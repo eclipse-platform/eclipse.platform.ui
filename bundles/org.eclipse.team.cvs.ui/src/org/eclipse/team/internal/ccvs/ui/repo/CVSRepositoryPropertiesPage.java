@@ -11,41 +11,27 @@
 package org.eclipse.team.internal.ccvs.ui.repo;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.IConnectionMethod;
-import org.eclipse.team.internal.ccvs.core.IUserInfo;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
+import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialogWithProjects;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -343,16 +329,16 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		try {
 			// Ensure the read and write locations are listed
 			if (currentReadLocation != null) {
-				CVSProviderPlugin.getPlugin().getRepository(currentReadLocation);
+				KnownRepositories.getInstance().getRepository(currentReadLocation);
 			}
 			if (currentWriteLocation != null) {
-				CVSProviderPlugin.getPlugin().getRepository(currentWriteLocation);
+				KnownRepositories.getInstance().getRepository(currentWriteLocation);
 			}
 		} catch (CVSException e) {
 			CVSProviderPlugin.log(e);
 		}
 
-		ICVSRepositoryLocation[] locations = CVSProviderPlugin.getPlugin().getKnownRepositories();
+		ICVSRepositoryLocation[] locations = KnownRepositories.getInstance().getRepositories();
 		for (int i = 0; i < locations.length; i++) {
 			ICVSRepositoryLocation location = locations[i];
 			readLocation.add(location.getLocation());
@@ -446,8 +432,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 							
 						} finally {
 							// Even if we failed, ensure that the new location appears in the repo view.
-							newLocation = (CVSRepositoryLocation)CVSProviderPlugin.getPlugin().getRepository(newLocation.getLocation());
-							newLocation.updateCache();
+							newLocation = (CVSRepositoryLocation)KnownRepositories.getInstance().addRepository(newLocation, !KnownRepositories.getInstance().isKnownRepository(newLocation.getLocation()));
 						}
 						
 						// Set the location of the page to the new location in case Apply was chosen
@@ -464,8 +449,6 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		} catch (InvocationTargetException e) {
 			handle(e);
 		} catch (InterruptedException e) {
-		} catch (CVSException e) {
-			handle(e);
 		}
 		return false; /* we only get here if an exception occurred */
 	}

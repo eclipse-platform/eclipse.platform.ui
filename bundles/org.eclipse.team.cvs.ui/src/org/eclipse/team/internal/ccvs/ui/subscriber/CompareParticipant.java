@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.subscribers.Subscriber;
@@ -19,8 +20,6 @@ import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
-import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant;
 
 public class CompareParticipant extends SubscriberParticipant {
@@ -80,5 +79,13 @@ public class CompareParticipant extends SubscriberParticipant {
 	 */
 	protected StructuredViewerAdvisor createSynchronizeViewerAdvisor(ISynchronizeView view) {
 		return new CVSSynchronizeViewerAdvisor(view, this);
+	}
+	
+	/**
+	 * Refresh this participant and show the results in a model dialog.
+	 * @param resources
+	 */
+	public void refresh(IResource[] resources) {
+		refresh(resources, getRefreshListenerFactory().createModalDialogListener(getId(), this, getSubscriberSyncInfoCollector().getSyncInfoTree()), getName(), null);
 	}
 }

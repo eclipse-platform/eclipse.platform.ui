@@ -26,6 +26,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -339,5 +341,30 @@ public abstract class CVSWizardPage extends WizardPage {
 	
 	protected RepositoryManager getRepositoryManager() {
 		return CVSUIPlugin.getPlugin().getRepositoryManager();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
+	 */
+	public IWizardPage getNextPage() {
+		IWizard wizard = getWizard();
+		if (wizard instanceof ICVSWizard) {
+			// This is the method that is invoked when the next button is pressed
+			// Hence, assume that the page s about to be shown
+			return ((ICVSWizard)wizard).getNextPage(this, true /* about to show */);
+		}
+		return super.getNextPage();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.WizardPage#canFlipToNextPage()
+	 */
+	public boolean canFlipToNextPage() {
+		IWizard wizard = getWizard();
+		if (wizard instanceof ICVSWizard) {
+			return isPageComplete() && 
+				((ICVSWizard)wizard).getNextPage(this, false /* about to show */) != null;
+		}
+		return super.canFlipToNextPage();
 	}
 }

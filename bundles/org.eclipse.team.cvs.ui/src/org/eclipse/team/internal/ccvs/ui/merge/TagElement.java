@@ -46,4 +46,21 @@ public class TagElement implements IWorkbenchAdapter, IAdaptable {
 	public CVSTag getTag() {
 		return tag;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return tag.hashCode();
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj instanceof TagElement) {
+			return tag.equals(((TagElement)obj).getTag());
+		}
+		return super.equals(obj);
+	}
 }

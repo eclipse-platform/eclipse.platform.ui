@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -20,9 +21,8 @@ import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
-import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Create a folder and any missing parents in the repository
@@ -32,9 +32,11 @@ public class ShareProjectOperation extends CVSOperation {
 	private ICVSRepositoryLocation location;
 	private IProject project;
 	private String moduleName;
+	private Shell shell;
 
-	public ShareProjectOperation(IWorkbenchPart part, ICVSRepositoryLocation location, IProject project, String moduleName) {
-		super(part);
+	public ShareProjectOperation(Shell shell, ICVSRepositoryLocation location, IProject project, String moduleName) {
+		super(null);
+		this.shell = shell;
 		this.moduleName = moduleName;
 		this.project = project;
 		this.location = location;
@@ -44,56 +46,46 @@ public class ShareProjectOperation extends CVSOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
-		
-		// Determine if the repository is known
-		boolean alreadyExists = CVSProviderPlugin.getPlugin().isKnownRepository(location.getLocation());
-			
 		try {
-			createRemoteFolder(monitor);
-			mapProjectToRemoteFolder(monitor);
-		} catch (CVSException e) {
-			// The checkout may have triggered password caching
-			// Therefore, if this is a newly created location, we want to clear its cache
-			if ( ! alreadyExists)
-				CVSProviderPlugin.getPlugin().disposeRepository(location);
-			throw e;
-		}
-		// Add the repository if it didn't exist already
-		if ( ! alreadyExists) {
-			CVSProviderPlugin.getPlugin().addRepository(location);
-		}
-	}
-
-	private void mapProjectToRemoteFolder(IProgressMonitor monitor) throws CVSException {
-		// perform the workspace modifications in a runnable
-		try {
-			// Set the folder sync info of the project to point to the remote module
-			final ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(project);
+			monitor.beginTask(getTaskName(), 100);
+			// Create the remote module
+			final ICVSRemoteFolder remote = createRemoteFolder(Policy.subMonitorFor(monitor, 50));
+			// Map the project to the module in a workspace runnable
 			final TeamException[] exception = new TeamException[] {null};
-			final String modName = moduleName;
 			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					try {
-						// Link the project to the newly created module
-						folder.setFolderSyncInfo(new FolderSyncInfo(modName, location.getLocation(), null, false));
-						//Register it with Team.  If it already is, no harm done.
-						RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
+						mapProjectToRemoteFolder(remote, monitor);
 					} catch (TeamException e) {
 						exception[0] = e;
 					}
 				}
-			}, project, 0, monitor);
+			}, project, 0, Policy.subMonitorFor(monitor, 40));
 			if (exception[0] != null)
 				throw exception[0];
+			waitForCollector(Policy.subMonitorFor(monitor, 10));
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
+		} finally {
+			monitor.done();
 		}
 	}
 
-	/*
-	 * Create the remote folder (and any ancestors).
+	private void waitForCollector(IProgressMonitor sub) {
+		sub.beginTask("Waiting for synchronization state updates", IProgressMonitor.UNKNOWN);
+		sub.subTask("Waiting for synchronization state updates");
+		CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant().getSubscriberSyncInfoCollector().waitForCollector(sub);
+	}
+
+	/**
+	 * Create the remote folder to which the project is being mapped 
+	 * (as well as any ancestors) and return it. If the remote folder does not
+	 * exist remotely, this method will create it.
+	 * @param monitor a progress monitor
+	 * @return the existing remote folder to which the project is being mapped
+	 * @throws CVSException
 	 */
-	private void createRemoteFolder(IProgressMonitor monitor) throws CVSException {
+	protected ICVSRemoteFolder createRemoteFolder(IProgressMonitor monitor) throws CVSException {
 		String projectName = project.getName();
 		if (moduleName == null)
 			moduleName = projectName;
@@ -103,12 +95,30 @@ public class ShareProjectOperation extends CVSOperation {
 		
 		try {
 			monitor.beginTask(getTaskName(), 100 * path.segmentCount());
-			ensureTreeExists(root, path, monitor);
+			return ensureTreeExists(root, path, monitor);
 		} catch (TeamException e) {
 			throw CVSException.wrapException(e);
 		} finally {
 			monitor.done();
 		}
+	}
+	
+	/**
+	 * Map the project to the remote folder by associating the CVS
+	 * Repository Provider with the project and, at the very least,
+	 * assigning the folder sync info for the remote folder as the
+	 * folder sync info for the project.
+	 * @param remote the remote folder to which the projetc is being mapped
+	 * @param monitor a progress monitor
+	 * @throws CVSException
+	 */
+	protected void mapProjectToRemoteFolder(final ICVSRemoteFolder remote, IProgressMonitor monitor) throws TeamException {
+		purgeAnyCVSFolders();
+		// Link the project to the newly created module
+		ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(project);
+		folder.setFolderSyncInfo(remote.getFolderSyncInfo());
+		//Register it with Team.  If it already is, no harm done.
+		RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
 	}
 
 	/*
@@ -130,11 +140,11 @@ public class ShareProjectOperation extends CVSOperation {
 	/*
 	 * Ensure that all the folders in the tree exist
 	 */
-	private void ensureTreeExists(RemoteFolderTree folder, IPath path, IProgressMonitor monitor) throws TeamException {
-		if (path.isEmpty()) return;
+	private ICVSRemoteFolder ensureTreeExists(RemoteFolderTree folder, IPath path, IProgressMonitor monitor) throws TeamException {
+		if (path.isEmpty()) return folder;
 		String name = path.segment(0);
 		RemoteFolderTree child = createChild(folder, name, monitor);
-		ensureTreeExists(child, path.removeFirstSegments(1), monitor);
+		return ensureTreeExists(child, path.removeFirstSegments(1), monitor);
 	}
 	
 	private void createFolder(RemoteFolderTree folder, IProgressMonitor monitor) throws TeamException {
@@ -160,8 +170,44 @@ public class ShareProjectOperation extends CVSOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		// TODO Auto-generated method stub
-		return null;
+		return Policy.bind("ShareProjectOperation.0", project.getName(), moduleName); //$NON-NLS-1$
 	}
 
+	/**
+	 * @return Returns the project.
+	 */
+	public IProject getProject() {
+		return project;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getShell()
+	 */
+	protected Shell getShell() {
+		return shell;
+	}
+	
+	/**
+	 * Method findCommonRootInSubfolders.
+	 * @return String
+	 */
+	private void purgeAnyCVSFolders() {
+		try {
+			ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project);
+			folder.accept(new ICVSResourceVisitor() {
+				public void visitFile(ICVSFile file) throws CVSException {
+					// nothing to do for files
+				}
+				public void visitFolder(ICVSFolder folder) throws CVSException {
+					if (folder.isCVSFolder()) {
+						// for now, just unmanage
+						folder.unmanage(null);
+					}
+				}
+			}, true /* recurse */);
+		} catch (CVSException e) {
+			// log the exception and return null
+			CVSUIPlugin.log(e);
+		}
+	}
 }

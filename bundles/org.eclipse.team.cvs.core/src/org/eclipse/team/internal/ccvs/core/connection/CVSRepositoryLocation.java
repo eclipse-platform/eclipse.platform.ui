@@ -23,6 +23,11 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.resources.*;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * This class manages a CVS repository location.
@@ -45,6 +50,17 @@ import org.eclipse.team.internal.ccvs.core.resources.*;
  */
 public class CVSRepositoryLocation extends PlatformObject implements ICVSRepositoryLocation, IUserInfo {
 
+	/**
+	 * The name of the preferences node in the CVS preferences that contains
+	 * the known repositories as its children.
+	 */
+	public static final String PREF_REPOSITORIES_NODE = "repositories"; //$NON-NLS-1$
+	
+	// Preference keys used to persist the state of the location
+	public static final String PREF_LOCATION = "location"; //$NON-NLS-1$
+	public static final String PREF_WRITE_LOCATION = "write"; //$NON-NLS-1$
+	public static final String PREF_READ_LOCATION = "read"; //$NON-NLS-1$
+	
 	// server platform constants
 	public static final int UNDETERMINED_PLATFORM = 0;
 	public static final int CVS_SERVER = 1;
@@ -87,10 +103,6 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	public static final String HOST_VARIABLE = "{host}"; //$NON-NLS-1$
 	public static final String PORT_VARIABLE = "{port}"; //$NON-NLS-1$
 	
-	// alternate repository connection details to be used when reading or writting
-	private String readLocation;
-	private String writeLocation;
-	
 	static {
 		URL temp = null;
 		try {
@@ -100,6 +112,354 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		}
 		FAKE_URL = temp;
 	} 
+	
+	/**
+	 * Return the preferences node whose child nodes are teh know repositories
+	 * @return a preferences node
+	 */
+	public static Preferences getParentPreferences() {
+		return CVSProviderPlugin.getPlugin().getInstancePreferences().node(PREF_REPOSITORIES_NODE);
+	}
+	
+	/**
+	 * Validate whether the given string is a valid registered connection method
+	 * name.
+	 * @param methodName the method name
+	 * @return whether the given string is a valid registered connection method
+	 * name
+	 */
+	public static boolean validateConnectionMethod(String methodName) {
+		Assert.isNotNull(methodName);
+		IConnectionMethod[] methods = getPluggedInConnectionMethods();
+		for (int i=0;i<methods.length;i++) {
+			if (methodName.equals(methods[i].getName()))
+				return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Create a repository location instance from the given properties.
+	 * The supported properties are:
+	 * 
+	 *   connection The connection method to be used
+	 *   user The username for the connection (optional)
+	 *   password The password used for the connection (optional)
+	 *   host The host where the repository resides
+	 *   port The port to connect to (optional)
+	 *   root The server directory where the repository is located
+	 */
+	public static CVSRepositoryLocation fromProperties(Properties configuration) throws CVSException {
+		// We build a string to allow validation of the components that are provided to us
+		String connection = configuration.getProperty("connection");//$NON-NLS-1$ 
+		if (connection == null)
+			connection = "pserver";//$NON-NLS-1$ 
+		IConnectionMethod method = getPluggedInConnectionMethod(connection);
+		if (method == null)
+			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSRepositoryLocation.methods", new Object[] {getPluggedInConnectionMethodNames()}), null));//$NON-NLS-1$ 
+		String user = configuration.getProperty("user");//$NON-NLS-1$ 
+		if (user.length() == 0)
+			user = null;
+		String password = configuration.getProperty("password");//$NON-NLS-1$ 
+		if (user == null)
+			password = null;
+		String host = configuration.getProperty("host");//$NON-NLS-1$ 
+		if (host == null)
+			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSRepositoryLocation.hostRequired"), null));//$NON-NLS-1$ 
+		String portString = configuration.getProperty("port");//$NON-NLS-1$ 
+		int port;
+		if (portString == null)
+			port = ICVSRepositoryLocation.USE_DEFAULT_PORT;
+		else
+			port = Integer.parseInt(portString);
+		String root = configuration.getProperty("root");//$NON-NLS-1$ 
+		if (root == null)
+			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSRepositoryLocation.rootRequired"), null));//$NON-NLS-1$ 
+		root = root.replace('\\', '/');
+
+		return new CVSRepositoryLocation(method, user, password, host, port, root, user != null, false);
+	}
+	
+	/**
+	 * Parse a location string and return a CVSRepositoryLocation.
+	 * 
+	 * On failure, the status of the exception will be a MultiStatus
+	 * that includes the original parsing error and a general status
+	 * displaying the passed location and proper form. This form is
+	 * better for logging, etc.
+	 */
+	public static CVSRepositoryLocation fromString(String location) throws CVSException {	
+		try {
+			return fromString(location, false);
+		} catch (CVSException e) {
+			// Parsing failed. Include a status that
+			// shows the passed location and the proper form
+			MultiStatus error = new MultiStatus(CVSProviderPlugin.ID, IStatus.ERROR, Policy.bind("CVSRepositoryLocation.invalidFormat", new Object[] {location}), null);//$NON-NLS-1$ 
+			error.merge(new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.locationForm")));//$NON-NLS-1$ 
+			error.merge(e.getStatus());
+			throw new CVSException(error);
+		}
+	}
+	
+	/**
+	 * Parse a location string and return a CVSRepositoryLocation.
+	 * 
+	 * The valid format (from the cederqvist) is:
+	 * 
+	 * :method:[[user][:password]@]hostname[:[port]]/path/to/repository
+	 * 
+	 * However, this does not work with CVS on NT so we use the format
+	 * 
+	 * :method:[user[:password]@]hostname[#port]:/path/to/repository
+	 * 
+	 * Some differences to note:
+	 *    The : after the host/port is not optional because of NT naming including device
+	 *    e.g. :pserver:username:password@hostname#port:D:\cvsroot
+	 * 
+	 * If validateOnly is true, this method will always throw an exception.
+	 * The status of the exception indicates success or failure. The status
+	 * of the exception contains a specific message suitable for displaying
+	 * to a user who has knowledge of the provided location string.
+	 * @see CVSRepositoryLocation.fromString(String)
+	 */
+	public static CVSRepositoryLocation fromString(String location, boolean validateOnly) throws CVSException {
+		String partId = null;
+		try {
+			// Get the connection method
+			partId = "CVSRepositoryLocation.parsingMethod";//$NON-NLS-1$ 
+			int start = location.indexOf(COLON);
+			String methodName;
+			int end;
+			if (start == 0) {
+				end = location.indexOf(COLON, start + 1);
+				methodName = location.substring(start + 1, end);
+				start = end + 1;
+			} else {
+				// this could be an alternate format for ext: username:password@host:path
+				methodName = "ext"; //$NON-NLS-1$
+				start = 0;
+			}
+			
+			IConnectionMethod method = getPluggedInConnectionMethod(methodName);
+			if (method == null)
+				throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.methods", new Object[] {getPluggedInConnectionMethodNames()})));//$NON-NLS-1$ 
+			
+			// Get the user name and password (if provided)
+			partId = "CVSRepositoryLocation.parsingUser";//$NON-NLS-1$ 
+			
+			end = location.indexOf(HOST_SEPARATOR, start);
+			String user = null;
+			String password = null;
+			// if end is -1 then there is no host separator meaning that the username is not present
+			if (end != -1) {		
+				// Get the optional user and password
+				user = location.substring(start, end);
+				// Separate the user and password (if there is a password)
+				start = user.indexOf(COLON);
+				if (start != -1) {
+					partId = "CVSRepositoryLocation.parsingPassword";//$NON-NLS-1$ 
+					password = user.substring(start+1);
+					user = user.substring(0, start);	
+				}
+				// Set start to point after the host separator
+				start = end + 1;
+			}
+			
+			// Get the host (and port)
+			partId = "CVSRepositoryLocation.parsingHost";//$NON-NLS-1$ 
+			end= location.indexOf(COLON, start);
+			String host = location.substring(start, end);
+			int port = USE_DEFAULT_PORT;
+			// Separate the port and host if there is a port
+			start = host.indexOf(PORT_SEPARATOR);
+			if (start != -1) {
+				// Initially, we used a # between the host and port
+				partId = "CVSRepositoryLocation.parsingPort";//$NON-NLS-1$ 
+				port = Integer.parseInt(host.substring(start+1));
+				host = host.substring(0, start);
+			} else {
+				// In the correct CVS format, the port follows the COLON
+				partId = "CVSRepositoryLocation.parsingPort";//$NON-NLS-1$ 
+				int index = end;
+				char c = location.charAt(++index);
+				String portString = new String();
+				while (Character.isDigit(c)) {
+					portString += c;
+					c = location.charAt(++index);
+				}
+				if (portString.length() > 0) {
+					end = index - 1;
+					port = Integer.parseInt(portString);
+				}
+			}
+			
+			// Get the repository path (translating backslashes to slashes)
+			partId = "CVSRepositoryLocation.parsingRoot";//$NON-NLS-1$ 
+			start = end + 1;
+			String root = location.substring(start).replace('\\', '/');
+			
+			if (validateOnly)
+				throw new CVSException(new CVSStatus(IStatus.OK, Policy.bind("ok")));//$NON-NLS-1$ 
+				
+			return new CVSRepositoryLocation(method, user, password, host, port, root, (user != null), (password != null));
+		}
+		catch (IndexOutOfBoundsException e) {
+			// We'll get here if anything funny happened while extracting substrings
+			throw new CVSException(Policy.bind(partId));
+		}
+		catch (NumberFormatException e) {
+			// We'll get here if we couldn't parse a number
+			throw new CVSException(Policy.bind(partId));
+		}
+	}
+	
+	/**
+	 * Validate that the given string could be used to succesfully create
+	 * a CVS repository location
+	 * 
+	 * This method performs some initial checks to provide displayable
+	 * feedback and also tries a more in-depth parse using 
+	 * <code>fromString(String, boolean)</code>.
+	 */
+	public static IStatus validate(String location) {
+		
+		// Check some simple things that are not checked in creation
+		if (location == null)
+			return new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.nullLocation"));//$NON-NLS-1$ 
+		if (location.equals(""))//$NON-NLS-1$ 
+			return new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.emptyLocation"));//$NON-NLS-1$ 
+		if (location.endsWith(" ") || location.endsWith("\t"))//$NON-NLS-1$  //$NON-NLS-2$ 
+			return new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.endWhitespace"));//$NON-NLS-1$ 
+		if (!location.startsWith(":") || location.indexOf(COLON, 1) == -1)//$NON-NLS-1$ 
+			return new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.startOfLocation"));//$NON-NLS-1$ 
+
+		// Do some quick checks to provide geberal feedback
+		String formatError = Policy.bind("CVSRepositoryLocation.locationForm");//$NON-NLS-1$ 
+		int secondColon = location.indexOf(COLON, 1);
+		int at = location.indexOf(HOST_SEPARATOR);
+		if (at != -1) {
+			String user = location.substring(secondColon + 1, at);
+			if (user.equals(""))//$NON-NLS-1$ 
+				return new CVSStatus(IStatus.ERROR, formatError);
+		} else
+			at = secondColon;
+		int colon = location.indexOf(COLON, at + 1);
+		if (colon == -1)
+			return new CVSStatus(IStatus.ERROR, formatError);
+		String host = location.substring(at + 1, colon);
+		if (host.equals(""))//$NON-NLS-1$ 
+				return new CVSStatus(IStatus.ERROR, formatError);
+		String path = location.substring(colon + 1, location.length());
+		if (path.equals(""))//$NON-NLS-1$ 
+				return new CVSStatus(IStatus.ERROR, formatError);
+				
+		// Do a full parse and see if it passes
+		try {
+			fromString(location, true);
+		} catch (CVSException e) {
+			// An exception is always throw. Return the status
+			return e.getStatus();
+		}
+				
+		// Looks ok (we'll actually never get here because above 
+		// fromString(String, boolean) will always throw an exception).
+		return Status.OK_STATUS; 
+	}
+	
+	/**
+	 * Get the plugged-in user authenticator if there is one.
+	 * @return the plugged-in user authenticator or <code>null</code>
+	 */
+	public static IUserAuthenticator getAuthenticator() {
+		if (authenticator == null) {
+			authenticator = getPluggedInAuthenticator();
+		}
+		return authenticator;
+	}
+	
+	/**
+	 * Return the list of plugged-in connection methods.
+	 * @return the list of plugged-in connection methods
+	 */
+	public static IConnectionMethod[] getPluggedInConnectionMethods() {
+		if(pluggedInConnectionMethods==null) {
+			List connectionMethods = new ArrayList();
+			
+			if (STANDALONE_MODE) {				
+				connectionMethods.add(new PServerConnectionMethod());
+			} else {
+				IExtension[] extensions = Platform.getPluginRegistry().getExtensionPoint(CVSProviderPlugin.ID, CVSProviderPlugin.PT_CONNECTIONMETHODS).getExtensions();
+				for(int i=0; i<extensions.length; i++) {
+					IExtension extension = extensions[i];
+					IConfigurationElement[] configs = extension.getConfigurationElements();
+					if (configs.length == 0) {
+						CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSProviderPlugin.execProblem"), null);//$NON-NLS-1$ 
+						continue;
+					}
+					try {
+						IConfigurationElement config = configs[0];
+						connectionMethods.add(config.createExecutableExtension("run"));//$NON-NLS-1$ 
+					} catch (CoreException ex) {
+						CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSProviderPlugin.execProblem"), ex);//$NON-NLS-1$ 
+					}
+				}
+			}
+			pluggedInConnectionMethods = (IConnectionMethod[])connectionMethods.toArray(new IConnectionMethod[0]);
+		}
+		return pluggedInConnectionMethods;
+	}
+	
+	/*
+	 * Return the connection method registered for the given name 
+	 * or <code>null</code> if none is registered with the given name.
+	 */
+	private static IConnectionMethod getPluggedInConnectionMethod(String methodName) {
+		Assert.isNotNull(methodName);
+		IConnectionMethod[] methods = getPluggedInConnectionMethods();
+		for(int i=0; i<methods.length; i++) {
+			if(methodName.equals(methods[i].getName()))
+				return methods[i];
+		}
+		return null;		
+	}
+	
+	/*
+	 * Return a string containing a list of all connection methods
+	 * that is suitable for inclusion in an error message.
+	 */
+	private static String getPluggedInConnectionMethodNames() {
+		IConnectionMethod[] methods = getPluggedInConnectionMethods();
+		StringBuffer methodNames = new StringBuffer();
+		for(int i=0; i<methods.length; i++) {
+			String name = methods[i].getName();
+			if (i>0)
+				methodNames.append(", ");//$NON-NLS-1$ 
+			methodNames.append(name);
+		}		
+		return methodNames.toString();
+	}
+	
+	/*
+	 * Get the pluged-in authenticator from the plugin manifest.
+	 */
+	private static IUserAuthenticator getPluggedInAuthenticator() {
+		IExtension[] extensions = Platform.getPluginRegistry().getExtensionPoint(CVSProviderPlugin.ID, CVSProviderPlugin.PT_AUTHENTICATOR).getExtensions();
+		if (extensions.length == 0)
+			return null;
+		IExtension extension = extensions[0];
+		IConfigurationElement[] configs = extension.getConfigurationElements();
+		if (configs.length == 0) {
+			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSAdapter.noConfigurationElement", new Object[] {extension.getUniqueIdentifier()}), null);//$NON-NLS-1$ 
+			return null;
+		}
+		try {
+			IConfigurationElement config = configs[0];
+			return (IUserAuthenticator) config.createExecutableExtension("run");//$NON-NLS-1$ 
+		} catch (CoreException ex) {
+			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSAdapter.unableToInstantiate", new Object[] {extension.getUniqueIdentifier()}), ex);//$NON-NLS-1$ 
+			return null;
+		}
+	}
 	
 	/*
 	 * Create a CVSRepositoryLocation from its composite parts.
@@ -125,9 +485,6 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * be handled by the caller.
 	 */
 	private Connection createConnection(String password, IProgressMonitor monitor) throws CVSException {
-		// FIXME Should the open() of Connection be done in the constructor?
-		// The only reason it should is if connections can be reused (they aren't reused now).
-		// FIXME! monitor is unused
 		Connection connection = new Connection(this, method.createConnection(this, password));
 		connection.open(monitor);
 		return connection;
@@ -138,20 +495,29 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * This method shold only be invoked when the corresponding adapter is shut
 	 * down or a connection is being validated.
 	 */
-	public void dispose() throws CVSException {
+	public void dispose() {
 		flushCache();
+		try {
+			if (hasPreferences()) {
+				getPreferences().removeNode();
+				getParentPreferences().flush();
+			}
+		} catch (BackingStoreException e) {
+			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.73", getLocation(true)), e); //$NON-NLS-1$
+		}
 	}
 	
 	/*
 	 * Flush the keyring entry associated with the receiver
 	 */
-	private void flushCache() throws CVSException {
+	private void flushCache() {
 		try {
 			Platform.flushAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME);
 		} catch (CoreException e) {
-			// We should probably wrap the CoreException here!
+			// No need to report this since the location is
+			// most likely being disposed. 
+			// Just fail silently and continue
 			CVSProviderPlugin.log(e);
-			throw new CVSException(IStatus.ERROR, IStatus.ERROR, Policy.bind("CVSRepositoryLocation.errorFlushing", getLocation()), e);//$NON-NLS-1$ 
 		}
 	}
 	
@@ -319,7 +685,9 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			
 			// Get the repository in order to ensure that the location is known by CVS.
 			// (The get will record the location if it's not already recorded.
-			CVSProviderPlugin.getPlugin().getRepository(getLocation());
+			if (!KnownRepositories.getInstance().isKnownRepository(getLocation())) {
+				KnownRepositories.getInstance().addRepository(this, true /* broadcast */);
+			}
 			
 			while (true) {
 				try {
@@ -411,23 +779,27 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		userFixed = !muteable;
 	}
 	
-	public void updateCache() throws CVSException {
-		if (passwordFixed)
-			return;
-		updateCache(user, password, true);
-		password = null;
-		// Ensure that the receiver is known by the CVS provider
-		CVSProviderPlugin.getPlugin().getRepository(getLocation());
+	public void updateCache() {
+		// Nothing to cache if the password is fixed
+		if (passwordFixed) return;
+		// Nothing to cache if the password is null and the user is fixed
+		if (password == null && userFixed) return;
+		if (updateCache(user, password)) {
+			// If the cache was updated, null the password field
+			// so we will obtain the password from the cache when needed
+			password = null;
+		}
+		ensurePreferencesStored();
 	}
-	
+
 	/*
-	 * Cache the user info in the keyring
+	 * Cache the user info in the keyring. Return true if the operation
+	 * succeeded and false otherwise. If an error occurs, it will be logged.
 	 */
-	private void updateCache(String username, String password, boolean createIfAbsent) throws CVSException {
+	private boolean updateCache(String username, String password) {
 		// put the password into the Platform map
 		Map map = Platform.getAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME);
 		if (map == null) {
-			if ( ! createIfAbsent) return;
 			map = new java.util.HashMap(10);
 		}
 		if (username != null)
@@ -439,8 +811,9 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		} catch (CoreException e) {
 			// We should probably wrap the CoreException here!
 			CVSProviderPlugin.log(e);
-			throw new CVSException(IStatus.ERROR, IStatus.ERROR, Policy.bind("CVSRepositoryLocation.errorCaching", getLocation()), e);//$NON-NLS-1$ 
+			return false;
 		}
+		return true;
 	}
 	
 	/*
@@ -534,327 +907,10 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		}
 	}
 	
-	public static boolean validateConnectionMethod(String methodName) {
-		IConnectionMethod[] methods = getPluggedInConnectionMethods();
-		for (int i=0;i<methods.length;i++) {
-			if (methodName.equals(methods[i].getName()))
-				return true;
-		}
-		return false;
-	}
-	
-	/*
-	 * Create a repository location instance from the given properties.
-	 * The supported properties are:
-	 * 
-	 *   connection The connection method to be used
-	 *   user The username for the connection (optional)
-	 *   password The password used for the connection (optional)
-	 *   host The host where the repository resides
-	 *   port The port to connect to (optional)
-	 *   root The server directory where the repository is located
-	 */
-	public static CVSRepositoryLocation fromProperties(Properties configuration) throws CVSException {
-		// We build a string to allow validation of the components that are provided to us
-		String connection = configuration.getProperty("connection");//$NON-NLS-1$ 
-		if (connection == null)
-			connection = "pserver";//$NON-NLS-1$ 
-		IConnectionMethod method = getPluggedInConnectionMethod(connection);
-		if (method == null)
-			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSRepositoryLocation.methods", new Object[] {getPluggedInConnectionMethodNames()}), null));//$NON-NLS-1$ 
-		String user = configuration.getProperty("user");//$NON-NLS-1$ 
-		if (user.length() == 0)
-			user = null;
-		String password = configuration.getProperty("password");//$NON-NLS-1$ 
-		if (user == null)
-			password = null;
-		String host = configuration.getProperty("host");//$NON-NLS-1$ 
-		if (host == null)
-			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSRepositoryLocation.hostRequired"), null));//$NON-NLS-1$ 
-		String portString = configuration.getProperty("port");//$NON-NLS-1$ 
-		int port;
-		if (portString == null)
-			port = ICVSRepositoryLocation.USE_DEFAULT_PORT;
-		else
-			port = Integer.parseInt(portString);
-		String root = configuration.getProperty("root");//$NON-NLS-1$ 
-		if (root == null)
-			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSRepositoryLocation.rootRequired"), null));//$NON-NLS-1$ 
-		root = root.replace('\\', '/');
-
-		return new CVSRepositoryLocation(method, user, password, host, port, root, user != null, false);
-	}
-	
-	/*
-	 * Parse a location string and return a CVSRepositoryLocation.
-	 * 
-	 * On failure, the status of the exception will be a MultiStatus
-	 * that includes the original parsing error and a general status
-	 * displaying the passed location and proper form. This form is
-	 * better for logging, etc.
-	 */
-	public static CVSRepositoryLocation fromString(String location) throws CVSException {	
-		try {
-			return fromString(location, false);
-		} catch (CVSException e) {
-			// Parsing failed. Include a status that
-			// shows the passed location and the proper form
-			MultiStatus error = new MultiStatus(CVSProviderPlugin.ID, IStatus.ERROR, Policy.bind("CVSRepositoryLocation.invalidFormat", new Object[] {location}), null);//$NON-NLS-1$ 
-			error.merge(new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.locationForm")));//$NON-NLS-1$ 
-			error.merge(e.getStatus());
-			throw new CVSException(error);
-		}
-	}
-	
-	/*
-	 * Parse a location string and return a CVSRepositoryLocation.
-	 * 
-	 * The valid format (from the cederqvist) is:
-	 * 
-	 * :method:[[user][:password]@]hostname[:[port]]/path/to/repository
-	 * 
-	 * However, this does not work with CVS on NT so we use the format
-	 * 
-	 * :method:[user[:password]@]hostname[#port]:/path/to/repository
-	 * 
-	 * Some differences to note:
-	 *    The : after the host/port is not optional because of NT naming including device
-	 *    e.g. :pserver:username:password@hostname#port:D:\cvsroot
-	 * 
-	 * If validateOnly is true, this method will always throw an exception.
-	 * The status of the exception indicates success or failure. The status
-	 * of the exception contains a specific message suitable for displaying
-	 * to a user who has knowledge of the provided location string.
-	 * @see CVSRepositoryLocation.fromString(String)
-	 */
-	public static CVSRepositoryLocation fromString(String location, boolean validateOnly) throws CVSException {
-		String partId = null;
-		try {
-			// Get the connection method
-			partId = "CVSRepositoryLocation.parsingMethod";//$NON-NLS-1$ 
-			int start = location.indexOf(COLON);
-			String methodName;
-			int end;
-			if (start == 0) {
-				end = location.indexOf(COLON, start + 1);
-				methodName = location.substring(start + 1, end);
-				start = end + 1;
-			} else {
-				// this could be an alternate format for ext: username:password@host:path
-				methodName = "ext"; //$NON-NLS-1$
-				start = 0;
-			}
-			
-			IConnectionMethod method = getPluggedInConnectionMethod(methodName);
-			if (method == null)
-				throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.methods", new Object[] {getPluggedInConnectionMethodNames()})));//$NON-NLS-1$ 
-			
-			// Get the user name and password (if provided)
-			partId = "CVSRepositoryLocation.parsingUser";//$NON-NLS-1$ 
-			
-			end = location.indexOf(HOST_SEPARATOR, start);
-			String user = null;
-			String password = null;
-			// if end is -1 then there is no host separator meaning that the username is not present
-			if (end != -1) {		
-				// Get the optional user and password
-				user = location.substring(start, end);
-				// Separate the user and password (if there is a password)
-				start = user.indexOf(COLON);
-				if (start != -1) {
-					partId = "CVSRepositoryLocation.parsingPassword";//$NON-NLS-1$ 
-					password = user.substring(start+1);
-					user = user.substring(0, start);	
-				}
-				// Set start to point after the host separator
-				start = end + 1;
-			}
-			
-			// Get the host (and port)
-			partId = "CVSRepositoryLocation.parsingHost";//$NON-NLS-1$ 
-			end= location.indexOf(COLON, start);
-			String host = location.substring(start, end);
-			int port = USE_DEFAULT_PORT;
-			// Separate the port and host if there is a port
-			start = host.indexOf(PORT_SEPARATOR);
-			if (start != -1) {
-				// Initially, we used a # between the host and port
-				partId = "CVSRepositoryLocation.parsingPort";//$NON-NLS-1$ 
-				port = Integer.parseInt(host.substring(start+1));
-				host = host.substring(0, start);
-			} else {
-				// In the correct CVS format, the port follows the COLON
-				partId = "CVSRepositoryLocation.parsingPort";//$NON-NLS-1$ 
-				int index = end;
-				char c = location.charAt(++index);
-				String portString = new String();
-				while (Character.isDigit(c)) {
-					portString += c;
-					c = location.charAt(++index);
-				}
-				if (portString.length() > 0) {
-					end = index - 1;
-					port = Integer.parseInt(portString);
-				}
-			}
-			
-			// Get the repository path (translating backslashes to slashes)
-			partId = "CVSRepositoryLocation.parsingRoot";//$NON-NLS-1$ 
-			start = end + 1;
-			String root = location.substring(start).replace('\\', '/');
-			
-			if (validateOnly)
-				throw new CVSException(new CVSStatus(IStatus.OK, Policy.bind("ok")));//$NON-NLS-1$ 
-				
-			return new CVSRepositoryLocation(method, user, password, host, port, root, (user != null), (password != null));
-		}
-		catch (IndexOutOfBoundsException e) {
-			// We'll get here if anything funny happened while extracting substrings
-			throw new CVSException(Policy.bind(partId));
-		}
-		catch (NumberFormatException e) {
-			// We'll get here if we couldn't parse a number
-			throw new CVSException(Policy.bind(partId));
-		}
-	}
-	
-	public static IUserAuthenticator getAuthenticator() {
-		if (authenticator == null) {
-			authenticator = getPluggedInAuthenticator();
-		}
-		return authenticator;
-	}
-
-	/*
-	 * Return the connection method registered for the given name or null if none
-	 * are registered
-	 */
-	private static IConnectionMethod getPluggedInConnectionMethod(String methodName) {
-		IConnectionMethod[] methods = getPluggedInConnectionMethods();
-		for(int i=0; i<methods.length; i++) {
-			if(methodName.equals(methods[i].getName()))
-				return methods[i];
-		}
-		return null;		
-	}
-	
-	/*
-	 * Return a string containing a list of all connection methods
-	 */
-	private static String getPluggedInConnectionMethodNames() {
-		IConnectionMethod[] methods = getPluggedInConnectionMethods();
-		StringBuffer methodNames = new StringBuffer();
-		for(int i=0; i<methods.length; i++) {
-			String name = methods[i].getName();
-			if (i>0)
-				methodNames.append(", ");//$NON-NLS-1$ 
-			methodNames.append(name);
-		}		
-		return methodNames.toString();
-	}
-	
-	public static IConnectionMethod[] getPluggedInConnectionMethods() {
-		if(pluggedInConnectionMethods==null) {
-			List connectionMethods = new ArrayList();
-			
-			if (STANDALONE_MODE) {				
-				connectionMethods.add(new PServerConnectionMethod());
-			} else {
-				IExtension[] extensions = Platform.getPluginRegistry().getExtensionPoint(CVSProviderPlugin.ID, CVSProviderPlugin.PT_CONNECTIONMETHODS).getExtensions();
-				for(int i=0; i<extensions.length; i++) {
-					IExtension extension = extensions[i];
-					IConfigurationElement[] configs = extension.getConfigurationElements();
-					if (configs.length == 0) {
-						CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSProviderPlugin.execProblem"), null);//$NON-NLS-1$ 
-						continue;
-					}
-					try {
-						IConfigurationElement config = configs[0];
-						connectionMethods.add(config.createExecutableExtension("run"));//$NON-NLS-1$ 
-					} catch (CoreException ex) {
-						CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSProviderPlugin.execProblem"), ex);//$NON-NLS-1$ 
-					}
-				}
-			}
-			pluggedInConnectionMethods = (IConnectionMethod[])connectionMethods.toArray(new IConnectionMethod[0]);
-		}
-		return pluggedInConnectionMethods;
-	}
-	
-	private static IUserAuthenticator getPluggedInAuthenticator() {
-		IExtension[] extensions = Platform.getPluginRegistry().getExtensionPoint(CVSProviderPlugin.ID, CVSProviderPlugin.PT_AUTHENTICATOR).getExtensions();
-		if (extensions.length == 0)
-			return null;
-		IExtension extension = extensions[0];
-		IConfigurationElement[] configs = extension.getConfigurationElements();
-		if (configs.length == 0) {
-			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSAdapter.noConfigurationElement", new Object[] {extension.getUniqueIdentifier()}), null);//$NON-NLS-1$ 
-			return null;
-		}
-		try {
-			IConfigurationElement config = configs[0];
-			return (IUserAuthenticator) config.createExecutableExtension("run");//$NON-NLS-1$ 
-		} catch (CoreException ex) {
-			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSAdapter.unableToInstantiate", new Object[] {extension.getUniqueIdentifier()}), ex);//$NON-NLS-1$ 
-			return null;
-		}
-	}
-	
-	/*
-	 * Validate that the given string could ne used to succesfully create
-	 * an instance of the receiver.
-	 * 
-	 * This method performs some initial checks to provide displayable
-	 * feedback and also tries a more in-depth parse using fromString(String, boolean).
-	 */
-	public static IStatus validate(String location) {
-		
-		// Check some simple things that are not checked in creation
-		if (location == null)
-			return new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.nullLocation"));//$NON-NLS-1$ 
-		if (location.equals(""))//$NON-NLS-1$ 
-			return new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.emptyLocation"));//$NON-NLS-1$ 
-		if (location.endsWith(" ") || location.endsWith("\t"))//$NON-NLS-1$  //$NON-NLS-2$ 
-			return new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.endWhitespace"));//$NON-NLS-1$ 
-		if (!location.startsWith(":") || location.indexOf(COLON, 1) == -1)//$NON-NLS-1$ 
-			return new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.startOfLocation"));//$NON-NLS-1$ 
-
-		// Do some quick checks to provide geberal feedback
-		String formatError = Policy.bind("CVSRepositoryLocation.locationForm");//$NON-NLS-1$ 
-		int secondColon = location.indexOf(COLON, 1);
-		int at = location.indexOf(HOST_SEPARATOR);
-		if (at != -1) {
-			String user = location.substring(secondColon + 1, at);
-			if (user.equals(""))//$NON-NLS-1$ 
-				return new CVSStatus(IStatus.ERROR, formatError);
-		} else
-			at = secondColon;
-		int colon = location.indexOf(COLON, at + 1);
-		if (colon == -1)
-			return new CVSStatus(IStatus.ERROR, formatError);
-		String host = location.substring(at + 1, colon);
-		if (host.equals(""))//$NON-NLS-1$ 
-				return new CVSStatus(IStatus.ERROR, formatError);
-		String path = location.substring(colon + 1, location.length());
-		if (path.equals(""))//$NON-NLS-1$ 
-				return new CVSStatus(IStatus.ERROR, formatError);
-				
-		// Do a full parse and see if it passes
-		try {
-			fromString(location, true);
-		} catch (CVSException e) {
-			// An exception is always throw. Return the status
-			return e.getStatus();
-		}
-				
-		// Looks ok (we'll actually never get here because above 
-		// fromString(String, boolean) will always throw an exception).
-		return new CVSStatus(IStatus.OK, Policy.bind("ok"));//$NON-NLS-1$ 
-	}
 	/**
 	 * @see ICVSRepositoryLocation#flushUserInfo()
 	 */
-	public void flushUserInfo() throws CVSException {
+	public void flushUserInfo() {
 		flushCache();
 	}
 	
@@ -967,7 +1023,11 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * @return Returns the readLocation.
 	 */
 	public String getReadLocation() {
-		return readLocation;
+		if (hasPreferences()) {
+			return getPreferences().get(PREF_READ_LOCATION, null);
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -978,10 +1038,14 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * @param readLocation The readLocation to set.
 	 */
 	public void setReadLocation(String readLocation) {
-		if (readLocation != null && readLocation.equals(getLocation())) {
-			this.readLocation = null;
+		if (readLocation == null || readLocation.equals(getLocation())) {
+			if (hasPreferences()) {
+				getPreferences().remove(PREF_READ_LOCATION);
+			}
 		} else {
-			this.readLocation = readLocation;
+			ensurePreferencesStored();
+			getPreferences().put(PREF_READ_LOCATION, readLocation);
+			flushPreferences();
 		}
 	}
 
@@ -992,7 +1056,11 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * @return Returns the writeLocation.
 	 */
 	public String getWriteLocation() {
-		return writeLocation;
+		if (hasPreferences()) {
+			return getPreferences().get(PREF_WRITE_LOCATION, null);
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -1003,10 +1071,14 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * @param writeLocation The writeLocation to set.
 	 */
 	public void setWriteLocation(String writeLocation) {
-		if (writeLocation != null && writeLocation.equals(getLocation())) {
-			this.writeLocation = null;
+		if (writeLocation == null || writeLocation.equals(getLocation())) {
+			if (hasPreferences()) {
+				getPreferences().remove(PREF_WRITE_LOCATION);
+			}
 		} else {
-			this.writeLocation = writeLocation;
+			ensurePreferencesStored();
+			getPreferences().put(PREF_WRITE_LOCATION, writeLocation);
+			flushPreferences();
 		}
 	}
 
@@ -1022,5 +1094,52 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 */
 	public void setUserAuthenticator(IUserAuthenticator authenticator) {
 		CVSRepositoryLocation.authenticator = authenticator;
-	}	
+	}
+	
+	/*
+	 * Return the preferences node for this repository
+	 */
+	private Preferences getPreferences() {
+		return getParentPreferences().node(getPreferenceName());
+	}
+	
+	private boolean hasPreferences() {
+		try {
+			return getParentPreferences().nodeExists(getPreferenceName());
+		} catch (BackingStoreException e) {
+			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.74", getLocation(true)), e); //$NON-NLS-1$
+			return false;
+		}
+	}
+	
+	/**
+	 * Return a unique name that identifies this location but
+	 * does not contain any slashes (/). Also, do not use ':'.
+	 * Although a valid path character, the initial core implementation
+	 * didn't handle it well.
+	 */
+	private String getPreferenceName() {
+		return getLocation().replace('/', '%').replace(':', '%');
+	}
+
+	public void storePreferences() {
+		Preferences prefs = getPreferences();
+		// Must store at least one preference in the node
+		prefs.put(PREF_LOCATION, getLocation());
+		flushPreferences();
+	}
+	
+	private void flushPreferences() {
+		try {
+			getPreferences().flush();
+		} catch (BackingStoreException e) {
+			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.75", getLocation(true)), e); //$NON-NLS-1$
+		}
+	}
+
+	private void ensurePreferencesStored() {
+		if (!hasPreferences()) {
+			storePreferences();
+		}
+	}
 }

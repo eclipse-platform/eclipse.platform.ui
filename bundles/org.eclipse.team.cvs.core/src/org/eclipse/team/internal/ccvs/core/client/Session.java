@@ -24,6 +24,7 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
 import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.*;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.core.streams.*;
@@ -224,12 +225,12 @@ public class Session {
 			if (writeAccess) {
 				String writeLocation = location.getWriteLocation();
 				if (writeLocation != null) {
-					return (CVSRepositoryLocation)CVSProviderPlugin.getPlugin().getRepository(writeLocation);
+					return (CVSRepositoryLocation)KnownRepositories.getInstance().getRepository(writeLocation);
 				}
 			} else {
 				String readLocation = location.getReadLocation();
 				if (readLocation != null) {
-					return (CVSRepositoryLocation)CVSProviderPlugin.getPlugin().getRepository(readLocation);
+					return (CVSRepositoryLocation)KnownRepositories.getInstance().getRepository(readLocation);
 				}
 			}
 		} catch (CVSException e) {

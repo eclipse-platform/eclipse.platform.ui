@@ -100,7 +100,7 @@ public interface ICVSRepositoryLocation  extends IAdaptable {
 	/**
 	 * Flush any cahced user information related to the repository location
 	 */
-	public void flushUserInfo() throws CVSException;
+	public void flushUserInfo();
 	
 	/**
 	 * Validate that the receiver can be used to connect to a repository.

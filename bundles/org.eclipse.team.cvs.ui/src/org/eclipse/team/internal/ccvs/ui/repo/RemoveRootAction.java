@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
@@ -120,9 +121,7 @@ public class RemoveRootAction extends SelectionListenerAction {
 								try {
 									Platform.getJobManager().beginRule(rule, monitor);
 									view.getContentProvider().cancelJobs(root);
-									provider.disposeRepository(root);
-								} catch (CVSException e) {
-									throw new InvocationTargetException(e);
+									KnownRepositories.getInstance().disposeRepository(root);
 								} finally {
 									Platform.getJobManager().endRule(rule);
 								}

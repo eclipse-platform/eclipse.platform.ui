@@ -26,6 +26,7 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.AnnotateView;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.*;
@@ -106,7 +107,7 @@ public class ShowAnnotationAction extends WorkspaceAction {
 			monitor.beginTask(null, 100);
 			ICVSFolder folder = cvsResource.getParent();
 			final FolderSyncInfo info = folder.getFolderSyncInfo();
-			ICVSRepositoryLocation location = CVSProviderPlugin.getPlugin().getRepository(info.getRoot());
+			ICVSRepositoryLocation location = KnownRepositories.getInstance().getRepository(info.getRoot());
 			Session session = new Session(location, folder, true /*
 																  * output to
 																  * console

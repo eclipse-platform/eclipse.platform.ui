@@ -23,7 +23,6 @@ import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.*;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
@@ -687,48 +686,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 */
 	public void setComment(String comment) {
 		this.comment = comment;
-	}
-		
-	/**
-	 * Set the connection method for the given resource's
-	 * project. If the conection method name is invalid (i.e.
-	 * no corresponding registered connection method), false is returned.
-	 */
-	public boolean setConnectionInfo(IResource resource, String methodName, IUserInfo userInfo, IProgressMonitor monitor) throws TeamException {
-		checkIsChild(resource);
-		try {
-			monitor.beginTask(Policy.bind("CVSTeamProvider.connectionInfo", project.getName()), 100); //$NON-NLS-1$
-			
-			if (!CVSRepositoryLocation.validateConnectionMethod(methodName))
-				return false;
-				
-			// Get the original location
-			ICVSRepositoryLocation location = workspaceRoot.getRemoteLocation();
-			
-			// Make a copy to work on
-			CVSRepositoryLocation newLocation = CVSRepositoryLocation.fromString(location.getLocation());
-			newLocation.setMethod(methodName);
-			newLocation.setUserInfo(userInfo);
-	
-			// Validate that a connection can be made with the new location
-			boolean isKnown = CVSProviderPlugin.getPlugin().isKnownRepository(newLocation.getLocation());
-			try {
-				newLocation.validateConnection(Policy.subMonitorFor(monitor, 20));
-			} catch (CVSException e) {
-				if (!isKnown)
-					CVSProviderPlugin.getPlugin().disposeRepository(newLocation);
-				throw e;
-			}
-			
-			// Add the location to the provider
-			CVSProviderPlugin.getPlugin().addRepository(newLocation);
-			
-			// Set the project to use the new Locations
-			setRemoteRoot(newLocation, Policy.subMonitorFor(monitor, 80));
-			return true;
-		} finally {
-			monitor.done();
-		}
 	}
 	
 	/*

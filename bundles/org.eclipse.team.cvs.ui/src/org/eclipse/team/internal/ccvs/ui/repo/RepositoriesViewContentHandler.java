@@ -10,19 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.repo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
+import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class RepositoriesViewContentHandler extends DefaultHandler {
@@ -122,7 +117,10 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 			}
 			ICVSRepositoryLocation root;
 			try {
-				root = CVSProviderPlugin.getPlugin().getRepository(id);
+				root = KnownRepositories.getInstance().getRepository(id);
+				if (!KnownRepositories.getInstance().isKnownRepository(id)) {
+					KnownRepositories.getInstance().addRepository(root, false);
+				}
 			} catch (CVSException e) {
 				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.errorCreatingRoot", id), e); //$NON-NLS-1$
 			}
@@ -132,9 +130,13 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 				currentRepositoryRoot.setName(name);
 			}
 			String readLocation = atts.getValue(READ_ID_ATTRIBUTE);
-			((CVSRepositoryLocation)root).setReadLocation(readLocation);
+			if (readLocation != null) {
+				((CVSRepositoryLocation)root).setReadLocation(readLocation);
+			}
 			String writeLocation = atts.getValue(WRITE_ID_ATTRIBUTE);
-			((CVSRepositoryLocation)root).setWriteLocation(writeLocation);
+			if (writeLocation != null) {
+				((CVSRepositoryLocation)root).setWriteLocation(writeLocation);
+			}
 		} else if (elementName.equals(WORKING_SET_TAG)) {
 			String name = atts.getValue(NAME_ATTRIBUTE);
 			if (name == null) {

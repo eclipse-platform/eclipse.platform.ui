@@ -13,17 +13,8 @@ package org.eclipse.team.internal.ccvs.core.util;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
-import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -113,7 +104,7 @@ public class ReplaceWithBaseVisitor implements ICVSResourceVisitor {
 		FolderSyncInfo folderInfo = root.getFolderSyncInfo();
 		IProgressMonitor monitor = Policy.monitorFor(pm);
 		monitor.beginTask(null, 100);
-		this.session = new Session(CVSProviderPlugin.getPlugin().getRepository(folderInfo.getRoot()), root, true /* creat e backups */);
+		this.session = new Session(KnownRepositories.getInstance().getRepository(folderInfo.getRoot()), root, true /* creat e backups */);
 		this.session.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 		try {
 			this.monitor = Policy.infiniteSubMonitorFor(monitor, 90);

@@ -11,9 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -22,18 +20,12 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.IProjectSetSerializer;
-import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.core.*;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class CVSProjectSetSerializer implements IProjectSetSerializer {
@@ -181,7 +173,7 @@ public class CVSProjectSetSerializer implements IProjectSetSerializer {
 		ICVSRepositoryLocation newLocation = CVSRepositoryLocation.fromString(repo);
 		if (newLocation.getUsername() == null || newLocation.getUsername().length() == 0) {
 			// look for an existing location that matched
-			ICVSRepositoryLocation[] locations = CVSProviderPlugin.getPlugin().getKnownRepositories();
+			ICVSRepositoryLocation[] locations = KnownRepositories.getInstance().getRepositories();
 			for (int i = 0; i < locations.length; i++) {
 				ICVSRepositoryLocation location = locations[i];
 				if (location.getMethod() == newLocation.getMethod()

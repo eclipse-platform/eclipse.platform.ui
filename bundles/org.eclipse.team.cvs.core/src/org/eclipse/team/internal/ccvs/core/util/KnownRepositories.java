@@ -10,20 +10,19 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.ICVSListener;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * This class keeps track of the CVS repository locations that are known to
@@ -84,93 +83,32 @@ public class KnownRepositories {
 			repositoryListeners.remove(listener);
 		}
 	}
-	
-	private ICVSListener[] getListeners() {
-		synchronized(repositoryListeners) {
-			return (ICVSListener[]) repositoryListeners.toArray(new ICVSListener[repositoryListeners.size()]);
-		}
-	}
-	
-	private void fireNotification(Notification notification) {
-		// Get a snapshot of the listeners so the list doesn't change while we're firing
-		ICVSListener[] listeners = getListeners();
-		// Notify each listener in a safe manner (i.e. so their exceptions don't kill us)
-		for (int i = 0; i < listeners.length; i++) {
-			ICVSListener listener = listeners[i];
-			notification.run(listener);
-		}
-	}
-	
-	/*
-	 * Add the repository location to the cached locations and notify listeners
-	 */
-	private void addToRepositoriesCache(final ICVSRepositoryLocation repository) {
-		repositories.put(repository.getLocation(), repository);
-		fireNotification(new Notification() {
-			public void notify(ICVSListener listener) {
-				listener.repositoryAdded(repository);
-			}
-		});
-	}
-	
-	/*
-	 * Remove the repository location from the cached locations and notify listeners
-	 */
-	private void removeFromRepositoriesCache(final ICVSRepositoryLocation repository) {
-		if (repositories.remove(repository.getLocation()) != null) {
-			fireNotification(new Notification() {
-				public void notify(ICVSListener listener) {
-					listener.repositoryRemoved(repository);
-				}
-			});
-		}
-	}
-	
-	/**
-	 * Create a repository instance from the given properties.
-	 * The supported properties are:
-	 * 
-	 *   connection The connection method to be used
-	 *   user The username for the connection
-	 *   password The password used for the connection (optional)
-	 *   host The host where the repository resides
-	 *   port The port to connect to (optional)
-	 *   root The server directory where the repository is located
-	 * 
-	 * The created instance is not known by the provider and it's user information is not cached.
-	 * The purpose of the created location is to allow connection validation before adding the
-	 * location to the provider.
-	 * 
-	 * This method will throw a CVSException if the location for the given configuration already
-	 * exists.
-	 */
-	public ICVSRepositoryLocation createRepository(Properties configuration) throws CVSException {
-		// Create a new repository location
-		CVSRepositoryLocation location = CVSRepositoryLocation.fromProperties(configuration);
-		
-		// Check the cache for an equivalent instance and if there is one, throw an exception
-		CVSRepositoryLocation existingLocation = (CVSRepositoryLocation)repositories.get(location.getLocation());
-		if (existingLocation != null) {
-			throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSProvider.alreadyExists"))); //$NON-NLS-1$
-		}
-
-		return location;
-	}
 
 	/**
 	 * Add the repository to the receiver's list of known repositories. Doing this will enable
 	 * password caching accross platform invokations.
 	 */
-	public void addRepository(ICVSRepositoryLocation repository) throws CVSException {
+	public ICVSRepositoryLocation addRepository(final ICVSRepositoryLocation repository, boolean broadcast) {
 		// Check the cache for an equivalent instance and if there is one, just update the cache
-		CVSRepositoryLocation existingLocation = (CVSRepositoryLocation)repositories.get(repository.getLocation());
+		CVSRepositoryLocation existingLocation = internalGetRepository(repository.getLocation());
 		if (existingLocation != null) {
+			// Cache the password in case it has changed
 			((CVSRepositoryLocation)repository).updateCache();
 		} else {
-			// Cache the password and register the repository location
-			addToRepositoriesCache(repository);
+			// Store the location and cache the password
+			store((CVSRepositoryLocation)repository);
 			((CVSRepositoryLocation)repository).updateCache();
+			existingLocation = (CVSRepositoryLocation)repository;
 		}
+		// Notify no matter what since it may not have been broadcast before
+		if (broadcast) {
+			fireNotification(new Notification() {
+				public void notify(ICVSListener listener) {
+					listener.repositoryAdded(repository);
+				}
+			});
+		}
+		return existingLocation;
 	}
 	
 	/**
@@ -178,9 +116,15 @@ public class KnownRepositories {
 	 * 
 	 * Removes any cached information about the repository such as a remembered password.
 	 */
-	public void disposeRepository(ICVSRepositoryLocation repository) throws CVSException {
+	public void disposeRepository(final ICVSRepositoryLocation repository) {
 		((CVSRepositoryLocation)repository).dispose();
-		removeFromRepositoriesCache(repository);
+		if (getRepositoriesMap().remove(repository.getLocation()) != null) {
+			fireNotification(new Notification() {
+				public void notify(ICVSListener listener) {
+					listener.repositoryRemoved(repository);
+				}
+			});
+		}
 	}
 
 	/**
@@ -188,14 +132,14 @@ public class KnownRepositories {
 	 * The location string corresponds to the Strin returned by ICVSRepositoryLocation#getLocation()
 	 */
 	public boolean isKnownRepository(String location) {
-		return repositories.get(location) != null;
+		return internalGetRepository(location) != null;
 	}
-	
+
 	/** 
 	 * Return a list of the know repository locations
 	 */
-	public ICVSRepositoryLocation[] getKnownRepositories() {
-		return (ICVSRepositoryLocation[])repositories.values().toArray(new ICVSRepositoryLocation[repositories.size()]);
+	public ICVSRepositoryLocation[] getRepositories() {
+		return (ICVSRepositoryLocation[])getRepositoriesMap().values().toArray(new ICVSRepositoryLocation[getRepositoriesMap().size()]);
 	}
 	
 	/**
@@ -214,19 +158,98 @@ public class KnownRepositories {
 	 *   port The port to connect to (optional)
 	 *   root The server directory where the repository is located
 	 * 
-	 * It is expected that the instance requested by using this method exists.
-	 * If the repository location does not exist, it will be automatically created
-	 * and cached with the provider.
+	 * If the repository is already registered, the cahced instance is returned.
+	 * Otherwise, a new uncached instance is returned.
 	 * 
 	 * WARNING: Providing the password as part of the String will result in the password being part
 	 * of the location permanently. This means that it cannot be modified by the authenticator. 
 	 */
 	public ICVSRepositoryLocation getRepository(String location) throws CVSException {
-		ICVSRepositoryLocation repository = (ICVSRepositoryLocation)repositories.get(location);
+		ICVSRepositoryLocation repository = internalGetRepository(location);
 		if (repository == null) {
 			repository = CVSRepositoryLocation.fromString(location);
-			addToRepositoriesCache(repository);
 		}
 		return repository;
+	}
+	
+	private CVSRepositoryLocation internalGetRepository(String location) {
+		return (CVSRepositoryLocation)getRepositoriesMap().get(location);
+	}
+	
+	/*
+	 * Cache the location and store it in the preferences for persistance
+	 */
+	private void store(CVSRepositoryLocation location) {
+		// Cache the location instance for later retrieval
+		getRepositoriesMap().put(location.getLocation(), location);
+		location.storePreferences();
+	}
+	
+	private Map getRepositoriesMap() {
+		if (repositories == null) {
+			// Load the repositories from the preferences
+			repositories = new HashMap();
+			Preferences prefs = CVSRepositoryLocation.getParentPreferences();
+			try {
+				String[] keys = prefs.childrenNames();
+				for (int i = 0; i < keys.length; i++) {
+					String key = keys[i];
+					try {
+						Preferences node = prefs.node(key);
+						String location = node.get(CVSRepositoryLocation.PREF_LOCATION, null);
+						if (location != null) {
+							repositories.put(location, CVSRepositoryLocation.fromString(location));
+						} else {
+							node.removeNode();
+							prefs.flush();
+						}
+					} catch (CVSException e) {
+						// Log and continue
+						CVSProviderPlugin.log(e);
+					}
+				}
+				if (repositories.isEmpty()) {
+					getRepositoriesFromProjects();
+				}
+			} catch (BackingStoreException e) {
+				// Log and continue (although all repos will be missing)
+				CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("KnownRepositories.0"), e); //$NON-NLS-1$
+			} catch (CVSException e) {
+				CVSProviderPlugin.log(e);
+			}
+		}
+		return repositories;
+	}
+	
+	private void getRepositoriesFromProjects() throws CVSException {
+		// If the file did not exist, then prime the list of repositories with
+		// the providers with which the projects in the workspace are shared.
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		for (int i = 0; i < projects.length; i++) {
+			RepositoryProvider provider = RepositoryProvider.getProvider(projects[i], CVSProviderPlugin.getTypeId());
+			if (provider!=null) {
+				ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(projects[i]);
+				FolderSyncInfo info = folder.getFolderSyncInfo();
+				if (info != null) {
+					addRepository(getRepository(info.getRoot()), false);
+				}
+			}
+		}
+	}
+	
+	private ICVSListener[] getListeners() {
+		synchronized(repositoryListeners) {
+			return (ICVSListener[]) repositoryListeners.toArray(new ICVSListener[repositoryListeners.size()]);
+		}
+	}
+	
+	private void fireNotification(Notification notification) {
+		// Get a snapshot of the listeners so the list doesn't change while we're firing
+		ICVSListener[] listeners = getListeners();
+		// Notify each listener in a safe manner (i.e. so their exceptions don't kill us)
+		for (int i = 0; i < listeners.length; i++) {
+			ICVSListener listener = listeners[i];
+			notification.run(listener);
+		}
 	}
 }

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSCommunicationException;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 
 public class CVSTestSetup extends TestSetup {
 	public static final String REPOSITORY_LOCATION;
@@ -179,7 +180,8 @@ public class CVSTestSetup extends TestSetup {
 		
 		// Validate that we can connect, also creates and caches the repository location. This
 		// is important for the UI tests.
-		CVSRepositoryLocation repository = (CVSRepositoryLocation)CVSProviderPlugin.getPlugin().getRepository(location);
+		CVSRepositoryLocation repository = (CVSRepositoryLocation)KnownRepositories.getInstance().getRepository(location);
+		KnownRepositories.getInstance().addRepository(repository, false);
 		repository.setUserAuthenticator(new TestsUserAuthenticator());
 		repository.setReadLocation(READ_REPOSITORY_LOCATION);
 		repository.setWriteLocation(WRITE_REPOSITORY_LOCATION);

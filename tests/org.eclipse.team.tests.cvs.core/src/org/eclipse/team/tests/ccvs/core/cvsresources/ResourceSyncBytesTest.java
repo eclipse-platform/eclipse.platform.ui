@@ -22,6 +22,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.*;
 import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
@@ -89,7 +90,7 @@ public class ResourceSyncBytesTest extends EclipseTest {
 	}
 
 	public void testSendEntry() throws CVSException, ParseException {
-		ICVSRepositoryLocation location = CVSProviderPlugin.getPlugin().getRepository(":test:user:password@host:/path");
+		ICVSRepositoryLocation location = KnownRepositories.getInstance().getRepository(":test:user:password@host:/path");
 		// disable version detemrination to reduce traffic
 		CVSProviderPlugin.getPlugin().setDetermineVersionEnabled(false);
 		// create and open a session

@@ -24,6 +24,7 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
@@ -210,9 +211,6 @@ public class CVSWorkspaceRoot {
 			throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSProvider.infoMismatch", project.getName())));//$NON-NLS-1$
 		}
 		
-		// Ensure that the provided location is managed
-		CVSProviderPlugin.getPlugin().getRepository(info.getRoot());
-		
 		// Register the project with Team
 		RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
 	}
@@ -360,7 +358,7 @@ public class CVSWorkspaceRoot {
 			ICVSFolder folder = (ICVSFolder)resource;
 			FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
 			if (syncInfo != null) {
-				return new RemoteFolder(null, CVSProviderPlugin.getPlugin().getRepository(syncInfo.getRoot()), syncInfo.getRepository(), syncInfo.getTag());
+				return new RemoteFolder(null, KnownRepositories.getInstance().getRepository(syncInfo.getRoot()), syncInfo.getRepository(), syncInfo.getTag());
 			}
 		} else {
 			if (resource.isManaged()) {
@@ -393,7 +391,7 @@ public class CVSWorkspaceRoot {
 			// The parent is managed so just indicate that there is no remote
 			return null;
 		}
-		ICVSRepositoryLocation location = CVSProviderPlugin.getPlugin().getRepository(parent.getFolderSyncInfo().getRoot());
+		ICVSRepositoryLocation location = KnownRepositories.getInstance().getRepository(parent.getFolderSyncInfo().getRoot());
 		RemoteFolder remoteParent = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, parent, tag, progress);
 		ICVSRemoteResource remote = null;
 		if (remoteParent != null) {
@@ -483,7 +481,7 @@ public class CVSWorkspaceRoot {
 		if (info == null) {
 			throw new CVSException(Policy.bind("CVSWorkspaceRoot.notCVSFolder", localRoot.getName()));  //$NON-NLS-1$
 		}
-		return CVSProviderPlugin.getPlugin().getRepository(info.getRoot());
+		return KnownRepositories.getInstance().getRepository(info.getRoot());
 	}
 
 	public ICVSFolder getLocalRoot() {

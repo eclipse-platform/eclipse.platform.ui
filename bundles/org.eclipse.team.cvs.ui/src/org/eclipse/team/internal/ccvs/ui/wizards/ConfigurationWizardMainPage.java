@@ -11,30 +11,18 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Properties;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.internal.ccvs.core.IConnectionMethod;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -69,6 +57,11 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	private static final int COMBO_HISTORY_LENGTH = 5;
 	
 	private Properties properties = null;
+	
+	// The previously created repository.
+	// It is recorded whan asked for and
+	// nulled when the page is changed.
+	private ICVSRepositoryLocation location;
 	
 	// Dialog store id constants
 	private static final String STORE_USERNAME_ID =
@@ -144,6 +137,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {
+				location = null;
 				updateWidgetEnablements();
 			}
 		};
@@ -173,12 +167,14 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		// Password
 		createLabel(g, Policy.bind("ConfigurationWizardMainPage.password")); //$NON-NLS-1$
 		passwordText = createPasswordField(g);
+		passwordText.addListener(SWT.Modify, listener);
 
 		g = createGroup(composite, Policy.bind("ConfigurationWizardMainPage.Connection_3")); //$NON-NLS-1$
 		
 		// Connection type
 		createLabel(g, Policy.bind("ConfigurationWizardMainPage.connection")); //$NON-NLS-1$
 		connectionMethodCombo = createCombo(g);
+		connectionMethodCombo.addListener(SWT.Selection, listener);
 
 		// Port number
 		// create a composite to ensure the radio buttons come in the correct order
@@ -249,11 +245,10 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		return group;
 	}
 	
-	/**
-	 * @see CVSWizardPage#finish
+	/*
+	 * Create a Proeprties node that contains everything needed to create a repository location
 	 */
-	public boolean finish(IProgressMonitor monitor) {
-		// Set the result to be the current values
+	private Properties createProperties() {
 		Properties result = new Properties();
 		result.setProperty("connection", connectionMethodCombo.getText()); //$NON-NLS-1$
 		result.setProperty("user", userCombo.getText()); //$NON-NLS-1$
@@ -263,20 +258,26 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			result.setProperty("port", portText.getText()); //$NON-NLS-1$
 		}
 		result.setProperty("root", repositoryPathCombo.getText()); //$NON-NLS-1$
-		this.properties = result;
-		
-		saveWidgetValues();
-		
-		return true;
+		return result;
 	}
+	
 	/**
-	 * Returns the properties for the repository connection
-	 * 
-	 * @return the properties or null
+	 * Crate a new location with the information entered on the page.
+	 * The location will exists and can be sed for connecting but is not
+	 * registered for persistance. This method must be called from the UI
+	 * thread.
+	 * @return a location or <code>null</code>
+	 * @throws CVSException
 	 */
-	public Properties getProperties() {
-		return properties;
+	public ICVSRepositoryLocation getLocation() throws CVSException {
+		if (location == null) {
+			if (!isPageComplete()) return null;
+			location = CVSRepositoryLocation.fromProperties(createProperties());
+			saveWidgetValues();
+		}
+		return location;
 	}
+	
 	/**
 	 * Initializes states of the controls.
 	 */
@@ -318,35 +319,35 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		useDefaultPort.setSelection(true);
 		
 		if(properties != null) {
-			String method = (String)properties.getProperty("connection"); //$NON-NLS-1$
+			String method = properties.getProperty("connection"); //$NON-NLS-1$
 			if (method == null) {
 				connectionMethodCombo.select(0);
 			} else {
 				connectionMethodCombo.select(connectionMethodCombo.indexOf(method));
 			}
 	
-			String user = (String)properties.getProperty("user"); //$NON-NLS-1$
+			String user = properties.getProperty("user"); //$NON-NLS-1$
 			if (user != null) {
 				userCombo.setText(user);
 			}
 	
-			String password = (String)properties.getProperty("password"); //$NON-NLS-1$
+			String password = properties.getProperty("password"); //$NON-NLS-1$
 			if (password != null) {
 				passwordText.setText(password);
 			}
 	
-			String host = (String)properties.getProperty("host"); //$NON-NLS-1$
+			String host = properties.getProperty("host"); //$NON-NLS-1$
 			if (host != null) {
 				hostCombo.setText(host);
 			}
 	
-			String port = (String)properties.getProperty("port"); //$NON-NLS-1$
+			String port = properties.getProperty("port"); //$NON-NLS-1$
 			if (port != null) {
 				useCustomPort.setSelection(true);
 				portText.setText(port);
 			}
 	
-			String repositoryPath = (String)properties.getProperty("root"); //$NON-NLS-1$
+			String repositoryPath = properties.getProperty("root"); //$NON-NLS-1$
 			if (repositoryPath != null) {
 				repositoryPathCombo.setText(repositoryPath);
 			}
@@ -490,4 +491,5 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			hostCombo.setFocus();
 		}
 	}
+	
 }

@@ -27,6 +27,7 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.UpdateListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.*;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -55,7 +56,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		Assert.isNotNull(bytes);
 		Assert.isTrue(local.getType() != IResource.FILE);
 		FolderSyncInfo syncInfo = FolderSyncInfo.getFolderSyncInfo(bytes);
-		return new RemoteFolder(null, local.getName(), CVSProviderPlugin.getPlugin().getRepository(syncInfo.getRoot()), syncInfo.getRepository(), syncInfo.getTag(), syncInfo.getIsStatic());
+		return new RemoteFolder(null, local.getName(), KnownRepositories.getInstance().getRepository(syncInfo.getRoot()), syncInfo.getRepository(), syncInfo.getTag(), syncInfo.getIsStatic());
 	}
 	
 	/**

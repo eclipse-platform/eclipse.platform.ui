@@ -80,9 +80,9 @@ public class FolderSyncInfo {
 		}
 		if (repository.startsWith(rootDir)) {
 			repository = repository.substring(rootDir.length());
-			if (repository.startsWith(ResourceSyncInfo.SEPARATOR)) {
-				repository = repository.substring(ResourceSyncInfo.SEPARATOR.length());
-			}
+		}
+		if (repository.startsWith(ResourceSyncInfo.SEPARATOR)) {
+			repository = repository.substring(ResourceSyncInfo.SEPARATOR.length());
 		}
 	}
 	

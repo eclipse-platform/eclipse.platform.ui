@@ -50,6 +50,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.*;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
 import org.eclipse.team.internal.core.ExceptionCollector;
@@ -272,7 +273,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 				ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor((IContainer) resource);
 				FolderSyncInfo folderInfo = folder.getFolderSyncInfo();
 				if (folderInfo != null) {
-					ICVSRepositoryLocation location = CVSProviderPlugin.getPlugin().getRepository(folderInfo.getRoot());
+					ICVSRepositoryLocation location = KnownRepositories.getInstance().getRepository(folderInfo.getRoot());
 					bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_HOST, location.getHost());
 					bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_METHOD, location.getMethod().getName());
 					bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_USER, location.getUsername());

@@ -680,7 +680,7 @@ public class TagConfigurationDialog extends Dialog {
 		return refreshButton;		
 	 }
 	 
-	 public static void createTagDefinitionButtons(final Shell shell, Composite composite, final ICVSFolder[] folders, int hHint, int wHint, final Runnable afterRefresh, final Runnable afterConfigure) {
+	 public static Control createTagDefinitionButtons(final Shell shell, Composite composite, final ICVSFolder[] folders, int hHint, int wHint, final Runnable afterRefresh, final Runnable afterConfigure) {
 	 	Composite buttonComp = new Composite(composite, SWT.NONE);
 		GridData data = new GridData ();
 		data.horizontalAlignment = GridData.END;		
@@ -726,6 +726,7 @@ public class TagConfigurationDialog extends Dialog {
 		
 		WorkbenchHelp.setHelp(refreshButton, IHelpContextIds.TAG_CONFIGURATION_REFRESHACTION);
 		WorkbenchHelp.setHelp(addButton, IHelpContextIds.TAG_CONFIGURATION_OVERVIEW);
+		return buttonComp;
 	 }
 	 
 	 private static void updateEnablementOnRefreshButton(Button refreshButton, ICVSFolder project) {

@@ -11,35 +11,14 @@
 package org.eclipse.team.internal.ccvs.ui.repo;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ILogEntry;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.XMLWriter;
 
 public class RepositoryRoot extends PlatformObject {
 
@@ -326,7 +305,7 @@ public class RepositoryRoot extends PlatformObject {
 	 * @param writer
 	 * @throws IOException
 	 */
-	public void writeState(XMLWriter writer) throws IOException {
+	public void writeState(XMLWriter writer) {
 
 		HashMap attributes = new HashMap();
 
@@ -334,14 +313,6 @@ public class RepositoryRoot extends PlatformObject {
 		attributes.put(RepositoriesViewContentHandler.ID_ATTRIBUTE, root.getLocation());
 		if (name != null) {
 			attributes.put(RepositoriesViewContentHandler.NAME_ATTRIBUTE, name);
-		}
-		String readLocation = ((CVSRepositoryLocation)root).getReadLocation();
-		if (readLocation != null) {
-			attributes.put(RepositoriesViewContentHandler.READ_ID_ATTRIBUTE, readLocation);
-		}
-		String writeLocation = ((CVSRepositoryLocation)root).getWriteLocation();
-		if (writeLocation != null) {
-			attributes.put(RepositoriesViewContentHandler.WRITE_ID_ATTRIBUTE, writeLocation);
 		}
 		
 		writer.startTag(RepositoriesViewContentHandler.REPOSITORY_TAG, attributes, true);

@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
@@ -127,18 +126,10 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 		}
 	}
 	
-	public void setSharing(FolderSyncInfo info) {
-		this.info = info;
-		try {
-			this. location = CVSRepositoryLocation.fromString(info.getRoot());
-		} catch (CVSException e) {
-			CVSUIPlugin.openError(null, null, null, e);
-		}
-	}
-	
 	public FolderSyncInfo getSharing() {
 		return info;
 	}
+	
 	/**
 	 * Gets the location.
 	 * @return Returns a ICVSRepositoryLocation

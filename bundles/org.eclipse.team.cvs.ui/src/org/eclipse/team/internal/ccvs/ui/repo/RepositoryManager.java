@@ -28,6 +28,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkingSet;
@@ -69,7 +70,7 @@ public class RepositoryManager {
 	 * Answer an array of all known remote roots.
 	 */
 	public ICVSRepositoryLocation[] getKnownRepositoryLocations() {
-		return CVSProviderPlugin.getPlugin().getKnownRepositories();
+		return KnownRepositories.getInstance().getRepositories();
 	}
 	
 	/**
@@ -425,7 +426,7 @@ public class RepositoryManager {
 			repoSize = dis.readInt();
 		}
 		for (int i = 0; i < repoSize; i++) {
-			ICVSRepositoryLocation root = CVSProviderPlugin.getPlugin().getRepository(dis.readUTF());
+			ICVSRepositoryLocation root = KnownRepositories.getInstance().getRepository(dis.readUTF());
 			RepositoryRoot repoRoot = getRepositoryRootFor(root);
 			
 			// read branch tags associated with this root
@@ -678,7 +679,7 @@ public class RepositoryManager {
 			folder = resource.getParent();
 		}
 		if (folder.isCVSFolder()) {
-			ICVSRepositoryLocation location = CVSProviderPlugin.getPlugin().getRepository(folder.getFolderSyncInfo().getRoot());
+			ICVSRepositoryLocation location = KnownRepositories.getInstance().getRepository(folder.getFolderSyncInfo().getRoot());
 			return location;
 		}
 		// XXX This is asking for trouble
@@ -825,26 +826,22 @@ public class RepositoryManager {
 	 */
 	public void replaceRepositoryLocation(
 			final ICVSRepositoryLocation oldLocation,
-			final CVSRepositoryLocation newLocation) throws CVSException {
+			final CVSRepositoryLocation newLocation) {
 		
 		try {
 			run(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						RepositoryRoot root = getRepositoryRootFor(oldLocation);
-						// Disposing of the old location will result in the deletion of the
-						// cached root through a listener callback
-						CVSProviderPlugin.getPlugin().disposeRepository(oldLocation);
-						
-						newLocation.updateCache();
-						// Get the new location from the CVS plugin to ensure we use the
-						// instance that will be returned by future calls to getRepository()
-						root.setRepositoryLocation(
-							CVSProviderPlugin.getPlugin().getRepository(newLocation.getLocation()));
-						add(root);
-					} catch (CVSException e) {
-						throw new InvocationTargetException(e);
-					}
+					RepositoryRoot root = getRepositoryRootFor(oldLocation);
+					// Disposing of the old location will result in the deletion of the
+					// cached root through a listener callback
+					KnownRepositories.getInstance().disposeRepository(oldLocation);
+					
+					// Get the new location from the CVS plugin to ensure we use the
+					// instance that will be returned by future calls to getRepository()
+					boolean isNew = !KnownRepositories.getInstance().isKnownRepository(newLocation.getLocation());
+					root.setRepositoryLocation(
+							KnownRepositories.getInstance().addRepository(newLocation, isNew /* broadcast */));
+					add(root);
 				}
 			}, Policy.monitorFor(null));
 		} catch (InvocationTargetException e) {

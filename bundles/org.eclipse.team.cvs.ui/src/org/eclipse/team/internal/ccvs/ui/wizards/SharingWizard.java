@@ -11,37 +11,37 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 
-import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Properties;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.*;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.TeamStatus;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.operations.ReconcileProjectOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.ShareProjectOperation;
-import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
+import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.ui.IConfigurationWizard;
-import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.IWorkbench;
 
 /**
  * This wizard helps the user to import a new project in their workspace
  * into a CVS repository for the first time.
  */
-public class SharingWizard extends Wizard implements IConfigurationWizard {
+public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSWizard {
 	// The project to configure
 	private IProject project;
 
@@ -56,9 +56,19 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 	
 	// The page that prompts the user for module name.
 	private ModuleSelectionPage modulePage;
+
+	// The page that lets the user pick a branch to share against
+	private SharingWizardTagPage tagPage;
 	
-	// The page that tells the user what's going to happen.
-	private SharingWizardFinishPage finishPage;
+	// The page that allows the user to commit or update resources
+	private SharingWizardSyncPage syncPage;
+	
+	// Keep track of location state so we know what to do at the end
+	private ICVSRepositoryLocation location;
+	private boolean isNewLocation;
+	
+	// Keep track of the folder that existed the last time we checked
+	private ICVSRemoteFolder existingRemote;
 	
 	public SharingWizard() {
 		IDialogSettings workbenchSettings = CVSUIPlugin.getPlugin().getDialogSettings();
@@ -69,7 +79,6 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		setDialogSettings(section);
 		setNeedsProgressMonitor(true);
 		setWindowTitle(Policy.bind("SharingWizard.title")); //$NON-NLS-1$
-		//set
 	}	
 		
 	public void addPages() {
@@ -80,56 +89,61 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 			autoconnectPage.setDescription(Policy.bind("SharingWizard.autoConnectTitleDescription")); //$NON-NLS-1$
 			addPage(autoconnectPage);
 		} else {
-			FolderSyncInfo info = getRepositoryInfoFromOneO(project);
-			if (info != null) {
-				// The project is from 1.0 and has sharing info
-				autoconnectPage = new ConfigurationWizardAutoconnectPage("autoconnectPage", Policy.bind("SharingWizard.autoConnectOneOTitle"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
-				autoconnectPage.setSharing(info);
-				autoconnectPage.setDescription(Policy.bind("SharingWizard.autoConnectTitleDescription")); //$NON-NLS-1$
-				addPage(autoconnectPage);
-			} else {
-				ICVSRepositoryLocation[] locations = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryLocations();
-				if (locations.length > 0) {
-					locationPage = new RepositorySelectionPage("importPage", Policy.bind("SharingWizard.importTitle"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
-					locationPage.setDescription(Policy.bind("SharingWizard.importTitleDescription")); //$NON-NLS-1$
-					addPage(locationPage);
-				}
-				createLocationPage = new ConfigurationWizardMainPage("createLocationPage", Policy.bind("SharingWizard.enterInformation"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
-				createLocationPage.setDescription(Policy.bind("SharingWizard.enterInformationDescription")); //$NON-NLS-1$
-				addPage(createLocationPage);
-				createLocationPage.setDialogSettings(getDialogSettings());
-				modulePage = new ModuleSelectionPage("modulePage", Policy.bind("SharingWizard.enterModuleName"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
-				modulePage.setDescription(Policy.bind("SharingWizard.enterModuleNameDescription")); //$NON-NLS-1$
-				addPage(modulePage);
-				WorkspaceSynchronizeParticipant p = (WorkspaceSynchronizeParticipant)TeamUI.getSynchronizeManager().find(WorkspaceSynchronizeParticipant.ID)[0];
-				finishPage = new SharingWizardFinishPage("finishPage", Policy.bind("SharingWizard.readyToFinish"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
-				finishPage.setDescription(Policy.bind("SharingWizard.readyToFinishDescription")); //$NON-NLS-1$
-				addPage(finishPage);
+			ICVSRepositoryLocation[] locations = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryLocations();
+			if (locations.length > 0) {
+				locationPage = new RepositorySelectionPage("importPage", Policy.bind("SharingWizard.importTitle"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
+				locationPage.setDescription(Policy.bind("SharingWizard.importTitleDescription")); //$NON-NLS-1$
+				addPage(locationPage);
 			}
+			createLocationPage = new ConfigurationWizardMainPage("createLocationPage", Policy.bind("SharingWizard.enterInformation"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
+			createLocationPage.setDescription(Policy.bind("SharingWizard.enterInformationDescription")); //$NON-NLS-1$
+			addPage(createLocationPage);
+			createLocationPage.setDialogSettings(getDialogSettings());
+			modulePage = new ModuleSelectionPage("modulePage", Policy.bind("SharingWizard.enterModuleName"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
+			modulePage.setDescription(Policy.bind("SharingWizard.enterModuleNameDescription")); //$NON-NLS-1$
+			addPage(modulePage);
+			
+			addTagPage(sharingImage);
+			addSyncPage(sharingImage);
 		}
 	}
+	
+	private void addTagPage(ImageDescriptor sharingImage) {
+		tagPage = new SharingWizardTagPage("tagPage",  //$NON-NLS-1$
+			Policy.bind("SharingWizard.selectTagTitle"),  //$NON-NLS-1$
+			sharingImage);
+		addPage(tagPage);
+	}
+	
+	private void addSyncPage(ImageDescriptor sharingImage) {
+		syncPage = new SharingWizardSyncPage("syncPagePage",  //$NON-NLS-1$
+			Policy.bind("SharingWizard.23"),  //$NON-NLS-1$
+			sharingImage,
+			Policy.bind("SharingWizard.24")); //$NON-NLS-1$
+		syncPage.setProject(project);
+		addPage(syncPage);
+	}
+	
 	public boolean canFinish() {
 		IWizardPage page = getContainer().getCurrentPage();
-		if (page == locationPage) {
-			if (locationPage.getLocation() == null) {
-				return createLocationPage.isPageComplete();
-			} else {
-				return modulePage.useProjectName() || modulePage.getModuleName() != null;
-			}
-		} else if (page == modulePage) {
-			return modulePage.useProjectName() || modulePage.getModuleName() != null;
-		} else if (page == finishPage) {
-			return true;
-		}
-		return super.canFinish();
+		return (page == autoconnectPage || page == syncPage);
 	}
+	
 	protected String getMainPageDescription() {
 		return Policy.bind("SharingWizard.description"); //$NON-NLS-1$
 	}
+	
 	protected String getMainPageTitle() {
 		return Policy.bind("SharingWizard.heading"); //$NON-NLS-1$
 	}
+	
 	public IWizardPage getNextPage(IWizardPage page) {
+		// Assume the page is about to be shown when this method is
+		// invoked
+		return getNextPage(page, true /* about to show*/);
+	}
+	
+	public IWizardPage getNextPage(IWizardPage page, boolean aboutToShow) {
 		if (page == autoconnectPage) return null;
 		if (page == locationPage) {
 			if (locationPage.getLocation() == null) {
@@ -142,173 +156,114 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 			return modulePage;
 		}
 		if (page == modulePage) {
-			return finishPage;
+			if (aboutToShow) {
+				ICVSRemoteFolder remoteFolder = getRemoteFolder();
+				if (exists(remoteFolder)) {
+					prepareTagPage(remoteFolder);
+					return tagPage;
+				} else {
+					populateSyncPage(false /* remote exists */);
+					return syncPage;
+				}
+			} else {
+				return syncPage;
+			}
+		}
+		if (page == tagPage) {
+			if (aboutToShow) {
+				populateSyncPage(true /* remote exists */);
+			}
+			return syncPage;
 		}
 		return null;
 	}
+
 	/*
 	 * @see IWizard#performFinish
 	 */
 	public boolean performFinish() {
 		final boolean[] result = new boolean[] { true };
-		try {
-			final boolean[] doSync = new boolean[] { false };
-			final boolean[] projectExists = new boolean[] { false };
-			getContainer().run(true /* fork */, true /* cancel */, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException {
-					try {
-						monitor.beginTask("", 100); //$NON-NLS-1$
-						if (autoconnectPage != null && doesCVSDirectoryExist()) {
-							// Autoconnect to the repository using CVS/ directories
-							
-							FolderSyncInfo info = autoconnectPage.getFolderSyncInfo();
-							if (info == null) {
-								// Error!
-								return;
-							}
-							
-							// Get the repository location (the get will add the locatin to the provider)
-							boolean isPreviouslyKnown = CVSProviderPlugin.getPlugin().isKnownRepository(info.getRoot());
-							ICVSRepositoryLocation location = CVSProviderPlugin.getPlugin().getRepository(info.getRoot());
-	
-							// Validate the connection if the user wants to
-							boolean validate = autoconnectPage.getValidate();					
-							if (validate) {
-								// Do the validation
-								try {
-									location.validateConnection(new SubProgressMonitor(monitor, 50));
-								} catch (final TeamException e) {
-									// Exception validating. We can continue if the user wishes.
-									final boolean[] keep = new boolean[] { false };
-									getShell().getDisplay().syncExec(new Runnable() {
-										public void run() {
-											keep[0] = MessageDialog.openQuestion(getContainer().getShell(),
-												Policy.bind("SharingWizard.validationFailedTitle"), //$NON-NLS-1$
-												Policy.bind("SharingWizard.validationFailedText", new Object[] {e.getStatus().getMessage()})); //$NON-NLS-1$
-										}
-									});
-									if (!keep[0]) {
-										// Remove the root
-										try {
-											if (!isPreviouslyKnown) {
-												CVSProviderPlugin.getPlugin().disposeRepository(location);
-											}
-										} catch (TeamException e1) {
-											CVSUIPlugin.openError(getContainer().getShell(), Policy.bind("exception"), null, e1, CVSUIPlugin.PERFORM_SYNC_EXEC); //$NON-NLS-1$
-										}
-										result[0] = false;
-										return;
-									}
-									// They want to keep the connection anyway. Fall through.
-								}
-							}
-							
-							// Set the sharing
-							CVSWorkspaceRoot.setSharing(project, info, new SubProgressMonitor(monitor, 50));
-						} else {
-							// Import
-							doSync[0] = true;
-							// Check if the directory exists on the server
-							ICVSRepositoryLocation location = null;
-							boolean isKnown = false;
-							try {
-								location = getLocation();
-								isKnown = CVSProviderPlugin.getPlugin().isKnownRepository(location.getLocation());
-								location.validateConnection(monitor);
-								// Purge any CVS folders that may exists in subfolders
-								purgeAnyCVSFolders();
-								String moduleName = getModuleName();
-								ICVSRemoteFolder folder = location.getRemoteFolder(moduleName, null);
-								if (folder.exists(new SubProgressMonitor(monitor, 50))) {
-									projectExists[0] = true;
-									final boolean[] sync = new boolean[] {true};
-									if (autoconnectPage == null) {
-										getShell().getDisplay().syncExec(new Runnable() {
-											public void run() {
-												sync[0] = MessageDialog.openQuestion(getShell(), Policy.bind("SharingWizard.couldNotImport"), Policy.bind("SharingWizard.couldNotImportLong", getModuleName())); //$NON-NLS-1$ //$NON-NLS-2$
-											}
-										});
-									}
-									result[0] = sync[0];
-									doSync[0] = sync[0];
-									return;
-								}
-							} catch (TeamException e) {
-								CVSUIPlugin.openError(getShell(), null, null, e, CVSUIPlugin.PERFORM_SYNC_EXEC);
-								if (!isKnown && location != null) location.flushUserInfo();
-								result[0] = false;
-								doSync[0] = false;
-								return;
-							}
-							// Add the location to the provider if it is new
-							if (!isKnown) {
-								CVSProviderPlugin.getPlugin().addRepository(location);
-							}
-							
-							// Create the remote module for the project
-							ShareProjectOperation op = new ShareProjectOperation(null, location, project, getModuleName());
-							op.setShell(getShell());
-							op.run(new SubProgressMonitor(monitor, 50));
+		if (isAutoconnect()) {
+			try {
+				getContainer().run(true /* fork */, true /* cancel */, new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException {
+						try {
+							result[0] = autoconnectCVSProject(monitor);
+						} catch (TeamException e) {
+							throw new InvocationTargetException(e);
+						} finally {
+							monitor.done();
 						}
-					} catch (TeamException e) {
-						throw new InvocationTargetException(e);
-					} catch (InterruptedException e) {
-						// Must have been canceled
-						return;
-					} finally {
-						monitor.done();
 					}
-				}
-			});
-			if (doSync[0]) {
-				// Sync of the project
-				if (projectExists[0]) {
-					try {
-						String moduleName = getModuleName();
-						CVSTag tag;
-						if (autoconnectPage == null) {
-							TagSelectionDialog dialog = new TagSelectionDialog(getShell(), 
-								new ICVSFolder[] {(ICVSFolder)getLocation().getRemoteFolder(moduleName, null)}, 
-								Policy.bind("SharingWizard.selectTagTitle"),  //$NON-NLS-1$
-								Policy.bind("SharingWizard.selectTag"), //$NON-NLS-1$
-								TagSelectionDialog.INCLUDE_HEAD_TAG | TagSelectionDialog.INCLUDE_BRANCHES, 
-								false, /*don't show recurse option*/
-								IHelpContextIds.SHARE_WITH_EXISTING_TAG_SELETION_DIALOG);
-							dialog.setBlockOnOpen(true);
-							if (dialog.open() == Dialog.CANCEL) {
-								return false;
-							}
-							tag = dialog.getResult();
-						} else {
-							tag = autoconnectPage.getSharing().getTag();
-						}
-						mapProject(moduleName, tag);
-					} catch (TeamException e) {
-						throw new InvocationTargetException(e);
-					}
-				}
-				WorkspaceSynchronizeParticipant participant = CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant();
-				if(participant != null) {
-					participant.refresh(new IResource[] {project}, participant.getRefreshListeners().createSynchronizeViewListener(participant), Policy.bind("Participant.synchronizing"), null); //$NON-NLS-1$
-				}
+				});
+			} catch (InterruptedException e) {
+				return true;
+			} catch (InvocationTargetException e) {
+				CVSUIPlugin.openError(getContainer().getShell(), null, null, e);
+				result[0] = false;
 			}
-		} catch (InterruptedException e) {
-			return true;
-		} catch (InvocationTargetException e) {
-			CVSUIPlugin.openError(getContainer().getShell(), null, null, e);
 		}
-
+		// Add the location to the provider if it is new
+		if (result[0] && isNewLocation) {
+			KnownRepositories.getInstance().addRepository(location, true /* broadcast */);
+		}
 		return result[0];
 	}
-
-	private void mapProject(final String moduleName, final CVSTag tag) throws InvocationTargetException, InterruptedException {
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.IWizard#performCancel()
+	 */
+	public boolean performCancel() {
+		boolean disposeLocation = isNewLocation;
+		ICVSRepositoryLocation location;
 		try {
-			ICVSRemoteFolder remote = new RemoteFolder(null, getLocation(), moduleName, tag);
-			// TODO: Shoudl have a part but this code will be changing soon anyway
-			new ReconcileProjectOperation(null /* part */, project, remote).run();
+			location = getLocation();
 		} catch (TeamException e) {
-			throw new InvocationTargetException(e);
-		} 
+			CVSUIPlugin.log(e);
+			return true;
+		}
+		if (location == null) return true;
+		// If on the last page, offer to disconnect
+		if (getContainer().getCurrentPage() == syncPage
+				&& RepositoryProvider.getProvider(project) != null) {
+			// Prompt to see if we should undo out work
+			if (promptToKeepMapping()) {
+				// If we didn't disconnect, don't dispose the repo
+				disposeLocation = false;
+				// Add the location to the provider if it is new
+				if (isNewLocation) {
+					KnownRepositories.getInstance().addRepository(location, true /* broadcast */);
+				}
+			} else {
+				try {
+					getContainer().run(true, true, new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor)
+								throws InvocationTargetException,
+								InterruptedException {
+							new DisconnectOperation(null, new IProject[] { project }, true)
+								.run(monitor);
+						}
+					});
+				} catch (InvocationTargetException e) {
+					CVSUIPlugin.log(IStatus.ERROR, e.getMessage(), e.getTargetException());
+				} catch (InterruptedException e) {
+					// Ignore
+				}
+			}
+		}
+		// Dispose of the location if appropriate
+		if (disposeLocation) {
+			KnownRepositories.getInstance().disposeRepository(location);
+		}
+		return super.performCancel();
+	}
+
+	private boolean promptToKeepMapping() {
+		return (MessageDialog.openQuestion(getShell(), Policy.bind("SharingWizard.26"), Policy.bind("SharingWizard.27", project.getName()))); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	private void reconcileProject(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+		new ReconcileProjectOperation(getShell(), project, getRemoteFolder()).run(monitor);
 	}
 	
 	/**
@@ -317,25 +272,52 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 	private ICVSRepositoryLocation getLocation() throws TeamException {
 		// If there is an autoconnect page then it has the location
 		if (autoconnectPage != null) {
-			return autoconnectPage.getLocation();
+			return recordLocation(autoconnectPage.getLocation());
 		}
 		
-		// If the import page has a location, use it.
+		// If the location page has a location, use it.
 		if (locationPage != null) {
-			ICVSRepositoryLocation location = locationPage.getLocation();
-			if (location != null) return location;
+			ICVSRepositoryLocation newLocation = locationPage.getLocation();
+			if (newLocation != null) {
+				return recordLocation(newLocation);
+			}
 		}
 		
 		// Otherwise, get the location from the create location page
+		final ICVSRepositoryLocation[] locations = new ICVSRepositoryLocation[] { null };
+		final CVSException[] exception = new CVSException[] { null };
 		getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
-				createLocationPage.finish(new NullProgressMonitor());
+				try {
+					locations[0] = createLocationPage.getLocation();
+				} catch (CVSException e) {
+					exception[0] = e;
+				}
 			}
 		});
-		Properties properties = createLocationPage.getProperties();
-		ICVSRepositoryLocation location = CVSProviderPlugin.getPlugin().createRepository(properties);
+		if (exception[0] != null) {
+			throw exception[0];
+		}
+		return recordLocation(locations[0]);
+	}
+
+	private ICVSRepositoryLocation recordLocation(ICVSRepositoryLocation newLocation) {
+		if (newLocation == null) return location;
+		if (location == null || !newLocation.equals(location)) {
+			if (location != null && isNewLocation) {
+				// Dispose of the previous location
+				KnownRepositories.getInstance().disposeRepository(location);
+			}
+			location = newLocation;
+			isNewLocation = !KnownRepositories.getInstance().isKnownRepository(newLocation.getLocation());
+			if (isNewLocation) {
+				// Add the location silently so we can work with it
+				location = KnownRepositories.getInstance().addRepository(location, false /* silently */);
+			}
+		}
 		return location;
 	}
+
 	/**
 	 * Return the module name.
 	 */
@@ -348,12 +330,14 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		if (moduleName == null) moduleName = project.getName();
 		return moduleName;
 	}
+	
 	/*
 	 * @see IConfigurationWizard#init(IWorkbench, IProject)
 	 */
 	public void init(IWorkbench workbench, IProject project) {
 		this.project = project;
 	}
+	
 	private boolean doesCVSDirectoryExist() {
 		// Determine if there is an existing CVS/ directory from which configuration
 		// information can be retrieved.
@@ -377,65 +361,169 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		} catch (InvocationTargetException e) {
 			CVSUIPlugin.openError(shell, null, null, e);
 		} catch (InterruptedException e) {
+			// Cancelled. Just fall through
 		}
 		return isCVSFolder[0];
 	}
 	
-	private FolderSyncInfo getRepositoryInfoFromOneO(IProject project) {
+	/*
+	 * Shoudl the project be auto-connected
+	 */
+	/* private*/ boolean isAutoconnect() {
+		return autoconnectPage != null && doesCVSDirectoryExist();
+	}
+	
+	/*
+	 * Auto-connect to the repository using CVS/ directories
+	 */
+	/*private */ boolean autoconnectCVSProject(IProgressMonitor monitor) throws TeamException {
 		try {
-			QualifiedName key = new QualifiedName("org.eclipse.vcm.core", "Sharing"); //$NON-NLS-1$ //$NON-NLS-2$
-			byte[] syncBytes = ResourcesPlugin.getWorkspace().getSynchronizer().getSyncInfo(key, project); //$NON-NLS-1$ //$NON-NLS-2$
-			if (syncBytes != null) {
-				DataInputStream reader = new DataInputStream(new ByteArrayInputStream(syncBytes));
-				String repoType = reader.readUTF();
-				String repoLocation = reader.readUTF();
-				String stream = reader.readUTF();
-				reader.close();
-				ResourcesPlugin.getWorkspace().getSynchronizer().flushSyncInfo(key, project, IResource.DEPTH_INFINITE);
-				if (repoType.equals("CVS")) { //$NON-NLS-1$
-					// Get the repository so it is added to the provider 
-					// (in case the user cancels after we purge the old info)
-					CVSProviderPlugin.getPlugin().getRepository(repoLocation);
-					CVSTag tag;
-					if (stream.equals("HEAD")) { //$NON-NLS-1$
-						tag = CVSTag.DEFAULT;
-					} else {
-						tag = new CVSTag(stream, CVSTag.BRANCH);
+			monitor.beginTask(null, 100);
+			
+			FolderSyncInfo info = autoconnectPage.getFolderSyncInfo();
+			if (info == null) {
+				// Error!
+				return false;
+			}
+			
+			// Get the repository location (the get will add the locatin to the provider)
+			ICVSRepositoryLocation location = getLocation();
+	
+			// Validate the connection if the user wants to
+			boolean validate = autoconnectPage.getValidate();					
+			if (validate) {
+				// Do the validation
+				try {
+					location.validateConnection(Policy.subMonitorFor(monitor, 50));
+				} catch (final TeamException e) {
+					// Exception validating. We can continue if the user wishes.
+					final boolean[] keep = new boolean[] { false };
+					getShell().getDisplay().syncExec(new Runnable() {
+						public void run() {
+							keep[0] = MessageDialog.openQuestion(getContainer().getShell(),
+								Policy.bind("SharingWizard.validationFailedTitle"), //$NON-NLS-1$
+								Policy.bind("SharingWizard.validationFailedText", new Object[] {e.getStatus().getMessage()})); //$NON-NLS-1$
+						}
+					});
+					if (!keep[0]) {
+						return false;
 					}
-					return new FolderSyncInfo(project.getName(), repoLocation, tag, false);
+					// They want to keep the connection anyway. Fall through.
 				}
 			}
-		} catch (CVSException ex) {
-			CVSUIPlugin.log(ex);
-		}  catch (CoreException ex) {
-			// Ignore the core exception since we will get one if the key is not registered
-		} catch (IOException ex) {
-			CVSUIPlugin.log(CVSException.wrapException(ex));
+			
+			// Set the sharing
+			CVSWorkspaceRoot.setSharing(project, info, Policy.subMonitorFor(monitor, 50));
+			return true;
+		} finally {
+			monitor.done();
 		}
-		return null;
 	}
-
-	/**
-	 * Method findCommonRootInSubfolders.
-	 * @return String
-	 */
-	private void purgeAnyCVSFolders() {
+	
+	private boolean shareProject(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+		monitor.beginTask(null, 100);
+		ICVSRepositoryLocation location = null;
 		try {
-			ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project);
-			folder.accept(new ICVSResourceVisitor() {
-				public void visitFile(ICVSFile file) throws CVSException {
-					// nothing to do for files
-				}
-				public void visitFolder(ICVSFolder folder) throws CVSException {
-					if (folder.isCVSFolder()) {
-						// for now, just unmanage
-						folder.unmanage(null);
+			location = getLocation();
+			location.validateConnection(Policy.subMonitorFor(monitor, 50));
+		} catch (TeamException e) {
+			CVSUIPlugin.openError(getShell(), null, null, e, CVSUIPlugin.PERFORM_SYNC_EXEC);
+			if (isNewLocation && location != null) location.flushUserInfo();
+			return false;
+		}
+		
+		// Create the remote module for the project
+		ShareProjectOperation op = new ShareProjectOperation(null, location, project, getModuleName());
+		op.setShell(getShell());
+		op.run(Policy.subMonitorFor(monitor, 50));
+		return true;
+	}
+	
+	private CVSTag getTag() {
+		if (tagPage == null || tagPage.getSelectedTag() == null) {
+			return CVSTag.DEFAULT;
+		}
+		return tagPage.getSelectedTag();
+	}
+	
+	private ICVSRemoteFolder getRemoteFolder() {
+		try {
+			ICVSRepositoryLocation location = getLocation();
+			if (location == null) return null;
+			return location.getRemoteFolder(getModuleName(), getTag());
+		} catch (TeamException e) {
+			CVSProviderPlugin.log(e);
+			return null;
+		}
+	}
+	
+	private boolean exists(ICVSRemoteFolder folder, IProgressMonitor monitor) throws TeamException {
+		if (existingRemote != null && existingRemote.equals(folder)) return true;
+		if (folder.exists(monitor)) {
+			existingRemote = folder;
+			return true;
+		} else {
+			existingRemote = null;
+			return false;
+		}
+	}
+	
+	private boolean exists(final ICVSRemoteFolder folder) {
+		final boolean[] result = new boolean[] { false };
+		try {
+			getContainer().run(true, true, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor)
+						throws InvocationTargetException, InterruptedException {
+					try {
+						result[0] = exists(folder, monitor);
+					} catch (TeamException e) {
+						throw new InvocationTargetException(e);
 					}
 				}
-			}, true /* recurse */);
-		} catch (CVSException e) {
-			// log the exception and return null
-			CVSUIPlugin.log(e);
+			});
+		} catch (InvocationTargetException e) {
+			CVSUIPlugin.openError(getContainer().getShell(), null, null, e);
+		} catch (InterruptedException e) {
+			// Cancelled. Assume the folder doesn't exist
 		}
+		return result[0];
+	}
+	
+	private void populateSyncPage(final boolean exists) {
+		try {
+			getContainer().run(true, true, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					if (exists) {
+						reconcileProject(monitor);
+					} else {
+						shareProject(monitor);
+					}
+					if (monitor.isCanceled()) {
+						syncPage.showError(new TeamStatus(IStatus.ERROR, CVSUIPlugin.ID, 0, "The population of this view was canceled by the user.", null, null));
+					}
+				}
+			});
+		} catch (InvocationTargetException e) {
+			syncPage.showError(new TeamStatus(IStatus.ERROR, CVSUIPlugin.ID, 0, e.getTargetException().getMessage(), e.getTargetException(), null));
+		} catch (InterruptedException e) {
+			// Cancelled. Just return
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.IWizard#getPreviousPage(org.eclipse.jface.wizard.IWizardPage)
+	 */
+	public IWizardPage getPreviousPage(IWizardPage page) {
+		if (page == syncPage) {
+			// There's no going back from the sync page
+			return null;
+		}
+		return super.getPreviousPage(page);
+	}
+	
+	private void prepareTagPage(ICVSRemoteFolder remote) {
+		tagPage.setFolder(remote);
+		tagPage.setDescription(Policy.bind("SharingWizard.25", remote.getRepositoryRelativePath())); //$NON-NLS-1$
+
 	}
 }
