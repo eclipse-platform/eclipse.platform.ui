@@ -250,6 +250,11 @@
 			id="org.eclipse.team.ccvs.ui.RemoteRootContributions"
 			objectClass="org.eclipse.team.ccvs.core.ICVSRepositoryLocation">
 			<action
+				id="org.eclipse.team.ccvs.ui.copyNames"
+				label="%CopyRepositoryNameAction.label"
+				tooltip="%CopyRepositoryNameAction.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.actions.CopyRepositoryNameAction"/>
+			<action
 				id="org.eclipse.team.ccvs.ui.removeRoot"
 				label="%RemoveRootAction.label"
 				tooltip="%RemoveRootAction.tooltip"
