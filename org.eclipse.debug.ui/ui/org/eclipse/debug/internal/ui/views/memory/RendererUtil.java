@@ -49,26 +49,23 @@ public class RendererUtil {
 			array = temp;
 			return array;
 		}
-		else
-		{
-			byte[] temp = new byte[size];
-			
-			for (int i=0; i<size - array.length; i++)
-			{
-				temp[i] = 0;
-			}
-			
-			int j=0;
-			// fill up the rest of the array
-			for (int i=size - array.length; i<size; i++)
-			{
-				temp[i] = array[j];
-				j++;
-			}
-			
-			array = temp;
-			return array;			
-		}
+        byte[] temp = new byte[size];
+        
+        for (int i=0; i<size - array.length; i++)
+        {
+        	temp[i] = 0;
+        }
+        
+        int j=0;
+        // fill up the rest of the array
+        for (int i=size - array.length; i<size; i++)
+        {
+        	temp[i] = array[j];
+        	j++;
+        }
+        
+        array = temp;
+        return array;
 	}
 	
 	static public BigInteger convertByteArrayToUnsignedLong(byte[] array, int endianess)
@@ -78,7 +75,7 @@ public class RendererUtil {
 			array = fillArray(array, 8, endianess);
 		}
 		
-		BigInteger value = new BigInteger("0");
+		BigInteger value = new BigInteger("0"); //$NON-NLS-1$
 		if (endianess == RendererUtil.LITTLE_ENDIAN)
 		{
 			for (int i=0; i< 8; i++)
@@ -86,7 +83,7 @@ public class RendererUtil {
 				byte[] temp = new byte[1];
 				temp[0] = array[i];
 				BigInteger b = new BigInteger(temp);
-				b = b.and(new BigInteger("ff", 16));
+				b = b.and(new BigInteger("ff", 16)); //$NON-NLS-1$
 				b = b.shiftLeft(i*8);
 				value = value.or(b);
 			}			
@@ -98,7 +95,7 @@ public class RendererUtil {
 				byte[] temp = new byte[1];
 				temp[0] = array[i];
 				BigInteger b = new BigInteger(temp);
-				b = b.and(new BigInteger("ff", 16));
+				b = b.and(new BigInteger("ff", 16)); //$NON-NLS-1$
 				b = b.shiftLeft((7-i)*8);
 				value = value.or(b);
 			}
@@ -129,18 +126,15 @@ public class RendererUtil {
 			}
 			return value;
 		}
-		else
-		{
-			long value = 0;
-			for (int i=0; i< 8; i++)
-			{
-				long b = array[i];
-				b &= 0xff;
-				value |= (b<<((7-i)*8));
-			}
-			
-			return value;
-		}
+        long value = 0;
+        for (int i=0; i< 8; i++)
+        {
+        	long b = array[i];
+        	b &= 0xff;
+        	value |= (b<<((7-i)*8));
+        }
+        
+        return value;
 	}
 	
 	static public BigInteger convertByteArrayToBigInteger(byte[] array, int endianess)
@@ -164,12 +158,8 @@ public class RendererUtil {
 			BigInteger value = new BigInteger(holder);
 			return value;
 		}
-		else
-		{
-			
-			BigInteger value = new BigInteger(array);
-			return value;
-		}
+        BigInteger value = new BigInteger(array);
+        return value;
 	}
 	
 	static public BigInteger convertByteArrayToUnsignedBigInteger(byte[] array, int endianess)
@@ -179,7 +169,7 @@ public class RendererUtil {
 			array = fillArray(array, 16, endianess);
 		}
 		
-		BigInteger value = new BigInteger("0");
+		BigInteger value = new BigInteger("0"); //$NON-NLS-1$
 		if (endianess == RendererUtil.LITTLE_ENDIAN)
 		{
 			for (int i=0; i< 16; i++)
@@ -187,7 +177,7 @@ public class RendererUtil {
 				byte[] temp = new byte[1];
 				temp[0] = array[i];
 				BigInteger b = new BigInteger(temp);
-				b = b.and(new BigInteger("ff", 16));
+				b = b.and(new BigInteger("ff", 16)); //$NON-NLS-1$
 				b = b.shiftLeft(i*8);
 				value = value.or(b);
 			}			
@@ -199,7 +189,7 @@ public class RendererUtil {
 				byte[] temp = new byte[1];
 				temp[0] = array[i];
 				BigInteger b = new BigInteger(temp);
-				b = b.and(new BigInteger("ff", 16));
+				b = b.and(new BigInteger("ff", 16)); //$NON-NLS-1$
 				b = b.shiftLeft((15-i)*8);
 				value = value.or(b);
 			}
@@ -230,18 +220,15 @@ public class RendererUtil {
 			}
 			return value;
 		}
-		else
-		{	
-			int value = 0;
-			for (int i=0; i< 4; i++)
-			{
-				int b = array[i];
-				b &= 0xff;
-				value |= (b<<((3-i)*8));
-			}
-			
-			return value;
-		}
+        int value = 0;
+        for (int i=0; i< 4; i++)
+        {
+        	int b = array[i];
+        	b &= 0xff;
+        	value |= (b<<((3-i)*8));
+        }
+        
+        return value;
 	}
 	
 	/**
@@ -267,17 +254,14 @@ public class RendererUtil {
 			}
 			return value;
 		}
-		else
-		{
-			short value = 0;
-			for (int i=0; i< 2; i++)
-			{
-				short b = array[i];
-				b &= 0xff;
-				value |= (b<<((1-i)*8));
-			}
-			return value;
-		}
+        short value = 0;
+        for (int i=0; i< 2; i++)
+        {
+        	short b = array[i];
+        	b &= 0xff;
+        	value |= (b<<((1-i)*8));
+        }
+        return value;
 	}
 	
 	/**
@@ -299,15 +283,12 @@ public class RendererUtil {
 			}
 			return buf;
 		}
-		else
-		{
-			for (int j=15; j>=0; j--)
-			{
-				BigInteger x = i.shiftRight((15-j)*8);
-				buf[j] = x.byteValue();
-			}
-			return buf;			
-		}		
+        for (int j=15; j>=0; j--)
+        {
+        	BigInteger x = i.shiftRight((15-j)*8);
+        	buf[j] = x.byteValue();
+        }
+        return buf;		
 	}
 	
 	/**
@@ -329,15 +310,12 @@ public class RendererUtil {
 			}
 			return buf;
 		}
-		else
-		{
-			for (int j=31; j>=0; j--)
-			{
-				BigInteger x = i.shiftRight((31-j)*8);
-				buf[j] = x.byteValue();
-			}
-			return buf;			
-		}		
+        for (int j=31; j>=0; j--)
+        {
+        	BigInteger x = i.shiftRight((31-j)*8);
+        	buf[j] = x.byteValue();
+        }
+        return buf;		
 	}
 	
 	/**
@@ -358,14 +336,11 @@ public class RendererUtil {
 			}
 			return buf;
 		}
-		else
-		{
-			for (int j=7; j>=0; j--)
-			{
-				buf[j] = new Long(i>>(7-j)*8).byteValue();
-			}
-			return buf;			
-		}
+        for (int j=7; j>=0; j--)
+        {
+        	buf[j] = new Long(i>>(7-j)*8).byteValue();
+        }
+        return buf;
 	}
 	
 	/**
@@ -386,14 +361,11 @@ public class RendererUtil {
 			}
 			return buf;
 		}
-		else
-		{
-			for (int j=3; j>=0; j--)
-			{
-				buf[j] = new Integer(i>>(3-j)*8).byteValue();
-			}
-			return buf;			
-		}
+        for (int j=3; j>=0; j--)
+        {
+        	buf[j] = new Integer(i>>(3-j)*8).byteValue();
+        }
+        return buf;
 	}
 	
 	/**
@@ -414,13 +386,10 @@ public class RendererUtil {
 			}
 			return buf;
 		}
-		else
-		{
-			for (short j=1; j>=0; j--)
-			{
-				buf[j] = new Integer(i>>(1-j)*8).byteValue();
-			}
-			return buf;			
-		}
+        for (short j=1; j>=0; j--)
+        {
+        	buf[j] = new Integer(i>>(1-j)*8).byteValue();
+        }
+        return buf;
 	} 	
 }
