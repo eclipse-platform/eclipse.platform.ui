@@ -30,6 +30,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
@@ -240,6 +242,19 @@ public class RepositoriesView extends ViewPart {
 		viewer.getControl().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent event) {
 				if (event.keyCode == SWT.F5) {
+					if (WorkbenchUserAuthenticator.USE_ALTERNATE_PROMPTER) {
+						try {
+							ICVSRepositoryLocation[] locations = CVSProvider.getInstance().getKnownRepositories();
+							for (int i = 0; i < locations.length; i++) {
+								locations[i].flushUserInfo();
+							}
+						} catch (CVSException e) {
+							// Do nothing
+						}
+					} else {
+						refreshAction.run();
+					}
+				} else if (event.keyCode == SWT.F9 && WorkbenchUserAuthenticator.USE_ALTERNATE_PROMPTER) {
 					refreshAction.run();
 				}
 			}
