@@ -473,15 +473,18 @@ public class ContentFormatter implements IContentFormatter {
 			final int[] positions= getAffectedPositions(document, offset, length);
 			String formatted= strategy.format(content, isLineStart(document, offset), getIndentation(document, offset), positions);
 			
-			IPositionUpdater first= new RemoveAffectedPositions();
-			document.insertPositionUpdater(first, 0);
-			IPositionUpdater last= new UpdateAffectedPositions(positions, offset);
-			document.addPositionUpdater(last);
-			
-			document.replace(offset, length, formatted);
-			
-			document.removePositionUpdater(first);
-			document.removePositionUpdater(last);
+			if (formatted != null && !formatted.equals(content)) {
+				
+				IPositionUpdater first= new RemoveAffectedPositions();
+				document.insertPositionUpdater(first, 0);
+				IPositionUpdater last= new UpdateAffectedPositions(positions, offset);
+				document.addPositionUpdater(last);
+				
+				document.replace(offset, length, formatted);
+				
+				document.removePositionUpdater(first);
+				document.removePositionUpdater(last);
+			}
 					
 		} catch (BadLocationException x) {
 			// should not happen
