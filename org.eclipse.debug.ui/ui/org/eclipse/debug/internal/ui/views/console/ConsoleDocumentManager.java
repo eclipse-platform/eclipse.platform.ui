@@ -135,7 +135,6 @@ public class ConsoleDocumentManager implements ILaunchListener {
 						IDocumentProvider provider = getDocumentProvider(process);
 						try {
 							provider.connect(process);
-							provider.getDocument(process);
 						} catch (CoreException e) {
 						}
 					}
