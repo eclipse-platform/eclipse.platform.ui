@@ -324,8 +324,11 @@ public class AntRunner implements IPlatformRunnable {
 			}
 			
 			// set message output level
-			Method setMessageOutputLevel = classInternalAntRunner.getMethod("setMessageOutputLevel", new Class[] { int.class }); //$NON-NLS-1$
-			setMessageOutputLevel.invoke(runner, new Object[] { new Integer(messageOutputLevel)});
+			if (messageOutputLevel != 2) { //changed from the default Project.MSG_INFO
+				Method setMessageOutputLevel = classInternalAntRunner.getMethod("setMessageOutputLevel", new Class[] { int.class }); //$NON-NLS-1$
+				setMessageOutputLevel.invoke(runner, new Object[] { new Integer(messageOutputLevel)});
+			}
+			
 			// set execution targets
 			if (targets != null) {
 				Method setExecutionTargets = classInternalAntRunner.getMethod("setExecutionTargets", new Class[] { String[].class }); //$NON-NLS-1$
