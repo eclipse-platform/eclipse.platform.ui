@@ -57,7 +57,7 @@ public final class BrokenWorkbenchWindowPulldownDelegate implements
         if (throwControl) {
             throwControl = false;
             throw new RuntimeException(
-                    "The workbench should handle hostile pulldown delegates.");
+                    "The workbench should handle hostile pulldown delegates (this is an expected exception from the UI test suite).");
         }
         menuControl = new Menu(parent);
         return menuControl;
