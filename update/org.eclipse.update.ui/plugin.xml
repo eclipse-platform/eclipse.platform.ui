@@ -56,14 +56,14 @@
                menubarPath="help/org.eclipse.update.ui.updateMenu/group0"
                id="org.eclipse.update.ui.newUpdates">
          </action>
-         <action
+         <!--action
                label="%actionSets.webSites.label"
                style="pulldown"
                icon="icons/full/obj16/web_bkmrk_obj.gif"
                class="org.eclipse.update.internal.ui.UpdateWebSitesAction"
                menubarPath="help/org.eclipse.update.ui.updateMenu/group1"
                id="org.eclipse.update.ui.updateWebSites">
-         </action>
+         </action-->
       </actionSet>
    </extension>
    <extension
