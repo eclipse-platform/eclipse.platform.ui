@@ -12,6 +12,8 @@ package org.eclipse.ui.internal;
 
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -21,33 +23,152 @@ import org.eclipse.ui.*;
  * A workbench window pulldown action.  
  */
 public class WWinPluginPulldown extends WWinPluginAction {
-	private IMenuCreator menuProxy;
-	private class MenuProxy implements IMenuCreator {
-		public Menu getMenu(Control parent) {
-			IWorkbenchWindowPulldownDelegate delegate = getPulldownDelegate();
-			if (delegate != null) {
-				return delegate.getMenu(parent);
-			} else {
-				return null;
-			}
-		}
-		public Menu getMenu(Menu parent) {
-			IWorkbenchWindowPulldownDelegate delegate = getPulldownDelegate();
-			if (delegate instanceof IWorkbenchWindowPulldownDelegate2) {
-				IWorkbenchWindowPulldownDelegate2 delegate2 = (IWorkbenchWindowPulldownDelegate2) delegate;
-				return delegate2.getMenu(parent);
-			}
-			return null;
-		}
-		public void dispose() {
-		    // do nothing
-		}
-	}
+    
+    /**
+     * The proxy for creating the menu.  There is always a menu proxy.  This
+     * value can't be <code>null</code>.
+     */
+	private final IMenuCreator menuProxy;
+
+    private class MenuProxy implements IMenuCreator {
+
+        /**
+         * A wrapper for loading the menu that defends against possible
+         * exceptions triggered outside of the workbench.
+         * 
+         * @since 3.0
+         */
+        private class MenuLoader implements ISafeRunnable {
+
+            /**
+             * The parent for the menu to be created. This value is
+             * <code>null</code> if the parent is a menu.
+             */
+            private final Control control;
+
+            /**
+             * The delegate from which to load the menu.
+             */
+            private final IWorkbenchWindowPulldownDelegate delegate;
+
+            /**
+             * The loaded menu. This value is <code>null</code> if the load
+             * failed, or if it hasn't been loaded yet.
+             */
+            private Menu menu = null;
+
+            /**
+             * The parent for the menu to be created. This value is
+             * <code>null</code> if the parent is a control.
+             */
+            private final Menu parent;
+
+            /**
+             * Constructs a new instance of <code>MenuLoader</code>
+             * 
+             * @param delegate
+             *            The delegate from which the menu will be loaded; this
+             *            value must not be <code>null</code>.
+             * @param parent
+             *            The parent of the menu to be loaded; this value must
+             *            not be <code>null</code>.
+             */
+            private MenuLoader(
+                    final IWorkbenchWindowPulldownDelegate2 delegate,
+                    final Menu parent) {
+                this.delegate = delegate;
+                this.parent = parent;
+                this.control = null;
+            }
+
+            /**
+             * Constructs a new instance of <code>MenuLoader</code>
+             * 
+             * @param delegate
+             *            The delegate from which the menu will be loaded; this
+             *            value must not be <code>null</code>.
+             * @param parent
+             *            The parent of the menu to be loaded; this value must
+             *            not be <code>null</code>.
+             */
+            private MenuLoader(final IWorkbenchWindowPulldownDelegate delegate,
+                    final Control parent) {
+                this.delegate = delegate;
+                this.parent = null;
+                this.control = parent;
+            }
+
+            /**
+             * Returns the menu loaded, if any.
+             * 
+             * @return the loaded menu, or <code>null</code> if none.
+             */
+            private Menu getMenu() {
+                return menu;
+            }
+
+            /**
+             * @see ISafeRunnable#handleException(java.lang.Throwable)
+             */
+            public void handleException(Throwable exception) {
+                // Do nothing
+            }
+
+            /**
+             * @see ISafeRunnable#run()
+             */
+            public void run() throws Exception {
+                if (parent == null) {
+                    menu = delegate.getMenu(control);
+                } else {
+                    menu = ((IWorkbenchWindowPulldownDelegate2) delegate)
+                            .getMenu(parent);
+                }
+            }
+        }
+
+        /**
+         * @see IMenuCreator#getMenu(Control)
+         */
+        public Menu getMenu(Control parent) {
+            IWorkbenchWindowPulldownDelegate delegate = getPulldownDelegate();
+            if (delegate != null) {
+                final MenuLoader menuLoader = new MenuLoader(delegate, parent);
+                Platform.run(menuLoader);
+                return menuLoader.getMenu();
+            } else {
+                return null;
+            }
+        }
+
+        /**
+         * @see IMenuCreator#getMenu(Menu)
+         */
+        public Menu getMenu(Menu parent) {
+            IWorkbenchWindowPulldownDelegate delegate = getPulldownDelegate();
+
+            if (delegate instanceof IWorkbenchWindowPulldownDelegate2) {
+                IWorkbenchWindowPulldownDelegate2 delegate2 = (IWorkbenchWindowPulldownDelegate2) delegate;
+                final MenuLoader menuLoader = new MenuLoader(delegate2, parent);
+                Platform.run(menuLoader);
+                return menuLoader.getMenu();
+            }
+
+            return null;
+        }
+
+        /**
+         * @see IMenuCreator#dispose()
+         */
+        public void dispose() {
+            // do nothing
+        }
+    }
 	
 	/**
 	 * WWinPluginPulldown constructor comment.
 	 * @param actionElement org.eclipse.core.runtime.IConfigurationElement
-	 * @param runAttribute java.lang.String
+	 * @param id java.lang.String
 	 * @param window org.eclipse.ui.IWorkbenchWindow
 	 */
 	public WWinPluginPulldown(IConfigurationElement actionElement, IWorkbenchWindow window, String id, int style) {
