@@ -13,6 +13,10 @@
          <packages prefixes="org.eclipse.help"/>
       </library>
    </runtime>
+   <requires>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
+   </requires>
+
 
 <!-- Extension points -->
    <extension-point id="contexts" name="%contexts_extension_point_name" schema="schema/contexts.exsd"/>
