@@ -314,10 +314,6 @@ public ToolBarManager getToolBarManager() {
  * Method declared on Window.
  */
 protected void handleFontChange(final PropertyChangeEvent event) {
-	if (getShell() == null)
-		return;
-	if (event.getProperty() == null)
-		return;
 }
 /* (non-Javadoc)
  * Method declared on IRunnableContext.

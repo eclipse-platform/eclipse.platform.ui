@@ -22,7 +22,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -46,7 +45,6 @@ public class Workbench implements IWorkbench,
 	private static final String P_PRODUCT_INFO = "productInfo";//$NON-NLS-1$
 	private static final String DEFAULT_PRODUCT_INFO_FILENAME = "product.ini";//$NON-NLS-1$
 	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml";//$NON-NLS-1$
-	private static String LOCALE_SUFIX;
 	private WindowManager windowManager;
 	private EditorHistory editorHistory;
 	private boolean runEventLoop;
@@ -56,7 +54,6 @@ public class Workbench implements IWorkbench,
 	private String productInfoFilename;
 	private ProductInfo productInfo;
 	private String[] commandLineArgs;
-
 /**
  * Workbench constructor comment.
  */
@@ -241,7 +238,6 @@ public EditorHistory getEditorHistory() {
 	}
 	return editorHistory;
 }
-
 /**
  * Returns the editor registry for the workbench.
  *
@@ -378,7 +374,7 @@ private boolean init(String[] commandLineArgs) {
 	addAdapters();
 	windowManager = new WindowManager();
 	WorkbenchColors.startup();
-	intializeFonts();
+	initializeFonts();
 
 	// deadlock code
 	boolean avoidDeadlock = true;
@@ -399,7 +395,7 @@ private boolean init(String[] commandLineArgs) {
 	
 	openWindows();
 	openWelcomeDialog();
-
+	
 	isStarting = false;
 	return true;
 }
@@ -407,7 +403,7 @@ private boolean init(String[] commandLineArgs) {
 /**
  * Initialize the workbench fonts with the stored values.
  */
-private void intializeFonts() {
+private void initializeFonts() {
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	FontRegistry registry = JFaceResources.getFontRegistry();
 	initializeFont(JFaceResources.DIALOG_FONT,registry,store);
@@ -419,8 +415,8 @@ private void intializeFonts() {
  * Initialize the specified font with the stored value.
  */
 private void initializeFont(String fontKey,FontRegistry registry,IPreferenceStore store) {
-	String font_Locale = PreferenceConverter.localizeFontName(fontKey);
-	if(store.isDefault(font_Locale))
+	String localizedName = PreferenceConverter.localizeFontName(fontKey);
+	if(store.isDefault(localizedName))
 		return;
 	FontData[] font = new FontData[1];
 	font[0] = PreferenceConverter.getFontData(store,fontKey);
@@ -581,45 +577,6 @@ public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
 	return openWorkbenchWindow(getPerspectiveRegistry().getDefaultPerspective(), 
 		input);
 }
-
-/**
- * Opens a new page. 
- */
-public IWorkbenchPage openPage(String perspID,IAdaptable input) 
-	throws WorkbenchException 
-{
-	String openBehavior =
-		WorkbenchPlugin.getDefault().getPreferenceStore().getString(
-			IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
-
-	if (openBehavior.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW)) {
-		IWorkbenchWindow ww = openWorkbenchWindow(perspID,input);
-		return ww.getActivePage();
-	} else if (openBehavior.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE)) {
-		return getActiveWorkbenchWindow().openPage(input);
-	} else if (openBehavior.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE)) {
-	// Add the default perspective first.
-		IPerspectiveRegistry reg =
-			WorkbenchPlugin.getDefault().getPerspectiveRegistry();
-		IPerspectiveDescriptor defDesc =
-			reg.findPerspectiveWithId(IWorkbenchConstants.DEFAULT_LAYOUT_ID);
-		if (defDesc != null) {
-			IWorkbenchPage page = getActiveWorkbenchWindow().getActivePage();
-			if (page != null)
-				page.setPerspective(defDesc);
-			return page;
-		}
-	}
-	return null;
-}
-/**
- * Opens a new page. 
- */
-public IWorkbenchPage openPage(IAdaptable input)
-	throws WorkbenchException 
-{
-	return openPage(getPerspectiveRegistry().getDefaultPerspective(),input);
-}
 /**
  * Reads the product info.
  * The product info contains the product name, product images,
@@ -655,7 +612,7 @@ private XMLMemento recordWorkbenchState() {
 /**
  * @see IPersistable
  */
-private void restoreState(IMemento memento) {
+public void restoreState(IMemento memento) {
 	// Get the child windows.
 	IMemento [] children = memento.getChildren(IWorkbenchConstants.TAG_WINDOW);
 	
@@ -700,7 +657,7 @@ public Object run(Object arg) {
 /**
  * run an event loop for the workbench.
  */
-private void runEventLoop() {
+protected void runEventLoop() {
 	Display display = Display.getCurrent();
 	runEventLoop = true;
 	while (runEventLoop) {
@@ -727,7 +684,7 @@ private void runEventLoop() {
 /**
  * @see IPersistable
  */
-private void saveState(IMemento memento) {
+public void saveState(IMemento memento) {
 	// Save the version number.
 	memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING);
 	

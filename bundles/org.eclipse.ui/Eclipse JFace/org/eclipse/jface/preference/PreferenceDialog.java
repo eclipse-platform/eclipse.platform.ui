@@ -758,7 +758,9 @@ public void updateMessage() {
 	// Adjust the font
 	if (pageMessage == null && pageErrorMessage == null)
 		messageLabel.setFont(JFaceResources.getBannerFont());
-	
+	else
+		messageLabel.setFont(JFaceResources.getDialogFont());
+
 	// Set the message and error message	
 	if (pageMessage == null) {
 		setMessage(currentPage.getTitle());
