@@ -66,6 +66,7 @@ public class MergeDialog extends SyncResourceSetDetailsDialog {
 		// codes.
 		if(id == YES || id == IDialogConstants.NO_ID) {
 			setReturnCode(id);
+			filterSyncSet();
 			close();
 		} else {
 			super.buttonPressed(id);

@@ -24,9 +24,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ccvs.ui.AdaptableResourceList;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.DetailsDialog;
+import org.eclipse.team.ui.sync.SyncInfoFilter;
 import org.eclipse.team.ui.sync.SyncResourceSet;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -139,9 +141,7 @@ public abstract class SyncResourceSetDetailsDialog extends DetailsDialog {
 	
 	protected void setViewerInput() {
 		if (listViewer == null || listViewer.getControl().isDisposed()) return;
-		selectedResources = null;
 		listViewer.setInput(new AdaptableResourceList(getAllResources()));
-		// TODO: for now, just reset the selection when the input is reset
 		if (selectedResources == null) {
 			listViewer.setAllChecked(true);
 		} else {
@@ -149,6 +149,10 @@ public abstract class SyncResourceSetDetailsDialog extends DetailsDialog {
 		}
 	}
 	
+	protected void resetViewerInput() {
+		selectedResources = null;
+		setViewerInput();
+	}
 	/**
 	 * Return a list of all the resources that are currently under consideration by the dialog
 	 */
@@ -170,4 +174,28 @@ public abstract class SyncResourceSetDetailsDialog extends DetailsDialog {
 		return syncSet;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
+	 */
+	protected void buttonPressed(int id) {
+		if (id == IDialogConstants.OK_ID) {
+			filterSyncSet();
+		}
+		super.buttonPressed(id);
+	}
+
+	protected void filterSyncSet() {
+		// Keep only the checked resources
+		if (selectedResources != null) {
+			getSyncSet().selectNodes(new SyncInfoFilter() {
+				public boolean select(SyncInfo info) {
+					IResource local = info.getLocal();
+					for (int i = 0; i < selectedResources.length; i++) {
+						if (local.equals(selectedResources[i])) return true;
+					}
+					return false;
+				}
+			});
+		}
+	}
 }

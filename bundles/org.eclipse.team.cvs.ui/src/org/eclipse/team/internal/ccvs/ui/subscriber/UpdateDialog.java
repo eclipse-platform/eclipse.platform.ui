@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -157,7 +156,7 @@ public class UpdateDialog extends SyncResourceSetDetailsDialog {
 	
 	private void setAutomerge(boolean b) {
 		this.autoMerge = b;
-		setViewerInput();
+		resetViewerInput();
 	}
 	
 	public boolean getAutomerge() {
@@ -165,16 +164,13 @@ public class UpdateDialog extends SyncResourceSetDetailsDialog {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SyncResourceSetDetailsDialog#keepSelectedResources()
 	 */
-	protected void buttonPressed(int id) {
-		if (id == IDialogConstants.OK_ID) {
-			if (autoMerge) {
-				getSyncSet().selectNodes(getAutomergableFilter());
-			}
-			// TODO: remove those nodes not checked in the details area
+	protected void filterSyncSet() {
+		if (autoMerge) {
+			getSyncSet().selectNodes(getAutomergableFilter());
 		}
-		super.buttonPressed(id);
+		super.filterSyncSet();
 	}
-	
+
 }
