@@ -510,6 +510,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				saveAsXML(os);
 				config.setDirty(false);
 			} catch (CoreException e) {
+				Utils.log(e.getMessage());
+				Utils.log(e.getStatus());
 				throw new IOException(Messages.getString("cfig.unableToSave", url.toExternalForm())); //$NON-NLS-1$
 			} finally {
 				os.close();
