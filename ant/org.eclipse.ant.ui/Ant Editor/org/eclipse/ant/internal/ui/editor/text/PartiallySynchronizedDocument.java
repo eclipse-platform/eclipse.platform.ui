@@ -59,21 +59,6 @@ public class PartiallySynchronizedDocument extends Document implements ISynchron
 	}
 			
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IDocument#replace(int, int, java.lang.String)
-	 */
-	synchronized public void replace(int offset, int length, String text) throws BadLocationException {
-		super.replace(offset, length, text);
-		//TODO to be used for incremental parsing...not for 3.0
-//		if (length == 0 && text != null) {
-//			// Insert
-//		} else if (text == null || text.length() == 0) {
-//			// Remove
-//		} else {
-//			fAntModel.setReplaceHasOccurred();
-//		}
-	}
-			
-	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocument#set(java.lang.String)
 	 */
 	synchronized public void set(String text) {
