@@ -11,8 +11,12 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -22,6 +26,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
@@ -41,6 +46,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 	// The project being associated with the remote module (or null)
 	private IProject project;
 	private ICVSRepositoryLocation location;
+	private boolean badLocation = false;
 	
 	public ModuleSelectionPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
@@ -113,13 +119,33 @@ public class ModuleSelectionPage extends CVSWizardPage {
 			} else {
 				setPageComplete(true);
 			}
-		} else {
+		} else if (!badLocation){
 			text.setEnabled(false);
 			moduleList.getControl().setEnabled(true);
 			moduleName = null;
 			if (moduleList.getInput() == null) {
 				// The input is set after the page is shown to avoid
 				// fetching if the user wants to specify the name manually
+				try {
+					// Validate the location first since the module fecthing is
+					// done in a deferred fashion
+					getContainer().run(true, true, new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							try {
+								location.validateConnection(monitor);
+							} catch (CVSException e) {
+								throw new InvocationTargetException(e);
+							}
+						}
+					});
+				} catch (InvocationTargetException e) {
+					if (!badLocation) {
+						badLocation = true;
+						CVSUIPlugin.openError(getShell(), null, null, e);
+					}
+				} catch (InterruptedException e) {
+					// Canceled by the user
+				}
 				setModuleListInput();
 			}
 			ICVSRemoteFolder folder = internalGetSelectedModule();
@@ -213,7 +239,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 	
 	private void setModuleListInput() {
 		ICVSRepositoryLocation location = getLocation();
-		if (location == null) return;
+		if (location == null || badLocation) return;
 		moduleList.setInput(location.getRemoteFolder(ICVSRemoteFolder.REPOSITORY_ROOT_FOLDER_NAME, CVSTag.DEFAULT));
 	}
 
@@ -223,6 +249,10 @@ public class ModuleSelectionPage extends CVSWizardPage {
 	
 	public void setLocation(ICVSRepositoryLocation location) {
 		this.location = location;
+		badLocation = false;
+		if (moduleList != null) {
+			updateEnablements();
+		}
 	}
 
 	public void setProject(IProject project) {
