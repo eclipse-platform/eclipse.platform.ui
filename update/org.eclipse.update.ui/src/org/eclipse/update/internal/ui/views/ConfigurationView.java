@@ -281,7 +281,7 @@ public class ConfigurationView
 					children.add(childFeature);
 				}
 			} catch (CoreException e) {
-				// FIXME at least log
+				UpdateUIPlugin.logException(e);
 			}
 		}
 
@@ -718,12 +718,14 @@ public class ConfigurationView
 		if (config != null) {
 			manager.add(removePreservedAction);
 		}
+		manager.add(new Separator());
+		drillDownAdapter.addNavigationActions(manager);	
+		manager.add(new Separator());	
 		super.fillContextMenu(manager);
 		if (obj instanceof PreservedConfiguration
 			|| obj instanceof IInstallConfiguration)
 			manager.add(propertiesAction);
-		manager.add(new Separator());
-		drillDownAdapter.addNavigationActions(manager);
+
 		//defect 14684
 		//super.fillContextMenu(manager);
 	}

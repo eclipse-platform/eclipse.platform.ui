@@ -3,6 +3,8 @@ package org.eclipse.update.internal.ui.win32.views;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.ole.win32.*;
@@ -25,19 +27,19 @@ public class WebBrowser implements OleListener {
 	// Fired when a new hyperlink is being navigated to.
 	public static final int NavigateComplete = 101;
 	// Fired when the document being navigated to becomes visible and enters the navigation stack.
-	public static final int StatusTextChange = 102; 
+	public static final int StatusTextChange = 102;
 	// Statusbar text changed.
 	public static final int ProgressChange = 108;
 	// Fired when download progress is updated.
-	public static final int DownloadComplete = 104; 
+	public static final int DownloadComplete = 104;
 	// Download of page complete.
 	public static final int CommandStateChange = 105;
 	// The enabled state of a command changed
-	public static final int DownloadBegin = 106; 
+	public static final int DownloadBegin = 106;
 	// Download of a page started.
 	public static final int NewWindow = 107;
 	// Fired when a new window should be created.
-	public static final int TitleChange = 113; 
+	public static final int TitleChange = 113;
 	// Document title changed.
 	public static final int FrameBeforeNavigate = 200;
 	// Fired when a new hyperlink is being navigated to in a frame.
@@ -45,9 +47,9 @@ public class WebBrowser implements OleListener {
 	// Fired when a new hyperlink is being navigated to in a frame.
 	public static final int FrameNewWindow = 204;
 	// Fired when a new window should be created.
-	public static final int Quit = 103; 
+	public static final int Quit = 103;
 	// Fired when application is quiting.
-	public static final int WindowMove = 109; 
+	public static final int WindowMove = 109;
 	// Fired when window has been moved.
 	public static final int WindowResize = 110;
 	// Fired when window has been sized.
@@ -82,7 +84,7 @@ public class WebBrowser implements OleListener {
 
 	// The OLE frame (there should only be one)
 	private OleFrame controlFrame;
-	
+
 	//private NestedPrintDelegate aPrintDelegate = null;
 
 	/**
@@ -98,7 +100,11 @@ public class WebBrowser implements OleListener {
 		// control fails. No checking if the correct version of the OLE control 
 		// is installed.
 		try {
-			controlSite = new BrowserControlSite(controlFrame, SWT.NONE, "Shell.Explorer");
+			controlSite =
+				new BrowserControlSite(
+					controlFrame,
+					SWT.NONE,
+					"Shell.Explorer");
 			controlSite.setBrowser(this);
 			oleObject = new OleAutomation(controlSite);
 
@@ -115,16 +121,11 @@ public class WebBrowser implements OleListener {
 			//aPrintDelegate = new NestedPrintDelegate(this, oleObject, controlSite);
 
 		} catch (Exception e) {
-			// Display and log error, then delegate to parent UI class. 
-			// The actual translated message goes all the way back to the calling
-			// UI class, for display.
-			//FIXME log instead
-			System.out.println(e);
-			//String msg = WorkbenchResources.getString("WE001");
-			//Util.displayErrorDialog(msg, e);
-			//throw new HelpWorkbenchException(msg);
+			String id = "org.eclipse.update.ui.win32";
+			IStatus status =
+				new Status(IStatus.ERROR, id, IStatus.OK, e.getMessage(), e);
+			Platform.getPlugin("org.eclipse.core.runtime").getLog().log(status);
 		}
-
 	}
 	/**
 	 */
@@ -155,7 +156,11 @@ public class WebBrowser implements OleListener {
 		int result = controlSite.queryStatus(OLE.OLECMDID_COPY);
 		if ((result & OLE.OLECMDF_ENABLED) == OLE.OLECMDF_ENABLED) {
 			result =
-				controlSite.exec(OLE.OLECMDID_COPY, OLE.OLECMDEXECOPT_DODEFAULT, null, null);
+				controlSite.exec(
+					OLE.OLECMDID_COPY,
+					OLE.OLECMDEXECOPT_DODEFAULT,
+					null,
+					null);
 		}
 		return result;
 	}
@@ -222,7 +227,8 @@ public class WebBrowser implements OleListener {
 		//int dispIdMember = 210;
 
 		// Alternatively, you can look up the DISPID dynamically
-		int[] rgdispid = oleObject.getIDsOfNames(new String[] { "LocationName" });
+		int[] rgdispid =
+			oleObject.getIDsOfNames(new String[] { "LocationName" });
 		int dispIdMember = rgdispid[0];
 		Variant pVarResult = oleObject.getProperty(dispIdMember);
 		if (pVarResult == null)
@@ -237,7 +243,8 @@ public class WebBrowser implements OleListener {
 		//int dispIdMember = 211;
 
 		// Alternatively, you can look up the DISPID dynamically
-		int[] rgdispid = oleObject.getIDsOfNames(new String[] { "LocationURL" });
+		int[] rgdispid =
+			oleObject.getIDsOfNames(new String[] { "LocationURL" });
 		int dispIdMember = rgdispid[0];
 
 		Variant pVarResult = oleObject.getProperty(dispIdMember);
@@ -249,7 +256,7 @@ public class WebBrowser implements OleListener {
 		return controlFrame;
 
 	}
-	
+
 	public BrowserControlSite getControlSite() {
 		return controlSite;
 	}
@@ -332,7 +339,7 @@ public class WebBrowser implements OleListener {
 	 */
 	protected int navigate(OleAutomation aOleAutomation, String url) {
 		//if (Logger.DEBUG)
-			//Logger.logDebugMessage("WebBrowser", "navigate to: " + url);
+		//Logger.logDebugMessage("WebBrowser", "navigate to: " + url);
 		// dispid=104, type=METHOD, name="Navigate"
 
 		// You can hard code the DISPID if you know it before hand - this is of course the fastest way
@@ -362,16 +369,18 @@ public class WebBrowser implements OleListener {
 	}
 	/**
 	 */
-	protected int print(
-		BrowserControlSite aControlSite,
-		boolean promptuser) {
+	protected int print(BrowserControlSite aControlSite, boolean promptuser) {
 
 		int result = aControlSite.queryStatus(OLE.OLECMDID_PRINT);
-		
+
 		if ((result & OLE.OLECMDF_ENABLED) == OLE.OLECMDF_ENABLED) {
 			if (promptuser)
 				result =
-					aControlSite.exec(OLE.OLECMDID_PRINT, OLE.OLECMDEXECOPT_PROMPTUSER, null, null);
+					aControlSite.exec(
+						OLE.OLECMDID_PRINT,
+						OLE.OLECMDEXECOPT_PROMPTUSER,
+						null,
+						null);
 			else
 				result =
 					aControlSite.exec(
@@ -380,9 +389,9 @@ public class WebBrowser implements OleListener {
 						null,
 						null);
 		}
-		
+
 		//if (Logger.DEBUG)
-			//Logger.logDebugMessage("WebBrowser", "exec returns: " + Integer.toString(result));
+		//Logger.logDebugMessage("WebBrowser", "exec returns: " + Integer.toString(result));
 		return result;
 	}
 
@@ -449,5 +458,3 @@ public class WebBrowser implements OleListener {
 		return backwardEnabled;
 	}
 }
-
-

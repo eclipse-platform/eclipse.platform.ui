@@ -5,27 +5,10 @@ import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.update.ui.forms.internal.HyperlinkSettings;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.ui.forms.internal.*;
 
 public class FormEngine extends Canvas {
 	public static final String URL_HANDLER_ID = "urlHandler";
@@ -43,9 +26,9 @@ public class FormEngine extends Canvas {
 	public boolean getFocus() {
 		return hasFocus;
 	}
-	
+
 	public int getParagraphSpacing(int lineHeight) {
-		return lineHeight/2;
+		return lineHeight / 2;
 	}
 
 	public void setParagraphsSeparated(boolean value) {
@@ -72,7 +55,7 @@ public class FormEngine extends Canvas {
 		});
 		addListener(SWT.KeyDown, new Listener() {
 			public void handleEvent(Event e) {
-				if (e.character=='\r') {
+				if (e.character == '\r') {
 					activateSelectedLink();
 					return;
 				}
@@ -81,12 +64,12 @@ public class FormEngine extends Canvas {
 		addListener(SWT.Traverse, new Listener() {
 			public void handleEvent(Event e) {
 				switch (e.detail) {
-					case SWT.TRAVERSE_PAGE_NEXT:
-					case SWT.TRAVERSE_PAGE_PREVIOUS:
-					case SWT.TRAVERSE_ARROW_NEXT:
-					case SWT.TRAVERSE_ARROW_PREVIOUS:
-					e.doit = false;
-					return;
+					case SWT.TRAVERSE_PAGE_NEXT :
+					case SWT.TRAVERSE_PAGE_PREVIOUS :
+					case SWT.TRAVERSE_ARROW_NEXT :
+					case SWT.TRAVERSE_ARROW_PREVIOUS :
+						e.doit = false;
+						return;
 				}
 				if (!model.hasFocusSegments()) {
 					e.doit = true;
@@ -158,7 +141,7 @@ public class FormEngine extends Canvas {
 				enterLink(segmentUnder);
 				paintFocusTransfer(oldLink, segmentUnder);
 			}
-			mouseDown=true;
+			mouseDown = true;
 			dragOrigin = new Point(e.x, e.y);
 		} else {
 			IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
@@ -176,7 +159,7 @@ public class FormEngine extends Canvas {
 			return;
 		}
 		ITextSegment segmentUnder = model.findSegmentAt(e.x, e.y);
-		
+
 		if (segmentUnder == null) {
 			if (entered != null) {
 				exitLink(entered);
@@ -185,22 +168,21 @@ public class FormEngine extends Canvas {
 			setCursor(null);
 		} else {
 			if (segmentUnder instanceof IHyperlinkSegment) {
-				IHyperlinkSegment linkUnder = (IHyperlinkSegment)segmentUnder;
+				IHyperlinkSegment linkUnder = (IHyperlinkSegment) segmentUnder;
 				if (entered == null) {
 					entered = linkUnder;
 					enterLink(linkUnder);
-					setCursor(model.getHyperlinkSettings().getHyperlinkCursor());
+					setCursor(
+						model.getHyperlinkSettings().getHyperlinkCursor());
 				}
-			}
-			else {
+			} else {
 				setCursor(model.getHyperlinkSettings().getTextCursor());
 			}
 		}
 	}
-	
+
 	private void handleDrag(MouseEvent e) {
 	}
-	
 
 	public HyperlinkSettings getHyperlinkSettings() {
 		return model.getHyperlinkSettings();
@@ -212,10 +194,11 @@ public class FormEngine extends Canvas {
 
 	private boolean advance(boolean next) {
 		IHyperlinkSegment current = model.getSelectedLink();
-		if (current!=null) exitLink(current);
-		
+		if (current != null)
+			exitLink(current);
+
 		boolean valid = model.traverseLinks(next);
-		
+
 		if (valid)
 			enterLink(model.getSelectedLink());
 		paintFocusTransfer(current, model.getSelectedLink());
@@ -311,14 +294,14 @@ public class FormEngine extends Canvas {
 			else
 				model.parseRegularText(text, expandURLs);
 		} catch (CoreException e) {
-			//FIXME at least log
+			FormsPlugin.logException(e);
 		}
 	}
 	public void load(InputStream is, boolean expandURLs) {
 		try {
 			model.parseInputStream(is, expandURLs);
 		} catch (CoreException e) {
-			// FIXME at least log
+			FormsPlugin.logException(e);
 		}
 	}
 
@@ -329,20 +312,22 @@ public class FormEngine extends Canvas {
 		*/
 		return super.setFocus();
 	}
-	
-	private void paintFocusTransfer(IHyperlinkSegment oldLink, IHyperlinkSegment newLink) {
+
+	private void paintFocusTransfer(
+		IHyperlinkSegment oldLink,
+		IHyperlinkSegment newLink) {
 		GC gc = new GC(this);
 		Color bg = getBackground();
 		Color fg = getForeground();
-		
+
 		gc.setFont(getFont());
 
-		if (oldLink!=null) {
+		if (oldLink != null) {
 			gc.setBackground(bg);
 			gc.setForeground(fg);
 			oldLink.paintFocus(gc, bg, fg, false);
 		}
-		if (newLink!=null) {
+		if (newLink != null) {
 			gc.setBackground(bg);
 			gc.setForeground(fg);
 			newLink.paintFocus(gc, bg, fg, true);

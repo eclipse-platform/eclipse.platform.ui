@@ -65,10 +65,14 @@ public class HyperlinkHandler
 		// the link. This can happen when mouse is
 		// clicked, dragged outside the link, then
 		// released.
-		if (e.x < 0) return;
-		if (e.y < 0) return;
-		if (e.x >= size.x) return;
-		if (e.y >= size.y) return;
+		if (e.x < 0)
+			return;
+		if (e.y < 0)
+			return;
+		if (e.x >= size.x)
+			return;
+		if (e.y >= size.y)
+			return;
 		linkActivated(linkControl);
 	}
 
@@ -87,17 +91,20 @@ public class HyperlinkHandler
 	}
 
 	private void linkActivated(Control link) {
-		IHyperlinkListener action = (IHyperlinkListener) hyperlinkListeners.get(link);
+		IHyperlinkListener action =
+			(IHyperlinkListener) hyperlinkListeners.get(link);
 		if (action != null) {
 			link.setCursor(busyCursor);
 			action.linkActivated(link);
 			if (!link.isDisposed())
-				link.setCursor(isHyperlinkCursorUsed() ? hyperlinkCursor : null);
+				link.setCursor(
+					isHyperlinkCursorUsed() ? hyperlinkCursor : null);
 		}
 	}
 
 	private void linkEntered(Control link) {
-		if (lastEntered != null && lastEntered instanceof SelectableFormLabel) {
+		if (lastEntered != null
+			&& lastEntered instanceof SelectableFormLabel) {
 			SelectableFormLabel fl = (SelectableFormLabel) lastEntered;
 			linkExited(fl);
 		}
@@ -110,7 +117,8 @@ public class HyperlinkHandler
 		if (hyperlinkUnderlineMode == UNDERLINE_ROLLOVER)
 			underline(link, true);
 
-		IHyperlinkListener action = (IHyperlinkListener) hyperlinkListeners.get(link);
+		IHyperlinkListener action =
+			(IHyperlinkListener) hyperlinkListeners.get(link);
 		if (action != null)
 			action.linkEntered(link);
 		lastEntered = link;
@@ -125,7 +133,8 @@ public class HyperlinkHandler
 			link.setBackground(background);
 		if (foreground != null)
 			link.setForeground(foreground);
-		IHyperlinkListener action = (IHyperlinkListener) hyperlinkListeners.get(link);
+		IHyperlinkListener action =
+			(IHyperlinkListener) hyperlinkListeners.get(link);
 		if (action != null)
 			action.linkExited(link);
 		if (lastEntered == link)
@@ -138,7 +147,9 @@ public class HyperlinkHandler
 			HyperlinkHandler.underline(label, true);
 	}
 
-	public void registerHyperlink(Control control, IHyperlinkListener listener) {
+	public void registerHyperlink(
+		Control control,
+		IHyperlinkListener listener) {
 		if (background != null)
 			control.setBackground(background);
 		if (foreground != null)
@@ -146,7 +157,8 @@ public class HyperlinkHandler
 		control.addMouseListener(this);
 		control.addMouseTrackListener(this);
 
-		if (hyperlinkUnderlineMode == UNDERLINE_ALWAYS && control instanceof Label)
+		if (hyperlinkUnderlineMode == UNDERLINE_ALWAYS
+			&& control instanceof Label)
 			control.addPaintListener(this);
 		if (control instanceof SelectableFormLabel) {
 			SelectableFormLabel sl = (SelectableFormLabel) control;
@@ -157,8 +169,11 @@ public class HyperlinkHandler
 		hyperlinkListeners.put(control, listener);
 		removeDisposedLinks();
 	}
+
 	private void removeDisposedLinks() {
-		for (Enumeration keys = hyperlinkListeners.keys(); keys.hasMoreElements();) {
+		for (Enumeration keys = hyperlinkListeners.keys();
+			keys.hasMoreElements();
+			) {
 			Control control = (Control) keys.nextElement();
 			if (control.isDisposed()) {
 				hyperlinkListeners.remove(control);
@@ -182,11 +197,22 @@ public class HyperlinkHandler
 		Composite parent = control.getParent();
 		Rectangle bounds = control.getBounds();
 		GC gc = new GC(parent);
-		Color color = inside ? control.getForeground() : control.getBackground();
+		Color color =
+			inside ? control.getForeground() : control.getBackground();
 		gc.setForeground(color);
 		int y = bounds.y + bounds.height;
 		gc.drawLine(bounds.x, y, bounds.x + bounds.width, y);
 		gc.dispose();
 	}
 
+	public void setForeground(Color color) {
+		super.setForeground(color);
+		removeDisposedLinks();
+		for (Enumeration links = hyperlinkListeners.keys();
+			links.hasMoreElements();
+			) {
+			Control control = (Control) links.nextElement();
+			control.setForeground(color);
+		}
+	}
 }

@@ -825,14 +825,9 @@ public class DetailsForm extends PropertyWebForm {
 						UpdateUIPlugin.getResourceString(KEY_MISSING_ABORT)},
 					0);
 			int result = dialog.open();
-			if (result == 0) {
+			if (result == 0)
 				initiatePluginSearch(missing);
-				return false;
-			} else if (result == 1) {
-				return true;
-			} else {
-				return false;
-			}
+			return false;
 		} else
 			return true;
 	}

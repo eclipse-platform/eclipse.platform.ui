@@ -180,6 +180,13 @@ public class WebForm extends AbstractSectionForm {
 			control.layout();
 		}
 	}
+	
+	protected void updateHyperlinkColors() {
+		factory.updateHyperlinkColors();
+		if (control != null) {
+			control.redraw();
+		}
+	}
 
 	public void updateSize() {
 		Rectangle ssize = scrollComposite.getClientArea();

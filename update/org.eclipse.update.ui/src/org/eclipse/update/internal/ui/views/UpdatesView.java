@@ -43,7 +43,8 @@ public class UpdatesView
 		"UpdatesView.Popup.newLocalSite";
 	private static final String KEY_DELETE = "UpdatesView.Popup.delete";
 	private static final String KEY_REFRESH = "UpdatesView.Popup.refresh";
-	private static final String KEY_LINK_EXTENSION = "UpdatesView.Popup.linkExtension";
+	private static final String KEY_LINK_EXTENSION =
+		"UpdatesView.Popup.linkExtension";
 	private static final String KEY_FILTER_FILES = "UpdatesView.menu.showFiles";
 	private static final String KEY_FILTER_ENVIRONMENT =
 		"UpdatesView.menu.filterEnvironment";
@@ -55,10 +56,12 @@ public class UpdatesView
 		"UpdatesView.newBookmark.title";
 	private static final String KEY_NEW_FOLDER_TITLE =
 		"UpdatesView.newFolder.title";
-	private static final String KEY_RESTART_TITLE = 
-		"UpdatesView.restart.title";
-	private static final String KEY_RESTART_MESSAGE = 
+	private static final String KEY_RESTART_TITLE = "UpdatesView.restart.title";
+	private static final String KEY_RESTART_MESSAGE =
 		"UpdatesView.restart.message";
+	private static final String KEY_CONFIRM_DELETE = "ConfirmDelete.title";
+	private static final String KEY_CONFIRM_DELETE_MULTIPLE="ConfirmDelete.multiple";
+	private static final String KEY_CONFIRM_DELETE_SINGLE="ConfirmDelete.single";
 
 	private Action propertiesAction;
 	private Action newAction;
@@ -399,13 +402,12 @@ public class UpdatesView
 		fileFilterAction.setChecked(false);
 
 		viewer.addFilter(fileFilter);
-		
+
 		filterEnvironmentAction = new Action() {
 			public void run() {
 				if (filterEnvironmentAction.isChecked()) {
 					viewer.addFilter(environmentFilter);
-				}
-				else
+				} else
 					viewer.removeFilter(environmentFilter);
 			}
 		};
@@ -424,13 +426,14 @@ public class UpdatesView
 		showCategoriesAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_SHOW_CATEGORIES));
 		showCategoriesAction.setChecked(true);
-		
+
 		linkExtensionAction = new Action() {
 			public void run() {
 				linkProductExtension();
 			}
 		};
-		linkExtensionAction.setText(UpdateUIPlugin.getResourceString(KEY_LINK_EXTENSION));
+		linkExtensionAction.setText(
+			UpdateUIPlugin.getResourceString(KEY_LINK_EXTENSION));
 
 		viewer.addSelectionChangedListener(selectionListener);
 	}
@@ -571,7 +574,9 @@ public class UpdatesView
 							UpdateUIPluginImages.DESC_NEW_BOOKMARK);
 					WizardDialog dialog = new WizardDialog(shell, wizard);
 					dialog.create();
-					dialog.getShell().setText("New Site Bookmark");
+					dialog.getShell().setText(
+						UpdateUIPlugin.getResourceString(
+							KEY_NEW_BOOKMARK_TITLE));
 					dialog.open();
 				}
 			}
@@ -624,25 +629,29 @@ public class UpdatesView
 			});
 		}
 	}
-	
+
 	private void linkProductExtension() {
 		Object obj = getSelectedObject();
-		ExtensionRoot extension = (ExtensionRoot)obj;
+		ExtensionRoot extension = (ExtensionRoot) obj;
 		File dir = extension.getInstallableDirectory();
 		try {
-			IInstallConfiguration config = InstallWizard.createInstallConfiguration();
-			if (TargetPage.addConfiguredSite(viewer.getControl().getShell(), config, dir)) {
+			IInstallConfiguration config =
+				InstallWizard.createInstallConfiguration();
+			if (TargetPage
+				.addConfiguredSite(
+					viewer.getControl().getShell(),
+					config,
+					dir)) {
 				InstallWizard.makeConfigurationCurrent(config);
 				InstallWizard.saveLocalSite();
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			UpdateUIPlugin.logException(e);
 		}
 	}
 	private void informRestartNeeded() {
 		String title = UpdateUIPlugin.getResourceString(KEY_RESTART_TITLE);
-		String message= UpdateUIPlugin.getResourceString(KEY_RESTART_MESSAGE);
+		String message = UpdateUIPlugin.getResourceString(KEY_RESTART_MESSAGE);
 		boolean restart =
 			MessageDialog.openConfirm(
 				viewer.getControl().getShell(),
@@ -653,18 +662,15 @@ public class UpdatesView
 	}
 
 	private boolean confirmDeletion(IStructuredSelection ssel) {
-		String title = "Confirm Delete";
+		String title = UpdateUIPlugin.getResourceString(KEY_CONFIRM_DELETE);
 		String message;
 
 		if (ssel.size() > 1) {
-			message =
-				"Are you sure you want to delete these "
-					+ ssel.size()
-					+ " items?";
+			message = UpdateUIPlugin.getFormattedMessage(KEY_CONFIRM_DELETE_MULTIPLE,
+					""+ssel.size());
 		} else {
 			Object obj = ssel.getFirstElement().toString();
-			message =
-				"Are you sure you want to delete \"" + obj.toString() + "\"?";
+			message = UpdateUIPlugin.getFormattedMessage(KEY_CONFIRM_DELETE_SINGLE, obj.toString());
 		}
 		return MessageDialog.openConfirm(
 			viewer.getControl().getShell(),
@@ -703,7 +709,7 @@ public class UpdatesView
 							bookmark.getCatalog(
 								showCategoriesAction.isChecked());
 					} catch (CoreException e) {
-						// FIXME
+						UpdateUIPlugin.logException(e);
 					}
 				}
 			});
@@ -736,7 +742,8 @@ public class UpdatesView
 
 	public void objectsAdded(Object parent, Object[] children) {
 		Object child = children[0];
-		if (child instanceof PendingChange) return;
+		if (child instanceof PendingChange)
+			return;
 		if (child instanceof NamedModelObject
 			|| child instanceof SearchResultSite
 			|| child instanceof IFeature
@@ -752,7 +759,8 @@ public class UpdatesView
 	}
 
 	public void objectsRemoved(Object parent, Object[] children) {
-		if (children[0] instanceof PendingChange) return;
+		if (children[0] instanceof PendingChange)
+			return;
 		if (children[0] instanceof NamedModelObject
 			|| children[0] instanceof SearchResultSite) {
 			viewer.remove(children);

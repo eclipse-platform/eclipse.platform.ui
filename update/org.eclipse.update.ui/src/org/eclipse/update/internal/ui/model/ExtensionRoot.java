@@ -41,7 +41,7 @@ public class ExtensionRoot extends UIModelObject implements IWorkbenchAdapter {
 	}
 	
 	public File getInstallableDirectory() {
-		return new File(root, "eclipse");
+		return root;
 	}
 	
 	/**
@@ -55,8 +55,6 @@ public class ExtensionRoot extends UIModelObject implements IWorkbenchAdapter {
 	public static boolean isExtensionRoot(File directory) {
 		File marker = new File(directory, ".eclipseextension");
 		if (!marker.exists() || marker.isDirectory()) return false;
-		File eclipse = new File(directory, "eclipse");
-		if (!eclipse.exists() || !eclipse.isDirectory()) return false;
 		return true;
 	}
 	

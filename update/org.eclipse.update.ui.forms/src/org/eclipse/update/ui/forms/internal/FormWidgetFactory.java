@@ -354,21 +354,24 @@ public class FormWidgetFactory {
 	}
 	private void initialize() {
 		clientAreaColor = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-		//registerColor(COLOR_BACKGROUND, 0xff, 0xfe, 0xf9);
 		registerColor(COLOR_BORDER, 195, 191, 179);
 		registerColor(COLOR_COMPOSITE_SEPARATOR, 152, 170, 203);
 		registerColor(DEFAULT_HEADER_COLOR, 0x48, 0x70, 0x98);
-		//backgroundColor = getColor(COLOR_BACKGROUND);
 		backgroundColor = clientAreaColor;
 		borderColor = getColor(COLOR_BORDER);
 		foregroundColor = display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		hyperlinkHandler = new HyperlinkHandler();
-		Color hyperlinkColor = JFaceColors.getHyperlinkText(display);
-		//hyperlinkHandler.setForeground(registerColor(COLOR_HYPERLINK, 0, 0, 153));
-		hyperlinkHandler.setForeground(hyperlinkColor);
 		hyperlinkHandler.setBackground(backgroundColor);
+		updateHyperlinkColors();
 		visibilityHandler = new VisibilityHandler();
 		keyboardHandler = new KeyboardHandler();
+	}
+
+	public void updateHyperlinkColors() {
+		Color hyperlinkColor = JFaceColors.getHyperlinkText(display);
+		Color activeHyperlinkColor = JFaceColors.getActiveHyperlinkText(display);
+		hyperlinkHandler.setForeground(hyperlinkColor);
+		hyperlinkHandler.setActiveForeground(activeHyperlinkColor);
 	}
 
 	public void paintBordersFor(Composite parent) {

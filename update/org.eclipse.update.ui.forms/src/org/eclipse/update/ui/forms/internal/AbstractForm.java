@@ -5,6 +5,8 @@ package org.eclipse.update.ui.forms.internal;
  */
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.ui.*;
@@ -21,15 +23,29 @@ public abstract class AbstractForm implements IForm, IPropertyChangeListener {
 	protected FormWidgetFactory factory;
 	protected Color headingBackground;
 	protected Color headingForeground;
-	protected boolean headingVisible=true;
+	protected boolean headingVisible = true;
 	protected Image headingImage;
 	protected String headingText;
 	protected Font titleFont;
-	
+
 	public AbstractForm() {
 		factory = new FormWidgetFactory();
-	   	titleFont = JFaceResources.getHeaderFont();
-   		JFaceResources.getFontRegistry().addListener(this);
+		titleFont = JFaceResources.getHeaderFont();
+		JFaceResources.getFontRegistry().addListener(this);
+		IPreferenceStore pstore = JFacePreferences.getPreferenceStore();
+		pstore.addPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e) {
+				if (e.getProperty().equals(JFacePreferences.HYPERLINK_COLOR)
+					|| e.getProperty().equals(
+						JFacePreferences.ACTIVE_HYPERLINK_COLOR)) {
+					updateHyperlinkColors();
+				}
+			}
+		});
+	}
+	
+	protected void updateHyperlinkColors() {
+		factory.updateHyperlinkColors();
 	}
 
 	/**
@@ -37,7 +53,6 @@ public abstract class AbstractForm implements IForm, IPropertyChangeListener {
 	 */
 	public void commitChanges(boolean onSave) {
 	}
-
 
 	/**
 	 * @see IForm#createControl(Composite)
@@ -50,8 +65,9 @@ public abstract class AbstractForm implements IForm, IPropertyChangeListener {
 	public void dispose() {
 		factory.dispose();
 		JFaceResources.getFontRegistry().removeListener(this);
+		IPreferenceStore pstore = JFacePreferences.getPreferenceStore();
+		pstore.removePropertyChangeListener(this);
 	}
-
 
 	/**
 	 * @see IForm#doGlobalAction(String)
@@ -60,13 +76,11 @@ public abstract class AbstractForm implements IForm, IPropertyChangeListener {
 		return false;
 	}
 
-
 	/**
 	 * @see IForm#expandTo(Object)
 	 */
 	public void expandTo(Object object) {
 	}
-
 
 	/**
 	 * @see IForm#getControl()
@@ -80,14 +94,12 @@ public abstract class AbstractForm implements IForm, IPropertyChangeListener {
 		return factory;
 	}
 
-
 	/**
 	 * @see IForm#getHeadingBackground()
 	 */
 	public Color getHeadingBackground() {
 		return headingBackground;
 	}
-
 
 	/**
 	 * @see IForm#getHeadingForeground()
@@ -96,7 +108,6 @@ public abstract class AbstractForm implements IForm, IPropertyChangeListener {
 		return headingForeground;
 	}
 
-
 	/**
 	 * @see IForm#getHeadingImage()
 	 */
@@ -104,22 +115,20 @@ public abstract class AbstractForm implements IForm, IPropertyChangeListener {
 		return headingImage;
 	}
 
-
 	/**
 	 * @see IForm#getHeading()
 	 */
 	public String getHeadingText() {
-		if (headingText==null) return "";
+		if (headingText == null)
+			return "";
 		return headingText;
 	}
-
 
 	/**
 	 * @see IForm#initialize(Object)
 	 */
 	public void initialize(Object model) {
 	}
-
 
 	/**
 	 * @see IForm#isHeadingVisible()
@@ -128,20 +137,17 @@ public abstract class AbstractForm implements IForm, IPropertyChangeListener {
 		return headingVisible;
 	}
 
-
 	/**
 	 * @see IForm#registerSection(FormSection)
 	 */
 	public void registerSection(FormSection section) {
 	}
 
-
 	/**
 	 * @see IForm#setFocus()
 	 */
 	public void setFocus() {
 	}
-
 
 	/**
 	 * @see IForm#setHeadingBackground(Color)
@@ -150,14 +156,12 @@ public abstract class AbstractForm implements IForm, IPropertyChangeListener {
 		this.headingBackground = newHeadingBackground;
 	}
 
-
 	/**
 	 * @see IForm#setHeadingForeground(Color)
 	 */
 	public void setHeadingForeground(Color newHeadingForeground) {
 		this.headingForeground = newHeadingForeground;
 	}
-
 
 	/**
 	 * @see IForm#setHeadingImage(Image)
@@ -166,14 +170,12 @@ public abstract class AbstractForm implements IForm, IPropertyChangeListener {
 		this.headingImage = headingImage;
 	}
 
-
 	/**
 	 * @see IForm#setHeadingVisible(boolean)
 	 */
 	public void setHeadingVisible(boolean newHeadingVisible) {
 		this.headingVisible = newHeadingVisible;
 	}
-
 
 	/**
 	 * @see IForm#setHeading(String)
@@ -182,45 +184,41 @@ public abstract class AbstractForm implements IForm, IPropertyChangeListener {
 		this.headingText = headingText;
 	}
 
-
 	/**
 	 * @see IForm#update()
 	 */
 	public void update() {
 	}
-	
-protected boolean canPerformDirectly(String id, Control control) {
-	if (control instanceof Text) {
-		Text text = (Text)control;
-		if (id.equals(IWorkbenchActionConstants.CUT)) {
-			text.cut();
-			return true;
-		}
-		if (id.equals(IWorkbenchActionConstants.COPY)) {
-			text.copy();
-			return true;
-		}
-		if (id.equals(IWorkbenchActionConstants.PASTE)) {
-			text.paste();
-			return true;
-		}
-		if (id.equals(IWorkbenchActionConstants.SELECT_ALL)) {
-			text.selectAll();
-			return true;
-		}
-		if (id.equals(IWorkbenchActionConstants.DELETE)) {
-			int count = text.getSelectionCount();
-			if (count==0) {
-				int caretPos = text.getCaretPosition();
-				text.setSelection(caretPos, caretPos+1);
+
+	protected boolean canPerformDirectly(String id, Control control) {
+		if (control instanceof Text) {
+			Text text = (Text) control;
+			if (id.equals(IWorkbenchActionConstants.CUT)) {
+				text.cut();
+				return true;
 			}
-			text.insert("");
-			return true;
+			if (id.equals(IWorkbenchActionConstants.COPY)) {
+				text.copy();
+				return true;
+			}
+			if (id.equals(IWorkbenchActionConstants.PASTE)) {
+				text.paste();
+				return true;
+			}
+			if (id.equals(IWorkbenchActionConstants.SELECT_ALL)) {
+				text.selectAll();
+				return true;
+			}
+			if (id.equals(IWorkbenchActionConstants.DELETE)) {
+				int count = text.getSelectionCount();
+				if (count == 0) {
+					int caretPos = text.getCaretPosition();
+					text.setSelection(caretPos, caretPos + 1);
+				}
+				text.insert("");
+				return true;
+			}
 		}
+		return false;
 	}
-	return false;
 }
-
-
-}
-
