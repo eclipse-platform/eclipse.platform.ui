@@ -28,6 +28,7 @@ public static final String SITE_PAGE = "Site";
 public static final String DETAILS_PAGE = "Details";
 public static final String BROWSER_PAGE = "Browser";
 public static final String CONFIG_PAGE = "Config";
+public static final String SNAPSHOT_PAGE = "Snapshot";
 public static final String INSTALL_SITE_PAGE = "InstallSite";
 public static final String CDROM_PAGE = "CDROM";
 public static final String UPDATES_PAGE = "Updates";
@@ -63,6 +64,7 @@ public void createPages() {
 		new SitePage(this, "Site");
 	addPage(SITE_PAGE, sitePage);
 	addPage(CONFIG_PAGE, new LocalSitePage(this, "Configuration"));
+	addPage(SNAPSHOT_PAGE, new SnapshotPage(this, "Snapshot"));
 	addPage(INSTALL_SITE_PAGE, new InstallableSitePage(this, "Install Location"));
 	addPage(CDROM_PAGE, new CDROMPage(this, "CDROM"));
 	addPage(UPDATES_PAGE, new UpdatesPage(this, "Available Updates"));
@@ -160,7 +162,11 @@ public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 				showPageWithInput(CONFIG_PAGE, el);
 				return;
 			}
-			if (el instanceof ISite) {
+			if (el instanceof IInstallConfiguration) {
+				showPageWithInput(SNAPSHOT_PAGE, el);
+				return;
+			}
+			if (el instanceof IConfigurationSite) {
 				showPageWithInput(INSTALL_SITE_PAGE, el);
 				return;
 			}

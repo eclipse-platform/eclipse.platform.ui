@@ -23,7 +23,7 @@ import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.dialogs.MessageDialog;
-public class DetailsForm extends UpdateWebForm {
+public class DetailsForm extends PropertyWebForm {
 private Label imageLabel;
 private Label providerLabel;
 private Label versionLabel;
@@ -199,9 +199,9 @@ public void createContents(Composite container) {
 			GridLayout layout = new GridLayout();
   			expansion.setLayout(layout);
    			layout.marginWidth = 0;
-		   	osLabel = createProperty(expansion, "Operating System", true);
-			wsLabel = createProperty(expansion, "\nWindowing System", true);
-			nlLabel = createProperty(expansion, "\nSupported Languages", true);
+		   	osLabel = createProperty(expansion, "Operating System");
+			wsLabel = createProperty(expansion, "\nWindowing System");
+			nlLabel = createProperty(expansion, "\nSupported Languages");
 			
 		}
 	};
@@ -222,7 +222,7 @@ public void createContents(Composite container) {
 	//td.valign = TableData.MIDDLE;
 	imageLabel.setLayoutData(td);
 	
-	Label label = createHeading(container, "\nDescription", false);
+	Label label = createHeading(container, "\nDescription");
 	td = new TableData();
 	td.colspan = 2;
 	label.setLayoutData(td);
@@ -281,33 +281,6 @@ public void createContents(Composite container) {
   	gd = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_BEGINNING);
   	gd.grabExcessHorizontalSpace = true;
   	doButton.setLayoutData(gd);
-}
-
-private Label createProperty(Composite parent, String name) {
-	return createProperty(parent, name, false);
-}
-
-private Label createProperty(Composite parent, String name, boolean subHeading) {
-	createHeading(parent, name, subHeading);
-	Label label = factory.createLabel(parent, null);
-	label.setText("");
-	GridData gd = new GridData();
-	gd.horizontalIndent = 10;
-	label.setLayoutData(gd);
-	return label;
-}
-
-private Label createHeading(Composite parent, String text, boolean subHeading) {
-	Label l = factory.createHeadingLabel(parent, text);
-	Color hc;
-	/*
-	if (subHeading)
-	   hc = factory.getBorderColor();
-	else
-	*/
-	   hc = factory.getColor(factory.COLOR_COMPOSITE_SEPARATOR);	
-  	l.setForeground(hc);
-	return l;
 }
 
 public void expandTo(final Object obj) {
