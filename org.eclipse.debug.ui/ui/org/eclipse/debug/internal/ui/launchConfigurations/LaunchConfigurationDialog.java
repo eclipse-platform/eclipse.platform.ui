@@ -1444,7 +1444,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			DebugUIPlugin.log(e);
 		}
 		getTreeViewer().refresh();	
-		getTreeViewer().setSelection(new StructuredSelection(configuration));
 		updateButtons();
 		setIgnoreSelectionChanges(false);
 	}
@@ -1592,6 +1591,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				configType = (ILaunchConfigurationType)obj;
 			}
 			constructNewConfig(configType);
+			getTreeViewer().setSelection(new StructuredSelection(fUnderlyingConfig));
 		} catch(CoreException ce) {
 			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception getting configuration type for new launch configuration.", ce);
  			clearLaunchConfiguration();
@@ -1662,6 +1662,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				ILaunchConfigurationWorkingCopy newWorkingCopy = selectedConfig.copy(newName);
 				setLaunchConfiguration(newWorkingCopy, false);
 				doSave();
+				getTreeViewer().setSelection(new StructuredSelection(fUnderlyingConfig));
 			} catch (CoreException ce) {
 				DebugUIPlugin.log(ce);			
 			}			
