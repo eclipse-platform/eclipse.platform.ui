@@ -25,6 +25,7 @@ import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.editor.actions.FoldingActionGroup;
 import org.eclipse.ant.internal.ui.editor.actions.InformationDispatchAction;
 import org.eclipse.ant.internal.ui.editor.actions.OpenDeclarationAction;
+import org.eclipse.ant.internal.ui.editor.actions.RunToLineAdapter;
 import org.eclipse.ant.internal.ui.editor.actions.ToggleLineBreakpointAction;
 import org.eclipse.ant.internal.ui.editor.outline.AntEditorContentOutlinePage;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
@@ -41,6 +42,7 @@ import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.ui.actions.IRunToLineTarget;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
@@ -408,6 +410,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		setCompatibilityMode(false);
 		setHelpContextId(IAntUIHelpContextIds.ANT_EDITOR);	
 		setRulerContextMenuId("org.eclipse.ant.internal.ui.editor.AntEditor.RulerContext"); //$NON-NLS-1$
+        setEditorContextMenuId("org.eclipse.ant.internal.ui.editor.AntEditor"); //$NON-NLS-1$
     }
    
 	/* (non-Javadoc)
@@ -435,6 +438,10 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
         
         if (key == IToggleBreakpointsTarget.class) {
 			return new ToggleLineBreakpointAction();
+		}
+        
+        if (key == IRunToLineTarget.class) {
+			return new RunToLineAdapter();
 		}
         
         return super.getAdapter(key);
