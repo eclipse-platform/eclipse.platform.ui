@@ -120,7 +120,8 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * @see IProjectNature#deconfigure()
 	 */
 	public void deconfigure() throws CoreException {
-		// unmanage() removes any traces of CVS from the project
+		// We want to clear the sync info for the project without deleting the CVS directories
+		// unmanage() does this
 		try {
 			managedProject.unmanage();
 		} catch (CVSException e) {

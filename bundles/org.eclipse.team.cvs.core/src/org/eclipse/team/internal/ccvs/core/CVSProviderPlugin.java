@@ -22,6 +22,7 @@ import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -151,6 +152,7 @@ public class CVSProviderPlugin extends Plugin {
 			throw new CoreException(e.getStatus());
 		}
 		ProjectDescriptionManager.initializeChangeListener();
+		Synchronizer.startup();
 	}
 	
 	/**

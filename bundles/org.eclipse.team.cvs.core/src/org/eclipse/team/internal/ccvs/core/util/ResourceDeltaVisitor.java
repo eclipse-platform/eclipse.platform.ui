@@ -23,7 +23,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 
 public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 
@@ -41,30 +44,40 @@ public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 			listener = new IResourceChangeListener() {
 				public void resourceChanged(IResourceChangeEvent event) {
 					try {
-						IResourceDelta root = event.getDelta();
-						IResourceDelta[] projectDeltas = root.getAffectedChildren();
-						for (int i = 0; i < projectDeltas.length; i++) {							
-							IResourceDelta delta = projectDeltas[i];
-							IResource resource = delta.getResource();
+						if (event.getType() == IResourceChangeEvent.PRE_DELETE) {
+							// We add the removal in the pre-delete.
+							// It will be forwarded when we get the post change
+							IResource resource = event.getResource();
 							ITeamProvider provider = TeamPlugin.getManager().getProvider(resource);
-
-							// if a project is moved the originating project will not be associated with the CVS provider
-							// however listeners will probably still be interested in the move delta.	
-							if ((delta.getFlags() & IResourceDelta.MOVED_TO) > 0) {																
-								IResource destination = getResourceFor(resource.getProject(), resource, delta.getMovedToPath());
-								provider = TeamPlugin.getManager().getProvider(destination);
-							}
-							
 							if (provider instanceof CVSTeamProvider)
-								delta.accept(visitor);
+								addRemoval(resource.getProject(), resource);
+						} else {
+							IResourceDelta root = event.getDelta();
+							IResourceDelta[] projectDeltas = root.getAffectedChildren();
+							for (int i = 0; i < projectDeltas.length; i++) {							
+								IResourceDelta delta = projectDeltas[i];
+								IResource resource = delta.getResource();
+								ITeamProvider provider = TeamPlugin.getManager().getProvider(resource);
+	
+								// if a project is moved the originating project will not be associated with the CVS provider
+								// however listeners will probably still be interested in the move delta.	
+								if ((delta.getFlags() & IResourceDelta.MOVED_TO) > 0) {																
+									IResource destination = getResourceFor(resource.getProject(), resource, delta.getMovedToPath());
+									provider = TeamPlugin.getManager().getProvider(destination);
+								}
+								
+								if (provider instanceof CVSTeamProvider) {
+									delta.accept(visitor);
+								}
+							}
+							visitor.handle();
 						}
-						visitor.handle();
 					} catch (CoreException e) {
 						Util.logError(Policy.bind("ResourceDeltaVisitor.visitError"), e);
 					}
 				}
 			};
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_DELETE);
 		return visitor;
 	}
 	

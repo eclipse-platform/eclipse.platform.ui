@@ -105,7 +105,6 @@ public class Synchronizer {
 				if(resource.getType()!=IResource.FILE && !resource.getName().equals("CVS")) {
 					String location = new Path(project.getWorkspace().getRoot().getLocation().toString()).append(resource.getFullPath()).toString();
 					Synchronizer.getInstance().deleteFolderSync(new File(location), new NullProgressMonitor());
-					Synchronizer.getInstance().save(new NullProgressMonitor());
 				}
 			} catch(CVSException e) {
 				CVSProviderPlugin.log(new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0, "Could not delete CVS folder sync info", null));
@@ -147,13 +146,17 @@ public class Synchronizer {
 	 * Answer the singleton instance of the Synchronizer.
 	 */
 	public static Synchronizer getInstance() {
-		if(instance==null) {
-			instance = new Synchronizer();
-			deletedListener = instance.new SyncResourceDeletionListener();
-			deletedListener.register();
-		}
 		return instance;
 	}		
+	
+	/**
+	 * On startup, initialize the synchronizer instance
+	 */
+	public static void startup() {
+		instance = new Synchronizer();
+		deletedListener = instance.new SyncResourceDeletionListener();
+		deletedListener.register();
+	}
 	
 	/**
 	 * Associates the provided sync information with the given file or folder. The resource
