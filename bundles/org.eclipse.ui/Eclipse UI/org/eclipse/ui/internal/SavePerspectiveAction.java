@@ -4,13 +4,13 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.registry.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.dialogs.SavePerspectiveDialog;
+import org.eclipse.ui.internal.registry.*;
 
 /**
  * Reset the layout within the active perspective.
@@ -31,6 +31,41 @@ public SavePerspectiveAction(IWorkbenchWindow window) {
  *	The user has invoked this action
  */
 public void run() {
+	IWorkbenchPage page = window.getActivePage();
+	if (page == null)
+		return;
+	PerspectiveDescriptor desc = (PerspectiveDescriptor)page.getPerspective();
+	if (desc.isSingleton())
+		saveSingleton();
+	else
+		saveNonSingleton();
+}
+
+/** 
+ * Save a singleton over itself.
+ */
+public void saveSingleton() {
+	String [] buttons= new String[] { 
+		IDialogConstants.OK_LABEL,
+		IDialogConstants.CANCEL_LABEL
+	};
+	MessageDialog d= new MessageDialog(
+		window.getShell(),
+		WorkbenchMessages.getString("SavePerspective.overwriteTitle"), //$NON-NLS-1$
+		null,
+		WorkbenchMessages.getString("SavePerspective.singletonQuestion"),  //$NON-NLS-1$
+		MessageDialog.QUESTION,
+		buttons,
+		0
+	);
+	if (d.open() == 0)
+		window.getActivePage().savePerspective();
+}
+
+/**
+ * Save a singleton over the user selection.
+ */
+public void saveNonSingleton() {
 	// Get reg.
 	PerspectiveRegistry reg = (PerspectiveRegistry)WorkbenchPlugin.getDefault()
 		.getPerspectiveRegistry();

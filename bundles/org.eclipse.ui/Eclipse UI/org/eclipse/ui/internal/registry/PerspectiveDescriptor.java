@@ -30,6 +30,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor {
 	private String originalId;
 	private String label;
 	private String className;
+	private boolean singleton;
 	private ImageDescriptor image;
 	private IConfigurationElement configElement;
 	private File customFile;
@@ -39,6 +40,8 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor {
 	private static final String ATT_NAME="name";//$NON-NLS-1$
 	private static final String ATT_ICON="icon";//$NON-NLS-1$
 	private static final String ATT_CLASS="class";//$NON-NLS-1$
+	private static final String ATT_SINGLETON="singleton";//$NON-NLS-1$
+	
 /**
  * Create a descriptor from a file.
  */
@@ -84,6 +87,7 @@ public PerspectiveDescriptor(IConfigurationElement configElement)
 	id = configElement.getAttribute(ATT_ID);
 	label = configElement.getAttribute(ATT_NAME);
 	className = configElement.getAttribute(ATT_CLASS);
+	singleton = (configElement.getAttributeAsIs(ATT_SINGLETON) != null);
 
 	// Sanity check.
 	if ((label == null) || (className == null)) {
@@ -173,6 +177,12 @@ public boolean isPredefined() {
 	return (className != null);
 }
 /**
+ * Returns true if this perspective is a singleton.
+ */
+public boolean isSingleton() {
+	return singleton;
+}
+/**
  * @see IPersistable
  */
 public void restoreState(IMemento memento) {
@@ -188,6 +198,7 @@ public void restoreState(IMemento memento) {
 		path = path.append(customFileStr);
 		customFile = path.toFile();
 	}
+	singleton = (childMem.getInteger("singleton") != null);
 
 	//Find a descriptor in the registry.
 	PerspectiveDescriptor descriptor = (PerspectiveDescriptor)WorkbenchPlugin.getDefault().
@@ -216,6 +227,8 @@ public void saveState(IMemento memento) {
 	childMem.putString(IWorkbenchConstants.TAG_LABEL,label);
 	childMem.putString(IWorkbenchConstants.TAG_CLASS,className);
 	childMem.putString(IWorkbenchConstants.TAG_FILE,customFile.getName());
+	if (singleton)
+		childMem.putInteger("singleton", 1);
 }
 /**
  * Sets the custom file.
