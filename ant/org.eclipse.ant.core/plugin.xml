@@ -2,9 +2,9 @@
 <plugin
   name="Eclipse Core Ant Support"
   id="org.eclipse.ant.core"
-  version="1.0"
+  version="0.9"
   class="org.eclipse.ant.core.AntPlugin"
-  vendor-name="IBM">
+  provider-name="Object Technology International, Inc.">
 
   <runtime>
     <library name="ant.jar">

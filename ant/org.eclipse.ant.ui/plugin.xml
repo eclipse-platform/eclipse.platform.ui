@@ -3,8 +3,8 @@
 <plugin
   name = "AntUI"
   id="org.eclipse.ant.ui"
-  version = "0.0"
-  vendor-name = "IBM"
+  version = "0.9"
+  provider-name = "Object Technology International, Inc."
   class="org.eclipse.ant.internal.ui.AntUIPlugin">
 
   <requires>
