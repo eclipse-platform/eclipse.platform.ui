@@ -186,6 +186,9 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	
 	public static void handle(Throwable t) {
 		IStatus error = null;
+		if (t instanceof InvocationTargetException) {
+			t = ((InvocationTargetException)t).getTargetException();
+		}
 		if (t instanceof CoreException) {
 			error = ((CoreException)t).getStatus();
 		} else if (t instanceof TeamException) {

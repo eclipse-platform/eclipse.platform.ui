@@ -261,6 +261,7 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 					final IRemoteTargetResource selectedFolder = getSelectedRemoteFolder(selection)[0];
 					
 					IRemoteTargetResource newFolder = CreateNewFolderAction.createDir(shell, selectedFolder);
+					if (newFolder == null) return;
 					treeViewer.refresh(currentSelection);
 					expandInTreeCurrentSelection(new StructuredSelection(currentSelection), false);
 					treeViewer.setSelection(new StructuredSelection(currentSelection));
