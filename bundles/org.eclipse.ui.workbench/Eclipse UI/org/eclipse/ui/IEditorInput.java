@@ -81,7 +81,7 @@ public ImageDescriptor getImageDescriptor();
  * @return the name string
  */ 
 public String getName();
-/*
+/**
  * Returns an object that can be used to save the state of this editor input.
  *
  * @return the persistable element, or <code>null</code> if this editor input
