@@ -24,15 +24,7 @@ public class SearchPluginImages {
 	private static URL fgIconLocation;
 
 	static {
-		String pathSuffix= ""; //$NON-NLS-1$
-		Display display= Display.getCurrent();
-		if (display == null)
-			// class might get loaded by non-UI thread.
-			display= Display.getDefault();
-		if (display != null && display.getIconDepth() > 4)
-			pathSuffix = "icons/full/"; //$NON-NLS-1$
-		else
-			pathSuffix = "icons/basic/"; //$NON-NLS-1$
+		String pathSuffix= "icons/full/"; //$NON-NLS-1$
 		try {
 			fgIconLocation= new URL(SearchPlugin.getDefault().getDescriptor().getInstallURL(), pathSuffix);
 		} catch (MalformedURLException ex) {
