@@ -78,6 +78,12 @@ public class BasicStackPresentation extends StackPresentation {
 	private Color background;
 	
 	/**
+	 * While we are dragging a tab from this folder, this holdes index of the tab
+	 * being dragged. Set to -1 if we are not currently dragging a tab from this folder.
+	 */
+	private int dragStart = -1;
+	
+	/**
 	 * State of the presentation at the last mousedown event. This is used to prevent
 	 * a mouseup over the minimize or maximize buttons from undoing a state change 
 	 * that was caused by the mousedown.
@@ -273,8 +279,10 @@ public class BasicStackPresentation extends StackPresentation {
 				IPresentablePart part = getPartForTab(tabUnderPointer); 
 				
 				if (getSite().isMoveable(part)) {
+					dragStart = tabFolder.indexOf(tabUnderPointer);
 					getSite().dragStart(part, 
 						tabFolder.toDisplay(localPos), false);
+					dragStart = -1;
 				}
 			}
 		};
@@ -661,7 +669,7 @@ public class BasicStackPresentation extends StackPresentation {
 	public void addPart(IPresentablePart newPart, IPresentablePart position) {
 		int idx = indexOf(position);
 		
-		createPartTab(newPart, idx);		
+		createPartTab(newPart, idx);
 	}
 
 	/* (non-Javadoc)
@@ -778,8 +786,21 @@ public class BasicStackPresentation extends StackPresentation {
 			return null;
 		}
 		
+		int dragOverIndex = tabFolder.indexOf(tabUnderPointer); 
+		
+		IPresentablePart position = null;
+		boolean dropNext = dragStart >= 0 && dragStart < dragOverIndex;
+		if (dropNext) {
+			int idx = dragOverIndex + 1;
+			if (idx < tabFolder.getItemCount()) {
+				position = getPartForTab(tabFolder.getItem(idx));
+			}
+		} else {
+			position = getPartForTab(tabUnderPointer);
+		}
+		
 		return new StackDropResult(Geometry.toDisplay(tabFolder, tabUnderPointer.getBounds()),
-			tabFolder.indexOf(tabUnderPointer));
+			position);
 	}
 	
 	/**

@@ -196,15 +196,14 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
     /**
      * Add a part at a particular position
      */
-    private void add(LayoutPart newChild, int idx) {
-        IPresentablePart position = getPresentablePartAtIndex(idx);
+    private void add(LayoutPart newChild, IPresentablePart position) {
         LayoutPart targetPart = getPaneFor(position);
         int childIdx = children.indexOf(targetPart);
 
         if (childIdx == -1) {
             children.add(newChild);
         } else {
-            children.add(idx, newChild);
+            children.add(childIdx, newChild);
         }
 
         if (active) {
@@ -312,10 +311,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
 
                 if (dropResult == null) { return null; }
 
-                final IPresentablePart draggedControl = getPresentablePartAtIndex(dropResult
-                        .getDropIndex());
-
-                if (draggedControl == pane.getPresentablePart()) { return null; };
+                if (dropResult.getInsertionPoint() == pane.getPresentablePart()) { return null; };
                 
                 return new IDropTarget() {
 
@@ -335,7 +331,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
                             remove(pane);
                         }
 
-                        add(pane, dropResult.getDropIndex());
+                        add(pane, dropResult.getInsertionPoint());
                         setSelection(pane);
                         pane.setFocus();
                     }

@@ -21,19 +21,20 @@ import org.eclipse.swt.graphics.Rectangle;
 public final class StackDropResult {
 	
 	private Rectangle snapRectangle;
-	private int tabIndex;
+	private IPresentablePart insertBefore;
 	
 	/**
 	 * Creates a drag status object
 	 * 
 	 * @param snapRectangle region that should be highlighted by the tracking
 	 * rectangle (display coordinates) 
-	 * @param dragPart part being dragged over (or null if the dragged part
-	 * can be added anywhere)
+	 * @param insertBefore indicates the position where the drop will occur.
+	 * The dragged part will be inserted before the indicated part. Null if
+	 * the dragged part should be inserted at the end.
 	 */
-	public StackDropResult(Rectangle snapRectangle, int tabIndex) {
+	public StackDropResult(Rectangle snapRectangle, IPresentablePart insertBefore) {
 		this.snapRectangle = snapRectangle;
-		this.tabIndex = tabIndex;
+		this.insertBefore = insertBefore;
 	}
 	
 	/**
@@ -48,13 +49,13 @@ public final class StackDropResult {
 	}
 	
 	/**
-	 * Returns the part being dragged over. If the part being dragged is dropped
-	 * here, it will replace this part.
+	 * Returns the insertion position for this drop, or null if the drop will
+	 * occur at the end. That is, the newly inserted part will be inserted
+	 * before the returned part.
 	 * 
-	 * @return the part that will be replaced by this drop operation (or null if
-	 * the dragged part can be added anywhere in the stack)
+	 * @return the insertion position, or null if at the end
 	 */
-	public int getDropIndex() {
-		return tabIndex;
-	}
+	public IPresentablePart getInsertionPoint() {
+		return insertBefore;
+	}	
 }
