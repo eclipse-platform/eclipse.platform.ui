@@ -197,7 +197,16 @@ public class CVSProvider implements ICVSProvider {
 								if(!project.isOpen()) {
 									project.open(Policy.subMonitorFor(pm, 10));
 								}
-								project.delete(true, true, Policy.subMonitorFor(pm, 90));
+								// XXX: temporary code to support creating a java project for sources in CVS
+								// should be removed once nature support is added to the UI.
+								// delete children, keep project 
+								pm.subTask("Srubbing local project...");
+								IResource[] children = project.members();
+								IProgressMonitor subMonitor = Policy.subMonitorFor(pm, 90);
+								subMonitor.beginTask(null, children.length * 100);
+								for (int j = 0; j < children.length; j++) {
+										children[j].delete(true /*force*/, Policy.subMonitorFor(subMonitor, 100));
+								}
 							}
 							
 							checkout(resource.getRepository(), project, resource.getRepositoryRelativePath(), resource.getTag(), Policy.subMonitorFor(pm, 900));
