@@ -16,9 +16,12 @@ import org.eclipse.core.runtime.IStatus;
  */
 public class PlatformLogWriter implements ILogListener {
 	protected File logFile = null;
-	protected PrintWriter log = null;
+	protected Writer log = null;
 	protected int tabDepth;
-
+	
+	protected static final String LINE_SEPARATOR;
+	protected static final String TAB_STRING = "  ";
+	
 	protected static final String XML_VERSION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 
 	protected static final String ATTRIBUTE_DATE = "date";
@@ -32,6 +35,11 @@ public class PlatformLogWriter implements ILogListener {
 	protected static final String ELEMENT_LOG_ENTRY = "log-entry";
 	protected static final String ELEMENT_STATUS = "status";
 	protected static final String ELEMENT_EXCEPTION = "exception";
+
+	static {
+		String s = System.getProperty("line.separator");
+		LINE_SEPARATOR = s == null ? "\n" : s;
+	}
 
 public PlatformLogWriter(File file) {
 	this.logFile = file;
@@ -77,7 +85,7 @@ protected static String getReplacement(char c) {
 	}
 	return null;
 }
-protected void closeLogFile() {
+protected void closeLogFile() throws IOException {
 	try {
 		log.flush();
 		log.close();
@@ -110,16 +118,19 @@ protected String encodeStackTrace(Throwable t) {
 	pWriter.flush();
 	return sWriter.toString();
 }
-protected void endTag(String name) {
+protected void endTag(String name) throws IOException {
 	tabDepth--;
 	printTag('/' + name, null);
 }
+/**
+ * @see ILogListener#logging.
+ */
 public synchronized void logging(IStatus status, String plugin) {
 	// thread safety: (Concurrency003)
 	if (logFile != null)
 		openLogFile();
 	if (log == null)
-		return;
+		log = new OutputStreamWriter(System.err);
 	try {
 		try {
 			writeLogEntry(status);
@@ -136,7 +147,11 @@ public synchronized void logging(IStatus status, String plugin) {
 			writeLogEntry(status);
 			log.flush();
 		} catch (Exception e2) {
+			System.err.println("An exception occurred while logging to the console:");
+			e2.printStackTrace();
 		}
+	} finally {
+			log = null;
 	}
 }
 protected void openLogFile() {
@@ -144,67 +159,79 @@ protected void openLogFile() {
 		boolean newLog = !logFile.exists();
 		log = new PrintWriter(new BufferedWriter(new FileWriter(logFile.getAbsolutePath(), true)));
 		if (newLog) {
-			log.println(XML_VERSION);
+			println(XML_VERSION);
 			startTag(ELEMENT_LOG, null);
 		}
 	} catch (IOException e) {
 		// there was a problem opening the log file so log to the console
-		log = new PrintWriter(System.out);
+		log = new OutputStreamWriter(System.err);
 	}
 }
-protected void printTabulation() {
+/**
+ * Writes the given string to the log, followed by the line terminator string.
+ */
+protected void println(String s) throws IOException {
+	log.write(s);
+	log.write(LINE_SEPARATOR);
+}
+protected void printTabulation() throws IOException {
 	for (int i = 0; i < tabDepth; i++)
-		log.print("  ");
+		log.write(TAB_STRING);
 }
 
-protected void printTag(String name, HashMap parameters) {
+protected void printTag(String name, HashMap parameters) throws IOException {
 	printTabulation();
-	log.print('<');
-	log.print(name);
+	log.write('<');
+	log.write(name);
 	tabDepth++;
 	if (parameters != null)
 		for (Enumeration enum = Collections.enumeration(parameters.keySet()); enum.hasMoreElements();) {
 			//new line for each attribute if there's more than one
 			if (parameters.size() > 1) {
-				log.println();
+				log.write(LINE_SEPARATOR);
 				printTabulation();
 			}
-			log.print(" ");
+			log.write(" ");
 			String key = (String) enum.nextElement();
-			log.print(key);
-			log.print("=\"");
-			log.print(getEscaped(String.valueOf(parameters.get(key))));
-			log.print("\"");
+			log.write(key);
+			log.write("=\"");
+			log.write(getEscaped(String.valueOf(parameters.get(key))));
+			log.write("\"");
 		}
 	tabDepth--;
-	log.println(">");
+	println(">");
 }
 /**
- * @see ILogListener
+ * Shuts down the platform log.
  */
 public synchronized void shutdown() {
-	if (logFile != null) {
-		try {
-			openLogFile();
-			endTag(ELEMENT_LOG);
-		} finally {
-			closeLogFile();
-			logFile = null;
+	try {
+		if (logFile != null) {
+			try {
+				openLogFile();
+				endTag(ELEMENT_LOG);
+			} finally {
+				closeLogFile();
+				logFile = null;
+			}
+		} else {
+			if (log != null) {
+				Writer old = log;
+				log = null;
+				old.flush();
+				old.close();
+			}
 		}
-	} else {
-		if (log != null) {
-			PrintWriter old = log;
-			log = null;
-			old.flush();
-			old.close();
-		}
+	} catch (Exception e) {
+		//we've shutdown the log, so not much else we can do!
+		e.printStackTrace();
 	}
 }
-protected void startTag(String name, HashMap parameters) {
+protected void startTag(String name, HashMap parameters) throws IOException {
 	printTag(name, parameters);
 	tabDepth++;
 }
-protected void write(Throwable throwable) {
+protected void write(Throwable throwable) throws IOException {
 	if (throwable == null)
 		return;
 	HashMap attributes = new HashMap();
@@ -213,7 +240,7 @@ protected void write(Throwable throwable) {
 	startTag(ELEMENT_EXCEPTION, attributes);
 	endTag(ELEMENT_EXCEPTION);
 }
-protected void write(IStatus status) {
+protected void write(IStatus status) throws IOException {
 	HashMap attributes = new HashMap();
 	attributes.put(ATTRIBUTE_SEVERITY, encodeSeverity(status.getSeverity()));
 	attributes.put(ATTRIBUTE_PLUGIN_ID, status.getPlugin());
@@ -230,7 +257,7 @@ protected void write(IStatus status) {
 	}
 	endTag(ELEMENT_STATUS);
 }
-protected void writeLogEntry(IStatus status) {
+protected void writeLogEntry(IStatus status) throws IOException {
 	tabDepth = 0;
 	HashMap attributes = new HashMap();
 	attributes.put(ATTRIBUTE_DATE, new Date());
