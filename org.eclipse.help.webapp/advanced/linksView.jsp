@@ -50,9 +50,7 @@ if(!data.isLinksRequest()) {
 		   href='<%=data.getTopicHref(topic)%>' 
 		   onclick='parent.parent.parent.setContentToolbarTitle(this.title)'
 		   title="<%=data.getTopicTocLabel(topic)%>">
-		   <img src="<%=prefs.getImagesDirectory()%>/topic.gif">
-		   <%=data.getTopicLabel(topic)%>
-		 </a>
+		   <img src="<%=prefs.getImagesDirectory()%>/topic.gif"><%=data.getTopicLabel(topic)%></a>
 	</td>
 </tr>
 
