@@ -51,7 +51,6 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.resources.EclipseFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -625,8 +624,6 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		do {
 			file.setContents(new ByteArrayInputStream(contents.getBytes()), false, false, null);
 			assertTrue("Timestamp granularity is too small. Increase test wait factor", count <= CVSTestSetup.WAIT_FACTOR);
-			// TODO: We shouldn't need to do this
-			((EclipseFile)cvsFile).setSyncBytes(cvsFile.getSyncBytes(), ICVSFile.UNKNOWN);
 			if (!cvsFile.isModified(null)) {
 				waitMsec(1500);
 				count++;

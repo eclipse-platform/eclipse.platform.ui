@@ -439,7 +439,7 @@ public class CVSProviderTest extends EclipseTest {
 	}
 	
 	public void testForBinaryLinefeedCorruption() throws CoreException, TeamException, IOException {
-		byte EOL = '\n';
+		String EOL = "\n";
 		IProject project = createProject("testForBinaryLinefeedCorruption", new String[] { "binaryFile" });
 		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(project.getFile("binaryFile"));
 		assertTrue(ResourceSyncInfo.isBinary(cvsFile.getSyncBytes()));
