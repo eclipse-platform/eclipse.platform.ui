@@ -20,13 +20,15 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
  */
 public class VariablesContentProvider extends BasicContentProvider implements IDebugEventListener, ITreeContentProvider {
 	
-	protected HashMap fParentCache;
+	private VariablesView fVariablesView;
+	private HashMap fParentCache;
 	
 	/**
 	 * Constructs a new provider
 	 */
-	public VariablesContentProvider() {
+	public VariablesContentProvider(VariablesView variablesView) {
 		DebugPlugin.getDefault().addDebugEventListener(this);
+		fVariablesView = variablesView;
 		fParentCache = new HashMap(10);
 	}
 
@@ -73,6 +75,16 @@ public class VariablesContentProvider extends BasicContentProvider implements ID
 			case DebugEvent.SUSPEND:
 			case DebugEvent.CHANGE:
 				refresh();
+
+				// We have to be careful NOT to populate the detail pane in the
+				// variables view on any CHANGE DebugEvent, since the very act of 
+				// populating the detail pane does an evaluation, which queues up
+				// a CHANGE DebugEvent, which would lead to an infinite loop.  It's
+				// probably safer to add invidual event details here as needed,
+				// rather than try to exclude the ones we think are problematic.
+				if (event.getDetail() == DebugEvent.STEP_END) {
+					fVariablesView.populateDetailPane();
+				}
 				break;
 		}
 	}

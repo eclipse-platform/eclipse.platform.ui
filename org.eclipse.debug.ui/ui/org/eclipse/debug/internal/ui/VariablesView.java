@@ -130,6 +130,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	public void dispose() {
 		DebugUIPlugin.getDefault().removeSelectionListener(this);
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+		getDetailDocument().removeDocumentListener(getDetailDocumentListener());
 		super.dispose();
 	}
 
@@ -203,7 +204,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 		// add tree viewer
 		TreeViewer vv = new TreeViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		setViewer(vv);
-		getViewer().setContentProvider(new VariablesContentProvider());
+		getViewer().setContentProvider(new VariablesContentProvider(this));
 		getViewer().setLabelProvider(getModelPresentation());
 		getViewer().setUseHashlookup(true);
 		getViewer().addDoubleClickListener(this);
@@ -254,8 +255,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 		if (on) {
 			getSashForm().setMaximizedControl(null);
 			getSashForm().setWeights(getLastSashWeights());
-			IStructuredSelection selection = (IStructuredSelection) getViewer().getSelection();
-			populateDetailPaneFromSelection(selection);
+			populateDetailPane();
 			fToggledDetailOnce = true;
 		} else {
 			if (fToggledDetailOnce) {
@@ -263,6 +263,15 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 			}
 			getSashForm().setMaximizedControl(getViewer().getControl());
 		}
+	}
+	
+	/**
+	 * Ask the variables tree for its current selection, and use this to populate
+	 * the detail pane.
+	 */
+	protected void populateDetailPane() {
+		IStructuredSelection selection = (IStructuredSelection) getViewer().getSelection();
+		populateDetailPaneFromSelection(selection);		
 	}
 	
 	/**
