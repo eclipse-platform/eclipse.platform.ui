@@ -20,13 +20,13 @@ import java.util.*;
  */
 
 public class BundleStats {
-	private String pluginId;		// the plugin loading this bundle
-	private String fileName;		// the filename of the bundle 
+	private String pluginId;	// the plugin loading this bundle
+	private String fileName;	// the filename of the bundle 
 	private int keyCount = 0;	// number of keys in the bundle
-	private int keySize = 0;		// size of the keys in the bundle
+	private int keySize = 0;	// size of the keys in the bundle
 	private int valueSize = 0;	// size of the values in the bundle 
 	private long hashSize = 0;	// size of the hashtable
-	private long fileSize = 0;	
+	private long fileSize = 0;
 
 	private static int sizeOf(String value) {
 		return 44 + (2 * value.length());
@@ -48,7 +48,10 @@ public class BundleStats {
 		initialize(bundle);
 	}
 
-	private void initialize(ResourceBundle bundle) {
+	/**
+	 * Compute the size of bundle
+	 */
+	private void initialize(ResourceBundle bundle) { 
 		for (Enumeration enum = bundle.getKeys(); enum.hasMoreElements();) {
 			String key = (String) enum.nextElement();
 			keySize += sizeOf(key);
@@ -57,12 +60,16 @@ public class BundleStats {
 		}
 	}
 
-	private void initialize(InputStream result) {
+	/**
+	 * Compute the size of stream which represents a property file
+	 */
+	private void initialize(InputStream stream) {
+
 		Properties props = new Properties();
 		try {
 			try {
-				fileSize = result.available();
-				props.load(result);
+				fileSize = stream.available();
+				props.load(stream);
 				for (Iterator iter = props.keySet().iterator(); iter.hasNext();) {
 					String key = (String) iter.next();
 					keySize += sizeOf(key);
@@ -71,7 +78,7 @@ public class BundleStats {
 				}
 				hashSize = sizeOf(props);
 			} finally {
-				result.close();
+				stream.close();
 			}
 		} catch (IOException e) {
 			// ignore exceptions as they will be handled when the stream 
