@@ -106,6 +106,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 						IStackFrame lastFrame= getLaunchView().getStackFrame();
 						if (source.equals(lastFrame)) {
 							getLaunchView().setStackFrame(null);
+							getLaunchView().showEditorForCurrentSelection();
 						}
 					}
 					if (event.getDetail() == DebugEvent.STATE) {
