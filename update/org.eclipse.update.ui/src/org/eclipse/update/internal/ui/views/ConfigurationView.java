@@ -114,7 +114,8 @@ public class ConfigurationView
 		public Object[] getChildren() {
 			try {
 				ILocalSite localSite = SiteManager.getLocalSite();
-				return makeChildren(localSite.getPreservedConfigurations());
+				return invertArray(
+					makeChildren(localSite.getPreservedConfigurations()));
 			} catch (CoreException e) {
 				return new Object[0];
 			}
@@ -136,7 +137,7 @@ public class ConfigurationView
 		public Object[] getChildren() {
 			try {
 				ILocalSite localSite = SiteManager.getLocalSite();
-				return localSite.getConfigurationHistory();
+				return invertArray(localSite.getConfigurationHistory());
 			} catch (CoreException e) {
 				return new Object[0];
 			}
@@ -915,5 +916,11 @@ public class ConfigurationView
 			}
 		});
 	}
-
+	private Object[] invertArray(Object[] array) {
+		Object[] invertedArray = new Object[array.length];
+		for (int i = 0; i < array.length; i++) {
+			invertedArray[i] = array[array.length - 1 - i];
+		}
+		return invertedArray;
+	}
 }

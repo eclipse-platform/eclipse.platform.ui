@@ -13,6 +13,7 @@ import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
@@ -24,6 +25,7 @@ import org.eclipse.update.internal.ui.forms.UpdateAdapterFactory;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.AboutInfo;
 import org.eclipse.update.internal.ui.parts.SWTUtil;
+import org.eclipse.update.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.update.internal.ui.preferences.UpdateColors;
 import org.eclipse.update.internal.ui.security.AuthorizationDatabase;
 
@@ -289,5 +291,35 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 				message);
 		if (restart)
 			PlatformUI.getWorkbench().restart();
+	}
+	/** 
+	 * Initializes a preference store with default preference values 
+	 * for this plug-in.
+	 * <p>
+	 * This method is called after the preference store is initially loaded
+	 * (default values are never stored in preference stores).
+	 * </p>
+	 * <p>
+	 * The default implementation of this method does nothing.
+	 * Subclasses should reimplement this method if the plug-in has any preferences.
+	 * </p>
+	 * <p>
+	 * A subclass may reimplement this method to set default values for the 
+	 * preference store using JFace API. This is the older way of initializing 
+	 * default values. If this method is reimplemented, do not override
+	 * <code>initializeDefaultPluginPreferences()</code>.
+	 * </p>
+	 *
+	 * @param store the preference store to fill
+	 */
+	protected void initializeDefaultPreferences(IPreferenceStore store) {
+		store.setDefault(MainPreferencePage.P_HISTORY_SIZE, 10);
+		store.setDefault(
+			MainPreferencePage.P_BROWSER,
+			MainPreferencePage.EMBEDDED_VALUE);
+		store.setDefault(
+			MainPreferencePage.P_UPDATE_VERSIONS,
+			MainPreferencePage.EQUIVALENT_VALUE);
+		UpdateColors.setDefaults(store);
 	}
 }

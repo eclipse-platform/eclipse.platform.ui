@@ -20,9 +20,9 @@ public class MainPreferencePage
 	private static final String KEY_DESCRIPTION =
 		"MainPreferencePage.description";
 	private static final String PREFIX = UpdateUIPlugin.getPluginId();
-	private static final String P_HISTORY_SIZE = PREFIX + ".historySize";
-	private static final String P_BROWSER = PREFIX + ".browser";
-	private static final String EMBEDDED_VALUE = "embedded";
+	public static final String P_HISTORY_SIZE = PREFIX + ".historySize";
+	public static final String P_BROWSER = PREFIX + ".browser";
+	public static final String EMBEDDED_VALUE = "embedded";
 	private static final String SYSTEM_VALUE = "system";
 	private static final String KEY_HISTORY_SIZE =
 		"MainPreferencePage.historySize";
@@ -35,7 +35,7 @@ public class MainPreferencePage
 	private static final String KEY_BROWSER_CHOICE_SYSTEM =
 		"MainPreferencePage.browserChoice.system";
 
-	private static final String P_UPDATE_VERSIONS = PREFIX + ".updateVersions";
+	public static final String P_UPDATE_VERSIONS = PREFIX + ".updateVersions";
 	private static final String KEY_UPDATE_VERSIONS =
 		"MainPreferencePage.updateVersions";
 	private static final String KEY_UPDATE_VERSIONS_EQUIVALENT =
@@ -51,7 +51,6 @@ public class MainPreferencePage
 		super(GRID);
 		setPreferenceStore(UpdateUIPlugin.getDefault().getPreferenceStore());
 		setDescription(UpdateUIPlugin.getResourceString(KEY_DESCRIPTION));
-		initializeDefaults(getPreferenceStore());
 	}
 
 	/**
@@ -120,29 +119,20 @@ public class MainPreferencePage
 		gd.horizontalSpan = columnSpan;
 		label.setLayoutData(gd);
 	}
-	private static void initializeDefaults(IPreferenceStore store) {
-		store.setDefault(P_HISTORY_SIZE, 5);
-		store.setDefault(P_BROWSER, EMBEDDED_VALUE);
-		store.setDefault(P_UPDATE_VERSIONS, EQUIVALENT_VALUE);
-		UpdateColors.setDefaults(store);
-	}
 	private int getHistorySize() {
 		IPreferenceStore store =
 			UpdateUIPlugin.getDefault().getPreferenceStore();
-		initializeDefaults(store);
 		return store.getInt(P_HISTORY_SIZE);
 	}
 	public static boolean getUseEmbeddedBrowser() {
 		IPreferenceStore store =
 			UpdateUIPlugin.getDefault().getPreferenceStore();
-		initializeDefaults(store);
 		return store.getString(P_BROWSER).equals(EMBEDDED_VALUE);
 	}
 
 	public static String getUpdateVersionsMode() {
 		IPreferenceStore store =
 			UpdateUIPlugin.getDefault().getPreferenceStore();
-		initializeDefaults(store);
 		return store.getString(P_UPDATE_VERSIONS);
 	}
 
