@@ -48,22 +48,18 @@ public abstract class AbstractDebugEventHandler implements IDebugEventListener {
 	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
 	 */
 	public void handleDebugEvent(final DebugEvent event) {
-		if (getViewer() == null) {
-			return;
-		}
 		Object element= event.getSource();
 		if (element == null) {
 			return;
 		}
-		if (getViewer().getControl() == null || getViewer().getControl().isDisposed()) {
+		if (!isAvailable()) {
 			return;
 		}
 		Runnable r= new Runnable() {
 			public void run() {
-				if (getViewer().getControl() == null || getViewer().getControl().isDisposed()) {
-					return;
+				if (isAvailable()) {
+					doHandleDebugEvent(event);
 				}
-				doHandleDebugEvent(event);
 			}
 		};
 		
@@ -81,12 +77,14 @@ public abstract class AbstractDebugEventHandler implements IDebugEventListener {
 	 * Helper method for inserting the given element - must be called in UI thread
 	 */
 	protected void insert(Object element) {
-		final Object parent= ((ITreeContentProvider)getTreeViewer().getContentProvider()).getParent(element);
-		// a parent can be null for a debug target or process that has not yet been associated
-		// with a launch
-		if (parent != null) {
-			getView().showViewer();
-			getTreeViewer().add(parent, element);
+		if (isAvailable()) {
+			final Object parent= ((ITreeContentProvider)getTreeViewer().getContentProvider()).getParent(element);
+			// a parent can be null for a debug target or process that has not yet been associated
+			// with a launch
+			if (parent != null) {
+				getView().showViewer();
+				getTreeViewer().add(parent, element);
+			}
 		}
 	}
 
@@ -94,23 +92,27 @@ public abstract class AbstractDebugEventHandler implements IDebugEventListener {
 	 * Helper method to remove the given element - must be called in UI thread.
 	 */
 	protected void remove(Object element) {
-		getView().showViewer();
-		getTreeViewer().remove(element);
+		if (isAvailable()) {
+			getView().showViewer();
+			getTreeViewer().remove(element);
+		}
 	}
 
 	/**
 	 * Helper method to update the label of the given element - must be called in UI thread
 	 */
 	protected void labelChanged(Object element) {
-		getView().showViewer();
-		getTreeViewer().update(element, new String[] {IBasicPropertyConstants.P_TEXT});
+		if (isAvailable()) {
+			getView().showViewer();
+			getTreeViewer().update(element, new String[] {IBasicPropertyConstants.P_TEXT});
+		}
 	}
 
 	/**
 	 * Refresh the given element in the viewer - must be called in UI thread.
 	 */
 	protected void refresh(Object element) {
-		if (getTreeViewer() != null) {
+		if (isAvailable()) {
 			 getView().showViewer();
 			 getTreeViewer().refresh(element);
 		}
@@ -120,7 +122,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventListener {
 	 * Refresh the viewer - must be called in UI thread.
 	 */
 	protected void refresh() {
-		if (getTreeViewer() != null) {
+		if (isAvailable()) {
 			 getView().showViewer();
 			 getTreeViewer().refresh();
 		}
@@ -130,7 +132,9 @@ public abstract class AbstractDebugEventHandler implements IDebugEventListener {
 	 * Helper method to select and reveal the given element - must be called in UI thread
 	 */
 	protected void selectAndReveal(Object element) {
-		getViewer().setSelection(new StructuredSelection(element), true);
+		if (isAvailable()) {
+			getViewer().setSelection(new StructuredSelection(element), true);
+		}
 	}
 	
 	/**
@@ -179,11 +183,29 @@ public abstract class AbstractDebugEventHandler implements IDebugEventListener {
 		fViewer = viewer;
 	}
 	
+	/**
+	 * Returns this event handler's viewer as a tree
+	 * viewer or <code>null</code> if none.
+	 * 
+	 * @return this event handler's viewer as a tree
+	 * viewer or <code>null</code> if none
+	 */
 	protected TreeViewer getTreeViewer() {
 		if (getViewer() instanceof TreeViewer) {
 			return (TreeViewer)getViewer();
 		} 
 		return null;
+	}
+	
+	/**
+	 * Returns whether this event handler's viewer is
+	 * currently available.
+	 * 
+	 * @return whether this event handler's viewer is
+	 * currently available
+	 */
+	protected boolean isAvailable() {
+		return !(getViewer() == null || getViewer().getControl() == null || getViewer().getControl().isDisposed());
 	}
 }
 
