@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
@@ -73,4 +74,16 @@ public class OptimizedRemoteSynchronizer extends RemoteTagSynchronizer {
 	public byte[] getRemoteBytes(IResource resource) throws CVSException {
 		return super.getSyncBytes(resource);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.syncinfo.RemoteTagSynchronizer#getRemoteBytes(org.eclipse.core.resources.IResource, org.eclipse.team.internal.ccvs.core.ICVSRemoteResource)
+	 */
+	protected byte[] getRemoteBytes(IResource local, ICVSRemoteResource remote) throws CVSException {
+		if (remote == null && local.getType() == IResource.FOLDER) {
+			// If there is no remote, use the local sync for the folder
+			return baseSynchronizer.getSyncBytes(local);
+		}
+		return super.getRemoteBytes(local, remote);
+	}
+
 }

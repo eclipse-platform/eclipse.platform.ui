@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
@@ -51,12 +52,8 @@ public class RemoteTagSynchronizer extends RemoteSynchronizer {
 	}
 
 	public void collectChanges(IResource local, ICVSRemoteResource remote, int depth, IProgressMonitor monitor) throws TeamException {
-		byte[] remoteBytes;
-		if (remote != null) {
-			remoteBytes = ((RemoteResource)remote).getSyncBytes();
-		} else {
-			remoteBytes = NO_REMOTE;
-		}
+		byte[] remoteBytes = getRemoteBytes(local, remote);
+		if (remoteBytes == null) return;
 		setSyncBytes(local, remoteBytes);
 		if (depth == IResource.DEPTH_ZERO) return;
 		Map children = mergedMembers(local, remote, monitor);	
@@ -66,6 +63,24 @@ public class RemoteTagSynchronizer extends RemoteSynchronizer {
 			collectChanges(localChild, remoteChild, 
 				depth == IResource.DEPTH_INFINITE ? IResource.DEPTH_INFINITE : IResource.DEPTH_ZERO, 
 				monitor);
+		}
+		
+		// Look for resources that have sync bytes but are not in the resources we care about
+		IResource[] resources = getChildrenWithSyncBytes(local);
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			if (!children.containsKey(resource.getName())) {
+				// These sync bytes are stale. Purge them
+				removeSyncBytes(resource, IResource.DEPTH_INFINITE, true /* silent*/);
+			}
+		}
+	}
+	
+	protected byte[] getRemoteBytes(IResource local, ICVSRemoteResource remote) throws CVSException {
+		if (remote != null) {
+			return ((RemoteResource)remote).getSyncBytes();
+		} else {
+			return NO_REMOTE;
 		}
 	}
 	
@@ -159,6 +174,30 @@ public class RemoteTagSynchronizer extends RemoteSynchronizer {
 		return localChildren;
 	}
 	
+	private IResource[] getChildrenWithSyncBytes(IResource local) throws TeamException {			
+		try {
+			if (local.getType() != IResource.FILE && (local.exists() || local.isPhantom())) {
+				IResource[] allChildren = ((IContainer)local).members(true /* include phantoms */);
+				List childrenWithSyncBytes = new ArrayList();
+				for (int i = 0; i < allChildren.length; i++) {
+					IResource resource = allChildren[i];
+					if (internalGetSyncBytes(resource) != null) {
+						childrenWithSyncBytes.add(resource);
+					}
+				}
+				return (IResource[]) childrenWithSyncBytes.toArray(
+					new IResource[childrenWithSyncBytes.size()]);
+			}
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+		return new IResource[0];
+	}
+	
+	private byte[] internalGetSyncBytes(IResource resource) throws CVSException {
+		return super.getSyncBytes(resource);
+	}
+
 	/*
 	 * Returns a handle to a non-existing resource.
 	 */
@@ -192,7 +231,7 @@ public class RemoteTagSynchronizer extends RemoteSynchronizer {
 	 * differentiate these cases.  
 	 */
 	public byte[] getSyncBytes(IResource resource) throws CVSException {
-		byte[] syncBytes = super.getSyncBytes(resource);
+		byte[] syncBytes = internalGetSyncBytes(resource);
 		if (syncBytes != null && Util.equals(syncBytes, NO_REMOTE)) {
 			// If it is known that there is no remote, return null
 			return null;
