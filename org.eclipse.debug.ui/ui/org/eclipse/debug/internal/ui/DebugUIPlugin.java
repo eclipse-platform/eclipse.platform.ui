@@ -59,6 +59,8 @@ import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -81,7 +83,11 @@ import org.w3c.dom.Document;
  * The Debug UI Plugin.
  *
  */
-public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {															   
+public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {			
+	
+	private static final int WAIT_FOR_BUILD = 1;
+	private static final int DONT_WAIT_FOR_BUILD = 2;
+	private static final int CANCEL_LAUNCH = 3;
 									   	
 	/**
 	 * The singleton debug plugin instance
@@ -728,13 +734,14 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	
 	/**
 	 * Builds the workspace (according to preferences) and launches the given launch
-	 * configuration in the specified mode.
+	 * configuration in the specified mode. May return null if autobuild is in process and 
+	 * user cancels the launch.
 	 * 
 	 * @param configuration the configuration to launch
 	 * @param mode launch mode - run or debug
 	 * @param monitor progress monitor
 	 * @exception CoreException if an exception occurs while building or launching
-	 * @return resulting launch
+	 * @return resulting launch or <code>null</code> if user cancels
 	 */
 	public static ILaunch buildAndLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		boolean buildBeforeLaunch = getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH);
@@ -745,10 +752,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			monitor.beginTask(message, 200);
 			return configuration.launch(mode, monitor, true);	
 		} else {
-			Job[] build = Platform.getJobManager().find(ResourcesPlugin.FAMILY_AUTO_BUILD); 
+			Job[] build = Platform.getJobManager().find(ResourcesPlugin.FAMILY_AUTO_BUILD);
 			if (build.length == 1) {
-				boolean join= waitForBuild(build[0].getState());
-				if (join) {
+				int join= waitForBuild(build[0].getState());
+				if (join == WAIT_FOR_BUILD) {
 					try {
 						StringBuffer buffer= new StringBuffer(configuration.getName());
 						buffer.append(DebugUIMessages.getString("DebugUIPlugin.19")); //$NON-NLS-1$
@@ -766,9 +773,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 					} catch (InterruptedException e) {
 						throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, DebugUIMessages.getString("DebugUIPlugin.15"), e)); //$NON-NLS-1$
 					}
-				}else {
+				}else if (join == DONT_WAIT_FOR_BUILD){
 					subMonitor = monitor;
 					subMonitor.beginTask(message, 100);
+				} else { //CANCEL_LAUNCH 
+					return null;
 				}
 			}
 			return configuration.launch(mode, subMonitor); 
@@ -784,16 +793,17 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * because the build won't begin for an indeterminite amount of time.
 	 * 
 	 * @param buildState the state of the build job
-	 * @return whether a launch should wait for a build to finish before proceeding
+	 * @return whether a launch should wait for a build to finish before proceeding. Possible
+	 * return values are WAIT_FOR_BUILD, DONT_WAIT_FOR_BUILD, and CANCEL_LAUNCH
 	 */
-	private static boolean waitForBuild(final int buildState) {
+	private static int waitForBuild(final int buildState) {
 		String waitPreference= DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_WAIT_FOR_BUILD);
 		if (AlwaysNeverDialog.ALWAYS.equals(waitPreference)) {
-			return true;
+			return WAIT_FOR_BUILD;
 		} else if (AlwaysNeverDialog.NEVER.equals(waitPreference)) {
-			return false;
+			return DONT_WAIT_FOR_BUILD;
 		}
-		final boolean[] wait= new boolean[1];
+		final int[] wait= new int[1];
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
 				String message= null;
@@ -803,14 +813,60 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 					message= DebugUIMessages.getString("DebugUIPlugin.17"); //$NON-NLS-1$
 				}
 				if (message != null) {
-					wait[0]= AlwaysNeverDialog.openQuestion(getShell(), DebugUIMessages.getString("DebugUIPlugin.18"), message, IDebugUIConstants.PREF_WAIT_FOR_BUILD, DebugUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$
+					PromptDialog dialog = new PromptDialog(getShell(), DebugUIMessages.getString("DebugUIPlugin.18"), message, IDebugUIConstants.PREF_WAIT_FOR_BUILD, DebugUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$
+					dialog.open();
+					wait[0] = dialog.getReturnCode();
 				} else {
 					// Unknown or sleeping job. Don't wait.
-					wait[0]= false;
+					wait[0]= DONT_WAIT_FOR_BUILD;
 				}
 			}
 		});
 		return wait[0];
+	}
+	
+	
+	static class PromptDialog extends MessageDialog {
+		private String fPreferenceKey = null;
+		private String fResult = null;
+		private IPreferenceStore fStore = null;
+		
+		public PromptDialog(Shell parent, String title, String message, String preferenceKey, IPreferenceStore store) {
+			super(parent, title, null, message, QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, DebugUIMessages.getString("DebugUIPlugin.21"), DebugUIMessages.getString("DebugUIPlugin.22"), IDialogConstants.CANCEL_LABEL}, 0);	 //$NON-NLS-1$ //$NON-NLS-2$
+			fStore = store;
+			fPreferenceKey = preferenceKey;
+		}
+
+		protected void buttonPressed(int id) {
+			if (id == 2) { // Always
+				fResult= AlwaysNeverDialog.ALWAYS;
+			} else {
+				fResult= AlwaysNeverDialog.PROMPT;
+			}
+			
+			if (fStore != null && fPreferenceKey != null) {
+				fStore.setValue(fPreferenceKey, fResult);
+			}
+			
+			super.buttonPressed(id);
+		}
+		
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.window.Window#getReturnCode()
+		 */
+		public int getReturnCode() {
+			int returnCode = super.getReturnCode();
+			switch(returnCode) { 
+				case 1: //NO
+				case 3: //NEVER
+					return DONT_WAIT_FOR_BUILD;
+				case 4: //CANCEL
+					return CANCEL_LAUNCH;
+				default: // YES or ALWAYS
+					return WAIT_FOR_BUILD;
+			}
+		}
 	}
 }
 
