@@ -27,13 +27,7 @@ public class ActionExpression {
 	final static String ATT_OBJECT_STATE = "objectState"; //$NON-NLS-1$
 	final static String ATT_OBJECT_CLASS = "objectClass"; //$NON-NLS-1$
 	final static String ATT_PLUG_IN_STATE = "pluginState"; //$NON-NLS-1$
-	final static String ATT_SYSTEM_PROPERTY = "systemProperty"; //$NON-NLS-1$
-	final static String ATT_RESOURCE_PROPERTY = "resourceProperty"; //$NON-NLS-1$
-	
-	final static String ATT_QUALIFIER = "qualifier"; //$NON-NLS-1$
-	final static String ATT_TYPE = "type"; //$NON-NLS-1$
-	final static String ATT_NAME = "name"; //$NON-NLS-1$
-	final static String ATT_VALUE = "value"; //$NON-NLS-1$
+	final static String ATT_SYSTEM_PROPERTY = "systemProperty"; //$NON-NLS-1$	
 	
 	final static String ID_PERSISTENT_PROPERTY = "persistentProperty"; //$NON-NLS-1$
 	final static String ID_SESSION_PROPERTY = "sessionProperty"; //$NON-NLS-1$
@@ -119,9 +113,6 @@ public class ActionExpression {
 			childExpr.readFrom(element);
 		} else if (tag.equals(ATT_SYSTEM_PROPERTY)) { 
 			childExpr = new SystemPropertyExpression();
-			childExpr.readFrom(element);
-		} else if (tag.equals(ATT_RESOURCE_PROPERTY)) { 
-			childExpr = new ResourcePropertyExpression();
 			childExpr.readFrom(element);
 		} else {
 			throw new IllegalStateException("Unrecognized element: " + tag); //$NON-NLS-1$
@@ -228,58 +219,6 @@ public class ActionExpression {
 		}
 	}
 	
-	protected class ResourcePropertyExpression extends AbstractExpression {
-		private String name, qualifier,type,value;
-		public void readFrom(IConfigurationElement element) 
-			throws IllegalStateException
-		{
-			type = element.getAttribute(ATT_TYPE);//$NON-NLS-1$
-			qualifier = element.getAttribute(ATT_QUALIFIER);//$NON-NLS-1$
-			name = element.getAttribute(ATT_NAME);//$NON-NLS-1$
-			value = element.getAttribute(ATT_VALUE);//$NON-NLS-1$
-			if (name == null || value == null || qualifier == null || type == null)
-				throw new IllegalStateException();
-		}
-		public boolean isEnabledFor(Object object) {
-			
-				
-			// This is only makes sense for objects
-			if (!(object instanceof IResource))
-				return false;
-				
-			// Try out the underlying resource.
-			IResource res = (IResource) object;
-			if(ID_PERSISTENT_PROPERTY.equals(type)){
-				try{
-					String propertyValue =
-						res.getPersistentProperty(new QualifiedName(qualifier,name));
-					if(propertyValue != null && propertyValue.equals(value))
-						return true;
-					return false;
-				}
-				catch (CoreException exception){
-					return false;
-				}
-			}
-						
-			if(ID_SESSION_PROPERTY.equals(type)){
-				try{
-					Object propertyValue =
-						res.getSessionProperty(new QualifiedName(qualifier,name));
-					if(propertyValue != null && propertyValue.equals(value))
-						return true;
-					return false;
-				}
-				catch (CoreException exception){
-					return false;
-				}
-			}	
-			return false;
-			
-		}
-
-	}
-
 	protected class ObjectStateExpression extends AbstractExpression {
 		private String name, value;
 		public void readFrom(IConfigurationElement element) 
