@@ -27,15 +27,14 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
-import org.eclipse.ui.externaltools.internal.model.ToolUtil;
-import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
-import org.eclipse.ui.externaltools.internal.variables.RefreshScopeVariableRegistry;
 import org.eclipse.debug.ui.variables.ExpandVariableContext;
 import org.eclipse.debug.ui.variables.LaunchConfigurationVariable;
 import org.eclipse.debug.ui.variables.VariableContextManager;
 import org.eclipse.debug.ui.variables.VariableUtil;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
+import org.eclipse.ui.externaltools.internal.variables.RefreshScopeVariableRegistry;
 
 /**
  * Utilities for external tool launch configurations.
@@ -81,7 +80,7 @@ public class ExternalToolsUtil {
 		Map envMap = configuration.getAttribute(IDebugUIConstants.ATTR_ENVIRONMENT_VARIABLES, (Map) null);
 		if (envMap != null) {
 			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.runProblem"), null); //$NON-NLS-1$;
-			String[] expandedEnvironment = ToolUtil.expandEnvironment(envMap, context, status);
+			String[] expandedEnvironment = VariableUtil.expandEnvironment(envMap, context, status);
 			if (status.isOK()) {
 				if (expandedEnvironment != null && expandedEnvironment.length > 0) {
 					return expandedEnvironment;
@@ -127,7 +126,7 @@ public class ExternalToolsUtil {
 			abort(MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Location_not_specified_by_{0}_1"), new String[] { configuration.getName()}), null, 0); //$NON-NLS-1$
 		} else {
 			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.runProblem"), null); //$NON-NLS-1$;
-			String expandedLocation = ToolUtil.expandFileLocation(location, context, status);
+			String expandedLocation = VariableUtil.expandLocationText(location, context, status);
 			if (status.isOK()) {
 				if (expandedLocation == null || expandedLocation.length() == 0) {
 					String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidLocation"), new Object[] { configuration.getName()}); //$NON-NLS-1$
@@ -182,7 +181,7 @@ public class ExternalToolsUtil {
 		String location = configuration.getAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String) null);
 		if (location != null) {
 			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.runProblem"), null); //$NON-NLS-1$;
-			String expandedLocation = ToolUtil.expandDirectoryLocation(location, context, status);
+			String expandedLocation = VariableUtil.expandLocationText(location, context, status);
 			if (status.isOK()) {
 				if (expandedLocation != null && expandedLocation.length() > 0) {
 					File path = new File(expandedLocation);
@@ -216,7 +215,7 @@ public class ExternalToolsUtil {
 		String args = configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String) null);
 		if (args != null) {
 			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Could_not_resolve_an_argument._1"), null); //$NON-NLS-1$
-			String[] expandedArgs = ToolUtil.expandArguments(args, context, status);
+			String[] expandedArgs = VariableUtil.expandArguments(args, context, status);
 			if (status.isOK()) {
 				return expandedArgs;
 			} else {

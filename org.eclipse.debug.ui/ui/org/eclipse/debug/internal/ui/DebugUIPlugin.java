@@ -431,8 +431,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * @param t throwable to log 
 	 */
 	public static void log(Throwable t) {
-		IStatus status= new Status(IStatus.ERROR, getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Error logged from Debug UI: ", t); //$NON-NLS-1$
-		log(status);
+		log(newErrorStatus("Error logged from Debug UI: ", t)); //$NON-NLS-1$
 	}
 	
 	/**
@@ -454,7 +453,17 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	public static void logErrorMessage(String message) {
 		// this message is intentionally not internationalized, as an exception may
 		// be due to the resource bundle itself
-		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Internal message logged from Debug UI: " + message, null)); //$NON-NLS-1$	
+		log(newErrorStatus("Internal message logged from Debug UI: " + message, null)); //$NON-NLS-1$	
+	}
+	
+	/**
+	 * Returns a new error status for this plugin with the given message
+	 * @param message the message to be included in the status
+	 * @param exception the exception to be included in the status or <code>null</code> if none
+	 * @return a new error status
+	 */
+	public static IStatus newErrorStatus(String message, Throwable exception) {
+		return new Status(IStatus.ERROR, getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, message, exception);
 	}
 	
 	/**
