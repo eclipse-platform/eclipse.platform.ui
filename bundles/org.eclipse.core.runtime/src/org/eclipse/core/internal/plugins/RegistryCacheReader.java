@@ -23,7 +23,7 @@ public class RegistryCacheReader {
 	// cached registry.
 	ArrayList objectTable = null;
 
-	public static final byte REGISTRY_CACHE_VERSION = 1;
+	public static final byte REGISTRY_CACHE_VERSION = 2;
 
 	public static final byte NONLABEL = 0;
 
@@ -101,147 +101,103 @@ public int addToObjectTable(Object object) {
 	return (objectTable.size() - 1);
 
 }
-public int decipherLabel(String labelString) {
-	if (labelString.equals("<registry>")) {
-		return REGISTRY_LABEL;
-	}
-	if (labelString.equals("<resolved>")) {
-		return REGISTRY_RESOLVED_LABEL;
-	}
-	if (labelString.equals("<plugin>")) {
-		return PLUGIN_LABEL;
-	}
-	if (labelString.equals("<endregistry>")) {
-		return REGISTRY_END_LABEL;
-	}
-	if (labelString.equals("<readonly>")) {
-		return READONLY_LABEL;
-	}
-	if (labelString.equals("<name>")) {
-		return NAME_LABEL;
-	}
-	if (labelString.equals("<id>")) {
-		return ID_LABEL;
-	}
-	if (labelString.equals("<provider>")) {
-		return PLUGIN_PROVIDER_NAME_LABEL;
-	}
-	if (labelString.equals("<version>")) {
-		return VERSION_LABEL;
-	}
-	if (labelString.equals("<class>")) {
-		return PLUGIN_CLASS_LABEL;
-	}
-	if (labelString.equals("<location>")) {
-		return PLUGIN_LOCATION_LABEL;
-	}
-	if (labelString.equals("<enabled>")) {
-		return PLUGIN_ENABLED_LABEL;
-	}
-	if (labelString.equals("<requires>")) {
-		return PLUGIN_REQUIRES_LABEL;
-	}
-	if (labelString.equals("<library>")) {
-		return PLUGIN_LIBRARY_LABEL;
-	}
-	if (labelString.equals("<extension>")) {
-		return PLUGIN_EXTENSION_LABEL;
-	}
-	if (labelString.equals("<extensionPoint>")) {
-		return PLUGIN_EXTENSION_POINT_LABEL;
-	}
-	if (labelString.equals("<endplugin>")) {
-		return PLUGIN_END_LABEL;
-	}
-	if (labelString.equals("<match>")) {
-		return REQUIRES_MATCH_LABEL;
-	}
-	if (labelString.equals("<export>")) {
-		return REQUIRES_EXPORT_LABEL;
-	}
-	if (labelString.equals("<resolved_version>")) {
-		return REQUIRES_RESOLVED_VERSION_LABEL;
-	}
-	if (labelString.equals("<requires_plugin_name>")) {
-		return REQUIRES_PLUGIN_NAME_LABEL;
-	}
-	if (labelString.equals("<endrequires>")) {
-		return REQUIRES_END_LABEL;
-	}
-	if (labelString.equals("<exports-length>")) {
-		return LIBRARY_EXPORTS_LENGTH_LABEL;
-	}
-	if (labelString.equals("<exports>")) {
-		return LIBRARY_EXPORTS_LABEL;
-	}
-	if (labelString.equals("<endlibrary>")) {
-		return LIBRARY_END_LABEL;
-	}
-	if (labelString.equals("<schema>")) {
-		return EXTENSION_POINT_SCHEMA_LABEL;
-	}
-	if (labelString.equals("<endextensionPoint>")) {
-		return EXTENSION_POINT_END_LABEL;
-	}
-	if (labelString.equals("<extension-extPt-name>")) {
-		return EXTENSION_EXT_POINT_NAME_LABEL;
-	}
-	if (labelString.equals("<subElements-length>")) {
-		return SUBELEMENTS_LENGTH_LABEL;
-	}
-	if (labelString.equals("<endextension>")) {
-		return EXTENSION_END_LABEL;
-	}
-	if (labelString.equals("<configuration-element>")) {
-		return CONFIGURATION_ELEMENT_LABEL;
-	}
-	if (labelString.equals("<value>")) {
-		return VALUE_LABEL;
-	}
-	if (labelString.equals("<properties-length>")) {
-		return PROPERTIES_LENGTH_LABEL;
-	}
-	if (labelString.equals("<endconfiguration-element>")) {
-		return CONFIGURATION_ELEMENT_END_LABEL;
-	}
-	if (labelString.equals("<configuration-property>")) {
-		return CONFIGURATION_PROPERTY_LABEL;
-	}
-	if (labelString.equals("<endconfiguration-property>")) {
-		return CONFIGURATION_PROPERTY_END_LABEL;
-	}
-	if (labelString.equals("<parentRegistry>")) {
-		return PLUGIN_PARENT_LABEL;
-	}
-	if (labelString.equals("<ConfigurationElementParent>")) {
-		return CONFIGURATION_ELEMENT_PARENT_LABEL;
-	}
-	if (labelString.equals("<pluginIndex>")) {
-		return PLUGIN_INDEX_LABEL;
-	}
-	if (labelString.equals("<extensionIndex>")) {
-		return EXTENSION_INDEX_LABEL;
-	}
-	if (labelString.equals("<ExtensionPointParent>")) {
-		return EXTENSION_POINT_PARENT_LABEL;
-	}
-	if (labelString.equals("<extensionPointExtensionsLength>")) {
-		return EXTENSION_POINT_EXTENSIONS_LENGTH_LABEL;
-	}
-	if (labelString.equals("<extensionPointExtensions>")) {
-		return EXTENSION_POINT_EXTENSIONS_LABEL;
-	}
-	if (labelString.equals("<extensionParent>")) {
-		return EXTENSION_PARENT_LABEL;
-	}
-	if (labelString.equals("<configElementIndex>")) {
-		return CONFIGURATION_ELEMENT_INDEX_LABEL;
-	}
-	if (labelString.equals("<registryIndex>")) {
-		return REGISTRY_INDEX_LABEL;
+public static String decipherLabel(byte labelValue) {
+	switch (labelValue) {
+		case REGISTRY_LABEL:
+			return "<registry>";
+		case REGISTRY_RESOLVED_LABEL:
+			return "<resolved>";
+		case PLUGIN_LABEL:
+			return "<plugin>";
+		case REGISTRY_END_LABEL:
+			return "<endregistry>";
+		case READONLY_LABEL:
+			return "<readonly>";
+		case NAME_LABEL:
+			return "<name>";
+		case ID_LABEL:
+			return "<id>";
+		case PLUGIN_PROVIDER_NAME_LABEL:
+			return "<provider>";
+		case VERSION_LABEL:
+			return "<version>";
+		case PLUGIN_CLASS_LABEL:
+			return "<class>";
+		case PLUGIN_LOCATION_LABEL:
+			return "<location>";
+		case PLUGIN_ENABLED_LABEL:
+			return "<enabled>";
+		case PLUGIN_REQUIRES_LABEL:
+			return "<requires>";
+		case PLUGIN_LIBRARY_LABEL:
+			return "<library>";
+		case PLUGIN_EXTENSION_LABEL:
+			return "<extension>";
+		case PLUGIN_EXTENSION_POINT_LABEL:
+			return "<extensionPoint>";
+		case PLUGIN_END_LABEL:
+			return "<endplugin>";
+		case REQUIRES_MATCH_LABEL:
+			return "<match>";
+		case REQUIRES_EXPORT_LABEL:
+			return "<export>";
+		case REQUIRES_RESOLVED_VERSION_LABEL:
+			return "<resolved_version>";
+		case REQUIRES_PLUGIN_NAME_LABEL:
+			return "<requires_plugin_name>";
+		case REQUIRES_END_LABEL:
+			return "<endrequires>";
+		case LIBRARY_EXPORTS_LENGTH_LABEL:
+			return "<exports-length>";
+		case LIBRARY_EXPORTS_LABEL:
+			return "<exports>";
+		case LIBRARY_END_LABEL:
+			return "<endlibrary>";
+		case EXTENSION_POINT_SCHEMA_LABEL:
+			return "<schema>";
+		case EXTENSION_POINT_END_LABEL:
+			return "<endextensionPoint>";
+		case EXTENSION_EXT_POINT_NAME_LABEL:
+			return "<extension-extPt-name>";
+		case SUBELEMENTS_LENGTH_LABEL:
+			return "<subElements-length>";
+		case EXTENSION_END_LABEL:
+			return "<endextension>";
+		case CONFIGURATION_ELEMENT_LABEL:
+			return "<configuration-element>";
+		case VALUE_LABEL:
+			return "<value>";
+		case PROPERTIES_LENGTH_LABEL:
+			return "<properties-length>";
+		case CONFIGURATION_ELEMENT_END_LABEL:
+			return "<endconfiguration-element>";
+		case CONFIGURATION_PROPERTY_LABEL:
+			return "<configuration-property>";
+		case CONFIGURATION_PROPERTY_END_LABEL:
+			return "<endconfiguration-property>";
+		case PLUGIN_PARENT_LABEL:
+			return "<parentRegistry>";
+		case CONFIGURATION_ELEMENT_PARENT_LABEL:
+			return "<ConfigurationElementParent>";
+		case PLUGIN_INDEX_LABEL:
+			return "<pluginIndex>";
+		case EXTENSION_INDEX_LABEL:
+			return "<extensionIndex>";
+		case EXTENSION_POINT_PARENT_LABEL:
+			return "<ExtensionPointParent>";
+		case EXTENSION_POINT_EXTENSIONS_LENGTH_LABEL:
+			return "<extensionPointExtensionsLength>";
+		case EXTENSION_POINT_EXTENSIONS_LABEL:
+			return "<extensionPointExtensions>";
+		case EXTENSION_PARENT_LABEL:
+			return "<extensionParent>";
+		case CONFIGURATION_ELEMENT_INDEX_LABEL:
+			return "<configElementIndex>";
+		case REGISTRY_INDEX_LABEL:
+			return "<registryIndex>";
 	}
 
-	return NONLABEL;
+	return "<unknown label>";
 }
 public boolean interpretHeaderInformation(DataInputStream in) {
 	try {
@@ -255,17 +211,14 @@ public boolean interpretHeaderInformation(DataInputStream in) {
 		// locale stamp
 		String localeStamp = in.readUTF();
 
-		if ((version != REGISTRY_CACHE_VERSION) ||
-			(!installStamp.equals(LaunchInfo.getCurrent().getIdentifier())) ||
-			(!osStamp.equals(BootLoader.getOS())) ||
-			(!windowsStamp.equals(BootLoader.getWS())) ||
-			(!localeStamp.equals(BootLoader.getNL())) ) {
-			return false;
-		}
+		return ((version == REGISTRY_CACHE_VERSION) &&
+			(installStamp.equals(LaunchInfo.getCurrent().getIdentifier())) &&
+			(osStamp.equals(BootLoader.getOS())) &&
+			(windowsStamp.equals(BootLoader.getWS())) &&
+			(localeStamp.equals(BootLoader.getNL())) );
 	} catch (IOException ioe) {
 		return false;
 	}
-	return true;
 }
 public ConfigurationElementModel readConfigurationElement(DataInputStream in) {
 	ConfigurationElementModel configurationElement = cacheFactory.createConfigurationElement();
