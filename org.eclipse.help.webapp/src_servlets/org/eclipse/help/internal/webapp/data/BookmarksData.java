@@ -47,11 +47,11 @@ public class BookmarksData extends RequestData {
 	}
 
 	public void addBookmark() {
-		String bookmarkURL = request.getParameter("bookmark");
+		String bookmarkURL = request.getParameter("bookmark"); //$NON-NLS-1$
 		if (bookmarkURL != null
 			&& bookmarkURL.length() > 0
-			&& !bookmarkURL.equals("about:blank")) {
-			String title = request.getParameter("title");
+			&& !bookmarkURL.equals("about:blank")) { //$NON-NLS-1$
+			String title = request.getParameter("title"); //$NON-NLS-1$
 			if(title==null){
 				return;
 			}
@@ -61,28 +61,28 @@ public class BookmarksData extends RequestData {
 			// separate the url and title by vertical bar
 
 			// check for duplicates
-			if (bookmarks.indexOf("," + encode(bookmarkURL) + "|") != -1)
+			if (bookmarks.indexOf("," + encode(bookmarkURL) + "|") != -1) //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			bookmarks =
-				bookmarks + "," + encode(bookmarkURL) + "|" + encode(title);
+				bookmarks + "," + encode(bookmarkURL) + "|" + encode(title); //$NON-NLS-1$ //$NON-NLS-2$
 			prefs.setValue(BaseHelpSystem.BOOKMARKS, bookmarks);
 			HelpBasePlugin.getDefault().savePluginPreferences();
 		}
 	}
 
 	public void removeBookmark() {
-		String bookmarkURL = request.getParameter("bookmark");
+		String bookmarkURL = request.getParameter("bookmark"); //$NON-NLS-1$
 		if (bookmarkURL != null
 			&& bookmarkURL.length() > 0
-			&& !bookmarkURL.equals("about:blank")) {
-			String title = request.getParameter("title");
+			&& !bookmarkURL.equals("about:blank")) { //$NON-NLS-1$
+			String title = request.getParameter("title"); //$NON-NLS-1$
 			if(title==null){
 				return;
 			}
 			Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
 			String bookmarks = prefs.getString(BaseHelpSystem.BOOKMARKS);
 			String removeString =
-				"," + encode(bookmarkURL) + "|" + encode(title);
+				"," + encode(bookmarkURL) + "|" + encode(title); //$NON-NLS-1$ //$NON-NLS-2$
 			int i = bookmarks.indexOf(removeString);
 			if (i == -1)
 				return;
@@ -96,7 +96,7 @@ public class BookmarksData extends RequestData {
 	
 	public void removeAllBookmarks() {
 		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-		prefs.setValue(BaseHelpSystem.BOOKMARKS, "");
+		prefs.setValue(BaseHelpSystem.BOOKMARKS, ""); //$NON-NLS-1$
 		HelpBasePlugin.getDefault().savePluginPreferences();
 	}
 
@@ -106,7 +106,7 @@ public class BookmarksData extends RequestData {
 			// this is workbench
 			Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
 			String bookmarks = prefs.getString(BaseHelpSystem.BOOKMARKS);
-			StringTokenizer tokenizer = new StringTokenizer(bookmarks, ",");
+			StringTokenizer tokenizer = new StringTokenizer(bookmarks, ","); //$NON-NLS-1$
 			Topic[] topics = new Topic[tokenizer.countTokens()];
 			for (int i = 0; tokenizer.hasMoreTokens(); i++) {
 				String bookmark = tokenizer.nextToken();
@@ -116,7 +116,7 @@ public class BookmarksData extends RequestData {
 				String label = decode(bookmark.substring(separator + 1));
 				String href =
 					separator < 0
-						? ""
+						? "" //$NON-NLS-1$
 						: decode(bookmark.substring(0, separator));
 				topics[i] = new Topic(label, href);
 			}
@@ -126,12 +126,12 @@ public class BookmarksData extends RequestData {
 	}
 
 	private int getOperation() {
-		String op = request.getParameter("operation");
-		if ("add".equals(op))
+		String op = request.getParameter("operation"); //$NON-NLS-1$
+		if ("add".equals(op)) //$NON-NLS-1$
 			return ADD;
-		else if ("remove".equals(op))
+		else if ("remove".equals(op)) //$NON-NLS-1$
 			return REMOVE;
-		else if ("removeAll".equals(op))
+		else if ("removeAll".equals(op)) //$NON-NLS-1$
 			return REMOVE_ALL;
 		else
 			return NONE;
@@ -143,13 +143,13 @@ public class BookmarksData extends RequestData {
 	 * @return String
 	 */
 	private static String encode(String s) {
-		s = TString.change(s, "\\", "\\escape");
-		s = TString.change(s, ",", "\\comma");
-		return TString.change(s, "|", "\\pipe");
+		s = TString.change(s, "\\", "\\escape"); //$NON-NLS-1$ //$NON-NLS-2$
+		s = TString.change(s, ",", "\\comma"); //$NON-NLS-1$ //$NON-NLS-2$
+		return TString.change(s, "|", "\\pipe"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	private static String decode(String s) {
-		s = TString.change(s, "\\pipe", "|");
-		s = TString.change(s, "\\comma", ",");
-		return TString.change(s, "\\escape", "\\");
+		s = TString.change(s, "\\pipe", "|"); //$NON-NLS-1$ //$NON-NLS-2$
+		s = TString.change(s, "\\comma", ","); //$NON-NLS-1$ //$NON-NLS-2$
+		return TString.change(s, "\\escape", "\\"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

@@ -54,7 +54,7 @@ public class ToolbarButton{
 	 */
 	public String getImage() {
 		int i = image.lastIndexOf('/');
-		return image.substring(0, i) + "/e_"+ image.substring(i+1);
+		return image.substring(0, i) + "/e_"+ image.substring(i+1); //$NON-NLS-1$
 	}
 	
 	/**

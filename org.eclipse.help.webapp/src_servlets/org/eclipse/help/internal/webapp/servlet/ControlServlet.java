@@ -60,21 +60,21 @@ public class ControlServlet extends HttpServlet {
 		HttpServletResponse resp)
 		throws ServletException, IOException {
 
-		req.setCharacterEncoding("UTF-8");
+		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 
-		resp.setHeader("Cache-Control", "no-cache"); //HTTP 1.1
-		resp.setHeader("Pragma", "no-cache"); //HTTP 1.0
-		resp.setDateHeader("Expires", 0);
+		resp.setHeader("Cache-Control", "no-cache"); //HTTP 1.1 //$NON-NLS-1$ //$NON-NLS-2$
+		resp.setHeader("Pragma", "no-cache"); //HTTP 1.0 //$NON-NLS-1$ //$NON-NLS-2$
+		resp.setDateHeader("Expires", 0); //$NON-NLS-1$
 		//prevents caching at the proxy server
 
 		if (!UrlUtil.isLocalRequest(req)) {
 			// do not allow remote clients to execute this servlet
 			return;
 		}
-		if (!"/helpControl".equals(req.getContextPath())
-			|| !"/control.html".equals(req.getServletPath())) {
+		if (!"/helpControl".equals(req.getContextPath()) //$NON-NLS-1$
+			|| !"/control.html".equals(req.getServletPath())) { //$NON-NLS-1$
 			// do not allow arbitrary URLs to execute this servlet
-			resp.sendError(HttpServletResponse.SC_FORBIDDEN, "");
+			resp.sendError(HttpServletResponse.SC_FORBIDDEN, ""); //$NON-NLS-1$
 			return;
 		}
 
@@ -82,20 +82,20 @@ public class ControlServlet extends HttpServlet {
 			return;
 		}
 
-		String command = req.getParameter("command");
+		String command = req.getParameter("command"); //$NON-NLS-1$
 		if (command == null) {
-			resp.getWriter().print("No command.");
+			resp.getWriter().print("No command."); //$NON-NLS-1$
 			return;
 		}
 
-		if ("shutdown".equalsIgnoreCase(command)) {
+		if ("shutdown".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			shutdown();
-		} else if ("displayHelp".equalsIgnoreCase(command)) {
+		} else if ("displayHelp".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_STANDALONE) {
 				displayHelp(req);
 			}
 		} else {
-			resp.getWriter().print("Unrecognized command.");
+			resp.getWriter().print("Unrecognized command."); //$NON-NLS-1$
 		}
 	}
 	/**
@@ -112,7 +112,7 @@ public class ControlServlet extends HttpServlet {
 	 * href parameter, which is the resource to display
 	 */
 	private void displayHelp(HttpServletRequest req) {
-		String href = req.getParameter("href");
+		String href = req.getParameter("href"); //$NON-NLS-1$
 		if (href != null) {
 			helpDisplay.displayHelpResource(href, false);
 		} else {

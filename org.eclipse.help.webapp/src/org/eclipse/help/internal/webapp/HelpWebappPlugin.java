@@ -16,7 +16,7 @@ import org.osgi.framework.*;
  * Welp web application plug-in.
  */
 public class HelpWebappPlugin extends Plugin {
-	public final static String PLUGIN_ID = "org.eclipse.help.webapp";
+	public final static String PLUGIN_ID = "org.eclipse.help.webapp"; //$NON-NLS-1$
 	// debug options
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_WORKINGSETS = false;
@@ -30,7 +30,7 @@ public class HelpWebappPlugin extends Plugin {
 	 */
 	public static synchronized void logError(String message, Throwable ex) {
 		if (message == null)
-			message = "";
+			message = ""; //$NON-NLS-1$
 		Status errorStatus =
 			new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, ex);
 		HelpWebappPlugin.getDefault().getLog().log(errorStatus);
@@ -43,7 +43,7 @@ public class HelpWebappPlugin extends Plugin {
 	public static synchronized void logWarning(String message) {
 		if (HelpPlugin.DEBUG) {
 			if (message == null)
-				message = "";
+				message = ""; //$NON-NLS-1$
 			Status warningStatus =
 				new Status(
 					IStatus.WARNING,
@@ -72,7 +72,7 @@ public class HelpWebappPlugin extends Plugin {
 		// Setup debugging options
 		DEBUG = isDebugging();
 		if (DEBUG) {
-			DEBUG_WORKINGSETS = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.help.webapp/debug/workingsets")); //$NON-NLS-1$
+			DEBUG_WORKINGSETS = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.help.webapp/debug/workingsets")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	/* (non-Javadoc)

@@ -34,10 +34,10 @@ public class ContextServlet extends HttpServlet {
 		throws ServletException, IOException {
 
 		locale = UrlUtil.getLocale(req, resp);
-		req.setCharacterEncoding("UTF-8");
+		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 
-		resp.setContentType("application/xml; charset=UTF-8");
-		resp.setHeader("Cache-Control", "max-age=0");
+		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
+		resp.setHeader("Cache-Control", "max-age=0"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 		String contextId = req.getPathInfo();
 		if (contextId == null || contextId.length() < 2)
@@ -78,12 +78,12 @@ public class ContextServlet extends HttpServlet {
 		 */
 		public void generate(String contextId, IContext context, HttpServletResponse resp) {
 
-			println("<context id=\""+ contextId +"\">");
+			println("<context id=\""+ contextId +"\">"); //$NON-NLS-1$ //$NON-NLS-2$
 			pad++;
 			printPad();
-			print("<description>");
+			print("<description>"); //$NON-NLS-1$
 			print(context.getText());
-			println("</description>");
+			println("</description>"); //$NON-NLS-1$
 			
 			IHelpResource[] links = context.getRelatedTopics();
 			if (links == null)
@@ -92,26 +92,26 @@ public class ContextServlet extends HttpServlet {
 			for (int i = 0; i < links.length; i++) {
 				printPad();
 				print(
-					"<topic label=\""
+					"<topic label=\"" //$NON-NLS-1$
 						+ xmlEscape(links[i].getLabel())
-						+ "\""
-						+ " href=\""
+						+ "\"" //$NON-NLS-1$
+						+ " href=\"" //$NON-NLS-1$
 						+ links[i].getHref()
-						+ "\"");
+						+ "\""); //$NON-NLS-1$
 				IToc toc = findTocForTopic(links[i].getHref());
 				if (toc != null) {
 					print(
-						" toc=\""
+						" toc=\"" //$NON-NLS-1$
 							+ toc.getHref()
-							+ "\""
-							+ " toclabel=\""
+							+ "\"" //$NON-NLS-1$
+							+ " toclabel=\"" //$NON-NLS-1$
 							+ toc.getLabel()
-							+ "\"");
+							+ "\""); //$NON-NLS-1$
 				}
-				print(" />");
+				print(" />"); //$NON-NLS-1$
 			}
 			pad--;
-			println("</context>");
+			println("</context>"); //$NON-NLS-1$
 		}
 		
 

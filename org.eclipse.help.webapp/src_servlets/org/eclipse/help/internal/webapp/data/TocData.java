@@ -75,16 +75,16 @@ public class TocData extends ActivitiesData {
 			honorLevelsLimit = loadBookAtOnceLimit / 4;
 		}
 
-		this.tocHref = request.getParameter("toc");
-		this.topicHref = request.getParameter("topic");
+		this.tocHref = request.getParameter("toc"); //$NON-NLS-1$
+		this.topicHref = request.getParameter("topic"); //$NON-NLS-1$
 		if (tocHref != null && tocHref.length() == 0)
 			tocHref = null;
 		if (topicHref != null && topicHref.length() == 0)
 			topicHref = null;
 		// initialize rootPath
-		String pathStr = request.getParameter("path");
+		String pathStr = request.getParameter("path"); //$NON-NLS-1$
 		if (pathStr != null && pathStr.length() > 0) {
-			String[] paths = pathStr.split("_", -1);
+			String[] paths = pathStr.split("_", -1); //$NON-NLS-1$
 			int[] indexes = new int[paths.length];
 			boolean indexesOK = true;
 			for (int i = 0; i < paths.length; i++) {
@@ -220,17 +220,17 @@ public class TocData extends ActivitiesData {
 	 *            the topic href
 	 */
 	private int findTocContainingTopic(String topic) {
-		if (topic == null || topic.equals(""))
+		if (topic == null || topic.equals("")) //$NON-NLS-1$
 			return -1;
 
-		int index = topic.indexOf("/topic/");
+		int index = topic.indexOf("/topic/"); //$NON-NLS-1$
 		if (index != -1)
 			topic = topic.substring(index + 6);
 		index = topic.indexOf('?');
 		if (index != -1)
 			topic = topic.substring(0, index);
 
-		if (topic == null || topic.equals(""))
+		if (topic == null || topic.equals("")) //$NON-NLS-1$
 			return -1;
 
 		tocs = getTocs();
@@ -255,17 +255,17 @@ public class TocData extends ActivitiesData {
 	 */
 	private ITopic findTopic() {
 		String topic = getSelectedTopic();
-		if (topic == null || topic.equals(""))
+		if (topic == null || topic.equals("")) //$NON-NLS-1$
 			return null;
 
-		int index = topic.indexOf("/topic/");
+		int index = topic.indexOf("/topic/"); //$NON-NLS-1$
 		if (index != -1)
 			topic = topic.substring(index + 6);
 		index = topic.indexOf('?');
 		if (index != -1)
 			topic = topic.substring(0, index);
 
-		if (topic == null || topic.equals(""))
+		if (topic == null || topic.equals("")) //$NON-NLS-1$
 			return null;
 
 		if (getSelectedToc() < 0)
@@ -306,13 +306,13 @@ public class TocData extends ActivitiesData {
 				topics = getEnabledSubtopics(topics[rootPath[p]]);
 				id.append(rootPath[p]);
 			}
-			out.write("<ul class='expanded' id=\"" + id.toString() + "\">\n");
+			out.write("<ul class='expanded' id=\"" + id.toString() + "\">\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		for (int i = 0; i < topics.length; i++) {
 			String idPrefix = id.toString();
 			if (idPrefix.length() > 0) {
-				idPrefix = idPrefix + "_" + Integer.toString(i);
+				idPrefix = idPrefix + "_" + Integer.toString(i); //$NON-NLS-1$
 			} else {
 				idPrefix = Integer.toString(i);
 			}
@@ -326,7 +326,7 @@ public class TocData extends ActivitiesData {
 		}
 
 		if (rootPath != null) {
-			out.write("</ul>\n");
+			out.write("</ul>\n"); //$NON-NLS-1$
 		}
 
 	}
@@ -361,16 +361,16 @@ public class TocData extends ActivitiesData {
 		boolean hasNodes = topics.length > 0;
 
 		if (hasNodes) {
-			out.write("<li>");
-			out.write("<img src='");
+			out.write("<li>"); //$NON-NLS-1$
+			out.write("<img src='"); //$NON-NLS-1$
 			out.write(imagesDirectory);
-			out.write("/plus.gif' class='collapsed' alt=\""+ServletResources.getString("topicClosed", request)+"\">");
-			out.write("<a href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>");
-			out.write("<img src='");
+			out.write("/plus.gif' class='collapsed' alt=\""+ServletResources.getString("topicClosed", request)+"\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			out.write("<a href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>"); //$NON-NLS-1$ //$NON-NLS-2$
+			out.write("<img src='"); //$NON-NLS-1$
 			out.write(imagesDirectory);
-			out.write("/container_obj.gif' alt=\"\">");
+			out.write("/container_obj.gif' alt=\"\">"); //$NON-NLS-1$
 			out.write(UrlUtil.htmlEncode(topic.getLabel()));
-			out.write("</a>");
+			out.write("</a>"); //$NON-NLS-1$
 
 			// is it ancestor of topic to reveal
 			boolean isAncestor =
@@ -379,10 +379,10 @@ public class TocData extends ActivitiesData {
 					&& topicPath[currentLevel] == topic;
 
 			if (maxLevels != 1 || isAncestor) {
-				out.write("<ul class='collapsed'>\n");
+				out.write("<ul class='collapsed'>\n"); //$NON-NLS-1$
 			} else {
 				// children will not be generated
-				out.write("<ul class='collapsed' id=\"" + id + "\">\n");
+				out.write("<ul class='collapsed' id=\"" + id + "\">\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			if (1 <= maxLevels
@@ -393,7 +393,7 @@ public class TocData extends ActivitiesData {
 					generateTopic(
 						topics[i],
 						out,
-						id + "_" + i,
+						id + "_" + i, //$NON-NLS-1$
 						dynamicLoadDepths,
 						currentLevel + 1);
 				}
@@ -402,27 +402,27 @@ public class TocData extends ActivitiesData {
 					generateTopic(
 						topics[i],
 						out,
-						id + "_" + i,
+						id + "_" + i, //$NON-NLS-1$
 						maxLevels - 1,
 						currentLevel + 1);
 				}
 			}
 
-			out.write("</ul>\n");
+			out.write("</ul>\n"); //$NON-NLS-1$
 		} else {
-			out.write("<li>");
-			out.write("<img src='");
+			out.write("<li>"); //$NON-NLS-1$
+			out.write("<img src='"); //$NON-NLS-1$
 			out.write(imagesDirectory);
-			out.write("/plus.gif' class='h' alt=\"\">");
-			out.write("<a href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>");
-			out.write("<img src='");
+			out.write("/plus.gif' class='h' alt=\"\">"); //$NON-NLS-1$
+			out.write("<a href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>"); //$NON-NLS-1$ //$NON-NLS-2$
+			out.write("<img src='"); //$NON-NLS-1$
 			out.write(imagesDirectory);
-			out.write("/topic.gif' alt=\"\">");
+			out.write("/topic.gif' alt=\"\">"); //$NON-NLS-1$
 			out.write(UrlUtil.htmlEncode(topic.getLabel()));
-			out.write("</a>");
+			out.write("</a>"); //$NON-NLS-1$
 		}
 
-		out.write("</li>\n");
+		out.write("</li>\n"); //$NON-NLS-1$
 	}
 
 	/**
@@ -443,46 +443,46 @@ public class TocData extends ActivitiesData {
 	private void generateBasicTopic(ITopicElement topic, Writer out)
 		throws IOException {
 
-		out.write("<li>");
+		out.write("<li>"); //$NON-NLS-1$
 		ITopicElement[] topics = getEnabledSubtopics(topic);
 		boolean hasNodes = topics.length > 0;
 		if (hasNodes) {
-			out.write("<nobr>");
-			out.write("<a ");
+			out.write("<nobr>"); //$NON-NLS-1$
+			out.write("<a "); //$NON-NLS-1$
 			if (getSelectedTopicHelpHref().equals(topic.getHref())) {
-				out.write("name=\"selectedItem\" ");
+				out.write("name=\"selectedItem\" "); //$NON-NLS-1$
 			}
-			out.write("href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>");
-			out.write("<img src='");
+			out.write("href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>"); //$NON-NLS-1$ //$NON-NLS-2$
+			out.write("<img src='"); //$NON-NLS-1$
 			out.write(imagesDirectory);
-			out.write("/container_obj.gif' alt=\"\" border=0>&nbsp;");
+			out.write("/container_obj.gif' alt=\"\" border=0>&nbsp;"); //$NON-NLS-1$
 			out.write(UrlUtil.htmlEncode(topic.getLabel()));
-			out.write("</a>");
-			out.write("</nobr>");
+			out.write("</a>"); //$NON-NLS-1$
+			out.write("</nobr>"); //$NON-NLS-1$
 
-			out.write("<ul>\n");
+			out.write("<ul>\n"); //$NON-NLS-1$
 
 			for (int i = 0; i < topics.length; i++) {
 				generateBasicTopic(topics[i], out);
 			}
 
-			out.write("</ul>\n");
+			out.write("</ul>\n"); //$NON-NLS-1$
 		} else {
-			out.write("<nobr>");
-			out.write("<a ");
+			out.write("<nobr>"); //$NON-NLS-1$
+			out.write("<a "); //$NON-NLS-1$
 			if (getSelectedTopicHelpHref().equals(topic.getHref())) {
-				out.write("name=\"selectedItem\" ");
+				out.write("name=\"selectedItem\" "); //$NON-NLS-1$
 			}
-			out.write("href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>");
-			out.write("<img src='");
+			out.write("href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>"); //$NON-NLS-1$ //$NON-NLS-2$
+			out.write("<img src='"); //$NON-NLS-1$
 			out.write(imagesDirectory);
-			out.write("/topic.gif' alt=\"\" border=0>&nbsp;");
+			out.write("/topic.gif' alt=\"\" border=0>&nbsp;"); //$NON-NLS-1$
 			out.write(UrlUtil.htmlEncode(topic.getLabel()));
-			out.write("</a>");
-			out.write("</nobr>");
+			out.write("</a>"); //$NON-NLS-1$
+			out.write("</nobr>"); //$NON-NLS-1$
 		}
 
-		out.write("</li>\n");
+		out.write("</li>\n"); //$NON-NLS-1$
 	}
 	/**
 	 * @return String - help form of selected topic URL, or ""
@@ -491,10 +491,10 @@ public class TocData extends ActivitiesData {
 		if (topicHelpHref == null) {
 			String topic = getSelectedTopic();
 			if (topic == null || topic.length() == 0) {
-				topicHelpHref = "";
+				topicHelpHref = ""; //$NON-NLS-1$
 				return topicHelpHref;
 			}
-			int index = topic.indexOf("/topic/");
+			int index = topic.indexOf("/topic/"); //$NON-NLS-1$
 			if (index != -1)
 				topic = topic.substring(index + 6);
 			index = topic.indexOf('?');
@@ -502,7 +502,7 @@ public class TocData extends ActivitiesData {
 				topic = topic.substring(0, index);
 			topicHelpHref = topic;
 			if (topic == null) {
-				topicHelpHref = "";
+				topicHelpHref = ""; //$NON-NLS-1$
 			}
 		}
 		return topicHelpHref;

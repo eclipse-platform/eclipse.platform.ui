@@ -35,7 +35,7 @@ public class View {
 	 */
 	public String getImage() {
 		int i = imageURL.lastIndexOf('/');
-		return imageURL.substring(0, i) + "/e_"+ imageURL.substring(i+1);
+		return imageURL.substring(0, i) + "/e_"+ imageURL.substring(i+1); //$NON-NLS-1$
 	}
 	
 	/**

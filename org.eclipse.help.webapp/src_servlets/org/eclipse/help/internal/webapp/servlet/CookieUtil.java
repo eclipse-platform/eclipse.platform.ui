@@ -23,7 +23,7 @@ import org.eclipse.help.internal.webapp.*;
 public class CookieUtil {
 	private static final int COOKIE_LIFE = 5 * 365 * 24 * 60 * 60;
 	private static final int MAX_COOKIE_PAYLOAD =
-		4096 - "wset01=".length() - "81920<".length() - 1;
+		4096 - "wset01=".length() - "81920<".length() - 1; //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
 	 * @return null or String
@@ -43,11 +43,11 @@ public class CookieUtil {
 		}
 		if (HelpWebappPlugin.DEBUG_WORKINGSETS) {
 			System.out.println(
-				"CookieUtil.getCookieValue("
+				"CookieUtil.getCookieValue(" //$NON-NLS-1$
 					+ name
-					+ ", "
+					+ ", " //$NON-NLS-1$
 					+ request.getRequestURI()
-					+ ") returning "
+					+ ") returning " //$NON-NLS-1$
 					+ ret);
 		}
 		return ret;
@@ -61,14 +61,14 @@ public class CookieUtil {
 		response.addCookie(cookie);
 		if (HelpWebappPlugin.DEBUG_WORKINGSETS) {
 			System.out.println(
-				"CookieUtil.setCookieValue(" + name + ", " + value + ",...)");
+				"CookieUtil.setCookieValue(" + name + ", " + value + ",...)"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 
 	public static void deleteCookie(
 		String name,
 		HttpServletResponse response) {
-		Cookie cookie = new Cookie(name, "");
+		Cookie cookie = new Cookie(name, ""); //$NON-NLS-1$
 		cookie.setMaxAge(0);
 		response.addCookie(cookie);
 	}
@@ -93,13 +93,13 @@ public class CookieUtil {
 		int len = data.length();
 		int n = len / MAX_COOKIE_PAYLOAD;
 		if (n > maxCookies) {
-			throw new IOException("Too may cookies required to store data.");
+			throw new IOException("Too may cookies required to store data."); //$NON-NLS-1$
 		}
 		for (int i = 1; i <= n; i++) {
 			if (i == 1) {
 				setCookieValue(
-					name + "1",
-					len + "<" + data.substring(0, MAX_COOKIE_PAYLOAD),
+					name + "1", //$NON-NLS-1$
+					len + "<" + data.substring(0, MAX_COOKIE_PAYLOAD), //$NON-NLS-1$
 					response);
 			} else {
 				setCookieValue(
@@ -113,8 +113,8 @@ public class CookieUtil {
 		if (len % MAX_COOKIE_PAYLOAD > 0) {
 			if (n == 0) {
 				setCookieValue(
-					name + "1",
-					len + "<" + data.substring(0, len),
+					name + "1", //$NON-NLS-1$
+					len + "<" + data.substring(0, len), //$NON-NLS-1$
 					response);
 			} else {
 				setCookieValue(
@@ -142,12 +142,12 @@ public class CookieUtil {
 	public static String restoreString(
 		String name,
 		HttpServletRequest request) {
-		String value1 = CookieUtil.getCookieValue(name + "1", request);
+		String value1 = CookieUtil.getCookieValue(name + "1", request); //$NON-NLS-1$
 		if (value1 == null) {
 			// no cookie
 			return null;
 		}
-		String lengthAndSubstring1[] = value1.split("<");
+		String lengthAndSubstring1[] = value1.split("<"); //$NON-NLS-1$
 		if (lengthAndSubstring1.length < 2) {
 			return null;
 		}

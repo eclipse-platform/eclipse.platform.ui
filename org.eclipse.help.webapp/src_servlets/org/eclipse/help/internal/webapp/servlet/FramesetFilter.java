@@ -21,24 +21,24 @@ import javax.servlet.http.*;
  */
 public class FramesetFilter implements IFilter {
 	private static final String scriptPart1 =
-		"<script>if( self == top ){ window.location.replace( \"";
-	private static final String scriptPart3 = "\");}</script>";
+		"<script>if( self == top ){ window.location.replace( \""; //$NON-NLS-1$
+	private static final String scriptPart3 = "\");}</script>"; //$NON-NLS-1$
 
 	/*
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)
 	 */
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		String uri = req.getRequestURI();
-		if (uri == null || !uri.endsWith("html") && !uri.endsWith("htm")) {
+		if (uri == null || !uri.endsWith("html") && !uri.endsWith("htm")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return out;
 		}
 		
-		if("/nftopic".equals(req.getServletPath())){
+		if("/nftopic".equals(req.getServletPath())){ //$NON-NLS-1$
 			return out;
 		}
 
-		String noframes = req.getParameter("noframes");
-		if ("true".equals(noframes)){
+		String noframes = req.getParameter("noframes"); //$NON-NLS-1$
+		if ("true".equals(noframes)){ //$NON-NLS-1$
 			return out;
 		}
 
@@ -50,9 +50,9 @@ public class FramesetFilter implements IFilter {
 		for (int i;
 			0 <= (i = path.indexOf('/'));
 			path = path.substring(i + 1)) {
-			script.append("../");
+			script.append("../"); //$NON-NLS-1$
 		}
-		script.append("?topic=");
+		script.append("?topic="); //$NON-NLS-1$
 		script.append(req.getPathInfo());
 		script.append(scriptPart3);
 		return new FilterHTMLHeadOutputStream(

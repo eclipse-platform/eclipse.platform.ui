@@ -37,7 +37,7 @@ public class WorkingSetData extends RequestData {
 		AdaptableTocsArray adaptableTocs =
 			wsmgr.getRoot();
 		tocs = (AdaptableToc[]) adaptableTocs.getChildren();
-		isEditMode = "edit".equals(getOperation());
+		isEditMode = "edit".equals(getOperation()); //$NON-NLS-1$
 	}
 
 	public boolean isEditMode() {
@@ -45,9 +45,9 @@ public class WorkingSetData extends RequestData {
 	}
 
 	public String getWorkingSetName() {
-		String name = request.getParameter("workingSet");
+		String name = request.getParameter("workingSet"); //$NON-NLS-1$
 		if (name == null)
-			name = "";
+			name = ""; //$NON-NLS-1$
 		return name;
 	}
 
@@ -131,7 +131,7 @@ public class WorkingSetData extends RequestData {
 	}
 
 	public String getOperation() {
-		return request.getParameter("operation");
+		return request.getParameter("operation"); //$NON-NLS-1$
 	}
 
 	// Accessor methods to avoid exposing help classes directly to JSP.

@@ -36,7 +36,7 @@ public class ContentServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 		throws ServletException, IOException {
-		req.setCharacterEncoding("UTF-8");
+		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		if (connector != null){
 			connector.transfer(req, resp);
 		}

@@ -22,7 +22,7 @@ public class LinksData extends RequestData {
 
 	// Request parameters
 	private String topicHref;
-	private String selectedTopicId = "";
+	private String selectedTopicId = ""; //$NON-NLS-1$
 
 	// list of related links
 	private IHelpResource[] links;
@@ -34,7 +34,7 @@ public class LinksData extends RequestData {
 	 */
 	public LinksData(ServletContext context, HttpServletRequest request, HttpServletResponse response) {
 		super(context, request, response);
-		this.topicHref = request.getParameter("topic");
+		this.topicHref = request.getParameter("topic"); //$NON-NLS-1$
 		if (topicHref != null && topicHref.length() == 0)
 			topicHref = null;
 
@@ -47,7 +47,7 @@ public class LinksData extends RequestData {
 	 * @return boolean
 	 */
 	public boolean isLinksRequest() {
-		return (request.getParameter("contextId") != null);
+		return (request.getParameter("contextId") != null); //$NON-NLS-1$
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class LinksData extends RequestData {
 		if (toc != null)
 			return UrlUtil.htmlEncode(toc.getLabel());
 		else
-			return "";
+			return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class LinksData extends RequestData {
 
 	private void loadLinks() {
 
-		String contextId = request.getParameter("contextId");
+		String contextId = request.getParameter("contextId"); //$NON-NLS-1$
 		IContext context = HelpSystem.getContext(contextId);
 		if (context == null) {
 			links = new IHelpResource[0];
@@ -109,7 +109,7 @@ public class LinksData extends RequestData {
 		for (int i = 0; i < links.length; i++) {
 			// the following assume topic numbering as in linksView.jsp
 			if (links[i].getHref().equals(topicHref)) {
-				selectedTopicId = "a" + i;
+				selectedTopicId = "a" + i; //$NON-NLS-1$
 				break;
 			}
 		}

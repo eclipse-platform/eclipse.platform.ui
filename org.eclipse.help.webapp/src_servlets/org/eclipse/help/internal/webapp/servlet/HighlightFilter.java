@@ -20,18 +20,18 @@ import org.eclipse.help.internal.webapp.data.*;
 
 public class HighlightFilter implements IFilter {
 	private static final String scriptPart1 =
-		"\n<script language=\"JavaScript\">\n<!--\nvar keywords = new Array (";
+		"\n<script language=\"JavaScript\">\n<!--\nvar keywords = new Array ("; //$NON-NLS-1$
 	private static final String scriptPart3 =
-		");\n-->\n</script>\n<script language=\"JavaScript\" src=\"";
+		");\n-->\n</script>\n<script language=\"JavaScript\" src=\""; //$NON-NLS-1$
 	private static final String scriptPart5 =
-		"advanced/highlight.js\"></script>\n";
+		"advanced/highlight.js\"></script>\n"; //$NON-NLS-1$
 
 	/*
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)
 	 */
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		String uri = req.getRequestURI();
-		if (uri == null || !uri.endsWith("html") && !uri.endsWith("htm")) {
+		if (uri == null || !uri.endsWith("html") && !uri.endsWith("htm")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return out;
 		}
 		if (!(UrlUtil.isIE(req) || UrlUtil.isMozilla(req))) {
@@ -65,10 +65,10 @@ public class HighlightFilter implements IFilter {
 		if (!it.hasNext())
 			return null;
 		String keyword = (String) it.next();
-		buf.append("\"").append(keyword).append("\"");
+		buf.append("\"").append(keyword).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
 		while (it.hasNext()) {
 			keyword = (String) it.next();
-			buf.append(", \"").append(keyword).append("\"");
+			buf.append(", \"").append(keyword).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		//
 		buf.append(scriptPart3);
@@ -78,7 +78,7 @@ public class HighlightFilter implements IFilter {
 			for (int i;
 				0 <= (i = path.indexOf('/'));
 				path = path.substring(i + 1)) {
-				buf.append("../");
+				buf.append("../"); //$NON-NLS-1$
 			}
 		}
 		//
@@ -94,21 +94,21 @@ public class HighlightFilter implements IFilter {
 		// Collect words to hash set to eliminate duplcates
 		Collection tokens = new ArrayList();
 
-		String searchWord = req.getParameter("resultof");
+		String searchWord = req.getParameter("resultof"); //$NON-NLS-1$
 		if (searchWord == null) {
 			return tokens;
 		}
 		//Divide along quotation marks
 		StringTokenizer qTokenizer =
-			new StringTokenizer(searchWord.trim(), "\"", true);
+			new StringTokenizer(searchWord.trim(), "\"", true); //$NON-NLS-1$
 		boolean withinQuotation = false;
-		String quotedString = "";
+		String quotedString = ""; //$NON-NLS-1$
 		while (qTokenizer.hasMoreTokens()) {
 			String curToken = qTokenizer.nextToken();
-			if (curToken.equals("\"")) {
+			if (curToken.equals("\"")) { //$NON-NLS-1$
 				if (!withinQuotation) {
 					//beginning of quoted string
-					quotedString = "";
+					quotedString = ""; //$NON-NLS-1$
 				} else {
 					//end of quoted string
 					tokens.add(quotedString);
@@ -155,7 +155,7 @@ public class HighlightFilter implements IFilter {
 		for (Iterator it = col.iterator(); it.hasNext();) {
 			String word = (String) it.next();
 			int index;
-			while ((index = word.indexOf("*")) >= 0) {
+			while ((index = word.indexOf("*")) >= 0) { //$NON-NLS-1$
 				if (index > 0)
 					resultPass1.add(word.substring(0, index));
 				if (word.length() > index)
@@ -170,7 +170,7 @@ public class HighlightFilter implements IFilter {
 		for (Iterator it = resultPass1.iterator(); it.hasNext();) {
 			String word = (String) it.next();
 			int index;
-			while ((index = word.indexOf("?")) >= 0) {
+			while ((index = word.indexOf("?")) >= 0) { //$NON-NLS-1$
 				if (index > 0)
 					resultPass2.add(word.substring(0, index));
 				if (word.length() > index)

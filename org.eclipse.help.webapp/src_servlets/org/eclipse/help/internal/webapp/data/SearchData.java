@@ -30,7 +30,7 @@ public class SearchData extends ActivitiesData {
 
 	// Request parameters
 	private String topicHref;
-	private String selectedTopicId = "";
+	private String selectedTopicId = ""; //$NON-NLS-1$
 	private String searchWord;
 	private String workingSetName;
 
@@ -53,11 +53,11 @@ public class SearchData extends ActivitiesData {
 		HttpServletResponse response) {
 		super(context, request, response);
 		wsmgr = new WebappWorkingSetManager(request, response, getLocale());
-		this.topicHref = request.getParameter("topic");
+		this.topicHref = request.getParameter("topic"); //$NON-NLS-1$
 		if (topicHref != null && topicHref.length() == 0)
 			topicHref = null;
 
-		searchWord = request.getParameter("searchWord");
+		searchWord = request.getParameter("searchWord"); //$NON-NLS-1$
 
 		// try loading search results or get the indexing progress info.
 		if (isSearchRequest() && !isScopeRequest()) {
@@ -69,7 +69,7 @@ public class SearchData extends ActivitiesData {
 				for (int i = 0; i < hits.length; i++) {
 					// the following assume topic numbering as in searchView.jsp
 					if (hits[i].getHref().equals(topicHref)) {
-						selectedTopicId = "a" + i;
+						selectedTopicId = "a" + i; //$NON-NLS-1$
 						break;
 					}
 				}
@@ -83,7 +83,7 @@ public class SearchData extends ActivitiesData {
 	 * @return boolean
 	 */
 	public boolean isSearchRequest() {
-		return (request.getParameter("searchWord") != null);
+		return (request.getParameter("searchWord") != null); //$NON-NLS-1$
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class SearchData extends ActivitiesData {
 	 * Returns true when there is a request to change the scope (working set)
 	 */
 	public boolean isScopeRequest() {
-		return (request.getParameter("workingSet") != null);
+		return (request.getParameter("workingSet") != null); //$NON-NLS-1$
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class SearchData extends ActivitiesData {
 		if (hits[i].getToc() != null)
 			return UrlUtil.htmlEncode(hits[i].getToc().getLabel());
 		else
-			return "";
+			return ""; //$NON-NLS-1$
 	}
 	
 	/**
@@ -161,7 +161,7 @@ public class SearchData extends ActivitiesData {
 	 */
 	public String getSearchWord() {
 		if (searchWord == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		else
 			return searchWord;
 	}
@@ -170,7 +170,7 @@ public class SearchData extends ActivitiesData {
 	 * Returns the list of selected TOC's 
 	 */
 	public String[] getSelectedTocs() {
-		String[] books = request.getParameterValues("scope");
+		String[] books = request.getParameterValues("scope"); //$NON-NLS-1$
 		if (books == null) {
 			// select all books
 			TocData tocData = new TocData(context, request, response);
@@ -187,7 +187,7 @@ public class SearchData extends ActivitiesData {
 	public boolean isTocSelected(int toc) {
 		TocData tocData = new TocData(context, request, response);
 		String href = tocData.getTocHref(toc);
-		String[] books = request.getParameterValues("scope");
+		String[] books = request.getParameterValues("scope"); //$NON-NLS-1$
 		if (books == null)
 			return false;
 		for (int i = 0; i < books.length; i++) {
@@ -208,12 +208,12 @@ public class SearchData extends ActivitiesData {
 			return workingSetName;
 
 		if (isScopeRequest()) {
-			workingSetName = request.getParameter("workingSet");
+			workingSetName = request.getParameter("workingSet"); //$NON-NLS-1$
 		} else if (isSearchRequest()) {
-			workingSetName = request.getParameter("scope");
+			workingSetName = request.getParameter("scope"); //$NON-NLS-1$
 			// if we have already set the working set, then use it.
 			if (workingSetName == null)
-				workingSetName = request.getParameter("workingSet");
+				workingSetName = request.getParameter("workingSet"); //$NON-NLS-1$
 		} else {
 			workingSetName =wsmgr.getCurrentWorkingSet();
 		}
@@ -224,7 +224,7 @@ public class SearchData extends ActivitiesData {
 			&& wsmgr.getWorkingSet(
 		workingSetName)
 				== null)
-			workingSetName = ServletResources.getString("All", request);
+			workingSetName = ServletResources.getString("All", request); //$NON-NLS-1$
 		return workingSetName;
 	}
 
@@ -234,14 +234,14 @@ public class SearchData extends ActivitiesData {
 	 */
 	public void saveScope() {
 		// if a working set is defined, set it in the preferences
-		String workingSet = request.getParameter("scope");
+		String workingSet = request.getParameter("scope"); //$NON-NLS-1$
 		String lastWS =
 			wsmgr.getCurrentWorkingSet();
 		if (workingSet != null && !workingSet.equals(lastWS)) {
 			wsmgr.setCurrentWorkingSet(workingSet);
 		} else if (
 			workingSet == null && lastWS != null && lastWS.length() > 0) {
-			wsmgr.setCurrentWorkingSet("");
+			wsmgr.setCurrentWorkingSet(""); //$NON-NLS-1$
 		}
 	}
 	/**
@@ -262,7 +262,7 @@ public class SearchData extends ActivitiesData {
 				hits = results.getSearchHits();
 				if (hits == null) {
 					HelpWebappPlugin.logError(
-						HelpBaseResources.getString("index_is_busy"),
+						HelpBaseResources.getString("index_is_busy"), //$NON-NLS-1$
 						null);
 				}
 				return;
@@ -283,7 +283,7 @@ public class SearchData extends ActivitiesData {
 
 	}
 	private ISearchQuery createSearchQuery() {
-		String fieldSearchStr = request.getParameter("fieldSearch");
+		String fieldSearchStr = request.getParameter("fieldSearch"); //$NON-NLS-1$
 		boolean fieldSearch =
 			fieldSearchStr != null
 				? new Boolean(fieldSearchStr).booleanValue()
@@ -296,7 +296,7 @@ public class SearchData extends ActivitiesData {
 	}
 	private SearchResults createHitCollector() {
 		WorkingSet[] workingSets;
-		if (request.getParameterValues("scopedSearch") == null) {
+		if (request.getParameterValues("scopedSearch") == null) { //$NON-NLS-1$
 			// scopes are working set names
 			workingSets = getWorkingSets();
 		} else {
@@ -305,7 +305,7 @@ public class SearchData extends ActivitiesData {
 		}
 
 		int maxHits = 500;
-		String maxHitsStr = request.getParameter("maxHits");
+		String maxHitsStr = request.getParameter("maxHits"); //$NON-NLS-1$
 		if (maxHitsStr != null) {
 			try {
 				int clientmaxHits = Integer.parseInt(maxHitsStr);
@@ -321,7 +321,7 @@ public class SearchData extends ActivitiesData {
 	 * @return WorkingSet[] or null
 	 */
 	private WorkingSet[] getWorkingSets() {
-		String[] scopes = request.getParameterValues("scope");
+		String[] scopes = request.getParameterValues("scope"); //$NON-NLS-1$
 		if (scopes == null) {
 			return null;
 		}
@@ -344,7 +344,7 @@ public class SearchData extends ActivitiesData {
 	 * @return WorkingSet[] or null
 	 */
 	private WorkingSet[] createTempWorkingSets() {
-		String[] scopes = request.getParameterValues("scope");
+		String[] scopes = request.getParameterValues("scope"); //$NON-NLS-1$
 		if (scopes == null) {
 			// it is possible that filtering is used, but all books are deselected
 			return new WorkingSet[0];
@@ -365,14 +365,14 @@ public class SearchData extends ActivitiesData {
 		AdaptableToc[] adaptableTocs =
 			(AdaptableToc[]) tocs.toArray(new AdaptableToc[tocs.size()]);
 		WorkingSet[] workingSets = new WorkingSet[1];
-		workingSets[0] = wsmgr.createWorkingSet("temp", adaptableTocs);
+		workingSets[0] = wsmgr.createWorkingSet("temp", adaptableTocs); //$NON-NLS-1$
 		return workingSets;
 	}
 	public String getQueryExceptionMessage(){
 		if (queryException==null){
 			return null;
 		}
-		return ServletResources.getString("searchTooComplex",request);
+		return ServletResources.getString("searchTooComplex",request); //$NON-NLS-1$
 	}
 
 }

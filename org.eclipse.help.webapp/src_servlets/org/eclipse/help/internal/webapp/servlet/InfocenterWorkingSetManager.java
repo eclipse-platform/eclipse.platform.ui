@@ -27,13 +27,13 @@ import org.eclipse.help.internal.workingset.*;
  * @since 3.0
  */
 public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
-	private static final String COOKIE_NAME = "wset";
+	private static final String COOKIE_NAME = "wset"; //$NON-NLS-1$
 	private static final int MAX_COOKIES = 15;
 	private HttpServletRequest request;
 	private HttpServletResponse response;
 
 	// Current working set , empty string means all documents
-	private String currentWorkingSet = "";
+	private String currentWorkingSet = ""; //$NON-NLS-1$
 	private SortedSet workingSets = new TreeSet(new WorkingSetComparator());
 	private String locale;
 	private AdaptableTocsArray root;
@@ -123,14 +123,14 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 			return;
 		}
 
-		String[] values = data.split("\\|", -1);
+		String[] values = data.split("\\|", -1); //$NON-NLS-1$
 		if (values.length < 1) {
 			return;
 		}
 		currentWorkingSet = URLCoder.decode(values[0] /*, "UTF8"*/
 		);
 		i : for (int i = 1; i < values.length; i++) {
-			String[] nameAndHrefs = values[i].split("&", -1);
+			String[] nameAndHrefs = values[i].split("&", -1); //$NON-NLS-1$
 
 			String name = URLCoder.decode(nameAndHrefs[0] /*, "UTF8"*/
 			);
@@ -215,7 +215,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 		} catch (IOException ioe) {
 			if (HelpWebappPlugin.DEBUG_WORKINGSETS) {
 				System.out.println(
-					"InfocenterWorkingSetManager.saveState(): Too much data to save: "
+					"InfocenterWorkingSetManager.saveState(): Too much data to save: " //$NON-NLS-1$
 						+ data.toString());
 			}
 			throw ioe;

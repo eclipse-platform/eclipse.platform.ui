@@ -38,17 +38,17 @@ public class TocServlet extends HttpServlet {
 		throws ServletException, IOException {
 
 		locale = UrlUtil.getLocale(req, resp);
-		req.setCharacterEncoding("UTF-8");
+		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 
-		resp.setContentType("application/xml; charset=UTF-8");
-		resp.setHeader("Cache-Control", "max-age=10000");
+		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
+		resp.setHeader("Cache-Control", "max-age=10000"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		if ("/".equals(req.getPathInfo())) {
-			if (req.getParameter("topic") == null)
+		if ("/".equals(req.getPathInfo())) { //$NON-NLS-1$
+			if (req.getParameter("topic") == null) //$NON-NLS-1$
 				serializeTocs(resp);
 			else
 				serializeTocs(
-					findTocContainingTopic(req.getParameter("topic")),
+					findTocContainingTopic(req.getParameter("topic")), //$NON-NLS-1$
 					resp);
 		} else {
 			serializeToc(req.getPathInfo(), resp);
@@ -97,14 +97,14 @@ public class TocServlet extends HttpServlet {
 		IToc[] tocs = tocManager.getTocs(locale);
 
 		TocWriter gen = new TocWriter(resp.getWriter());
-		gen.println("<tocs>");
+		gen.println("<tocs>"); //$NON-NLS-1$
 		gen.pad++;
 		for (int i = 0; i < tocs.length; i++) {
 			gen.printPad();
 			gen.generate(tocs[i], false);
 		}
 		gen.pad--;
-		gen.println("</tocs>");
+		gen.println("</tocs>"); //$NON-NLS-1$
 		gen.close();
 	}
 
@@ -117,12 +117,12 @@ public class TocServlet extends HttpServlet {
 			throw new ServletException();
 
 		TocWriter gen = new TocWriter(resp.getWriter());
-		gen.println("<tocs>");
+		gen.println("<tocs>"); //$NON-NLS-1$
 		gen.pad++;
 		gen.printPad();
 		gen.generate(toc, false);
 		gen.pad--;
-		gen.println("</tocs>");
+		gen.println("</tocs>"); //$NON-NLS-1$
 		gen.close();
 	}
 
@@ -131,17 +131,17 @@ public class TocServlet extends HttpServlet {
 	 * @param topic the topic href
 	 */
 	private IToc findTocContainingTopic(String topic) {
-		if (topic == null || topic.equals(""))
+		if (topic == null || topic.equals("")) //$NON-NLS-1$
 			return null;
 
-		int index = topic.indexOf("/topic/");
+		int index = topic.indexOf("/topic/"); //$NON-NLS-1$
 		if (index != -1)
 			topic = topic.substring(index + 6);
 		index = topic.indexOf('?');
 		if (index != -1)
 			topic = topic.substring(0, index);
 
-		if (topic == null || topic.equals(""))
+		if (topic == null || topic.equals("")) //$NON-NLS-1$
 			return null;
 
 		IToc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
@@ -170,26 +170,26 @@ public class TocServlet extends HttpServlet {
 		 */
 		public void generate(IToc toc, boolean genTopics) {
 			// get the topic description
-			String topicDescription = "";
+			String topicDescription = ""; //$NON-NLS-1$
 			ITopic topic = toc.getTopic(null);
 			if (topic != null)
 				topicDescription = topic.getHref();
 
 			println(
-				"<toc label=\""
+				"<toc label=\"" //$NON-NLS-1$
 					+ xmlEscape(toc.getLabel())
-					+ "\" href=\""
+					+ "\" href=\"" //$NON-NLS-1$
 					+ reduceURL(toc.getHref())
-					+ "\" topic=\""
+					+ "\" topic=\"" //$NON-NLS-1$
 					+ reduceURL(topicDescription)
-					+ "\">");
+					+ "\">"); //$NON-NLS-1$
 			if (genTopics) {
 				ITopic[] topics = toc.getTopics();
 				for (int i = 0; i < topics.length; i++) {
 					generate(topics[i]);
 				}
 			}
-			println("</toc>");
+			println("</toc>"); //$NON-NLS-1$
 		}
 
 		/**
@@ -201,20 +201,20 @@ public class TocServlet extends HttpServlet {
 			printPad();
 			String href = topic.getHref();
 			print(
-				"<topic label=\""
+				"<topic label=\"" //$NON-NLS-1$
 					+ xmlEscape(topic.getLabel())
-					+ "\""
-					+ (href != null ? " href=\"" + reduceURL(href) + "\"" : ""));
+					+ "\"" //$NON-NLS-1$
+					+ (href != null ? " href=\"" + reduceURL(href) + "\"" : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			ITopic[] subtopics = topic.getSubtopics();
 			if (subtopics.length > 0) {
-				println(">");
+				println(">"); //$NON-NLS-1$
 				for (int i = 0; i < subtopics.length; i++) {
 					generate(subtopics[i]);
 				}
 				printPad();
-				println("</topic>");
+				println("</topic>"); //$NON-NLS-1$
 			} else {
-				println(" />");
+				println(" />"); //$NON-NLS-1$
 			}
 			pad--;
 		}
@@ -228,13 +228,13 @@ public class TocServlet extends HttpServlet {
 			if (url == null)
 				return url;
 			while (true) {
-				int index = url.indexOf("/..", 1);
+				int index = url.indexOf("/..", 1); //$NON-NLS-1$
 				if (index <= 0)
 					break;
 				//there is no "/.." or nothing before "/.." to simplify
 				String part1 = url.substring(0, index);
-				String part2 = url.substring(index + "/..".length());
-				index = part1.lastIndexOf("/");
+				String part2 = url.substring(index + "/..".length()); //$NON-NLS-1$
+				index = part1.lastIndexOf("/"); //$NON-NLS-1$
 				if (index >= 0)
 					url = part1.substring(0, index) + part2;
 				else

@@ -39,7 +39,7 @@ public class WorkingSetManagerData extends RequestData {
 		HttpServletResponse response) {
 		super(context, request, response);
 		wsmgr = new WebappWorkingSetManager(request, response, getLocale());
-		name = request.getParameter("workingSet");
+		name = request.getParameter("workingSet"); //$NON-NLS-1$
 		try {
 			switch (getOperation()) {
 				case ADD :
@@ -62,7 +62,7 @@ public class WorkingSetManagerData extends RequestData {
 	public void addWorkingSet() throws IOException {
 		if (name != null && name.length() > 0) {
 
-			String[] hrefs = request.getParameterValues("hrefs");
+			String[] hrefs = request.getParameterValues("hrefs"); //$NON-NLS-1$
 			if (hrefs == null)
 				hrefs = new String[0];
 
@@ -93,12 +93,12 @@ public class WorkingSetManagerData extends RequestData {
 	public void editWorkingSet() throws IOException {
 		if (name != null && name.length() > 0) {
 
-			String oldName = request.getParameter("oldName");
+			String oldName = request.getParameter("oldName"); //$NON-NLS-1$
 			if (oldName == null || oldName.length() == 0)
 				oldName = name;
 			WorkingSet ws = wsmgr.getWorkingSet(oldName);
 			if (ws != null) {
-				String[] hrefs = request.getParameterValues("hrefs");
+				String[] hrefs = request.getParameterValues("hrefs"); //$NON-NLS-1$
 				if (hrefs == null)
 					hrefs = new String[0];
 
@@ -140,7 +140,7 @@ public class WorkingSetManagerData extends RequestData {
 			if (name == null
 				|| name.length() == 0
 				|| wsmgr.getWorkingSet(name) == null)
-				name = ServletResources.getString("All", request);
+				name = ServletResources.getString("All", request); //$NON-NLS-1$
 		}
 		return name;
 	}
@@ -158,12 +158,12 @@ public class WorkingSetManagerData extends RequestData {
 	}
 
 	private int getOperation() {
-		String op = request.getParameter("operation");
-		if ("add".equals(op))
+		String op = request.getParameter("operation"); //$NON-NLS-1$
+		if ("add".equals(op)) //$NON-NLS-1$
 			return ADD;
-		else if ("remove".equals(op))
+		else if ("remove".equals(op)) //$NON-NLS-1$
 			return REMOVE;
-		else if ("edit".equals(op))
+		else if ("edit".equals(op)) //$NON-NLS-1$
 			return EDIT;
 		else
 			return NONE;
@@ -183,6 +183,6 @@ public class WorkingSetManagerData extends RequestData {
 			return null;
 		}
 		return UrlUtil.JavaScriptEncode(
-			ServletResources.getString("cookieSaveFailed", request));
+			ServletResources.getString("cookieSaveFailed", request)); //$NON-NLS-1$
 	}
 }

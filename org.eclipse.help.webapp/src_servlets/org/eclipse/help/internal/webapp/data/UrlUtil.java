@@ -22,12 +22,12 @@ import org.eclipse.help.internal.base.util.*;
 
 public class UrlUtil {
 	// XML escaped characters mapping
-	private static final String invalidXML[] = { "&", ">", "<", "\"" };
+	private static final String invalidXML[] = { "&", ">", "<", "\"" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	private static final String escapedXML[] =
-		{ "&amp;", "&gt;", "&lt;", "&quot;" };
+		{ "&amp;", "&gt;", "&lt;", "&quot;" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	
 	// for Safari build 125.1 finds version 125
-	static final Pattern safariPatern = Pattern.compile("Safari/(\\d+)(?:\\.|\\s|$)", Pattern.CASE_INSENSITIVE);
+	static final Pattern safariPatern = Pattern.compile("Safari/(\\d+)(?:\\.|\\s|$)", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
 	// Default locale to use for serving requests to help
 	private static String defaultLocale;
@@ -56,16 +56,16 @@ public class UrlUtil {
 			String charInHex = Integer.toString(unicode, 16).toUpperCase();
 			switch (charInHex.length()) {
 				case 1 :
-					jsEncoded.append("\\u000").append(charInHex);
+					jsEncoded.append("\\u000").append(charInHex); //$NON-NLS-1$
 					break;
 				case 2 :
-					jsEncoded.append("\\u00").append(charInHex);
+					jsEncoded.append("\\u00").append(charInHex); //$NON-NLS-1$
 					break;
 				case 3 :
-					jsEncoded.append("\\u0").append(charInHex);
+					jsEncoded.append("\\u0").append(charInHex); //$NON-NLS-1$
 					break;
 				default :
-					jsEncoded.append("\\u").append(charInHex);
+					jsEncoded.append("\\u").append(charInHex); //$NON-NLS-1$
 					break;
 			}
 		}
@@ -84,7 +84,7 @@ public class UrlUtil {
 
 	public static boolean isLocalRequest(HttpServletRequest request) {
 		String reqIP = request.getRemoteAddr();
-		if ("127.0.0.1".equals(reqIP)) {
+		if ("127.0.0.1".equals(reqIP)) { //$NON-NLS-1$
 			return true;
 		}
 
@@ -109,93 +109,93 @@ public class UrlUtil {
 	 */
 	public static String getHelpURL(String url) {
 		if (url == null || url.length() == 0)
-			url = "about:blank";
-		else if (url.startsWith("http:/"));
-		else if (url.startsWith("file:/") || url.startsWith("jar:file:/"))
-			url = "../topic/" + url;
+			url = "about:blank"; //$NON-NLS-1$
+		else if (url.startsWith("http:/")); //$NON-NLS-1$
+		else if (url.startsWith("file:/") || url.startsWith("jar:file:/")) //$NON-NLS-1$ //$NON-NLS-2$
+			url = "../topic/" + url; //$NON-NLS-1$
 		else
-			url = "../topic" + url;
+			url = "../topic" + url; //$NON-NLS-1$
 		return url;
 	}
 
 	public static boolean isGecko(HttpServletRequest request) {
-		String agent = request.getHeader("User-Agent").toLowerCase();
+		String agent = request.getHeader("User-Agent").toLowerCase(); //$NON-NLS-1$
 		// sample substring Gecko/20020508
 		// search for "gecko/" not to react to "like Gecko"
-		return agent.indexOf("gecko/") >= 0;
+		return agent.indexOf("gecko/") >= 0; //$NON-NLS-1$
 	}
 
 	public static boolean isIE(HttpServletRequest request) {
-		String agent = request.getHeader("User-Agent").toLowerCase();
+		String agent = request.getHeader("User-Agent").toLowerCase(); //$NON-NLS-1$
 		
 		// When accessing with Bobby identified Bobby return 5.5 to allow testing advanced UI as bobby cannot identifiy as IE >=5.5
-		if(agent.startsWith("bobby/")){
+		if(agent.startsWith("bobby/")){ //$NON-NLS-1$
 			return true;
 		}
 		//
 		
-		return (agent.indexOf("msie") >= 0);
+		return (agent.indexOf("msie") >= 0); //$NON-NLS-1$
 	}
 
 	public static String getIEVersion(HttpServletRequest request) {
-		String agent = request.getHeader("User-Agent").toLowerCase();
+		String agent = request.getHeader("User-Agent").toLowerCase(); //$NON-NLS-1$
 		
 		// When accessing with Bobby identified Bobby return 5.5 to allow testing advanced UI as bobby cannot identifiy as IE >=5.5
-		if(agent.startsWith("bobby/")){
-			return "5.5";
+		if(agent.startsWith("bobby/")){ //$NON-NLS-1$
+			return "5.5"; //$NON-NLS-1$
 		}
 		//
 		
-		int start = agent.indexOf("msie ") + "msie ".length();
-		if (start < "msie ".length() || start >= agent.length())
-			return "0";
-		int end = agent.indexOf(";", start);
+		int start = agent.indexOf("msie ") + "msie ".length(); //$NON-NLS-1$ //$NON-NLS-2$
+		if (start < "msie ".length() || start >= agent.length()) //$NON-NLS-1$
+			return "0"; //$NON-NLS-1$
+		int end = agent.indexOf(";", start); //$NON-NLS-1$
 		if (end <= start)
-			return "0";
+			return "0"; //$NON-NLS-1$
 		return agent.substring(start, end);
 	}
 
 	public static boolean isKonqueror(HttpServletRequest request) {
-		String agent = request.getHeader("User-Agent").toLowerCase();
-		return agent.indexOf("konqueror") >= 0;
+		String agent = request.getHeader("User-Agent").toLowerCase(); //$NON-NLS-1$
+		return agent.indexOf("konqueror") >= 0; //$NON-NLS-1$
 	}
 
 	public static boolean isMozilla(HttpServletRequest request) {
-		String agent = request.getHeader("User-Agent").toLowerCase();
-		return agent.indexOf("mozilla/5") >= 0;
+		String agent = request.getHeader("User-Agent").toLowerCase(); //$NON-NLS-1$
+		return agent.indexOf("mozilla/5") >= 0; //$NON-NLS-1$
 	}
 
 	public static String getMozillaVersion(HttpServletRequest request) {
-		String agent = request.getHeader("User-Agent").toLowerCase();
-		if (agent.indexOf("mozilla/5") < 0)
-			return "0";
-		int start = agent.indexOf("rv:") + "rv:".length();
-		if (start < "rv:".length() || start >= agent.length())
-			return "0";
-		int end = agent.indexOf(")", start);
+		String agent = request.getHeader("User-Agent").toLowerCase(); //$NON-NLS-1$
+		if (agent.indexOf("mozilla/5") < 0) //$NON-NLS-1$
+			return "0"; //$NON-NLS-1$
+		int start = agent.indexOf("rv:") + "rv:".length(); //$NON-NLS-1$ //$NON-NLS-2$
+		if (start < "rv:".length() || start >= agent.length()) //$NON-NLS-1$
+			return "0"; //$NON-NLS-1$
+		int end = agent.indexOf(")", start); //$NON-NLS-1$
 		if (end <= start)
-			return "0";
+			return "0"; //$NON-NLS-1$
 		return agent.substring(start, end);
 	}
 
 	public static boolean isOpera(HttpServletRequest request) {
-		String agent = request.getHeader("User-Agent").toLowerCase();
-		return agent.indexOf("opera") >= 0;
+		String agent = request.getHeader("User-Agent").toLowerCase(); //$NON-NLS-1$
+		return agent.indexOf("opera") >= 0; //$NON-NLS-1$
 	}
 	
 	public static boolean isSafari(HttpServletRequest request) {
-		String agent = request.getHeader("User-Agent").toLowerCase();
-		return agent.indexOf("Safari/") >= 0;
+		String agent = request.getHeader("User-Agent").toLowerCase(); //$NON-NLS-1$
+		return agent.indexOf("Safari/") >= 0; //$NON-NLS-1$
 	}
 	
 	public static String getSafariVersion(HttpServletRequest request) {
-		String agent = request.getHeader("User-Agent").toLowerCase();
+		String agent = request.getHeader("User-Agent").toLowerCase(); //$NON-NLS-1$
 		Matcher m = safariPatern.matcher(agent);
 		boolean matched = m.find();
 		if (matched) {
 			return m.group(1);
 		}
-		return "0";
+		return "0"; //$NON-NLS-1$
 	}
 	/**
 	 * 
@@ -212,7 +212,7 @@ public class UrlUtil {
 				localeStr.substring(0, 2),
 				localeStr.substring(3, 5));
 		} else if (localeStr.length() >= 2) {
-			return new Locale(localeStr.substring(0, 2), "");
+			return new Locale(localeStr.substring(0, 2), ""); //$NON-NLS-1$
 		} else {
 			return Locale.getDefault();
 		}
@@ -292,18 +292,18 @@ public class UrlUtil {
 		HttpServletRequest request,
 		HttpServletResponse response) {
 		// get locale passed in this request
-		String forcedLocale = request.getParameter("lang");
+		String forcedLocale = request.getParameter("lang"); //$NON-NLS-1$
 		if (forcedLocale != null) {
 			// save locale (in session cookie) for later use in a user session
 			if (response != null) {
-				Cookie cookieTest = new Cookie("lang", forcedLocale);
+				Cookie cookieTest = new Cookie("lang", forcedLocale); //$NON-NLS-1$
 				response.addCookie(cookieTest);
 			}
 		} else {
 			// check if locale was passed earlier in this session
 			Cookie[] cookies = request.getCookies();
 			for (int c = 0; cookies != null && c < cookies.length; c++) {
-				if ("lang".equals(cookies[c].getName())) {
+				if ("lang".equals(cookies[c].getName())) { //$NON-NLS-1$
 					forcedLocale = cookies[c].getValue();
 					break;
 				}
@@ -315,7 +315,7 @@ public class UrlUtil {
 			if (forcedLocale.length() >= 5) {
 				forcedLocale =
 					forcedLocale.substring(0, 2)
-						+ "_"
+						+ "_" //$NON-NLS-1$
 						+ forcedLocale.substring(3, 5);
 			} else if (forcedLocale.length() >= 2) {
 				forcedLocale = forcedLocale.substring(0, 2);
@@ -356,11 +356,11 @@ public class UrlUtil {
 		String[] args = Platform.getCommandLineArgs();
 		boolean localeOption = false;
 		for (int i = 0; i < args.length; i++) {
-			if ("-locales".equalsIgnoreCase(args[i])) {
+			if ("-locales".equalsIgnoreCase(args[i])) { //$NON-NLS-1$
 				localeOption = true;
 				infocenterLocales = new ArrayList();
 				continue;
-			} else if (args[i].startsWith("-")) {
+			} else if (args[i].startsWith("-")) { //$NON-NLS-1$
 				localeOption = false;
 				continue;
 			}
@@ -373,8 +373,8 @@ public class UrlUtil {
 			StringTokenizer tokenizer =
 				new StringTokenizer(
 					HelpBasePlugin.getDefault().getPluginPreferences().getString(
-						"locales"),
-					" ,\t");
+						"locales"), //$NON-NLS-1$
+					" ,\t"); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
 				if (infocenterLocales == null) {
 					infocenterLocales = new ArrayList();
@@ -391,7 +391,7 @@ public class UrlUtil {
 				if (locale.length() >= 5) {
 					locales.add(
 						locale.substring(0, 2).toLowerCase()
-							+ "_"
+							+ "_" //$NON-NLS-1$
 							+ locale.substring(3, 5).toUpperCase());
 
 				} else if (locale.length() >= 2) {

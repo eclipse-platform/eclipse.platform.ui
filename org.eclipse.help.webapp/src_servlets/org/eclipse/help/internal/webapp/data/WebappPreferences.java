@@ -28,85 +28,85 @@ public class WebappPreferences {
 	 * @return String - URL of banner page or null
 	 */
 	public String getBanner() {
-		return prefs.getString("banner");
+		return prefs.getString("banner"); //$NON-NLS-1$
 	}
 
 	public String getBannerHeight() {
-		return prefs.getString("banner_height");
+		return prefs.getString("banner_height"); //$NON-NLS-1$
 	}
 
 	public String getHelpHome() {
-		return prefs.getString("help_home");
+		return prefs.getString("help_home"); //$NON-NLS-1$
 	}
 
 	public boolean isBookmarksView() {
 		return BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER
-			&& "true".equals(prefs.getString("bookmarksView"));
+			&& "true".equals(prefs.getString("bookmarksView")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public boolean isBookmarksAction() {
-		return "true".equals(prefs.getString("bookmarksView"));
+		return "true".equals(prefs.getString("bookmarksView")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public boolean isLinksView() {
 		return BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER
-			&& "true".equals(prefs.getString("linksView"));
+			&& "true".equals(prefs.getString("linksView")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public String getImagesDirectory() {
-		String imagesDirectory = prefs.getString("imagesDirectory");
-		if (imagesDirectory != null && imagesDirectory.startsWith("/"))
+		String imagesDirectory = prefs.getString("imagesDirectory"); //$NON-NLS-1$
+		if (imagesDirectory != null && imagesDirectory.startsWith("/")) //$NON-NLS-1$
 			imagesDirectory = UrlUtil.getHelpURL(imagesDirectory);
 		return imagesDirectory;
 
 	}
 
 	public String getToolbarBackground() {
-		return prefs.getString("advanced.toolbarBackground");
+		return prefs.getString("advanced.toolbarBackground"); //$NON-NLS-1$
 	}
 
 	public String getBasicToolbarBackground() {
-		return prefs.getString("basic.toolbarBackground");
+		return prefs.getString("basic.toolbarBackground"); //$NON-NLS-1$
 	}
 
 	public String getToolbarFont() {
-		return prefs.getString("advanced.toolbarFont");
+		return prefs.getString("advanced.toolbarFont"); //$NON-NLS-1$
 	}
 
 	public String getViewBackground() {
-		return prefs.getString("advanced.viewBackground");
+		return prefs.getString("advanced.viewBackground"); //$NON-NLS-1$
 	}
 
 	public String getBasicViewBackground() {
-		return prefs.getString("basic.viewBackground");
+		return prefs.getString("basic.viewBackground"); //$NON-NLS-1$
 	}
 
 	public String getViewFont() {
-		return prefs.getString("advanced.viewFont");
+		return prefs.getString("advanced.viewFont"); //$NON-NLS-1$
 	}
 
 	public int getBookAtOnceLimit() {
-		return prefs.getInt("loadBookAtOnceLimit");
+		return prefs.getInt("loadBookAtOnceLimit"); //$NON-NLS-1$
 	}
 
 	public int getLoadDepth() {
-		int value = prefs.getInt("dynamicLoadDepthsHint");
+		int value = prefs.getInt("dynamicLoadDepthsHint"); //$NON-NLS-1$
 		if (value < 1) {
 			return 1;
 		}
 		return value;
 	}
 	public boolean isWindowTitlePrefix() {
-		return "true".equalsIgnoreCase(prefs.getString("windowTitlePrefix"));
+		return "true".equalsIgnoreCase(prefs.getString("windowTitlePrefix")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	public boolean isDontConfirmShowAll() {
-		return prefs.getBoolean("dontConfirmShowAll");
+		return prefs.getBoolean("dontConfirmShowAll"); //$NON-NLS-1$
 	}
 	public void setDontConfirmShowAll(boolean dontconfirm) {
-		prefs.setValue("dontConfirmShowAll", dontconfirm);
+		prefs.setValue("dontConfirmShowAll", dontconfirm); //$NON-NLS-1$
 	}
 	public boolean isActiveHelp() {
-		return "true".equalsIgnoreCase(prefs.getString("activeHelp"));
+		return "true".equalsIgnoreCase(prefs.getString("activeHelp")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

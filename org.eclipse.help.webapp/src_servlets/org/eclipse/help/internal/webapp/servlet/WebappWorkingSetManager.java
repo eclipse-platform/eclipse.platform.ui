@@ -48,11 +48,11 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 				synchronized (workingSetsSyncLock) {
 					if (!workingSetsSynchronized) {
 						workingSetsSynchronized = true;
-						Bundle b = Platform.getBundle("org.eclipse.help.ide");
+						Bundle b = Platform.getBundle("org.eclipse.help.ide"); //$NON-NLS-1$
 						if (b != null) {
 							try {
 								b
-										.loadClass("org.eclipse.help.ui.internal.ide.HelpIdePlugin");
+										.loadClass("org.eclipse.help.ui.internal.ide.HelpIdePlugin"); //$NON-NLS-1$
 							} catch (ClassNotFoundException cnfe) {
 							}
 						}

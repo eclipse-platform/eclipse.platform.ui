@@ -30,11 +30,11 @@ public class ToolbarData extends RequestData {
 	}
 
 	private void loadButtons() {
-		String[] names = request.getParameterValues("name");
-		String[] tooltips = request.getParameterValues("tooltip");
-		String[] images = request.getParameterValues("image");
-		String[] actions = request.getParameterValues("action");
-		String[] states = request.getParameterValues("state");
+		String[] names = request.getParameterValues("name"); //$NON-NLS-1$
+		String[] tooltips = request.getParameterValues("tooltip"); //$NON-NLS-1$
+		String[] images = request.getParameterValues("image"); //$NON-NLS-1$
+		String[] actions = request.getParameterValues("action"); //$NON-NLS-1$
+		String[] states = request.getParameterValues("state"); //$NON-NLS-1$
 
 		if (names == null
 			|| tooltips == null
@@ -51,27 +51,27 @@ public class ToolbarData extends RequestData {
 
 		List buttonList = new ArrayList();
 		for (int i = 0; i < names.length; i++) {
-			if(states[i].startsWith("hid")){
+			if(states[i].startsWith("hid")){ //$NON-NLS-1$
 				continue;
 			}
-			if ("".equals(names[i]))
+			if ("".equals(names[i])) //$NON-NLS-1$
 				buttonList.add(new ToolbarButton());
 			else
 				buttonList.add(
 					new ToolbarButton(
 						names[i],
 						ServletResources.getString(tooltips[i], request),
-						preferences.getImagesDirectory() + "/" + images[i],
+						preferences.getImagesDirectory() + "/" + images[i], //$NON-NLS-1$
 						actions[i],
-						"on".equalsIgnoreCase(states[i])));
+						"on".equalsIgnoreCase(states[i]))); //$NON-NLS-1$
 		}
 		// add implicit maximize/restore button on all toolbars
 		if (isIE() || isMozilla()
-				&& "1.2.1".compareTo(getMozillaVersion()) <= 0) {
-			buttonList.add(new ToolbarButton("maximize_restore",
-					"",
-					preferences.getImagesDirectory() + "/" + "maximize.gif",
-					"restore_maximize", false));
+				&& "1.2.1".compareTo(getMozillaVersion()) <= 0) { //$NON-NLS-1$
+			buttonList.add(new ToolbarButton("maximize_restore", //$NON-NLS-1$
+					"", //$NON-NLS-1$
+					preferences.getImagesDirectory() + "/" + "maximize.gif", //$NON-NLS-1$ //$NON-NLS-2$
+					"restore_maximize", false)); //$NON-NLS-1$
 		}
 		buttons = (ToolbarButton[])buttonList.toArray(new ToolbarButton[buttonList.size()]);
 	}
@@ -81,28 +81,28 @@ public class ToolbarData extends RequestData {
 	}
 
 	public String getName() {
-		if (request.getParameter("view") == null)
-			return "";
+		if (request.getParameter("view") == null) //$NON-NLS-1$
+			return ""; //$NON-NLS-1$
 		else
-			return request.getParameter("view");
+			return request.getParameter("view"); //$NON-NLS-1$
 	}
 
 	public String getTitle() {
-		if (request.getParameter("view") == null)
-			return "";
+		if (request.getParameter("view") == null) //$NON-NLS-1$
+			return ""; //$NON-NLS-1$
 		else
 			return ServletResources.getString(
-				request.getParameter("view"),
+				request.getParameter("view"), //$NON-NLS-1$
 				request);
 	}
 
 	public String getScript() {
-		return request.getParameter("script");
+		return request.getParameter("script"); //$NON-NLS-1$
 	}
 	public String getMaximizeImage() {
-		return preferences.getImagesDirectory() + "/e_maximize.gif";
+		return preferences.getImagesDirectory() + "/e_maximize.gif"; //$NON-NLS-1$
 	}
 	public String getRestoreImage() {
-		return preferences.getImagesDirectory() + "/e_restore.gif";
+		return preferences.getImagesDirectory() + "/e_restore.gif"; //$NON-NLS-1$
 	}
 }

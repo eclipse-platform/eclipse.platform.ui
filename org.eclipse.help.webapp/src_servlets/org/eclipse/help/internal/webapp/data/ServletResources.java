@@ -79,9 +79,9 @@ public class ServletResources {
 			return property;
 		}
 		return property.substring(0, amp - 1)
-			+ "<u STYLE=\"ACCELERATOR:true\">"
+			+ "<u STYLE=\"ACCELERATOR:true\">" //$NON-NLS-1$
 			+ property.charAt(amp - 1)
-			+ "</u>"
+			+ "</u>" //$NON-NLS-1$
 			+ property.substring(amp + 1, property.length());
 	}
 
@@ -99,7 +99,7 @@ public class ServletResources {
 		if (amp <= 0) {
 			return null;
 		}
-		return ("" + property.charAt(amp - 1)).toLowerCase();
+		return ("" + property.charAt(amp - 1)).toLowerCase(); //$NON-NLS-1$
 	}
 
 }

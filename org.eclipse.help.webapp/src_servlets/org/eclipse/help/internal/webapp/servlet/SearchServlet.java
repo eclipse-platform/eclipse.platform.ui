@@ -39,10 +39,10 @@ public class SearchServlet extends HttpServlet {
 		throws ServletException, IOException {
 
 		locale = UrlUtil.getLocale(req, resp);
-		req.setCharacterEncoding("UTF-8");
+		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 
-		resp.setContentType("application/xml; charset=UTF-8");
-		resp.setHeader("Cache-Control", "max-age=0");
+		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
+		resp.setHeader("Cache-Control", "max-age=0"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		SearchHit[] hits = loadSearchResults(req, resp);
 
@@ -84,7 +84,7 @@ public class SearchServlet extends HttpServlet {
 		} catch (QueryTooComplexException qe) {
 			hits = new SearchHit[0];
 		} catch (Exception e) {
-			HelpWebappPlugin.logError("", e);
+			HelpWebappPlugin.logError("", e); //$NON-NLS-1$
 		} finally {
 			if (hits == null)
 				hits = new SearchHit[0];
@@ -93,8 +93,8 @@ public class SearchServlet extends HttpServlet {
 	}
 
 	private ISearchQuery createSearchQuery(HttpServletRequest request) {
-		String searchWord = request.getParameter("searchWord");
-		String fieldSearchStr = request.getParameter("fieldSearch");
+		String searchWord = request.getParameter("searchWord"); //$NON-NLS-1$
+		String fieldSearchStr = request.getParameter("fieldSearch"); //$NON-NLS-1$
 		boolean fieldSearch =
 			fieldSearchStr != null
 				? new Boolean(fieldSearchStr).booleanValue()
@@ -110,7 +110,7 @@ public class SearchServlet extends HttpServlet {
 		HttpServletRequest request,
 		HttpServletResponse response) {
 		WorkingSet[] workingSets;
-		if (request.getParameterValues("scopedSearch") == null) {
+		if (request.getParameterValues("scopedSearch") == null) { //$NON-NLS-1$
 			// scopes are working set names
 			workingSets = getWorkingSets(request, response);
 		} else {
@@ -119,7 +119,7 @@ public class SearchServlet extends HttpServlet {
 		}
 
 		int maxHits = 500;
-		String maxHitsStr = request.getParameter("maxHits");
+		String maxHitsStr = request.getParameter("maxHits"); //$NON-NLS-1$
 		if (maxHitsStr != null) {
 			try {
 				int clientmaxHits = Integer.parseInt(maxHitsStr);
@@ -137,7 +137,7 @@ public class SearchServlet extends HttpServlet {
 	private WorkingSet[] getWorkingSets(
 		HttpServletRequest request,
 		HttpServletResponse response) {
-		String[] scopes = request.getParameterValues("scope");
+		String[] scopes = request.getParameterValues("scope"); //$NON-NLS-1$
 		if (scopes == null) {
 			return null;
 		}
@@ -164,7 +164,7 @@ public class SearchServlet extends HttpServlet {
 	private WorkingSet[] createTempWorkingSets(
 		HttpServletRequest request,
 		HttpServletResponse response) {
-		String[] scopes = request.getParameterValues("scope");
+		String[] scopes = request.getParameterValues("scope"); //$NON-NLS-1$
 		if (scopes == null) {
 			// it is possible that filtering is used, but all books are
 			// deselected
@@ -188,7 +188,7 @@ public class SearchServlet extends HttpServlet {
 		AdaptableToc[] adaptableTocs =
 			(AdaptableToc[]) tocs.toArray(new AdaptableToc[tocs.size()]);
 		WorkingSet[] workingSets = new WorkingSet[1];
-		workingSets[0] = wsmgr.createWorkingSet("temp", adaptableTocs);
+		workingSets[0] = wsmgr.createWorkingSet("temp", adaptableTocs); //$NON-NLS-1$
 		return workingSets;
 	}
 
@@ -210,34 +210,34 @@ public class SearchServlet extends HttpServlet {
 		 */
 		public void generate(SearchHit[] hits, HttpServletResponse resp) {
 
-			println("<hits length=\""+hits.length+"\">");
+			println("<hits length=\""+hits.length+"\">"); //$NON-NLS-1$ //$NON-NLS-2$
 			pad++;
 			for (int i = 0; i < hits.length; i++) {
 				printPad();
 				print(
-					"<topic label=\""
+					"<topic label=\"" //$NON-NLS-1$
 						+ xmlEscape(hits[i].getLabel())
-						+ "\""
-						+ " href=\""
+						+ "\"" //$NON-NLS-1$
+						+ " href=\"" //$NON-NLS-1$
 						+ hits[i].getHref()
-						+ "\""
-						+ " score=\""
+						+ "\"" //$NON-NLS-1$
+						+ " score=\"" //$NON-NLS-1$
 						+ Float.toString(hits[i].getScore())
-						+ "\"");
+						+ "\""); //$NON-NLS-1$
 
 				if (hits[i].getToc() != null) {
 					print(
-						" toc=\""
+						" toc=\"" //$NON-NLS-1$
 							+ hits[i].getToc().getHref()
-							+ "\""
-							+ " toclabel=\""
+							+ "\"" //$NON-NLS-1$
+							+ " toclabel=\"" //$NON-NLS-1$
 							+ hits[i].getToc().getLabel()
-							+ "\"");
+							+ "\""); //$NON-NLS-1$
 				}
-				print(" />");
+				print(" />"); //$NON-NLS-1$
 			}
 			pad--;
-			println("</hits>");
+			println("</hits>"); //$NON-NLS-1$
 		}
 	}
 }

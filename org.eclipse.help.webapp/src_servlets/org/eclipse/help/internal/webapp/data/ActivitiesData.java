@@ -26,12 +26,12 @@ public class ActivitiesData extends RequestData {
 	public ActivitiesData(ServletContext context, HttpServletRequest request,
 			HttpServletResponse response) {
 		super(context, request, response);
-			String changeShowAll = request.getParameter("showAll");
+			String changeShowAll = request.getParameter("showAll"); //$NON-NLS-1$
 			if (changeShowAll != null) {
-				if ("off".equalsIgnoreCase(changeShowAll)) {
+				if ("off".equalsIgnoreCase(changeShowAll)) { //$NON-NLS-1$
 					HelpBasePlugin.getActivitySupport().setFilteringEnabled(
 							true);
-				} else if ("on".equalsIgnoreCase(changeShowAll)) {
+				} else if ("on".equalsIgnoreCase(changeShowAll)) { //$NON-NLS-1$
 					HelpBasePlugin.getActivitySupport().setFilteringEnabled(
 							false);
 				} else {
@@ -40,8 +40,8 @@ public class ActivitiesData extends RequestData {
 			} else {
 				// no change to afilter
 			}
-			String confirmShowAll= request.getParameter("showconfirm");
-			if("false".equalsIgnoreCase(confirmShowAll)){
+			String confirmShowAll= request.getParameter("showconfirm"); //$NON-NLS-1$
+			if("false".equalsIgnoreCase(confirmShowAll)){ //$NON-NLS-1$
 				preferences.setDontConfirmShowAll(true);
 			}
 	}
@@ -58,10 +58,10 @@ public class ActivitiesData extends RequestData {
 	 */
 	public String getButtonState() {
 		if (!HelpBasePlugin.getActivitySupport().isUserCanToggleFiltering())
-			return "hidden";
+			return "hidden"; //$NON-NLS-1$
 		else if (HelpBasePlugin.getActivitySupport().isFilteringEnabled())
-			return "off";
+			return "off"; //$NON-NLS-1$
 		else
-			return "on";
+			return "on"; //$NON-NLS-1$
 	}
 }

@@ -27,12 +27,12 @@ import org.eclipse.help.internal.webapp.data.*;
 public class EclipseConnector {
 	private ServletContext context;
 	private static final String errorPageBegin =
-		"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n"
-			+ "<html><head>\n"
-			+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n"
-			+ "</head>\n"
-			+ "<body><p>\n";
-	private static final String errorPageEnd = "</p></body></html>";
+		"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n" //$NON-NLS-1$
+			+ "<html><head>\n" //$NON-NLS-1$
+			+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n" //$NON-NLS-1$
+			+ "</head>\n" //$NON-NLS-1$
+			+ "<body><p>\n"; //$NON-NLS-1$
+	private static final String errorPageEnd = "</p></body></html>"; //$NON-NLS-1$
 	private static final IFilter filters[] =
 		new IFilter[] { new FramesetFilter(), new HighlightFilter()};
 
@@ -51,8 +51,8 @@ public class EclipseConnector {
 			String url = getURL(req);
 			if (url == null)
 				return;
-			if (url.toLowerCase().startsWith("file:/")
-				|| url.toLowerCase().startsWith("jar:file:/")) {
+			if (url.toLowerCase().startsWith("file:/") //$NON-NLS-1$
+				|| url.toLowerCase().startsWith("jar:file:/")) { //$NON-NLS-1$
 				int i = url.indexOf('?');
 				if (i != -1)
 					url = url.substring(0, i);
@@ -65,7 +65,7 @@ public class EclipseConnector {
 				// enable activities matching url
 				// HelpBasePlugin.getActivitySupport().enableActivities(url);
 
-				url = "help:" + url;
+				url = "help:" + url; //$NON-NLS-1$
 			}
 
 			URLConnection con = openConnection(url, req, resp);
@@ -81,19 +81,19 @@ public class EclipseConnector {
 					maxAge = 0;
 			} catch (Exception e) {
 			}
-			resp.setHeader("Cache-Control", "max-age=" + maxAge);
+			resp.setHeader("Cache-Control", "max-age=" + maxAge); //$NON-NLS-1$ //$NON-NLS-2$
 
 			InputStream is;
 			try {
 				is = con.getInputStream();
 			} catch (IOException ioe) {
-				if (url.toLowerCase().endsWith("htm")
-					|| url.toLowerCase().endsWith("html")) {
+				if (url.toLowerCase().endsWith("htm") //$NON-NLS-1$
+					|| url.toLowerCase().endsWith("html")) { //$NON-NLS-1$
 					String error =
 						errorPageBegin
-							+ ServletResources.getString("noTopic", req)
+							+ ServletResources.getString("noTopic", req) //$NON-NLS-1$
 							+ errorPageEnd;
-					is = new ByteArrayInputStream(error.getBytes("UTF8"));
+					is = new ByteArrayInputStream(error.getBytes("UTF8")); //$NON-NLS-1$
 				} else {
 					return;
 				}
@@ -153,28 +153,28 @@ public class EclipseConnector {
 			// it is an infocentre, add client locale to url
 			String locale = UrlUtil.getLocale(request, response);
 			if (url.indexOf('?') >= 0) {
-				url = url + "&lang=" + locale;
+				url = url + "&lang=" + locale; //$NON-NLS-1$
 			} else {
-				url = url + "?lang=" + locale;
+				url = url + "?lang=" + locale; //$NON-NLS-1$
 			}
 		}
 		// URL helpURL = new URL(url);
 		URL helpURL;
-		if (url.startsWith("help:")) {
+		if (url.startsWith("help:")) { //$NON-NLS-1$
 			helpURL =
 				new URL(
-					"help",
+					"help", //$NON-NLS-1$
 					null,
 					-1,
-					url.substring("help:".length()),
+					url.substring("help:".length()), //$NON-NLS-1$
 					HelpURLStreamHandler.getDefault());
 		} else {
 			helpURL = new URL(url);
 		}
 		String protocol = helpURL.getProtocol();
-		if (!("help".equals(protocol)
-			|| "file".equals(protocol)
-			|| "jar".equals(protocol))) {
+		if (!("help".equals(protocol) //$NON-NLS-1$
+			|| "file".equals(protocol) //$NON-NLS-1$
+			|| "jar".equals(protocol))) { //$NON-NLS-1$
 			throw new IOException();
 		}
 		con = helpURL.openConnection();
@@ -189,7 +189,7 @@ public class EclipseConnector {
 	 * Extracts the url from a request
 	 */
 	private String getURL(HttpServletRequest req) {
-		String query = "";
+		String query = ""; //$NON-NLS-1$
 		boolean firstParam = true;
 		for (Enumeration params = req.getParameterNames();
 			params.hasMoreElements();
@@ -200,16 +200,16 @@ public class EclipseConnector {
 				continue;
 			for (int i = 0; i < values.length; i++) {
 				if (firstParam) {
-					query += "?" + param + "=" + values[i];
+					query += "?" + param + "=" + values[i]; //$NON-NLS-1$ //$NON-NLS-2$
 					firstParam = false;
 				} else
-					query += "&" + param + "=" + values[i];
+					query += "&" + param + "=" + values[i]; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
 		// the request contains the eclipse url help: or search:
 		String url = req.getPathInfo() + query;
-		if (url.startsWith("/"))
+		if (url.startsWith("/")) //$NON-NLS-1$
 			url = url.substring(1);
 		return url;
 	}

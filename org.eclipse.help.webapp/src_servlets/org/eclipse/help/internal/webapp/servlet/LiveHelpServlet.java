@@ -45,14 +45,14 @@ public class LiveHelpServlet extends HttpServlet {
 		if (!new WebappPreferences().isActiveHelp()) {
 			return;
 		}
-		req.setCharacterEncoding("UTF-8");
-		String pluginID = req.getParameter("pluginID");
+		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
+		String pluginID = req.getParameter("pluginID"); //$NON-NLS-1$
 		if (pluginID == null)
 			return;
-		String className = req.getParameter("class");
+		String className = req.getParameter("class"); //$NON-NLS-1$
 		if (className == null)
 			return;
-		String arg = req.getParameter("arg");
+		String arg = req.getParameter("arg"); //$NON-NLS-1$
 		Bundle bundle = Platform.getBundle(pluginID);
 		if(bundle==null){
 			return;
