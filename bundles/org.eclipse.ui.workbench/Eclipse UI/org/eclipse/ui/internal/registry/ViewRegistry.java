@@ -26,7 +26,9 @@ public ViewRegistry() {
  * Add a category to the registry.
  */
 public void add(ICategory desc) {
-	categories.add(desc);
+	/* fix for 1877 */
+	if (findCategory(desc.getId()) == null)
+		categories.add(desc);
 }
 /**
  * Add a descriptor to the registry.
