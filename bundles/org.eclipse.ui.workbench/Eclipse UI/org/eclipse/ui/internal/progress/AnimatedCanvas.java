@@ -14,14 +14,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public class AnimatedCanvas {
 
-	/*
-	 * AnimateJob is a convenience class implemented so that 
-	 * progress elements can determine if this is an animate
-	 * job or not.
-	 */
-	abstract class AnimateJob extends Job {
-
-	}
 
 	private ImageData[] animatedData;
 	private ImageData[] disabledData;

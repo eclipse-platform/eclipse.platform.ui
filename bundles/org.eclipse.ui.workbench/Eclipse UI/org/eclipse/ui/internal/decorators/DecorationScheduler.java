@@ -17,9 +17,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.internal.jobs.JobManager;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.internal.progress.AnimateJob;
+import org.eclipse.ui.internal.progress.AnimatedCanvas;
 
 /**
  * The DecorationScheduler is the class that handles the
@@ -43,8 +50,8 @@ public class DecorationScheduler {
 	private DecoratorManager decoratorManager;
 
 	private boolean shutdown = false;
-
-	private Thread decoratorUpdateThread;
+	
+	Job decorationJob;
 
 	/**
 	 * Return a new instance of the receiver configured for
@@ -100,9 +107,8 @@ public class DecorationScheduler {
 		boolean forceUpdate) {
 
 		//Lazily create the thread that calculates the decoration for a resource
-		if (decoratorUpdateThread == null) {
-			createDecoratorThread();
-			decoratorUpdateThread.start();
+		if (decorationJob == null) {
+			queueDecorationJob();
 		}
 
 		if (!awaitingDecorationValues.containsKey(element)) {
@@ -193,12 +199,6 @@ public class DecorationScheduler {
 		synchronized (this) {
 			notifyAll();
 		}
-		try {
-			if (decoratorUpdateThread != null)
-				// Wait for the decorator thread to finish before returning.
-				decoratorUpdateThread.join();
-		} catch (InterruptedException e) {
-		}
 	}
 
 	/**
@@ -230,11 +230,12 @@ public class DecorationScheduler {
 	/**
 	 * Create the Thread used for running decoration.
 	 */
-	private void createDecoratorThread() {
-		Runnable decorationRunnable = new Runnable() {
-			/* @see Runnable#run()
-				*/
-			public void run() {
+	private void queueDecorationJob() {
+		decorationJob = new AnimateJob() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public IStatus run(IProgressMonitor monitor) {
 				while (true) {
 					// will block if there are no resources to be decorated
 					DecorationReference reference = next();
@@ -242,7 +243,7 @@ public class DecorationScheduler {
 
 					// if next() returned null, we are done and should shut down.
 					if (reference == null) {
-						return;
+						return Status.OK_STATUS;
 					}
 
 					//Don't decorate if there is already a pending result
@@ -331,9 +332,7 @@ public class DecorationScheduler {
 			};
 		};
 
-		decoratorUpdateThread = new Thread(decorationRunnable, "Decoration"); //$NON-NLS-1$
-		decoratorUpdateThread.setDaemon(true);
-		decoratorUpdateThread.setPriority(Thread.MIN_PRIORITY);
+		JobManager.getInstance().schedule(decorationJob);
 	}
 
 	/**

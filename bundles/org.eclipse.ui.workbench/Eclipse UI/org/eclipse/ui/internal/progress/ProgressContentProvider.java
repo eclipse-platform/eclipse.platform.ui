@@ -87,7 +87,7 @@ public class ProgressContentProvider
 	 * @see org.eclipse.core.runtime.jobs.IJobListener#finished(org.eclipse.core.runtime.jobs.Job, int)
 	 */
 	public void finished(Job job, IStatus result) {
-		if (job instanceof AnimatedCanvas.AnimateJob)
+		if (job instanceof AnimateJob)
 			return;
 		jobs.remove(job);
 		refreshViewer(null);
@@ -114,7 +114,7 @@ public class ProgressContentProvider
 	 * @see org.eclipse.core.runtime.jobs.IProgressListener#beginTask(org.eclipse.core.runtime.jobs.Job, java.lang.String, int)
 	 */
 	public void beginTask(Job job, String name, int totalWork) {
-		if (job instanceof AnimatedCanvas.AnimateJob)
+		if (job instanceof AnimateJob)
 			return;
 		jobs.put(job, new JobInfoWithProgress(name, totalWork));
 		refreshViewer(null);
@@ -140,7 +140,7 @@ public class ProgressContentProvider
 	 * @see org.eclipse.core.runtime.jobs.IProgressListener#subTask(org.eclipse.core.runtime.jobs.Job, java.lang.String)
 	 */
 	public void subTask(Job job, String name) {
-		if (job instanceof AnimatedCanvas.AnimateJob)
+		if (job instanceof AnimateJob)
 			return;
 		if (name.length() == 0)
 			return;
@@ -157,7 +157,7 @@ public class ProgressContentProvider
 	 * @see org.eclipse.core.runtime.jobs.IProgressListener#worked(org.eclipse.core.runtime.jobs.Job, int)
 	 */
 	public void worked(Job job, double work) {
-		if (job instanceof AnimatedCanvas.AnimateJob)
+		if (job instanceof AnimateJob)
 			return;
 		JobInfo info =getInfo(job);
 		info.addWork(work);

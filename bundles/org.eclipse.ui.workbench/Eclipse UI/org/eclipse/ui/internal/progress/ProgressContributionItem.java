@@ -62,7 +62,7 @@ public class ProgressContributionItem extends ContributionItem {
 
 			private void incrementJobCount(Job job) {
 				//Don't count the animate job itself
-				if (job instanceof AnimatedCanvas.AnimateJob)
+				if (job instanceof AnimateJob)
 					return;
 
 				if (jobCount == 0)
@@ -72,7 +72,7 @@ public class ProgressContributionItem extends ContributionItem {
 
 			private void decrementJobCount(Job job) {
 				//Don't count the animate job itself
-				if (job instanceof AnimatedCanvas.AnimateJob)
+				if (job instanceof AnimateJob)
 					return;
 				if (jobCount == 1)
 					setDisabledImage();
