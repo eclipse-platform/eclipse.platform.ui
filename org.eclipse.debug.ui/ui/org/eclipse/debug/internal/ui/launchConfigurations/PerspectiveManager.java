@@ -24,10 +24,15 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
+import sun.security.krb5.internal.i;
+import sun.security.krb5.internal.r;
+import sun.security.krb5.internal.crypto.d;
+import sun.security.krb5.internal.crypto.e;
 
 /**
  * The perspective manager manages the 'perspective' settings
@@ -273,8 +278,9 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 					}
 					if (targetId != null) {
 						// re-open the window if minimized 
-						if (window.getShell().getMinimized()) {
-							window.getShell().setMinimized(false);
+						Shell shell= window.getShell();
+						if (shell != null && shell.getMinimized()) {
+							shell.setMinimized(false);
 						}						
 						switchToPerspective(targetId);
 					}
