@@ -56,9 +56,11 @@ public void run() {
 	resources.toArray(resourcesArray);
 	GotoResourceDialog dialog = new GotoResourceDialog(getShell(),resourcesArray);
  	dialog.open();
-	IResource selection = dialog.getSelection();
-	if(selection == null)
-		return;
+ 	Object[] result = dialog.getResult();
+ 	if (result == null || result.length == 0 || result[0] instanceof IResource == false)
+ 		return;
+	 
+	IResource selection = (IResource) result[0];
 	getViewer().setSelection(new StructuredSelection(selection),true);
 }
 }

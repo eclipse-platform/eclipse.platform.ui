@@ -110,10 +110,12 @@ public void run(IAction action) {
 	resources.toArray(resourcesArray);
 	GotoResourceDialog dialog = new GotoResourceDialog(workbenchWindow.getShell(), resourcesArray);
  	dialog.open();
-	IResource selection = dialog.getSelection();
-	if(selection == null)
-		return;
-	navigator.getViewer().setSelection(new StructuredSelection(selection), true);
+ 	Object[] result = dialog.getResult();
+ 	if (result == null || result.length == 0 || result[0] instanceof IResource == false)
+ 		return;
+	 
+	IResource resource = (IResource) result[0];
+	navigator.getViewer().setSelection(new StructuredSelection(resource), true);
 	
 	IWorkbenchPage activePage = workbenchWindow.getActivePage();
 	activePage.activate(navigator);
