@@ -50,9 +50,15 @@
       </page>
       <page
             objectClass="org.eclipse.update.internal.ui.model.IConfiguredSiteAdapter"
-            name="%properties.configSite"
+            name="%properties.general-info.label"
             class="org.eclipse.update.internal.ui.properties.ConfiguredSitePropertyPage"
             id="org.eclipse.update.ui.configSite">
+      </page>
+      <page
+            objectClass="org.eclipse.update.internal.core.SiteLocal"
+            name="%properties.general-info.label"
+            class="org.eclipse.update.internal.ui.properties.InstallConfigurationPropertyPage"
+            id="org.eclipse.update.ui.installConfig">
       </page>
    </extension>
    <extension
