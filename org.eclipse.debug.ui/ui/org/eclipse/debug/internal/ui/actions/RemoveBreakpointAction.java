@@ -33,11 +33,15 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
  
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) {
+				IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
 				while (itr.hasNext()) {
-					try {
-						IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
-						IBreakpoint breakpoint= (IBreakpoint)itr.next();
-						breakpointManager.removeBreakpoint(breakpoint, true);
+					try {						
+						Object next= itr.next();
+						//see Bug 10243
+						if (next instanceof IBreakpoint) {
+							IBreakpoint breakpoint= (IBreakpoint)next;						
+							breakpointManager.removeBreakpoint(breakpoint, true);
+						}
 					} catch (CoreException ce) {
 						ms.merge(ce.getStatus());
 					}
