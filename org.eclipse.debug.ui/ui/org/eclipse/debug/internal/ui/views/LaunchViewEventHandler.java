@@ -503,6 +503,10 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					timeToWait= Math.min(timeToWait, stopTime - currentTime);
 				}
 			}
+			try {
+				Thread.sleep(timeToWait);
+			} catch (InterruptedException e) {
+			}
 		}
 	}
 	
