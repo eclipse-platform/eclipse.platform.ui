@@ -69,7 +69,7 @@ public class XmlDocumentFormattingStrategy extends ContextBasedFormattingStrateg
         // setup formatter with preferences and format the text.
         FormattingPreferences prefs = new FormattingPreferences();
         
-        NonParsingXMLFormatter formatter = new NonParsingXMLFormatter();     
+        XmlDocumentFormatter formatter = new XmlDocumentFormatter();     
         formatter.setText(documentText);
         formatter.setFormattingPreferences(prefs);
         

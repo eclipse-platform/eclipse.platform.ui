@@ -38,7 +38,7 @@ public class FormattingPreferences {
         return fPrefs.getInt(AntEditorPreferenceConstants.FORMATTER_MAX_LINE_LENGTH);
     }  
     
-    public boolean useElementWrapping() {
+    public boolean wrapLongTags() {
         return fPrefs.getBoolean(AntEditorPreferenceConstants.FORMATTER_WRAP_LONG);
     }
     
@@ -52,10 +52,6 @@ public class FormattingPreferences {
     
     public boolean stripBlankLines() {
         return fPrefs.getBoolean(AntEditorPreferenceConstants.FORMATTER_DELETE_BLANK_LINES);
-    }
-
-    public boolean formatElements() {
-        return fPrefs.getBoolean(AntEditorPreferenceConstants.FORMATTER_WRAP_LONG);
     }
 
 	public int getTabWidth() {

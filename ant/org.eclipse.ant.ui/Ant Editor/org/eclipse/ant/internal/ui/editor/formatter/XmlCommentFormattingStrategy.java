@@ -149,7 +149,6 @@ public class XmlCommentFormattingStrategy extends ContextBasedFormattingStrategy
          * @see org.eclipse.ant.internal.ui.editor.format.XmlCommentFormattingStrategy.Normalizer#isApplicableFor(java.lang.String)
          */
         protected boolean isApplicableFor(String commentText) {
-            // TODO Auto-generated method stub
             return false;
         }
 
@@ -159,7 +158,6 @@ public class XmlCommentFormattingStrategy extends ContextBasedFormattingStrategy
          * @see org.eclipse.ant.internal.ui.editor.format.XmlCommentFormattingStrategy.Normalizer#normalize(java.lang.String)
          */
         protected String normalize(String commentText) {
-            // TODO Auto-generated method stub
             return null;
         }
     }
@@ -231,7 +229,7 @@ public class XmlCommentFormattingStrategy extends ContextBasedFormattingStrategy
         Assert.isLegal(fPartitions.size() > 0);
         Assert.isLegal(fIndentations.size() > 0);
 
-        final String indent = fIndentations.removeFirst().toString();
+       //final String indent = fIndentations.removeFirst().toString();
         final CommentPartitionDecorator partition = (CommentPartitionDecorator) fPartitions
                 .removeFirst();
 
@@ -248,8 +246,6 @@ public class XmlCommentFormattingStrategy extends ContextBasedFormattingStrategy
             }
 
         } catch (BadLocationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
 
     }
@@ -261,12 +257,10 @@ public class XmlCommentFormattingStrategy extends ContextBasedFormattingStrategy
         super.formatterStarts(context);
 
         final FormattingContext current = (FormattingContext) context;
-        fIndentations.addLast(current
-                .getProperty(FormattingContextProperties.CONTEXT_INDENTATION));
+        fIndentations.addLast(current.getProperty(FormattingContextProperties.CONTEXT_INDENTATION));
 
-        fPartitions.addLast(CommentPartitionDecorator.decorate(this.getViewer()
-                .getDocument(), (Position) current
-                .getProperty(FormattingContextProperties.CONTEXT_PARTITION)));
+        fPartitions.addLast(CommentPartitionDecorator.decorate(getViewer().getDocument()
+                , (Position) current.getProperty(FormattingContextProperties.CONTEXT_PARTITION)));
     }
 
     /*

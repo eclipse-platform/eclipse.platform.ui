@@ -19,7 +19,7 @@ import java.io.StringReader;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.jface.text.Assert;
 
-public class NonParsingXMLFormatter {
+public class XmlDocumentFormatter {
 
     private static class CommentReader extends TagReader {
 
@@ -198,14 +198,14 @@ public class NonParsingXMLFormatter {
         }
 
         /* (non-Javadoc)
-         * @see org.eclipse.ant.internal.ui.editor.formatter.NonParsingXMLFormatter.TagReader#getStartOfTag()
+         * @see org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormatter.TagReader#getStartOfTag()
          */
         public String getStartOfTag() {
             return ""; //$NON-NLS-1$
         }
 
         /* (non-Javadoc)
-         * @see org.eclipse.ant.internal.ui.editor.formatter.NonParsingXMLFormatter.TagReader#isTextNode()
+         * @see org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormatter.TagReader#isTextNode()
          */
         public boolean isTextNode() {
             return this.isTextNode;
@@ -252,14 +252,14 @@ public class NonParsingXMLFormatter {
         }
 
         /* (non-Javadoc)
-         * @see org.eclipse.ant.internal.ui.editor.formatter.NonParsingXMLFormatter.TagReader#requiresInitialIndent()
+         * @see org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormatter.TagReader#requiresInitialIndent()
          */
         public boolean requiresInitialIndent() {
             return false;
         }
 
         /* (non-Javadoc)
-         * @see org.eclipse.ant.internal.ui.editor.formatter.NonParsingXMLFormatter.TagReader#startsOnNewline()
+         * @see org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormatter.TagReader#startsOnNewline()
          */
         public boolean startsOnNewline() {
             return false;

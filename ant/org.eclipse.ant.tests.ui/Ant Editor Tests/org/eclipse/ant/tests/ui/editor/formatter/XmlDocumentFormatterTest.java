@@ -11,18 +11,18 @@
 package org.eclipse.ant.tests.ui.editor.formatter;
 
 import org.eclipse.ant.internal.ui.editor.formatter.FormattingPreferences;
-import org.eclipse.ant.internal.ui.editor.formatter.NonParsingXMLFormatter;
+import org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormatter;
 import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 
 /**
  *  
  */
-public class NonParsingXMLFormatterTest extends AbstractAntUITest {
+public class XmlDocumentFormatterTest extends AbstractAntUITest {
 
     /**
      * @param name
      */
-    public NonParsingXMLFormatterTest(String name) {
+    public XmlDocumentFormatterTest(String name) {
         super(name);
     }
 
@@ -91,7 +91,7 @@ public class NonParsingXMLFormatterTest extends AbstractAntUITest {
     private void simpleTest(String sourceFileName, String targetFileName,
             FormattingPreferences prefs) throws Exception {
         
-        NonParsingXMLFormatter xmlFormatter = new NonParsingXMLFormatter();
+        XmlDocumentFormatter xmlFormatter = new XmlDocumentFormatter();
         xmlFormatter.setText(getFileContentAsString(getBuildFile(sourceFileName)));
         xmlFormatter.setFormattingPreferences(prefs);
         
