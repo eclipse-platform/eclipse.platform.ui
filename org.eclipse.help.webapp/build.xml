@@ -39,13 +39,7 @@
 			<fileset dir="${basedir}" includes="advanced/,basic/,WEB-INF/,*.html,*.jsp,plugin.properties,plugin.xml" excludes="WEB-INF/classes/"/>
 		</copy>
 <!-- custom begin -->
-		<loadfile
-			property="temp_web.xml"
-			srcFile="${temp.folder}/WEB-INF/lib/jsp.jar.src/temp_web.xml"/>
-		<replace
-			file="${destination.temp.folder}/${full.name}/WEB-INF/web.xml"
-			token="&lt;!-- placeholder for JSPs web.xml --&gt;"
-			value="${temp_web.xml}" />
+		<copy file="${basedir}/web.xml" todir="${destination.temp.folder}/${full.name}/WEB-INF" overwrite="true"/>
 <!-- custom end -->
 	</target>
 
