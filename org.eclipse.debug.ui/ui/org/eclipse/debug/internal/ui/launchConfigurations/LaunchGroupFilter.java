@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -24,12 +25,12 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  */
 public class LaunchGroupFilter extends ViewerFilter {
 	
-	private LaunchGroupExtension fGroup;
+	private ILaunchGroup fGroup;
 
 	/**
 	 * Constructor for ExternalToolsLaunchConfigurationFilter.
 	 */
-	public LaunchGroupFilter(LaunchGroupExtension groupExtension) {
+	public LaunchGroupFilter(ILaunchGroup groupExtension) {
 		super();
 		fGroup = groupExtension;
 	}

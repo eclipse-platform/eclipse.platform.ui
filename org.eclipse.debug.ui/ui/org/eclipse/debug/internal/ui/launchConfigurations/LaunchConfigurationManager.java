@@ -45,6 +45,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -580,12 +581,12 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	 * 
 	 * @return all defined launch groups
 	 */
-	public LaunchGroupExtension[] getLaunchGroups() {
+	public ILaunchGroup[] getLaunchGroups() {
 		if (fLaunchGroups == null) {
 			loadLaunchGroups();
 		}
 		Collection groups = fLaunchGroups.values();
-		return (LaunchGroupExtension[])groups.toArray(new LaunchGroupExtension[groups.size()]);
+		return (ILaunchGroup[])groups.toArray(new ILaunchGroup[groups.size()]);
 	}	
 	
 	/**
@@ -606,10 +607,10 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	private void loadLaunchHistories() {
 		if (fLaunchHistories == null) {
 			fRestoring = true;
-			LaunchGroupExtension[] groups = getLaunchGroups();
+			ILaunchGroup[] groups = getLaunchGroups();
 			fLaunchHistories = new HashMap(groups.length);
 			for (int i = 0; i < groups.length; i++) {
-				LaunchGroupExtension extension = groups[i];
+				ILaunchGroup extension = groups[i];
 				if (extension.isPublic()) {
 					fLaunchHistories.put(extension.getIdentifier(), new LaunchHistory(extension));
 				}
@@ -642,12 +643,12 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	 * @return the launch group the given launch configuration belongs to, in
 	 * the specified mode, or <code>null</code> if none
 	 */
-	public LaunchGroupExtension getLaunchGroup(ILaunchConfiguration configuration, String mode) {
+	public ILaunchGroup getLaunchGroup(ILaunchConfiguration configuration, String mode) {
 		try {
 			String category = configuration.getCategory();
-			LaunchGroupExtension[] groups = getLaunchGroups();
+			ILaunchGroup[] groups = getLaunchGroups();
 			for (int i = 0; i < groups.length; i++) {
-				LaunchGroupExtension extension = groups[i];
+				ILaunchGroup extension = groups[i];
 				if (category == null) {
 					if (extension.getCategory() == null && extension.getMode().equals(mode)) {
 						return extension;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -537,11 +536,11 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			LaunchGroupExtension[] groups = getLaunchConfigurationManager().getLaunchGroups();
+			ILaunchGroup[] groups = DebugUITools.getLaunchGroups();
 			List possibleGroups = new ArrayList();
 			ILaunchConfiguration configuration = (ILaunchConfiguration)inputElement;
 			for (int i = 0; i < groups.length; i++) {
-				LaunchGroupExtension extension = groups[i];
+				ILaunchGroup extension = groups[i];
 				LaunchHistory history = getLaunchConfigurationManager().getLaunchHistory(extension.getIdentifier());
 				if (history != null && history.accepts(configuration)) {
 					possibleGroups.add(extension);

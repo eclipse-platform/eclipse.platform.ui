@@ -623,4 +623,27 @@ public class DebugUITools {
 		}
 		return null;
 	}	
+	
+	/**
+	 * Returns all registered launch group extensions.
+	 *  
+	 * @return all registered launch group extensions
+	 * @since 3.0
+	 */
+	public static ILaunchGroup[] getLaunchGroups() {
+		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroups();
+	}
+	
+	/**
+	 * Returns the launch group that the given launch configuration belongs
+	 * to, for the specified mode, or <code>null</code> if none.
+	 * 
+	 * @param configuration
+	 * @param mode
+	 * @return the launch group the given launch configuration belongs to, for
+	 * the specified mode, or <code>null</code> if none
+	 */
+	public static ILaunchGroup getLaunchGroup(ILaunchConfiguration configuration, String mode) {
+		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
+	}
 }

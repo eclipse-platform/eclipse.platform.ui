@@ -121,7 +121,7 @@
 			  id="com.example.ExampleLaunchGroupId"
 			  mode="run"
 			  label="Run"
-			  icon="icons\run.gif"
+			  image="icons\run.gif"
 			  bannerImage="icons\runBanner.gif"&gt;
 		&lt;/launchGroup&gt;
 	&lt;/extension&gt;

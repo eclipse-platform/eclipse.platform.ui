@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.ui.actions;
 
 
 import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
@@ -23,8 +22,8 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.actions.SelectionListenerAction;
@@ -128,7 +127,7 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(getLaunchConfiguration(), getMode());
+		ILaunchGroup group = DebugUITools.getLaunchGroup(getLaunchConfiguration(), getMode());
 		if (group != null) {
 			DebugUITools.openLaunchConfigurationDialog(
 				DebugUIPlugin.getShell(), getLaunchConfiguration(),

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,13 +28,14 @@ import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.ILaunchGroup;
 
 /**
  * A history of launches and favorites for a launch group
  */
 public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListener {
 
-	private LaunchGroupExtension fGroup;
+	private ILaunchGroup fGroup;
 	
 	private List fHistory = new ArrayList();
 	private List fFavorites = new ArrayList();
@@ -46,7 +47,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	/**
 	 * Creates a new launch history for the given launch group
 	 */
-	public LaunchHistory(LaunchGroupExtension group) {
+	public LaunchHistory(ILaunchGroup group) {
 		fGroup = group;
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager(); 
 		manager.addLaunchListener(this);
@@ -257,7 +258,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * 
 	 * @return group
 	 */
-	public LaunchGroupExtension getLaunchGroup() {
+	public ILaunchGroup getLaunchGroup() {
 		return fGroup;
 	}
 	

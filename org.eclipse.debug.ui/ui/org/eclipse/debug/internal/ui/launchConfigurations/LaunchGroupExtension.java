@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,13 +16,14 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 
 /**
  * Proxy to a launch group extension
  */
-public class LaunchGroupExtension {
+public class LaunchGroupExtension implements ILaunchGroup {
 	
 	/**
 	 * The configuration element defining this launch group.
@@ -106,29 +107,7 @@ public class LaunchGroupExtension {
 	public String getLabel() {
 		return getConfigurationElement().getAttribute("label"); //$NON-NLS-1$
 	}	
-	
-	/**
-	 * Returns the label for this launch group with any acclerators
-	 * removed from the label.
-	 * 
-	 * @return label without accelerators
-	 */
-	public String getShellTitle() {
-		String title = getLabel();
-		if (title != null) {
-			// strip out any '&' (accelerators)
-			int index = title.indexOf('&');
-			if (index == 0) {
-				title = title.substring(1);
-			} else if (index > 0 && index < (title.length() - 1)){
-				String first = title.substring(0, index);
-				String last = title.substring(index + 1);
-				title = first + last;
-			}		
-		}
-		return title;
-	}
-	
+		
 	/**
 	 * Returns the id for this launch group
 	 * 

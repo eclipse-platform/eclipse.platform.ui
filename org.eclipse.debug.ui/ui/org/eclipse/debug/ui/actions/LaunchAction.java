@@ -75,7 +75,7 @@ public class LaunchAction extends Action {
 	public void runWithEvent(Event event) {
 		if ((event.stateMask & SWT.MOD1) > 0) {
 			IStructuredSelection selection = new StructuredSelection(fConfiguration);
-			String id = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(fConfiguration, fMode).getIdentifier();
+			String id = DebugUITools.getLaunchGroup(fConfiguration, fMode).getIdentifier();
 			DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), selection, id); 
 		} else {
 			run();

@@ -264,7 +264,7 @@ public class FavoritesDialog extends Dialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
-		getShell().setText(MessageFormat.format(LaunchConfigurationsMessages.getString("FavoritesDialog.1"), new String[]{fHistory.getLaunchGroup().getShellTitle()})); //$NON-NLS-1$
+		getShell().setText(MessageFormat.format(LaunchConfigurationsMessages.getString("FavoritesDialog.1"), new String[]{DebugUIPlugin.removeAccelerators(fHistory.getLaunchGroup().getLabel())})); //$NON-NLS-1$
 		createFavoritesArea(composite);
 		return composite;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.debug.internal.ui.actions;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunch;
@@ -24,9 +23,9 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.actions.SelectionListenerAction;
@@ -39,7 +38,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 	
 	private ILaunchConfiguration fConfiguration = null;
 	private String fMode =null;
-	private LaunchGroupExtension fGroup = null;
+	private ILaunchGroup fGroup = null;
 
 	/**
 	 * Constructs a new action.
@@ -76,7 +75,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 				if (configuration != null) {
 					setLaunchConfiguration(configuration);
 					setMode(launch.getLaunchMode());
-					setGroup(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, getMode()));
+					setGroup(DebugUITools.getLaunchGroup(configuration, getMode()));
 					setText(MessageFormat.format(ActionMessages.getString("AddToFavoritesAction.1"), new String[]{getGroup().getLabel()})); //$NON-NLS-1$
 				}
 			}
@@ -123,11 +122,11 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 		return fMode;
 	}
 	
-	protected void setGroup(LaunchGroupExtension group) {
+	protected void setGroup(ILaunchGroup group) {
 		fGroup = group;
 	}
 	
-	protected LaunchGroupExtension getGroup() {
+	protected ILaunchGroup getGroup() {
 		return fGroup;
 	}
 	

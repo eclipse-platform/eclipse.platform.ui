@@ -46,7 +46,6 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
@@ -54,6 +53,7 @@ import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -857,7 +857,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			CoreException ce = (CoreException)t;
 			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(ce.getStatus());
 			if (handler != null) {
-				LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
+				ILaunchGroup group = DebugUITools.getLaunchGroup(configuration, mode);
 				if (group != null) {
 					DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), ce.getStatus());
 					return;
@@ -933,7 +933,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 					if (handler == null) {
 						return status;
 					}
-					final LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
+					final ILaunchGroup group = DebugUITools.getLaunchGroup(configuration, mode);
 					if (group == null) {
 						return status;
 					}
@@ -1003,6 +1003,27 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 					return WAIT_FOR_BUILD;
 			}
 		}
+	}
+
+	/**
+	 * Returns the label with any acclerators removed.
+	 * 
+	 * @return label without accelerators
+	 */
+	public static String removeAccelerators(String label) {
+		String title = label;
+		if (title != null) {
+			// strip out any '&' (accelerators)
+			int index = title.indexOf('&');
+			if (index == 0) {
+				title = title.substring(1);
+			} else if (index > 0 && index < (title.length() - 1)){
+				String first = title.substring(0, index);
+				String last = title.substring(index + 1);
+				title = first + last;
+			}		
+		}
+		return title;
 	}
 }
 

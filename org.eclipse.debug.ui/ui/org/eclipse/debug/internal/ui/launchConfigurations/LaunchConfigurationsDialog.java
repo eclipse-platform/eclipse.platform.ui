@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -669,7 +669,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 	
 	protected String getShellTitle() {
-		String title = getLaunchGroup().getShellTitle();
+		String title = DebugUIPlugin.removeAccelerators(getLaunchGroup().getLabel());
 		if (title == null) {
 			title = LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configurations_18"); //$NON-NLS-1$
 		}
