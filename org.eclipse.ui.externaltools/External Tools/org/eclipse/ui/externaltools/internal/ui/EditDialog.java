@@ -359,7 +359,7 @@ public class EditDialog extends TitleAreaDialog {
 				if (results == null || results.length < 1)
 					return;
 				IResource resource = (IResource)results[0];
-				String var = ToolUtil.buildVariableTag(ExternalTool.VAR_DIR_WORKSPACE, null);
+				String var = ToolUtil.buildVariableTag(ExternalTool.VAR_WORKSPACE_LOC, null);
 				locationField.setText(var + resource.getFullPath());
 			}
 		});
@@ -402,7 +402,7 @@ public class EditDialog extends TitleAreaDialog {
 				Object[] result = dialog.getResult();
 				if (result != null && result.length == 1) {
 					StringBuffer buf = new StringBuffer();
-					ToolUtil.buildVariableTag(ExternalTool.VAR_DIR_WORKSPACE, null, buf);
+					ToolUtil.buildVariableTag(ExternalTool.VAR_WORKSPACE_LOC, null, buf);
 					buf.append(result[0].toString());
 					directoryField.setText(buf.toString());
 				}
@@ -636,11 +636,13 @@ public class EditDialog extends TitleAreaDialog {
 			list.add(ToolMessages.getString("EditDialog.varWorkspaceDirLabel")); //$NON-NLS-1$
 			list.add(ToolMessages.getString("EditDialog.varProjectDirLabel")); //$NON-NLS-1$
 			list.add(ToolMessages.getString("EditDialog.varProjectXDirLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varResourceDirLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varResourceXDirLabel")); //$NON-NLS-1$	
 			
 			location = locationField.getText().trim();
 			Path path = null;
 			VariableDefinition varDef = ToolUtil.extractVariableTag(location, 0);
-			if (varDef.start >= 0 && ExternalTool.VAR_DIR_WORKSPACE.equals(varDef.name))
+			if (varDef.start >= 0 && ExternalTool.VAR_WORKSPACE_LOC.equals(varDef.name))
 				location = Platform.getLocation().toString() + location.substring(varDef.end);
 			path = new Path(location);
 			AntTargetList targetList = AntUtil.getTargetList(path);
@@ -659,11 +661,11 @@ public class EditDialog extends TitleAreaDialog {
 			
 			switch (sel) {
 				case 0 :
-					result = ToolUtil.buildVariableTag(ExternalTool.VAR_DIR_WORKSPACE, null);
+					result = ToolUtil.buildVariableTag(ExternalTool.VAR_WORKSPACE_LOC, null);
 					break;
 
 				case 1 :
-					result = ToolUtil.buildVariableTag(ExternalTool.VAR_DIR_PROJECT, null);
+					result = ToolUtil.buildVariableTag(ExternalTool.VAR_PROJECT_LOC, null);
 					break;
 
 				case 2 :
@@ -672,10 +674,23 @@ public class EditDialog extends TitleAreaDialog {
 					dialog.open();
 					Object[] name = dialog.getResult();
 					if (name != null && name.length > 0)
-						result = ToolUtil.buildVariableTag(ExternalTool.VAR_DIR_PROJECT, (String)name[0]);
+						result = ToolUtil.buildVariableTag(ExternalTool.VAR_PROJECT_LOC, (String)name[0]);
+					break;
+					
+				case 3 :
+					result = ToolUtil.buildVariableTag(ExternalTool.VAR_RESOURCE_LOC, null);
 					break;
 
-				case 3 :
+				case 4 :
+					ResourceSelectionDialog resDialog;
+					resDialog = new ResourceSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot());
+					resDialog.open();
+					Object[] resource = resDialog.getResult();
+					if (resource != null && resource.length > 0)
+						result = ToolUtil.buildVariableTag(ExternalTool.VAR_RESOURCE_LOC, ((IResource)resource[0]).getFullPath().toString());
+					break;
+
+				case 5 :
 					TargetSelectionDialog targetDialog;
 					targetDialog = new TargetSelectionDialog(getShell(), location);
 					targetDialog.open();

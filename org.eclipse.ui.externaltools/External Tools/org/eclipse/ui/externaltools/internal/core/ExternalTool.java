@@ -42,8 +42,24 @@ public class ExternalTool {
 	public static final String TOOL_TYPE_ANT = "org.eclipse.ui.externaltools.type.ant"; //$NON-NLS-1$
 	
 	// Variable names the tool will expand
-	public static final String VAR_DIR_WORKSPACE = "workspace_dir"; //$NON-NLS-1$
-	public static final String VAR_DIR_PROJECT = "project_dir"; //$NON-NLS-1$
+	public static final String VAR_WORKSPACE_LOC = "workspace_loc"; //$NON-NLS-1$
+
+	public static final String VAR_PROJECT_LOC = "project_loc"; //$NON-NLS-1$
+	public static final String VAR_PROJECT_PATH = "project_path"; //$NON-NLS-1$
+	public static final String VAR_PROJECT_NAME = "project_name"; //$NON-NLS-1$
+
+	public static final String VAR_RESOURCE_LOC = "resource_loc"; //$NON-NLS-1$
+	public static final String VAR_RESOURCE_PATH = "resource_path"; //$NON-NLS-1$
+	public static final String VAR_RESOURCE_NAME = "resource_name"; //$NON-NLS-1$
+
+	public static final String VAR_CONTAINER_LOC = "container_loc"; //$NON-NLS-1$
+	public static final String VAR_CONTAINER_PATH = "container_path"; //$NON-NLS-1$
+	public static final String VAR_CONTAINER_NAME = "container_name"; //$NON-NLS-1$
+
+	public static final String VAR_EDITOR_CUR_COL = "editor_cur_col"; //$NON-NLS-1$
+	public static final String VAR_EDITOR_CUR_LINE = "editor_cur_line"; //$NON-NLS-1$
+	public static final String VAR_EDITOR_SEL_TEXT = "editor_sel_text"; //$NON-NLS-1$
+
 	public static final String VAR_ANT_TARGET = "ant_target"; //$NON-NLS-1$
 
 	// Known refresh scopes
