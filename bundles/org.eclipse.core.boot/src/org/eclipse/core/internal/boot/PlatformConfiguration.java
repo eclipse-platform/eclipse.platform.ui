@@ -1393,8 +1393,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	}
 
 	private synchronized void initializeCurrent(URL url, String metaPath, boolean createRootSite) throws IOException {
-
-		boolean concurrentUse = false;
+		// FIXME: commented out for now. Remove if not needed.
+		//boolean concurrentUse = false;
 
 		if (cmdInitialize) {
 			// we are running post-install initialization (-install command
@@ -1402,7 +1402,12 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			// Force the configuration to be saved in the install location.
 			// Allow an existing configuration to be re-initialized.
 			url = new URL(BootLoader.getInstallURL(), CONFIG_FILE); // if we fail here, return exception
-			concurrentUse = getConfigurationLock(url);
+			// FIXME: commented out for now. Remove if not needed. 
+			// I left the call to #getConfigurationLock in just in case
+			// calling it has useful side effect. If not, then it can be removed too.
+			//concurrentUse = getConfigurationLock(url);
+			getConfigurationLock(url);
+			
 			resetInitializationConfiguration(url); // [20111]
 			if (createRootSite)
 				configureSite(getRootSite());
@@ -1418,7 +1423,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			// in specified location
 
 			// check concurrent use lock
-			concurrentUse = getConfigurationLock(url);
+			// FIXME: might not need this method call.
+			getConfigurationLock(url);
 
 			// try loading the configuration
 			try {
@@ -1451,7 +1457,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			URL cfigURL = new URL("file", null, 0, metaPath + CONFIG_FILE); // if we fail here, return exception //$NON-NLS-1$
 
 			// check concurrent use lock
-			concurrentUse = getConfigurationLock(cfigURL);
+			// FIXME: might not need this method call
+			getConfigurationLock(cfigURL);
 
 			// if we can load it, use it
 			try {
