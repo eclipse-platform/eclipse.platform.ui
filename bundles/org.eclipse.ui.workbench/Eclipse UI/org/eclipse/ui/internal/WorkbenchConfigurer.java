@@ -35,13 +35,8 @@ import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
  * @since 3.0
  */
 public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
-	/**
-	 * The dialog setting key to access the known installed features
-	 * since the last time the workbench was run.
-	 */
-	private static final String INSTALLED_FEATURES = "installedFeatures"; //$NON-NLS-1$
-	
-	/**
+
+    /**
 	 * Table to hold arbitrary key-data settings (key type: <code>String</code>,
 	 * value type: <code>Object</code>).
 	 * @see #setData

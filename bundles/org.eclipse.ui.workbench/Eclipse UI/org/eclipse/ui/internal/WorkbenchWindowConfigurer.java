@@ -34,6 +34,8 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
+import org.eclipse.ui.internal.presentations.WorkbenchPresentationFactory;
+import org.eclipse.ui.presentations.AbstractPresentationFactory;
 
 /**
  * Internal class providing special access for configuring workbench windows.
@@ -112,7 +114,6 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 */
 	private Map extraData = new HashMap(1);
 
-
 	/**
 	 * Holds the list drag and drop <code>Transfer</code> for the
 	 * editor area
@@ -125,6 +126,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 */
 	private DropTargetListener dropTargetListener = null;
 	 
+	
 	/**
 	 * Object for configuring this workbench window's action bars. 
 	 * Lazily initialized to an instance unique to this window.
@@ -136,6 +138,11 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 */
 	private Point initialSize = new Point(800, 600);
 
+	/**
+	 * The presentation factory.
+	 */
+	private AbstractPresentationFactory presentationFactory = new WorkbenchPresentationFactory();
+	    
 	/**
 	 * Action bar configurer that changes this workbench window.
 	 * This implementation keeps track of of cool bar items
@@ -537,4 +544,18 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	public void setInitialSize(Point size) {
 		initialSize = size;
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public AbstractPresentationFactory getPresentationFactory() {
+        return presentationFactory;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public void setPresentationFactory(AbstractPresentationFactory factory) {
+        presentationFactory = factory;
+    }
 }

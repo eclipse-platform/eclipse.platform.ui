@@ -189,8 +189,8 @@ import org.eclipse.swt.widgets.*;
 	/**
 	 * Create a new StatusLine as a child of the given parent.
 	 */
-	public StatusLine(Composite parent) {
-		super(parent, SWT.NONE);
+	public StatusLine(Composite parent, int style) {
+		super(parent, style);
 		
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {

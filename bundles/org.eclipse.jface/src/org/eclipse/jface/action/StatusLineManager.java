@@ -62,12 +62,13 @@ public StatusLineManager() {
  * Does not create a new control if one already exists.
  *
  * @param parent the parent control
+ * @param style the style for the control
  * @return the status line control
- * @since 3.0 this previously returned a package-private StatusLine control
+ * @since 3.0
  */
-public Control createControl(Composite parent) {
+public Control createControl(Composite parent, int style) {
 	if (!statusLineExist() && parent != null) {
-		statusLine= new StatusLine(parent);
+		statusLine= new StatusLine(parent, style);
 		add(new GroupMarker(BEGIN_GROUP));
 		add(new GroupMarker (MIDDLE_GROUP));
 		add(new GroupMarker(END_GROUP));
@@ -303,5 +304,6 @@ public void setProgressMessage(String message) {
 	if (statusLineExist())
 		((StatusLine) statusLine).setMessage(message);
 }
+
 
 }

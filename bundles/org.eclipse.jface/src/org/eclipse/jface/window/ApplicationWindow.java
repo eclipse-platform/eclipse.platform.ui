@@ -306,17 +306,10 @@ protected void configureShell(Shell shell) {
  * @param parent
  */
 protected void createTrimWidgets(Shell parent){
-// will create either a cool bar or a tool bar
-	if (toolBarManager != null) {
-		createToolBarControl(parent);
-	}
-	if (coolBarManager != null) {
-		createCoolBarControl(parent);
-	}
-	
-	if (statusLineManager != null) {
-		statusLineManager.createControl(parent);
-	}
+    // will create either a cool bar or a tool bar
+    createToolBarControl(parent);
+    createCoolBarControl(parent);
+    createStatusLine(parent);
 }
 
 /* (non-Javadoc)
@@ -341,7 +334,7 @@ protected boolean showTopSeperator() {
  */
 protected void createStatusLine(Shell shell) {
 	if (statusLineManager != null) {
-		statusLineManager.createControl(shell);
+		statusLineManager.createControl(shell, SWT.NONE);
 	}
 }
 /**

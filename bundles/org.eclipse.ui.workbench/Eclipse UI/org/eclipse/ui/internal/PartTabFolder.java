@@ -39,6 +39,7 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.presentations.PartTabFolderPresentation;
 import org.eclipse.ui.internal.presentations.PartTabFolderSystemContribution;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
+import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.StackDropResult;
@@ -301,8 +302,11 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	
 		// The following line should be redirected to a factory in order to 
 		// support pluggable look-and-feel.
-		presentationSite.setPresentation(new PartTabFolderPresentation(parent, 
-				presentationSite, flags));
+		AbstractPresentationFactory factory = ((WorkbenchWindow) page.getWorkbenchWindow())
+                .getWindowConfigurer().getPresentationFactory();
+		presentationSite.setPresentation(factory.createPresentation(parent,
+                presentationSite, AbstractPresentationFactory.ROLE_DOCKED_VIEW,
+                flags, page.getPerspective().getId(), getID()));
 
 		active = true;
 		

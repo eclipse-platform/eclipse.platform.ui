@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.presentations;
 
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * This is a factory for objects that control the appearance of editors and
@@ -92,7 +94,24 @@ public abstract class AbstractPresentationFactory {
      *            it has no id
      * @return a newly created part presentation
      */
-    public abstract StackPresentation createPartPresentation(Composite parent,
+    public abstract StackPresentation createPresentation(Composite parent,
             IStackPresentationSite site, int role, int flags,
             String perspectiveId, String folderId);
+    
+    
+    /**
+     * Creates the status line manager for the window.
+     * 
+     * @return the status line manager for the window
+     */
+    public abstract IStatusLineManager createWindowStatusLineManager();
+
+    /**
+     * Creates the control for the status line.
+     * 
+     * @param statusLine the status line manager
+     * @param parent the parent composite
+     * @return the status line control
+     */
+    public abstract Control createWindowStatusLineControl(IStatusLineManager statusLine, Composite parent);
 }

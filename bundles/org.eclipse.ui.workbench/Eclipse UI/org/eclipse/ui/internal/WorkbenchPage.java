@@ -1789,7 +1789,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		window.getFastViewBar().update(true);
 
 		//if it was the last part, close the perspective
-		lastPartClosePerspective();
+//		lastPartClosePerspective();
 	}
 
 	/*

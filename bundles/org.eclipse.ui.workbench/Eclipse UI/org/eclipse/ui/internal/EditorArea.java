@@ -338,7 +338,7 @@ public void updateTabList() {
 	}
 	private void addDropSupport() {
 		if (dropTarget == null) {
-			WorkbenchWindowConfigurer winConfigurer = page.getUnprotectedWindow().getWindowConfigurer();
+			WorkbenchWindowConfigurer winConfigurer = ((WorkbenchWindow) page.getWorkbenchWindow()).getWindowConfigurer();
 		
 			dropTarget = new DropTarget(getControl(), DND.DROP_DEFAULT | DND.DROP_COPY);
 			dropTarget.setTransfer(winConfigurer.getTransfers());

@@ -34,7 +34,6 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -278,7 +277,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private Map actionSetHandlersByCommandId = new HashMap();
 	private Map globalActionHandlersByCommandId = new HashMap();
 	List handlerSubmissions = new ArrayList();
-    private IPropertyChangeListener themeListener;
 	
 	void registerActionSets(IActionSet[] actionSets) {
 		actionSetHandlersByCommandId.clear();
@@ -2276,4 +2274,25 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	public void closeFloatingWindow(){
 		progressRegion.getAnimationItem().closeFloatingWindow();
 	}
+	
+    /**
+     * Delegate to the presentation factory.
+     * 
+     * @see org.eclipse.jface.window.ApplicationWindow#createStatusLineManager
+     * @since 3.0
+     */
+    protected StatusLineManager createStatusLineManager() {
+        // @issue ApplicationWindow and WorkbenchWindow should allow full IStatusLineManager
+        return (StatusLineManager) getWindowConfigurer().getPresentationFactory().createWindowStatusLineManager();
+    }
+    
+    /**
+     * Delegate to the presentation factory.
+     * 
+     * @see org.eclipse.jface.window.ApplicationWindow#createStatusLine
+     * @since 3.0
+     */
+    protected void createStatusLine(Shell shell) {
+        getWindowConfigurer().getPresentationFactory().createWindowStatusLineControl(getStatusLineManager(), shell);
+    }
 }
