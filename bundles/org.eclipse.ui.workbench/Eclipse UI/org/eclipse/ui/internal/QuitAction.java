@@ -32,6 +32,7 @@ public class QuitAction extends Action implements ActionFactory.IWorkbenchAction
 		setText(WorkbenchMessages.getString("Exit.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("Exit.toolTip")); //$NON-NLS-1$
 		setId("quit"); //$NON-NLS-1$
+		setActionDefinitionId("org.eclipse.ui.file.exit"); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.QUIT_ACTION);
 	}
 
