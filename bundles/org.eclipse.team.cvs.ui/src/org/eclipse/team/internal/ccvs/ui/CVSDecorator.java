@@ -14,8 +14,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.Vector;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -59,17 +58,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	private static CVSDecorator theDecorator = null;
 	
 	// Resources that need an icon and text computed for display to the user, sorted by canonical path
-	private SortedSet decoratorNeedsUpdating = Collections.synchronizedSortedSet(
-		new TreeSet(new Comparator() {
-		public boolean equals(Object a, Object b) {
-			return a == b || a.equals(b);
-		}
-		public int compare(Object a, Object b) {
-			IPath pathA = ((IResource) a).getFullPath();
-			IPath pathB = ((IResource) b).getFullPath();
-			return pathA.toString().compareTo(pathB.toString());
-		}
-	}));
+	private List decoratorNeedsUpdating = new Vector();
 
 	// When decorations are computed they are added to this cache via decorated() method
 	private Map cache = Collections.synchronizedMap(new HashMap());
@@ -191,8 +180,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 				// The decorator was awakened by the plug-in as it was shutting down.
 				return null;
 			}
-			IResource resource = (IResource) decoratorNeedsUpdating.first();
-			decoratorNeedsUpdating.remove(resource);
+			IResource resource = (IResource) decoratorNeedsUpdating.remove(0);
 
 			//System.out.println("++ Next: " + resource.getFullPath() + " remaining in cache: " + cache.size());
 
@@ -283,8 +271,13 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	private synchronized void addResourcesToBeDecorated(IResource[] resources) {
 		if (resources.length > 0) {
 			for (int i = 0; i < resources.length; i++) {
-				//System.out.println("\t to update: " + resources[i].getFullPath());
-				decoratorNeedsUpdating.add(resources[i]);
+				IResource resource = resources[i];
+				//System.out.println("\t to update: " + resource.getFullPath());
+				//Often we get two requests in a row for the same resource.  See if we've just queue'd it and don't add it second time.
+				if(decoratorNeedsUpdating.isEmpty() || decoratorNeedsUpdating.get(decoratorNeedsUpdating.size() - 1) != resource) {
+					//System.out.println("\t adding: " + resource.getFullPath());
+					decoratorNeedsUpdating.add(resource);
+				}
 			}
 			notify();
 		}

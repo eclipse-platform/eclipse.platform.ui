@@ -236,7 +236,26 @@ public class CVSDecorationRunnable implements Runnable {
 		}
 	}
 
+	private boolean isDirty(ICVSFile cvsFile) {
+		try {
+			// file is dirty or file has been merged by an update
+			return cvsFile.isModified();
+		} catch (CVSException e) {
+			//if we get an error report it to the log but assume dirty
+			CVSUIPlugin.log(e.getStatus());
+			return true;
+		}
+	}
+
+	private boolean isDirty(IFile file) {
+		return isDirty(CVSWorkspaceRoot.getCVSFileFor(file));
+	}
+
 	private boolean isDirty(IResource resource) {
+		if(resource.getType() == IResource.FILE) {
+			return isDirty((IFile) resource);
+		}
+		
 		final CoreException DECORATOR_EXCEPTION = new CoreException(new Status(IStatus.OK, "id", 1, "", null)); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			resource.accept(new IResourceVisitor() {
@@ -254,24 +273,18 @@ public class CVSDecorationRunnable implements Runnable {
 
 					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 
-					try {
-						if (!cvsResource.isManaged()) {
-							if (cvsResource.isIgnored()) {
-								return false;
-							} else {
-								// new resource, show as dirty
-								throw DECORATOR_EXCEPTION;
-							}
+					if (!cvsResource.isManaged()) {
+						if (cvsResource.isIgnored()) {
+							return false;
+						} else {
+							// new resource, show as dirty
+							throw DECORATOR_EXCEPTION;
 						}
-						if (!cvsResource.isFolder()) {
-							ResourceSyncInfo info = cvsResource.getSyncInfo();
-							// file is dirty or file has been merged by an update
-							if (((ICVSFile) cvsResource).isModified()) {
-								throw DECORATOR_EXCEPTION;
-							}
+					}
+					if (!cvsResource.isFolder()) {
+						if(isDirty((ICVSFile) cvsResource)) {
+							throw DECORATOR_EXCEPTION;
 						}
-					} catch (CVSException e) {
-						return true;
 					}
 					// no change -- keep looking in children
 					return true;
