@@ -280,7 +280,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 	public void init(IWorkbench workbench) {
 		this.workbench = workbench;
-		IMutableRegistry preferenceRegistry = PreferenceRegistry.getInstance();
+		AbstractMutableRegistry preferenceRegistry = PreferenceRegistry.getInstance();
 
 		try {
 			preferenceRegistry.load();
@@ -295,7 +295,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 	public boolean performOk() {
 		copyFromUI();
-		IMutableRegistry preferenceRegistry = PreferenceRegistry.getInstance();
+		AbstractMutableRegistry preferenceRegistry = PreferenceRegistry.getInstance();
 		preferenceRegistry.setActiveKeyConfigurations(preferenceActiveKeyConfigurations);
 		preferenceRegistry.setKeyBindings(preferenceKeyBindings);
 		preferenceRegistry.setKeyConfigurations(preferenceKeyConfigurations);
@@ -315,9 +315,9 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 	public void setVisible(boolean visible) {
 		if (visible == true) {
-			IRegistry coreRegistry = CoreRegistry.getInstance();
-			IMutableRegistry localRegistry = LocalRegistry.getInstance();
-			IMutableRegistry preferenceRegistry = PreferenceRegistry.getInstance();
+			AbstractRegistry coreRegistry = CoreRegistry.getInstance();
+			AbstractMutableRegistry localRegistry = LocalRegistry.getInstance();
+			AbstractMutableRegistry preferenceRegistry = PreferenceRegistry.getInstance();
 			
 			try {
 				coreRegistry.load();

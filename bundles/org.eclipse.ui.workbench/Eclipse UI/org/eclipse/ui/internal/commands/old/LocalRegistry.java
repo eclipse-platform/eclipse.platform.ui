@@ -69,7 +69,6 @@ public final class LocalRegistry extends AbstractMutableRegistry {
 			throw new IOException();
 		} finally {
 			reader.close();
-			fireRegistryChanged();			
 		}
 	}
 	

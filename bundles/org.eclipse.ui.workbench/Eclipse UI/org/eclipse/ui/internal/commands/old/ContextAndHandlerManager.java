@@ -310,9 +310,9 @@ public class ContextAndHandlerManager implements IContextResolver {
 	}
 	
 	void reset() {
-		IRegistry coreRegistry = CoreRegistry.getInstance();
-		IMutableRegistry localRegistry = LocalRegistry.getInstance();
-		IMutableRegistry preferenceRegistry = PreferenceRegistry.getInstance();
+		AbstractRegistry coreRegistry = CoreRegistry.getInstance();
+		AbstractMutableRegistry localRegistry = LocalRegistry.getInstance();
+		AbstractMutableRegistry preferenceRegistry = PreferenceRegistry.getInstance();
 			
 		try {
 			coreRegistry.load();

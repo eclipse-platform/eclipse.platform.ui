@@ -16,8 +16,7 @@ import java.util.List;
 
 import org.eclipse.ui.internal.util.Util;
 
-abstract class AbstractMutableRegistry extends AbstractRegistry
-	implements IMutableRegistry {
+abstract class AbstractMutableRegistry extends AbstractRegistry {
 
 	protected AbstractMutableRegistry() {
 		super();

@@ -15,8 +15,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-abstract class AbstractRegistry 
-	implements IRegistry {
+abstract class AbstractRegistry { 
 
 	protected List activeGestureConfigurations = Collections.EMPTY_LIST;
 	protected List activeKeyConfigurations = Collections.EMPTY_LIST;
