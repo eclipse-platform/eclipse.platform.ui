@@ -13,6 +13,7 @@ package org.eclipse.help.internal.search;
 import org.apache.lucene.analysis.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.*;
+import org.osgi.framework.*;
 
 /**
  * Text Analyzer Descriptor.  Encapsulates Lucene Analyzer
@@ -42,13 +43,13 @@ public class AnalyzerDescriptor {
 		// if all fails, create default analyzer
 		if (this.luceneAnalyzer == null) {
 			this.id =
-				HelpBasePlugin.getDefault().getDescriptor().getUniqueIdentifier()
+				HelpBasePlugin.PLUGIN_ID
 					+ "#"
 					+ HelpBasePlugin
 						.getDefault()
-						.getDescriptor()
-						.getVersionIdentifier()
-						.toString();
+						.getBundle()
+						.getHeaders()
+						.get(Constants.BUNDLE_VERSION);
 			this.luceneAnalyzer = new DefaultAnalyzer(locale);
 			this.lang = locale;
 		}
@@ -88,7 +89,7 @@ public class AnalyzerDescriptor {
 	private Analyzer createAnalyzer(String locale) {
 		// find extension point
 		IConfigurationElement configElements[] =
-			Platform.getPluginRegistry().getConfigurationElementsFor(
+			Platform.getExtensionRegistry().getConfigurationElementsFor(
 				HelpBasePlugin.PLUGIN_ID,
 				"luceneAnalyzer");
 		for (int i = 0; i < configElements.length; i++) {
@@ -106,14 +107,10 @@ public class AnalyzerDescriptor {
 					String pluginId =
 						configElements[i]
 							.getDeclaringExtension()
-							.getDeclaringPluginDescriptor()
-							.getUniqueIdentifier();
-					String pluginVersion =
-						configElements[i]
-							.getDeclaringExtension()
-							.getDeclaringPluginDescriptor()
-							.getVersionIdentifier()
-							.toString();
+							.getNamespace();
+					String pluginVersion = (String)
+						Platform.getBundle(pluginId)
+						.getHeaders().get(Constants.BUNDLE_VERSION);
 					this.luceneAnalyzer = (Analyzer) analyzer;
 					this.id = pluginId + "#" + pluginVersion;
 					this.lang = locale;
@@ -149,14 +146,16 @@ public class AnalyzerDescriptor {
 		if (id.equals(analyzerId)) {
 			return true;
 		}
-		// analyzers between versions 2.0.1 and 3.0.0 of org.eclipse.help plugin
-		// are compatible (logic unchanged), index can be preserved between them
-		if (analyzerId.compareTo(HelpBasePlugin.PLUGIN_ID + "#2.0.1") >= 0
-			&& analyzerId.compareTo(HelpBasePlugin.PLUGIN_ID + "#3.0.0") <= 0
-			&& id.compareTo(HelpBasePlugin.PLUGIN_ID + "#2.0.1") >= 0
-			&& id.compareTo(HelpBasePlugin.PLUGIN_ID + "#3.0.0") <= 0) {
-			return true;
-		}
+		// analyzers between some versions of org.eclipse.help plugin
+		// are compatible (logic unchanged), index can be preserved between
+		// them
+		// in 3.0 index has been moved so cannot be reused
+		//		if (analyzerId.compareTo(HelpBasePlugin.PLUGIN_ID + "#2.0.1") >= 0
+		//			&& analyzerId.compareTo(HelpBasePlugin.PLUGIN_ID + "#3.0.0") <= 0
+		//			&& id.compareTo(HelpBasePlugin.PLUGIN_ID + "#2.0.1") >= 0
+		//			&& id.compareTo(HelpBasePlugin.PLUGIN_ID + "#3.0.0") <= 0) {
+		//			return true;
+		//		}
 		return false;
 	}
 
