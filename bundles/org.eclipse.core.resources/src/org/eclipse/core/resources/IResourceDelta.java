@@ -368,7 +368,9 @@ public interface IResourceDelta extends IAdaptable {
 	 * <li><code>CONTENT</code> - The bytes contained by the resource have 
 	 * 		been altered, or <code>IResource.touch</code> has been called on 
 	 * 		the resource.</li>
-	 * <li><code>ENCODING</code> - The encoding of the resource has been altered.</li>
+	 * <li><code>ENCODING</code> - The encoding of the resource may have been altered.
+	 * This flag is not set when the encoding changes due to the file being modified, 
+	 * or being moved.</li>
 	 * <li><code>DESCRIPTION</code> - The description of the project has been altered,
 	 * 		or <code>IResource.touch</code> has been called on the project.
 	 * 		This flag is only valid for project resources.</li>
