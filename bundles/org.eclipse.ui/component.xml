@@ -135,7 +135,6 @@
   <type name="ActivitiesPreferencePage"/>
   <type name="ActivityEvent"/>
   <type name="ActivityManagerEvent"/>
-  <type name="BasicTriggerPointAdvisor"/>
   <type name="CategoryEvent"/>
   <type name="IActivity" implement="false"/>
   <type name="IActivityListener"/>
