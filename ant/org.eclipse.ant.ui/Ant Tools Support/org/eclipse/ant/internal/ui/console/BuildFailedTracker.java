@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,12 +22,14 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.externaltools.internal.model.StringMatcher;
 
 /**
- * Generates hyperlinks for build failures resulting from XML syntax errors
+ * Generates hyperlinks for build failures
  */
 public class BuildFailedTracker implements IConsoleLineTracker {
 	
 	private IConsole fConsole;
 	private StringMatcher fErrorMatcher;
+	private StringMatcher fErrorMatcher2;
+	private boolean fBuildFailed= false;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#init(org.eclipse.debug.ui.console.IConsole)
@@ -35,7 +37,8 @@ public class BuildFailedTracker implements IConsoleLineTracker {
 	public void init(IConsole console) {
 		fConsole = console;
 		//BUILD FAILED: file:c:/1115/test/buildFiles/23638.xml:12:
-		fErrorMatcher = new StringMatcher("*BUILD FAILED: *.xml*",false, false); //$NON-NLS-1$
+		fErrorMatcher = new StringMatcher("*BUILD FAILED: *.xml*", false, false); //$NON-NLS-1$
+		fErrorMatcher2= new StringMatcher("*.xml*", false, false); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -49,14 +52,24 @@ public class BuildFailedTracker implements IConsoleLineTracker {
 			String fileName = null;
 			String lineNumber = ""; //$NON-NLS-1$
 			int fileStart = -1;
+			int index= -1;
 			if (fErrorMatcher.match(text)) {
-				int index = text.indexOf("file:"); //$NON-NLS-1$
+				fBuildFailed= true;
+				index = text.indexOf("file:"); //$NON-NLS-1$
 				if (index > 0) {
 					fileStart = index + 5;
 				} else {
 					fileStart = text.indexOf("BUILD FAILED:") + 14; //$NON-NLS-1$
 					index= fileStart;
 				}
+			} else if (fBuildFailed && fErrorMatcher2.match(text)) {
+				//output resulting from failures occured in nested build from using the ant task:
+				//BUILD FAILED: C:\Darins\Debugger\20021213\eclipse\runtime-workspace\Mine\build.xml:4: Following error occured while executing this line
+				//C:\Darins\Debugger\20021213\eclipse\runtime-workspace\Mine\subbuild.xml:4: srcdir attribute must be set!
+				index= 0;
+				fileStart= 0;
+			}
+			if (index > -1) {
 				index = text.indexOf("xml", index); //$NON-NLS-1$
 				if (index > 0) {
 					int numberStart= index + 4;
