@@ -47,7 +47,6 @@ import org.eclipse.ui.views.markers.internal.IField;
 import org.eclipse.ui.views.markers.internal.IFilter;
 import org.eclipse.ui.views.markers.internal.MarkerRegistry;
 import org.eclipse.ui.views.markers.internal.MarkerView;
-import org.eclipse.ui.views.markers.internal.Messages;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
 import org.eclipse.ui.views.markers.internal.TableSorter;
 
@@ -119,10 +118,6 @@ public class ProblemView extends MarkerView {
 	private ProblemFilter problemFilter;
 	private ActionResolveMarker resolveMarkerAction;
 	private TableSorter sorter;
-
-	private static final int ERRORS = 0;
-	private static final int WARNINGS = 1;
-	private static final int INFOS = 2;
 
 	public void dispose() {
 		if (resolveMarkerAction != null)
@@ -236,117 +231,5 @@ public class ProblemView extends MarkerView {
 	public void setSelection(IStructuredSelection structuredSelection, boolean reveal) {
 		// TODO: added because nick doesn't like public API inherited from internal classes
 		super.setSelection(structuredSelection, reveal);
-	}
-	
-	/**
-	 * This method takes a list of all the markers we
-	 * wish to get statistical information on.  Each marker is examined
-	 * to determine its severity.  The resulting array contains
-	 * counts of the total number of markers with each of the severities:  error,
-	 * warning or info.
-	 * 
-	 * @param regList the list of markers we wish to get stats for
-	 * @return a 3-element int array giving the number of markers in regList
-	 *   that have severity ERROR, WARNING, and INFO
-	 */
-	private int[] getMarkerCounts (Object[] regList) {
-		int[] visibleMarkerCounts = {0, 0, 0};
-		if (regList == null || regList.length == 0)
-			return visibleMarkerCounts;
-		for (int i = 0; i < regList.length; i++) {
-			IMarker marker = (IMarker)regList[i];
-			int severity = marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
-			switch (severity) {
-				case IMarker.SEVERITY_ERROR:
-					visibleMarkerCounts[ERRORS]++;
-					break;
-				case IMarker.SEVERITY_INFO:
-					visibleMarkerCounts[INFOS]++;
-					break;
-				case IMarker.SEVERITY_WARNING:
-					visibleMarkerCounts[WARNINGS]++;
-					break;
-			}
-		}
-		return visibleMarkerCounts;
-	}
-
-	/**
-	 * The <code>ProblemView</code> implementation of this <code>MarkerView</code>
-	 * method updates the status message to indicate the
-	 * total number of items in the view and how many of them have severity
-	 * ERROR, WARNING, and INFO if the selection passed in is <code>null</code>
-	 * or has a size of 0 (i.e. nothing is selected in the view).  If more
-	 * than 1 item is selected, the same information is displayed but
-	 * only for the selected items.  If only 1 item is selected, the MESSAGE
-	 * attribute of this marker is displayed.
-	 * 
-	 * @param selection a valid selection or <code>null</code>
-	 */
-	protected void updateStatusMessage(IStructuredSelection selection) {
-		String message = ""; //$NON-NLS-1$
-		
-		if (selection == null || selection.size() == 0){
-			// Show stats on all items in the view
-			message = updateSummaryVisible();
-		} else if (selection.size() == 1) {
-			// Use the Message attribute of the marker
-			IMarker marker = (IMarker)selection.getFirstElement();
-			message = marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
-		} else if (selection.size() > 1) {
-			// Show stats on only those items in the selection
-			message = updateSummarySelected(selection);
-		}
-		getViewSite().getActionBars().getStatusLineManager().setMessage(message);
-	}
-
-	/**
-	 * Retrieves statistical information (the total number of markers with each
-	 * severity type) for the markers contained in the marker registry for this
-	 * view. This information is then massaged into a string which may be
-	 * displayed by the caller.
-	 * 
-	 * @return a message ready for display
-	 */
-	private String updateSummaryVisible() {
-		Object[] regList = getRegistry().getElements();
-		int[] visibleMarkerCounts = getMarkerCounts(regList);
-		String message = Messages.format(
-			"problem.statusSummaryVisible", //$NON-NLS-1$
-			new Object[] {
-				new Integer(visibleMarkerCounts[ERRORS] + visibleMarkerCounts[INFOS] + visibleMarkerCounts[WARNINGS]),
-				Messages.format(
-					"problem.statusSummaryBreakdown", //$NON-NLS-1$
-					new Object[] {
-						new Integer(visibleMarkerCounts[ERRORS]),
-						new Integer(visibleMarkerCounts[WARNINGS]),
-						new Integer(visibleMarkerCounts[INFOS])})
-			});
-		return message;
-	}
-	
-	/**
-	 * Retrieves statistical information (the total number of markers with each
-	 * severity type) for the markers contained in the selection passed in.
-	 * This information is then massaged into a string which may be displayed
-	 * by the caller.
-	 * 
-	 * @param selection a valid selection or <code>null</code>
-	 * @return a message ready for display
-	 */
-	private String updateSummarySelected(IStructuredSelection selection) {
-		int[] selectedMarkerCounts = getMarkerCounts(selection.toArray());
-		String message = Messages.format(
-			"problem.statusSummarySelected", //$NON-NLS-1$
-			new Object[] {
-				new Integer(selectedMarkerCounts[ERRORS] + selectedMarkerCounts[INFOS] + selectedMarkerCounts[WARNINGS]),
-				Messages.format(
-					"problem.statusSummaryBreakdown", //$NON-NLS-1$
-					new Object[] {
-						new Integer(selectedMarkerCounts[ERRORS]),
-						new Integer(selectedMarkerCounts[WARNINGS]),
-						new Integer(selectedMarkerCounts[INFOS])})
-			});
-		return message;
 	}
 }
