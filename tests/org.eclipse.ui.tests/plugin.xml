@@ -27,14 +27,15 @@
 <!-- Startup testing -->
    <extension
          point="org.eclipse.ui.startup">
-         <startup/>
+      <startup>
+      </startup>
    </extension>
-
    <extension
          point="org.eclipse.ui.startup">
-         <startup class="org.eclipse.ui.tests.api.StartupClass"/>
+      <startup
+            class="org.eclipse.ui.tests.api.StartupClass">
+      </startup>
    </extension>
-
 <!-- Utils -->
    <extension
          point="org.eclipse.ui.perspectives">
@@ -78,14 +79,14 @@
             icon="icons\view.gif"
             class="org.eclipse.ui.tests.api.MockViewPart"
             id="org.eclipse.ui.tests.api.MockViewPart4">
-      </view>      
+      </view>
       <view
+            allowMultiple="true"
             name="Mock View Mult"
             icon="icons\view.gif"
             class="org.eclipse.ui.tests.api.MockViewPart"
-            id="org.eclipse.ui.tests.api.MockViewPartMult"
-            allowMultiple="true">
-      </view>      
+            id="org.eclipse.ui.tests.api.MockViewPartMult">
+      </view>
       <view
             name="Session Test View"
             icon="icons\view.gif"
@@ -139,54 +140,54 @@
          point="org.eclipse.ui.editors">
       <editor
             name="Mock Editor 1"
-            icon="icons\mockeditorpart1.gif"
             extensions="mock1"
+            icon="icons\mockeditorpart1.gif"
             class="org.eclipse.ui.tests.api.MockEditorPart"
             id="org.eclipse.ui.tests.api.MockEditorPart1">
       </editor>
       <editor
             name="Mock Editor 2"
-            icon="icons\mockeditorpart2.gif"
             extensions="mock2"
+            icon="icons\mockeditorpart2.gif"
             class="org.eclipse.ui.tests.api.MockEditorPart"
             id="org.eclipse.ui.tests.api.MockEditorPart2">
       </editor>
       <editor
             name="IEditorActionBarContributorTest"
-            icon="icons\mockeditorpart2.gif"
             extensions="mock3"
-            contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor"
+            icon="icons\mockeditorpart2.gif"
             class="org.eclipse.ui.tests.api.MockEditorPart"
+            contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor"
             id="org.eclipse.ui.tests.api.IEditorActionBarContributorTest">
       </editor>
       <editor
             name="IEditorActionDelegateTest"
-            icon="icons\mockeditorpart2.gif"
             extensions="mock3"
-            contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor"
+            icon="icons\mockeditorpart2.gif"
             class="org.eclipse.ui.tests.api.MockEditorPart"
+            contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor"
             id="org.eclipse.ui.tests.api.IEditorActionDelegateTest">
       </editor>
       <editor
             name="IEditorActionBarsTest"
-            icon="icons\mockeditorpart2.gif"
             extensions="mock3"
-            contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor"
+            icon="icons\mockeditorpart2.gif"
             class="org.eclipse.ui.tests.api.MockEditorPart"
+            contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor"
             id="org.eclipse.ui.tests.internal.EditorActionBarsTest">
       </editor>
       <editor
             name="ExtendedTextEditor"
-            icon="icons\mockeditorpart2.gif"
             extensions="exttxt"
-            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            icon="icons\mockeditorpart2.gif"
             class="org.eclipse.ui.tests.internal.ExtendedTextEditor"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
             id="org.eclipse.ui.tests.ExtendedTextEditor">
       </editor>
       <editor
             name="Test Multi-Page Editor"
-            icon="icons\mockeditorpart1.gif"
             extensions="multi"
+            icon="icons\mockeditorpart1.gif"
             class="org.eclipse.ui.tests.multipageeditor.TestMultiPageEditor"
             id="org.eclipse.ui.tests.multipageeditor.TestMultiPageEditor">
       </editor>
@@ -303,8 +304,8 @@
       </objectContribution>
 <!-- Adaptable test-->
       <objectContribution
-            objectClass="org.eclipse.core.resources.IResource"
             adaptable="true"
+            objectClass="org.eclipse.core.resources.IResource"
             id="org.eclipse.ui.tests.adaptable.ResourceContributions">
          <action
                label="Resource Action"
@@ -749,30 +750,30 @@
       <decorator
             objectClass="org.eclipse.core.resources.IResource"
             label="Test Decorator"
-            state="false"
             class="org.eclipse.ui.tests.navigator.TestDecoratorContributor"
+            state="false"
             id="org.eclipse.ui.tests.adaptable.decorator">
-            <description>
-            	The test decorator
-            </description>
+         <description>
+            The test decorator
+         </description>
       </decorator>
       <decorator
-            objectClass="org.eclipse.core.resources.IResource"
             adaptable="true"
+            objectClass="org.eclipse.core.resources.IResource"
             label="Null Decorator"
-            state="false"
             class="org.eclipse.ui.tests.adaptable.NullLabelDecorator"
+            state="false"
             id="org.eclipse.ui.tests.adaptable.nulldecorator">
-            <description>
-            	A null test decorator
-            </description>            
+         <description>
+            A null test decorator
+         </description>
       </decorator>
       <decorator
             lightweight="true"
             adaptable="true"
             label="Lightweight Test Decorator"
-            state="false"
             class="org.eclipse.ui.tests.navigator.TestLightweightDecoratorContributor"
+            state="false"
             id="org.eclipse.ui.tests.navigator.lightweightdecorator">
          <enablement>
             <objectClass
@@ -780,28 +781,28 @@
             </objectClass>
          </enablement>
          <description>
-            	A lightweight test decorator
-          </description> 
+            A lightweight test decorator
+         </description>
       </decorator>
       <decorator
-            adaptable="true"
-            state="false"
-            id="org.eclipse.ui.tests.navigator.declareddecorator"
             lightweight="true"
             quadrant="TOP_LEFT"
+            adaptable="true"
+            label="Declarative Test Decorator"
             icon="icons/binary_co.gif"
-            label="Declarative Test Decorator">
+            state="false"
+            id="org.eclipse.ui.tests.navigator.declareddecorator">
          <enablement>
             <objectClass
                   name="org.eclipse.core.resources.IResource">
             </objectClass>
          </enablement>
-          <description>
-            	A lightweight test decorator
-          </description> 
+         <description>
+            A lightweight test decorator
+         </description>
       </decorator>
       <decorator
-      		lightweight="true"
+            lightweight="true"
             objectClass="org.eclipse.core.resources.IResource"
             label="Bug 41545 Lightweight"
             class="org.eclipse.ui.tests.navigator.NullImageDecorator"
@@ -814,7 +815,7 @@
             class="org.eclipse.ui.tests.navigator.HeavyNullImageDecorator"
             id="org.eclipse.ui.tests.heavyNullImageDecorator">
       </decorator>
-       <decorator
+      <decorator
             lightweight="false"
             objectClass="org.eclipse.core.resources.IResource"
             label="Bug 41545 Heavy Text"
@@ -851,7 +852,7 @@
             id="org.eclipse.ui.tests.dialogs.FontFieldEditorTestPreferencePage">
       </page>
    </extension>
-   <!-- Multi-page editor tests -->
+<!-- Multi-page editor tests -->
    <extension
          point="org.eclipse.ui.commands">
       <keyBinding
@@ -880,8 +881,7 @@
             id="org.eclipse.ui.tests.scope2">
       </context>
    </extension>
-
-   <!-- Marker Image Provider tests -->
+<!-- Marker Image Provider tests -->
    <extension
          id="testmarker"
          name="Test Marker"
@@ -895,7 +895,6 @@
             id="testmarker.imageProvider">
       </imageprovider>
    </extension>
-
    <extension
          id="testmarker2"
          name="Test Marker 2"
@@ -909,14 +908,14 @@
             id="testmarker.imageProvider2">
       </imageprovider>
    </extension>
-   
    <extension
          point="org.eclipse.ui.intro">
       <intro
             name="Intro Test"
-            icon="next_nav.gif"
+            icon="icons/anything.gif"
             class="org.eclipse.ui.tests.intro.MockIntroPart"
             id="org.eclipse.ui.testintro">
       </intro>
-   </extension>   
+   </extension>
+
 </plugin>
