@@ -10,6 +10,9 @@
 package org.eclipse.core.internal.refresh;
 
 import java.util.*;
+import org.eclipse.core.internal.events.ILifecycleListener;
+import org.eclipse.core.internal.events.LifecycleEvent;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.refresh.IRefreshMonitor;
@@ -23,15 +26,15 @@ import org.eclipse.core.runtime.*;
  * 
  * @since 3.0
  */
-class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, IPathVariableChangeListener {
-	/**
-	 * The list of registered monitor factories.
-	 */
-	private RefreshProvider[] providers;
+class MonitorManager implements ILifecycleListener, IPathVariableChangeListener {
 	/**
 	 * The PollingMonitor in charge of doing filesystem polls.
 	 */
 	protected PollingMonitor pollMonitor;
+	/**
+	 * The list of registered monitor factories.
+	 */
+	private RefreshProvider[] providers;
 	/**
 	 * Reference to the refresh manager
 	 */
@@ -102,6 +105,20 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 		return resourcesToMonitor;
 	}
 
+	public void handleEvent(LifecycleEvent event) {
+		switch (event.kind) {
+			case LifecycleEvent.PRE_LINK_CREATE:
+			case LifecycleEvent.PRE_PROJECT_OPEN:
+				monitor(event.resource);
+				break;
+			case LifecycleEvent.PRE_LINK_DELETE:
+			case LifecycleEvent.PRE_PROJECT_CLOSE:
+			case LifecycleEvent.PRE_PROJECT_DELETE:
+				unmonitor(event.resource);
+				break;
+		}
+	}
+
 	private boolean isMonitoring(IResource resource) {
 		synchronized (registeredMonitors) {
 			for (Iterator i = registeredMonitors.keySet().iterator(); i.hasNext();) {
@@ -134,22 +151,6 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 			registerMonitor(pollMonitor, resource);
 		}
 		return pollingMonitorNeeded;
-	}
-
-	private IRefreshMonitor safeInstallMonitor(RefreshProvider provider, IResource resource) {
-		Throwable t = null;
-		try {
-			return provider.installMonitor(resource, refreshManager);
-		} catch (Exception e) {
-			t = e;
-		} catch (LinkageError e) {
-			t = e;
-		}
-		if (t != null) {
-			IStatus error = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 1, Policy.bind("refresh.installError"), t); //$NON-NLS-1$
-			ResourcesPlugin.getPlugin().getLog().log(error);
-		}
-		return null;
 	}
 
 	/* (non-Javadoc)
@@ -238,23 +239,20 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 			System.out.println(RefreshManager.DEBUG_PREFIX + " removing monitor (" + monitor + ") on resource: " + resource); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public void resourceChanged(IResourceChangeEvent event) {
-		switch (event.getType()) {
-			case IResourceChangeEvent.PRE_DELETE :
-			case IResourceChangeEvent.PRE_CLOSE :
-				/*
-				 * Additions and project open handled in visitor.
-				 */
-				IProject project = (IProject) event.getResource();
-				unmonitor(project);
-				break;
-			default :
-				try {
-					event.getDelta().accept(this);
-				} catch (CoreException e) {
-					ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
-				}
+	private IRefreshMonitor safeInstallMonitor(RefreshProvider provider, IResource resource) {
+		Throwable t = null;
+		try {
+			return provider.installMonitor(resource, refreshManager);
+		} catch (Exception e) {
+			t = e;
+		} catch (LinkageError e) {
+			t = e;
 		}
+		if (t != null) {
+			IStatus error = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 1, Policy.bind("refresh.installError"), t); //$NON-NLS-1$
+			ResourcesPlugin.getPlugin().getLog().log(error);
+		}
+		return null;
 	}
 
 	/**
@@ -264,8 +262,9 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 		boolean refreshNeeded = false;
 		for (Iterator i = getResourcesToMonitor().iterator(); i.hasNext();)
 			refreshNeeded |= !monitor((IResource) i.next());
-		workspace.addResourceChangeListener(this);
 		workspace.getPathVariableManager().addChangeListener(this);
+		//adding the lifecycle listener twice does no harm
+		((Workspace)workspace).addLifecycleListener(this);
 		if (RefreshManager.DEBUG)
 			System.out.println(RefreshManager.DEBUG_PREFIX + " starting monitor manager."); //$NON-NLS-1$
 		//If not exclusively using polling, create a polling monitor and run it once, to catch 
@@ -278,7 +277,6 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 	 * Stop the monitoring of resources by all monitors.
 	 */
 	public void stop() {
-		workspace.removeResourceChangeListener(this);
 		workspace.getPathVariableManager().removeChangeListener(this);
 		// synchronized: protect the collection during iteration
 		synchronized (registeredMonitors) {
@@ -320,55 +318,5 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 			for (int i = 0; i < children.length; i++)
 				if (children[i].isLinked())
 					unmonitor(children[i]);
-	}
-
-	/*(non-Javadoc)
-	 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
-	 */
-	public boolean visit(IResourceDelta delta) {
-		IResource resource = delta.getResource();
-		switch (resource.getType()) {
-			case IResource.FILE :
-			case IResource.FOLDER :
-				if (resource.isLinked()) {
-					switch (delta.getKind()) {
-						case IResourceDelta.ADDED :
-							monitor(resource);
-							break;
-						case IResourceDelta.REMOVED :
-							unmonitor(resource);
-							break;
-						default :
-							break;
-					}
-				}
-				return false;
-			case IResource.ROOT :
-				return true;
-			case IResource.PROJECT :
-				IProject project = (IProject) resource;
-				switch (delta.getKind()) {
-					case IResourceDelta.ADDED :
-						/*
-						 * Project deletion is handled in
-						 * resourceChanged(IResourceEvent)
-						 */
-						if (project.isOpen())
-							monitor(project);
-						break;
-					case IResourceDelta.CHANGED :
-						// Project closure is handled in resourceChanged(IResourceEvent)
-						if ((delta.getFlags() & IResourceDelta.OPEN) != 0)
-							if (project.isOpen())
-								monitor(project);
-						break;
-					default :
-						break;
-				}
-				return true;
-			default :
-				break;
-		}
-		return false;
 	}
 }
