@@ -1643,8 +1643,8 @@
   <extension
         point="org.eclipse.ui.contexts">
      <context
-           name="Debugging"
-           description="Debugging Programs"
+           name="%Context.debugging.name"
+           description="%Context.debugging.description"
            id="org.eclipse.debug.ui.debugging">
      </context>
      <context
