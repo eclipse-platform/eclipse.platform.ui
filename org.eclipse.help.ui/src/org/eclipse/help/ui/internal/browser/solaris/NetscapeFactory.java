@@ -5,6 +5,7 @@
 package org.eclipse.help.ui.internal.browser.solaris;
 import org.eclipse.help.ui.browser.*;
 public class NetscapeFactory implements IBrowserFactory {
+	private NetscapeBrowserAdapter browserInstance = null;
 	/**
 	 * Constructor.
 	 */
@@ -15,15 +16,17 @@ public class NetscapeFactory implements IBrowserFactory {
 	 * @see IBrowserFactory#isAvailable()
 	 */
 	public boolean isAvailable() {
-		if (!System.getProperty("os.name").startsWith("SunOS")) {
-			return false;
-		}
-		return true;
+		return System.getProperty("os.name").toLowerCase().startsWith(
+			"SunOS".toLowerCase());
 	}
 	/*
 	 * @see IBrowserFactory#createBrowser()
 	 */
 	public IBrowser createBrowser() {
-		return NetscapeBrowserAdapter.getInstance();
+		// Create single browser for all clients
+		if (browserInstance == null) {
+			browserInstance = new NetscapeBrowserAdapter();
+		}
+		return browserInstance;
 	}
 }

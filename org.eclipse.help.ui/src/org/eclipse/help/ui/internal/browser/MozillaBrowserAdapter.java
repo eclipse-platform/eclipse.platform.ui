@@ -2,35 +2,42 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.ui.internal.browser.linux;
+package org.eclipse.help.ui.internal.browser;
 import java.io.*;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.help.internal.util.Logger;
 import org.eclipse.help.ui.browser.IBrowser;
 import org.eclipse.help.ui.internal.WorkbenchHelpPlugin;
-import org.eclipse.help.ui.internal.util.StreamConsumer;
-public class NetscapeBrowserAdapter implements IBrowser {
-	// delay that it takes netscape to start responding
-	// to remote command after netscape has been called
+import org.eclipse.help.ui.internal.util.*;
+import org.eclipse.swt.widgets.Display;
+/**
+ * Browser adapter for browsers supporting
+ * -remote openURL command line option
+ * i.e. Mozilla and Netscape.
+ */
+public class MozillaBrowserAdapter implements IBrowser {
+	// delay that it takes mozilla to start responding
+	// to remote command after mozilla has been called
 	private static final int DELAY = 5000;
-	private static long browserFullyOpenedAt = 0;
-	private static BrowserThread lastBrowserThread = null;
-	private static NetscapeBrowserAdapter instance;
-	private static int x, y;
-	private static int width, height;
-	private static boolean setLocationPending;
-	private static boolean setSizePending;
+	private long browserFullyOpenedAt = 0;
+	private BrowserThread lastBrowserThread = null;
+	private int x, y;
+	private int width, height;
+	private boolean setLocationPending = false;
+	private boolean setSizePending = false;
+	private String executable;
+	private String executableName;
+	private Thread uiThread;
 	/**
 	 * Constructor
+	 * @executable executable filename to launch
+	 * @executableName name of the program to display when error occurs
 	 */
-	private NetscapeBrowserAdapter() {
-	}
-	public static NetscapeBrowserAdapter getInstance() {
-		setLocationPending = false;
-		setSizePending = false;
-		if (instance == null)
-			instance = new NetscapeBrowserAdapter();
-		return instance;
+	MozillaBrowserAdapter(String executable, String executableName) {
+		this.uiThread = Thread.currentThread();
+		this.executable = executable;
+		this.executableName = executableName;
 	}
 	/*
 	 * @see IBrowser#close()
@@ -73,23 +80,23 @@ public class NetscapeBrowserAdapter implements IBrowser {
 	 * @see IBrowser#setLocation(int, int)
 	 */
 	public void setLocation(int x, int y) {
-		NetscapeBrowserAdapter.x = x;
-		NetscapeBrowserAdapter.y = y;
+		this.x = x;
+		this.y = y;
 		setLocationPending = true;
 	}
 	/*
 	 * @see IBrowser#setSize(int, int)
 	 */
 	public void setSize(int width, int height) {
-		NetscapeBrowserAdapter.width = width;
-		NetscapeBrowserAdapter.height = height;
+		this.width = width;
+		this.height = height;
 		setSizePending = true;
 	}
 	private synchronized String createPositioningURL(String url) {
 		IPath pluginPath = WorkbenchHelpPlugin.getDefault().getStateLocation();
 		File outFile =
 			pluginPath
-				.append("netscapePositon")
+				.append("mozillaPositon")
 				.append("position.html")
 				.toFile();
 		try {
@@ -137,6 +144,24 @@ public class NetscapeBrowserAdapter implements IBrowser {
 				return pr.exitValue();
 			} catch (InterruptedException e) {
 			} catch (IOException e) {
+				Logger.logError(
+					WorkbenchResources.getString(
+						"MozillaBrowserAdapter.executeFailed",
+						executableName),
+					e);
+				try {
+					Display.findDisplay(uiThread).asyncExec(new Runnable() {
+						public void run() {
+							ErrorUtil.displayErrorDialog(
+								WorkbenchResources.getString(
+									"MozillaBrowserAdapter.executeFailed",
+									executableName));
+						}
+					});
+				} catch (Exception e2) {
+				}
+				// return success so second command does not execute
+				return 0;
 			}
 			return -1;
 		}
@@ -145,12 +170,12 @@ public class NetscapeBrowserAdapter implements IBrowser {
 			waitForBrowser();
 			if (exitRequested)
 				return;
-			if (openBrowser("netscape -remote openURL(" + url + ")") == 0)
+			if (openBrowser(executable + " -remote openURL(" + url + ")") == 0)
 				return;
 			if (exitRequested)
 				return;
 			browserFullyOpenedAt = System.currentTimeMillis() + DELAY;
-			openBrowser("netscape " + url);
+			openBrowser(executable + " " + url);
 		}
 		private void waitForBrowser() {
 			while (System.currentTimeMillis() < browserFullyOpenedAt)

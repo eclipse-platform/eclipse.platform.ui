@@ -16,17 +16,12 @@ public class NetscapeBrowserAdapter implements IBrowser {
 	private static long browserFullyOpenedAt = 0;
 	private static boolean opened = false;
 	private static NetscapeBrowserAdapter instance;
-	private static Thread mainThread;
+	private static Thread uiThread;
 	/**
 	 * Constructor
 	 */
-	private NetscapeBrowserAdapter() {
-		mainThread=Thread.currentThread();
-	}
-	public static NetscapeBrowserAdapter getInstance() {
-		if (instance == null)
-			instance = new NetscapeBrowserAdapter();
-		return instance;
+	NetscapeBrowserAdapter() {
+		uiThread = Thread.currentThread();
 	}
 	/*
 	 * @see IBrowser#close()
@@ -106,20 +101,20 @@ public class NetscapeBrowserAdapter implements IBrowser {
 			pr.waitFor();
 		} catch (InterruptedException e) {
 		} catch (IOException e) {
-				Logger.logError(
-					WorkbenchResources.getString(
-						"NetscapeBrowserAdapter.executeFailed"),
-					e);
-				try {
-					Display.findDisplay(mainThread).asyncExec(new Runnable() {
-						public void run() {
-							ErrorUtil.displayErrorDialog(
-								WorkbenchResources.getString(
-									"NetscapeBrowserAdapter.executeFailed"));
-						}
-					});
-				} catch (Exception e2) {
-				}
+			Logger.logError(
+				WorkbenchResources.getString(
+					"NetscapeBrowserAdapter.executeFailed"),
+				e);
+			try {
+				Display.findDisplay(uiThread).asyncExec(new Runnable() {
+					public void run() {
+						ErrorUtil.displayErrorDialog(
+							WorkbenchResources.getString(
+								"NetscapeBrowserAdapter.executeFailed"));
+					}
+				});
+			} catch (Exception e2) {
+			}
 		} finally {
 			opened = false;
 		}

@@ -80,52 +80,52 @@
 		</actionSet>
 	</extension>
 			
-	<!-- WebBrowsers -->
-	<extension
-		point="org.eclipse.help.ui.browser">
-		<browser
-			factoryclass="org.eclipse.help.ui.internal.browser.SystemBrowserFactory"
-			name="%system_browser"
-			id="org.eclipse.help.ui.systembrowser">
-		</browser>
-	</extension>
-	<extension
-		point="org.eclipse.help.ui.browser">
-		<browser
-			factoryclass="org.eclipse.help.ui.internal.browser.CustomBrowserFactory"
-			name="%custom_browser"
-			id="org.eclipse.help.ui.custombrowser">
-		</browser>
-	</extension>
+	<!-- Web Browsers -->
 	<extension point="org.eclipse.help.ui.browser">
 		<browser id="org.eclipse.help.ui.mozillaLinux"
-			factoryclass="org.eclipse.help.ui.internal.browser.linux.MozillaFactory"
-			name="%mozilla" />
-	</extension>
-	<extension point="org.eclipse.help.ui.browser">
+			name="%mozilla_adapter">
+				<factoryclass class="org.eclipse.help.ui.internal.browser.MozillaFactory">
+					<parameter name="executable" value="mozilla" />
+					<parameter name="executableName" value="%mozilla" />
+					<parameter name="os" value="Linux" />
+				</factoryclass>
+		</browser>
 		<browser id="org.eclipse.help.ui.netscapeLinux"
-			factoryclass="org.eclipse.help.ui.internal.browser.linux.NetscapeFactory"
-			name="%netscape" />
-	</extension>
-	<extension point="org.eclipse.help.ui.browser">
-		<browser id="org.eclipse.help.ui.netscapeSolaris"
-			factoryclass="org.eclipse.help.ui.internal.browser.solaris.NetscapeFactory"
-			name="%netscape4" />
-	</extension>
-	<extension point="org.eclipse.help.ui.browser">
+			name="%netscape_adapter">
+				<factoryclass class="org.eclipse.help.ui.internal.browser.MozillaFactory">
+					<parameter name="executable" value="netscape" />
+					<parameter name="executableName" value="%netscape" />
+					<parameter name="os" value="Linux" />
+				</factoryclass>
+		</browser>
 		<browser id="org.eclipse.help.ui.netscapeAIX"
-			factoryclass="org.eclipse.help.ui.internal.browser.aix.NetscapeFactory"
-			name="%netscape4" />
-	</extension>
-	<extension point="org.eclipse.help.ui.browser">
+			name="%netscape_adapter">
+				<factoryclass class="org.eclipse.help.ui.internal.browser.MozillaFactory">
+					<parameter name="executable" value="netscape" />
+					<parameter name="executableName" value="%netscape" />
+					<parameter name="os" value="AIX" />
+				</factoryclass>
+		</browser>
 		<browser id="org.eclipse.help.ui.netscapeHPUX"
-			factoryclass="org.eclipse.help.ui.internal.browser.hpux.NetscapeFactory"
-			name="%netscape4" />
-	</extension>
-	<extension point="org.eclipse.help.ui.browser">
+			name="%netscape_adapter">
+				<factoryclass class="org.eclipse.help.ui.internal.browser.MozillaFactory">
+					<parameter name="executable" value="netscape" />
+					<parameter name="executableName" value="%netscape" />
+					<parameter name="os" value="HP" />
+				</factoryclass>
+		</browser>
+		<browser id="org.eclipse.help.ui.netscapeSolaris"
+			name="%netscape_adapter"
+			factoryclass="org.eclipse.help.ui.internal.browser.solaris.NetscapeFactory" />
 		<browser id="org.eclipse.help.ui.defaultBrowserMacOSX"
-			factoryclass="org.eclipse.help.ui.internal.browser.macosx.DefaultBrowserFactory"
-			name="%defaultBrowser" />
+			name="%defaultBrowser"
+			factoryclass="org.eclipse.help.ui.internal.browser.macosx.DefaultBrowserFactory" />
+		<browser id="org.eclipse.help.ui.systembrowser"
+			name="%system_browser"
+			factoryclass="org.eclipse.help.ui.internal.browser.SystemBrowserFactory" />
+		<browser id="org.eclipse.help.ui.custombrowser"
+			name="%custom_browser"
+			factoryclass="org.eclipse.help.ui.internal.browser.CustomBrowserFactory" />
 	</extension>
 
 	<!-- Search Page -->
