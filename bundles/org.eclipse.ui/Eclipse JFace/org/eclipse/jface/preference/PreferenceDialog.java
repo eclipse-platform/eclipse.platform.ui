@@ -712,6 +712,9 @@ protected boolean showPage(IPreferenceNode node) {
 	if (oldPage != null)
 		oldPage.setVisible(false);
 
+	// Keep focus in tree.  See bugs 2692, 2621, and 6775.
+	tree.setFocus();
+	
 	// update the dialog controls
 	update();
 

@@ -223,7 +223,6 @@ protected Control createContents(Composite parent) {
 	fillResourceTypeTable();
 	if (resourceTypeTable.getItemCount() > 0) {
 		resourceTypeTable.setSelection(0);
-		resourceTypeTable.setFocus();
 	}
 	fillEditorTable();
 	updateEnabledState();
