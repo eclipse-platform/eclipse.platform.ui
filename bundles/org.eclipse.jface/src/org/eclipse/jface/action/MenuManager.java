@@ -460,14 +460,17 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      * also propagates the dirty flag up the parent chain.
      */
     public void markDirty() {
-        boolean wasDirty = isDirty();
         super.markDirty();
-        // optimization: if already dirty, assume all parents are already dirty too
-        if (!wasDirty) {
-            IContributionManager parent = getParent();
-            if (parent != null) {
-                parent.markDirty();
-            }
+        // Can't optimize by short-circuiting when the first dirty manager is encountered,
+        // since non-visible children are not even processed.
+        // That is, it's possible to have a dirty sub-menu under a non-dirty parent menu
+        // even after the parent menu has been updated. 
+        // If items are added/removed in the sub-menu, we still need to propagate the dirty flag up,
+        // even if the sub-menu is already dirty, since the result of isVisible() may change
+        // due to the added/removed items.
+        IContributionManager parent = getParent();
+        if (parent != null) {
+            parent.markDirty();
         }
     }
     

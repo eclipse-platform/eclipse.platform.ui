@@ -55,8 +55,7 @@ public class TestNavigatorActionGroup extends ActionGroup {
         MenuManager newMenu = new MenuManager(ResourceNavigatorMessages
                 .getString("ResourceNavigator.new")); //$NON-NLS-1$
         menu.add(newMenu);
-        new NewWizardMenu(newMenu, navigator.getSite().getWorkbenchWindow(),
-                false);
+        newMenu.add(new NewWizardMenu(navigator.getSite().getWorkbenchWindow()));
 
         //Update the selections of those who need a refresh before filling
         addBookmarkAction.selectionChanged(selection);
