@@ -5,9 +5,7 @@
     <classpathentry kind="src" path="/org.eclipse.core.tests.harness"/>
     <classpathentry kind="src" path="/org.eclipse.core.resources"/>
     <classpathentry kind="src" path="/org.eclipse.team.core"/>
-    <classpathentry kind="src" path="/org.eclipse.team.cvs.core"/>
     <classpathentry kind="src" path="/org.eclipse.team.ui"/>
-    <classpathentry kind="src" path="/org.eclipse.team.cvs.ui"/>
     <classpathentry kind="src" path="/org.eclipse.compare"/>
     <classpathentry kind="src" path="/org.eclipse.ui"/>
     <classpathentry kind="src" path="/org.junit"/>

@@ -1,6 +1,8 @@
 package org.eclipse.team.tests.core;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,18 +31,24 @@ import org.eclipse.team.core.target.TargetManager;
 import org.eclipse.team.core.target.TargetProvider;
 
 public class TeamTest extends EclipseWorkspaceTest {
-	
+	protected static IProgressMonitor DEFAULT_MONITOR = new NullProgressMonitor();
 	protected static final IProgressMonitor DEFAULT_PROGRESS_MONITOR = new NullProgressMonitor();
-	
+
 	Properties properties;
-	
+
 	public TeamTest() {
 		super();
 	}
 	public TeamTest(String name) {
 		super(name);
 	}
-	
+	/**
+	* @see TestCase#setUp()
+	*/
+	protected void setUp() throws Exception {
+		super.setUp();
+		properties = TargetTestSetup.properties;
+	}
 	protected IProject getNamedTestProject(String name) throws CoreException {
 		IProject target = getWorkspace().getRoot().getProject(name);
 		if (!target.exists()) {
@@ -178,14 +186,80 @@ public class TeamTest extends EclipseWorkspaceTest {
 	protected void assertEquals(IRemoteResource container1, IResource container2) throws CoreException, TeamException {
 		if (container2.getType() == IResource.FILE) {
 			// Ignore .project file
-			if (container2.getName().equals(".project")) return;
+			if (container2.getName().equals(".project"))
+				return;
 			assertTrue(compareContent(container1.getContents(null), ((IFile) container2).getContents()));
 		} else {
 			IRemoteResource[] remoteResources = container1.members(null);
 			IResource[] localResources = ((IFolder) container2).members();
 			for (int i = 0; i < localResources.length; i++) {
-				assertEquals(remoteResources[i],localResources[i]);
+				assertEquals(remoteResources[i], localResources[i]);
 			}
 		}
+	}
+	protected IProject createAndPut(String projectPrefix, String[] resourceNames) throws CoreException, TeamException {
+		IProject project = getUniqueTestProject(projectPrefix);
+		IResource[] resources = buildResources(project, resourceNames, false);
+		TargetProvider target = createProvider(project);
+		target.put(resources, null);
+		return project;
+	}
+
+	public void appendText(IResource resource, String text, boolean prepend) throws CoreException, IOException {
+		IFile file = (IFile) resource;
+		InputStream in = file.getContents();
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		try {
+			if (prepend) {
+				bos.write(text.getBytes());
+			}
+			int i;
+			while ((i = in.read()) != -1) {
+				bos.write(i);
+			}
+			if (!prepend) {
+				bos.write(text.getBytes());
+			}
+		} finally {
+			in.close();
+		}
+		file.setContents(new ByteArrayInputStream(bos.toByteArray()), false, false, DEFAULT_MONITOR);
+	}
+	/**
+	 * Add the resources to an existing container and optionally upload them to the remote server
+	 */
+	public IResource[] addResources(IProject container, String[] hierarchy, boolean checkin) throws CoreException, TeamException {
+		IResource[] newResources = buildResources(container, hierarchy, false);
+		if (checkin) getProvider(container).put(newResources, DEFAULT_MONITOR);
+		return newResources;
+	}
+	/*
+	 * Get the resources for the given resource names
+	 */
+	public IResource[] getResources(IContainer container, String[] hierarchy) throws CoreException {
+		IResource[] resources = new IResource[hierarchy.length];
+		for (int i=0;i<resources.length;i++) {
+			resources[i] = container.findMember(hierarchy[i]);
+			if (resources[i] == null) {
+				resources[i] = buildResources(container, new String[] {hierarchy[i]})[0];
+			}
+		}
+		return resources;
+	}
+	/**
+	 * Delete the resources from an existing container and optionally add the changes to the remote server
+	 */
+	public IResource[] deleteResources(IProject container, String[] hierarchy, boolean checkin) throws CoreException, TeamException {
+		IResource[] resources = getResources(container, hierarchy);
+		for (int i = 0; i < resources.length; i++) {
+			resources[0].delete(true, null);
+		}
+		if (checkin) {
+		//delete the resources on the server as well.
+			//TargetProvider target=getProvider(container);
+			//IRemoteResource remote=target.getRemoteResourceFor(resources[i]);
+			//Currently the API does not support deletion of remote resources (well, according to Jean-Michael, anyway).
+		}
+		return resources;
 	}
 }
