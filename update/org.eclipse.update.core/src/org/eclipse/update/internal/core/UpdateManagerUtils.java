@@ -639,7 +639,8 @@ public class UpdateManagerUtils {
 	 */	
 	private static boolean isMatching(String candidateValues, String siteValues) {
 		if (siteValues==null) return false;
-		if ("*".equalsIgnoreCase(candidateValues)) return true; //$NON-NLS-1$
+		if ("*".equals(candidateValues)) return true; //$NON-NLS-1$
+		if ("".equals(candidateValues)) return true; //$NON-NLS-1$
 		siteValues = siteValues.toUpperCase();		
 		StringTokenizer stok = new StringTokenizer(candidateValues, ","); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
@@ -654,7 +655,8 @@ public class UpdateManagerUtils {
 	 */	
 	private static boolean isMatchingLocale(String candidateValues, String locale) {
 		if (locale==null) return false;
-		if ("*".equalsIgnoreCase(candidateValues)) return true; //$NON-NLS-1$
+		if ("*".equals(candidateValues)) return true; //$NON-NLS-1$
+		if ("".equals(candidateValues)) return true; //$NON-NLS-1$
 		
 		locale = locale.toUpperCase();
 		candidateValues = candidateValues.toUpperCase();	
