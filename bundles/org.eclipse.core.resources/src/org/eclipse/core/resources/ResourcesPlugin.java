@@ -12,7 +12,6 @@ package org.eclipse.core.resources;
 
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.IJobManager;
 
 /**
  * The plug-in runtime class for the Resources plug-in.  This is
@@ -84,7 +83,7 @@ public final class ResourcesPlugin extends Plugin {
 	
 	/**
 	 * Constant identifying the job family identifier for the background autobuild job.
-	 * @see IJobManager#join(Object, IProgressMonitor)
+	 * @see org.eclipse.core.runtime.jobs.IJobManager#join(Object, IProgressMonitor)
 	 * @since 3.0
 	 */
 	public static final Object FAMILY_AUTO_BUILD = new Object();
