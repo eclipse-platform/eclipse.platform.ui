@@ -19,6 +19,8 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -30,7 +32,11 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.presentations.*;
+import org.eclipse.ui.presentations.IPresentablePart;
+import org.eclipse.ui.presentations.IStackPresentationSite;
+import org.eclipse.ui.presentations.PresentationUtil;
+import org.eclipse.ui.presentations.StackDropResult;
+import org.eclipse.ui.presentations.StackPresentation;
 
 /**
  * Base class for StackPresentations that display IPresentableParts in a CTabFolder. 
@@ -149,6 +155,18 @@ public class BasicStackPresentation extends StackPresentation {
 				childPropertyChanged(part, property);
 			}
 		}	
+	};
+	
+	private DisposeListener tabDisposeListener = new DisposeListener() {
+		public void widgetDisposed(DisposeEvent e) {
+			if (e.widget instanceof CTabItem) {
+				CTabItem item = (CTabItem)e.widget;
+				
+				IPresentablePart part = getPartForTab(item);
+				
+				part.removePropertyListener(childPropertyChangeListener);
+			}
+		}
 	};
 
 	public BasicStackPresentation(CTabFolder control, IStackPresentationSite stackSite) {
@@ -339,6 +357,7 @@ public class BasicStackPresentation extends StackPresentation {
 		tabItem.setData(TAB_DATA, part);
 		
 		part.addPropertyListener(childPropertyChangeListener);
+		tabItem.addDisposeListener(tabDisposeListener );
 
 		initTab(tabItem, part);
 		

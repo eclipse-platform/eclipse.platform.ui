@@ -120,4 +120,11 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		
 		updateGradient();
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.StackPresentation#dispose()
+	 */
+	public void dispose() {
+		preferenceStore.removePropertyChangeListener(propertyChangeListener);
+		super.dispose();
+	}
 }
