@@ -268,7 +268,12 @@ public class PageWidgetFactory {
     private Control createFormText(Composite parent, String text, Color fg) {
         FormText formText = toolkit.createFormText(parent, true);
         formText.addHyperlinkListener(hyperlinkAdapter);
-        formText.setText(text, true, true);
+        try {
+            formText.setText(text, true, true);
+        } catch (SWTError e) {
+            Log.error(e.getMessage(), e);
+            return createText(parent, text, fg);
+        }
         if (fg != null)
             formText.setForeground(fg);
         return formText;
@@ -309,14 +314,32 @@ public class PageWidgetFactory {
     }
 
 
+    /*
+     * creates form text on a formatted string. A formatted string is any string
+     * that has a " <" in it. If it starts with a <p> then it is assumed that
+     * the text if a proper UI forms formatted text. If not, the <p> tag is
+     * added.
+     */
     private String generateFormText(String text) {
         StringBuffer sbuf = new StringBuffer();
         sbuf.append("<form>"); //$NON-NLS-1$
-        sbuf.append(text);
+        if (text.startsWith("<p>"))
+            sbuf.append(text);
+        else {
+            sbuf.append("<p>");
+            sbuf.append(text);
+            sbuf.append("</p>");
+        }
         sbuf.append("</form>"); //$NON-NLS-1$
         return sbuf.toString();
     }
 
+    /**
+     * Will be only called for non formatted text.
+     * 
+     * @param text
+     * @return
+     */
     private String generateBoldFormText(String text) {
         StringBuffer sbuf = new StringBuffer();
         sbuf.append("<form>"); //$NON-NLS-1$
