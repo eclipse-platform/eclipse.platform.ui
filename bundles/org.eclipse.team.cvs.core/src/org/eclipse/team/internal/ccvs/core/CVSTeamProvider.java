@@ -413,10 +413,19 @@ public class CVSTeamProvider extends RepositoryProvider {
 	public void diff(IResource resource, LocalOption[] options, PrintStream stream,
 		IProgressMonitor progress) throws TeamException {
 		
-		// Build the arguments list
-		String[] arguments = getValidArguments(new IResource[] {resource}, options);
+		// Determine the command root and arguments arguments list
+		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+		ICVSFolder commandRoot;
+		String[] arguments;
+		if (cvsResource.isFolder()) {
+			commandRoot = (ICVSFolder)cvsResource;
+			arguments = new String[] {Session.CURRENT_LOCAL_FOLDER};
+		} else {
+			commandRoot = cvsResource.getParent();
+			arguments = new String[] {cvsResource.getName()};
+		}
 
-		Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
+		Session s = new Session(workspaceRoot.getRemoteLocation(), commandRoot);
 		progress.beginTask(null, 100);
 		try {
 			s.open(Policy.subMonitorFor(progress, 20));
