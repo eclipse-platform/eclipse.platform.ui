@@ -647,8 +647,11 @@ public String getRuntime() {
 public Status[] getStatus() {
 	if (status != null && status.size() == 0)
 		return null;
-	else
-		return (Status[])status.toArray();
+	else {
+		Status[] result = new Status[status.size()];
+		status.toArray(result);
+		return result;
+	}
 }
 public boolean hasStatus() {
 	if (status == null || status.size() == 0)
@@ -1511,6 +1514,13 @@ static void startup(URL base) {
 
 		// check if runtime path has changed
 		profile.checkRuntimePath();
+		
+		if (DEBUG && profile.hasStatus()) {
+			Status[] status = profile.getStatus();
+			for (int i=0; i<status.length; i++) {
+				debug(status[i].getMessage());
+			}			
+		}
 	}
 }
 
