@@ -6,7 +6,7 @@ package org.eclipse.debug.internal.ui;
  * (c) Copyright IBM Corp 2001
  */
 
-import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.viewers.TreeViewer;import org.eclipse.swt.SWT;import org.eclipse.swt.events.KeyAdapter;import org.eclipse.swt.events.KeyEvent;import org.eclipse.swt.widgets.Composite;import org.eclipse.ui.IWorkbenchActionConstants;import org.eclipse.ui.part.DrillDownAdapter;
+import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.viewers.TreeViewer;import org.eclipse.swt.SWT;import org.eclipse.swt.events.KeyAdapter;import org.eclipse.swt.events.KeyEvent;import org.eclipse.swt.widgets.Composite;import org.eclipse.ui.IWorkbenchActionConstants;
 
 /**
  * A view that shows items that have been added to a inspector
@@ -22,8 +22,6 @@ public class InspectorView extends AbstractDebugView {
 	protected RemoveFromInspectorAction fRemoveFromInspectorAction;
 	protected RemoveAllFromInspectorAction fRemoveAllFromInspectorAction;
 	protected ChangeVariableValueAction fChangeVariableAction;
-
-	protected DrillDownAdapter fDrillPart;
 	
 	/**
 	 * @see IWorkbenchPart
@@ -31,7 +29,6 @@ public class InspectorView extends AbstractDebugView {
 	public void createPartControl(Composite parent) {
 		TreeViewer vv = new TreeViewer(parent, SWT.MULTI);
 		fViewer= vv;
-		fDrillPart = new DrillDownAdapter(vv);
 		initializeActions();
 		initializeToolBar();
 		fContentProvider= new InspectorContentProvider(fRemoveAllFromInspectorAction);
@@ -87,7 +84,6 @@ public class InspectorView extends AbstractDebugView {
 	 * Configures the toolBar
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
-		fDrillPart.addNavigationActions(tbm);
 		tbm.add(new Separator(this.getClass().getName()));
 		tbm.add(fShowTypesAction);
 		tbm.add(fShowQualifiedAction);
@@ -142,7 +138,6 @@ public class InspectorView extends AbstractDebugView {
 	public void removeAllFromInspector() {
 		fContentProvider.removeAll();
 		fViewer.setInput(null);
-		fDrillPart.reset();
 	}
 	
 	/**

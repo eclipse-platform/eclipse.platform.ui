@@ -6,7 +6,7 @@ package org.eclipse.debug.internal.ui;
  * (c) Copyright IBM Corp 2000
  */
 
-import org.eclipse.debug.core.model.IDebugElement;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.viewers.*;import org.eclipse.swt.SWT;import org.eclipse.swt.widgets.Composite;import org.eclipse.ui.*;import org.eclipse.ui.part.DrillDownAdapter;
+import org.eclipse.debug.core.model.IDebugElement;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.viewers.*;import org.eclipse.swt.SWT;import org.eclipse.swt.widgets.Composite;import org.eclipse.ui.*;
 
 /**
  * This view shows variables and their values for a particular stack frame
@@ -20,7 +20,6 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	protected ChangeVariableValueAction fChangeVariableAction;
 	protected AddToInspectorAction fAddToInspectorAction;
 
-	protected DrillDownAdapter fDrillPart;
 	/**
 	 * Remove myself as a selection listener to the <code>LaunchesView</code> in this perspective.
 	 *
@@ -77,7 +76,6 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 		fViewer.setContentProvider(new VariablesContentProvider());
 		fViewer.setLabelProvider(new DelegatingModelPresentation());
 		fViewer.setUseHashlookup(true);
-		fDrillPart = new DrillDownAdapter(vv);
 		// add a context menu
 		createContextMenu(vv.getTree());
 
@@ -136,7 +134,6 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	 * Configures the toolBar
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
-		fDrillPart.addNavigationActions(tbm);
 		tbm.add(new Separator(this.getClass().getName()));
 		tbm.add(fShowTypesAction);
 		tbm.add(fShowQualifiedAction);
