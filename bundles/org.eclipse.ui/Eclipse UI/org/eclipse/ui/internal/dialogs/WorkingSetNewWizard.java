@@ -55,6 +55,8 @@ public class WorkingSetNewWizard extends Wizard {
 		super.addPages();
 		workingSetTypePage = new WorkingSetTypePage();
 		workingSetTypePage.setWizard(this);
+		workingSetTypePage.setTitle(WorkbenchMessages.getString("WorkingSetNewWizard.page.title")); //$NON-NLS-1$
+		workingSetTypePage.setDescription(WorkbenchMessages.getString("WorkingSetNewWizard.page.description")); //$NON-NLS-1$		
 		addPage(workingSetTypePage);
 	}		
 	/**
@@ -73,6 +75,8 @@ public class WorkingSetNewWizard extends Wizard {
 				WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
 				workingSetEditPage = registry.getWorkingSetPage(pageId);
 				workingSetEditPage.setWizard(this);
+				workingSetEditPage.setTitle(WorkbenchMessages.getString("WorkingSetNewWizard.page.title")); //$NON-NLS-1$
+				workingSetEditPage.setDescription(WorkbenchMessages.getString("WorkingSetNewWizard.page.description")); //$NON-NLS-1$		
 				editPageId = pageId;
 			}			
 			return workingSetEditPage;
