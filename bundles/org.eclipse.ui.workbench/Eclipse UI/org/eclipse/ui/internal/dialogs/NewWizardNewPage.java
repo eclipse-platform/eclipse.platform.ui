@@ -137,6 +137,8 @@ class NewWizardNewPage
     private Label imageSeperator;
 
     private WorkbenchWizardElement selectedElement;
+    
+    private boolean needShowAll;
 
 	/**
 	 * Create an instance of this class
@@ -148,9 +150,50 @@ class NewWizardNewPage
 		this.page = mainPage;
 		this.wizardCategories = wizardCategories;
 		this.primaryWizards = primaryWizards;
+		needShowAll = primaryWizards.length > 0;
+		if (needShowAll) {
+		    if (allPrimary(wizardCategories)) {
+		        this.wizardCategories = null; // dont bother considering the categories as all wizards are primary
+		        needShowAll = false;
+		    }
+		}
 	}
 
 	/**
+     * @return whether show all is needed.  Show all is needed if any of the 
+     * wizards in the category or its children are NOT primary wizards.
+     */
+    private boolean allPrimary(WizardCollectionElement category) {
+        Object [] wizards = category.getWizards();
+        for (int i = 0; i < wizards.length; i++) {
+            WorkbenchWizardElement wizard = (WorkbenchWizardElement) wizards[i];
+            if (notPrimary(wizard))
+                return false;
+        }
+        
+        Object [] children = category.getChildren();
+        for (int i = 0; i < children.length; i++) {
+            if (!allPrimary((WizardCollectionElement) children[i]))
+                return false;
+        }
+        
+        return true;
+    }
+
+    /**
+     * @param wizard
+     * @return
+     */
+    private boolean notPrimary(WorkbenchWizardElement wizard) {
+        for (int j = 0; j < primaryWizards.length; j++) {
+            if (primaryWizards[j].equals(wizard))
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
 	 * @since 3.0
 	 */
 	public void activate() {
@@ -172,40 +215,40 @@ class NewWizardNewPage
 
 		createViewer(outerContainer);
 		createDescription(outerContainer);
-
-		showAllCheck = new Button(outerContainer, SWT.CHECK);
 		
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-        showAllCheck.setLayoutData(data);
-        showAllCheck.setFont(wizardFont);
-		showAllCheck.setText(WorkbenchMessages.getString("NewWizardNewPage.showAll")); //$NON-NLS-1$
-		showAllCheck.setSelection(false);
-		
-		// flipping tabs updates the selected node
-		showAllCheck.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {				    
-				    boolean showAll = showAllCheck.getSelection();
-                    if (!showAll)
-				        expandedElements = viewer.getExpandedElements();
-                    
-                    if (showAll) {
-                        viewer.getControl().setRedraw(false);
-                    }
-
-                    try {
-					    contentProvider.setFiltering(!showAll);
-					    
-					    if (showAll)
-					        viewer.setExpandedElements(expandedElements);
-                    }
-                    finally {
-                        if (showAll)
-                            viewer.getControl().setRedraw(true);
-                    }
-				}
-			});
-		
+		if (needShowAll) {
+			showAllCheck = new Button(outerContainer, SWT.CHECK);
+			GridData data = new GridData(GridData.FILL_HORIZONTAL);
+			data.horizontalSpan = 2;
+	        showAllCheck.setLayoutData(data);
+	        showAllCheck.setFont(wizardFont);
+			showAllCheck.setText(WorkbenchMessages.getString("NewWizardNewPage.showAll")); //$NON-NLS-1$
+			showAllCheck.setSelection(false);
+			
+			// flipping tabs updates the selected node
+			showAllCheck.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {				    
+					    boolean showAll = showAllCheck.getSelection();
+	                    if (!showAll)
+					        expandedElements = viewer.getExpandedElements();
+	                    
+	                    if (showAll) {
+	                        viewer.getControl().setRedraw(false);
+	                    }
+	
+	                    try {
+						    contentProvider.setFiltering(!showAll);
+						    
+						    if (showAll)
+						        viewer.setExpandedElements(expandedElements);
+	                    }
+	                    finally {
+	                        if (showAll)
+	                            viewer.getControl().setRedraw(true);
+	                    }
+					}
+				});
+		}
 
 		updateDescription(null);
 
@@ -338,9 +381,9 @@ class NewWizardNewPage
              * @param data
              * @return
              */
-            private ImageData scale(ImageData data) {
-		        int width = data.width;
-				int height = data.height;
+            private ImageData scale(ImageData imageData) {
+		        int width = imageData.width;
+				int height = imageData.height;
 				float scale = 1.0f;				
 				Point size = descImageCanvas.getSize();
 				
@@ -356,7 +399,7 @@ class NewWizardNewPage
 				
 				width *= scale;
 				height *= scale;
-				return data.scaledTo(width, height);
+				return imageData.scaledTo(width, height);
             }});        		
 	}
 
@@ -409,20 +452,22 @@ class NewWizardNewPage
 		viewer.addSelectionChangedListener(this);
 		viewer.addDoubleClickListener(this);
 		
-		ArrayList inputArray = new ArrayList();
+        ArrayList inputArray = new ArrayList();
 		
 		for (int i = 0; i < primaryWizards.length; i++) {
             inputArray.add(primaryWizards[i]);
         }
 		
-		if (wizardCategories.getParent(wizardCategories) == null) {
-		    Object [] children = wizardCategories.getChildren();
-		    for (int i = 0; i < children.length; i++) {
-	            inputArray.add(children[i]);
-	        }
-		} else {
-			//inputArray.add(new RootElementProxy(wizardCategories));
-		    inputArray.add(wizardCategories);
+		if (wizardCategories != null) {
+			if (wizardCategories.getParent(wizardCategories) == null) {
+			    Object [] children = wizardCategories.getChildren();
+			    for (int i = 0; i < children.length; i++) {
+		            inputArray.add(children[i]);
+		        }
+			} else {
+				//inputArray.add(new RootElementProxy(wizardCategories));
+			    inputArray.add(wizardCategories);
+			}
 		}
 		
 		AdaptableList input = new AdaptableList(inputArray);
@@ -471,8 +516,13 @@ class NewWizardNewPage
 		boolean showAll =
 			settings.getBoolean(SHOW_ALL_ENABLED);
 
-	    showAllCheck.setSelection(showAll);
-	    contentProvider.setFiltering(!showAll);
+	    if (showAllCheck != null) {
+	        showAllCheck.setSelection(showAll);
+	        contentProvider.setFiltering(!showAll);
+	    }
+	    else {
+	        contentProvider.setFiltering(false);
+	    }	    
 	    
 		String[] expandedCategoryPaths = settings.getArray(STORE_EXPANDED_CATEGORIES_ID);
 		if (expandedCategoryPaths == null || expandedCategoryPaths.length == 0)
@@ -605,7 +655,7 @@ class NewWizardNewPage
 	 */
 	protected void storeSelectedCategoryAndWizard() {
 
-	    if (showAllCheck.getSelection()) {	        
+	    if (showAllCheck != null && showAllCheck.getSelection()) {	        
 	        settings.put(
 				SHOW_ALL_ENABLED,
 				true);	        
