@@ -234,12 +234,14 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 		if (pluginDescriptor instanceof PluginDescriptorModel) {
 			PluginFragmentModel[] fragmentModels =
 				((PluginDescriptorModel) pluginDescriptor).getFragments();
-			for (int f = 0; f < fragmentModels.length; f++) {
-				String location = fragmentModels[f].getLocation();
-				try {
-					URL fragInstallURL = new URL(location);
-					installURLs.add(fragInstallURL);
-				} catch (MalformedURLException mue) {
+			if (fragmentModels != null) {
+				for (int f = 0; f < fragmentModels.length; f++) {
+					String location = fragmentModels[f].getLocation();
+					try {
+						URL fragInstallURL = new URL(location);
+						installURLs.add(fragInstallURL);
+					} catch (MalformedURLException mue) {
+					}
 				}
 			}
 		}
