@@ -122,7 +122,8 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 				FileDialog d = new FileDialog(getShell(), SWT.SAVE);
 				d.setFilterExtensions(new String[] {"*.psf"}); //$NON-NLS-1$
 				d.setFilterNames(new String[] {Policy.bind("ExportProjectSetMainPage.Project_Set_Files_3")}); //$NON-NLS-1$
-				d.setFileName(Policy.bind("ExportProjectSetMainPage.default"));
+				d.setFileName(Policy.bind("ExportProjectSetMainPage.default")); //$NON-NLS-1$
+				d.setFilterPath(new File(".").getAbsolutePath()); //$NON-NLS-1$
 				String f = d.open();
 				if (f != null) {
 					fileText.setText(f);

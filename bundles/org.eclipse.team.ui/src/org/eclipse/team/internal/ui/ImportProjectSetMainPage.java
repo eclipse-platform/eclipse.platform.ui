@@ -75,6 +75,7 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 				FileDialog d = new FileDialog(getShell());
 				d.setFilterExtensions(new String[] {"*.psf", "*"}); //$NON-NLS-1$ //$NON-NLS-2$
 				d.setFilterNames(new String[] {Policy.bind("ImportProjectSetMainPage.Project_Set_Files_2"), Policy.bind("ImportProjectSetMainPage.allFiles")}); //$NON-NLS-1$  //$NON-NLS-2$
+				d.setFilterPath(new File(".").getAbsolutePath()); //$NON-NLS-1$
 				String f = d.open();
 				if (f != null) {
 					fileText.setText(f);
