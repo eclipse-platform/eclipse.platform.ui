@@ -85,7 +85,7 @@ private Workbench getWorkbench() {
 /**
  * Open the Welcome editor for the primary feature or for a new feature
  */
-protected void openWelcomeEditors() {
+protected void openWelcomeEditors(IWorkbenchWindow window) {
 	AboutInfo info = getAboutInfo();
 	AboutInfo[] newFeatures = getNewFeaturesInfo();
 
@@ -100,7 +100,7 @@ protected void openWelcomeEditors() {
 		// Don't show it again
 		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.WELCOME_DIALOG, false);
 
-		openEditor(new WelcomeEditorInput(info), Workbench.WELCOME_EDITOR_ID, null);
+		openEditor(window, new WelcomeEditorInput(info), Workbench.WELCOME_EDITOR_ID, null);
 	} else {
 		// Show the welcome page for any newly installed features
 
@@ -126,7 +126,7 @@ protected void openWelcomeEditors() {
 			AboutInfo newInfo = (AboutInfo) welcomeFeatures.get(i);
 			String id = newInfo.getWelcomePerspective();
 			if (id == null || i >= wCount) //Other editors were already opened in restoreState(..)
-				openEditor(new WelcomeEditorInput(newInfo), Workbench.WELCOME_EDITOR_ID, id);
+				openEditor(window, new WelcomeEditorInput(newInfo), Workbench.WELCOME_EDITOR_ID, id);
 		}
 	}
 }
@@ -272,17 +272,15 @@ protected AboutInfo[] collectNewFeaturesWithPerspectives() {
 /**
  * Open an editor for the given input
  */
-private void openEditor(IEditorInput input, String editorId, String perspectiveId) {
-	if (getWorkbench().getWorkbenchWindowCount() == 0) {
+private void openEditor(IWorkbenchWindow window, IEditorInput input, String editorId, String perspectiveId) {
+	if (window == null) {
 		// Something is wrong, there should be at least
 		// one workbench window open by now.
 		return;
 	}
 
-	IWorkbenchWindow win = null;
-	if (perspectiveId == null) {
-		win = getWorkbench().getActiveWorkbenchWindow();
-	} else {
+	IWorkbenchWindow win = window;
+	if (perspectiveId != null) {
 		IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
 		try {
 			win = getWorkbench().openWorkbenchWindow(perspectiveId, root);
@@ -294,7 +292,7 @@ private void openEditor(IEditorInput input, String editorId, String perspectiveI
 	}
 
 	if (win == null)
-		win = getWorkbench().getWorkbenchWindows()[0];
+		win = window;
 
 	WorkbenchPage page = (WorkbenchPage) win.getActivePage();
 	String id = perspectiveId;
@@ -305,7 +303,7 @@ private void openEditor(IEditorInput input, String editorId, String perspectiveI
 		// Create the page.
 		try {
 			IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
-			page = (WorkbenchPage) getWorkbench().getActiveWorkbenchWindow().openPage(id, root);
+			page = (WorkbenchPage) window.openPage(id, root);
 		} catch (WorkbenchException e) {
 			ErrorDialog.openError(
 				win.getShell(), 
@@ -356,7 +354,7 @@ private void openEditor(IEditorInput input, String editorId, String perspectiveI
 /**
  * Open the system summary editor
  */
-public void openSystemSummaryEditor() {
-	openEditor(new SystemSummaryEditorInput(), PlatformUI.PLUGIN_ID + ".SystemSummaryEditor", null); //$NON-NLS-1$
+public void openSystemSummaryEditor(IWorkbenchWindow window) {
+	openEditor(window, new SystemSummaryEditorInput(), PlatformUI.PLUGIN_ID + ".SystemSummaryEditor", null); //$NON-NLS-1$
 }					
 }

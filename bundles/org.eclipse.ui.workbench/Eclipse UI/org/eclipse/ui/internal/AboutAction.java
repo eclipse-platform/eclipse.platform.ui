@@ -37,6 +37,6 @@ public AboutAction(IWorkbenchWindow window) {
  * Perform the action: show about dialog.
  */
 public void run() {
-	new AboutDialog(workbenchWindow.getShell()).open();
+	new AboutDialog(workbenchWindow).open();
 }
 }

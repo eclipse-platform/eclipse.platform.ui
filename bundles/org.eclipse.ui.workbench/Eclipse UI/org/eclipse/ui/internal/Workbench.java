@@ -746,7 +746,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		}
 
 		forceOpenPerspective(commandLineArgs);
-		getConfigurationInfo().openWelcomeEditors();
+		getConfigurationInfo().openWelcomeEditors(getActiveWorkbenchWindow());
 		refreshFromLocal(commandLineArgs);
 		isStarting = false;
 		return true;
