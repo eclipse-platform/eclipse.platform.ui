@@ -267,9 +267,9 @@ protected void constrainShellSize() {
 	
 	// move the shell origin as required
 	Point loc = shell.getLocation();
-	shell.setLocation(
-		Math.min(loc.x, bounds.width - size.x), 
-		Math.min(loc.y, bounds.height - size.y));
+	int x = Math.max(0, Math.min(loc.x, bounds.width - size.x));
+	int y = Math.max(0, Math.min(loc.y, bounds.height - size.y));
+	shell.setLocation(x, y);
 }
 /**
  * Returns the number of pixels corresponding to the

@@ -250,7 +250,6 @@ protected void configureShell(Shell newShell) {
 }
 /**
  * Constrain the shell size to be no larger than the display bounds.
- * Reduce the shell size and move its origin as required.
  * 
  * @since 2.0
  */
