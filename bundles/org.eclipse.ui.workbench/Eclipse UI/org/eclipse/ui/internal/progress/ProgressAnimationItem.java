@@ -89,7 +89,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 	                            .getString("NewProgressView.errorDialogTitle"); //$NON-NLS-1$
 	                    String msg = ProgressMessages
 	                            .getString("NewProgressView.errorDialogMessage"); //$NON-NLS-1$
-                        if (!getManager().showErrorFor(toolbar.getShell(), job, title, msg)) {
+                        if (!getManager().showErrorFor(job, title, msg)) {
                             // The error is missing from the error manager.
                             // This should only occur if what the progress view is showing is
                             // out-of-sync with the ErrorNotificationManager
@@ -126,7 +126,7 @@ public class ProgressAnimationItem extends AnimationItem implements
         }
 
         if (getManager().hasErrors()) {
-            getManager().showErrorFor(toolbar.getShell(), null, null, null);
+            getManager().showErrorFor(null, null, null);
         }
         
         progressRegion.processDoubleClick();

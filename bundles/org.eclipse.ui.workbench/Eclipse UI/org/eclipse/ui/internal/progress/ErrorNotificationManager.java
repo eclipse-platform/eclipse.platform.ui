@@ -12,17 +12,30 @@ package org.eclipse.ui.internal.progress;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
+
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.WorkbenchJob;
+
+import org.eclipse.ui.internal.ExceptionHandler;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The ErrorNotificationManager is the class that manages the display of
@@ -98,6 +111,11 @@ public class ErrorNotificationManager {
         WorkbenchJob job = new WorkbenchJob(ProgressMessages
                 .getString("ErrorNotificationManager.OpenErrorDialogJob")) { //$NON-NLS-1$
             public IStatus runInUIThread(IProgressMonitor monitor) {
+            	
+            	//Reschedule if there is a modal dialog
+            	 if (ProgressManagerUtil.rescheduleIfModalShellOpen(this))
+                    return Status.CANCEL_STATUS;
+            	 
                 // Add the error in the UI thread to ensure thread safety in the dialog
                 errors.add(errorInfo);
                 if (dialog != null) {
@@ -202,14 +220,13 @@ public class ErrorNotificationManager {
      * Display the error for the given job and any other errors
      * that have been accumulated. This method must be invoked
      * from the UI thread.
-     * @param shell the shell used to parent the dialog
      * @param job the job whose error should be displayed
      * @param title The title for the dialog
      * @param msg The message for the dialog.
      * @return <code>true</code> if the info for the job was found and the error
      * displayed and <code>false</code> otherwise.
      */
-    public boolean showErrorFor(Shell shell, Job job, String title, String msg) {
+    public boolean showErrorFor(Job job, String title, String msg) {
         if (dialog != null) {
             // The dialog is already open so the error is being displayed
             return true;
