@@ -779,7 +779,8 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	
 	/**
 	 * Returns the key to use for the formatter preference.
-	 * @return
+	 * 
+	 * @return the formatter preference key
 	 */
 	protected String getFormatterPreferenceKey() {
 		return DEFAULT_FORMATTER_PREFERENCE_KEY;

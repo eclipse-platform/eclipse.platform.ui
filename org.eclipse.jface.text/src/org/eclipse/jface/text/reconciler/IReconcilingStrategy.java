@@ -19,6 +19,11 @@ import org.eclipse.jface.text.IRegion;
  * based on text of a particular content type. It provides methods for 
  * incremental as well as non-incremental reconciling.
  * <p>
+ * If a reconcile strategy consists of several steps between which
+ * model transformation is desired the each step should implement
+ * {@link org.eclipse.jface.text.reconciler.IReconcileStep}.
+ * </p>
+ * <p>
  * In order to provide backward compatibility for clients of <code>IReconcilingStrategy</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces exist:
  * <ul>

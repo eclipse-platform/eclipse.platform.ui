@@ -168,7 +168,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		 * Creates a new file synchronizer which is not yet installed on a resource.
 		 * 
 		 * @param fileEditorInput the editor input to be synchronized
-		 * @deprecated use {@link FileDocumentProvider.FileSynchronizer#FileSynchronizer(IFileEditorInput)}
+		 * @deprecated use <code>FileSynchronizer(IFileEditorInput)</code>
 		 */
 		public FileSynchronizer(FileEditorInput fileEditorInput) {
 			fFileEditorInput= fileEditorInput;
