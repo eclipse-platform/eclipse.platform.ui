@@ -283,12 +283,8 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 			System.out.println(RefreshManager.DEBUG_PREFIX + " stopping monitor manager."); //$NON-NLS-1$
 	}
 	private void unmonitor(IResource resource) {
-		if (resource == null) {
+		if (resource == null || !isMonitoring(resource)) 
 			return;
-		}
-		if (!isMonitoring(resource)) {
-			return;
-		}
 		synchronized (registeredMonitors) {
 			for (Iterator i = registeredMonitors.entrySet().iterator(); i.hasNext();) {
 				Map.Entry current = (Map.Entry) i.next();
@@ -307,15 +303,14 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 		} catch (CoreException e) {
 			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
 		}
-		if (children != null && children.length > 0) {
-			for (int i = 0; i < children.length; i++) {
-				IResource child = children[i];
-				if (child.isLinked()) {
-					unmonitor(child);
-				}
-			}
-		}
+		if (children != null && children.length > 0) 
+			for (int i = 0; i < children.length; i++) 
+				if (children[i].isLinked()) 
+					unmonitor(children[i]);
 	}
+	/*(non-Javadoc)
+	 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
+	 */
 	public boolean visit(IResourceDelta delta) {
 		IResource resource = delta.getResource();
 		switch (resource.getType()) {
@@ -344,20 +339,14 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 						 * Project deletion is handled in
 						 * resourceChanged(IResourceEvent)
 						 */
-						if (project.isOpen()) {
+						if (project.isOpen()) 
 							monitor(project);
-						}
 						break;
 					case IResourceDelta.CHANGED :
-						if ((delta.getFlags() & IResourceDelta.OPEN) != 0) {
-							/*
-							 * Project closure is handled in
-							 * resourceChanged(IResourceEvent)
-							 */
-							if (project.isOpen()) {
+						// Project closure is handled in resourceChanged(IResourceEvent)
+						if ((delta.getFlags() & IResourceDelta.OPEN) != 0) 
+							if (project.isOpen()) 
 								monitor(project);
-							}
-						}
 						break;
 					default :
 						break;
@@ -368,5 +357,4 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 		}
 		return false;
 	}
-
 }
