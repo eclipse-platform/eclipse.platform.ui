@@ -20,6 +20,7 @@
   <extension-point name="%markersName" id="markers"/>
   <extension-point name="%naturesName" id="natures"/>
   <extension-point name="%validatorName" id="fileModificationValidator"/>
+  <extension-point name="%hookName" id="moveDeleteHook"/>
 
   <extension id="marker" point="org.eclipse.core.resources.markers" name="%markerName"/>
   <extension id="problemmarker" point="org.eclipse.core.resources.markers" name="%problemName">
