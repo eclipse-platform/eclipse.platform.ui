@@ -80,7 +80,7 @@ TD, TR {
 	padding:0px;
 }
 
-INPUT {
+BUTTON {
 	font:<%=prefs.getViewFont()%>;
 }
 
@@ -126,7 +126,11 @@ plus.src = "<%=prefs.getImagesDirectory()%>"+"/plus.gif";
 var oldName = '<%=data.isEditMode()?data.getWorkingSetName():""%>';
 
 function onloadHandler() {
+<%if(!data.isMozilla() || "1.3.1".compareTo(data.getMozillaVersion()) <=0){
+// buttons are not resized immediately on mozilla before 1.3
+%>
 	sizeButtons();
+<%}%>
 	document.getElementById("workingSet").focus();
 	enableOK();
 }
@@ -391,10 +395,10 @@ for (int i=0; i<data.getTocCount(); i++)
   			<table cellspacing=10 cellpading=0 border=0 style="background:transparent;">
 				<tr>
 					<td>
-						<input type="submit" value='<%=ServletResources.getString("OK", request)%>' id="ok" alt='<%=ServletResources.getString("OK", request)%>'>
+						<button type="submit" id="ok"><%=ServletResources.getString("OK", request)%></button>
 					</td>
 					<td>
-					  	<input type="reset" onclick="window.close()" value='<%=ServletResources.getString("Cancel", request)%>' id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>'>
+					  	<button type="reset" onclick="window.close()" id="cancel"><%=ServletResources.getString("Cancel", request)%></button>
 					</td>
 				</tr>
   			</table>

@@ -44,9 +44,6 @@ TD, TR {
 	border:0px;
 }
 
-INPUT {
-	font:<%=prefs.getViewFont()%>;
-}
 BUTTON {
 	font:<%=prefs.getViewFont()%>;
 }
