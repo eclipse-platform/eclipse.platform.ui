@@ -343,4 +343,8 @@ public class FeatureEntry
 		FullFeatureParser parser = new FullFeatureParser(this);
 		parser.parse();
 	}
+	
+	public Bundle getDefiningBundle() {
+		return Platform.getBundle(getFeaturePluginIdentifier());
+	}
 }
