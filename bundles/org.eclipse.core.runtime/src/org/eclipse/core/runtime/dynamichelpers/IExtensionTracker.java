@@ -8,10 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.runtime.dynamicHelpers;
+package org.eclipse.core.runtime.dynamichelpers;
 
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
 
 /**
  * An extension tracker keeps associations between extensions and their derived objects on an extension basis.
@@ -96,11 +95,4 @@ public interface IExtensionTracker {
 	 * Close the tracker. All registered objects are fred and all handlers are being automatically removed.
 	 */
     public void close();
-
-    /**
-     * Return an instance of filter matching all changes for the given extension point.
-     * @param xpt the extension point 
-     * @return a filter
-     */
-    public IFilter createExtensionPointFilter(final IExtensionPoint xpt);
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.runtime.dynamicHelpers;
+package org.eclipse.core.runtime.dynamichelpers;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;

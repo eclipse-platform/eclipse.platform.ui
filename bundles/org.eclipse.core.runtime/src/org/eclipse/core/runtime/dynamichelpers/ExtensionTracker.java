@@ -8,16 +8,22 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.runtime.dynamicHelpers;
+package org.eclipse.core.runtime.dynamichelpers;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.core.internal.runtime.ListenerList;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionDelta;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Implementation of the IExtensionTracker. 
- * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker 
+ * @see org.eclipse.core.runtime.dynamichelpers.IExtensionTracker 
  * @since 3.1
  */
 public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListener {
@@ -190,27 +196,32 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 			return associatedObjects.toArray();
 		}
 	}
-
-	public IFilter createExtensionPointFilter(final IExtensionPoint point) {
+	
+    /**
+     * Return an instance of filter matching all changes for the given extension point.
+     * @param xpt the extension point 
+     * @return a filter
+     */
+	public static IFilter createExtensionPointFilter(final IExtensionPoint xpt) {
 		return new IFilter() {
 			public boolean matches(IExtensionPoint target) {
-				return point.equals(target);
+				return xpt.equals(target);
 			}
 		};
 	}
 
-	public IFilter createExtensionPointFilter(final IExtensionPoint[] points) {
+	public static IFilter createExtensionPointFilter(final IExtensionPoint[] xpts) {
 		return new IFilter() {
 			public boolean matches(IExtensionPoint target) {
-				for (int i = 0; i < points.length; i++)
-					if (points[i].equals(target))
+				for (int i = 0; i < xpts.length; i++)
+					if (xpts[i].equals(target))
 						return true;
 				return false;
 			}
 		};
 	}
 
-	public IFilter createPluginFilter(final String id) {
+	public static IFilter createNamespaceFilter(final String id) {
 		return new IFilter() {
 			public boolean matches(IExtensionPoint target) {
 				return id.equals(target.getNamespace());
