@@ -109,7 +109,7 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
 		if (resourceMappings[0] == null || resourceMappings[0].length == 0 || tag[0] == null) return;
 		
 		// Peform the replace in the background
-		new ReplaceOperation(getTargetPart(), resourceMappings[0], tag[0], recurse[0]).run();
+		new ReplaceOperation(getTargetPart(), resourceMappings[0], tag[0] /*, recurse[0]*/).run();
 	}
 	
 	/**

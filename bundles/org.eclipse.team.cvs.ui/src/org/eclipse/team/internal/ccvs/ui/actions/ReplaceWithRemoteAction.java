@@ -45,7 +45,7 @@ public class ReplaceWithRemoteAction extends WorkspaceTraversalAction {
         }
 		
 		// Peform the replace in the background
-		new ReplaceOperation(getTargetPart(), resourceMappings[0], null, true).run();
+		new ReplaceOperation(getTargetPart(), resourceMappings[0], null).run();
 	}
 	
 	/**

@@ -34,14 +34,7 @@ public class ReplaceOperation extends UpdateOperation {
 		super(part, asResourceMappers(resources, recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE), new LocalOption[] { Update.IGNORE_LOCAL_CHANGES }, tag);
 	}
 
-	/**
-	 * @deprecated keep until bug 84575 is fixed
-	 * @param part
-	 * @param mappings
-	 * @param tag
-	 * @param b
-	 */
-	public ReplaceOperation(IWorkbenchPart part, ResourceMapping[] mappings, CVSTag tag, boolean b) {
+	public ReplaceOperation(IWorkbenchPart part, ResourceMapping[] mappings, CVSTag tag) {
         super(part, mappings, new LocalOption[] { Update.IGNORE_LOCAL_CHANGES }, tag);
     }
 
