@@ -60,13 +60,19 @@ public class HyperlinkLabel extends Canvas{
 		addListener(SWT.Traverse, new Listener () {
 			public void handleEvent(Event e) {
 				switch (e.detail) {
-					case SWT.TRAVERSE_PAGE_NEXT:
-					case SWT.TRAVERSE_PAGE_PREVIOUS:
-					case SWT.TRAVERSE_ARROW_NEXT:
-					case SWT.TRAVERSE_ARROW_PREVIOUS:
-					case SWT.TRAVERSE_RETURN:
-					e.doit = false;
-					return;
+					// let arrows move focus
+					case SWT.TRAVERSE_ARROW_NEXT :
+						e.detail = SWT.TRAVERSE_TAB_NEXT;
+						break;
+					case SWT.TRAVERSE_ARROW_PREVIOUS :
+						e.detail = SWT.TRAVERSE_TAB_PREVIOUS;
+						break;
+					
+					case SWT.TRAVERSE_PAGE_NEXT :
+					case SWT.TRAVERSE_PAGE_PREVIOUS :
+					case SWT.TRAVERSE_RETURN :
+						e.doit = false;
+						return;
 				}
 				e.doit = true;
 			}

@@ -155,7 +155,11 @@ public class ContextHelpDialog {
 		contents.setLayoutData(new GridData(GridData.FILL_BOTH));
 		// create the dialog area and button bar
 		createInfoArea(contents);
-		createLinksArea(contents);
+		Control c=createLinksArea(contents);
+		if(c!=null){
+			// links exist, make them the only focusable controls
+			contents.setTabList(new Control[] {c});
+		}
 		return contents;
 	}
 	private Control createInfoArea(Composite parent) {
@@ -163,11 +167,7 @@ public class ContextHelpDialog {
 		String styledText = context.getText();
 		if (styledText == null) // no description found in context objects.
 			styledText = WorkbenchResources.getString("WW002");
-		StyledText text =
-			new StyledText(
-				parent,
-				SWT.MULTI | SWT.READ_ONLY /* | SWT.NO_FOCUS | SWT.WRAP*/
-		);
+		Description text = new Description(parent, SWT.MULTI | SWT.READ_ONLY);
 		text.addTraverseListener(new TraverseListener() {
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_ESCAPE) {
@@ -335,4 +335,21 @@ public class ContextHelpDialog {
 			}
 		});
 	}
+
+	public class Description extends StyledText {
+		/**
+		 * @param parent
+		 * @param style
+		 */
+		public Description(Composite parent, int style) {
+			super(parent, style);
+		}
+		public boolean setFocus() {
+			return false;
+		}
+		public boolean isFocusControl() {
+			return false;
+		}
+	}
+
 }
