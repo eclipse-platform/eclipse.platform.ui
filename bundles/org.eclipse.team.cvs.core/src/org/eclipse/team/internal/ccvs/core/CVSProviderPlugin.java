@@ -710,13 +710,6 @@ public class CVSProviderPlugin extends Plugin {
 	}
 	
 	/**
-	 * Method getResetTimestampOfFalseChange.
-	 * @return boolean
-	 */
-	public boolean getResetTimestampOfFalseChange() {
-		return true;
-	}
-	/**
 	 * Returns the fileModificationManager.
 	 * @return FileModificationManager
 	 */

@@ -77,8 +77,9 @@ public class Commit extends Command {
 			new PruneFolderVisitor().visit(session, resources);
 		}
 		
-		// Reset the timestamps of any committed files that are still dirty
-		if (CVSProviderPlugin.getPlugin().getResetTimestampOfFalseChange()) {
+		// Reset the timestamps of any committed files that are still dirty.
+		// Only do so if there were no E messages from the server
+		if (status.isOK()) {
 			for (int i = 0; i < resources.length; i++) {
 				ICVSResource resource = resources[i];
 				if (!resource.isFolder()) {
