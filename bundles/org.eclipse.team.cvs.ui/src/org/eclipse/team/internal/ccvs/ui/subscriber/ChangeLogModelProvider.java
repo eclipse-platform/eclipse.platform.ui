@@ -39,33 +39,43 @@ import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.progress.UIJob;
 
 /**
- * This is a prototype model provider using *internal* team classes. It is not meant
- * to be an example or sanctioned use of team. This provider groups changes 
- * It would be very useful to support showing changes grouped logically
- * instead of grouped physically. This could be used for showing incoming
- * changes and also for showing the results of comparisons.
+ * Disclamer:
+ * This is a prototype layout using *internal* team classes. It is not meant
+ * to be an example or sanctioned use of team. These classes and the classes
+ * references here may change or be deleted in the future.
  * 
- * + 2003-12-09 Tuesday 6:04 jlemieux
- *   + Bug 3456: this was changed last night
- *     + org/eclipse/com/Main.java
- *     + org/blah/this/Other.txt
+ * This provider groups changes into commit sets and fetches the log history for
+ * files in the background. Changes that can't be grouped into commit sets (e.g. outgoing 
+ * changes) are shown in a flat list.
  * 
- * {date/time, comment, user} -> {*files}
+ * @since 3.0
  */
 public class ChangeLogModelProvider extends SynchronizeModelProvider {
-	
+	// Cache for the top level commit sets
 	private Map commentRoots = new HashMap();
+	
+	// Log operation that is used to fetch revision histories from the server. It also
+	// provides caching so we keep it around.
 	private RemoteLogOperation logOperation;
+	
+	// Job that builds the layout in the background.
 	private boolean shutdown = false;
 	private FetchLogEntriesJob fetchLogEntriesJob;
+	
+	// Sorters for the commit sets and resources
 	private ChangeLogActionGroup sortGroup;
+	
+	// Tag ranges for fetching revision histories. If no tags are specified then
+	// the history for the remote revision in the sync info is used.
 	private CVSTag tag1;
 	private CVSTag tag2;
+	
+	// Constants for persisting sorting options
 	private final static String SORT_ORDER_GROUP = "changelog_sort"; //$NON-NLS-1$
 	private static final String P_LAST_COMMENTSORT = TeamUIPlugin.ID + ".P_LAST_COMMENT_SORT"; //$NON-NLS-1$
 	private static final String P_LAST_RESOURCESORT = TeamUIPlugin.ID + ".P_LAST_RESOURCE_SORT"; //$NON-NLS-1$
 	
-	/**
+	/* *****************************************************************************
 	 * Action that allows changing the model providers sort order.
 	 */
 	private class ToggleSortOrderAction extends Action {
@@ -122,6 +132,10 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		}
 	}
 	
+	/* *****************************************************************************
+	 * Action group for this layout. It is added and removed for this layout only.
+	 */
+	
 	/**
 	 * Actions for the compare particpant's toolbar
 	 */
@@ -152,6 +166,9 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		}
 	}
 	
+	/* *****************************************************************************
+	 * Commit set key in for the model elements.
+	 */
 	public static class DateComment {
 		Date date;
 		String comment;
@@ -167,28 +184,18 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			if(obj == this) return true;
 			if(! (obj instanceof DateComment)) return false;
 			DateComment other = (DateComment)obj;
-			
-			Calendar c1 = new GregorianCalendar();
-			c1.setTime(date);
-			int year = c1.get(Calendar.YEAR);
-			int day = c1.get(Calendar.DAY_OF_YEAR);
-			
-			Calendar c2 = new GregorianCalendar();
-			c2.setTime(other.date);
-			int yearOther = c2.get(Calendar.YEAR);
-			int dayOther = c2.get(Calendar.DAY_OF_YEAR);
-			
 			return comment.equals(other.comment) && user.equals(other.user);
 		}
 		
-		/* (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
 		public int hashCode() {
 			return comment.hashCode() + user.hashCode();
 		}
 	}
 	
+	/* *****************************************************************************
+	 * Model element for the resources in this layout. They are displayed with filename and path
+	 * onto the same line.
+	 */
 	public static class FullPathSyncInfoElement extends SyncInfoModelElement {
 		public FullPathSyncInfoElement(IDiffContainer parent, SyncInfo info) {
 			super(parent, info);
@@ -199,6 +206,9 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		}
 	}
 	
+	/* *****************************************************************************
+	 * Special sync info that has its kind already calculated.
+	 */
 	public class CVSUpdatableSyncInfo extends CVSSyncInfo {
 		public int kind;
 		public CVSUpdatableSyncInfo(int kind, IResource local, IResourceVariant base, IResourceVariant remote, Subscriber s) {
@@ -210,6 +220,10 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			return kind;
 		}
 	}
+	
+	/* *****************************************************************************
+	 * Action group for this layout. It is added and removed for this layout only.
+	 */
 	
 	private class FetchLogEntriesJob extends Job {
 		private Set syncSets = new HashSet();
@@ -249,6 +263,9 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		}
 	};
 	
+	/* *****************************************************************************
+	 * Descriptor for this model provider
+	 */
 	public static class ChangeLogModelProviderDescriptor implements ISynchronizeModelProviderDescriptor {
 		public static final String ID = TeamUIPlugin.ID + ".modelprovider_cvs_changelog"; //$NON-NLS-1$
 		public String getId() {

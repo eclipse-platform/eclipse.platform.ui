@@ -112,7 +112,7 @@ public class CommitCommentArea extends DialogArea {
 		
 		// populate the previous comment list
 		for (int i = 0; i < comments.length; i++) {
-			previousCommentsCombo.add(flattenText(comments[i]));
+			previousCommentsCombo.add(HistoryView.flattenText(comments[i]));
 		}
 		
 		// We don't want to have an initial selection
@@ -130,28 +130,6 @@ public class CommitCommentArea extends DialogArea {
 		if (initialComment != null && initialComment.length() != 0) {
 			text.setText(initialComment);
 		}
-	}
-
-	/*
-	 * Flatten the text in the multiline comment
-	 * @param string
-	 * @return String
-	 */
-	private String flattenText(String string) {
-		StringBuffer buffer = new StringBuffer(string.length() + 20);
-		boolean skipAdjacentLineSeparator = true;
-		for (int i = 0; i < string.length(); i++) {
-			char c = string.charAt(i);
-			if (c == '\r' || c == '\n') {
-				if (!skipAdjacentLineSeparator)
-					buffer.append(Policy.bind("separator")); //$NON-NLS-1$
-				skipAdjacentLineSeparator = true;
-			} else {
-				buffer.append(c);
-				skipAdjacentLineSeparator = false;
-			}
-		}
-		return buffer.toString();
 	}
 
 	/**

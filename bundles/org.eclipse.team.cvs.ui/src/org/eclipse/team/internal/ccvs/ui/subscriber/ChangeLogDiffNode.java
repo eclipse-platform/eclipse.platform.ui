@@ -15,6 +15,7 @@ import java.text.DateFormat;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeModelElement;
@@ -51,8 +52,8 @@ public class ChangeLogDiffNode extends SynchronizeModelElement {
 	 */
 	public String getName() {
 		String date = DateFormat.getDateTimeInstance().format(logEntry.getDate());
-		//return logEntry.getComment() + " (" + logEntry.getAuthor() + " on "+ date +")";
-		return "["+logEntry.getAuthor()+"] " +logEntry.getComment() + " (" + date +")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		String comment = HistoryView.flattenText(logEntry.getComment());
+		return "["+logEntry.getAuthor()+ "] (" + date +") " + comment; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 	
 	/* (non-Javadoc)
