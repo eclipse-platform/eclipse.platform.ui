@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -160,10 +159,6 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 			IResource resource = resources[i];
 			final IProgressMonitor infinite = Policy.infiniteSubMonitorFor(monitor, 100);
 			try {
-				// We need to do a scheduling rule on the project because
-				// the EclipseSynchronizer currently obtains rules which causes
-				// many workers to be created (see bug 41979).
-				Platform.getJobManager().beginRule(resource);
 				infinite.beginTask(null, 512);
 				resource.accept(new IResourceVisitor() {
 					public boolean visit(IResource innerResource) throws CoreException {
@@ -184,7 +179,6 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 			} catch (CoreException e) {
 				throw CVSException.wrapException(e);
 			} finally {
-				Platform.getJobManager().endRule();
 				infinite.done();
 			}
 		}
