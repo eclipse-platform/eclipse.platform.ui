@@ -423,11 +423,13 @@ public class OperationsManager implements IAdaptable {
 				}
 
 				toggleOperation.markProcessed();
+				// is this needed ?
 				UpdateManager.getOperationsManager().fireObjectChanged(
 					toggleOperation,
 					null);
 
 				SiteManager.getLocalSite().save();
+				// is this needed ?
 				UpdateManager.getOperationsManager().fireObjectChanged(
 					adapter,
 					"");
