@@ -472,19 +472,11 @@ public class JobErrorDialog extends ErrorDialog {
             showDetailsArea();
         }
     }
-    
+  
     /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.ErrorDialog#isIncludeTopLevelErrorInDetails()
-     */
-    protected boolean isIncludeTopLevelErrorInDetails() {
-        return isMultipleJobErrors();
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.ErrorDialog#isIncludeDetailsButton()
-     */
-    protected boolean isIncludeDetailsButton() {
-        // Always include the deatils button since we may have errors added that have details
-        return true;
-    }
+	 * @see org.eclipse.jface.dialogs.ErrorDialog#shouldShowDetailsButton()
+	 */
+	protected boolean shouldShowDetailsButton() {
+		return true;
+	}
 }
