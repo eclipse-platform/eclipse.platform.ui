@@ -14,7 +14,6 @@ import javax.servlet.*;
  * Eclipse launcher
  */
 public class Eclipse {
-	private static final String RESOURCE_BUNDLE = InitServlet.class.getName();
 	private static final String SERVLET_FACADE = "org.eclipse.help.servletFacade";
 	private Class bootLoader;
 	private Object platformRunnable;
