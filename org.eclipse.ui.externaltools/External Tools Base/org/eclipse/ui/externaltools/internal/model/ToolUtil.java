@@ -151,8 +151,7 @@ public final class ToolUtil {
 			start = varDef.end;
 			
 			// Lookup the variable if it exist
-			ExternalToolVariableRegistry registry;
-			registry = ExternalToolsPlugin.getDefault().getToolVariableRegistry();
+			ExternalToolVariableRegistry registry = ExternalToolsPlugin.getDefault().getToolVariableRegistry();
 			ExternalToolVariable variable = registry.getVariable(varDef.name);
 			if (variable == null) {
 				String msg = MessageFormat.format(ExternalToolsModelMessages.getString("ToolUtil.argumentVarMissing"), new Object[] {varDef.name}); //$NON-NLS-1$
