@@ -63,6 +63,9 @@
 		<copy todir="${temp.folder}/webapp.jar.bin">
 			<fileset dir="src/" excludes="**/*.java"/>
 		</copy>
+<!-- custom begin -->
+		<copy file="${temp.folder}/webapp.jar.bin/webapp.properties" tofile="${temp.folder}/webapp.jar.bin/webapp_en.properties" />
+<!-- custom end -->
 		<mkdir dir="${build.result.folder}"/>
 		<jar jarfile="${build.result.folder}/webapp.jar" basedir="${temp.folder}/webapp.jar.bin"/>
 		<delete dir="${temp.folder}/webapp.jar.bin"/>
