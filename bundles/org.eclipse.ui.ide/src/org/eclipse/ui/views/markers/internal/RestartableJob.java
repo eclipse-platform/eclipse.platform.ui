@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
+
 import org.eclipse.ui.internal.ide.StatusUtil;
 
 /**
@@ -43,11 +45,18 @@ public final class RestartableJob {
 	 * 
 	 * @param name
 	 * @param newRunnable
+	 * @param IWorkbenchSiteProgressService the service we are
+	 * going to use to show progress or <code>null</code>.
 	 */
-	public RestartableJob(String name, IRunnableWithProgress newRunnable) {
+	public RestartableJob(
+			String name, 
+			IRunnableWithProgress newRunnable,
+			IWorkbenchSiteProgressService service) {
 		this.runnable = newRunnable;
 
-		createJob(name);		
+		createJob(name);
+		if(service != null)
+			service.useHalfBusyCursor(theJob);
 		
 		theJob.addJobChangeListener(new JobChangeAdapter() {
 			public void done(IJobChangeEvent e) {

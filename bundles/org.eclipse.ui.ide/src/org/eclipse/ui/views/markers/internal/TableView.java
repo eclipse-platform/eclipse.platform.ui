@@ -54,6 +54,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 public abstract class TableView extends ViewPart {
 	
@@ -115,8 +116,11 @@ public abstract class TableView extends ViewPart {
 		viewer = new TableViewer(createTable(parent));
 		restoreColumnWidths(memento);
 		createColumns(viewer.getTable());
-		content = new TableContentProvider(viewer, Messages.format("TableView.populating", //$NON-NLS-1$
-				new Object[] {getTitle()}));
+		content = new TableContentProvider(
+					viewer, 
+					Messages.format("TableView.populating", //$NON-NLS-1$
+							new Object[] {getTitle()}),
+					getProgressService());
 		
 		
 		viewer.setContentProvider(content);
@@ -434,6 +438,19 @@ public abstract class TableView extends ViewPart {
 		}
 		Integer position = memento.getInteger(TAG_HORIZONTAL_POSITION);
 		return (position == null) ? 0 : position.intValue();
+	}
+	
+	/**
+	 * Get the IWorkbenchSiteProgressService for the receiver.
+	 * @return IWorkbenchSiteProgressService or <code>null</code>.
+	 */
+	protected IWorkbenchSiteProgressService getProgressService() {
+		IWorkbenchSiteProgressService service = null;
+		Object siteService =
+			getSite().getAdapter(IWorkbenchSiteProgressService.class);
+		if(siteService != null)
+			service = (IWorkbenchSiteProgressService) siteService;
+		return service;
 	}
 
 }

@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -155,12 +156,7 @@ class TableContentProvider implements IStructuredContentProvider {
 	 * changes to apply. This job doesn't actually do any real work -- it simply
 	 * schedules updates and updates the progress bar.
 	 */
-	RestartableJob updateJob = new RestartableJob(TABLE_SYNCHRONIZATION, 
-			new IRunnableWithProgress() {
-		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-			doUpdate(monitor);
-		}
-	});
+	RestartableJob updateJob;
 	
 	private ILock lock; 
 		
@@ -170,12 +166,22 @@ class TableContentProvider implements IStructuredContentProvider {
 	 * 
 	 * @param viewer
 	 * @param description user-readable string that will be included in progress monitors
+	 * @param service IWorkbenchSiteProgressService or <code>null</null>
+	 * 	 the service that this content provider will inform of 
+	 * 	updates.
 	 */
-	public TableContentProvider(TableViewer viewer, String description) {
+	public TableContentProvider(TableViewer viewer, String description, IWorkbenchSiteProgressService service) {
 		this.queues = new DeferredQueue(viewer);
 		this.description = description;
 		uiJob.setPriority(Job.LONG);
 		uiJob.setSystem(true);
+		
+		updateJob = new RestartableJob(TABLE_SYNCHRONIZATION, 
+				new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						doUpdate(monitor);
+					}
+			}, service);
 		
 		lock = Platform.getJobManager().newLock();
 	}
