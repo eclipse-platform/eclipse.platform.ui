@@ -14,7 +14,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<title><%=WebappResources.getString("Tabs", request)%></title>
+<title><%=ServletResources.getString("Tabs", request)%></title>
     
 <style type="text/css">
  
@@ -114,7 +114,7 @@ function showTab(tab)
 <%
 	for (int i=0; i<views.length; i++) 
 	{
-		String title = WebappResources.getString(views[i].getName(), request);
+		String title = ServletResources.getString(views[i].getName(), request);
 %>
 	<td  title="<%=views[i].getName()%>" 
 	     align="center"  

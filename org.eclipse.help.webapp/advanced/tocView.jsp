@@ -13,7 +13,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<title><%=WebappResources.getString("Content", request)%></title>
+<title><%=ServletResources.getString("Content", request)%></title>
 
 <style type="text/css">
 <%@ include file="tree.css"%>
@@ -91,7 +91,7 @@ function onloadHandler()
 <%
 	} else if ("yes".equals(request.getParameter("synch"))) {
 %>
-	var message='<%=UrlUtil.JavaScriptEncode(WebappResources.getString("CannotSync", request))%>';
+	var message='<%=UrlUtil.JavaScriptEncode(ServletResources.getString("CannotSync", request))%>';
 	// when we don't find the specified toc, we just restore navigation
 	parent.parent.parent.restoreNavigation(message);
 <%

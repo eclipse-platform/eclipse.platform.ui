@@ -1,4 +1,4 @@
-package org.eclipse.help.servlet.data;
+package org.eclipse.help.internal.webapp.data;
 
 /*
  * (c) Copyright IBM Corp. 2002.
@@ -8,7 +8,8 @@ package org.eclipse.help.servlet.data;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.eclipse.help.servlet.WebappResources;
+import org.eclipse.help.internal.webapp.servlet.ServletResources;
+
 
 /**
  * Control for a toolbar.
@@ -47,7 +48,7 @@ public class ToolbarData extends RequestData {
 				buttons[i] =
 					new ToolbarButton(
 						names[i],
-						WebappResources.getString(tooltips[i], request),
+						ServletResources.getString(tooltips[i], request),
 						preferences.getImagesDirectory() + "/" + images[i],
 						actions[i]);
 		}
@@ -61,7 +62,7 @@ public class ToolbarData extends RequestData {
 		if (request.getParameter("view") == null)
 			return "";
 		else 
-			return WebappResources.getString(request.getParameter("view"), request);
+			return ServletResources.getString(request.getParameter("view"), request);
 	}
 	
 	public String getScript() {

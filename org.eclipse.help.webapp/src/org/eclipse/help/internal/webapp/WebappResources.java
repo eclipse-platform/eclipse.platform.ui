@@ -1,12 +1,11 @@
-package org.eclipse.help.servlet;
+package org.eclipse.help.internal.webapp;
+
 /*
- * (c) Copyright IBM Corp. 2000, 2002.
+ * (c) Copyright IBM Corp. 2002.
  * All Rights Reserved.
  */
-
+ 
 import java.util.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.core.boot.*;
 
@@ -30,9 +29,9 @@ public class WebappResources {
 	 * It uses 'name' as a the key to retrieve from the webapp.properties file.
 	 * @param request HttpServletRequest or null; default locale will be used if null passed
 	 */
-	public static String getString(String name, HttpServletRequest request) {
-		Locale locale =
-			request == null ? getDefaultLocale() : request.getLocale();
+	public static String getString(String name, Locale locale) {
+		if (locale == null)
+			locale = getDefaultLocale();
 
 		// check cache
 		ResourceBundle bundle =

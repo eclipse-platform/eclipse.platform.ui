@@ -25,7 +25,7 @@ if (data.isProgressRequest()) {
 }
 %>
 
-<title><%=WebappResources.getString("SearchResults", request)%></title>
+<title><%=ServletResources.getString("SearchResults", request)%></title>
 <base target="ContentViewFrame">
 </head>
 
@@ -36,18 +36,18 @@ if (data.isProgressRequest()) {
 <table border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td>
-			<%=WebappResources.getString("Indexing", request)%>
+			<%=ServletResources.getString("Indexing", request)%>
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<%=data.getIndexedPercentage()%>% <%=WebappResources.getString("complete", request)%>
+			<%=data.getIndexedPercentage()%>% <%=ServletResources.getString("complete", request)%>
 		</td>
 	</tr>
 	<tr>
 		<td>
 			<br>
-			<%=WebappResources.getString("IndexingPleaseWait", request)%>
+			<%=ServletResources.getString("IndexingPleaseWait", request)%>
 		</td>
 	</tr>
 </table>
@@ -62,7 +62,7 @@ if (data.isProgressRequest()) {
 <%
  	if (data.isSearchRequest()) {
 		if (data.getResultsCount() == 0){
-			out.write(WebappResources.getString("Nothing_found", request));
+			out.write(ServletResources.getString("Nothing_found", request));
 		} else {	
 %>
 

@@ -1,4 +1,4 @@
-package org.eclipse.help.servlet.data;
+package org.eclipse.help.internal.webapp.data;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2002.

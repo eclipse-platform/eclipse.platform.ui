@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.servlet.data;
+package org.eclipse.help.internal.webapp.data;
 import java.io.*;
 
 import javax.servlet.ServletContext;
@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.servlet.*;
+import org.eclipse.help.internal.webapp.servlet.*;
 
 /**
  * Helper class for tocView.jsp initialization

@@ -15,7 +15,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
 
-<title><%=WebappResources.getString("Bookmarks", request)%></title>
+<title><%=ServletResources.getString("Bookmarks", request)%></title>
 
 <style type="text/css">
 <%@ include file="list.css"%>
@@ -89,7 +89,7 @@ function removeBookmark()
 
 </table>
 <div id="menu">
-	<div class="unselectedMenuItem" onmouseover="this.className='selectedMenuItem'" onmouseout="this.className='unselectedMenuItem'" onclick="removeBookmark()"><%=WebappResources.getString("RemoveBookmark",request)%></div>
+	<div class="unselectedMenuItem" onmouseover="this.className='selectedMenuItem'" onmouseout="this.className='unselectedMenuItem'" onclick="removeBookmark()"><%=ServletResources.getString("RemoveBookmark",request)%></div>
 </div>
 
 </body>

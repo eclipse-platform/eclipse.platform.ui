@@ -3,7 +3,7 @@
  * All Rights Reserved.
  */
 
-package org.eclipse.help.servlet;
+package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.*;
 

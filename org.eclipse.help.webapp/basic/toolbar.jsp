@@ -14,7 +14,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<title><%=WebappResources.getString("Toolbar", request)%></title>
+<title><%=ServletResources.getString("Toolbar", request)%></title>
 </head>
  
 <body bgcolor="#D4D0C8" text="#000000">
@@ -22,7 +22,7 @@
 	String title=data.getTitle();
 	// search view is not called "advanced view"
 	if("search".equals(request.getParameter("view"))){
-		title=WebappResources.getString("Search", request);
+		title=ServletResources.getString("Search", request);
 	}
 %>
 	<b>

@@ -15,7 +15,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
 
-<title><%=WebappResources.getString("Links", request)%></title>
+<title><%=ServletResources.getString("Links", request)%></title>
 
 <base target="ContentViewFrame">
 </head>
@@ -25,9 +25,9 @@
  
 <%
 if(!data.isLinksRequest()) {
-	out.write(WebappResources.getString("pressF1", request));
+	out.write(ServletResources.getString("pressF1", request));
 } else if (data.getLinksCount() == 0){
-	out.write(WebappResources.getString("Nothing_found", null));
+	out.write(ServletResources.getString("Nothing_found", null));
 } else {
 %>
 

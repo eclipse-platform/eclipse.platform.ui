@@ -1,4 +1,4 @@
-package org.eclipse.help.servlet.data;
+package org.eclipse.help.internal.webapp.data;
 
 /*
  * (c) Copyright IBM Corp. 2002.
@@ -11,9 +11,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.webapp.servlet.ServletResources;
 import org.eclipse.help.internal.workingset.*;
-import org.eclipse.help.servlet.WebappResources;
 
 /**
  * This class manages help working sets
@@ -144,7 +143,7 @@ public class WorkingSetManagerData extends RequestData {
 			// See if anything is set in the preferences
 			name = HelpPlugin.getDefault().getPluginPreferences().getString(HelpSystem.WORKING_SET);
 			if (name == null || name.length() == 0 || wsmgr.getWorkingSet(name) == null)
-				name = WebappResources.getString("All", request);
+				name = ServletResources.getString("All", request);
 		}
 		return name;
 	}

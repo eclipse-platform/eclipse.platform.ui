@@ -12,7 +12,7 @@
 
 <html>
 <head>
-<title><%=WebappResources.getString("SelectWorkingSet", request)%></title>
+<title><%=ServletResources.getString("SelectWorkingSet", request)%></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
@@ -151,10 +151,10 @@ function closeWorkingSetDialog()
 <div style="overflow:auto;height:250px;width:100%;">
   	<table id="filterTable" cellspacing=0 cellpading=0 border=0 align=center  style="background:<%=prefs.getToolbarBackground()%>;margin-top:5px;width:100%;">
 		<tr><td>
-			<input id="alldocs" type="radio" name="workingSet" onclick="enableButtons()"><%=WebappResources.getString("All", request)%>
+			<input id="alldocs" type="radio" name="workingSet" onclick="enableButtons()"><%=ServletResources.getString("All", request)%>
 		</td></tr>
 		<tr><td>
-			<input id="selectws" type="radio" name="workingSet"  onclick="enableButtons()"><%=WebappResources.getString("selectWorkingSet", request)%>:		
+			<input id="selectws" type="radio" name="workingSet"  onclick="enableButtons()"><%=ServletResources.getString("selectWorkingSet", request)%>:		
 		</td></tr>
 		<tr><td>
 			<div id="workingSetContainer" style="overflow:auto; height:150px;">
@@ -191,13 +191,13 @@ for (int i=0; i<wsets.length; i++)
   			<table cellspacing=10 cellpading=0 border=0 align=right  style="background:transparent;">
 				<tr>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-						<input class='button'  type="button" onclick="newWorkingSet()" value='<%=WebappResources.getString("NewWorkingSetButton", request)%>...'  id="new" alt='<%=WebappResources.getString("NewWorkingSetButton", request)%>'>
+						<input class='button'  type="button" onclick="newWorkingSet()" value='<%=ServletResources.getString("NewWorkingSetButton", request)%>...'  id="new" alt='<%=ServletResources.getString("NewWorkingSetButton", request)%>'>
 					</td>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-					  	<input class='button' type="button" onclick="editWorkingSet()"  type="button"  value='<%=WebappResources.getString("EditWorkingSetButton", request)%>...'  id="edit" disabled='<%=data.getWorkingSet() == null ?"true":"false"%>' alt='<%=WebappResources.getString("EditWorkingSetButton", request)%>'>
+					  	<input class='button' type="button" onclick="editWorkingSet()"  type="button"  value='<%=ServletResources.getString("EditWorkingSetButton", request)%>...'  id="edit" disabled='<%=data.getWorkingSet() == null ?"true":"false"%>' alt='<%=ServletResources.getString("EditWorkingSetButton", request)%>'>
 					</td>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-					  	<input class='button' type="button" onclick="removeWorkingSet()"  type="button"  value='<%=WebappResources.getString("RemoveWorkingSetButton", request)%>'  id="remove" disabled='<%=data.getWorkingSet() == null ?"true":"false"%>' alt='<%=WebappResources.getString("RemoveWorkingSetButton", request)%>'>
+					  	<input class='button' type="button" onclick="removeWorkingSet()"  type="button"  value='<%=ServletResources.getString("RemoveWorkingSetButton", request)%>'  id="remove" disabled='<%=data.getWorkingSet() == null ?"true":"false"%>' alt='<%=ServletResources.getString("RemoveWorkingSetButton", request)%>'>
 					</td>
 				</tr>
   			</table>
@@ -210,10 +210,10 @@ for (int i=0; i<wsets.length; i++)
   			<table cellspacing=10 cellpading=0 border=0 align=right  style="background:transparent;">
 				<tr>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-						<input id="okButton" class='button'  type="button" onclick="selectWorkingSet()" value='<%=WebappResources.getString("OK", request)%>'  id="ok" alt='<%=WebappResources.getString("OK", request)%>'>
+						<input id="okButton" class='button'  type="button" onclick="selectWorkingSet()" value='<%=ServletResources.getString("OK", request)%>'  id="ok" alt='<%=ServletResources.getString("OK", request)%>'>
 					</td>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-					  	<input class='button' type="button" onclick="window.close()"  type="button"  value='<%=WebappResources.getString("Cancel", request)%>'  id="cancel" alt='<%=WebappResources.getString("Cancel", request)%>'>
+					  	<input class='button' type="button" onclick="window.close()"  type="button"  value='<%=ServletResources.getString("Cancel", request)%>'  id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>'>
 					</td>
 				</tr>
   			</table>

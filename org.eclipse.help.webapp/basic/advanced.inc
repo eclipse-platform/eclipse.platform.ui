@@ -7,14 +7,14 @@
 	<table border="0" cellpadding="0" cellspacing="0">
 		<tr>
 			<td nowrap>
-				<input type="text" name="searchWord" value='<%=data.getSearchWord()%>' maxlength=256 alt='<%=WebappResources.getString("SearchExpression", request)%>'>
+				<input type="text" name="searchWord" value='<%=data.getSearchWord()%>' maxlength=256 alt='<%=ServletResources.getString("SearchExpression", request)%>'>
           	  	<input type="hidden" name="maxHits" value="500" >
-				<input type="submit" value='<%=WebappResources.getString("GO", request)%>' alt='<%=WebappResources.getString("GO", request)%>'>
+				<input type="submit" value='<%=ServletResources.getString("GO", request)%>' alt='<%=ServletResources.getString("GO", request)%>'>
         	</td>
         </tr>
         <tr>
         	<td>
-        		<%=WebappResources.getString("expression_label", request)%>
+        		<%=ServletResources.getString("expression_label", request)%>
         	</td>
         </tr>
 		<tr>
@@ -25,7 +25,7 @@
     	<tr>
   			<td>
   				<b>
-				<%=WebappResources.getString("Select", request)%>
+				<%=ServletResources.getString("Select", request)%>
 				</b>
 			</td>
 		</tr>

@@ -18,7 +18,7 @@
 <noscript>
 <meta HTTP-EQUIV="REFRESH" CONTENT="0;URL=index.jsp?noscript=1">
 </noscript>
-<title><%=WebappResources.getString("Help", request)%></title>
+<title><%=ServletResources.getString("Help", request)%></title>
 <jsp:include page="livehelp.js.jsp"/>
 </head>
 

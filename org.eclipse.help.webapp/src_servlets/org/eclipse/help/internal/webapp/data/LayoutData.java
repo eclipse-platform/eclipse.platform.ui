@@ -1,10 +1,10 @@
-package org.eclipse.help.servlet.data;
+package org.eclipse.help.internal.webapp.data;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.servlet.*;
+import org.eclipse.help.internal.webapp.servlet.*;
 
 /*
  * (c) Copyright IBM Corp. 2002.

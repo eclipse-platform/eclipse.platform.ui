@@ -14,7 +14,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-<title><%=WebappResources.getString("Search", request)%></title>
+<title><%=ServletResources.getString("Search", request)%></title>
      
 <style type="text/css">
 /* need this one for Mozilla */
@@ -192,17 +192,17 @@ function onloadHandler(e)
 		<table id="searchTable" align="left" valign="middle" cellspacing="0" cellpadding="0" border="0">
 			<tr nowrap  valign="middle">
 				<td>
-					&nbsp;<%=WebappResources.getString("Search", request)%>:
+					&nbsp;<%=ServletResources.getString("Search", request)%>:
 				</td>
 				<td>
-					<input type="text" id="searchWord" name="searchWord" value='' size="20" maxlength="256" alt='<%=WebappResources.getString("SearchExpression", request)%>'>
+					<input type="text" id="searchWord" name="searchWord" value='' size="20" maxlength="256" alt='<%=ServletResources.getString("SearchExpression", request)%>'>
 				</td>
 				<td >
-					&nbsp;<input type="button" onclick="this.blur();doSearch()" value='<%=WebappResources.getString("GO", request)%>' id="go" alt='<%=WebappResources.getString("GO", request)%>'>
+					&nbsp;<input type="button" onclick="this.blur();doSearch()" value='<%=ServletResources.getString("GO", request)%>' id="go" alt='<%=ServletResources.getString("GO", request)%>'>
 					<input type="hidden" name="maxHits" value="500" >
 				</td>
 				<td nowrap>
-					<a id="advanced" href="javascript:openAdvanced();" alt='<%=WebappResources.getString("Advanced", request)%>' onmouseover="window.status='<%=WebappResources.getString("Advanced", request)%>'; return true;" onmouseout="window.status='';"><%=WebappResources.getString("Advanced", request)%></a>&nbsp;
+					<a id="advanced" href="javascript:openAdvanced();" alt='<%=ServletResources.getString("Advanced", request)%>' onmouseover="window.status='<%=ServletResources.getString("Advanced", request)%>'; return true;" onmouseout="window.status='';"><%=ServletResources.getString("Advanced", request)%></a>&nbsp;
 				</td>
 			</tr>
 

@@ -9,17 +9,17 @@
 
     <servlet>
         <servlet-name>control</servlet-name>
-        <servlet-class>org.eclipse.help.servlet.ControlServlet</servlet-class>
+        <servlet-class>org.eclipse.help.internal.webapp.servlet.ControlServlet</servlet-class>
     </servlet>
     
     <servlet>
         <servlet-name>content</servlet-name>
-        <servlet-class>org.eclipse.help.servlet.ContentServlet</servlet-class>
+        <servlet-class>org.eclipse.help.internal.webapp.servlet.ContentServlet</servlet-class>
     </servlet>
     
     <servlet>
         <servlet-name>livehelp</servlet-name>
-        <servlet-class>org.eclipse.help.servlet.LiveHelpServlet</servlet-class>
+        <servlet-class>org.eclipse.help.internal.webapp.servlet.LiveHelpServlet</servlet-class>
     </servlet>
         
 <!-- placeholder for JSPs web.xml -->

@@ -13,7 +13,7 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title><%=WebappResources.getString("Help", request)%></title>
+<title><%=ServletResources.getString("Help", request)%></title>
 <script language="JavaScript">
 var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
 var isMozilla10 = isMozilla && navigator.userAgent.indexOf('rv:1') != -1;

@@ -2,13 +2,15 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.servlet.data;
+package org.eclipse.help.internal.webapp.data;
+import java.util.Locale;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.servlet.*;
+import org.eclipse.help.internal.webapp.servlet.*;
 
 /**
  * Helper class for contents.jsp initialization
@@ -37,6 +39,9 @@ public class RequestData {
 			locale = request.getLocale().toString();
 		else
 			locale = BootLoader.getNL();
+			
+		if (locale == null)
+			locale = Locale.getDefault().toString();
 	}
 
 	/**

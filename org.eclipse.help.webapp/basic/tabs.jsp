@@ -14,7 +14,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<title><%=WebappResources.getString("Tabs", request)%></title>
+<title><%=ServletResources.getString("Tabs", request)%></title>
     
 <base target="ViewsFrame">
 </head>
@@ -32,9 +32,9 @@
 		}
 		
 		// search view is not called "advanced view"
-		String title = WebappResources.getString(views[i].getName(), request);
+		String title = ServletResources.getString(views[i].getName(), request);
 		if("search".equals(views[i].getName())){
-			title=WebappResources.getString("Search", request);
+			title=ServletResources.getString("Search", request);
 		}
 		
 		String viewHref="view.jsp?view="+views[i].getName();

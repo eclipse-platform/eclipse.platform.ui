@@ -14,7 +14,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<title><%=WebappResources.getString("Toolbar", request)%></title>
+<title><%=ServletResources.getString("Toolbar", request)%></title>
  
 <style type="text/css">
 

@@ -2,13 +2,13 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.servlet.data;
+package org.eclipse.help.internal.webapp.data;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.servlet.UrlUtil;
+import org.eclipse.help.internal.webapp.servlet.UrlUtil;
 
 /**
  * Helper class for linksView.jsp initialization

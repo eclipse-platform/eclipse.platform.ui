@@ -12,7 +12,7 @@
 
 <html>
 <head>
-<title><%=WebappResources.getString("Advanced", request)%></title>
+<title><%=ServletResources.getString("Advanced", request)%></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
@@ -182,17 +182,17 @@ function onloadHandler()
 <form name="searchForm" onsubmit="doAdvancedSearch()">
 <div style="overflow:auto;height:250px;">
 	<table id="searchTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
-		<tr><td style="padding:0px 10px;"><%=WebappResources.getString("SearchExpression", request)%>
+		<tr><td style="padding:0px 10px;"><%=ServletResources.getString("SearchExpression", request)%>
 		</td></tr>
-		<tr><td style="padding:0px 10px;"><input type="text" id="searchWord" name="searchWord" value="<%=UrlUtil.htmlEncode(data.getSearchWord())%>" maxlength=256 alt='<%=WebappResources.getString("SearchExpression", request)%>'>
+		<tr><td style="padding:0px 10px;"><input type="text" id="searchWord" name="searchWord" value="<%=UrlUtil.htmlEncode(data.getSearchWord())%>" maxlength=256 alt='<%=ServletResources.getString("SearchExpression", request)%>'>
           	  	<input type="hidden" name="maxHits" value="500" >
         </td></tr>
-        <tr><td style="padding:0px 10px;"><%=WebappResources.getString("expression_label", request)%>
+        <tr><td style="padding:0px 10px;"><%=ServletResources.getString("expression_label", request)%>
         </td></tr>
     </table>
   
   	<table id="filterTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center  style="background:transparent;">
-		<tr><td><div id="selectBook" style="margin-left:10px;"><%=WebappResources.getString("Select", request)%></div>
+		<tr><td><div id="selectBook" style="margin-left:10px;"><%=ServletResources.getString("Select", request)%></div>
 		</td></tr>
 		<tr><td>
 			<div id="booksContainer">
@@ -216,10 +216,10 @@ for (int i=0; i<tocData.getTocCount(); i++)
   			<table cellspacing=10 cellpading=0 border=0 align=right  style="background:transparent;">
 				<tr>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-						<input id="searchButton" class='button'  type="button" onclick="doAdvancedSearch()" value='<%=WebappResources.getString("Search", request)%>'  id="go" alt='<%=WebappResources.getString("Search", request)%>'>
+						<input id="searchButton" class='button'  type="button" onclick="doAdvancedSearch()" value='<%=ServletResources.getString("Search", request)%>'  id="go" alt='<%=ServletResources.getString("Search", request)%>'>
 					</td>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-					  	<input class='button' type="button" onclick="window.close()"  type="button"  value='<%=WebappResources.getString("Cancel", request)%>'  id="cancel" alt='<%=WebappResources.getString("Cancel", request)%>'>
+					  	<input class='button' type="button" onclick="window.close()"  type="button"  value='<%=ServletResources.getString("Cancel", request)%>'  id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>'>
 					</td>
 				</tr>
   			</table>

@@ -2,17 +2,17 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.servlet;
+package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.Enumeration;
 
-import javax.servlet.*;
+import javax.servlet.ServletContext;
 import javax.servlet.http.*;
 
-import org.eclipse.core.boot.*;
-import org.eclipse.help.internal.*;
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.help.internal.HelpSystem;
 
 /**
  * Performs transfer of data from eclipse to a jsp/servlet
@@ -78,7 +78,7 @@ public class EclipseConnector {
 					|| url.toLowerCase().endsWith("html")) {
 					String error =
 						errorPageBegin
-							+ WebappResources.getString("noTopic", req)
+							+ ServletResources.getString("noTopic", req)
 							+ errorPageEnd;
 					is = new ByteArrayInputStream(error.getBytes("UTF8"));
 				} else {

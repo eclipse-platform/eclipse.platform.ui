@@ -15,7 +15,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
 
-<title><%=WebappResources.getString("Bookmarks", request)%></title>
+<title><%=ServletResources.getString("Bookmarks", request)%></title>
 
 <base target="ContentViewFrame">
 

@@ -13,7 +13,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<title><%=WebappResources.getString("Content", request)%></title>
+<title><%=ServletResources.getString("Content", request)%></title>
 
 <base target="ContentViewFrame">
 </head>
