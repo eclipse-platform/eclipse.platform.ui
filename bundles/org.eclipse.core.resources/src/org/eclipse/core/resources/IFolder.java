@@ -104,8 +104,7 @@ public void create(boolean force, boolean local, IProgressMonitor monitor) throw
  */
 public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
 /**
- * Returns a handle to the file with the given name in the
- * receiver.
+ * Returns a handle to the file with the given name in this folder.
  * <p> 
  * This is a resource handle operation; neither the resource nor
  * the result need exist in the workspace.
@@ -120,8 +119,7 @@ public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor)
  */
 public IFile getFile(String name);
 /**
- * Returns a handle to the folder with the given name in the
- * receiver.
+ * Returns a handle to the folder with the given name in this folder.
  * <p> 
  * This is a resource handle operation; neither the container
  * nor the result need exist in the workspace.

@@ -31,7 +31,7 @@ public interface IContainer extends IResource, IAdaptable {
  * exists relative to this resource.
  * The supplied path may be absolute or relative; in either case, it is
  * interpreted as relative to this resource.  Trailing separators are ignored.
- * If the path is empty the receiver is checked for existence.
+ * If the path is empty this container is checked for existence.
  *
  * @param path the path of the resource
  * @return <code>true</code> if a resource of some type with the given path 
@@ -41,7 +41,7 @@ public interface IContainer extends IResource, IAdaptable {
 public boolean exists(IPath path);
 /**
  * Finds and returns the member resource (project, folder, or file)
- * with the given name in the receiver, or <code>null</code> if no such
+ * with the given name in this container, or <code>null</code> if no such
  * resource exists.
  * 
  * <p> N.B. Unlike the methods which traffic strictly in resource
@@ -56,7 +56,7 @@ public boolean exists(IPath path);
 public IResource findMember(String name);
 /**
  * Finds and returns the member resource (project, folder, or file)
- * with the given name in the receiver, or <code>null</code> if 
+ * with the given name in this container, or <code>null</code> if 
  * there is no such resource.
  * <p>
  * If the <code>includePhantoms</code> argument is <code>false</code>, 
@@ -83,10 +83,10 @@ public IResource findMember(String name);
 public IResource findMember(String name, boolean includePhantoms);
 /**
  * Finds and returns the member resource identified by the given path in
- * the receiver, or <code>null</code> if no such resource exists.
+ * this container, or <code>null</code> if no such resource exists.
  * The supplied path may be absolute or relative; in either case, it is
  * interpreted as relative to this resource.   Trailing separators are ignored.
- * If the path is empty the receiver is returned.
+ * If the path is empty this container is returned.
  * <p> N.B. Unlike the methods which traffic strictly in resource
  * handles, this method infers the resulting resource's type from the
  * resource existing at the calculated path in the workspace.
@@ -99,10 +99,10 @@ public IResource findMember(String name, boolean includePhantoms);
 public IResource findMember(IPath path);
 /**
  * Finds and returns the member resource identified by the given path in
- * the receiver, or <code>null</code> if there is no such resource.
+ * this container, or <code>null</code> if there is no such resource.
  * The supplied path may be absolute or relative; in either case, it is
  * interpreted as relative to this resource.  Trailing separators are ignored.
- * If the path is empty the receiver is returned.
+ * If the path is empty this container is returned.
  * <p>
  * If the <code>includePhantoms</code> argument is <code>false</code>, 
  * only a resource that exists at the given path will be returned.
@@ -127,8 +127,8 @@ public IResource findMember(IPath path);
  */
 public IResource findMember(IPath path, boolean includePhantoms);
 /**
- * Returns a handle to the file identified by the given path in the
- * receiver.
+ * Returns a handle to the file identified by the given path in this
+ * container.
  * <p> 
  * This is a resource handle operation; neither the resource nor
  * the result need exist in the workspace.
@@ -138,7 +138,7 @@ public IResource findMember(IPath path, boolean includePhantoms);
  * <p>
  * The supplied path may be absolute or relative; in either case, it is
  * interpreted as relative to this resource and is appended
- * to the receiver's full path to form the full path of the resultant resource.
+ * to this container's full path to form the full path of the resultant resource.
  * A trailing separator is ignored. The path resulting resource will 
  * have at least 3 segments.
  * </p>
@@ -149,8 +149,8 @@ public IResource findMember(IPath path, boolean includePhantoms);
  */
 public IFile getFile(IPath path);
 /**
- * Returns a handle to the folder identified by the given path in the
- * receiver.
+ * Returns a handle to the folder identified by the given path in this
+ * container.
  * <p> 
  * This is a resource handle operation; neither the resource nor
  * the result need exist in the workspace.
@@ -160,7 +160,7 @@ public IFile getFile(IPath path);
  * <p>
  * The supplied path may be absolute or relative; in either case, it is
  * interpreted as relative to this resource and is appended
- * to the receiver's full path to form the full path of the resultant resource.
+ * to this container's full path to form the full path of the resultant resource.
  * A trailing separator is ignored. The path of the resulting resource will 
  * have at least 2 segments.
  * </p>

@@ -679,7 +679,7 @@ public IContainer getParent();
 public String getPersistentProperty(QualifiedName key) throws CoreException;
 /**
  * Returns the project which contains this resource.
- * Returns the receiver for projects and <code>null</code>
+ * Returns itself for projects and <code>null</code>
  * for the workspace root.
  * <p>
  * A resource's project is the one named by the first segment
