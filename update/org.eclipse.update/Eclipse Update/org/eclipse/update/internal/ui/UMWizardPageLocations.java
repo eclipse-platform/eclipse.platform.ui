@@ -196,10 +196,10 @@ public void createControl(Composite compositeParent) {
 	gridData.grabExcessVerticalSpace = true;
 	compositeBottomContent.setLayoutData(gridData);
 
-	// Label: Location
-	//----------------
+	// Label: Uniform Resource Locator
+	//--------------------------------
 	Label label = new Label(compositeBottomContent, SWT.NULL);
-	label.setText(UpdateManagerStrings.getString("S_Location") + ":");
+	label.setText(UpdateManagerStrings.getString("S_Uniform_Resource_Locator") + ":");
 	gridData = new GridData();
 	gridData.horizontalAlignment = GridData.FILL;
 	label.setLayoutData(gridData);
