@@ -185,9 +185,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	protected void basicBuild(final IProject project, final int trigger, final MultiStatus status, final IProgressMonitor monitor) {
 		if (!project.isAccessible())
 			return;
-		//perform clean on the project itself
-		if (trigger == IncrementalProjectBuilder.CLEAN_BUILD)
-			basicBuildClean(project, status);
 		final ICommand[] commands = ((Project) project).internalGetDescription().getBuildSpec(false);
 		if (commands.length == 0)
 			return;
@@ -209,18 +206,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			}
 		};
 		Platform.run(code);
-	}
-
-	/**
-	 * Peforms aspects of build clean that apply to the entire project
-	 */
-	private void basicBuildClean(IProject project, MultiStatus status) {
-		try {
-			//discard all problem markers in the project
-			project.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
-		} catch (CoreException e) {
-			status.merge(e.getStatus());
-		}
 	}
 
 	protected void basicBuild(IProject project, int trigger, String builderName, Map args, MultiStatus status, IProgressMonitor monitor) {

@@ -126,19 +126,20 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	protected abstract IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Clean is an opportunity for a builder to discard any additional state
-	 * that has been computed as a result of previous builds. The platform will
+	 * Clean is an opportunity for a builder to discard any additional state that has 
+	 * been computed as a result of previous builds. It is recommended that builders 
+	 * override this method to delete all derived resources created by previous builds, 
+	 * and to remove all markers of type <code>IMarker.PROBLEM</code> that 
+	 * were created by previous invocations of the builder. The platform will
 	 * take care of discarding the builder's last built state (there is no need
-	 * to call <code>forgetLastBuiltState</code>), and will remove all
-	 * markers of type <code>IMarker.PROBLEM</code> that are associated with
-	 * the project.
+	 * to call <code>forgetLastBuiltState</code>).
 	 * </p>
 	 * <p>
 	 * This method is called as a result of invocations of
 	 * <code>IWorkspace.build</code> or <code>IProject.build</code> where
 	 * the build kind is <code>CLEAN_BUILD</code>.
 	 * <p>
-	 * This default implementation does nothing. Subclasses may override.
+	 * This default implementation does nothing. Subclasses may override. 
 	 * <p>
 	 * This method is long-running; progress and cancellation are provided by
 	 * the given progress monitor. All builders should report their progress and
@@ -155,6 +156,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * @since 3.0
 	 */
 	protected void clean(IProgressMonitor monitor) throws CoreException {
+		//default implementation does nothing
 	}
 
 	/**
