@@ -119,6 +119,8 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			boolean dark= (cs.length % 2) == 1;
 			for (int i= 0; i < cs.length; i++) {
 				Control c= cs[i];
+				if (c == null)
+				    continue;
 				Point s= c.computeSize(e.x, SWT.DEFAULT, flushCache);
 				c.setBounds(x, y, s.x, s.y);
 				y+= s.y+VERTICAL_SPACING;
