@@ -139,6 +139,11 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	private boolean fInitializingTabs = false;
 
 	/**
+	 * Controls when the redraw flag is set on the visible area
+	 */
+	private boolean fRedraw = true;
+
+	/**
 	 * Constructs a viewer in the given composite, contained by the given
 	 * launch configuration dialog.
 	 * 
@@ -447,32 +452,44 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 */
 	protected void inputChanged(Object input) {
 		fInput = input;
-		if (input instanceof ILaunchConfiguration) {
-			ILaunchConfiguration configuration = (ILaunchConfiguration)input;
-			setOriginal(configuration);
-			try {
-				setWorkingCopy(configuration.getWorkingCopy());
-			} catch (CoreException e) {
-				errorDialog(e);
+		Runnable r = new Runnable() {
+			public void run() {
+				if (fInput instanceof ILaunchConfiguration) {
+					ILaunchConfiguration configuration = (ILaunchConfiguration)fInput;
+					setOriginal(configuration);
+					try {
+						setWorkingCopy(configuration.getWorkingCopy());
+					} catch (CoreException e) {
+						errorDialog(e);
+					}
+					displayInstanceTabs();
+				} else if (fInput instanceof ILaunchConfigurationType) {
+					ILaunchConfiguration configuration = getSharedTypeConfig((ILaunchConfigurationType)fInput);
+					setOriginal(configuration);
+					try {
+						setWorkingCopy(configuration.getWorkingCopy());
+					} catch (CoreException e) {
+						errorDialog(e);
+					}
+					displaySharedTabs();
+				} else {
+					setOriginal(null);
+					setWorkingCopy(null);
+					getVisibleArea().setVisible(false);
+					disposeExistingTabs();
+				}
+				setRedraw(true);
 			}
-			displayInstanceTabs();
-		} else if (input instanceof ILaunchConfigurationType) {
-			ILaunchConfiguration configuration = getSharedTypeConfig((ILaunchConfigurationType)input);
-			setOriginal(configuration);
-			try {
-				setWorkingCopy(configuration.getWorkingCopy());
-			} catch (CoreException e) {
-				errorDialog(e);
-			}
-			displaySharedTabs();
-		} else {
-			setOriginal(null);
-			setWorkingCopy(null);
-			getVisibleArea().setVisible(false);
-			disposeExistingTabs();
-		}
+		};
+		BusyIndicator.showWhile(getShell().getDisplay(), r);
 	}
 	
+	private void setRedraw(boolean b) {
+		if (fRedraw != b) {
+			fRedraw = b;
+			getVisibleArea().setRedraw(fRedraw);
+		}	
+	}	
 	/**
 	 * Displays tabs for the current working copy
 	 */
@@ -628,10 +645,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Create the tabs in the configuration edit area for the given tab group.
 	 */
 	private void showTabsFor(ILaunchConfigurationTabGroup tabGroup) {
-
-		// Avoid flicker
-		getControl().setRedraw(false);
-
+		// turn off redraw
+		setRedraw(false);
 		// Dispose the current tabs
 		disposeExistingTabs();
 
@@ -655,7 +670,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			}
 		}
 
-		getControl().setRedraw(true);
 	}	
 	
 	/**
