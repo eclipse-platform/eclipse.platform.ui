@@ -122,12 +122,6 @@ M4 = Platform-specific fourth key -->
             categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.ant.ui.views.AntView">
       </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.ant.ui.views.AntView"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.format.name"
             description="%ActionDefinition.format.description"
