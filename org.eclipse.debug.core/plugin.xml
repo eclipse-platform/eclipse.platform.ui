@@ -101,6 +101,11 @@
             resolver="org.eclipse.debug.internal.core.EnvironmentVariableResolver"
             description="%env_var.description">
       </variable>
+      <variable
+            name="system"
+            resolver="org.eclipse.debug.internal.core.SystemVariableResolver"
+            description="%system_var.description">
+      </variable>      
    </extension>
    
 <!-- ====================== -->
