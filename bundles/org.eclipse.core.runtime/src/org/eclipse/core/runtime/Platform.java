@@ -334,13 +334,16 @@ public final class Platform {
 		return InternalPlatform.getDefault().getOption(option);
 	}
 	/**
-	 * Returns the location of the platform working directory.  This 
-	 * corresponds to the <i>-data</i> command line argument if
-	 * present or, if not, the current working directory when the platform
-	 * was started.
+	 * Returns the location of the platform working directory.  
+	 * <p>
+	 * Callers of this method should consider using <code>getInstanceLocation</code>
+	 * instead.  In various, typically non IDE-related configurations of Eclipse, the platform
+	 * working directory may not be on the local filesystem.  As such, the more general
+	 * form of this location is as a URL.
+	 * </p>
 	 *
 	 * @return the location of the platform
-	 * @deprecated Use @see #getInstanceLocation()
+	 * @see #getInstanceLocation
 	 */
 	public static IPath getLocation() throws IllegalStateException {
 		return InternalPlatform.getDefault().getLocation();
@@ -511,6 +514,7 @@ public final class Platform {
 	public static IExtensionRegistry getExtensionRegistry() {
 		return InternalPlatform.getDefault().getRegistry();
 	}
+	
 	/**
 	 * Returns a URL for the given path in the given bundle.  Returns <code>null</code> if the URL
 	 * could not be computed or created.
