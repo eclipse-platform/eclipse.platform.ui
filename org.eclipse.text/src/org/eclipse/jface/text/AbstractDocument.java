@@ -24,7 +24,8 @@ import java.util.regex.PatternSyntaxException;
  * Abstract default implementation of <code>IDocument</code> and its extension
  * interfaces {@link org.eclipse.jface.text.IDocumentExtension},
  * {@link org.eclipse.jface.text.IDocumentExtension2},
- * {@link org.eclipse.jface.text.IDocumentExtension3}, as well as
+ * {@link org.eclipse.jface.text.IDocumentExtension3}, 
+ * {@link org.eclipse.jface.text.IDocumentExtension4}, as well as
  * {@link org.eclipse.jface.text.IRepairableDocument}.
  * <p>
  * 
@@ -47,7 +48,7 @@ import java.util.regex.PatternSyntaxException;
  * @see org.eclipse.jface.text.ITextStore
  * @see org.eclipse.jface.text.ILineTracker
  */
-public abstract class AbstractDocument implements IDocument, IDocumentExtension, IDocumentExtension2, IDocumentExtension3, IRepairableDocument {
+public abstract class AbstractDocument implements IDocument, IDocumentExtension, IDocumentExtension2, IDocumentExtension3, IDocumentExtension4, IRepairableDocument {
 	
 	/**
 	 * Inner class to bundle a registered post notification replace operation together with its
@@ -132,6 +133,12 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 3.0
 	 */
 	private FindReplaceDocumentAdapter fFindReplaceDocumentAdapter;
+	/** 
+	 * The registered document rewrite session listeners.
+	 * @since 3.1
+	 */
+	private List fDocumentRewriteSessionListeners;
+
 	
 	
 	/**
@@ -243,6 +250,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		fDocumentListeners= new ArrayList();
 		fPrenotifiedDocumentListeners= new ArrayList();
 		fDocumentPartitioningListeners= new ArrayList();
+		fDocumentRewriteSessionListeners= new ArrayList();
 		
 		addPositionCategory(DEFAULT_CATEGORY);
 		addPositionUpdater(new DefaultPositionUpdater(DEFAULT_CATEGORY));		
@@ -1305,5 +1313,67 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	public void repairLineInformation() {
 		getTracker().set(get());
+	}
+	
+	/**
+	 * Fires the given event to all registered rewrite session listeners. Uses robust iterators.
+	 * 
+	 * @param event the event to be fired
+	 * @since 3.1
+	 */
+	protected void fireRewriteSessionChanged(DocumentRewriteSessionEvent event) {
+		if (fDocumentRewriteSessionListeners.size() > 0) {
+			List list= new ArrayList(fDocumentRewriteSessionListeners);
+			Iterator e= list.iterator();
+			while (e.hasNext()) {
+				IDocumentRewriteSessionListener l= (IDocumentRewriteSessionListener) e.next();
+				l.documentRewriteSessionChanged(event);
+			}
+		}
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension4#startRewriteSession(java.lang.Object)
+	 * @since 3.1
+	 */
+	public void startRewriteSession(Object sessionId) {
+		fireRewriteSessionChanged(new DocumentRewriteSessionEvent(this, sessionId, true));
+		ILineTracker tracker= getTracker();
+		if (tracker instanceof ILineTrackerExtension) {
+			ILineTrackerExtension extension= (ILineTrackerExtension) tracker;
+			extension.startRewriteSession(sessionId);
+		}
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension4#stopRewriteSession(java.lang.Object)
+	 * @since 3.1
+	 */
+	public void stopRewriteSession(Object sessionId) {
+		ILineTracker tracker= getTracker();
+		if (tracker instanceof ILineTrackerExtension) {
+			ILineTrackerExtension extension= (ILineTrackerExtension) tracker;
+			extension.stopRewriteSession(sessionId, get());
+		}
+		fireRewriteSessionChanged(new DocumentRewriteSessionEvent(this, sessionId, false));
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension4#addDocumentRewriteSessionListener(org.eclipse.jface.text.IDocumentRewriteSessionListener)
+	 * @since 3.1
+	 */
+	public void addDocumentRewriteSessionListener(IDocumentRewriteSessionListener listener) {
+		Assert.isNotNull(listener);
+		if (! fDocumentRewriteSessionListeners.contains(listener))
+			fDocumentRewriteSessionListeners.add(listener);
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension4#removeDocumentRewriteSessionListener(org.eclipse.jface.text.IDocumentRewriteSessionListener)
+	 * @since 3.1
+	 */
+	public void removeDocumentRewriteSessionListener(IDocumentRewriteSessionListener listener) {
+		Assert.isNotNull(listener);
+		fDocumentRewriteSessionListeners.remove(listener);
 	}
 }

@@ -14,8 +14,8 @@ package org.eclipse.jface.text;
 
 /**
  * Default document implementation. Uses a
- * {@link org.eclipse.jface.text.GapTextStore}as default text store and a
- * {@link org.eclipse.jface.text.SequentialRewriteTextStore}when in sequential
+ * {@link org.eclipse.jface.text.GapTextStore} as default text store and a
+ * {@link org.eclipse.jface.text.SequentialRewriteTextStore} when in sequential
  * rewrite mode.
  * <p>
  * The used line tracker considers the following strings as line delimiters

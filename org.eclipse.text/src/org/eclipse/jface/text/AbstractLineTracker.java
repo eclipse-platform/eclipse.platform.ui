@@ -11,6 +11,7 @@
 package org.eclipse.jface.text;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -29,7 +30,7 @@ import java.util.List;
  * </ul>
  * This class must be subclassed.
  */
-public abstract class AbstractLineTracker implements ILineTracker {
+public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerExtension {
 	
 	
 	/**
@@ -43,12 +44,50 @@ public abstract class AbstractLineTracker implements ILineTracker {
 		public int delimiterLength;
 		public String delimiter;
 	}
+	
+	/**
+	 * Representation of replace and set requests.
+	 * 
+	 * @since 3.1
+	 */
+	protected static class Request {
+		public final int offset;
+		public final int length;
+		public final String text;
 		
+		public Request(int offset, int length, String text) {
+			this.offset= offset;
+			this.length= length;
+			this.text= text;
+		}
+		
+		public Request(String text) {
+			this.offset= -1;
+			this.length= -1;
+			this.text= text;
+		}
+		
+		public boolean isReplaceRequest() {
+			return this.offset > -1 && this.length > -1;
+		}
+	}	
+	
 	
 	/** The line information */
 	private List fLines= new ArrayList();
 	/** The length of the tracked text */
 	private int fTextLength;
+	
+	/**
+	 * The list of active rewrite sessions.
+	 * @since 3.1
+	 */
+	private List fActiveRewriteSessions;
+	/**
+	 * The list of pending requests.
+	 * @since 3.1
+	 */
+	private List fPendingRequests;
 	
 	
 	/**
@@ -134,6 +173,9 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	 */
 	public int getLineLength(int line) throws BadLocationException {
 		
+		if (hasActiveRewriteSession())
+			flushRewriteSessions();
+		
 		int lines= fLines.size();
 		
 		if (line < 0 || line > lines)
@@ -150,6 +192,9 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	 * @see org.eclipse.jface.text.ILineTracker#getLineNumberOfOffset(int)
 	 */
 	public int getLineNumberOfOffset(int position) throws BadLocationException {
+		
+		if (hasActiveRewriteSession())
+			flushRewriteSessions();
 				
 		if (position > fTextLength)
 			throw new BadLocationException();
@@ -171,6 +216,10 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	 * @see org.eclipse.jface.text.ILineTracker#getLineInformationOfOffset(int)
 	 */
 	public IRegion getLineInformationOfOffset(int position) throws BadLocationException {		
+		
+		if (hasActiveRewriteSession())
+			flushRewriteSessions();
+		
 		if (position > fTextLength)
 			throw new BadLocationException();
 			
@@ -189,6 +238,9 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	 * @see org.eclipse.jface.text.ILineTracker#getLineInformation(int)
 	 */
 	public IRegion getLineInformation(int line) throws BadLocationException {
+		
+		if (hasActiveRewriteSession())
+			flushRewriteSessions();
 		
 		int lines= fLines.size();
 		
@@ -211,6 +263,9 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	 * @see org.eclipse.jface.text.ILineTracker#getLineOffset(int)
 	 */
 	public int getLineOffset(int line) throws BadLocationException {
+		
+		if (hasActiveRewriteSession())
+			flushRewriteSessions();
 		
 		int lines= fLines.size();
 		
@@ -236,6 +291,14 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	 * @see org.eclipse.jface.text.ILineTracker#getNumberOfLines()
 	 */
 	public int getNumberOfLines() {
+		
+		if (hasActiveRewriteSession()) {
+			try {
+				flushRewriteSessions();
+			} catch (BadLocationException x) {
+				// TODO needs to be communicated
+			}
+		}
 		
 		int lines= fLines.size();
 		
@@ -273,6 +336,29 @@ public abstract class AbstractLineTracker implements ILineTracker {
 			delimiterInfo= nextDelimiterInfo(text, start);
 		}
 		return count;	
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.ILineTracker#getLineDelimiter(int)
+	 */
+	public String getLineDelimiter(int line) throws BadLocationException {
+		
+		if (hasActiveRewriteSession())
+			flushRewriteSessions();
+		
+		int lines= fLines.size();
+		
+		if (line < 0 || line > lines)
+			throw new BadLocationException();
+			
+		if (lines == 0)
+			return null;
+			
+		if (line == lines)
+			return null;
+					
+		Line l= (Line) fLines.get(line);
+		return l.delimiter;
 	}
 	
 	
@@ -459,99 +545,154 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	 */
 	public void replace(int position, int length, String text) throws BadLocationException {
 		
-		int firstLine= getLineNumberOfOffset(position);
-		int insertLineNumber= firstLine;
-		
-		if (remove(firstLine, position, length))
-			-- firstLine;
+		if (hasActiveRewriteSession()) {
+			fPendingRequests.add(new Request(position, length, text));
 			
-		int lastLine= firstLine + insert(insertLineNumber, position, text);
+		} else {
 		
-//		int lines= fLines.size();
-//		if (lines > 0) {
-//			
-//			// try to collapse the first and the second line if second line is empty
-//			if (0 <= firstLine && firstLine + 1 < lines) {
-//				Line l2= (Line) fLines.get(firstLine + 1);
-//				if (l2.delimiter != null && l2.length == l2.delimiter.length()) {
-//					// line is empty
-//					
-//					// append empty line to precessor
-//					Line l1= (Line) fLines.get(firstLine);
-//					StringBuffer buffer= new StringBuffer();
-//					buffer.append(l1.delimiter);
-//					buffer.append(l2.delimiter);
-//					
-//					// test whether this yields just one line rather then two
-//					DelimiterInfo info= nextDelimiterInfo(buffer.toString(), 0);
-//					if (info != null && info.delimiterIndex == 0 && info.delimiterLength == buffer.length()) {
-//						l1.length += l2.length;
-//						l1.delimiter += l2.delimiter;
-//						fLines.remove(firstLine + 1);
-//						-- lastLine;
+			int firstLine= getLineNumberOfOffset(position);
+			int insertLineNumber= firstLine;
+			
+			if (remove(firstLine, position, length))
+				-- firstLine;
+			
+			int lastLine= firstLine + insert(insertLineNumber, position, text);
+		
+//			int lines= fLines.size();
+//			if (lines > 0) {
+//				
+//				// try to collapse the first and the second line if second line is empty
+//				if (0 <= firstLine && firstLine + 1 < lines) {
+//					Line l2= (Line) fLines.get(firstLine + 1);
+//					if (l2.delimiter != null && l2.length == l2.delimiter.length()) {
+//						// line is empty
+//						
+//						// append empty line to precessor
+//						Line l1= (Line) fLines.get(firstLine);
+//						StringBuffer buffer= new StringBuffer();
+//						buffer.append(l1.delimiter);
+//						buffer.append(l2.delimiter);
+//						
+//						// test whether this yields just one line rather then two
+//						DelimiterInfo info= nextDelimiterInfo(buffer.toString(), 0);
+//						if (info != null && info.delimiterIndex == 0 && info.delimiterLength == buffer.length()) {
+//							l1.length += l2.length;
+//							l1.delimiter += l2.delimiter;
+//							fLines.remove(firstLine + 1);
+//							-- lastLine;
+//						}
+//					}
+//				}
+//				
+//				// try to collapse the last inserted line with the following line
+//				if (lastLine < lines) {
+//					Line l2= (Line) fLines.get(lastLine);
+//					if (l2.delimiter != null && l2.length == l2.delimiter.length()) {
+//						// line is empty
+//						
+//						// append empty line to precessor
+//						Line l1= (Line) fLines.get(lastLine -1);
+//						StringBuffer buffer= new StringBuffer();
+//						buffer.append(l1.delimiter);
+//						buffer.append(l2.delimiter);
+//						
+//						// test whether this yields just one line rather then two
+//						DelimiterInfo info= nextDelimiterInfo(buffer.toString(), 0);
+//						if (info != null && info.delimiterIndex == 0 && info.delimiterLength == buffer.length()) {
+//							l1.length += l2.length;
+//							l1.delimiter += l2.delimiter;
+//							fLines.remove(lastLine);
+//						}
 //					}
 //				}
 //			}
-//			
-//			// try to collapse the last inserted line with the following line
-//			if (lastLine < lines) {
-//				Line l2= (Line) fLines.get(lastLine);
-//				if (l2.delimiter != null && l2.length == l2.delimiter.length()) {
-//					// line is empty
-//					
-//					// append empty line to precessor
-//					Line l1= (Line) fLines.get(lastLine -1);
-//					StringBuffer buffer= new StringBuffer();
-//					buffer.append(l1.delimiter);
-//					buffer.append(l2.delimiter);
-//					
-//					// test whether this yields just one line rather then two
-//					DelimiterInfo info= nextDelimiterInfo(buffer.toString(), 0);
-//					if (info != null && info.delimiterIndex == 0 && info.delimiterLength == buffer.length()) {
-//						l1.length += l2.length;
-//						l1.delimiter += l2.delimiter;
-//						fLines.remove(lastLine);
-//					}
-//				}
-//			}
-//		}
 		
-		int delta= -length;
-		if (text != null)
-			delta= text.length() + delta;
-		
-		if (delta != 0)
-			adaptLineOffsets(lastLine, delta);
+			int delta= -length;
+			if (text != null)
+				delta= text.length() + delta;
+			
+			if (delta != 0)
+				adaptLineOffsets(lastLine, delta);
+		}
 	}
 	
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#set(java.lang.String)
 	 */
 	public void set(String text) {
-		fLines.clear();
-		if (text != null) {
-			fTextLength= text.length();
-			createLines(text, 0, 0);
+		if (hasActiveRewriteSession()) {
+			fPendingRequests.clear();
+			fPendingRequests.add(new Request(text));
+		} else {
+			fLines.clear();
+			if (text != null) {
+				fTextLength= text.length();
+				createLines(text, 0, 0);
+			}
+		}
+	}
+	
+	
+	/*
+	 * @see org.eclipse.jface.text.ILineTrackerExtension#startRewriteSession(java.lang.Object)
+	 */
+	public final void startRewriteSession(Object sessionId) {
+		if (fActiveRewriteSessions == null) {
+			fActiveRewriteSessions= new ArrayList(2);
+			fActiveRewriteSessions.add(sessionId);
+			fPendingRequests= new ArrayList(20);
+		} else if (!fActiveRewriteSessions.contains(sessionId)) {
+			fActiveRewriteSessions.add(sessionId);
 		}
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.ILineTracker#getLineDelimiter(int)
+	 * @see org.eclipse.jface.text.ILineTrackerExtension#stopRewriteSession(java.lang.Object, java.lang.String)
 	 */
-	public String getLineDelimiter(int line) throws BadLocationException {
+	public final void stopRewriteSession(Object sessionId, String text) {
+		if (fActiveRewriteSessions != null) {
+			fActiveRewriteSessions.remove(sessionId);
+			if (fActiveRewriteSessions.isEmpty()) {
+				fActiveRewriteSessions= null;
+				fPendingRequests= null;
+				set(text);
+			}
+		}
+	}
+	
+	/**
+	 * Not yet for public use. API under construction.
+	 * 
+	 * @return <code>true</code> if there are active rewrite session,
+	 *         <code>false</code> otherwise
+	 * @since 3.1
+	 */
+	protected final boolean hasActiveRewriteSession() {
+		return fActiveRewriteSessions != null;
+	}
+	
+	/**
+	 * Not yet for public use. API under construction.
+	 * 
+	 * @throws BadLocationException in case the recorded requests cannot be
+	 *             processed correctly
+	 * @since 3.1
+	 */
+	protected final void flushRewriteSessions() throws BadLocationException {
+		if (!hasActiveRewriteSession())
+			return;
 		
-		int lines= fLines.size();
-		
-		if (line < 0 || line > lines)
-			throw new BadLocationException();
-			
-		if (lines == 0)
-			return null;
-			
-		if (line == lines)
-			return null;
-					
-		Line l= (Line) fLines.get(line);
-		return l.delimiter;
+		try {
+			for (Iterator e= fPendingRequests.iterator(); e.hasNext();) {
+				Request request= (Request) e.next();
+				if (request.isReplaceRequest())
+					replace(request.offset, request.length, request.text);
+				else
+					set(request.text);
+			}
+		} finally {
+			fPendingRequests= null;
+			fActiveRewriteSessions= null;
+		}
 	}
 }

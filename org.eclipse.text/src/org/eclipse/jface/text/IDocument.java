@@ -80,6 +80,9 @@ package org.eclipse.jface.text;
  * <li> {@link org.eclipse.jface.text.IDocumentExtension3} since version 3.0 replacing the original
  *      partitioning concept by allowing multiple partitionings at the same time and introducing zero-
  *      length partitions in conjunction with the distinction between open and closed partitions. </li>
+ * <li> {@link org.eclipse.jface.text.IDocumentExtension4} since version 3.1 introducing the
+ *      concept of rewrite sessions. A rewrite session is a sequence of document replace operations
+ *      that form a semantic unit.</li>
  * </ul>
  * 
  * Clients may implement this interface and its extension interfaces or use the default
