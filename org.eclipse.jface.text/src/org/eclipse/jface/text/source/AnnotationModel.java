@@ -131,6 +131,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
     
     /*
      * @see org.eclipse.jface.text.ISynchronizable#setLockObject(java.lang.Object)
+	 * @since 3.0
      */
     public void setLockObject(Object lockObject) {
         getAnnotationMap().setLockObject(lockObject);
@@ -599,6 +600,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension#modifyAnnotationPosition(org.eclipse.jface.text.source.Annotation, org.eclipse.jface.text.Position)
+	 * @since 3.0
 	 */
 	public void modifyAnnotationPosition(Annotation annotation, Position position) {
 		modifyAnnotationPosition(annotation, position, true);

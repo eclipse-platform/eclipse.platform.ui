@@ -127,7 +127,10 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		
 		/** The list of listeners added to this canvas. */
 		private List fCachedListeners= new ArrayList();
-		/** Internal listener for opening the context menu. */
+		/**
+		 * Internal listener for opening the context menu.
+		 * @since 3.0
+		 */
 		private Listener fMenuDetectListener;
 		
 		/**
@@ -780,6 +783,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 
 	/*
 	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getHover()
+	 * @since 3.0
 	 */
 	public IAnnotationHover getHover() {
 		return null;

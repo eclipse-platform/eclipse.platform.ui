@@ -407,6 +407,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * for the first time, the return value is also <code>true</code>.
 	 * 
 	 * @return whether the number of digits has been changed
+	 * @since 3.0
 	 */
 	protected boolean updateNumberOfDigits() {
 		if (fCachedTextViewer == null)
@@ -677,6 +678,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * 
 	 * @param line the line number for which the line number string is generated
 	 * @return the string to be printed on the line number bar for <code>line</code>
+	 * @since 3.0
 	 */
 	protected String createDisplayString(int line) {
 		return Integer.toString(line + 1);

@@ -581,6 +581,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 * its <code>dispose</code> method.
 	 * 
 	 * @return The new formatting context
+	 * @since 3.0
 	 */
 	protected IFormattingContext createFormattingContext() {
 		return new FormattingContext();	

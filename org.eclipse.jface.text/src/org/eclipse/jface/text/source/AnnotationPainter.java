@@ -236,7 +236,10 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private Map fHighlightedDecorationsMap= new HashMap(); // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=50767
 	/** The internal color table */
 	private Map fColorTable= new HashMap();
-	/** The list of configured annotation types for being painted by this painter */
+	/**
+	 * The list of configured annotation types for being painted by this painter.
+	 * @since 3.0
+	 */
 	private Set fConfiguredAnnotationTypes= new HashSet();
 	/**
 	 * The list of allowed annotation types for being painted by this painter.
@@ -693,6 +696,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * 
 	 * @param annotationType the annotation type
 	 * @return the color
+	 * @since 3.0
 	 */
 	private Color findColor(Object annotationType) {
 		Color color= (Color) fColorTable.get(annotationType);
@@ -718,6 +722,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * Recomputes the squiggles to be drawn and redraws them.
 	 * 
 	 * @param event the annotation model event
+	 * @since 3.0
 	 */
 	private void updatePainting(AnnotationModelEvent event) {
 		disablePainting(true);

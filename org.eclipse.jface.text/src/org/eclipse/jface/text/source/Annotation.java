@@ -30,6 +30,10 @@ import org.eclipse.swt.widgets.Canvas;
  */
 public class Annotation {
 	
+	/**
+	 * Constant for unknown annotation types.
+	 * @since 3.0
+	 */
 	public final static String TYPE_UNKNOWN= "org.eclipse.text.annotation.unknown";  //$NON-NLS-1$
 	
 	/**

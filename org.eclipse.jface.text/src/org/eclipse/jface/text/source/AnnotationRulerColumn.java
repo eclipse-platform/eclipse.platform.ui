@@ -252,6 +252,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * Hook method for a mouse click event on the given ruler line.
 	 * 
 	 * @param rulerLine the ruler line
+	 * @since 3.0
 	 */
 	protected void mouseClicked(int rulerLine) {
 	}
@@ -608,6 +609,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	
 	/*
 	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#getLineOfLastMouseButtonActivity()
+	 * @since 3.0
 	 */
 	public int getLineOfLastMouseButtonActivity() {
 		return fParentRuler.getLineOfLastMouseButtonActivity();
@@ -615,6 +617,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	
 	/*
 	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#toDocumentLineNumber(int)
+	 * @sine 3.0
 	 */
 	public int toDocumentLineNumber(int y_coordinate) {
 		return fParentRuler.toDocumentLineNumber(y_coordinate);
@@ -677,6 +680,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 
 	/*
 	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getHover()
+	 * @since 3.0
 	 */
 	public IAnnotationHover getHover() {
 		return fHover;
@@ -684,6 +688,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	
 	/**
 	 * @param hover The hover to set.
+	 * @since 3.0
 	 */
 	public void setHover(IAnnotationHover hover) {
 		fHover= hover;

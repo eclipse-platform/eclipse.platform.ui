@@ -157,6 +157,7 @@ public class AnnotationModelEvent {
 	 * 
 	 * @param annotation the removed annotation
 	 * @return the position of the removed annotation or <code>null</code>
+	 * @since 3.0
 	 */
 	public Position getPositionOfRemovedAnnotation(Annotation annotation) {
 		return (Position) fRemovedAnnotations.get(annotation);
@@ -208,6 +209,7 @@ public class AnnotationModelEvent {
 	 * model might have changed.
 	 * 
 	 * @return <code>true</code> if world change, <code>false</code> otherwise
+	 * @since 3.0
 	 */
 	public boolean isWorldChange() {
 		return fIsWorldChange;
@@ -227,6 +229,7 @@ public class AnnotationModelEvent {
 	 * Returns whether this annotation model event is still valid.
 	 * 
 	 * @return <code>true</code> if this event is still valid, <code>false</code> otherwise
+	 * @since 3.0
 	 */
 	public boolean isValid() {
 		if (fModificationStamp != null && fAnnotationModel instanceof IAnnotationModelExtension) {
@@ -239,6 +242,8 @@ public class AnnotationModelEvent {
 	/**
 	 * Seals this event. Any direct modification to the annotation model after the event has been sealed
 	 * invalidates this event.
+	 *
+	 * @since 3.0
 	 */
 	public void markSealed() {
 		if (fAnnotationModel instanceof IAnnotationModelExtension) {

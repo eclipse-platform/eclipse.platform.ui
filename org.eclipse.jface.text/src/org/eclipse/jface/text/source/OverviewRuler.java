@@ -250,9 +250,15 @@ public class OverviewRuler implements IOverviewRuler {
 	private IAnnotationAccess fAnnotationAccess;
 	/** The header painter */
 	private HeaderPainter fHeaderPainter;
-	/** The list of annotation types to be shown in this ruler */
+	/**
+	 * The list of annotation types to be shown in this ruler.
+	 * @since 3.0
+	 */
 	private Set fConfiguredAnnotationTypes= new HashSet();
-	/** The list of annotation types to be shown in the header of this ruler */
+	/**
+	 * The list of annotation types to be shown in the header of this ruler.
+	 * @since 3.0
+	 */
 	private Set fConfiguredHeaderAnnotationTypes= new HashSet();
 	/** The mapping between annotation types and colors */
 	private Map fAnnotationTypes2Colors= new HashMap();
@@ -267,7 +273,6 @@ public class OverviewRuler implements IOverviewRuler {
 	/**
 	 * All available layers sorted by layer.
 	 * This list may contain duplicates.
-	 * 
 	 * @since 3.0
 	 */
 	private List fLayersSortedByLayer= new ArrayList();
@@ -874,6 +879,7 @@ public class OverviewRuler implements IOverviewRuler {
 	 * 
 	 * @param annotationType the annotation type
 	 * @return <code>true</code> if annotation of the given type should be skipped
+	 * @since 3.0
 	 */
 	private boolean skipInHeader(Object annotationType) {
 		return !contains(annotationType, fAllowedHeaderAnnotationTypes, fConfiguredHeaderAnnotationTypes);
@@ -995,6 +1001,7 @@ public class OverviewRuler implements IOverviewRuler {
 	 * 
 	 * @param annotationType the annotation type
 	 * @return the color
+	 * @since 3.0
 	 */
 	private Color findColor(Object annotationType) {
 		Color color= (Color) fAnnotationTypes2Colors.get(annotationType);

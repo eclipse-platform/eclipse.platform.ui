@@ -121,6 +121,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	 * 
 	 * @param width the width of the vertical ruler
 	 * @param annotationAcccess the annotation access
+	 * @since 3.0
 	 */
 	public VerticalRuler(int width, IAnnotationAccess annotationAcccess) {
 		fWidth= width;

@@ -53,6 +53,8 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * The  information control closer for the hover information. Closes the information control as 
 	 * soon as the mouse pointer leaves the subject area, a mouse button is pressed, the user presses a key,
 	 * or the subject control is resized or moved.
+	 *
+	 * @since 3.0
 	 */
 	protected class Closer extends MouseTrackAdapter 
 	implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener, DisposeListener {
@@ -538,6 +540,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		
 	/*
 	 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeLocation(org.eclipse.swt.graphics.Rectangle, org.eclipse.swt.graphics.Point, org.eclipse.jface.text.AbstractInformationControlManager.Anchor)
+	 * @since 3.0
 	 */
 	protected Point computeLocation(Rectangle subjectArea, Point controlSize, Anchor anchor) {
 		MouseEvent event= getHoverEvent();
