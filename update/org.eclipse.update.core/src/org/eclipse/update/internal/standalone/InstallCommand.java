@@ -104,6 +104,7 @@ public class InstallCommand extends ScriptedCommand {
 	 */
 	public boolean run(IProgressMonitor monitor) {
 		try {
+			monitor.beginTask("Installing feature", 4);
 			searchRequest.performSearch(collector, new SubProgressMonitor(monitor,1));
 			IInstallFeatureOperation[] operations = collector.getOperations();
 			if (operations == null || operations.length == 0) {
@@ -144,7 +145,7 @@ public class InstallCommand extends ScriptedCommand {
 					.createBatchInstallOperation(
 					operations);
 			try {
-				installOperation.execute(monitor, this);
+				installOperation.execute(new SubProgressMonitor(monitor,3), this);
 				System.out.println(
 					"Feature "
 						+ featureId
@@ -161,6 +162,8 @@ public class InstallCommand extends ScriptedCommand {
 			StandaloneUpdateApplication.exceptionLogged();
 			UpdateCore.log(ce);
 			return false;
+		} finally {
+			monitor.done();
 		}
 	}
 
