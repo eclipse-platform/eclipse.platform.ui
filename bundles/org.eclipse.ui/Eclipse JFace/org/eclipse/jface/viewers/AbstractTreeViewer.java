@@ -1227,7 +1227,12 @@ protected void updateChildren(Widget widget, Object parent, Object[] elementChil
 		Object oldElement = item.getData();
 		if (oldElement != null) {
 			Object newElement = elementChildren[i];
-			if (!newElement.equals(oldElement)) {
+			if (newElement.equals(oldElement)) {
+				// update the data to be the new element, since although the elements 
+				// may be equal, they may still have different labels or children
+				item.setData(newElement);
+				mapElement(newElement, item);
+			} else {
 				disassociate(item);
 			}
 		}
