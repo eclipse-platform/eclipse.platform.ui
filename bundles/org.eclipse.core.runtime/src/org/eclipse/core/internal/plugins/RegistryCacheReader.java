@@ -262,7 +262,7 @@ public boolean interpretHeaderInformation(DataInputStream in) {
 		return false;
 	}
 }
-public ConfigurationElementModel readConfigurationElement(DataInputStream in) {
+public ConfigurationElementModel readConfigurationElement(DataInputStream in, boolean debugFlag) {
 	ConfigurationElementModel configurationElement = cacheFactory.createConfigurationElement();
 	// Use this flag to determine if the read-only flag should be set.  You
 	// can't set it now or you won't be able to add anything more to this
@@ -294,27 +294,63 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in) {
 				case PROPERTIES_LENGTH_LABEL :
 					int propertiesLength = in.readInt();
 					ConfigurationPropertyModel[] properties = new ConfigurationPropertyModel[propertiesLength];
-					for (int i = 0; i < propertiesLength; i++) {
-						properties[i] = readConfigurationProperty(in);
+					for (int i = 0; i < propertiesLength && !done; i++) {
+						properties[i] = readConfigurationProperty(in, debugFlag);
+						if (properties[i] == null) {
+							// Something went wrong reading this configuration
+							// property
+							if (debugFlag) {
+								String name = configurationElement.getName();
+								if (name == null)
+									name = new String ("<unknown name>");
+								debug ("Trouble reading configuration property #" + i + " for configuration element " + name);
+							}
+							configurationElement = null;
+							done = true;
+						}
 					}
-					configurationElement.setProperties(properties);
+					if (configurationElement != null)
+						configurationElement.setProperties(properties);
 					properties = null;
 					break;
 				case SUBELEMENTS_LENGTH_LABEL :
 					int subElementsLength = in.readInt();
 					ConfigurationElementModel[] subElements = new ConfigurationElementModel[subElementsLength];
-					for (int i = 0; i < subElementsLength; i++) {
+					for (int i = 0; i < subElementsLength && !done; i++) {
 						// Do we have an index or a real configuration element?
-						switch (in.readByte()) {
+						byte subInByte = in.readByte();
+						switch (subInByte) {
 							case CONFIGURATION_ELEMENT_LABEL :
-								subElements[i] = readConfigurationElement(in);
+								subElements[i] = readConfigurationElement(in, debugFlag);
+								if (subElements[i] == null) {
+									if (debugFlag) {
+										String name = configurationElement.getName();
+										if (name == null)
+											name = new String ("<unknown name>");
+										debug ("Unable to read subelement #" + i + " for configuration element " + name);
+									}
+									configurationElement = null;
+									done = true;
+								}
 								break;
 							case CONFIGURATION_ELEMENT_INDEX_LABEL :
 								subElements[i] = (ConfigurationElementModel) objectTable.get(in.readInt());
 								break;
+							default:
+								// We found something we weren't expecting
+								if (debugFlag) {
+									String name = configurationElement.getName();
+									if (name == null)
+										name = new String ("<unknown name>");
+									debug ("Unexpected byte code " + decipherLabel(subInByte) + "reading subelements of configuration element" + name);
+								}
+								done = true;
+								configurationElement = null;
+								break;
 						}
 					}
-					configurationElement.setSubElements(subElements);
+					if (configurationElement != null)
+						configurationElement.setSubElements(subElements);
 					subElements = null;
 					break;
 				case CONFIGURATION_ELEMENT_PARENT_LABEL :
@@ -323,6 +359,18 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in) {
 					break;
 				case CONFIGURATION_ELEMENT_END_LABEL :
 					done = true;
+					break;
+				default:
+					// We got something unexpected
+					if (debugFlag) {
+						String name = configurationElement.getName();
+						if (name == null)
+							name = new String ("<unknown name>");
+						debug ("Unexpected byte code " + decipherLabel(inByte) + "reading configuration element" + name);
+					}
+					done = true;
+					configurationElement = null;
+					break;
 			}
 		}
 	} catch (IOException ioe) {
@@ -331,7 +379,7 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in) {
 	}
 	return configurationElement;
 }
-public ConfigurationPropertyModel readConfigurationProperty(DataInputStream in) {
+public ConfigurationPropertyModel readConfigurationProperty(DataInputStream in, boolean debugFlag) {
 	ConfigurationPropertyModel configurationProperty = cacheFactory.createConfigurationProperty();
 	// Use this flag to determine if the read-only flag should be set.  You
 	// can't set it now or you won't be able to add anything more to this
@@ -348,6 +396,8 @@ public ConfigurationPropertyModel readConfigurationProperty(DataInputStream in) 
 				break;
 			}
 			switch (inByte) {
+				case CONFIGURATION_PROPERTY_LABEL:
+					break;
 				case READONLY_LABEL :
 					if (in.readBoolean()) {
 						setReadOnlyFlag = true;
@@ -361,6 +411,18 @@ public ConfigurationPropertyModel readConfigurationProperty(DataInputStream in) 
 					break;
 				case CONFIGURATION_PROPERTY_END_LABEL :
 					done = true;
+					break;
+				default:
+					// We got something unexpected
+					if (debugFlag) {
+						String name = configurationProperty.getName();
+						if (name == null)
+							name = new String ("<unknown name>");
+						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading configuration property " + name);
+					}
+					configurationProperty = null;
+					done = true;
+					break;
 			}
 		}
 	} catch (IOException ioe) {
@@ -369,7 +431,7 @@ public ConfigurationPropertyModel readConfigurationProperty(DataInputStream in) 
 	}
 	return configurationProperty;
 }
-public ExtensionModel readExtension(DataInputStream in) {
+public ExtensionModel readExtension(DataInputStream in, boolean debugFlag) {
 	ExtensionModel extension = cacheFactory.createExtension();
 	addToObjectTable(extension);
 	// Use this flag to determine if the read-only flag should be set.  You
@@ -404,41 +466,112 @@ public ExtensionModel readExtension(DataInputStream in) {
 				case SUBELEMENTS_LENGTH_LABEL :
 					int subElementsLength = in.readInt();
 					ConfigurationElementModel[] subElements = new ConfigurationElementModel[subElementsLength];
-					for (int i = 0; i < subElementsLength; i++) {
+					for (int i = 0; i < subElementsLength && !done; i++) {
 						// Do we have a configuration element or an index into
 						// objectTable?
-						switch (in.readByte()) {
+						byte subInByte = in.readByte();
+						switch (subInByte) {
 							case CONFIGURATION_ELEMENT_LABEL :
-								subElements[i] = readConfigurationElement(in);
+								subElements[i] = readConfigurationElement(in, debugFlag);
+								if (subElements[i] == null) {
+									if (debugFlag) {
+										String name = extension.getName();
+										if (name == null)
+											name = new String("<unknown name>");
+										debug ("Unable to read subelement #" + i + " for extension " + name);
+									}
+									extension = null;
+									done = true;
+								}
 								break;
 							case CONFIGURATION_ELEMENT_INDEX_LABEL :
 								subElements[i] = (ConfigurationElementModel) objectTable.get(in.readInt());
 								break;
+							default:
+								// We got something unexpected
+								if (debugFlag) {
+									String name = extension.getName();
+									if (name == null)
+										name = new String("<unknown name>");
+									debug ("Unexpected byte code " + decipherLabel(subInByte) + " reading subelements for extension " + name);
+								}
+								extension = null;
+								done = true;
+								break;
 						}
 					}
-					extension.setSubElements(subElements);
+					if (extension != null)
+						extension.setSubElements(subElements);
 					subElements = null;
 					break;
 				case EXTENSION_PARENT_LABEL :
 					// Either there is a plugin or there is an index into the
 					// objectTable
-					switch (in.readByte()) {
+					byte subByte = in.readByte();
+					switch (subByte) {
 						case PLUGIN_LABEL :
-							extension.setParent((PluginModel)readPluginDescriptor(in));
+							PluginModel parent = (PluginModel)readPluginDescriptor(in, debugFlag);
+							if (parent == null) {
+								if (debugFlag) {
+									String name = extension.getName();
+									if (name == null)
+										name = new String("<unknown name>");
+									debug ("Trouble reading parent plugin for extension " + name);
+								}
+								done = true;
+								extension = null;
+							} else {
+								extension.setParent(parent);
+							}
 							break;
 						case PLUGIN_INDEX_LABEL :
 							extension.setParent((PluginModel)objectTable.get(in.readInt()));
 							break;
 						case FRAGMENT_LABEL :
-							extension.setParent((PluginModel)readPluginFragment(in));
+							PluginModel fragmentParent = (PluginModel)readPluginFragment(in, debugFlag);
+							if (fragmentParent == null) {
+								if (debugFlag) {
+									String name = extension.getName();
+									if (name == null)
+										name = new String("<unknown name>");
+									debug ("Trouble reading parent fragment for extension " + name);
+								}
+								done = true;
+								extension = null;
+							} else {
+								extension.setParent(fragmentParent);
+							}
 							break;
 						case FRAGMENT_INDEX_LABEL :
 							extension.setParent((PluginModel)objectTable.get(in.readInt()));
+							break;
+						default: 
+							// We got something unexpected
+							if (debugFlag) {
+								String name = extension.getName();
+								if (name == null)
+									name = new String("<unknown name>");
+								debug ("Unexpected byte code " + decipherLabel(subByte) + "reading parent of extension " + name);
+							}
+							done = true;
+							extension = null;
 							break;
 					}
 					break;
 				case EXTENSION_END_LABEL :
 					done = true;
+					break;
+				default:
+					// We got something unexpected
+					if (debugFlag) {
+						String name = extension.getName();
+						if (name == null)
+							name = new String ("<unknown name>");
+						debug ("Unexpected byte code " + decipherLabel(inByte) + "reading extension" + name);
+					}
+					done = true;
+					extension = null;
+					break;
 			}
 		}
 	} catch (IOException ioe) {
@@ -447,7 +580,7 @@ public ExtensionModel readExtension(DataInputStream in) {
 	}
 	return extension;
 }
-public ExtensionPointModel readExtensionPoint(DataInputStream in) {
+public ExtensionPointModel readExtensionPoint(DataInputStream in, boolean debugFlag) {
 	ExtensionPointModel extPoint = cacheFactory.createExtensionPoint();
 	addToObjectTable(extPoint);
 
@@ -486,19 +619,42 @@ public ExtensionPointModel readExtensionPoint(DataInputStream in) {
 					break;
 				case EXTENSION_POINT_EXTENSIONS_LABEL :
 					ExtensionModel[] extensions = new ExtensionModel[extensionLength];
-					for (int i = 0; i < extensionLength; i++) {
-						switch (in.readByte()) {
+					for (int i = 0; i < extensionLength && !done; i++) {
+						byte subByte = in.readByte();
+						switch (subByte) {
 							// Either this is an extension or an index into
 							// the objectTable
 							case PLUGIN_EXTENSION_LABEL :
-								extensions[i] = readExtension(in);
+								extensions[i] = readExtension(in, debugFlag);
+								if (extensions[i] == null) {
+									if (debugFlag) {
+										String name = extPoint.getName();
+										if (name == null)
+											name = new String ("<unknown name>");
+										debug ("Unable to read extension #" + i + " for extension point " + name);
+									}
+									done = true;
+									extPoint = null;
+								}
 								break;
 							case EXTENSION_INDEX_LABEL :
 								extensions[i] = (ExtensionModel) objectTable.get(in.readInt());
 								break;
+							default:
+								// We got something unexpected
+								if (debugFlag) {
+									String name = extPoint.getName();
+									if (name == null)
+										name = new String ("<unknown name>");
+									debug ("Unexpected byte code " + decipherLabel(subByte) + "reading extension #" + i + " for extension point " + name);
+								}
+								extPoint = null;
+								done = true;
+								break;
 						}
 					}
-					extPoint.setDeclaredExtensions(extensions);
+					if (extPoint != null)
+						extPoint.setDeclaredExtensions(extensions);
 					break;
 				case EXTENSION_POINT_PARENT_LABEL :
 					// We know this plugin or fragment is already in the objectTable
@@ -506,6 +662,18 @@ public ExtensionPointModel readExtensionPoint(DataInputStream in) {
 					break;
 				case EXTENSION_POINT_END_LABEL :
 					done = true;
+					break;
+				default:
+					// We got something unexpected
+					if (debugFlag) {
+						String name = extPoint.getName();
+						if (name == null)
+							name = new String ("<unknown name>");
+						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading extension point " + name);
+					}
+					extPoint = null;
+					done = true;
+					break;
 			}
 		}
 	} catch (IOException ioe) {
@@ -514,7 +682,7 @@ public ExtensionPointModel readExtensionPoint(DataInputStream in) {
 	}
 	return extPoint;
 }
-public LibraryModel readLibrary(DataInputStream in) {
+public LibraryModel readLibrary(DataInputStream in, boolean debugFlag) {
 	LibraryModel library = cacheFactory.createLibrary();
 	// Use this flag to determine if the read-only flag should be set.  You
 	// can't set it now or you won't be able to add anything more to this
@@ -548,14 +716,37 @@ public LibraryModel readLibrary(DataInputStream in) {
 					break;
 				case LIBRARY_EXPORTS_LABEL :
 					String[] exports = new String[exportsLength];
-					for (int i = 0; i < exportsLength; i++) {
+					for (int i = 0; i < exportsLength && !done; i++) {
 						exports[i] = in.readUTF();
+						if (exports[i] == null) {
+							if (debugFlag) {
+								String name = library.getName();
+								if (name == null)
+									name = new String ("<unknown name>");
+								debug ("Empty export string for export #" + i + " reading library " + name);
+							}
+							done = true;
+							library = null;
+						}
 					}
-					library.setExports(exports);
+					if (!done)
+						library.setExports(exports);
 					exports = null;
 					break;
 				case LIBRARY_END_LABEL :
 					done = true;
+					break;
+				default:
+					// We got something unexpected
+					if (debugFlag) {
+						String name = library.getName();
+						if (name == null)
+							name = new String ("<unknown name>");
+						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading library " + name);
+					}
+					library = null;
+					done = true;
+					break;
 			}
 		}
 	} catch (IOException ioe) {
@@ -564,7 +755,7 @@ public LibraryModel readLibrary(DataInputStream in) {
 	}
 	return library;
 }
-public PluginDescriptorModel readPluginDescriptor(DataInputStream in) {
+public PluginDescriptorModel readPluginDescriptor(DataInputStream in, boolean debugFlag) {
 	PluginDescriptorModel plugin = cacheFactory.createPluginDescriptor();
 	addToObjectTable(plugin);
 	// Use this flag to determine if the read-only flag should be set.  You
@@ -609,41 +800,93 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in) {
 					plugin.setEnabled(in.readBoolean());
 					break;
 				case PLUGIN_REQUIRES_LABEL :
-					PluginPrerequisiteModel requires = readPluginPrerequisite(in);
-					// Add this prerequisite to the end of the requires list
-					PluginPrerequisiteModel[] requiresList = plugin.getRequires();
-					PluginPrerequisiteModel[] newRequiresValues = null;
-					if (requiresList == null) {
-						newRequiresValues = new PluginPrerequisiteModel[1];
-						newRequiresValues[0] = requires;
+					PluginPrerequisiteModel requires = readPluginPrerequisite(in, debugFlag);
+					if (requires == null) {
+						// Something went wrong
+						if (debugFlag) {
+							String name = plugin.getName();
+							if (name == null)
+								name = new String ("<unknown name>");
+							debug ("Unable to read prerequisite for plugin " + name);
+						}
+						plugin = null;
+						done = true;
 					} else {
-						newRequiresValues = new PluginPrerequisiteModel[requiresList.length + 1];
-						System.arraycopy(requiresList, 0, newRequiresValues, 0, requiresList.length);
-						newRequiresValues[requiresList.length] = requires;
+						// Add this prerequisite to the end of the requires list
+						PluginPrerequisiteModel[] requiresList = plugin.getRequires();
+						PluginPrerequisiteModel[] newRequiresValues = null;
+						if (requiresList == null) {
+							newRequiresValues = new PluginPrerequisiteModel[1];
+							newRequiresValues[0] = requires;
+						} else {
+							newRequiresValues = new PluginPrerequisiteModel[requiresList.length + 1];
+							System.arraycopy(requiresList, 0, newRequiresValues, 0, requiresList.length);
+							newRequiresValues[requiresList.length] = requires;
+						}
+						plugin.setRequires(newRequiresValues);
+						requiresList = newRequiresValues = null;
 					}
-					plugin.setRequires(newRequiresValues);
 					requires = null;
-					requiresList = newRequiresValues = null;
 					break;
 				case PLUGIN_LIBRARY_LABEL :
-					LibraryModel library = readLibrary(in);
-					// Add this library to the end of the runtime list
-					LibraryModel[] libraryList = plugin.getRuntime();
-					LibraryModel[] newLibraryValues = null;
-					if (libraryList == null) {
-						newLibraryValues = new LibraryModel[1];
-						newLibraryValues[0] = library;
+					LibraryModel library = readLibrary(in, debugFlag);
+					if (library == null) {
+						// Something went wrong reading this library
+						if (debugFlag) {
+							String name = plugin.getName();
+							if (name == null)
+								name = new String ("<unknown name>");
+							debug ("Unable to read library for plugin " + name);
+						}
+						plugin = null;
+						done = true;
 					} else {
-						newLibraryValues = new LibraryModel[libraryList.length + 1];
-						System.arraycopy(libraryList, 0, newLibraryValues, 0, libraryList.length);
-						newLibraryValues[libraryList.length] = library;
+						// Add this library to the end of the runtime list
+						LibraryModel[] libraryList = plugin.getRuntime();
+						LibraryModel[] newLibraryValues = null;
+						if (libraryList == null) {
+							newLibraryValues = new LibraryModel[1];
+							newLibraryValues[0] = library;
+						} else {
+							newLibraryValues = new LibraryModel[libraryList.length + 1];
+							System.arraycopy(libraryList, 0, newLibraryValues, 0, libraryList.length);
+							newLibraryValues[libraryList.length] = library;
+						}
+						plugin.setRuntime(newLibraryValues);
+						libraryList = newLibraryValues = null;
 					}
-					plugin.setRuntime(newLibraryValues);
 					library = null;
-					libraryList = newLibraryValues = null;
 					break;
 				case PLUGIN_EXTENSION_LABEL :
-					ExtensionModel extension = readExtension(in);
+					ExtensionModel extension = readExtension(in, debugFlag);
+					if (extension == null) {
+						// Something went wrong reading this extension
+						if (debugFlag) {
+							String name = plugin.getName();
+							if (name == null)
+								name = new String ("<unknown name>");
+							debug ("Unable to read extension for plugin " + name);
+						}
+						plugin = null;
+						done = true;
+					} else {
+						ExtensionModel[] extList = plugin.getDeclaredExtensions();
+						ExtensionModel[] newExtValues = null;
+						if (extList == null) {
+							newExtValues = new ExtensionModel[1];
+							newExtValues[0] = extension;
+						} else {
+							newExtValues = new ExtensionModel[extList.length + 1];
+							System.arraycopy(extList, 0, newExtValues, 0, extList.length);
+							newExtValues[extList.length] = extension;
+						}
+						plugin.setDeclaredExtensions(newExtValues);
+						extList = newExtValues = null;
+					}
+					extension = null;
+					break;
+				case EXTENSION_INDEX_LABEL :
+					extension = (ExtensionModel) objectTable.get(in.readInt());
 					ExtensionModel[] extList = plugin.getDeclaredExtensions();
 					ExtensionModel[] newExtValues = null;
 					if (extList == null) {
@@ -658,60 +901,68 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in) {
 					extension = null;
 					extList = newExtValues = null;
 					break;
-				case EXTENSION_INDEX_LABEL :
-					extension = (ExtensionModel) objectTable.get(in.readInt());
-					extList = plugin.getDeclaredExtensions();
-					newExtValues = null;
-					if (extList == null) {
-						newExtValues = new ExtensionModel[1];
-						newExtValues[0] = extension;
-					} else {
-						newExtValues = new ExtensionModel[extList.length + 1];
-						System.arraycopy(extList, 0, newExtValues, 0, extList.length);
-						newExtValues[extList.length] = extension;
-					}
-					plugin.setDeclaredExtensions(newExtValues);
-					extension = null;
-					extList = newExtValues = null;
-					break;
 				case PLUGIN_EXTENSION_POINT_LABEL :
-					ExtensionPointModel extensionPoint = readExtensionPoint(in);
-					// Add this extension point to the end of the extension point list
-					ExtensionPointModel[] extPointList = plugin.getDeclaredExtensionPoints();
-					ExtensionPointModel[] newExtPointValues = null;
-					if (extPointList == null) {
-						newExtPointValues = new ExtensionPointModel[1];
-						newExtPointValues[0] = extensionPoint;
+					ExtensionPointModel extensionPoint = readExtensionPoint(in, debugFlag);
+					if (extensionPoint == null) {
+						// Something went wrong reading this extension
+						if (debugFlag) {
+							String name = plugin.getName();
+							if (name == null)
+								name = new String ("<unknown name>");
+							debug ("Unable to read extension point for plugin " + name);
+						}
+						plugin = null;
+						done = true;
 					} else {
-						newExtPointValues = new ExtensionPointModel[extPointList.length + 1];
-						System.arraycopy(extPointList, 0, newExtPointValues, 0, extPointList.length);
-						newExtPointValues[extPointList.length] = extensionPoint;
+						// Add this extension point to the end of the extension point list
+						ExtensionPointModel[] extPointList = plugin.getDeclaredExtensionPoints();
+						ExtensionPointModel[] newExtPointValues = null;
+						if (extPointList == null) {
+							newExtPointValues = new ExtensionPointModel[1];
+							newExtPointValues[0] = extensionPoint;
+						} else {
+							newExtPointValues = new ExtensionPointModel[extPointList.length + 1];
+							System.arraycopy(extPointList, 0, newExtPointValues, 0, extPointList.length);
+							newExtPointValues[extPointList.length] = extensionPoint;
+						}
+						plugin.setDeclaredExtensionPoints(newExtPointValues);
+						extensionPoint = null;
+						extPointList = newExtPointValues = null;
 					}
-					plugin.setDeclaredExtensionPoints(newExtPointValues);
-					extensionPoint = null;
-					extPointList = newExtPointValues = null;
 					break;
 				case FRAGMENT_LABEL :
-					PluginFragmentModel fragment = readPluginFragment(in);
-					// Add this fragment to the end of the fragment list
-					PluginFragmentModel[] fragmentList = plugin.getFragments();
-					PluginFragmentModel[] newFragmentValues = null;
-					if (fragmentList == null) {
-						newFragmentValues = new PluginFragmentModel[1];
-						newFragmentValues[0] = fragment;
+					PluginFragmentModel fragment = readPluginFragment(in, debugFlag);
+					if (fragment == null) {
+						// Something went wrong reading this fragment
+						if (debugFlag) {
+							String name = plugin.getName();
+							if (name == null)
+								name = new String ("<unknown name>");
+							debug ("Unable to read fragment for plugin " + name);
+						}
+						plugin = null;
+						done = true;
 					} else {
-						newFragmentValues = new PluginFragmentModel[fragmentList.length + 1];
-						System.arraycopy(fragmentList, 0, newFragmentValues, 0, fragmentList.length);
-						newFragmentValues[fragmentList.length] = fragment;
+						// Add this fragment to the end of the fragment list
+						PluginFragmentModel[] fragmentList = plugin.getFragments();
+						PluginFragmentModel[] newFragmentValues = null;
+						if (fragmentList == null) {
+							newFragmentValues = new PluginFragmentModel[1];
+							newFragmentValues[0] = fragment;
+						} else {
+							newFragmentValues = new PluginFragmentModel[fragmentList.length + 1];
+							System.arraycopy(fragmentList, 0, newFragmentValues, 0, fragmentList.length);
+							newFragmentValues[fragmentList.length] = fragment;
+						}
+						plugin.setFragments(newFragmentValues);
+						fragment = null;
+						fragmentList = newFragmentValues = null;
 					}
-					plugin.setFragments(newFragmentValues);
-					fragment = null;
-					fragmentList = newFragmentValues = null;
 					break;
 				case FRAGMENT_INDEX_LABEL :
 					fragment = (PluginFragmentModel) objectTable.get(in.readInt());
-					fragmentList = plugin.getFragments();
-					newFragmentValues = null;
+					PluginFragmentModel[] fragmentList = plugin.getFragments();
+					PluginFragmentModel[] newFragmentValues = null;
 					if (fragmentList == null) {
 						newFragmentValues = new PluginFragmentModel[1];
 						newFragmentValues[0] = fragment;
@@ -729,6 +980,18 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in) {
 					break;
 				case PLUGIN_END_LABEL :
 					done = true;
+					break;
+				default :
+					// We got something unexpected
+					if (debugFlag) {
+						String name = plugin.getName();
+						if (name == null)
+							name = new String ("<unknown name>");
+						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading plugin " + name);
+					}
+					plugin = null;
+					done = true;
+					break;
 			}
 		}
 	} catch (IOException ioe) {
@@ -737,7 +1000,7 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in) {
 	}
 	return plugin;
 }
-public PluginFragmentModel readPluginFragment(DataInputStream in) {
+public PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugFlag) {
 	PluginFragmentModel fragment = cacheFactory.createPluginFragment();
 	addToObjectTable(fragment);
 	// Use this flag to determine if the read-only flag should be set.  You
@@ -785,41 +1048,93 @@ public PluginFragmentModel readPluginFragment(DataInputStream in) {
 					fragment.setMatch(in.readByte());
 					break;
 				case PLUGIN_REQUIRES_LABEL :
-					PluginPrerequisiteModel requires = readPluginPrerequisite(in);
-					// Add this prerequisite to the end of the requires list
-					PluginPrerequisiteModel[] requiresList = fragment.getRequires();
-					PluginPrerequisiteModel[] newRequiresValues = null;
-					if (requiresList == null) {
-						newRequiresValues = new PluginPrerequisiteModel[1];
-						newRequiresValues[0] = requires;
+					PluginPrerequisiteModel requires = readPluginPrerequisite(in, debugFlag);
+					if (requires == null) {
+						// Something went wrong reading the prerequisite
+						if (debugFlag) {
+							String name = fragment.getName();
+							if (name == null)
+								name = new String ("<unknown name>");
+							debug ("Unable to read prerequisite for fragment " + name);
+						}
+						done = true;
+						fragment = null;
 					} else {
-						newRequiresValues = new PluginPrerequisiteModel[requiresList.length + 1];
-						System.arraycopy(requiresList, 0, newRequiresValues, 0, requiresList.length);
-						newRequiresValues[requiresList.length] = requires;
+						// Add this prerequisite to the end of the requires list
+						PluginPrerequisiteModel[] requiresList = fragment.getRequires();
+						PluginPrerequisiteModel[] newRequiresValues = null;
+						if (requiresList == null) {
+							newRequiresValues = new PluginPrerequisiteModel[1];
+							newRequiresValues[0] = requires;
+						} else {
+							newRequiresValues = new PluginPrerequisiteModel[requiresList.length + 1];
+							System.arraycopy(requiresList, 0, newRequiresValues, 0, requiresList.length);
+							newRequiresValues[requiresList.length] = requires;
+						}
+						fragment.setRequires(newRequiresValues);
+						requires = null;
+						requiresList = newRequiresValues = null;
 					}
-					fragment.setRequires(newRequiresValues);
-					requires = null;
-					requiresList = newRequiresValues = null;
 					break;
 				case PLUGIN_LIBRARY_LABEL :
-					LibraryModel library = readLibrary(in);
-					// Add this library to the end of the runtime list
-					LibraryModel[] libraryList = fragment.getRuntime();
-					LibraryModel[] newLibraryValues = null;
-					if (libraryList == null) {
-						newLibraryValues = new LibraryModel[1];
-						newLibraryValues[0] = library;
+					LibraryModel library = readLibrary(in, debugFlag);
+					if (library == null) {
+						// Something went wrong reading this library
+						if (debugFlag) {
+							String name = fragment.getName();
+							if (name == null)
+								name = new String ("<unknown name>");
+							debug ("Unable to read library for fragment " + name);
+						}
+						fragment = null;
+						done = true;
 					} else {
-						newLibraryValues = new LibraryModel[libraryList.length + 1];
-						System.arraycopy(libraryList, 0, newLibraryValues, 0, libraryList.length);
-						newLibraryValues[libraryList.length] = library;
+						// Add this library to the end of the runtime list
+						LibraryModel[] libraryList = fragment.getRuntime();
+						LibraryModel[] newLibraryValues = null;
+						if (libraryList == null) {
+							newLibraryValues = new LibraryModel[1];
+							newLibraryValues[0] = library;
+						} else {
+							newLibraryValues = new LibraryModel[libraryList.length + 1];
+							System.arraycopy(libraryList, 0, newLibraryValues, 0, libraryList.length);
+							newLibraryValues[libraryList.length] = library;
+						}
+						fragment.setRuntime(newLibraryValues);
+						library = null;
+						libraryList = newLibraryValues = null;
 					}
-					fragment.setRuntime(newLibraryValues);
-					library = null;
-					libraryList = newLibraryValues = null;
 					break;
 				case PLUGIN_EXTENSION_LABEL :
-					ExtensionModel extension = readExtension(in);
+					ExtensionModel extension = readExtension(in, debugFlag);
+					if (extension == null) {
+						// Something went wrong reading this extension
+						if (debugFlag) {
+							String name = fragment.getName();
+							if (name == null)
+								name = new String ("<unknown name>");
+							debug ("Unable to read extension for fragment " + name);
+						}
+						fragment = null;
+						done = true;
+					} else {
+						ExtensionModel[] extList = fragment.getDeclaredExtensions();
+						ExtensionModel[] newExtValues = null;
+						if (extList == null) {
+							newExtValues = new ExtensionModel[1];
+							newExtValues[0] = extension;
+						} else {
+							newExtValues = new ExtensionModel[extList.length + 1];
+							System.arraycopy(extList, 0, newExtValues, 0, extList.length);
+							newExtValues[extList.length] = extension;
+						}
+						fragment.setDeclaredExtensions(newExtValues);
+						extension = null;
+						extList = newExtValues = null;
+					}
+					break;
+				case EXTENSION_INDEX_LABEL :
+					extension = (ExtensionModel) objectTable.get(in.readInt());
 					ExtensionModel[] extList = fragment.getDeclaredExtensions();
 					ExtensionModel[] newExtValues = null;
 					if (extList == null) {
@@ -834,44 +1149,52 @@ public PluginFragmentModel readPluginFragment(DataInputStream in) {
 					extension = null;
 					extList = newExtValues = null;
 					break;
-				case EXTENSION_INDEX_LABEL :
-					extension = (ExtensionModel) objectTable.get(in.readInt());
-					extList = fragment.getDeclaredExtensions();
-					newExtValues = null;
-					if (extList == null) {
-						newExtValues = new ExtensionModel[1];
-						newExtValues[0] = extension;
-					} else {
-						newExtValues = new ExtensionModel[extList.length + 1];
-						System.arraycopy(extList, 0, newExtValues, 0, extList.length);
-						newExtValues[extList.length] = extension;
-					}
-					fragment.setDeclaredExtensions(newExtValues);
-					extension = null;
-					extList = newExtValues = null;
-					break;
 				case PLUGIN_EXTENSION_POINT_LABEL :
-					ExtensionPointModel extensionPoint = readExtensionPoint(in);
-					// Add this extension point to the end of the extension point list
-					ExtensionPointModel[] extPointList = fragment.getDeclaredExtensionPoints();
-					ExtensionPointModel[] newExtPointValues = null;
-					if (extPointList == null) {
-						newExtPointValues = new ExtensionPointModel[1];
-						newExtPointValues[0] = extensionPoint;
+					ExtensionPointModel extensionPoint = readExtensionPoint(in, debugFlag);
+					if (extensionPoint == null) {
+						// Something went wrong reading this extension point
+						if (debugFlag) {
+							String name = fragment.getName();
+							if (name == null)
+								name = new String ("<unknown name>");
+							debug ("Unable to read extension point for fragment " + name);
+						}
+						fragment = null;
+						done = true;
 					} else {
-						newExtPointValues = new ExtensionPointModel[extPointList.length + 1];
-						System.arraycopy(extPointList, 0, newExtPointValues, 0, extPointList.length);
-						newExtPointValues[extPointList.length] = extensionPoint;
+						// Add this extension point to the end of the extension point list
+						ExtensionPointModel[] extPointList = fragment.getDeclaredExtensionPoints();
+						ExtensionPointModel[] newExtPointValues = null;
+						if (extPointList == null) {
+							newExtPointValues = new ExtensionPointModel[1];
+							newExtPointValues[0] = extensionPoint;
+						} else {
+							newExtPointValues = new ExtensionPointModel[extPointList.length + 1];
+							System.arraycopy(extPointList, 0, newExtPointValues, 0, extPointList.length);
+							newExtPointValues[extPointList.length] = extensionPoint;
+						}
+						fragment.setDeclaredExtensionPoints(newExtPointValues);
+						extensionPoint = null;
+						extPointList = newExtPointValues = null;
 					}
-					fragment.setDeclaredExtensionPoints(newExtPointValues);
-					extensionPoint = null;
-					extPointList = newExtPointValues = null;
 					break;
 				case PLUGIN_PARENT_LABEL :
 					fragment.setRegistry((PluginRegistryModel) objectTable.get(in.readInt()));
 					break;
 				case FRAGMENT_END_LABEL :
 					done = true;
+					break;
+				default:
+					// We got something unexpected
+					if (debugFlag) {
+						String name = fragment.getName();
+						if (name == null)
+							name = new String ("<unknown name>");
+						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading fragment " + name);
+					}
+					fragment = null;
+					done = true;
+					break;
 			}
 		}
 	} catch (IOException ioe) {
@@ -880,7 +1203,7 @@ public PluginFragmentModel readPluginFragment(DataInputStream in) {
 	}
 	return fragment;
 }
-public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in) {
+public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in, boolean debugFlag) {
 	PluginPrerequisiteModel requires = cacheFactory.createPluginPrerequisite();
 	// Use this flag to determine if the read-only flag should be set.  You
 	// can't set it now or you won't be able to add anything more to this
@@ -925,6 +1248,19 @@ public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in) {
 					break;
 				case REQUIRES_END_LABEL :
 					done = true;
+					break;
+				default:
+					// We got something we didn't expect
+					// Make this an empty prerequisite
+					if (debugFlag) {
+						String name = requires.getName();
+						if (name == null)
+							name = new String ("<unknown name>");
+						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading prerequisite " + name);
+					}
+					done = true;
+					requires = null;
+					break;
 			}
 		}
 	} catch (IOException ioe) {
@@ -958,6 +1294,8 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPa
 				break;
 			}
 			switch (inByte) {
+				case REGISTRY_LABEL:
+					break;
 				case REGISTRY_LAST_MOD_START :
 					if (!readAndCheckLastModified((PluginRegistry)cachedRegistry, in, pluginPath, debugFlag)) {
 						// something has changed and we should discard
@@ -965,6 +1303,8 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPa
 						done = true;
 						cachedRegistry = null;
 					}
+					break;
+				case REGISTRY_LAST_MOD_END :
 					break;
 				case READONLY_LABEL :
 					if (in.readBoolean()) {
@@ -978,8 +1318,16 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPa
 					break;
 				case PLUGIN_LABEL :
 					PluginDescriptorModel plugin = null;
-					if ((plugin = readPluginDescriptor(in)) != null) {
+					if ((plugin = readPluginDescriptor(in,debugFlag)) != null) {
 						cachedRegistry.addPlugin(plugin);
+					} else {
+						// Something went wrong reading this plugin
+						// Invalidate the cache
+						if (debugFlag) {
+							debug ("Unable to read plugin descriptor for plugin registry");
+						}
+						done = true;
+						cachedRegistry = null;
 					}
 					break;
 				case PLUGIN_INDEX_LABEL :
@@ -988,8 +1336,16 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPa
 					break;
 				case FRAGMENT_LABEL :
 					PluginFragmentModel fragment = null;
-					if ((fragment = readPluginFragment(in)) != null) {
+					if ((fragment = readPluginFragment(in, debugFlag)) != null) {
 						cachedRegistry.addFragment(fragment);
+					} else {
+						// Something went wrong reading this fragment
+						// Invalidate the cache
+						if (debugFlag) {
+							debug ("Unable to read fragment descriptor for plugin registry");
+						}
+						done = true;
+						cachedRegistry = null;
 					}
 					break;
 				case FRAGMENT_INDEX_LABEL :
@@ -998,6 +1354,16 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPa
 					break;
 				case REGISTRY_END_LABEL :
 					done = true;
+					break;
+				default:
+					// We got something we weren't expecting
+					// Invalidate this cached registry
+					if (debugFlag) {
+						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading plugin registry");
+					}
+					done = true;
+					cachedRegistry = null;
+					break;
 			}
 		}
 	} catch (IOException ioe) {
