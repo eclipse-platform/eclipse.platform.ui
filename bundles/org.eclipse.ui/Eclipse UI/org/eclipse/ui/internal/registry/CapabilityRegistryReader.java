@@ -9,7 +9,9 @@ import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginRegistry;
 
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * This class is used to read project capabilities and capability
@@ -20,9 +22,6 @@ public class CapabilityRegistryReader extends RegistryReader{
 	private static final String TAG_CAPABILITY = "capability";
 	private static final String TAG_CATEGORY = "category";
 	private static final String TAG_HANDLE_UI = "handleUI";
-	
-	private static final String CAT_ATT_ID = "id";
-	private static final String CAT_ATT_NAME = "name";
 	
 	private static final String CAP_ATT_ID = "id";
 	private static final String CAP_ATT_NAME = "name";
@@ -103,18 +102,13 @@ public class CapabilityRegistryReader extends RegistryReader{
 	 * Reads a capability category and adds it to the capability registry.
 	 */
 	private boolean readCategory(IConfigurationElement element) {
-		String id = element.getAttribute(CAT_ATT_ID);
-		String name = element.getAttribute(CAT_ATT_NAME);
-			
-		if (id==null) {
-			logMissingAttribute(element, CAT_ATT_ID);
+		try {
+			Category category = new Category(element);
+			capabilityRegistry.addCategory(category);
+		} catch (WorkbenchException e) {
+			// log an error since its not safe to show a dialog here
+			WorkbenchPlugin.log("Unable to create capability category. ", e.getStatus()); //$NON-NLS-1$
 		}
-		if (name==null) {
-			logMissingAttribute(element, CAT_ATT_NAME);
-		}
-
-		CapabilityCategory category = new CapabilityCategory(id, name);
-		capabilityRegistry.addCategory(category);
 		return true;		
 	}
 	
@@ -143,5 +137,6 @@ public class CapabilityRegistryReader extends RegistryReader{
 	public void read(IPluginRegistry registry, CapabilityRegistry out) {
 		capabilityRegistry = out;
 		readRegistry(registry, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_CAPABILITIES);
+		out.mapCapabilitiesToCategories();
 	}
 }

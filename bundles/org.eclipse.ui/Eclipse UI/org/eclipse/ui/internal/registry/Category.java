@@ -26,6 +26,15 @@ public class Category implements ICategory {
 	private ArrayList elements;
 	
 	/**
+	 * Creates an instance of <code>Category</code> as a
+	 * miscellaneous category.
+	 */
+	public Category() {
+		this.id = MISC_ID;
+		this.name = MISC_NAME;
+	}
+	
+	/**
 	 * Creates an instance of <code>Category</code> with
 	 * an ID and label.
 	 * 
@@ -101,7 +110,7 @@ public class Category implements ICategory {
 		if (path != null && path.length > 0)
 			return path[0];
 		else
-			return null;
+			return id;
 	}
 	
 	/* (non-Javadoc)

@@ -15,8 +15,6 @@ public class ViewRegistry implements IViewRegistry {
 	private List views;
 	private List categories;
 	private Category miscCategory;
-	private final static String MISC_NAME = "Other";//$NON-NLS-1$
-	private final static String MISC_ID = "org.eclipse.ui.internal.otherCategory";//$NON-NLS-1$
 /**
  * Create a new ViewRegistry.
  */
@@ -118,7 +116,7 @@ public void mapViewsToCategories() {
 			cat.addElement(desc);
 		} else {
 			if (miscCategory == null) {
-				miscCategory = new Category(MISC_ID, MISC_NAME);
+				miscCategory = new Category();
 				categories.add(miscCategory);
 			}
 			miscCategory.addElement(desc);

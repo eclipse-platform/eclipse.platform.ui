@@ -21,6 +21,16 @@ import java.util.ArrayList;
  */
 public interface ICategory {
 	/**
+	 * Name of the miscellaneous category
+	 */
+	public final static String MISC_NAME = "Other";//$NON-NLS-1$
+	
+	/**
+	 * Identifier of the miscellaneous category
+	 */
+	public final static String MISC_ID = "org.eclipse.ui.internal.otherCategory";//$NON-NLS-1$
+	
+	/**
 	 * Adds an element as being part of this category
 	 */
 	public void addElement(Object element);

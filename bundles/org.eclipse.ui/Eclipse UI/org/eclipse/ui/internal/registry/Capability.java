@@ -25,7 +25,7 @@ public class Capability {
 	private String name;
 	private String icon;
 	private String natureId;
-	private String category;
+	private String categoryPath;
 	private String installWizard;
 	private String description;
 	
@@ -34,12 +34,12 @@ public class Capability {
 	private List handleUIs;
 	
 	public Capability(String id, String name, String icon, String natureId,
-			String category, String installWizard, String description) {
+			String categoryPath, String installWizard, String description) {
 		this.id = id;
 		this.name = name;
 		this.icon = icon;
 		this.natureId = natureId;
-		this.category = category;
+		this.categoryPath = categoryPath;
 		this.installWizard = installWizard;
 		this.description = description;
 		this.handleUIs = new ArrayList();	
@@ -65,8 +65,8 @@ public class Capability {
 	public String getNatureId() {
 		return natureId;
 	}
-	public String getCategory() {
-		return category;
+	public String getCategoryPath() {
+		return categoryPath;
 	}
 	public String getInstallWizard() {
 		return installWizard;
