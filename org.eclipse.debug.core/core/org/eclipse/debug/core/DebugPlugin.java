@@ -154,7 +154,7 @@ public class DebugPlugin extends Plugin {
 	 * 
 	 * @since 2.1
 	 */
-	private Vector fRunnables = new Vector(10);
+	private Vector fRunnables = null;
 	
 	/**
 	 * Thread that async runnables are run in
@@ -255,9 +255,11 @@ public class DebugPlugin extends Plugin {
 			Object[] listeners= getEventListeners();
 			for (int i= 0; i < listeners.length; i++) {
 				((IDebugEventSetListener)listeners[i]).handleDebugEvents(events);
-			}		
-			synchronized (fAsynchRunner) {
-				fAsynchRunner.notifyAll();
+			}
+			if (fAsynchRunner != null) {
+				synchronized (fAsynchRunner) {
+					fAsynchRunner.notifyAll();
+				}
 			}
 			fDispatching = false;
 		}
@@ -273,6 +275,13 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.1
 	 */
 	public void asyncExec(Runnable r) {
+		if (fAsynchRunner == null) {
+			// initialize and launch the debug async queue
+			fRunnables= new Vector(10);
+			fAsynchRunner = new AsynchRunner();
+			fAsyncThread = new Thread(fAsynchRunner, DebugCoreMessages.getString("DebugPlugin.Debug_async_queue_1")); //$NON-NLS-1$
+			fAsyncThread.start();
+		}
 		fRunnables.add(r);
 		if (!fDispatching) {
 			synchronized (fAsynchRunner) {
@@ -389,8 +398,10 @@ public class DebugPlugin extends Plugin {
 	public void shutdown() throws CoreException {
 		setShuttingDown(true);
 		super.shutdown();
-		synchronized (fAsynchRunner) {
-			fAsynchRunner.notifyAll();
+		if (fAsynchRunner != null) {
+			synchronized (fAsynchRunner) {
+				fAsynchRunner.notifyAll();
+			}
 		}
 		fLaunchManager.shutdown();
 		fBreakpointManager.shutdown();
@@ -413,14 +424,11 @@ public class DebugPlugin extends Plugin {
 	 * @exception CoreException if this plug-in fails to start up
 	 */
 	public void startup() throws CoreException {
-		fAsynchRunner = new AsynchRunner();
-		fAsyncThread = new Thread(fAsynchRunner, DebugCoreMessages.getString("DebugPlugin.Debug_async_queue_1")); //$NON-NLS-1$
 		fLaunchManager= new LaunchManager();
 		fBreakpointManager= new BreakpointManager();
 		fBreakpointManager.startup();
 		fExpressionManager = new ExpressionManager();
 		fExpressionManager.startup();
-		fAsyncThread.start();
 	}
 	
 	/**
@@ -678,7 +686,7 @@ public class DebugPlugin extends Plugin {
 	 * Executes runnables after event dispatch is complete, in
 	 * a seperate thread.
 	 * 
-	 * @ since 2.1
+	 * @since 2.1
 	 */
 	class AsynchRunner implements Runnable {
 		public void run() {
@@ -708,13 +716,13 @@ public class DebugPlugin extends Plugin {
 		 * Executes runnables in the queue, and empties the queue
 		 */
 		private void executeRunnables() {
-			if (fRunnables.isEmpty()) {
+			if (fShuttingDown || fRunnables.isEmpty()) {
 				return;
 			}
 			Vector v = fRunnables;
 			fRunnables = new Vector(5);
 			Iterator iter = v.iterator();
-			while (iter.hasNext()) {
+			while (iter.hasNext() && !fShuttingDown) {
 				Runnable r = (Runnable)iter.next();
 				try {
 					r.run();
