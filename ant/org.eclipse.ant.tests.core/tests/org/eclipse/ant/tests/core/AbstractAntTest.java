@@ -130,7 +130,7 @@ public abstract class AbstractAntTest extends TestCase {
 	protected String getProjectName(String buildFileName, String targetName) throws CoreException {
 		TargetInfo info= getTarget(buildFileName, targetName);
 		if (info != null) {
-			return info.getProject();
+			return info.getProject().getName();
 		}
 		return null;
 	}
