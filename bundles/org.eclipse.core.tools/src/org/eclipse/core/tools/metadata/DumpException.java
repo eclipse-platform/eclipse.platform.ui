@@ -21,6 +21,7 @@ import java.io.PrintWriter;
  */
 public class DumpException extends Exception {
 
+	private static final long serialVersionUID = 1L;
 	/**
 	 * The low-level exception that caused this <coed>DumpException</code>. May be 
 	 * null.

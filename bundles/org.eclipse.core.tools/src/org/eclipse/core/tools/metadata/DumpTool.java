@@ -28,7 +28,7 @@ public class DumpTool implements IPlatformRunnable {
 	 * @see DumperFactory#getDumper(String)
 	 */	
 	public Object run(Object args) throws Exception {		
-		String fileName = System.getProperty("dump.file");
+		String fileName = System.getProperty("dump.file"); //$NON-NLS-1$
 		if (fileName == null) {
 			System.err.println("Use \"dump.file\" system property to point to the metadata file to be dumped"); //$NON-NLS-1$			
 			return new Integer(0);
@@ -36,7 +36,7 @@ public class DumpTool implements IPlatformRunnable {
 
 		File toDump = new File(fileName);
 		if (!toDump.isFile()) {
-			System.err.println("File \"" + toDump.getAbsolutePath() + "\" does not exist or is not a file"); //$NON-NLS-1$			
+			System.err.println("File \"" + toDump.getAbsolutePath() + "\" does not exist or is not a file"); //$NON-NLS-1$ //$NON-NLS-2$			
 			return new Integer(1);
 		}
 

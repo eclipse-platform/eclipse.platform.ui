@@ -11,6 +11,8 @@
 package org.eclipse.core.tools.metadata;
 
 public class PartialDumpException extends DumpException {
+
+	private static final long serialVersionUID = 1L;
 	/**
 	 * Data read when the error happened. May be 
 	 * null. 

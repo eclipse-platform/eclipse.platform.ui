@@ -94,7 +94,7 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 		private Viewer viewer;
 
 		public MetadataTreeRebuilder() {
-			super("Updating metadata tree");
+			super("Updating metadata tree"); //$NON-NLS-1$
 		}
 
 		protected IStatus run(IProgressMonitor monitor) {
@@ -117,7 +117,7 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 			this.rootNode = rootNode;
 			this.viewer = viewer;
 			cancel();
-			setName("Loading metadata tree from " + rootDir);
+			setName("Loading metadata tree from " + rootDir); //$NON-NLS-1$
 			schedule();
 		}
 	}
@@ -142,7 +142,7 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 
 		TreeContentProviderNode childNode;
 
-		monitor.beginTask("Scanning dir " + dir, 100);
+		monitor.beginTask("Scanning dir " + dir, 100); //$NON-NLS-1$
 		try {
 			// looks for files of registered types in this directory	
 			File[] selectedFiles = dir.listFiles(fileFilter);

@@ -52,7 +52,7 @@ public abstract class MultiStrategyDumper extends AbstractDumper {
 			contents.append("\n"); //$NON-NLS-1$                          
 		}
 		if (contents.length() == 0)
-			contents.append("No contents\n");
+			contents.append("No contents\n"); //$NON-NLS-1$
 	}
 
 	/**
