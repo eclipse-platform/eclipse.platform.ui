@@ -806,24 +806,21 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.progress.IProgressService#runInPart(org.eclipse.core.runtime.jobs.Job, org.eclipse.ui.IWorkbenchPart)
 	 */
-	public void runInPart(Job job, IWorkbenchPart part) {
-		
-		final Job finalJob = job;
-		final IWorkbenchPart finalPart = part;
+	public void runInPart(final Job job, final IWorkbenchPart part) {
 		
 		job.addJobChangeListener(new JobChangeAdapter(){
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
-				finalPart.getSite().progressEnd(finalJob);
+				part.getSite().progressEnd(job);
 			}
 			
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void aboutToRun(IJobChangeEvent event) {
-				finalPart.getSite().progressStart(finalJob);
+				part.getSite().progressStart(job);
 			}
 		});
 

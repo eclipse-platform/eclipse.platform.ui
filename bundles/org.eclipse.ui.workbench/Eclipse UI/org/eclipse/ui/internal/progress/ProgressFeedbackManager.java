@@ -71,12 +71,11 @@ public class ProgressFeedbackManager {
 	IStatus requestInUI(UIJob job, String message){
 		
 		//We are in the UI Thread so we want to avoid blocking
-		if(Thread.currentThread() == Display.getCurrent().getThread()){
+		if(Thread.currentThread() == Display.getDefault().getThread()){
 			throw new IllegalThreadStateException(ProgressMessages.getString("ProgressFeedbackManager.invalidThreadMessage")); //$NON-NLS-1$
 		}
 
 		final IStatus[] statuses = new IStatus[1];
-		final boolean[] wait = { true };
 		final AwaitingFeedbackInfo info = new AwaitingFeedbackInfo(message, job);
 		pendingInfos.add(info);
 
@@ -86,7 +85,6 @@ public class ProgressFeedbackManager {
 			 */
 			public void done(IJobChangeEvent event) {
 				statuses[0] = event.getResult();
-				wait[0] = false;
 				pendingInfos.remove(info);
 				refreshDialog();
 			}
@@ -94,13 +92,13 @@ public class ProgressFeedbackManager {
 
 		openProgressJob.schedule();
 
-		while (wait[0]) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-
-			}
+		try{
+			job.join();
 		}
+		catch (InterruptedException exception){
+			return ProgressUtil.exceptionStatus(exception);
+		}
+		
 		return statuses[0];
 
 	}
