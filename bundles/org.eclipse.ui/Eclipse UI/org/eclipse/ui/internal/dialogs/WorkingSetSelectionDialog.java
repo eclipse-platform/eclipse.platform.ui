@@ -132,11 +132,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		Composite composite = (Composite) super.createDialogArea(parent);
 
 		createMessageArea(composite);
-		int tableStyle = SWT.BORDER;
-		if (multiSelect) {
-			tableStyle |= SWT.MULTI;
-		}
-		listViewer = new TableViewer(composite, tableStyle);
+		listViewer = new TableViewer(composite, SWT.BORDER | SWT.MULTI);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
 		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
@@ -258,6 +254,12 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 			hasSingleSelection = ((IStructuredSelection) selection).size() == 1;
 		}
 		detailsButton.setEnabled(hasSingleSelection);
+		if (multiSelect) {
+			getOkButton().setEnabled(hasSelection);
+		}
+		else {
+			getOkButton().setEnabled(hasSingleSelection);
+		}
 	}
 	/**
 	 * Removes the selected working sets from the workbench.
