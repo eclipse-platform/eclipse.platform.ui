@@ -5,7 +5,6 @@
 package org.eclipse.help.ui.browser;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.browser.*;
 import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.internal.browser.*;
 import org.eclipse.help.ui.internal.util.*;
@@ -74,9 +73,9 @@ public class LaunchURL
 			Program.launch(url);
 		} else {
 			IBrowser browser = BrowserManager.getInstance().createBrowser();
-			try{
+			try {
 				browser.displayURL(url);
-			} catch(Exception e) {
+			} catch (Exception e) {
 				ErrorUtil.displayErrorDialog(e.getMessage());
 			}
 		}
