@@ -21,7 +21,7 @@ ComposedToken := SimpleToken | (SimpleToken '.' ComposedToken)
 JavaClassName := ComposedToken
 PlugInId := ComposedToken
 PlugInPrereq := PlugInId | 'export' PlugInId
-ExtensionId := SimpleToken&
+ExtensionId := SimpleToken
 ExtensionPointId := SimpleToken
 ExtensionPointReference := ExtensionPointID | (PlugInId '.' ExtensionPointId)</pre>
 
