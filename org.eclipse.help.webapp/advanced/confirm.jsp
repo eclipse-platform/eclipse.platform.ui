@@ -108,7 +108,7 @@ function confirmed(){
 
 <body dir="<%=direction%>" onload="onloadHandler()">
 <form onsubmit="confirmed();return false;">
-<div style="overflow:auto;height:150px;width:100%;">
+<div style="overflow:auto;height:220px;width:100%;">
 	<div style="padding:10px;">
 	<span style="font-weight:bold;"><%=request.getParameter("header")%></span>
 	<br><br>
