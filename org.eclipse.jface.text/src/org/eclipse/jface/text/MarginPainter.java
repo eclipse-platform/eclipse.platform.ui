@@ -33,7 +33,7 @@ public class MarginPainter implements IPainter, PaintListener {
 	/** The widget of the text viewer */
 	private StyledText fTextWidget;
 	
-	/** The column after which to paint the line, default value <code>60</code> */
+	/** The column after which to paint the line, default value <code>80</code> */
 	private int fMarginWidth= 80;
 	/** The color in which to paint the line */
 	private Color fColor;
