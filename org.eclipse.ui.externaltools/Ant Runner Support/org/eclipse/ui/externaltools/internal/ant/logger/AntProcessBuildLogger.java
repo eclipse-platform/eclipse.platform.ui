@@ -111,7 +111,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		fullMessage.append('[');
 		fullMessage.append(name);
 		fullMessage.append("] ");
-		int offset = fLength + size + StringUtils.LINE_SEP.length();
+		int offset = fLength + Math.max(size, 0) + StringUtils.LINE_SEP.length();
 		int length = LEFT_COLUMN_SIZE - size - 1;
 		IConsoleHyperlink taskLink = getTaskLink(offset, length, event);
 		if (taskLink != null) {
