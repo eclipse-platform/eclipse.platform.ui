@@ -645,11 +645,6 @@ public class ReviewPage
 
 	private void showStatus() {
 		if (validationStatus != null) {
-//			ErrorDialog.openError(
-//				UpdateUI.getActiveWorkbenchShell(),
-//				UpdateUI.getString("InstallWizard.ReviewPage.invalid.short"), //$NON-NLS-1$
-//				null,
-//				validationStatus);
 			new StatusDialog().open();
 		}
 
