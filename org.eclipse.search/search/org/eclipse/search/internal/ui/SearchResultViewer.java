@@ -65,8 +65,8 @@ public class SearchResultViewer extends TableViewer {
 	private ShowPreviousResultAction fShowPreviousResultAction;
 	private GotoMarkerAction fGotoMarkerAction;
 	private SearchAgainAction fSearchAgainAction;
-	private RemoveAllSearchesAction fRemoveAllSearchesAction;
-	private RemoveMatchAction fRemoveMatchAction;
+	private RemoveResultAction fRemoveSelectedMatchesAction;
+	private RemoveAllResultsAction fRemoveAllMatchesAction;
 	private SortDropDownAction fSortDropDownAction;
 	private SearchDropDownAction fSearchDropDownAction;
 	private CopyToClipboardAction fCopyToClipboardAction;
@@ -107,12 +107,10 @@ public class SearchResultViewer extends TableViewer {
 		fShowPreviousResultAction.setEnabled(false);
 		fGotoMarkerAction= new GotoMarkerAction(this);
 		fGotoMarkerAction.setEnabled(false);
-		fRemoveMatchAction= new RemoveMatchAction(this);
-		fRemoveMatchAction.setEnabled(false);
-		fRemoveAllSearchesAction= new RemoveAllSearchesAction();
+		fRemoveSelectedMatchesAction= new RemoveResultAction(this, false);
+		fRemoveSelectedMatchesAction.setEnabled(false);
 		fSearchAgainAction= new SearchAgainAction();
 		fSearchAgainAction.setEnabled(hasSearch);
-		fRemoveAllSearchesAction.setEnabled(hasSearch);
 		fSortDropDownAction = new SortDropDownAction(this);
 		fSortDropDownAction.setEnabled(getItemCount() > 0);
 		fSearchDropDownAction= new SearchDropDownAction(this);
@@ -152,9 +150,10 @@ public class SearchResultViewer extends TableViewer {
 		fOuterPart.getSite().registerContextMenu(menuMgr, this);
 		
 		IActionBars actionBars= fOuterPart.getViewSite().getActionBars();
-		if (actionBars != null)
+		if (actionBars != null) {
 			actionBars.setGlobalActionHandler(IWorkbenchActionConstants.NEXT, fShowNextResultAction);
 			actionBars.setGlobalActionHandler(IWorkbenchActionConstants.PREVIOUS, fShowPreviousResultAction);
+		}
 	}
 
 	/**
@@ -176,7 +175,7 @@ public class SearchResultViewer extends TableViewer {
 		fShowNextResultAction.setEnabled(hasSingleSelection || (hasElements && selectionCount == 0));
 		fShowPreviousResultAction.setEnabled(hasSingleSelection || (hasElements && selectionCount == 0));
 		fGotoMarkerAction.setEnabled(hasSingleSelection);
-		fRemoveMatchAction.setEnabled(hasSingleSelection);
+		fRemoveSelectedMatchesAction.setEnabled(selectionCount > 0);
 
 		if (fHandleSelectionChangedEvents) {
 			fMarkerToShow= -1;
@@ -212,8 +211,6 @@ public class SearchResultViewer extends TableViewer {
 			fSortDropDownAction.setEnabled(state);
 
 		state= SearchManager.getDefault().getCurrentSearch() != null;
-		if (state != fRemoveAllSearchesAction.isEnabled())
-			fRemoveAllSearchesAction.setEnabled(state);
 		if (state != fSearchDropDownAction.isEnabled())
 			fSearchDropDownAction.setEnabled(state);
 		if (state != fSearchAgainAction.isEnabled())
@@ -222,8 +219,8 @@ public class SearchResultViewer extends TableViewer {
 		state= !getSelection().isEmpty();
 		if (state != fGotoMarkerAction.isEnabled())
 			fGotoMarkerAction.setEnabled(state);
-		if (state != fRemoveMatchAction.isEnabled())
-			fRemoveMatchAction.setEnabled(state);
+		if (state != fRemoveSelectedMatchesAction.isEnabled())
+			fRemoveSelectedMatchesAction.setEnabled(state);
 	}
 
 
@@ -280,8 +277,8 @@ public class SearchResultViewer extends TableViewer {
 			menu.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS, fCopyToClipboardAction);
 			menu.appendToGroup(IContextMenuConstants.GROUP_GOTO, fGotoMarkerAction);
 			if (enableRemoveMatchMenuItem())
-				menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, fRemoveMatchAction);
-			menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, new RemoveResultAction(this));
+				menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, new RemoveMatchAction(this));
+			menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, new RemoveResultAction(this, true));
 		}
 		
 		// If we have elements
@@ -335,10 +332,9 @@ public class SearchResultViewer extends TableViewer {
 		tbm.add(fShowNextResultAction);
 		tbm.add(fShowPreviousResultAction);
 //		tbm.add(fGotoMarkerAction); see bug 15275
-		tbm.add(fRemoveMatchAction);
+		tbm.add(fRemoveSelectedMatchesAction);
 		tbm.add(new Separator());
 		tbm.add(new OpenSearchDialogAction());
-		tbm.add(fRemoveAllSearchesAction);
 		tbm.add(fSearchDropDownAction);
 		
 		// need to hook F5 to table
@@ -349,7 +345,7 @@ public class SearchResultViewer extends TableViewer {
 					return;	// performance
 				}
 				if (e.character == SWT.DEL) {
-					new RemoveResultAction(SearchResultViewer.this).run();
+					new RemoveResultAction(SearchResultViewer.this, true).run();
 					return; // performance
 				}
 			}
