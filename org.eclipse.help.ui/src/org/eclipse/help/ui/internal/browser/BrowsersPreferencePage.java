@@ -4,6 +4,7 @@ package org.eclipse.help.ui.internal.browser;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.browser.*;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.util.*;
@@ -134,7 +135,7 @@ public class BrowsersPreferencePage
 		customBrowserPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		customBrowserPath.setFont(font);
 		customBrowserPath.setText(
-			WorkbenchHelpPlugin.getDefault().getPluginPreferences().getString(
+			HelpPlugin.getDefault().getPluginPreferences().getString(
 				CustomBrowser.CUSTOM_BROWSER_PATH_KEY));
 
 		customBrowserBrowse = new Button(bPathComposite, SWT.NONE);
@@ -178,7 +179,7 @@ public class BrowsersPreferencePage
 	 */
 	public boolean performOk() {
 		Preferences pref =
-			WorkbenchHelpPlugin.getDefault().getPluginPreferences();
+			HelpPlugin.getDefault().getPluginPreferences();
 		TableItem[] items = browsersTable.getItems();
 		for (int i = 0; i < items.length; i++) {
 			if (items[i].getChecked()) {
@@ -197,7 +198,7 @@ public class BrowsersPreferencePage
 		pref.setValue(
 			CustomBrowser.CUSTOM_BROWSER_PATH_KEY,
 			customBrowserPath.getText());
-		WorkbenchHelpPlugin.getDefault().savePluginPreferences();
+		HelpPlugin.getDefault().savePluginPreferences();
 		return true;
 	}
 	/**
