@@ -1,4 +1,4 @@
-<%@ page import="org.eclipse.help.servlet.Search,org.w3c.dom.*" errorPage="err.jsp"%>
+<%@ page import="org.eclipse.help.servlet.Search" errorPage="err.jsp"%>
 
 <% 
 	// calls the utility class to initialize the application
@@ -6,13 +6,14 @@
 %>
 
 
-
 <html>
 <head>
+ 	<meta http-equiv="Pragma" content="no-cache">
+ 	<meta http-equiv="Expires" content="-1">
 	<title>Search</title>
 	<base target="MainFrame">
-      <link rel="stylesheet" TYPE="text/css" HREF="search.css" TITLE="sea">
-      <link rel="stylesheet" TYPE="text/css" HREF="toc.css" TITLE="nav">
+    <link rel="stylesheet" TYPE="text/css" HREF="search.css" TITLE="sea">
+    <link rel="stylesheet" TYPE="text/css" HREF="toc.css" TITLE="nav">
 
 <script language="JavaScript">
 function mouseover(img)
@@ -25,6 +26,12 @@ function mouseout(img)
 	img.className="normal";
 	window.event.cancelBubble = true;
 }
+
+function refresh() 
+{ 
+	parent.QueryFrame.document.forms[0].submit(); 
+}
+
 </script>
 
 </head>

@@ -7,9 +7,6 @@ import java.io.*;
 
 import javax.servlet.ServletContext;
 import org.apache.xerces.parsers.DOMParser;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.search.SearchManager;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 /**
@@ -19,8 +16,6 @@ public class Search {
 
 	private ServletContext context;
 	private EclipseConnector connector;
-	private ProgressMonitor pm;
-	private boolean isIndexing = false;
 
 	/**
 	 * Constructor
@@ -28,9 +23,8 @@ public class Search {
 	public Search(ServletContext context) {
 		this.context = context;
 		this.connector = new EclipseConnector(context);
-		this.pm = new ProgressMonitor();
 	}
-
+	
 	/**
 	 * Generates the html for the search results based on input xml data
 	 */
@@ -39,23 +33,25 @@ public class Search {
 			if (query == null || query.trim().length() == 0)
 				return;
 
-			if (isIndexing()) {
-				displayProgressMonitor(out);
-				return;
-			}
-
+			String urlString = "search:/";
+			if (query != null && query.length() >= 0)
+				urlString += "?" + query;
+				
 			//System.out.println("search:"+query);
-			String urlString = "search:/?" + query;
 			InputSource xmlSource = new InputSource(connector.openStream(urlString));
 			DOMParser parser = new DOMParser();
 			parser.parse(xmlSource);
-			Element toc = parser.getDocument().getDocumentElement();
-			genToc(toc, out);
+			Element elem = parser.getDocument().getDocumentElement();
+			if (elem.getTagName().equals("toc"))
+				genToc(elem, out);
+			else
+				displayProgressMonitor(out, elem.getAttribute("indexed"));
 		} catch (Exception e) {
 		}
 	}
-	private void genToc(Element toc, Writer out) throws IOException {
-
+	
+	private void genToc(Element toc, Writer out) throws IOException 
+	{
 		NodeList topics = toc.getChildNodes();
 		if (topics.getLength() == 0)
 		{
@@ -99,90 +95,40 @@ public class Search {
 	}
 
 
-	public ProgressMonitor getProgressMonitor()
-	{
-		return pm;
-	}
-
-	public synchronized boolean isIndexing() {
-		// First check if we need to index...
-		if (!isIndexing) {
-			index();
+	private void displayProgressMonitor(Writer out, String indexed) throws IOException {
+		//out.write("<script>window.open('progress.jsp?indexed="+indexed+"', null, 'height=200,width=400,status=no,toolbar=no,menubar=no,location=no'); </script>");
+		//out.flush();
+		int percentage = 0;
+		try
+		{
+			percentage = Integer.parseInt(indexed);
 		}
-		return isIndexing;
-	}
-	
-	private synchronized void index() {
-		final SearchManager sm = HelpSystem.getSearchManager();
-		if (sm.isIndexingNeeded("en_US")) {
-			isIndexing = true;
-			Thread indexer = new Thread(new Runnable() {
-				public void run() {
-					try {
-						sm.updateIndex(pm, "en_US");
-					} catch (Exception e) {
-						e.printStackTrace();
-					} finally {
-						isIndexing = false;
-					}
-				}
-			});
-			indexer.start();
-		}
-	}
+		catch(Exception e)
+		{}
+		
+		StringBuffer sb = new StringBuffer();
+		sb
+		.append("<CENTER>")
+		.append("<TABLE BORDER='0'>")
+		.append("    <TR><TD>Indexing...</TD></TR>")
+        .append("    <TR>")
+        .append("    	<TD ALIGN='LEFT'>")
+  		.append("			<DIV STYLE='width:100px;height:16px;border-width:1px;border-style:solid;border-color:black'>")
+  		.append("				<DIV ID='divProgress' STYLE='width:"+percentage+"px;height:15px;background-color:Highlight'>")
+  		.append("				</DIV>")
+  		.append("			</DIV>")
+  		.append("		</TD>")
+  		.append("	</TR>")
+  		.append("	<TR>")
+  		.append("		<TD>"+indexed+"% complete</TD>")
+  		.append("	</TR>")
+  		.append("</TABLE>")
+  		.append("</CENTER>")
+  		.append("<script language='JavaScript'>")
+  		.append("setTimeout('refresh()', 2000);")
+  		.append("</script>");
 
-	private void displayProgressMonitor(Writer out) throws IOException {
-		out.write("<script>window.open('progress.jsp', null, 'height=200,width=400,status=no,toolbar=no,menubar=no,location=no'); </script>");
-	}
-
-	/**
-	 * Internal progress monitor implementation.
-	 */
-	public class ProgressMonitor implements IProgressMonitor {
-		private boolean isCancelled;
-		private int totalWork;
-		private int currWork;
-
-		public ProgressMonitor() {
-		}
-		public void beginTask(String name, int totalWork) {
-			this.totalWork = totalWork;;
-		}
-
-		public void done() {
-		}
-
-		public void setTaskName(String name) {
-		}
-
-		public boolean isCanceled() {
-			return isCancelled;
-		}
-
-		public void setCanceled(boolean b) {
-			isCancelled = b;
-		}
-
-		public void subTask(String name) {
-		}
-
-		public void worked(int work) {
-			currWork += work;
-			if (currWork > totalWork)
-				currWork = totalWork;
-			else if (currWork < 0)
-				currWork = 0;
-
-			internalWorked(work);
-		}
-
-		public void internalWorked(double work) {
-		}
-
-		public int getPercentage() {
-			if(currWork==totalWork || totalWork<=0)
-				return 100;			
-			return (int)(100*currWork/totalWork);
-		}
+		out.write(sb.toString());
+		out.flush();
 	}
 }
