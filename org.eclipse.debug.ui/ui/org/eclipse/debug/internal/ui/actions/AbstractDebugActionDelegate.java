@@ -187,14 +187,18 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	}
 	/**
 	 * Returns the String to use as an error dialog message for
-	 * a failed action.  Default is to return null.
+	 * a failed action. This message appears as the "Message:" in
+	 * the error dialog for this action.
+	 * Default is to return null.
 	 */
 	protected String getErrorDialogMessage(){
 		return null;
 	}
 	/**
 	 * Returns the String to use as a status message for
-	 * a failed action. Default is to return the empty String.
+	 * a failed action. This message appears as the "Reason:"
+	 * in the error dialog for this action.
+	 * Default is to return the empty String.
 	 */
 	protected String getStatusMessage(){
 		return ""; //$NON-NLS-1$

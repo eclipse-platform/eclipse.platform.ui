@@ -184,13 +184,6 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	protected boolean shouldAppendChildren(Object e) {
 		return e instanceof IDebugTarget || e instanceof IThread;
 	}
-	
-	/**
-	 * @see AbstractDebugActionDelegate#getStatusMessage()
-	 */
-	protected String getStatusMessage() {
-		return ActionMessages.getString("CopyToClipboardActionDelegate.Copy_failed"); //$NON-NLS-1$
-	}
 			
 	protected ContentViewer getViewer() {
 		return fViewer;

@@ -28,14 +28,14 @@ public class StepReturnActionDelegate extends StepActionDelegate {
 	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return ActionMessages.getString("StepReturnActionDelegate.Run_to_return_failed._1"); //$NON-NLS-1$
+		return ActionMessages.getString("StepReturnActionDelegate.Exceptions_occurred_attempting_to_run_to_return_of_the_frame._2"); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
-		return ActionMessages.getString("StepReturnActionDelegate.Exceptions_occurred_attempting_to_run_to_return_of_the_frame._2"); //$NON-NLS-1$
+		return ActionMessages.getString("StepReturnActionDelegate.Run_to_return_failed._1"); //$NON-NLS-1$
 	}
 
 	/**

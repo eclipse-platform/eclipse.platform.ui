@@ -32,14 +32,14 @@ public class DisconnectActionDelegate extends AbstractListenerActionDelegate {
 	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return ActionMessages.getString("DisconnectActionDelegate.Disconnect_failed_1"); //$NON-NLS-1$
+		return ActionMessages.getString("DisconnectActionDelegate.Exceptions_occurred_attempting_to_disconnect._2"); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
-		return ActionMessages.getString("DisconnectActionDelegate.Exceptions_occurred_attempting_to_disconnect._2"); //$NON-NLS-1$
+		return ActionMessages.getString("DisconnectActionDelegate.Disconnect_failed_1"); //$NON-NLS-1$
 	}
 	/**
 	 * @see AbstractDebugActionDelegate#getErrorDialogTitle()

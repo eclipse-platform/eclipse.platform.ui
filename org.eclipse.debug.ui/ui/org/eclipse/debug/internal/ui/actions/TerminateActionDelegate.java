@@ -31,15 +31,14 @@ public class TerminateActionDelegate extends AbstractListenerActionDelegate {
 	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return ActionMessages.getString("TerminateActionDelegate.Terminate_failed._1"); //$NON-NLS-1$
+		return ActionMessages.getString("TerminateActionDelegate.Exceptions_occurred_attempting_to_terminate._2"); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
-		return ActionMessages.getString("TerminateActionDelegate.Exceptions_occurred_attempting_to_terminate._2"); //$NON-NLS-1$
-
+		return ActionMessages.getString("TerminateActionDelegate.Terminate_failed._1"); //$NON-NLS-1$
 	}
 
 	/**
