@@ -46,7 +46,7 @@ public class BuildCleanAction extends Action implements ActionFactory.IWorkbench
 	}
 
 	public void run() {
-		IProject[] selected = BuildSetAction.findSelectedProjects(window);
+		IProject[] selected = BuildUtilities.findSelectedProjects(window);
 		new CleanDialog(window, selected).open();
 	}
 }

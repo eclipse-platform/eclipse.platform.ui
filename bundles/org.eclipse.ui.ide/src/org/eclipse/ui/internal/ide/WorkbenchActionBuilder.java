@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Preferences;
@@ -45,6 +50,7 @@ import org.eclipse.ui.ide.IIDEActionConstants;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.actions.BuildSetMenu;
+import org.eclipse.ui.internal.ide.actions.BuildUtilities;
 import org.eclipse.ui.internal.ide.actions.QuickMenuAction;
 import org.eclipse.ui.internal.ide.actions.RetargetActionWithDefault;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
@@ -228,6 +234,7 @@ public final class WorkbenchActionBuilder {
 
     private IPerspectiveListener perspectiveListener;
 
+    private IResourceChangeListener resourceListener;
     /**
      * Constructs a new action builder which contributes actions
      * to the given window.
@@ -285,14 +292,12 @@ public final class WorkbenchActionBuilder {
             public void propertyChange(Preferences.PropertyChangeEvent event) {
                 if (event.getProperty().equals(
                         ResourcesPlugin.PREF_AUTO_BUILDING)) {
-                    final boolean autoBuild = ResourcesPlugin.getWorkspace()
-                            .isAutoBuilding();
                     if (window.getShell() != null
                             && !window.getShell().isDisposed()) {
                         // this property change notification could be from a non-ui thread
                         window.getShell().getDisplay().syncExec(new Runnable() {
                             public void run() {
-                                updateBuildActions(autoBuild);
+                                updateBuildActions();
                             }
                         });
                     }
@@ -329,6 +334,25 @@ public final class WorkbenchActionBuilder {
          */
         WorkbenchPlugin.getDefault().getPreferenceStore()
                 .addPropertyChangeListener(propPrefListener);
+        //listen for project description changes, which can affect enablement of build actions
+        resourceListener = new IResourceChangeListener() {
+			public void resourceChanged(IResourceChangeEvent event) {
+				IResourceDelta delta = event.getDelta();
+				if (delta == null)
+					return;
+				IResourceDelta[] projectDeltas = delta.getAffectedChildren();
+				for (int i = 0; i < projectDeltas.length; i++) {
+					int kind = projectDeltas[i].getKind();
+					//affected by projects being opened/closed or description changes
+					boolean changed = (projectDeltas[i].getFlags() & (IResourceDelta.DESCRIPTION | IResourceDelta.OPEN)) != 0;
+					if (kind != IResourceDelta.CHANGED || changed) {
+						updateBuildActions();
+						return;
+					}
+				}
+			}
+		};
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener, IResourceChangeEvent.POST_CHANGE);
     }
 
     /**
@@ -361,7 +385,7 @@ public final class WorkbenchActionBuilder {
         makeActions(windowConfigurer, actionBarConfigurer);
         populateMenuBar(actionBarConfigurer);
         populateCoolBar(actionBarConfigurer);
-        updateBuildActions(ResourcesPlugin.getWorkspace().isAutoBuilding());
+        updateBuildActions();
         populateStatusLine(actionBarConfigurer);
         hookListeners();
     }
@@ -725,7 +749,7 @@ public final class WorkbenchActionBuilder {
         subMenu.add(prevPerspectiveAction);
     }
 
-	/**
+    /**
 	 * Creates and returns the Help menu.
 	 */
 	private MenuManager createHelpMenu() {
@@ -1007,7 +1031,7 @@ public final class WorkbenchActionBuilder {
 	 * 
 	 * @param menu
 	 *            the menu to add to
-	 * @param string
+	 * @param groupId
 	 *            the group id for the added separator or group marker
 	 */
 	private void addSeparatorOrGroupMarker(MenuManager menu, String groupId) {
@@ -1044,6 +1068,10 @@ public final class WorkbenchActionBuilder {
             WorkbenchPlugin.getDefault().getPreferenceStore()
                     .removePropertyChangeListener(propPrefListener);
             propPrefListener = null;
+        }
+        if (resourceListener != null) {
+            ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
+            resourceListener = null;
         }
         closeAction.dispose();
         closeAllAction.dispose();
@@ -1534,11 +1562,15 @@ public final class WorkbenchActionBuilder {
      * Update the build actions on the toolbar and menu bar based on the 
      * current state of autobuild
      */
-    void updateBuildActions(boolean autoBuilding) {
+    void updateBuildActions() {
+    	IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IProject[] projects = workspace.getRoot().getProjects();
+    	boolean enabled = BuildUtilities.isEnabled(projects, IncrementalProjectBuilder.INCREMENTAL_BUILD);
         //update menu bar actions in project menu
-        buildAllAction.setEnabled(!autoBuilding);
-        buildProjectAction.setEnabled(!autoBuilding);
-        toggleAutoBuildAction.setChecked(autoBuilding);
+        buildAllAction.setEnabled(enabled);
+        buildProjectAction.setEnabled(enabled);
+        toggleAutoBuildAction.setChecked(workspace.isAutoBuilding());
+        cleanAction.setEnabled(BuildUtilities.isEnabled(projects, IncrementalProjectBuilder.CLEAN_BUILD));
 
         //update the cool bar build button
         ICoolBarManager coolBarManager = actionBarConfigurer
@@ -1557,20 +1589,21 @@ public final class WorkbenchActionBuilder {
             IDEWorkbenchPlugin.log("File toolbar is missing"); //$NON-NLS-1$
             return;
         }
-        //add the build button if autobuild is on, and remove it otherwise
-        if (!autoBuilding) {
+        //add the build button if build actions are enabled, and remove it otherwise
+        boolean found = toolBarManager.find(buildAllAction.getId()) != null;
+        if (enabled && !found) {
             toolBarManager.appendToGroup(IWorkbenchActionConstants.BUILD_GROUP,
                     buildAllAction);
             toolBarManager.update(false);
             toolBarItem.update(ICoolBarManager.SIZE);
-        } else if (buildAllAction != null) {
+        } else if (buildAllAction != null && found) {
             toolBarManager.remove(buildAllAction.getId());
             toolBarManager.update(false);
             toolBarItem.update(ICoolBarManager.SIZE);
         }
     }
 
-    /**
+	/**
      * Update the pin action's tool bar
      */
     void updatePinActionToolbar() {
