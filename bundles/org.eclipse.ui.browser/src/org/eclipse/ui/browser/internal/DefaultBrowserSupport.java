@@ -42,11 +42,13 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 			return browser;
 		
 		IWebBrowser webBrowser = null;
-		if (WebBrowserPreference.isUseInternalBrowser()) {
-			webBrowser = new InternalBrowserInstance(browserId, style, name, tooltip);
-		} else {
+		// AS_EXTERNAL will force the external browser regardless
+		// of the user preference
+		if ((style & AS_EXTERNAL)!=0 || !WebBrowserPreference.isUseInternalBrowser()) {
 			IBrowserDescriptor ewb = BrowserManager.getInstance().getCurrentWebBrowser();
 			webBrowser = new ExternalBrowserInstance(browserId, ewb);
+		} else {
+			webBrowser = new InternalBrowserInstance(browserId, style, name, tooltip);
 		}
 		browserIdMap.put(browserId, webBrowser);
 		return webBrowser;
