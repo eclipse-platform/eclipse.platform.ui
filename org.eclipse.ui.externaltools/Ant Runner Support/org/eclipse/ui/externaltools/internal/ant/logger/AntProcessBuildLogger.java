@@ -84,8 +84,8 @@ public class AntProcessBuildLogger implements BuildLogger {
 				String fileName = message.substring(10).trim();
 				IFile file = getFileForLocation(fileName);
 				if (file != null) {
-					FileLink link = new FileLink(fLength + 11 + StringUtils.LINE_SEP.length(), fileName.length(), file, null,  -1, -1, -1);
-					addLink(link);
+					FileLink link = new FileLink(file, null,  -1, -1, -1);
+					addLink(link, fLength + 11 + StringUtils.LINE_SEP.length(), fileName.length());
 				}
 			}
 		}
@@ -126,9 +126,9 @@ public class AntProcessBuildLogger implements BuildLogger {
 		fullMessage.append("] "); //$NON-NLS-1$
 		int offset = fLength + Math.max(size, 0) + StringUtils.LINE_SEP.length();
 		int length = LEFT_COLUMN_SIZE - size - 1;
-		IConsoleHyperlink taskLink = getTaskLink(offset, length, event);
+		IConsoleHyperlink taskLink = getTaskLink(event);
 		if (taskLink != null) {
-			addLink(taskLink);
+			addLink(taskLink, offset, length);
 		}
 	}
 	
@@ -137,8 +137,8 @@ public class AntProcessBuildLogger implements BuildLogger {
 	 *  
 	 * @param link
 	 */
-	protected void addLink(IConsoleHyperlink link) {
-		fProcess.getConsole().addLink(link);
+	protected void addLink(IConsoleHyperlink link, int offset, int length) {
+		fProcess.getConsole().addLink(link, offset, length);
 	}
 
 	private AntStreamMonitor getMonitor(int priority) {
@@ -219,7 +219,7 @@ public class AntProcessBuildLogger implements BuildLogger {
 	 * 
 	 * @return hyper link, or <code>null</code>
 	 */
-	private IConsoleHyperlink getTaskLink(int offset, int length, BuildEvent event) {
+	private IConsoleHyperlink getTaskLink(BuildEvent event) {
 		Task task = event.getTask();
 		if (task != null) {
 			Location location = task.getLocation();
@@ -243,7 +243,7 @@ public class AntProcessBuildLogger implements BuildLogger {
 				if (file != null) {
 					try {
 						int line = Integer.parseInt(lineNumber);
-						return new FileLink(offset, length, file, null, -1, -1, line);
+						return new FileLink(file, null, -1, -1, line);
 					} catch (NumberFormatException e) {
 					}
 				}

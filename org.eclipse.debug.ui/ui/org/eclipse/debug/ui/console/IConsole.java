@@ -11,6 +11,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 
 /**
  * A console that displays output and writes input to a process. Implementors of
@@ -47,13 +48,26 @@ public interface IConsole {
 	 * Adds the given hyperlink to this console. The link will be notified when
 	 * entered, exited, and activated.
 	 * <p>
-	 * If the link's region is within the console's document current bounds,
-	 * it is added immediately. Otherwise, the link is added when the console's
-	 * document grows to contain the link's region.
+	 * If the link's region (offset/length) is within the console's document
+	 * current bounds, it is added immediately. Otherwise, the link is added
+	 * when the console's document grows to contain the link's region.
 	 * </p>
-	 * @param link
+	 * @param link the hyperlink to add 
+	 * @param offset the character offset within the console document where the
+	 * text assoicated with the hyperlink begins
+	 * @param length the length of the associated hyperlink text
 	 */
-	public void addLink(IConsoleHyperlink link);
+	public void addLink(IConsoleHyperlink link, int offset, int length);
+	
+	/**
+	 * Returns the region of text associated with the given hyperlink, or
+	 * <code>null</code> if the given hyperlink is not contained in this
+	 * console.
+	 * 
+	 * @param link a console hyperlink
+	 * @return region of text associated with the hyperlink, or <code>null</code>
+	 */
+	public IRegion getRegion(IConsoleHyperlink link);
 
 	/**
 	 * Returns the document associated with this console.

@@ -371,38 +371,41 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	 */
 	public void paintControl(PaintEvent e) {
 		if (fHyperLink != null) {
-			int start = fHyperLink.getOffset();
-			int end = start + fHyperLink.getLength();
 			IDocument doc = getDocument();
 			ConsoleDocumentPartitioner partitioner = (ConsoleDocumentPartitioner)getDocument().getDocumentPartitioner();
-			IConsoleColorProvider contentProvider = partitioner.getContentProvider();
-			try {
-				ITypedRegion partition = doc.getPartition(start);
-				Color fontColor = e.gc.getForeground();
-				if (partition instanceof StreamPartition) {
-					StreamPartition streamPartition = (StreamPartition)partition;
-					fontColor = contentProvider.getColor(streamPartition.getStreamIdentifier());
-				}
-				int startLine = doc.getLineOfOffset(start);
-				int endLine = doc.getLineOfOffset(end);
-				for (int i = startLine; i <= endLine; i++) {
-					IRegion lineRegion = doc.getLineInformation(i);
-					int lineStart = lineRegion.getOffset();
-					int lineEnd = lineStart + lineRegion.getLength();
-					Color color = e.gc.getForeground();
-					e.gc.setForeground(fontColor);
-					if (lineStart < end) {
-						lineStart = Math.max(start, lineStart);
-						lineEnd = Math.min(end, lineEnd);
-						Point p1 = getTextWidget().getLocationAtOffset(lineStart);
-						Point p2 = getTextWidget().getLocationAtOffset(lineEnd);
-						FontMetrics metrics = e.gc.getFontMetrics();
-						int height = metrics.getHeight();
-						e.gc.drawLine(p1.x, p1.y + height, p2.x, p2.y + height);
+			IRegion linkRegion = partitioner.getRegion(fHyperLink);
+			if (linkRegion != null) {
+				int start = linkRegion.getOffset();
+				int end = start + linkRegion.getLength();
+				IConsoleColorProvider contentProvider = partitioner.getContentProvider();
+				try {
+					ITypedRegion partition = doc.getPartition(start);
+					Color fontColor = e.gc.getForeground();
+					if (partition instanceof StreamPartition) {
+						StreamPartition streamPartition = (StreamPartition)partition;
+						fontColor = contentProvider.getColor(streamPartition.getStreamIdentifier());
 					}
-					e.gc.setForeground(color);
+					int startLine = doc.getLineOfOffset(start);
+					int endLine = doc.getLineOfOffset(end);
+					for (int i = startLine; i <= endLine; i++) {
+						IRegion lineRegion = doc.getLineInformation(i);
+						int lineStart = lineRegion.getOffset();
+						int lineEnd = lineStart + lineRegion.getLength();
+						Color color = e.gc.getForeground();
+						e.gc.setForeground(fontColor);
+						if (lineStart < end) {
+							lineStart = Math.max(start, lineStart);
+							lineEnd = Math.min(end, lineEnd);
+							Point p1 = getTextWidget().getLocationAtOffset(lineStart);
+							Point p2 = getTextWidget().getLocationAtOffset(lineEnd);
+							FontMetrics metrics = e.gc.getFontMetrics();
+							int height = metrics.getHeight();
+							e.gc.drawLine(p1.x, p1.y + height, p2.x, p2.y + height);
+						}
+						e.gc.setForeground(color);
+					}
+				} catch (BadLocationException ex) {
 				}
-			} catch (BadLocationException ex) {
 			}
 		}
 	}

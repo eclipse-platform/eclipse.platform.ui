@@ -24,7 +24,9 @@ import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.console.*;
+import org.eclipse.debug.ui.console.IConsole;
+import org.eclipse.debug.ui.console.IConsoleColorProvider;
+import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -34,6 +36,7 @@ import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IDocumentPartitionerExtension;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -422,10 +425,10 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		}
 		Iterator links = fPendingLinks.iterator();
 		while (links.hasNext()) {
-			IConsoleHyperlink link = (IConsoleHyperlink)links.next();
+			HyperlinkPosition link = (HyperlinkPosition)links.next();
 			if ((link.getOffset() + link.getLength()) <= fDocument.getLength()) {
 				links.remove();
-				addLink(link);
+				addLink(link.getHyperLink(), link.getOffset(), link.getLength());
 			}
 		}
 	}
@@ -705,17 +708,18 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	}
 
 	/**
-	 * @see org.eclipse.debug.internal.ui.views.console.IConsole#addLink(org.eclipse.debug.internal.ui.views.console.IConsoleHyperlink)
+	 * @see IConsole#addLink(IConsoleHyperlink, int, int)
 	 */
-	public void addLink(IConsoleHyperlink link) {
+	public void addLink(IConsoleHyperlink link, int offset, int length) {
+		HyperlinkPosition hyperlinkPosition = new HyperlinkPosition(link, offset, length); 
 		try {
-			fDocument.addPosition(HyperlinkPosition.HYPER_LINK_CATEGORY, new HyperlinkPosition(link));
+			fDocument.addPosition(HyperlinkPosition.HYPER_LINK_CATEGORY, hyperlinkPosition);
 		} catch (BadPositionCategoryException e) {
 			// internal error
 			DebugUIPlugin.log(e);
 		} catch (BadLocationException e) {
 			// queue the link
-			fPendingLinks.add(link);
+			fPendingLinks.add(hyperlinkPosition);
 		}
 	}
 
@@ -741,6 +745,23 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	public void connectLineNotifier(ConsoleLineNotifier lineNotifier) {
 		fLineNotifier = lineNotifier;
 		lineNotifier.connect(this);
+	}
+
+	/**
+	 * @see org.eclipse.debug.ui.console.IConsole#getRegion(org.eclipse.debug.ui.console.IConsoleHyperlink)
+	 */
+	public IRegion getRegion(IConsoleHyperlink link) {
+		try {
+			Position[] positions = getDocument().getPositions(HyperlinkPosition.HYPER_LINK_CATEGORY);
+			for (int i = 0; i < positions.length; i++) {
+				HyperlinkPosition position = (HyperlinkPosition)positions[i];
+				if (position.getHyperLink().equals(link)) {
+					return new Region(position.getOffset(), position.getLength());
+				}
+			}
+		} catch (BadPositionCategoryException e) {
+		}
+		return null;
 	}
 
 }

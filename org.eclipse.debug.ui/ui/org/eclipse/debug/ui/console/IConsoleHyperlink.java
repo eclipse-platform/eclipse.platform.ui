@@ -7,11 +7,8 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import org.eclipse.jface.text.IRegion;
-
 /**
- * A hyperlink in the console. The region of a link specifies the link location
- * in the console. Link behavior is implementation dependent.
+ * A hyperlink in the console. Link behavior is implementation dependent.
  * <p>
  * Clients may implement this interface.
  * </p>
@@ -20,7 +17,7 @@ import org.eclipse.jface.text.IRegion;
  * </p>
  * @since 2.1
  */
-public interface IConsoleHyperlink extends IRegion {
+public interface IConsoleHyperlink {
 	
 	/**
 	 * Notification that the mouse has entered this link's region.

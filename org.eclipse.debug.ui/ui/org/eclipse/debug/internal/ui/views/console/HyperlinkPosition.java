@@ -22,8 +22,8 @@ public class HyperlinkPosition extends Position {
 	/**
 	 * 
 	 */
-	public HyperlinkPosition(IConsoleHyperlink link) {
-		super(link.getOffset(), link.getLength());
+	public HyperlinkPosition(IConsoleHyperlink link, int offset, int length) {
+		super(offset, length);
 		fLink = link;
 	}
 	

@@ -64,8 +64,8 @@ public class JavacLineTracker implements IConsoleLineTracker {
 				}
 				IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));
 				if (file != null && file.exists()) {
-					FileLink link = new FileLink(lineOffset + fileStart, lineLength - fileStart, file, null, -1, -1, num);
-					fConsole.addLink(link);
+					FileLink link = new FileLink(file, null, -1, -1, num);
+					fConsole.addLink(link, lineOffset + fileStart, lineLength - fileStart);
 				}
 			}
 		} catch (BadLocationException e) {

@@ -10,10 +10,8 @@ http://www.eclipse.org/legal/cpl-v10.html
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.console.*;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.Region;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -33,7 +31,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * </p>
  * @since 2.1
  */
-public class FileLink extends Region implements IConsoleHyperlink {
+public class FileLink implements IConsoleHyperlink {
 
 	private IFile fFile;
 	private int fFileOffset;
@@ -44,15 +42,14 @@ public class FileLink extends Region implements IConsoleHyperlink {
 	/**
 	 * Constructs a hyperlink to the specified file.
 	 * 
-	 * @param linkOffset the offset of the hyperlink (in the console)	 * @param linkLength the length of the hyperlink (in the console)	 * @param file the file to open when activated	 * @param editorId the identifier of the editor to open the file in, or
+	 * @param file the file to open when activated	 * @param editorId the identifier of the editor to open the file in, or
 	 * <code>null</code> if the default editor should be used
 	 * @param fileOffset the offset in the file to select when activated, or -1	 * @param fileLength the length of text to select in the file when activated
 	 * or -1
 	 * @param fileLineNumber the line number to select in the file when
 	 * activated, or -1
 	 */
-	public FileLink(int linkOffset, int linkLength, IFile file, String editorId, int fileOffset, int fileLength, int fileLineNumber) {
-		super(linkOffset, linkLength);
+	public FileLink(IFile file, String editorId, int fileOffset, int fileLength, int fileLineNumber) {
 		fFile = file;
 		fFileOffset = fileOffset;
 		fFileLength = fileLength;
