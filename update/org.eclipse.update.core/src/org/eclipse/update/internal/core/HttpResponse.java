@@ -21,6 +21,7 @@ public class HttpResponse implements Response {
 	protected InputStream in;
 	protected URLConnection connection;
 	protected long lastModified;
+	protected int offset;
 
 	public HttpResponse(URL url) {
 		this.url = url;
@@ -29,7 +30,10 @@ public class HttpResponse implements Response {
 	public InputStream getInputStream() throws IOException {
 		if (in == null && url != null) {
 			connection = url.openConnection();
+			if (offset > 0)
+				connection.setRequestProperty("Range", "bytes=" + offset + "-");
 			in = connection.getInputStream();
+			checkOffset();
 		}
 		return in;
 	}
@@ -40,8 +44,10 @@ public class HttpResponse implements Response {
 		throws IOException, CoreException {
 		if (in == null && url != null) {
 			connection = url.openConnection();
+			if (offset > 0)
+				connection.setRequestProperty("Range", "bytes=" + offset + "-");
 
-			if (monitor != null && connection instanceof HttpURLConnection) {
+			if (monitor != null) {
 				this.in =
 					openStreamWithCancel(
 						(HttpURLConnection) connection,
@@ -52,13 +58,14 @@ public class HttpResponse implements Response {
 			// this can also be run inside a monitoring thread, but it is safe
 			// to
 			// just call it now, if the input stream has already been obtained
+			checkOffset();
 			if (in != null) {
 				this.lastModified = connection.getLastModified();
 			}
 		}
 		return in;
 	}
-	
+
 	public long getContentLength() {
 		if (connection != null)
 			return connection.getContentLength();
@@ -67,25 +74,22 @@ public class HttpResponse implements Response {
 
 	public int getStatusCode() {
 		if (connection != null) {
-			if (connection instanceof HttpURLConnection)
-				try {
-					return ((HttpURLConnection) connection).getResponseCode();
-				} catch (IOException e) {
-					UpdateCore.warn("", e);
-				}
+			try {
+				return ((HttpURLConnection) connection).getResponseCode();
+			} catch (IOException e) {
+				UpdateCore.warn("", e);
+			}
 		}
 		return IStatusCodes.HTTP_OK;
 	}
 
 	public String getStatusMessage() {
 		if (connection != null) {
-			if (connection instanceof HttpURLConnection)
-				try {
-					return ((HttpURLConnection) connection)
-						.getResponseMessage();
-				} catch (IOException e) {
-					UpdateCore.warn("", e);
-				}
+			try {
+				return ((HttpURLConnection) connection).getResponseMessage();
+			} catch (IOException e) {
+				UpdateCore.warn("", e);
+			}
 		}
 		return "";
 	}
@@ -132,5 +136,21 @@ public class HttpResponse implements Response {
 		} catch (InterruptedException e) {
 		}
 		return is;
+	}
+	public void setOffset(int offset) {
+		this.offset = offset;
+	}
+	private void checkOffset() throws IOException {
+		if (offset == 0)
+			return;
+		String range = connection.getHeaderField("Content-Range");
+		//System.out.println("Content-Range=" + range);
+		if (range == null) {
+			//System.err.println("Server does not support ranges");
+			throw new IOException("Server returned full content instead of a range.");
+		} else if (!range.startsWith("bytes " + offset + "-")) {
+			//System.err.println("Server returned wrong range");
+			throw new IOException("Server returned wrong range.");
+		}
 	}
 }

@@ -39,6 +39,11 @@ public class UpdateManagerUtils {
 	// manage URL to File
 	private static Map urlFileMap;
 
+	private static Map localFileFragmentMap;
+	private static Stack bufferPool;
+	private static final int BUFFER_SIZE = 4096; // 4kbytes
+	private static String dirRoot = null;
+	private static final int INCREMENT_SIZE = 10240; // 10kbytes
 	/**
 	 * return the urlString if it is a absolute URL
 	 * otherwise, return the default URL if the urlString is null
@@ -757,5 +762,94 @@ public static class Writer {
 		} catch (IOException e) {
 			return false;
 		}
+	}
+	/**
+	 * The file is associated with a lookup key.
+	 * @param key optional lookup key, or <code>null</code>.
+	 * @param temp the local working file
+	 * @since 2.0.2
+	 */
+	public synchronized static void mapLocalFileFragment(String key, FileFragment temp) {
+		// create file association 
+		if (key != null) {
+			if (localFileFragmentMap == null)
+				localFileFragmentMap = new HashMap();
+			localFileFragmentMap.put(key, temp);
+		}
+	}
+	
+	/**
+	 * Returns a previously cached local file (in temporary area) matching the
+	 * specified key. 
+	 * 
+	 * @param key lookup key
+	 * @return cached file, or <code>null</code>.
+	 * @since 2.0
+	 */
+	public static synchronized FileFragment lookupLocalFileFragment(String key) {
+		if (localFileFragmentMap == null)
+			return null;
+		return (FileFragment) localFileFragmentMap.get(key);
+	}
+	
+	/**
+	 * Copies specified input stream to the output stream. Neither stream
+	 * is closed as part of this operation.
+	 * 
+	 * @param is input stream
+	 * @param os output stream
+	 * @param monitor progress monitor
+	 * @param bytesCopied - first element (if exists) will be incremented by number of byes copied
+	 * @exception IOException
+	 * @exception InstallAbortedException
+	 * @since 2.0
+	 */
+	public static void copy(InputStream is, OutputStream os, InstallMonitor monitor, int[] bytesCopied) throws IOException, InstallAbortedException {
+		byte[] buf = getBuffer();
+		try {
+			int len = is.read(buf);
+			int nextIncrement = 0;
+			while (len != -1) {
+				os.write(buf, 0, len);
+				if (bytesCopied.length > 0) {
+					bytesCopied[0] += len;
+				}
+				if (monitor != null) {
+					nextIncrement += len;
+					// only report in 2k increments
+					if (nextIncrement >= INCREMENT_SIZE){ 	
+						monitor.incrementCount(nextIncrement);
+						nextIncrement = 0;
+					}
+					if (monitor.isCanceled()) {
+						String msg = Policy.bind("Feature.InstallationCancelled"); //$NON-NLS-1$
+						throw new InstallAbortedException(msg, null);
+					}
+				}
+				len = is.read(buf);
+			}
+			if (nextIncrement > 0 && monitor != null)
+				monitor.incrementCount(nextIncrement);
+		} finally {
+			freeBuffer(buf);
+		}
+	}
+
+	private static synchronized byte[] getBuffer() {
+		if (bufferPool == null) {
+			return new byte[BUFFER_SIZE];
+		}
+
+		try {
+			return (byte[]) bufferPool.pop();
+		} catch (EmptyStackException e) {
+			return new byte[BUFFER_SIZE];
+		}
+	}
+
+	private static synchronized void freeBuffer(byte[] buf) {
+		if (bufferPool == null)
+			bufferPool = new Stack();
+		bufferPool.push(buf);
 	}
 }

@@ -156,31 +156,7 @@ public class Utilities {
 	 * @since 2.0
 	 */
 	public static void copy(InputStream is, OutputStream os, InstallMonitor monitor) throws IOException, InstallAbortedException {
-		byte[] buf = getBuffer();
-		try {
-			int len = is.read(buf);
-			int nextIncrement = 0;
-			while (len != -1) {
-				os.write(buf, 0, len);
-				if (monitor != null) {
-					nextIncrement += len;
-					// only report in 2k increments
-					if (nextIncrement >= INCREMENT_SIZE){ 	
-						monitor.incrementCount(nextIncrement);
-						nextIncrement = 0;
-					}
-					if (monitor.isCanceled()) {
-						String msg = Policy.bind("Feature.InstallationCancelled"); //$NON-NLS-1$
-						throw new InstallAbortedException(msg, null);
-					}
-				}
-				len = is.read(buf);
-			}
-			if (nextIncrement > 0 && monitor != null)
-				monitor.incrementCount(nextIncrement);
-		} finally {
-			freeBuffer(buf);
-		}
+		UpdateManagerUtils.copy(is, os, monitor, new int[0]);
 	}
 
 	/**
@@ -334,23 +310,5 @@ public class Utilities {
 		if (!isFile)
 			path.mkdir();
 		path.deleteOnExit();
-	}
-
-	private static synchronized byte[] getBuffer() {
-		if (bufferPool == null) {
-			return new byte[BUFFER_SIZE];
-		}
-
-		try {
-			return (byte[]) bufferPool.pop();
-		} catch (EmptyStackException e) {
-			return new byte[BUFFER_SIZE];
-		}
-	}
-
-	private static synchronized void freeBuffer(byte[] buf) {
-		if (bufferPool == null)
-			bufferPool = new Stack();
-		bufferPool.push(buf);
 	}
 }

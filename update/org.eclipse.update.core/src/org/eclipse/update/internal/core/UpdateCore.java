@@ -269,10 +269,12 @@ public class UpdateCore extends Plugin {
 		//Request request = null;
 		Response response = null;
 		
-		if ("file".equals(url.getProtocol())){
+		if ("file".equals(url.getProtocol())) {
 			response = new FileResponse(url);
-		} else {
+		} else if (url != null && url.getProtocol().startsWith("http")) {
 			response = new HttpResponse(url);
+		} else {
+			response = new OtherResponse(url);
 		}
 		
 		/*else {

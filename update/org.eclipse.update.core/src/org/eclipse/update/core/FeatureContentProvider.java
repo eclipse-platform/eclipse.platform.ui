@@ -169,6 +169,7 @@ public abstract class FeatureContentProvider
 		// need to synch as another thread my have created the file but
 		// is still copying into it
 		File localFile = null;
+		FileFragment localFileFragment = null;
 		Object keyLock = null;
 		synchronized (lock) {
 			if (locks.get(key) == null)
@@ -187,11 +188,16 @@ public abstract class FeatureContentProvider
 						ref.getIdentifier(),
 						localFile);
 			}
+
+			if (localFile == null) {
+				localFileFragment =
+					UpdateManagerUtils.lookupLocalFileFragment(key);
+			}
 			// 
 			// download the referenced file into local temporary area
 			InputStream is = null;
 			OutputStream os = null;
-			localFile = Utilities.createLocalFile(getWorkingDirectory(), null);
+			int[] bytesCopied = new int[1];
 			boolean success = false;
 			if (monitor != null) {
 				monitor.saveState();
@@ -204,42 +210,96 @@ public abstract class FeatureContentProvider
 			}
 
 			try {
-				try {
-					is = ref.getInputStream();
-				} catch (IOException e) {
-					throw Utilities.newCoreException(
-						Policy.bind(
-							"FeatureContentProvider.UnableToRetrieve",
-							new Object[] { ref }),
-						e);
+				if (localFileFragment != null
+					&& "http".equals(ref.asURL().getProtocol())) {
+					localFile = localFileFragment.getFile();
+					try {
+						// get partial input stream
+						is =
+							ref.getPartialInputStream(
+								localFileFragment.getSize());
+						// get output stream to append to file fragment
+						os =
+							new BufferedOutputStream(
+								new FileOutputStream(localFile, true));
+					} catch (IOException e) {
+						try {
+							if (is != null)
+								is.close();
+						} catch (IOException ioe) {
+						}
+						is = null;
+						os = null;
+						localFileFragment = null;
+					}
 				}
+				if (is == null) {
+					// must download from scratch
+					localFile =
+						Utilities.createLocalFile(getWorkingDirectory(), null);
+					try {
+						is = ref.getInputStream();
+					} catch (IOException e) {
+						throw Utilities.newCoreException(
+							Policy.bind(
+								"FeatureContentProvider.UnableToRetrieve",
+								new Object[] { ref }),
+							e);
+					}
 
-				try {
-					os =
-						new BufferedOutputStream(
-							new FileOutputStream(localFile));
-				} catch (FileNotFoundException e) {
-					throw Utilities.newCoreException(
-						Policy.bind(
-							"FeatureContentProvider.UnableToCreate",
-							new Object[] { localFile }),
-						e);
+					try {
+						os =
+							new BufferedOutputStream(
+								new FileOutputStream(localFile));
+					} catch (FileNotFoundException e) {
+						throw Utilities.newCoreException(
+							Policy.bind(
+								"FeatureContentProvider.UnableToCreate",
+								new Object[] { localFile }),
+							e);
+					}
 				}
 
 				Date start = new Date();
-				Utilities.copy(is, os, monitor);
-				Date stop = new Date();
-				long timeInseconds = (stop.getTime() - start.getTime()) / 1000;
-				// time in milliseconds /1000 = time in seconds
-				InternalSiteManager.downloaded(
-					ref.getInputSize(),
-					(timeInseconds),
-					ref.asURL());
+				try {
+					if (localFileFragment != null) {
+						bytesCopied = new int[1];
+						bytesCopied[0] = localFileFragment.getSize();
+						if (monitor != null) {
+							monitor.incrementCount(bytesCopied[0]);
+						}
+					}
+					UpdateManagerUtils.copy(is, os, monitor, bytesCopied);
+					Date stop = new Date();
+					long timeInseconds =
+						(stop.getTime() - start.getTime()) / 1000;
+					// time in milliseconds /1000 = time in seconds
+					InternalSiteManager.downloaded(
+						ref.getInputSize(),
+						(timeInseconds),
+						ref.asURL());
 
-				success = true;
+					success = true;
 
-				// file is downloaded succesfully, map it
-				Utilities.mapLocalFile(key, localFile);
+					// file is downloaded succesfully, map it
+					Utilities.mapLocalFile(key, localFile);
+				} catch (IOException ioe) {
+					if (bytesCopied[0] > 0) {
+						// preserve partially downloaded file
+						UpdateManagerUtils.mapLocalFileFragment(
+							key,
+							new FileFragment(localFile, bytesCopied[0]));
+					}
+					throw ioe;
+				} catch (InstallAbortedException iae) {
+					if (bytesCopied[0] > 0) {
+						// preserve partially downloaded file
+						UpdateManagerUtils.mapLocalFileFragment(
+							key,
+							new FileFragment(localFile, bytesCopied[0]));
+					}
+					throw iae;
+				}
 			} catch (ClassCastException e) {
 				throw Utilities.newCoreException(
 					Policy.bind(
@@ -260,7 +320,7 @@ public abstract class FeatureContentProvider
 					} catch (IOException e) {
 					}
 
-				if (success) {
+				if (success || bytesCopied[0] > 0) {
 					// set the timestamp on the temp file to match the remote
 					// timestamp
 					localFile.setLastModified(ref.getLastModified());

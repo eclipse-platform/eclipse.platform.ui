@@ -139,7 +139,25 @@ public class ContentReference {
 		} else
 			throw new IOException(Policy.bind("ContentReference.UnableToCreateInputStream", this.toString())); //$NON-NLS-1$
 	}
-
+	/**
+	 * Creates an input stream for the reference.
+	 * 
+	 * @return input stream
+	 * @exception IOException unable to create stream
+	 * @since 2.0
+	 */
+	InputStream getPartialInputStream(int offset) throws IOException {
+		if (url != null && "http".equals(url.getProtocol())) {
+			URL resolvedURL = URLEncoder.encode(url);
+			response = UpdateCore.getPlugin().get(resolvedURL);
+			if(response instanceof HttpResponse)
+				((HttpResponse)response).setOffset(offset);
+			UpdateManagerUtils.checkConnectionResult(response,resolvedURL);
+			return response.getInputStream();
+		} else
+			throw new IOException(Policy.bind("ContentReference.UnableToCreateInputStream", this.toString())); //$NON-NLS-1$
+	}
+	
 	/**
 	 * Returns the size of the referenced input, if it can be determined.
 	 * 
