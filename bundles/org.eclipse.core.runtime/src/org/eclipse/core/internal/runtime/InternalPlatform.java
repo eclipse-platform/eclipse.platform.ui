@@ -129,6 +129,7 @@ public final class InternalPlatform {
 	public static final String PROP_CONSOLE_LOG = "eclipse.consoleLog"; //$NON-NLS-1$
 	public static final String PROP_NO_REGISTRY_CACHE = "eclipse.noRegistryCache"; //$NON-NLS-1$
 	public static final String PROP_NO_LAZY_CACHE_LOADING = "eclipse.noLazyRegistryCacheLoading"; //$NON-NLS-1$
+	public static final String PROP_NO_REGISTRY_FLUSHING = "eclipse.noRegistryFlushing"; //$NON-NLS-1$
 	public static final String PROP_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
 
 	// OSGI system properties.  Copied from EclipseStarter

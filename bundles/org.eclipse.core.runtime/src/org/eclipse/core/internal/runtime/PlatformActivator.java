@@ -99,7 +99,8 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 
 			if (cacheFile != null && cacheFile.isFile()) {
 				registryStamp = computeRegistryStamp(); //$NON-NLS-1$
-				registry = new RegistryCacheReader(cacheFile, problems, lazyLoading).loadCache(registryStamp);
+				boolean flushable = !"true".equals(System.getProperty(InternalPlatform.PROP_NO_REGISTRY_FLUSHING)); //$NON-NLS-1$
+				registry = new RegistryCacheReader(cacheFile, problems, lazyLoading, flushable).loadCache(registryStamp);
 			}
 			if (InternalPlatform.DEBUG && registry != null)
 				System.out.println("Reading registry cache: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$

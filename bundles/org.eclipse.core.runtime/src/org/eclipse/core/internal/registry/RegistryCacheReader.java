@@ -39,6 +39,7 @@ public class RegistryCacheReader {
 	// cached registry.
 	protected List objectTable = null;
 	private boolean lazilyLoadExtensions;
+	private boolean flushableExtensions = true;
 	protected File cacheFile;
 
 	public static final byte REGISTRY_CACHE_VERSION = 6;
@@ -46,16 +47,17 @@ public class RegistryCacheReader {
 	public static final byte OBJECT = 1;
 	public static final byte INDEX = 2;
 
-	public RegistryCacheReader(File cacheFile, MultiStatus problems, boolean lazilyLoadExtensions) {
+	public RegistryCacheReader(File cacheFile, MultiStatus problems, boolean lazilyLoadExtensions, boolean flushable) {
 		super();
 		this.cacheFile = cacheFile;
 		this.problems = problems;
 		this.lazilyLoadExtensions = lazilyLoadExtensions;
+		this.flushableExtensions = flushable;
 		objectTable = new ArrayList();
 	}
 
 	public RegistryCacheReader(File cacheFile, MultiStatus problems) {
-		this(cacheFile, problems, false);
+		this(cacheFile, problems, false, true);
 	}
 
 	private int addToObjectTable(Object object) {
@@ -117,7 +119,7 @@ public class RegistryCacheReader {
 			result = (Extension) readIndex(in);
 			if (result != null)
 				return result;
-			result = new Extension();
+			result = flushableExtensions ? new FlushableExtension() : new Extension();
 			addToObjectTable(result);
 			result.setSimpleIdentifier(readString(in, true));
 			result.setParent(readBundleModel(in));
@@ -183,7 +185,7 @@ public class RegistryCacheReader {
 
 			// and then extensions
 			length = in.readInt();
-			IExtension[] extensions = new Extension[length];
+			IExtension[] extensions = flushableExtensions ? new FlushableExtension[length] : new Extension[length];
 			for (int i = 0; i < length; i++)
 				extensions[i] = readExtension(in);
 			result.setExtensions(extensions);

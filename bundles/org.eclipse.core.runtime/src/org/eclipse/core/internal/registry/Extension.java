@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.registry;
 
-import org.eclipse.core.internal.runtime.CompatibilityHelper;
-import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -26,11 +25,11 @@ public class Extension extends NestedRegistryModelObject implements IExtension {
 	// DTD properties (included in plug-in manifest)
 	private String extensionPoint;
 	private String id;
-	private IConfigurationElement[] elements;
+	protected Object elements;
 	// this extension's elements data offset in the registry cache
-	private int subElementsCacheOffset;
+	protected int subElementsCacheOffset;
 	// is this extension already fully loaded?
-	private boolean fullyLoaded = true;
+	protected boolean fullyLoaded = true;
 
 	/**
 	 * Two Extensions are equal if they have the same Id
@@ -95,7 +94,7 @@ public class Extension extends NestedRegistryModelObject implements IExtension {
 			if (elements == null)
 				elements = new IConfigurationElement[0];
 		}
-		return elements;
+		return (IConfigurationElement[]) elements;
 	}
 
 	/**
