@@ -82,7 +82,7 @@ public class ServletResources {
 			return property;
 		}
 		return property.substring(0, amp - 1)
-			+ "<u>"
+			+ "<u STYLE=\"ACCELERATOR:true\">"
 			+ property.charAt(amp - 1)
 			+ "</u>"
 			+ property.substring(amp + 1, property.length());
