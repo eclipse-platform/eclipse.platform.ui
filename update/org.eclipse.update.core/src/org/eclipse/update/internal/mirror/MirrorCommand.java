@@ -185,7 +185,7 @@ public class MirrorCommand extends ScriptedCommand {
 			String type =
 				((SiteFeatureReference) remoteSiteFeatureReferences[i])
 					.getType();
-			if (!ISite.DEFAULT_PACKAGED_FEATURE_TYPE.equals(type)) {
+			if (type!=null && !ISite.DEFAULT_PACKAGED_FEATURE_TYPE.equals(type)) {
 				// unsupported
 				throw Utilities.newCoreException(
 					"Feature "
