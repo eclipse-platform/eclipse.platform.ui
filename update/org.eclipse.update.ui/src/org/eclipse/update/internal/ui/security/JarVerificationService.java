@@ -8,6 +8,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.security.JarVerifier;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
 /**
  *
  */
@@ -63,6 +64,7 @@ public class JarVerificationService implements IVerificationListener {
 				new JarVerificationDialog(shell,page,result);
 		dialog.create();
 		dialog.getShell().setSize(600, 500);
+		dialog.getShell().setText(UpdateUIPlugin.getResourceString("JarVerificationDialog.wtitle"));
 		dialog.open();
 		if (dialog.getReturnCode() == JarVerificationDialog.OK)
 			code = CHOICE_INSTALL_TRUST_ALWAYS;

@@ -33,6 +33,7 @@ public class InstallWizard extends Wizard {
 		setDefaultPageImageDescriptor(UpdateUIPluginImages.DESC_INSTALL_WIZ);
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(true);
+		setWindowTitle(UpdateUIPlugin.getResourceString("InstallWizard.wtitle"));
 		this.job = job;
 	}
 
