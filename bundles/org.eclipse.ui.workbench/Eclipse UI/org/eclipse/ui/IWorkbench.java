@@ -302,12 +302,4 @@ public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow win
  */
 public IDecoratorManager getDecoratorManager();
 
-/**
- * Save all of the editors in all of the pages of the receiver.
- * Confirm if force is false.
- * @param confirm whether or not to prompt before a save.
- * @return boolean if all of the editors were saved or discarded
- */
-public boolean saveAllEditors(boolean confirm);
-
 }

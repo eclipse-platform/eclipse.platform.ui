@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ResourceTreeAndListGroup;
@@ -584,6 +585,6 @@ private void setupSelectionsBasedOnSelectedTypes(
  * Save any editors that the user wants to save before export.
  * @return boolean if the save was successful. */
 protected boolean saveDirtyEditors(){
-	return WorkbenchPlugin.getDefault().getWorkbench().saveAllEditors(true);
+	return ((Workbench) WorkbenchPlugin.getDefault().getWorkbench()).saveAllEditors(true);
 }
 }
