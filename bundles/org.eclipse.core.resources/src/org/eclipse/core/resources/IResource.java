@@ -203,16 +203,6 @@ public interface IResource extends IAdaptable {
 	 */
 	public static final int SHALLOW = 0x20;
 	
-	/**
-	 * Update flag constant (bit mask value 128) indicating that a copy or move
-	 * operation should copy the underlying contents of the linked resource,
-	 * rather than just copy the link itself.
-	 * 
-	 * @deprecated This flag will has been superceded by IResource.SHALLOW.
-	 * This flag will be removed after the next integration build!
-	 */
-	public static final int DEEP = 0x80;
-
 	/*====================================================================
 	 * Other constants:
 	 *====================================================================*/
