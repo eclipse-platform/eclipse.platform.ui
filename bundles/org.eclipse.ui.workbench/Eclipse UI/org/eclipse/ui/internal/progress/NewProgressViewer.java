@@ -1,6 +1,7 @@
 package org.eclipse.ui.internal.progress;
 
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -63,6 +64,10 @@ public class NewProgressViewer extends ProgressTreeViewer {
 
 	private static ListenerList allJobViews= new ListenerList();
 	
+	static final QualifiedName KEEP_PROPERTY= new QualifiedName(PROPERTY_PREFIX, PROPERTY_KEEP);
+	static final QualifiedName ICON_PROPERTY= new QualifiedName(PROPERTY_PREFIX, PROPERTY_ICON);
+	static final QualifiedName GOTO_PROPERTY= new QualifiedName(PROPERTY_PREFIX, PROPERTY_GOTO);
+	
 	private Composite list;
 	private ScrolledComposite scroller;
 	private Color linkColor;
@@ -73,20 +78,98 @@ public class NewProgressViewer extends ProgressTreeViewer {
 	private Color selectedColor;
 	private Cursor handCursor;
 	private Font defaultFont= JFaceResources.getDefaultFont();
+	private HashMap map= new HashMap();
 
+	
+	abstract class JobTreeItem extends Canvas implements Listener {
+		JobTreeElement jobTreeElement;
+		boolean keepItem;
+		
+		JobTreeItem(Composite parent, JobTreeElement info, int flags) {
+			super(parent, flags);
+			jobTreeElement= info;
+			map.put(jobTreeElement, this);
+			addListener(SWT.Dispose, this);
+		}
+
+		void init(JobTreeElement info) {
+			map.remove(jobTreeElement);
+			jobTreeElement= info;
+			map.put(jobTreeElement, this);
+			refresh();
+		}
+		
+		public void handleEvent(Event e) {
+			switch (e.type) {
+			case SWT.Dispose:
+				map.remove(jobTreeElement);
+				break;
+			}
+		}
+		
+		Job getJob() {
+			if (jobTreeElement instanceof JobInfo)
+				return ((JobInfo)jobTreeElement).getJob();
+			return null;
+		}
+
+		String getResult() {
+			Job job= getJob();
+			if (job != null) {
+				IStatus result= job.getResult();
+				if (result != null) {
+					String m= result.getMessage();
+					if (m != null && m.trim().length() > 0)
+						return m;
+				}
+			}
+			return null;
+		}
+		
+		public boolean kill(boolean refresh, boolean broadcast) {
+			return true;
+		}
+		
+		boolean getKeep() {
+			if (jobTreeElement instanceof JobInfo) {
+				Job job= getJob();
+				if (job != null) {
+					Object property= job.getProperty(KEEP_PROPERTY);
+					if (property instanceof Boolean)
+						return ((Boolean)property).booleanValue();
+				}
+			}
+			return false;			
+		}
+		
+		abstract boolean refresh();
+		
+		public boolean remove() {
+			if (!keepItem) {
+				dispose();
+				return true;
+			}
+			return false;
+		}
+	}
+	
 	/*
 	 * Label with hyperlink capability.
 	 */
-	class Hyperlink extends Canvas implements Listener {
+	class Hyperlink extends JobTreeItem implements Listener {
 		final static int MARGINWIDTH = 1;
 		final static int MARGINHEIGHT = 1;
+		
 		boolean hasFocus;
 		String text= ""; //$NON-NLS-1$
 		boolean underlined;
 		IAction gotoAction;
 		
-		Hyperlink(Composite parent, int flags) {
-			super(parent, SWT.NO_BACKGROUND | flags);
+		Hyperlink(Composite parent, JobTreeElement info) {
+			super(parent, info, SWT.NO_BACKGROUND);
+			
+ 			setFont(defaultFont);
+			
 			addListener(SWT.KeyDown, this);
 			addListener(SWT.Paint, this);
 			addListener(SWT.MouseEnter, this);
@@ -94,8 +177,11 @@ public class NewProgressViewer extends ProgressTreeViewer {
 			addListener(SWT.MouseUp, this);
 			addListener(SWT.FocusIn, this);
 			addListener(SWT.FocusOut, this);
+			
+ 			refresh();
 		}
 		public void handleEvent(Event e) {
+			super.handleEvent(e);
 			switch (e.type) {
 			case SWT.KeyDown:
 				if (e.character == '\r')
@@ -187,12 +273,27 @@ public class NewProgressViewer extends ProgressTreeViewer {
 			if (underlined && gotoAction != null && gotoAction.isEnabled())
 				gotoAction.run();
 		}
+		public boolean refresh() {
+			if (!keepItem && jobTreeElement instanceof JobInfo) {
+				Job job= getJob();
+				if (job != null) {
+					Object o= job.getProperty(KEEP_PROPERTY);
+					if (o instanceof Boolean && ((Boolean)o).booleanValue()) {
+						keepItem= true;
+						JobTreeItem ji= (JobTreeItem) getParent();
+						ji.keepItem= true;
+					}
+				}					
+			}
+			setText(jobTreeElement.getDisplayString());
+			return false;
+		}
 	}
 
 	/*
 	 * An SWT widget representing a JobModel
 	 */
-	class JobItem extends Composite {
+	class JobItem extends JobTreeItem {
 		
 		static final int MARGIN= 2;
 		static final int HGAP= 7;
@@ -200,41 +301,35 @@ public class NewProgressViewer extends ProgressTreeViewer {
 		static final int MAX_PROGRESS_HEIGHT= 12;
 		static final int MIN_ICON_SIZE= 16;
 
-		JobTreeElement jobTreeElement;
-		boolean keepItem;
 		boolean jobTerminated;
 		boolean selected;
 		IAction gotoAction;	
 		int cachedWidth= -1;
 		int cachedHeight= -1;
 
+		Hyperlink taskinfo;
 		Label iconItem;
 		Label nameItem;
 		ProgressBar progressBar;
-		Hyperlink taskItem;
 		ToolBar actionBar;
 		ToolItem actionButton;
 		ToolItem gotoButton;
 		
 
 		JobItem(Composite parent, JobTreeElement info) {
-			super(parent, SWT.NONE);
-			
+			super(parent, info, SWT.NONE);
+				
 			Assert.isNotNull(info);
-			jobTreeElement= info;
-			
+						
 			Display display= getDisplay();
 
 			Job job= getJob();
 			Image image= null;
 			if (job != null) {
-				Object property= job.getProperty(new QualifiedName(PROPERTY_PREFIX, PROPERTY_KEEP));
-				if (property instanceof Boolean)
-					keepItem= ((Boolean)property).booleanValue();
-				property= job.getProperty(new QualifiedName(PROPERTY_PREFIX, PROPERTY_GOTO));
+				Object property= job.getProperty(GOTO_PROPERTY);
 				if (property instanceof IAction)
 					gotoAction= (IAction) property;
-				property= job.getProperty(new QualifiedName(PROPERTY_PREFIX, PROPERTY_ICON));
+				property= job.getProperty(ICON_PROPERTY);
 				if (property instanceof ImageDescriptor) {
 					ImageDescriptor id= (ImageDescriptor) property;
 					image= id.createImage(display);
@@ -307,12 +402,6 @@ public class NewProgressViewer extends ProgressTreeViewer {
 			refresh();
 		}
 		
-		Job getJob() {
-			if (jobTreeElement instanceof JobInfo)
-				return ((JobInfo)jobTreeElement).getJob();
-			return null;
-		}
-				
 		String getJobName() {
 			
 			if (jobTreeElement instanceof JobInfo) {
@@ -324,7 +413,7 @@ public class NewProgressViewer extends ProgressTreeViewer {
 			
 			if (jobTreeElement instanceof GroupInfo) {
 				GroupInfo gi= (GroupInfo) jobTreeElement;
-				Object[] objects = gi.getChildren();
+				Object[] objects = contentProviderGetChildren(gi);
 				if (objects.length > 0 && objects[0] instanceof JobTreeElement) {
 					String s= ((JobTreeElement)objects[0]).getDisplayString();
 					int pos= s.indexOf("%) "); //$NON-NLS-1$
@@ -341,10 +430,10 @@ public class NewProgressViewer extends ProgressTreeViewer {
 			
 			if (jobTreeElement instanceof JobInfo) {
 				JobInfo ji= (JobInfo) jobTreeElement;
-				Object[] objects = ji.getChildren();
+				Object[] objects = contentProviderGetChildren(ji);
 				if (objects.length > 0) {
 					JobTreeElement jte= (JobTreeElement) objects[0];
-					return jte.getDisplayString();
+					return "1-"+jte.getDisplayString();
 				}				
 				
 				TaskInfo ti= ji.getTaskInfo();
@@ -360,10 +449,10 @@ public class NewProgressViewer extends ProgressTreeViewer {
 			
 			if (jobTreeElement instanceof GroupInfo) {
 				GroupInfo gi= (GroupInfo) jobTreeElement;
-				Object[] objects = gi.getChildren();
+				Object[] objects = contentProviderGetChildren(gi);
 				if (objects.length > 0) {
 					JobInfo ji= (JobInfo) objects[0];
-					objects = ji.getChildren();
+					objects = contentProviderGetChildren(ji);
 					if (objects.length > 0 && objects[0] instanceof JobTreeElement)
 						return ((JobTreeElement)objects[0]).getDisplayString();
 				}
@@ -371,7 +460,7 @@ public class NewProgressViewer extends ProgressTreeViewer {
 			return null;
 		}
 	
-		boolean remove() {
+		public boolean remove() {
 			jobTerminated= true;
 			if (keepItem) {
 				boolean changed= false;
@@ -391,7 +480,7 @@ public class NewProgressViewer extends ProgressTreeViewer {
 			return true;	
 		}
 		
-		boolean kill(boolean refresh, boolean broadcast) {
+		public boolean kill(boolean refresh, boolean broadcast) {
 			if (jobTerminated) {
 				
 				if (broadcast) {
@@ -399,7 +488,7 @@ public class NewProgressViewer extends ProgressTreeViewer {
 					for (int i= 0; i < listeners.length; i++) {
 						NewProgressViewer jv= (NewProgressViewer) listeners[i];
 						if (jv != NewProgressViewer.this) {
-							JobItem ji= jv.findJobItem(null, jobTreeElement);
+							JobTreeItem ji= jv.findJobItem(jobTreeElement, false);
 							if (ji != null)
 								ji.kill(true, false);
 						}
@@ -433,11 +522,14 @@ public class NewProgressViewer extends ProgressTreeViewer {
 				progressBar.setBounds(MARGIN+indent, y, iw-indent, e3.y);
 				y+= e3.y;
 			}
-			if (taskItem != null) {
-				Point e4= taskItem.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				y+= VGAP;
-				taskItem.setBounds(MARGIN+indent, y, iw-indent, e4.y);
-				y+= e4.y;
+			Control[] cs= getChildren();
+			for (int i= 0; i < cs.length; i++) {
+				if (cs[i] instanceof Hyperlink) {
+					Point e4= cs[i].computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					y+= VGAP;
+					cs[i].setBounds(MARGIN+indent, y, iw-indent, e4.y);
+					y+= e4.y;
+				}
 			}
 			
 			actionBar.setBounds(e.x-MARGIN-e5.x, (e.y-e5.y)/2, e5.x, e5.y);
@@ -456,9 +548,12 @@ public class NewProgressViewer extends ProgressTreeViewer {
 					Point e3= progressBar.computeSize(SWT.DEFAULT, SWT.DEFAULT); e3.y= MAX_PROGRESS_HEIGHT;
 					cachedHeight+= VGAP + e3.y;
 				}
-				if (taskItem != null) {
-					Point e4= taskItem.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-					cachedHeight+= VGAP + e4.y;
+				Control[] cs= getChildren();
+				for (int i= 0; i < cs.length; i++) {
+					if (cs[i] instanceof Hyperlink) {
+						Point e4= cs[i].computeSize(SWT.DEFAULT, SWT.DEFAULT);
+						cachedHeight+= VGAP + e4.y;
+					}
 				}
 				cachedHeight+= MARGIN;
 			}
@@ -478,12 +573,11 @@ public class NewProgressViewer extends ProgressTreeViewer {
 				c= selectedColor;				
 			else
 				c= dark ? darkColor : whiteColor;
-			setBackground(c);				
-			iconItem.setBackground(c);	
-			nameItem.setBackground(c);
-			if (taskItem != null)
-			    taskItem.setBackground(c);
-			actionBar.setBackground(c);
+			setBackground(c);
+			
+			Control[] cs= getChildren();
+			for (int i= 0; i < cs.length; i++)
+				cs[i].setBackground(c);	
 		}
 		
 		/*
@@ -501,36 +595,6 @@ public class NewProgressViewer extends ProgressTreeViewer {
 			}
 		}
 		
-		/*
-		 * Sets the task message.
-		 */
-		void setTask(String message) {
-		    if (taskItem == null) {
-	 			taskItem= new Hyperlink(this, SWT.NONE);
-	 			taskItem.setFont(defaultFont);
-		        taskItem.setText(message);
-	 			if (gotoAction != null) {
-	 				taskItem.setToolTipText(gotoAction.getToolTipText());
-	 				taskItem.setAction(gotoAction);
-	 			}
-				relayout(true, false);
-		    } else
-		        taskItem.setText(message);
-		}
-
-		String getResult() {
-			Job job= getJob();
-			if (job != null) {
-				IStatus result= job.getResult();
-				if (result != null) {
-					String m= result.getMessage();
-					if (m != null && m.trim().length() > 0)
-						return m;
-				}
-			}
-			return null;
-		}
-		
 		boolean isCanceled() {
 			if (jobTreeElement instanceof JobInfo)
 				return ((JobInfo)jobTreeElement).isCanceled();
@@ -540,17 +604,20 @@ public class NewProgressViewer extends ProgressTreeViewer {
 		/*
 		 * Update the visual item from the model.
 		 */
-		void refresh() {
+		public boolean refresh() {
 
-		    	String name= getJobName();
+		    if (isDisposed())
+		        return false;
+
+			String name= getJobName();
 			nameItem.setText(shortenText(nameItem, name));
 
 			if (jobTerminated) {
 				if (! isCanceled() && keepItem) {
 					String message= getResult();
 					if (message != null) {
-						setTask(message);
-						return;
+						//setTask(jobTreeElement, message);
+						return true;
 					}
 				}
 			} else {
@@ -558,21 +625,90 @@ public class NewProgressViewer extends ProgressTreeViewer {
 			}
 			
 			if (jobTreeElement instanceof JobInfo) {
+				Job job= getJob();
+				if (job != null) {
+					Object property= job.getProperty(KEEP_PROPERTY);
+					if (property instanceof Boolean)
+						keepItem= ((Boolean)property).booleanValue();
+				}
+				
 				TaskInfo ti= ((JobInfo)jobTreeElement).getTaskInfo();
-				if (ti != null)
+				if (ti != null) {
+//					if (taskinfo == null)
+//						taskinfo= new Hyperlink(this, ti);
+//					taskinfo.setText(ti.getDisplayString());
 					setPercentDone(ti.getPercentDone());
+				}
+				
 			} else if (jobTreeElement instanceof GroupInfo) {
 				GroupInfo gi= (GroupInfo) jobTreeElement;
-				setPercentDone(gi.getPercentDone());		
+				setPercentDone(gi.getPercentDone());
 			}
 			
+			/*
 			String tname= getTaskName();
 			if (tname != null)
-			    setTask(tname);
-		}		
+			    setTask(jobTreeElement, tname);
+			*/
+			
+			
+			
+		    if (!jobTreeElement.hasChildren())
+		        return false;
+			boolean changed= false;
+			
+			Object[] roots= contentProviderGetChildren(jobTreeElement);
+			Control[] children= getChildren();
+			int n= 0;
+			for (int i= 0; i < children.length; i++) {
+				if (children[i] instanceof Hyperlink && children[i] != taskinfo)
+					n++;
+			}
+			
+			if (roots.length == n) {
+				int z= 0;
+				for (int i= 0; i < children.length; i++) {
+					if (children[i] instanceof Hyperlink) {
+						Hyperlink l= (Hyperlink) children[i];					
+						l.init((JobTreeElement) roots[z++]);
+					}
+				}
+			} else {
+			
+				HashSet modelJobs= new HashSet();
+				for (int z= 0; z < roots.length; z++)
+					modelJobs.add(roots[z]);
+				
+				
+				// find all removed
+				HashSet shownJobs= new HashSet();
+				for (int i= 0; i < children.length; i++) {
+					if (children[i] instanceof Hyperlink && children[i] != taskinfo) {
+						JobTreeItem ji= (JobTreeItem)children[i];
+						shownJobs.add(ji.jobTreeElement);
+						if (modelJobs.contains(ji.jobTreeElement)) {
+							ji.refresh();
+						} else {
+							changed |= ji.remove();
+						}
+					}
+				}
+				
+				// find all added
+				for (int i= 0; i < roots.length; i++) {
+					Object element= roots[i];
+					if (!shownJobs.contains(element)) {
+						JobTreeElement jte= (JobTreeElement)element;
+						new Hyperlink(this, jte);
+						changed= true;
+					}
+				}
+			}
+			
+			return changed;
+		}
 	}
 	
-		
     public NewProgressViewer(Composite parent, int flags) {
         super(parent, flags);
         Tree c = getTree();
@@ -632,37 +768,23 @@ public class NewProgressViewer extends ProgressTreeViewer {
 	    //System.err.println("add");
  	    if (list.isDisposed())
  	        return;
-		boolean changed= false;
-		Control[] children= list.getChildren();
-		Object lastAdded= null;
-		for (int i= 0; i < elements.length; i++) {
-			Object element= elements[i];
-			if (use(element)) {
-				if (findJobItem(children, element) == null) {
-				    createItem(element);
-					changed= true;
-					lastAdded= element;
-				}
-			}
-		}
-		relayout(changed, changed);
+ 	    JobTreeItem lastAdded= null;
+		for (int i= 0; i < elements.length; i++)
+			lastAdded= findJobItem(elements[i], true);
+		relayout(true, true);
 		if (lastAdded != null)
 			reveal(lastAdded);
 	}
-	
+ 	
 	public void remove(Object[] elements) {
  	    if (list.isDisposed())
  	        return;
 	    //System.err.println("remove");
 		boolean changed= false;
-		Control[] children= list.getChildren();
 		for (int i= 0; i < elements.length; i++) {
-			Object element= elements[i];
-			if (use(element)) {
-				JobItem ji= findJobItem(children, element);
-				if (ji != null)
-					changed |= ji.remove();
-			}
+			JobTreeItem ji= findJobItem(elements[i], false);
+			if (ji != null)
+				changed |= ji.remove();
 		}
 		relayout(changed, changed);
 	}
@@ -670,25 +792,24 @@ public class NewProgressViewer extends ProgressTreeViewer {
 	public void refresh(Object element, boolean updateLabels) {
  	    if (list.isDisposed())
  	        return;
-		if (use(element)) {
-			JobItem ji= findJobItem(null, element);
-			if (ji != null)
-				ji.refresh();
-		}
+ 	    JobTreeItem ji= findJobItem(element, true);
+		if (ji != null)
+			if (ji.refresh())
+				relayout(true, true);
 	}
 	
 	public void refresh(boolean updateLabels) {
- 	    if (list.isDisposed())
- 	        return;
+	    if (list.isDisposed())
+	        return;
 	    //System.err.println("refreshAll");
 		boolean changed= false;
-		Object lastAdded= null;
+		boolean added= false;
+		JobTreeItem lastAdded= null;
 		
-		Object[] roots= getRoots();
+		Object[] roots= contentProviderGetRoots(getInput());
 		HashSet modelJobs= new HashSet();
 		for (int z= 0; z < roots.length; z++)
-			if (use(roots[z]))
-				modelJobs.add(roots[z]);
+			modelJobs.add(roots[z]);
 		
 		HashSet shownJobs= new HashSet();
 		
@@ -698,66 +819,53 @@ public class NewProgressViewer extends ProgressTreeViewer {
 			JobItem ji= (JobItem)children[i];
 			shownJobs.add(ji.jobTreeElement);
 			if (modelJobs.contains(ji.jobTreeElement))
-				ji.refresh();
-			else
+				changed |= ji.refresh();
+			else {
+				added= true;
 				changed |= ji.remove();
+			}
 		}
 		
 		// find all added
 		for (int i= 0; i < roots.length; i++) {
 			Object element= roots[i];
 			if (!shownJobs.contains(element)) {
-			    createItem(element);
-				changed= true;
-				lastAdded= element;
+			    lastAdded= createItem(element);
+				changed= added= true;
 			}
 		}
-			
-		relayout(changed, changed);
+				
+		relayout(changed, added);
 		if (lastAdded != null)
 			reveal(lastAdded);
 	}
 	
-	private void createItem(Object element) {
-	    new JobItem(list, (JobTreeElement) element);
+	private JobItem createItem(Object element) {
+		return new JobItem(list, (JobTreeElement) element);
 	}
 	
-	private Object[] getRoots() {
-	    IContentProvider provider = getContentProvider();
-	    if (provider instanceof IStructuredContentProvider)
-	        return ((IStructuredContentProvider)provider).getElements(getInput());
-	    return new Object[0];
-	}
-	
-	private JobItem findJobItem(Control[] children, Object element) {
-		if (children == null)
-			children= list.getChildren();
-		for (int i= 0; i < children.length; i++) {
-			JobItem ji= (JobItem) children[i];
-			if (element == ji.jobTreeElement)
-				return ji;
-		}
-		return null;
-	}
-
-	boolean use(Object element) {
-	    if (element instanceof JobTreeElement) {
-	        JobTreeElement jte= (JobTreeElement)element;
+	private JobTreeItem findJobItem(Object element, boolean create) {
+		JobTreeItem ji= (JobTreeItem) map.get(element);
+		
+		//System.out.println(element + ": " + ji);
+		
+		if (ji == null && create) {
+			JobTreeElement jte= (JobTreeElement) element;
 			Object parent= jte.getParent();
 			if (parent != null) {
-				refresh(parent, true);
-				//System.err.println("---use: " + jte.getCondensedDisplayString());
-				return false;
+				JobTreeItem parentji= findJobItem(parent, true);
+				if (parentji != null)
+					ji= new Hyperlink(parentji, jte);
+			} else {
+				createItem(jte);
 			}
-	    }
-		return true;
-	}
-	
-	public void reveal(Object element) {
-		Assert.isNotNull(element);
-		JobItem ji= findJobItem(null, element);
-		if (ji != null) {
-			Rectangle bounds= ji.getBounds();
+		}
+		return ji;
+	}	
+		
+	public void reveal(JobTreeItem jti) {
+		if (jti != null) {
+			Rectangle bounds= jti.getBounds();
 			/*
 			Rectangle visArea= scroller.getClientArea();
 			Point o= scroller.getOrigin();
@@ -851,6 +959,20 @@ public class NewProgressViewer extends ProgressTreeViewer {
 			gc.dispose();
 		}
 		return textValue;
+	}
+	
+	Object[] contentProviderGetChildren(Object parent) {
+		IContentProvider provider = getContentProvider();
+		if (provider instanceof ITreeContentProvider)
+			return ((ITreeContentProvider)provider).getChildren(parent);
+		return new Object[0];
+	}
+
+	Object[] contentProviderGetRoots(Object parent) {
+		IContentProvider provider = getContentProvider();
+		if (provider instanceof ITreeContentProvider)
+			return ((ITreeContentProvider)provider).getElements(parent);
+		return new Object[0];
 	}
 
 	////// SelectionProvider
