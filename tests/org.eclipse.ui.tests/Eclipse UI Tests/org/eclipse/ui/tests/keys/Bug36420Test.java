@@ -107,6 +107,6 @@ public class Bug36420Test extends UITestCase {
 			}
 		}
 
-		assertTrue("Key binding not imported", found); //$NON-NLS-1$
+		assertTrue("Key binding not imported.", found); //$NON-NLS-1$
 	}
 }
