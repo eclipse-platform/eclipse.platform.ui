@@ -13,8 +13,6 @@ package org.eclipse.jface.bindings;
 import java.util.Comparator;
 import java.util.Map;
 
-import org.eclipse.jface.util.Util;
-
 /**
  * 
  * There is an ordering in which the search is applied. This ordering is the
@@ -41,40 +39,75 @@ import org.eclipse.jface.util.Util;
  */
 final class BindingComparator implements Comparator {
 
-    /**
-     * The tree of contexts to be used for all of the comparison. All of the
-     * keys should be active context identifiers (i.e., never <code>null</code>).
-     * The values will be their parents (i.e., possibly <code>null</code>).
-     * Both keys and values are context identifiers (<code>String</code>).
-     * This map may be empty, but is should never be <code>null</code>.
-     */
-    private final Map contextTree;
+	/**
+	 * The tree of contexts to be used for all of the comparison. All of the
+	 * keys should be active context identifiers (i.e., never <code>null</code>).
+	 * The values will be their parents (i.e., possibly <code>null</code>).
+	 * Both keys and values are context identifiers (<code>String</code>).
+	 * This map may be empty, but is should never be <code>null</code>.
+	 */
+	private final Map contextTree;
 
-    /**
-     * Constructs a new instance of <code>BindingComparator</code>.
-     * 
-     * @param activeContextTree
-     *            The tree of contexts to be used for all of the comparison. All
-     *            of the keys should be active context identifiers (i.e., never
-     *            <code>null</code>). The values will be their parents (i.e.,
-     *            possibly <code>null</code>). Both keys and values are
-     *            context identifiers (<code>String</code>). This map may be
-     *            empty, but is should never be <code>null</code>.
-     */
-    BindingComparator(final Map activeContextTree) {
-        contextTree = activeContextTree;
-    }
+	/**
+	 * The array of scheme identifiers, starting with the active scheme and
+	 * moving up through its parents.
+	 */
+	private final String[] schemeIds;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-     */
-    public int compare(final Object object1, final Object object2) {
-        final Binding binding1 = (Binding) object1;
-        final Binding binding2 = (Binding) object2;
+	/**
+	 * Constructs a new instance of <code>BindingComparator</code>.
+	 * 
+	 * @param activeContextTree
+	 *            The tree of contexts to be used for all of the comparison. All
+	 *            of the keys should be active context identifiers (i.e., never
+	 *            <code>null</code>). The values will be their parents (i.e.,
+	 *            possibly <code>null</code>). Both keys and values are
+	 *            context identifiers (<code>String</code>). This map may be
+	 *            empty, but is should never be <code>null</code>.
+	 * @param activeSchemeIds
+	 *            The array of scheme identifiers, starting with the active
+	 *            scheme and moving up through its parents. This value may be
+	 *            empty, but it is never <code>null</code>.
+	 */
+	BindingComparator(final Map activeContextTree,
+			final String[] activeSchemeIds) {
+		contextTree = activeContextTree;
+		schemeIds = activeSchemeIds;
+	}
 
-        return Util.compare(object1, object2);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	 */
+	public int compare(final Object object1, final Object object2) {
+		final Binding binding1 = (Binding) object1;
+		final Binding binding2 = (Binding) object2;
+
+		final String scheme1 = binding1.getSchemeId();
+		final String scheme2 = binding2.getSchemeId();
+		Binding mostSpecificScheme = null;
+		if (!scheme1.equals(scheme2)) {
+			for (int i = 0; i < schemeIds.length; i++) {
+				final String schemeId = schemeIds[i];
+				if (scheme1.equals(schemeId)) {
+					mostSpecificScheme = binding1;
+					break;
+				}
+				if (scheme2.equals(schemeId)) {
+					mostSpecificScheme = binding2;
+					break;
+				}
+			}
+		}
+		
+		if (mostSpecificScheme == binding1) {
+			return -1;
+		}
+		if (mostSpecificScheme == binding2) {
+			return 1;
+		}
+		return 0;
+	}
 
 }

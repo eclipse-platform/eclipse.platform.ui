@@ -21,7 +21,7 @@ import org.eclipse.jface.util.Util;
  * 
  * @since 3.1
  */
-public class TriggerSequence {
+public abstract class TriggerSequence {
 
     /**
      * A factor for computing the hash code for all trigger sequences.
@@ -97,6 +97,25 @@ public class TriggerSequence {
 
         return Util.endsWith(triggers, triggerSequence.triggers, equals);
     }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public final boolean equals(final Object object) {
+        if (!(object instanceof TriggerSequence))
+            return false;
+
+        final TriggerSequence castedObject = (TriggerSequence) object;
+        return triggers.equals(castedObject.triggers);
+    }
+
+    /**
+     * Formats this trigger sequence into the current default look.
+     * 
+     * @return A string representation for this trigger sequence using the default
+     *         look; never <code>null</code>.
+     */
+    public abstract String format();
 
     /**
      * Returns the list of triggers.

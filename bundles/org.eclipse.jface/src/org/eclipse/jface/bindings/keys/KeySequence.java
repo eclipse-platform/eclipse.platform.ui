@@ -202,17 +202,6 @@ public class KeySequence extends TriggerSequence implements Comparable {
     }
 
     /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    public final boolean equals(final Object object) {
-        if (!(object instanceof KeySequence))
-            return false;
-
-        final KeySequence castedObject = (KeySequence) object;
-        return triggers.equals(castedObject.triggers);
-    }
-
-    /**
      * Formats this key sequence into the current default look.
      * 
      * @return A string representation for this key sequence using the default
