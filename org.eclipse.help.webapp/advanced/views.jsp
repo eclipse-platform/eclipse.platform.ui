@@ -169,11 +169,21 @@ if (data.isIE()){
 	confirmShowAllDialog.focus(); 
 }
 
+function closeConfirmShowAllDialog()
+{
+	try {
+		if (confirmShowAllDialog){
+			confirmShowAllDialog.close();
+		}
+	}
+	catch(e) {}
+}
+
 </script>
 
 </head>
    
-<body dir="<%=direction%>" tabIndex="-1">
+<body dir="<%=direction%>" tabIndex="-1" onunload="closeConfirmShowAllDialog()">
 <%
 	for (int i=0; i<views.length; i++) 
 	{

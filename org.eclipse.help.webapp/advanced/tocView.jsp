@@ -149,8 +149,18 @@ if (data.isIE()){
 function yesShowAll(){
 	window.parent.parent.showAll();
 }
-		
+
+function closeAskShowAllDialog(){
+	try {
+		if (askShowAllDialog){
+			askShowAllDialog.close();
+		}
+	}
+	catch(e) {}
+}
+
 function onunloadHandler() {
+	closeAskShowAllDialog();
 <%
 // for large books, we want to avoid a long unload time
 if (data.isIE()){

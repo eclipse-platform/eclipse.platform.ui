@@ -87,12 +87,14 @@ function sizeButtons() {
 }
 
 function confirmed(){
+	try{
 <% if ("true".equalsIgnoreCase(request.getParameter("dontaskagain")) ){ %>
-	if(document.getElementById("dontask").checked){
-		window.opener.<%=request.getParameter("dontaskagainCallback")%>;
-	}
+		if(document.getElementById("dontask").checked){
+			window.opener.<%=request.getParameter("dontaskagainCallback")%>;
+		}
 <% } %>
-	window.opener.<%=request.getParameter("confirmCallback")%>;
+		window.opener.<%=request.getParameter("confirmCallback")%>;
+	} catch(e) {}
  	window.close();
 	return false;
 }
