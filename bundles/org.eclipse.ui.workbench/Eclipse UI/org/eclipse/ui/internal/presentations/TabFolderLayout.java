@@ -16,6 +16,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.internal.layout.*;
 
 /**
  * Arranges a set of controls along the top of a CTabFolder, and
