@@ -148,8 +148,7 @@ public class RegistryCacheWriter {
 	public void writeHeaderInformation(DataOutputStream out) {
 		try {
 			out.writeInt(RegistryCacheReader.REGISTRY_CACHE_VERSION);
-			// TODO figure out what (if anything) to use as the install stamp (OSGi gneration or some such?)
-			out.writeLong(23);
+			out.writeLong(InternalPlatform.getDefault().getStateTimeStamp());
 			EnvironmentInfo info = InternalPlatform.getDefault().getEnvironmentInfoService();
 			out.writeUTF(info.getOS());
 			out.writeUTF(info.getWS());

@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
+import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.osgi.framework.*;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -1239,5 +1240,12 @@ public final class InternalPlatform implements IPlatform {
 	}
 	public Plugin getRuntimeInstance() {
 		return runtimeInstance;
+	}
+	public long getStateTimeStamp() {
+		ServiceReference platformAdminReference = context.getServiceReference(PlatformAdmin.class.getName());
+		if (platformAdminReference == null)
+			return -1;
+		else
+			return ((PlatformAdmin) context.getService(platformAdminReference)).getState().getTimeStamp();
 	}
 }

@@ -32,7 +32,8 @@ public class RegistryCacheReader {
 	private boolean lazilyLoadExtensions;
 	private MultiStatus cacheReadProblems = null;
 	protected File cacheFile;
-
+	private long timeStamp;
+	
 	public static final byte REGISTRY_CACHE_VERSION = 3;
 	public static final byte NULL = 0;
 	public static final byte OBJECT = 1;
@@ -65,15 +66,8 @@ public class RegistryCacheReader {
 			String osStamp = in.readUTF();
 			String windowsStamp = in.readUTF();
 			String localeStamp = in.readUTF();
-			//TODO We need to save the state number for which the registry has been derived
-			// Save the current plugin timestamp for writing to the
-			// cache when we shutdown
-			//			InternalPlatform.setRegistryCacheTimeStamp(BootLoader.getCurrentPlatformConfiguration().getPluginsChangeStamp());
-
 			EnvironmentInfo info = InternalPlatform.getDefault().getEnvironmentInfoService();
-			//			return ((installStamp == InternalPlatform.getRegistryCacheTimeStamp()) &&
-			return ((osStamp.equals(info.getOS())) && (windowsStamp.equals(info.getWS())) && (localeStamp.equals(info.getNL())));
-			// TODO need to read/compare the OS, WS and NL etc.
+			return ((installStamp == InternalPlatform.getDefault().getStateTimeStamp()) && (osStamp.equals(info.getOS())) && (windowsStamp.equals(info.getWS())) && (localeStamp.equals(info.getNL())));
 		} catch (IOException ioe) {
 			cacheReadProblems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOException", "HeaderInformation"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;

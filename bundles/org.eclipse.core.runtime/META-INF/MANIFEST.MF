@@ -27,6 +27,7 @@ Import-Package:
  org.eclipse.osgi.service.environment,
  org.osgi.service.packageadmin,
  org.osgi.service.url,
- org.osgi.util.tracker
+ org.osgi.util.tracker,
+ org.eclipse.osgi.service.resolver
 DynamicImport-Package:
  org.eclipse.core.internal.plugins
