@@ -184,6 +184,36 @@ public class SourceViewerConfiguration {
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return null;
 	}
+
+	/**
+	 * Returns the SWT event state masks for which text hover are configured for
+	 * the given content type.
+	 *
+	 * @param sourceViewer the source viewer to be configured by this configuration
+	 * @param contentType the content type
+	 * @return an <code>int</code> array with the configured SWT event state masks
+	 * 			or <code>null</code> if text hovers are not supported for the given content type
+	 * @since 2.1
+	 */
+	public int[] getConfiguredTextHoverStateMasks(ISourceViewer sourceViewer, String contentType) {
+		return null;
+	}
+
+	/**
+	 * Returns the text hover which will provide the information to be shown
+	 * in a text hover popup window when requested for the given source viewer and
+	 * the given content type. This implementation always returns <code>
+	 * null</code>.
+	 *
+	 * @param sourceViewer the source viewer to be configured by this configuration
+	 * @param contentType the content type
+	 * @param stateMask the SWT event state mask
+	 * @return a text hover or <code>null</code> if no hover support should be installed
+	 * @since 2.1
+	 */
+	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType, int stateMask) {
+		return null;
+	}
 	
 	/**
 	 * Returns the text hover which will provide the information to be shown

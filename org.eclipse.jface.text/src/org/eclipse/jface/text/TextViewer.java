@@ -21,9 +21,9 @@ import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.LineBackgroundEvent;
 import org.eclipse.swt.custom.LineBackgroundListener;
+import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -51,6 +51,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ScrollBar;
 
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -910,6 +911,42 @@ public class TextViewer extends Viewer implements
 		}
 	};
 	
+	/**
+	 * Value object uses as key in the text hover configuration table. It is
+	 * modifiable only for efficiency reasons only inside this compilation unit
+	 * to allow the reuse of created objects.	 */
+	protected class TextHoverKey {
+
+		private String fContentType;
+		private int fStateMask;
+
+		protected TextHoverKey(String contentType, int stateMask) {
+			Assert.isNotNull(contentType);
+			fContentType= contentType;
+			fStateMask= stateMask;
+		}
+		
+		/*
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		public boolean equals(Object obj) {
+			if (obj == null || obj.getClass() != getClass())
+				return false;
+			TextHoverKey textHoverKey= (TextHoverKey)obj;
+			return textHoverKey.fContentType.equals(fContentType) && textHoverKey.fStateMask == fStateMask;
+		}
+
+		/*
+		 * @see java.lang.Object#hashCode()
+		 */
+		public int hashCode() {
+	 		return fStateMask << 16 | fContentType.hashCode();
+		}
+
+		private void setStateMask(int stateMask) {
+			fStateMask= stateMask;
+		}
+	}
 		
 	/** ID for originators of view port changes */
 	protected static final int SCROLLER=		1;
@@ -974,7 +1011,7 @@ public class TextViewer extends Viewer implements
 	 * The mark position category.
 	 * @since 2.0
 	 */
-	private final String MARK_POSITION_CATEGORY="__mark_category_" + hashCode();
+	private final String MARK_POSITION_CATEGORY="__mark_category_" + hashCode(); //$NON-NLS-1$
 	/** 
 	 * The mark position updater
 	 * @since 2.0
@@ -1317,18 +1354,25 @@ public class TextViewer extends Viewer implements
 	public void setUndoManager(IUndoManager undoManager) {
 		fUndoManager= undoManager;
 	}
-	
+
 	/*
 	 * @see ITextViewer#setTextHover
 	 */
 	public void setTextHover(ITextHover hover, String contentType) {
-		
+		setTextHover(hover, contentType, ITextViewerExtension2.DEFAULT_HOVER_STATE_MASK);
+	}
+
+	/*
+	 * @see ITextViewerExtension2#setTextHover
+	 */
+	public void setTextHover(ITextHover hover, String contentType, int stateMask) {
+		TextHoverKey key= new TextHoverKey(contentType, stateMask);
 		if (hover != null) {
 			if (fTextHovers == null)
 				fTextHovers= new HashMap();
-			fTextHovers.put(contentType, hover);
+			fTextHovers.put(key, hover);
 		} else if (fTextHovers != null)
-			fTextHovers.remove(contentType);
+			fTextHovers.remove(key);
 	}
 	
 	/**
@@ -1338,9 +1382,36 @@ public class TextViewer extends Viewer implements
 	 * @return the text hover for the given offset
 	 */
 	protected ITextHover getTextHover(int offset) {
-		return (ITextHover) selectContentTypePlugin(offset, fTextHovers);
+		return getTextHover(offset, ITextViewerExtension2.DEFAULT_HOVER_STATE_MASK);
 	}
-	
+
+	/**
+	 * Returns the text hover for a given offset.
+	 * 
+	 * @param offset the offset for which to return the text hover
+	 * @param stateMask the SWT event state mask
+	 * @return the text hover for the given offset
+	 */
+	protected ITextHover getTextHover(int offset, int stateMask) {
+		if (fTextHovers == null)
+			return null;
+
+		try {
+			TextHoverKey key= new TextHoverKey(getDocument().getContentType(offset), stateMask);
+			Object textHover= fTextHovers.get(key);
+			if (textHover == null) {
+				// Use default text hover
+				key.setStateMask(ITextViewerExtension2.DEFAULT_HOVER_STATE_MASK);
+				textHover= fTextHovers.get(key);
+			}
+			return (ITextHover)textHover;
+		} catch (BadLocationException x) {
+			if (TRACE_ERRORS)
+				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.selectContentTypePlugin")); //$NON-NLS-1$
+		}
+		return null;
+	}
+
 	/**
 	 * Returns the text hovering controller of this viewer.
 	 * 

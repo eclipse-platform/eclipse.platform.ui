@@ -229,7 +229,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		private boolean fIsActive= false;
 		/** Indicates whether the mouse has been lost. */
 		private boolean fMouseLost= false;
-		/** Indicates whether the subject control's shelll has been deactivated. */
+		/** Indicates whether the subject control's shell has been deactivated. */
 		private boolean fShellDeactivated= false;
 		
 		/**
@@ -349,7 +349,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			if (!fSubjectArea.contains(event.x, event.y))
 				deactivate();
 		}
-		
+
 		/*
 		 * @see ShellListener#shellDeactivated(ShellEvent)
 		 */
@@ -404,6 +404,17 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	private MouseTracker fMouseTracker= new MouseTracker();
 	/** The remembered hover event location */
 	private Point fHoverEventLocation= new Point(-1, -1);
+
+	/**
+	 * The key listener to get modifier state mask mouse tracker events.
+	 * TODO: Workaround for bug 24619 and can be removed once the bug is fixed
+	 */
+	private KeyListener fKeyListener;
+	/**
+	 * State mask of the keyboard modifiers.
+	 * TODO: Workaround for bug 24619 and can be removed once the bug is fixed
+	 */
+	private int fStateMask= 0;
 	
 	/**
 	 * Creates a new hover information control manager using the given information control creator.
@@ -459,5 +470,43 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 */
 	protected Point getHoverEventLocation() {
 		return fHoverEventLocation;
+	}
+
+	/*
+	 * @see AbstractInformationControlManager#setEnabled(boolean)
+	 * TODO: Workaround for bug 24619. This method can be removed once the bug is fixed
+	 */
+	public void install(Control subjectControl) {
+		super.install(subjectControl);
+		if (subjectControl != null) {
+			fKeyListener= new KeyListener() {
+				public void keyPressed(KeyEvent event) {
+					fStateMask= event.stateMask | event.keyCode;
+				}
+				public void keyReleased(KeyEvent event) {
+					fStateMask= 0;
+				}
+			};
+			subjectControl.addKeyListener(fKeyListener);
+		}		
+	}
+
+	/*
+	 * @see AbstractInformationControlManager#setEnabled(boolean)
+	 * TODO: Workaround for bug 24619. This method can be removed once the bug is fixed
+	 */
+	public void dispose() {
+		if (fKeyListener != null && getSubjectControl() != null)
+			getSubjectControl().removeKeyListener(fKeyListener);
+		super.dispose();
+	}
+	
+	/**
+	 * Returns the SWT event state mask.
+	 * TODO: Workaround for bug 24619. This method can be removed once the bug is fixed
+	 * 
+	 * @deprecated	The state mask should be provided by the mouse event or the display.	 */
+	int getStateMask() {
+		return fStateMask;
 	}
 }

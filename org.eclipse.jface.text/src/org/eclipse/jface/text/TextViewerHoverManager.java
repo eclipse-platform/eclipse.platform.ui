@@ -75,7 +75,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 			return;
 		}
 			
-		final ITextHover hover= fTextViewer.getTextHover(offset);
+		final ITextHover hover= fTextViewer.getTextHover(offset, getStateMask());
 		if (hover == null) {
 			setInformation(null, null);
 			return;
@@ -98,7 +98,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 			return;
 		}
 		
-		fThread= new Thread() {
+		fThread= new Thread("Text Viewer Hover Presenter") { //$NON-NLS-1$
 			public void run() {
 				// http://bugs.eclipse.org/bugs/show_bug.cgi?id=17693			
 				try {

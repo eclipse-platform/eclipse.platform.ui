@@ -24,6 +24,7 @@ import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextViewer;
@@ -228,7 +229,16 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 				
 			setAutoIndentStrategy(configuration.getAutoIndentStrategy(this, t), t);
 			setTextDoubleClickStrategy(configuration.getDoubleClickStrategy(this, t), t);
-			setTextHover(configuration.getTextHover(this, t), t);
+			
+			int[] stateMasks= configuration.getConfiguredTextHoverStateMasks(this, t);
+			if (stateMasks != null) {
+				for (int j= 0; j < stateMasks.length; j++)	{
+					int stateMask= stateMasks[j];
+					setTextHover(configuration.getTextHover(this, t, stateMask), t, stateMask);
+				}
+			} else {
+				setTextHover(configuration.getTextHover(this, t), t, ITextViewerExtension2.DEFAULT_HOVER_STATE_MASK);
+			}
 			
 			String[] prefixes= configuration.getIndentPrefixes(this, t);
 			if (prefixes != null && prefixes.length > 0)
