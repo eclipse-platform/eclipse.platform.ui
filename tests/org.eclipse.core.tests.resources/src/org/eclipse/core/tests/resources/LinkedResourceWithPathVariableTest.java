@@ -202,19 +202,29 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		} catch (CoreException e) {
 			fail("3.0", e);
 		}
+		assertExistsInWorkspace("3,1", file);
+		
+		//refresh local - should not fail or make the link disappear
+		try {
+			file.refreshLocal(IResource.DEPTH_ONE, getMonitor());
+			file.getProject().refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		} catch (CoreException e) {
+			fail("3.2", e);
+		}
+		assertExistsInWorkspace("3.3", file);
 
 		// try to change resource's contents
 		try {
 			file.setContents(getContents("new contents"), IResource.NONE, null);
 			// Resource has no-defined location - should fail
-			fail("3.1");
+			fail("3.4");
 		} catch (CoreException re) {
 			// success: resource had no defined location
 		}
 
-		assertExistsInWorkspace("3.2", file);
+		assertExistsInWorkspace("3.5", file);
 		// the location is null
-		assertNull("3.3", file.getLocation());
+		assertNull("3.6", file.getLocation());
 
 		// re-creates the variable with its previous value
 		try {
