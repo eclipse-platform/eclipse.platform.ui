@@ -29,6 +29,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 
 /**
  * Manages contributed launch configuration tabs
@@ -49,6 +50,16 @@ public class LaunchConfigurationPresentationManager {
 	 * used to represent the default tab group (i.e. unspecified mode).
 	 */
 	private Hashtable fTabGroupExtensions;	
+	
+	/**
+	 * Collection of debug view content providers defined in 
+	 * plug-in XML. Entries are keyed by debug model identifier
+	 * (<code>String</code>) and values are configuration elements
+	 * (<code>IConfigurationElement</code>).
+	 *  
+	 *  @since 3.1
+	 */
+	private Map fDebugViewContentProviders;
 		
 	/**
 	 * Constructs the singleton launch configuration presentation
@@ -57,6 +68,7 @@ public class LaunchConfigurationPresentationManager {
 	private LaunchConfigurationPresentationManager() {
 		fgDefault = this;
 		initializeTabGroupExtensions();
+		initializeDebugViewContentProviderExtensions();
 	}
 
 	/**
@@ -116,6 +128,35 @@ public class LaunchConfigurationPresentationManager {
 			}
 		}
 	}	
+	
+	/**
+	 * Caches the configuration elements for debug model content providers,
+	 * by debug model.
+	 */
+	private void initializeDebugViewContentProviderExtensions() {
+		fDebugViewContentProviders = new Hashtable();
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_DEBUG_VIEW_CONTENT_PROVIDERS);
+		IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
+		for (int i = 0; i < extensions.length; i++) {
+			IConfigurationElement element = extensions[i];
+			if (attributeExists(element, "debugModelId")) { //$NON-NLS-1$
+				if (attributeExists(element, "class")) { //$NON-NLS-1$
+					fDebugViewContentProviders.put(element.getAttribute("debugModelId"), element); //$NON-NLS-1$
+				}
+			}
+		}
+	}	
+	
+	private boolean attributeExists(IConfigurationElement element, String attribute) {
+		if (element.getAttribute(attribute) == null) {
+			IExtension extension = element.getDeclaringExtension();
+			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.STATUS_INVALID_EXTENSION_DEFINITION,
+					 MessageFormat.format("Extension {0} missing required attribute {1}",new String[]{extension.getUniqueIdentifier(), attribute}), null); //$NON-NLS-1$
+					DebugUIPlugin.log(status);
+			return false;
+		}
+		return true;
+	}
 	
 	/**
 	 * Returns the tab group for the given launch configuration type and mode.
@@ -192,5 +233,45 @@ public class LaunchConfigurationPresentationManager {
 		LaunchConfigurationTabGroupExtension extension = manager.getExtension(configType.getAttribute("id"), mode); //$NON-NLS-1$
 		return extension.getDescription(mode);
 	}	
+	
+	/**
+	 * Returns a new content provider for the given debug model, or <code>null</code>
+	 * if none.
+	 * 
+	 * @param modelId debug model identifier
+	 * @return a new content provider or <code>null</code>
+	 */
+	public ITreeContentProvider newDebugViewContentProvider(String modelId) {
+		IConfigurationElement element = (IConfigurationElement) fDebugViewContentProviders.get(modelId);
+		if (element != null) {
+			try {
+				Object object = element.createExecutableExtension("class"); //$NON-NLS-1$
+				if (object instanceof ITreeContentProvider) {
+					ITreeContentProvider provider = (ITreeContentProvider) object;
+					return provider;
+				} else {
+					IExtension extension = element.getDeclaringExtension();
+					IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.STATUS_INVALID_EXTENSION_DEFINITION,
+						MessageFormat.format("'class' attribute for extension {0} must specify an instance of ITreeContentProvider",new String[]{extension.getUniqueIdentifier()}), null); //$NON-NLS-1$
+					DebugUIPlugin.log(status);
+				}
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns whether an debug model content provider extension has been
+	 * contributed for the given model.
+	 * 
+	 * @param modelIdentifier
+	 * @return whether an debug model content provider extension has been
+	 * contributed for the given model
+	 */
+	public boolean hasDebugViewContentProivder(String modelIdentifier) {
+		return fDebugViewContentProviders.containsKey(modelIdentifier);
+	}
 }
 

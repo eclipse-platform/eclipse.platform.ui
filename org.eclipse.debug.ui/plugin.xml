@@ -40,6 +40,7 @@
    <extension-point id="sourceContainerPresentations" name="%SourceContainerPresentationsName" schema="schema/sourceContainerPresentations.exsd"/>
    <extension-point id="debugModelContextBindings" name="%DebugModelContextBindingsName" schema="schema/debugModelContextBindings.exsd"/>
    <extension-point id="contextViewBindings" name="%ContextViewBindingsName" schema="schema/contextViewBindings.exsd"/>
+   <extension-point id="debugViewContentProviders" name="%DebugViewContentProvidersName" schema="schema/debugViewContentProviders.exsd"/>
 
 <!-- Extensions -->
    <extension
