@@ -18,11 +18,9 @@ import org.eclipse.core.internal.runtime.Assert;
  * <p>
  * This class may be subclassed.
  * </p>
- * <p>
- * <b>Note</b>: This is obsolete API that will be replaced in time with
- * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
- * This API will be deprecated once the APIs for the new Eclipse Platform
- * Runtime achieve their final and stable form (post-3.0). </p>
+ * TODO @deprecated In Eclipse 3.0 the runtime was refactored and all 
+ * non-essential elements removed.  This class provides facilities primarily intended
+ * for tooling.  As such it has been removed and no directly substitutable API provided.
  */
 
 public abstract class PluginModelObject {
@@ -72,7 +70,7 @@ public abstract class PluginModelObject {
 	 * 
 	 * @return <code>true</code> if this model object is read-only,
 	 *		<code>false</code> otherwise
-	 * @see #markReadOnly
+	 * @see #markReadOnly()
 	 */
 	public boolean isReadOnly() {
 		return (flags & M_READ_ONLY) == M_READ_ONLY;
@@ -82,7 +80,7 @@ public abstract class PluginModelObject {
 	 * Sets this model object and all of its descendents to be read-only.
 	 * Subclasses may extend this implementation.
 	 *
-	 * @see #isReadOnly
+	 * @see #isReadOnly()
 	 */
 	public void markReadOnly() {
 		flags |= M_READ_ONLY;
@@ -91,6 +89,8 @@ public abstract class PluginModelObject {
 	/**
 	 * Optimization to replace a non-localized key with its localized value.  Avoids having
 	 * to access resource bundles for further lookups.
+	 * 
+	 * @param value the localized name of this model object
 	 */
 	public void setLocalizedName(String value) {
 		name = value;

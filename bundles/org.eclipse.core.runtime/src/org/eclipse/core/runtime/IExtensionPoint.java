@@ -63,7 +63,7 @@ public interface IExtensionPoint {
 	 * their finished, stable form (post-3.0). </p>
 	 * 
 	 * @return the namespace for this extension point
-	 * @see Platform.getBundle(String)
+	 * @see Platform#getBundle(String)
 	 * @see IExtensionRegistry
 	 * @since 3.0
 	 */
@@ -99,7 +99,7 @@ public interface IExtensionPoint {
 	 *
 	 * @return a displayable string label for this extension point,
 	 *    possibly the empty string
-	 * @see IPluginDescriptor#getResourceString 
+	 * @see IPluginDescriptor#getResourceString(String)
 	 */
 	public String getLabel();
 
@@ -111,7 +111,6 @@ public interface IExtensionPoint {
 	 * is specified in the plug-in manifest file.
 	 *
 	 * @return a relative URL path, or an empty string
-	 * @see IPluginDescriptor#getInstallURL
 	 */
 	public String getSchemaReference();
 

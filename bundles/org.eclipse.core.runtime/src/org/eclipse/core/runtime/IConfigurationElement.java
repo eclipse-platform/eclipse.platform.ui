@@ -44,7 +44,7 @@ public interface IConfigurationElement {
 	 * @return the executable instance
 	 * @exception CoreException if an instance of the executable extension
 	 *   could not be created for any reason.
-	 * @see IExecutableExtension#setInitializationData
+	 * @see IExecutableExtension#setInitializationData(IConfigurationElement, String, Object)
 	 */
 	public Object createExecutableExtension(String propertyName) throws CoreException;
 
@@ -66,7 +66,7 @@ public interface IConfigurationElement {
 	 * file is automatically applied.
 	 * </p>
 	 *
-	 * @see IPluginDescriptor#getResourceString 
+	 * @see IPluginDescriptor#getResourceString(String)
 	 *
 	 * @param name the name of the attribute
 	 * @return attribute value, or <code>null</code> if none
@@ -135,6 +135,7 @@ public interface IConfigurationElement {
 	 * </p>
 	 *
 	 * @return the child configuration elements
+	 * @see #getChildren(String)
 	 */
 	public IConfigurationElement[] getChildren();
 
@@ -145,7 +146,7 @@ public interface IConfigurationElement {
 	 *
 	 * @param name the name of the child configuration element
 	 * @return the child configuration elements with that name
-	 * @see #getChildren
+	 * @see #getChildren()
 	 */
 	public IConfigurationElement[] getChildren(String name);
 
@@ -197,9 +198,8 @@ public interface IConfigurationElement {
 	 * file is automatically applied.
 	 * </p>
 	 *
-	 * @see IPluginDescriptor#getResourceString 
-	 *
 	 * @return the text value of this configuration element or <code>null</code>
+	 * @see IPluginDescriptor#getResourceString(String)
 	 */
 	public String getValue();
 

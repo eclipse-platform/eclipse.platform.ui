@@ -18,11 +18,9 @@ import org.eclipse.core.runtime.PluginVersionIdentifier;
  * <p>
  * This class may not be instantiated, but may be further subclassed.
  * </p>
- * <p>
- * <b>Note</b>: This is obsolete API that will be replaced in time with
- * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
- * This API will be deprecated once the APIs for the new Eclipse Platform
- * Runtime achieve their final and stable form (post-3.0). </p>
+ * TODO @deprecated In Eclipse 3.0 the runtime was refactored and all 
+ * non-essential elements removed.  This class provides facilities primarily intended
+ * for tooling.  As such it has been removed and no directly substitutable API provided.
  */
 public abstract class PluginModel extends PluginModelObject {
 
@@ -157,7 +155,7 @@ public abstract class PluginModel extends PluginModelObject {
 	 * Sets this model object and all of its descendents to be read-only.
 	 * Subclasses may extend this implementation.
 	 *
-	 * @see #isReadOnly
+	 * @see #isReadOnly()
 	 */
 	public void markReadOnly() {
 		super.markReadOnly();
@@ -216,6 +214,8 @@ public abstract class PluginModel extends PluginModelObject {
 	/**
 	 * Optimization to replace a non-localized key with its localized value.  Avoids having
 	 * to access resource bundles for further lookups.
+	 * 
+	 * @param value the localized provider name for this model object
 	 */
 	public void setLocalizedProviderName(String value) {
 		providerName = value;

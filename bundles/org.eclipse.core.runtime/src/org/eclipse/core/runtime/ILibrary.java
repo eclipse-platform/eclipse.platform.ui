@@ -25,7 +25,7 @@ import org.osgi.framework.Constants;
  * This interface is not intended to be implemented by clients.
  * </p>
  *
- * @see IPluginDescriptor#getRuntimeLibraries 
+ * @see IPluginDescriptor#getRuntimeLibraries() 
  * TODO @deprecated 
  * In Eclipse 3.0 the plug-in classpath representation was changed.  Clients of 
  * <code>ILibrary</code> are directed to the headers associated with the relevant bundle.
@@ -58,7 +58,6 @@ import org.osgi.framework.Constants;
 public interface ILibrary {
 	/**
 	 * Constant string (value "code") indicating the code library type.
-	 * @see LibraryModel#CODE
 	 * TODO @deprecated As of Eclipse 3.0 library types are obsolete.
 	 * There is no replacement.
 	 */
@@ -66,7 +65,6 @@ public interface ILibrary {
 
 	/**
 	 * Constant string (value "resource") indicating the resource library type.
-	 * @see LibraryModel#RESOURCE
 	 * TODO @deprecated As of Eclipse 3.0 library types are obsolete.
 	 * There is no replacement.
 	 */
@@ -92,7 +90,7 @@ public interface ILibrary {
 	 * installation location.
 	 *
 	 * @return the path of the library
-	 * @see IPluginDescriptor#getInstallURL
+	 * @see IPluginDescriptor#getInstallURL()
 	 * TODO @deprecated 
 	 * Given a manifest element corresponding to a classpath entry, the path
 	 * for the entry can be accessed by getting the value of the manifest element.  

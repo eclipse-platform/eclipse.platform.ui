@@ -26,7 +26,7 @@ package org.eclipse.core.runtime;
  * Clients may implement this interface.
  * </p>
  * 
- * @see IConfigurationElement#createExecutableExtension 
+ * @see IConfigurationElement#createExecutableExtension(String)
  */
 public interface IExecutableExtension {
 	/**
@@ -112,7 +112,7 @@ public interface IExecutableExtension {
 	 * @param data adapter data in the form of a <code>String</code>, 
 	 *		a <code>Hashtable</code>, or <code>null</code>.
 	 * @exception CoreException if error(s) detected during initialization processing
-	 * @see IConfigurationElement#createExecutableExtension
+	 * @see IConfigurationElement#createExecutableExtension(String)
 	 */
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException;
 }

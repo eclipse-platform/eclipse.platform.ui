@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.internal.runtime.FindSupport;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.content.IContentTypeManager;
@@ -23,7 +24,6 @@ import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.osgi.framework.Bundle;
 
-// TODO clarify the javadoc below 
 /**
  * The central class of the Eclipse Platform Runtime. This class cannot
  * be instantiated or subclassed by clients; all functionality is provided 
@@ -34,14 +34,6 @@ import org.osgi.framework.Bundle;
  * <li>the platform log</li>
  * <li>the authorization info management</li>
  * </ul>
- * <p>
- * The platform is in one of two states, running or not running, at all
- * times. The only ways to start the platform running, or to shut it down,
- * are on the bootstrap <code>BootLoader</code> class. Code in plug-ins will
- * only observe the platform in the running state. The platform cannot
- * be shutdown from inside (code in plug-ins have no access to
- * <code>BootLoader</code>).
- * </p>
  */
 public final class Platform {
 
@@ -51,8 +43,6 @@ public final class Platform {
 	 */
 	public static final String PI_RUNTIME = "org.eclipse.core.runtime"; //$NON-NLS-1$
 
-	// TODO was this API anywhere?  On Plugin?
-	public static final String PI_BOOT = "org.eclipse.core.boot"; //$NON-NLS-1$
 	/** 
 	 * The simple identifier constant (value "<code>applications</code>") of
 	 * the extension point of the Core Runtime plug-in where plug-ins declare
@@ -69,7 +59,7 @@ public final class Platform {
 	 * the existence of adapter factories. A plug-in may define any
 	 * number of adapters.
 	 * 
-	 * @see org.eclipse.core.runtime.IAdapterManager#hasAdapter
+	 * @see IAdapterManager#hasAdapter(Object, String)
 	 * @since 3.0
 	 */
 	public static final String PT_ADAPTERS = "adapters"; //$NON-NLS-1$
@@ -80,7 +70,7 @@ public final class Platform {
 	 * extensions to the preference facility. A plug-in may define any number
 	 * of preference extensions.
 	 * 
-	 * @see #getPreferencesService
+	 * @see #getPreferencesService()
 	 * @since 3.0
 	 */
 	public static final String PT_PREFERENCES = "preferences"; //$NON-NLS-1$
@@ -216,8 +206,8 @@ public final class Platform {
 	 * </p>
 	 *
 	 * @param listener the listener to register
-	 * @see ILog#addLogListener
-	 * @see #removeLogListener
+	 * @see ILog#addLogListener(ILogListener)
+	 * @see #removeLogListener(ILogListener)
 	 */
 	public static void addLogListener(ILogListener listener) {
 		InternalPlatform.getDefault().addLogListener(listener);
@@ -260,9 +250,9 @@ public final class Platform {
 	 * @param url original plug-in-relative URL.
 	 * @return the resolved URL
 	 * @exception IOException if unable to resolve URL
-	 * @see #resolve, #find
-	 * @see IPluginDescriptor#getInstallURL
-	 * @see Bundle#getEntry
+	 * @see #resolve(URL)
+	 * @see #find(Bundle, IPath)
+	 * @see Bundle#getEntry(String)
 	 */
 	public static URL asLocalURL(URL url) throws IOException {
 		return InternalPlatform.getDefault().asLocalURL(url);
@@ -379,7 +369,7 @@ public final class Platform {
 	 * </p>
 	 *
 	 * @return the location of the platform
-	 * @see #getInstanceLocation
+	 * @see #getInstanceLocation()
 	 */
 	public static IPath getLocation() throws IllegalStateException {
 		return InternalPlatform.getDefault().getLocation();
@@ -465,7 +455,7 @@ public final class Platform {
 	 * See the comments on {@link IPluginRegistry} and its methods for details.
 	 */
 	public static IPluginRegistry getPluginRegistry() {
-		Bundle compatibility = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME_COMPATIBILITY);
+		Bundle compatibility = InternalPlatform.getDefault().getBundle(CompatibilityHelper.PI_RUNTIME_COMPATIBILITY);
 		if (compatibility == null)
 			return null;
 
@@ -518,8 +508,8 @@ public final class Platform {
 	 * of the platform.  If no such listener exists, no action is taken.
 	 *
 	 * @param listener the listener to deregister
-	 * @see ILog#removeLogListener
-	 * @see #addLogListener
+	 * @see ILog#removeLogListener(ILogListener)
+	 * @see #addLogListener(ILogListener)
 	 */
 	public static void removeLogListener(ILogListener listener) {
 		InternalPlatform.getDefault().removeLogListener(listener);
@@ -543,11 +533,11 @@ public final class Platform {
 	 * @param url original plug-in-relative URL.
 	 * @return the resolved URL
 	 * @exception IOException if unable to resolve URL
-	 * @see #asLocalURL, #find
-	 * @see IPluginDescriptor#getInstallURL
-	 * @see Bundle#getEntry
+	 * @see #asLocalURL(URL)
+	 * @see #find(Bundle, IPath)
+	 * @see Bundle#getEntry(String)
 	 */
-	public static URL resolve(URL url) throws java.io.IOException {
+	public static URL resolve(URL url) throws IOException {
 		return InternalPlatform.getDefault().resolve(url);
 	}
 
@@ -556,7 +546,7 @@ public final class Platform {
 	 * thrown in the runnable are logged and passed to the runnable's
 	 * exception handler.  Such exceptions are not rethrown by this method.
 	 *
-	 * @param code the runnable to run
+	 * @param runnable the runnable to run
 	 */
 	public static void run(ISafeRunnable runnable) {
 		InternalPlatform.getDefault().run(runnable);
@@ -565,6 +555,7 @@ public final class Platform {
 	/**
 	 * Returns the platform job manager.
 	 * 
+	 * @return the platform's job manager
 	 * @since 3.0
 	 */
 	public static IJobManager getJobManager() {
@@ -594,7 +585,7 @@ public final class Platform {
 	 * their finished, stable form (post-3.0). </p>
 	 * 
 	 * @param bundle the bundle in which to search
-	 * @param file path relative to plug-in installation location 
+	 * @param path path relative to plug-in installation location 
 	 * @return a URL for the given path or <code>null</code>.  The actual form
 	 * of the returned URL is not specified.
 	 * @see #resolve(URL)
@@ -660,8 +651,8 @@ public final class Platform {
 	 * @see #asLocalURL(URL)
 	 * @since 3.0
 	 */
-	public static URL find(Bundle b, IPath path, Map override) {
-		return FindSupport.find(b, path, override);
+	public static URL find(Bundle bundle, IPath path, Map override) {
+		return FindSupport.find(bundle, path, override);
 	}
 
 	/**
@@ -727,6 +718,7 @@ public final class Platform {
 	 * that these APIs may well change in incompatible ways until they reach
 	 * their finished, stable form (post-3.0). </p>
 	 *
+	 * @param bundle the bundle whose resource bundle is being queried
 	 * @return the resource bundle
 	 * @exception MissingResourceException if the resource bundle was not found
 	 * @since 3.0
@@ -759,10 +751,10 @@ public final class Platform {
 	 * that these APIs may well change in incompatible ways until they reach
 	 * their finished, stable form (post-3.0). </p>
 	 *
-	 * @param bundle the runtime bundle 
-	 * @param value the value
+	 * @param bundle the bundle whose resource bundle is being queried
+	 * @param value the value to look for
 	 * @return the resource string
-	 * @see #getResourceBundle
+	 * @see #getResourceBundle(Bundle)
 	 * @since 3.0
 	 */
 	public static String getResourceString(Bundle bundle, String value) {
@@ -803,11 +795,11 @@ public final class Platform {
 	 * that these APIs may well change in incompatible ways until they reach
 	 * their finished, stable form (post-3.0). </p>
 	 *
-	 * @param bundle the runtime bundle
+	 * @param bundle the bundle whose resource bundle is being queried
 	 * @param value the value
-	 * @param bundle the resource bundle
+	 * @param resourceBundle the resource bundle to query
 	 * @return the resource string
-	 * @see #getResourceBundle
+	 * @see #getResourceBundle(Bundle)
 	 * @since 3.0
 	 */
 	public static String getResourceString(Bundle bundle, String value, ResourceBundle resourceBundle) {
@@ -847,7 +839,6 @@ public final class Platform {
 	 * the operating system name is specified on the command line.
 	 *
 	 * @return the string name of the current operating system
-	 * @see #knownOSValues
 	 * @since 3.0
 	 */
 	public static String getOS() {
@@ -885,6 +876,18 @@ public final class Platform {
 		return InternalPlatform.getDefault().getApplicationArgs();
 	}
 
+	/**
+	 * Returns the platform administrator for this running Eclipse.  
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been full
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs are likely to change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0).
+	 * </p>
+	 * @return the platform admin for this instance of Eclipse
+	 */
 	public static PlatformAdmin getPlatformAdmin() {
 		return InternalPlatform.getDefault().getPlatformAdmin();
 	}
@@ -912,6 +915,7 @@ public final class Platform {
 		return InternalPlatform.getDefault().getBundleGroupProviders();
 	}
 
+	// TODO see DJ for javadoc
 	public static IPreferencesService getPreferencesService() {
 		return InternalPlatform.getDefault().getPreferencesService();
 	}
@@ -994,6 +998,8 @@ public final class Platform {
 
 	/**
 	 * Checks if the specified bundle is a fragment bundle.
+	 * 
+	 * @param bundle the bundle to query
 	 * @return true if the specified bundle is a fragment bundle; otherwise false is returned.
 	 * @since 3.0
 	 */

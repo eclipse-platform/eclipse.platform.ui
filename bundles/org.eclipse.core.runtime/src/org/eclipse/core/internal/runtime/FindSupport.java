@@ -284,20 +284,22 @@ public class FindSupport {
 	 * The caller must close the returned stream when done.
 	 * </p>
 	 *
+	 * @param bundle the bundle to search
 	 * @param file path relative to plug-in installation location
 	 * @param localized <code>true</code> for the localized version
 	 *   of the file, and <code>false</code> for the file exactly
 	 *   as specified
 	 * @return an input stream
+	 * @exception IOException if the given path cannot be found in the given bundle
 	 */
-	public static final InputStream openStream(Bundle b, IPath file, boolean localized) throws IOException {
+	public static final InputStream openStream(Bundle bundle, IPath file, boolean localized) throws IOException {
 		URL url = null;
 		if (!localized) {
-			url = findInPlugin(b, file);
+			url = findInPlugin(bundle, file);
 			if (url == null)
-				url = findInFragments(b, file);
+				url = findInFragments(bundle, file);
 		} else {
-			url = FindSupport.find(b, file);
+			url = FindSupport.find(bundle, file);
 		}
 		if (url != null)
 			return url.openStream();

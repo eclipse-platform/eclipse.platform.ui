@@ -59,6 +59,7 @@ public interface ILog {
 	 * no longer receive notification of log events passing through this log.  
 	 * This method has no affect if the identical listener is not registered on this log.
 	 *
+	 * @param listener the listener to remove
 	 * @see Platform#removeLogListener(ILogListener)
 	 */
 	public void removeLogListener(ILogListener listener);

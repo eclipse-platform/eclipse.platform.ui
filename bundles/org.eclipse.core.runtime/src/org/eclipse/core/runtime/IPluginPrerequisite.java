@@ -27,8 +27,8 @@ import org.osgi.framework.Constants;
  * This API will be deprecated once the APIs for the new Eclipse Platform
  * Runtime achieve their final and stable form (post-3.0). </p>
  *
- * @see IPluginDescriptor#getPluginPrerequisites
- * @deprecated 
+ * @see IPluginDescriptor#getPluginPrerequisites()
+ *TODO @deprecated 
  * In Eclipse 3.0 the plug-in prerequisite representation was changed.  Clients of 
  * <code>IPluginPrerequisite</code> are directed to the headers associated with the relevant bundle.
  * In particular, the <code>Require-Bundle</code> header contains all available information

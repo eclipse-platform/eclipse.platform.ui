@@ -87,7 +87,7 @@ public interface IExtension {
 	 *
 	 * @return a displayable string label for this extension,
 	 *    possibly the empty string
-	 * @see IPluginDescriptor#getResourceString 
+	 * @see IPluginDescriptor#getResourceString(String)
 	 */
 	public String getLabel();
 

@@ -22,18 +22,20 @@ public interface IExtensionDelta {
 	/**
 	 * Delta kind constant indicating that an extension has been added to an 
 	 * extension point.
-	 * @see IExtensionDelta#getKind
+	 * @see IExtensionDelta#getKind()
 	 */
 	public int ADDED = 1;
 	/**
 	 * Delta kind constant indicating that an extension has been removed from an 
 	 * extension point.
-	 * @see IExtensionDelta#getKind
+	 * @see IExtensionDelta#getKind()
 	 */
 	public int REMOVED = 2;
 
 	/**
 	 * The kind of this extension delta.
+	 * 
+	 * @return the kind of change this delta represents
 	 * @see #ADDED
 	 * @see #REMOVED
 	 */

@@ -73,19 +73,14 @@ public interface IPlatform {
 	 * of the Core Runtime plug-in.
 	 */
 	public static final String PI_RUNTIME = "org.eclipse.core.runtime"; //$NON-NLS-1$
-	public static final String PI_RUNTIME_COMPATIBILITY = "org.eclipse.core.runtime.compatibility"; //$NON-NLS-1$ 
 	/** 
 	 * The simple identifier constant (value "<code>applications</code>") of
 	 * the extension point of the Core Runtime plug-in where plug-ins declare
 	 * the existence of runnable applications. A plug-in may define any
 	 * number of applications; however, the platform is only capable
 	 * of running one application at a time.
-	 * 
-	 * @see org.eclipse.core.boot.BootLoader#run
 	 */
 	public static final String PT_APPLICATIONS = "applications"; //$NON-NLS-1$
-
-	public static final String PT_URLHANDLERS = "urlHandlers"; //$NON-NLS-1$
 
 	/** 
 	 * The simple identifier constant (value "<code>products</code>") of
@@ -267,14 +262,12 @@ public interface IPlatform {
 	public Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme);
 
 	/**
-	 * Returns the location of the platform working directory.  This 
-	 * corresponds to the <i>-data</i> command line argument if
-	 * present or, if not, the current working directory when the platform
-	 * was started.
+	 * Returns the location of the platform working directory. 
 	 *
-	 * @return the location of the platform
+	 * @return the location of the platform's working directory
+	 * @see #getInstallLocation()
 	 */
-	public IPath getLocation() throws IllegalStateException;
+	public IPath getLocation();
 
 	/**
 	 * Returns the location of the platform log file.  This file may contain information
@@ -348,6 +341,7 @@ public interface IPlatform {
 	/**
 	 * Returns the log for the given bundle.  If no such log exists, one is created.
 	 *
+	 * @param bundle the bundle whose log is being queried
 	 * @return the log for the given bundle
 	 * @since 3.0
 	 */
@@ -505,6 +499,7 @@ public interface IPlatform {
 	 * along with other resource strings used by the plug-in implementation.
 	 * </p>
 	 *
+	 * @param bundle the bundle whose resource bundle is being queried
 	 * @return the resource bundle
 	 * @exception MissingResourceException if the resource bundle was not found
 	 * @since 3.0
@@ -528,6 +523,7 @@ public interface IPlatform {
 	 * Equivalent to <code>getResourceString(value, getResourceBundle())</code>
 	 * </p>
 	 *
+	 * @param bundle the bundle whose resource bundle is being queried
 	 * @param value the value
 	 * @return the resource string
 	 * @see #getResourceBundle(Bundle)
@@ -561,8 +557,9 @@ public interface IPlatform {
 	 * </pre>
 	 * </p>
 	 *
-	 * @param value the value
 	 * @param bundle the resource bundle
+	 * @param value the value to look for
+	 * @param resourceBundle the resource bundle to query
 	 * @return the resource string
 	 * @see #getResourceBundle(Bundle)
 	 */
@@ -595,8 +592,6 @@ public interface IPlatform {
 	 * the operating system name is specified on the command line.
 	 *
 	 * @return the string name of the current operating system
-	 * @see Platform#knownOSValues
-	 * 
 	 */
 	public String getOS();
 
@@ -617,6 +612,11 @@ public interface IPlatform {
 	 */
 	public String[] getApplicationArgs();
 
+	/**
+	 * Returns the platform administrator for this running Eclipse.  
+	 * 
+	 * @return the platform admin for this instance of Eclipse
+	 */
 	public PlatformAdmin getPlatformAdmin();
 
 	/**
@@ -678,6 +678,8 @@ public interface IPlatform {
 
 	/**
 	 * Checks if the specified bundle is a fragment bundle.
+	 * 
+	 * @param bundle the bundle to query
 	 * @return true if the specified bundle is a fragment bundle; otherwise false is returned.
 	 */
 	public boolean isFragment(Bundle bundle);

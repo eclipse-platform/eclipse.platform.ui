@@ -36,7 +36,7 @@ import org.osgi.framework.ServiceReference;
  * defined in plug-ins, and shutting down the platform when done.
  * </p>
  * 
- * @see org.eclipse.core.runtime.Platform
+ * @see Platform
  * TODO @deprecated 
  * In Eclipse 3.0 the runtime has been refactored such that the <code>BootLoader</code>
  * class is no longer relevant.  Most of the function found on <code>BootLoader</code> is
@@ -59,28 +59,9 @@ public final class BootLoader implements Constants {
 	 */
 	public static final String PI_BOOT = "org.eclipse.core.boot"; //$NON-NLS-1$
 
-	private static final String[] ARCH_LIST = { // 
-	ARCH_PA_RISC, //
-			ARCH_PPC, //
-			ARCH_SPARC, //
-			ARCH_X86, //
-			ARCH_AMD64};
-	private static final String[] OS_LIST = { //
-	OS_AIX, //
-			OS_HPUX, //
-			OS_LINUX, //
-			OS_MACOSX, //
-			OS_QNX, //
-			OS_SOLARIS, //
-			OS_WIN32 //
-	};
-	private static final String[] WS_LIST = { //
-	WS_CARBON, //
-			WS_GTK, //
-			WS_MOTIF, //
-			WS_PHOTON, //
-			WS_WIN32 //
-	};
+	private static final String[] ARCH_LIST = {ARCH_PA_RISC, ARCH_PPC, ARCH_SPARC, ARCH_X86, ARCH_AMD64};
+	private static final String[] OS_LIST = {OS_AIX, OS_HPUX, OS_LINUX, OS_MACOSX, OS_QNX, OS_SOLARIS, OS_WIN32};
+	private static final String[] WS_LIST = {WS_CARBON, WS_GTK, WS_MOTIF, WS_PHOTON, WS_WIN32};
 
 	/**
 	 * Private constructor to block instance creation.
@@ -106,6 +87,7 @@ public final class BootLoader implements Constants {
 	 * 
 	 * @return platform configuration used in current instance of platform
 	 * @since 2.0
+	 * TODO @deprecated This functionality has moved to the Eclipse Update manager plug-in.
 	 */
 	public static org.eclipse.core.boot.IPlatformConfiguration getCurrentPlatformConfiguration() {
 		BundleContext context = InternalPlatform.getDefault().getBundleContext();
@@ -181,7 +163,9 @@ public final class BootLoader implements Constants {
 	 * @param url location of previously save configuration information. If <code>null</code>
 	 * is specified, an empty configuration object is returned
 	 * @return platform configuration used in current instance of platform
+	 * @exception IOException if the configuration cannot be read
 	 * @since 2.0
+	 * TODO @deprecated This functionality has moved to the Eclipse Update manager plug-in.
 	 */
 	public static org.eclipse.core.boot.IPlatformConfiguration getPlatformConfiguration(URL url) throws IOException {
 		BundleContext context = InternalPlatform.getDefault().getBundleContext();
@@ -220,7 +204,7 @@ public final class BootLoader implements Constants {
 	 * </p>
 	 * 
 	 * @return the list of system architectures known to the system
-	 * @see #getOSArch
+	 * @see #getOSArch()
 	 * @since 2.0
 	 * XXX @deprecated Unclear whether or not this is required.  We could put it on 
 	 * EnvironmentInfo
@@ -239,7 +223,7 @@ public final class BootLoader implements Constants {
 	 * </p>
 	 * 
 	 * @return the list of operating systems known to the system
-	 * @see #getOS
+	 * @see #getOS()
 	 * @since 2.0
 	 * XXX @deprecated Unclear whether or not this is required.  We could put it on 
 	 * EnvironmentInfo
@@ -258,7 +242,7 @@ public final class BootLoader implements Constants {
 	 * </p>
 	 * 
 	 * @return the list of window systems known to the system
-	 * @see #getWS
+	 * @see #getWS()
 	 * @since 2.0
 	 * XXX @deprecated Unclear whether or not this is required.  We could put it on 
 	 * EnvironmentInfo
@@ -276,7 +260,6 @@ public final class BootLoader implements Constants {
 	 * TODO @deprecated Replaced by {@link EnvironmentInfo#inDebugMode()}.
 	 */
 	public static boolean inDebugMode() {
-		// TODO: need an API to access this (at least a constant for the property name)
 		return System.getProperty("osgi.debug") != null; //$NON-NLS-1$
 	}
 
@@ -287,7 +270,7 @@ public final class BootLoader implements Constants {
 	 * in development mode using the "-dev" command line argument.
 	 *
 	 * @return whether or not the platform is running in development mode
-	 * TODO @deprecated Replaced by {@link EnvironmentInfo#inDevMode()}.
+	 * TODO @deprecated Replaced by {@link EnvironmentInfo#inDevelopmentMode()}.
 	 */
 	public static boolean inDevelopmentMode() {
 		// TODO: need an API to access this (at least a constant for the property name)
@@ -296,15 +279,10 @@ public final class BootLoader implements Constants {
 
 	/**
 	 * Returns whether the platform is running.
-	 * The <code>startup</code> method starts the platform running;
-	 * the <code>shutdown</code> method stops it.
 	 *
 	 * @return <code>true</code> if the platform is running, 
 	 *		and <code>false</code> otherwise
-	 * @see #startup
-	 * @see #shutdown
-	 * 
-	 *  
+	 * TODO @deprecated Replaced by {@link Platform#isRunning()}.
 	 */
 	public static boolean isRunning() {
 		return InternalPlatform.getDefault().isRunning();
@@ -315,8 +293,9 @@ public final class BootLoader implements Constants {
 	 * If the given location is <code>null</code> or does not indicate a valid 
 	 * plug-in path definition file, <code>null</code> is returned.
 	 *
+	 * @param pluginPathLocation the location of the plug-in path to load
 	 * @return the complete set of URLs which locate plug-ins
-	 *  
+	 * TODO @deprecated This functionality has moved to the Eclipse Update manager plug-in.
 	 */
 	public static URL[] getPluginPath(URL pluginPathLocation) {
 		return InternalPlatform.getDefault().getPluginPath(pluginPathLocation);

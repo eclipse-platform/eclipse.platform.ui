@@ -66,7 +66,7 @@ import java.util.*;
  * <code>IPluginDescriptor</code> methods.
  * </p>
  * 
- * @see #getPlugin
+ * @see #getPlugin()
  */
 public interface IPluginDescriptor {
 	/**
@@ -142,8 +142,8 @@ public interface IPluginDescriptor {
 	 * provided by <code>Plugin.getStateLocation</code>.
 	 *
 	 * @return the URL of this plug-in's install directory
-	 * @see #getPlugin
-	 * @see Plugin#getStateLocation
+	 * @see #getPlugin()
+	 * @see Plugin#getStateLocation()
 	 * TODO @deprecated 
 	 * Use 
 	 * <pre>
@@ -164,7 +164,7 @@ public interface IPluginDescriptor {
 	 *
 	 * @return a displayable string label for this plug-in,
 	 *    possibly the empty string
-	 * @see #getResourceString 
+	 * @see #getResourceString(String)
 	 * TODO @deprecated 
 	 * Use 
 	 * <pre>
@@ -187,7 +187,7 @@ public interface IPluginDescriptor {
 	 * @return the plug-in runtime object
 	 * @exception CoreException 
 	 *   if this plug-in's runtime object could not be created.
-	 * @see #isPluginActivated
+	 * @see #isPluginActivated()
 	 * TODO @deprecated 
 	 * In Eclipse 3.0 plug-in runtime objects are not globally managed and
 	 * so are not generically accessible.  Rather, each plug-in is free to declare
@@ -237,9 +237,9 @@ public interface IPluginDescriptor {
 	 * </pre>
 	 *
 	 * @return the plug-in class loader
-	 * @see IConfigurationElement#createExecutableExtension
-	 * @see #isPluginActivated
-	 * @see #getResourceBundle
+	 * @see IConfigurationElement#createExecutableExtension(String)
+	 * @see #isPluginActivated()
+	 * @see #getResourceBundle()
 	 * TODO @deprecated 
 	 * Use 
 	 * <pre>
@@ -279,7 +279,7 @@ public interface IPluginDescriptor {
 	 * file is automatically applied.
 	 * </p>
 	 *
-	 * @see #getResourceString 
+	 * @see #getResourceString(String)
 	 *
 	 * @return the name of the provider, possibly the empty string
 	 * TODO @deprecated
@@ -332,7 +332,7 @@ public interface IPluginDescriptor {
 	 *
 	 * @param value the value
 	 * @return the resource string
-	 * @see #getResourceBundle
+	 * @see #getResourceBundle()
 	 * TODO @deprecated 
 	 * Use 
 	 * <pre>
@@ -373,7 +373,7 @@ public interface IPluginDescriptor {
 	 * @param value the value
 	 * @param resourceBundle the resource bundle
 	 * @return the resource string
-	 * @see #getResourceBundle
+	 * @see #getResourceBundle()
 	 * TODO @deprecated 
 	 * Use 
 	 * <pre>
@@ -442,7 +442,7 @@ public interface IPluginDescriptor {
 	 *
 	 * @return <code>true</code> if this plug-in is activated, and
 	 *   <code>false</code> otherwise
-	 * @see #getPlugin
+	 * @see #getPlugin()
 	 * TODO @deprecated 
 	 * Use 
 	 * <pre>
@@ -457,7 +457,7 @@ public interface IPluginDescriptor {
 	 * Returns a URL for the given path.  Returns <code>null</code> if the URL
 	 * could not be computed or created.
 	 * 
-	 * @param file path relative to plug-in installation location 
+	 * @param path path relative to plug-in installation location 
 	 * @return a URL for the given path or <code>null</code>  It is not
 	 * necessary to perform a 'resolve' on this URL.
 	 * 

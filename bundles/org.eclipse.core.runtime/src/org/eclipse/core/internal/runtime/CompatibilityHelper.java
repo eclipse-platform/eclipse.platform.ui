@@ -16,9 +16,12 @@ import org.osgi.framework.Bundle;
 
 //TODO Some comments could be welcomed here.
 public class CompatibilityHelper {
+	
+	public static final String PI_RUNTIME_COMPATIBILITY = "org.eclipse.core.runtime.compatibility"; //$NON-NLS-1$
+
 	public static void setPlugin(IPluginDescriptor descriptor, Plugin plugin) {
 		//Here we use reflection so the runtime code can run without the compatibility
-		Bundle compatibility = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME_COMPATIBILITY);
+		Bundle compatibility = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundle(PI_RUNTIME_COMPATIBILITY);
 		if (compatibility == null)
 			return;
 
@@ -32,7 +35,7 @@ public class CompatibilityHelper {
 
 	public static IPluginDescriptor getPluginDescriptor(String pluginId) {
 		//Here we use reflection so the runtime code can run without the compatibility
-		Bundle compatibility = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME_COMPATIBILITY);
+		Bundle compatibility = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundle(PI_RUNTIME_COMPATIBILITY);
 		if (compatibility == null)
 			return null;
 
@@ -48,7 +51,7 @@ public class CompatibilityHelper {
 	}
 
 	public static void setActive(IPluginDescriptor descriptor) {
-		Bundle compatibility = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME_COMPATIBILITY);
+		Bundle compatibility = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundle(PI_RUNTIME_COMPATIBILITY);
 		if (compatibility == null)
 			return;
 

@@ -11,6 +11,7 @@
 package org.eclipse.core.runtime.model;
 
 import org.eclipse.core.internal.runtime.Assert;
+import org.eclipse.core.runtime.ILibrary;
 
 /**
  * A runtime library declared in a plug-in.  Libraries contribute elements to the search path.
@@ -24,11 +25,9 @@ import org.eclipse.core.internal.runtime.Assert;
  * <p>
  * This class may be instantiated, or further subclassed.
  * </p>
- * <p>
- * <b>Note</b>: This is obsolete API that will be replaced in time with
- * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
- * This API will be deprecated once the APIs for the new Eclipse Platform
- * Runtime achieve their final and stable form (post-3.0). </p>
+ * TODO @deprecated In Eclipse 3.0 the runtime was refactored and all 
+ * non-essential elements removed.  This class provides facilities primarily intended
+ * for tooling.  As such it has been removed and no directly substitutable API provided.
  */
 public class LibraryModel extends PluginModelObject {
 
@@ -136,7 +135,7 @@ public class LibraryModel extends PluginModelObject {
 	}
 
 	/**
-	 * @see org.eclipse.core.runtime.ILibrary#getPackagePrefixes
+	 * @see ILibrary#getPackagePrefixes()
 	 */
 	public String[] getPackagePrefixes() {
 		return packagePrefixes;
@@ -144,8 +143,10 @@ public class LibraryModel extends PluginModelObject {
 
 	/**
 	 * Sets this library's package prefixes to be the specified array or <code>null</code>.
+	 * 
+	 * @param value the list of package prefixes for this library
 	 */
-	public void setPackagePrefixes(String[] packagePrefixes) {
-		this.packagePrefixes = packagePrefixes;
+	public void setPackagePrefixes(String[] value) {
+		packagePrefixes = value;
 	}
 }

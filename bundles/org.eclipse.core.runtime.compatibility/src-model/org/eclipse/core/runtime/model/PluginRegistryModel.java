@@ -24,11 +24,9 @@ import org.eclipse.core.runtime.IStatus;
  * <p>
  * This class may be instantiated, or further subclassed.
  * </p>
- * <p>
- * <b>Note</b>: This is obsolete API that will be replaced in time with
- * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
- * This API will be deprecated once the APIs for the new Eclipse Platform
- * Runtime achieve their final and stable form (post-3.0). </p>
+ * TODO @deprecated In Eclipse 3.0 the runtime was refactored and all 
+ * non-essential elements removed.  This class provides facilities primarily intended
+ * for tooling.  As such it has been removed and no directly substitutable API provided.
  */
 public class PluginRegistryModel {
 
@@ -208,7 +206,7 @@ public class PluginRegistryModel {
 	 * 
 	 * @return <code>true</code> if this model object is read-only,
 	 *		<code>false</code> otherwise
-	 * @see #markReadOnly
+	 * @see #markReadOnly()
 	 */
 	public boolean isReadOnly() {
 		return readOnly;
@@ -219,7 +217,6 @@ public class PluginRegistryModel {
 	 * 
 	 * @return <code>true</code> if this model object has been resolved,
 	 *		<code>false</code> otherwise
-	 * @see #resolve
 	 */
 	public boolean isResolved() {
 		return resolved;
@@ -229,7 +226,7 @@ public class PluginRegistryModel {
 	 * Sets this model object and all of its descendents to be read-only.
 	 * Subclasses may extend this implementation.
 	 *
-	 * @see #isReadOnly
+	 * @see #isReadOnly()
 	 */
 	public void markReadOnly() {
 		readOnly = true;
@@ -297,20 +294,20 @@ public class PluginRegistryModel {
 	 * mark any PluginDescriptorModels which do not have access to all
 	 * of their prerequisites as disabled.  Prerequisites which cause
 	 * cyclical dependencies will be marked as disabled.
-	 *
+	 * <p>
 	 * If the parameter trimDisabledPlugins is set to true, all PluginDescriptorModels
 	 * which are labelled as disabled will be removed from the registry.
-	 *
+	 * </p><p>
 	 * If the paramter doCrossLinking is set to true, links will be
 	 * created between ExtensionPointModels and their corresponding
 	 * ExtensionModels.  Not that these links will include disabled
 	 * plugins if trimDisabledPlugins was set to false.
-	 *
+	 * </p>
 	 * @param trimDisabledPlugins if true, remove all disabled plugins
 	 * from the registry (recommended value = true)
-	 *
 	 * @param doCrossLinking if true, link all ExtensionModels in the registry
 	 * to their corresponding ExtensionPointModel (recommended value = true).
+	 * @return a status object describing the result of resolving.
 	 */
 	public IStatus resolve(boolean trimDisabledPlugins, boolean doCrossLinking) {
 		RegistryResolver resolver = new RegistryResolver();
@@ -319,6 +316,25 @@ public class PluginRegistryModel {
 		return resolver.resolve(this);
 	}
 
+	/**
+	 * Returns a plug-in registry containing all of the plug-ins discovered
+	 * on the given plug-in path.  Any problems encountered are added to
+	 * the status managed by the supplied factory.
+	 * <p>
+	 * The given plug-in path is the list of locations in which to look for plug-ins.
+	 * If an entry identifies a directory (i.e., ends in a '/'), this method
+	 * attempts to scan all sub-directories for plug-ins.  Alternatively, an
+	 * entry may identify a particular plug-in manifest (<code>plugin.xml</code>) file.
+	 * </p>
+	 * <p>
+	 * <b>Note:</b> this method does not affect the running platform.  It is intended
+	 * for introspecting installed plug-ins on this and other platforms.  The returned
+	 * registry is <b>not</b> the same as the platform's registry.
+	 * </p>
+	 * @param pluginPath the list of locations in which to look for plug-ins
+	 * @param factory the factory to use to create runtime model objects
+	 * @return the registry of parsed plug-ins
+	 */
 	public static PluginRegistryModel parsePlugins(URL[] pluginPath, Factory factory) {
 		return InternalPlatform.parsePlugins(pluginPath, factory, false);
 	}

@@ -41,7 +41,7 @@ public interface IRegistryChangeEvent {
 	 * Returns all the extension deltas for the given namespace and extension point. Returns an 
 	 * empty array if there are no deltas in this event for the given extension point.
 	 *  
-	 * @param names the namespace for the extension point
+	 * @param namespace the namespace for the extension point
 	 * @param extensionPoint the simple identifier of the 
 	 * extension point (e.g. <code>"builders"</code>)
 	 * @return all extension deltas for the given extension point

@@ -72,6 +72,8 @@ public interface IProgressMonitor {
 	 * Internal method to handle scaling correctly. This method
 	 * must not be called by a client. Clients should 
 	 * always use the method </code>worked(int)</code>.
+	 * 
+	 * @param work the amound of work done
 	 */
 	public void internalWorked(double work);
 

@@ -15,11 +15,9 @@ package org.eclipse.core.runtime.model;
  * <p>
  * This class may be instantiated, or further subclassed.
  * </p>
- * <p>
- * <b>Note</b>: This is obsolete API that will be replaced in time with
- * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
- * This API will be deprecated once the APIs for the new Eclipse Platform
- * Runtime achieve their final and stable form (post-3.0). </p>
+ * TODO @deprecated In Eclipse 3.0 the runtime was refactored and all 
+ * non-essential elements removed.  This class provides facilities primarily intended
+ * for tooling.  As such it has been removed and no directly substitutable API provided.
  */
 public class ExtensionModel extends PluginModelObject {
 
@@ -95,7 +93,7 @@ public class ExtensionModel extends PluginModelObject {
 	 * Sets this model object and all of its descendents to be read-only.
 	 * Subclasses may extend this implementation.
 	 * 
-	 * @see #isReadOnly
+	 * @see #isReadOnly()
 	 */
 	public void markReadOnly() {
 		super.markReadOnly();
@@ -108,7 +106,7 @@ public class ExtensionModel extends PluginModelObject {
 	 * Set the extension point with which this extension is associated. This
 	 * object must not be read-only.
 	 * 
-	 * @return the extension point with which this extension is associated. May
+	 * @param value the extension point with which this extension is associated. May
 	 *               be <code>null</code>.
 	 */
 	public void setExtensionPoint(String value) {

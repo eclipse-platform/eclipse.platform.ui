@@ -490,6 +490,8 @@ public abstract class Plugin implements BundleActivator {
 	 *
 	 * @param file path relative to plug-in installation location
 	 * @return an input stream
+	 * @exception IOException if the given path cannot be found in this plug-in
+	 * 
 	 * @see #openStream(IPath,boolean)
 	 */
 	public final InputStream openStream(IPath file) throws IOException {
@@ -512,6 +514,7 @@ public abstract class Plugin implements BundleActivator {
 	 *   of the file, and <code>false</code> for the file exactly
 	 *   as specified
 	 * @return an input stream
+	 * @exception IOException if the given path cannot be found in this plug-in
 	 */
 	public final InputStream openStream(IPath file, boolean localized) throws IOException {
 		return FindSupport.openStream(bundle, file, localized);
@@ -680,7 +683,7 @@ public abstract class Plugin implements BundleActivator {
 	 * <b>Clients must never explicitly call this method.</b>
 	 *
 	 * @param context the bundle context for this plug-in
-	 * @exception BundleException if this plug-in did not start up properly
+	 * @exception Exception if this plug-in did not start up properly
 	 * @since 3.0
 	 */
 	public void start(BundleContext context) throws Exception {
@@ -719,7 +722,7 @@ public abstract class Plugin implements BundleActivator {
 	 * <b>Clients must never explicitly call this method.</b>
 	 * 
 	 * @param context the bundle context for this plug-in
-	 * @exception BundleException if this method fails to shut down this plug-in
+	 * @exception Exception if this method fails to shut down this plug-in
 	 * @since 3.0
 	 */
 	public void stop(BundleContext context) throws Exception {
