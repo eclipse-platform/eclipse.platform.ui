@@ -46,6 +46,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private static final String prevEditorActionDefId = "org.eclipse.ui.window.previousEditor"; //$NON-NLS-1$
 	private static final String nextPartActionDefId = "org.eclipse.ui.window.nextView"; //$NON-NLS-1$
 	private static final String prevPartActionDefId = "org.eclipse.ui.window.previousView"; //$NON-NLS-1$
+	private static final String nextPerspectiveActionDefId = "org.eclipse.ui.window.nextPerspective"; //$NON-NLS-1$
+	private static final String prevPerspectiveActionDefId = "org.eclipse.ui.window.previousPerspective"; //$NON-NLS-1$
 	private static final String activateEditorActionDefId = "org.eclipse.ui.window.activateEditor"; //$NON-NLS-1$
 	private static final String workbenchEditorsActionDefId = "org.eclipse.ui.window.switchToEditor";	 //$NON-NLS-1$
 	
@@ -86,7 +88,9 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private CyclePartAction nextPartAction;
 	private CyclePartAction prevPartAction;
 	private CycleEditorAction nextEditorAction;
-	private CycleEditorAction prevEditorAction;
+	private CycleEditorAction prevEditorAction; 
+	private CyclePerspectiveAction nextPerspectiveAction;
+	private CyclePerspectiveAction prevPerspectiveAction;
 	private ActivateEditorAction activateEditorAction;
 	private WorkbenchEditorsAction workbenchEditorsAction;
 	
@@ -513,6 +517,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		subMenu.add(prevEditorAction);
 		subMenu.add(nextPartAction);
 		subMenu.add(prevPartAction);
+		subMenu.add(nextPerspectiveAction);
+		subMenu.add(prevPerspectiveAction);
 	}
 	
 	/**
@@ -859,6 +865,14 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		prevPartAction = new CyclePartAction(window, false);
 		prevPartAction.setActionDefinitionId(prevPartActionDefId);
 		keyBindingService.registerGlobalAction(prevPartAction);
+		
+		nextPerspectiveAction = new CyclePerspectiveAction(window, true);
+		nextPerspectiveAction.setActionDefinitionId(nextPerspectiveActionDefId);
+		keyBindingService.registerGlobalAction(nextPerspectiveAction);
+		
+		prevPerspectiveAction = new CyclePerspectiveAction(window, false);
+		prevPerspectiveAction.setActionDefinitionId(prevPerspectiveActionDefId);
+		keyBindingService.registerGlobalAction(prevPerspectiveAction);
 		
 		activateEditorAction = new ActivateEditorAction(window);
 		activateEditorAction.setActionDefinitionId(activateEditorActionDefId);

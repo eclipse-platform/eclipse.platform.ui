@@ -16,7 +16,7 @@ import org.eclipse.ui.*;
  */
 public class CyclePartAction extends PageEventAction {
 	boolean forward;
-	private IWorkbenchPart selection;
+	private Object selection;
 	
 /**
  * Creates a CyclePartAction.
@@ -69,6 +69,11 @@ public void partClosed(IWorkbenchPart part) {
 	super.partClosed(part);
 	updateState();
 }
+/** 
+ * Dispose the resources cached by this action.
+ */
+protected void dispose() {
+}
 /**
  * Updates the enabled state.
  */
@@ -94,15 +99,21 @@ public void run() {
 	try {
 		IWorkbenchPage page = getActivePage();
 		openDialog((WorkbenchPage)page); 
-		if(selection != null) {
-			if (selection instanceof IEditorPart) {
-				page.setEditorAreaVisible(true);
-			}
-			page.activate(selection);
-		}
+		activate(page,selection);
 	} finally {
 		forward = direction;
 	}
+}
+/**
+ * Activate the selected item.
+ */
+public void activate(IWorkbenchPage page,Object selection) {
+	if(selection != null) {
+		if (selection instanceof IEditorPart) {
+			page.setEditorAreaVisible(true);
+		}
+		page.activate((IWorkbenchPart)selection);
+	}	
 }
 /*
  * Open a dialog showing all views in the activation order
@@ -244,8 +255,9 @@ private void addKeyListener(final Table table,final Shell dialog) {
 private void ok(Shell dialog, final Table table) {
 	TableItem[] items = table.getSelection();
 	if (items != null && items.length == 1)
-		selection = (IWorkbenchPart) items[0].getData();
+		selection = items[0].getData();
 	dialog.close();
+	dispose();
 }
 /*
  * Close the dialog and set selection to null.
@@ -253,6 +265,7 @@ private void ok(Shell dialog, final Table table) {
 private void cancel(Shell dialog) {
 	selection = null;
 	dialog.close();
+	dispose();
 }
 /*
  * Add mouse listener to the table closing it when

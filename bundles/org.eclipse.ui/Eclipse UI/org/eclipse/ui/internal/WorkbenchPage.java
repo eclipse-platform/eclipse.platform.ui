@@ -2248,6 +2248,12 @@ public IEditorPart[] getSortedEditors() {
 	return (IEditorPart[])editors.toArray(result);
 }
 /*
+ * Returns the perspectives in activation order (oldest first).
+ */
+public Perspective[] getSortedPerspectives() {
+	return perspList.getSortedPerspectives();
+}
+/*
  * Returns the parts in activation order (oldest first).
  */
 public IWorkbenchPart[] getSortedParts() {
@@ -2443,7 +2449,13 @@ class ActivationList {
 			openedList = new ArrayList(15);
 	 		usedList = new ArrayList(15);
 		}
-		
+		/**
+		 * Return all perspectives in the order they were activated.
+		 */
+		public Perspective[] getSortedPerspectives() {
+			Perspective[] result = new Perspective[usedList.size()];
+			return (Perspective[])usedList.toArray(result);
+		}
 		/**
 		 * Adds a perspective to the list. No check is done
 		 * for a duplicate when adding.
