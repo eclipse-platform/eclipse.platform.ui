@@ -132,10 +132,11 @@ public class ActionCopyMarker extends SelectionProviderAction {
 					e.getStatus());
 			return "";
 		}
-		String report = ""; //$NON-NLS-1$
+		
+		StringBuffer report = new StringBuffer();
+		
 		final String NEWLINE = System.getProperty("line.separator"); //$NON-NLS-1$
 		final char DELIMITER = '\t';
-		
 		
 		if (properties == null) {
 			return null;
@@ -143,25 +144,25 @@ public class ActionCopyMarker extends SelectionProviderAction {
 			
 		//create header
 		for (int i = 0; i < properties.length; i++) {
-			report += properties[i].getDescription();
+			report.append(properties[i].getDescription());
 			if (i == properties.length - 1)
-				report += NEWLINE;
+				report.append(NEWLINE);
 			else
-				report += DELIMITER;
+				report.append(DELIMITER);
 		}
 		
 		for (int i = 0; i < markers.length; i++) {
 			ConcreteMarker marker = markers[i];
 			for (int j = 0; j < properties.length; j++) {
-				report += properties[j].getValue(marker);
+				report.append(properties[j].getValue(marker));
 				if (j == properties.length - 1)
-					report += NEWLINE;
+					report.append(NEWLINE);
 				else
-					report += DELIMITER;
+					report.append(DELIMITER);
 			}
 		}
 		
-		return report;
+		return report.toString();
 	}
 }
 
