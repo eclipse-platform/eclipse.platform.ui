@@ -55,8 +55,11 @@ public class EclipseConnector {
 				int i = url.indexOf('?');
 				if (i != -1)
 					url = url.substring(0, i);
-				if (!UrlUtil.validate(url, req, context))
+				// ensure the file is only accessed from a local installation
+				if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER
+					|| !UrlUtil.isLocalRequest(req)) {
 					return;
+				}
 			}
 
 			URLConnection con = openConnection(url, req);

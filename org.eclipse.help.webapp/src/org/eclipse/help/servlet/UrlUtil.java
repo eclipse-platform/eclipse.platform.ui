@@ -7,10 +7,8 @@ import java.io.*;
 import java.net.InetAddress;
 import java.util.*;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.util.TString;
 
 public class UrlUtil {
@@ -177,23 +175,11 @@ public class UrlUtil {
 		return str;
 	}
 
-	/**
-	 * Validates a file:// URL by ensuring the file is only accessed 
-	 * from a local installation.
-	 */
-	public static boolean validate(
-		String fileURL,
-		HttpServletRequest req,
-		ServletContext context) {
-		// first check if we are running outside the workbench
-		if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER) {
-			return false;
-		}
-
-		// check that the request IP is a local IP
-		String reqIP = req.getRemoteAddr();
-		if ("127.0.0.1".equals(reqIP))
+	public static boolean isLocalRequest(HttpServletRequest request) {
+		String reqIP = request.getRemoteAddr();
+		if ("127.0.0.1".equals(reqIP)) {
 			return true;
+		}
 
 		try {
 			String hostname = InetAddress.getLocalHost().getHostName();
@@ -204,7 +190,6 @@ public class UrlUtil {
 					return true;
 			}
 		} catch (IOException ioe) {
-			return false;
 		}
 		return false;
 	}

@@ -85,6 +85,10 @@ public class ControlServlet extends HttpServlet {
 		resp.setDateHeader("Expires", 0);
 		//prevents caching at the proxy server
 
+		if (!UrlUtil.isLocalRequest(req)) {
+			// do not allow remote clients to execute this servlet
+			return;
+		}
 		if (!"/helpControl".equals(req.getContextPath())
 			|| !"/control.html".equals(req.getServletPath())) {
 			// do not allow arbitrary URLs to execute this servlet
