@@ -16,6 +16,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
+import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
+import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
@@ -28,6 +31,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
@@ -77,10 +81,46 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 				if (resource != null) {
 					launch(resource, mode);
 					return;
+				} else if (object instanceof AntElementNode){
+					launch((AntElementNode) object);
+					return;
 				}
 			}
 		}
 		antFileNotFound();
+	}
+	
+	/**
+	 * Launches the given Ant node, which can correspond to an Ant
+	 * target or an Ant project node.
+	 * 
+	 * @param node the Ant node to launch
+	 */
+	public void launch(AntElementNode node) {
+		String selectedTarget= null;
+		if (node instanceof AntTargetNode) {
+			AntTargetNode targetNode= (AntTargetNode) node;
+			if (targetNode.isDefaultTarget()) {
+				selectedTarget= ""; //$NON-NLS-1$
+			} else {
+				selectedTarget= targetNode.getTarget().getName();
+			}
+		} else if (node instanceof AntProjectNode) {
+			selectedTarget = ""; //$NON-NLS-1$
+		}
+	
+		if (selectedTarget == null) {
+			return;
+		}
+		IFile file= node.getIFile();
+		if (file != null) {
+			launch(file, ILaunchManager.RUN_MODE, selectedTarget);
+		} else { //external buildfile
+			String filePath= node.getFilePath();
+			if (filePath != null) {
+				launch(new Path(filePath), ILaunchManager.RUN_MODE, selectedTarget);
+			}
+		}
 	}
 	
 	/**

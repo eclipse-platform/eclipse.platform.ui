@@ -70,8 +70,6 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 
 	private Menu menu;
 	private AntOpenWithMenu openWithMenu;
-	private AntRunTargetAction runTargetImmediately; 
-	private AntRunTargetAction runAnt;
 	
 	private IDocumentModelListener fListener;
 	private AntModel fModel;
@@ -496,8 +494,6 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			}
 		});
 		
-		runTargetImmediately = new AntRunTargetAction(this, AntRunTargetAction.MODE_IMMEDIATE_EXECUTE);
-		runAnt = new AntRunTargetAction(this, AntRunTargetAction.MODE_DISPLAY_DIALOG);
 		setFilterInternalTargets(fFilterInternalTargets);
 		setFilterImportedElements(fFilterImportedElements);
 		setFilterProperties(fFilterProperties);
@@ -585,9 +581,6 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		if (shouldAddOpenWithMenu()) {
 			addOpenWithMenu(menuManager);
 		}
-		if (shouldAddRunTargetMenu()) {
-			addRunTargetMenu(menuManager);
-		}
 		menuManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
@@ -605,19 +598,6 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			submenu.add(openWithMenu);
 			menuManager.appendToGroup("group.open", submenu); //$NON-NLS-1$
 		}
-	}
-
-	private void addRunTargetMenu(IMenuManager menuManager) {
-		menuManager.add(this.runTargetImmediately);
-		menuManager.add(this.runAnt);                   
-	}
-	
-	private boolean shouldAddRunTargetMenu() {
-		AntElementNode node= getSelectedNode();
-		if (node instanceof AntProjectNode || node instanceof AntTargetNode) {
-			return true;
-		}
-		return false;
 	}
 	
 	private boolean shouldAddOpenWithMenu() {

@@ -32,7 +32,9 @@ import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
@@ -40,7 +42,7 @@ import org.eclipse.swt.graphics.Image;
  * General representation of an Ant buildfile element.
  * 
  */
-public class AntElementNode {
+public class AntElementNode implements IAdaptable {
     
 	/**
 	 * The offset of the corresponding source.
@@ -552,5 +554,12 @@ public class AntElementNode {
 			file= locationProvider.getFile();
 		}
 		return file;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 }
