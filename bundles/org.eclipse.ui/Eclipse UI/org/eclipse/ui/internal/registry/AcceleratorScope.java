@@ -31,9 +31,8 @@ public class AcceleratorScope {
 	private HashMap defaultActionToAccelerator = new HashMap();
 	private HashMap defaultAcceleratorToAction = new HashMap();
 	
-	private Control oldFocus;
-	private Control focusThief;
-	
+	private KeyBindingMenu acceleratorsMenu;
+
 	private static AcceleratorMode currentMode;
 	private static AcceleratorMode defaultMode;
 	private static KeyBindingService currentService;
@@ -140,42 +139,26 @@ public class AcceleratorScope {
 			currentMode = defaultMode;
 			if(getStatusLineManager(service)!=null)
 				getStatusLineManager(service).setMessage("");	 //$NON-NLS-1$
-			AcceleratorScope scope = service.getActiveAcceleratorScope();
-			if(scope.oldFocus != null) {
-				scope.oldFocus.forceFocus();
-				scope.oldFocus = null;
-			}
-			if(scope.focusThief != null) {
-				scope.focusThief.dispose();
-				scope.focusThief = null;
-			}
 		}
+		AcceleratorScope scope = service.getActiveAcceleratorScope();
+		scope.acceleratorsMenu.setAccelerators(scope.getAccelerators(),scope,service,defaultMode == currentMode);
+
 	}
+	
+    public void setAcceleratorsMenu(KeyBindingMenu acceleratorsMenu) {
+    	this.acceleratorsMenu = acceleratorsMenu;
+    }
 	/**
 	 * Set the current mode and service
 	 */
 	private static void setCurrentMode(final KeyBindingService service,AcceleratorMode mode) {
 		final AcceleratorScope scope = service.getActiveAcceleratorScope();
 		Shell shell = service.getWindow().getShell();
-		if(currentMode == defaultMode) {
-			scope.oldFocus = shell.getDisplay().getFocusControl();
-			if(scope.focusThief == null) {
-				scope.focusThief = new Label(shell,SWT.NONE);
-				scope.focusThief.moveBelow(null);
-				scope.focusThief.setBounds(100,100,100,100);
-				scope.focusThief.addListener(SWT.KeyDown,new Listener() {
-					public void handleEvent(Event event) {
-						scope.processKey(service,new KeyEvent(event));	
-					}
-				});
-			}
-			scope.focusThief.forceFocus();
-		}	
-		
 		if(service == currentService)
 			currentMode = mode;
 		else 
 			currentMode = mode;
+		scope.acceleratorsMenu.setAccelerators(scope.getAccelerators(),scope,service,defaultMode == currentMode);
 	}
 	/**
 	 * Verify if the current mode was set with this service. Reset the mode

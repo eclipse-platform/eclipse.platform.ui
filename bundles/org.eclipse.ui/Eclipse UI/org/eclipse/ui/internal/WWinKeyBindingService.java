@@ -46,7 +46,7 @@ public class WWinKeyBindingService {
 	/* The window this service is managing the accelerators for.*/
 	private WorkbenchWindow window;
 	
-	private Menu acceleratorsMenu;
+	private KeyBindingMenu acceleratorsMenu;
 	/**
 	 * Create an instance of WWinKeyBindingService and initializes it.
 	 */			
@@ -226,7 +226,7 @@ public class WWinKeyBindingService {
 		return acc.getAccelerators();
     }
     
-    public void setAcceleratorsMenu(Menu acceleratorsMenu) {
+    public void setAcceleratorsMenu(KeyBindingMenu acceleratorsMenu) {
     	this.acceleratorsMenu = acceleratorsMenu;
     }
     
@@ -234,31 +234,9 @@ public class WWinKeyBindingService {
     
     public void setActiveService(KeyBindingService service) {
     	acceleratorsAllowed = false;
-    	if(acceleratorsMenu == null)
-    		return;
     	activeService = service;
-    	final AcceleratorScope scope = activeService.getActiveAcceleratorScope();
-		int count = 0;
-		MenuItem items[] = acceleratorsMenu.getItems();
-		for (int i = 0; i < items.length; i++) {
-			items[i].dispose();
-		}
-		int[] accs = scope.getAllAccelerators();
-		Arrays.sort(accs);
-		for (int i = 0; i < accs.length; i++) {
-			final int acc = accs[i];
-			if((acc & ACCEL_MASK) != 0) {
-				count++;
-				MenuItem item = new MenuItem(acceleratorsMenu,SWT.PUSH);
-				item.setText(Action.convertAccelerator(acc));
-				item.setAccelerator(acc);
-				item.addListener(SWT.Selection, new Listener() {
-					public void handleEvent (Event event) {
-						scope.processKey(activeService,event,acc);
-					}
-				});
-			}
-		}
-		System.out.println("MENU ITEMS: " + count);
+    	AcceleratorScope scope = activeService.getActiveAcceleratorScope();
+    	scope.setAcceleratorsMenu(acceleratorsMenu);
+    	scope.resetMode(activeService);
     }
 }
