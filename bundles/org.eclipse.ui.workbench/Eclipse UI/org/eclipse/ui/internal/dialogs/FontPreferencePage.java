@@ -293,12 +293,9 @@ public class FontPreferencePage
 					FontDialog fontDialog =
 						new FontDialog(changeFontButton.getShell());
 					FontData[] currentData = getFontDataSetting(definition);
-					fontDialog.setFontData(currentData[0]);
-					FontData font = fontDialog.open();
-					if (font != null) {
-						FontData[] fonts = new FontData[1];
-						fonts[0] = font;
-						fontDataSettings.put(definition.getId(), fonts);
+					fontDialog.setFontList(currentData);
+					if (fontDialog.open() != null) {						
+						fontDataSettings.put(definition.getId(), fontDialog.getFontList());
 						updateForSelectedFontDefinition(definition);
 					}
 				}
