@@ -441,6 +441,22 @@ public static Image getDefaultImage() {
 			? null
 			: defaultImages[0];
 }
+
+/**
+ * Returns the array of default images to use for newly opened windows.
+ * It is expected that the array will contain the same icon rendered at
+ * different resolutions.
+ * 
+ * @see org.eclipse.swt.widgets.Decorations#setImages
+ * 
+ * @return the array of images to be used when a new window is opened
+ * @see #setDefaultImages
+ * @since 3.0
+ */
+public static Image[] getDefaultImages() {
+	return (defaultImages == null ? new Image[0] : defaultImages);
+}
+
 /**
  * Returns the initial location to use for the shell.
  * The default implementation centers the shell horizontally 
@@ -684,14 +700,14 @@ public static void setDefaultImage(Image image) {
 }
 
 /**
- * Sets the receiver's images to the argument, which may be an empty array.
+ * Sets the array of default images to use for newly opened windows.
  * It is expected that the array will contain the same icon rendered at
  * different resolutions.
  * 
  * @see org.eclipse.swt.widgets.Decorations#setImages
  * 
  * @param images
- *            the array of images to be used when the receiver window is
+ *            the array of images to be used when this window is
  *            opened
  * @since 3.0
  */
