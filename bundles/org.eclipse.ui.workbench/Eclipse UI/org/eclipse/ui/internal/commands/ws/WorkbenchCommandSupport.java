@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.commands.ws;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -244,28 +243,35 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     }
 
     public void addHandlerSubmission(HandlerSubmission handlerSubmission) {
-        addHandlerSubmissions(Collections.singleton(handlerSubmission));
+        addHandlerSubmissionReal(handlerSubmission);
+        processHandlerSubmissions(true);
+    }
+
+    /**
+     * Adds a single handler submission. This method is used by the two API
+     * methods to actually add a single handler submission.
+     * 
+     * @param handlerSubmission
+     *            The submission to be added; must not be <code>null</code>.
+     */
+    private final void addHandlerSubmissionReal(
+            final HandlerSubmission handlerSubmission) {
+        final String commandId = handlerSubmission.getCommandId();
+        List handlerSubmissions2 = (List) handlerSubmissionsByCommandId
+                .get(commandId);
+
+        if (handlerSubmissions2 == null) {
+            handlerSubmissions2 = new ArrayList();
+            handlerSubmissionsByCommandId.put(commandId, handlerSubmissions2);
+        }
+
+        handlerSubmissions2.add(handlerSubmission);
     }
 
     public void addHandlerSubmissions(Collection handlerSubmissions) {
-        handlerSubmissions = Util.safeCopy(handlerSubmissions,
-                HandlerSubmission.class);
-
-        for (Iterator iterator = handlerSubmissions.iterator(); iterator
-                .hasNext();) {
-            HandlerSubmission handlerSubmission = (HandlerSubmission) iterator
-                    .next();
-            String commandId = handlerSubmission.getCommandId();
-            List handlerSubmissions2 = (List) handlerSubmissionsByCommandId
-                    .get(commandId);
-
-            if (handlerSubmissions2 == null) {
-                handlerSubmissions2 = new ArrayList();
-                handlerSubmissionsByCommandId.put(commandId,
-                        handlerSubmissions2);
-            }
-
-            handlerSubmissions2.add(handlerSubmission);
+        final Iterator submissionItr = handlerSubmissions.iterator();
+        while (submissionItr.hasNext()) {
+            addHandlerSubmissionReal((HandlerSubmission) submissionItr.next());
         }
 
         processHandlerSubmissions(true);
@@ -312,6 +318,10 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
      */
     public void processHandlerSubmissions(boolean force,
             final Shell newActiveShell) {
+
+        // We do not need to update the listeners until everything is done.
+        if (!processing) { return; }
+
         IWorkbenchSite newWorkbenchSite = null;
         IWorkbenchWindow newWorkbenchWindow = workbench
                 .getActiveWorkbenchWindow();
@@ -361,9 +371,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             newWorkbenchSite = null;
         }
 
-        if (processing
-                && (force || update || !Util.equals(activeWorkbenchSite,
-                        newWorkbenchSite))) {
+        if (force || update || (activeWorkbenchSite != newWorkbenchSite)) {
             activeWorkbenchSite = newWorkbenchSite;
             Map handlersByCommandId = new HashMap();
 
@@ -455,21 +463,19 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     }
 
     public void removeHandlerSubmission(HandlerSubmission handlerSubmission) {
-        removeHandlerSubmission(handlerSubmission, true);
+        removeHandlerSubmissionReal(handlerSubmission);
+        processHandlerSubmissions(true);
     }
 
     /**
-     * Removes a single handler submission -- optionally causing the list of
-     * handler submissions to be reprocessed. This method is used by the two API
+     * Removes a single handler submission. This method is used by the two API
      * methods to actually remove a single handler submission.
      * 
      * @param handlerSubmission
      *            The submission to be removed; must not be <code>null</code>.
-     * @param reprocess
-     *            Whether to reprocess handler submissions.
      */
-    private final void removeHandlerSubmission(
-            final HandlerSubmission handlerSubmission, final boolean reprocess) {
+    private final void removeHandlerSubmissionReal(
+            final HandlerSubmission handlerSubmission) {
         final String commandId = handlerSubmission.getCommandId();
         final List handlerSubmissions2 = (List) handlerSubmissionsByCommandId
                 .get(commandId);
@@ -481,17 +487,12 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                 handlerSubmissionsByCommandId.remove(commandId);
             }
         }
-
-        if (reprocess) {
-            processHandlerSubmissions(true);
-        }
     }
 
     public void removeHandlerSubmissions(Collection handlerSubmissions) {
         final Iterator submissionItr = handlerSubmissions.iterator();
         while (submissionItr.hasNext()) {
-            removeHandlerSubmission((HandlerSubmission) submissionItr.next(),
-                    false);
+            removeHandlerSubmissionReal((HandlerSubmission) submissionItr.next());
         }
 
         processHandlerSubmissions(true);

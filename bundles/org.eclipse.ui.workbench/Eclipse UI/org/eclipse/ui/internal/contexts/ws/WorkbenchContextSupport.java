@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.contexts.ws;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -47,7 +46,6 @@ import org.eclipse.ui.internal.contexts.IMutableContextManager;
 import org.eclipse.ui.internal.contexts.ProxyContextManager;
 import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
 import org.eclipse.ui.internal.misc.Policy;
-import org.eclipse.ui.internal.util.Util;
 
 /**
  * Provides support for contexts within the workbench -- including key bindings,
@@ -342,30 +340,36 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
     }
 
     public void addEnabledSubmission(EnabledSubmission enabledSubmission) {
-        addEnabledSubmissions(Collections.singleton(enabledSubmission));
+        addEnabledSubmissionReal(enabledSubmission);
+        processEnabledSubmissions(true);
     }
-    
-    public void addEnabledSubmissions(Collection enabledSubmissions) {
-        enabledSubmissions = Util.safeCopy(enabledSubmissions,
-                EnabledSubmission.class);
 
-        for (Iterator iterator = enabledSubmissions.iterator(); iterator
-                .hasNext();) {
-            EnabledSubmission enabledSubmission = (EnabledSubmission) iterator
-                    .next();
-            String contextId = enabledSubmission.getContextId();
-            List enabledSubmissions2 = (List) enabledSubmissionsByContextId
-                    .get(contextId);
+    /**
+     * Adds a single enabled submission without causing the submissions to be
+     * reprocessed. This is an internal method used by the two API methods.
+     * 
+     * @param enabledSubmission
+     *            The enabled submission to add; must not be <code>null</code>.
+     */
+    private final void addEnabledSubmissionReal(
+            EnabledSubmission enabledSubmission) {
+        final String contextId = enabledSubmission.getContextId();
+        List enabledSubmissions2 = (List) enabledSubmissionsByContextId
+                .get(contextId);
 
-            if (enabledSubmissions2 == null) {
-                enabledSubmissions2 = new ArrayList();
-                enabledSubmissionsByContextId.put(contextId,
-                        enabledSubmissions2);
-            }
-
-            enabledSubmissions2.add(enabledSubmission);
+        if (enabledSubmissions2 == null) {
+            enabledSubmissions2 = new ArrayList();
+            enabledSubmissionsByContextId.put(contextId, enabledSubmissions2);
         }
 
+        enabledSubmissions2.add(enabledSubmission);
+    }
+
+    public void addEnabledSubmissions(Collection enabledSubmissions) {
+        final Iterator submissionItr = enabledSubmissions.iterator();
+        while (submissionItr.hasNext()) {
+            addEnabledSubmissionReal((EnabledSubmission) submissionItr.next());
+        }
         processEnabledSubmissions(true);
     }
 
@@ -496,6 +500,10 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
      */
     public void processEnabledSubmissions(boolean force,
             final Shell newActiveShell) {
+
+        // If we are not currently processing, then wait.
+        if (!processing) { return; }
+        
         IWorkbenchSite newActiveWorkbenchSite = null;
         final IWorkbenchWindow newActiveWorkbenchWindow = workbench
                 .getActiveWorkbenchWindow();
@@ -546,9 +554,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
             }
         }
 
-        if (processing
-                && (force || update || !Util.equals(activeWorkbenchSite,
-                        newActiveWorkbenchSite))) {
+        if (force || update || (activeWorkbenchSite != newActiveWorkbenchSite)) {
             activeWorkbenchSite = newActiveWorkbenchSite;
             final Set enabledContextIds = new HashSet();
 
@@ -667,29 +673,38 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
     }
 
     public void removeEnabledSubmission(EnabledSubmission enabledSubmission) {
-        removeEnabledSubmissions(Collections.singleton(enabledSubmission));
+        removeEnabledSubmissionReal(enabledSubmission);
+        processEnabledSubmissions(true);
     }
-    
-    public void removeEnabledSubmissions(Collection enabledSubmissions) {
-        enabledSubmissions = Util.safeCopy(enabledSubmissions,
-                EnabledSubmission.class);
 
-        for (Iterator iterator = enabledSubmissions.iterator(); iterator
-                .hasNext();) {
-            EnabledSubmission enabledSubmission = (EnabledSubmission) iterator
-                    .next();
-            String contextId = enabledSubmission.getContextId();
-            List enabledSubmissions2 = (List) enabledSubmissionsByContextId
-                    .get(contextId);
+    /**
+     * Removes a single enabled submission without causing all of the
+     * submissions to be reprocessed. This is used by the two API methods to
+     * carry out work.
+     * 
+     * @param enabledSubmission
+     *            The submission to remove; must not be <code>null</code>.
+     */
+    private final void removeEnabledSubmissionReal(
+            EnabledSubmission enabledSubmission) {
+        final String contextId = enabledSubmission.getContextId();
+        final List enabledSubmissions2 = (List) enabledSubmissionsByContextId
+                .get(contextId);
 
-            if (enabledSubmissions2 != null) {
-                enabledSubmissions2.remove(enabledSubmission);
+        if (enabledSubmissions2 != null) {
+            enabledSubmissions2.remove(enabledSubmission);
 
-                if (enabledSubmissions2.isEmpty())
-                        enabledSubmissionsByContextId.remove(contextId);
-            }
+            if (enabledSubmissions2.isEmpty())
+                    enabledSubmissionsByContextId.remove(contextId);
         }
+    }
 
+    public void removeEnabledSubmissions(Collection enabledSubmissions) {
+        final Iterator submissionItr = enabledSubmissions.iterator();
+        while (submissionItr.hasNext()) {
+            removeEnabledSubmissionReal((EnabledSubmission) submissionItr
+                    .next());
+        }
         processEnabledSubmissions(true);
     }
 
