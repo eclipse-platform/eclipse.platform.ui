@@ -194,7 +194,6 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 				label.getParent().layout();
 			}							
 		}
-		
 	}
 	
 	/**
@@ -343,6 +342,9 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	 * @param visible A value of true set the control visible, false sets it to be invisible
 	 */
 	public void setVisible(boolean visible) {
+		if (!visible) {
+			deregister();
+		}
 		shell.setVisible(visible);
 	}
 	
