@@ -122,10 +122,10 @@ function dontShowAll(){
 		window.frames.search.searchToolbarFrame.setButtonState("show_all", false);
 	}catch(ex) {}
 	try{
-		window.frames.toc.tocViewFrame.location=window.frames.toc.frames[1].location.href.replace(re, "")+"&showAll=off";
+		window.frames.toc.tocViewFrame.location=window.frames.toc.tocViewFrame.location.href.replace(re, "")+"&showAll=off";
 	}catch(ex) {}
 	try{
-		window.frames.search.searchViewFrame.location=window.frames.search.frames[1].location.href.replace(re, "")+"&showAll=off";
+		window.frames.search.searchViewFrame.location=window.frames.search.searchViewFrame.location.href.replace(re, "")+"&showAll=off";
 	}catch(ex) {}
 }
 
