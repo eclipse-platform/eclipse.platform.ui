@@ -239,11 +239,9 @@
          <action
                definitionId="org.eclipse.ui.navigate.goToResource"
                label="%GoToResourceAction.label"
-               hoverIcon="icons/full/clcl16/gotoobj_tsk.gif"
                icon="icons/full/elcl16/gotoobj_tsk.gif"
                retarget="true"
                menubarPath="navigate/goTo/"
-               disabledIcon="icons/full/dlcl16/gotoobj_tsk.gif"
                id="goToResource">
          </action>
          <action

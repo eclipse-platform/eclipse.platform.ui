@@ -24,7 +24,7 @@ public class ActionAddGlobalTask extends Action {
 	public ActionAddGlobalTask(IWorkbenchPart part) {
 		setText(Messages.getString("addGlobalTaskAction.title")); //$NON-NLS-1$
 		setImageDescriptor(ImageFactory.getImageDescriptor(ENABLED_IMAGE_PATH));
-		setHoverImageDescriptor(ImageFactory.getImageDescriptor(HOVER_IMAGE_PATH));
+//		setHoverImageDescriptor(ImageFactory.getImageDescriptor(HOVER_IMAGE_PATH));
 		setToolTipText(Messages.getString("addGlobalTaskAction.tooltip")); //$NON-NLS-1$
 		this.part = part;
 	}

@@ -62,10 +62,10 @@ public class NewWizardDropDownAction
 		ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
 		setImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
-		setHoverImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
-		setDisabledImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
+//		setHoverImageDescriptor(
+//			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
+//		setDisabledImageDescriptor(
+//			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
 
 		setMenuCreator(this);
 	}

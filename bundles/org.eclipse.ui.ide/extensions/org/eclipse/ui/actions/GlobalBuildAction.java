@@ -123,12 +123,12 @@ private void setBuildType(int type) {
 			setImageDescriptor(
 				IDEInternalWorkbenchImages.getImageDescriptor(
 					IDEInternalWorkbenchImages.IMG_CTOOL_BUILD_EXEC));
-			setHoverImageDescriptor(
-				IDEInternalWorkbenchImages.getImageDescriptor(
-					IDEInternalWorkbenchImages.IMG_CTOOL_BUILD_EXEC_HOVER));
-			setDisabledImageDescriptor(
-				IDEInternalWorkbenchImages.getImageDescriptor(
-					IDEInternalWorkbenchImages.IMG_CTOOL_BUILD_EXEC_DISABLED));
+//			setHoverImageDescriptor(
+//				IDEInternalWorkbenchImages.getImageDescriptor(
+//					IDEInternalWorkbenchImages.IMG_CTOOL_BUILD_EXEC_HOVER));
+//			setDisabledImageDescriptor(
+//				IDEInternalWorkbenchImages.getImageDescriptor(
+//					IDEInternalWorkbenchImages.IMG_CTOOL_BUILD_EXEC_DISABLED));
 			setActionDefinitionId("org.eclipse.ui.project.buildAll"); //$NON-NLS-1$
 			break;
 		case IncrementalProjectBuilder.FULL_BUILD:

@@ -42,9 +42,9 @@ public class ActionOpenMarker extends SelectionProviderAction {
 	public ActionOpenMarker(IWorkbenchPart part, ISelectionProvider provider) {
 		super(provider, Messages.getString("openAction.title")); //$NON-NLS-1$
 		this.part = part;
-		setHoverImageDescriptor(ImageFactory.getImageDescriptor(HOVER_IMAGE_PATH));
 		setImageDescriptor(ImageFactory.getImageDescriptor(IMAGE_PATH));
-		setDisabledImageDescriptor(ImageFactory.getImageDescriptor(DISABLED_IMAGE_PATH));
+//		setHoverImageDescriptor(ImageFactory.getImageDescriptor(HOVER_IMAGE_PATH));
+//		setDisabledImageDescriptor(ImageFactory.getImageDescriptor(DISABLED_IMAGE_PATH));
 		setEnabled(false);
 	}
 	

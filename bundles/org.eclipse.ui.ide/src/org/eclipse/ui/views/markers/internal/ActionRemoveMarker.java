@@ -39,9 +39,9 @@ public class ActionRemoveMarker extends SelectionProviderAction {
 	public ActionRemoveMarker(IWorkbenchPart part, ISelectionProvider provider) {
 		super(provider, Messages.getString("deleteAction.title")); //$NON-NLS-1$
 		this.part = part;
-		setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_HOVER));
 		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
-		setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
+//		setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_HOVER));
+//		setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
 		setToolTipText(Messages.getString("deleteAction.tooltip")); //$NON-NLS-1$
 		setEnabled(false);
 	}
