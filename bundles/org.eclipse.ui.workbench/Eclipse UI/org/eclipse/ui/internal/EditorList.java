@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.*;
@@ -33,6 +32,7 @@ public class EditorList {
 	private SetScopeAction tabGroupScopeAction;
 	private BookMarkAction bookMarkAction;
 
+	private List dirtyEditorList;
 	private static boolean displayFullPath = false;
 	private static Collator collator = Collator.getInstance();
 	private static final int SELECT_ALL = 0;
@@ -85,50 +85,14 @@ public class EditorList {
 		});
 		editorsTable.addMouseListener(new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
-				// would have preferred a selectionListener, but 
-				// desired functionality is to open the editor on 
-				// single click, but allow popup if right-click
-				// 
 				if (e.button == 1) {
-					TableItem[] items = editorsTable.getSelection();
-					if (items.length > 0) {
-						saveAction.setEnabled(false);
-						for (int i = 0; i < items.length; i++) {
-							Adapter editor = (Adapter)items[i].getData();
-							if (editor.isDirty()) {
-								saveAction.setEnabled(true);
-								break;
-							}
-						}
-						closeAction.setEnabled(true); 
-						
-						if (items.length == 1) {
-							Adapter selection = (Adapter)items[0].getData();
-							selection.activate(true);
-						}
-					} else {
-						saveAction.setEnabled(false);
-						closeAction.setEnabled(false);
-					}
+					handleSelectionEvent();
 				}
-				
 			}
 		});
 		editorsTable.addSelectionListener(new SelectionAdapter() {
 			public void widgetDefaultSelected(SelectionEvent e) {
-				TableItem[] items = editorsTable.getSelection();
-				if (items.length > 0) {
-					saveAction.setEnabled(true);
-					closeAction.setEnabled(true); 
-					
-					if (items.length == 1) {
-						Adapter selection = (Adapter)items[0].getData();
-						selection.activate(true);
-					}
-				} else {
-					saveAction.setEnabled(false);
-					closeAction.setEnabled(false);
-				}
+				handleSelectionEvent();
 			}
 		});
 		return editorsTable; 
@@ -149,6 +113,32 @@ public class EditorList {
 	
 	public int getItemCount() {
 		return editorsTable.getItemCount();
+	}
+
+	private void handleSelectionEvent() {
+		TableItem[] selection = editorsTable.getSelection();
+		if (selection.length > 0) {
+			boolean enableSaveAction = false;
+			
+			dirtyEditorList = new ArrayList();
+			for (int i = 0; i < selection.length; i++) {
+				Adapter editor = (Adapter)selection[i].getData();
+				if (editor.isDirty()) {
+					enableSaveAction = true;
+					dirtyEditorList.add(editor.editorRef.getPart(false));
+				}
+			}
+			saveAction.setEnabled(enableSaveAction);
+			closeAction.setEnabled(true);
+			
+			if (selection.length == 1) {
+				Adapter a = (Adapter)selection[0].getData();
+				a.activate(true);
+			}
+		} else {
+			saveAction.setEnabled(false);
+			closeAction.setEnabled(false);
+		}
 	}
 	
 	/**
@@ -253,16 +243,7 @@ public class EditorList {
 			if(items.length == 0) {
 				return;
 			}
-			ProgressMonitorDialog pmd = new ProgressMonitorDialog(editorsTable.getShell());
-			pmd.open();
-			for (int i = 0; i < items.length; i++) {
-				Adapter editor = (Adapter)items[i].getData();
-				if (editor.isDirty()) {
-					editor.save(pmd.getProgressMonitor());
-					updateItem(items[i], editor);
-				}
-			}
-			pmd.close();
+			EditorManager.saveAll(dirtyEditorList, false, window);
 			destroyControl();
 		}
 	}

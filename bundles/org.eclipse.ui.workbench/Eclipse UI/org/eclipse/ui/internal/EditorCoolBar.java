@@ -250,25 +250,20 @@ public class EditorCoolBar {
 		listComposite.setVisible(true);
 		listComposite.moveAbove(null);
 		listComposite.setLocation(point);
-		editorListControl.addFocusListener(new FocusAdapter() {
-			public void focusLost(FocusEvent e) {
-				closeEditorList();
-			}
-		});
 			 
-// 		editorListControl.addListener(SWT.Deactivate, new Listener() {
-//			public void handleEvent(Event event) {
-//				listComposite.getDisplay().asyncExec(new Runnable() {
-//					public void run() {
-//						if (singleClick) return;
-//						if (listComposite != null) {
-//							closeEditorList();
-//						}
-//					}
-//				});
-//
-//			}
-// 		});
+ 		editorListControl.addListener(SWT.Deactivate, new Listener() {
+			public void handleEvent(Event event) {
+				listComposite.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						if (singleClick) return;
+						if (listComposite != null) {
+							closeEditorList();
+						}
+					}
+				});
+
+			}
+ 		});
 	}
 	
 	public Control createControl(Composite parent) {	
