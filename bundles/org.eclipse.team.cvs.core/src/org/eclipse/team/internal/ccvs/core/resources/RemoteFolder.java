@@ -524,6 +524,8 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	public boolean equals(Object target) {
 		if ( ! super.equals(target)) return false;
 		RemoteFolder folder = (RemoteFolder)target;
+		// A simple folder is never equal to a defined module
+		if (folder.isDefinedModule() != isDefinedModule()) return false;
 		CVSTag tag1 = getTag();
 		CVSTag tag2 = folder.getTag();
 		if (tag1 == null) tag1 = CVSTag.DEFAULT;

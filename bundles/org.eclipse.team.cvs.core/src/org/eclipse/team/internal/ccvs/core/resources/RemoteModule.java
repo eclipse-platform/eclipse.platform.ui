@@ -207,6 +207,7 @@ public class RemoteModule extends RemoteFolder {
 				}
 			}
 			if (expandable) {
+				//TODO: Make module static??
 				module.setChildren((ICVSRemoteResource[]) referencedFolders.toArray(new ICVSRemoteResource[referencedFolders.size()]));
 			} else {
 				module.setExpandable(false);
@@ -299,15 +300,6 @@ public class RemoteModule extends RemoteFolder {
 			allChildren = new ICVSRemoteResource[0];
 		}
 		return allChildren;
-	}
-	
-	/*
-	 * Set the children to a static set of children
-	 */
-	protected void setChildren(ICVSRemoteResource[] children) {
-		super.setChildren(children);
-		if ( ! folderInfo.getIsStatic())
-			this.folderInfo = new FolderSyncInfo(folderInfo.getRepository(), folderInfo.getRoot(), folderInfo.getTag(), true);
 	}
 	
 	private void setReferencedModules(ICVSRemoteResource[] referencedModules) {
