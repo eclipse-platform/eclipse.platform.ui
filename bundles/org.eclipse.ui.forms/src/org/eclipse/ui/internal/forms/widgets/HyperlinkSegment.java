@@ -58,7 +58,7 @@ public class HyperlinkSegment
 			String text = areaRectangle.getText();
 			Point extent = gc.textExtent(text);
 			int textX = rect.x + 1;
-			gc.drawString(text, textX, rect.y, true);
+			gc.drawString(text, textX, rect.y, false);
 			if (underline || hover || rolloverMode) {
 				int lineY = rect.y + lineHeight - descent + 1;
 				Color saved=null;
