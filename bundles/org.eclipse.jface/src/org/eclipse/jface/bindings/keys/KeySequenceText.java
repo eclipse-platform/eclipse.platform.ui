@@ -115,13 +115,13 @@ public final class KeySequenceText {
 		 *            The triggering event; must not be <code>null</code>.
 		 */
 		public void handleEvent(Event event) {
-			final KeyStroke[] keyStrokes = getKeySequence().getKeyStrokes();
+			KeyStroke[] keyStrokes = getKeySequence().getKeyStrokes();
 
 			// Dispatch the event to the correct handler.
 			if (event.type == SWT.KeyDown) {
-				handleKeyDown(event, keyStrokes);
+				keyStrokes = handleKeyDown(event, keyStrokes);
 			} else if (event.type == SWT.KeyUp) {
-				handleKeyUp(event, keyStrokes);
+				keyStrokes = handleKeyUp(event, keyStrokes);
 			}
 
 			// Update the underlying widget.
@@ -294,7 +294,7 @@ public final class KeySequenceText {
 			} else {
 				// No selection, so remove the incomplete stroke, if any
 				if ((hasIncompleteStroke()) && (keyStrokes.length > 0)) {
-					final KeyStroke[] newKeyStrokes = new KeyStroke[keyStrokes.length];
+					final KeyStroke[] newKeyStrokes = new KeyStroke[keyStrokes.length - 1];
 					System.arraycopy(keyStrokes, 0, newKeyStrokes, 0,
 							keyStrokes.length - 1);
 					keyStrokes = newKeyStrokes;
@@ -754,8 +754,10 @@ public final class KeySequenceText {
 		final KeyStroke[] newKeyStrokes = new KeyStroke[keyStrokesLength + 1];
 		System.arraycopy(keyStrokes, 0, newKeyStrokes, 0, index);
 		newKeyStrokes[index] = stroke;
-		System.arraycopy(keyStrokes, index, newKeyStrokes, index + 1,
-				keyStrokesLength);
+		if (index < keyStrokesLength) {
+			System.arraycopy(keyStrokes, index, newKeyStrokes, index + 1,
+					keyStrokesLength);
+		}
 		return newKeyStrokes;
 	}
 
