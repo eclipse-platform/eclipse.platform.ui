@@ -35,16 +35,23 @@ public class AnimationItem {
 	private static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
 	private static final String RUNNING_ICON = "running.gif"; //$NON-NLS-1$
 	private static final String BACKGROUND_ICON = "back.gif"; //$NON-NLS-1$
-	
+	private static final String ERROR_ICON = "error.gif"; //$NON-NLS-1$
+
 	private ImageData[] animatedData;
 	private ImageData[] disabledData;
-	private Image animatedImage;
+	private ImageData[] errorData;
+
 	private Image disabledImage;
+	private Image animatedImage;
+	private Image errorImage;
+
 	Canvas imageCanvas;
 	GC imageCanvasGC;
-	private ImageLoader loader = new ImageLoader();
+	private ImageLoader runLoader = new ImageLoader();
+	private ImageLoader errorLoader = new ImageLoader();
 	boolean animated = false;
-	private Job animateJob;
+	Job animateJob;
+	boolean showingError = false;
 	private IJobProgressManagerListener listener;
 
 	/**
@@ -65,13 +72,21 @@ public class AnimationItem {
 		try {
 			URL runningRoot = new URL(iconsRoot, RUNNING_ICON);
 			URL backRoot = new URL(iconsRoot, BACKGROUND_ICON);
-			animatedData = getImageData(runningRoot);
+			URL errorRoot = new URL(iconsRoot, ERROR_ICON);
+
+			animatedData = getImageData(runningRoot, runLoader);
 			if (animatedData != null)
 				animatedImage = getImage(animatedData[0]);
 
-			disabledData = getImageData(backRoot);
+			disabledData = getImageData(backRoot, runLoader);
 			if (disabledData != null)
 				disabledImage = getImage(disabledData[0]);
+
+			errorData = getImageData(errorRoot, errorLoader);
+			if (errorData != null)
+				errorImage = getImage(errorData[0]);
+
+			getImageData(backRoot, errorLoader);
 
 			listener = getProgressListener();
 			JobProgressManager.getInstance().addListener(listener);
@@ -93,9 +108,10 @@ public class AnimationItem {
 	/**
 	 * Returns the image descriptor with the given relative path.
 	 * @param fileSystemPath The URL for the file system to the image.
+	 * @param loader - the loader used to get this data
 	 * @return ImageData[]
 	 */
-	ImageData[] getImageData(URL fileSystemPath) {
+	ImageData[] getImageData(URL fileSystemPath, ImageLoader loader) {
 		try {
 			InputStream stream = fileSystemPath.openStream();
 			ImageData[] result = loader.load(stream);
@@ -168,8 +184,8 @@ public class AnimationItem {
 					arg0.result = ProgressMessages.getString("AnimationItem.NotRunningStatus"); //$NON-NLS-1$
 			}
 		});
-		
-		imageCanvas.addHelpListener(new HelpListener(){
+
+		imageCanvas.addHelpListener(new HelpListener() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.HelpListener#helpRequested(org.eclipse.swt.events.HelpEvent)
 			 */
@@ -182,25 +198,31 @@ public class AnimationItem {
 	}
 
 	/**
-	 * Return the current image for the receiver.
-	 * @return Image
-	 */
-	Image getImage() {
-		if (animated)
-			return animatedImage;
-		else
-			return disabledImage;
-	}
-
-	/**
 	 * Get the current ImageData for the receiver.
 	 * @return ImageData[]
 	 */
 	ImageData[] getImageData() {
-		if (animated)
-			return animatedData;
-		else
+		if (animated) {
+			if (showingError)
+				return errorData;
+			else
+				return animatedData;
+		} else
 			return disabledData;
+	}
+
+	/**
+	 * Get the current Image for the receiver.
+	 * @return Image
+	 */
+	Image getImage() {
+		if (animated) {
+			if (showingError)
+				return errorImage;
+			else
+				return animatedImage;
+		} else
+			return disabledImage;
 	}
 
 	/**
@@ -209,10 +231,7 @@ public class AnimationItem {
 	 * @param image The image to display
 	 * @param imageData The array of ImageData. Required to show an animation.
 	 */
-	void paintImage(
-		PaintEvent event,
-		Image image,
-		ImageData imageData) {
+	void paintImage(PaintEvent event, Image image, ImageData imageData) {
 
 		Image paintImage = image;
 
@@ -233,7 +252,7 @@ public class AnimationItem {
 	 * Return whether or not the current state is animated.
 	 * @return boolean
 	 */
-	private boolean isAnimated() {
+	boolean isAnimated() {
 		return animated;
 	}
 
@@ -245,9 +264,8 @@ public class AnimationItem {
 
 		animated = bool;
 		if (bool) {
-			Image image = getImage();
 			ImageData[] imageDataArray = getImageData();
-			if (isAnimated() && image != null && imageDataArray.length > 1) {
+			if (isAnimated() && imageDataArray.length > 1) {
 				getAnimateJob().schedule();
 			}
 		}
@@ -265,8 +283,9 @@ public class AnimationItem {
 	 * Dispose the images in the receiver.
 	 */
 	void dispose() {
-		animatedImage.dispose();
 		disabledImage.dispose();
+		errorImage.dispose();
+		animatedImage.dispose();
 		JobProgressManager.getInstance().removeListener(listener);
 	}
 
@@ -281,12 +300,15 @@ public class AnimationItem {
 
 		if (getControl().isDisposed())
 			return;
+			
+		boolean startErrorState = showingError;
 		Display display = imageCanvas.getDisplay();
 		ImageData[] imageDataArray = getImageData();
 		ImageData imageData = imageDataArray[0];
 		Image image = getImage(imageData);
 		int imageDataIndex = 0;
 		final Color[] backgrounds = new Color[1];
+		ImageLoader loader = getLoader();
 
 		Image offScreenImage =
 			new Image(
@@ -333,8 +355,9 @@ public class AnimationItem {
 				imageData.height);
 
 			if (loader.repeatCount > 0) {
-				while (isAnimated() && !monitor.isCanceled()) {
-
+				while (isAnimated()
+					&& !monitor.isCanceled()
+					&& (startErrorState == showingError)) {
 					if (getControl().isDisposed())
 						return;
 					if (imageData.disposalMethod == SWT.DM_FILL_BACKGROUND) {
@@ -434,13 +457,11 @@ public class AnimationItem {
 		return disabledImage.getBounds();
 	}
 
+	private IJobProgressManagerListener getProgressListener() {
+		return new IJobProgressManagerListener() {
 
-
-	private IJobProgressManagerListener getProgressListener(){
-		return new IJobProgressManagerListener(){
-			
 			HashSet jobs = new HashSet();
-			
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#add(org.eclipse.ui.internal.progress.JobInfo)
 			 */
@@ -448,23 +469,30 @@ public class AnimationItem {
 				incrementJobCount(info.getJob());
 
 			}
-			
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refresh(org.eclipse.ui.internal.progress.JobInfo)
 			 */
 			public void refresh(JobInfo info) {
-				// XXX Auto-generated method stub
-
+				if (info.getErrorStatus() != null)
+					showingError = true;
 			}
-			
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshAll()
 			 */
 			public void refreshAll() {
-				// XXX Auto-generated method stub
+				JobProgressManager manager = JobProgressManager.getInstance();
+				showingError = manager.hasErrorsDisplayed();
+				jobs.clear();
+				Object[] currentJobs = manager.getJobs();
+				for (int i = 0; i < currentJobs.length; i++) {
+					jobs.add(currentJobs[i]);
+				}
+				setAnimated(showingError);
 
 			}
-			
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#remove(org.eclipse.ui.internal.progress.JobInfo)
 			 */
@@ -474,33 +502,33 @@ public class AnimationItem {
 				}
 
 			}
-			
-			private void incrementJobCount(Job job) {
-							//Don't count the animate job itself
-							if (job.isSystem())
-								return;
-							if (jobs.size() == 0)
-								setAnimated(true);
-							jobs.add(job);
-						}
 
-						private void decrementJobCount(Job job) {
-							//Don't count the animate job itself
-							if (job.isSystem())
-								return;
-							jobs.remove(job);
-							if(jobs.isEmpty())
-								setAnimated(false);
-						}
+			private void incrementJobCount(Job job) {
+				//Don't count the animate job itself
+				if (job.isSystem())
+					return;
+				if (jobs.size() == 0)
+					setAnimated(true);
+				jobs.add(job);
+			}
+
+			private void decrementJobCount(Job job) {
+				//Don't count the animate job itself
+				if (job.isSystem())
+					return;
+				jobs.remove(job);
+				if (jobs.isEmpty())
+					setAnimated(false);
+			}
 		};
 	}
 
 	private Job getAnimateJob() {
 		if (animateJob == null) {
 				animateJob = new Job(ProgressMessages.getString("AnimateJob.JobName")) {//$NON-NLS-1$
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+				/* (non-Javadoc)
+				 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+				 */
 				public IStatus run(IProgressMonitor monitor) {
 					try {
 						animateLoop(monitor);
@@ -517,22 +545,39 @@ public class AnimationItem {
 				 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 				 */
 				public void done(IJobChangeEvent event) {
-					//Clear the image
+					if (isAnimated())
+						animateJob.schedule();
+					else {
+						//Clear the image
+
 						UIJob clearJob = new UIJob(ProgressMessages.getString("AnimationItem.RedrawJob")) {//$NON-NLS-1$
 						/* (non-Javadoc)
-	 					 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+						 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 						 */
-						public IStatus runInUIThread(IProgressMonitor monitor) {
-							if (!imageCanvas.isDisposed())
-								imageCanvas.redraw();
-							return Status.OK_STATUS;
-						}
-					};
-					clearJob.setSystem(true);
-					clearJob.schedule();
+							public IStatus runInUIThread(IProgressMonitor monitor) {
+								if (!imageCanvas.isDisposed())
+									imageCanvas.redraw();
+								return Status.OK_STATUS;
+							}
+						};
+						clearJob.setSystem(true);
+						clearJob.schedule();
+					}
 				}
 			});
+
 		}
 		return animateJob;
+	}
+
+	/**
+	 * Return the loader currently in use.
+	 * @return ImageLoader
+	 */
+	ImageLoader getLoader() {
+		if (showingError)
+			return errorLoader;
+		else
+			return runLoader;
 	}
 }
