@@ -413,13 +413,7 @@ class ResourceTree implements IResourceTree {
 			}
 
 			// Clear the history store.
-			try {
-				project.clearHistory(null);
-			} catch (CoreException e) {
-				String message = Policy.bind("history.problemsRemoving", project.getFullPath().toString()); //$NON-NLS-1$
-				IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, project.getFullPath(), message, e);
-				failed(status);
-			}
+			project.clearHistory(null);
 		} finally {
 			lock.release();
 		}
@@ -488,11 +482,11 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * @see IResourceTree#standardDeleteFile(IFile, int, IProgressMonitor)
 	 */
-	public void standardDeleteFile(IFile file, int updateFlags, IProgressMonitor monitor) {
+	public void standardDeleteFile(IFile file, int flags, IProgressMonitor monitor) {
 		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
-			internalDeleteFile(file, updateFlags, monitor);
+			internalDeleteFile(file, flags, monitor);
 		} finally {
 			lock.release();
 		}
@@ -502,7 +496,7 @@ class ResourceTree implements IResourceTree {
 	 * Helper method for #standardDeleteFile. Returns a boolean indicating whether or
 	 * not the delete was successful. 
 	 */
-	private boolean internalDeleteFile(IFile file, int updateFlags, IProgressMonitor monitor) {
+	private boolean internalDeleteFile(IFile file, int flags, IProgressMonitor monitor) {
 		try {
 			String message = Policy.bind("resources.deleting", file.getFullPath().toString()); //$NON-NLS-1$
 			monitor.beginTask(message, Policy.totalWork);
@@ -526,8 +520,8 @@ class ResourceTree implements IResourceTree {
 				return true;
 			}
 
-			boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
-			boolean force = (updateFlags & IResource.FORCE) != 0;
+			boolean keepHistory = (flags & IResource.KEEP_HISTORY) != 0;
+			boolean force = (flags & IResource.FORCE) != 0;
 
 			// Add the file to the local history if requested by the user.
 			if (keepHistory)
@@ -574,7 +568,7 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * @see IResourceTree#standardDeleteFolder(IFolder, int, IProgressMonitor)
 	 */
-	public void standardDeleteFolder(IFolder folder, int updateFlags, IProgressMonitor monitor) {
+	public void standardDeleteFolder(IFolder folder, int flags, IProgressMonitor monitor) {
 		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
@@ -602,15 +596,15 @@ class ResourceTree implements IResourceTree {
 			// we can short circuit this operation and delete all the files on disk, otherwise we have
 			// to recursively try and delete them doing best-effort, thus leaving only the ones which
 			// were out of sync.
-			boolean force = (updateFlags & IResource.FORCE) != 0;
+			boolean force = (flags & IResource.FORCE) != 0;
 			if (!force && !isSynchronized(folder, IResource.DEPTH_INFINITE)) {
 				// we are not in sync and force is false so delete via best effort
-				internalDeleteFolder(folder, updateFlags, monitor);
+				internalDeleteFolder(folder, flags, monitor);
 				return;
 			}
 
 			// Add the contents of the files to the local history if so requested by the user.
-			boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
+			boolean keepHistory = (flags & IResource.KEEP_HISTORY) != 0;
 			if (keepHistory)
 				addToLocalHistory(folder, IResource.DEPTH_INFINITE);
 

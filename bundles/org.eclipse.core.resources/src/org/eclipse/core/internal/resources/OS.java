@@ -56,7 +56,7 @@ public abstract class OS {
 	 */
 	public static boolean isNameValid(String name) {
 		//. and .. have special meaning on all platforms
-		if (name.equals(".") || name.equals(".."))
+		if (name.equals(".") || name.equals("..")) //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		if (INSTALLED_PLATFORM.equals(Constants.OS_WIN32)) {
 			//on windows, filename suffixes are not relevant to name validity

@@ -278,7 +278,7 @@ public class File extends Resource implements IFile {
 	/* (non-Javadoc)
 	 * @see IFile#getHistory(IProgressMonitor)
 	 */
-	public IFileState[] getHistory(IProgressMonitor monitor) throws CoreException {
+	public IFileState[] getHistory(IProgressMonitor monitor) {
 		return getLocalManager().getHistoryStore().getStates(getFullPath(), monitor);
 	}
 
@@ -387,7 +387,7 @@ public class File extends Resource implements IFile {
 		}
 	}
 
-	/* (non-Javadoc)
+	/** (non-Javadoc)
 	 * @see IFile#setCharset(String)
 	 * @deprecated Replaced by {@link #setCharset(String, IProgressMonitor)} which 
 	 * 	is a workspace operation and reports changes in resource deltas.

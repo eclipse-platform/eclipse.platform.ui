@@ -426,7 +426,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	/* (non-Javadoc)
 	 * @see IResource#clearHistory(IProgressMonitor)
 	 */
-	public void clearHistory(IProgressMonitor monitor) throws CoreException {
+	public void clearHistory(IProgressMonitor monitor) {
 		getLocalManager().getHistoryStore().remove(getFullPath(), monitor);
 	}
 
@@ -797,7 +797,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	/* (non-Javadoc)
 	 * @see IResource#findMarker(long)
 	 */
-	public IMarker findMarker(long id) throws CoreException {
+	public IMarker findMarker(long id) {
 		return workspace.getMarkerManager().findMarker(this, id);
 	}
 
@@ -1108,7 +1108,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_PHANTOM);
 	}
 
-	/* (non-Javadoc)
+	/** (non-Javadoc)
 	 * @see IResource#isReadOnly()
 	 * @deprecated
 	 */
@@ -1296,7 +1296,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		getPropertyManager().setProperty(this, key, value);
 	}
 
-	/* (non-Javadoc)
+	/** (non-Javadoc)
 	 * @see IResource#setReadOnly(boolean)
 	 * @deprecated
 	 */

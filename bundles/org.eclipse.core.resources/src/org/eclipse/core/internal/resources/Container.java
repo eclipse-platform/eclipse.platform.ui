@@ -216,7 +216,7 @@ public abstract class Container extends Resource implements IContainer {
 	/* (non-Javadoc)
 	 * @see IContainer#findDeletedMembersWithHistory(int, IProgressMonitor)
 	 */
-	public IFile[] findDeletedMembersWithHistory(int depth, IProgressMonitor monitor) throws CoreException {
+	public IFile[] findDeletedMembersWithHistory(int depth, IProgressMonitor monitor) {
 		IHistoryStore historyStore = getLocalManager().getHistoryStore();
 		IPath basePath = getFullPath();
 		IWorkspaceRoot root = getWorkspace().getRoot();
@@ -244,7 +244,7 @@ public abstract class Container extends Resource implements IContainer {
 		return (IFile[]) deletedFiles.toArray(new IFile[deletedFiles.size()]);
 	}
 
-	/* (non-Javadoc)
+	/** (non-Javadoc)
 	 * @see IContainer#setDefaultCharset(String)
 	 * @deprecated Replaced by {@link #setDefaultCharset(String, IProgressMonitor)} which 
 	 * 	is a workspace operation and reports changes in resource deltas.
@@ -268,8 +268,7 @@ public abstract class Container extends Resource implements IContainer {
 			final ISchedulingRule rule = workspace.getRuleFactory().charsetRule(this);
 			try {
 				workspace.prepareOperation(rule, monitor);
-				ResourceInfo info = getResourceInfo(false, false);
-				checkAccessible(getFlags(info));
+				checkAccessible(getFlags(getResourceInfo(false, false)));
 				workspace.beginOperation(true);
 				workspace.getCharsetManager().setCharsetFor(getFullPath(), newCharset);
 				// now propagate the changes to all children inheriting their setting from this container
