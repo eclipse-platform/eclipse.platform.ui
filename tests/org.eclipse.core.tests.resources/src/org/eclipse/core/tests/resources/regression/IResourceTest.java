@@ -271,6 +271,26 @@ public void testDelete_1GD3ZUZ() {
 	assertTrue("4.0", !file.isReadOnly());
 	ensureDoesNotExistInWorkspace(new IResource[] {project, file});
 }
+public void testDelete_Bug8754() {
+	//In this test, we delete with force false on a file that does not exist in the file system,
+	//and ensure that the returned exception is of type OUT_OF_SYNC_LOCAL
+	
+	IProject project = getWorkspace().getRoot().getProject("MyProject");
+	IFile file = project.getFile("MyFile");
+	
+	// setup
+	ensureExistsInWorkspace(new IResource[] {project, file}, true);
+	ensureDoesNotExistInFileSystem(file);
+	
+	// doit
+	try {
+		file.delete(false, getMonitor());
+	} catch (CoreException e) {
+		assertEquals("1.0", e.getStatus().getCode(), IResourceStatus.OUT_OF_SYNC_LOCAL);
+	}
+	//cleanup
+	ensureDoesNotExistInWorkspace(new IResource[] {project, file});
+}
 public void testEquals_1FUOU25() {
 	IResource fileResource = getWorkspace().getRoot().getFile(new Path("a/b/c/d"));
 	IResource folderResource = getWorkspace().getRoot().getFolder(new Path("a/b/c/d"));
