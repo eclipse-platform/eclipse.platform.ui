@@ -182,8 +182,7 @@ if (data.getScript() != null) {
 		} else {
 %>
 						<td align="middle" class="button">
-							<a href="#" 
-							   onclick="<%=buttons[i].getAction()%>(this);" 
+							<a href="javascript:void <%=buttons[i].getAction()%>(this);" 
 							   onmouseover="window.status='<%=buttons[i].getTooltip()%>';return true;" 
 							   onmouseout="window.status='';">
 							   <img src="<%=buttons[i].getImage()%>" 
