@@ -321,16 +321,18 @@ public class PageStyleManager extends SharedStyleManager {
     }
 
     public boolean isBold(IntroText text) {
+        String value = null;
         StringBuffer buff = createPathToElementKey(text);
         if (buff != null) {
             String key = buff.append(".font.bold").toString();
-            String value = getProperty(key);
+            value = getProperty(key);
             if (value != null)
                 return value.toLowerCase().equals("true");
-        } else {
+        }
+        if (value == null) {
             // bold is not specified by ID. Check to see if there is a style-id
             // specified for bold.
-            String value = getProperty("bold-style-id");
+            value = getProperty("bold-style-id");
             if (value != null && text.getStyleId() != null)
                 return text.getStyleId().equals(value);
         }
