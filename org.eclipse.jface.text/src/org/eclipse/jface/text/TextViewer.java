@@ -3559,6 +3559,8 @@ public class TextViewer extends Viewer implements
 	 * @see org.eclipse.jface.text.ITextViewerExtension2#getCurrentTextHover()
 	 */
 	public ITextHover getCurrentTextHover() {
+		if (fTextHoverManager == null)
+			return null;
 		return fTextHoverManager.getCurrentTextHover();
 	}
 
@@ -3566,6 +3568,8 @@ public class TextViewer extends Viewer implements
 	 * @see org.eclipse.jface.text.ITextViewerExtension2#getHoverEventLocation()
 	 */
 	public Point getHoverEventLocation() {
+		if (fTextHoverManager == null)
+			return null;
 		return fTextHoverManager.getHoverEventLocation();
 	}
 
