@@ -56,19 +56,12 @@ public class TeamResourceDecorator extends LabelProvider implements ILabelDecora
 	// value = decorator instance
 	Map decorators = new HashMap();
 	
-	/**
-	 * Creates a new decorator with the given shell.  The shell is
-	 * needed for determining the UI display for updates.
-	 * 
-	 * @param shell  the shell the decorator is in.
-	 */
-	public TeamResourceDecorator(Shell shell) {
-		this.shell = shell;
+	public TeamResourceDecorator() {
 		initializeDecorators();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_AUTO_BUILD);
 		TeamPlugin.getManager().addResourceStateChangeListener(this);
 	}
-
+	
 	/**
 	 * Initialize the decorators table
 	 */
@@ -277,13 +270,7 @@ public class TeamResourceDecorator extends LabelProvider implements ILabelDecora
 	 */
 	protected void postLabelEvents(final LabelProviderChangedEvent[] events) {
 		// now post the change events to the UI thread
-		if (events.length > 0 && shell != null && !shell.isDisposed()) {
-			shell.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					fireLabelUpdates(events);
-				}
-			});
-		}
+		fireLabelUpdates(events);		
 	} 
 	
 	/**

@@ -40,20 +40,6 @@
        	    name="%ASCIIPreferencePage.name">
        </page>
    </extension>
-   
-   <extension point="org.eclipse.ui.viewActions"> 
-      <viewContribution 
-         id="org.eclipse.team.ui.navcontribution" 
-         targetID="org.eclipse.ui.views.ResourceNavigator"> 
-         <action id="org.eclipse.team.ui.infoinnav" 
-              label="%ToggleNavigatorDecorations.label" 
-              menubarPath="additions" 
-              state="false"
-              tooltip="%ToggleNavigatorVersionLabels.tooltip" 
-              class="org.eclipse.team.ui.actions.ToggleNavigatorDecorations">
-         </action> 
-     </viewContribution> 
-   </extension>
 
 <!-- ****************** POPUP ACTIONS *************** -->
 
@@ -174,5 +160,15 @@
 			class="org.eclipse.team.internal.ui.sync.SyncView">
 		</view>
 	</extension>
-
+	
+	<!-- ************** Decorators ********************** -->
+		<extension point="org.eclipse.ui.decorators"> 
+        <decorator 
+             id="org.eclipse.team.ui.decorator" 
+             label="%Team.decorator" 
+             state="false" 
+	         class="org.eclipse.team.internal.ui.TeamResourceDecorator" 
+             objectClass="org.eclipse.core.resources.IResource"> 
+         </decorator > 
+	</extension> 
 </plugin>
