@@ -695,6 +695,9 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * @param message the message to display
 	 */
 	public void showMessage(String message) {
+		if (getPageBook().isDisposed()) {
+			return;
+		}
 		getMessagePage().setMessage(message);
 		getPageBook().showPage(getMessagePage().getControl());
 	}
@@ -703,6 +706,9 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * Shows this view's viewer page.
 	 */
 	public void showViewer() {
+		if (getPageBook().isDisposed()) {
+			return;
+		}
 		getPageBook().showPage(getDefaultPage().getControl());
 	}
 }	
