@@ -55,11 +55,14 @@ protected void copyContents(UnifiedTreeNode node, Resource source, Resource dest
 		else {
 			// XXX: should use transfer streams in order to report better progress
 			((IFile) destination).create(((IFile) source).getContents(false), force, null);
+			// update the destination timestamp on disk
+			long lastModified = node.getLastModified();
+			destination.getResourceInfo(false, true).setLocalSyncInfo(lastModified);
+			destination.getLocation().toFile().setLastModified(lastModified);
+			// update the read-only flag
+			if (node.isReadOnly())
+				destination.setReadOnly(true);
 		}
-		// update the destination timestamp on disk
-		long lastModified = node.getLastModified();
-		destination.getResourceInfo(false, true).setLocalSyncInfo(lastModified);
-		destination.getLocation().toFile().setLastModified(lastModified);
 	} catch (CoreException e) {
 		status.add(e.getStatus());
 	}

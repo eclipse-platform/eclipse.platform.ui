@@ -73,6 +73,8 @@ public static long getStat(String fileName) {
 	result |= STAT_VALID;
 	if (target.isDirectory())
 		result |= STAT_FOLDER;
+	if (!(new File(fileName).canWrite()))
+		result |= STAT_READ_ONLY;
 	return result;
 }
 private static void logMissingNativeLibrary(UnsatisfiedLinkError e) {
@@ -100,6 +102,9 @@ public static boolean isReadOnly(String fileName) {
 
 	// inlined (no native) implementation
 	return !(new File(fileName).canWrite());
+}
+public static boolean isReadOnly(long stat) {
+	return isSet(stat, STAT_READ_ONLY);
 }
 private static boolean isSet(long stat, long mask) {
 	return (stat & mask) != 0;

@@ -332,7 +332,12 @@ public void write(IFile target, InputStream content, boolean force, boolean keep
 	try {
 		IPath location = locationFor(target);
 		java.io.File localFile = location.toFile();
-		long lastModified = CoreFileSystemLibrary.getLastModified(localFile.getAbsolutePath());
+		long stat = CoreFileSystemLibrary.getStat(localFile.getAbsolutePath());
+		if (CoreFileSystemLibrary.isReadOnly(stat)) {
+			String message = Policy.bind("localstore.couldNotWriteReadOnly", target.getFullPath().toString());
+			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
+		}
+		long lastModified = CoreFileSystemLibrary.getLastModified(stat);
 		if (!force) {
 			if (target.isLocal(IResource.DEPTH_ZERO)) {
 				// test if timestamp is the same since last synchronization

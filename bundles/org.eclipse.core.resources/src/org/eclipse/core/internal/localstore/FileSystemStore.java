@@ -59,6 +59,13 @@ protected void copyFile(File target, File destination, IProgressMonitor monitor)
 		int totalWork = 1 + ((int) target.length() / 8192);
 		monitor.beginTask(Policy.bind("localstore.copying", target.getAbsolutePath()), totalWork);
 		write(destination, read(target), false, monitor);
+		// update the destination timestamp on disk
+		long stat = CoreFileSystemLibrary.getStat(target.getAbsolutePath());
+		long lastModified = CoreFileSystemLibrary.getLastModified(stat);
+		destination.setLastModified(lastModified);
+		// update the read-only flag
+		if (CoreFileSystemLibrary.isReadOnly(stat))
+			destination.setReadOnly();
 	} finally {
 		monitor.done();
 	}

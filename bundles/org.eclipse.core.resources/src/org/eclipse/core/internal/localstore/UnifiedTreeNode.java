@@ -55,6 +55,9 @@ public boolean isFile() {
 public boolean isFolder() {
 	return CoreFileSystemLibrary.isFolder(stat);
 }
+public boolean isReadOnly() {
+	return CoreFileSystemLibrary.isReadOnly(stat);
+}
 public void setExistsWorkspace(boolean exists) {
 	this.existsWorkspace = exists;
 }
