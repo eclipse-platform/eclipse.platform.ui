@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Note: This interface is yet experimental.
@@ -72,6 +73,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * 
 	 * @param mode the mode in which to launch, one of the mode constants
 	 *  defined by this interface - <code>RUN</code> or <code>DEBUG</code>.
+	 * @param monitor progress monitor, or <code>null</code>
 	 * @return the resulting launch object, or <code>null</code> if the
 	 *  launch is not completed.
 	 * @exception CoreException if this method fails. Reasons include:<ul>
@@ -79,7 +81,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * <li>the launch fails</code>
 	 * </ul>
 	 */
-	public ILaunch launch(String mode) throws CoreException;
+	public ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Returns whether this launch configuration supports the

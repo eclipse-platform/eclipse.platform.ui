@@ -6,6 +6,7 @@ package org.eclipse.debug.core.model;
  */
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -43,10 +44,11 @@ public interface ILaunchConfigurationDelegate {
 	 * @param mode the mode in which to launch, one of the mode constants
 	 *  defined by this <code>ILaunchConfiguration</code> -
 	 *  <code>RUN</code> or <code>DEBUG</code>.
+	 * @param monitor progress monitor, or <code>null</code>
 	 * @return the resulting launch object, or <code>null</code> if the
 	 *  launch is not completed.
 	 * @exception CoreException if launching fails 
 	 */
-	public ILaunch launch(ILaunchConfiguration configuration, String mode) throws CoreException;
+	public ILaunch launch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException;
 	
 }

@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
@@ -48,10 +49,10 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	}
 	
 	/**
-	 * @see ILaunchConfiguration#launch(String)
+	 * @see ILaunchConfiguration#launch(String, IProgressMonitor)
 	 */
-	public ILaunch launch(String mode) throws CoreException {
-		ILaunch launch = getDelegate().launch(this, mode);
+	public ILaunch launch(String mode, IProgressMonitor montior) throws CoreException {
+		ILaunch launch = getDelegate().launch(this, mode, montior);
 		if (launch != null) {
 			getLaunchManager().addLaunch(launch);
 		}

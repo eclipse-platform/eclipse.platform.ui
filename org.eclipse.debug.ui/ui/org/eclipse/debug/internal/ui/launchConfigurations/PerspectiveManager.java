@@ -131,10 +131,10 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 	 * @param id perspective identifier
 	 */
 	protected void switchToPerspective(final String id) {
-		final IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
-		if (window != null) {
-			async(new Runnable() {
-				public void run() {
+		async(new Runnable() {
+			public void run() {
+				IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+				if (window != null) {
 					try {
 						window.getWorkbench().showPerspective(id, window);
 					} catch (WorkbenchException e) {
@@ -144,8 +144,8 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 						e.getStatus());
 					}
 				}
-			});	
-		} 
+			}
+		});	
 	}
 	
 	/**

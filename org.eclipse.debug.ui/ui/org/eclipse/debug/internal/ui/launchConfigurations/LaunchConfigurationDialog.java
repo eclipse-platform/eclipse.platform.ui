@@ -16,8 +16,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -25,6 +27,7 @@ import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.DebugUITools;
@@ -34,6 +37,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
@@ -998,7 +1002,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		
 		// Take care of any unsaved changes.  If the user aborts, reset selection
 		// to whatever it was previously selected
- 		if (!canReplaceWorkingCopy()) {
+		boolean canReplaceConfig = canReplaceWorkingCopy();
+ 		if (!canReplaceConfig) {
  			StructuredSelection prevSelection;
  			Object selectedTreeObject = getSelectedTreeObject();
 			if (selectedTreeObject == null) {
@@ -1017,7 +1022,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  			setLastSavedName(config.getName());
  			setLaunchConfiguration(config, false);
  		} else if (singleSelection && firstSelectedElement instanceof ILaunchConfigurationType) {
-			if (canReplaceWorkingCopy()) {
+			if (canReplaceConfig) {
 				clearLaunchConfiguration();
 				setTabsForConfigType((ILaunchConfigurationType)firstSelectedElement);
 				getEditArea().setVisible(false);
@@ -1251,6 +1256,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		}
  		if (workingCopy.getOriginal() == null) {
  			return true;
+ 		}
+ 		if (!workingCopy.isDirty()) {
+ 			return false;
  		}
  		updateWorkingCopyFromPages();
  		ILaunchConfiguration original = workingCopy.getOriginal();
@@ -1643,8 +1651,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			} 
 		}
 		
-		// Do the launch
-		ILaunch launch = fUnderlyingConfig.launch(getMode());
+
+		ILaunch launch = launchWithProgress();
+		
 		// notify pages
 		if (launch != null) {
 			ILaunchConfigurationTab[] tabs = getTabs();
@@ -1669,6 +1678,40 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		return OK;
 	}
 	
+	/**
+	 * @return the resulting launch, or <code>null</code> if cancelled.
+	 * @exception CoreException if an exception occurrs launching
+	 */
+	private ILaunch launchWithProgress() throws CoreException {
+		final ILaunch[] launchResult = new ILaunch[1];
+		// Do the launch
+		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+				try {
+					launchResult[0] = fUnderlyingConfig.launch(getMode(), monitor);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				}
+			}
+		};
+		try {
+			run(true, true, runnable);
+		} catch (InterruptedException e) {
+			return null;
+		} catch (InvocationTargetException e) {
+			Throwable t = e.getTargetException();
+			if (t instanceof CoreException) {
+				throw (CoreException)t;
+			} else {
+				IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Exception occurred while launching.", t);
+				throw new CoreException(status);
+			}
+		}
+		
+		
+		return launchResult[0];		
+	}
+	
 	protected IPreferenceStore getPreferenceStore() {
 		return DebugUIPlugin.getDefault().getPreferenceStore();
 	}
@@ -1683,15 +1726,20 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * @see IRunnableContext#run(boolean, boolean, IRunnableWithProgress)
 	 */
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-		// The operation can only be canceled if it is executed in a separate thread.
-		// Otherwise the UI is blocked anyway.
-		Object state = aboutToStart(fork && cancelable);
-		fActiveRunningOperations++;
-		try {
-			ModalContext.run(runnable, fork, fProgressMonitorPart, getShell().getDisplay());
-		} finally {
-			fActiveRunningOperations--;
-			stopped(state);
+		if (isVisible()) {
+			// The operation can only be canceled if it is executed in a separate thread.
+			// Otherwise the UI is blocked anyway.
+			Object state = aboutToStart(fork && cancelable);
+			fActiveRunningOperations++;
+			try {
+				ModalContext.run(runnable, fork, fProgressMonitorPart, getShell().getDisplay());
+			} finally {
+				fActiveRunningOperations--;
+				stopped(state);
+			}
+		} else {
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(DebugUIPlugin.getShell());
+			dialog.run(fork, cancelable, runnable);
 		}
 	}
 	

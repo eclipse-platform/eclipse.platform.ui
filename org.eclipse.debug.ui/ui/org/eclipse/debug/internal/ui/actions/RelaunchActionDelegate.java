@@ -121,7 +121,7 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 			return;
 		}
 		try {
-			config.launch(mode);		
+			config.launch(mode, null);		
 		} catch (CoreException ce) {
 			DebugUIPlugin.logError(ce);			
 		}
