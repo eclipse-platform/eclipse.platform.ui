@@ -18,9 +18,11 @@
 		<property name="win32.jar" value="${basedir}/../org.eclipse.swt.win32/ws/win32/swt.jar"/>
 		<property name="gtk.jar" value="${basedir}/../org.eclipse.swt.gtk/ws/gtk/swt.jar"/>
 		<property name="motif.jar" value="${basedir}/../org.eclipse.swt.motif/ws/motif/swt.jar"/>
+		<property name="osx.jar" value="${basedir}/../org.eclipse.swt.carbon/ws/carbon/swt.jar"/>
 		<available file="${win32.jar}" property="swt.jar" value="${win32.jar}"/>
 		<available file="${gtk.jar}" property="swt.jar" value="${gtk.jar}"/>
 		<available file="${motif.jar}" property="swt.jar" value="${motif.jar}"/>
+		<available file="${osx.jar}" property="swt.jar" value="${osx.jar}"/>
 	</target>
 
 	<target name="properties" if="eclipse.running">
