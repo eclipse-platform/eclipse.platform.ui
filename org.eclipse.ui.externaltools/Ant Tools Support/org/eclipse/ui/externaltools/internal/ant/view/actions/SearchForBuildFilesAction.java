@@ -18,7 +18,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This action opens a dialog to search for build files and adds the resulting
@@ -31,6 +33,7 @@ public class SearchForBuildFilesAction extends Action {
 		super(AntViewActionMessages.getString("SearchForBuildFilesAction.Search_1"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_SEARCH)); //$NON-NLS-1$
 		setToolTipText(AntViewActionMessages.getString("SearchForBuildFilesAction.Add_build_files_with_search_2")); //$NON-NLS-1$
 		this.view= view;
+		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.SEARCH_FOR_BUILDFILES_ACTION);
 	}
 	
 	/**

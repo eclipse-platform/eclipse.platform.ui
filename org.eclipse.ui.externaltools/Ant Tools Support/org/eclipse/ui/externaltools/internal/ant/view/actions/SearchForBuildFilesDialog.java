@@ -33,13 +33,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
 import org.eclipse.ui.externaltools.internal.model.StringMatcher;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This dialog allows the user to search for Ant build files whose names match a
@@ -388,4 +391,12 @@ public class SearchForBuildFilesDialog extends InputDialog {
 			return true;
 		}
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		WorkbenchHelp.setHelp(shell, IExternalToolsHelpContextIds.SEARCH_FOR_BUILDFILES_DIALOG);
+	}
+
 }

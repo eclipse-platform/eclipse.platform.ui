@@ -14,6 +14,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Action that switches the orientation of the Ant View, toggling it between
@@ -28,24 +30,29 @@ public class ToggleAntViewOrientation extends Action {
 		super("", AS_RADIO_BUTTON);  //$NON-NLS-1$
 		this.view= view;
 		this.orientation= orientation;
+		String contextHelpId= null;
 		if (orientation == AntView.HORIZONTAL_ORIENTATION) {
 			setText(AntViewActionMessages.getString("SwitchAntViewOrientation.Horizontal_View_Orientation_1")); //$NON-NLS-1$
 			setToolTipText(AntViewActionMessages.getString("SwitchAntViewOrientation.Align_horizontally")); //$NON-NLS-1$
 			setDescription(AntViewActionMessages.getString("SwitchAntViewOrientation.Align_horizontally")); //$NON-NLS-1$
 			ExternalToolsImages.setLocalImageDescriptors(this, "th_horizontal.gif"); //$NON-NLS-1$
+			contextHelpId= IExternalToolsHelpContextIds.ANT_VIEW_HORIZONTAL_ACTION;
 		} else if (orientation == AntView.VERTICAL_ORIENTATION) {
 			setText(AntViewActionMessages.getString("SwitchAntViewOrientation.Vertical_View_Orientation_4")); //$NON-NLS-1$
 			setToolTipText(AntViewActionMessages.getString("SwitchAntViewOrientation.Align_vertically")); //$NON-NLS-1$
 			setDescription(AntViewActionMessages.getString("SwitchAntViewOrientation.Align_vertically")); //$NON-NLS-1$
 			ExternalToolsImages.setLocalImageDescriptors(this, "th_vertical.gif"); //$NON-NLS-1$
+			contextHelpId= IExternalToolsHelpContextIds.ANT_VIEW_VERTICAL_ACTION;
 		} else if (orientation== AntView.SINGLE_ORIENTATION){
 			setText(AntViewActionMessages.getString("ToggleAntViewOrientation.Project_View_Only_4")); //$NON-NLS-1$
 			setToolTipText(AntViewActionMessages.getString("ToggleAntViewOrientation.Only_Project")); //$NON-NLS-1$
 			setDescription(AntViewActionMessages.getString("ToggleAntViewOrientation.Only_Project")); //$NON-NLS-1$
 			ExternalToolsImages.setLocalImageDescriptors(this, "th_single.gif"); //$NON-NLS-1$
+			contextHelpId= IExternalToolsHelpContextIds.ANT_VIEW_SINGLE_ACTION;
 		} else {
 			Assert.isTrue(false, AntViewActionMessages.getString("SwitchAntViewOrientation.Invalid")); //$NON-NLS-1$
 		}
+		WorkbenchHelp.setHelp(this, contextHelpId);
 	}
 
 	/**

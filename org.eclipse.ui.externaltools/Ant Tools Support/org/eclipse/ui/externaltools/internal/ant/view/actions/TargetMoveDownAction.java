@@ -15,7 +15,9 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -31,6 +33,7 @@ public class TargetMoveDownAction extends Action implements IUpdate {
 		setDescription(AntViewActionMessages.getString("TargetMoveDownAction.Move_Down_2")); //$NON-NLS-1$
 		setToolTipText(AntViewActionMessages.getString("TargetMoveDownAction.Move_Down_2")); //$NON-NLS-1$
 		this.view= view;
+		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.TARGET_MOVE_DOWN_ACTION);
 	}
 	
 	/**
