@@ -258,7 +258,7 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 			if (!tokenizer.hasMoreTokens())
 				return true;
 			int service = Integer.parseInt(tokenizer.nextToken());
-			return service > MIN_JVM_VERSION_SERVICE;
+			return service >= MIN_JVM_VERSION_SERVICE;
 		} catch (SecurityException e) {
 			// If the security manager won't allow us to get the system
 			// property, continue for now and let things fail later on
