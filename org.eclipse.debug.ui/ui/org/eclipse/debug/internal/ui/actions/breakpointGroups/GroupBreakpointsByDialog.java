@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainerFactoryManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
-import org.eclipse.debug.ui.IBreakpointOrganizer;
+import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointOrganizer;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DoubleClickEvent;

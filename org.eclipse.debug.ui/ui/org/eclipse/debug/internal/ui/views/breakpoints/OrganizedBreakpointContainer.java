@@ -19,7 +19,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.ui.IBreakpointOrganizer;
 
 /**
  * A container of breakpoints, based on a category.

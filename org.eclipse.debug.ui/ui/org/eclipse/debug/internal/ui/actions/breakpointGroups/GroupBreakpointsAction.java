@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
-import org.eclipse.debug.ui.IBreakpointOrganizer;
+import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointOrganizer;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 
