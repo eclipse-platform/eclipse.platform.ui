@@ -27,12 +27,12 @@
 function onloadHandler(e)
 {
 <% if (data.isIE() || data.isMozilla() && "1.2.1".compareTo(data.getMozillaVersion()) <=0){
-%>	var h=window.ToolbarFrame.document.getElementById("titleText").offsetHeight; <%-- default 13 --%>
+%>	var h=window.<%=view.getName()%>ToolbarFrame.document.getElementById("titleText").offsetHeight; <%-- default 13 --%>
 	if(h<=19){
 		return; <%-- no need to resize up to 19px --%>
 	}
 	document.getElementById("viewFrameset").setAttribute("rows", <%=data.isIE()?"11":"14"%>+h+",*"); <%-- default 24, 27 for mozilla --%>
-	window.ToolbarFrame.document.getElementById("titleTextTableDiv").style.height=(<%=data.isIE()?"9":"11"%>+h)+"px"; <%-- default 22 --%>
+	window.<%=view.getName()%>ToolbarFrame.document.getElementById("titleTextTableDiv").style.height=(<%=data.isIE()?"9":"11"%>+h)+"px"; <%-- default 22 --%>
 <%}%>
 }
 </script>
@@ -40,8 +40,8 @@ function onloadHandler(e)
 </head>
 
 <frameset id="viewFrameset" onload="onloadHandler()" rows='<%=data.isIE()?"24,*":"27,*"%>'  frameborder="0" framespacing="0" border=0  >
-	<frame id="toolbar" name="ToolbarFrame" src='<%=view.getURL()+view.getName()+"Toolbar.jsp"%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
-	<frame name='ViewFrame' src='<%=view.getURL()+view.getName()+"View.jsp?"+request.getQueryString()%>'  marginwidth="10" marginheight="0" frameborder="0" >
+	<frame id="toolbar" name="<%=view.getName()%>ToolbarFrame" src='<%=view.getURL()+view.getName()+"Toolbar.jsp"%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
+	<frame name='<%=view.getName()%>ViewFrame' src='<%=view.getURL()+view.getName()+"View.jsp?"+request.getQueryString()%>'  marginwidth="10" marginheight="0" frameborder="0" >
 </frameset>
 
 </html>

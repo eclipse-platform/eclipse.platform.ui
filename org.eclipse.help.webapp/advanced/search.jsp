@@ -180,10 +180,10 @@ function doSearch(query)
 		parent.HelpFrame.NavFrame.showView &&
 		parent.HelpFrame.NavFrame.ViewsFrame && 
 		parent.HelpFrame.NavFrame.ViewsFrame.search && 
-		parent.HelpFrame.NavFrame.ViewsFrame.search.ViewFrame) 
+		parent.HelpFrame.NavFrame.ViewsFrame.search.searchViewFrame) 
 	{
 		parent.HelpFrame.NavFrame.showView("search");
-		var searchView = parent.HelpFrame.NavFrame.ViewsFrame.search.ViewFrame;
+		var searchView = parent.HelpFrame.NavFrame.ViewsFrame.search.searchViewFrame;
 		searchView.location.replace("searchView.jsp?"+query);
 	}
 }

@@ -59,16 +59,6 @@ function setContentToolbarTitle(title)
 }
 
 /**
- * Views can call this to set the title on the navigation toolbar
- */
-function setNavToolbarTitle(title)
-{
-	if(ToolbarFrame && ToolbarFrame.setTitle ){
-		ToolbarFrame.setTitle(title);
-	}
-}
-
-/**
  * Shows specified view. Called from actions that switch the view */
 function showView(view)
 {
@@ -91,7 +81,7 @@ function displayTocFor(topic)
 	/******** HARD CODED VIEW NAME *********/
 	showView("toc");
 	
-	var tocView = ViewsFrame.toc.ViewFrame;
+	var tocView = ViewsFrame.toc.tocViewFrame;
 
 	if (tocView.selectTopic && tocView.selectTopic(topic))
 		return;
@@ -110,7 +100,7 @@ function displayTocFor(topic)
 function saveNavigation()
 {
 	/**** HARD CODED VIEW NAME *********/
-	var tocView = ViewsFrame.toc.ViewFrame;
+	var tocView = ViewsFrame.toc.tocViewFrame;
 	
 	if (tocView.oldActive) {
 		tempActiveId = tocView.oldActive.id;
@@ -130,7 +120,7 @@ function restoreNavigation(errorMessage)
 	showView(tempView);
 
 	/**** HARD CODED VIEW NAME *********/	
-	var tocView = ViewsFrame.toc.ViewFrame;
+	var tocView = ViewsFrame.toc.tocViewFrame;
 
 	if (temp && (isIE || isMozilla10)) {
 		// Restore old navigation

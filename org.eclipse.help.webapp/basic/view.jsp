@@ -25,8 +25,8 @@
 </head>
 
 <frameset  rows="30,*" >
-	<frame name="ToolbarFrame" src='<%=view.getURL()+view.getName()+"Toolbar.jsp"%>' frameborder="no" marginwidth="5" marginheight="3" scrolling="no">
-	<frame name='ViewFrame' src='<%=view.getURL()+view.getName()+"View.jsp?"+request.getQueryString()%>#selectedItem' frameborder="no" marginwidth="5" marginheight="5">
+	<frame name="<%=view.getName()%>ToolbarFrame" src='<%=view.getURL()+view.getName()+"Toolbar.jsp"%>' frameborder="no" marginwidth="5" marginheight="3" scrolling="no">
+	<frame name='<%=view.getName()%>ViewFrame' src='<%=view.getURL()+view.getName()+"View.jsp?"+request.getQueryString()%>#selectedItem' frameborder="no" marginwidth="5" marginheight="5">
 </frameset>
 
 </html>
