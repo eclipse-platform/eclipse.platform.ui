@@ -83,7 +83,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 
 		// link the process to its build logger via a timestamp
 		long timeStamp = System.currentTimeMillis();
-		String idStamp = new Long(timeStamp).toString();
+		String idStamp = Long.toString(timeStamp);
 		String idProperty = "-D" + AntProcess.ATTR_ANT_PROCESS_ID + "=" + idStamp; //$NON-NLS-1$ //$NON-NLS-2$
 		
 		// resolve arguments
