@@ -138,18 +138,22 @@ public class RemoteTagSynchronizer extends RemoteSynchronizer {
 	}
 
 	private IResource[] getLocalChildren(IResource local) throws TeamException {
-		IResource[] localChildren;			
-		if( local.getType() != IResource.FILE && local.exists() ) {
-			// TODO: This should be a list of all non-ignored resources including outgoing deletions
+		IResource[] localChildren = null;			
+		if( local.getType() != IResource.FILE && (local.exists() || local.isPhantom())) {
+			// Include all non-ignored resources including outgoing deletions
 			ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)local);
-			ICVSResource[] cvsChildren = cvsFolder.members(ICVSFolder.MANAGED_MEMBERS | ICVSFolder.UNMANAGED_MEMBERS);
-			List resourceChildren = new ArrayList();
-			for (int i = 0; i < cvsChildren.length; i++) {
-				ICVSResource cvsResource = cvsChildren[i];
-				resourceChildren.add(cvsResource.getIResource());
+			// Look inside existing folders and phantoms that are CVS folders
+			if (local.exists() || cvsFolder.isCVSFolder()) {
+				ICVSResource[] cvsChildren = cvsFolder.members(ICVSFolder.MANAGED_MEMBERS | ICVSFolder.UNMANAGED_MEMBERS);
+				List resourceChildren = new ArrayList();
+				for (int i = 0; i < cvsChildren.length; i++) {
+					ICVSResource cvsResource = cvsChildren[i];
+					resourceChildren.add(cvsResource.getIResource());
+				}
+				localChildren = (IResource[]) resourceChildren.toArray(new IResource[resourceChildren.size()]);
 			}
-			localChildren = (IResource[]) resourceChildren.toArray(new IResource[resourceChildren.size()]);
-		} else {
+		}
+		if (localChildren == null) {
 			localChildren = new IResource[0];
 		}
 		return localChildren;
