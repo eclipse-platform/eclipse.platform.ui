@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -53,6 +54,9 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	private ITypedElement left;
 	private ITypedElement right;
 	private ITypedElement ancestor;	
+	private Image leftImage;
+	private Image rightImage;
+	private Image ancestorImage;
 	
 	// comparison constants
 	private static final int NODE_EQUAL = 0;
@@ -74,6 +78,15 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		this.left = left;
 		this.right = right;
 		this.ancestor = ancestor;
+		if (left != null) {
+			this.leftImage = left.getImage();
+		}
+		if (right != null) {
+			this.rightImage = right.getImage();
+		}
+		if (ancestor != null) {
+			this.ancestorImage = ancestor.getImage();
+		}
 	}
 	
 	/**
@@ -213,17 +226,17 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		
 		if (left != null) {
 			cc.setLeftLabel(getLabel(left));
-			cc.setLeftImage(left.getImage());
+			cc.setLeftImage(leftImage);
 		}
 	
 		if (right != null) {
 			cc.setRightLabel(getLabel(right));
-			cc.setRightImage(right.getImage());
+			cc.setRightImage(rightImage);
 		}
 		
 		if (ancestor != null) {
 			cc.setAncestorLabel(getLabel(ancestor));
-			cc.setAncestorImage(ancestor.getImage());
+			cc.setAncestorImage(ancestorImage);
 		}
 	}
 	
