@@ -317,12 +317,12 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 		protected IStatus run(IProgressMonitor monitor) {
 			Display display = ConsolePlugin.getStandardDisplay();
 			
-			ArrayList pendingCopy = null;
+			ArrayList pendingCopy = new ArrayList();
 			StringBuffer buffer = null;
 			while (display != null && pendingPartitions.size() > 0) {
 				synchronized(pendingPartitions) {
-					pendingCopy = pendingPartitions;
-					pendingPartitions = new ArrayList();
+					pendingCopy.addAll(pendingPartitions);
+					pendingPartitions.clear();
 				}
 				
 				buffer = new StringBuffer();
@@ -332,19 +332,17 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 				}
 			}
 			
-			scheduled = false;
-				
 			final ArrayList finalCopy = pendingCopy;
-			final StringBuffer finalBuffer = buffer;
+			final String toAppend = buffer.toString();		
+			scheduled = false;
 			
 			display.asyncExec(new Runnable() {
 			    public void run() {    
 			        setUpdateInProgress(true);
 			        updatePartitions = finalCopy;
 			        firstOffset = document.getLength();
-//			        System.out.println("appending " + finalBuffer.length());
 			        try {
-			            document.replace(firstOffset, 0, finalBuffer.toString());
+			            document.replace(firstOffset, 0, toAppend.toString());
 			        } catch (BadLocationException e) {
 			        }
 			        updatePartitions = null;
