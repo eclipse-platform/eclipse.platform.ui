@@ -156,14 +156,15 @@ class LightweightDecoratorManager {
 		LinkedList appliedAdaptedDecorators = new LinkedList();
 		StringBuffer result = new StringBuffer();
 
-		LightweightDecoratorDefinition[] decorators =
-			getDecoratorsFor(element);
+		LightweightDecoratorDefinition[] decorators = getDecoratorsFor(element);
 
 		for (int i = 0; i < decorators.length; i++) {
 			if (decorators[i].getEnablement().isEnabledFor(element)) {
 				//Add in reverse order for symmetry of suffixes
 				appliedDecorators.addFirst(decorators[i]);
-				result.append(decorators[i].getPrefix(element));
+				String prefix = decorators[i].getPrefix(element);
+				if (prefix != null)
+					result.append(prefix);
 			}
 		}
 
@@ -176,7 +177,9 @@ class LightweightDecoratorManager {
 					.isEnabledFor(adapted)) {
 					//Add in reverse order for symmetry of suffixes
 					appliedAdaptedDecorators.addFirst(adaptedDecorators[i]);
-					result.append(adaptedDecorators[i].getPrefix(adapted));
+					String prefix = adaptedDecorators[i].getPrefix(adapted);
+					if (prefix != null)
+						result.append(prefix);
 				}
 			}
 		}
@@ -190,23 +193,27 @@ class LightweightDecoratorManager {
 		if (adapted != null) {
 			Iterator appliedIterator = appliedAdaptedDecorators.iterator();
 			while (appliedIterator.hasNext()) {
-				result.append(
+				String suffix =
 					(
 						(LightweightDecoratorDefinition) appliedIterator
 							.next())
 							.getSuffix(
-						element));
+						element);
+				if (suffix != null)
+					result.append(suffix);
 			}
 		}
 
 		Iterator appliedIterator = appliedDecorators.iterator();
 		while (appliedIterator.hasNext()) {
-			result.append(
+			String suffix =
 				(
 					(LightweightDecoratorDefinition) appliedIterator
 						.next())
 						.getSuffix(
-					element));
+					element);
+			if (suffix != null)
+				result.append(suffix);
 		}
 		return result.toString();
 

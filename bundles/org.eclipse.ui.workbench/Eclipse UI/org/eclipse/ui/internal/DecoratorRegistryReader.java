@@ -35,7 +35,7 @@ class DecoratorRegistryReader extends RegistryReader {
 	private static String CHILD_ENABLEMENT = "enablement"; //$NON-NLS-1$
 	private static String P_TRUE = "true"; //$NON-NLS-1$
 	private static String ATT_OBJECT_CLASS = "objectClass"; //$NON-NLS-1$
-	public static String ATT_DECORATOR_CLASS = "decoratorClass"; //$NON-NLS-1$
+	private static String ATT_LIGHTWEIGHT = "lightweight"; //$NON-NLS-1$
 	
 	//Constants for quadrants
 	public static final int TOP_LEFT = 0;
@@ -94,7 +94,7 @@ class DecoratorRegistryReader extends RegistryReader {
 			enablementExpression = new ActionExpression(enablement[0]);
 			
 		//Lightweight or Full?
-		if(element.getAttribute(WizardsRegistryReader.ATT_CLASS) == null){
+		if(P_TRUE.equals(element.getAttribute(ATT_LIGHTWEIGHT))){
 			String iconPath = element.getAttribute(ATT_ICON);
 			int quadrant = getQuadrantConstant(element.getAttribute(ATT_QUADRANT));
 			values.add(

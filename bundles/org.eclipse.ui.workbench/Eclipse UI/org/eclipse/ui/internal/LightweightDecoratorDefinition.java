@@ -26,8 +26,7 @@ import org.eclipse.ui.internal.registry.WizardsRegistryReader;
  * will not require the activation of its defining 
  * plug-in.
  */
-class LightweightDecoratorDefinition
-	extends DecoratorDefinition {
+class LightweightDecoratorDefinition extends DecoratorDefinition {
 
 	/**
 	 * The DeclarativeDecorator is the internal decorator
@@ -73,8 +72,7 @@ class LightweightDecoratorDefinition
 		if (labelProviderCreationFailed)
 			return null;
 
-		if (definingElement
-			.getAttribute(DecoratorRegistryReader.ATT_DECORATOR_CLASS)
+		if (definingElement.getAttribute(WizardsRegistryReader.ATT_CLASS)
 			== null)
 			return new DeclarativeDecorator(definingElement, iconLocation);
 
@@ -89,7 +87,7 @@ class LightweightDecoratorDefinition
 								ILightweightLabelDecorator) WorkbenchPlugin
 									.createExtension(
 								definingElement,
-								DecoratorRegistryReader.ATT_DECORATOR_CLASS);
+								WizardsRegistryReader.ATT_CLASS);
 					} catch (CoreException exception) {
 						exceptions[0] = exception;
 					}
@@ -104,8 +102,8 @@ class LightweightDecoratorDefinition
 
 		if (exceptions[0] != null)
 			throw exceptions[0];
-			
-	 return decorator;
+
+		return decorator;
 	}
 
 	/**

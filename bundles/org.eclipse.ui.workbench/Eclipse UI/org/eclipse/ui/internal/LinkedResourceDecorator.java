@@ -70,13 +70,13 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
 	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#getPrefix(java.lang.Object)
 	 */
 	public String getPrefix(Object element) {
-		return "";
+		return null;
 	}
 	/**
 	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#getSuffix(java.lang.Object)
 	 */
 	public String getSuffix(Object element) {
-		return "";
+		return null;
 	}
 	/**
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
