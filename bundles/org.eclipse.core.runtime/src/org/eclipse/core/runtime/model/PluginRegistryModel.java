@@ -105,7 +105,7 @@ protected void assertIsWriteable() {
  * Returns the plug-in fragment with the given identifier
  * in this plug-in registry, or <code>null</code> if there is no such
  * fragment.  If there are multiple versions of the identified fragment,
- * one will be non-deterministically choosen and returned.  
+ * one will be non-deterministically chosen and returned.  
  *
  * @param id the unique identifier of the plug-in fragment
  *		(e.g. <code>"com.example.acme"</code>).
@@ -119,7 +119,11 @@ public PluginFragmentModel getFragment(String id) {
  * Returns the identified plug-in fragment or <code>null</code> if
  * the fragment does not exist.
  *
- * @return the matching fragment in this registry
+ * @param id the unique identifier of the plug-in fragment
+ * @param version fragment version identifier. If <code>null</code> is
+ * specified, a non-deterministically chosen version of the identified fragment
+ * (if any) will be returned
+ * @return the matching fragment in this registry, or <code>null</code>
  */
 public PluginFragmentModel getFragment(String id, String version) {
 	PluginFragmentModel[] list = getFragments(id);
@@ -167,7 +171,7 @@ public PluginFragmentModel[] getFragments(String id) {
  * Returns the plug-in descriptor with the given plug-in identifier
  * in this plug-in registry, or <code>null</code> if there is no such
  * plug-in.  If there are multiple versions of the identified plug-in,
- * one will be non-deterministically choosen and returned.  
+ * one will be non-deterministically chosen and returned.  
  *
  * @param pluginId the unique identifier of the plug-in 
  *		(e.g. <code>"com.example.acme"</code>).
@@ -179,9 +183,14 @@ public PluginDescriptorModel getPlugin(String pluginId) {
 }
 /**
  * Returns the identified plug-in or <code>null</code> if
- * the plug-in does not exist.
+ * the plug-in does not exist. 
  *
- * @return the matching plug-in in this registry
+ * @param pluginId the unique identifier of the plug-in 
+ *		(e.g. <code>"org.eclipse.core.resources"</code>)
+ * @param version plug-in version identifier. If <code>null</code> is specified,
+ * a non-deterministically chosen version of the identified plug-in (if any)
+ * will be returned
+ * @return the matching plug-in in this registry or <code>null</code>
  */
 public PluginDescriptorModel getPlugin(String pluginId, String version) {
 	PluginDescriptorModel[] list = getPlugins(pluginId);

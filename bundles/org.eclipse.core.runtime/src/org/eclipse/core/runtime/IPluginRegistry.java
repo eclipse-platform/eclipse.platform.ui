@@ -121,7 +121,7 @@ public IExtensionPoint[] getExtensionPoints();
  * Returns the plug-in descriptor with the given plug-in identifier
  * in this plug-in registry, or <code>null</code> if there is no such
  * plug-in.  If there are multiple versions of the identified plug-in,
- * one will be non-deterministically choosen and returned.  
+ * one will be non-deterministically chosen and returned.  
  *
  * @param pluginId the unique identifier of the plug-in 
  *		(e.g. <code>"com.example.acme"</code>).
@@ -134,8 +134,10 @@ public IPluginDescriptor getPluginDescriptor(String pluginId);
  * there is no such plug-in.
  *
  * @param pluginId the unique identifier of the plug-in 
- *		(e.g. <code>"org.eclipse.core.resources"</code>).
- * @param version plug-in version identifier
+ *		(e.g. <code>"org.eclipse.core.resources"</code>)
+ * @param version plug-in version identifier. If <code>null</code> is specified,
+ * a non-deterministically chosen version of the identified plug-in (if any)
+ * will be returned
  * @return the plug-in descriptor, or <code>null</code>
  */
 public IPluginDescriptor getPluginDescriptor(String pluginId, PluginVersionIdentifier version);

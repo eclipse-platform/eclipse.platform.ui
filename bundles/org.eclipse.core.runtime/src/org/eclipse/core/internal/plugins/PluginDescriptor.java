@@ -657,6 +657,29 @@ public static PluginVersionIdentifier getVersionIdentifierFromString(String plug
 		return null;
 	}
 }
+/**
+ * Returns all pre-requisites that have been properly resolved, excluding any
+ * redundant references to Platform.PI_RUNTIME and BootLoader.PI_BOOT.
+ */
+public IPluginPrerequisite[] getPluginResolvedPrerequisites() {
+	PluginPrerequisiteModel[] prereqs = this.getRequires();
+	if (prereqs == null || prereqs.length == 0)
+		return new IPluginPrerequisite[0];
+	List resolvedPrerequisites = new ArrayList(prereqs.length);
+	for (int i = 0; i < prereqs.length; i++) {
+		if (prereqs[i].getResolvedVersion() == null)
+			continue;
+		String prereqId = prereqs[i].getPlugin();
+		// skip over the runtime and boot plugins if they were specified.  They are automatically included
+		// as the platform and parent respectively.
+		if (prereqId.equalsIgnoreCase(Platform.PI_RUNTIME) || prereqId.equalsIgnoreCase(BootLoader.PI_BOOT))
+			continue;
+		resolvedPrerequisites.add(prereqs[i]);
+	}
+	if (resolvedPrerequisites.isEmpty())
+		return new IPluginPrerequisite[0];
+	return (IPluginPrerequisite[]) resolvedPrerequisites.toArray(new IPluginPrerequisite[resolvedPrerequisites.size()]);
+}
 private void internalDoPluginActivation() throws CoreException {
 	String errorMsg;
 	// load the runtime class 

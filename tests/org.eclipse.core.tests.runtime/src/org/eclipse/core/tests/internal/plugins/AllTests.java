@@ -106,6 +106,7 @@ public static Test suite() {
 	suite.addTest(RegressionResolveTest_8.suite());
 	suite.addTest(RegressionResolveTest_9.suite());
 	suite.addTest(RegressionResolveTest_10.suite());
+	suite.addTest(RegressionResolveTest_11.suite());
 	suite.addTest(FragmentResolveTest_1.suite());
 	suite.addTest(FragmentResolveTest_2.suite());
 	suite.addTest(FragmentResolveTest_3.suite());

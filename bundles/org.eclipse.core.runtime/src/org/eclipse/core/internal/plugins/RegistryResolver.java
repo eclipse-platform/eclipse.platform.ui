@@ -12,11 +12,10 @@
 package org.eclipse.core.internal.plugins;
 
 import java.util.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.*;
 
 public class RegistryResolver {
 
@@ -456,7 +455,7 @@ public class RegistryResolver {
 				pd.setEnabled(false);
 			}
 		}
-
+		
 		private void resolveDependencies(List roots) {
 			// preresolved will pick out the plugin which has the highest version
 			// number and satisfies all the constraints.  This is then put in
@@ -470,6 +469,15 @@ public class RegistryResolver {
 			// of the plugin we are actually using.
 			for (Iterator list = concurrentList.iterator(); list.hasNext();)
 				 ((ConstraintsEntry) list.next()).resolve();
+		}
+		/**
+		 * A root plug-in does not have any constraints attached to it.
+		 */
+		private boolean isRoot() {			
+			if (concurrentList.size() != 1)
+				return false;
+			ConstraintsEntry constraintsEntry = (ConstraintsEntry) concurrentList.get(0);
+			return constraintsEntry.constraintCount() == 0;
 		}
 
 		private List versions() {
@@ -645,20 +653,9 @@ public IExtensionPoint getExtensionPoint(PluginDescriptorModel plugin, String ex
 	}
 	return null;
 }
-private PluginVersionIdentifier getVersionIdentifier(PluginDescriptorModel descriptor) {
+private PluginVersionIdentifier getVersionIdentifier(PluginModel model) {
 	try {
-		return new PluginVersionIdentifier(descriptor.getVersion());
-	} catch (Throwable e) {
-		// Hopefully, we will never get here.  The version number
-		// has already been successfully converted from a string to
-		// a PluginVersionIdentifier and back to a string.  But keep
-		// this catch around in case something does go wrong.
-		return new PluginVersionIdentifier("0.0.0"); //$NON-NLS-1$
-	}
-}
-private PluginVersionIdentifier getVersionIdentifier(PluginFragmentModel fragment) {
-	try {
-		return new PluginVersionIdentifier(fragment.getVersion());
+		return new PluginVersionIdentifier(model.getVersion());
 	} catch (Throwable e) {
 		// Hopefully, we will never get here.  The version number
 		// has already been successfully converted from a string to
@@ -818,6 +815,7 @@ private void resolve() {
 	
 	// resolve root descriptors
 	List roots = resolveRootDescriptors();
+	
 	if (roots.size() == 0) {
 		// No roots, likely due to a circular dependency
 		// (or multiple circular dependencies).  Disable
@@ -837,27 +835,35 @@ private void resolve() {
 	// roots is a list of those plugin ids that are not a
 	// prerequisite for any other plugin.  Note that roots
 	// contains ids only.
-
-	// walk the dependencies and setup constraints
-	for (int i = 0; i < roots.size(); i++) {
-		ArrayList orphans = new ArrayList();
-		resolveNode((String) roots.get(i), null, null, null, orphans);
-		// At this point we have set up all the Constraint and
-		// ConstraintsEntry components.  But we may not have found which
-		// plugin is the best match for a given set of constraints.
-		for (int j = 0; j < orphans.size(); j++) {
-			// Adding the orphans to the list of roots is not enough.
+	
+	// process all root nodes (first those previously on roots list, then those on the orphans set) 
+	// The orphans of an iteration will become the roots of the next one.	
+	for (Set orphans, rootsSet = new HashSet(roots); !rootsSet.isEmpty(); rootsSet = orphans) {
+		orphans = new HashSet();
+		// walk the dependencies and setup constraints	
+		for (Iterator rootsIter = rootsSet.iterator(); rootsIter.hasNext();) {
+			String rootID = (String) rootsIter.next();
+			resolveNode(rootID, null, null, null, orphans);
+			// At this point we have set up all the Constraint and
+			// ConstraintsEntry components.  But we may not have found which
+			// plugin is the best match for a given set of constraints.
+		}
+		// build the roots set for the next iteration
+		for (Iterator orphansIter = orphans.iterator(); orphansIter.hasNext();) {
+			IndexEntry orphan = (IndexEntry) idmap.get(orphansIter.next());
+			// only after a complete iteration over the roots set we can decide if 
+			// a potential orphan is a real orphan
 			// Now we need to resolve for these new roots (they may
 			// not have been resolved before, especially if the parent
 			// was looking for an older version and not the latest
-			// version which is what we pick up for the roots).
-			if (!roots.contains(orphans.get(j))) {
-				roots.add(orphans.get(j));
+			// version which is what we pick up for the roots).					
+			if (orphan.isRoot()) {
 				if (DEBUG_RESOLVE)
-					debug("orphan " + orphans.get(j)); //$NON-NLS-1$
-			}
+					debug("orphan " + orphan.getId()); //$NON-NLS-1$				
+				roots.add(orphan.getId());
+			} else
+				orphansIter.remove();
 		}
-		orphans = null;
 	}
 
 	// resolve dependencies
@@ -949,7 +955,7 @@ private void resolveFragments() {
 		resolvePluginFragments(plugin);
 	}
 }
-private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPrerequisiteModel prq, Cookie cookie, List orphans) {
+private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPrerequisiteModel prq, Cookie cookie, Set orphans) {
 	// This method is called recursively to setup dependency constraints.
 	// Top invocation is passed null parent and null prerequisite.
 	// We are trying to resolve for the plugin descriptor with id 'child'.
@@ -989,6 +995,7 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 			if (prq.getOptional()) {
 				// This is an optional prerequisite.  Ignore the conflict and this
 				// prerequisite.
+				orphans.add(ix.getId());
 				information (Policy.bind("parse.unsatisfiedOptPrereq", parent.getId(), child)); //$NON-NLS-1$
 				return cookie;
 			} else {

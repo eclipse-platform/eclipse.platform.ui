@@ -11,11 +11,9 @@
 package org.eclipse.core.internal.plugins;
 
 import java.net.URL;
-import java.util.*;
-import org.eclipse.core.boot.BootLoader;
+import java.util.HashSet;
+import java.util.Set;
 import org.eclipse.core.internal.boot.*;
-import org.eclipse.core.internal.boot.DelegatingURLClassLoader;
-import org.eclipse.core.internal.boot.URLContentFilter;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 
@@ -216,29 +214,24 @@ public PluginDescriptor getPluginDescriptor() {
 public String getPrefixId() {
 	return descriptor.getUniqueIdentifier();
  }
+ /**
+  * Initializes imported classloaders with the classloaders of all resolved pre-
+  * requisites.
+  */
 public void initializeImportedLoaders() {
 	PluginDescriptor desc = getPluginDescriptor();
-	IPluginPrerequisite[] prereqs = desc.getPluginPrerequisites();
+	// prereqs will contain all *resolved* pre-requisites (except boot and runtime)
+	IPluginPrerequisite[] prereqs = desc.getPluginResolvedPrerequisites();
 	if (prereqs.length == 0)
 		return;
-
 	PluginRegistry registry = desc.getPluginRegistry();
-	ArrayList require = new ArrayList();
+	DelegateLoader[] importedLoaders = new DelegateLoader[prereqs.length];
 	for (int i = 0; i < prereqs.length; i++) {
 		String prereqId = prereqs[i].getUniqueIdentifier();
-		// skip over the runtime and boot plugins if they were specified.  They are automatically included
-		// as the platfrom and parent respectively.
-		if (!prereqId.equalsIgnoreCase(Platform.PI_RUNTIME) && !prereqId.equalsIgnoreCase(BootLoader.PI_BOOT)) {
-			desc = (PluginDescriptor) registry.getPluginDescriptor(prereqId, prereqs[i].getResolvedVersionIdentifier());
-			// can be null if the prereq was optional and did not exst.
-			if (desc != null)
-				require.add(new DelegateLoader((DelegatingURLClassLoader) desc.getPluginClassLoader(true), prereqs[i].isExported()));
-		}
+		desc = (PluginDescriptor) registry.getPluginDescriptor(prereqId, prereqs[i].getResolvedVersionIdentifier());
+		importedLoaders[i] = new DelegateLoader((DelegatingURLClassLoader) desc.getPluginClassLoader(true), prereqs[i].isExported());
 	}
-
-	if (require.isEmpty())
-		return;
-	setImportedLoaders((DelegateLoader[]) require.toArray(new DelegateLoader[require.size()]));
+	setImportedLoaders(importedLoaders);
 }
 public void setPluginDescriptor(PluginDescriptor value) {
 	descriptor = value;
