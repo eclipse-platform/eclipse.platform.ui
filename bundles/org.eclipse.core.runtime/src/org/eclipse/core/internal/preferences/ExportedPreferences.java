@@ -62,7 +62,9 @@ public class ExportedPreferences extends EclipsePreferences implements IExported
 	 * @see org.eclipse.core.runtime.preferences.IScope#create(org.eclipse.core.runtime.preferences.IEclipsePreferences, java.lang.String)
 	 */
 	public IEclipsePreferences create(IEclipsePreferences nodeParent, String nodeName, Plugin context) {
-		return addChild(nodeName, new ExportedPreferences(nodeParent, nodeName));
+		IEclipsePreferences result = new ExportedPreferences(nodeParent, nodeName);
+		addChild(nodeName, result);
+		return result;
 	}
 
 	/*

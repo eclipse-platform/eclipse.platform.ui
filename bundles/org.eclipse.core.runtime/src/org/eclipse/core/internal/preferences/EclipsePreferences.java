@@ -94,15 +94,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			toVisit[i].accept(visitor);
 	}
 
-	/**
-	 * Adds and returns a new child
-	 */
-	protected synchronized IEclipsePreferences addChild(String childName, IEclipsePreferences child) {
+	protected synchronized void addChild(String childName, IEclipsePreferences child) {
 		//Thread safety: synchronize method to protect modification of children field
 		if (children == null)
 			children = Collections.synchronizedMap(new HashMap());
 		children.put(childName, child == null ? (Object) childName : child);
-		return child;
 	}
 
 	/*
@@ -277,6 +273,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 
 	public IEclipsePreferences create(IEclipsePreferences nodeParent, String nodeName, Plugin context) {
 		EclipsePreferences result = internalCreate(nodeParent, nodeName, context);
+		((EclipsePreferences) nodeParent).addChild(nodeName, result);
 		IEclipsePreferences loadLevel = result.getLoadLevel();
 
 		// if this node or a parent node is not the load level then return
@@ -376,21 +373,21 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * Thread safe way to obtain a child for a given key. Returns the child
 	 * that matches the given key, or null if there is no matching child
 	 */
-	protected IEclipsePreferences getChild(String key, Plugin context, boolean create) {
-		synchronized (this) {
-			if (children == null)
-				return null;
-			Object value = children.get(key);
-			if (value == null)
-				return null;
-			if (value instanceof IEclipsePreferences)
-				return (IEclipsePreferences) value;
-			// if we aren't supposed to create this node, then 
-			// just return null
-			if (!create)
-				return null;
-		}
-		return addChild(key, create(this, key, context));
+	protected synchronized IEclipsePreferences getChild(String key, Plugin context, boolean create) {
+		if (children == null)
+			return null;
+		Object value = children.get(key);
+		if (value == null)
+			return null;
+		if (value instanceof IEclipsePreferences)
+			return (IEclipsePreferences) value;
+		// if we aren't supposed to create this node, then 
+		// just return null
+		if (!create)
+			return null;
+		value = create(this, key, context);
+		addChild(key, (IEclipsePreferences) value);
+		return (IEclipsePreferences) value;
 	}
 
 	/**
@@ -526,12 +523,13 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		int index = path.indexOf(IPath.SEPARATOR);
 		String key = index == -1 ? path : path.substring(0, index);
 		boolean added = false;
-		IEclipsePreferences child = getChild(key, context, true);
-		if (child == null) {
-			//note that in case of race condition, node may be initialized twice
-			child = create(this, key, context);
-			addChild(key, child);
-			added = true;
+		IEclipsePreferences child;
+		synchronized (this) {
+			child = getChild(key, context, true);
+			if (child == null) {
+				child = create(this, key, context);
+				added = true;
+			}
 		}
 		// notify listeners if a child was added
 		if (added && notify)
