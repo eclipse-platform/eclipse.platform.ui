@@ -65,7 +65,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	public static Test suite() {
 		return new TestSuite(IJobManagerTest.class);
 		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new IJobManagerTest("testJobFamilyJoinRepeating"));
+		//		suite.addTest(new IJobManagerTest("testJobFamilyJoinShouldSchedule"));
 		//		return suite;
 	}
 
@@ -747,6 +747,33 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		assertEquals("1.2", count, job.getRunCount());
 	}
 
+	/**
+	 * Tests joining a job family that repeats but returns false to shouldSchedule
+	 */
+	public void testJobFamilyJoinShouldSchedule() {
+		Object family = new Object();
+		final int count = 1;
+		RepeatingJob job = new RepeatingJob("testJobFamilyJoinShouldSchedule", count) {
+			public boolean shouldSchedule() {
+				return shouldRun();
+			}
+		};
+		job.setFamily(family);
+		job.schedule();
+		try {
+			Platform.getJobManager().join(family, null);
+		} catch (OperationCanceledException e) {
+			fail("1.0", e);
+		} catch (InterruptedException e) {
+			fail("1.1", e);
+		}
+		//ensure the job has run the expected number of times
+		assertEquals("1.2", count, job.getRunCount());
+	}
+
+	/**
+	 * Tests simple usage of the IJobManager.join() method.
+	 */
 	public void testJobFamilyJoinSimple() {
 		//test the join method on a family of jobs that is empty
 		final int[] status = new int[1];
@@ -1020,8 +1047,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		for (int i = 0; i < JOBS_PER_FAMILY; i++) {
 			//the running job may not respond immediately
 			if (!family2[i].cancel())
-				;
-			waitForCancel(family2[i]);
+				waitForCancel(family2[i]);
 			assertState("5." + i, family2[i], Job.NONE);
 		}
 

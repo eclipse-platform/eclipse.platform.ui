@@ -39,8 +39,8 @@ public class RepeatingJob extends Job {
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
-		runCount++;
 		schedule(DELAY);
+		runCount++;
 		return Status.OK_STATUS;
 	}
 

@@ -229,7 +229,6 @@ public class JobManager implements IJobManager {
 	private void changeState(InternalJob job, int newState) {
 		synchronized (lock) {
 			int oldState = job.internalGetState();
-			//			System.out.println("changeState (" + job + "): " + printState(oldState) +"->" + printState(newState));
 			switch (oldState) {
 				case Job.NONE :
 				case InternalJob.ABOUT_TO_SCHEDULE:
@@ -450,7 +449,7 @@ public class JobManager implements IJobManager {
 		for (int i = 0; i < blockedJobCount; i++)
 			pool.jobQueued(blocked);
 		//notify listeners outside sync block
-		final boolean reschedule = active && rescheduleDelay > InternalJob.T_NONE;
+		final boolean reschedule = active && rescheduleDelay > InternalJob.T_NONE && job.shouldSchedule();
 		if (notify)
 			jobListeners.done((Job) job, result, reschedule);
 		//finally reschedule the job if requested and we are still active
@@ -524,6 +523,30 @@ public class JobManager implements IJobManager {
 		return active;
 	}
 
+	/**
+	 * Returns true if the given job is blocking the execution of a non-system
+	 * job.
+	 */
+	protected boolean isBlocking(InternalJob runningJob) {
+		synchronized (lock) {
+			//if this job isn't running, it can't be blocking anyone
+			if (runningJob.getState() != Job.RUNNING)
+				return false;
+			//if any job is queued behind this one, it is blocked by it
+			InternalJob previous = runningJob.previous();
+			while (previous != null) {
+				if (!previous.isSystem())
+					return true;
+				//implicit jobs should interrupt unless they act on behalf of system jobs
+				if (previous instanceof ThreadJob && ((ThreadJob) previous).shouldInterrupt())
+					return true;
+				previous = previous.previous();
+			}
+			//none found
+			return false;
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#job(org.eclipse.core.runtime.jobs.Job)
 	 */
@@ -566,49 +589,25 @@ public class JobManager implements IJobManager {
 		}
 	}
 
-	/**
-	 * Returns true if the given job is blocking the execution of a non-system
-	 * job.
-	 */
-	protected boolean isBlocking(InternalJob runningJob) {
-		synchronized (lock) {
-			//if this job isn't running, it can't be blocking anyone
-			if (runningJob.getState() != Job.RUNNING)
-				return false;
-			//if any job is queued behind this one, it is blocked by it
-			InternalJob previous = runningJob.previous();
-			while (previous != null) {
-				if (!previous.isSystem())
-					return true;
-				//implicit jobs should interrupt unless they act on behalf of system jobs
-				if (previous instanceof ThreadJob && ((ThreadJob) previous).shouldInterrupt())
-					return true;
-				previous = previous.previous();
-			}
-			//none found
-			return false;
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see IJobManager#join(String, IProgressMonitor)
 	 */
 	public void join(final Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException {
 		monitor = monitorFor(monitor);
 		IJobChangeListener listener = null;
-		final List jobs;
+		final Set jobs;
 		int jobCount;
 		Job blocking = null;
 		synchronized (lock) {
 			//don't join a waiting or sleeping job when suspended (deadlock risk)
 			int states = suspended ? Job.RUNNING : Job.RUNNING | Job.WAITING | Job.SLEEPING;
-			jobs = Collections.synchronizedList(select(family, states));
+			jobs = Collections.synchronizedSet(new HashSet(select(family, states)));
 			jobCount = jobs.size();
 			if (jobCount == 0)
 				return;
 			//if there is only one blocking job, use it in the blockage callback below
 			if (jobCount == 1)
-				blocking = (Job)jobs.get(0);
+				blocking = (Job)jobs.iterator().next();
 			listener = new JobChangeAdapter() {
 				//update the list of jobs if new ones are added during the join
 				public void scheduled(IJobChangeEvent event) {
@@ -809,9 +808,6 @@ public class JobManager implements IJobManager {
 			throw new IllegalStateException("Job manager has been shut down."); //$NON-NLS-1$
 		Assert.isNotNull(job, "Job is null"); //$NON-NLS-1$
 		Assert.isLegal(delay >= 0, "Scheduling delay is negative"); //$NON-NLS-1$
-		//call hook method outside sync block to avoid deadlock
-		if (!job.shouldSchedule())
-			return;
 		synchronized (lock) {
 			//if the job is already running, set it to be rescheduled when done
 			if (job.getState() == Job.RUNNING) {
