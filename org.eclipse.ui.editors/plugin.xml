@@ -109,7 +109,7 @@
       <keyBinding
             commandId="org.eclipse.ui.edit.text.folding.toggle"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="M1+P M1+P"
+            keySequence="M1+Numpad_Divide"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
@@ -121,7 +121,7 @@
       <keyBinding
             commandId="org.eclipse.ui.edit.text.folding.expand_all"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="M1+P M1+A"
+            keySequence="M1+Numpad_Multiply"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
@@ -133,7 +133,7 @@
       <keyBinding
             commandId="org.eclipse.ui.edit.text.folding.expand"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="M1+P M1+X"
+            keySequence="M1+Numpad_Add"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
@@ -145,7 +145,7 @@
       <keyBinding
             commandId="org.eclipse.ui.edit.text.folding.collapse"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="M1+P M1+C"
+            keySequence="M1+Numpad_Subtract"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
