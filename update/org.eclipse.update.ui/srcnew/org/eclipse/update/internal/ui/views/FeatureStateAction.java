@@ -10,6 +10,8 @@ import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.forms.ActivityConstraints;
 import org.eclipse.update.internal.ui.model.ConfiguredFeatureAdapter;
+import org.eclipse.update.internal.ui.model.PendingChange;
+import org.eclipse.update.internal.ui.model.UpdateModel;
 
 public class FeatureStateAction extends Action {
 	private ConfiguredFeatureAdapter adapter;
@@ -49,7 +51,15 @@ public class FeatureStateAction extends Action {
 			} else {
 				// do a restart
 				try {
-					UpdateUI.informRestartNeeded();
+					boolean restartNeeded = false;
+					if (isConfigured) {
+						restartNeeded = addPendingChange(PendingChange.UNCONFIGURE,PendingChange.CONFIGURE);
+					} else {
+						restartNeeded = addPendingChange(PendingChange.CONFIGURE, PendingChange.UNCONFIGURE);
+					}
+					if (restartNeeded)
+						UpdateUI.informRestartNeeded();
+						
 					SiteManager.getLocalSite().save();
 					UpdateUI.getDefault().getUpdateModel().fireObjectChanged(adapter, "");
 				} catch (CoreException e) {
@@ -62,11 +72,25 @@ public class FeatureStateAction extends Action {
 		}
 
 	}
+	
 	private void revert(boolean originallyConfigured) throws CoreException {
 		if (originallyConfigured) {
 			site.configure(feature);
 		} else {
 			site.unconfigure(feature);
+		}
+	}
+	
+	
+	private boolean addPendingChange(int newJobType, int obsoleteJobType) {
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
+		PendingChange job = model.findPendingChange(feature);
+		if (job != null && obsoleteJobType == job.getJobType()) {
+				model.removePendingChange(job);
+				return false;
+		} else {
+			model.addPendingChange(new PendingChange(feature, newJobType));
+			return true;	
 		}
 	}
 

@@ -98,11 +98,9 @@ public class NewConfigurationView
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof UpdateModel) {
 				ILocalSite localSite = getLocalSite();
-				if (localSite != null)
-					return new Object[] { localSite };
-				else
-					return new Object[0];
+				return (localSite != null) ? new Object[]{localSite} : new Object[0];
 			}
+			
 			if (parent instanceof ILocalSite) {
 				Object[] csites =  openLocalSite();
 				if (showSitesAction.isChecked())
@@ -120,12 +118,10 @@ public class NewConfigurationView
 			}
 
 			if (parent instanceof IConfiguredSiteAdapter) {
-				IConfiguredSiteAdapter adapter = (IConfiguredSiteAdapter) parent;
-				boolean showUnconf = showUnconfFeaturesAction.isChecked();
-				return getFeatures(adapter, !showUnconf);
+				return getFeatures((IConfiguredSiteAdapter)parent, !showUnconfFeaturesAction.isChecked());
 			}
 			if (parent instanceof ConfiguredFeatureAdapter && showNestedFeaturesAction.isChecked()) {
-				return ((ConfiguredFeatureAdapter) parent).getIncludedFeatures(null);
+				return ((ConfiguredFeatureAdapter)parent).getIncludedFeatures(null);
 			}
 			return new Object[0];
 		}
@@ -165,10 +161,7 @@ public class NewConfigurationView
 					return productName;
 				return UpdateUI.getString(KEY_CURRENT);
 			}
-			if (obj instanceof IInstallConfiguration) {
-				IInstallConfiguration config = (IInstallConfiguration) obj;
-				return config.getLabel();
-			}
+			
 			if (obj instanceof IConfiguredSiteAdapter) {
 				IConfiguredSite csite =
 					((IConfiguredSiteAdapter) obj).getConfiguredSite();
@@ -185,102 +178,79 @@ public class NewConfigurationView
 					}
 					String version =
 						feature.getVersionedIdentifier().getVersion().toString();
-					return feature.getLabel() + " " + version;
+					String pending = "";
+					if (UpdateUI.getDefault().getUpdateModel().findPendingChange(feature) != null)
+						pending = " (pending changes)";
+					return feature.getLabel() + " " + version + pending;
 				} catch (CoreException e) {
 					return "Error";
 				}
 			}
 			return super.getText(obj);
 		}
+		
 		public Image getImage(Object obj) {
 			UpdateLabelProvider provider = UpdateUI.getDefault().getLabelProvider();
 			if (obj instanceof ILocalSite)
 				return eclipseImage;
-			if (obj instanceof IFeatureAdapter) {
-				return getFeatureImage(provider, (IFeatureAdapter) obj);
-			}
+
+			if (obj instanceof ConfiguredFeatureAdapter)
+				return getFeatureImage(provider, (ConfiguredFeatureAdapter) obj);
+
 			if (obj instanceof IConfiguredSiteAdapter) {
 				IConfiguredSite csite =
 					((IConfiguredSiteAdapter) obj).getConfiguredSite();
 				int flags = csite.isUpdatable() ? 0 : UpdateLabelProvider.F_LINKED;
-				if (csite.isEnabled() == false)
+				if (!csite.isEnabled())
 					flags |= UpdateLabelProvider.F_UNCONFIGURED;
-				ImageDescriptor desc = provider.getLocalSiteDescriptor(csite);
-				return provider.get(desc, flags);
-			}
-			if (obj instanceof PreservedConfiguration) {
-				obj = ((PreservedConfiguration) obj).getConfiguration();
-			}
-			if (obj instanceof IInstallConfiguration) {
-				IInstallConfiguration config = (IInstallConfiguration) obj;
-				int flags = config.isCurrent() ? SharedLabelProvider.F_CURRENT : 0;
-
-				boolean currentTimeline = isCurrentTimeline(config);
-				if (!currentTimeline)
-					flags |= SharedLabelProvider.F_MOD;
-				return provider.get(UpdateUIImages.DESC_CONFIG_OBJ, flags);
+				return provider.get(provider.getLocalSiteDescriptor(csite), flags);
 			}
 			return null;
 		}
 
-		private boolean isCurrentTimeline(IInstallConfiguration config) {
-			ILocalSite localSite = getLocalSite();
-			if (localSite == null)
-				return true;
-			IInstallConfiguration cconfig = localSite.getCurrentConfiguration();
-			return config.getTimeline() == cconfig.getTimeline();
-		}
-
 		private Image getFeatureImage(
 			UpdateLabelProvider provider,
-			IFeatureAdapter adapter) {
-			boolean configured = true;
-			boolean updated = false;
-			boolean current = true;
-			if (adapter instanceof IConfiguredFeatureAdapter) {
-				IConfiguredFeatureAdapter cadapter = (IConfiguredFeatureAdapter) adapter;
-				configured = cadapter.isConfigured();
-				updated = cadapter.isUpdated();
-				current = cadapter.getInstallConfiguration().isCurrent();
-			}
-			ILocalSite localSite = getLocalSite();
+			ConfiguredFeatureAdapter adapter) {
 			try {
 				IFeature feature = adapter.getFeature(null);
 				if (feature instanceof MissingFeature) {
-					MissingFeature mfeature = (MissingFeature) feature;
-					if (mfeature.isOptional() == false)
-						return provider.get(
-							UpdateUIImages.DESC_FEATURE_OBJ,
-							UpdateLabelProvider.F_ERROR);
-					return provider.get(UpdateUIImages.DESC_NOTINST_FEATURE_OBJ);
+					if (((MissingFeature) feature).isOptional())
+						return provider.get(UpdateUIImages.DESC_NOTINST_FEATURE_OBJ);
+					return provider.get(
+						UpdateUIImages.DESC_FEATURE_OBJ,
+						UpdateLabelProvider.F_ERROR);
 				}
-				int code = IFeature.STATUS_HAPPY;
-				ImageDescriptor baseDesc;
-				int flags = 0;
-				if (current) {
-					IStatus status = localSite.getFeatureStatus(feature);
-					code = ShowFeatureStatusAction.getStatusCode(feature, status);
-				}
+
 				boolean efix = feature.isPatch();
-				baseDesc =
+				ImageDescriptor baseDesc =
 					efix
 						? UpdateUIImages.DESC_EFIX_OBJ
-						: (configured
+						: (adapter.isConfigured()
 							? UpdateUIImages.DESC_FEATURE_OBJ
 							: UpdateUIImages.DESC_UNCONF_FEATURE_OBJ);
-				if (efix && !configured)
+
+				int flags = 0;
+				if (efix && !adapter.isConfigured())
 					flags |= UpdateLabelProvider.F_UNCONFIGURED;
-				switch (code) {
-					case IFeature.STATUS_UNHAPPY :
-						flags |= UpdateLabelProvider.F_ERROR;
-						break;
-					case IFeature.STATUS_AMBIGUOUS :
-						flags |= UpdateLabelProvider.F_WARNING;
-						break;
-					default :
-						if (configured && updated)
-							flags |= UpdateLabelProvider.F_UPDATED;
-						break;
+				if (UpdateUI.getDefault().getUpdateModel().findPendingChange(feature)
+					== null) {
+
+					int code =
+						ShowFeatureStatusAction.getStatusCode(
+							feature,
+							getLocalSite().getFeatureStatus(feature));
+					switch (code) {
+						case IFeature.STATUS_UNHAPPY :
+							flags |= UpdateLabelProvider.F_ERROR;
+							break;
+						case IFeature.STATUS_AMBIGUOUS :
+							flags |= UpdateLabelProvider.F_WARNING;
+							break;
+						default :
+							if (adapter.isConfigured() && adapter.isUpdated())
+								flags |= UpdateLabelProvider.F_UPDATED;
+							break;
+					}
 				}
 				return provider.get(baseDesc, flags);
 			} catch (CoreException e) {
@@ -310,26 +280,13 @@ public class NewConfigurationView
 		treeViewer.setInput(UpdateUI.getDefault().getUpdateModel());
 		treeViewer.setLabelProvider(new LocalSiteLabelProvider());
 		treeViewer.setSorter(new ConfigurationSorter());
-		treeViewer.addFilter(new ViewerFilter() {
-			public boolean select(Viewer v, Object parent, Object element) {
-				if (element instanceof IConfiguredFeatureAdapter) {
-					IConfiguredFeatureAdapter adapter =
-						(IConfiguredFeatureAdapter) element;
-					if (adapter.isConfigured())
-						return true;
-					boolean showUnconf = showUnconfFeaturesAction.isChecked();
-					return showUnconf;
-				}
-				return true;
-			}
-		});
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();
 			localSite.addLocalSiteChangedListener(this);
 		} catch (CoreException e) {
 			UpdateUI.logException(e);
 		}
-		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
+		
 		modelListener = new IUpdateModelChangedListener() {
 			public void objectsAdded(Object parent, Object[] children) {
 			}
@@ -345,7 +302,7 @@ public class NewConfigurationView
 				});
 			}
 		};
-		model.addUpdateModelChangedListener(modelListener);
+		UpdateUI.getDefault().getUpdateModel().addUpdateModelChangedListener(modelListener);
 		WorkbenchHelp.setHelp(getControl(), "org.eclipse.update.ui.ConfigurationView");
 	}
 
