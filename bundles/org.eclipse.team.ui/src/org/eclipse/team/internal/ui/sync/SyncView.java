@@ -21,7 +21,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -41,6 +40,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -56,7 +57,6 @@ import org.eclipse.ui.part.ViewPart;
 public class SyncView extends ViewPart {
 	public static final String VIEW_ID = "org.eclipse.team.ui.sync.SyncView"; //$NON-NLS-1$
 	private SyncCompareInput input;
-	private TreeViewer viewer;
 	private Composite top;
 
 	// The possible sync modes
@@ -419,4 +419,20 @@ public class SyncView extends ViewPart {
 		menu.update(false);
 		bars.updateActionBars();
 	}
+	
+	/**
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class key) {
+		if (key == IShowInSource.class) {
+			return new IShowInSource() {
+				public ShowInContext getShowInContext() {
+					if (input == null || input.getViewer() == null) return null;
+					return new ShowInContext(null, input.getViewer().getSelection());
+				}
+			};
+		}
+		return super.getAdapter(key);
+	}
+
 }

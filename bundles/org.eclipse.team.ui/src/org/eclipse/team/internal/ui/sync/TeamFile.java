@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -47,7 +48,7 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
  * side is the local file, the right side is the remote file,
  * and the ancestor is the common file.
  */
-public class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
+public class TeamFile extends DiffElement implements ICompareInput, ITeamNode, IAdaptable {
 	
 	private MergeResource mergeResource;
 	
@@ -364,5 +365,14 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 	
 	public boolean hasBeenSaved() {
 		return hasBeenSaved;
+	}
+
+	/**
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == IResource.class)
+			return mergeResource.getResource();
+		return null;
 	}
 }
