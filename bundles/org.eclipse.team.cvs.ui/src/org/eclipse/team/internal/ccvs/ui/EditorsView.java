@@ -103,18 +103,24 @@ public class EditorsView extends ViewPart {
 				return ""; //$NON-NLS-1$
 			EditorsInfo info = (EditorsInfo) element;
 
+			String result = null;
 			switch (columnIndex) {
 				case 0 :
-					return info.getFileName();
+					result = info.getFileName();
+					break;
 				case 1 :
-					return info.getUserName();
+					result = info.getUserName();
+					break;
 				case 2 :
-					return info.getDateString();
+					result = info.getDateString();
+					break;
 				case 3 :
-					return info.getComputerName();
-
+					result = info.getComputerName();
+					break;
 			}
-			return ""; //$NON-NLS-1$
+			// This method must not return null
+			if (result == null) result = ""; //$NON-NLS-1
+			return result;
 
 		}
 
