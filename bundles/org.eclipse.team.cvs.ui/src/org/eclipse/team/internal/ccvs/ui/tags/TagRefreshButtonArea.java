@@ -71,7 +71,6 @@ public class TagRefreshButtonArea extends DialogArea {
 	 	buttonComp.setLayout(SWTUtils.createGridLayout(3, converter, SWTUtils.MARGINS_NONE));
 	 	
 		fMessageLabel= SWTUtils.createLabel(buttonComp, null);
-		fMessageLabel.setForeground(parent.getShell().getDisplay().getSystemColor(SWT.COLOR_RED));
 		refreshButton = new Button(buttonComp, SWT.PUSH);
 		refreshButton.setText (refreshButtonLabel);
 		
