@@ -17,16 +17,18 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -98,6 +100,24 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	 * @param parent  the parent for the new label
 	 * @return the new widget
 	 */
+	protected Combo createCombo(Composite parent, int widthChars) {
+		Combo combo = new Combo(parent, SWT.READ_ONLY);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		GC gc = new GC(combo);
+	 	gc.setFont(combo.getFont());
+		FontMetrics fontMetrics = gc.getFontMetrics();		
+		data.widthHint = Dialog.convertWidthInCharsToPixels(fontMetrics, widthChars);
+		gc.dispose();
+		combo.setLayoutData(data);
+		return combo;
+	}
+
+	/**
+	 * Utility method that creates a combo box
+	 *
+	 * @param parent  the parent for the new label
+	 * @return the new widget
+	 */
 	protected Combo createCombo(Composite parent) {
 		Combo combo = new Combo(parent, SWT.READ_ONLY);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -105,7 +125,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		combo.setLayoutData(data);
 		return combo;
 	}
-	
+
 	/**
 	 * Creates composite control and sets the default layout data.
 	 *
@@ -156,9 +176,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 
 		// set F1 help
 //		WorkbenchHelp.setHelp(composite, new DialogPageContextComputer(this, ICVSHelpContextIds.CVS_PREFERENCE_PAGE));
-
-		pruneEmptyDirectoriesField = createCheckBox(composite, Policy.bind("CVSPreferencePage.pruneEmptyDirectories")); //$NON-NLS-1$
-
+		
 		createLabel(composite, Policy.bind("CVSPreferencePage.timeoutValue")); //$NON-NLS-1$
 		timeoutValue = createTextField(composite);
 		timeoutValue.addModifyListener(new ModifyListener() {
@@ -180,7 +198,17 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		compressionLevelCombo = createCombo(composite);
 		
 		createLabel(composite, Policy.bind("CVSPreferencePage.defaultTextKSubst")); //$NON-NLS-1$
-		ksubstCombo = createCombo(composite);
+		int chars = 0;
+		for (Iterator it = ksubstOptions.iterator(); it.hasNext();) {
+			KSubstOption option = (KSubstOption) it.next();
+			int c = option.getLongDisplayText().length();
+			if(c > chars) {
+				chars = c;
+			}
+		}
+		ksubstCombo = createCombo(composite, chars);
+		
+		pruneEmptyDirectoriesField = createCheckBox(composite, Policy.bind("CVSPreferencePage.pruneEmptyDirectories")); //$NON-NLS-1$
 		
 		historyTracksSelectionButton = createCheckBox(composite, Policy.bind("CVSPreferencePage.historyTracksSelection")); //$NON-NLS-1$
 		
@@ -275,7 +303,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		initializeSaveRadios(store.getInt(PREF_SAVE_DIRTY_EDITORS));		
 	}
 
-	/**
+   /**
 	* @see IWorkbenchPreferencePage#init(IWorkbench)
 	*/
 	public void init(IWorkbench workbench) {
