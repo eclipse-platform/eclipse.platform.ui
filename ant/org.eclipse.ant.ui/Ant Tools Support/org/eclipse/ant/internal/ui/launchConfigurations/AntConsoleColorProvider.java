@@ -55,9 +55,11 @@ public class AntConsoleColorProvider extends ConsoleColorProvider {
 		if (process instanceof AntProcess) {
 			((AntProcess)process).setConsole(console);
 		}
-		console.connect(proxy.getDebugStreamMonitor(), AntStreamsProxy.ANT_DEBUG_STREAM);
-		console.connect(proxy.getWarningStreamMonitor(), AntStreamsProxy.ANT_WARNING_STREAM);
-		console.connect(proxy.getVerboseStreamMonitor(), AntStreamsProxy.ANT_VERBOSE_STREAM);
+		if (proxy != null) {
+			console.connect(proxy.getDebugStreamMonitor(), AntStreamsProxy.ANT_DEBUG_STREAM);
+			console.connect(proxy.getWarningStreamMonitor(), AntStreamsProxy.ANT_WARNING_STREAM);
+			console.connect(proxy.getVerboseStreamMonitor(), AntStreamsProxy.ANT_VERBOSE_STREAM);
+		}
 		super.connect(process, console);
 	}
 	

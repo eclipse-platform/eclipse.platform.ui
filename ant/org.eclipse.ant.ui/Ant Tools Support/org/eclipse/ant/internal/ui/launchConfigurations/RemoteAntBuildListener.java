@@ -205,6 +205,9 @@ public class RemoteAntBuildListener implements ILaunchesListener{
 			return null;
 		}
 		AntStreamsProxy proxy = (AntStreamsProxy)process.getStreamsProxy();
+		if (proxy == null) {
+			return null;
+		}
 		AntStreamMonitor monitor = null;
 		switch (priority) {
 			case Project.MSG_INFO:
