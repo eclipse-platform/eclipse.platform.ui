@@ -571,6 +571,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		connectViewer(result);
 		fViewer.setSelection(selection, true);
 		getSettings().put(KEY_LAYOUT, layout);
+		getViewPart().updateLabel();
 	}
 
 	private void disposeViewer() {
