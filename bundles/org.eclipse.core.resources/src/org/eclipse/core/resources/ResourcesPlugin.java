@@ -62,6 +62,26 @@ public final class ResourcesPlugin extends Plugin {
 	public static final String PT_MOVE_DELETE_HOOK = "moveDeleteHook";
 
 	/**
+	 * Name of a preference indicating the encoding to use when reading text 
+	 * files in the workspace.  The value is a string, and may 
+	 * be the default empty string, indicating that the file system encoding should
+	 * be used instead.  The file system encoding can be retrieved using
+	 * <code>System.getProperty("file.encoding")</code>.
+	 * There is also a convenience method <code>getEncoding</code> which returns
+	 * the value of this preference, or the file system encoding if this 
+	 * preference is not set.
+	 * <p>
+	 * Note that there is no guarantee that the value is a supported encoding.
+	 * Callers should be prepared to handle <code>UnsupportedEncodingException</code>
+	 * where this encoding is used.
+	 * </p>
+	 * 
+	 * @see #getEncoding()
+	 * @see java.io.UnsupportedEncodingException
+	 */
+	public static final String PREF_ENCODING = "encoding";
+	
+	/**
 	 * The single instance of this plug-in runtime class.
 	 */
 	private static ResourcesPlugin plugin;
@@ -105,6 +125,27 @@ private static void constructWorkspace() throws CoreException {
 	WorkspaceDescription description = Workspace.defaultWorkspaceDescription();
 	new LocalMetaArea().write(description);
 }
+
+/**
+ * Returns the encoding to use when reading text files in the workspace.
+ * This is the value of the <code>PREF_ENCODING</code> preference, or the
+ * file system encoding (<code>System.getProperty("file.encoding")</code>)
+ * if the preference is not set.
+ * <p>
+ * Note that this method does not check whether the result is a supporteed
+ * encoding.  Callers should be prepared to handle 
+ * <code>UnsupportedEncodingException</code> where this encoding is used.
+ * 
+ * @see java.io.UnsupportedEncodingException
+ */
+public static String getEncoding() {
+	String enc = getPlugin().getPluginPreferences().getString(PREF_ENCODING);
+	if (enc == null || enc.length() == 0) {
+		enc = System.getProperty("file.encoding");
+	}
+	return enc;
+}
+
 /**
  * Returns the Resources plug-in.
  *
