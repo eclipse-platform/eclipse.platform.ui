@@ -1034,12 +1034,11 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 						info.tabText = ref.getRegisteredName();
 					}
 					CTabItem oldItem = tabFolder.getSelection();
-					CTabItem item = createPartTab(newChild, info.tabText, info.partImage, -1);
-					if (oldItem == null) 
-						oldItem = item;
-					int index = tabFolder.indexOf(oldItem);
-					
-					setSelection(index);
+					/*CTabItem item = */ createPartTab(newChild, info.tabText, info.partImage, -1);
+					if (oldItem != null) {  // set the selection to the old one only.
+						int index = tabFolder.indexOf(oldItem);						
+						setSelection(index);						
+					}									
 				} else {
 					invisibleChildren[i].part = newChild;
 					// On restore, all views are initially represented by placeholders and then 
