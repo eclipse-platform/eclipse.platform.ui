@@ -169,6 +169,10 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 			loadPerspective(ext);
 			return;
 		}
+		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_PERSPECTIVE_EXTENSIONS)) {
+			loadPerspectiveExtensions(ext);
+			return;
+		}
 		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_ACTION_SETS)) {
 			loadActionSets(ext);
 			return;
@@ -658,6 +662,39 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 				WorkbenchMessages.getString("Workspace.problemsTitle"), //$NON-NLS-1$
 				WorkbenchMessages.getString("Workbench.problemsRestoringMsg"), //$NON-NLS-1$
 				result);
+		}
+	}
+
+	private void loadPerspectiveExtensions(IExtension ext) {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window == null)
+			return;
+		IWorkbenchPage page = window.getActivePage();
+		if (page == null)
+			return;
+	
+		// Get the current perspective.
+		IPerspectiveDescriptor persp = page.getPerspective();
+		if (persp == null)
+			return;
+		String currentId = persp.getId();
+		IConfigurationElement[] elements = ext.getConfigurationElements();
+		for (int i = 0; i < elements.length; i++) {
+			// If any of these refer to the current perspective, output
+			// a message saying this perspective will need to be reset
+			// in order to see the changes.  For any other case, the
+			// perspective extension registry will be rebuilt anyway so
+			// just ignore it.
+			String id = elements[i].getAttribute(ATT_TARGET_ID);
+			if (id == null)
+				continue;
+			if (id.equals(currentId)) {
+				// Display message
+				MessageDialog.openInformation(window.getShell(), ExtensionEventHandlerMessages.getString("ExtensionEventHandler.newPerspectiveExtensionTitle"), //$NON-NLS-1$
+						ExtensionEventHandlerMessages.getString("ExtensionEventHandler.newPerspectiveExtension"));  //$NON-NLS-1$
+				// don't bother outputing this message more than once.
+				break;
+			}
 		}
 	}
 
