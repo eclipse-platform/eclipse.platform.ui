@@ -123,8 +123,7 @@ public class Hyperlink extends AbstractHyperlink {
 
 		gc.setFont(getFont());
 		if ((getStyle() & SWT.WRAP) != 0 && wHint != SWT.DEFAULT) {
-			int height = FormUtil.computeWrapHeight(gc, text, wHint);
-			extent = new Point(wHint, height);
+			extent = FormUtil.computeWrapSize(gc, text, wHint);
 		} else {
 			extent = gc.textExtent(getText());
 		}

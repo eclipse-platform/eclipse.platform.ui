@@ -212,9 +212,9 @@ public abstract class AbstractHyperlink extends Canvas {
 		paintHyperlink(e);
 		if (hasFocus) {
 			GC gc = e.gc;
-			Point size = getSize();
+			Rectangle carea = getClientArea();
 			gc.setForeground(getForeground());
-			gc.drawFocus(0, 0, size.x, size.y);
+			gc.drawFocus(0, 0, carea.width, carea.height);
 		}
 	}
 }

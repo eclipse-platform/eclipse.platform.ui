@@ -158,7 +158,7 @@ public class RichText extends Canvas {
 	 *            the widget style
 	 */
 	public RichText(Composite parent, int style) {
-		super(parent, style);
+		super(parent, SWT.WRAP | style);
 		setLayout(new RichTextLayout());
 		model = new RichTextModel();
 

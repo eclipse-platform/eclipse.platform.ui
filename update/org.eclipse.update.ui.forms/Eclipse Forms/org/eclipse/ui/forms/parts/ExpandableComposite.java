@@ -122,8 +122,9 @@ public class ExpandableComposite extends Composite {
 						desc.setBounds(cx, y, dsize.x, dsize.y);
 						y+= dsize.y+VSPACE;
 					}
-					size = client.computeSize(areaWidth, SWT.DEFAULT, changed);
-					client.setBounds(cx, y, size.x, size.y);
+					int cwidth = clientArea.width - cx;
+					int cheight = clientArea.height - y;
+					client.setBounds(cx, y, cwidth, cheight);
 				}
 			}
 		}
@@ -161,7 +162,7 @@ public class ExpandableComposite extends Composite {
 				Point dsize = null;
 				if (getDescriptionControl()!=null)
 					dsize = getDescriptionControl().computeSize(cwHint, SWT.DEFAULT, changed);
-				Point csize = client.computeSize(cwHint, SWT.DEFAULT, changed);
+				Point csize = client.computeSize(FormUtil.getWidthHint(cwHint, client), SWT.DEFAULT, changed);
 				if (dsize!=null) {
 					width = Math.max(width, dsize.x);
 					if (expanded)
@@ -187,7 +188,7 @@ public class ExpandableComposite extends Composite {
 					dsize = getDescriptionControl().computeSize(5, SWT.DEFAULT, changed);
 					width = Math.max(width, dsize.x);
 				}
-				Point csize = client.computeSize(5, SWT.DEFAULT, changed);
+				Point csize = client.computeSize(FormUtil.getWidthHint(5, client), SWT.DEFAULT, changed);
 				width = Math.max(width, csize.x);
 			}
 			if (toggle != null) {

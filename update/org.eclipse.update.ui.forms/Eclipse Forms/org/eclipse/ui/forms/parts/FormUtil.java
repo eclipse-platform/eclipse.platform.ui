@@ -82,8 +82,26 @@ public class FormUtil {
 		text.setLayoutData(gd);
 		return text;
 	}
+	
+	static int computeMinimumWidth(GC gc, String text) {
+		BreakIterator wb = BreakIterator.getWordInstance();
+		wb.setText(text);
+		int last = 0;
+		
+		int width = 0;
 
-	static int computeWrapHeight(GC gc, String text, int width) {
+		for (int loc = wb.first();
+		loc != BreakIterator.DONE;
+		loc = wb.next()) {
+			String word = text.substring(last, loc);
+			Point extent = gc.textExtent(word);
+			width = Math.max(width, extent.x);
+			last = loc;
+		}
+		return width;
+	}
+
+	static Point computeWrapSize(GC gc, String text, int wHint) {
 		BreakIterator wb = BreakIterator.getWordInstance();
 		wb.setText(text);
 		FontMetrics fm = gc.getFontMetrics();
@@ -92,20 +110,22 @@ public class FormUtil {
 		int saved = 0;
 		int last = 0;
 		int height = lineHeight;
+		int maxWidth = 0;
 
 		for (int loc = wb.first();
 			loc != BreakIterator.DONE;
 			loc = wb.next()) {
 			String word = text.substring(saved, loc);
 			Point extent = gc.textExtent(word);
-			if (extent.x > width) {
+			maxWidth = Math.max(maxWidth, extent.x);
+			if (extent.x > wHint) {
 				// overflow
 				saved = last;
 				height += extent.y;
 			}
 			last = loc;
 		}
-		return height;
+		return new Point(maxWidth, height);
 	}
 	static void paintWrapText(
 		GC gc,
@@ -286,5 +306,19 @@ public class FormUtil {
 					break;
 			}
 		}
+	}
+	
+	public static boolean isWrapControl(Control c) {
+		if (c instanceof Composite) {
+			return ((Composite)c).getLayout() instanceof ILayoutExtension;
+		}
+		else {
+			return (c.getStyle() & SWT.WRAP) != 0;
+		}
+	}
+	
+	public static int getWidthHint(int wHint, Control c) {
+		boolean wrap=isWrapControl(c);
+		return wrap ? wHint : SWT.DEFAULT;
 	}
 }
