@@ -946,6 +946,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 * @throws TeamException
 	 */
 	public IStatus setKeywordSubstitution(final Map /* from IFile to KSubstOption */ changeSet,
+		final String comment,
 		IProgressMonitor monitor) throws TeamException {
 		final IStatus[] result = new IStatus[] { ICommandOutputListener.OK };
 		workspaceRoot.getLocalRoot().run(new ICVSRunnable() {
@@ -1015,7 +1016,9 @@ public class CVSTeamProvider extends RepositoryProvider {
 							Session.run(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */,
 								new ICVSRunnable(								) {
 									public void run(IProgressMonitor monitor) throws CVSException {
-										String keywordChangeComment = Policy.bind("CVSTeamProvider.changingKeywordComment"); //$NON-NLS-1$
+										String keywordChangeComment = comment;
+										if (keywordChangeComment == null || keywordChangeComment.length() == 0)
+											keywordChangeComment = Policy.bind("CVSTeamProvider.changingKeywordComment"); //$NON-NLS-1$
 										result[0] = Command.COMMIT.execute(
 											Command.NO_GLOBAL_OPTIONS,
 											new LocalOption[] { Commit.DO_NOT_RECURSE, Commit.FORCE,

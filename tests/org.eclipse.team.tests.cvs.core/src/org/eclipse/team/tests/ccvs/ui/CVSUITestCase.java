@@ -361,7 +361,6 @@ public class CVSUITestCase extends LoggingTestCase {
 			}
 			protected ReleaseCommentDialog promptForComment(RepositoryManager manager, IResource[] resourcesToCommit, IResource[] unadded) {
 				ReleaseCommentDialog dialog = new ReleaseCommentDialog(null, resourcesToCommit, unadded); // use our comment
-				dialog.setComments(new String[] {comment});
 				return dialog;
 			}
 		};
@@ -374,7 +373,6 @@ public class CVSUITestCase extends LoggingTestCase {
 			}
 			protected ReleaseCommentDialog promptForComment(RepositoryManager manager, IResource[] resourcesToCommit, IResource[] unadded) {
 				ReleaseCommentDialog dialog = new ReleaseCommentDialog(null, resourcesToCommit, unadded); // use our comment
-				dialog.setComments(new String[] {comment});
 				return dialog;
 			}
 		};
