@@ -969,6 +969,9 @@ public final class FormText extends Canvas {
 			IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
 			if (segmentUnder != null) {
 				IHyperlinkSegment oldLink = model.getSelectedLink();
+				if (getDisplay().getFocusControl()!=this) {
+					setFocus();
+				}
 				model.selectLink(segmentUnder);
 				enterLink(segmentUnder, e.stateMask);
 				paintFocusTransfer(oldLink, segmentUnder);
@@ -986,6 +989,7 @@ public final class FormText extends Canvas {
 					activateLink(segmentUnder, e.stateMask);
 				}
 			}
+			mouseFocus=false;
 		}
 	}
 
@@ -1058,11 +1062,13 @@ public final class FormText extends Canvas {
 	private void handleFocusChange() {
 		if (hasFocus) {
 			//if (model.getSelectedLink() == null)
-			if (model.restoreSavedLink()==false)
-				model.traverseLinks(true);
-			enterLink(model.getSelectedLink(), SWT.NULL);
-			paintFocusTransfer(null, model.getSelectedLink());
+			if (!mouseFocus) {
+				if (model.restoreSavedLink()==false)
+					model.traverseLinks(true);
+				enterLink(model.getSelectedLink(), SWT.NULL);
+				paintFocusTransfer(null, model.getSelectedLink());
 			// ensureVisible(model.getSelectedLink());
+			}
 		} else {
 			paintFocusTransfer(model.getSelectedLink(), null);
 			model.selectLink(null);
