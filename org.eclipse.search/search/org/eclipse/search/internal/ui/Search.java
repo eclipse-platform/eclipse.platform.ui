@@ -27,7 +27,8 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
 
 class Search extends Object {
 	private String fPageId;
-	private String fDescription;
+	private String fSingularLabel;
+	private String fPluralLabelPattern;
 	private ImageDescriptor fImageDescriptor;
 	private ILabelProvider fLabelProvider;
 	private ArrayList fResults;
@@ -37,32 +38,38 @@ class Search extends Object {
 	private IRunnableWithProgress fOperation;
 
 
-	public Search(String pageId, String description, ILabelProvider labelProvider, ImageDescriptor imageDescriptor, IAction gotoMarkerAction, IContextMenuContributor contextMenuContributor, IGroupByKeyComputer groupByKeyComputer, IRunnableWithProgress operation) {
+	public Search(String pageId, String singularLabel, String pluralLabelPattern, ILabelProvider labelProvider, ImageDescriptor imageDescriptor, IAction gotoMarkerAction, IContextMenuContributor contextMenuContributor, IGroupByKeyComputer groupByKeyComputer, IRunnableWithProgress operation) {
 		fPageId= pageId;
-		fDescription= description;
+		fSingularLabel= singularLabel;
+		fPluralLabelPattern= pluralLabelPattern;
 		fImageDescriptor= imageDescriptor;
 		fLabelProvider= labelProvider;
 		fGotoMarkerAction= gotoMarkerAction;
 		fContextMenuContributor= contextMenuContributor;
 		fGroupByKeyComputer= groupByKeyComputer;
 		fOperation= operation;
+		
+		if (fPluralLabelPattern == null)
+			fPluralLabelPattern= ""; //$NON-NLS-1$
 	}
+
 	/**
 	 * Returns the full description of the search.
 	 * The description set by the client where
 	 * {0} will be replaced by the match count.
 	 */
 	String getFullDescription() {
-		if (fDescription == null)
-			return ""; //$NON-NLS-1$
+		if (fSingularLabel != null && getItemCount() == 1)
+			return fSingularLabel;
 
 		// try to replace "{0}" with the match count
-		int i= fDescription.lastIndexOf("{0}"); //$NON-NLS-1$
+		int i= fPluralLabelPattern.lastIndexOf("{0}"); //$NON-NLS-1$
 		if (i < 0)
-			return fDescription;
+			return fPluralLabelPattern;
 		else
-			return fDescription.substring(0, i) + getItemCount()+ fDescription.substring(Math.min(i + 3, fDescription.length()));
+			return fPluralLabelPattern.substring(0, i) + getItemCount()+ fPluralLabelPattern.substring(Math.min(i + 3, fPluralLabelPattern.length()));
 	}
+
 	/**
 	 * Returns a short description of the search.
 	 * Cuts off after 30 characters and adds ...
@@ -70,8 +77,6 @@ class Search extends Object {
 	 * {0} will be replaced by the match count.
 	 */
 	String getShortDescription() {
-		if (fDescription == null)
-			return ""; //$NON-NLS-1$
 		String text= getFullDescription();
 		int separatorPos= text.indexOf(" - "); //$NON-NLS-1$
 		if (separatorPos < 1)

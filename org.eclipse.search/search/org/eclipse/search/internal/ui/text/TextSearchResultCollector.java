@@ -51,7 +51,8 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 		if (fView != null) {
 			fView.searchStarted(
 				TextSearchPage.EXTENSION_POINT_ID,
-				fOperation.getDescription(),
+				fOperation.getSingularLabel(),
+				fOperation.getPluralLabelPattern(),
 				fOperation.getImageDescriptor(),
 				null,
 				new FileLabelProvider(FileLabelProvider.SHOW_LABEL_PATH),

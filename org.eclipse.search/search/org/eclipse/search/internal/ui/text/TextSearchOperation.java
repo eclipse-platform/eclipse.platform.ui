@@ -53,9 +53,13 @@ public class TextSearchOperation extends WorkspaceModifyOperation {
 		TextSearchEngine engine= new TextSearchEngine();
 		engine.search(fWorkspace, fPattern, fOptions, fScope, fCollector);
 	}	
-	
-	String getDescription() {
-		return SearchMessages.getFormattedString("TextSearchOperation.descriptionPostfix", new String[] {fPattern, "{0}", fScope.getDescription()}); //$NON-NLS-2$ //$NON-NLS-1$
+
+	String getSingularLabel() {
+		return SearchMessages.getFormattedString("TextSearchOperation.singularLabelPostfix", new String[] {fPattern, fScope.getDescription()}); //$NON-NLS-2$ //$NON-NLS-1$
+	}
+
+	String getPluralLabelPattern() {
+		return SearchMessages.getFormattedString("TextSearchOperation.pluralLabelPatternPostfix", new String[] {fPattern, "{0}", fScope.getDescription()}); //$NON-NLS-2$ //$NON-NLS-1$
 	}
 	
 	ImageDescriptor getImageDescriptor() {

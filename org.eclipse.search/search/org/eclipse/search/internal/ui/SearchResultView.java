@@ -163,32 +163,52 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		return fViewer.getSelection();
 	}
 
+	/**
+	 * Implements method from ISearchResultView
+	 * @deprecated	As of build > 20011107, replaced by the new version with additonal parameter
+	 */
+	public void searchStarted(
+				String					pageId,
+				String					label,
+				ImageDescriptor			imageDescriptor,
+				IContextMenuContributor contributor,
+				ILabelProvider			labelProvider,
+				IAction					gotoAction,
+				IGroupByKeyComputer		groupByKeyComputer,
+				IRunnableWithProgress	operation) {
+		
+		searchStarted(pageId, null, label, imageDescriptor, contributor, labelProvider, gotoAction, groupByKeyComputer, operation);
+	};
+
 	/*
 	 * Implements method from ISearchResultView
 	 */
 	public void searchStarted(
-				String			pageId,
-				String			label,
-				ImageDescriptor		imageDescriptor,
+				String					pageId,
+				String					singularLabel,
+				String					pluralLabelPattern,
+				ImageDescriptor			imageDescriptor,
 				IContextMenuContributor contributor,
-				ILabelProvider		labelProvider,
-				IAction			gotoAction,
-				IGroupByKeyComputer	groupByKeyComputer,
+				ILabelProvider			labelProvider,
+				IAction					gotoAction,
+				IGroupByKeyComputer		groupByKeyComputer,
 				IRunnableWithProgress	operation) {
-
+
+
 		Assert.isNotNull(pageId);
-		Assert.isNotNull(label);
+		Assert.isNotNull(pluralLabelPattern);
 		Assert.isNotNull(gotoAction);		
-
+
 		fResponse= new HashMap(500);
 		setGotoMarkerAction(gotoAction);
-
+
 		fgLabelProviders.put(pageId, labelProvider);
-
+
 		SearchManager.getDefault().addNewSearch(		
 			new Search(
 				pageId,
-				label,
+				singularLabel,
+				pluralLabelPattern,
 				null,
 				imageDescriptor,
 				fViewer.getGotoMarkerAction(),
@@ -196,7 +216,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 				groupByKeyComputer,
 				operation));
 	};
-
+
 	/*
 	 * Implements method from ISearchResultView
 	 */
