@@ -444,6 +444,9 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			final String expandedLocation;
 			try {
 				String location= fLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
+				if (location == null) {
+					return fAllTargets;
+				}
 				expandedLocation = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(location);
 			} catch (CoreException e1) {
 				setErrorMessage(e1.getMessage());
