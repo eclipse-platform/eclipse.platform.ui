@@ -37,8 +37,9 @@
             id="org.eclipse.ui.cheatsheets.views.CheatSheetView">
       </view>
    </extension>
+<!--
    <extension
          point="org.eclipse.ui.startup">
    </extension>
-
+-->
 </plugin>
