@@ -55,7 +55,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 	 * Returns the specified ant home classpath entries
 	 */
 	protected IAntClasspathEntry[] getAntHomeEntries() {
-		return model.getURLEntries(ClasspathModel.GLOBAL);
+		return model.getURLEntries(ClasspathModel.ANT_HOME);
 	}
 	
 	protected String getAntHome() {

@@ -70,7 +70,7 @@ public class AntClasspathContentProvider implements ITreeContentProvider {
 	}
 	
 	public void removeAllGlobalAntClasspathEntries() {
-		model.removeAll(ClasspathModel.GLOBAL);
+		model.removeAll(ClasspathModel.ANT_HOME);
 		refresh();
 	}
 
@@ -180,7 +180,7 @@ public class AntClasspathContentProvider implements ITreeContentProvider {
 	}
 
 	public Object[] getGlobalAntClasspathEntries() {
-		return model.getURLEntries(ClasspathModel.GLOBAL);
+		return model.getURLEntries(ClasspathModel.ANT_HOME);
 	}
 	
 	public void handleMove(boolean direction, IClasspathEntry entry) {

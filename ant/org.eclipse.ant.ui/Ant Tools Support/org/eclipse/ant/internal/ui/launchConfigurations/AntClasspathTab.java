@@ -95,7 +95,7 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 		}
 		
 		String classpath= model.serializeClasspath(defaultAntHome);
-		if (classpath.equals(AntUtil.ANT_GLOBAL_CLASSPATH_PLACEHOLDER + AntUtil.ATTRIBUTE_SEPARATOR + AntUtil.ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER)) {
+		if (classpath.equals(AntUtil.ANT_HOME_CLASSPATH_PLACEHOLDER + AntUtil.ATTRIBUTE_SEPARATOR + AntUtil.ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER)) {
 			classpath= null;
 		}
 		

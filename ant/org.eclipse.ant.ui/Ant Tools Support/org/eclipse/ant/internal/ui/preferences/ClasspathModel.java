@@ -25,7 +25,7 @@ import org.eclipse.ant.internal.ui.model.AntUtil;
 
 public class ClasspathModel extends AbstractClasspathEntry {
 	
-	public static final int GLOBAL= 0;
+	public static final int ANT_HOME= 0;
 	public static final int GLOBAL_USER= 1;
 	public static final int USER= 2;
 	
@@ -60,7 +60,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	public Object addEntry(int entryType, Object entry) {
 		IClasspathEntry entryParent= null;
 		switch (entryType) {
-			case GLOBAL :
+			case ANT_HOME :
 				if (antHomeEntry == null) {
 					String name= AntPreferencesMessages.getString("ClasspathModel.2"); //$NON-NLS-1$
 					antHomeEntry= createGlobalEntry(new IAntClasspathEntry[0], name, false, true);
@@ -101,7 +101,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	public IAntClasspathEntry[] getURLEntries(int entryType) {
 		IAntClasspathEntry[] classpathEntries= null;
 		switch (entryType) {
-			case GLOBAL :
+			case ANT_HOME :
 				if (antHomeEntry != null) {
 					classpathEntries= antHomeEntry.getEntries();
 				}
@@ -145,7 +145,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	
 	public void removeAll(int entryType) {
 		switch (entryType) {
-			case GLOBAL :
+			case ANT_HOME :
 				if (antHomeEntry != null) {
 					antHomeEntry.removeAll();
 				}
@@ -247,7 +247,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 							buff.append(AntUtil.ATTRIBUTE_SEPARATOR);
 						}
 					} else {
-						buff.append(AntUtil.ANT_GLOBAL_CLASSPATH_PLACEHOLDER);
+						buff.append(AntUtil.ANT_HOME_CLASSPATH_PLACEHOLDER);
 					}
 				} else {
 					buff.append(AntUtil.ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER);
@@ -287,7 +287,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		
 		while (tokenizer.hasMoreTokens()) {
 			String string = tokenizer.nextToken().trim();
-			if (string.equals(AntUtil.ANT_GLOBAL_CLASSPATH_PLACEHOLDER)) {
+			if (string.equals(AntUtil.ANT_HOME_CLASSPATH_PLACEHOLDER)) {
 				IAntClasspathEntry[] antHomeEntries= new IAntClasspathEntry[0];
 				if (!customAntHome) {
 					antHomeEntries= AntCorePlugin.getPlugin().getPreferences().getAntHomeClasspathEntries();
@@ -313,7 +313,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 					entry= string;
 				}
 				if (isAntHomeEntry) {
-					addEntry(GLOBAL, entry);
+					addEntry(ANT_HOME, entry);
 				} else {
 					addEntry(entry);
 				}

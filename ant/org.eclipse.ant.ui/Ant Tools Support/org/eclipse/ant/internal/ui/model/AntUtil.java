@@ -53,7 +53,7 @@ import org.eclipse.ui.PlatformUI;
 public final class AntUtil {
 	public static final String ATTRIBUTE_SEPARATOR = ","; //$NON-NLS-1$;
 	public static final char ANT_CLASSPATH_DELIMITER= '*';
-	public static final String ANT_GLOBAL_CLASSPATH_PLACEHOLDER= "G"; //$NON-NLS-1$
+	public static final String ANT_HOME_CLASSPATH_PLACEHOLDER= "G"; //$NON-NLS-1$
 	public static final String ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER= "UG"; //$NON-NLS-1$
 	/**
 	 * No instances allowed
@@ -219,7 +219,7 @@ public final class AntUtil {
 		
 		List antEntries= new ArrayList();
 		List additionalEntries= new ArrayList();
-		if (classpathString.equals(ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER + AntUtil.ATTRIBUTE_SEPARATOR + ANT_GLOBAL_CLASSPATH_PLACEHOLDER )) {
+		if (classpathString.equals(ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER + AntUtil.ATTRIBUTE_SEPARATOR + ANT_HOME_CLASSPATH_PLACEHOLDER )) {
 			//really the default classpath ..just ordered differently
 			antEntries.addAll(Arrays.asList(AntCorePlugin.getPlugin().getPreferences().getAdditionalClasspathEntries()));
 			antEntries.addAll(Arrays.asList(AntCorePlugin.getPlugin().getPreferences().getAntHomeClasspathEntries()));
@@ -281,7 +281,7 @@ public final class AntUtil {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		for (int i = 0; i < entryStrings.length; i++) {
 			String string = entryStrings[i];
-			if (string.equals(ANT_GLOBAL_CLASSPATH_PLACEHOLDER)) {
+			if (string.equals(ANT_HOME_CLASSPATH_PLACEHOLDER)) {
 				entries.addAll(Arrays.asList(prefs.getAntHomeClasspathEntries()));
 			} else if (string.equals(ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER)) {
 				entries.addAll(Arrays.asList(prefs.getAdditionalClasspathEntries()));
