@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.debug.ui" id="variableValueEditors" name="Variable Value Editors"/>
       </appInfo>
       <documentation>
-         This extension point provides a mechanism for contributing variable value editors for a particular debug model. When the user invokes the &quot;Change Value...&quot; action on a variable in the Variables view, the contributed &lt;code&gt;org.eclipse.debug.ui.actions.IVariableValueEditor&lt;/code&gt; will be invoked to change the value.
+         This extension point provides a mechanism for contributing variable value editors for a particular debug model. Variable value editors are used to edit/save variable values. When the user invokes the &quot;Change Value...&quot; or &quot;Assign Value&quot; (details pane) actions on a variable in the Variables view, the contributed &lt;code&gt;org.eclipse.debug.ui.actions.IVariableValueEditor&lt;/code&gt; will be invoked to change the value.
       </documentation>
    </annotation>
 

@@ -18,6 +18,8 @@ import org.eclipse.debug.core.model.IValueModification;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
+import org.eclipse.debug.ui.actions.IVariableValueEditor;
+import org.eclipse.debug.ui.actions.VariableValueEditorManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -26,7 +28,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.SelectionProviderAction;
 
-
+/**
+ * Action which assigns a value to a variable from the detail pane
+ * of the variables view.
+ */
 public class AssignValueAction extends SelectionProviderAction {
 	private VariablesView variablesView;
 	private ISourceViewer detailsViewer;
@@ -70,18 +75,30 @@ public class AssignValueAction extends SelectionProviderAction {
 			} catch (BadLocationException e1) {
 			}
 		}
+		IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
+		Shell activeShell= null;
+		if (window != null) {
+			activeShell= window.getShell();
+		}
+		
+		String modelIdentifier = variable.getModelIdentifier();
+		IVariableValueEditor editor = VariableValueEditorManager.getDefault().getVariableValueEditor(modelIdentifier);
+		if (editor != null) {
+		    if (editor.saveVariable(variable, value, activeShell)) {
+		        // If we successfully delegate to an editor which performs the save,
+		        // don't do any more work.
+		        return;
+		    }
+		}
 		
 		try {
+		    // If we failed to delegate to anyone, perform the default assignment.
 			if (variable.verifyValue(value)) {
 				variable.setValue(value);
 			} else {
-				IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
-				if (window == null) {
-					return;
-				}
-				Shell activeShell= window.getShell();
-				
-				DebugUIPlugin.errorDialog(activeShell, ActionMessages.getString("AssignValueAction.2"), MessageFormat.format(ActionMessages.getString("AssignValueAction.3"), new String[] {value, variable.getName()}), new StatusInfo(IStatus.ERROR, ActionMessages.getString("AssignValueAction.4")));  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			    if (activeShell != null) {
+			        DebugUIPlugin.errorDialog(activeShell, ActionMessages.getString("AssignValueAction.2"), MessageFormat.format(ActionMessages.getString("AssignValueAction.3"), new String[] {value, variable.getName()}), new StatusInfo(IStatus.ERROR, ActionMessages.getString("AssignValueAction.4")));  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			    }
 			}
 		} catch (DebugException e) {
 			DebugUIPlugin.log(e);

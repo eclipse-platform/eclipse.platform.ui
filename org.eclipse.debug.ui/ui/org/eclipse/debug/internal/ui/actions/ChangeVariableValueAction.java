@@ -12,14 +12,8 @@ package org.eclipse.debug.internal.ui.actions;
 
  
 import java.text.MessageFormat;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValueModification;
 import org.eclipse.debug.core.model.IVariable;
@@ -30,6 +24,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IVariableValueEditor;
+import org.eclipse.debug.ui.actions.VariableValueEditorManager;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -41,22 +36,18 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * Action for changing the value of primitives and <code>String</code> variables.
  * This action will attempt to delegate the editing operation to a registered
  * variable value editor, if any is provided for the variable's debug model.
- * @see org.eclipse.debug.ui.actions.IVariableValueEditor
+ * @see org.eclipse.debug.ui.actions.VariableValueEditorManager
  */
 public class ChangeVariableValueAction extends SelectionProviderAction {
     
 	protected IVariable fVariable;
     private VariablesView fView;
     private boolean fEditing= false;
-    /**
-     * Mapping of debug model identifiers to variable value editors.
-     * The keys in this map are always Strings (model ids).
-     * The values in the map are IConfigurationElements at startup,
-     * which are replaced by IVariableValueEditors as the editors
-     * are instantiated (editors are loaded lazily, then cached).
-     */
-    private Map fEditorMap= new HashMap();
 	
+    /**
+     * Creates a new ChangeVariableValueAction for the given variables view
+     * @param view the varibles view in which this action will appear
+     */
 	public ChangeVariableValueAction(VariablesView view) {
 		super(view.getViewer(), ActionMessages.getString("ChangeVariableValue.title")); //$NON-NLS-1$
 		setDescription(ActionMessages.getString("ChangeVariableValue.toolTipText")); //$NON-NLS-1$
@@ -67,23 +58,6 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 			this,
 			IDebugHelpContextIds.CHANGE_VALUE_ACTION);
 		fView= view;
-		loadVariableEditors();
-	}
-	
-	/**
-	 * Loads contributors to the org.eclipse.debug.ui.variableValueEditors extension point,
-	 * for use when the user runs this action.
-	 */
-	private void loadVariableEditors() {
-		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_VARIABLE_VALUE_EDITORS);
-		IConfigurationElement[] elements = ep.getConfigurationElements();
-		for (int i = 0; i < elements.length; i++) {
-            IConfigurationElement element = elements[i];
-            String modelId = element.getAttribute("modelId"); //$NON-NLS-1$
-            if (modelId != null) {
-                fEditorMap.put(modelId, element);
-            }
-        }
 	}
 	
 	/**
@@ -91,7 +65,6 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	 */
 	protected void doActionPerformed(final IVariable variable) {
 	    Shell shell = fView.getViewSite().getShell();
-	    
 		// If a previous edit is still in progress, don't start another		
 	    if (fEditing) {
 	        return;
@@ -115,20 +88,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
      */
     private boolean delegateEdit(Shell shell) {
         String modelIdentifier = fVariable.getModelIdentifier();
-        Object object = fEditorMap.get(modelIdentifier);
-        IVariableValueEditor editor= null;
-        if (object instanceof IVariableValueEditor) {
-            editor= (IVariableValueEditor) object;
-        } else if (object instanceof IConfigurationElement) {
-            try {
-                editor = (IVariableValueEditor) ((IConfigurationElement) object).createExecutableExtension("class"); //$NON-NLS-1$
-                fEditorMap.put(modelIdentifier, editor);
-            } catch (CoreException e) {
-                // If an exception occurs, loading the extension, just log it and
-                // return false to use the default editor.
-                DebugUIPlugin.log(e);
-            }
-        }
+        IVariableValueEditor editor= VariableValueEditorManager.getDefault().getVariableValueEditor(modelIdentifier);
         if (editor != null) {
             return editor.editVariable(fVariable, shell);
         }
