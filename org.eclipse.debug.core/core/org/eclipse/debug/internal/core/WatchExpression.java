@@ -183,7 +183,11 @@ public class WatchExpression implements IWatchExpression {
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
 	public ILaunch getLaunch() {
-		return getDebugTarget().getLaunch();
+		IDebugTarget debugTarget = getDebugTarget();
+		if (debugTarget != null) {
+		    return debugTarget.getLaunch();
+		}
+		return null; 
 	}
 
 	/**

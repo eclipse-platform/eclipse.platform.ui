@@ -73,7 +73,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
             }
             // we only need to consider the first event, as all events in an event set come
             // from the same program
-            if (DebugPlugin.getDefault().getLaunchManager().isRegistered(launch)) {
+            if (launch != null && DebugPlugin.getDefault().getLaunchManager().isRegistered(launch)) {
                 return events;
             }
             return EMPTY_EVENT_SET;
