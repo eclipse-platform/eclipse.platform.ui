@@ -229,12 +229,6 @@ boolean verifyBuildersAvailable() {
 		return false;
 	}
 	
-	MessageDialog.openWarning(
-		getShell(),
-		WorkbenchMessages.getString("BuildAction.warning"), //$NON-NLS-1$
-		WorkbenchMessages.getString("BuildAction.noBuilders") //$NON-NLS-1$
-	);
-	
 	return false;
 }
 }

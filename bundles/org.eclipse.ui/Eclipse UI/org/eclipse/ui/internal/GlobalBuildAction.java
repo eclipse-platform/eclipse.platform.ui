@@ -177,12 +177,6 @@ protected boolean verifyBuildersAvailable(IProject[] roots) {
 		return false;
 	}
 	
-	MessageDialog.openWarning(
-		this.workbench.getActiveWorkbenchWindow().getShell(),
-		WorkbenchMessages.getString("GlobalBuildAction.warning"), //$NON-NLS-1$
-		WorkbenchMessages.getString("GlobalBuildAction.noBuilders") //$NON-NLS-1$
-	);
-	
 	return false;
 }
 }
