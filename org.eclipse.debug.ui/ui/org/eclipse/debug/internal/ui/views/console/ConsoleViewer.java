@@ -65,7 +65,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	 * @see org.eclipse.swt.events.VerifyListener
 	 */	
 	public ConsoleViewer(Composite parent) {
-		super(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+		super(parent, getSWTStyles());
 		
 		getTextWidget().setDoubleClickEnabled(true);
 		
@@ -73,6 +73,17 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		FontData data= ConsolePreferencePage.getConsoleFontData();
 		fFont= new Font(getControl().getDisplay(), data);
 		getTextWidget().setFont(fFont);
+	}
+	
+	/**
+	 * Returns the SWT style flags used when instantiating this viewer
+	 */
+	private static int getSWTStyles() {
+		int styles= SWT.H_SCROLL | SWT.V_SCROLL;
+		if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.CONSOLE_WRAP)) {
+			styles= styles | SWT.WRAP;
+		}
+		return styles;
 	}
 
 	/**
@@ -82,7 +93,6 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		IDocument doc= getDocument();
 		int docLength= doc.getLength();
 		if (docLength > 0) {
-			revealRange(docLength - 1, 1);
 			StyledText widget= getTextWidget();
 			widget.setCaretOffset(docLength);
 			widget.showSelection();

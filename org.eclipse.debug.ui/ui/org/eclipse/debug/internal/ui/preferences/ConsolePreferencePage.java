@@ -24,7 +24,7 @@ import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
 /**
  * A page to set the preferences for the console
  */
-public class ConsolePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage, IDebugPreferenceConstants {
+public class ConsolePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	/**
 	 * Create the console page.
 	 */
@@ -49,16 +49,18 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	 */
 	public void createFieldEditors() {
 		
-		addField(new BooleanFieldEditor(CONSOLE_OPEN_ON_OUT, DebugPreferencesMessages.getString("ConsolePreferencePage.Show_&Console_View_when_there_is_program_output_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
-		addField(new BooleanFieldEditor(CONSOLE_OPEN_ON_ERR, DebugPreferencesMessages.getString("ConsolePreferencePage.Show_&Console_View_when_there_is_program_error_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_WRAP, DebugPreferencesMessages.getString("Wrap_text_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		
+		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT, DebugPreferencesMessages.getString("ConsolePreferencePage.Show_&Console_View_when_there_is_program_output_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR, DebugPreferencesMessages.getString("ConsolePreferencePage.Show_&Console_View_when_there_is_program_error_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 
 		// Note: first String value is the key for the preference bundle and second the
 		// second String value is the label displayed in front of the editor.
-		ColorFieldEditor sysout= new ColorFieldEditor(CONSOLE_SYS_OUT_RGB, DebugPreferencesMessages.getString("ConsolePreferencePage.Standard_Out__2"), getFieldEditorParent()); //$NON-NLS-1$
-		ColorFieldEditor syserr= new ColorFieldEditor(CONSOLE_SYS_ERR_RGB, DebugPreferencesMessages.getString("ConsolePreferencePage.Standard_Error__3"), getFieldEditorParent()); //$NON-NLS-1$
-		ColorFieldEditor sysin= new ColorFieldEditor(CONSOLE_SYS_IN_RGB, DebugPreferencesMessages.getString("ConsolePreferencePage.Standard_In__4"), getFieldEditorParent()); //$NON-NLS-1$
+		ColorFieldEditor sysout= new ColorFieldEditor(IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB, DebugPreferencesMessages.getString("ConsolePreferencePage.Standard_Out__2"), getFieldEditorParent()); //$NON-NLS-1$
+		ColorFieldEditor syserr= new ColorFieldEditor(IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB, DebugPreferencesMessages.getString("ConsolePreferencePage.Standard_Error__3"), getFieldEditorParent()); //$NON-NLS-1$
+		ColorFieldEditor sysin= new ColorFieldEditor(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB, DebugPreferencesMessages.getString("ConsolePreferencePage.Standard_In__4"), getFieldEditorParent()); //$NON-NLS-1$
 		
-		WorkbenchChainedTextFontFieldEditor editor= new WorkbenchChainedTextFontFieldEditor(CONSOLE_FONT,
+		WorkbenchChainedTextFontFieldEditor editor= new WorkbenchChainedTextFontFieldEditor(IDebugPreferenceConstants.CONSOLE_FONT,
 				DebugPreferencesMessages.getString("ConsolePreferencePage.Console_font_setting___5"), getFieldEditorParent()); //$NON-NLS-1$
 		
 		addField(sysout);
@@ -78,18 +80,19 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	 */
 	public static FontData getConsoleFontData() {
 		IPreferenceStore pstore= DebugUIPlugin.getDefault().getPreferenceStore();
-		FontData fontData= PreferenceConverter.getFontData(pstore, CONSOLE_FONT);
+		FontData fontData= PreferenceConverter.getFontData(pstore, IDebugPreferenceConstants.CONSOLE_FONT);
 		return fontData;
 	}
 	
 	public static void initDefaults(IPreferenceStore store) {
+		store.setDefault(IDebugPreferenceConstants.CONSOLE_WRAP, false);
 		store.setDefault(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT, true);
 		store.setDefault(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR, true);
-		WorkbenchChainedTextFontFieldEditor.startPropagate(store, CONSOLE_FONT);
+		WorkbenchChainedTextFontFieldEditor.startPropagate(store, IDebugPreferenceConstants.CONSOLE_FONT);
 		
-		PreferenceConverter.setDefault(store, CONSOLE_SYS_OUT_RGB, new RGB(0, 0, 255));
-		PreferenceConverter.setDefault(store, CONSOLE_SYS_IN_RGB, new RGB(0, 200, 125));
-		PreferenceConverter.setDefault(store, CONSOLE_SYS_ERR_RGB, new RGB(255, 0, 0));
+		PreferenceConverter.setDefault(store, IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB, new RGB(0, 0, 255));
+		PreferenceConverter.setDefault(store, IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB, new RGB(0, 200, 125));
+		PreferenceConverter.setDefault(store, IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB, new RGB(255, 0, 0));
 	}
 		
 	/**

@@ -33,6 +33,11 @@ public interface IDebugPreferenceConstants {
 	public static final String CONSOLE_FONT= "Console.font"; //$NON-NLS-1$
 	
 	/**
+	 * (boolean) Whether or not the text in the console will wrap
+	 */
+	public static final String CONSOLE_WRAP= "Console.wrap"; //$NON-NLS-1$
+	
+	/**
 	 * (boolean) Whether or not the console view is shown 
 	 * when there is program output.
   	 */
