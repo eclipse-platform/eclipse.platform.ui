@@ -36,7 +36,9 @@ import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.internal.commands.ActionService;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
+import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.part.WorkbenchPart;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * <code>PartSite</code> is the general implementation for an
@@ -326,6 +328,18 @@ public class PartSite implements IWorkbenchPartSite {
 			job.addJobChangeListener((IJobChangeListener) partListener);
 		
 		job.schedule(delay);
+	}
+	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (IWorkbenchSiteProgressService.class.equals(adapter))
+			return new WorkbenchSiteProgressService(this);
+		else
+			return null;
+		
 	}
 
 }

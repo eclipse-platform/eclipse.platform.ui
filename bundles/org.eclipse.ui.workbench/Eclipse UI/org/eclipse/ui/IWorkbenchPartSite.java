@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 
@@ -19,7 +20,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * This interface is not intended to be implemented or extended by clients.
  * </p>
  */
-public interface IWorkbenchPartSite extends IWorkbenchSite {
+public interface IWorkbenchPartSite extends IWorkbenchSite, IAdaptable {
 	
 
 /**
@@ -31,6 +32,7 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
  *
  * @return the registry extension id
  */
+	
 public String getId();
 /**
  * Returns the unique identifier of the plug-in that defines this workbench
