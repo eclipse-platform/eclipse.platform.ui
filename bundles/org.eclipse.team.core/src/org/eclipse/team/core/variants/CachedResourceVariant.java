@@ -95,7 +95,7 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 				contents = getContents();
 				return contentTypeManager.getDescriptionFor(contents, getName(), IContentDescription.ALL);
 			} catch (IOException e) {
-				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.FAILED_DESCRIBING_CONTENTS, "As error occurred computing the content type of resource variant {0}" + getFullPath(), e));
+				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.FAILED_DESCRIBING_CONTENTS, Policy.bind("CachedResourceVariant.1", getFullPath().toString()), e)); //$NON-NLS-1$
 			} finally {
 				if (contents != null)
 					try {
