@@ -166,7 +166,7 @@ String validateDestination(IPath destination, List sourceResources) {
 	if (root.exists(destination)) {
 		IContainer container = (IContainer) root.findMember(destination);
 		if (isDestinationSameAsSource(container, sourceResources)) {
-			return "The source and destination are the same.";
+			return WorkbenchMessages.getString("MoveResourceAction.sameSourceAndDest"); //$NON-NLS-1$
 		}
 	}
 	return super.validateDestination(destination, sourceResources);

@@ -128,7 +128,7 @@ boolean confirmDeleteNonProjects() {
  *  if the deletion should be abandoned
  */
 boolean confirmDeleteProjects() {
-	String title = WorkbenchMessages.getString("DeleteResourceAction.titleProject");
+	String title = WorkbenchMessages.getString("DeleteResourceAction.titleProject"); //$NON-NLS-1$
 	List resources = getSelectedResources();
 	String msg;
 	if (resources.size() == 1) {
@@ -162,7 +162,7 @@ boolean confirmDeleteProjects() {
  * Deletes the given resources.
  */
 void delete(IResource[] resourcesToDelete, IProgressMonitor monitor) throws CoreException {
-	monitor.beginTask("", resourcesToDelete.length);
+	monitor.beginTask("", resourcesToDelete.length); //$NON-NLS-1$
 	for (int i = 0; i < resourcesToDelete.length; ++i) {
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
