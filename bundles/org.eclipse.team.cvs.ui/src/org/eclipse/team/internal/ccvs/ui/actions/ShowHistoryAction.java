@@ -65,7 +65,7 @@ public class ShowHistoryAction extends TeamAction {
 					view.showHistory(files[0]);
 				}
 			}
-		}, Policy.bind("ShowHistoryAction.showHistory"), this.PROGRESS_DIALOG);
+		}, Policy.bind("ShowHistoryAction.showHistory"), this.PROGRESS_BUSYCURSOR);
 	}
 	/*
 	 * @see TeamAction#isEnabled()
