@@ -45,7 +45,9 @@ public class LaunchConfigurationTypePropertyPage extends PropertyPage {
 		}
 		
 		Composite topComp = new Composite(parent, SWT.NONE);
-		GridLayout topLayout = new GridLayout();		
+		GridLayout topLayout = new GridLayout();
+		topLayout.marginHeight = 0;
+		topLayout.marginWidth = 0;		
 		topComp.setLayout(topLayout);
 		
 		setSelectLabel(new Label(topComp, SWT.NONE));
