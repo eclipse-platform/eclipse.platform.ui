@@ -578,6 +578,8 @@ public class JobManager implements IJobManager {
 			//TODO: report blockage before starting
 			monitor.beginTask(Policy.bind("jobs.blocked0"), jobCount); //$NON-NLS-1$
 			monitor.subTask(Policy.bind("jobs.waitFamSub", Integer.toString(jobCount))); //$NON-NLS-1$
+			Job blocking = jobCount == 1 ? (Job)jobs.iterator().next() : null;
+			reportBlocked(monitor, blocking);
 			int jobsLeft;
 			int reportedWorkDone = 0;
 			while ((jobsLeft = jobs.size()) > 0) {
@@ -598,6 +600,7 @@ public class JobManager implements IJobManager {
 				Thread.sleep(100);
 			}
 		} finally {
+			reportUnblocked(monitor);
 			monitor.done();
 			removeJobChangeListener(listener);
 		}
@@ -675,6 +678,39 @@ public class JobManager implements IJobManager {
 	 */
 	public void removeJobChangeListener(IJobChangeListener listener) {
 		jobListeners.remove(listener);
+	}
+
+	/**
+	 * Report to the progress monitor that this thread is blocked, supplying
+	 * an information message, and if possible the job that is causing the blockage.
+	 * Important: An invocation of this method MUST be followed eventually be
+	 * an invocation of reportUnblocked.
+	 * @param monitor The monitor to report blocking to
+	 * @param blockingJob The job that is blocking this thread, or <code>null</code>
+	 * @see #reportUnblocked
+	 */
+	final void reportBlocked(IProgressMonitor monitor, InternalJob blockingJob) {
+		if (!(monitor instanceof IProgressMonitorWithBlocking))
+			return;
+		IStatus reason;
+		if (blockingJob == null || blockingJob instanceof ThreadJob || blockingJob.isSystem()) {
+			reason = new Status(IStatus.INFO, IPlatform.PI_RUNTIME, 1, Policy.bind("jobs.blocked0"), null);//$NON-NLS-1$
+		} else {
+			String msg = Policy.bind("jobs.blocked1", blockingJob.getName()); //$NON-NLS-1$
+			reason = new JobStatus(IStatus.INFO, (Job) blockingJob, msg);
+		}
+		((IProgressMonitorWithBlocking) monitor).setBlocked(reason);
+	}
+
+	/**
+	 * Reports that this thread was blocked, but is no longer blocked and is able
+	 * to proceed.
+	 * @param monitor The monitor to report unblocking to.
+	 * @see #reportBlocked
+	 */
+	final void reportUnblocked(IProgressMonitor monitor) {
+		if (monitor instanceof IProgressMonitorWithBlocking)
+			((IProgressMonitorWithBlocking) monitor).clearBlocked();
 	}
 
 	/*(non-Javadoc)

@@ -147,7 +147,7 @@ class ImplicitJobs {
 			//lock listener decided to grant immediate access
 			if (!manager.getLockManager().aboutToWait(blocker)) {
 				try {
-					reportBlocked(monitor, blockingJob);
+					waitStart(monitor, blockingJob);
 					while (true) {
 						if (isCanceled(monitor))
 							throw new OperationCanceledException();
@@ -169,7 +169,7 @@ class ImplicitJobs {
 						}
 					}
 				} finally {
-					reportUnblocked(monitor);
+					waitEnd(monitor);
 				}
 			}
 			manager.getLockManager().aboutToRelease();
@@ -227,44 +227,6 @@ class ImplicitJobs {
 			return true;
 		}
 
-		/**
-		 * Report to the progress monitor that this thread is blocked, supplying
-		 * an information message, and if possible the job that is causing the blockage.
-		 * @param monitor The monitor to report blocking to
-		 * @param blockingJob The job that is blocking this thread, or <code>null</code>
-		 */
-		private void reportBlocked(IProgressMonitor monitor, InternalJob blockingJob) {
-			manager.getLockManager().addLockWaitThread(Thread.currentThread(), getRule());
-			if (!(monitor instanceof IProgressMonitorWithBlocking))
-				return;
-			IStatus reason;
-			if (blockingJob == null || blockingJob instanceof ThreadJob || blockingJob.isSystem()) {
-				reason = new Status(IStatus.INFO, IPlatform.PI_RUNTIME, 1, Policy.bind("jobs.blocked0"), null);//$NON-NLS-1$
-			} else {
-				String msg = Policy.bind("jobs.blocked1", blockingJob.getName()); //$NON-NLS-1$
-				reason = new JobStatus(IStatus.INFO, (Job) blockingJob, msg);
-			}
-			((IProgressMonitorWithBlocking) monitor).setBlocked(reason);
-		}
-
-		/**
-		 * Reports that this thread was blocked, but is no longer blocked and is able
-		 * to proceed.
-		 * @param monitor The monitor to report unblocking to.
-		 */
-		private void reportUnblocked(IProgressMonitor monitor) {
-			if (isRunning()) {
-				manager.getLockManager().addLockThread(Thread.currentThread(), getRule());
-				//need to reaquire any locks that were suspended while this thread was blocked on the rule
-				manager.getLockManager().resumeSuspendedLocks(Thread.currentThread());
-			} else {
-				//tell lock manager that this thread gave up waiting
-				manager.getLockManager().removeLockWaitThread(Thread.currentThread(), getRule());
-			}
-			if (monitor instanceof IProgressMonitorWithBlocking)
-				((IProgressMonitorWithBlocking) monitor).clearBlocked();
-		}
-
 		/** (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
@@ -289,6 +251,34 @@ class ImplicitJobs {
 		 */
 		boolean shouldInterrupt() {
 			return realJob == null ? true : !realJob.isSystem();
+		}
+
+		/**
+		 * Reports that this thread was blocked, but is no longer blocked and is able
+		 * to proceed.
+		 * @param monitor The monitor to report unblocking to.
+		 */
+		private void waitEnd(IProgressMonitor monitor) {
+			if (isRunning()) {
+				manager.getLockManager().addLockThread(Thread.currentThread(), getRule());
+				//need to reaquire any locks that were suspended while this thread was blocked on the rule
+				manager.getLockManager().resumeSuspendedLocks(Thread.currentThread());
+			} else {
+				//tell lock manager that this thread gave up waiting
+				manager.getLockManager().removeLockWaitThread(Thread.currentThread(), getRule());
+			}
+			manager.reportUnblocked(monitor);
+		}
+
+		/**
+		 * Indicates the start of a wait on a scheduling rule. Report the
+		 * blockage to the progress manager and update the lock manager.
+		 * @param monitor The monitor to report blocking to
+		 * @param blockingJob The job that is blocking this thread, or <code>null</code>
+		 */
+		private void waitStart(IProgressMonitor monitor, InternalJob blockingJob) {
+			manager.getLockManager().addLockWaitThread(Thread.currentThread(), getRule());
+			manager.reportBlocked(monitor, blockingJob);
 		}
 	}
 
@@ -341,7 +331,7 @@ class ImplicitJobs {
 			//join the thread job outside sync block
 			if (threadJob.acquireRule) {
 				//no need to reaquire any locks because the thread did not wait to get this lock
-				if (manager.runNow(threadJob)) 
+				if (manager.runNow(threadJob))
 					manager.getLockManager().addLockThread(Thread.currentThread(), rule);
 				else
 					threadJob.joinRun(monitor);
