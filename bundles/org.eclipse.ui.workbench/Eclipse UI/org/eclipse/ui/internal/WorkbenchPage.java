@@ -1717,6 +1717,8 @@ public boolean isZoomed() {
 	Perspective persp = getActivePerspective();
 	if (persp == null)
 		return false;
+	if(persp.getPresentation() == null)
+		return false;
 	return persp.getPresentation().isZoomed();
 }
 /**
