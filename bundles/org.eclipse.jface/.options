@@ -6,6 +6,8 @@ org.eclipse.jface/debug=false
 # Log a message if a dialog is opened without a parent
 org.eclipse.jface/debug/dialog/noparent=false
 
+# Show the jface new look for the preferences dialog
+org.eclipse.jface/newlook/preferences/showNewLook=false
 
 # Report when a tool bar contribution item is asked its visibility after being
 # disposed.  TODO Remove this option?  Bug 51000

@@ -45,6 +45,12 @@ public class Policy {
      * A flag to indicate whether actions are being traced.
      */
     public static boolean TRACE_ACTIONS = DEFAULT;
+    
+    /**
+     * A boolean to determine if we are showing the new look preferences
+     * dialog.
+     */
+    public static boolean SHOW_PREFERENCES_NEWLOOK = DEFAULT;
 
     /**
      * A flag to indicate whether toolbars are being traced.
@@ -56,6 +62,7 @@ public class Policy {
             DEBUG_DIALOG_NO_PARENT = getDebugOption("/debug/dialog/noparent"); //$NON-NLS-1$
             TRACE_ACTIONS = getDebugOption("/trace/actions"); //$NON-NLS-1$
             TRACE_TOOLBAR = getDebugOption("/trace/toolbarDisposal"); //$NON-NLS-1$
+            SHOW_PREFERENCES_NEWLOOK = getDebugOption("/newlook/preferences/showNewLook");//$NON-NLS-1$
         }
     }
 
