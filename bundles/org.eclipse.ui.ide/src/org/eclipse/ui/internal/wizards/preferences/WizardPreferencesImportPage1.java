@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IExportedPreferences;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -181,4 +182,12 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 
         super.handleEvent(e);
     }
+	
+    protected String getFileDialogTitle(){
+		return PreferencesMessages.WizardPreferencesImportPage1_title;
+	}
+	
+	protected int getFileDialogStyle() {
+		return SWT.OPEN;
+	}
 }

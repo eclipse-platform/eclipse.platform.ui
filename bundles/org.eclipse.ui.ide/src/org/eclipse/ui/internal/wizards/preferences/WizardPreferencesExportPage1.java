@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -118,4 +119,12 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage
         }
         return true;
     }
+	
+    protected String getFileDialogTitle(){
+		return PreferencesMessages.WizardPreferencesExportPage1_title;
+	}
+	
+	protected int getFileDialogStyle() {
+		return SWT.SAVE;
+	}
 }

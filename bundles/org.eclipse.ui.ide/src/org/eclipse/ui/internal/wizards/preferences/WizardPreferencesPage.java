@@ -610,8 +610,8 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
      * source to import from
      */
     protected void handleDestinationBrowseButtonPressed() {
-        FileDialog dialog = new FileDialog(getContainer().getShell(), SWT.SAVE);
-        dialog.setText(PreferencesMessages.WizardPreferencesExportPage1_saveAs);
+        FileDialog dialog = new FileDialog(getContainer().getShell(), getFileDialogStyle());
+        dialog.setText(getFileDialogTitle());
         dialog.setFilterPath(getDestinationValue());
         dialog.setFilterExtensions(new String[] { "*.epf" }); //$NON-NLS-1$
         String selectedFileName = dialog.open();
@@ -620,7 +620,11 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
             setDestinationValue(selectedFileName);
     }
 
-    /**
+    protected abstract String getFileDialogTitle();
+	protected abstract int getFileDialogStyle();
+	
+
+	/**
      * Handle all events and enablements for widgets in this page
      * 
      * @param e

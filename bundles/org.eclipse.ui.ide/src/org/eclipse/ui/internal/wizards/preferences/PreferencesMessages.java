@@ -21,7 +21,7 @@ public class PreferencesMessages extends NLS {
 	public static String WizardPreferencesExportPage1_preferences;
 	public static String WizardPreferencesExportPage1_noPrefFile;
 	public static String WizardPreferencesExportPage1_overwrite;
-	public static String WizardPreferencesExportPage1_saveAs;
+	public static String WizardPreferencesExportPage1_title;
 	public static String WizardPreferencesExportPage1_all;
 	public static String WizardPreferencesExportPage1_choose;
 	public static String WizardPreferencesExportPage1_file;
@@ -31,6 +31,7 @@ public class PreferencesMessages extends NLS {
 	public static String WizardPreferencesImportPage1_all;
 	public static String WizardPreferencesImportPage1_choose;
 	public static String WizardPreferencesImportPage1_file;
+	public static String WizardPreferencesImportPage1_title;
 
 	public static String PreferencesExport_error;
 	public static String PreferencesExport_browse;
