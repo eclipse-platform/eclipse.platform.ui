@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.ui.activities.CategoryEvent;
-import org.eclipse.ui.activities.IActivityBinding;
 import org.eclipse.ui.activities.ICategory;
+import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.activities.ICategoryListener;
 import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
@@ -26,14 +26,12 @@ final class Category implements ICategory {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = Category.class.getName().hashCode();
-
-	private Set activityBindings;
-	private transient IActivityBinding[] activityBindingsAsArray;
 	private MutableActivityManager activityManager;
+	private Set categoryActivityBindings;
+	private transient ICategoryActivityBinding[] categoryActivityBindingsAsArray;
 	private List categoryListeners;
 	private boolean defined;
 	private String description;
-
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private String id;
@@ -65,8 +63,8 @@ final class Category implements ICategory {
 		Category castedObject = (Category) object;
 		int compareTo =
 			Util.compare(
-				(Comparable[]) activityBindingsAsArray,
-				(Comparable[]) castedObject.activityBindingsAsArray);
+				(Comparable[]) categoryActivityBindingsAsArray,
+				(Comparable[]) castedObject.categoryActivityBindingsAsArray);
 
 		if (compareTo == 0) {
 			compareTo = Util.compare(defined, castedObject.defined);
@@ -92,7 +90,10 @@ final class Category implements ICategory {
 
 		Category castedObject = (Category) object;
 		boolean equals = true;
-		equals &= Util.equals(activityBindings, castedObject.activityBindings);
+		equals
+			&= Util.equals(
+				categoryActivityBindings,
+				castedObject.categoryActivityBindings);
 		equals &= Util.equals(defined, castedObject.defined);
 		equals &= Util.equals(description, castedObject.description);
 		equals &= Util.equals(id, castedObject.id);
@@ -110,8 +111,8 @@ final class Category implements ICategory {
 					categoryEvent);
 	}
 
-	public Set getActivityBindings() {
-		return activityBindings;
+	public Set getCategoryActivityBindings() {
+		return categoryActivityBindings;
 	}
 
 	public String getDescription() throws NotDefinedException {
@@ -135,7 +136,9 @@ final class Category implements ICategory {
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityBindings);
+			hashCode =
+				hashCode * HASH_FACTOR
+					+ Util.hashCode(categoryActivityBindings);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
@@ -161,15 +164,23 @@ final class Category implements ICategory {
 			activityManager.getCategoriesWithListeners().remove(this);
 	}
 
-	boolean setActivityBindings(Set activityBindings) {
-		activityBindings =
-			Util.safeCopy(activityBindings, IActivityBinding.class);
+	boolean setCategoryActivityBindings(Set categoryActivityBindings) {
+		categoryActivityBindings =
+			Util.safeCopy(
+				categoryActivityBindings,
+				ICategoryActivityBinding.class);
 
-		if (!Util.equals(activityBindings, this.activityBindings)) {
-			this.activityBindings = activityBindings;
-			this.activityBindingsAsArray =
-				(IActivityBinding[]) this.activityBindings.toArray(
-					new IActivityBinding[this.activityBindings.size()]);
+		if (!Util
+			.equals(categoryActivityBindings, this.categoryActivityBindings)) {
+			this.categoryActivityBindings = categoryActivityBindings;
+			this.categoryActivityBindingsAsArray =
+				(
+					ICategoryActivityBinding[]) this
+						.categoryActivityBindings
+						.toArray(
+					new ICategoryActivityBinding[this
+						.categoryActivityBindings
+						.size()]);
 			hashCodeComputed = false;
 			hashCode = 0;
 			string = null;
@@ -219,7 +230,7 @@ final class Category implements ICategory {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
-			stringBuffer.append(activityBindings);
+			stringBuffer.append(categoryActivityBindings);
 			stringBuffer.append(',');
 			stringBuffer.append(defined);
 			stringBuffer.append(',');

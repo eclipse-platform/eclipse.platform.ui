@@ -33,7 +33,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.activities.IActivityBinding;
+import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.IMutableActivityManager;
 
@@ -152,10 +152,10 @@ public class ActivityEnabler {
 	 */
 	private Collection getCategoryActivities(String categoryId) {
 		ICategory category = activityManager.getCategory(categoryId);
-		Set activityBindings = category.getActivityBindings();
+		Set activityBindings = category.getCategoryActivityBindings();
 		List categoryActivities = new ArrayList(10);
 		for (Iterator j = activityBindings.iterator(); j.hasNext();) {
-			IActivityBinding binding = (IActivityBinding) j.next();
+			ICategoryActivityBinding binding = (ICategoryActivityBinding) j.next();
 			String activityId = binding.getActivityId();
 			categoryActivities.add(activityId);
 		}

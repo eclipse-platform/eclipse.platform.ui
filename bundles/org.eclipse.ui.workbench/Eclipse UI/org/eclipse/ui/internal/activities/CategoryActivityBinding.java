@@ -11,41 +11,46 @@
 
 package org.eclipse.ui.internal.activities;
 
-import org.eclipse.ui.activities.IActivityBinding;
+import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.internal.util.Util;
 
-final class ActivityBinding implements IActivityBinding {
+final class CategoryActivityBinding implements ICategoryActivityBinding {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
-		ActivityBinding.class.getName().hashCode();
-
+		CategoryActivityBinding.class.getName().hashCode();
 	private String activityId;
-
+	private String categoryId;
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	ActivityBinding(String activityId) {
-		if (activityId == null)
+	CategoryActivityBinding(String activityId, String categoryId) {
+		if (activityId == null || categoryId == null)
 			throw new NullPointerException();
 
 		this.activityId = activityId;
+		this.categoryId = categoryId;
 	}
 
 	public int compareTo(Object object) {
-		ActivityBinding castedObject = (ActivityBinding) object;
+		CategoryActivityBinding castedObject = (CategoryActivityBinding) object;
 		int compareTo = Util.compare(activityId, castedObject.activityId);
+
+		if (compareTo == 0)
+			compareTo = Util.compare(categoryId, castedObject.categoryId);
+
 		return compareTo;
 	}
 
 	public boolean equals(Object object) {
-		if (!(object instanceof ActivityBinding))
+		if (!(object instanceof CategoryActivityBinding))
 			return false;
 
-		ActivityBinding castedObject = (ActivityBinding) object;
+		CategoryActivityBinding castedObject = (CategoryActivityBinding) object;
 		boolean equals = true;
 		equals &= Util.equals(activityId, castedObject.activityId);
+		equals &= Util.equals(categoryId, castedObject.categoryId);
 		return equals;
 	}
 
@@ -53,10 +58,15 @@ final class ActivityBinding implements IActivityBinding {
 		return activityId;
 	}
 
+	public String getCategoryId() {
+		return categoryId;
+	}
+
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
 			hashCodeComputed = true;
 		}
 
@@ -68,6 +78,8 @@ final class ActivityBinding implements IActivityBinding {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
 			stringBuffer.append(activityId);
+			stringBuffer.append(',');
+			stringBuffer.append(categoryId);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}

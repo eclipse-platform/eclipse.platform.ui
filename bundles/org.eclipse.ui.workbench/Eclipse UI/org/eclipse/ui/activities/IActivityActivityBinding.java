@@ -13,8 +13,8 @@ package org.eclipse.ui.activities;
 
 /**
  * <p>
- * An instance of <code>IActivityBinding</code> represents a binding between
- * a category and an activity.
+ * An instance of <code>IActivityActivityBinding</code> represents a binding
+ * between an activity and a activity.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -24,15 +24,25 @@ package org.eclipse.ui.activities;
  * </p>
  * 
  * @since 3.0
- * @see IActivity
- * @see ICategory
+ * @see org.eclipse.ui.activities.IActivity
  */
-public interface IActivityBinding extends Comparable {
+public interface IActivityActivityBinding extends Comparable {
 
 	/**
-	 * Returns the identifier of the activity represented in this binding.
+	 * Returns the identifier of the child activity represented in this
+	 * binding.
 	 * 
-	 * @return the identifier of the activity. Guaranteed not to be <code>null</code>.
+	 * @return the identifier of the child activity represented in this
+	 *         binding. Guaranteed not to be <code>null</code>.
 	 */
-	String getActivityId();
+	String getChildActivityId();
+
+	/**
+	 * Returns the identifier of the parent activity represented in this
+	 * binding.
+	 * 
+	 * @return the identifier of the parent activity represented in this
+	 *         binding. Guaranteed not to be <code>null</code>.
+	 */
+	String getParentActivityId();
 }

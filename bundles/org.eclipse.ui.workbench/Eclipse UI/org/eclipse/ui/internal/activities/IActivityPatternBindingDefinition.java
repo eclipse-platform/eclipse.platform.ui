@@ -11,13 +11,11 @@
 
 package org.eclipse.ui.internal.activities;
 
-public interface IPatternBindingDefinition extends Comparable {
+public interface IActivityPatternBindingDefinition extends Comparable {
 
 	String getActivityId();
 
 	String getPattern();
 
 	String getPluginId();
-
-	boolean isInclusive();
 }

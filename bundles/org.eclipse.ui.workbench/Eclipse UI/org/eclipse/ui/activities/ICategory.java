@@ -1,29 +1,29 @@
- /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- ******************************************************************************/
+/*******************************************************************************
+* Copyright (c) 2000, 2003 IBM Corporation and others.
+* All rights reserved. This program and the accompanying materials 
+* are made available under the terms of the Common Public License v1.0
+* which accompanies this distribution, and is available at
+* http://www.eclipse.org/legal/cpl-v10.html
+* 
+* Contributors:
+*     IBM Corporation - initial API and implementation
+******************************************************************************/
 
 package org.eclipse.ui.activities;
 
 import java.util.Set;
 
-
 /**
  * <p>
- * An instance of <code>ICategory</code> is a handle representing an category as
- * defined by the extension point <code>org.eclipse.ui.activities</code>. The
- * identifier of the handle is identifier of the category being represented.
+ * An instance of <code>ICategory</code> is a handle representing an category
+ * as defined by the extension point <code>org.eclipse.ui.activities</code>.
+ * The identifier of the handle is identifier of the category being
+ * represented.
  * </p>
  * <p>
  * An instance of <code>ICategory</code> can be obtained from an instance of
- * <code>ICategoryManager</code> for any identifier, whether or not a category with
- * that identifier is defined in the plugin registry.
+ * <code>ICategoryManager</code> for any identifier, whether or not a
+ * category with that identifier is defined in the plugin registry.
  * </p>
  * <p>
  * The handle-based nature of this API allows it to work well with runtime
@@ -52,33 +52,34 @@ public interface ICategory extends Comparable {
 	 * @param categoryListener
 	 *            the instance of <code>ICategoryListener</code> to register.
 	 *            Must not be <code>null</code>. If an attempt is made to
-	 *            register an instance of <code>ICategoryListener</code> which is
-	 *            already registered with this instance, no operation is
-	 *            performed.
+	 *            register an instance of <code>ICategoryListener</code>
+	 *            which is already registered with this instance, no operation
+	 *            is performed.
 	 */
 	void addCategoryListener(ICategoryListener categoryListener);
 
 	/**
 	 * <p>
-	 * Returns the set of activity bindings for this handle. This method will
-	 * return all activity bindings for this handle's identifier, whether or
-	 * not the category represented by this handle is defined.
+	 * Returns the set of category activity bindings for this handle. This
+	 * method will return all category activity bindings for this handle's
+	 * identifier, whether or not the category represented by this handle is
+	 * defined.
 	 * </p>
 	 * <p>
 	 * Notification is set to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
-	 * @return the set of activity bindings. This set may be empty, but is
-	 *         guaranteed not to be <code>null</code>. If this set is not
-	 *         empty, it is guaranteed to only contain instances of <code>IActivityBinding</code>.
+	 * @return the set of category activity bindings. This set may be empty,
+	 *         but is guaranteed not to be <code>null</code>. If this set is
+	 *         not empty, it is guaranteed to only contain instances of <code>ICategoryActivityBinding</code>.
 	 */
-	Set getActivityBindings();
+	Set getCategoryActivityBindings();
 
 	/**
 	 * <p>
-	 * Returns the description of the category represented by this handle, suitable
-	 * for display to the user.
+	 * Returns the description of the category represented by this handle,
+	 * suitable for display to the user.
 	 * </p>
 	 * <p>
 	 * Notification is set to all registered listeners if this attribute
@@ -101,16 +102,16 @@ public interface ICategory extends Comparable {
 
 	/**
 	 * <p>
-	 * Returns the name of the category represented by this handle, suitable for
-	 * display to the user.
+	 * Returns the name of the category represented by this handle, suitable
+	 * for display to the user.
 	 * </p>
 	 * <p>
 	 * Notification is set to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
-	 * @return the name of the category represented by this handle. Guaranteed not
-	 *         to be <code>null</code>.
+	 * @return the name of the category represented by this handle. Guaranteed
+	 *         not to be <code>null</code>.
 	 * @throws NotDefinedException
 	 *             if the category represented by this handle is not defined.
 	 */
@@ -118,28 +119,29 @@ public interface ICategory extends Comparable {
 
 	/**
 	 * <p>
-	 * Returns whether or not the category represented by this handle is defined.
+	 * Returns whether or not the category represented by this handle is
+	 * defined.
 	 * </p>
 	 * <p>
 	 * Notification is set to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
-	 * @return <code>true</code>, iff the category represented by this handle is
-	 *         defined.
+	 * @return <code>true</code>, iff the category represented by this
+	 *         handle is defined.
 	 */
 	boolean isDefined();
 
 	/**
-	 * Unregisters an instance of <code>ICategoryListener</code> listening for
-	 * changes to attributes of this instance.
+	 * Unregisters an instance of <code>ICategoryListener</code> listening
+	 * for changes to attributes of this instance.
 	 * 
 	 * @param categoryListener
-	 *            the instance of <code>ICategoryListener</code> to unregister.
-	 *            Must not be <code>null</code>. If an attempt is made to
-	 *            unregister an instance of <code>ICategoryListener</code> which
-	 *            is not already registered with this instance, no operation is
-	 *            performed.
+	 *            the instance of <code>ICategoryListener</code> to
+	 *            unregister. Must not be <code>null</code>. If an attempt
+	 *            is made to unregister an instance of <code>ICategoryListener</code>
+	 *            which is not already registered with this instance, no
+	 *            operation is performed.
 	 */
 	void removeCategoryListener(ICategoryListener categoryListener);
 }

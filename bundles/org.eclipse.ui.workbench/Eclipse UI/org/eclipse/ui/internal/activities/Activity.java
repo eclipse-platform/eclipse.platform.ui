@@ -14,11 +14,13 @@ package org.eclipse.ui.internal.activities;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.ui.activities.ActivityEvent;
 import org.eclipse.ui.activities.IActivity;
+import org.eclipse.ui.activities.IActivityActivityBinding;
 import org.eclipse.ui.activities.IActivityListener;
-import org.eclipse.ui.activities.IPatternBinding;
+import org.eclipse.ui.activities.IActivityPatternBinding;
 import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
 
@@ -26,20 +28,20 @@ final class Activity implements IActivity {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = Activity.class.getName().hashCode();
-
+	private Set activityActivityBindings;
+	private transient IActivityActivityBinding[] activityActivityBindingsAsArray;
 	private List activityListeners;
 	private MutableActivityManager activityManager;
+	private Set activityPatternBindings;
+	private transient IActivityPatternBinding[] activityPatternBindingsAsArray;
 	private boolean defined;
 	private String description;
 	private boolean enabled;
-
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private String id;
 	private String name;
 	private String parentId;
-	private List patternBindings;
-	private transient IPatternBinding[] patternBindingsAsArray;
 	private transient String string;
 
 	Activity(MutableActivityManager activityManager, String id) {
@@ -65,31 +67,41 @@ final class Activity implements IActivity {
 
 	public int compareTo(Object object) {
 		Activity castedObject = (Activity) object;
-		int compareTo = Util.compare(defined, castedObject.defined);
+
+		int compareTo =
+			Util.compare(
+				(Comparable[]) activityActivityBindingsAsArray,
+				(Comparable[]) castedObject.activityActivityBindingsAsArray);
 
 		if (compareTo == 0) {
-			compareTo = Util.compare(description, castedObject.description);
+			compareTo =
+				Util.compare(
+					(Comparable[]) activityPatternBindingsAsArray,
+					(Comparable[]) castedObject.activityPatternBindingsAsArray);
 
 			if (compareTo == 0) {
-				compareTo = Util.compare(enabled, castedObject.enabled);
+				compareTo = Util.compare(defined, castedObject.defined);
 
 				if (compareTo == 0) {
-					compareTo = Util.compare(id, castedObject.id);
+					compareTo =
+						Util.compare(description, castedObject.description);
 
 					if (compareTo == 0) {
-						compareTo = Util.compare(name, castedObject.name);
+						compareTo = Util.compare(enabled, castedObject.enabled);
 
 						if (compareTo == 0) {
-							compareTo =
-								Util.compare(parentId, castedObject.parentId);
+							compareTo = Util.compare(id, castedObject.id);
 
-							if (compareTo == 0)
+							if (compareTo == 0) {
 								compareTo =
-									Util.compare(
-										(Comparable[]) patternBindingsAsArray,
-										(
-											Comparable[]) castedObject
-												.patternBindingsAsArray);
+									Util.compare(name, castedObject.name);
+
+								if (compareTo == 0)
+									compareTo =
+										Util.compare(
+											parentId,
+											castedObject.parentId);
+							}
 						}
 					}
 				}
@@ -105,13 +117,20 @@ final class Activity implements IActivity {
 
 		Activity castedObject = (Activity) object;
 		boolean equals = true;
+		equals
+			&= Util.equals(
+				activityActivityBindings,
+				castedObject.activityActivityBindings);
+		equals
+			&= Util.equals(
+				activityPatternBindings,
+				castedObject.activityPatternBindings);
 		equals &= Util.equals(defined, castedObject.defined);
 		equals &= Util.equals(description, castedObject.description);
 		equals &= Util.equals(enabled, castedObject.enabled);
 		equals &= Util.equals(id, castedObject.id);
 		equals &= Util.equals(name, castedObject.name);
 		equals &= Util.equals(parentId, castedObject.parentId);
-		equals &= Util.equals(patternBindings, castedObject.patternBindings);
 		return equals;
 	}
 
@@ -123,6 +142,14 @@ final class Activity implements IActivity {
 			for (int i = 0; i < activityListeners.size(); i++)
 				((IActivityListener) activityListeners.get(i)).activityChanged(
 					activityEvent);
+	}
+
+	public Set getActivityActivityBindings() {
+		return activityActivityBindings;
+	}
+
+	public Set getActivityPatternBindings() {
+		return activityPatternBindings;
 	}
 
 	public String getDescription() throws NotDefinedException {
@@ -150,20 +177,20 @@ final class Activity implements IActivity {
 		return parentId;
 	}
 
-	public List getPatternBindings() {
-		return patternBindings;
-	}
-
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
+			hashCode =
+				hashCode * HASH_FACTOR
+					+ Util.hashCode(activityActivityBindings);
+			hashCode =
+				hashCode * HASH_FACTOR + Util.hashCode(activityPatternBindings);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(patternBindings);
 			hashCodeComputed = true;
 		}
 
@@ -178,25 +205,22 @@ final class Activity implements IActivity {
 		return enabled;
 	}
 
-	public boolean match(String string) {
-		boolean match = false;
-
+	public boolean isMatch(String string) {
 		if (isDefined())
-			for (Iterator iterator = patternBindings.iterator();
+			for (Iterator iterator = activityPatternBindings.iterator();
 				iterator.hasNext();
 				) {
-				IPatternBinding patternBinding =
-					(IPatternBinding) iterator.next();
+				IActivityPatternBinding activityPatternBinding =
+					(IActivityPatternBinding) iterator.next();
 
-				if (patternBinding.isInclusive() && !match)
-					match =
-						patternBinding.getPattern().matcher(string).matches();
-				else if (!patternBinding.isInclusive() && match)
-					match =
-						!patternBinding.getPattern().matcher(string).matches();
+				if (activityPatternBinding
+					.getPattern()
+					.matcher(string)
+					.matches())
+					return true;
 			}
 
-		return match;
+		return false;
 	}
 
 	public void removeActivityListener(IActivityListener activityListener) {
@@ -208,6 +232,58 @@ final class Activity implements IActivity {
 
 		if (activityListeners.isEmpty())
 			activityManager.getActivitiesWithListeners().remove(this);
+	}
+
+	boolean setActivityActivityBindings(Set activityActivityBindings) {
+		activityActivityBindings =
+			Util.safeCopy(
+				activityActivityBindings,
+				IActivityActivityBinding.class);
+
+		if (!Util
+			.equals(activityActivityBindings, this.activityActivityBindings)) {
+			this.activityActivityBindings = activityActivityBindings;
+			this.activityActivityBindingsAsArray =
+				(
+					IActivityActivityBinding[]) this
+						.activityActivityBindings
+						.toArray(
+					new IActivityActivityBinding[this
+						.activityActivityBindings
+						.size()]);
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}
+
+		return false;
+	}
+
+	boolean setActivityPatternBindings(Set activityPatternBindings) {
+		activityPatternBindings =
+			Util.safeCopy(
+				activityPatternBindings,
+				IActivityPatternBinding.class);
+
+		if (!Util
+			.equals(activityPatternBindings, this.activityPatternBindings)) {
+			this.activityPatternBindings = activityPatternBindings;
+			this.activityPatternBindingsAsArray =
+				(
+					IActivityPatternBinding[]) this
+						.activityPatternBindings
+						.toArray(
+					new IActivityPatternBinding[this
+						.activityPatternBindings
+						.size()]);
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}
+
+		return false;
 	}
 
 	boolean setDefined(boolean defined) {
@@ -270,27 +346,14 @@ final class Activity implements IActivity {
 		return false;
 	}
 
-	boolean setPatternBindings(List patternBindings) {
-		patternBindings = Util.safeCopy(patternBindings, IPatternBinding.class);
-
-		if (!Util.equals(patternBindings, this.patternBindings)) {
-			this.patternBindings = patternBindings;
-			this.patternBindingsAsArray =
-				(IPatternBinding[]) this.patternBindings.toArray(
-					new IPatternBinding[this.patternBindings.size()]);
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
-
-		return false;
-	}
-
 	public String toString() {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
+			stringBuffer.append(activityActivityBindings);
+			stringBuffer.append(',');
+			stringBuffer.append(activityPatternBindings);
+			stringBuffer.append(',');
 			stringBuffer.append(defined);
 			stringBuffer.append(',');
 			stringBuffer.append(description);
@@ -302,8 +365,6 @@ final class Activity implements IActivity {
 			stringBuffer.append(name);
 			stringBuffer.append(',');
 			stringBuffer.append(parentId);
-			stringBuffer.append(',');
-			stringBuffer.append(patternBindings);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.activities;
+package org.eclipse.ui.internal.activities.service;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -17,12 +17,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.ui.activities.AbstractActivityService;
-import org.eclipse.ui.activities.ActivityServiceEvent;
-import org.eclipse.ui.activities.IActivityService;
-import org.eclipse.ui.activities.IActivityServiceListener;
-import org.eclipse.ui.activities.ICompoundActivityService;
-import org.eclipse.ui.activities.IMutableActivityService;
+import org.eclipse.ui.activities.service.AbstractActivityService;
+import org.eclipse.ui.activities.service.ActivityServiceEvent;
+import org.eclipse.ui.activities.service.IActivityService;
+import org.eclipse.ui.activities.service.IActivityServiceListener;
+import org.eclipse.ui.activities.service.ICompoundActivityService;
+import org.eclipse.ui.activities.service.IMutableActivityService;
 import org.eclipse.ui.internal.util.Util;
 
 public final class CompoundActivityService

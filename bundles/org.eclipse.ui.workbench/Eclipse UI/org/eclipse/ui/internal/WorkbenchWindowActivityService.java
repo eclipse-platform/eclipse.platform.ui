@@ -13,12 +13,12 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.activities.AbstractActivityService;
-import org.eclipse.ui.activities.ActivityServiceEvent;
-import org.eclipse.ui.activities.ActivityServiceFactory;
-import org.eclipse.ui.activities.IActivityService;
-import org.eclipse.ui.activities.IActivityServiceListener;
-import org.eclipse.ui.activities.ICompoundActivityService;
+import org.eclipse.ui.activities.service.AbstractActivityService;
+import org.eclipse.ui.activities.service.ActivityServiceEvent;
+import org.eclipse.ui.activities.service.ActivityServiceFactory;
+import org.eclipse.ui.activities.service.IActivityService;
+import org.eclipse.ui.activities.service.IActivityServiceListener;
+import org.eclipse.ui.activities.service.ICompoundActivityService;
 
 final class WorkbenchWindowActivityService extends AbstractActivityService {
 

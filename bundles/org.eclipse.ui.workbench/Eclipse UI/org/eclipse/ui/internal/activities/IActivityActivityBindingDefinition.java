@@ -9,31 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.activities;
+package org.eclipse.ui.internal.activities;
 
-/**
- * <p>
- * TODO javadoc
- * </p>
- * <p>
- * This interface is not intended to be extended or implemented by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
- * 
- * @since 3.0
- * @see IActivityServiceListener
- */
-public interface ICompoundActivityService extends IActivityService {
+public interface IActivityActivityBindingDefinition extends Comparable {
 
-	/**
-	 * TODO javadoc
-	 */
-	void addActivityService(IActivityService activityService);
-
-	/**
-	 * TODO javadoc
-	 */
-	void removeActivityService(IActivityService activityService);
+	String getChildActivityId();
+	
+	String getParentActivityId();
+	
+	String getPluginId();
 }

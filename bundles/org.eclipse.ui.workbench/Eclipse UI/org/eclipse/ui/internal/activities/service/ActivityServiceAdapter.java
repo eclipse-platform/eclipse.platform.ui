@@ -9,12 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.activities;
+package org.eclipse.ui.internal.activities.service;
 
 import java.util.Set;
 
-import org.eclipse.ui.activities.AbstractActivityService;
-import org.eclipse.ui.activities.IActivityService;
+import org.eclipse.ui.activities.service.AbstractActivityService;
+import org.eclipse.ui.activities.service.IActivityService;
 
 public final class ActivityServiceAdapter extends AbstractActivityService {
 

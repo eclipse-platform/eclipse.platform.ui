@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.activities;
+package org.eclipse.ui.activities.service;
 
 import java.util.Set;
 
@@ -47,7 +47,7 @@ public interface IActivityService {
 	 * Returns the set of identifiers to active activities.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 

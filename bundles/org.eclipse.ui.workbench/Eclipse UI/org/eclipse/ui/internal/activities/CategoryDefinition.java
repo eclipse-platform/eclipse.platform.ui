@@ -37,7 +37,8 @@ final class CategoryDefinition implements Comparable, ICategoryDefinition {
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			Util.assertInstance(object, ICategoryDefinition.class);
-			ICategoryDefinition categoryDefinition = (ICategoryDefinition) object;
+			ICategoryDefinition categoryDefinition =
+				(ICategoryDefinition) object;
 			String id = categoryDefinition.getId();
 
 			if (allowNullIds || id != null)
@@ -59,7 +60,8 @@ final class CategoryDefinition implements Comparable, ICategoryDefinition {
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			Util.assertInstance(object, ICategoryDefinition.class);
-			ICategoryDefinition categoryDefinition = (ICategoryDefinition) object;
+			ICategoryDefinition categoryDefinition =
+				(ICategoryDefinition) object;
 			String name = categoryDefinition.getName();
 
 			if (allowNullNames || name != null) {
@@ -78,7 +80,6 @@ final class CategoryDefinition implements Comparable, ICategoryDefinition {
 	}
 
 	private String description;
-
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private String id;

@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.activities;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -41,7 +41,7 @@ import java.util.List;
  * @since 3.0
  * @see IActivityListener
  * @see IActivityManager
- * @see IPatternBinding
+ * @see IActivityPatternBinding
  */
 public interface IActivity extends Comparable {
 
@@ -60,11 +60,47 @@ public interface IActivity extends Comparable {
 
 	/**
 	 * <p>
+	 * Returns the set of activity activity bindings for this handle. This
+	 * method will return all activity activity bindings for this handle's
+	 * identifier, whether or not the activity represented by this handle is
+	 * defined.
+	 * </p>
+	 * <p>
+	 * Notification is sent to all registered listeners if this attribute
+	 * changes.
+	 * </p>
+	 * 
+	 * @return the set of activity activity bindings. This set may be empty,
+	 *         but is guaranteed not to be <code>null</code>. If this set is
+	 *         not empty, it is guaranteed to only contain instances of <code>IActivityActivityBinding</code>.
+	 */
+	Set getActivityActivityBindings();
+
+	/**
+	 * <p>
+	 * Returns the set of activity pattern bindings for this handle. This
+	 * method will return all activity pattern bindings for this handle's
+	 * identifier, whether or not the activity represented by this handle is
+	 * defined.
+	 * </p>
+	 * <p>
+	 * Notification is sent to all registered listeners if this attribute
+	 * changes.
+	 * </p>
+	 * 
+	 * @return the set of activity pattern bindings. This set may be empty, but
+	 *         is guaranteed not to be <code>null</code>. If this set is not
+	 *         empty, it is guaranteed to only contain instances of <code>IActivityPatternBinding</code>.
+	 */
+	Set getActivityPatternBindings();
+
+	/**
+	 * <p>
 	 * Returns the description of the activity represented by this handle,
 	 * suitable for display to the user.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -88,7 +124,7 @@ public interface IActivity extends Comparable {
 	 * for display to the user.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -105,7 +141,7 @@ public interface IActivity extends Comparable {
 	 * handle.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -118,28 +154,11 @@ public interface IActivity extends Comparable {
 
 	/**
 	 * <p>
-	 * Returns the list of pattern bindings for this handle. This method will
-	 * return all pattern bindings for this handle's identifier, whether or not
-	 * the activity represented by this handle is defined.
-	 * </p>
-	 * <p>
-	 * Notification is set to all registered listeners if this attribute
-	 * changes.
-	 * </p>
-	 * 
-	 * @return the list of pattern bindings. This list may be empty, but is
-	 *         guaranteed not to be <code>null</code>. If this list is not
-	 *         empty, it is guaranteed to only contain instances of <code>IPatternBinding</code>.
-	 */
-	List getPatternBindings();
-
-	/**
-	 * <p>
 	 * Returns whether or not the activity represented by this handle is
 	 * defined.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -155,7 +174,7 @@ public interface IActivity extends Comparable {
 	 * from whence they were brokered.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -166,8 +185,8 @@ public interface IActivity extends Comparable {
 	/**
 	 * TODO javadoc
 	 */
-	boolean match(String string);
-
+	boolean isMatch(String string);
+	
 	/**
 	 * Unregisters an instance of <code>IActivityListener</code> listening
 	 * for changes to attributes of this instance.

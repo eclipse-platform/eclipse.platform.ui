@@ -9,10 +9,10 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.activities;
+package org.eclipse.ui.activities.service;
 
-import org.eclipse.ui.internal.activities.CompoundActivityService;
-import org.eclipse.ui.internal.activities.MutableActivityService;
+import org.eclipse.ui.internal.activities.service.CompoundActivityService;
+import org.eclipse.ui.internal.activities.service.MutableActivityService;
 
 /**
  * <p>

@@ -19,36 +19,41 @@ import java.util.Map;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class ActivityBindingDefinition implements IActivityBindingDefinition {
+final class CategoryActivityBindingDefinition
+	implements ICategoryActivityBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
-		ActivityBindingDefinition.class.getName().hashCode();
+		CategoryActivityBindingDefinition.class.getName().hashCode();
 
-	static Map activityBindingDefinitionsByRoleId(Collection activityBindingDefinitions) {
-		if (activityBindingDefinitions == null)
+	static Map categoryActivityBindingDefinitionsByCategoryId(Collection categoryActivityBindingDefinitions) {
+		if (categoryActivityBindingDefinitions == null)
 			throw new NullPointerException();
 
 		Map map = new HashMap();
-		Iterator iterator = activityBindingDefinitions.iterator();
+		Iterator iterator = categoryActivityBindingDefinitions.iterator();
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IActivityBindingDefinition.class);
-			IActivityBindingDefinition activityBindingDefinition =
-				(IActivityBindingDefinition) object;
-			String roleId = activityBindingDefinition.getRoleId();
+			Util.assertInstance(
+				object,
+				ICategoryActivityBindingDefinition.class);
+			ICategoryActivityBindingDefinition categoryActivityBindingDefinition =
+				(ICategoryActivityBindingDefinition) object;
+			String categoryId =
+				categoryActivityBindingDefinition.getCategoryId();
 
-			if (roleId != null) {
-				Collection activityBindingDefinitions2 =
-					(Collection) map.get(roleId);
+			if (categoryId != null) {
+				Collection categoryActivityBindingDefinitions2 =
+					(Collection) map.get(categoryId);
 
-				if (activityBindingDefinitions2 == null) {
-					activityBindingDefinitions2 = new HashSet();
-					map.put(roleId, activityBindingDefinitions2);
+				if (categoryActivityBindingDefinitions2 == null) {
+					categoryActivityBindingDefinitions2 = new HashSet();
+					map.put(categoryId, categoryActivityBindingDefinitions2);
 				}
 
-				activityBindingDefinitions2.add(activityBindingDefinition);
+				categoryActivityBindingDefinitions2.add(
+					categoryActivityBindingDefinition);
 			}
 		}
 
@@ -56,47 +61,46 @@ final class ActivityBindingDefinition implements IActivityBindingDefinition {
 	}
 
 	private String activityId;
-
+	private String categoryId;
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private String pluginId;
-	private String roleId;
 	private transient String string;
 
-	ActivityBindingDefinition(
+	CategoryActivityBindingDefinition(
 		String activityId,
 		String categoryId,
 		String pluginId) {
 		this.activityId = activityId;
+		this.categoryId = categoryId;
 		this.pluginId = pluginId;
-		this.roleId = categoryId;
 	}
 
 	public int compareTo(Object object) {
-		ActivityBindingDefinition castedObject =
-			(ActivityBindingDefinition) object;
+		CategoryActivityBindingDefinition castedObject =
+			(CategoryActivityBindingDefinition) object;
 		int compareTo = Util.compare(activityId, castedObject.activityId);
 
 		if (compareTo == 0) {
-			compareTo = Util.compare(pluginId, castedObject.pluginId);
+			compareTo = Util.compare(categoryId, castedObject.categoryId);
 
 			if (compareTo == 0)
-				compareTo = Util.compare(roleId, castedObject.roleId);
+				compareTo = Util.compare(pluginId, castedObject.pluginId);
 		}
 
 		return compareTo;
 	}
 
 	public boolean equals(Object object) {
-		if (!(object instanceof ActivityBindingDefinition))
+		if (!(object instanceof CategoryActivityBindingDefinition))
 			return false;
 
-		ActivityBindingDefinition castedObject =
-			(ActivityBindingDefinition) object;
+		CategoryActivityBindingDefinition castedObject =
+			(CategoryActivityBindingDefinition) object;
 		boolean equals = true;
 		equals &= Util.equals(activityId, castedObject.activityId);
+		equals &= Util.equals(categoryId, castedObject.categoryId);
 		equals &= Util.equals(pluginId, castedObject.pluginId);
-		equals &= Util.equals(roleId, castedObject.roleId);
 		return equals;
 	}
 
@@ -104,20 +108,20 @@ final class ActivityBindingDefinition implements IActivityBindingDefinition {
 		return activityId;
 	}
 
-	public String getPluginId() {
-		return pluginId;
+	public String getCategoryId() {
+		return categoryId;
 	}
 
-	public String getRoleId() {
-		return roleId;
+	public String getPluginId() {
+		return pluginId;
 	}
 
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(roleId);
 			hashCodeComputed = true;
 		}
 
@@ -130,9 +134,9 @@ final class ActivityBindingDefinition implements IActivityBindingDefinition {
 			stringBuffer.append('[');
 			stringBuffer.append(activityId);
 			stringBuffer.append(',');
-			stringBuffer.append(pluginId);
+			stringBuffer.append(categoryId);
 			stringBuffer.append(',');
-			stringBuffer.append(roleId);
+			stringBuffer.append(pluginId);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}

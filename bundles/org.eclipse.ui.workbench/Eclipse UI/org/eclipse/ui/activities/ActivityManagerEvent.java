@@ -40,21 +40,23 @@ public final class ActivityManagerEvent {
 	 * 
 	 * @param activityManager
 	 * @param definedActivityIdsChanged
+	 * @param definedCategoryIdsChanged
 	 * @param enabledActivityIdsChanged
+	 * @param enabledCategoryIdsChanged
 	 */
 	public ActivityManagerEvent(
 		IActivityManager activityManager,
 		boolean definedActivityIdsChanged,
-		boolean enabledActivityIdsChanged,
 		boolean definedCategoryIdsChanged,
+		boolean enabledActivityIdsChanged,
 		boolean enabledCategoryIdsChanged) {
 		if (activityManager == null)
 			throw new NullPointerException();
 
 		this.activityManager = activityManager;
 		this.definedActivityIdsChanged = definedActivityIdsChanged;
-		this.enabledActivityIdsChanged = enabledActivityIdsChanged;
 		this.definedCategoryIdsChanged = definedCategoryIdsChanged;
+		this.enabledActivityIdsChanged = enabledActivityIdsChanged;
 		this.enabledCategoryIdsChanged = enabledCategoryIdsChanged;
 	}
 

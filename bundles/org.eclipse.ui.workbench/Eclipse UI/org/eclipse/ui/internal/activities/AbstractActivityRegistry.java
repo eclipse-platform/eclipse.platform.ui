@@ -17,12 +17,13 @@ import java.util.List;
 
 abstract class AbstractActivityRegistry implements IActivityRegistry {
 
-	protected List activityBindingDefinitions = Collections.EMPTY_LIST;
+	protected List activityActivityBindingDefinitions = Collections.EMPTY_LIST;
 	protected List activityDefinitions = Collections.EMPTY_LIST;
+	protected List activityPatternBindingDefinitions = Collections.EMPTY_LIST;
 	private ActivityRegistryEvent activityRegistryEvent;
 	private List activityRegistryListeners;
-	protected List categoryDefinitions = Collections.EMPTY_LIST;	
-	protected List patternBindingDefinitions = Collections.EMPTY_LIST;
+	protected List categoryActivityBindingDefinitions = Collections.EMPTY_LIST;
+	protected List categoryDefinitions = Collections.EMPTY_LIST;
 
 	protected AbstractActivityRegistry() {
 	}
@@ -52,20 +53,24 @@ abstract class AbstractActivityRegistry implements IActivityRegistry {
 		}
 	}
 
-	public List getActivityBindingDefinitions() {
-		return activityBindingDefinitions;
+	public List getActivityActivityBindingDefinitions() {
+		return activityActivityBindingDefinitions;
 	}
-	
+
 	public List getActivityDefinitions() {
 		return activityDefinitions;
 	}
 
+	public List getActivityPatternBindingDefinitions() {
+		return activityPatternBindingDefinitions;
+	}
+
+	public List getCategoryActivityBindingDefinitions() {
+		return categoryActivityBindingDefinitions;
+	}
+
 	public List getCategoryDefinitions() {
 		return categoryDefinitions;
-	}	
-
-	public List getPatternBindingDefinitions() {
-		return patternBindingDefinitions;
 	}
 
 	public void removeActivityRegistryListener(IActivityRegistryListener activityRegistryListener) {

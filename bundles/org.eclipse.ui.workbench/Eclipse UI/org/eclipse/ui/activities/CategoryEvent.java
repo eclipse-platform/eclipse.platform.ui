@@ -28,9 +28,9 @@ package org.eclipse.ui.activities;
  * @see ICategoryListener#categoryChanged
  */
 public final class CategoryEvent {
-
-	private boolean activityBindingsChanged;
 	private ICategory category;
+
+	private boolean categoryActivityBindingsChanged;
 	private boolean definedChanged;
 	private boolean descriptionChanged;
 	private boolean nameChanged;
@@ -39,14 +39,14 @@ public final class CategoryEvent {
 	 * TODO javadoc
 	 * 
 	 * @param category
-	 * @param activityBindingsChanged
+	 * @param categoryActivityBindingsChanged
 	 * @param definedChanged
 	 * @param descriptionChanged
 	 * @param nameChanged
 	 */
 	public CategoryEvent(
 		ICategory category,
-		boolean activityBindingsChanged,
+		boolean categoryActivityBindingsChanged,
 		boolean definedChanged,
 		boolean descriptionChanged,
 		boolean nameChanged) {
@@ -54,7 +54,7 @@ public final class CategoryEvent {
 			throw new NullPointerException();
 
 		this.category = category;
-		this.activityBindingsChanged = activityBindingsChanged;
+		this.categoryActivityBindingsChanged = categoryActivityBindingsChanged;
 		this.definedChanged = definedChanged;
 		this.descriptionChanged = descriptionChanged;
 		this.nameChanged = nameChanged;
@@ -94,7 +94,7 @@ public final class CategoryEvent {
 	/**
 	 * TODO javadoc
 	 */
-	public boolean haveActivityBindingsChanged() {
-		return activityBindingsChanged;
+	public boolean haveCategoryActivityBindingsChanged() {
+		return categoryActivityBindingsChanged;
 	}
 }

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.activities;
+package org.eclipse.ui.activities.service;
 
 /**
  * <p>

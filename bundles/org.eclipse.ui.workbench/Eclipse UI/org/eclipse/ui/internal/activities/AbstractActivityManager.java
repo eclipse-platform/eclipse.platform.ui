@@ -18,16 +18,10 @@ import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IActivityManagerListener;
 
-/**
- * TODO javadoc
- */
 public abstract class AbstractActivityManager implements IActivityManager {
 
 	private List activityManagerListeners;
 
-	/**
-	 * TODO javadoc
-	 */
 	protected AbstractActivityManager() {
 	}
 
@@ -42,11 +36,6 @@ public abstract class AbstractActivityManager implements IActivityManager {
 			activityManagerListeners.add(activityManagerListener);
 	}
 
-	/**
-	 * TODO javadoc
-	 * 
-	 * @param activityManagerEvent
-	 */
 	protected void fireActivityManagerChanged(ActivityManagerEvent activityManagerEvent) {
 		if (activityManagerEvent == null)
 			throw new NullPointerException();

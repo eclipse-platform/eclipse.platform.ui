@@ -15,8 +15,8 @@ import java.util.regex.Pattern;
 
 /**
  * <p>
- * An instance of <code>IPatternBinding</code> represents a binding between
- * an activity and a pattern.
+ * An instance of <code>IActivityPatternBinding</code> represents a binding
+ * between an activity and a pattern.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -28,7 +28,15 @@ import java.util.regex.Pattern;
  * @since 3.0
  * @see org.eclipse.ui.activities.IActivity
  */
-public interface IPatternBinding extends Comparable {
+public interface IActivityPatternBinding extends Comparable {
+
+	/**
+	 * Returns the identifier of the activity represented in this binding.
+	 * 
+	 * @return the identifier of the activity represented in this binding.
+	 *         Guaranteed not to be <code>null</code>.
+	 */
+	String getActivityId();
 
 	/**
 	 * Returns the pattern represented in this binding.
@@ -36,13 +44,4 @@ public interface IPatternBinding extends Comparable {
 	 * @return the pattern. Guaranteed not to be <code>null</code>.
 	 */
 	Pattern getPattern();
-
-	/**
-	 * <p>
-	 * Returns whether or not this pattern binding is inclusive.
-	 * </p>
-	 * 
-	 * @return <code>true</code>, iff this pattern binding is inclusive.
-	 */
-	boolean isInclusive();
 }

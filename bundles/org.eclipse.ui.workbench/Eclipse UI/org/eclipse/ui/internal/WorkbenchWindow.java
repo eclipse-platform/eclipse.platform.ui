@@ -72,7 +72,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.activities.IActivityService;
+import org.eclipse.ui.activities.service.IActivityService;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.ui.help.WorkbenchHelp;

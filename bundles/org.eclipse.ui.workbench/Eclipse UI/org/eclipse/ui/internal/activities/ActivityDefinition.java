@@ -80,7 +80,6 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 	}
 
 	private String description;
-
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private String id;

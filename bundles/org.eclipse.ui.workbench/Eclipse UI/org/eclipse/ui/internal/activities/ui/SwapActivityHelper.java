@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivity;
-import org.eclipse.ui.activities.IActivityBinding;
+import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.IMutableActivityManager;
@@ -112,10 +112,10 @@ public class SwapActivityHelper {
 			) {
 			ICategory category = activityManager.getCategory((String) categoryItr.next());
 			
-			for (Iterator bindingItr = category.getActivityBindings().iterator();
+			for (Iterator bindingItr = category.getCategoryActivityBindings().iterator();
 				bindingItr.hasNext();
 				) {
-				IActivityBinding binding = (IActivityBinding) bindingItr.next();
+				ICategoryActivityBinding binding = (ICategoryActivityBinding) bindingItr.next();
 				if (binding.getActivityId().equals(activityId)) {
 					return true;
 				}

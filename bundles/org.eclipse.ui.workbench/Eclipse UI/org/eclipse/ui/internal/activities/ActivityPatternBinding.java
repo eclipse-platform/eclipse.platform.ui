@@ -13,33 +13,31 @@ package org.eclipse.ui.internal.activities;
 
 import java.util.regex.Pattern;
 
-import org.eclipse.ui.activities.IPatternBinding;
+import org.eclipse.ui.activities.IActivityPatternBinding;
 import org.eclipse.ui.internal.util.Util;
 
-final class PatternBinding implements IPatternBinding {
+final class ActivityPatternBinding implements IActivityPatternBinding {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
-		PatternBinding.class.getName().hashCode();
-
+		ActivityPatternBinding.class.getName().hashCode();
+	private String activityId;
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
-
-	private boolean inclusive;
 	private Pattern pattern;
 	private transient String string;
 
-	PatternBinding(boolean inclusive, Pattern pattern) {
+	ActivityPatternBinding(String activityId, Pattern pattern) {
 		if (pattern == null)
 			throw new NullPointerException();
 
-		this.inclusive = inclusive;
+		this.activityId = activityId;
 		this.pattern = pattern;
 	}
 
 	public int compareTo(Object object) {
-		PatternBinding castedObject = (PatternBinding) object;
-		int compareTo = Util.compare(inclusive, castedObject.inclusive);
+		ActivityPatternBinding castedObject = (ActivityPatternBinding) object;
+		int compareTo = Util.compare(activityId, castedObject.activityId);
 
 		if (compareTo == 0)
 			compareTo =
@@ -49,14 +47,18 @@ final class PatternBinding implements IPatternBinding {
 	}
 
 	public boolean equals(Object object) {
-		if (!(object instanceof PatternBinding))
+		if (!(object instanceof ActivityPatternBinding))
 			return false;
 
-		PatternBinding castedObject = (PatternBinding) object;
+		ActivityPatternBinding castedObject = (ActivityPatternBinding) object;
 		boolean equals = true;
-		equals &= Util.equals(inclusive, castedObject.inclusive);
+		equals &= Util.equals(activityId, castedObject.activityId);
 		equals &= Util.equals(pattern, castedObject.pattern);
 		return equals;
+	}
+
+	public String getActivityId() {
+		return activityId;
 	}
 
 	public Pattern getPattern() {
@@ -66,7 +68,7 @@ final class PatternBinding implements IPatternBinding {
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(inclusive);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pattern);
 			hashCodeComputed = true;
 		}
@@ -74,15 +76,11 @@ final class PatternBinding implements IPatternBinding {
 		return hashCode;
 	}
 
-	public boolean isInclusive() {
-		return inclusive;
-	}
-
 	public String toString() {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
-			stringBuffer.append(inclusive);
+			stringBuffer.append(activityId);
 			stringBuffer.append(',');
 			stringBuffer.append(pattern);
 			stringBuffer.append(']');

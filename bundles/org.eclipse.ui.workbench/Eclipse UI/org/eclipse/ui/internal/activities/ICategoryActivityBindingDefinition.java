@@ -11,21 +11,11 @@
 
 package org.eclipse.ui.internal.activities;
 
-import java.util.List;
+public interface ICategoryActivityBindingDefinition extends Comparable {
 
-public interface IActivityRegistry {
+	String getActivityId();
 
-	void addActivityRegistryListener(IActivityRegistryListener activityRegistryListener);
+	String getCategoryId();
 
-	List getActivityDefinitions();
-
-	List getActivityActivityBindingDefinitions();
-	
-	List getActivityPatternBindingDefinitions();
-
-	List getCategoryActivityBindingDefinitions();
-
-	List getCategoryDefinitions();
-
-	void removeActivityRegistryListener(IActivityRegistryListener activityRegistryListener);
+	String getPluginId();
 }

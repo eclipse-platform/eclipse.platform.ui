@@ -56,11 +56,20 @@ public interface IActivityManager {
 	IActivity getActivity(String activityId);
 
 	/**
+	 * Returns a handle to an category given an identifier.
+	 * 
+	 * @param categoryId
+	 *            an identifier. Must not be <code>null</code>
+	 * @return a handle to an category.
+	 */
+	ICategory getCategory(String categoryId);
+
+	/**
 	 * <p>
 	 * Returns the set of identifiers to defined activities.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -73,36 +82,10 @@ public interface IActivityManager {
 
 	/**
 	 * <p>
-	 * Returns the set of identifiers to enabled activities. This set is not
-	 * necessarily a subset of the set of identifiers to defined activities.
-	 * </p>
-	 * <p>
-	 * Notification is set to all registered listeners if this attribute
-	 * changes.
-	 * </p>
-	 * 
-	 * @return the set of identifiers to enabled activities. This set may be
-	 *         empty, but is guaranteed not to be <code>null</code>. If this
-	 *         set is not empty, it is guaranteed to only contain instances of
-	 *         <code>String</code>.
-	 */
-	Set getEnabledActivityIds();
-
-	/**
-	 * Returns a handle to an category given an identifier.
-	 * 
-	 * @param categoryId
-	 *            an identifier. Must not be <code>null</code>
-	 * @return a handle to an category.
-	 */
-	ICategory getCategory(String categoryId);
-
-	/**
-	 * <p>
 	 * Returns the set of identifiers to defined categories.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -115,11 +98,28 @@ public interface IActivityManager {
 
 	/**
 	 * <p>
+	 * Returns the set of identifiers to enabled activities. This set is not
+	 * necessarily a subset of the set of identifiers to defined activities.
+	 * </p>
+	 * <p>
+	 * Notification is sent to all registered listeners if this attribute
+	 * changes.
+	 * </p>
+	 * 
+	 * @return the set of identifiers to enabled activities. This set may be
+	 *         empty, but is guaranteed not to be <code>null</code>. If this
+	 *         set is not empty, it is guaranteed to only contain instances of
+	 *         <code>String</code>.
+	 */
+	Set getEnabledActivityIds();
+
+	/**
+	 * <p>
 	 * Returns the set of identifiers to enabled categories. This set is not
 	 * necessarily a subset of the set of identifiers to defined categories.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -128,18 +128,24 @@ public interface IActivityManager {
 	 *         set is not empty, it is guaranteed to only contain instances of
 	 *         <code>String</code>.
 	 */
-	Set getEnabledCategoryIds();	
-	
+	Set getEnabledCategoryIds();
+
 	/**
 	 * TODO javadoc
+	 */
+	Set getMatches(String string, Set activityIds);
+
+	/**
+	 * TODO javadoc
+	 */
+	boolean isMatch(String string, Set activityIds);
+
+	/**
+	 * TODO javadoc
+	 * @deprecated use isMatch(String, Set);
 	 */
 	boolean match(String string, Set activityIds);
-
-	/**
-	 * TODO javadoc
-	 */
-	Set matches(String string, Set activityIds);
-
+	
 	/**
 	 * Unregisters an instance of <code>IActivityManagerListener</code>
 	 * listening for changes to attributes of this instance.
