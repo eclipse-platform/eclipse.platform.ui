@@ -134,7 +134,8 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	public boolean hasChildren(Object element) {
 		try {
 			if (element instanceof IVariable) {
-				return ((IVariable)element).getValue().hasVariables();
+				IValue v = ((IVariable)element).getValue();
+				return v != null && v.hasVariables();
 			}
 			if (element instanceof IValue) {
 				return ((IValue)element).hasVariables();
