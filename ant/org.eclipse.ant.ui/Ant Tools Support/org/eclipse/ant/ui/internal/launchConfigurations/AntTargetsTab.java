@@ -165,9 +165,9 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		table.setLinesVisible(true);		
 
 		TableLayout tableLayout= new TableLayout();
-		ColumnWeightData weightData = new ColumnWeightData(40, true);
+		ColumnWeightData weightData = new ColumnWeightData(30, true);
 		tableLayout.addColumnData(weightData);
-		weightData = new ColumnWeightData(60, true);
+		weightData = new ColumnWeightData(70, true);
 		tableLayout.addColumnData(weightData);		
 		table.setLayout(tableLayout);
 
