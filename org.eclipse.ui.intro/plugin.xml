@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-
 <plugin
    id="org.eclipse.ui.intro"
    name="%plugin_name"
@@ -16,8 +15,8 @@
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.help"/>   
-   	  <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.help"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.ui.forms"/>
    </requires>
 

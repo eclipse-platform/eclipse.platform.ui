@@ -3,11 +3,6 @@
 	<name>org.eclipse.ui.intro</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.core.runtime</project>
-		<project>org.eclipse.core.runtime.compatibility</project>
-		<project>org.eclipse.help</project>
-		<project>org.eclipse.ui</project>
-		<project>org.eclipse.ui.forms</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
