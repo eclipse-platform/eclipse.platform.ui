@@ -79,9 +79,9 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 * value.
 	 */
 	private void checkIsValidValue(IPath newValue) throws CoreException {
-		if (newValue == null || newValue.isAbsolute())
-			return;
-		throw new ResourceException(ResourceStatus.INVALID_VALUE, null, Policy.bind("pathvar.invalidValue"), null); //$NON-NLS-1$
+		IStatus status = validateValue(newValue);
+		if (!status.isOK())
+			throw new CoreException(status);
 	}
 	/**
 	 * Return a key to use in the Preferences.
@@ -163,12 +163,14 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		for (int i = 0; i < names.length; i++) {
 			if (names[i].startsWith(VARIABLE_PREFIX)) {
 				String key = names[i].substring(VARIABLE_PREFIX.length());
-				// filter out names which might be valid keys in the preference
-				// store but are not valid path variable names. We can get in this
-				// state if the user has edited the file on disk.
-				//TODO: we may want to look at removing these keys from the
+				// filter out names for preferences which might be valid in the 
+				// preference store but does not have valid path variable names
+				// and/or values. We can get in this state if the user has 
+				// edited the file on disk or set a preference using the prefix 
+				// reserved to path variables (#VARIABLE_PREFIX).
+				// TODO: we may want to look at removing these keys from the
 				// preference store as a garbage collection means
-				if (validateName(key).isOK())
+				if (validateName(key).isOK() && validateValue(getValue(key)).isOK())
 					result.add(key);
 			}
 		}
@@ -220,6 +222,16 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 				message = Policy.bind("pathvar.invalidChar", String.valueOf(following)); //$NON-NLS-1$
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
+		}
+		return ResourceStatus.OK_STATUS;
+	}
+	/**
+	 * @see IPathVariableManager#validateValue
+	 */
+	public IStatus validateValue(IPath value) {
+		if (value != null && (!value.isValidPath(value.toString()) || !value.isAbsolute())) {
+			String message = Policy.bind("pathvar.invalidValue"); //$NON-NLS-1$
+			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 		return ResourceStatus.OK_STATUS;
 	}

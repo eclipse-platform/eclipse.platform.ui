@@ -167,4 +167,17 @@ public interface IPathVariableManager {
 	 * @see IStatus#OK
 	 */
 	public IStatus validateName(String name);
+	
+	/**
+	 * Validates the given path as the value for a path variable. A path
+	 * variable value must be a valid path that is absolute.
+	 *
+	 * @param value a possibly valid path variable value
+	 * @return a status object with code <code>IStatus.OK</code> if the given
+	 * path is a valid path variable value, otherwise a status object indicating
+	 * what is wrong with the value
+	 * @see IPath#isValidPath
+	 * @see IStatus#OK
+	 */
+	public IStatus validateValue(IPath path);
 }
