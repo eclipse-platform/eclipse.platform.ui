@@ -75,4 +75,8 @@ public class CVSLocalCompareEditorInput extends CVSSyncCompareInput {
 	
 	protected void contentsChanged(ICompareInput source) {
 	}
+
+	public String getToolTipText() {
+		return getTitle();
+	}
 }
