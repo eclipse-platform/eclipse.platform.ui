@@ -14,7 +14,7 @@ package org.eclipse.debug.core;
  * Enhancements to the launch listener interface. Provides notification
  * when a launch terminates.
  * <p>
- * Clients may implementing launch listeners may implement
+ * Clients implementing launch listener may implement
  * this interface.
  * </p>
  * @since 3.0
