@@ -192,6 +192,10 @@ public void copy(IProjectDescription destination, boolean force, IProgressMonito
 	Assert.isNotNull(destination);
 	internalCopy(destination, force, monitor);
 }
+public void copy(IProjectDescription destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	boolean force = (updateFlags | IResource.FORCE) != 0;
+	copy(destination, force, monitor);
+}
 /**
  * @see IResource#copy
  */
@@ -208,9 +212,13 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
 		desc.setLocation(null);
 		internalCopy(desc, force, monitor);
 	} else {
-		int updateFlags = force ? IResource.FORCE : IResource.NONE;
-		copy(destination, updateFlags, monitor);
+		// will fail since we're trying to copy a project to a non-project
+		checkCopyRequirements(destination, IResource.PROJECT);
 	}
+}
+public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	boolean force = (updateFlags | IResource.FORCE) != 0;
+	copy(destination, force, monitor);
 }
 protected void copyMetaArea(IProject source, IProject destination, IProgressMonitor monitor) throws CoreException {
 	java.io.File oldMetaArea = workspace.getMetaArea().locationFor(source).toFile();
@@ -430,7 +438,7 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 			// set the description
 			destProject.internalSetDescription(destDesc, false);
 			// call super.copy for each child
-			IResource[] children = members();
+			IResource[] children = members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 			for (int i = 0; i < children.length; i++)
 				children[i].copy(destProject.getFullPath().append(children[i].getName()), force, Policy.subMonitorFor(monitor, Policy.opWork * 50 / 100 / children.length));
 
