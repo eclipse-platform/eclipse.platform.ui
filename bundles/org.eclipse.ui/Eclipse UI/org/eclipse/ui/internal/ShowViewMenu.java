@@ -156,20 +156,18 @@ public class ShowViewMenu extends ShortcutMenu implements IPartListener {
 		dlg.open();
 		if (dlg.getReturnCode() == Window.CANCEL)
 			return;
-		IViewDescriptor desc = dlg.getSelection();
-		if (desc != null) {
+		IViewDescriptor[] descs = dlg.getSelection();
+		for (int i = 0; i < descs.length; ++i) {
 			try {
-				page.showView(desc.getID());
+				page.showView(descs[i].getID());
 			} catch (PartInitException e) {
 				MessageDialog
 					.openError(
 						window.getShell(),
 						WorkbenchMessages.getString("ShowView.errorTitle"), //$NON-NLS-1$
-				//$NON-NLS-1$
-				e.getMessage());
+						e.getMessage());
 			}
 		}
-
 	}
 
 	private ArrayList getParts(IWorkbenchPage page) {
