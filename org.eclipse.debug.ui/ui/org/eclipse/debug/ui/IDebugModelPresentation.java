@@ -33,7 +33,8 @@ import org.eclipse.ui.IEditorInput;
  * &lt;extension point="org.eclipse.debug.ui.debugModelPresentations"&gt;
  *   &lt;debugModelPresentation 
  *      id="com.example.debugModelIdentifier"
- *      class="com.example.ExmaplePresentation"
+ *      class="com.example.ExamplePresentation"
+ *      detailsViewerConfiguration="com.example.ExampleSourceViewerConfiguration"
  *   &lt;/debugModelPresentation&gt;
  * &lt;/extension&gt;
  * </pre>
@@ -44,6 +45,12 @@ import org.eclipse.ui.IEditorInput;
  *	element - see <code>IDebugElement.getModelIndentifier</code></li>
  * <li><code>class</code> specifies the fully qualified name of the Java class
  *   that implements this interface.</li>
+ * <li><code>detailsViewerConfiguration</code> optionally specifies the fully qualified name of the Java class
+ *   that is an instance of <code>org.eclipse.jface.text.source.SourceViewerConfiguration</code>.
+ *   When specified, the source viewer configuration will be used in the "details" area of the
+ *   variables and expressions view when displaying the details of an element from the
+ *   debug model associated with this debug model presentation. When unspecified,
+ *   a default configuration is used.</li>
  * </ul>
  * </p>
  * <p>
