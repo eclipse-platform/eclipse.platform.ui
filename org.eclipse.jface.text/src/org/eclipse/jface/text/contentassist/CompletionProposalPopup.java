@@ -448,7 +448,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (p.x < 0) p.x= 0;
 		if (p.y < 0) p.y= 0;
 		p= new Point(p.x, p.y + text.getLineHeight());
-		return text.toDisplay(p);
+		p= text.toDisplay(p);
+		if (p.x < 0) p.x= 0;
+		if (p.y < 0) p.y= 0;
+		return p;
 	}
 
 	/**

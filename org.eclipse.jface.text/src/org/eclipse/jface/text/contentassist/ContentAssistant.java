@@ -496,21 +496,22 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 			}
 		}
 		
-		protected void shiftLeftLocation(Point location, Rectangle shellBounds, Rectangle displayBounds) {
+		protected void shiftHorizontalLocation(Point location, Rectangle shellBounds, Rectangle displayBounds) {
 			if (location.x + shellBounds.width > displayBounds.width)
 				location.x= displayBounds.width - shellBounds.width;
+			
+			if (location.x < displayBounds.x)
+				location.x= displayBounds.x;
 		}
 		
-		protected void shiftDownLocation(Point location, Rectangle shellBounds, Rectangle displayBounds) {
+		protected void shiftVerticalLocation(Point location, Rectangle shellBounds, Rectangle displayBounds) {
+			if (location.y + shellBounds.height > displayBounds.height)
+				location.y= displayBounds.height - shellBounds.height;
+			
 			if (location.y < displayBounds.y)
 				location.y= displayBounds.y;
 		}
-		
-		protected void shiftUpLocation(Point location, Rectangle shellBounds, Rectangle displayBounds) {
-			if (location.y + shellBounds.height > displayBounds.height)
-				location.y= displayBounds.height - shellBounds.height;
-		}
-		
+				
 		protected Point getAboveLocation(Shell shell, int offset) {
 			StyledText text= fViewer.getTextWidget();
 			Point location= text.getLocationAtOffset(offset);
@@ -521,8 +522,8 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 			
 			location.y=location.y - shellBounds.height;
 			
-			shiftLeftLocation(location, shellBounds, displayBounds);
-			shiftDownLocation(location, shellBounds, displayBounds);
+			shiftHorizontalLocation(location, shellBounds, displayBounds);
+			shiftVerticalLocation(location, shellBounds, displayBounds);
 			
 			return location;
 		}
@@ -538,8 +539,8 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 			Rectangle displayBounds= shell.getDisplay().getClientArea();
 			
 			location.y= location.y + text.getLineHeight();
-			shiftLeftLocation(location, shellBounds, displayBounds);
-			shiftUpLocation(location, shellBounds, displayBounds);
+			shiftHorizontalLocation(location, shellBounds, displayBounds);
+			shiftVerticalLocation(location, shellBounds, displayBounds);
 			
 			return location;
 		}	
@@ -554,8 +555,8 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 
 			Rectangle shellBounds= shell.getBounds();
 			Rectangle displayBounds= shell.getDisplay().getClientArea();
-			shiftLeftLocation(p, shellBounds, displayBounds);
-			shiftUpLocation(p, shellBounds, displayBounds);
+			shiftHorizontalLocation(p, shellBounds, displayBounds);
+			shiftVerticalLocation(p, shellBounds, displayBounds);
 			
 			return p;
 		}
