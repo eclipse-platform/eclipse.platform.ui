@@ -203,8 +203,7 @@ final class Node {
 		}
 	}
 
-	static boolean removeFromTree(SortedMap tree, 
-		KeyBinding keyBinding) {
+	static boolean removeFromTree(SortedMap tree, KeyBinding keyBinding) {
 		// TBD
 		return false;
 	}
@@ -214,17 +213,17 @@ final class Node {
 		
 		while (iterator.hasNext()) {
 			Node node = (Node) iterator.next();			
-			node.best = solve(node.stateMap, stack);
+			node.bestMatchAction = solve(node.stateMap, stack);
 			solveTree(node.childMap, stack);								
 			Iterator iterator2 = node.childMap.values().iterator();	
 			
 			while (iterator2.hasNext()) {
 				Node child = (Node) iterator2.next();
-				MatchAction childMatchAction = child.best;				
+				MatchAction childMatchAction = child.bestMatchAction;				
 				
 				if (childMatchAction != null && 
-					(node.bestChild == null || childMatchAction.getMatch().getValue() < node.bestChild.getMatch().getValue())) 
-					node.bestChild = childMatchAction;
+					(node.bestChildMatchAction == null || childMatchAction.getMatch().getValue() < node.bestChildMatchAction.getMatch().getValue())) 
+					node.bestChildMatchAction = childMatchAction;
 			}
 		}		
 	}
@@ -244,13 +243,13 @@ final class Node {
 		return tree;			
 	}
 
-	static List toBindings(SortedMap tree) {
-		List bindings = new ArrayList();
-		toBindings(tree, KeySequence.create(), bindings);
-		return bindings;
+	static List toKeyBindings(SortedMap tree) {
+		List keyBindings = new ArrayList();
+		toKeyBindings(tree, KeySequence.create(), keyBindings);
+		return keyBindings;
 	}
 	
-	private static void toBindings(SortedMap tree, KeySequence prefix, List bindings) {
+	private static void toKeyBindings(SortedMap tree, KeySequence prefix, List keyBindings) {
 		Iterator iterator = tree.entrySet().iterator();	
 			
 		while (iterator.hasNext()) {
@@ -276,14 +275,12 @@ final class Node {
 					
 					while (iterator4.hasNext()) {
 						String action = (String) iterator4.next();						
-						/* TBD:
-						bindings.add(KeyBinding.create(keySequence, state, plugin, action));
-						*/
+						// TBD: keyBindings.add(KeyBinding.create(keySequence, ...));
 					}				
 				}			
 			}
 			
-			toBindings(node.childMap, keySequence, bindings);
+			toKeyBindings(node.childMap, keySequence, keyBindings);
 		}	
 	}
 
@@ -304,16 +301,17 @@ final class Node {
 			KeySequence keySequence = KeySequence.create(keyStrokes);				
 			Node node = (Node) entry.getValue();			
 			
-			if (node.bestChild != null && (node.best == null || node.bestChild.getMatch().getValue() < node.best.getMatch().getValue()))
+			if (node.bestChildMatchAction != null && 
+				(node.bestMatchAction == null || node.bestChildMatchAction.getMatch().getValue() < node.bestMatchAction.getMatch().getValue()))
 				toKeySequenceMap(node.childMap, keySequence, keySequenceMap);	
-			else if (node.best != null) {
-				keySequenceMap.put(keySequence, node.best);				
+			else if (node.bestMatchAction != null) {
+				keySequenceMap.put(keySequence, node.bestMatchAction);				
 			}
 		}	
 	}
 
-	MatchAction best = null;
-	MatchAction bestChild = null;
+	MatchAction bestChildMatchAction = null;
+	MatchAction bestMatchAction = null;
 	SortedMap childMap = new TreeMap();	
 	SortedMap stateMap = new TreeMap();	
 }
