@@ -361,6 +361,9 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	
 	/**
 	 * Returns the context menu managers relevant to this view.
+	 * 
+	 * @return the context menu managers relevant to this view
+	 * @since 2.1
 	 */
 	public List getContextMenuManagers() {
 		return fContextMenuManagers;
@@ -756,6 +759,8 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * Adds a context menu manager that is relevant to this view.
 	 * @param contextMenuManager The contextMenuManager to add
+	 * 
+	 * @since 2.1
 	 */
 	public void addContextMenuManager(IMenuManager contextMenuManager) {
 		if (fContextMenuManagers == null) {
