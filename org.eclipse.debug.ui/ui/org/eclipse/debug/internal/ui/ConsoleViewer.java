@@ -31,14 +31,14 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	 * Internal document listener.
 	 */
 	class InternalDocumentListener implements IDocumentListener {
-		/*
-		 * @see IDocumentListener#documentAboutToBeChanged
+		/**
+		 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
 		 */
 		public void documentAboutToBeChanged(DocumentEvent e) {
 		}
 		
-		/*
-		 * @see IDocumentListener#documentChanged
+		/**
+		 * @see IDocumentListener#documentChanged(DocumentEvent)
 		 */
 		public void documentChanged(DocumentEvent e) {
 			ConsoleDocument doc= (ConsoleDocument) getDocument();
