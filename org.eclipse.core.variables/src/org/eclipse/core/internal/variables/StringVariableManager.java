@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -203,7 +203,7 @@ public class StringVariableManager implements IStringVariableManager {
 	 * Loads contributed dynamic variables
 	 */
 	private void loadDynamicVariables() {
-		IExtensionPoint point= VariablesPlugin.getDefault().getDescriptor().getExtensionPoint(EXTENSION_POINT_DYNAMIC_VARIABLES);
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(VariablesPlugin.PI_CORE_VARIABLES, EXTENSION_POINT_DYNAMIC_VARIABLES);
 		IConfigurationElement elements[]= point.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
@@ -271,7 +271,7 @@ public class StringVariableManager implements IStringVariableManager {
 	 * merged with existing persisted values.
 	 */
 	private void loadContributedValueVariables() {
-		IExtensionPoint point= VariablesPlugin.getDefault().getDescriptor().getExtensionPoint(EXTENSION_POINT_VALUE_VARIABLES);
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(VariablesPlugin.PI_CORE_VARIABLES, EXTENSION_POINT_VALUE_VARIABLES);
 		IConfigurationElement elements[]= point.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];

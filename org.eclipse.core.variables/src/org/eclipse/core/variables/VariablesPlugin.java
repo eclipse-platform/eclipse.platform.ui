@@ -12,7 +12,6 @@
 package org.eclipse.core.variables;
 
 import org.eclipse.core.internal.variables.StringVariableManager;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
@@ -52,12 +51,9 @@ public class VariablesPlugin extends Plugin {
 	 * when the facilities provided by the Variables plug-in are required.
 	 * <b>Clients must never explicitly instantiate a plug-in runtime class.</b>
 	 * </p>
-	 * 
-	 * @param pluginDescriptor the plug-in descriptor for the
-	 *   Variables plug-in
 	 */
-	public VariablesPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public VariablesPlugin() {
+		super();
 		plugin = this;
 	}
 
@@ -102,13 +98,7 @@ public class VariablesPlugin extends Plugin {
 	 * Convenience method which returns the unique identifier of this plugin.
 	 */
 	public static String getUniqueIdentifier() {
-		if (getDefault() == null) {
-			// If the default instance is not yet initialized,
-			// return a static identifier. This identifier must
-			// match the plugin id defined in plugin.xml
-			return PI_CORE_VARIABLES;
-		}
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return PI_CORE_VARIABLES;
 	}
 	
 	/**
@@ -119,5 +109,4 @@ public class VariablesPlugin extends Plugin {
 	public IStringVariableManager getStringVariableManager() {
 		return StringVariableManager.getDefault();
 	}
-	
 }

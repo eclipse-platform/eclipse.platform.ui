@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.console;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -34,19 +35,14 @@ public class ConsolePluginImages {
 	/**
 	 * A table of all the <code>ImageDescriptor</code>s.
 	 */
-	private static HashMap imageDescriptors;
+	private static Map imageDescriptors;
 	
 	/* Declare Common paths */
 	private static URL ICON_BASE_URL= null;
 
 	static {
 		String pathSuffix = "icons/full/"; //$NON-NLS-1$
-			
-		try {
-			ICON_BASE_URL= new URL(ConsolePlugin.getDefault().getDescriptor().getInstallURL(), pathSuffix);
-		} catch (MalformedURLException e) {
-			// do nothing
-		}
+		ICON_BASE_URL= ConsolePlugin.getDefault().getBundle().getEntry(pathSuffix);
 	}
 
 	// Use IPath and toOSString to build the names to ensure they have the slashes correct
