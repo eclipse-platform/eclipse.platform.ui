@@ -907,7 +907,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			return;
 		}
 
-		IJobManager jobManager = Platform.getJobManager();
+		final IJobManager jobManager = Platform.getJobManager();
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 
 		boolean wait = (jobManager.find(ResourcesPlugin.FAMILY_AUTO_BUILD).length > 0) || (jobManager.find(ResourcesPlugin.FAMILY_MANUAL_BUILD).length > 0);
@@ -936,8 +936,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			public IStatus run(IProgressMonitor monitor) {
 				try {
 					if(waitInJob) {
-						String configName = configuration.getName();
-						IJobManager jobManager = Platform.getJobManager();
 						try {
 							jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, monitor);
 							jobManager.join(ResourcesPlugin.FAMILY_MANUAL_BUILD, monitor);
