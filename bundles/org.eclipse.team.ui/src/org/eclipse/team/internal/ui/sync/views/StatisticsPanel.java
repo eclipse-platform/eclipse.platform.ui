@@ -148,7 +148,7 @@ public class StatisticsPanel extends Composite {
 	}
 
 	private void updateStats() {
-		if(stats != null) {
+		if(stats != null && ! isDisposed()) {
 			
 			SyncInfoStatistics workspaceSetStats = stats.getSubscriberInput().getSubscriberSyncSet().getStatistics();
 			SyncInfoStatistics workingSetSetStats = stats.getSubscriberInput().getWorkingSetSyncSet().getStatistics();
