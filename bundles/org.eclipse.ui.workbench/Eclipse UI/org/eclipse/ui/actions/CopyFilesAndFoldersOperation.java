@@ -112,6 +112,27 @@ public class CopyFilesAndFoldersOperation {
 		return true;
 	}
 	/**
+	 * Checks whether the files with the given names exist. 
+	 *
+	 * @param names path to the file. must not be null.
+	 * 	If the path is not valid it will not be tested. 
+	 * @return error message if one of the files does not exist.
+	 * 	null if all files specified in names exist.
+	 */
+	String checkExist(String[] names) {
+		for (int i = 0; i < names.length; i++) {
+			IPath path = new Path(names[i]);
+			File file = path.toFile();
+			
+			if (file != null && file.exists() == false) {
+				return WorkbenchMessages.format(
+					"CopyFilesAndFoldersOperation.resourceDeleted",	//$NON-NLS-1$
+					new Object[] {file.getName()});				
+			}
+		}
+		return null;		
+	}
+	/**
 	 * Check if the user wishes to overwrite the supplied resource or 
 	 * all resources.
 	 * 
@@ -295,7 +316,13 @@ public class CopyFilesAndFoldersOperation {
 	public void copyFiles(final String[] fileNames, IContainer destination) {
 		alwaysOverwrite = false;
 
-		String errorMsg = validateImportDestination(destination, fileNames);
+		// test files for existence separate from validate API 
+		// because an external file may not exist until the copy actually 
+		// takes place (e.g., WinZip contents).
+		String errorMsg = checkExist(fileNames);
+		if (errorMsg == null) {
+			errorMsg = validateImportDestination(destination, fileNames);
+		}
 		if (errorMsg != null) {
 			displayError(errorMsg);
 			return;
@@ -726,11 +753,6 @@ public class CopyFilesAndFoldersOperation {
 			File sourceFile = sourcePath.toFile();
 			File sourceParentFile = sourcePath.removeLastSegments(1).toFile();			
 			if (sourceFile != null) {
-				if (sourceFile.exists() == false) {
-					return WorkbenchMessages.format(
-						"CopyFilesAndFoldersOperation.resourceDeleted",	//$NON-NLS-1$
-						new Object[] {sourceFile.getName()});				
-				}
 				if (destinationFile.compareTo(sourceFile) == 0 || 
 					(sourceParentFile != null && destinationFile.compareTo(sourceParentFile) == 0)) {
 					return WorkbenchMessages.format("CopyFilesAndFoldersOperation.importSameSourceAndDest", //$NON-NLS-1$
