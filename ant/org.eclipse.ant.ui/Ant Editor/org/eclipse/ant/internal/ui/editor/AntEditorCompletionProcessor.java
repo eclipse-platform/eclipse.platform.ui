@@ -484,6 +484,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 		   replacementLength += 1;
 		   replacementOffset = aCursorPosition - aPrefix.length() - 1;                
 	   } else {
+			//support for property proposals for the if/unless attributes of targets
 	   		replacementOffset= aCursorPosition - aPrefix.length();
 	   		appendBraces= false;
 	   }
