@@ -17,6 +17,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -61,10 +62,10 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 	 */
 	public void visitFolder(ICVSFolder folder) throws CVSException {
 		// Visit the children of the folder as appropriate
-		if (depth == IResource.DEPTH_INFINITE)
+		if (depth == IResource.DEPTH_INFINITE) {
 			folder.acceptChildren(this);
-		else if (depth == IResource.DEPTH_ONE) {
-			ICVSFile[] files = folder.getFiles();
+		} else if (depth == IResource.DEPTH_ONE) {
+			ICVSResource[] files = folder.members(ICVSFolder.FILE_MEMBERS);
 			for (int i = 0; i < files.length; i++) {
 				files[i].accept(this);
 			}

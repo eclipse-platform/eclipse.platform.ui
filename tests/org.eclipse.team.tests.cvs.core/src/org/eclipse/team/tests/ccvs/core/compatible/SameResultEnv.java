@@ -447,38 +447,19 @@ public final class SameResultEnv extends JUnitTestCase {
 			assertEquals(mFolder1.getFolderSyncInfo().getTag(),mFolder2.getFolderSyncInfo().getTag());
 		}
 		
-		ICVSResource[] resourceList1;
-		ICVSResource[] resourceList2;
-		boolean fileFound;
-		
-		resourceList1 = mFolder1.getFiles();
-		resourceList2 = mFolder2.getFiles();
-		assertEquals(resourceList1.length,resourceList2.length);
+		ICVSResource[] resourceList1 = mFolder1.members(ICVSFolder.FILE_MEMBERS | ICVSFolder.FOLDER_MEMBERS);
+		ICVSResource[] resourceList2 = mFolder2.members(ICVSFolder.FILE_MEMBERS | ICVSFolder.FOLDER_MEMBERS);
+		assertEquals(resourceList1.length, resourceList2.length);
 		for (int i=0; i<resourceList1.length; i++) {
-			fileFound = false;
+			boolean resourceFound = false;
 			for (int j=0; j<resourceList2.length; j++) {
 				if (resourceList1[i].getName().equals(resourceList2[j].getName())) {
 					assertEquals(resourceList1[i], resourceList2[j]);
-					fileFound = true;
+					resourceFound = true;
 					break;
 				}
 			}
-			assertTrue("File " + resourceList1[i].getName() + " not found in the list",fileFound);
-		}
-		
-		resourceList1 = mFolder1.getFolders();
-		resourceList2 = mFolder2.getFolders();
-		assertEquals(resourceList1.length,resourceList2.length);
-		for (int i=0; i<resourceList1.length; i++) {
-			fileFound = false;
-			for (int j=0; j<resourceList2.length; j++) {
-				if (resourceList1[i].getName().equals(resourceList2[j].getName())) {
-					assertEquals(resourceList1[i], resourceList2[j]);
-					fileFound = true;
-					break;
-				}
-			}
-			assertTrue("Folder " + resourceList1[i].getName() + " not found in the list",fileFound);
+			assertTrue("Resource " + resourceList1[i].getName() + " not found in the list",resourceFound);
 		}
 	}
 	

@@ -25,6 +25,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
@@ -244,18 +245,19 @@ public class RemoteFolderTreeBuilder {
 		List children = new ArrayList();
 		
 		// Build the child folders corresponding to local folders base
-		ICVSFolder[] folders = local.getFolders();
+		ICVSResource[] folders = local.members(ICVSFolder.FOLDER_MEMBERS);
 		for (int i=0;i<folders.length;i++) {
-			if (folders[i].isManaged() && folders[i].isCVSFolder()) {
+			ICVSFolder folder = (ICVSFolder)folders[i];
+			if (folder.isManaged() && folder.isCVSFolder()) {
 				monitor.worked(1);
-				children.add(buildBaseTree(remote, folders[i], monitor));
+				children.add(buildBaseTree(remote, folder, monitor));
 			}
 		}
 		
 		// Build the child files corresponding to local files base
-		ICVSFile[] files = local.getFiles();
+		ICVSResource[] files = local.members(ICVSFolder.FILE_MEMBERS);
 		for (int i=0;i<files.length;i++) {
-			ICVSFile file = files[i];
+			ICVSFile file = (ICVSFile)files[i];
 			ResourceSyncInfo info = file.getSyncInfo();
 			// if there is no sync info then there is no base
 			if (info==null)
@@ -309,20 +311,21 @@ public class RemoteFolderTreeBuilder {
 		// If there is a local, use the local children to start buidling the remote children
 		if (local != null) {
 			// Build the child folders corresponding to local folders
-			ICVSFolder[] folders = local.getFolders();
+			ICVSResource[] folders = local.members(ICVSFolder.FOLDER_MEMBERS);
 			for (int i=0;i<folders.length;i++) {
-				DeltaNode d = (DeltaNode)deltas.get(folders[i].getName());
-				if (folders[i].isCVSFolder() && ! isOrphanedSubtree(session, folders[i]) && (d==null || d.getRevision() != DELETED)) {
+				ICVSFolder folder = (ICVSFolder)folders[i];
+				DeltaNode d = (DeltaNode)deltas.get(folder.getName());
+				if (folder.isCVSFolder() && ! isOrphanedSubtree(session, folder) && (d==null || d.getRevision() != DELETED)) {
 					children.put(folders[i].getName(), 
 						new RemoteFolderTree(remote, folders[i].getName(), repository, 
-							new Path(folders[i].getFolderSyncInfo().getRepository()), 
-							tagForRemoteFolder(folders[i],tag)));
+							new Path(folder.getFolderSyncInfo().getRepository()), 
+							tagForRemoteFolder(folder,tag)));
 				}
 			}
 			// Build the child files corresponding to local files
-			ICVSFile[] files = local.getFiles();
+			ICVSResource[] files = local.members(ICVSFolder.FILE_MEMBERS);
 			for (int i=0;i<files.length;i++) {
-				ICVSFile file = files[i];
+				ICVSFile file = (ICVSFile)files[i];
 
 				DeltaNode d = (DeltaNode)deltas.get(file.getName());
 				ResourceSyncInfo info = file.getSyncInfo();
@@ -395,7 +398,7 @@ public class RemoteFolderTreeBuilder {
 				// Record any children that are empty
 				if (pruneEmptyDirectories() && remoteFolder.getChildren().length == 0) {
 					// Prune if the local folder is also empty.
-					if (localFolder == null || (localFolder.getFiles().length == 0 && localFolder.getFolders().length == 0))
+					if (localFolder == null || (localFolder.members(ICVSFolder.ALL_MEMBERS).length == 0))
 						emptyChildren.add(remoteFolder);
 					else {
 						// Also prune if the tag we are fetching is not HEAD and differs from the tag of the local folder

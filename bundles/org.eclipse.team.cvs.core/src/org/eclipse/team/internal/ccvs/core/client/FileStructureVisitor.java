@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 
 /**
  * Visitor to send the local file structure to the CVS Server.
@@ -54,9 +55,6 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 	 */
 	public void visitFolder(ICVSFolder mFolder) throws CVSException {
 
-		ICVSFile[] files;
-		ICVSFolder[] folders;
-
 		if (sendEmptyFolders) {
 			// If we want to send empty folder, that just send it when
 			// we come to it
@@ -67,28 +65,18 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 			return;
 		}
 
-		// We have to do a manual visit to ensure that the questionable
-		// folders are send before the normal
-
-		files = mFolder.getFiles();
-
+		// Send files, then the questionable folders, then the managed folders
+		ICVSResource[] files = mFolder.members(ICVSFolder.FILE_MEMBERS);
 		for (int i = 0; i < files.length; i++) {
 			files[i].accept(this);
 		}
-
-		folders = mFolder.getFolders();
-
+		ICVSResource[] folders = mFolder.members(ICVSFolder.FOLDER_MEMBERS | ICVSFolder.UNMANAGED_MEMBERS);
 		for (int i = 0; i < folders.length; i++) {
-			if (!folders[i].isCVSFolder()) {
-				folders[i].accept(this);
-				folders[i] = null;
-			}
+			folders[i].accept(this);
 		}
-
+		folders = mFolder.members(ICVSFolder.FOLDER_MEMBERS | ICVSFolder.MANAGED_MEMBERS);
 		for (int i = 0; i < folders.length; i++) {
-			if (folders[i] != null) {
-				folders[i].accept(this);
-			}
+			folders[i].accept(this);
 		}
 	}
 	

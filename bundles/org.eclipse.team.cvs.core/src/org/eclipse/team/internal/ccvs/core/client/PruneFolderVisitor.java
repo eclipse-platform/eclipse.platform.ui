@@ -47,11 +47,10 @@ class PruneFolderVisitor implements ICVSResourceVisitor {
 	public void visitFolder(ICVSFolder folder) throws CVSException {
 		// First prune any empty children
 		folder.acceptChildren(this);
-		// Then prune the folder if it is not the command root.
-		// XXX Seems a bit inefficient to fetch the files and folders separately
-		if ( ! folder.equals(session.getLocalRoot()) &&
-			folder.getFiles().length == 0 && 
-			folder.getFolders().length == 0) {
+		// Then prune the folder if it is managed, not the command root and is empty
+		if (folder.isManaged() &&
+		 	! folder.equals(session.getLocalRoot()) &&
+			folder.members(ICVSFolder.ALL_MEMBERS).length == 0) {
 			folder.delete();
 			folder.unmanage(null);
 		}

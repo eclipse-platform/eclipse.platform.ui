@@ -7,6 +7,7 @@ package org.eclipse.team.internal.ccvs.core.client;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
@@ -41,11 +42,25 @@ public class Commit extends Command {
 		ModifiedFileSender visitor = new ModifiedFileSender(session, monitor);
 		visitor.visit(session, resources);
 		
-		// Send the changed files as arguments
-		// XXX Is this the way the command line client works?
+		// Send the changed files as arguments (because this is what other cvs clients do)
 		ICVSFile[] changedFiles = visitor.getSentFiles();
 		for (int i = 0; i < changedFiles.length; i++) {
 			session.sendArgument(changedFiles[i].getRelativePath(session.getLocalRoot()));
+		}
+	}
+	
+	/**
+	 * On successful finish, prune empty directories if the -P or -D option was specified.
+	 */
+	protected void commandFinished(Session session, GlobalOption[] globalOptions,
+		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
+		boolean succeeded) throws CVSException {
+		// If we didn't succeed, don't do any post processing
+		if (! succeeded) return;
+
+		// If pruning is enable, prune empty directories after a commit
+		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) { //$NON-NLS-1$
+			new PruneFolderVisitor().visit(session, resources);
 		}
 	}
 	

@@ -295,14 +295,14 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	protected void assertEquals(IPath parent, ICVSFolder container1, ICVSFolder container2, boolean includeTimestamps, boolean includeTags) throws CoreException, CVSException, IOException {
 		IPath path = parent.append(container1.getName());
 		assertEquals(path, container1.getFolderSyncInfo(), container2.getFolderSyncInfo(), includeTags);
-		assertTrue("The numder of folders in " + path.toString() + " differs", container1.getFolders().length == container2.getFolders().length);
-		assertTrue("The numder of files in " + path.toString() + " differs", container1.getFiles().length == container2.getFiles().length);
-		ICVSFolder[] folders = container1.getFolders();
-		for (int i= 0;i <folders.length;i++)
-			assertEquals(path, folders[i], container2.getFolder(folders[i].getName()), includeTimestamps, includeTags);
-		ICVSFile[] files = container1.getFiles();
-		for (int i= 0;i <files.length;i++)
-			assertEquals(path, files[i], container2.getFile(files[i].getName()), includeTimestamps, includeTags);
+		assertTrue("The number of resource in " + path.toString() + " differs", 
+			container1.members(ICVSFolder.FILE_MEMBERS | ICVSFolder.FOLDER_MEMBERS).length 
+			== container2.members(ICVSFolder.FILE_MEMBERS | ICVSFolder.FOLDER_MEMBERS).length);
+		ICVSResource[] resources = container1.members(ICVSFolder.FILE_MEMBERS | ICVSFolder.FOLDER_MEMBERS);
+		for (int i= 0;i <resources.length;i++) {
+			assertEquals(path, resources[i], container2.getChild(resources[i].getName()), includeTimestamps, includeTags);
+		}
+
 	}
 	
 	/*

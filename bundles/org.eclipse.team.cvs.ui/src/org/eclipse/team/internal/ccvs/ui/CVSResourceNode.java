@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 
 /**
@@ -41,19 +42,14 @@ public class CVSResourceNode extends ResourceNode {
 			if (resource instanceof IContainer) {
 				try {
 					ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer) resource);
-					ICVSFile[] files = cvsFolder.getFiles();
-					for (int i= 0; i < files.length; i++) {
-						IResource child = getFile((IContainer)resource, files[i].getName());
-						if (child.exists()) {
-							IStructureComparator childNode = createChild(child);
-							if (childNode != null) {
-								fChildren.add(childNode);
-							}
+					ICVSResource[] resources = cvsFolder.members(ICVSFolder.FILE_MEMBERS | ICVSFolder.FOLDER_MEMBERS);
+					for (int i= 0; i < resources.length; i++) {
+						IResource child;
+						if (resources[i].isFolder()) {
+							child = getFolder((IContainer)resource, resources[i].getName());
+						} else {
+							child = getFile((IContainer)resource, resources[i].getName());
 						}
-					}
-					ICVSFolder[] folders = cvsFolder.getFolders();
-					for (int i= 0; i < folders.length; i++) {
-						IResource child = getFolder((IContainer)resource, folders[i].getName());
 						if (child.exists()) {
 							IStructureComparator childNode = createChild(child);
 							if (childNode != null) {

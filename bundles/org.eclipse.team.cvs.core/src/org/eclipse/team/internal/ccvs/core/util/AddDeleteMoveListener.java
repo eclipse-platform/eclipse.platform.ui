@@ -350,12 +350,6 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 							IMarker marker = getDeletionMarker(resource);
 							if (marker != null)
 								marker.delete();
-							cvsResource.getParent().run(new ICVSRunnable() {
-								public void run(IProgressMonitor monitor) throws CVSException {
-									pruneEmptyParents(resource);
-								}
-	
-							}, Policy.monitorFor(null));
 						}
 					}
 				}
@@ -364,28 +358,6 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 			} catch (CoreException e) {
 				Util.logError(Policy.bind("AddDeleteMoveListener.Error_updating_marker_state_4"), e); //$NON-NLS-1$
 			}
-		}
-	}
-
-	private void pruneEmptyParents(IResource resource) throws CVSException {
-		// Don't prune if pruning is off
-		if ( ! CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) {
-			return;
-		}
-		// Make sure it's a folder and not the project or workspace root
-		IContainer parent = resource.getParent();
-		if (parent.getType() != IResource.FOLDER) {
-			return;
-		}
-		// XXX Could use members on IFolder once team-private works
-		ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(parent);
-		if (folder.exists() 
-				&& folder.isManaged()
-				&& folder.getFiles().length == 0 
-				&& folder.getFolders().length == 0) {
-			folder.delete();
-			folder.unmanage(null);
-			pruneEmptyParents(parent);
 		}
 	}
 	

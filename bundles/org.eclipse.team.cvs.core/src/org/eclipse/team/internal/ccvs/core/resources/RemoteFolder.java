@@ -382,35 +382,35 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	}
 
 	/**
-	 * @see ICVSFolder#getFolders()
+	 * @see ICVSFolder#members(int)
 	 */
-	public ICVSFolder[] getFolders() throws CVSException {		
-		ICVSRemoteResource[] children = getChildren();
+	public ICVSResource[] members(int flags) throws CVSException {		
+		final List result = new ArrayList();
+		ICVSRemoteResource[] resources = getChildren();
 		if (children == null) {
-			return new ICVSFolder[0];
+			return new ICVSResource[0];
 		}
-		List result = new ArrayList();
-		for (int i=0;i<children.length;i++)
-			if (((ICVSResource)children[i]).isFolder())
-				result.add(children[i]);
-		return (ICVSFolder[])result.toArray(new ICVSFolder[result.size()]);
-	}
-
-	/**
-	 * @see ICVSFolder#getFiles()
-	 */
-	public ICVSFile[] getFiles() throws CVSException {
-		ICVSRemoteResource[] children = getChildren();
-		if (children == null) {
-			return new ICVSFile[0];
+		boolean includeFiles = (((flags & FILE_MEMBERS) != 0) || ((flags & (FILE_MEMBERS | FOLDER_MEMBERS)) == 0));
+		boolean includeFolders = (((flags & FOLDER_MEMBERS) != 0) || ((flags & (FILE_MEMBERS | FOLDER_MEMBERS)) == 0));
+		boolean includeManaged = (((flags & MANAGED_MEMBERS) != 0) || ((flags & (MANAGED_MEMBERS | UNMANAGED_MEMBERS | IGNORED_MEMBERS)) == 0));
+		boolean includeUnmanaged = (((flags & UNMANAGED_MEMBERS) != 0) || ((flags & (MANAGED_MEMBERS | UNMANAGED_MEMBERS | IGNORED_MEMBERS)) == 0));
+		boolean includeIgnored = ((flags & IGNORED_MEMBERS) != 0);
+		for (int i = 0; i < resources.length; i++) {
+			ICVSResource cvsResource = resources[i];
+			if ((includeFiles && ( ! cvsResource.isFolder())) 
+					|| (includeFolders && (cvsResource.isFolder()))) {
+				boolean isManaged = cvsResource.isManaged();
+				boolean isIgnored = cvsResource.isIgnored();
+				if ((isManaged && includeManaged)|| (isIgnored && includeIgnored)
+						|| ( ! isManaged && ! isIgnored && includeUnmanaged)) {
+					result.add(cvsResource);
+				}
+						
+			}		
 		}
-		List result = new ArrayList();
-		for (int i=0;i<children.length;i++)
-			if (!((ICVSResource)children[i]).isFolder())
-				result.add(children[i]);
-		return (ICVSFile[])result.toArray(new ICVSFile[result.size()]);
+		return (ICVSResource[]) result.toArray(new ICVSResource[result.size()]);
 	}
-
+	
 	/**
 	 * @see ICVSFolder#getFolder(String)
 	 */

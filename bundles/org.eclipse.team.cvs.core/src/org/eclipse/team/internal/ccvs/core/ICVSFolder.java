@@ -16,7 +16,14 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
  * @see ICVSFile
  */
 public interface ICVSFolder extends ICVSResource {
-		
+	
+	public static final int FILE_MEMBERS = 1;
+	public static final int FOLDER_MEMBERS = 2;
+	public static final int IGNORED_MEMBERS = 4;
+	public static final int UNMANAGED_MEMBERS = 8;
+	public static final int MANAGED_MEMBERS = 16;
+	public static final int ALL_MEMBERS = FILE_MEMBERS | FOLDER_MEMBERS | IGNORED_MEMBERS | UNMANAGED_MEMBERS | MANAGED_MEMBERS;
+	
 	/**
 	 * Answers and array of <code>ICVSResource</code> elements that are immediate 
 	 * children of this remote resource, in no particular order. The server may be contacted.
@@ -29,32 +36,32 @@ public interface ICVSFolder extends ICVSResource {
 	public ICVSResource[] fetchChildren(IProgressMonitor monitor) throws CVSException;
 	
 	/**
-	 * [Note: temporary method that should only be used by commands.]
-	 * Answers the immediate folder children of this resource that are known
-	 * at the time of invocation. The server is never contacted. 
+	 * Answer the immediate children of the resource that are known
+	 * at the time of invocation. The server is never contacted.
+	 * The flags indicate the type of members to be included.
+	 * Here are the rules for specifying just one flag:
 	 * 
-	 * This includes the union 
-	 * of children that satisfy the following criteria:
-	 * <ul>
-	 *   <li> exists but is not managed (not under CVS control)
-	 *   <li> does not exist() but is managed (deleted folder)
-	 *   <li> exist() and isManaged() (normal registered file)
-	 * </ul>
-	 * If the folder does not exist then a zero length array is returned.
+	 *   a) FILE_MEMBERS and FOLDER_MEMBERS will return managed 
+	 *     and unmanaged resource of the corresponding type
+	 *   b) IGNORED_MEMBERS, MANAGED_RESOURCES and UNMANAGED_RESOURCES
+	 *     will return files and folders of the given type
+	 * 
+	 * Note: Unmanaged resources are those tat are neither managed
+	 * or ignored.
+	 * 
+	 * If all of the flags from either group a) or group b)
+	 * are not present, the same rule for default types applies. 
+	 * For example,
+	 * - FILE_MEMBERS | FOLDER_MEMBERS will return all managed
+	 *   and unmanaged files and folders. 
+	 * - IGNORED_MEMBERS | UNMANAGED_MEMBERS will return all
+	 *   ignored or unmanaged files and folders
+	 * If a flag from each group is present, the result is the
+	 * union of the sets. For example,
+	 * - FILE_MEMBERS | IGNORED_MEMBERS will return all
+	 *   ignored files.
 	 */
-	public ICVSFolder[] getFolders() throws CVSException;
-	
-	/**
-	 * [Note: temporary method that should only be used by commands.]
-	 * Answers the immediate file children of this resource that are known
-	 * at the time of invocation. The server is never contacted. 
-	 * <ul>
-	 *   <li> exists but is not managed (not under CVS control)
-	 *   <li> does not exist() but is managed (deleted file)
-	 *   <li> exist() and isManaged() (normal registered file)
-	 * </ul>
-	 */
-	public ICVSFile[] getFiles() throws CVSException;
+	public ICVSResource[] members(int flags) throws CVSException;
 	
 	/**
 	 * Answers a child folder of this resource with the given name or <code>null</code> if 

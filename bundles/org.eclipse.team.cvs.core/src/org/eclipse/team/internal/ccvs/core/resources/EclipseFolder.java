@@ -49,46 +49,33 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	protected EclipseFolder(IContainer container) {
 		super(container);		
 	}
-
-	/**
-	 * 
-	 * @see ICVSFolder#getFolders()
-	 */
-	public ICVSFolder[] getFolders() throws CVSException {
-		IContainer folder = (IContainer)resource;			
-		final List folders = new ArrayList();
-		
-		IResource[] resources = EclipseSynchronizer.getInstance().members(folder);
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			if(resource.getType()!=IResource.FILE) {
-				ICVSResource cvsResource = new EclipseFolder((IContainer)resource);
-				if(!cvsResource.isIgnored()) {
-					folders.add(cvsResource);
-				}
-			}			
-		}	
-		return (ICVSFolder[]) folders.toArray(new ICVSFolder[folders.size()]);
-	}
 	
 	/**
-	 * @see ICVSFolder#getFiles()
+	 * @see ICVSFolder#members(int)
 	 */
-	public ICVSFile[] getFiles() throws CVSException {
-		IContainer folder = (IContainer)resource;			
-		final List files = new ArrayList();
-		
-		IResource[] resources = EclipseSynchronizer.getInstance().members(folder);
+	public ICVSResource[] members(int flags) throws CVSException {		
+		final List result = new ArrayList();
+		IResource[] resources = EclipseSynchronizer.getInstance().members((IContainer)resource);
+		boolean includeFiles = (((flags & FILE_MEMBERS) != 0) || ((flags & (FILE_MEMBERS | FOLDER_MEMBERS)) == 0));
+		boolean includeFolders = (((flags & FOLDER_MEMBERS) != 0) || ((flags & (FILE_MEMBERS | FOLDER_MEMBERS)) == 0));
+		boolean includeManaged = (((flags & MANAGED_MEMBERS) != 0) || ((flags & (MANAGED_MEMBERS | UNMANAGED_MEMBERS | IGNORED_MEMBERS)) == 0));
+		boolean includeUnmanaged = (((flags & UNMANAGED_MEMBERS) != 0) || ((flags & (MANAGED_MEMBERS | UNMANAGED_MEMBERS | IGNORED_MEMBERS)) == 0));
+		boolean includeIgnored = ((flags & IGNORED_MEMBERS) != 0);
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			if(resource.getType()==IResource.FILE) {
-				ICVSResource cvsResource = new EclipseFile((IFile)resource);
-				if(!cvsResource.isIgnored()) {
-					files.add(cvsResource);
+			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+			if ((includeFiles && (resource.getType()==IResource.FILE)) 
+					|| (includeFolders && (resource.getType()==IResource.FOLDER))) {
+				boolean isManaged = cvsResource.isManaged();
+				boolean isIgnored = cvsResource.isIgnored();
+				if ((isManaged && includeManaged)|| (isIgnored && includeIgnored)
+						|| ( ! isManaged && ! isIgnored && includeUnmanaged)) {
+					result.add(cvsResource);
 				}
-			}			
+						
+			}		
 		}	
-		return (ICVSFile[]) files.toArray(new ICVSFile[files.size()]);
+		return (ICVSResource[]) result.toArray(new ICVSResource[result.size()]);
 	}
 
 	/**
@@ -141,16 +128,12 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 */
 	public void acceptChildren(ICVSResourceVisitor visitor) throws CVSException {
 		
-		ICVSResource[] subFiles;
-		ICVSResource[] subFolders;
-		
-		subFiles = getFiles();
-		subFolders = getFolders();
-		
+		// Visit files and then folders
+		ICVSResource[] subFiles = members(FILE_MEMBERS);
 		for (int i=0; i<subFiles.length; i++) {
 			subFiles[i].accept(visitor);
 		}
-		
+		ICVSResource[] subFolders = members(FOLDER_MEMBERS);
 		for (int i=0; i<subFolders.length; i++) {
 			subFolders[i].accept(visitor);
 		}
@@ -318,9 +301,6 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 * @see ICVSFolder#fetchChildren(IProgressMonitor)
 	 */
 	public ICVSResource[] fetchChildren(IProgressMonitor monitor) throws CVSException {
-		List children = new ArrayList();
-		children.addAll(Arrays.asList(getFolders()));
-		children.addAll(Arrays.asList(getFiles()));
-		return (ICVSResource[]) children.toArray(new ICVSResource[children.size()]);
+		return members(FILE_MEMBERS | FOLDER_MEMBERS);
 	}
 }

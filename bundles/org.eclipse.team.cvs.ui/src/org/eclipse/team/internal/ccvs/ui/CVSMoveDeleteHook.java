@@ -29,6 +29,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -120,9 +121,9 @@ public class CVSMoveDeleteHook implements IMoveDeleteHook {
 			try {
 				ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(source);
 				// We we need to check if the folder already has outgoing deletions
-				ICVSFile[] files = folder.getFiles();
+				ICVSResource[] files = folder.members(ICVSFolder.FILE_MEMBERS);
 				for (int i = 0; i < files.length; i++) {
-					ICVSFile cvsFile = files[i];
+					ICVSFile cvsFile = (ICVSFile)files[i];
 					if (cvsFile.isManaged() && ! cvsFile.getSyncInfo().isAdded()) {
 						fileFound = true;
 						break;
