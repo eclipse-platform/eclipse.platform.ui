@@ -47,5 +47,10 @@
          class="org.eclipse.ant.internal.core.ant.CommaPatternSet"
          library="lib/antsupportlib.jar">
       </antType>
+      <antType
+         name="eclipse.commapatternset"
+         class="org.eclipse.ant.internal.core.ant.CommaPatternSet"
+         library="lib/antsupportlib.jar">
+      </antType>
    </extension>
 </plugin>
