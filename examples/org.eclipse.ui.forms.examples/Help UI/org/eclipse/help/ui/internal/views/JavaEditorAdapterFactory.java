@@ -6,17 +6,13 @@
  */
 package org.eclipse.help.ui.internal.views;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.help.HelpSystem;
-import org.eclipse.help.IContext;
+import org.eclipse.core.runtime.*;
+import org.eclipse.help.*;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.internal.ui.IJavaHelpContextIds;
-import org.eclipse.jdt.internal.ui.actions.ActionUtil;
-import org.eclipse.jdt.internal.ui.actions.SelectionConverter;
+import org.eclipse.jdt.internal.ui.actions.*;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jdt.internal.ui.util.JavadocHelpContext;
-import org.eclipse.swt.widgets.Widget;
 
 /**
  * @author dejan
@@ -27,9 +23,10 @@ import org.eclipse.swt.widgets.Widget;
 public class JavaEditorAdapterFactory implements IAdapterFactory {
 	private EditorContextHelpProvider provider;
 	
-	private class EditorContextHelpProvider implements IContextHelpProvider {
+	private class EditorContextHelpProvider implements IContextProvider {
 		private Object[] selected;
 		private String id;
+		private String expression;
 		
 		public EditorContextHelpProvider(String id) {
 			this.id = id;
@@ -37,10 +34,13 @@ public class JavaEditorAdapterFactory implements IAdapterFactory {
 		public void setSelected(Object[] selected) {
 			this.selected = selected;
 		}
-		public int getContextHelpChangeMask() {
+		public void setSearchExpression(String expression) {
+			this.expression = expression;
+		}
+		public int getContextChangeMask() {
 			return SELECTION;
 		}
-		public IContext getHelpContext(Widget widget) {
+		public IContext getContext(Object target) {
 			IContext context= HelpSystem.getContext(id);
 			if (context != null) {
 				if (selected != null && selected.length > 0) {
@@ -54,6 +54,9 @@ public class JavaEditorAdapterFactory implements IAdapterFactory {
 			}
 			return context;
 		}
+		public String getSearchExpression(Object target) {
+			return expression;
+		}
 	}
 	/**
 	 * 
@@ -66,7 +69,7 @@ public class JavaEditorAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		if (IContextHelpProvider.class.isAssignableFrom(adapterType)
+		if (IContextProvider.class.isAssignableFrom(adapterType)
 				&& adaptableObject instanceof JavaEditor)
 			return createJavaEditorAdapter((JavaEditor) adaptableObject);
 		return null;
@@ -76,9 +79,9 @@ public class JavaEditorAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() {
-		return new Class[] { IContextHelpProvider.class };
+		return new Class[] { IContextProvider.class };
 	}
-	private IContextHelpProvider createJavaEditorAdapter(JavaEditor editor) {
+	private IContextProvider createJavaEditorAdapter(JavaEditor editor) {
 		try {
 			Object[] selected= null;
 			IJavaElement input= SelectionConverter.getInput(editor);
@@ -86,11 +89,30 @@ public class JavaEditorAdapterFactory implements IAdapterFactory {
 				selected= SelectionConverter.codeResolve(editor);					
 			}
 			provider.setSelected(selected);
+			provider.setSearchExpression(createSearchExpression(editor, selected));
 			return provider;
 
 		} catch (CoreException x) {
 			System.out.println(x);
 		}		
 		return null;
+	}
+	private String createSearchExpression(JavaEditor editor, Object[] selected) {
+		StringBuffer buf = new StringBuffer();
+		if (selected!=null) {
+			for (int i=0; i<selected.length; i++) {
+				Object obj = selected[i];
+				if (obj instanceof IJavaElement) {
+					IJavaElement el = (IJavaElement)obj;
+					if (buf.length()>0)
+						buf.append(" ");
+					buf.append(el.getElementName());
+				}
+			}
+		}
+		if (buf.length()>0)
+			buf.append(" ");
+		buf.append(editor.getEditorSite().getRegisteredName());
+		return buf.toString();
 	}
 }

@@ -97,6 +97,6 @@ public class WizardFormEditorOutline implements IContentOutlinePage {
 	
 	public void update() {
 		IWizardPage page = editor.getCurrentPage();
-		contextHelpPart.update(page!=null?page.getControl():null);
+		contextHelpPart.update(null, page!=null?page.getControl():null);
 	}
 }

@@ -8,14 +8,11 @@ package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.help.HelpSystem;
-import org.eclipse.help.IContext;
+import org.eclipse.help.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.views.markers.internal.ConcreteMarker;
-import org.eclipse.ui.views.markers.internal.MarkerView;
+import org.eclipse.ui.views.markers.internal.*;
 
 /**
  * @author dejan
@@ -29,19 +26,23 @@ public class MarkerViewAdapterFactory implements IAdapterFactory {
 	/**
 	 * 
 	 */
-	private class MarkerViewContextHelpProvider implements IContextHelpProvider {
+	private class MarkerViewContextHelpProvider implements IContextProvider {
 		private String id;
 
-		public IContext getHelpContext(Widget widget) {
+		public IContext getContext(Object widget) {
 			return HelpSystem.getContext(id);
 		}
 
-		public int getContextHelpChangeMask() {
+		public int getContextChangeMask() {
 			return SELECTION;
 		}
 
 		public void setId(String id) {
 			this.id = id;
+		}
+		public String getSearchExpression(Object target) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 
@@ -56,7 +57,7 @@ public class MarkerViewAdapterFactory implements IAdapterFactory {
 	 *      java.lang.Class)
 	 */
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		if (IContextHelpProvider.class.isAssignableFrom(adapterType)
+		if (IContextProvider.class.isAssignableFrom(adapterType)
 				&& adaptableObject instanceof MarkerView) {
 			return createMarkerViewAdapter((MarkerView) adaptableObject);
 		}
@@ -91,6 +92,6 @@ public class MarkerViewAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() {
-		return new Class[] { IContextHelpProvider.class };
+		return new Class[] { IContextProvider.class };
 	}
 }

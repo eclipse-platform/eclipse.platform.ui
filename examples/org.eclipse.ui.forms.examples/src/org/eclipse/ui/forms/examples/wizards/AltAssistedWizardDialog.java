@@ -6,7 +6,8 @@
  */
 package org.eclipse.ui.forms.examples.wizards;
 
-import org.eclipse.help.ui.internal.views.*;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.help.ui.internal.views.ReusableHelpPart;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.wizard.*;
@@ -82,14 +83,14 @@ public class AltAssistedWizardDialog extends WizardDialog {
 			gd.heightHint = 1;
 			separator.setLayoutData(gd);				
 			
-			helpPart.showPage(IHelpViewConstants.CONTEXT_HELP_PAGE);
+			helpPart.showPage(IHelpUIConstants.HV_CONTEXT_HELP_PAGE);
 			updateForPage(getCurrentPage());
 			return helpPart.getControl();
 		}
 		
 		public void updateForPage(IWizardPage page) {
 			if (page!=null)
-				helpPart.update(page.getControl());
+				helpPart.update(null, page.getControl());
 		}
 
 		public boolean close() {

@@ -6,6 +6,7 @@
  */
 package org.eclipse.ui.forms.examples.wizards;
 
+import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.views.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -107,7 +108,7 @@ public class AssistedWizardDialog extends WizardDialog implements IFormToolkitPr
     	sep = new Label(helpContainer, SWT.SEPARATOR|SWT.HORIZONTAL);    	
     	sep.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
      	//dialogContainer.setWeights(new int[] {5, 2});
-		contextHelpPart.showPage(IHelpViewConstants.CONTEXT_HELP_PAGE);  	
+		contextHelpPart.showPage(IHelpUIConstants.HV_CONTEXT_HELP_PAGE);  	
     	updateContextHelp();
     	return dialogContainer;
     }
@@ -154,7 +155,7 @@ public class AssistedWizardDialog extends WizardDialog implements IFormToolkitPr
 	}    
     private void updateContextHelp() {
        	IWizardPage page = getCurrentPage();
-    	contextHelpPart.update(page!=null?page.getControl():null);
+    	contextHelpPart.update(null, page!=null?page.getControl():null);
     }
     protected void helpPressed() {
     	//dialogContainer.setMaximizedControl(null);

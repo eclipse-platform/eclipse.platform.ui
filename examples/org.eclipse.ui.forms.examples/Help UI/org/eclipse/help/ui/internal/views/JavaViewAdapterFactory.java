@@ -6,16 +6,11 @@
  */
 package org.eclipse.help.ui.internal.views;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.help.HelpSystem;
-import org.eclipse.help.IContext;
+import org.eclipse.core.runtime.*;
+import org.eclipse.help.*;
 import org.eclipse.jdt.internal.ui.IJavaHelpContextIds;
 import org.eclipse.jdt.internal.ui.util.JavadocHelpContext;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -29,8 +24,9 @@ public class JavaViewAdapterFactory implements IAdapterFactory,
 	private ViewContextHelpProvider provider;
 
 	private String id;
+	private String expression;
 
-	private class ViewContextHelpProvider implements IContextHelpProvider {
+	private class ViewContextHelpProvider implements IContextProvider {
 		private Object[] selected;
 
 		public ViewContextHelpProvider() {
@@ -40,11 +36,11 @@ public class JavaViewAdapterFactory implements IAdapterFactory,
 			this.selected = selected;
 		}
 
-		public int getContextHelpChangeMask() {
+		public int getContextChangeMask() {
 			return SELECTION;
 		}
 
-		public IContext getHelpContext(Widget widget) {
+		public IContext getContext(Object target) {
 			IContext context = HelpSystem.getContext(id);
 			if (context != null) {
 				if (selected != null && selected.length > 0) {
@@ -56,6 +52,9 @@ public class JavaViewAdapterFactory implements IAdapterFactory,
 				}
 			}
 			return context;
+		}
+		public String getSearchExpression(Object target) {
+			return expression;
 		}
 	}
 
@@ -73,7 +72,7 @@ public class JavaViewAdapterFactory implements IAdapterFactory,
 	 *      java.lang.Class)
 	 */
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		if (IContextHelpProvider.class.isAssignableFrom(adapterType)
+		if (IContextProvider.class.isAssignableFrom(adapterType)
 				&& adaptableObject instanceof ViewPart)
 			return createJavaViewerAdapter((ViewPart) adaptableObject);
 		return null;
@@ -85,10 +84,10 @@ public class JavaViewAdapterFactory implements IAdapterFactory,
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() {
-		return new Class[] { IContextHelpProvider.class };
+		return new Class[] { IContextProvider.class };
 	}
 
-	private IContextHelpProvider createJavaViewerAdapter(ViewPart view) {
+	private IContextProvider createJavaViewerAdapter(ViewPart view) {
 		IStructuredSelection sel = (IStructuredSelection) view.getSite()
 				.getSelectionProvider().getSelection();
 		provider.setSelected(sel.toArray());
