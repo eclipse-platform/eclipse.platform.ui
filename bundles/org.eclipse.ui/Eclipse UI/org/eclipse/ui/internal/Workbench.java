@@ -1,7 +1,7 @@
 package org.eclipse.ui.internal;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.io.*;
@@ -769,9 +769,13 @@ public void restoreState(IMemento memento) {
 	// Read perspective history.
 	// This must be done before we recreate the windows, because it is
 	// consulted during the recreation.
-	IMemento childMem = memento.getChild("perspHistory");
+	IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVE_HISTORY);
 	if (childMem != null)
 		getPerspectiveHistory().restoreState(childMem);
+
+	IMemento mruMemento = memento.getChild(IWorkbenchConstants.TAG_MRU_LIST); //$NON-NLS-1$
+	if (mruMemento != null)
+		getEditorHistory().restoreState(mruMemento);
 		
 	// Get the child windows.
 	IMemento [] children = memento.getChildren(IWorkbenchConstants.TAG_WINDOW);
@@ -845,9 +849,9 @@ public void saveState(IMemento memento) {
 		IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_WINDOW);
 		window.saveState(childMem);
 	}
-	
+	getEditorHistory().saveState(memento.createChild(IWorkbenchConstants.TAG_MRU_LIST)); 			//$NON-NLS-1$
 	// Save perspective history.
-	getPerspectiveHistory().saveState(memento.createChild("perspHistory"));
+	getPerspectiveHistory().saveState(memento.createChild(IWorkbenchConstants.TAG_PERSPECTIVE_HISTORY));	//$NON-NLS-1$
 }
 /**
  * Save the workbench UI in a persistence file.
@@ -857,13 +861,13 @@ private boolean saveWorkbenchState(XMLMemento memento) {
 	File stateFile = getWorkbenchStateFile();
 	try {
 		FileOutputStream stream = new FileOutputStream(stateFile);
-		OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8");
+		OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8");	//$NON-NLS-1$
 		memento.save(writer);
 		writer.close();
 	} catch (IOException e) {
 		stateFile.delete();		
 		MessageDialog.openError((Shell)null, 
-			WorkbenchMessages.getString("SavingProblem"),  //$NON-NLS-1$
+			WorkbenchMessages.getString("SavingProblem"),  		//$NON-NLS-1$
 			WorkbenchMessages.getString("ProblemSavingState")); //$NON-NLS-1$
 		return false;
 	}

@@ -118,4 +118,7 @@ public interface IWorkbenchConstants {
 	public static final String TAG_VIEW_STATE = "viewState"; //$NON-NLS-1$
 	public static final String TAG_SINGLETON="singleton"; //$NON-NLS-1$
 	public static final String TAG_EDITOR_REUSE_THRESHOLD="editorReuseThreshold"; //$NON-NLS-1$
+	public static final String TAG_PERSISTABLE = "persistable";	//$NON-NLS-1$
+	public static final String TAG_MRU_LIST = "mruList";	//$NON-NLS-1$
+	public static final String TAG_PERSPECTIVE_HISTORY = "perspHistory";	//$NON-NLS-1$	
 }

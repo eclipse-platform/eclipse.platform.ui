@@ -1,11 +1,13 @@
 package org.eclipse.ui.internal;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.ui.*;
-import java.util.*;
 
 /**
  * This class is used to record "open editor" actions as they
@@ -40,17 +42,21 @@ public void add(IEditorInput input) {
  * Adds an item to the history.
  */
 public void add(IEditorInput input, IEditorDescriptor desc) {
+	add(new EditorHistoryItem(input, desc));
+}
+/**
+ * Adds an item to the history.
+ */
+private void add(EditorHistoryItem item) {
 	// Remove old item.
-	remove(input);
+	remove(item.getInput());
 
 	// Add the new item.
-	EditorHistoryItem item = new EditorHistoryItem(input, desc);
 	stack.add(item);
-	while (stack.size() > depth) {
+	if (stack.size() > depth) {
 		stack.remove(0);
 	}
 }
-
 /**
  * Returns an array of editor history items.  The items are returned in order
  * of most recent first.
@@ -77,7 +83,7 @@ public void refresh() {
 	Iterator iter = stack.iterator();
 	while (iter.hasNext()) {
 		EditorHistoryItem item = (EditorHistoryItem)iter.next();
-		if (!item.input.exists())
+		if (!item.getInput().exists())
 			iter.remove();
 	}
 }
@@ -88,8 +94,37 @@ public void remove(IEditorInput input) {
 	Iterator iter = stack.iterator();
 	while (iter.hasNext()) {
 		EditorHistoryItem item = (EditorHistoryItem)iter.next();
-		if (input.equals(item.input))
+		if (input.equals(item.getInput()))
 			iter.remove();
+	}
+}
+/**
+ * Restore the most-recently-used history from the given memento.
+ * 
+ * @param memento the memento to restore the mru history from
+ */
+public void restoreState(IMemento memento) {
+	IMemento[] mementos = memento.getChildren(IWorkbenchConstants.TAG_FILE);
+	for (int i = 0; i < mementos.length; i++) {
+		EditorHistoryItem item = new EditorHistoryItem();
+		item.restoreState(mementos[i]);
+		if (item.getInput() != null) {
+			add(item);
+		}
+	}
+}
+/**
+ * Save the most-recently-used history in the given memento.
+ * 
+ * @param memento the memento to save the mru history in
+ */
+public void saveState(IMemento memento) {
+	Iterator iterator = stack.iterator();
+	
+	while (iterator.hasNext()) {
+		EditorHistoryItem historyItem = (EditorHistoryItem) iterator.next();
+		IMemento itemMemento = memento.createChild(IWorkbenchConstants.TAG_FILE);			
+		historyItem.saveState(itemMemento);
 	}
 }
 }

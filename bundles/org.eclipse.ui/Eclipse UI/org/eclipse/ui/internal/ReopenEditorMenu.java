@@ -41,7 +41,7 @@ private String calcText(int index, EditorHistoryItem item) {
 	sb.append(index+1);
 	sb.insert(sb.length()-1, '&');  // make the last digit the mnemonic, not the first
 	sb.append(' ');
-	String suffix = item.input.getToolTipText();
+	String suffix = item.getInput().getToolTipText();
 	if (suffix.length() <= MAX_TEXT_LENGTH) {
 		sb.append(suffix);
 	}
@@ -101,8 +101,8 @@ void open(EditorHistoryItem item) {
 		try {
 			// Fix for 1GF6HQ1: ITPUI:WIN2000 - NullPointerException: opening a .ppt file
 			// Descriptor is null if opened on OLE editor.  .
-			IEditorInput input = item.input;
-			IEditorDescriptor desc = item.desc;
+			IEditorInput input = item.getInput();
+			IEditorDescriptor desc = item.getDescriptor();
 			if (desc == null) {
 				// There's no openEditor(IEditorInput) call, and openEditor(IEditorInput, String)
 				// doesn't allow null id.

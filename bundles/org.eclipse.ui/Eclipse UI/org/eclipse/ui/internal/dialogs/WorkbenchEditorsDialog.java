@@ -327,8 +327,10 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 			Workbench wb = (Workbench)window.getWorkbench();
 			EditorHistory history = wb.getEditorHistory();
 			EditorHistoryItem editors[] = history.getItems();
-			for (int i = 0; i < editors.length; i ++)
-				elements.add(new Adapter(editors[i].input,editors[i].desc));
+			for (int i = 0; i < editors.length; i ++) {
+				EditorHistoryItem editor = editors[i];
+				elements.add(new Adapter(editor.getInput(),editor.getDescriptor()));
+			}
 		}
 		sort();
 		Object selection = null;
