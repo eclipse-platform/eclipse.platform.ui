@@ -801,6 +801,10 @@ public class CVSSSH2PreferencePage extends PreferencePage
       CVSRepositoryLocation crl=CVSRepositoryLocation.fromString(location);
       IProgressMonitor pm=new org.eclipse.core.runtime.NullProgressMonitor();
       Session session=JSchSession.getSession(crl, user, "", host, port, pm);
+      if(session.getServerVersion().indexOf("OpenSSH")==-1){
+      	setErrorMessage(Policy.bind("CVSSSH2PreferencePage.110"));
+    	return;
+      }
       Channel channel=session.openChannel("sftp");
       channel.connect();
       ChannelSftp c=(ChannelSftp)channel;
