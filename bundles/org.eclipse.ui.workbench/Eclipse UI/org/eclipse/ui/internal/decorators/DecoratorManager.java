@@ -261,6 +261,13 @@ public class DecoratorManager implements IDelayedLabelDecorator,
                 fireListeners(event);
                 return Status.OK_STATUS;
             }
+            
+            /* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+			 */
+			public boolean belongsTo(Object family) {
+				return FAMILY_DECORATE == family;
+			}
         };
         updateJob.setSystem(true);
         updateJob.schedule();

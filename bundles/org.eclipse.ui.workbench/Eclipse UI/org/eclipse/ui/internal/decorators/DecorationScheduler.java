@@ -20,6 +20,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Color;
@@ -46,8 +47,22 @@ public class DecorationScheduler {
 
 	// Objects that are awaiting a label update.
 	Set pendingUpdate = new HashSet();
+	
+	ISchedulingRule updateRule = new ISchedulingRule(){
 
-	Object resultLock = new Object();
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
+		 */
+		public boolean contains(ISchedulingRule rule) {
+			return rule == this;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
+		 */
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule == this; //ALways conflict with this.
+		}};
 
 	Map awaitingDecorationValues = new HashMap();
 
@@ -185,7 +200,7 @@ public class DecorationScheduler {
 	/**
 	 * Execute a label update using the pending decorations.
 	 */
-	synchronized void decorated() {
+	void decorated() {
 
 		//Don't bother if we are shutdown now
 		if (shutdown)
@@ -266,16 +281,16 @@ public class DecorationScheduler {
 					//Synchronize on the result lock as we want to
 					//be sure that we do not try and decorate during
 					//label update servicing.
-					synchronized (resultLock) {
-						elementIsCached = resultCache.containsKey(element);
-						if (elementIsCached) {
-							pendingUpdate.add(element);
-						}
-						if (adapted != null) {
-							adaptedResult = (DecorationResult) resultCache
-									.get(adapted);
-						}
+					
+					elementIsCached = resultCache.containsKey(element);
+					if (elementIsCached) {
+						pendingUpdate.add(element);
 					}
+					if (adapted != null) {
+						adaptedResult = (DecorationResult) resultCache
+								.get(adapted);
+					}
+					
 					if (!elementIsCached) {
 						//Just build for the resource first
 						if (adapted != null) {
@@ -311,21 +326,20 @@ public class DecorationScheduler {
 							//label update servicing.
 							//Note: resultCache and pendingUpdate modifications
 							//must be done atomically.
-							synchronized (resultLock) {
-								if (adaptedResult != null) {
-									resultCache.put(adapted, adaptedResult);
-								}
-								// Add the decoration even if it's empty in
-								// order to indicate that the decoration is
-								// ready
-								resultCache.put(element, cacheResult
-										.createResult());
+							if (adaptedResult != null) 
+								resultCache.put(adapted, adaptedResult);
+							
+							// Add the decoration even if it's empty in
+							// order to indicate that the decoration is
+							// ready
+							resultCache.put(element, cacheResult
+									.createResult());
 
-								//Add an update for only the original element
-								// to
-								//prevent multiple updates and clear the cache.
-								pendingUpdate.add(element);
-							}
+							//Add an update for only the original element
+							// to
+							//prevent multiple updates and clear the cache.
+							pendingUpdate.add(element);
+							
 						}
 					}
 
@@ -357,6 +371,7 @@ public class DecorationScheduler {
 			}
 		};
 
+		decorationJob.setRule(updateRule);
 		decorationJob.setSystem(true);
 		decorationJob.setPriority(Job.DECORATE);
 		decorationJob.schedule();
@@ -367,10 +382,28 @@ public class DecorationScheduler {
 	 * likely obsolete now.
 	 */
 	void clearResults() {
-		synchronized (resultLock) {
-			resultCache.clear();
-		}
+		
+		Job clearJob = new Job(WorkbenchMessages.getString("DecorationScheduler.ClearResultsJob")){ //$NON-NLS-1$
 
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			protected IStatus run(IProgressMonitor monitor) {
+				resultCache.clear();
+				return Status.OK_STATUS;
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
+			 */
+			public boolean shouldRun() {
+				return PlatformUI.isWorkbenchRunning();
+			}
+			
+		};
+		clearJob.setSystem(true);
+		clearJob.setRule(updateRule);
+		clearJob.schedule();
 	}
 
 	/**
@@ -387,8 +420,7 @@ public class DecorationScheduler {
 					return Status.CANCEL_STATUS;
 				
 				//Check again in case someone has already cleared it out.
-				synchronized (resultLock) {
-					if (pendingUpdate.isEmpty())
+				if (pendingUpdate.isEmpty())
 						return Status.OK_STATUS;
 
 					//Get the elements awaiting update and then
@@ -412,7 +444,7 @@ public class DecorationScheduler {
 						resultCache.clear();
 					monitor.worked(5);
 					monitor.done();
-				}
+				
 				if (!pendingUpdate.isEmpty())
 					decorated();
 				return Status.OK_STATUS;
@@ -426,6 +458,7 @@ public class DecorationScheduler {
 			}
 		};
 
+		job.setRule(updateRule);
 		job.setSystem(true);
 		return job;
 	}
@@ -492,5 +525,14 @@ public class DecorationScheduler {
 		if (decoration == null)
 			return null;
 		return decoration.getForegroundColor();
+	}
+
+	/**
+	 * Return whether or not any updates are being
+	 * processed/
+	 * @return boolean
+	 */
+	public boolean processingUpdates() {
+		return !pendingUpdate.isEmpty() && !awaitingDecoration.isEmpty();
 	}
 }

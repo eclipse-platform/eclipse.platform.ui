@@ -35,20 +35,6 @@ public class ForegroundColorDecorator implements ILightweightLabelDecorator {
 	 */
 	public void decorate(Object element, IDecoration decoration) {
 
-		if(color == null){
-			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see java.lang.Runnable#run()
-				 */
-				public void run() {
-					setUpColor();
-
-				}
-			});
-
-		}
 		decoration.setForegroundColor(color);
 
 	}

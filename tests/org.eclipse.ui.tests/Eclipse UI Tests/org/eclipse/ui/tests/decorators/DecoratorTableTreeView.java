@@ -10,18 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.TableTreeViewer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.ViewPart;
 
 /**
  * The DecoratorTableTreeView is the view that tests decorators
  * for table trees.
  */
-public class DecoratorTableTreeView extends ViewPart {
+public class DecoratorTableTreeView extends DecoratorTestPart {
 	
 	TableTreeViewer viewer;
 
@@ -38,8 +35,7 @@ public class DecoratorTableTreeView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		viewer = new TableTreeViewer(parent);
 
-		viewer.setLabelProvider(new DecoratingLabelProvider(new TestLabelProvider(), PlatformUI
-				.getWorkbench().getDecoratorManager()));
+		viewer.setLabelProvider(getLabelProvider());
 
 		viewer.setContentProvider(new TestTreeContentProvider());
 		viewer.setInput(this);

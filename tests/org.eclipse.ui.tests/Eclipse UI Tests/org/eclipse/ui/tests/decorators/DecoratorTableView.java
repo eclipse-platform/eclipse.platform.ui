@@ -10,19 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.ViewPart;
 
 /**
- * The DecoratorTableView is a view that tests the decorator
- * support for tables.
+ * The DecoratorTableView is a view that tests the decorator support for tables.
  */
-public class DecoratorTableView extends ViewPart {
-	
+public class DecoratorTableView extends DecoratorTestPart {
+
 	TableViewer viewer;
 
 	/**
@@ -32,31 +28,36 @@ public class DecoratorTableView extends ViewPart {
 		super();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
 		viewer = new TableViewer(parent);
 
-		viewer.setLabelProvider(new DecoratingLabelProvider(new TestLabelProvider(), PlatformUI
-				.getWorkbench().getDecoratorManager()));
+		viewer.setLabelProvider(getLabelProvider());
 
 		viewer.setContentProvider(new TestTableContentProvider());
 		viewer.setInput(this);
 
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL
-				| GridData.FILL_BOTH);
-		
+		GridData data = new GridData(GridData.GRAB_HORIZONTAL
+				| GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
+
 		viewer.getControl().setLayoutData(data);
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
 		// XXX Auto-generated method stub
 
 	}
+
+	
 
 }

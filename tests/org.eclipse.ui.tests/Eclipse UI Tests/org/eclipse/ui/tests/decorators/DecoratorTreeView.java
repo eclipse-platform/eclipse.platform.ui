@@ -10,18 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.ViewPart;
 
 /**
  * The DecoratorTreeView is a TreeView that tests the 
  * font and color decorations.
  */
-public class DecoratorTreeView extends ViewPart {
+public class DecoratorTreeView extends DecoratorTestPart {
 	
 	TreeViewer viewer;
 
@@ -46,8 +43,7 @@ public class DecoratorTreeView extends ViewPart {
 			}
 		 };
 
-		viewer.setLabelProvider(new DecoratingLabelProvider(new TestLabelProvider(), PlatformUI
-				.getWorkbench().getDecoratorManager()));
+		viewer.setLabelProvider(getLabelProvider());
 
 		viewer.setContentProvider(new TestTreeContentProvider());
 		viewer.setInput(this);
@@ -59,6 +55,7 @@ public class DecoratorTreeView extends ViewPart {
 
 	}
 
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
@@ -66,5 +63,6 @@ public class DecoratorTreeView extends ViewPart {
 		// XXX Auto-generated method stub
 
 	}
+
 
 }
