@@ -275,6 +275,12 @@ public class CodeCompletionTest extends TestCase {
         assertEquals(1, tempProposals.length);
         ICompletionProposal tempProposal = tempProposals[0];
         assertEquals("classpath", tempProposal.getDisplayString());
+        
+        //case insensitivity
+		tempProposals = tempProcessor.getTaskProposals("       <CL", createTestPropertyElement(tempDocument), "cl");
+	   	assertEquals(1, tempProposals.length);
+	   	tempProposal = tempProposals[0];
+	   	assertEquals("classpath", tempProposal.getDisplayString());
 
         tempProposals = tempProcessor.getTaskProposals("       <cl", tempDocument.createElement("property"), "cl");
         assertEquals(1, tempProposals.length);
