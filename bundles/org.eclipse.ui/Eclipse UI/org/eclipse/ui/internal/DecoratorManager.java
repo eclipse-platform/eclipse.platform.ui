@@ -96,18 +96,15 @@ public class DecoratorManager
 		DecoratorDefinition[] decorators = getDecoratorsFor(element);
 		String result = text;
 		for (int i = 0; i < decorators.length; i++) {
-			result = decorators[i].getDecorator().decorateText(result, element);
+			String newResult = decorators[i].getDecorator().decorateText(result, element);
+			if(newResult != null)
+				result = newResult;
 		}
 
 		//Get any adaptions to IResource
 		Object adapted = getResourceAdapter(element);
-		if (adapted != null) {
-			DecoratorDefinition[] adaptedDecorators = getDecoratorsFor(adapted);
-			for (int i = 0; i < adaptedDecorators.length; i++) {
-				if (adaptedDecorators[i].isAdaptable())
-					result = adaptedDecorators[i].getDecorator().decorateText(result, adapted);
-			}
-		}
+		if (adapted != null) 
+			result = decorateText(result,adapted);
 
 		return result;
 	}
@@ -121,18 +118,15 @@ public class DecoratorManager
 		DecoratorDefinition[] decorators = getDecoratorsFor(element);
 		Image result = image;
 		for (int i = 0; i < decorators.length; i++) {
-			result = decorators[i].getDecorator().decorateImage(result, element);
+			Image newResult = decorators[i].getDecorator().decorateImage(result, element);
+			if(newResult != null)
+				result = newResult;
 		}
 
 		//Get any adaptions to IResource
 		Object adapted = getResourceAdapter(element);
-		if (adapted != null) {
-			DecoratorDefinition[] adaptedDecorators = getDecoratorsFor(adapted);
-			for (int i = 0; i < adaptedDecorators.length; i++) {
-				if (adaptedDecorators[i].isAdaptable())
-					result = adaptedDecorators[i].getDecorator().decorateImage(result, adapted);
-			}
-		}
+		if (adapted != null) 
+			result = decorateImage(result,adapted);
 
 		return result;
 	}
