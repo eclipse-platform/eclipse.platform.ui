@@ -48,6 +48,11 @@ public class SyncViewerDirectionFilters extends SyncViewerActionGroup {
 	private DirectionFilterAction conflictsMode;
 		
 	private final static int[] DEFAULT_FILTER = new int[] {SyncInfo.INCOMING, SyncInfo.OUTGOING, SyncInfo.CONFLICTING};
+	
+	public final static int INCOMING_MODE = 1;
+	public final static int OUTGOING_MODE = 2;
+	public final static int BOTH_MODE = 3;
+	public final static int CONFLICTING_MODE = 4;
 			
 	/**
 	 * Action for toggling the sync mode.
@@ -56,9 +61,11 @@ public class SyncViewerDirectionFilters extends SyncViewerActionGroup {
 		// The sync mode that this action enables
 		private int[] syncMode;
 		private boolean toggled;
-		public DirectionFilterAction(String prefix,String commandId, int[] mode) {
+		private int modeId;
+		public DirectionFilterAction(String prefix,String commandId, int[] mode, int modeId) {
 			super("", AS_RADIO_BUTTON); //$NON-NLS-1$
 			this.syncMode = mode;
+			this.modeId = modeId;
 			Utils.initAction(this, prefix);
 			Action a = new Action() {
 				public void run() {
@@ -70,6 +77,7 @@ public class SyncViewerDirectionFilters extends SyncViewerActionGroup {
 			Utils.registerAction(kbs, a, commandId);	//$NON-NLS-1$
 		}
 		public void run() {
+			TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCVIEW_SELECTED_MODE, modeId);
 			updateFilter(this);
 		}
 		public int[] getFilter() {
@@ -88,16 +96,16 @@ public class SyncViewerDirectionFilters extends SyncViewerActionGroup {
 	 */
 	private void createActions() {
 		// Create the actions
-		incomingMode = new DirectionFilterAction("action.directionFilterIncoming.", "org.eclipse.team.ui.syncview.incomingFilter", new int[] {SyncInfo.INCOMING, SyncInfo.CONFLICTING}); //$NON-NLS-1$ //$NON-NLS-2$
+		incomingMode = new DirectionFilterAction("action.directionFilterIncoming.", "org.eclipse.team.ui.syncview.incomingFilter", new int[] {SyncInfo.INCOMING, SyncInfo.CONFLICTING}, INCOMING_MODE); //$NON-NLS-1$ //$NON-NLS-2$
 		actions.add(incomingMode);
 					
-		outgoingMode = new DirectionFilterAction("action.directionFilterOutgoing.", "org.eclipse.team.ui.syncview.outgoingFilter", new int[] {SyncInfo.OUTGOING, SyncInfo.CONFLICTING}); //$NON-NLS-1$ //$NON-NLS-2$
+		outgoingMode = new DirectionFilterAction("action.directionFilterOutgoing.", "org.eclipse.team.ui.syncview.outgoingFilter", new int[] {SyncInfo.OUTGOING, SyncInfo.CONFLICTING}, OUTGOING_MODE); //$NON-NLS-1$ //$NON-NLS-2$
 		actions.add(outgoingMode);
 
-		bothMode = new DirectionFilterAction("action.directionFilterBoth.", "org.eclipse.team.ui.syncview.bothFilter", new int[] {SyncInfo.OUTGOING, SyncInfo.INCOMING, SyncInfo.CONFLICTING}); //$NON-NLS-1$ //$NON-NLS-2$
+		bothMode = new DirectionFilterAction("action.directionFilterBoth.", "org.eclipse.team.ui.syncview.bothFilter", new int[] {SyncInfo.OUTGOING, SyncInfo.INCOMING, SyncInfo.CONFLICTING}, BOTH_MODE); //$NON-NLS-1$ //$NON-NLS-2$
 		actions.add(bothMode);
 
-		conflictsMode = new DirectionFilterAction("action.directionFilterConflicts.", "org.eclipse.team.ui.syncview.conflictsFilter", new int[] {SyncInfo.CONFLICTING}); //$NON-NLS-1$ //$NON-NLS-2$
+		conflictsMode = new DirectionFilterAction("action.directionFilterConflicts.", "org.eclipse.team.ui.syncview.conflictsFilter", new int[] {SyncInfo.CONFLICTING}, CONFLICTING_MODE); //$NON-NLS-1$ //$NON-NLS-2$
 		actions.add(conflictsMode);
 		
 		updateEnablement(null);
@@ -180,15 +188,24 @@ public class SyncViewerDirectionFilters extends SyncViewerActionGroup {
 			} else {
 				outgoingMode.setEnabled(true);	
 			}
-			if(TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_USEBOTHMODE)) {
-				bothMode.setChecked(true);
-				incomingMode.setChecked(false);
-			} else {
-				incomingMode.setChecked(true);
-				bothMode.setChecked(false);
-			}			
+			int defaultMode = TeamUIPlugin.getPlugin().getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_SELECTED_MODE);
+			bothMode.setChecked(false);
+			incomingMode.setChecked(false);
 			outgoingMode.setChecked(false);
 			conflictsMode.setChecked(false);
+			switch(defaultMode) {
+				case INCOMING_MODE: incomingMode.setChecked(true); break; 
+				case CONFLICTING_MODE: conflictsMode.setChecked(true); break;
+				case BOTH_MODE: bothMode.setChecked(true); break;
+				case OUTGOING_MODE: 
+					// handle the case where the outgoing mode is disabled.
+					if(outgoingMode.isEnabled()) {
+						outgoingMode.setChecked(true);
+					} else {
+						incomingMode.setChecked(true);
+					}
+					break;
+			}
 		}
 	}
 	

@@ -148,9 +148,6 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 		compressFolders = new BooleanFieldEditor(SYNCVIEW_COMPRESS_FOLDERS, Policy.bind("SyncViewerPreferencePage.9"), SWT.NONE, displayGroup); //$NON-NLS-1$
 		addField(compressFolders);
 		
-		useBothMode = new BooleanFieldEditor(SYNCVIEW_USEBOTHMODE, Policy.bind("SyncViewerPreferencePage.10"), SWT.NONE, displayGroup); //$NON-NLS-1$
-		addField(useBothMode);
-
 		refreshGroup = createGroup(getFieldEditorParent(), Policy.bind("SyncViewerPreferencePage.11")); //$NON-NLS-1$
 		
 		bkgRefresh = new BooleanFieldEditor(SYNCVIEW_BACKGROUND_SYNC, Policy.bind("SyncViewerPreferencePage.12"), SWT.NONE, refreshGroup); //$NON-NLS-1$
