@@ -24,7 +24,10 @@ import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
+import org.eclipse.jface.text.DocumentRewriteSession;
+import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
@@ -703,14 +706,21 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				{
 					final Point selection= rememberSelection();
 					final IRewriteTarget target= getRewriteTarget();
+					final IDocument document= getDocument();
 					IFormattingContext context= null;
+					DocumentRewriteSession rewriteSession= null;
 
-					try {
+					if (document instanceof IDocumentExtension4) {
+						IDocumentExtension4 extension= (IDocumentExtension4) document;
+						rewriteSession= extension.startRewriteSession(DocumentRewriteSessionType.UNRESTRICTED);
+					} else {
 						setRedraw(false);
 						startSequentialRewriteMode(false);
 						target.beginCompoundChange();
-
-						final IDocument document= getDocument();
+					}
+					
+					try {
+						
 						final String rememberedContents= document.get();
 						
 						try {
@@ -747,11 +757,16 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 						}
 						
 					} finally {
-
-						target.endCompoundChange();
-						stopSequentialRewriteMode();
-						setRedraw(true);
-
+						
+						if (document instanceof IDocumentExtension4) {
+							IDocumentExtension4 extension= (IDocumentExtension4) document;
+							extension.stopRewriteSession(rewriteSession);
+						} else {	
+							target.endCompoundChange();
+							stopSequentialRewriteMode();
+							setRedraw(true);
+						}
+						
 						restoreSelection();
 						if (context != null)
 							context.dispose();
