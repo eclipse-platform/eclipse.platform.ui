@@ -77,6 +77,15 @@ public final class HandlerProxy extends AbstractHandler {
         configurationElement = newConfigurationElement;
         handler = null;
     }
+    
+    /**
+     * Passes the dipose on to the proxied handler, if it has been loaded.
+     */
+    public void dispose() {
+        if (handler != null) {
+            handler.dispose();
+        }
+    }
 
     /**
      * @see IHandler#execute(Map)

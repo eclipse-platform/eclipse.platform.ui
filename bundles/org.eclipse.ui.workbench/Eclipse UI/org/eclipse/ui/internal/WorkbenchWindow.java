@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -295,44 +296,94 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				for (int j = 0; j < pluginActions.length; j++) {
 					IAction pluginAction = pluginActions[j];
 					String commandId = pluginAction.getActionDefinitionId();
-
-					if (commandId != null)			
+					
+					if (commandId != null) {
+					    final Object value = actionSetHandlersByCommandId.get(commandId);
+					    if (value instanceof ActionHandler) {
+					        /*
+                             * This handler is about to get clobbered, so
+                             * dispose it.
+                             */
+					        final ActionHandler handler = (ActionHandler) value;
+					        handler.dispose();
+					    }
 						actionSetHandlersByCommandId.put(commandId, new ActionHandler(pluginAction));
+					    
+					}
 				}
 			}
 			
 		setHandlersByCommandId();
 	}
 
-	void registerGlobalAction(IAction globalAction) {		
-		String commandId = globalAction.getActionDefinitionId();
+	void registerGlobalAction(IAction globalAction) {
+        String commandId = globalAction.getActionDefinitionId();
 
-		if (commandId != null)
-			globalActionHandlersByCommandId.put(commandId, new ActionHandler(globalAction));
-	
-		setHandlersByCommandId();
-	}
+        if (commandId != null) {
+            final Object value = globalActionHandlersByCommandId.get(commandId);
+            if (value instanceof ActionHandler) {
+                // This handler is about to get clobbered, so dispose it.
+                final ActionHandler handler = (ActionHandler) value;
+                handler.dispose();
+            }
+
+            globalActionHandlersByCommandId.put(commandId, new ActionHandler(
+                    globalAction));
+        }
+
+        setHandlersByCommandId();
+    }
 
 	void setHandlersByCommandId() {
-		Map handlersByCommandId = new HashMap();
-		handlersByCommandId.putAll(actionSetHandlersByCommandId);
-		handlersByCommandId.putAll(globalActionHandlersByCommandId);		
-		List newHandlerSubmissions = new ArrayList();
-        Shell shell = getShell();
-        
-        if (shell != null)
-		
-		for (Iterator iterator = handlersByCommandId.entrySet().iterator(); iterator.hasNext();) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            String commandId = (String) entry.getKey();
-            IHandler handler = (IHandler) entry.getValue();
-            newHandlerSubmissions.add(new HandlerSubmission(null, shell, null, commandId, handler, Priority.LEGACY));
+        Map handlersByCommandId = new HashMap();
+        handlersByCommandId.putAll(actionSetHandlersByCommandId);
+
+        /*
+         * Bug 60520. This has the possibility of clobbering the action set
+         * handlers. Until these handlers are submitted, extra cares needs to be
+         * taken with the ActionHandler instance. They could be leaking property
+         * change listeners otherwise. The solution is to do the clobbering by
+         * hand, and dispose of duplicated ActionHandler instances
+         */
+        final Iterator globalItr = globalActionHandlersByCommandId.entrySet()
+                .iterator();
+        while (globalItr.hasNext()) {
+            final Map.Entry entry = (Map.Entry) globalItr.next();
+            final String commandId = (String) entry.getKey();
+
+            // Check if there is a handler already, and, if so, dispose it.
+            final ActionHandler actionSetActionHandler = (ActionHandler) handlersByCommandId
+                    .get(commandId);
+            if (actionSetActionHandler != null) {
+                actionSetActionHandler.dispose();
+            }
+
+            // Clobber the handler.
+            final ActionHandler globalActionHandler = (ActionHandler) entry
+                    .getValue();
+            handlersByCommandId.put(commandId, globalActionHandler);
         }
-		
-		Workbench.getInstance().getCommandSupport().removeHandlerSubmissions(this.handlerSubmissions);
-		this.handlerSubmissions = newHandlerSubmissions;
-		Workbench.getInstance().getCommandSupport().addHandlerSubmissions(this.handlerSubmissions);		
-	}	
+
+        final List newHandlerSubmissions = new ArrayList();
+        final Shell shell = getShell();
+        if (shell != null) {
+
+            for (Iterator iterator = handlersByCommandId.entrySet().iterator(); iterator
+                    .hasNext();) {
+                Map.Entry entry = (Map.Entry) iterator.next();
+                String commandId = (String) entry.getKey();
+                IHandler handler = (IHandler) entry.getValue();
+                newHandlerSubmissions.add(new HandlerSubmission(null, shell,
+                        null, commandId, handler, Priority.LEGACY));
+            }
+        }
+
+        Workbench.getInstance().getCommandSupport().removeHandlerSubmissions(
+                this.handlerSubmissions);
+        this.handlerSubmissions = newHandlerSubmissions;
+        Workbench.getInstance().getCommandSupport().addHandlerSubmissions(
+                this.handlerSubmissions);
+    }	
 	
 	/*
 	 * Adds an listener to the part service.

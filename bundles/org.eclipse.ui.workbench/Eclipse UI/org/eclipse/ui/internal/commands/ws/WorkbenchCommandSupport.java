@@ -439,27 +439,46 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     }
 
     public void removeHandlerSubmission(HandlerSubmission handlerSubmission) {
-        removeHandlerSubmissions(Collections.singleton(handlerSubmission));
+        removeHandlerSubmission(handlerSubmission, true);
+    }
+
+    /**
+     * Removes a single handler submission -- optionally causing the list of
+     * handler submissions to be reprocessed. This method is used by the two API
+     * methods to actually remove a single handler submission.
+     * 
+     * @param handlerSubmission
+     *            The submission to be removed; must not be <code>null</code>.
+     * @param reprocess
+     *            Whether to reprocess handler submissions.
+     */
+    private final void removeHandlerSubmission(
+            final HandlerSubmission handlerSubmission, final boolean reprocess) {
+        final String commandId = handlerSubmission.getCommandId();
+        final List handlerSubmissions2 = (List) handlerSubmissionsByCommandId
+                .get(commandId);
+
+        if (handlerSubmissions2 != null) {
+            handlerSubmissions2.remove(handlerSubmission);
+
+            // Bug 60520. Give the handler a chance to drop listeners.
+            handlerSubmission.getHandler().dispose();
+
+            if (handlerSubmissions2.isEmpty()) {
+                handlerSubmissionsByCommandId.remove(commandId);
+            }
+        }
+
+        if (reprocess) {
+            processHandlerSubmissions(true);
+        }
     }
 
     public void removeHandlerSubmissions(Collection handlerSubmissions) {
-        handlerSubmissions = Util.safeCopy(handlerSubmissions,
-                HandlerSubmission.class);
-
-        for (Iterator iterator = handlerSubmissions.iterator(); iterator
-                .hasNext();) {
-            HandlerSubmission handlerSubmission = (HandlerSubmission) iterator
-                    .next();
-            String commandId = handlerSubmission.getCommandId();
-            List handlerSubmissions2 = (List) handlerSubmissionsByCommandId
-                    .get(commandId);
-
-            if (handlerSubmissions2 != null) {
-                handlerSubmissions2.remove(handlerSubmission);
-
-                if (handlerSubmissions2.isEmpty())
-                        handlerSubmissionsByCommandId.remove(commandId);
-            }
+        final Iterator submissionItr = handlerSubmissions.iterator();
+        while (submissionItr.hasNext()) {
+            removeHandlerSubmission((HandlerSubmission) submissionItr.next(),
+                    false);
         }
 
         processHandlerSubmissions(true);

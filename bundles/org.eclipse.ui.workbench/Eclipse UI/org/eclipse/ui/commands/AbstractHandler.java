@@ -46,6 +46,16 @@ public abstract class AbstractHandler implements IHandler {
     }
 
     /**
+     * The default implementation does nothing. Subclasses who attach listeners
+     * to other objects are encouraged to detach them in this method.
+     * 
+     * @see org.eclipse.ui.commands.IHandler#dispose()
+     */
+    public void dispose() {
+        // Do nothing.
+    }
+    
+    /**
      * Fires an event to all registered listeners describing changes to this
      * instance.
      * 

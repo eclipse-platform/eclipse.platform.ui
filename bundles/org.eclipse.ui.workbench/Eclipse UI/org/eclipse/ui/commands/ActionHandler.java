@@ -73,7 +73,7 @@ public final class ActionHandler extends AbstractHandler {
     /**
      * The wrapped action.  This value is never <code>null</code>.
      */
-    private IAction action;
+    private final IAction action;
 
     /**
      * The map of attributes values.  The keys are <code>String</code> values of
@@ -81,6 +81,13 @@ public final class ActionHandler extends AbstractHandler {
      * <code>Object</code>.
      */
     private Map attributeValuesByName;
+    
+    /**
+     * The property change listener hooked on to the action. This is initialized
+     * in the constructor, and attached to the action. When the handler is
+     * disposed, it is removed.
+     */
+    private final IPropertyChangeListener propertyChangeListener;
 
     /**
      * Creates a new instance of this class given an instance of
@@ -90,11 +97,12 @@ public final class ActionHandler extends AbstractHandler {
      *            the action. Must not be <code>null</code>.
      */
     public ActionHandler(IAction action) {
-        super();
         if (action == null) throw new NullPointerException();
+        
         this.action = action;
         this.attributeValuesByName = getAttributeValuesByNameFromAction();
-        this.action.addPropertyChangeListener(new IPropertyChangeListener() {
+
+        propertyChangeListener = new IPropertyChangeListener() {
 
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                 String property = propertyChangeEvent.getProperty();
@@ -109,9 +117,19 @@ public final class ActionHandler extends AbstractHandler {
                                     previousAttributeValuesByName));
                 }
             }
-        });
+        };
+        this.action.addPropertyChangeListener(propertyChangeListener);
     }
 
+    /**
+     * Removes the property change listener from the action.
+     * 
+     * @see org.eclipse.ui.commands.IHandler#dispose()
+     */
+    public void dispose() {
+        action.removePropertyChangeListener(propertyChangeListener);
+    }
+    
     /**
      * @see IHandler#execute(Map)
      */
