@@ -31,8 +31,11 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
 
+// import org.eclipse.ui..commands.Manager;
+
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+
 
 /**
  * A delete line target.
@@ -276,15 +279,33 @@ class DeleteLineTarget {
 		
 		if (length == 0)
 			return;
+			
+		if (appendToClipboard()) {
 
-		fClipboard.checkState();
-		fClipboard.append(document.get(offset, length));
-
-		fClipboard.setDeleting(true);
-		document.replace(offset, length, null);
-		fClipboard.setDeleting(false);
-
-		fClipboard.saveState();
+			fClipboard.checkState();
+			fClipboard.append(document.get(offset, length));
+	
+			fClipboard.setDeleting(true);
+			document.replace(offset, length, null);
+			fClipboard.setDeleting(false);
+	
+			fClipboard.saveState();
+		
+		} else {
+			document.replace(offset, length, null);
+		}
 	}
+	
 
+	/**
+	 * Returns whether the deleted line should be appended to the clipboard. This default implementation
+	 * returns <code>true</code> if the current key binding is emacs.
+	 * @return <code>true</code> if deleted line should be appended to the clipboard
+	 */
+	private boolean appendToClipboard() {
+//		Manager manager= Manager.getInstance();
+//		String configuration= manager.getKeyMachine().getKeyConfiguration();
+//		return "org.eclipse.ui.emacsAcceleratorConfiguration".equalsIgnoreCase(configuration);
+		return true;
+	}
 }

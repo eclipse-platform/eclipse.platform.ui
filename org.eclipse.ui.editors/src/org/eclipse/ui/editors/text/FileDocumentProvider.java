@@ -182,7 +182,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 					case IResourceDelta.CHANGED:
 						if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
 							FileInfo info= (FileInfo) getElementInfo(fFileEditorInput);
-							if (!info.fCanBeSaved && computeModificationStamp(getFile()) != info.fModificationStamp) {
+							if (info != null && !info.fCanBeSaved && computeModificationStamp(getFile()) != info.fModificationStamp) {
 								runnable= new SafeChange(fFileEditorInput) {
 									protected void execute(IFileEditorInput input) throws Exception {
 										handleElementContentChanged(input);
@@ -201,7 +201,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 							};
 						} else {
 							FileInfo info= (FileInfo) getElementInfo(fFileEditorInput);
-							if (!info.fCanBeSaved) {
+							if (info != null && !info.fCanBeSaved) {
 								runnable= new SafeChange(fFileEditorInput) {
 									protected void execute(IFileEditorInput input) throws Exception {
 										handleElementDeleted(input);
@@ -544,6 +544,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 */
 	protected void handleElementContentChanged(IFileEditorInput fileEditorInput) {
 		FileInfo info= (FileInfo) getElementInfo(fileEditorInput);
+		if (info == null)
+			return;
 		
 		IDocument document= createEmptyDocument();
 		IStatus status= null;
