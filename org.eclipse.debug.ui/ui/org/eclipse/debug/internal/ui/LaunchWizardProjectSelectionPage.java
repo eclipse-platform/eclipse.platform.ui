@@ -185,19 +185,13 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 			public void modifyText(ModifyEvent e) {
 				filter.setPattern(((Text) (e.widget)).getText());
 				fElementsList.refresh();
-				if (fFilteredElements.length == 1) {
+				if (fFilteredElements.length >= 1) {
 					fElementsList.setSelection(new StructuredSelection(fFilteredElements[0]), true);
-					setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENT));
-					setPageComplete(true);
+					setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENT));						
+						setPageComplete(true);
+						return;
 				} else {
-					fElementsList.setSelection(null);
-					// this should get done in the selection changed callback -  but it does not work
-					if (fFilteredElements.length == 0) {
-						setMessage(DebugUIUtils.getResourceString(SELECT_ERROR_ELEMENT));
-					} else {
-						setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENT));
-					}
-
+					setMessage(DebugUIUtils.getResourceString(SELECT_ERROR_ELEMENT));
 					setPageComplete(false);
 				}
 			}
