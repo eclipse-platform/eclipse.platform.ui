@@ -10,17 +10,32 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -41,6 +56,11 @@ public class ResourceInfoPage extends PropertyPage {
 	private Button derivedBox;
 	private boolean previousReadOnlyValue;
 	private boolean previousDerivedValue;
+	
+	private Combo encodingCombo;
+	private Button defaultEncodingButton;
+	private Button otherEncodingButton;	
+	
 	private static String READ_ONLY = IDEWorkbenchMessages.getString("ResourceInfo.readOnly"); //$NON-NLS-1$
 	private static String DERIVED = IDEWorkbenchMessages.getString("ResourceInfo.derived"); //$NON-NLS-1$
 	private static String TYPE_TITLE = IDEWorkbenchMessages.getString("ResourceInfo.type"); //$NON-NLS-1$
@@ -60,6 +80,11 @@ public class ResourceInfoPage extends PropertyPage {
 	private static String PATH_TITLE = IDEWorkbenchMessages.getString("ResourceInfo.path"); //$NON-NLS-1$
 	private static String TIMESTAMP_TITLE = IDEWorkbenchMessages.getString("ResourceInfo.lastModified"); //$NON-NLS-1$
 	private static String FILE_NOT_EXIST_TEXT = IDEWorkbenchMessages.getString("ResourceInfo.fileNotExist"); //$NON-NLS-1$
+	private static String FILE_ENCODING_TITLE = IDEWorkbenchMessages.getString("WorkbenchPreference.encoding"); //$NON-NLS-1$
+	private static String CONTAINER_ENCODING_TITLE = IDEWorkbenchMessages.getString("ResourceInfo.fileEncodingTitle"); //$NON-NLS-1$
+	private static String FILE_CONTENT_ENCODING_FORMAT = IDEWorkbenchMessages.getString("ResourceInfo.fileContentEncodingFormat"); //$NON-NLS-1$
+	private static String FILE_CONTAINER_ENCODING_FORMAT = IDEWorkbenchMessages.getString("ResourceInfo.fileContainerEncodingFormat"); //$NON-NLS-1$
+	private static String CONTAINER_ENCODING_FORMAT = IDEWorkbenchMessages.getString("ResourceInfo.containerEncodingFormat"); //$NON-NLS-1$
 
 	//Max value width in characters before wrapping
 	private static final int MAX_VALUE_WIDTH = 80;
@@ -278,7 +303,185 @@ private void createStateGroup(Composite parent, IResource resource) {
 		createEditableButton(composite);
 		createDerivedButton(composite);
 	}
+	
+	// encoding for containers and files
+	new Label(composite, SWT.NONE);	// vertical spacer
+	new Label(composite, SWT.NONE);
+	createEncodingGroup(composite, resource);
 }
+
+private void createEncodingGroup(Composite parent, IResource resource) {
+	
+	Font font = parent.getFont();
+	Group group = new Group(parent, SWT.NONE);
+	GridData data = new GridData(GridData.FILL_HORIZONTAL);
+	group.setLayoutData(data);
+	GridLayout layout = new GridLayout();
+	layout.numColumns = 2;
+	group.setLayout(layout);
+	if (resource instanceof IContainer)
+		group.setText(CONTAINER_ENCODING_TITLE);
+	else
+		group.setText(FILE_ENCODING_TITLE);
+	group.setFont(font);
+	
+	SelectionAdapter buttonListener = new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			updateEncodingState(defaultEncodingButton.getSelection());
+			updateValidState();
+		}
+	};
+	
+	defaultEncodingButton = new Button(group, SWT.RADIO);
+	
+	String encoding = getEncoding(resource);
+	String format = CONTAINER_ENCODING_FORMAT;
+	String defaultEnc = null;
+	
+	if (resource instanceof IFile) {
+		defaultEnc= getEncodingFromContent((IFile) resource);
+		format = (defaultEnc != null) ? FILE_CONTENT_ENCODING_FORMAT : FILE_CONTAINER_ENCODING_FORMAT;
+	}
+	if (defaultEnc == null)
+		defaultEnc = getEncoding(resource.getParent());		
+	
+	defaultEncodingButton.setText(MessageFormat.format(format, new String[] { defaultEnc }));
+	
+	data = new GridData();
+	data.horizontalSpan = 2;
+	defaultEncodingButton.setLayoutData(data);
+	defaultEncodingButton.addSelectionListener(buttonListener);
+	defaultEncodingButton.setFont(font);
+	
+	otherEncodingButton = new Button(group, SWT.RADIO);
+	otherEncodingButton.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.otherEncoding")); //$NON-NLS-1$
+	otherEncodingButton.addSelectionListener(buttonListener);
+	otherEncodingButton.setFont(font);
+	
+	encodingCombo = new Combo(group, SWT.NONE);
+	data = new GridData();
+	data.widthHint = convertWidthInCharsToPixels(15);
+	encodingCombo.setFont(font);
+	encodingCombo.setLayoutData(data);
+	encodingCombo.addModifyListener(new ModifyListener() {
+		public void modifyText(ModifyEvent e) {
+			updateValidState();
+		}
+	});
+
+	ArrayList encodings = new ArrayList();
+	int n = 0;
+	try {
+		n = Integer.parseInt(IDEWorkbenchMessages.getString("WorkbenchPreference.numDefaultEncodings")); //$NON-NLS-1$
+	}
+	catch (NumberFormatException e1) {
+		// Ignore;
+	}
+	for (int i = 0; i < n; ++i) {
+		String enc = IDEWorkbenchMessages.getString("WorkbenchPreference.defaultEncoding" + (i+1), null); //$NON-NLS-1$
+		if (enc != null)
+			encodings.add(enc);
+	}
+	
+	String defaultEnc1 = System.getProperty("file.encoding", "UTF-8");  //$NON-NLS-1$  //$NON-NLS-2$
+	if (!encodings.contains(defaultEnc1))
+		encodings.add(defaultEnc1);
+	
+	String enc = ResourcesPlugin.getPlugin().getPluginPreferences().getString(ResourcesPlugin.PREF_ENCODING);
+	if (!encodings.contains(enc))
+		encodings.add(enc);
+	
+	Collections.sort(encodings);
+	for (int i = 0; i < encodings.size(); ++i)
+		encodingCombo.add((String) encodings.get(i));
+	
+	encodingCombo.setText(encoding);
+
+	updateEncodingState(usesDefaultEncoding(resource));
+}
+
+private String getEncoding(IResource resource) {
+	try {
+		if (resource instanceof IContainer)
+			return ((IContainer)resource).getDefaultCharset();
+		else if (resource instanceof IFile)
+			return ((IFile)resource).getCharset();
+	} catch (CoreException e) {
+	}
+	IContainer parent= resource.getParent();
+	return getEncoding(parent);
+}
+
+private String getEncodingFromContent(IFile file) {
+	// tries to obtain a description for the file contents
+	IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+	try {
+		InputStream contents = new BufferedInputStream(file.getContents());
+		try {
+			IContentDescription description = contentTypeManager.getDescriptionFor(contents, file.getName(), IContentDescription.CHARSET);
+			if (description != null) {
+				String charset= description.getCharset();
+				if (charset != null)
+					return charset;
+			}
+		} catch (IOException e) {
+		} finally {
+			if (contents != null)
+				try {
+					contents.close();
+				} catch (IOException e) {
+					// ignore silently
+				}				
+		}
+	} catch (CoreException e) {
+		// ignore silently			
+	}
+	return null;
+}
+
+private boolean usesDefaultEncoding(IResource resource) {
+	try {
+		if (resource instanceof IContainer)
+			return ((IContainer)resource).getDefaultCharset(false) == null;
+		if (resource instanceof IFile)
+			return ((IFile)resource).getCharset(false) == null;
+	} catch (CoreException e) {
+	}
+	return true;
+}
+
+private void updateEncodingState(boolean useDefault) {
+	defaultEncodingButton.setSelection(useDefault);
+	otherEncodingButton.setSelection(!useDefault);
+	encodingCombo.setEnabled(!useDefault);
+	updateValidState();
+}		
+
+protected void updateValidState() {
+	if (isEncodingValid()) {
+		setErrorMessage(null);
+		setValid(true);
+	} else {
+		setErrorMessage(IDEWorkbenchMessages.getString("WorkbenchPreference.unsupportedEncoding")); //$NON-NLS-1$
+		setValid(false);
+	}
+}
+
+private boolean isEncodingValid() {
+	return defaultEncodingButton.getSelection() || isValidEncoding(encodingCombo.getText());
+}
+
+private boolean isValidEncoding(String enc) {
+	try {
+		new String(new byte[0], enc);
+		return true;
+	} catch (UnsupportedEncodingException e) {
+		return false;
+	}
+}
+
+/////////////////////////////
+
 /**
  * Return the value for the date String for the timestamp of the supplied resource.
  * @return String
@@ -443,12 +646,46 @@ protected void performDefaults() {
 	//Nothing to update if we never made the box
 	if(this.derivedBox != null)
 		this.derivedBox.setSelection(false);
+	
+	if (defaultEncodingButton != null)
+		updateEncodingState(true);
 }
 /** 
- * Apply the read only state to the resource.
+ * Apply the read only state and the encoding to the resource.
  */
 public boolean performOk() {
+	
 	IResource resource = (IResource) getElement();
+	
+	// set encoding
+	if (isEncodingValid()) {
+		String previousEncoding= null;
+		if (!usesDefaultEncoding(resource))
+			previousEncoding= getEncoding(resource);
+		
+		String newEncoding= null;
+		if (!defaultEncodingButton.getSelection())
+			newEncoding= encodingCombo.getText();
+	
+		if ((previousEncoding == null && newEncoding != null) ||
+			(previousEncoding != null && newEncoding == null) ||
+			(previousEncoding != null && newEncoding != null && !previousEncoding.equals(newEncoding))) {		
+			try {
+				if (resource instanceof IFile)
+					((IFile)resource).setCharset(newEncoding);
+				else if (resource instanceof IContainer)
+					((IContainer)resource).setDefaultCharset(newEncoding);
+			} catch (CoreException e) {
+				ErrorDialog.openError(
+						getShell(), 
+						IDEWorkbenchMessages.getString("InternalError"), //$NON-NLS-1$
+						e.getLocalizedMessage(),
+						e.getStatus()); 
+					return false;
+			}
+		}
+	}
+	
 	//Nothing to update if we never made the box
 	if(this.editableBox != null) {
 		boolean localReadOnlyValue = editableBox.getSelection();
