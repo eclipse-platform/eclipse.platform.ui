@@ -57,11 +57,11 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 
             //If one is a child put it second
             if(c2.getPageId().equals(c1.getCategory()))
-            		return -1;
+            		return 1;
             	
             //If one is a child put it second
             if(c1.getPageId().equals(c2.getCategory()))
-            		return 1;
+            		return -1;
             	
             // The other pages are sorted in alphabetical order			 
             String s1 = c1.getPageName();
