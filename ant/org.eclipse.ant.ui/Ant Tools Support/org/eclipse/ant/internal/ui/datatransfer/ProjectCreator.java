@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
+ * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -194,8 +194,13 @@ public class ProjectCreator {
 	/**
 	 * Adds a container entry to an IJavaProject.
 	 */			
-	private void addContainer(IJavaProject jproject, IPath path, IProgressMonitor monitor) throws JavaModelException {
+	private void addContainer(IJavaProject jproject, IPath path, IProgressMonitor monitor) throws CoreException {
 		IClasspathEntry cpe= JavaCore.newContainerEntry(path);
 		addToClasspath(jproject, cpe, monitor);
+		IProject project= jproject.getProject();
+		IFolder folder= project.getFolder(path.lastSegment());
+		if (!folder.exists()) {
+			folder.createLink(path, IResource.ALLOW_MISSING_LOCAL, monitor);
+		}
 	}
 }

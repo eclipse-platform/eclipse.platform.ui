@@ -444,7 +444,7 @@ M4 = Platform-specific fourth key -->
                <iterate>
                  <or>
                    <instanceof value="org.eclipse.ant.internal.ui.model.AntElementNode"/>
-                   <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.antBuildFile"/>
+                     <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.antBuildFile"/>
                  </or>
                </iterate>
              </with>
@@ -472,7 +472,7 @@ M4 = Platform-specific fourth key -->
                <iterate>
                  <or>
                    <instanceof value="org.eclipse.ant.internal.ui.model.AntElementNode"/>
-				   <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.antBuildFile"/>
+                     <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.antBuildFile"/>
                  </or>
                </iterate>
              </with>
@@ -712,6 +712,21 @@ M4 = Platform-specific fourth key -->
       </consolePatternMatchListener>      
    </extension>
        
+	<extension 
+         point="org.eclipse.ui.exportWizards"> 
+      <wizard 
+            id="org.eclipse.ant.ui.export" 
+            name="%antExportWizard.name"
+            class="org.eclipse.ant.internal.ui.datatransfer.AntBuildfileExportWizard" 
+            icon="icons/full/obj16/ant.gif">
+         <description> 
+            %antExportWizard.description
+         </description>
+         <selection
+               class="org.eclipse.jdt.core.IJavaProject">
+         </selection>
+      </wizard> 
+   </extension>
        
       <!-- bug 78752 <extension
       	 point="org.eclipse.ant.core.antProperties">
