@@ -491,8 +491,8 @@ public class JobManager implements IJobManager {
 			if (jobCount == 0)
 				return;
 			listener = new JobChangeAdapter() {
-				public void done(Job job, IStatus result) {
-					jobs.remove(job);
+				public void done(IJobChangeEvent event) {
+					jobs.remove(event.getJob());
 				}
 			};
 			addJobChangeListener(listener);
