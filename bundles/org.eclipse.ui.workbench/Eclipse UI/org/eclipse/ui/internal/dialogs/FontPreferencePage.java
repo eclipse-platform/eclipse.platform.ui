@@ -351,10 +351,9 @@ public class FontPreferencePage
 		namesToIds.put(
 			WorkbenchMessages.getString("FontsPreference.HeaderFont"), //$NON-NLS-1$
 			JFaceResources.HEADER_FONT);
-		//Commenting out DIALOG_FONT until all of Eclipse uses it	
-//		namesToIds.put(
-//			WorkbenchMessages.getString("FontsPreference.DialogFont"), //$NON-NLS-1$
-//			JFaceResources.DIALOG_FONT);
+		namesToIds.put(
+			WorkbenchMessages.getString("FontsPreference.DialogFont"), //$NON-NLS-1$
+			JFaceResources.DIALOG_FONT);
 
 		//Now set up the fonts
 
@@ -371,9 +370,9 @@ public class FontPreferencePage
 			JFaceResources.HEADER_FONT,
 			(JFaceResources.getHeaderFont().getFontData()));
 			
-//		idsToFontData.put(
-//			JFaceResources.DIALOG_FONT,
-//			(JFaceResources.getDialogFont().getFontData()));
+		idsToFontData.put(
+			JFaceResources.DIALOG_FONT,
+			(JFaceResources.getDialogFont().getFontData()));
 
 	}
 
