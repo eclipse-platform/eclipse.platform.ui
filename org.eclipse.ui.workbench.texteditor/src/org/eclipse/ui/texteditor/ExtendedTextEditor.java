@@ -39,10 +39,9 @@ import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 
-import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
-
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.internal.texteditor.quickdiff.DocumentLineDiffer;
+import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
 
 /**
  * An intermediate editor comprising functionality not present in the leaner <code>AbstractTextEditor</code>,
@@ -136,6 +135,11 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 * Whether quick diff information is displayed, either on a change ruler or the line number ruler.
 	 */
 	private boolean fIsChangeInformationShown;
+	/**
+	 * The annotation ruler column used in the vertical ruler.
+	 * @since 3.0
+	 */
+	private AnnotationRulerColumn fAnnotationRulerColumn;
 	
 	/**
 	 * Creates a new text editor.
@@ -636,7 +640,22 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 */
 	protected CompositeRuler createCompositeRuler() {
 		CompositeRuler ruler= new CompositeRuler();
-		ruler.addDecorator(0, new AnnotationRulerColumn(VERTICAL_RULER_WIDTH));
+		
+		fAnnotationRulerColumn= new AnnotationRulerColumn(VERTICAL_RULER_WIDTH, getAnnotationAccess());
+		
+		for (Iterator iter= fAnnotationPreferences.getAnnotationPreferences().iterator(); iter.hasNext();) {
+			AnnotationPreference preference= (AnnotationPreference)iter.next();
+			String key= preference.getVerticalRulerPreferenceKey();
+			boolean showAnnotation= true;
+			if (key != null)
+				showAnnotation= getPreferenceStore().getBoolean(key);
+			if (showAnnotation)
+				fAnnotationRulerColumn.addAnnotationType(preference.getAnnotationType());
+			
+		}
+		fAnnotationRulerColumn.addAnnotationType(DefaultMarkerAnnotationAccess.UNKNOWN);
+		
+		ruler.addDecorator(0, fAnnotationRulerColumn);
 		
 		if (isLineNumberRulerVisible())
 			ruler.addDecorator(1, createLineNumberRulerColumn());
@@ -706,9 +725,18 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 						initializeChangeRulerColumn(column);
 					}
 				}
-			}			
+			}
 			
-							
+			AnnotationPreference annotationPreference= getVerticalRulerAnnotationPreference(property);
+			if (annotationPreference != null && event.getNewValue() instanceof Boolean) {
+				Object type= annotationPreference.getAnnotationType();
+				if (((Boolean)event.getNewValue()).booleanValue())
+					fAnnotationRulerColumn.addAnnotationType(type);
+				else
+					fAnnotationRulerColumn.removeAnnotationType(type);
+				getVerticalRuler().update();
+			}
+			
 		} finally {
 			super.handlePreferenceStoreChanged(event);
 		}
@@ -728,7 +756,28 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 		}
 		return null;
 	}
-
+	
+	/**
+	 * Returns the annotation preference for which the given
+	 * preference matches a vertical ruler preference key.
+	 * 
+	 * @param preferenceKey the preference key string
+	 * @return the annotation preference or <code>null</code> if none
+	 * @since 3.0
+	 */
+	private AnnotationPreference getVerticalRulerAnnotationPreference(String preferenceKey) {
+		if (preferenceKey == null)
+			return null;
+		
+		Iterator e= fAnnotationPreferences.getAnnotationPreferences().iterator();
+		while (e.hasNext()) {
+			AnnotationPreference info= (AnnotationPreference) e.next();
+			if (info != null && preferenceKey.equals(info.getVerticalRulerPreferenceKey())) 
+				return info;
+		}
+		return null;
+	}
+	
 	/**
 	 * Shows the overview ruler.
 	 */
