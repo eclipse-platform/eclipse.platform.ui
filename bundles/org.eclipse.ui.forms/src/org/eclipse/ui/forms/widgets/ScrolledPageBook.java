@@ -133,11 +133,25 @@ public final class ScrolledPageBook extends SharedScrolledComposite {
 	 *            the page key.
 	 */
 	public void removePage(Object key) {
+		removePage(key, true);
+	}
+	/**
+	 * Removes the page under the provided key from the page book. Does nothing
+	 * if page with that key does not exist.
+	 * 
+	 * @param key
+	 *            the page key.
+	 * @param showEmptyPage
+	 * 			  if <code>true</code>, shows the empty page
+	 *            after page removal.
+	 */
+	public void removePage(Object key, boolean showEmptyPage) {
 		Control page = (Control) pages.get(key);
 		if (page != null) {
 			pages.remove(key);
 			page.dispose();
-			showEmptyPage();
+			if (showEmptyPage)
+				showEmptyPage();
 		}
 	}
 	/**

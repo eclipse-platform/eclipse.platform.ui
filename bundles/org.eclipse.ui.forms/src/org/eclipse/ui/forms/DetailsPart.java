@@ -20,6 +20,15 @@ import org.eclipse.ui.forms.widgets.ScrolledPageBook;
  * This managed form part handles the 'details' portion of the 
  * 'master/details' block. It has a page book that manages pages
  * of details registered for the current selection.
+ * <p>By default, details part accepts any number of pages.
+ * If dynamic page provider is registered, this number may
+ * be excessive. To avoid running out of steam (by creating 
+ * a large number of pages with widgets on each), maximum
+ * number of pages can be set to some reasonable value (e.g. 10).
+ * When this number is reached, old pages (those created first)
+ * will be removed and disposed as new ones are added. If
+ * the disposed pages are needed again after that, they
+ * will be created again.
  * 
  * @since 3.0
  */
@@ -30,6 +39,39 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	private IStructuredSelection currentSelection;
 	private Hashtable pages;
 	private IDetailsPageProvider pageProvider;
+	private int pageLimit=Integer.MAX_VALUE;
+	
+	private static class PageBag {
+		private static int counter;
+		private int ticket;
+		private IDetailsPage page;
+		private boolean fixed;
+		
+		public PageBag(IDetailsPage page, boolean fixed) {
+			this.page= page;
+			this.fixed = fixed;
+			this.ticket = ++counter;
+		}
+		public int getTicket() {
+			return ticket;
+		}
+		public IDetailsPage getPage() {
+			return page;
+		}
+		public void dispose() {
+			page.dispose();
+			page=null;
+		}
+		public boolean isDisposed() {
+			return page==null;
+		}
+		public boolean isFixed() {
+			return fixed;
+		}
+		public static int getCurrentTicket() {
+			return counter;
+		}
+	}
 /**
  * Creates a details part by wrapping the provided page book.
  * @param mform the parent form
@@ -57,7 +99,11 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
  * @param page
  */
 	public void registerPage(Object objectClass, IDetailsPage page) {
-		pages.put(objectClass, page);
+		registerPage(objectClass, page, true);
+	}
+	
+	private void registerPage(Object objectClass, IDetailsPage page, boolean fixed) {
+		pages.put(objectClass, new PageBag(page, fixed));
 		page.initialize(managedForm);
 	}
 /**
@@ -98,8 +144,8 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	 */
 	public void dispose() {
 		for (Enumeration enum = pages.elements(); enum.hasMoreElements();) {
-			IDetailsPage page = (IDetailsPage) enum.nextElement();
-			page.dispose();
+			PageBag pageBag = (PageBag) enum.nextElement();
+			pageBag.dispose();
 		}
 	}
 	/*
@@ -193,16 +239,17 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 		return object.getClass();
 	}
 	private void showPage(final Object key) {
+		checkLimit();
 		final IDetailsPage oldPage = getCurrentPage();
 		if (key != null) {
-			IDetailsPage page = (IDetailsPage) pages.get(key);
+			PageBag pageBag = (PageBag)pages.get(key);
+			IDetailsPage page = pageBag!=null?pageBag.getPage():null;
 			if (page==null) {
 				// try to get the page dynamically from the provider
 				if (pageProvider!=null) {
 					page = pageProvider.getPage(key);
 					if (page!=null) {
-						page.initialize(managedForm);
-						pages.put(key, page);
+						registerPage(key, page, false);
 					}
 				}
 			}
@@ -229,5 +276,47 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 			}
 		}
 		pageBook.showEmptyPage();
+	}
+	private void checkLimit() {
+		if (pages.size() <= getPageLimit()) return;
+		// overflow
+		int currentTicket = PageBag.getCurrentTicket();
+		int cutoffTicket = currentTicket - getPageLimit();
+		for (Enumeration enum=pages.keys(); enum.hasMoreElements();) {
+			Object key = enum.nextElement();
+			PageBag pageBag = (PageBag)pages.get(key);
+			if (pageBag.getTicket()<=cutoffTicket) {
+				// candidate - see if it is active and not fixed
+				if (!pageBag.isFixed() && !pageBag.getPage().equals(getCurrentPage())) {
+					// drop it
+					pageBag.dispose();
+					pages.remove(key);
+					pageBook.removePage(key, false);				
+				}
+			}
+		}
+	}
+	/**
+	 * Returns the maximum number of pages that should be
+	 * maintained in this part. When an attempt is made to
+	 * add more pages, old pages are removed and disposed
+	 * based on the order of creation (the oldest pages
+	 * are removed). The exception is made for the 
+	 * page that should otherwise be disposed but is
+	 * currently active.
+	 * @return maximum number of pages for this part
+	 */
+	public int getPageLimit() {
+		return pageLimit;
+	}
+	/**
+	 * Sets the page limit for this part. 
+	 * @see #getPageLimit()
+	 * @param pageLimit the maximum number of pages that
+	 * should be maintained in this part.
+	 */
+	public void setPageLimit(int pageLimit) {
+		this.pageLimit = pageLimit;
+		checkLimit();
 	}
 }
