@@ -182,18 +182,19 @@ boolean canDelete() {
 	return true;
 }
 /**
- * Returns whether the selection contains only projects.
+ * Returns whether the selection contains linked resources.
  *
- * @return <code>true</code> if the resources contains only projects, and 
- *  <code>false</code> otherwise
+ * @return <code>true</code> if the resources contain linked   
+ *  resources, and <code>false</code> otherwise
  */
-boolean containsOnlyProjects() {
-	if (getSelectedNonResources().size() > 0) return false;
-	int types = getSelectedResourceTypes();
-	// note that the selection may contain multiple types of resource
-	return types == IResource.PROJECT;
+boolean containsLinkedResource() {
+	Iterator iterator = getSelectedResources().iterator();
+	while (iterator.hasNext()) {
+		IResource resource = (IResource) iterator.next();
+		if (resource.isLinked()) return true;
+	}
+	return false;
 }
-
 /**
  * Returns whether the selection contains only non-projects.
  *
@@ -207,6 +208,18 @@ boolean containsOnlyNonProjects() {
 	if (types == 0) return false;
 	// note that the selection may contain multiple types of resource
 	return (types & IResource.PROJECT) == 0;
+}
+/**
+ * Returns whether the selection contains only projects.
+ *
+ * @return <code>true</code> if the resources contains only projects, and 
+ *  <code>false</code> otherwise
+ */
+boolean containsOnlyProjects() {
+	if (getSelectedNonResources().size() > 0) return false;
+	int types = getSelectedResourceTypes();
+	// note that the selection may contain multiple types of resource
+	return types == IResource.PROJECT;
 }
 
 /**
@@ -237,11 +250,17 @@ boolean confirmDeleteNonProjects() {
 	if (resources.size() == 1) {
 		title = WorkbenchMessages.getString("DeleteResourceAction.title1");  //$NON-NLS-1$
  		IResource resource = (IResource) resources.get(0);
-		msg = WorkbenchMessages.format("DeleteResourceAction.confirm1", new Object[] { resource.getName() });  //$NON-NLS-1$
+ 		if (resource.isLinked())
+ 			msg = WorkbenchMessages.format("DeleteResourceAction.confirmLinkedResource1", new Object[] { resource.getName() });  //$NON-NLS-1$
+ 		else
+			msg = WorkbenchMessages.format("DeleteResourceAction.confirm1", new Object[] { resource.getName() });  //$NON-NLS-1$
 	}
 	else {
 		title = WorkbenchMessages.getString("DeleteResourceAction.titleN");  //$NON-NLS-1$
-		msg = WorkbenchMessages.format("DeleteResourceAction.confirmN", new Object[] { new Integer(resources.size()) });  //$NON-NLS-1$
+		if (containsLinkedResource())
+			msg = WorkbenchMessages.format("DeleteResourceAction.confirmLinkedResourceN", new Object[] { new Integer(resources.size()) });  //$NON-NLS-1$
+		else
+			msg = WorkbenchMessages.format("DeleteResourceAction.confirmN", new Object[] { new Integer(resources.size()) });  //$NON-NLS-1$
 	}
 	return MessageDialog.openQuestion(shell, title, msg);
 }
