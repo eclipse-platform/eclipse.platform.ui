@@ -409,9 +409,9 @@ public class TaskList extends ViewPart {
 		for (int i = 0; i < columnHeaders.length; i++) {
 			TableColumn tc = new TableColumn(table, SWT.NONE, i);
 
-			if (i == 1 && !gtk)
+			if (!gtk && i == 1)
 				tc.setImage(MarkerUtil.getImage("header_complete")); //$NON-NLS-1$
-			else if (i == 2 && !gtk)
+			else if (!gtk && i == 2)
 				tc.setImage(MarkerUtil.getImage("header_priority")); //$NON-NLS-1$
 			else 
 				tc.setText(columnHeaders[i]);
