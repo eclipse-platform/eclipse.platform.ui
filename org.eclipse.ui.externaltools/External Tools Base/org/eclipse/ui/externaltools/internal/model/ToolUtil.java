@@ -8,12 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tomasz Stanczak - Fix for Bug 29504
+ *     Keith Seitz (keiths@redhat.com) - environment variables contribution (Bug 27243)
  *******************************************************************************/
 
 package org.eclipse.ui.externaltools.internal.model;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -78,6 +82,32 @@ public final class ToolUtil {
 			buffer.append(varArgument);
 		}
 		buffer.append(VAR_TAG_END);
+	}
+	
+	/**
+	 * Return a list of all the environment variables (suitable for passing to
+	 * Process.exec) in which variable expansion has been performed.
+	 * 
+	 * @param envMap Map of all the environment variables (key=name,value=value)
+	 * @param context the context used to expand the variable
+	 * @param status multi status to report any problems expanding variables
+	 * @return String[] the list of variables in "variable=value" form
+	 */
+	public static String[] expandEnvironment(Map envMap, ExpandVariableContext context, MultiStatus status) {
+		String[] vars = null;
+		
+		if (envMap != null && envMap.size() > 0) {
+			Entry e;
+			Iterator iter = envMap.entrySet().iterator();
+			vars = new String[envMap.size()];
+			int i = 0;
+			while (iter.hasNext()) {
+				e = (Entry) iter.next();
+				vars[i++] = (String) e.getKey() + '=' + expandArgument((String) e.getValue(), context, status);
+			}
+		}
+		
+		return vars;
 	}
 	
 	/**

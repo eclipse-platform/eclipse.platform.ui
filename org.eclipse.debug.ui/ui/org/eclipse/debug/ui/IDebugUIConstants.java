@@ -683,7 +683,13 @@ public interface IDebugUIConstants {
 	 * 
 	 * @since 2.1
 	 */
-	public static final String ATTR_FAVORITE_GROUPS = PLUGIN_ID + ".favoriteGroups"; //$NON-NLS-1$		
+	public static final String ATTR_FAVORITE_GROUPS = PLUGIN_ID + ".favoriteGroups"; //$NON-NLS-1$
+	
+	/**
+	 * Launch configuration attribute - a map of variables passed into
+	 * Runtime.exec(...) when a launch configuration is launched.
+	 */
+	public static final String ATTR_ENVIRONMENT_VARIABLES = PLUGIN_ID + ".environmentVariables"; //$NON-NLS-1$
 	
 	// Extension points
 	

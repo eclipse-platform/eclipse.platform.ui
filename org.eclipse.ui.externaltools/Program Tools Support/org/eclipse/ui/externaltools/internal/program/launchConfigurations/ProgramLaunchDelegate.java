@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Keith Seitz (keiths@redhat.com) - environment variables contribution (Bug 27243)
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.program.launchConfigurations;
 
@@ -141,11 +142,17 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 			return;
 		}
 		
+		String[] envp = ExternalToolsUtil.getEnvironment(configuration, resourceContext);
+		
+		if (monitor.isCanceled()) {
+			return;
+		}
+		
 		if (windowListener == null) {
 			windowListener= new ProgramLaunchWindowListener();
 			PlatformUI.getWorkbench().addWindowListener(windowListener);
 		}
-		Process p = DebugPlugin.exec(cmdLine, workingDir);
+		Process p = DebugPlugin.exec(cmdLine, workingDir, envp);
 		IProcess process = null;
 		
 		// add process type to process attributes

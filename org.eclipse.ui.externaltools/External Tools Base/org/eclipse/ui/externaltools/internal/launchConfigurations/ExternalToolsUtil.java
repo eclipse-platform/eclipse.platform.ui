@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Keith Seitz (keiths@redhat.com) - environment variables contribution (Bug 27243(
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
@@ -25,6 +26,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.ToolUtil;
@@ -61,6 +63,36 @@ public class ExternalToolsUtil {
 	 */
 	protected static void abort(String message, Throwable exception, int code) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, code, message, exception));
+	}
+	
+	/** 
+	 * Returns an array of (expanded) environment variables to be used when
+	 * running the launch configuration or <code>null</code> if unspecified
+	 * 
+	 * @param configuration launch configuration
+	 * @param context context used to expand environment variable values
+	 * @return String[] the array of "variable=value" pairs, suitable for
+	 * passing to Process.exec
+	 * @throws CoreException if unable to access associated attribute or if
+	 * unable to resolve a variable in an environment variable's value
+	 */
+	public static String[] getEnvironment(ILaunchConfiguration configuration, ExpandVariableContext context) throws CoreException {
+		Map envMap = configuration.getAttribute(IDebugUIConstants.ATTR_ENVIRONMENT_VARIABLES, (Map) null);
+		if (envMap != null) {
+			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.runProblem"), null); //$NON-NLS-1$;
+			String[] expandedEnvironment = ToolUtil.expandEnvironment(envMap, context, status);
+			if (status.isOK()) {
+				if (expandedEnvironment != null && expandedEnvironment.length > 0) {
+					return expandedEnvironment;
+				} else {
+					String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("DefaultRunnerContext.invalidDirectory"), new Object[] { configuration.getName()}); //$NON-NLS-1$
+					abort(msg, null, 0);
+				}
+			} else {
+				throw new CoreException(status);
+			}
+		}
+		return null;
 	}
 
 	/**
