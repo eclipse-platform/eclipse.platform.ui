@@ -49,7 +49,7 @@ public class CommandTests extends CVSUITestCase {
     	return new BenchmarkTestSetup(new TestSuite(CommandTests.class));
 	}
 
-	public void setUp() throws CVSException {
+	public void setUp() throws CoreException {
 		super.setUp();
 		try {
 			baseName = Utils.makeUniqueName(null, "thisproject", null);

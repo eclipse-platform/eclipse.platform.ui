@@ -14,8 +14,7 @@ import java.io.*;
 import junit.extensions.TestSetup;
 import junit.framework.Test;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSCommunicationException;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
@@ -164,7 +163,7 @@ public class CVSTestSetup extends TestSetup {
 		executeRemoteCommand(repository, "cvs -d " + repoRoot + " init");
 	}
 	
-	public void setUp() throws CVSException {
+	public void setUp() throws CoreException {
 		if (repository == null) {
 			repository = setupRepository(REPOSITORY_LOCATION);
 		}

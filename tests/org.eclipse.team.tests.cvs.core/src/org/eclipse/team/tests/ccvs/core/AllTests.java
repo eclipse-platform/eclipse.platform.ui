@@ -31,7 +31,7 @@ public class AllTests extends EclipseTest {
 		suite.addTest(AllTestsProvider.suite());
 		suite.addTest(AllTestsTeamSubscriber.suite());
 		suite.addTest(AllUITests.suite());
-		return new CVSTestSetup(suite);
+		return new CVSUITestSetup(suite);
 	}
 }
 

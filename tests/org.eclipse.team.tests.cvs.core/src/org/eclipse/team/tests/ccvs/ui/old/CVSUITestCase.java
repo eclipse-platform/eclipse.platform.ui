@@ -87,7 +87,7 @@ public class CVSUITestCase extends LoggingTestCase {
 		testWindows = new ArrayList(3);
 	}
 	
-	public void setUp() throws CVSException {
+	public void setUp() throws CoreException{
 		super.setUp();
 		testRepository = CVSTestSetup.repository;
 		testWindow = openTestWindow();
