@@ -28,6 +28,7 @@ public class OptionTests extends AbstractAntTest {
 	protected static final String UNKNOWN_ARG= "Unknown argument: ";
 	protected static final String START_OF_HELP= "ant [options] [target [target2 [target3] ...]]";
 	protected static final String VERSION= "Apache Ant version 1.6.0 compiled on December 18 2003";
+	protected static final String PLUGIN_VERSION= "org.apache.ant_1.6.0";
 	 
 	public OptionTests(String name) {
 		super(name);
@@ -531,7 +532,7 @@ public class OptionTests extends AbstractAntTest {
 		
 		String msg= (String)AntTestChecker.getDefault().getMessages().get(12);
 		//msg depends on whether self hosting testing or build testing
-		assertTrue("Message incorrect: " + msg, msg.endsWith("org.apache.ant") || msg.endsWith("org.apache.ant_1.5.4"));
+		assertTrue("Message incorrect: " + msg, msg.endsWith("org.apache.ant") || msg.endsWith(PLUGIN_VERSION));
 	}
 	
 	/**
@@ -542,4 +543,23 @@ public class OptionTests extends AbstractAntTest {
 		run("TestForEcho.xml", new String[]{"-quiet"});
 		assertSuccessful();	
 	}
+	
+	/**
+	 * Tests the "-keep-going" option
+	 * On hold as I figure out what -keep-going is supposed to do
+	 */
+	//public void testMinusKeepGoing() throws CoreException {
+	//	run("failingTargets.xml", new String[]{"-keep-going"});
+	//	assertTrue("no messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 0);
+	//}
+	
+	/**
+	 * Tests the "-k" option
+	 * On hold as I figure out what -keep-going is supposed to do
+	 */
+//	public void testMinusK() throws CoreException {
+//		run("failingTargets.xml", new String[]{"-k"});
+//		assertTrue("no messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 0);
+//	}
+	
 }
