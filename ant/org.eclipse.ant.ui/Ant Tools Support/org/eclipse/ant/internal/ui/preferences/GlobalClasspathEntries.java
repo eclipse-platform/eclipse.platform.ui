@@ -14,40 +14,39 @@ package org.eclipse.ant.internal.ui.preferences;
 import java.util.List;
 
 public class GlobalClasspathEntries extends AbstractClasspathEntry {
-	private String name;
-	private int type;
-	
-	private boolean canBeRemoved= true;
+	private String fName;
+	private int fType;
+	private boolean fCanBeRemoved= true;
 	
 	public GlobalClasspathEntries(String name, IClasspathEntry parent, boolean canBeRemoved, int type) {
-		this.parent= parent;
-		this.name= name;
-		this.canBeRemoved= canBeRemoved;
-		this.type= type;
+		fParent= parent;
+		fName= name;
+		fCanBeRemoved= canBeRemoved;
+		fType= type;
 	}
 		
 	public void addEntry(ClasspathEntry entry) {
-		childEntries.add(entry);
+		fChildEntries.add(entry);
 	}
 	
 	public void removeEntry(ClasspathEntry entry) {
-		childEntries.remove(entry);
+		fChildEntries.remove(entry);
 	}
 	
 	public boolean contains(ClasspathEntry entry) {
-		return childEntries.contains(entry);
+		return fChildEntries.contains(entry);
 	}
 	
 	public String toString() {
-		return name;
+		return fName;
 	}
 
 	public void removeAll() {
-		childEntries.clear();
+		fChildEntries.clear();
 	}
 	
 	public boolean canBeRemoved() {
-		return canBeRemoved;
+		return fCanBeRemoved;
 	}
 
 	/**
@@ -55,14 +54,15 @@ public class GlobalClasspathEntries extends AbstractClasspathEntry {
 	 * @param entries The child entries.
 	 */
 	public void setEntries(List entries) {
-		childEntries= entries;
+		fChildEntries= entries;
 	}
 	/**
 	 * @return Returns the type of this global classpath entry.
 	 * @see ClasspathModel#ANT_HOME
 	 * @see ClasspathModel#GLOBAL_USER
+	 * @see ClasspathModel#CONTRIBUTED
 	 */
 	public int getType() {
-		return type;
+		return fType;
 	}
 }

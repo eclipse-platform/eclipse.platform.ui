@@ -20,18 +20,18 @@ import org.eclipse.core.variables.VariablesPlugin;
 
 public class ClasspathEntry extends AbstractClasspathEntry {
 
-	private URL url= null;
-	private String variableString= null;
-	private IAntClasspathEntry entry= null;
+	private URL fUrl= null;
+	private String fVariableString= null;
+	private IAntClasspathEntry fEntry= null;
 	
 	public ClasspathEntry(Object o, IClasspathEntry parent) {
-		this.parent= parent;
+		fParent= parent;
 		if (o instanceof URL) {
-			url= (URL)o;
+			fUrl= (URL)o;
 		} else if (o instanceof String) {
-			variableString= (String)o;
+			fVariableString= (String)o;
 		} else if (o instanceof IAntClasspathEntry) {
-			entry= (IAntClasspathEntry)o;
+			fEntry= (IAntClasspathEntry)o;
 		}
 	}
 	
@@ -58,8 +58,8 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		if (entry != null) {
-			return entry.getLabel();
+		if (fEntry != null) {
+			return fEntry.getLabel();
 		}
 		if (getURL() != null) {
 			return getURL().getFile();
@@ -69,36 +69,36 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 	}
 	
 	protected URL getURL() {
-		return url;
+		return fUrl;
 	}
 	
 	protected String getVariableString() {
-		return variableString;
+		return fVariableString;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.core.IAntClasspathEntry#getLabel()
 	 */
 	public String getLabel() {
-		if (entry == null) {
+		if (fEntry == null) {
 			return toString();
 		}
-		return entry.getLabel();
+		return fEntry.getLabel();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.core.IAntClasspathEntry#getEntryURL()
 	 */
 	public URL getEntryURL() {
-		if (entry != null) {
-			return entry.getEntryURL();
+		if (fEntry != null) {
+			return fEntry.getEntryURL();
 		}
-		if (url != null) {
-			return url;
+		if (fUrl != null) {
+			return fUrl;
 		} 
 			
 		try {
-			String expanded = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(variableString);
+			String expanded = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fVariableString);
 			return new URL("file:" + expanded); //$NON-NLS-1$
 		} catch (CoreException e) {
 			AntUIPlugin.log(e);
@@ -112,9 +112,9 @@ public class ClasspathEntry extends AbstractClasspathEntry {
      * @see org.eclipse.ant.core.IAntClasspathEntry#isEclipseRuntimeRequired()
      */
     public boolean isEclipseRuntimeRequired() {
-        if (entry == null) {
+        if (fEntry == null) {
             return super.isEclipseRuntimeRequired();
         } 
-        return entry.isEclipseRuntimeRequired();
+        return fEntry.isEclipseRuntimeRequired();
     }
 }

@@ -18,35 +18,35 @@ import org.eclipse.ant.core.IAntClasspathEntry;
 
 public abstract class AbstractClasspathEntry implements IClasspathEntry {
 
-	protected List childEntries = new ArrayList();
-	protected IClasspathEntry parent = null;
+	protected List fChildEntries = new ArrayList();
+	protected IClasspathEntry fParent = null;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.preferences.IClasspathEntry#getEntries()
 	 */
 	public IAntClasspathEntry[] getEntries() {
-		return (IAntClasspathEntry[])childEntries.toArray(new IAntClasspathEntry[childEntries.size()]);
+		return (IAntClasspathEntry[])fChildEntries.toArray(new IAntClasspathEntry[fChildEntries.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.preferences.IClasspathEntry#hasEntries()
 	 */
 	public boolean hasEntries() {
-		return !childEntries.isEmpty();
+		return !fChildEntries.isEmpty();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.preferences.IClasspathEntry#getParent()
 	 */
 	public IClasspathEntry getParent() {
-		return parent;
+		return fParent;
 	}
 	
 	/**
 	 * @param parent The parent to set.
 	 */
 	public void setParent(IClasspathEntry parent) {
-		this.parent = parent;
+		fParent = parent;
 	}
 	
 	/* (non-Javadoc)
