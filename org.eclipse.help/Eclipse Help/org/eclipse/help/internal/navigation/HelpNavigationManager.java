@@ -235,6 +235,7 @@ public class HelpNavigationManager {
 	 * Reads the product info and extracts the ordering of the infosets
 	 */
 	private void readProductInfo() {
+		// This does not work anymore, product.ini has been moved
 		try
 		{
 			Properties productInfo = new Properties();
