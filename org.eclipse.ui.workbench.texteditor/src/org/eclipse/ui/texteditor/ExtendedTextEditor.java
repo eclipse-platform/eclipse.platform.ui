@@ -152,6 +152,8 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 */
 	public ExtendedTextEditor() {
 		super();
+		fAnnotationPreferences= new MarkerAnnotationPreferences();
+		setRangeIndicator(new DefaultRangeIndicator());
 		initializeKeyBindingScopes();
 		initializeEditor();
 	}
@@ -160,8 +162,6 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 * Initializes this editor.
 	 */
 	protected void initializeEditor() {
-		fAnnotationPreferences= new MarkerAnnotationPreferences();
-		setRangeIndicator(new DefaultRangeIndicator());
 		setPreferenceStore(TextEditorPlugin.getDefault().getPreferenceStore());
 	}
 
@@ -204,7 +204,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 		fAnnotationAccess= createAnnotationAccess();
 		fOverviewRuler= createOverviewRuler(getSharedColors());
 		
-		ISourceViewer viewer= new SourceViewer(parent, ruler, getOverviewRuler(), isPrefOverviewRulerVisible(), styles);
+		ISourceViewer viewer= new SourceViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles);
 		// ensure decoration support has been created and configured.
 		getSourceViewerDecorationSupport(viewer);
 		
@@ -267,7 +267,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	/**
 	 * Tells whether the overview ruler is visible.
 	 */
-	protected boolean isPrefOverviewRulerVisible() {
+	protected boolean isOverviewRulerVisible() {
 		IPreferenceStore store= getPreferenceStore();
 		return store != null ? store.getBoolean(OVERVIEW_RULER) : false;
 	}
@@ -313,7 +313,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 * a separate change ruler gets displayed.
 	 */
 	private void ensureChangeInfoCanBeDisplayed() {
-		if (isPrefLineNumberRulerVisible()) {
+		if (isLineNumberRulerVisible()) {
 			if (!(fLineNumberRulerColumn instanceof IChangeRulerColumn)) {
 				hideLineNumberRuler();
 				// HACK: set state already so a change ruler is created. Not needed once always a change line number bar gets installed
@@ -435,7 +435,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 * 
 	 * @return <code>true</code> if the line numbers should be visible
 	 */
-	protected boolean isPrefLineNumberRulerVisible() {
+	protected boolean isLineNumberRulerVisible() {
 		IPreferenceStore store= getPreferenceStore();
 		return store != null ? store.getBoolean(LINE_NUMBER_RULER) : false;
 	}
@@ -613,7 +613,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 		CompositeRuler ruler= new CompositeRuler();
 		ruler.addDecorator(0, new AnnotationRulerColumn(VERTICAL_RULER_WIDTH));
 		
-		if (isPrefLineNumberRulerVisible())
+		if (isLineNumberRulerVisible())
 			ruler.addDecorator(1, createLineNumberRulerColumn());
 		else if (isPrefQuickDiffAlwaysOn())
 			ruler.addDecorator(1, createChangeRulerColumn());
@@ -635,7 +635,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 			String property= event.getProperty();	
 			
 			if (fSourceViewerDecorationSupport != null && fOverviewRuler != null && OVERVIEW_RULER.equals(property))  {
-				if (isPrefOverviewRulerVisible())
+				if (isOverviewRulerVisible())
 					showOverviewRuler();
 				else
 					hideOverviewRuler();
@@ -643,7 +643,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 			}
 			
 			if (LINE_NUMBER_RULER.equals(property)) {
-				if (isPrefLineNumberRulerVisible())
+				if (isLineNumberRulerVisible())
 					showLineNumberRuler();
 				else
 					hideLineNumberRuler();

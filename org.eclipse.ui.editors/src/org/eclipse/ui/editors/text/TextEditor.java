@@ -82,7 +82,6 @@ public class TextEditor extends ExtendedTextEditor {
 	 * Initializes this editor.
 	 */
 	protected void initializeEditor() {
-		super.initializeEditor();
 		setEditorContextMenuId("#TextEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#TextRulerContext"); //$NON-NLS-1$
 		setHelpContextId(ITextEditorHelpContextIds.TEXT_EDITOR);
