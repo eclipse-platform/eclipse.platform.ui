@@ -95,15 +95,24 @@ public class ProjectionSupport {
 						gc.setForeground(color);
 						
 						FontMetrics metrics= gc.getFontMetrics();
-						int lineHeight= metrics.getHeight();
-						int verticalMargin= lineHeight/10;
-						int height= lineHeight - 2*verticalMargin;
+						
+						// baseline: where the dots are drawn 
+						int baseline= textWidget.getBaseline();
+						// descent: number of pixels that the box extends over baseline
+						int descent= Math.min(2, textWidget.getLineHeight() - baseline);
+						// ascent: so much does the box stand up from baseline
+						int ascent= metrics.getAscent();
+						// leading: free space from line top to box upper line
+						int leading= baseline - ascent;
+						// height: height of the box
+						int height= ascent + descent;
+						
 						int width= metrics.getAverageCharWidth();
-						gc.drawRectangle(p.x, p.y + verticalMargin, width, height);
+						gc.drawRectangle(p.x, p.y + leading, width, height);
 						int third= width/3;
-						int dotsVertical= p.y + metrics.getLeading() + metrics.getAscent();
+						int dotsVertical= p.y + baseline - 1;
 						gc.drawPoint(p.x + third, dotsVertical);
-						gc.drawPoint(p.x + 2*third, dotsVertical);
+						gc.drawPoint(p.x + width - third, dotsVertical);
 						
 						gc.setForeground(c);
 						
