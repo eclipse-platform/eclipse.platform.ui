@@ -10,19 +10,16 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.syncinfo;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.PersistantResourceVariantByteStore;
 import org.eclipse.team.core.variants.ResourceVariantByteStore;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.core.subscribers.DescendantResourceVariantByteStore;
 
 /**
@@ -85,6 +82,7 @@ public class CVSDescendantResourceVariantByteStore extends DescendantResourceVar
 		for (int i = 0; i < changedResources.length; i++) {
 			IResource resource = changedResources[i];
 			try {
+				if (!isInCVSProject(resource)) continue;
 				if (resource.getType() == IResource.FILE
 						&& (resource.exists() || resource.isPhantom())) {
 					byte[] remoteBytes = getBytes(resource);
@@ -126,5 +124,9 @@ public class CVSDescendantResourceVariantByteStore extends DescendantResourceVar
 			CVSProviderPlugin.log(e);
 		}
 		return Status.OK_STATUS; // TODO
+	}
+
+	private boolean isInCVSProject(IResource resource) {
+		return RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId()) != null;
 	}
 }

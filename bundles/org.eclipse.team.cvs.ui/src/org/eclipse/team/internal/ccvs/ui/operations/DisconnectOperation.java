@@ -17,6 +17,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -51,6 +52,7 @@ public class DisconnectOperation extends RepositoryProviderOperation {
 		if (unmanage) {
 			ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(project);
 			cvsFolder.unmanage(monitor);
+			EclipseSynchronizer.getInstance().deconfigure(project, monitor);
 		}
 	}
 

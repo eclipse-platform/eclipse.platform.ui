@@ -60,7 +60,7 @@ public class ShareProjectOperation extends CVSOperation {
 						exception[0] = e;
 					}
 				}
-			}, project, 0, Policy.subMonitorFor(monitor, 100));
+			}, ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(project), 0, Policy.subMonitorFor(monitor, 100));
 			if (exception[0] != null)
 				throw exception[0];
 		} catch (CoreException e) {
