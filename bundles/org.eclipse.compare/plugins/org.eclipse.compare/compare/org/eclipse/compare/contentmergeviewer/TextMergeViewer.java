@@ -149,7 +149,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	/** Width of birds eye view */
 	private static final int BIRDS_EYE_VIEW_INSET= 1;
 	/** */
-	private static final int RESOLVE_SIZE= 5;
+	private static final int RESOLVE_SIZE= 8;
 
 	/** line width of change borders */
 	private static final int LW= 1;
@@ -264,6 +264,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private MenuManager fCenterMenuManager;
 	private Menu fCenterMenu;
+	private Button fCenterButton;
 					
 	/**
 	 * The position updater used to adapt the positions representing
@@ -983,7 +984,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return null;
 	}
 	
-	private Diff handleMouseInCenter(Canvas canvas, int mx, int my) {
+	private Diff getDiffUnderMouse(Canvas canvas, int mx, int my, Rectangle r) {
 
 		if (! fSynchronizedScrolling)
 			return null;
@@ -1026,62 +1027,17 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				if (Math.min(ly, ry) >= visibleHeight)
 					break;
 
-//				fPts[0]= x;	fPts[1]= ly;	fPts[2]= w;	fPts[3]= ry;
-//				fPts[6]= x;	fPts[7]= ly+lh;	fPts[4]= w;	fPts[5]= ry+rh;
-
-//				if (fUseSingleLine) {
-//					int w2= 3;
-//
-//					g.setBackground(fillColor);
-//					g.fillRectangle(0, ly, w2, lh);		// left
-//					g.fillRectangle(w-w2, ry, w2, rh);	// right
-//
-//					g.setLineWidth(LW);
-//					g.setForeground(strokeColor);
-//					g.drawRectangle(0-1, ly, w2, lh);	// left
-//					g.drawRectangle(w-w2, ry, w2, rh);	// right
-//
-//					if (fUseSplines) {
-//						int[] points= getCenterCurvePoints(w2, ly+lh/2, w-w2, ry+rh/2);
-//						for (int i= 1; i < points.length; i++)
-//							g.drawLine(w2+i-1, points[i-1], w2+i, points[i]);
-//					} else {
-//						g.drawLine(w2, ly+lh/2, w-w2, ry+rh/2);
-//					}
-//				} else {
-//					// two lines
-//					if (fUseSplines) {
-//						g.setBackground(fillColor);
-//
-//						g.setLineWidth(LW);
-//						g.setForeground(strokeColor);
-//
-//						int[] topPoints= getCenterCurvePoints(fPts[0], fPts[1], fPts[2], fPts[3]);
-//						int[] bottomPoints= getCenterCurvePoints(fPts[6], fPts[7], fPts[4], fPts[5]);
-//						g.setForeground(fillColor);
-//						g.drawLine(0, bottomPoints[0], 0, topPoints[0]);
-//						for (int i= 1; i < bottomPoints.length; i++) {
-//							g.setForeground(fillColor);
-//							g.drawLine(i, bottomPoints[i], i, topPoints[i]);
-//							g.setForeground(strokeColor);
-//							g.drawLine(i-1, topPoints[i-1], i, topPoints[i]);
-//							g.drawLine(i-1, bottomPoints[i-1], i, bottomPoints[i]);
-//						}
-//					} else {
-//						g.setBackground(fillColor);
-//						g.fillPolygon(fPts);
-//
-//						g.setLineWidth(LW);
-//						g.setForeground(strokeColor);
-//						g.drawLine(fPts[0], fPts[1], fPts[2], fPts[3]);
-//						g.drawLine(fPts[6], fPts[7], fPts[4], fPts[5]);
-//					}
-//				}
-
 				int cx= (w-RESOLVE_SIZE)/2;
 				int cy= ((ly+lh/2) + (ry+rh/2) - RESOLVE_SIZE)/2; 
-				if (my >= cy && my < cy+RESOLVE_SIZE && mx >= cx && mx < cx+RESOLVE_SIZE)
+				if (my >= cy && my < cy+RESOLVE_SIZE && mx >= cx && mx < cx+RESOLVE_SIZE) {
+					if (r != null) {
+						r.x= cx-5;
+						r.y= cy-5;
+						r.width= RESOLVE_SIZE+10;
+						r.height= RESOLVE_SIZE+10;
+					}
 					return diff;
+				}
 			}
 		}
 		return null;
@@ -1215,40 +1171,62 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					paintCenter(this, gc);
 				}
 			};
-			//new Resizer(canvas, HORIZONTAL);
-			canvas.addMouseListener(
-				new MouseAdapter() {
-					public void mouseDown(MouseEvent e) {
-						Diff diff= handleMouseInCenter(canvas, e.x, e.y);
-						if (diff != null) {
-							setCurrentDiff2(diff, false);
-							if (e.button == 3) {
-								Point p= canvas.toDisplay(new Point(e.x, e.y));
-								fCenterMenu= fCenterMenuManager.createContextMenu(canvas);
-								if (fCenterMenu != null) {
-									fCenterMenu.setLocation(p.x, p.y);
-									fCenterMenu.setVisible(true);
+			if (!fUseResolveUI) {
+				new Resizer(canvas, HORIZONTAL);
+			} else {
+				canvas.addMouseListener(
+					new MouseAdapter() {
+						public void mouseDown(MouseEvent e) {
+							Diff diff= getDiffUnderMouse(canvas, e.x, e.y, null);
+							if (diff != null) {
+								setCurrentDiff2(diff, false);
+								if (e.button == 3) {
+									Point p= canvas.toDisplay(new Point(e.x, e.y));
+									fCenterMenu= fCenterMenuManager.createContextMenu(canvas);
+									if (fCenterMenu != null) {
+										fCenterMenu.setLocation(p.x, p.y);
+										fCenterMenu.setVisible(true);
+									}
 								}
 							}
 						}
 					}
-				}
-			);
-			
-			fCenterMenuManager= new MenuManager();
-			fCenterMenuManager.setRemoveAllWhenShown(true);
-			fCenterMenuManager.addMenuListener(
-				new IMenuListener() {
-					public void menuAboutToShow(IMenuManager manager) {
-						updateControls();
-						if (fCopyDiffRightToLeftItem != null)
-							manager.add(fCopyDiffRightToLeftItem.getAction());
-						if (fCopyDiffLeftToRightItem != null)
-							manager.add(fCopyDiffLeftToRightItem.getAction());
+				);
+				canvas.addMouseMoveListener(
+					new MouseMoveListener() {
+						public void mouseMove(MouseEvent e) {
+							Rectangle r= new Rectangle(0, 0, 0, 0);
+							Diff diff= getDiffUnderMouse(canvas, e.x, e.y, r);
+							if (diff != null) {
+								fCenterButton.setBounds(r);
+								fCenterButton.setVisible(true);
+							} else {
+								fCenterButton.setVisible(false);
+							}
+						}
 					}
-				}
-			);
-			//canvas.setMenu(fCenterMenuManager.createContextMenu(canvas));
+				);
+				
+				fCenterButton= new Button(canvas, SWT.FLAT);
+				fCenterButton.setText("<");
+				fCenterButton.pack();
+				fCenterButton.setVisible(false);
+				
+				fCenterMenuManager= new MenuManager();
+				fCenterMenuManager.setRemoveAllWhenShown(true);
+				fCenterMenuManager.addMenuListener(
+					new IMenuListener() {
+						public void menuAboutToShow(IMenuManager manager) {
+							updateControls();
+							if (fCopyDiffRightToLeftItem != null)
+								manager.add(fCopyDiffRightToLeftItem.getAction());
+							if (fCopyDiffLeftToRightItem != null)
+								manager.add(fCopyDiffLeftToRightItem.getAction());
+						}
+					}
+				);
+				//canvas.setMenu(fCenterMenuManager.createContextMenu(canvas));
+			}
 			
 			return canvas;
 		}
@@ -3620,11 +3598,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			setRightDirty(true);
 			fRightContentsChanged= false;
 		} else {
-			if (false) {
+			if (true) {
 				// not ready for primetime
-				copyAllUnresolvedIncoming();			
+				copyAllUnresolvedIncoming();
 				invalidateLines();
-				refreshBirdsEyeView();
+				//refreshBirdsEyeView();
 				return;
 			} else {
 				if (fRight.getEnabled()) {
