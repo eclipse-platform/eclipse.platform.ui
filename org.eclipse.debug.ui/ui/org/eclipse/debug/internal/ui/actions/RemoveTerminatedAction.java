@@ -37,11 +37,13 @@ public class RemoveTerminatedAction extends ListenerActionDelegate implements IL
 		if (event.getKind() == DebugEvent.TERMINATE) {
 			Object source= event.getSource();
 			if (source instanceof IDebugTarget) {
-				if (((IDebugTarget)source).getLaunch().isTerminated()) {
+				ILaunch launch= ((IDebugTarget)source).getLaunch();
+				if (launch != null && launch.isTerminated()) {
 					getAction().setEnabled(true);
 				}
 			} else if (source instanceof IProcess) {
-				if (((IProcess)source).getLaunch().isTerminated()) {
+				ILaunch launch= ((IProcess)source).getLaunch();
+				if (launch != null && launch.isTerminated()) {
 					getAction().setEnabled(true);
 				}
 			}
@@ -151,7 +153,7 @@ public class RemoveTerminatedAction extends ListenerActionDelegate implements IL
 	 * @see ControlActionDelegate#getToolTipText()
 	 */
 	protected String getToolTipText() {
-		return ActionMessages.getString("RemoveTerminatedAction.Remove_All_Terminated_Launches_2");
+		return ActionMessages.getString("RemoveTerminatedAction.Remove_All_Terminated_Launches_2"); //$NON-NLS-1$
 	}
 
 	/**
