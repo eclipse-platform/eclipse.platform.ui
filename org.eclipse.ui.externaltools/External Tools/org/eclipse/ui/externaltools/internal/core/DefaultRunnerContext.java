@@ -152,6 +152,12 @@ public final class DefaultRunnerContext implements IRunnerContext {
 	 * Expands the variable
 	 */
 	private void expandVariable(ToolUtil.VariableDefinition varDef, StringBuffer buf) {
+		if (tool.VAR_ANT_TARGET.equals(varDef.name)) {
+			if (varDef.argument != null && varDef.argument.length() > 0)
+				antTargets.add(varDef.argument);
+			return;
+		}
+		
 		if (tool.VAR_WORKSPACE_LOC.equals(varDef.name)) {
 			String location = null;
 			if (varDef.argument != null && varDef.argument.length() > 0)
@@ -166,8 +172,9 @@ public final class DefaultRunnerContext implements IRunnerContext {
 		if (tool.VAR_PROJECT_LOC.equals(varDef.name)) {
 			IPath location = null;
 			if (varDef.argument != null && varDef.argument.length() > 0) {
-				IProject namedProject = ResourcesPlugin.getWorkspace().getRoot().getProject(varDef.argument);
-				location = namedProject.getLocation();
+				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
+				if (member != null)
+					location = member.getProject().getLocation();
 			} else {
 				if (currentProject != null)
 					location = currentProject.getLocation();
@@ -190,10 +197,109 @@ public final class DefaultRunnerContext implements IRunnerContext {
 			return;			
 		}
 		
-		if (tool.VAR_ANT_TARGET.equals(varDef.name)) {
-			if (varDef.argument != null && varDef.argument.length() > 0)
-				antTargets.add(varDef.argument);
+		if (tool.VAR_CONTAINER_LOC.equals(varDef.name)) {
+			String location = null;
+			if (varDef.argument != null && varDef.argument.length() > 0) {
+				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
+				if (member != null)
+					location = member.getParent().getLocation().toString();
+			} else {
+				if (selectedResource != null)
+					location = selectedResource.getParent().getLocation().toString();
+			}
+			if (location != null)
+				buf.append(location);
+			return;			
+		}
+		
+		if (tool.VAR_PROJECT_PATH.equals(varDef.name)) {
+			IPath fullPath = null;
+			if (varDef.argument != null && varDef.argument.length() > 0) {
+				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
+				if (member != null)
+					fullPath = member.getProject().getFullPath();
+			} else {
+				if (currentProject != null)
+					fullPath = currentProject.getFullPath();
+			}
+			if (fullPath != null)
+				buf.append(fullPath.toString());
 			return;
+		}
+		
+		if (tool.VAR_RESOURCE_PATH.equals(varDef.name)) {
+			String fullPath = null;
+			if (varDef.argument != null && varDef.argument.length() > 0) {
+				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
+				if (member != null)
+					fullPath = member.getFullPath().toString();
+			} else {
+				if (selectedResource != null)
+					fullPath = selectedResource.getFullPath().toString();
+			}
+			if (fullPath != null)
+				buf.append(fullPath);
+			return;			
+		}
+		
+		if (tool.VAR_CONTAINER_PATH.equals(varDef.name)) {
+			String fullPath = null;
+			if (varDef.argument != null && varDef.argument.length() > 0) {
+				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
+				if (member != null)
+					fullPath = member.getParent().getFullPath().toString();
+			} else {
+				if (selectedResource != null)
+					fullPath = selectedResource.getParent().getFullPath().toString();
+			}
+			if (fullPath != null)
+				buf.append(fullPath);
+			return;			
+		}
+		
+		if (tool.VAR_PROJECT_NAME.equals(varDef.name)) {
+			String name = null;
+			if (varDef.argument != null && varDef.argument.length() > 0) {
+				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
+				if (member != null)
+					name = member.getProject().getName();
+			} else {
+				if (currentProject != null)
+					name = currentProject.getName();
+			}
+			if (name != null)
+				buf.append(name);
+			return;
+		}
+		
+		if (tool.VAR_RESOURCE_NAME.equals(varDef.name)) {
+			String name = null;
+			if (varDef.argument != null && varDef.argument.length() > 0) {
+				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
+				if (member != null)
+					name = member.getName();
+			} else {
+				if (selectedResource != null)
+					name = selectedResource.getName();
+			}
+			if (name != null)
+				buf.append(name);
+			return;			
+		}
+		
+		if (tool.VAR_CONTAINER_NAME.equals(varDef.name)) {
+			String name = null;
+			if (varDef.argument != null && varDef.argument.length() > 0) {
+				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
+				if (member != null)
+					name = member.getParent().getName();
+			} else {
+				if (selectedResource != null)
+					name = selectedResource.getParent().getName();
+			}
+			if (name != null)
+				buf.append(name);
+			return;			
 		}
 	}
 	
