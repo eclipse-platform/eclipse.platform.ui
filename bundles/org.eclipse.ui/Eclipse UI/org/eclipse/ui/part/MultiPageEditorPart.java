@@ -5,17 +5,22 @@ package org.eclipse.ui.part;
  * All Rights Reserved.
  */
  
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
-import java.util.ArrayList;
+
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+
+import org.eclipse.ui.*;
 
 /**
  * A multi-page editor is an editor with multiple pages, each of which may
@@ -361,9 +366,10 @@ public void init(IEditorSite site, IEditorInput input) throws PartInitException 
  * </p>
  */
 public boolean isDirty() {
-	for (int i = 0, count = getPageCount(); i < count; i++) {
-		IEditorPart editor = getEditor(i);
-		if (editor != null && editor.isDirty()) {
+	// use nestedEditors to avoid SWT requests; see bug 12996
+	for (Iterator i = nestedEditors.iterator(); i.hasNext();) {
+		IEditorPart editor = (IEditorPart) i.next();
+		if (editor.isDirty()) {
 			return true;
 		}
 	}
