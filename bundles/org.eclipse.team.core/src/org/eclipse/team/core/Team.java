@@ -141,7 +141,16 @@ public final class Team {
 		if (resource.isDerived()) return true;
 		return matchesEnabledIgnore(resource);
 	}
-
+	
+	/**
+	 * Returns whether the given file should be ignored.
+	 * @deprecated use isIgnoredHint(IResource) instead
+	 */
+	public static boolean isIgnoredHint(IFile file) {
+		if (file.isDerived()) return true;
+		return matchesEnabledIgnore(file);
+	}
+	
 	private static boolean matchesEnabledIgnore(IResource resource) {
 		StringMatcher[] matchers = getStringMatchers();
 		for (int i = 0; i < matchers.length; i++) {
