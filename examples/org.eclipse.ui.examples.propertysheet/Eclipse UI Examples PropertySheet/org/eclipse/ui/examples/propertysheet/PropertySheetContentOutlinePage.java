@@ -53,6 +53,6 @@ public void init(IPageSite pageSite) {
 	Menu menu = menuMgr.createContextMenu(viewer.getTree());
 	viewer.getTree().setMenu(menu);
 	// Be sure to register it so that other plug-ins can add actions.
-	getSite().registerContextMenu("org.eclipse.ui.examples.propertysheet.outline", menuMgr, viewer);
+	getSite().registerContextMenu("org.eclipse.ui.examples.propertysheet.outline", menuMgr, viewer); //$NON-NLS-1$
 }	
 }
