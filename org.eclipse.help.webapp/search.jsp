@@ -71,11 +71,11 @@ INPUT {
 
 
 #searchTable {
-	margin-right:4px;
+	padding-right:4px;
 }
 
 #searchWord {	
-	border:0px;
+	border:1px solid black;
 	padding-left:4px;
 	padding-right:4px;
 }
@@ -93,6 +93,11 @@ INPUT {
 	color:#0000ff; 
 	cursor:hand;
 	margin-left:4px;
+	border:0px;
+}
+
+#advancedTable {
+	background: ButtonFace;
 	border:0px;
 }
 
@@ -121,7 +126,7 @@ function saveSelectedBooks(books)
 
 function openAdvanced()
 {
-	advancedDialog = window.open("advanced.jsp?<%=searchWordParName%>="+escape(document.getElementById("searchWord").value), "advancedDialog", "height="+h+",width="+w );
+	advancedDialog = window.open("advanced.jsp?<%=searchWordParName%>="+escape(document.getElementById("searchWord").value), "advancedDialog", "resizeable=no,height="+h+",width="+w );
 	advancedDialog.focus(); 
 }
 
@@ -172,13 +177,18 @@ function fixHeights()
 					&nbsp;<input type="button" onclick="this.blur();doSearch()" value='<%=WebappResources.getString("GO", request)%>' id="go" alt='<%=WebappResources.getString("GO", request)%>'>
 					<input type="hidden" name="maxHits" value="500" >
 				</td>
-				<td>
-					&nbsp;<a id="advanced" href="javascript:openAdvanced();" alt='<%=WebappResources.getString("Advanced", request)%>'><%=WebappResources.getString("Advanced", request)%></a>&nbsp;
-				</td>
 			</tr>
 
 		</table>
 	</form>		
+
+	<table id="advancedTable" align="left" valign="middle" cellspacing="0" cellpadding="0" border="0">
+		<tr nowrap  valign="middle">
+		<td>
+				<a id="advanced" href="javascript:openAdvanced();" alt='<%=WebappResources.getString("Advanced", request)%>'><%=WebappResources.getString("Advanced", request)%></a>&nbsp;
+		</td>
+		</tr>
+	</table>
 
 </body>
 </html>
