@@ -81,13 +81,11 @@ public class MyComputerDirectory
 					File file = files[i];
 
 					if (file.isDirectory()) {
-						/*
 						SiteBookmark site = createSite(file);
 						if (site != null)
 							children[i] = site;
 						else
-						*/
-					    children[i] = new MyComputerDirectory(MyComputerDirectory.this, file);
+							children[i] = new MyComputerDirectory(MyComputerDirectory.this, file);
 					} else {
 						children[i] = new MyComputerFile(MyComputerDirectory.this, file);
 					}
@@ -99,9 +97,10 @@ public class MyComputerDirectory
 
 	private SiteBookmark createSite(File file) {
 		try {
+			File siteXML = new File(file, "site.xml");
+			if (siteXML.exists()==false) return null;
 			URL url = new URL("file:" + file.getAbsolutePath() + File.separator);
 			SiteBookmark site = new SiteBookmark(file.getName(), url);
-			site.connect();
 			return site;
 		} catch (Exception e) {
 			return null;
