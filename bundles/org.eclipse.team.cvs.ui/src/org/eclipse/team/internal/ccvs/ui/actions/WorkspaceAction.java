@@ -46,6 +46,7 @@ import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ui.IPromptCondition;
 import org.eclipse.team.internal.ui.PromptingDialog;
 
 /**
@@ -544,7 +545,15 @@ public abstract class WorkspaceAction extends CVSAction {
 		}
 		
 		PromptingDialog dialog = new PromptingDialog(getShell(), selectedResources, 
-				getOverwriteLocalChangesPrompt((IResource[]) dirtyResources.toArray(new IResource[dirtyResources.size()])), Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
+				getPromptCondition((IResource[]) dirtyResources.toArray(new IResource[dirtyResources.size()])), Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
 		return dialog.promptForMultiple();
+	}
+
+	/**
+	 * This is a helper for the CVS UI automated tests. It allows the tests to ignore prompting dialogs.
+	 * @param resources
+	 */
+	protected IPromptCondition getPromptCondition(IResource[] resources) {
+		return getOverwriteLocalChangesPrompt(resources);
 	}
 }
