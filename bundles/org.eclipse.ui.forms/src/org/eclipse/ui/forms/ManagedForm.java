@@ -149,9 +149,19 @@ public class ManagedForm implements IManagedForm {
 		}
 	}
 	/**
-	 * Refreshes the form by refreshes all the stale parts.
+	 * Refreshes the form by refreshes all the stale parts. 
+	 * Since 3.1, this method is performed on a UI thread
+	 * so it is safe to call it from a non-UI thread.
 	 */
 	public void refresh() {
+		toolkit.getColors().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				doRefresh();
+			}
+		});
+	}
+	
+	private void doRefresh() {
 		int nrefreshed = 0;
 		for (int i = 0; i < parts.size(); i++) {
 			IFormPart part = (IFormPart) parts.get(i);
