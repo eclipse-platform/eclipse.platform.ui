@@ -2,6 +2,7 @@ package org.eclipse.update.internal.ui.wizards;
 
 import org.eclipse.update.configuration.ISessionDelta;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  *
@@ -11,6 +12,7 @@ public class DeltaFeatureAdapter {
 	private IFeature feature;
 	private DeltaAdapter deltaAdapter;
 	private boolean selected;
+	private boolean duplicate;
 	
 	public DeltaFeatureAdapter(DeltaAdapter deltaAdapter, IFeatureReference ref, IFeature feature) {
 		this.ref = ref;
@@ -42,11 +44,26 @@ public class DeltaFeatureAdapter {
 	public boolean isSelected() {
 		return selected;
 	}
+	
+	public void setDuplicate(boolean duplicate) {
+		this.duplicate = duplicate;
+	}
+	
+	public boolean isDuplicate() {
+		return duplicate;
+	}
 		
 	public String toString() {
-		return feature.getLabel()
-			+ " ("
-			+ feature.getVersionedIdentifier().getVersion().toString()
-			+ ")";
+		if (duplicate) {
+			return UpdateUI.getFormattedMessage("DeltaFeatureAdapter.longName",
+				new String [] { feature.getLabel(), 
+								feature.getVersionedIdentifier().getVersion().toString(),
+								feature.getSite().getURL().toString()});
+		}
+		else {
+		return UpdateUI.getFormattedMessage("DeltaFeatureAdapter.shortName",
+			new String [] { feature.getLabel(), 
+							feature.getVersionedIdentifier().getVersion().toString() });
+		}
 	}
 }

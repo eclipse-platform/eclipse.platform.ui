@@ -118,10 +118,6 @@ public class SearchForm extends UpdateWebForm {
 			infoLabel.getParent().layout();
 			reflow(true);
 			searchObject.detachProgressMonitor(this);
-			//			if (statusMonitor != null) {
-			//				searchObject.detachProgressMonitor(statusMonitor);
-			//				statusMonitor = null;
-			//			}
 			enableOptions(true);
 			activateSearchResultSelection();
 		}
@@ -151,8 +147,6 @@ public class SearchForm extends UpdateWebForm {
 
 	private void detachFrom(SearchObject obj) {
 		obj.detachProgressMonitor(monitor);
-		//		if (statusMonitor != null)
-		//			obj.detachProgressMonitor(statusMonitor);
 	}
 
 	public void initialize(Object modelObject) {
@@ -304,21 +298,6 @@ public class SearchForm extends UpdateWebForm {
 		optionsGroup.setText(UpdateUI.getString(KEY_OPTIONS));
 		optionsGroup.createControl(optionContainer, factory);
 
-/*
-		fullModeCheck = factory.createButton(parent, null, SWT.CHECK);
-		fullModeCheck.setText(
-			UpdateUI.getResourceString(KEY_FULL_MODE_CHECK));
-		fullModeCheck.setSelection(settings.getBoolean(S_FULL_MODE));
-		fullModeCheck.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				toggleMode(fullModeCheck.getSelection());
-			}
-		});
-		td = new TableData();
-		td.colspan = 2;
-		fullModeCheck.setLayoutData(td);
-*/
-
 		Composite sep = factory.createCompositeSeparator(parent);
 		td = new TableData();
 		td.align = TableData.FILL;
@@ -365,17 +344,6 @@ public class SearchForm extends UpdateWebForm {
 			// sync up with the search
 			catchUp();
 		}
-		/*
-		searchResultSection =
-			new SearchResultSection((UpdateFormPage) getPage());
-		Control control = searchResultSection.createControl(parent, factory);
-		td = new TableData();
-		td.align = TableData.FILL;
-		td.colspan = 2;
-		td.grabHorizontal = true;
-		control.setLayoutData(td);
-		searchResultSection.setFullMode(settings.getBoolean(S_FULL_MODE));
-		*/
 		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.SearchForm");
 	}
 
@@ -444,10 +412,6 @@ public class SearchForm extends UpdateWebForm {
 				categoryCombo.select(i);
 				switchTo(category);
 				category.load(obj.getSettings(), !obj.isCategoryFixed());
-				/*
-				searchResultSection.setSearchString(
-					category.getCurrentSearch());
-				*/
 				categoryCombo.setEnabled(!obj.isCategoryFixed());
 				break;
 			}
@@ -455,12 +419,6 @@ public class SearchForm extends UpdateWebForm {
 	}
 
 	private void reflow(boolean searchFinished) {
-		/*
-		if (searchFinished)
-			searchResultSection.searchFinished();
-		else
-			searchResultSection.reflow();
-		*/
 		descLabel.getParent().layout(true);
 		((Composite) getControl()).layout(true);
 		updateSize();
@@ -469,20 +427,6 @@ public class SearchForm extends UpdateWebForm {
 	private void reflow() {
 		reflow(false);
 	}
-
-/*
-	private void toggleMode(final boolean fullMode) {
-		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
-			public void run() {
-				searchResultSection.setFullMode(fullMode);
-				descLabel.getParent().layout(true);
-				((Composite) getControl()).layout(true);
-				updateSize();
-			}
-		});
-		settings.put(S_FULL_MODE, fullMode);
-	}
-*/
 
 	private void performSearch() {
 		if (searchObject != null) {
@@ -506,13 +450,9 @@ public class SearchForm extends UpdateWebForm {
 					searchObject.setCategoryId(currentCategory.getId());
 			}
 			searchObject.attachProgressMonitor(monitor);
-			//attachStatusLineMonitor();
 			enableOptions(false);
 			hookSearchView();
 			searchObject.startSearch(getControl().getDisplay(), getQueries());
-			
-			//searchResultSection.setSearchObject(searchObject);
-			//searchResultSection.searchStarted();
 		} catch (InvocationTargetException e) {
 			UpdateUI.logException(e);
 			return false;
@@ -546,27 +486,14 @@ public class SearchForm extends UpdateWebForm {
 	private ISearchQuery[] getQueries() {
 		int index = categoryCombo.getSelectionIndex();
 		ISearchCategory category = (ISearchCategory) categories.get(index);
-		//searchResultSection.setSearchString(category.getCurrentSearch());
 		return category.getQueries();
 	}
 
 	private void catchUp() {
 		searchObject.attachProgressMonitor(monitor);
-		//attachStatusLineMonitor();
 		enableOptions(false);
 		updateButtonText();
 	}
-
-	//	private void attachStatusLineMonitor() {
-	//		if (statusMonitor != null)
-	//			return;
-	//		IViewSite vsite = getPage().getView().getViewSite();
-	//		IStatusLineManager manager = vsite.getActionBars().getStatusLineManager();
-	//		manager = getRootManager(manager);
-	//
-	//		statusMonitor = new UpdateSearchProgressMonitor(manager);
-	//		searchObject.attachProgressMonitor(statusMonitor);
-	//	}
 
 	private IStatusLineManager getRootManager(IStatusLineManager manager) {
 		IContributionManager parent = manager;
@@ -637,7 +564,6 @@ public class SearchForm extends UpdateWebForm {
 				updateHeadingText(searchObject);
 				selectCategory(obj);
 				updateScopeSettings(obj);
-				//searchResultSection.setSearchObject(searchObject);
 				if (searchObject.isSearchInProgress()) {
 					// sync up with the search
 					catchUp();

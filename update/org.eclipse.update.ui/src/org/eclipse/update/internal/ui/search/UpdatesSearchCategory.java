@@ -58,9 +58,9 @@ public class UpdatesSearchCategory extends SearchCategory {
 				return new VersionedIdentifier("unknown", "0.0.0");
 			}
 		}
-		public IFeature getFeature() {
+		public IFeature getFeature(IProgressMonitor monitor) {
 			try {
-				return ref.getFeature(null);
+				return ref.getFeature(monitor);
 			}
 			catch (CoreException e) {
 				return null;
@@ -83,7 +83,7 @@ public class UpdatesSearchCategory extends SearchCategory {
 			if (ref instanceof IIncludedFeatureReference)
 				location = ((IIncludedFeatureReference)ref).getSearchLocation();
 			if (parent == null || location==IUpdateConstants.SEARCH_SELF) {
-				return getFeature().getUpdateSiteEntry();
+				return getFeature(null).getUpdateSiteEntry();
 			}
 			return getRoot().getUpdateEntry();
 		}
@@ -366,7 +366,7 @@ public class UpdatesSearchCategory extends SearchCategory {
 		// filter out included features so that only top-level features remain on the list
 		for (int i = 0; i < array.length; i++) {
 			Candidate parent = array[i];
-			IFeature feature = parent.getFeature();
+			IFeature feature = parent.getFeature(null);
 			IFeatureReference[] included =
 				feature.getIncludedFeatureReferences();
 			for (int j = 0; j < included.length; j++) {
@@ -394,7 +394,7 @@ public class UpdatesSearchCategory extends SearchCategory {
 		ISearchQuery[] queries = new ISearchQuery[selected.size()];
 		for (int i = 0; i < selected.size(); i++) {
 			Candidate candidate = (Candidate)selected.get(i);
-			IFeature feature = candidate.getFeature();
+			IFeature feature = candidate.getFeature(null);
 			int match = candidate.getMatch();
 			IURLEntry updateEntry = candidate.getUpdateEntry();
 			if (feature==null) {

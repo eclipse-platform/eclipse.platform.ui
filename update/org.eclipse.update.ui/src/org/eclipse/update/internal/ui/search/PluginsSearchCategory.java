@@ -72,14 +72,17 @@ public class PluginsSearchCategory extends SearchCategory {
 				IFeatureReference[] refs,
 				ArrayList result,
 				IProgressMonitor monitor) {
-				monitor.beginTask("", refs.length);
+				monitor.beginTask("", refs.length * 2);
 
 				for (int i = 0; i < refs.length; i++) {
 					try {
-						IFeature feature = refs[i].getFeature(null);
+						IFeature feature =
+							refs[i].getFeature(
+								new SubProgressMonitor(monitor, 1));
 						if (matches(feature))
 							result.add(feature);
-						if (monitor.isCanceled()) break;
+						if (monitor.isCanceled())
+							break;
 						IFeatureReference[] included =
 							feature.getIncludedFeatureReferences();
 						addMatchingFeatures(
@@ -88,8 +91,8 @@ public class PluginsSearchCategory extends SearchCategory {
 							new SubProgressMonitor(monitor, 1));
 					} catch (CoreException e) {
 					}
-					monitor.worked(1);
-					if (monitor.isCanceled()) break;
+					if (monitor.isCanceled())
+						break;
 				}
 			}
 
@@ -134,7 +137,8 @@ public class PluginsSearchCategory extends SearchCategory {
 		layout.marginWidth = 2;
 		layout.marginHeight = 2;
 		container.setLayout(layout);
-		tableViewer = new TableViewer(container, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		tableViewer =
+			new TableViewer(container, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		tableViewer.setContentProvider(new ImportContentProvider());
 		tableViewer.setLabelProvider(new ImportLabelProvider());
 		tableViewer
@@ -191,8 +195,7 @@ public class PluginsSearchCategory extends SearchCategory {
 		NewPluginEntryDialog dialog =
 			new NewPluginEntryDialog(tableViewer.getControl().getShell());
 		dialog.create();
-		dialog.getShell().setText(
-			UpdateUI.getString(KEY_NEW_TITLE));
+		dialog.getShell().setText(UpdateUI.getString(KEY_NEW_TITLE));
 		dialog.getShell().pack();
 		if (dialog.open() == NewPluginEntryDialog.OK) {
 			if (imports == null)

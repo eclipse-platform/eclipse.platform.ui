@@ -70,7 +70,7 @@ class ExpandableLayout extends Layout {
 		return control;
 	}
 	
-	public void createControl(Composite parent, FormWidgetFactory factory) {
+	public void createControl(Composite parent, final FormWidgetFactory factory) {
 		final Canvas container = new Canvas(parent, SWT.NULL);
 		container.setBackground(factory.getBackgroundColor());
 		container.setLayout(new ExpandableLayout());
@@ -83,7 +83,9 @@ class ExpandableLayout extends Layout {
 			public void mouseUp(MouseEvent e) {
 				Rectangle box = getBoxBounds(null);
 				if (box.contains(e.x, e.y)) {
+					container.setCursor(factory.getBusyCursor());
 					setExpanded(!isExpanded());
+					container.setCursor(null);
 				}
 			}
 		});

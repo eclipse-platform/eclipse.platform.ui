@@ -3,6 +3,7 @@ package org.eclipse.update.internal.ui.search;
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
@@ -97,12 +98,11 @@ public class ExpressionSearchCategory extends SearchCategory {
 		monitor.beginTask("", references.length);
 		for (int i=0; i<references.length; i++) {
 			try {
-				IFeature feature = references[i].getFeature(null);
+				IFeature feature = references[i].getFeature(new SubProgressMonitor(monitor, 1));
 				result.add(feature);
 			}
 			catch (CoreException e) {
 			}
-			monitor.worked(1);
 		}
 		monitor.done();
 		return result;

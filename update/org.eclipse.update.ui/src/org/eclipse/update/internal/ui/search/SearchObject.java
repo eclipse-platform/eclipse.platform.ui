@@ -317,7 +317,7 @@ public class SearchObject extends NamedModelObject {
 
 		ISite site;
 		try {
-			site = SiteManager.getSite(siteURL,null);
+			site = SiteManager.getSite(siteURL, new SubProgressMonitor(monitor, 1));
 		} catch (CoreException e) {
 			// Test the exception. If the exception is
 			// due to the site connection problems,

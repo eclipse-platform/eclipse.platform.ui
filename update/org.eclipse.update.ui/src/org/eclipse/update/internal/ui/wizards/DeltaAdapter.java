@@ -14,7 +14,6 @@ import org.eclipse.update.internal.ui.model.MissingFeature;
 public class DeltaAdapter {
 	private ISessionDelta delta;
 	private DeltaFeatureAdapter[] dfeatures;
-	private boolean selected;
 	private boolean removed;
 	private IStatus status;
 	private boolean statusComputed;
@@ -40,9 +39,15 @@ public class DeltaAdapter {
 		}
 		return dfeatures;
 	}
+	
+	public void addFeaturesTo(ArrayList list) {
+		DeltaFeatureAdapter [] array = getFeatures();
+		for (int i=0; i<array.length; i++) {
+			list.add(array[i]);
+		}
+	}
 
 	public void setSelected(boolean value) {
-		this.selected = value;
 		DeltaFeatureAdapter[] adapters = getFeatures();
 
 		boolean stateChange = false;
@@ -83,16 +88,16 @@ public class DeltaAdapter {
 
 	public boolean isMixedSelection() {
 		int count = getSelectionCount();
-		return !(count == 0 || count == getFeatures().length);
+		return count > 0 && count < getFeatures().length;
 	}
 
 	public void setRemoved(boolean removed) {
 		this.removed = removed;
-		this.selected = false;
+		setSelected(false);
 	}
 
 	public boolean isSelected() {
-		return selected;
+		return getSelectionCount()>0;
 	}
 
 	public boolean isRemoved() {
@@ -135,9 +140,11 @@ public class DeltaAdapter {
 		IFeatureReference[] references = delta.getFeatureReferences();
 		dfeatures = new DeltaFeatureAdapter[references.length];
 		selectionBlocked = true;
+
 		for (int i = 0; i < references.length; i++) {
 			IFeatureReference reference = references[i];
 			DeltaFeatureAdapter dfeature = null;
+			DeltaFeatureAdapter duplicate = findDuplicate(reference, dfeatures);
 			try {
 				IFeature feature = reference.getFeature(null);
 				dfeature = new DeltaFeatureAdapter(this, reference, feature);
@@ -147,8 +154,33 @@ public class DeltaAdapter {
 					new MissingFeature(reference.getSite(), reference.getURL());
 				dfeature = new DeltaFeatureAdapter(this, reference, feature);
 			}
+			if (duplicate != null) {
+				dfeature.setDuplicate(true);
+				duplicate.setDuplicate(true);
+			}
 			dfeatures[i] = dfeature;
 		}
 		selectionBlocked = false;
+	}
+
+	private DeltaFeatureAdapter findDuplicate(
+		IFeatureReference reference,
+		DeltaFeatureAdapter[] dfeatures) {
+		for (int i = 0; i < dfeatures.length; i++) {
+			DeltaFeatureAdapter prev = dfeatures[i];
+			if (prev == null)
+				return null;
+			try {
+				if (reference
+					.getVersionedIdentifier()
+					.equals(
+						prev.getFeatureReference().getVersionedIdentifier())) {
+					return prev;
+				}
+			} catch (CoreException e) {
+				return null;
+			}
+		}
+		return null;
 	}
 }

@@ -59,6 +59,7 @@ public class ConfigurationView
 	private Action showStatusAction;
 	private SiteStateAction siteStateAction;
 	private IUpdateModelChangedListener modelListener;
+	private boolean refreshLock=false;
 	private static final String KEY_RESTORE = "ConfigurationView.Popup.restore";
 	private static final String KEY_PRESERVE =
 		"ConfigurationView.Popup.preserve";
@@ -449,6 +450,7 @@ public class ConfigurationView
 			public void objectsRemoved(Object parent, Object[] children) {
 			}
 			public void objectChanged(final Object obj, String property) {
+				if (refreshLock) return;
 				getControl().getDisplay().asyncExec(new Runnable() {
 					public void run() {
 						treeViewer.refresh();
@@ -870,9 +872,10 @@ public class ConfigurationView
 
 	protected void fillActionBars(IActionBars bars) {
 		IToolBarManager tbm = bars.getToolBarManager();
+		tbm.add(showUnconfFeaturesAction);
+		tbm.add(new Separator());
 		addDrillDownAdapter(bars);
 		tbm.add(new Separator());
-		tbm.add(showUnconfFeaturesAction);
 		tbm.add(collapseAllAction);
 	}
 	protected void fillContextMenu(IMenuManager manager) {
@@ -1132,6 +1135,7 @@ public class ConfigurationView
 		final boolean configuredOnly) {
 		final IConfiguredSite csite = siteAdapter.getConfiguredSite();
 		final Object[][] bag = new Object[1][];
+		refreshLock=true;
 
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -1175,6 +1179,9 @@ public class ConfigurationView
 			getViewSite().getWorkbenchWindow().run(true, false, op);
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {
+		}
+		finally {
+			refreshLock = false;
 		}
 		return bag[0];
 	}

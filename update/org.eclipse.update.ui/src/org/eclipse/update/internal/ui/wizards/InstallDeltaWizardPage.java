@@ -93,13 +93,17 @@ public class InstallDeltaWizardPage extends WizardPage {
 		super.dispose();
 	}
 
-	private void initializeFeatures() {
+	private Object [] initializeFeatures() {
+		ArrayList selection = new ArrayList();
 		features = new ArrayList();
 		for (int i = 0; i < deltas.length; i++) {
 			ISessionDelta delta = deltas[i];
 			DeltaAdapter adapter = new DeltaAdapter(delta);
 			features.add(adapter);
+			selection.add(adapter);
+			adapter.addFeaturesTo(selection);
 		}
+		return selection.toArray();
 	}
 
 	/**
@@ -175,8 +179,10 @@ public class InstallDeltaWizardPage extends WizardPage {
 		});
 		SWTUtil.setButtonDimensionHint(errorsButton);
 
-		initializeFeatures();
+		Object[] checked = initializeFeatures();
 		deltaViewer.setInput(this);
+		deltaViewer.setCheckedElements(checked);
+		
 		dialogChanged();
 		WorkbenchHelp.setHelp(
 			container,
@@ -238,7 +244,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 			dfeature.setSelected(checked);
 			DeltaAdapter adapter = dfeature.getDeltaAdapter();
 			deltaViewer.setGrayed(adapter, adapter.isMixedSelection());
-			deltaViewer.setChecked(adapter, adapter.getSelectionCount() > 0);
+			deltaViewer.setChecked(adapter, adapter.isSelected());
 			adapter.resetStatus();
 			deltaViewer.update(adapter, null);
 		} else if (obj instanceof DeltaAdapter) {
