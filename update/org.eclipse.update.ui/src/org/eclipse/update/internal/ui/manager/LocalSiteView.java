@@ -30,6 +30,7 @@ import org.eclipse.update.core.VersionedIdentifier;
 import java.util.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.update.ui.internal.model.UpdateModel;
 
 /**
  * Insert the type's description here.
@@ -209,6 +210,12 @@ public LocalSiteView() {
 				{{ UpdateUIPluginImages.DESC_LINKED_CO }});
 	linkedSiteImage = linkedSiteDesc.createImage();
 	modelListener = new UpdateModelChangedListener();
+}
+
+public void selectUpdateObject() {
+	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+	viewer.setSelection(new StructuredSelection(model.getUpdates()), true);
+	
 }
 
 public void initProviders() {

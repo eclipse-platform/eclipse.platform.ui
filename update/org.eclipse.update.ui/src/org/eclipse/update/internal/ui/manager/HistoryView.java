@@ -49,28 +49,30 @@ class HistoryProvider extends DefaultContentProvider
 		}
 		if (parent instanceof IInstallConfiguration) {
 			return ((IInstallConfiguration)parent).getConfigurationSites();
+			
 		}
 		if (parent instanceof IConfigurationSite) {
 			IConfigurationSite csite = (IConfigurationSite)parent;
-			return getSiteFeatures(csite.getSite());
+			return getConfiguredFeatures(csite);
 		}
 		return new Object[0];
 	}
 	
-	private Object[] getSiteFeatures(ISite site) {
-		try {
-			IFeatureReference [] refs = site.getFeatureReferences();
-			Object [] result = new Object[refs.length];
-			for (int i=0; i<refs.length; i++) {
+	private Object[] getConfiguredFeatures(IConfigurationSite csite) {
+		IFeatureReference [] refs = csite.getConfiguredFeatures();
+		ISite site = csite.getSite();
+		Object [] result = new Object[refs.length];
+		for (int i=0; i<refs.length; i++) {
+			try {
 				result[i] = refs[i].getFeature();
 			}
-			return result;
+			catch (CoreException e) {
+				result[i] = new MissingFeature(site, refs[i].getURL());
+			}
 		}
-		catch (CoreException e) {
-			UpdateUIPlugin.logException(e);
-			return new Object[0];
-		}
+		return result;
 	}
+
 
 	/**
 	 * @see ITreeContentProvider#getParent(Object)

@@ -65,7 +65,10 @@ protected void createContents(Composite parent) {
 
 	listener = new HyperlinkAdapter() {
 		public void linkActivated(Control link) {
-			showView(UpdatePerspective.ID_LOCAL_SITE);
+			LocalSiteView view = (LocalSiteView)showView(UpdatePerspective.ID_LOCAL_SITE);
+			if (view!=null) {
+				view.selectUpdateObject();
+			}
 		}
 	};
 	topic = factory.createLabel(parent, null);
@@ -139,11 +142,13 @@ protected void createContents(Composite parent) {
 	text.setLayoutData(td);
 }
 
-private void showView(String viewId) {
+private IViewPart showView(String viewId) {
 	try {
 		IViewPart part = UpdateUIPlugin.getActivePage().showView(viewId);
+		return part;
 	}
 	catch (PartInitException e) {
+		return null;
 	}
 }
 }
