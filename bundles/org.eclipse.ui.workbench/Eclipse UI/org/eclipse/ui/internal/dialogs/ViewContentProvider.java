@@ -55,8 +55,12 @@ public class ViewContentProvider implements ITreeContentProvider {
                         filtered.add(categories[i]);
                     }
     			}
-    			return filtered.toArray();
+                categories = (Category[]) filtered.toArray(new Category[filtered.size()]);
             }
+            // if there is only one category, return it's children directly
+            if (categories.length == 1) {
+                return getChildren(categories[0]);
+            }            
             return categories;
 		} else if (element instanceof Category) {
 			ArrayList list = ((Category) element).getElements();            
