@@ -10,6 +10,7 @@ import java.io.File;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteResource;
@@ -58,7 +59,9 @@ public class CVSLocalSyncElement extends LocalSyncElement {
 			if(base == null && cvsResource.isManaged()) {
 				if(cvsResource.isFolder()) {
 					FolderSyncInfo syncInfo = ((ICVSFolder)cvsResource).getFolderSyncInfo();
-					base = new RemoteFolder(null, CVSProvider.getInstance().getRepository(syncInfo.getRoot()), new Path(syncInfo.getRepository()), syncInfo.getTag());		
+					// We need to create an untraversable remote resource for the base
+					base = new RemoteFolderTree(null, CVSProvider.getInstance().getRepository(syncInfo.getRoot()), new Path(syncInfo.getRepository()), syncInfo.getTag());
+					((RemoteFolderTree)base).setChildren(new ICVSRemoteResource[0]);		
 				} else {
 					ResourceSyncInfo info = cvsResource.getSyncInfo();
 					if(!info.isDeleted() || !info.isAdded()) {
