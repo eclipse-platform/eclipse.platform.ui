@@ -30,12 +30,12 @@ CDATA #OPTIONAL&nbsp; //#REQUIRED if lightweight = false</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; objectClass&nbsp;&nbsp; CDATA #REQUIRED&nbsp;
 //deprecated. Make this part of the enablement</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #OPTIONAL</tt>
+CDATA #OPTIONAL // required if there is no class</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; quadrant&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 (&quot;TOP_LEFT&quot; | &quot;TOP_RIGHT&quot; | &quot;BOTTOM_LEFT&quot; |
 &quot;BOTTOM_RIGHT&quot;) #OPTIONAL</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; lightweight&nbsp;&nbsp; (true
-| false) #IMPLIED</tt>
+| false) #IMPLIED&nbsp;</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; adaptable&nbsp;&nbsp;&nbsp; (true
 | false) #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; state&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (true
@@ -55,8 +55,8 @@ menu to represent this decorator.</li>
 <li>
 <b>class</b> - a fully qualified name of a class which implements <tt>org.eclipse.jface.viewers.ILabelDecorator</tt>
 if <b><i> lightweight</i></b> is false or&nbsp; <tt>org.eclipse.jface.viewers.ILightweightLabelDecorator</tt>
-if lightweight is true. If <b><i>lightweight</i></b> is true this value is not
-required and the icon is applied using the quadrant and icon values.</li>
+if lightweight is true. The default value is false. If there is no <b><i>class</i></b>
+element it is assumed to be true.</li>
 
 <li>
 <b>objectClass</b> - a fully qualified name of a class which this
@@ -68,7 +68,8 @@ enablement.</li>
 is not specified this is the path to the overlay image to apply</li>
 
 <li>
-<b>quadrant </b>- if the decorator is <b><i>lightweight</i></b> this is the quadrant to apply the decorator to</li>
+<b>quadrant </b>- if the decorator is <b><i>lightweight</i></b> this is the quadrant to apply the decorator to.
+Defaults to BOTTOM_RIGHT.</li>
 
 <li>
 <b>adaptable</b> - a flag that indicates if types that adapt to IResource
