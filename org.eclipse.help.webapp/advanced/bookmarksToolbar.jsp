@@ -12,5 +12,11 @@
 
 
 <jsp:include page="toolbar.jsp">
+	<jsp:param name="script" value="navActions.js"/>
 	<jsp:param name="view" value="bookmarks"/>
+
+	<jsp:param name="name"     value="synchnav"/>
+	<jsp:param name="tooltip"  value='SynchNav'/>
+	<jsp:param name="image"    value="synch_nav.gif"/>
+	<jsp:param name="action"   value="resynchNav"/>
 </jsp:include>
