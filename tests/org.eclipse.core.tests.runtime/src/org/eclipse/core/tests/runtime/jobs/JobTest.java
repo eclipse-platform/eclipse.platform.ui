@@ -262,19 +262,19 @@ public class JobTest extends TestCase {
 		
 		//wake up the sleeping job
 		shortJob.wakeUp();
+
+		//setting the rule while running should fail
+		try {
+			shortJob.setRule(new PathRule("/A/B"));
+			fail("2.0");
+		}  catch (RuntimeException e1) {
+			//should fail
+		}
 		
-		while(shortJob.getState() != Job.NONE) {
-			try {
-				shortJob.setRule(new PathRule("/A/B"));
-				fail("2.0");
-			}  catch (RuntimeException e1) {
-				//should fail
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException e) {
-				
-				}
-			}
+		try {
+			//wait for the job to complete
+			shortJob.join();
+		} catch (InterruptedException e2) {
 		}
 		
 		//after the job has finished executing, the scheduling rule for it can once again be reset
