@@ -46,7 +46,7 @@ public class ActionPasteMarker extends SelectionProviderAction {
 		super(provider, Messages.getString("pasteAction.title")); //$NON-NLS-1$
 		this.part = part;
 		this.pastableTypes = new String[0];
-		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_HOVER));
+		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 		setEnabled(false);
 	}
 	

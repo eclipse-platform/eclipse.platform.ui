@@ -195,10 +195,10 @@ public class BookmarkNavigator extends ViewPart {
 		openAction.setImageDescriptor(getImageDescriptor("elcl16/gotoobj_tsk.gif"));//$NON-NLS-1$
 	
 		copyAction = new CopyBookmarkAction(this);
-		copyAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));
+		copyAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		
 		pasteAction = new PasteBookmarkAction(this);
-		pasteAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_HOVER));
+		pasteAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 		
 		removeAction = new RemoveBookmarkAction(this);
 		removeAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));

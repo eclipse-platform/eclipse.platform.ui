@@ -45,7 +45,7 @@ public class ActionCopyMarker extends SelectionProviderAction {
 	public ActionCopyMarker(IWorkbenchPart part, ISelectionProvider provider) {
 		super(provider, Messages.getString("copyAction.title")); //$NON-NLS-1$
 		this.part = part;
-		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));
+		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		setEnabled(false);
 	}
 	
