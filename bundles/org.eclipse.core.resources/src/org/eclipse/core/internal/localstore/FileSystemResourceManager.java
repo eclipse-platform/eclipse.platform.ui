@@ -280,6 +280,11 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				return false;
 		}
 		ByteArrayInputStream in = new ByteArrayInputStream(newContents);
+		if (descriptionFile.isReadOnly()) {
+			IStatus result = getWorkspace().validateEdit(new IFile[] {descriptionFile}, null);
+			if (!result.isOK())
+				throw new ResourceException(result);
+		}
 		descriptionFile.setContents(in, updateFlags, null);
 
 		//update the timestamp on the project as well so we know when it has
@@ -437,9 +442,8 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 					if (!resolved.isAbsolute())
 						return null;
 					return resolved.append(target.getProjectRelativePath());
-				} else {
-					return Platform.getLocation().append(target.getFullPath());
 				}
+				return Platform.getLocation().append(target.getFullPath());
 		}
 	}
 
@@ -750,11 +754,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 					if (localFile.exists()) {
 						String message = Policy.bind("localstore.resourceExists", target.getFullPath().toString()); //$NON-NLS-1$
 						throw new ResourceException(IResourceStatus.EXISTS_LOCAL, target.getFullPath(), message, null);
-					} else {
-						if (append) {
-							String message = Policy.bind("resources.mustBeLocal", target.getFullPath().toString()); //$NON-NLS-1$
-							throw new ResourceException(IResourceStatus.RESOURCE_NOT_LOCAL, target.getFullPath(), message, null);
-						}
+					}
+					if (append) {
+						String message = Policy.bind("resources.mustBeLocal", target.getFullPath().toString()); //$NON-NLS-1$
+						throw new ResourceException(IResourceStatus.RESOURCE_NOT_LOCAL, target.getFullPath(), message, null);
 					}
 				}
 			}
@@ -795,11 +798,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			if (file.isDirectory()) {
 				String message = Policy.bind("localstore.resourceExists", target.getFullPath().toString()); //$NON-NLS-1$
 				throw new ResourceException(IResourceStatus.EXISTS_LOCAL, target.getFullPath(), message, null);
-			} else {
-				if (file.exists()) {
-					String message = Policy.bind("localstore.fileExists", target.getFullPath().toString()); //$NON-NLS-1$
-					throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
-				}
+			} 
+			if (file.exists()) {
+				String message = Policy.bind("localstore.fileExists", target.getFullPath().toString()); //$NON-NLS-1$
+				throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
 			}
 		getStore().writeFolder(file);
 		long lastModified = CoreFileSystemLibrary.getLastModified(file.getAbsolutePath());

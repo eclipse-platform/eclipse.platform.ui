@@ -225,63 +225,73 @@ public class ProjectPreferences extends EclipsePreferences {
 	}
 
 	protected void save() throws BackingStoreException {
-		IFile localFile = getFile();
-		if (localFile == null) {
+		IFile fileInWorkspace = getFile();
+		if (fileInWorkspace == null) {
 			if (Policy.DEBUG_PREFERENCES)
 				Policy.debug("Not saving preferences since there is no file for node: " + absolutePath()); //$NON-NLS-1$
 			return;
 		}
 		Properties table = convertToProperties(new Properties(), ""); //$NON-NLS-1$
-		if (table.isEmpty()) {
-			// nothing to save. delete existing file if one exists.
-			if (localFile.exists()) {
-				if (Policy.DEBUG_PREFERENCES)
-					Policy.debug("Deleting preference file: " + localFile.getFullPath()); //$NON-NLS-1$
+		try {
+			if (table.isEmpty()) {
+				// nothing to save. delete existing file if one exists.
+				if (fileInWorkspace.exists()) {
+					if (Policy.DEBUG_PREFERENCES)
+						Policy.debug("Deleting preference file: " + fileInWorkspace.getFullPath()); //$NON-NLS-1$
+					if (fileInWorkspace.isReadOnly()) {
+						IStatus status = fileInWorkspace.getWorkspace().validateEdit(new IFile[] {fileInWorkspace}, null);
+						if (!status.isOK())
+							throw new CoreException(status);
+					}
+					try {
+						fileInWorkspace.delete(true, null);
+					} catch (CoreException e) {
+						String message = Policy.bind("preferences.deleteException", fileInWorkspace.getFullPath().toString()); //$NON-NLS-1$
+						log(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IStatus.WARNING, message, null));
+					}
+				}
+				return;
+			}
+			table.put(VERSION_KEY, VERSION_VALUE);
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+			try {
+				table.store(output, null);
+			} catch (IOException e) {
+				String message = Policy.bind("preferences.saveProblems", absolutePath()); //$NON-NLS-1$
+				log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e));
+				throw new BackingStoreException(message);
+			} finally {
 				try {
-					localFile.delete(true, null);
-				} catch (CoreException e) {
-					String message = Policy.bind("preferences.deleteException", localFile.getFullPath().toString()); //$NON-NLS-1$
-					log(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IStatus.WARNING, message, null));
+					output.close();
+				} catch (IOException e) {
+					// ignore
 				}
 			}
-			return;
-		}
-		table.put(VERSION_KEY, VERSION_VALUE);
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		try {
-			table.store(output, null);
-		} catch (IOException e) {
-			String message = Policy.bind("preferences.saveProblems", absolutePath()); //$NON-NLS-1$
-			log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e));
-			throw new BackingStoreException(message);
-		} finally {
-			try {
-				output.close();
-			} catch (IOException e) {
-				// ignore
-			}
-		}
-		InputStream input = new BufferedInputStream(new ByteArrayInputStream(output.toByteArray()));
-		try {
-			if (localFile.exists()) {
+			InputStream input = new BufferedInputStream(new ByteArrayInputStream(output.toByteArray()));
+			if (fileInWorkspace.exists()) {
 				if (Policy.DEBUG_PREFERENCES)
-					Policy.debug("Setting preference file contents for: " + localFile.getFullPath()); //$NON-NLS-1$
+					Policy.debug("Setting preference file contents for: " + fileInWorkspace.getFullPath()); //$NON-NLS-1$
+				if (fileInWorkspace.isReadOnly()) {
+					IStatus status = fileInWorkspace.getWorkspace().validateEdit(new IFile[] {fileInWorkspace}, null);
+					if (!status.isOK())
+						throw new CoreException(status);
+				}
 				// set the contents
-				localFile.setContents(input, IResource.KEEP_HISTORY, null);
+				fileInWorkspace.setContents(input, IResource.KEEP_HISTORY, null);
 			} else {
 				// create the file
-				IFolder folder = (IFolder) localFile.getParent();
+				IFolder folder = (IFolder) fileInWorkspace.getParent();
 				if (!folder.exists()) {
 					if (Policy.DEBUG_PREFERENCES)
 						Policy.debug("Creating parent preference directory: " + folder.getFullPath()); //$NON-NLS-1$
 					folder.create(IResource.NONE, true, null);
 				}
 				if (Policy.DEBUG_PREFERENCES)
-					Policy.debug("Creating preference file: " + localFile.getLocation()); //$NON-NLS-1$
-				localFile.create(input, IResource.NONE, null);
+					Policy.debug("Creating preference file: " + fileInWorkspace.getLocation()); //$NON-NLS-1$
+				fileInWorkspace.create(input, IResource.NONE, null);
 			}
 		} catch (CoreException e) {
-			String message = Policy.bind("preferences.saveProblems", localFile.getFullPath().toString()); //$NON-NLS-1$
+			String message = Policy.bind("preferences.saveProblems", fileInWorkspace.getFullPath().toString()); //$NON-NLS-1$
 			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
 			throw new BackingStoreException(message);
 		}
