@@ -16,15 +16,15 @@ import java.io.*;
 
 public class FileFragment{
 	private File file;
-	private int bytes;
-	public FileFragment(File file, int size){
+	private long bytes;
+	public FileFragment(File file, long size){
 		this.file=file;
 		this.bytes=size;
 	}
 	public File getFile(){
 		return file;
 	}
-	public int getSize(){
+	public long getSize(){
 		return bytes;
 	}
 }

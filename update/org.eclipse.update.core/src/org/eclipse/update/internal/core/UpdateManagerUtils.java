@@ -808,10 +808,11 @@ public static class Writer {
 	 * @param is input stream
 	 * @param os output stream
 	 * @param monitor progress monitor
+     * @param expectedLength - if > 0, the number of bytes from InputStream will be verified
 	 * @@return the offset in the input stream where copying stopped. Returns -1 if end of input stream is reached.
 	 * @since 2.0
 	 */
-	public static long copy(InputStream is, OutputStream os, InstallMonitor monitor) {
+	public static long copy(InputStream is, OutputStream os, InstallMonitor monitor, long expectedLength) {
 		byte[] buf = getBuffer();
 		long offset=0;
 		try {
@@ -835,6 +836,8 @@ public static class Writer {
 			}
 			if (nextIncrement > 0 && monitor != null)
 				monitor.incrementCount(nextIncrement);
+			if(expectedLength>0 && offset!=expectedLength)
+				throw new IOException("InputStream ended after "+ offset +" bytes (expected "+expectedLength+").");
 			return -1;
 		} catch(IOException e){
 			// Log the actual error, as this is no longer

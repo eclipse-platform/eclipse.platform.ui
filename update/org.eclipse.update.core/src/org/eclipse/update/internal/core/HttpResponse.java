@@ -12,6 +12,7 @@ package org.eclipse.update.internal.core;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 
@@ -21,7 +22,7 @@ public class HttpResponse implements Response {
 	protected InputStream in;
 	protected URLConnection connection;
 	protected long lastModified;
-	protected int offset;
+	protected long offset;
 
 	public HttpResponse(URL url) {
 		this.url = url;
@@ -137,7 +138,7 @@ public class HttpResponse implements Response {
 		}
 		return is;
 	}
-	public void setOffset(int offset) {
+	public void setOffset(long offset) {
 		this.offset = offset;
 	}
 	private void checkOffset() throws IOException {

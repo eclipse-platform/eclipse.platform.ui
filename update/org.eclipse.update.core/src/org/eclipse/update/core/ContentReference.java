@@ -51,6 +51,7 @@ public class ContentReference {
 	private File file; //    local file reference
 	private Response response;
 	private int permission; 
+	private long length;
 	
 	// <true> if a copy of a Contentreferenec in a temp local directory
 	private boolean tempLocal = false;
@@ -135,7 +136,9 @@ public class ContentReference {
 				response = UpdateCore.getPlugin().get(resolvedURL);
 				UpdateManagerUtils.checkConnectionResult(response,resolvedURL);
 			}
-			return response.getInputStream();
+			InputStream is=response.getInputStream();
+			length=response.getContentLength();
+			return is;
 		} else
 			throw new IOException(Policy.bind("ContentReference.UnableToCreateInputStream", this.toString())); //$NON-NLS-1$
 	}
@@ -146,14 +149,16 @@ public class ContentReference {
 	 * @exception IOException unable to create stream
 	 * @since 2.0
 	 */
-	InputStream getPartialInputStream(int offset) throws IOException {
+	InputStream getPartialInputStream(long offset) throws IOException {
 		if (url != null && "http".equals(url.getProtocol())) {
 			URL resolvedURL = URLEncoder.encode(url);
 			response = UpdateCore.getPlugin().get(resolvedURL);
 			if(response instanceof HttpResponse)
 				((HttpResponse)response).setOffset(offset);
 			UpdateManagerUtils.checkConnectionResult(response,resolvedURL);
-			return response.getInputStream();
+			InputStream is = response.getInputStream();
+			length=offset + response.getContentLength();
+			return is;
 		} else
 			throw new IOException(Policy.bind("ContentReference.UnableToCreateInputStream", this.toString())); //$NON-NLS-1$
 	}
@@ -165,6 +170,8 @@ public class ContentReference {
 	 * @since 2.0
 	 */
 	public long getInputSize() throws IOException {
+		if (length>0)
+			return length;
 		if (file != null)
 			return file.length();
 		else if (url != null) {

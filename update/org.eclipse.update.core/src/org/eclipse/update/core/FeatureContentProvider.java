@@ -197,7 +197,8 @@ public abstract class FeatureContentProvider
 			// download the referenced file into local temporary area
 			InputStream is = null;
 			OutputStream os = null;
-			int bytesCopied = 0;
+			long bytesCopied = 0;
+			long inputLength = 0;
 			boolean success = false;
 			if (monitor != null) {
 				monitor.saveState();
@@ -218,6 +219,7 @@ public abstract class FeatureContentProvider
 						is =
 							ref.getPartialInputStream(
 								localFileFragment.getSize());
+						inputLength = ref.getInputSize()-localFileFragment.getSize(); 
 						// get output stream to append to file fragment
 						os =
 							new BufferedOutputStream(
@@ -239,6 +241,7 @@ public abstract class FeatureContentProvider
 						Utilities.createLocalFile(getWorkingDirectory(), null);
 					try {
 						is = ref.getInputStream();
+						inputLength = ref.getInputSize(); 
 					} catch (IOException e) {
 						throw Utilities.newCoreException(
 							Policy.bind(
@@ -269,7 +272,7 @@ public abstract class FeatureContentProvider
 				}
 
 				// Transfer as many bytes as possible from input to output stream
-				long offset = UpdateManagerUtils.copy(is, os, monitor);
+				long offset = UpdateManagerUtils.copy(is, os, monitor, inputLength);
 				if (offset != -1) {
 					bytesCopied += offset;
 					if (bytesCopied > 0) {
