@@ -16,10 +16,10 @@ import org.eclipse.debug.core.DebugException;
 public interface IMemoryBlockRetrieval {
 	
 	/**
-	 * Returns whether this debug target supports the retreival
+	 * Returns whether this debug target supports the retrieval
 	 * of memory blocks.
 	 * 
-	 * @return whether this debug target supports the retreival
+	 * @return whether this debug target supports the retrieval
 	 *  of memory blocks
 	 */
 	public boolean supportsStorageRetrieval();
@@ -36,7 +36,7 @@ public interface IMemoryBlockRetrieval {
 	 * <ul><li>Failure communicating with the debug target.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
-	 * <li>This debug target does not support memory block retreival</li>
+	 * <li>This debug target does not support memory block retrieval</li>
 	 * <li>The specified address and length are not within valid
 	 *  ranges</li>
 	 * </ul>

@@ -21,7 +21,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  *   &lt;sourceLocator 
  *      id="com.example.ExampleIdentifier"
  *      class="com.example.ExampleSourceLocator"
- *      name="Example Source Locator"
+ *      name="Example Source Locator"&gt;
  *   &lt;/sourceLocator&gt;
  * &lt;/extension&gt;
  * </pre>

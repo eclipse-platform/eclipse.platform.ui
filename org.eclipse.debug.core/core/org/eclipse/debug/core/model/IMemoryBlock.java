@@ -8,7 +8,7 @@ package org.eclipse.debug.core.model;
 import org.eclipse.debug.core.DebugException;
  
 /**
- * A contiguos segment of memory in an execution context.
+ * A contiguous segment of memory in an execution context.
  * A memory block is represented by a starting memory address
  * and a length. Not all debug architectures support the retrieval
  * of memory blocks.
