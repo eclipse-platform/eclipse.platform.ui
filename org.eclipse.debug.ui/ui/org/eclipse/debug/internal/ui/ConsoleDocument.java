@@ -55,10 +55,8 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		setLineTracker(new DefaultLineTracker());
 		
 		if (process != null) {
-			fProxy= process.getStreamsProxy();			
-		}
-		if (process != null) {
-			DebugPlugin.getDefault().addDebugEventListener(this);
+			fProxy= process.getStreamsProxy();
+			DebugPlugin.getDefault().addDebugEventListener(this);			
 		}
 		completeInitialization();
 	}
