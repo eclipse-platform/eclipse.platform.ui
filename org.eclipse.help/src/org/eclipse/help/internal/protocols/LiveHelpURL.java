@@ -4,9 +4,10 @@
  */
 package org.eclipse.help.internal.protocols;
 import java.io.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.ILiveHelpAction;
-import org.eclipse.help.internal.util.Resources;
+import org.eclipse.help.internal.util.*;
 /**
  * URL that performs live help action.
  */
@@ -45,7 +46,7 @@ public class LiveHelpURL extends HelpURL {
 		String className = (String) arguments.get("class");
 		if (className == null)
 			return getErrorStream(Resources.getString("E031"));
-		String arg = (String) arguments.get("arg");
+		String arg = URLCoder.decode((String) arguments.get("arg"));
 		Plugin plugin = Platform.getPlugin(pluginID);
 		if (plugin == null)
 			return getErrorStream(Resources.getString("E032"));

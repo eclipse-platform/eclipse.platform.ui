@@ -16,6 +16,11 @@
         <servlet-name>init</servlet-name>
         <servlet-class>org.eclipse.help.servlet.InitServlet</servlet-class>
     </servlet>
+
+    <servlet>
+        <servlet-name>livehelp</servlet-name>
+        <servlet-class>org.eclipse.help.servlet.LiveHelpServlet</servlet-class>
+    </servlet>
         
     <servlet-mapping>
         <servlet-name>content</servlet-name>
@@ -25,6 +30,11 @@
     <servlet-mapping>
         <servlet-name>content</servlet-name>
         <url-pattern>/ns4/content/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>livehelp</servlet-name>
+        <url-pattern>/livehelp/*</url-pattern>
     </servlet-mapping>
     
 </web-app>
