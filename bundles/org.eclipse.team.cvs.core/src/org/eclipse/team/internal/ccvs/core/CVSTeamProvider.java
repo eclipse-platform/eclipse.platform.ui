@@ -1360,13 +1360,13 @@ public class CVSTeamProvider extends RepositoryProvider {
 					monitor.beginTask(null, 100);
 					Session session = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true);
 					try {
-						session.open(Policy.subMonitorFor(monitor, 10), true /* open for modification */);
-					} catch (CVSException e1) {
-						// If the connection cannot be opened, just exit normally.
-						// The notifications will be sent when a connection can be made
-						return;
-					}
-					try {
+						try {
+							session.open(Policy.subMonitorFor(monitor, 10), true /* open for modification */);
+						} catch (CVSException e1) {
+							// If the connection cannot be opened, just exit normally.
+							// The notifications will be sent when a connection can be made
+							return;
+						}
 						Command.NOOP.execute(
 							session,
 							Command.NO_GLOBAL_OPTIONS, 
@@ -1377,6 +1377,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 					} catch (CVSException e) {
 						exception[0] = e;
 					} finally {
+						session.close();
 						monitor.done();
 					}
 				}
