@@ -648,25 +648,16 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			// backward compatibility
 			descriptor = getProductInfo().getProductImageDescriptor();
 		}
-		if (descriptor == null) {
-			// if none was supplied we use a default
-			URL path = null;
-			try {
-				path = new URL(WorkbenchPlugin.getDefault().getDescriptor().getInstallURL(), WorkbenchImages.ICONS_PATH + "obj16/prod.gif"); //$NON-NLS-1$
-			} catch (MalformedURLException e) {
-			};
-			descriptor = ImageDescriptor.createFromURL(path);
-		}
-		WorkbenchImages.getImageRegistry().put(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD, descriptor);
-		// Test to see if we can create a real image
-		Image test = descriptor.createImage(false);
-		if (test != null) {
-			test.dispose();
+		if (descriptor != null) {
+			WorkbenchImages.getImageRegistry().put(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD, descriptor);
 			Image image = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD);
 			if (image != null) {
 				Window.setDefaultImage(image);
 			}
-		}
+		} else {
+			// Avoid setting a missing image as the window default image
+			WorkbenchImages.getImageRegistry().put(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD, ImageDescriptor.getMissingImageDescriptor());
+		}			
 	}
 	/**
 	 * Returns true if the workbench is in the process of closing
