@@ -1144,6 +1144,10 @@
          <description>
             %Color.activeTabTextDesc
          </description>
+         <colorValue
+               ws="motif"
+               value="COLOR_TITLE_INACTIVE_FOREGROUND">
+         </colorValue>
       </colorDefinition>
       <colorDefinition
             label="%Color.activeTabBGEnd"
@@ -1164,6 +1168,11 @@
          <description>
             %Color.activeTabBGStartDesc
          </description>
+         <colorValue
+               ws="motif"
+               value="COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT">
+
+         </colorValue>
       </colorDefinition>
       <colorDefinition
             label="%Color.activeTabBGStart"            
@@ -1173,9 +1182,13 @@
           <description>
             %Color.activeTabBGEndDesc
          </description>
-
-      <!-- Inactive Tab Colors -->
+         <colorValue
+               ws="motif"
+               value="COLOR_TITLE_INACTIVE_BACKGROUND">
+         </colorValue>
       </colorDefinition>
+      
+      <!-- Inactive Tab Colors -->
       <colorDefinition
             label="%Color.inactiveTabText"
             value="COLOR_WIDGET_FOREGROUND"
