@@ -711,7 +711,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 	}
 
 	public void testShowActionSet() {
-		String id = MockAction.SET_ID;
+		String id = MockActionDelegate.ACTION_SET_ID;
 		WorkbenchPage page = (WorkbenchPage) fActivePage;
 
 		int totalBefore = page.getActionSets().length;
