@@ -180,8 +180,8 @@ public final class CompareUI {
 		CompareUIPlugin.addStructureViewerAlias(type, alias);
 	}
 	
-	public static void removeStructureViewerAlias(String type, String alias) {
-		CompareUIPlugin.removeStructureViewerAlias(type, alias);
+	public static void removeAllStructureViewerAliases(String type) {
+		CompareUIPlugin.removeAllStructureViewerAliases(type);
 	}
 }
 

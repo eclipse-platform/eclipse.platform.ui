@@ -793,11 +793,13 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		fgStructureViewerAliases.put(normalizeCase(alias), normalizeCase(type));
 	}
 	
-	public static void removeStructureViewerAlias(String type, String alias) {
-		//System.out.println("removeStructureViewerAlias: " + type + " " + alias);
-		String a= normalizeCase(alias);
-		String oldType= (String) fgStructureViewerAliases.get(a);
-		if (oldType != null && oldType.equals(type))
-			fgStructureViewerAliases.remove(a);
+	public static void removeAllStructureViewerAliases(String type) {
+		String t= normalizeCase(type);
+		Set entrySet= fgStructureViewerAliases.entrySet();
+		for (Iterator iter= entrySet.iterator(); iter.hasNext(); ) {
+			Map.Entry entry= (Map.Entry)iter.next();
+			if (entry.getValue().equals(t))
+				iter.remove();
+		}
 	}
 }
