@@ -14,9 +14,9 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.activities.ws.FilterableObject;
+import org.eclipse.ui.model.AdaptableList;
 
 /**
  * Provider used by the new format NewWizardNewPage.
@@ -69,6 +69,14 @@ public class WizardContentProvider
 				return getChildren(list.get(0));
 			}
 
+			return list.toArray();
+		} else if (parentElement instanceof AdaptableList) {
+			AdaptableList aList = (AdaptableList) parentElement;
+			Object[] children = aList.getChildren();
+			ArrayList list = new ArrayList(children.length);
+			for (int i = 0; i < children.length; i++) {
+				handleChild(children[i], list);
+			}
 			return list.toArray();
 		} else
 			return new Object[0];

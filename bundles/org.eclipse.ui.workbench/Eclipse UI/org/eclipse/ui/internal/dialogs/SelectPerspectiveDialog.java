@@ -13,15 +13,6 @@
 
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -30,7 +21,16 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -122,13 +122,29 @@ public class SelectPerspectiveDialog
 		composite.setFont(parent.getFont());
 
 		if (WorkbenchActivityHelper.isFiltering()) {
-			TabFolder tabFolder = new TabFolder(composite, SWT.NONE);
+			final TabFolder tabFolder = new TabFolder(composite, SWT.NONE);
 			tabFolder.setFont(parent.getFont());
 			layoutTopControl(tabFolder);
 
 			filteredList = createViewer(tabFolder, true);
 			unfilteredList = createViewer(tabFolder, false);
 
+			// flipping tabs updates the selected node
+			tabFolder.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (tabFolder.getSelectionIndex() == 0) {
+						selectionChanged(
+							new SelectionChangedEvent(
+								filteredList,
+								filteredList.getSelection()));
+					} else {
+						selectionChanged(
+							new SelectionChangedEvent(
+								unfilteredList,
+								unfilteredList.getSelection()));
+					}
+				}
+			});
 		} else {
 			unfilteredList = createViewer(composite, false);
 			layoutTopControl(unfilteredList.getControl());

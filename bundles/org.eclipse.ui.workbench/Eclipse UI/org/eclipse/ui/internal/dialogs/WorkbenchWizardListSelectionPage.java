@@ -10,19 +10,33 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.internal.dialogs.WorkbenchWizardSelectionPage;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 import org.eclipse.ui.model.AdaptableList;
-import org.eclipse.ui.model.*;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
  * Abstract implementation of a wizard selection page which simply displays a
@@ -33,12 +47,18 @@ import org.eclipse.ui.model.*;
 public abstract class WorkbenchWizardListSelectionPage
 	extends WorkbenchWizardSelectionPage
 	implements ISelectionChangedListener, IDoubleClickListener {
-	private final static int SIZING_LISTS_HEIGHT = 200;
 
 	// id constants
-	private static final String STORE_SELECTED_WIZARD_ID = "WizardListSelectionPage.STORE_SELECTED_WIZARD_ID"; //$NON-NLS-1$
+	private static final String DIALOG_SETTING_SECTION_NAME = "WizardListSelectionPage."; //$NON-NLS-1$
+
+	private final static int SIZING_LISTS_HEIGHT = 200;
+	private static final String STORE_SELECTED_FILTERED_WIZARD_ID = DIALOG_SETTING_SECTION_NAME + "STORE_SELECTED_FILTERED_WIZARD_ID"; //$NON-NLS-1$
+	private static final String STORE_SELECTED_UNFILTERED_WIZARD_ID = DIALOG_SETTING_SECTION_NAME + "STORE_SELECTED_UNFILTERED_WIZARD_ID"; //$NON-NLS-1$
+	private static final String UNFILTERED_TAB_SELECTED = DIALOG_SETTING_SECTION_NAME + ".UNFILTERED_TAB_SELECTED"; //$NON-NLS-1$
+	private TableViewer filteredViewer, unfilteredViewer;
 	private String message;
-	
+
+	private TabFolder tabFolder;
 	/**
 	 * Creates a <code>WorkbenchWizardListSelectionPage</code>.
 	 * 
@@ -57,9 +77,11 @@ public abstract class WorkbenchWizardListSelectionPage
 		setDescription(WorkbenchMessages.getString("WizardList.description")); //$NON-NLS-1$
 		this.message = message;
 	}
-	
-	/**
-	 * (non-Javadoc) Method declared on IDialogPage.
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
 
@@ -77,37 +99,72 @@ public abstract class WorkbenchWizardListSelectionPage
 		messageLabel.setText(message);
 		messageLabel.setFont(font);
 
-		//Create a table for the list
-		Table table = new Table(outerContainer, SWT.BORDER);
-		GridData data = new GridData(GridData.FILL_BOTH);
+		if (WorkbenchActivityHelper.isFiltering()) {
+			tabFolder = new TabFolder(outerContainer, SWT.NONE);
+			layoutTopControl(tabFolder);
 
-		int availableRows = DialogUtil.availableRows(parent);
+			tabFolder.setFont(parent.getFont());
+			filteredViewer = createViewer(tabFolder, true);
+			unfilteredViewer = createViewer(tabFolder, false);
 
-		//Only give a height hint if the dialog is going to be too small
-		if (availableRows > 50) {
-			data.heightHint = SIZING_LISTS_HEIGHT;
+			// flipping tabs updates the selected node
+			tabFolder.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (tabFolder.getSelectionIndex() == 0) {
+						selectionChanged(
+							new SelectionChangedEvent(
+								filteredViewer,
+								filteredViewer.getSelection()));
+					} else {
+						selectionChanged(
+							new SelectionChangedEvent(
+								unfilteredViewer,
+								unfilteredViewer.getSelection()));
+					}
+				}
+			});
+
 		} else {
-			data.heightHint = availableRows * 3;
+			unfilteredViewer = createViewer(outerContainer, false);
+			layoutTopControl(unfilteredViewer.getControl());
 		}
 
-		table.setLayoutData(data);
-		table.setFont(font);
-
-		// the list viewer
-		wizardSelectionViewer = new TableViewer(table);
-		wizardSelectionViewer.setContentProvider(
-			new BaseWorkbenchContentProvider());
-		wizardSelectionViewer.setLabelProvider(new WorkbenchLabelProvider());
-		wizardSelectionViewer.setSorter(new WorkbenchViewerSorter());
-		wizardSelectionViewer.addSelectionChangedListener(this);
-		wizardSelectionViewer.addDoubleClickListener(this);
-
-		wizardSelectionViewer.setInput(wizardElements);
 		restoreWidgetValues();
 
 		setControl(outerContainer);
 	}
-	
+	/**
+	 * Create a new viewer in the parent.
+	 * 
+	 * @param parent the parent <code>Composite</code>.
+	 * @param filtering whether the viewer should be filtering based on
+	 *            activities.
+	 * @return <code>TableViewer</code>
+	 */
+	private TableViewer createViewer(Composite parent, boolean filtering) {
+		//Create a table for the list
+		Table table = new Table(parent, SWT.BORDER);
+		table.setFont(parent.getFont());
+
+		// the list viewer
+		TableViewer viewer = new TableViewer(table);
+		viewer.setContentProvider(new WizardContentProvider(filtering));
+		viewer.setLabelProvider(new WorkbenchLabelProvider());
+		viewer.setSorter(new WorkbenchViewerSorter());
+		viewer.addSelectionChangedListener(this);
+		viewer.addDoubleClickListener(this);
+		viewer.setInput(wizardElements);
+
+		if (parent instanceof TabFolder) {
+			TabItem tabItem = new TabItem((TabFolder) parent, SWT.NONE);
+			tabItem.setControl(viewer.getControl());
+			tabItem.setText(filtering ? ActivityMessages.getString("ActivityFiltering.filtered") //$NON-NLS-1$
+			: ActivityMessages.getString("ActivityFiltering.unfiltered")); //$NON-NLS-1$
+		}
+
+		return viewer;
+	}
+
 	/**
 	 * Returns an <code>IWizardNode</code> representing the specified
 	 * workbench wizard which has been selected by the user. <b>Subclasses
@@ -118,54 +175,100 @@ public abstract class WorkbenchWizardListSelectionPage
 	 * @return org.eclipse.jface.wizards.IWizardNode
 	 */
 	protected abstract IWizardNode createWizardNode(WorkbenchWizardElement element);
-	
+
 	/**
 	 * An item in a viewer has been double-clicked.
 	 */
 	public void doubleClick(DoubleClickEvent event) {
 		selectionChanged(
 			new SelectionChangedEvent(
-				wizardSelectionViewer,
-				wizardSelectionViewer.getSelection()));
+				event.getViewer(),
+				event.getViewer().getSelection()));
 		getContainer().showPage(getNextPage());
 	}
-	
+
+	/**
+	 * Layout the top control.
+	 * 
+	 * @param control the control.
+	 * @since 3.0
+	 */
+	private void layoutTopControl(Control control) {
+		GridData data = new GridData(GridData.FILL_BOTH);
+
+		int availableRows = DialogUtil.availableRows(control.getParent());
+
+		//Only give a height hint if the dialog is going to be too small
+		if (availableRows > 50) {
+			data.heightHint = SIZING_LISTS_HEIGHT;
+		} else {
+			data.heightHint = availableRows * 3;
+		}
+
+		control.setLayoutData(data);
+
+	}
+
 	/**
 	 * Uses the dialog store to restore widget values to the values that they
 	 * held last time this wizard was used to completion.
 	 */
 	private void restoreWidgetValues() {
-		// reselect previous wizard
-		String wizardId = getDialogSettings().get(STORE_SELECTED_WIZARD_ID);
-		WorkbenchWizardElement wizard = findWizard(wizardId);
-		if (wizard == null)
-			return; // wizard no longer exists, or has moved
+		boolean unfilteredSelected =
+			getDialogSettings().getBoolean(UNFILTERED_TAB_SELECTED);
 
-		StructuredSelection selection = new StructuredSelection(wizard);
-		wizardSelectionViewer.setSelection(selection);
-		selectionChanged(
-			new SelectionChangedEvent(wizardSelectionViewer, selection));
+		updateViewerSelection(
+			unfilteredViewer,
+			STORE_SELECTED_UNFILTERED_WIZARD_ID);
+
+		if (WorkbenchActivityHelper.isFiltering()) {
+			updateViewerSelection(
+				filteredViewer,
+				STORE_SELECTED_FILTERED_WIZARD_ID);
+			if (unfilteredSelected) {
+				tabFolder.setSelection(1);
+				selectionChanged(
+					new SelectionChangedEvent(
+						unfilteredViewer,
+						unfilteredViewer.getSelection()));
+			}
+
+		}
 	}
-	
+
+	/**
+	 * @param viewer the <code>TableViewer</code> to save.
+	 * @param key the preference key to use.
+	 * @since 3.0
+	 */
+	private void saveViewerSelection(TableViewer viewer, String key) {
+		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
+		if (sel.size() > 0) {
+			WorkbenchWizardElement selectedWizard =
+				(WorkbenchWizardElement) sel.getFirstElement();
+			getDialogSettings().put(key, selectedWizard.getID());
+		}
+	}
+
 	/**
 	 * Since Finish was pressed, write widget values to the dialog store so
 	 * that they will persist into the next invocation of this wizard page
 	 */
 	public void saveWidgetValues() {
-		IDialogSettings settings = getDialogSettings();
+		saveViewerSelection(
+			unfilteredViewer,
+			STORE_SELECTED_UNFILTERED_WIZARD_ID);
+		if (WorkbenchActivityHelper.isFiltering()) {
+			saveViewerSelection(
+				filteredViewer,
+				STORE_SELECTED_FILTERED_WIZARD_ID);
+			getDialogSettings().put(
+				UNFILTERED_TAB_SELECTED,
+				tabFolder.getSelectionIndex() == 1 ? true : false);
 
-		// since the user is able to leave this page then exactly one wizard
-		// must be currently selected
-		IStructuredSelection sel =
-			(IStructuredSelection) wizardSelectionViewer.getSelection();
-		// We are losing the selection going back
-		if (sel.size() > 0) {
-			WorkbenchWizardElement selectedWizard =
-				(WorkbenchWizardElement) sel.getFirstElement();
-			settings.put(STORE_SELECTED_WIZARD_ID, selectedWizard.getID());
 		}
 	}
-	
+
 	/**
 	 * Notes the newly-selected wizard element and updates the page
 	 * accordingly.
@@ -186,5 +289,19 @@ public abstract class WorkbenchWizardListSelectionPage
 
 		setSelectedNode(createWizardNode(currentWizardSelection));
 		setMessage((String) currentWizardSelection.getDescription());
+	}
+
+	/**
+	 * @param viewer the <code>TableViewer</code> to update.
+	 * @param key the preference key to use.
+	 * @since 3.0
+	 */
+	private void updateViewerSelection(TableViewer viewer, String key) {
+		String wizardId = getDialogSettings().get(key);
+		WorkbenchWizardElement wizard = findWizard(wizardId);
+		if (wizard != null) {
+			StructuredSelection selection = new StructuredSelection(wizard);
+			viewer.setSelection(selection);
+		}
 	}
 }

@@ -13,15 +13,6 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -30,7 +21,16 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
@@ -142,6 +142,23 @@ public class ShowViewDialog
 			// Add filtered view list.
 			filteredTree = createViewer(tabFolder, true);
 			unfilteredTree = createViewer(tabFolder, false);
+
+			// flipping tabs updates the selected node
+			tabFolder.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (tabFolder.getSelectionIndex() == 0) {
+						selectionChanged(
+							new SelectionChangedEvent(
+								filteredTree,
+								filteredTree.getSelection()));
+					} else {
+						selectionChanged(
+							new SelectionChangedEvent(
+								unfilteredTree,
+								unfilteredTree.getSelection()));
+					}
+				}
+			});
 
 		} else {
 			unfilteredTree = createViewer(composite, false);
@@ -273,18 +290,20 @@ public class ShowViewDialog
 	protected void restoreWidgetValues() {
 		IDialogSettings settings = getDialogSettings();
 
+		expandTree(
+			settings.getArray(STORE_EXPANDED_UNFILTERED_CATEGORIES_ID),
+			unfilteredTree);
+
 		if (WorkbenchActivityHelper.isFiltering()) {
 			expandTree(
 				settings.getArray(STORE_EXPANDED_FILTERED_CATEGORIES_ID),
 				filteredTree);
-		}
 
-		expandTree(
-			settings.getArray(STORE_EXPANDED_UNFILTERED_CATEGORIES_ID),
-			unfilteredTree);
-		if (WorkbenchActivityHelper.isFiltering()
-			&& settings.getBoolean(UNFILTERED_TAB_SELECTED)) {
-			tabFolder.setSelection(1);
+			boolean unfilteredSelected =
+				getDialogSettings().getBoolean(UNFILTERED_TAB_SELECTED);
+
+			if (unfilteredSelected)
+				tabFolder.setSelection(1);
 		}
 	}
 
