@@ -111,10 +111,10 @@ private IProject createNewProject() {
 	final IProject newProjectHandle = mainPage.getProjectHandle();
 
 	// get a project descriptor
-	IPath defaultPath = Platform.getLocation();
-	IPath newPath = mainPage.getLocationPath();
-	if (defaultPath.equals(newPath))
-		newPath = null;
+	IPath newPath = null;
+	if (!mainPage.useDefaults())
+		newPath = mainPage.getLocationPath();
+		
 	IWorkspace workspace = ResourcesPlugin.getWorkspace();
 	final IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
 	description.setLocation(newPath);
