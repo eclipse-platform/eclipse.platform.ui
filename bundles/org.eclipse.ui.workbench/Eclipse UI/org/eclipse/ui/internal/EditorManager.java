@@ -687,6 +687,7 @@ public class EditorManager {
 			boolean visibleEditor = "true".equals(strFocus); //$NON-NLS-1$
 			if(visibleEditor) {
 				Editor e = new Editor();
+				e.setPinned("true".equals(editorMem.getString(IWorkbenchConstants.TAG_PINNED)));
 				visibleEditors.add(e);
 				page.addPart(e);
 				result.add(restoreEditor(e,editorMem));
@@ -711,6 +712,7 @@ public class EditorManager {
 					
 				if(editorTitle == null) { //backward compatible format of workbench.xml
 					Editor e = new Editor();
+					e.setPinned("true".equals(editorMem.getString(IWorkbenchConstants.TAG_PINNED)));
 					result.add(restoreEditor(e,editorMem));
 					page.addPart(e);
 				} else {
@@ -1128,6 +1130,7 @@ public class EditorManager {
 			this.imageDescritor = desc;
 			this.tooltip = tooltip;
 			this.title = title;
+			this.pinned = pinned;			
 			//make it backward compatible.
 			if(this.name == null)
 				this.name = title;
@@ -1201,6 +1204,7 @@ public class EditorManager {
 			EditorSite site = (EditorSite)part.getSite();
 			if(site != null) {
 				site.setPane(this.pane);
+				site.setReuseEditor(!pinned);
 				this.pane = null;
 			}
 		}
@@ -1217,6 +1221,9 @@ public class EditorManager {
 				return !((EditorSite)part.getEditorSite()).getReuseEditor();
 			return pinned;
 		}
+		public void setPinned(boolean pinned) {
+			this.pinned = pinned;
+		}		
 		public String getTitle() {
 			String result = title;
 			if(part != null)
