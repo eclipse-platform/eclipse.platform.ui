@@ -10,21 +10,24 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.search.*;
+import org.eclipse.help.internal.search.SearchManager;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.widgets.*;
 
-public class FederatedSearchPart extends AbstractFormPart implements IHelpPart {
-	private static final String ENGINE_EXP_ID = "org.eclipse.help.ui.searchEngine";
-	private static final String ATT_LABEL ="label"; //$NON-NLS-1$
-	private static final String ATT_ICON = "icon";//$NON-NLS-1$
-	private static final String EL_DESC = "description"; //$NON-NLS-1$
+public class FederatedSearchPart extends AbstractFormPart implements IHelpPart, IHelpUIConstants {
 	private ReusableHelpPart parent;
 	protected static java.util.List previousSearchQueryData = new java.util.ArrayList(
 			20);
@@ -33,59 +36,9 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart {
 	private Combo searchWordCombo;
 	private Section scopeSection;
 	private Button goButton;
+	private Hyperlink scopeSetLink;
 	private ScopeSetManager scopeSetManager;
-	private ToolBarManager scopeToolbarManager;
-
-	class ScopeSetAction extends Action implements IMenuCreator {
-		private Menu fMenu;
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.action.IMenuCreator#dispose()
-		 */
-		public ScopeSetAction() {
-			super("scope_set");
-			setMenuCreator(this);
-		}
-		public void dispose() {
-			if (fMenu != null) {
-				fMenu.dispose();
-				fMenu=null;
-			}
-		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
-		 */
-		public Menu getMenu(Control parent) {
-			dispose();
-			fMenu = new Menu(parent);
-			MenuItem item = new MenuItem(fMenu, SWT.PUSH);			
-			item.setText("Edit scope sets...");
-			new MenuItem(fMenu, SWT.SEPARATOR);
-			ScopeSet [] sets = scopeSetManager.getScopeSets();
-			for (int i=0; i<sets.length; i++) {
-				addItem(sets[i]);
-			}
-			return fMenu;
-		}
-		private void addItem(final ScopeSet set) {
-			MenuItem item = new MenuItem(fMenu, SWT.PUSH);
-			item.setData(set);
-			item.setText(set.getName());
-			item.setImage(HelpUIResources.getImage(IHelpUIConstants.IMAGE_HELP_SEARCH));
-			item.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					setActiveScopeSet(set);
-				}
-			});
-		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
-		 */
-		public Menu getMenu(Menu parent) {
-			return null;
-		}
-		public void run() {
-		}
-	}
+	private ArrayList engineDescriptors;
 
 	/**
 	 * @param parent
@@ -167,6 +120,7 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart {
 		// Filtering group		
 		scopeSection = toolkit.createSection(container, 
 				Section.TWISTIE|Section.COMPACT|Section.LEFT_TEXT_CLIENT_ALIGNMENT);
+		scopeSection.setText(HelpUIResources.getString("limit_to"));
 		td = new TableWrapData();
 		td.colspan = 2;
 		td.align = TableWrapData.FILL;
@@ -176,73 +130,129 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart {
 		createScopeSet(scopeSection, toolkit);
 		TableWrapLayout flayout = new TableWrapLayout();
 		flayout.numColumns = 2;
-		scopeSection.setText(HelpUIResources.getString("limit_to")); //$NON-NLS-1$
 		filteringGroup.setLayout(flayout);
 
 		toolkit.paintBordersFor(filteringGroup);
 		loadEngines(filteringGroup, toolkit);
 		Hyperlink advanced = toolkit.createHyperlink(filteringGroup, "Advanced Settings", SWT.NULL);
+		advanced.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				doAdvanced();
+			}
+		});
 		td = new TableWrapData();
 		td.colspan = 2;
 		advanced.setLayoutData(td);
 	}
 
 	private void createScopeSet(Section section, FormToolkit toolkit) {
-		scopeToolbarManager = new ToolBarManager(SWT.FLAT);
-		ScopeSetAction action = new ScopeSetAction();
-		action.setImageDescriptor(HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_HELP_SEARCH));
-		scopeToolbarManager.add(action);
-		ToolBar toolBar = scopeToolbarManager.createControl(section);
-		toolkit.adapt(toolBar, true, true);
-		section.setTextClient(toolBar);
+		scopeSetManager = new ScopeSetManager();
+		scopeSetLink = toolkit.createHyperlink(section, null, SWT.NULL);
+		scopeSetLink.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				doChangeScopeSet();
+			}
+		});
+		scopeSetLink.setToolTipText("Change the current scope set");
+		section.setTextClient(scopeSetLink);
+		ScopeSet active = scopeSetManager.getActiveSet();
+		setActiveScopeSet(active);
 	}
 
 	private void setActiveScopeSet(ScopeSet set) {
-		scopeSection.setText("Scope - "+set.getName());
-		scopeSection.layout();
-		parent.reflow();
+		scopeSetLink.setText(set.getName());
 		scopeSetManager.setActiveSet(set);
+		updateMasters(set);
+	}
+	
+	private void updateMasters(ScopeSet set) {
+		Control [] masters = ((Composite)scopeSection.getClient()).getChildren();
+		for (int i=0; i<masters.length; i++) {
+			Control master = masters[i];
+			Object data = master.getData();
+			if (data!=null && data instanceof EngineDescriptor) {
+				EngineDescriptor ed = (EngineDescriptor)data;
+				Button button = (Button)master;
+				button.setSelection(set.getEngineEnabled(ed));
+			}
+		}		
 	}
 
 	private void loadEngines(Composite container, FormToolkit toolkit) {
+		engineDescriptors = new ArrayList();
 		IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(ENGINE_EXP_ID);
 		for (int i=0; i<elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (element.getName().equals("engine")) {
-				loadEngine(element, container, toolkit);
+				EngineDescriptor desc = loadEngine(element, container, toolkit);
+				engineDescriptors.add(desc);
 			}
 		}
+		updateMasters(scopeSetManager.getActiveSet());
 	}
 	
-	private void loadEngine(IConfigurationElement element, Composite container, FormToolkit toolkit) {
-		String name = element.getAttribute(ATT_LABEL);
-		String desc = null;
-		IConfigurationElement [] children = element.getChildren(EL_DESC);
-		if (children.length==1) 
-			desc = children[0].getValue();
-		String icon = element.getAttribute(ATT_ICON);
-		Image image = null;
-		
-		if (icon!=null)
-			image = HelpUIResources.getImage(icon);
-		else
-			image = HelpUIResources.getImage(IHelpUIConstants.IMAGE_HELP_SEARCH);
+	private EngineDescriptor loadEngine(IConfigurationElement element, Composite container, FormToolkit toolkit) {
+		final EngineDescriptor edesc = new EngineDescriptor(element);
 		Label ilabel = toolkit.createLabel(container, null);
-		ilabel.setImage(image);
-		Button master = toolkit.createButton(container, name, SWT.CHECK);
+		ilabel.setImage(edesc.getIconImage());
+		final Button master = toolkit.createButton(container, edesc.getLabel(), SWT.CHECK);
+		master.setData(edesc);
+		master.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				scopeSetManager.getActiveSet().setEngineEnabled(edesc, master.getSelection());
+			}
+		});
+		String desc = edesc.getDescription();
 		if (desc!=null) {
 			toolkit.createLabel(container, null);
 			Label dlabel = toolkit.createLabel(container, desc, SWT.WRAP);
 			dlabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 			dlabel.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		}
+		return edesc;
+	}
+
+	private void doSearch(String text) {
+		ScopeSet set = scopeSetManager.getActiveSet();
+		ArrayList entries = new ArrayList();
+		for (int i=0; i<engineDescriptors.size(); i++) {
+			EngineDescriptor ed = (EngineDescriptor)engineDescriptors.get(i);
+			if (set.getEngineEnabled(ed)) {
+				ISearchScope scope = ed.createSearchScope(set.getPreferenceStore());
+				FederatedSearchEntry entry = new FederatedSearchEntry(ed.getId(), scope, ed.getEngine());
+				entries.add(entry);
+			}
+		}
+		if (entries.size()==0)
+			return;
+		FederatedSearchEntry [] array = (FederatedSearchEntry[])entries.toArray(new FederatedSearchEntry[entries.size()]);
+		FederatedSearchResultsPart results = (FederatedSearchResultsPart)parent.findPart(IHelpUIConstants.HV_FSEARCH_RESULT);
+		BaseHelpSystem.getSearchManager().search(text, array, results);   
 	}
 	
-	private void doSearch(String text) {
-		
+	private void doAdvanced() {
+		PreferenceManager manager = new ScopePreferenceManager(engineDescriptors);
+		PreferenceDialog dialog = new PreferenceDialog(container.getShell(), manager);
+		ScopeSet set = scopeSetManager.getActiveSet();
+		dialog.setPreferenceStore(set.getPreferenceStore());
+		dialog.open();
+		updateMasters(set);
+	}
+	
+	private void doChangeScopeSet() {
+		ScopeSetDialog dialog = new ScopeSetDialog(container.getShell(), scopeSetManager, engineDescriptors);
+		dialog.setInput(scopeSetManager);
+		if (dialog.open()==ScopeSetDialog.OK) {
+			ScopeSet set = dialog.getActiveSet();
+			if (set!=null)
+				setActiveScopeSet(set);
+		}
 	}
 	
 	public void dispose() {
+		ScopeSet activeSet = scopeSetManager.getActiveSet();
+		if (activeSet!=null)
+			activeSet.save();
 		super.dispose();
 	}
 

@@ -7,8 +7,7 @@
 package org.eclipse.help.ui;
 
 import org.eclipse.help.internal.search.ISearchScope;
-import org.eclipse.jface.dialogs.IDialogPage;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * @author dejan
@@ -16,15 +15,6 @@ import org.eclipse.swt.widgets.Composite;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public interface IScopeEditor extends IDialogPage {
-/**
- * 
- */
-	void createControl(Composite parent);
-/**
- * Returns the object that represents the search scope. The data should
- * be collected from the widget state.
- * @return
- */
-	ISearchScope getScope();
+public interface ISearchScopeFactory {
+	ISearchScope createSearchScope(IPreferenceStore store);
 }

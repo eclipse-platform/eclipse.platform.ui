@@ -43,9 +43,15 @@
    </element>
 
    <element name="engine">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="label" icon="icon"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
+            <element ref="subpage" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -84,7 +90,24 @@
          <attribute name="pageClass" type="string">
             <annotation>
                <documentation>
-                  a fully qualified name of a class that implements IScopeEditor interface. The class will be used to provide for advanced search configuration when requested by the user.
+                  a fully qualified name of the class that extends &lt;code&gt;org.eclipse.help.ui.RootScopePage&lt;/code&gt; class. This page holds the master switch for the search engine and is responsible for creating search scope object from the preference store.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.help.ui.RootScopePage"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="enabled" type="boolean">
+            <annotation>
+               <documentation>
+                  if &lt;code&gt;true&lt;/code&gt;, the engine will initially be enabled. Users can override this value in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="scopeFactory" type="string">
+            <annotation>
+               <documentation>
+                  a fully qualified name of the class that implements &lt;code&gt;org.eclipse.help.ui.ISearchScopeFactory&lt;/code&gt;. The factory is responsible for creating ISearchScope objects out of settings stored in IPreferenceStore class. If &lt;code&gt;pageClass&lt;/code&gt; is specified, scope factory must be specified as well.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -103,6 +126,53 @@
             a short description of the search engine
          </documentation>
       </annotation>
+   </element>
+
+   <element name="subpage">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="label"/>
+         </appInfo>
+         <documentation>
+            a child page to the root page defined in the &lt;code&gt;engine&lt;/code&gt; element. Child pages cannot be defined if &lt;code&gt;pageClass&lt;/code&gt; engine attribute is not defined.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  a fully qualified name of a class that implements &lt;code&gt;ISearchScopePage&lt;/code&gt; interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.help.ui.ISearchScopePage"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="category" type="string" use="required">
+            <annotation>
+               <documentation>
+                  id of a parent subpage or engine id if the parent is the root page.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
    </element>
 
    <annotation>

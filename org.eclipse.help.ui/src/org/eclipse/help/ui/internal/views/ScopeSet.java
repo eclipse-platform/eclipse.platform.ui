@@ -29,6 +29,17 @@ public class ScopeSet {
 		this.name = name;
 	}
 
+	public ScopeSet(ScopeSet set) {
+		this(set.getName()+"_new");
+		copy((PreferenceStore)set.getPreferenceStore());
+	}
+	
+	public void dispose() {
+		File file = new File(getFileName(name));
+		if (file.exists())
+			file.delete();
+	}
+
 	public IPreferenceStore getPreferenceStore() {
 		if (preferenceStore==null) {
 			preferenceStore = new PreferenceStore(getFileName(this.name));
@@ -49,6 +60,21 @@ public class ScopeSet {
 		location = location.append(SCOPE_DIR_NAME);
 		location = location.append(name+".pref");
 		return location.toOSString();
+	}
+
+	private void copy(PreferenceStore store) {
+		try {
+			File file = File.createTempFile("sset", null);
+			FileOutputStream fos = new FileOutputStream(file);
+			store.save(fos, "");
+			fos.close();
+			FileInputStream fis = new FileInputStream(file);
+			getPreferenceStore();
+			preferenceStore.load(fis);
+			fis.close();
+		}
+		catch (IOException e) {
+		}
 	}
 	/**
 	 * @return Returns the name.
@@ -85,13 +111,30 @@ public class ScopeSet {
 	}
 
 	public void save() {
-		if (preferenceStore!=null && preferenceStore.needsSaving()) {
+		if (preferenceStore!=null && (preferenceStore.needsSaving() || needsSaving)) {
 			try {
 				preferenceStore.save();
+				needsSaving = false;
 			}
 			catch (IOException e) {
 				//TODO handle this
 			}
 		}
+	}
+	
+	public boolean getEngineEnabled(EngineDescriptor desc) {
+		IPreferenceStore store = getPreferenceStore();
+		String key = getMasterKey(desc.getId());
+		if (store.contains(key))
+			return store.getBoolean(key);
+		return desc.isEnabled();
+	}
+	public void setEngineEnabled(EngineDescriptor desc, boolean value) {
+		IPreferenceStore store = getPreferenceStore();
+		String key = getMasterKey(desc.getId());
+		store.setValue(key, value);
+	}
+	public static String getMasterKey(String id) {
+		return id + ".master";
 	}
 }

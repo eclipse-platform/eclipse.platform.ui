@@ -91,9 +91,11 @@
    <extension
          point="org.eclipse.help.ui.searchEngine">
       <engine
+            enabled="true"
             label="Local Help"
             class="dsdad"
-            id="org.eclipse.help.ui.localSearch">
+            id="org.eclipse.help.ui.localSearch"
+            pageClass="org.eclipse.help.ui.internal.views.DummyRootPage">
          <description>
             Searches the best help system in the world, but only locally.
          </description>
@@ -101,6 +103,7 @@
       <engine
             label="Google"
             class="org.eclipse.hel"
+            pageClass="org.eclipse.help.ui.internal.views.DummyRootPage"
             id="org.eclipse.help.ui.google">
          <description>
             Searches another  best system in the world on the Web (but not locally). We should have bought Google when it was $5 :-(.
@@ -110,6 +113,7 @@
       <engine
             label="Eclipse.org"
             class="org.eclipse.help.ui.engine3"
+            pageClass="org.eclipse.help.ui.internal.views.DummyRootPage"
             id="org.eclipse.help.ui.eclipse">
          <description>
             Searches mailing lists, news groups, articles and other documents on Eclipse.org web site.

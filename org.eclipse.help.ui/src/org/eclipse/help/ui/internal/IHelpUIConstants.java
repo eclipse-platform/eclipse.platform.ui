@@ -37,6 +37,8 @@ public interface IHelpUIConstants {
 	public static final String HV_SEARCH = "search";
 	public static final String HV_FSEARCH = "fsearch";
 	public static final String HV_SEARCH_RESULT = "search-result";
+	public static final String HV_FSEARCH_RESULT = "fsearch-result";
+	
 	public static final String HV_TOPIC_TREE = "topic-tree";
 	public static final String HV_SEE_ALSO = "see-also";
 	public static final String HV_BROWSER = "browser";
@@ -46,5 +48,16 @@ public interface IHelpUIConstants {
 	public static final String HV_FSEARCH_PAGE = "fsearch-page";
 	public static final String HV_ALL_TOPICS_PAGE = "all-topics-page";
 	public static final String HV_BROWSER_PAGE = "browser-page";
-	public static final String HV_CONTEXT_HELP_PAGE = "context-help-page";	
+	public static final String HV_CONTEXT_HELP_PAGE = "context-help-page";
+
+	static final String ENGINE_EXP_ID = "org.eclipse.help.ui.searchEngine";
+	static final String ATT_ID = "id";
+	static final String ATT_LABEL ="label"; //$NON-NLS-1$
+	static final String ATT_ICON = "icon";//$NON-NLS-1$
+	static final String ATT_CLASS = "class";//$NON-NLS-1$
+	static final String ATT_ENABLED = "enabled";
+	static final String ATT_PAGE_CLASS = "pageClass";//$NON-NLS-1$
+	static final String ATT_CATEGORY = "category";//$NON-NLS-1$
+	static final String EL_DESC = "description"; //$NON-NLS-1$
+	static final String ATT_SCOPE_FACTORY = "scopeFactory";
 }

@@ -307,7 +307,8 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		pages = new ArrayList();
 		// federated search page
 		HelpPartPage page = new HelpPartPage(HV_FSEARCH_PAGE, HelpUIResources.getString("ReusableHelpPart.searchPage.name")); //$NON-NLS-1$
-		page.addPart(HV_FSEARCH, false, true);
+		page.addPart(HV_FSEARCH, false);
+		page.addPart(HV_FSEARCH_RESULT, true);
 		page.addPart(HV_SEE_ALSO, false);
 		pages.add(page);
 		// all topics page

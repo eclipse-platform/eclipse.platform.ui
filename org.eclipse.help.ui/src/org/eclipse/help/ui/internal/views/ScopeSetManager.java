@@ -26,6 +26,7 @@ public class ScopeSetManager {
 	private ArrayList sets;
 
 	public ScopeSetManager() {
+		ensureLocation();
 		loadScopeSets();
 	}
 
@@ -38,10 +39,22 @@ public class ScopeSetManager {
 	}
 
 	public void setActiveSet(ScopeSet set) {
+		if (this.activeSet!=null) {
+			this.activeSet.save();
+		}
 		this.activeSet = set;
+	}
+	
+	public static void ensureLocation() {
+		IPath location = HelpUIPlugin.getDefault().getStateLocation();
+		location = location.append("scope_sets");
+		File dir = location.toFile();
+		if (dir.exists()==false)
+			dir.mkdir();
 	}
 
 	public void save() {
+		ensureLocation();
 		for (int i = 0; i < sets.size(); i++) {
 			ScopeSet set = (ScopeSet) sets.get(i);
 			set.save();
@@ -77,6 +90,9 @@ public class ScopeSetManager {
 				}
 			}
 		}
+		if (sets.size()==1) {
+			activeSet = (ScopeSet)sets.get(0);
+		}
 	}
 
 	/**
@@ -90,11 +106,17 @@ public class ScopeSetManager {
 			if (name != null) {
 				activeSet = findSet(name);
 			}
+			else {
+				// no active sets - create the default
+				activeSet = new ScopeSet("Default");
+				activeSet.save();
+				sets.add(activeSet);
+			}
 		}
 		return activeSet;
 	}
 
-	private ScopeSet findSet(String name) {
+	public ScopeSet findSet(String name) {
 		for (int i = 0; i < sets.size(); i++) {
 			ScopeSet set = (ScopeSet) sets.get(i);
 			if (set.getName().equals(name))
