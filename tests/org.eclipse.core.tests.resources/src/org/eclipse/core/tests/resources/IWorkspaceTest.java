@@ -13,6 +13,7 @@ package org.eclipse.core.tests.resources;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
@@ -1024,6 +1025,7 @@ public void testValidateProjectLocation() {
 	} catch (CoreException e) {
 		fail("9.99", e);
 	}
+	IPath linkLocation = getRandomLocation();
 	try {
 		//indirect test: setting the project description may validate location, which shouldn't complain
 		IProjectDescription desc = open.getDescription();
@@ -1037,9 +1039,21 @@ public void testValidateProjectLocation() {
 		assertTrue("9.3", workspace.validateProjectLocation(open, openProjectLocation).isOK());
 		assertTrue("9.4", !workspace.validateProjectLocation(open, openProjectLocation.append("sub")).isOK());
 		
+		//an existing project cannot overlap the location of any linked resource in that project
+		linkLocation.toFile().mkdirs();
+		assertTrue("10.1", workspace.validateProjectLocation(open, linkLocation).isOK());
+		IFolder link = open.getFolder("link");
+		link.createLink(linkLocation, IResource.NONE, getMonitor());
+		assertTrue("10.2", !workspace.validateProjectLocation(open, linkLocation).isOK());
+		assertTrue("10.3", !workspace.validateProjectLocation(open, linkLocation.append("sub")).isOK());
+		
+		//however another project can overlap an existing link location
+		assertTrue("10.4", workspace.validateProjectLocation(project, linkLocation).isOK());
+		
 	} catch (CoreException e) {
-		fail("9.5", e);
+		fail("9.99", e);
 	} finally {
+		Workspace.clear(linkLocation.toFile());
 		//make sure we clean up project directories
 		try {
 			open.delete(IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
