@@ -194,6 +194,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		if(input != null) {
 			viewer.setInput(input.getFilteredSyncSet());
 		}
+		viewer.getControl().setFocus();
 	}
 
 	private void createTreeViewerPartControl(Composite parent) {
