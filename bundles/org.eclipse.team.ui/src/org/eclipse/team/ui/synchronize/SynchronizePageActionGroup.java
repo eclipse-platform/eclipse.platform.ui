@@ -18,6 +18,7 @@ import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.actions.ActionGroup;
 
 /**
@@ -207,7 +208,7 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 		IContributionItem group = findGroup(manager, groupId);
 		if (group != null) {
 			manager.appendToGroup(group.getId(), action);
-			configuration.getSite().getActionBars().setGlobalActionHandler(action.getId(), action);
+			registerActionWithWorkbench(action);
 			return true;
 		}
 		return false;
@@ -248,10 +249,24 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 	 * @param action the action to be added
 	 */
 	protected void appendToGroup(String menuId, String groupId, IAction action) {
-		configuration.getSite().getActionBars().setGlobalActionHandler(action.getId(), action);
+		registerActionWithWorkbench(action);
 		internalAppendToGroup(menuId, groupId, action);
 	}
 	
+	/**
+	 * Register this action with the workbench so that it can participate in keybindings and
+	 * retargetable actions.
+	 * 
+	 * @param action the action to register
+	 */
+	private void registerActionWithWorkbench(IAction action) {
+		ISynchronizePageSite site = configuration.getSite();
+		site.getActionBars().setGlobalActionHandler(action.getId(), action);
+		IKeyBindingService keyBindingService = site.getKeyBindingService();
+		if(keyBindingService != null)
+			keyBindingService.registerAction(action);
+	}
+
 	/**
 	 * Helper method that can be invoked during initialization to add an item to
 	 * a particular menu (one of P_TOOLBAR_MENU, P_VIEW_MENU, P_CONTEXT_MENU

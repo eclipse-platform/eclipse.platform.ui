@@ -1185,6 +1185,45 @@
             category="org.eclipse.team.cvs.ui.actionSet"
             name="%IgnoreAction.name"
             id="org.eclipse.team.cvs.ui.ignore"/>
+      <handlerSubmission
+            handler="org.eclipse.team.internal.ccvs.ui.actions.CommitAction"
+            commandId="org.eclipse.team.cvs.ui.commit"/>      
+      <handlerSubmission
+            commandId="org.eclipse.team.cvs.ui.ignore"
+            handler="org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction"/>
+      <handlerSubmission
+            commandId="org.eclipse.team.cvs.ui.add"
+            handler="org.eclipse.team.internal.ccvs.ui.actions.AddAction"/>
+	  <handlerSubmission               
+            commandId="org.eclipse.team.cvs.ui.showHistory"
+            handler="org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction"/>
+      <handlerSubmission
+            commandId="org.eclipse.team.cvs.ui.showAnnotation"
+            handler="org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction"/>
+	  <handlerSubmission
+      		commandId="org.eclipse.team.cvs.ui.setKeywordSubstitution"
+            handler="org.eclipse.team.internal.ccvs.ui.actions.SetKeywordSubstitutionAction"/>
+	  <handlerSubmission
+      		commandId="org.eclipse.team.cvs.ui.updateSwitch"
+            handler="org.eclipse.team.internal.ccvs.ui.actions.UpdateAction"/>
+	  <handlerSubmission
+      		handler="org.eclipse.team.internal.ccvs.ui.actions.MergeAction"
+            commandId="org.eclipse.team.cvs.ui.merge"/>
+      <handlerSubmission
+      		handler="org.eclipse.team.internal.ccvs.ui.actions.BranchAction"
+            commandId="org.eclipse.team.cvs.ui.branch"/>
+      <handlerSubmission
+      		handler="org.eclipse.team.internal.ccvs.ui.actions.TagLocalAction"
+            commandId="org.eclipse.team.cvs.ui.tag"/>
+      <handlerSubmission
+      		commandId="org.eclipse.team.cvs.ui.GenerateDiff"
+            handler="org.eclipse.team.internal.ccvs.ui.actions.GenerateDiffFileAction"/>
+      <handlerSubmission
+      		handler="org.eclipse.team.internal.ccvs.ui.actions.UpdateSilentAction"
+            commandId="org.eclipse.team.cvs.ui.update"/>
+      <handlerSubmission
+      		commandId="org.eclipse.team.ui.synchronizeLast"
+            handler="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"/>      
    </extension>
    
 <!-- ********** Color and Font Definitions ************** -->   

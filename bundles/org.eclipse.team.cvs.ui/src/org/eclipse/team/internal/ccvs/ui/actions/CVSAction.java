@@ -35,6 +35,9 @@ import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.RetargetAction;
+import org.eclipse.ui.commands.*;
+import org.eclipse.ui.commands.ExecutionException;
+import org.eclipse.ui.commands.IHandlerListener;
 import org.eclipse.ui.ide.IDE;
 
 /**
@@ -42,7 +45,7 @@ import org.eclipse.ui.ide.IDE;
  * facilities for enablement handling, standard error handling, selection
  * retrieval and prompting.
  */
-abstract public class CVSAction extends TeamAction implements IEditorActionDelegate {
+abstract public class CVSAction extends TeamAction implements IEditorActionDelegate, IHandler {
 	
 	private List accumulatedStatus = new ArrayList();
 	private RetargetAction retargetAction;
@@ -569,6 +572,72 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 		return Utils.getResources(selection.toArray());
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
+	 */
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
+	}
+	
+	/**
+	 * This method is called by the platform UI framework when a command is run for
+	 * which this action is the handler. The handler doesn't have an explicit context, for
+	 * example unlike a view, editor, or workenchwindow actions, they are not initialized
+	 * with a part. As a result when the action is run it will use the selection service
+	 * to determine to elements on which to perform the action.
+	 * <p>
+	 * CVS actions should ensure that they can run without a proxy action. Meaning that
+	 * <code>selectionChanged</code> and <code>run</code> should support passing
+	 * <code>null</code> as the IAction parameter.
+	 * </p>
+	 * @param parameterValuesByName
+	 * @return
+	 * @throws ExecutionException
+	 */
+	public Object execute(Map parameterValuesByName) throws ExecutionException {
+		try {
+			IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			if(activeWorkbenchWindow!= null) {
+				IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
+				if(activePage!= null) {
+					// Prime the action with the selection
+					selectionChanged((IAction)null, activePage.getSelection());
+					// Safe guard to ensure that the action is only run when enabled. 
+					if(isEnabled()) {
+						execute((IAction)null);
+					} else {
+						MessageDialog.openInformation(activeWorkbenchWindow.getShell(), 
+								Policy.bind("CVSAction.handlerNotEnabledTitle"), //$NON-NLS-1$
+								Policy.bind("CVSAction.handlerNotEnabledMessage")); //$NON-NLS-1$
+					}
+				}
+			}
+		} catch (InvocationTargetException e) {
+			throw new ExecutionException(Policy.bind("CVSAction.errorTitle"), e); //$NON-NLS-1$
+		} catch (InterruptedException e) {
+			throw new ExecutionException(Policy.bind("CVSAction.errorTitle"), e); //$NON-NLS-1$
+		} catch (TeamException e) {
+			throw new ExecutionException(Policy.bind("CVSAction.errorTitle"), e); //$NON-NLS-1$
+		}
+		return Boolean.TRUE;
+	}
+
+	/**
+	 * No-op. These handlers don't have any interesting properties.
+	 * @return an empty attribute map
+	 * @since 3.1
+	 */
+	public Map getAttributeValuesByName() {
+		return new HashMap();
+	}
+
+	/**
+	 * No-op. These handlers won't have any interesting property changes. There is
+	 * no need to notify listeners.
+	 * @param handlerListener
+	 * @since 3.1
+	 */
+	public void removeHandlerListener(IHandlerListener handlerListener) {
+	}
+	public void addHandlerListener(IHandlerListener handlerListener) {
 	}
 }
