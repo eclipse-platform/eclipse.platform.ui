@@ -154,26 +154,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	}
 
 	protected Image getLauncherImage(ILauncher launcher) {
-		String iconPath = launcher.getIconPath();
-		if (iconPath != null) {
-			// return custom image
-			ImageRegistry registry = DebugPluginImages.getImageRegistry();
-			Image image = registry.get(launcher.getIdentifier());
-			if (image == null) {
-				URL iconURL = launcher.getConfigurationElement().getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL();
-				ImageDescriptor desc = ImageDescriptor.getMissingImageDescriptor();
-				try {
-					iconURL = new URL(iconURL, iconPath);			
-					desc= ImageDescriptor.createFromURL(iconURL);
-				} catch (MalformedURLException e) {
-				} 
-				DebugPluginImages.getImageRegistry().put(launcher.getIdentifier(), desc);				
-				return registry.get(launcher.getIdentifier());
-			} else {
-				return image;
-			}
-		}
-		return null;
+		return DebugPluginImages.getImage(launcher.getIdentifier());
 	}
 	
 	/**

@@ -5,13 +5,16 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
 
 /**
  * The images provided by the debug plugin.
@@ -124,6 +127,24 @@ public class DebugPluginImages {
 		//Wizard Banners
 		declareRegistryImage(IDebugUIConstants.IMG_WIZBAN_DEBUG, WIZBAN + "debug_wiz.gif");
 		declareRegistryImage(IDebugUIConstants.IMG_WIZBAN_RUN, WIZBAN + "run_wiz.gif");
+		
+		// launchers
+		ILauncher[] launchers = DebugPlugin.getDefault().getLaunchManager().getLaunchers();
+		for (int i = 0; i < launchers.length; i++) {
+			ILauncher launcher = launchers[i];
+			String iconPath = launcher.getIconPath();
+			if (iconPath != null) {
+				URL iconURL = launcher.getConfigurationElement().getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL();
+				ImageDescriptor desc = ImageDescriptor.getMissingImageDescriptor();
+				try {
+					iconURL = new URL(iconURL, iconPath);			
+					desc= ImageDescriptor.createFromURL(iconURL);
+				} catch (MalformedURLException e) {
+				} 
+				imageRegistry.put(launcher.getIdentifier(), desc);				
+				imageDescriptors.put(launcher.getIdentifier(), desc);
+			}
+		}
 	}
 
 	/**

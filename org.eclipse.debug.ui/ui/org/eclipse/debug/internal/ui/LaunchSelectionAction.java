@@ -6,10 +6,12 @@ package org.eclipse.debug.internal.ui;
  */
 
 import java.text.MessageFormat;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -17,6 +19,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -39,11 +42,13 @@ public class LaunchSelectionAction extends Action {
 		fMode= mode;
 		fElement= element;
 		setText(new DelegatingModelPresentation().getText(launcher));
-		ImageDescriptor descriptor= null;
-		if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
-			descriptor= DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_DEBUG);
-		} else {
-			descriptor= DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN);
+		ImageDescriptor descriptor= DebugPluginImages.getImageDescriptor(launcher.getIdentifier());
+		if (descriptor == null) {
+			if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
+				descriptor= DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_DEBUG);
+			} else {
+				descriptor= DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN);
+			}
 		}
 
 		if (descriptor != null) {
