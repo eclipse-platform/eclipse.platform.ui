@@ -115,7 +115,7 @@ public void run() {
  */
 public void activate(IWorkbenchPage page,Object selection) {
 	if(selection != null) {
-		if (selection instanceof IEditorPart) {
+		if (selection instanceof IEditorReference) {
 			page.setEditorAreaVisible(true);
 		}
 		page.activate(((IWorkbenchPartReference)selection).getPart(true));
