@@ -492,7 +492,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			// Backup old file
 			File oldConfigFile = new File(cfigDir, CONFIG_NAME);
 			if (oldConfigFile.exists()){
-				File backupDir = new File(cfigDir, CONFIG_HISTORY);
+				File backupDir = new File(cfigDir, ConfigurationActivator.NAME_SPACE + File.separator+ CONFIG_HISTORY);
 				if (!backupDir.exists())
 					backupDir.mkdir();
 				File preservedFile = new File(backupDir, String.valueOf(oldConfigFile.lastModified())+".xml");
@@ -638,11 +638,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 					// pre-initialized config loaded OK ... copy any remaining update metadata
 					// Only copy if the default config location is not the install location
 					if (!sharedConfigFileURL.equals(configFileURL)) {
-//						if (true)
 							// need to link config info instead of using a copy
 							linkInitializedState(config, parentLocation, platformConfigLocation);
-//						else
-//							// copy config info
 //							copyInitializedState(sharedConfigDirURL, configPath);
 						
 						Utils.debug("Configuration initialized from    " + sharedConfigFileURL.toString()); //$NON-NLS-1$

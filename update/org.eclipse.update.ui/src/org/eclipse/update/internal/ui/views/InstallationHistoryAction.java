@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.update.configurator.*;
+import org.eclipse.update.internal.configurator.*;
 import org.eclipse.update.internal.ui.*;
 
 public class InstallationHistoryAction extends Action {
@@ -37,7 +38,7 @@ public class InstallationHistoryAction extends Action {
 				.getCurrentPlatformConfiguration()
 				.getConfigurationLocation()
 				.getFile();
-		path = new Path(location).removeLastSegments(1).append(".install-log"); //$NON-NLS-1$
+		path = new Path(location).removeLastSegments(1).append(ConfigurationActivator.NAME_SPACE).append("install.log"); //$NON-NLS-1$
 		rowType = "light-row"; //$NON-NLS-1$
 	}
 

@@ -99,13 +99,24 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		
 		installURL = platform.getInstallURL();
 		configLocation = platform.getConfigurationLocation();
+		// create the name space directory for update (configuration/org.eclipse.update)
+		if (!configLocation.isReadOnly()) {
+			try {
+				URL privateURL = new URL(configLocation.getURL(), NAME_SPACE);
+				File f = new File(privateURL.getFile());
+				if(!f.exists())
+					f.mkdirs();
+			} catch (MalformedURLException e1) {
+				// ignore
+			}
+		}
 		configurationFactorySR = context.registerService(IPlatformConfigurationFactory.class.getName(), new PlatformConfigurationFactory(), null);
 		configuration = getPlatformConfiguration(installURL, configLocation);
 		if (configuration == null)
 			throw Utils.newCoreException("Cannot create configuration in " + configLocation.getURL(), null);
 
 		try {
-			DataInputStream stream = new DataInputStream(new URL(configLocation.getURL(),LAST_CONFIG_STAMP).openStream());
+			DataInputStream stream = new DataInputStream(new URL(configLocation.getURL(),NAME_SPACE+'/'+LAST_CONFIG_STAMP).openStream());
 			lastTimeStamp = stream.readLong();
 			stream.close();
 		} catch (Exception e) {
@@ -315,7 +326,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			
 			String configArea = configLocation.getURL().getFile();
 			lastTimeStamp = configuration.getChangeStamp();
-			DataOutputStream stream = new DataOutputStream(new FileOutputStream(configArea +File.separator+ LAST_CONFIG_STAMP));
+			DataOutputStream stream = new DataOutputStream(new FileOutputStream(configArea +File.separator+ NAME_SPACE+ File.separator+ LAST_CONFIG_STAMP));
 			stream.writeLong(lastTimeStamp);
 		} catch (Exception e) {
 			Utils.log(e.getLocalizedMessage());

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.configurator.*;
 import org.eclipse.update.internal.operations.*;
 
 
@@ -50,7 +51,7 @@ public class InstallLogParser {
 	
 	public InstallLogParser(){
 		String loc = ConfiguratorUtils.getCurrentPlatformConfiguration().getConfigurationLocation().getFile();
-		logPath = new Path(loc).removeLastSegments(1).append(".install-log"); 
+		logPath = new Path(loc).removeLastSegments(1).append(ConfigurationActivator.NAME_SPACE).append("install.log"); 
 		installConfigMap = new HashMap();
 		try {
 			InstallConfiguration[] configs = (InstallConfiguration[])SiteManager.getLocalSite().getConfigurationHistory();

@@ -17,6 +17,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.configurator.*;
+import org.eclipse.update.internal.configurator.*;
 
 
 /**
@@ -27,7 +28,7 @@ public class ErrorRecoveryLog {
 
 	public static final boolean RECOVERY_ON = false;
 
-	private static final String ERROR_RECOVERY_LOG = "platform.xml.log";
+	private static final String ERROR_RECOVERY_LOG = "error_recovery.log";
 	private static final String LOG_ENTRY_KEY = "LogEntry.";
 	private static final String RETURN_CARRIAGE = "\r\n";
 	private static final String END_OF_FILE = "eof=eof";
@@ -108,7 +109,7 @@ public class ErrorRecoveryLog {
 		String locationString = location.getFile();
 		File platformConfiguration = new File(locationString);
 		if (!platformConfiguration.isDirectory()) platformConfiguration = platformConfiguration.getParentFile();
-		return new File(platformConfiguration, ERROR_RECOVERY_LOG);
+		return new File(platformConfiguration, ConfigurationActivator.NAME_SPACE + File.separator + ERROR_RECOVERY_LOG);
 	}
 
 

@@ -15,6 +15,7 @@ import java.util.*;
 
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.configurator.*;
 
 /**
  * Keeps track of all the features and plugins installed by Update mgr
@@ -46,7 +47,7 @@ public class InstallRegistry extends Properties {
 				.getFile();
 		file = new File(configFile);
 		file = file.getParentFile();
-		file = new File(file, REGISTRY);
+		file = new File(file, ConfigurationActivator.NAME_SPACE + File.separator + REGISTRY);
 		restore();
 	}
 
