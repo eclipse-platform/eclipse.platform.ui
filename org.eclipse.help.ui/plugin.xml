@@ -101,4 +101,13 @@
      </actionSet>
  </extension>
 
+   <!-- Help System Application -->
+   <!-- =============================== -->
+   <extension id="helpapp" point="org.eclipse.core.runtime.applications">
+     <application> 
+        <run class="org.eclipse.help.internal.ui.standalone.HelpApplication">
+        </run>
+     </application>
+   </extension>
+   
 </plugin>
