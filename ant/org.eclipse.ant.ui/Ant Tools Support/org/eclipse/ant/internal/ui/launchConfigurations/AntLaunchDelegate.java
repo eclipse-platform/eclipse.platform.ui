@@ -98,9 +98,9 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		
 		// resolve working directory
 		IPath workingDirectory = ExternalToolsUtil.getWorkingDirectory(configuration);
-		String baseDir = null;
+		String basedir = null;
 		if (workingDirectory != null) {
-			baseDir = workingDirectory.toOSString();
+			basedir= workingDirectory.toOSString();
 		}
 		monitor.worked(1);
 		
@@ -118,21 +118,6 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		
 		// resolve arguments
 		String[] arguments = ExternalToolsUtil.getArguments(configuration);
-		int argLength = 1; // at least one user property - timestamp
-		if (arguments != null) {
-			argLength += arguments.length;
-		}		
-		if (baseDir != null && baseDir.length() > 0) {
-			argLength++;
-		}
-		String[] runnerArgs = new String[argLength];
-		if (arguments != null) {
-			System.arraycopy(arguments, 0, runnerArgs, 0, arguments.length);
-		}
-		if (baseDir != null && baseDir.length() > 0) {
-			runnerArgs[runnerArgs.length - 2] = BASE_DIR_PREFIX + baseDir;
-		}
-		runnerArgs[runnerArgs.length -1] = idProperty.toString();
 		
 		Map userProperties= AntUtil.getProperties(configuration);
 		String[] propertyFiles= AntUtil.getPropertyFiles(configuration);
@@ -142,34 +127,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		
 		AntRunner runner= null;
 		if (vmTypeID == null) {
-			runner= new AntRunner();
-			runner.setBuildFileLocation(location.toOSString());
-			if (ExternalToolsUtil.getCaptureOutput(configuration)) {
-				runner.addBuildLogger(ANT_LOGGER_CLASS);
-			} else {
-				runner.addBuildLogger(NULL_LOGGER_CLASS);
-			}
-			runner.setInputHandler(INPUT_HANDLER_CLASS);
-			runner.setArguments(runnerArgs);
-			if (userProperties != null) {
-				runner.addUserProperties(userProperties);
-			}
-
-			if (propertyFiles != null) {
-				runner.setPropertyFiles(propertyFiles);
-			}
-
-			if (targets != null) {
-				runner.setExecutionTargets(targets);
-			}
-
-			if (customClasspath != null) {
-				runner.setCustomClasspath(customClasspath);
-			}
-
-			if (antHome != null) {
-				runner.setAntHome(antHome);
-			}
+			runner = configureAntRunner(configuration, location, basedir, idProperty, arguments, userProperties, propertyFiles, targets, customClasspath, antHome);
 		}
 		 
 		monitor.worked(1);
@@ -186,13 +144,20 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			userProperties.put(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
 			userProperties.put("eclipse.connect.port", Integer.toString(port)); //$NON-NLS-1$
 		}
-		StringBuffer commandLine= generateCommandLine(location, arguments, userProperties, propertyFiles, targets, antHome, vmTypeID != null);
+		StringBuffer commandLine= generateCommandLine(location, arguments, userProperties, propertyFiles, targets, antHome, basedir, vmTypeID != null);
+		
 		if (vmTypeID != null) {
 			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Launching_{0}_1"), new String[] {configuration.getName()}), 10); //$NON-NLS-1$
 			runInSeparateVM(configuration, launch, monitor, idStamp, port, commandLine);
-			return;
+		} else {
+			runInSameVM(configuration, launch, monitor, location, idStamp, runner, commandLine);
 		}
-		Map attributes= new HashMap();
+		
+		monitor.done();	
+	}
+	
+	private void runInSameVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, IPath location, String idStamp, AntRunner runner, StringBuffer commandLine) throws CoreException {
+		Map attributes= new HashMap(2);
 		attributes.put(IProcess.ATTR_PROCESS_TYPE, IAntLaunchConfigurationConstants.ID_ANT_PROCESS_TYPE);
 		attributes.put(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
 				
@@ -214,11 +179,11 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			Thread background = new Thread(r);
 			background.start();
 			monitor.worked(1);
-			// refresh resources after process finishes
+			//refresh resources after process finishes
 			if (RefreshTab.getRefreshScope(configuration) != null) {
 				BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(configuration, process);
 				refresher.startBackgroundRefresh();
-			}				
+			}	
 		} else {
 			// execute the build 
 			try {
@@ -233,11 +198,57 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			
 			// refresh resources
 			RefreshTab.refreshResources(configuration, monitor);
-		}	
-		
-		monitor.done();	
+		}
 	}
-	
+
+	private AntRunner configureAntRunner(ILaunchConfiguration configuration, IPath location, String baseDir, StringBuffer idProperty, String[] arguments, Map userProperties, String[] propertyFiles, String[] targets, URL[] customClasspath, String antHome) throws CoreException {
+		int argLength = 1; // at least one user property - timestamp
+		if (arguments != null) {
+			argLength += arguments.length;
+		}		
+		if (baseDir != null && baseDir.length() > 0) {
+			argLength++;
+		}
+		String[] runnerArgs = new String[argLength];
+		if (arguments != null) {
+			System.arraycopy(arguments, 0, runnerArgs, 0, arguments.length);
+		}
+		if (baseDir != null && baseDir.length() > 0) {
+			runnerArgs[runnerArgs.length - 2] = BASE_DIR_PREFIX + baseDir;
+		}
+		runnerArgs[runnerArgs.length -1] = idProperty.toString();
+		
+		AntRunner runner= new AntRunner();
+		runner.setBuildFileLocation(location.toOSString());
+		if (ExternalToolsUtil.getCaptureOutput(configuration)) {
+			runner.addBuildLogger(ANT_LOGGER_CLASS);
+		} else {
+			runner.addBuildLogger(NULL_LOGGER_CLASS);
+		}
+		runner.setInputHandler(INPUT_HANDLER_CLASS);
+		runner.setArguments(runnerArgs);
+		if (userProperties != null) {
+			runner.addUserProperties(userProperties);
+		}
+
+		if (propertyFiles != null) {
+			runner.setPropertyFiles(propertyFiles);
+		}
+
+		if (targets != null) {
+			runner.setExecutionTargets(targets);
+		}
+
+		if (customClasspath != null) {
+			runner.setCustomClasspath(customClasspath);
+		}
+
+		if (antHome != null) {
+			runner.setAntHome(antHome);
+		}
+		return runner;
+	}
+
 	private void handleException(final CoreException e, final String title) {
 		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
 		if (store.getBoolean(IAntUIPreferenceConstants.ANT_ERROR_DIALOG)) {
@@ -260,7 +271,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		TaskLinkManager.registerAntBuild(process);
 	}
 
-	private StringBuffer generateCommandLine(IPath location, String[] arguments, Map userProperties, String[] propertyFiles, String[] targets, String antHome, boolean separateVM) {
+	private StringBuffer generateCommandLine(IPath location, String[] arguments, Map userProperties, String[] propertyFiles, String[] targets, String antHome, String basedir, boolean separateVM) {
 		StringBuffer commandLine= new StringBuffer();
 
 		if (!separateVM) {
@@ -316,6 +327,10 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			if (property.getValue() != null && (userProperties == null || userProperties.get(key) == null)) {
 				appendProperty(commandLine, key, property.getValue());
 			}
+		}
+		
+		if (basedir != null && basedir.length() > 0) {
+			appendProperty(commandLine, "basedir", basedir); //$NON-NLS-1$
 		}
 		
 		if (antHome != null) {
