@@ -88,6 +88,7 @@ public class RevertSelectionAction extends QuickDiffRestoreAction {
 			try {
 				differ.revertSelection(fStartLine, fEndLine - fStartLine + 1);
 			} catch (BadLocationException e) {
+				setStatus(e.getMessage());
 			}
 		}
 	}

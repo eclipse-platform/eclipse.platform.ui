@@ -255,7 +255,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	 * @return the selection in the document displayed in <code>viewer</code> containing <code>line</code> 
 	 * that is covered by the hover information returned by the receiver.
 	 */
-	private Point computeLineRange(ISourceViewer viewer, int line, int min, int max) {
+	protected Point computeLineRange(ISourceViewer viewer, int line, int min, int max) {
 		/* Algorithm: 
 		 * All lines that have changes to themselves (added, changed) are taken that form a 
 		 * contiguous block of lines that includes <code>line</code>.

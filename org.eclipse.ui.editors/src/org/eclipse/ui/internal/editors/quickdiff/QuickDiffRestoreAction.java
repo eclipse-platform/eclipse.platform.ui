@@ -25,6 +25,7 @@ import org.eclipse.jface.text.source.LineNumberChangeRulerColumn;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
@@ -131,5 +132,19 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 			return (IVerticalRulerInfo)getTextEditor().getAdapter(IVerticalRulerInfo.class);
 		else
 			return null;
+	}
+
+	/**
+	 * Sets the status line error message to <code>string</code>.
+	 * 
+	 * @param string the message to be displayed as error.
+	 */
+	protected void setStatus(String string) {
+		if (getTextEditor() != null) {
+			IEditorStatusLine statusLine= (IEditorStatusLine) getTextEditor().getAdapter(IEditorStatusLine.class);
+			if (statusLine != null) {
+				statusLine.setMessage(true, string, null);
+			}
+		}
 	}
 }

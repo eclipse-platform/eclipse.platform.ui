@@ -536,7 +536,11 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 	 * @param rulerColumn the decorator to be inserted
 	 */
 	public void addDecorator(int index, IVerticalRulerColumn rulerColumn) {
-		fDecorators.add(index, rulerColumn);
+		if (index > fDecorators.size())
+			fDecorators.add(rulerColumn);
+		else
+			fDecorators.add(index, rulerColumn);
+			
 		if (fComposite != null && !fComposite.isDisposed()) {
 			rulerColumn.createControl(this, fComposite);
 			fComposite.childAdded(rulerColumn.getControl());
@@ -550,16 +554,28 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 	 * @param index the index
 	 */
 	public void removeDecorator(int index) {
-		IVerticalRulerColumn column= (IVerticalRulerColumn) fDecorators.get(index);
-		fDecorators.remove(index);
-		Control cc= column.getControl();
-		if (cc != null && !cc.isDisposed()) {
-			fComposite.childRemoved(cc);
-			cc.dispose();
+		IVerticalRulerColumn rulerColumn= (IVerticalRulerColumn) fDecorators.get(index);
+		removeDecorator(rulerColumn);
+	}
+	
+	/**
+	 * Removes the given decorator from the composite ruler.
+	 * 
+	 * @param rulerColumn the ruler column to be removed
+	 * @since 3.0
+	 */
+	public void removeDecorator(IVerticalRulerColumn rulerColumn) {
+		fDecorators.remove(rulerColumn);
+		if (rulerColumn != null) {
+			Control cc= rulerColumn.getControl();
+			if (cc != null && !cc.isDisposed()) {
+				fComposite.childRemoved(cc);
+				cc.dispose();
+			}
 		}
 		layoutTextViewer();
 	}
-	
+
 	/**
 	 * Relayouts the text viewer. This also causes this ruler to get
 	 * relayouted.

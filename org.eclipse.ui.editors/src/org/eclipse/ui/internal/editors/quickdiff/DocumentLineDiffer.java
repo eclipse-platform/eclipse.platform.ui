@@ -10,26 +10,26 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.quickdiff;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 import java.util.SortedMap;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
@@ -42,11 +42,7 @@ import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.text.source.ILineDiffInfo;
 import org.eclipse.jface.text.source.ILineDiffer;
 
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.editors.quickdiff.*;
-
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.editors.quickdiff.IQuickDiffReferenceProvider;
 
 /**
  * Standard implementation of <code>ILineDiffer</code> as an incremental diff engine. A 
@@ -215,7 +211,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	/** The provider for the reference document. */
 	IQuickDiffReferenceProvider fReferenceProvider;
 	/** Whether this differ is in sync with the model. */
-	private boolean fIsSynchronized= false;
+	private boolean fIsSynchronized;
 	/** The number of clients connected to this model. */
 	private int fOpenConnections;
 	/** Flag, when true, additional lines are not marked deleted. */
@@ -235,6 +231,10 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	final DocumentListener fReferenceListener= new DocumentListener();
 	/** The lines changed in one document modification. The lines are checked whether they are real changes after their application. */
 	private Set fModified= new HashSet();
+	/** The job currently initializing the differ, or <code>null</code> if there is none. */
+	private Job fInitializationJob;
+	/** Stores <code>DocumentEvents</code> while an initialization is going on. */
+	private List fStoredEvents= new ArrayList();
 
 	/**
 	 * Creates a new differ.
@@ -256,14 +256,20 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	/*
 	 * @see org.eclipse.jface.text.source.ILineDiffer#revertLine(int)
 	 */
-	public void revertLine(int line) throws BadLocationException {
+	public synchronized void revertLine(int line) throws BadLocationException {
+		if (!isInitialized())
+			throw new BadLocationException(QuickDiffMessages.getString("quickdiff.nonsynchronized")); //$NON-NLS-1$
+			
 		revertLine(line, false);
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.source.ILineDiffer#revertBlock(int)
 	 */
-	public void revertBlock(int line) throws BadLocationException {
+	public synchronized void revertBlock(int line) throws BadLocationException {
+		if (!isInitialized())
+			throw new BadLocationException(QuickDiffMessages.getString("quickdiff.nonsynchronized")); //$NON-NLS-1$
+
 		/* Grow block forward and backward */
 		final int nLines= fLines.size();
 		if (line < 0 || line >= nLines)
@@ -292,7 +298,10 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	/*
 	 * @see org.eclipse.jface.text.source.ILineDiffer#revertSelection(int, int)
 	 */
-	public void revertSelection(int line, int nLines) throws BadLocationException {
+	public synchronized void revertSelection(int line, int nLines) throws BadLocationException {
+		if (!isInitialized())
+			throw new BadLocationException(QuickDiffMessages.getString("quickdiff.nonsynchronized")); //$NON-NLS-1$
+
 		if (nLines < 1)
 			return;
 
@@ -308,7 +317,10 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	/*
 	 * @see org.eclipse.jface.text.source.ILineDiffer#restoreAfterLine(int)
 	 */
-	public int restoreAfterLine(int line) throws BadLocationException {
+	public synchronized int restoreAfterLine(int line) throws BadLocationException {
+		if (!isInitialized())
+			throw new BadLocationException(QuickDiffMessages.getString("quickdiff.nonsynchronized")); //$NON-NLS-1$
+
 		return internalRestoreAfterLine(line);
 	}
 
@@ -391,8 +403,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	}
 
 	/**
-	 * Initializes this line differ with initial diff information obtained from an outside source
-	 * (e.g. compare). The passed instances of <code>ILineDiffInfo</code> will not be altered and no
+	 * Transforms the passed instances of <code>ILineDiffInfo</code> into the format used internally
+	 * by this class. The passed instances of <code>ILineDiffInfo</code> will not be modified and no
 	 * references to them will be kept inside the differ. The map must be sorted with low line numbers
 	 * first. The passed map must not be empty.
 	 * 
@@ -402,8 +414,10 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * <code>ILineDiffInfo</code>s that will initialize the differ
 	 * @param nLines the number of lines in the document. This number must correspond to the number of 
 	 * lines in the document connected to this instance of <code>ILineDiffer</code>
+	 * @return a <code>List</code> of <code>DiffRegion</code>s in the internal format used by this class 
 	 */
-	void initialize(SortedMap diffs, int nLines) {
+	List initialize(SortedMap diffs, int nLines) {
+		
 		ArrayList table= new ArrayList(nLines);
 
 		int nextChangedLine;
@@ -458,12 +472,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				second.deletedBefore= first.deletedBehind;
 			}
 		}
-
-		// set line table
-		fLines= table;
-		fUpdateNeeded= true;
-		fIsSynchronized= true;
-		fireModelChanged();
+		
+		return table;
 	}
 
 	/**
@@ -472,6 +482,15 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @return <code>true</code> if we are initialized and in sync with the document.
 	 */
 	private boolean isInitialized() {
+		return fIsSynchronized;
+	}
+	
+	/**
+	 * Returns the receivers synchronization state.
+	 * 
+	 * @return <code>true</code> if we are initialized and in sync with the document.
+	 */
+	public synchronized boolean isSynchronized() {
 		return fIsSynchronized;
 	}
 
@@ -503,66 +522,75 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	/**
 	 * (Re-)initializes the differ using the current reference and <code>DiffInitializer</code>
 	 */
-	void initialize() {
-		IRunnableWithProgress runnable= new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				final IDocument actual= getDocument();
-				if (actual != null) {
-					if (monitor != null) {
-						int work= actual.getNumberOfLines();
-						// TODO: strings, work computation etc.
-						// worst case is quadratic max(actual.lines, reference.lines)
-						work= work * (work + 1);
-						monitor.beginTask("QuickDiff Initialization", work);
-//						// but very often its a lot quicker - just let the monitor guess it
-//						monitor.beginTask("QuickDiff Initialization", IProgressMonitor.UNKNOWN);
-
-					}
-					// fetch reference in here, since this might be lengthy
-					final IDocument reference= fReferenceProvider == null ? null : fReferenceProvider.getReference();
-					if (monitor != null && monitor.isCanceled()) {
-						return;
-					}
-					if (reference != null) {
-						fReferenceListener.installDocument(reference);
-						DiffInitializer.initializeDiffer(monitor, DocumentLineDiffer.this, reference, actual);
-					}
-				}
-			}
-		};
-
-		try {
-			Shell shell= getShell();
-			if (shell == null)
-				runnable.run(null);
-//			else 
-//				DelayedProgressMonitor.run(shell, true, true, runnable);
-			else
-				new ProgressMonitorDialog(shell).run(true, true, runnable);
-		} catch (InvocationTargetException e) {
-			// ignore
-		} catch (InterruptedException e) {
-			// user canceled - who cares...
+	synchronized void initialize() {
+		fIsSynchronized= false;
+		
+		// for now: if a later invocation 
+		if (fInitializationJob != null) {
+			fInitializationJob.cancel();
+			fInitializationJob= null;
 		}
-	}
+		
+		// handle updates to the actual document.... should have temporary read-only copy of the documents
+		// the same does not apply for the reference document, since we reinitialize everytime it changes.
+		//
+		// this will block the update of the document (since documentAboutToBeChanged is synchronized)
+		// however, there is no other way to get a consistent known state (?).
+		//		
+		// TODO: use WorkingCopy for this?
+		IDocument current= getDocument();
+		if (current == null)
+			return;
+		final IDocument actual= new Document(current.get());
+		
+		fInitializationJob= new Job(QuickDiffMessages.getString("quickdiff.initialize")) { //$NON-NLS-1$
 
-	/**
-	 * Returns the current shell.
-	 * 
-	 * @return the shell of the currently open window
-	 */
-	private Shell getShell() {
-		// TODO this is a hack
-		WorkbenchPlugin wbp= WorkbenchPlugin.getDefault();
-		if (wbp == null)
-			return null;
-		IWorkbench wb= wbp.getWorkbench();
-		if (wb == null)
-			return null;
-		IWorkbenchWindow activeWindow= wb.getActiveWorkbenchWindow();
-		if (activeWindow == null)
-			return null;
-		return activeWindow.getShell();
+			public IStatus run(IProgressMonitor monitor) {
+				final IDocument reference= fReferenceProvider == null ? null : fReferenceProvider.getReference();
+				if (monitor != null && monitor.isCanceled())
+					return ASYNC_FINISH;
+
+				if (reference == null)
+					return signalDone();
+
+				fReferenceListener.installDocument(reference);
+				SortedMap map= DiffInitializer.initializeDiffer(monitor, reference, actual);
+				List table= initialize(map, actual.getNumberOfLines());
+				
+				// set line table
+				synchronized (DocumentLineDiffer.this) {
+					if (fInitializationJob != this)
+						return signalDone();
+				
+					fInitializationJob= null;
+		
+					fLines= table;
+					fIsSynchronized= true;
+					
+					// reinject events accumulated in the meantime.
+					for (ListIterator iter= fStoredEvents.listIterator(); iter.hasNext();) {
+						DocumentEvent event= (DocumentEvent) iter.next();
+						handleAboutToBeChanged(event);
+						handleChange();
+						iter.remove();
+					}
+			
+					fUpdateNeeded= true;
+				}
+				
+				fireModelChanged();
+				return signalDone();
+			}
+			
+			private IStatus signalDone() {
+				done(ASYNC_FINISH);
+				return ASYNC_FINISH;
+			}
+			
+		};
+		
+		fInitializationJob.setPriority(Job.DECORATE);
+		fInitializationJob.schedule();
 	}
 
 	/**
@@ -579,14 +607,29 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	/*
 	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
-	public void documentAboutToBeChanged(DocumentEvent event) {
+	public synchronized void documentAboutToBeChanged(DocumentEvent event) {
+		// if a initialization is going on, we just store the events in the meantime
+		if (!isInitialized()) {
+			fStoredEvents.add(event);
+			return;
+		}
+
 		/* The invariant must hold before the document is changed. It will be temporarily violated
 		 * after this method and before the changes are applied to the document, see documentChanged(DocumentEvent)
 		 */
 		invariant();
+		
+		handleAboutToBeChanged(event);
+	}
 
-		if (!isInitialized())
-			return;
+	
+	/**
+	 * Unsynchronized version of <code>documentAboutToBeChanged</code>, called by <code>documentAboutToBeChanged</code>
+	 * and {@link initialize(SortedMap, int) sortedMap(SortedMap, int)}. 
+	 * 
+	 * @param event the document event to be handled
+	 */
+	void handleAboutToBeChanged(DocumentEvent event) {
 		IDocument doc= getDocument();
 		if (doc == null)
 			return;
@@ -598,8 +641,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			i= applyAdditions(analysis, i);
 			applyDeletions(analysis, i);
 
-			// postcondition:
-			Assert.isTrue(doc.getNumberOfLines() + analysis.added - analysis.deleted == fLines.size(), "lines: " + doc.getNumberOfLines() + " size: " + fLines.size() + " added: " + analysis.added + " deleted: " + analysis.deleted); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		} catch (BadLocationException e) {
 			// document unsychronously modified, reinitialize
 			initialize();
@@ -609,9 +650,22 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	/*
 	 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
-	public void documentChanged(DocumentEvent event) {
+	public synchronized void documentChanged(DocumentEvent event) {
+		if (!isInitialized())
+			return;
+		
 		invariant();
+		
+		handleChange();
+		
+		// inform listeners about change
+		if (fUpdateNeeded) {
+			fireModelChanged();
+			fUpdateNeeded= false;
+		}
+	}
 
+	void handleChange() {
 		// check false positives - lines that are modified, but actually the same as the original
 		for (Iterator it= fModified.iterator(); it.hasNext();) {
 			int l= ((Integer)it.next()).intValue();
@@ -628,11 +682,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					fUpdateNeeded= true;
 				}
 			}
-		}
-		// inform listeners about change
-		if (fUpdateNeeded) {
-			fireModelChanged();
-			fUpdateNeeded= false;
 		}
 	}
 
@@ -894,10 +943,10 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * Invariant that holds except for in the gap between <code>documentAboutToBeChanged</code> and
 	 * <code>documentChanged</code>. 
 	 */
-	private void invariant() {
-		Assert.isTrue(!isInitialized() || (fDocument != null && fReferenceProvider != null));
+	private synchronized void invariant() {
 		if (!isInitialized())
 			return;
+		Assert.isTrue(fDocument != null && fReferenceProvider != null);
 		IDocument doc= getDocument();
 		if (doc != null) {
 			Assert.isTrue(fLines.size() == doc.getNumberOfLines(), "Invariant violated (lines: " + doc.getNumberOfLines() + " size: " //$NON-NLS-1$ //$NON-NLS-2$
@@ -948,7 +997,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			if (fReferenceProvider != null)
 				fReferenceProvider.dispose();
 			fDocument= null;
-			fIsSynchronized= false;
+			synchronized (this) {
+				fIsSynchronized= false;
+			}
 		}
 		invariant();
 	}

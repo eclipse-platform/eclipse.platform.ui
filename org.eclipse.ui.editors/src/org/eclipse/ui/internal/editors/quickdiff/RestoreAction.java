@@ -88,6 +88,7 @@ public class RestoreAction extends QuickDiffRestoreAction {
 			try {
 				differ.restoreAfterLine(fLine);
 			} catch (BadLocationException e) {
+				setStatus(e.getMessage());
 			}
 		}
 	}

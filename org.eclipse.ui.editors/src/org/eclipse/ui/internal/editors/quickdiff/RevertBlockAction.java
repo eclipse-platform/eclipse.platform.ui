@@ -79,6 +79,7 @@ public class RevertBlockAction extends QuickDiffRestoreAction {
 			try {
 				differ.revertBlock(fLine);
 			} catch (BadLocationException e) {
+				setStatus(e.getMessage());
 			}
 		}
 	}

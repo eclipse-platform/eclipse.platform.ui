@@ -29,11 +29,9 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
+import org.eclipse.jface.text.source.IChangeRulerColumn;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
-import org.eclipse.jface.text.source.IVerticalRulerInfoExtension;
-import org.eclipse.jface.text.source.LineNumberChangeRulerColumn;
-import org.eclipse.jface.text.source.LineNumberRulerColumn;
 
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
@@ -41,9 +39,11 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorExtension;
+import org.eclipse.ui.texteditor.ITextEditorExtension3;
 import org.eclipse.ui.texteditor.IUpdate;
 
 import org.eclipse.ui.internal.editors.quickdiff.DocumentLineDiffer;
@@ -65,12 +65,6 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
  * @since 3.0
  */
 public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
-	
-	// TODO: make preferences visible in Preferences
-	/** Preference key for the preferred reference. */
-	private static final String PREF_PREFERRED_REFERENCE= "PREFERRED_REFERENCE"; //$NON-NLS-1$
-	/** Preference key for the enable on open property. */
-	private static final String PREF_ENABLE_ON_OPEN= "ENABLE_ON_OPEN"; //$NON-NLS-1$
 	
 	/** The editor we are working on. */
 	ITextEditor fEditor= null;
@@ -176,7 +170,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	private void postAutoInit() {
 		Runnable runnable= new Runnable() {
 			public void run() {
-				boolean enable= EditorsPlugin.getDefault().getPreferenceStore().getBoolean(PREF_ENABLE_ON_OPEN);
+				boolean enable= EditorsPlugin.getDefault().getPreferenceStore().getBoolean(TextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON);
 				if (enable && !hasDiffer())
 					QuickDiffToggleAction.this.run(fProxy);
 			}
@@ -227,9 +221,9 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	 * @return <code>true</code> if a differ has been installed on <code>fEditor</code>.
 	 */
 	boolean isConnected() {
-		IVerticalRulerColumn column= getColumn();
-		if (column instanceof IVerticalRulerInfoExtension) {
-			IAnnotationModel m= ((IVerticalRulerInfoExtension)column).getModel();
+		IChangeRulerColumn column= getColumn();
+		if (column != null) {
+			IAnnotationModel m= column.getModel();
 			if (m instanceof DocumentLineDiffer)
 				return true;
 		}
@@ -243,9 +237,6 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		fProxy= action;
 		if (fEditor == null)
 			return;
-		IVerticalRulerColumn column= getColumn();
-		if (column == null)
-			return;
 		IDocumentProvider provider= fEditor.getDocumentProvider();
 		IEditorInput editorInput= fEditor.getEditorInput();
 		IAnnotationModelExtension model= getModel();
@@ -257,14 +248,31 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		if (actual == null)
 			return;
 
+		IChangeRulerColumn column= getColumn();
 		if (isConnected()) {
 			column.setModel(null);
+			if (fEditor instanceof ITextEditorExtension3)
+				((ITextEditorExtension3)fEditor).showChangeInformation(false);
 		} else {
-			if (differ == null) {
+			if (differ == null)
 				differ= createDiffer(model);
-			}
-			column.setModel(differ);
+			if (column == null)
+				column= createColumn();
+			if (column != null)
+				column.setModel(differ);
 		}
+	}
+
+	/**
+	 * Triggers the editor to show quick diff information and returns the colum as in 
+	 * <code>getColumn</code>.
+	 * 
+	 * @return an instance of <code>IChangeRulerColumn</code> or <code>null</code>
+	 */
+	private IChangeRulerColumn createColumn() {
+		if (fEditor instanceof ITextEditorExtension3)
+			((ITextEditorExtension3)fEditor).showChangeInformation(true);
+		return getColumn();
 	}
 
 	/**
@@ -301,9 +309,9 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	 * Returns the linenumber ruler of <code>fEditor</code>, or <code>null</code> if it cannot be
 	 * found.
 	 * 
-	 * @return an instance of <code>LineNumberRulerColumn</code> or <code>null</code>.
+	 * @return an instance of <code>IChangeRulerColumn</code> or <code>null</code>.
 	 */
-	private IVerticalRulerColumn getColumn() {
+	private IChangeRulerColumn getColumn() {
 		// HACK: we get the IVerticalRulerInfo and assume its a CompositeRuler.
 		// will get broken if IVerticalRulerInfo implementation changes
 		if (fEditor instanceof IAdaptable) {
@@ -311,8 +319,8 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 			if (info instanceof CompositeRuler) {
 				for (Iterator it= ((CompositeRuler)info).getDecoratorIterator(); it.hasNext();) {
 					IVerticalRulerColumn c= (IVerticalRulerColumn)it.next();
-					if (c instanceof LineNumberRulerColumn)
-						return c;
+					if (c instanceof IChangeRulerColumn)
+						return (IChangeRulerColumn)c;
 				}
 			}
 		}
@@ -333,7 +341,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	 * @return the linediffer, or <code>null</code> if none found.
 	 */
 	private DocumentLineDiffer getDiffer(IAnnotationModelExtension model) {
-		return (DocumentLineDiffer)model.getAnnotationModel(LineNumberChangeRulerColumn.QUICK_DIFF_MODEL_ID);
+		return (DocumentLineDiffer)model.getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
 	}
 
 	/**
@@ -346,7 +354,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	private DocumentLineDiffer createDiffer(IAnnotationModelExtension model) {
 		DocumentLineDiffer differ;
 		differ= new DocumentLineDiffer();
-		String defaultID= EditorsPlugin.getDefault().getPreferenceStore().getString(PREF_PREFERRED_REFERENCE);
+		String defaultID= EditorsPlugin.getDefault().getPreferenceStore().getString(TextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER);
 		ReferenceProviderDescriptor[] descs= EditorsPlugin.getDefault().getExtensions();
 		IQuickDiffProviderImplementation provider= null;
 		// try to fetch preferred provider; load if needed
@@ -375,7 +383,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		}
 		if (provider != null)
 			differ.setReferenceProvider(provider);
-		model.addAnnotationModel(LineNumberChangeRulerColumn.QUICK_DIFF_MODEL_ID, differ);
+		model.addAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID, differ);
 		return differ;
 	}
 

@@ -12,18 +12,34 @@ package org.eclipse.ui.editors.text;
 
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.LineChangeHover;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
 /**
+ * SourceViewer configuration for the text editor.
  * 
+ * @since 3.0
  */
 public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
+	
+	/**
+	 * A noop implementation of <code>IAnnotationHover</code> that will trigger the text editor
+	 * to set up annotation hover support.
+	 */
+	private static class NullHover implements IAnnotationHover {
+
+		/*
+		 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, int)
+		 */
+		public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
+			return null;
+		}
+		
+	}
+	
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAnnotationHover(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
-		return new LineChangeHover();
+		return new NullHover();
 	}
-
 }

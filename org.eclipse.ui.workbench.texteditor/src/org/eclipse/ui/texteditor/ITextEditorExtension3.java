@@ -58,4 +58,11 @@ public interface ITextEditorExtension3 {
 	 * @exception IllegalArgumentException if <code>mode</code> is not a legal insert mode for this editor
 	 */
 	void setInsertMode(InsertMode mode);
+	
+	/**
+	 * Sets the display of quick diff information.
+	 * 
+	 * @param show <code>true</code> if quick diff information should be shown, <code>false</code> otherwise
+	 */
+	void showChangeInformation(boolean show);
 }

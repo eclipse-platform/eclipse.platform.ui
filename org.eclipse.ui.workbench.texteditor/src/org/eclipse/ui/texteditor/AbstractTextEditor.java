@@ -4691,4 +4691,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		return viewer.overlapsWithVisibleRegion(offset, length);
 	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.ITextEditorExtension3#showChangeInformation(boolean)
+	 */
+	public void showChangeInformation(boolean show) {
+		// do nothing
+	}
 }

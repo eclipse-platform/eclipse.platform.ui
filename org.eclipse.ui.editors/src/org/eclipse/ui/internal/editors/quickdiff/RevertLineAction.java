@@ -77,6 +77,7 @@ public class RevertLineAction extends QuickDiffRestoreAction {
 			try {
 				differ.revertLine(fLine);
 			} catch (BadLocationException e) {
+				setStatus(e.getMessage());
 			}
 		}
 	}

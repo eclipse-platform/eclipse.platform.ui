@@ -21,17 +21,17 @@ import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
+import org.eclipse.jface.text.source.IChangeRulerColumn;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.IVerticalRulerInfoExtension;
-import org.eclipse.jface.text.source.LineNumberChangeRulerColumn;
-import org.eclipse.jface.text.source.LineNumberRulerColumn;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.quickdiff.IQuickDiffProviderImplementation;
 import org.eclipse.ui.editors.quickdiff.IQuickDiffReferenceProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.ITextEditorExtension3;
 import org.eclipse.ui.texteditor.IUpdate;
 
 
@@ -97,6 +97,8 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 		}
 		if (!isConnected()) {
 			IVerticalRulerColumn column= getColumn();
+			if (column == null)
+				column= createColumn();
 			if (column != null)
 				column.setModel(differ);
 		}
@@ -157,11 +159,11 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 			return null;
 		}
 
-		DocumentLineDiffer differ= (DocumentLineDiffer)model.getAnnotationModel(LineNumberChangeRulerColumn.QUICK_DIFF_MODEL_ID);
+		DocumentLineDiffer differ= (DocumentLineDiffer)model.getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
 
 		if (differ == null && createIfNeeded) {
 			differ= new DocumentLineDiffer();
-			model.addAnnotationModel(LineNumberChangeRulerColumn.QUICK_DIFF_MODEL_ID, differ);
+			model.addAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID, differ);
 		}
 		return differ;
 	}
@@ -186,9 +188,9 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 	 * Returns the linenumber ruler of <code>fEditor</code>, or <code>null</code> if it cannot be
 	 * found.
 	 * 
-	 * @return an instance of <code>LineNumberRulerColumn</code> or <code>null</code>.
+	 * @return an instance of <code>IChangeRulerColumn</code> or <code>null</code>.
 	 */
-	private IVerticalRulerColumn getColumn() {
+	private IChangeRulerColumn getColumn() {
 		// HACK: we get the IVerticalRulerInfo and assume its a CompositeRuler.
 		// will get broken if IVerticalRulerInfo implementation changes
 		if (fEditor instanceof IAdaptable) {
@@ -196,12 +198,25 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 			if (info instanceof CompositeRuler) {
 				for (Iterator it= ((CompositeRuler)info).getDecoratorIterator(); it.hasNext();) {
 					IVerticalRulerColumn c= (IVerticalRulerColumn)it.next();
-					if (c instanceof LineNumberRulerColumn)
-						return c;
+					if (c instanceof IChangeRulerColumn)
+						return (IChangeRulerColumn)c;
 				}
 			}
 		}
 		return null;
 	}
+
+	/**
+	 * Triggers the editor to show quick diff information and returns the colum as in 
+	 * <code>getColumn</code>.
+	 * 
+	 * @return an instance of <code>IChangeRulerColumn</code> or <code>null</code>
+	 */
+	private IChangeRulerColumn createColumn() {
+		if (fEditor instanceof ITextEditorExtension3)
+			((ITextEditorExtension3)fEditor).showChangeInformation(true);
+		return getColumn();
+	}
+
 
 }

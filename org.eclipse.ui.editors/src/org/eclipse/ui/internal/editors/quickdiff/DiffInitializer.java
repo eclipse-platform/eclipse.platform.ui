@@ -21,10 +21,10 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.ILineDiffInfo;
 
+import org.eclipse.ui.internal.editors.quickdiff.compare.rangedifferencer.DocLineComparator;
 import org.eclipse.ui.internal.editors.quickdiff.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.ui.internal.editors.quickdiff.compare.rangedifferencer.RangeDifference;
 import org.eclipse.ui.internal.editors.quickdiff.compare.rangedifferencer.RangeDifferencer;
-import org.eclipse.ui.internal.editors.quickdiff.compare.rangedifferencer.DocLineComparator;
 
 /**
  * Utility class that bridges between the diff engine of org.eclipse.compare and the 
@@ -117,11 +117,11 @@ class DiffInitializer {
 	 * Initializes the given <code>ILineDiffer</code> with the differences in <code>actual</code> when
 	 * compared to <code>reference</code>.
 	 * 
-	 * @param differ the <code>ILineDiffer</code> to be initialized
 	 * @param reference the reference document
 	 * @param actual the actual (current) document
+	 * @return the <code>ILineDiffInfo</code> objects corresponding to the smalles edit script from <code>reference</code> to <code>actual</code>.
 	 */
-	public static void initializeDiffer(IProgressMonitor pm, DocumentLineDiffer differ, IDocument reference, IDocument actual) {
+	public static SortedMap initializeDiffer(IProgressMonitor pm, IDocument reference, IDocument actual) {
 		// 1: call the compare engine
 		IRangeComparator ref= new DocLineComparator(reference, null, false);
 		IRangeComparator act= new DocLineComparator(actual, null, false);
@@ -181,7 +181,7 @@ class DiffInitializer {
 			}
 		}
 		
-		// 3: feed the table into the differ
-		differ.initialize(map, actual.getNumberOfLines());
+		// 3: return the line diff infos
+		return map;
 	}
 }

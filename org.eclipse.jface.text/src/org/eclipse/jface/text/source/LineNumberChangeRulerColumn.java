@@ -21,11 +21,8 @@ import org.eclipse.jface.text.Assert;
  *
  * @since 3.0
  */
-public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn implements IVerticalRulerInfo, IVerticalRulerInfoExtension {
+public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn implements IVerticalRulerInfo, IVerticalRulerInfoExtension, IChangeRulerColumn {
 	
-	/** The ID under which the quick diff model is registered with a document's annotation model. */
-	public static final String QUICK_DIFF_MODEL_ID= "diff"; //$NON-NLS-1$
-
 	/** Width of the triangle displayed for deleted lines. */
 	private final static int fTriangleWidth= 7;
 	/** The height of the triangle displayed for deleted lines. */
@@ -137,7 +134,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	}
 
 	/**
-	 * Returns whether the line background differes from the default.
+	 * Returns whether the line background differs from the default.
 	 * 
 	 * @param info the info being queried
 	 * @return <code>true</code> if <code>info</code> describes either a changed or an added line.

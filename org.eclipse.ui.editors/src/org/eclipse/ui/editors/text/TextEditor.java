@@ -38,14 +38,17 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
+import org.eclipse.jface.text.source.ChangeRulerColumn;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationAccess;
+import org.eclipse.jface.text.source.IChangeRulerColumn;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
+import org.eclipse.jface.text.source.LineChangeHover;
 import org.eclipse.jface.text.source.LineNumberChangeRulerColumn;
 import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.OverviewRuler;
@@ -165,6 +168,11 @@ public class TextEditor extends StatusTextEditor {
 	 */
 	protected LineNumberRulerColumn fLineNumberRulerColumn;
 	/**
+	 * The change ruler column.
+	 * @since 3.0
+	 */
+	private IChangeRulerColumn fChangeRulerColumn;
+	/**
 	 * The encoding support for the editor.
 	 * @since 2.0
 	 */
@@ -174,6 +182,11 @@ public class TextEditor extends StatusTextEditor {
 	 * @since 2.1
 	 */
 	private MarkerAnnotationPreferences fAnnotationPreferences;
+	/**
+	 * Whether quick diff information is displayed, either on a change ruler or the line number ruler.
+	 * @since 3.0
+	 */
+	private boolean fIsChangeInformationShown;
 	
 	
 	/**
@@ -198,6 +211,8 @@ public class TextEditor extends StatusTextEditor {
 		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
 		configureInsertMode(SMART_INSERT, false);
 		setInsertMode(INSERT);
+		
+		fIsChangeInformationShown= getPreferenceStore().getBoolean(TextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON);
 	}
 
 	/**
@@ -595,12 +610,42 @@ public class TextEditor extends StatusTextEditor {
 		return store != null ? store.getBoolean(OVERVIEW_RULER) : false;
 	}
 
+	/*
+	 * @see org.eclipse.ui.texteditor.ITextEditorExtension3#showChangeInformation(boolean)
+	 */
+	public void showChangeInformation(boolean show) {
+	
+		fIsChangeInformationShown= show;
+		if (isLineNumberRulerVisible()) {
+			if (!(fLineNumberRulerColumn instanceof IChangeRulerColumn)) {
+				hideLineNumberRuler();
+				showLineNumberRuler();
+			}
+		} else
+			showChangeRulerColumn(show);
+		
+	}
+
+	private void showChangeRulerColumn(boolean show) {
+		IVerticalRuler v= getVerticalRuler();
+		if (v instanceof CompositeRuler) {
+			CompositeRuler c= (CompositeRuler) v;
+			if (show && fChangeRulerColumn == null)
+				c.addDecorator(1, createChangeRuler());
+			else if (!show && fChangeRulerColumn != null) {
+				c.removeDecorator(fChangeRulerColumn);
+				fChangeRulerColumn= null;
+			}
+		}
+	}
+	
 	/**
 	 * Shows the line number ruler column.
 	 * 
 	 * @since 2.1
 	 */
 	private void showLineNumberRuler() {
+		showChangeRulerColumn(false);
 		if (fLineNumberRulerColumn == null) {
 			IVerticalRuler v= getVerticalRuler();
 			if (v instanceof CompositeRuler) {
@@ -620,10 +665,12 @@ public class TextEditor extends StatusTextEditor {
 			IVerticalRuler v= getVerticalRuler();
 			if (v instanceof CompositeRuler) {
 				CompositeRuler c= (CompositeRuler) v;
-				c.removeDecorator(1);
+				c.removeDecorator(fLineNumberRulerColumn);
 			}
 			fLineNumberRulerColumn = null;
 		}
+		if (fIsChangeInformationShown)
+			showChangeRulerColumn(true);
 	}
 	
 	/**
@@ -670,70 +717,92 @@ public class TextEditor extends StatusTextEditor {
 						rgb= PreferenceConverter.getColor(store, PREFERENCE_COLOR_BACKGROUND);
 				}
 			}
-			rulerColumn.setBackground(sharedColors.getColor(rgb));
-			
-			if (rulerColumn instanceof LineNumberChangeRulerColumn) {
-				LineNumberChangeRulerColumn changeColumn= (LineNumberChangeRulerColumn)rulerColumn;
-				
-				ISourceViewer v= getSourceViewer();
-				if (v != null && v.getAnnotationModel() != null) {
-					changeColumn.setModel(v.getAnnotationModel());
-				}
-				
-				rgb= null;
-				// change color
-				if (!store.getBoolean(TextEditorPreferenceConstants.LINE_NUMBER_CHANGED_COLOR)) {
-					if (store.contains(TextEditorPreferenceConstants.LINE_NUMBER_CHANGED_COLOR)) {
-						if (store.isDefault(TextEditorPreferenceConstants.LINE_NUMBER_CHANGED_COLOR))
-							rgb= PreferenceConverter.getDefaultColor(store, TextEditorPreferenceConstants.LINE_NUMBER_CHANGED_COLOR);
-						else
-							rgb= PreferenceConverter.getColor(store, TextEditorPreferenceConstants.LINE_NUMBER_CHANGED_COLOR);
-					}
-				}
-				changeColumn.setChangedColor(sharedColors.getColor(rgb));
-				
-				rgb= null;
-				// addition color
-				if (!store.getBoolean(TextEditorPreferenceConstants.LINE_NUMBER_ADDED_COLOR)) {
-					if (store.contains(TextEditorPreferenceConstants.LINE_NUMBER_ADDED_COLOR)) {
-						if (store.isDefault(TextEditorPreferenceConstants.LINE_NUMBER_ADDED_COLOR))
-							rgb= PreferenceConverter.getDefaultColor(store, TextEditorPreferenceConstants.LINE_NUMBER_ADDED_COLOR);
-						else
-							rgb= PreferenceConverter.getColor(store, TextEditorPreferenceConstants.LINE_NUMBER_ADDED_COLOR);
-					}
-				}
-				changeColumn.setAddedColor(sharedColors.getColor(rgb));
-				
-				rgb= null;
-				// deletion indicator color
-				if (!store.getBoolean(TextEditorPreferenceConstants.LINE_NUMBER_DELETED_COLOR)) {
-					if (store.contains(TextEditorPreferenceConstants.LINE_NUMBER_DELETED_COLOR)) {
-						if (store.isDefault(TextEditorPreferenceConstants.LINE_NUMBER_DELETED_COLOR))
-							rgb= PreferenceConverter.getDefaultColor(store, TextEditorPreferenceConstants.LINE_NUMBER_DELETED_COLOR);
-						else
-							rgb= PreferenceConverter.getColor(store, TextEditorPreferenceConstants.LINE_NUMBER_DELETED_COLOR);
-					}
-				}
-				changeColumn.setDeletedColor(sharedColors.getColor(rgb));
-			}
-			
+			rulerColumn.setBackground(sharedColors.getColor(rgb));			
 			rulerColumn.redraw();
 		}
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param lineNumberRulerColumn
+	 */
+	private void initializeChangeRulerColumn(IChangeRulerColumn changeColumn) {
+		ISharedTextColors sharedColors= EditorsPlugin.getDefault().getSharedTextColors();
+		IPreferenceStore store= getPreferenceStore();
+	
+		if (store != null) {
+			RGB rgb= null;
+
+			ISourceViewer v= getSourceViewer();
+			if (v != null && v.getAnnotationModel() != null) {
+				changeColumn.setModel(v.getAnnotationModel());
+			}
+			
+			rgb= null;
+			// change color
+			if (!store.getBoolean(TextEditorPreferenceConstants.QUICK_DIFF_CHANGED_COLOR)) {
+				if (store.contains(TextEditorPreferenceConstants.QUICK_DIFF_CHANGED_COLOR)) {
+					if (store.isDefault(TextEditorPreferenceConstants.QUICK_DIFF_CHANGED_COLOR))
+						rgb= PreferenceConverter.getDefaultColor(store, TextEditorPreferenceConstants.QUICK_DIFF_CHANGED_COLOR);
+					else
+						rgb= PreferenceConverter.getColor(store, TextEditorPreferenceConstants.QUICK_DIFF_CHANGED_COLOR);
+				}
+			}
+			changeColumn.setChangedColor(sharedColors.getColor(rgb));
+				
+			rgb= null;
+			// addition color
+			if (!store.getBoolean(TextEditorPreferenceConstants.QUICK_DIFF_ADDED_COLOR)) {
+				if (store.contains(TextEditorPreferenceConstants.QUICK_DIFF_ADDED_COLOR)) {
+					if (store.isDefault(TextEditorPreferenceConstants.QUICK_DIFF_ADDED_COLOR))
+						rgb= PreferenceConverter.getDefaultColor(store, TextEditorPreferenceConstants.QUICK_DIFF_ADDED_COLOR);
+					else
+						rgb= PreferenceConverter.getColor(store, TextEditorPreferenceConstants.QUICK_DIFF_ADDED_COLOR);
+				}
+			}
+			changeColumn.setAddedColor(sharedColors.getColor(rgb));
+				
+			rgb= null;
+			// deletion indicator color
+			if (!store.getBoolean(TextEditorPreferenceConstants.QUICK_DIFF_DELETED_COLOR)) {
+				if (store.contains(TextEditorPreferenceConstants.QUICK_DIFF_DELETED_COLOR)) {
+					if (store.isDefault(TextEditorPreferenceConstants.QUICK_DIFF_DELETED_COLOR))
+						rgb= PreferenceConverter.getDefaultColor(store, TextEditorPreferenceConstants.QUICK_DIFF_DELETED_COLOR);
+					else
+						rgb= PreferenceConverter.getColor(store, TextEditorPreferenceConstants.QUICK_DIFF_DELETED_COLOR);
+				}
+			}
+			changeColumn.setDeletedColor(sharedColors.getColor(rgb));
+		}
+	
+		changeColumn.redraw();
+	}
+
 	/**
 	 * Creates a new line number ruler column that is appropriately initialized.
 	 * 
 	 * @since 2.1
 	 */
 	protected IVerticalRulerColumn createLineNumberRulerColumn() {
-		if (getPreferenceStore().getBoolean(TextEditorPreferenceConstants.LINE_NUMBER_BAR_QUICK_DIFF)) {
-			fLineNumberRulerColumn= new LineNumberChangeRulerColumn();
+		if (fIsChangeInformationShown && fChangeRulerColumn == null) {
+			LineNumberChangeRulerColumn column= new LineNumberChangeRulerColumn();
+			column.setHover(new LineChangeHover());
+			initializeChangeRulerColumn(column);
+			fLineNumberRulerColumn= column;
 		} else {
 			fLineNumberRulerColumn= new LineNumberRulerColumn();
 		}
 		initializeLineNumberRulerColumn(fLineNumberRulerColumn);
 		return fLineNumberRulerColumn;
+	}
+	
+	protected IChangeRulerColumn createChangeRuler() {
+		IChangeRulerColumn column= new ChangeRulerColumn();
+		column.setHover(new LineChangeHover());
+		fChangeRulerColumn= column;
+		initializeChangeRulerColumn(fChangeRulerColumn);
+		return fChangeRulerColumn;
 	}
 	
 	/*
@@ -778,22 +847,24 @@ public class TextEditor extends StatusTextEditor {
 				return;
 			}
 
-			if (isLineNumberRulerVisible() && TextEditorPreferenceConstants.LINE_NUMBER_BAR_QUICK_DIFF.equals(property)) {
-				hideLineNumberRuler();
-				showLineNumberRuler();
-			}
-				
-			if (fLineNumberRulerColumn != null &&
-						(LINE_NUMBER_COLOR.equals(property) || 
-						PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property)  ||
-						PREFERENCE_COLOR_BACKGROUND.equals(property) ||
-						TextEditorPreferenceConstants.LINE_NUMBER_CHANGED_COLOR.equals(property) ||
-						TextEditorPreferenceConstants.LINE_NUMBER_ADDED_COLOR.equals(property) ||
-						TextEditorPreferenceConstants.LINE_NUMBER_DELETED_COLOR.equals(property))) {
+			if (fLineNumberRulerColumn != null
+				&&	(LINE_NUMBER_COLOR.equals(property) 
+				||	PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property)
+				||	PREFERENCE_COLOR_BACKGROUND.equals(property))) {
 					
-					initializeLineNumberRulerColumn(fLineNumberRulerColumn);
+				initializeLineNumberRulerColumn(fLineNumberRulerColumn);
 			}
-				
+			
+			if (TextEditorPreferenceConstants.QUICK_DIFF_CHANGED_COLOR.equals(property)
+				||	TextEditorPreferenceConstants.QUICK_DIFF_ADDED_COLOR.equals(property)
+				||	TextEditorPreferenceConstants.QUICK_DIFF_DELETED_COLOR.equals(property)) {
+						
+				if (fLineNumberRulerColumn instanceof IChangeRulerColumn)
+					initializeChangeRulerColumn((IChangeRulerColumn) fLineNumberRulerColumn);
+				else if (fChangeRulerColumn != null)
+					initializeChangeRulerColumn(fChangeRulerColumn);
+			}
+							
 		} finally {
 			super.handlePreferenceStoreChanged(event);
 		}

@@ -161,7 +161,7 @@ public class TextEditorPreferenceConstants {
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 */
-	public static final String LINE_NUMBER_CHANGED_COLOR= "lineNumberBar.colors.changed"; //$NON-NLS-1$
+	public static final String QUICK_DIFF_CHANGED_COLOR= "quickdiff.colors.changed"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls the background color for added lines in the line number bar.
@@ -173,7 +173,7 @@ public class TextEditorPreferenceConstants {
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 */
-	public static final String LINE_NUMBER_ADDED_COLOR= "lineNumberBar.colors.added"; //$NON-NLS-1$
+	public static final String QUICK_DIFF_ADDED_COLOR= "quickdiff.colors.added"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls the color for the deleted lines indicator in the line number bar.
@@ -185,14 +185,21 @@ public class TextEditorPreferenceConstants {
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 */
-	public static final String LINE_NUMBER_DELETED_COLOR= "lineNumberBar.colors.deleted"; //$NON-NLS-1$
+	public static final String QUICK_DIFF_DELETED_COLOR= "quickdiff.colors.deleted"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether quick diff colors are shown on the line number bar.
 	 * <p>
 	 * Value is of type <code>boolean</code>.
 	 */
-	public static final String LINE_NUMBER_BAR_QUICK_DIFF= "lineNumberBar.quickDiff"; //$NON-NLS-1$
+	public static final String QUICK_DIFF_ALWAYS_ON= "quickdiff.quickDiff"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls the default quick diff reference provider.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 */
+	public static final String QUICK_DIFF_DEFAULT_PROVIDER= "quickdiff.defaultProvider"; //$NON-NLS-1$
 	
 	/**
 	 * @deprecated
@@ -300,10 +307,11 @@ public class TextEditorPreferenceConstants {
 
 		store.setDefault(TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, false);
 		PreferenceConverter.setDefault(store, TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, new RGB(0, 0, 0));
-		store.setDefault(TextEditorPreferenceConstants.LINE_NUMBER_CHANGED_COLOR, false);
-		PreferenceConverter.setDefault(store, TextEditorPreferenceConstants.LINE_NUMBER_CHANGED_COLOR, new RGB(255, 230, 230));
-		PreferenceConverter.setDefault(store, TextEditorPreferenceConstants.LINE_NUMBER_ADDED_COLOR, new RGB(230, 230, 255));
-		PreferenceConverter.setDefault(store, TextEditorPreferenceConstants.LINE_NUMBER_DELETED_COLOR, new RGB(0, 0, 0));
+		store.setDefault(TextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, true);
+		store.setDefault(TextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER, "org.eclipse.ui.internal.editors.quickdiff.LastSaveReferenceProvider"); //$NON-NLS-1$
+		PreferenceConverter.setDefault(store, TextEditorPreferenceConstants.QUICK_DIFF_CHANGED_COLOR, new RGB(255, 230, 230));
+		PreferenceConverter.setDefault(store, TextEditorPreferenceConstants.QUICK_DIFF_ADDED_COLOR, new RGB(230, 230, 255));
+		PreferenceConverter.setDefault(store, TextEditorPreferenceConstants.QUICK_DIFF_DELETED_COLOR, new RGB(0, 0, 0));
 
 		store.setDefault(TextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, true);
 		
