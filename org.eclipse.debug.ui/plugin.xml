@@ -678,9 +678,9 @@
             objectClass="org.eclipse.debug.core.model.IWatchExpression"
             id="org.eclipse.debug.ui.WatchExpressionActions">
          <action
-               label="Enable"
+               label="%enableWatchExpressionAction.label"
                helpContextId="enable_watch_expression_context"
-               tooltip="Enable watch expression"
+               tooltip="%enableWatchExpressionAction.tooltip"
                class="org.eclipse.debug.internal.ui.actions.EnableWatchExpressionAction"
                menubarPath="additions"
                enablesFor="1"
@@ -691,9 +691,9 @@
             objectClass="org.eclipse.debug.core.model.IWatchExpression"
             id="org.eclipse.debug.ui.WatchExpressionActions">
          <action
-               label="Disable"
+               label="%disableWatchExpressionAction.label"
                helpContextId="disable_watch_expression_context"
-               tooltip="Disable watch expression"
+               tooltip="%disableWatchExpressionAction.tooltip"
                class="org.eclipse.debug.internal.ui.actions.DisableWatchExpressionAction"
                menubarPath="additions"
                enablesFor="1"
