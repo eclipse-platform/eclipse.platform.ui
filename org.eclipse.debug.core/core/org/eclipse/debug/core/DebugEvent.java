@@ -295,7 +295,7 @@ public final class DebugEvent extends EventObject {
 	 * @param kind the kind of debug event (one of the
 	 *	kind constants defined by this class)
 	 * @param detail extra information about the event (one of the
-	 *	detail constants defined by this class)
+	 *	detail constants defined by this class or a client defined detail if this is a model specific event)
 	 */
 	public DebugEvent(Object eventSource, int kind, int detail) {
 		super(eventSource);
@@ -308,9 +308,9 @@ public final class DebugEvent extends EventObject {
 	}
 
 	/**
-	 * Returns a constant describing extra detail about the event - one
+	 * Returns a constant describing extra detail about the event - either one
 	 * of the detail constants defined by this class, possibly
-	 * <code>UNSPECIFIED</code>.
+	 * <code>UNSPECIFIED</code>, or a client defined detail if this is a model specific event.
 	 *
 	 * @return the detail code
 	 */
@@ -366,7 +366,7 @@ public final class DebugEvent extends EventObject {
 	/**
 	 * Returns this event's application defined data, or <code>null</code> if none
 	 * 
-	 * @return appliation defined data, or <code>null</code> if none
+	 * @return application defined data, or <code>null</code> if none
 	 * @since 3.0
 	 */
 	public Object getData() {
