@@ -21,6 +21,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -68,12 +69,13 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	protected void createFieldEditors() {
 		storeAppliedValues();
 
+		Font font= getFieldEditorParent().getFont();
 		Label label= new Label(getFieldEditorParent(), SWT.NONE);
 		label.setText(AntPreferencesMessages.getString("AntPreferencePage.Enter")); //$NON-NLS-1$
 		GridData gd= new GridData();
 		gd.horizontalSpan= 2;
 		label.setLayoutData(gd);
-		label.setFont(getFieldEditorParent().getFont());
+		label.setFont(font);
 		
 		fBuildFileNames = new StringFieldEditor(IPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES, AntPreferencesMessages.getString("AntPreferencePage.&Names__3"), getFieldEditorParent()); //$NON-NLS-1$
 		addField(fBuildFileNames);
@@ -83,7 +85,8 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 			}
 		});
 		
-		new Label(getFieldEditorParent(), SWT.NONE);
+		label= new Label(getFieldEditorParent(), SWT.NONE);
+		label.setFont(font);
 		createColorComposite();
 	}
 	
@@ -101,12 +104,13 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	}
 	
 	private void createColorComposite() {
-		
-		Label l= new Label(getFieldEditorParent(), SWT.LEFT);
-		l.setText(AntPreferencesMessages.getString("AntPreferencePage.Ant_Color_Options__6"));  //$NON-NLS-1$
+		Font font= getFieldEditorParent().getFont();
+		Label label= new Label(getFieldEditorParent(), SWT.LEFT);
+		label.setText(AntPreferencesMessages.getString("AntPreferencePage.Ant_Color_Options__6"));  //$NON-NLS-1$
+		label.setFont(font);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
-		l.setLayoutData(gd);
+		label.setLayoutData(gd);
 				
 		Composite editorComposite= new Composite(getFieldEditorParent(), SWT.NONE);
 		GridLayout layout= new GridLayout();
@@ -114,6 +118,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
 		editorComposite.setLayout(layout);
+		editorComposite.setFont(font);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		gd.horizontalSpan= 2;
 		editorComposite.setLayoutData(gd);		
@@ -122,6 +127,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		gd.heightHint= convertHeightInCharsToPixels(8);
 		fAppearanceColorList.setLayoutData(gd);
+		fAppearanceColorList.setFont(font);
 				
 		Composite stylesComposite= new Composite(editorComposite, SWT.NONE);
 		layout= new GridLayout();
@@ -130,18 +136,21 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		layout.numColumns= 2;
 		stylesComposite.setLayout(layout);
 		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		stylesComposite.setFont(font);
 
-		l= new Label(stylesComposite, SWT.LEFT);
-		l.setText(AntPreferencesMessages.getString("AntPreferencePage.Color__7"));  //$NON-NLS-1$
+		label= new Label(stylesComposite, SWT.LEFT);
+		label.setText(AntPreferencesMessages.getString("AntPreferencePage.Color__7"));  //$NON-NLS-1$
+		label.setFont(font);
 		gd= new GridData();
 		gd.horizontalAlignment= GridData.BEGINNING;
-		l.setLayoutData(gd);
+		label.setLayoutData(gd);
 
 		fAppearanceColorEditor= new ColorEditor(stylesComposite);
 		Button foregroundColorButton= fAppearanceColorEditor.getButton();
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		foregroundColorButton.setLayoutData(gd);
+		foregroundColorButton.setFont(font);
 
 		fAppearanceColorList.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

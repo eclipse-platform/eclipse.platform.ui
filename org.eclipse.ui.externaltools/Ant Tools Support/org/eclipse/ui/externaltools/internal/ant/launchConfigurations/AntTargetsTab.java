@@ -87,6 +87,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		comp.setLayout(topLayout);		
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		comp.setLayoutData(gd);
+		comp.setFont(font);
 		
 		Label label = new Label(comp, SWT.NONE);
 		label.setFont(font);
@@ -102,9 +103,11 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		
 		// spacer
 		label = new Label(comp, SWT.NONE);
+		label.setFont(font);
 		
 		label = new Label(comp, SWT.NONE);
 		label.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Target_execution_order__3")); //$NON-NLS-1$
+		label.setFont(font);
 		
 		Composite orderComposite = new Composite(comp, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -113,6 +116,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		orderComposite.setLayout(layout);
+		orderComposite.setFont(font);
 				
 		fTargetOrderText = new Text(orderComposite, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL | SWT.READ_ONLY);
 		fTargetOrderText.setFont(font);
@@ -124,6 +128,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		fOrderButton = createPushButton(orderComposite, AntLaunchConfigurationMessages.getString("AntTargetsTab.&Order..._4"), null); //$NON-NLS-1$
 		gd = (GridData)fOrderButton.getLayoutData();
 		gd.verticalAlignment = GridData.BEGINNING;
+		fOrderButton.setFont(font);
 		fOrderButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleOrderPressed();

@@ -23,6 +23,7 @@ import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -44,6 +45,7 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
+		Font font= parent.getFont();
 		Composite top = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -51,6 +53,7 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 		layout.marginWidth = 2;
 		top.setLayout(layout);
 		top.setLayoutData(new GridData(GridData.FILL_BOTH));
+		top.setFont(font);
 
 		setControl(top);
 		WorkbenchHelp.setHelp(top, IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_ANT_CLASSPATH_TAB);
@@ -61,16 +64,17 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 	}
 
 	private void createChangeClasspath(Composite top) {
+		Font font= top.getFont();
 		Composite changeClasspath = new Composite(top, SWT.NONE);
 		changeClasspath.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		changeClasspath.setLayout(layout);
-		changeClasspath.setFont(top.getFont());
+		changeClasspath.setFont(font);
 
 		useDefaultButton = new Button(changeClasspath, SWT.CHECK);
-		useDefaultButton.setFont(top.getFont());
+		useDefaultButton.setFont(font);
 		useDefaultButton.setText(AntLaunchConfigurationMessages.getString("AntClasspathTab.Use_&global")); //$NON-NLS-1$
 		useDefaultButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
