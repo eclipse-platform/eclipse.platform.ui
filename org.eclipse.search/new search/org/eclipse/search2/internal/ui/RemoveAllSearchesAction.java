@@ -11,6 +11,8 @@
 package org.eclipse.search2.internal.ui;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.NewSearchUI;
 
 
 class RemoveAllSearchesAction extends Action {
@@ -21,6 +23,10 @@ class RemoveAllSearchesAction extends Action {
 	}	
 	
 	public void run() {
-		InternalSearchUI.getInstance().removeAllQueries();
+		ISearchQuery[] queries= NewSearchUI.getQueries();
+		for (int i = 0; i < queries.length; i++) {
+			if (!NewSearchUI.isQueryRunning(queries[i]))
+				InternalSearchUI.getInstance().removeQuery(queries[i]);
+		}
 	}
 }

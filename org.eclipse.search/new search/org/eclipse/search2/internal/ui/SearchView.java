@@ -308,9 +308,14 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	}
 
 	protected void refreshProgress() {
-		ISearchQuery query= getCurrentSearchResult().getQuery();
-		double current= InternalSearchUI.getInstance().getCurrentAmountOfWork(query); 
-		boolean queryRunning= InternalSearchUI.getInstance().isQueryRunning(query);
+		ISearchResult currentResult= getCurrentSearchResult();
+		double current= 0;
+		boolean queryRunning= false;
+		if (currentResult != null) {
+			ISearchQuery query= currentResult.getQuery();
+			current= InternalSearchUI.getInstance().getCurrentAmountOfWork(query); 
+			queryRunning= InternalSearchUI.getInstance().isQueryRunning(query);
+		}
 		if (fBar != null) {
 			if (queryRunning) {
 				fBar.setSelection((int)current);  
