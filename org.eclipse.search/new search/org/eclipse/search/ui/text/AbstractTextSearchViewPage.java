@@ -426,8 +426,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private Control createBusyControl() {
-		Table busyLabel = new Table(fPagebook, SWT.NULL);
-		TableItem item = new TableItem(busyLabel, SWT.NULL);
+		Table busyLabel = new Table(fPagebook, SWT.NONE);
+		TableItem item = new TableItem(busyLabel, SWT.NONE);
 		item.setText(SearchMessages.getString("AbstractTextSearchViewPage.searching.label")); //$NON-NLS-1$
 		busyLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return busyLabel;
@@ -628,7 +628,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * @return returns a newly created <code>TableViewer</code>
 	 */
 	protected TableViewer createTableViewer(Composite parent) {
-		return new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL) {
+		return new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION) {
 			protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
 				getTable().setRedraw(false);
 				try {

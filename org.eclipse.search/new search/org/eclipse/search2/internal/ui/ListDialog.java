@@ -77,7 +77,7 @@ public class ListDialog extends SelectionDialog {
 	protected Control createDialogArea(Composite container) {
 		Composite parent= (Composite) super.createDialogArea(container);
 		createMessageArea(parent);
-		fViewer= new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		fViewer= new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
 		fViewer.setContentProvider(fContentProvider);
 
 		final Table table= fViewer.getTable();
