@@ -36,7 +36,7 @@ public class OpenResourceDialog extends ResourceListSelectionDialog {
     public OpenResourceDialog(Shell parentShell, IContainer container,
             int typesMask) {
         super(parentShell, container, typesMask);
-        setTitle(IDEWorkbenchMessages.getString("OpenResourceDialog.title")); //$NON-NLS-1$
+        setTitle(IDEWorkbenchMessages.OpenResourceDialog_title);
         PlatformUI.getWorkbench().getHelpSystem()
                 .setHelp(parentShell, IIDEHelpContextIds.OPEN_RESOURCE_DIALOG);
         setAllowUserToToggleDerived(true);

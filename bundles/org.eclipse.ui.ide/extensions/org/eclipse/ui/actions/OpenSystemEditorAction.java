@@ -51,9 +51,8 @@ public class OpenSystemEditorAction extends SelectionListenerAction {
      * @param page the workbench page in which to open the editor
      */
     public OpenSystemEditorAction(IWorkbenchPage page) {
-        super(IDEWorkbenchMessages.getString("OpenSystemEditorAction.text")); //$NON-NLS-1$
-        setToolTipText(IDEWorkbenchMessages
-                .getString("OpenSystemEditorAction.toolTip")); //$NON-NLS-1$
+        super(IDEWorkbenchMessages.OpenSystemEditorAction_text);
+        setToolTipText(IDEWorkbenchMessages.OpenSystemEditorAction_toolTip);
         setId(ID);
         page.getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.OPEN_SYSTEM_EDITOR_ACTION);
@@ -83,8 +82,7 @@ public class OpenSystemEditorAction extends SelectionListenerAction {
                     IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
         } catch (PartInitException e) {
             DialogUtil.openError(getWorkbenchPage().getWorkbenchWindow()
-                    .getShell(), IDEWorkbenchMessages
-                    .getString("OpenSystemEditorAction.dialogTitle"), //$NON-NLS-1$
+                    .getShell(), IDEWorkbenchMessages.OpenSystemEditorAction_dialogTitle,
                     e.getMessage(), e);
         }
     }

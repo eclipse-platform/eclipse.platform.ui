@@ -84,11 +84,9 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
     protected ResourceTreeAndListGroup selectionGroup;
 
     //messages
-    private static final String EMPTY_FOLDER_MESSAGE = IDEWorkbenchMessages
-            .getString("WizardImportPage.specifyFolder"); //$NON-NLS-1$
+    private static final String EMPTY_FOLDER_MESSAGE = IDEWorkbenchMessages.WizardImportPage_specifyFolder;
 
-    private static final String INACCESSABLE_FOLDER_MESSAGE = IDEWorkbenchMessages
-            .getString("WizardImportPage.folderMustExist"); //$NON-NLS-1$
+    private static final String INACCESSABLE_FOLDER_MESSAGE = IDEWorkbenchMessages.WizardImportPage_folderMustExist;
 
     /**
      * Creates an import wizard page. If the initial resource selection 
@@ -177,8 +175,7 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
 
         // container label
         Label resourcesLabel = new Label(containerGroup, SWT.NONE);
-        resourcesLabel.setText(IDEWorkbenchMessages
-                .getString("WizardImportPage.folder")); //$NON-NLS-1$
+        resourcesLabel.setText(IDEWorkbenchMessages.WizardImportPage_folder);
         resourcesLabel.setFont(parent.getFont());
 
         // container name entry field
@@ -192,8 +189,7 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
 
         // container browse button
         containerBrowseButton = new Button(containerGroup, SWT.PUSH);
-        containerBrowseButton.setText(IDEWorkbenchMessages
-                .getString("WizardImportPage.browse2")); //$NON-NLS-1$
+        containerBrowseButton.setText(IDEWorkbenchMessages.WizardImportPage_browse2);
         containerBrowseButton.setLayoutData(new GridData(
                 GridData.HORIZONTAL_ALIGN_FILL));
         containerBrowseButton.addListener(SWT.Selection, this);
@@ -242,8 +238,7 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
      * @see WizardDataTransferPage.getErrorDialogTitle()
      */
     protected String getErrorDialogTitle() {
-        return IDEWorkbenchMessages
-                .getString("WizardImportPage.errorDialogTitle"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.WizardImportPage_errorDialogTitle;
     }
 
     /**
@@ -355,10 +350,8 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
     protected void handleContainerBrowseButtonPressed() {
         // see if the user wishes to modify this container selection
         IPath containerPath = queryForContainer(getSpecifiedContainer(),
-                IDEWorkbenchMessages
-                        .getString("WizardImportPage.selectFolderLabel"), //$NON-NLS-1$
-                IDEWorkbenchMessages
-                        .getString("WizardImportPage.selectFolderTitle")); //$NON-NLS-1$
+                IDEWorkbenchMessages.WizardImportPage_selectFolderLabel,
+                IDEWorkbenchMessages.WizardImportPage_selectFolderTitle);
 
         // if a container was selected then put its name in the container name field
         if (containerPath != null) { // null means user cancelled
@@ -495,8 +488,7 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
 
             if (workspace.getRoot().exists(projectPath))
                 return true;
-            setErrorMessage(IDEWorkbenchMessages
-                        .getString("WizardImportPage.projectNotExist")); //$NON-NLS-1$
+            setErrorMessage(IDEWorkbenchMessages.WizardImportPage_projectNotExist);
             return false;
         } 
         if (!container.isAccessible()) {
@@ -505,11 +497,9 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
         }
         if (container.getLocation() == null) {
           if (container.isLinked()) {
-               setErrorMessage(IDEWorkbenchMessages
-                       .getString("WizardImportPage.undefinedPathVariable")); //$NON-NLS-1$	
+               setErrorMessage(IDEWorkbenchMessages.WizardImportPage_undefinedPathVariable);
           } else {
-               setErrorMessage(IDEWorkbenchMessages
-                       .getString("WizardImportPage.containerNotExist")); //$NON-NLS-1$
+               setErrorMessage(IDEWorkbenchMessages.WizardImportPage_containerNotExist);
           }
          return false;
         }
@@ -529,8 +519,7 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
      * with the destination.
      */
     protected final String getSourceConflictMessage() {
-        return (IDEWorkbenchMessages
-                .getString("WizardImportPage.importOnReceiver")); //$NON-NLS-1$
+        return (IDEWorkbenchMessages.WizardImportPage_importOnReceiver);
     }
 
     /**
@@ -552,8 +541,7 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
     protected boolean determinePageCompletion() {
         //Check for valid projects before making the user do anything 
         if (noOpenProjects()) {
-            setErrorMessage(IDEWorkbenchMessages
-                    .getString("WizardImportPage.noOpenProjects")); //$NON-NLS-1$
+            setErrorMessage(IDEWorkbenchMessages.WizardImportPage_noOpenProjects);
             return false;
         }
         return super.determinePageCompletion();

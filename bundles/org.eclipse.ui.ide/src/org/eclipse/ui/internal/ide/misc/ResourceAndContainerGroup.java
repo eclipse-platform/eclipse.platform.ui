@@ -18,6 +18,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
@@ -62,8 +63,7 @@ public class ResourceAndContainerGroup implements Listener {
     private boolean allowExistingResources = false;
 
     // resource type (file, folder, project)
-    private String resourceType = IDEWorkbenchMessages
-            .getString("ResourceGroup.resource"); //$NON-NLS-1$
+    private String resourceType = IDEWorkbenchMessages.ResourceGroup_resource;
 
     // show closed projects in the tree, by default
     private boolean showClosedProjects = true;
@@ -305,8 +305,7 @@ public class ResourceAndContainerGroup implements Listener {
         IPath path = containerGroup.getContainerFullPath();
         if (path == null) {
             problemType = PROBLEM_CONTAINER_EMPTY;
-            problemMessage = IDEWorkbenchMessages
-                    .getString("ResourceGroup.folderEmpty"); //$NON-NLS-1$
+            problemMessage = IDEWorkbenchMessages.ResourceGroup_folderEmpty;
             return false;
         }
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -314,8 +313,7 @@ public class ResourceAndContainerGroup implements Listener {
         if (projectName == null
                 || !workspace.getRoot().getProject(projectName).exists()) {
             problemType = PROBLEM_PROJECT_DOES_NOT_EXIST;
-            problemMessage = IDEWorkbenchMessages
-                    .getString("ResourceGroup.noProject"); //$NON-NLS-1$
+            problemMessage = IDEWorkbenchMessages.ResourceGroup_noProject;
             return false;
         }
         //path is invalid if any prefix is occupied by a file
@@ -323,9 +321,7 @@ public class ResourceAndContainerGroup implements Listener {
         while (path.segmentCount() > 1) {
         	if (root.getFile(path).exists()) {
         		problemType = PROBLEM_PATH_OCCUPIED;
-        		problemMessage = IDEWorkbenchMessages
-        			.format("ResourceGroup.pathOccupied",  //$NON-NLS-1$
-        			new Object[] {path.makeRelative()});
+        		problemMessage = NLS.bind(IDEWorkbenchMessages.ResourceGroup_pathOccupied, path.makeRelative());
         		return false;
         	}
         	path = path.removeLastSegments(1);
@@ -379,8 +375,7 @@ public class ResourceAndContainerGroup implements Listener {
                 && (workspace.getRoot().getFolder(resourcePath).exists() || workspace
                         .getRoot().getFile(resourcePath).exists())) {
             problemType = PROBLEM_RESOURCE_EXIST;
-            problemMessage = IDEWorkbenchMessages
-                    .getString("ResourceGroup.nameExists"); //$NON-NLS-1$
+            problemMessage = IDEWorkbenchMessages.ResourceGroup_nameExists;
             return false;
         }
         return true;
@@ -398,16 +393,13 @@ public class ResourceAndContainerGroup implements Listener {
 
         if (resourceName.equals("")) {//$NON-NLS-1$
             problemType = PROBLEM_RESOURCE_EMPTY;
-            problemMessage = IDEWorkbenchMessages.format(
-                    "ResourceGroup.emptyName", new Object[] { resourceType }); //$NON-NLS-1$
+            problemMessage = NLS.bind(IDEWorkbenchMessages.ResourceGroup_emptyName, resourceType);
             return false;
         }
 
         if (!(new Path("")).isValidSegment(resourceName)) { //$NON-NLS-1$
             problemType = PROBLEM_NAME_INVALID;
-            problemMessage = IDEWorkbenchMessages
-                    .format(
-                            "ResourceGroup.invalidFilename", new String[] { resourceName }); //$NON-NLS-1$
+            problemMessage = NLS.bind(IDEWorkbenchMessages.ResourceGroup_invalidFilename, resourceName);
             return false;
         }
         return true;

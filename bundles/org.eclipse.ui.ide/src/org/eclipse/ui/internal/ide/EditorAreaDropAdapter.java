@@ -154,8 +154,7 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
 
                 // if no valid editor found, bail out
                 if (editorDesc == null) {
-                    throw new PartInitException(IDEWorkbenchMessages
-                            .getString("IDE.noFileEditorFound")); //$NON-NLS-1$
+                    throw new PartInitException(IDEWorkbenchMessages.IDE_noFileEditorFound);
                 }
 
                 // open the editor on the file

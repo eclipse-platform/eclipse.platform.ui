@@ -154,8 +154,7 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
         Label projectContentsLabel = new Label(projectGroup, SWT.NONE);
         projectContentsLabel.setFont(font);
         projectContentsLabel
-                .setText(IDEWorkbenchMessages
-                        .getString("WizardNewProjectCreationPage.projectContentsLabel")); //$NON-NLS-1$
+                .setText(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectContentsLabel);
 
         GridData labelData = new GridData();
         labelData.horizontalSpan = 3;
@@ -163,8 +162,7 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
 
         final Button useDefaultsButton = new Button(projectGroup, SWT.CHECK
                 | SWT.RIGHT);
-        useDefaultsButton.setText(IDEWorkbenchMessages
-                .getString("WizardNewProjectCreationPage.useDefaultLabel")); //$NON-NLS-1$
+        useDefaultsButton.setText(IDEWorkbenchMessages.WizardNewProjectCreationPage_useDefaultLabel);
         useDefaultsButton.setSelection(useDefaults);
         useDefaultsButton.setFont(font);
 
@@ -208,8 +206,7 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
         // new project label
         Label projectLabel = new Label(projectGroup, SWT.NONE);
         projectLabel.setFont(font);
-        projectLabel.setText(IDEWorkbenchMessages
-                .getString("WizardNewProjectCreationPage.nameLabel")); //$NON-NLS-1$
+        projectLabel.setText(IDEWorkbenchMessages.WizardNewProjectCreationPage_nameLabel);
 
         // new project name entry field
         projectNameField = new Text(projectGroup, SWT.BORDER);
@@ -237,8 +234,7 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
         // location label
         locationLabel = new Label(projectGroup, SWT.NONE);
         locationLabel.setFont(font);
-        locationLabel.setText(IDEWorkbenchMessages
-                .getString("WizardNewProjectCreationPage.locationLabel")); //$NON-NLS-1$
+        locationLabel.setText(IDEWorkbenchMessages.WizardNewProjectCreationPage_locationLabel);
         locationLabel.setEnabled(enabled);
 
         // project location entry field
@@ -252,8 +248,7 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
         // browse button
         browseButton = new Button(projectGroup, SWT.PUSH);
         browseButton.setFont(font);
-        browseButton.setText(IDEWorkbenchMessages
-                .getString("WizardNewProjectCreationPage.browseLabel")); //$NON-NLS-1$
+        browseButton.setText(IDEWorkbenchMessages.WizardNewProjectCreationPage_browseLabel);
         browseButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 handleLocationBrowseButtonPressed();
@@ -343,8 +338,7 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
     private void handleLocationBrowseButtonPressed() {
         DirectoryDialog dialog = new DirectoryDialog(locationPathField
                 .getShell());
-        dialog.setMessage(IDEWorkbenchMessages
-                .getString("WizardNewProjectCreationPage.directoryLabel")); //$NON-NLS-1$
+        dialog.setMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_directoryLabel);
 
         String dirName = getProjectLocationFieldValue();
         if (!dirName.equals("")) { //$NON-NLS-1$
@@ -409,8 +403,7 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
         String projectFieldContents = getProjectNameFieldValue();
         if (projectFieldContents.equals("")) { //$NON-NLS-1$
             setErrorMessage(null);
-            setMessage(IDEWorkbenchMessages
-                    .getString("WizardNewProjectCreationPage.projectNameEmpty")); //$NON-NLS-1$
+            setMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectNameEmpty);
             return false;
         }
 
@@ -425,34 +418,29 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
 
         if (locationFieldContents.equals("")) { //$NON-NLS-1$
             setErrorMessage(null);
-            setMessage(IDEWorkbenchMessages
-                    .getString("WizardNewProjectCreationPage.projectLocationEmpty")); //$NON-NLS-1$
+            setMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectLocationEmpty);
             return false;
         }
 
         IPath path = new Path(""); //$NON-NLS-1$
         if (!path.isValidPath(locationFieldContents)) {
-            setErrorMessage(IDEWorkbenchMessages
-                    .getString("WizardNewProjectCreationPage.locationError")); //$NON-NLS-1$
+            setErrorMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_locationError);
             return false;
         }
         if (!useDefaults
                 && Platform.getLocation().isPrefixOf(
                         new Path(locationFieldContents))) {
-            setErrorMessage(IDEWorkbenchMessages
-                    .getString("WizardNewProjectCreationPage.defaultLocationError")); //$NON-NLS-1$
+            setErrorMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_defaultLocationError);
             return false;
         }
 
         if (getProjectHandle().exists()) {
-            setErrorMessage(IDEWorkbenchMessages
-                    .getString("WizardNewProjectCreationPage.projectExistsMessage")); //$NON-NLS-1$
+            setErrorMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectExistsMessage);
             return false;
         }
 
         if (isExistingProjectLocation()) {
-            setErrorMessage(IDEWorkbenchMessages
-                    .getString("WizardNewProjectCreationPage.projectLocationExistsMessage")); //$NON-NLS-1$
+            setErrorMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectLocationExistsMessage);
             return false;
         }
 

@@ -40,8 +40,7 @@ public class ProjectCapabilitySimpleAddWizard extends Wizard {
         setForcePreviousAndNextButtons(true);
         setNeedsProgressMonitor(true);
         initializeDefaultPageImageDescriptor();
-        setWindowTitle(IDEWorkbenchMessages
-                .getString("ProjectCapabilitySimpleSelectionPage.windowTitle")); //$NON-NLS-1$
+        setWindowTitle(IDEWorkbenchMessages.ProjectCapabilitySimpleSelectionPage_windowTitle);
     }
 
     /* (non-Javadoc)
@@ -51,10 +50,8 @@ public class ProjectCapabilitySimpleAddWizard extends Wizard {
         mainPage = new ProjectCapabilitySimpleSelectionPage(
                 "projectCapabilitySimpleSelectionPage", //$NON-NLS-1$
                 workbench, selection, project);
-        mainPage.setTitle(IDEWorkbenchMessages
-                .getString("ProjectCapabilitySimpleSelectionPage.title")); //$NON-NLS-1$
-        mainPage.setDescription(IDEWorkbenchMessages
-                .getString("ProjectCapabilitySimpleSelectionPage.description")); //$NON-NLS-1$
+        mainPage.setTitle(IDEWorkbenchMessages.ProjectCapabilitySimpleSelectionPage_title);
+        mainPage.setDescription(IDEWorkbenchMessages.ProjectCapabilitySimpleSelectionPage_description);
         addPage(mainPage);
     }
 

@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
@@ -150,11 +151,8 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
             String reqVersion = Integer.toString(MIN_JVM_VERSION_MAJOR) + '.'
                     + MIN_JVM_VERSION_MINOR + '.' + MIN_JVM_VERSION_SERVICE;
 
-            MessageDialog.openError(shell, IDEWorkbenchMessages
-                    .getString("IDEApplication.incompatibleJVMTitle"), //$NON-NLS-1$
-                    IDEWorkbenchMessages.format(
-                            "IDEApplication.incompatibleJVMMessage", //$NON-NLS-1$
-                            new Object[] { reqVersion }));
+            MessageDialog.openError(shell, IDEWorkbenchMessages.IDEApplication_incompatibleJVMTitle,
+                    NLS.bind(IDEWorkbenchMessages.IDEApplication_incompatibleJVMMessage, reqVersion));
             return false;
         } catch (SecurityException e) {
             // If the security manager won't allow us to get the system
@@ -182,10 +180,8 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
             MessageDialog
                     .openError(
                             shell,
-                            IDEWorkbenchMessages
-                                    .getString("IDEApplication.workspaceMandatoryTitle"), //$NON-NLS-1$
-                            IDEWorkbenchMessages
-                                    .getString("IDEApplication.workspaceMandatoryMessage")); //$NON-NLS-1$
+                            IDEWorkbenchMessages.IDEApplication_workspaceMandatoryTitle,
+                            IDEWorkbenchMessages.IDEApplication_workspaceMandatoryMessage);
             return false;
         }
 
@@ -206,18 +202,15 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
                 MessageDialog
                 .openError(
                         shell,
-                        IDEWorkbenchMessages
-                                .getString("IDEApplication.workspaceCannotLockTitle"), //$NON-NLS-1$
-                        IDEWorkbenchMessages
-                                .getString("IDEApplication.workspaceCannotLockMessage")); //$NON-NLS-1$                
+                        IDEWorkbenchMessages.IDEApplication_workspaceCannotLockTitle,
+                        IDEWorkbenchMessages.IDEApplication_workspaceCannotLockMessage);
             } catch (IOException e) {
                 IDEWorkbenchPlugin.log("Could not obtain lock for workspace location", //$NON-NLS-1$
                         e);            	
                 MessageDialog
                 .openError(
                         shell,
-                        IDEWorkbenchMessages
-                                .getString("InternalError"), //$NON-NLS-1$
+                        IDEWorkbenchMessages.InternalError,
                         e.getMessage()); //$NON-NLS-1$                
             }            
             return false;
@@ -249,19 +242,15 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
                 MessageDialog
                         .openError(
                                 shell,
-                                IDEWorkbenchMessages
-                                        .getString("IDEApplication.workspaceCannotBeSetTitle"), //$NON-NLS-1$
-                                IDEWorkbenchMessages
-                                        .getString("IDEApplication.workspaceCannotBeSetMessage")); //$NON-NLS-1$
+                                IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetTitle,
+                                IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetMessage);
                 return false;
             }
 
             // by this point it has been determined that the workspace is
             // already in use -- force the user to choose again
-            MessageDialog.openError(shell, IDEWorkbenchMessages
-                    .getString("IDEApplication.workspaceInUseTitle"), //$NON-NLS-1$
-                    IDEWorkbenchMessages
-                            .getString("IDEApplication.workspaceInUseMessage")); //$NON-NLS-1$
+            MessageDialog.openError(shell, IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle, 
+                    IDEWorkbenchMessages.IDEApplication_workspaceInUseMessage);
         }
     }
 
@@ -340,10 +329,8 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
                 MessageDialog
                 .openError(
                         shell,
-                        IDEWorkbenchMessages
-                                .getString("IDEApplication.workspaceEmptyTitle"), //$NON-NLS-1$
-                        IDEWorkbenchMessages
-                                .getString("IDEApplication.workspaceEmptyMessage")); //$NON-NLS-1$
+                        IDEWorkbenchMessages.IDEApplication_workspaceEmptyTitle,
+                        IDEWorkbenchMessages.IDEApplication_workspaceEmptyMessage);
                 continue;
             }
 
@@ -362,10 +349,8 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
                 MessageDialog
                         .openError(
                                 shell,
-                                IDEWorkbenchMessages
-                                        .getString("IDEApplication.workspaceInvalidTitle"), //$NON-NLS-1$
-                                IDEWorkbenchMessages
-                                        .getString("IDEApplication.workspaceInvalidMessage")); //$NON-NLS-1$
+                                IDEWorkbenchMessages.IDEApplication_workspaceInvalidTitle,
+                                IDEWorkbenchMessages.IDEApplication_workspaceInvalidMessage);
                 continue;
             }
         } while (!checkValidWorkspace(shell, url));
@@ -406,11 +391,8 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
         // At this point workspace has been detected to be from a version
         // other than the current ide version -- find out if the user wants
         // to use it anyhow.
-        String title = IDEWorkbenchMessages
-                .getString("IDEApplication.versionTitle"); //$NON-NLS-1$
-        String message = IDEWorkbenchMessages.format(
-                "IDEApplication.versionMessage", //$NON-NLS-1$
-                new Object[] { url.getFile() });
+        String title = IDEWorkbenchMessages.IDEApplication_versionTitle;
+        String message = NLS.bind(IDEWorkbenchMessages.IDEApplication_versionMessage, url.getFile());
 
         MessageBox mbox = new MessageBox(shell, SWT.OK | SWT.CANCEL
                 | SWT.ICON_WARNING | SWT.APPLICATION_MODAL);

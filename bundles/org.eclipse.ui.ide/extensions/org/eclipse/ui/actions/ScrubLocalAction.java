@@ -39,9 +39,8 @@ public class ScrubLocalAction extends WorkspaceAction {
      * @param shell the shell for any dialogs
      */
     public ScrubLocalAction(Shell shell) {
-        super(shell, IDEWorkbenchMessages.getString("ScrubLocalAction.text")); //$NON-NLS-1$
-        setToolTipText(IDEWorkbenchMessages
-                .getString("ScrubLocalAction.toolTip")); //$NON-NLS-1$
+        super(shell, IDEWorkbenchMessages.ScrubLocalAction_text);
+        setToolTipText(IDEWorkbenchMessages.ScrubLocalAction_toolTip);
         setId(ID);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.SCRUB_LOCAL_ACTION);
@@ -51,22 +50,21 @@ public class ScrubLocalAction extends WorkspaceAction {
      * Method declared on WorkspaceAction.
      */
     protected String getOperationMessage() {
-        return IDEWorkbenchMessages.getString("ScrubLocalAction.progress"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.ScrubLocalAction_progress;
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
     protected String getProblemsMessage() {
-        return IDEWorkbenchMessages
-                .getString("ScrubLocalAction.problemsMessage"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.ScrubLocalAction_problemsMessage;
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
     protected String getProblemsTitle() {
-        return IDEWorkbenchMessages.getString("ScrubLocalAction.problemsTitle"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.ScrubLocalAction_problemsTitle;
     }
 
     /* (non-Javadoc)

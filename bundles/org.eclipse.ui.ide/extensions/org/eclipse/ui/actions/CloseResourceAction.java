@@ -64,10 +64,9 @@ public class CloseResourceAction extends WorkspaceAction implements
      * @param shell the shell for any dialogs
      */
     public CloseResourceAction(Shell shell) {
-        super(shell, IDEWorkbenchMessages.getString("CloseResourceAction.text")); //$NON-NLS-1$
+        super(shell, IDEWorkbenchMessages.CloseResourceAction_text);
         setId(ID);
-        setToolTipText(IDEWorkbenchMessages
-                .getString("CloseResourceAction.toolTip")); //$NON-NLS-1$
+        setToolTipText(IDEWorkbenchMessages.CloseResourceAction_toolTip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.CLOSE_RESOURCE_ACTION);
     }
@@ -134,13 +133,11 @@ public class CloseResourceAction extends WorkspaceAction implements
         AdaptableList input = new AdaptableList(saveEditors);
         ListSelectionDialog dlg = new ListSelectionDialog(getShell(), input,
                 new WorkbenchContentProvider(),
-                new WorkbenchPartLabelProvider(), IDEWorkbenchMessages
-                        .getString("EditorManager.saveResourcesMessage")); //$NON-NLS-1$
+                new WorkbenchPartLabelProvider(), IDEWorkbenchMessages.EditorManager_saveResourcesMessage);
 
         dlg.setInitialSelections(saveEditors.toArray(new Object[saveEditors
                 .size()]));
-        dlg.setTitle(IDEWorkbenchMessages
-                .getString("EditorManager.saveResourcesTitle")); //$NON-NLS-1$
+        dlg.setTitle(IDEWorkbenchMessages.EditorManager_saveResourcesTitle);
         int result = dlg.open();
 
         if (result == IDialogConstants.CANCEL_ID)
@@ -152,23 +149,21 @@ public class CloseResourceAction extends WorkspaceAction implements
      * Method declared on WorkspaceAction.
      */
     protected String getOperationMessage() {
-        return IDEWorkbenchMessages
-        .getString("CloseResourceAction.operationMessage"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.CloseResourceAction_operationMessage;
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
     protected String getProblemsMessage() {
-        return IDEWorkbenchMessages
-                .getString("CloseResourceAction.problemMessage"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.CloseResourceAction_problemMessage;
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
     protected String getProblemsTitle() {
-        return IDEWorkbenchMessages.getString("CloseResourceAction.title"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.CloseResourceAction_title;
     }
 
     protected void invokeOperation(IResource resource, IProgressMonitor monitor)

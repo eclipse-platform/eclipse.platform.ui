@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
@@ -51,7 +52,7 @@ public class WelcomeEditorInput implements IEditorInput {
     }
 
     public String getName() {
-        return IDEWorkbenchMessages.getString("WelcomeEditor.title"); //$NON-NLS-1$	
+        return IDEWorkbenchMessages.WelcomeEditor_title;
     }
 
     public IPersistableElement getPersistable() {
@@ -81,8 +82,6 @@ public class WelcomeEditorInput implements IEditorInput {
     }
 
     public String getToolTipText() {
-        return IDEWorkbenchMessages
-                .format(
-                        "WelcomeEditor.toolTip", new Object[] { aboutInfo.getFeatureLabel() }); //$NON-NLS-1$	
+        return NLS.bind(IDEWorkbenchMessages.WelcomeEditor_toolTip, aboutInfo.getFeatureLabel());
     }
 }

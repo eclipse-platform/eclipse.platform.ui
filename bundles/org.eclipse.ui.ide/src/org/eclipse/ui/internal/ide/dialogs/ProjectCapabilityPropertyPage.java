@@ -71,11 +71,9 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
 
         String instructions;
         if (reg.hasCapabilities())
-            instructions = IDEWorkbenchMessages
-                    .getString("ProjectCapabilityPropertyPage.chooseCapabilities"); //$NON-NLS-1$
+            instructions = IDEWorkbenchMessages.ProjectCapabilityPropertyPage_chooseCapabilities;
         else
-            instructions = IDEWorkbenchMessages
-                    .getString("ProjectCapabilityPropertyPage.noCapabilities"); //$NON-NLS-1$
+            instructions = IDEWorkbenchMessages.ProjectCapabilityPropertyPage_noCapabilities;
         Label label = new Label(parent, SWT.LEFT);
         label.setFont(parent.getFont());
         label.setText(instructions);
@@ -118,10 +116,8 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
             ErrorDialog
                     .openError(
                             getShell(),
-                            IDEWorkbenchMessages
-                                    .getString("ProjectCapabilityPropertyPage.errorTitle"), //$NON-NLS-1$
-                            IDEWorkbenchMessages
-                                    .getString("ProjectCapabilityPropertyPage.invalidSelection"), //$NON-NLS-1$
+                            IDEWorkbenchMessages.ProjectCapabilityPropertyPage_errorTitle,
+                            IDEWorkbenchMessages.ProjectCapabilityPropertyPage_invalidSelection,
                             status);
             return true;
         }
@@ -135,10 +131,8 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
             ErrorDialog
                     .openError(
                             getShell(),
-                            IDEWorkbenchMessages
-                                    .getString("ProjectCapabilityPropertyPage.errorTitle"), //$NON-NLS-1$
-                            IDEWorkbenchMessages
-                                    .getString("ProjectCapabilityPropertyPage.internalError"), //$NON-NLS-1$
+                            IDEWorkbenchMessages.ProjectCapabilityPropertyPage_errorTitle,
+                            IDEWorkbenchMessages.ProjectCapabilityPropertyPage_internalError,
                             e.getStatus());
             return true;
         }

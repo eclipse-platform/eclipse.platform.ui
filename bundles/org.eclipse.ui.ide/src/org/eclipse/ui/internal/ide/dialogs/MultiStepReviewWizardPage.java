@@ -99,8 +99,7 @@ public class MultiStepReviewWizardPage extends WizardPage {
 
         // Add a label to identify the details text field
         Label label = new Label(composite, SWT.LEFT);
-        label.setText(IDEWorkbenchMessages
-                .getString("MultiStepReviewWizardPage.detailsLabel")); //$NON-NLS-1$
+        label.setText(IDEWorkbenchMessages.MultiStepReviewWizardPage_detailsLabel);
         GridData data = new GridData();
         data.verticalAlignment = SWT.TOP;
         label.setLayoutData(data);
@@ -120,8 +119,7 @@ public class MultiStepReviewWizardPage extends WizardPage {
      */
     private void createInstructionsGroup(Composite parent) {
         instructionLabel = new Label(parent, SWT.LEFT);
-        instructionLabel.setText(IDEWorkbenchMessages
-                .getString("MultiStepReviewWizardPage.instructionFinishLabel")); //$NON-NLS-1$
+        instructionLabel.setText(IDEWorkbenchMessages.MultiStepReviewWizardPage_instructionFinishLabel);
         GridData data = new GridData();
         data.verticalAlignment = SWT.TOP;
         data.horizontalSpan = 2;
@@ -176,13 +174,9 @@ public class MultiStepReviewWizardPage extends WizardPage {
         super.setVisible(visible);
         if (visible) {
             if (stepWizard.canFinishOnReviewPage())
-                instructionLabel
-                        .setText(IDEWorkbenchMessages
-                                .getString("MultiStepReviewWizardPage.instructionFinishLabel")); //$NON-NLS-1$
+                instructionLabel.setText(IDEWorkbenchMessages.MultiStepReviewWizardPage_instructionFinishLabel);
             else
-                instructionLabel
-                        .setText(IDEWorkbenchMessages
-                                .getString("MultiStepReviewWizardPage.instructionNextLabel")); //$NON-NLS-1$
+                instructionLabel.setText(IDEWorkbenchMessages.MultiStepReviewWizardPage_instructionNextLabel);
             ((Composite) getControl()).layout(true);
         }
     }

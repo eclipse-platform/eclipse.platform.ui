@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
@@ -41,17 +42,13 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * manipulated. This should be disabled for multi select or no selection.
  */
 public class CopyProjectAction extends SelectionListenerAction {
-    private static String COPY_TOOL_TIP = IDEWorkbenchMessages
-            .getString("CopyProjectAction.toolTip"); //$NON-NLS-1$
+    private static String COPY_TOOL_TIP = IDEWorkbenchMessages.CopyProjectAction_toolTip;
 
-    private static String COPY_TITLE = IDEWorkbenchMessages
-            .getString("CopyProjectAction.title"); //$NON-NLS-1$
+    private static String COPY_TITLE = IDEWorkbenchMessages.CopyProjectAction_title;
 
-    private static String COPY_PROGRESS_TITLE = IDEWorkbenchMessages
-            .getString("CopyProjectAction.progressTitle"); //$NON-NLS-1$
+    private static String COPY_PROGRESS_TITLE = IDEWorkbenchMessages.CopyProjectAction_progressTitle;
 
-    private static String PROBLEMS_TITLE = IDEWorkbenchMessages
-            .getString("CopyProjectAction.copyFailedTitle"); //$NON-NLS-1$
+    private static String PROBLEMS_TITLE = IDEWorkbenchMessages.CopyProjectAction_copyFailedTitle;
 
     /**
      * The id of this action.
@@ -190,9 +187,7 @@ public class CopyProjectAction extends SelectionListenerAction {
         } catch (InterruptedException e) {
             return false;
         } catch (InvocationTargetException e) {
-            displayError(IDEWorkbenchMessages
-                    .format(
-                            "CopyProjectAction.internalError", new Object[] { e.getTargetException().getMessage() })); //$NON-NLS-1$
+            displayError(NLS.bind(IDEWorkbenchMessages.CopyProjectAction_internalError, e.getTargetException().getMessage()));
             return false;
         }
 
@@ -208,8 +203,7 @@ public class CopyProjectAction extends SelectionListenerAction {
     protected Object[] queryDestinationParameters(IProject project) {
         ProjectLocationSelectionDialog dialog = new ProjectLocationSelectionDialog(
                 shell, project);
-        dialog.setTitle(IDEWorkbenchMessages
-                .getString("CopyProjectAction.copyTitle")); //$NON-NLS-1$
+        dialog.setTitle(IDEWorkbenchMessages.CopyProjectAction_copyTitle);
         dialog.open();
         return dialog.getResult();
     }

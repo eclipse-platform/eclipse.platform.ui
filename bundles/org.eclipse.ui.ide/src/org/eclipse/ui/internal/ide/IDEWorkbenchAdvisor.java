@@ -251,10 +251,8 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
                 }
             });
             if (ex[0] != null) {
-                ErrorDialog.openError(shell, IDEWorkbenchMessages
-                        .getString("Workspace.problemsTitle"), //$NON-NLS-1$ 
-                        IDEWorkbenchMessages
-                                .getString("Workspace.problemMessage"), //$NON-NLS-1$
+                ErrorDialog.openError(shell, IDEWorkbenchMessages.Workspace_problemsTitle,
+                        IDEWorkbenchMessages.Workspace_problemMessage,
                         ex[0].getStatus());
             }
         } catch (InterruptedException e) {
@@ -273,8 +271,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
     private void disconnectFromWorkspace() {
         // save the workspace
         final MultiStatus status = new MultiStatus(
-                IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages
-                        .getString("ProblemSavingWorkbench"), null); //$NON-NLS-1$
+                IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.ProblemSavingWorkbench, null);
         IRunnableWithProgress runnable = new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor) {
                 try {
@@ -293,18 +290,15 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
                             IStatus.ERROR,
                             IDEWorkbenchPlugin.IDE_WORKBENCH,
                             1,
-                            IDEWorkbenchMessages.getString("InternalError"), e.getTargetException())); //$NON-NLS-1$
+                            IDEWorkbenchMessages.InternalError, e.getTargetException()));
         } catch (InterruptedException e) {
             status.merge(new Status(IStatus.ERROR,
-                    IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages
-                            .getString("InternalError"), e)); //$NON-NLS-1$
+                    IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.InternalError, e));
         }
-        ErrorDialog.openError(null, IDEWorkbenchMessages
-                .getString("ProblemsSavingWorkspace"), //$NON-NLS-1$
+        ErrorDialog.openError(null, IDEWorkbenchMessages.ProblemsSavingWorkspace,
                 null, status, IStatus.ERROR | IStatus.WARNING);
         if (!status.isOK()) {
-            IDEWorkbenchPlugin.log(IDEWorkbenchMessages
-                    .getString("ProblemsSavingWorkspace"), status); //$NON-NLS-1$
+            IDEWorkbenchPlugin.log(IDEWorkbenchMessages.ProblemsSavingWorkspace, status);
         }
     }
 

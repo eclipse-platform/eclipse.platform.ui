@@ -41,8 +41,7 @@ public class ReadOnlyStateChecker {
 
     private boolean ignoreLinkedResources = false;
     
-    private String READ_ONLY_EXCEPTION_MESSAGE = IDEWorkbenchMessages
-            .getString("ReadOnlyCheck.problems"); //$NON-NLS-1$
+    private String READ_ONLY_EXCEPTION_MESSAGE = IDEWorkbenchMessages.ReadOnlyCheck_problems;
 
     /**
      * Create a new checker that parents the dialog off of parent using the supplied

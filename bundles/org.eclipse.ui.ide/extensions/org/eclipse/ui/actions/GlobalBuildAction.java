@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -113,9 +114,8 @@ public class GlobalBuildAction extends Action implements
         switch (type) {
         case IncrementalProjectBuilder.INCREMENTAL_BUILD:
         case IncrementalProjectBuilder.AUTO_BUILD:
-            setText(IDEWorkbenchMessages.getString("GlobalBuildAction.text")); //$NON-NLS-1$
-            setToolTipText(IDEWorkbenchMessages
-                    .getString("GlobalBuildAction.toolTip")); //$NON-NLS-1$
+            setText(IDEWorkbenchMessages.GlobalBuildAction_text);
+            setToolTipText(IDEWorkbenchMessages.GlobalBuildAction_toolTip);
             setId("build"); //$NON-NLS-1$
             workbenchWindow.getWorkbench().getHelpSystem().setHelp(this,
                     IIDEHelpContextIds.GLOBAL_INCREMENTAL_BUILD_ACTION);
@@ -126,10 +126,8 @@ public class GlobalBuildAction extends Action implements
             setActionDefinitionId("org.eclipse.ui.project.buildAll"); //$NON-NLS-1$
             break;
         case IncrementalProjectBuilder.FULL_BUILD:
-            setText(IDEWorkbenchMessages
-                    .getString("GlobalBuildAction.rebuildText")); //$NON-NLS-1$
-            setToolTipText(IDEWorkbenchMessages
-                    .getString("GlobalBuildAction.rebuildToolTip")); //$NON-NLS-1$
+            setText(IDEWorkbenchMessages.GlobalBuildAction_rebuildText);
+            setToolTipText(IDEWorkbenchMessages.GlobalBuildAction_rebuildToolTip);
             setId("rebuildAll"); //$NON-NLS-1$
             workbenchWindow.getWorkbench().getHelpSystem().setHelp(this,
                     IIDEHelpContextIds.GLOBAL_FULL_BUILD_ACTION);
@@ -153,11 +151,9 @@ public class GlobalBuildAction extends Action implements
      */
     private String getOperationMessage() {
         if (buildType == IncrementalProjectBuilder.INCREMENTAL_BUILD)
-            return IDEWorkbenchMessages
-                    .getString("GlobalBuildAction.buildOperationTitle"); //$NON-NLS-1$
+            return IDEWorkbenchMessages.GlobalBuildAction_buildOperationTitle;
         else
-            return IDEWorkbenchMessages
-                    .getString("GlobalBuildAction.rebuildAllOperationTitle"); //$NON-NLS-1$
+            return IDEWorkbenchMessages.GlobalBuildAction_rebuildAllOperationTitle;
     }
 
     /**
@@ -172,8 +168,7 @@ public class GlobalBuildAction extends Action implements
      * with the build to the user.
      */
     /* package */void doBuildOperation() {
-        Job buildJob = new Job(IDEWorkbenchMessages
-                .getString("GlobalBuildAction.jobTitle")) { //$NON-NLS-1$
+        Job buildJob = new Job(IDEWorkbenchMessages.GlobalBuildAction_jobTitle) {
             /*
              * (non-Javadoc)
              * 
@@ -181,8 +176,7 @@ public class GlobalBuildAction extends Action implements
              */
             protected IStatus run(IProgressMonitor monitor) {
                 final MultiStatus status = new MultiStatus(
-                        PlatformUI.PLUGIN_ID, 0, IDEWorkbenchMessages
-                                .getString("GlobalBuildAction.buildProblems"), //$NON-NLS-1$
+                        PlatformUI.PLUGIN_ID, 0, IDEWorkbenchMessages.GlobalBuildAction_buildProblems,
                         null);
                 monitor.beginTask(getOperationMessage(), 100); //$NON-NLS-1$
                 try {
@@ -277,11 +271,8 @@ public class GlobalBuildAction extends Action implements
             ErrorDialog
                     .openError(
                             getShell(),
-                            IDEWorkbenchMessages
-                                    .getString("GlobalBuildAction.buildProblems"), //$NON-NLS-1$
-                            IDEWorkbenchMessages
-                                    .format(
-                                            "GlobalBuildAction.internalError", new Object[] { e.getMessage() }), //$NON-NLS-1$
+                            IDEWorkbenchMessages.GlobalBuildAction_buildProblems,
+                            NLS.bind(IDEWorkbenchMessages.GlobalBuildAction_internalError, e.getMessage()),
                             e.getStatus());
             return false;
         }
@@ -314,10 +305,8 @@ public class GlobalBuildAction extends Action implements
         if (buildJobs.length == 0)
             return true;
         boolean cancel = MessageDialog.openQuestion(workbenchWindow.getShell(),
-                IDEWorkbenchMessages
-                        .getString("GlobalBuildAction.BuildRunningTitle"), //$NON-NLS-1$
-                IDEWorkbenchMessages
-                        .getString("GlobalBuildAction.BuildRunningMessage")); //$NON-NLS-1$
+                IDEWorkbenchMessages.GlobalBuildAction_BuildRunningTitle,
+                IDEWorkbenchMessages.GlobalBuildAction_BuildRunningMessage);
         if (cancel) {
             for (int i = 0; i < buildJobs.length; i++) {
                 Job job = buildJobs[i];

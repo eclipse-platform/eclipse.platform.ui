@@ -32,7 +32,7 @@ public class ToggleAutoBuildAction extends Action implements
      * @param window The window for parenting dialogs associated with this action
      */
     public ToggleAutoBuildAction(IWorkbenchWindow window) {
-        super(IDEWorkbenchMessages.getString("Workbench.buildAutomatically")); //$NON-NLS-1$
+        super(IDEWorkbenchMessages.Workbench_buildAutomatically);
         this.window = window;
         setChecked(ResourcesPlugin.getWorkspace().isAutoBuilding());
     }

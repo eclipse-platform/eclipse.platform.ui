@@ -327,8 +327,7 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
         buttonComposite.setLayoutData(data);
 
         Button selectButton = createButton(buttonComposite,
-                IDialogConstants.SELECT_ALL_ID, IDEWorkbenchMessages
-                        .getString("SelectionDialog.selectLabel"), false); //$NON-NLS-1$
+                IDialogConstants.SELECT_ALL_ID, IDEWorkbenchMessages.SelectionDialog_selectLabel, false);
 
         SelectionListener listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -338,8 +337,7 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
         selectButton.addSelectionListener(listener);
 
         Button deselectButton = createButton(buttonComposite,
-                IDialogConstants.DESELECT_ALL_ID, IDEWorkbenchMessages
-                        .getString("SelectionDialog.deselectLabel"), false); //$NON-NLS-1$
+                IDialogConstants.DESELECT_ALL_ID, IDEWorkbenchMessages.SelectionDialog_deselectLabel, false);
 
         listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {

@@ -502,8 +502,7 @@ public final class IDE {
 
 		// if no valid editor found, bail out
 		if (editorDesc == null)
-			throw new PartInitException(IDEWorkbenchMessages
-					.getString("IDE.noFileEditorFound")); //$NON-NLS-1$
+			throw new PartInitException(IDEWorkbenchMessages.IDE_noFileEditorFound);
 
 		return editorDesc;
 	}
@@ -628,8 +627,7 @@ public final class IDE {
         if (resourceRoots.length == 0)
             return result[0];
 
-        Platform.run(new SafeRunnable(IDEWorkbenchMessages
-                .getString("ErrorClosing")) { //$NON-NLS-1$
+        Platform.run(new SafeRunnable(IDEWorkbenchMessages.ErrorClosing) {
                     public void run() {
                         //Collect dirtyEditors
                         ArrayList dirtyEditors = new ArrayList();

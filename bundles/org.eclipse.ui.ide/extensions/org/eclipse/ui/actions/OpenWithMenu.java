@@ -278,7 +278,7 @@ public class OpenWithMenu extends ContributionItem {
             IDE.setDefaultEditor(file, editorId);
         } catch (PartInitException e) {
             DialogUtil.openError(page.getWorkbenchWindow().getShell(),
-                    IDEWorkbenchMessages.getString("OpenWithMenu.dialogTitle"), //$NON-NLS-1$
+                    IDEWorkbenchMessages.OpenWithMenu_dialogTitle,
                     e.getMessage(), e);
         }
     }
@@ -293,8 +293,7 @@ public class OpenWithMenu extends ContributionItem {
     private void createDefaultMenuItem(Menu menu, final IFile file) {
         final MenuItem menuItem = new MenuItem(menu, SWT.RADIO);
         menuItem.setSelection(IDE.getDefaultEditor(file) == null);
-        menuItem.setText(IDEWorkbenchMessages
-                .getString("DefaultEditorDescription.name")); //$NON-NLS-1$
+        menuItem.setText(IDEWorkbenchMessages.DefaultEditorDescription_name);
 
         Listener listener = new Listener() {
             public void handleEvent(Event event) {
@@ -306,8 +305,7 @@ public class OpenWithMenu extends ContributionItem {
                             IDE.openEditor(page, file, true);
                         } catch (PartInitException e) {
                             DialogUtil.openError(page.getWorkbenchWindow()
-                                    .getShell(), IDEWorkbenchMessages
-                                    .getString("OpenWithMenu.dialogTitle"), //$NON-NLS-1$
+                                    .getShell(), IDEWorkbenchMessages.OpenWithMenu_dialogTitle,
                                     e.getMessage(), e);
                         }
                     }

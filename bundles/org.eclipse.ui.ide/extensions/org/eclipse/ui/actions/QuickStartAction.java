@@ -68,12 +68,12 @@ public class QuickStartAction extends Action implements
      * @param window the window
      */
     public QuickStartAction(IWorkbenchWindow window) {
-        super(IDEWorkbenchMessages.getString("QuickStart.text")); //$NON-NLS-1$
+        super(IDEWorkbenchMessages.QuickStart_text);
         if (window == null) {
             throw new IllegalArgumentException();
         }
         this.workbenchWindow = window;
-        setToolTipText(IDEWorkbenchMessages.getString("QuickStart.toolTip")); //$NON-NLS-1$
+        setToolTipText(IDEWorkbenchMessages.QuickStart_toolTip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.QUICK_START_ACTION);
         setActionDefinitionId("org.eclipse.ui.help.quickStartAction"); //$NON-NLS-1$
@@ -95,10 +95,8 @@ public class QuickStartAction extends Action implements
             }
         } catch (WorkbenchException e) {
             ErrorDialog.openError(workbenchWindow.getShell(),
-                    IDEWorkbenchMessages
-                            .getString("QuickStartAction.errorDialogTitle"), //$NON-NLS-1$
-                    IDEWorkbenchMessages
-                            .getString("QuickStartAction.infoReadError"), //$NON-NLS-1$
+                    IDEWorkbenchMessages.QuickStartAction_errorDialogTitle,
+                    IDEWorkbenchMessages.QuickStartAction_infoReadError,
                     e.getStatus());
         }
     }
@@ -130,10 +128,8 @@ public class QuickStartAction extends Action implements
         Shell shell = workbenchWindow.getShell();
 
         if (welcomeFeatures.size() == 0) {
-            MessageDialog.openInformation(shell, IDEWorkbenchMessages
-                    .getString("QuickStartMessageDialog.title"), //$NON-NLS-1$
-                    IDEWorkbenchMessages
-                            .getString("QuickStartMessageDialog.message")); //$NON-NLS-1$
+            MessageDialog.openInformation(shell, IDEWorkbenchMessages.QuickStartMessageDialog_title,
+                    IDEWorkbenchMessages.QuickStartMessageDialog_message);
             return null;
         }
 
@@ -141,10 +137,8 @@ public class QuickStartAction extends Action implements
         welcomeFeatures.toArray(features);
 
         FeatureSelectionDialog d = new FeatureSelectionDialog(shell, features,
-                product == null ? null : product.getId(), IDEWorkbenchMessages
-                        .getString("WelcomePageSelectionDialog.title"), //$NON-NLS-1$
-                IDEWorkbenchMessages
-                        .getString("WelcomePageSelectionDialog.message"), //$NON-NLS-1$
+                product == null ? null : product.getId(), IDEWorkbenchMessages.WelcomePageSelectionDialog_title,
+                IDEWorkbenchMessages.WelcomePageSelectionDialog_message,
                 IIDEHelpContextIds.WELCOME_PAGE_SELECTION_DIALOG);
         if (d.open() != Window.OK || d.getResult().length != 1)
             return null;
@@ -244,15 +238,12 @@ public class QuickStartAction extends Action implements
                     IStatus.ERROR,
                     IDEWorkbenchPlugin.IDE_WORKBENCH,
                     1,
-                    IDEWorkbenchMessages
-                            .getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$
+                    IDEWorkbenchMessages.QuickStartAction_openEditorException, e);
             ErrorDialog
                     .openError(
                             workbenchWindow.getShell(),
-                            IDEWorkbenchMessages
-                                    .getString("Workbench.openEditorErrorDialogTitle"), //$NON-NLS-1$
-                            IDEWorkbenchMessages
-                                    .getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
+                            IDEWorkbenchMessages.Workbench_openEditorErrorDialogTitle,
+                            IDEWorkbenchMessages.Workbench_openEditorErrorDialogMessage,
                             status);
             return false;
         }

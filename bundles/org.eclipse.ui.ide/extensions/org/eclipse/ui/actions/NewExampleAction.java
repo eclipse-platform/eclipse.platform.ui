@@ -66,7 +66,7 @@ public class NewExampleAction extends Action {
      * 		selection and shell for opening the wizard.
      */
     public NewExampleAction(IWorkbenchWindow window) {
-        super(IDEWorkbenchMessages.getString("NewExampleAction.text")); //$NON-NLS-1$
+        super(IDEWorkbenchMessages.NewExampleAction_text);
         if (window == null) {
             throw new IllegalArgumentException();
         }
@@ -76,8 +76,7 @@ public class NewExampleAction extends Action {
                 .getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
         setDisabledImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
-        setToolTipText(IDEWorkbenchMessages
-                .getString("NewExampleAction.toolTip")); //$NON-NLS-1$
+        setToolTipText(IDEWorkbenchMessages.NewExampleAction_toolTip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				org.eclipse.ui.internal.IWorkbenchHelpContextIds.NEW_ACTION);
     }
@@ -110,8 +109,7 @@ public class NewExampleAction extends Action {
         Shell parent = window.getShell();
         WizardDialog dialog = new WizardDialog(parent, wizard);
         dialog.create();
-        wizard.setWindowTitle(IDEWorkbenchMessages
-                .getString("NewExample.title")); //$NON-NLS-1$
+        wizard.setWindowTitle(IDEWorkbenchMessages.NewExample_title);
         dialog.getShell().setSize(
                 Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x),
                 SIZING_WIZARD_HEIGHT);

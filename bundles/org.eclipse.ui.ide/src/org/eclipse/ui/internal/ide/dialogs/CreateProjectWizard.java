@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -95,14 +96,11 @@ public class CreateProjectWizard extends Wizard {
                     MessageDialog
                             .openError(
                                     getShell(),
-                                    IDEWorkbenchMessages
-                                            .getString("CreateProjectWizard.errorTitle"), //$NON-NLS-1$
-                                    IDEWorkbenchMessages
-                                            .getString("CreateProjectWizard.caseVariantExistsError") //$NON-NLS-1$,
+                                    IDEWorkbenchMessages.CreateProjectWizard_errorTitle,
+                                    IDEWorkbenchMessages.CreateProjectWizard_caseVariantExistsError
                             );
                 } else {
-                    ErrorDialog.openError(getShell(), IDEWorkbenchMessages
-                            .getString("CreateProjectWizard.errorTitle"), //$NON-NLS-1$
+                    ErrorDialog.openError(getShell(), IDEWorkbenchMessages.CreateProjectWizard_errorTitle,
                             null, // no special message
                             ((CoreException) t).getStatus());
                 }
@@ -114,11 +112,8 @@ public class CreateProjectWizard extends Wizard {
                 MessageDialog
                         .openError(
                                 getShell(),
-                                IDEWorkbenchMessages
-                                        .getString("CreateProjectWizard.errorTitle"), //$NON-NLS-1$
-                                IDEWorkbenchMessages
-                                        .format(
-                                                "CreateProjectWizard.internalError", new Object[] { t.getMessage() })); //$NON-NLS-1$
+                                IDEWorkbenchMessages.CreateProjectWizard_errorTitle,
+                                NLS.bind(IDEWorkbenchMessages.CreateProjectWizard_internalError, t.getMessage()));
             }
             return null;
         }

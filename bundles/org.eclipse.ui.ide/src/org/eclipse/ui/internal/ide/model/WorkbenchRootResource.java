@@ -42,6 +42,6 @@ public class WorkbenchRootResource extends WorkbenchAdapter {
      */
     public String getLabel(Object o) {
         //root resource has no name
-        return IDEWorkbenchMessages.getString("Workspace"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.Workspace;
     }
 }

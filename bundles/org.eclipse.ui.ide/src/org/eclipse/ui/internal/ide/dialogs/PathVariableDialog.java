@@ -177,11 +177,9 @@ public class PathVariableDialog extends TitleAreaDialog {
         this.namesInUse = namesInUse;
 
         if (newVariable)
-            this.standardMessage = IDEWorkbenchMessages
-                    .getString("PathVariableDialog.message.newVariable"); //$NON-NLS-1$
+            this.standardMessage = IDEWorkbenchMessages.PathVariableDialog_message_newVariable;
         else
-            this.standardMessage = IDEWorkbenchMessages
-                    .getString("PathVariableDialog.message.existingVariable"); //$NON-NLS-1$
+            this.standardMessage = IDEWorkbenchMessages.PathVariableDialog_message_existingVariable;
     }
 
     /**
@@ -192,12 +190,10 @@ public class PathVariableDialog extends TitleAreaDialog {
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
         if (newVariable)
-            shell.setText(IDEWorkbenchMessages
-                    .getString("PathVariableDialog.shellTitle.newVariable")); //$NON-NLS-1$
+            shell.setText(IDEWorkbenchMessages.PathVariableDialog_shellTitle_newVariable);
         else
             shell
-                    .setText(IDEWorkbenchMessages
-                            .getString("PathVariableDialog.shellTitle.existingVariable")); //$NON-NLS-1$
+                    .setText(IDEWorkbenchMessages.PathVariableDialog_shellTitle_existingVariable);
     }
 
     /**
@@ -243,11 +239,9 @@ public class PathVariableDialog extends TitleAreaDialog {
         contents.setFont(parentComposite.getFont());
 
         if (newVariable)
-            setTitle(IDEWorkbenchMessages
-                    .getString("PathVariableDialog.dialogTitle.newVariable")); //$NON-NLS-1$
+            setTitle(IDEWorkbenchMessages.PathVariableDialog_dialogTitle_newVariable);
         else
-            setTitle(IDEWorkbenchMessages
-                    .getString("PathVariableDialog.dialogTitle.existingVariable")); //$NON-NLS-1$
+            setTitle(IDEWorkbenchMessages.PathVariableDialog_dialogTitle_existingVariable);
         setMessage(standardMessage);
         return contents;
     }
@@ -261,10 +255,8 @@ public class PathVariableDialog extends TitleAreaDialog {
     private void createWidgets(Composite contents, Font font) {
         FormData data;
 
-        String nameLabelText = IDEWorkbenchMessages
-                .getString("PathVariableDialog.variableName"); //$NON-NLS-1$
-        String valueLabelText = IDEWorkbenchMessages
-                .getString("PathVariableDialog.variableValue"); //$NON-NLS-1$
+        String nameLabelText = IDEWorkbenchMessages.PathVariableDialog_variableName;
+        String valueLabelText = IDEWorkbenchMessages.PathVariableDialog_variableValue;
 
         // variable name label
         variableNameLabel = new Label(contents, SWT.LEFT);
@@ -327,8 +319,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 
         // select file path button
         fileButton = new Button(contents, SWT.PUSH);
-        fileButton.setText(IDEWorkbenchMessages
-                .getString("PathVariableDialog.file")); //$NON-NLS-1$
+        fileButton.setText(IDEWorkbenchMessages.PathVariableDialog_file);
         if ((variableType & IResource.FILE) == 0)
             fileButton.setEnabled(false);
 
@@ -349,8 +340,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 
         // select folder path button
         folderButton = new Button(contents, SWT.PUSH);
-        folderButton.setText(IDEWorkbenchMessages
-                .getString("PathVariableDialog.folder")); //$NON-NLS-1$
+        folderButton.setText(IDEWorkbenchMessages.PathVariableDialog_folder);
         if ((variableType & IResource.FOLDER) == 0)
             folderButton.setEnabled(false);
 
@@ -417,10 +407,8 @@ public class PathVariableDialog extends TitleAreaDialog {
      */
     private void selectFolder() {
         DirectoryDialog dialog = new DirectoryDialog(getShell());
-        dialog.setText(IDEWorkbenchMessages
-                .getString("PathVariableDialog.selectFolderTitle")); //$NON-NLS-1$
-        dialog.setMessage(IDEWorkbenchMessages
-                .getString("PathVariableDialog.selectFolderMessage")); //$NON-NLS-1$
+        dialog.setText(IDEWorkbenchMessages.PathVariableDialog_selectFolderTitle);
+        dialog.setMessage(IDEWorkbenchMessages.PathVariableDialog_selectFolderMessage);
         dialog.setFilterPath(variableValue);
         String res = dialog.open();
         if (res != null) {
@@ -434,8 +422,7 @@ public class PathVariableDialog extends TitleAreaDialog {
      */
     private void selectFile() {
         FileDialog dialog = new FileDialog(getShell());
-        dialog.setText(IDEWorkbenchMessages
-                .getString("PathVariableDialog.selectFileTitle")); //$NON-NLS-1$
+        dialog.setText(IDEWorkbenchMessages.PathVariableDialog_selectFileTitle);
         dialog.setFilterPath(variableValue);
         String res = dialog.open();
         if (res != null) {
@@ -479,8 +466,7 @@ public class PathVariableDialog extends TitleAreaDialog {
             if (nameEntered) {
                 // a name was entered before and is now empty
                 newValidationStatus = IMessageProvider.ERROR;
-                message = IDEWorkbenchMessages
-                        .getString("PathVariableDialog.variableNameEmptyMessage"); //$NON-NLS-1$
+                message = IDEWorkbenchMessages.PathVariableDialog_variableNameEmptyMessage;
             }
         } else {
             IStatus status = pathVariableManager.validateName(variableName);
@@ -491,8 +477,7 @@ public class PathVariableDialog extends TitleAreaDialog {
             } else if (namesInUse.contains(variableName)
                     && !variableName.equals(originalName)) {
                 // the variable name is already in use
-                message = IDEWorkbenchMessages
-                        .getString("PathVariableDialog.variableAlreadyExistsMessage"); //$NON-NLS-1$
+                message = IDEWorkbenchMessages.PathVariableDialog_variableAlreadyExistsMessage;
                 newValidationStatus = IMessageProvider.ERROR;
             } else {
                 allowFinish = true;
@@ -534,23 +519,19 @@ public class PathVariableDialog extends TitleAreaDialog {
             if (locationEntered) {
                 // a location value was entered before and is now empty
                 newValidationStatus = IMessageProvider.ERROR;
-                message = IDEWorkbenchMessages
-                        .getString("PathVariableDialog.variableValueEmptyMessage"); //$NON-NLS-1$
+                message = IDEWorkbenchMessages.PathVariableDialog_variableValueEmptyMessage;
             }
         } else if (!Path.EMPTY.isValidPath(variableValue)) {
             // the variable value is an invalid path
-            message = IDEWorkbenchMessages
-                    .getString("PathVariableDialog.variableValueInvalidMessage"); //$NON-NLS-1$
+            message = IDEWorkbenchMessages.PathVariableDialog_variableValueInvalidMessage;
             newValidationStatus = IMessageProvider.ERROR;
         } else if (!new Path(variableValue).isAbsolute()) {
             // the variable value is a relative path
-            message = IDEWorkbenchMessages
-                    .getString("PathVariableDialog.pathIsRelativeMessage"); //$NON-NLS-1$
+            message = IDEWorkbenchMessages.PathVariableDialog_pathIsRelativeMessage;
             newValidationStatus = IMessageProvider.ERROR;
         } else if (!new File(variableValue).exists()) {
             // the path does not exist (warning)
-            message = IDEWorkbenchMessages
-                    .getString("PathVariableDialog.pathDoesNotExistMessage"); //$NON-NLS-1$
+            message = IDEWorkbenchMessages.PathVariableDialog_pathDoesNotExistMessage;
             newValidationStatus = IMessageProvider.WARNING;
             allowFinish = true;
         } else {

@@ -37,6 +37,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -166,8 +167,7 @@ public class ProjectCapabilitySelectionGroup {
 
         // Add a label to identify the list viewer of categories
         Label categoryLabel = new Label(catComposite, SWT.LEFT);
-        categoryLabel.setText(IDEWorkbenchMessages
-                .getString("ProjectCapabilitySelectionGroup.categories")); //$NON-NLS-1$
+        categoryLabel.setText(IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_categories);
         GridData data = new GridData();
         data.verticalAlignment = SWT.TOP;
         categoryLabel.setLayoutData(data);
@@ -188,8 +188,7 @@ public class ProjectCapabilitySelectionGroup {
 
         // Add a label to identify the checkbox tree viewer of capabilities
         Label capabilityLabel = new Label(capComposite, SWT.LEFT);
-        capabilityLabel.setText(IDEWorkbenchMessages
-                .getString("ProjectCapabilitySelectionGroup.capabilities")); //$NON-NLS-1$
+        capabilityLabel.setText(IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_capabilities);
         data = new GridData();
         data.verticalAlignment = SWT.TOP;
         capabilityLabel.setLayoutData(data);
@@ -207,8 +206,7 @@ public class ProjectCapabilitySelectionGroup {
 
         // Add a label to identify the text field of capability's description
         Label descLabel = new Label(composite, SWT.LEFT);
-        descLabel.setText(IDEWorkbenchMessages
-                .getString("ProjectCapabilitySelectionGroup.description")); //$NON-NLS-1$
+        descLabel.setText(IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_description);
         data = new GridData();
         data.verticalAlignment = SWT.TOP;
         data.horizontalSpan = 2;
@@ -229,8 +227,7 @@ public class ProjectCapabilitySelectionGroup {
 
         // Add a text field to explain grayed out items
         Label grayLabel = new Label(composite, SWT.LEFT);
-        grayLabel.setText(IDEWorkbenchMessages
-                .getString("ProjectCapabilitySelectionGroup.grayItems")); //$NON-NLS-1$
+        grayLabel.setText(IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_grayItems);
         data = new GridData();
         data.verticalAlignment = SWT.TOP;
         data.horizontalSpan = 2;
@@ -496,11 +493,8 @@ public class ProjectCapabilitySelectionGroup {
             MessageDialog
                     .openWarning(
                             checkboxViewer.getControl().getShell(),
-                            IDEWorkbenchMessages
-                                    .getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
-                            IDEWorkbenchMessages
-                                    .format(
-                                            "ProjectCapabilitySelectionGroup.disabledCapability", new Object[] { capability.getName() })); //$NON-NLS-1$
+                            IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_errorTitle,
+                            NLS.bind(IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_disabledCapability, capability.getName()));
             checkboxViewer.setChecked(capability, false);
             return;
         }
@@ -510,11 +504,8 @@ public class ProjectCapabilitySelectionGroup {
             MessageDialog
                     .openWarning(
                             checkboxViewer.getControl().getShell(),
-                            IDEWorkbenchMessages
-                                    .getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
-                            IDEWorkbenchMessages
-                                    .format(
-                                            "ProjectCapabilitySelectionGroup.invalidCapability", new Object[] { capability.getName() })); //$NON-NLS-1$
+                            IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_errorTitle,
+                            NLS.bind(IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_invalidCapability, capability.getName()));
             checkboxViewer.setChecked(capability, false);
             return;
         }
@@ -527,11 +518,8 @@ public class ProjectCapabilitySelectionGroup {
                 MessageDialog
                         .openWarning(
                                 checkboxViewer.getControl().getShell(),
-                                IDEWorkbenchMessages
-                                        .getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
-                                IDEWorkbenchMessages
-                                        .format(
-                                                "ProjectCapabilitySelectionGroup.membershipConflict", new Object[] { capability.getName(), member.getName() })); //$NON-NLS-1$
+                                IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_errorTitle,
+                                NLS.bind(IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_membershipConflict, capability.getName(), member.getName()));
                 checkboxViewer.setChecked(capability, false);
                 return;
             }
@@ -560,11 +548,8 @@ public class ProjectCapabilitySelectionGroup {
                         MessageDialog
                                 .openWarning(
                                         checkboxViewer.getControl().getShell(),
-                                        IDEWorkbenchMessages
-                                                .getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
-                                        IDEWorkbenchMessages
-                                                .format(
-                                                        "ProjectCapabilitySelectionGroup.missingPrereqs", new Object[] { capability.getName(), prereqIds[i] })); //$NON-NLS-1$
+                                        IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_errorTitle,
+                                        NLS.bind(IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_missingPrereqs, capability.getName(), prereqIds[i]));
                         checkboxViewer.setChecked(capability, false);
                         return;
                     }
@@ -579,11 +564,8 @@ public class ProjectCapabilitySelectionGroup {
                                     .openWarning(
                                             checkboxViewer.getControl()
                                                     .getShell(),
-                                            IDEWorkbenchMessages
-                                                    .getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
-                                            IDEWorkbenchMessages
-                                                    .format(
-                                                            "ProjectCapabilitySelectionGroup.membershipPrereqConflict", new Object[] { capability.getName(), prereqCapabilities[i].getName(), member.getName() })); //$NON-NLS-1$
+                                            IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_errorTitle,
+                                            NLS.bind(IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_membershipPrereqConflict, new Object[] {capability.getName(), prereqCapabilities[i].getName(), member.getName()}));
                             checkboxViewer.setChecked(capability, false);
                             return;
                         }
@@ -701,11 +683,8 @@ public class ProjectCapabilitySelectionGroup {
                 MessageDialog
                         .openWarning(
                                 checkboxViewer.getControl().getShell(),
-                                IDEWorkbenchMessages
-                                        .getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
-                                IDEWorkbenchMessages
-                                        .format(
-                                                "ProjectCapabilitySelectionGroup.requiredPrereq", new Object[] { capability.getName(), cap.getName() })); //$NON-NLS-1$
+                                IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_errorTitle,
+                                NLS.bind(IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_requiredPrereq, capability.getName(), cap.getName()));
             } else {
                 StringBuffer msg = new StringBuffer();
                 Iterator itr = descCopy.iterator();
@@ -717,11 +696,8 @@ public class ProjectCapabilitySelectionGroup {
                 MessageDialog
                         .openWarning(
                                 checkboxViewer.getControl().getShell(),
-                                IDEWorkbenchMessages
-                                        .getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
-                                IDEWorkbenchMessages
-                                        .format(
-                                                "ProjectCapabilitySelectionGroup.requiredPrereqs", new Object[] { capability.getName(), msg.toString() })); //$NON-NLS-1$
+                                IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_errorTitle,
+                                NLS.bind(IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_requiredPrereqs, capability.getName(), msg));
             }
         }
     }
@@ -818,9 +794,7 @@ public class ProjectCapabilitySelectionGroup {
             Capability cap = (Capability) element;
             String text = cap.getName();
             if (isDisabledCapability(cap))
-                text = IDEWorkbenchMessages
-                        .format(
-                                "ProjectCapabilitySelectionGroup.disabledLabel", new Object[] { text }); //$NON-NLS-1$
+                text = NLS.bind(IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_disabledLabel, text );
             return text;
         }
     }

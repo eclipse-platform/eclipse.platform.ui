@@ -478,12 +478,11 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
      * Creates and returns the File menu.
      */
     private MenuManager createFileMenu() {
-        MenuManager menu = new MenuManager(IDEWorkbenchMessages
-                .getString("Workbench.file"), IWorkbenchActionConstants.M_FILE); //$NON-NLS-1$
+        MenuManager menu = new MenuManager(IDEWorkbenchMessages.Workbench_file, IWorkbenchActionConstants.M_FILE);
         menu.add(new GroupMarker(IWorkbenchActionConstants.FILE_START));
         {
             // create the New submenu, using the same id for it as the New action
-            String newText = IDEWorkbenchMessages.getString("Workbench.new"); //$NON-NLS-1$
+            String newText = IDEWorkbenchMessages.Workbench_new;
             String newId = ActionFactory.NEW.getId();
             MenuManager newMenu = new MenuManager(newText, newId) {
                 public String getMenuText() {
@@ -549,8 +548,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
      * Creates and returns the Edit menu.
      */
     private MenuManager createEditMenu() {
-        MenuManager menu = new MenuManager(IDEWorkbenchMessages
-                .getString("Workbench.edit"), IWorkbenchActionConstants.M_EDIT); //$NON-NLS-1$
+        MenuManager menu = new MenuManager(IDEWorkbenchMessages.Workbench_edit, IWorkbenchActionConstants.M_EDIT);
         menu.add(new GroupMarker(IWorkbenchActionConstants.EDIT_START));
 
         menu.add(undoAction);
@@ -586,12 +584,11 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
      */
     private MenuManager createNavigateMenu() {
         MenuManager menu = new MenuManager(
-                IDEWorkbenchMessages.getString("Workbench.navigate"), IWorkbenchActionConstants.M_NAVIGATE); //$NON-NLS-1$
+                IDEWorkbenchMessages.Workbench_navigate, IWorkbenchActionConstants.M_NAVIGATE);
         menu.add(new GroupMarker(IWorkbenchActionConstants.NAV_START));
         menu.add(goIntoAction);
 
-        MenuManager goToSubMenu = new MenuManager(IDEWorkbenchMessages
-                .getString("Workbench.goTo"), IWorkbenchActionConstants.GO_TO); //$NON-NLS-1$
+        MenuManager goToSubMenu = new MenuManager(IDEWorkbenchMessages.Workbench_goTo, IWorkbenchActionConstants.GO_TO);
         menu.add(goToSubMenu);
         goToSubMenu.add(backAction);
         goToSubMenu.add(forwardAction);
@@ -605,8 +602,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT));
         {
 
-            MenuManager showInSubMenu = new MenuManager(IDEWorkbenchMessages
-                    .getString("Workbench.showIn"), "showIn") { //$NON-NLS-1$ //$NON-NLS-2$
+            MenuManager showInSubMenu = new MenuManager(IDEWorkbenchMessages.Workbench_showIn, "showIn") { //$NON-NLS-1$
                 public String getMenuText() {
                     String result = super.getMenuText();
                     if (showInQuickMenu == null)
@@ -642,7 +638,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
      */
     private MenuManager createProjectMenu() {
         MenuManager menu = new MenuManager(
-                IDEWorkbenchMessages.getString("Workbench.project"), IWorkbenchActionConstants.M_PROJECT); //$NON-NLS-1$
+                IDEWorkbenchMessages.Workbench_project, IWorkbenchActionConstants.M_PROJECT);
         menu.add(new Separator(IWorkbenchActionConstants.PROJ_START));
 
         menu.add(openProjectAction);
@@ -669,12 +665,11 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
      */
     private MenuManager createWindowMenu() {
         MenuManager menu = new MenuManager(
-                IDEWorkbenchMessages.getString("Workbench.window"), IWorkbenchActionConstants.M_WINDOW); //$NON-NLS-1$
+                IDEWorkbenchMessages.Workbench_window, IWorkbenchActionConstants.M_WINDOW);
 
         IWorkbenchAction action = ActionFactory.OPEN_NEW_WINDOW
                 .create(getWindow());
-        action.setText(IDEWorkbenchMessages
-                .getString("Workbench.openNewWindow")); //$NON-NLS-1$
+        action.setText(IDEWorkbenchMessages.Workbench_openNewWindow);
         menu.add(action);
         menu.add(new Separator());
         addPerspectiveActions(menu);
@@ -693,8 +688,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
      */
     private void addPerspectiveActions(MenuManager menu) {
         {
-            String openText = IDEWorkbenchMessages
-                    .getString("Workbench.openPerspective"); //$NON-NLS-1$
+            String openText = IDEWorkbenchMessages.Workbench_openPerspective;
             MenuManager changePerspMenuMgr = new MenuManager(openText,
                     "openPerspective"); //$NON-NLS-1$
             IContributionItem changePerspMenuItem = ContributionItemFactory.PERSPECTIVES_SHORTLIST
@@ -703,8 +697,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             menu.add(changePerspMenuMgr);
         }
         {
-            MenuManager showViewMenuMgr = new MenuManager(IDEWorkbenchMessages
-                    .getString("Workbench.showView"), "showView"); //$NON-NLS-1$ //$NON-NLS-2$
+            MenuManager showViewMenuMgr = new MenuManager(IDEWorkbenchMessages.Workbench_showView, "showView"); //$NON-NLS-1$
             IContributionItem showViewMenu = ContributionItemFactory.VIEWS_SHORTLIST
                     .create(getWindow());
             showViewMenuMgr.add(showViewMenu);
@@ -722,8 +715,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
      * Adds the keyboard navigation submenu to the specified menu.
      */
     private void addWorkingSetBuildActions(MenuManager menu) {
-        buildWorkingSetMenu = new MenuManager(IDEWorkbenchMessages
-                .getString("Workbench.buildSet")); //$NON-NLS-1$
+        buildWorkingSetMenu = new MenuManager(IDEWorkbenchMessages.Workbench_buildSet);
         IContributionItem workingSetBuilds = new BuildSetMenu(window,
                 getActionBarConfigurer());
         buildWorkingSetMenu.add(workingSetBuilds);
@@ -734,8 +726,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
      * Adds the keyboard navigation submenu to the specified menu.
      */
     private void addKeyboardShortcuts(MenuManager menu) {
-        MenuManager subMenu = new MenuManager(IDEWorkbenchMessages
-                .getString("Workbench.shortcuts"), "shortcuts"); //$NON-NLS-1$ //$NON-NLS-2$
+        MenuManager subMenu = new MenuManager(IDEWorkbenchMessages.Workbench_shortcuts, "shortcuts"); //$NON-NLS-1$
         menu.add(subMenu);
         subMenu.add(showPartPaneMenuAction);
         subMenu.add(showViewMenuAction);
@@ -759,8 +750,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 	 * Creates and returns the Help menu.
 	 */
 	private MenuManager createHelpMenu() {
-		MenuManager menu = new MenuManager(IDEWorkbenchMessages
-				.getString("Workbench.help"), IWorkbenchActionConstants.M_HELP); //$NON-NLS-1$
+		MenuManager menu = new MenuManager(IDEWorkbenchMessages.Workbench_help, IWorkbenchActionConstants.M_HELP);
 		addSeparatorOrGroupMarker(menu, "group.intro"); //$NON-NLS-1$
 		// See if a welcome or intro page is specified
 		if (introAction != null)

@@ -69,77 +69,53 @@ public class ResourceInfoPage extends PropertyPage {
 
 	private ResourceEncodingFieldEditor encodingEditor;
 
-	private static String READ_ONLY = IDEWorkbenchMessages
-			.getString("ResourceInfo.readOnly"); //$NON-NLS-1$
+	private static String READ_ONLY = IDEWorkbenchMessages.ResourceInfo_readOnly;
 
-	private static String EXECUTABLE = IDEWorkbenchMessages
-			.getString("ResourceInfo.executable"); //$NON-NLS-1$
+	private static String EXECUTABLE = IDEWorkbenchMessages.ResourceInfo_executable;
 	
-	private static String ARCHIVE = IDEWorkbenchMessages
-			.getString("ResourceInfo.archive"); //$NON-NLS-1$
+	private static String ARCHIVE = IDEWorkbenchMessages.ResourceInfo_archive;
 
-	private static String DERIVED = IDEWorkbenchMessages
-			.getString("ResourceInfo.derived"); //$NON-NLS-1$
+	private static String DERIVED = IDEWorkbenchMessages.ResourceInfo_derived;
 
-	private static String TYPE_TITLE = IDEWorkbenchMessages
-			.getString("ResourceInfo.type"); //$NON-NLS-1$
+	private static String TYPE_TITLE = IDEWorkbenchMessages.ResourceInfo_type;
 
-	private static String LOCATION_TITLE = IDEWorkbenchMessages
-			.getString("ResourceInfo.location"); //$NON-NLS-1$
+	private static String LOCATION_TITLE = IDEWorkbenchMessages.ResourceInfo_location;
 
-	private static String RESOLVED_LOCATION_TITLE = IDEWorkbenchMessages
-			.getString("ResourceInfo.resolvedLocation"); //$NON-NLS-1$
+	private static String RESOLVED_LOCATION_TITLE = IDEWorkbenchMessages.ResourceInfo_resolvedLocation;
 
-	private static String SIZE_TITLE = IDEWorkbenchMessages
-			.getString("ResourceInfo.size"); //$NON-NLS-1$
+	private static String SIZE_TITLE = IDEWorkbenchMessages.ResourceInfo_size;
 
-	private static String BYTES_LABEL = IDEWorkbenchMessages
-			.getString("ResourceInfo.bytes"); //$NON-NLS-1$
+	private static String BYTES_LABEL = IDEWorkbenchMessages.ResourceInfo_bytes;
 
-	private static String FILE_LABEL = IDEWorkbenchMessages
-			.getString("ResourceInfo.file"); //$NON-NLS-1$
+	private static String FILE_LABEL = IDEWorkbenchMessages.ResourceInfo_file;
 
-	private static String FILE_TYPE_FORMAT = IDEWorkbenchMessages
-			.getString("ResourceInfo.fileTypeFormat"); //$NON-NLS-1$
+	private static String FILE_TYPE_FORMAT = IDEWorkbenchMessages.ResourceInfo_fileTypeFormat;
 
-	private static String FOLDER_LABEL = IDEWorkbenchMessages
-			.getString("ResourceInfo.folder"); //$NON-NLS-1$
+	private static String FOLDER_LABEL = IDEWorkbenchMessages.ResourceInfo_folder;
 
-	private static String PROJECT_LABEL = IDEWorkbenchMessages
-			.getString("ResourceInfo.project"); //$NON-NLS-1$
+	private static String PROJECT_LABEL = IDEWorkbenchMessages.ResourceInfo_project;
 
-	private static String LINKED_FILE_LABEL = IDEWorkbenchMessages
-			.getString("ResourceInfo.linkedFile"); //$NON-NLS-1$
+	private static String LINKED_FILE_LABEL = IDEWorkbenchMessages.ResourceInfo_linkedFile;
 
-	private static String LINKED_FOLDER_LABEL = IDEWorkbenchMessages
-			.getString("ResourceInfo.linkedFolder"); //$NON-NLS-1$
+	private static String LINKED_FOLDER_LABEL = IDEWorkbenchMessages.ResourceInfo_linkedFolder;
 
-	private static String UNKNOWN_LABEL = IDEWorkbenchMessages
-			.getString("ResourceInfo.unknown"); //$NON-NLS-1$
+	private static String UNKNOWN_LABEL = IDEWorkbenchMessages.ResourceInfo_unknown;
 
-	private static String NOT_LOCAL_TEXT = IDEWorkbenchMessages
-			.getString("ResourceInfo.notLocal"); //$NON-NLS-1$
+	private static String NOT_LOCAL_TEXT = IDEWorkbenchMessages.ResourceInfo_notLocal;
 
-	private static String MISSING_PATH_VARIABLE_TEXT = IDEWorkbenchMessages
-			.getString("ResourceInfo.undefinedPathVariable"); //$NON-NLS-1$
+	private static String MISSING_PATH_VARIABLE_TEXT = IDEWorkbenchMessages.ResourceInfo_undefinedPathVariable;
 
-	private static String NOT_EXIST_TEXT = IDEWorkbenchMessages
-			.getString("ResourceInfo.notExist"); //$NON-NLS-1$
+	private static String NOT_EXIST_TEXT = IDEWorkbenchMessages.ResourceInfo_notExist;
 
-	private static String PATH_TITLE = IDEWorkbenchMessages
-			.getString("ResourceInfo.path"); //$NON-NLS-1$
+	private static String PATH_TITLE = IDEWorkbenchMessages.ResourceInfo_path;
 
-	private static String TIMESTAMP_TITLE = IDEWorkbenchMessages
-			.getString("ResourceInfo.lastModified"); //$NON-NLS-1$
+	private static String TIMESTAMP_TITLE = IDEWorkbenchMessages.ResourceInfo_lastModified;
 
-	private static String FILE_NOT_EXIST_TEXT = IDEWorkbenchMessages
-			.getString("ResourceInfo.fileNotExist"); //$NON-NLS-1$
+	private static String FILE_NOT_EXIST_TEXT = IDEWorkbenchMessages.ResourceInfo_fileNotExist;
 
-	private static String FILE_ENCODING_TITLE = IDEWorkbenchMessages
-			.getString("WorkbenchPreference.encoding"); //$NON-NLS-1$
+	private static String FILE_ENCODING_TITLE = IDEWorkbenchMessages.WorkbenchPreference_encoding;
 
-	private static String CONTAINER_ENCODING_TITLE = IDEWorkbenchMessages
-			.getString("ResourceInfo.fileEncodingTitle"); //$NON-NLS-1$
+	private static String CONTAINER_ENCODING_TITLE = IDEWorkbenchMessages.ResourceInfo_fileEncodingTitle;
 
 	//Max value width in characters before wrapping
 	private static final int MAX_VALUE_WIDTH = 80;
@@ -745,8 +721,7 @@ public class ResourceInfoPage extends PropertyPage {
 				}
 			}
 		} catch (CoreException exception) {
-			ErrorDialog.openError(getShell(), IDEWorkbenchMessages
-					.getString("InternalError"), //$NON-NLS-1$
+			ErrorDialog.openError(getShell(), IDEWorkbenchMessages.InternalError,
 					exception.getLocalizedMessage(), exception.getStatus());
 			return false;
 		}

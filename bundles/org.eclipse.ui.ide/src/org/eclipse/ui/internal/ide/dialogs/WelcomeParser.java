@@ -354,16 +354,12 @@ public class WelcomeParser extends DefaultHandler {
             parser.parse(new InputSource(is), this);
         } catch (SAXException e) {
             IStatus status = new Status(IStatus.ERROR,
-                    IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages
-                            .getString("WelcomeParser.parseException"), e); //$NON-NLS-1$	
-            IDEWorkbenchPlugin.log(IDEWorkbenchMessages
-                    .getString("WelcomeParser.parseError"), status); //$NON-NLS-1$	
+                    IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.WelcomeParser_parseException, e);
+            IDEWorkbenchPlugin.log(IDEWorkbenchMessages.WelcomeParser_parseError, status);
         } catch (IOException e) {
             IStatus status = new Status(IStatus.ERROR,
-                    IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages
-                            .getString("WelcomeParser.parseException"), e); //$NON-NLS-1$	
-            IDEWorkbenchPlugin.log(IDEWorkbenchMessages
-                    .getString("WelcomeParser.parseError"), status); //$NON-NLS-1$	
+                    IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.WelcomeParser_parseException, e);
+            IDEWorkbenchPlugin.log(IDEWorkbenchMessages.WelcomeParser_parseError, status);
         }
     }
 

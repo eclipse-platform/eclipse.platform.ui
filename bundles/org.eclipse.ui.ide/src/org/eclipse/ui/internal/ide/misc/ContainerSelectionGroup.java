@@ -61,11 +61,9 @@ public class ContainerSelectionGroup extends Composite {
     TreeViewer treeViewer;
 
     // the message to display at the top of this dialog
-    private static final String DEFAULT_MSG_NEW_ALLOWED = IDEWorkbenchMessages
-            .getString("ContainerGroup.message"); //$NON-NLS-1$
+    private static final String DEFAULT_MSG_NEW_ALLOWED = IDEWorkbenchMessages.ContainerGroup_message;
 
-    private static final String DEFAULT_MSG_SELECT_ONLY = IDEWorkbenchMessages
-            .getString("ContainerGroup.selectFolder"); //$NON-NLS-1$
+    private static final String DEFAULT_MSG_SELECT_ONLY = IDEWorkbenchMessages.ContainerGroup_selectFolder;
 
     // sizing constants
     private static final int SIZING_SELECTION_PANE_WIDTH = 320;

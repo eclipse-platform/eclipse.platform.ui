@@ -418,16 +418,14 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 
         Composite dialogArea = (Composite) super.createDialogArea(parent);
         Label l = new Label(dialogArea, SWT.NONE);
-        l.setText(IDEWorkbenchMessages
-                .getString("ResourceSelectionDialog.label")); //$NON-NLS-1$
+        l.setText(IDEWorkbenchMessages.ResourceSelectionDialog_label);
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         l.setLayoutData(data);
 
         pattern = new Text(dialogArea, SWT.SINGLE | SWT.BORDER);
         pattern.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         l = new Label(dialogArea, SWT.NONE);
-        l.setText(IDEWorkbenchMessages
-                .getString("ResourceSelectionDialog.matching")); //$NON-NLS-1$
+        l.setText(IDEWorkbenchMessages.ResourceSelectionDialog_matching);
         data = new GridData(GridData.FILL_HORIZONTAL);
         l.setLayoutData(data);
         resourceNames = new Table(dialogArea, SWT.SINGLE | SWT.BORDER
@@ -437,8 +435,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
         resourceNames.setLayoutData(data);
 
         l = new Label(dialogArea, SWT.NONE);
-        l.setText(IDEWorkbenchMessages
-                .getString("ResourceSelectionDialog.folders")); //$NON-NLS-1$
+        l.setText(IDEWorkbenchMessages.ResourceSelectionDialog_folders);
         data = new GridData(GridData.FILL_HORIZONTAL);
         l.setLayoutData(data);
 
@@ -486,7 +483,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 
         if (getAllowUserToToggleDerived()) {
             showDerivedButton = new Button(dialogArea, SWT.CHECK);
-            showDerivedButton.setText(IDEWorkbenchMessages.getString("ResourceSelectionDialog.showDerived")); //$NON-NLS-1$
+            showDerivedButton.setText(IDEWorkbenchMessages.ResourceSelectionDialog_showDerived);
             showDerivedButton.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e) {
                     setShowDerived(showDerivedButton.getSelection());

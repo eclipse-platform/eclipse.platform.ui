@@ -109,8 +109,7 @@ public class WelcomeItem {
      */
     public void logActionLinkError(String actionPluginId, String actionClass) {
         IDEWorkbenchPlugin
-                .log(IDEWorkbenchMessages
-                        .getString("WelcomeItem.unableToLoadClass") + actionPluginId + " " + actionClass); //$NON-NLS-1$	//$NON-NLS-2$
+                .log(IDEWorkbenchMessages.WelcomeItem_unableToLoadClass + actionPluginId + " " + actionClass); //$NON-NLS-1$
     }
 
     /**

@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ProjectLocationMoveDialog;
@@ -34,17 +35,13 @@ import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
  * they have different semantics from other resources.
  */
 public class MoveProjectAction extends CopyProjectAction {
-	private static String MOVE_TOOL_TIP = IDEWorkbenchMessages
-			.getString("MoveProjectAction.toolTip"); //$NON-NLS-1$
+	private static String MOVE_TOOL_TIP = IDEWorkbenchMessages.MoveProjectAction_toolTip;
 
-	private static String MOVE_TITLE = IDEWorkbenchMessages
-			.getString("MoveProjectAction.text"); //$NON-NLS-1$
+	private static String MOVE_TITLE = IDEWorkbenchMessages.MoveProjectAction_text;
 
-	private static String PROBLEMS_TITLE = IDEWorkbenchMessages
-			.getString("MoveProjectAction.dialogTitle"); //$NON-NLS-1$
+	private static String PROBLEMS_TITLE = IDEWorkbenchMessages.MoveProjectAction_dialogTitle;
 
-	private static String MOVE_PROGRESS_TITLE = IDEWorkbenchMessages
-			.getString("MoveProjectAction.progressMessage"); //$NON-NLS-1$
+	private static String MOVE_PROGRESS_TITLE = IDEWorkbenchMessages.MoveProjectAction_progressMessage;
 
 	/**
 	 * The id of this action.
@@ -119,9 +116,7 @@ public class MoveProjectAction extends CopyProjectAction {
 			// exceptions and errors may still occur.
 			IDEWorkbenchPlugin.log(getClass(),
                     "performMove()", e.getTargetException()); //$NON-NLS-1$
-			displayError(IDEWorkbenchMessages
-					.format(
-							"MoveProjectAction.internalError", new Object[] { e.getTargetException().getMessage() })); //$NON-NLS-1$
+			displayError(NLS.bind(IDEWorkbenchMessages.MoveProjectAction_internalError, e.getTargetException().getMessage()));
 			return false;
 		}
 
@@ -139,8 +134,7 @@ public class MoveProjectAction extends CopyProjectAction {
 	protected Object[] queryDestinationParameters(IProject project) {
 		ProjectLocationMoveDialog dialog = new ProjectLocationMoveDialog(shell,
 				project);
-		dialog.setTitle(IDEWorkbenchMessages
-				.getString("MoveProjectAction.moveTitle")); //$NON-NLS-1$
+		dialog.setTitle(IDEWorkbenchMessages.MoveProjectAction_moveTitle);
 		dialog.open();
 		return dialog.getResult();
 	}

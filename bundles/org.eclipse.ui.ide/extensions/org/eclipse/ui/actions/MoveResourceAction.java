@@ -47,9 +47,8 @@ public class MoveResourceAction extends CopyResourceAction {
      * @param shell the shell for any dialogs
      */
     public MoveResourceAction(Shell shell) {
-        super(shell, IDEWorkbenchMessages.getString("MoveResourceAction.text")); //$NON-NLS-1$
-        setToolTipText(IDEWorkbenchMessages
-                .getString("MoveResourceAction.toolTip")); //$NON-NLS-1$
+        super(shell, IDEWorkbenchMessages.MoveResourceAction_text);
+        setToolTipText(IDEWorkbenchMessages.MoveResourceAction_toolTip);
         setId(MoveResourceAction.ID);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.MOVE_RESOURCE_ACTION);
@@ -76,9 +75,8 @@ public class MoveResourceAction extends CopyResourceAction {
      */
     protected IResource[] getResources(List resourceList) {
         ReadOnlyStateChecker checker = new ReadOnlyStateChecker(getShell(),
-                IDEWorkbenchMessages.getString("MoveResourceAction.title"), //$NON-NLS-1$
-                IDEWorkbenchMessages
-                        .getString("MoveResourceAction.checkMoveMessage"));//$NON-NLS-1$	
+                IDEWorkbenchMessages.MoveResourceAction_title,
+                IDEWorkbenchMessages.MoveResourceAction_checkMoveMessage);
         return checker.checkReadOnlyResources(super.getResources(resourceList));
     }
 

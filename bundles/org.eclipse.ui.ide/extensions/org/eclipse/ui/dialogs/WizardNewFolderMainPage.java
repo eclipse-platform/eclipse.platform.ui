@@ -31,6 +31,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -106,8 +107,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
             IStructuredSelection selection) {
         super("newFolderPage1");//$NON-NLS-1$
         setTitle(pageName);
-        setDescription(IDEWorkbenchMessages
-                .getString("WizardNewFolderMainPage.description")); //$NON-NLS-1$
+        setDescription(IDEWorkbenchMessages.WizardNewFolderMainPage_description);
         this.currentSelection = selection;
     }
 
@@ -132,8 +132,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 
             advancedButton = new Button(linkedResourceParent, SWT.PUSH);
             advancedButton.setFont(linkedResourceParent.getFont());
-            advancedButton.setText(IDEWorkbenchMessages
-                    .getString("showAdvanced")); //$NON-NLS-1$
+            advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
             GridData data = setButtonLayoutData(advancedButton);
             data.horizontalAlignment = GridData.BEGINNING;
             advancedButton.setLayoutData(data);
@@ -170,8 +169,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
         resourceGroup = new ResourceAndContainerGroup(
                 composite,
                 this,
-                IDEWorkbenchMessages
-                        .getString("WizardNewFolderMainPage.folderName"), IDEWorkbenchMessages.getString("WizardNewFolderMainPage.folderLabel"), false, SIZING_CONTAINER_GROUP_HEIGHT); //$NON-NLS-2$ //$NON-NLS-1$
+                IDEWorkbenchMessages.WizardNewFolderMainPage_folderName, IDEWorkbenchMessages.WizardNewFolderMainPage_folderLabel, false, SIZING_CONTAINER_GROUP_HEIGHT);
         resourceGroup.setAllowExistingResources(false);
         createAdvancedControls(composite);
         initializePage();
@@ -276,10 +274,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
         WorkspaceModifyOperation op = new WorkspaceModifyOperation(createRule(newFolderHandle)) {
             public void execute(IProgressMonitor monitor) throws CoreException {
                 try {
-                    monitor
-                            .beginTask(
-                                    IDEWorkbenchMessages
-                                            .getString("WizardNewFolderCreationPage.progress"), 2000); //$NON-NLS-1$
+                    monitor.beginTask(IDEWorkbenchMessages.WizardNewFolderCreationPage_progress, 2000);
                     ContainerGenerator generator = new ContainerGenerator(
                             containerPath);
                     generator.generateContainer(new SubProgressMonitor(monitor,
@@ -301,8 +296,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
                 ErrorDialog
                         .openError(
                                 getContainer().getShell(), // Was Utilities.getFocusShell()
-                                IDEWorkbenchMessages
-                                        .getString("WizardNewFolderCreationPage.errorTitle"), //$NON-NLS-1$
+                                IDEWorkbenchMessages.WizardNewFolderCreationPage_errorTitle,
                                 null, // no special message
                                 ((CoreException) e.getTargetException())
                                         .getStatus());
@@ -314,8 +308,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
                 MessageDialog
                         .openError(
                                 getContainer().getShell(),
-                                IDEWorkbenchMessages
-                                        .getString("WizardNewFolderCreationPage.internalErrorTitle"), IDEWorkbenchMessages.format("WizardNewFolder.internalError", new Object[] { e.getTargetException().getMessage() })); //$NON-NLS-2$ //$NON-NLS-1$
+                                IDEWorkbenchMessages.WizardNewFolderCreationPage_internalErrorTitle, NLS.bind(IDEWorkbenchMessages.WizardNewFolder_internalError, e.getTargetException().getMessage()));
             }
             return null; // ie.- one of the steps resulted in a core exception
         }
@@ -357,8 +350,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
             linkedResourceComposite = null;
             composite.layout();
             shell.setSize(shellSize.x, shellSize.y - linkedResourceGroupHeight);
-            advancedButton.setText(IDEWorkbenchMessages
-                    .getString("showAdvanced")); //$NON-NLS-1$
+            advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
         } else {
             linkedResourceComposite = linkedResourceGroup
                     .createContents(linkedResourceParent);
@@ -369,8 +361,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
             }
             shell.setSize(shellSize.x, shellSize.y + linkedResourceGroupHeight);
             composite.layout();
-            advancedButton.setText(IDEWorkbenchMessages
-                    .getString("hideAdvanced")); //$NON-NLS-1$
+            advancedButton.setText(IDEWorkbenchMessages.hideAdvanced);
         }
     }
 

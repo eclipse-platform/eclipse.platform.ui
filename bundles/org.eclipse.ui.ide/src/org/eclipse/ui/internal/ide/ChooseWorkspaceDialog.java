@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -107,16 +108,12 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
             productName = product.getName();
         }
         if (productName == null) {
-            productName = IDEWorkbenchMessages
-                    .getString("ChooseWorkspaceDialog.defaultProductName"); //$NON-NLS-1$
+            productName = IDEWorkbenchMessages.ChooseWorkspaceDialog_defaultProductName;
         }
 
         Composite composite = (Composite) super.createDialogArea(parent);
-        setTitle(IDEWorkbenchMessages
-                .getString("ChooseWorkspaceDialog.dialogTitle")); //$NON-NLS-1$
-        setMessage(IDEWorkbenchMessages.format(
-                "ChooseWorkspaceDialog.dialogMessage", //$NON-NLS-1$
-                new Object[] { productName }));
+        setTitle(IDEWorkbenchMessages.ChooseWorkspaceDialog_dialogTitle);
+        setMessage(NLS.bind(IDEWorkbenchMessages.ChooseWorkspaceDialog_dialogMessage, productName));
 
         // bug 59934: load title image for sizing, but set it non-visible so the
         //            white background is displayed
@@ -143,8 +140,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        shell.setText(IDEWorkbenchMessages
-                .getString("ChooseWorkspaceDialog.dialogName")); //$NON-NLS-1$
+        shell.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_dialogName);
     }
 
     /**
@@ -190,8 +186,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         panel.setFont(parent.getFont());
 
         Label label = new Label(panel, SWT.NONE);
-        label.setText(IDEWorkbenchMessages
-                .getString("ChooseWorkspaceDialog.workspaceEntryLabel")); //$NON-NLS-1$
+        label.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_workspaceEntryLabel);
 
         text = new Combo(panel, SWT.BORDER | SWT.LEAD | SWT.DROP_DOWN);
         text.setFocus();
@@ -200,8 +195,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         setInitialTextValues(text);
 
         Button browseButton = new Button(panel, SWT.PUSH);
-        browseButton.setText(IDEWorkbenchMessages
-                .getString("ChooseWorkspaceDialog.browseLabel")); //$NON-NLS-1$
+        browseButton.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_browseLabel);
         setButtonLayoutData(browseButton);
         GridData data = (GridData) browseButton.getLayoutData();
         data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_END;
@@ -209,10 +203,8 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         browseButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 DirectoryDialog dialog = new DirectoryDialog(getShell());
-                dialog.setText(IDEWorkbenchMessages
-                        .getString("ChooseWorkspaceDialog.directoryBrowserTitle")); //$NON-NLS-1$
-                dialog.setMessage(IDEWorkbenchMessages
-                        .getString("ChooseWorkspaceDialog.directoryBrowserMessage")); //$NON-NLS-1$
+                dialog.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_directoryBrowserTitle);
+                dialog.setMessage(IDEWorkbenchMessages.ChooseWorkspaceDialog_directoryBrowserMessage);
                 dialog.setFilterPath(getInitialBrowsePath());
                 String dir = dialog.open();
                 if (dir != null)
@@ -255,8 +247,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         panel.setLayoutData(data);
 
         Button button = new Button(panel, SWT.CHECK);
-        button.setText(IDEWorkbenchMessages
-                .getString("ChooseWorkspaceDialog.useDefaultMessage")); //$NON-NLS-1$
+        button.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_useDefaultMessage);
         button.setSelection(!launchData.getShowDialog());
         button.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {

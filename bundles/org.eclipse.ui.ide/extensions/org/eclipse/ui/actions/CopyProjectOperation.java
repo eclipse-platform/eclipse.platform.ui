@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
@@ -71,8 +72,7 @@ public class CopyProjectOperation {
         //Get the project name and location in a two element list
         ProjectLocationSelectionDialog dialog = new ProjectLocationSelectionDialog(
                 parentShell, project);
-        dialog.setTitle(IDEWorkbenchMessages
-                .getString("CopyProjectOperation.copyProject")); //$NON-NLS-1$
+        dialog.setTitle(IDEWorkbenchMessages.CopyProjectOperation_copyProject);
         if (dialog.open() != Window.OK)
             return;
 
@@ -90,8 +90,7 @@ public class CopyProjectOperation {
 
         // If errors occurred, open an Error dialog
         if (errorStatus != null) {
-            ErrorDialog.openError(parentShell, IDEWorkbenchMessages
-                    .getString("CopyProjectOperation.copyFailedTitle"), //$NON-NLS-1$
+            ErrorDialog.openError(parentShell, IDEWorkbenchMessages.CopyProjectOperation_copyFailedTitle,
                     null, errorStatus);
             errorStatus = null;
         }
@@ -114,8 +113,7 @@ public class CopyProjectOperation {
                     if (monitor.isCanceled())
                         throw new OperationCanceledException();
                     
-                    monitor.setTaskName(IDEWorkbenchMessages
-                            .getString("CopyProjectOperation.progressTitle")); //$NON-NLS-1$
+                    monitor.setTaskName(IDEWorkbenchMessages.CopyProjectOperation_progressTitle);
                     
                     //Get a copy of the current description and modify it
                     IProjectDescription newDescription = createProjectDescription(
@@ -136,11 +134,8 @@ public class CopyProjectOperation {
             final String message = e.getTargetException().getMessage();
             parentShell.getDisplay().syncExec(new Runnable() {
                 public void run() {
-                    MessageDialog.openError(parentShell, IDEWorkbenchMessages
-                            .getString("CopyProjectOperation.copyFailedTitle"), //$NON-NLS-1$
-                            IDEWorkbenchMessages.format(
-                                    "CopyProjectOperation.internalError", //$NON-NLS-1$
-                                    new Object[] { message }));
+                    MessageDialog.openError(parentShell, IDEWorkbenchMessages.CopyProjectOperation_copyFailedTitle,
+                            NLS.bind(IDEWorkbenchMessages.CopyProjectOperation_internalError, message));
                 }
             });
             return false;
@@ -186,8 +181,7 @@ public class CopyProjectOperation {
             errorStatus = new MultiStatus(
                     PlatformUI.PLUGIN_ID,
                     IStatus.ERROR,
-                    IDEWorkbenchMessages
-                            .getString("CopyProjectOperation.copyFailedMessage"), //$NON-NLS-1$
+                    IDEWorkbenchMessages.CopyProjectOperation_copyFailedMessage,
                     error);
 
         errorStatus.merge(error.getStatus());

@@ -20,6 +20,7 @@ import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -84,20 +85,16 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
 
     protected void createSaveAllBeforeBuildPref(Composite composite) {
         autoSaveAllButton = new Button(composite, SWT.CHECK);
-        autoSaveAllButton.setText(IDEWorkbenchMessages
-                .getString("WorkbenchPreference.savePriorToBuilding")); //$NON-NLS-1$
-        autoSaveAllButton.setToolTipText(IDEWorkbenchMessages
-                .getString("WorkbenchPreference.savePriorToBuildingToolTip")); //$NON-NLS-1$
+        autoSaveAllButton.setText(IDEWorkbenchMessages.WorkbenchPreference_savePriorToBuilding);
+        autoSaveAllButton.setToolTipText(IDEWorkbenchMessages.WorkbenchPreference_savePriorToBuildingToolTip);
         autoSaveAllButton.setSelection(getIDEPreferenceStore().getBoolean(
                 IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
     }
 
     private void createAutoBuildPref(Composite composite) {
         autoBuildButton = new Button(composite, SWT.CHECK);
-        autoBuildButton.setText(IDEWorkbenchMessages
-                .getString("WorkbenchPreference.autobuild")); //$NON-NLS-1$
-        autoBuildButton.setToolTipText(IDEWorkbenchMessages
-                .getString("WorkbenchPreference.autobuildToolTip")); //$NON-NLS-1$
+        autoBuildButton.setText(IDEWorkbenchMessages.WorkbenchPreference_autobuild);
+        autoBuildButton.setToolTipText(IDEWorkbenchMessages.WorkbenchPreference_autobuildToolTip);
         autoBuildButton.setSelection(ResourcesPlugin.getWorkspace()
                 .isAutoBuilding());
     }
@@ -119,8 +116,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         groupComposite.setLayoutData(gd);
 
         saveInterval = new IntegerFieldEditor(
-                IDEInternalPreferences.SAVE_INTERVAL, IDEWorkbenchMessages
-                        .getString("WorkbenchPreference.saveInterval"), //$NON-NLS-1$
+                IDEInternalPreferences.SAVE_INTERVAL, IDEWorkbenchMessages.WorkbenchPreference_saveInterval,
                 groupComposite);
 
         // @issue we should drop our preference constant and let clients use
@@ -130,10 +126,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         saveInterval.setPage(this);
         saveInterval.setTextLimit(Integer.toString(
                 IDEInternalPreferences.MAX_SAVE_INTERVAL).length());
-        saveInterval.setErrorMessage(IDEWorkbenchMessages.format(
-                "WorkbenchPreference.saveIntervalError", //$NON-NLS-1$
-                new Object[] { new Integer(
-                        IDEInternalPreferences.MAX_SAVE_INTERVAL) }));
+        saveInterval.setErrorMessage(NLS.bind(IDEWorkbenchMessages.WorkbenchPreference_saveIntervalError, new Integer(IDEInternalPreferences.MAX_SAVE_INTERVAL)));
         saveInterval
                 .setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
         saveInterval.setValidRange(1, IDEInternalPreferences.MAX_SAVE_INTERVAL);
@@ -249,10 +242,8 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
     private void createAutoRefreshControls(Composite parent) {
 
         this.autoRefreshButton = new Button(parent, SWT.CHECK);
-        this.autoRefreshButton.setText(IDEWorkbenchMessages
-                .getString("WorkbenchPreference.RefreshButtonText")); //$NON-NLS-1$
-        this.autoRefreshButton.setToolTipText(IDEWorkbenchMessages
-                .getString("WorkbenchPreference.RefreshButtonToolTip")); //$NON-NLS-1$
+        this.autoRefreshButton.setText(IDEWorkbenchMessages.WorkbenchPreference_RefreshButtonText);
+        this.autoRefreshButton.setToolTipText(IDEWorkbenchMessages.WorkbenchPreference_RefreshButtonToolTip);
 
         boolean autoRefresh = ResourcesPlugin.getPlugin()
                 .getPluginPreferences().getBoolean(

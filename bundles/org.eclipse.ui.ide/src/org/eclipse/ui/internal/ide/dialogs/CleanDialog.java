@@ -80,8 +80,8 @@ public class CleanDialog extends MessageDialog {
     private static String getQuestion() {
         boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
         if (autoBuilding)
-            return IDEWorkbenchMessages.getString("CleanDialog.buildCleanAuto"); //$NON-NLS-1$
-        return IDEWorkbenchMessages.getString("CleanDialog.buildCleanManual"); //$NON-NLS-1$
+            return IDEWorkbenchMessages.CleanDialog_buildCleanAuto;
+        return IDEWorkbenchMessages.CleanDialog_buildCleanManual;
     }
 
     /**
@@ -93,7 +93,7 @@ public class CleanDialog extends MessageDialog {
     public CleanDialog(IWorkbenchWindow window, IProject[] selection) {
         super(
                 window.getShell(),
-                IDEWorkbenchMessages.getString("CleanDialog.title"), null, getQuestion(), QUESTION, new String[] { //$NON-NLS-1$
+                IDEWorkbenchMessages.CleanDialog_title, null, getQuestion(), QUESTION, new String[] {
                 IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
         this.window = window;
         this.selection = selection;
@@ -115,7 +115,7 @@ public class CleanDialog extends MessageDialog {
         if (buttonId != IDialogConstants.OK_ID)
         	return;
         //batching changes ensures that autobuild runs after cleaning
-    	WorkspaceJob cleanJob = new WorkspaceJob(IDEWorkbenchMessages.getString("CleanDialog.taskName")) { //$NON-NLS-1$
+    	WorkspaceJob cleanJob = new WorkspaceJob(IDEWorkbenchMessages.CleanDialog_taskName) {
     		public boolean belongsTo(Object family) {
     			return ResourcesPlugin.FAMILY_MANUAL_BUILD.equals(family);
     		}
@@ -157,8 +157,7 @@ public class CleanDialog extends MessageDialog {
         boolean selectSelectedButton= settings.getBoolean(TOGGLE_SELECTED);
         //first row
         allButton = new Button(radioGroup, SWT.RADIO);
-        allButton.setText(IDEWorkbenchMessages
-                .getString("CleanDialog.cleanAllButton")); //$NON-NLS-1$
+        allButton.setText(IDEWorkbenchMessages.CleanDialog_cleanAllButton);
         allButton.setSelection(!selectSelectedButton);
         allButton.addSelectionListener(updateEnablement);
         //empty label to fill rest of grid row
@@ -167,8 +166,7 @@ public class CleanDialog extends MessageDialog {
 
         //second row
         selectedButton = new Button(radioGroup, SWT.RADIO);
-        selectedButton.setText(IDEWorkbenchMessages
-                .getString("CleanDialog.cleanSelectedButton")); //$NON-NLS-1$
+        selectedButton.setText(IDEWorkbenchMessages.CleanDialog_cleanSelectedButton);
         GridData data = new GridData();
         data.verticalAlignment = SWT.TOP;
         selectedButton.setLayoutData(data);
@@ -178,8 +176,7 @@ public class CleanDialog extends MessageDialog {
         //only prompt for immediate build if autobuild is off
         if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
             buildNowButton = new Button(parent, SWT.CHECK);
-            buildNowButton.setText(IDEWorkbenchMessages
-                    .getString("CleanDialog.buildNowButton")); //$NON-NLS-1$
+            buildNowButton.setText(IDEWorkbenchMessages.CleanDialog_buildNowButton);
             String buildNow = settings.get(BUILD_NOW);
             buildNowButton.setSelection(buildNow == null || Boolean.valueOf(buildNow).booleanValue());
             buildNowButton.setLayoutData(new GridData(
@@ -236,9 +233,7 @@ public class CleanDialog extends MessageDialog {
 	                IncrementalProjectBuilder.CLEAN_BUILD, monitor);
 	    else {
 	        try {
-	            monitor.beginTask(IDEWorkbenchMessages
-	                    .getString("CleanDialog.taskName"), //$NON-NLS-1$
-	                    selection.length);
+	            monitor.beginTask(IDEWorkbenchMessages.CleanDialog_taskName, selection.length);
 	            for (int i = 0; i < selection.length; i++)
 	                ((IProject) selection[i]).build(
 	                        IncrementalProjectBuilder.CLEAN_BUILD,

@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -108,7 +109,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
     public NewFolderDialog(Shell parentShell, IContainer container) {
         super(parentShell);
         this.container = container;
-        setTitle(IDEWorkbenchMessages.getString("NewFolderDialog.title")); //$NON-NLS-1$
+        setTitle(IDEWorkbenchMessages.NewFolderDialog_title);
         setShellStyle(getShellStyle() | SWT.RESIZE);
         setStatusLineAboveButtons(true);
     }
@@ -164,8 +165,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 
             advancedButton = new Button(linkedResourceParent, SWT.PUSH);
             advancedButton.setFont(linkedResourceParent.getFont());
-            advancedButton.setText(IDEWorkbenchMessages
-                    .getString("showAdvanced")); //$NON-NLS-1$
+            advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
             setButtonLayoutData(advancedButton);
             GridData data = (GridData) advancedButton.getLayoutData();
             data.horizontalAlignment = GridData.BEGINNING;
@@ -215,8 +215,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
         // new project label
         Label folderLabel = new Label(folderGroup, SWT.NONE);
         folderLabel.setFont(font);
-        folderLabel.setText(IDEWorkbenchMessages
-                .getString("NewFolderDialog.nameLabel")); //$NON-NLS-1$
+        folderLabel.setText(IDEWorkbenchMessages.NewFolderDialog_nameLabel);
 
         // new project name entry field
         folderNameField = new Text(folderGroup, SWT.BORDER);
@@ -262,8 +261,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
         WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
             public void execute(IProgressMonitor monitor) throws CoreException {
                 try {
-                    monitor.beginTask(IDEWorkbenchMessages
-                            .getString("NewFolderDialog.progress"), 2000); //$NON-NLS-1$
+                    monitor.beginTask(IDEWorkbenchMessages.NewFolderDialog_progress, 2000);
                     if (monitor.isCanceled())
                         throw new OperationCanceledException();
                     if (linkTargetName == null)
@@ -286,8 +284,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
             return null;
         } catch (InvocationTargetException exception) {
             if (exception.getTargetException() instanceof CoreException) {
-                ErrorDialog.openError(getShell(), IDEWorkbenchMessages
-                        .getString("NewFolderDialog.errorTitle"), //$NON-NLS-1$
+                ErrorDialog.openError(getShell(), IDEWorkbenchMessages.NewFolderDialog_errorTitle,
                         null, // no special message
                         ((CoreException) exception.getTargetException())
                                 .getStatus());
@@ -295,12 +292,8 @@ public class NewFolderDialog extends SelectionStatusDialog {
                 // CoreExceptions are handled above, but unexpected runtime exceptions and errors may still occur.
                 IDEWorkbenchPlugin.log(getClass(),
                         "createNewFolder", exception.getTargetException()); //$NON-NLS-1$
-                MessageDialog.openError(getShell(), IDEWorkbenchMessages
-                        .getString("NewFolderDialog.errorTitle"), //$NON-NLS-1$
-                        IDEWorkbenchMessages.format(
-                                "NewFolderDialog.internalError", //$NON-NLS-1$
-                                new Object[] { exception.getTargetException()
-                                        .getMessage() }));
+                MessageDialog.openError(getShell(), IDEWorkbenchMessages.NewFolderDialog_errorTitle,
+                        NLS.bind(IDEWorkbenchMessages.NewFolderDialog_internalError, exception.getTargetException().getMessage()));
             }
             return null;
         }
@@ -320,8 +313,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
             linkedResourceComposite = null;
             composite.layout();
             shell.setSize(shellSize.x, basicShellHeight);
-            advancedButton.setText(IDEWorkbenchMessages
-                    .getString("showAdvanced")); //$NON-NLS-1$
+            advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
         } else {
             if (basicShellHeight == -1) {
                 basicShellHeight = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT,
@@ -332,8 +324,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
             shellSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
             shell.setSize(shellSize);
             composite.layout();
-            advancedButton.setText(IDEWorkbenchMessages
-                    .getString("hideAdvanced")); //$NON-NLS-1$
+            advancedButton.setText(IDEWorkbenchMessages.hideAdvanced);
         }
     }
 
@@ -432,8 +423,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
         IStatus nameStatus = workspace.validateName(name, IResource.FOLDER);
 
         if ("".equals(name)) { //$NON-NLS-1$
-            updateStatus(IStatus.ERROR, IDEWorkbenchMessages
-                    .getString("NewFolderDialog.folderNameEmpty")); //$NON-NLS-1$
+            updateStatus(IStatus.ERROR, IDEWorkbenchMessages.NewFolderDialog_folderNameEmpty);
             return false;
         }
         if (nameStatus.isOK() == false) {
@@ -443,8 +433,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
         IPath path = new Path(name);
         if (container.getFolder(path).exists()
                 || container.getFile(path).exists()) {
-            updateStatus(IStatus.ERROR, IDEWorkbenchMessages.format(
-                    "NewFolderDialog.alreadyExists", new Object[] { name })); //$NON-NLS-1$
+            updateStatus(IStatus.ERROR, NLS.bind(IDEWorkbenchMessages.NewFolderDialog_alreadyExists, name));
             return false;
         }
         updateStatus(IStatus.OK, ""); //$NON-NLS-1$

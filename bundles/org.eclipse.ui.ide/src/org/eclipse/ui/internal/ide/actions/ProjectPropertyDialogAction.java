@@ -52,9 +52,8 @@ public class ProjectPropertyDialogAction extends PartEventAction implements
             throw new IllegalArgumentException();
         }
         this.workbenchWindow = window;
-        setText(IDEWorkbenchMessages.getString("Workbench.projectProperties")); //$NON-NLS-1$
-        setToolTipText(IDEWorkbenchMessages
-                .getString("Workbench.projectPropertiesToolTip")); //$NON-NLS-1$
+        setText(IDEWorkbenchMessages.Workbench_projectProperties);
+        setToolTipText(IDEWorkbenchMessages.Workbench_projectPropertiesToolTip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 IIDEHelpContextIds.PROJECT_PROPERTY_DIALOG_ACTION);
         workbenchWindow.getSelectionService().addSelectionListener(this);

@@ -41,6 +41,6 @@ public class WorkbenchWorkspace extends WorkbenchAdapter {
      */
     public String getLabel(Object o) {
         //workspaces don't have a name
-        return IDEWorkbenchMessages.getString("Workspace"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.Workspace;
     }
 }

@@ -34,8 +34,7 @@ public class Category extends WorkbenchAdapter {
     /**
      * Name of the miscellaneous category
      */
-    public final static String MISC_NAME = IDEWorkbenchMessages
-            .getString("ICategory.other"); //$NON-NLS-1$
+    public final static String MISC_NAME = IDEWorkbenchMessages.ICategory_other;
 
     /**
      * Identifier of the miscellaneous category

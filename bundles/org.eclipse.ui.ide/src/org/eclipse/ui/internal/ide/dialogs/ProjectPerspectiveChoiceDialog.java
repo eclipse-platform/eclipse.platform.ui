@@ -110,8 +110,7 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        shell.setText(IDEWorkbenchMessages
-                .getString("ProjectPerspectiveChoiceDialog.title")); //$NON-NLS-1$
+        shell.setText(IDEWorkbenchMessages.ProjectPerspectiveChoiceDialog_title);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
                 IIDEHelpContextIds.SHOW_PROJECT_PERSPECTIVE_DIALOG);
     }
@@ -156,8 +155,7 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
         // Label for choosing perspective
         Label label = new Label(parent, SWT.NONE);
         label.setFont(font);
-        label.setText(IDEWorkbenchMessages
-                .getString("ProjectPerspectiveChoiceDialog.choosePerspective")); //$NON-NLS-1$
+        label.setText(IDEWorkbenchMessages.ProjectPerspectiveChoiceDialog_choosePerspective);
 
         // Add perspective list.
         list = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
@@ -184,13 +182,11 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
                 | GridData.GRAB_HORIZONTAL);
         optionGroup.setLayoutData(data);
         optionGroup.setFont(font);
-        optionGroup.setText(IDEWorkbenchMessages
-                .getString("ProjectPerspectiveChoiceDialog.options")); //$NON-NLS-1$
+        optionGroup.setText(IDEWorkbenchMessages.ProjectPerspectiveChoiceDialog_options);
 
         // Same window option
         Button button = new Button(optionGroup, SWT.RADIO | SWT.LEFT);
-        button.setText(IDEWorkbenchMessages
-                .getString("ProjectPerspectiveChoiceDialog.sameWindow")); //$NON-NLS-1$
+        button.setText(IDEWorkbenchMessages.ProjectPerspectiveChoiceDialog_sameWindow);
         data = new GridData();
         button.setLayoutData(data);
         button.setFont(font);
@@ -203,8 +199,7 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
 
         // New window option
         button = new Button(optionGroup, SWT.RADIO | SWT.LEFT);
-        button.setText(IDEWorkbenchMessages
-                .getString("ProjectPerspectiveChoiceDialog.newWindow")); //$NON-NLS-1$
+        button.setText(IDEWorkbenchMessages.ProjectPerspectiveChoiceDialog_newWindow);
         data = new GridData();
         button.setLayoutData(data);
         button.setFont(font);
@@ -254,10 +249,8 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
             ErrorDialog
                     .openError(
                             window.getShell(),
-                            IDEWorkbenchMessages
-                                    .getString("ProjectPerspectiveChoiceDialog.errorTitle"), //$NON-NLS-1$
-                            IDEWorkbenchMessages
-                                    .getString("ProjectPerspectiveChoiceDialog.errorMessage"), //$NON-NLS-1$
+                            IDEWorkbenchMessages.ProjectPerspectiveChoiceDialog_errorTitle,
+                            IDEWorkbenchMessages.ProjectPerspectiveChoiceDialog_errorMessage,
                             errors[0].getStatus());
             errors[0] = null;
             return window;

@@ -115,14 +115,12 @@ public abstract class WizardImportPage extends WizardDataTransferPage {
 
         createSpacer(composite);
 
-        createBoldLabel(composite, IDEWorkbenchMessages
-                .getString("WizardImportPage.destinationLabel")); //$NON-NLS-1$
+        createBoldLabel(composite, IDEWorkbenchMessages.WizardImportPage_destinationLabel);
         createDestinationGroup(composite);
 
         createSpacer(composite);
 
-        createBoldLabel(composite, IDEWorkbenchMessages
-                .getString("WizardImportPage.options")); //$NON-NLS-1$
+        createBoldLabel(composite, IDEWorkbenchMessages.WizardImportPage_options);
         createOptionsGroup(composite);
 
         restoreWidgetValues();
@@ -148,8 +146,7 @@ public abstract class WizardImportPage extends WizardDataTransferPage {
 
         // container label
         Label resourcesLabel = new Label(containerGroup, SWT.NONE);
-        resourcesLabel.setText(IDEWorkbenchMessages
-                .getString("WizardImportPage.folder")); //$NON-NLS-1$
+        resourcesLabel.setText(IDEWorkbenchMessages.WizardImportPage_folder);
 
         // container name entry field
         containerNameField = new Text(containerGroup, SWT.SINGLE | SWT.BORDER);
@@ -161,8 +158,7 @@ public abstract class WizardImportPage extends WizardDataTransferPage {
 
         // container browse button
         containerBrowseButton = new Button(containerGroup, SWT.PUSH);
-        containerBrowseButton.setText(IDEWorkbenchMessages
-                .getString("WizardImportPage.browseLabel")); //$NON-NLS-1$
+        containerBrowseButton.setText(IDEWorkbenchMessages.WizardImportPage_browseLabel);
         containerBrowseButton.setLayoutData(new GridData(
                 GridData.HORIZONTAL_ALIGN_FILL));
         containerBrowseButton.addListener(SWT.Selection, this);
@@ -186,8 +182,7 @@ public abstract class WizardImportPage extends WizardDataTransferPage {
      * @param message the error message
      */
     protected void displayErrorDialog(String message) {
-        MessageDialog.openError(getContainer().getShell(), IDEWorkbenchMessages
-                .getString("WizardImportPage.errorDialogTitle"), message); //$NON-NLS-1$
+        MessageDialog.openError(getContainer().getShell(), IDEWorkbenchMessages.WizardImportPage_errorDialogTitle, message);
     }
 
     /**
@@ -247,8 +242,7 @@ public abstract class WizardImportPage extends WizardDataTransferPage {
     protected void handleContainerBrowseButtonPressed() {
         // see if the user wishes to modify this container selection
         IPath containerPath = queryForContainer(getSpecifiedContainer(),
-                IDEWorkbenchMessages
-                        .getString("WizardImportPage.selectFolderLabel")); //$NON-NLS-1$
+                IDEWorkbenchMessages.WizardImportPage_selectFolderLabel);
 
         // if a container was selected then put its name in the container name field
         if (containerPath != null) // null means user cancelled
@@ -305,8 +299,7 @@ public abstract class WizardImportPage extends WizardDataTransferPage {
         IContainer container = getSpecifiedContainer();
         if (container != null) {
             if (!container.isAccessible()) {
-                setErrorMessage(IDEWorkbenchMessages
-                        .getString("WizardImportPage.folderMustExist")); //$NON-NLS-1$
+                setErrorMessage(IDEWorkbenchMessages.WizardImportPage_folderMustExist);
                 return false;
             }
         }

@@ -32,6 +32,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -151,20 +152,17 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
         composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL
                 | GridData.HORIZONTAL_ALIGN_FILL));
 
-        createBoldLabel(composite, IDEWorkbenchMessages
-                .getString("WizardExportPage.whatLabel")); //$NON-NLS-1$
+        createBoldLabel(composite, IDEWorkbenchMessages.WizardExportPage_whatLabel);
         createSourceGroup(composite);
 
         createSpacer(composite);
 
-        createBoldLabel(composite, IDEWorkbenchMessages
-                .getString("WizardExportPage.whereLabel")); //$NON-NLS-1$
+        createBoldLabel(composite, IDEWorkbenchMessages.WizardExportPage_whereLabel);
         createDestinationGroup(composite);
 
         createSpacer(composite);
 
-        createBoldLabel(composite, IDEWorkbenchMessages
-                .getString("WizardExportPage.options")); //$NON-NLS-1$
+        createBoldLabel(composite, IDEWorkbenchMessages.WizardExportPage_options);
         createOptionsGroup(composite);
 
         restoreResourceSpecificationWidgetValues(); // ie.- local
@@ -203,8 +201,7 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
                 | GridData.HORIZONTAL_ALIGN_FILL));
 
         // resource label
-        new Label(sourceGroup, SWT.NONE).setText(IDEWorkbenchMessages
-                .getString("WizardExportPage.folder")); //$NON-NLS-1$
+        new Label(sourceGroup, SWT.NONE).setText(IDEWorkbenchMessages.WizardExportPage_folder);
 
         // resource name entry field
         resourceNameField = new Text(sourceGroup, SWT.SINGLE | SWT.BORDER);
@@ -216,16 +213,14 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
 
         // resource browse button
         resourceBrowseButton = new Button(sourceGroup, SWT.PUSH);
-        resourceBrowseButton.setText(IDEWorkbenchMessages
-                .getString("WizardExportPage.browse")); //$NON-NLS-1$
+        resourceBrowseButton.setText(IDEWorkbenchMessages.WizardExportPage_browse);
         resourceBrowseButton.addListener(SWT.Selection, this);
         resourceBrowseButton.setLayoutData(new GridData(
                 GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
         // export all types radio	
         exportAllTypesRadio = new Button(sourceGroup, SWT.RADIO);
-        exportAllTypesRadio.setText(IDEWorkbenchMessages
-                .getString("WizardExportPage.allTypes")); //$NON-NLS-1$
+        exportAllTypesRadio.setText(IDEWorkbenchMessages.WizardExportPage_allTypes);
         exportAllTypesRadio.addListener(SWT.Selection, this);
         data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
                 | GridData.GRAB_HORIZONTAL);
@@ -234,8 +229,7 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
 
         // export specific types radio
         exportSpecifiedTypesRadio = new Button(sourceGroup, SWT.RADIO);
-        exportSpecifiedTypesRadio.setText(IDEWorkbenchMessages
-                .getString("WizardExportPage.specificTypes")); //$NON-NLS-1$
+        exportSpecifiedTypesRadio.setText(IDEWorkbenchMessages.WizardExportPage_specificTypes);
         exportSpecifiedTypesRadio.addListener(SWT.Selection, this);
 
         // types combo
@@ -248,8 +242,7 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
 
         // types edit button
         typesToExportEditButton = new Button(sourceGroup, SWT.PUSH);
-        typesToExportEditButton.setText(IDEWorkbenchMessages
-                .getString("WizardExportPage.edit")); //$NON-NLS-1$
+        typesToExportEditButton.setText(IDEWorkbenchMessages.WizardExportPage_edit);
         typesToExportEditButton.setLayoutData(new GridData(
                 GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL
                         | GridData.VERTICAL_ALIGN_END));
@@ -257,8 +250,7 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
 
         // details button
         resourceDetailsButton = new Button(sourceGroup, SWT.PUSH);
-        resourceDetailsButton.setText(IDEWorkbenchMessages
-                .getString("WizardExportPage.details")); //$NON-NLS-1$
+        resourceDetailsButton.setText(IDEWorkbenchMessages.WizardExportPage_details);
         resourceDetailsButton.addListener(SWT.Selection, this);
 
         // details label
@@ -287,8 +279,7 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
      * @param message the error message
      */
     protected void displayErrorDialog(String message) {
-        MessageDialog.openError(getContainer().getShell(), IDEWorkbenchMessages
-                .getString("WizardExportPage.errorDialogTitle"), message); //$NON-NLS-1$
+        MessageDialog.openError(getContainer().getShell(), IDEWorkbenchMessages.WizardExportPage_errorDialogTitle, message);
     }
 
     /**
@@ -299,13 +290,10 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
      */
     protected void displayResourcesSelectedCount(int selectedResourceCount) {
         if (selectedResourceCount == 1)
-            resourceDetailsDescription.setText(IDEWorkbenchMessages
-                    .getString("WizardExportPage.oneResourceSelected")); //$NON-NLS-1$
+            resourceDetailsDescription.setText(IDEWorkbenchMessages.WizardExportPage_oneResourceSelected);
         else
             resourceDetailsDescription
-                    .setText(IDEWorkbenchMessages
-                            .format(
-                                    "WizardExportPage.resourceCountMessage", new Object[] { new Integer(selectedResourceCount) })); //$NON-NLS-1$
+                    .setText(NLS.bind(IDEWorkbenchMessages.WizardExportPage_resourceCountMessage, new Integer(selectedResourceCount)));
     }
 
     /**
@@ -489,8 +477,7 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
             currentFolder = currentFolder.getParent();
 
         IPath containerPath = queryForContainer((IContainer) currentFolder,
-                IDEWorkbenchMessages
-                        .getString("WizardExportPage.selectResourcesToExport")); //$NON-NLS-1$
+                IDEWorkbenchMessages.WizardExportPage_selectResourcesToExport);
         if (containerPath != null) { // null means user cancelled
             String relativePath = containerPath.makeRelative().toString();
             if (!relativePath.toString().equals(resourceNameField.getText())) {
@@ -590,8 +577,7 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
      */
     protected Object[] queryIndividualResourcesToExport(IAdaptable rootResource) {
         ResourceSelectionDialog dialog = new ResourceSelectionDialog(
-                getContainer().getShell(), rootResource, IDEWorkbenchMessages
-                        .getString("WizardExportPage.selectResourcesTitle")); //$NON-NLS-1$
+                getContainer().getShell(), rootResource, IDEWorkbenchMessages.WizardExportPage_selectResourcesTitle);
         dialog.setInitialSelections(selectedResources
                 .toArray(new Object[selectedResources.size()]));
         dialog.open();
@@ -623,11 +609,9 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
         ListSelectionDialog dialog = new ListSelectionDialog(getContainer()
                 .getShell(), editorMappings,
                 FileEditorMappingContentProvider.INSTANCE,
-                FileEditorMappingLabelProvider.INSTANCE, IDEWorkbenchMessages
-                        .getString("WizardExportPage.selectionDialogMessage")); //$NON-NLS-1$
+                FileEditorMappingLabelProvider.INSTANCE, IDEWorkbenchMessages.WizardExportPage_selectionDialogMessage);
 
-        dialog.setTitle(IDEWorkbenchMessages
-                .getString("WizardExportPage.resourceTypeDialog")); //$NON-NLS-1$
+        dialog.setTitle(IDEWorkbenchMessages.WizardExportPage_resourceTypeDialog);
         dialog.open();
 
         return dialog.getResult();
@@ -638,8 +622,7 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
      * accordingly.
      */
     protected void resetSelectedResources() {
-        resourceDetailsDescription.setText(IDEWorkbenchMessages
-                .getString("WizardExportPage.detailsMessage")); //$NON-NLS-1$
+        resourceDetailsDescription.setText(IDEWorkbenchMessages.WizardExportPage_detailsMessage);
         selectedResources = null;
 
         if (exportCurrentSelection) {
@@ -925,14 +908,12 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
         IResource resource = getSourceResource();
 
         if (resource == null) {
-            setErrorMessage(IDEWorkbenchMessages
-                    .getString("WizardExportPage.mustExistMessage")); //$NON-NLS-1$
+            setErrorMessage(IDEWorkbenchMessages.WizardExportPage_mustExistMessage);
             return false;
         }
 
         if (!resource.isAccessible()) {
-            setErrorMessage(IDEWorkbenchMessages
-                    .getString("WizardExportPage.mustBeAccessibleMessage")); //$NON-NLS-1$
+            setErrorMessage(IDEWorkbenchMessages.WizardExportPage_mustBeAccessibleMessage);
             return false;
         }
 

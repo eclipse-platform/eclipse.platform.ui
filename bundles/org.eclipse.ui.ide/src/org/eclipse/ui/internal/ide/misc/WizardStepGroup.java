@@ -88,8 +88,7 @@ public class WizardStepGroup {
 
         // Add a label to identify the step list field
         Label label = new Label(composite, SWT.LEFT);
-        label.setText(IDEWorkbenchMessages
-                .getString("WizardStepGroup.stepsLabel")); //$NON-NLS-1$
+        label.setText(IDEWorkbenchMessages.WizardStepGroup_stepsLabel);
         GridData data = new GridData();
         data.verticalAlignment = SWT.TOP;
         label.setLayoutData(data);

@@ -82,8 +82,7 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements
 
         final Button enableLinkedResourcesButton = new Button(pageComponent,
                 SWT.CHECK);
-        enableLinkedResourcesButton.setText(IDEWorkbenchMessages
-                .getString("LinkedResourcesPreference.enableLinkedResources")); //$NON-NLS-1$
+        enableLinkedResourcesButton.setText(IDEWorkbenchMessages.LinkedResourcesPreference_enableLinkedResources);
         enableLinkedResourcesButton.setFont(font);
         enableLinkedResourcesButton
                 .addSelectionListener(new SelectionAdapter() {
@@ -100,10 +99,8 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements
                             MessageDialog
                                     .openWarning(
                                             getShell(),
-                                            IDEWorkbenchMessages
-                                                    .getString("LinkedResourcesPreference.linkedResourcesWarningTitle"), //$NON-NLS-1$ 
-                                            IDEWorkbenchMessages
-                                                    .getString("LinkedResourcesPreference.linkedResourcesWarningMessage")); //$NON-NLS-1$
+                                            IDEWorkbenchMessages.LinkedResourcesPreference_linkedResourcesWarningTitle,
+                                            IDEWorkbenchMessages.LinkedResourcesPreference_linkedResourcesWarningMessage);
                         }
                     }
                 });
@@ -111,8 +108,7 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements
         createSpace(pageComponent);
 
         topLabel = new Label(pageComponent, SWT.NONE);
-        topLabel.setText(IDEWorkbenchMessages
-                .getString("LinkedResourcesPreference.explanation")); //$NON-NLS-1$
+        topLabel.setText(IDEWorkbenchMessages.LinkedResourcesPreference_explanation);
         data = new GridData();
         data.verticalAlignment = GridData.FILL;
         data.horizontalAlignment = GridData.FILL;

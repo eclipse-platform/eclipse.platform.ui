@@ -64,11 +64,10 @@ public class OpenFileAction extends OpenSystemEditorAction {
      */
     public OpenFileAction(IWorkbenchPage page, IEditorDescriptor descriptor) {
         super(page);
-        setText(descriptor == null ? IDEWorkbenchMessages
-                .getString("OpenFileAction.text") : descriptor.getLabel()); //$NON-NLS-1$
+        setText(descriptor == null ? IDEWorkbenchMessages.OpenFileAction_text : descriptor.getLabel());
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.OPEN_FILE_ACTION);
-        setToolTipText(IDEWorkbenchMessages.getString("OpenFileAction.toolTip")); //$NON-NLS-1$
+        setToolTipText(IDEWorkbenchMessages.OpenFileAction_toolTip);
         setId(ID);
         this.editorDescriptor = descriptor;
     }
@@ -105,8 +104,7 @@ public class OpenFileAction extends OpenSystemEditorAction {
             }
         } catch (PartInitException e) {
             DialogUtil.openError(getWorkbenchPage().getWorkbenchWindow()
-                    .getShell(), IDEWorkbenchMessages
-                    .getString("OpenFileAction.openFileShellTitle"), //$NON-NLS-1$
+                    .getShell(), IDEWorkbenchMessages.OpenFileAction_openFileShellTitle,
                     e.getMessage(), e);
         }
     }

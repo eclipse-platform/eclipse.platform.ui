@@ -81,8 +81,7 @@ public class WizardNewProjectCapabilityPage extends WizardPage {
 
         if (!reg.hasCapabilities())
             setMessage(
-                    IDEWorkbenchMessages
-                            .getString("WizardNewProjectCapabilityPage.noCapabilities"), WARNING); //$NON-NLS-1$
+                    IDEWorkbenchMessages.WizardNewProjectCapabilityPage_noCapabilities, WARNING);
     }
 
     /**

@@ -81,16 +81,14 @@ public class BuildAction extends WorkspaceAction {
         super(shell, "");//$NON-NLS-1$
 
         if (type == IncrementalProjectBuilder.INCREMENTAL_BUILD) {
-            setText(IDEWorkbenchMessages.getString("BuildAction.text")); //$NON-NLS-1$
-            setToolTipText(IDEWorkbenchMessages
-                    .getString("BuildAction.toolTip")); //$NON-NLS-1$
+            setText(IDEWorkbenchMessages.BuildAction_text);
+            setToolTipText(IDEWorkbenchMessages.BuildAction_toolTip);
             setId(ID_BUILD);
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                     IIDEHelpContextIds.INCREMENTAL_BUILD_ACTION);
         } else {
-            setText(IDEWorkbenchMessages.getString("RebuildAction.text")); //$NON-NLS-1$
-            setToolTipText(IDEWorkbenchMessages
-                    .getString("RebuildAction.tooltip")); //$NON-NLS-1$
+            setText(IDEWorkbenchMessages.RebuildAction_text);
+            setToolTipText(IDEWorkbenchMessages.RebuildAction_tooltip);
             setId(ID_REBUILD_ALL);
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 					IIDEHelpContextIds.FULL_BUILD_ACTION);
@@ -128,21 +126,21 @@ public class BuildAction extends WorkspaceAction {
      * Method declared on WorkspaceAction.
      */
     protected String getOperationMessage() {
-        return IDEWorkbenchMessages.getString("BuildAction.operationMessage"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.BuildAction_operationMessage;
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
     protected String getProblemsMessage() {
-        return IDEWorkbenchMessages.getString("BuildAction.problemMessage"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.BuildAction_problemMessage;
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
     protected String getProblemsTitle() {
-        return IDEWorkbenchMessages.getString("BuildAction.problemTitle"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.BuildAction_problemTitle;
     }
 
     /**

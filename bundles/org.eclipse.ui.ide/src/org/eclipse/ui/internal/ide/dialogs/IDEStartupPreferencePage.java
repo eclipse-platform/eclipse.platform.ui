@@ -113,8 +113,7 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
 
     protected void createRefreshWorkspaceOnStartupPref(Composite composite) {
         refreshButton = new Button(composite, SWT.CHECK);
-        refreshButton.setText(IDEWorkbenchMessages
-                .getString("StartupPreferencePage.refreshButton")); //$NON-NLS-1$
+        refreshButton.setText(IDEWorkbenchMessages.StartupPreferencePage_refreshButton);
         refreshButton.setFont(composite.getFont());
         refreshButton.setSelection(getIDEPreferenceStore().getBoolean(
                 IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP));
@@ -122,8 +121,7 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
 
     protected void createLaunchPromptPref(Composite composite) {
         launchPromptButton = new Button(composite, SWT.CHECK);
-        launchPromptButton.setText(IDEWorkbenchMessages
-                .getString("StartupPreferencePage.launchPromptButton")); //$NON-NLS-1$
+        launchPromptButton.setText(IDEWorkbenchMessages.StartupPreferencePage_launchPromptButton);
         launchPromptButton.setFont(composite.getFont());
 
         // TODO: This should get the value from the configuration preference
@@ -137,8 +135,7 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
 
     protected void createExitPromptPref(Composite composite) {
         exitPromptButton = new Button(composite, SWT.CHECK);
-        exitPromptButton.setText(IDEWorkbenchMessages
-                .getString("StartupPreferencePage.exitPromptButton")); //$NON-NLS-1$
+        exitPromptButton.setText(IDEWorkbenchMessages.StartupPreferencePage_exitPromptButton);
         exitPromptButton.setFont(composite.getFont());
         exitPromptButton.setSelection(getIDEPreferenceStore().getBoolean(
                 IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));

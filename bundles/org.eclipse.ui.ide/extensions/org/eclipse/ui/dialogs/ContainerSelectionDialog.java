@@ -82,15 +82,13 @@ public class ContainerSelectionDialog extends SelectionDialog {
     public ContainerSelectionDialog(Shell parentShell, IContainer initialRoot,
             boolean allowNewContainerName, String message) {
         super(parentShell);
-        setTitle(IDEWorkbenchMessages
-                .getString("ContainerSelectionDialog.title")); //$NON-NLS-1$
+        setTitle(IDEWorkbenchMessages.ContainerSelectionDialog_title);
         this.initialSelection = initialRoot;
         this.allowNewContainerName = allowNewContainerName;
         if (message != null)
             setMessage(message);
         else
-            setMessage(IDEWorkbenchMessages
-                    .getString("ContainerSelectionDialog.message")); //$NON-NLS-1$
+            setMessage(IDEWorkbenchMessages.ContainerSelectionDialog_message);
         setShellStyle(getShellStyle() | SWT.RESIZE);
     }
 

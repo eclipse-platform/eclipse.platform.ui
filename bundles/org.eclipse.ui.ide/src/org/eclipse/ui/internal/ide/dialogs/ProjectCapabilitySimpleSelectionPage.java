@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Font;
@@ -89,8 +90,7 @@ public class ProjectCapabilitySimpleSelectionPage extends WizardPage {
         topContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         Label label = new Label(topContainer, SWT.LEFT);
-        label.setText(IDEWorkbenchMessages
-                .getString("ProjectCapabilitySelectionGroup.capabilities")); //$NON-NLS-1$
+        label.setText(IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_capabilities);
         GridData data = new GridData();
         data.verticalAlignment = SWT.TOP;
         label.setLayoutData(data);
@@ -194,8 +194,7 @@ public class ProjectCapabilitySimpleSelectionPage extends WizardPage {
         Capability[] caps = reg.getProjectCapabilities(project);
         List existingCaps = Arrays.asList(caps);
         if (existingCaps.contains(chosenCapability)) {
-            setErrorMessage(IDEWorkbenchMessages
-                    .getString("ProjectCapabilitySimpleSelectionPage.capabilityExist")); //$NON-NLS-1$
+            setErrorMessage(IDEWorkbenchMessages.ProjectCapabilitySimpleSelectionPage_capabilityExist);
             return false;
         }
 
@@ -203,15 +202,11 @@ public class ProjectCapabilitySimpleSelectionPage extends WizardPage {
         Capability[] prereqs = reg.findCapabilities(ids);
         for (int i = 0; i < prereqs.length; i++) {
             if (prereqs[i] == null) {
-                setErrorMessage(IDEWorkbenchMessages
-                        .format(
-                                "ProjectCapabilitySimpleSelectionPage.capabilityMissing", new Object[] { ids[i] })); //$NON-NLS-1$
+                setErrorMessage(NLS.bind(IDEWorkbenchMessages.ProjectCapabilitySimpleSelectionPage_capabilityMissing, ids[i]));
                 return false;
             }
             if (!existingCaps.contains(prereqs[i])) {
-                setErrorMessage(IDEWorkbenchMessages
-                        .format(
-                                "ProjectCapabilitySimpleSelectionPage.capabilityRequired", new Object[] { prereqs[i].getName() })); //$NON-NLS-1$
+                setErrorMessage(NLS.bind(IDEWorkbenchMessages.ProjectCapabilitySimpleSelectionPage_capabilityRequired, prereqs[i].getName()));
                 return false;
             }
         }
@@ -222,9 +217,7 @@ public class ProjectCapabilitySimpleSelectionPage extends WizardPage {
             String[] setIds = reg.getMembershipSetIds(caps[i]);
             for (int j = 0; j < setIds.length; j++) {
                 if (idsList.contains(setIds[j])) {
-                    setErrorMessage(IDEWorkbenchMessages
-                            .format(
-                                    "ProjectCapabilitySimpleSelectionPage.capabilitySet", new Object[] { caps[i].getName() })); //$NON-NLS-1$
+                    setErrorMessage(NLS.bind(IDEWorkbenchMessages.ProjectCapabilitySimpleSelectionPage_capabilitySet, caps[i].getName()));
                     return false;
                 }
             }

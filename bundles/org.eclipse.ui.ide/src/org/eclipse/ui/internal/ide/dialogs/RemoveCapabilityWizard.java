@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.ICapabilityUninstallWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -110,8 +111,7 @@ public class RemoveCapabilityWizard extends Wizard implements
         } catch (InvocationTargetException e) {
             Throwable t = e.getTargetException();
             if (t instanceof CoreException) {
-                ErrorDialog.openError(getShell(), IDEWorkbenchMessages
-                        .getString("RemoveCapabilityWizard.errorMessage"), //$NON-NLS-1$
+                ErrorDialog.openError(getShell(), IDEWorkbenchMessages.RemoveCapabilityWizard_errorMessage,
                         null, // no special message
                         ((CoreException) t).getStatus());
             } else {
@@ -122,11 +122,8 @@ public class RemoveCapabilityWizard extends Wizard implements
                 MessageDialog
                         .openError(
                                 getShell(),
-                                IDEWorkbenchMessages
-                                        .getString("RemoveCapabilityWizard.errorMessage"), //$NON-NLS-1$
-                                IDEWorkbenchMessages
-                                        .format(
-                                                "RemoveCapabilityWizard.internalError", new Object[] { t.getMessage() })); //$NON-NLS-1$
+                                IDEWorkbenchMessages.RemoveCapabilityWizard_errorMessage,
+                                NLS.bind(IDEWorkbenchMessages.RemoveCapabilityWizard_internalError, t.getMessage()));
             }
             return false;
         }

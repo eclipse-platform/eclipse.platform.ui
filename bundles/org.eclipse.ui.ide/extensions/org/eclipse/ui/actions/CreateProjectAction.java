@@ -78,7 +78,7 @@ public class CreateProjectAction extends Action {
      * 		selection and shell for opening the wizard.
      */
     public CreateProjectAction(IWorkbenchWindow window) {
-        super(IDEWorkbenchMessages.getString("CreateProjectAction.text")); //$NON-NLS-1$
+        super(IDEWorkbenchMessages.CreateProjectAction_text);
         if (window == null) {
             throw new IllegalArgumentException();
         }
@@ -88,8 +88,7 @@ public class CreateProjectAction extends Action {
                 .getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
         setDisabledImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
-        setToolTipText(IDEWorkbenchMessages
-                .getString("CreateProjectAction.toolTip")); //$NON-NLS-1$
+        setToolTipText(IDEWorkbenchMessages.CreateProjectAction_toolTip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				org.eclipse.ui.internal.IWorkbenchHelpContextIds.NEW_ACTION);
     }

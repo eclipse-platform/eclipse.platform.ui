@@ -51,13 +51,12 @@ public class CreateFileAction extends SelectionListenerAction {
      * @deprecated see deprecated tag on class
      */
     public CreateFileAction(Shell shell) {
-        super(IDEWorkbenchMessages.getString("CreateFileAction.text")); //$NON-NLS-1$
+        super(IDEWorkbenchMessages.CreateFileAction_text);
         if (shell == null) {
             throw new IllegalArgumentException();
         }
         this.shell = shell;
-        setToolTipText(IDEWorkbenchMessages
-                .getString("CreateFileAction.toolTip")); //$NON-NLS-1$
+        setToolTipText(IDEWorkbenchMessages.CreateFileAction_toolTip);
         setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
                 .getImageDescriptor(ISharedImages.IMG_OBJ_FILE));
         setId(ID);
@@ -77,7 +76,7 @@ public class CreateFileAction extends SelectionListenerAction {
         WizardDialog dialog = new WizardDialog(shell, wizard);
         dialog.create();
         dialog.getShell().setText(
-                IDEWorkbenchMessages.getString("CreateFileAction.title")); //$NON-NLS-1$
+                IDEWorkbenchMessages.CreateFileAction_title);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
                 IIDEHelpContextIds.NEW_FILE_WIZARD);
         dialog.open();

@@ -210,8 +210,7 @@ public class PathVariablesGroup {
 
         // layout the table & its buttons
         variableLabel = new Label(pageComponent, SWT.LEFT);
-        variableLabel.setText(IDEWorkbenchMessages
-                .getString("PathVariablesBlock.variablesLabel")); //$NON-NLS-1$
+        variableLabel.setText(IDEWorkbenchMessages.PathVariablesBlock_variablesLabel);
         data = new GridData();
         data.horizontalAlignment = GridData.FILL;
         data.horizontalSpan = 2;
@@ -347,8 +346,7 @@ public class PathVariablesGroup {
         groupComponent.setFont(font);
 
         addButton = new Button(groupComponent, SWT.PUSH);
-        addButton.setText(IDEWorkbenchMessages
-                .getString("PathVariablesBlock.addVariableButton")); //$NON-NLS-1$
+        addButton.setText(IDEWorkbenchMessages.PathVariablesBlock_addVariableButton);
         addButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 addNewVariable();
@@ -358,8 +356,7 @@ public class PathVariablesGroup {
         setButtonLayoutData(addButton);
 
         editButton = new Button(groupComponent, SWT.PUSH);
-        editButton.setText(IDEWorkbenchMessages
-                .getString("PathVariablesBlock.editVariableButton")); //$NON-NLS-1$
+        editButton.setText(IDEWorkbenchMessages.PathVariablesBlock_editVariableButton);
         editButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 editSelectedVariable();
@@ -369,8 +366,7 @@ public class PathVariablesGroup {
         setButtonLayoutData(editButton);
 
         removeButton = new Button(groupComponent, SWT.PUSH);
-        removeButton.setText(IDEWorkbenchMessages
-                .getString("PathVariablesBlock.removeVariableButton")); //$NON-NLS-1$
+        removeButton.setText(IDEWorkbenchMessages.PathVariablesBlock_removeVariableButton);
         removeButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 removeSelectedVariables();

@@ -14,6 +14,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.List;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -169,7 +170,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		group.setLayout(layout);
-		group.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.encoding")); //$NON-NLS-1$
+		group.setText(IDEWorkbenchMessages.WorkbenchPreference_encoding);
 		group.setFont(font);
 
 		SelectionAdapter buttonListener = new SelectionAdapter() {
@@ -189,8 +190,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 		defaultEncodingButton.setFont(font);
 
 		otherEncodingButton = new Button(group, SWT.RADIO);
-		otherEncodingButton.setText(IDEWorkbenchMessages
-				.getString("WorkbenchPreference.otherEncoding")); //$NON-NLS-1$
+		otherEncodingButton.setText(IDEWorkbenchMessages.WorkbenchPreference_otherEncoding);
 		otherEncodingButton.addSelectionListener(buttonListener);
 		otherEncodingButton.setFont(font);
 
@@ -220,8 +220,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 * @return String
 	 */
 	protected String defaultButtonText() {
-		return IDEWorkbenchMessages.format(
-				"WorkbenchPreference.defaultEncoding", new String[] { defaultEnc });//$NON-NLS-1$
+		return NLS.bind(IDEWorkbenchMessages.WorkbenchPreference_defaultEncoding, defaultEnc);
 	}
 
 	/**
@@ -256,8 +255,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 			if (isValid) {
 				clearErrorMessage();
 			} else {
-				showErrorMessage(IDEWorkbenchMessages
-						.getString("WorkbenchPreference.unsupportedEncoding")); //$NON-NLS-1$
+				showErrorMessage(IDEWorkbenchMessages.WorkbenchPreference_unsupportedEncoding);
 			}
 			fireStateChanged(IS_VALID, !isValid, isValid);
 

@@ -34,7 +34,7 @@ public class BuildCleanAction extends Action implements ActionFactory.IWorkbench
 	 * @param window The window for parenting this action
 	 */
 	public BuildCleanAction(IWorkbenchWindow window) {
-		super(IDEWorkbenchMessages.getString("Workbench.buildClean")); //$NON-NLS-1$
+		super(IDEWorkbenchMessages.Workbench_buildClean);
 		setActionDefinitionId("org.eclipse.ui.project.cleanAction"); //$NON-NLS-1$
 		this.window = window;
 	}

@@ -55,11 +55,10 @@ public class OpenResourceAction extends WorkspaceAction implements
      * @param shell the shell for any dialogs
      */
     public OpenResourceAction(Shell shell) {
-        super(shell, IDEWorkbenchMessages.getString("OpenResourceAction.text")); //$NON-NLS-1$
+        super(shell, IDEWorkbenchMessages.OpenResourceAction_text);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.OPEN_RESOURCE_ACTION);
-        setToolTipText(IDEWorkbenchMessages
-                .getString("OpenResourceAction.toolTip")); //$NON-NLS-1$
+        setToolTipText(IDEWorkbenchMessages.OpenResourceAction_toolTip);
         setId(ID);
     }
 
@@ -67,23 +66,21 @@ public class OpenResourceAction extends WorkspaceAction implements
      * Method declared on WorkspaceAction.
      */
     protected String getOperationMessage() {
-        return IDEWorkbenchMessages
-        .getString("OpenResourceAction.operationMessage"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.OpenResourceAction_operationMessage;
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
     protected String getProblemsMessage() {
-        return IDEWorkbenchMessages
-                .getString("OpenResourceAction.problemMessage"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.OpenResourceAction_problemMessage;
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
     protected String getProblemsTitle() {
-        return IDEWorkbenchMessages.getString("OpenResourceAction.dialogTitle"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.OpenResourceAction_dialogTitle;
     }
 
     protected void invokeOperation(IResource resource, IProgressMonitor monitor)

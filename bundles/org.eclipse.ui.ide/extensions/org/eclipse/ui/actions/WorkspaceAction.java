@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -94,8 +95,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      */
     void displayError(String message) {
         if (message == null) {
-            message = IDEWorkbenchMessages
-                    .getString("WorkbenchAction.internalError"); //$NON-NLS-1$
+            message = IDEWorkbenchMessages.WorkbenchAction_internalError;
         }
         MessageDialog.openError(shell, getProblemsTitle(), message);
     }
@@ -169,8 +169,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      * @return the problems message
      */
     protected String getProblemsMessage() {
-        return IDEWorkbenchMessages
-                .getString("WorkbenchAction.problemsMessage"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.WorkbenchAction_problemsMessage;
     }
 
     /**
@@ -184,7 +183,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      * @return the problems dialog title
      */
     protected String getProblemsTitle() {
-        return IDEWorkbenchMessages.getString("WorkspaceAction.problemsTitle"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.WorkspaceAction_problemsTitle;
     }
 
     /**
@@ -289,9 +288,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
             return;
         } catch (InvocationTargetException e) {
             // we catch CoreException in execute(), but unexpected runtime exceptions or errors may still occur
-            String msg = IDEWorkbenchMessages.format(
-                    "WorkspaceAction.logTitle", new Object[] {//$NON-NLS-1$
-                    getClass().getName(), e.getTargetException() });
+            String msg = NLS.bind(IDEWorkbenchMessages.WorkspaceAction_logTitle, getClass().getName(), e.getTargetException());
             IDEWorkbenchPlugin.log(msg, StatusUtil.newStatus(IStatus.ERROR,
                     msg, e.getTargetException()));
             displayError(e.getTargetException().getMessage());

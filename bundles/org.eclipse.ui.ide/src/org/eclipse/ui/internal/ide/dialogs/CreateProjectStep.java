@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
@@ -37,16 +38,14 @@ public class CreateProjectStep extends WizardStep {
      * Method declared on WizardStep.
      */
     public String getLabel() {
-        return IDEWorkbenchMessages.getString("CreateProjectStep.label"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.CreateProjectStep_label;
     }
 
     /* (non-Javadoc)
      * Method declared on WizardStep.
      */
     public String getDetails() {
-        return IDEWorkbenchMessages
-                .format(
-                        "CreateProjectStep.details", new Object[] { stepWizard.getProjectName() }); //$NON-NLS-1$
+        return NLS.bind(IDEWorkbenchMessages.CreateProjectStep_details, stepWizard.getProjectName());
     }
 
     /* (non-Javadoc)

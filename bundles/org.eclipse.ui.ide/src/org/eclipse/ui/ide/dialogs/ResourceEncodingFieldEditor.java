@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -74,8 +75,7 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 			return ((IFile) resource).getCharset();
 
 		} catch (CoreException e) {//If there is an error return the default
-			WorkbenchPlugin.log(IDEWorkbenchMessages
-					.getString("ResourceEncodingFieldEditor.ErrorLoadingMessage"), e.getStatus()); //$NON-NLS-1$
+			WorkbenchPlugin.log(IDEWorkbenchMessages.ResourceEncodingFieldEditor_ErrorLoadingMessage, e.getStatus());
 			return WorkbenchEncoding.getWorkbenchDefaultEncoding();
 		}
 
@@ -100,12 +100,9 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 			
 			MessageDialog dialog = new MessageDialog(
 					shell,
-					IDEWorkbenchMessages
-							.getString("ResourceEncodingFieldEditor.EncodingConflictTitle"), //$NON-NLS-1$
+					IDEWorkbenchMessages.ResourceEncodingFieldEditor_EncodingConflictTitle,
 					null,
-					IDEWorkbenchMessages
-							.format(
-									"ResourceEncodingFieldEditor.EncodingConflictMessage", new String[] { encoding, descriptionCharset }), //$NON-NLS-1$
+					NLS.bind(IDEWorkbenchMessages.ResourceEncodingFieldEditor_EncodingConflictMessage, encoding, descriptionCharset),
 					MessageDialog.WARNING, new String[] { IDialogConstants.YES_LABEL,
 							IDialogConstants.NO_LABEL }, 0); // yes is the default
 			if (dialog.open() > 0)
@@ -119,7 +116,7 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 
 		final String finalEncoding = encoding;
 
-		Job charsetJob = new Job(IDEWorkbenchMessages.getString("IDEEncoding.EncodingJob")) {//$NON-NLS-1$
+		Job charsetJob = new Job(IDEWorkbenchMessages.IDEEncoding_EncodingJob) {
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
@@ -131,10 +128,7 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 						((IFile) resource).setCharset(finalEncoding, monitor);
 					return Status.OK_STATUS;
 				} catch (CoreException e) {//If there is an error return the default
-					WorkbenchPlugin
-							.log(
-									IDEWorkbenchMessages
-											.getString("ResourceEncodingFieldEditor.ErrorStoringMessage"), e.getStatus()); //$NON-NLS-1$
+					WorkbenchPlugin.log(IDEWorkbenchMessages.ResourceEncodingFieldEditor_ErrorStoringMessage, e.getStatus());
 					return e.getStatus();
 				}
 			}
@@ -218,19 +212,16 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 				IContentDescription description = ((IFile) resource).getContentDescription();
 				//If we can find a charset from the description then derive from that
 				if (description == null || description.getCharset() == null)
-					return IDEWorkbenchMessages.format("ResourceInfo.fileContainerEncodingFormat", //$NON-NLS-1$
-							new String[] { getDefaultEnc() });
+					return NLS.bind(IDEWorkbenchMessages.ResourceInfo_fileContainerEncodingFormat, getDefaultEnc());
 
-				return IDEWorkbenchMessages.format("ResourceInfo.fileContentEncodingFormat", //$NON-NLS-1$
-						new String[] { getDefaultEnc() });
+				return NLS.bind(IDEWorkbenchMessages.ResourceInfo_fileContentEncodingFormat, getDefaultEnc());
 
 			} catch (CoreException exception) {
 				//Do nothing here as we will just try to derive from the container
 			}
 		}
 
-		return IDEWorkbenchMessages.format("ResourceInfo.containerEncodingFormat", //$NON-NLS-1$
-				new String[] { getDefaultEnc() });
+		return NLS.bind(IDEWorkbenchMessages.ResourceInfo_containerEncodingFormat, getDefaultEnc());
 
 	}
 
@@ -242,9 +233,7 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 		String byteOrderLabel = IDEEncoding.getByteOrderMarkLabel(getContentDescription());
 		if (byteOrderLabel != null) {
 			Label label = new Label(group, SWT.NONE);
-			label.setText(IDEWorkbenchMessages.format(
-					"WorkbenchPreference.encoding.encodingMessage", //$NON-NLS-1$
-					new String[] { byteOrderLabel }));
+			label.setText(NLS.bind(IDEWorkbenchMessages.WorkbenchPreference_encoding_encodingMessage, byteOrderLabel));
 			GridData layoutData = new GridData();
 			layoutData.horizontalSpan = numColumns + 1;
 			label.setLayoutData(layoutData);

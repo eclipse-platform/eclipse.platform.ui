@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.ide.actions;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceData;
@@ -54,7 +55,7 @@ public class OpenWorkspaceAction extends Action implements
      *            the window in which this action should appear
      */
     public OpenWorkspaceAction(IWorkbenchWindow window) {
-        super(IDEWorkbenchMessages.getString("OpenWorkspaceAction.text")); //$NON-NLS-1$
+        super(IDEWorkbenchMessages.OpenWorkspaceAction_text);
 
         if (window == null)
             throw new IllegalArgumentException();
@@ -62,8 +63,7 @@ public class OpenWorkspaceAction extends Action implements
         // TODO help?
 
         this.window = window;
-        setToolTipText(IDEWorkbenchMessages
-                .getString("OpenWorkspaceAction.toolTip")); //$NON-NLS-1$
+        setToolTipText(IDEWorkbenchMessages.OpenWorkspaceAction_toolTip);
         setActionDefinitionId("org.eclipse.ui.file.openWorkspace"); //$NON-NLS-1$
     }
 
@@ -124,11 +124,8 @@ public class OpenWorkspaceAction extends Action implements
             MessageDialog
                     .openError(
                             window.getShell(),
-                            IDEWorkbenchMessages
-                                    .getString("OpenWorkspaceAction.errorTitle"), //$NON-NLS-1$
-                            IDEWorkbenchMessages
-                                    .format(
-                                            "OpenWorkspaceAction.errorMessage", new Object[] { PROP_VM })); //$NON-NLS-1$
+                            IDEWorkbenchMessages.OpenWorkspaceAction_errorTitle,
+                            NLS.bind(IDEWorkbenchMessages.OpenWorkspaceAction_errorMessage, PROP_VM));
             return null;
         }
 

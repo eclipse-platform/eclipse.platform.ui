@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -61,23 +62,17 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 
     private Button browseButton;
 
-    private static String PROJECT_NAME_LABEL = IDEWorkbenchMessages
-            .getString("ProjectLocationSelectionDialog.nameLabel"); //$NON-NLS-1$
+    private static String PROJECT_NAME_LABEL = IDEWorkbenchMessages.ProjectLocationSelectionDialog_nameLabel;
 
-    private static String LOCATION_LABEL = IDEWorkbenchMessages
-            .getString("ProjectLocationSelectionDialog.locationLabel"); //$NON-NLS-1$
+    private static String LOCATION_LABEL = IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationLabel;
 
-    private static String BROWSE_LABEL = IDEWorkbenchMessages
-            .getString("ProjectLocationSelectionDialog.browseLabel"); //$NON-NLS-1$
+    private static String BROWSE_LABEL = IDEWorkbenchMessages.ProjectLocationSelectionDialog_browseLabel;
 
-    private static String DIRECTORY_DIALOG_LABEL = IDEWorkbenchMessages
-            .getString("ProjectLocationSelectionDialog.directoryLabel"); //$NON-NLS-1$
+    private static String DIRECTORY_DIALOG_LABEL = IDEWorkbenchMessages.ProjectLocationSelectionDialog_directoryLabel;
 
-    private static String INVALID_LOCATION_MESSAGE = IDEWorkbenchMessages
-            .getString("ProjectLocationSelectionDialog.locationError"); //$NON-NLS-1$
+    private static String INVALID_LOCATION_MESSAGE = IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationError;
 
-    private static String PROJECT_LOCATION_SELECTION_TITLE = IDEWorkbenchMessages
-            .getString("ProjectLocationSelectionDialog.selectionTitle"); //$NON-NLS-1$
+    private static String PROJECT_LOCATION_SELECTION_TITLE = IDEWorkbenchMessages.ProjectLocationSelectionDialog_selectionTitle;
 
     // constants
     private static final int SIZING_TEXT_FIELD_WIDTH = 250;
@@ -150,8 +145,7 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
             return null;
         String locationFieldContents = locationPathField.getText();
         if (locationFieldContents.equals("")) {//$NON-NLS-1$
-            return (IDEWorkbenchMessages
-                    .getString("WizardNewProjectCreationPage.projectLocationEmpty")); //$NON-NLS-1$
+            return (IDEWorkbenchMessages.WizardNewProjectCreationPage_projectLocationEmpty);
         }
         IPath path = new Path("");//$NON-NLS-1$
         if (!path.isValidPath(locationFieldContents)) {
@@ -181,8 +175,7 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
             return nameStatus.getMessage();
         IProject newProject = workspace.getRoot().getProject(name);
         if (newProject.exists()) {
-            return IDEWorkbenchMessages.format(
-                    "CopyProjectAction.alreadyExists", new Object[] { name }); //$NON-NLS-1$
+            return NLS.bind(IDEWorkbenchMessages.CopyProjectAction_alreadyExists, name);
         }
 
         return null;
@@ -277,8 +270,7 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 
         final Button useDefaultsButton = new Button(projectGroup, SWT.CHECK
                 | SWT.RIGHT);
-        useDefaultsButton.setText(IDEWorkbenchMessages
-                .getString("ProjectLocationSelectionDialog.useDefaultLabel")); //$NON-NLS-1$
+        useDefaultsButton.setText(IDEWorkbenchMessages.ProjectLocationSelectionDialog_useDefaultLabel);
         useDefaultsButton.setSelection(this.useDefaults);
         GridData buttonData = new GridData();
         buttonData.horizontalSpan = 3;
@@ -407,13 +399,9 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
         while (true) {
             String nameSegment;
             if (counter > 1) {
-                nameSegment = IDEWorkbenchMessages
-                        .format(
-                                "CopyProjectAction.copyNameTwoArgs", new Object[] { new Integer(counter), projectName }); //$NON-NLS-1$
+                nameSegment = NLS.bind(IDEWorkbenchMessages.CopyProjectAction_copyNameTwoArgs, new Integer(counter), projectName);
             } else {
-                nameSegment = IDEWorkbenchMessages
-                        .format(
-                                "CopyProjectAction.copyNameOneArg", new Object[] { projectName }); //$NON-NLS-1$
+                nameSegment = NLS.bind(IDEWorkbenchMessages.CopyProjectAction_copyNameOneArg, projectName);
             }
 
             if (!workspace.getRoot().getProject(nameSegment).exists())

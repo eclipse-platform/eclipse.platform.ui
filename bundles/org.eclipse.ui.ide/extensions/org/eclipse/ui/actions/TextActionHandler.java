@@ -132,7 +132,7 @@ public class TextActionHandler {
 
     private class DeleteActionHandler extends Action {
         protected DeleteActionHandler() {
-            super(IDEWorkbenchMessages.getString("Delete")); //$NON-NLS-1$
+            super(IDEWorkbenchMessages.Delete);
             setId("TextDeleteActionHandler");//$NON-NLS-1$
             setEnabled(false);
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
@@ -170,7 +170,7 @@ public class TextActionHandler {
 
     private class CutActionHandler extends Action {
         protected CutActionHandler() {
-            super(IDEWorkbenchMessages.getString("Cut")); //$NON-NLS-1$
+            super(IDEWorkbenchMessages.Cut);
             setId("TextCutActionHandler");//$NON-NLS-1$
             setEnabled(false);
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
@@ -206,7 +206,7 @@ public class TextActionHandler {
 
     private class CopyActionHandler extends Action {
         protected CopyActionHandler() {
-            super(IDEWorkbenchMessages.getString("Copy")); //$NON-NLS-1$
+            super(IDEWorkbenchMessages.Copy);
             setId("TextCopyActionHandler");//$NON-NLS-1$
             setEnabled(false);
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
@@ -242,7 +242,7 @@ public class TextActionHandler {
 
     private class PasteActionHandler extends Action {
         protected PasteActionHandler() {
-            super(IDEWorkbenchMessages.getString("Paste")); //$NON-NLS-1$
+            super(IDEWorkbenchMessages.Paste);
             setId("TextPasteActionHandler");//$NON-NLS-1$
             setEnabled(false);
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
@@ -278,7 +278,7 @@ public class TextActionHandler {
 
     private class SelectAllActionHandler extends Action {
         protected SelectAllActionHandler() {
-            super(IDEWorkbenchMessages.getString("TextAction.selectAll")); //$NON-NLS-1$
+            super(IDEWorkbenchMessages.TextAction_selectAll);
             setId("TextSelectAllActionHandler");//$NON-NLS-1$
             setEnabled(false);
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this,

@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
@@ -160,8 +161,7 @@ public class ContainerGenerator {
             public void run(IProgressMonitor monitor) throws CoreException {
                 monitor
                         .beginTask(
-                                IDEWorkbenchMessages
-                                        .getString("ContainerGenerator.progressMessage"), 1000 * containerFullPath.segmentCount()); //$NON-NLS-1$
+                                IDEWorkbenchMessages.ContainerGenerator_progressMessage, 1000 * containerFullPath.segmentCount());
                 if (container != null)
                     return;
 
@@ -178,7 +178,7 @@ public class ContainerGenerator {
                     IResource resource = container.findMember(currentSegment);
                     if (resource != null) {
                     	if (resource.getType() == IResource.FILE) {
-                    		String msg = IDEWorkbenchMessages.format("ContainerGenerator.pathOccupied", new Object[] {resource.getFullPath().makeRelative()}); //$NON-NLS-1$
+                    		String msg = NLS.bind(IDEWorkbenchMessages.ContainerGenerator_pathOccupied, resource.getFullPath().makeRelative());
                     		throw new CoreException(new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, msg, null));
                     	}
                         container = (IContainer) resource;

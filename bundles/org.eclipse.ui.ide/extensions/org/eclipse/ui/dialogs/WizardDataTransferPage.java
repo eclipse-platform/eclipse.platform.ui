@@ -20,6 +20,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -247,18 +248,14 @@ public abstract class WizardDataTransferPage extends WizardPage implements
         //Break the message up if there is a file name and a directory
         //and there are at least 2 segments.
         if (path.getFileExtension() == null || path.segmentCount() < 2)
-            messageString = IDEWorkbenchMessages.format(
-                    "WizardDataTransfer.existsQuestion", //$NON-NLS-1$
-                    new String[] { pathString });
+            messageString = NLS.bind(IDEWorkbenchMessages.WizardDataTransfer_existsQuestion, pathString);
 
         else
-            messageString = IDEWorkbenchMessages.format(
-                    "WizardDataTransfer.overwriteNameAndPathQuestion", //$NON-NLS-1$
-                    new String[] { path.lastSegment(),
-                            path.removeLastSegments(1).toOSString() });
+            messageString = NLS.bind(IDEWorkbenchMessages.WizardDataTransfer_overwriteNameAndPathQuestion, path.lastSegment(),
+			path.removeLastSegments(1).toOSString());
 
         final MessageDialog dialog = new MessageDialog(getContainer()
-                .getShell(), IDEWorkbenchMessages.getString("Question"), //$NON-NLS-1$
+                .getShell(), IDEWorkbenchMessages.Question,
                 null, messageString, MessageDialog.QUESTION, new String[] {
                         IDialogConstants.YES_LABEL,
                         IDialogConstants.YES_TO_ALL_LABEL,
@@ -286,7 +283,7 @@ public abstract class WizardDataTransferPage extends WizardPage implements
      */
     protected boolean queryYesNoQuestion(String message) {
         MessageDialog dialog = new MessageDialog(getContainer().getShell(),
-                IDEWorkbenchMessages.getString("Question"), //$NON-NLS-1$
+                IDEWorkbenchMessages.Question,
                 (Image) null, message, MessageDialog.NONE,
                 new String[] { IDialogConstants.YES_LABEL,
                         IDialogConstants.NO_LABEL }, 0);
@@ -395,8 +392,7 @@ public abstract class WizardDataTransferPage extends WizardPage implements
         optionsGroup.setLayout(layout);
         optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
                 | GridData.GRAB_HORIZONTAL));
-        optionsGroup.setText(IDEWorkbenchMessages
-                .getString("WizardExportPage.options")); //$NON-NLS-1$
+        optionsGroup.setText(IDEWorkbenchMessages.WizardExportPage_options);
         optionsGroup.setFont(parent.getFont());
 
         createOptionsGroupButtons(optionsGroup);
@@ -422,9 +418,7 @@ public abstract class WizardDataTransferPage extends WizardPage implements
         String message = exception.getMessage();
         //Some system exceptions have no message
         if (message == null)
-            message = IDEWorkbenchMessages.format(
-                    "WizardDataTransfer.exceptionMessage", //$NON-NLS-1$
-                    new String[] { exception.toString() });
+            message = NLS.bind(IDEWorkbenchMessages.WizardDataTransfer_exceptionMessage, exception);
         displayErrorDialog(message);
     }
 
@@ -433,8 +427,7 @@ public abstract class WizardDataTransferPage extends WizardPage implements
      * override.
      */
     protected String getErrorDialogTitle() {
-        return IDEWorkbenchMessages
-                .getString("WizardExportPage.internalErrorTitle"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.WizardExportPage_internalErrorTitle;
     }
 
 }

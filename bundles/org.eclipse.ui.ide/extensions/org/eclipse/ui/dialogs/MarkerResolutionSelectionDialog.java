@@ -79,10 +79,8 @@ public class MarkerResolutionSelectionDialog extends SelectionDialog {
             throw new IllegalArgumentException();
         }
         resolutions = markerResolutions;
-        setTitle(IDEWorkbenchMessages
-                .getString("MarkerResolutionSelectionDialog.title")); //$NON-NLS-1$
-        setMessage(IDEWorkbenchMessages
-                .getString("MarkerResolutionSelectionDialog.messageLabel")); //$NON-NLS-1$
+        setTitle(IDEWorkbenchMessages.MarkerResolutionSelectionDialog_title);
+        setMessage(IDEWorkbenchMessages.MarkerResolutionSelectionDialog_messageLabel);
         setInitialSelections(new Object[] { markerResolutions[0] });
     }
 

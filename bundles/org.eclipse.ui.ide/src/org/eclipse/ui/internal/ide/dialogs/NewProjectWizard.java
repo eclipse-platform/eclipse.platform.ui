@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -79,19 +80,15 @@ public class NewProjectWizard extends MultiStepCapabilityWizard implements
     protected void addCustomPages() {
         creationPage = new WizardNewProjectNameAndLocationPage(
                 "newProjectCreationPage");//$NON-NLS-1$
-        creationPage.setTitle(IDEWorkbenchMessages
-                .getString("NewProjectWizard.title")); //$NON-NLS-1$
-        creationPage.setDescription(IDEWorkbenchMessages
-                .getString("WizardNewProjectCreationPage.description")); //$NON-NLS-1$
+        creationPage.setTitle(IDEWorkbenchMessages.NewProjectWizard_title);
+        creationPage.setDescription(IDEWorkbenchMessages.WizardNewProjectCreationPage_description);
         creationPage.setInitialProjectName(initialProjectName);
         this.addPage(creationPage);
 
         capabilityPage = new WizardNewProjectCapabilityPage(
                 "newProjectCapabilityPage");//$NON-NLS-1$
-        capabilityPage.setTitle(IDEWorkbenchMessages
-                .getString("NewProjectWizard.title")); //$NON-NLS-1$
-        capabilityPage.setDescription(IDEWorkbenchMessages
-                .getString("WizardNewProjectCapabilityPage.description")); //$NON-NLS-1$
+        capabilityPage.setTitle(IDEWorkbenchMessages.NewProjectWizard_title);
+        capabilityPage.setDescription(IDEWorkbenchMessages.WizardNewProjectCapabilityPage_description);
         capabilityPage
                 .setInitialProjectCapabilities(initialProjectCapabilities);
         capabilityPage.setInitialSelectedCategories(initialSelectedCategories);
@@ -120,10 +117,8 @@ public class NewProjectWizard extends MultiStepCapabilityWizard implements
             setSteps(steps);
             return true;
         } else {
-            ErrorDialog.openError(getShell(), IDEWorkbenchMessages
-                    .getString("NewProjectWizard.errorTitle"), //$NON-NLS-1$
-                    IDEWorkbenchMessages
-                            .getString("NewProjectWizard.invalidCapabilities"), //$NON-NLS-1$
+            ErrorDialog.openError(getShell(), IDEWorkbenchMessages.NewProjectWizard_errorTitle,
+                    IDEWorkbenchMessages.NewProjectWizard_invalidCapabilities,
                     status);
             return false;
         }
@@ -141,30 +136,28 @@ public class NewProjectWizard extends MultiStepCapabilityWizard implements
      * Method declared on MultiStepWizard.
      */
     protected String getConfigurePageTitle() {
-        return IDEWorkbenchMessages.getString("NewProjectWizard.title"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.NewProjectWizard_title;
     }
 
     /* (non-Javadoc)
      * Method declared on MultiStepWizard.
      */
     protected String getConfigurePageDescription() {
-        return IDEWorkbenchMessages
-                .getString("WizardProjectConfigurePage.description"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.WizardProjectConfigurePage_description;
     }
 
     /* (non-Javadoc)
      * Method declared on MultiStepWizard.
      */
     protected String getReviewPageTitle() {
-        return IDEWorkbenchMessages.getString("NewProjectWizard.title"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.NewProjectWizard_title;
     }
 
     /* (non-Javadoc)
      * Method declared on MultiStepWizard.
      */
     protected String getReviewPageDescription() {
-        return IDEWorkbenchMessages
-                .getString("WizardProjectReviewPage.description"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.WizardProjectReviewPage_description;
     }
 
     /* (non-Javadoc)
@@ -238,11 +231,8 @@ public class NewProjectWizard extends MultiStepCapabilityWizard implements
         MessageDialog
                 .openError(
                         getShell(),
-                        IDEWorkbenchMessages
-                                .getString("NewProjectWizard.errorTitle"), //$NON-NLS-1$
-                        IDEWorkbenchMessages
-                                .format(
-                                        "NewProjectWizard.noWizard", new Object[] { step.getLabel() })); //$NON-NLS-1$
+                        IDEWorkbenchMessages.NewProjectWizard_errorTitle,
+                        NLS.bind(IDEWorkbenchMessages.NewProjectWizard_noWizard, step.getLabel()));
         return false;
     }
 
@@ -252,8 +242,7 @@ public class NewProjectWizard extends MultiStepCapabilityWizard implements
     public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
         this.workbench = workbench;
         initializeDefaultPageImageDescriptor();
-        setWindowTitle(IDEWorkbenchMessages
-                .getString("NewProjectWizard.windowTitle")); //$NON-NLS-1$
+        setWindowTitle(IDEWorkbenchMessages.NewProjectWizard_windowTitle);
     }
 
     /**

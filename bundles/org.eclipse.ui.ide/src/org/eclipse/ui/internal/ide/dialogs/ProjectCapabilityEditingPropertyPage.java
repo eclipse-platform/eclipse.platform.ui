@@ -37,6 +37,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -107,11 +108,9 @@ public class ProjectCapabilityEditingPropertyPage extends
 
         String instructions;
         if (reg.hasCapabilities())
-            instructions = IDEWorkbenchMessages
-                    .getString("ProjectCapabilityPropertyPage.chooseCapabilities"); //$NON-NLS-1$
+            instructions = IDEWorkbenchMessages.ProjectCapabilityPropertyPage_chooseCapabilities;
         else
-            instructions = IDEWorkbenchMessages
-                    .getString("ProjectCapabilityPropertyPage.noCapabilities"); //$NON-NLS-1$
+            instructions = IDEWorkbenchMessages.ProjectCapabilityPropertyPage_noCapabilities;
         Label label = new Label(topComposite, SWT.LEFT);
         label.setFont(font);
         label.setText(instructions);
@@ -136,8 +135,7 @@ public class ProjectCapabilityEditingPropertyPage extends
 
         label = new Label(capComposite, SWT.LEFT);
         label.setFont(font);
-        label.setText(IDEWorkbenchMessages
-                .getString("ProjectCapabilitySelectionGroup.capabilities")); //$NON-NLS-1$
+        label.setText(IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_capabilities);
 
         table = new TableViewer(capComposite, SWT.SINGLE | SWT.H_SCROLL
                 | SWT.V_SCROLL | SWT.BORDER);
@@ -159,8 +157,7 @@ public class ProjectCapabilityEditingPropertyPage extends
         label.setText(""); //$NON-NLS-1$
 
         addButton = new Button(buttonComposite, SWT.PUSH);
-        addButton.setText(IDEWorkbenchMessages
-                .getString("ProjectCapabilityEditingPropertyPage.add")); //$NON-NLS-1$
+        addButton.setText(IDEWorkbenchMessages.ProjectCapabilityEditingPropertyPage_add);
         addButton.setEnabled(true);
         addButton.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
@@ -179,8 +176,7 @@ public class ProjectCapabilityEditingPropertyPage extends
         addButton.setFont(font);
 
         removeButton = new Button(buttonComposite, SWT.PUSH);
-        removeButton.setText(IDEWorkbenchMessages
-                .getString("ProjectCapabilityEditingPropertyPage.remove")); //$NON-NLS-1$
+        removeButton.setText(IDEWorkbenchMessages.ProjectCapabilityEditingPropertyPage_remove);
         removeButton.setEnabled(false);
         removeButton.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
@@ -263,11 +259,8 @@ public class ProjectCapabilityEditingPropertyPage extends
                 MessageDialog
                         .openWarning(
                                 getShell(),
-                                IDEWorkbenchMessages
-                                        .getString("ProjectCapabilityPropertyPage.errorTitle"), //$NON-NLS-1$
-                                IDEWorkbenchMessages
-                                        .format(
-                                                "ProjectCapabilityPropertyPage.capabilityRequired", new Object[] { caps[i].getName() })); //$NON-NLS-1$
+                                IDEWorkbenchMessages.ProjectCapabilityPropertyPage_errorTitle,
+                                NLS.bind(IDEWorkbenchMessages.ProjectCapabilityPropertyPage_capabilityRequired, caps[i].getName()));
                 return;
             }
         }
@@ -277,10 +270,8 @@ public class ProjectCapabilityEditingPropertyPage extends
             ErrorDialog
                     .openError(
                             getShell(),
-                            IDEWorkbenchMessages
-                                    .getString("ProjectCapabilityPropertyPage.errorTitle"), //$NON-NLS-1$
-                            IDEWorkbenchMessages
-                                    .getString("ProjectCapabilityPropertyPage.invalidSelection"), //$NON-NLS-1$
+                            IDEWorkbenchMessages.ProjectCapabilityPropertyPage_errorTitle,
+                            IDEWorkbenchMessages.ProjectCapabilityPropertyPage_invalidSelection,
                             status);
             return;
         }
@@ -364,9 +355,7 @@ public class ProjectCapabilityEditingPropertyPage extends
             Capability cap = (Capability) element;
             String text = cap.getName();
             if (isDisabledCapability(cap))
-                text = IDEWorkbenchMessages
-                        .format(
-                                "ProjectCapabilitySelectionGroup.disabledLabel", new Object[] { text }); //$NON-NLS-1$
+                text = NLS.bind(IDEWorkbenchMessages.ProjectCapabilitySelectionGroup_disabledLabel, text);
             return text;
         }
     }

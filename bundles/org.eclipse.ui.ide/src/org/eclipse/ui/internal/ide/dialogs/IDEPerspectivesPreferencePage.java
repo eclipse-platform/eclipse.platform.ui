@@ -30,17 +30,13 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * internal
  */
 public class IDEPerspectivesPreferencePage extends PerspectivesPreferencePage {
-    private final String PROJECT_SWITCH_PERSP_MODE_TITLE = IDEWorkbenchMessages
-            .getString("ProjectSwitchPerspectiveMode.optionsTitle"); //$NON-NLS-1$
+    private final String PROJECT_SWITCH_PERSP_MODE_TITLE = IDEWorkbenchMessages.ProjectSwitchPerspectiveMode_optionsTitle;
 
-    private final String PSPM_ALWAYS_TEXT = IDEWorkbenchMessages
-            .getString("ProjectSwitchPerspectiveMode.always"); //$NON-NLS-1$
+    private final String PSPM_ALWAYS_TEXT = IDEWorkbenchMessages.ProjectSwitchPerspectiveMode_always;
 
-    private final String PSPM_NEVER_TEXT = IDEWorkbenchMessages
-            .getString("ProjectSwitchPerspectiveMode.never"); //$NON-NLS-1$
+    private final String PSPM_NEVER_TEXT = IDEWorkbenchMessages.ProjectSwitchPerspectiveMode_never;
 
-    private final String PSPM_PROMPT_TEXT = IDEWorkbenchMessages
-            .getString("ProjectSwitchPerspectiveMode.prompt"); //$NON-NLS-1$
+    private final String PSPM_PROMPT_TEXT = IDEWorkbenchMessages.ProjectSwitchPerspectiveMode_prompt;
 
     private RadioGroupFieldEditor projectSwitchField;
 

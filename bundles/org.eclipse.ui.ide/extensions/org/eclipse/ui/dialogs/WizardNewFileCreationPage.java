@@ -33,6 +33,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -145,8 +146,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 
             advancedButton = new Button(linkedResourceParent, SWT.PUSH);
             advancedButton.setFont(linkedResourceParent.getFont());
-            advancedButton.setText(IDEWorkbenchMessages
-                    .getString("showAdvanced")); //$NON-NLS-1$
+            advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
             GridData data = setButtonLayoutData(advancedButton);
             data.horizontalAlignment = GridData.BEGINNING;
             advancedButton.setLayoutData(data);
@@ -184,8 +184,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
                 topLevel,
                 this,
                 getNewFileLabel(),
-                IDEWorkbenchMessages
-                        .getString("WizardNewFileCreationPage.file"), false, SIZING_CONTAINER_GROUP_HEIGHT); //$NON-NLS-1$
+                IDEWorkbenchMessages.WizardNewFileCreationPage_file, false, SIZING_CONTAINER_GROUP_HEIGHT);
         resourceGroup.setAllowExistingResources(false);
         initialPopulateContainerNameField();
         createAdvancedControls(topLevel);
@@ -296,10 +295,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
             protected void execute(IProgressMonitor monitor)
                     throws CoreException {
                 try {
-                    monitor
-                            .beginTask(
-                                    IDEWorkbenchMessages
-                                            .getString("WizardNewFileCreationPage.progress"), 2000); //$NON-NLS-1$
+                    monitor.beginTask(IDEWorkbenchMessages.WizardNewFileCreationPage_progress, 2000);
                     ContainerGenerator generator = new ContainerGenerator(
                             containerPath);
                     generator.generateContainer(new SubProgressMonitor(monitor,
@@ -321,8 +317,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
                 ErrorDialog
                         .openError(
                                 getContainer().getShell(), // Was Utilities.getFocusShell()
-                                IDEWorkbenchMessages
-                                        .getString("WizardNewFileCreationPage.errorTitle"), //$NON-NLS-1$
+                                IDEWorkbenchMessages.WizardNewFileCreationPage_errorTitle,
                                 null, // no special message
                                 ((CoreException) e.getTargetException())
                                         .getStatus());
@@ -333,8 +328,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
                 MessageDialog
                         .openError(
                                 getContainer().getShell(),
-                                IDEWorkbenchMessages
-                                        .getString("WizardNewFileCreationPage.internalErrorTitle"), IDEWorkbenchMessages.format("WizardNewFileCreationPage.internalErrorMessage", new Object[] { e.getTargetException().getMessage() })); //$NON-NLS-2$ //$NON-NLS-1$
+                                IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorTitle, NLS.bind(IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorMessage, e.getTargetException().getMessage()));
             }
             return null;
         }
@@ -410,8 +404,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
      *     component group
      */
     protected String getNewFileLabel() {
-        return IDEWorkbenchMessages
-                .getString("WizardNewFileCreationPage.fileLabel"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.WizardNewFileCreationPage_fileLabel;
     }
 
     /**
@@ -427,8 +420,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
             linkedResourceComposite = null;
             composite.layout();
             shell.setSize(shellSize.x, shellSize.y - linkedResourceGroupHeight);
-            advancedButton.setText(IDEWorkbenchMessages
-                    .getString("showAdvanced")); //$NON-NLS-1$
+            advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
         } else {
             linkedResourceComposite = linkedResourceGroup
                     .createContents(linkedResourceParent);
@@ -439,8 +431,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
             }
             shell.setSize(shellSize.x, shellSize.y + linkedResourceGroupHeight);
             composite.layout();
-            advancedButton.setText(IDEWorkbenchMessages
-                    .getString("hideAdvanced")); //$NON-NLS-1$
+            advancedButton.setText(IDEWorkbenchMessages.hideAdvanced);
         }
     }
 

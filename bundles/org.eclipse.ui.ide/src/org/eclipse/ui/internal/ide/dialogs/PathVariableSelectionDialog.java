@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -66,8 +67,7 @@ public class PathVariableSelectionDialog extends SelectionDialog {
      */
     public PathVariableSelectionDialog(Shell parentShell, int variableType) {
         super(parentShell);
-        setTitle(IDEWorkbenchMessages
-                .getString("PathVariableSelectionDialog.title")); //$NON-NLS-1$
+        setTitle(IDEWorkbenchMessages.PathVariableSelectionDialog_title);
         this.variableType = variableType;
         pathVariablesGroup = new PathVariablesGroup(false, variableType,
                 new Listener() {
@@ -89,13 +89,8 @@ public class PathVariableSelectionDialog extends SelectionDialog {
                     getShell(), false, variableType);
             PathVariablesGroup.PathVariableElement selection = pathVariablesGroup
                     .getSelection()[0];
-            dialog
-                    .setTitle(IDEWorkbenchMessages
-                            .getString("PathVariableSelectionDialog.ExtensionDialog.title")); //$NON-NLS-1$
-            dialog
-                    .setMessage(IDEWorkbenchMessages
-                            .format(
-                                    "PathVariableSelectionDialog.ExtensionDialog.description", new Object[] { selection.name })); //$NON-NLS-1$
+            dialog.setTitle(IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_title);
+            dialog.setMessage(NLS.bind(IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_description, selection.name));
             dialog.setInput(selection.path.toFile());
             if (dialog.open() == Window.OK
                     && pathVariablesGroup.performOk()) {
@@ -123,8 +118,7 @@ public class PathVariableSelectionDialog extends SelectionDialog {
     protected void createButtonsForButtonBar(Composite parent) {
         createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
                 true);
-        createButton(parent, EXTEND_ID, IDEWorkbenchMessages
-                .getString("PathVariableSelectionDialog.extendButton"), false);//$NON-NLS-1$	
+        createButton(parent, EXTEND_ID, IDEWorkbenchMessages.PathVariableSelectionDialog_extendButton, false);
         createButton(parent, IDialogConstants.CANCEL_ID,
                 IDialogConstants.CANCEL_LABEL, false);
         updateExtendButtonState();

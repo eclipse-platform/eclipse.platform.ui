@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.ICapabilityInstallWizard;
 import org.eclipse.ui.ICapabilityUninstallWizard;
 import org.eclipse.ui.WorkbenchException;
@@ -166,9 +167,8 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
     public String getName() {
         if (isValid())
             return natureDescriptor.getLabel();
-        else
-            return IDEWorkbenchMessages.format(
-                    "Capability.nameMissing", new Object[] { id }); //$NON-NLS-1$
+		else
+			return NLS.bind(IDEWorkbenchMessages.Capability_nameMissing, id);
     }
 
     public ImageDescriptor getIconDescriptor() {

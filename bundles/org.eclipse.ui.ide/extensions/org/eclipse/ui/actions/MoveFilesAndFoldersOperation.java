@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
@@ -118,9 +119,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
      * @return the deep query message
      */
     protected String getDeepCheckQuestion(IResource source) {
-        return IDEWorkbenchMessages.format(
-                "CopyFilesAndFoldersOperation.deepMoveQuestion", //$NON-NLS-1$
-                new Object[] { source.getFullPath().makeRelative() });
+        return NLS.bind(IDEWorkbenchMessages.CopyFilesAndFoldersOperation_deepMoveQuestion, source.getFullPath().makeRelative());
     }
 
     /**
@@ -129,8 +128,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
      * @return the task title
      */
     protected String getOperationTitle() {
-        return IDEWorkbenchMessages
-                .getString("MoveFilesAndFoldersOperation.operationTitle"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.MoveFilesAndFoldersOperation_operationTitle;
     }
 
     /**
@@ -139,8 +137,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
      * @return the problems message
      */
     protected String getProblemsMessage() {
-        return IDEWorkbenchMessages
-                .getString("MoveFilesAndFoldersOperation.problemMessage"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.MoveFilesAndFoldersOperation_problemMessage;
     }
 
     /**
@@ -149,8 +146,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
      * @return the problems dialog title
      */
     protected String getProblemsTitle() {
-        return IDEWorkbenchMessages
-                .getString("MoveFilesAndFoldersOperation.moveFailedTitle"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.MoveFilesAndFoldersOperation_moveFailedTitle;
     }
 
     /**
@@ -205,9 +201,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 
             // is the source being copied onto itself?
             if (sourceResource.getParent().equals(destination)) {
-                return IDEWorkbenchMessages.format(
-                        "MoveFilesAndFoldersOperation.sameSourceAndDest", //$NON-NLS-1$
-                        new Object[] { sourceResource.getName() });
+                return NLS.bind(IDEWorkbenchMessages.MoveFilesAndFoldersOperation_sameSourceAndDest, sourceResource.getName());
             }
             // test if linked source is copied onto itself. Fixes bug 29913.
             if (destinationLocation != null) {
@@ -216,9 +210,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
                         .append(sourceResource.getName());
                 if (sourceLocation != null
                         && sourceLocation.isPrefixOf(destinationResource)) {
-                    return IDEWorkbenchMessages.format(
-                            "MoveFilesAndFoldersOperation.sameSourceAndDest", //$NON-NLS-1$
-                            new Object[] { sourceResource.getName() });
+                    return NLS.bind(IDEWorkbenchMessages.MoveFilesAndFoldersOperation_sameSourceAndDest, sourceResource.getName());
                 }
             }
         }

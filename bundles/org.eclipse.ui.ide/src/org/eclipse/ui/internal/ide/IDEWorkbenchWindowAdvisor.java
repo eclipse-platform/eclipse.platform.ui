@@ -28,6 +28,7 @@ import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridLayout;
@@ -127,20 +128,15 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
                 productName = product.getName();
             }
             if (productName == null) {
-                message = IDEWorkbenchMessages
-                        .getString("PromptOnExitDialog.message0"); //$NON-NLS-1$
+                message = IDEWorkbenchMessages.PromptOnExitDialog_message0;
             } else {
-                message = IDEWorkbenchMessages
-                        .format(
-                                "PromptOnExitDialog.message1", new Object[] { productName }); //$NON-NLS-1$
+                message = NLS.bind(IDEWorkbenchMessages.PromptOnExitDialog_message1, productName);
             }
 
             MessageDialogWithToggle dlg = MessageDialogWithToggle
                     .openOkCancelConfirm(getWindowConfigurer().getWindow()
-                            .getShell(), IDEWorkbenchMessages
-                            .getString("PromptOnExitDialog.shellTitle"), //$NON-NLS-1$,
-                            message, IDEWorkbenchMessages
-                                    .getString("PromptOnExitDialog.choice"), //$NON-NLS-1$,
+                            .getShell(), IDEWorkbenchMessages.PromptOnExitDialog_shellTitle,
+                            message, IDEWorkbenchMessages.PromptOnExitDialog_choice,
                             false, null, null);
             if (dlg.getReturnCode() != IDialogConstants.OK_ID) {
                 return false;
@@ -272,9 +268,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
         String workspaceLocation = wbAdvisor.getWorkspaceLocation();
         if (workspaceLocation != null) {
-            title = IDEWorkbenchMessages
-                    .format(
-                            "WorkbenchWindow.shellTitle", new Object[] { workspaceLocation, title }); //$NON-NLS-1$
+            title = NLS.bind(IDEWorkbenchMessages.WorkbenchWindow_shellTitle, workspaceLocation, title);
         }
 
         IWorkbenchPage currentPage = window.getActivePage();
@@ -282,9 +276,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
             IEditorPart editor = currentPage.getActiveEditor();
             if (editor != null) {
                 String editorTitle = editor.getTitle();
-                title = IDEWorkbenchMessages
-                        .format(
-                                "WorkbenchWindow.shellTitle", new Object[] { editorTitle, title }); //$NON-NLS-1$
+                title = NLS.bind(IDEWorkbenchMessages.WorkbenchWindow_shellTitle, editorTitle, title);
             }
             IPerspectiveDescriptor persp = currentPage.getPerspective();
             String label = ""; //$NON-NLS-1$
@@ -295,9 +287,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
                 label = currentPage.getLabel();
             }
             if (label != null && !label.equals("")) { //$NON-NLS-1$ 
-                title = IDEWorkbenchMessages
-                        .format(
-                                "WorkbenchWindow.shellTitle", new Object[] { label, title }); //$NON-NLS-1$
+                title = NLS.bind(IDEWorkbenchMessages.WorkbenchWindow_shellTitle, label, title);
             }
         }
         configurer.setTitle(title);
@@ -481,8 +471,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
             try {
                 page = win.openPage(id, wbAdvisor.getDefaultPageInput());
             } catch (WorkbenchException e) {
-                ErrorDialog.openError(win.getShell(), IDEWorkbenchMessages
-                        .getString("Problems_Opening_Page"), //$NON-NLS-1$
+                ErrorDialog.openError(win.getShell(), IDEWorkbenchMessages.Problems_Opening_Page,
                         e.getMessage(), e.getStatus());
             }
         }
@@ -496,10 +485,8 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
                 ErrorDialog
                         .openError(
                                 win.getShell(),
-                                IDEWorkbenchMessages
-                                        .getString("Workbench.openEditorErrorDialogTitle"), //$NON-NLS-1$
-                                IDEWorkbenchMessages
-                                        .getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
+                                IDEWorkbenchMessages.Workbench_openEditorErrorDialogTitle,
+                                IDEWorkbenchMessages.Workbench_openEditorErrorDialogMessage,
                                 e.getStatus());
                 return;
             }
@@ -520,10 +507,8 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
             ErrorDialog
                     .openError(
                             win.getShell(),
-                            IDEWorkbenchMessages
-                                    .getString("Workbench.openEditorErrorDialogTitle"), //$NON-NLS-1$
-                            IDEWorkbenchMessages
-                                    .getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
+                            IDEWorkbenchMessages.Workbench_openEditorErrorDialogTitle,
+                            IDEWorkbenchMessages.Workbench_openEditorErrorDialogMessage,
                             e.getStatus());
         }
         return;
@@ -543,12 +528,12 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         label.setForeground(display.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
         label.setBackground(bgCol);
         label.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT));
-        String msg = IDEWorkbenchMessages.getString("IDEWorkbenchAdvisor.noPerspective"); //$NON-NLS-1$
+        String msg = IDEWorkbenchMessages.IDEWorkbenchAdvisor_noPerspective;
         label.setText(msg);
         ToolBarManager toolBarManager = new ToolBarManager();
         // TODO: should obtain the open perspective action from ActionFactory
         IAction openPerspectiveAction = new Action() {
-            { setToolTipText(IDEWorkbenchMessages.getString("IDEWorkbenchAdvisor.openPerspective")); //$NON-NLS-1$
+            { setToolTipText(IDEWorkbenchMessages.IDEWorkbenchAdvisor_openPerspective);
               setImageDescriptor(WorkbenchImages.getImageDescriptor(
                     IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE));
             }

@@ -49,7 +49,7 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		Composite composite = createComposite(parent);
         
 		PreferenceLinkArea area = new PreferenceLinkArea(composite, SWT.BORDER,
-				"org.eclipse.ui.preferencePages.FileEditors", IDEWorkbenchMessages.getString("IDEEditorsPreferencePage.WorkbenchPreference.relatedLink"),//$NON-NLS-1$ //$NON-NLS-2$
+				"org.eclipse.ui.preferencePages.FileEditors", IDEWorkbenchMessages.IDEEditorsPreferencePage_WorkbenchPreference_relatedLink,//$NON-NLS-1$
 				(IWorkbenchPreferenceContainer) getContainer(),null);
 
 		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
@@ -65,8 +65,7 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		createEditorReuseGroup(composite);
 
 		createSpace(composite);
-		encodingEditor = new ResourceEncodingFieldEditor(IDEWorkbenchMessages
-				.getString("WorkbenchPreference.encoding"), composite, ResourcesPlugin //$NON-NLS-1$
+		encodingEditor = new ResourceEncodingFieldEditor(IDEWorkbenchMessages.WorkbenchPreference_encoding, composite, ResourcesPlugin
 				.getWorkspace().getRoot());
 
 		encodingEditor.setPage(this);

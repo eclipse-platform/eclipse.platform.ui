@@ -120,7 +120,7 @@ public class WelcomeEditor extends EditorPart {
      */
     public WelcomeEditor() {
         super();
-        setPartName(IDEWorkbenchMessages.getString("WelcomeEditor.title")); //$NON-NLS-1$
+        setPartName(IDEWorkbenchMessages.WelcomeEditor_title);
         copyAction = new WelcomeEditorCopyAction(this);
         copyAction.setEnabled(false);
     }
@@ -959,10 +959,8 @@ public class WelcomeEditor extends EditorPart {
             read(is);
         } catch (IOException e) {
             IStatus status = new Status(IStatus.ERROR,
-                    IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages
-                            .getString("WelcomeEditor.accessException"), e); //$NON-NLS-1$
-            IDEWorkbenchPlugin.log(IDEWorkbenchMessages
-                    .getString("WelcomeEditor.readFileError"), status); //$NON-NLS-1$
+                    IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.WelcomeEditor_accessException, e);
+            IDEWorkbenchPlugin.log(IDEWorkbenchMessages.WelcomeEditor_readFileError, status);
         } finally {
             try {
                 if (is != null)

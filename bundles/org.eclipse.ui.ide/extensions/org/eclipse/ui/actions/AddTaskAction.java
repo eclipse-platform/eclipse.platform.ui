@@ -46,11 +46,11 @@ public class AddTaskAction extends SelectionListenerAction {
      * @param shell shell to use to show any dialogs
      */
     public AddTaskAction(Shell shell) {
-        super(IDEWorkbenchMessages.getString("AddTaskLabel")); //$NON-NLS-1$		
+        super(IDEWorkbenchMessages.AddTaskLabel);
         setId(ID);
         this.shell = shell;
         Assert.isNotNull(shell);
-        setToolTipText(IDEWorkbenchMessages.getString("AddTaskToolTip")); //$NON-NLS-1$		
+        setToolTipText(IDEWorkbenchMessages.AddTaskToolTip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.ADD_TASK_ACTION);
     }

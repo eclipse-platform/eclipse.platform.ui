@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.ide.dialogs;
 import java.io.PrintWriter;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.about.ISystemSummarySection;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.update.configuration.IActivity;
@@ -41,33 +42,15 @@ public class ConfigurationLogUpdateSection implements ISystemSummarySection {
                 writer
                         .println("----------------------------------------------------"); //$NON-NLS-1$
 
-            writer
-                    .println(IDEWorkbenchMessages
-                            .format(
-                                    "SystemSummary.configuration", new Object[] { configurations[i].getLabel() })); //$NON-NLS-1$
-            writer
-                    .println(IDEWorkbenchMessages
-                            .format(
-                                    "SystemSummary.isCurrentConfiguration", new Object[] { new Boolean(configurations[i].isCurrent()) })); //$NON-NLS-1$ 
+            writer.println(NLS.bind(IDEWorkbenchMessages.SystemSummary_configuration, configurations[i].getLabel()));
+            writer.println(NLS.bind(IDEWorkbenchMessages.SystemSummary_isCurrentConfiguration, new Boolean(configurations[i].isCurrent())));
             IActivity[] activities = configurations[i].getActivities();
             for (int j = 0; j < activities.length; j++) {
                 writer.println();
-                writer
-                        .println(IDEWorkbenchMessages
-                                .format(
-                                        "SystemSummary.date", new Object[] { activities[j].getDate() })); //$NON-NLS-1$
-                writer
-                        .println(IDEWorkbenchMessages
-                                .format(
-                                        "SystemSummary.target", new Object[] { activities[j].getLabel() })); //$NON-NLS-1$
-                writer
-                        .println(IDEWorkbenchMessages
-                                .format(
-                                        "SystemSummary.action", new Object[] { getActionLabel(activities[j]) })); //$NON-NLS-1$
-                writer
-                        .println(IDEWorkbenchMessages
-                                .format(
-                                        "SystemSummary.status", new Object[] { getStatusLabel(activities[j]) })); //$NON-NLS-1$
+                writer.println(NLS.bind(IDEWorkbenchMessages.SystemSummary_date, activities[j].getDate()));
+                writer.println(NLS.bind(IDEWorkbenchMessages.SystemSummary_target, activities[j].getLabel()));
+                writer.println(NLS.bind(IDEWorkbenchMessages.SystemSummary_action, getActionLabel(activities[j])));
+                writer.println(NLS.bind(IDEWorkbenchMessages.SystemSummary_status, getStatusLabel(activities[j])));
             }
         }
     }
@@ -76,48 +59,35 @@ public class ConfigurationLogUpdateSection implements ISystemSummarySection {
         int action = activity.getAction();
         switch (action) {
         case IActivity.ACTION_CONFIGURE:
-            return IDEWorkbenchMessages
-                    .getString("SystemSummary.activity.enabled"); //$NON-NLS-1$
+            return IDEWorkbenchMessages.SystemSummary_activity_enabled;
         case IActivity.ACTION_FEATURE_INSTALL:
-            return IDEWorkbenchMessages
-                    .getString("SystemSummary.activity.featureInstalled"); //$NON-NLS-1$
+            return IDEWorkbenchMessages.SystemSummary_activity_featureInstalled;
         case IActivity.ACTION_FEATURE_REMOVE:
-            return IDEWorkbenchMessages
-                    .getString("SystemSummary.activity.featureRemoved"); //$NON-NLS-1$
+            return IDEWorkbenchMessages.SystemSummary_activity_featureRemoved;
         case IActivity.ACTION_SITE_INSTALL:
-            return IDEWorkbenchMessages
-                    .getString("SystemSummary.activity.siteInstalled"); //$NON-NLS-1$
+            return IDEWorkbenchMessages.SystemSummary_activity_siteInstalled;
         case IActivity.ACTION_SITE_REMOVE:
-            return IDEWorkbenchMessages
-                    .getString("SystemSummary.activity.siteRemoved"); //$NON-NLS-1$
+            return IDEWorkbenchMessages.SystemSummary_activity_siteRemoved;
         case IActivity.ACTION_UNCONFIGURE:
-            return IDEWorkbenchMessages
-                    .getString("SystemSummary.activity.disabled"); //$NON-NLS-1$
+            return IDEWorkbenchMessages.SystemSummary_activity_disabled;
         case IActivity.ACTION_REVERT:
-            return IDEWorkbenchMessages
-                    .getString("SystemSummary.activity.revert"); //$NON-NLS-1$
+            return IDEWorkbenchMessages.SystemSummary_activity_revert;
         case IActivity.ACTION_RECONCILIATION:
-            return IDEWorkbenchMessages
-                    .getString("SystemSummary.activity.reconcile"); //$NON-NLS-1$
+            return IDEWorkbenchMessages.SystemSummary_activity_reconcile;
         case IActivity.ACTION_ADD_PRESERVED:
-            return IDEWorkbenchMessages
-                    .getString("SystemSummary.activity.preserved"); //$NON-NLS-1$
+            return IDEWorkbenchMessages.SystemSummary_activity_preserved;
         default:
-            return IDEWorkbenchMessages
-                    .getString("SystemSummary.activity.unknown"); //$NON-NLS-1$
+            return IDEWorkbenchMessages.SystemSummary_activity_unknown;
         }
     }
 
     private String getStatusLabel(IActivity activity) {
         switch (activity.getStatus()) {
         case IActivity.STATUS_OK:
-            return IDEWorkbenchMessages
-                    .getString("SystemSummary.activity.status.success"); //$NON-NLS-1$
+            return IDEWorkbenchMessages.SystemSummary_activity_status_success;
         case IActivity.STATUS_NOK:
-            return IDEWorkbenchMessages
-                    .getString("SystemSummary.activity.status.failure"); //$NON-NLS-1$
+            return IDEWorkbenchMessages.SystemSummary_activity_status_failure;
         }
-        return IDEWorkbenchMessages
-                .getString("SystemSummary.activity.status.unknown"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.SystemSummary_activity_status_unknown;
     }
 }

@@ -14,6 +14,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.widgets.MessageBox;
@@ -44,26 +45,19 @@ public final class IDEExceptionHandler {
     private IWorkbenchConfigurer workbenchConfigurer;
 
     //Pre-load all Strings trying to run as light as possible in case of fatal errors.
-    private static String MSG_OutOfMemoryError = IDEWorkbenchMessages
-            .getString("FatalError_OutOfMemoryError"); //$NON-NLS-1$
+    private static String MSG_OutOfMemoryError = IDEWorkbenchMessages.FatalError_OutOfMemoryError;
 
-    private static String MSG_StackOverflowError = IDEWorkbenchMessages
-            .getString("FatalError_StackOverflowError"); //$NON-NLS-1$
+    private static String MSG_StackOverflowError = IDEWorkbenchMessages.FatalError_StackOverflowError;
 
-    private static String MSG_VirtualMachineError = IDEWorkbenchMessages
-            .getString("FatalError_VirtualMachineError"); //$NON-NLS-1$
+    private static String MSG_VirtualMachineError = IDEWorkbenchMessages.FatalError_VirtualMachineError;
 
-    private static String MSG_SWTError = IDEWorkbenchMessages
-            .getString("FatalError_SWTError"); //$NON-NLS-1$
+    private static String MSG_SWTError = IDEWorkbenchMessages.FatalError_SWTError;
 
-    private static String MSG_FATAL_ERROR = IDEWorkbenchMessages
-            .getString("FatalError"); //$NON-NLS-1$
+    private static String MSG_FATAL_ERROR = IDEWorkbenchMessages.FatalError;
 
-    private static String MSG_FATAL_ERROR_Recursive = IDEWorkbenchMessages
-            .getString("FatalError_RecursiveError"); //$NON-NLS-1$
+    private static String MSG_FATAL_ERROR_Recursive = IDEWorkbenchMessages.FatalError_RecursiveError;
 
-    private static String MSG_FATAL_ERROR_RecursiveTitle = IDEWorkbenchMessages
-            .getString("Internal_error"); //$NON-NLS-1$
+    private static String MSG_FATAL_ERROR_RecursiveTitle = IDEWorkbenchMessages.Internal_error;
 
     /**
      * Creates the exception handle for the IDE application
@@ -154,15 +148,12 @@ public final class IDEExceptionHandler {
                 msg = MSG_SWTError;
             } else {
                 if (internalError.getMessage() == null) {
-                    msg = IDEWorkbenchMessages.getString("InternalErrorNoArg"); //$NON-NLS-1$
+                    msg = IDEWorkbenchMessages.InternalErrorNoArg;
                 } else {
-                    msg = IDEWorkbenchMessages
-                            .format(
-                                    "InternalErrorOneArg", new Object[] { internalError.getMessage() }); //$NON-NLS-1$
+                    msg = NLS.bind(IDEWorkbenchMessages.InternalErrorOneArg, internalError.getMessage());
                 }
                 if (Policy.DEBUG_OPEN_ERROR_DIALOG)
-                    return openQuestion(null, IDEWorkbenchMessages
-                            .getString("Internal_error"), msg, internalError, 1); //$NON-NLS-1$
+                    return openQuestion(null, IDEWorkbenchMessages.Internal_error, msg, internalError, 1);
                 else
                     return false;
             }
@@ -172,8 +163,7 @@ public final class IDEExceptionHandler {
             if (!Policy.DEBUG_OPEN_ERROR_DIALOG)
                 detail = null;
             return InternalErrorDialog
-                    .openQuestion(null, IDEWorkbenchMessages
-                            .getString("Internal_error"),//$NON-NLS-1$
+                    .openQuestion(null, IDEWorkbenchMessages.Internal_error,
                             MessageFormat.format(MSG_FATAL_ERROR,
                                     new Object[] { msg }), detail, 1);
         } catch (Throwable th) {

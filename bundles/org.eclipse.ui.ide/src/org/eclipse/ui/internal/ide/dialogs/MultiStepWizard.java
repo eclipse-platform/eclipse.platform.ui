@@ -131,7 +131,7 @@ public abstract class MultiStepWizard extends Wizard {
      * </p>
      */
     protected String getFinishStepLabel(WizardStep[] steps) {
-        return IDEWorkbenchMessages.getString("MultiStepWizard.finishLabel"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.MultiStepWizard_finishLabel;
     }
 
     /* (non-Javadoc)

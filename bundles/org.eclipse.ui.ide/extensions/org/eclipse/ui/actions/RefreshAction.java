@@ -28,6 +28,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
@@ -55,8 +56,8 @@ public class RefreshAction extends WorkspaceAction {
      * @param shell the shell for any dialogs
      */
     public RefreshAction(Shell shell) {
-        super(shell, IDEWorkbenchMessages.getString("RefreshAction.text")); //$NON-NLS-1$
-        setToolTipText(IDEWorkbenchMessages.getString("RefreshAction.toolTip")); //$NON-NLS-1$
+        super(shell, IDEWorkbenchMessages.RefreshAction_text);
+        setToolTipText(IDEWorkbenchMessages.RefreshAction_toolTip);
         setId(ID);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.REFRESH_ACTION);
@@ -71,13 +72,11 @@ public class RefreshAction extends WorkspaceAction {
             return;
         File location = project.getLocation().toFile();
         if (!location.exists()) {
-            String message = IDEWorkbenchMessages
-                    .format(
-                            "RefreshAction.locationDeletedMessage", new Object[] { project.getName(), location.getAbsolutePath() });//$NON-NLS-1$
+            String message = NLS.bind(IDEWorkbenchMessages.RefreshAction_locationDeletedMessage, project.getName(), location.getAbsolutePath());
 
             final MessageDialog dialog = new MessageDialog(
                     getShell(),
-                    IDEWorkbenchMessages.getString("RefreshAction.dialogTitle"), // dialog title //$NON-NLS-1$
+                    IDEWorkbenchMessages.RefreshAction_dialogTitle, // dialog title
                     null, // use default window icon
                     message, MessageDialog.QUESTION, new String[] {
                             IDialogConstants.YES_LABEL,
@@ -101,21 +100,21 @@ public class RefreshAction extends WorkspaceAction {
      * Method declared on WorkspaceAction.
      */
     protected String getOperationMessage() {
-        return IDEWorkbenchMessages.getString("RefreshAction.progressMessage"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.RefreshAction_progressMessage;
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
     protected String getProblemsMessage() {
-        return IDEWorkbenchMessages.getString("RefreshAction.problemMessage"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.RefreshAction_problemMessage;
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
     protected String getProblemsTitle() {
-        return IDEWorkbenchMessages.getString("RefreshAction.problemTitle"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.RefreshAction_problemTitle;
     }
 
     /**

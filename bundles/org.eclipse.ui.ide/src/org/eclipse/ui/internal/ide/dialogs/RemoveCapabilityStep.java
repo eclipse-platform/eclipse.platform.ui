@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.ide.dialogs;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.ICapabilityUninstallWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -53,9 +54,7 @@ public class RemoveCapabilityStep extends WizardStep {
      * Method declared on WizardStep.
      */
     public String getLabel() {
-        return IDEWorkbenchMessages
-                .format(
-                        "RemoveCapabilityStep.label", new Object[] { capability.getName() }); //$NON-NLS-1$
+        return NLS.bind(IDEWorkbenchMessages.RemoveCapabilityStep_label, capability.getName());
     }
 
     /* (non-Javadoc)
@@ -65,9 +64,7 @@ public class RemoveCapabilityStep extends WizardStep {
         String details = capability.getUninstallDetails();
         if (details == null) {
             if (natureIds.length == 1) {
-                details = IDEWorkbenchMessages
-                        .format(
-                                "RemoveCapabilityStep.defaultDescription0", new Object[] { capability.getName() }); //$NON-NLS-1$
+                details = NLS.bind(IDEWorkbenchMessages.RemoveCapabilityStep_defaultDescription0, capability.getName());
             } else if (natureIds.length == 2) {
                 CapabilityRegistry reg = IDEWorkbenchPlugin.getDefault()
                         .getCapabilityRegistry();
@@ -75,9 +72,7 @@ public class RemoveCapabilityStep extends WizardStep {
                         .getCapabilityForNature(natureIds[1]);
                 if (otherCapability == capability)
                     otherCapability = reg.getCapabilityForNature(natureIds[0]);
-                details = IDEWorkbenchMessages
-                        .format(
-                                "RemoveCapabilityStep.defaultDescription1", new Object[] { capability.getName(), otherCapability.getName() }); //$NON-NLS-1$
+                details = NLS.bind(IDEWorkbenchMessages.RemoveCapabilityStep_defaultDescription1, capability.getName(), otherCapability.getName());
             } else {
                 StringBuffer msg = new StringBuffer();
                 CapabilityRegistry reg = IDEWorkbenchPlugin.getDefault()
@@ -89,9 +84,7 @@ public class RemoveCapabilityStep extends WizardStep {
                         msg.append(cap.getName());
                     }
                 }
-                details = IDEWorkbenchMessages
-                        .format(
-                                "RemoveCapabilityStep.defaultDescription2", new Object[] { capability.getName(), msg.toString() }); //$NON-NLS-1$
+                details = NLS.bind(IDEWorkbenchMessages.RemoveCapabilityStep_defaultDescription2, capability.getName(), msg);
             }
         }
 

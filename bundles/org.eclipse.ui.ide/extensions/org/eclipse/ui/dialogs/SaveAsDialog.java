@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -77,7 +78,7 @@ public class SaveAsDialog extends TitleAreaDialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        shell.setText(IDEWorkbenchMessages.getString("SaveAsDialog.text")); //$NON-NLS-1$
+        shell.setText(IDEWorkbenchMessages.SaveAsDialog_text);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
 				IIDEHelpContextIds.SAVE_AS_DIALOG);
     }
@@ -92,11 +93,11 @@ public class SaveAsDialog extends TitleAreaDialog {
         initializeControls();
         validatePage();
         resourceGroup.setFocus();
-        setTitle(IDEWorkbenchMessages.getString("SaveAsDialog.title")); //$NON-NLS-1$
+        setTitle(IDEWorkbenchMessages.SaveAsDialog_title);
         dlgTitleImage = WorkbenchImages.getImageDescriptor(
                 IWorkbenchGraphicConstants.IMG_DLGBAN_SAVEAS_DLG).createImage();
         setTitleImage(dlgTitleImage);
-        setMessage(IDEWorkbenchMessages.getString("SaveAsDialog.message")); //$NON-NLS-1$
+        setMessage(IDEWorkbenchMessages.SaveAsDialog_message);
 
         return contents;
     }
@@ -148,7 +149,7 @@ public class SaveAsDialog extends TitleAreaDialog {
         resourceGroup = new ResourceAndContainerGroup(
                 composite,
                 listener,
-                IDEWorkbenchMessages.getString("SaveAsDialog.fileLabel"), IDEWorkbenchMessages.getString("SaveAsDialog.file")); //$NON-NLS-2$ //$NON-NLS-1$
+                IDEWorkbenchMessages.SaveAsDialog_fileLabel, IDEWorkbenchMessages.SaveAsDialog_file);
         resourceGroup.setAllowExistingResources(true);
 
         return parentComposite;
@@ -207,11 +208,9 @@ public class SaveAsDialog extends TitleAreaDialog {
         if (file.exists()) {
             String[] buttons = new String[] { IDialogConstants.YES_LABEL,
                     IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
-            String question = IDEWorkbenchMessages.format(
-                    "SaveAsDialog.overwriteQuestion", //$NON-NLS-1$
-                    new Object[] { path.toOSString() });
+            String question = NLS.bind(IDEWorkbenchMessages.SaveAsDialog_overwriteQuestion, path.toOSString());
             MessageDialog d = new MessageDialog(getShell(),
-                    IDEWorkbenchMessages.getString("Question"), //$NON-NLS-1$
+                    IDEWorkbenchMessages.Question,
                     null, question, MessageDialog.QUESTION, buttons, 0);
             int overwrite = d.open();
             switch (overwrite) {

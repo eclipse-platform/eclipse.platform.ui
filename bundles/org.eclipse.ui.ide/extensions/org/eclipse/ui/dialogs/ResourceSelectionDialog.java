@@ -74,14 +74,12 @@ public class ResourceSelectionDialog extends SelectionDialog {
     public ResourceSelectionDialog(Shell parentShell, IAdaptable rootElement,
             String message) {
         super(parentShell);
-        setTitle(IDEWorkbenchMessages
-                .getString("ResourceSelectionDialog.title")); //$NON-NLS-1$
+        setTitle(IDEWorkbenchMessages.ResourceSelectionDialog_title);
         root = rootElement;
         if (message != null)
             setMessage(message);
         else
-            setMessage(IDEWorkbenchMessages
-                    .getString("ResourceSelectionDialog.message")); //$NON-NLS-1$
+            setMessage(IDEWorkbenchMessages.ResourceSelectionDialog_message);
         setShellStyle(getShellStyle() | SWT.RESIZE);
     }
 

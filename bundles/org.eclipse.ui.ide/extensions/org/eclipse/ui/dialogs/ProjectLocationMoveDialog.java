@@ -60,20 +60,15 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 
     private Button browseButton;
 
-    private static String LOCATION_LABEL = IDEWorkbenchMessages
-            .getString("ProjectLocationSelectionDialog.locationLabel"); //$NON-NLS-1$
+    private static String LOCATION_LABEL = IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationLabel;
 
-    private static String BROWSE_LABEL = IDEWorkbenchMessages
-            .getString("ProjectLocationSelectionDialog.browseLabel"); //$NON-NLS-1$
+    private static String BROWSE_LABEL = IDEWorkbenchMessages.ProjectLocationSelectionDialog_browseLabel;
 
-    private static String DIRECTORY_DIALOG_LABEL = IDEWorkbenchMessages
-            .getString("ProjectLocationSelectionDialog.directoryLabel"); //$NON-NLS-1$
+    private static String DIRECTORY_DIALOG_LABEL = IDEWorkbenchMessages.ProjectLocationSelectionDialog_directoryLabel;
 
-    private static String INVALID_LOCATION_MESSAGE = IDEWorkbenchMessages
-            .getString("ProjectLocationSelectionDialog.locationError"); //$NON-NLS-1$
+    private static String INVALID_LOCATION_MESSAGE = IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationError;
 
-    private static String PROJECT_LOCATION_SELECTION_TITLE = IDEWorkbenchMessages
-            .getString("ProjectLocationSelectionDialog.selectionTitle"); //$NON-NLS-1$
+    private static String PROJECT_LOCATION_SELECTION_TITLE = IDEWorkbenchMessages.ProjectLocationSelectionDialog_selectionTitle;
 
     // constants
     private static final int SIZING_TEXT_FIELD_WIDTH = 250;
@@ -139,8 +134,7 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
         }
         String locationFieldContents = locationPathField.getText();
         if (locationFieldContents.equals("")) {//$NON-NLS-1$
-            return (IDEWorkbenchMessages
-                    .getString("WizardNewProjectCreationPage.projectLocationEmpty")); //$NON-NLS-1$
+            return (IDEWorkbenchMessages.WizardNewProjectCreationPage_projectLocationEmpty);
         }
         IPath path = new Path("");//$NON-NLS-1$
         if (!path.isValidPath(locationFieldContents)) {
@@ -233,8 +227,7 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
         final Button useDefaultsButton = new Button(projectGroup, SWT.CHECK
                 | SWT.RIGHT);
         useDefaultsButton.setFont(font);
-        useDefaultsButton.setText(IDEWorkbenchMessages
-                .getString("ProjectLocationSelectionDialog.useDefaultLabel")); //$NON-NLS-1$
+        useDefaultsButton.setText(IDEWorkbenchMessages.ProjectLocationSelectionDialog_useDefaultLabel);
         useDefaultsButton.setSelection(this.useDefaults);
         GridData buttonData = new GridData();
         buttonData.horizontalSpan = 3;

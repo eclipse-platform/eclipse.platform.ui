@@ -82,11 +82,10 @@ public class ResourceWorkingSetPage extends WizardPage implements
     public ResourceWorkingSetPage() {
         super(
                 "resourceWorkingSetPage", //$NON-NLS-1$ 
-                IDEWorkbenchMessages.getString("ResourceWorkingSetPage.title"), //$NON-NLS-1$ 
+                IDEWorkbenchMessages.ResourceWorkingSetPage_title,
                 IDEInternalWorkbenchImages
                         .getImageDescriptor(IDEInternalWorkbenchImages.IMG_WIZBAN_RESOURCEWORKINGSET_WIZ));
-        setDescription(IDEWorkbenchMessages
-                .getString("ResourceWorkingSetPage.description")); //$NON-NLS-1$
+        setDescription(IDEWorkbenchMessages.ResourceWorkingSetPage_description);
     }
 
     /**
@@ -132,8 +131,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
         PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,
                 IIDEHelpContextIds.WORKING_SET_RESOURCE_PAGE);
         Label label = new Label(composite, SWT.WRAP);
-        label.setText(IDEWorkbenchMessages
-                .getString("ResourceWorkingSetPage.message")); //$NON-NLS-1$
+        label.setText(IDEWorkbenchMessages.ResourceWorkingSetPage_message);
         GridData data = new GridData(GridData.GRAB_HORIZONTAL
                 | GridData.HORIZONTAL_ALIGN_FILL
                 | GridData.VERTICAL_ALIGN_CENTER);
@@ -152,8 +150,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
         text.setFocus();
 
         label = new Label(composite, SWT.WRAP);
-        label.setText(IDEWorkbenchMessages
-                .getString("ResourceWorkingSetPage.label.tree")); //$NON-NLS-1$
+        label.setText(IDEWorkbenchMessages.ResourceWorkingSetPage_label_tree);
         data = new GridData(GridData.GRAB_HORIZONTAL
                 | GridData.HORIZONTAL_ALIGN_FILL
                 | GridData.VERTICAL_ALIGN_CENTER);
@@ -220,10 +217,8 @@ public class ResourceWorkingSetPage extends WizardPage implements
             handleCoreException(
                     ex,
                     getShell(),
-                    IDEWorkbenchMessages
-                            .getString("ResourceWorkingSetPage.error"), //$NON-NLS-1$
-                    IDEWorkbenchMessages
-                            .getString("ResourceWorkingSetPage.error.updateCheckedState")); //$NON-NLS-1$
+                    IDEWorkbenchMessages.ResourceWorkingSetPage_error,
+                    IDEWorkbenchMessages.ResourceWorkingSetPage_error_updateCheckedState);
         }
         for (int i = 0; i < resources.length; i++) {
             if (tree.getGrayed(resources[i])) {
@@ -316,7 +311,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
             MessageDialog
                     .openError(
                             shell,
-                            IDEWorkbenchMessages.getString("InternalError"), exception.getLocalizedMessage()); //$NON-NLS-1$
+                            IDEWorkbenchMessages.InternalError, exception.getLocalizedMessage());
         }
     }
 
@@ -403,10 +398,8 @@ public class ResourceWorkingSetPage extends WizardPage implements
             handleCoreException(
                     ex,
                     getShell(),
-                    IDEWorkbenchMessages
-                            .getString("ResourceWorkingSetPage.error"), //$NON-NLS-1$
-                    IDEWorkbenchMessages
-                            .getString("ResourceWorkingSetPage.error.updateCheckedState")); //$NON-NLS-1$
+                    IDEWorkbenchMessages.ResourceWorkingSetPage_error,
+                    IDEWorkbenchMessages.ResourceWorkingSetPage_error_updateCheckedState);
         }
         for (int i = members.length - 1; i >= 0; i--) {
             IResource element = members[i];
@@ -447,10 +440,8 @@ public class ResourceWorkingSetPage extends WizardPage implements
             handleCoreException(
                     ex,
                     getShell(),
-                    IDEWorkbenchMessages
-                            .getString("ResourceWorkingSetPage.error"), //$NON-NLS-1$
-                    IDEWorkbenchMessages
-                            .getString("ResourceWorkingSetPage.error.updateCheckedState")); //$NON-NLS-1$
+                    IDEWorkbenchMessages.ResourceWorkingSetPage_error,
+                    IDEWorkbenchMessages.ResourceWorkingSetPage_error_updateCheckedState);
         }
         for (int i = members.length - 1; i >= 0; i--) {
             if (tree.getChecked(members[i]) || tree.getGrayed(members[i])) {
@@ -471,15 +462,13 @@ public class ResourceWorkingSetPage extends WizardPage implements
         String newText = text.getText();
 
         if (newText.equals(newText.trim()) == false) {
-            errorMessage = IDEWorkbenchMessages
-                    .getString("ResourceWorkingSetPage.warning.nameWhitespace"); //$NON-NLS-1$
+            errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_nameWhitespace; 
         } else if (firstCheck) {
             firstCheck = false;
             return;
         }
         if (newText.equals("")) { //$NON-NLS-1$
-            errorMessage = IDEWorkbenchMessages
-                    .getString("ResourceWorkingSetPage.warning.nameMustNotBeEmpty"); //$NON-NLS-1$
+            errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_nameMustNotBeEmpty;
         }
         if (errorMessage == null
                 && (workingSet == null || newText.equals(workingSet.getName()) == false)) {
@@ -487,14 +476,12 @@ public class ResourceWorkingSetPage extends WizardPage implements
                     .getWorkingSetManager().getWorkingSets();
             for (int i = 0; i < workingSets.length; i++) {
                 if (newText.equals(workingSets[i].getName())) {
-                    errorMessage = IDEWorkbenchMessages
-                            .getString("ResourceWorkingSetPage.warning.workingSetExists"); //$NON-NLS-1$
+                    errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_workingSetExists;
                 }
             }
         }
         if (errorMessage == null && tree.getCheckedElements().length == 0) {
-            errorMessage = IDEWorkbenchMessages
-                    .getString("ResourceWorkingSetPage.warning.resourceMustBeChecked"); //$NON-NLS-1$
+            errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_resourceMustBeChecked;
         }
         setErrorMessage(errorMessage);
         setPageComplete(errorMessage == null);

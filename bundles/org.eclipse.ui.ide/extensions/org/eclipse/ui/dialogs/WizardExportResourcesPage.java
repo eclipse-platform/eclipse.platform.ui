@@ -78,14 +78,11 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
     // widgets
     private ResourceTreeAndListGroup resourceGroup;
 
-    private final static String SELECT_TYPES_TITLE = IDEWorkbenchMessages
-            .getString("WizardTransferPage.selectTypes"); //$NON-NLS-1$
+    private final static String SELECT_TYPES_TITLE = IDEWorkbenchMessages.WizardTransferPage_selectTypes;
 
-    private final static String SELECT_ALL_TITLE = IDEWorkbenchMessages
-            .getString("WizardTransferPage.selectAll"); //$NON-NLS-1$
+    private final static String SELECT_ALL_TITLE = IDEWorkbenchMessages.WizardTransferPage_selectAll;
 
-    private final static String DESELECT_ALL_TITLE = IDEWorkbenchMessages
-            .getString("WizardTransferPage.deselectAll"); //$NON-NLS-1$
+    private final static String DESELECT_ALL_TITLE = IDEWorkbenchMessages.WizardTransferPage_deselectAll;
 
     /**
      * Creates an export wizard page. If the current resource selection 
@@ -288,8 +285,7 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
      * @see WizardDataTransferPage.getErrorDialogTitle()
      */
     protected String getErrorDialogTitle() {
-        return IDEWorkbenchMessages
-                .getString("WizardExportPage.errorDialogTitle"); //$NON-NLS-1$
+        return IDEWorkbenchMessages.WizardExportPage_errorDialogTitle;
     }
 
     /**

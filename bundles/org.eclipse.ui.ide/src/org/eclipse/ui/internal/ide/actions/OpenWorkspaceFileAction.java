@@ -104,10 +104,8 @@ public class OpenWorkspaceFileAction extends Action implements
                 IDE.openEditor(page, file, true);
             }
         } catch (CoreException x) {
-            String title = IDEWorkbenchMessages
-                    .getString("OpenWorkspaceFileAction.errorTitle"); //$NON-NLS-1$
-            String message = IDEWorkbenchMessages
-                    .getString("OpenWorkspaceFileAction.errorMessage"); //$NON-NLS-1$
+            String title = IDEWorkbenchMessages.OpenWorkspaceFileAction_errorTitle;
+            String message = IDEWorkbenchMessages.OpenWorkspaceFileAction_errorMessage;
             IDEWorkbenchPlugin.log(title, x.getStatus());
             ErrorDialog.openError(workbenchWindow.getShell(), title, message, x
                     .getStatus());

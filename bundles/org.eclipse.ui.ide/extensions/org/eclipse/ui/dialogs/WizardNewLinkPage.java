@@ -102,11 +102,9 @@ public class WizardNewLinkPage extends WizardPage {
 
         final Button createLinkButton = new Button(topLevel, SWT.CHECK);
         if (type == IResource.FILE)
-            createLinkButton.setText(IDEWorkbenchMessages
-                    .getString("WizardNewLinkPage.linkFileButton")); //$NON-NLS-1$
+            createLinkButton.setText(IDEWorkbenchMessages.WizardNewLinkPage_linkFileButton);
         else
-            createLinkButton.setText(IDEWorkbenchMessages
-                    .getString("WizardNewLinkPage.linkFolderButton")); //$NON-NLS-1$
+            createLinkButton.setText(IDEWorkbenchMessages.WizardNewLinkPage_linkFolderButton);
         createLinkButton.setSelection(createLink);
         GridData data = new GridData();
         data.horizontalSpan = 3;
@@ -166,8 +164,7 @@ public class WizardNewLinkPage extends WizardPage {
         browseButton = new Button(locationGroup, SWT.PUSH);
         setButtonLayoutData(browseButton);
         browseButton.setFont(font);
-        browseButton.setText(IDEWorkbenchMessages
-                .getString("WizardNewLinkPage.browseButton")); //$NON-NLS-1$
+        browseButton.setText(IDEWorkbenchMessages.WizardNewLinkPage_browseButton);
         browseButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 handleLinkTargetBrowseButtonPressed();
@@ -184,8 +181,7 @@ public class WizardNewLinkPage extends WizardPage {
         variablesButton = new Button(locationGroup, SWT.PUSH);
         setButtonLayoutData(variablesButton);
         variablesButton.setFont(font);
-        variablesButton.setText(IDEWorkbenchMessages
-                .getString("WizardNewLinkPage.variablesButton")); //$NON-NLS-1$
+        variablesButton.setText(IDEWorkbenchMessages.WizardNewLinkPage_variablesButton);
         variablesButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 handleVariablesButtonPressed();
@@ -242,8 +238,7 @@ public class WizardNewLinkPage extends WizardPage {
                     dialog.setFilterPath(linkTargetName);
                 }
             }
-            dialog.setMessage(IDEWorkbenchMessages
-                    .getString("WizardNewLinkPage.targetSelectionLabel")); //$NON-NLS-1$
+            dialog.setMessage(IDEWorkbenchMessages.WizardNewLinkPage_targetSelectionLabel);
             selection = dialog.open();
         }
         if (selection != null) {
@@ -308,13 +303,11 @@ public class WizardNewLinkPage extends WizardPage {
         boolean valid = true;
 
         if (type == IResource.FILE && linkTargetFile.isFile() == false) {
-            setErrorMessage(IDEWorkbenchMessages
-                    .getString("WizardNewLinkPage.linkTargetNotFile")); //$NON-NLS-1$
+            setErrorMessage(IDEWorkbenchMessages.WizardNewLinkPage_linkTargetNotFile);
             valid = false;
         } else if (type == IResource.FOLDER
                 && linkTargetFile.isDirectory() == false) {
-            setErrorMessage(IDEWorkbenchMessages
-                    .getString("WizardNewLinkPage.linkTargetNotFolder")); //$NON-NLS-1$
+            setErrorMessage(IDEWorkbenchMessages.WizardNewLinkPage_linkTargetNotFolder);
             valid = false;
         }
         return valid;
@@ -331,14 +324,12 @@ public class WizardNewLinkPage extends WizardPage {
         boolean valid = true;
 
         if ("".equals(linkTargetName)) {//$NON-NLS-1$
-            setErrorMessage(IDEWorkbenchMessages
-                    .getString("WizardNewLinkPage.linkTargetEmpty")); //$NON-NLS-1$
+            setErrorMessage(IDEWorkbenchMessages.WizardNewLinkPage_linkTargetEmpty);
             valid = false;
         } else {
             IPath path = new Path("");//$NON-NLS-1$
             if (path.isValidPath(linkTargetName) == false) {
-                setErrorMessage(IDEWorkbenchMessages
-                        .getString("WizardNewLinkPage.linkTargetInvalid")); //$NON-NLS-1$
+                setErrorMessage(IDEWorkbenchMessages.WizardNewLinkPage_linkTargetInvalid);
                 valid = false;
             }
         }
@@ -363,16 +354,14 @@ public class WizardNewLinkPage extends WizardPage {
             if (valid) {
                 File linkTargetFile = new Path(linkTargetName).toFile();
                 if (linkTargetFile.exists() == false) {
-                    setErrorMessage(IDEWorkbenchMessages
-                            .getString("WizardNewLinkPage.linkTargetNonExistent")); //$NON-NLS-1$
+                    setErrorMessage(IDEWorkbenchMessages.WizardNewLinkPage_linkTargetNonExistent);
                     valid = false;
                 } else {
                     IStatus locationStatus = workspace.validateLinkLocation(
                             container, new Path(linkTargetName));
 
                     if (locationStatus.isOK() == false) {
-                        setErrorMessage(IDEWorkbenchMessages
-                                .getString("WizardNewLinkPage.linkTargetLocationInvalid")); //$NON-NLS-1$
+                        setErrorMessage(IDEWorkbenchMessages.WizardNewLinkPage_linkTargetLocationInvalid);
                         valid = false;
                     } else {
                         valid = validateFileType(linkTargetFile);

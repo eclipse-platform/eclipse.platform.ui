@@ -108,11 +108,9 @@ public class CreateLinkedResourceGroup {
 
         final Button createLinkButton = new Button(groupComposite, SWT.CHECK);
         if (type == IResource.FILE)
-            createLinkButton.setText(IDEWorkbenchMessages
-                    .getString("CreateLinkedResourceGroup.linkFileButton")); //$NON-NLS-1$
+            createLinkButton.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_linkFileButton);
         else
-            createLinkButton.setText(IDEWorkbenchMessages
-                    .getString("CreateLinkedResourceGroup.linkFolderButton")); //$NON-NLS-1$
+            createLinkButton.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_linkFolderButton);
         createLinkButton.setSelection(createLink);
         createLinkButton.setFont(font);
         SelectionListener selectionListener = new SelectionAdapter() {
@@ -177,8 +175,7 @@ public class CreateLinkedResourceGroup {
         browseButton = new Button(linkTargetGroup, SWT.PUSH);
         setButtonLayoutData(browseButton);
         browseButton.setFont(font);
-        browseButton.setText(IDEWorkbenchMessages
-                .getString("CreateLinkedResourceGroup.browseButton")); //$NON-NLS-1$
+        browseButton.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_browseButton);
         browseButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 handleLinkTargetBrowseButtonPressed();
@@ -190,8 +187,7 @@ public class CreateLinkedResourceGroup {
         variablesButton = new Button(linkTargetGroup, SWT.PUSH);
         setButtonLayoutData(variablesButton);
         variablesButton.setFont(font);
-        variablesButton.setText(IDEWorkbenchMessages
-                .getString("CreateLinkedResourceGroup.variablesButton")); //$NON-NLS-1$
+        variablesButton.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_variablesButton);
         variablesButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 handleVariablesButtonPressed();
@@ -211,8 +207,7 @@ public class CreateLinkedResourceGroup {
         resolvedPathGroup.setFont(font);
 
         resolvedPathLabelText = new Label(resolvedPathGroup, SWT.SINGLE);
-        resolvedPathLabelText.setText(IDEWorkbenchMessages
-                .getString("CreateLinkedResourceGroup.resolvedPathLabel")); //$NON-NLS-1$
+        resolvedPathLabelText.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_resolvedPathLabel);
         resolvedPathLabelText.setVisible(false);
         resolvedPathLabelText.setFont(font);
 
@@ -289,8 +284,7 @@ public class CreateLinkedResourceGroup {
                     dialog.setFilterPath(path);
             }
             dialog
-                    .setMessage(IDEWorkbenchMessages
-                            .getString("CreateLinkedResourceGroup.targetSelectionLabel")); //$NON-NLS-1$
+                    .setMessage(IDEWorkbenchMessages.CreateLinkedResourceGroup_targetSelectionLabel);
             selection = dialog.open();
         }
         if (selection != null)
@@ -396,12 +390,10 @@ public class CreateLinkedResourceGroup {
      */
     private IStatus validateFileType(File linkTargetFile) {
         if (type == IResource.FILE && linkTargetFile.isFile() == false) {
-            return createStatus(IStatus.ERROR, IDEWorkbenchMessages
-                    .getString("CreateLinkedResourceGroup.linkTargetNotFile")); //$NON-NLS-1$
+            return createStatus(IStatus.ERROR, IDEWorkbenchMessages.CreateLinkedResourceGroup_linkTargetNotFile);
         } else if (type == IResource.FOLDER
                 && linkTargetFile.isDirectory() == false) {
-            return createStatus(IStatus.ERROR, IDEWorkbenchMessages
-                    .getString("CreateLinkedResourceGroup.linkTargetNotFolder")); //$NON-NLS-1$
+            return createStatus(IStatus.ERROR, IDEWorkbenchMessages.CreateLinkedResourceGroup_linkTargetNotFolder);
         }
         return createStatus(IStatus.OK, ""); //$NON-NLS-1$
     }
@@ -439,8 +431,7 @@ public class CreateLinkedResourceGroup {
             // locationStatus takes precedence over missing location warning.
             return createStatus(
                     IStatus.WARNING,
-                    IDEWorkbenchMessages
-                            .getString("CreateLinkedResourceGroup.linkTargetNonExistent")); //$NON-NLS-1$	
+                    IDEWorkbenchMessages.CreateLinkedResourceGroup_linkTargetNonExistent);
         }
         return locationStatus;
     }

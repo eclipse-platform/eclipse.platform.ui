@@ -52,15 +52,14 @@ public class CreateFolderAction extends SelectionListenerAction {
      * @deprecated see deprecated tag on class
      */
     public CreateFolderAction(Shell shell) {
-        super(IDEWorkbenchMessages.getString("CreateFolderAction.text")); //$NON-NLS-1$
+        super(IDEWorkbenchMessages.CreateFolderAction_text);
         if (shell == null) {
             throw new IllegalArgumentException();
         }
         this.shell = shell;
         setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
                 .getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER));
-        setToolTipText(IDEWorkbenchMessages
-                .getString("CreateFolderAction.toolTip")); //$NON-NLS-1$
+        setToolTipText(IDEWorkbenchMessages.CreateFolderAction_toolTip);
         setId(ID);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.CREATE_FOLDER_ACTION);
@@ -78,7 +77,7 @@ public class CreateFolderAction extends SelectionListenerAction {
         WizardDialog dialog = new WizardDialog(shell, wizard);
         dialog.create();
         dialog.getShell().setText(
-                IDEWorkbenchMessages.getString("CreateFolderAction.title")); //$NON-NLS-1$
+                IDEWorkbenchMessages.CreateFolderAction_title);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
                 IIDEHelpContextIds.NEW_FOLDER_WIZARD);
         dialog.open();

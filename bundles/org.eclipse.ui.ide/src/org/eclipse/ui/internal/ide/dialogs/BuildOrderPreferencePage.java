@@ -74,32 +74,23 @@ public class BuildOrderPreferencePage extends PreferencePage implements
     //Boolean to indicate if we have looked it up
     private boolean notCheckedBuildOrder = true;
 
-    private final String UP_LABEL = IDEWorkbenchMessages
-            .getString("BuildOrderPreference.up"); //$NON-NLS-1$
+    private final String UP_LABEL = IDEWorkbenchMessages.BuildOrderPreference_up;
 
-    private final String DOWN_LABEL = IDEWorkbenchMessages
-            .getString("BuildOrderPreference.down"); //$NON-NLS-1$
+    private final String DOWN_LABEL = IDEWorkbenchMessages.BuildOrderPreference_down;
 
-    private final String ADD_LABEL = IDEWorkbenchMessages
-            .getString("BuildOrderPreference.add"); //$NON-NLS-1$
+    private final String ADD_LABEL = IDEWorkbenchMessages.BuildOrderPreference_add;
 
-    private final String REMOVE_LABEL = IDEWorkbenchMessages
-            .getString("BuildOrderPreference.remove"); //$NON-NLS-1$
+    private final String REMOVE_LABEL = IDEWorkbenchMessages.BuildOrderPreference_remove;
 
-    private final String PROJECT_SELECTION_MESSAGE = IDEWorkbenchMessages
-            .getString("BuildOrderPreference.selectOtherProjects"); //$NON-NLS-1$
+    private final String PROJECT_SELECTION_MESSAGE = IDEWorkbenchMessages.BuildOrderPreference_selectOtherProjects;
 
-    private final String DEFAULTS_LABEL = IDEWorkbenchMessages
-            .getString("BuildOrderPreference.useDefaults"); //$NON-NLS-1$
+    private final String DEFAULTS_LABEL = IDEWorkbenchMessages.BuildOrderPreference_useDefaults;
 
-    private final String LIST_LABEL = IDEWorkbenchMessages
-            .getString("BuildOrderPreference.projectBuildOrder"); //$NON-NLS-1$
+    private final String LIST_LABEL = IDEWorkbenchMessages.BuildOrderPreference_projectBuildOrder;
 
-    private final String NOTE_LABEL = IDEWorkbenchMessages
-            .getString("Preference.note"); //$NON-NLS-1$
+    private final String NOTE_LABEL = IDEWorkbenchMessages.Preference_note;
 
-    private final String REMOVE_MESSAGE = IDEWorkbenchMessages
-            .getString("BuildOrderPreference.removeNote"); //$NON-NLS-1$
+    private final String REMOVE_MESSAGE = IDEWorkbenchMessages.BuildOrderPreference_removeNote;
 
     // whether or not the use defaults option was selected when Apply (or OK) was last pressed
     // (or when the preference page was opened). This represents the most recent applied state.
@@ -377,7 +368,7 @@ public class BuildOrderPreferencePage extends PreferencePage implements
         maxItersComposite.setFont(composite.getFont());
 
         maxItersField = new IntegerFieldEditor(
-                "", IDEWorkbenchMessages.getString("BuildOrderPreference.maxIterationsLabel"), maxItersComposite) { //$NON-NLS-1$ //$NON-NLS-2$
+                "", IDEWorkbenchMessages.BuildOrderPreference_maxIterationsLabel, maxItersComposite) { //$NON-NLS-1$
             protected void doLoad() {
                 Text text = getTextControl();
                 if (text != null) {

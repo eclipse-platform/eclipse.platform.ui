@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -194,7 +195,7 @@ public class ProjectReferencePage extends PropertyPage {
         } else {
             String msg = target.getMessage();
             if (msg == null)
-                msg = IDEWorkbenchMessages.getString("Internal_error"); //$NON-NLS-1$
+                msg = IDEWorkbenchMessages.Internal_error;
             error = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
                     1, msg, target);
         }
@@ -207,9 +208,7 @@ public class ProjectReferencePage extends PropertyPage {
     private void initialize() {
         project = (IProject) getElement().getAdapter(IResource.class);
         noDefaultAndApplyButton();
-        setDescription(IDEWorkbenchMessages
-                .format(
-                        "ProjectReferencesPage.label", new Object[] { project.getName() })); //$NON-NLS-1$
+        setDescription(NLS.bind(IDEWorkbenchMessages.ProjectReferencesPage_label, project.getName()));
     }
 
     /**

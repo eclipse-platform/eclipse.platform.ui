@@ -79,7 +79,7 @@ public class CopyResourceAction extends SelectionListenerAction implements
      * @param shell the shell for any dialogs
      */
     public CopyResourceAction(Shell shell) {
-        this(shell, IDEWorkbenchMessages.getString("CopyResourceAction.title")); //$NON-NLS-1$
+        this(shell, IDEWorkbenchMessages.CopyResourceAction_title);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.COPY_RESOURCE_ACTION);
     }
@@ -93,8 +93,7 @@ public class CopyResourceAction extends SelectionListenerAction implements
      */
     CopyResourceAction(Shell shell, String name) {
         super(name);
-        setToolTipText(IDEWorkbenchMessages
-                .getString("CopyResourceAction.toolTip")); //$NON-NLS-1$
+        setToolTipText(IDEWorkbenchMessages.CopyResourceAction_toolTip);
         setId(CopyResourceAction.ID);
         if (shell == null) {
             throw new IllegalArgumentException();
@@ -177,8 +176,7 @@ public class CopyResourceAction extends SelectionListenerAction implements
         // start traversal at root resource, should probably start at a
         // better location in the tree
         ContainerSelectionDialog dialog = new ContainerSelectionDialog(shell,
-                getInitialContainer(), true, IDEWorkbenchMessages
-                        .getString("CopyResourceAction.selectDestination")); //$NON-NLS-1$
+                getInitialContainer(), true, IDEWorkbenchMessages.CopyResourceAction_selectDestination);
         dialog.setValidator(this);
         dialog.showClosedProjects(false);
         dialog.open();

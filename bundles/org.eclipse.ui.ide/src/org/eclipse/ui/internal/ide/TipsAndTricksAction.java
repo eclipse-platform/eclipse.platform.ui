@@ -42,12 +42,12 @@ public class TipsAndTricksAction extends PartEventAction implements
      * @param window the window
      */
     public TipsAndTricksAction(IWorkbenchWindow window) {
-        super(IDEWorkbenchMessages.getString("TipsAndTricks.text")); //$NON-NLS-1$
+        super(IDEWorkbenchMessages.TipsAndTricks_text);
         if (window == null) {
             throw new IllegalArgumentException();
         }
         this.workbenchWindow = window;
-        setToolTipText(IDEWorkbenchMessages.getString("TipsAndTricks.toolTip")); //$NON-NLS-1$
+        setToolTipText(IDEWorkbenchMessages.TipsAndTricks_toolTip);
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.TIPS_AND_TRICKS_ACTION);
         setActionDefinitionId("org.eclipse.ui.help.tipsAndTricksAction"); //$NON-NLS-1$
@@ -74,10 +74,8 @@ public class TipsAndTricksAction extends PartEventAction implements
         Shell shell = workbenchWindow.getShell();
 
         if (tipsAndTricksFeatures.size() == 0) {
-            MessageDialog.openInformation(shell, IDEWorkbenchMessages
-                    .getString("TipsAndTricksMessageDialog.title"), //$NON-NLS-1$
-                    IDEWorkbenchMessages
-                            .getString("TipsAndTricksMessageDialog.message")); //$NON-NLS-1$
+            MessageDialog.openInformation(shell, IDEWorkbenchMessages.TipsAndTricksMessageDialog_title,
+                    IDEWorkbenchMessages.TipsAndTricksMessageDialog_message);
             return;
         }
 
@@ -86,10 +84,8 @@ public class TipsAndTricksAction extends PartEventAction implements
 
         IProduct product = Platform.getProduct();
         FeatureSelectionDialog d = new FeatureSelectionDialog(shell, features,
-                product == null ? null : product.getId(), IDEWorkbenchMessages
-                        .getString("TipsAndTricksPageSelectionDialog.title"), //$NON-NLS-1$
-                IDEWorkbenchMessages
-                        .getString("TipsAndTricksPageSelectionDialog.message"), //$NON-NLS-1$
+                product == null ? null : product.getId(), IDEWorkbenchMessages.TipsAndTricksPageSelectionDialog_title,
+                IDEWorkbenchMessages.TipsAndTricksPageSelectionDialog_message,
                 IIDEHelpContextIds.TIPS_AND_TRICKS_PAGE_SELECTION_DIALOG);
 
         if (d.open() != Window.OK || d.getResult().length != 1)
@@ -114,22 +110,16 @@ public class TipsAndTricksAction extends PartEventAction implements
                         IStatus.ERROR,
                         IDEWorkbenchPlugin.IDE_WORKBENCH,
                         1,
-                        IDEWorkbenchMessages
-                                .getString("TipsAndTricksErrorDialog.noHref"), null); //$NON-NLS-1$
-                ErrorDialog.openError(shell, IDEWorkbenchMessages
-                        .getString("TipsAndTricksErrorDialog.title"), //$NON-NLS-1$
-                        IDEWorkbenchMessages
-                                .getString("TipsAndTricksErrorDialog.noHref"), //$NON-NLS-1$
+                        IDEWorkbenchMessages.TipsAndTricksErrorDialog_noHref, null);
+                ErrorDialog.openError(shell, IDEWorkbenchMessages.TipsAndTricksErrorDialog_title,
+                        IDEWorkbenchMessages.TipsAndTricksErrorDialog_noHref,
                         status);
             }
         } else {
             IStatus status = new Status(IStatus.ERROR,
-                    IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages
-                            .getString("TipsAndTricksErrorDialog.noHref"), null); //$NON-NLS-1$
-            ErrorDialog.openError(shell, IDEWorkbenchMessages
-                    .getString("TipsAndTricksErrorDialog.title"), //$NON-NLS-1$
-                    IDEWorkbenchMessages
-                            .getString("TipsAndTricksErrorDialog.noFeatures"), //$NON-NLS-1$
+                    IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.TipsAndTricksErrorDialog_noHref, null);
+            ErrorDialog.openError(shell, IDEWorkbenchMessages.TipsAndTricksErrorDialog_title,
+                    IDEWorkbenchMessages.TipsAndTricksErrorDialog_noFeatures, 
                     status);
         }
     }

@@ -73,14 +73,14 @@ public class AddBookmarkAction extends SelectionListenerAction {
      * @param promptForName whether to ask the user for the bookmark name
      */
     public AddBookmarkAction(Shell shell, boolean promptForName) {
-        super(IDEWorkbenchMessages.getString("AddBookmarkLabel")); //$NON-NLS-1$
+        super(IDEWorkbenchMessages.AddBookmarkLabel);
         setId(ID);
         if (shell == null) {
             throw new IllegalArgumentException();
         }
         this.shell = shell;
         this.promptForName = promptForName;
-        setToolTipText(IDEWorkbenchMessages.getString("AddBookmarkToolTip")); //$NON-NLS-1$
+        setToolTipText(IDEWorkbenchMessages.AddBookmarkToolTip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.ADD_BOOKMARK_ACTION);
     }
@@ -154,10 +154,8 @@ public class AddBookmarkAction extends SelectionListenerAction {
      * @return the bookmark name or <code>null</code> if cancelled.
      */
     String askForLabel(String proposal) {
-        String title = IDEWorkbenchMessages
-                .getString("AddBookmarkDialog.title"); //$NON-NLS-1$
-        String message = IDEWorkbenchMessages
-                .getString("AddBookmarkDialog.message"); //$NON-NLS-1$
+        String title = IDEWorkbenchMessages.AddBookmarkDialog_title;
+        String message = IDEWorkbenchMessages.AddBookmarkDialog_message;
 
         IInputValidator inputValidator = new IInputValidator() {
             public String isValid(String newText) {

@@ -81,13 +81,12 @@ public class FileSelectionDialog extends SelectionDialog {
     public FileSelectionDialog(Shell parentShell,
             FileSystemElement fileSystemElement, String message) {
         super(parentShell);
-        setTitle(IDEWorkbenchMessages.getString("FileSelectionDialog.title")); //$NON-NLS-1$
+        setTitle(IDEWorkbenchMessages.FileSelectionDialog_title);
         root = fileSystemElement;
         if (message != null)
             setMessage(message);
         else
-            setMessage(IDEWorkbenchMessages
-                    .getString("FileSelectionDialog.message")); //$NON-NLS-1$
+            setMessage(IDEWorkbenchMessages.FileSelectionDialog_message);
     }
 
     /**
