@@ -14,6 +14,8 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * Handles debug events, updating a view and viewer.
@@ -186,5 +188,24 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	protected boolean isAvailable() {
 		return getView().isAvailable();
 	}
+	
+	/**
+	 * Returns whether this event handler's view is currently visible.
+	 * 
+	 * @return boolean
+	 */
+	protected boolean isViewVisible() {
+		AbstractDebugView view = getView();
+		if (view != null) {
+			IWorkbenchPartSite site = view.getSite();
+			if (site != null) {
+				IWorkbenchPage page = site.getPage();
+				if (page != null) {
+					return page.isPartVisible(view);
+				}
+			}
+		}
+		return false;		
+	}	
 }
 

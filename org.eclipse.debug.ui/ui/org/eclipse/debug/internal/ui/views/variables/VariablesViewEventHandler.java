@@ -10,8 +10,8 @@ http://www.eclipse.org/legal/cpl-v10.html
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
@@ -45,11 +45,7 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 		private void visibilityChanged(IWorkbenchPartReference ref) {
 			IWorkbenchPart part= ref.getPart(false);
 			if (part != null && part == getView()) {
-				IWorkbenchPage page= getActivePage();
-				if (page == null) {
-					return;
-				}
-				boolean isVisible= page.isPartVisible(getView());
+				boolean isVisible= isViewVisible();
 				if (isVisible != fViewVisible) {
 					fViewVisible= isVisible;
 					if (isVisible) {
@@ -88,25 +84,51 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 	 */
 	public VariablesViewEventHandler(AbstractDebugView view) {
 		super(view);
-		final IWorkbenchPage page= getActivePage();
 		// The launch listener registers and deregisters the view's part listener when there are active launches
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(new ILaunchesListener() {
+			/**
+			 * Stop listening when all launches are removed
+			 */
 			public void launchesRemoved(ILaunch[] launches) {
+				ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+				if (manager.getLaunches().length == 0) {
+					deregisterPartListener();
+				}
 			}
 			/**
 			 * Start listening to part activations when a launch is added.
 			 */
 			public void launchesAdded(ILaunch[] launches) {
-				if (fPartListener == null) {
-					fPartListener= new VariablesViewPartListener();
-					page.addPartListener(new VariablesViewPartListener());
-				}
+				registerPartListener();
 			}
 			public void launchesChanged(ILaunch[] launches) {
 			}
 		});
-		if (page != null) {
-			fViewVisible= page.isPartVisible(view);
+		fViewVisible= isViewVisible();
+		// if there are already launches, must add a part listener
+		if (DebugPlugin.getDefault().getLaunchManager().getLaunches().length > 0) {
+			registerPartListener();
+		}
+	}
+	
+	/**
+	 * Creates and registers a part listener with this event handler's page,
+	 * if one does not already exist.
+	 */
+	protected void registerPartListener() {
+		if (fPartListener == null) {
+			fPartListener= new VariablesViewPartListener();
+			getView().getSite().getPage().addPartListener(new VariablesViewPartListener());
+		}		
+	}
+	
+	/**
+	 * Deregisters and disposes this event handler's part listener.
+	 */
+	protected void deregisterPartListener() {
+		if (fPartListener != null) {
+			getView().getSite().getPage().removePartListener(fPartListener);
+			fPartListener = null;
 		}
 	}
 	
@@ -174,26 +196,6 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 		if (fViewVisible) {
 			getVariablesView().clearExpandedVariables(event.getSource());
 		}
-		if (fPartListener == null) {
-			return;
-		}
-		ILaunch[] launches= DebugPlugin.getDefault().getLaunchManager().getLaunches();
-		// If there are no more active IDebugTargets, stop
-		// listening to part notifications.
-		for (int i= 0; i < launches.length; i++) {
-			IDebugTarget target= launches[i].getDebugTarget();
-			if (target != null) {
-				if (!target.isDisconnected() && !target.isTerminated()) {
-					return;
-				}
-			}
-		}
-		// To get here, there must be no running JDIDebugTargets
-		IWorkbenchPage page= getActivePage();
-		if (page != null) {
-			page.removePartListener(fPartListener);
-			fPartListener= null;
-		}
 	}
 	
 	/**
@@ -232,5 +234,6 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 	protected VariablesView getVariablesView() {
 		return (VariablesView)getView();
 	}
+	
 }
 
