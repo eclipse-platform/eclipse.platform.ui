@@ -267,7 +267,7 @@ public class MergeUpdateAction extends SubscriberUpdateAction {
 				result[0] = dialog.open();
 			}
 		});
-		return (result[0] == Dialog.OK);
+		return (result[0] == MergeDialog.YES);
 	}
 	
 	/*

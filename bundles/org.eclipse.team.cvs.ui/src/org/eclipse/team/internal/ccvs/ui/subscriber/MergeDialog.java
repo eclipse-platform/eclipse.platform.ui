@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -22,6 +23,8 @@ import org.eclipse.team.ui.sync.SyncResourceSet;
  */
 public class MergeDialog extends SyncResourceSetDetailsDialog {
 
+	public static final int YES = IDialogConstants.YES_ID;
+	
 	/**
 	 * @param parentShell
 	 * @param dialogTitle
@@ -44,4 +47,28 @@ public class MergeDialog extends SyncResourceSetDetailsDialog {
 		createWrappingLabel(composite, "All mergable resources have been updated. However, some non-mergable resources remain. Should these resources be updated, ignoring any local changes?");
 	}
 
+	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, YES, IDialogConstants.YES_LABEL, true);
+		createButton(parent, IDialogConstants.NO_ID, IDialogConstants.NO_LABEL, true);
+		super.createButtonsForButtonBar(parent);
+	}
+	
+	protected boolean includeOkButton() {
+		return false;
+	}
+	
+	protected boolean includeCancelButton() {
+		return false;
+	}
+
+	protected void buttonPressed(int id) {
+		// hijack yes and no buttons to set the correct return
+		// codes.
+		if(id == YES || id == IDialogConstants.NO_ID) {
+			setReturnCode(id);
+			close();
+		} else {
+			super.buttonPressed(id);
+		}
+	}
 }
