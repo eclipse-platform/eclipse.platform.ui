@@ -139,7 +139,7 @@ public class DecoratorManager
 	/**
 	 * Inform all of the listeners that require an update
 	 */
-	private void fireListeners(final LabelProviderChangedEvent event) {
+	void fireListeners(final LabelProviderChangedEvent event) {
 		Object [] array = listeners.getListeners();
 		for (int i = 0; i < array.length; i ++) {
 			final ILabelProviderListener l = (ILabelProviderListener)array[i];
@@ -412,7 +412,16 @@ public class DecoratorManager
 	 * @see ILabelProviderListener#labelProviderChanged(LabelProviderChangedEvent)
 	 */
 	public void labelProviderChanged(LabelProviderChangedEvent event) {
-		fireListeners(event);
+		Object[] elements = event.getElements();
+		
+		//Assume that someone is going to care about the 
+		//decoration result and just start it right away
+		for(int i = 0; i < elements.length; i ++){
+			Object adapted = getResourceAdapter(elements[i]);
+			//Force an update in case full decorators are the only ones enabled
+			scheduler.queueForDecoration(elements[i],adapted,true);
+		}
+			
 	}
 
 	/**

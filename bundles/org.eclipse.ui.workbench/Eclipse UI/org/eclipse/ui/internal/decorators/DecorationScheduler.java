@@ -78,7 +78,7 @@ public class DecorationScheduler implements IResourceChangeListener {
 			(DecorationResult) resultCache.get(element);
 
 		if (decoration == null) {
-			queueForDecoration(element, adaptedElement);
+			queueForDecoration(element, adaptedElement,false);
 			return text;
 		} else
 			return decoration.decorateWithText(text);
@@ -89,11 +89,14 @@ public class DecorationScheduler implements IResourceChangeListener {
 	 * already.
 	 * @param element
 	 * @param adaptedElement. The adapted value of element. May be null.
+	 * @param forceUpdate. If true then a labelProviderChanged is fired
+	 * 	whether decoration occured or not.
 	 */
 
-	private synchronized void queueForDecoration(
+	synchronized void queueForDecoration(
 		Object element,
-		Object adaptedElement) {
+		Object adaptedElement,
+		boolean forceUpdate) {
 
 		//Lazily create the thread that calculates the decoration for a resource
 		if (decoratorUpdateThread == null) {
@@ -104,6 +107,7 @@ public class DecorationScheduler implements IResourceChangeListener {
 		if (!awaitingDecorationValues.containsKey(element)) {
 			DecorationReference reference =
 				new DecorationReference(element, adaptedElement);
+			reference.setForceUpdate(forceUpdate);
 			awaitingDecorationValues.put(element, reference);
 			awaitingDecoration.add(element);
 			//Notify the receiver as the next method is
@@ -135,7 +139,7 @@ public class DecorationScheduler implements IResourceChangeListener {
 			(DecorationResult) resultCache.get(element);
 
 		if (decoration == null) {
-			queueForDecoration(element, adaptedElement);
+			queueForDecoration(element, adaptedElement,false);
 			return image;
 		} else
 			return decoration.decorateWithOverlays(
@@ -162,7 +166,7 @@ public class DecorationScheduler implements IResourceChangeListener {
 					Object[] elements =
 						pendingUpdate.toArray(new Object[pendingUpdate.size()]);
 					pendingUpdate.clear();
-					decoratorManager.labelProviderChanged(
+					decoratorManager.fireListeners(
 						new LabelProviderChangedEvent(
 							decoratorManager,
 							elements));
@@ -303,10 +307,16 @@ public class DecorationScheduler implements IResourceChangeListener {
 							reference.getElement(),
 							cacheResult);
 
-						if (cacheResult.hasValue()) {
-							resultCache.put(
-								reference.getElement(),
-								cacheResult.createResult());
+						//If we should update regardless then put a result anyways
+						if (cacheResult.hasValue()
+							|| reference.shouldForceUpdate()) {
+								
+							//Only add something to look up if it is interesting
+							if (cacheResult.hasValue()) {
+								resultCache.put(
+									reference.getElement(),
+									cacheResult.createResult());
+							}
 
 							//Add an update for only the original element to 
 							//prevent multiple updates and clear the cache.
