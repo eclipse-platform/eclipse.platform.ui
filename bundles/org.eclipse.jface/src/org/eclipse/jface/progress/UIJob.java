@@ -9,17 +9,32 @@
  **********************************************************************/
 package org.eclipse.jface.progress;
 
+/**
+ * The UIJob is a Job that runs within the UI Thread via an
+ * asyncExec.
+ */
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.jface.resource.JFaceResources;
 
 public abstract class UIJob extends Job {
 	private Display display;
+	
+	private static final String PLUGIN_NAME = "org.eclipse.jface"; //$NON-NLS-1$
 
+	/**
+	 * Create a new instance of the receiver.
+	 */
 	public UIJob() {
 		super();
 	}
 
+	/**
+	 * Create a new instance of the receiver with the supplied
+	 * Display.
+	 * @param jobDisplay
+	 */
 	public UIJob(Display jobDisplay) {
 		this();
 		display = jobDisplay;
@@ -33,7 +48,7 @@ public abstract class UIJob extends Job {
 	public static IStatus errorStatus(Throwable exception) {
 		return new Status(
 			IStatus.ERROR,
-			"org.eclipse.jface",
+			PLUGIN_NAME,
 			IStatus.ERROR,
 			exception.getMessage(),
 			exception);
@@ -47,13 +62,11 @@ public abstract class UIJob extends Job {
 		Display asyncDisplay = getDisplay();
 
 		if (asyncDisplay == null) {
-
-			System.out.println("No display");
 			return new Status(
 				IStatus.ERROR,
-				"org.eclipse.jface",
+				PLUGIN_NAME,
 				IStatus.ERROR,
-				"Display must be set",
+				JFaceResources.getString("UIJob.displayNotSet"), //$NON-NLS-1$
 				null);
 		}
 		asyncDisplay.asyncExec(new Runnable() {
@@ -66,9 +79,9 @@ public abstract class UIJob extends Job {
 						result =
 							new Status(
 								IStatus.ERROR,
-								"org.eclipse.ui",
+								PLUGIN_NAME,
 								1,
-								"Error",
+								JFaceResources.getString("Error"), //$NON-NLS-1$
 								null);
 					done(result);
 				}

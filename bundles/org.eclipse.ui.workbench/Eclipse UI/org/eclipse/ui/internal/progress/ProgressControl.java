@@ -29,7 +29,9 @@ import org.eclipse.ui.PlatformUI;
 public class ProgressControl {
 
 	private AnimatedCanvas canvas;
-
+	private static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
+	private static final String RUNNING_ICON = "running.gif"; //$NON-NLS-1$
+	private static final String BACKGROUND_ICON = "back.gif"; //$NON-NLS-1$
 	/**
 	 * 
 	 */
@@ -134,10 +136,10 @@ public class ProgressControl {
 	public void createCanvas(Composite parent) {
 		URL iconsRoot =
 			Platform.getPlugin(PlatformUI.PLUGIN_ID).find(
-				new Path("icons/full/progress/"));
+				new Path(PROGRESS_FOLDER));
 		try {
-			URL runningRoot = new URL(iconsRoot, "running.gif");
-			URL backRoot = new URL(iconsRoot, "back.gif");
+			URL runningRoot = new URL(iconsRoot, RUNNING_ICON);
+			URL backRoot = new URL(iconsRoot, BACKGROUND_ICON);
 			canvas = new AnimatedCanvas(runningRoot, backRoot);
 			canvas.createCanvas(parent);
 		} catch (MalformedURLException e) {

@@ -135,7 +135,6 @@ public class AnimatedCanvas {
 	 */
 	private void paintImage(PaintEvent event, Image image, ImageData imageData) {
 
-		Display display = imageCanvas.getDisplay();
 		Image paintImage = image;
 
 		int w = imageData.width;
@@ -222,7 +221,7 @@ public class AnimatedCanvas {
 								.getDescriptor()
 								.getUniqueIdentifier(),
 							IStatus.ERROR,
-							"Error invoking job",
+							ProgressMessages.getString("AnimatedCanvas.JobInvocationError"), //$NON-NLS-1$
 							e);
 					}
 				}
