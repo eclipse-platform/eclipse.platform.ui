@@ -18,7 +18,7 @@ import java.io.File;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -27,7 +27,6 @@ import org.xml.sax.SAXException;
  * SAX Parsing Handler that determines the enclosing target task element in
  * respect to a specified cursor position.
  * 
- * @version 19.11.2002
  * @author Alf Schiefelbein
  */
 public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler {
@@ -58,8 +57,8 @@ public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler 
     public void endElement(String aUri, String aLocalName, String aQualifiedName)
         throws SAXException {
 
-		if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
-        	ExternalToolsPlugin.getDefault().log("AntEditorSaxDefaultHandler.endElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		if (AntUIPlugin.getDefault() != null && AntUIPlugin.getDefault().isDebugging()) {
+        	AntUIPlugin.log("AntEditorSaxDefaultHandler.endElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 
         if(parsingFinished) {
@@ -104,8 +103,8 @@ public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler 
          * string as local name.
          */
         
-		 if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
-			ExternalToolsPlugin.getDefault().log("AntEditorSaxDefaultHandler.startElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ", "+anAttributes+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		 if (AntUIPlugin.getDefault() != null && AntUIPlugin.getDefault().isDebugging()) {
+			AntUIPlugin.log("AntEditorSaxDefaultHandler.startElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ", "+anAttributes+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         }
         if(parsingFinished) {
             return;
@@ -177,8 +176,8 @@ public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler 
             Element tempElement = (Element)stillOpenElements.pop();
             if(tempElement.getTagName().equals("target")) { //$NON-NLS-1$
                 parentElement = tempElement;
-				if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
-					ExternalToolsPlugin.getDefault().log("EnclosingTargetSearchingHandler.checkForParentElement(): Enclosing target element found: " +parentElement, null); //$NON-NLS-1$
+				if (AntUIPlugin.getDefault() != null && AntUIPlugin.getDefault().isDebugging()) {
+					AntUIPlugin.log("EnclosingTargetSearchingHandler.checkForParentElement(): Enclosing target element found: " +parentElement, null); //$NON-NLS-1$
                 }
             }
         }

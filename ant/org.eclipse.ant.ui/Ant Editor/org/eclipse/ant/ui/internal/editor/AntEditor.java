@@ -102,7 +102,7 @@ public class AntEditor extends TextEditor {
     protected void createActions() {
         super.createActions();
 
-        ContentAssistAction action = new ContentAssistAction(ResourceBundle.getBundle("org.eclipse.ui.externaltools.internal.ant.editor.AntEditorMessages"), "ContentAssistProposal.", this); //$NON-NLS-1$ //$NON-NLS-2$
+        ContentAssistAction action = new ContentAssistAction(ResourceBundle.getBundle("org.eclipse.ant.ui.internal.editor.AntEditorMessages"), "ContentAssistProposal.", this); //$NON-NLS-1$ //$NON-NLS-2$
 
         // This action definition is associated with the accelerator Ctrl+Space
         action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);

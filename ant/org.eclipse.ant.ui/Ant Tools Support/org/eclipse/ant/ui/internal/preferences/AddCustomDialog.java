@@ -53,8 +53,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
-import org.eclipse.ui.externaltools.internal.ui.StatusDialog;
-import org.eclipse.ui.externaltools.internal.ui.StatusInfo;
 import org.eclipse.ui.externaltools.internal.ui.TreeAndListGroup;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;

@@ -135,7 +135,6 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
         initialize();
     }
 
-
     /**
      * Initializes the handler.
      */
@@ -143,8 +142,6 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
         DocumentBuilder tempDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         document = tempDocumentBuilder.newDocument();
     }
-
-
 
     /**
      * Checks whether the parent element, that we are searching for can be or
@@ -184,8 +181,6 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
         return true;
     }
     
-
-
     /* (non-Javadoc)
      * @see org.xml.sax.ContentHandler#startElement(String, String, String, Attributes)
      */
@@ -228,7 +223,6 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
         super.startElement(aUri, aLocalName, aQualifiedName, anAttributes);
     }
 
-
     /* (non-Javadoc)
      * @see org.xml.sax.ContentHandler#endElement(String, String, String)
      */
@@ -264,7 +258,6 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
 		}
     }
 
-
     /* (non-Javadoc)
      * @see org.xml.sax.ContentHandler#setDocumentLocator(Locator)
      */
@@ -272,7 +265,6 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
         locator = aLocator;
         super.setDocumentLocator(aLocator);
     }
-
 
     /**
      * Returns the parent element that has been determined during a prior 
@@ -298,7 +290,6 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
         }
         return null;
     }
-
 
     /* (non-Javadoc)
      * @see org.xml.sax.ErrorHandler#error(SAXParseException)

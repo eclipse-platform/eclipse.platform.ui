@@ -23,7 +23,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -125,13 +125,13 @@ public class TaskDescriptionProvider {
             InputSource tempInputSource = new InputSource(tempURL.toExternalForm());
             tempDocument = tempDocBuilder.parse(tempInputSource);
         } catch (ParserConfigurationException e) {
-			ExternalToolsPlugin.getDefault().log(e);
+			AntUIPlugin.log(e);
         }
         catch (IOException ioException) {
-			ExternalToolsPlugin.getDefault().log(ioException);
+			AntUIPlugin.log(ioException);
         }
         catch (SAXException saxException) {
-			ExternalToolsPlugin.getDefault().log(saxException);
+			AntUIPlugin.log(saxException);
         }
 
         return tempDocument;

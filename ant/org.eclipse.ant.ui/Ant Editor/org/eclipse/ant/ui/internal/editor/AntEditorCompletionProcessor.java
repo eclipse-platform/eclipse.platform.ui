@@ -53,6 +53,7 @@ import org.eclipse.ant.ui.internal.dtd.ParseError;
 import org.eclipse.ant.ui.internal.dtd.Parser;
 import org.eclipse.ant.ui.internal.editor.utils.ProjectHelper;
 import org.eclipse.ant.ui.internal.model.AntUIImages;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -67,7 +68,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.part.FileEditorInput;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -224,9 +224,9 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 	        try {
 	     	  	dtd = parseDtd();
 	        } catch (IOException e) {
-	        	ExternalToolsPlugin.getDefault().log(e);
+	        	AntUIPlugin.log(e);
 	        } catch (ParseError e) {
-				ExternalToolsPlugin.getDefault().log(e);
+				AntUIPlugin.log(e);
 			}
 		}
 	}
@@ -300,14 +300,11 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
             lineNumber = tempDocument.getLineOfOffset(cursorPosition);
             columnNumber = cursorPosition - tempDocument.getLineOffset(lineNumber);
         } catch (BadLocationException e) {
-            ExternalToolsPlugin.getDefault().log(e);
+            AntUIPlugin.log(e);
         }
 		
 		if (prefix == null || cursorPosition == -1) {
-			if (ExternalToolsPlugin.getDefault().isDebugging()) {
-				ExternalToolsPlugin.getDefault().log(AntEditorMessages.getString("AntEditorCompletionProcessor.Could_not_do_completion_3"), null); //$NON-NLS-1$
-			}
-			IWorkbenchWindow window= ExternalToolsPlugin.getActiveWorkbenchWindow();
+			IWorkbenchWindow window= AntUIPlugin.getActiveWorkbenchWindow();
 			if (window != null) {
 				window.getShell().getDisplay().beep();
 			}
@@ -933,10 +930,10 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         try {
             tempParser = SAXParserFactory.newInstance().newSAXParser();
         } catch (ParserConfigurationException e) {
-            ExternalToolsPlugin.getDefault().log(e);
+            AntUIPlugin.log(e);
             return null;
         } catch (SAXException e) {
-			ExternalToolsPlugin.getDefault().log(e);
+			AntUIPlugin.log(e);
             return null;
         }
         
@@ -950,7 +947,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 			}
         	tempHandler = new AntEditorSaxDefaultHandler(parent, aLineNumber, aColumnNumber);
         } catch (ParserConfigurationException e) {
-			ExternalToolsPlugin.getDefault().log(e);
+			AntUIPlugin.log(e);
         }
         
         // Parse!
@@ -964,7 +961,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         } catch(SAXParseException e) {
             // Ignore since that happens always if the edited file is not valid. We try to handle that.
         } catch (SAXException e) {
-            ExternalToolsPlugin.getDefault().log(e);
+            AntUIPlugin.log(e);
         } catch (IOException e) {
             //ignore since can happen when user has incorrect paths / protocols for external entities
         }
@@ -1100,7 +1097,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     }
 
     protected File getEditedFile() {
-    	IWorkbenchPage page= ExternalToolsPlugin.getActivePage();
+    	IWorkbenchPage page= AntUIPlugin.getActivePage();
     	if (page == null) {
     		return null;
     	}
@@ -1148,10 +1145,10 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         try {
             tempParser = SAXParserFactory.newInstance().newSAXParser();
         } catch (ParserConfigurationException e) {
-            ExternalToolsPlugin.getDefault().log(e);
+            AntUIPlugin.log(e);
             return null;
         } catch (SAXException e) {
-            ExternalToolsPlugin.getDefault().log(e);
+            AntUIPlugin.log(e);
             return null;
         }
         
@@ -1165,7 +1162,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 		   }
             tempHandler = new EnclosingTargetSearchingHandler(parent, aLineNumber, aColumnNumber);
         } catch (ParserConfigurationException e) {
-            ExternalToolsPlugin.getDefault().log(e);
+            AntUIPlugin.log(e);
         }
         
         // Parse!
@@ -1179,9 +1176,9 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         } catch(SAXParseException e) {
             // Ignore since that happens always if the edited file is not valid. We try to handle that.
         } catch (SAXException e) {
-            ExternalToolsPlugin.getDefault().log(e);
+            AntUIPlugin.log(e);
         } catch (IOException e) {
-            ExternalToolsPlugin.getDefault().log(e);
+            AntUIPlugin.log(e);
         }
 
 		return tempHandler.getParentElement(true);
