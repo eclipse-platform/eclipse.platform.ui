@@ -312,6 +312,34 @@ class FakeFeature implements IFeature {
 		return null;
 	}
 
+	/**
+	 * @see IFeature#getRootURL()
+	 */
+	public URL getRootURL() {
+		return null;
+	}
+
+	/**
+	 * @see IFeature#getOS()
+	 */
+	public String getOS() {
+		return null;
+	}
+
+	/**
+	 * @see IFeature#getWS()
+	 */
+	public String getWS() {
+		return null;
+	}
+
+	/**
+	 * @see IFeature#getNL()
+	 */
+	public String getNL() {
+		return null;
+	}
+
 }
 
 class FakeLocalSite implements ILocalSite {
