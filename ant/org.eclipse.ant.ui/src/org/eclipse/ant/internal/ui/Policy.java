@@ -8,10 +8,8 @@ package org.eclipse.ant.internal.ui;
 import org.eclipse.core.runtime.*;
 import java.util.*;
 
-class Policy {
+public class Policy {
 	private static ResourceBundle bundle;
-	private static String bundleName = "org.eclipse.ant.internal.ui.messages";
-
 	static {
 		relocalize();
 	}
@@ -49,7 +47,7 @@ public static String bind(String id, String[] bindings) {
 	} catch (MissingResourceException e) {
 		// If we got an exception looking for the message, fail gracefully by just returning
 		// the id we were looking for.  In most cases this is semi-informative so is not too bad.
-		return "Missing message: " + id + "in: " + bundleName;
+		return "Missing message: " + id + "in: " + AntUIPlugin.PROPERTIES_MESSAGES;
 	}
 	if (bindings == null)
 		return message;
@@ -90,7 +88,7 @@ public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
  * Creates a NLS catalog for the given locale.
  */
 public static void relocalize() {
-	bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault());
+	bundle = ResourceBundle.getBundle(AntUIPlugin.PROPERTIES_MESSAGES, Locale.getDefault());
 }
 public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks) {
 	if (monitor == null)
