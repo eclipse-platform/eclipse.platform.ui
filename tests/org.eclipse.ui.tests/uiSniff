@@ -1,0 +1,6 @@
+rm -R ui_sniff_folder
+./jre/bin/java -cp plugins/org.eclipse.ui.test.harness.launcher/bin;startup.jar org.eclipse.ui.test.harness.launcher.TestUIMain -dev bin -data ui_sniff_folder -uiTest ui.TestSuite
+
+rm -R ui_session_sniff_folder
+./jre/bin/java -cp plugins/org.eclipse.ui.test.harness.launcher/bin;startup.jar org.eclipse.ui.test.harness.launcher.TestUIMain -dev bin -data ui_session_sniff_folder -uiTest ui.api.SessionCreateTest
+./jre/bin/java -cp plugins/org.eclipse.ui.test.harness.launcher/bin;startup.jar org.eclipse.ui.test.harness.launcher.TestUIMain -dev bin -data ui_session_sniff_folder -uiTest ui.api.SessionRestoreTest
