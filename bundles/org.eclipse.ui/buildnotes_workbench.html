@@ -11,6 +11,104 @@
 <h1>
 Eclipse Platform Build Notes<br>
 Workbench</h1>
+Eclipse Integration Build 20020409
+<h2>
+What's new in this drop</h2>
+
+<h3>
+API changes</h3>
+
+<blockquote><b>ICapabilityWizard </b>- this experimental interface is deprecated
+and will be removed prior to M6. Use ICapabilityInstallWizard instead.
+<p><b>ResourceNavigator.setLabelDecorator()</b> - This experimental and
+deprecated method has been removed. Callers should use the decoration extension
+point instead.
+<p><b>org.eclipse.ui.views.internal.framelist</b> - all types in this package
+have been deprecated and will be removed prior to M6.
+<p><b>Single Click</b> - The API addOpenListener(IOpenListener listener)
+was added to StructuredViewer. The listeners will be notified of open events
+which dependent on the user preference (default is double-click). Views
+that are implemented on top of SWT (not JFace) can use the classes OpenStrategy
+and IOpenEventListener. Views like the Navigator should change the code
+that listen for DoubleClickEvent to listen for OpenEvent instead/as well.
+E.g. Navigator opens editors on open event but expands trees on double
+click.
+<p><b>IWorkbenchPage.isEditorPinned(IEditorPart)</b> - added back the tool
+bar button to pin editors. And added the API isEditorPinned(IEditorPart
+editor) to IWorkbenchPage. Any kind of editor managment code must use isEditorPinned.</blockquote>
+
+<h3>
+API additions</h3>
+
+<blockquote><b>ICapabilityInstallWizard</b> and <b>ICapabilityUninstallWizard</b>
+- capability now support both an install and uninstall wizard. See the
+documentation for the capabilities extension point for more details
+<p><b>org.eclipse.ui.views.framelist</b> - contains all the types previously
+contained in org.eclipse.ui.views.internal.framelist package
+<p><b>IWorkbenchActionConstants</b> - New constants for the new menus,
+global actions and groups (see Menu Reorganization below)
+<p><b>IWindowListener</b> - support listeners for window lifecycle events
+<p><b>IWorkbench.addWindowListener(IWindowListener)</b> and <b>IWorkbench.removeWindowListener(IWindowListener)</b>
+- support listeners for window lifecycle events
+<p><b>OpenInNewWindowAction</b> - The action was made public so that views
+such as Navigator can have the "Open In New Window" option.</blockquote>
+
+<h3>
+Other highlights</h3>
+
+<blockquote><b>Retarget Actions in Action Sets</b> - The action set extension
+point now supports the retarget and allowLabelUpdate attributes. The readme
+example has been modified to demonstrate the use of these attributes. Parts
+can supply handlers for these actions using the standard API on their site.
+As with global actions, the enablement is determined by the handler.
+<p><b>Menu Reorganization</b> - There has been a major reorganization of
+the Workbench menus. The overall intent of the change is to provide all
+actions on the main menus, reserving the context menus for frequently used
+actions. This is the recommended direction for the Workbench and other
+plugins.
+<p>The File menu has new items for Revert (used by editors), Refresh (used
+by the Navigator and similar views), and Properties (used by the Navigator
+and Task List).
+<p>The Edit menu has new items for Move and Rename.
+<p>The Perspective menu has been removed.&nbsp; The perspective actions
+have been moved to the Window menu and renamed.
+<p>The Workbench menu has been replaced by the Project menu, and has new
+actions for opening, closing, and building individual projects.
+<p>There is a new menu, Navigate, which contains Go Into and the Go To
+submenu, used by the Navigator and similar views (e.g. the Packages view
+in JDT UI). It also has reserved groups for Open On... and Show in... items,
+although the Workbench itself does not add any actions to these groups.
+See the JDT UI plugin for a good example of how these should be used.
+<p>All the new actions are provided as retargetable global actions. There
+are no default implementations of these actions provided by the Workbench
+proper (the standard views and editors provide handlers though). Use IActionBars.setGlobalActionHandler
+to hook handlers in views and editors.
+<p>Note that this approach may still change between now and M6 for the
+more resource-oriented actions. We are considering providing these as a
+separate action set, however this would require changing any existing perspectives
+which want these actions available.&nbsp; The additions to the File and
+Edit menus will likely remain as retargetable global actions.
+<p><b>groupMarker</b> - was added to ActionSets menus allowing menus to
+have a marker without a visible separator.</blockquote>
+
+<h2>
+Known deficiencies</h2>
+
+<blockquote>- Contributions from other plugins, via action sets or editor
+action contributions, to the old menus (Perspective and Workbench) are
+lost. We are planning on adding support to forward such contributions to
+the new menus (Window and Project).</blockquote>
+
+<h2>
+Problem reports fixed</h2>
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&chfield=bug_status&chfieldfrom=2002%2F04%2F02&chfieldto=2002%2F04%2F09&product=Platform&component=UI&cmdtype=doit&&order=Bug+Number">Click
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+between 2002/04/02 and 2002/04/09.
+<p>
+<hr SIZE=0 WIDTH="100%">
+<h1>
+Eclipse Platform Build Notes<br>
+Workbench</h1>
 Eclipse Integration Build 20020402
 <h2>
 What's new in this drop</h2>
