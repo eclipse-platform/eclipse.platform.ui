@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.resources.ant;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -11,7 +16,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class Policy {
 	private static ResourceBundle bundle;
-	private static final String bundleName = "org.eclipse.ant.internal.core.messages";
+	private static final String bundleName = "org.eclipse.core.resources.ant.messages";
 
 	static {
 		relocalize();

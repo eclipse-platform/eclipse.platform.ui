@@ -1,8 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.resources.ant;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 /*
  * The Apache Software License, Version 1.1
@@ -58,13 +64,14 @@ package org.eclipse.core.resources.ant;
  * <http://www.apache.org/>.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
 import org.apache.tools.ant.*;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.apache.tools.ant.types.*;
 import org.apache.tools.ant.util.*;
-
-import java.io.*;
-import java.util.*;
 /**
  * Ant task which replaces the standard Ant Copy task.  This version of the task
  * is necessary in order to copy permissions of files as well.
