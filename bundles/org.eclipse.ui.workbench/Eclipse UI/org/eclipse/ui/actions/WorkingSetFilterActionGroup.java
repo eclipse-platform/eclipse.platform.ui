@@ -17,6 +17,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.WorkingSetComparator;
 import org.eclipse.ui.internal.WorkingSetMenuContributionItem;
 import org.eclipse.ui.internal.actions.*;
 
@@ -66,6 +67,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 	private void addMruWorkingSetActions(IMenuManager menuManager) {
 		IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager().getRecentWorkingSets();
 		List sortedWorkingSets = Arrays.asList(workingSets);
+		Collections.sort(sortedWorkingSets, new WorkingSetComparator());
 		
 		Iterator iter = sortedWorkingSets.iterator();
 		mruMenuCount = 0;
