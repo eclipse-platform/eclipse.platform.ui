@@ -22,6 +22,35 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class ExtensionsParser extends DefaultHandler {
+	// Introduced for backward compatibility
+	private final static String NO_EXTENSION_MUNGING = "eclipse.noExtensionMunging"; //$NON-NLS-1$ //System property
+	private static Map extensionPointMap;
+	static {
+		initializeExtensionPointMap();
+	}
+
+	/**
+	 * Initialize the list of renamed extension point ids
+	 */
+	private static void initializeExtensionPointMap() {
+		Map map = new HashMap(13);
+		// TODO should this be hard coded? can we use a properties file?
+		map.put("org.eclipse.ui.markerImageProvider", "org.eclipse.ui.ide.markerImageProvider"); //$NON-NLS-1$ //$NON-NLS-2$
+		map.put("org.eclipse.ui.markerHelp", "org.eclipse.ui.ide.markerHelp"); //$NON-NLS-1$ //$NON-NLS-2$
+		map.put("org.eclipse.ui.markerImageProviders", "org.eclipse.ui.ide.markerImageProviders"); //$NON-NLS-1$ //$NON-NLS-2$
+		map.put("org.eclipse.ui.markerResolution", "org.eclipse.ui.ide.markerResolution"); //$NON-NLS-1$ //$NON-NLS-2$
+		map.put("org.eclipse.ui.projectNatureImages", "org.eclipse.ui.ide.projectNatureImages"); //$NON-NLS-1$ //$NON-NLS-2$
+		map.put("org.eclipse.ui.resourceFilters", "org.eclipse.ui.ide.resourceFilters"); //$NON-NLS-1$ //$NON-NLS-2$
+		map.put("org.eclipse.ui.markerUpdaters", "org.eclipse.ui.editors.markerUpdaters"); //$NON-NLS-1$ //$NON-NLS-2$
+		map.put("org.eclipse.ui.documentProviders", "org.eclipse.ui.editors.documentProviders"); //$NON-NLS-1$ //$NON-NLS-2$
+		map.put("org.eclipse.ui.workbench.texteditor.markerAnnotationSpecification", "org.eclipse.ui.editors.markerAnnotationSpecification"); //$NON-NLS-1$ //$NON-NLS-2$
+		map.put("org.eclipse.help.browser", "org.eclipse.help.base.browser"); //$NON-NLS-1$ //$NON-NLS-2$
+		map.put("org.eclipse.help.luceneAnalyzer", "org.eclipse.help.base.luceneAnalyzer"); //$NON-NLS-1$ //$NON-NLS-2$
+		map.put("org.eclipse.help.webapp", "org.eclipse.help.base.webapp"); //$NON-NLS-1$ //$NON-NLS-2$
+		map.put("org.eclipse.help.support", "org.eclipse.ui.helpSupport"); //$NON-NLS-1$ //$NON-NLS-2$
+		extensionPointMap = map;
+	}
+
 	private static long cumulativeTime = 0;
 
 	// is in compatibility mode
@@ -45,7 +74,7 @@ public class ExtensionsParser extends DefaultHandler {
 	private MultiStatus status;
 
 	private ResourceBundle resources;
-	
+
 	/** 
 	 * Status code constant (value 1) indicating a problem in a bundle extensions
 	 * manifest (<code>extensions.xml</code>) file.
@@ -156,7 +185,7 @@ public class ExtensionsParser extends DefaultHandler {
 					// Put the extensions into this bundle model too
 					ArrayList extensions = scratchVectors[EXTENSION_INDEX];
 					if (extensions.size() > 0) {
-						root.setExtensions((Extension[]) extensions.toArray(new Extension[extensions.size()]));
+						root.setExtensions(fixRenamedExtensionPoints((Extension[]) extensions.toArray(new Extension[extensions.size()])));
 						scratchVectors[EXTENSION_INDEX].clear();
 					}
 				}
@@ -261,7 +290,6 @@ public class ExtensionsParser extends DefaultHandler {
 		compatibilityMode = !(elementName.equals(PLUGIN) && attributes.getLength() == 0);
 		stateStack.push(new Integer(BUNDLE_STATE));
 		Namespace current = new Namespace();
-		current.setSchemaVersion(schemaVersion);
 		objectStack.push(current);
 	}
 
@@ -567,8 +595,26 @@ public class ExtensionsParser extends DefaultHandler {
 	public MultiStatus getStatus() {
 		return status;
 	}
-	
+
 	private String translate(String key) {
 		return ResourceTranslator.getResourceString(null, key, resources);
+	}
+
+	/**
+	 * Fixes up the extension declarations in the given pre-3.0 plug-in or fragment to compensate
+	 * for extension points that were renamed between release 2.1 and 3.0.
+	 */
+	private Extension[] fixRenamedExtensionPoints(Extension[] extensions) {
+		if (extensions == null || (schemaVersion != null && schemaVersion.equals("3.0")) || System.getProperties().get(NO_EXTENSION_MUNGING) != null) //$NON-NLS-1$
+			return extensions;
+		for (int i = 0; i < extensions.length; i++) {
+			Extension extension = extensions[i];
+			String oldPointId = extension.getExtensionPointIdentifier();
+			String newPointId = (String) extensionPointMap.get(oldPointId);
+			if (newPointId != null) {
+				extension.setExtensionPointIdentifier(newPointId);
+			}
+		}
+		return extensions;
 	}
 }

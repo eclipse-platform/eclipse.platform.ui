@@ -13,8 +13,6 @@ package org.eclipse.core.internal.registry;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.zip.CRC32;
-import java.util.zip.CheckedOutputStream;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 
@@ -55,7 +53,7 @@ public class RegistryCacheWriter {
 
 	public void writeConfigurationElement(ConfigurationElement object, DataOutputStream out) {
 		try {
-			writeStringOrNull(object.getName(), out);
+			writeCachedStringOrNull(object.getName(), out);
 			writeStringOrNull(object.getValue(), out);
 
 			ConfigurationProperty[] properties = object.getProperties();
@@ -76,7 +74,7 @@ public class RegistryCacheWriter {
 
 	public void writeConfigurationProperty(ConfigurationProperty object, DataOutputStream out) {
 		try {
-			writeStringOrNull(object.getName(), out);
+			writeCachedStringOrNull(object.getName(), out);
 			writeStringOrNull(object.getValue(), out);
 		} catch (IOException ioe) {
 			problems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "ConfigurationProperty"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -94,10 +92,26 @@ public class RegistryCacheWriter {
 			writeStringOrNull(object.getSimpleIdentifier(), out);
 			writeBundleModel((Namespace) object.getParent(), out);
 			writeStringOrNull(object.getName(), out);
-			writeStringOrNull(object.getExtensionPointIdentifier(), out);
+			writeCachedStringOrNull(object.getExtensionPointIdentifier(), out);
 			writeSubElements(object, out);
 		} catch (IOException ioe) {
 			problems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "Extension"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+
+	private void writeCachedStringOrNull(String string, DataOutputStream out) throws IOException {
+		if (string == null)
+			out.writeByte(RegistryCacheReader.NULL);
+		else {
+			int index = getFromObjectTable(string);
+			if (index == -1) {
+				addToObjectTable(string);
+				out.writeByte(RegistryCacheReader.OBJECT);
+				out.writeUTF(string);
+			} else {
+				out.writeByte(RegistryCacheReader.INDEX);
+				out.writeInt(index);
+			}
 		}
 	}
 
@@ -110,19 +124,9 @@ public class RegistryCacheWriter {
 		out.writeByte(RegistryCacheReader.OBJECT);
 		// write the offset for sub-elements data
 		out.writeInt(out.size());
-		// write the sub-elements data to a memory stream...
-		// so we can prefix that data with its size (to easily skip it)
-		ByteArrayOutputStream arrayOut = new ByteArrayOutputStream();
-		CheckedOutputStream checkedOut = new CheckedOutputStream(arrayOut, new CRC32());
-		DataOutputStream tempOut = new DataOutputStream(checkedOut);
-		tempOut.writeInt(subElements.length);
+		out.writeInt(subElements.length);
 		for (int i = 0; i < subElements.length; i++)
-			writeConfigurationElement((ConfigurationElement) subElements[i], tempOut);
-		tempOut.close();
-		// write the block size, the data and a checksum
-		out.writeInt(arrayOut.size());
-		out.write(arrayOut.toByteArray());
-		out.writeLong(checkedOut.getChecksum().getValue());
+			writeConfigurationElement((ConfigurationElement) subElements[i], out);
 	}
 
 	public void writeExtensionPoint(ExtensionPoint object, DataOutputStream out) {
@@ -169,10 +173,10 @@ public class RegistryCacheWriter {
 			// add this object to the object table first
 			addToObjectTable(object);
 			out.writeByte(RegistryCacheReader.OBJECT);
-			writeStringOrNull(object.getUniqueIdentifier(), out);
+			writeCachedStringOrNull(object.getUniqueIdentifier(), out);
 			out.writeLong(object.getId());
 			writeRegistry((ExtensionRegistry) object.getParent(), out);
-			writeStringOrNull(object.getHostIdentifier(), out);
+			writeCachedStringOrNull(object.getHostIdentifier(), out);
 
 			// need to worry about cross links here
 			// now do extension points

@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.registry;
 
-import java.util.*;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import org.eclipse.core.internal.runtime.ResourceTranslator;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -27,38 +28,7 @@ public class Namespace extends NestedRegistryModelObject {
 	private IExtension[] extensions;
 	private transient ResourceBundle resourceBundle;
 	private boolean missingResourceBundle = false;
-	private String schemaVersion;
 	private Bundle bundle; //Introduced to fix #46308
-
-	private final static String NO_EXTENSION_MUNGING = "eclipse.noExtensionMunging"; //$NON-NLS-1$ //System property
-
-	// Introduced for backward compatibility
-	private static Map extensionPointMap;
-	static {
-		initializeExtensionPointMap();
-	}
-
-	/**
-	 * Initialize the list of renamed extension point ids
-	 */
-	private static void initializeExtensionPointMap() {
-		Map map = new HashMap(13);
-		// TODO should this be hard coded? can we use a properties file?
-		map.put("org.eclipse.ui.markerImageProvider", "org.eclipse.ui.ide.markerImageProvider"); //$NON-NLS-1$ //$NON-NLS-2$
-		map.put("org.eclipse.ui.markerHelp", "org.eclipse.ui.ide.markerHelp"); //$NON-NLS-1$ //$NON-NLS-2$
-		map.put("org.eclipse.ui.markerImageProviders", "org.eclipse.ui.ide.markerImageProviders"); //$NON-NLS-1$ //$NON-NLS-2$
-		map.put("org.eclipse.ui.markerResolution", "org.eclipse.ui.ide.markerResolution"); //$NON-NLS-1$ //$NON-NLS-2$
-		map.put("org.eclipse.ui.projectNatureImages", "org.eclipse.ui.ide.projectNatureImages"); //$NON-NLS-1$ //$NON-NLS-2$
-		map.put("org.eclipse.ui.resourceFilters", "org.eclipse.ui.ide.resourceFilters"); //$NON-NLS-1$ //$NON-NLS-2$
-		map.put("org.eclipse.ui.markerUpdaters", "org.eclipse.ui.editors.markerUpdaters"); //$NON-NLS-1$ //$NON-NLS-2$
-		map.put("org.eclipse.ui.documentProviders", "org.eclipse.ui.editors.documentProviders"); //$NON-NLS-1$ //$NON-NLS-2$
-		map.put("org.eclipse.ui.workbench.texteditor.markerAnnotationSpecification", "org.eclipse.ui.editors.markerAnnotationSpecification"); //$NON-NLS-1$ //$NON-NLS-2$
-		map.put("org.eclipse.help.browser", "org.eclipse.help.base.browser"); //$NON-NLS-1$ //$NON-NLS-2$
-		map.put("org.eclipse.help.luceneAnalyzer", "org.eclipse.help.base.luceneAnalyzer"); //$NON-NLS-1$ //$NON-NLS-2$
-		map.put("org.eclipse.help.webapp", "org.eclipse.help.base.webapp"); //$NON-NLS-1$ //$NON-NLS-2$
-		map.put("org.eclipse.help.support", "org.eclipse.ui.helpSupport"); //$NON-NLS-1$ //$NON-NLS-2$
-		extensionPointMap = map;
-	}
 
 	public String getUniqueIdentifier() {
 		return getName();
@@ -70,7 +40,6 @@ public class Namespace extends NestedRegistryModelObject {
 
 	public void setExtensions(IExtension[] value) {
 		extensions = value;
-		fixRenamedExtensionPoints();
 	}
 
 	public IExtension getExtension(String id) {
@@ -125,27 +94,6 @@ public class Namespace extends NestedRegistryModelObject {
 
 	public String toString() {
 		return "Namespace: " + getName(); //$NON-NLS-1$
-	}
-
-	/**
-	 * Fixes up the extension declarations in the given pre-3.0 plug-in or fragment to compensate
-	 * for extension points that were renamed between release 2.1 and 3.0.
-	 */
-	private void fixRenamedExtensionPoints() {
-		if (extensions == null || (schemaVersion != null && schemaVersion.equals("3.0")) || System.getProperties().get(NO_EXTENSION_MUNGING) != null) //$NON-NLS-1$
-			return;
-		for (int i = 0; i < extensions.length; i++) {
-			Extension extension = (Extension) extensions[i];
-			String oldPointId = extension.getExtensionPointIdentifier();
-			String newPointId = (String) extensionPointMap.get(oldPointId);
-			if (newPointId != null) {
-				extension.setExtensionPointIdentifier(newPointId);
-			}
-		}
-	}
-
-	protected void setSchemaVersion(String schemaVersion) {
-		this.schemaVersion = schemaVersion;
 	}
 
 	public long getId() {

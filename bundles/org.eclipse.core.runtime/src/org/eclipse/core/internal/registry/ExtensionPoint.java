@@ -87,10 +87,7 @@ public class ExtensionPoint extends NestedRegistryModelObject implements IExtens
 		String s = getName();
 		if (s == null)
 			return ""; //$NON-NLS-1$
-		String localized = ((Namespace) getParent()).getResourceString(s);
-		if (localized != s)
-			setLocalizedName(localized);
-		return localized;
+		return s;
 	}
 
 	public String toString() {
@@ -98,7 +95,7 @@ public class ExtensionPoint extends NestedRegistryModelObject implements IExtens
 	}
 
 	public IConfigurationElement[] getConfigurationElements() {
-		IExtension[] tmpExtensions = extensions;		
+		IExtension[] tmpExtensions = extensions;
 		if (tmpExtensions == null || tmpExtensions.length == 0)
 			return new IConfigurationElement[0];
 		Collection result = new ArrayList();

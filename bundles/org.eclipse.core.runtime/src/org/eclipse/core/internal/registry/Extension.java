@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.registry;
 
-import org.eclipse.core.internal.runtime.*;
+import org.eclipse.core.internal.runtime.CompatibilityHelper;
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -133,10 +134,7 @@ public class Extension extends NestedRegistryModelObject implements IExtension {
 		String s = getName();
 		if (s == null)
 			return ""; //$NON-NLS-1$
-		String localized = ((Namespace) getParent()).getResourceString(s);
-		if (localized != s)
-			setLocalizedName(localized);
-		return localized;
+		return s;
 	}
 
 	public String toString() {

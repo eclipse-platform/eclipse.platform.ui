@@ -14,8 +14,6 @@ package org.eclipse.core.internal.registry;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.CRC32;
-import java.util.zip.CheckedInputStream;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
@@ -86,30 +84,52 @@ public class RegistryCacheReader {
 		}
 	}
 
+	private void skipConfigurationElement(RegistryModelObject parent, DataInputStream in) throws IOException {
+		readCachedString(in, false); //read name
+		skipString(in); //skip value
+
+		int length = in.readInt();
+		for (int i = 0; i < length; i++) {
+			skipConfigurationProperty(in);
+		}
+		length = in.readInt();
+		for (int i = 0; i < length; i++) {
+			skipConfigurationElement(null, in);
+		}
+	}
+
 	private ConfigurationElement readConfigurationElement(RegistryModelObject parent, DataInputStream in) throws IOException {
 		ConfigurationElement result = new ConfigurationElement();
 		result.setParent(parent);
-		result.setName(readString(in, true));
-		result.setValue(readString(in, true));
+		result.setName(readCachedString(in, false));
+		result.setValue(readString(in, false));
 
 		int length = in.readInt();
 		ConfigurationProperty[] properties = new ConfigurationProperty[length];
-		for (int i = 0; i < length; i++)
+		for (int i = 0; i < length; i++) {
 			properties[i] = readConfigurationProperty(in);
+		}
 		result.setProperties(properties);
 
 		length = in.readInt();
 		IConfigurationElement[] elements = new ConfigurationElement[length];
-		for (int i = 0; i < length; i++)
+		for (int i = 0; i < length; i++) {
 			elements[i] = readConfigurationElement(result, in);
+		}
 		result.setChildren(elements);
 		return result;
 	}
 
+	private void skipConfigurationProperty(DataInputStream in) throws IOException {
+		readCachedString(in, false); //Read the name
+		skipString(in); // skip the value
+	}
+
 	private ConfigurationProperty readConfigurationProperty(DataInputStream in) throws IOException {
+		String name = readCachedString(in, false);
 		ConfigurationProperty result = new ConfigurationProperty();
-		result.setName(readString(in, true));
-		result.setValue(readString(in, true));
+		result.setName(name);
+		result.setValue(readString(in, false));
 		return result;
 	}
 
@@ -121,10 +141,10 @@ public class RegistryCacheReader {
 				return result;
 			result = flushableExtensions ? new FlushableExtension() : new Extension();
 			addToObjectTable(result);
-			result.setSimpleIdentifier(readString(in, true));
+			result.setSimpleIdentifier(readString(in, false));
 			result.setParent(readBundleModel(in));
 			result.setName(readString(in, false));
-			result.setExtensionPointIdentifier(readString(in, true));
+			result.setExtensionPointIdentifier(readCachedString(in, false));
 			result.setSubElements(readSubElements(result, in));
 			return result;
 		} catch (IOException e) {
@@ -146,7 +166,7 @@ public class RegistryCacheReader {
 			result.setParent(bundle);
 			result.setSimpleIdentifier(readString(in, true));
 			result.setName(readString(in, false));
-			result.setSchema(readString(in, true));
+			result.setSchema(readString(in, false));
 
 			// Now do the extensions.
 			int length = in.readInt();
@@ -171,10 +191,10 @@ public class RegistryCacheReader {
 				return result;
 			result = new Namespace();
 			addToObjectTable(result);
-			result.setUniqueIdentifier(readString(in, true));
+			result.setUniqueIdentifier(readCachedString(in, true));
 			result.setBundle(InternalPlatform.getDefault().getBundleContext().getBundle(in.readLong()));
 			result.setParent(readRegistry(in));
-			result.setHostIdentifier(readString(in, true));
+			result.setHostIdentifier(readCachedString(in, false));
 
 			// now do extension points
 			int length = in.readInt();
@@ -230,53 +250,41 @@ public class RegistryCacheReader {
 		}
 	}
 
-	private ConfigurationElement[] readSubElements(Extension parent, DataInputStream in) throws IOException, InvalidRegistryCacheException {
+	private ConfigurationElement[] readSubElements(Extension parent, DataInputStream in) throws IOException {
 		int type = in.readByte();
 		if (type == NULL)
 			return null;
 
+		//Here type is OBJECT
 		// the first field is extension sub-elements data offset
 		int offset = in.readInt();
 
 		if (lazilyLoadExtensions) {
 			Extension extension = parent;
 			extension.setSubElementsCacheOffset(offset);
-			checkSubElements(parent, in);
+			skipBasicSubElements(parent, in);
 			extension.setFullyLoaded(false);
 			return null;
 		}
 		return readBasicSubElements(parent, in);
 	}
 
-	private ConfigurationElement[] readBasicSubElements(Extension parent, DataInputStream in) throws IOException {
-		// skip the byte count of the elements data 
-		in.readInt();
-		// read the number of sub elements to load
+	private void skipBasicSubElements(Extension parent, DataInputStream in) throws IOException {
 		int length = in.readInt();
-		ConfigurationElement[] result = new ConfigurationElement[length];
-		for (int i = 0; i < length; i++)
-			result[i] = readConfigurationElement(parent, in);
-		// skip checksum
-		in.readLong();
-		return result;
+		for (int i = 0; i < length; i++) {
+			skipConfigurationElement(parent, in);
+		}
 	}
 
-	private void checkSubElements(Extension parent, DataInputStream in) throws IOException, InvalidRegistryCacheException {
-		int subElementsDataLength = in.readInt();
-		CheckedInputStream checkedIn = new CheckedInputStream(in, new CRC32());
-		if (checkedIn.skip(subElementsDataLength) != subElementsDataLength) {
-			String message = null;
-			if (InternalPlatform.DEBUG_REGISTRY)
-				message = "EOF checking sub-elements data for extension " + parent.getName(); //$NON-NLS-1$ 
-			throw new InvalidRegistryCacheException(message);
+	private ConfigurationElement[] readBasicSubElements(Extension parent, DataInputStream in) throws IOException {
+		// read the number of sub elements to load
+		int length = in.readInt();
+
+		ConfigurationElement[] result = new ConfigurationElement[length];
+		for (int i = 0; i < length; i++) {
+			result[i] = readConfigurationElement(parent, in);
 		}
-		long checksum = in.readLong();
-		if (checksum != checkedIn.getChecksum().getValue()) {
-			String message = null;
-			if (InternalPlatform.DEBUG_REGISTRY)
-				message = "Checksum error checking sub-elements data for extension " + parent.getName(); //$NON-NLS-1$ 
-			throw new InvalidRegistryCacheException(message);
-		}
+		return result;
 	}
 
 	private String readString(DataInputStream in, boolean intern) throws IOException {
@@ -287,6 +295,32 @@ public class RegistryCacheReader {
 			return in.readUTF().intern();
 		else
 			return in.readUTF();
+	}
+
+	private void skipString(DataInputStream in) throws IOException {
+		byte type = in.readByte();
+		if (type == NULL)
+			return;
+		int utfLength = in.readUnsignedShort();
+		byte bytearr[] = new byte[utfLength];
+		in.readFully(bytearr, 0, utfLength);
+	}
+
+	private String readCachedString(DataInputStream in, boolean intern) throws IOException {
+		byte type = in.readByte();
+		if (type == NULL)
+			return null;
+
+		if (type == INDEX)
+			return (String) objectTable.get(in.readInt());
+
+		String stringRead = null;
+		if (intern)
+			stringRead = in.readUTF().intern();
+		else
+			stringRead = in.readUTF();
+		addToObjectTable(stringRead);
+		return stringRead;
 	}
 
 	private Object readIndex(DataInputStream in) throws IOException {

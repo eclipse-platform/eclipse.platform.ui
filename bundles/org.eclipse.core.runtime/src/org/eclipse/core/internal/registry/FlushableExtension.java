@@ -6,7 +6,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 public class FlushableExtension extends Extension {
 	public FlushableExtension() {
 	}
-	
+
 	public IConfigurationElement[] getConfigurationElements() {
 		synchronized (this) {
 			if (!fullyLoaded) {
@@ -16,8 +16,8 @@ public class FlushableExtension extends Extension {
 					elements = new SoftReference(reader.loadConfigurationElements(this, subElementsCacheOffset));
 			}
 			if (elements == null)
-				elements =  new IConfigurationElement[0];
-			
+				elements = new IConfigurationElement[0];
+
 			if (((SoftReference) elements).get() == null) {
 				RegistryCacheReader reader = getRegistry().getCacheReader();
 				if (reader != null)
@@ -26,7 +26,7 @@ public class FlushableExtension extends Extension {
 		}
 		return (IConfigurationElement[]) ((SoftReference) elements).get();
 	}
-	
+
 	public void setSubElements(IConfigurationElement[] value) {
 		elements = new SoftReference(value);
 	}
