@@ -200,12 +200,12 @@
        </page>
    </extension>
 
-   <extension point="org.eclipse.search.searchPages">
-      <page label="%help_search_page"
-   	     class="org.eclipse.help.ui.internal.search.HelpSearchPage"
- 	     icon="icons/searchview.gif" 
-         id="org.eclipse.help.ui.searchPage">
-      </page>
-   </extension>
+	<!-- <extension point="org.eclipse.search.searchPages"> -->
+	<!--    <page label="%help_search_page" -->
+	<!-- 	     class="org.eclipse.help.ui.internal.search.HelpSearchPage" -->
+	<!--       icon="icons/searchview.gif"  -->
+	<!--       id="org.eclipse.help.ui.searchPage"> -->
+	<!--    </page> -->
+	<!-- </extension> -->
 
 </plugin>
