@@ -114,7 +114,7 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 		int count= 0;
 		while (enum.hasNext()) {
 			count++;
-			if (count > 1 && enableForMultiSelection()) {
+			if (count > 1 && !enableForMultiSelection()) {
 				return false;
 			}
 			Object element= enum.next();

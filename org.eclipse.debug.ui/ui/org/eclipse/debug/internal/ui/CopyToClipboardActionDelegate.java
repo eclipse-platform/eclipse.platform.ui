@@ -4,19 +4,21 @@ package org.eclipse.debug.internal.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
+ 
+import java.util.*;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.jface.viewers.ContentViewer;
-import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.widgets.Display;
 
 public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	
 	private ContentViewer fViewer;
 
 	private static final String PREFIX= "copy_to_clipboard_action.";
-		
+	
 	/**
 	 * @see ControlActionDelegate
 	 */
@@ -42,11 +44,17 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	/**
 	 * @see ControlActionDelegate
 	 */
-	protected void doAction(final Object element) {
-		StringBuffer buffer= new StringBuffer();
+	protected void doAction(Object element, StringBuffer buffer) {
 		IDebugElement de= (IDebugElement) element;
 		append(de, buffer, (ILabelProvider)fViewer.getLabelProvider(), 0);
-
+	}
+	
+	/**
+	 * @see ControlActionDelegate
+	 */
+	protected void doAction(Object element) {
+		StringBuffer buffer= new StringBuffer();
+		doAction(element, buffer);
 		RTFTransfer rtfTransfer = RTFTransfer.getInstance();
 		TextTransfer plainTextTransfer = TextTransfer.getInstance();
 		Clipboard clipboard= new Clipboard(fViewer.getControl().getDisplay());		
@@ -54,6 +62,7 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 			new String[]{buffer.toString()}, 
 			new Transfer[]{plainTextTransfer});
 	}
+
 
 	/** 
 	 * Appends the representation of the specified element (using the label provider and indent)
@@ -79,14 +88,62 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 		}
 	}
 
-	/**
-	 * @see ControlActionDelegate
-	 */
-	protected boolean enableForMultiSelection() {
-		return false;
-	}
-
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.COPY_TO_CLIPBOARD_ACTION;
+	}
+	
+	/**
+	 * Do the specific action using the current selection.
+	 */
+	public void run() {
+		LaunchesView view= getLaunchesView(fMode);
+		if (view == null) {
+			return;
+		}
+		final Iterator iter= pruneSelection(view);
+		String pluginId= DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier();
+		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+			public void run() {
+				StringBuffer buffer= new StringBuffer();
+				while (iter.hasNext()) {
+					doAction(iter.next(), buffer);
+				}
+				RTFTransfer rtfTransfer = RTFTransfer.getInstance();
+				TextTransfer plainTextTransfer = TextTransfer.getInstance();
+				Clipboard clipboard= new Clipboard(fViewer.getControl().getDisplay());		
+				clipboard.setContents(
+					new String[]{buffer.toString()}, 
+					new Transfer[]{plainTextTransfer});
+			}
+		});
+	}
+	
+	protected Iterator pruneSelection(LaunchesView view) {
+		IStructuredSelection selection= (IStructuredSelection)view.getSite().getSelectionProvider().getSelection();
+		List elements= new ArrayList(selection.size());
+		Iterator iter= selection.iterator();
+		while (iter.hasNext()) {
+			Object element= iter.next();
+			if (isEnabledFor(element)) {
+				IDebugElement de= (IDebugElement)element;
+				IDebugElement parent= de.getParent();
+				if(walkHierarchy(de, elements)) {
+					elements.add(de);
+				}
+			}
+		}
+		return elements.iterator();
+	}
+	
+	protected boolean walkHierarchy(IDebugElement de, List elements) {
+		IDebugElement parent= de.getParent();
+		if (parent == null) {
+			return true;
+		}
+		if (elements.contains(parent)) {
+			return false;
+		}
+		return walkHierarchy(parent, elements);
+		
 	}
 }
