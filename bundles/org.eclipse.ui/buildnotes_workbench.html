@@ -11,6 +11,63 @@
 <h1>
 Eclipse Platform Build Notes<br>
 Workbench</h1>
+Eclipse Integration Build 20020430
+<h2>
+What's new in this drop</h2>
+
+<h3>
+API changes</h3>
+
+<blockquote><b>IWorkbenchPage.addPropertyChangeListener/removePropertyChangeListener</b>
+- Deprecated methods. Views should register a property change listener
+with the IWorkingSetManager to receive notification when a working set
+is removed.
+<p><b>IWorkbenchPage.getWorkingSet</b> - Deprecated method. Working sets
+are now view specific and are no longer stored in the page. If your view
+uses a working set it should provide means to select a working set.
+<p><b>IWorkingSet.CHANGE_WORKING_SET_CONTENT_CHANGE/CHANGE_WORKING_SET_NAME_CHANGE</b>
+- Deprecated constants. Use the constants in IWorkingSetManager instead.
+<p><b>IWorkingSet.addPropertyChangeListener/removePropertyChangeListener</b>
+- Deprecated methods. Use IWorkingSetManager.addPropertyChangeListener/removePropertyChangeListener
+instead to receive notification when a working set has changed.
+<br>&nbsp;</blockquote>
+
+<h3>
+API additions</h3>
+
+<blockquote><b>org.eclipse.ui.views.framelist</b> - has been promoted to
+API from org.eclipse.ui.views.internal.framelist.
+<br>org.eclipse.ui.views.internal.framelist has been deleted.
+<p><b>org.eclipse.ui.XMLMemento</b> - has been promoted to API from org.eclipse.ui.internal.
+Internal implementation has been deleted.
+<p><b>IWorkingSetManager.addRecentWorkingSet/getRecentWorkingSets</b> -
+Provides access to the most recently used working set list. The MRU list
+is a global list of working sets that have recently been selected by the
+user. It is the responsibility of the working set selection UI to add the
+selected working set using the addRecentWorkingSet API.
+<p><b>IResourceNavigatorPart.getWorkingSet/setWorkingSet</b> - Used to
+access the resource navigator view working set.</blockquote>
+
+<h3>
+Other highlights</h3>
+
+<blockquote>Working sets have been changed from being set in a workbench
+page to being view specific. A working set for the resource navigator view
+may be selected in the view's filter dialog.</blockquote>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&chfield=bug_status&chfieldfrom=2002%2F04%2F23&chfieldto=2002%2F04%2F30&product=Platform&component=UI&cmdtype=doit&&order=Bug+Number">Click
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+between 2002/04/23 and 2002/04/30.
+<p>
+<hr SIZE=0 WIDTH="100%">
+<h1>
+Eclipse Platform Build Notes<br>
+Workbench</h1>
 Eclipse Integration Build 20020423
 <h2>
 What's new in this drop</h2>
@@ -757,8 +814,9 @@ Known deficiencies</h2>
 <h2>
 Problem reports fixed</h2>
 <a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&chfield=bug_status&chfieldfrom=2002%2F01%2F29&chfieldto=2002%2F02%2F05&product=Platform&component=UI&cmdtype=doit&&order=Bug+Number">Click
-here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
-between 2002/01/22 and 2002/01/29.
+here</a>
+to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED between
+2002/01/22 and 2002/01/29.
 <p>
 <hr SIZE=0 WIDTH="100%">
 <h1>
@@ -877,8 +935,9 @@ with non-IStructuredSelection objects.
 Action Enablement</h4>
 In version 1 of Eclipse the enablement and visibility of window, view,
 editor and popup menu action extensions was defined using a limited set
-of elements in xml.&nbsp; The existing tags cannot adequately describe
-the conditions when an action should be enabled or visible.&nbsp; To resolve
+of
+elements in xml.&nbsp; The existing tags cannot adequately describe the
+conditions when an action should be enabled or visible.&nbsp; To resolve
 these issues, the following approach has been implemented:
 <p>- a refreshPluginActions() has been added to AbstractUIPlugin.&nbsp;
 The AbtractUIPlugin.startup method will call this to trigger the creation
