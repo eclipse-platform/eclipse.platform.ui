@@ -25,8 +25,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
@@ -234,19 +232,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 	}
 	
 	private boolean isRecreation(IResource resource) {
-		if (resource.getType() == IResource.FOLDER || resource.getType() == IResource.FILE) {
-			try {
-				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-				if (cvsResource.isFolder()) {
-					return ((ICVSFolder)cvsResource).isCVSFolder();
-				}
-				return cvsResource.isManaged();
-			} catch (CVSException e) {
-				CVSProviderPlugin.log(e);
-				// Fallthrough and assume it is not a recreation
-			}
-		}
-		return false;
+		return EclipseSynchronizer.getInstance().wasPhantom(resource);
 	}
 	
 	/*

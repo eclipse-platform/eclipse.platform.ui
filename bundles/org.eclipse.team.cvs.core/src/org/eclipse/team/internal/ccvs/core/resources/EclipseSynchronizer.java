@@ -59,6 +59,7 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
 import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * A synchronizer is responsible for managing synchronization information for local
@@ -1726,6 +1727,20 @@ public class EclipseSynchronizer implements IFlushOperation {
 		}
 	}
 	
+	public boolean wasPhantom(IResource resource) {
+		if (resource.exists()) {
+			try {
+				return (synchronizerCache.getCachedSyncBytes(resource) != null 
+					|| (resource.getType() == IResource.FOLDER
+							&& synchronizerCache.hasCachedFolderSync((IContainer)resource)));
+			} catch (CVSException e) {
+				// Log and assume resource is not a phantom
+				CVSProviderPlugin.log(e);
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Method called from background handler when resources that are mapped to CVS are recreated
 	 * @param resources
@@ -1737,6 +1752,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 		ISchedulingRule rule = null;
 		ISchedulingRule projectsRule = getProjectRule(resources);
 		try {
+			monitor = Policy.monitorFor(monitor);
 			monitor.beginTask(null, 100);
 			rule = beginBatching(projectsRule, monitor);
 			for (int i = 0; i < resources.length; i++) {
@@ -1766,29 +1782,30 @@ public class EclipseSynchronizer implements IFlushOperation {
 		return new MultiRule(projects);
 	}
 
-	private void created(IResource resource) throws CVSException {
-		if (resource.exists()) {
-			if (resource.getType() == IResource.FILE) {
-				created((IFile)resource);
-			} else if (resource.getType() == IResource.FOLDER) {
-				created((IFolder)resource);
+	protected void created(IResource resource) throws CVSException {
+		try {
+			beginOperation();
+			if (resource.exists()) {
+				restoreResourceSync(resource);
+				if (resource.getType() == IResource.FOLDER) {
+					restoreFolderSync((IFolder)resource);
+				}
 			}
+		} finally {
+			endOperation();
 		}
 	}
 	
-	/**
-	 * Notify the receiver that a folder has been created.
-	 * Any existing phantom sync info will be moved
-	 *
-	 * @param folder the folder that has been created
+	/*
+	 * Restore the folder sync info for the given folder
 	 */
-	private void created(IFolder folder) throws CVSException {
+	private void restoreFolderSync(IFolder folder) throws CVSException {
 		try {
 			// set the dirty count using what was cached in the phantom it
 			beginOperation();
 			FolderSyncInfo folderInfo = synchronizerCache.getCachedFolderSync(folder);
-			byte[] syncBytes = synchronizerCache.getCachedSyncBytes(folder);
-			if (folderInfo != null && syncBytes != null) {
+			if (folderInfo != null) {
+				// There is folder sync info to restore
 				if (folder.getFolder(SyncFileWriter.CVS_DIRNAME).exists()) {
 					// There is already a CVS subdirectory which indicates that
 					// either the folder was recreated by an external tool or that
@@ -1800,24 +1817,23 @@ public class EclipseSynchronizer implements IFlushOperation {
 					// Get the new folder sync info
 					FolderSyncInfo newFolderInfo = getFolderSync(folder);
 					if (newFolderInfo.getRoot().equals(folderInfo.getRoot())
-						&& newFolderInfo.getRepository().equals(folderInfo.getRepository())) {
-							// The folder is the same so use what is on disk
-							return;
-					}
-
-					// The folder is mapped to a different location.
-					// Purge new resource sync before restoring from phantom
-					ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
-					ICVSResource[] children = cvsFolder.members(ICVSFolder.MANAGED_MEMBERS);
-					for (int i = 0; i < children.length; i++) {
-						ICVSResource resource = children[i];
-						deleteResourceSync(resource.getIResource());
+							&& newFolderInfo.getRepository().equals(folderInfo.getRepository())) {
+						// The folder is the same so use what is on disk.
+						// Fall through to ensure that the Root and Repository files exist
+					} else {
+						// The folder is mapped to a different location.
+						// Purge new resource sync before restoring from phantom
+						ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
+						ICVSResource[] children = cvsFolder.members(ICVSFolder.MANAGED_MEMBERS);
+						for (int i = 0; i < children.length; i++) {
+							ICVSResource resource = children[i];
+							deleteResourceSync(resource.getIResource());
+						}
 					}
 				}
 
 				// set the sync info using what was cached in the phantom
 				setFolderSync(folder, folderInfo);
-				setCachedSyncBytes(folder, syncBytes);
 				// if there are members, indicate that 1 is changed so the Entries file is written
 				IResource[] members = members(folder);
 				if (members.length > 0) {
@@ -1833,27 +1849,31 @@ public class EclipseSynchronizer implements IFlushOperation {
 		}
 	}
 
-	/**
-	 * Notify the receiver that a file has been created. Any existing phantom
-	 * sync info will be moved
-	 *
-	 * @param file the file that has been created
+	/*
+	 * Restore the resource sync info for the given resource.
 	 */
-	private void created(IFile file) throws CVSException {
+	private void restoreResourceSync(IResource resource) throws CVSException {
 		try {
 			beginOperation();
-			byte[] syncBytes = synchronizerCache.getCachedSyncBytes(file);
-			if (syncBytes == null) return;
-			byte[] newBytes = getSyncBytes(file);
-			if (newBytes == null) {
-				// only move the sync info if there is no new sync info
-				setSyncBytes(file, ResourceSyncInfo.convertFromDeletion(syncBytes));
+			byte[] syncBytes = synchronizerCache.getCachedSyncBytes(resource);
+			if (syncBytes != null) {
+				if (!ResourceSyncInfo.isFolder(syncBytes)) {
+					syncBytes = ResourceSyncInfo.convertFromDeletion(syncBytes);
+				}
+				byte[] newBytes = getSyncBytes(resource);
+				if (newBytes != null && !ResourceSyncInfo.isFolder(newBytes)) {
+					newBytes = ResourceSyncInfo.convertFromDeletion(newBytes);
+				}
+				if (newBytes == null || Util.equals(syncBytes, newBytes)) {
+					// only move the sync info if there is no new sync info
+					setSyncBytes(resource, syncBytes);
+				}
 			}
 		} finally {
 			try {
 				endOperation();
 			} finally {
-				synchronizerCache.setCachedSyncBytes(file, null, true);
+				synchronizerCache.setCachedSyncBytes(resource, null, true);
 			}
 		}
 	}

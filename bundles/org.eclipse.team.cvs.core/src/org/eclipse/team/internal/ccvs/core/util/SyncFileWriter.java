@@ -527,9 +527,9 @@ public class SyncFileWriter {
 						ByteArrayOutputStream os = new ByteArrayOutputStream();
 						writeLinesToStreamAndClose(os, contents);
 						if(!file.exists()) {
-							file.create(new ByteArrayInputStream(os.toByteArray()), IResource.FORCE /*don't keep history and don't force*/, null);
+							file.create(new ByteArrayInputStream(os.toByteArray()), IResource.FORCE /*don't keep history but do force*/, null);
 						} else {
-							file.setContents(new ByteArrayInputStream(os.toByteArray()), IResource.FORCE /*don't keep history and don't force*/, null);
+							file.setContents(new ByteArrayInputStream(os.toByteArray()), IResource.FORCE /*don't keep history but do force*/, null);
 						}			
 						file.setSessionProperty(MODSTAMP_KEY, new Long(file.getModificationStamp()));
 					} catch(CVSException e) {

@@ -74,15 +74,26 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	 * @see #cacheFolderSync
 	 */
 	FolderSyncInfo getCachedFolderSync(IContainer container) throws CVSException {
+		byte[] bytes = internalGetCachedSyncBytes(container);
+		if (bytes == null) return null;
+		return FolderSyncInfo.getFolderSyncInfo(bytes);
+	}
+	
+	boolean hasCachedFolderSync(IContainer container) throws CVSException {
+		return internalGetCachedSyncBytes(container) != null;
+	};
+	
+	/*
+	 * Retieve the cached sync bytes from the synchronizer. A null
+	 * is returned if there are no cached sync bytes.
+	 */
+	private byte[] internalGetCachedSyncBytes(IContainer container) throws CVSException {
 		try {
-			byte[] bytes = getWorkspaceSynchronizer().getSyncInfo(FOLDER_SYNC_KEY, container);
-			if (bytes == null) return null;
-			return FolderSyncInfo.getFolderSyncInfo(bytes);
+			return getWorkspaceSynchronizer().getSyncInfo(FOLDER_SYNC_KEY, container);
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		}
 	}
-	
 	/**
 	 * Sets the folder sync info for the container; if null, deletes it.
 	 * Folder must exist and must not be the workspace root.

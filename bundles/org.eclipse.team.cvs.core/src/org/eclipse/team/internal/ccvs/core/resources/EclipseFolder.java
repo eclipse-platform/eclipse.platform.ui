@@ -97,6 +97,10 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 				project.open(null);				
 			} else {
 				((IFolder)resource).create(false /*don't force*/, true /*make local*/, null);
+				// We need to signal the creation to the synchronizer immediately because
+				// we may do additional CVS operations on the folder before the next delta
+				// occurs.
+				EclipseSynchronizer.getInstance().created(getIResource());;
 			}				
 		} catch (CoreException e) {
 			throw CVSException.wrapException(resource, Policy.bind("EclipseFolder_problem_creating", resource.getFullPath().toString(), e.getStatus().getMessage()), e); //$NON-NLS-1$

@@ -15,6 +15,8 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.core.BackgroundEventHandler;
@@ -62,7 +64,10 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 	}
 	
 	/**
-	 * @param resource
+	 * The resource has been added and has sync info that has not been written to disk. 
+	 * Queue an event to ensure that the CVS directory files
+	 * are written to disk.
+	 * @param resource the recently add resource
 	 */
 	public void recreated(IResource resource) {
 		queueEvent(new Event(resource, RECREATED_CVS_RESOURCE, IResource.DEPTH_ZERO), false);
@@ -72,9 +77,35 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 	 * @see org.eclipse.team.core.subscribers.BackgroundEventHandler#dispatchEvents()
 	 */
 	protected void dispatchEvents(IProgressMonitor monitor) throws TeamException {
+		// Handle ignore file changes
 		EclipseSynchronizer.getInstance().ignoreFilesChanged(getParents(changedIgnoreFiles));
 		changedIgnoreFiles.clear();
-		EclipseSynchronizer.getInstance().resourcesRecreated((IResource[]) recreatedResources.toArray(new IResource[recreatedResources.size()]), monitor);
+		// Handle recreations by project to reduce locking granularity
+		Map recreations = getResourcesByProject((IResource[]) recreatedResources.toArray(new IResource[recreatedResources.size()]));
 		recreatedResources.clear();
+		for (Iterator iter = recreations.values().iterator(); iter.hasNext();) {
+			List resources = (List) iter.next();
+			try {
+				EclipseSynchronizer.getInstance().resourcesRecreated((IResource[]) resources.toArray(new IResource[resources.size()]), monitor);
+			} catch (CVSException e) {
+				// Log and continue
+				CVSProviderPlugin.log(e);
+			}
+		}
+	}
+	
+	private Map getResourcesByProject(IResource[] resources) {
+		Map result = new HashMap();
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			IProject project = resource.getProject();
+			List projectResources = (List)result.get(project);
+			if (projectResources == null) {
+				projectResources = new ArrayList();
+				result.put(project, projectResources);
+			}
+			projectResources.add(resource);
+		}
+		return result;
 	}
 }

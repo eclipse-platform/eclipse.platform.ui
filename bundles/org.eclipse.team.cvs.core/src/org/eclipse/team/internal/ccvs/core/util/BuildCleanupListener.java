@@ -30,6 +30,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 
 /**
  * Cleanup any CVS folders that were copied by a builder. This will also clean up
@@ -55,9 +56,14 @@ public class BuildCleanupListener implements IResourceDeltaVisitor, IResourceCha
 		switch (delta.getKind()) {
 			case IResourceDelta.ADDED :
 				// make sure the added resource isn't a phantom
-				if (resource.exists() && resource.getType() == IResource.FOLDER) {
-					handleOrphanedSubtree((IContainer)resource);
-				}	
+				if (resource.exists()) {
+					if (EclipseSynchronizer.getInstance().wasPhantom(resource)) {
+						EclipseSynchronizer.getInstance().resourcesRecreated(new IResource[] { resource }, null);
+					}
+					if (resource.getType() == IResource.FOLDER) {
+						handleOrphanedSubtree((IContainer)resource);
+					}
+				}
 				break;
 			case IResourceDelta.CHANGED :
 				// This state means there is a resource before and after but changes were made by deleting and moving.
