@@ -17,16 +17,19 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class RemoteResourceElement implements IWorkbenchAdapter, IAdaptable {
-	IRemoteTargetResource remote;
-	boolean showFiles = true;
+	final public static int SHOW_FILES = 1;
+	final public static int SHOW_FOLDERS = 2;
+	
+	private IRemoteTargetResource remote;
+	private int showMask = SHOW_FILES | SHOW_FOLDERS;
 	
 	public RemoteResourceElement(IRemoteTargetResource remote) {
 		this.remote = remote;
 	}
 	
-	public RemoteResourceElement(IRemoteTargetResource remote, boolean showFiles) {
+	public RemoteResourceElement(IRemoteTargetResource remote, int showMask) {
 		this.remote = remote;
-		this.showFiles = showFiles;
+		this.showMask = showMask;
 	}
 
 	public IRemoteTargetResource getRemoteResource() {
@@ -49,8 +52,12 @@ public class RemoteResourceElement implements IWorkbenchAdapter, IAdaptable {
 						int n = 0;
 						for (int i = 0; i < children.length; i++) {
 							IRemoteTargetResource child = (IRemoteTargetResource)children[i];
-							if(child.isContainer() || showFiles) {
-								remoteElements.add(new RemoteResourceElement(child, showFiles));
+							if(child.isContainer()) {
+								if((showMask & SHOW_FOLDERS) != 0) {
+									remoteElements.add(new RemoteResourceElement(child, showMask));
+								}
+							} else if((showMask & SHOW_FILES) != 0) {
+								remoteElements.add(new RemoteResourceElement(child, showMask));
 							}
 						}
 						result[0] = (RemoteResourceElement[])remoteElements.toArray(new RemoteResourceElement[remoteElements.size()]);

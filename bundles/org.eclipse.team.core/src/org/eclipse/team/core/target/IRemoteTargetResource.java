@@ -38,6 +38,11 @@ public interface IRemoteTargetResource extends IRemoteResource {
 	public int getSize() throws TeamException;
 	
 	/**
+	 * Returns the last modified time
+	 */
+	public String getLastModified() throws TeamException;
+	
+	/**
 	 * Return a boolean value indicating whether or not this resource exists on the
 	 * remote server.
 	 */

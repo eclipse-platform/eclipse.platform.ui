@@ -8,11 +8,11 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class SiteRootsElement implements IWorkbenchAdapter, IAdaptable {
 	private Site[] sites = null;
-	private boolean showFiles = true;
+	private int showMask = RemoteResourceElement.SHOW_FILES | RemoteResourceElement.SHOW_FOLDERS;
 
-	public SiteRootsElement(Site[] sites, boolean showFiles) {
+	public SiteRootsElement(Site[] sites, int showMask) {
 		this.sites = sites;
-		this.showFiles = showFiles;
+		this.showMask = showMask;
 	}
 	
 	public SiteRootsElement() {
@@ -32,7 +32,7 @@ public class SiteRootsElement implements IWorkbenchAdapter, IAdaptable {
 		}
 		SiteElement[] siteElements = new SiteElement[childSites.length];
 		for (int i = 0; i < childSites.length; i++) {
-			siteElements[i] = new SiteElement(childSites[i], showFiles);
+			siteElements[i] = new SiteElement(childSites[i], showMask);
 		}
 		return siteElements;
 	}
