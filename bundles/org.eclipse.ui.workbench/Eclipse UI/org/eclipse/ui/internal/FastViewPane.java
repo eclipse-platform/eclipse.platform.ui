@@ -50,16 +50,17 @@ class FastViewPane {
 		 * @see org.eclipse.ui.internal.skins.IPresentationSite#setState(int)
 		 */
 		public void setState(int newState) {
+			ViewPane pane = currentPane;
 			switch(newState) {
 				case IPresentationSite.STATE_MINIMIZED: 
 					currentPane.getPage().toggleFastView(currentPane.getViewReference());
 					break;
 				case IPresentationSite.STATE_MAXIMIZED:
-					ViewPane pane = currentPane;
 					pane.getPage().removeFastView(pane.getViewReference());
 				    pane.doZoom();
-					//currentPane.getPage().removeFastView(currentPane.getViewReference());
-				    //(currentPane).doZoom();
+					break;
+				case IPresentationSite.STATE_RESTORED:
+					pane.getPage().removeFastView(pane.getViewReference());
 					break;
 				default:
 			}
@@ -180,7 +181,7 @@ class FastViewPane {
 		StackPresentation presentation = new PartTabFolderPresentation(newClientComposite, site, SWT.MIN | SWT.MAX, pane.getPage().getTheme());
 		
 		site.setPresentation(presentation);
-		site.setPresentationState(IPresentationSite.STATE_RESTORED);
+		site.setPresentationState(IPresentationSite.STATE_MAXIMIZED);
 		presentation.addPart(pane.getPresentablePart(), null);
 		presentation.selectPart(pane.getPresentablePart());
 		presentation.setActive(true);
