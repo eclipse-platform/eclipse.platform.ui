@@ -12,6 +12,7 @@ package org.eclipse.team.tests.ccvs.core.subscriber;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,8 +39,6 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberCommitAction;
-import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceUpdateAction;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.ui.sync.SyncInfoSet;
 
@@ -249,7 +248,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	 * This update uses the SubscriberUpdateAction to perform the update so that all special
 	 * cases should be handled properly
 	 */
-	public IResource[] update(IContainer container, String[] hierarchy, boolean allowOverwrite) throws CoreException, TeamException {
+	public IResource[] update(IContainer container, String[] hierarchy, boolean allowOverwrite) throws CoreException, TeamException, InvocationTargetException, InterruptedException {
 		IResource[] resources = getResources(container, hierarchy);
 		SyncInfo[] syncResources = createSyncInfos(resources);
 		update(syncResources,allowOverwrite);
@@ -277,32 +276,33 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	}
 
 	private void update(SyncInfo[] infos, final boolean allowOverwrite) throws TeamException {
-		WorkspaceUpdateAction action = new WorkspaceUpdateAction() {
-			protected boolean promptForOverwrite(SyncInfoSet syncSet) {
-				if (allowOverwrite) return true;
-				if (syncSet.isEmpty()) return true;
-				IResource[] resources = syncSet.getResources();
-				fail(resources[0].getFullPath().toString() + " failed to update properly");
-				return false;
-			}
-		};
+		TestWorkspaceUpdateAction action = new TestWorkspaceUpdateAction(allowOverwrite);
 		action.setSubscriber(getSubscriber());
-		action.run(new SyncInfoSet(infos), DEFAULT_MONITOR);	
+		try {
+			action.getRunnable(new SyncInfoSet(infos)).run(DEFAULT_MONITOR);
+		} catch (InvocationTargetException e) {
+			throw CVSException.wrapException(e);
+		} catch (InterruptedException e) {
+			fail("Operation was interupted");
+		}	
 	}
 
-	/**
-	 * @param syncResources
-	 */
 	private void commitResources(SyncInfo[] syncResources) throws TeamException {
-		SubscriberCommitAction action = new SubscriberCommitAction();
+		TestCommitAction action = new TestCommitAction();
 		action.setSubscriber(getSubscriber());
-		action.run(new SyncInfoSet(syncResources), DEFAULT_MONITOR);	
+		try {
+			action.getRunnable(new SyncInfoSet(syncResources)).run(DEFAULT_MONITOR);	
+		} catch (InvocationTargetException e) {
+			throw CVSException.wrapException(e);
+		} catch (InterruptedException e) {
+			fail("Operation was interupted");
+		}	
 	}
 	
 	/*
 	 * Perform a simple test that checks for the different types of incoming changes
 	 */
-	public void testIncomingChanges() throws IOException, CoreException, TeamException {
+	public void testIncomingChanges() throws IOException, TeamException, CoreException, InvocationTargetException, InterruptedException {
 		// Create a test project
 		IProject project = createProject("testIncomingChanges", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 		
@@ -399,7 +399,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	/*
 	 * Perform a simple test that checks for the different types of outgoing changes
 	 */
-	public void testOverrideOutgoingChanges() throws CoreException, TeamException, IOException {
+	public void testOverrideOutgoingChanges() throws IOException, TeamException, CoreException, InvocationTargetException, InterruptedException {
 		// Create a test project (which commits it as well)
 		IProject project = createProject("testOverrideOutgoingChanges", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 		// Checkout a copy for later verification
@@ -495,7 +495,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	/*
 	 * Test simple file conflicts
 	 */
-	public void testFileConflict() throws TeamException, CoreException, IOException {
+	public void testFileConflict() throws IOException, TeamException, CoreException, InvocationTargetException, InterruptedException {
 		String eol = System.getProperty("line.separator");
 		if (eol == null) eol = "\n";
 		
@@ -551,7 +551,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	/*
 	 * Test conflicts involving additions
 	 */
-	public void testAdditionConflicts() throws TeamException, CoreException {
+	public void testAdditionConflicts() throws TeamException, CoreException, InvocationTargetException, InterruptedException {
 		
 		// CASE 1: The user adds (using CVS add) a remotely added file
 		//     (a) catchup is simply get?
@@ -613,7 +613,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	/*
 	 * Test conflicts involving deletions
 	 */
-	public void testDeletionConflicts() throws TeamException, CoreException {
+	public void testDeletionConflicts() throws TeamException, CoreException, InvocationTargetException, InterruptedException {
 		
 		// CASE 1: The user deletes a remotely modified file
 		//    (a) catchup must do an update
@@ -746,7 +746,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	/*
 	 * Test a conflict with an incomming foler addition and an unmanaqged lcoal folder
 	 */
-	public void testFolderConflict()  throws TeamException, CoreException {
+	public void testFolderConflict()  throws TeamException, CoreException, InvocationTargetException, InterruptedException {
 		
 		// Create a test project (which commits it as well) and delete the resource without committing
 		IProject project = createProject("testFolderConflict", new String[] { "file.txt"});
@@ -822,7 +822,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	/*
 	 * Test catching up to an incoming addition
 	 */
-	public void testIncomingAddition() throws TeamException, CoreException {
+	public void testIncomingAddition() throws TeamException, CoreException, InvocationTargetException, InterruptedException {
 		// Create a test project
 		IProject project = createProject("testIncomingAddition", new String[] { "file1.txt", "folder1/", "folder1/a.txt"});
 		

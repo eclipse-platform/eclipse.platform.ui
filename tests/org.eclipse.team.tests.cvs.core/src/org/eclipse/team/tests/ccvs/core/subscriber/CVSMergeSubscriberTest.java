@@ -11,6 +11,7 @@
 package org.eclipse.team.tests.ccvs.core.subscriber;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -26,7 +27,6 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.ui.subscriber.MergeUpdateAction;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.ui.sync.SyncInfoSet;
 
@@ -63,33 +63,16 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		return copy;
 	}
 		
-	/**
-	 * Perform a merge on the given resources
-	 * @param subscriber
-	 * @param project
-	 * @param strings
-	 */
-	private void mergeResources(CVSMergeSubscriber subscriber, IProject project, String[] resourcePaths, boolean allowOverwrite) throws CoreException, TeamException {
+	private void mergeResources(CVSMergeSubscriber subscriber, IProject project, String[] resourcePaths, boolean allowOverwrite) throws CoreException, TeamException, InvocationTargetException, InterruptedException {
 		IResource[] resources = getResources(project, resourcePaths);
 		SyncInfo[] infos = createSyncInfos(subscriber, resources);
 		mergeResources(subscriber, infos, allowOverwrite);
 	}
 	
-	/**
-	 * @param syncResources
-	 */
-	private void mergeResources(TeamSubscriber subscriber, SyncInfo[] infos, final boolean allowOverwrite) throws TeamException {
-		MergeUpdateAction action = new MergeUpdateAction() {
-			protected boolean promptForOverwrite(SyncInfoSet syncSet) {
-				if (allowOverwrite) return true;
-				if (syncSet.isEmpty()) return true;
-				IResource[] resources = syncSet.getResources();
-				fail(resources[0].getFullPath().toString() + " failed to merge properly");
-				return false;
-			}
-		};
+	private void mergeResources(TeamSubscriber subscriber, SyncInfo[] infos, boolean allowOverwrite) throws TeamException, InvocationTargetException, InterruptedException {
+		TestMergeUpdateAction action = new TestMergeUpdateAction(allowOverwrite);
 		action.setSubscriber(subscriber);
-		action.run(new SyncInfoSet(infos), DEFAULT_MONITOR);
+		action.getRunnable(new SyncInfoSet(infos)).run(DEFAULT_MONITOR);
 	}
 
 	private CVSMergeSubscriber createMergeSubscriber(IProject project, CVSTag root, CVSTag branch) {
@@ -105,7 +88,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 	 * - incoming change
 	 * - incoming addition of a folder containing files
 	 */
-	public void testIncomingChanges() throws CoreException, TeamException {
+	public void testIncomingChanges() throws TeamException, CoreException, InvocationTargetException, InterruptedException {
 		// Create a test project
 		IProject project = createProject("testIncomingChanges", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 
@@ -154,7 +137,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.OUTGOING | SyncInfo.ADDITION});
 	}
 
-	public void testMergableConflicts() throws TeamException, CVSException, CoreException, IOException {
+	public void testMergableConflicts() throws IOException, TeamException, CoreException, InvocationTargetException, InterruptedException {
 		// Create a test project
 		IProject project = createProject("testMergableConflicts", new String[] { "file1.txt", "file2.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 		setContentsAndEnsureModified(project.getFile("file1.txt"), "some text\nwith several lines\n");
@@ -203,7 +186,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		//TODO: How do we know if the right thing happened to the file contents?	
 	}
 	
-	public void testUnmergableConflicts() throws TeamException, CVSException, CoreException, IOException {
+	public void testUnmergableConflicts() throws IOException, TeamException, CoreException, InvocationTargetException, InterruptedException {
 		// Create a test project
 		IProject project = createProject("testUnmergableConflicts", new String[] { "delete.txt", "file1.txt", "file2.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 		setContentsAndEnsureModified(project.getFile("file1.txt"), "some text\nwith several lines\n");
@@ -278,7 +261,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		//TODO: How do we know if the right thing happend to the file contents?
 	}
 	
-	public void testLocalScrub() throws CVSException, CoreException, IOException {
+	public void testLocalScrub() throws IOException, TeamException, CoreException, InvocationTargetException, InterruptedException {
 		// Create a test project
 		IProject project = createProject("testLocalScrub", new String[] { "delete.txt", "file1.txt", "file2.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 		setContentsAndEnsureModified(project.getFile("file1.txt"), "some text\nwith several lines\n");
