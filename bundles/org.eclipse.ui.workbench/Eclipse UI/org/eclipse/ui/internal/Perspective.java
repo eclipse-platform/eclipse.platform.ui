@@ -1057,6 +1057,19 @@ public IStatus restoreState() {
 		perspectiveActionIds.add(id);
 	}
 	
+	ArrayList extActionSets = getActionSetsFromRegistry();
+	for (int i = 0; i < extActionSets.size(); i++) {
+		String actionSetID = (String)extActionSets.get(i);
+		if (knownActionSetIds.contains(actionSetID))
+			continue;
+		IActionSetDescriptor d = 
+			WorkbenchPlugin.getDefault().getActionSetRegistry().findActionSet(actionSetID);
+		if (d != null) {
+			alwaysOnActionSets.add(d);
+			visibleActionSets.add(d);
+		}
+	}
+	
 	// Add the visible set of action sets to our knownActionSetIds
 	for (int i = 0; i < visibleActionSets.size(); i++) {
 		IActionSetDescriptor desc = (IActionSetDescriptor)visibleActionSets.get(i);
@@ -1072,7 +1085,7 @@ public IStatus restoreState() {
 	for (int i = 0; i < count; i++) {
 		IActionSetDescriptor desc = array[i];
 		if ( (!knownActionSetIds.contains(desc.getId())) &&
-		     (desc.isInitiallyVisible()) ) {
+			 (desc.isInitiallyVisible()) ) {
 			addActionSet(desc);
 		}
 	}
@@ -1108,6 +1121,17 @@ private void restoreViewLayoutRec(IMemento childMem, IViewReference viewRef) {
         rec.isStandalone = true;
     if (IWorkbenchConstants.FALSE.equals(childMem.getString(IWorkbenchConstants.TAG_SHOW_TITLE)))
         rec.showTitle = false;
+}
+
+/**
+ * Returns the ActionSets read from perspectiveExtensions in the registry.  
+ */
+private ArrayList getActionSetsFromRegistry() {
+	PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
+	reader.setIncludeOnlyTags(new String[] { PerspectiveExtensionReader.TAG_ACTION_SET });
+	PageLayout layout = new PageLayout();
+	reader.extendLayout(descriptor.getOriginalId(), layout);
+	return layout.getActionSets();
 }
 /**
  * Returns the Show In... part ids read from the registry.  
