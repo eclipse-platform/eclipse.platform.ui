@@ -16,6 +16,7 @@ import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
+import org.eclipse.update.internal.core.Policy;
 
 /**
  * parse default site.xml
@@ -150,12 +151,16 @@ public class DefaultSiteParser extends DefaultHandler {
 
 	}
 
-	public void handleInitialState(String elementName, Attributes attributes) throws SAXException {
+	public void handleInitialState(String elementName, Attributes attributes) throws SAXException{
 		if (elementName.equals(SITE)) {
 			stateStack.push(new Integer(STATE_SITE));
 			processSite(attributes);
-		} else
-			internalErrorUnknownTag("unknown root element:" + elementName);
+		} else{
+			internalErrorUnknownTag(Policy.bind("DefaultSiteParser.unknownRootElement") + elementName); //$NON-NLS-1$
+			// what we received was not a site.xml, no need to continue
+			throw new SAXException(new ParsingException(new InvalidSiteTypeException(null)));
+		}
+			
 	}
 
 	public void handleSiteState(String elementName, Attributes attributes) {
@@ -521,9 +526,8 @@ public class DefaultSiteParser extends DefaultHandler {
 
 		getStatus().add(error);
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
-			UpdateManagerPlugin.getPlugin().debug(error.toString());
 			UpdateManagerPlugin.getPlugin().debug(error.toString());			
-	}
+	} 
 	/**
 	 *
 	 */
@@ -544,6 +548,6 @@ public class DefaultSiteParser extends DefaultHandler {
 	}
 
 	private void internalError(String message) {
-		error(new Status(IStatus.WARNING, PLUGIN_ID, Platform.PARSE_PROBLEM, message, null));
+		error(new Status(IStatus.ERROR, PLUGIN_ID,IStatus.OK, message, null));
 	}
 }

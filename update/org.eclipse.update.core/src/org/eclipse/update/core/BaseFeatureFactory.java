@@ -47,7 +47,7 @@ public abstract class BaseFeatureFactory extends FeatureModelFactory implements 
 			//ok, there is no bundle, keep it as null
 			//DEBUG:
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + url.toExternalForm());
+				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
 			}
 		}
 		return bundle;

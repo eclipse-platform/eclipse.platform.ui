@@ -44,14 +44,14 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 			//ok, there is no bundle, keep it as null
 			//DEBUG:
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + url.toExternalForm());
+				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
 			}
 
 			// do not attempt if URL like protocol://....#....
 			if (url.getRef() == null) {
 				// the URL may point ot a file.. attempt to use the parent directory
 				String file = url.getFile();
-				if (!file.endsWith("/")) {
+				if (!file.endsWith("/")) { //$NON-NLS-1$
 					try {
 						int index = file.lastIndexOf('/');
 						if (index != -1) {
@@ -63,19 +63,19 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 						}
 					} catch (MalformedURLException e1) {
 						if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-							UpdateManagerPlugin.getPlugin().debug("Unable to retrive parent directory for URL:" + url);
+							UpdateManagerPlugin.getPlugin().debug(Policy.bind("BaseSiteFactory.CannotRetriveParentDirectory") + url);  //$NON-NLS-1$
 						}
 					} catch (MissingResourceException e2) { //ok, there is no bundle, keep it as null
 						//DEBUG:
 						if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-							UpdateManagerPlugin.getPlugin().debug(e2.getLocalizedMessage() + ":" + url.toExternalForm());
+							UpdateManagerPlugin.getPlugin().debug(e2.getLocalizedMessage() + ":" + url.toExternalForm());  //$NON-NLS-1$
 						}
 					}
 				}
 			}
 		} catch (MalformedURLException e1) {
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug("Unable to encode URL:" + url);
+				UpdateManagerPlugin.getPlugin().debug(Policy.bind("BaseSiteFactory.CannotEncodeURL") + url);  //$NON-NLS-1$
 			}
 		}
 

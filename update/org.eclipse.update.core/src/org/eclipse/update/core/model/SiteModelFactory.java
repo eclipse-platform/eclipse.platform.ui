@@ -61,9 +61,16 @@ public class SiteModelFactory {
 		} catch (SAXException e){
 			if (e instanceof SAXException){
 				SAXException exception = (SAXException) e;
+				// invalid Site type
 				if(exception.getException() instanceof InvalidSiteTypeException){
 					throw (InvalidSiteTypeException)exception.getException();
 				}
+				
+				// invalid XML file (i.e we are parsing a directory stream)
+				if(exception.getException() instanceof ParsingException){
+					throw (ParsingException)exception.getException();
+				}
+				
 			}
 			
 			throw new ParsingException(e);

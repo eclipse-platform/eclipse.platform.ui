@@ -140,7 +140,6 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 
 		try {
 			installedFeature = ((ISite)getSite()).install(feature, monitor);
-			configure(installedFeature);
 
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);
@@ -151,6 +150,8 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 		} finally {
 			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel)activity);
 		}
+
+		configure(installedFeature);
 
 		return installedFeature;
 	}

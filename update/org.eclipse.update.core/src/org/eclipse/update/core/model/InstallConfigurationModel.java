@@ -40,7 +40,7 @@ public class InstallConfigurationModel extends ModelObject {
 			}
 		} catch (SAXException exception) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during parsing of the install config XML:" + getLocationURLString(), exception);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Parsing error during creation of configuration:" + getLocationURLString()+"\r\n"+exception.toString(), exception);
 			throw new CoreException(status);
 		} catch (IOException exception) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();

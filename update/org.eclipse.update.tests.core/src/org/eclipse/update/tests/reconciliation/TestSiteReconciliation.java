@@ -126,9 +126,9 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		if (newSite==null) fail("Site not found in configuration");
 		
 		IFeatureReference[] ref = newSite.getConfiguredFeatures();
-		assertTrue(ref.length==1);
+		assertEquals("Wrong number of configured features",1,ref.length);
 		ref = newSite.getConfigurationPolicy().getUnconfiguredFeatures();
-		assertTrue(ref.length==0);
+		assertEquals("Wrong number of unconfigured features",0,ref.length);
 		
 		removeConfigSite(url);
 	}
@@ -153,9 +153,10 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		if (newSite==null) fail("Site not found in configuration");
 		
 		IFeatureReference[] ref = newSite.getConfiguredFeatures();
-		assertTrue(ref.length==1);
+		assertEquals("Wrong number of configured features",1,ref.length);
 		ref = newSite.getConfigurationPolicy().getUnconfiguredFeatures();
-		assertTrue(ref.length==0);
+		assertEquals("Wrong number of unconfigured features",0,ref.length);
+
 		removeConfigSite(url);
 	}
 

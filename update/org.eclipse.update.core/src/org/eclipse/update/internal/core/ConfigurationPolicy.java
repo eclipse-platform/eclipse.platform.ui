@@ -187,8 +187,8 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 				toInclude = remove(getUnconfiguredFeatures(),include);
 		}		
 		
-		
-		result = union(toInclude,result);
+		// FIXME: HACK FOR OTI TC
+		//result = union(toInclude,result);
 
 		return result;
 	}

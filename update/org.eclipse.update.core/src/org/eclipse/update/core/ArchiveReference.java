@@ -26,8 +26,8 @@ public class ArchiveReference extends ArchiveReferenceModel implements IArchiveE
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		String result = "IURLEntry: ";
-		 result = result +( (getPath()==null)?getURL().toExternalForm():getPath() + " : "+getURL().toExternalForm());
+		String result = "IURLEntry: "; //$NON-NLS-1$
+		 result = result +( (getPath()==null)?getURL().toExternalForm():getPath() + " : "+getURL().toExternalForm()); //$NON-NLS-1$
 		return result;
 	}
 

@@ -5,10 +5,16 @@ package org.eclipse.update.tests.parser;
  */
 import java.net.URL;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.DefaultFeatureParser;
+import org.eclipse.update.core.model.FeatureModel;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.FeatureReference;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.tests.UpdateManagerTestCase;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 public class TestFeatureParse extends UpdateManagerTestCase {
 	/**
@@ -34,5 +40,25 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 			assertEquals("Object Technology International",prov);
 			
 	}
+	
+	public void testParseValid1() throws Exception {
+
+	try {
+
+		URL remoteURL = new URL(SOURCE_FILE_SITE + "parsertests/feature1.xml");
+		DefaultFeatureParser parser = new DefaultFeatureParser(new FeatureExecutableFactory());
+		URL resolvedURL = URLEncoder.encode(remoteURL);		
+		FeatureModel remoteFeature = parser.parse(resolvedURL.openStream());
+		remoteFeature.resolve(remoteURL, null);
+	
+		fail("Exception shoudl be thrown");
+	} catch (SAXParseException e){
+		if (e.getMessage().indexOf("</copyright>")==-1){
+			throw e;	
+		}
+	}
+		
+
+	}	
 }
 
