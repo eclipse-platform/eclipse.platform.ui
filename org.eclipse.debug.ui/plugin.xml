@@ -387,6 +387,26 @@
             </groupMarker>
          </menu>
          <action
+               definitionId="org.eclipse.debug.ui.commands.ToggleWatchpoint"
+               label="%ToggleWatchpointAction.label"
+               icon="icons/full/obj16/readwrite_obj.gif"
+               disabledIcon="icons/full/obj16/readwrite_obj_disabled.gif"
+               helpContextId="toggle_watchpoint_action_context"
+               class="org.eclipse.debug.internal.ui.actions.RetargetWatchpointAction"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               id="org.eclipse.debug.ui.actions.ToggleWatchpoint">
+         </action>
+         <action
+               definitionId="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint"
+               label="%ToggleMethodBreakpointAction.label"
+               icon="icons/full/obj16/brkp_obj.gif"
+               disabledIcon="icons/full/obj16/brkpd_obj.gif"
+               helpContextId="toggle_method_breakpoint_action_context"
+               class="org.eclipse.debug.internal.ui.actions.RetargetMethodBreakpointAction"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               id="org.eclipse.debug.ui.actions.ToggleMethodBreakpoint">
+         </action>
+         <action
                definitionId="org.eclipse.debug.ui.commands.ToggleBreakpoint"
                label="%ToggleBreakpointAction.label"
                icon="icons/full/obj16/brkp_obj.gif"
@@ -1407,6 +1427,30 @@
             string="Ctrl+Shift+B"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.commands.ToggleBreakpoint"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ActionDefinition.toggleWatchpoint.name"
+            description="%ActionDefinition.toggleWatchpoint.description"
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.ui.commands.ToggleWatchpoint">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.ui.commands.ToggleWatchpoint"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ActionDefinition.toggleMethodBreakpoint.name"
+            description="%ActionDefinition.toggleMethodBreakpoint.description"
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>      
    </extension>

@@ -25,24 +25,23 @@ import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * A run to line action that can be contributed to a view or editor. The action
- * will perform the 'run to line' operation for views that provide
+ * A run to line action that can be contributed to a an editor. The action
+ * will perform the 'run to line' operation for editors that provide
  * an appropriate 'run to line' adapter (<code>IRunToLineTarget</code>).
  * <p>
  * EXPERIMENTAL
  * </p>
  * <p>
- * Clients may instantiate this class. This class is not intended to
+ * Clients may instantiate this class, or contribute it as an editor
+ * action delegate in plug-in XML. This class is not intended to
  * be subclassed.
  * </p>
  * @since 3.0
  */
-public class RunToLineActionDelegate implements IViewActionDelegate, IEditorActionDelegate, IActionDelegate2 {
+public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDelegate2 {
 	
 	private IWorkbenchPart activePart = null;
 	private IRunToLineTarget partTarget = null;
@@ -71,8 +70,8 @@ public class RunToLineActionDelegate implements IViewActionDelegate, IEditorActi
 		
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
+	/*(non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
 	public void dispose() {
 		activePart.getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, selectionListener);
@@ -101,11 +100,6 @@ public class RunToLineActionDelegate implements IViewActionDelegate, IEditorActi
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partOpened(IWorkbenchPart part) {		
-	}
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
 	public void update() {
@@ -118,30 +112,7 @@ public class RunToLineActionDelegate implements IViewActionDelegate, IEditorActi
 			action.setEnabled(false);
 		}
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
-	public void init(IViewPart view) {
-		init((IWorkbenchPart)view);
-	}
-	
-	protected void init(IWorkbenchPart view) {
-		partTarget = null;
-		activePart = view;
-		if (view != null) {
-			view.getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, selectionListener);
-			partTarget  = (IRunToLineTarget) view.getAdapter(IRunToLineTarget.class);
-			if (partTarget == null) {
-				IAdapterManager adapterManager = Platform.getAdapterManager();
-				// TODO: we could restrict loading to cases when the debugging context is on
-				if (adapterManager.hasAdapter(view, "org.eclipse.debug.internal.ui.actions.IRunToLineTarget")) { //$NON-NLS-1$
-					partTarget = (IRunToLineTarget) adapterManager.loadAdapter(view, "org.eclipse.debug.internal.ui.actions.IRunToLineTarget"); //$NON-NLS-1$
-				}
-			}
-		}
-		update();		
-	}	
-	
+		
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
@@ -164,6 +135,22 @@ public class RunToLineActionDelegate implements IViewActionDelegate, IEditorActi
 	 */
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		init(action);
-		init(targetEditor);
+		if (activePart != null && !activePart.equals(targetEditor)) {
+			activePart.getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, selectionListener);
+		}
+		partTarget = null;
+		activePart = targetEditor;
+		if (targetEditor != null) {
+			targetEditor.getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, selectionListener);
+			partTarget  = (IRunToLineTarget) targetEditor.getAdapter(IRunToLineTarget.class);
+			if (partTarget == null) {
+				IAdapterManager adapterManager = Platform.getAdapterManager();
+				// TODO: we could restrict loading to cases when the debugging context is on
+				if (adapterManager.hasAdapter(targetEditor, "org.eclipse.debug.internal.ui.actions.IRunToLineTarget")) { //$NON-NLS-1$
+					partTarget = (IRunToLineTarget) adapterManager.loadAdapter(targetEditor, "org.eclipse.debug.internal.ui.actions.IRunToLineTarget"); //$NON-NLS-1$
+				}
+			}
+		}
+		update();		
 	}
 }

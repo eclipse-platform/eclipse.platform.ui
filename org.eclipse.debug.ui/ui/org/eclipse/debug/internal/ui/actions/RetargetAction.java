@@ -11,12 +11,14 @@
 package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
@@ -33,7 +35,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	
 	protected IWorkbenchWindow window = null;
 	private IWorkbenchPart activePart = null;
-	private Object partTarget = null;
+	private Object targetAdapter = null;
 	private IAction action = null;
 	private static final ISelection EMPTY_SELECTION = new EmptySelection();  
 	
@@ -70,7 +72,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	public void dispose() {
 		window.getPartService().removePartListener(this);
 		activePart = null;
-		partTarget = null;
+		targetAdapter = null;
 		
 	}
 	/* (non-Javadoc)
@@ -89,9 +91,9 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		if (partTarget != null) {
+		if (targetAdapter != null) {
 			try {
-				performAction(partTarget, getTargetSelection(), activePart);
+				performAction(targetAdapter, getTargetSelection(), activePart);
 			} catch (CoreException e) {
 				DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.getString("RetargetAction.2"), ActionMessages.getString("RetargetAction.3"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -112,6 +114,16 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		this.action = action;
+		// if the active part did not provide an adapter, see if the selectoin does
+		if (targetAdapter == null && selection instanceof IStructuredSelection) {
+			IStructuredSelection ss = (IStructuredSelection) selection;
+			if (!ss.isEmpty()) {
+				Object object = ss.getFirstElement();
+				if (object instanceof IAdaptable) {
+					targetAdapter = getAdapter((IAdaptable) object);
+				}
+			}
+		}
 		update();
 	}
 	
@@ -120,16 +132,20 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	 */
 	public void partActivated(IWorkbenchPart part) {
 		activePart = part;
-		partTarget = null;
-		partTarget  = part.getAdapter(getAdapterClass());
-		if (partTarget == null) {
+		targetAdapter = getAdapter(part);
+		update();
+	}
+	
+	protected Object getAdapter(IAdaptable adaptable) {
+		Object adapter  = adaptable.getAdapter(getAdapterClass());
+		if (adapter == null) {
 			IAdapterManager adapterManager = Platform.getAdapterManager();
 			// TODO: we could restrict loading to cases when the debugging context is on
-			if (adapterManager.hasAdapter(part, getAdapterClass().getName())) { //$NON-NLS-1$
-				partTarget = adapterManager.loadAdapter(part, getAdapterClass().getName()); //$NON-NLS-1$
+			if (adapterManager.hasAdapter(adaptable, getAdapterClass().getName())) { //$NON-NLS-1$
+				targetAdapter = adapterManager.loadAdapter(adaptable, getAdapterClass().getName()); //$NON-NLS-1$
 			}
 		}
-		update();
+		return adapter;
 	}
 	
 	/**
@@ -166,8 +182,8 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 		if (action == null) {
 			return;
 		}
-		if (partTarget != null) {
-			action.setEnabled(canPerformAction(partTarget, getTargetSelection(), activePart));
+		if (targetAdapter != null) {
+			action.setEnabled(canPerformAction(targetAdapter, getTargetSelection(), activePart));
 		} else {
 			action.setEnabled(false);
 		}
