@@ -21,7 +21,8 @@ import org.eclipse.ui.progress.UIJob;
  * The ProgressContentProvider is the content provider used for
  * classes that listen to the progress changes.
  */
-public class ProgressContentProvider implements ITreeContentProvider {
+public class ProgressContentProvider
+	implements ITreeContentProvider, IJobProgressManagerListener {
 
 	/**
 	 * The UpdatesInfo is a private class for keeping track of the
@@ -76,7 +77,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 
 	public ProgressContentProvider(TreeViewer mainViewer) {
 		viewer = mainViewer;
-		JobProgressManager.getInstance().addProvider(this);
+		JobProgressManager.getInstance().addListener(this);
 		createUpdateJob();
 	}
 	/* (non-Javadoc)
@@ -117,7 +118,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
-		JobProgressManager.getInstance().removeProvider(this);
+		JobProgressManager.getInstance().removeListener(this);
 	}
 
 	/* (non-Javadoc)
@@ -128,48 +129,49 @@ public class ProgressContentProvider implements ITreeContentProvider {
 		Object oldInput,
 		Object newInput) {
 	}
-	/**
-	 * Refresh the viewer as a result of a change in info.
-	 * @param info
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refresh(org.eclipse.ui.internal.progress.JobInfo)
 	 */
-	void refresh(final JobInfo info) {
+	public void refresh(JobInfo info) {
 
 		synchronized (updateLock) {
 			currentInfo.refresh(info);
 		}
 		//Add in a 100ms delay so as to keep priority low
 		updateJob.schedule(100);
+
 	}
 
-	/**
-	 * Refresh the viewer for all jobs.
-	 * @param info
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshAll()
 	 */
-	void refreshAll() {
+	public void refreshAll() {
+
 		synchronized (updateLock) {
 			currentInfo.updateAll = true;
 		}
 
 		//Add in a 100ms delay so as to keep priority low
 		updateJob.schedule(100);
+
 	}
 
-	/**
-	 * Refresh the viewer as a result of an addition of info.
-	 * @param info
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#add(org.eclipse.ui.internal.progress.JobInfo)
 	 */
-	void add(final JobInfo info) {
+	public void add(JobInfo info) {
+
 		synchronized (updateLock) {
 			currentInfo.add(info);
 		}
 		updateJob.schedule(100);
+
 	}
 
-	/**
-	 * Refresh the viewer as a result of a removal of info.
-	 * @param info
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#remove(org.eclipse.ui.internal.progress.JobInfo)
 	 */
-	void remove(final JobInfo info) {
+	public void remove(JobInfo info) {
 		synchronized (updateLock) {
 			currentInfo.remove(info);
 		}

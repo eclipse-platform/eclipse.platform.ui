@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.internal.progress.ProgressMessages;
 
 /**
  * JobProgressManager provides the progress monitor to the 
@@ -27,9 +26,10 @@ public class JobProgressManager
 	extends JobChangeAdapter
 	implements IProgressProvider {
 
-	private ArrayList providers = new ArrayList();
+	private ArrayList listeners = new ArrayList();
 	private static JobProgressManager singleton;
 	private Map jobs = Collections.synchronizedMap(new HashMap());
+	private Collection filteredJobs = new ArrayList();
 	boolean debug = false;
 	static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 
@@ -164,19 +164,19 @@ public class JobProgressManager
 	}
 
 	/**
-	 * Add a progress content provider to listen to the changes.
-	 * @param provider
+	 * Add an IJobProgressManagerListener to listen to the changes.
+	 * @param listener
 	 */
-	void addProvider(ProgressContentProvider provider) {
-		providers.add(provider);
+	void addListener(IJobProgressManagerListener listener) {
+		listeners.add(listener);
 	}
 
 	/**
-	 * Remove the supplied provider from the list of providers.
-	 * @param provider
+	 * Remove the supplied IJobProgressManagerListener from the list of listeners.
+	 * @param listener
 	 */
-	void removeProvider(ProgressContentProvider provider) {
-		providers.remove(provider);
+	void removeListener(IJobProgressManagerListener listener) {
+		listeners.remove(listener);
 	}
 
 	/* (non-Javadoc)
@@ -187,7 +187,9 @@ public class JobProgressManager
 			return;
 		JobInfo info = new JobInfo(event.getJob());
 		jobs.put(event.getJob(), info);
-		if (!isNonDisplayableJob(event.getJob()))
+		if (isNonDisplayableJob(event.getJob()))
+			addToFiltered(event.getJob());
+		else
 			add(info);
 	}
 
@@ -209,10 +211,10 @@ public class JobProgressManager
 		JobInfo info = getJobInfo(event.getJob());
 		if (event.getResult().getSeverity() == IStatus.ERROR) {
 			info.setError(event.getResult());
-			UIJob job = new UIJob(ProgressMessages.getString("JobProgressManager.OpenProgressJob")) { //$NON-NLS-1$
-				/* (non-Javadoc)
-				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-				 */
+				UIJob job = new UIJob(ProgressMessages.getString("JobProgressManager.OpenProgressJob")) {//$NON-NLS-1$
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					IWorkbenchWindow window =
 						WorkbenchPlugin
@@ -227,12 +229,15 @@ public class JobProgressManager
 				}
 			};
 			job.schedule();
+			if (!isNonDisplayableJob(event.getJob()))
+				refresh(info);
 
-		} else
+		} else {
 			jobs.remove(event.getJob());
-		//Only refresh if we are showing it
-		if (!isNonDisplayableJob(event.getJob()))
-			remove(info);
+			//Only refresh if we are showing it
+			if (!isNonDisplayableJob(event.getJob()))
+				remove(info);
+		}
 	}
 
 	/**
@@ -251,29 +256,36 @@ public class JobProgressManager
 	}
 
 	/**
-	 * Refresh the content providers as a result of a change in info.
+	 * Refresh the IJobProgressManagerListeners as a result of a change in info.
 	 * @param info
 	 */
 	public void refresh(JobInfo info) {
-		Iterator iterator = providers.iterator();
+		
+		//If we never displayed this job then add it instead.
+		if (isFiltered(info.getJob())){
+			add(info);
+			removeFromFiltered(info.getJob());
+		}
+			Iterator iterator = listeners.iterator();
 		while (iterator.hasNext()) {
-			ProgressContentProvider provider =
-				(ProgressContentProvider) iterator.next();
-			provider.refresh(info);
+			IJobProgressManagerListener listener =
+				(IJobProgressManagerListener) iterator.next();
+			listener.refresh(info);
 		}
 
 	}
 
 	/**
-	 * Refresh all the content providers as a result of a change in the whole model.
+	 * Refresh all the IJobProgressManagerListener as a result of a change in the whole model.
 	 * @param info
 	 */
 	public void refreshAll() {
-		Iterator iterator = providers.iterator();
+		filteredJobs.clear();
+		Iterator iterator = listeners.iterator();
 		while (iterator.hasNext()) {
-			ProgressContentProvider provider =
-				(ProgressContentProvider) iterator.next();
-			provider.refreshAll();
+			IJobProgressManagerListener listener =
+				(IJobProgressManagerListener) iterator.next();
+			listener.refreshAll();
 		}
 
 	}
@@ -283,11 +295,13 @@ public class JobProgressManager
 	 * @param info
 	 */
 	public void remove(JobInfo info) {
-		Iterator iterator = providers.iterator();
+		removeFromFiltered(info.getJob());
+		
+		Iterator iterator = listeners.iterator();
 		while (iterator.hasNext()) {
-			ProgressContentProvider provider =
-				(ProgressContentProvider) iterator.next();
-			provider.remove(info);
+			IJobProgressManagerListener listener =
+				(IJobProgressManagerListener) iterator.next();
+			listener.remove(info);
 		}
 
 	}
@@ -297,10 +311,10 @@ public class JobProgressManager
 	 * @param info
 	 */
 	public void add(JobInfo info) {
-		Iterator iterator = providers.iterator();
+		Iterator iterator = listeners.iterator();
 		while (iterator.hasNext()) {
-			ProgressContentProvider provider =
-				(ProgressContentProvider) iterator.next();
+			IJobProgressManagerListener provider =
+				(IJobProgressManagerListener) iterator.next();
 			provider.add(info);
 		}
 
@@ -363,23 +377,63 @@ public class JobProgressManager
 			remove(info);
 		}
 	}
-	
+
 	/**
 	 * Clear all of the errors from the list.
 	 */
-	void clearAllErrors(){
+	void clearAllErrors() {
 		Collection jobsToDelete = new ArrayList();
 		Iterator keySet = jobs.keySet().iterator();
-		while(keySet.hasNext()){
+		while (keySet.hasNext()) {
 			Object job = keySet.next();
 			JobInfo info = (JobInfo) jobs.get(job);
-			if(info.getErrorStatus() != null)
+			if (info.getErrorStatus() != null)
 				jobsToDelete.add(job);
 		}
 		Iterator deleteSet = jobsToDelete.iterator();
-		while(deleteSet.hasNext()){
+		while (deleteSet.hasNext()) {
 			jobs.remove(deleteSet.next());
 		}
 		refreshAll();
+	}
+
+	/**
+	 * Return whether or not there are any errors displayed.
+	 * @return
+	 */
+	boolean hasErrorsDisplayed() {
+		Iterator keySet = jobs.keySet().iterator();
+		while (keySet.hasNext()) {
+			Object job = keySet.next();
+			JobInfo info = (JobInfo) jobs.get(job);
+			if (info.getErrorStatus() != null)
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Add job to the list of filtered jobs.
+	 * @param job
+	 */
+	void addToFiltered(Job job) {
+		filteredJobs.add(job);
+	}
+
+	/**
+	 * Remove job from the list of fitlered jobs.
+	 * @param job
+	 */
+	void removeFromFiltered(Job job) {
+		filteredJobs.remove(job);
+	}
+
+	/**
+	 * Return whether or not the job is currently filtered.
+	 * @param job
+	 * @return
+	 */
+	boolean isFiltered(Job job) {
+		return filteredJobs.contains(job);
 	}
 }
