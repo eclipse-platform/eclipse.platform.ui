@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.workingset.*;
 import org.eclipse.help.servlet.WebappResources;
@@ -139,8 +140,12 @@ public class WorkingSetManagerData extends RequestData {
 
 	public String getWorkingSetName() {
 		String name = request.getParameter("workingSet");
-		if (name == null || name.length() == 0)
-			name = WebappResources.getString("All", request);
+		if (name == null || name.length() == 0) {
+			// See if anything is set in the preferences
+			name = HelpPlugin.getDefault().getPluginPreferences().getString(HelpSystem.WORKING_SET);
+			if (name == null || name.length() == 0)
+				name = WebappResources.getString("All", request);
+		}
 		return name;
 	}
 

@@ -100,31 +100,9 @@ A {
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
 
-//var workingSet = '<%=workingSetData.getWorkingSetName()%>';
-function setWorkingSet(ws) 
-{
-return;
-//alert("Set " + ws)
-
-	workingSet = ws;
-	if (!workingSet)
-		workingSet = '<%=workingSetData.getWorkingSetName()%>';
-
-//return;
-
-	workingSetNode = document.getElementById("workingSet");
-	if (workingSetNode.firstChild){
-		workingSetNode.firstChild.nodeValue = workingSet;	
-	} else {
-		text = document.createTextNode(workingSet);
-		workingSetNode.appendChild(text);
-	}
-}
-
 var advancedDialog;
 var w = 300;
 var h = 300;
-
 
 function openAdvanced()
 {
