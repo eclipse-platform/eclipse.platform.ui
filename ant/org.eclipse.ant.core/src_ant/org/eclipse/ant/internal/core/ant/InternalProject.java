@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -103,9 +104,12 @@ public class InternalProject extends Project {
 			}
 			return o;
 		} catch (InvocationTargetException ite) {
-			return null;
+			Throwable t = ite.getTargetException();
+			String message= MessageFormat.format(InternalAntMessages.getString("InternalProject.0"), new String[]{typeName, t.toString()}); //$NON-NLS-1$
+			throw new BuildException(message, t);
 		} catch (Throwable t) {
-			return null;
+			String message= MessageFormat.format(InternalAntMessages.getString("InternalProject.0"), new String[]{typeName, t.toString()}); //$NON-NLS-1$
+			throw new BuildException(message, t);
 		}
 	}
 
