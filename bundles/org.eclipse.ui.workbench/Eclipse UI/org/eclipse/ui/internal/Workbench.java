@@ -977,28 +977,27 @@ public final class Workbench implements IWorkbench {
 		IPreferenceStore store) {
 				
 		String id = definition.getId();
-		RGB color = PreferenceConverter.getColor(store, id);
-		if (color == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
-			// process RGB if no good value is set.
-			color = StringConverter.asRGB(definition.getValue(), null);
-
-			if (color != null) 
-				PreferenceConverter.setDefault(
-						store, 
-						id, 
-						color);
-			else { // we have a default value.  Get it.
-				color = PreferenceConverter.getColor(store, definition.getDefaultsTo());
-				if (color != null) 
-					PreferenceConverter.setDefault(
-							store, 
-							id, 
-							color);
-				}
+		RGB prefColor = PreferenceConverter.getColor(store, id);
+		RGB defaultColor = null;
+		if (definition.getValue() != null)
+		    defaultColor = StringConverter.asRGB(definition.getValue(), null);
+		else 
+		    defaultColor = PreferenceConverter.getColor(store, definition.getDefaultsTo());
+		
+		if (prefColor == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
+		    prefColor = defaultColor;
+		}
+		
+		if (defaultColor != null) {
+			PreferenceConverter.setDefault(
+					store, 
+					id, 
+					defaultColor);
 		}
 
-		if (color != null) {
-			registry.put(id, color);
+		
+		if (prefColor != null) {		    
+			registry.put(id, prefColor);
 		}
 	}
 
