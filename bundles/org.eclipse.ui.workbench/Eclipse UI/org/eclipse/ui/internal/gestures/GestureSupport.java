@@ -11,7 +11,45 @@
 
 package org.eclipse.ui.internal.gestures;
 
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.keys.KeySupport;
+
 public final class GestureSupport {
+
+	public static void main(String[] args) {
+		final int HEIGHT = 300;
+		final int WIDTH = 400;
+		Display display = new Display();
+		Rectangle bounds = display.getBounds();
+		Shell shell = new Shell(display);
+
+		if (bounds.height >= HEIGHT && bounds.width >= WIDTH)
+			shell.setBounds((bounds.x + bounds.width - WIDTH) / 2, (bounds.y + bounds.height - HEIGHT) / 2, WIDTH, HEIGHT);
+
+		shell.setText(GestureSupport.class.getName());
+		shell.open();
+		Capture capture = new Capture();
+
+		capture.addCaptureListener(new ICaptureListener() {
+			public void capture(CaptureEvent captureEvent) {
+				System.out.println(
+					"Pen: " + captureEvent.getPen() + //$NON-NLS-1$ 
+					" Key Stroke: " + KeySupport.convertAcceleratorToKeyStroke(captureEvent.getData()) + //$NON-NLS-1$ 
+					" Points: " + captureEvent.getPoints().length + //$NON-NLS-1$
+					" Gesture: " + recognize(captureEvent.getPoints(), 20)); //$NON-NLS-1$		
+			}
+		});
+
+		capture.setControl(shell);
+
+		while (!shell.isDisposed())
+			if (!display.readAndDispatch())
+				display.sleep();
+
+		display.dispose();
+	}
 
 	public static String recognize(Point[] points, int sensitivity) {
 		char stroke = '\0';
