@@ -629,7 +629,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			WorkbenchPlugin.getDefault().log(msg,new Status(Status.ERROR,PlatformUI.PLUGIN_ID,0,msg,e.getTargetException()));
 		}
 	}
-	
+
 	private void initializeSingleClickOption() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		boolean openOnSingleClick = store.getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK);
@@ -939,70 +939,48 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Reads the about info for all the configured features.
 	 */
 	private void readFeaturesInfo() {
-		// get the list of versioned feature ids
-		ArrayList versionedFeatureIdentifiers = new ArrayList();
-		ILocalSite localSite;
-		try {
-			localSite = SiteManager.getLocalSite(); 
-		} catch (CoreException e) {
-			WorkbenchPlugin.log("Error obtaining configured features", e.getStatus()); //$NON-NLS-1$
-			featuresInfo = new AboutInfo[0];
-			return;
-		}
-		IInstallConfiguration installConfiguration = localSite.getCurrentConfiguration(); 
-		IConfiguredSite[] configuredSites = installConfiguration.getConfiguredSites(); 
-		for (int i = 0; i < configuredSites.length; i++) {
-			IFeatureReference[] featureReferences = configuredSites[i].getConfiguredFeatures();
-			for (int j = 0; j < featureReferences.length; j++) {
-				VersionedIdentifier id = null;
-				try {
-					id = featureReferences[j].getFeature().getVersionedIdentifier();
-				} catch (CoreException e) {
-					WorkbenchPlugin.log("Error obtaining feature", e.getStatus()); //$NON-NLS-1$
-				}
-				if (id != null)
-					versionedFeatureIdentifiers.add(id);
-			}	
+
+		ArrayList aboutInfos = new ArrayList();
+		
+		IPlatformConfiguration.IFeatureEntry[] featureEntries = 
+			BootLoader.getCurrentPlatformConfiguration().getConfiguredFeatureEntries();
+		for (int i = 0; i < featureEntries.length; i++) {
+			IPlatformConfiguration.IFeatureEntry entry = featureEntries[i];
+			String id = entry.getFeatureIdentifier();
+			String ver = entry.getFeatureVersion();
+			try {
+				PluginVersionIdentifier vid = new PluginVersionIdentifier(ver);
+				AboutInfo info = new AboutInfo(id, vid);
+				aboutInfos.add(info);
+			}
+			catch (RuntimeException e) {
+				WorkbenchPlugin.log("Error parsing version \"" + ver + "\" for plugin: " + id + " in Workbench.readFeaturesInfo()");
+				// continue
+			}
 		}
 
 		// ensure a consistent ordering
-		Collections.sort(versionedFeatureIdentifiers, new Comparator() {
-			Collator coll = Collator.getInstance(Locale.getDefault());
+		Collections.sort(aboutInfos, new Comparator() {
+			Collator coll = Collator.getInstance();
 			public int compare(Object a, Object b) {
-				VersionedIdentifier v1, v2;
-				String featureId1, featureId2;
-				PluginVersionIdentifier versionId1, versionId2;
-				v1 = (VersionedIdentifier) a;
-				featureId1 = v1.getIdentifier();
-				versionId1 = v1.getVersion();
-				v2 = (VersionedIdentifier) b;
-				featureId2 = v2.getIdentifier();
-				versionId2 = v2.getVersion();
-				
-				if (featureId1.equals(featureId1)) {
-					if (versionId1.equals(versionId2)) 
-						return 0;
-					else if (versionId1.isGreaterThan(versionId2))
-						return 1;
-					else 
-						return -1;
-				} else {
-					return coll.compare(featureId1, featureId2);
+				AboutInfo infoA = (AboutInfo) a;
+				AboutInfo infoB = (AboutInfo) b;
+				int c = coll.compare(infoA.getFeatureId(), infoB.getFeatureId());
+				if (c == 0) {
+					c = infoA.getVersionId().isGreaterThan(infoB.getVersionId()) ? 1 : -1;
 				}
+				return c;
 			}
 		});
 		
-		// get an AboutInfo for each id
-		VersionedIdentifier[] idArray = 
-			(VersionedIdentifier[])versionedFeatureIdentifiers.toArray(
-				new VersionedIdentifier[versionedFeatureIdentifiers.size()]);
-		featuresInfo = new AboutInfo[idArray.length];
-		for (int i = 0; i < idArray.length; i++) {
-			featuresInfo[i] = new AboutInfo(idArray[i].getIdentifier(), idArray[i].getVersion());
+		featuresInfo = new AboutInfo[aboutInfos.size()];
+		aboutInfos.toArray(featuresInfo);
+		
+		for (int i = 0; i < featuresInfo.length; i++) {
 			try {
 				featuresInfo[i].readINIFile();
 			} catch (CoreException e) {
-				WorkbenchPlugin.log("Error reading about info file for feature: " + idArray[i], e.getStatus()); //$NON-NLS-1$
+				WorkbenchPlugin.log("Error reading about info file for feature: " + featuresInfo[i].getFeatureId(), e.getStatus()); //$NON-NLS-1$
 			}
 		}
 	}
