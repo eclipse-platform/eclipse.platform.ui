@@ -169,8 +169,8 @@ public class UnifiedReviewPage
 	 */
 	public UnifiedReviewPage(SearchRunner2 searchRunner) {
 		super("UnifiedMultiReview");
-		setTitle(UpdateUI.getString(KEY_TITLE));
-		setDescription(UpdateUI.getString(KEY_DESC));
+		setTitle(UpdateUI.getString("Search Results"));
+		setDescription("Select features to install from the search result list.");
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 		this.searchRunner = searchRunner;
 		setBannerVisible(false);
