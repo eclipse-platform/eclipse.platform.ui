@@ -35,8 +35,6 @@ import org.eclipse.jface.text.source.AnnotationModel;
 
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-
 
 /**
  * Abstract  implementation of a marker-based annotation model.
@@ -157,7 +155,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	 * @since 3.0
 	 */
 	protected AnnotationTypeLookup getAnnotationTypeLookup() {
-		return EditorsPlugin.getDefault().getAnnotationTypeLookup();
+		return EditorsUI.getAnnotationTypeLookup();
 	}
 
 	/**

@@ -36,8 +36,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-
 
 /**
  * This registry manages shareable document provider. Document

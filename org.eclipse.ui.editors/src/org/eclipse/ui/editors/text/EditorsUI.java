@@ -39,7 +39,7 @@ public final class EditorsUI {
 	 * @return the annotation type lookup
 	 * @since 3.0
 	 */
-	public AnnotationTypeLookup getAnnotationTypeLookup() {
+	public static AnnotationTypeLookup getAnnotationTypeLookup() {
 		return EditorsPlugin.getDefault().getAnnotationTypeLookup();
 	}
 	
@@ -49,7 +49,7 @@ public final class EditorsUI {
 	 * @return the annotation preference lookup
 	 * @since 3.0
 	 */
-	public AnnotationPreferenceLookup getAnnotationPreferenceLookup() {
+	public static AnnotationPreferenceLookup getAnnotationPreferenceLookup() {
 		return EditorsPlugin.getDefault().getAnnotationPreferenceLookup();
 	}
 	
@@ -59,7 +59,7 @@ public final class EditorsUI {
 	 * @return the annotation type hierarchy
 	 * @since 3.0
 	 */
-	public AnnotationTypeHierarchy getAnnotationTypeHierarchy() {
+	public static AnnotationTypeHierarchy getAnnotationTypeHierarchy() {
 		return EditorsPlugin.getDefault().getAnnotationTypeHierarchy();
 	}
 

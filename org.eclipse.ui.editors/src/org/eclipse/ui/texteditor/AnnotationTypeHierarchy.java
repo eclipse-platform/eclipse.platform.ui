@@ -21,8 +21,6 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.ui.editors.text.EditorsUI;
 
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-
 
 /**
  * Internal annotation super type hierarchy cache.

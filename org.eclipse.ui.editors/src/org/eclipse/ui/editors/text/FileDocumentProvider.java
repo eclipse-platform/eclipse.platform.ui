@@ -51,8 +51,6 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-
 
 
 /**
