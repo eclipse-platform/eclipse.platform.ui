@@ -117,8 +117,8 @@ public PartPane(IWorkbenchPartReference partReference, WorkbenchPage workbenchPa
  * Factory method for creating the SWT Control hierarchy for this Pane's child.
  */
 protected void createChildControl() {
-	final IWorkbenchPart part = partReference.getPart(false);
-	if(part == null)
+	final IWorkbenchPart part[] = new IWorkbenchPart[]{partReference.getPart(false)};
+	if(part[0] == null)
 		return;
 
 	if(control == null || control.getContent() != null)
@@ -130,10 +130,7 @@ protected void createChildControl() {
 	String error = WorkbenchMessages.format("PartPane.unableToCreate", new Object[] {partReference.getTitle()}); //$NON-NLS-1$
 	Platform.run(new SafeRunnableAdapter(error) {
 		public void run() {
-			part.createPartControl(content);
-			control.setContent(content);
-			page.addPart(partReference);
-			page.firePartOpened(part);
+			part[0].createPartControl(content);
 		}
 		public void handleException(Throwable e) {
 			// Log error.
@@ -148,13 +145,16 @@ protected void createChildControl() {
 			}
 			
 			// Create new part.
-			IWorkbenchPart part = partReference.getPart(true);
-			IWorkbenchPart newPart = createErrorPart((WorkbenchPart)part);
-			part.getSite().setSelectionProvider(null);
+			IWorkbenchPart newPart = createErrorPart((WorkbenchPart)part[0]);
+			part[0].getSite().setSelectionProvider(null);
 			newPart.createPartControl(content);
-			part = newPart;
+			((WorkbenchPartReference)partReference).setPart(newPart);
+			part[0] = newPart;
 		}
 	});
+	control.setContent(content);
+	page.addPart(partReference);
+	page.firePartOpened(part[0]);	
 }
 /**
  * 

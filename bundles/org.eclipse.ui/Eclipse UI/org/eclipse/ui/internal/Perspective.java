@@ -726,13 +726,13 @@ public void restoreState(IMemento memento) {
 	}	
 	this.memento = memento;
 	// Add the visible views.
-	IMemento[] views = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
+	IMemento views[] = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
 	createReferences(views);
 	
 	memento = memento.getChild(IWorkbenchConstants.TAG_FAST_VIEWS);
 	if(memento != null) {
-		IMemento[] fastViews = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
-		createReferences(fastViews);
+		views = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
+		createReferences(views);	
 	}
 }
 private void createReferences(IMemento views[]) {
@@ -740,7 +740,7 @@ private void createReferences(IMemento views[]) {
 		// Get the view details.
 		IMemento childMem = views[x];
 		String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
-
+	
 		// Create and open the view.
 		try {
 			viewFactory.createView(viewID);
@@ -790,6 +790,7 @@ public void restoreState() {
 		IMemento childMem = views[x];
 		String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
 
+		// Create and open the view.
 		IViewReference ref = viewFactory.getView(viewID);
 		if(ref == null) {
 			WorkbenchPlugin.log("Could not create view: '" + viewID + "'."); //$NON-NLS-1$
@@ -820,7 +821,6 @@ public void restoreState() {
 			}
 			mapFastViewToWidthRatio.put(viewID, ratio);
 				
-			// Create and open the view.
 			IViewReference ref = viewFactory.getView(viewID);
 			if(ref == null) {
 				WorkbenchPlugin.log("Could not create view: '" + viewID + "'."); //$NON-NLS-1$
