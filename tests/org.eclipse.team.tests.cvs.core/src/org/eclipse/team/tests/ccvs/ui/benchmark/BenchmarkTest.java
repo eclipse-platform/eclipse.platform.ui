@@ -26,6 +26,7 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
 import org.eclipse.team.tests.ccvs.ui.SynchronizeViewTestAdapter;
+import org.eclipse.test.performance.*;
 import org.eclipse.test.performance.Performance;
 import org.eclipse.test.performance.PerformanceMeter;
 
@@ -37,6 +38,11 @@ public abstract class BenchmarkTest extends EclipseTest {
 	private HashMap groups;
     private PerformanceMeter currentMeter;
     private static SyncInfoSource source = new SynchronizeViewTestAdapter();
+    
+    // Global performance groups for CVS tests, these will be shown in the platform overview 
+    // diagram.
+    public final static String SYNC_GROUP = "CVS Synchronize";
+    public final static String WORKFLOW_GROUP = "CVS Workflow";
 
     protected BenchmarkTest() {
 	}
@@ -78,12 +84,19 @@ public abstract class BenchmarkTest extends EclipseTest {
      * @param performance_groups
      */
 	protected void setupGroups(String[] performance_groups) {
+        setupGroups(performance_groups, null);
+    }
+	
+	protected void setupGroups(String[] performance_groups, String globalName) {
         groups = new HashMap();
 	    Performance perf = Performance.getDefault();
         for (int i = 0; i < performance_groups.length; i++) {
             String suffix = performance_groups[i];
 		    PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(this) + suffix);
             groups.put(suffix, meter);
+            if(globalName != null) {
+    	    	perf.tagAsGlobalSummary(meter, globalName, Dimension.CPU_TIME);
+    	    }
         }
     }
     

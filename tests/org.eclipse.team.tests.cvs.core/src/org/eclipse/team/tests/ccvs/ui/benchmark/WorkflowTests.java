@@ -53,22 +53,22 @@ public class WorkflowTests extends BenchmarkTest {
 	}
 
 	public void testBigWorkflow() throws Exception {
-		runWorkflowTests("testBig", BenchmarkTestSetup.BIG_ZIP_FILE);
+		runWorkflowTests("testBig", BenchmarkTestSetup.BIG_ZIP_FILE, WORKFLOW_GROUP);
 	}
 	
 	public void testSmallWorkflow() throws Exception {
-		runWorkflowTests("testSmall", BenchmarkTestSetup.SMALL_ZIP_FILE);
+		runWorkflowTests("testSmall", BenchmarkTestSetup.SMALL_ZIP_FILE, null);
 	}
 
 	public void testTinyWorkflow() throws Exception {
-		runWorkflowTests("testTiny", BenchmarkTestSetup.TINY_ZIP_FILE);
+		runWorkflowTests("testTiny", BenchmarkTestSetup.TINY_ZIP_FILE, null);
 	}
 
 	/**
 	 * Runs a series of incoming and outgoing workflow-related tests.
 	 */
-	protected void runWorkflowTests(String name, File initialContents) throws Exception {
-	    setupGroups(PERFORMANCE_GROUPS);
+	protected void runWorkflowTests(String name, File initialContents, String globalName) throws Exception {
+	    setupGroups(PERFORMANCE_GROUPS, globalName);
 	    for (int i = 0; i < BenchmarkTestSetup.LOOP_COUNT; i++) {
 			final SequenceGenerator gen = new SequenceGenerator();
 			IProject outProject = createAndImportProject(name, initialContents);

@@ -12,7 +12,6 @@ package org.eclipse.team.tests.ccvs.ui.benchmark;
 
 
 import junit.framework.Test;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
@@ -51,15 +50,15 @@ public class SyncTests extends BenchmarkTest {
 	}
 
     public void testSync1() throws Exception {
-		runTestSync(1);
+		runTestSync(1, null);
 	}
 
 	public void testSync10() throws Exception {
-		runTestSync(10);
+		runTestSync(10, null);
 	}
 
 	public void testSync100() throws Exception {
-		runTestSync(100);
+		runTestSync(100, SYNC_GROUP);
 	}
 
 	protected IProject setupOutProject() throws Exception {
@@ -72,8 +71,8 @@ public class SyncTests extends BenchmarkTest {
 	 * Runs a sequence of operations for the synchronizer tests.
 	 * A parallel project is used to generate incoming changes.
 	 */
-	protected void runTestSync(int size) throws Exception {
-	    setupGroups(PERFORMANCE_GROUPS);
+	protected void runTestSync(int size, String globalName) throws Exception {
+	    setupGroups(PERFORMANCE_GROUPS, globalName);
 	    for (int i = 0; i < BenchmarkTestSetup.LOOP_COUNT; i++) {
 			final SequenceGenerator gen = new SequenceGenerator();
 	
