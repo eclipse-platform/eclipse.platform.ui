@@ -33,13 +33,14 @@ public abstract class AbstractForm implements IForm, IPropertyChangeListener {
 	protected Image headingImage;
 	protected String headingText;
 	protected Font titleFont;
+	private IPropertyChangeListener hyperlinkColorListener;
 
 	public AbstractForm() {
 		factory = new FormWidgetFactory();
 		titleFont = JFaceResources.getHeaderFont();
 		JFaceResources.getFontRegistry().addListener(this);
 		IPreferenceStore pstore = JFacePreferences.getPreferenceStore();
-		pstore.addPropertyChangeListener(new IPropertyChangeListener() {
+		hyperlinkColorListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
 				if (e.getProperty().equals(JFacePreferences.HYPERLINK_COLOR)
 					|| e.getProperty().equals(
@@ -47,7 +48,8 @@ public abstract class AbstractForm implements IForm, IPropertyChangeListener {
 					updateHyperlinkColors();
 				}
 			}
-		});
+		};
+		pstore.addPropertyChangeListener(hyperlinkColorListener);
 	}
 	
 	protected void updateHyperlinkColors() {
@@ -73,6 +75,7 @@ public abstract class AbstractForm implements IForm, IPropertyChangeListener {
 		JFaceResources.getFontRegistry().removeListener(this);
 		IPreferenceStore pstore = JFacePreferences.getPreferenceStore();
 		pstore.removePropertyChangeListener(this);
+		pstore.removePropertyChangeListener(hyperlinkColorListener);
 	}
 
 	/**
