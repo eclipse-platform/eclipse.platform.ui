@@ -70,13 +70,14 @@
       point = "org.eclipse.ui.newWizards">
 	<category
 	   id = "org.eclipse.ui.examples.readmetool.new"
+	   parentCategory="org.eclipse.ui.Examples"
 	   name="Example Creation Wizards">
 	</category>
  	<wizard
 	   id = "org.eclipse.ui.examples.readmetool.wizards.new.file"
       	   name = "Readme File"
 	   class="org.eclipse.ui.examples.readmetool.ReadmeCreationWizard"
-	   category="org.eclipse.ui.examples.readmetool.new"
+	   category="org.eclipse.ui.Examples/org.eclipse.ui.examples.readmetool.new"
 	   icon="icons/basic/obj16/newreadme_wiz.gif">
     	   <description>An example of a wizard that creates sample Readme file</description>
 	   <selection class="org.eclipse.core.resources.IResource"/>

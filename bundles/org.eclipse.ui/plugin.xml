@@ -160,6 +160,10 @@
 <extension 
 	point="org.eclipse.ui.newWizards">
 	<category
+	   id="org.eclipse.ui.Examples"
+	   name="%NewWizards.Category.Examples">
+	</category>
+	<category
 	   id="org.eclipse.ui.Basic"
 	   name="%NewWizards.Category.Basic">
 	</category>
