@@ -107,6 +107,11 @@
 			description="Expands to the selected resource's containing folder absolute file system path."
 			expanderClass="org.eclipse.ui.externaltools.variable.ResourceContainerExpander">
 		</variable>
+		<variable
+			tag="build_type"
+			description="Expands to the type of build"
+			expanderClass="org.eclipse.ui.externaltools.variable.BuildTypeExpander">
+		</variable>
 	</extension>
 
 	<extension point="org.eclipse.ui.externaltools.directoryVariables">
@@ -260,6 +265,14 @@
 			category="org.eclipse.ui.externaltools.views"
 			class="org.eclipse.ui.externaltools.internal.view.ExternalToolView">
 		</view>
+		<view
+			id="org.eclipse.ui.externaltools.LogConsoleView"
+	  		name="%View.logConsole"
+			icon="icons/full/cview16/log_console_view.gif"
+			fastViewWidthRatio="0.75"
+			category="org.eclipse.ui.externaltools.views"
+			class="org.eclipse.ui.externaltools.internal.ui.LogConsoleView">
+		</view>
 	</extension>
 
 	<extension point="org.eclipse.ui.preferencePages">
@@ -325,21 +338,6 @@
 			name="%PreferencePage.toolsPreferences"
 			class="org.eclipse.ui.externaltools.internal.ui.ToolsPreferencePage">
 		</page>
-	</extension>
-
-	<extension point="org.eclipse.ui.views">
-		<category 
-			id="org.eclipse.ui.externaltools.views"
-			name="%CategoryView.externalTools">
-		</category>
-		<view
-			id="org.eclipse.ui.externaltools.LogConsoleView"
-	  		name="%View.logConsole"
-			icon="icons/full/cview16/log_console_view.gif"
-			fastViewWidthRatio="0.75"
-			category="org.eclipse.ui.externaltools.views"
-			class="org.eclipse.ui.externaltools.internal.ui.LogConsoleView">
-		</view>
 	</extension>
 
 </plugin>
