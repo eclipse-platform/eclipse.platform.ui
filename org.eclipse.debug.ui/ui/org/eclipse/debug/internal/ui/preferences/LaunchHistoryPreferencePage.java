@@ -193,6 +193,8 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 		updateAttributes(runOriginals, current, IDebugUIConstants.ATTR_RUN_FAVORITE);			
 		
 		fHistoryMaxEditor.store();
+		
+		DebugUIPlugin.getDefault().savePluginPreferences();
 		return true;
 	}
 	

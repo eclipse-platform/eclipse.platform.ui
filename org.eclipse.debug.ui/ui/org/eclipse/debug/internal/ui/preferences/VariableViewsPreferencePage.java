@@ -92,4 +92,13 @@ public class VariableViewsPreferencePage extends FieldEditorPreferencePage imple
 		gd.horizontalSpan = columnSpan;
 		label.setLayoutData(gd);
 	}
+	
+	/**
+	 * @see IPreferencePage#performOk()
+	 */
+	public boolean performOk() {
+		boolean ok= super.performOk();
+		DebugUIPlugin.getDefault().savePluginPreferences();
+		return ok;
+	}
 }

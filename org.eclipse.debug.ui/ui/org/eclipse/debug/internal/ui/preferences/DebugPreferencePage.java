@@ -123,6 +123,15 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		GridData gd = new GridData();
 		gd.horizontalSpan = columnSpan;
 		label.setLayoutData(gd);
-	}				
+	}
+	
+	/**
+	 * @see IPreferencePage#performOk()
+	 */
+	public boolean performOk() {
+		boolean ok= super.performOk();
+		DebugUIPlugin.getDefault().savePluginPreferences();
+		return ok;
+	}			
 }
 

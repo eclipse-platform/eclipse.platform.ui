@@ -91,5 +91,15 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		PreferenceConverter.setDefault(store, CONSOLE_SYS_OUT_RGB, new RGB(0, 0, 255));
 		PreferenceConverter.setDefault(store, CONSOLE_SYS_IN_RGB, new RGB(0, 200, 125));
 		PreferenceConverter.setDefault(store, CONSOLE_SYS_ERR_RGB, new RGB(255, 0, 0));
-	}	
+	}
+		
+	/**
+	 * @see IPreferencePage#performOk()
+	 */
+	public boolean performOk() {
+		boolean ok= super.performOk();
+		DebugUIPlugin.getDefault().savePluginPreferences();
+		return ok;
+	}
+
 }

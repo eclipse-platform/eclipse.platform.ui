@@ -25,9 +25,9 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -193,6 +193,7 @@ public class DebugActionGroupsPreferencePage  extends PreferencePage implements 
 			DebugActionGroupsManager.getDefault().updateDebugActionGroups();
 			persistDebugActionGroups();
 		}
+		DebugUIPlugin.getDefault().savePluginPreferences();
 		return true;
 	}
 	
