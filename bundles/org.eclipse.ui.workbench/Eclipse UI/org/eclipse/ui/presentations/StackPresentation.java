@@ -14,7 +14,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.presentations.*;
 
 
 /**

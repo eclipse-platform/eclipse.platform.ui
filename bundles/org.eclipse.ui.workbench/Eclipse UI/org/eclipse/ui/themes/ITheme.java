@@ -14,7 +14,6 @@ import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.GradientRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.ui.internal.themes.ITabThemeDescriptor;
 
 /**
  * 
@@ -83,10 +82,4 @@ public interface ITheme {
      * Dispose of this theme.
      */
     public void dispose();
-    
-    /**
-     * TODO: Remove
-     * @return
-     */
-    public ITabThemeDescriptor getTabTheme();
 }

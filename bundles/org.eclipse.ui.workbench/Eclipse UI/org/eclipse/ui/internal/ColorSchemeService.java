@@ -10,112 +10,63 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.util.List;
-
-import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.Gradient;
+import org.eclipse.jface.resource.GradientRegistry;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.Sash;
+import org.eclipse.ui.themes.ITheme;
 
 /**
  * ColorSchemeService is the service that sets the colors on widgets as
  * appropriate.
+ * 
+ * TODO: do we need this?  can this be expanded or removed entirely?
  */
 public class ColorSchemeService {
 
-	public static void setSchemeColors(Control control) {
+	public static void setTabColors(ITheme theme, CTabFolder control) {	  
+	    ColorRegistry colorRegistry = theme.getColorRegistry();
+	    GradientRegistry gradientRegistry = theme.getGradientRegistry();
 
-		if (control instanceof CTabFolder) {
-			setTabColors((CTabFolder) control);
-			setCompositeColors((Composite) control);
-			return;
-		}
+	    Color fgColor;
+	    Gradient bgGradient;
+
+		fgColor = colorRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_COLOR);
+		bgGradient = gradientRegistry.get(IWorkbenchPresentationConstants.TAB_BG_GRADIENT);
+	    
+		control.setBackground(bgGradient.getColors(), bgGradient.getPercents(), bgGradient.getDirection() == SWT.VERTICAL); 
+		control.setForeground(fgColor);		
 		
-		if (control instanceof Composite) {
-			setCompositeColors((Composite) control);
-			return;
-		}
+		fgColor = colorRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_COLOR);
+		bgGradient = gradientRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_BG_GRADIENT);
 		
-		if (control instanceof List) {
-			return;
-		}
-
-		if (control instanceof Tree) {
-			return;
-		}
-
-		if (control instanceof StyledText) {
-			return;
-		}
-
-		if (control instanceof Table) {
-			return;
-		}
-
-		if (control instanceof Sash) {
-//			control.setBackground(
-//			JFaceColors.getSchemeParentBackground(control.getDisplay()));
-			return;
-		}
-
-//		control.setBackground(
-//			JFaceColors.getSchemeBackground(control.getDisplay()));
-//		control.setForeground(
-//			JFaceColors.getSchemeForeground(control.getDisplay()));
-
-//		if (control instanceof CBanner) {
-//			setCBannerColors((CBanner)control);
-//		}
-	}
-
-//	/**
-//	 * @param banner
-//	 */
-//	public static void setCBannerColors(CBanner control) {
-//		Display d = control.getDisplay();
-//		control.setBackground(JFaceColors.getSchemeBackground(d));
-//		control.setForeground(JFaceColors.getTabFolderSelectionBackground(d));		
-//		
-//	}
-
-	public static void setTabColors(CTabFolder control) {
-		control.setBackground(WorkbenchColors.getDeactivatedViewGradient(), WorkbenchColors.getDeactivatedViewGradientPercents(), true); 
-		control.setForeground(WorkbenchColors.getActiveViewForeground());
-		control.setSelectionBackground(WorkbenchColors.getActiveViewGradient(), WorkbenchColors.getActiveViewGradientPercents(), true); 
-		control.setSelectionForeground(WorkbenchColors.getActiveViewForeground());		
+		control.setSelectionBackground(bgGradient.getColors(), bgGradient.getPercents(), bgGradient.getDirection() == SWT.VERTICAL); 
+		control.setSelectionForeground(fgColor);		
 			
-	}
-
-	static void setCompositeColors(Composite control) {
-		Control[] children = control.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			setSchemeColors(children[i]);
-		}
 	}
 
 	/**
 	 * @param control
 	 */
-	public static void setCoolBarColors(Control control) {
-		setBasicColors(control);
+	public static void setCoolBarColors(ITheme theme, Control control) {
+		setBasicColors(theme, control);
 	}
 
-	private static void setBasicColors(Control control) {
+	private static void setBasicColors(ITheme theme, Control control) {	    
 		control.setBackground(
-				JFaceColors.getSchemeBackground(control.getDisplay()));
+		        theme.getColorRegistry().get(IWorkbenchPresentationConstants.BACKGROUND));
 		control.setForeground(
-				JFaceColors.getSchemeForeground(control.getDisplay()));
+		        theme.getColorRegistry().get(IWorkbenchPresentationConstants.FOREGROUND));
 	}
 
 	/**
 	 * @param bar
 	 */
-	public static void setPerspectiveToolBarColors(ToolBar control) {
-		setBasicColors(control);
+	public static void setPerspectiveToolBarColors(ITheme theme, ToolBar control) {
+		setBasicColors(theme, control);
 	}
 }

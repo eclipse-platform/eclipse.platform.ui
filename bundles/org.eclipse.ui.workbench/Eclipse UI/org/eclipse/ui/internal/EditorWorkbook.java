@@ -207,16 +207,13 @@ public abstract class EditorWorkbook
 		
 		switch (activeState) {
 			case ACTIVE_FOCUS :
-				fgColor = colorRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_TEXT_COLOR_ACTIVE_FOCUS);
-				bgGradient = gradientRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_GRADIENT_ACTIVE_FOCUS);
+				fgColor = colorRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_COLOR);
+				bgGradient = gradientRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_BG_GRADIENT);
 				break;
 			case ACTIVE_NOFOCUS :
-				fgColor = colorRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_TEXT_COLOR_ACTIVE_NOFOCUS);
-				bgGradient = gradientRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_GRADIENT_ACTIVE_FOCUS);
-				break;
 			case INACTIVE :
-				fgColor = colorRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_TEXT_COLOR_INACTIVE);
-				bgGradient = gradientRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_GRADIENT_INACTIVE);
+				fgColor = colorRegistry.get(IWorkbenchPresentationConstants.INACTIVE_TAB_TEXT_COLOR);
+				bgGradient = gradientRegistry.get(IWorkbenchPresentationConstants.INACTIVE_TAB_BG_GRADIENT);
 				break;
 			default :
 			    // hmm.

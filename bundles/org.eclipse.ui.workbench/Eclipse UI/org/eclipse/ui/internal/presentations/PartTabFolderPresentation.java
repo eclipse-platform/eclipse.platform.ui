@@ -23,10 +23,9 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.internal.ColorSchemeService;
 import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.IWorkbenchPresentationConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.themes.ITabThemeDescriptor;
-import org.eclipse.ui.internal.themes.IThemeDescriptor;
-import org.eclipse.ui.presentations.*;
+import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.themes.ITheme;
 
 /**
@@ -72,7 +71,7 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		
 		//tabFolder.setBorderVisible(true);
 		// set basic colors
-		ColorSchemeService.setTabColors(tabFolder);
+		ColorSchemeService.setTabColors(getTheme(), tabFolder);
 
 		applyTheme(theme);
 		
@@ -94,47 +93,8 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		this.theme = theTheme;
 		
 		CTabFolder tabFolder = getTabFolder();
-		
-		FontRegistry fontRegistry = theTheme.getFontRegistry();
-	    tabFolder.setFont(fontRegistry.get("org.eclipse.workbench.tabFont")); //$NON-NLS-1$
-	    
+		    
 	    updateGradient();
-	    
-	    ITabThemeDescriptor tabThemeDescriptor = theTheme.getTabTheme();
-
-	    // TODO: This is bad... the theme shouldn't be returning null for this
-	    // kind of thing. If there are no custom values, it should still return
-	    // a theme descriptor that describes the defaults. For now, just bail
-	    // to prevent a NPE.
-	    if (tabThemeDescriptor == null) {
-	    	return;
-	    }
-	    
-		//	if (tabThemeDescriptor.getSelectedImageDesc() != null)
-		//		tabFolder.setSelectedTabImage(tabThemeDescriptor.getSelectedImageDesc().createImage());
-		//	if (tabThemeDescriptor.getUnselectedImageDesc() != null)
-		//		tabFolder.setUnselectedTabImage(tabThemeDescriptor.getUnselectedImageDesc().createImage());
-
-		if (tabThemeDescriptor.getTabMarginSize(SWT.DEFAULT) != -1) {
-			//		tabFolder.setUseSameMarginAllSides(true);		
-			//		tabFolder.setMarginHeight(tabThemeDescriptor.getTabMarginSize(SWT.DEFAULT));
-			//		tabFolder.setBorderMarginHeightColor(tabThemeDescriptor.getTabMarginColor(SWT.DEFAULT));
-		} else if (tabThemeDescriptor.getTabMarginSize(getTabPosition()) != -1) {
-			//		tabFolder.setMarginHeight(tabThemeDescriptor.getTabMarginSize(tabPosition));
-			//		tabFolder.setBorderMarginHeightColor(tabThemeDescriptor.getTabMarginColor(tabPosition));
-		}
-
-		if (tabThemeDescriptor.getTabFixedHeight() > 0) {
-			tabFolder.setTabHeight(tabThemeDescriptor.getTabFixedHeight());
-		}
-		if (tabThemeDescriptor.getTabFixedWidth() > 0) {
-			//		tabFolder.setTabWidth(tabThemeDescriptor.getTabFixedWidth());
-		}
-		if (tabThemeDescriptor.getBorderStyle() == SWT.NONE) {
-			tabFolder.setBorderVisible(false);
-		}
-
-		//	setTabDragInFolder(tabThemeDescriptor.isDragInFolder());
 	}
 	
 	private ITheme getTheme() {
@@ -149,26 +109,23 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		Color fgColor;
 		Color[] bgColors;
 		int[] bgPercents;
+		
+		FontRegistry fontRegistry = getTheme().getFontRegistry();
+	    getTabFolder().setFont(fontRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_FONT)); //$NON-NLS-1$
+
 
 		ColorRegistry colorRegistry = getTheme().getColorRegistry();
 		GradientRegistry gradientRegistry = getTheme().getGradientRegistry();
 		
 		Gradient gradient = null;
         if (isActive()){
-	        fgColor = colorRegistry.get(IThemeDescriptor.VIEW_TITLE_TEXT_COLOR_ACTIVE);
-	        gradient = gradientRegistry.get(IThemeDescriptor.VIEW_TITLE_GRADIENT_COLOR_ACTIVE);
-//	        fgColor = WorkbenchColors.getActiveViewForeground();
-//			bgColors = WorkbenchColors.getActiveViewGradient();
-//			bgPercents = WorkbenchColors.getActiveViewGradientPercents();
+	        fgColor = colorRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_COLOR);
+	        gradient = gradientRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_BG_GRADIENT);
 		} else {
-	        fgColor = colorRegistry.get(IThemeDescriptor.VIEW_TITLE_TEXT_COLOR_DEACTIVATED);
-	        gradient = gradientRegistry.get(IThemeDescriptor.VIEW_TITLE_GRADIENT_COLOR_DEACTIVATED);
-//			fgColor = WorkbenchColors.getActiveViewForeground();
-//			bgColors = WorkbenchColors.getActiveNoFocusViewGradient();
-//			bgPercents = WorkbenchColors.getActiveNoFocusViewGradientPercents();
+	        fgColor = colorRegistry.get(IWorkbenchPresentationConstants.INACTIVE_TAB_TEXT_COLOR);
+	        gradient = gradientRegistry.get(IWorkbenchPresentationConstants.INACTIVE_TAB_BG_GRADIENT);
 		}		
-		drawGradient(fgColor, gradient);
-		//drawGradient(fgColor, bgColors, bgPercents, activeState);	
+		drawGradient(fgColor, gradient);	
 	}
 	
 	/* (non-Javadoc)

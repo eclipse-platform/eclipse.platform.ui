@@ -27,10 +27,6 @@ public class ThemeDescriptor implements IThemeDescriptor {
 	/* Theme */
 	private static final String ATT_ID="id";//$NON-NLS-1$
 	private static final String ATT_NAME="name";//$NON-NLS-1$	
-	/* TabTheme*/
-	public static final String TAG_TABTHEME="tabTheme";//$NON-NLS-1$	
-	/* ViewTheme */
-	public static final String TAG_VIEWTHEME="viewTheme";//$NON-NLS-1$
 	
 	private Collection colors = new ArrayList();
 	private IConfigurationElement configElement;
@@ -40,9 +36,6 @@ public class ThemeDescriptor implements IThemeDescriptor {
 	
 	private String id;
 	private String name;
-	private ITabThemeDescriptor tabThemeDescriptor;
-	
-	private IViewThemeDescriptor viewThemeDescriptor;
 
 	/**
 	 * Create a new ThemeDescriptor for an extension.
@@ -127,40 +120,12 @@ public class ThemeDescriptor implements IThemeDescriptor {
 		return name;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IThemeDescriptor#getTabLookNFeelDesc()
-	 */
-	public ITabThemeDescriptor getTabThemeDescriptor () {
-		return tabThemeDescriptor;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.IThemeDescriptor#getViewThemeDescriptor()
-	 */
-	public IViewThemeDescriptor getViewThemeDescriptor () {
-		return viewThemeDescriptor;
-	}
-	
 	/*
 	 * load a theme descriptor from the registry.
 	 */
 	private void processExtension() throws CoreException {
 		id = configElement.getAttribute(ATT_ID);
 		name = configElement.getAttribute(ATT_NAME);
-		/* process children */
-		IConfigurationElement [] children = configElement.getChildren();
-		for (int nX = 0; nX < children.length; nX ++) {
-			IConfigurationElement child = children[nX];
-			String type = child.getName();
-			/* TabTheme */
-			if (type.equals(TAG_TABTHEME)) {
-				tabThemeDescriptor = new TabThemeDescriptor(child);
-			}
-			/* ViewTheme */
-			else if (type.equals(TAG_VIEWTHEME)) {
-				viewThemeDescriptor = new ViewThemeDescriptor(child);
-			}									
-		}
 	}
     
     /**

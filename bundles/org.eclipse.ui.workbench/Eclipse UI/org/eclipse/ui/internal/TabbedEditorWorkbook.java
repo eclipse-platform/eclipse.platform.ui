@@ -199,7 +199,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		tabFolder.setSimpleTab(simple);
 	
 		//tabFolder.setBorderVisible(true);
-		ColorSchemeService.setTabColors(tabFolder);
+		ColorSchemeService.setTabColors(getEditorArea().getPage().getTheme(), tabFolder);
 
 		// prevent close button and scroll buttons from taking focus
 		tabFolder.setTabList(new Control[0]);

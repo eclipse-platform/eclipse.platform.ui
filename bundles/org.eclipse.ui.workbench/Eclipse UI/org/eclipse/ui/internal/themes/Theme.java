@@ -109,10 +109,6 @@ public class Theme implements ITheme {
             themeFontRegistry.dispose();
         }
     }
-    
-    public ITabThemeDescriptor getTabTheme() {
-        return descriptor == null ? null : descriptor.getTabThemeDescriptor();
-    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.ITheme#getGradientRegistry()

@@ -64,8 +64,8 @@
       <context
             name="%context.editingJavaSource.name"
             description="%context.editingJavaSource.description"
-            parentId="org.eclipse.ui.textEditorScope"
-            id="org.eclipse.jdt.ui.javaEditorScope">
+            id="org.eclipse.jdt.ui.javaEditorScope"
+            parentId="org.eclipse.ui.textEditorScope">
       </context>
    </extension>
    <extension
@@ -809,164 +809,164 @@
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.file.save"
+            platform="carbon"
             keySequence="Command+S"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.file.saveAll"
+            platform="carbon"
             keySequence="Command+Shift+S"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.file.print"
+            platform="carbon"
             keySequence="Command+P"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.edit.undo"
+            platform="carbon"
             keySequence="Command+Z"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.edit.redo"
+            platform="carbon"
             keySequence="Command+Y"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.edit.cut"
+            platform="carbon"
             keySequence="Command+X"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.edit.copy"
+            platform="carbon"
             keySequence="Command+C"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.edit.paste"
+            platform="carbon"
             keySequence="Command+V"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.edit.selectAll"
+            platform="carbon"
             keySequence="Command+A"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.edit.findReplace"
+            platform="carbon"
             keySequence="Command+F"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.navigate.openResource"
+            platform="carbon"
             keySequence="Command+Shift+R"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.navigate.next"
+            platform="carbon"
             keySequence="Command+."
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.navigate.previous"
+            platform="carbon"
             keySequence="Command+,"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.project.buildAll"
+            platform="carbon"
             keySequence="Command+B"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.window.showViewMenu"
+            platform="carbon"
             keySequence="Command+F10"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.window.nextEditor"
+            platform="carbon"
             keySequence="Command+F6"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.window.previousEditor"
+            platform="carbon"
             keySequence="Command+Shift+F6"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.window.nextView"
+            platform="carbon"
             keySequence="Command+F7"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.window.previousView"
+            platform="carbon"
             keySequence="Command+Shift+F7"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.window.nextPerspective"
+            platform="carbon"
             keySequence="Command+F8"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.window.previousPerspective"
+            platform="carbon"
             keySequence="Command+Shift+F8"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="gtk"
             commandId="org.eclipse.ui.edit.cut"
+            platform="gtk"
             keySequence="Shift+Del"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="gtk"
             commandId="org.eclipse.ui.edit.copy"
+            platform="gtk"
             keySequence="Ctrl+Insert"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="gtk"
             commandId="org.eclipse.ui.edit.paste"
+            platform="gtk"
             keySequence="Shift+Insert"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="motif"
             commandId="org.eclipse.ui.edit.cut"
+            platform="motif"
             keySequence="Shift+Del"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="motif"
             commandId="org.eclipse.ui.edit.copy"
+            platform="motif"
             keySequence="Ctrl+Insert"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="motif"
             commandId="org.eclipse.ui.edit.paste"
+            platform="motif"
             keySequence="Shift+Insert"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -1098,8 +1098,8 @@
       <keyConfiguration
             name="%keyConfiguration.emacs.name"
             description="%keyConfiguration.emacs.description"
-            id="org.eclipse.ui.emacsAcceleratorConfiguration"
-            parentId="org.eclipse.ui.defaultAcceleratorConfiguration">
+            parentId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            id="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyConfiguration>
    </extension>
    <extension
@@ -1118,56 +1118,26 @@
    </extension>
    <extension
          point="org.eclipse.ui.themes">
-      <colorDefinition
-            label="Active Tab Text Color"
-            value="COLOR_BLACK"
-            categoryId="org.eclipse.ui.workbenchMisc"
-            id="VIEW_TITLE_TEXT_COLOR_ACTIVE">
-      </colorDefinition>
-      <colorDefinition
-            label="Inactive Tab Text Color"
-            value="COLOR_BLACK"
-            categoryId="org.eclipse.ui.workbenchMisc"
-            id="VIEW_TITLE_TEXT_COLOR_DEACTIVATED">
-      </colorDefinition>
 <!-- FastView -->
       <colorDefinition
             label="Fast View Border 1"
-            value="132,130,132"
             categoryId="org.eclipse.ui.workbenchMisc"
+            value="132,130,132"
             id="FAST_VIEW_BORDER_1">
       </colorDefinition>
       <colorDefinition
             label="Fast View Border 2"
-            value="143,141,138"
             categoryId="org.eclipse.ui.workbenchMisc"
+            value="143,141,138"
             id="FAST_VIEW_BORDER_2">
       </colorDefinition>
       <colorDefinition
             label="Fast View Border 3"
-            value="171,168,165"
             categoryId="org.eclipse.ui.workbenchMisc"
+            value="171,168,165"
             id="FAST_VIEW_BORDER_3">
       </colorDefinition>
-<!-- EditorWorkbook -->
-      <colorDefinition
-            label="Active Editor Tab Text Color (Focus)"
-            value="COLOR_BLACK"
-            categoryId="org.eclipse.ui.workbenchMisc"
-            id="EDITOR_TITLE_TEXT_COLOR_ACTIVE_FOCUS">
-      </colorDefinition>
-      <colorDefinition
-            label="Active Editor Tab Text Color (No Focus)"
-            value="COLOR_BLACK"
-            categoryId="org.eclipse.ui.workbenchMisc"
-            id="EDITOR_TITLE_TEXT_COLOR_ACTIVE_NOFOCUS">
-      </colorDefinition>
-      <colorDefinition
-            label="Inactive Editor Tab Text Color"
-            value="COLOR_BLACK"
-            categoryId="org.eclipse.ui.workbenchMisc"
-            id="EDITOR_TITLE_TEXT_COLOR_INACTIVE">
-      </colorDefinition>
+
       <fontDefinition
             label="%FontsPreference.BannerFontLabel"
             id="org.eclipse.jface.bannerfont">
@@ -1197,47 +1167,96 @@
          </description>
       </fontDefinition>
       <fontDefinition
-            label="%FontsPreference.TabFont"
+            label="%FontsPreference.ActiveTabFont"
             categoryId="org.eclipse.ui.workbenchMisc"
-            id="org.eclipse.workbench.tabFont">
+            id="org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_FONT">
          <description>
-            %FontsPreference.TabFontDescription
+            %FontsPreference.ActiveTabFontDescription
          </description>
       </fontDefinition>
+      <fontDefinition
+            label="%FontsPreference.InactiveTabFont"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.ui.workbench.INACTIVE_TAB_TEXT_FONT">
+         <description>
+            %FontsPreference.InactiveTabFontDescription
+         </description>
+      </fontDefinition>      
+
+      <themeElementCategory
+            label="%Presentation.misc.workbench"
+            id="org.eclipse.ui.workbenchMisc">
+      </themeElementCategory>
+      
+      <colorDefinition
+            label="%Color.errorText"
+            value="COLOR_RED"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="ERROR_COLOR">
+         <description>
+            %Color.errorTextDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%Color.hyperlinkText"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            value="COLOR_DARK_BLUE"
+            id="HYPERLINK_COLOR">
+         <description>
+            %Color.hyperlinkTextDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%Color.activeHyperlinkText"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            value="COLOR_BLUE"
+            id="ACTIVE_HYPERLINK_COLOR">
+         <description>
+            %Color.activeHyperlinkTextDesc
+         </description>
+      </colorDefinition>
+      
+      <colorDefinition
+            label="%Color.activeTabText"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            value="COLOR_WIDGET_FOREGROUND"
+            id="org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR">
+         <description>
+            %Color.activeTabTextDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%Color.inactiveTabText"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            value="COLOR_WIDGET_FOREGROUND"
+            id="org.eclipse.ui.workbench.INACTIVE_TAB_TEXT_COLOR">
+         <description>
+            %Color.inactiveTabTextDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%Color.background"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            value="COLOR_WIDGET_BACKGROUND"
+            id="org.eclipse.ui.workbench.BACKGROUND">
+         <description>
+            %Color.backgroundDesc
+         </description>
+      </colorDefinition>      
+      <colorDefinition
+            label="%Color.foreground"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            value="COLOR_WIDGET_FOREGROUND"
+            id="org.eclipse.ui.workbench.FOREGROUND">
+         <description>
+            %Color.foregroundDesc
+         </description>
+      </colorDefinition>            
       <gradientDefinition
-            initialValue="COLOR_TITLE_BACKGROUND_GRADIENT"
-            label="Inactive Editor Tab Gradient"
+            label="%Color.activeTabBGGradient"
             categoryId="org.eclipse.ui.workbenchMisc"
             direction="vertical"
-            id="EDITOR_TITLE_GRADIENT_INACTIVE">
-      </gradientDefinition>
-      <gradientDefinition
-            initialValue="COLOR_WHITE"
-            label="Active Editor Tab Gradient"
-            categoryId="org.eclipse.ui.workbenchMisc"
-            direction="vertical"
-            id="EDITOR_TITLE_GRADIENT_ACTIVE_FOCUS">
-         <gradientPart
-               percentage="100"
-               value="COLOR_TITLE_BACKGROUND_GRADIENT">
-         </gradientPart>
-      </gradientDefinition>
-      <gradientDefinition
-            initialValue="COLOR_WHITE"
-            label="Active Editor Tab Gradient"
-            categoryId="org.eclipse.ui.workbenchMisc"
-            direction="vertical"
-            id="EDITOR_TITLE_GRADIENT_ACTIVE_NOFOCUS">
-         <gradientPart
-               percentage="100"
-               value="COLOR_TITLE_BACKGROUND_NOGRADIENT">
-         </gradientPart>
-      </gradientDefinition>
-      <gradientDefinition
-            label="Active View Tab Gradient"
-            categoryId="org.eclipse.ui.workbenchMisc"
-            direction="vertical"
-            id="VIEW_TITLE_GRADIENT_COLOR_ACTIVE">
+            id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_GRADIENT">
          <colorFactory
                plugin="org.eclipse.ui"
                class="org.eclipse.ui.themes.RGBBlendColorFactory">
@@ -1254,50 +1273,37 @@
                percentage="100"
                value="COLOR_TITLE_BACKGROUND_GRADIENT">
          </gradientPart>
+         <description>
+	         %Color.activeTabBGGradientDesc
+         </description>
       </gradientDefinition>
       <gradientDefinition
             initialValue="COLOR_WHITE"
-            label="Inacitve View Tab Gradient"
+            label="%Color.inactiveTabBGGradient"
             categoryId="org.eclipse.ui.workbenchMisc"
             direction="vertical"
-            id="VIEW_TITLE_GRADIENT_COLOR_DEACTIVATED">
-<!-- win32 specific -->
+            id="org.eclipse.ui.workbench.INACTIVE_TAB_BG_GRADIENT">
          <gradientPart
                percentage="100"
                value="COLOR_WIDGET_LIGHT_SHADOW">
          </gradientPart>
+		 <description>
+	         %Color.inactiveTabBGGradientDesc
+         </description>         
       </gradientDefinition>
-      <themeElementCategory
-            label="%Presentation.misc.workbench"
-            id="org.eclipse.ui.workbenchMisc">
-      </themeElementCategory>
-      <colorDefinition
-            label="%Color.errorText"
+      <gradientDefinition
+            label="%Color.tabBGGradient"
             categoryId="org.eclipse.ui.workbenchMisc"
-            value="255,0,0"
-            id="ERROR_COLOR">
+            direction="vertical"
+            initialValue="COLOR_WIDGET_LIGHT_SHADOW"
+            id="org.eclipse.ui.workbench.TAB_BG_GRADIENT">
+		 <gradientPart
+               percentage="100"
+               value="COLOR_WHITE">
+         </gradientPart>            
          <description>
-            %Color.errorTextDesc
+	         %Color.tabBGGradientDesc
          </description>
-      </colorDefinition>
-      <colorDefinition
-            label="%Color.hyperlinkText"
-            value="0,0,153"
-            categoryId="org.eclipse.ui.workbenchMisc"
-            id="HYPERLINK_COLOR">
-         <description>
-            %Color.hyperlinkTextDesc
-         </description>
-      </colorDefinition>
-      <colorDefinition
-            label="%Color.activeHyperlinkText"
-            value="0,0,255"
-            categoryId="org.eclipse.ui.workbenchMisc"
-            id="ACTIVE_HYPERLINK_COLOR">
-         <description>
-            %Color.activeHyperlinkTextDesc
-         </description>
-      </colorDefinition>
-   </extension>
-
+      </gradientDefinition>      
+   </extension>   
 </plugin>

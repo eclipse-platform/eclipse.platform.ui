@@ -30,7 +30,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -51,8 +50,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.internal.themes.IThemeDescriptor;
-import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.part.WorkbenchPart;
@@ -535,7 +532,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		setTabList();
 		// only do this once for the non-floating toolbar case.  Otherwise update colors
 		// whenever updating the tab colors
-		setToolBarColors(WorkbenchColors.getActiveNoFocusEditorGradientEnd());
+		setToolBarColors(getPage().getTheme().getColorRegistry().get(IWorkbenchPresentationConstants.BACKGROUND));
 	}
 	
 	public void dispose() {
@@ -565,38 +562,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		//hideToolBarShell();
 	}
 
-	/**
-	 * Draws the applicable gradient on the view's title area
-	 */
-	/* package */
-	void drawGradient(boolean active) {
-/*		if (active) {
-			setToolBarColors(WorkbenchColors.getActiveEditorGradientEnd());
-		} else {
-			setToolBarColors(WorkbenchColors.getActiveNoFocusEditorGradientEnd());
-		}*/
-		
-		if (titleLabel == null || viewToolBar == null || isvToolBar == null)
-			return;
-
-		if (showFocus) {
-			if (getShellActivated()) {
-                titleLabel.setBackground(getActiveGradient(),
-                        getActiveGradientPercents(), isGradientVertical());
-				titleLabel.setForeground(getActiveForeground());
-			} else {
-                titleLabel.setBackground(getDeactivatedGradient(),
-                        getDeactivatedGradientPercents(), isGradientVertical());
-				titleLabel.setForeground(getDeactivatedForeground());
-			}
-		} else {
-            titleLabel.setBackground(getNormalGradient(),
-                    getNormalGradientPercents(), isGradientVertical());
-			titleLabel.setForeground(getNormalForeground());
-		}
-
-		titleLabel.update();
-	}
 	
 	/**
 	 * Make this view pane a fast view
@@ -1038,128 +1003,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			}
 		}
 		*/
-	}
-
-	private Color[] getNormalGradient() {
-		if (theme != null) {
-			return WorkbenchThemeManager.getInstance().getViewGradientColors(
-				theme,
-				IThemeDescriptor.VIEW_TITLE_GRADIENT_COLOR_NORMAL);
-		}
-		return null;
-	}
-
-	private int[] getNormalGradientPercents() {
-		if (theme != null) {
-			return WorkbenchThemeManager.getInstance().getViewGradientPercents(
-				theme,
-				IThemeDescriptor.VIEW_TITLE_GRADIENT_PERCENTS_NORMAL);
-		}
-		return null;
-	}
-
-	private Color getNormalForeground() {
-		if (theme != null) {
-			return WorkbenchThemeManager.getInstance().getViewColor(
-				theme,
-				IThemeDescriptor.VIEW_TITLE_TEXT_COLOR_NORMAL);
-		}
-		return null;
-	}
-
-	private Color[] getActiveGradient() {
-		if (theme != null) {
-			return WorkbenchThemeManager.getInstance().getViewGradientColors(
-				theme,
-				IThemeDescriptor.VIEW_TITLE_GRADIENT_COLOR_ACTIVE);
-		}
-		return WorkbenchColors.getActiveViewGradient();
-	}
-
-	private int[] getActiveGradientPercents() {
-		if (theme != null)
-			return WorkbenchThemeManager.getInstance().getViewGradientPercents(
-				theme,
-				IThemeDescriptor.VIEW_TITLE_GRADIENT_PERCENTS_ACTIVE);
-		else
-			return WorkbenchColors.getActiveViewGradientPercents();
-	}
-
-	private Color getActiveForeground() {
-		if (theme != null) {
-			return WorkbenchThemeManager.getInstance().getViewColor(
-				theme,
-				IThemeDescriptor.VIEW_TITLE_TEXT_COLOR_ACTIVE);
-		}
-		return WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
-	}
-
-	private Color[] getDeactivatedGradient() {
-		if (theme != null) {
-			return WorkbenchThemeManager.getInstance().getViewGradientColors(
-				theme,
-				IThemeDescriptor.VIEW_TITLE_GRADIENT_COLOR_DEACTIVATED);
-		}
-		return WorkbenchColors.getDeactivatedViewGradient();
-	}
-
-	private int[] getDeactivatedGradientPercents() {
-		if (theme != null) {
-			return WorkbenchThemeManager.getInstance().getViewGradientPercents(
-				theme,
-				IThemeDescriptor.VIEW_TITLE_GRADIENT_PERCENTS_DEACTIVATED);
-		}
-		return WorkbenchColors.getDeactivatedViewGradientPercents();
-	}
-
-	private Color getDeactivatedForeground() {
-		if (theme != null) {
-			return WorkbenchThemeManager.getInstance().getViewColor(
-				theme,
-				IThemeDescriptor.VIEW_TITLE_TEXT_COLOR_DEACTIVATED);
-		}
-		return WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
-	}
-
-	private int getGradientDirection() {
-		if (theme != null) {
-			return WorkbenchThemeManager.getInstance().getViewGradientDirection(
-				theme,
-				IThemeDescriptor.VIEW_TITLE_GRADIENT_DIRECTION);
-		}
-		return SWT.HORIZONTAL;
-	}
-
-	private boolean isGradientVertical() {
-	    return getGradientDirection() == SWT.VERTICAL;
-	}
-	
-	private Font getTitleFont() {
-		if (theme != null) {
-			return WorkbenchThemeManager.getInstance().getViewFont(
-				theme,
-				IThemeDescriptor.VIEW_TITLE_FONT);
-		}
-		return null;
-	}
-
-	/**
-	 * Answer the SWT widget style.
-	 */
-	int getStyle() {
-
-		int style = super.getStyle();
-		
-		// @issue even if there is a style, it may still be a function of whether the
-		//   container allows a border
-		if (hasBorder() && (theme != null)) {
-			
-			style |= WorkbenchThemeManager.getInstance().getViewBorderStyle(
-					theme,
-					IThemeDescriptor.VIEW_BORDER_STYLE);
-		};
-		
-		return style;
 	}
 
 	/**

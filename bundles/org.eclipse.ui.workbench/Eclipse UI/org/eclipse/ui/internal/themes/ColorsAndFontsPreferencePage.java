@@ -1539,11 +1539,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
                                 // TODO: confirm
                                 
                             }
-
-                            public ITabThemeDescriptor getTabTheme() {
-                                return null;
-                            }
-	                        
 	                    };
 	                    preview.createControl(previewControl, theme);
 	                    previewSet.add(preview);

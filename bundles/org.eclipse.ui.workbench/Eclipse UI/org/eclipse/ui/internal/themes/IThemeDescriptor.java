@@ -19,23 +19,23 @@ package org.eclipse.ui.internal.themes;
 public interface IThemeDescriptor extends IThemeElementDefinition{
 	public static final String TAB_BORDER_STYLE = "TAB_BORDER_STYLE";	 //$NON-NLS-1$
 
-	public static final String TAB_TITLE_FONT = "TAB_TITLE_FONT"; //$NON-NLS-1$
-	public static final String TAB_TITLE_TEXT_COLOR_ACTIVE = "TAB_TITLE_TEXT_COLOR_ACTIVE"; //$NON-NLS-1$
-	public static final String TAB_TITLE_TEXT_COLOR_DEACTIVATED = "TAB_TITLE_TEXT_COLOR_DEACTIVATED"; //$NON-NLS-1$
-	public static final String TAB_TITLE_TEXT_COLOR_HOVER = "TAB_TITLE_TEXT_COLOR_HOVER"; //$NON-NLS-1$
-	public static final String VIEW_BORDER_STYLE = "VIEW_BORDER_STYLE"; //$NON-NLS-1$
-	public static final String VIEW_TITLE_FONT = "VIEW_TITLE_FONT"; //$NON-NLS-1$
-	public static final String VIEW_TITLE_GRADIENT_COLOR_ACTIVE = "VIEW_TITLE_GRADIENT_COLOR_ACTIVE"; //$NON-NLS-1$
-	public static final String VIEW_TITLE_GRADIENT_COLOR_DEACTIVATED = "VIEW_TITLE_GRADIENT_COLOR_DEACTIVATED"; //$NON-NLS-1$
-	
-	public static final String VIEW_TITLE_GRADIENT_COLOR_NORMAL = "VIEW_TITLE_GRADIENT_COLOR_NORMAL"; //$NON-NLS-1$
-	public static final String VIEW_TITLE_GRADIENT_DIRECTION = "VIEW_TITLE_GRADIENT_DIRECTION"; //$NON-NLS-1$
-	public static final String VIEW_TITLE_GRADIENT_PERCENTS_ACTIVE = "VIEW_TITLE_GRADIENT_PERCENTS_ACTIVE"; //$NON-NLS-1$
-	public static final String VIEW_TITLE_GRADIENT_PERCENTS_DEACTIVATED = "VIEW_TITLE_GRADIENT_PERCENTS_DEACTIVATED"; //$NON-NLS-1$
-	public static final String VIEW_TITLE_GRADIENT_PERCENTS_NORMAL = "VIEW_TITLE_GRADIENT_PERCENTS_NORMAL"; //$NON-NLS-1$
-	public static final String VIEW_TITLE_TEXT_COLOR_ACTIVE = "VIEW_TITLE_TEXT_COLOR_ACTIVE"; //$NON-NLS-1$
-	public static final String VIEW_TITLE_TEXT_COLOR_DEACTIVATED = "VIEW_TITLE_TEXT_COLOR_DEACTIVATED"; //$NON-NLS-1$
-	public static final String VIEW_TITLE_TEXT_COLOR_NORMAL = "VIEW_TITLE_TEXT_COLOR_NORMAL"; //$NON-NLS-1$
+//	public static final String TAB_TITLE_FONT = "TAB_TITLE_FONT"; //$NON-NLS-1$
+//	public static final String TAB_TITLE_TEXT_COLOR_ACTIVE = "TAB_TITLE_TEXT_COLOR_ACTIVE"; //$NON-NLS-1$
+//	public static final String TAB_TITLE_TEXT_COLOR_DEACTIVATED = "TAB_TITLE_TEXT_COLOR_DEACTIVATED"; //$NON-NLS-1$
+//	public static final String TAB_TITLE_TEXT_COLOR_HOVER = "TAB_TITLE_TEXT_COLOR_HOVER"; //$NON-NLS-1$
+//	public static final String VIEW_BORDER_STYLE = "VIEW_BORDER_STYLE"; //$NON-NLS-1$
+//	public static final String VIEW_TITLE_FONT = "VIEW_TITLE_FONT"; //$NON-NLS-1$
+//	public static final String VIEW_TITLE_GRADIENT_COLOR_ACTIVE = "VIEW_TITLE_GRADIENT_COLOR_ACTIVE"; //$NON-NLS-1$
+//	public static final String VIEW_TITLE_GRADIENT_COLOR_DEACTIVATED = "VIEW_TITLE_GRADIENT_COLOR_DEACTIVATED"; //$NON-NLS-1$
+//	
+//	public static final String VIEW_TITLE_GRADIENT_COLOR_NORMAL = "VIEW_TITLE_GRADIENT_COLOR_NORMAL"; //$NON-NLS-1$
+//	public static final String VIEW_TITLE_GRADIENT_DIRECTION = "VIEW_TITLE_GRADIENT_DIRECTION"; //$NON-NLS-1$
+//	public static final String VIEW_TITLE_GRADIENT_PERCENTS_ACTIVE = "VIEW_TITLE_GRADIENT_PERCENTS_ACTIVE"; //$NON-NLS-1$
+//	public static final String VIEW_TITLE_GRADIENT_PERCENTS_DEACTIVATED = "VIEW_TITLE_GRADIENT_PERCENTS_DEACTIVATED"; //$NON-NLS-1$
+//	public static final String VIEW_TITLE_GRADIENT_PERCENTS_NORMAL = "VIEW_TITLE_GRADIENT_PERCENTS_NORMAL"; //$NON-NLS-1$
+//	public static final String VIEW_TITLE_TEXT_COLOR_ACTIVE = "VIEW_TITLE_TEXT_COLOR_ACTIVE"; //$NON-NLS-1$
+//	public static final String VIEW_TITLE_TEXT_COLOR_DEACTIVATED = "VIEW_TITLE_TEXT_COLOR_DEACTIVATED"; //$NON-NLS-1$
+//	public static final String VIEW_TITLE_TEXT_COLOR_NORMAL = "VIEW_TITLE_TEXT_COLOR_NORMAL"; //$NON-NLS-1$
 	
 	/**
 	 * Returns the color overrides for this theme.
@@ -54,16 +54,4 @@ public interface IThemeDescriptor extends IThemeElementDefinition{
 	 * @return GradientDefinition []
 	 */
 	public GradientDefinition [] getGradients();	
-	
-	/**
-	 * Returns the descriptor of the tab theme.
-	 * @return ITabThemeDescriptor
-	 */
-	public ITabThemeDescriptor getTabThemeDescriptor();
-
-	/**
-	 * Returns the descriptor of the view theme.
-	 * @return IViewThemeDesc
-	 */	
-	public IViewThemeDescriptor getViewThemeDescriptor();
 }

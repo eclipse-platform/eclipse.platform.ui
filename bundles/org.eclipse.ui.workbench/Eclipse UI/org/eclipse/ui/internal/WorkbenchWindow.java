@@ -628,8 +628,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		//topBar.setMiddle(newBar.getControl());
 
 		//ColorSchemeService.setCBannerColors(topBar);
-		ColorSchemeService.setCoolBarColors(getCoolBarControl());
-		ColorSchemeService.setPerspectiveToolBarColors(perspectiveBar.getControl());
+		ColorSchemeService.setCoolBarColors(getWorkbench().getThemeManager().getCurrentTheme(), getCoolBarControl());
+		ColorSchemeService.setPerspectiveToolBarColors(getWorkbench().getThemeManager().getCurrentTheme(), perspectiveBar.getControl());
 		//ColorSchemeService.setPerspectiveToolBarColors(newBar.getControl());
 	
 		createStatusLine(parent);

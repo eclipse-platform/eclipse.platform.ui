@@ -197,22 +197,16 @@ public abstract class MultiEditor extends EditorPart {
 		GradientRegistry gradientRegistry = JFaceResources.getGradientRegistry();        
 		ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
         if (activePart) {
-			if (getShellActivated()) {
-			    jfaceGradient = gradientRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_GRADIENT_ACTIVE_FOCUS);
-			    g.fgColor = colorRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_TEXT_COLOR_ACTIVE_FOCUS);
-			}
-			else {
-			    jfaceGradient = gradientRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_GRADIENT_ACTIVE_NOFOCUS);
-			    g.fgColor = colorRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_TEXT_COLOR_ACTIVE_NOFOCUS);
-			}
+			g.fgColor = colorRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_COLOR);
+			jfaceGradient = gradientRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_BG_GRADIENT);
 		} else {
 			if (activeEditor) {
-				jfaceGradient = gradientRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_GRADIENT_ACTIVE_FOCUS);
-				g.fgColor = colorRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_TEXT_COLOR_ACTIVE_FOCUS);
+				g.fgColor = colorRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_COLOR);
+				jfaceGradient = gradientRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_BG_GRADIENT);
 			}
 			else {
-				jfaceGradient = gradientRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_GRADIENT_INACTIVE);
-				g.fgColor = colorRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_TEXT_COLOR_ACTIVE_FOCUS);
+				g.fgColor = colorRegistry.get(IWorkbenchPresentationConstants.INACTIVE_TAB_TEXT_COLOR);
+				jfaceGradient = gradientRegistry.get(IWorkbenchPresentationConstants.INACTIVE_TAB_BG_GRADIENT);
 			}
 		}
 		

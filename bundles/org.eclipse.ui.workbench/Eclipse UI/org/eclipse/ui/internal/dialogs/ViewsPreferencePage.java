@@ -25,9 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.ColorSchemeService;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
@@ -232,14 +230,7 @@ public class ViewsPreferencePage
 		store.setValue(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR, showTextOnPerspectiveBar.getSelection());
 		store.setValue(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, showTraditionalStyleTabs.getSelection());
 		store.setValue(IPreferenceConstants.COLOR_ICONS, colorIcons.getSelection());		
-	
-		if (Workbench.getInstance() != null) {
-			IWorkbenchWindow[] windows = Workbench.getInstance().getWorkbenchWindows();
-			for (int i = 0; i < windows.length; i++) {
-				ColorSchemeService.setSchemeColors(windows[i].getShell());
-			}
-		}
-			
+				
 		int idx = themeCombo.getSelectionIndex();
 		if (idx == 0) {		    
 		    Workbench.getInstance().getThemeManager().setCurrentTheme(IThemeManager.DEFAULT_THEME);

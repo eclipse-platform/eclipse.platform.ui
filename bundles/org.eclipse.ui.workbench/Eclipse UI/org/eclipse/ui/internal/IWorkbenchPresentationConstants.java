@@ -25,13 +25,17 @@ public interface IWorkbenchPresentationConstants {
     public static final String FAST_VIEW_BORDER_2 = "FAST_VIEW_BORDER_2"; //$NON-NLS-1$
     public static final String FAST_VIEW_BORDER_3 = "FAST_VIEW_BORDER_3"; //$NON-NLS-1$
 
-    // used in EditorWorkbook
-    public static final String EDITOR_TITLE_TEXT_COLOR_ACTIVE_FOCUS = "EDITOR_TITLE_TEXT_COLOR_ACTIVE_FOCUS"; //$NON-NLS-1$
-    public static final String EDITOR_TITLE_TEXT_COLOR_ACTIVE_NOFOCUS = "EDITOR_TITLE_TEXT_COLOR_ACTIVE_NOFOCUS"; //$NON-NLS-1$
-    public static final String EDITOR_TITLE_TEXT_COLOR_INACTIVE = "EDITOR_TITLE_TEXT_COLOR_INACTIVE"; //$NON-NLS-1$
+    public static final String ACTIVE_TAB_TEXT_FONT = "org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_FONT"; //$NON-NLS-1$
+    public static final String INACTIVE_TAB_TEXT_FONT = "org.eclipse.ui.workbench.INACTIVE_TAB_TEXT_FONT"; //$NON-NLS-1$
     
-    public static final String EDITOR_TITLE_GRADIENT_INACTIVE = "EDITOR_TITLE_GRADIENT_INACTIVE"; //$NON-NLS-1$
-    public static final String EDITOR_TITLE_GRADIENT_ACTIVE_FOCUS = "EDITOR_TITLE_GRADIENT_ACTIVE_FOCUS"; //$NON-NLS-1$
-    public static final String EDITOR_TITLE_GRADIENT_ACTIVE_NOFOCUS = "EDITOR_TITLE_GRADIENT_ACTIVE_NOFOCUS"; //$NON-NLS-1$
+    public static final String ACTIVE_TAB_TEXT_COLOR = "org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR"; //$NON-NLS-1$
+    public static final String INACTIVE_TAB_TEXT_COLOR = "org.eclipse.ui.workbench.INACTIVE_TAB_TEXT_COLOR"; //$NON-NLS-1$
+    
+    public static final String TAB_BG_GRADIENT = "org.eclipse.ui.workbench.TAB_BG_GRADIENT"; //$NON-NLS-1$
+    public static final String ACTIVE_TAB_BG_GRADIENT = "org.eclipse.ui.workbench.ACTIVE_TAB_BG_GRADIENT"; //$NON-NLS-1$
+    public static final String INACTIVE_TAB_BG_GRADIENT = "org.eclipse.ui.workbench.INACTIVE_TAB_BG_GRADIENT"; //$NON-NLS-1$
+    
+    public static final String BACKGROUND = "org.eclipse.ui.workbench.BACKGROUND"; //$NON-NLS-1$
+    public static final String FOREGROUND = "org.eclipse.ui.workbench.FOREGROUND"; //$NON-NLS-1$
     
 }
