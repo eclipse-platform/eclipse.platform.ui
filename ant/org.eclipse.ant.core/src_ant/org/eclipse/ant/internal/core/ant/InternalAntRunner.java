@@ -67,8 +67,6 @@ import java.text.MessageFormat;
 import java.util.*;
 
 import org.apache.tools.ant.*;
-import org.apache.tools.ant.input.DefaultInputHandler;
-import org.apache.tools.ant.input.InputHandler;
 import org.eclipse.ant.core.*;
 import org.eclipse.core.runtime.*;
 
@@ -98,7 +96,12 @@ public class InternalAntRunner {
 	
 	/**
 	 * Cache of the Ant version information when it has been loaded	 */
-	protected static String antVersion= null;
+	protected String antVersion= null;
+	
+	/**
+	 * Cache of the Ant version number when it has been loaded
+	 */
+	protected String antVersionNumber= null;
 
 	/** Our current message output status. Follows Project.MSG_XXX */
 	protected int messageOutputLevel = Project.MSG_INFO;
@@ -177,7 +180,7 @@ public class InternalAntRunner {
 		this.propertyFiles.addAll(Arrays.asList(propertyFiles));
 	}
 
-	protected void addBuildListeners(Project project) {
+	private void addBuildListeners(Project project) {
 		String className= null;
 		try {
 			BuildLogger logger= createLogger();
@@ -202,7 +205,7 @@ public class InternalAntRunner {
 		}
 	}
 
-	protected void setProperties(Project project) {
+	private void setProperties(Project project) {
 		project.setUserProperty(PROPERTY_ECLIPSE_RUNNING, "true"); //$NON-NLS-1$
 		project.setUserProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
 		project.setUserProperty("ant.version", getAntVersion()); //$NON-NLS-1$
@@ -224,19 +227,21 @@ public class InternalAntRunner {
 		}
 	}
 
-	protected void setTasks(Project project) {
+	private void setTasks(Project project) {
 		List tasks = AntCorePlugin.getPlugin().getPreferences().getTasks();
 		
 		for (Iterator iterator = tasks.iterator(); iterator.hasNext();) {
 			org.eclipse.ant.core.Task task = (org.eclipse.ant.core.Task) iterator.next();
 			try {
 				Class taskClass = Class.forName(task.getClassName());
-				try {
-					project.checkTaskClass(taskClass);
-				} catch (BuildException e) {
-					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Error_setting_Ant_task"), new String[]{task.getTaskName()}), e); //$NON-NLS-1$
-					AntCorePlugin.getPlugin().getLog().log(status);
-					continue;
+				if (isVersionCompatible("1.5")) { //$NON-NLS-1$
+					try {
+						project.checkTaskClass(taskClass);
+					} catch (BuildException e) {
+						IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Error_setting_Ant_task"), new String[]{task.getTaskName()}), e); //$NON-NLS-1$
+						AntCorePlugin.getPlugin().getLog().log(status);
+						continue;
+					}
 				}
 				project.addTaskDefinition(task.getTaskName(), taskClass);
 			} catch (ClassNotFoundException e) {
@@ -246,7 +251,7 @@ public class InternalAntRunner {
 		}
 	}
 
-	protected void setTypes(Project project) {
+	private void setTypes(Project project) {
 		List types = AntCorePlugin.getPlugin().getPreferences().getTypes();
 		
 		for (Iterator iterator = types.iterator(); iterator.hasNext();) {
@@ -262,10 +267,10 @@ public class InternalAntRunner {
 	}
 
 	/**
-	 * Parses the build script and adds necessary information into
+	 * Parses the build file and adds necessary information into
 	 * the given project.
 	 */
-	protected void parseScript(Project project) {
+	private void parseBuildFile(Project project) {
 		File buildFile = new File(getBuildFileLocation());
 		if (!buildFile.exists()) {
 			throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Buildfile__{0}_does_not_exist_!_1"), //$NON-NLS-1$
@@ -286,11 +291,29 @@ public class InternalAntRunner {
 	 * project name, and the last elements is an array of dependencies.
 	 */
 	public List getTargets() {
-		// create a project and initialize it
+		// create a project and initialize it by loading the Property task
 		Project antProject = new Project();
-		antProject.init();
+		
+		if (isVersionCompatible("1.6")) { //$NON-NLS-1$
+			//in Ant version 1.6 or greater all tasks can exist outside the scope of a target
+			antProject.init();
+		} else {
+			try {
+				Class taskClass = Class.forName("org.apache.tools.ant.taskdefs.Property"); //$NON-NLS-1$
+				antProject.addTaskDefinition("property", taskClass); //$NON-NLS-1$
+				taskClass = Class.forName("org.apache.tools.ant.taskdefs.Typedef"); //$NON-NLS-1$
+				antProject.addTaskDefinition("typedef", taskClass); //$NON-NLS-1$
+				taskClass = Class.forName("org.apache.tools.ant.taskdefs.Taskdef"); //$NON-NLS-1$
+				antProject.addTaskDefinition("taskdef", taskClass); //$NON-NLS-1$
+				} catch (NoClassDefFoundError e) {
+					throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Missing_Class"), e); //$NON-NLS-1$
+				} catch (ClassNotFoundException c) {
+					throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Missing_Class"), c); //$NON-NLS-1$
+			   }
+		}
+		
 		antProject.setProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
-		parseScript(antProject);
+		parseBuildFile(antProject);
 		defaultTarget = antProject.getDefaultTarget();
 		Enumeration targets = antProject.getTargets().elements();
 		List infos= new ArrayList();
@@ -338,7 +361,7 @@ public class InternalAntRunner {
 		run(getArrayList(extraArguments));
 	}
 
-	protected void printArguments(Project project) {
+	private void printArguments(Project project) {
 		if ((messageOutputLevel != Project.MSG_DEBUG) && (messageOutputLevel != Project.MSG_VERBOSE)) {
 			return;
 		}
@@ -350,7 +373,7 @@ public class InternalAntRunner {
 		project.log(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Arguments__{0}_2"), new String[]{sb.toString().trim()})); //$NON-NLS-1$
 	}
 
-	protected void createMonitorBuildListener(Project project) {
+	private void createMonitorBuildListener(Project project) {
 		if (monitor == null) {
 			return;
 		}
@@ -467,7 +490,7 @@ public class InternalAntRunner {
 	/**
 	 * Note that the list passed to this method must support
 	 * List#remove(Object)	 */
-	protected void run(List argList) {
+	private void run(List argList) {
 		setCurrentProject(new Project());
 		Throwable error = null;
 		PrintStream originalErr = System.err;
@@ -520,7 +543,7 @@ public class InternalAntRunner {
 			setTasks(getCurrentProject());
 			setTypes(getCurrentProject());
 			
-			parseScript(getCurrentProject());
+			parseBuildFile(getCurrentProject());
 			validateDefaultTarget();
 			createMonitorBuildListener(getCurrentProject());
 			
@@ -610,18 +633,6 @@ public class InternalAntRunner {
 			throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Default_target_{0}{1}{2}_does_not_exist_in_this_project_1"), new String[]{"'", defaultTarget, "'"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
-	
-	/**
-	 * Prints the message of the Throwable if it is not null.
-	 * 
-	 * @param t the throwable whose message is to be displayed
-	 */
-	protected void printMessage(Throwable t) {
-		String message = t.getMessage();
-		if (message != null) {
-			logMessage(getCurrentProject(), message, Project.MSG_ERR);
-		}
-	}
 
 	/**
 	 * Creates and returns the default build logger for logging build events to the ant log.
@@ -629,7 +640,7 @@ public class InternalAntRunner {
 	 * @return the default build logger for logging build events to the ant log
 	 * 			can return <code>null</code> if no logging is to occur
 	 */
-	protected BuildLogger createLogger() {
+	private BuildLogger createLogger() {
 		if (loggerClassname == null) {
 			buildLogger= new DefaultLogger();
 		} else if (!"".equals(loggerClassname)) { //$NON-NLS-1$
@@ -717,7 +728,7 @@ public class InternalAntRunner {
 		return false;
 	}
 
-	protected void logMessage(Project project, String message, int priority) {
+	private void logMessage(Project project, String message, int priority) {
 		if (project != null) {
 			project.log(message, priority);	
 		} else {
@@ -761,7 +772,7 @@ public class InternalAntRunner {
 		this.inputHandlerClassname= inputHandlerClassname;
 	}
 
-	protected String getBuildFileLocation() {
+	private String getBuildFileLocation() {
 		if (buildFileLocation == null) {
 			buildFileLocation = new File("build.xml").getAbsolutePath(); //$NON-NLS-1$
 		}
@@ -795,7 +806,7 @@ public class InternalAntRunner {
 		}
 	}
 
-	protected static String getAntVersion() throws BuildException {
+	private String getAntVersion() throws BuildException {
 		if (antVersion == null) {
 			try {
 				Properties props = new Properties();
@@ -803,9 +814,10 @@ public class InternalAntRunner {
 				props.load(in);
 				in.close();
 
-				StringBuffer msg = new StringBuffer();
-				msg.append(InternalAntMessages.getString("InternalAntRunner.Ant_version__7")); //$NON-NLS-1$
-				msg.append(props.getProperty("VERSION")); //$NON-NLS-1$
+				StringBuffer msg = new StringBuffer(InternalAntMessages.getString("InternalAntRunner.Ant_version__7")); //$NON-NLS-1$
+				String versionNumber= props.getProperty("VERSION");  //$NON-NLS-1$
+				antVersionNumber= versionNumber;
+				msg.append(versionNumber);
 				msg.append(' ');
 				msg.append(InternalAntMessages.getString("InternalAntRunner.compiled_on__8")); //$NON-NLS-1$
 				msg.append(props.getProperty("DATE")); //$NON-NLS-1$
@@ -818,8 +830,20 @@ public class InternalAntRunner {
 		}
 		return antVersion;
 	}
-
-	protected boolean preprocessCommandLine(List commands) {
+	
+	private String getAntVersionNumber() throws BuildException {
+		if (antVersionNumber == null) {
+			getAntVersion();
+		}
+		return antVersionNumber;
+	}
+	
+	private boolean isVersionCompatible(String comparison) {
+		String version= getAntVersionNumber();
+		return version.compareTo(comparison) >= 0;
+	}
+	
+	private boolean preprocessCommandLine(List commands) {
 		
 		String[] args = getArgument(commands, "-listener"); //$NON-NLS-1$
 		while (args != null) {
@@ -847,7 +871,7 @@ public class InternalAntRunner {
 		
 		args = getArgument(commands, "-inputhandler"); //$NON-NLS-1$
 		if (args != null) {
-			if (getAntVersion().indexOf("1.5") == -1) { //$NON-NLS-1$
+			if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
 				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Specifying_an_InputHandler_is_an_Ant_1.5.*_feature._Please_update_your_Ant_classpath_to_include_an_Ant_version_greater_than_this._2")); //$NON-NLS-1$
 			}
 			if (args.length == 0) {
@@ -866,7 +890,7 @@ public class InternalAntRunner {
 	 * Looks for interesting command line arguments. 
 	 * Returns whether it is OK to run the script.
 	 */
-	protected boolean processCommandLine(List commands) {
+	private boolean processCommandLine(List commands) {
 		
 		if (commands.remove("-help")) { //$NON-NLS-1$
 			printUsage();
@@ -900,7 +924,7 @@ public class InternalAntRunner {
 		}
 		
 		if (commands.remove("-diagnostics")) { //$NON-NLS-1$
-			if (getAntVersion().indexOf("1.5") == -1) { //$NON-NLS-1$
+			if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
 				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.The_diagnositics_options_is_an_Ant_1.5.*_feature._Please_update_your_Ant_classpath_to_include_an_Ant_version_greater_than_this._4")); //$NON-NLS-1$
 			}
 			try {
@@ -968,7 +992,7 @@ public class InternalAntRunner {
 	 * Checks for targets specified at the command line.
 	 * Returns whether execution should continue; false if
 	 * an unrecognized argument is encountered.	 */
-	protected boolean processTargets(List commands) {
+	private boolean processTargets(List commands) {
 		if (targets == null) {
 			targets = new Vector(commands.size());
 		}
@@ -991,7 +1015,7 @@ public class InternalAntRunner {
 	 * If the fileName is not absolute, the file will be created in the
 	 * working directory if specified or in the same directory as the location
 	 * of the build file.	 */
-	protected void createLogFile(String fileName) throws FileNotFoundException, IOException {
+	private void createLogFile(String fileName) throws FileNotFoundException, IOException {
 		File logFile = getFileRelativeToBaseDir(fileName);
 		
 		//this stream is closed in the finally block of run(list)
@@ -1004,7 +1028,7 @@ public class InternalAntRunner {
 		}
 	}
 
-	protected File getFileRelativeToBaseDir(String fileName) {
+	private File getFileRelativeToBaseDir(String fileName) {
 		IPath path= new Path(fileName);
 		if (!path.isAbsolute()) {
 			String base= getCurrentProject().getUserProperty("basedir"); //$NON-NLS-1$
@@ -1030,11 +1054,11 @@ public class InternalAntRunner {
 	 * Processes cmd line properties and adds the user properties
 	 * Any user properties that have been explicitly set are set as well.
 	 * Ensures that -D properties take precedence.	 * 	 */
-	protected void processProperties(List commands) {
+	private void processProperties(List commands) {
 		//MULTIPLE property files are allowed
 		String[] args= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
-		while(args != null) {
-			if (getAntVersion().indexOf("1.5") == -1) { //$NON-NLS-1$
+		while (args != null) {
+			if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
 				logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.Specifying_property_files_is_a_Ant_1.5.*_feature._Please_update_your_Ant_classpath._6"), Project.MSG_ERR); //$NON-NLS-1$
 				break;
 			}
@@ -1100,7 +1124,7 @@ public class InternalAntRunner {
 	/**
 	 * Print the project description, if any
 	 */
-	protected void printHelp(Project project) {
+	private void printHelp(Project project) {
 		if (project.getDescription() != null) {
 			logMessage(project, project.getDescription(), Project.MSG_INFO);
 		}
@@ -1111,14 +1135,14 @@ public class InternalAntRunner {
 	 * Logs a message with the client indicating the version of <b>Ant</b> that this class
 	 * fronts.
 	 */
-	protected void printVersion() {
+	private void printVersion() {
 		logMessage(getCurrentProject(), getAntVersion(), Project.MSG_INFO);
 	}
 
 	/**
 	 * Logs a message with the client outlining the usage of <b>Ant</b>.
 	 */
-	protected void printUsage() {
+	private void printUsage() {
 		String lSep = System.getProperty("line.separator"); //$NON-NLS-1$
 		StringBuffer msg = new StringBuffer();
 		msg.append("ant ["); //$NON-NLS-1$
@@ -1198,7 +1222,7 @@ public class InternalAntRunner {
 	 * @return <code>null</code> if the parameter is not found 
 	 * 			or an empty array if no arguments are found
 	 */
-	protected String[] getArgument(List commands, String param) {
+	private String[] getArgument(List commands, String param) {
 		if (commands == null) {
 			return null;
 		}
@@ -1246,11 +1270,11 @@ public class InternalAntRunner {
 		this.monitor = monitor;
 	}
 
-	protected Project getCurrentProject() {
+	private Project getCurrentProject() {
 		return currentProject;
 	}
 
-	protected void setCurrentProject(Project currentProject) {
+	private void setCurrentProject(Project currentProject) {
 		this.currentProject = currentProject;
 	}
 	
@@ -1264,7 +1288,7 @@ public class InternalAntRunner {
 	/**
 	 * Load all properties from the files 
 	 * specified by -propertyfile.	 */
-	protected void loadPropertyFiles() {
+	private void loadPropertyFiles() {
 		Iterator itr= propertyFiles.iterator();
         while (itr.hasNext()) {
             String filename= (String) itr.next();
@@ -1304,24 +1328,11 @@ public class InternalAntRunner {
      *                           implementation could not be loaded.
      */
     private void addInputHandler(Project project) {
-    	if (getAntVersion().indexOf("1.5") == -1) { //$NON-NLS-1$
+    	if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
 			return;
 		}
-        InputHandler handler = null;
-        if (inputHandlerClassname == null) {
-            handler = new DefaultInputHandler();
-        } else {
-            try {
-                handler = (InputHandler)(Class.forName(inputHandlerClassname).newInstance());
-            } catch (ClassCastException e) {
-                String msg = MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.The_specified_input_handler_class_{0}_does_not_implement_the_org.apache.tools.ant.input.InputHandler_interface_5"), new String[]{inputHandlerClassname}); //$NON-NLS-1$
-                throw new BuildException(msg, e);
-            } catch (Exception e) {
-                String msg = MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Unable_to_instantiate_specified_input_handler_class_{0}___{1}_6"), new String[]{inputHandlerClassname, e.getClass().getName()}); //$NON-NLS-1$
-                throw new BuildException(msg, e);
-            }
-        }
-        project.setInputHandler(handler);
+		InputHandlerSetter setter= new InputHandlerSetter();
+		setter.setInputHandler(project, inputHandlerClassname);
     }
 
 	/**
