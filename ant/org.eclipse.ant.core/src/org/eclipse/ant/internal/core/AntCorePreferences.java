@@ -226,7 +226,7 @@ protected void addToolsJar(List destination) {
 	if (!tools.exists())
 		return;
 	try {
-		destination.add(tools.toURL());
+		destination.add(new URL("file:" + tools.getAbsolutePath())); //$NON-NLS-1$
 	} catch (MalformedURLException e) {
 		// if the URL does not have a valid format, just log and ignore the exception
 		IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e); //$NON-NLS-1$
