@@ -432,7 +432,7 @@ public ProjectDescription read(IProject target, boolean creation) throws CoreExc
 	if (isDefaultLocation) {
 		projectLocation = getProjectDefaultLocation(target);
 	}
-	IPath descriptionPath = projectLocation.append(IProjectDescription.DESCRIPTION_FILE_NAME);
+	IPath descriptionPath = workspace.getPathVariableManager().resolvePath(projectLocation).append(IProjectDescription.DESCRIPTION_FILE_NAME);
 	ProjectDescription description = null;
 
 	if (!descriptionPath.toFile().exists()) {
