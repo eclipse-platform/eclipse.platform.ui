@@ -25,6 +25,12 @@ public class URLHandler extends BaseURLHandler {
 		public long getContentLength() {
 			return r.getContentLength();
 		}
+		public int getResponseCode() {
+			return r.getStatusCode();
+		}
+		public String getResponseMessage() {
+			return r.getStatusMessage();
+		}
 	}
 
 private URLHandler() {}
@@ -42,7 +48,7 @@ public static BaseURLHandler.Response open(URL url) throws IOException {
 			i++;
 		}	
 		InputStream is = c.getInputStream();	
-		return new Response(new org.eclipse.webdav.http.client.Response(200/*http OK*/,"",ctx,is));
+		return new Response(new org.eclipse.webdav.http.client.Response(UNKNOWN_STATUS,UNKNOWN_MSG,ctx,is));
 	}
 	else {
 		if (http==null) throw new IllegalStateException("HTTP client not set");		
