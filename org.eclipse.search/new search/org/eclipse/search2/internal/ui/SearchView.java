@@ -439,16 +439,15 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 					showProgressBar();
 					int max= InternalSearchUI.getInstance().getAmountOfWork(result.getQuery()); 
 					fBar.setMaximum(max); 
-					fUpdateJob= new UpdateUIJob("Refresh Search Progress"); //$NON-NLS-1$  
-					fUpdateJob.schedule(200);
 				}
 			});
 		}
-
+		fUpdateJob= new UpdateUIJob("Refresh Search Progress");  
+		fUpdateJob.schedule(200);
 	}
 
 	public void queryFinished(ISearchQuery query) {
-		updateTitle();
+		updateTitle(); 
 		if (getPageBook() != null && !getPageBook().isDisposed()) {
 			getPageBook().getDisplay().asyncExec(new Runnable() {
 				public void run() {
