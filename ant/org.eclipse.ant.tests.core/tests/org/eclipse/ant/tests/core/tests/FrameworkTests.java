@@ -25,10 +25,10 @@ public class FrameworkTests extends AbstractAntTest {
 	public void testClasspathOrdering() throws MalformedURLException, CoreException {
 		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
 		
-		String path= getProject().getFolder("lib").getFile("antTestsSupport.jar").getLocation().toFile().getAbsolutePath();
+		String path= getProject().getFolder("lib").getFile("classpathOrdering1.jar").getLocation().toFile().getAbsolutePath();
 		URL url= new URL("file:" + path);
 		
-		path= getProject().getFolder("lib").getFile("antTestsSupport.jar").getLocation().toFile().getAbsolutePath();
+		path= getProject().getFolder("lib").getFile("classpathOrdering2.jar").getLocation().toFile().getAbsolutePath();
 		URL url2= new URL("file:" + path);
 		
 		URL urls[] = prefs.getCustomURLs();
@@ -38,14 +38,39 @@ public class FrameworkTests extends AbstractAntTest {
 		newUrls[urls.length + 1] = url2;
 		prefs.setCustomURLs(newUrls);
 		
-		
 		prefs.updatePluginPreferences();
 		
 		run("ClasspathOrdering.xml");
 		String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
-		assertTrue("Message incorrect: " + msg, msg.equals("Testing Ant in Eclipse with a custom task"));
+		assertTrue("Message incorrect: " + msg, msg.equals("classpathOrdering1"));
 		assertSuccessful();
 		
 		restorePreferenceDefaults();
+		
+		urls = prefs.getCustomURLs();
+		newUrls = new URL[urls.length + 2];
+		System.arraycopy(urls, 0, newUrls, 0, urls.length);
+		newUrls[urls.length] = url2;
+		newUrls[urls.length + 1] = url;
+		prefs.setCustomURLs(newUrls);
+		
+		prefs.updatePluginPreferences();
+		
+		run("ClasspathOrdering.xml");
+		msg= (String)AntTestChecker.getDefault().getMessages().get(1);
+		assertTrue("Message incorrect: " + msg, msg.equals("classpathOrdering2"));
+		assertSuccessful();
+		
+	}
+	
+	public void testNoDefaultTarget() {
+		try {
+			run("NoDefault.xml", new String[]{"test"}, false);
+		} catch (CoreException e) {
+			String msg= e.getMessage();
+			assertTrue("Message incorrect: " + msg, msg.equals("Default target 'build' does not exist in this project"));
+			return;
+		}
+		assertTrue("Build files with no default targets should not be accepted", false);
 	}
 }

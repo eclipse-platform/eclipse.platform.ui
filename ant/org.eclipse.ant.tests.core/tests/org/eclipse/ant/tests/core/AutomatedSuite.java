@@ -46,6 +46,7 @@ public class AutomatedSuite extends TestSuite {
 	 */
 	public AutomatedSuite() {
 		addTest(new TestSuite(ProjectCreationDecorator.class));
+		addTest(new TestSuite(FrameworkTests.class));
 		addTest(new TestSuite(TargetTests.class));
 		addTest(new TestSuite(ProjectTests.class));
 		addTest(new TestSuite(OptionTests.class));

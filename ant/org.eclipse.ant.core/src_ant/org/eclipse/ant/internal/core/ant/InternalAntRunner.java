@@ -546,7 +546,7 @@ public class InternalAntRunner {
 		
 		if (!defaultFound) {
 			//default target must exist
-			throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Default_target_{0}{1}{2}_does_not_exist_in_this_project_1"), new String[]{InternalAntMessages.getString("InternalAntRunner.___5"), defaultTarget, InternalAntMessages.getString("InternalAntRunner.___6")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Default_target_{0}{1}{2}_does_not_exist_in_this_project_1"), new String[]{"'", defaultTarget, "'"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 	
