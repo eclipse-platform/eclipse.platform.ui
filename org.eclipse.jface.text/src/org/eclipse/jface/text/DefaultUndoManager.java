@@ -856,7 +856,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 * @since 3.1
 	 */
 	private void disposeCommandStack() {
-	    fHistory.dispose(fUndoContext, true, true);
+	    fHistory.dispose(fUndoContext, true, true, true);
 	}
 	
 	/**
@@ -866,7 +866,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 */
 	private void initializeCommandStack() {
 	    if (fHistory != null && fUndoContext != null)
-			fHistory.dispose(fUndoContext, true, true);
+			fHistory.dispose(fUndoContext, true, true, true);
 
 	}
 	
