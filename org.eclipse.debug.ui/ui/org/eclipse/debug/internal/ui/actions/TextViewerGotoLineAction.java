@@ -36,7 +36,7 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 				return ActionMessages.getString("TextViewerGotoLineAction.Not_a_number_2"); //$NON-NLS-1$
 			}
 
-			return ""; //$NON-NLS-1$
+			return null;
 		}
 	};
 
