@@ -462,6 +462,18 @@ public interface IDebugUIConstants {
 	/** Disabled breakpoint image identifier. */
 	public static final String IMG_OBJS_BREAKPOINT_DISABLED= "IMG_OBJS_BREAKPOINT_DISABLED"; //$NON-NLS-1$
 		
+	/**
+	 * Enabled watchpoint image identifier.
+	 * @since 3.0
+	 */
+	public static final String IMG_OBJS_WATCHPOINT= "IMG_OBJS_WATCHPOINT"; //$NON-NLS-1$
+	
+	/**
+	 * Disabled watchpoint image identifier.
+	 * @since 3.0
+	 */
+	public static final String IMG_OBJS_WATCHPOINT_DISABLED= "IMG_OBJS_WATCHPOINT_DISABLED"; //$NON-NLS-1$
+	
 	/** Running system process image identifier. */
 	public static final String IMG_OBJS_OS_PROCESS= "IMG_OBJS_OS_PROCESS"; //$NON-NLS-1$
 	
