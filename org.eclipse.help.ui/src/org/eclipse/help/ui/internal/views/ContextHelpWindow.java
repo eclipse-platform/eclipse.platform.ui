@@ -389,8 +389,20 @@ public class ContextHelpWindow extends Window implements IPageChangedListener {
 
 	public void pageChanged(PageChangedEvent event) {
 		Object page = event.getSelectedPage();
+		Control c = null;
 		if (page instanceof IDialogPage) {
-			update(null, ((IDialogPage)page).getControl());
+			c = ((IDialogPage)page).getControl();
 		}
+		else {
+			c = getShell().getDisplay().getFocusControl();
+			if (c instanceof TabFolder) {
+				TabFolder folder = (TabFolder)c;
+				TabItem [] selection = folder.getSelection();
+				if (selection.length==1) {
+					c = selection[0].getControl();
+				}
+			}
+		}
+		update(null, c);
 	}
 }
