@@ -54,6 +54,9 @@ INPUT {
 	padding:0px;
 }
 
+A {
+	color:#0066FF;
+}
 
 #searchTable {
 	padding-left:5;
@@ -205,7 +208,7 @@ function onloadHandler(e)
 				</td>
 				<td nowrap>
 					<input type="hidden" name="workingSet" value='<%=workingSetData.getWorkingSetName()%>' >
-					<a id="scope" href="javascript:openAdvanced();" alt='<%=WebappResources.getString("selectWorkingSet", request)%>' onmouseover="window.status='<%=WebappResources.getString("selectWorkingSet", request)%>'; return true;" onmouseout="window.status='';"><%=workingSetData.getWorkingSetName()%></a>
+					<a id="scope" href="javascript:openAdvanced();" title='<%=WebappResources.getString("selectWorkingSet", request)%>' alt='<%=WebappResources.getString("selectWorkingSet", request)%>' onmouseover="window.status='<%=WebappResources.getString("selectWorkingSet", request)%>'; return true;" onmouseout="window.status='';"><%=workingSetData.getWorkingSetName()%></a>
 				</td>
 			</tr>
 

@@ -98,7 +98,7 @@ var w = 300;
 var h = 300;
 
 function newWorkingSet() {
-	workingSetDialog = window.open("workingSet.jsp?operation=add&workingSet=xyz", "workingSetDialog", "resizeable=no,height="+h+",width="+w );
+	workingSetDialog = window.open("workingSet.jsp?operation=add&workingSet=", "workingSetDialog", "resizeable=no,height="+h+",width="+w );
 	workingSetDialog.focus(); 
 }
 
