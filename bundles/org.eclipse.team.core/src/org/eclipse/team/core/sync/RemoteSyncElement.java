@@ -414,25 +414,27 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	}
 	
 	static public String kindToString(int kind) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("["); //$NON-NLS-1$
+		String label = ""; //$NON-NLS-1$
 		if(kind==IN_SYNC) {
-			buffer.append("in-sync"); //$NON-NLS-1$
+			label = Policy.bind("RemoteSyncElement.insync"); //$NON-NLS-1$
 		} else {
 			switch(kind & DIRECTION_MASK) {
-				case CONFLICTING: buffer.append("conflicting"); break; //$NON-NLS-1$
-				case OUTGOING: buffer.append("outgoing"); break; //$NON-NLS-1$
-				case INCOMING: buffer.append("incoming"); break; //$NON-NLS-1$
-			}		
+				case CONFLICTING: label = Policy.bind("RemoteSyncElement.conflicting"); break; //$NON-NLS-1$
+				case OUTGOING: label = Policy.bind("RemoteSyncElement.outgoing"); break; //$NON-NLS-1$
+				case INCOMING: label = Policy.bind("RemoteSyncElement.incoming"); break; //$NON-NLS-1$
+			}	
 			switch(kind & CHANGE_MASK) {
-				case CHANGE: buffer.append("change"); break; //$NON-NLS-1$
-				case ADDITION: buffer.append("addition"); break; //$NON-NLS-1$
-				case DELETION: buffer.append("deletion"); break; //$NON-NLS-1$
+				case CHANGE: label = Policy.bind("concatStrings", label, Policy.bind("RemoteSyncElement.change")); break; //$NON-NLS-1$ //$NON-NLS-2$
+				case ADDITION: label = Policy.bind("concatStrings", label, Policy.bind("RemoteSyncElement.addition")); break; //$NON-NLS-1$ //$NON-NLS-2$
+				case DELETION: label = Policy.bind("concatStrings", label, Policy.bind("RemoteSyncElement.deletion")); break; //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			if((kind & MANUAL_CONFLICT) != 0) buffer.append("{manual}"); //$NON-NLS-1$
-			if((kind & AUTOMERGE_CONFLICT) != 0) buffer.append("{auto}"); //$NON-NLS-1$
+			if((kind & MANUAL_CONFLICT) != 0) {			
+				label = Policy.bind("concatStrings", label, Policy.bind("RemoteSyncElement.manual")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			if((kind & AUTOMERGE_CONFLICT) != 0) {				
+				label = Policy.bind("concatStrings", label, Policy.bind("RemoteSyncElement.auto")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
-		buffer.append("]"); //$NON-NLS-1$
-		return buffer.toString();
+		return Policy.bind("RemoteSyncElement.delimit", label); //$NON-NLS-1$
 	}
 }

@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.compare.internal.TabFolderLayout;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -27,9 +28,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
@@ -60,6 +62,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 	private Text addedFlag;
 	
 	private Button showDirty;
+	private Button showSyncInfoInLabel;
 	
 	class StringPair {
 		String s1;
@@ -75,6 +78,13 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		Text t2;
 	}
 	
+	/**
+	 * Constructor for CVSDecoratorPreferencesPage.
+	 */
+	public CVSDecoratorPreferencesPage() {
+		setDescription(Policy.bind("CVSDecoratorPreferencesPage.description")); //$NON-NLS-1$;
+	}
+
 	protected TextPair createFormatEditorControl(Composite composite, String title, String buttonText, final Map supportedBindings) {
 		createLabel(composite, title, 1);
 		Text format = new Text(composite, SWT.BORDER);
@@ -140,23 +150,46 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NULL);
-		GridLayout layout= new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData());
-
-		// file text decoration options
-
-		Group fileTextGroup = new Group(composite, SWT.NULL);
-		layout = new GridLayout();
+				
+		// create a tab folder for the page
+		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
+		tabFolder.setLayout(new TabFolderLayout());
+		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));		
+		
+		// text decoration options
+		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
+		tabItem.setText(Policy.bind("Text_Labels_12"));//$NON-NLS-1$		
+		tabItem.setControl(createTextDecoratorPage(tabFolder));
+		
+		// image decoration options
+		tabItem = new TabItem(tabFolder, SWT.NONE);
+		tabItem.setText(Policy.bind("Icon_Overlays_24"));//$NON-NLS-1$		
+		tabItem.setControl(createIconDecoratorPage(tabFolder));
+		
+		// general decoration options
+		tabItem = new TabItem(tabFolder, SWT.NONE);
+		tabItem.setText(Policy.bind("CVSDecoratorPreferencesPage.generalTabFolder"));//$NON-NLS-1$
+		tabItem.setControl(createGeneralDecoratorPage(tabFolder));
+		
+		// synchronize decoration options
+		tabItem = new TabItem(tabFolder, SWT.NONE);
+		tabItem.setText(Policy.bind("CVSDecoratorPreferencesPage.synchronizeTabFolder"));//$NON-NLS-1$
+		tabItem.setControl(createSynchronizeDecoratorPage(tabFolder));
+				
+		initializeValues();
+		WorkbenchHelp.setHelp(tabFolder, IHelpContextIds.DECORATORS_PREFERENCE_PAGE);
+		return tabFolder;
+	}
+	
+	private Control createTextDecoratorPage(Composite parent) {
+		Composite fileTextGroup = new Composite(parent, SWT.NULL);
+		GridLayout	layout = new GridLayout();
 		layout.numColumns = 3;
 		fileTextGroup.setLayout(layout);
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		fileTextGroup.setLayoutData(data);
-		fileTextGroup.setText(Policy.bind("Text_Labels_12")); //$NON-NLS-1$
+
 		createLabel(fileTextGroup, Policy.bind("Select_the_format_for_file,_folders,_and_project_text_labels__13"), 3); //$NON-NLS-1$
 
 		TextPair format = createFormatEditorControl(fileTextGroup, Policy.bind("&File_Format__14"), Policy.bind("Add_&Variables_15"), getFileBindingDescriptions()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -173,44 +206,66 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		dirtyFlag = new Text(fileTextGroup, SWT.BORDER);
 		dirtyFlag.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		dirtyFlag.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {				
+			public void modifyText(ModifyEvent e) {
 				updateExamples();
 			}
 		});
 		createLabel(fileTextGroup, "", 1); // spacer //$NON-NLS-1$
-		
+
 		createLabel(fileTextGroup, Policy.bind("Label_decorat&ion_for_added__22"), 1); //$NON-NLS-1$
 		addedFlag = new Text(fileTextGroup, SWT.BORDER);
 		addedFlag.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		addedFlag.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {				
+			public void modifyText(ModifyEvent e) {
 				updateExamples();
 			}
 		});
 
-		createLabel(fileTextGroup, "", 1); // spacer //$NON-NLS-1$
-		
-		// image decoration options
-		
-		Group imageGroup = new Group(composite, SWT.NULL);
-		layout = new GridLayout();
+		return fileTextGroup;	
+	}
+	
+	private Control createIconDecoratorPage(Composite parent) {
+		Composite imageGroup = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
 		imageGroup.setLayout(layout);
-		data = new GridData();
+		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		imageGroup.setLayoutData(data);
-		imageGroup.setText(Policy.bind("Icon_Overlays_24")); //$NON-NLS-1$
+
+		createLabel(imageGroup, Policy.bind("CVSDecoratorPreferencesPage.iconDescription"), 1); //$NON-NLS-1$
+		
 		imageShowDirty = createCheckBox(imageGroup, Policy.bind("Sho&w_outgoing_25")); //$NON-NLS-1$
 		imageShowHasRemote = createCheckBox(imageGroup, Policy.bind("Show_has_&remote_26")); //$NON-NLS-1$
 		imageShowAdded = createCheckBox(imageGroup, Policy.bind("S&how_is_added_27")); //$NON-NLS-1$
 		imageShowNewResource = createCheckBox(imageGroup, Policy.bind("CVSDecoratorPreferencesPage.newResources")); //$NON-NLS-1$
 		
-		showDirty = createCheckBox(composite, Policy.bind("&Compute_deep_outgoing_state_for_folders_(disabling_this_will_improve_decorator_performance)_28")); //$NON-NLS-1$
-				
-		initializeValues();
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.DECORATORS_PREFERENCE_PAGE);
+		return imageGroup;
+	}
+	
+	private Control createGeneralDecoratorPage(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		composite.setLayout(layout);
+		GridData data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		composite.setLayoutData(data);
+		createLabel(composite, Policy.bind("CVSDecoratorPreferencesPage.generalDescription"), 1); //$NON-NLS-1$		
+		showDirty = createCheckBox(composite, Policy.bind("&Compute_deep_outgoing_state_for_folders_(disabling_this_will_improve_decorator_performance)_28")); //$NON-NLS-1$		
 		return composite;
 	}
 	
+	private Control createSynchronizeDecoratorPage(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		composite.setLayout(layout);
+		GridData data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		composite.setLayoutData(data);
+		createLabel(composite, Policy.bind("CVSDecoratorPreferencesPage.synchronizeDescription"), 1); //$NON-NLS-1$
+		showSyncInfoInLabel = createCheckBox(composite, Policy.bind("CVSDecoratorPreferencesPage.showSyncInfoInLabel")); //$NON-NLS-1$
+		return composite;
+	}
+		
 	private Label createLabel(Composite parent, String text, int span) {
 		Label label = new Label(parent, SWT.LEFT);
 		label.setText(text);
@@ -261,6 +316,8 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		imageShowNewResource.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION));
 		
 		showDirty.setSelection(store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY));
+		
+		showSyncInfoInLabel.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_SYNCINFO_AS_TEXT));
 	
 		setValid(true);
 	}
@@ -292,6 +349,8 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		
 		store.setValue(ICVSUIConstants.PREF_CALCULATE_DIRTY, showDirty.getSelection());
 		
+		store.setValue(ICVSUIConstants.PREF_SHOW_SYNCINFO_AS_TEXT, showSyncInfoInLabel.getSelection());		
+		
 		CVSDecorator.refresh();
 		
 		CVSUIPlugin.getPlugin().savePluginPreferences();
@@ -319,6 +378,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		imageShowNewResource.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION));
 		
 		showDirty.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY));
+		showSyncInfoInLabel.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_SYNCINFO_AS_TEXT));		
 	}
 
 	/**
@@ -368,7 +428,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 				labelProvider,
 				Policy.bind("Select_the_&variables_to_add_to_the_decoration_format__30")); //$NON-NLS-1$
 		dialog.setTitle(Policy.bind("Add_Variables_31")); //$NON-NLS-1$
-		if (dialog.open() != dialog.OK)
+		if (dialog.open() != ListSelectionDialog.OK)
 			return;
 	
 		Object[] result = dialog.getResult();

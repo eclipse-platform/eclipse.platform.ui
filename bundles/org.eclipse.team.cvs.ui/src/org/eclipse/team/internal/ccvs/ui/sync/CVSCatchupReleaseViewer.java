@@ -37,8 +37,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.core.sync.RemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
@@ -246,6 +248,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				return image;
 			}
 			public String getText(Object element) {
+				String label = oldProvider.getText(element);
 				if (element instanceof ITeamNode) {					
 					ITeamNode node = (ITeamNode)element;					
 					IResource resource = node.getResource();
@@ -260,12 +263,19 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 							// the label for the remote/base/local files editors
 							bindings.remove(CVSDecoratorConfiguration.FILE_REVISION);
 							
-							bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, oldProvider.getText(element));
-							return CVSDecoratorConfiguration.bind(format, bindings);
+							bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, label);
+							label = CVSDecoratorConfiguration.bind(format, bindings);
+						}
+					}
+					if (CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_SHOW_SYNCINFO_AS_TEXT)) {
+						int syncKind = node.getKind();
+						if (syncKind != ILocalSyncElement.IN_SYNC) {
+							String syncKindString = RemoteSyncElement.kindToString(syncKind);
+							label = Policy.bind("CVSCatchupReleaseViewer.labelWithSyncKind", label, syncKindString); //$NON-NLS-1$
 						}
 					}
 				}								
-				return oldProvider.getText(element);
+				return label;
 			}
 		});
 	}

@@ -347,7 +347,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 			status = ((TeamException)exception).getStatus();
 			log = ((flags & LOG_TEAM_EXCEPTIONS) > 0);
 		} else if (exception instanceof InterruptedException) {
-			return new CVSStatus(IStatus.OK, Policy.bind("ok"));
+			return new CVSStatus(IStatus.OK, Policy.bind("ok")); //$NON-NLS-1$
 		} else if (exception != null) {
 			status = new CVSStatus(IStatus.ERROR, Policy.bind("internal"), exception); //$NON-NLS-1$
 			log = ((flags & LOG_OTHER_EXCEPTIONS) > 0);
@@ -465,6 +465,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		store.setDefault(ICVSUIConstants.PREF_ADDED_FLAG, CVSDecoratorConfiguration.DEFAULT_ADDED_FLAG);
 		store.setDefault(ICVSUIConstants.PREF_DIRTY_FLAG, CVSDecoratorConfiguration.DEFAULT_DIRTY_FLAG);
 		store.setDefault(ICVSUIConstants.PREF_CALCULATE_DIRTY, true);
+		store.setDefault(ICVSUIConstants.PREF_SHOW_SYNCINFO_AS_TEXT, false);		
 		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_MIXED_TAGS, true);
 		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_SAVING_IN_SYNC, true);
 		store.setDefault(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS, ICVSUIConstants.OPTION_PROMPT);
