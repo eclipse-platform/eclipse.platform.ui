@@ -53,8 +53,10 @@ public class FindUnusedMethodsAction implements IObjectActionDelegate {
 				}
 			} finally {
 				String summary = "\n\nSearch complete.  Found " + unusedCount + " unreferenced methods."; //$NON-NLS-1$ //$NON-NLS-2$
-				writer.write(summary);
-				writer.close();
+				if (writer != null) {
+					writer.write(summary);
+					writer.close();
+				}
 				MessageDialog.openInformation(part.getSite().getShell(), "Search Complete", summary);   //$NON-NLS-1$
 			}
 		} catch (Exception e) {
