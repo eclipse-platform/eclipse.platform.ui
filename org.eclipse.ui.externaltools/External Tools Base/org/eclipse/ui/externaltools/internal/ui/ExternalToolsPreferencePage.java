@@ -19,6 +19,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -35,7 +36,6 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 	private Button promptForMigrationButton;
 	
 	public ExternalToolsPreferencePage() {
-		setDescription(ExternalToolsUIMessages.getString("ExternalToolsPreferencePage.Preferences_for_external_tools__1")); //$NON-NLS-1$
 		setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
 	}
 
@@ -57,11 +57,21 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 		data.horizontalAlignment = GridData.FILL;
 		composite.setLayoutData(data);
 		
-		new Label(composite, SWT.NULL);
+		Group builderGroup= new Group(composite, SWT.BORDER);
+		builderGroup.setText(ExternalToolsUIMessages.getString("ExternalToolsPreferencePage.Project_builder_migration_1")); //$NON-NLS-1$
+		builderGroup.setFont(font);
+		data= new GridData(GridData.FILL_HORIZONTAL);
+		builderGroup.setLayoutData(data);
+		builderGroup.setLayout(new GridLayout());
 		
-		promptForMigrationButton= new Button(composite, SWT.CHECK | SWT.LEFT);
+		Label migrationLabel= new Label(builderGroup, SWT.LEFT | SWT.WRAP);
+		migrationLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		migrationLabel.setFont(font);
+		migrationLabel.setText(ExternalToolsUIMessages.getString("ExternalToolsPreferencePage.External_tool_project_builders_migration_2")); //$NON-NLS-1$
+		
+		promptForMigrationButton= new Button(builderGroup, SWT.CHECK | SWT.LEFT);
 		promptForMigrationButton.setFont(font);
-		promptForMigrationButton.setText(ExternalToolsUIMessages.getString("ExternalToolsPreferencePage.Always_&prompt_before_migrating_project_builders_3")); //$NON-NLS-1$
+		promptForMigrationButton.setText(ExternalToolsUIMessages.getString("ExternalToolsPreferencePage.Prompt_before_migrating_3")); //$NON-NLS-1$
 		promptForMigrationButton.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.PROMPT_FOR_MIGRATION));
 		
 		return composite;
