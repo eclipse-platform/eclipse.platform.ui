@@ -56,6 +56,8 @@ public class AnimationItem {
 	public AnimationItem(IWorkbenchWindow workbenchWindow) {
 
 		this.window = workbenchWindow;
+		//Get the progress manager started if it hasn't already
+		JobProgressManager.getInstance();
 		URL iconsRoot =
 			Platform.getPlugin(PlatformUI.PLUGIN_ID).find(
 				new Path(PROGRESS_FOLDER));
