@@ -22,9 +22,9 @@ import org.eclipse.jface.text.Position;
  * The model maintains a set of annotations for a given document and notifies registered annotation 
  * model listeners about annotation model changes. It also provides methods
  * for querying the current position of an annotation managed
- * by this model.<p>
- * 
- * In order to provided backward compatibility for clients of <code>IAnnotationModel</code>, extension
+ * by this model.
+ * <p>
+ * In order to provide backward compatibility for clients of <code>IAnnotationModel</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces
  * exist:
  * <ul>
@@ -32,6 +32,7 @@ import org.eclipse.jface.text.Position;
  *      of model piggybacking annotation models, modification time stamps, and enhanced manipulation methods.
  * </li>
  * </ul>
+ * </p>
  * 
  * Clients may implement this interface or use the default implementation provided
  * by <code>AnnotationModel</code>.
