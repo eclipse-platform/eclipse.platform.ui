@@ -311,6 +311,10 @@ public final class MoveSourceEdit extends TextEdit {
 		TextEdit[] children= source.getChildren();
 		for (int i= 0; i < children.length; i++) {
 			TextEdit child= children[i];
+			// a deleted child remains deleted even if the temporary buffer
+			// gets modified.
+			if (child.isDeleted())
+				continue;
 			RangeMarker marker= new RangeMarker(child.getOffset(), child.getLength());
 			target.addChild(marker);
 			editMap.put(marker, child);

@@ -31,6 +31,7 @@ import org.eclipse.jface.text.Region;
  * parent, as well as downwards. Newly created edits are unparented. New edits
  * are added to the tree by calling one of the <code>add</code> methods on a parent
  * edit.
+ * </p>
  * <p>
  * An edit tree is well formed in the following sense:
  * <ul>
@@ -40,6 +41,7 @@ import org.eclipse.jface.text.Region;
  * </ul>
  * Any manipulation of the tree that violates one of the above requirements results
  * in a <code>MalformedTreeException</code>.
+ * </p>
  * <p>
  * Insert edits are represented by an edit of length 0. If more than one insert 
  * edit exists at the same offset then the edits are executed in the order in which
@@ -52,8 +54,17 @@ import org.eclipse.jface.text.Region;
  *    edit.apply(document);
  * </pre> 
  * therefore results in string: "www.eclipse.org".
- * 
+ * </p>
  * <p>
+ * Text edits can be executed in a mode where the edit's region is updated to 
+ * reflect the edit's position in the changed document. Region updating is enabled
+ * by default or can be requested by passing <code>UPDATE_REGIONS</code> to the 
+ * {@link #apply(IDocument, int) apply(IDocument, int)} method. In the above example
+ * the region of the <code>InsertEdit(0, "eclipse.")</code> edit after executing
+ * the root edit is <code>[3, 8]</code>. If the region of an edit got deleted during
+ * change execution the region is set to <code>[-1, -1]</code> and the method {@link 
+ * #isDeleted() isDeleted} returns <code>true</code>. 
+ * </p>
  * This class isn't intended to be subclassed outside of the edit framework. Clients 
  * are only allowed to subclass <code>MultiTextEdit</code>.
  * 
@@ -624,7 +635,7 @@ public abstract class TextEdit {
 	
 	/**
 	 * Applies the edit tree rooted by this edit to the given document. This
-	 * method is a convinence method for <code>apply(document, CREATE_UNDO | UPDATE_REGIONS)
+	 * method is a convenience method for <code>apply(document, CREATE_UNDO | UPDATE_REGIONS)
 	 * </code>
 	 * 
 	 * @see #apply(IDocument, int)

@@ -46,8 +46,7 @@ public final class InsertEdit extends TextEdit {
 	}
 	
 	/**
-	 * Returns the new text inserted at the offset denoted
-	 * by this edit. 
+	 * Returns the text to be inserted.
 	 * 
 	 * @return the edit's text.
 	 */
