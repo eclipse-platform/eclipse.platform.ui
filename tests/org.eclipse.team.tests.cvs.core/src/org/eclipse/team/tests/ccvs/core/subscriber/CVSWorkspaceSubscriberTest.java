@@ -281,7 +281,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	
 	private void runSubscriberOperation(CVSSubscriberOperation op) throws CoreException {
 		try {
-			op.run(DEFAULT_MONITOR);
+			op.run();
 		} catch (InvocationTargetException e) {
 			throw CVSException.wrapException(e);
 		} catch (InterruptedException e) {
