@@ -30,12 +30,9 @@ class WizardZipFileResourceExportPage1
 	protected static final int COMBO_HISTORY_LENGTH = 5;
 
 	// dialog store id constants
-	private final static String STORE_DESTINATION_NAMES_ID =
-		"WizardZipFileResourceExportPage1.STORE_DESTINATION_NAMES_ID"; //$NON-NLS-1$
-	private final static String STORE_CREATE_STRUCTURE_ID =
-		"WizardZipFileResourceExportPage1.STORE_CREATE_STRUCTURE_ID"; //$NON-NLS-1$
-	private final static String STORE_COMPRESS_CONTENTS_ID =
-		"WizardZipFileResourceExportPage1.STORE_COMPRESS_CONTENTS_ID"; //$NON-NLS-1$
+	private final static String STORE_DESTINATION_NAMES_ID = "WizardZipFileResourceExportPage1.STORE_DESTINATION_NAMES_ID"; //$NON-NLS-1$
+	private final static String STORE_CREATE_STRUCTURE_ID = "WizardZipFileResourceExportPage1.STORE_CREATE_STRUCTURE_ID"; //$NON-NLS-1$
+	private final static String STORE_COMPRESS_CONTENTS_ID = "WizardZipFileResourceExportPage1.STORE_COMPRESS_CONTENTS_ID"; //$NON-NLS-1$
 	/**
 	 *	Create an instance of this class. 
 	 *
