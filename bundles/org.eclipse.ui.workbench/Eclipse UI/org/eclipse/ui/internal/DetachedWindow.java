@@ -16,6 +16,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
@@ -28,6 +29,7 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class DetachedWindow extends Window   {
@@ -75,6 +77,11 @@ public class DetachedWindow extends Window   {
 		if (folder != null)
 			folder.dispose();
 
+        // Unregister this detached view as a window (for key bindings).
+        final IWorkbenchContextSupport contextSupport = getWorkbenchPage()
+                .getWorkbenchWindow().getWorkbench().getContextSupport();
+        contextSupport.unregisterShell(s);
+
 		return super.close();
 	}
 	/**
@@ -100,6 +107,12 @@ public class DetachedWindow extends Window   {
 				folder.setBounds(shell.getClientArea());
 			}
 		});
+
+        // Register this detached view as a window (for key bindings).
+        final IWorkbenchContextSupport contextSupport = getWorkbenchPage()
+                .getWorkbenchWindow().getWorkbench().getContextSupport();
+        contextSupport.registerShell(shell,
+                IWorkbenchContextSupport.TYPE_WINDOW);
 
 		WorkbenchHelp.setHelp(shell, IHelpContextIds.DETACHED_WINDOW);
 	}
