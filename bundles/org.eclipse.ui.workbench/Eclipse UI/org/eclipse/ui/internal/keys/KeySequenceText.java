@@ -12,11 +12,9 @@
 package org.eclipse.ui.internal.keys;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
@@ -28,7 +26,6 @@ import org.eclipse.ui.keys.CharacterKey;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.NaturalKey;
-import org.eclipse.ui.keys.ParseException;
 
 /**
  * A wrapper around the SWT text widget that traps literal key presses and 
@@ -49,7 +46,7 @@ public final class KeySequenceText {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	/** The text of the key sequence -- containing only the complete key strokes. */
-	private KeySequence keySequence = KeySequence.getInstance();
+	private KeySequence keySequence = null;
 	/** The maximum number of key strokes permitted in the sequence. */
 	private int maxStrokes = INFINITE;
 	/** The incomplete key stroke, if any. */
@@ -90,9 +87,6 @@ public final class KeySequenceText {
 
 		// Add the traversal listener.
 		text.addTraverseListener(new FocusTrapListener());
-
-		// Add an internal modify listener.
-		text.addModifyListener(new UpdateSequenceListener());
 	}
 
 	/**
@@ -203,9 +197,9 @@ public final class KeySequenceText {
 					keySequence = KeySequence.getInstance(keyStrokes);
 					temporaryStroke = null;
 				} else if (keyStrokesSize == maxStrokes) {
-					keySequence = newKeySequence;
-					temporaryStroke = null;
-				} else {
+                    keySequence = newKeySequence;
+                    temporaryStroke = null;
+                } else {
 					keySequence = newKeySequence;
 					temporaryStroke = incompleteStroke;
 				}
@@ -371,50 +365,6 @@ public final class KeySequenceText {
 
 			// Prevent the event from reaching the widget.
 			event.doit = false;
-		}
-	}
-
-	/**
-     * A modification listener that makes sure that external events to this 
-     * class (i.e., direct modification of the underlying text) do not break
-     * this class' view of the world.
-     */
-	private final class UpdateSequenceListener implements ModifyListener {
-		/**
-		 * Handles the modify event on the underlying text widget.
-         * @param event The triggering event; ignored.
-         */
-		public final void modifyText(final ModifyEvent event) {
-			try {
-				// The original sequence.
-				final KeySequence originalSequence = getKeySequence();
-				final List keyStrokes = new ArrayList(originalSequence.getKeyStrokes());
-				if (temporaryStroke != null) {
-					keyStrokes.add(temporaryStroke);
-				}
-				final KeySequence sequenceFromStrokes = KeySequence.getInstance(keyStrokes);
-
-				// The new sequence drawn from the text.
-				final String contents = text.getText();
-				final KeySequence sequenceFromText = KeySequence.getInstance(contents);
-
-				// Check to see if they're the same.
-				if (!sequenceFromStrokes.equals(sequenceFromText)) {
-					final List strokes = sequenceFromText.getKeyStrokes();
-					final Iterator strokeItr = strokes.iterator();
-					while (strokeItr.hasNext()) {
-						// Make sure that it's a valid sequence.
-						if (!isComplete((KeyStroke) strokeItr.next())) {
-							setKeySequence(getKeySequence(), temporaryStroke);
-							return;
-						}
-					}
-					setKeySequence(sequenceFromText, null);
-				}
-			} catch (final ParseException e) {
-				// Abort any cut/paste-driven modifications
-				setKeySequence(getKeySequence(), temporaryStroke);
-			}
 		}
 	}
 }
