@@ -812,16 +812,6 @@ public final class WorkbenchActionBuilder {
 			// @issue ref to internal generic workbench constant
 			// @issue idiosyncratic semantics of pinEditor
 //			pinEditorAction.updateState();
-		} else if (event.getProperty().equals(IPreferenceConstants.RECENT_FILES)) {
-			// @issue ref to internal generic workbench constant
-			// @issue this should be moved to the contribution item (open recent editor)
-			Workbench wb = (Workbench) (Workbench) getWindow().getWorkbench();
-			int newValue = store.getInt(IPreferenceConstants.RECENT_FILES);
-			wb.getEditorHistory().reset(newValue);
-			if (newValue == 0) {
-				// the open recent menu item can go from enabled to disabled
-				windowConfigurer.getMenuManager().updateAll(false);
-			}
 		}
 	}
 	/**
