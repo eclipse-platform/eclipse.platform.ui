@@ -11,9 +11,11 @@ package org.eclipse.ui.progress;
 
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * The IProgressManager is an interface to the progress manager provided by the
@@ -31,6 +33,24 @@ public interface IProgressService extends IRunnableContext {
 	 * @see busyCursorWhile(IRunnableWithProgress)
 	 */
 	public int getLongOperationTime();
+	
+	/**
+	 * Register the ImageDescriptor to be the icon used for
+	 * all jobs that belong to family within the workbench.
+	 * @param icon ImageDescriptor that will be used when the job is being displayed
+	 * @param family The family to associate with
+	 * @see Job.belongsTo(Object)
+	 */
+	public void registerIconForFamily(ImageDescriptor icon, Object family);
+	
+	/**
+	 * Get the icon that has been registered for a Job by
+	 * checking if the job belongs to any of the registered 
+	 * families.
+	 * @return Icon or <code>null</code> if there isn't one.
+	 * @see registerIconForFamily
+	 */
+	public Image getIconFor(Job job);
 
 	/**
 	 * Set the cursor to busy and run runnable within the UI Thread. After the

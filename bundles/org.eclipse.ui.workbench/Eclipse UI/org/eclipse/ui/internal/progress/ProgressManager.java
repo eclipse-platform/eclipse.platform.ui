@@ -18,8 +18,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -103,6 +105,10 @@ public class ProgressManager extends ProgressProvider
 	final static String[] keys = new String[]{PROGRESS_20_KEY, PROGRESS_40_KEY,
 			PROGRESS_60_KEY, PROGRESS_80_KEY, PROGRESS_100_KEY};
 	final Map runnableMonitors = Collections.synchronizedMap(new HashMap());
+	//A table that maps families to keys in the Jface image
+	//table
+	private Hashtable imageKeyTable = new Hashtable();
+	private static final String IMAGE_KEY = "org.eclipse.ui.progress.images"; //$NON-NLS-1
 	/**
 	 * Get the progress manager currently in use.
 	 * 
@@ -553,15 +559,12 @@ public class ProgressManager extends ProgressProvider
 	 */
 	public void removeJobInfo(JobInfo info) {
 		synchronized (listenerKey) {
-			
 			Job job = info.getJob();
 			jobs.remove(job);
-			
-			//If the job does not call done the 
+			//If the job does not call done the
 			//reference needs to cleared up.
 			if (runnableMonitors.containsKey(job))
 				runnableMonitors.remove(job);
-				
 			Iterator iterator = listeners.iterator();
 			while (iterator.hasNext()) {
 				IJobProgressManagerListener listener = (IJobProgressManagerListener) iterator
@@ -995,5 +998,31 @@ public class ProgressManager extends ProgressProvider
 	 */
 	public int getLongOperationTime() {
 		return 800;
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.progress.IProgressService#registerIconForFamily(org.eclipse.jface.resource.ImageDescriptor,
+	 *      java.lang.Object)
+	 */
+	public void registerIconForFamily(ImageDescriptor icon, Object family) {
+		String key = IMAGE_KEY + String.valueOf(imageKeyTable.size());
+		imageKeyTable.put(family, key);
+		JFaceResources.getImageRegistry().put(key, icon);
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.progress.IProgressService#getIconFor(org.eclipse.core.runtime.jobs.Job)
+	 */
+	public Image getIconFor(Job job) {
+		Enumeration families = imageKeyTable.keys();
+		while (families.hasMoreElements()) {
+			Object next = families.nextElement();
+			if (job.belongsTo(next))
+				return JFaceResources.getImageRegistry().get(
+						(String) imageKeyTable.get(next));
+		}
+		return null;
 	}
 }

@@ -93,10 +93,7 @@ public class ProgressManagerUtil {
 			logException(exception);
 		}
 	}
-	static boolean useNewProgress() {
-		return WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
-				"USE_NEW_PROGRESS"); //$NON-NLS-1$
-	}
+	
 	/**
 	 * Return whether or not the progress view is missing.
 	 * 

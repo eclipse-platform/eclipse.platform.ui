@@ -21,10 +21,12 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
@@ -294,5 +296,19 @@ public class WorkbenchSiteProgressService
 	 */
 	public int getLongOperationTime() {
 		return getWorkbenchProgressService().getLongOperationTime();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.IProgressService#registerIconForFamily(org.eclipse.jface.resource.ImageDescriptor, java.lang.Object)
+	 */
+	public void registerIconForFamily(ImageDescriptor icon, Object family) {
+		getWorkbenchProgressService().registerIconForFamily(icon, family);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.IProgressService#getIconFor(org.eclipse.core.runtime.jobs.Job)
+	 */
+	public Image getIconFor(Job job) {
+		return getWorkbenchProgressService().getIconFor(job);
 	}
 }
