@@ -8,11 +8,12 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * The interface between the workbench its parts and between the workbench
- * and pages within parts.
+ * The common interface between the workbench and its parts, including pages within parts.
  * <p>
  * This interface is not intended to be implemented or extended by clients.
  * </p>
+ * @see IWorkbenchPartSite
+ * @see IPageSite
  * @since 2.0
  */
 public interface IWorkbenchSite {
