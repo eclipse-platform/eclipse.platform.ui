@@ -30,8 +30,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.debug.ui.variables.VariableContextManager;
-import org.eclipse.debug.ui.variables.VariableUtil;
+import org.eclipse.debug.ui.launchVariables.VariableUtil;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -240,10 +239,10 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		if (fAllTargets == null) {
 			setErrorMessage(null);
 			MultiStatus status = new MultiStatus(IAntUIConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
-			String expandedLocation = VariableUtil.expandLocationText(fLocation, VariableContextManager.getDefault().getVariableContext(), status);
+			String expandedLocation = VariableUtil.expandVariables(fLocation, status);
 			if (expandedLocation != null && status.isOK()) {
 				try {
-					String[] arguments = ExternalToolsUtil.getArguments(fLaunchConfiguration, VariableContextManager.getDefault().getVariableContext());
+					String[] arguments = ExternalToolsUtil.getArguments(fLaunchConfiguration);
 					fAllTargets = AntUtil.getTargets(expandedLocation, arguments, fLaunchConfiguration);
 				} catch (CoreException ce) {
 					IStatus exceptionStatus= ce.getStatus();

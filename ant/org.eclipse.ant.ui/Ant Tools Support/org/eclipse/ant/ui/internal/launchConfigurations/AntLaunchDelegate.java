@@ -40,7 +40,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.program.launchConfigurations.BackgroundResourceRefresher;
-import org.eclipse.debug.ui.variables.ExpandVariableContext;
+import org.eclipse.debug.ui.launchVariables.ExpandVariableContext;
 
 /**
  * Launch delegate for ant builds
@@ -73,16 +73,8 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Running_{0}_2"), new String[] {configuration.getName()}), 100); //$NON-NLS-1$
 		}
 		
-		// get variable context
-		ExpandVariableContext resourceContext = ExternalToolsUtil.getVariableContext();
-		monitor.worked(1);
-
-		if (monitor.isCanceled()) {
-			return;
-		}
-		
 		// resolve location
-		IPath location = ExternalToolsUtil.getLocation(configuration, resourceContext);
+		IPath location = ExternalToolsUtil.getLocation(configuration);
 		monitor.worked(1);
 		
 		if (monitor.isCanceled()) {
@@ -95,7 +87,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		}		
 		
 		// resolve working directory
-		IPath workingDirectory = ExternalToolsUtil.getWorkingDirectory(configuration, resourceContext);
+		IPath workingDirectory = ExternalToolsUtil.getWorkingDirectory(configuration);
 		String baseDir = null;
 		if (workingDirectory != null) {
 			baseDir = workingDirectory.toOSString();
@@ -112,7 +104,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		String idProperty = "-D" + AntProcess.ATTR_ANT_PROCESS_ID + "=" + idStamp; //$NON-NLS-1$ //$NON-NLS-2$
 		
 		// resolve arguments
-		String[] arguments = ExternalToolsUtil.getArguments(configuration, resourceContext);
+		String[] arguments = ExternalToolsUtil.getArguments(configuration);
 		int argLength = 1; // at least one user property - timestamp
 		if (arguments != null) {
 			argLength += arguments.length;
@@ -206,7 +198,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			monitor.worked(1);
 			// refresh resources after process finishes
 			if (ExternalToolsUtil.getRefreshScope(configuration) != null) {
-				BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(configuration, process, resourceContext);
+				BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(configuration, process);
 				refresher.startBackgroundRefresh();
 			}				
 		} else {
@@ -220,7 +212,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			process.terminated();
 			
 			// refresh resources
-			ExternalToolsUtil.refreshResources(configuration, resourceContext, monitor);
+			ExternalToolsUtil.refreshResources(configuration, monitor);
 		}	
 		
 		monitor.done();	

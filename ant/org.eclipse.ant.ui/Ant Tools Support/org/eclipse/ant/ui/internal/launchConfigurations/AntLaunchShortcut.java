@@ -35,9 +35,8 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchShortcut;
-import org.eclipse.debug.ui.variables.ExpandVariableContext;
-import org.eclipse.debug.ui.variables.IVariableConstants;
-import org.eclipse.debug.ui.variables.VariableUtil;
+import org.eclipse.debug.ui.launchVariables.IVariableConstants;
+import org.eclipse.debug.ui.launchVariables.VariableUtil;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -252,12 +251,11 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			}
 			if (configs != null && configs.length > 0) {
 				IPath filePath = file.getLocation();
-				ExpandVariableContext context = ExternalToolsUtil.getVariableContext();
 				for (int i = 0; i < configs.length; i++) {
 					ILaunchConfiguration configuration = configs[i];
 					IPath location;
 					try {
-						location = ExternalToolsUtil.getLocation(configuration, context);
+						location = ExternalToolsUtil.getLocation(configuration);
 						if (filePath.equals(location)) {
 							validConfigs.add(configuration);
 						}
