@@ -76,4 +76,10 @@ public class PinParticipantAction extends Action implements IPropertyChangeListe
 			updateState();
 		}
 	}
+
+	public void dispose() {
+		if (participant != null) {
+			participant.removePropertyChangeListener(this);
+		}
+	}
 }

@@ -199,13 +199,15 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	public void dispose() {
 		super.dispose();
 		TeamUI.getSynchronizeManager().removeSynchronizeParticipantListener(this);
+		// Pin action is hooked up to listeners, must call dispose to un-register.
+		fPinAction.dispose();
+		// Remember the last active participant
 		if(activeParticipantRef != null) {
 			IDialogSettings section = getDialogSettings();
 			section.put(KEY_LAST_ACTIVE_PARTICIPANT, activeParticipantRef.getId());
 		}			
 		fParticipantToPart = null;
-		fPartToParticipant = null;
-		
+		fPartToParticipant = null;	
 	}
 
 	/* (non-Javadoc)
