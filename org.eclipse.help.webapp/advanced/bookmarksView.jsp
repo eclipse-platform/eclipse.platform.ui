@@ -53,8 +53,32 @@ function removeBookmark()
 		title = url;
 			
 	window.location.replace("bookmarksView.jsp?operation=remove&bookmark="+url+"&title="+escape(title));
+	return false;
 }
 
+/**
+ * If the Del key was pressed, remove the bookmark
+ */
+function bookmarkKeyDownHandler(e) {
+	var key;
+	
+	if (isIE) {
+		key = window.event.keyCode;
+	} else if (isMozilla) {
+		key = e.keyCode;
+	}
+
+	// Check if this is the Delete key (code 46)
+	if (key != 46)
+		return true;
+		
+	if (isMozilla)
+		e.cancelBubble = true;
+	else if (isIE)
+		window.event.cancelBubble = true;
+  	
+  	return removeBookmark();
+}
 </script>
 
 </head>
@@ -81,6 +105,7 @@ if(data.getBookmarks().length == 0) {
 		   href='<%=bookmarks[i].getHref()%>' 
 		   onclick='parent.parent.parent.setContentToolbarTitle(" ")' 
 		   oncontextmenu="contextMenuHandler(event);return false;"
+		   onkeydown="bookmarkKeyDownHandler(event);"
 		   title="<%=UrlUtil.htmlEncode(bookmarks[i].getLabel())%>">
 		   <img src="<%=prefs.getImagesDirectory()%>/topic.gif"><%=UrlUtil.htmlEncode(bookmarks[i].getLabel())%></a>
 	</td>
@@ -92,7 +117,7 @@ if(data.getBookmarks().length == 0) {
 
 </table>
 <div id="menu">
-	<div class="unselectedMenuItem" onmouseover="this.className='selectedMenuItem'" onmouseout="this.className='unselectedMenuItem'" onclick="removeBookmark()"><%=ServletResources.getString("RemoveBookmark",request)%></div>
+	<div class="unselectedMenuItem" onmouseover="this.className='selectedMenuItem'" onmouseout="this.className='unselectedMenuItem'" onclick="removeBookmark()" ><%=ServletResources.getString("RemoveBookmark",request)%></div>
 </div>
 
 <%
