@@ -40,6 +40,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 		}
 		String contentKey = contentReference.getIdentifier();
 		pluginPath += pluginPath.endsWith(File.separator) ? contentKey : File.separator + contentKey;
+		pluginPath = pluginPath.replace('/',File.separatorChar);
 
 		try {
 			inStream = contentReference.getInputStream();

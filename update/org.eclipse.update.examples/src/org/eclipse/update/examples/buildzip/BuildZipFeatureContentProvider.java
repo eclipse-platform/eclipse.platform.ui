@@ -136,6 +136,8 @@ public class BuildZipFeatureContentProvider extends FeatureContentProvider imple
 		// define selector for feature entry files
 		ContentSelector selector = new ContentSelector() {
 			public boolean include(JarEntry jarEntry) {
+				if (jarEntry.isDirectory())
+					return false;					
 				String entry = jarEntry.getName();
 				if (entry.startsWith("eclipse/readme/"))
 					return true;
@@ -184,6 +186,8 @@ public class BuildZipFeatureContentProvider extends FeatureContentProvider imple
 		// define selector for plugin entry files
 		ContentSelector selector = new ContentSelector() {
 			public boolean include(JarEntry jarEntry) {
+				if (jarEntry.isDirectory())
+					return false;
 				String entry = jarEntry.getName();
 				String id = currentPluginEntry.getVersionIdentifier().getIdentifier();
 				if (id==null)
@@ -197,8 +201,7 @@ public class BuildZipFeatureContentProvider extends FeatureContentProvider imple
 				String entry = jarEntry.getName();
 				int ix = entry.indexOf("/",16);
 				if (ix != -1) {
-					String rest = entry.substring(ix);
-					return "plugins/"+currentPluginEntry.getVersionIdentifier().toString()+rest;
+					return entry.substring(ix+1);
 				} else {
 					return entry;
 				}
@@ -215,6 +218,8 @@ public class BuildZipFeatureContentProvider extends FeatureContentProvider imple
 		// define selector for non plugin entry files
 		ContentSelector selector = new ContentSelector() {
 			public boolean include(JarEntry jarEntry) {
+				if (jarEntry.isDirectory())
+					return false;
 				String entry = jarEntry.getName();
 				String id = currentNonPluginEntry.getIdentifier();
 				if (!id.equals("root"))
