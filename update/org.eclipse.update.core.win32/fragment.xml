@@ -5,6 +5,11 @@
    version="1.9.0"
    provider-name="International Business Machine Corp."
    plugin-id="org.eclipse.update.core"
-   plugin-version="1.9.0">
+   plugin-version="1.9.0"
+   match="compatible">
+
+   <runtime>
+   </runtime>
+
 
 </fragment>
