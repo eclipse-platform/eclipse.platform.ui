@@ -737,7 +737,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     private FontData[] getFontAncestorValue(FontDefinition definition) {
 		FontDefinition ancestor = getFontAncestor(definition);
 		if (ancestor == null)
-			return null;
+			return PreferenceConverter.getDefaultFontDataArray(getPreferenceStore(), definition.getId());
 
 		return getFontValue(ancestor);
     }
@@ -975,28 +975,30 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     private boolean isDefault(FontDefinition definition) {
 		String id = definition.getId();
 
-        if (fontPreferencesToSet.containsKey(id)) {			
-		    FontData [] ourFontValue = (FontData[]) fontPreferencesToSet.get(id);
-            if (definition.getDefaultsTo() != null){
-        		FontData[] otherFontValue = getFontAncestorValue(definition);
-        		if (Arrays.equals(ourFontValue, otherFontValue))
+		if (fontPreferencesToSet.containsKey(id)) {
+			if (definition.getValue() != null) { // value-based font
+				if (Arrays.equals((FontData[]) fontPreferencesToSet.get(id), 
+				        new FontData [] {
+				        	StringConverter.asFontData(getPreferenceStore().getDefaultString(id), null)
+				        }))
+					return true;
+			} else {
+			    FontData [] ancestor = getFontAncestorValue(definition);
+			    if (Arrays.equals((FontData[]) fontPreferencesToSet.get(id), ancestor))
 					return true;
 			}
-			else {
-			    if (Arrays.equals(ourFontValue, PreferenceConverter.getDefaultFontDataArray(getPreferenceStore(), id))) 
+		} else {
+			if (definition.getValue() != null) { // value-based font
+				if (getPreferenceStore().isDefault(id))
+					return true;
+			} else {
+			    FontData [] ancestor = getFontAncestorValue(definition);
+			    if (ancestor == null)
 			        return true;
-			}
-		} else {			
-		    FontData[] ourFontValue = getFontValue(definition);
-            if (definition.getDefaultsTo() != null) {
+			    
 				// a descendant is default if it's the same value as its ancestor
-			    FontData[] otherFontValue = getFontAncestorValue(definition);
-				if (Arrays.equals(ourFontValue, otherFontValue))
+				if (Arrays.equals(getFontValue(definition), ancestor))
 					return true;
-			}
-			else {
-			    if (Arrays.equals(ourFontValue, PreferenceConverter.getDefaultFontDataArray(getPreferenceStore(), id))) 
-			        return true;
 			}
 		}
 		return false;
