@@ -12,6 +12,9 @@
 package org.eclipse.ant.internal.ui.editor.model;
 
 import org.apache.tools.ant.Target;
+import org.eclipse.ant.internal.ui.model.AntUIImages;
+import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 public class AntTargetNode extends AntElementNode {
 
@@ -48,5 +51,20 @@ public class AntTargetNode extends AntElementNode {
 			return false;
 		}
 		return targetName.equals(fTarget.getProject().getDefaultTarget());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#getBaseImageDescriptor()
+	 */
+	protected ImageDescriptor getBaseImageDescriptor() {
+		ImageDescriptor base= null;
+		if (isDefaultTarget()) {
+			base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_DEFAULT_TARGET);
+		} else if (getTarget().getDescription() == null) {
+			base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET_INTERNAL);
+		} else {
+			base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET);
+		}
+		return base;
 	}
 }

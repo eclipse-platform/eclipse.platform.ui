@@ -22,9 +22,6 @@ import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.model.AntPropertyNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
-import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
-import org.eclipse.ant.internal.ui.model.AntImageDescriptor;
-import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
@@ -37,11 +34,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -190,103 +184,14 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	/**
 	 * The label provider for the objects shown in the outline view.
 	 */
-	private class LabelProvider implements ILabelProvider, IColorProvider {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(ILabelProviderListener)
-		 */
-		public void addListener(ILabelProviderListener listener) {
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-		 */
-		public void dispose() {
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(Object, String)
-		 */
-		public boolean isLabelProperty(Object element, String property) {
-			return false;
-		}
-
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(ILabelProviderListener)
-		 */
-		public void removeListener(ILabelProviderListener listener) {
-		}
+	private class LabelProvider extends org.eclipse.jface.viewers.LabelProvider implements IColorProvider {
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(Object)
 		 */
 		public Image getImage(Object anElement) {
-			AntElementNode tempElement = (AntElementNode)anElement;
-			if(tempElement instanceof AntTargetNode) { //$NON-NLS-1$
-				ImageDescriptor base = null;
-				int flags = 0;
-				
-				if (tempElement.isErrorNode()) {
-					flags = flags | AntImageDescriptor.HAS_ERRORS;
-				}
-				if (isDefaultTargetNode(tempElement)) {
-					flags = flags | AntImageDescriptor.DEFAULT_TARGET;
-					base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_DEFAULT_TARGET);
-				} else if (((AntTargetNode)tempElement).getTarget().getDescription() == null) {
-					base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET_INTERNAL);
-				} else {
-					base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET);
-				}
-				return AntUIImages.getImage(new AntImageDescriptor(base, flags));				
-			}
-			if(tempElement instanceof AntProjectNode) { //$NON-NLS-1$
-				return getProjectImage((AntProjectNode)tempElement);
-			}
-			if("macrodef".equalsIgnoreCase(tempElement.getName()) //$NON-NLS-1$
-				|| "presetdef".equalsIgnoreCase(tempElement.getName())) {  //$NON-NLS-1$
-			    return AntUIImages.getImage(IAntUIConstants.IMG_ANT_MACRODEF);
-			}
-			
-			if("property".equalsIgnoreCase(tempElement.getName())) { //$NON-NLS-1$
-				int flags= 0;
-				ImageDescriptor base= AntUIImages.getImageDescriptor(IAntUIConstants.IMG_PROPERTY);
-				if (tempElement.isErrorNode()) {
-					flags |= AntImageDescriptor.HAS_ERRORS;
-				}
-				return AntUIImages.getImage(new AntImageDescriptor(base, flags));
-			}
-            
-            if("import".equalsIgnoreCase(tempElement.getName())) { //$NON-NLS-1$
-                return AntUIImages.getImage(IAntUIConstants.IMG_ANT_IMPORT);
-            }
-			
-//			XmlAttribute attribute= tempElement.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
-//			if (attribute != null && IAntEditorConstants.TYPE_EXTERNAL.equals(attribute.getValue())) {
-//				return getProjectImage(tempElement);
-//			}
-
-			if (tempElement instanceof AntTaskNode) {
-				int flags= 0;
-				ImageDescriptor base= AntUIImages.getImageDescriptor(IAntUIConstants.IMG_TASK_PROPOSAL);
-				if (tempElement.isErrorNode()) {
-					flags |= AntImageDescriptor.HAS_ERRORS;
-				}
-				return AntUIImages.getImage(new AntImageDescriptor(base, flags));
-			}
-
-			if (tempElement.isErrorNode()) {
-				return AntUIImages.getImage(IAntUIConstants.IMG_ANT_TARGET_ERROR);
-			}
-			return AntUIImages.getImage(IAntUIConstants.IMG_TASK_PROPOSAL);
-		}
-		
-		private Image getProjectImage(AntProjectNode tempElement) {
-			int flags = 0;
-			ImageDescriptor base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_PROJECT);
-			if (tempElement.isErrorNode()) {
-				flags = flags | AntImageDescriptor.HAS_ERRORS;
-			}
-			return AntUIImages.getImage(new AntImageDescriptor(base, flags));
+			AntElementNode node = (AntElementNode)anElement;
+			return node.getImage();
 		}
         
 		/* (non-Javadoc)
@@ -301,10 +206,11 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			return displayName.toString();
 		}
 
-		public Color getForeground(Object element) {
-			if (isDefaultTargetNode((AntElementNode) element)) {
+		public Color getForeground(Object node) {
+			if (node instanceof AntTargetNode && ((AntTargetNode)node).isDefaultTarget() ) {
 				return Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
 			}
+			
 			return null;
 		}
 
@@ -370,7 +276,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	}
 	
 	/**
-	 * Returns whether properties currently being filtered out of
+	 * Returns whether properties are currently being filtered out of
 	 * the outline.
 	 * 
 	 * @return whether or not properties are being filtered out
@@ -406,19 +312,6 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		return fSort;
 	}
 	
-	/**
-	 * Returns whether the given element represents a project's default target
-	 * 
-	 * @param node the node to examine
-	 * @return whether the given node is a default target
-	 */
-	private boolean isDefaultTargetNode(AntElementNode node) {
-		if (node instanceof AntTargetNode) {
-			return ((AntTargetNode)node).isDefaultTarget();
-		}
-		return false;
-	}
-   
 	/**
 	 * Creates a new AntEditorContentOutlinePage.
 	 */

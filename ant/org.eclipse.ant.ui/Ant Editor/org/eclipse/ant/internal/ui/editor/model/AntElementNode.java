@@ -23,7 +23,12 @@ import java.util.List;
 import org.apache.xml.utils.URI;
 import org.apache.xml.utils.URI.MalformedURIException;
 import org.eclipse.ant.internal.ui.editor.AntEditorException;
+import org.eclipse.ant.internal.ui.model.AntImageDescriptor;
+import org.eclipse.ant.internal.ui.model.AntUIImages;
+import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * General representation of an Ant buildfile element.
@@ -403,5 +408,19 @@ public class AntElementNode {
 	
 	public boolean contains(int childOffset) {
 		return childOffset < (offset + length); 
+	}
+	
+	public Image getImage() {
+		int flags = 0;
+		
+		if (isErrorNode()) {
+			flags = flags | AntImageDescriptor.HAS_ERRORS;
+		}
+		ImageDescriptor base= getBaseImageDescriptor();
+		return AntUIImages.getImage(new AntImageDescriptor(base, flags));			
+	}
+
+	protected ImageDescriptor getBaseImageDescriptor() {
+		return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_TASK_PROPOSAL);
 	}
 }

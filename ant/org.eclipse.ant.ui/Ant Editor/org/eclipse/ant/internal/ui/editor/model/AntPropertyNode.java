@@ -12,6 +12,9 @@
 package org.eclipse.ant.internal.ui.editor.model;
 
 import org.apache.tools.ant.Task;
+import org.eclipse.ant.internal.ui.model.AntUIImages;
+import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.xml.sax.Attributes;
 
 public class AntPropertyNode extends AntTaskNode {
@@ -60,4 +63,11 @@ public class AntPropertyNode extends AntTaskNode {
 //			return task;
 //		}
 //	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#getBaseImageDescriptor()
+	 */
+	protected ImageDescriptor getBaseImageDescriptor() {
+		return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_PROPERTY);
+	}
 }

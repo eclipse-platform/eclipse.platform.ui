@@ -170,13 +170,15 @@ public class AntModel {
     		projectHelper.setBuildFile(file);
 			projectHelper.setAntModel(this);
 			beginReporting();
+			project.addReference("ant.projectHelper", projectHelper); //$NON-NLS-1$
     		projectHelper.parse(project, input.get());  // File will be parsed here
     	} catch(BuildException e) {
-    		// ignore a build exception on purpose, since we also parse invalid
-    		// build files.
 			try {
 				int line= e.getLocation().getLineNumber();
-				notifyProblemRequestor(e, getNonWhitespaceOffset(line, 1), getLastCharColumn(line), XMLProblem.SEVERTITY_ERROR);
+				int originalOffset= getOffset(line, 1);
+				int offset= getNonWhitespaceOffset(line, 1);
+				int length= getLastCharColumn(line) - (offset - originalOffset);
+				notifyProblemRequestor(e, offset, length, XMLProblem.SEVERTITY_ERROR);
 			} catch (BadLocationException e1) {
 			}
     	} finally {
@@ -185,7 +187,6 @@ public class AntModel {
 	}
 
 	protected File getEditedFile() {
-    	
 		if (fLocationProvider != null) {
         	return fLocationProvider.getLocation().toFile();
 		}
