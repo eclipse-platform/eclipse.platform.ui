@@ -207,6 +207,25 @@ public class PerformanceStats {
 		statMap.put(newStats, newStats);
 		return newStats;
 	}
+	
+	/**
+	 * Returns whether monitoring of a given performance event is enabled.
+	 * <p>
+	 * For frequent performance events, the result of this method call should
+	 * be cached by the caller to minimize overhead when performance monitoring
+	 * is turned off.  It is not possible for enablement to change during the life
+	 * of this invocation of the platform.
+	 * 
+	 * @param eventName The name of the event to determine enablement for
+	 * @return <code>true</code>If the performance event with the given
+	 * name is enabled, and <code>false</code> otherwise.
+	 */
+	public static boolean isEnabled(String eventName) {
+		if (!ENABLED)
+			return false;
+		String option = Platform.getDebugOption(eventName);
+		return option != null && !option.equalsIgnoreCase("false") && !option.equalsIgnoreCase("-1"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
 	/**
 	 * Prints all statistics to the standard output.
