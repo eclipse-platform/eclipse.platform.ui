@@ -13,11 +13,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
@@ -310,6 +314,18 @@ public class SyncFileUtil {
 		
 		writeLines(entriesFile,(String[]) mergedEntries.values().toArray(new String[mergedEntries.size()]));
 		logEntriesFile.delete();
+		
+		// Refresh the CVS directory containing the files
+		IResource resource = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(new Path(getCVSSubdirectory(root).getAbsolutePath()));
+		try {
+			if(resource!=null) {
+				resource.refreshLocal(IResource.DEPTH_INFINITE, Policy.monitorFor(null));
+			}		
+		} catch(CoreException e) {
+			// XXX Should we throw or log?
+			throw new CVSException(IStatus.ERROR, 0, "Error reloading sync information", e);
+		}
+		
 	}
 	
 	public static String[] readLines(File file) throws CVSException {
