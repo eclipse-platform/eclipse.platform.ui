@@ -13,35 +13,21 @@ package org.eclipse.core.internal.runtime;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.framework.Bundle;
 
 public class DataArea {
-	/* package */static final String F_DESCRIPTION = ".platform"; //$NON-NLS-1$	//TODO Not used
 	/* package */static final String F_META_AREA = ".metadata"; //$NON-NLS-1$
-	/* package */static final String F_PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$	//TODO Not used
 	/* package */static final String F_PLUGIN_DATA = ".plugins"; //$NON-NLS-1$
 	/* package */static final String F_LOG = ".log"; //$NON-NLS-1$
 	/* package */static final String F_BACKUP = ".bak"; //$NON-NLS-1$
-	/* package */static final String F_KEYRING = ".keyring"; //$NON-NLS-1$	//TODO Consider for removal
-	/* package */static final String F_LOCK_FILE = ".lock"; //$NON-NLS-1$	//TODO To consider for removal
-	/* package */static final String F_VERSION = "version.ini"; //$NON-NLS-1$
 	/**
 	 * Internal name of the preference storage file (value <code>"pref_store.ini"</code>) in this plug-in's (read-write) state area.
 	 */
 	/* package */static final String PREFERENCES_FILE_NAME = "pref_store.ini"; //$NON-NLS-1$
 
 	private IPath location; //The location of the instance data
-	private PlatformMetaAreaLock metaAreaLock = null;
-
-	//Authorization related informations
-	private AuthorizationDatabase keyring = null;
-	private long keyringTimeStamp;
-	private String keyringFile = null;
-	private String password = ""; //$NON-NLS-1$
 	private boolean initialized = false;
 
 	protected void assertLocationInitialized() throws IllegalStateException {
@@ -109,14 +95,6 @@ public class DataArea {
 		return result.append(PREFERENCES_FILE_NAME);
 	}
 
-	/**
-	 * Return the path to the version.ini file.
-	 */
-	public IPath getVersionPath() throws IllegalStateException {
-		assertLocationInitialized();
-		return getMetadataLocation().append(F_VERSION);
-	}
-
 	private void initializeLocation() throws CoreException {
 		// check if the location can be created
 		if (location.toFile().exists()) {
@@ -152,124 +130,5 @@ public class DataArea {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	// TODO remove this method by M8
-	/**
-	 * Creates a lock file in the meta-area that indicates the meta-area is in use, preventing other eclipse instances from concurrently using the same meta-area.
-	 */
-	public synchronized void createLockFile() throws CoreException, IllegalStateException {
-		// temporary testing hook to allow the UI team to turn runtime locking off and test their locking.
-		if (System.getProperty("eclipse.ui.testing") != null)
-			return;
-		assertLocationInitialized();
-		if (System.getProperty("org.eclipse.core.runtime.ignoreLockFile") != null) //$NON-NLS-1$
-			return;
-		String lockLocation = getMetadataLocation().append(F_LOCK_FILE).toOSString();
-		metaAreaLock = new PlatformMetaAreaLock(new File(lockLocation));
-		try {
-			if (!metaAreaLock.acquire()) {
-				String message = Policy.bind("meta.inUse", lockLocation); //$NON-NLS-1$
-				throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.FAILED_WRITE_METADATA, message, null));
-			}
-		} catch (IOException e) {
-			String message = Policy.bind("meta.failCreateLock", lockLocation); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.FAILED_WRITE_METADATA, message, e));
-		}
-	}
-
-	// TODO remove this method by M8
-	/**
-	 * Closes the open lock file handle, and makes a silent best attempt to delete the file.
-	 */
-	public synchronized void clearLockFile() throws IllegalStateException {
-		// temporary testing hook to allow the UI team to turn runtime locking off and test their locking.
-		if (System.getProperty("eclipse.ui.testing") != null)
-			return;
-		assertLocationInitialized();
-		if (metaAreaLock != null)
-			metaAreaLock.release();
-	}
-
-	/**
-	 * @see Platform
-	 */
-	public void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
-		loadKeyring();
-		keyring.addAuthorizationInfo(serverUrl, realm, authScheme, new HashMap(info));
-		keyring.save();
-	}
-
-	/**
-	 * @see Platform
-	 */
-	public void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
-		loadKeyring();
-		keyring.addProtectionSpace(resourceUrl, realm);
-		keyring.save();
-	}
-
-	/**
-	 * @see Platform
-	 */
-	public void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
-		loadKeyring();
-		keyring.flushAuthorizationInfo(serverUrl, realm, authScheme);
-		keyring.save();
-	}
-
-	/**
-	 * @see Platform
-	 */
-	public Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
-		loadKeyring();
-		Map info = keyring.getAuthorizationInfo(serverUrl, realm, authScheme);
-		return info == null ? null : new HashMap(info);
-	}
-
-	/**
-	 * @see Platform
-	 */
-	public String getProtectionSpace(URL resourceUrl) {
-		loadKeyring();
-		return keyring.getProtectionSpace(resourceUrl);
-	}
-
-	/**
-	 * Opens the password database (if any) initally provided to the platform at startup.
-	 */
-	private void loadKeyring() {
-		if (keyring != null && new File(keyringFile).lastModified() == keyringTimeStamp)
-			return;
-		if (keyringFile == null) {
-			File file = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath());
-			file = new File(file, F_KEYRING);
-			keyringFile = file.getAbsolutePath();
-		}
-		try {
-			keyring = new AuthorizationDatabase(keyringFile, password);
-		} catch (CoreException e) {
-			InternalPlatform.getDefault().log(e.getStatus());
-		}
-		if (keyring == null) {
-			//try deleting the file and loading again - format may have changed
-			new java.io.File(keyringFile).delete();
-			try {
-				keyring = new AuthorizationDatabase(keyringFile, password);
-			} catch (CoreException e) {
-				//don't bother logging a second failure
-			}
-		}
-		keyringTimeStamp = new File(keyringFile).lastModified();
-	}
-
-	public void setKeyringFile(String keyringFile) {
-		if (this.keyringFile != null)
-			throw new IllegalStateException(Policy.bind("meta.keyringFileAlreadySpecified", this.keyringFile)); //$NON-NLS-1$
-		this.keyringFile = keyringFile;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 }

@@ -61,7 +61,7 @@ public final class InternalPlatform implements IPlatform {
 	private static DataArea metaArea;
 	private static boolean initialized;
 	private static Runnable endOfInitializationHandler = null;
-	private static String password = "";
+	private static String password = ""; //$NON-NLS-1$
 	private static String keyringFile;
 
 	// Command line args as seen by the Eclipse runtime. allArgs does NOT
@@ -76,23 +76,11 @@ public final class InternalPlatform implements IPlatform {
 	private ArrayList groupProviders = new ArrayList(3);
 	private IProduct product;
 
-	/**
-	 * Name of the plug-in customization file (value "plugin_customization.ini")
-	 * located in the root of the primary feature plug-in and it's 
-	 * companion nl-specific file with externalized strings (value
-	 * "plugin_customization.properties").  The companion file can
-	 * be contained in any nl-specific subdirectories of the primary
-	 * feature or any fragment of this feature.
-	 */
-	private static final String PLUGIN_CUSTOMIZATION_BASE_NAME = "plugin_customization"; //$NON-NLS-1$
-	private static final String PLUGIN_CUSTOMIZATION_FILE_NAME = PLUGIN_CUSTOMIZATION_BASE_NAME + ".ini"; //$NON-NLS-1$
-
 	// execution options
 	private static final String OPTION_DEBUG = PI_RUNTIME + "/debug"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_SYSTEM_CONTEXT = PI_RUNTIME + "/debug/context"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_SHUTDOWN = PI_RUNTIME + "/timing/shutdown"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_REGISTRY = PI_RUNTIME + "/registry/debug"; //$NON-NLS-1$
-	private static final String OPTION_REGISTRY_CACHE_TIMING = IPlatform.PI_RUNTIME + "/registry/cache/timing"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_REGISTRY_DUMP = PI_RUNTIME + "/registry/debug/dump"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_PREFERENCES = PI_RUNTIME + "/preferences/debug"; //$NON-NLS-1$
 
@@ -318,8 +306,9 @@ public final class InternalPlatform implements IPlatform {
 			return metaArea;
 
 		metaArea = new DataArea();
-		metaArea.setKeyringFile(keyringFile); //TODO Aren't those files suppose to be located into the config? Why does it need to happen here?
-		metaArea.setPassword(password);
+		//TODO This should be moved somewhere else
+		AuthorizationHandler.setKeyringFile(keyringFile);
+		AuthorizationHandler.setPassword(password);
 		return metaArea;
 	}
 
@@ -1128,23 +1117,23 @@ public final class InternalPlatform implements IPlatform {
 	}
 
 	public void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
-		getMetaArea().addAuthorizationInfo(serverUrl, realm, authScheme, info);
+		AuthorizationHandler.addAuthorizationInfo(serverUrl, realm, authScheme, info);
 	}
 
 	public void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
-		getMetaArea().addProtectionSpace(resourceUrl, realm);
+		AuthorizationHandler.addProtectionSpace(resourceUrl, realm);
 	}
 
 	public void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
-		getMetaArea().flushAuthorizationInfo(serverUrl, realm, authScheme);
+		AuthorizationHandler.flushAuthorizationInfo(serverUrl, realm, authScheme);
 	}
 
 	public Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
-		return getMetaArea().getAuthorizationInfo(serverUrl, realm, authScheme);
+		return AuthorizationHandler.getAuthorizationInfo(serverUrl, realm, authScheme);
 	}
 
 	public String getProtectionSpace(URL resourceUrl) {
-		return getMetaArea().getProtectionSpace(resourceUrl);
+		return AuthorizationHandler.getProtectionSpace(resourceUrl);
 	}
 
 	public Location getInstanceLocation() {

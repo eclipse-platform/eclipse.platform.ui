@@ -138,8 +138,7 @@ public class AuthorizationDatabase {
 		Assert.isNotNull(resourceUrl);
 		Assert.isNotNull(realm);
 
-		String file = resourceUrl.getFile();
-		if (!file.endsWith("/")) { //$NON-NLS-1$
+		if (!resourceUrl.getFile().endsWith("/")) { //$NON-NLS-1$
 			resourceUrl = URLTool.getParent(resourceUrl);
 		}
 
