@@ -42,19 +42,19 @@ public class DebugPlugin extends Plugin {
 	 * Debug plug-in identifier
 	 * (value <code>"org.eclipse.debug.core"</code>).
 	 */
-	public static final String PLUGIN_ID = "org.eclipse.debug.core";
+	public static final String PLUGIN_ID = "org.eclipse.debug.core"; //$NON-NLS-1$
 	
 	/**
 	 * Launcher extension point identifier
 	 * (value <code>"launchers"</code>).
 	 */
-	public static final String EXTENSION_POINT_LAUNCHER= "launchers";
+	public static final String EXTENSION_POINT_LAUNCHER= "launchers"; //$NON-NLS-1$
 	
 	/**
 	 * Breakpoint extension point identifier
 	 * (value <code>"breakpoints"</code>).
 	 */
-	public static final String EXTENSION_POINT_BREAKPOINTS= "breakpoints";	
+	public static final String EXTENSION_POINT_BREAKPOINTS= "breakpoints";	 //$NON-NLS-1$
 
 	/**
 	 * The singleton debug plug-in instance.
