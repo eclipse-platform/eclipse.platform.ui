@@ -128,9 +128,6 @@ public class InstancePreferences extends EclipsePreferences {
 			}
 		}
 
-		if (properties == null)
-			properties = new Properties();
-
 		// Store values in the preferences object
 		for (Iterator i = values.keySet().iterator(); i.hasNext();) {
 			String key = (String) i.next();
@@ -140,8 +137,9 @@ public class InstancePreferences extends EclipsePreferences {
 				if (InternalPlatform.DEBUG_PREFERENCES)
 					Policy.debug("Loaded legacy preference: " + key + " -> " + value); //$NON-NLS-1$ //$NON-NLS-2$
 				// call these 2 methods rather than #put() so we don't send out unnecessary notification
-				properties.put(key, value);
-				makeDirty();
+				Object oldValue = internalPut(key, value);
+				if (!value.equals(oldValue))
+					makeDirty();
 			}
 		}
 

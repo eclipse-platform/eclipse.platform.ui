@@ -223,9 +223,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				EclipsePreferences childNode = (EclipsePreferences) internalNode(path, false, null);
 				if (InternalPlatform.DEBUG_PREFERENCES)
 					Policy.debug("Setting preference: " + childNode.absolutePath() + '/' + key + '=' + value); //$NON-NLS-1$
-				String oldValue = childNode.internalPut(key, value);
-				if (!value.equals(oldValue))
-					childNode.makeDirty();
+				childNode.internalPut(key, value);
 			}
 		}
 	}
