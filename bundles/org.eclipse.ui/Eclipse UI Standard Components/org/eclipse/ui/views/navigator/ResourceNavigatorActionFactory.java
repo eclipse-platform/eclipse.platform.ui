@@ -85,7 +85,6 @@ public class ResourceNavigatorActionFactory extends ActionFactory {
 		IActionBars actionBars = part.getViewSite().getActionBars();
 		refactorFactory.updateGlobalActions(selection, actionBars);
 		workbenchFactory.updateGlobalActions(selection);
-		actionBars.updateActionBars();
 	}
 
 	/**
