@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -167,12 +168,18 @@ public abstract class WorkbenchWizardListSelectionPage
 	 * held last time this wizard was used to completion.
 	 */
 	private void restoreWidgetValues() {
-	    String wizardId = getDialogSettings().get(STORE_SELECTED_WIZARD_ID);
+		
+		IDialogSettings settings =  getDialogSettings();
+		if(settings == null)
+			return;
+		
+	    String wizardId =settings.get(STORE_SELECTED_WIZARD_ID);
         WorkbenchWizardElement wizard = findWizard(wizardId);
-        if (wizard != null) {
-        	StructuredSelection selection = new StructuredSelection(wizard);
-        	viewer.setSelection(selection);
-        }	    
+        if (wizard == null) 
+        	return;
+        
+        StructuredSelection selection = new StructuredSelection(wizard);
+        viewer.setSelection(selection);
 	}
 
 	/**
