@@ -42,6 +42,7 @@ public class DetailsForm extends PropertyWebForm {
 	private static final String KEY_PENDING_VERSION =
 		"FeaturePage.pendingVersion";
 	private static final String KEY_SIZE = "FeaturePage.size";
+	private static final String KEY_ESTIMATE = "FeaturePage.estimate";	
 	private static final String KEY_OS = "FeaturePage.os";
 	private static final String KEY_WS = "FeaturePage.ws";
 	private static final String KEY_NL = "FeaturePage.nl";
@@ -54,8 +55,11 @@ public class DetailsForm extends PropertyWebForm {
 		"FeaturePage.copyrightLink";
 	private static final String KEY_NOT_INSTALLED = "FeaturePage.notInstalled";
 	private static final String KEY_SIZE_VALUE = "FeaturePage.sizeValue";
+	private static final String KEY_ESTIMATE_VALUE = "FeaturePage.estimateValue";	
 	private static final String KEY_UNKNOWN_SIZE_VALUE =
 		"FeaturePage.unknownSizeValue";
+	private static final String KEY_UNKNOWN_ESTIMATE_VALUE =
+		"FeaturePage.unknownEstimateValue";		
 	private static final String KEY_DO_UNCONFIGURE =
 		"FeaturePage.doButton.unconfigure";
 	private static final String KEY_DO_CONFIGURE =
@@ -117,6 +121,7 @@ public class DetailsForm extends PropertyWebForm {
 	private Label versionLabel;
 	private Label installedVersionLabel;
 	private Label sizeLabel;
+	private Label estimatedTime;
 	private Label osLabel;
 	private Label wsLabel;
 	private Label nlLabel;
@@ -310,6 +315,9 @@ public class DetailsForm extends PropertyWebForm {
 			createProperty(
 				properties,
 				UpdateUIPlugin.getResourceString(KEY_SIZE));
+		estimatedTime = createProperty(
+				properties,
+				UpdateUIPlugin.getResourceString(KEY_ESTIMATE));
 		supportedPlatformsGroup = new ReflowGroup() {
 			public void fillExpansion(
 				Composite expansion,
@@ -579,10 +587,22 @@ public class DetailsForm extends PropertyWebForm {
 			format = UpdateUIPlugin.getResourceString(KEY_UNKNOWN_SIZE_VALUE);
 		}
 		sizeLabel.setText(format);
+		long estimate = SiteManager.estimate(feature.getURL());
+		String estimateFormat = null;
+		if (estimate>=0 && size!=-1){
+			String hours = Long.toString(estimate/3600000);
+			String minutes = Long.toString(estimate%3600000);
+			String pattern = UpdateUIPlugin.getResourceString(KEY_ESTIMATE_VALUE);
+			estimateFormat = UpdateUIPlugin.getFormattedMessage(pattern,new String[]{hours,minutes});
+		} else {
+			estimateFormat = UpdateUIPlugin.getResourceString(KEY_UNKNOWN_ESTIMATE_VALUE);
+		}
+		estimatedTime.setText(estimateFormat);
 		if (feature.getDescription() != null)
 			descriptionText.setText(feature.getDescription().getAnnotation());
 		else
 			descriptionText.setText("");
+		
 		Image logoImage = loadProviderImage(feature);
 		if (logoImage == null)
 			logoImage = providerImage;

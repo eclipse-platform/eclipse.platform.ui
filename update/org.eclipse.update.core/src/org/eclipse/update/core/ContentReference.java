@@ -44,6 +44,9 @@ public class ContentReference {
 	private File file; //    local file reference
 	private Response response;
 	private int permission; 
+	
+	// <true> if a copy of a Contentreferenec in a temp local directory
+	private boolean tempLocal = false;
 
 	/*
 	 * do not allow default contruction
@@ -87,7 +90,14 @@ public class ContentReference {
 	 * @since 2.0
 	 */
 	public ContentReference createContentReference(String id, File file) {
-		return new ContentReference(id, file);
+		return new ContentReference(id, file,true);
+	}
+	/**
+	 * 
+	 */
+	private ContentReference(String id, File file, boolean b) {
+		this(id,file);
+		setTempLocal(b);
 	}
 
 	/**
@@ -155,12 +165,14 @@ public class ContentReference {
 	 * @since 2.0
 	 */
 	public boolean isLocalReference() {
-		if (file != null)
+		/*if (file != null)
 			return true;
 		else if (url != null)
 			return FILE_URL_PROTOCOL.equals(url.getProtocol());
 		else
-			return false;
+			return false;*/
+		// only temp files are considered local
+		return tempLocal;
 	}
 
 	/**
@@ -234,6 +246,15 @@ public class ContentReference {
 	 */
 	public void setPermission(int permission) {
 		this.permission = permission;
+	}
+
+	/**
+	 * Sets if a content reference is considered local 
+	 * 
+	 * @param tempLocal <code>true</code> if the file is considered local
+	 */
+	protected void setTempLocal(boolean tempLocal) {
+		this.tempLocal = tempLocal;
 	}
 
 }

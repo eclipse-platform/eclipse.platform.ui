@@ -5,6 +5,8 @@ package org.eclipse.update.core;
  */
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.CoreException;
@@ -26,8 +28,8 @@ public class SiteManager {
 	
 	private static String os;
 	private static String ws;
-	private static String arch;	
-
+	private static String arch;
+	
 	private SiteManager() {
 	}
 
@@ -161,5 +163,17 @@ public class SiteManager {
 	public static void setWS(String ws) {
 		SiteManager.ws = ws;
 	}
+	
+	/**
+	 * Returns an estimate of bytes per milliseconds transfer rate for this URL
+	 * @param URL the URL of the site
+	 * @return long a bytes per millisecond estimate rate
+	 * @since 2.1
+ 	 */
+	public static long estimate(URL site) {
+		if (site==null) return 0;
+		return InternalSiteManager.estimate(site.getHost());
+	}
+
 
 }

@@ -29,6 +29,8 @@ public class InternalSiteManager {
 	private static final String SIMPLE_EXTENSION_ID = "deltaHandler";
 	//$NON-NLS-1$
 
+	private static Map estimates;	
+
 	// cache found sites
 	private static Map sites = new HashMap();
 	public static boolean globalUseCache = true;
@@ -371,4 +373,38 @@ public class InternalSiteManager {
 		}
 		return false;
 	}
+	
+	/**
+	 * Method downloaded.
+	 * @param l
+	 * @param l1
+	 * @param uRL
+	 */
+	public static void downloaded(long downloadSize, long time, URL url) {
+		if (downloadSize<=0 || time<0) return;
+		String host = url.getHost();
+		long sizeByTime= (time==0)?0:downloadSize/time;
+		Long value = new Long(sizeByTime);
+		if (estimates==null){
+			estimates = new HashMap();
+		} else {
+			Long previous = (Long)estimates.get(host);
+			if (previous!=null){
+				value = new Long((previous.longValue()+sizeByTime)/2);
+			}
+		}
+		estimates.put(host,value);
+	}	
+	/**
+	 * Method estimate.
+	 * @param string
+	 * @return long
+	 */
+	public static long estimate(String host) {
+		if (estimates==null) return 0;
+		Long value = (Long)estimates.get(host);
+		if (value==null) return 0;
+		return value.longValue();
+	}
+	
 }

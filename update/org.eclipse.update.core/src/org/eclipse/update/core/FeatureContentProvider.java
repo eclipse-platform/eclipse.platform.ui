@@ -10,6 +10,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.InternalSiteManager;
 import org.eclipse.update.internal.core.Policy;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
@@ -145,7 +146,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	public ContentReference asLocalReference(ContentReference ref, InstallMonitor monitor) throws  IOException, CoreException {
 
 		// check to see if this is already a local reference
-		if (ref.isLocalReference() && !SWITCH_COPY_LOCAL)
+		if (ref.isLocalReference())
 			return ref;
 
 		// check to see if we already have a local file for this reference
@@ -187,7 +188,12 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 				} catch (FileNotFoundException e) {
 					throw Utilities.newCoreException(Policy.bind("FeatureContentProvider.UnableToCreate", new Object[] { localFile }), e);
 				}
+
+				Date start = new Date();				
 				Utilities.copy(is, os, monitor);
+				Date stop = new Date();
+				InternalSiteManager.downloaded(ref.getInputSize(),(stop.getTime()-start.getTime()),ref.asURL());
+				
 				sucess = true;
 				
 				// file is downloaded succesfully, map it 

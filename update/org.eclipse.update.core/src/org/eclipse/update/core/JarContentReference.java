@@ -99,7 +99,17 @@ public class JarContentReference extends ContentReference {
 	 * @since 2.0
 	 */
 	public ContentReference createContentReference(String id, File file) {
-		return new JarContentReference(id, file);
+		return new JarContentReference(id, file,true);
+	}
+	/**
+	 * Constructor JarContentReference.
+	 * @param id
+	 * @param file
+	 * @param b
+	 */
+	public JarContentReference(String id, File file, boolean b) {
+		this(id,file);
+		setTempLocal(b);
 	}
 
 	/**
