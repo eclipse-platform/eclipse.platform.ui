@@ -24,7 +24,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public final class ViewsPlugin extends AbstractUIPlugin {
 	/**
-	 * Text views UI plug-in id (value <code>"org.eclipse.ui.views"</code>).
+	 * Views UI plug-in id (value <code>"org.eclipse.ui.views"</code>).
 	 */
 	public static final String PLUGIN_ID = "org.eclipse.ui.views"; //$NON-NLS-1$
 

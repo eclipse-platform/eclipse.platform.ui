@@ -9,7 +9,7 @@
    <runtime>
       <library name="views.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.ui.views"/>
+         <packages prefixes="org.eclipse.ui.views, org.eclipse.ui.internal.views"/>
       </library>
    </runtime>
    <requires>
