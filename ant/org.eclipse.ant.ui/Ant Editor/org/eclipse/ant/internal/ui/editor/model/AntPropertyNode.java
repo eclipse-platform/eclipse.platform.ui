@@ -11,7 +11,9 @@
 
 package org.eclipse.ant.internal.ui.editor.model;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.UnknownElement;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -56,9 +58,19 @@ public class AntPropertyNode extends AntTaskNode {
 		return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_PROPERTY);
 	}
 	
+	/**
+	 * Sets the property in the project is required.
+	 * Top level properties (properties not in a target) have already been configured
+	 */
 	public void configure() {
-		 //set the property in the project
-        getTask().maybeConfigure();
-        getTask().execute();
+		if (((UnknownElement)getTask()).getRealThing() != null) {
+			return;
+		}
+		try {
+			getTask().maybeConfigure();
+			getTask().execute();
+		} catch (BuildException be) {
+			getAntModel().handleBuildException(be, this);
+		}
 	}
 }
