@@ -13,7 +13,9 @@ package org.eclipse.ui.internal.decorators;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.progress.UIJob;
@@ -107,7 +109,7 @@ public class DecorationScheduler {
 			awaitingDecoration.add(element);
 			if (shutdown)
 				return;
-			if(decorationJob.getState() == Job.NONE)
+			if (decorationJob.getState() == Job.NONE)
 				decorationJob.schedule();
 		}
 
@@ -309,7 +311,7 @@ public class DecorationScheduler {
 	 * @return UIJob
 	 */
 	private UIJob getUpdateJob() {
-		return new UIJob(WorkbenchMessages.getString("DecorationScheduler.UpdateJobName")) { //$NON-NLS-1$
+		UIJob job = new UIJob(WorkbenchMessages.getString("DecorationScheduler.UpdateJobName")) {//$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				//Check again in case someone has already cleared it out.
 				if (pendingUpdate.isEmpty())
@@ -327,14 +329,23 @@ public class DecorationScheduler {
 							decoratorManager,
 							elements));
 					monitor.worked(elements.length);
-					//Other decoration requests may have occured due to
-					//updates. Only clear the results if there are none pending.
-					if (awaitingDecoration.isEmpty())
-						resultCache.clear();
 					monitor.done();
 				}
 				return Status.OK_STATUS;
 			}
 		};
+
+		job.addJobChangeListener(new JobChangeAdapter() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+			 */
+			public void done(IJobChangeEvent event) {
+				//Other decoration requests may have occured due to
+				//updates. Only clear the results if there are none pending.
+				if (awaitingDecoration.isEmpty())
+					resultCache.clear();
+			}
+		});
+		return job;
 	}
 }
