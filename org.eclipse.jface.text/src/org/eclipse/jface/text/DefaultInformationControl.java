@@ -200,7 +200,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @param presenter the presenter to be used
 	 */	
 	public DefaultInformationControl(Shell parent,int style, IInformationPresenter presenter) {
-		this(parent, SWT.NO_TRIM, style, presenter);
+		this(parent, SWT.TOOL | SWT.NO_TRIM, style, presenter);
 	}	
 
 	/**
@@ -216,7 +216,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @since 3.0
 	 */	
 	public DefaultInformationControl(Shell parent,int style, IInformationPresenter presenter, String statusFieldText) {
-		this(parent, SWT.NO_TRIM, style, presenter, statusFieldText);
+		this(parent, SWT.TOOL | SWT.NO_TRIM, style, presenter, statusFieldText);
 	}	
 	
 	/**

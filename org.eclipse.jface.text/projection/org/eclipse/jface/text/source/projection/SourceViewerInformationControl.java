@@ -76,7 +76,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	 * @param symbolicFontName the symbolic font name
 	 */
 	public SourceViewerInformationControl(Shell parent, String symbolicFontName) {
-		this(parent, SWT.NO_TRIM, SWT.NONE, symbolicFontName, null);
+		this(parent, SWT.NO_TRIM | SWT.TOOL, SWT.NONE, symbolicFontName, null);
 	}
 	
 	/**
