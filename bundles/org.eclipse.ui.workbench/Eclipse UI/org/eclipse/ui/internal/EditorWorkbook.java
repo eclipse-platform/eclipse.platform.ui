@@ -126,11 +126,8 @@ public class EditorWorkbook extends PartStack {
 
     }
     
-    public void setSelection(LayoutPart part) {
-
-        super.setSelection(part);
-        
-        EditorPane pane = (EditorPane)part;
+    protected void updateActions() {
+        EditorPane pane = (EditorPane)getVisiblePart();
         
         sizeItem.setPane(pane);
         pinEditorItem.setPane(pane);

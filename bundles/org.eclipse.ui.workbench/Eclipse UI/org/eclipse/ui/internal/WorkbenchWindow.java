@@ -801,11 +801,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			// adjust the toolbar size to display as many items as possible
 			perspectiveCoolBar.addControlListener(new ControlAdapter() {
 				public void controlResized(ControlEvent e) {
-					// NOTE: this listener previously had an algorithm that exhaustively tested all possible
-					// widths to determine the smallest width that can fit in the available space. This was
-					// intentionally removed since it was using about 50% of the CPU time during layouts. Please
-					// do not bring it back -- whatever algorithm ends up running here, it must run
-					// in constant time.
 					
 					// Would it be possible to fit the toolbar in this space if we wrapped it? 
 					Rectangle area = perspectiveCoolBar.getClientArea();
@@ -815,6 +810,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 					
 					Point wrappedSize = toolbarWrapper.getControl().computeSize(area.width - offset.x, SWT.DEFAULT);
 
+					// If everything will fit, set it to the wrapped size
 					if (wrappedSize.y <= area.height - offset.y) { 
 						coolItem.setSize(wrappedSize.x + offset.x, wrappedSize.y + offset.y);
 						return;

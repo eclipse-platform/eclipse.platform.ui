@@ -38,6 +38,7 @@ public class PartTabFolder extends PartStack {
     private WorkbenchPage page;
     
     private SystemMenuSize sizeItem = new SystemMenuSize(null);
+    private SystemMenuFastView fastViewAction;
     
 	public void addSystemActions(IMenuManager menuManager) {
 		appendToGroupIfPossible(menuManager, "misc", new UpdatingActionContributionItem(fastViewAction)); //$NON-NLS-1$
@@ -61,8 +62,6 @@ public class PartTabFolder extends PartStack {
         return !isFixedView(pane);
     }
     
-    private SystemMenuFastView fastViewAction;
-
     public PartTabFolder(WorkbenchPage page) {
     	this(page, true);
     }
@@ -106,10 +105,9 @@ public class PartTabFolder extends PartStack {
                 page.getPerspective().getId(), getID()));
     }
 
-    public void setSelection(LayoutPart part) {
-    	super.setSelection(part);
-
+    protected void updateActions() {
     	ViewPane pane = null;
+    	PartPane part = getVisiblePart();
     	
     	if (part instanceof ViewPane) {
     		pane = (ViewPane)part;
@@ -118,7 +116,6 @@ public class PartTabFolder extends PartStack {
         fastViewAction.setPane(pane);        
         sizeItem.setPane(pane);
     }
-	
 	
 	public boolean isFixedView(ViewPane pane) {
         Perspective perspective = page.getActivePerspective();

@@ -276,6 +276,8 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         	updateContainerVisibleTab();
         }
         
+        updateActions();
+        
         refreshPresentationSelection();
     }
 
@@ -650,8 +652,19 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
         current = part;
 
+        if (!isDisposed()) {
+        	updateActions();
+        }
         refreshPresentationSelection();
     }
+    
+	/**
+	 * Subclasses should override this method to update the enablement state of their
+	 * actions
+	 */
+	protected void updateActions() {
+		
+	}
     
     private void refreshPresentationSelection() {
     	if (current != null) {
