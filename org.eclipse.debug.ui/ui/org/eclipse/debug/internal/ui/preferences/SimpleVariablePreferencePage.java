@@ -284,9 +284,9 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	 * @param event the selection change event
 	 */
 	protected void handleTableSelectionChanged(SelectionChangedEvent event) {
-		boolean enabled = !(variableTable.getSelection().isEmpty());
-		envEditButton.setEnabled(enabled);
-		envRemoveButton.setEnabled(enabled);
+		int size = ((IStructuredSelection)variableTable.getSelection()).size();
+		envEditButton.setEnabled(size == 1);
+		envRemoveButton.setEnabled(size > 0);
 	}
 
 	public void init(IWorkbench workbench) {
