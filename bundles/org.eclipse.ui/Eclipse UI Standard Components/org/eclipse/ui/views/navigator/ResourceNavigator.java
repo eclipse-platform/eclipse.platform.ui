@@ -641,9 +641,8 @@ public class ResourceNavigator
 				child.putString(TAG_ELEMENT, filters[i]);
 			}
 		}
-		//save expanded elements
-		Tree tree = viewer.getTree();
-		Object expandedElements[] = viewer.getExpandedElements();
+		//save visible expanded elements
+		Object expandedElements[] = viewer.getVisibleExpandedElements();
 		if (expandedElements.length > 0) {
 			IMemento expandedMem = memento.createChild(TAG_EXPANDED);
 			for (int i = 0; i < expandedElements.length; i++) {
@@ -666,6 +665,7 @@ public class ResourceNavigator
 			}
 		}
 
+		Tree tree = viewer.getTree();
 		//save vertical position
 		ScrollBar bar = tree.getVerticalBar();
 		int position = bar != null ? bar.getSelection() : 0;

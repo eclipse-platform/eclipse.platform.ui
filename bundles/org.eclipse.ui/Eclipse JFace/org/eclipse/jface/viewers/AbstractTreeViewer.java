@@ -1304,4 +1304,31 @@ protected void updatePlus(Item item, Object element) {
 	if (addDummy)
 		newItem(item, SWT.NULL, -1); // append a dummy
 }
+
+/**
+ * Get the expanded elements that are visible
+ * to the user as an expanded element is only
+ * isible if the parent is expanded.
+ * @return Collection of Object
+ */
+public Object[] getVisibleExpandedElements() {
+	ArrayList v= new ArrayList();
+	internalCollectVisibleExpanded(v, getControl());
+	return v.toArray();
+}
+	
+private void internalCollectVisibleExpanded(Collection result, Widget widget){
+	Item[] items = getChildren(widget);
+	for (int i = 0; i < items.length; i++) {
+		Item item = items[i];
+		if (getExpanded(item)) {
+			Object data = item.getData();
+			if (data != null)
+				result.add(data);
+			//Only recurse if it is expanded - if
+			//not then the children aren't visible
+			internalCollectVisibleExpanded(result, item);
+		}
+	}
+}
 }
