@@ -151,7 +151,7 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 					addFolder(userTableViewer, AntPreferencesMessages.getString("AntClasspathPage.&Choose_a_folder_to_add_to_the_classpath__1")); //$NON-NLS-1$
 				}
 			});
-			upUserButton = createPushButton(parent, AntPreferencesMessages.getString("AntClasspathPage.upButtonTitle"), null); //$NON-NLS-1$;
+			upUserButton = createPushButton(parent, AntPreferencesMessages.getString("AntClasspathPage.upButtonTitle2"), null); //$NON-NLS-1$;
 			upUserButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent evt) {
 					handleMove(-1, userTableViewer);
