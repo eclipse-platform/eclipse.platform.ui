@@ -8,7 +8,9 @@
 <h1>3.0 Debug Platform Change Notes</h1>
 <p>This document describes important changes in the 3.0 debug platform, relative 
   to the 2.1 release.</p>
+  
 <h2>New Features</h2>
+
 <h3> Extensible Launch Modes</h3>
 <p>The debug platform supports an extensible set of launch modes. Releases prior 
   to 3.0 only supported two launch modes - run and debug. The debug platform now 
@@ -43,6 +45,7 @@
   type (specifying no launch mode), is used for all launch modes for which a specific 
   launch tab group is not contributed. Thus, when a mode is not specified by a 
   tab group, the tab group effectively becomes the default tab group.</p>
+  
 <h3>Extensible Debug Events</h3>
 <p>The debug platform supports an extensible set of debug events. A debug event 
   kind of <code>MODEL_SPECIFIC</code> has been added in the 3.0 release to indicate 
@@ -53,6 +56,7 @@
   model specific debug events.</p>
 <p>A data field has been added to debug events to allow clients to store application 
   specific data in debug events.</p>
+  
 <h3>Extensible Instruction Pointer Images</h3>
 <p>When a stack frame is selected in the debug view, the debugger opens a corresponding 
   editor and displays an image in the editor ruler on the line that corresponds 
@@ -60,6 +64,7 @@
   by the debug plug-in and could not be overridden by a debug model. In release 
   3.0, a debug model presentation (<code>IDebugModelPresentation</code>) can provide 
   specialized images by implementing the debug editor presentation interface (<code>IDebugEditorPresentation</code>).</p>
+
 <h3>Editor Positioning and Custom Decorations</h3>
 <p>In release 3.0, debug model presentations can control the positioning of editors 
   opened by the debugger for a stack frame, and may add extra decorations to the 
@@ -67,6 +72,7 @@
   can be achieved by having a debug model presentation implement the new interface 
   <code>IDebugEditorPresentation</code>, and implementing the appropriate methods 
   - <code>selectAndReveal</code>,<code> decorateEditor</code>, and <code>removeDecorations</code>.</p>
+
 <h3>Extensible Watch Expressions</h3>
 <p>In release 3.0, the debug platform provides an implementation of watch expressions. 
   Debug models can contribute watch expression delegates if they support watch 
@@ -74,6 +80,7 @@
   to provide a value for a watch expression in the given (stack frame) context. 
   The debug platform provides persistence, enabling, disabling, entering, and 
   editing of watch expressions.</p>
+
 <h3>Process Factories</h3>
 <p>The debug platform provides an extension point (<code>org.eclipse.debug.core.processFactories</code>) 
   for contributing process factories. A process factory can be used to override 
@@ -81,6 +88,7 @@
   org.eclipse.debug.core.DebugPlugin</code>) is consulted to create a new process. 
   A launch configuration can reference a process factory to use when creating 
   a process, via the launch configuration attribute <code>DebugPlugin.ATTR_PROCESS_FACTORY_ID</code>.</p>
+
 <h3>Automatic Array Partitioning</h3>
 <p>The debug plug-in now supports automatic array partitioning in the variables, 
   which partitions large arrays into sub-ranges in the variables view. This is 
@@ -88,6 +96,7 @@
   an indexed value - <code>org.eclipse.core.debug.model.IIndexedValue</code>. 
   If a value implements this interface, the variables view will automatically 
   partition its elements as required, into sub-ranges</p>
+
 <h3>Logical Structure Types</h3>
 <p>Often, it is convenient to navigate complex data structures in terms of a logical 
   structure, rather than an implementation structure. For example, no matter how 
@@ -101,6 +110,7 @@
   the option to display logical structures is turned on. More than one logical 
   structure can be provided for a single value - the user can choose which structure 
   to display.</p>
+
 <h3>Step Filters</h3>
 <p>To support step filters on all stepping functions (into, over, return), a new 
   interface has been added to the debug platform - <code>IStepFilters</code> - 
@@ -114,18 +124,22 @@
   setting when stepping. See javadoc for <code>IStepFilters</code> for more details.</p>
 <p>This change maintains binary compatibility with previous releases. However, 
   targets wishing to leverage the new function must implement the new interface.</p>
+
 <h3>Launch Termination Notification</h3>
 <p>New interfaces have been introduced to provide a mechanism for launch listeners 
   to be notified when a launch terminates. A launch is simply a container of processes 
   and debug targets. When all of the contained targets and processes terminate, 
   a terminate notification is now sent to those listeners that implement <code>ILaunchListener2</code> 
   or <code>ILaunchesListener2</code>.</p>
+  
+
 <h3>Launch Delegate Enhancements</h3>
 <p>Lanuch delegates can optionally implement the new interface <code>ILaunchConfigurationDelegate2</code>. 
   This allows launch delegates to provide a launch object to be used for a launch. 
   For example, when debugging on a server a delegate could create a new launch 
   object or may reuse an existing launch object if the server is already running 
   in debug mode.</p>
+
 <h3>Retargettable Actions</h3>
 <p>The debug platform now provides retargettable actions for the following actions.</p>
 <ul>
@@ -148,7 +162,9 @@
   See the following classes: <code>RunToLineActionDelegate</code>, <code>ToggleMethodBreakpointActionDelegate</code>, 
   and <code>ToggleWatchpointActionDelegate</code> in the <code>org.eclipse.debug.ui.actions</code> 
   package.</p>
+  
 <h2>API Changes</h2>
+
 <h3>Extensible Launch Modes</h3>
 <p>With the introduction of extensible launch modes, more than one launch delegate 
   can exist for a launch configuration type. Releases prior to 3.0 only supported 
@@ -157,6 +173,7 @@
   used in its place to retrieve the launch delegate for a specific launch mode. 
   The deprecated method has been changed to return the launch delegate for the 
   <code>run</code> mode.</p>
+
 <h3>Launch Tabs &amp; Tab Groups</h3>
 <p>Launch tab groups and launch tabs are no longer notified when a launch completes. 
   The method <code>launched(ILaunch)</code> in the interfaces <code>ILaunchConfigurationTab</code> 
@@ -166,6 +183,7 @@
   with the introduction of background launching, this method can no longer be 
   called, as the launch dialog is be closed before the resulting launch object 
   exists.</p>
+
 <h3>Perspective Switching</h3>
 <p>In prior releases, perspective switching was specified on a launch configuration, 
   via the launch configuration attributes <code>ATTR_TARGET_DEBUG_PERSPECTIVE</code> 
@@ -184,6 +202,7 @@
   and selecting a launch configuration type node in the tree (rather than an individual 
   configuration). A tab is displayed allowing the user to set a perspective with 
   each supported launch mode.</p>
+
 <h3>Generic Console</h3>
 <p>With the work for the generic console support <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=37263"> 
   (Bug 37263)</a>, the view id for the Eclipse (formerly debug) console has changed. 
@@ -193,11 +212,13 @@
   The equivalent view id is now: "org.eclipse.ui.console.ConsoleView".<br>
   The generic console is available via the Window>Show View>Basic>Console and 
   is used by the Eclipse debug and Ant integration. </p>
+
 <h3>Console Line Tracker Extension</h3>
 <p>A console line tracker (<code>IConsoleLineTracker</code>) can be notified when 
   its associated console is closed (i.e. all of its streams are closed), by implementing 
   the new interface <code>IConsoleLineTrackerExtension</code>. The notification 
   indicates that no more output will be appended to the console.</p>
+
 <h3>Launch Configuration Tab Enhancements</h3>
 <p>Two methods have been added to the <code>ILaunchConfigurationTab</code> interface 
   - activated and deactivated. These new life cycle methods are called when a 
@@ -222,5 +243,15 @@
   should override these methods as required. Generally, for tabs that do not perform 
   inter-tab communication, a correct implementation of these methods is to do 
   nothing.</p>
+  
+<h3>BreakpointManager Can Be Disabled</h3>
+<p>IBreakpointManager now defines the methods setEnabled(boolean) and isEnabled().
+  When the breakpoint manager is disabled, debuggers should ignore all registered breakpoints.
+  The debug platform also provides a new listener mechanism, IBreakpointManagerListener
+  which allows clients to register with the breakpoint manager to be notified when its
+  enablement changes.</p>
+<p>The Breakpoints view calls this API from a new toggle action that allows the user to
+  "Skip All Breakpoints." Debuggers which do not honor the breakpoint manager's enablement
+  will thus appear somewhat broken if the user tries to use this feature.</p>
 </body>
 </html>
