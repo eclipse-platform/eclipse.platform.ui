@@ -94,9 +94,9 @@ final class KeySequenceBindingNode {
 		}
 	}
 
-	static void add(Map tree, KeySequence keySequence, String activityId, String keyConfigurationId, int rank, String platform, String locale, String commandId) {		 	
+	static void add(Map keyStrokeNodeByKeyStrokeMap, KeySequence keySequence, String activityId, String keyConfigurationId, int rank, String platform, String locale, String commandId) {		 	
 		List keyStrokes = keySequence.getKeyStrokes();		
-		Map root = tree;
+		Map root = keyStrokeNodeByKeyStrokeMap;
 		KeySequenceBindingNode keySequenceBindingNode = null;
 	
 		for (int i = 0; i < keyStrokes.size(); i++) {
@@ -108,67 +108,32 @@ final class KeySequenceBindingNode {
 				root.put(keyStroke, keySequenceBindingNode);
 			}
 			
-			root = keySequenceBindingNode.childMap;
+			root = keySequenceBindingNode.childKeyStrokeNodeByKeyStrokeMap;
 		}
 
-		if (keySequenceBindingNode != null) {
-			Map keyConfigurationMap = (Map) keySequenceBindingNode.activityMap.get(activityId);
-		
-			if (keyConfigurationMap == null) {
-				keyConfigurationMap = new HashMap();	
-				keySequenceBindingNode.activityMap.put(activityId, keyConfigurationMap);
-			}
-
-			Map rankMap = (Map) keyConfigurationMap.get(keyConfigurationId);
-		
-			if (rankMap == null) {
-				rankMap = new HashMap();	
-				keyConfigurationMap.put(keyConfigurationId, rankMap);
-			}
-
-			Map platformMap = (Map) rankMap.get(new Integer(rank));
-
-			if (platformMap == null) {
-				platformMap = new HashMap();	
-				rankMap.put(new Integer(rank), platformMap);
-			}
-
-			Map localeMap = (Map) platformMap.get(platform);
-
-			if (localeMap == null) {
-				localeMap = new HashMap();	
-				platformMap.put(platform, localeMap);
-			}
-
-			Set commandIds = (Set) localeMap.get(locale);
-
-			if (commandIds == null) {
-				commandIds = new HashSet();	
-				localeMap.put(locale, commandIds);
-			}
-
-			commandIds.add(commandId);					
-		}
+		if (keySequenceBindingNode != null)
+			keySequenceBindingNode.add(activityId, keyConfigurationId, rank, platform, locale, commandId);
 	}
 
-	static Map find(Map tree, KeySequence prefix) {	
-		Iterator iterator = prefix.getKeyStrokes().iterator();
-	
+	static Map find(Map keyStrokeNodeByKeyStrokeMap, KeySequence keySequence) {	
+		Iterator iterator = keySequence.getKeyStrokes().iterator();
+		KeySequenceBindingNode keySequenceBindingNode = null;
+		
 		while (iterator.hasNext()) {
-			KeySequenceBindingNode keySequenceBindingNode = (KeySequenceBindingNode) tree.get(iterator.next());
+			keySequenceBindingNode = (KeySequenceBindingNode) keyStrokeNodeByKeyStrokeMap.get(iterator.next());
 			
 			if (keySequenceBindingNode == null)
-				return new HashMap();
+				return null;
 								
-			tree = keySequenceBindingNode.childMap;
+			keyStrokeNodeByKeyStrokeMap = keySequenceBindingNode.childKeyStrokeNodeByKeyStrokeMap;
 		}		
 		
-		return tree;			
+		return keyStrokeNodeByKeyStrokeMap;			
 	}
 
-	static Map getAssignmentsByActivityIdKeySequence(Map tree, KeySequence prefix) {
+	static Map getAssignmentsByActivityIdKeySequence(Map keyStrokeNodeByKeyStrokeMap, KeySequence prefix) {
 		Map assignmentsByActivityIdByKeySequence = new HashMap();
-		Iterator iterator = tree.entrySet().iterator();
+		Iterator iterator = keyStrokeNodeByKeyStrokeMap.entrySet().iterator();
 		
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
@@ -177,7 +142,7 @@ final class KeySequenceBindingNode {
 			List keyStrokes = new ArrayList(prefix.getKeyStrokes());
 			keyStrokes.add(keyStroke);
 			KeySequence keySequence = KeySequence.getInstance(keyStrokes);
-			Map childAssignmentsByActivityIdByKeySequence = getAssignmentsByActivityIdKeySequence(keySequenceBindingNode.childMap, keySequence);
+			Map childAssignmentsByActivityIdByKeySequence = getAssignmentsByActivityIdKeySequence(keySequenceBindingNode.childKeyStrokeNodeByKeyStrokeMap, keySequence);
 
 			if (childAssignmentsByActivityIdByKeySequence.size() >= 1)
 				assignmentsByActivityIdByKeySequence.putAll(childAssignmentsByActivityIdByKeySequence);
@@ -188,8 +153,8 @@ final class KeySequenceBindingNode {
 		return assignmentsByActivityIdByKeySequence;
 	}
 
-	static void getKeySequenceBindingDefinitions(Map tree, KeySequence prefix, int rank, List keySequenceBindingDefinitions) {
-		Iterator iterator = tree.entrySet().iterator();
+	static void getKeySequenceBindingDefinitions(Map keyStrokeNodeByKeyStrokeMap, KeySequence prefix, int rank, List keySequenceBindingDefinitions) {
+		Iterator iterator = keyStrokeNodeByKeyStrokeMap.entrySet().iterator();
 		
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
@@ -238,7 +203,7 @@ final class KeySequenceBindingNode {
 				}
 			}
 			
-			getKeySequenceBindingDefinitions(keySequenceBindingNode.childMap, keySequence, rank, keySequenceBindingDefinitions);
+			getKeySequenceBindingDefinitions(keySequenceBindingNode.childKeyStrokeNodeByKeyStrokeMap, keySequence, rank, keySequenceBindingDefinitions);
 		}
 	}
 
@@ -265,9 +230,9 @@ final class KeySequenceBindingNode {
 		return commandMap;		
 	}
 
-	static Map getMatchesByKeySequence(Map tree, KeySequence prefix) {
+	static Map getMatchesByKeySequence(Map keyStrokeNodeByKeyStrokeMap, KeySequence prefix) {
 		Map keySequenceMap = new HashMap();
-		Iterator iterator = tree.entrySet().iterator();
+		Iterator iterator = keyStrokeNodeByKeyStrokeMap.entrySet().iterator();
 		
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
@@ -276,7 +241,7 @@ final class KeySequenceBindingNode {
 			List keyStrokes = new ArrayList(prefix.getKeyStrokes());
 			keyStrokes.add(keyStroke);
 			KeySequence keySequence = KeySequence.getInstance(keyStrokes);
-			Map childMatchesByKeySequence = getMatchesByKeySequence(keySequenceBindingNode.childMap, keySequence);
+			Map childMatchesByKeySequence = getMatchesByKeySequence(keySequenceBindingNode.childKeyStrokeNodeByKeyStrokeMap, keySequence);
 
 			if (childMatchesByKeySequence.size() >= 1)
 				keySequenceMap.putAll(childMatchesByKeySequence);
@@ -287,230 +252,275 @@ final class KeySequenceBindingNode {
 		return keySequenceMap;
 	}
 
-	static void remove(Map tree, KeySequence keySequence, String activityId, String keyConfigurationId, int rank, String platform, String locale) {
-		List keyStrokes = keySequence.getKeyStrokes();		
-		Map root = tree;
+	static void remove(Map keyStrokeNodeByKeyStrokeMap, KeySequence keySequence, String activityId, String keyConfigurationId, int rank, String platform, String locale) {
+		Iterator iterator = keySequence.getKeyStrokes().iterator();
 		KeySequenceBindingNode keySequenceBindingNode = null;
-	
-		for (int i = 0; i < keyStrokes.size(); i++) {
-			KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);
-			keySequenceBindingNode = (KeySequenceBindingNode) root.get(keyStroke);
+		
+		while (iterator.hasNext()) {
+			keySequenceBindingNode = (KeySequenceBindingNode) keyStrokeNodeByKeyStrokeMap.get(iterator.next());
 			
 			if (keySequenceBindingNode == null)
-				break;
+				return;
 			
-			root = keySequenceBindingNode.childMap;
-		}
-
-		if (keySequenceBindingNode != null) {
-			Map keyConfigurationMap = (Map) keySequenceBindingNode.activityMap.get(activityId);
-
-			if (keyConfigurationMap != null) {
-				Map rankMap = (Map) keyConfigurationMap.get(keyConfigurationId);
-	
-				if (rankMap != null) {
-					Map platformMap = (Map) rankMap.get(new Integer(rank));
-				
-					if (platformMap != null) {
-						Map localeMap = (Map) platformMap.get(platform);
-
-						if (localeMap != null) {	
-							localeMap.remove(locale);
-										
-							if (localeMap.isEmpty()) {
-								platformMap.remove(platform);
-									
-								if (platformMap.isEmpty()) {
-									rankMap.remove(new Integer(rank));
-									
-									if (rankMap.isEmpty()) {
-										keyConfigurationMap.remove(keyConfigurationId);
-
-										if (keyConfigurationMap.isEmpty())
-											keySequenceBindingNode.activityMap.remove(activityId);
-									}
-								}					
-							}
-						}
-					}			
-				}
-			}			
-		}
+			keyStrokeNodeByKeyStrokeMap = keySequenceBindingNode.childKeyStrokeNodeByKeyStrokeMap;
+		}	
+		
+		keySequenceBindingNode.remove(activityId, keyConfigurationId, rank, platform, locale);
 	}
 
-	static void remove(Map tree, KeySequence keySequence, String activityId, String keyConfigurationId, int rank, String platform, String locale, String commandId) {
-		List keyStrokes = keySequence.getKeyStrokes();		
-		Map root = tree;
+	static void remove(Map keyStrokeNodeByKeyStrokeMap, KeySequence keySequence, String activityId, String keyConfigurationId, int rank, String platform, String locale, String commandId) {
+		Iterator iterator = keySequence.getKeyStrokes().iterator();
 		KeySequenceBindingNode keySequenceBindingNode = null;
-	
-		for (int i = 0; i < keyStrokes.size(); i++) {
-			KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);
-			keySequenceBindingNode = (KeySequenceBindingNode) root.get(keyStroke);
+		
+		while (iterator.hasNext()) {
+			keySequenceBindingNode = (KeySequenceBindingNode) keyStrokeNodeByKeyStrokeMap.get(iterator.next());
 			
 			if (keySequenceBindingNode == null)
-				break;
+				return;
 			
-			root = keySequenceBindingNode.childMap;
-		}
-
-		if (keySequenceBindingNode != null) {
-			Map keyConfigurationMap = (Map) keySequenceBindingNode.activityMap.get(activityId);
-
-			if (keyConfigurationMap != null) {
-				Map rankMap = (Map) keyConfigurationMap.get(keyConfigurationId);
-	
-				if (rankMap != null) {
-					Map platformMap = (Map) rankMap.get(new Integer(rank));
-				
-					if (platformMap != null) {
-						Map localeMap = (Map) platformMap.get(platform);
-
-						if (localeMap != null) {	
-							Set commandIds = (Set) localeMap.get(locale);
-					
-							if (commandIds != null) {
-								commandIds.remove(commandId);	
-								
-								if (commandIds.isEmpty()) {
-									localeMap.remove(locale);
-										
-									if (localeMap.isEmpty()) {
-										platformMap.remove(platform);
-									
-										if (platformMap.isEmpty()) {
-											rankMap.remove(new Integer(rank));
-									
-											if (rankMap.isEmpty()) {
-												keyConfigurationMap.remove(keyConfigurationId);
-
-												if (keyConfigurationMap.isEmpty())
-													keySequenceBindingNode.activityMap.remove(activityId);
-											}
-										}
-									}
-								}					
-							}
-						}
-					}			
-				}
-			}			
-		}
+			keyStrokeNodeByKeyStrokeMap = keySequenceBindingNode.childKeyStrokeNodeByKeyStrokeMap;
+		}	
+		
+		keySequenceBindingNode.remove(activityId, keyConfigurationId, rank, platform, locale, commandId);
 	}
 
-	static void solve(Map tree, String[] keyConfigurationIds, String[] platforms, String[] locales) {
-		for (Iterator iterator = tree.values().iterator(); iterator.hasNext();) {	
+	static void solve(Map keyStrokeNodeByKeyStrokeMap, String[] keyConfigurationIds, String[] platforms, String[] locales) {
+		for (Iterator iterator = keyStrokeNodeByKeyStrokeMap.values().iterator(); iterator.hasNext();) {	
 			KeySequenceBindingNode keySequenceBindingNode = (KeySequenceBindingNode) iterator.next();
-			keySequenceBindingNode.assignmentsByActivityId.clear();		
-
-			for (Iterator iterator2 = keySequenceBindingNode.activityMap.entrySet().iterator(); iterator2.hasNext();) {
-				Map.Entry entry = (Map.Entry) iterator2.next();
-				String activityId = (String) entry.getKey();
-				Map keyConfigurationMap = (Map) entry.getValue();
-				KeySequenceBindingNode.Assignment assignment = null;
-				
-				if (keyConfigurationMap != null)
-					for (int keyConfiguration = 0; keyConfiguration < keyConfigurationIds.length && keyConfiguration < 0xFF; keyConfiguration++) {
-						Map rankMap = (Map) keyConfigurationMap.get(keyConfigurationIds[keyConfiguration]);
-				
-						if (rankMap != null)
-							for (int rank = 0; rank <= 1; rank++) {
-								Map platformMap = (Map) rankMap.get(new Integer(rank));
-
-								if (platformMap != null)
-									for (int platform = 0; platform < platforms.length && platform < 0xFF; platform++) {
-										Map localeMap = (Map) platformMap.get(platforms[platform]);
-					
-										if (localeMap != null)
-											for (int locale = 0; locale < locales.length && locale < 0xFF; locale++) {
-												Set commandIds = (Set) localeMap.get(locales[locale]);
-					
-												if (commandIds != null) {
-													String commandId = commandIds.size() == 1 ? (String) commandIds.iterator().next() : null;
-																												
-													if (assignment == null)
-														assignment = new Assignment();
-														
-													switch (rank) {
-														case 0:
-															if (keyConfiguration == 0 && !assignment.hasPreferenceCommandIdInFirstKeyConfiguration) {															
-																assignment.hasPreferenceCommandIdInFirstKeyConfiguration = true;
-																assignment.preferenceCommandIdInFirstKeyConfiguration = commandId;
-															} else if (!assignment.hasPreferenceCommandIdInInheritedKeyConfiguration) {
-																assignment.hasPreferenceCommandIdInInheritedKeyConfiguration = true;
-																assignment.preferenceCommandIdInInheritedKeyConfiguration = commandId;
-															}
-															
-															break;
-															
-														case 1:										
-															if (keyConfiguration == 0 && !assignment.hasPluginCommandIdInFirstKeyConfiguration) {															
-																assignment.hasPluginCommandIdInFirstKeyConfiguration = true;
-																assignment.pluginCommandIdInFirstKeyConfiguration = commandId;
-															} else if (!assignment.hasPluginCommandIdInInheritedKeyConfiguration) {
-																assignment.hasPluginCommandIdInInheritedKeyConfiguration = true;
-																assignment.pluginCommandIdInInheritedKeyConfiguration = commandId;
-															}
-															
-															break;
-													}
-												}
-											}
-									}								
-									
-							}
-							
-					}
-	
-				if (assignment != null)
-					keySequenceBindingNode.assignmentsByActivityId.put(activityId, assignment);
-			}
-
-			solve(keySequenceBindingNode.childMap, keyConfigurationIds, platforms, locales);								
+			keySequenceBindingNode.solveAssignmentsByActivityId(keyConfigurationIds, platforms, locales);		
+			solve(keySequenceBindingNode.childKeyStrokeNodeByKeyStrokeMap, keyConfigurationIds, platforms, locales);								
 		}		
 	}
 
-	static void solve(Map tree, String[] activityIds, String[] keyConfigurationIds, String[] platforms, String[] locales) {
-		for (Iterator iterator = tree.values().iterator(); iterator.hasNext();) {
+	static void solve(Map keyStrokeNodeByKeyStrokeMap, String[] activityIds, String[] keyConfigurationIds, String[] platforms, String[] locales) {
+		for (Iterator iterator = keyStrokeNodeByKeyStrokeMap.values().iterator(); iterator.hasNext();) {
 			KeySequenceBindingNode keySequenceBindingNode = (KeySequenceBindingNode) iterator.next();
-			keySequenceBindingNode.match = null;		
-			
-			for (int activity = 0; activity < activityIds.length && activity < 0xFF && keySequenceBindingNode.match == null; activity++) {
-				Map keyConfigurationMap = (Map) keySequenceBindingNode.activityMap.get(activityIds[activity]);
-			
-				if (keyConfigurationMap != null)
-					for (int keyConfiguration = 0; keyConfiguration < keyConfigurationIds.length && keyConfiguration < 0xFF && keySequenceBindingNode.match == null; keyConfiguration++) {
-						Map rankMap = (Map) keyConfigurationMap.get(keyConfigurationIds[keyConfiguration]);
-		
-						if (rankMap != null) {
-							for (int rank = 0; rank <= 1; rank++) {
-								Map platformMap = (Map) rankMap.get(new Integer(rank));
-								
-								if (platformMap != null)
-									for (int platform = 0; platform < platforms.length && platform < 0xFF && keySequenceBindingNode.match == null; platform++) {
-										Map localeMap = (Map) platformMap.get(platforms[platform]);
-				
-										if (localeMap != null)
-											for (int locale = 0; locale < locales.length && locale < 0xFF && keySequenceBindingNode.match == null; locale++) {
-												Set commandIds = (Set) localeMap.get(locales[locale]);
-				
-												if (commandIds != null)
-													keySequenceBindingNode.match = new Match(commandIds.size() == 1 ? (String) commandIds.iterator().next() : null, (activity << 24) + (keyConfiguration << 16) + (platform << 8) + locale);
-											}
-									}								
-							}
-						}
-					}
-			}
-		
-			solve(keySequenceBindingNode.childMap, activityIds, keyConfigurationIds, platforms, locales);								
-		}		
+			keySequenceBindingNode.solveMatch(activityIds, keyConfigurationIds, platforms, locales);		
+			solve(keySequenceBindingNode.childKeyStrokeNodeByKeyStrokeMap, activityIds, keyConfigurationIds, platforms, locales);								
+		}
 	}
 
 	private Map assignmentsByActivityId = new HashMap();
-	private Map childMap = new HashMap();	
+	private Map childKeyStrokeNodeByKeyStrokeMap = new HashMap();	
 	private Map activityMap = new HashMap();
 	private Match match = null;
 	
 	private KeySequenceBindingNode() {
+	}
+
+	private void add(String activityId, String keyConfigurationId, int rank, String platform, String locale, String commandId) {		 	
+		Map keyConfigurationMap = (Map) activityMap.get(activityId);
+		
+		if (keyConfigurationMap == null) {
+			keyConfigurationMap = new HashMap();	
+			activityMap.put(activityId, keyConfigurationMap);
+		}
+
+		Map rankMap = (Map) keyConfigurationMap.get(keyConfigurationId);
+		
+		if (rankMap == null) {
+			rankMap = new HashMap();	
+			keyConfigurationMap.put(keyConfigurationId, rankMap);
+		}
+
+		Map platformMap = (Map) rankMap.get(new Integer(rank));
+
+		if (platformMap == null) {
+			platformMap = new HashMap();	
+			rankMap.put(new Integer(rank), platformMap);
+		}
+
+		Map localeMap = (Map) platformMap.get(platform);
+
+		if (localeMap == null) {
+			localeMap = new HashMap();	
+			platformMap.put(platform, localeMap);
+		}
+
+		Set commandIds = (Set) localeMap.get(locale);
+
+		if (commandIds == null) {
+			commandIds = new HashSet();	
+			localeMap.put(locale, commandIds);
+		}
+
+		commandIds.add(commandId);					
+	}
+	
+	private void remove(String activityId, String keyConfigurationId, int rank, String platform, String locale) {
+		Map keyConfigurationMap = (Map) activityMap.get(activityId);
+
+		if (keyConfigurationMap != null) {
+			Map rankMap = (Map) keyConfigurationMap.get(keyConfigurationId);
+			
+			if (rankMap != null) {
+				Map platformMap = (Map) rankMap.get(new Integer(rank));
+				
+				if (platformMap != null) {
+					Map localeMap = (Map) platformMap.get(platform);
+
+					if (localeMap != null) {	
+						localeMap.remove(locale);
+						
+						if (localeMap.isEmpty()) {
+							platformMap.remove(platform);
+							
+							if (platformMap.isEmpty()) {
+								rankMap.remove(new Integer(rank));
+								
+								if (rankMap.isEmpty()) {
+									keyConfigurationMap.remove(keyConfigurationId);
+
+									if (keyConfigurationMap.isEmpty())
+										activityMap.remove(activityId);
+								}
+							}					
+						}
+					}
+				}			
+			}
+		}			
+	}
+
+	private void remove(String activityId, String keyConfigurationId, int rank, String platform, String locale, String commandId) {
+		Map keyConfigurationMap = (Map) activityMap.get(activityId);
+
+		if (keyConfigurationMap != null) {
+			Map rankMap = (Map) keyConfigurationMap.get(keyConfigurationId);
+			
+			if (rankMap != null) {
+				Map platformMap = (Map) rankMap.get(new Integer(rank));
+				
+				if (platformMap != null) {
+					Map localeMap = (Map) platformMap.get(platform);
+
+					if (localeMap != null) {	
+						Set commandIds = (Set) localeMap.get(locale);
+						
+						if (commandIds != null) {
+							commandIds.remove(commandId);	
+							
+							if (commandIds.isEmpty()) {
+								localeMap.remove(locale);
+								
+								if (localeMap.isEmpty()) {
+									platformMap.remove(platform);
+									
+									if (platformMap.isEmpty()) {
+										rankMap.remove(new Integer(rank));
+										
+										if (rankMap.isEmpty()) {
+											keyConfigurationMap.remove(keyConfigurationId);
+
+											if (keyConfigurationMap.isEmpty())
+												activityMap.remove(activityId);
+										}
+									}
+								}
+							}					
+						}
+					}
+				}			
+			}
+		}			
+	}
+
+	private void solveAssignmentsByActivityId(String[] keyConfigurationIds, String[] platforms, String[] locales) {
+		assignmentsByActivityId.clear();		
+
+		for (Iterator iterator = activityMap.entrySet().iterator(); iterator.hasNext();) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			String activityId = (String) entry.getKey();
+			Map keyConfigurationMap = (Map) entry.getValue();
+			KeySequenceBindingNode.Assignment assignment = null;
+			
+			if (keyConfigurationMap != null)
+				for (int keyConfiguration = 0; keyConfiguration < keyConfigurationIds.length && keyConfiguration < 0xFF; keyConfiguration++) {
+					Map rankMap = (Map) keyConfigurationMap.get(keyConfigurationIds[keyConfiguration]);
+					
+					if (rankMap != null)
+						for (int rank = 0; rank <= 1; rank++) {
+							Map platformMap = (Map) rankMap.get(new Integer(rank));
+
+							if (platformMap != null)
+								for (int platform = 0; platform < platforms.length && platform < 0xFF; platform++) {
+									Map localeMap = (Map) platformMap.get(platforms[platform]);
+									
+									if (localeMap != null)
+										for (int locale = 0; locale < locales.length && locale < 0xFF; locale++) {
+											Set commandIds = (Set) localeMap.get(locales[locale]);
+											
+											if (commandIds != null) {
+												String commandId = commandIds.size() == 1 ? (String) commandIds.iterator().next() : null;
+												
+												if (assignment == null)
+													assignment = new Assignment();
+												
+												switch (rank) {
+													case 0:
+														if (keyConfiguration == 0 && !assignment.hasPreferenceCommandIdInFirstKeyConfiguration) {															
+															assignment.hasPreferenceCommandIdInFirstKeyConfiguration = true;
+															assignment.preferenceCommandIdInFirstKeyConfiguration = commandId;
+														} else if (!assignment.hasPreferenceCommandIdInInheritedKeyConfiguration) {
+															assignment.hasPreferenceCommandIdInInheritedKeyConfiguration = true;
+															assignment.preferenceCommandIdInInheritedKeyConfiguration = commandId;
+														}
+														
+														break;
+														
+													case 1:										
+														if (keyConfiguration == 0 && !assignment.hasPluginCommandIdInFirstKeyConfiguration) {															
+															assignment.hasPluginCommandIdInFirstKeyConfiguration = true;
+															assignment.pluginCommandIdInFirstKeyConfiguration = commandId;
+														} else if (!assignment.hasPluginCommandIdInInheritedKeyConfiguration) {
+															assignment.hasPluginCommandIdInInheritedKeyConfiguration = true;
+															assignment.pluginCommandIdInInheritedKeyConfiguration = commandId;
+														}
+														
+														break;
+												}
+											}
+										}
+								}								
+							
+						}
+					
+				}
+			
+			if (assignment != null)
+				assignmentsByActivityId.put(activityId, assignment);
+		}
+	}
+	
+	private void solveMatch(String[] activityIds, String[] keyConfigurationIds, String[] platforms, String[] locales) {
+		match = null;	
+	
+		for (int activity = 0; activity < activityIds.length && activity < 0xFF && match == null; activity++) {
+			Map keyConfigurationMap = (Map) activityMap.get(activityIds[activity]);
+			
+			if (keyConfigurationMap != null)
+				for (int keyConfiguration = 0; keyConfiguration < keyConfigurationIds.length && keyConfiguration < 0xFF && match == null; keyConfiguration++) {
+					Map rankMap = (Map) keyConfigurationMap.get(keyConfigurationIds[keyConfiguration]);
+					
+					if (rankMap != null) {
+						for (int rank = 0; rank <= 1; rank++) {
+							Map platformMap = (Map) rankMap.get(new Integer(rank));
+							
+							if (platformMap != null)
+								for (int platform = 0; platform < platforms.length && platform < 0xFF && match == null; platform++) {
+									Map localeMap = (Map) platformMap.get(platforms[platform]);
+									
+									if (localeMap != null)
+										for (int locale = 0; locale < locales.length && locale < 0xFF && match == null; locale++) {
+											Set commandIds = (Set) localeMap.get(locales[locale]);
+											
+											if (commandIds != null)
+												match = new Match(commandIds.size() == 1 ? (String) commandIds.iterator().next() : null, (activity << 24) + (keyConfiguration << 16) + (platform << 8) + locale);
+										}
+								}								
+						}
+					}
+				}
+		}
 	}
 }
