@@ -14,6 +14,8 @@ import org.eclipse.core.resources.IResource;
  * <p>
  * [Issue: Working set must be provided by platform.]
  * </p>
+ * 
+ * @since 2.0
  */
 public interface IWorkingSet {
 	

@@ -11,6 +11,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
  * <p>
  * This interface declares constants only; it is not intended to be implemented.
  * </p>
+ * 
+ * @since 2.0
  */
 public interface IContextMenuConstants {
 

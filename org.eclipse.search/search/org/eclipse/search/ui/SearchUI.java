@@ -58,6 +58,8 @@ public final class SearchUI {
 	/**
 	 * Id of the Search action set
 	 * (value <code>"org.eclipse.search.searchActionSet"</code>).
+	 *
+	 * @since 2.0
 	 */
 	public static final String ACTION_SET_ID= PLUGIN_ID + ".searchActionSet"; //$NON-NLS-1$
 
@@ -111,6 +113,7 @@ public final class SearchUI {
 	 * 
 	 * @param parent the parent shell of the dialog to be created
 	 * @return a new selection dialog or <code>null</code> if none available
+	 * @since 2.0
 	 */
 	public static SelectionDialog createWorkingSetDialog(Shell parent) {
 		return new WorkingSetSelectionDialog(parent);
@@ -127,6 +130,7 @@ public final class SearchUI {
 	 * </p>
 	 * 
 	 * @return an array of IWorkingSet
+	 * @since 2.0
 	 */
 	public static IWorkingSet[] getWorkingSets() {
 		return WorkingSet.getWorkingSets();
@@ -144,6 +148,7 @@ public final class SearchUI {
 	 * 
 	 * @param name the name the working set
 	 * @return the working set with the given name or <code>null</code> if not found
+	 * @since 2.0
 	 */
 	public static IWorkingSet findWorkingSet(String name) {
 		return WorkingSet.find(name);
@@ -161,6 +166,7 @@ public final class SearchUI {
 	 * 
 	 * @param name the name the working set
 	 * @return <code>true</code> if editors should be reused for showing search results
+	 * @since 2.0
 	 */
 	public static boolean reuseEditor() {
 		return true;

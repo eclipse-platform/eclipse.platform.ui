@@ -93,6 +93,7 @@ public interface ISearchResultView extends IViewPart {
 	 * @param	gotoAction				the action used by the view to go to a marker
 	 * @param	groupByKeyComputer		the computer used by the view to compute the key for a marker
 	 * @param	operation				the runnable used by the view to repeat the search
+ 	 * @since 2.0
 	 */
 	public void searchStarted(
 				String					pageId,
@@ -131,6 +132,7 @@ public interface ISearchResultView extends IViewPart {
 	 * Returns the label provider of a search result view.
 	 *
 	 * @return	the label provider of a search result view or <code>null</code>
+	 * @since 2.0
 	 */
 	public ILabelProvider getLabelProvider();
 }

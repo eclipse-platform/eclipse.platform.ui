@@ -20,16 +20,22 @@ public interface ISearchPageContainer {
 
 	/**
 	 * Workspace scope (value <code>0</code>).
+	 * 
+	 * @since 2.0
 	 */	
 	public static final int WORKSPACE_SCOPE= 0;
 
 	/**
 	 * Selection scope (value <code>1</code>).
+	 * 
+	 * @since 2.0
 	 */	
 	public static final int SELECTION_SCOPE= 1;
 
 	/**
 	 * Working set scope (value <code>2</code>).
+	 * 
+	 * @since 2.0
 	 */	
 	public static final int WORKING_SET_SCOPE= 2;
 
@@ -62,6 +68,7 @@ public interface ISearchPageContainer {
 	 * The scope is WORKSPACE_SCOPE, SELECTION_SCOPE or WORKING_SET_SCOPE.
 	 * 
 	 * @return the selected scope
+	 * @since 2.0
 	 */	
 	public int getSelectedScope();
 
@@ -70,6 +77,7 @@ public interface ISearchPageContainer {
 	 * The scope is WORKSPACE_SCOPE, SELECTION_SCOPE or WORKING_SET_SCOPE.
 	 * 
 	 * @return the selected scope
+ 	 * @since 2.0
 	 */	
 	public void setSelectedScope(int scope);
 
@@ -77,6 +85,7 @@ public interface ISearchPageContainer {
 	 * Tells whether a valid scope is selected.
 	 * 
 	 * @return a <code>true</code> if a valid scope is selected in this search page container
+ 	 * @since 2.0
 	 */
 	public boolean hasValidScope();
 
@@ -91,6 +100,7 @@ public interface ISearchPageContainer {
 	 * </p>
 	 * 
 	 * @return the selected IWorkingSet or <code>null</code> if the scope is not WORKING_SET_SCOPE
+	 * @since 2.0
 	 */
 	public IWorkingSet getSelectedWorkingSet();
 
@@ -105,6 +115,7 @@ public interface ISearchPageContainer {
 	 * </p>
 	 * 
 	 * @param workingSet the IWorkingSet to be selected
+	 * @since 2.0
 	 */
 	public void setSelectedWorkingSet(IWorkingSet workingSet);
 }
