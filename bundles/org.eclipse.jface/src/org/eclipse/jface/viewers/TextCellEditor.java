@@ -13,7 +13,6 @@ package org.eclipse.jface.viewers;
 
 import java.text.MessageFormat;
 
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -23,11 +22,15 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.jface.util.Assert;
 
 /**
  * A cell editor that manages a text entry field.
@@ -132,10 +135,19 @@ private void checkSelection() {
  */
 protected Control createControl(Composite parent) {
 	text = new Text(parent, getStyle());
+    text.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent e) {}
+            public void widgetDefaultSelected(SelectionEvent e) {
+                // same with enter-key handling code in keyReleaseOccured(e);
+                fireApplyEditorValue();
+                deactivate();
+            }   
+        });    
 	text.addKeyListener(new KeyAdapter() {
 		// hook key pressed - see PR 14201  
 		public void keyPressed(KeyEvent e) {
-			keyReleaseOccured(e);
+            // do not call keyReleaseOccured(e) as per PR 39074
+            
 			// as a result of processing the above call, clients may have
 			// disposed this cell editor
 			if ((getControl() == null) || getControl().isDisposed())
