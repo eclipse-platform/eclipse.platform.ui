@@ -4,15 +4,14 @@
  */
 package org.eclipse.compare.rangedifferencer;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.jface.util.Assert;
 
-import org.eclipse.compare.internal.StoppableThread;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * For finding the differences between two or three <code>IRangeComparator</code>s.
+ * A <code>RangeDifferencer</code> finds the differences between two or three <code>IRangeComparator</code>s.
  * <p>
  * To use the differencer, clients provide an <code>IRangeComparator</code>
  * that breaks their input data into a sequence of comparable entities. The differencer
@@ -52,6 +51,20 @@ public final class RangeDifferencer {
 	 * @return an array of range differences, or an empty array if no differences were found
 	 */
 	public static RangeDifference[] findDifferences(IRangeComparator left, IRangeComparator right) {
+		return findDifferences((IProgressMonitor)null, left, right);
+	}
+	
+	/**
+	 * Finds the differences between two <code>IRangeComparator</code>s.
+	 * The differences are returned as an array of <code>RangeDifference</code>s.
+	 * If no differences are detected an empty array is returned.
+	 * 
+	 * @param pm if not <code>null</code> used to report progress
+	 * @param left the left range comparator
+	 * @param right the right range comparator
+	 * @return an array of range differences, or an empty array if no differences were found
+	 */
+	public static RangeDifference[] findDifferences(IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
 
 		// assert that both IRangeComparators are of the same class
 		Assert.isTrue(right.getClass().equals(left.getClass()));
@@ -83,18 +96,23 @@ public final class RangeDifferencer {
 
 		if (lower > upper)
 			return EMPTY_RESULT;
-
+			
+		//System.out.println("findDifferences: " + maxDiagonal + " " + lower + " " + upper);
+		
 		// for each value of the edit distance
 		for (int d= 1; d <= maxDiagonal; ++d) { // d is the current edit distance
 			
+			if (pm != null)
+				pm.worked(1);
+
 			if (right.skipRangeComparison(d, maxDiagonal, left))
 				return EMPTY_RESULT; // should be something we already found
 
 			// for each relevant diagonal (-d, -d+2 ..., d-2, d)
 			for (int k= lower; k <= upper; k += 2) { // k is the current diagonal
 				LinkedRangeDifference edit;
-				
-				if (StoppableThread.isStopped())
+
+				if (pm != null && pm.isCanceled())
 					return EMPTY_RESULT;
 
 				if (k == origin - d || k != origin + d && lastDiagonal[k + 1] >= lastDiagonal[k - 1]) {
@@ -155,14 +173,31 @@ public final class RangeDifferencer {
 	 * @return an array of range differences, or an empty array if no differences were found
 	 */
 	public static RangeDifference[] findDifferences(IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
+		return findDifferences(null, ancestor, left, right);
+	}
+	
+	/**
+	 * Finds the differences among three <code>IRangeComparator</code>s.
+	 * The differences are returned as a list of <code>RangeDifference</code>s.
+	 * If no differences are detected an empty list is returned.
+	 * If the ancestor range comparator is <code>null</code>, a two-way
+	 * comparison is performed.
+	 * 
+	 * @param pm if not <code>null</code> used to report progress
+	 * @param ancestor the ancestor range comparator or <code>null</code>
+	 * @param left the left range comparator
+	 * @param right the right range comparator
+	 * @return an array of range differences, or an empty array if no differences were found
+	 */
+	public static RangeDifference[] findDifferences(IProgressMonitor pm, IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
 
 		if (ancestor == null)
-			return findDifferences(left, right);
+			return findDifferences(pm, left, right);
 
 		RangeDifference[] leftAncestorScript= null;
-		RangeDifference[] rightAncestorScript= findDifferences(ancestor, right);
+		RangeDifference[] rightAncestorScript= findDifferences(pm, ancestor, right);
 		if (rightAncestorScript != null)
-			leftAncestorScript= findDifferences(ancestor, left);
+			leftAncestorScript= findDifferences(pm, ancestor, left);
 		if (rightAncestorScript == null || leftAncestorScript == null)
 			return null;
 
@@ -230,7 +265,21 @@ public final class RangeDifferencer {
 	 * @return an array of range differences
 	 */
 	public static RangeDifference[] findRanges(IRangeComparator left, IRangeComparator right) {
-		RangeDifference[] in= findDifferences(left, right);
+		return findRanges((IProgressMonitor)null, left, right);
+	}
+	
+	/**
+	 * Finds the differences among two <code>IRangeComparator</code>s.
+	 * In contrast to <code>findDifferences</code>, the result
+	 * contains <code>RangeDifference</code> elements for non-differing ranges too.
+	 * 
+	 * @param pm if not <code>null</code> used to report progress
+	 * @param left the left range comparator
+	 * @param right the right range comparator
+	 * @return an array of range differences
+	 */
+	public static RangeDifference[] findRanges(IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
+		RangeDifference[] in= findDifferences(pm, left, right);
 		List out= new ArrayList();
 
 		RangeDifference rd;
@@ -264,17 +313,35 @@ public final class RangeDifferencer {
 	 * If the ancestor range comparator is <code>null</code>, a two-way
 	 * comparison is performed.
 	 * 
+	 * @param pm if not <code>null</code> used to report progress
 	 * @param ancestor the ancestor range comparator or <code>null</code>
 	 * @param left the left range comparator
 	 * @param right the right range comparator
 	 * @return an array of range differences
 	 */
 	public static RangeDifference[] findRanges(IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
+		return findRanges(null, ancestor, left, right);
+	}
+	
+	/**
+	 * Finds the differences among three <code>IRangeComparator</code>s.
+	 * In contrast to <code>findDifferences</code>, the result
+	 * contains <code>RangeDifference</code> elements for non-differing ranges too.
+	 * If the ancestor range comparator is <code>null</code>, a two-way
+	 * comparison is performed.
+	 * 
+	 * @param pm if not <code>null</code> used to report progress
+	 * @param ancestor the ancestor range comparator or <code>null</code>
+	 * @param left the left range comparator
+	 * @param right the right range comparator
+	 * @return an array of range differences
+	 */
+	public static RangeDifference[] findRanges(IProgressMonitor pm, IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
 
 		if (ancestor == null)
-			return findRanges(left, right);
+			return findRanges(pm, left, right);
 
-		RangeDifference[] in= findDifferences(ancestor, left, right);
+		RangeDifference[] in= findDifferences(pm, ancestor, left, right);
 		List out= new ArrayList();
 
 		RangeDifference rd;

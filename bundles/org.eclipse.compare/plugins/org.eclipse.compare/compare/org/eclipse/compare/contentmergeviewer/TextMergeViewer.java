@@ -14,7 +14,9 @@ import java.util.ResourceBundle;
 import java.io.InputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.lang.InterruptedException;
 
+import java.lang.reflect.InvocationTargetException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.GC;
@@ -37,7 +39,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.ui.texteditor.IUpdate;
@@ -57,7 +61,7 @@ import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.MergeViewerAction;
 import org.eclipse.compare.internal.INavigatable;
 import org.eclipse.compare.internal.CompareNavigator;
-import org.eclipse.compare.internal.StoppableThread;
+import org.eclipse.compare.internal.TimeoutContext;
 import org.eclipse.compare.rangedifferencer.*;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 
@@ -152,8 +156,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	/** if DEAD_STEP is true navigation with the next/previous buttons needs an extra step 
 	when wrapping around the beginning or end */
 	private static final boolean DEAD_STEP= false;
-	/** Maximum time to wait for the document compare (in milliseconds) */
-	private static final int TIMEOUT= 20000;
+	/** When calculating differences show Progress after this timeout (in milliseconds) */
+	private static final int TIMEOUT= 2000;
 		
 	// determines whether a change between left and right is considered incoming or outgoing
 	private boolean fLeftIsLocal;
@@ -1065,6 +1069,16 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	//---- the differencing
 	
+	private static int maxWork(IRangeComparator a, IRangeComparator l, IRangeComparator r) {
+		int ln= l.getRangeCount();
+		int rn= r.getRangeCount();
+		if (a != null) {
+			int an= a.getRangeCount();
+			return (2 * Math.max(an, ln)) + (2 * Math.max(an, rn));
+		}
+		return 2 * Math.max(ln, rn);
+	}
+	
 	/**
 	 * Perform a two level 2- or 3-way diff.
 	 * The first level is based on line comparison, the second level on token comparison.
@@ -1125,23 +1139,43 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				fAllDiffs.add(diff);
 			}
 		}
-		
+	
+		final ResourceBundle bundle= getResourceBundle();
+			
+		final Object[] result= new Object[1];
 		final DocLineComparator sa= sancestor, sl= sleft, sr= sright;
-		StoppableThread t= new StoppableThread() {
-			public Object doRun() {
-				return RangeDifferencer.findRanges(sa, sl, sr);
+		IRunnableWithProgress runnable= new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+				String progressTitle= Utilities.getString(bundle, "compareProgressTask.title"); //$NON-NLS-1$
+				monitor.beginTask(progressTitle, maxWork(sa, sl, sr));
+				try {
+					result[0]= RangeDifferencer.findRanges(monitor, sa, sl, sr);
+				} catch (OutOfMemoryError ex) {
+					System.gc();
+					throw new InvocationTargetException(ex);
+				}
+				if (monitor.isCanceled())	{ // cancelled
+					throw new InterruptedException();
+				}
+				monitor.done();
 			}
 		};
-		RangeDifference[] e= (RangeDifference[]) t.getResult(TIMEOUT);
-					
-		if (e == null) {
-			// timeout
-			ResourceBundle bundle= getResourceBundle();
+		
+		RangeDifference[] e= null;
+		try {
+			TimeoutContext.run(true, TIMEOUT, getControl().getShell(), runnable);
+			e= (RangeDifference[]) result[0];
+		} catch (InvocationTargetException ex) {
 			String title= Utilities.getString(bundle, "tooComplexError.title"); //$NON-NLS-1$
 			String format= Utilities.getString(bundle, "tooComplexError.format"); //$NON-NLS-1$
 			String msg= MessageFormat.format(format, new Object[] { Integer.toString(TIMEOUT/1000) } );
 			MessageDialog.openError(fComposite.getShell(), title, msg);
-
+			e= null;
+		} catch (InterruptedException ex) {
+			// 
+		}
+					
+		if (e == null) {
 			// we create a NOCHANGE range for the whole document
 			Diff diff= new Diff(null, RangeDifference.NOCHANGE,
 				aDoc, 0, aDoc != null ? aDoc.getLength() : 0,

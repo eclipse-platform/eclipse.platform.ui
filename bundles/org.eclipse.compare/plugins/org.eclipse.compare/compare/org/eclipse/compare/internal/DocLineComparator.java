@@ -131,13 +131,18 @@ public class DocLineComparator implements ITokenComparator {
 		return false;
 	}
 
-	/* (non Javadoc)
-	 * see IRangeComparator.skipRangeComparison
+	/**
+	 * Aborts the comparison if the number of tokens is too large.
+	 *
+	 * @return <code>true</code> to abort a token comparison
 	 */
 	public boolean skipRangeComparison(int length, int max, IRangeComparator other) {
+		
+//		if (max > 10000)
+//			return true;
 		return false;
 	}
-
+		
 	//---- private methods
 	
 	/**
