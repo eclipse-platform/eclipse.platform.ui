@@ -26,8 +26,8 @@ public class ProgramTabGroup extends AbstractLaunchConfigurationTabGroup {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new ProgramMainTab(true),
 			new RefreshTab(),
-			new CommonTab(),
-			new EnvironmentTab()
+			new EnvironmentTab(),
+			new CommonTab()
 		};
 		setTabs(tabs);
 	}
