@@ -10,7 +10,7 @@ import org.eclipse.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.compare.contentmergeviewer.ITokenComparator;
 
 /**
- * Implements the <code>ITokenComparator</code> interface for lines in a document.
+ * Implements the <code>IRangeComparator</code> interface for lines in a document.
  * A <code>DocLineComparator</code> is used as the input for the <code>RangeDifferencer</code>
  * engine to perform a line oriented compare on documents.
  * <p>
@@ -95,10 +95,9 @@ public class DocLineComparator implements IRangeComparator {
 	 * @return the contents of the line as a String
 	 */
 	public String extract(int line) {
-		line += fLineOffset;
 		if (line < fLineCount) {
 			try {
-				IRegion r= fDocument.getLineInformation(line);
+				IRegion r= fDocument.getLineInformation(fLineOffset + line);
 				return fDocument.get(r.getOffset(), r.getLength());
 				// return fDocument.getLine(line);
 			} catch(BadLocationException e) {
