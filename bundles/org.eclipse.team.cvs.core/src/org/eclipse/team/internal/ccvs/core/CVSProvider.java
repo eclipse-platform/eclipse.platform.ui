@@ -459,7 +459,8 @@ public class CVSProvider implements ICVSProvider {
 					new String[] { moduleName, vendor, tag },
 					null,
 					monitor);
-				if (status.getCode() == CVSStatus.SERVER_ERROR) {
+				// If we get a warning, the operation most likely failed so check that the status is OK
+				if (status.getCode() == CVSStatus.SERVER_ERROR  || ! status.isOK()) {
 					throw new CVSServerException(status);
 				}
 			} finally {
