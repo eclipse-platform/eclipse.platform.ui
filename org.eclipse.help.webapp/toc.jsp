@@ -136,7 +136,9 @@ A.book {
 	background-position:top left;
 	background-repeat:no-repeat;
 	margin-top:5px;
+	margin-left:-24px;
 }
+
 
 
 </style>  
@@ -148,7 +150,7 @@ A.book {
   if (isMozilla)
   	 extraStyle = "<style type='text/css'>#root{ margin-left:-15px; } LI { margin-top:3px; } A { padding-top:2px; } NOBR { margin-left:20px;  }</style>";
   else if (isIE)
- 	extraStyle =  "<style type='text/css'>A {	height:18px; } A.book { margin-left:-24px; }</style>";
+ 	extraStyle =  "<style type='text/css'>A {	height:18px; } </style>";
  	
  document.write(extraStyle);
 </script>
