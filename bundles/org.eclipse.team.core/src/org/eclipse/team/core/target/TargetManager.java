@@ -94,7 +94,8 @@ public class TargetManager {
 				TARGET_MAPPINGS,
 				project,
 				mapping.encode());
-		} catch (CoreException e) {
+		   project.setPersistentProperty(new QualifiedName("org.eclipse.team", "target"), "basic");
+  		} catch (CoreException e) {
 			throw new TeamException(Policy.bind("TargetManager.Problems_mapping_project", project.getName()), e); //$NON-NLS-1$
 		} catch (IOException e) {
 			throw new TeamException(Policy.bind("TargetManager.Problems_mapping_project", project.getName()), e); //$NON-NLS-1$
@@ -115,6 +116,7 @@ public class TargetManager {
 				provider.deregister(project);
 				s.flushSyncInfo(TARGET_MAPPINGS, project, IResource.DEPTH_ZERO);
 			}
+		   project.setPersistentProperty(new QualifiedName("org.eclipse.team", "target"), null);	// null arg removes
 		} catch (CoreException e) {
 			throw new TeamException(Policy.bind("TargetManager.problemsUnmapping", project.getName()), e); //$NON-NLS-1$
 		}
