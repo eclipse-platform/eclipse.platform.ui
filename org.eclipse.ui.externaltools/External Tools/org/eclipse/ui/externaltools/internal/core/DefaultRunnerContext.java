@@ -12,24 +12,11 @@ Contributors:
 import java.io.File;
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 
 /**
  * Context to run the external tool in.
@@ -252,35 +239,40 @@ public final class DefaultRunnerContext implements IRunnerContext {
 		
 		executeRunner(monitor);
 	}
-	
+
 	/**
 	 * Runs the external tool and does a resource refresh if specified.
 	 * The tool is validated within this context before being
 	 * runned. Any problems are displayed to the user in a dialog box.
-	 * <p>
-	 * <b>Note:</b> Only call this method if running within the UI thread
-	 * </p>
 	 * 
 	 * @param monitor the monitor to report progress to, or <code>null</code>.
 	 * @param shell the shell to parent the error message dialog
 	 */
-	public void run(IProgressMonitor monitor, Shell shell) throws InterruptedException {
+	public void run(IProgressMonitor monitor, final Shell shell) throws InterruptedException {
 		try {
-			String problem = validateInContext();
+			final String problem = validateInContext();
 			if (problem != null) {
-				MessageDialog.openWarning(
-					shell, 
-					ToolMessages.getString("DefaultRunnerContext.errorShellTitle"), //$NON-NLS-1$
-					problem);
+				shell.getDisplay().syncExec(new Runnable() { 
+					public void run() {
+						MessageDialog.openError(
+							shell, 
+							ToolMessages.getString("DefaultRunnerContext.errorShellTitle"), //$NON-NLS-1$
+							problem);
+					}
+				});
+			} else {
+				executeRunner(monitor);
 			}
-			
-			executeRunner(monitor);
-		} catch(CoreException e) {
-			ErrorDialog.openError(
-				shell,
-				ToolMessages.getString("DefaultRunnerContext.errorShellTitle"), //$NON-NLS-1$
-				ToolMessages.getString("DefaultRunnerContext.errorMessage"), //$NON-NLS-1$
-				e.getStatus());
+		} catch (final CoreException e) {
+			shell.getDisplay().syncExec(new Runnable() { 
+				public void run() {
+					ErrorDialog.openError(
+					shell,
+					ToolMessages.getString("DefaultRunnerContext.errorShellTitle"), //$NON-NLS-1$
+					ToolMessages.getString("DefaultRunnerContext.errorMessage"), //$NON-NLS-1$
+					e.getStatus());
+				}
+			});
 		}
 	}
 
