@@ -25,6 +25,10 @@ public class FileSystemStore implements ILocalStoreConstants {
 	 * that multiple writes won't happen in a given instance of FileSystemStore.
 	 */
 	private final byte[] buffer = new byte[8192];
+	/**
+	 * For testing purposes only.  Traces reading of IFiles.
+	 */
+	private boolean traceReads = false;
 	
 public FileSystemStore() {
 }
@@ -293,7 +297,7 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
  */
 public InputStream read(File target) throws CoreException {
 	try {
-		return new FileInputStream(target);
+		return traceReads ? new TracingFileInputStream(target) : new FileInputStream(target);
 	} catch (FileNotFoundException e) {
 		String message;
 		if (!target.exists())
@@ -388,6 +392,13 @@ public void writeFolder(File target) throws CoreException {
 	}
 		throw new ResourceException(code, new Path(path), message, null);
 }
+}
+/*
+ * Testing support. Enables or disables tracing of file reading.
+ * @see TestingSupport.startTraceReads
+ */
+void setTraceReads(boolean value) {
+	this.traceReads = value;
 }
 
 }
