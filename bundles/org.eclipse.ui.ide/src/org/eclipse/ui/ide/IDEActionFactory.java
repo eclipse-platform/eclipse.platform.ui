@@ -11,11 +11,13 @@
 package org.eclipse.ui.ide;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.actions.QuickStartAction;
 import org.eclipse.ui.actions.RetargetAction;
+
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.NewWizardDropDownAction;
 import org.eclipse.ui.internal.ide.TipsAndTricksAction;
@@ -49,15 +51,6 @@ import org.eclipse.ui.internal.ide.actions.ProjectPropertyDialogAction;
 public abstract class IDEActionFactory extends ActionFactory {
 
 	/**
-	 * Creates a new IDE workbench action factory with the given id.
-	 * 
-	 * @param actionId the id of actions created by this action factory
-	 */
-	protected IDEActionFactory(String actionId) {
-		super(actionId);
-	}
-
-	/**
 	 * Workbench action: Displays the About dialog.
 	 * This action maintains its enablement state.
 	 */
@@ -69,6 +62,25 @@ public abstract class IDEActionFactory extends ActionFactory {
 			}
 			IWorkbenchAction action = new AboutAction(window);
 			action.setId(getId());
+			return action;
+		}
+	};
+
+	/**
+	 * IDE-specific workbench action: Add task.
+	 * This action is a {@link Retarget Retarget} action with 
+	 * id "addTask". This action maintains its enablement state.
+	 */
+	public static final ActionFactory ADD_TASK = new ActionFactory("addTask") { //$NON-NLS-1$
+		/* (non-javadoc) method declared on ActionFactory */
+		public IWorkbenchAction create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.getString("Workbench.addTask")); //$NON-NLS-1$ //$NON-NLS-2$
+			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.addTaskToolTip")); //$NON-NLS-1$
+			window.getPartService().addPartListener(action);
+			action.setActionDefinitionId("org.eclipse.ui.edit.addTask"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -93,20 +105,38 @@ public abstract class IDEActionFactory extends ActionFactory {
 	};
 
 	/**
-	 * IDE-specific workbench action: Add task.
+	 * IDE-specific workbench action: Close project.
 	 * This action is a {@link Retarget Retarget} action with 
-	 * id "addTask". This action maintains its enablement state.
+	 * id "closeProject". This action maintains its enablement state.
 	 */
-	public static final ActionFactory ADD_TASK = new ActionFactory("addTask") { //$NON-NLS-1$
+	public static final ActionFactory CLOSE_PROJECT = new ActionFactory("closeProject") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ActionFactory */
 		public IWorkbenchAction create(IWorkbenchWindow window) {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
-			RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.getString("Workbench.addTask")); //$NON-NLS-1$ //$NON-NLS-2$
-			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.addTaskToolTip")); //$NON-NLS-1$
+			RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.getString("Workbench.closeProject")); //$NON-NLS-1$ //$NON-NLS-2$
+			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.closeProjectToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
-			action.setActionDefinitionId("org.eclipse.ui.edit.addTask"); //$NON-NLS-1$
+			action.setActionDefinitionId("org.eclipse.ui.project.closeProject"); //$NON-NLS-1$
+			return action;
+		}
+	};
+	
+	/**
+	 * IDE-specific workbench action: Opens the "new" wizard drop down.
+	 * This action maintains its enablement state.
+	 */
+	public static final ActionFactory NEW_WIZARD_DROP_DOWN = new ActionFactory("newWizardDropDown") { //$NON-NLS-1$
+		/* (non-javadoc) method declared on ActionFactory */
+		public IWorkbenchAction create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			// @issue we are creating a NEW action just to pass to NewWizardDropDownAction
+			IWorkbenchAction innerAction = ActionFactory.NEW.create(window);
+			IWorkbenchAction action = new NewWizardDropDownAction(window, innerAction);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -131,44 +161,6 @@ public abstract class IDEActionFactory extends ActionFactory {
 	};
 
 	/**
-	 * IDE-specific workbench action: Close project.
-	 * This action is a {@link Retarget Retarget} action with 
-	 * id "closeProject". This action maintains its enablement state.
-	 */
-	public static final ActionFactory CLOSE_PROJECT = new ActionFactory("closeProject") { //$NON-NLS-1$
-		/* (non-javadoc) method declared on ActionFactory */
-		public IWorkbenchAction create(IWorkbenchWindow window) {
-			if (window == null) {
-				throw new IllegalArgumentException();
-			}
-			RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.getString("Workbench.closeProject")); //$NON-NLS-1$ //$NON-NLS-2$
-			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.closeProjectToolTip")); //$NON-NLS-1$
-			window.getPartService().addPartListener(action);
-			action.setActionDefinitionId("org.eclipse.ui.project.closeProject"); //$NON-NLS-1$
-			return action;
-		}
-	};
-
-	/**
-	 * IDE-specific workbench action: Rebuild project.
-	 * This action is a {@link Retarget Retarget} action with 
-	 * id "rebuildProject". This action maintains its enablement state.
-	 */
-	public static final ActionFactory REBUILD_PROJECT = new ActionFactory("rebuildProject") { //$NON-NLS-1$
-		/* (non-javadoc) method declared on ActionFactory */
-		public IWorkbenchAction create(IWorkbenchWindow window) {
-			if (window == null) {
-				throw new IllegalArgumentException();
-			}
-			RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.getString("Workbench.rebuildProject")); //$NON-NLS-1$ //$NON-NLS-2$
-			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.rebuildProjectToolTip")); //$NON-NLS-1$
-			window.getPartService().addPartListener(action);
-			action.setActionDefinitionId("org.eclipse.ui.project.rebuildProject"); //$NON-NLS-1$
-			return action;
-		}
-	};
-
-	/**
 	 * IDE-specific workbench action: Open project properties.
 	 * This action maintains its enablement state.
 	 */
@@ -179,24 +171,6 @@ public abstract class IDEActionFactory extends ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new ProjectPropertyDialogAction(window);
-			action.setId(getId());
-			return action;
-		}
-	};
-	
-	/**
-	 * IDE-specific workbench action: Opens the "new" wizard drop down.
-	 * This action maintains its enablement state.
-	 */
-	public static final ActionFactory NEW_WIZARD_DROP_DOWN = new ActionFactory("newWizardDropDown") { //$NON-NLS-1$
-		/* (non-javadoc) method declared on ActionFactory */
-		public IWorkbenchAction create(IWorkbenchWindow window) {
-			if (window == null) {
-				throw new IllegalArgumentException();
-			}
-			// @issue we are creating a NEW action just to pass to NewWizardDropDownAction
-			IWorkbenchAction innerAction = ActionFactory.NEW.create(window);
-			IWorkbenchAction action = new NewWizardDropDownAction(window, innerAction);
 			action.setId(getId());
 			return action;
 		}
@@ -219,22 +193,6 @@ public abstract class IDEActionFactory extends ActionFactory {
 	};
 	
 	/**
-	 * IDE-specific workbench action: Tips and tricks.
-	 * This action maintains its enablement state.
-	 */
-	public static final ActionFactory TIPS_AND_TRICKS = new ActionFactory("tipsAndTricks") { //$NON-NLS-1$
-		/* (non-javadoc) method declared on ActionFactory */
-		public IWorkbenchAction create(IWorkbenchWindow window) {
-			if (window == null) {
-				throw new IllegalArgumentException();
-			}
-			IWorkbenchAction action = new TipsAndTricksAction(window);
-			action.setId(getId());
-			return action;
-		}
-	};
-	
-	/**
 	 * IDE-specific workbench action: Full build.
 	 * This action maintains its enablement state.
 	 */
@@ -249,4 +207,48 @@ public abstract class IDEActionFactory extends ActionFactory {
 			return action;
 		}
 	};
+
+	/**
+	 * IDE-specific workbench action: Rebuild project.
+	 * This action is a {@link Retarget Retarget} action with 
+	 * id "rebuildProject". This action maintains its enablement state.
+	 */
+	public static final ActionFactory REBUILD_PROJECT = new ActionFactory("rebuildProject") { //$NON-NLS-1$
+		/* (non-javadoc) method declared on ActionFactory */
+		public IWorkbenchAction create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.getString("Workbench.rebuildProject")); //$NON-NLS-1$ //$NON-NLS-2$
+			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.rebuildProjectToolTip")); //$NON-NLS-1$
+			window.getPartService().addPartListener(action);
+			action.setActionDefinitionId("org.eclipse.ui.project.rebuildProject"); //$NON-NLS-1$
+			return action;
+		}
+	};
+	
+	/**
+	 * IDE-specific workbench action: Tips and tricks.
+	 * This action maintains its enablement state.
+	 */
+	public static final ActionFactory TIPS_AND_TRICKS = new ActionFactory("tipsAndTricks") { //$NON-NLS-1$
+		/* (non-javadoc) method declared on ActionFactory */
+		public IWorkbenchAction create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			IWorkbenchAction action = new TipsAndTricksAction(window);
+			action.setId(getId());
+			return action;
+		}
+	};
+
+	/**
+	 * Creates a new IDE workbench action factory with the given id.
+	 * 
+	 * @param actionId the id of actions created by this action factory
+	 */
+	protected IDEActionFactory(String actionId) {
+		super(actionId);
+	}
 }
