@@ -60,9 +60,10 @@ public class BrowserActionBarAdvisor extends ActionBarAdvisor {
         newWindowAction.setText("&New Window");
         register(newWindowAction);
 		
-		newTabAction = new Action("newTab", "New &Tab") { //$NON-NLS-1$
+		newTabAction = new Action("New &Tab") { //$NON-NLS-1$
 		    int counter = 0;
-		    { setActionDefinitionId(IBrowserConstants.COMMAND_PREFIX + "newTab"); } //$NON-NLS-1$
+		    { setId("newTab");
+              setActionDefinitionId(IBrowserConstants.COMMAND_PREFIX + "newTab"); } //$NON-NLS-1$
             public void run() {
                 try {
                     String secondaryId = Integer.toString(++counter);
@@ -106,8 +107,9 @@ public class BrowserActionBarAdvisor extends ActionBarAdvisor {
 		window.getPartService().addPartListener(refreshAction);
 		register(refreshAction);
 		
-		historyAction = new Action("history", "History", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
-		    { setActionDefinitionId(IBrowserConstants.COMMAND_PREFIX + "history"); } //$NON-NLS-1$
+		historyAction = new Action("History", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
+		    { setId("history");
+              setActionDefinitionId(IBrowserConstants.COMMAND_PREFIX + "history"); } //$NON-NLS-1$
 		    public void run() {
 		        try {
 		            IWorkbenchPage page = window.getActivePage();
