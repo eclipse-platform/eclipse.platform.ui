@@ -709,13 +709,6 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 	 */
 	public void syncSetChanged(SyncSetChangedEvent event) {
 		updateStatusPanel();
-		
-		// remove opened compare editors if file was removed from sync view and update if changed
-		IResource[] resources =event.getRemovedResources();
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			OpenInCompareAction.closeCompareEditorFor(this.getSite(), resource);
-		}
 	}
 
 	private void fireSafePropertyChange(final int property) {
