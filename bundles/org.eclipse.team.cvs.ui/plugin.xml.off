@@ -65,12 +65,6 @@
 				<separator name="enhancedGroup"/>
 			</menu>
 			<action 
-				id="org.eclipse.team.ccvs.ui.branch"
-				label="%BranchAction.label"
-				tooltip="%BranchAction.tooltip"
-				menubarPath="cvs.main/enhancedGroup"
-				class="org.eclipse.team.internal.ccvs.ui.actions.BranchAction"/>
-			<action 
 				id="org.eclipse.team.ccvs.ui.tag"
 				label="%TagAction.label"
 				tooltip="%TagAction.tooltip"
@@ -106,6 +100,12 @@
 				tooltip="%CommitAction.tooltip"
 				menubarPath="cvs.main/enhancedGroup"
 				class="org.eclipse.team.internal.ccvs.ui.actions.CommitAction"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.branch"
+				label="%BranchAction.label"
+				tooltip="%BranchAction.tooltip"
+				menubarPath="cvs.main/nativeGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.BranchAction"/>
 			<action
 				id="org.eclipse.team.ccvs.ui.GenerateDiff"
 				label="%GenerateDiff.label"
