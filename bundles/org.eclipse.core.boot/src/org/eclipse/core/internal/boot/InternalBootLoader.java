@@ -49,7 +49,7 @@ public final class InternalBootLoader {
 	private static String nl = null;
 	private static String ws = null;
 	private static String os = null;
-	private static final String[] OS_LIST = { BootLoader.OS_WIN32, BootLoader.OS_LINUX, BootLoader.OS_AIX, BootLoader.OS_SOLARIS, BootLoader.OS_HPUX };
+	private static final String[] OS_LIST = { BootLoader.OS_WIN32, BootLoader.OS_LINUX, BootLoader.OS_AIX, BootLoader.OS_SOLARIS, BootLoader.OS_HPUX, BootLoader.OS_QNX };
 	
 	private static final String PLATFORM_ENTRYPOINT = "org.eclipse.core.internal.runtime.InternalPlatform";
 	private static final String BOOTNAME = "org.eclipse.core.boot";

@@ -63,10 +63,10 @@ public final class BootLoader {
 	public static final String OS_HPUX = "hpux";
 
 	/**
-	 * Constant string (value "neutrino") indicating the platform is running on a
-	 * Neutrino-based machine.
+	 * Constant string (value "qnx") indicating the platform is running on a
+	 * QNX-based machine.
 	 */
-	public static final String OS_NEUTRINO = "neutrino";
+	public static final String OS_QNX = "qnx";
 
 	/**
 	 * Constant string (value "unknown") indicating the platform is running on a
