@@ -542,7 +542,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		//finally clear the rule
 		manager.endRule(rule);
 	}
-	public void _testRuleContainment() {
+	public void testRuleContainment() {
 		ISchedulingRule rules[] = new ISchedulingRule[4];
 
 		rules[0] = new RuleSetA();
@@ -557,6 +557,9 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 			fail("3.0");
 		} catch (RuntimeException e) {
 			//should fail
+		} finally {
+			//still need to end the rule
+			manager.endRule(rules[0]);
 		}
 		manager.endRule(rules[1]);
 
@@ -568,11 +571,12 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 			fail("3.2");
 		} catch (RuntimeException e) {
 			//should fail
+		} finally {
+			manager.endRule(rules[3]);
 		}
 		//should still be able to end the rules
 		manager.endRule(rules[2]);
 		manager.endRule(rules[1]);
-
 	}
 	public void testSimpleOtherThreadAccess() {
 		//ending a rule started on this thread from another thread
