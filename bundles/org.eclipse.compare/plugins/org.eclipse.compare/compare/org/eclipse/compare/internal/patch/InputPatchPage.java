@@ -44,6 +44,8 @@ import org.eclipse.compare.internal.Utilities;
 	// help IDs
 	private final static String PATCH_HELP_CONTEXT_ID= "PatchWizardHelpId";	//$NON-NLS-1$
 	
+	private boolean fShowError= false;
+	
 	// SWT widgets
 	private Button fUseClipboardButton;
 	private Combo fPatchFileNameField;
@@ -188,7 +190,6 @@ import org.eclipse.compare.internal.Utilities;
 			int matches= matchTrailingSegments(path, filePath);
 			if (matches > 0)
 				return matches;
-			//System.out.println("  " + filePath + ": " + matches);
 		}
 		return 0;
 	}
@@ -281,6 +282,7 @@ import org.eclipse.compare.internal.Utilities;
 		fUsePatchFileButton.addSelectionListener(
 			new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
+					fShowError= true;
 					setEnablePatchFile(!getUseClipboard());
 					updateWidgetEnablements();
 				}
@@ -297,6 +299,7 @@ import org.eclipse.compare.internal.Utilities;
 		fPatchFileNameField.addModifyListener(
 			new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
+					fShowError= true;
 					updateWidgetEnablements();
 				}
 			}
@@ -413,7 +416,8 @@ import org.eclipse.compare.internal.Utilities;
 		}
 		
 		setPageComplete(anySelected && gotPatch);
-		setErrorMessage(error);
+		if (fShowError)
+			setErrorMessage(error);
 	}
 	
 	protected void handlePatchFileBrowseButtonPressed() {
@@ -504,11 +508,13 @@ import org.eclipse.compare.internal.Utilities;
 	 *	last time this wizard was used to completion
 	 */
 	private void restoreWidgetValues() {
+		
+		boolean useClipboard= false;
+		
 		IDialogSettings settings= getDialogSettings();
 		if (settings != null) {
 			
-			// set 'Use Clipboard' radio button
-			setUseClipboard(settings.getBoolean(STORE_USE_CLIPBOARD_ID));
+			useClipboard= settings.getBoolean(STORE_USE_CLIPBOARD_ID);
 
 			// set filenames history
 			String[] sourceNames= settings.getArray(STORE_PATCH_FILES_ID);
@@ -522,6 +528,9 @@ import org.eclipse.compare.internal.Utilities;
 			if (patchFilePath != null)
 				setSourceName(patchFilePath);
 		}
+		
+		// set 'Use Clipboard' radio buttons
+		setUseClipboard(useClipboard);
 	}
 	
 	/**
