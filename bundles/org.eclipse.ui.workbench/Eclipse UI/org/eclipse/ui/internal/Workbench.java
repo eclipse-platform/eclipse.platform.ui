@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +61,7 @@ import org.eclipse.jface.action.ContextResolver;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContextResolver;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -344,7 +346,7 @@ public class Workbench
 
 	private CommandManager commandManager;
 	private ContextManager contextManager;
-	private StatusLineContributionItem modeContributionItem;
+	private Map modeContributionItems = new HashMap(11);
 
 	private IWorkbenchWindow activeWorkbenchWindow;
 	//private IActionService activeWorkbenchWindowActionService;
@@ -429,8 +431,7 @@ public class Workbench
 
 		if (!matchesByKeySequenceForModeAfterKeyStroke.isEmpty()) {
 			// this key stroke is part of one or more possible completions: consume the keystroke
-			modeContributionItem.setText(
-				"carbon".equals(SWT.getPlatform()) ? KeySupport.formatOSX(modeAfterKeyStroke) : modeAfterKeyStroke.format());						
+			updateModeLines(modeAfterKeyStroke);
 			consumeKeyStroke = true;
 		} else {
 			// there are no possible longer multi-stroke sequences, allow a completion now if possible
@@ -450,9 +451,8 @@ public class Workbench
 					// an action was found corresponding to the completion
 
 					if (action.isEnabled()) {
+						updateModeLines(modeAfterKeyStroke);
 						try {
-							modeContributionItem.setText(
-								"carbon".equals(SWT.getPlatform()) ? KeySupport.formatOSX(modeAfterKeyStroke) : modeAfterKeyStroke.format());
 							action.execute(event);
 						} catch (final Exception e) {
 							// TODO 						
@@ -470,15 +470,28 @@ public class Workbench
 
 			// clear mode			
 			commandManager.setMode(KeySequence.getInstance());
-			modeContributionItem.setText(
-				"carbon".equals(SWT.getPlatform())
-					? KeySupport.formatOSX(KeySequence.getInstance())
-					: KeySequence.getInstance().format());
+			updateModeLines(KeySequence.getInstance());
 		}
 
 		// TODO is this necessary?		
 		updateActiveContextIds();
 		return consumeKeyStroke;
+	}	
+	
+	/**
+	 * Updates the text of the mode lines with the current mode.  Synchronized
+	 * over the collection of mode lines.
+	 * @param mode The mode which should be used to update the status line;
+	 * must not be <code>null</code>.
+	 */
+	private final void updateModeLines(final KeySequence mode) {
+		synchronized (modeContributionItems) {
+			final Iterator modeLineItr = modeContributionItems.values().iterator();
+			while (modeLineItr.hasNext()) {
+				final StatusLineContributionItem modeLine = (StatusLineContributionItem) modeLineItr.next();
+				modeLine.setText("carbon".equals(SWT.getPlatform()) ? KeySupport.formatOSX(mode) : mode.format()); //$NON-NLS-1$
+			}
+		}
 	}
 
 	public void updateActiveContextIds() {
@@ -706,7 +719,6 @@ public class Workbench
 		ContextResolver.getInstance().setContextResolver(this);
 		commandManager = CommandManager.getInstance();
 		contextManager = ContextManager.getInstance();
-		modeContributionItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$	
 		commandManager.addCommandManagerListener(commandManagerListener);
 		contextManager.addContextManagerListener(contextManagerListener);
 		updateActiveContextIds();
@@ -808,10 +820,6 @@ public class Workbench
 	 * Fire window opened event.
 	 */
 	protected void fireWindowOpened(IWorkbenchWindow window) {
-		if (window instanceof WorkbenchWindow)
-			((WorkbenchWindow) window).getStatusLineManager().add(
-				modeContributionItem);
-
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
 			((IWindowListener) list[i]).windowOpened(window);
@@ -821,9 +829,12 @@ public class Workbench
 	 * Fire window closed event.
 	 */
 	protected void fireWindowClosed(IWorkbenchWindow window) {
-		if (window instanceof WorkbenchWindow)
-			((WorkbenchWindow) window).getStatusLineManager().remove(
-				modeContributionItem);
+		synchronized (modeContributionItems) {
+			final StatusLineContributionItem modeLine = (StatusLineContributionItem) modeContributionItems.remove(window);
+			if (modeLine != null && (window instanceof WorkbenchWindow)) {
+				((WorkbenchWindow) window).getStatusLineManager().remove(modeLine);
+			}
+		}
 
 		if (activatedWindow == window) {
 			// Do not hang onto it so it can be GC'ed
@@ -1664,7 +1675,19 @@ public class Workbench
 	 * @return the new workbench window
 	*/
 	protected WorkbenchWindow newWorkbenchWindow() {
-		return new WorkbenchWindow(this, getNewWindowNumber());
+		final WorkbenchWindow window = new WorkbenchWindow(this, getNewWindowNumber());
+		
+		// Add a mode line to the window.
+		final StatusLineManager manager = window.getStatusLineManager();
+		if (manager != null) {
+			final StatusLineContributionItem modeLine = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
+			synchronized (modeContributionItems) {
+				modeContributionItems.put(window, modeLine);
+			}
+			manager.add(modeLine);
+		}
+		
+		return window; 
 	}
 
 	/**
