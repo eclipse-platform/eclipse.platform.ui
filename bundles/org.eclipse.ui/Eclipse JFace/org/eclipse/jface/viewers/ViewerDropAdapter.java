@@ -86,9 +86,16 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
 
 	/**
 	 * A flag that allows adapter users to turn the insertion
-	 * feedback on or off.
+	 * feedback on or off. Default is <code>true</code>.
 	 */
 	private boolean feedbackEnabled = true;
+	
+	/**
+	 * A flag that allows adapter users to turn auto scrolling
+	 * and expanding on or off. Default is <code>true</code>.
+	 */
+	private boolean scrollExpandEnabled = true;
+	
 /**
  * Creates a new drop adapter for the given viewer.
  *
@@ -351,19 +358,21 @@ public abstract boolean performDrop(Object data);
  * that it is still enabled.
  */
 private void setFeedback(DropTargetEvent event, int location) {
-	if (!feedbackEnabled) return;
-	event.feedback |= DND.FEEDBACK_EXPAND | DND.FEEDBACK_SCROLL;
-	switch (location) {
-		case LOCATION_BEFORE:
-			event.feedback |= DND.FEEDBACK_INSERT_BEFORE;
-			break;
-		case LOCATION_AFTER:
-			event.feedback |= DND.FEEDBACK_INSERT_AFTER;
-			break;
-		case LOCATION_ON:
-		default:
-			event.feedback |= DND.FEEDBACK_SELECT;
-			break;
+	if (scrollExpandEnabled)
+		event.feedback |= DND.FEEDBACK_EXPAND | DND.FEEDBACK_SCROLL;
+	if (feedbackEnabled) {
+		switch (location) {
+			case LOCATION_BEFORE:
+				event.feedback |= DND.FEEDBACK_INSERT_BEFORE;
+				break;
+			case LOCATION_AFTER:
+				event.feedback |= DND.FEEDBACK_INSERT_AFTER;
+				break;
+			case LOCATION_ON:
+			default:
+				event.feedback |= DND.FEEDBACK_SELECT;
+				break;
+		}
 	}
 }
 /**
@@ -378,6 +387,16 @@ private void setFeedback(DropTargetEvent event, int location) {
  */
 public void setFeedbackEnabled(boolean value) {
 	feedbackEnabled = value;
+}
+/**
+ * Sets whether auto scrolling and expanding should be provided during dragging.
+ *
+ * @param value <code>true</code> if scrolling and expanding is desired, and
+ *   <code>false</code> if not
+ * @since 2.0
+ */
+public void setScrollExpandEnabled(boolean value) {
+	scrollExpandEnabled = value;
 }
 /**
  * Validates dropping on the given object. This method is called whenever some 
