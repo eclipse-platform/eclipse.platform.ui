@@ -60,7 +60,7 @@ public interface IAnnotationAccessExtension {
 	
 	/**
 	 * Returns <code>true</code> if painting <code>annotation</code> will produce something
-	 * meaningful, <code>false</code> if not, e.g. if no image is available.
+	 * meaningful, <code>false</code> if not. E.g. if no image is available.
 	 * 
 	 * @param annotation the annotation to check for paintability
 	 * @return <code>true</code> if painting <code>annotation</code> will succeed

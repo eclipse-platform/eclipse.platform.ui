@@ -34,7 +34,7 @@ public interface ICompletionProposalExtension3 {
 	
 	/**
 	 * Returns the string that would be inserted at the position returned from 
-	 * {@see #getCompletionOffset()} if this proposal was applied. If the 
+	 * <code>getCompletionOffset()</code> if this proposal was applied. If the 
 	 * replacement string cannot be determined, <code>null</code> may be returned.
 	 * 
 	 * @return the replacement string or <code>null</code> if it cannot be determined

@@ -24,14 +24,14 @@ import org.eclipse.swt.widgets.Menu;
 public interface IVerticalRulerListener {
 	
 	/**
-	 * Called when an annotation is selected (e.g. hovering or selecting via keyboard) in the UI.
+	 * Called when an annotation is selected in the UI.
 	 * 
 	 * @param event the annotation event that occurred
 	 */
 	void annotationSelected(VerticalRulerEvent event);
 	
 	/**
-	 * Called when default selection (e.g. double clicking or pressing enter) occurs on an 
+	 * Called when a default selection occurs on an 
 	 * annotation.
 	 * 
 	 * @param event the annotation event that occurred

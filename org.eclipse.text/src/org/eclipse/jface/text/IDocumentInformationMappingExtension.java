@@ -62,7 +62,7 @@ public interface IDocumentInformationMappingExtension {
 	
 	/**
 	 * Returns the maximal sub-regions of the given origin region which are
-	 * completely covered, i.e. each offset in a sub-region has a corresponding
+	 * completely covered. I.e. each offset in a sub-region has a corresponding
 	 * image offset. Returns <code>null</code> if there are no such
 	 * sub-regions.
 	 * 

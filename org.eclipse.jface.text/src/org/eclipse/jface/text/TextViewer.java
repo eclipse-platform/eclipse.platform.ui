@@ -1295,12 +1295,12 @@ public class TextViewer extends Viewer implements
 	 */
 	protected IDocumentInformationMapping fInformationMapping;
 	/**
-	 * The viewer's paint manager;
+	 * The viewer's paint manager.
 	 * @since 2.1
 	 */
 	protected PaintManager fPaintManager;
 	/**
-	 * The viewers partitioning, i.e. the partitioning name the viewer uses to access partitioning information of its input document.
+	 * The viewers partitioning. I.e. the partitioning name the viewer uses to access partitioning information of its input document.
 	 * @since 3.0
 	 */
 	protected String fPartitioning;
@@ -3858,7 +3858,7 @@ public class TextViewer extends Viewer implements
 
 	/**
 	 * @see IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)
-	 * @deprecated as of 3.0 use {@link #findAndSelect(int, String, boolean, boolean, boolean, boolean)
+	 * @deprecated as of 3.0 use {@link #findAndSelect(int, String, boolean, boolean, boolean, boolean)}
 	 */
 	protected int findAndSelect(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord) {
 		try { 

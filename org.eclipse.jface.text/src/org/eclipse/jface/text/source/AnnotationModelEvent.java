@@ -205,7 +205,7 @@ public class AnnotationModelEvent {
 	/**
 	 * Returns whether this annotation model events contains detailed
 	 * information about the modifications applied to the event annotation
-	 * model or whether it represents a world change, i.e. everything in the
+	 * model or whether it represents a world change. I.e. everything in the
 	 * model might have changed.
 	 * 
 	 * @return <code>true</code> if world change, <code>false</code> otherwise

@@ -13,7 +13,7 @@ package org.eclipse.jface.text.source;
 
 /**
  * An event sent to {@link org.eclipse.jface.text.source.IVerticalRulerListener} instances when annotation
- * selection etc. occurs.
+ * related event occurs on the vertical ruler.
  * 
  * @since 3.0
  */

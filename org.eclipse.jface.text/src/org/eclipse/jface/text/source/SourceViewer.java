@@ -39,7 +39,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.FormattingContext;
 import org.eclipse.jface.text.formatter.FormattingContextProperties;
 import org.eclipse.jface.text.formatter.IContentFormatter;
-import org.eclipse.jface.text.formatter.IContentFormatterExtension2;
+import org.eclipse.jface.text.formatter.IContentFormatterExtension;
 import org.eclipse.jface.text.formatter.IFormattingContext;
 import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
@@ -712,8 +712,8 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 						
 						try {
 							
-							if (fContentFormatter instanceof IContentFormatterExtension2) {
-								final IContentFormatterExtension2 extension= (IContentFormatterExtension2) fContentFormatter;
+							if (fContentFormatter instanceof IContentFormatterExtension) {
+								final IContentFormatterExtension extension= (IContentFormatterExtension) fContentFormatter;
 								extension.format(document, context);
 							} else {
 								fContentFormatter.format(document, region);

@@ -638,7 +638,7 @@ public class LinkedModeModel {
 
 	/**
 	 * Finds the position in this model that is closest after
-	 * <code>toFind</code>.<code>toFind</code> needs not be a position in
+	 * <code>toFind</code>. <code>toFind</code> needs not be a position in
 	 * this model and serves merely as an offset.
 	 * 
 	 * <p>
