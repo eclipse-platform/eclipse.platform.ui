@@ -25,7 +25,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.custom.CTabFolderCloseAdapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
-import org.eclipse.swt.custom.CTabFolderExpandListener;
 import org.eclipse.swt.custom.CTabItem2;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -316,6 +315,10 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		else
 			tabItem = new CTabItem2(this.tabFolder, SWT.NONE, tabIndex);
 		tabItem.setText(tabName);
+		
+		if(part instanceof PartPane){
+			tabItem.setImage(((PartPane) part).getPartReference().getTitleImage());
+		}
 
 		mapTabToPart.put(tabItem, part);
 
