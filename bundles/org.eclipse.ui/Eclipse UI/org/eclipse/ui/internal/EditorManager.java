@@ -264,7 +264,6 @@ private IEditorPart openEditor(IFileEditorInput input,boolean setVisible)
 	throws PartInitException
 {
 	IFile file = input.getFile();
-	
 	// If there is a registered editor for the file use it.
 	EditorDescriptor desc = (EditorDescriptor)getEditorRegistry().
 		getDefaultEditor(file);
@@ -290,12 +289,79 @@ private IEditorPart openEditor(IFileEditorInput input,boolean setVisible)
 	desc = (EditorDescriptor)getEditorRegistry().getDefaultEditor();
 	return openEditor(desc, input);
 }
+
+/*
+ *
+ */
+private IReusableEditor findReusableEditor(EditorDescriptor desc) {
+	//Must get global preference: "Reuse opened editors".
+	//if(!reuseEditors)
+	//	return null;
+	IEditorPart editors[] = getEditors();
+	IReusableEditor dirtyEditor = null;
+	IWorkbenchPart activePart = page.getActivePart();
+	//Find IReusableEditor with the same descriptor id.
+	for(int i = 0;i < editors.length;i++) {
+		IEditorPart editor = editors[i];
+		if(editor == activePart)
+			continue;
+		if(!(editor instanceof IReusableEditor))
+			continue;
+		IReusableEditor reusableEditor = (IReusableEditor)editor;
+		if(!reusableEditor.getReuseEditor())
+			continue;
+		IEditorInput editorInput = reusableEditor.getEditorInput(); 
+		EditorSite site = (EditorSite)reusableEditor.getEditorSite();
+		EditorDescriptor oldDesc = site.getEditorDescriptor();
+		if(oldDesc == null)
+			oldDesc = (EditorDescriptor)getEditorRegistry().getDefaultEditor();
+		if(desc.getId().equals(oldDesc.getId())) {
+			if(editor.isDirty()) {
+				dirtyEditor = reusableEditor;
+				continue;
+			}
+			return reusableEditor;
+		}
+	}
+	if(dirtyEditor == null)
+		return null;
+	
+	//Must get global preference: "Open new Editor when dirty"
+	//if(openNewWhenDirty)
+	//	return null;
+	MessageDialog dialog = new MessageDialog(
+		window.getShell(),
+		"Reusing dirty editor", 
+		null,	// accept the default window icon
+		dirtyEditor.getEditorInput().getName() + " has being modified. Save changes?", 
+		MessageDialog.QUESTION, 
+		new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,"Open new editor"}, 
+		0);
+	int result = dialog.open();
+	if(result == 0) { //YES
+		ProgressMonitorDialog pmd = new ProgressMonitorDialog(dialog.getShell());
+		pmd.open();
+		dirtyEditor.doSave(pmd.getProgressMonitor());
+		pmd.close();
+	} else if(result == 2) {
+		return null;
+	}
+	return dirtyEditor;
+}
 /*
  * See IWorkbenchPage.
  */
 private IEditorPart openEditor(EditorDescriptor desc, IEditorInput input)
 	throws PartInitException {
 	if (desc.isInternal()) {
+		IReusableEditor reusableEditor = findReusableEditor(desc);
+		if(reusableEditor != null) {
+			reusableEditor.setInput(input);
+			// Record the happy event.
+			Workbench wb = (Workbench)window.getWorkbench();
+			wb.getEditorHistory().add(input, desc);
+			return reusableEditor;
+		}
 		return openInternalEditor(desc, input, true,null);
 	} else
 		if (desc.isOpenInPlace()) {

@@ -55,4 +55,8 @@ public IEditorActionBarContributor getActionBarContributor() {
 public IEditorPart getEditorPart() {
 	return (IEditorPart)getPart();
 }
+
+public EditorDescriptor getEditorDescriptor() {
+	return desc;
+}
 }

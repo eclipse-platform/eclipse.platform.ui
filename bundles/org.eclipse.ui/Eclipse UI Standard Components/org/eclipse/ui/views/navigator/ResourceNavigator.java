@@ -477,8 +477,7 @@ void handleDoubleClick(DoubleClickEvent event) {
 	IStructuredSelection s = (IStructuredSelection)event.getSelection();
 	Object element = s.getFirstElement();
 	if (element instanceof IFile) {
-		openFileAction.selectionChanged(s);
-		openFileAction.run();
+		runOpenFileAction(s);
 	}
 	else {
 		// 1GBZIA0: ITPUI:WIN2000 - Double-clicking in navigator should expand/collapse containers
@@ -486,7 +485,12 @@ void handleDoubleClick(DoubleClickEvent event) {
 			viewer.setExpandedState(element, !viewer.getExpandedState(element));
 		}
 	}
-	
+}
+/**
+ */
+void runOpenFileAction(IStructuredSelection s) {
+	openFileAction.selectionChanged(s);
+	openFileAction.run();
 }
 /**
  * Handles key events in viewer.
@@ -506,7 +510,8 @@ void handleSelectionChanged(SelectionChangedEvent event) {
 	updateStatusLine(sel);
 	goIntoAction.update();
 	updateGlobalActions(sel);
-	linkToEditor(sel);
+	if(!linkToEditor(sel))
+		runOpenFileAction(sel);
 }
 /* (non-Javadoc)
  * Method declared on IViewPart.
@@ -591,9 +596,9 @@ boolean isLinkingEnabled() {
 /**
  * Links to editor (if option enabled)
  */
-void linkToEditor(IStructuredSelection selection) {
+boolean linkToEditor(IStructuredSelection selection) {
 	if (!isLinkingEnabled())
-		return;
+		return false;
 
 	Object obj = selection.getFirstElement();
 	if (obj instanceof IFile && selection.size() == 1) {
@@ -605,10 +610,11 @@ void linkToEditor(IStructuredSelection selection) {
 			IEditorInput input = editor.getEditorInput();
 			if (input instanceof IFileEditorInput && file.equals(((IFileEditorInput)input).getFile())) {
 				page.bringToTop(editor);
-				return;
+				return true;
 			}
 		}
 	}
+	return false;
 }
 /**
  *	Create self's action objects

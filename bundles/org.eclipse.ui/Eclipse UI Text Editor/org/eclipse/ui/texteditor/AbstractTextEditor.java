@@ -85,6 +85,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.IReusableEditor;
 
 
 
@@ -98,7 +99,7 @@ import org.eclipse.ui.part.EditorPart;
  *
  * @see org.eclipse.ui.editors.text.TextEditor
  */
-public abstract class AbstractTextEditor extends EditorPart implements ITextEditor {
+public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor {
 	
 	/**
 	 * Internal element state listener.
@@ -1791,4 +1792,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				updateAction((String) e.next());
 		}
 	}
+	
+	public boolean getReuseEditor() {
+		return true;
+		
+	}
+	
+	public void setReuseEditor(boolean reuse) {
+	}
+	
 }
