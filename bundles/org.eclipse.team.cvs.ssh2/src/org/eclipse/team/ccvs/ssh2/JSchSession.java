@@ -78,7 +78,7 @@ class JSchSession {
 					);
 			return prompt == 0;
 		}
-		public boolean promptPassphrase(String message) {
+		private String promptSecret(String message) throws CVSException{
 			IUserAuthenticator authenticator = location.getUserAuthenticator();
 			final String[] _password = new String[1];
 			IUserInfo info = new IUserInfo() {
@@ -94,18 +94,32 @@ class JSchSession {
 				public void setUsername(String username) {
 				}
 			};
-			try {
-				authenticator.promptForUserInfo(location, info,	message);
-			} catch (CVSException e) {
+			authenticator.promptForUserInfo(location, info,	message);
+			return _password[0];	
+		}
+		public boolean promptPassphrase(String message) {
+			try{
+				String _passphrase=promptSecret(message);
+				if(_passphrase!=null){
+				  passphrase=_passphrase;
+				}
+				return _passphrase!=null;
+			}
+			catch(CVSException e){
 				return false;
 			}
-			
-			if (_password[0] != null)
-				passphrase = _password[0];
-			return _password != null;
 		}
 		public boolean promptPassword(String message) {
-			return promptPassphrase(message);
+			try{
+				String _password=promptSecret(message);
+				if(_password!=null){
+					password=_password;
+				}
+				return _password!=null;
+			}
+			catch(CVSException e){
+				return false;
+			}
 		}
 		public void showMessage(String message) {
 			IUserAuthenticator authenticator = location.getUserAuthenticator();
