@@ -9,11 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.older;
+package org.eclipse.ui.internal.commands;
 
 import org.eclipse.swt.widgets.Event;
 
-public class ActionHandler implements org.eclipse.ui.internal.commands.api.older.IAction {
+public class ActionHandler implements org.eclipse.ui.internal.commands.api.IAction {
 
 	private org.eclipse.jface.action.IAction action;
 

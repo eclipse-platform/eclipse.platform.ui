@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.older;
+package org.eclipse.ui.internal.commands;
 
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.internal.commands.api.older.NotActiveException;

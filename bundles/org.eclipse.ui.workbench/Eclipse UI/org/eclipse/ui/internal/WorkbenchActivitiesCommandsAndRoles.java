@@ -35,17 +35,17 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.IActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManagerListener;
-import org.eclipse.ui.internal.commands.api.older.IActionService;
-import org.eclipse.ui.internal.commands.api.older.IActionServiceEvent;
-import org.eclipse.ui.internal.commands.api.older.IActionServiceListener;
+import org.eclipse.ui.contexts.IContextActivationService;
+import org.eclipse.ui.contexts.IContextActivationServiceEvent;
+import org.eclipse.ui.contexts.IContextActivationServiceListener;
+import org.eclipse.ui.internal.commands.ActionService;
+import org.eclipse.ui.internal.commands.api.IActionService;
+import org.eclipse.ui.internal.commands.api.IActionServiceEvent;
+import org.eclipse.ui.internal.commands.api.IActionServiceListener;
 import org.eclipse.ui.internal.commands.api.older.ICommand;
 import org.eclipse.ui.internal.commands.api.older.ICommandManagerEvent;
 import org.eclipse.ui.internal.commands.api.older.ICommandManagerListener;
 import org.eclipse.ui.internal.commands.api.older.NotDefinedException;
-import org.eclipse.ui.contexts.IContextActivationService;
-import org.eclipse.ui.contexts.IContextActivationServiceEvent;
-import org.eclipse.ui.contexts.IContextActivationServiceListener;
-import org.eclipse.ui.internal.commands.older.ActionService;
 import org.eclipse.ui.internal.commands.older.Match;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
 import org.eclipse.ui.internal.keys.KeySupport;
@@ -501,7 +501,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 					// a completion was found.
 					String commandId = match.getCommandId();
 					Map actionsById = workbench.commandManager.getActionsById();
-					org.eclipse.ui.internal.commands.api.older.IAction action = (org.eclipse.ui.internal.commands.api.older.IAction) actionsById.get(commandId);
+					org.eclipse.ui.internal.commands.api.IAction action = (org.eclipse.ui.internal.commands.api.IAction) actionsById.get(commandId);
 
 					if (action != null) {
 						// an action was found corresponding to the completion

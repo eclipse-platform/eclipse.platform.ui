@@ -9,10 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.older;
+package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.internal.commands.api.older.IActionService;
-import org.eclipse.ui.internal.commands.api.older.IActionServiceEvent;
+import org.eclipse.ui.internal.commands.api.IActionService;
+import org.eclipse.ui.internal.commands.api.IActionServiceEvent;
 
 final class ActionServiceEvent implements IActionServiceEvent {
 

@@ -9,9 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.older;
+package org.eclipse.ui.internal.commands.api;
 
 /**
+ * <p>
+ * JAVADOC
+ * </p>
  * <p>
  * This interface is not intended to be extended by clients.
  * </p>
@@ -21,26 +24,12 @@ package org.eclipse.ui.internal.commands.older;
  * 
  * @since 3.0
  */
-public interface XIPropertyListener {
+public interface IActionServiceListener {
 
 	/**
 	 * JAVADOC
 	 * 
-	 * @param propertyEvent
+	 * @param actionServiceEvent
 	 */	
-	void propertyAdded(XPropertyEvent propertyEvent);
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @param propertyEvent
-	 */	
-	void propertyChanged(XPropertyEvent propertyEvent);
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @param propertyEvent
-	 */	
-	void propertyRemoved(XPropertyEvent propertyEvent);
+	void actionServiceChanged(IActionServiceEvent actionServiceEvent);
 }

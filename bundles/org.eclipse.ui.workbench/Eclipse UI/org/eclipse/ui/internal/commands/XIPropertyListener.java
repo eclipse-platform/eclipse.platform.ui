@@ -9,16 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.api.older;
-
-import org.eclipse.swt.widgets.Event;
+package org.eclipse.ui.internal.commands;
 
 /**
  * <p>
- * JAVADOC
- * </p>
- * <p>
- * This interface is not intended to be implemented or extended by clients.
+ * This interface is not intended to be extended by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -26,46 +21,26 @@ import org.eclipse.swt.widgets.Event;
  * 
  * @since 3.0
  */
-public interface IAction {
-
-	/**
-	 * JAVADOC
-	 */	
-	void execute();
+public interface XIPropertyListener {
 
 	/**
 	 * JAVADOC
 	 * 
-	 * @param event
-	 */
-	// TODO temporary method	
-	void execute(Event event);
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
+	 * @param propertyEvent
 	 */	
-	// TODO String getDescription();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	// TODO String getName();
+	void propertyAdded(XPropertyEvent propertyEvent);
 	
 	/**
 	 * JAVADOC
 	 * 
-	 * @return
+	 * @param propertyEvent
 	 */	
-	// TODO String getHelpId();
-
+	void propertyChanged(XPropertyEvent propertyEvent);
+	
 	/**
 	 * JAVADOC
 	 * 
-	 * @return
+	 * @param propertyEvent
 	 */	
-	boolean isEnabled();
+	void propertyRemoved(XPropertyEvent propertyEvent);
 }

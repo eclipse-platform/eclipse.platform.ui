@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.api.older;
+package org.eclipse.ui.internal.commands.api;
 
 import java.util.SortedMap;
 

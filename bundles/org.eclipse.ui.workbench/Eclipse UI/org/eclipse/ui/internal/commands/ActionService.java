@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.older;
+package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.eclipse.ui.internal.commands.api.older.IAction;
-import org.eclipse.ui.internal.commands.api.older.IActionService;
-import org.eclipse.ui.internal.commands.api.older.IActionServiceEvent;
-import org.eclipse.ui.internal.commands.api.older.IActionServiceListener;
+import org.eclipse.ui.internal.commands.api.IAction;
+import org.eclipse.ui.internal.commands.api.IActionService;
+import org.eclipse.ui.internal.commands.api.IActionServiceEvent;
+import org.eclipse.ui.internal.commands.api.IActionServiceListener;
 import org.eclipse.ui.internal.util.Util;
 
 public final class ActionService implements IActionService {

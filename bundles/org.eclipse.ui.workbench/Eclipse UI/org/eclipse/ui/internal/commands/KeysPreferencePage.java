@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.older;
+package org.eclipse.ui.internal.commands;
 
 import java.io.IOException;
 import java.text.Collator;
@@ -72,6 +72,7 @@ import org.eclipse.ui.internal.commands.IKeyConfigurationDefinition;
 import org.eclipse.ui.internal.commands.IKeySequenceBindingDefinition;
 import org.eclipse.ui.internal.commands.KeyConfigurationDefinition;
 import org.eclipse.ui.internal.commands.PreferenceCommandRegistry;
+import org.eclipse.ui.internal.commands.older.CommandManager;
 import org.eclipse.ui.internal.keys.KeySequenceText;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;

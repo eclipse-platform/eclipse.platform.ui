@@ -30,7 +30,24 @@ import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
-import org.eclipse.ui.internal.commands.api.older.IAction;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.commands.ActionHandler;
+import org.eclipse.ui.internal.commands.CategoryDefinition;
+import org.eclipse.ui.internal.commands.CommandDefinition;
+import org.eclipse.ui.internal.commands.ExtensionCommandRegistry;
+import org.eclipse.ui.internal.commands.IActiveKeyConfigurationDefinition;
+import org.eclipse.ui.internal.commands.IActivityBindingDefinition;
+import org.eclipse.ui.internal.commands.ICategoryDefinition;
+import org.eclipse.ui.internal.commands.ICommandDefinition;
+import org.eclipse.ui.internal.commands.ICommandRegistry;
+import org.eclipse.ui.internal.commands.ICommandRegistryEvent;
+import org.eclipse.ui.internal.commands.ICommandRegistryListener;
+import org.eclipse.ui.internal.commands.IImageBindingDefinition;
+import org.eclipse.ui.internal.commands.IKeyConfigurationDefinition;
+import org.eclipse.ui.internal.commands.IKeySequenceBindingDefinition;
+import org.eclipse.ui.internal.commands.KeyConfigurationDefinition;
+import org.eclipse.ui.internal.commands.PreferenceCommandRegistry;
+import org.eclipse.ui.internal.commands.api.IAction;
 import org.eclipse.ui.internal.commands.api.older.ICategory;
 import org.eclipse.ui.internal.commands.api.older.ICommand;
 import org.eclipse.ui.internal.commands.api.older.ICommandManager;
@@ -38,22 +55,6 @@ import org.eclipse.ui.internal.commands.api.older.ICommandManagerEvent;
 import org.eclipse.ui.internal.commands.api.older.ICommandManagerListener;
 import org.eclipse.ui.internal.commands.api.older.IKeyBinding;
 import org.eclipse.ui.internal.commands.api.older.IKeyConfiguration;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.commands.CategoryDefinition;
-import org.eclipse.ui.internal.commands.CommandDefinition;
-import org.eclipse.ui.internal.commands.ExtensionCommandRegistry;
-import org.eclipse.ui.internal.commands.IActiveKeyConfigurationDefinition;
-import org.eclipse.ui.internal.commands.ICategoryDefinition;
-import org.eclipse.ui.internal.commands.ICommandDefinition;
-import org.eclipse.ui.internal.commands.ICommandRegistry;
-import org.eclipse.ui.internal.commands.ICommandRegistryEvent;
-import org.eclipse.ui.internal.commands.ICommandRegistryListener;
-import org.eclipse.ui.internal.commands.IActivityBindingDefinition;
-import org.eclipse.ui.internal.commands.IImageBindingDefinition;
-import org.eclipse.ui.internal.commands.IKeyConfigurationDefinition;
-import org.eclipse.ui.internal.commands.IKeySequenceBindingDefinition;
-import org.eclipse.ui.internal.commands.KeyConfigurationDefinition;
-import org.eclipse.ui.internal.commands.PreferenceCommandRegistry;
 import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.CharacterKey;
@@ -63,7 +64,7 @@ import org.eclipse.ui.keys.KeyStroke;
 public final class CommandManager implements ICommandManager {
 
 	// TODO private?
-	final static String SEPARATOR = "_"; //$NON-NLS-1$
+	public final static String SEPARATOR = "_"; //$NON-NLS-1$
 
 	private static CommandManager instance;
 
@@ -88,7 +89,7 @@ public final class CommandManager implements ICommandManager {
 		return false;
 	}	
 
-	static void validateContextBindingDefinitions(Collection contextBindingDefinitions) {		
+	public static void validateContextBindingDefinitions(Collection contextBindingDefinitions) {		
 		Iterator iterator = contextBindingDefinitions.iterator();
 		
 		while (iterator.hasNext()) {
@@ -99,7 +100,7 @@ public final class CommandManager implements ICommandManager {
 		}
 	}		
 	
-	static void validateImageBindingDefinitions(Collection imageBindingDefinitions) {		
+	public static void validateImageBindingDefinitions(Collection imageBindingDefinitions) {		
 		Iterator iterator = imageBindingDefinitions.iterator();
 		
 		while (iterator.hasNext()) {
@@ -108,7 +109,7 @@ public final class CommandManager implements ICommandManager {
 		}
 	}		
 	
-	static void validateKeyBindingDefinitions(Collection keyBindingDefinitions) {
+	public static void validateKeyBindingDefinitions(Collection keyBindingDefinitions) {
 		Iterator iterator = keyBindingDefinitions.iterator();
 		
 		while (iterator.hasNext()) {
@@ -120,7 +121,7 @@ public final class CommandManager implements ICommandManager {
 		}
 	}	
 
-	static boolean validateKeySequence(KeySequence keySequence) {
+	public static boolean validateKeySequence(KeySequence keySequence) {
 		List keyStrokes = keySequence.getKeyStrokes();
 		int size = keyStrokes.size();
 			
@@ -137,7 +138,7 @@ public final class CommandManager implements ICommandManager {
 		return true;
 	}
 
-	static boolean validateKeyStroke(KeyStroke keyStroke) {
+	public static boolean validateKeyStroke(KeyStroke keyStroke) {
 		return !keyStroke.getNaturalKey().equals(CharacterKey.getInstance('\0'));
 	}
 
@@ -534,7 +535,7 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	// TODO private?
-	static String[] extend(String[] strings) {
+	public static String[] extend(String[] strings) {
 		String[] strings2 = new String[strings.length + 1];
 		System.arraycopy(strings, 0, strings2, 0, strings.length);		
 		return strings2;
@@ -552,7 +553,7 @@ public final class CommandManager implements ICommandManager {
 	}
 	
 	// TODO private?
-	static String[] getKeyConfigurationIds(String keyConfigurationDefinitionId, Map keyConfigurationDefinitionsById) {
+	public static String[] getKeyConfigurationIds(String keyConfigurationDefinitionId, Map keyConfigurationDefinitionsById) {
 		List strings = new ArrayList();
 
 		while (keyConfigurationDefinitionId != null) {	
@@ -572,7 +573,7 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	// TODO private?
-	static String[] getPath(String string, String separator) {
+	public static String[] getPath(String string, String separator) {
 		if (string == null || separator == null)
 			return new String[0];
 

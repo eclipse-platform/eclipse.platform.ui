@@ -9,14 +9,16 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.api.older;
+package org.eclipse.ui.internal.commands.api;
+
+import org.eclipse.swt.widgets.Event;
 
 /**
  * <p>
  * JAVADOC
  * </p>
  * <p>
- * This interface is not intended to be extended or implemented by clients.
+ * This interface is not intended to be implemented or extended by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -24,12 +26,46 @@ package org.eclipse.ui.internal.commands.api.older;
  * 
  * @since 3.0
  */
-public interface IActionServiceEvent {
+public interface IAction {
+
+	/**
+	 * JAVADOC
+	 */	
+	void execute();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @param event
+	 */
+	// TODO temporary method	
+	void execute(Event event);
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	IActionService getActionService();
+	// TODO String getDescription();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	// TODO String getName();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	// TODO String getHelpId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	boolean isEnabled();
 }
