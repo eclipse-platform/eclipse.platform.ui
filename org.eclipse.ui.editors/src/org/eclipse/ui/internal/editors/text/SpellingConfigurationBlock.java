@@ -293,7 +293,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		
 		/* contributed provider preferences. */
 		fGroup= new Composite(groupComp, SWT.NONE);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
+		gd= new GridData(SWT.FILL, SWT.FILL, true, true);
 		fGroup.setLayoutData(gd);
 		fStackLayout= new StackLayout();
 		fGroup.setLayout(fStackLayout);
