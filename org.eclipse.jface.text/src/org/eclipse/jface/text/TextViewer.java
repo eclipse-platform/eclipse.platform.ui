@@ -64,8 +64,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.jface.text.hyperlink.HyperlinkManager;
-import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
 import org.eclipse.jface.text.projection.ChildDocument;
 import org.eclipse.jface.text.projection.ChildDocumentManager;
 
@@ -4008,16 +4008,28 @@ public class TextViewer extends Viewer implements
 		try {
 			
 			int widgetOffset= (startPosition == -1 ? startPosition : modelOffset2WidgetOffset(startPosition));
-			IRegion matchRegion= getFindReplaceDocumentAdapter().find(widgetOffset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
+			FindReplaceDocumentAdapter adapter= getFindReplaceDocumentAdapter();
+			IRegion matchRegion= adapter.find(widgetOffset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
 			if (matchRegion != null) {
 				int widgetPos= matchRegion.getOffset();
 				int length= matchRegion.getLength();
+				
+				// Prevents setting of widget selection with line delimiters at beginning or end
+				char startChar= adapter.charAt(widgetPos);
+				char endChar= adapter.charAt(widgetPos+length-1);
+				boolean borderHasLineDelimiter= startChar == '\n' || startChar == '\r' || endChar == '\n' || endChar == '\r';
+				boolean redraws= redraws();
+				if (borderHasLineDelimiter && redraws)
+					setRedraw(false);
+				
 				if (redraws()) {
 					fTextWidget.setSelectionRange(widgetPos, length);
 					internalRevealRange(widgetPos, widgetPos + length);
 					selectionChanged(widgetPos, length);
 				} else {
 					setSelectedRange(widgetOffset2ModelOffset(widgetPos), length);
+					if (redraws)
+						setRedraw(true);
 				}
 				
 				return widgetOffset2ModelOffset(widgetPos);
@@ -4064,7 +4076,8 @@ public class TextViewer extends Viewer implements
 			if (widgetOffset == -1)
 				return -1;
 
-			IRegion matchRegion= getFindReplaceDocumentAdapter().find(widgetOffset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
+			FindReplaceDocumentAdapter adapter= getFindReplaceDocumentAdapter();
+			IRegion matchRegion= adapter.find(widgetOffset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
 			int widgetPos= -1;
 			int length= 0;
 			if (matchRegion != null) {
@@ -4078,12 +4091,22 @@ public class TextViewer extends Viewer implements
 
 			if (widgetPos > -1) {
 				
+				// Prevents setting of widget selection with line delimiters at beginning or end
+				char startChar= adapter.charAt(widgetPos);
+				char endChar= adapter.charAt(widgetPos+length-1);
+				boolean borderHasLineDelimiter= startChar == '\n' || startChar == '\r' || endChar == '\n' || endChar == '\r';
+				boolean redraws= redraws();
+				if (borderHasLineDelimiter && redraws)
+					setRedraw(false);
+				
 				if (redraws()) {
 					fTextWidget.setSelectionRange(widgetPos, length);
 					internalRevealRange(widgetPos, widgetPos + length);
 					selectionChanged(widgetPos, length);
 				} else {
 					setSelectedRange(modelPos, length);
+					if (redraws)
+						setRedraw(true);
 				}
 			
 				return modelPos;
