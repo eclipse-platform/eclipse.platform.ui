@@ -35,10 +35,28 @@ public class BucketIndex {
 		};
 
 		private final static byte[][] EMPTY_DATA = new byte[0][];
-		// the length of a long in bytes
-		private final static int LONG_LENGTH = 8;
+		/**
+		 * This entry has not been modified in any way so far.
+		 * 
+		 * @see #state
+		 */
+		private final static int STATE_CLEAR = 0;
+		/**
+		 * This entry has been requested for deletion.
+		 * 
+		 * @see #state
+		 */
+		private final static int STATE_DELETED = 0x02;
+		/**
+		 * This entry has been modified.
+		 * 
+		 * @see #state
+		 */
+		private final static int STATE_DIRTY = 0x01;
 		// the length of a UUID in bytes
 		private final static int UUID_LENGTH = UniversalUniqueIdentifier.BYTES_SIZE;
+		// the length of a long in bytes
+		private final static int LONG_LENGTH = 8;
 		// the length of each component of the data array
 		public final static int DATA_LENGTH = UUID_LENGTH + LONG_LENGTH;
 
@@ -52,6 +70,15 @@ public class BucketIndex {
 		 * correspond to a file system path.
 		 */
 		private IPath path;
+
+		/**
+		 * State for this entry. Possible values are STATE_CLEAR, STATE_DIRTY and STATE_DELETED.
+		 * 
+		 * @see #STATE_CLEAR
+		 * @see #STATE_DELETED
+		 * @see #STATE_DIRTY
+		 */
+		private byte state = STATE_CLEAR;
 
 		/**
 		 * Comparison logic for states in byte[] form.
@@ -132,9 +159,12 @@ public class BucketIndex {
 		}
 
 		/**
-		 * Compacts the given array removing any null slots.
+		 * Compacts the given array removing any null slots. If non-null slots
+		 * are found, the entry is marked for removal. 
 		 */
 		void compact() {
+			if (!isDirty())
+				return;
 			int occurrences = 0;
 			for (int i = 0; i < data.length; i++)
 				if (data[i] != null)
@@ -145,6 +175,7 @@ public class BucketIndex {
 			if (occurrences == 0) {
 				// no items remaining
 				data = EMPTY_DATA;
+				delete();
 				return;
 			}
 			byte[][] result = new byte[occurrences][];
@@ -152,7 +183,13 @@ public class BucketIndex {
 			data = result;
 		}
 
+		public void delete() {
+			state = STATE_DELETED;
+		}
+
 		public void deleteOccurrence(int i) {
+			Assert.isTrue(state != STATE_DELETED);
+			state = STATE_DIRTY;
 			data[i] = null;
 		}
 
@@ -185,6 +222,14 @@ public class BucketIndex {
 			return getUUID(data[i]);
 		}
 
+		public boolean isDeleted() {
+			return state == STATE_DELETED;
+		}
+
+		public boolean isDirty() {
+			return state == STATE_DIRTY;
+		}
+
 		public boolean isEmpty() {
 			return data.length == 0;
 		}
@@ -193,17 +238,13 @@ public class BucketIndex {
 	public abstract static interface Visitor {
 		// should continue the traversal
 		public final static int CONTINUE = 0;
-		// should delete this entry (can be combined with the other constants except for UPDATE)
-		public final static int DELETE = 0x100;
 		// should stop looking at states for files in this container (or any of its children)	
 		public final static int RETURN = 2;
 		// should stop the traversal	
 		public final static int STOP = 1;
-		// should update this entry (can be combined with the other constants except for DELETE)		
-		public final static int UPDATE = 0x200;
 
 		/** 
-		 * @return either STOP, CONTINUE or RETURN and optionally DELETE or UPDATE
+		 * @return either STOP, CONTINUE or RETURN
 		 */
 		public int visit(Entry entry);
 	}
@@ -254,9 +295,10 @@ public class BucketIndex {
 	}
 
 	/**
-	 * 
+	 * Applies the given visitor to this bucket index. 
 	 * @param visitor
 	 * @param filter
+	 * @param exactMatch
 	 * @return one of STOP, RETURN or CONTINUE constants
 	 * @throws CoreException
 	 */
@@ -273,23 +315,23 @@ public class BucketIndex {
 				// calls the visitor passing all uuids for the entry
 				final Entry fileEntry = new Entry(path, (byte[][]) entry.getValue());
 				int outcome = visitor.visit(fileEntry);
-				if ((outcome & Visitor.UPDATE) != 0) {
-					needSaving = true;
-					fileEntry.compact();
-					if (fileEntry.isEmpty())
-						i.remove();
-					else
-						entry.setValue(fileEntry.getData());
-				} else if ((outcome & Visitor.DELETE) != 0) {
+				// compact the entry in case any changes have happened
+				fileEntry.compact();
+				if (fileEntry.isDeleted()) {
 					needSaving = true;
 					i.remove();
+				} else if (fileEntry.isDirty()) {
+					needSaving = true;
+					entry.setValue(fileEntry.getData());
 				}
-				if ((outcome & Visitor.RETURN) != 0)
-					// skip any other buckets under this
-					return Visitor.RETURN;
-				if ((outcome & Visitor.STOP) != 0)
-					// stop looking
-					return Visitor.STOP;
+				switch (outcome) {
+					case Visitor.RETURN :
+						// skip any other buckets under this
+						return Visitor.RETURN;
+					case Visitor.STOP :
+						// stop looking
+						return Visitor.STOP;
+				}
 			}
 			return Visitor.CONTINUE;
 		} finally {

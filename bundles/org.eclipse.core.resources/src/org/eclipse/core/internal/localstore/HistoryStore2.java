@@ -110,17 +110,14 @@ public class HistoryStore2 implements IHistoryStore {
 	/**
 	 * Applies the clean-up policy to an entry.
 	 */
-	boolean applyPolicy(Entry fileEntry, int maxStates, long minTimeStamp) {
-		boolean changed = false;
+	void applyPolicy(Entry fileEntry, int maxStates, long minTimeStamp) {
 		for (int i = 0; i < fileEntry.getOccurrences(); i++) {
 			if (i < maxStates && fileEntry.getTimestamp(i) >= minTimeStamp)
 				continue;
 			// "delete" the current uuid						
 			blobsToRemove.add(fileEntry.getUUID(i));
 			fileEntry.deleteOccurrence(i);
-			changed = true;
 		}
-		return changed;
 	}
 
 	/**
@@ -130,7 +127,8 @@ public class HistoryStore2 implements IHistoryStore {
 		// apply policy to destination as a separate pass, since now we want to visit the destination		
 		accept(new Visitor() {
 			public int visit(BucketIndex.Entry entry) {
-				return applyPolicy(entry, maxStates, minimumTimestamp) ? UPDATE : CONTINUE;
+				applyPolicy(entry, maxStates, minimumTimestamp);
+				return CONTINUE;
 			}
 		}, root, IResource.DEPTH_INFINITE);
 	}
@@ -145,7 +143,8 @@ public class HistoryStore2 implements IHistoryStore {
 			accept(new Visitor() {
 				public int visit(Entry fileEntry) {
 					entryCount[0] += fileEntry.getOccurrences();
-					return applyPolicy(fileEntry, maxStates, minimumTimestamp) ? UPDATE : CONTINUE;
+					applyPolicy(fileEntry, maxStates, minimumTimestamp);
+					return CONTINUE;
 				}
 			}, Path.ROOT, IResource.DEPTH_INFINITE);
 			if (Policy.DEBUG_HISTORY) {
@@ -362,7 +361,8 @@ public class HistoryStore2 implements IHistoryStore {
 					for (int i = 0; i < fileEntry.getOccurrences(); i++)
 						// remember we need to delete the files later
 						tmpBlobsToRemove.add(fileEntry.getUUID(i));
-					return DELETE;
+					fileEntry.delete();
+					return CONTINUE;
 				}
 			}, root, IResource.DEPTH_INFINITE);
 		} catch (CoreException ce) {

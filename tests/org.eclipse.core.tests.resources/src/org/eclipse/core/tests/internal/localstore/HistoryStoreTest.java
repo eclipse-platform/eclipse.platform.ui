@@ -101,7 +101,7 @@ public class HistoryStoreTest extends ResourceTest {
 	}
 
 	public static Test suite() {
-		 //if (true) return new TestSuite(HistoryStoreTest.class);
+		// if (true) return new TestSuite(HistoryStoreTest.class);
 		TestSuite suite = new TestSuite(HistoryStoreTest.class.getName());
 		SessionTestSuite oldHistoryTestSuite = new WorkspaceSessionTestSuite(PI_RESOURCES_TESTS, HistoryStoreTest.class, "Old History Store test");
 		try {

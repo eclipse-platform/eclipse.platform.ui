@@ -26,7 +26,7 @@ public class BucketIndexTest extends ResourceTest {
 	public BucketIndexTest(String name) {
 		super(name);
 	}
-	
+
 	public void testSort() {
 		IPath baseLocation = getRandomLocation();
 		try {
@@ -43,7 +43,7 @@ public class BucketIndexTest extends ResourceTest {
 			assertEquals("2.3", timestamp1, entry.getTimestamp(0));
 			// adds a new state with a more recent timestamp
 			UniversalUniqueIdentifier uuid2 = new UniversalUniqueIdentifier();
-			long timestamp2 = timestamp1 + 1;			
+			long timestamp2 = timestamp1 + 1;
 			index.addBlob(path, uuid2, timestamp2);
 			entry = index.getEntry(path);
 			assertNotNull("3.0", entry);
@@ -55,7 +55,7 @@ public class BucketIndexTest extends ResourceTest {
 			assertEquals("3.5", timestamp1, entry.getTimestamp(1));
 			// adds a 3rd state, with the same timestamp as the 1st 
 			UniversalUniqueIdentifier uuid3 = new UniversalUniqueIdentifier();
-			long timestamp3 = timestamp1;			
+			long timestamp3 = timestamp1;
 			index.addBlob(path, uuid3, timestamp3);
 			entry = index.getEntry(path);
 			assertNotNull("4.0", entry);
@@ -65,12 +65,12 @@ public class BucketIndexTest extends ResourceTest {
 			assertEquals("4.2", uuid2, entry.getUUID(0));
 			assertEquals("4.3", timestamp2, entry.getTimestamp(0));
 			assertEquals("4.4", uuid3, entry.getUUID(1));
-			assertEquals("4.5", timestamp3, entry.getTimestamp(1));			
+			assertEquals("4.5", timestamp3, entry.getTimestamp(1));
 			assertEquals("4.6", uuid1, entry.getUUID(2));
-			assertEquals("4.7", timestamp1, entry.getTimestamp(2));			
+			assertEquals("4.7", timestamp1, entry.getTimestamp(2));
 		} finally {
 			ensureDoesNotExistInFileSystem(baseLocation.toFile());
-		}			
+		}
 	}
 
 	/**
@@ -161,8 +161,9 @@ public class BucketIndexTest extends ResourceTest {
 			// test deletion
 			try {
 				index1.accept(new BucketIndex.Visitor() {
-					public int visit(BucketIndex.Entry entry) {
-						return DELETE;
+					public int visit(BucketIndex.Entry fileEntry) {
+						fileEntry.delete();
+						return CONTINUE;
 					}
 				}, path, true);
 			} catch (CoreException e) {
@@ -180,5 +181,5 @@ public class BucketIndexTest extends ResourceTest {
 		} finally {
 			ensureDoesNotExistInFileSystem(baseLocation.toFile());
 		}
-	}	
+	}
 }
