@@ -10,14 +10,29 @@
  *******************************************************************************/
 package org.eclipse.help.internal.util;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Locale;
+import java.util.Map;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
-import org.eclipse.help.internal.*;
-import org.osgi.framework.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionDelta;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.IHelpContentProducer;
+import org.eclipse.help.internal.HelpPlugin;
+import org.osgi.framework.Bundle;
 
 public class ResourceLocator {
 	public static final String CONTENTPRODUCER_XP_NAME = "contentProducer"; //$NON-NLS-1$
@@ -150,74 +165,115 @@ public class ResourceLocator {
 	}
 
 	/**
-	 * Opens an input stream to a file contained in a plugin. This includes NL
-	 * lookup.
+	 * Opens an input stream to a file contained in a plugin. This includes
+	 * includes OS, WS and NL lookup.
+	 * 
+	 * @param pluginId
+	 *            the plugin id of the plugin that contains the file you are
+	 *            trying to find
+	 * @param file
+	 *            the relative path of the file to find
+	 * @param locale
+	 *            the locale used as an override or <code>null</code> to use
+	 *            the default locale
+	 * 
+	 * @return an InputStream to the file or <code>null</code> if the file
+	 *         wasn't found
 	 */
 	public static InputStream openFromPlugin(String pluginId, String file,
 			String locale) {
 		Bundle bundle = Platform.getBundle(pluginId);
 		if (bundle != null)
-			return openFromPlugin(Platform.getBundle(pluginId), file, locale);
+			return openFromPlugin(bundle, file, locale);
 		else
 			return null;
 	}
 
 	/**
 	 * Opens an input stream to a file contained in a zip in a plugin. This
-	 * includes NL lookup.
+	 * includes OS, WS and NL lookup.
+	 * 
+	 * @param pluginDesc
+	 *            the plugin description of the plugin that contains the file
+	 *            you are trying to find
+	 * @param file
+	 *            the relative path of the file to find
+	 * @param locale
+	 *            the locale used as an override or <code>null</code> to use
+	 *            the default locale
+	 * 
+	 * @return an InputStream to the file or <code>null</code> if the file
+	 *         wasn't found
 	 */
-	public static InputStream openFromZip(Bundle pluginDesc, String zip,
-			String file, String locale) {
-		// First try the NL lookup
-		InputStream is = doOpenFromZip(pluginDesc, "$nl$/" + zip, file, locale); //$NON-NLS-1$
-		if (is == null)
-			// Default location <plugin>/doc.zip
-			is = doOpenFromZip(pluginDesc, zip, file, locale);
-		return is;
+	public static InputStream openFromZip(Bundle pluginDesc, String zip, String file, String locale) {;
+		
+		String pluginID = pluginDesc.getSymbolicName();
+		Map cache = zipCache;
+		ArrayList pathPrefix = getPathPrefix(locale);
+		
+		for (int i = 0; i < pathPrefix.size(); i++) {
+			
+			// finds the zip file by either using a cached location, or
+			// calling Platform.find - the result is cached for future use.
+			Object cached = cache.get(pluginID + '/'+ pathPrefix.get(i) + zip);
+			if (cached == null) {
+				try {
+					URL url = Platform.find(pluginDesc, new Path(pathPrefix.get(i) + zip));
+					if (url != null) {
+						URL realZipURL = Platform.asLocalURL(Platform.resolve(url));
+						cached = realZipURL.toExternalForm();
+					} else {
+						cached = ZIP_NOT_FOUND;
+					}
+				} catch (IOException ioe) {
+					cached = ZIP_NOT_FOUND;
+				}
+				// cache it
+				cache.put(pluginID + '/' + pathPrefix.get(i) + zip, cached);
+			} 
+
+			if (cached == ZIP_NOT_FOUND || cached.toString().startsWith("jar:"))
+				continue;
+			
+			// cached should be a zip file that is actually on the filesystem
+			// now check if the file is in this zip
+			try {
+				URL jurl = new URL("jar", "", (String) cached + "!/" + file); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				URLConnection jconnection = jurl.openConnection();
+				jconnection.setDefaultUseCaches(false);
+				jconnection.setUseCaches(false);
+				return jconnection.getInputStream();
+			} catch (IOException ioe) {
+				// a file not found exception is an io exception
+				continue;
+			}
+			
+		} // end for loop
+		
+		// we didn't find the file in any zip
+		return null;
 	}
 
 	/**
-	 * Opens an input stream to a file contained in a plugin. This includes NL
-	 * lookup.
+	 * Opens an input stream to a file contained in a plugin. This includes
+	 * includes OS, WS and NL lookup.
+	 * 
+	 * @param pluginDesc
+	 *            the plugin description of the plugin that contains the file
+	 *            you are trying to find
+	 * @param file
+	 *            the relative path of the file to find
+	 * @param locale
+	 *            the locale used as an override or <code>null</code> to use
+	 *            the default locale
+	 * 
+	 * @return an InputStream to the file or <code>null</code> if the file
+	 *         wasn't found
 	 */
-	public static InputStream openFromPlugin(Bundle pluginDesc, String file,
-			String locale) {
-		InputStream is = doOpenFromPlugin(pluginDesc, "$nl$/" + file, locale); //$NON-NLS-1$
-		if (is == null)
-			// Default location
-			is = doOpenFromPlugin(pluginDesc, file, locale);
-		return is;
-	}
-
-	/**
-	 * Opens an input stream to a file contained in doc.zip in a plugin
-	 */
-	private static InputStream doOpenFromZip(Bundle pluginDesc, String zip,
-			String file, String locale) {
-		String realZipURL = findZip(pluginDesc, zip, locale);
-		if (realZipURL == null) {
-			return null;
-		}
-		try {
-			URL jurl = new URL("jar", "", realZipURL + "!/" + file); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			URLConnection jconnection = jurl.openConnection();
-			jconnection.setDefaultUseCaches(false);
-			jconnection.setUseCaches(false);
-			return jconnection.getInputStream();
-		} catch (IOException ioe) {
-			return null;
-		}
-	}
-
-	/**
-	 * Opens an input stream to a file contained in a plugin
-	 */
-	private static InputStream doOpenFromPlugin(Bundle pluginDesc, String file,
-			String locale) {
-		IPath flatFilePath = new Path(file);
-		Map override = new HashMap(1);
-		override.put("$nl$", locale); //$NON-NLS-1$
-		URL flatFileURL = Platform.find(pluginDesc, flatFilePath, override);
+	public static InputStream openFromPlugin(Bundle pluginDesc, String file, String locale) {
+		ArrayList pathPrefix = getPathPrefix(locale);
+		
+		URL flatFileURL = find(pluginDesc, new Path(file), pathPrefix);
 		if (flatFileURL != null)
 			try {
 				return flatFileURL.openStream();
@@ -227,46 +283,59 @@ public class ResourceLocator {
 		return null;
 	}
 
-	/**
-	 * @param pluginDesc
-	 * @param zip
-	 *            zip file path as required by Plugin.find()
-	 * @param locale
-	 * @return String form of resolved URL of a zip or null
+	/*
+	 * Search the ws, os then nl for a resource. Platform.find can't be used
+	 * directly with $nl$, $os$ or $ws$ becuase the root directory will be 
+	 * searched too early.
 	 */
-	private static String findZip(Bundle pluginDesc, String zip, String locale) {
-		String pluginID = pluginDesc.getSymbolicName();
-		// check cache
-		Map cache = zipCache;
-		Object cached = cache.get(pluginID + '/' + zip + '/' + locale);
-		if (cached == null) {
-			// not in cache find on filesystem
-			IPath zipFilePath = new Path(zip);
-			Map override = new HashMap(1);
-			override.put("$nl$", locale); //$NON-NLS-1$
-			try {
-				URL zipFileURL = Platform.find(pluginDesc, zipFilePath,
-						override); //PASCAL This will not activate the plugin
-				if (zipFileURL != null) {
-					URL realZipURL = Platform.asLocalURL(Platform
-							.resolve(zipFileURL));
-					cached = realZipURL.toExternalForm();
-				} else {
-					cached = ZIP_NOT_FOUND;
-				}
-			} catch (IOException ioe) {
-				cached = ZIP_NOT_FOUND;
-			}
-			// cache it
-			cache.put(pluginID + '/' + zip + '/' + locale, cached);
+	private static URL find(Bundle pluginDesc, IPath flatFilePath, ArrayList pathPrefix) {
+		
+		// try to find the actual file. 
+		for (int i = 0; i < pathPrefix.size(); i++) {
+			URL url = Platform.find(pluginDesc, new Path((String)pathPrefix.get(i) + flatFilePath));
+			if (url != null)
+				return url;
 		}
-		if (cached == ZIP_NOT_FOUND) {
-			return null;
-		}
-		return (String) cached;
+		return null; 
 	}
-
+	
 	public static void clearZipCache() {
 		zipCache = new Hashtable();
 	}
+	
+	/*
+	 * Gets an ArrayList that has the path prefixes to search.
+	 * 
+	 * @param locale
+	 *            the locale used as an override or <code>null</code> to use
+	 *            the default locale
+	 * @return an ArrayList that has path prefixes that need to be search. The
+	 *         returned ArrayList will have an entry for the root of the plugin.
+	 */
+	private static ArrayList getPathPrefix(String locale) {
+		ArrayList pathPrefix = new ArrayList(5); 
+		// TODO add override for ws and os similar to how it's done with locale now
+		String ws = Platform.getWS();
+		String os = Platform.getOS();
+		if (locale == null)
+			locale = Platform.getNL();
+		
+		if (ws != null) 
+			pathPrefix.add("ws/" + ws + '/');
+		
+		if (os != null && !os.equals("OS_UNKNOWN"))
+			pathPrefix.add("os/" + os + '/');
+		
+		if (locale != null && locale.length() >= 5) 
+			pathPrefix.add("nl/" + locale.substring(0, 2) + '/' + locale.substring(3, 5) + '/');
+		
+		if (locale != null && locale.length() >= 2)
+			pathPrefix.add("nl/" + locale.substring(0, 2) + '/');
+		
+		// the plugin root
+		pathPrefix.add("");	
+		
+		return pathPrefix;
+	}
+
 }

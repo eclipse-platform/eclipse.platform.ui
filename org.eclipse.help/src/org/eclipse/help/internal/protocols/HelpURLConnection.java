@@ -94,9 +94,8 @@ public class HelpURLConnection extends URLConnection {
 			throw new IOException("Resource not found."); //$NON-NLS-1$
 		}
 
-		// first try using content provider
-		// then find the file inside nl tree in doc.zip,
-		// and then, in the file system
+		// first try using content provider, then try to find the file 
+		// inside doc.zip, and finally try the file system
 		InputStream inputStream = ResourceLocator.openFromProducer(plugin,
 				query == null ? getFile() : getFile() + "?" + query, //$NON-NLS-1$
 				getLocale());
