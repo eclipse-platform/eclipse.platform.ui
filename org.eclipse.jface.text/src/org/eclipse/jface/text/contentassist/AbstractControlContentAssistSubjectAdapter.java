@@ -448,7 +448,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 				}
 				
 				void paintControl(PaintEvent e) {
-					if (!fControl.isDisposed()) {
+					if (!fControl.isDisposed() && !fImage.isDisposed()) {
 						Point global= fControl.toDisplay(fDx, fDy);
 						Point local= ((Control) e.widget).toControl(global);
 						e.gc.drawImage(fImage, local.x, local.y);
@@ -456,14 +456,16 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 				}
 				
 				boolean handleEvent(MouseEvent e) {
-					Rectangle r= fImage.getBounds();
-					Point global= fControl.toDisplay(fDx, fDy);
-					Point local= ((Control) e.widget).toControl(global);
-					r.x= local.x;
-					r.y= local.y;
-					if (r.contains(e.x, e.y)) {
-						updateHover2(fControl, fText);
-						return true;
+					if (!fImage.isDisposed()) {
+						Rectangle r= fImage.getBounds();
+						Point global= fControl.toDisplay(fDx, fDy);
+						Point local= ((Control) e.widget).toControl(global);
+						r.x= local.x;
+						r.y= local.y;
+						if (r.contains(e.x, e.y)) {
+							updateHover2(fControl, fText);
+							return true;
+						}
 					}
 					return false;
 				}
