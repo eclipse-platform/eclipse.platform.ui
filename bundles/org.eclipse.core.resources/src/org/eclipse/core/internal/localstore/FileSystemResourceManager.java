@@ -419,6 +419,9 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		if (localLocation.isAbsolute())
 			lastModified = CoreFileSystemLibrary.getLastModified(localLocation.toFile().getAbsolutePath());
 		ResourceInfo info = target.getResourceInfo(false, true);
+		//clear modification stamp for resource whose local contents don't exist
+		if (lastModified == 0)
+			info.clearModificationStamp();
 		updateLocalSync(info, lastModified);
 	}
 

@@ -85,8 +85,12 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 		ResourceInfo info = target.getResourceInfo(false, false);
 		int flags = target.getFlags(info);
 		//don't delete linked resources
-		if (ResourceInfo.isSet(flags, ICoreConstants.M_LINK))
+		if (ResourceInfo.isSet(flags, ICoreConstants.M_LINK)) {
+			//just clear local sync info
+			info = target.getResourceInfo(false, true);
+			info.clearModificationStamp();
 			return;
+		}
 		if (target.exists(flags, false))
 			target.deleteResource(true, null);
 		node.setExistsWorkspace(false);
