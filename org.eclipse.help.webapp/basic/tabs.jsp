@@ -94,7 +94,7 @@ document.write("<%=ServletResources.getString("shortSynch", request)%></a>&nbsp;
 //-->
 </SCRIPT>
 
-	<iframe name="liveHelpFrame" frameborder="no" width="0" height="0" scrolling="no">
+	<iframe name="liveHelpFrame" title="<%=ServletResources.getString("ignore", "liveHelpFrame", request)%>" frameborder="no" width="0" height="0" scrolling="no">
 	<layer name="liveHelpFrame" frameborder="no" width="0" height="0" scrolling="no"></layer>
 	</iframe>
 </body>
