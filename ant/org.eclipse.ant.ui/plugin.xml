@@ -323,6 +323,13 @@
   		 </contextualLaunch>
       </shortcut>
    </extension>
+   <extension point="org.eclipse.core.runtime.adapters">
+         <factory 
+            class=""
+            adaptableType="org.eclipse.core.resources.IFile">
+            <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
+         </factory>
+    </extension>
 <!-- Console Extensions -->
    <extension
          point="org.eclipse.debug.ui.consoleLineTrackers">
