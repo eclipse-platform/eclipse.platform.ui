@@ -12,6 +12,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.InstallAbortedException;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.UpdateUIPluginImages;
 import org.eclipse.update.internal.ui.model.PendingChange;
@@ -71,7 +72,13 @@ public class InstallWizard extends Wizard {
 		try {
 			getContainer().run(true, true, operation);
 		} catch (InvocationTargetException e) {
-			UpdateUIPlugin.logException(e);
+			Throwable target = e.getTargetException();
+			if (target instanceof InstallAbortedException) {
+				// should we revert to the previous configuration?
+			}
+			else {
+				UpdateUIPlugin.logException(e);
+			}
 			return false;
 		} catch (InterruptedException e) {
 			return false;
