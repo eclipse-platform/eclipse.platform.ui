@@ -5,6 +5,7 @@ package org.eclipse.jface.dialogs;
  * All Rights Reserved.
  */
 import org.eclipse.swt.*;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
@@ -343,9 +344,24 @@ protected Button createButton(Composite parent,int id,String label,boolean defau
 	Button button = super.createButton(parent, id, label, defaultButton);
 	//Be sure to set the focus if the custom area cannot so as not
 	//to lose the defaultButton.
-	if(defaultButton && !customArea.isFocusControl())
+	if(defaultButton && !customShouldTakeFocus())
 		button.setFocus();
 	return button;
+}
+/**
+ * Return whether or not we should apply the workaround where
+ * we take focus for the default button or if that should be 
+ * determined by the dialog.
+ * By default only return true if the custom area is a label
+ * or CLabel that cannot take focus. * @return boolean */
+protected boolean customShouldTakeFocus() {
+	if(customArea instanceof Label) 
+		return false;
+	
+	if(customArea instanceof CLabel)
+		return (customArea.getStyle() & SWT.NO_FOCUS) > 0;
+	
+	return true;	
 }
 
 	/*
