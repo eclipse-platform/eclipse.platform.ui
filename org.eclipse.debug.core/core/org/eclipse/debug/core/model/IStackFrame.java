@@ -8,11 +8,10 @@ package org.eclipse.debug.core.model;
 import org.eclipse.debug.core.DebugException;
 
 /**
- * A stack frame represents a stack frame in a suspended thread. A
- * stack frame has element type <code>STACK_FRAME</code>, and a parent
- * of type <code>THREAD</code>. The children of a stack frame are of
- * type <code>VARIABLE</code>, and represent the visible variables in
- * the stack frame. Minimally, a stack frame supports
+ * A stack frame represents an execution context in a suspended thread. A
+ * stack frame is of element type <code>STACK_FRAME</code>. A stack frame
+ * contains variables representing visible locals and arguments at the current
+ * execution location. Minimally, a stack frame supports
  * the following capabilities:
  * <ul>
  * <li>suspend/resume (convenience to resume this stack frame's thread)
@@ -20,14 +19,14 @@ import org.eclipse.debug.core.DebugException;
  * <li>termination (convenience to terminate this stack frame's thread or debug target)
  * </ul>
  * <p>
- * An implementation may choose to re-use or discard
+ * An debug model implementation may choose to re-use or discard
  * stack frames on iterative thread suspensions. Clients
  * cannot assume that stack frames are identical or equal across
  * iterative thread suspensions and must check for equality on iterative
  * suspensions if they wish to re-use the objects.
  * </p>
  * <p>
- * An implementation that preserves equality
+ * An debug model implementation that preserves equality
  * across iterative suspensions may display more desirable behavior in
  * some clients. For example, if stack frames are preserved
  * while stepping, a UI client would be able to update the UI incrementally,
@@ -52,34 +51,41 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * 
 	 * @return thread
 	 */
-	IThread getThread();
+	public IThread getThread();
 	/**
 	 * Returns the visible variables in this stack frame. An empty
 	 * collection is returned if there are no visible variables.
 	 * 
 	 * @return collection of visible variables
-	 * @exception DebugException if unable to retrieve variables
-	 * 		from the target
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
 	 */
-	IVariable[] getVariables() throws DebugException;
+	public IVariable[] getVariables() throws DebugException;
 	/**
 	 * Returns the line number of the instruction pointer in 
 	 * this stack frame that corresponds to a line in an associated source
 	 * element, or <code>-1</code> if line number information
 	 * is unavailable.
 	 *
-	 * @return line number of instruction pointer in this stack frame
-	 * @exception DebugException if unable to retrieve this stack frame's line number
-	 *   from the target
+	 * @return line number of instruction pointer in this stack frame, or 
+	 * <code>-1</code> if line number information is unavailable
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
 	 */
-	int getLineNumber() throws DebugException;
+	public int getLineNumber() throws DebugException;
 	/**
 	 * Returns the name of this stack frame. Name format is debug model
 	 * specific, and should be specified by a debug model.
 	 *
 	 * @return this frame's name
-	 * @exception DebugException if unable to retrieve this element's name from
-	 *    the target
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
 	 */
-	String getName() throws DebugException;
+	public String getName() throws DebugException;
 }
