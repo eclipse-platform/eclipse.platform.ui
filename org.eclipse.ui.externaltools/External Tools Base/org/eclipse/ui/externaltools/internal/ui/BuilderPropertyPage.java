@@ -723,7 +723,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 * Prompts the user to edit the given launch configuration. Returns the
 	 * return code from opening the launch configuration dialog.
 	 */
-	private int editConfiguration(ILaunchConfiguration config) throws CoreException {
+	private int editConfiguration(ILaunchConfiguration config) {
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
 		manager.addLaunchConfigurationListener(configurationListener);
 		int code= DebugUITools.openLaunchConfigurationPropertiesDialog(getShell(), config, IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP);

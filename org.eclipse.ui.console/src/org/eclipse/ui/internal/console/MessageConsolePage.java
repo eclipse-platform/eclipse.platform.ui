@@ -41,12 +41,11 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.console.*;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleView;
+import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.actions.ClearOutputAction;
 import org.eclipse.ui.console.actions.TextViewerAction;
 import org.eclipse.ui.console.actions.TextViewerGotoLineAction;
@@ -107,7 +106,7 @@ public class MessageConsolePage implements IPageBookViewPage, IAdaptable, IPrope
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.IPageBookViewPage#init(org.eclipse.ui.part.IPageSite)
 	 */
-	public void init(IPageSite site) throws PartInitException {
+	public void init(IPageSite site) {
 		fSite = site;
 		
 	}
