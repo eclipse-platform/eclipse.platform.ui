@@ -183,6 +183,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		preferences.setDefault(ResourcesPlugin.PREF_BUILD_ORDER, convertStringArraytoString(defaults.getBuildOrder()));
 		preferences.setDefault(ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER, defaults.getBuildOrder() == null);
 		preferences.setDefault(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY, defaults.getFileStateLongevity());
+		preferences.setDefault(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS, defaults.getMaxBuildIterations());
 		preferences.setDefault(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE, defaults.getMaxFileStateSize());
 		preferences.setDefault(ResourcesPlugin.PREF_MAX_FILE_STATES, defaults.getMaxFileStates());
 		preferences.setDefault(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, defaults.getSnapshotInterval());
