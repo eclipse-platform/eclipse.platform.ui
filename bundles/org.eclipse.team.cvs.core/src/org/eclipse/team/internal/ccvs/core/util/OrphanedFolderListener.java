@@ -13,6 +13,8 @@ import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
@@ -56,11 +58,35 @@ public class OrphanedFolderListener extends ResourceDeltaVisitor {
 	}
 	
 	/*
+	 * Handle the case where an added file has the same name as a "cvs removed" file
+	 * by restoring the sync info to what it was before the delete
+	 */
+	private void handleReplacedDeletion(IResource resource) {
+		if (resource.getType() == IResource.FILE) {
+			try {
+				ICVSFile mFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
+				if (mFile.isManaged()) {
+					ResourceSyncInfo info = mFile.getSyncInfo();
+					if (info.isDeleted()) {
+						mFile.setSyncInfo(new ResourceSyncInfo(info.getName(), info.getRevision(), info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions()));
+					}
+				}
+			} catch (CVSException e) {
+				CVSProviderPlugin.log(e);
+			}
+		}
+	}
+	
+	/*
 	 * @see ResourceDeltaVisitor#handleAdded(IResource[])
 	 */
 	protected void handleAdded(IResource[] resources) {
 		for (int i = 0; i < resources.length; i++) {
-			handleOrphanedSubtree(resources[i]);
+			if (resources[i].getType() == IResource.FOLDER) {
+				handleOrphanedSubtree(resources[i]);
+			} else if (resources[i].getType() == IResource.FILE) {
+				handleReplacedDeletion(resources[i]);
+			}
 		}
 	}
 
