@@ -368,6 +368,7 @@ function keyDownHandler(e)
   		if (!clickedNode) return;
 
 		var next = getNextDown(clickedNode);
+		highlightTopic(next);
 		if (next)
 			next.focus();
 
@@ -376,6 +377,7 @@ function keyDownHandler(e)
   		if (!clickedNode) return;
 
 		var next = getNextUp(clickedNode);
+		highlightTopic(next);
 		if (next)
 			next.focus();
   	}

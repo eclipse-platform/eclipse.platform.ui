@@ -75,7 +75,6 @@ function removeBookmark()
 		<a id='a<%=i%>' 
 		   href='<%=bookmarks[i].getHref()%>' 
 		   onclick='parent.parent.parent.setContentToolbarTitle(" ")' 
-		   onfocus="highlightTopic(this)"
 		   oncontextmenu="contextMenuHandler(event);return false;"
 		   title="<%=UrlUtil.htmlEncode(bookmarks[i].getLabel())%>">
 		   <img src="<%=prefs.getImagesDirectory()%>/topic.gif">

@@ -82,7 +82,6 @@ setTimeout('refresh()', 2000);
 		<a id='a<%=topic%>' 
 		   href='<%=data.getTopicHref(topic)%>' 
 		   onclick='parent.parent.parent.setContentToolbarTitle(this.title)' 
-		   onfocus="highlightTopic(this)"
 		   title="<%=data.getTopicTocLabel(topic)%>">
 		   <%=data.getTopicLabel(topic)%>
 		 </a>
