@@ -5,6 +5,7 @@
 package org.eclipse.help.ui.internal.browser.win32;
 import java.io.*;
 import java.util.StringTokenizer;
+
 import org.eclipse.help.internal.ui.util.HelpWorkbenchException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -193,6 +194,7 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 			webBrowser = new WebBrowser(composite);
 			webBrowser.addCommandStateChangedListener(this);
 		} catch (HelpWorkbenchException hwe) {
+			System.err.println(ieResources.getString("WE027", hwe.getMessage()));
 		}
 		return composite;
 	}
@@ -211,6 +213,7 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 			while (null != (line = reader.readLine())) {
 				if (line.length() > 0) {
 					executeCommand(line);
+					// this is required, otherwise shell stops responding
 					while (System.in.available() <= 0) {
 						try {
 							Thread.currentThread().sleep(30);
@@ -220,6 +223,7 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 				}
 			}
 		} catch (IOException e) {
+			System.err.println(ieResources.getString("WE026", e.getMessage()));
 			return;
 		}
 	}
@@ -266,7 +270,7 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 			display.syncExec(new CloseCommand());
 			return;
 		} else {
-			System.err.println("Unrecognized command");
+			System.err.println(ieResources.getString("WE028", command));
 		}
 	}
 	class SetLocationCommand implements Runnable {
