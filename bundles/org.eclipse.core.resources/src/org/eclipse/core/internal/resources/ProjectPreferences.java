@@ -13,6 +13,7 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
+import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -37,6 +38,7 @@ public class ProjectPreferences extends EclipsePreferences {
 	private IFile file;
 	// cache which nodes have been loaded from disk
 	protected static Set loadedNodes = new HashSet();
+	private boolean isWriting;
 
 	/**
 	 * Default constructor. Should only be called by #createExecutableExtension.
@@ -112,9 +114,18 @@ public class ProjectPreferences extends EclipsePreferences {
 		if (file == null) {
 			if (project == null || qualifier == null)
 				return null;
-			file = project.getFile(new Path(DEFAULT_PREFERENCES_DIRNAME).append(qualifier).addFileExtension(PREFS_FILE_EXTENSION));
+			file = getFile(project, qualifier);
 		}
 		return file;
+	}
+
+	static IFile getFile(IProject project, String qualifier) {
+		return project.getFile(new Path(DEFAULT_PREFERENCES_DIRNAME).append(qualifier).addFileExtension(PREFS_FILE_EXTENSION));
+	}
+
+	static IFile getFile(IFolder folder, String qualifier) {
+		Assert.isLegal(folder.getName().equals(DEFAULT_PREFERENCES_DIRNAME));
+		return folder.getFile(new Path(qualifier).addFileExtension(PREFS_FILE_EXTENSION));
 	}
 
 	protected void save() throws BackingStoreException {
@@ -237,8 +248,16 @@ public class ProjectPreferences extends EclipsePreferences {
 		String message = null;
 		try {
 			message = Policy.bind("preferences.syncException", node.absolutePath()); //$NON-NLS-1$
-			if (node instanceof ProjectPreferences)
-				((ProjectPreferences) node).load();
+			if (!(node instanceof ProjectPreferences))
+				return;
+			ProjectPreferences projectPrefs = (ProjectPreferences) node;
+			if (projectPrefs.isWriting)
+				return;
+			projectPrefs.load();
+			// make sure that we generate the appropriate resource change events
+			// if encoding settings have changed
+			if (ResourcesPlugin.PI_RESOURCES.equals(qualifier))
+				((Workspace) ResourcesPlugin.getWorkspace()).getCharsetManager().charsetPreferencesChanged(file.getProject());
 		} catch (BackingStoreException e) {
 			IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e);
 			throw new CoreException(status);
@@ -270,12 +289,18 @@ public class ProjectPreferences extends EclipsePreferences {
 		// synchronizing) there is short-circuit code that doesn't visit the
 		// children.
 		Preferences root = Platform.getPreferencesService().getRootNode();
-		Preferences node = root.node(ProjectScope.SCOPE).node(project.getName());
-		removeNode(node);
+		Preferences projectNode = root.node(ProjectScope.SCOPE).node(project.getName());
+		// check if we need to notify the charset manager
+		boolean hasResourcesSettings = getFile(project, ResourcesPlugin.PI_RESOURCES).exists();
+		// remove the preferences
+		removeNode(projectNode);
+		// notifies the CharsetManager 		
+		if (hasResourcesSettings)
+			((Workspace) ResourcesPlugin.getWorkspace()).getCharsetManager().charsetPreferencesChanged(project);
 	}
 
-	static void deleted(IFile resource) throws CoreException {
-		IPath path = resource.getFullPath();
+	static void deleted(IFile file) throws CoreException {
+		IPath path = file.getFullPath();
 		int count = path.segmentCount();
 		if (count != 3)
 			return;
@@ -287,12 +312,16 @@ public class ProjectPreferences extends EclipsePreferences {
 		String qualifier = path.removeFileExtension().lastSegment();
 		Preferences projectNode = root.node(ProjectScope.SCOPE).node(project);
 		try {
-			if (projectNode.nodeExists(qualifier))
-				removeNode(projectNode.node(qualifier));
+			if (!projectNode.nodeExists(qualifier))
+				return;
 		} catch (BackingStoreException e) {
-			// try to remove it anyway
-			removeNode(projectNode.node(qualifier));
+			// ignore
 		}
+		// remove the preferences
+		removeNode(projectNode.node(qualifier));
+		// notifies the CharsetManager if needed
+		if (qualifier.equals(ResourcesPlugin.PI_RESOURCES))
+			((Workspace) ResourcesPlugin.getWorkspace()).getCharsetManager().charsetPreferencesChanged(file.getProject());
 	}
 
 	static void deleted(IResource resource) throws CoreException {
@@ -309,8 +338,8 @@ public class ProjectPreferences extends EclipsePreferences {
 		}
 	}
 
-	static void deleted(IFolder resource) throws CoreException {
-		IPath path = resource.getFullPath();
+	static void deleted(IFolder folder) throws CoreException {
+		IPath path = folder.getFullPath();
 		int count = path.segmentCount();
 		if (count != 2)
 			return;
@@ -321,7 +350,22 @@ public class ProjectPreferences extends EclipsePreferences {
 		// The settings dir has been removed/moved so remove all project prefs
 		// for the resource.
 		String project = path.segment(0);
-		Preferences node = root.node(ProjectScope.SCOPE).node(project);
-		removeNode(node);
+		Preferences projectNode = root.node(ProjectScope.SCOPE).node(project);
+		// check if we need to notify the charset manager
+		boolean hasResourcesSettings = getFile(folder, ResourcesPlugin.PI_RESOURCES).exists();
+		// remove the preferences
+		removeNode(projectNode);
+		// notifies the CharsetManager 		
+		if (hasResourcesSettings)
+			((Workspace) ResourcesPlugin.getWorkspace()).getCharsetManager().charsetPreferencesChanged(folder.getProject());
+	}
+
+	public void flush() throws BackingStoreException {
+		isWriting = true;
+		try {
+			super.flush();
+		} finally {
+			isWriting = false;
+		}
 	}
 }

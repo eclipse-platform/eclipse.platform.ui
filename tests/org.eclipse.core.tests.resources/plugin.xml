@@ -250,5 +250,10 @@
          id="anotherXML"
          base-type="org.eclipse.core.runtime.xml"          
          describer="org.eclipse.core.runtime.content.XMLRootElementContentDescriber:org.eclipse.core.tests.resources.anotherXML"/>
-</extension>
+   <content-type      
+         name="My Content Type"
+         id="myContent"
+         file-extensions="resources-mc"
+         default-charset="PROVIDER_CHARSET"/>         
+</extension>            
 </plugin>

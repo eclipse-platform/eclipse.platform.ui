@@ -26,14 +26,12 @@ public class CharsetTest extends EclipseWorkspaceTest {
 	private static final String SAMPLE_XML_UTF_8_ENCODING = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.resources.tests.root/>";
 	private static final String SAMPLE_SPECIFIC_XML = "<?xml version=\"1.0\"?><org.eclipse.core.tests.resources.anotherXML/>";
 
-	private CharsetVerifier verifier = new CharsetVerifier();
-
 	public static Test suite() {
 		//		TestSuite suite = new TestSuite();
 		//		suite.addTest(new CharsetTest("testFileCreation"));
 		//		suite.addTest(new CharsetTest("testPrefsFileCreation"));
 		//		return suite;
-		//return new CharsetTest("testPrefsFileCreation");
+		//return new CharsetTest("testDeltaOnPreferenceChanges");
 		return new TestSuite(CharsetTest.class);
 	}
 
@@ -46,12 +44,46 @@ public class CharsetTest extends EclipseWorkspaceTest {
 	}
 
 	public class CharsetVerifier extends ResourceDeltaVerifier {
+		final static int IGNORE_CREATION_THREAD = 0x01;
+		final static int IGNORE_BACKGROUND_THREAD = 0x02;
+		private Thread creationThread = Thread.currentThread();
+		private int flags;
+
+		CharsetVerifier(int flags) {
+			this.flags = flags;
+		}
+
+		public synchronized void resourceChanged(IResourceChangeEvent e) {
+			// to make testing easier, we allow events from the main or other thread to be ignored
+			if (isSet(IGNORE_BACKGROUND_THREAD) && Thread.currentThread() != creationThread)
+				return;
+			if (isSet(IGNORE_CREATION_THREAD) && Thread.currentThread() == creationThread)
+				return;
+			super.resourceChanged(e);
+			this.notify();
+		}
+
+		private boolean isSet(int mask) {
+			return (mask & flags) == mask;
+		}
+
 		void internalVerifyDelta(IResourceDelta delta) {
 			// ignore any changes to project preferences
 			IPath path = delta.getFullPath();
-			if (path.segmentCount() == 2 && (path.segment(1).equals(".settings") || path.segment(1).equals(".project"))) 
+			if (path.segmentCount() == 2 && (path.segment(1).equals(".settings") || path.segment(1).equals(".project")))
 				return;
 			super.internalVerifyDelta(delta);
+		}
+
+		public synchronized boolean waitForEvent(long limit) {
+			if (hasBeenNotified())
+				return true;
+			try {
+				this.wait(limit);
+			} catch (InterruptedException e) {
+				// ignore
+			}
+			return hasBeenNotified();
 		}
 	}
 
@@ -438,75 +470,81 @@ public class CharsetTest extends EclipseWorkspaceTest {
 	 *
 	 */
 	public void testDeltasFile() {
-		IWorkspace workspace = getWorkspace();
-		// File:
-		// single file		
-		final IProject project = workspace.getRoot().getProject("MyProject");
-		final IFile file1 = project.getFile("file1.txt");
-		ensureExistsInWorkspace(file1, getRandomContents());
-		// change from default		
-		verifier.reset();
-		verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+		CharsetVerifier verifier = new CharsetVerifier(CharsetVerifier.IGNORE_BACKGROUND_THREAD);
+		getWorkspace().addResourceChangeListener(verifier, IResourceChangeEvent.POST_CHANGE);
 		try {
-			file1.setCharset("FOO", getMonitor());
-		} catch (CoreException e) {
-			fail("1.0.0", e);
-		}
-		assertTrue("1.0.1" + verifier.getMessage(), verifier.isDeltaValid());
+			IWorkspace workspace = getWorkspace();
+			// File:
+			// single file		
+			final IProject project = workspace.getRoot().getProject("MyProject");
+			final IFile file1 = project.getFile("file1.txt");
+			ensureExistsInWorkspace(file1, getRandomContents());
+			// change from default		
+			verifier.reset();
+			verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			try {
+				file1.setCharset("FOO", getMonitor());
+			} catch (CoreException e) {
+				fail("1.0.0", e);
+			}
+			assertTrue("1.0.1" + verifier.getMessage(), verifier.isDeltaValid());
 
-		// change to default (clear it)
-		verifier.reset();
-		verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-		try {
-			file1.setCharset(null, getMonitor());
-		} catch (CoreException e) {
-			fail("1.1.0", e);
-		}
-		assertTrue("1.1.1" + verifier.getMessage(), verifier.isDeltaValid());
+			// change to default (clear it)
+			verifier.reset();
+			verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			try {
+				file1.setCharset(null, getMonitor());
+			} catch (CoreException e) {
+				fail("1.1.0", e);
+			}
+			assertTrue("1.1.1" + verifier.getMessage(), verifier.isDeltaValid());
 
-		// change to default (equal to it but it doesn't inherit)
-		verifier.reset();
-		verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-		try {
-			file1.setCharset(file1.getCharset(), getMonitor());
-		} catch (CoreException e) {
-			fail("1.2.0", e);
-		}
-		assertTrue("1.2.1" + verifier.getMessage(), verifier.isDeltaValid());
+			// change to default (equal to it but it doesn't inherit)
+			verifier.reset();
+			verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			try {
+				file1.setCharset(file1.getCharset(), getMonitor());
+			} catch (CoreException e) {
+				fail("1.2.0", e);
+			}
+			assertTrue("1.2.1" + verifier.getMessage(), verifier.isDeltaValid());
 
-		// change from non-default to another non-default
-		try {
-			// sets to a non-default value first
-			file1.setCharset("FOO", getMonitor());
-		} catch (CoreException e) {
-			fail("1.3.0", e);
-		}
-		verifier.reset();
-		verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-		try {
-			// sets to another non-defauilt value
-			file1.setCharset("BAR", getMonitor());
-		} catch (CoreException e) {
-			fail("1.3.1", e);
-		}
-		assertTrue("1.3.2" + verifier.getMessage(), verifier.isDeltaValid());
+			// change from non-default to another non-default
+			try {
+				// sets to a non-default value first
+				file1.setCharset("FOO", getMonitor());
+			} catch (CoreException e) {
+				fail("1.3.0", e);
+			}
+			verifier.reset();
+			verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			try {
+				// sets to another non-defauilt value
+				file1.setCharset("BAR", getMonitor());
+			} catch (CoreException e) {
+				fail("1.3.1", e);
+			}
+			assertTrue("1.3.2" + verifier.getMessage(), verifier.isDeltaValid());
 
-		// multiple files (same operation)
-		verifier.reset();
-		final IFile file2 = project.getFile("file2.txt");
-		ensureExistsInWorkspace(file2, getRandomContents());
-		verifier.addExpectedChange(new IResource[] {file1, file2}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-		try {
-			workspace.run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-					file1.setCharset("FOO", getMonitor());
-					file2.setCharset("FOO", getMonitor());
-				}
-			}, getMonitor());
-		} catch (CoreException e) {
-			fail("1.4.0", e);
+			// multiple files (same operation)
+			verifier.reset();
+			final IFile file2 = project.getFile("file2.txt");
+			ensureExistsInWorkspace(file2, getRandomContents());
+			verifier.addExpectedChange(new IResource[] {file1, file2}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			try {
+				workspace.run(new IWorkspaceRunnable() {
+					public void run(IProgressMonitor monitor) throws CoreException {
+						file1.setCharset("FOO", getMonitor());
+						file2.setCharset("FOO", getMonitor());
+					}
+				}, getMonitor());
+			} catch (CoreException e) {
+				fail("1.4.0", e);
+			}
+			assertTrue("1.4.1" + verifier.getMessage(), verifier.isDeltaValid());
+		} finally {
+			getWorkspace().removeResourceChangeListener(verifier);
 		}
-		assertTrue("1.4.1" + verifier.getMessage(), verifier.isDeltaValid());
 	}
 
 	/**
@@ -514,108 +552,115 @@ public class CharsetTest extends EclipseWorkspaceTest {
 	 * when we make encoding changes to containers (folders, projects, root).
 	 */
 	public void testDeltasContainer() {
-		// leaf folder
-		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
-		IFolder folder1 = project.getFolder("folder1");
-		ensureExistsInWorkspace(new IResource[] {project, folder1}, true);
-		verifier.reset();
-		verifier.addExpectedChange(folder1, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+		CharsetVerifier verifier = new CharsetVerifier(CharsetVerifier.IGNORE_BACKGROUND_THREAD);
+		getWorkspace().addResourceChangeListener(verifier, IResourceChangeEvent.POST_CHANGE);
 		try {
-			folder1.setDefaultCharset("new_charset", getMonitor());
-		} catch (CoreException e) {
-			fail("1.0", e);
-		}
-		assertTrue("1.1." + verifier.getMessage(), verifier.isDeltaValid());
 
-		// folder with children
-		IFolder folder2 = folder1.getFolder("folder2");
-		IFile file1 = folder1.getFile("file1.txt");
-		IFile file2 = folder2.getFile("file2.txt");
-		ensureExistsInWorkspace(new IResource[] {folder2, file1, file2}, true);
-		verifier.reset();
-		verifier.addExpectedChange(new IResource[] {folder1, folder2, file1, file2}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-		try {
-			folder1.setDefaultCharset("a_charset", getMonitor());
-		} catch (CoreException e) {
-			fail("2.0", e);
-		}
-		assertTrue("2.1." + verifier.getMessage(), verifier.isDeltaValid());
+			// leaf folder
+			IProject project = getWorkspace().getRoot().getProject(getUniqueString());
+			IFolder folder1 = project.getFolder("folder1");
+			ensureExistsInWorkspace(new IResource[] {project, folder1}, true);
+			verifier.reset();
+			verifier.addExpectedChange(folder1, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			try {
+				folder1.setDefaultCharset("new_charset", getMonitor());
+			} catch (CoreException e) {
+				fail("1.0", e);
+			}
+			assertTrue("1.1." + verifier.getMessage(), verifier.isDeltaValid());
 
-		// folder w. children, some with non-inherited values
-		try {
-			// set the child to have a non-inherited value
-			folder2.setDefaultCharset("non-Default", getMonitor());
-		} catch (CoreException e) {
-			fail("3.0", e);
-		}
-		verifier.reset();
-		verifier.addExpectedChange(new IResource[] {folder1, file1}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-		try {
-			folder1.setDefaultCharset("newOne", getMonitor());
-		} catch (CoreException e) {
-			fail("3.1", e);
-		}
-		assertTrue("3.2." + verifier.getMessage(), verifier.isDeltaValid());
+			// folder with children
+			IFolder folder2 = folder1.getFolder("folder2");
+			IFile file1 = folder1.getFile("file1.txt");
+			IFile file2 = folder2.getFile("file2.txt");
+			ensureExistsInWorkspace(new IResource[] {folder2, file1, file2}, true);
+			verifier.reset();
+			verifier.addExpectedChange(new IResource[] {folder1, folder2, file1, file2}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			try {
+				folder1.setDefaultCharset("a_charset", getMonitor());
+			} catch (CoreException e) {
+				fail("2.0", e);
+			}
+			assertTrue("2.1." + verifier.getMessage(), verifier.isDeltaValid());
 
-		// change from non-default to another non-default
-		verifier.reset();
-		verifier.addExpectedChange(new IResource[] {folder1, file1}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-		try {
-			folder1.setDefaultCharset("newTwo", getMonitor());
-		} catch (CoreException e) {
-			fail("4.1", e);
-		}
-		assertTrue("4.2." + verifier.getMessage(), verifier.isDeltaValid());
+			// folder w. children, some with non-inherited values
+			try {
+				// set the child to have a non-inherited value
+				folder2.setDefaultCharset("non-Default", getMonitor());
+			} catch (CoreException e) {
+				fail("3.0", e);
+			}
+			verifier.reset();
+			verifier.addExpectedChange(new IResource[] {folder1, file1}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			try {
+				folder1.setDefaultCharset("newOne", getMonitor());
+			} catch (CoreException e) {
+				fail("3.1", e);
+			}
+			assertTrue("3.2." + verifier.getMessage(), verifier.isDeltaValid());
 
-		// change to default (clear it)
-		verifier.reset();
-		verifier.addExpectedChange(new IResource[] {folder1, file1}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-		try {
-			folder1.setDefaultCharset(null, getMonitor());
-		} catch (CoreException e) {
-			fail("5.0", e);
-		}
-		assertTrue("5.1." + verifier.getMessage(), verifier.isDeltaValid());
+			// change from non-default to another non-default
+			verifier.reset();
+			verifier.addExpectedChange(new IResource[] {folder1, file1}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			try {
+				folder1.setDefaultCharset("newTwo", getMonitor());
+			} catch (CoreException e) {
+				fail("4.1", e);
+			}
+			assertTrue("4.2." + verifier.getMessage(), verifier.isDeltaValid());
 
-		// change to default (equal to it but it doesn't inherit)
-		verifier.reset();
-		verifier.addExpectedChange(new IResource[] {folder1, file1}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-		try {
-			folder1.setDefaultCharset(project.getDefaultCharset(), getMonitor());
-		} catch (CoreException e) {
-			fail("6.0", e);
-		}
-		assertTrue("6.1." + verifier.getMessage(), verifier.isDeltaValid());
+			// change to default (clear it)
+			verifier.reset();
+			verifier.addExpectedChange(new IResource[] {folder1, file1}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			try {
+				folder1.setDefaultCharset(null, getMonitor());
+			} catch (CoreException e) {
+				fail("5.0", e);
+			}
+			assertTrue("5.1." + verifier.getMessage(), verifier.isDeltaValid());
 
-		// clear all the encoding info before we start working with the project
-		try {
-			clearAllEncodings();
-		} catch (CoreException e) {
-			fail("7.0", e);
-		}
-		verifier.reset();
-		verifier.addExpectedChange(new IResource[] {project, folder1, folder2, file1, file2}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-		try {
-			project.setDefaultCharset("foo", getMonitor());
-		} catch (CoreException e) {
-			fail("7.1", e);
-		}
-		assertTrue("7.2." + verifier.getMessage(), verifier.isDeltaValid());
+			// change to default (equal to it but it doesn't inherit)
+			verifier.reset();
+			verifier.addExpectedChange(new IResource[] {folder1, file1}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			try {
+				folder1.setDefaultCharset(project.getDefaultCharset(), getMonitor());
+			} catch (CoreException e) {
+				fail("6.0", e);
+			}
+			assertTrue("6.1." + verifier.getMessage(), verifier.isDeltaValid());
 
-		// clear all the encoding info before we start working with the root
-		try {
-			clearAllEncodings();
-		} catch (CoreException e) {
-			fail("8.0", e);
+			// clear all the encoding info before we start working with the project
+			try {
+				clearAllEncodings();
+			} catch (CoreException e) {
+				fail("7.0", e);
+			}
+			verifier.reset();
+			verifier.addExpectedChange(new IResource[] {project, folder1, folder2, file1, file2}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			try {
+				project.setDefaultCharset("foo", getMonitor());
+			} catch (CoreException e) {
+				fail("7.1", e);
+			}
+			assertTrue("7.2." + verifier.getMessage(), verifier.isDeltaValid());
+
+			// clear all the encoding info before we start working with the root
+			try {
+				clearAllEncodings();
+			} catch (CoreException e) {
+				fail("8.0", e);
+			}
+			verifier.reset();
+			verifier.addExpectedChange(new IResource[] {project, folder1, folder2, file1, file2}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			try {
+				getWorkspace().getRoot().setDefaultCharset("foo", getMonitor());
+			} catch (CoreException e) {
+				fail("8.1", e);
+			}
+			assertTrue("8.2." + verifier.getMessage(), verifier.isDeltaValid());
+		} finally {
+			getWorkspace().removeResourceChangeListener(verifier);
 		}
-		verifier.reset();
-		verifier.addExpectedChange(new IResource[] {project, folder1, folder2, file1, file2}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-		try {
-			getWorkspace().getRoot().setDefaultCharset("foo", getMonitor());
-		} catch (CoreException e) {
-			fail("8.1", e);
-		}
-		assertTrue("8.2." + verifier.getMessage(), verifier.isDeltaValid());
 	}
 
 	private void clearAllEncodings() throws CoreException {
@@ -641,22 +686,138 @@ public class CharsetTest extends EclipseWorkspaceTest {
 	}
 
 	// check preference change events are reflected in the charset settings
-	public void testPreferenceChangeEvents() {
+	// temporarily disabled
+	public void _testDeltaOnPreferenceChanges() {
 
+		CharsetVerifier backgroundVerifier = new CharsetVerifier(CharsetVerifier.IGNORE_CREATION_THREAD);
+		getWorkspace().addResourceChangeListener(backgroundVerifier, IResourceChangeEvent.POST_CHANGE);
+
+		try {
+			IProject project = getWorkspace().getRoot().getProject("project1");
+			IFolder folder1 = project.getFolder("folder1");
+			IFile file1 = folder1.getFile("file1.txt");
+			IFile file2 = project.getFile("file2.txt");
+			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
+
+			IFile resourcesPrefs = getResourcesPreferenceFile(project);
+			assertTrue("0.9", !resourcesPrefs.exists());
+
+			try {
+				file1.setCharset("CHARSET1", getMonitor());
+			} catch (CoreException e) {
+				fail("1.0", e);
+			}
+			assertTrue("1.1", resourcesPrefs.exists());
+
+			backgroundVerifier.reset();
+			backgroundVerifier.addExpectedChange(new IResource[] {project, folder1, file1, file2}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			// cause a resource change event without actually changing contents			
+			try {
+				resourcesPrefs.setContents(resourcesPrefs.getContents(), 0, getMonitor());
+			} catch (CoreException e) {
+				fail("2.0", e);
+			}
+			assertTrue("2.1", backgroundVerifier.waitForEvent(10000));
+			assertTrue("2.2 " + backgroundVerifier.getMessage(), backgroundVerifier.isDeltaValid());
+
+			backgroundVerifier.reset();
+			backgroundVerifier.addExpectedChange(new IResource[] {project, folder1, file1, file2}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			try {
+				// delete the preferences file
+				resourcesPrefs.delete(true, getMonitor());
+			} catch (CoreException e) {
+				fail("3.0", e);
+			}
+			assertTrue("3.1", backgroundVerifier.waitForEvent(10000));
+			assertTrue("3.2 " + backgroundVerifier.getMessage(), backgroundVerifier.isDeltaValid());
+
+		} finally {
+			getWorkspace().removeResourceChangeListener(backgroundVerifier);
+		}
 	}
 
 	// check we react to content type changes
-	public void testContentTypeChangeEvents() {
-
+	public void testDeltaOnContentTypeChanges() {
+		final String USER_SETTING = "USER_CHARSET";
+		final String PROVIDER_SETTING = "PROVIDER_CHARSET";
+		
+		// install a verifier		
+		CharsetVerifier backgroundVerifier = new CharsetVerifier(CharsetVerifier.IGNORE_CREATION_THREAD);
+		getWorkspace().addResourceChangeListener(backgroundVerifier, IResourceChangeEvent.POST_CHANGE);
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		IContentType myType = contentTypeManager.getContentType("org.eclipse.core.tests.resources.myContent");
+		assertNotNull("0.1", myType);
+		assertEquals("0.2", PROVIDER_SETTING, myType.getDefaultCharset());
+		try {
+			IProject project = getWorkspace().getRoot().getProject("project1");
+			IFolder folder1 = project.getFolder("folder1");
+			IFile file1 = folder1.getFile("file1.txt");
+			IFile file2 = folder1.getFile("file2.resources-mc");
+			IFile file3 = project.getFile("file3.resources-mc");
+			IFile file4 = project.getFile("file4.resources-mc");
+			ensureExistsInWorkspace(new IResource[] {file1, file2, file3, file4}, true);
+			try {
+				project.setDefaultCharset("FOO", getMonitor());
+			} catch (CoreException e) {
+				fail("1.0", e);
+			}
+			// even files with a user-set charset will appear in the delta
+			try {
+				file4.setCharset("BAR", getMonitor());
+			} catch (CoreException e) {
+				fail("1.1", e);
+			}
+			// configure verifier
+			backgroundVerifier.reset();
+			backgroundVerifier.addExpectedChange(new IResource[] {file2, file3, file4}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			// change content type's default charset
+			try {
+				myType.setDefaultCharset(USER_SETTING);
+			} catch (CoreException e) {
+				fail("2.0", e);
+			}
+			// ensure the property events were generated
+			assertTrue("2.1", backgroundVerifier.waitForEvent(10000));
+			assertTrue("2.2 " + backgroundVerifier.getMessage(), backgroundVerifier.isDeltaValid());
+			try {
+				assertEquals("3.0", USER_SETTING, file2.getCharset());
+				assertEquals("3.1", USER_SETTING, file3.getCharset());
+				assertEquals("3.2", "BAR", file4.getCharset());
+			} catch (CoreException e) {
+				fail("3.9", e);
+			}
+			
+			// change back to the provider-provided default
+			// configure verifier
+			backgroundVerifier.reset();
+			backgroundVerifier.addExpectedChange(new IResource[] {file2, file3, file4}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			// reset charset to default
+			try {
+				myType.setDefaultCharset(null);
+			} catch (CoreException e) {
+				fail("4.0", e);
+			}
+			// ensure the property events were generated
+			assertTrue("4.1", backgroundVerifier.waitForEvent(10000));
+			assertTrue("4.2 " + backgroundVerifier.getMessage(), backgroundVerifier.isDeltaValid());
+			try {
+				assertEquals("5.0", PROVIDER_SETTING, file2.getCharset());
+				assertEquals("5.1", PROVIDER_SETTING, file3.getCharset());
+				assertEquals("5.2", "BAR", file4.getCharset());
+			} catch (CoreException e) {
+				fail("5.9", e);
+			}			
+		} finally {
+			getWorkspace().removeResourceChangeListener(backgroundVerifier);
+			try {
+				myType.setDefaultCharset(null);
+			} catch (CoreException e) {
+				fail("99.0", e);
+			}
+		}
 	}
 
-	protected void setUp() throws Exception {
-		super.setUp();
-		getWorkspace().addResourceChangeListener(verifier, IResourceChangeEvent.POST_CHANGE);
-	}
-
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		getWorkspace().removeResourceChangeListener(verifier);
+	IFile getResourcesPreferenceFile(IProject project) {
+		return project.getFolder(".settings").getFile("org.eclipse.core.resources.prefs");
 	}
 }

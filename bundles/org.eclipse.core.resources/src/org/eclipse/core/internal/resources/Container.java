@@ -282,13 +282,19 @@ public abstract class Container extends Resource implements IContainer {
 						// that is the condition we are checking later)
 						if (!visitedRoot) {
 							visitedRoot = true;
-							workspace.getResourceInfo(nodePath, false, true).incrementCharsetGenerationCount();
+							ResourceInfo info = workspace.getResourceInfo(nodePath, false, true);
+							if (info == null)
+								return false;
+							info.incrementCharsetGenerationCount();
 							return true;
 						}						
 						// does it already have an encoding explicitly set?
 						if (workspace.getCharsetManager().getCharsetFor(nodePath, false) != null)
 							return false;
-						workspace.getResourceInfo(nodePath, false, true).incrementCharsetGenerationCount();
+						ResourceInfo info = workspace.getResourceInfo(nodePath, false, true);
+						if (info == null)
+							return false;
+						info.incrementCharsetGenerationCount();
 						return true;
 					}
 				};

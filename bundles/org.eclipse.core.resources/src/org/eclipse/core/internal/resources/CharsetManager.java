@@ -15,6 +15,7 @@ import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.Bundle;
 import org.osgi.service.prefs.BackingStoreException;
@@ -27,6 +28,7 @@ import org.osgi.service.prefs.Preferences;
  */
 public class CharsetManager implements IManager {
 	protected final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
+
 	/**
 	 * This job implementation is used to allow the resource change listener
 	 * to schedule operations that need to modify the workspace. 
@@ -35,7 +37,7 @@ public class CharsetManager implements IManager {
 		private List asyncChanges = new ArrayList();
 
 		public CharsetManagerJob() {
-			super("Charset Updater"); //$NON-NLS-1$
+			super(Policy.bind("resources.charsetUpdating")); //$NON-NLS-1$
 			setSystem(true);
 			setPriority(Job.INTERACTIVE);
 		}
@@ -60,20 +62,40 @@ public class CharsetManager implements IManager {
 		 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		protected IStatus run(IProgressMonitor monitor) {
-			IProject next;
-			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_SETTING_CHARSET, Policy.bind("resources.updatingEncoding"), null); //$NON-NLS-1$
-			while ((next = getNextChange()) != null) {
-				//just exit if the system is shutting down or has been shut down
-				//it is too late to change the workspace at this point anyway
-				if (systemBundle.getState() != Bundle.ACTIVE)
-					return Status.OK_STATUS;
+			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_SETTING_CHARSET, Policy.bind("resources.updatingEncoding"), null); //$NON-NLS-1$			
+			monitor = Policy.monitorFor(monitor);
+			try {
+				monitor.beginTask(Policy.bind("resources.charsetUpdating"), Policy.totalWork); //$NON-NLS-1$
+				final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(workspace.getRoot());
 				try {
-					getPreferences(next).flush();
-				} catch (BackingStoreException e) {
-					// we got an error saving					
-					String message = Policy.bind("resources.savingEncoding"); //$NON-NLS-1$
-					result.add(new ResourceStatus(IResourceStatus.FAILED_SETTING_CHARSET, next.getFullPath(), message, e));
+					workspace.prepareOperation(rule, monitor);
+					workspace.beginOperation(true);
+					IProject next;
+					while ((next = getNextChange()) != null) {
+						//just exit if the system is shutting down or has been shut down
+						//it is too late to change the workspace at this point anyway
+						if (systemBundle.getState() != Bundle.ACTIVE)
+							return Status.OK_STATUS;
+						try {
+							if (next.isAccessible())
+								getPreferences(next).flush();
+						} catch (BackingStoreException e) {
+							// we got an error saving					
+							String detailMessage = Policy.bind("resources.savingEncoding"); //$NON-NLS-1$
+							result.add(new ResourceStatus(IResourceStatus.FAILED_SETTING_CHARSET, next.getFullPath(), detailMessage, e));
+						}
+					}
+					monitor.worked(Policy.opWork);
+				} catch (OperationCanceledException e) {
+					workspace.getWorkManager().operationCanceled();
+					throw e;
+				} finally {
+					workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
 				}
+			} catch (CoreException ce) {
+				return ce.getStatus();
+			} finally {
+				monitor.done();
 			}
 			return result; //$NON-NLS-1$
 		}
@@ -152,6 +174,7 @@ public class CharsetManager implements IManager {
 	private static final String PROJECT_KEY = "<project>"; //$NON-NLS-1$
 	CharsetManagerJob job;
 	private IResourceChangeListener listener;
+	private CharsetDeltaJob charsetListener;
 	Workspace workspace;
 
 	public CharsetManager(Workspace workspace) {
@@ -190,6 +213,7 @@ public class CharsetManager implements IManager {
 	}
 
 	public void setCharsetFor(IPath resourcePath, String newCharset) throws CoreException {
+		// for the workspace root we just set a preference in the instance scope
 		if (resourcePath.segmentCount() == 0) {
 			org.eclipse.core.runtime.Preferences resourcesPreferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 			if (newCharset != null)
@@ -199,6 +223,7 @@ public class CharsetManager implements IManager {
 			ResourcesPlugin.getPlugin().savePluginPreferences();
 			return;
 		}
+		// for all other cases, we set a property in the corresponding project
 		IProject project = workspace.getRoot().getProject(resourcePath.segment(0));
 		Preferences encodingSettings = getPreferences(project);
 		if (newCharset == null || newCharset.trim().length() == 0)
@@ -206,21 +231,34 @@ public class CharsetManager implements IManager {
 		else
 			encodingSettings.put(getKeyFor(resourcePath), newCharset);
 		try {
+			// disable the listener so we don't react to changes made by ourselves 
+			charsetListener.setDisabled(true);
 			// save changes
 			encodingSettings.flush();
 		} catch (BackingStoreException e) {
 			String message = Policy.bind("resources.savingEncoding"); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.FAILED_SETTING_CHARSET, project.getFullPath(), message, e);
+		} finally {
+			charsetListener.setDisabled(false);
 		}
+
 	}
 
 	public void shutdown(IProgressMonitor monitor) {
 		workspace.removeResourceChangeListener(listener);
+		if (charsetListener != null)
+			charsetListener.shutdown();
 	}
 
 	public void startup(IProgressMonitor monitor) throws CoreException {
 		job = new CharsetManagerJob();
 		listener = new Listener();
 		workspace.addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
+		charsetListener = new CharsetDeltaJob(workspace);
+		charsetListener.startup();
+	}
+
+	public void charsetPreferencesChanged(IProject project) {
+		charsetListener.charsetPreferencesChanged(project);
 	}
 }
