@@ -25,6 +25,13 @@ public abstract class StepActionDelegate extends AbstractListenerActionDelegate 
 			stepAction((IStep)object);
 		}
 	}
+	
+	/**
+	 * @see AbstractDebugActionDelegate#isRunInBackground()
+	 */
+	protected boolean isRunInBackground() {
+		return true;
+	}
 
 	/**
 	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)

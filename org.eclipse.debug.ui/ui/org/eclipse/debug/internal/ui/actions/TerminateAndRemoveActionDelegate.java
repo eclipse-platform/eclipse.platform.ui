@@ -23,6 +23,13 @@ public class TerminateAndRemoveActionDelegate extends AbstractDebugActionDelegat
 	protected void doAction(Object element) throws DebugException {
 		LaunchView.terminateAndRemove(element);
 	}
+	
+	/**
+	 * @see AbstractDebugActionDelegate#isRunInBackground()
+	 */
+	protected boolean isRunInBackground() {
+		return true;
+	}
 
 	/**
 	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)

@@ -29,6 +29,13 @@ public class ResumeActionDelegate extends AbstractListenerActionDelegate {
 			}
 		}
 	}
+	
+	/**
+	 * @see AbstractDebugActionDelegate#isRunInBackground()
+	 */
+	protected boolean isRunInBackground() {
+		return true;
+	}
 
 	/**
 	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)

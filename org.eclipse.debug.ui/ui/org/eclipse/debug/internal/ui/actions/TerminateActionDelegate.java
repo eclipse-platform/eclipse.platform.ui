@@ -25,6 +25,13 @@ public class TerminateActionDelegate extends AbstractListenerActionDelegate {
 			((ITerminate)element).terminate();
 		}
 	}
+	
+	/**
+	 * @see AbstractDebugActionDelegate#isRunInBackground()
+	 */
+	protected boolean isRunInBackground() {
+		return true;
+	}
 
 	/**
 	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)

@@ -26,6 +26,13 @@ public class DisconnectActionDelegate extends AbstractListenerActionDelegate {
 			 ((IDisconnect) element).disconnect();
 		}
 	}
+	
+	/**
+	 * @see AbstractDebugActionDelegate#isRunInBackground()
+	 */
+	protected boolean isRunInBackground() {
+		return true;
+	}
 
 	/**
 	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)

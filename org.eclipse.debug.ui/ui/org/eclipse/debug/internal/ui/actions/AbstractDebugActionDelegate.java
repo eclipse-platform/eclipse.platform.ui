@@ -11,9 +11,14 @@
 package org.eclipse.debug.internal.ui.actions;
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -23,6 +28,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewActionDelegate;
@@ -61,11 +67,71 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	protected IWorkbenchWindow fWindow;
 	
 	/**
+	 * The background delegate manager keeps track of the debug
+	 * actions delegates which do their work in a background job.
+	 * The manager disables these delegates while one of them is
+	 * running.
+	 */
+	protected static class BackgroundDelegateManager {
+		private List fBackgroundDelegates= new ArrayList();
+		private boolean fIsJobRunning= false;
+		
+		/**
+		 * Registers the given delegate with this manager
+		 * @param delegate
+		 */
+		public void addBackgroundDelegate(AbstractDebugActionDelegate delegate) {
+			fBackgroundDelegates.add(delegate);
+		}
+		
+		/**
+		 * A background job has been started for one of the action delegates.
+		 * Disable all background delegates.
+		 */
+		public void jobStarted() {
+			fIsJobRunning= true;
+			Iterator iter= fBackgroundDelegates.iterator();
+			while (iter.hasNext()) {
+				AbstractDebugActionDelegate delegate= (AbstractDebugActionDelegate) iter.next();
+				delegate.getAction().setEnabled(false);
+			}
+		}
+		
+		/**
+		 * A background job has finished for one of the action delegates.
+		 * Update the enabled state of all background delegates.
+		 */
+		public void jobStopped() {
+			fIsJobRunning= false;
+			Iterator iter= fBackgroundDelegates.iterator();
+			while (iter.hasNext()) {
+				AbstractDebugActionDelegate delegate= (AbstractDebugActionDelegate) iter.next();
+				delegate.update(delegate.getAction(), delegate.getSelection());
+			}
+		}
+
+		/**
+		 * @return
+		 */
+		public boolean isJobRunning() {
+			return fIsJobRunning;
+		}
+	};
+	
+	/**
+	 * The background delegate manager which disables and reenables background action delegates.
+	 */
+	protected static BackgroundDelegateManager fgBackgroundActionManager= new BackgroundDelegateManager();
+	
+	/**
 	 * It's crucial that delegate actions have a zero-arg constructor so that
 	 * they can be reflected into existence when referenced in an action set
 	 * in the plugin's plugin.xml file.
 	 */
 	public AbstractDebugActionDelegate() {
+		if (isRunInBackground()) {
+			fgBackgroundActionManager.addBackgroundDelegate(this);
+		}
 	}
 	
 	/**
@@ -90,24 +156,67 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action){
-		IStructuredSelection selection= getSelection();
+		Iterator selectionIter= getSelection().iterator();
 		
-		final Iterator itr= selection.iterator();
 		String pluginId= DebugUIPlugin.getUniqueIdentifier();
-		final MultiStatus ms= 
+		MultiStatus status= 
 			new MultiStatus(pluginId, DebugException.REQUEST_FAILED, getStatusMessage(), null); 
-		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
-			public void run() {
-				while (itr.hasNext()) {
-					Object element= itr.next();
+		if (isRunInBackground()) {
+			runInBackground(action, selectionIter, status);
+		} else {
+			runInForeground(selectionIter, status);
+		}		
+	}
+	
+	/**
+	 * Runs this action in a background job.
+	 */
+	private void runInBackground(IAction action, final Iterator selectionIter, final MultiStatus status) {
+		Job job= new Job(action.getText()) {
+			protected IStatus run(IProgressMonitor monitor) {
+				while (selectionIter.hasNext()) {
+					Object element= selectionIter.next();
 					try {
 						doAction(element);
 					} catch (DebugException e) {
-						ms.merge(e.getStatus());
+						status.merge(e.getStatus());
+					}
+				}
+				DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+					public void run() {
+						fgBackgroundActionManager.jobStopped();
+					}
+				});
+				return status;
+			}
+		};
+		fgBackgroundActionManager.jobStarted();
+		job.schedule();
+	}
+	
+	/**
+	 * Runs this action in the UI thread.
+	 */
+	private void runInForeground(final Iterator selectionIter, final MultiStatus status) {
+		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+			public void run() {
+				while (selectionIter.hasNext()) {
+					Object element= selectionIter.next();
+					try {
+						doAction(element);
+					} catch (DebugException e) {
+						status.merge(e.getStatus());
 					}
 				}
 			}
 		});
+		reportErrors(status);
+	}
+
+	/**
+	 * @param ms
+	 */
+	private void reportErrors(final MultiStatus ms) {
 		if (!ms.isOK()) {
 			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
 			if (window != null) {
@@ -115,7 +224,16 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 			} else {
 				DebugUIPlugin.log(ms);
 			}
-		}		
+		}
+	}
+
+	/**
+	 * Returns whether or not this action should be run in the background.
+	 * Subclasses may override.
+	 * @return whether or not this action should be run in the background
+	 */
+	protected boolean isRunInBackground() {
+		return false;
 	}
 
 	/**
@@ -146,6 +264,10 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	}
 	
 	protected void update(IAction action, ISelection s) {
+		if (isRunInBackground() && fgBackgroundActionManager.isJobRunning()) {
+			// Don't update enablement of background delegates while a job is running.
+			return;
+		}
 		if (s instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection)s;
 			action.setEnabled(getEnableStateForSelection(ss));

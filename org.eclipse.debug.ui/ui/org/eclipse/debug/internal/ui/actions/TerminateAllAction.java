@@ -17,44 +17,19 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IActionDelegate;
 
 /**
  * Terminates all launches.
  */
 public class TerminateAllAction extends AbstractListenerActionDelegate {
 	
-	protected void doAction(Object element) {
-		//not used
-	}
-	
-	protected void update() {
-		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
-		ILaunch[] launches= lManager.getLaunches();
-		for (int i= 0; i< launches.length; i++) {
-			ILaunch launch= launches[i];
-			if (!launch.isTerminated()) {
-				getAction().setEnabled(true);
-				return;
-			}
-		}
-		getAction().setEnabled(false);
-	}
-
 	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		setAction(action);
-	}
-
-	/**
-	 * @see IActionDelegate#run(IAction)
-	 */
-	public void run(IAction action) {
+	protected void doAction(Object element) throws DebugException {
 		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
 		ILaunch[] launches= lManager.getLaunches();
 		MultiStatus ms = new MultiStatus(DebugPlugin.getUniqueIdentifier(), 
@@ -70,22 +45,52 @@ public class TerminateAllAction extends AbstractListenerActionDelegate {
 			}
 		}
 		if (!ms.isOK()) {
-			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
-			if (window != null) {
-				DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.getString("TerminateAllAction.Terminate_All_2"),ActionMessages.getString("TerminateAllAction.Exceptions_occurred_attempting_to_terminate_all._5") , ms); //$NON-NLS-1$ //$NON-NLS-2$
-			} else {
-				DebugUIPlugin.log(ms);
+			throw new DebugException(ms);
+		}
+	}
+	
+	/**
+	 * @see AbstractDebugActionDelegate#isRunInBackground()
+	 */
+	protected boolean isRunInBackground() {
+		return true;
+	}
+	
+	/**
+	 * Update the action enablement based on the launches present in
+	 * the launch manager. selection is unused and can be <code>null</code>.
+	 */
+	protected void update(IAction action, ISelection selection) {
+		if (isRunInBackground() && fgBackgroundActionManager.isJobRunning()) {
+			// Don't update enablement of background delegates while a job is running.
+			return;
+		}
+		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
+		ILaunch[] launches= lManager.getLaunches();
+		for (int i= 0; i< launches.length; i++) {
+			ILaunch launch= launches[i];
+			if (!launch.isTerminated()) {
+				action.setEnabled(true);
+				return;
 			}
 		}
+		action.setEnabled(false);
+	}
+
+	/**
+	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 */
+	public void selectionChanged(IAction action, ISelection selection) {
+		setAction(action);
 	}
 
 	protected void doHandleDebugEvent(DebugEvent event) {
 		switch (event.getKind()) {
 			case DebugEvent.TERMINATE :
-				update();
+				update(getAction(), null);
 				break;
 			case DebugEvent.CREATE :
-				update();
+				update(getAction(), null);
 				break;
 		}
 	}		
