@@ -90,15 +90,16 @@ public Image getImage(Object element) {
 	return image;
 }
 /**
- * Returns the label decorator, or <code>null</code> if none has been set.
- * This is no longer in use and is provided only for backwards
- * compatibility.
+ * Returns the label decorator, or <code>DecoratorManager</code> if none has been set.
  *
  * @return <code>null</code>
  * @since 2.0
  */
 public ILabelDecorator getLabelDecorator() {
-	return null;
+	if(decorator == null)
+		return getDecoratorManager();
+	else
+		return decorator;
 }
 /**
  * Returns the nested label provider.
@@ -166,7 +167,8 @@ public void removeListener(ILabelProviderListener listener) {
  * if no decorations are to be applied
  * @since 2.0
  */
-public void setLabelDecorator(ILabelDecorator decorator) {
+public void setLabelDecorator(ILabelDecorator labelDecorator) {
+	this.decorator = labelDecorator;
 
 }
 

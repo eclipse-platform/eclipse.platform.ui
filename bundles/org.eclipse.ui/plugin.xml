@@ -48,7 +48,8 @@
 <extension-point name="%ExtPoint.resourceFilters" id="resourceFilters"/>
 <extension-point name="%ExtPoint.markerImageProviders" id="markerImageProviders"/>
 <extension-point name="%ExtPoint.projectNatureImages" id="projectNatureImages"/>
-<extension-point name="Decorators" id="decorators"/>
+<extension-point name="%ExtPoint.projectNatureImages" id="projectNatureImages"/>
+<extension-point name="%ExtPoint.decorators" id="decorators"/>
 
 <!-- Extensions -->
 

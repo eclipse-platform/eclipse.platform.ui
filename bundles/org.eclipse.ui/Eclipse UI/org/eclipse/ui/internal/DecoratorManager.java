@@ -2,21 +2,16 @@ package org.eclipse.ui.internal;
 
 import java.util.*;
 
-import org.eclipse.core.internal.plugins.IPluginVisitor;
-import org.eclipse.core.internal.plugins.PluginRegistry;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.internal.registry.RegistryReader;
-import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**
  * The DecoratorManager is the class that handles all of the
  * decorators defined in the image.
  */
 
-public class DecoratorManager {
+public class DecoratorManager implements ILabelDecorator{
 
 	//Hold onto the list of listeners to be told if a change has occured
 	private Collection listeners = new HashSet();
@@ -102,9 +97,9 @@ public class DecoratorManager {
 	private ILabelDecorator[] getDecoratorsFor(Object element) {
 
 		Class elementClass = element.getClass();
-		Object existing = cachedDecorators.get(elementClass.getName());
-		if (existing != null)
-			return (ILabelDecorator[]) existing;
+		String className = elementClass.getName();
+		if (cachedDecorators.containsKey(className))
+			return (ILabelDecorator[]) cachedDecorators.get(className);
 
 		List allClasses = new ArrayList();
 		allClasses.add(element.getClass());
@@ -225,4 +220,10 @@ public class DecoratorManager {
 		result.toArray(returnArray);
 		return returnArray;
 	}
+	/*
+	 * @see IBaseLabelProvider#dispose()
+	 */
+	public void dispose() {
+	}
+
 }
