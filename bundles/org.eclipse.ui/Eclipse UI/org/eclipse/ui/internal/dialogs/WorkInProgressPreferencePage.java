@@ -311,7 +311,7 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		coolBarsButton.setSelection(store.getDefaultBoolean("ENABLE_COOL_BARS")); //$NON-NLS-1$				
 //		newMenusButton.setSelection(store.getDefaultBoolean("ENABLE_NEW_MENUS")); //$NON-NLS-1$
 		
-		updateEncodingState(true);
+//		updateEncodingState(true);
 	}
 	
 	/**
@@ -338,8 +338,8 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		//Call commented out on WorkbenchPreferencePage. 
 		acceleratorPerformOk(store);
 		
-		store.setValue(IPreferenceConstants.IS_ENCODING_SET, otherEncodingButton.getSelection());
-		store.setValue(IPreferenceConstants.ENCODING, encodingCombo.getText());
+		//store.setValue(IPreferenceConstants.IS_ENCODING_SET, otherEncodingButton.getSelection());
+		//store.setValue(IPreferenceConstants.ENCODING, encodingCombo.getText());
 		
 		return true;
 	}	
