@@ -65,12 +65,17 @@ public class Connection {
 		try {
 			// Perhaps it should be left to the connection to deal with reading pending input!
 			readPendingInput();
-			serverConnection.close();
-		} catch (IOException ex) {
-			throw new CVSCommunicationException(Policy.bind("Connection.cannotClose"), ex);//$NON-NLS-1$
+		} catch (CVSException e) {
+			// Ignore this exception since we don't care about it (i.e. we're closing)
 		} finally {
-			fResponseStream= null;
-			fIsEstablished= false;
+			try {
+				serverConnection.close();
+			} catch (IOException ex) {
+				throw new CVSCommunicationException(Policy.bind("Connection.cannotClose"), ex);//$NON-NLS-1$
+			} finally {
+				fResponseStream = null;
+				fIsEstablished = false;
+			}
 		}
 	}
 	/**
