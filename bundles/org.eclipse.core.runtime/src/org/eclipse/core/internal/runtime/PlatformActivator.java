@@ -11,6 +11,9 @@
 package org.eclipse.core.internal.runtime;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Hashtable;
 import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
@@ -39,6 +42,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	private ServiceReference urlServiceReference;
 	private ServiceReference logServiceReference;
 	private ServiceReference packageAdminReference;
+	private long registryStamp;
 	
 	public static BundleContext getContext() {
 		return context;
@@ -87,10 +91,11 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			File cacheFile = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath());
 			cacheFile = new File(cacheFile, ".registry"); //$NON-NLS-1$
 
-			if (cacheFile.isFile())
-				registry = new RegistryCacheReader(cacheFile, factory, lazyLoading).loadCache();
-
-			if (InternalPlatform.DEBUG && registry != null)
+			if (cacheFile.isFile()) {
+				registryStamp = computeRegistryStamp(); //$NON-NLS-1$
+				registry = new RegistryCacheReader(cacheFile, factory, lazyLoading).loadCache(registryStamp);
+			}
+			if (InternalPlatform.DEBUG)
 				System.out.println("Reading registry cache: " + (System.currentTimeMillis() - start));
 
 			if (InternalPlatform.DEBUG_REGISTRY) {
@@ -119,6 +124,27 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		context.registerService(IExtensionRegistry.class.getName(), registry, new Hashtable()); //$NON-NLS-1$
 		InternalPlatform.getDefault().setExtensionRegistry(registry);
 	}
+	private long computeRegistryStamp() {
+		if (!"true".equalsIgnoreCase(System.getProperty("osgi.checkConfiguration"))) //$NON-NLS-1$
+			return 0;
+		Bundle[] allBundles = context.getBundles();
+		long result = 0;
+		for (int i = 0; i < allBundles.length; i++) {
+			URL pluginManifest = allBundles[i].getEntry("plugin.xml"); //$NON-NLS-1$
+			if (pluginManifest == null)
+				pluginManifest = allBundles[i].getEntry("fragment.xml"); //$NON-NLS-1$
+			if (pluginManifest == null)
+				continue;		
+			try {
+				URLConnection connection = pluginManifest.openConnection();
+				result ^= connection.getLastModified() + allBundles[i].getBundleId();
+			} catch (IOException e) {
+				return 0;
+			}
+		}
+		return result;
+	}	
+
 	public void stop(BundleContext context) throws Exception {
 		// Stop the registry
 		stopRegistry(context);
@@ -135,8 +161,8 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		context.removeBundleListener(this.pluginBundleListener);
 		if (registry != null && registry.isDirty()) {
 			File cacheFile = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath());
-			cacheFile = new File(cacheFile, ".registry"); //$NON-NLS-1$
-			new RegistryCacheWriter(cacheFile).saveCache(registry);
+			cacheFile = new File(cacheFile, ".registry"); //$NON-NLS-1$			
+			new RegistryCacheWriter(cacheFile).saveCache(registry, computeRegistryStamp());
 			registry = null;
 		}
 	}

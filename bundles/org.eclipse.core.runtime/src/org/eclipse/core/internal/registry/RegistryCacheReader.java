@@ -41,7 +41,7 @@ public class RegistryCacheReader {
 	private boolean lazilyLoadExtensions;
 	protected File cacheFile;
 
-	public static final byte REGISTRY_CACHE_VERSION = 5;
+	public static final byte REGISTRY_CACHE_VERSION = 6;
 	public static final byte NULL = 0;
 	public static final byte OBJECT = 1;
 	public static final byte INDEX = 2;
@@ -65,16 +65,17 @@ public class RegistryCacheReader {
 		System.out.println("RegistryCacheReader: " + msg); //$NON-NLS-1$
 	}
 
-	private boolean readHeaderInformation(DataInputStream in) throws InvalidRegistryCacheException {
+	private boolean readHeaderInformation(DataInputStream in, long expectedTimestamp) throws InvalidRegistryCacheException {
 		try {
 			if (in.readInt() != REGISTRY_CACHE_VERSION)
 				return false;
 			long installStamp = in.readLong();
+			long registryStamp = in.readLong();			
 			String osStamp = in.readUTF();
 			String windowsStamp = in.readUTF();
-			String localeStamp = in.readUTF();
+			String localeStamp = in.readUTF();		
 			IPlatform info = InternalPlatform.getDefault();
-			return ((installStamp == InternalPlatform.getDefault().getStateTimeStamp()) && (osStamp.equals(info.getOS())) && (windowsStamp.equals(info.getWS())) && (localeStamp.equals(info.getNL())));
+			return ((expectedTimestamp == 0 || expectedTimestamp == registryStamp) && (installStamp == InternalPlatform.getDefault().getStateTimeStamp()) && (osStamp.equals(info.getOS())) && (windowsStamp.equals(info.getWS())) && (localeStamp.equals(info.getNL())));
 		} catch (IOException e) {
 			throw new InvalidRegistryCacheException(Policy.bind("meta.regCacheIOExceptionReading","HeaderInformation"), e);  //$NON-NLS-1$//$NON-NLS-2$
 		}
@@ -187,8 +188,8 @@ public class RegistryCacheReader {
 			}
 	}
 
-	private ExtensionRegistry readCache(DataInputStream in) throws InvalidRegistryCacheException {
-		if (!readHeaderInformation(in)) {
+	private ExtensionRegistry readCache(DataInputStream in, long expectedTimestamps) throws InvalidRegistryCacheException {
+		if (!readHeaderInformation(in, expectedTimestamps)) {
 			if (InternalPlatform.DEBUG_REGISTRY)
 				debug("Cache header information out of date - ignoring cache"); //$NON-NLS-1$
 			return null;
@@ -321,6 +322,12 @@ public class RegistryCacheReader {
 		return new ConfigurationElement[0];
 	}
 	public final ExtensionRegistry loadCache() {
+		return this.loadCache(0);
+	}
+	/*
+	 * If expectedTimestamp != 0, check it against the registry timestamp if the header. 
+	 */
+	public final ExtensionRegistry loadCache(long expectedTimestamp) {
 		DataInputStream in = null;
 		try {
 			in = openCacheFile();
@@ -331,7 +338,7 @@ public class RegistryCacheReader {
 			return null;
 		}
 		try {
-			return readCache(in);
+			return readCache(in, expectedTimestamp);
 		} catch (InvalidRegistryCacheException e) {
 			Throwable exception = InternalPlatform.DEBUG_REGISTRY ? e.getCause() : null;
 			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, e.getMessage(), exception));

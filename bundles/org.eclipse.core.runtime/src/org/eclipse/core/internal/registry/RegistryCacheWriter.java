@@ -141,10 +141,11 @@ public class RegistryCacheWriter {
 			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "ExtensionPoint"), ioe)); //$NON-NLS-1$
 		}
 	}
-	public void writeHeaderInformation(DataOutputStream out) {
+	public void writeHeaderInformation(long registryStamp, DataOutputStream out) {
 		try {
 			out.writeInt(RegistryCacheReader.REGISTRY_CACHE_VERSION);
 			out.writeLong(InternalPlatform.getDefault().getStateTimeStamp());
+			out.writeLong(registryStamp);			
 			IPlatform info = InternalPlatform.getDefault();
 			out.writeUTF(info.getOS());
 			out.writeUTF(info.getWS());
@@ -185,10 +186,10 @@ public class RegistryCacheWriter {
 		}
 	}
 
-	public void writeCache(ExtensionRegistry object, DataOutputStream out) {
+	public void writeCache(ExtensionRegistry object, long registryStamp, DataOutputStream out) {
 		if (problems == null)
 			problems = new MultiStatus(IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.registryCacheWriteProblems"), null); //$NON-NLS-1$
-		writeHeaderInformation(out);
+		writeHeaderInformation(registryStamp, out);
 		writeRegistry(object, out);
 	}
 
@@ -230,11 +231,11 @@ public class RegistryCacheWriter {
 		return true;
 	}
 
-	public void saveCache(ExtensionRegistry registry) {
+	public void saveCache(ExtensionRegistry registry, long registryStamp) {
 		try {
 			DataOutputStream out = openCacheFile();
 			try {
-				writeCache(registry, out);
+				writeCache(registry, registryStamp, out);
 			} finally {
 				out.close();
 			}
@@ -244,6 +245,9 @@ public class RegistryCacheWriter {
 			if (InternalPlatform.DEBUG_REGISTRY)
 				e.printStackTrace();
 		}
+	}
+	public void saveCache(ExtensionRegistry registry) {
+		this.saveCache(registry, 0);
 	}
 
 	private DataOutputStream openCacheFile() throws IOException {
