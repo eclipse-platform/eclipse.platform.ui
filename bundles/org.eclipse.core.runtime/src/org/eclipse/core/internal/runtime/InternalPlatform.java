@@ -588,7 +588,7 @@ public static void loaderShutdown() {
 		writeVersion();
 	registry.shutdown(null);
 	//shutdown all running jobs
-	JobManager.shutdown();
+	jobManager.shutdown();
 	clearLockFile();
 	if (DEBUG_PLUGINS && DEBUG_PLUGINS_DUMP != null) {
 		// We are debugging so output the registry in XML

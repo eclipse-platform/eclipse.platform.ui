@@ -41,6 +41,12 @@ public class JobManager implements IJobManager {
 	static final boolean DEBUG_DEADLOCK = Boolean.TRUE.toString().equalsIgnoreCase(Platform.getDebugOption(OPTION_DEADLOCK_ERROR));
 	private static final DateFormat DEBUG_FORMAT = new SimpleDateFormat("HH:mm:ss.SSS"); //$NON-NLS-1$
 	private static JobManager instance;
+	/**
+	 * True if this manager is active, and false otherwise.  A job manager
+	 * starts out active, and becomes inactive if it has been shutdown
+	 * and not restarted.
+	 */
+	private static volatile boolean active = false;
 	protected static final long NEVER = Long.MAX_VALUE;
 	private final ImplicitJobs implicitJobs = new ImplicitJobs(this);
 	private final JobListeners jobListeners = new JobListeners();
@@ -84,17 +90,10 @@ public class JobManager implements IJobManager {
 		msgBuf.append('[').append(Thread.currentThread()).append(']').append(msg);
 		System.out.println(msgBuf.toString());
 	}
-
 	public static synchronized JobManager getInstance() {
-		if (instance == null) {
-			new JobManager();
-		}
+		if(instance == null) 
+			new JobManager().startup();
 		return instance;
-	}
-	public static synchronized void shutdown() {
-		if (instance != null)
-			instance.doShutdown();
-		instance = null;
 	}
 	private JobManager() {
 		instance = this;
@@ -113,12 +112,6 @@ public class JobManager implements IJobManager {
 	}
 	public void beginRule(ISchedulingRule rule, IProgressMonitor monitor) {
 		implicitJobs.begin(rule, monitorFor(monitor));
-	}
-	/**
-	 * @deprecated
-	 */
-	public void beginRule(ISchedulingRule rule) {
-		implicitJobs.begin(rule, monitorFor(null));
 	}
 	/**
 	 * Cancels a job
@@ -245,25 +238,6 @@ public class JobManager implements IJobManager {
 		}
 	}
 	/**
-	 * Shuts down the job manager.  Currently running jobs will be told
-	 * to stop, but worker threads may still continue processing.
-	 */
-	private void doShutdown() {
-		//cancel all running jobs
-		Job[] toCancel = null;
-		synchronized (lock) {
-			toCancel = (Job[]) running.toArray(new Job[running.size()]);
-			//clean up
-			sleeping.clear();
-			waiting.clear();
-			running.clear();
-		}
-		//cancel jobs outside sync block to avoid deadlock
-		for (int i = 0; i < toCancel.length; i++)
-			cancel(toCancel[i]);
-		pool.shutdown();
-	}
-	/**
 	 * Indicates that a job was running, and has now finished.  Note that this method 
 	 * can be called under OutOfMemoryError conditions and thus must be paranoid 
 	 * about allocating objects.
@@ -360,6 +334,13 @@ public class JobManager implements IJobManager {
 	}
 	public LockManager getLockManager() {
 		return lockManager;
+	}
+	/**
+	 * Returns whether the job manager is active (has been started more
+	 * recently than it has not been shutdown).
+	 */
+	protected boolean isActive() {
+		return active;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#job(org.eclipse.core.runtime.jobs.Job)
@@ -527,6 +508,8 @@ public class JobManager implements IJobManager {
 	 * @see org.eclipse.core.runtime.jobs.Job#schedule(long)
 	 */
 	protected void schedule(InternalJob job, long delay) {
+		if(!active)
+			throw new IllegalStateException("Job manager has been shut down."); //$NON-NLS-1$
 		Assert.isNotNull(job, "Job is null"); //$NON-NLS-1$
 		//call hook method outside sync block to avoid deadlock
 		if (!job.shouldSchedule())
@@ -633,6 +616,30 @@ public class JobManager implements IJobManager {
 		}
 	}
 	/**
+	 * Shuts down the job manager.  Currently running jobs will be told
+	 * to stop, but worker threads may still continue processing.
+	 */
+	public void shutdown() {
+		Job[] toCancel = null;
+		synchronized (lock) {
+			if (active) {
+				active = false;
+				//cancel all running jobs
+				toCancel = (Job[]) running.toArray(new Job[running.size()]);
+				//clean up
+				sleeping.clear();
+				waiting.clear();
+				running.clear();
+			}
+		}
+		if(toCancel != null) {
+			//cancel jobs outside sync block to avoid deadlock
+			for (int i = 0; i < toCancel.length; i++)
+				cancel(toCancel[i]);
+			pool.shutdown();
+		}
+	}
+	/**
 	 * Puts a job to sleep. Returns true if the job was successfully put to sleep.
 	 */
 	protected boolean sleep(InternalJob job) {
@@ -706,6 +713,17 @@ public class JobManager implements IJobManager {
 				//job has been vetoed or canceled, so mark it as done
 				endJob(job, Status.CANCEL_STATUS, true);
 				continue;
+			}
+		}
+	}
+	/**
+	 * Starts up the job manager. Jobs can be scheduled once again.
+	 */
+	public void startup() {
+		synchronized(lock) {
+			if(!active) {
+				active = true;
+				pool.startup();
 			}
 		}
 	}

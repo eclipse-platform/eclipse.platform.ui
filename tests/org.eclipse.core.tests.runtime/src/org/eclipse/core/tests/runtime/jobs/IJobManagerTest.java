@@ -122,6 +122,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			manager.removeJobChangeListener(jobListeners[i]);
 		}
 		super.tearDown();
+		manager.startup();
 	}
 	public void testDelayedJob() {
 		//schedule a delayed job and ensure it doesn't start until instructed
@@ -344,6 +345,60 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				assertState("2.2." + i + "." + j, jobs[j], Job.WAITING);
 			}
 		}
+	}
+	
+	public void testJobManagerShutdown() {
+		Job job = new TestJob("testShutdown", 100, 100);
+		job.schedule();
+		manager.shutdown();
+		try {
+			job.schedule();
+			fail("Manager is shutdown and cannot schedule new jobs.");
+		} catch(RuntimeException e) {
+			//should fail
+		}
+		
+		//repeated calls should make no difference
+		manager.shutdown();
+		manager.shutdown();
+		manager.shutdown();
+		manager.shutdown();
+	}
+	
+	public void testJobManagerStartup() {
+		Job job = new TestJob("testShutdown", 100, 100);
+		
+		manager.shutdown();
+		try {
+			job.schedule();
+			fail("Manager is shutdown and cannot schedule new jobs.");
+		} catch(RuntimeException e) {
+			//should fail
+		}
+		
+		manager.startup();
+		try {
+			job.schedule();
+		} catch(RuntimeException e) {
+			fail("Manager is started up and should schedule new jobs normally.");
+		}
+		waitForCompletion();
+		
+		Job second = new TestJob("testShutdown2", 100, 100);
+		job.schedule(1000);
+		manager.shutdown();
+		try {
+			second.schedule();
+			fail("Manager is shutdown and cannot schedule new jobs.");
+		} catch(RuntimeException e) {
+			//should fail
+		}
+		//start the manager back up
+		manager.startup();
+		//repeated calls should make no difference
+		manager.startup();
+		manager.startup();
+		manager.startup();
 	}
 	
 	public void testJobFamilyCancel() {

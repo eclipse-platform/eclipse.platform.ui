@@ -47,7 +47,7 @@ class DeadlockDetector {
 		//(go through all the threads in the graph as a type of error checking)
 		for (int i = 0; i < graph.length; i++) {
 			if (graph[i][column] > NO_STATE) {
-				Assert.isTrue(!found, "The lock " + locks.get(column).toString() + " is owned by 2 threads.");
+				Assert.isTrue(!found, "The lock " + locks.get(column).toString() + " is owned by 2 threads."); //$NON-NLS-1$ //$NON-NLS-2$
 				found = true;
 				index = i;
 			}
@@ -108,7 +108,7 @@ class DeadlockDetector {
 			if ((graph[threadIndex][j] > NO_STATE) && (locks.get(j) instanceof ILock)) // && (isWaitedFor((ISchedulingRule)locks.get(j))))
 				ownedLocks.add(locks.get(j));
 		}
-		Assert.isLegal(ownedLocks.size() > 0, "A thread with no contested locks caused deadlock.");
+		Assert.isLegal(ownedLocks.size() > 0, "A thread with no contested locks caused deadlock."); //$NON-NLS-1$
 		return (ISchedulingRule[]) ownedLocks.toArray(new ISchedulingRule[ownedLocks.size()]);
 	}
 	/**
@@ -128,7 +128,7 @@ class DeadlockDetector {
 			if (graph[index][j] > NO_STATE)
 				ownedLocks.add(locks.get(j));
 		}
-		Assert.isLegal(ownedLocks.size() > 0, "A thread with no locks is part of a deadlock.");
+		Assert.isLegal(ownedLocks.size() > 0, "A thread with no locks is part of a deadlock."); //$NON-NLS-1$
 		return ownedLocks.toArray();
 	}
 	/**
@@ -142,7 +142,7 @@ class DeadlockDetector {
 				return (Thread) lockThreads.get(i);
 		}
 		toDebugString();
-		throw new IllegalStateException("Lock " + lock + " is involved in deadlock but is not owned by any thread.");
+		throw new IllegalStateException("Lock " + lock + " is involved in deadlock but is not owned by any thread."); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	/**
 	 * Returns the true index of the lock in the array.
@@ -166,7 +166,7 @@ class DeadlockDetector {
 			if (graph[index][j] == WAITING_FOR_LOCK)
 				return locks.get(j);
 		}
-		throw new IllegalStateException("Thread " + current.getName() + " is involved in deadlock but is not waiting for any lock.");
+		throw new IllegalStateException("Thread " + current.getName() + " is involved in deadlock but is not waiting for any lock."); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	/**
 	 * Returns the index of the given lock in the lock array.
@@ -230,12 +230,12 @@ class DeadlockDetector {
 	void lockReleased(Thread owner, ISchedulingRule lock) {
 		if (!lockThreads.contains(owner)) {
 			if (lock instanceof ILock)
-				Assert.isTrue(false, "Lock " + lock + " has already been released by thread " + owner.getName());
+				Assert.isTrue(false, "Lock " + lock + " has already been released by thread " + owner.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		if (!locks.contains(lock)) {
 			if (lock instanceof ILock)
-				Assert.isTrue(false, "Thread " + owner.getName() + " has already released lock " + lock);
+				Assert.isTrue(false, "Thread " + owner.getName() + " has already released lock " + lock); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		int lockIndex = indexOf(lock);
@@ -247,7 +247,7 @@ class DeadlockDetector {
 			return;
 		}
 		graph[threadIndex][lockIndex]--;
-		Assert.isTrue(graph[threadIndex][lockIndex] > -1, "More releases than acquires for thread " + owner.getName() + " and lock " + lock);
+		Assert.isTrue(graph[threadIndex][lockIndex] > -1, "More releases than acquires for thread " + owner.getName() + " and lock " + lock); //$NON-NLS-1$ //$NON-NLS-2$
 		if (graph[threadIndex][lockIndex] == NO_STATE)
 			removeExtraRows(threadIndex, lockIndex);
 	}
@@ -259,10 +259,10 @@ class DeadlockDetector {
 		//need to make sure that the given thread was not already removed from the graph
 		//and that the given rule (not a rule that conflicts with it) was not removed either
 		if (!lockThreads.contains(owner))
-			Assert.isTrue(false, "Lock " + rule + " was already released by thread " + owner.getName());
+			Assert.isTrue(false, "Lock " + rule + " was already released by thread " + owner.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 
 		if (!locks.contains(rule))
-			Assert.isTrue(false, "Thread " + owner.getName() + " already released lock " + rule);
+			Assert.isTrue(false, "Thread " + owner.getName() + " already released lock " + rule); //$NON-NLS-1$ //$NON-NLS-2$
 
 		int lockIndex = indexOf(rule);
 		int threadIndex = indexOf(owner);
@@ -290,11 +290,11 @@ class DeadlockDetector {
 		int lockIndex = getTrueLockIndex(lock);
 		int threadIndex = lockThreads.indexOf(owner);
 		if (threadIndex < 0)
-			Assert.isTrue(false, "Thread " + owner.getName() + " was already removed.");
+			Assert.isTrue(false, "Thread " + owner.getName() + " was already removed."); //$NON-NLS-1$ //$NON-NLS-2$
 		if (lockIndex < 0)
-			Assert.isTrue(false, "Lock " + lock + " was already removed.");
+			Assert.isTrue(false, "Lock " + lock + " was already removed."); //$NON-NLS-1$ //$NON-NLS-2$
 		if (graph[threadIndex][lockIndex] != WAITING_FOR_LOCK)
-			Assert.isTrue(false, "Thread " + owner.getName() + " was not waiting for lock " + lock.toString() + " so it could not time out.");
+			Assert.isTrue(false, "Thread " + owner.getName() + " was not waiting for lock " + lock.toString() + " so it could not time out."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		graph[threadIndex][lockIndex] = NO_STATE;
 		removeExtraRows(threadIndex, lockIndex);
 	}
@@ -327,7 +327,6 @@ class DeadlockDetector {
 				break;
 			}
 		}
-
 		for (int i = 0; i < graph.length; i++) {
 			if (graph[i][column] != NO_STATE) {
 				colEmpty = false;
@@ -385,20 +384,20 @@ class DeadlockDetector {
 			ISchedulingRule waitingLock = (ISchedulingRule) getWaitingLock(owner);
 			owner = getThreadOwningLock(waitingLock);
 		}
-		String msg = "Deadlock detected. All locks owned by thread " + toSuspend.getName() + " will be suspended.";
-		MultiStatus main = new MultiStatus(Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, msg, new IllegalStateException("Deadlock detected."));
+		String msg = "Deadlock detected. All locks owned by thread " + toSuspend.getName() + " will be suspended."; //$NON-NLS-1$ //$NON-NLS-2$
+		MultiStatus main = new MultiStatus(Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, msg, new IllegalStateException());
 		for (int i = 0; i < deadlockedThreads.size(); i++) {
 			Thread current = (Thread) deadlockedThreads.get(i);
 			Object[] ownedLocks = getOwnedLocks(current);
 			Object waitLock = getWaitingLock(current);
-			StringBuffer buf = new StringBuffer("Thread");
+			StringBuffer buf = new StringBuffer("Thread"); //$NON-NLS-1$
 			buf.append(current.getName());
-			buf.append(" has locks: ");
+			buf.append(" has locks: "); //$NON-NLS-1$
 			for (int j = 0; j < ownedLocks.length; j++) {
 				buf.append(ownedLocks[j]);
-				buf.append((j < ownedLocks.length - 1) ? ", " : " ");
+				buf.append((j < ownedLocks.length - 1) ? ", " : " "); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			buf.append("and is waiting for lock ");
+			buf.append("and is waiting for lock "); //$NON-NLS-1$
 			buf.append(waitLock);
 			Status child = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, buf.toString(), null);
 			main.add(child);
@@ -416,13 +415,11 @@ class DeadlockDetector {
 				tempGraph[i][j] = graph[i][j];
 			}
 		}
-
 		for (int i = 0; i < tempGraph.length; i++) {
 			for (int j = (graph.length == 0 ? 0 : graph[0].length); j < tempGraph[i].length; j++) {
 				tempGraph[i][j] = NO_STATE;
 			}
 		}
-
 		for (int i = graph.length; i < tempGraph.length; i++) {
 			for (int j = 0; j < tempGraph[i].length; j++) {
 				tempGraph[i][j] = NO_STATE;
@@ -462,18 +459,18 @@ class DeadlockDetector {
 	 * Only used for debugging.
 	 */
 	public void toDebugString() {
-		System.out.println(" :: ");
+		System.out.println(" :: "); //$NON-NLS-1$
 		for (int j = 0; j < locks.size(); j++) {
-			System.out.print(" " + locks.get(j) + ",");
+			System.out.print(" " + locks.get(j) + ','); //$NON-NLS-1$
 		}
-		System.out.println("");
+		System.out.println();
 		for (int i = 0; i < graph.length; i++) {
-			System.out.print(" " + ((Thread) lockThreads.get(i)).getName() + " : ");
+			System.out.print(" " + ((Thread) lockThreads.get(i)).getName() + " : "); //$NON-NLS-1$ //$NON-NLS-2$
 			for (int j = 0; j < graph[i].length; j++) {
-				System.out.print(" " + graph[i][j] + ",");
+				System.out.print(" " + graph[i][j] + ','); //$NON-NLS-1$
 			}
-			System.out.println("");
+			System.out.println();
 		}
-		System.out.println("-------");
+		System.out.println("-------"); //$NON-NLS-1$
 	}
 }

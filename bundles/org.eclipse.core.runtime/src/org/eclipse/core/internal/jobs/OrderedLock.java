@@ -219,7 +219,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	 */
 	public void release() {
 		if (depth == 0)
-			Assert.isTrue(false, "Lock cannot be released because it is not owned.");
+			Assert.isTrue(false, "Lock cannot be released because it is not owned."); //$NON-NLS-1$
 		//only release the lock when the depth reaches zero
 		Assert.isTrue(depth >= 0, "Lock released too many times"); //$NON-NLS-1$
 		if (--depth == 0)

@@ -46,8 +46,6 @@ class WorkerPool {
 	 * The number of workers in the threads array
 	 */
 	private int numThreads = 0;
-	
-	private boolean running = false;
 	/**
 	 * The number of threads that are currently sleeping 
 	 */
@@ -59,7 +57,6 @@ class WorkerPool {
 
 	protected WorkerPool(JobManager manager) {
 		this.manager = manager;
-		running = true;
 		computeMaxThreads();
 		Platform.getPlugin(Platform.PI_RUNTIME).getPluginPreferences().addPropertyChangeListener(new Preferences.IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -175,7 +172,6 @@ class WorkerPool {
 		return false;
 	}
 	protected synchronized void shutdown() {
-		running = false;
 		notifyAll();
 	}
 	/**
@@ -200,7 +196,7 @@ class WorkerPool {
 	protected InternalJob startJob(Worker worker) {
 		//if we're above capacity, kill the thread
 		synchronized (this) {
-			if (!running || numThreads > MAX_THREADS) {
+			if (!manager.isActive() || numThreads > MAX_THREADS) {
 				//must remove the worker immediately to prevent all threads from expiring
 				endWorker(worker);
 				return null;
@@ -209,7 +205,7 @@ class WorkerPool {
 		Job job = manager.startJob();
 		//spin until a job is found or until we have been idle for too long
 		long idleStart = System.currentTimeMillis();
-		while (running && job == null) {
+		while (manager.isActive() && job == null) {
 			long hint = manager.sleepHint();
 			if (hint > 0)
 				sleep(Math.min(hint, BEST_BEFORE));
@@ -237,5 +233,8 @@ class WorkerPool {
 				jobQueued(null);
 		}
 		return job;
+	}
+	protected synchronized void startup() {
+		computeMaxThreads();
 	}
 }
