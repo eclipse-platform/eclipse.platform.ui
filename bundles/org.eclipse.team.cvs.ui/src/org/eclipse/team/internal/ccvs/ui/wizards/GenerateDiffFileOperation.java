@@ -13,9 +13,9 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 
@@ -47,80 +47,96 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
 	private IResource resource;
 	private Shell shell;
 	private LocalOption[] options;
-	private boolean toClipboard;
 
-	GenerateDiffFileOperation(IResource resource, File file, boolean toClipboard, LocalOption[] options, Shell shell) {
+	GenerateDiffFileOperation(IResource resource, File file, LocalOption[] options, Shell shell) {
 		this.resource = resource;
 		this.outputFile = file;
 		this.shell = shell;
 		this.options = options;
-		this.toClipboard = toClipboard;
 	}
 
 	/**
 	 * @see IRunnableWithProgress#run(IProgressMonitor)
 	 */
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+	    
+	    final CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
+	    monitor.beginTask("", 500); //$NON-NLS-1$
+	    monitor.setTaskName(Policy.bind("GenerateCVSDiff.working")); //$NON-NLS-1$
 		try {
-			monitor.beginTask("", 500); //$NON-NLS-1$
-			monitor.setTaskName(
-				Policy.bind("GenerateCVSDiff.working")); //$NON-NLS-1$
-			
-			OutputStream os;
-			if(toClipboard) {
-				os = new ByteArrayOutputStream();
+			if (outputFile != null) {
+			    generateDiffToFile(monitor, provider, outputFile);
 			} else {
-				os = new FileOutputStream(outputFile);
-			}
-			try {
-				CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
-				provider.diff(resource, options, new PrintStream(os), new SubProgressMonitor(monitor, 500));
-			} finally {
-				os.close();
-			}
-
-			boolean emptyDiff = false;
-			
-			if(toClipboard) {				
-				final ByteArrayOutputStream baos = (ByteArrayOutputStream)os;
-				if(baos.size() == 0) {
-					emptyDiff = true;
-				} else {
-					shell.getDisplay().syncExec(new Runnable() {
-						public void run() {
-							TextTransfer plainTextTransfer = TextTransfer.getInstance();
-							Clipboard clipboard = new Clipboard(shell.getDisplay());		
-							clipboard.setContents(
-								new String[]{baos.toString()}, 
-								new Transfer[]{plainTextTransfer});	
-							clipboard.dispose();
-						}
-					});
-				}
-			} else {
-				if(outputFile.length() == 0) {
-					emptyDiff = true;
-					outputFile.delete();
-				}	
-			}
-
-			//check for empty diff and report			
-			if (emptyDiff) {
-				CVSUIPlugin.openDialog(shell, new CVSUIPlugin.IOpenableInShell() {
-					public void open(Shell shell) {
-						MessageDialog.openInformation(
-							shell,
-							Policy.bind("GenerateCVSDiff.noDiffsFoundTitle"), //$NON-NLS-1$
-							Policy.bind("GenerateCVSDiff.noDiffsFoundMsg")); //$NON-NLS-1$
-					}
-				}, CVSUIPlugin.PERFORM_SYNC_EXEC);
+			    generateDiffToClipboard(monitor, provider);
 			}
 		} catch (TeamException e) {
-			throw new InvocationTargetException(e);
-		} catch(IOException e) {
-			throw new InvocationTargetException(e);
+		    throw new InvocationTargetException(e); 
 		} finally {
 			monitor.done();
 		}
 	}
+	
+    private void generateDiffToFile(IProgressMonitor monitor, CVSTeamProvider provider, File file) throws TeamException {
+        
+        final FileOutputStream os;
+        try {
+            os= new FileOutputStream(file);
+            try {
+                provider.diff(resource, options, new PrintStream(os), new SubProgressMonitor(monitor, 500));
+            } finally {
+                os.close();
+            }
+        } catch (FileNotFoundException e) {
+            throw new TeamException(Policy.bind("GenerateDiffFileOperation.0"), e); //$NON-NLS-1$
+        } catch (IOException e) {
+            throw new TeamException(Policy.bind("GenerateDiffFileOperation.1"), e); //$NON-NLS-1$
+        }
+        
+		if (file.length() == 0) {
+			outputFile.delete();
+			reportEmptyDiff();
+		}	
+	}
+
+    private void generateDiffToClipboard(IProgressMonitor monitor, CVSTeamProvider provider) throws TeamException {
+        final ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try {
+            try {
+                provider.diff(resource, options, new PrintStream(os), new SubProgressMonitor(monitor, 500));
+            } finally {
+                os.close();
+            }
+        } catch (IOException e) {
+            throw new TeamException(Policy.bind("GenerateDiffFileOperation.2"), e); //$NON-NLS-1$
+        }
+        if (os.size() == 0) {
+            reportEmptyDiff();
+        } else {
+            copyToClipboard(os);
+        }
+    }
+ 
+    private void copyToClipboard(final ByteArrayOutputStream baos) {
+        shell.getDisplay().syncExec(new Runnable() {
+        	public void run() {
+        		TextTransfer plainTextTransfer = TextTransfer.getInstance();
+        		Clipboard clipboard = new Clipboard(shell.getDisplay());		
+        		clipboard.setContents(
+        			new String[]{baos.toString()}, 
+        			new Transfer[]{plainTextTransfer});	
+        		clipboard.dispose();
+        	}
+        });
+    }
+
+    private void reportEmptyDiff() {
+        CVSUIPlugin.openDialog(shell, new CVSUIPlugin.IOpenableInShell() {
+        	public void open(Shell shell) {
+        		MessageDialog.openInformation(
+        			shell,
+        			Policy.bind("GenerateCVSDiff.noDiffsFoundTitle"), //$NON-NLS-1$
+        			Policy.bind("GenerateCVSDiff.noDiffsFoundMsg")); //$NON-NLS-1$
+        	}
+        }, CVSUIPlugin.PERFORM_SYNC_EXEC);
+    }
 }

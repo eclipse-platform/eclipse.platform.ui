@@ -654,7 +654,6 @@ public class GenerateDiffFileWizard extends Wizard {
         optionsPage.setDescription(pageDescription);
         addPage(optionsPage);		
     }
-
     
     /**
      * Declares the wizard banner iamge descriptor
@@ -685,29 +684,10 @@ public class GenerateDiffFileWizard extends Wizard {
     public boolean performFinish() {
         
         final int location= locationPage.getSelectedLocation();
-        final boolean toClipboard= location == LocationPage.CLIPBOARD;
-        final File file= toClipboard ? null : locationPage.getFile();
 
-        /**
-         * Ask the user to overwrite the file if it already exists.
-         */
-        if (file != null && file.exists()) {
-            final String title = Policy.bind("GenerateCVSDiff.overwriteTitle"); //$NON-NLS-1$
-            final String msg = Policy.bind("GenerateCVSDiff.overwriteMsg"); //$NON-NLS-1$
-            final MessageDialog dialog = new MessageDialog(getShell(), title, null, msg, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
-            dialog.open();
-            if (dialog.getReturnCode() != 0)            
-                return false;
-        }
+        final File file= location != LocationPage.CLIPBOARD? locationPage.getFile() : null;
         
-        /**
-         * Error: the file isn't writable.
-         */
-        if (!file.canWrite()) {
-            final String title= Policy.bind("GenerateCVSDiff.1"); //$NON-NLS-1$
-            final String msg= Policy.bind("GenerateCVSDiff.2"); //$NON-NLS-1$
-            final MessageDialog dialog= new MessageDialog(getShell(), title, null, msg, MessageDialog.ERROR, new String[] { IDialogConstants.OK_LABEL }, 0);
-            dialog.open();
+        if (!(file == null || validateFile(file))) {
             return false;
         }
         
@@ -715,11 +695,11 @@ public class GenerateDiffFileWizard extends Wizard {
          * Perform diff operation.
          */
         try {
-            getContainer().run(true, true, new GenerateDiffFileOperation(resource, file, toClipboard, optionsPage.getOptions(), getShell()));
+            getContainer().run(true, true, new GenerateDiffFileOperation(resource, file, optionsPage.getOptions(), getShell()));
         } catch (InterruptedException e1) {
             return true;
         } catch (InvocationTargetException e2) {
-            CVSUIPlugin.openError(getShell(), Policy.bind("GenerateCVSDiff.error"), null, e2); //$NON-NLS-1$
+            CVSUIPlugin.openError(getShell(), null, null, e2);
             return false;
         }
         
@@ -754,5 +734,37 @@ public class GenerateDiffFileWizard extends Wizard {
             return false;
         }
         return true;
+    }
+    
+    public boolean validateFile(File file) {
+        
+        if (file == null)
+            return false;
+        
+        /**
+         * Consider file valid if it doesn't exist for now.
+         */
+        if (!file.exists())
+            return true;
+        
+    	/**
+    	 * The file exists.
+    	 */
+    	if (!file.canWrite()) {
+    	    final String title= Policy.bind("GenerateCVSDiff.1"); //$NON-NLS-1$
+    	    final String msg= Policy.bind("GenerateCVSDiff.2"); //$NON-NLS-1$
+    	    final MessageDialog dialog= new MessageDialog(getShell(), title, null, msg, MessageDialog.ERROR, new String[] { IDialogConstants.OK_LABEL }, 0);
+    	    dialog.open();
+    	    return false;
+    	}
+    	
+    	final String title = Policy.bind("GenerateCVSDiff.overwriteTitle"); //$NON-NLS-1$
+    	final String msg = Policy.bind("GenerateCVSDiff.overwriteMsg"); //$NON-NLS-1$
+    	final MessageDialog dialog = new MessageDialog(getShell(), title, null, msg, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
+    	dialog.open();
+    	if (dialog.getReturnCode() != 0)            
+    	    return false;
+    	
+    	return true;
     }
 }
