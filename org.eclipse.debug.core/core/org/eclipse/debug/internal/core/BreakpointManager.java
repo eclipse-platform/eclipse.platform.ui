@@ -132,23 +132,13 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * notified when this manager's enablement changes.
 	 */
 	private ListenerList fBreakpointManagerListeners= new ListenerList(2);
-	
-	/**
-	 * Collection of marker that associates marker types to breakpoint types
-	 * (user-presentable label provided via extension).
-	 * 
-	 * key: a marker type (String)
-	 * value: a breakpoint type (String)
-	 */
-    private HashMap fBreakpointTypes;
 
 	/**
 	 * Constructs a new breakpoint manager.
 	 */
 	public BreakpointManager() {
 		fMarkersToBreakpoints= new HashMap(10);	
-		fBreakpointExtensions= new HashMap(15);	
-		fBreakpointTypes= new HashMap(15);
+		fBreakpointExtensions= new HashMap(15);
 	}
 	
 	/**
