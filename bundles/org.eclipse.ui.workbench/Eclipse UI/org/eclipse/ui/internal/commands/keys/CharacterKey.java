@@ -25,6 +25,6 @@ public class CharacterKey extends NonModifierKey {
 	}
 
 	public String toString() {
-		return Character.toString(character);
+		return "" + character; // TODO 1.4 Character.toString(character);
 	}
 }
