@@ -21,14 +21,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.text.Assert;
-import org.eclipse.osgi.util.ManifestElement;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
+
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.osgi.util.ManifestElement;
+
+import org.eclipse.jface.text.Assert;
+
+import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 /**
  * Allows to sort an array based on their elements' configuration elements
@@ -144,8 +151,14 @@ public abstract class ConfigurationElementSorter {
                 try {
                     manifestElements = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, requires);
                 } catch (BundleException e) {
+                	String message= "ConfigurationElementSorter: getting required plug-ins for " + bundle.getSymbolicName() + "failed"; //$NON-NLS-1$ //$NON-NLS-2$
+    				Status status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, e);
+    				TextEditorPlugin.getDefault().getLog().log(status);
                     continue;
                 }
+                
+                if (manifestElements == null)
+                	continue;
                 
 				int i= 0;
 				while (i < manifestElements.length && !toTest.isEmpty()) {
