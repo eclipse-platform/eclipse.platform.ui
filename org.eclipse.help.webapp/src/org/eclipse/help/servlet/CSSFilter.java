@@ -12,11 +12,12 @@ package org.eclipse.help.servlet;
 public class CSSFilter implements IFilter {
 	private static final byte[] css = 
 	("<style type=\"text/css\">" +
-	"body {scrollbar-highlight-color:ThreeDShadow;" +
+	"body, html {scrollbar-highlight-color:ThreeDShadow;" +
 	"scrollbar-shadow-color:ThreeDShadow;" +
 	"scrollbar-arrow-color:#000000;" +
 	"scrollbar-darkshadow-color:Window;" +
 	"scrollbar-face-color:ButtonFace;" +
+	"}" +
 	"</style>").getBytes();
 		
 	public CSSFilter() {
