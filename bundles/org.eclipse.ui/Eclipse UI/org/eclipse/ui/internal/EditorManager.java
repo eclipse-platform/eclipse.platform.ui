@@ -302,10 +302,10 @@ private IReusableEditor findReusableEditor(EditorDescriptor desc) {
 		if(!(editor instanceof IReusableEditor))
 			continue;
 		IReusableEditor reusableEditor = (IReusableEditor)editor;
-		if(!reusableEditor.getReuseEditor())
+		EditorSite site = (EditorSite)reusableEditor.getEditorSite();
+		if(!site.getReuseEditor())
 			continue;
 		IEditorInput editorInput = reusableEditor.getEditorInput(); 
-		EditorSite site = (EditorSite)reusableEditor.getEditorSite();
 		EditorDescriptor oldDesc = site.getEditorDescriptor();
 		if(oldDesc == null)
 			oldDesc = (EditorDescriptor)getEditorRegistry().getDefaultEditor();

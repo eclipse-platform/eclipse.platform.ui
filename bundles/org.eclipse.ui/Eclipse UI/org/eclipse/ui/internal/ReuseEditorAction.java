@@ -20,19 +20,19 @@ protected ReuseEditorAction(IWorkbenchWindow window) {
  * @see Action#run()
  */
 public void run() {
-	Object editor = getActiveEditor();
+	IEditorPart editor = getActiveEditor();
 	if(editor instanceof IReusableEditor)
-		((IReusableEditor)editor).setReuseEditor(isChecked());
+		((EditorSite)editor.getEditorSite()).setReuseEditor(isChecked());
 }
 /**
  * @see ActiveEdirorAction#updateState()
  */
 protected void updateState() {
-	Object editor = getActiveEditor();
+	IEditorPart editor = getActiveEditor();
 	boolean enabled = (editor != null) && (editor instanceof IReusableEditor);
 	setEnabled(enabled);
 	if(enabled)
-		setChecked(((IReusableEditor)editor).getReuseEditor());
+		setChecked(((EditorSite)editor.getEditorSite()).getReuseEditor());
 	else
 		setChecked(false);
 }

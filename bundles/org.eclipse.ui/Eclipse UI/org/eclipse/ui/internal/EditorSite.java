@@ -18,6 +18,8 @@ public class EditorSite extends PartSite
 	implements IEditorSite
 {
 	private EditorDescriptor desc;
+	private boolean reuseEditor = true;
+	
 /**
  * Constructs an EditorSite for an editor.  The resource editor descriptor
  * may be omitted for an OLE editor.
@@ -58,5 +60,13 @@ public IEditorPart getEditorPart() {
 
 public EditorDescriptor getEditorDescriptor() {
 	return desc;
+}
+
+public boolean getReuseEditor() {
+	return reuseEditor;
+}
+	
+public void setReuseEditor(boolean reuse) {
+	reuseEditor = reuse;
 }
 }

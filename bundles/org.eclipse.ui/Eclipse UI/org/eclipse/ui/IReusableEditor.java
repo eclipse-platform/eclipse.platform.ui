@@ -13,20 +13,6 @@ package org.eclipse.ui;
  */
 public interface IReusableEditor extends IEditorPart {
 /**
- * Returns true if this editor can be reused otherwise
- * returns false
- *
- * @return whether or not the editor can be reused.
- */
-public boolean getReuseEditor();
-/**
- * Set whether of not this editor may be reused
- * to edit another resource.
- * 
- * @param true if the editor may be reused.
- */
-public void setReuseEditor(boolean reuse);
-/**
  * @see EditorPart#setInput
  */
 public void setInput(IEditorInput newInput);

@@ -417,8 +417,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/** The editor's part listener */
 	private IPartListener fPartListener= new PartListener();
 	
-	private boolean fReuseEditor = true;
-	
 	/**
 	 * Creates a new text editor. It initializes the editor and ruler context
 	 * menu id with the predefined names. If not explicitly set, this
@@ -1792,15 +1790,5 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			while (e.hasNext())
 				updateAction((String) e.next());
 		}
-	}
-	
-	public boolean getReuseEditor() {
-		return fReuseEditor;
-		
-	}
-	
-	public void setReuseEditor(boolean reuse) {
-		fReuseEditor = reuse;
-	}
-	
+	}	
 }
