@@ -8,7 +8,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.viewers.ISelection; 
+import org.eclipse.jface.viewers.ISelection;
 
 /**
  * A workbench page consists of an arrangement of views and editors intended to
@@ -644,14 +644,12 @@ public int getEditorReuseThreshold();
  * @deprecated use IPageLayout.setEditorReuseThreshold(int openEditors) instead.
  */
 public void setEditorReuseThreshold(int openEditors);
-
 /**
- * 2.1 - WORK_IN_PROGRESS do not use.
+ * 2.1 - WORK_IN_PROGRESS. Do not use.
+ * 
+ * Returns the navigation history which manages a list of entries keeping the history
+ * of places (positions, selection and editors) the user visited making it easier to the
+ * user to move back and forward without losing context.
  */
-public void addNavigationHistoryEntry(IEditorPart part, NavigationLocation entry);
-
-/**
- * 2.1 - WORK_IN_PROGRESS do not use.
- */
-public NavigationLocation[] getNavigationHistoryEntries(IEditorInput input);
+public INavigationHistory getNavigationHistory();
 }

@@ -972,7 +972,7 @@ public void dispose() {
 	window.getClientComposite().removeControlListener(resizeListener);
 	composite.dispose();
 	
-	getNavigationHistory().dispose();
+	navigationHistory.dispose();
 }
 /**
  * Dispose a perspective.
@@ -1001,24 +1001,8 @@ private void disposePerspective(Perspective persp) {
 }
 /**
  * * @return NavigationHistory */
-public NavigationHistory getNavigationHistory() {
+public INavigationHistory getNavigationHistory() {
 	return navigationHistory;
-}
-
-/*
- * (non-Javadoc)
- * Method declared on IWorkbenchPage
- */
-public void addNavigationHistoryEntry(IEditorPart part, NavigationLocation entry) {
-	getNavigationHistory().addEntry(part, entry);
-}
-
-/*
- * (non-Javadoc)
- * Method declared on IWorkbenchPage
- */
-public NavigationLocation[] getNavigationHistoryEntries(IEditorInput input) {
-	return getNavigationHistory().getEntries(input);
 }
 
 /**
@@ -1924,8 +1908,6 @@ public IStatus restoreState(IMemento memento) {
 	// Restore editor manager.
 	IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_EDITORS);
 	result.merge(getEditorManager().restoreState(childMem));
-	if(getActiveEditor() != null)
-		getNavigationHistory().add(getActiveEditor());
 	
 	childMem = memento.getChild(IWorkbenchConstants.TAG_VIEWS);
 	if(childMem != null)
@@ -1971,8 +1953,11 @@ public IStatus restoreState(IMemento memento) {
 			activePart = view;
 	}
 	
-	if(getActivePart() != getActiveEditor())
-		getNavigationHistory().add((IEditorPart)null);
+	childMem = memento.getChild(IWorkbenchConstants.TAG_NAVIGATION_HISTORY);
+	if(childMem != null)
+		navigationHistory.restoreState(childMem);
+	else if(getActiveEditor() != null)
+		getNavigationHistory().markLocation();
 	return result;
 }
 /**
@@ -2085,6 +2070,8 @@ public IStatus saveState(IMemento memento) {
 	if (workingSet != null) {
 		memento.putString(IWorkbenchConstants.TAG_WORKING_SET, workingSet.getName());
 	}
+	
+	navigationHistory.saveState(memento.createChild(IWorkbenchConstants.TAG_NAVIGATION_HISTORY));
 	return result;
 }
 /**
@@ -2095,6 +2082,13 @@ private void setActivePart(IWorkbenchPart newPart) {
 	if (activePart == newPart)
 		return;
 
+	//No need to change the history if the active editor is becoming the active part
+	boolean markLocation = newPart != lastActiveEditor;
+	if(markLocation && lastActiveEditor != null && activePart != null && activePart instanceof IEditorPart) {
+		//Can't use markLocation because the getActiveEditor will return the new part.
+		navigationHistory.addEntry(lastActiveEditor);
+	}
+		
 	// Notify perspective.  It may deactivate fast view.
 	Perspective persp = getActivePerspective();
 	if (persp != null)
@@ -2105,7 +2099,8 @@ private void setActivePart(IWorkbenchPart newPart) {
 	if (oldPart != null) {
 		deactivatePart(oldPart);
 	}
-	
+
+			
 	// Set active part.
 	activePart = newPart;
 	if (newPart != null) {	
@@ -2118,10 +2113,8 @@ private void setActivePart(IWorkbenchPart newPart) {
 	}
 	activatePart(activePart);
 	
-	if(activePart != null && activePart instanceof IEditorPart)
-		getNavigationHistory().add((IEditorPart)activePart);		
-	else
-		getNavigationHistory().add((IEditorPart)null);	
+	if(markLocation && activePart != null && activePart instanceof IEditorPart)
+		getNavigationHistory().markLocation();
 
 	// Fire notifications
 	if (oldPart != null)

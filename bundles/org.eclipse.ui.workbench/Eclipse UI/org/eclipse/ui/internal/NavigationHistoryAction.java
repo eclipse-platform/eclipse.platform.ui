@@ -1,16 +1,23 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.*;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * The <code>HistoryAction</code> is move navigation history 
+ * The <code>NavigationHistoryAction</code> moves navigation history 
  * back and forward.
  */
 public class NavigationHistoryAction extends PageEventAction {
@@ -40,7 +47,7 @@ public class NavigationHistoryAction extends PageEventAction {
 	 */	
 	public void pageActivated(IWorkbenchPage page) {
 		super.pageActivated(page);
-		NavigationHistory nh = ((WorkbenchPage)page).getNavigationHistory();
+		NavigationHistory nh = (NavigationHistory)page.getNavigationHistory();
 		if(forward)
 			nh.setForwardAction(this);
 		else
@@ -51,10 +58,12 @@ public class NavigationHistoryAction extends PageEventAction {
 	 */
 	public void run() {
 		WorkbenchPage page = (WorkbenchPage)getActivePage();
-		if (page != null)
+		if (page != null) {
+			NavigationHistory nh = (NavigationHistory)page.getNavigationHistory();
 			if(forward)
-				page.getNavigationHistory().forward();
+				nh.forward();
 			else
-				page.getNavigationHistory().backward();
+				nh.backward();
+		}
 	}
 }
