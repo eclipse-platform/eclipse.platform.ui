@@ -67,6 +67,6 @@ public abstract class AbstractClasspathEntry implements IClasspathEntry {
 	 * @see org.eclipse.ant.core.IAntClasspathEntry#isEclipseRuntimeRequired()
 	 */
 	public boolean isEclipseRuntimeRequired() {
-		return true;
+		return false;
 	}
 }
