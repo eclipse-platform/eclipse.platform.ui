@@ -225,16 +225,9 @@ protected void contributeToolbarAction(ActionDescriptor ad, IToolBarManager tool
 		return;
 
 	// Find reference group.
-	if (tgroup == null)
-		tgroup = IWorkbenchActionConstants.MB_ADDITIONS;
-	IContributionItem sep;
-	if (toolbar instanceof CoolItemToolBarManager) {
-		// in the coolbar case, MB_ADDITIONS is part of the org.eclipse.ui.internal
-		// CoolBarContributionItem
-		sep = ((CoolItemToolBarManager)toolbar).getParentManager().findSubId(tgroup);
-	} else {
-		sep = toolbar.find(tgroup);
-	}
+	if (tgroup == null) tgroup = IWorkbenchActionConstants.MB_ADDITIONS;
+	IContributionItem sep = null;
+	sep = toolbar.find(tgroup);
 	if (sep == null) {
 		if (appendIfMissing) {
 			addGroup(toolbar, tgroup);
@@ -242,8 +235,7 @@ protected void contributeToolbarAction(ActionDescriptor ad, IToolBarManager tool
 			WorkbenchPlugin.log("Invalid Toolbar Extension (Group is invalid): " + ad.getId());//$NON-NLS-1$
 			return;
 		}
-	}
-	
+	} 	
 	// Add action to tool bar.
 	try {
 		insertAfter(toolbar, tgroup, ad.getAction());
