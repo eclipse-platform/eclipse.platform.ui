@@ -100,7 +100,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		public String getColumnText(Object obj, int col) {
 			if (col == 0) {
 				ISite site = ((IConfiguredSite) obj).getSite();
-				return site.getURL().getFile();
+				return new File(site.getURL().getFile()).toString();
 			}
 			return null;
 		}

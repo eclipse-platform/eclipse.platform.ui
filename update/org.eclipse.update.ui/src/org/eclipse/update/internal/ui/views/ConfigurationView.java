@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
+import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
@@ -206,7 +207,7 @@ public class ConfigurationView
 				IConfiguredSite csite =
 					((IConfiguredSiteAdapter) obj).getConfiguredSite();
 				ISite site = csite.getSite();
-				return site.getURL().toString();
+				return new File(site.getURL().getFile()).toString();
 			}
 			if (obj instanceof IFeatureAdapter) {
 				try {
