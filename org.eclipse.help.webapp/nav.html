@@ -113,7 +113,7 @@ function getFrameInput(nav)
 		
 	case "links":
 		if(args && args["contextId"])
-			return "links.jsp?contextId="+args["contextId"];
+			return "links.jsp?contextId="+args["contextId"] + "&topic="+args["topic"];
 		else
 			return "about:blank";
 		break;
@@ -126,7 +126,6 @@ function getFrameInput(nav)
 
 function showBookshelf()
 {
-	//document.getElementById("toc").src = "tocs.jsp";
 	window.toc.window.location.href = "tocs.jsp";
 }
 

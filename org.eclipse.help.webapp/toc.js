@@ -188,6 +188,7 @@ function highlightTopic(topic)
 function selectTopic(topic)
 {
 	var links = document.getElementsByTagName("a");
+
 	for (var i=0; i<links.length; i++)
 	{
 		if (topic == links[i].href)

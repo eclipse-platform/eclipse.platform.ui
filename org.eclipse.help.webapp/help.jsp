@@ -15,18 +15,8 @@
 	
 	// url of NavFrame
 	String srcNavFrame = "nav.html";
-	if(request.getParameter("tab")!=null)
-		srcNavFrame=srcNavFrame+"?tab="+request.getParameter("tab");
-	else
-		srcNavFrame=srcNavFrame+"?tab=toc";
-	if(request.getParameter("toc")!=null)
-		srcNavFrame=srcNavFrame+"&toc="+request.getParameter("toc");
-	if(request.getParameter("topic")!=null)
-		srcNavFrame=srcNavFrame+"&topic="+request.getParameter("topic");
-	if(request.getParameter("query")!=null)
-		srcNavFrame=srcNavFrame+"&query="+request.getParameter("query");
-	if(request.getParameter("contextId")!=null)
-		srcNavFrame=srcNavFrame+"&contextId="+request.getParameter("contextId");
+	if (request.getQueryString() != null) 
+		srcNavFrame += "?"+request.getQueryString();
 	
 	// url of MainFrame
 	String srcMainFrame = "about:blank";

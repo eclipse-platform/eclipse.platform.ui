@@ -52,7 +52,8 @@ public class Links {
 		NodeList topics = toc.getChildNodes();
 		if (topics.getLength() == 0)
 		{
-			out.write("Nothing found");
+			// TO DO: get the correct locale
+			out.write(WebappResources.getString("Nothing_found", null));
 			return;
 		}
 		out.write("<ul class='expanded'>");

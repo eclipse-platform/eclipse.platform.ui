@@ -53,19 +53,17 @@
 <%
 	// Generate the tree
 	if (selectedTOC != null)
-	{
 		tocs.loadTOC(selectedTOC, out);	
 		
-		// Highlight topic
-		if (topic != null && !topic.equals(""))
-		{
+	// Highlight topic
+	if (topic != null && !topic.equals(""))
+	{
 %>
 		<script language="JavaScript">
 	 		selectTopic('<%=topic%>');
 		</script>
 <%
-		}
-	}		
+	}
 %>
 
 </body>
