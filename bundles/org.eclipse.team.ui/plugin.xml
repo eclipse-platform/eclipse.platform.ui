@@ -20,7 +20,6 @@
 </runtime>
 
 <extension-point id="configurationWizards" name="Configuration Wizards"/>
-<extension-point id="decorators" name="Provider Decorators"/>
 
 <!-- Define some example text extensions. This will be done
      by other plugins later. -->
