@@ -26,20 +26,19 @@ protected void initText() {
 protected void showMenu(PartPane pane) {
 	pane.showViewMenu();
 }
-}
 
-	/**
-	 * See IPartListener
-	 */
-	public void partActivated(IWorkbenchPart part) {
-		super.partActivated(part);
+/**
+ * Updates the enabled state.
+ */
+protected void updateState() {
+	super.updateState();
 
-		//All of the conditions in the super class passed
-		//now check for the menu.
-		if (isEnabled()) {
-			PartPane pane = (((PartSite) part.getSite()).getPane());
-			if (pane instanceof ViewPane)
-				setEnabled(((ViewPane) pane).hasViewMenu());
-		}
+	//All of the conditions in the super class passed
+	//now check for the menu.
+	if (isEnabled()) {
+		PartPane pane = (((PartSite) getActivePart().getSite()).getPane());
+		if (pane instanceof ViewPane)
+			setEnabled(((ViewPane) pane).hasViewMenu());
 	}
+}
 }

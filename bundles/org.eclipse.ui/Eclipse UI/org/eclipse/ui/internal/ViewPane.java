@@ -481,19 +481,33 @@ protected void addMoveItems(Menu moveMenu) {
 }
 
 /**
- * Show the view menu for this window.
+ * Return if there should be a view menu at all.
+ * There is no view menu if there is no menu manager,
+ * no pull down button or if the receiver is an
+ * inactive fast view.
  */
-public void showViewMenu() {
+public boolean hasViewMenu(){
 	if (isvMenuMgr == null)
-		return;
+		return false;
 	// If this is a fast view, it may have been minimized. Do nothing in this case.
 	if(isFastView() && (page.getActiveFastView() != getPart()))
-		return;
+		return false;
 		
 	//If there is no pull down button there is no associated menu
 	if(pullDownButton == null || pullDownButton.isDisposed())
-		return;
+		return false;
 		
+	return true;
+}
+
+/**
+ * Show the view menu for this window.
+ */
+public void showViewMenu() {
+	
+	if(!hasViewMenu())
+		return;
+				
 	Menu aMenu = isvMenuMgr.createContextMenu(getControl());
 	Rectangle bounds = pullDownButton.getBounds();
 	Point topLeft = new Point(bounds.x, bounds.y + bounds.height);
