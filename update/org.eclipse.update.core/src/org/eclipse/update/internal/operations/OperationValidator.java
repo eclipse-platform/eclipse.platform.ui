@@ -330,6 +330,7 @@ public class OperationValidator implements IOperationValidator {
 		try {
 			ArrayList features = computeFeatures();
 			checkOptionalChildConfiguring(feature, status);
+			checkForCycles(feature, null, features);
 			features = computeFeaturesAfterOperation(features, feature, null);
 			checkConstraints(features, status);
 
@@ -347,6 +348,7 @@ public class OperationValidator implements IOperationValidator {
 		ArrayList status) {
 		try {
 			ArrayList features = computeFeatures();
+			checkForCycles(feature, null, features);
 			features =
 				computeFeaturesAfterOperation(
 					features,
@@ -369,6 +371,7 @@ public class OperationValidator implements IOperationValidator {
 			ArrayList features = computeFeatures();
 			if (oldFeature == null && isPatch(newFeature))
 				checkUnique(newFeature, features, status);
+			checkForCycles(newFeature, null, features);
 			features =
 				computeFeaturesAfterOperation(features, newFeature, oldFeature);
 			checkConstraints(features, status);
@@ -442,6 +445,7 @@ public class OperationValidator implements IOperationValidator {
 							UpdateUtils.getString(KEY_EXCLUSIVE)));
 					continue;
 				}
+				checkForCycles(newFeature, null, features);
 				features =
 					computeFeaturesAfterOperation(
 						features,
@@ -541,12 +545,12 @@ public class OperationValidator implements IOperationValidator {
 	 * feature
 	 */
 	private static ArrayList computeFeatureSubtree(
-		IFeature top,
-		IFeature feature,
-		ArrayList features,
-		boolean tolerateMissingChildren,
-		ArrayList configuredFeatures)
-		throws CoreException {
+			IFeature top,
+			IFeature feature,
+			ArrayList features,
+			boolean tolerateMissingChildren,
+			ArrayList configuredFeatures)
+	throws CoreException {
 
 		// check arguments
 		if (features == null)
@@ -557,16 +561,16 @@ public class OperationValidator implements IOperationValidator {
 			feature = top;
 
 		// check for <includes> cycle
-		if (features.contains(feature)) {
-			IStatus status =
-				createStatus(top, UpdateUtils.getString(KEY_CYCLE));
-			throw new CoreException(status);
-		}
+//		if (features.contains(feature)) {
+//			IStatus status =
+//			createStatus(top, UpdateUtils.getString(KEY_CYCLE));
+//			throw new CoreException(status);
+//		}
 
 		// return specified base feature and all its children
 		features.add(feature);
 		IIncludedFeatureReference[] children =
-			feature.getIncludedFeatureReferences();
+		feature.getIncludedFeatureReferences();
 		for (int i = 0; i < children.length; i++) {
 			try {
 				IFeature child;
@@ -575,7 +579,7 @@ public class OperationValidator implements IOperationValidator {
 				else
 					child = getBestMatch(children[i], configuredFeatures);
 				features =
-					computeFeatureSubtree(
+				computeFeatureSubtree(
 						top,
 						child,
 						features,
@@ -850,6 +854,53 @@ public class OperationValidator implements IOperationValidator {
 		return false;
 	}
 
+	/**
+	 * Check for feature cycles:
+	 * - visit feature
+	 * - if feature is in the cycle candidates list, then cycle found, else add it to candidates list
+	 * - DFS children 
+	 * - when return from DFS remove the feature from the candidates list
+	 */
+	private static void checkForCycles(
+			IFeature feature,
+			ArrayList candidates,
+			ArrayList configuredFeatures)
+	throws CoreException {
+
+		// check arguments
+		if (feature == null)
+			return;
+		if (configuredFeatures == null)
+			configuredFeatures = new ArrayList();
+		if (candidates == null)
+			candidates = new ArrayList();
+		
+		// check for <includes> cycle
+		if (candidates.contains(feature)) {
+			IStatus status =
+			createStatus(feature, UpdateUtils.getString(KEY_CYCLE));
+			throw new CoreException(status);
+		}
+
+		// potential candidate
+		candidates.add(feature);
+		
+		// recursively, check cycles with children
+		IIncludedFeatureReference[] children =
+		feature.getIncludedFeatureReferences();
+		for (int i = 0; i < children.length; i++) {
+			try {
+				IFeature child = getBestMatch(children[i], configuredFeatures);
+				checkForCycles(child, candidates, configuredFeatures);
+			} catch (CoreException e) {
+				if (!children[i].isOptional())
+					throw e;
+			}
+		}
+		// no longer a candidate, because no cycles with children
+		candidates.remove(feature);
+	}
+	
 	/*
 	 *  
 	 */
