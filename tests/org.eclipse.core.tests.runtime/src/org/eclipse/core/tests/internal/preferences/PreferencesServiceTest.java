@@ -404,24 +404,43 @@ public class PreferencesServiceTest extends RuntimeTest {
 	}
 
 	public void testGet() {
-		// TODO
-		if (true)
-			return;
 		IPreferencesService service = Platform.getPreferencesService();
 		String qualifier = getRandomString();
-		String key = new Path(getRandomString()).append(getRandomString()).toString();
 		Preferences node = service.getRootNode().node(TestScope.SCOPE).node(qualifier);
-		String value = getRandomString();
-		String actual = null;
+		service.setDefaultLookupOrder(qualifier, null, new String[] {TestScope.SCOPE});
 
-		// set a real value
-		node.put(key, value);
-		actual = node.get(key, null);
-		assertNotNull("1.0", actual);
-		assertEquals("1.1", value, actual);
+		// fun with paths
 
-		actual = service.getString(qualifier, key, null, null);
-		assertNotNull("2.0", actual);
-		assertEquals("2.1", value, actual);
+		String searchPath = "a";
+		node.put("a", searchPath);
+		assertEquals("3.0", searchPath, service.getString(qualifier, searchPath, null, null));
+
+		searchPath = "a/b";
+		node.node("a").put("b", searchPath);
+		assertEquals("4.0", searchPath, service.getString(qualifier, searchPath, null, null));
+
+		searchPath = "a//b";
+		node.node("a").put("b", searchPath);
+		assertEquals("5.0", searchPath, service.getString(qualifier, searchPath, null, null));
+
+		searchPath = "a/b//c";
+		node.node("a").node("b").put("c", searchPath);
+		assertEquals("6.0", searchPath, service.getString(qualifier, searchPath, null, null));
+
+		searchPath = "a/b//c/d";
+		node.node("a").node("b").put("c/d", searchPath);
+		assertEquals("7.0", searchPath, service.getString(qualifier, searchPath, null, null));
+
+		searchPath = "/a";
+		node.put("a", searchPath);
+		assertEquals("8.0", searchPath, service.getString(qualifier, searchPath, null, null));
+
+		searchPath = "/a/b";
+		node.node("a").put("b", searchPath);
+		assertEquals("9.0", searchPath, service.getString(qualifier, searchPath, null, null));
+
+		searchPath = "///a";
+		node.put("/a", searchPath);
+		assertEquals("10.0", searchPath, service.getString(qualifier, searchPath, null, null));
 	}
 }
