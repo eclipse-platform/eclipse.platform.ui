@@ -248,6 +248,18 @@ class ThreadJob extends Job {
 		return realJob == null ? true : !realJob.isSystem();
 	}
 
+	/* (non-javadoc)
+	 * For debugging purposes only
+	 */
+	public String toString() {
+		StringBuffer buf = new StringBuffer(getClass().getName());
+		buf.append('(').append(realJob).append(',').append('[');
+		for (int i = 0; i <= top && i < ruleStack.length; i++)
+			buf.append(ruleStack[i]).append(',');
+		buf.append(']').append(')');
+		return buf.toString();
+	}
+
 	/**
 	 * Reports that this thread was blocked, but is no longer blocked and is able
 	 * to proceed.
