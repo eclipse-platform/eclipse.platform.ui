@@ -196,19 +196,21 @@ public class AntRunner implements IPlatformRunnable {
 			// get the info for each targets
 			Method getTargets = classInternalAntRunner.getMethod("getTargets", null); //$NON-NLS-1$
 			Object results = getTargets.invoke(runner, null);
+			// get the default target
+			Method getDefault= classInternalAntRunner.getMethod("getDefaultTarget", null); //$NON-NLS-1$
+			String defaultName= (String)getDefault.invoke(runner, null);
 			// collect the info into target objects
-			String[][] infos = (String[][]) results;
-			if (infos.length < 2) {
+			List infos = (List) results;
+			if (infos.size() < 2) {
 				return new TargetInfo[0];
 			}
-			// The last info is the name of the default target or null if none
-			int count = infos.length - 1;
-			String defaultName = infos[count][0];
-			TargetInfo[] targets = new TargetInfo[count];
-			for (int i = 0; i < count; i++) {
-				String[] info = infos[i];
-				boolean isDefault = info[0].equals(defaultName);
-				targets[i] = new TargetInfo(info[0], info[1], isDefault);
+			Iterator iter= infos.iterator();
+			List info;
+			TargetInfo[] targets= new TargetInfo[infos.size()];
+			int i= 0;
+			while (iter.hasNext()) {
+				info= (List)iter.next();
+				targets[i++] = new TargetInfo((String)info.get(0), (String)info.get(1), (String)info.get(2), (String[])info.get(3), info.get(0).equals(defaultName));
 			}
 			return targets;
 		} catch (NoClassDefFoundError e) {

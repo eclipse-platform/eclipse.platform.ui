@@ -51,6 +51,22 @@ public class TargetTests extends AbstractAntTest {
 	}
 	
 	/**
+	 * Ensures that target projects are retrieved properly	 */
+	public void testTargetProject() throws CoreException {
+		String targetProject= getProjectName("TestForEcho.xml", "Test for Echo");
+		assertTrue("Project name should be exportplugins", "exportplugins".equals(targetProject));
+	}
+	
+	/**
+	 * Ensures that target dependencies are retrieved properly	 */
+	public void testTargetDependencies() throws CoreException {
+		String[] dependencies= getDependencies("TestForEcho.xml", "Test for Echo");
+		assertNotNull("Dependencies should not be null", dependencies);
+		assertTrue("Should be one dependency in Test for Echo", dependencies.length == 1);
+		assertTrue("First dependency should be init", "init".equals(dependencies[0]));
+	}
+	
+	/**
 	 * Runs an Ant script and ensure that the build file location is logged
 	 */
 	public void testRunScript() throws CoreException {

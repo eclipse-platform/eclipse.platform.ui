@@ -94,6 +94,8 @@ public class InternalAntRunner {
 	
 	protected Project currentProject;
 	
+	protected String defaultTarget;
+	
 	protected BuildLogger buildLogger= null;
 	
 	/**
@@ -246,33 +248,46 @@ public class InternalAntRunner {
 
 	/**
 	 * Gets all the target information from the build script.
-	 * Returns a two dimension array. Each row represents a
-	 * target, where the first column is the name and the
-	 * second column is the description. The last row is
-	 * special and represents the name of the default target.
-	 * This default target name is in the first column, the
-	 * second column is null. Note, the default name can be
-	 * null.
+	 * Returns a list of lists. Each item in the enclosing list represents a
+	 * target, where the first element is the name, the
+	 * second element is the description, the third element is the
+	 * project name, and the last elements is an array of dependencies.
 	 */
-	public String[][] getTargets() {
+	public List getTargets() {
 		// create a project and initialize it
 		Project antProject = new Project();
 		antProject.init();
 		antProject.setProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
 		parseScript(antProject);
-		String defaultName = antProject.getDefaultTarget();
+		defaultTarget = antProject.getDefaultTarget();
 		Collection targets = antProject.getTargets().values();
-		String[][] infos = new String[targets.size() + 1][2];
-		Iterator enum = targets.iterator();
-		int i = 0;
-		while (enum.hasNext()) {
-			Target target = (Target) enum.next();
-			infos[i][0] = target.getName();
-			infos[i][1] = target.getDescription();
-			i++;
+		List infos= new ArrayList(targets.size());
+		List info;
+		Iterator iter = targets.iterator();
+		while (iter.hasNext()) {
+			Target target = (Target) iter.next();
+			info= new ArrayList(4);
+			info.add(target.getName());
+			info.add(target.getDescription());
+			info.add(target.getProject().getName());
+			List dependencies= new ArrayList();
+			Enumeration enum= target.getDependencies();
+			while (enum.hasMoreElements()) {
+				dependencies.add(enum.nextElement());
+			}
+			String[] dependencyArray= new String[dependencies.size()];
+			dependencies.toArray(dependencyArray);
+			info.add(dependencyArray);
+			infos.add(info);
 		}
-		infos[i][0] = defaultName;
 		return infos;
+	}
+	
+	/**
+	 * Returns the default target name that was last computed or <code>null</code>
+	 * if no default target has been computed.	 * @return the default target name	 */
+	public String getDefaultTarget() {
+		return defaultTarget;
 	}
 
 	/**

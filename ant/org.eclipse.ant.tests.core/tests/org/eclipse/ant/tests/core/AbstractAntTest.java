@@ -123,6 +123,42 @@ public abstract class AbstractAntTest extends TestCase {
 		return descriptions;
 	}
 	
+	/**
+	 * Returns the name of the project containing the given target in the given build file or
+	 * <code>null</code> if no project name can be found.	 */
+	protected String getProjectName(String buildFileName, String targetName) throws CoreException {
+		TargetInfo info= getTarget(buildFileName, targetName);
+		if (info != null) {
+			return info.getProject();
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the dependencies of the target with the given name in the given build file or <code>null</code>
+	 * if no such target can be found.
+	 */
+	protected String[] getDependencies(String buildFileName, String targetName) throws CoreException {
+		TargetInfo info= getTarget(buildFileName, targetName);
+		if (info != null) {
+			return info.getDependencies();
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the target with the given name in the given build file or <code>null</code>
+	 * if no such target can be found.	 */
+	protected TargetInfo getTarget(String buildFileName, String targetName) throws CoreException {
+		TargetInfo[] infos= getTargets(buildFileName);
+		for (int i= 0, numTargets= infos.length; i < numTargets; i++) {
+			if (infos[i].getName().equals(targetName)) {
+				return infos[i];
+			}
+		}
+		return null;
+	}
+	
 	protected String getLastMessageLogged() {
 		return AntTestChecker.getDefault().getLastMessageLogged();
 	}
