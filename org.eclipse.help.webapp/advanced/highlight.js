@@ -67,8 +67,8 @@ function highlightWordInText(aWord, textNode){
 			newBefore=document.createTextNode(before);
 			replacementNode.appendChild(newBefore);
 			spanNode=document.createElement("span");
-			spanNode.style.background="ButtonFace";
-			spanNode.style.color="ButtonText";
+			spanNode.style.background="Highlight";
+			spanNode.style.color="HighlightText";
 			replacementNode.appendChild(spanNode);
 			boldText=document.createTextNode(allText.substring(index,index+aWord.length));
 			spanNode.appendChild(boldText);

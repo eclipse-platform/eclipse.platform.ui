@@ -53,13 +53,15 @@ A:hover{
 }
 
 A.active{ 
-	background:<%=prefs.getToolbarBackground()%>;
+	background:Highlight;
+	color:HighlightText;
 	width:100%;
 }
 
 A.active:hover{
 	text-decoration:underline; 
-	background:<%=prefs.getToolbarBackground()%>;
+	background:Highlight;
+	color:HighlightText;
 	width:100%;
 }
 
@@ -73,11 +75,7 @@ UL {
 	margin-left:-35px; 
 	margin-top:5px;
 } 
-A.active, 
-A.active:hover {
-	background:WindowText;
-	color:Window;
-} 
+ 
 <%
 }
 %>
