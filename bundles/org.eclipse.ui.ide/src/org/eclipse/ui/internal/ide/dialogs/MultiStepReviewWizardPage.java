@@ -109,7 +109,7 @@ public class MultiStepReviewWizardPage extends WizardPage {
 	 */
 	private void createInstructionsGroup(Composite parent) {
 		instructionLabel = new Label(parent, SWT.LEFT);
-		instructionLabel.setText(IDEWorkbenchMessages.getString("MultiStepReviewWizardPage.instructionLabel")); //$NON-NLS-1$
+		instructionLabel.setText(IDEWorkbenchMessages.getString("MultiStepReviewWizardPage.instructionFinishLabel")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		data.horizontalSpan = 2;

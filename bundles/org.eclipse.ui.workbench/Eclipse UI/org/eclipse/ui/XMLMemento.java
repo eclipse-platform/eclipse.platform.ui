@@ -85,7 +85,7 @@ public final class XMLMemento implements IMemento {
 	 * @throws <code>WorkbenchException</code> if IO problems, invalid format, or no element.
 	 */
 	public static XMLMemento createReadRoot(Reader reader, String baseDir) throws WorkbenchException {
-		String messageKey = "XMLMemento.noElement"; //$NON-NLS-1$
+		String errorMessage = null;
 		Exception exception = null;
 		
 		try {
@@ -103,20 +103,21 @@ public final class XMLMemento implements IMemento {
 			}
 		} catch (ParserConfigurationException e) {
 			exception = e;
-			messageKey = "XMLMemento.parserConfigError"; //$NON-NLS-1$
+			errorMessage = WorkbenchMessages.getString("XMLMemento.parserConfigError"); //$NON-NLS-1$
 		} catch (IOException e) {
 			exception = e;
-			messageKey = "XMLMemento.ioError"; //$NON-NLS-1$
+			errorMessage = WorkbenchMessages.getString("XMLMemento.ioError"); //$NON-NLS-1$
 		} catch (SAXException e) {
 			exception = e;
-			messageKey = "XMLMemento.formatError"; //$NON-NLS-1$
+			errorMessage = WorkbenchMessages.getString("XMLMemento.formatError"); //$NON-NLS-1$
 		}
 		
 		String problemText = null;
 		if (exception != null)
 			problemText = exception.getMessage();
 		if (problemText == null || problemText.length() == 0)
-			problemText = WorkbenchMessages.getString(messageKey);
+		    problemText = errorMessage != null ? errorMessage
+                        : WorkbenchMessages.getString("XMLMemento.noElement"); //$NON-NLS-1$
 		throw new WorkbenchException(problemText, exception);
 	}
 	
