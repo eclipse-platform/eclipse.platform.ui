@@ -155,7 +155,18 @@ if (data.getScript() != null) {
 
 </head>
  
-<body>
+<%
+ToolbarButton[] buttons = data.getButtons();
+if(buttons.length > 0){
+%>
+	<body>
+<%
+}else{
+%>
+	<body tabIndex="-1">
+<%
+}
+%>
 	<div id="textLayer" style="position:absolute; z-index:1; left:0; top:0; height:100%; width:100%;">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100%" style="padding-left:5px;">
 			<tr>
@@ -184,7 +195,6 @@ if (data.getScript() != null) {
 					<table border="0" cellspacing="0" cellpadding="0" height="100%" style="background:<%=prefs.getToolbarBackground()%>">
 					<tr>
 <%
-	ToolbarButton[] buttons = data.getButtons();
 	for (int i=0; i<buttons.length; i++) {
 		if (buttons[i].isSeparator()) {
 %>
