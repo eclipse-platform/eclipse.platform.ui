@@ -16,7 +16,7 @@ import java.util.EventObject;
  * The following list defines the events generated for each debug
  * model element.
  * The <code>getSource()</code> method of a debug event
- * returns element associated with the event.
+ * returns the element associated with the event.
  * Creation events are guaranteed to occur in a top
  * down order - that is, parents are created before children.
  * Termination events are guaranteed to occur in a bottom up order -
