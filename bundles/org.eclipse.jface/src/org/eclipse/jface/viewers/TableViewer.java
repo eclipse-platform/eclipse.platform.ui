@@ -186,10 +186,10 @@ protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 			lprov = (ILabelProvider) prov;
 		}
 		int columnCount = table.getColumnCount();
+		TableItem ti = (TableItem) item;
 		// Also enter loop if no columns added.  See 1G9WWGZ: JFUIF:WINNT - TableViewer with 0 columns does not work
 		for (int column = 0; column < columnCount || column == 0; column++) {
 			// Similar code in TableTreeViewer.doUpdateItem()
-		    TableItem ti = (TableItem) item;
 			String text = "";//$NON-NLS-1$
 			Image image = null;
 			if (tprov != null) {
@@ -206,6 +206,11 @@ protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 			if (ti.getImage(column) != image) {
 				ti.setImage(column, image);
 			}
+		}
+		if (prov instanceof IColorProvider) {
+			IColorProvider cprov = (IColorProvider) prov;
+			ti.setForeground(cprov.getForeground(element));
+			ti.setBackground(cprov.getBackground(element));
 		}
 	}
 }
@@ -445,6 +450,11 @@ protected void internalRefresh(Object element, boolean updateLabels) {
 			if (equals(children[i], items[i].getData())) {
 				if (updateLabels) {
 					updateItem(items[i], children[i]);
+				}
+				else {
+					// associate the new element, even if equal to the old one,
+					// to remove stale references (see bug 31314)
+					associate(children[i], items[i]);
 				}
 			}
 			else {
