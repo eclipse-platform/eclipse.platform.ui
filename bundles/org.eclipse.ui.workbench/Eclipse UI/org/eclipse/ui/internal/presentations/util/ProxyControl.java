@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.layout.SizeCache;
 
 /**
- * A ProxyControl is an invisible dummy control whose size and position are linked
+ * A ProxyControl is an invisible control whose size and position are linked
  * with some target control. That is, when the dummy control is asked for its
  * preferred size it returns the preferred size of the target. Changing the
  * bounds of the dummy control also changes the bounds of the target. This allows 
@@ -76,8 +76,18 @@ public class ProxyControl {
 	 * Target control (possibly null)
 	 */
 	private Control target;
+	
+	/**
+	 * Most specific common ancestor between the target and the proxy controls
+	 */
 	private Control commonAncestor;
 	
+	/**
+	 * Visibility state of the proxy control the last time it had a non-null target.
+	 * Note: when the target is set to null, we force the proxy to become invisible
+	 * and use this variable to remember the initial state when we get a new non-null
+	 * target.
+	 */
 	private boolean visible = true;
 	
 	/**
