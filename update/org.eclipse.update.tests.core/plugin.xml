@@ -20,6 +20,7 @@
       <import plugin="org.eclipse.tomcat"/>
       <import plugin="org.eclipse.help.appserver"/>
       <import plugin="org.eclipse.update.configurator"/>
+      <import plugin="org.eclipse.test.performance"/>
    </requires>
 
 

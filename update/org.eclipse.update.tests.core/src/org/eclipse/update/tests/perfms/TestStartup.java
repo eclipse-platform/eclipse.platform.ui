@@ -11,11 +11,14 @@
 package org.eclipse.update.tests.perfms;
 //import java.net.*;
 
-//import org.eclipse.update.configurator.*;
+import java.io.*;
+import java.net.*;
+
+import org.eclipse.update.configurator.*;
+import org.eclipse.update.internal.configurator.*;
+import org.eclipse.test.performance.*;
 import org.eclipse.update.tests.*;
 
-//import org.eclipse.perfmsr.core.PerfMsrCorePlugin;
-//import org.eclipse.perfmsr.core.Upload;
 
 
 public class TestStartup extends UpdateManagerTestCase {
@@ -24,22 +27,46 @@ public class TestStartup extends UpdateManagerTestCase {
 	}
 	
 
-	public void testPerfms() {
-		/*
-		 * this test takes snapshots before (1) and after (2) opening the Java
-		 * Perspective. The delta between snapshots can be used to calculate the time required to open
-		 * the Java perspective.  Disabled for now since the EclipseTestRunner is instrumented for performance
-		 * monitoring.
-		 */
+	public void testConfigurationCreation() {
+		Performance perf= Performance.getDefault();
+		PerformanceMeter performanceMeter= perf.createPerformanceMeter(perf.getDefaultScenarioId(this));
 		try {
-	 	//	PerfMsrCorePlugin.getPerformanceMonitor(true).snapshot(1);
-//			long s = System.currentTimeMillis();
-//			URL perfURL = new URL("file", "", SOURCE_FILE_SITE + "perf");
-//			IPlatformConfiguration config = ConfiguratorUtils.getPlatformConfiguration(perfURL);
-//			long e = System.currentTimeMillis();
-//			System.out.println("time=" + (e-s));
-		//	PerfMsrCorePlugin.getPerformanceMonitor(true).snapshot(2);
-		} catch (Exception e) {
-		} 
+			for (int i= 0; i < 10; i++) {
+				performanceMeter.start();
+				try {
+					URL platformXml = new URL("file", "",dataPath + "/" + "perf/platform.xml");
+					IPlatformConfiguration config = new PlatformConfigurationFactory().getPlatformConfiguration(platformXml);
+				} catch (IOException e) {
+					System.out.println("Cannot create configuration for performance measurement");
+				}
+				performanceMeter.stop();
+	 		}
+			performanceMeter.commit();
+			perf.assertPerformance(performanceMeter);
+	 	} finally {
+			performanceMeter.dispose();
+	 	}
+	}
+	
+	public void testConfigurationDetection() {
+		Performance perf= Performance.getDefault();
+		PerformanceMeter performanceMeter= perf.createPerformanceMeter(perf.getDefaultScenarioId(this));
+		try {
+			for (int i= 0; i < 10; i++) {
+				performanceMeter.start();
+				try {
+					URL siteURL = new URL("file", "",dataPath + "/" + "perf/eclipse");
+					SiteEntry site = new SiteEntry(siteURL);
+					site.loadFromDisk(0);
+				} catch (Exception e) {
+					System.out.println("Cannot create site entry for performance measurement");
+				}
+				performanceMeter.stop();
+	 		}
+			performanceMeter.commit();
+			perf.assertPerformance(performanceMeter);
+	 	} finally {
+			performanceMeter.dispose();
+	 	}
 	}
 }

@@ -20,7 +20,7 @@ public AllPerformanceTests(String name) {
 }
 public static Test suite() {
 	TestSuite suite = new TestSuite();
-	suite.setName("Performance Tests");
+	suite.setName("Update Performance Tests");
 	
 	// the following will take all teh test methods in the class that start with 'test'
 	suite.addTest(new TestSuite(TestStartup.class));

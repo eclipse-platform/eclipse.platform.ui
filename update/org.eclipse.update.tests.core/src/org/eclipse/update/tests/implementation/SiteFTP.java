@@ -263,4 +263,10 @@ public class SiteFTP implements ISite {
 	}
 
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.update.core.ISite#getMirrorSiteEntries()
+	 */
+	public IURLEntry[] getMirrorSiteEntries() throws CoreException {
+		return null;
+	}
 }
