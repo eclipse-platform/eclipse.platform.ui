@@ -188,13 +188,14 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 	protected void doHandleSuspendThreadEvent(IThread thread) {
 		// Get the current stack frames from the thread
 		IStackFrame[] stackFrames = null;
+		int currentStackFrameCount = 0;
 		try {
 			stackFrames = thread.getStackFrames();
+			currentStackFrameCount = stackFrames.length;
 		} catch (DebugException de) {
 		}
 		
 		// Retrieve the old and current counts of stack frames for this thread
-		int currentStackFrameCount = stackFrames.length;
 		int oldStackFrameCount = 0;
 		Integer oldStackFrameCountObject = (Integer)fStackFrameCountByThread.get(thread);
 		if (oldStackFrameCountObject != null) {
