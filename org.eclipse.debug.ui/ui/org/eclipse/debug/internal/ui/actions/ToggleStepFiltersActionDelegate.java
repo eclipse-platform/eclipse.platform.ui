@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions;
 
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IStepFilters;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
@@ -18,6 +21,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate2;
 
@@ -98,6 +102,23 @@ public class ToggleStepFiltersActionDelegate extends AbstractDebugActionDelegate
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#update(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	protected void update(IAction action, ISelection s) {
-		action.setEnabled(true);
+		boolean enabled = true;
+		if (!s.isEmpty()) {
+			if (s instanceof IStructuredSelection) {
+				IStructuredSelection ss = (IStructuredSelection)s;
+				if (ss.size() == 1 && ss.getFirstElement() instanceof IDebugElement) {
+					// only disable if the selection does not support step filters
+					IDebugElement element = (IDebugElement) ss.getFirstElement();
+					IDebugTarget target = element.getDebugTarget();
+					if (target instanceof IStepFilters) {
+						IStepFilters filters = (IStepFilters)target;
+						enabled = filters.supportsStepFilters();
+					} else {
+						enabled = false;
+					}
+				}
+			}
+		}
+		action.setEnabled(enabled);
 	}
 }
