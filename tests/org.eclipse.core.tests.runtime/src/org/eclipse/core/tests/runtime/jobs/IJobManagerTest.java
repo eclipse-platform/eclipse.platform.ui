@@ -1134,26 +1134,23 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	}
 
 	public void testSleepOnWait() {
-		//keep scheduling infinitely long jobs until we have a job waiting
-		ArrayList longJobs = new ArrayList();
-		TestJob job = null;
-		//start enough jobs to saturate the worker pool
-		final int MAX_THREADS = 150;
-		for (int i = 0; i < MAX_THREADS; i++) {
-			job = new TestJob("Long Job", 1000000, 10);
-			job.schedule();
-			longJobs.add(job);
-		}
-		job = new TestJob("Long Job", 1000000, 10);
+		final ISchedulingRule rule = new PathRule("testSleepOnWait");
+		TestJob blockingJob = new TestJob("Long Job", 1000000, 10);
+		blockingJob.setRule(rule);
+		blockingJob.schedule();
+		
+		TestJob job = new TestJob("Long Job", 1000000, 10);
+		job.setRule(rule);
 		job.schedule();
 		//we know this job is waiting, so putting it to sleep should prevent it from running
 		assertState("1.0", job, Job.WAITING);
 		assertTrue("1.1", job.sleep());
 		assertState("1.2", job, Job.SLEEPING);
 
-		//cancel all the long jobs, thus freeing the pool for the waiting job
-		cancel(longJobs);
-		//make sure the job is still waiting
+		//cancel the blocking job, thus freeing the pool for the waiting job
+		blockingJob.cancel();
+		
+		//make sure the job is still sleeping
 		assertState("1.3", job, Job.SLEEPING);
 
 		//now wake the job up
@@ -1163,6 +1160,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 		//finally cancel the job
 		job.cancel();
+		waitForCompletion(job);
 	}
 
 	/**
