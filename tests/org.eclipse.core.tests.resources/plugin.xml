@@ -465,6 +465,15 @@
 	<two-of-nature ic="baz"/>
 </extension>
 <extension
+      id="missingPrerequisiteNature"
+      name="Bogus Nature"
+      point="org.eclipse.core.resources.natures">
+	<runtime>
+		<run class="org.eclipse.core.tests.internal.resources.MissingPrerequisiteNature"/>
+   </runtime>
+   <requires-nature id="does.not.exist.Nature"/>
+</extension>
+<extension
       id="cycle1"
       name="Cycle1"
       point="org.eclipse.core.resources.natures">
