@@ -14,8 +14,8 @@ import java.util.ResourceBundle;
 
 public class SourceLookupMessages {
 	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages";//$NON-NLS-1$
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-			.getBundle(BUNDLE_NAME);
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+	
 	private SourceLookupMessages() {
 	}
 	public static String getString(String key) {
