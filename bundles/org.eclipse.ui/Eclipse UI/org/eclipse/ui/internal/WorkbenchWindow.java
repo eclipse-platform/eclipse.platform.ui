@@ -1428,7 +1428,8 @@ public void updateTitle() {
 		IAdaptable input = currentPage.getInput();
 		if((input != null) && (!input.equals(ResourcesPlugin.getWorkspace().getRoot())))
 			label = currentPage.getLabel();
-		title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] {label, title}); //$NON-NLS-1$
+		if (!label.equals("")) //$NON-NLS-1$	
+			title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] {label, title}); //$NON-NLS-1$
 	}
 	getShell().setText(title);	
 }
