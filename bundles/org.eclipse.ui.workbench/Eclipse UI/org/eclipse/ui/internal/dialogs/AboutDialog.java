@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.ProductProperties;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.about.AboutBundleGroupData;
@@ -56,6 +57,7 @@ public class AboutDialog extends ProductInfoDialog {
 	private final static int INFO_ID = IDialogConstants.CLIENT_ID + 3;
 
 	private String productName;
+	private IProduct product;
 	private AboutBundleGroupData[] bundleGroupInfos;
 
 	private ArrayList images = new ArrayList();
@@ -71,35 +73,21 @@ public class AboutDialog extends ProductInfoDialog {
 	public AboutDialog(Shell parentShell) {
 	    super(parentShell);
 
-	    IProduct product = Platform.getProduct();
-	    IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
-	    
-		String productId = ""; //$NON-NLS-1$
-        if (product != null) {
-            productId = product.getId();
+	    product = Platform.getProduct();
+        if (product != null)
             productName = product.getName();
-        }
         if (productName == null)
             productName = WorkbenchMessages
             				.getString("AboutDialog.defaultProductName"); //$NON-NLS-1$
-		
-        // create a descriptive object for each BundleGroup, putting the primary
-        // first if it can be found
+
+        // create a descriptive object for each BundleGroup
+	    IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
         LinkedList groups = new LinkedList();
         if (providers != null)
             for (int i = 0; i < providers.length; ++i) {
                 IBundleGroup[] bundleGroups = providers[i].getBundleGroups();
-                for (int j = 0; j < bundleGroups.length; ++j) {
-                    AboutBundleGroupData info = new AboutBundleGroupData(
-                                bundleGroups[j]);
-
-                    // if there's a bundle with the same id as the product,
-                    // assume its the primary bundle and put it first
-                    if (info.getId().equals(productId))
-                        groups.addFirst(info);
-                    else
-                        groups.add(info);
-                }
+                for (int j = 0; j < bundleGroups.length; ++j)
+                    groups.add(new AboutBundleGroupData(bundleGroups[j]));
             }
         bundleGroupInfos = (AboutBundleGroupData[]) groups
                 .toArray(new AboutBundleGroupData[0]);
@@ -141,7 +129,7 @@ public class AboutDialog extends ProductInfoDialog {
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setText(WorkbenchMessages.format("AboutDialog.shellTitle", //$NON-NLS-1$
-                new Object[] { productName == null ? "" : productName })); //$NON-NLS-1$
+                new Object[] { productName }));
         WorkbenchHelp.setHelp(newShell, IHelpContextIds.ABOUT_DIALOG);
     }
 
@@ -197,23 +185,17 @@ public class AboutDialog extends ProductInfoDialog {
             }
         });
 
-		// if there is product info (index 0), then brand the about box
+		// brand the about box if there is product info
 		Image aboutImage = null;
-        if (bundleGroupInfos.length > 0) {
-        	AboutBundleGroupData productInfo = bundleGroupInfos[0];
-
-	        ImageDescriptor imageDescriptor = null;
-	        if (productInfo != null)
-	        	imageDescriptor = productInfo.getAboutImage();
-	        if (imageDescriptor != null)
+		if (product != null) {
+		    ImageDescriptor imageDescriptor = ProductProperties.getAboutImage(product);
+        	if (imageDescriptor != null)
 	            aboutImage = imageDescriptor.createImage();
 
 			// if the about image is small enough, then show the text
 			if (aboutImage == null
                     || aboutImage.getBounds().width <= MAX_IMAGE_WIDTH_FOR_TEXT) {
-	            String aboutText = null;
-	            if (productInfo != null)
-	            	aboutText = productInfo.getAboutText();
+	            String aboutText = ProductProperties.getAboutText(product);
 	            if (aboutText != null)
 	            	setItem(scan(aboutText));
 	        }
@@ -222,7 +204,6 @@ public class AboutDialog extends ProductInfoDialog {
 			    images.add(aboutImage);
 		}
 
-        
 		// create a composite which is the parent of the top area and the bottom
         // button bar, this allows there to be a second child of this composite with 
         // a banner background on top but not have on the bottom
@@ -320,7 +301,6 @@ public class AboutDialog extends ProductInfoDialog {
 	}
 
 	private void createFeatureImageButtonRow(Composite parent) {
-		// feature images
 		Composite featureContainer = new Composite(parent, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.wrap = true;
@@ -329,7 +309,6 @@ public class AboutDialog extends ProductInfoDialog {
 		data.horizontalAlignment = GridData.FILL;
 		featureContainer.setLayoutData(data);
 
-		// create buttons for all the rest
 		for (int i = 0; i < bundleGroupInfos.length; i++)
 			createFeatureButton(featureContainer, bundleGroupInfos[i]);
 	}
