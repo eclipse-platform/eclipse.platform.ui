@@ -1,13 +1,56 @@
 <!doctype html public "-//w3c//dtd html 4.0 transitional//en">
 <html>
 <head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; I) [Netscape]">
    <title>Eclipse Platform Release Notes Core</title>
-<!-- saved from url=(0079)http://home.ott.oti.com/hubba/drops/sdk/latest-javadoc/doc/buildnotes_core.html -->
-<!-- saved from url=(0079)http://home.ott.oti.com/hubba/drops/sdk/latest-javadoc/doc/buildnotes_core.html -->
 </head>
 <body>
+
+
+<hr>
+<h1>Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 20021118
+
+<h2>What's new in this drop</h2>
+Since we've been neglecting to update our build notes for the past little while,
+this file contains a multitude new APIs and functionality that we have
+added to the Platform/Core component and is not necessarily restricted to those
+changes between the 2002-11-15 and 2002-11-19 builds.
+
+<h3>API changes</h3>
+
+<ul>
+<li>In order to help with sorting markers by their creation time, we added a timestamp to markers. See:
+IMarker.getCreationTime() for more details.
+<li>Linked Resources - New API has been added to support the creation and manipulation of linked resources. Full
+details can be found in the proposals on the
+<a href="http://www.eclipse.org/eclipse/development/challenges_2_1.html">Top Ten Issues</a>
+page on <a href="http://dev.eclipse.org">dev.eclipse.org</a>.
+<li>Path Variables - We added support for workspace path variables. These can be used in conjunction with linked resources
+(described above). See the following classes/methods for more information: IWorkspace.getPathVariableManager, 
+IPathVariableManager, IPathVariableChangeListener, IPathVariableChangeEvent.
+<li>Build Order Computation - The algorithm to calculate the default project build order in the workspace has changed.
+The new API for this method is: IWorkspace.computeProjectOrder. The old method (IWorkspace.computePrerequisiteOrder)
+has been deprecated.
+<li>We added basic line information to plug-in model objects. This is set by the parser when they are read
+from the plugin.xml file. See PluginModelObject.getStartLine() for more details.
+</ul>
+
+<h3>Other highlights</h3>
+<ul>
+<li>Classloader Properties - We added some classloader performance enhancement. They are described in
+<a href="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-core-home/docs/classloader-properties/classloader_properties.html">this</a> document.
+</ul>
+
+<h3>Resolved Bugs</h3>
+
+<ul>
+<li>
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?short_desc_type=allwordssubstr&short_desc=&product=Platform&component=Core&long_desc_type=allwordssubstr&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=anywords&keywords=&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&emailassigned_to1=1&emailtype1=substring&email1=&emailreporter2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&changedin=&chfield=bug_status&chfieldfrom=2002%2F06%2F27&chfieldto=2002%2F11%2F18&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=">Click
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+since the last integration build.</li>
+</ul>
+
 
 <h1>
 <hr WIDTH="100%">Eclipse Platform Build Notes<br>
