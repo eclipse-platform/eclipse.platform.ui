@@ -1261,9 +1261,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.1
 	 */
 	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
-		// this is a hack because menu item ordering is not reliable
-		// change once the action contribution story converges
-		// see http://dev.eclipse.org/viewcvs/index.cgi/~checkout~/platform-ui-home/R3_1/dynamic_teams/dynamic_teams.html#actionContributions
+		/*
+		 * XXX: workaround for reliable menu item ordering.
+		 * This can be changed once the action contribution story converges,
+		 * see http://dev.eclipse.org/viewcvs/index.cgi/~checkout~/platform-ui-home/R3_1/dynamic_teams/dynamic_teams.html#actionContributions
+		 */ 
 		// pre-install menus for contributions and call super
 		menu.add(new Separator("debug")); //$NON-NLS-1$
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
