@@ -573,11 +573,7 @@ public class CheatSheetParser {
 			if(node.getNodeName().equals(IParserTags.ACTION)) {
 				handleAction(subItem, node);
 			} else if(node.getNodeName().equals(IParserTags.PERFORMWHEN)) {
-				if(item instanceof IPerformWhenItem) {
-					handlePerformWhen((IPerformWhenItem)item, node);
-				} else {
-					//TODO: Error, only subitems can have a perform-when. Not conditional-subitem or repeated-subitem.
-				}
+				handlePerformWhen(subItem, node);
 			}
 		}
 //		item.setIsDynamic(dynamic);

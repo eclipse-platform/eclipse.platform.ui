@@ -147,7 +147,8 @@ public class Item extends Intro implements IActionItem, IPerformWhenItem, ISubIt
 			for (Iterator iter = subItems.iterator(); iter.hasNext();) {
 				AbstractSubItem subItem = (AbstractSubItem)iter.next();
 				if( subItem instanceof RepeatedSubItem ||
-					subItem instanceof ConditionalSubItem ) {
+					subItem instanceof ConditionalSubItem ||
+					subItem instanceof SubItem && ((SubItem)subItem).getPerformWhen() != null ) {
 					return true;
 				}
 			}

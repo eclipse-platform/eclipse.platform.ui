@@ -449,7 +449,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 							((SubItemCompositeHolder) coreitemws.getListOfSubItemCompositeHolders().get(Integer.parseInt(token))).getIconLabel().setImage((item).getCompleteImage());
 							ArrayList l = coreitemws.getListOfSubItemCompositeHolders();
 							SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(Integer.parseInt(token));
-							if (s != null) {
+							if (s != null && s.getStartButton() != null) {
 								s.getStartButton().setImage(coreitemws.restartImage);
 								s.getStartButton().redraw();
 							}
@@ -627,13 +627,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		return getContent().getID();
 	}
 
-	/*package*/ CheatSheetManager getManager() {
-		if (manager == null) {
-			manager = new CheatSheetManager(contentElement);
-		}
-		return manager;
-	}
-
 	/**
 	 * Returns the current content.
 	 *
@@ -705,6 +698,13 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	 */
 	/*package*/ ArrayList getListOfContentItems() {
 		return listOfContentItems;
+	}
+
+	/*package*/ CheatSheetManager getManager() {
+		if (manager == null) {
+			manager = new CheatSheetManager(contentElement);
+		}
+		return manager;
 	}
 
 	/*package*/ ViewItem[] getViewItemArray() {
@@ -845,39 +845,19 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	}
 
 	/*package*/ void runSubItemPerformAction(ImageHyperlink mylabel, int subItemIndex) {
+		CoreItem coreItem = null;
+		mylabel.setCursor(busyCursor);
 		currentItem = (ViewItem) mylabel.getData();
-
-		//		CoreItem c = null;
-		CoreItem ciws = null;
-
-		if (currentItem instanceof CoreItem)
-			ciws = (CoreItem) currentItem;
+		coreItem = (CoreItem) currentItem;
 
 		try {
-			if (ciws != null) {
-				if (ciws.item.getSubItems() != null && ciws.item.getSubItems().size()>0) {
-					ArrayList l = ciws.getListOfSubItemCompositeHolders();
+			if (coreItem != null) {
+				if (coreItem.runSubItemAction(getManager(), subItemIndex) == ViewItem.VIEWITEM_ADVANCE) {
+					ArrayList l = coreItem.getListOfSubItemCompositeHolders();
 					SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(subItemIndex);
-					SubItem subItem = s.getSubItem();
-					if(subItem.getAction() != null) {
-						try {
-							if(s.getThisValue() != null) {
-								getManager().setData("this", s.getThisValue()); //$NON-NLS-1$
-							}
-							String[] params = subItem.getAction().getParams();
-							if ((ciws.runAction(subItem.getAction().getPluginID(), subItem.getAction().getActionClass(), params, getManager()) == ViewItem.VIEWITEM_ADVANCE)) { 
-								//set that item as complete.
-								s.getStartButton().setImage(ciws.restartImage);
-								s.getStartButton().redraw();
-								advanceSubItem(mylabel, true, subItemIndex);
-								saveCurrentSheet();
-							}
-						} finally {
-							if(s.getThisValue() != null) {
-								getManager().setData("this", null); //$NON-NLS-1$
-							}
-						}
-					}
+					s.getStartButton().setImage(coreItem.restartImage);
+					advanceSubItem(mylabel, true, subItemIndex);
+					saveCurrentSheet();
 				}
 			}
 		} catch (RuntimeException e) {

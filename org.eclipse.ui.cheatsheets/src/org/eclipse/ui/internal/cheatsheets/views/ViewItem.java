@@ -14,15 +14,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.*;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.cheatsheets.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
@@ -30,7 +26,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.data.*;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
-import org.osgi.framework.Bundle;
 
 public abstract class ViewItem {
 
@@ -377,103 +372,6 @@ public abstract class ViewItem {
 	}
 
 	/*package*/
-	byte runAction(CheatSheetManager csm) {
-		Action action = item.getAction();
-		if(action == null) {
-			if(item.getPerformWhen() != null){
-				action = item.getPerformWhen().getSelectedAction();
-			}
-		}
-
-		if(action != null) {
-			return runAction(action.getPluginID(), action.getActionClass(), action.getParams(), csm);
-		}
-
-		return VIEWITEM_ADVANCE;
-	}
-
-	/**
-	 * Run an action
-	 */
-	/*package*/
-	byte runAction(String pluginId, String className, String[] params, CheatSheetManager csm) {
-		Bundle bundle = Platform.getBundle(pluginId);
-		if (bundle == null) {
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_FINDING_PLUGIN_FOR_ACTION), null);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_FINDING_PLUGIN_FOR_ACTION), null, status);
-			return VIEWITEM_DONOT_ADVANCE;
-		}
-		Class actionClass;
-		IAction action;
-		try {
-			actionClass = bundle.loadClass(className);
-		} catch (Exception e) {
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION), e);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION), null, status);
-			return VIEWITEM_DONOT_ADVANCE;
-		}
-		try {
-			action = (IAction) actionClass.newInstance();
-		} catch (Exception e) {
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), e);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), null, status);
-
-			//logActionLinkError(pluginId, className);
-			return VIEWITEM_DONOT_ADVANCE;
-		}
-
-		final boolean[] listenerFired = { false };
-		final boolean[] listenerResult = { false };
-		IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if(event.getNewValue() instanceof Boolean) {
-					listenerFired[0] = true;
-					listenerResult[0] = ((Boolean)event.getNewValue()).booleanValue();
-				}
-			}
-		};
-
-		// Add PropertyChangeListener to the action, so we can detemine if a action was succesfull
-		action.addPropertyChangeListener(propertyChangeListener);
-
-		// Run the action for this ViewItem
-		if (action instanceof ICheatSheetAction) {
-			// Prepare parameters
-			String[] clonedParams = null;
-			if(params != null && params.length > 0) {
-				clonedParams = new String[params.length];
-				System.arraycopy(params, 0, clonedParams, 0, params.length);
-				for (int i = 0; i < clonedParams.length; i++) {
-					String param = clonedParams[i];
-					if(param != null && param.startsWith("${") && param.endsWith("}")) { //$NON-NLS-1$ //$NON-NLS-2$
-						param = param.substring(2,param.length()-1);
-						String value = csm.getData(param);
-						clonedParams[i] = value == null ? "" : value; //$NON-NLS-1$
-					}
-				}
-			}			
-			((ICheatSheetAction) action).run(clonedParams, csm);
-		} else
-			action.run();
-
-		// Remove the PropertyChangeListener
-		action.removePropertyChangeListener(propertyChangeListener);
-
-		if (listenerFired[0]) {
-			if (listenerResult[0]) {
-				return VIEWITEM_ADVANCE;
-			} else {
-				return VIEWITEM_DONOT_ADVANCE;
-			}
-		}
-
-		return VIEWITEM_ADVANCE;
-	}
-
-	/*package*/
 	void setAsCurrentActiveItem() {
 		setColorAsCurrent(true);
 		if (!buttonExpanded)
@@ -498,20 +396,6 @@ public abstract class ViewItem {
 		setBold(false);
 	}
 
-	/*package*/
-	void setBold(boolean value) {
-		if(value) {
-			mainItemComposite.setFont(boldFont);
-			mainItemComposite.layout();
-			parent.layout();
-		} else {
-			mainItemComposite.setFont(regularFont);
-			mainItemComposite.layout();
-			parent.layout();
-		}
-		bold = value;
-	}
-	
 	private void setBodyColor(Color color) {
 		mainItemComposite.setBackground(color);
 		bodyWrapperComposite.setBackground(color);
@@ -533,6 +417,20 @@ public abstract class ViewItem {
 		}
 	}
 
+	/*package*/
+	void setBold(boolean value) {
+		if(value) {
+			mainItemComposite.setFont(boldFont);
+			mainItemComposite.layout();
+			parent.layout();
+		} else {
+			mainItemComposite.setFont(regularFont);
+			mainItemComposite.layout();
+			parent.layout();
+		}
+		bold = value;
+	}
+	
 	//collapses the item
 	/*package*/
 	void setButtonsCollapsed() {

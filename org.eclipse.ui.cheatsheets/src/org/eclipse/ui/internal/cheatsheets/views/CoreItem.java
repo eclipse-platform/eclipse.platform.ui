@@ -14,16 +14,20 @@ import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.cheatsheets.ICheatSheetAction;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.data.*;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
+import org.osgi.framework.Bundle;
 
 public class CoreItem extends ViewItem {
 	protected boolean buttonsHandled = false;
@@ -130,10 +134,17 @@ public class CoreItem extends ViewItem {
 		label.setBackground(itemColor);
 		added++;
 
+		Action subAction = null;
+		if(sub.getPerformWhen() != null) {
+			sub.getPerformWhen().setSelectedAction(viewer.getManager());
+			subAction = sub.getPerformWhen().getSelectedAction();
+		} else {
+			subAction = sub.getAction();
+		};
+		
 		final int fi = index;
-
 		ImageHyperlink startButton = null;
-		if (sub.getAction() != null) {
+		if (subAction != null) {
 			added++;
 			startButton = createButton(buttonComposite, startImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
 			final ImageHyperlink finalStartButton = startButton;
@@ -154,7 +165,7 @@ public class CoreItem extends ViewItem {
 				}
 			});
 		}
-		if (sub.getAction() == null || sub.getAction().isConfirm()) {
+		if (subAction == null || subAction.isConfirm()) {
 			added++;
 			final ImageHyperlink completeButton = createButton(buttonComposite, completeImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.COMPLETE_TASK_TOOLTIP));
 			toolkit.adapt(completeButton, true, true);
@@ -194,6 +205,24 @@ public class CoreItem extends ViewItem {
 		return listOfSubItemCompositeHolders;
 	}
 
+	private ImageHyperlink getStartButton() {
+		if(buttonComposite != null) {
+			Control[] controls = buttonComposite.getChildren();
+			for (int i = 0; i < controls.length; i++) {
+				Control control = controls[i];
+				if(control instanceof ImageHyperlink) {
+					String toolTipText = control.getToolTipText();
+					if( toolTipText != null &&
+						(toolTipText.equals(CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP)) ||
+						 toolTipText.equals(CheatSheetPlugin.getResourceString(ICheatSheetResource.RESTART_TASK_TOOLTIP)))) {
+						return (ImageHyperlink)control;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * @see org.eclipse.ui.internal.cheatsheets.ViewItem#handleButtons()
 	 */
@@ -221,12 +250,11 @@ public class CoreItem extends ViewItem {
 	}
 
 	private void handleDynamicButtons() {
-		if( item.getPerformWhen() != null ) {
+		if( item.getSubItems() != null && item.getSubItems().size() > 0 ) {
+			handleDynamicSubItemButtons();
+		} else if( item.getPerformWhen() != null ) {
 			handlePerformWhenButtons();
-			return;
 		}
-
-		handleDynamicSubItemButtons();
 	}
 
 	private void handleDynamicSubItemButtons() {
@@ -361,6 +389,153 @@ public class CoreItem extends ViewItem {
 		restartImage = imageDescriptor.createImage();
 	}
 
+	public String performLineSubstitution(String line, String variable, String value) {
+		StringBuffer buffer = new StringBuffer(line.length());
+
+		StringDelimitedTokenizer tokenizer = new StringDelimitedTokenizer(line, variable);
+		boolean addValue = false;
+
+		while (tokenizer.hasMoreTokens()) {
+			if (addValue) {
+				buffer.append(value);
+			}
+			buffer.append(tokenizer.nextToken());
+			addValue = true;
+		}
+		if (tokenizer.endsWithDelimiter()) {
+			buffer.append(value);
+		}
+
+		return buffer.toString();
+	}
+	/*package*/
+	byte runAction(CheatSheetManager csm) {
+		Action action = item.getAction();
+		if(action == null) {
+			if(item.getPerformWhen() != null){
+				action = item.getPerformWhen().getSelectedAction();
+			}
+		}
+
+		if(action != null) {
+			return runAction(action.getPluginID(), action.getActionClass(), action.getParams(), csm);
+		}
+
+		return VIEWITEM_ADVANCE;
+	}
+
+	/**
+	 * Run an action
+	 */
+	/*package*/
+	byte runAction(String pluginId, String className, String[] params, CheatSheetManager csm) {
+		Bundle bundle = Platform.getBundle(pluginId);
+		if (bundle == null) {
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_FINDING_PLUGIN_FOR_ACTION), null);
+			CheatSheetPlugin.getPlugin().getLog().log(status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_FINDING_PLUGIN_FOR_ACTION), null, status);
+			return VIEWITEM_DONOT_ADVANCE;
+		}
+		Class actionClass;
+		IAction action;
+		try {
+			actionClass = bundle.loadClass(className);
+		} catch (Exception e) {
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION), e);
+			CheatSheetPlugin.getPlugin().getLog().log(status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION), null, status);
+			return VIEWITEM_DONOT_ADVANCE;
+		}
+		try {
+			action = (IAction) actionClass.newInstance();
+		} catch (Exception e) {
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), e);
+			CheatSheetPlugin.getPlugin().getLog().log(status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), null, status);
+
+			//logActionLinkError(pluginId, className);
+			return VIEWITEM_DONOT_ADVANCE;
+		}
+
+		final boolean[] listenerFired = { false };
+		final boolean[] listenerResult = { false };
+		IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if(event.getNewValue() instanceof Boolean) {
+					listenerFired[0] = true;
+					listenerResult[0] = ((Boolean)event.getNewValue()).booleanValue();
+				}
+			}
+		};
+
+		// Add PropertyChangeListener to the action, so we can detemine if a action was succesfull
+		action.addPropertyChangeListener(propertyChangeListener);
+
+		// Run the action for this ViewItem
+		if (action instanceof ICheatSheetAction) {
+			// Prepare parameters
+			String[] clonedParams = null;
+			if(params != null && params.length > 0) {
+				clonedParams = new String[params.length];
+				System.arraycopy(params, 0, clonedParams, 0, params.length);
+				for (int i = 0; i < clonedParams.length; i++) {
+					String param = clonedParams[i];
+					if(param != null && param.startsWith("${") && param.endsWith("}")) { //$NON-NLS-1$ //$NON-NLS-2$
+						param = param.substring(2,param.length()-1);
+						String value = csm.getData(param);
+						clonedParams[i] = value == null ? "" : value; //$NON-NLS-1$
+					}
+				}
+			}			
+			((ICheatSheetAction) action).run(clonedParams, csm);
+		} else
+			action.run();
+
+		// Remove the PropertyChangeListener
+		action.removePropertyChangeListener(propertyChangeListener);
+
+		if (listenerFired[0]) {
+			if (listenerResult[0]) {
+				return VIEWITEM_ADVANCE;
+			} else {
+				return VIEWITEM_DONOT_ADVANCE;
+			}
+		}
+
+		return VIEWITEM_ADVANCE;
+	}
+
+	/*package*/
+	byte runSubItemAction(CheatSheetManager csm, int index) {
+		if (item.getSubItems() != null && item.getSubItems().size()>0 && listOfSubItemCompositeHolders != null) {
+			SubItemCompositeHolder s = (SubItemCompositeHolder) listOfSubItemCompositeHolders.get(index);
+			if(s != null) {
+				SubItem subItem = s.getSubItem();
+				Action action = subItem.getAction();
+				if(action == null) {
+					if(subItem.getPerformWhen() != null){
+						action = subItem.getPerformWhen().getSelectedAction();
+					}
+				}
+
+				if(action != null) {
+					try {
+						if(s.getThisValue() != null) {
+							csm.setData("this", s.getThisValue()); //$NON-NLS-1$
+						}
+						String[] params = action.getParams();
+						return runAction(action.getPluginID(), action.getActionClass(), params, csm);
+					} finally {
+						if(s.getThisValue() != null) {
+							csm.setData("this", null); //$NON-NLS-1$
+						}
+					}
+				}
+			}
+		}
+		return VIEWITEM_ADVANCE;
+	}
+
 	/*package*/void setButtonsHandled(boolean handled){
 		buttonsHandled = handled;
 	}
@@ -396,43 +571,5 @@ public class CoreItem extends ViewItem {
 			startButton.setImage(startImage);
 			startButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
 		}
-	}
-	
-	private ImageHyperlink getStartButton() {
-		if(buttonComposite != null) {
-			Control[] controls = buttonComposite.getChildren();
-			for (int i = 0; i < controls.length; i++) {
-				Control control = controls[i];
-				if(control instanceof ImageHyperlink) {
-					String toolTipText = control.getToolTipText();
-					if( toolTipText != null &&
-						(toolTipText.equals(CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP)) ||
-						 toolTipText.equals(CheatSheetPlugin.getResourceString(ICheatSheetResource.RESTART_TASK_TOOLTIP)))) {
-						return (ImageHyperlink)control;
-					}
-				}
-			}
-		}
-		return null;
-	}
-
-	public String performLineSubstitution(String line, String variable, String value) {
-		StringBuffer buffer = new StringBuffer(line.length());
-
-		StringDelimitedTokenizer tokenizer = new StringDelimitedTokenizer(line, variable);
-		boolean addValue = false;
-
-		while (tokenizer.hasMoreTokens()) {
-			if (addValue) {
-				buffer.append(value);
-			}
-			buffer.append(tokenizer.nextToken());
-			addValue = true;
-		}
-		if (tokenizer.endsWithDelimiter()) {
-			buffer.append(value);
-		}
-
-		return buffer.toString();
 	}
 }
