@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.ide.model;
 
 import java.io.File;
+import java.io.StringReader;
 
 import javax.xml.parsers.*;
 
@@ -24,6 +25,7 @@ import org.eclipse.ui.IResourceActionFilter;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
@@ -246,4 +248,16 @@ public class PropertyParser extends DefaultHandler implements LexicalHandler {
 	public void startEntity(String name) throws SAXException {
 		//No interesting behavior
 	}
+
+    /* (non-Javadoc)
+     * Resolve external entity definitions to an empty string.  This is to speed
+     * up processing of files with external DTDs.  Not resolving the contents of
+     * the DTD is ok, as only the System ID of the DTD declaration is used.
+     * 
+     * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
+     */
+    public InputSource resolveEntity(String publicId, String systemId)
+            throws SAXException {
+        return new InputSource(new StringReader(""));
+    }
 }
