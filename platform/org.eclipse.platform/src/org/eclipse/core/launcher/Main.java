@@ -579,7 +579,7 @@ public class Main {
 		if (spec.startsWith("file:")) {
 			File file = new File(spec.substring(5));
 			if (!file.isAbsolute())
-				spec = file.getAbsolutePath();
+				spec = "file:" + file.getAbsolutePath();
 		}
 		try {
 			return new URL(spec);
