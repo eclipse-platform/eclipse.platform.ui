@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ public class SelectLogicalStructureAction extends Action {
 	private VariablesView fView;
 	private ILogicalStructureType[] fTypes;
 	private int fIndex;
-	private String fDescription = null;
 
 	/**
 	 * 
@@ -38,7 +37,6 @@ public class SelectLogicalStructureAction extends Action {
 	 */
 	public SelectLogicalStructureAction(VariablesView view, ILogicalStructureType[] group, IValue value, int index) {
 		super(group[index].getDescription(value), IAction.AS_CHECK_BOX);
-		fDescription = getText();
 		setView(view);
 		fTypes = group;
 		fIndex = index;
