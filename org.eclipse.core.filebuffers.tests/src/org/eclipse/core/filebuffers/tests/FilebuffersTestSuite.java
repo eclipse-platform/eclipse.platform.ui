@@ -16,6 +16,7 @@ import junit.framework.TestSuite;
 
 
 /**
+ * Test Suite for org.eclipse.core.filebuffers.
  * 
  * @since 3.0
  */
