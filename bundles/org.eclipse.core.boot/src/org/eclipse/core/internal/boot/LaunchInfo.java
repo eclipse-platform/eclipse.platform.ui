@@ -240,12 +240,13 @@ private LaunchInfo() {
 }
 
 private LaunchInfo(URL info) throws IOException {
-	this(info, getCurrent().baseUrl);
+	this(info, profile == null ? null : profile.baseUrl);
 }
 
 private LaunchInfo(URL info, URL install) throws IOException {
 	super();
-	
+	if (install == null)
+		throw new IOException();
 	infoUrl = info;
 	baseUrl = install;
 	
