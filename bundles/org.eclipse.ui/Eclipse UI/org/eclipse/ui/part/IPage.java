@@ -25,13 +25,27 @@ public interface IPage {
 /**
  * Creates the SWT control for this page under the given parent 
  * control.
+ * <p>
+ * Clients should not call this method (the workbench calls this method when
+ * it needs to, which may be never).
+ * </p>
  *
- * @param parent the parent composite
+ * @param parent the parent control
  */
 public void createControl(Composite parent);
 /**
- * Disposes all resources associated with this page.  From this point on,
- * the page will not be referenced within the workbench.
+ * Disposes of this page.
+ * <p>
+ * This is the last method called on the <code>IPage</code>.  It is the page's
+ * responsibility to ensure that all of its controls have been disposed by the
+ * time this method returns, but they may have already been disposed if the parent
+ * composite has been disposed.  Also, there is no guarantee that createControl() 
+ * has been called, so the controls may never have been created.
+ * </p>
+ * <p>
+ * Clients should not call this method (the workbench calls this method at
+ * appropriate times).
+ * </p>
  */
 public void dispose();
 /**

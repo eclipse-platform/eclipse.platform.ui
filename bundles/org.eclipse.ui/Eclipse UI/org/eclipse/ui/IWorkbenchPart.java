@@ -101,8 +101,8 @@ public void addPropertyListener(IPropertyListener listener);
 /**
  * Creates the SWT controls for this workbench part.
  * <p>
- * Clients should not call this method (the workbench calls this method at
- * appropriate times).
+ * Clients should not call this method (the workbench calls this method when
+ * it needs to, which may be never).
  * </p>
  * <p>
  * For implementors this is a multi-step process:
@@ -123,9 +123,9 @@ public void createPartControl(Composite parent);
  * Disposes of this workbench part.
  * <p>
  * This is the last method called on the <code>IWorkbenchPart</code>.  At this
- * point the part controls have been disposed as part of an SWT composite.  
- * If the part invokes any method on the disposed SWT controls an
- * <code>SWTError</code> will be thrown.
+ * point the part controls (if they were ever created) have been disposed as part 
+ * of an SWT composite.  There is no guarantee that createControl() has been 
+ * called, so the part controls may never have been created.
  * </p>
  * <p>
  * Within this method a part may release any resources, fonts, images, etc.&nbsp; 
