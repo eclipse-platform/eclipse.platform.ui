@@ -325,7 +325,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		
 		try {
 			// Allow two ticks in case of a retry
-			monitor.beginTask(Policy.bind("CVSRepositoryLocation.openingConnection", getLocation()), 2);//$NON-NLS-1$
+			monitor.beginTask(Policy.bind("CVSRepositoryLocation.openingConnection", getHost()), 2);//$NON-NLS-1$
 			
 			// If we have a username and password, use them to attempt a connection
 			if ((user != null) && (password != null)) {
