@@ -179,9 +179,7 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 				resolver.setType(type);
 				
 				String desc= element.getAttribute(DESCRIPTION);
-				if (desc == null)
-					desc= new String();
-				resolver.setDescription(desc);
+				resolver.setDescription(desc == null ? "" : desc); //$NON-NLS-1$
 				
 				return resolver;
 			}
