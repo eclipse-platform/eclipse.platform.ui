@@ -46,6 +46,13 @@ public class Utilities {
 			if (!dirRoot.endsWith(File.separator))
 				dirRoot += File.separator;
 
+			// on Unix/Linux, the temp dir is shared by many users, so we need to ensure 
+			// that the top working directory is different for each user
+			if (!Platform.getOS().equals("win32")) {
+				String home = System.getProperty("user.home");
+				home = Integer.toString(home.hashCode());
+				dirRoot += home + File.separator;
+			}
 			dirRoot += "eclipse" + File.separator + ".update" + File.separator + Long.toString(tmpseed) + File.separator;
 			//$NON-NLS-1$ //$NON-NLS-2$
 		}
