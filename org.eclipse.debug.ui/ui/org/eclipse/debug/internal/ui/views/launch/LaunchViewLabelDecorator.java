@@ -246,6 +246,6 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 		public boolean isConflicting(ISchedulingRule rule) {
 			return (rule instanceof LabelJob) && fPresentation == ((LabelJob)rule).fPresentation;
 		}
-	};
+	}
 
 }
