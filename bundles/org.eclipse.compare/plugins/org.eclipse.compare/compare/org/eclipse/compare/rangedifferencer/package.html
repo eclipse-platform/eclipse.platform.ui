@@ -11,27 +11,34 @@ Provides support for finding the differences between
 two or three sequences of comparable entities.
 <h2>
 Package Specification</h2>
-The class <tt>Differencer</tt> finds longest sequences of matching and
-non-matching comparable entities.
-<p>Clients must supply the input to the differencer as an implementation
-of the <tt>IRangeComparator</tt> interface.
-<br>An <tt>IRangeComparator</tt> breaks the input data into a sequence
+
+The class <b>RangeDifferencer</b> finds longest sequences of matching and
+non-matching comparable entities. Its implementation is based on
+an objectified version of the algorithm described in:
+<i>A File Comparison Program,</i> by Webb Miller and Eugene W. Myers,
+Software Practice and Experience, Vol. 15, Nov. 1985.
+<p>
+
+Clients must supply the input to the differencer as an implementation
+of the <b>IRangeComparator</b> interface.
+An <b>IRangeComparator</b> breaks the input data into a sequence
 of entities and provides a method for comparing
-<br>one entity with the entity in another <tt>IRangeComparator</tt>.
-<br>For example, to compare two text documents and find longest common
-sequences
-<br>of matching and non-matching lines, the implementation of <tt>IRangeComparator
-</tt>must break the document
-<br>into lines and provide a method for testing whether two lines are considered
-equal.
-<p>The differencer returns the differences among these sequences as an
-array of <tt>RangeDifference</tt> objects.
-<br>Every single <tt>RangeDifference</tt> describes kind of difference
-(no change, change, addition, deletion)
-<br>and the corresponding ranges of the underlying comparable entities
-in the two or three inputs.
-<p>The algorithm used is an objectified version of one described in:
-<br><i>A File Comparison Program,</i> by Webb Miller and Eugene W. Myers,
-<br>Software Practice and Experience, Vol. 15, Nov. 1985.
+one entity with the entity in another <b>IRangeComparator</b>.
+<p>
+
+For example, to compare two text documents and find longest common
+sequences of matching and non-matching lines,
+the implementation of <b>IRangeComparator</b> 
+must break the document into lines and provide a method for testing
+whether two lines are considered equal.
+See <b>org.eclipse.compare.internal.DocLineComparator</b> for how this can be done.
+<p>
+
+The differencer returns the differences among these sequences as an
+array of <b>RangeDifference</b> objects.
+Every single <b>RangeDifference</b> describes the kind of difference
+(no change, change, addition, deletion) and the corresponding ranges
+of the underlying comparable entities in the two or three inputs.
+
 </body>
 </html>

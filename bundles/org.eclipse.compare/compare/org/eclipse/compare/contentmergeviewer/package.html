@@ -11,25 +11,35 @@ Support for compare and merge viewers which show the
 content side-by-side.
 <h2>
 Package Specification</h2>
-The <tt>ContentMergeViewer</tt> is an abstract compare and merge viewer
+
+The <b>ContentMergeViewer</b> is an abstract compare and merge viewer
 with two side-by-side content areas and an optional content area for a
 common ancestor (for three-way compare). Because the implementation makes
 no assumptions about the content type it is a subclass responsibility to
-deal with a specific type.
-<p>A <tt>ContentMergeViewer</tt> accesses its model by means of a content
-provider which must implement the
-<br><tt>IMergeViewerContentProvider</tt> interface.
-<p>The <tt>TextMergeViewer</tt> is the standard concrete subclass of <tt>ContentMergeViewer</tt>.
-A text merge viewer uses the <tt>RangeDifferencer</tt> to perform a textual,
-line-by-line comparison of two (or three) input documents. For text lines
-that differ the <tt>TextMergeViewer</tt> uses an <tt>ITokenComparator</tt>
-to find longest sequences of matching and non-matching tokens. The <tt>TextMergeViewer</tt>'s
+deal with a specific type. Its subclass <b>ImageMergeViewer</b> in
+package org.eclipse.compare.internal shows how to base a simple
+mergeviewer for images on <b>ContentMergeViewer</b>.
+<p>
+
+A <b>ContentMergeViewer</b> accesses its model by means of a content
+provider which must implement the <b>IMergeViewerContentProvider</b> interface.
+<p>
+
+The <b>TextMergeViewer</b> is the standard concrete subclass of
+<b>ContentMergeViewer</b> for comparing and merging text content.
+<br>
+A text merge viewer uses the <b>org.eclipse.compare.rangedifferencer.RangeDifferencer</b>
+to perform a textual, line-by-line comparison of two (or three) input documents.
+For text lines that differ the <b>TextMergeViewer</b> uses an <b>ITokenComparator</b>
+to find longest sequences of matching and non-matching tokens.
+The <b>TextMergeViewer</b>'s
 default token compare works on characters separated by whitespace. If a
 different strategy is needed (for example, Java tokens in a Java-aware
 merge viewer), clients can create their own token comparators by implementing
-the <tt>ITokenComparator</tt> interface.
-<p>The <tt>TextMergeViewer</tt> not only works on whole documents but on
+the <b>ITokenComparator</b> interface.
+<p>The <b>TextMergeViewer</b> not only works on whole documents but on
 subranges of documents too. In this case the viewer's input must be an
-<tt>IDocumentRange</tt> instead of an <tt>IDocument</tt>.
+<b>IDocumentRange</b> instead of an <b>IDocument</b>.
+
 </body>
 </html>

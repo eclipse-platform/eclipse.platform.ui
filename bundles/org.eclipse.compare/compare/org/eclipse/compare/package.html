@@ -11,40 +11,89 @@ Provides support for performing structural and textual
 compare operations on arbitrary data and displaying the results.
 <h2>
 Package Specification</h2>
-The class <tt>CompareUI</tt> defines the entry point to initiate a configurable
+
+The class <b>CompareUI</b> defines the entry point to initiate a configurable
 compare operation on arbitrary resources. The result of the compare is
 opened into a compare editor where the details can be browsed and edited
 in dynamically selected structure and content viewers.
-<p>A compare operation must be implemented as a subclass of <tt>CompareEditorInput</tt>.
-A <tt>CompareEditorInput</tt> runs a (potentially lengthy) compare operation
+<p>
+
+A compare operation must be implemented as a subclass of <b>CompareEditorInput</b>.
+A <b>CompareEditorInput</b> runs a (potentially lengthy) compare operation
 under progress monitor control, creates a UI for drilling-down into the
 compare results, tracks the dirty state of the result in case of merge,
 and saves any changes that occured during a merge.
-<p>An instance of <tt>CompareConfiguration</tt> configures various UI aspects
+<p>
+
+The <b>NavigationAction</b> is used to navigate (step) through the individual
+differences of a <b>CompareEditorInput</b>.
+<p>
+
+An instance of <b>CompareConfiguration</b> configures various UI aspects
 of compare/merge viewers like title labels and images, or whether a side
-of a merge viewer is editable. It is passed to the <tt>CompareEditorInput</tt>
+of a merge viewer is editable. It is passed to the <b>CompareEditorInput</b>
 on creation.
-<p>When implementing a compare operation clients have to provide a tree
-of <tt>IStructureComparator</tt> (see package org.eclipse.compare.structuremergeviewer)
-and <tt>IStreamContentAccessor</tt> that can be passed as the input to
-the differencing engine (org.eclipse.compare.structuremergeviewer.Differencer).
-A <tt>ResourceNode</tt> is a convenience class that implements both interfaces
-for Eclipse workbench resources (org.eclipse.core.resources.IResource).
+<p>
+
+When implementing a hierarchical compare operation as a subclass of
+<b>CompareEditorInput</b> clients have to provide a tree of objects where each
+node implements the interface
+<b>org.eclipse.compare.structuremergeviewer.IStructureComparator</b>.
+This interface is used by the hierarchical differencing engine
+(<b>org.eclipse.compare.structuremergeviewer.Differencer</b>) to walk the tree.
+<br>
+In addition every leaf of the tree must implement the <b>IStreamContentAccessor</b>
+interface in order to give the differencing engine access to its stream content.
+<p>
+
+The abstract class <b>BufferedContent</b> provides a default implementation
+for the <b>IStreamContentAccessor</b> and <b>IContentChangeNotifier</b> interfaces.
+Its subclass <b>ResourceNode</b> adds an implementation for the
+<b>IStructureComparator</b> and <b>ITypedElement</b> interfaces
+based on Eclipse workbench resources (org.eclipse.core.resources.IResource). 
 It can be used without modification as the input to the differencing engine.
-<p>The <tt>EditionSelectionDialog</tt> is a simple selection dialog where
+<p>
+
+The <b>ZipFileStructureCreator</b> is an implementation of the
+<b>org.eclipse.compare.structuremergeviewer.IStructureCreator</b> interface
+and makes the contents of a zip archive available as a
+hierarchical structure of <b>IStructureComparator</b>s which can be easily compared
+by the differencing engine (<b>org.eclipse.compare.structuremergeviewer.Differencer</b>).
+It is a good example for how to make structured files available to the hierarchical 
+compare functionality of the Compare plugin.
+<p>
+
+The <b>EditionSelectionDialog</b> is a simple selection dialog where
 one input element can be compared against a list of historic variants (<i>editions</i>)
 of the same input element. The dialog can be used to implement functions
-like <i>"Replace with Version"</i> or
-<br><i>"Replace with Edition"</i> on workbench resources.
-<p>In addition it is possible to specify a subsection of the input element
+like <i>"Replace with Version"</i> or <i>"Replace with Edition"</i> on workbench resources.
+<p>
+
+In addition it is possible to specify a subsection of the input element
 (e.g. a method in a Java source file) by means of a <i>path</i>. In this
 case the dialog compares only the subsection (as specified by the path)
 with the corresponding subsection in the list of editions. This functionality
 can be used to implement <i>"Replace with Method Edition"</i> for the Java
 language.
-<p>The <tt>EditionSelectionDialog</tt> requires that the editions implement
-the <tt>IStreamContentAccessor</tt> and <tt>IModificationDate</tt> interfaces.
-The <tt>HistoryItem</tt> is a convenience class that implements these interfaces
-for <tt>IFileState</tt> objects.
+<p>
+
+The <b>EditionSelectionDialog</b> requires that the editions implement
+the <b>IStreamContentAccessor</b> and <b>IModificationDate</b> interfaces.
+The <b>HistoryItem</b> is a convenience class that implements these interfaces
+for <b>IFileState</b> objects.
+<p>
+
+
+The <b>CompareViewerPane</b> is a convenience class which provides
+a label and local toolbar for a compare viewer (or any other subclass of a 
+JFace <b>Viewer</b>).
+<br>
+Its abstract subclass <b>CompareViewerSwitchingPane</b> supports <i>dynamic
+viewer switching</i>, that is the viewer installed in the pane is dynamically 
+determined by the pane's input object.
+Both classes are useful if you want to use compare viewers outside the context of
+a compare editor, for example in a dialog or wizard.
+
+
 </body>
 </html>
