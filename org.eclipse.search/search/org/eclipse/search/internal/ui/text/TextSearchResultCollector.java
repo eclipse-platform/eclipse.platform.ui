@@ -43,6 +43,7 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 	private TextSearchOperation fOperation;
 	private int fMatchCount= 0;
 	private Integer[] fMessageFormatArgs= new Integer[1];
+	private long fLastUpdateTime;
 	
 
 	private class TextSearchActionGroupFactory implements IActionGroupFactory {
@@ -105,6 +106,7 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 	public void aboutToStart() throws CoreException {
 		fView= SearchUI.getSearchResultView();
 		fMatchCount= 0;
+		fLastUpdateTime= 0;
 		if (fView != null) {
 			fView.searchStarted(
 				new TextSearchActionGroupFactory(),
@@ -138,9 +140,11 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 		fView.addMatch(description, resource, resource, marker);
 		
 		fMatchCount++;
-		if (!getProgressMonitor().isCanceled())
+
+		if (!getProgressMonitor().isCanceled() && System.currentTimeMillis() - fLastUpdateTime > 1000) {
 			getProgressMonitor().subTask(getFormattedMatchesString(fMatchCount));
-		
+			fLastUpdateTime= System.currentTimeMillis();
+		}
 	}
 	
 	/**
