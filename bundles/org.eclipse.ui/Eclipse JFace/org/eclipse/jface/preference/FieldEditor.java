@@ -4,13 +4,17 @@ package org.eclipse.jface.preference;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.*;
-import org.eclipse.jface.resource.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
 
 /**
  * Abstract base class for all field editors.
@@ -575,5 +579,27 @@ public void store() {
 	} else {
 		doStore();
 	}
+}
+
+/**
+ * Set the GridData on button to be one that is spaced for the
+ * current font.
+ * @param Button
+ */
+
+protected void setButtonLayoutData(Button button) {
+	
+	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+	
+	// Compute and store a font metric
+	GC gc = new GC(button);
+	gc.setFont(button.getFont());
+	FontMetrics fontMetrics = gc.getFontMetrics();
+	gc.dispose();
+	
+	data.heightHint =  org.eclipse.jface.dialogs.Dialog.convertHorizontalDLUsToPixels(fontMetrics,IDialogConstants.BUTTON_HEIGHT);
+	int widthHint = org.eclipse.jface.dialogs.Dialog.convertVerticalDLUsToPixels(fontMetrics,IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+	button.setLayoutData(data);
 }
 }
