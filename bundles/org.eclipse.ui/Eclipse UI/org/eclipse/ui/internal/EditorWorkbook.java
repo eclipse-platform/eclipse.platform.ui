@@ -533,12 +533,14 @@ public void remove(LayoutPart child) {
 	removeListeners((EditorPane)child);
 	
 	// Show new editor
-	int maxIndex = editors.size() - 1;
-	if (maxIndex >= 0) {
-		tabIndex = Math.min(tabIndex, maxIndex);
-		setVisibleEditor((EditorPane)editors.get(tabIndex));
-	} else {
-		setVisibleEditor(null);
+	if (visibleEditor == child) {
+		int maxIndex = editors.size() - 1;
+		if (maxIndex >= 0) {
+			tabIndex = Math.min(tabIndex, maxIndex);
+			setVisibleEditor((EditorPane)editors.get(tabIndex));
+		} else {
+			setVisibleEditor(null);
+		}
 	}
 
 	// Dispose old editor.
