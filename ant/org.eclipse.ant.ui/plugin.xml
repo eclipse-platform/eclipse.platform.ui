@@ -514,7 +514,7 @@
    
    <extension
          id="org.eclipse.ant.ui.AntDocumentSetupParticipant"
-         name="%antDocumentSetupParticipant"
+         name="%antDocumentSetupParticipant.name"
          point="org.eclipse.core.filebuffers.documentSetup">
       <participant
             extensions="xml, ent, macrodef"
