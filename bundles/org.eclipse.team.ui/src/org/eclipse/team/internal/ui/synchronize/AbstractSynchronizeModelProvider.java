@@ -753,7 +753,8 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
             ISynchronizeModelElement node = nodes[i];
 			ISynchronizeModelElement rootToClear = getRootToClear(node);
 			propogateConflictState(rootToClear, true /* clear the conflict */);
-			clearModelObjects(rootToClear);           
+			clearModelObjects(rootToClear);
+			rootsToClear.add(rootToClear);
         }
 	    ISynchronizeModelElement[] roots = (ISynchronizeModelElement[]) rootsToClear.toArray(new ISynchronizeModelElement[rootsToClear.size()]);
 		if (Utils.canUpdateViewer(getViewer())) {
