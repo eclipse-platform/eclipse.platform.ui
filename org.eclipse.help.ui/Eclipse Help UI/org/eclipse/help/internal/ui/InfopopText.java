@@ -328,9 +328,9 @@ public class InfopopText extends Canvas {
 				lines.add(i, newline);
 				line = line.substring(linebreak);
 				lines.add(++i, line);
-				i--; // may need to split more...
-
-				adjustStyles(i);
+				
+				// adjust the styles for the old line
+				adjustStyles(i-1);
 			}
 		}
 	}
