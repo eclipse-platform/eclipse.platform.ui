@@ -11,8 +11,6 @@ public interface IHelpUIConstants {
 	public static final String HELP_UI_PLUGIN_ID = "org.eclipse.help.ui.";
 	// F1 ids
 	public static final String F1_SHELL = HELP_UI_PLUGIN_ID + "f1Shell";
-	public static final String PREF_PAGE = HELP_UI_PLUGIN_ID + "prefPage";
-	public static final String LOGGING_OPTIONS = HELP_UI_PLUGIN_ID + "loggingOptions";
 	public static final String PREF_PAGE_BROWSERS = HELP_UI_PLUGIN_ID + "prefPageBrowsers";
 	public static final String SEARCH_FILTERING_OPTIONS = HELP_UI_PLUGIN_ID + "searchFilteringOpts";
 	public static final String SEARCH_PAGE = HELP_UI_PLUGIN_ID + "searchPage";
