@@ -111,6 +111,15 @@ public final class ToolScriptPlugin {
 	}
 
 	/**
+	 * Fake this out until the tool scripts becomes a
+	 * real plugin.
+	 */
+	public final org.eclipse.jface.preference.IPreferenceStore getPreferenceStore() {
+//********* Remove this method when real plugin
+		return org.eclipse.ui.internal.WorkbenchPlugin.getDefault().getPreferenceStore();
+	}
+
+	/**
 	 * Fake this out until tool scripts becomes a
 	 * real plugin
 	 */
