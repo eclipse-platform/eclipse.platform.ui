@@ -22,6 +22,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.variables.ILaunchVariableManager;
 import org.eclipse.debug.core.variables.LaunchVariableUtil;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
@@ -36,6 +37,11 @@ public final class ExternalToolMigration {
 	 * External tool type for Ant build files (value <code>antBuildType</code>).
 	 */
 	public static final String TOOL_TYPE_ANT_BUILD = "antBuildType"; //$NON-NLS-1$;
+	/**
+	 * Ant builder launch configuration type identifier. Ant project builders
+	 * are of this type.
+	 */
+	public static final String ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE = "org.eclipse.ant.AntBuilderLaunchConfigurationType"; //$NON-NLS-1$
 		
 	public static final String RUN_TARGETS_ATTRIBUTE = TOOL_TYPE_ANT_BUILD + ".runTargets"; //$NON-NLS-1$;
 
@@ -244,19 +250,21 @@ public final class ExternalToolMigration {
 		}
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType configType;
-		//if (IExternalToolConstants.TOOL_TYPE_ANT_BUILD.equals(type)) {
-			//configType = manager.getLaunchConfigurationType(IExternalToolConstants.ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE);
-		//} else
-		 if (IExternalToolConstants.TOOL_TYPE_PROGRAM.equals(type)) {
+		if (TOOL_TYPE_ANT_BUILD.equals(type)) {
+			configType = manager.getLaunchConfigurationType(ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE);
+		} else if (IExternalToolConstants.TOOL_TYPE_PROGRAM.equals(type)) {
 			configType = manager.getLaunchConfigurationType(IExternalToolConstants.ID_PROGRAM_BUILDER_LAUNCH_CONFIGURATION_TYPE);
 		} else {
 			return null;
 		}
 		try {
-			return configType.newInstance(null, name);
+			if (configType != null) {
+				return configType.newInstance(null, name);
+			}
 		} catch (CoreException e) {
-			return null;
+			ExternalToolsPlugin.getDefault().log(e);
 		}
+		return null;
 	}
 	
 	/**
