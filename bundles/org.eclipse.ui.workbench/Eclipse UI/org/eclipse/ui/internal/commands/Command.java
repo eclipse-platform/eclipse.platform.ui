@@ -183,14 +183,7 @@ final class Command implements ICommand {
     public int hashCode() {
         if (!hashCodeComputed) {
             hashCode = HASH_INITIAL;
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(handler);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-            hashCode = hashCode * HASH_FACTOR
-                    + Util.hashCode(keySequenceBindings);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
             hashCodeComputed = true;
         }
         return hashCode;
@@ -222,8 +215,6 @@ final class Command implements ICommand {
     boolean setCategoryId(String categoryId) {
         if (!Util.equals(categoryId, this.categoryId)) {
             this.categoryId = categoryId;
-            hashCodeComputed = false;
-            hashCode = 0;
             string = null;
             return true;
         }
@@ -233,8 +224,6 @@ final class Command implements ICommand {
     boolean setDefined(boolean defined) {
         if (defined != this.defined) {
             this.defined = defined;
-            hashCodeComputed = false;
-            hashCode = 0;
             string = null;
             return true;
         }
@@ -244,8 +233,6 @@ final class Command implements ICommand {
     boolean setDescription(String description) {
         if (!Util.equals(description, this.description)) {
             this.description = description;
-            hashCodeComputed = false;
-            hashCode = 0;
             string = null;
             return true;
         }
@@ -255,8 +242,6 @@ final class Command implements ICommand {
     boolean setHandler(IHandler handler) {
         if (handler != this.handler) {
             this.handler = handler;
-            hashCodeComputed = false;
-            hashCode = 0;
             string = null;
 
             // Debugging output
@@ -287,8 +272,6 @@ final class Command implements ICommand {
             this.keySequenceBindingsAsArray = (IKeySequenceBinding[]) this.keySequenceBindings
                     .toArray(new IKeySequenceBinding[this.keySequenceBindings
                             .size()]);
-            hashCodeComputed = false;
-            hashCode = 0;
             string = null;
             return true;
         }
@@ -298,8 +281,6 @@ final class Command implements ICommand {
     boolean setName(String name) {
         if (!Util.equals(name, this.name)) {
             this.name = name;
-            hashCodeComputed = false;
-            hashCode = 0;
             string = null;
             return true;
         }
