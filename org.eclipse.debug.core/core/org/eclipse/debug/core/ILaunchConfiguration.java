@@ -94,7 +94,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * to be instantiated (if not already).
 	 * 
 	 * @param mode the mode in which to launch, one of the mode constants
-	 *  defined by this interface - <code>RUN</code> or <code>DEBUG</code>.
+	 *  defined by <code>ILaunchManager</code> - <code>RUN_MODE</code> or <code>DEBUG_MODE</code>.
 	 * @param monitor progress monitor, or <code>null</code>
 	 * @return the resulting launch.
 	 * @exception CoreException if this method fails. Reasons include:<ul>
@@ -109,8 +109,8 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * specified mode.
 	 * 
 	 * @param mode a mode in which a configuration can be launched, one of
-	 *  the mode constants defined by this interface - <code>RUN</code> or
-	 *  <code>DEBUG</code>.
+	 *  the mode constants defined by <code>ILaunchManager</code> - <code>RUN_MODE</code> or
+	 *  <code>DEBUG_MODE</code>.
 	 * @return whether this launch configuration supports the
 	 *  specified mode
 	 * @exception CoreException if this method fails. Reasons include:
@@ -269,7 +269,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li>An exception occurs while initializing the contents of the
-	 * working copy from this configurations underlying storage.</li>
+	 * working copy from this configuration's underlying storage.</li>
 	 * </ul>
 	 * @see ILaunchConfigurationWorkingCopy#getOriginal()
 	 */
@@ -289,7 +289,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li>An exception occurs while initializing the contents of the
-	 * working copy from this configurations underlying storage.</li>
+	 * working copy from this configuration's underlying storage.</li>
 	 * </ul>
 	 * @see ILaunchConfigurationWorkingCopy#getOriginal()
 	 */
@@ -335,7 +335,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * equal to the contents of the given launch configuration.
 	 * 
 	 * @return whether the contents of this launch configuration are equal to the contents
-	 * of specified launch configuration.
+	 * of the specified launch configuration.
 	 */
 	public boolean contentsEqual(ILaunchConfiguration configuration);
 
