@@ -27,8 +27,9 @@ import org.eclipse.team.internal.core.Policy;
  */
 public class RefreshSubscriberJob extends Job {
 	
-	protected final static boolean DEBUG = Policy.DEBUG_REFRESH_JOB;
+	protected final static boolean DEBUG = Policy.DEBUG_REFRESH_JOB;	
 	
+	private final static Object FAMILY_ID = new Object();
 	private TeamSubscriber subscriber;
 	private IResource[] roots;
 	
@@ -51,8 +52,17 @@ public class RefreshSubscriberJob extends Job {
 	}
 	
 	public RefreshSubscriberJob(TeamSubscriber subscriber, IResource[] roots) {
+		this();
 		this.subscriber = subscriber;
 		this.roots = roots;
+	}
+	
+	public boolean belongsTo(Object family) {		
+		return family == getFamily();
+	}
+
+	public static Object getFamily() {
+		return FAMILY_ID;
 	}
 	
 	/**
@@ -60,32 +70,33 @@ public class RefreshSubscriberJob extends Job {
 	 * and it will continue to refresh the other subscribers.
 	 */
 	public IStatus run(IProgressMonitor monitor) {		
-		monitor.beginTask(null, getSubscribers().length * 100);
+		monitor.beginTask(Policy.bind("RefreshSubscriber.runTitle"), getSubscribers().length * 100);
 		try {
 			TeamSubscriber[] subscribers = getSubscribers();
-			if(DEBUG) System.out.println("refreshJob: running with " + subscribers.length + " subscribers");
+			if(DEBUG) System.out.println(this.getClass().getName() + ": running with " + subscribers.length + " subscribers");
 			for (int i = 0; i < subscribers.length; i++) {
 				TeamSubscriber s = subscribers[i];
 				if(monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
 				try {
-					if(DEBUG) System.out.println("refreshJob: starting refresh for " + s.getName());
+					if(DEBUG) System.out.println(this.getClass().getName() + ": starting refresh for " + s.getName());
+					monitor.setTaskName(Policy.bind("RefreshSubscriber.runTitleSubscriber", s.getName()));
 					s.refresh(getResources(s), IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 100));
-					if(DEBUG) System.out.println("refreshJob: finished refresh for " + s.getName());
+					if(DEBUG) System.out.println(this.getClass().getName() + ":  finished refresh for " + s.getName());
 				} catch(TeamException e) {
-					if(DEBUG) System.out.println("refreshJob: exception in refresh " + s.getName() + ":" + e.getMessage());
+					if(DEBUG) System.out.println(this.getClass().getName() + ": exception in refresh " + s.getName() + ":" + e.getMessage());
 					//TeamPlugin.log(e);
 					// keep going'
 				}
 			}
 		} catch(OperationCanceledException e2) {
-			if(DEBUG) System.out.println("refreshJob: run cancelled");
+			if(DEBUG) System.out.println(this.getClass().getName() + ": run cancelled");
 			return Status.CANCEL_STATUS;
 		} finally {
 			monitor.done();
 		}
-		if(DEBUG) System.out.println("refreshJob: run completed");
+		if(DEBUG) System.out.println(this.getClass().getName() + ": run completed");
 		return Status.OK_STATUS;
 	}
 

@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
@@ -57,6 +58,7 @@ class RefreshAction extends Action {
 					resources = input.roots();
 				}
 				if(TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_BACKGROUND_SYNC)) {
+					Platform.getJobManager().cancel(RefreshSubscriberJob.getFamily());
 					RefreshSubscriberJob job = new RefreshSubscriberJob(input.getSubscriber(), resources);
 					job.schedule();
 				} else {

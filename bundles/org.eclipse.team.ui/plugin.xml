@@ -198,7 +198,7 @@
       <wizard
          id="org.eclipse.team.ui.ProjectSetImportWizard"
          name="%ProjectSetImportWizard.name"
-         class="org.eclipse.team.internal.ui.wizard.ProjectSetImportWizard"
+         class="org.eclipse.team.internal.ui.wizards.ProjectSetImportWizard"
          icon="icons/full/obj/import_projectset.gif">
          <description>
             %ProjectSetImportWizard.description

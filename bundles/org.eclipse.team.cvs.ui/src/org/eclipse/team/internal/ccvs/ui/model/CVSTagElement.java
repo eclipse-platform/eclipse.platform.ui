@@ -16,14 +16,11 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.progress.IElementCollector;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.jobs.IDeferredWorkbenchAdapter;
-import org.eclipse.team.internal.ccvs.ui.jobs.BatchSimilarSchedulingRule;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
 public class CVSTagElement extends CVSModelElement implements IAdaptable, IDeferredWorkbenchAdapter {
 	CVSTag tag;
@@ -38,6 +35,8 @@ public class CVSTagElement extends CVSModelElement implements IAdaptable, IDefer
 	}
 	public Object getAdapter(Class adapter) {
 		if (adapter == IWorkbenchAdapter.class)
+   return this;
+  if (adapter == IDeferredWorkbenchAdapter.class)
 			return this;
 		return null;
 	}

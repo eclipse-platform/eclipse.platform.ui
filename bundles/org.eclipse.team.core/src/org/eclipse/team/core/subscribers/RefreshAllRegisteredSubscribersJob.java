@@ -72,26 +72,20 @@ public class RefreshAllRegisteredSubscribersJob extends RefreshSubscriberJob imp
 			if(delta.getFlags() == TeamDelta.SUBSCRIBER_CREATED) {				
 				TeamSubscriber s = delta.getSubscriber();
 				subscribers.put(s.getId(), s);
-				if(DEBUG) System.out.println("refreshJob: adding subscriber " + s.getName());
-				if(this.getState() == Job.NONE) {
-					startup();
-				}				
+				if(DEBUG) System.out.println(this.getClass().getName() + ": adding subscriber " + s.getName());
 			} else if(delta.getFlags() == TeamDelta.SUBSCRIBER_DELETED) {
 				// cancel current refresh just to make sure that the subscriber being deleted can
 				// be properly shutdown
 				cancel();
 				TeamSubscriber s = delta.getSubscriber();
 				subscribers.remove(s.getId());
-				if(DEBUG) System.out.println("refreshJob: removing subscriber " + s.getName());
-				if(! subscribers.isEmpty()) {
-					startup();
-				}
+				if(DEBUG) System.out.println(this.getClass().getName() + ": removing subscriber " + s.getName());
 			}
 		}
 	}
 
 	protected void startup() {
-		if(DEBUG) System.out.println("refreshJob: scheduling job in " + (refreshInterval / 3600) + " seconds");
+		if(DEBUG) System.out.println(this.getClass().getName() + ": scheduling job in " + (refreshInterval / 60000) + " minutes");
 		schedule(refreshInterval);
 	}
 	

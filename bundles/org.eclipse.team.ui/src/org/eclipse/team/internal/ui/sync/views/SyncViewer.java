@@ -61,7 +61,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
-import org.eclipse.team.core.subscribers.RefreshAllRegisteredSubscribersJob;
+import org.eclipse.team.core.subscribers.RefreshSubscriberJob;
 import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.subscribers.TeamProvider;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
@@ -74,7 +74,6 @@ import org.eclipse.team.internal.ui.sync.actions.SyncViewerActions;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -703,14 +702,14 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	 * change the icon of the view when the refresh jobis running.
 	 */
 	public void done(Job job, IStatus result) {
-		if(job instanceof RefreshAllRegisteredSubscribersJob) {
+		if(job.belongsTo(RefreshSubscriberJob.getFamily())) {
 			viewImage = initialImg;
 			fireSavePropertyChange(IWorkbenchPart.PROP_TITLE);
 		}
 	}
 
 	public void running(Job job) {
-		if(job instanceof RefreshAllRegisteredSubscribersJob) {
+		if(job.belongsTo(RefreshSubscriberJob.getFamily())) {
 			viewImage = refreshingImg;
 			fireSavePropertyChange(IWorkbenchPart.PROP_TITLE);
 		}

@@ -45,7 +45,6 @@ import org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithTagAction;
 import org.eclipse.team.internal.ccvs.ui.actions.SetKeywordSubstitutionAction;
 import org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction;
 import org.eclipse.team.internal.ccvs.ui.actions.SyncAction;
-import org.eclipse.team.internal.ccvs.ui.actions.TagAction;
 import org.eclipse.team.internal.ccvs.ui.actions.TagLocalAction;
 import org.eclipse.team.internal.ccvs.ui.actions.UnmanageAction;
 import org.eclipse.team.internal.ccvs.ui.actions.UpdateAction;
