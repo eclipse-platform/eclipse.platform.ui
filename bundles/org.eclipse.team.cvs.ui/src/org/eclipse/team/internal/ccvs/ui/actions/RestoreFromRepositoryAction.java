@@ -44,7 +44,7 @@ import org.eclipse.team.internal.ccvs.ui.wizards.RestoreFromRepositoryWizard;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class RestoreFromRepositoryAction extends CVSAction {
+public class RestoreFromRepositoryAction extends WorkspaceTraversalAction {
 
 	/*
 	 * This class handles the output from "cvs log -R ..." where -R
