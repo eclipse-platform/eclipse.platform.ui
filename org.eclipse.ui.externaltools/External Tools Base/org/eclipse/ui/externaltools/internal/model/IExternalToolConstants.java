@@ -131,6 +131,7 @@ public interface IExternalToolConstants {
 	/**
 	 * Boolean attribute indicating if external tool output should be captured.
 	 * Default value is <code>false</code>.
+	 * @deprecated since 3.1 Replaced by <code>org.eclipse.debug.core.DebugPlugin.ATTR_CAPTURE_OUTPUT</code>
 	 */
 	public static final String ATTR_CAPTURE_OUTPUT = PLUGIN_ID + ".ATTR_CAPTURE_OUTPUT"; //$NON-NLS-1$
 	/**
