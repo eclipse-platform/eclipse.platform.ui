@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.search.*;
+import org.eclipse.help.internal.workingset.*;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.jface.resource.*;
@@ -66,17 +67,26 @@ public class SearchOperation extends WorkspaceModifyOperation {
 	protected void execute(IProgressMonitor monitor)
 		throws CoreException, InvocationTargetException, InterruptedException {
 		try {
-			Collection scope = null;
+			WorkingSet[] workingSets = null; // no filtering
 			if (queryData.isBookFiltering()) {
-				scope = new ArrayList();
-				IWorkingSet[] workingSets = queryData.getSelectedWorkingSets();
-				for (int i = 0; i < workingSets.length; i++) {
-					scope.add(workingSets[i].getName());
+				IWorkingSet[] allWorkingSets =
+					queryData.getSelectedWorkingSets();
+				ArrayList helpWorkingSets = new ArrayList();
+				WorkingSetManager wsmgr =
+					HelpSystem.getWorkingSetManager(queryData.getLocale());
+				for (int i = 0; i < allWorkingSets.length; i++) {
+					WorkingSet ws = wsmgr.getWorkingSet(allWorkingSets[i].getName());
+					if (ws != null) {
+						helpWorkingSets.add(ws);
+					}
 				}
+				workingSets =
+					(WorkingSet[]) helpWorkingSets.toArray(
+						new WorkingSet[helpWorkingSets.size()]);
 			}
 			SearchResults results =
 				new SearchResults(
-					scope,
+					workingSets,
 					queryData.getMaxHits(),
 					queryData.getLocale());
 			HelpSystem.getSearchManager().search(

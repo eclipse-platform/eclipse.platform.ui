@@ -21,6 +21,7 @@ import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.webapp.*;
 import org.eclipse.help.internal.webapp.data.*;
+import org.eclipse.help.internal.workingset.*;
 
 /**
  * Returns search results.
@@ -43,7 +44,7 @@ public class SearchServlet extends HttpServlet {
 		resp.setContentType("application/xml; charset=UTF-8");
 		resp.setHeader("Cache-Control", "max-age=0");
 
-		SearchHit[] hits = loadSearchResults(req);
+		SearchHit[] hits = loadSearchResults(req, resp);
 
 		ResultsWriter resultsWriter = new ResultsWriter(resp.getWriter());
 		resultsWriter.generate(hits, resp);
@@ -67,12 +68,14 @@ public class SearchServlet extends HttpServlet {
 				* Call the search engine, and get results or the percentage of 
 				* indexed documents.
 				*/
-	private SearchHit[] loadSearchResults(HttpServletRequest request) {
+	private SearchHit[] loadSearchResults(
+		HttpServletRequest request,
+		HttpServletResponse response) {
 		SearchHit[] hits = null;
 		try {
 			NullProgressMonitor pm = new NullProgressMonitor();
 
-			SearchResults results = createHitCollector(request);
+			SearchResults results = createHitCollector(request, response);
 			HelpSystem.getSearchManager().search(
 				createSearchQuery(request),
 				results,
@@ -101,18 +104,16 @@ public class SearchServlet extends HttpServlet {
 			locale);
 	}
 
-	private SearchResults createHitCollector(HttpServletRequest request) {
-		String[] scopes = request.getParameterValues("scope");
-		Collection scopeCol = null;
-		if (scopes != null) {
-			if (scopes.length
-				!= HelpSystem.getTocManager().getTocs(locale).length) {
-				// scope only if not all books selected
-				scopeCol = new ArrayList(scopes.length);
-				for (int i = 0; i < scopes.length; i++) {
-					scopeCol.add(scopes[i]);
-				}
-			}
+	private SearchResults createHitCollector(
+		HttpServletRequest request,
+		HttpServletResponse response) {
+		WorkingSet[] workingSets;
+		if (request.getParameterValues("scopedSearch") == null) {
+			// scopes are working set names
+			workingSets = getWorkingSets(request, response);
+		} else {
+			// scopes are books (advanced search)
+			workingSets = createTempWorkingSets(request, response);
 		}
 
 		int maxHits = 500;
@@ -126,7 +127,66 @@ public class SearchServlet extends HttpServlet {
 			} catch (NumberFormatException nfe) {
 			}
 		}
-		return new SearchResults(scopeCol, maxHits, locale);
+		return new SearchResults(workingSets, maxHits, locale);
+	}
+	/**
+	 * @return WorkingSet[] or null
+	 */
+	private WorkingSet[] getWorkingSets(
+		HttpServletRequest request,
+		HttpServletResponse response) {
+		String[] scopes = request.getParameterValues("scope");
+		if (scopes == null) {
+			return null;
+		}
+		// confirm working set exists and use it
+		WebappWorkingSetManager wsmgr =
+			new WebappWorkingSetManager(request, response, locale);
+		ArrayList workingSetCol = new ArrayList(scopes.length);
+		for (int s = 0; s < scopes.length; s++) {
+			WorkingSet ws = wsmgr.getWorkingSet(scopes[s]);
+			if (ws != null) {
+				workingSetCol.add(ws);
+			}
+		}
+		if (workingSetCol.size() == 0) {
+			return null;
+		}
+		return (WorkingSet[]) workingSetCol.toArray(
+			new WorkingSet[workingSetCol.size()]);
+	}
+
+	/**
+	 * @return WorkingSet[] or null
+	 */
+	private WorkingSet[] createTempWorkingSets(
+		HttpServletRequest request,
+		HttpServletResponse response) {
+		String[] scopes = request.getParameterValues("scope");
+		if (scopes == null) {
+			// it is possible that filtering is used, but all books are deselected
+			return new WorkingSet[0];
+		}
+		if (scopes.length
+			== HelpSystem.getTocManager().getTocs(locale).length) {
+			// do not filter if all books are selected
+			return null;
+		}
+		// create working set from books
+		WebappWorkingSetManager wsmgr =
+			new WebappWorkingSetManager(request, response, locale);
+		ArrayList tocs = new ArrayList(scopes.length);
+		for (int s = 0; s < scopes.length; s++) {
+			AdaptableToc toc = wsmgr.getAdaptableToc(scopes[s]);
+			if (toc != null) {
+				tocs.add(toc);
+			}
+		}
+		AdaptableToc[] adaptableTocs =
+			(AdaptableToc[]) tocs.toArray(new AdaptableToc[tocs.size()]);
+		WorkingSet[] workingSets = new WorkingSet[1];
+		workingSets[0] = wsmgr.createWorkingSet("temp", adaptableTocs);
+		return workingSets;
 	}
 
 	/**

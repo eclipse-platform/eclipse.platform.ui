@@ -12,9 +12,12 @@
 
 <% 
 	LayoutData data = new LayoutData(application,request);
-	String search_jsp = "search.jsp";
-	if (data.getMode() == RequestData.MODE_INFOCENTER)
-		search_jsp = "searchInfocenter.jsp";
+	// Initiate test for persisted cookies
+	if(data.getMode() == LayoutData.MODE_INFOCENTER){
+		Cookie cookieTest=new Cookie("cookiesEnabled", "yes");
+		cookieTest.setMaxAge(365*24*60*60);
+		response.addCookie(cookieTest);
+	}
 %>
 
 <html>
@@ -67,7 +70,7 @@ if (data.isMozilla()){
 <%
 	}
 %>
-	<frame name="SearchFrame" title="<%=ServletResources.getString("helpToolbarFrame", request)%>" src='<%="advanced/"+ search_jsp+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
+	<frame name="SearchFrame" title="<%=ServletResources.getString("helpToolbarFrame", request)%>" src='<%="advanced/search.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
 	<frame name="HelpFrame" title="<%=ServletResources.getString("ignore", "HelpFrame", request)%>" src='<%="advanced/help.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" >
 </frameset>
 

@@ -24,20 +24,19 @@ import org.eclipse.help.internal.workingset.*;
  * Performs filtering and collects hits into an array of SearchHit
  */
 public class SearchResults implements ISearchHitCollector {
-	private Collection scopeNames;
+	// Collection of WorkingSet
 	private ArrayList scopes;
 	private int maxHits;
 	private String locale;
 	protected SearchHit[] searchHits = new SearchHit[0];
 	/**
 	 * Constructor
-	 * @param scope collection of book names to search in, null means entire world
+	 * @param workingSets working sets or null if no filtering
 	 */
-	public SearchResults(Collection scopeNames, int maxHits, String locale) {
-		this.scopeNames = scopeNames;
+	public SearchResults(WorkingSet[] workingSets, int maxHits, String locale) {
 		this.maxHits = maxHits;
 		this.locale = locale;
-		this.scopes = getScopes();
+		this.scopes = getScopes(workingSets);
 	}
 	/**
 	 * Adds hits to the result
@@ -65,7 +64,7 @@ public class SearchResults implements ISearchHitCollector {
 			IToc toc = null; // the TOC containing the topic
 			AdaptableHelpResource scope = null;
 			// the scope for the topic, if any
-			if (scopeNames == null) {
+			if (scopes == null) {
 				toc = getTocForTopic(href, locale);
 			} else {
 				scope = getScopeForTopic(href);
@@ -155,28 +154,15 @@ public class SearchResults implements ISearchHitCollector {
 	 * filtering.
 	 * @return Collection
 	 */
-	private ArrayList getScopes() {
-		if (scopes != null)
-			return scopes;
-
-		// Note: currently the scope can be a collection of books or working sets
-		if (scopeNames == null)
+	private ArrayList getScopes(WorkingSet[] wSets) {
+		if (wSets == null)
 			return null;
 
-		scopes = new ArrayList(scopeNames.size());
-		WorkingSetManager wsmgr = HelpSystem.getWorkingSetManager(locale);
-		for (Iterator it = scopeNames.iterator(); it.hasNext();) {
-			String s = (String) it.next();
-			WorkingSet ws = wsmgr.getWorkingSet(s);
-			if (ws != null) {
-				AdaptableHelpResource[] elements = ws.getElements();
+		scopes = new ArrayList(wSets.length);
+		for (int w=0; w<wSets.length;w++) {
+				AdaptableHelpResource[] elements = wSets[w].getElements();
 				for (int i = 0; i < elements.length; i++)
 					scopes.add(elements[i]);
-			} else {
-				AdaptableToc toc = wsmgr.getAdaptableToc(s);
-				if (toc != null)
-					scopes.add(toc);
-			}
 		}
 		return scopes;
 	}

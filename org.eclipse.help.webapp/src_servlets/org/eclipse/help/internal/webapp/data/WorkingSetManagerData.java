@@ -17,6 +17,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.webapp.servlet.*;
 import org.eclipse.help.internal.workingset.*;
 
 /**
@@ -28,25 +29,16 @@ public class WorkingSetManagerData extends RequestData {
 	private final static int REMOVE = 2;
 	private final static int EDIT = 3;
 
-	private static boolean workingSetsSynchronized = false;
-
 	private String name;
-
-	private WorkingSetManager wsmgr =
-		HelpSystem.getWorkingSetManager(getLocale());
+	private WebappWorkingSetManager wsmgr;
 
 	public WorkingSetManagerData(
 		ServletContext context,
-		HttpServletRequest request) {
+		HttpServletRequest request,
+		HttpServletResponse response) {
 		super(context, request);
-
+		wsmgr = new WebappWorkingSetManager(request, response, getLocale());
 		name = request.getParameter("workingSet");
-
-		if (!workingSetsSynchronized && getMode() == MODE_WORKBENCH) {
-			// upon startup in workbench mode, make sure working sets are in synch with those from UI
-			workingSetsSynchronized = true;
-			wsmgr.synchronizeWorkingSets();
-		}
 
 		switch (getOperation()) {
 			case ADD :
@@ -64,9 +56,6 @@ public class WorkingSetManagerData extends RequestData {
 	}
 
 	public void addWorkingSet() {
-		if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER)
-			return;
-
 		if (name != null && name.length() > 0) {
 
 			String[] hrefs = request.getParameterValues("hrefs");
@@ -89,9 +78,6 @@ public class WorkingSetManagerData extends RequestData {
 	}
 
 	public void removeWorkingSet() {
-		if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER)
-			return;
-
 		if (name != null && name.length() > 0) {
 
 			WorkingSet ws = wsmgr.getWorkingSet(name);
@@ -101,9 +87,6 @@ public class WorkingSetManagerData extends RequestData {
 	}
 
 	public void editWorkingSet() {
-		if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER)
-			return;
-
 		if (name != null && name.length() > 0) {
 
 			String oldName = request.getParameter("oldName");
@@ -138,11 +121,6 @@ public class WorkingSetManagerData extends RequestData {
 	}
 
 	public String[] getWorkingSets() {
-		// sanity test for infocenter, but this could not work anyway...
-		if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER)
-			return new String[0];
-
-		// this is workbench
 		WorkingSet[] workingSets = wsmgr.getWorkingSets();
 		String[] sets = new String[workingSets.length];
 		for (int i = 0; i < workingSets.length; i++)
@@ -154,9 +132,7 @@ public class WorkingSetManagerData extends RequestData {
 	public String getWorkingSetName() {
 		if (name == null || name.length() == 0) {
 			// See if anything is set in the preferences
-			name =
-				HelpPlugin.getDefault().getPluginPreferences().getString(
-					HelpSystem.WORKING_SET);
+			name =wsmgr.getCurrentWorkingSet();
 			if (name == null
 				|| name.length() == 0
 				|| wsmgr.getWorkingSet(name) == null)

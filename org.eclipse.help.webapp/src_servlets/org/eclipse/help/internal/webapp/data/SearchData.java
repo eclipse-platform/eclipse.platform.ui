@@ -19,11 +19,15 @@ import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.webapp.*;
+import org.eclipse.help.internal.webapp.servlet.*;
+import org.eclipse.help.internal.workingset.*;
 
 /**
  * Helper class for searchView.jsp initialization
  */
 public class SearchData extends RequestData {
+	private HttpServletResponse response;
+	private WebappWorkingSetManager wsmgr;
 
 	// Request parameters
 	private String topicHref;
@@ -42,8 +46,13 @@ public class SearchData extends RequestData {
 	 * @param context
 	 * @param request
 	 */
-	public SearchData(ServletContext context, HttpServletRequest request) {
+	public SearchData(
+		ServletContext context,
+		HttpServletRequest request,
+		HttpServletResponse response) {
 		super(context, request);
+		this.response = response;
+		wsmgr = new WebappWorkingSetManager(request, response, getLocale());
 		this.topicHref = request.getParameter("topic");
 		if (topicHref != null && topicHref.length() == 0)
 			topicHref = null;
@@ -194,15 +203,14 @@ public class SearchData extends RequestData {
 			if (workingSetName == null)
 				workingSetName = request.getParameter("workingSet");
 		} else {
-			workingSetName =
-				HelpPlugin.getDefault().getPluginPreferences().getString(
-					HelpSystem.WORKING_SET);
+			workingSetName =wsmgr.getCurrentWorkingSet();
 		}
 
 		if (workingSetName == null
 			|| workingSetName.length() == 0
-			|| HelpSystem.getWorkingSetManager(getLocale()).getWorkingSet(
-				workingSetName)
+			|| getMode() == RequestData.MODE_INFOCENTER
+			&& wsmgr.getWorkingSet(
+		workingSetName)
 				== null)
 			workingSetName = ServletResources.getString("All", request);
 		return workingSetName;
@@ -213,24 +221,15 @@ public class SearchData extends RequestData {
 	 * the search view, after each search
 	 */
 	public void saveScope() {
-		if (getMode() == MODE_INFOCENTER)
-			return;
 		// if a working set is defined, set it in the preferences
 		String workingSet = request.getParameter("scope");
 		String lastWS =
-			HelpPlugin.getDefault().getPluginPreferences().getString(
-				HelpSystem.WORKING_SET);
+			wsmgr.getCurrentWorkingSet();
 		if (workingSet != null && !workingSet.equals(lastWS)) {
-			HelpPlugin.getDefault().getPluginPreferences().setValue(
-				HelpSystem.WORKING_SET,
-				workingSet);
-			HelpPlugin.getDefault().savePluginPreferences();
+			wsmgr.setCurrentWorkingSet(workingSet);
 		} else if (
 			workingSet == null && lastWS != null && lastWS.length() > 0) {
-			HelpPlugin.getDefault().getPluginPreferences().setValue(
-				HelpSystem.WORKING_SET,
-				"");
-			HelpPlugin.getDefault().savePluginPreferences();
+			wsmgr.setCurrentWorkingSet("");
 		}
 	}
 	/**
@@ -278,24 +277,13 @@ public class SearchData extends RequestData {
 			getLocale());
 	}
 	private SearchResults createHitCollector() {
-		String[] scopes = request.getParameterValues("scope");
-		Collection scopeCol = null;
-		if (scopes != null) {
-			if (request.getParameterValues("scopedSearch") == null
-				|| scopes.length
-					!= HelpSystem.getTocManager().getTocs(getLocale()).length) {
-				// filter only if using working sets or scope with not all books are selected
-				scopeCol = new ArrayList(scopes.length);
-				for (int i = 0; i < scopes.length; i++) {
-					scopeCol.add(scopes[i]);
-				}
-			}
+		WorkingSet[] workingSets;
+		if (request.getParameterValues("scopedSearch") == null) {
+			// scopes are working set names
+			workingSets = getWorkingSets();
 		} else {
-			// it is possible that filtering is used, but all books are deselected
-			// set scopeCol to empty Collection in this case
-			if (request.getParameterValues("scopedSearch") != null) {
-				scopeCol = new ArrayList(0);
-			}
+			// scopes are books (advanced search)
+			workingSets = createTempWorkingSets();
 		}
 
 		int maxHits = 500;
@@ -309,7 +297,58 @@ public class SearchData extends RequestData {
 			} catch (NumberFormatException nfe) {
 			}
 		}
-		return new SearchResults(scopeCol, maxHits, getLocale());
+		return new SearchResults(workingSets, maxHits, getLocale());
+	}
+	/**
+	 * @return WorkingSet[] or null
+	 */
+	private WorkingSet[] getWorkingSets() {
+		String[] scopes = request.getParameterValues("scope");
+		if (scopes == null) {
+			return null;
+		}
+		// confirm working set exists and use it
+		ArrayList workingSetCol = new ArrayList(scopes.length);
+		for (int s = 0; s < scopes.length; s++) {
+			WorkingSet ws = wsmgr.getWorkingSet(scopes[s]);
+			if (ws != null) {
+				workingSetCol.add(ws);
+			}
+		}
+		if (workingSetCol.size() == 0) {
+			return null;
+		}
+		return (WorkingSet[]) workingSetCol.toArray(
+			new WorkingSet[workingSetCol.size()]);
+	}
+
+	/**
+	 * @return WorkingSet[] or null
+	 */
+	private WorkingSet[] createTempWorkingSets() {
+		String[] scopes = request.getParameterValues("scope");
+		if (scopes == null) {
+			// it is possible that filtering is used, but all books are deselected
+			return new WorkingSet[0];
+		}
+		if (scopes.length
+			== HelpSystem.getTocManager().getTocs(getLocale()).length) {
+			// do not filter if all books are selected
+			return null;
+		}
+		// create working set from books
+		ArrayList tocs = new ArrayList(scopes.length);
+		for (int s = 0; s < scopes.length; s++) {
+			AdaptableToc toc = wsmgr.getAdaptableToc(scopes[s]);
+			if (toc != null) {
+				tocs.add(toc);
+			}
+		}
+		AdaptableToc[] adaptableTocs =
+			(AdaptableToc[]) tocs.toArray(new AdaptableToc[tocs.size()]);
+		WorkingSet[] workingSets = new WorkingSet[1];
+		workingSets[0] = wsmgr.createWorkingSet("temp", adaptableTocs);
+		return workingSets;
 	}
 
 }

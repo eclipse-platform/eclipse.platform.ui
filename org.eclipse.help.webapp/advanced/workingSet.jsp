@@ -11,7 +11,7 @@
 <%@ include file="header.jsp"%>
 
 <% 
-	WorkingSetData data = new WorkingSetData(application, request);
+	WorkingSetData data = new WorkingSetData(application, request, response);
 	WebappPreferences prefs = data.getPrefs();
 %>
 

@@ -11,7 +11,12 @@
 <%@ include file="header.jsp"%>
 
 <% 
-	SearchData data = new SearchData(application, request);
+	SearchData data = new SearchData(application, request, response);
+	// After each search we preserve the scope (working set), if any
+	// this need to be at the beginning, otherwise cookie is not written
+	if (data.isSearchRequest())
+		data.saveScope();
+
 	WebappPreferences prefs = data.getPrefs();
 %>
 
@@ -111,10 +116,3 @@ setTimeout('refresh()', 2000);
 
 </body>
 </html>
-
-
-<%
-// After each search we preserve the scope (working set), if any
-if (data.isSearchRequest())
-	data.saveScope();
-%>

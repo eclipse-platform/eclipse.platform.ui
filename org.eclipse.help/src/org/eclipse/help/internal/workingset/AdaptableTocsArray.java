@@ -28,7 +28,7 @@ public class AdaptableTocsArray implements IAdaptable {
 	/**
 	 * This constructor will be called when wrapping help resources.
 	 */
-	AdaptableTocsArray(IToc[] tocs) {
+	public AdaptableTocsArray(IToc[] tocs) {
 		this.element = tocs;
 	}
 

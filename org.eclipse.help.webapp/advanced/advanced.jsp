@@ -11,7 +11,7 @@
 <%@ include file="header.jsp"%>
 
 <% 
-	SearchData data = new SearchData(application, request);
+	SearchData data = new SearchData(application, request, response);
 	WebappPreferences prefs = data.getPrefs();
 %>
 

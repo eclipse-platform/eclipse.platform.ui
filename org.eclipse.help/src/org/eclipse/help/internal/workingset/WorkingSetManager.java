@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.help.internal.workingset;
 
-
 import java.io.*;
 import java.util.*;
 
@@ -29,7 +28,7 @@ import org.xml.sax.*;
  * whenever one is added or removed.
  * @since 2.1
  */
-public class WorkingSetManager {
+public class WorkingSetManager implements IHelpWorkingSetManager {
 
 	// Note: keep the following constants in sych with the values defined in IWorkingSetManager.
 	//       They are needed to synch the ui and the help working sets, as help should run w/o ui plugins.
@@ -465,4 +464,16 @@ public class WorkingSetManager {
 
 		return null;
 	}
+	public String getCurrentWorkingSet() {
+		return HelpPlugin.getDefault().getPluginPreferences().getString(
+			HelpSystem.WORKING_SET);
+	}
+
+	public void setCurrentWorkingSet(String workingSet) {
+		HelpPlugin.getDefault().getPluginPreferences().setValue(
+				HelpSystem.WORKING_SET,
+				workingSet);
+			HelpPlugin.getDefault().savePluginPreferences();
+	}
+
 }

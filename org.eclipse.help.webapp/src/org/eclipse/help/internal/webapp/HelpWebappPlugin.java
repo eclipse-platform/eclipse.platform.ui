@@ -16,6 +16,9 @@ import org.eclipse.help.internal.*;
  */
 public class HelpWebappPlugin extends Plugin {
 	public final static String PLUGIN_ID = "org.eclipse.help.webapp";
+	// debug options
+	public static boolean DEBUG = false;
+	public static boolean DEBUG_WORKINGSETS = false;
 
 	protected static HelpWebappPlugin plugin;
 	/** 
@@ -63,5 +66,12 @@ public class HelpWebappPlugin extends Plugin {
 	 */
 	public static HelpWebappPlugin getDefault() {
 		return plugin;
+	}
+	public void startup() throws CoreException {
+		// Setup debugging options
+		DEBUG = isDebugging();
+		if (DEBUG) {
+			DEBUG_WORKINGSETS = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.help.webapp/debug/workingsets")); //$NON-NLS-1$
+		}
 	}
 }

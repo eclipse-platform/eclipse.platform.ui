@@ -12,7 +12,7 @@
 <%@ page import="org.eclipse.help.internal.webapp.data.*"%>
 
 <% 
-	SearchData data = new SearchData(application, request);
+	SearchData data = new SearchData(application, request, response);
 	WebappPreferences prefs = data.getPrefs();
 	LayoutData ldata = new LayoutData(application,request);
 %>

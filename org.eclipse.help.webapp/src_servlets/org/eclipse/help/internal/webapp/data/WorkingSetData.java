@@ -14,7 +14,7 @@ package org.eclipse.help.internal.webapp.data;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.webapp.servlet.*;
 import org.eclipse.help.internal.workingset.*;
 
 /**
@@ -25,16 +25,17 @@ public class WorkingSetData extends RequestData {
 	public final static short STATE_GRAYED = 1;
 	public final static short STATE_CHECKED = 2;
 
-	private WorkingSetManager wsmgr =
-		HelpSystem.getWorkingSetManager(getLocale());
+	private WebappWorkingSetManager wsmgr;
 
 	private AdaptableToc[] tocs;
 	private boolean isEditMode;
 
-	public WorkingSetData(ServletContext context, HttpServletRequest request) {
+	public WorkingSetData(ServletContext context, HttpServletRequest request,
+	HttpServletResponse response) {
 		super(context, request);
+		wsmgr = new WebappWorkingSetManager(request, response, getLocale());
 		AdaptableTocsArray adaptableTocs =
-			HelpSystem.getWorkingSetManager(getLocale()).getRoot();
+			wsmgr.getRoot();
 		tocs = (AdaptableToc[]) adaptableTocs.getChildren();
 		isEditMode = "edit".equals(getOperation());
 	}
