@@ -72,6 +72,10 @@ public class GroupBreakpointsByDialog extends Dialog {
 	private Button fMoveUpButton;
 	private Button fMoveDownButton;
 	
+	/**
+	 * Selection listener that listens to selection from all buttons in this
+	 * dialog.
+	 */
 	private SelectionAdapter fSelectionListener= new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			Object source= e.getSource();
@@ -121,6 +125,10 @@ public class GroupBreakpointsByDialog extends Dialog {
 		return parentComposite;
 	}
 	
+	/**
+	 * Divides the available breakpoint container factories into the
+	 * appropriate viewers ("available" or "selected").
+	 */
 	private void initializeContent() {
 		IBreakpointContainerFactory[] factories = BreakpointContainerFactoryManager.getDefault().getFactories();
 		for (int i = 0; i < factories.length; i++) {
@@ -133,6 +141,10 @@ public class GroupBreakpointsByDialog extends Dialog {
 		}
 	}
 
+	/**
+	 * Creates and configured the viewer that shows the available (not currently selected)
+	 * breakpoint container factories.
+	 */
 	private void createAvailableViewer(Composite parent, ILabelProvider labelProvider) {
 		Label label= new Label(parent, SWT.WRAP);
 		label.setText(ActionMessages.getString("GroupBreakpointsByDialog.1")); //$NON-NLS-1$
@@ -174,6 +186,10 @@ public class GroupBreakpointsByDialog extends Dialog {
 		fAddButton.addSelectionListener(fSelectionListener);
 	}
 
+	/**
+	 * Creates and configures the viewer that shows the currently selected
+	 * breakpoint container factories.
+	 */
 	private void createSelectedViewer(Composite parent, ILabelProvider labelProvider) {
 		Label label= new Label(parent, SWT.WRAP);
 		label.setText(ActionMessages.getString("GroupBreakpointsByDialog.3")); //$NON-NLS-1$
@@ -221,10 +237,19 @@ public class GroupBreakpointsByDialog extends Dialog {
 		fMoveDownButton.addSelectionListener(fSelectionListener);
 	}
 
+	/**
+	 * Returns the container factories chosen by the user. The order
+	 * of the list is the order that the containers should be displayed
+	 * in the breakpoints view.
+	 * @return the breakpoint container factories chosen by the user
+	 */
 	public List getSelectedContainers() {
 		return fResult;
 	}
 	
+	/**
+	 * When the user presses OK, convert the tree selection into a list.
+	 */
 	protected void okPressed() {
 		Object[] factories= fSelectedContainersProvider.getElements(null);
 		while (factories.length > 0) {
@@ -235,6 +260,10 @@ public class GroupBreakpointsByDialog extends Dialog {
 		super.okPressed();
 	}
 	
+	/**
+	 * Moves the selected item from the list of "available" factories
+	 * to the tree of "selected" factories.
+	 */
 	public void handleAddPressed() {
 		IStructuredSelection selection= (IStructuredSelection) fAvailableViewer.getSelection();
 		if (selection.size() < 1) {
@@ -247,6 +276,10 @@ public class GroupBreakpointsByDialog extends Dialog {
 		updateViewers();
 	}
 	
+	/**
+	 * Moves the selected item from the tree of "selected" factories
+	 * to the list of "available" factories.
+	 */
 	public void handleRemovePressed() {
 		IStructuredSelection selection= (IStructuredSelection) fSelectedViewer.getSelection();
 		if (selection.size() < 1) {
@@ -283,6 +316,9 @@ public class GroupBreakpointsByDialog extends Dialog {
 		updateViewers();
 	}
 	
+	/**
+	 * Fully refreshes and updates all viewers and buttons.
+	 */
 	public void updateViewers() {
 		fAvailableViewer.refresh();
 		fSelectedViewer.refresh();
@@ -291,6 +327,9 @@ public class GroupBreakpointsByDialog extends Dialog {
 		updateSelectedButtons();
 	}
 	
+	/**
+	 * Updates all buttons associated with the tree of selected containers.
+	 */
 	public void updateSelectedButtons() {
 		updateRemoveButton();
 		updateMoveUpButton();
@@ -337,6 +376,10 @@ public class GroupBreakpointsByDialog extends Dialog {
 		fMoveDownButton.setEnabled(enabled);
 	}
 	
+	/**
+	 * Content provider that provides the list of breakpoint container
+	 * factories that are available but not currently selected.
+	 */
 	private class AvailableContainersProvider implements IStructuredContentProvider {
 		protected List availableFactories= new ArrayList();
 		
@@ -357,7 +400,8 @@ public class GroupBreakpointsByDialog extends Dialog {
 	
 	/**
 	 * Content provider that returns the selected breakpoint container factories
-	 * as a tree.
+	 * as a tree. This tree shows the list of container factories as they will
+	 * appear in the breakpoints view.
 	 */
 	private class SelectedContainerProvider implements ITreeContentProvider {
 		protected List selectedFactories= new ArrayList();
@@ -420,6 +464,9 @@ public class GroupBreakpointsByDialog extends Dialog {
 		}
 	}
 	
+	/**
+	 * Label provider which provides text and images for breakpoint container factories
+	 */
 	private class BreakpointContainerFactoryLabelProvider extends ViewLabelProvider {
 		private HashMap fImageCache= new HashMap();
 		
