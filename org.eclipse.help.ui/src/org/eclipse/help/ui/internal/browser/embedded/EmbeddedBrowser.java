@@ -209,7 +209,7 @@ public class EmbeddedBrowser {
 			if(url!=null && url.length()>0){
 				return url.split(",\\s*")[0];
 			}
-			return product.getProperty("windowImages");
+			return product.getProperty("windowImage");
 		}
 		return null;
 	}
