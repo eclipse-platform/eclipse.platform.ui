@@ -13,6 +13,8 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 
+import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
+import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
 import org.eclipse.ui.examples.javaeditor.JavaEditorExamplePlugin;
 import org.eclipse.ui.examples.templateeditor.template.XMLContextType;
 
@@ -29,7 +31,7 @@ public class TemplateEditorUI  {
 	/** The template store. */
 	private TemplateStore fStore;
 	/** The context type registry. */
-	private ContextTypeRegistry fRegistry;
+	private ContributionContextTypeRegistry fRegistry;
 	
 	private TemplateEditorUI() {
 	}
@@ -52,7 +54,7 @@ public class TemplateEditorUI  {
 	 */
 	public TemplateStore getTemplateStore() {
 		if (fStore == null) {
-			fStore= new TemplateStore(getContextTypeRegistry(), JavaEditorExamplePlugin.getDefault().getPreferenceStore(), CUSTOM_TEMPLATES_KEY);
+			fStore= new ContributionTemplateStore(getContextTypeRegistry(), JavaEditorExamplePlugin.getDefault().getPreferenceStore(), CUSTOM_TEMPLATES_KEY);
 			try {
 				fStore.load();
 			} catch (IOException e) {
@@ -70,7 +72,7 @@ public class TemplateEditorUI  {
 	public ContextTypeRegistry getContextTypeRegistry() {
 		if (fRegistry == null) {
 			// create an configure the contexts available in the template editor
-			fRegistry= new ContextTypeRegistry();
+			fRegistry= new ContributionContextTypeRegistry();
 			fRegistry.addContextType(XMLContextType.XML_CONTEXT_TYPE);
 		}
 		return fRegistry;

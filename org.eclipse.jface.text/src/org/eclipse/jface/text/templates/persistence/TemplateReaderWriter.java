@@ -43,8 +43,8 @@ import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.templates.Template;
 
 /**
- * <code>TemplateSet</code> manages a collection of templates and makes them
- * persistent.
+ * Serializes templates as character stream and reads the same format back.
+ * Clients may instantiate this class. 
  * 
  * @since 3.0
  */
@@ -60,27 +60,26 @@ public class TemplateReaderWriter {
 	private static final String DELETED_ATTRIBUTE= "deleted"; //$NON-NLS-1$
 	
 	/**
-	 * Reads templates from an XML reader and adds them to the templates.
+	 * Reads templates from a reader and returns them. The reader must present
+	 * a serialized form as produced by the <code>save</code> method.
 	 * 
-	 * @param reader the XML reader to read templates from
+	 * @param reader the reader to read templates from
 	 * @return the read templates, encapsulated in instances of <code>TemplatePersistenceData</code>
-	 * @throws SAXException if the XML is not valid
 	 * @throws IOException if reading from the stream fails 
 	 */	
-	public TemplatePersistenceData[] read(Reader reader) throws SAXException, IOException {
+	public TemplatePersistenceData[] read(Reader reader) throws IOException {
 		return read(reader, null);
 	}
 	
 	/**
-	 * Reads templates from an XML stream and adds them to the templates.
+	 * Reads templates from a stream and adds them to the templates.
 	 * 
-	 * @param reader the XML reader to read templates from
+	 * @param reader the reader to read templates from
 	 * @param bundle a resource bundle to use for translating the read templates, or <code>null</code> if no translation should occur
 	 * @return the read templates, encapsulated in instances of <code>TemplatePersistenceData</code>
-	 * @throws SAXException if the XML is not valid
 	 * @throws IOException if reading from the stream fails 
 	 */	
-	public TemplatePersistenceData[] read(Reader reader, ResourceBundle bundle) throws SAXException, IOException {
+	public TemplatePersistenceData[] read(Reader reader, ResourceBundle bundle) throws IOException {
 		
 		try {
 			Collection templates= new ArrayList();
@@ -102,7 +101,7 @@ public class TemplateReaderWriter {
 
 				String id= getStringValue(attributes, ID_ATTRIBUTE, null);
 				if (id != null && ids.contains(id))
-					throw new SAXException(TemplatePersistenceMessages.getString("TemplateReaderWriter.duplicate.id")); //$NON-NLS-1$
+					throw new IOException(TemplatePersistenceMessages.getString("TemplateReaderWriter.duplicate.id")); //$NON-NLS-1$
 				
 				boolean deleted = getBooleanValue(attributes, DELETED_ATTRIBUTE, false);
 				
@@ -115,7 +114,7 @@ public class TemplateReaderWriter {
 				String context= getStringValue(attributes, CONTEXT_ATTRIBUTE);
 
 				if (name == null || context == null)
-					throw new SAXException(TemplatePersistenceMessages.getString("TemplateReaderWriter.error.missing_attribute")); //$NON-NLS-1$
+					throw new IOException(TemplatePersistenceMessages.getString("TemplateReaderWriter.error.missing_attribute")); //$NON-NLS-1$
 
 				boolean enabled = getBooleanValue(attributes, ENABLED_ATTRIBUTE, true);
 				
@@ -140,6 +139,12 @@ public class TemplateReaderWriter {
 			
 		} catch (ParserConfigurationException e) {
 			Assert.isTrue(false);
+		} catch (SAXException e) {
+			Throwable t= e.getCause();
+			if (t instanceof IOException)
+				throw (IOException) t;
+			else
+				throw new IOException(t.getMessage());
 		}
 		
 		return null; // dummy

@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.xml.sax.SAXException;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -640,8 +638,6 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			fTableViewer.setCheckedElements(getEnabledTemplates());
 
 		} catch (FileNotFoundException e) {
-			openReadErrorDialog(e);
-		} catch (SAXException e) {
 			openReadErrorDialog(e);
 		} catch (IOException e) {
 			openReadErrorDialog(e);
