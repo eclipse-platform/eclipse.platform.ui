@@ -244,7 +244,7 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 		});
 	}
 	
-	private void updateStatusLine(IStructuredSelection selection) {
+	/* private */ void updateStatusLine(IStructuredSelection selection) {
 		IWorkbenchSite ws = getConfiguration().getSite().getWorkbenchSite();
 		if (ws != null && ws instanceof IViewSite) {
 			String msg = getStatusLineMessage(selection);
