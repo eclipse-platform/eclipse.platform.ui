@@ -280,9 +280,14 @@ void createColumns() {
 		TableColumn tc = new TableColumn(table, SWT.NONE,i);
 		tc.setResizable(columnLayouts[i].resizable);
 		tc.setText(columnHeaders[i]);
+
+		if (i == 1)
+			tc.setImage(MarkerUtil.getImage("header_complete"));
+		else if (i == 2)
+			tc.setImage(MarkerUtil.getImage("header_priority"));
+
 		tc.addSelectionListener(headerListener);
 	}
-
 }
 /**
  * Returns a string that summarizes the contents of the
