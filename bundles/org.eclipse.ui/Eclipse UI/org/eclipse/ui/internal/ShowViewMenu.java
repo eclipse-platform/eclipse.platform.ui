@@ -7,6 +7,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.part.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.window.*;
@@ -17,13 +18,19 @@ import java.util.*;
  * Show View actions.  The visible views are determined by user preference
  * from the Perspective Customize dialog. 
  */
-public class ShowViewMenu extends ShortcutMenu {
+public class ShowViewMenu extends ShortcutMenu implements IPartListener {
 	private Action showDlgAction = new Action(WorkbenchMessages.getString("ShowView.title")) { //$NON-NLS-1$
 		public void run() {
 			showOther();
 		}
 	};
 	private Map actions = new HashMap(21);
+	
+	//Maps pages to a list of opened views
+	private Map openedViews = new HashMap();
+	
+	private IWorkbenchPage activePage;
+
 /**
  * Create a show view menu.
  * <p>
@@ -59,6 +66,7 @@ protected void fillMenu() {
 		
 	// Get visible actions.
 	List actions = ((WorkbenchPage) page).getShowViewActions();
+	actions = addOpenedViews(actions);
 	if (actions != null) {
 		for (Iterator i = actions.iterator(); i.hasNext();) {
 			String id = (String) i.next();
@@ -73,6 +81,24 @@ protected void fillMenu() {
 	innerMgr.add(new Separator());
 	innerMgr.add(showDlgAction);
 }
+
+private List addOpenedViews(List actions) {
+	ArrayList views = getParts();
+	ArrayList result = new ArrayList(views.size() + actions.size());
+	
+	for (int i = 0; i < actions.size(); i ++) {
+		Object element = actions.get(i);
+		if(result.indexOf(element) < 0)
+			result.add(element);
+	}
+	for (int i = 0; i < views.size(); i ++) {
+		Object element = views.get(i);
+		if(result.indexOf(element) < 0)
+			result.add(element);
+	}
+	return result;
+}
+
 /**
  * Returns the action for the given view id, or null if not found.
  */
@@ -114,4 +140,50 @@ private void showOther() {
 	}
 		
 }
+
+private ArrayList getParts() {
+	Object result = openedViews.get(activePage);
+	if(result == null) {
+		result = new ArrayList();
+		openedViews.put(activePage,result);
+	}
+	return (ArrayList)result;
+}
+
+public void partActivated(IWorkbenchPart part){}
+public void partBroughtToTop(IWorkbenchPart part){}
+public void partClosed(IWorkbenchPart part){}
+public void partDeactivated(IWorkbenchPart part){}
+
+public void partOpened(IWorkbenchPart part) {
+	if(activePage != null && part instanceof IViewPart) {
+		String id = ((IViewPart)part).getSite().getId();
+		ArrayList parts = getParts();
+		if(parts.indexOf(id) < 0) {
+			parts.add(id);
+			updateMenu();
+		}
+	}
+}
+public void pageActivated(IWorkbenchPage page) {
+	activePage = page;
+    super.pageActivated(page);
+}
+public void pageClosed(IWorkbenchPage page) {
+	openedViews.remove(page);
+	super.pageClosed(page);
+}
+public void pageOpened(IWorkbenchPage page) {
+	ArrayList views = new ArrayList();
+	IViewPart parts[] = page.getViews();
+	for (int i = 0; i < parts.length; i++) {
+		String id = parts[i].getSite().getId();
+		if(views.indexOf(id) < 0)
+			views.add(id);
+	}
+	openedViews.put(page,views);
+	page.addPartListener(this);
+	super.pageOpened(page);
+}
+		
 }
