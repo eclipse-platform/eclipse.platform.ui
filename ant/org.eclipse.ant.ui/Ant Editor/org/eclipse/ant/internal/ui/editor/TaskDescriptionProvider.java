@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2003 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2004 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -9,7 +9,7 @@
  * 
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
- * 	   IBM Corporation - bug 24108
+ * 	   IBM Corporation - bug fixes
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor;
@@ -66,18 +66,25 @@ public class TaskDescriptionProvider {
     public static String XML_ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
     public static String XML_ATTRIBUTE_REQUIRED = "required"; //$NON-NLS-1$
     
+    private static TaskDescriptionProvider fgDefault;
 
     protected Map taskNodes = new HashMap();
     
 
     /**
-     * Creates an initialized instance.
+     * Meant to be a singleton
      */
-    public TaskDescriptionProvider() {
+    private TaskDescriptionProvider() {
         initialize();
     }
-
     
+    public static TaskDescriptionProvider getDefault() {
+    	if (fgDefault == null) {
+    		fgDefault= new TaskDescriptionProvider();
+    	}
+    	return fgDefault;
+    }
+
     /**
      * Parses the task description xml file and stores the information.
      */
@@ -275,7 +282,7 @@ public class TaskDescriptionProvider {
      * Returns the Elements Node of the specified TaskName
      * 
      * @param aTaskName The name of the task
-     * @param return The Elements Node of the Task.
+     * @return The Elements Node of the Task.
      */
     protected Node getElementsNode(String aTaskName) {
     	
@@ -293,7 +300,7 @@ public class TaskDescriptionProvider {
      * Returns the Attributes Node of the specified TaskName
      * 
      * @param aTaskName The name of the task
-     * @param return The Attributes Node of the Task or <code>null</code> if one
+     * @return The Attributes Node of the Task or <code>null</code> if one
      * does not exist.
      */    
     protected Node getAttributesNode(String aTaskName) {
@@ -311,7 +318,7 @@ public class TaskDescriptionProvider {
      * Returns the Structure Node of the specified TaskName
      * 
      * @param aTaskName The name of the task
-     * @param return The Structure Node of the Task.
+     * @return The Structure Node of the Task.
      */        
     protected Node getStructureNode(String aTaskName) {	
     	Element tempTaskElement = (Element)taskNodes.get(aTaskName);
