@@ -95,6 +95,22 @@ public class PluginDescriptor implements IPluginDescriptor {
 	}
 
 	/**
+	 * @return a URL to the install location that does not need to be resolved.
+	 */
+	//TODO this can be private
+	//TODO Given that we can have a pluginDescriptor for a real bundle, what happens here?
+	public URL getInstallURLInternal() {
+		try {
+			return InternalPlatform.getDefault().resolve(getInstallURL());
+		} catch (IOException ioe) {
+			try {
+				return new URL(bundleOsgi.getEntry("plugin.xml"), ".");
+			} catch (IOException io) {
+				io.printStackTrace();
+				return getInstallURL();
+			}
+		}
+	}	/**
 	 * @see IPluginDescriptor
 	 */
 	public String getLabel() {
@@ -424,7 +440,9 @@ public class PluginDescriptor implements IPluginDescriptor {
 	public Bundle getBundle() {
 		return bundleOsgi;
 	}
-
+	public String getLocation() {
+		return getInstallURLInternal().toExternalForm();
+	}
 	public void setPlugin(Plugin object) {
 		pluginObject = object;
 	}
