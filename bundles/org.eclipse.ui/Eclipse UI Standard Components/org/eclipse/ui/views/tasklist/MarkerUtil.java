@@ -56,6 +56,8 @@ static void createImageDescriptors() {
 	String OBJ = "obj16/";//$NON-NLS-1$
 	
 	imageDescriptors = new HashMap(51);
+	imageDescriptors.put("copy", 			createImageDescriptor(CTOOL + "copy_edit.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("paste", 			createImageDescriptor(CTOOL + "paste_edit.gif"));//$NON-NLS-2$//$NON-NLS-1$
 	imageDescriptors.put("task", 			createImageDescriptor(OBJ + "taskmrk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 	imageDescriptors.put("error", 			createImageDescriptor(OBJ + "error_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 	imageDescriptors.put("warn", 			createImageDescriptor(OBJ + "warn_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$

@@ -609,12 +609,14 @@ void makeActions() {
 	copyTaskAction = new CopyTaskAction(this, "copy"); //$NON-NLS-1$
 	copyTaskAction.setText(TaskListMessages.getString("CopyTask.text")); //$NON-NLS-1$
 	copyTaskAction.setToolTipText(TaskListMessages.getString("CopyTask.tooltip")); //$NON-NLS-1$
+	copyTaskAction.setHoverImageDescriptor(MarkerUtil.getImageDescriptor("copy")); //$NON-NLS-1$
 	copyTaskAction.setEnabled(false);
 
 	// paste task
 	pasteTaskAction = new PasteTaskAction(this, "paste"); //$NON-NLS-1$
 	pasteTaskAction.setText(TaskListMessages.getString("PasteTask.text")); //$NON-NLS-1$
 	pasteTaskAction.setToolTipText(TaskListMessages.getString("PasteTask.tooltip")); //$NON-NLS-1$
+	pasteTaskAction.setHoverImageDescriptor(MarkerUtil.getImageDescriptor("paste")); //$NON-NLS-1$
 	pasteTaskAction.setEnabled(false);
 	
 	// remove task
