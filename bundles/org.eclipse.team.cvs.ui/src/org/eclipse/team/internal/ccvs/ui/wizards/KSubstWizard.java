@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -36,6 +37,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
@@ -127,10 +129,12 @@ public class KSubstWizard extends Wizard {
 	}
 
 	public void addPages() {
+		ImageDescriptor substImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_KEYWORD);
+		
 		// add main page
 		String pageTitle = Policy.bind("KSubstWizardSelectionPage.pageTitle"); //$NON-NLS-1$
 		String pageDescription = Policy.bind("KSubstWizardSelectionPage.pageDescription"); //$NON-NLS-1$
-		mainPage = new KSubstWizardSelectionPage(pageTitle, defaultKSubst);
+		mainPage = new KSubstWizardSelectionPage(pageTitle, pageTitle, substImage, defaultKSubst);
 		mainPage.setDescription(pageDescription);
 		mainPage.setTitle(pageTitle);
 		addPage(mainPage);
@@ -138,25 +142,22 @@ public class KSubstWizard extends Wizard {
 		// add summary page
 		pageTitle = Policy.bind("KSubstWizardSummaryPage.pageTitle"); //$NON-NLS-1$
 		pageDescription = Policy.bind("KSubstWizardSummaryPage.pageDescription"); //$NON-NLS-1$
-		summaryPage = new KSubstWizardSummaryPage(pageTitle, false);
+		summaryPage = new KSubstWizardSummaryPage(pageTitle, pageTitle, substImage, false);
 		summaryPage.setDescription(pageDescription);
-		summaryPage.setTitle(pageTitle);
 		addPage(summaryPage);
 		
 		// add shared files warning page
 		pageTitle = Policy.bind("KSubstWizardSharedFilesPage.pageTitle"); //$NON-NLS-1$
 		pageDescription = Policy.bind("KSubstWizardSharedFilesPage.pageDescription"); //$NON-NLS-1$
-		sharedFilesPage = new KSubstWizardSharedFilesPage(pageTitle, false);
+		sharedFilesPage = new KSubstWizardSharedFilesPage(pageTitle, pageTitle, substImage, false);
 		sharedFilesPage.setDescription(pageDescription);
-		sharedFilesPage.setTitle(pageTitle);
 		addPage(sharedFilesPage);
 		
 		// add changed files warning page
 		pageTitle = Policy.bind("KSubstWizardDirtyFilesPage.pageTitle"); //$NON-NLS-1$
 		pageDescription = Policy.bind("KSubstWizardDirtyFilesPage.pageDescription"); //$NON-NLS-1$
-		dirtyFilesPage = new KSubstWizardDirtyFilesPage(pageTitle, false);
+		dirtyFilesPage = new KSubstWizardDirtyFilesPage(pageTitle, pageTitle, substImage, false);
 		dirtyFilesPage.setDescription(pageDescription);
-		dirtyFilesPage.setTitle(pageTitle);
 		addPage(dirtyFilesPage);		
 	}
 

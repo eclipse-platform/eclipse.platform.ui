@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -35,8 +36,8 @@ public class KSubstWizardSelectionPage extends CVSWizardPage {
 	private Button ksubstRadioButton;
 	private Combo ksubstOptionCombo;
 
-	public KSubstWizardSelectionPage(String pageName, KSubstOption defaultKSubst) {
-		super(pageName);
+	public KSubstWizardSelectionPage(String pageName, String title, ImageDescriptor image, KSubstOption defaultKSubst) {
+		super(pageName, title, image);
 		this.ksubst = defaultKSubst;
 
 		// sort the options by display text

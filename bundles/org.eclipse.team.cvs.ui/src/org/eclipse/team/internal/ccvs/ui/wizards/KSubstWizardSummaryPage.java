@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -50,8 +51,8 @@ public class KSubstWizardSummaryPage extends CVSWizardPage {
 	private Button showUnaffectedFilesButton;
 	private boolean showUnaffectedFiles;
 
-	public KSubstWizardSummaryPage(String pageName, boolean showUnaffectedFiles) {
-		super(pageName);
+	public KSubstWizardSummaryPage(String pageName, String title, ImageDescriptor image, boolean showUnaffectedFiles) {
+		super(pageName, title, image);
 		this.showUnaffectedFiles = showUnaffectedFiles;
 
 		// sort the options by display text

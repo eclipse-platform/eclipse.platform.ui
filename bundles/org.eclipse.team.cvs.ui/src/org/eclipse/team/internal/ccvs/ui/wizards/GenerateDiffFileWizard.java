@@ -49,6 +49,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ccvs.core.client.Diff;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.misc.ContainerContentProvider;
@@ -92,8 +93,8 @@ public class GenerateDiffFileWizard extends Wizard {
 		private static final int SIZING_SELECTION_PANE_HEIGHT = 125;
 		private static final int SIZING_SELECTION_PANE_WIDTH = 200;
 		
-		PatchFileSelectionPage(String pageName, IStructuredSelection selection) {
-			super(pageName);
+		PatchFileSelectionPage(String pageName, String title, ImageDescriptor image, IStructuredSelection selection) {
+			super(pageName, title, image);
 			this.currentSelection = selection;
 			setPageComplete(false);
 		}
@@ -442,18 +443,16 @@ public class GenerateDiffFileWizard extends Wizard {
 	}
 
 	public void addPages() {
-		String pageTitle =Policy.bind("GenerateCVSDiff.pageTitle"); //$NON-NLS-1$
+		String pageTitle = Policy.bind("GenerateCVSDiff.pageTitle"); //$NON-NLS-1$
 		String pageDescription = Policy.bind("GenerateCVSDiff.pageDescription"); //$NON-NLS-1$
-		mainPage = new PatchFileSelectionPage(pageTitle, selection);
+		mainPage = new PatchFileSelectionPage(pageTitle, pageTitle, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_DIFF), selection);
 		mainPage.setDescription(pageDescription);
-		mainPage.setTitle(pageTitle);
 		addPage(mainPage);
 		
 		pageTitle = Policy.bind("Advanced_options_19"); //$NON-NLS-1$
 		pageDescription = Policy.bind("Configure_the_options_used_for_the_CVS_diff_command_20"); //$NON-NLS-1$
-		optionsPage = new PatchFileCreationOptionsPage(pageTitle);
+		optionsPage = new PatchFileCreationOptionsPage(pageTitle, pageTitle, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_DIFF));
 		optionsPage.setDescription(pageDescription);
-		optionsPage.setTitle(pageTitle);
 		addPage(optionsPage);		
 	}
 		

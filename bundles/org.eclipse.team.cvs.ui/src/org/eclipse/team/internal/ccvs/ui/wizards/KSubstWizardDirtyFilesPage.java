@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -27,8 +28,8 @@ public class KSubstWizardDirtyFilesPage extends CVSWizardPage {
 	private Button includeDirtyFilesButton;
 	private ListViewer listViewer;
 
-	public KSubstWizardDirtyFilesPage(String pageName, boolean includeDirtyFiles) {
-		super(pageName);
+	public KSubstWizardDirtyFilesPage(String pageName, String title, ImageDescriptor image, boolean includeDirtyFiles) {
+		super(pageName, title, image);
 		this.includeDirtyFiles = includeDirtyFiles;
 	}
 	
