@@ -77,6 +77,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputer;
+import org.eclipse.osgi.service.environment.Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -1589,7 +1590,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		fgNativeEnv= new HashMap();
 		try {
 			String nativeCommand= null;
-			if (BootLoader.getOS().equals(BootLoader.OS_WIN32)) {
+			if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
 				String osName= System.getProperty("os.name"); //$NON-NLS-1$
 				if (osName != null && (osName.startsWith("Windows 9") || osName.startsWith("Windows ME"))) { //$NON-NLS-1$ //$NON-NLS-2$
 					// Win 95, 98, and ME
@@ -1598,7 +1599,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 					// Win NT, 2K, XP
 					nativeCommand= "cmd.exe /C set"; //$NON-NLS-1$
 				}
-			} else if (!BootLoader.getOS().equals(BootLoader.OS_UNKNOWN)){
+			} else if (!BootLoader.getOS().equals(Constants.OS_UNKNOWN)){
 				nativeCommand= "printenv";		 //$NON-NLS-1$
 			}
 			if (nativeCommand == null) {
