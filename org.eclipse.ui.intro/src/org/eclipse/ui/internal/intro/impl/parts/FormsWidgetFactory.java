@@ -87,8 +87,8 @@ public class FormsWidgetFactory {
                 return;
 
         switch (element.getType()) {
-        case AbstractIntroElement.DIV:
-            IntroDiv group = (IntroDiv) element;
+        case AbstractIntroElement.GROUP:
+            IntroGroup group = (IntroGroup) element;
             Control c = createGroup(parent, group);
             updateLayoutData(c, element);
             // c must be a composite.
@@ -143,7 +143,7 @@ public class FormsWidgetFactory {
         c.setLayoutData(td);
     }
 
-    private Composite createGroup(Composite parent, IntroDiv group) {
+    private Composite createGroup(Composite parent, IntroGroup group) {
         String label = group.getLabel();
         String description = styleManager.getDescription(group);
         int numColumns = styleManager.getNumberOfColumns(group);

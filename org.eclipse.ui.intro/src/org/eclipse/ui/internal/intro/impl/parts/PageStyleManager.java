@@ -113,7 +113,7 @@ public class PageStyleManager extends SharedStyleManager {
     }
 
 
-    public int getNumberOfColumns(IntroDiv group) {
+    public int getNumberOfColumns(IntroGroup group) {
         StringBuffer buff = createPathKey(group);
         if (buff == null)
                 return 1;
@@ -170,7 +170,7 @@ public class PageStyleManager extends SharedStyleManager {
      * @param group
      * @return
      */
-    public String getDescription(IntroDiv group) {
+    public String getDescription(IntroGroup group) {
         StringBuffer buff = createPathKey(group);
         if (buff == null)
                 return null;
@@ -260,10 +260,10 @@ public class PageStyleManager extends SharedStyleManager {
         IntroText[] allText = (IntroText[]) parent
                 .getChildrenOfType(AbstractIntroElement.TEXT);
         for (int i = 0; i < allText.length; i++) {
-            if (allText[i].getClassId() == null)
+            if (allText[i].getStyleId() == null)
                     // not all elements have style id.
                     continue;
-            if (allText[i].getClassId().equals(styleId)) {
+            if (allText[i].getStyleId().equals(styleId)) {
                 makeFiltered(allText[i]);
                 return allText[i].getText();
             }

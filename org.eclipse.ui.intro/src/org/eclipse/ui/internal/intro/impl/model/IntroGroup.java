@@ -17,9 +17,9 @@ import org.w3c.dom.*;
 /**
  * An intro div.
  */
-public class IntroDiv extends AbstractIntroContainer {
+public class IntroGroup extends AbstractIntroContainer {
 
-    protected static final String TAG_DIV = "div"; //$NON-NLS-1$
+    protected static final String TAG_GROUP = "group"; //$NON-NLS-1$
     private static final String ATT_LABEL = "label"; //$NON-NLS-1$
 
     private String label;
@@ -27,7 +27,7 @@ public class IntroDiv extends AbstractIntroContainer {
     /**
      * @param element
      */
-    IntroDiv(Element element, Bundle bundle) {
+    IntroGroup(Element element, Bundle bundle) {
         super(element, bundle);
         label = getAttribute(element, ATT_LABEL);
     }
@@ -45,7 +45,7 @@ public class IntroDiv extends AbstractIntroContainer {
      * @see org.eclipse.ui.internal.intro.impl.model.IntroElement#getType()
      */
     public int getType() {
-        return AbstractIntroElement.DIV;
+        return AbstractIntroElement.GROUP;
     }
 
 }

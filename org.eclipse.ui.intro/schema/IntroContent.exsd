@@ -1,0 +1,536 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="test">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="test" id="test" name="test"/>
+      </appInfo>
+      <documentation>
+         [Enter description of this extension point.]
+      </documentation>
+   </annotation>
+
+   <element name="introContent">
+      <complexType>
+         <sequence>
+            <element ref="page" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="group" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="extensionContent" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="page">
+      <complexType>
+         <choice>
+            <element ref="group"/>
+            <element ref="link"/>
+            <element ref="text"/>
+            <element ref="head"/>
+            <element ref="img"/>
+            <element ref="include"/>
+            <element ref="html"/>
+            <element ref="title"/>
+         </choice>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="style" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="alt-style" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="url" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="standby-url" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="standby-style" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="standby-alt-style" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="style-id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="filteredFrom">
+            <annotation>
+               <documentation>
+                  an optional attribute that allows for filtering a given element out of a specific presentation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt presentation.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="swt">
+                  </enumeration>
+                  <enumeration value="html">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="group">
+      <complexType>
+         <choice>
+            <element ref="text"/>
+            <element ref="img"/>
+            <element ref="include"/>
+            <element ref="html"/>
+            <element ref="link"/>
+            <element ref="group"/>
+         </choice>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  unique identifier of the division
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="style-id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="filteredFrom">
+            <annotation>
+               <documentation>
+                  an optional attribute that allows for filtering a given element out of a specific presentation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt presentation.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="swt">
+                  </enumeration>
+                  <enumeration value="html">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="link">
+      <complexType>
+         <sequence>
+            <element ref="text" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="url" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="style-id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="filteredFrom">
+            <annotation>
+               <documentation>
+                  an optional attribute that allows for filtering a given element out of a specific presentation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt presentation.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="swt">
+                  </enumeration>
+                  <enumeration value="html">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="html">
+      <annotation>
+         <documentation>
+            direct HTML to include in the page either by embedding the entire document, or inlining a snippet of HTML in-place. A fallback image or text must be defined for alternative rendering.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice>
+            <element ref="img"/>
+            <element ref="text"/>
+         </choice>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  unique identifier of this HTML element
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="src" type="string" use="required">
+            <annotation>
+               <documentation>
+                  relative or absolute URL to a file containing HTML
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="type" use="required">
+            <annotation>
+               <documentation>
+                  if &apos;inline&apos;, value of &apos;src&apos; will be treated as a snippet of HTML to emit &apos;in-place&apos;. If &apos;embed&apos;, a valid (full) HTML document will be embedded using HTML &apos;OBJECT&apos; tag. (if type is not specified, this html object is ignored by the intro configuration).
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="inline">
+                  </enumeration>
+                  <enumeration value="embed">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="style-id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="filteredFrom">
+            <annotation>
+               <documentation>
+                  an optional attribute that allows for filtering a given element out of a specific presentation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt presentation.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="swt">
+                  </enumeration>
+                  <enumeration value="html">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="title">
+      <annotation>
+         <documentation>
+            a snippet of text that can optionally contain escaped HTML tags. It is used as the page Title.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  unique identifier of this title.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="style-id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="filteredFrom">
+            <annotation>
+               <documentation>
+                  an optional attribute that allows for filtering a given element out of a specific presentation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt presentation.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="swt">
+                  </enumeration>
+                  <enumeration value="html">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="text">
+      <annotation>
+         <documentation>
+            a snippet of text that can optionally contain escaped HTML tags.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  unique identifier of this text.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="style-id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="filteredFrom">
+            <annotation>
+               <documentation>
+                  an optional attribute that allows for filtering a given element out of a specific presentation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt presentation.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="swt">
+                  </enumeration>
+                  <enumeration value="html">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="include">
+      <annotation>
+         <documentation>
+            expands an element targeted by the given path, and optional configId attributes. Path should uniquely address an element within the specified configuration. It could point to a div defined at the configuration level, or any element in a page.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="configId" type="string">
+            <annotation>
+               <documentation>
+                  identifier of a configuration where the included element is defined. If specified, it is assumed that the element to be included is specified in another configuration, and not the enclosing configuration. In this case, that external config is loaded and the element is resolved from that new config. If not specified, enclosing (parent) configuration of this include is assumed.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="path" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the path that uniquely represents the target element within the configuration (e.g. page/div1/div2). It may be a div element, or any element that may be contained in a div. You can not include a page.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="merge-style" type="boolean">
+            <annotation>
+               <documentation>
+                  if &lt;code&gt;true&lt;/code&gt;, style belonging to the page that owns the included element will be added to list of styles of the including page. If &lt;code&gt;false&lt;/code&gt; (the default), the including page is responsible for controling properties of the included element.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="head">
+      <annotation>
+         <documentation>
+            direct HTML to include in a page&apos;s HEAD content area. This markup is only to be used with an SWT Based intro part implementation. It is simply ignored in the case of a UI Forms implementation (aka swt). A page can have more than one head element. An implementation can have one and only one head element (since it is a shared head content, it makes sense to just define it in one file).
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="src" type="string" use="required">
+            <annotation>
+               <documentation>
+                  relative or absolute URL to a file containing HTML
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="img">
+      <annotation>
+         <documentation>
+            an image that represents presentation content (as opposed to decoration images defined in styles).
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  unique identifier of this image
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="src" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the file to load the image from
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="alt" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="style-id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="filteredFrom">
+            <annotation>
+               <documentation>
+                  an optional attribute that allows for filtering a given element out of a specific presentation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt presentation.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="swt">
+                  </enumeration>
+                  <enumeration value="html">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="extensionContent">
+      <annotation>
+         <documentation>
+            The content to be added to the target page or div. Only one extensionContent is allowed in a given configExtension because if this extension could not be resolved (if the config could not be found, or the target element could not be found, for example) then the pages and/or divs in the extension need to be ingnored.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice>
+            <element ref="text"/>
+            <element ref="group"/>
+            <element ref="link"/>
+            <element ref="html"/>
+            <element ref="include"/>
+         </choice>
+         <attribute name="style" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="alt-style" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="path" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the path that uniquely represents the element (e.g. page/div1/div2) within the target configuration to be extended. It can only be a page or a div, including shared divs at configuration level.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         [Enter the first release in which this extension point appears.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

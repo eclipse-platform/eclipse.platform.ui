@@ -190,9 +190,9 @@ public class IntroModelRoot extends AbstractIntroContainer {
      */
     private void loadSharedDivs(Document dom, Bundle bundle) {
         Element[] divs = ModelLoaderUtil.getElementsByTagName(dom,
-                IntroDiv.TAG_DIV);
+                IntroGroup.TAG_GROUP);
         for (int i = 0; i < divs.length; i++) {
-            IntroDiv div = new IntroDiv(divs[i], bundle);
+            IntroGroup div = new IntroGroup(divs[i], bundle);
             div.setParent(this);
             children.add(div);
         }
@@ -307,7 +307,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             IntroExtensionContent extension,
             AbstractIntroElement targetContainer) {
 
-        if (targetContainer.getType() == AbstractIntroElement.DIV
+        if (targetContainer.getType() == AbstractIntroElement.GROUP
                 && targetContainer.getParent().getType() == AbstractIntroElement.MODEL_ROOT)
                 // if we are extending a shared div, defined under a config, we
                 // can not include styles.

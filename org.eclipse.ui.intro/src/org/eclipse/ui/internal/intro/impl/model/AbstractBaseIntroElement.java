@@ -17,7 +17,7 @@ import org.w3c.dom.*;
 
 
 /**
- * An Intro Config component that has an id attribute and a class-id attribute.
+ * An Intro Config component that has an id attribute and a style-id attribute.
  * It also has the notion of filtering. Only model elements that have meaning in
  * the UI, and that are targettable can be filtered. HEAD, for example, only
  * applied to HTML presentation, and so, it does not need filtering. When model
@@ -30,22 +30,22 @@ import org.w3c.dom.*;
  */
 public abstract class AbstractBaseIntroElement extends AbstractIntroIdElement {
 
-    private static final String ATT_CLASS_ID = "class-id"; //$NON-NLS-1$
+    private static final String ATT_STYLE_ID = "style-id"; //$NON-NLS-1$
     private static final String ATT_FIlTERED_FROM = "filteredFrom";
 
-    protected String class_id;
+    protected String style_id;
     protected String filteredFrom;
     private boolean isFiltered;
 
     AbstractBaseIntroElement(IConfigurationElement element) {
         super(element);
-        class_id = element.getAttribute(ATT_CLASS_ID);
+        style_id = element.getAttribute(ATT_STYLE_ID);
         filteredFrom = element.getAttribute(ATT_FIlTERED_FROM);
     }
 
     AbstractBaseIntroElement(Element element, Bundle bundle) {
         super(element, bundle);
-        class_id = getAttribute(element, ATT_CLASS_ID);
+        style_id = getAttribute(element, ATT_STYLE_ID);
         filteredFrom = getAttribute(element, ATT_FIlTERED_FROM);
     }
 
@@ -55,8 +55,8 @@ public abstract class AbstractBaseIntroElement extends AbstractIntroIdElement {
      */
     private boolean checkFilterState() {
         if (this.isOfType(AbstractIntroElement.MODEL_ROOT))
-                // root element is not filtered.
-                return false;
+            // root element is not filtered.
+            return false;
         IntroModelRoot root = (IntroModelRoot) getParentPage().getParent();
         return root.getPresentation().getImplementationKind().equals(
                 filteredFrom) ? true : false;
@@ -66,8 +66,8 @@ public abstract class AbstractBaseIntroElement extends AbstractIntroIdElement {
     /**
      * @return Returns the class id.
      */
-    public String getClassId() {
-        return class_id;
+    public String getStyleId() {
+        return style_id;
     }
 
     /**

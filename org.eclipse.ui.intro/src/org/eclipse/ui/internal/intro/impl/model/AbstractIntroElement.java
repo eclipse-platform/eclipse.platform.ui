@@ -59,12 +59,12 @@ public abstract class AbstractIntroElement {
     /**
      * Type constant which identifies an IntroDiv element.
      */
-    public static final int DIV = 1 << 4;
+    public static final int GROUP = 1 << 4;
 
     /**
      * Type constant which identifies the AbstractIntroContainer element.
      */
-    public static final int ABSTRACT_CONTAINER = ABSTRACT_PAGE | DIV
+    public static final int ABSTRACT_CONTAINER = ABSTRACT_PAGE | GROUP
             | MODEL_ROOT;
 
     /**

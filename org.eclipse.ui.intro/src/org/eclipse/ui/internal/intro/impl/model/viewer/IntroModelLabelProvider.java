@@ -39,7 +39,7 @@ public class IntroModelLabelProvider extends LabelProvider {
 
         int elementType = introElement.getType();
         switch (elementType) {
-        case AbstractIntroElement.DIV:
+        case AbstractIntroElement.GROUP:
         case AbstractIntroElement.PAGE:
         case AbstractIntroElement.HOME_PAGE:
             image = ImageUtil.getImage(ImageUtil.INTRO_MODEL_CONTAINER);
@@ -63,8 +63,8 @@ public class IntroModelLabelProvider extends LabelProvider {
 
         int elementType = introElement.getType();
         switch (elementType) {
-        case AbstractIntroElement.DIV:
-            label = "DIV: " + ((IntroDiv) introElement).getLabel(); //$NON-NLS-1$
+        case AbstractIntroElement.GROUP:
+            label = "DIV: " + ((IntroGroup) introElement).getLabel(); //$NON-NLS-1$
             break;
         case AbstractIntroElement.LINK:
             label = "DEFAULT_LINK: " + ((IntroLink) introElement).getLabel(); //$NON-NLS-1$

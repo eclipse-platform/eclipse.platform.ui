@@ -116,7 +116,7 @@ public class IntroHomePage extends AbstractIntroPage {
 
         // root page does not have any links, append all links off non-filtered
         // divs.
-        IntroDiv[] rootPageDivs = (IntroDiv[]) getChildrenOfType(AbstractIntroElement.DIV);
+        IntroGroup[] rootPageDivs = (IntroGroup[]) getChildrenOfType(AbstractIntroElement.GROUP);
         Vector linkVector = new Vector();
 
         for (int i = 0; i < rootPageDivs.length; i++)
@@ -128,16 +128,16 @@ public class IntroHomePage extends AbstractIntroPage {
         return links;
     }
 
-    private void addLinks(IntroDiv div, Vector linksVector) {
+    private void addLinks(IntroGroup div, Vector linksVector) {
         linksVector.addAll(Arrays.asList(getLinks(div)));
-        IntroDiv[] divs = (IntroDiv[]) div
-                .getChildrenOfType(AbstractIntroElement.DIV);
+        IntroGroup[] divs = (IntroGroup[]) div
+                .getChildrenOfType(AbstractIntroElement.GROUP);
         for (int i = 0; i < divs.length; i++)
             addLinks(divs[i], linksVector);
     }
 
 
-    public IntroLink[] getLinks(IntroDiv div) {
+    public IntroLink[] getLinks(IntroGroup div) {
         return (IntroLink[]) div.getChildrenOfType(AbstractIntroElement.LINK);
     }
 

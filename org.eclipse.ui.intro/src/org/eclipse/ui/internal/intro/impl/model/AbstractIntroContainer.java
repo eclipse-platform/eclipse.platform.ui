@@ -127,8 +127,8 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         Object[] src = null;
         switch (elementMask) {
         // homogenous vector.
-        case AbstractIntroElement.DIV:
-            src = new IntroDiv[size];
+        case AbstractIntroElement.GROUP:
+            src = new IntroGroup[size];
             break;
         case AbstractIntroElement.LINK:
             src = new IntroLink[size];
@@ -225,8 +225,8 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
             Bundle bundle) {
 
         AbstractIntroElement child = null;
-        if (childElement.getNodeName().equalsIgnoreCase(IntroDiv.TAG_DIV))
-            child = new IntroDiv(childElement, bundle);
+        if (childElement.getNodeName().equalsIgnoreCase(IntroGroup.TAG_GROUP))
+            child = new IntroGroup(childElement, bundle);
         else if (childElement.getNodeName()
                 .equalsIgnoreCase(IntroLink.TAG_LINK))
             child = new IntroLink(childElement, bundle);
@@ -271,7 +271,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         if (target == null)
                 // target could not be found.
                 return;
-        if (target.isOfType(AbstractIntroElement.DIV
+        if (target.isOfType(AbstractIntroElement.GROUP
                 | AbstractIntroElement.ABSTRACT_TEXT
                 | AbstractIntroElement.IMAGE | AbstractIntroElement.TEXT))
                 insertTarget(include, target);

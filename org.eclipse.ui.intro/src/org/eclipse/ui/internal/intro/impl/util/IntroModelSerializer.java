@@ -57,7 +57,7 @@ public class IntroModelSerializer {
         text.append("\nNumber of pages (not including Root Page) = " //$NON-NLS-1$
                 + model.getPages().length);
         text.append("\nNumber of shared divs = " //$NON-NLS-1$
-                + model.getChildrenOfType(AbstractIntroElement.DIV).length);
+                + model.getChildrenOfType(AbstractIntroElement.GROUP).length);
         text
                 .append("\nNumber of unresolved extensions = " //$NON-NLS-1$
                         + model
@@ -81,7 +81,7 @@ public class IntroModelSerializer {
         text.append("\n\tstandby alt-style = " + rootPage.getStandbyAltStyle()); //$NON-NLS-1$
         text.append("\n\turl = " + rootPage.getUrl()); //$NON-NLS-1$
         text.append("\n\tstandby-url = " + rootPage.getStandbyUrl()); //$NON-NLS-1$
-        text.append("\n\tclass-id = " + rootPage.getClassId()); //$NON-NLS-1$
+        text.append("\n\tstyle-id = " + rootPage.getStyleId()); //$NON-NLS-1$
         printPageStyles(rootPage, text);
     }
 
@@ -121,8 +121,8 @@ public class IntroModelSerializer {
             case AbstractIntroElement.ELEMENT:
                 text.append("SHOULD NEVER BE HERE"); //$NON-NLS-1$
                 break;
-            case AbstractIntroElement.DIV:
-                printDiv(text, (IntroDiv) children[i], indent);
+            case AbstractIntroElement.GROUP:
+                printDiv(text, (IntroGroup) children[i], indent);
                 break;
             case AbstractIntroElement.LINK:
                 printLink(text, (IntroLink) children[i], indent);
@@ -151,12 +151,12 @@ public class IntroModelSerializer {
         }
     }
 
-    private void printDiv(StringBuffer text, IntroDiv div, String indent) {
+    private void printDiv(StringBuffer text, IntroGroup div, String indent) {
         text.append(indent + "DIV: id = " + div.getId()); //$NON-NLS-1$
         indent = indent + "\t\t"; //$NON-NLS-1$
         text.append(indent + "label = " + div.getLabel()); //$NON-NLS-1$
         text.append(indent + "children = " + div.getChildren().length); //$NON-NLS-1$
-        text.append(indent + "class-id = " + div.getClassId()); //$NON-NLS-1$
+        text.append(indent + "style-id = " + div.getStyleId()); //$NON-NLS-1$
         printContainerChildren(div, text, indent + "\t\t"); //$NON-NLS-1$
     }
 
@@ -165,14 +165,14 @@ public class IntroModelSerializer {
         indent = indent + "\t\t"; //$NON-NLS-1$
         text.append(indent + "label = " + link.getLabel()); //$NON-NLS-1$
         text.append(indent + "text = " + link.getText()); //$NON-NLS-1$
-        text.append(indent + "class-id = " + link.getClassId()); //$NON-NLS-1$
+        text.append(indent + "style-id = " + link.getStyleId()); //$NON-NLS-1$
     }
 
     private void printText(StringBuffer text, IntroText introText, String indent) {
         text.append(indent + "TEXT: id = " + introText.getId()); //$NON-NLS-1$
         indent = indent + "\t\t"; //$NON-NLS-1$
         text.append(indent + "text = " + introText.getText()); //$NON-NLS-1$
-        text.append(indent + "class-id = " + introText.getClassId()); //$NON-NLS-1$
+        text.append(indent + "style-id = " + introText.getStyleId()); //$NON-NLS-1$
     }
 
     private void printImage(StringBuffer text, IntroImage image, String indent) {
@@ -180,7 +180,7 @@ public class IntroModelSerializer {
         indent = indent + "\t\t"; //$NON-NLS-1$
         text.append(indent + "src = " + image.getSrc()); //$NON-NLS-1$
         text.append(indent + "alt = " + image.getAlt()); //$NON-NLS-1$
-        text.append(indent + "class-id = " + image.getClassId()); //$NON-NLS-1$
+        text.append(indent + "style-id = " + image.getStyleId()); //$NON-NLS-1$
     }
 
     private void printHtml(StringBuffer text, IntroHTML html, String indent) {
@@ -188,7 +188,7 @@ public class IntroModelSerializer {
         indent = indent + "\t\t"; //$NON-NLS-1$
         text.append(indent + "src = " + html.getSrc()); //$NON-NLS-1$
         text.append(indent + "isInlined = " + html.isInlined()); //$NON-NLS-1$
-        text.append(indent + "class-id = " + html.getClassId()); //$NON-NLS-1$
+        text.append(indent + "style-id = " + html.getStyleId()); //$NON-NLS-1$
         if (html.getIntroImage() != null)
                 printImage(text, html.getIntroImage(), indent + "\t\t"); //$NON-NLS-1$
         if (html.getIntroText() != null)
@@ -213,7 +213,7 @@ public class IntroModelSerializer {
         text.append(indent + "TITLE: id = " + title.getId()); //$NON-NLS-1$
         indent = indent + "\t\t"; //$NON-NLS-1$
         text.append(indent + "title = " + title.getTitle()); //$NON-NLS-1$
-        text.append(indent + "class-id = " + title.getClassId()); //$NON-NLS-1$
+        text.append(indent + "style-id = " + title.getStyleId()); //$NON-NLS-1$
     }
 
     /**
@@ -228,7 +228,7 @@ public class IntroModelSerializer {
             text.append("\n\ttitle = " + pages[i].getTitle()); //$NON-NLS-1$
             text.append("\n\tstyle = " + pages[i].getStyle()); //$NON-NLS-1$
             text.append("\n\talt-style = " + pages[i].getAltStyle()); //$NON-NLS-1$
-            text.append("\n\tclass-id = " + pages[i].getClassId()); //$NON-NLS-1$
+            text.append("\n\tstyle-id = " + pages[i].getStyleId()); //$NON-NLS-1$
             printPageStyles(pages[i], text);
             printPageChildren(pages[i], text);
         }
@@ -244,7 +244,7 @@ public class IntroModelSerializer {
         IntroPage firstPage = model.getPages()[0];
         text.append("\n\t\tFirst page children are: "); //$NON-NLS-1$
         text.append("\n\t\t\tDivs: " //$NON-NLS-1$
-                + firstPage.getChildrenOfType(AbstractIntroElement.DIV).length);
+                + firstPage.getChildrenOfType(AbstractIntroElement.GROUP).length);
         text
                 .append("\n\t\t\tLinks: " //$NON-NLS-1$
                         + firstPage
@@ -291,7 +291,7 @@ public class IntroModelSerializer {
                                 .getChildrenOfType(AbstractIntroElement.ABSTRACT_TEXT).length);
 
         AbstractIntroElement[] linksAndDivs = (AbstractIntroElement[]) firstPage
-                .getChildrenOfType(AbstractIntroElement.DIV
+                .getChildrenOfType(AbstractIntroElement.GROUP
                         | AbstractIntroElement.LINK);
         text.append("\n\t\t\tDivs and Links: " + linksAndDivs.length); //$NON-NLS-1$
     }
