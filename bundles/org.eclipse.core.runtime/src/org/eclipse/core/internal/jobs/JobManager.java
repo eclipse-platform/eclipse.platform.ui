@@ -324,12 +324,13 @@ public class JobManager implements IJobManager {
 	/**
 	 * Adds all family members in the list of jobs to the collection
 	 */
-	private void select(List members, Object family, InternalJob firstJob) {
+	private void select(List members, Object family, InternalJob firstJob, int stateMask) {
 		if (firstJob == null)
 			return;
 		InternalJob job = firstJob;
 		do {
-			if (job.belongsTo(family))
+			//note that job state cannot be NONE at this point
+			if (job.belongsTo(family) && ((job.getState() & stateMask) != 0))
 				members.add(job);
 			job = job.previous();
 		} while (job != null && job != firstJob);
@@ -338,13 +339,20 @@ public class JobManager implements IJobManager {
 	 * Returns a list of all jobs known to the job manager that belong to the given family.
 	 */
 	private List select(Object family) {
+		return select(family, Job.WAITING | Job.SLEEPING | Job.RUNNING);
+	}
+	/**
+	 * Returns a list of all jobs known to the job manager that belong to the given 
+	 * family and are in one of the provided states.
+	 */
+	private List select(Object family, int stateMask) {
 		List members = new ArrayList();
 		synchronized (lock) {
 			for (Iterator it = running.iterator(); it.hasNext();) {
-				select(members, family, (InternalJob)it.next());
+				select(members, family, (InternalJob)it.next(), stateMask);
 			}
-			select(members, family, (InternalJob)waiting.peek());
-			select(members, family, (InternalJob)sleeping.peek());
+			select(members, family, (InternalJob)waiting.peek(), stateMask);
+			select(members, family, (InternalJob)sleeping.peek(), stateMask);
 		}
 		return members;
 	}
@@ -462,7 +470,8 @@ public class JobManager implements IJobManager {
 		IJobChangeListener listener = null;
 		final Semaphore barrier = new Semaphore(null);
 		synchronized (lock) {
-			if (job.getState() == Job.NONE)
+			int state = job.getState();
+			if (state == Job.NONE || state == Job.SLEEPING)
 				return;
 			//the semaphore will be released when the job is done
 			listener = new JobChangeAdapter() {
@@ -489,7 +498,8 @@ public class JobManager implements IJobManager {
 		final List jobs;
 		final int jobCount;
 		synchronized (lock) {
-			jobs = Collections.synchronizedList(select(family));
+			//we never want to join sleeping jobs
+			jobs = Collections.synchronizedList(select(family, Job.WAITING | Job.RUNNING));
 			jobCount = jobs.size();
 			if (jobCount == 0)
 				return;

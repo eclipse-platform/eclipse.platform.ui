@@ -245,8 +245,8 @@ public abstract class Job extends InternalJob {
 	}
 	/**
 	 * Waits until this job is finished.  This method will block the calling thread until the 
-	 * job has finished executing.  If the job is not currently waiting, sleeping,
-	 * or running, this method returns immediately.
+	 * job has finished executing.  If the job is not currently waiting or running, this 
+	 * method returns immediately.
 	 * 
 	 * <p>
 	 * If the calling thread owns any locks, the locks may be released during the
