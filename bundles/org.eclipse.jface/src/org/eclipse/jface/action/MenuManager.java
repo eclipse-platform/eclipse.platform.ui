@@ -509,7 +509,7 @@ protected void update(boolean force, boolean recursive) {
 			MenuItem[] mi= menu.getItems();
 			for (int i= 0; i < mi.length; i++) {
 				Object data= mi[i].getData();
-				if (data == null || !clean.contains(data) || !PERMANENT.equals(data)) {
+				if (data == null || !clean.contains(data) || !PERMANENT.equals(mi[i].getData(PERMANENT))) {
 					mi[i].dispose();
 				} else if(data instanceof IContributionItem && 
 					((IContributionItem)data).isDynamic() && 
@@ -567,7 +567,7 @@ protected void update(boolean force, boolean recursive) {
 
 			// remove any old menu items not accounted for
 			for (; srcIx < mi.length; srcIx++) {
-				if (!PERMANENT.equals(mi[srcIx].getData()))
+				if (!PERMANENT.equals(mi[srcIx].getData(PERMANENT)))
 					mi[srcIx].dispose();
 			}
 			

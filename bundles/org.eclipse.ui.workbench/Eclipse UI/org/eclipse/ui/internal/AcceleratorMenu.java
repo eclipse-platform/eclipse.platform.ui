@@ -36,7 +36,7 @@ public AcceleratorMenu(Menu parent) {
 		item = new MenuItem(parent, SWT.CASCADE,0);
 		item.setText(""); //$NON-NLS-1$
 		item.setMenu(menu);
-		item.setData(PERMANENT);
+		item.setData(PERMANENT, PERMANENT);
 	}
 	
 	focusControlListener  = new Listener () {
@@ -85,7 +85,7 @@ public AcceleratorMenu(Menu parent) {
 					break;
 				case SWT.Hide:
 					item = new MenuItem(AcceleratorMenu.this.parent, SWT.CASCADE,0);
-					item.setData(PERMANENT);
+					item.setData(PERMANENT, PERMANENT);
 					if(menu.isDisposed()) {
 						//doing more than needed;
 						setAccelerators(getAccelerators());
