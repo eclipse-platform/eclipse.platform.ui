@@ -802,6 +802,13 @@ public class Main {
 				continue;
 			}
 
+			// look for and consume the nosplash directive.  This supercedes any
+			// -showsplash command that might be present.
+			if (arguments[i].equalsIgnoreCase(NOSPLASH)) {
+				splashDown = true;
+				found = true;
+			}
+
 			// check if this is initialization pass
 			if (arguments[i].equalsIgnoreCase(INITIALIZE)) {
 				initialize = true;
@@ -862,13 +869,6 @@ public class Main {
 			// look for the command to use to set exit data in the launcher
 			if (arguments[i - 1].equalsIgnoreCase(EXITDATA)) {
 				exitData = arg;
-				found = true;
-			}
-
-			// look for and consume the nosplash directive.  This supercedes any
-			// -showsplash command that might be present.
-			if (arguments[i - 1].equalsIgnoreCase(NOSPLASH)) {
-				splashDown = true;
 				found = true;
 			}
 
