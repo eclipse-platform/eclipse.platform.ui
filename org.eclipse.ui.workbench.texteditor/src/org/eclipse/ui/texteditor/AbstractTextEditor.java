@@ -4346,6 +4346,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		Image image= createOverwriteModeCaretImage(styledText);
 		if (image != null)
 			caret.setImage(image);
+		else
+			caret.setSize(1, caret.getSize().y);
+			
 		return caret;
 	}
 	
@@ -4373,6 +4376,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		Image image= createSmartInsertModeCaretImage(styledText);
 		if (image != null)
 			caret.setImage(image);
+		else
+			caret.setSize(1, caret.getSize().y);
+			
 		return caret;
 	}
 
