@@ -49,5 +49,10 @@ public interface ILogEntry extends IAdaptable {
 	 * Get the remote file for this entry
 	 */
 	public ICVSRemoteFile getRemoteFile();
+	
+	/**
+	 * Does the log entry represent a deletion (stat = "dead")
+	 */
+	public boolean isDeletion();
 }
 
