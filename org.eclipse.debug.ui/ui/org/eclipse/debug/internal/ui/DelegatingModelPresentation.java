@@ -123,41 +123,37 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 					return iRegistry.get(IDebugUIConstants.IMG_OBJS_OS_PROCESS);
 				}
 			} else
-				if (item instanceof ILaunch) {
-					ILaunch launch = (ILaunch) item;
-					Image image = getLaunchImage(launch);
-					if (image == null) {
-						// return default image
+				if (item instanceof ILauncher) {
+					return getLauncherImage((ILauncher)item);
+				} else
+					if (item instanceof ILaunch) {
+						ILaunch launch = (ILaunch) item;
 						String mode= launch.getLaunchMode();
 						if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 							return iRegistry.get(IDebugUIConstants.IMG_ACT_DEBUG);
 						} else {
 							return iRegistry.get(IDebugUIConstants.IMG_ACT_RUN);
 						}
-					} else {
-						return image;
-					}
-				} else
-					if (item instanceof InspectItem) {
-						return iRegistry.get(IDebugUIConstants.IMG_OBJS_EXPRESSION);
 					} else
-						if (item instanceof IAdaptable) {
-							IWorkbenchAdapter de= (IWorkbenchAdapter) ((IAdaptable) item).getAdapter(IWorkbenchAdapter.class);
-							if (de != null) {
-								ImageDescriptor descriptor= de.getImageDescriptor(item);
-								if( descriptor != null) {
-									return descriptor.createImage();
+						if (item instanceof InspectItem) {
+							return iRegistry.get(IDebugUIConstants.IMG_OBJS_EXPRESSION);
+						} else
+							if (item instanceof IAdaptable) {
+								IWorkbenchAdapter de= (IWorkbenchAdapter) ((IAdaptable) item).getAdapter(IWorkbenchAdapter.class);
+								if (de != null) {
+									ImageDescriptor descriptor= de.getImageDescriptor(item);
+									if( descriptor != null) {
+										return descriptor.createImage();
+									}
 								}
 							}
-						}
-
+	
 			return null;
 
 		}
 	}
 
-	protected Image getLaunchImage(ILaunch launch) {
-		ILauncher launcher = launch.getLauncher();
+	protected Image getLauncherImage(ILauncher launcher) {
 		String iconPath = launcher.getIconPath();
 		if (iconPath != null) {
 			// return custom image
