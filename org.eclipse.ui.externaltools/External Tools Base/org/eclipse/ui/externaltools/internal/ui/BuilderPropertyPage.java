@@ -55,6 +55,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -90,28 +91,35 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private IDebugModelPresentation debugModelPresentation;
 	
 	private boolean userHasMadeChanges= false;
+	
 	private SelectionListener fButtonListener= new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			handleButtonPressed((Button) e.widget);
 			}
 		};
+		
 	private ILaunchConfigurationListener configurationListener= new ILaunchConfigurationListener() {
-		public void launchConfigurationAdded(ILaunchConfiguration configuration) {
+		public void launchConfigurationAdded(final ILaunchConfiguration configuration) {
 			ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
-			ILaunchConfiguration oldConfig= manager.getMovedFrom(configuration);
+			final ILaunchConfiguration oldConfig= manager.getMovedFrom(configuration);
 			if (oldConfig == null) {
 				return;
 			}
-			TableItem[] items= builderTable.getItems();
-			for (int i = 0; i < items.length; i++) {
-				TableItem item = items[i];
-				Object data= item.getData();
-				if (data == oldConfig) {
-					item.setData(configuration);
-					updateConfigItem(item, configuration);
-					return;
+			
+			Display.getDefault().asyncExec(new Runnable() {	
+				public void run() {
+					TableItem[] items= builderTable.getItems();
+					for (int i = 0; i < items.length; i++) {
+						TableItem item = items[i];
+						Object data= item.getData();
+						if (data == oldConfig) {
+							item.setData(configuration);
+							updateConfigItem(item, configuration);
+							return;
+						}
+					}
 				}
-			}
+			});
 		}
 		public void launchConfigurationChanged(ILaunchConfiguration configuration) {
 		}
