@@ -21,6 +21,8 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -72,6 +74,7 @@ public class AboutDialog extends ProductInfoDialog {
 
     /**
      * Create an instance of the AboutDialog for the given window.
+     * @param parentShell The parent of the dialog.
      */
     public AboutDialog(Shell parentShell) {
         super(parentShell);
@@ -336,6 +339,15 @@ public class AboutDialog extends ProductInfoDialog {
         images.add(featureImage);
         button.setImage(featureImage);
         button.setToolTipText(info.getProviderName());
+        
+        button.getAccessible().addAccessibleListener(new AccessibleAdapter(){
+        	/* (non-Javadoc)
+			 * @see org.eclipse.swt.accessibility.AccessibleAdapter#getName(org.eclipse.swt.accessibility.AccessibleEvent)
+			 */
+			public void getName(AccessibleEvent e) {
+				e.result = info.getProviderName();
+			}
+        });
         button.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 AboutBundleGroupData[] groupInfos = buttonManager
