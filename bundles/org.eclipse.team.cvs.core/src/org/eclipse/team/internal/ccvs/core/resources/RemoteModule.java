@@ -153,7 +153,7 @@ public class RemoteModule extends RemoteFolder {
 					if ( ! files.isEmpty()) {
 						ICVSRemoteResource[] children = new ICVSRemoteResource[files.size()];
 						for (int j = 0; j < children.length; j++) {
-							children[j] = new RemoteFile(remoteModule, Update.STATE_NONE, (String)files.get(j), tag);
+							children[j] = new RemoteFile(remoteModule, Update.STATE_NONE, (String)files.get(j), null, null, tag);
 							remoteModule.setChildren(children);
 						}
 					}

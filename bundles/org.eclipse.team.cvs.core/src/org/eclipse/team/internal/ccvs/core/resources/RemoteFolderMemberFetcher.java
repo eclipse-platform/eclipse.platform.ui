@@ -265,7 +265,7 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 
 	/**
 	 * This method is invoked for each child file as the reponses are being recieved from
-	 * the server. Default behavior is to record the file for later retrieval using <code>getChilren()</code>. 
+	 * the server. Default behavior is to record the file for later retrieval using <code>getChildren()</code>. 
 	 * Subclasses may override but should invoke the inherited method to ensure the file gets recorded.
 	 * This is important because the file revisions for any files are fetched subsequent to the fecthing
 	 * of the children.
@@ -276,6 +276,8 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 			parentFolder, 
 			Update.STATE_NONE, 
 			name, 
+			null, /* revision unknown */
+			null, /* keyword mode unknown */
 			tag);
 		files.add(file);
 		return file;

@@ -583,7 +583,7 @@ public abstract class Command extends Request {
 		 */
 		public static KSubstOption fromFile(IFile file) {
 			if (CVSProviderPlugin.isText(file))
-				return CVSProviderPlugin.getPlugin().getDefaultTextKSubstOption();
+				return getDefaultTextMode();
 			return KSUBST_BINARY;
 		}
 		/**
@@ -619,6 +619,12 @@ public abstract class Command extends Request {
 		public String getLongDisplayText() {
 			if (isUnknownMode) return Policy.bind("KSubstOption.unknown.long", option); //$NON-NLS-1$
 			return Policy.bind("KSubstOption." + option + ".long"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		/**
+		 * Return the text mode that will be used by default
+		 */
+		public static KSubstOption getDefaultTextMode() {
+			return CVSProviderPlugin.getPlugin().getDefaultTextKSubstOption();
 		}
 	}
 

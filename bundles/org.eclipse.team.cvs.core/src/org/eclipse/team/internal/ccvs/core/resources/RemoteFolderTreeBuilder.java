@@ -329,7 +329,12 @@ public class RemoteFolderTreeBuilder {
 				if (d.getRevision() == DELETED) {
 					return null;
 				}
-				remoteFile = new RemoteFile(remoteRoot, d.getSyncState(), file.getName(), tagForRemoteFolder(remoteRoot, tag));
+				remoteFile = new RemoteFile(remoteRoot, 
+					d.getSyncState(), 
+					file.getName(), 
+					null, /* the revision will be retrieved from the server */
+					getKeywordMode(file), /* use the same keyword mode a the local file */
+					tagForRemoteFolder(remoteRoot, tag));
 			}
 			// Add the resource to its parent
 			remoteRoot.setChildren(new ICVSRemoteResource[] {remoteFile});
@@ -353,6 +358,13 @@ public class RemoteFolderTreeBuilder {
 		}
 	}
 	
+	private Command.KSubstOption getKeywordMode(ICVSFile file) throws CVSException {
+		if (file == null) return null;
+		byte[] syncBytes = file.getSyncBytes();
+		if (syncBytes == null) return null;
+		return ResourceSyncInfo.getKeywordMode(syncBytes);
+	}
+
 	/*
 	 * Build the base remote tree from the local tree.
 	 * 
@@ -480,12 +492,22 @@ public class RemoteFolderTreeBuilder {
 					Util.appendPath(remote.getRepositoryRelativePath(), name), 
 					tagForRemoteFolder(remote, tag)));
 			} else if (revision == ADDED) {
-				children.put(name, new RemoteFile(remote, d.getSyncState(), name, tagForRemoteFolder(remote, tag)));
+				children.put(name, new RemoteFile(remote, 
+					d.getSyncState(), 
+					name, 
+					null, /* the revision will be fetched later */
+					null, /* there's no way to know the remote keyword mode */
+					tagForRemoteFolder(remote, tag)));
 			} else if (revision == UNKNOWN) {
 				// The local resource is out of sync with the remote.
 				// Create a RemoteFile associated with the tag so we are assured of getting the proper revision
 				// (Note: this will replace the RemoteFile added from the local base)
-				children.put(name, new RemoteFile(remote, d.getSyncState(), name, tagForRemoteFolder(remote, tag)));
+				children.put(name, new RemoteFile(remote, 
+					d.getSyncState(), 
+					name, 
+					null, /* the revision will be fetched later */
+					getKeywordMode((ICVSFile)children.get(name)), /* get the keyword mode from the local file*/
+					tagForRemoteFolder(remote, tag)));
 			} else if (revision == DELETED) {
 				// This should have been deleted while creating from the local resources.
 				// If it wasn't, delete it now.

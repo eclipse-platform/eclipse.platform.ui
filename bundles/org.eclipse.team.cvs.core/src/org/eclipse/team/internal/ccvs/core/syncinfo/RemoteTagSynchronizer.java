@@ -79,6 +79,7 @@ public class RemoteTagSynchronizer extends CVSRemoteSynchronizer {
 			if (!children.containsKey(resource)) {
 				// These sync bytes are stale. Purge them
 				removeSyncBytes(resource, IResource.DEPTH_INFINITE);
+				changedResources.add(resource);
 			}
 		}
 	}

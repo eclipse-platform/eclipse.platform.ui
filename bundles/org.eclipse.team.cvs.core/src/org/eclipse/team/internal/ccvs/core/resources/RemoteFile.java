@@ -42,6 +42,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Log;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Update;
@@ -104,30 +105,44 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 		parent.setChildren(new ICVSRemoteResource[] {file});
 		return file;
 	}
-		
+	
 	/**
 	 * Constructor for RemoteFile that should be used when nothing is know about the
 	 * file ahead of time.
+	 * @param parent the folder that is the parent of the file
+	 * @param workspaceSyncState the workspace state (use Update.STATE_NONE if unknown)
+	 * @param name the name of the file
+	 * @param revision revision of the file or <code>null</code> if the revision is not known
+	 * @param keywordMode keyword mode of the file or <code>null</code> if the mode is not known
+	 * @param tag tag for the file
 	 */
-	public RemoteFile(RemoteFolder parent, int workspaceSyncState, String name, CVSTag tag) {
-		this(parent, workspaceSyncState, name, ResourceSyncInfo.ADDED_REVISION, tag);  //$NON-NLS-1$
+	public RemoteFile(RemoteFolder parent, int workspaceSyncState, String name, String revision, KSubstOption keywordMode, CVSTag tag) {
+		this(parent, name, workspaceSyncState, getSyncBytes(name, revision, keywordMode, tag));
 	}
 	
-	public RemoteFile(RemoteFolder parent, int workspaceSyncState, String name, String revision, CVSTag tag) {
-		super(parent, name);
+	private static byte[] getSyncBytes(String name, String revision, KSubstOption keywordMode, CVSTag tag) {
+		if (revision == null) {
+			revision = ResourceSyncInfo.ADDED_REVISION;
+		}
+		if (keywordMode == null) {
+			keywordMode = KSubstOption.getDefaultTextMode();
+		}
 		MutableResourceSyncInfo newInfo = new MutableResourceSyncInfo(name, revision);		
-		newInfo.setKeywordMode(Command.KSUBST_TEXT_EXPAND);
+		newInfo.setKeywordMode(keywordMode);
 		newInfo.setTag(tag);
-		syncBytes = newInfo.getBytes();
-		setWorkspaceSyncState(workspaceSyncState);
+		return newInfo.getBytes();
 	}
-		
-	public RemoteFile(RemoteFolder parent, byte[] syncBytes) throws CVSException {
+	
+	/* package */ RemoteFile(RemoteFolder parent, byte[] syncBytes) throws CVSException {
 		this(parent, Update.STATE_NONE, syncBytes);
 	}
 	
-	public RemoteFile(RemoteFolder parent, int workspaceSyncState, byte[] syncBytes) throws CVSException {
-		super(parent, ResourceSyncInfo.getName(syncBytes));
+	/* package */ RemoteFile(RemoteFolder parent, int workspaceSyncState, byte[] syncBytes) throws CVSException {
+		this(parent, ResourceSyncInfo.getName(syncBytes), workspaceSyncState, syncBytes);
+	}
+
+	private RemoteFile(RemoteFolder parent, String name, int workspaceSyncState, byte[] syncBytes) {
+		super(parent, name);
 		this.syncBytes = syncBytes;
 		setWorkspaceSyncState(workspaceSyncState);
 	}
@@ -277,6 +292,15 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 		}
 	}
 	
+	private KSubstOption getKeywordMode() {
+		try {
+			return ResourceSyncInfo.getKeywordMode(syncBytes);
+		} catch (CVSException e) {
+			CVSProviderPlugin.log(e);
+			return KSubstOption.getDefaultTextMode();
+		}
+	}
+	
 	/*
 	 * Get a different revision of the remote file.
 	 * 
@@ -285,11 +309,11 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 */
 	public RemoteFile toRevision(String revision) {
 		RemoteFolder newParent = new RemoteFolder(null, parent.getRepository(), parent.getRepositoryRelativePath(), parent.getTag());
-		RemoteFile file = new RemoteFile(newParent, getWorkspaceSyncState(), getName(), revision, CVSTag.DEFAULT);
+		RemoteFile file = new RemoteFile(newParent, getWorkspaceSyncState(), getName(), revision, getKeywordMode(), CVSTag.DEFAULT);
 		newParent.setChildren(new ICVSRemoteResource[] {file});
 		return file;
 	}
-	
+
 	/**
 	 * @see ICVSFile#getSize()
 	 */
@@ -522,8 +546,8 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	/**
 	 * @see RemoteResource#forTag(ICVSRemoteFolder, CVSTag)
 	 */
-	public ICVSRemoteResource forTag(ICVSRemoteFolder parent, CVSTag tagName) {
-		return new RemoteFile((RemoteFolder)parent, getWorkspaceSyncState(), getName(), tagName);
+	public ICVSRemoteResource forTag(ICVSRemoteFolder parent, CVSTag tag) {
+		return new RemoteFile((RemoteFolder)parent, getWorkspaceSyncState(), getName(), getRevision(), getKeywordMode(), tag);
 	}
 
 	/**
