@@ -11,6 +11,140 @@
 <h1>
 Eclipse Platform Build Notes<br>
 Workbench</h1>
+Eclipse Integration Build 20011218
+<h2>
+What's new in this drop</h2>
+
+<h3>
+Changes to perspectives</h3>
+In order to address a number of common problems encountered by novice users,
+the default behavior of some perspective actions has been modified.
+<p>1) The default behavior for "Open Perspective" has been changed from
+"open in current window" to "open in new window".&nbsp; This was done to
+clarify the separation between state in one perspective and another.
+<p>2) A perspective reuse strategy has been implemented in the workbench,
+and is "on" by default.&nbsp; If an object is opened once (using Open Perspective
+in the Navigator), you get a new page (in implementation terms).&nbsp;
+If the object is opened again, and a page is already open for the same
+object, the old page will be activated and the active perspective type
+will be changed.&nbsp;&nbsp; This was done to avoid the creation of duplicate
+perspectives, unless the user explicitly asks for it.&nbsp; If two pages
+are needed on the same object, you can now invoke Perspective > Clone to
+create a second page with the same input and perspective type as where
+the action is invoked.&nbsp;&nbsp; The "reuse perspective" option can be
+turned off in the Workbench Preferences page.
+<p>3) The contents of the Perspective > Open submenu are now determined
+using a global "most recently used" list.&nbsp; As you switch from one
+perspective to another, the list is updated with the new perspective (and
+clipped at 7 items).&nbsp; This was done to avoid the frustration which
+occurs when you switch from one perspective to another, then can't get
+back to the first.&nbsp; In order to avoid menu reordering, the items are
+sorted by perspective name.
+<p>4) A drop down combo box has been added to the window toolbar, to change
+the "perspective type" in a page.&nbsp; For instance, if you switch from
+a "resource perspective" to a "java perspective", the existing views and
+editors in the page will be re-arranged to suit the new perspective.&nbsp;
+This makes it easy to switch between perspective types without losing the
+open editors.
+<h3>
+New behaviour for view opening</h3>
+If a view is opened within a perspective for the first time, it will open
+as a fast view, floating view, or embedded view, depending on the user
+preference (Workbench > Appearance).&nbsp; If a view is moved, closed,
+and reopened, it will appear in the last position defined by the user.&nbsp;
+The default value for this preference is "fast view" on all platforms.&nbsp;
+On platforms which do not support floating views, the floating preference
+is not visible.
+<h3>
+View Drag and Drop changes</h3>
+In Eclipse, the size and position of a view may be changed by grabbing
+the view title with the mouse, and dragging.
+<br>This feature&nbsp; has led to a number of problems.
+<p>1) If you click on the title bar of a view, and then move your mouse
+to access the main toolbar or menubar, sometimes you don't release the
+mouse button fast enough.&nbsp; In this situation a d&amp;d is started
+and a detached window is created.&nbsp; The detached window looks a lot
+like a view within a folder, so you may not notice it until much later,
+after you do some other actions, and the floating window manifests itself.
+<p>2) If you click on a view and then drag it, there is no obvious way
+to cancel the drag just by putting the view back where it came from.&nbsp;
+This creates a floating window, which you have to redrag to regain the
+original layout.&nbsp; This also occurs with view folders.
+<p>To resolve problem 1, the hysteresis for view movement has been bumped
+from 8 to 10 pixels, so a (slightly) more deliberate effort is required
+to begin the drag.
+<p>To resolve problem 2, the behavior of drag and drop has been changed.&nbsp;
+If you drag a view or folder out, then back over itself, the "reject cursor"
+appears.&nbsp; If you release the mouse button at that point, the drag
+is cancelled.&nbsp; In all other scenarios, the behavior is unchanged.
+<h3>
+New API for opening pages</h3>
+An openPage method has been added to IWorkbench.&nbsp; If this method is
+called, a page will be opened in a new window, or in the current page,
+depending on the user preference as stated in the Workbench Preferences
+page.&nbsp; If the active window is empty, the new page will be opened
+in the active window, regardless of the user preference.
+<br>The existing methods to open a page or window have been deprecated
+(see API changes below).&nbsp; For backwards compatability, the behavior
+of these methods will remain the same.
+<br>From this point on, developers are expected to call the new method.&nbsp;
+Existing code will continue to work without change.
+<h3>
+New API for refreshing viewers</h3>
+There is a new API to refresh a structured viewer without having to update
+labels for unaffected elements.&nbsp; See refresh(boolean updateLabels)
+and refresh(Object element, boolean updateLabels) in org.eclipse.jface.viewers.StructuredViewer.&nbsp;
+TableViewer has been changed to take advantage of this.
+<h3>
+API changes</h3>
+
+<ul>
+<li>
+IWorkbench.openWorkbenchWindow(IAdaptable) is deprecated</li>
+
+<li>
+IWorkbench.openWorkbenchWindow(String, IAdaptable) is deprecated</li>
+
+<li>
+IWorkbenchWindow.openPage(IAdaptable) is deprecated</li>
+
+<li>
+IWorkbenchWindow.openPage(String, IAdaptable) is deprecated</li>
+</ul>
+
+<h3>
+API additions</h3>
+
+<ul>
+<li>
+Added IWorkbench.openPage(IAdaptable)</li>
+
+<li>
+Added IWorkbench.openPage(String, IAdaptable)</li>
+
+<li>
+Added StructuredViewer.refresh(boolean updateLabels)</li>
+
+<li>
+Added StructuredViewer.refresh(Object element, boolean updateLabels)</li>
+</ul>
+
+<h3>
+Other highlights</h3>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&chfield=bug_status&chfieldfrom=2001%2F12%2F11&chfieldto=2001%2F12%2F18&product=Platform&component=UI&cmdtype=doit&&order=Bug+Number">Click
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+between 2001/12/11 and 2001/12/18.
+<p>
+<hr SIZE=0 WIDTH="100%">
+<h1>
+Eclipse Platform Build Notes<br>
+Workbench</h1>
 Eclipse Integration Build 20011211
 <h2>
 What's new in this drop</h2>
