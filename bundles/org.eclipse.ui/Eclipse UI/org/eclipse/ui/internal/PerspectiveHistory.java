@@ -89,15 +89,32 @@ public class PerspectiveHistory {
 			shortcuts.remove(size - 1);
 			-- size;
 		}
-		
-		// Sort descriptor into ordered list.
-		sortedShortcuts = (ArrayList)shortcuts.clone();
-		Collections.sort(sortedShortcuts, comparator);
 
-		// Update listeners.		
+		updateSortedShortcuts();
 		fireChange();
 	}
 	
+	public void refreshFromRegistry() {
+		boolean change = false;
+		Iterator iter = shortcuts.iterator();
+		while (iter.hasNext()) {
+			IPerspectiveDescriptor desc = (IPerspectiveDescriptor)iter.next();
+			if (reg.findPerspectiveWithId(desc.getId()) == null) {
+				iter.remove();
+				change = true;
+			}
+		}
+		if (change) {
+			updateSortedShortcuts();
+			fireChange();
+		}
+	}
+
+	private void updateSortedShortcuts() {
+		sortedShortcuts = (ArrayList)shortcuts.clone();
+		Collections.sort(sortedShortcuts, comparator);
+	}
+			
 	/**
 	 * Returns an array list of IPerspectiveDescriptor objects.
 	 */

@@ -188,6 +188,9 @@ public boolean performOk() {
 	// Revert the perspectives
 	for (int i = 0; i < perspToRevert.size(); i++)
 		((PerspectiveDescriptor) perspToRevert.get(i)).revertToPredefined();
+		
+	// Update perspective history.
+	((Workbench)workbench).getPerspectiveHistory().refreshFromRegistry();
 
 	return true;
 }
