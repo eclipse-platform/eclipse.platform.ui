@@ -26,9 +26,8 @@ public class UpdateManagerAuthenticator extends Authenticator {
 		String host = getRequestingHost(); // can be null;
 		InetAddress address = getRequestingSite(); // can be null;
 		// int port = getRequestingPort();
-		String prompt = getRequestingPrompt(); // realm or message
-		// String scheme = getRequestingScheme(); // not documented that can be
-		// null
+		String prompt = getRequestingPrompt(); // realm or message, not documented that can be null
+		// String scheme = getRequestingScheme(); // not documented that can be null
 
 		String hostString = host;
 		if (hostString == null && address != null) {
