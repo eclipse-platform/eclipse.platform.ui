@@ -152,7 +152,7 @@ public class DefaultPartPresentation extends StackPresentation {
 			IPresentablePart item = getPartForTab((CTabItem)e.item);
 			
 			if (item != null) {
-				getSite().selectPart(item);
+				setSelection((CTabItem)e.item);
 			}
 		}
 	};
@@ -502,6 +502,13 @@ public class DefaultPartPresentation extends StackPresentation {
 	protected void childPropertyChanged(IPresentablePart part, int property) {
 		
 		CTabItem tab = getTab(part);
+		// If we're in the process of removing this part, it's possible that we might still receive
+		// some events for it. If everything is working perfectly, this should never happen... however,
+		// we check for this case just to be safe.
+		if (tab == null) {
+			return;
+		}
+		
 		initTab(tab, part);
 		
 		switch (property) {
@@ -1006,7 +1013,7 @@ public class DefaultPartPresentation extends StackPresentation {
     }
     
 	void setSelection(CTabItem tabItem) {
-        getSite().selectPart(getPartForTab(tabItem));
+		getSite().selectPart(getPartForTab(tabItem));
     }
 
     void close(IPresentablePart[] presentablePart) {

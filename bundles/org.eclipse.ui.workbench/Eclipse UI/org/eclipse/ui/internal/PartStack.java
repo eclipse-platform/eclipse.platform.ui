@@ -51,6 +51,8 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     // inactiveCurrent is only used when restoring the persisted state of
     // perspective on startup.
     private LayoutPart current;
+    
+    private boolean ignoreSelectionChanges = false;
 
     private DefaultStackPresentationSite presentationSite = new DefaultStackPresentationSite() {
 
@@ -472,19 +474,12 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     	}
         return null;
     }
-
-    private void hidePart(LayoutPart part) {
-        IPresentablePart presentablePart = part.getPresentablePart();
-
-        if (presentablePart == null) { return; }
-
-        getPresentation().removePart(presentablePart);
-        if (!isDisposed()) {
-            part.setContainer(null);
-        }
-    }
     
     private void presentationSelectionChanged(IPresentablePart newSelection) {
+    	// Ignore selection changes that occur as a result of removing a part
+    	if (ignoreSelectionChanges) {
+    		return;
+    	}
     	LayoutPart newPart = getPaneFor(newSelection); 
     	
     	// This method should only be called on objects that are already in the layout
@@ -521,7 +516,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         StackPresentation presentation = getPresentation();
         
         if (presentablePart != null && presentation != null) {
+        	ignoreSelectionChanges = true;
             presentation.removePart(presentablePart);
+            ignoreSelectionChanges = false;
         }
 
         if (!isDisposed()) {
