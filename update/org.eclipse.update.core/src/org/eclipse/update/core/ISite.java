@@ -17,7 +17,7 @@ public interface ISite extends IPluginContainer {
 	 * @return the list of features. Returns an empty array
 	 * if there are no feature.
 	 */
-	IFeatureReference [] getFeatureReferences() throws CoreException ;
+	IFeatureReference [] getFeatureReferences() ;
 	
 	/**
 	 * 

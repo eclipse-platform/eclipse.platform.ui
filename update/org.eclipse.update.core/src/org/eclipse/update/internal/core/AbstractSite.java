@@ -191,10 +191,9 @@ public abstract class AbstractSite implements ISite {
 	 * Gets the features
 	 * @return Returns a IFeatureReference[]
 	 */
-	public IFeatureReference[] getFeatureReferences() throws CoreException {
+	public IFeatureReference[] getFeatureReferences() {
 		IFeatureReference[] result = new IFeatureReference[0];
 		if (isManageable){
-			if (!isInitialized) initializeSite();
 			if (!(features==null || features.isEmpty())){
 				result = new IFeatureReference[features.size()];
 				features.toArray(result);
