@@ -1627,13 +1627,13 @@
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.dialogs.EditorsPreferencePage"
             id="org.eclipse.ui.preferencePages.Editors">
-      </page>
+      </page>          
       <page
-            name="%PreferencePages.KeyBindings"
+            name="%PreferencePages.Keys"
             category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.actions.keybindings.PreferencePage"
-            id="org.eclipse.ui.preferencePages.KeyBindings">
-      </page>
+            class="org.eclipse.ui.internal.keybindings.PreferencePage"
+            id="org.eclipse.ui.preferencePages.Keys">
+      </page>      
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
