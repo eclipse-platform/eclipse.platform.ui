@@ -6,6 +6,7 @@ package org.eclipse.team.internal.ccvs.core.client;
  */
 
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
@@ -66,7 +67,7 @@ class PruneFolderVisitor implements ICVSResourceVisitor {
 	
 	private void pruneParentIfAppropriate(ICVSResource resource) throws CVSException {
 		// If we are visiting the current visit root, prune the parent if appropriate
-		if (resource.equals(currentVisitRoot)) {
+		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories() && resource.equals(currentVisitRoot)) {
 			currentVisitRoot = resource.getParent();
 			pruneFolderIfAppropriate((ICVSFolder)currentVisitRoot);
 		}
