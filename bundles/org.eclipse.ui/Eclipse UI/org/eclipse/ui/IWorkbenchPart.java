@@ -31,10 +31,12 @@ import org.eclipse.swt.graphics.Image;
  *		<li>instantiate the part</li>
  *		<li>create a part site</li>
  *		<li>call <code>part.init(site)</code></li>
+ * 	  </ul>
+ *  <li>When a part becomes visible in the workbench:
+ * 	  <ul> 
  *		<li>add part to presentation by calling 
  *        <code>part.createControl(parent)</code> to create actual widgets</li>
  *		<li>fire <code>partOpened</code> event to all listeners</li>
- *		<li>activate the part</li>
  *	  </ul>
  *   </li>
  *  <li>When a part is activated or gets focus:
@@ -68,6 +70,11 @@ import org.eclipse.swt.graphics.Image;
  * <p>
  * The last method called on <code>IWorkbenchPart</code> is <code>dispose</code>.  
  * This signals the end of the part lifecycle.
+ * </p>
+ * <p>
+ * An important point to note about this lifecycle is that following 
+ * a call to init, createControl may never be called. Thus in the dispose
+ * method, implementors must not assume controls were created.
  * </p>
  * <p>
  * Workbench parts implement the <code>IAdaptable</code> interface; extensions
