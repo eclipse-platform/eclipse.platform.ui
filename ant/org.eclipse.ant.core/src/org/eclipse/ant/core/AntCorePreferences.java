@@ -569,6 +569,32 @@ public class AntCorePreferences {
 		}
 		return result;
 	}
+	
+	/**
+	 * Returns the default types defined via the type extension point
+	 * 
+	 * @return all of the default types
+	 */
+	public List getDefaultTypes() {
+		List result = new ArrayList(10);
+		if (defaultTypes != null && !defaultTypes.isEmpty()) {
+			result.addAll(defaultTypes);
+		}
+		return result;
+	}
+	
+	/**
+	 * Returns the default tasks defined via the task extension point
+	 * 
+	 * @return all of the default tasks
+	 */
+	public List getDefaultTasks() {
+		List result = new ArrayList(10);
+		if (defaultTasks != null && !defaultTasks.isEmpty()) {
+			result.addAll(defaultTasks);
+		}
+		return result;
+	}
 
 	/**
 	 * Convert a list of tokens into an array using "," as the tokenizer.
