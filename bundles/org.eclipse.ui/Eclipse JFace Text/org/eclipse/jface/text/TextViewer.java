@@ -723,12 +723,12 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 		 */
 		public void setReplaceAllMode(boolean replaceAll) {
 			if (replaceAll) {
-				TextViewer.this.setRedraw(true);
+				TextViewer.this.setRedraw(false);
 				TextViewer.this.startSequentialRewriteMode(false);
 				if (fUndoManager != null)
 					fUndoManager.beginCompoundChange();
 			} else {
-				TextViewer.this.setRedraw(false);
+				TextViewer.this.setRedraw(true);
 				TextViewer.this.stopSequentialRewriteMode();
 				if (fUndoManager != null)
 					fUndoManager.endCompoundChange();
