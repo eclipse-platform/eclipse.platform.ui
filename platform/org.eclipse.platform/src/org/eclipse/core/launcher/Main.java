@@ -1431,7 +1431,7 @@ public class Main {
 	
 	private void setInstallLocation(String location) {
 		installLocation = location;
-		System.getProperties().setProperty(CFG_INSTALLLOCATION, installLocation); //$NON-NLS-1$
+		System.getProperties().setProperty(CFG_INSTALLLOCATION, installLocation); 
 	}
 	/**
 	 * Return a boolean value indicating whether or not the version of the JVM is
