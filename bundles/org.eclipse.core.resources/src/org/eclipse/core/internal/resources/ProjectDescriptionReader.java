@@ -381,11 +381,15 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	 * @see ErrorHandler#fatalError(SAXParseException)
 	 */
 	public void fatalError(SAXParseException error) throws SAXException {
-		problems.add(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, error.getMessage(), error));
+		// ensure a null value is not passed as message to Status constructor (bug 42782)
+		String message = error.getMessage();
+		problems.add(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, message == null ? "" : message, error));
 		throw error;
 	}
 	protected void log(Exception ex) {
-		problems.add(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, ex.getMessage(), ex));
+		// ensure a null value is not passed as message to Status constructor (bug 42782)		
+		String message = ex.getMessage();
+		problems.add(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, message == null ? "" : message, ex));
 	}
 	private void parseProblem(String errorMessage) {
 		problems.add(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, errorMessage, null));
