@@ -247,7 +247,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 
 	private void registerApplicationService() {
 		ParameterizedRunnable work = new ParameterizedRunnable() {
-			public Object run(Object arg) {
+			public Object run(Object arg) throws Exception {
 				IPlatformRunnable application = null;
 				String applicationId = System.getProperty(PROP_ECLIPSE_APPLICATION);
 				if (applicationId == null) {
@@ -267,28 +267,16 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 				if (configs.length == 0)
 					throw new RuntimeException("Invalid (empty) application extension: " + applicationId);
 				IConfigurationElement config = configs[0];
-				try {
-					application = (IPlatformRunnable) config.createExecutableExtension("run"); //$NON-NLS-1$
-				} catch (CoreException ce) {
-					throw new RuntimeException("Error running application", ce); //$NON-NLS-1$
-				}
+				application = (IPlatformRunnable) config.createExecutableExtension("run"); //$NON-NLS-1$
 				// if the given arg is null the pass in the left over command line args.
 				if (arg == null)
 					arg = InternalPlatform.getDefault().getApplicationArgs();
-				try {
-					Object result = application.run(arg);
-					int exitCode = result instanceof Integer ? ((Integer) result).intValue() : 0;
-					System.setProperty(PROP_ECLIPSE_EXITCODE, Integer.toString(exitCode));
-					if (InternalPlatform.DEBUG)
-						System.out.println(Policy.bind("application.returned", new String[]{applicationId, result.toString()})); //$NON-NLS-1$
-					return result;
-				} catch (RuntimeException re) {
-					// catch separately to avoid unnecessary wrapping
-					throw re;					
-				} catch (Exception e) {
-					// wrap into RuntimeException (TODO: not need after bug 56053 is fixed)
-					throw new RuntimeException("Error running application", e); //$NON-NLS-1$
-				}
+				Object result = application.run(arg);
+				int exitCode = result instanceof Integer ? ((Integer) result).intValue() : 0;
+				System.setProperty(PROP_ECLIPSE_EXITCODE, Integer.toString(exitCode));
+				if (InternalPlatform.DEBUG)
+					System.out.println(Policy.bind("application.returned", new String[]{applicationId, result.toString()})); //$NON-NLS-1$
+				return result;
 			}
 		};
 		Hashtable properties = new Hashtable(1);
