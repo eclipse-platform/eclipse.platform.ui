@@ -75,7 +75,9 @@ public class EmbeddedBrowserHost implements Runnable {
 			HelpUIPlugin.getDefault().getStateLocation().toOSString();
 
 		ieResources = new EmbeddedBrowserResources(locale, installURL);
-		store = new EmbeddedBrowserStore(new File(stateLocation, ".iestore").toString());
+		store =
+			new EmbeddedBrowserStore(
+				new File(stateLocation, ".iestore").toString());
 		store.restore();
 		shellImage = createImage();
 		createShell();
@@ -86,7 +88,9 @@ public class EmbeddedBrowserHost implements Runnable {
 	private EmbeddedBrowserHost() {
 		display = new Display();
 		ieResources = new EmbeddedBrowserResources(locale, installURL);
-		store = new EmbeddedBrowserStore(new File(stateLocation, ".iestore").toString());
+		store =
+			new EmbeddedBrowserStore(
+				new File(stateLocation, ".iestore").toString());
 		store.restore();
 		shellImage = createImage();
 		createShell();
@@ -252,36 +256,34 @@ public class EmbeddedBrowserHost implements Runnable {
 		shell.setSize(w, h);
 		if (store.getBoolean(BROWSER_MAXIMIZED))
 			shell.setMaximized(true);
-		
-		// TODO enable on Windows after 46751 is fixed
-		if (!System.getProperty("os.name").startsWith("Win")) {
-			webBrowser.addOpenWindowListener(new OpenWindowListener() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.swt.browser.NewWindowListener#newWindow(org.eclipse.swt.browser.NewWindowEvent)
-				 */
-				public void open(OpenWindowEvent event) {
-					int dw = 300;
-					int dh = 300;
-					int dx = x + (w - dw) / 2;
-					int dy = y + (h - dh) / 2;
-					if (dy > 50)
-						dy -= 50;
-					EmbeddedBrowserDialog workingSetManagerDialog =
-						new EmbeddedBrowserDialog(
-							shell,
-							productName,
-							createImage(),
-							dx,
-							dy,
-							dw,
-							dh);
-					event.browser = workingSetManagerDialog.getBrowser();
 
-				}
-			});
-		}
+		webBrowser.addOpenWindowListener(new OpenWindowListener() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.browser.NewWindowListener#newWindow(org.eclipse.swt.browser.NewWindowEvent)
+			 */
+			public void open(OpenWindowEvent event) {
+				int dw = 300;
+				int dh = 300;
+				int dx = x + (w - dw) / 2;
+				int dy = y + (h - dh) / 2;
+				if (dy > 50)
+					dy -= 50;
+				EmbeddedBrowserDialog workingSetManagerDialog =
+					new EmbeddedBrowserDialog(
+						shell,
+						productName,
+						createImage(),
+						dx,
+						dy,
+						dw,
+						dh);
+				event.browser = workingSetManagerDialog.getBrowser();
+
+			}
+		});
+		
 		shell.open();
 	}
 	/**
@@ -311,7 +313,8 @@ public class EmbeddedBrowserHost implements Runnable {
 			}
 			reader.close();
 		} catch (IOException e) {
-			System.err.println(EmbeddedBrowserResources.getString("WE026", e.getMessage()));
+			System.err.println(
+				EmbeddedBrowserResources.getString("WE026", e.getMessage()));
 			return;
 		}
 	}
@@ -376,7 +379,8 @@ public class EmbeddedBrowserHost implements Runnable {
 			display.syncExec(new CloseCommand());
 			return;
 		} else {
-			System.err.println(EmbeddedBrowserResources.getString("WE028", command));
+			System.err.println(
+				EmbeddedBrowserResources.getString("WE028", command));
 		}
 	}
 	class SetLocationCommand implements Runnable {

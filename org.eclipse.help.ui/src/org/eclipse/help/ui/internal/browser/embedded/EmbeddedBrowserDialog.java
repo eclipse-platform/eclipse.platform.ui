@@ -59,13 +59,13 @@ public class EmbeddedBrowserDialog {
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		shell.setLayout(layout);
-		
+
 		webBrowser = new Browser(shell, SWT.NONE);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.grabExcessHorizontalSpace = true;
 		data.grabExcessVerticalSpace = true;
-		data.widthHint=w;
-		data.heightHint=h;
+		data.widthHint = w;
+		data.heightHint = h;
 		webBrowser.setLayoutData(data);
 		shell.pack();
 		shell.setLocation(x, y);
@@ -84,14 +84,15 @@ public class EmbeddedBrowserDialog {
 			 * @see org.eclipse.swt.browser.NewWindowListener#newWindow(org.eclipse.swt.browser.NewWindowEvent)
 			 */
 			public void open(OpenWindowEvent event) {
-				int dw=300;
-				int dh=500;
-				int dx=x+(w-dw)/2;
-				int dy=y+(h-dh)/2;
-				dx+=10;
-				if(dy>30) dy-=30;
+				int dw = 300;
+				int dh = 500;
+				int dx = x + (w - dw) / 2;
+				int dy = y + (h - dh) / 2;
+				dx += 10;
+				if (dy > 30)
+					dy -= 30;
 				EmbeddedBrowserDialog workingSetDialog =
-				new EmbeddedBrowserDialog(
+					new EmbeddedBrowserDialog(
 						shell,
 						windowTitle,
 						shellImg,
@@ -100,14 +101,20 @@ public class EmbeddedBrowserDialog {
 						dw,
 						dh);
 				event.browser = workingSetDialog.getBrowser();
+			}
 
+		});
+		webBrowser.addCloseWindowListener(new CloseWindowListener() {
+			public void close(CloseWindowEvent event) {
+				Browser browser = (Browser) event.widget;
+				browser.getShell().close();
 			}
 		});
 	}
 	public boolean isDisposed() {
 		return shell.isDisposed();
 	}
-	public Browser getBrowser(){
+	public Browser getBrowser() {
 		return webBrowser;
 	}
 }

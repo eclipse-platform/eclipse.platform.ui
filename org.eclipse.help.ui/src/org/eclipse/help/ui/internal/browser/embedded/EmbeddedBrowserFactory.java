@@ -27,9 +27,10 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 	 * @see IBrowserFactory#isAvailable()
 	 */
 	public boolean isAvailable() {
-		// TODO enable for all OSes after 46751 is fixed
-		if (true)
-			return System.getProperty("os.name").startsWith("Win");
+		if (!System.getProperty("os.name").startsWith("Win")
+			/*&& !System.getProperty("os.name").startsWith("Linux")*/) {
+			return false;
+		}
 		if (!tested) {
 			tested = true;
 			Shell sh = new Shell();
