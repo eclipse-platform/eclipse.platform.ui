@@ -9,25 +9,26 @@
  **********************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
-import junit.framework.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
- * Runs all job tests
+ * A job that executes asynchronously on a separate thread
  */
-public class AllTests extends TestCase {
-	public AllTests() {
-		super(null);
-	}
-	public AllTests(String name) {
+class AsynchTestJob extends Job {
+	private int [] status;
+	
+	public AsynchTestJob(String name, int [] status) {
 		super(name);
+		this.status = status;
 	}
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
-		suite.addTestSuite(IJobManagerTest.class);
-		suite.addTestSuite(JobQueueTest.class);
-		suite.addTestSuite(OrderedLockTest.class);
-		suite.addTestSuite(BeginEndRuleTest.class);
-		suite.addTestSuite(JobTest.class);
-		return suite;
+			
+	public IStatus run(IProgressMonitor monitor) {
+		Thread t = new Thread(new AsynchExecThread(monitor, this, 100, 10, getName(), status));
+				
+		t.start();
+		return Job.ASYNC_FINISH;
 	}
+		
 }

@@ -9,25 +9,31 @@
  **********************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
-import junit.framework.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
- * Runs all job tests
+ * A scheduling rule class that is a subset of RuleSetA
+ * 
  */
-public class AllTests extends TestCase {
-	public AllTests() {
-		super(null);
+public class RuleSetB extends RuleSetA {
+	private static int nextRule = 0;
+	
+	public boolean contains(ISchedulingRule rule) {
+		return (rule instanceof RuleSetB);
 	}
-	public AllTests(String name) {
-		super(name);
+	
+	/*public boolean isConflicting(ISchedulingRule rule) {
+		if(conflict) {
+			return (rule instanceof RuleSetA);
+		}
+		return (rule == this);
+	}*/
+	
+	int incRule() {
+		return ++nextRule;
 	}
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
-		suite.addTestSuite(IJobManagerTest.class);
-		suite.addTestSuite(JobQueueTest.class);
-		suite.addTestSuite(OrderedLockTest.class);
-		suite.addTestSuite(BeginEndRuleTest.class);
-		suite.addTestSuite(JobTest.class);
-		return suite;
+	
+	String getId() {
+		return "B";
 	}
 }

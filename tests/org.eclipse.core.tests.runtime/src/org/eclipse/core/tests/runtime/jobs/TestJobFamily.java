@@ -9,25 +9,25 @@
  **********************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
-import junit.framework.*;
-
-/**
- * Runs all job tests
- */
-public class AllTests extends TestCase {
-	public AllTests() {
-		super(null);
+public class TestJobFamily {
+	public static final int TYPE_NONE = 0;
+	public static final int TYPE_ONE = 1;
+	public static final int TYPE_TWO = 2;
+	public static final int TYPE_THREE = 3;
+	public static final int TYPE_FOUR = 4;
+	public static final int TYPE_FIVE = 5;
+	 
+	private int type = TYPE_NONE;
+	
+	public TestJobFamily() {
+		this(TYPE_NONE);
 	}
-	public AllTests(String name) {
-		super(name);
+	
+	public TestJobFamily(int type) {
+		this.type = type;
 	}
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
-		suite.addTestSuite(IJobManagerTest.class);
-		suite.addTestSuite(JobQueueTest.class);
-		suite.addTestSuite(OrderedLockTest.class);
-		suite.addTestSuite(BeginEndRuleTest.class);
-		suite.addTestSuite(JobTest.class);
-		return suite;
+	
+	public int getType() {
+		return type;
 	}
 }

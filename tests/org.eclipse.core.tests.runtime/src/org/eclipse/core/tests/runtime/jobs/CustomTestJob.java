@@ -9,25 +9,23 @@
  **********************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
-import junit.framework.*;
-
 /**
- * Runs all job tests
+ * 
  */
-public class AllTests extends TestCase {
-	public AllTests() {
-		super(null);
-	}
-	public AllTests(String name) {
+class CustomTestJob extends TestJob {
+	private int familyType = TestJobFamily.TYPE_NONE;
+	public CustomTestJob(String name, int type) {
 		super(name);
+		familyType = type;
 	}
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
-		suite.addTestSuite(IJobManagerTest.class);
-		suite.addTestSuite(JobQueueTest.class);
-		suite.addTestSuite(OrderedLockTest.class);
-		suite.addTestSuite(BeginEndRuleTest.class);
-		suite.addTestSuite(JobTest.class);
-		return suite;
+	
+	public CustomTestJob(String name, int ticks, int tickLength, int type) {
+		super(name, ticks, tickLength);
+		familyType = type;
 	}
+	
+	public boolean belongsTo(Object family) {
+		return ((family instanceof TestJobFamily) && (((TestJobFamily)family).getType() == familyType));
+	}
+
 }
