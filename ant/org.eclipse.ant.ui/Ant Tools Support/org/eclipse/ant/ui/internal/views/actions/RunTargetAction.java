@@ -59,11 +59,11 @@ public class RunTargetAction extends Action implements IUpdate {
 	 * Executes the selected target or project in the Ant view.
 	 */
 	public void run() {
-		UIJob job= new UIJob("Launching Ant build file") {
+		UIJob job= new UIJob(AntViewActionMessages.getString("RunTargetAction.2")) { //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				TargetNode target= getSelectedTarget();
 				if (target == null) {
-					return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), IStatus.ERROR, "No target found", null);
+					return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), IStatus.ERROR, AntViewActionMessages.getString("RunTargetAction.3"), null); //$NON-NLS-1$
 				}
 				runTarget(target);
 				return Status.OK_STATUS;
