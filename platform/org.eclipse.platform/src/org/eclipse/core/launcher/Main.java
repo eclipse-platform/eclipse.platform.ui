@@ -150,7 +150,6 @@ public class Main {
 	private String showSplash = null;
 	private String endSplash = null;
 	private boolean cmdInitialize = false;
-	private boolean cmdFirstUse = false;
 	private Process showProcess = null;
 	private boolean splashDown = false;
 	private final Runnable endSplashHandler = new Runnable() {
@@ -170,7 +169,6 @@ public class Main {
 	private static final String CONFIGURATION = "-configuration"; //$NON-NLS-1$
 	private static final String SHOWSPLASH = "-showsplash"; //$NON-NLS-1$
 	private static final String ENDSPLASH = "-endsplash"; //$NON-NLS-1$
-	private static final String FIRST_USE = "-firstuse"; //$NON-NLS-1$
 	private static final String SPLASH_IMAGE = "splash.bmp"; //$NON-NLS-1$
 
 	private static final String OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
@@ -825,29 +823,7 @@ public class Main {
 			}
 			bootLocation = resolve(urlString);
 		}
-
-		// reconstruct command line arguments for configuration elements
-		// (-boot and -application are not passed )
-		if (configURL == null && installLocation == null)
-			return passThruArgs;
-
-		ArrayList args = new ArrayList(Arrays.asList(passThruArgs));
-		if (configURL != null) {
-			args.add(0, CONFIGURATION);
-			args.add(1, "file:" + configurationLocation);
-		}
-
-		if (cmdFirstUse) {
-			args.add(0, FIRST_USE);
-		}
-
-		// pass root location downstream
-		if (installLocation != null) {
-			args.add(0, INSTALL);
-			args.add(1, installLocation);
-		}
-
-		return (String[]) args.toArray(new String[0]);
+		return passThruArgs;
 	}
 
 	/**
