@@ -99,12 +99,19 @@ public void createControl(Composite parent) {
 	WorkbenchHelp.setHelp(getControl(), new DialogPageContextComputer(this, IDataTransferHelpContextIds.ZIP_FILE_IMPORT_WIZARD_PAGE));
 }
 /**
- *	Create the import options specification widgets.
+ *	Create the options specification widgets. There is only one
+ * in this case so create no group.
+ *
+ *	@param parent org.eclipse.swt.widgets.Composite
  */
-protected void createOptionsGroupButtons(Group optionsGroup) {
+protected void createOptionsGroup(Composite parent) {
+	
+	//create a spacer first
+	
+	createSpacer(parent);
 	
 	// overwrite... checkbox
-	overwriteExistingResourcesCheckbox = new Button(optionsGroup,SWT.CHECK);
+	overwriteExistingResourcesCheckbox = new Button(parent,SWT.CHECK);
 	overwriteExistingResourcesCheckbox.setText(DataTransferMessages.getString("FileImport.overwriteExisting")); //$NON-NLS-1$
 }
 /**
