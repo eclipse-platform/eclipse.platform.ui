@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.views.console;
 
 import org.eclipse.debug.internal.ui.actions.TerminateActionDelegate;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IViewPart;
@@ -47,4 +48,14 @@ public class ConsoleTerminateActionDelegate extends TerminateActionDelegate {
         fConsoleView = (IConsoleView) view;
         super.init(view);
     }
+
+    public synchronized void dispose() {
+        super.dispose();
+        IViewPart view = getView();
+        if (view != null) {
+            view.getSite().getSelectionProvider().removeSelectionChangedListener((ISelectionChangedListener) getAction());
+        }
+    }
+    
+    
 }

@@ -190,14 +190,18 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/**
 	 * Updates the view title based on the active console
 	 */
-	protected void updateTitle() {
-		IConsole console = getConsole();
-		if (console == null) {
-			setContentDescription(ConsoleMessages.ConsoleView_0); //$NON-NLS-1$
-		} else {
-			setContentDescription(console.getName()); //$NON-NLS-1$
-		}
-	}
+    protected void updateTitle() {
+        IConsole console = getConsole();
+        if (console == null) {
+            setContentDescription(ConsoleMessages.ConsoleView_0); //$NON-NLS-1$
+        } else {
+            String newName = console.getName();
+            String oldName = getContentDescription();
+            if (newName!=null && !(newName.equals(oldName))) {
+                setContentDescription(console.getName()); //$NON-NLS-1$
+            }
+        }
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.PageBookView#doDestroyPage(org.eclipse.ui.IWorkbenchPart, org.eclipse.ui.part.PageBookView.PageRec)
@@ -393,6 +397,9 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 */
 	public void display(IConsole console) {
 	    if (fPinned && fActiveConsole != null) {
+            return;
+        }
+        if (console.equals(fActiveConsole)) {
             return;
         }
 	    ConsoleWorkbenchPart part = (ConsoleWorkbenchPart)fConsoleToPart.get(console);

@@ -97,7 +97,6 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
         
         IDocument document = console.getDocument();
         setDocument(document);
-        document.addDocumentListener(documentListener);
         
         StyledText styledText = getTextWidget();
         styledText.setDoubleClickEnabled(true);
@@ -111,6 +110,8 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
         ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
         propertyChangeListener = new HyperlinkColorChangeListener();
         colorRegistry.addListener(propertyChangeListener);
+        
+        document.addDocumentListener(documentListener);
     }
 
     /**

@@ -185,10 +185,12 @@ public abstract class AbstractConsole implements IConsole {
 	 * @param name the new name
 	 */
 	protected void setName(String name) {
-		String old = fName;
-		fName = name;
-		firePropertyChange(this, IBasicPropertyConstants.P_TEXT, old, name);
-	}
+        if (!name.equals(fName)) {
+            String old = fName;
+            fName = name;
+            firePropertyChange(this, IBasicPropertyConstants.P_TEXT, old, name);
+        }
+    }
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsole#getImageDescriptor()

@@ -21,7 +21,10 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.internal.ViewPluginAction;
  
 /**
  * Removes all terminated/detached launches from the
@@ -93,6 +96,10 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 		//removes as a debug event listener
 		super.dispose();
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+        IViewPart view = getView();
+        if (view != null) {
+            view.getSite().getSelectionProvider().removeSelectionChangedListener((ISelectionChangedListener) getAction());
+        }
 	}
 	
 	/**
