@@ -55,7 +55,7 @@ public class JobListeners {
 	/**
 	 * The global job listeners.
 	 */
-	private final List global = Collections.synchronizedList(new ArrayList());
+	protected final List global = Collections.synchronizedList(new ArrayList());
 
 	/**
 	 * TODO Could use an instance pool to re-use old event objects

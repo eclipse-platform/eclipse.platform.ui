@@ -77,10 +77,6 @@ class WorkerPool {
 			if (JobManager.DEBUG)
 				JobManager.debug("worker added to pool: " + worker); //$NON-NLS-1$
 			worker.start();
-			//threads are considered busy until they start their first job, this ensures
-			//that if several jobs are queued at once, enough threads will be started
-			//to handle them all
-			busyThreads++;
 			return;
 		}
 	}
@@ -103,17 +99,6 @@ class WorkerPool {
 		} finally {
 			sleepingThreads--;
 		}
-	}
-	/**
-	 * Returns a new job to run.  Returns null if the thread should die.
-	 * This method is only called when the very first job is being started by
-	 * a given worker.  This is so we can update the busyThread count
-	 * correctly since threads are considered "busy" in the period between 
-	 * constructor and commencement of their first job.
-	 */
-	protected synchronized Job startFirstJob() {
-		busyThreads--;
-		return startJob();
 	}
 	/**
 	 * Returns a new job to run.  Returns null if the thread should die.

@@ -28,12 +28,12 @@ class ImplicitJobs {
 	 */
 	class ThreadJob extends Job {
 		private ISchedulingRule[] ruleStack;
-		private boolean running = false;
+		protected boolean running = false;
 		private int top;
 		ThreadJob(ISchedulingRule rule) {
 			super("Implicit job"); //$NON-NLS-1$
 			setSystem(true);
-//			setPriority(INTERACTIVE);
+			setPriority(INTERACTIVE);
 			setRule(rule);
 			ruleStack = new ISchedulingRule[2];
 			top = -1;
@@ -88,7 +88,7 @@ class ImplicitJobs {
 	 * Cached of unused instance that can be reused
 	 */
 	private ThreadJob jobCache = null;
-	private JobManager manager;
+	protected JobManager manager;
 	ImplicitJobs(JobManager manager) {
 		this.manager = manager;
 	}
@@ -115,11 +115,11 @@ class ImplicitJobs {
 				else {
 					threadJob = newThreadJob(rule);
 					join = true;
+					//if this job has a rule, then we are essentially acquiring a lock
+					if (rule != null)
+						manager.getLockManager().addLockThread(Thread.currentThread());
 				}
 				threadJobs.put(currentThread, threadJob);
-				//if this job has a rule, then we are essentially acquiring a lock
-				if (rule != null)
-					manager.getLockManager().addLockThread(Thread.currentThread());
 			}
 			threadJob.push(rule);
 		}
