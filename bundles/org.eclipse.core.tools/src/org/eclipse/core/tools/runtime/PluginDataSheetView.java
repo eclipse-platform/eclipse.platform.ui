@@ -12,7 +12,6 @@ package org.eclipse.core.tools.runtime;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.eclipse.core.internal.registry.Extension;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tools.BaseTextView;
