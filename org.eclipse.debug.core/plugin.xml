@@ -16,6 +16,7 @@
 <runtime>
    <library name="dtcore.jar">
       <export name="*"/>
+      <packages prefixes="org.eclipse.debug.core,org.eclipse.debug.internal.core"/>
    </library>
 </runtime>
 
