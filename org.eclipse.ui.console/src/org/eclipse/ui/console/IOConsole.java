@@ -512,55 +512,78 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         	int prevBaseOffset = -1;
         	if (doc != null && !monitor.isCanceled()) {
         	    boolean allDone = true;
-	        	int docLength = doc.getLength();
+	        	int endOfSearch = doc.getLength();
 	        	for (int i = 0; i < patterns.size(); i++) {
 	        	    if (monitor.isCanceled()) {
 	        	        break;
 	        	    }
 	        		CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) patterns.get(i);
 	        		int baseOffset = notifier.end;
-					int length = docLength - baseOffset;
-					if (length > 0) {
+					int lengthToSearch = endOfSearch - baseOffset;
+					if (lengthToSearch > 0) {
 						try {
 							if (prevBaseOffset != baseOffset) {
 								// reuse the text string if possible
-								text = doc.get(baseOffset, length);
+								text = doc.get(baseOffset, lengthToSearch);
 							}
 							Matcher reg = notifier.pattern.matcher(text);
 							Matcher quick = null;
 							if (notifier.qualifier != null) {
 								quick = notifier.qualifier.matcher(text);
 							}
-							int start = 0;
-							while (start < length && !monitor.isCanceled()) {
+							int startOfNextSearch = 0;
+							int endOfLastMatch = -1;
+							int lineOfLastMatch = -1;
+							while (startOfNextSearch < lengthToSearch && !monitor.isCanceled()) {
 								if (quick != null) {
-									if (quick.find(start)) {
-										int line = doc.getLineOfOffset(baseOffset + quick.start());
-										start = doc.getLineOffset(line) - notifier.end;
+									if (quick.find(startOfNextSearch)) {
+										// start searching on the beginning of the line where the potential
+										// match was found, or after the last match on the same line
+										int matchLine = doc.getLineOfOffset(baseOffset + quick.start());
+										if (lineOfLastMatch == matchLine) {
+											startOfNextSearch = baseOffset + endOfLastMatch;
+										} else {
+											startOfNextSearch = doc.getLineOffset(matchLine);
+										}
 									} else {
-										start = length;
+										startOfNextSearch = lengthToSearch;
 									}
 								}
-								if (start < length) {
-									if (reg.find(start)) {
-										start = reg.end();
+								if (startOfNextSearch < lengthToSearch) {
+									if (reg.find(startOfNextSearch)) {
+										endOfLastMatch = reg.end();
+										lineOfLastMatch = doc.getLineOfOffset(baseOffset + endOfLastMatch);
 										int regStart = reg.start();
 										IPatternMatchListener listener = notifier.listener;
 										if (listener != null) {
-										    listener.matchFound(new PatternMatchEvent(IOConsole.this, baseOffset + regStart, start - regStart));
+										    listener.matchFound(new PatternMatchEvent(IOConsole.this, baseOffset + regStart, endOfLastMatch - regStart));
 										}
+										startOfNextSearch = endOfLastMatch;
 									} else {
-										start = length;
+										startOfNextSearch = lengthToSearch;
 									}
 								}
-								notifier.end = baseOffset + start;
+							}
+							// update start of next search to the last line searched
+							// or the end of the last match if it was on the line that
+							// was last searched
+							int lastLineSearched = doc.getLineOfOffset(endOfSearch);
+							if (lastLineSearched == lineOfLastMatch) {
+								notifier.end = baseOffset + endOfLastMatch;
+							} else {
+								notifier.end = doc.getLineOffset(lastLineSearched);
 							}
 		        		} catch (BadLocationException e) {
 		        			ConsolePlugin.log(e);
 		            	}
 					}
 					prevBaseOffset = baseOffset;
-					allDone = allDone && (notifier.end >= doc.getLength()); 
+					try {
+						int lastLineOfDoc = doc.getLineOfOffset(doc.getLength());
+						int lastLineOfNotifier = doc.getLineOfOffset(notifier.end);
+						allDone = allDone && (lastLineOfNotifier >= lastLineOfDoc);
+					} catch (BadLocationException e) {
+					}
 		        }
 	        	if (allDone && partitionerFinished && !monitor.isCanceled()) {
 	        	    firePropertyChange(this, IOConsole.P_CONSOLE_OUTPUT_COMPLETE, null, null);
