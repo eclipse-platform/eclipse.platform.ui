@@ -155,13 +155,7 @@ public class IntroHTMLGenerator {
 	 * <pre>
 	 * 
 	 *     &lt;BODY&gt;
-	 *     &lt;DIV id=&quot;presentation-header&quot;&gt;
-	 *     presentation title
-	 *     &lt;/DIV&gt;
-	 *     &lt;DIV id=&quot;pageId&quot; class=&quot;page-content&quot;&gt;
-	 *     &lt;DIV id=&quot;page-header&quot;&gt;
-	 *     page title
-	 *     &lt;/DIV&gt;
+	 *     &lt;DIV id=&quot;pageId&quot; class=&quot;pageClass&quot;&gt;
 	 *     page content
 	 *     &lt;/DIV&gt;
 	 *     &lt;/BODY&gt;
@@ -188,12 +182,16 @@ public class IntroHTMLGenerator {
 		AbstractIntroElement[] children = introPage.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			AbstractIntroElement child = children[i];
-			// use indentLevel + 2 here, since this element is contained within
-			// the pageContentDiv
-			HTMLElement childElement = generateIntroElement(child,
-					indentLevel + 2);
-			if (childElement != null)
-				pageContentDiv.addContent(childElement);
+			// check to see if this element should be filtered from the HTML 
+			// presentation
+			if(!filteredFromPresentation(child)){
+				// use indentLevel + 2 here, since this element is contained within
+				// the pageContentDiv
+				HTMLElement childElement = generateIntroElement(child,
+						indentLevel + 2);
+				if (childElement != null)
+					pageContentDiv.addContent(childElement);
+			}
 		}
 		body.addContent(pageContentDiv);
 		return body;
@@ -822,4 +820,11 @@ public class IntroHTMLGenerator {
 		span.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, spanClass);
 		return span;
 	}
+	
+    private boolean filteredFromPresentation(AbstractIntroElement element) {
+        if (element.isOfType(AbstractIntroElement.BASE_ELEMENT))
+            return ((AbstractBaseIntroElement) element).isFiltered();
+        else
+            return false;
+    }
 }
