@@ -35,8 +35,10 @@ import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.actions.TeamAction;
@@ -199,7 +201,12 @@ public class TagAction extends TeamAction {
 			RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
 			if (provider == null) return false;
 			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-			if (resource.getType()!=IResource.PROJECT&&!cvsResource.isManaged()) return false;
+			if(cvsResource.isFolder()) {
+				if (! ((ICVSFolder)cvsResource).isCVSFolder()) return false;
+			} else {
+				ResourceSyncInfo info = cvsResource.getSyncInfo();
+				if(info==null || info.isAdded()) return false;
+			}
 		}
 		return true;
 	}
