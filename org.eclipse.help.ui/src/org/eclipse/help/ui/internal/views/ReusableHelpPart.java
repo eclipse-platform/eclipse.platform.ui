@@ -38,6 +38,8 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	public static final int CONTEXT_HELP = 1 << 2;
 
 	public static final int SEARCH = 1 << 3;
+	
+	public static final int BOOKMARKS = 1 << 4;
 
 	private ManagedForm mform;
 
@@ -455,7 +457,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	}
 
 	public ReusableHelpPart(IRunnableContext runnableContext) {
-		this(runnableContext, CONTEXT_HELP | SEARCH | ALL_TOPICS);
+		this(runnableContext, CONTEXT_HELP | SEARCH | ALL_TOPICS | BOOKMARKS);
 	}
 
 	public ReusableHelpPart(IRunnableContext runnableContext, int style) {
@@ -496,6 +498,18 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		page.setVerticalSpacing(0);
 		page.setHorizontalMargin(0);
 		page.addPart(HV_TOPIC_TREE, true);
+		page.addPart(HV_SEE_ALSO, false);
+		pages.add(page);
+		
+		// bookmarks page
+		page = new HelpPartPage(
+				HV_BOOKMARKS_PAGE,
+				HelpUIResources
+						.getString("ReusableHelpPart.bookmarksPage.name"),  //$NON-NLS-1$
+						IHelpUIConstants.IMAGE_BOOKMARKS); //$NON-NLS-1$
+		page.setVerticalSpacing(0);
+		page.setHorizontalMargin(0);
+		page.addPart(HV_BOOKMARKS_TREE, true);
 		page.addPart(HV_SEE_ALSO, false);
 		pages.add(page);
 		// browser page
@@ -795,6 +809,8 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			part = new SeeAlsoPart(parent, mform.getToolkit());
 		} else if (id.equals(HV_FSEARCH)) {
 			part = new SearchPart(parent, mform.getToolkit());
+		} else if (id.equals(HV_BOOKMARKS_TREE)) {
+			part = new BookmarksPart(parent, mform.getToolkit(), tbm);
 		}
 		if (part != null) {
 			part.init(this, id);
@@ -944,6 +960,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		addPageAction(manager, IHelpUIConstants.HV_CONTEXT_HELP_PAGE);
 		addPageAction(manager, IHelpUIConstants.HV_ALL_TOPICS_PAGE);
 		addPageAction(manager, IHelpUIConstants.HV_FSEARCH_PAGE);
+		addPageAction(manager, IHelpUIConstants.HV_BOOKMARKS_PAGE);
 	}
 
 	private void addPageAction(IMenuManager manager, final String pageId) {
@@ -1091,7 +1108,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		if (mng != null) {
 			String label = e.getLabel();
 			String href = (String) e.getHref();
-			if (href != null && href.startsWith("__"))
+			if (href != null && href.startsWith("__")) //$NON-NLS-1$
 				href = null;
 			if (href != null)
 				href = href.replaceAll("&", "&&"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1150,7 +1167,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 				buf.append("&quot;"); //$NON-NLS-1$
 				break;
 			case (int) 160:
-				buf.append(" ");
+				buf.append(" "); //$NON-NLS-1$
 				break;
 			default:
 				buf.append(c);

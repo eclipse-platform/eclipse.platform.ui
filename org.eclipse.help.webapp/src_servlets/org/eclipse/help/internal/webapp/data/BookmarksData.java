@@ -10,14 +10,11 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
-import java.util.*;
-
-import javax.servlet.*;
+import javax.servlet.ServletContext;
 import javax.servlet.http.*;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.base.*;
-import org.eclipse.help.internal.base.util.*;
 
 /**
  * This class manages bookmarks.
@@ -55,19 +52,8 @@ public class BookmarksData extends RequestData {
 			if (title == null) {
 				return;
 			}
-			Preferences prefs = HelpBasePlugin.getDefault()
-					.getPluginPreferences();
-			String bookmarks = prefs.getString(BaseHelpSystem.BOOKMARKS);
-
-			// separate the url and title by vertical bar
-
-			// check for duplicates
-			if (bookmarks.indexOf("," + encode(bookmarkURL) + "|") != -1) //$NON-NLS-1$ //$NON-NLS-2$
-				return;
-			bookmarks = bookmarks
-					+ "," + encode(bookmarkURL) + "|" + encode(title); //$NON-NLS-1$ //$NON-NLS-2$
-			prefs.setValue(BaseHelpSystem.BOOKMARKS, bookmarks);
-			HelpBasePlugin.getDefault().savePluginPreferences();
+			BookmarkManager manager = BaseHelpSystem.getBookmarkManager();
+			manager.addBookmark(bookmarkURL, title);
 		}
 	}
 
@@ -79,44 +65,25 @@ public class BookmarksData extends RequestData {
 			if (title == null) {
 				return;
 			}
-			Preferences prefs = HelpBasePlugin.getDefault()
-					.getPluginPreferences();
-			String bookmarks = prefs.getString(BaseHelpSystem.BOOKMARKS);
-			String removeString = "," + encode(bookmarkURL) + "|" + encode(title); //$NON-NLS-1$ //$NON-NLS-2$
-			int i = bookmarks.indexOf(removeString);
-			if (i == -1)
-				return;
-			bookmarks = bookmarks.substring(0, i)
-					+ bookmarks.substring(i + removeString.length());
-			prefs.setValue(BaseHelpSystem.BOOKMARKS, bookmarks);
-			HelpBasePlugin.getDefault().savePluginPreferences();
+			BookmarkManager manager = BaseHelpSystem.getBookmarkManager();
+			manager.removeBookmark(bookmarkURL, title);
 		}
 	}
 
 	public void removeAllBookmarks() {
-		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-		prefs.setValue(BaseHelpSystem.BOOKMARKS, ""); //$NON-NLS-1$
-		HelpBasePlugin.getDefault().savePluginPreferences();
+		BookmarkManager manager = BaseHelpSystem.getBookmarkManager();
+		manager.removeAllBookmarks();
 	}
 
 	public Topic[] getBookmarks() {
 		// sanity test for infocenter, but this could not work anyway...
 		if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
-			// this is workbench
-			Preferences prefs = HelpBasePlugin.getDefault()
-					.getPluginPreferences();
-			String bookmarks = prefs.getString(BaseHelpSystem.BOOKMARKS);
-			StringTokenizer tokenizer = new StringTokenizer(bookmarks, ","); //$NON-NLS-1$
-			Topic[] topics = new Topic[tokenizer.countTokens()];
-			for (int i = 0; tokenizer.hasMoreTokens(); i++) {
-				String bookmark = tokenizer.nextToken();
-				// url and title are separated by vertical bar
-				int separator = bookmark.indexOf('|');
-
-				String label = decode(bookmark.substring(separator + 1));
-				String href = separator < 0 ? "" //$NON-NLS-1$
-						: decode(bookmark.substring(0, separator));
-				topics[i] = new Topic(label, href);
+			BookmarkManager manager = BaseHelpSystem.getBookmarkManager();
+			IHelpResource [] bookmarks = manager.getBookmarks();
+			Topic [] topics = new Topic[bookmarks.length];
+			for (int i=0; i<bookmarks.length; i++) {
+				IHelpResource bookmark = bookmarks[i];
+				topics[i] = new Topic(bookmark.getLabel(), bookmark.getHref());
 			}
 			return topics;
 		}
@@ -133,21 +100,5 @@ public class BookmarksData extends RequestData {
 			return REMOVE_ALL;
 		else
 			return NONE;
-	}
-	/**
-	 * Ensures that string does not contains ',' or '|' characters.
-	 * 
-	 * @param s
-	 * @return String
-	 */
-	private static String encode(String s) {
-		s = TString.change(s, "\\", "\\escape"); //$NON-NLS-1$ //$NON-NLS-2$
-		s = TString.change(s, ",", "\\comma"); //$NON-NLS-1$ //$NON-NLS-2$
-		return TString.change(s, "|", "\\pipe"); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-	private static String decode(String s) {
-		s = TString.change(s, "\\pipe", "|"); //$NON-NLS-1$ //$NON-NLS-2$
-		s = TString.change(s, "\\comma", ","); //$NON-NLS-1$ //$NON-NLS-2$
-		return TString.change(s, "\\escape", "\\"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

@@ -21,12 +21,18 @@ import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
 
-public class HelpView extends ViewPart implements IPartListener2, ISelectionChangedListener {
+public class HelpView extends ViewPart implements IPartListener2,
+		ISelectionChangedListener {
 	protected FormToolkit toolkit;
+
 	protected IMemento memento;
+
 	protected ReusableHelpPart reusableHelpPart;
+
 	private Hashtable pageRecs;
+
 	private IWorkbenchPart monitoredPart;
+
 	private boolean visible;
 
 	/**
@@ -42,19 +48,23 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	 */
 	public void createPartControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
-		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(HyperlinkGroup.UNDERLINE_HOVER);
-    	//toolkit.setBackground(toolkit.getColors().createNoContentBackground());
+		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
+				HyperlinkGroup.UNDERLINE_HOVER);
+		// toolkit.setBackground(toolkit.getColors().createNoContentBackground());
 		toolkit.getColors().initializeSectionToolBarColors();
 		reusableHelpPart.createControl(parent, toolkit);
-		reusableHelpPart
-				.setDefaultContextHelpText(HelpUIResources.getString("HelpView.defaultText")); //$NON-NLS-1$
+		reusableHelpPart.setDefaultContextHelpText(HelpUIResources
+				.getString("HelpView.defaultText")); //$NON-NLS-1$
 		reusableHelpPart.showPage(getFirstPage());
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (window==null) return;
+		IWorkbenchWindow window = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		if (window == null)
+			return;
 		IWorkbenchPage page = window.getActivePage();
-		if (page==null) return;
+		if (page == null)
+			return;
 		IWorkbenchPartReference aref = page.getActivePartReference();
-		if (aref!=null)
+		if (aref != null)
 			handlePartActivation(aref);
 	}
 
@@ -62,7 +72,7 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		IPartService service = window.getPartService();
-		if (monitoredPart!=null)
+		if (monitoredPart != null)
 			uninstallSelectionListener(monitoredPart);
 		service.removePartListener(this);
 		if (reusableHelpPart != null) {
@@ -79,9 +89,11 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		this.memento = memento;
 		init(site);
-		reusableHelpPart = new ReusableHelpPart(site.getWorkbenchWindow(), getHelpPartStyle());
+		reusableHelpPart = new ReusableHelpPart(site.getWorkbenchWindow(),
+				getHelpPartStyle());
 		IActionBars actionBars = site.getActionBars();
-		reusableHelpPart.init(actionBars, actionBars.getToolBarManager(), actionBars.getStatusLineManager());
+		reusableHelpPart.init(actionBars, actionBars.getToolBarManager(),
+				actionBars.getStatusLineManager());
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		IPartService service = window.getPartService();
@@ -99,62 +111,67 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 		Display display = part.getSite().getShell().getDisplay();
 		Control c = display.getFocusControl();
 		if (c != null && c.isVisible() && !c.isDisposed()) {
-			IContextProvider provider = (IContextProvider)part.getAdapter(IContextProvider.class);
-			if (provider!=null) {
+			IContextProvider provider = (IContextProvider) part
+					.getAdapter(IContextProvider.class);
+			if (provider != null) {
 				if (visible)
 					reusableHelpPart.update(provider, part, c);
-				if ((provider.getContextChangeMask() & IContextProvider.SELECTION)!=0) {
+				if ((provider.getContextChangeMask() & IContextProvider.SELECTION) != 0) {
 					// context help changes with selections
 					installSelectionListener(part);
 				}
-			}
-			else
-				if (visible)
-					reusableHelpPart.update(part, c);
+			} else if (visible)
+				reusableHelpPart.update(part, c);
 		}
 	}
-	
+
 	private void installSelectionListener(IWorkbenchPart part) {
 		ISelectionProvider provider = part.getSite().getSelectionProvider();
 		if (provider instanceof IPostSelectionProvider)
-			((IPostSelectionProvider)provider).addPostSelectionChangedListener(this);
+			((IPostSelectionProvider) provider)
+					.addPostSelectionChangedListener(this);
 		else
 			provider.addSelectionChangedListener(this);
 		monitoredPart = part;
-		//System.out.println("Installing "+part.getSite().getRegisteredName());
+		// System.out.println("Installing "+part.getSite().getRegisteredName());
 	}
+
 	private void uninstallSelectionListener(IWorkbenchPart part) {
 		ISelectionProvider provider = part.getSite().getSelectionProvider();
 		if (provider instanceof IPostSelectionProvider)
-			((IPostSelectionProvider)provider).removePostSelectionChangedListener(this);
+			((IPostSelectionProvider) provider)
+					.removePostSelectionChangedListener(this);
 		else
 			provider.removeSelectionChangedListener(this);
 		monitoredPart = null;
-		//System.out.println("Uninstalling "+part.getSite().getRegisteredName());
+		// System.out.println("Uninstalling
+		// "+part.getSite().getRegisteredName());
 	}
-	
+
 	private boolean isThisPart(IWorkbenchPartReference ref) {
 		IWorkbenchPart part = ref.getPart(false);
-		return part!=null && part.equals(this);
+		return part != null && part.equals(this);
 	}
-	
+
 	private void updateActivePart() {
 		if (reusableHelpPart == null)
 			return;
 		if (!reusableHelpPart.isMonitoringContextHelp())
 			return;
-		if (monitoredPart==null)
+		if (monitoredPart == null)
 			return;
-		IContextProvider provider = (IContextProvider)monitoredPart.getAdapter(IContextProvider.class);
-		Control c = monitoredPart.getSite().getShell().getDisplay().getFocusControl();
-		if (c!=null && c.isDisposed()==false && provider!=null && visible) {
+		IContextProvider provider = (IContextProvider) monitoredPart
+				.getAdapter(IContextProvider.class);
+		Control c = monitoredPart.getSite().getShell().getDisplay()
+				.getFocusControl();
+		if (c != null && c.isDisposed() == false && provider != null && visible) {
 			reusableHelpPart.update(provider, monitoredPart, c);
 		}
 	}
 
 	private void handlePartDeactivation(IWorkbenchPartReference ref) {
 		IWorkbenchPart part = ref.getPart(false);
-		if (monitoredPart!=null && part!=null && part.equals(monitoredPart)) {
+		if (monitoredPart != null && part != null && part.equals(monitoredPart)) {
 			uninstallSelectionListener(part);
 		}
 	}
@@ -169,13 +186,12 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 			visible = true;
 			hook(true);
 			selectionChanged(null);
-		}
-		else {
-		//getSite().getShell().getDisplay().asyncExec(new Runnable() {
-			//public void run() {
-				handlePartActivation(partRef);
-			//}
-		//});
+		} else {
+			// getSite().getShell().getDisplay().asyncExec(new Runnable() {
+			// public void run() {
+			handlePartActivation(partRef);
+			// }
+			// });
 		}
 	}
 
@@ -186,7 +202,7 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	 */
 	public void partBroughtToTop(IWorkbenchPartReference partRef) {
 		if (isThisPart(partRef)) {
-			visible= true;
+			visible = true;
 			hook(true);
 			selectionChanged(null);
 		}
@@ -250,66 +266,80 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	 */
 	public void partVisible(IWorkbenchPartReference partRef) {
 		if (isThisPart(partRef)) {
-			visible=true;
+			visible = true;
 			hook(true);
 			selectionChanged(null);
 		}
 	}
-	
+
 	private void hook(boolean doHook) {
 		if (doHook) {
-			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			IWorkbenchWindow window = PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow();
 			IPartService service = window.getPartService();
 			IWorkbenchPartReference aref = service.getActivePartReference();
-			if (aref!=null)
+			if (aref != null)
 				handlePartActivation(aref);
-		}
-		else {
-			if (monitoredPart!=null) 
+		} else {
+			if (monitoredPart != null)
 				uninstallSelectionListener(monitoredPart);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
-		if (!visible) return;
+		if (!visible)
+			return;
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				updateActivePart();
 			}
 		});
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.help.ui.internal.views.BaseHelpView#getFirstPage()
 	 */
 	protected String getFirstPage() {
 		return IHelpUIConstants.HV_CONTEXT_HELP_PAGE;
 	}
-	
-	public void displayContext(IContext context, IWorkbenchPart part, Control control) {
-		if (reusableHelpPart!=null) {
+
+	public void displayContext(IContext context, IWorkbenchPart part,
+			Control control) {
+		if (reusableHelpPart != null) {
 			// Ensure that context help is currently showing
 			reusableHelpPart.showPage(IHelpUIConstants.HV_CONTEXT_HELP_PAGE);
-			//check if there is a dynamic version
-			IContextProvider provider = (IContextProvider)part.getAdapter(IContextProvider.class);
-			if (provider!=null)
+			// check if there is a dynamic version
+			IContextProvider provider = (IContextProvider) part
+					.getAdapter(IContextProvider.class);
+			if (provider != null)
 				reusableHelpPart.update(provider, part, control);
-			else 
+			else
 				reusableHelpPart.update(context, part, control);
 		}
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.help.ui.internal.views.BaseHelpView#getHelpPartStyle()
 	 */
 	protected int getHelpPartStyle() {
-		return ReusableHelpPart.ALL_TOPICS|ReusableHelpPart.CONTEXT_HELP|ReusableHelpPart.SEARCH;
+		return ReusableHelpPart.ALL_TOPICS | ReusableHelpPart.CONTEXT_HELP
+				| ReusableHelpPart.SEARCH | ReusableHelpPart.BOOKMARKS;
 	}
+
 	public void setFocus() {
 		if (reusableHelpPart != null)
 			reusableHelpPart.setFocus();
 	}
+
 	public void startSearch(String phrase) {
 		if (reusableHelpPart != null)
 			reusableHelpPart.startSearch(phrase);

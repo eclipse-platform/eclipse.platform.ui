@@ -282,7 +282,7 @@ public class ScopeSetDialog extends ListDialog {
 			dialog.addOldName(set.getName());
 		}
 		dialog.create();
-		dialog.getShell().setText(HelpUIResources.getString("RenameDialog.wtitle"));
+		dialog.getShell().setText(HelpUIResources.getString("RenameDialog.wtitle")); //$NON-NLS-1$
 		if (dialog.open()==RenameDialog.OK) {
 			return dialog.getNewName();
 		}

@@ -29,6 +29,8 @@ public interface IHelpUIConstants {
 	public static final String IMAGE_CONTAINER = "obj16/container_obj.gif"; //$NON-NLS-1$
 	public static final String IMAGE_TOC_CLOSED= "obj16/toc_closed.gif"; //$NON-NLS-1$
 	public static final String IMAGE_TOC_OPEN = "obj16/toc_open.gif"; //$NON-NLS-1$
+	public static final String IMAGE_BOOKMARKS = "obj16/bookmarks_view.gif"; //$NON-NLS-1$
+	public static final String IMAGE_BOOKMARK = "obj16/bookmark_obj.gif"; //$NON-NLS-1$
 	public static final String IMAGE_HELP_SEARCH = "etool16/search_menu.gif"; //$NON-NLS-1$
 	public static final String IMAGE_HELP = "etool16/help.gif"; //$NON-NLS-1$
 	public static final String IMAGE_CLEAR = "elcl16/clear.gif"; //$NON-NLS-1$
@@ -46,11 +48,13 @@ public interface IHelpUIConstants {
 	public static final String HV_FSEARCH_RESULT = "fsearch-result"; //$NON-NLS-1$
 	
 	public static final String HV_TOPIC_TREE = "topic-tree"; //$NON-NLS-1$
+	public static final String HV_BOOKMARKS_TREE = "bookmarks-tree"; //$NON-NLS-1$
 	public static final String HV_SEE_ALSO = "see-also"; //$NON-NLS-1$
 	public static final String HV_BROWSER = "browser"; //$NON-NLS-1$
 	public static final String HV_CONTEXT_HELP = "context-help"; //$NON-NLS-1$
 	public static final String HV_FSEARCH_PAGE = "fsearch-page"; //$NON-NLS-1$
 	public static final String HV_ALL_TOPICS_PAGE = "all-topics-page"; //$NON-NLS-1$
+	public static final String HV_BOOKMARKS_PAGE = "bookmarks-page"; //$NON-NLS-1$
 	public static final String HV_BROWSER_PAGE = "browser-page"; //$NON-NLS-1$
 	public static final String HV_CONTEXT_HELP_PAGE = "context-help-page"; //$NON-NLS-1$
 

@@ -75,19 +75,23 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		buf.append(HelpUIResources.getString("SeeAlsoPart.goto")); //$NON-NLS-1$
 		buf.append("</span></p>"); //$NON-NLS-1$
 		buf.append("<p>"); //$NON-NLS-1$
+		int [] counter = new int[1];
 		if ((parent.getStyle() & ReusableHelpPart.ALL_TOPICS) != 0)
-			addPageLink(buf, HelpUIResources.getString("SeeAlsoPart.allTopics"), IHelpUIConstants.HV_ALL_TOPICS_PAGE, //$NON-NLS-1$
+			addPageLink(buf, counter, HelpUIResources.getString("SeeAlsoPart.allTopics"), IHelpUIConstants.HV_ALL_TOPICS_PAGE, //$NON-NLS-1$
 				IHelpUIConstants.IMAGE_TOC_OPEN);
 		if ((parent.getStyle() & ReusableHelpPart.SEARCH) != 0) {
-			addSpace(buf, 3);
-			addPageLink(buf, HelpUIResources.getString("SeeAlsoPart.search"), IHelpUIConstants.HV_FSEARCH_PAGE, //$NON-NLS-1$
+			addPageLink(buf, counter, HelpUIResources.getString("SeeAlsoPart.search"), IHelpUIConstants.HV_FSEARCH_PAGE, //$NON-NLS-1$
 				IHelpUIConstants.IMAGE_HELP_SEARCH);
 		}
 		if ((parent.getStyle() & ReusableHelpPart.CONTEXT_HELP) != 0) {
-			addSpace(buf, 3);
-			addPageLink(buf, HelpUIResources.getString("SeeAlsoPart.contextHelp"), //$NON-NLS-1$
+			addPageLink(buf, counter, HelpUIResources.getString("SeeAlsoPart.contextHelp"), //$NON-NLS-1$
 				IHelpUIConstants.HV_CONTEXT_HELP_PAGE,
 				IHelpUIConstants.IMAGE_CONTAINER);
+		}
+		if ((parent.getStyle() & ReusableHelpPart.BOOKMARKS) != 0) {
+			addPageLink(buf, counter, HelpUIResources.getString("SeeAlsoPart.bookmarks"), //$NON-NLS-1$
+				IHelpUIConstants.HV_BOOKMARKS_PAGE,
+				IHelpUIConstants.IMAGE_BOOKMARKS);
 		}
 		buf.append("</p>"); //$NON-NLS-1$
 		buf.append("</form>"); //$NON-NLS-1$
@@ -100,20 +104,22 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		}
 	}
 
-	private void addPageLink(StringBuffer buf, String text, String id,
+	private void addPageLink(StringBuffer buf, int [] counter, String text, String id,
 			String imgRef) {
 		String cid = parent.getCurrentPageId();
 		if (cid!=null && cid.equals(id))
 			return;
-		buf.append("<img href=\""); //$NON-NLS-1$
-		buf.append(imgRef);
-		buf.append("\"/>"); //$NON-NLS-1$
-		addSpace(buf, 1);
+		if (counter[0]>0) addSpace(buf, 3);		
 		buf.append("<a href=\""); //$NON-NLS-1$
 		buf.append(id);
 		buf.append("\">"); //$NON-NLS-1$
+		buf.append("<img href=\""); //$NON-NLS-1$
+		buf.append(imgRef);
+		buf.append("\"/>"); //$NON-NLS-1$
+		addSpace(buf, 1);	
 		buf.append(text);
 		buf.append("</a>"); //$NON-NLS-1$
+		counter[0]++;
 	}
 
 	/*
@@ -136,6 +142,7 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		hookImage(IHelpUIConstants.IMAGE_HELP_SEARCH);
 		hookImage(IHelpUIConstants.IMAGE_TOC_OPEN);
 		hookImage(IHelpUIConstants.IMAGE_CONTAINER);
+		hookImage(IHelpUIConstants.IMAGE_BOOKMARKS);
 		loadText();	
 	}
 

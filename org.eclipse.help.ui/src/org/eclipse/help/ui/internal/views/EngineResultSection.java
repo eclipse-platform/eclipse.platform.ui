@@ -214,8 +214,8 @@ public class EngineResultSection {
 			buff.append("<form>"); //$NON-NLS-1$
 			buff.append("<p><span color=\"summary\">");//$NON-NLS-1$
 			buff.append(HelpUIResources.getString("EngineResultSection.canceling")); //$NON-NLS-1$
-			buff.append("</span></p>");
-			buff.append("</form>");
+			buff.append("</span></p>"); //$NON-NLS-1$
+			buff.append("</form>"); //$NON-NLS-1$
 			searchResults.setText(buff.toString(), true, false);
 		}
 	}
@@ -401,7 +401,7 @@ public class EngineResultSection {
 			int remainder = hits.size() - nextOffset;
 			remainder = Math.min(remainder, HITS_PER_PAGE);
 				
-			nextLink.setText(HelpUIResources.getString("EngineResultSection.next", ""+remainder)); //$NON-NLS-1$
+			nextLink.setText(HelpUIResources.getString("EngineResultSection.next", ""+remainder)); //$NON-NLS-1$ //$NON-NLS-2$
 			nextLink.setVisible(hits.size() >= resultOffset + HITS_PER_PAGE);
 		} else {
 			if (prevLink != null) {

@@ -46,6 +46,8 @@ public final class BaseHelpSystem {
 	protected SearchManager searchManager;
 
 	protected WorkingSetManager workingSetManager;
+	
+	protected BookmarkManager bookmarkManager;
 
 	private int mode = MODE_WORKBENCH;
 
@@ -102,6 +104,18 @@ public final class BaseHelpSystem {
 		}
 		return getInstance().workingSetManager;
 	}
+	
+	/**
+	 * Used to obtain Bookmark Manager
+	 * 
+	 * @return instance of BookmarkManager
+	 */
+	public static synchronized BookmarkManager getBookmarkManager() {
+		if (getInstance().bookmarkManager == null) {
+			getInstance().bookmarkManager = new BookmarkManager();
+		}
+		return getInstance().bookmarkManager;
+	}	
 
 	public static synchronized IBrowser getHelpBrowser(boolean forceExternal) {
 		if (!forceExternal) {
