@@ -553,8 +553,12 @@ public class AntModel {
 			
 			int correction= 0;
 			if (element.getOffset() == -1) {
-				int nonWhitespaceOffset= getNonWhitespaceOffset(line, startColumn);
 				int originalOffset= getOffset(line, startColumn);
+				int nonWhitespaceOffset= originalOffset; 
+				try {
+					nonWhitespaceOffset= getNonWhitespaceOffset(line, startColumn);
+				} catch (BadLocationException be) {
+				}
 				element.setOffset(nonWhitespaceOffset);
 				correction= nonWhitespaceOffset - originalOffset;
 			}
@@ -572,17 +576,18 @@ public class AntModel {
 	public void fatalError(Exception exception) {
 		AntElementNode node= (AntElementNode)fStillOpenElements.peek();
 		generateExceptionOutline(node);
-		try {
-			if (exception instanceof SAXParseException) {
-				SAXParseException parseException= (SAXParseException)exception;
-				if (node.getOffset() == -1) { 
-					computeEndLocationForErrorNode(node, parseException.getLineNumber() - 1, parseException.getColumnNumber());
-				} else {
-					int lineNumber= parseException.getLineNumber();
-					int columnNumber= parseException.getColumnNumber();
-					if (columnNumber == -1) {
-						columnNumber= 1;
-					}
+		
+		if (exception instanceof SAXParseException) {
+			SAXParseException parseException= (SAXParseException)exception;
+			if (node.getOffset() == -1) { 
+				computeEndLocationForErrorNode(node, parseException.getLineNumber() - 1, parseException.getColumnNumber());
+			} else {
+				int lineNumber= parseException.getLineNumber();
+				int columnNumber= parseException.getColumnNumber();
+				if (columnNumber == -1) {
+					columnNumber= 1;
+				}
+				try {
 					AntElementNode childNode= node.getNode(getNonWhitespaceOffset(lineNumber, columnNumber) + 1);
 					if (childNode != null && childNode != node) {
 						node= childNode;
@@ -590,10 +595,10 @@ public class AntModel {
 					} else {
 						node= createProblemElement(parseException);
 					}
+				} catch (BadLocationException be) {
+					node= createProblemElement(parseException);
 				}
 			}
-		}catch (BadLocationException be) {
-			return;
 		}
 		
 		notifyProblemRequestor(exception, node, XMLProblem.SEVERTITY_FATAL_ERROR);
