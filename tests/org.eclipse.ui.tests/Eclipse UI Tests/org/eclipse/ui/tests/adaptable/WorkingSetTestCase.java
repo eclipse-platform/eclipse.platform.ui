@@ -107,6 +107,10 @@ public class WorkingSetTestCase extends UITestCase {
         assertTrue(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set=one"}, null));
         assertTrue(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set=one", "allowUnsetProjects"}, null));
 
+        // Test with a closed project in the set
+        ((IProject)resources[0]).close(null);
+        assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set=one"}, null));
+        assertTrue(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set=one", "allowUnsetProjects"}, null));
     }
 
 }

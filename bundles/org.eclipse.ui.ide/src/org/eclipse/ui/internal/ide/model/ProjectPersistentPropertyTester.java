@@ -65,7 +65,7 @@ public class ProjectPersistentPropertyTester extends PropertyTester {
                         // Check to see if the persistant property is present
                         // If it is, we fail since it must be set to somethings else
                         try {
-                            if (project != null && project.getPersistentProperty(getPropertyKey(persitentPropertyEntry)) != null)
+                            if (project != null && project.isAccessible() && project.getPersistentProperty(getPropertyKey(persitentPropertyEntry)) != null)
                                 return false;
                         } catch (CoreException e) {
                             final String message = "Core exception while testing project persistent property"; //$NON-NLS-1$
