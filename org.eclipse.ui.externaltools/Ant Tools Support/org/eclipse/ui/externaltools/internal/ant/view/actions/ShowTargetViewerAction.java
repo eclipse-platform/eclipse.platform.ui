@@ -29,7 +29,7 @@ public class ShowTargetViewerAction extends Action {
 	 * @see Action#run()
 	 */
 	public void run() {
-		//getAntView().toggleTargetViewer(isChecked());
+		//all the work occurs on setChecked(booelean)
 	}
 
 	/**
