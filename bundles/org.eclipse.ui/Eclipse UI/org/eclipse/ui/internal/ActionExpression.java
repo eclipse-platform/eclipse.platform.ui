@@ -62,7 +62,7 @@ public class ActionExpression {
 			childExpr = new ObjectClassExpression();
 			childExpr.readFrom(element);
 		} else {
-			throw new IllegalStateException("Unreconized element: " + tag);
+			throw new IllegalStateException("Unreconized element: " + tag); //$NON-NLS-1$
 		}
 		return childExpr;
 	}
@@ -80,7 +80,7 @@ public class ActionExpression {
 		{
 			IConfigurationElement [] children = element.getChildren();
 			if (children.length == 0)
-				throw new IllegalStateException("Expression must have 1 or more children");
+				throw new IllegalStateException("Expression must have 1 or more children"); //$NON-NLS-1$
 			for (int nX = 0; nX < children.length; nX ++) {
 				String tag = children[nX].getName();
 				AbstractExpression expr = createExpression(children[nX]);
@@ -107,7 +107,7 @@ public class ActionExpression {
 		{
 			IConfigurationElement [] children = element.getChildren();
 			if (children.length != 1)
-				throw new IllegalStateException("Expression must have 1 child");
+				throw new IllegalStateException("Expression must have 1 child"); //$NON-NLS-1$
 			child = createExpression(children[0]);
 		}
 		public boolean isEnabledFor(Object obj) {

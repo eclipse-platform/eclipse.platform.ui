@@ -23,6 +23,7 @@ public class ObjectActionContributor extends PluginActionBuilder
 	private boolean configRead=false;
 	static final String ATT_NAME_FILTER="nameFilter";//$NON-NLS-1$
 	private ObjectFilterTest filterTest;
+	private ActionExpression visibilityTest;
 /**
  * The constructor.
  */
@@ -113,10 +114,15 @@ public boolean isApplicableTo(Object object) {
 	if (!testName(object))
 		return false;
 
+	// Test visibility filter.
+	if (visibilityTest != null)
+		return visibilityTest.isEnabledFor(object);
+		
 	// Test custom filter.
-	if (filterTest == null)
-		return true;
-	return filterTest.matches(object, true);
+	if (filterTest != null)
+		return filterTest.matches(object, true);
+		
+	return true;
 }
 /**
  * Reads the configuration element and all the children.
@@ -134,7 +140,9 @@ private void readConfigElement() {
  */
 protected boolean readElement(IConfigurationElement element) {
 	String tag = element.getName();
-	if (tag.equals(PluginActionBuilder.TAG_FILTER)) {
+	if (tag.equals(PluginActionBuilder.TAG_VISIBILITY)) {
+		visibilityTest = new ActionExpression(element);
+	} else if (tag.equals(PluginActionBuilder.TAG_FILTER)) {
 		if (filterTest == null)
 			filterTest = new ObjectFilterTest();
 		filterTest.addFilterElement(element);
