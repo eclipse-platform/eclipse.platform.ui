@@ -354,7 +354,7 @@
 		</view>
 	</extension>
 	
-	<!-- **************** PREFERENCES ******************* -->
+	<!-- **************** Preferences ******************* -->
 	<extension
 		point = "org.eclipse.ui.preferencePages">
 			<page id="org.eclipse.team.cvs.ui.CVSPreferences"
@@ -419,7 +419,7 @@
      </viewContribution>
    </extension> 
 
-	<!-- **************** MARKERS ******************* -->
+	<!-- **************** Markers ******************* -->
 	<extension point="org.eclipse.ui.markerResolution">
 		<markerResolutionGenerator
 			markerType="org.eclipse.team.cvs.core.cvsremove" 
@@ -430,4 +430,23 @@
 			class="org.eclipse.team.internal.ccvs.ui.CVSAddResolutionGenerator">
 		</markerResolutionGenerator>
 	</extension>
+
+	<!-- **************** CVS Perspective ******************* -->
+   <extension 
+        point="org.eclipse.ui.perspectives"> 
+        <perspective 
+            id="org.eclipse.team.cvs.ui.cvsPerspective" 
+            name="%CVS" 
+            class="org.eclipse.team.internal.ccvs.ui.CVSPerspective" 
+            icon="icons/full/cview16/cvs_persp.gif"> 
+        </perspective> 
+    </extension> 
+    
+	<!-- ************** Perspective Extensions **************** -->
+	<extension 
+		point="org.eclipse.ui.perspectiveExtensions">
+		<perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+			<perspectiveShortcut id="org.eclipse.team.cvs.ui.cvsPerspective"/>
+		</perspectiveExtension>
+  </extension>
 </plugin>

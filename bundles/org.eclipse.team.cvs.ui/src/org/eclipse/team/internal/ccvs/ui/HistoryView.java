@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -408,25 +409,19 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 				if (!(inputElement instanceof ICVSRemoteFile)) return null;
 				final ICVSRemoteFile remoteFile = (ICVSRemoteFile)inputElement;
 				final Object[][] result = new Object[1][];
-				try {
-					new ProgressMonitorDialog(getViewSite().getShell()).run(true, true, new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							try {
-								entries = remoteFile.getLogEntries(monitor);
-								result[0] = entries;
-							} catch (TeamException e) {
-								throw new InvocationTargetException(e);
-							}
+				final TeamException[] ex = new TeamException[1];
+				BusyIndicator.showWhile(getViewSite().getShell().getDisplay(), new Runnable() {
+					public void run() {
+						try {
+							entries = remoteFile.getLogEntries(new NullProgressMonitor());
+							result[0] = entries;
+						} catch (TeamException e) {
+							ex[0] = e;
 						}
-					});
-				} catch (InvocationTargetException e) {
-					Throwable t = e.getTargetException();
-					if (t instanceof TeamException) {
-						ErrorDialog.openError(getViewSite().getShell(), null, null, ((TeamException)t).getStatus());
 					}
-					return new Object[0];
-				} catch (InterruptedException e) {
-					// Do nothing
+				});
+				if (ex[0] != null) {
+					ErrorDialog.openError(getViewSite().getShell(), null, null, ex[0].getStatus());
 					return new Object[0];
 				}
 				return result[0];				
