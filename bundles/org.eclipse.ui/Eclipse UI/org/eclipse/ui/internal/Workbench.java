@@ -267,14 +267,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		}
 	}
 
-	/*
-	 * @see IWorkbench#clonePage(IWorkbenchPage)
-	 * @deprecated This experimental API will be removed.
-	 */
-	public IWorkbenchPage clonePage(IWorkbenchPage page) throws WorkbenchException {
-		return null;
-	}
-
 	/**
 	 * Closes the workbench.
 	 */
@@ -828,23 +820,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 	}
 	/**
-	 * Opens a new page with the default perspective.
-	 * The "Open Perspective" and "Reuse Perspective" preferences are consulted and implemented.
-	 * @deprecated This experimental API will be removed.
-	 */
-	public IWorkbenchPage openPage(IAdaptable input) throws WorkbenchException {
-		return showPerspective(getPerspectiveRegistry().getDefaultPerspective(), getActiveWorkbenchWindow(), input);
-	}
-	/**
-	 * Opens a new workbench page with a specified perspective and input.
-	 * The "Open Perspective" and "Reuse Perspective" preferences are consulted and implemented.
-	 * @deprecated This experimental API will be removed.
-	 */
-	public IWorkbenchPage openPage(String perspId, IAdaptable input, int keyStateMask) throws WorkbenchException {
-		return showPerspective(perspId, getActiveWorkbenchWindow(), input);
-	}
-	
-	/**
 	 * Opens a new window and page with the default perspective.
 	 */
 	public IWorkbenchWindow openWorkbenchWindow(IAdaptable input) throws WorkbenchException {
@@ -1189,7 +1164,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		Assert.isNotNull(perspectiveId);
 		
 		// If the specified window has the requested perspective open, then the window
-		// is given focus and the perspective is shown. Page's input is ignored.
+		// is given focus and the perspective is shown. The page's input is ignored.
 		WorkbenchWindow win = (WorkbenchWindow) window;
 		if (win != null) {
 			WorkbenchPage page = win.getActiveWorkbenchPage();
@@ -1232,19 +1207,28 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		}
 			
 		// Otherwise the requested perspective is opened and shown in the specified
-		// window, and the window is given focus.
+		// window or in a new window depending on the current user preference for opening
+		// perspectives, and that window is given focus.
 		win = (WorkbenchWindow) window;
 		if (win != null) {
-			IWorkbenchPage page = win.getActiveWorkbenchPage();
-			IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
-			if (desc == null)
-				throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
-			win.getShell().open();
-			if (page == null)
-				page = win.openPage(perspectiveId, input);
-			else
-				page.setPerspective(desc);
-			return page;
+			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+			int mode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
+			
+			if (IPreferenceConstants.OPM_NEW_WINDOW == mode) {
+				IWorkbenchWindow newWindow = openWorkbenchWindow(perspectiveId, input);
+				return newWindow.getActivePage();
+			} else {
+				IWorkbenchPage page = win.getActiveWorkbenchPage();
+				IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
+				if (desc == null)
+					throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
+				win.getShell().open();
+				if (page == null)
+					page = win.openPage(perspectiveId, input);
+				else
+					page.setPerspective(desc);
+				return page;
+			}
 		}
 
 		// Just throw an exception....
@@ -1311,17 +1295,23 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		}
 
 		// If the specified window has the same requested input but not the requested
-		// perspective, then the window is given focus and the perspective is opened and shown.
+		// perspective, then the window is given focus and the perspective is opened and shown
+		// on condition that the user preference is not to open perspectives in a new window.
 		if (inputSameAsWindow) {
-			WorkbenchPage page = win.getActiveWorkbenchPage();
-			if (page != null) {
-				IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
-				if (desc == null)
-					throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
-				win.getShell().open();
-				page.setPerspective(desc);
-				return page;
-			}			
+			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+			int mode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
+			
+			if (IPreferenceConstants.OPM_NEW_WINDOW != mode) {
+				WorkbenchPage page = win.getActiveWorkbenchPage();
+				if (page != null) {
+					IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
+					if (desc == null)
+						throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
+					win.getShell().open();
+					page.setPerspective(desc);
+					return page;
+				}
+			}
 		}
 		
 		// Otherwise the requested perspective is opened and shown in a new window, and the

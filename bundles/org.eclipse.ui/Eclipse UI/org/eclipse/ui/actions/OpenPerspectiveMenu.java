@@ -130,7 +130,7 @@ private void openPage(IPerspectiveDescriptor desc, int keyStateMask) {
 
 	// Open the page.
 	try {
-		getWindow().getWorkbench().openPage(desc.getId(), pageInput, keyStateMask);
+		getWindow().getWorkbench().showPerspective(desc.getId(), getWindow(), pageInput);
 	} catch (WorkbenchException e) {
 		MessageDialog.openError(
 			getWindow().getShell(),

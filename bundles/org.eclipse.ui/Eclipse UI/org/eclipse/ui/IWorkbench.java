@@ -58,21 +58,6 @@ public void addWindowListener(IWindowListener listener);
  */
 public void removeWindowListener(IWindowListener l);
 /**
- * Creates a copy of an existing workbench page, and opens it in the workbench.
- * If the user preference for "Open Perspective" is "in current window", the 
- * page will be created in the current window.  Otherwise, it will be created 
- * in a new window.
- * On return, the new window and new page will be active.
- *
- * @param page the page to clone
- * @return the new workbench page
- * @exception WorkbenchException if a new page could not be opened
- * @since 2.0
- * @deprecated This experimental API will be removed.
- */
-public IWorkbenchPage clonePage(IWorkbenchPage page) 
-	throws WorkbenchException;
-/**
  * Closes this workbench and all its open windows.
  * <p>
  * If the workbench has an open editor with unsaved content, the user will be
@@ -144,69 +129,6 @@ public IWorkbenchWindow[] getWorkbenchWindows();
  */
 public IWorkingSetManager getWorkingSetManager();
 /**
- * Shows a workbench page with the given input using the default perspective.
- * Same as calling <code>openPage(input, getPerspectiveRegistry().getDefaultPerspective())</code>.
- * 
- * @param input the page input, or <code>null</code> if there is no current input.
- *		This is used to seed the input for the new page's views.
- * @return the workbench page which was opened or activated
- * @exception WorkbenchException if a new page could not be opened
- * @since 2.0
- * @deprecated This experimental API will be removed.
- * @see IWorkbench#showPerspective
- */
-public IWorkbenchPage openPage(IAdaptable input) 
-	throws WorkbenchException;
-/**
- * Shows a workbench page with the given input and perspective.
- * This may either create a new page or reuse an existing page,
- * depending on workbench preferences such as the "Open Perspective"
- * and "Reuse Perspectives" settings.
- * <p>
- * The exact policy for this is controlled by the workbench, and is subject to change.
- * The current policy is as follows:
- * <ul>
- * <li>
- * If there is an existing page with the given perspective and the same input,
- * it is activated instead of creating a new one.
- * </li>
- * <li>
- * Otherwise, if the "Reuse Perspectives" setting is checked and there is an 
- * existing page with the same input, it is activated and its perspective is
- * switched to the given perpective.
- * </li>
- * <li>
- * Otherwise, a new page is created with the given perspective. 
- * If the user preference for "Open Perspective" is "In a new window", 
- * the page is created in a new window.  
- * Otherwise, it is created in the current window.
- * On return, the new window and new page are active.
- * </li>
- * </ul>
- * </p>
- * <p>
- * In most cases where this method is used, the caller is tightly coupled to
- * a particular perspective, and may even define it in the registry.
- * </p>
- * <p>
- * A complete list of available perspectives can be retrieved from the perspective 
- * registry.
- * </p>
- * 
- * @param perspId the perspective id to show
- * @param input the page input, or <code>null</code> if there is no current input.
- *		This is used to seed the input for the page's views
- * @param keyState the state of the keyboard modifier keys, or 0 if undefined
- * @return the workbench page which was opened or activated
- * @exception WorkbenchException if a new page could not be opened
- * @see #getPerspectiveRegistry
- * @since 2.0
- * @deprecated This experimental API will be removed.
- * @see IWorkbench#showPerspective
- */
-public IWorkbenchPage openPage(String perspId, IAdaptable input, int keyState) 
-	throws WorkbenchException;
-/**
  * Creates and opens a new workbench window with one page.  The perspective of
  * the new page is defined by the specified perspective ID.  The new window and new 
  * page become active.
@@ -273,6 +195,7 @@ public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
  * @since 2.0
  */
 public boolean restart();
+
 /**
  * Shows the specified perspective to the user. The caller should use this method
  * when the perspective to be shown is not dependent on the page's input. That is,
@@ -285,13 +208,14 @@ public boolean restart();
  * <ul>
  * <li>
  * If the specified window has the requested perspective open, then the window
- * is given focus and the perspective is shown. Page's input is ignored.
+ * is given focus and the perspective is shown. The page's input is ignored.
  * </li><li>
  * If another window that has the workspace root as input and the requested
  * perpective open and active, then the window is given focus.
  * </li><li>
  * Otherwise the requested perspective is opened and shown in the specified
- * window, and the window is given focus.
+ * window or in a new window depending on the current user preference for opening
+ * perspectives, and that window is given focus.
  * </li>
  * </ul>
  * </p><p>
@@ -309,6 +233,7 @@ public boolean restart();
  */
 public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window) 
 	throws WorkbenchException;
+
 /**
  * Shows the specified perspective to the user. The caller should use this method
  * when the perspective to be shown is dependent on the page's input. That is,
@@ -327,7 +252,8 @@ public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow win
  * perpective open and active, then that window is given focus.
  * </li><li>
  * If the specified window has the same requested input but not the requested
- * perspective, then the window is given focus and the perspective is opened and shown.
+ * perspective, then the window is given focus and the perspective is opened and shown
+ * on condition that the user preference is not to open perspectives in a new window.
  * </li><li>
  * Otherwise the requested perspective is opened and shown in a new window, and the
  * window is given focus.
