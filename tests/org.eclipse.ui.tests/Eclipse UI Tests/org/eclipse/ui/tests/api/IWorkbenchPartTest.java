@@ -41,7 +41,7 @@ public abstract class IWorkbenchPartTest extends UITestCase {
 	
 	public void testOpenAndClose() throws Throwable {
 		// Open a part.
-		MockWorkbenchPart part = openPart(fPage);
+		MockPart part = openPart(fPage);
 		CallHistory history = part.getCallHistory();
 		assertTrue(history.verifyOrder(new String[] {
 			"init", "createPartControl", "setFocus" }));
@@ -55,13 +55,13 @@ public abstract class IWorkbenchPartTest extends UITestCase {
 	/**
 	 * Opens a part.  Subclasses should override
 	 */
-	protected abstract MockWorkbenchPart openPart(IWorkbenchPage page) 
+	protected abstract MockPart openPart(IWorkbenchPage page) 
 		throws Throwable;
 	
 	/**
 	 * Closes a part.  Subclasses should override
 	 */
-	protected abstract void closePart(IWorkbenchPage page, MockWorkbenchPart part) 
+	protected abstract void closePart(IWorkbenchPage page, MockPart part) 
 		throws Throwable;
 }
 

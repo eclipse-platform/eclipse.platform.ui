@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.intro;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 
@@ -37,8 +41,13 @@ import org.eclipse.ui.PartInitException;
  * @see org.eclipse.ui.intro.IIntroManager#showIntro(org.eclipse.ui.IWorkbenchWindow, boolean)
  * @since 3.0
  */
-public interface IIntroPart extends IWorkbenchPart {
+public interface IIntroPart extends IAdaptable {
 
+    /**
+	 * The property id for <code>getTitleImage</code>.
+	 */
+	public static final int PROP_TITLE = IWorkbenchPart.PROP_TITLE;
+	
 	/**
 	 * Returns the site for this intro part.
 	 * 
@@ -63,7 +72,7 @@ public interface IIntroPart extends IWorkbenchPart {
 	 * @exception PartInitException if this part was not initialized
 	 * successfully
 	 */
-	void init(IIntroSite site, IMemento memento) throws PartInitException;
+	public void init(IIntroSite site, IMemento memento) throws PartInitException;
 
 	/**
 	 * Sets the standby state of this intro part. An intro part should render
@@ -80,7 +89,7 @@ public interface IIntroPart extends IWorkbenchPart {
 	 * @param standby <code>true</code> to put this part in its partially
 	 * visible standy mode, and <code>false</code> to make it fully visible
 	 */
-	void standbyStateChanged(boolean standby);
+	public void standbyStateChanged(boolean standby);
 
     /**
 	 * Saves the object state within a memento.
@@ -91,5 +100,93 @@ public interface IIntroPart extends IWorkbenchPart {
 	 *
 	 * @param memento a memento to receive the object state
 	 */
-	void saveState(IMemento memento);
+	public void saveState(IMemento memento);
+	
+	/**
+	 * Adds a listener for changes to properties of this intro part.
+	 * Has no effect if an identical listener is already registered.
+	 * <p>
+	 * The properties ids are as follows:
+	 * <ul>
+	 *   <li><code>IIntroPart.PROP_TITLE</code> </li>
+	 * </ul>
+	 * </p>
+	 *
+	 * @param listener a property listener
+	 */
+	public void addPropertyListener(IPropertyListener listener);
+	
+	/**
+	 * Creates the SWT controls for this intro part.
+	 * <p>
+	 * Clients should not call this method (the workbench calls this method when
+	 * it needs to, which may be never).
+	 * </p>
+	 * <p>
+	 * For implementors this is a multi-step process:
+	 * <ol>
+	 *   <li>Create one or more controls within the parent.</li>
+	 *   <li>Set the parent layout as needed.</li>
+	 *   <li>Register any global actions with the <code>IActionService</code>.</li>
+	 *   <li>Register any popup menus with the <code>IActionService</code>.</li>
+	 *   <li>Register a selection provider with the <code>ISelectionService</code>
+	 *     (optional). </li>
+	 * </ol>
+	 * </p>
+	 *
+	 * @param parent the parent control
+	 */
+	public void createPartControl(Composite parent);
+	
+	/**
+	 * Disposes of this intro part.
+	 * <p>
+	 * This is the last method called on the <code>IIntroPart</code>.  At this
+	 * point the part controls (if they were ever created) have been disposed as part 
+	 * of an SWT composite.  There is no guarantee that createPartControl() has been 
+	 * called, so the part controls may never have been created.
+	 * </p>
+	 * <p>
+	 * Within this method a part may release any resources, fonts, images, etc.&nbsp; 
+	 * held by this part.  It is also very important to deregister all listeners
+	 * from the workbench.
+	 * </p>
+	 * <p>
+	 * Clients should not call this method (the workbench calls this method at
+	 * appropriate times).
+	 * </p>
+	 */
+	public void dispose();
+
+	/**
+	 * Returns the title image of this intro part.  If this value changes 
+	 * the part must fire a property listener event with 
+	 * {@link IIntroPart#PROP_TITLE}.
+	 * <p>
+	 * The title image is usually used to populate the title bar of this part's
+	 * visual container. Since this image is managed by the part itself, callers
+	 * must <b>not</b> dispose the returned image.
+	 * </p>
+	 *
+	 * @return the title image
+	 */
+	public Image getTitleImage();
+
+	/**
+	 * Removes the given property listener from this intro part.
+	 * Has no affect if an identical listener is not registered.
+	 *
+	 * @param listener a property listener
+	 */
+	public void removePropertyListener(IPropertyListener listener);
+	
+	/**
+	 * Asks this part to take focus within the workbench.
+	 * <p>
+	 * Clients should not call this method (the workbench calls this method at
+	 * appropriate times).  To have the workbench activate a part, use
+	 * {@link IIntroManager#showIntro(IWorkbenchWindow, boolean)}.
+	 * </p>
+	 */
+	public void setFocus();
 }

@@ -15,14 +15,15 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.IIntroSite;
-import org.eclipse.ui.tests.api.MockWorkbenchPart;
+import org.eclipse.ui.tests.api.MockPart;
 
 
 /**
  * @since 3.0
  */
-public class MockIntroPart extends MockWorkbenchPart implements IIntroPart {
+public class MockIntroPart extends MockPart implements IIntroPart {
 
+    private IIntroSite site;
     /**
      * 
      */
@@ -32,7 +33,7 @@ public class MockIntroPart extends MockWorkbenchPart implements IIntroPart {
 
 	
 	public IIntroSite getIntroSite() {
-		return (IIntroSite)getSite();
+		return site;
 	}
 
 	public void init(IIntroSite site, IMemento memento) throws PartInitException {
@@ -41,6 +42,14 @@ public class MockIntroPart extends MockWorkbenchPart implements IIntroPart {
 	}
 
 	/**
+     * @param site
+     */
+    private void setSite(IIntroSite site) {
+        this.site = site;
+    }
+
+
+    /**
 	 * @see IViewPart#saveState(IMemento)
 	 */
 	public void saveState(IMemento memento) {

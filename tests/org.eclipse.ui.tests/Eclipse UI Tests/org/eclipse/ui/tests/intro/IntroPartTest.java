@@ -20,7 +20,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.tests.api.IWorkbenchPartTest;
-import org.eclipse.ui.tests.api.MockWorkbenchPart;
+import org.eclipse.ui.tests.api.MockPart;
 import org.eclipse.ui.tests.util.CallHistory;
 
 
@@ -41,21 +41,21 @@ public class IntroPartTest extends IWorkbenchPartTest {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.api.IWorkbenchPartTest#openPart(org.eclipse.ui.IWorkbenchPage)
      */
-    protected MockWorkbenchPart openPart(IWorkbenchPage page) throws Throwable {
-        return (MockWorkbenchPart)page.getWorkbenchWindow().getWorkbench().getIntroManager().showIntro(page.getWorkbenchWindow(), false);
+    protected MockPart openPart(IWorkbenchPage page) throws Throwable {
+        return (MockIntroPart)page.getWorkbenchWindow().getWorkbench().getIntroManager().showIntro(page.getWorkbenchWindow(), false);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.api.IWorkbenchPartTest#closePart(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.tests.api.MockWorkbenchPart)
      */
-    protected void closePart(IWorkbenchPage page, MockWorkbenchPart part)
+    protected void closePart(IWorkbenchPage page, MockPart part)
             throws Throwable {
 		page.getWorkbenchWindow().getWorkbench().getIntroManager().closeIntro((IIntroPart) part);            
     }
     
 	public void testOpenAndClose() throws Throwable {
 		// Open a part.
-		MockWorkbenchPart part = openPart(fPage);
+		MockPart part = openPart(fPage);
 		CallHistory history = part.getCallHistory();
 		assertTrue(history.verifyOrder(new String[] {
 			"init", "createPartControl", "setFocus", "standbyStateChanged"}));
@@ -72,7 +72,7 @@ public class IntroPartTest extends IWorkbenchPartTest {
 	 * @throws Throwable
 	 */
 	public void testImage() throws Throwable {
-		MockWorkbenchPart part = openPart(fPage);				
+		MockPart part = openPart(fPage);				
 		ImageDescriptor imageDescriptor = getIntroDesc().getImageDescriptor();
 		assertNotNull(imageDescriptor);
 		
@@ -110,6 +110,5 @@ public class IntroPartTest extends IWorkbenchPartTest {
     protected void doTearDown() throws Exception {
         super.doTearDown();
         Workbench.getInstance().setIntroDescriptor(oldDesc);
-    }    
-
+    }
 }

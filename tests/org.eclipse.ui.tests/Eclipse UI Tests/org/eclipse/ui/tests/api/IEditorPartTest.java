@@ -35,7 +35,7 @@ public class IEditorPartTest extends IWorkbenchPartTest {
 	/**
 	 * @see IWorkbenchPartTest#openPart(IWorkbenchPage)
 	 */
-	protected MockWorkbenchPart openPart(IWorkbenchPage page) throws Throwable {
+	protected MockPart openPart(IWorkbenchPage page) throws Throwable {
 		IProject proj = FileUtil.createProject("IEditorPartTest");
 		IFile file = FileUtil.createFile("IEditorPartTest.txt", proj);
 		return (MockWorkbenchPart)page.openEditor(new FileEditorInput(file), MockEditorPart.ID1);
@@ -44,7 +44,7 @@ public class IEditorPartTest extends IWorkbenchPartTest {
 	/**
 	 * @see IWorkbenchPartTest#closePart(IWorkbenchPage, MockWorkbenchPart)
 	 */
-	protected void closePart(IWorkbenchPage page, MockWorkbenchPart part)
+	protected void closePart(IWorkbenchPage page, MockPart part)
 		throws Throwable 
 	{
 		page.closeEditor((IEditorPart)part, false);

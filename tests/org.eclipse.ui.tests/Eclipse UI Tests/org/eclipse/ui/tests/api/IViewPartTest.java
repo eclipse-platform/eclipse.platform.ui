@@ -30,14 +30,14 @@ public class IViewPartTest extends IWorkbenchPartTest {
 	/**
 	 * @see IWorkbenchPartTest#openPart(IWorkbenchPage)
 	 */
-	protected MockWorkbenchPart openPart(IWorkbenchPage page) throws Throwable {
+	protected MockPart openPart(IWorkbenchPage page) throws Throwable {
 		return (MockWorkbenchPart)page.showView(MockViewPart.ID);
 	}
 
 	/**
 	 * @see IWorkbenchPartTest#closePart(IWorkbenchPage, MockWorkbenchPart)
 	 */
-	protected void closePart(IWorkbenchPage page, MockWorkbenchPart part)
+	protected void closePart(IWorkbenchPage page, MockPart part)
 		throws Throwable 
 	{
 		page.hideView((IViewPart)part);
