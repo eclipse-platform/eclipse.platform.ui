@@ -31,6 +31,7 @@ import org.eclipse.team.core.IResourceStateChangeListener;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
  * Classes registered with the workbench decoration extension point. The <code>CVSDecorationRunnable</code> class
@@ -63,12 +64,15 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	private boolean shutdown = false;
 	
 	public CVSDecorator() {
+		// The decorator is a singleton, there should never be more than one instance.
+		// temporary until the UI component properly calls dispose when the workbench shutsdown
+		// UI Bug 9633
+		Assert.isTrue(theDecorator==null);
+		theDecorator = this;
+		
 		decoratorUpdateThread = new Thread(new CVSDecorationRunnable(this), "CVS"); //$NON-NLS-1$
 		decoratorUpdateThread.start();
 		TeamPlugin.getManager().addResourceStateChangeListener(this);
-		
-		// temporary until the UI component properly calls dispose on decorators
-		theDecorator = this;
 	}
 
 	public String decorateText(String text, Object o) {
@@ -291,7 +295,9 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	}
 
 	public static void shutdownAll() {
-		theDecorator.dispose();
+		if(theDecorator!=null) {
+			theDecorator.dispose();
+		}
 	}
 	
 	public static String getFileTypeString(String name, String keyword) {
@@ -327,5 +333,6 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		
 		decoratorNeedsUpdating.clear();
 		cache.clear();
+		theDecorator = null;
 	}
 }
