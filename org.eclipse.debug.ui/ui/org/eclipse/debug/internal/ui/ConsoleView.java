@@ -54,7 +54,7 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 		Menu menu= menuMgr.createContextMenu(fConsoleViewer.getTextWidget());
 		fConsoleViewer.getTextWidget().setMenu(menu);
 		// register the context menu such that other plugins may contribute to it
-		getSite().registerContextMenu(menuMgr.getId(), menuMgr, fConsoleViewer);
+		getSite().registerContextMenu(menuMgr, fConsoleViewer);
 		
 		fConsoleViewer.getSelectionProvider().addSelectionChangedListener(getSelectionChangedListener());
 		fConsoleViewer.addTextInputListener(getTextInputListener());
