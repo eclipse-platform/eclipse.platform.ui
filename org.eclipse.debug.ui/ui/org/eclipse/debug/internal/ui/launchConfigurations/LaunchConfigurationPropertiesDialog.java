@@ -90,6 +90,9 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	 * @see Window#close()
 	 */
 	public boolean close() {
+	    if (!isSafeToClose()) {
+	        return false;
+	    }
 		persistShellGeometry();
 		getBannerImage().dispose();
 		getTabViewer().dispose();

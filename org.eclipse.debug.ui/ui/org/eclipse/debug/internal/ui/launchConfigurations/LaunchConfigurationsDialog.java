@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
@@ -390,7 +391,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	public boolean close() {
-	    if (fActiveRunningOperations > 0) {
+	    if (!isSafeToClose()) {
 	        return false;
 	    }
 		persistShellGeometry();
@@ -402,6 +403,15 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			fLaunchConfigurationView.dispose();
 		}
 		return super.close();
+	}
+	
+	/**
+	 * Returns whether the dialog can be closed
+	 * 
+	 * @return whether the dialog can be closed
+	 */
+	protected boolean isSafeToClose() {
+	    return fActiveRunningOperations == 0;
 	}
 	
 	/**
