@@ -8,23 +8,38 @@ package org.eclipse.ui.internal.dialogs;
  */
 
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FontDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.fonts.FontDefinition;
 import org.eclipse.ui.internal.misc.Sorter;
 
@@ -38,6 +53,9 @@ public class FontPreferencePage
 	private Button changeFontButton;
 	private Button useSystemButton;
 	private Text descriptionText;
+	private Font appliedDialogFont;
+
+	private ArrayList dialogFontWidgets = new ArrayList();
 
 	//A token to identify a reset font
 	private String DEFAULT_TOKEN = "DEFAULT";
@@ -92,6 +110,28 @@ public class FontPreferencePage
 		}
 	}
 
+	/**
+	 * Apply the dialog font to the control and store 
+	 * it for later so that it can be used for a later
+	 * update.
+	 * @param control
+	 */
+	private void applyDialogFont(Control control) {
+		control.setFont(JFaceResources.getDialogFont());
+		dialogFontWidgets.add(control);
+	}
+
+	/**
+	 * Update for a change in the dialog font.
+	 * @param newFont
+	 */
+	private void updateForDialogFontChange(Font newFont) {
+		Iterator iterator = dialogFontWidgets.iterator();
+		while (iterator.hasNext()) {
+			((Control) iterator.next()).setFont(newFont);
+		}
+	}
+
 	/*
 	 * @see PreferencePage#createContents
 	 */
@@ -99,6 +139,13 @@ public class FontPreferencePage
 		WorkbenchHelp.setHelp(
 			getControl(),
 			IHelpContextIds.FONT_PREFERENCE_PAGE);
+
+		parent.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if (appliedDialogFont != null)
+					appliedDialogFont.dispose();
+			}
+		});
 
 		Font defaultFont = parent.getFont();
 
@@ -157,8 +204,6 @@ public class FontPreferencePage
 	 */
 	private void createFontList(Composite firstColumn) {
 
-		Font font = firstColumn.getFont();
-
 		Composite parent = new Composite(firstColumn, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
@@ -170,7 +215,7 @@ public class FontPreferencePage
 
 		Label label = new Label(parent, SWT.LEFT);
 		label.setText(WorkbenchMessages.getString("FontsPreference.fonts")); //$NON-NLS-1$
-		label.setFont(font);
+		applyDialogFont(label);
 
 		fontList = new List(parent, SWT.BORDER);
 		data =
@@ -178,7 +223,7 @@ public class FontPreferencePage
 				GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
 		data.grabExcessHorizontalSpace = true;
 		fontList.setLayoutData(data);
-		fontList.setFont(font);
+		applyDialogFont(fontList);
 
 		fontList.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
@@ -239,7 +284,7 @@ public class FontPreferencePage
 		changeFontButton = new Button(parent, SWT.PUSH);
 
 		changeFontButton.setText(changeButtonLabel); //$NON-NLS-1$
-		changeFontButton.setFont(parent.getFont());
+		applyDialogFont(changeFontButton);
 		setButtonLayoutData(changeFontButton);
 
 		changeFontButton.addSelectionListener(new SelectionAdapter() {
@@ -275,7 +320,7 @@ public class FontPreferencePage
 
 		useSystemButton = new Button(parent, SWT.PUSH | SWT.CENTER);
 		useSystemButton.setText(useSystemLabel); //$NON-NLS-1$
-		useSystemButton.setFont(parent.getFont());
+		applyDialogFont(useSystemButton);
 		setButtonLayoutData(useSystemButton);
 
 		useSystemButton.addSelectionListener(new SelectionAdapter() {
@@ -299,7 +344,7 @@ public class FontPreferencePage
 	private void createPreviewControl(Composite parent) {
 		Label label = new Label(parent, SWT.LEFT);
 		label.setText(WorkbenchMessages.getString("FontsPreference.preview")); //$NON-NLS-1$
-		label.setFont(parent.getFont());
+		applyDialogFont(label);
 
 		previewer = new DefaultPreviewer(parent);
 		Control control = previewer.getControl();
@@ -315,18 +360,16 @@ public class FontPreferencePage
 		 */
 	private void createDescriptionControl(Composite mainComposite) {
 
-		Font mainFont = mainComposite.getFont();
 		Composite textComposite = new Composite(mainComposite, SWT.NONE);
 		textComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout textLayout = new GridLayout();
 		textLayout.marginWidth = 0;
 		textLayout.marginHeight = 0;
 		textComposite.setLayout(textLayout);
-		textComposite.setFont(mainFont);
 
 		Label descriptionLabel = new Label(textComposite, SWT.NONE);
 		descriptionLabel.setText(WorkbenchMessages.getString("FontsPreference.description")); //$NON-NLS-1$
-		descriptionLabel.setFont(mainFont);
+		applyDialogFont(descriptionLabel);
 
 		descriptionText =
 			new Text(
@@ -337,7 +380,7 @@ public class FontPreferencePage
 					| SWT.BORDER
 					| SWT.H_SCROLL);
 		descriptionText.setLayoutData(new GridData(GridData.FILL_BOTH));
-		descriptionText.setFont(mainFont);
+		applyDialogFont(descriptionText);
 	}
 
 	/**
@@ -352,8 +395,8 @@ public class FontPreferencePage
 				valueControl = null;
 			}
 		});
-
-		valueControl.setFont(parent.getFont());
+		
+		applyDialogFont(valueControl);
 
 		GridData gd =
 			new GridData(
@@ -524,6 +567,28 @@ public class FontPreferencePage
 	 */
 	private boolean hasSetting(FontDefinition definition) {
 		return fontDataSettings.get(definition.getId()) instanceof FontData[];
+	}
+
+	/**
+	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
+	 */
+	protected void performApply() {
+		super.performApply();
+
+		//Apply the default font to the dialog.
+		Font oldFont = appliedDialogFont;
+
+		FontData[] newData =
+			getFontDataSetting(getDefinition(JFaceResources.DIALOG_FONT));
+
+		appliedDialogFont = new Font(getControl().getDisplay(), newData);
+
+		updateForDialogFontChange(appliedDialogFont);
+		getApplyButton().setFont(appliedDialogFont);
+		getDefaultsButton().setFont(appliedDialogFont);
+
+		oldFont.dispose();
+
 	}
 
 }
