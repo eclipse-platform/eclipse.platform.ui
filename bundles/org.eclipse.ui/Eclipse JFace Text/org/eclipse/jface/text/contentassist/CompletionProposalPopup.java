@@ -54,7 +54,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fAdditionalInfoController= infoController;
 	}
 
-	public String showProposals(final boolean beep) {
+	public String showProposals(final boolean autoActivated) {
 		final StyledText styledText= fViewer.getTextWidget();
 		BusyIndicator.showWhile(styledText.getDisplay(), new Runnable() {
 			public void run() {
@@ -62,17 +62,27 @@ class CompletionProposalPopup implements IContentAssistListener {
 				ICompletionProposal[] proposals= computeProposals();
 				
 				int count= (proposals == null ? 0 : proposals.length);
-				if (count > 0) {
+				if (count == 0) {
 					
-					if (fLineDelimiter == null)
-						fLineDelimiter= styledText.getLineDelimiter();
+					if (!autoActivated)
+						styledText.getDisplay().beep();
+				
+				} else {
 					
-					createProposalSelector();
-					setProposals(proposals);
-					displayProposals();
-									
-				} else if (beep) 
-					styledText.getDisplay().beep();
+					if (count == 1 && !autoActivated)
+						
+						insertProposal(proposals[0], (char) 0);
+					
+					else {
+					
+						if (fLineDelimiter == null)
+							fLineDelimiter= styledText.getLineDelimiter();
+						
+						createProposalSelector();
+						setProposals(proposals);
+						displayProposals();
+					}
+				}
 			}
 		});
 		

@@ -170,6 +170,32 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		/** The radius of the circle in which mouse hover locations are considered equal. */
 		private final static int EPSILON= 3;
 		
+		/** Reset time of mouse hover location. */
+		private final static int RESET= 600;
+		
+		/**
+		 * Resets the hover event location of nothing happend
+		 * since the timer has been started.
+		 */
+		private class Reset implements Runnable {
+			
+			private double fStartTicket;
+			
+			Reset(double ticket) {
+				fStartTicket= ticket;
+			}
+			
+			public void run() {
+				if (fStartTicket == fTicket && fHoverEventLocation != null) {
+					fHoverEventLocation.x= -1;
+					fHoverEventLocation.y= -1;
+				}
+			}
+		};
+		
+		/** The current ticket for reset timers. */
+		private double fTicket;
+		
 		/**
 		 * Returns whether the given event ocurred within a cicle of <code>EPSILON</code>
 		 * pixels of the previous mouse hover location. In addition, the location of
@@ -179,6 +205,8 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @return <code>false</code> if the event occured too close to the previous location
 		 */
 		private boolean isPreviousMouseHoverLocation(MouseEvent event) {
+			
+			fTicket= Math.random();
 			
 			boolean tooClose= false;	
 			
@@ -190,6 +218,10 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			fHoverEventLocation.x= event.x;
 			fHoverEventLocation.y= event.y;
 			
+			Control c= getSubjectControl();
+			if (c != null && !c.isDisposed())
+				c.getDisplay().timerExec(RESET, new Reset(fTicket));
+				
 			return tooClose;
 		}		
 		

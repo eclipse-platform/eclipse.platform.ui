@@ -259,9 +259,9 @@ public class ContentAssistant implements IContentAssistant {
 					d.syncExec(new Runnable() {
 						public void run() {
 							if (showStyle == SHOW_PROPOSALS)
-								fProposalPopup.showProposals(false);
+								fProposalPopup.showProposals(true);
 							else if (showStyle == SHOW_CONTEXT_INFO)
-								fContextInfoPopup.showContextProposals(false);
+								fContextInfoPopup.showContextProposals(true);
 						}
 					});
 				} catch (SWTError e) {
@@ -594,6 +594,7 @@ public class ContentAssistant implements IContentAssistant {
 	private IInformationControlCreator fInformationControlCreator;
 	private int fAutoActivationDelay= 500;
 	private boolean fIsAutoActivated= false;
+	private boolean fIsAutoInserting= false;
 	private int fProposalPopupOrientation= PROPOSAL_OVERLAY;
 	private int fContextInfoPopupOrientation= CONTEXT_INFO_ABOVE;	
 	private Map fProcessors;	
@@ -660,13 +661,35 @@ public class ContentAssistant implements IContentAssistant {
 	}
 	
 	/**
-	 * Sets the content assistant's auto activation state.
+	 * Enables the content assistant's auto activation mode.
 	 *
 	 * @param enabled indicates whether auto activation is enabled or not
 	 */
 	public void enableAutoActivation(boolean enabled) {
 		fIsAutoActivated= enabled;
 		manageAutoActivation(fIsAutoActivated);
+	}
+	
+	/**
+	 * Enables the content assistant's auto insertion mode. If enabled,
+	 * the content assistant inserts a proposal automatically if it is
+	 * the only proposal. In the case of ambiguities, the user must
+	 * make the choice.
+	 * 
+	 * @param enabled indicates whether auto insertion is enabled or not
+	 */
+	public void enableAutoInsert(boolean enabled) {
+		fIsAutoInserting= enabled;
+	}
+	
+	/**
+	 * Returns whether this content assistant is in the auto insertion
+	 * mode or not.
+	 * 
+	 * @return <code>true</code> if in auto insertion mode
+	 */
+	boolean isAutoInserting() {
+		return fIsAutoInserting;
 	}
 	
 	/**
@@ -1015,14 +1038,14 @@ public class ContentAssistant implements IContentAssistant {
 	 * @see IContentAssist#showPossibleCompletions
 	 */
 	public String showPossibleCompletions() {
-		return fProposalPopup.showProposals(true);
+		return fProposalPopup.showProposals(false);
 	}
 	
 	/*
 	 * @see IContentAssist#showContextInformation
 	 */
 	public String showContextInformation() {
-		return fContextInfoPopup.showContextProposals(true);
+		return fContextInfoPopup.showContextProposals(false);
 	}
 	
 	/**

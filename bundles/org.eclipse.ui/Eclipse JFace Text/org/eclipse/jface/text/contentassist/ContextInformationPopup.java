@@ -59,7 +59,7 @@ class ContextInformationPopup implements IContentAssistListener {
 		fViewer= viewer;
 	}
 
-	public String showContextProposals(final boolean beep) {
+	public String showContextProposals(final boolean autoActivated) {
 		final StyledText styledText= fViewer.getTextWidget();
 		BusyIndicator.showWhile(styledText.getDisplay(), new Runnable() {
 			public void run() {
@@ -84,7 +84,7 @@ class ContextInformationPopup implements IContentAssistListener {
 					displayContextSelector();
 					hideContextInfoPopup();
 					
-				} else if (beep) {
+				} else if (!autoActivated) {
 					styledText.getDisplay().beep();
 				}
 			}
@@ -161,21 +161,23 @@ class ContextInformationPopup implements IContentAssistListener {
 			fContextInfoText.setText(information.getInformationDisplayString());
 	}
 	
-	private void displayContextInfoPopup() {
-		
+	private void resize() {
 		Point size= fContextInfoText.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		
 		size.x += 3;
 		fContextInfoText.setSize(size);
 		fContextInfoText.setLocation(1,1);
 		size.x += 2;
 		size.y += 2;
 		fContextInfoPopup.setSize(size);
-
-		fContentAssistant.addToLayout(this, fContextInfoPopup, ContentAssistant.LayoutManager.LAYOUT_CONTEXT_INFO_POPUP);
+	}
+	
+	private void displayContextInfoPopup() {
 		if (fTextPresentation != null)
 			TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
 			
+		resize();
+
+		fContentAssistant.addToLayout(this, fContextInfoPopup, ContentAssistant.LayoutManager.LAYOUT_CONTEXT_INFO_POPUP);
 		fContextInfoPopup.setVisible(true);
 	}
 
@@ -436,8 +438,10 @@ class ContextInformationPopup implements IContentAssistListener {
 						hideContextInfoPopup();
 					} else {
 						IContextInformationPresenter presenter= fContentAssistant.getContextInformationPresenter(doc, pos);
-						if (presenter != null && presenter.updatePresentation(pos, fTextPresentation))
+						if (presenter != null && presenter.updatePresentation(pos, fTextPresentation)) {
+							resize();
 							TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
+						}
 					}
 				}
 			}
