@@ -22,6 +22,11 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 	private Combo addressCombo;
 	private Object input;
 	private MultiPageView view;
+	private IBrowserListener listener;
+	
+	public void setBrowserListener(IBrowserListener listener) {
+		this.listener = listener;
+	}
 	
 	public EmbeddedBrowser(MultiPageView view) {
 		this.view = view;
@@ -33,6 +38,9 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 	
 	public Object getInput() {
 		return input;
+	}
+	public WebBrowser getBrowser() {
+		return browser;
 	}
 	
 	ModelChangedListener modelListener = new ModelChangedListener();
@@ -115,9 +123,13 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 	 */
 	public void openTo(Object object) {
 		if (object instanceof String) {
-			String url = object.toString();
+			final String url = object.toString();
 			addressCombo.setText(url);
-			navigate(url);
+			control.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					navigate(url);
+				}
+			});
 		}
 	}
 
@@ -185,8 +197,11 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 		site.addEventListener(WebBrowser.DownloadComplete, new OleListener() {
 			public void handleEvent(OleEvent event) {
 				String url = site.getPresentationURL();
-				if (url!=null)
+				if (url!=null) {
 			   		addressCombo.setText(url);
+			   		if (listener!=null)
+			   		   listener.downloadComplete(url);
+				}
 			}
 		});
 		control = container;
