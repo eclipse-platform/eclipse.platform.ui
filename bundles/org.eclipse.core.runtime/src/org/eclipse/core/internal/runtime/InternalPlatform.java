@@ -423,7 +423,13 @@ private static void handleException(ISafeRunnable code, Throwable e) {
 		}
 		String pluginId =  plugin.getDescriptor().getUniqueIdentifier();
 		String message = Policy.bind("meta.pluginProblems", pluginId);
-		IStatus status = new Status(Status.WARNING, pluginId, Platform.PLUGIN_ERROR, message, e);
+		IStatus status;
+		if (e instanceof CoreException) {
+			status = new MultiStatus(pluginId, Platform.PLUGIN_ERROR, message, e);
+			((MultiStatus)status).merge(((CoreException)e).getStatus());
+		} else {
+			status = new Status(Status.WARNING, pluginId, Platform.PLUGIN_ERROR, message, e);
+		}
 		plugin.getLog().log(status);
 	}
 	code.handleException(e);
