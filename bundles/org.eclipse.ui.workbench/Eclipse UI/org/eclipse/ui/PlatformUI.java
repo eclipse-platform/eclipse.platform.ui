@@ -59,6 +59,15 @@ public final class PlatformUI {
 	public static final int RETURN_UNSTARTABLE = 2;
 
 	/**
+	 * Return code (value 3) indicating that the workbench was terminated with
+	 * a call to <code>IWorkbenchConfigurer.emergencyClose</code>.
+	 * 
+	 * @see #createAndRunWorkbench
+	 * @see IWorkbenchConfigurer#emergencyClose
+	 */
+	public static final int RETURN_EMERGENCY_CLOSE = 3;
+
+	/**
 	 * Block instantiation.
 	 */
 	private PlatformUI() {

@@ -15,7 +15,6 @@ import java.util.Map;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
@@ -62,6 +61,12 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 	 * file of the primary feature.
 	 */
 	private AboutInfo aboutInfo = null;
+	
+	/**
+	 * Indicates whether the workbench is being force to close. During
+	 * an emergency close, no interaction with the user should be done.
+	 */
+	private boolean isEmergencyClosing = false;
 	
 	/**
 	 * Creates a new workbench configurer.
@@ -199,5 +204,25 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 				}
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#emergencyClose()
+	 */
+	public void emergencyClose() {
+		if (!isEmergencyClosing) {
+			isEmergencyClosing = true;
+			if (Workbench.getInstance() != null && !Workbench.getInstance().isClosing()) {
+				Workbench.getInstance().close(PlatformUI.RETURN_EMERGENCY_CLOSE, true);
+			}
+		}
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#emergencyClosing()
+	 */
+	public boolean emergencyClosing() {
+		return isEmergencyClosing;
 	}
 }

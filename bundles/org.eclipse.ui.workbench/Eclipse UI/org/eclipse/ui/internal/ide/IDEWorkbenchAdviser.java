@@ -78,6 +78,11 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	 * Special object for configuring the workbench.
 	 */
 	private IWorkbenchConfigurer configurer;	
+
+	/**
+	 * Event loop exception handler for the adviser.
+	 */
+	private IDEExceptionHandler exceptionHandler = null;
 	
 	/**
 	 * Tracks whether we were autobuilding.
@@ -107,6 +112,9 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	public void initialize(IWorkbenchConfigurer configurer) {
 		// remember for future reference
 		this.configurer = configurer;		
+		
+		// setup the event loop exception handler
+		exceptionHandler = new IDEExceptionHandler(configurer);
 		
 		// register workspace adapters
 		WorkbenchAdapterBuilder.registerAdapters();
@@ -166,6 +174,20 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	public void postShutdown() {
 		if (WorkbenchPlugin.getPluginWorkspace() != null) {
 			disconnectFromWorkspace();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.WorkbenchAdviser#eventLoopException
+	 */
+	public void eventLoopException(Throwable exception) {
+		super.eventLoopException(exception);
+		if (exceptionHandler != null) {
+			exceptionHandler.handleException(exception);
+		} else {
+			if (configurer != null) {
+				configurer.emergencyClose();
+			}
 		}
 	}
 

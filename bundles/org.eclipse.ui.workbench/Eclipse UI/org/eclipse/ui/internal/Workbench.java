@@ -21,7 +21,6 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -387,21 +386,7 @@ public final class Workbench implements IWorkbench {
 	 * Method declared on IWorkbench.
 	 */
 	public boolean close() {
-		return close(PlatformUI.RETURN_OK);
-	}
-	/*
-	 * Closes the workbench, returning the given return code from the run method.
-	 * 
-	 * @param returnCode {@link PlatformUI#RETURN_OK RETURN_OK} for normal exit; 
-	 * {@link PlatformUI#RETURN_RESTART RETURN_RESTART} if the workbench was terminated
-	 * with a call to {@link IWorkbench#restart IWorkbench.restart}; 
-	 * {@link PlatformUI#RETURN_UNSTARTABLE RETURN_UNSTARTABLE} if the workbench could
-	 * not be started; other values reserved for future use
-	 * @return true if the close was successful, and false if the close was
-	 * canceled
-	 */
-	private boolean close(int returnCode) {
-		return close(returnCode, false);
+		return close(PlatformUI.RETURN_OK, false);
 	}
 	/**
 	 * Closes the workbench, returning the given return code from the run method.
@@ -956,7 +941,7 @@ public final class Workbench implements IWorkbench {
 	 */
 	public boolean restart() {
 		// this is the return code from run() to trigger a restart
-		return close(PlatformUI.RETURN_RESTART);
+		return close(PlatformUI.RETURN_RESTART, false);
 	}
 	
 	/*
@@ -1153,7 +1138,7 @@ public final class Workbench implements IWorkbench {
 				
 		try {
 			// install backstop to catch exceptions thrown out of event loop
-			Window.IExceptionHandler handler = new ExceptionHandler(this);
+			Window.IExceptionHandler handler = new ExceptionHandler();
 			Window.setExceptionHandler(handler);
 			
 			// initialize workbench and restore or open one window
