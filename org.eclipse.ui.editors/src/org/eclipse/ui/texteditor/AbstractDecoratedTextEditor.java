@@ -825,10 +825,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			}
 			
 			if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DISABLE_OVERWRITE_MODE.equals(property)) {
-				if (event.getNewValue() instanceof Boolean) {
-					Boolean disable= (Boolean) event.getNewValue();
-					enableOverwriteMode(!disable.booleanValue());
-				}
+				boolean disable= Boolean.valueOf(event.getNewValue().toString()).booleanValue();
+				enableOverwriteMode(!disable);
 				return;
 			}
 			
