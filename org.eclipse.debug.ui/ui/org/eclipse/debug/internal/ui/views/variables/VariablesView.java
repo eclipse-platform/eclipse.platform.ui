@@ -627,11 +627,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	protected void createDetailsViewer() {
 		ViewForm viewForm = new ViewForm(getSashForm(), SWT.FLAT);
-		
-		CLabel detailsLabel = new CLabel(viewForm, SWT.NONE);
-		detailsLabel.setText(VariablesViewMessages.getString("VariablesView.44")); //$NON-NLS-1$
-		detailsLabel.setImage(DebugPluginImages.getImage(IDebugUIConstants.IMG_VIEW_VARIABLES));
-		viewForm.setTopLeft(detailsLabel);
 			
 		// Create & configure a SourceViewer
 		SourceViewer detailsViewer= new SourceViewer(viewForm, null, SWT.V_SCROLL | SWT.H_SCROLL);
