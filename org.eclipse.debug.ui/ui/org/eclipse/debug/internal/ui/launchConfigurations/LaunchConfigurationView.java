@@ -24,6 +24,9 @@ import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.help.HelpSystem;
+import org.eclipse.help.IContext;
+import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -114,6 +117,38 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		if (getTreeViewer().getTree() != evt.getSource()) {
 			return;
 		}
+		String id = computeContextId();
+		if (id!=null)
+			PlatformUI.getWorkbench().getHelpSystem().displayHelp(id);
+	}
+	
+	/*
+	 * Adds support for dynamic help
+	 */
+	
+	public Object getAdapter(Class key) {
+		if (key == IContextProvider.class) {
+			return new IContextProvider () {
+				public int getContextChangeMask() {
+					return SELECTION;
+				}
+
+				public IContext getContext(Object target) {
+					String id = computeContextId();
+					if (id!=null)
+						return HelpSystem.getContext(id);
+					return null;
+				}
+
+				public String getSearchExpression(Object target) {
+					return null;
+				}
+			};
+		}
+		return super.getAdapter(key);
+	}
+	
+	private String computeContextId() {
 		try {
 			ISelection selection = getViewer().getSelection();
 			if (!selection.isEmpty() && selection instanceof IStructuredSelection ) {
@@ -128,13 +163,14 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 				if (configType != null) {
 					String helpContextId = LaunchConfigurationPresentationManager.getDefault().getHelpContext(configType, getLaunchGroup().getMode());
 					if (helpContextId != null) {
-						PlatformUI.getWorkbench().getHelpSystem().displayHelp(helpContextId);
+						return helpContextId;
 					}
 				}
 			}
 		} catch (CoreException ce) {
 			DebugUIPlugin.log(ce);
 		}
+		return null;
 	}
 
 	/**
