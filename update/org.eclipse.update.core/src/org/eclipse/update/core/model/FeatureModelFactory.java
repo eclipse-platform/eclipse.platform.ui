@@ -1,5 +1,4 @@
 package org.eclipse.update.core.model;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
@@ -12,96 +11,119 @@ import org.eclipse.core.runtime.IStatus;
 import org.xml.sax.SAXException;
 
 /**
- * An object which can create install related model objects (typically when
- * parsing feature manifest files and site maps).
+ * Default feature model factory.
  * <p>
- * This class may be instantiated, or further subclassed.
+ * This class may be instantiated or subclassed by clients. However, in most 
+ * cases clients should instead subclass the provided base implementation 
+ * of this factory.
  * </p>
+ * @see org.eclipse.update.core.BaseFeatureFactory
+ * @since 2.0
  */
 
 public class FeatureModelFactory {
-	
+
 	/**
-	 * Creates a factory which can be used to create install model objects.
+	 * Creates a default model factory.
+	 * 
+	 * @since 2.0
 	 */
 	public FeatureModelFactory() {
 		super();
 	}
-	
+
 	/**
-	 * Constructs a feature model from stream
+	 * Creates and populates a default feature from stream.
+	 * The parser assumes the stream contains a default feature manifest
+	 * (feature.xml) as documented by the platform.
 	 * 
 	 * @param stream feature stream
+	 * @return populated feature
+	 * @exception ParsingException
+	 * @exception IOException
+	 * @exception SAXException
+	 * @since 2.0
 	 */
-	public FeatureModel parseFeature(InputStream stream) throws ParsingException, IOException, SAXException {
+	public FeatureModel parseFeature(InputStream stream)
+		throws ParsingException, IOException, SAXException {
 		DefaultFeatureParser parser = new DefaultFeatureParser(this);
-		
-		FeatureModel featureModel =  parser.parse(stream);
-			if (parser.getStatus().getChildren().length>0){
-				// some internalError were detected
-				IStatus[] children = parser.getStatus().getChildren();
-				String error = ""; //$NON-NLS-1$
-				for (int i = 0; i < children.length; i++) {
-					error = error + "\r\n"+ children[i].getMessage(); //$NON-NLS-1$
-				}
-				throw new ParsingException(new Exception(error));
-			}		
+
+		FeatureModel featureModel = parser.parse(stream);
+		if (parser.getStatus().getChildren().length > 0) {
+			// some internalError were detected
+			IStatus[] children = parser.getStatus().getChildren();
+			String error = ""; //$NON-NLS-1$
+			for (int i = 0; i < children.length; i++) {
+				error = error + "\r\n" + children[i].getMessage(); //$NON-NLS-1$
+			}
+			throw new ParsingException(new Exception(error));
+		}
 		return featureModel;
 	}
 
 	/**
-	 * Returns a new feature model which is not initialized.
-	 *
-	 * @return a new feature model
+	 * Create a default feature model.
+	 * 
+	 * @see FeatureModel
+	 * @return feature model
+	 * @since 2.0
 	 */
 	public FeatureModel createFeatureModel() {
 		return new FeatureModel();
 	}
 
 	/**
-	 * Returns a new feature install handler model which is not initialized.
-	 *
-	 * @return a new feature install handler model
+	 * Create a default install handler model.
+	 * 
+	 * @see InstallHandlerEntryModel
+	 * @return install handler entry model
+	 * @since 2.0
 	 */
 	public InstallHandlerEntryModel createInstallHandlerEntryModel() {
 		return new InstallHandlerEntryModel();
 	}
 
 	/**
-	 * Returns a new import model which is not initialized.
-	 *
-	 * @return a new import model
+	 * Create a default import dependency model.
+	 * 
+	 * @see ImportModel
+	 * @return import dependency model
+	 * @since 2.0
 	 */
 	public ImportModel createImportModel() {
 		return new ImportModel();
 	}
 
 	/**
-	 * Returns a new plug-in entry model which is not initialized.
-	 *
-	 * @return a new plug-in entry model
+	 * Create a default plug-in entry model.
+	 * 
+	 * @see PluginEntryModel
+	 * @return plug-in entry model
+	 * @since 2.0
 	 */
 	public PluginEntryModel createPluginEntryModel() {
 		return new PluginEntryModel();
 	}
 
 	/**
-	 * Returns a new non-plug-in entry model which is not initialized.
-	 *
-	 * @return a new non-plug-in entry model
+	 * Create a default non-plug-in entry model.
+	 * 
+	 * @see NonPluginEntryModel
+	 * @return non-plug-in entry model
+	 * @since 2.0
 	 */
 	public NonPluginEntryModel createNonPluginEntryModel() {
 		return new NonPluginEntryModel();
 	}
 
-	
 	/**
-	 * Returns a new URL Entry model which is not initialized.
-	 *
-	 * @return a new URL Entry model
+	 * Create a default annotated URL model.
+	 * 
+	 * @see URLEntryModel
+	 * @return annotated URL model
+	 * @since 2.0
 	 */
 	public URLEntryModel createURLEntryModel() {
 		return new URLEntryModel();
 	}
-
-	}
+}

@@ -3,6 +3,7 @@ package org.eclipse.update.core;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -21,25 +22,47 @@ import org.eclipse.update.core.model.URLEntryModel;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
- * Default implementation of a Feature Factory
- * Must be sublassed
- * @since.2.0
+ * Base implementation of a feature factory.
+ * The factory is responsible for constructing the correct
+ * concrete implementation of the model objects for each particular
+ * feature type. This class creates model objects  corresponding
+ * to the concrete implementation classes provided in this package.
+ * The actual feature creation method is subclass responsibility.
+ * <p>
+ * This class must be subclassed by clients.
+ * </p>
+ * @see org.eclipse.update.core.IFeatureFactory
+ * @see org.eclipse.update.core.model.FeatureModelFactory
+ * @since 2.0
  */
-
-public abstract class BaseFeatureFactory extends FeatureModelFactory implements IFeatureFactory {
-
-	/*
-	 * @see IFeatureFactory#createFeature(URL,ISite)
-	 */
-	public abstract IFeature createFeature(URL url, ISite site) throws CoreException;
+public abstract class BaseFeatureFactory
+	extends FeatureModelFactory
+	implements IFeatureFactory {
 
 	/**
-	 * return the appropriate resource bundle for this feature
+	 * Create feature. Implementation of this method must be provided by 
+	 * subclass
+	 * 
+	 * @see IFeatureFactory#createFeature(URL,ISite)
+	 * @since 2.0
 	 */
-	protected ResourceBundle getResourceBundle(URL url) throws IOException, CoreException {
+	public abstract IFeature createFeature(URL url, ISite site)
+		throws CoreException;
+
+	/**
+	 * Helper method to access resouce bundle for feature. The default 
+	 * implementation attempts to load the appropriately localized 
+	 * feature.properties file.
+	 * 
+	 * @param url base URL used to load the resource bundle.
+	 * @return resource bundle, or <code>null</code>.
+	 * @since 2.0
+	 */
+	protected ResourceBundle getResourceBundle(URL url)
+		throws IOException, CoreException {
 		if (url == null)
 			return null;
-			
+
 		ResourceBundle bundle = null;
 		try {
 			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
@@ -48,53 +71,77 @@ public abstract class BaseFeatureFactory extends FeatureModelFactory implements 
 			//ok, there is no bundle, keep it as null
 			//DEBUG:
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
+				UpdateManagerPlugin.getPlugin().debug(
+					e.getLocalizedMessage() + ":" + url.toExternalForm());
+				//$NON-NLS-1$
 			}
 		}
 		return bundle;
 	}
 
-
-	/*
-	 * @see FeatureModelFactory#createFeatureModel()
+	/**
+	 * Create a concrete implementation of feature model.
+	 * 
+	 * @see Feature
+	 * @return feature model
+	 * @since 2.0
 	 */
 	public FeatureModel createFeatureModel() {
 		return new Feature();
 	}
 
-	/*
-	 * @see FeatureModelFactory#createInstallHandlerEntryModel()
+	/**
+	 * Create a concrete implementation of install handler model.
+	 * 
+	 * @see InstallHandlerEntry
+	 * @return install handler entry model
+	 * @since 2.0
 	 */
 	public InstallHandlerEntryModel createInstallHandlerEntryModel() {
 		return new InstallHandlerEntry();
 	}
 
-	/*
-	 * @see FeatureModelFactory#createImportModel()
+	/**
+	 * Create a concrete implementation of import dependency model.
+	 * 
+	 * @see Import
+	 * @return import dependency model
+	 * @since 2.0
 	 */
 	public ImportModel createImportModel() {
 		return new Import();
 	}
 
-	/*
-	 * @see FeatureModelFactory#createPluginEntryModel()
+	/**
+	 * Create a concrete implementation of plug-in entry model.
+	 * 
+	 * @see PluginEntry
+	 * @return plug-in entry model
+	 * @since 2.0
 	 */
 	public PluginEntryModel createPluginEntryModel() {
 		return new PluginEntry();
 	}
 
-	/*
-	 * @see FeatureModelFactory#createNonPluginEntryModel()
+	/**
+	 * Create a concrete implementation of non-plug-in entry model.
+	 * 
+	 * @see NonPluginEntry
+	 * @return non-plug-in entry model
+	 * @since 2.0
 	 */
 	public NonPluginEntryModel createNonPluginEntryModel() {
 		return new NonPluginEntry();
 	}
 
-	/*
-	 * @see FeatureModelFactory#createURLEntryModel()
+	/**
+	 * Create a concrete implementation of annotated URL model.
+	 * 
+	 * @see URLEntry
+	 * @return annotated URL model
+	 * @since 2.0
 	 */
 	public URLEntryModel createURLEntryModel() {
 		return new URLEntry();
 	}
-
 }
