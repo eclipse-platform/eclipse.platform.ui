@@ -180,11 +180,11 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * @see ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
-		if (!isTerminated()) {
-			fProcess.destroy();
+		if (!isTerminated()) {			
 			if (fStreamsProxy instanceof StreamsProxy) {
 				((StreamsProxy)fStreamsProxy).kill();
 			}
+			fProcess.destroy();
 			int attempts = 0;
 			while (attempts < MAX_WAIT_FOR_DEATH_ATTEMPTS) {
 				try {

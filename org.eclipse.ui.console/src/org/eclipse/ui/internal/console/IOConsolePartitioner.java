@@ -327,11 +327,18 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 				        if (pp == consoleClosedPartition) {
 				            continue;
 				        }
-				        IOConsolePartition partition = new IOConsolePartition(pp.stream, pp.text.length());
-				        partition.setOffset(firstOffset);
-				        firstOffset += partition.getLength();
-				        lastPartition = partition;
-				        partitions.add(partition);
+				        
+				        int ppLen = pp.text.length();
+				        if (lastPartition != null && lastPartition.getStream() == pp.stream) {
+				            int len = lastPartition.getLength();
+				            lastPartition.setLength(len + ppLen);
+				        } else {
+				            IOConsolePartition partition = new IOConsolePartition(pp.stream, ppLen);
+				            partition.setOffset(firstOffset);				        
+				            lastPartition = partition;
+				            partitions.add(partition);
+				        }
+				        firstOffset += ppLen;
 				    }
 				}
 			}

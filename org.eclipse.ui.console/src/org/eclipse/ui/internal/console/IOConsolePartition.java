@@ -157,4 +157,8 @@ public class IOConsolePartition implements IConsolePartition {
     public void clearBuffer() {
         buffer = null;
     }
+    
+    IOConsoleOutputStream getStream() {
+        return outputStream;
+    }
 }
