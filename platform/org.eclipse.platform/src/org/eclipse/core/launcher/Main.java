@@ -925,6 +925,7 @@ private void handleSplash(URL[] bootPath) {
 		showProcess = Runtime.getRuntime().exec(cmd);
 	} catch (Exception e) {
 		// continue without splash ...
+		log("Exception showing splash screen."); //$NON-NLS-1$
 		log(e);
 	}
 	return;
