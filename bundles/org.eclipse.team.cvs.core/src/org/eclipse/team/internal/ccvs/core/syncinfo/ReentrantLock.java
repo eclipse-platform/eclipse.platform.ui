@@ -99,11 +99,14 @@ public class ReentrantLock {
 		 */
 		public void popRule(IProgressMonitor monitor) throws CVSException {
 			ISchedulingRule rule = removeRule();
-			if (isFlushRequired()) {
-				flush(monitor);
-			}
-			if (rule != NULL_SCHEDULING_RULE) {
-				Platform.getJobManager().endRule(rule);
+			try {
+				if (isFlushRequired()) {
+					flush(monitor);
+				}
+			} finally {
+				if (rule != NULL_SCHEDULING_RULE) {
+					Platform.getJobManager().endRule(rule);
+				}
 			}
 		}
 		/**
