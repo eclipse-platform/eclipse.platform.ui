@@ -89,12 +89,14 @@ public interface ITextEditor extends IEditorPart {
 	 * and the triggering <code>KeyEvent</code> is considered consumed.
 	 * If the action is disabled, the <code>KeyEvent</code> is passed
 	 * on unmodified. Thus, action activation codes and action accelerators
-	 * differ in their model of event consumption.
+	 * differ in their model of event consumption. The key code parameter
+	 * can be <code>-1</code> to indicate a wild card. The state mask
+	 * parameter can be SWT.DEFAULT to indicate a wild card
 	 * 
 	 * @param actionId the action id
 	 * @param character the activation code character
-	 * @param keyCode the activation code key code
-	 * @param stateMask the activation code state mask
+	 * @param keyCode the activation code key code or <code>-1</code> for wild card
+	 * @param stateMask the activation code state mask or <code>SWT.DEFAULT</code> for wild card
 	 */
 	void setActionActivationCode(String actionId, char activationCharacter, int activationKeyCode, int activationStateMask);
 	

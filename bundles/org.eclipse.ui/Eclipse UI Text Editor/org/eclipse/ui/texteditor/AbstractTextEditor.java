@@ -571,8 +571,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		public String fActionId;
 		public char fCharacter;
-		public int fKeyCode;
-		public int fStateMask;
+		public int fKeyCode= -1;
+		public int fStateMask= SWT.DEFAULT;
 		
 		/**
 		 * Creates a new action activation code for the given action id.
@@ -588,8 +588,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public boolean matches(VerifyEvent event) {
 			return (event.character == fCharacter &&
-						event.keyCode == fKeyCode &&
-						event.stateMask == fStateMask);
+						(fKeyCode == -1 || event.keyCode == fKeyCode) &&
+						(fStateMask == SWT.DEFAULT || event.stateMask == fStateMask));
 		}		
 	};
 	
@@ -2893,8 +2893,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsStateDependentAction(ITextEditorActionConstants.DELETE_LINE_TO_BEGINNING, true);
 		markAsStateDependentAction(ITextEditorActionConstants.DELETE_LINE_TO_END, true);
 		
-		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT,'\t', 0, 0);
-		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', 0, SWT.SHIFT);
+		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT,'\t', -1, SWT.NONE);
+		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', -1, SWT.SHIFT);
 	}
 	
 	/**
