@@ -41,12 +41,27 @@ public interface ICommandManagerEvent {
 	 * TODO javadoc
 	 */	
 	boolean haveActiveCommandIdsChanged();
+
+	/**
+	 * TODO javadoc
+	 */	
+	boolean haveActiveKeyConfigurationIdsChanged();
+
+	/**
+	 * TODO javadoc
+	 */		
+	boolean haveDefinedCategoryIdsChanged();
 	
 	/**
 	 * TODO javadoc
 	 */		
 	boolean haveDefinedCommandIdsChanged();
 
+	/**
+	 * TODO javadoc
+	 */		
+	boolean haveDefinedKeyConfigurationIdsChanged();	
+	
 	/**
 	 * TODO javadoc
 	 */	

@@ -213,7 +213,7 @@ public final class CommandManager implements ICommandManager {
 		}
 		
 		if (commandManagerChanged)
-			fireCommandManagerChanged(new CommandManagerEvent(this, true, false, false));
+			fireCommandManagerChanged(new CommandManagerEvent(this, true, false, false, false, false, false));
 
 		if (commandEventsByCommandId != null)
 			notifyCommands(commandEventsByCommandId);	
@@ -231,7 +231,7 @@ public final class CommandManager implements ICommandManager {
 		}
 		
 		if (commandManagerChanged)
-			fireCommandManagerChanged(new CommandManagerEvent(this, true, false, false));
+			fireCommandManagerChanged(new CommandManagerEvent(this, false, true, false, false, false, false));
 
 		if (keyConfigurationEventsByKeyConfigurationId != null)
 			notifyKeyConfigurations(keyConfigurationEventsByKeyConfigurationId);	
@@ -249,7 +249,7 @@ public final class CommandManager implements ICommandManager {
 		}
 		
 		if (commandManagerChanged)
-			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, true));
+			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, false, false, false, true));
 
 		if (commandEventsByCommandId != null)
 			notifyCommands(commandEventsByCommandId);	
@@ -392,35 +392,36 @@ public final class CommandManager implements ICommandManager {
 		this.keySequenceBindingsByCommandId = keySequenceBindingsByCommandId;
 		// TODO end - check this.
 		
-		boolean commandManagerChanged = false;			
+		boolean definedCategoryIdsChanged = false;			
 		Set definedCategoryIds = new HashSet(categoryDefinitionsById.keySet());		
 
 		if (!definedCategoryIds.equals(this.definedCategoryIds)) {
 			this.definedCategoryIds = definedCategoryIds;
-			commandManagerChanged = true;	
+			definedCategoryIdsChanged = true;	
 		}
 		
+		boolean definedCommandIdsChanged = false;			
 		Set definedCommandIds = new HashSet(commandDefinitionsById.keySet());		
 
 		if (!definedCommandIds.equals(this.definedCommandIds)) {
 			this.definedCommandIds = definedCommandIds;
-			commandManagerChanged = true;	
+			definedCommandIdsChanged = true;	
 		}
 
+		boolean definedKeyConfigurationIdsChanged = false;
 		Set definedKeyConfigurationIds = new HashSet(keyConfigurationDefinitionsById.keySet());		
 
 		if (!definedKeyConfigurationIds.equals(this.definedKeyConfigurationIds)) {
 			this.definedKeyConfigurationIds = definedKeyConfigurationIds;
-			commandManagerChanged = true;	
+			definedKeyConfigurationIdsChanged = true;	
 		}
 		
 		Map categoryEventsByCategoryId = updateCategories(categoriesById.keySet());	
 		Map commandEventsByCommandId = updateCommands(commandsById.keySet());	
 		Map keyConfigurationEventsByKeyConfigurationId = updateKeyConfigurations(keyConfigurationsById.keySet());	
 		
-		if (commandManagerChanged)
-			// TODO...
-			fireCommandManagerChanged(new CommandManagerEvent(this, false, true, false));
+		if (definedCategoryIdsChanged || definedCommandIdsChanged || definedKeyConfigurationIdsChanged)
+			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, definedCategoryIdsChanged, definedCommandIdsChanged, definedKeyConfigurationIdsChanged, false));
 
 		if (categoryEventsByCategoryId != null)
 			notifyCategories(categoryEventsByCategoryId);		

@@ -17,17 +17,23 @@ import org.eclipse.ui.internal.csm.commands.api.ICommandManagerEvent;
 final class CommandManagerEvent implements ICommandManagerEvent {
 
 	private boolean activeCommandIdsChanged;
+	private boolean activeKeyConfigurationIdsChanged;
 	private ICommandManager commandManager;
+	private boolean definedCategoryIdsChanged;
 	private boolean definedCommandIdsChanged;
+	private boolean definedKeyConfigurationIdsChanged;
 	private boolean enabledCommandIdsChanged;
 
-	CommandManagerEvent(ICommandManager commandManager, boolean activeCommandIdsChanged, boolean definedCommandIdsChanged, boolean enabledCommandIdsChanged) {
+	CommandManagerEvent(ICommandManager commandManager, boolean activeCommandIdsChanged, boolean activeKeyConfigurationIdsChanged, boolean definedCategoryIdsChanged, boolean definedCommandIdsChanged, boolean definedKeyConfigurationIdsChanged, boolean enabledCommandIdsChanged) {
 		if (commandManager == null)
 			throw new NullPointerException();
 		
 		this.commandManager = commandManager;
 		this.activeCommandIdsChanged = activeCommandIdsChanged;
+		this.activeKeyConfigurationIdsChanged = activeKeyConfigurationIdsChanged;
+		this.definedCategoryIdsChanged = definedCategoryIdsChanged;		
 		this.definedCommandIdsChanged = definedCommandIdsChanged;
+		this.definedKeyConfigurationIdsChanged = definedKeyConfigurationIdsChanged;
 		this.enabledCommandIdsChanged = enabledCommandIdsChanged;
 	}
 
@@ -38,11 +44,23 @@ final class CommandManagerEvent implements ICommandManagerEvent {
 	public boolean haveActiveCommandIdsChanged() {
 		return activeCommandIdsChanged;
 	}
+
+	public boolean haveActiveKeyConfigurationIdsChanged() {
+		return activeKeyConfigurationIdsChanged;
+	}
+
+	public boolean haveDefinedCategoryIdsChanged() {
+		return definedCategoryIdsChanged;
+	}
 	
 	public boolean haveDefinedCommandIdsChanged() {
 		return definedCommandIdsChanged;
 	}
-
+	
+	public boolean haveDefinedKeyConfigurationIdsChanged() {
+		return definedKeyConfigurationIdsChanged;
+	}
+	
 	public boolean haveEnabledCommandIdsChanged() {
 		return enabledCommandIdsChanged;
 	}
