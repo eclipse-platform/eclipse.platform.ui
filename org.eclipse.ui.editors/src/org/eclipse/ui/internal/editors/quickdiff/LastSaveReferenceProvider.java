@@ -26,14 +26,11 @@ import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.IStorageDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -275,27 +272,32 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	 */
 	private void addElementStateListener(ITextEditor editor, final IDocumentProvider provider) {
 		// addElementStateListener adds at most once - no problem to call
-		// repeatedly
-		Runnable runnable= new Runnable() {
-			public void run() {
-				synchronized (fLock) {
-					if (fDocumentProvider == provider)
-						provider.addElementStateListener(LastSaveReferenceProvider.this);
-				}
-			}
-		};
+		provider.addElementStateListener(this);
 		
-		Display display= null;
-		if (editor != null) {
-			IWorkbenchPartSite site= editor.getSite();
-			if (site != null)
-				site.getWorkbenchWindow().getShell().getDisplay();
-		}
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=66686 and
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=56871
 		
-		if (display != null && !display.isDisposed())
-			display.asyncExec(runnable);
-		else
-			runnable.run();
+//		// repeatedly
+//		Runnable runnable= new Runnable() {
+//			public void run() {
+//				synchronized (fLock) {
+//					if (fDocumentProvider == provider)
+//						provider.addElementStateListener(LastSaveReferenceProvider.this);
+//				}
+//			}
+//		};
+//		
+//		Display display= null;
+//		if (editor != null) {
+//			IWorkbenchPartSite site= editor.getSite();
+//			if (site != null)
+//				site.getWorkbenchWindow().getShell().getDisplay();
+//		}
+//		
+//		if (display != null && !display.isDisposed())
+//			display.asyncExec(runnable);
+//		else
+//			runnable.run();
 	}
 
 	/**
