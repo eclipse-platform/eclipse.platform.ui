@@ -100,5 +100,15 @@ public class VariablesViewer extends TreeViewer {
 		super.setExpandedElements(elements);
 		getControl().setRedraw(true);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#collapseAll()
+	 */
+	public void collapseAll() {
+		//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=39449
+		if (getRoot() != null) {
+			super.collapseAll();
+		}
+	}
 
 }
