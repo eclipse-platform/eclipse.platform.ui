@@ -1267,7 +1267,13 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		AntProjectNode node= antModel.getProjectNode();
     	if (node != null) {
     		Project antProject= node.getProject();
-    		return ComponentHelper.getComponentHelper(antProject).getDefinition(elementName) != null; 
+    		if (ComponentHelper.getComponentHelper(antProject).getDefinition(elementName) != null) {
+    			return true;
+    		}
+    		//not everything is a task or type (nested elements)
+    		if (dtd.getElement(elementName) != null) {
+    			return true;
+    		}
     	}
     	
         return false;

@@ -308,6 +308,23 @@ public class CodeCompletionTest extends AbstractAntUITest {
 	}
 	
 	/**
+     * Tests the code completion for nested element attributes
+     */
+	public void testNestedElementAttributeProposals() throws BadLocationException {
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("macrodef.xml"));
+		int lineNumber= 5;
+    	int columnNumber= 11;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
+    	assertTrue(proposals.length == 4);
+    	assertContains("description", proposals);
+    	assertContains("name", proposals);
+	}
+	
+	/**
      * Tests the code completion for tasks that have been defined via macrodef in the buildfile
      */
 	public void testMacrodefAttributeProposals() throws BadLocationException {

@@ -3772,6 +3772,7 @@
 <!ATTLIST element
           id ID #IMPLIED
           optional %boolean; #IMPLIED
+          description CDATA #IMPLIED
           name CDATA #IMPLIED>
 
 <!ELEMENT ejbc (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
