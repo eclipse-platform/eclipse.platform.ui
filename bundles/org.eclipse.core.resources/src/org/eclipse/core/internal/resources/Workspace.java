@@ -212,6 +212,16 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 	}
 
+	/**
+	 * Returns whether creating executable extensions is acceptable
+	 * at this point in time.  In particular, returns <code>false</code>
+	 * when the system bundle is shutting down, which only occurs
+	 * when the entire framework is exiting.
+	 */
+	private boolean canCreateExtensions() {
+		return Platform.getBundle("org.eclipse.osgi").getState() != Bundle.STOPPING; //$NON-NLS-1$
+	}
+	
 	/* (non-Javadoc)
 	 * @see IWorkspace#checkpoint(boolean)
 	 */
@@ -1195,6 +1205,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	protected void initializeValidator() {
 		shouldValidate = false;
+		if (!canCreateExtensions())
+			return;
 		IConfigurationElement[] configs = Platform.getExtensionRegistry().getConfigurationElementsFor(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_FILE_MODIFICATION_VALIDATOR);
 		// no-one is plugged into the extension point so disable validation
 		if (configs == null || configs.length == 0) {
@@ -1217,7 +1229,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		} catch (CoreException e) {
 			//ignore the failure if we are shutting down (expected since extension
 			//provider plugin has probably already shut down
-			if (Platform.getBundle("org.eclipse.osgi").getState() != Bundle.STOPPING) {//$NON-NLS-1$
+			if (canCreateExtensions()) {//$NON-NLS-1$
 				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.initValidator"), e); //$NON-NLS-1$
 				ResourcesPlugin.getPlugin().getLog().log(status);
 			}
@@ -1231,6 +1243,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	protected void initializeMoveDeleteHook() {
 		try {
+			if (!canCreateExtensions())
+				return;
 			IConfigurationElement[] configs = Platform.getExtensionRegistry().getConfigurationElementsFor(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MOVE_DELETE_HOOK);
 			// no-one is plugged into the extension point so disable validation
 			if (configs == null || configs.length == 0) {
@@ -1251,7 +1265,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			} catch (CoreException e) {
 				//ignore the failure if we are shutting down (expected since extension
 				//provider plugin has probably already shut down
-				if (Platform.getBundle("org.eclipse.osgi").getState() != Bundle.STOPPING) {//$NON-NLS-1$
+				if (canCreateExtensions()) {//$NON-NLS-1$
 					IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.initHook"), e); //$NON-NLS-1$
 					ResourcesPlugin.getPlugin().getLog().log(status);
 				}
@@ -1270,6 +1284,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	protected void initializeTeamHook() {
 		try {
+			if (!canCreateExtensions())
+				return;
 			IConfigurationElement[] configs = Platform.getExtensionRegistry().getConfigurationElementsFor(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_TEAM_HOOK);
 			// no-one is plugged into the extension point so disable validation
 			if (configs == null || configs.length == 0) {
@@ -1290,7 +1306,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			} catch (CoreException e) {
 				//ignore the failure if we are shutting down (expected since extension
 				//provider plugin has probably already shut down
-				if (Platform.getBundle("org.eclipse.osgi").getState() != Bundle.STOPPING) {//$NON-NLS-1$
+				if (canCreateExtensions()) {//$NON-NLS-1$
 					IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.initTeamHook"), e); //$NON-NLS-1$
 					ResourcesPlugin.getPlugin().getLog().log(status);
 				}
