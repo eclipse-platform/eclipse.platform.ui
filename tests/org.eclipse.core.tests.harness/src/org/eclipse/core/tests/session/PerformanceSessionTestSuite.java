@@ -123,7 +123,7 @@ public class PerformanceSessionTestSuite extends SessionTestSuite {
 		// second component contains only assertAgainst=*
 		String[] perfCtrl = parsePerfCtrl();
 		if (perfCtrl[0] != null)
-			descriptor.getSetup().getSystemProperties().put(PROP_PERFORMANCE, perfCtrl[0]);
+			descriptor.getSetup().setSystemProperty(PROP_PERFORMANCE, perfCtrl[0]);
 		// run test cases n-1 times
 		ConsolidatedTestResult consolidated = new ConsolidatedTestResult(result);
 		for (int i = 0; !consolidated.shouldStop() && i < timesToRun - 1; i++)
@@ -132,7 +132,7 @@ public class PerformanceSessionTestSuite extends SessionTestSuite {
 			return;
 		// for the n-th run, enable assertions
 		if (perfCtrl[1] != null)
-			descriptor.getSetup().getSystemProperties().put(PROP_PERFORMANCE, perfCtrl[0] + ';' + perfCtrl[1]);
+			descriptor.getSetup().setSystemProperty(PROP_PERFORMANCE, perfCtrl[0] + ';' + perfCtrl[1]);
 		descriptor.run(consolidated);
 	}
 }

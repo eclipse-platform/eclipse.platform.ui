@@ -44,7 +44,7 @@ public class WorkspaceSessionTestSuite extends SessionTestSuite {
 	 */
 	protected Setup getSetup() {
 		Setup base = super.getSetup();
-		base.setInstanceLocation(instanceLocation.toOSString());
+		base.setEclipseArgument(Setup.DATA, instanceLocation.toOSString());
 		return base;
 	}
 

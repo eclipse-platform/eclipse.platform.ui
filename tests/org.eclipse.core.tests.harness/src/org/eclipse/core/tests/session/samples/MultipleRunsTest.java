@@ -26,7 +26,7 @@ public class MultipleRunsTest extends TestCase {
 		test.setSetup(SetupManager.getInstance().getDefaultSetup());
 		String[] perfCtrl = PerformanceSessionTestSuite.parsePerfCtrl();
 		if (perfCtrl[0] != null)
-			test.getSetup().getSystemProperties().put(PerformanceSessionTestSuite.PROP_PERFORMANCE, perfCtrl[0]);
+			test.getSetup().setSystemProperty(PerformanceSessionTestSuite.PROP_PERFORMANCE, perfCtrl[0]);
 		// runs the test case several times - only to collect data, won't do any assertions
 		TestResult result = new TestResult();
 		for (int i = 0; i < 5; i++) {

@@ -17,23 +17,29 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
+/*
+ * Implementation note: vmArguments and eclipseArguments are HashMap
+ * (and not just Map) because we are interested in features that are
+ * specific to HashMap (is Cloneable, allows null values).   
+ */
 public class Setup implements Cloneable {
+
+	public static final String APPLICATION = "application";
+	public static final String CONFIGURATION = "configuration";
+	public static final String DATA = "data";
+	public static final String DEBUG = "debug";
 	private static final int DEFAULT_TIMEOUT = 0;
-	private String application;
-	private String configuration;
-	private String debugOption;
-	private String devOption;
-	// includes all non-VM args
-	private String eclipseArgs;
+	public static final String DEV = "dev";
+	public static final String INSTALL = "install";
+	public static final String VM = "vm";
+
+	private HashMap eclipseArguments = new HashMap();
+
 	private String id;
-	private String installLocation;
-	private String instanceLocation;
 	private String name;
-	private Properties systemProperties = new Properties();
+	private HashMap systemProperties = new HashMap();
 	private int timeout;
-	private String vmArgs;
-	// includes the program file name
-	private String vmLocation;
+	private HashMap vmArguments = new HashMap();
 
 	public static String getDefaultConfiguration() {
 		return System.getProperty("configuration", System.getProperty(InternalPlatform.PROP_CONFIG_AREA));
@@ -76,12 +82,12 @@ public class Setup implements Cloneable {
 	 */
 	public static Setup getDefaultSetup() {
 		Setup defaultSetup = new Setup();
-		defaultSetup.setVMLocation(Setup.getDefaultVMLocation());
-		defaultSetup.setConfiguration(Setup.getDefaultConfiguration());
-		defaultSetup.setDebugOption(Setup.getDefaultDebugOption());
-		defaultSetup.setDevOption(Setup.getDefaultDevOption());
-		defaultSetup.setInstallLocation(Setup.getDefaultInstallLocation());
-		defaultSetup.setInstanceLocation(Setup.getDefaultInstanceLocation());
+		defaultSetup.setEclipseArgument(VM, Setup.getDefaultVMLocation());
+		defaultSetup.setEclipseArgument(CONFIGURATION, Setup.getDefaultConfiguration());
+		defaultSetup.setEclipseArgument(DEBUG, Setup.getDefaultDebugOption());
+		defaultSetup.setEclipseArgument(DEV, Setup.getDefaultDevOption());
+		defaultSetup.setEclipseArgument(INSTALL, Setup.getDefaultInstallLocation());
+		defaultSetup.setEclipseArgument(DATA, Setup.getDefaultInstanceLocation());
 		defaultSetup.setTimeout(DEFAULT_TIMEOUT);
 		return defaultSetup;
 	}
@@ -97,73 +103,6 @@ public class Setup implements Cloneable {
 		return new Path(javaVM).append("bin").append("java").toOSString();
 	}
 
-	private void appendClassPath(StringBuffer params) {
-		if (installLocation == null)
-			return;
-		params.append(" -classpath ");
-		IPath classPath = new Path(installLocation).append("startup.jar");
-		params.append(classPath.toOSString());
-	}
-
-	private void appendEclipseArgs(StringBuffer params) {
-		if (application != null) {
-			params.append(" -application ");
-			params.append(application);
-		}
-
-		if (configuration != null) {
-			params.append(" -configuration ");
-			params.append(configuration);
-			//params.append('"');
-		}
-
-		if (devOption != null) {
-			params.append(" -dev ");
-			params.append(devOption);
-			//params.append('"');
-		}
-
-		if (debugOption != null) {
-			params.append(" -debug ");
-			params.append(debugOption);
-			//params.append('"');
-		}
-
-		if (instanceLocation != null) {
-			params.append(" -data ");
-			params.append(instanceLocation);
-			//params.append('"');
-		}
-
-		// always enable -consolelog TODO should make this configurable 
-		//params.append(" -consolelog");
-
-		// eclipse args
-		if (eclipseArgs != null) {
-			params.append(' ');
-			params.append(eclipseArgs);
-		}
-	}
-
-	private void appendSystemProperties(StringBuffer command) {
-		for (Iterator iter = systemProperties.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry entry = (Map.Entry) iter.next();
-			command.append(" -D");
-			command.append(entry.getKey());
-			command.append('=');
-			command.append(entry.getValue());
-		}
-
-	}
-
-	private void appendVMArgs(StringBuffer params) {
-		// additional VM args
-		if (vmArgs != null) {
-			params.append(' ');
-			params.append(vmArgs);
-		}
-	}
-
 	/*
 	 *  (non-Javadoc)
 	 * @see java.lang.Object#clone()
@@ -172,176 +111,132 @@ public class Setup implements Cloneable {
 		Setup clone = null;
 		try {
 			clone = (Setup) super.clone();
-			clone.systemProperties = (Properties) systemProperties.clone();
+			// ensure we don't end up sharing references to mutable objects
+			clone.eclipseArguments = (HashMap) eclipseArguments.clone();
+			clone.vmArguments = (HashMap) vmArguments.clone();
+			clone.systemProperties = (HashMap) systemProperties.clone();
 		} catch (CloneNotSupportedException e) {
-			// just does not happen
+			// just does not happen: we do implement Cloneable
 		}
 		return clone;
 	}
 
-	private boolean containsOption(String args, String option) {
-		return args.indexOf("-" + option) >= 0;
+	private void fillClassPath(List params) {
+		String installLocation = getEclipseArgument(INSTALL);
+		if (installLocation == null)
+			throw new IllegalStateException("No install location set");
+		params.add("-classpath");
+		IPath classPath = new Path(installLocation).append("startup.jar");
+		params.add(classPath.toFile().toString());
 	}
 
-	public void copyProperty(String propertyKey) {
-		systemProperties.put(propertyKey, System.getProperty(propertyKey));
+	public void fillCommandLine(List commandLine) {
+		String vmLocation = getEclipseArgument(VM);
+		if (vmLocation == null)
+			throw new IllegalStateException("VM location not set");
+		commandLine.add(vmLocation);
+		fillClassPath(commandLine);
+		fillVMArgs(commandLine);
+		fillSystemProperties(commandLine);
+		commandLine.add("org.eclipse.core.launcher.Main");
+		fillEclipseArgs(commandLine);
 	}
 
-	public String getApplication() {
-		return application;
+	private void fillEclipseArgs(List params) {
+		for (Iterator i = eclipseArguments.entrySet().iterator(); i.hasNext();) {
+			Map.Entry entry = (Map.Entry) i.next();
+			params.add('-' + (String) entry.getKey());
+			if (entry.getValue() != null && ((String) entry.getValue()).length() > 0)
+				params.add(entry.getValue());
+		}
 	}
 
-	public String getCommandLine() {
-		StringBuffer command = new StringBuffer(vmLocation);
-		appendClassPath(command);
-		appendVMArgs(command);
-		appendSystemProperties(command);
-		command.append(" org.eclipse.core.launcher.Main");
-		appendEclipseArgs(command);
-		return command.toString();
+	private void fillSystemProperties(List command) {
+		for (Iterator iter = systemProperties.entrySet().iterator(); iter.hasNext();) {
+			Map.Entry entry = (Map.Entry) iter.next();
+			StringBuffer property = new StringBuffer("-D");
+			property.append(entry.getKey());
+			if (entry.getValue() != null && ((String) entry.getValue()).length() > 0) {
+				property.append('=');
+				property.append(entry.getValue());
+			}
+			command.add(property.toString());
+		}
 	}
 
-	public String getConfiguration() {
-		return configuration;
+	private void fillVMArgs(List params) {
+		for (Iterator i = vmArguments.entrySet().iterator(); i.hasNext();) {
+			Map.Entry entry = (Map.Entry) i.next();
+			params.add('-' + (String) entry.getKey());
+			if (entry.getValue() != null && ((String) entry.getValue()).length() > 0)
+				params.add(entry.getValue());
+		}
 	}
 
-	public String getDebugOption() {
-		return debugOption;
+	public String[] getCommandLine() {
+		List commandLine = new ArrayList();
+		fillCommandLine(commandLine);
+		return (String[]) commandLine.toArray(new String[commandLine.size()]);
 	}
 
-	public String getDevOption() {
-		return devOption;
-	}
-
-	/**
-	 * Returns a string containing all Eclipse args.
-	 */
-	public String getEclipseArgs() {
-		return eclipseArgs;
+	public String getEclipseArgument(String key) {
+		return (String) eclipseArguments.get(key);
 	}
 
 	public String getId() {
 		return id;
 	}
 
-	public String getInstallLocation() {
-		return installLocation;
-	}
-
-	public String getInstanceLocation() {
-		return instanceLocation;
-	}
-
 	public String getName() {
 		return name;
-	}
-
-	public Properties getSystemProperties() {
-		return systemProperties;
 	}
 
 	public int getTimeout() {
 		return timeout;
 	}
 
-	public String getVMArgs() {
-		return vmArgs;
-	}
-
-	public String getVMLocation() {
-		return vmLocation;
+	public String getVMArgument(String key) {
+		return (String) vmArguments.get(key);
 	}
 
 	public void merge(Setup variation) {
-		String eclipseLocation = variation.getInstallLocation();
-		if (eclipseLocation != null)
-			setInstallLocation(eclipseLocation);
-		String eclipseArgs = variation.getEclipseArgs();
-		if (eclipseArgs != null) {
-			if (getEclipseArgs() != null) {
-				StringBuffer newEclipseArgs = new StringBuffer(getEclipseArgs());
-				newEclipseArgs.append(' ');
-				newEclipseArgs.append(eclipseArgs);
-				eclipseArgs = newEclipseArgs.toString();
-			}
-			setEclipseArgs(eclipseArgs);
-		}
-		String vmLocation = variation.getVMLocation();
-		if (vmLocation != null)
-			setVMLocation(vmLocation);
-		String vmArgs = variation.getVMArgs();
-		if (vmArgs != null) {
-			if (getVMArgs() != null) {
-				StringBuffer newVMArgs = new StringBuffer(getVMArgs());
-				newVMArgs.append(' ');				
-				newVMArgs.append(vmArgs);
-				vmArgs = newVMArgs.toString();
-			}
-			setVMArgs(vmArgs);
-		}
+		eclipseArguments.putAll(variation.eclipseArguments);
+		vmArguments.putAll(variation.vmArguments);
+		systemProperties.putAll(variation.systemProperties);
 	}
 
-	public void setApplication(String application) {
-		this.application = application;
-	}
-
-	public void setConfiguration(String configuration) {
-		this.configuration = configuration;
-	}
-
-	public void setDebugOption(String debugOption) {
-		this.debugOption = debugOption;
-	}
-
-	public void setDevOption(String devOption) {
-		this.devOption = devOption;
-	}
-
-	public void setEclipseArgs(String eclipseArgs) {
-		this.eclipseArgs = eclipseArgs;
-		if (eclipseArgs == null)
-			return;
-		if (containsOption(eclipseArgs, "application"))
-			this.application = null;
-		if (containsOption(eclipseArgs, "configuration"))
-			this.configuration = null;
-		if (containsOption(eclipseArgs, "debug"))
-			this.debugOption = null;
-		if (containsOption(eclipseArgs, "dev"))
-			this.devOption = null;
-		if (containsOption(eclipseArgs, "data"))
-			this.instanceLocation = null;
+	public void setEclipseArgument(String key, String value) {
+		eclipseArguments.put(key, value);
 	}
 
 	public void setId(String id) {
 		this.id = id;
 	}
 
-	public void setInstallLocation(String newLocation) {
-		this.installLocation = newLocation;
-	}
-
-	public void setInstanceLocation(String instanceLocation) {
-		this.instanceLocation = instanceLocation;
-	}
-
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public void setSystemProperty(String key, String value) {
+		systemProperties.put(key, value);
 	}
 
 	public void setTimeout(int timeout) {
 		this.timeout = timeout;
 	}
 
-	public void setVMArgs(String vmArgs) {
-		this.vmArgs = vmArgs;
-	}
-
-	public void setVMLocation(String vmLocation) {
-		this.vmLocation = vmLocation;
+	public void setVMArgument(String key, String value) {
+		vmArguments.put(key, value);
 	}
 
 	public String toString() {
-		return "[" + getCommandLine() + "]";
+		List commandLine = new ArrayList();
+		fillCommandLine(commandLine);
+		StringBuffer result = new StringBuffer();
+		for (Iterator i = commandLine.iterator(); i.hasNext();) {
+			result.append(i.next());
+			result.append(System.getProperty("line.separator"));
+		}
+		return "[" + result.toString() + "]";
 	}
 }

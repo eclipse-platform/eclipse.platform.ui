@@ -192,19 +192,10 @@ public class SessionTestRunner {
 	 */
 	private Setup createSetup(TestDescriptor descriptor, int port) {
 		Setup setup = (Setup) descriptor.getSetup().clone();
-		setup.setApplication(descriptor.getApplicationId());
-		StringBuffer eclipseArgs = new StringBuffer(200);
-		if (setup.getEclipseArgs() != null)
-			eclipseArgs.append(setup.getEclipseArgs());
-		eclipseArgs.append(" -testpluginname ");
-		eclipseArgs.append(descriptor.getPluginId());
-		eclipseArgs.append(" -test ");
-		eclipseArgs.append(descriptor.getTestClass());
-		eclipseArgs.append(':');
-		eclipseArgs.append(descriptor.getTestMethod());
-		eclipseArgs.append(" -port ");
-		eclipseArgs.append(port);
-		setup.setEclipseArgs(eclipseArgs.toString());
+		setup.setEclipseArgument(Setup.APPLICATION, descriptor.getApplicationId());
+		setup.setEclipseArgument("testpluginname", descriptor.getPluginId());
+		setup.setEclipseArgument("test",descriptor.getTestClass() + ':' + descriptor.getTestMethod());
+		setup.setEclipseArgument("port", Integer.toString(port));
 		return setup;
 	}
 
@@ -213,15 +204,15 @@ public class SessionTestRunner {
 	 * @param timeout
 	 * @return a status object indicating the outcome 
 	 */
-	private IStatus launch(String command, long timeout) {
+	private IStatus launch(Setup setup) {
 		if (Platform.inDebugMode()) {
 			System.out.println("Command line: ");
 			System.out.print('\t');
-			System.out.println(command);
-		}
+			System.out.println(setup);
+		}		
 		IStatus outcome = Status.OK_STATUS;
 		try {
-			ProcessController process = new ProcessController(timeout, command);
+			ProcessController process = new ProcessController(setup.getTimeout(), setup.getCommandLine());
 			process.forwardErrorOutput(System.err);
 			process.forwardOutput(System.out);
 			//if necessary to interact with the spawned process, this would have
@@ -229,9 +220,9 @@ public class SessionTestRunner {
 			//process.forwardInput(System.in);
 			int returnCode = process.execute();
 			if (returnCode != 0)
-				outcome = new Status(IStatus.WARNING, Platform.PI_RUNTIME, returnCode, "Process returned non-zero code: " + returnCode + "\n\tCommand: " +command, null);
+				outcome = new Status(IStatus.WARNING, Platform.PI_RUNTIME, returnCode, "Process returned non-zero code: " + returnCode + "\n\tCommand: " +setup, null);
 		} catch (Exception e) {
-			outcome = new Status(IStatus.ERROR, Platform.PI_RUNTIME, -1, "Error running process\n\tCommand: " +command, e);
+			outcome = new Status(IStatus.ERROR, Platform.PI_RUNTIME, -1, "Error running process\n\tCommand: " +setup, e);
 		}
 		return outcome;
 	}
@@ -254,7 +245,7 @@ public class SessionTestRunner {
 			}
 			Setup setup = createSetup(descriptor, collector.getPort());
 			new Thread(collector, "Test result collector").start();
-			IStatus status = launch(setup.getCommandLine(), setup.getTimeout());
+			IStatus status = launch(setup);
 			collector.shutdown();
 			// ensure the session ran without any errors
 			if (!status.isOK()) {
