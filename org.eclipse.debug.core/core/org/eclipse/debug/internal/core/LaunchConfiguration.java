@@ -152,6 +152,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		Job job= new Job(MessageFormat.format(DebugCoreMessages.getString("LaunchConfiguration.12"), new String[] { getName() })) { //$NON-NLS-1$
 			public IStatus run(IProgressMonitor monitor) {
 				try {
+					initializeSourceLocator(launch);
 					delegate.launch(LaunchConfiguration.this, mode, launch, monitor);
 				} catch (CoreException e) {
 					// if there was an exception, and the launch is empty, remove it
