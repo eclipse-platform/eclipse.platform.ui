@@ -137,14 +137,18 @@ function highlightTopic(topic)
   var tr = getTRNode(topic); 
   if (tr != null)
   {
-  	   	if (oldActive && oldActive != tr) 
+  	   	if (oldActive && oldActive != tr) {
     		oldActive.className="list";
+    		var oldA = getAnchorNode(oldActive);
+    		if (oldA) oldA.className = "";
+  	   	}
     
 		oldActive = tr;		
   		tr.className = "active";
   		var a = getAnchorNode(tr);
   		if (a)
   		{
+  			a.className = "active";
   			// set toolbar title
   			a.onclick();
   			if (isIE)

@@ -18,15 +18,6 @@
 
 <title><%=WebappResources.getString("SearchResults", request)%></title>
 
-<base target="MainFrame">
-<script language="JavaScript" src="list.js"></script>
-<script language="JavaScript">		
-function refresh() 
-{ 
-	window.location.replace("search_results.jsp?<%=request.getQueryString()%>");
-}
-</script>
-
 <style type="text/css">
 BODY {
 	background-color: Window;
@@ -54,10 +45,8 @@ A {
 
 A:hover {
 	text-decoration:underline; 
-	color:WindowText; 
-	padding:0px;
-	white-space: nowrap;
 }
+
 
 TABLE {
 	background-color: Window;
@@ -76,11 +65,28 @@ TABLE {
      
 .active { 
 	background:ButtonFace;
-	padding:2px;
+	width:100%;
+	height:100%;
 }
 
-
 </style>
+
+
+<base target="MainFrame">
+<script language="JavaScript" src="list.js"></script>
+<script language="JavaScript">		
+var extraStyle = "";
+if (isMozilla)
+	extraStyle = "<style type='text/css'>.active, A.active:hover {background:WindowText;color:Window;} </style>";
+ 
+document.write(extraStyle);
+ 
+function refresh() 
+{ 
+	window.location.replace("search_results.jsp?<%=request.getQueryString()%>");
+}
+</script>
+
 
 </head>
 

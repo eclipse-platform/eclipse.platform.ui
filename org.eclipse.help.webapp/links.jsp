@@ -19,9 +19,6 @@
 
 <title><%=WebappResources.getString("Links", request)%></title>
 
-<base target="MainFrame">
-<script language="JavaScript" src="list.js"></script>
-
 <style type="text/css">
 BODY {
 	background-color: Window;
@@ -39,7 +36,6 @@ BODY {
 	scrollbar-face-color:ButtonFace;
 }
 
-
 A {
 	text-decoration:none; 
 	color:WindowText; 
@@ -49,9 +45,6 @@ A {
 
 A:hover {
 	text-decoration:underline; 
-	color:WindowText; 
-	padding:0px;
-	white-space: nowrap;
 }
 
 IMG {
@@ -74,15 +67,25 @@ TABLE {
      
 .active { 
 	background:ButtonFace;
-	padding:2px;
+	width:100%;
+	height:100%;
 }
 
 .label {
 	margin-left:4px;
 }
 
-
 </style>
+
+<base target="MainFrame">
+<script language="JavaScript" src="list.js"></script>
+<script language="JavaScript">		
+var extraStyle = "";
+if (isMozilla)
+	extraStyle = "<style type='text/css'>.active, A.active:hover {background:WindowText;color:Window;} </style>";
+ 
+document.write(extraStyle);
+</script>
 
 </head>
 

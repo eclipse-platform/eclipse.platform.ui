@@ -59,12 +59,12 @@ document.write(extraStyle);
 	
 	
 function goBack(button) {
-	parent.MainFrame.history.back();
+	parent.history.back();
 	if (isIE) button.blur();
 }
 
 function goForward(button) {
-	parent.MainFrame.history.forward();
+	parent.history.forward();
 	if (isIE) button.blur();
 }
 
