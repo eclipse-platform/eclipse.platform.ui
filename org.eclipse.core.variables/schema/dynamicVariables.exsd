@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.debug.core">
+<schema targetNamespace="org.eclipse.core.variables">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.debug.core" id="dynamicVariables" name="Dynamic Stirng Substitution Variables"/>
+         <meta.schema plugin="org.eclipse.core.variables" id="dynamicVariables" name="Dynamic Stirng Substitution Variables"/>
       </appInfo>
       <documentation>
          This extension point provides a mechanism for defining dynamic variables used in string substitution. The value of a dynamic variable is resolved at the time a string substitution is performed, with an optional argument.
@@ -51,10 +51,10 @@
          <attribute name="resolver" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a Java class which implements &lt;samp&gt;org.eclipse.debug.core.stringsubstitution.IContextVariableResolver&lt;/samp&gt;, which is used to determine the value of the variable
+                  specifies a Java class which implements &lt;samp&gt;org.eclipse.core.variables.IDynamicVariableResolver&lt;/samp&gt;, which is used to determine the value of the variable
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.debug.core.variables.IVariableExpander"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.variables.IDynamicVariableResolver"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -84,7 +84,7 @@
       <documentation>
          The following is a definition of a dynamic variable that resolves to the name of the selected resource:
 &lt;pre&gt;
- &lt;extension point=&quot;org.eclipse.debug.core.dynamicVariables&quot;&gt;
+ &lt;extension point=&quot;org.eclipse.core.variables.dynamicVariables&quot;&gt;
    &lt;variable 
       name=&quot;resource_name&quot;
       expanderClass=&quot;com.example.ResourceNameExpander&quot;
