@@ -781,6 +781,7 @@ public class DefaultUndoManager implements IUndoManager {
 	 */
 	public void undo() {
 		if (undoable()) {
+			fFoldingIntoCompoundChange= false;
 			commit();
 			internalUndo();
 		}
