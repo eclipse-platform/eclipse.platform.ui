@@ -481,7 +481,7 @@ public void addFastView(IViewReference ref) {
 	}
 		
 	// Notify listeners.
-	window.getShortcutBar().update(true);
+	window.getPerspectiveBar().update(true);
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_FAST_VIEW_ADD);
 }
 /**
@@ -695,7 +695,7 @@ private IViewPart busyShowView(String viewID, boolean activate)
 			bringToTop(view);
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_SHOW);
 		// Just in case view was fast.
-		window.getShortcutBar().update(true);
+		window.getPerspectiveBar().update(true);
 	}
 	return view;
 }
@@ -1678,7 +1678,7 @@ private void hideView(Perspective persp, IViewReference ref) {
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_HIDE);
 	
 	// Just in case view was fast.
-	window.getShortcutBar().update(true);
+	window.getFastViewBar().update(true);
 	
 	//if it was the last part, close the perspective
 	lastPartClosePerspective();
@@ -2054,7 +2054,7 @@ public void removeFastView(IViewReference ref) {
 	persp.removeFastView(ref);
 
 	// Notify listeners.
-	window.getShortcutBar().update(true);
+	window.getFastViewBar().update(true);
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_FAST_VIEW_REMOVE);
 }
 /**
@@ -2483,7 +2483,7 @@ private void setPerspective(Perspective newPersp) {
 	
 	// Update the window
 	window.updateActionSets();
-	window.getShortcutBar().update(true);
+	window.getPerspectiveBar().update(true);
 	
 	updateVisibility(oldPersp, newPersp);
 	
@@ -2756,7 +2756,7 @@ public void updateTitle(IViewReference ref) {
 	if (isFastView(ref)) {
 		// Would be more efficient to just update label of single tool item
 		// but we don't have access to it from here.
-		window.getShortcutBar().update(true);
+		window.getFastViewBar().update(true);
 	}
 }
 /**

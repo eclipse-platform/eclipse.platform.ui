@@ -997,7 +997,7 @@ public final class Workbench implements IWorkbench {
  	 * @return the new workbench window
     */
  	private WorkbenchWindow newWorkbenchWindow() {
- 		return new IDEWorkbenchWindow(getNewWindowNumber());
+ 		return new WorkbenchWindow(getNewWindowNumber());
 	}
 
 	/*

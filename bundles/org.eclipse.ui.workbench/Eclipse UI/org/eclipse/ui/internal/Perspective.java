@@ -1308,7 +1308,7 @@ private void setAllPinsVisible(boolean visible) {
  */
 private void setFastViewIconSelection(IViewReference ref, boolean selected) {
 	WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
-	ToolBar bar = window.getShortcutBar().getControl();
+	ToolBar bar = window.getFastViewBar().getControl();
 	ToolItem[] items = bar.getItems();
 	for(int i=0; i<items.length; i++) {
 		if (items[i].getData(ShowFastViewContribution.FAST_VIEW) == ref) {

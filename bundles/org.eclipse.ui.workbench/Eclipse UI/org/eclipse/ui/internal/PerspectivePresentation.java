@@ -952,7 +952,7 @@ private void movePart(LayoutPart part, int position, LayoutPart relativePart) {
 		else if (e.dragSource instanceof ShortcutBarPart) {
 			if (persp.getActiveFastView() != null) {
 				WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
-				ToolItem icon = window.getShortcutDND().getDraggedItem();
+				ToolItem icon = window.getFastViewDND().getDraggedItem();
 				IViewReference ref = (IViewReference)icon.getData(ShowFastViewContribution.FAST_VIEW);
 				// If the dragged element is an icon for the active 
 				// fast view, remove it instantly. It will be reactivated
@@ -1189,7 +1189,7 @@ private void onFastViewIconDrag(PartDropEvent e) {
 				persp.setActiveFastView(ref);
 		} else if (e.dragSource instanceof ShortcutBarPart) {
 			WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
-			ToolItem icon = window.getShortcutDND().getDraggedItem();
+			ToolItem icon = window.getFastViewDND().getDraggedItem();
 			IViewReference ref = (IViewReference)icon.getData(ShowFastViewContribution.FAST_VIEW);
 			// If the icon being dropped is the icon for a fast view that was active when
 			// the drag began, reactivate the fast view when the icon is dropped somewhere invalid.
@@ -1218,7 +1218,7 @@ private void onFastViewIconDrag(PartDropEvent e) {
 	// and remove the view from the fast view list.
 	if (e.dragSource instanceof ShortcutBarPart && !(e.dropTarget instanceof ShortcutBarPart)) {
 		WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
-		ToolItem icon = window.getShortcutDND().getDraggedItem();
+		ToolItem icon = window.getFastViewDND().getDraggedItem();
 		IViewReference ref = (IViewReference)icon.getData(ShowFastViewContribution.FAST_VIEW);
 		//Make sure the view is restored.
 		if(ref.getPart(true) == null)
@@ -1307,7 +1307,7 @@ private void moveFastView(ShortcutBarPart shortcutBarPart, Point point) {
 	
 	// Get the fast view that is being dragged
 	WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
-	ToolItem draggedItem = window.getShortcutDND().getDraggedItem();
+	ToolItem draggedItem = window.getFastViewDND().getDraggedItem();
 	IViewReference draggedView = (IViewReference)draggedItem.getData(ShowFastViewContribution.FAST_VIEW);
 	
 	//move the fast view to the new position
@@ -1341,7 +1341,7 @@ private void reorderFastViews(
 	page.getActivePerspective().moveFastView(draggedView, destinationView, placeAtEnd);
 	
 	//refresh the menu to show the change
-	((WorkbenchWindow)page.getWorkbenchWindow()).getShortcutBar().update(true);
+	((WorkbenchWindow)page.getWorkbenchWindow()).getFastViewBar().update(true);
 }
 
 /**

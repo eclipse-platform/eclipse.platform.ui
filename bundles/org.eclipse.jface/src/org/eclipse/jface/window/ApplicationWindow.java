@@ -260,9 +260,6 @@ protected void configureShell(Shell shell) {
 	// we need a special layout
 	shell.setLayout(new ApplicationWindowLayout());
 
-	if (showTopSeperator()) 
-		 seperator1 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
-
 	createToolBarControl(shell);
 
 	if (statusLineManager != null) {
