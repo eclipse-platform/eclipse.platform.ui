@@ -113,7 +113,7 @@
             file-extensions="xml2"
             base-type="org.eclipse.core.runtime.xml"
             name="XML Based with Different Extension"
-            charset="UTF-16LE"
+            default-charset="UTF-16LE"
             id="xml-based-different-extension"/>
       <content-type
             file-names="xml-based.xml"
@@ -185,10 +185,10 @@
             describer="a_non_existant_class_expected_to_cause_failure.class"/>
       <content-type
             id="invalid-missing-name"
-            filename="invalid.missing.name"/>                        
+            file-names="invalid.missing.name"/>                        
       <content-type
             name="Invalid (Missing identifier)"
-            filename="invalid.missing.identifier"/>            
+            file-names="invalid.missing.identifier"/>            
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
