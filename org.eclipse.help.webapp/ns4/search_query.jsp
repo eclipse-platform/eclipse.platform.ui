@@ -40,7 +40,7 @@ TABLE {
             
             <table border="0" cellpadding="0" cellspacing="2">
             <tr>
-              <td><input type="text" class="txtInput" name="keyword" size=10 maxlength=100></td>
+              <td><input type="text" class="txtInput" name="keyword" value="<%= request.getParameter("keyword")!=null?request.getParameter("keyword"):""%>" size=10 maxlength=100></td>
               <td> <input value='<%=WebappResources.getString("Go", null)%>' type="submit" alt='<%=WebappResources.getString("Search", null)%>' src="../images/go.gif" class="normal" onmouseover="mouseover(this)" onmouseout="mouseout(this)" ></td>
               <!--
                <input type="checkbox" name="fieldSearch" <%= request.getParameter("fieldSearch")!=null?"checked='true'":""%>>Search headings only
