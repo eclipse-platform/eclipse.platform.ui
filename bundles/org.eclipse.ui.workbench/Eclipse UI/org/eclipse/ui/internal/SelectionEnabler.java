@@ -26,6 +26,12 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * of this class is created in PluginAction if attribute
  * "enablesFor" is seen in the configuration.
  * 
+ * @issue The dependency on org.eclipse.jface.text for ITextSelection must be severed
+ * Nick suggests it may be possible to do with IActionFilter
+ * generic workbench registers IActionFilter for "size" property against IStructuredSelection
+ * workbench text registers IActionFilter for "size" property against ITextSelection
+ * code here: sel.getAdapter(IActionFilter.class)
+ * fallback: use reflection to access selections implementing ITextSelection 
  */
 public class SelectionEnabler {
 	public static final int ONE_OR_MORE = -1;
