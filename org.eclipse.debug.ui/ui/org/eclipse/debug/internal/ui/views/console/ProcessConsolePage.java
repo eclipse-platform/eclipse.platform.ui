@@ -330,7 +330,7 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 	 * 
 	 * @return the console viewer in this page
 	 */
-	protected ConsoleViewer getConsoleViewer() {
+	public ConsoleViewer getConsoleViewer() {
 		return fViewer;
 	}	
 
