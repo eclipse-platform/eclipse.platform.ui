@@ -856,13 +856,17 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		
 		action= new FindVariableAction(this);
 		setAction("FindVariable", action); //$NON-NLS-1$
+		
+		// TODO: Still using "old" resource access
+		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages"); //$NON-NLS-1$
+		action = new FindReplaceAction(bundle, "find_replace_action.", VariablesView.this);	 //$NON-NLS-1$
+		setAction("FindReplaceText", action); //$NON-NLS-1$
+		
 		setAction(ActionFactory.FIND.getId(), new Action() {
 			public void run() {
-				IAction findAction= null;
+				IAction findAction = null;
 				if (getDetailViewer().getTextWidget().isFocusControl()) {
-					//TODO: Still using "old" resource access
-					ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages"); //$NON-NLS-1$
-					findAction= new FindReplaceAction(bundle, "find_replace_action.", VariablesView.this);	 //$NON-NLS-1$
+					findAction= getAction("FindReplaceText"); //$NON-NLS-1$
 				} else {
 					findAction= getAction("FindVariable"); //$NON-NLS-1$
 				}
@@ -873,7 +877,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		fSelectionActions.add(ActionFactory.COPY.getId());
 		fSelectionActions.add(ActionFactory.CUT.getId());
 		fSelectionActions.add(ActionFactory.PASTE.getId());
-		updateAction(ActionFactory.FIND.getId());
+		fSelectionActions.add("FindReplaceText"); //$NON-NLS-1$
+		updateAction("FindReplaceText"); //$NON-NLS-1$
 		
 		action = new AssignValueAction(this, fDetailViewer);
 		setAction("AssignValue", action); //$NON-NLS-1$
@@ -954,7 +959,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		menu.add(getAction(ActionFactory.PASTE.getId()));
 		menu.add(getAction(DETAIL_SELECT_ALL_ACTION));
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
-		menu.add(getAction(ActionFactory.FIND.getId()));
+		menu.add(getAction("FindReplaceText")); //$NON-NLS-1$
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
