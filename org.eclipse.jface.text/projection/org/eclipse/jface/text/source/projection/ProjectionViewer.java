@@ -32,6 +32,7 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentInformationMappingExtension;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISlaveDocumentManager;
 import org.eclipse.jface.text.ITextViewerExtension5;
@@ -99,6 +100,60 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 	}
 	
+	/**
+	 * Executes the 'freeSaveDocument' operation when called the first time. Self-destructs afterwards.
+	 */
+	private class FreeSlaveDocumentExecutor implements IDocumentListener {
+		
+		private IDocument fSlaveDocument;
+		private IDocument fExecutionTrigger;
+		
+		public FreeSlaveDocumentExecutor(IDocument slaveDocument) {
+			fSlaveDocument= slaveDocument;
+		}
+
+		public void install(IDocument executionTrigger) {
+			if (executionTrigger != null && fSlaveDocument != null) {
+				fExecutionTrigger= executionTrigger;
+				fExecutionTrigger.addDocumentListener(this);
+			}
+		}
+		
+		/*
+		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
+		 */
+		public void documentAboutToBeChanged(DocumentEvent event) {
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
+		 */
+		public void documentChanged(DocumentEvent event) {
+			fExecutionTrigger.removeDocumentListener(this);
+			executeFreeSlaveDocument(fSlaveDocument);
+		}
+	}
+	
+	/**
+	 * Internal listener to find the document onto which to hook the free-slave-document command.
+	 */
+	private class DocumentListener implements IDocumentListener {
+
+		/*
+		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
+		 */
+		public void documentAboutToBeChanged(DocumentEvent event) {
+			fFreeSlaveDocumentExecutionTrigger= event.getDocument();
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
+		 */
+		public void documentChanged(DocumentEvent event) {
+			fFreeSlaveDocumentExecutionTrigger= null;
+		}
+	}
+	
 	/** The projection annotation model used by this viewer. */
 	private ProjectionAnnotationModel fProjectionAnnotationModel;
 	/** The annotation model listener */
@@ -115,6 +170,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private Object fLock= new Object();
 	/** The list of pending requests */
 	private List fPendingRequests= new ArrayList();
+	/** The free-slave-document execution trigger */
+	private IDocument fFreeSlaveDocumentExecutionTrigger;
+	/** Internal document listener */
+	private IDocumentListener fDocumentListener= new DocumentListener();
 	
 	/**
 	 * Creates a new projection source viewer.
@@ -478,12 +537,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					textWidget.setRedraw(true);
 			}
 			
-			
-			
 			IDocument master= getDocument();
 			if (slave.getLength() == master.getLength()) {
 				replaceVisibleDocument(master);
-				freeSlaveDocument(slave);
 			} else if (fireRedraw){
 				invalidateTextPresentation(expanded.getOffset(), expanded.getLength());
 			}
@@ -797,6 +853,32 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		if (moveCursor)
 			exposeModelRange(new Region(start, length));
 		super.setRangeIndication(start, length, moveCursor);
+	}
+	
+	protected final void executeFreeSlaveDocument(IDocument slave) {
+		super.freeSlaveDocument(slave);
+	}
+	
+	protected void freeSlaveDocument(IDocument slave) {
+		if (fFreeSlaveDocumentExecutionTrigger != null) {
+			FreeSlaveDocumentExecutor executor= new FreeSlaveDocumentExecutor(slave);
+			executor.install(fFreeSlaveDocumentExecutionTrigger);
+		} else
+			executeFreeSlaveDocument(slave);
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.TextViewer#inputChanged(java.lang.Object, java.lang.Object)
+	 */
+	protected void inputChanged(Object newInput, Object oldInput) {
+		if (oldInput instanceof IDocument) {
+			IDocument previous= (IDocument) oldInput;
+			previous.removeDocumentListener(fDocumentListener);
+		}
+		if (newInput instanceof IDocument) {
+			IDocument current= (IDocument) newInput;
+			current.addDocumentListener(fDocumentListener);
+		}
 	}
 	
 	/*

@@ -312,6 +312,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						enableSanityChecking(true);
 						firePropertyChange(PROP_DIRTY);
 						restoreSelection();
+						handleElementContentReplaced();
 					}
 				};
 				execute(r);
@@ -3476,6 +3477,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		} finally {
 			provider.changed(getEditorInput());
 		}
+	}
+	
+	/**
+	 * Performs any additional action necessary to perform after
+	 * the input document's content has been replaced.
+	 * <p> 
+	 * Clients may extended this method.
+	 * 
+	 * @since 3.0
+	 */
+	protected void handleElementContentReplaced() {
 	}
 	
 	/*
