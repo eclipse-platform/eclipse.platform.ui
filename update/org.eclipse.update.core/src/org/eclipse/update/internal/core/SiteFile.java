@@ -381,6 +381,7 @@ public class SiteFile extends Site {
 				//$NON-NLS-1$
 			}
 		}
+		pluginEntries.remove(pluginEntry);
 		InstallRegistry.unregisterPlugin(pluginEntry);
 	}
 

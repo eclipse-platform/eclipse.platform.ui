@@ -11,7 +11,6 @@
 
 package org.eclipse.update.tests.standalone;
 
-import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
@@ -41,7 +40,7 @@ public class TestFeatureUninstall extends StandaloneManagerTestCase {
 			StandaloneUpdateApplication app = new StandaloneUpdateApplication();
 			try {
 				exitValue = (Integer)app.run(getCommand(
-					"install",
+					"uninstall",
 					featureId,
 					version,
 					null,

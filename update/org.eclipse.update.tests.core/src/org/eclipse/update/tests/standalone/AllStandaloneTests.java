@@ -31,9 +31,8 @@ public class AllStandaloneTests extends UpdateManagerTestCase{
 		// the class that start with "test"
 		suite.addTest(new TestSuite(TestFeatureInstall.class));
 		suite.addTest(new TestSuite(TestFeatureUpdate.class));
-//
-		suite.addTest(new TestSuite(TestFeatureDisable.class));
 		suite.addTest(new TestSuite(TestFeatureEnable.class));
+		suite.addTest(new TestSuite(TestFeatureDisable.class));
 		suite.addTest(new TestSuite(TestFeatureUninstall.class));
 		//and this one's for fun :)
 //		suite.addTest(new TestSuite(TestSiteSearch.class));
