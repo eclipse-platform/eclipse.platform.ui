@@ -489,8 +489,18 @@ public ResourceBundle getResourceBundle(Locale targetLocale) throws MissingResou
 	if (bundleNotFound)
 		throw new MissingResourceException(Policy.bind("plugin.bundleNotFound", getId(), DEFAULT_BUNDLE_NAME + "_" + targetLocale), DEFAULT_BUNDLE_NAME + "_" + targetLocale, "");
 
-	// try to load bundle from this plugin install directory
-	ClassLoader resourceLoader = new URLClassLoader(new URL[] { getInstallURL()}, null);
+	// try to load bundle from this plugin. A new loader is created to include the base 
+	// install directory on the search path (to maintain compatibility with current handling
+	// of plugin.properties bundles (not in code jar)).
+	URL[] cp = ((URLClassLoader)getPluginClassLoader()).getURLs();
+	URL[] newcp = new URL[cp.length+1];
+	for (int i=0; i<cp.length; i++) newcp[i+1] = cp[i];
+	try {
+		newcp[0] = Platform.resolve(getInstallURL()); // always try to resolve URLs used in loaders
+	} catch(IOException e) {
+		newcp[0] = getInstallURL();
+	}
+	ClassLoader resourceLoader = new URLClassLoader(newcp, null);
 	ResourceBundle newBundle = null;
 	try {
 		newBundle = ResourceBundle.getBundle(DEFAULT_BUNDLE_NAME, targetLocale, resourceLoader);
