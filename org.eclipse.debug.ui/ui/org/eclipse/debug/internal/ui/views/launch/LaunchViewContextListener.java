@@ -1010,4 +1010,12 @@ public class LaunchViewContextListener implements IContextManagerListener {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		workbench.getContextSupport().getContextManager().removeContextManagerListener(this);
 	}
+
+	/**
+	 * Clears the cache of last enabled contexts. Called by the debug view when the pespective
+	 * changes.
+	 */
+	protected void clearLastEnabledContexts() {
+		lastEnabledIds.clear();
+	}
 }
