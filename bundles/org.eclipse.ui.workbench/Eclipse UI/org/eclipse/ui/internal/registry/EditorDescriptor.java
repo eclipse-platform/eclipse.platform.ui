@@ -33,9 +33,11 @@ import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
  */
 public final class EditorDescriptor implements IEditorDescriptor, Serializable, IPluginContribution {
 	private static final String ATT_EDITOR_CONTRIBUTOR = "contributorClass"; //$NON-NLS-1$
-	/* package */ static final int OPEN_INTERNAL = 0x01;
-	/* package */ static final int OPEN_INPLACE = 0x02;
-	/* package */ static final int OPEN_EXTERNAL = 0x04;
+	
+	// @issue the following constants need not be public; see bug 47600
+	public static final int OPEN_INTERNAL = 0x01;
+	public static final int OPEN_INPLACE = 0x02;
+	public static final int OPEN_EXTERNAL = 0x04;
 
 	private String editorName;
 	private String imageFilename;
@@ -214,6 +216,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 	public String getLauncher() {
 		return launcherName;
 	}
+	
 	/**
 	 * @see IResourceEditorDescriptor
 	 */
@@ -366,10 +369,13 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 		editorName = newName;
 	}
 	/**
-	 * Set the open mode of this editor descriptor.
-	 * @param anID
+	 * Sets the open mode of this editor descriptor.
+	 * 
+	 * @param mode the open mode
+	 * 
+	 * @issue this method is public as a temporary fix for bug 47600
 	 */
-	/* package */ void setOpenMode(int mode) {
+	public void setOpenMode(int mode) {
 		openMode = mode;
 	}
 	/**
