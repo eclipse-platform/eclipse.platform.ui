@@ -7,6 +7,7 @@ package org.eclipse.team.internal.ccvs.ui.repo;
 
 import java.util.Properties;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -24,17 +25,23 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.IRepositoryListener;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.WorkbenchUserAuthenticator;
+import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.model.AllRootsElement;
 import org.eclipse.team.internal.ccvs.ui.wizards.NewLocationWizard;
+import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
@@ -230,8 +237,35 @@ public class RepositoriesView extends RemoteViewPart {
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		String msg = getStatusLineMessage(selection);
+		getViewSite().getActionBars().getStatusLineManager().setMessage(msg);
 	}
 
+	private String getStatusLineMessage(ISelection selection) {
+		if (selection==null || selection.isEmpty()) return ""; //$NON-NLS-1$
+		if (!(selection instanceof IStructuredSelection)) return ""; //$NON-NLS-1$
+		IStructuredSelection s = (IStructuredSelection)selection;
+		
+		if (s.size() > 1) return Policy.bind("RepositoriesView.NItemsSelected", String.valueOf(s.size())); //$NON-NLS-1$
+		Object element = CVSAction.getAdapter(s.getFirstElement(), ICVSResource.class);
+		if (element instanceof ICVSRemoteResource) {
+			ICVSRemoteResource res = (ICVSRemoteResource)element;
+			String name;
+			if (res.isContainer()) {
+				name = res.getRepositoryRelativePath();
+			} else { 
+				try {
+					name = res.getRepositoryRelativePath() + " " + ((ICVSRemoteFile)res).getRevision(); //$NON-NLS-1$
+				} catch (TeamException e) {
+					TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoriesView.CannotGetRevision"), e); //$NON-NLS-1$
+					name = res.getRepositoryRelativePath();
+				} 
+			}
+			return Policy.bind("RepositoriesView.ResourceInRepository", name, res.getRepository().getLocation()); //$NON-NLS-1$
+		}
+		return Policy.bind("RepositoriesView.OneItemSelected");
+	}
+	
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.repo.RemoteViewPart#getHelpContextId()
 	 */
