@@ -6,6 +6,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 package org.eclipse.ui.externaltools.internal.ant.view.elements;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -163,7 +164,7 @@ public class ProjectNode extends AntNode {
 		try {
 			infos = AntUtil.getTargets(buildFileName);
 		} catch (CoreException e) {
-			setErrorMessage(AntViewElementsMessages.getString("ProjectNode.Exception") + e.getMessage()); //$NON-NLS-1$
+			setErrorMessage(MessageFormat.format(AntViewElementsMessages.getString("ProjectNode.Exception"), new String[]{e.getMessage()})); //$NON-NLS-1$
 			return;
 		}
 		if (infos.length < 1) {
