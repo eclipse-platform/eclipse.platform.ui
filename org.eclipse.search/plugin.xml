@@ -122,7 +122,7 @@
 				definitionId="org.eclipse.search.ui.openFileSearchPage"
 				menubarPath="org.eclipse.search.menu/internalDialogGroup"
 				label="%openFileSearchPageAction.label"
-				icon="icons/full/obj16/tsearch_obj.gif"
+				icon="icons/full/elcl16/tsearch_obj.gif"
 				helpContextId="file_search_action_context"
 				class="org.eclipse.search.internal.ui.OpenFileSearchPageAction"/>
 	
@@ -170,7 +170,7 @@
 		<page
 			id="org.eclipse.search.internal.ui.text.TextSearchPage"
 			label="%fileSearch"
-			icon="icons/full/obj16/tsearch_obj.gif"
+			icon="icons/full/elcl16/tsearch_obj.gif"
 			sizeHint="250,160"
 			tabPosition="1"
 			extensions="*:1"

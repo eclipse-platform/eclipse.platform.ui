@@ -65,14 +65,12 @@ public class SearchPluginImages {
 
 	public static final String IMG_VIEW_SEARCHRES= NAME_PREFIX + "searchres.gif"; //$NON-NLS-1$
 
-	public static final String IMG_OBJ_TSEARCH= NAME_PREFIX + "tsearch_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJ_TSEARCH_DPDN= NAME_PREFIX + "tsearch_dpdn_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJ_SEARCHMARKER= NAME_PREFIX + "searchm_obj.gif"; //$NON-NLS-1$
 
 	
 	
 	// Define images
-	public static final ImageDescriptor DESC_OBJ_TSEARCH= createManaged(T_OBJ, IMG_OBJ_TSEARCH);
 	public static final ImageDescriptor DESC_OBJ_TSEARCH_DPDN= createManaged(T_OBJ, IMG_OBJ_TSEARCH_DPDN);
 	public static final ImageDescriptor DESC_OBJ_SEARCHMARKER= createManaged(T_OBJ, IMG_OBJ_SEARCHMARKER);
 
