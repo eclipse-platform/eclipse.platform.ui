@@ -686,22 +686,25 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	/**
 	 * @see org.eclipse.debug.core.ILaunchManager#generateUniqueLaunchConfigurationNameFrom(String)
 	 */
-	public String generateUniqueLaunchConfigurationNameFrom(String namePrefix) {
+	public String generateUniqueLaunchConfigurationNameFrom(String baseName) {
 		int index = 1;
-		String baseName = namePrefix;
+		int length= baseName.length();
 		int copyIndex = baseName.lastIndexOf(" ("); //$NON-NLS-1$
-		if (copyIndex > -1) {
-			String trailer = baseName.substring(copyIndex + 1);
-			try {
-				index = Integer.parseInt(trailer);
-				baseName = namePrefix.substring(0, copyIndex);
-			} catch (NumberFormatException nfe) {
+		if (copyIndex > -1 && length > copyIndex + 2 && baseName.charAt(length - 1) == ')') {
+			String trailer = baseName.substring(copyIndex + 2, length -1);
+			if (isNumber(trailer)) {
+				try {
+					index = Integer.parseInt(trailer);
+					baseName = baseName.substring(0, copyIndex);
+				} catch (NumberFormatException nfe) {
+				}
 			}
 		} 
 		String newName = baseName;
 		try {
+			StringBuffer buffer= null;
 			while (isExistingLaunchConfigurationName(newName)) {
-				StringBuffer buffer = new StringBuffer(baseName);
+				buffer = new StringBuffer(baseName);
 				buffer.append(" ("); //$NON-NLS-1$
 				buffer.append(String.valueOf(index));
 				index++;
@@ -712,6 +715,22 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			DebugPlugin.log(e);
 		}
 		return newName;
+	}
+	
+	/**
+	 * Returns whether the given String is composed solely of digits
+	 */
+	private boolean isNumber(String string) {
+		int numChars= string.length();
+		if (numChars == 0) {
+			return false;
+		}
+		for (int i= 0; i < numChars; i++) {
+			if (!Character.isDigit(string.charAt(i))) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	/**
