@@ -758,21 +758,21 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		
 		if (fCopyLeftToRightAction != null) {
 			boolean enable= content.isRightEditable(input);
-			if (enable && input instanceof ICompareInput) {
-				ITypedElement e= ((ICompareInput) input).getLeft();
-				if (e == null)
-					enable= false;
-			}
+//			if (enable && input instanceof ICompareInput) {
+//				ITypedElement e= ((ICompareInput) input).getLeft();
+//				if (e == null)
+//					enable= false;
+//			}
 			fCopyLeftToRightAction.setEnabled(enable);
 		}
 		
 		if (fCopyRightToLeftAction != null) {
 			boolean enable= content.isLeftEditable(input);
-			if (enable && input instanceof ICompareInput) {
-				ITypedElement e= ((ICompareInput) input).getRight();
-				if (e == null)
-					enable= false;
-			}
+//			if (enable && input instanceof ICompareInput) {
+//				ITypedElement e= ((ICompareInput) input).getRight();
+//				if (e == null)
+//					enable= false;
+//			}
 			fCopyRightToLeftAction.setEnabled(enable);
 		}
 	}
@@ -898,17 +898,23 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		// write back modified contents
 		IMergeViewerContentProvider content= (IMergeViewerContentProvider) getContentProvider();
 		
+		boolean leftEmpty= content.getLeftContent(oldInput) != null;
+		boolean rightEmpty= content.getRightContent(oldInput) != null;
+
 		if (fCompareConfiguration.isLeftEditable() && fLeftSaveAction.isEnabled()) {
 			byte[] bytes= getContents(true);
+			if (leftEmpty && bytes != null && bytes.length == 0)
+				bytes= null;
 			setLeftDirty(false);
 			content.saveLeftContent(oldInput, bytes);
 		}
 		
 		if (fCompareConfiguration.isRightEditable() && fRightSaveAction.isEnabled()) {
 			byte[] bytes= getContents(false);
+			if (rightEmpty && bytes != null && bytes.length == 0)
+				bytes= null;
 			setRightDirty(false);
 			content.saveRightContent(oldInput, bytes);
 		}
 	}
 }
-

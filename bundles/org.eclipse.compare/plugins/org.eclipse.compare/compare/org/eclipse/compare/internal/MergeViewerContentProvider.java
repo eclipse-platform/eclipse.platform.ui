@@ -28,6 +28,7 @@ public class MergeViewerContentProvider implements IMergeViewerContentProvider {
 	}
 	
 	public void inputChanged(Viewer v, Object o1, Object o2) {
+		// we are not interested since we have no state
 	}
 	
 	//---- ancestor
@@ -87,6 +88,11 @@ public class MergeViewerContentProvider implements IMergeViewerContentProvider {
 			ICompareInput node= (ICompareInput) element;
 			if (bytes != null) {
 				ITypedElement left= node.getLeft();
+				// #9869: problem if left is null (because no resource exists yet) nothing is done!
+				if (left == null) {
+					node.copy(false);
+					left= node.getLeft();
+				}
 				if (left instanceof IEditableContent)
 					((IEditableContent)left).setContent(bytes);
 			} else {
@@ -130,6 +136,11 @@ public class MergeViewerContentProvider implements IMergeViewerContentProvider {
 			ICompareInput node= (ICompareInput) element;
 			if (bytes != null) {
 				ITypedElement right= node.getRight();
+				// #9869: problem if right is null (because no resource exists yet) nothing is done!
+				if (right == null) {
+					node.copy(true);
+					right= node.getRight();
+				}
 				if (right instanceof IEditableContent)
 					((IEditableContent)right).setContent(bytes);
 			} else {

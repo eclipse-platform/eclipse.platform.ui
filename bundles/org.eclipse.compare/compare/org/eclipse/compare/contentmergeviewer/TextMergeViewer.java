@@ -121,6 +121,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		IWorkbenchActionConstants.PASTE,
 		IWorkbenchActionConstants.DELETE,
 		IWorkbenchActionConstants.SELECT_ALL,
+		IWorkbenchActionConstants.SAVE
 	};
 	private static final String[] TEXT_ACTIONS= {
 		MergeSourceViewer.UNDO_ID,
@@ -130,14 +131,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		MergeSourceViewer.PASTE_ID,
 		MergeSourceViewer.DELETE_ID,
 		MergeSourceViewer.SELECT_ALL_ID,
+		MergeSourceViewer.SAVE_ID
 	};
 		
 	private static final String MY_UPDATER= "my_updater"; //$NON-NLS-1$
 	
 	private static final String SYNC_SCROLLING= "SYNC_SCROLLING"; //$NON-NLS-1$
-	
-	private static final String TEXT_FONT= ComparePreferencePage.TEXT_FONT;
-	
+		
 	private static final String BUNDLE_NAME= "org.eclipse.compare.contentmergeviewer.TextMergeViewerResources"; //$NON-NLS-1$
 		
 	// constants
@@ -486,10 +486,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		Font oldFont= fFont;
 		
 		FontData fontData= null;
-		if (ps.contains(TEXT_FONT) && !ps.isDefault(TEXT_FONT))
-			fontData= PreferenceConverter.getFontData(ps, TEXT_FONT);
+		if (ps.contains(ComparePreferencePage.TEXT_FONT)
+					&& !ps.isDefault(ComparePreferencePage.TEXT_FONT))
+			fontData= PreferenceConverter.getFontData(ps, ComparePreferencePage.TEXT_FONT);
 		else
-			fontData= PreferenceConverter.getDefaultFontData(ps, TEXT_FONT);
+			fontData= PreferenceConverter.getDefaultFontData(ps, ComparePreferencePage.TEXT_FONT);
 		if (fontData != null) {
 			fFont= new Font(c.getDisplay(), fontData);
 			
@@ -764,9 +765,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		IActionBars actionBars= Utilities.findActionBars(fComposite);
 		if (actionBars != null) {
 			for (int i= 0; i < GLOBAL_ACTIONS.length; i++) {
-				IAction action= null;
+				IAction action= null; 
 				if (part != null)
 					action= part.getAction(TEXT_ACTIONS[i]);
+				if (i == 7)
+					i= 7;
 				actionBars.setGlobalActionHandler(GLOBAL_ACTIONS[i], action);
 			}
 			actionBars.updateActionBars();
@@ -987,18 +990,19 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 * Returns the contents of the underlying document as an array of bytes.
 	 * 
 	 * @param left if <code>true</code> the contents of the left side is returned; otherwise the right side
-	 * @return the contents of the left or right document
+	 * @return the contents of the left or right document or null
 	 */
 	protected byte[] getContents(boolean left) {
-		
-		if (left) {
-			//if (fLeftContentsChanged)	// TRY
-				return fLeft.getDocument().get().getBytes();
-		} else {
-			//if (fRightContentsChanged)	// TRY
-				return fRight.getDocument().get().getBytes();
-		}
-		//return null;
+		MergeSourceViewer v= left ? fLeft : fRight;
+		if (v != null) {
+			IDocument d= v.getDocument();
+			if (d != null) {
+				String contents= d.get();
+				if (contents != null)
+					return contents.getBytes();
+			}
+		}	
+		return null;	
 	}
 				
 	private IRegion normalizeDocumentRegion(IDocument doc, IRegion region) {
@@ -1796,12 +1800,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			
 			selectFirstDiff();
 			
-		} else if (key.equals(TEXT_FONT)) {
+		} else if (key.equals(ComparePreferencePage.TEXT_FONT)) {
 			if (fPreferenceStore != null) {
 				updateFont(fPreferenceStore, fComposite);
 				invalidateLines();
 			}
-				
+			
 		} else if (key.equals(ComparePreferencePage.SYNCHRONIZE_SCROLLING)) {
 			
 			boolean b= fPreferenceStore.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);

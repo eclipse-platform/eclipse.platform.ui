@@ -37,16 +37,15 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 			return null;
 		}
 		public String getName() {
-			return "Name";	//$NON-NLS-1$
+			return "no name";	//$NON-NLS-1$
 		}
 		public String getType() {
-			return "Type";	//$NON-NLS-1$
+			return "no type";	//$NON-NLS-1$
 		}
 		public InputStream getContents() {
 			return new ByteArrayInputStream(fContent.getBytes());
 		}
 	};
-		
 
 	private static final String PREFIX= CompareUIPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
 	public static final String SYNCHRONIZE_SCROLLING= PREFIX + "SynchronizeScrolling"; //$NON-NLS-1$
@@ -62,7 +61,8 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	private CompareConfiguration fCompareConfiguration;
 	private OverlayPreferenceStore fOverlayStore;
 	private Map fCheckBoxes= new HashMap();
-	
+	private SelectionListener fCheckBoxListener;
+
 
 	public final OverlayPreferenceStore.OverlayKey[] fKeys= new OverlayPreferenceStore.OverlayKey[] {	
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, SYNCHRONIZE_SCROLLING),
@@ -103,6 +103,9 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		fOverlayStore.addPropertyChangeListener(fPreferenceChangeListener);
 	}
 	
+	/*
+	 * @see IWorkbenchPreferencePage#init()
+	 */
 	public void init(IWorkbench workbench) {
 	}	
 
@@ -173,21 +176,21 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		layout.numColumns= 1;
 		composite.setLayout(layout);
 				
-		addCheckBox(composite, "ComparePreferences.synchronizeScrolling.label", SYNCHRONIZE_SCROLLING, 0);	//$NON-NLS-1$
+		addCheckBox(composite, "ComparePreferencePage.synchronizeScrolling.label", SYNCHRONIZE_SCROLLING, 0);	//$NON-NLS-1$
 		
-		addCheckBox(composite, "ComparePreferences.initiallyShowAncestorPane.label", INITIALLY_SHOW_ANCESTOR_PANE, 0);	//$NON-NLS-1$
+		addCheckBox(composite, "ComparePreferencePage.initiallyShowAncestorPane.label", INITIALLY_SHOW_ANCESTOR_PANE, 0);	//$NON-NLS-1$
 		
-		addCheckBox(composite, "ComparePreferences.showPseudoConflicts.label", SHOW_PSEUDO_CONFLICTS, 0);	//$NON-NLS-1$
+		addCheckBox(composite, "ComparePreferencePage.showPseudoConflicts.label", SHOW_PSEUDO_CONFLICTS, 0);	//$NON-NLS-1$
 		
-		addCheckBox(composite, "ComparePreferences.showMoreInfo.label", SHOW_MORE_INFO, 0);	//$NON-NLS-1$
+		addCheckBox(composite, "ComparePreferencePage.showMoreInfo.label", SHOW_MORE_INFO, 0);	//$NON-NLS-1$
 		
-		fFontEditor= addTextFontEditor(composite, "ComparePreferences.textFont.label", TEXT_FONT);	//$NON-NLS-1$
+		fFontEditor= addTextFontEditor(composite, "ComparePreferencePage.textFont.label", TEXT_FONT);	//$NON-NLS-1$
 		fFontEditor.setPreferenceStore(getPreferenceStore());
 		fFontEditor.setPreferencePage(this);
 		fFontEditor.load();
 		
 		Label previewLabel= new Label(composite, SWT.NULL);
-		previewLabel.setText("Preview:");
+		previewLabel.setText(Utilities.getString("ComparePreferencePage.preview.label"));	//$NON-NLS-1$
 		
 		Control previewer= createPreviewer(composite);
 		GridData gd= new GridData(GridData.FILL_BOTH);
@@ -203,12 +206,12 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	private Control createPreviewer(Composite parent) {
 				
 		fCompareConfiguration= new CompareConfiguration(fOverlayStore);
-		fCompareConfiguration.setAncestorLabel("Common Ancestor");
+		fCompareConfiguration.setAncestorLabel(Utilities.getString("ComparePreferencePage.ancestor.label"));	//$NON-NLS-1$
 		
-		fCompareConfiguration.setLeftLabel("Local");
+		fCompareConfiguration.setLeftLabel(Utilities.getString("ComparePreferencePage.left.label"));	//$NON-NLS-1$
 		fCompareConfiguration.setLeftEditable(false);
 		
-		fCompareConfiguration.setRightLabel("Remote");
+		fCompareConfiguration.setRightLabel(Utilities.getString("ComparePreferencePage.right.label"));	//$NON-NLS-1$
 		fCompareConfiguration.setRightEditable(false);
 		
 		fTextMergeViewer= new TextMergeViewer(parent, SWT.BORDER, fCompareConfiguration);
@@ -236,27 +239,21 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 
 	// overlay stuff
 	
-	private SelectionListener fCheckBoxListener= new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			Button button= (Button) e.widget;
-			fOverlayStore.setValue((String) fCheckBoxes.get(button), button.getSelection());
-		}
-	};
-	
 	private WorkbenchChainedTextFontFieldEditor addTextFontEditor(Composite parent, String labelKey, String key) {
 		
 		String label= Utilities.getString(labelKey);
 
-		Composite editorComposite= new Composite(parent, SWT.NULL);
+		Group group= new Group(parent, SWT.NULL);
+		group.setText(label);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 3;
-		editorComposite.setLayout(layout);		
-		WorkbenchChainedTextFontFieldEditor fe= new WorkbenchChainedTextFontFieldEditor(key, label, editorComposite);
-		//fFontEditor.setChangeButtonText("C&hange...");
+		layout.marginWidth+= 3;
+		group.setLayout(layout);		
+		WorkbenchChainedTextFontFieldEditor fe= new WorkbenchChainedTextFontFieldEditor(key, "", group);	//$NON-NLS-1$
 				
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan= 2;
-		editorComposite.setLayoutData(gd);
+		group.setLayoutData(gd);
 		
 		return fe;
 	}
@@ -272,6 +269,15 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		gd.horizontalIndent= indentation;
 		gd.horizontalSpan= 2;
 		checkBox.setLayoutData(gd);
+		
+		if (fCheckBoxListener == null) {
+			fCheckBoxListener= new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					Button button= (Button) e.widget;
+					fOverlayStore.setValue((String) fCheckBoxes.get(button), button.getSelection());
+				}
+			};
+		}
 		checkBox.addSelectionListener(fCheckBoxListener);
 		
 		fCheckBoxes.put(checkBox, key);
@@ -280,12 +286,12 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	}
 	
 	private String loadPreviewContentFromFile(String filename) {
-		String line;
 		String separator= System.getProperty("line.separator"); //$NON-NLS-1$
 		StringBuffer buffer= new StringBuffer(512);
 		BufferedReader reader= null;
 		try {
 			reader= new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(filename)));
+			String line;
 			while ((line= reader.readLine()) != null) {
 				buffer.append(line);
 				buffer.append(separator);
@@ -294,7 +300,10 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 			CompareUIPlugin.log(io);
 		} finally {
 			if (reader != null) {
-				try { reader.close(); } catch (IOException e) {}
+				try {
+					reader.close();
+				} catch (IOException e) {
+				}
 			}
 		}
 		return buffer.toString();
