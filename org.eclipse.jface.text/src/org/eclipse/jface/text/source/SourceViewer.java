@@ -11,6 +11,7 @@
 
 package org.eclipse.jface.text.source;
 
+import java.util.Stack;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -21,7 +22,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 
 import org.eclipse.jface.text.AbstractHoverInformationControlManager;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.Position;
@@ -36,7 +41,6 @@ import org.eclipse.jface.text.formatter.IFormattingContext;
 import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
-
 
 /**
  * SWT based implementation of <code>ISourceViewer</code>. The same rules apply 
@@ -122,6 +126,21 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	protected IPresentationReconciler fPresentationReconciler;
 	/** The viewer's annotation hover */
 	protected IAnnotationHover fAnnotationHover;
+	/**
+	 * Stack of saved selections in the underlying document
+	 * @since 3.0
+	 */
+	protected final Stack fSelections= new Stack();
+	/**
+	 * Position category of saved selections
+	 * @since 3.0
+	 */
+	protected final static String SELECTION_POSITION_CATEGORY= "__selection_category";
+	/**
+	 * Position updater for saved selections
+	 * @since 3.0
+	 */
+	protected IPositionUpdater fSelectionUpdater= null;
 	/** 
 	 * The viewer's overview ruler annotation hover
 	 * @since 3.0
@@ -498,15 +517,71 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 	
 	/**
-	 * Creates and prepares a new formatting context for a format operation.
+	 * Creates a new formatting context for a format operation.
+	 * <p>
+	 * After the use of the context, clients are required to call
+	 * its <code>dispose</code> method.
 	 * 
 	 * @return The new formatting context
-	 * @since 3.0
 	 */
-	public IFormattingContext createFormattingContext() {
+	protected IFormattingContext createFormattingContext() {
 		return new FormattingContext();	
 	}
 	
+	/**
+	 * Saves the current selection in the document.
+	 */
+	public void saveSelection(int offset, int length) {
+
+		final IDocument document= getDocument();
+
+		if (fSelections.isEmpty()) {
+
+			fSelectionUpdater= new DefaultPositionUpdater(SELECTION_POSITION_CATEGORY);
+			document.addPositionCategory(SELECTION_POSITION_CATEGORY);
+			document.addPositionUpdater(fSelectionUpdater);
+		}
+
+		final Position selection;
+		try {
+
+			selection= new Position(offset, length);
+			document.addPosition(SELECTION_POSITION_CATEGORY, selection);
+			fSelections.push(selection);
+
+		} catch (BadLocationException exception) {
+			// Should not happen
+		} catch (BadPositionCategoryException exception) {
+			// Should not happen
+		}
+	}
+	
+	/**
+	 * Restores a previously saved selection in the document.
+	 */
+	public void restoreSelection() {
+
+		if (!fSelections.isEmpty()) {
+
+			final IDocument document= getDocument();
+			final Position selection= (Position)fSelections.pop();
+
+			try {
+				document.removePosition(SELECTION_POSITION_CATEGORY, selection);
+				setSelectedRange(selection.getOffset(), selection.getLength());
+
+				if (fSelections.isEmpty()) {
+
+					document.removePositionUpdater(fSelectionUpdater);
+					fSelectionUpdater= null;
+					document.removePositionCategory(SELECTION_POSITION_CATEGORY);
+				}
+			} catch (BadPositionCategoryException exception) {
+				// Should not happen
+			}
+		}
+	}
+
 	/*
 	 * @see ITextOperationTarget#doOperation(int)
 	 */
@@ -525,11 +600,13 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			case INFORMATION:
 				fInformationPresenter.showInformation();
 				return;
-			case FORMAT : {
-				IFormattingContext context= createFormattingContext();
-				try {
-					Point selection= getSelectedRange();
-					IRegion region= new Region(selection.x, selection.y);
+			case FORMAT :
+				{
+					final Point selection= getSelectedRange();
+					saveSelection(selection.x, selection.y);
+					
+					final IRegion region= new Region(selection.x, selection.y); 
+					final IFormattingContext context= createFormattingContext();
 
 					if (selection.y == 0) {
 						context.setProperty(FormattingContextProperties.CONTEXT_DOCUMENT, Boolean.TRUE);
@@ -537,23 +614,27 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 						context.setProperty(FormattingContextProperties.CONTEXT_DOCUMENT, Boolean.FALSE);
 						context.setProperty(FormattingContextProperties.CONTEXT_REGION, region);
 					}
-
 					try {
 						setRedraw(false);
+
+						final IDocument document= getDocument();
 						if (fContentFormatter instanceof IContentFormatterExtension2) {
-							IContentFormatterExtension2 extension= (IContentFormatterExtension2) fContentFormatter;
-							extension.format(getDocument(), context);
-						} else {
-							fContentFormatter.format(getDocument(), region);
-						}
+
+							final IContentFormatterExtension2 extension= (IContentFormatterExtension2)fContentFormatter;
+							extension.format(document, context);
+
+						} else
+							fContentFormatter.format(document, region);
+
 					} finally {
+						
+						restoreSelection();
+						context.dispose();
+						
 						setRedraw(true);
 					}
-				} finally {
-					context.dispose();
+					return;
 				}
-				return;
-			}
 			default :
 				super.doOperation(operation);
 		}

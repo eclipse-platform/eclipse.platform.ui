@@ -22,7 +22,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
- * Abstract formatting strategy for context based content formatting.
+ * Formatting strategy for context based content formatting.
  * <p>
  * This strategy implements <code>IFormattingStrategyExtension</code>. It must be
  * registered with a content formatter implementing <code>IContentFormatterExtension2<code>
@@ -40,7 +40,7 @@ public abstract class ContextBasedFormattingStrategy implements IFormattingStrat
 	 * @param document Document to get the used line delimiter from
 	 * @return The line delimiter used in the document
 	 */
-	protected static String getLineDelimiter(final IDocument document) {
+	protected static String getLineDelimiter(IDocument document) {
 
 		String delimiter= null;
 
@@ -83,7 +83,7 @@ public abstract class ContextBasedFormattingStrategy implements IFormattingStrat
 	 * 
 	 * @param viewer ISourceViewer to operate on
 	 */
-	public ContextBasedFormattingStrategy(final ISourceViewer viewer) {
+	public ContextBasedFormattingStrategy(ISourceViewer viewer) {
 		fViewer= viewer;
 	}
 
