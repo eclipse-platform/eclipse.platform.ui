@@ -37,6 +37,7 @@ public class LocalMetaArea implements ICoreConstants {
 	/* package */ static final String F_SYNCINFO = ".syncinfo"; //$NON-NLS-1$
     /* package */ static final String F_TREE = ".tree"; //$NON-NLS-1$
 public LocalMetaArea() {
+	super();
 }
 /**
  * For backwards compatibility, if there is a project at the old 

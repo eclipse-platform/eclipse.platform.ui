@@ -67,10 +67,10 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	 * WorkspaceDescription#getBuildOrder(boolean)
 	 */
 	public String[] getBuildOrder(boolean makeCopy) {
-		String[] buildOrder = getBuildOrder();
-		if (buildOrder == null)
+		String[] result = getBuildOrder();
+		if (result == null)
 			return null;
-		return makeCopy ? (String[]) buildOrder.clone() : buildOrder;
+		return makeCopy ? (String[]) result.clone() : result;
 	}
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#getFileStateLongevity()

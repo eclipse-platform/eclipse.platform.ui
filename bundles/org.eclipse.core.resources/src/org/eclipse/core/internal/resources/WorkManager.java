@@ -255,6 +255,7 @@ class WorkManager implements IManager {
 				lock.release();
 			}
 		} catch (InterruptedException e) {
+			// ignore
 		}
 		return result;
 	}

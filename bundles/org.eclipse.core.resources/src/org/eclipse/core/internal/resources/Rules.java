@@ -48,5 +48,6 @@ class Rules {
 	 * Don't allow instantiation
 	 */
 	private Rules() {
+		// not allowed
 	}
 }

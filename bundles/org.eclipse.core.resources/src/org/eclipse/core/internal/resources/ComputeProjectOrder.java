@@ -27,6 +27,7 @@ class ComputeProjectOrder {
 	 * Prevent class from being instantiated.
 	 */
 	private ComputeProjectOrder() {
+		// not allowed
 	}
 
 	/**
@@ -146,6 +147,7 @@ class ComputeProjectOrder {
 		 * </p>
 		 */
 		public Digraph() {
+			super();
 		}
 
 		/**

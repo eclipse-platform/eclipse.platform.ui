@@ -44,7 +44,7 @@ public void printTabulation() {
 public void printTag(String name, HashMap parameters) {
 	printTag(name, parameters, true, true);
 }
-public void printTag(String name, HashMap parameters, boolean tab, boolean newLine) {
+public void printTag(String name, HashMap parameters, boolean shouldTab, boolean newLine) {
 	StringBuffer sb = new StringBuffer();
 	sb.append("<"); //$NON-NLS-1$
 	sb.append(name);
@@ -58,7 +58,7 @@ public void printTag(String name, HashMap parameters, boolean tab, boolean newLi
 			sb.append("\""); //$NON-NLS-1$
 		}
 	sb.append(">"); //$NON-NLS-1$
-	if (tab)
+	if (shouldTab)
 		printTabulation();
 	if (newLine)
 		println(sb.toString());

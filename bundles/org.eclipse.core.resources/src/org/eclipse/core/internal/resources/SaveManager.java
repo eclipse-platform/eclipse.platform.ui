@@ -1036,9 +1036,9 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	}
 	public void startup(IProgressMonitor monitor) throws CoreException {
 		restore(monitor);
-		java.io.File masterTable = workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.PI_RESOURCES).toFile();
-		if (!masterTable.exists())
-			masterTable.getParentFile().mkdirs();
+		java.io.File table = workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.PI_RESOURCES).toFile();
+		if (!table.exists())
+			table.getParentFile().mkdirs();
 	}
 	protected void writeTree(Map statesToSave, DataOutputStream output, IProgressMonitor monitor) throws IOException, CoreException {
 		monitor = Policy.monitorFor(monitor);
@@ -1389,6 +1389,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 				try {
 					o1.close();
 				} catch (IOException e2) {
+					// ignore
 				}
 			message = Policy.bind("resources.writeMeta", root.getFullPath().toString()); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
@@ -1455,11 +1456,13 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 				try {
 					markersOutput.close();
 				} catch (IOException e) {
+					// ignore
 				}
 			if (syncInfoOutput != null)
 				try {
 					syncInfoOutput.close();
 				} catch (IOException e) {
+					// ignore
 				}
 		}
 
@@ -1509,6 +1512,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 				try {
 					o1.close();
 				} catch (IOException e2) {
+					// ignore
 				}
 			message = Policy.bind("resources.writeMeta", root.getFullPath().toString()); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);

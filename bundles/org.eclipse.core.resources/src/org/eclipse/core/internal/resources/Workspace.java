@@ -1179,7 +1179,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			//create anonymous subclass because TeamHook is abstract
 			if (teamHook == null)
 				teamHook = new TeamHook() {
-			};
+					// empty
+				};
 		}
 	}
 	public WorkspaceDescription internalGetDescription() {

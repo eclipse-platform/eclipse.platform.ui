@@ -30,6 +30,7 @@ public class WorkspaceDescriptionReader implements IModelObjectConstants {
 	protected static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 public WorkspaceDescriptionReader() {
+	super();
 }
 protected String getString(Node target, String tagName) {
 	Node node = searchNode(target, tagName);
@@ -64,8 +65,11 @@ public Object read(InputStream input) {
 		Document document = parser.parse(input);
 		return read(document.getFirstChild());
 	} catch (IOException e) {
+		// ignore
 	} catch (SAXException e) {
+		// ignore
 	} catch (ParserConfigurationException e) {
+		// ignore
 	}
 	return null;
 }

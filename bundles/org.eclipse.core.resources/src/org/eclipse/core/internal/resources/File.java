@@ -192,6 +192,7 @@ protected void ensureClosed(InputStream stream) {
 		try {
 			stream.close();
 		} catch (IOException e) {
+			// ignore
 		}
 	}
 }
