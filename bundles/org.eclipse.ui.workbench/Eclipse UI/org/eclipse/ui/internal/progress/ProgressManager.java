@@ -414,9 +414,9 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 			//Only refresh if we are showing it
 			remove(info);
 
-			//If there are no more left then refresh all but don't refresh for the refresh
+			//If there are no more left then refresh all on the last displayed one
 			if (hasNoRegularJobInfos() 
-					&& !ProgressViewUpdater.getSingleton().isUpdateJob(info.getJob()))
+					&& !isNonDisplayableJob(event.getJob(),false))
 				refreshAll();
 		}
 	}
