@@ -10,18 +10,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.update.core.ContentReference;
-import org.eclipse.update.core.Feature;
-import org.eclipse.update.core.FeatureContentProvider;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.INonPluginEntry;
-import org.eclipse.update.core.IPluginEntry;
-import org.eclipse.update.core.ISiteContentProvider;
-import org.eclipse.update.core.InstallMonitor;
-import org.eclipse.update.core.Site;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.*;
 
 /**
  * Default implementation of an Executable DefaultFeature Content Provider
@@ -44,7 +34,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	/**
 	 * return the path for a pluginEntry
 	 */
-	private String getPath(IPluginEntry pluginEntry) throws Exception {
+	private String getPath(IPluginEntry pluginEntry) throws IOException,CoreException {
 		String result = null;
 
 		// get the URL of the Archive file that contains the plugin entry
@@ -57,7 +47,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 			result += File.separator;
 		File pluginDir = new File(result);
 		if (!pluginDir.exists())
-			throw new IOException("The File:" + result + "does not exist.");
+			throw new IOException(Policy.bind("FeatureExecutableContentProvider.FileDoesNotExist",result)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		return result;
 	}
@@ -70,11 +60,11 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 
 
 		// return the list of all subdirectories
-		if (!(result.endsWith(File.separator) || result.endsWith("/")))
+		if (!(result.endsWith(File.separator) || result.endsWith("/"))) //$NON-NLS-1$
 			result += File.separator;
 		File pluginDir = new File(result);
 		if (!pluginDir.exists())
-			throw new IOException("The File:" + result + "does not exist.");
+			throw new IOException(Policy.bind("FeatureExecutableContentProvider.FileDoesNotExist",result)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		return result;
 	}
@@ -86,7 +76,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		List result = new ArrayList();
 
 		if (!dir.isDirectory())
-			throw new IOException(dir.getPath() + " is not a valid directory");
+			throw new IOException(dir.getPath() + Policy.bind("FeatureExecutableContentProvider.InvalidDirectory",dir.getAbsolutePath())); //$NON-NLS-1$
 
 		File[] files = dir.listFiles();
 		if (files != null) // be careful since it can be null
@@ -119,7 +109,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	 * the default ID is fragments/pluginId_pluginVer or
 		*/
 	private String getArchiveID(INonPluginEntry entry) {
-		String nonPluginBaseID = Site.DEFAULT_FEATURE_PATH + feature.getVersionedIdentifier().toString()+"/";
+		String nonPluginBaseID = Site.DEFAULT_FEATURE_PATH + feature.getVersionedIdentifier().toString()+"/"; //$NON-NLS-1$
 		return nonPluginBaseID + entry.getIdentifier().toString();
 	}
 	/*
@@ -132,7 +122,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 			
 		} catch (MalformedURLException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "cannot create URL for :"+getURL().toExternalForm()+" "+Feature.FEATURE_XML, e);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("FeatureExecutableContentProvider.UnableToCreateURLFor",getURL().toExternalForm()+" "+Feature.FEATURE_XML), e); //$NON-NLS-1$ //$NON-NLS-2$
 			throw new CoreException(status);
 		}
 		return result;
@@ -153,9 +143,9 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		ContentReference[] result = new ContentReference[1];
 		try {
 			result[0] = new ContentReference(getArchiveID(pluginEntry),new File(getPath(pluginEntry)));
-		} catch (Exception e) {
+		} catch (IOException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error retrieving archive names for:" + pluginEntry.getVersionedIdentifier().toString(), e);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("FeatureExecutableContentProvider.UnableToRetrievePluginEntry", pluginEntry.getVersionedIdentifier().toString()), e); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		return result;
@@ -174,12 +164,12 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 
 			File nonPluginData = new File(fileString);
 			if (!nonPluginData.exists())
-				throw new IOException("The File:" + fileString + " does not exist.");
+				throw new IOException(Policy.bind("FeatureExecutableContentProvider.FileDoesNotExist",fileString)); //$NON-NLS-1$ //$NON-NLS-2$
 
 			result[0] = new ContentReference(nonPluginEntry.getIdentifier(),nonPluginData.toURL());
 		} catch (Exception e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error retrieving archive references:" + nonPluginEntry.getIdentifier().toString(), e);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("FeatureExecutableContentProvider.UnableToRetrieveNonPluginEntry", nonPluginEntry.getIdentifier().toString()), e); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		return result;
@@ -209,7 +199,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 			}
 		} catch (Exception e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error retrieving archive content references for:" + feature.getVersionedIdentifier().toString(), e);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("FeatureExecutableContentProvider.UnableToRetrieveFeatureEntryContentRef",feature.getVersionedIdentifier().toString()), e); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		return result;
@@ -233,7 +223,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 			}
 		} catch (Exception e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error retrieving archive content references for:" + pluginEntry.getVersionedIdentifier().toString(), e);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("FeatureExecutableContentProvider.UnableToRetriveArchiveContentRef") + pluginEntry.getVersionedIdentifier().toString(), e); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		return result;

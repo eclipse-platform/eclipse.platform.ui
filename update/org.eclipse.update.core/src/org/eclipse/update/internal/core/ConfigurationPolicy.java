@@ -16,6 +16,7 @@ import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.internal.model.*;
 import org.eclipse.update.internal.model.ConfigurationActivityModel;
 import org.eclipse.update.internal.model.ConfigurationPolicyModel;
+import org.eclipse.update.internal.core.Policy;
 
 /**
  * 
@@ -86,7 +87,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 		
 		boolean unconfigure = true;
 		String uniqueId = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		MultiStatus multiStatus = new MultiStatus(uniqueId, IStatus.WARNING, "Some plugins of this feature are required by the following running plugins", null);
+		MultiStatus multiStatus = new MultiStatus(uniqueId, IStatus.WARNING, Policy.bind("ConfigurationPolicy.RequiredPlugins"), null); //$NON-NLS-1$
 
 		// plugins to remove	
 		ISite site = configuredSite.getSite();
@@ -104,7 +105,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 		}
 
 		if (multiStatus.getChildren().length > 0 && handler!=null) {
-			unconfigure = handler.reportProblem("Are you certain to want to unconfigure this feature ?", multiStatus);
+			unconfigure = handler.reportProblem(Policy.bind("ConfigurationPolicy.DoYouWantToUnconfigure"), multiStatus); //$NON-NLS-1$
 		}
 
 		if (unconfigure) {
@@ -176,9 +177,9 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 							// make it relative to teh site
 							String path = UpdateManagerUtils.getURLAsString(site.getURL(), url);
 							// add end "/"
-							path += (path.endsWith(File.separator) || path.endsWith("/")) ? "" : "/";
+							path += (path.endsWith(File.separator) || path.endsWith("/")) ? "" : "/"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							// add plugin.xml or fragment.xml
-							path += entry.isFragment() ? "fragment.xml" : "plugin.xml"; //FIXME: fragments
+							path += entry.isFragment() ? "fragment.xml" : "plugin.xml"; //FIXME: fragments //$NON-NLS-1$ //$NON-NLS-2$
 							pluginsString.add(path);
 						}
 					}

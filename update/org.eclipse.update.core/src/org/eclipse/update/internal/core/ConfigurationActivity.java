@@ -32,27 +32,27 @@ public class ConfigurationActivity extends ConfigurationActivityModel implements
 	 * @see IWritable#write(int, PrintWriter)
 	 */
 	public void write(int indent, PrintWriter w) {
-		String gap = "";
+		String gap = ""; //$NON-NLS-1$
 		for (int i = 0; i < indent; i++)
-			gap += " ";
-		String increment = "";
+			gap += " "; //$NON-NLS-1$
+		String increment = ""; //$NON-NLS-1$
 		for (int i = 0; i < IWritable.INDENT; i++)
-			increment += " ";
+			increment += " "; //$NON-NLS-1$
 		
 		
-		w.print(gap + "<" + InstallConfigurationParser.ACTIVITY + " ");
-		w.println("action=\""+getAction()+"\" ");
+		w.print(gap + "<" + InstallConfigurationParser.ACTIVITY + " "); //$NON-NLS-1$ //$NON-NLS-2$
+		w.println("action=\""+getAction()+"\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		if (getLabel()!=null){
-			w.println(gap+"label=\""+Writer.xmlSafe(getLabel())+"\" ");
+			w.println(gap+"label=\""+Writer.xmlSafe(getLabel())+"\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		w.println("date=\"" + getDate().getTime() + "\" ");
-		w.print("status=\""+getStatus()+"\"");
-		w.println(">");
-		w.println("");
+		w.println("date=\"" + getDate().getTime() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+		w.print("status=\""+getStatus()+"\""); //$NON-NLS-1$ //$NON-NLS-2$
+		w.println(">"); //$NON-NLS-1$
+		w.println(""); //$NON-NLS-1$
 		
 		
 		// end
-		w.println(gap+"</"+InstallConfigurationParser.ACTIVITY+">");
+		w.println(gap+"</"+InstallConfigurationParser.ACTIVITY+">"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		
 		
