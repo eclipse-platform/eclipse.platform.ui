@@ -19,6 +19,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -26,8 +27,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.internal.dnd.CompatibilityDragTarget;
+import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.dnd.IDragOverListener;
+import org.eclipse.ui.internal.dnd.IDropTarget;
 
 /**
  * A perspective presentation is a collection of parts with a layout. Each part
@@ -51,11 +54,55 @@ public class PerspectivePresentation {
 
 	private boolean active = false;
 	// key is the LayoutPart object, value is the PartDragDrop object
-	private IPartDropListener partDropListener;
+	//private IPartDropListener partDropListener;
 
 	private static final int MIN_DETACH_WIDTH = 150;
 	private static final int MIN_DETACH_HEIGHT = 250;
-	private CompatibilityDragTarget dragTarget;
+	private IDragOverListener dragTarget = new IDragOverListener() {
+
+		public IDropTarget drag(Control currentControl, Object draggedObject, Point position, final Rectangle dragRectangle) {
+
+			if (!(draggedObject instanceof ViewPane || draggedObject instanceof PartTabFolder)) {
+				return null;
+			}
+			final LayoutPart part = (LayoutPart)draggedObject;
+
+			return new AbstractDropTarget() {
+				public void drop() {
+				
+					Window window = part.getWindow();
+					if (window instanceof DetachedWindow) {
+						// only one tab folder in a detach window, so do window
+						// move
+						if (part instanceof PartTabFolder) {
+							window.getShell().setLocation(dragRectangle.x, dragRectangle.y);
+							return;
+						}
+						// if only one view in tab folder then do a window move
+						ILayoutContainer container = part.getContainer();
+						if (container instanceof PartTabFolder) {
+							if (((PartTabFolder) container).getItemCount() == 1) {
+								window.getShell().setLocation(dragRectangle.x, dragRectangle.y);
+								return;
+							}
+						}
+					}
+			
+					// If layout is modified always zoom out.
+					if (isZoomed())
+						zoomOut();
+					// do a normal part detach
+					detach(part, dragRectangle.x, dragRectangle.y);					
+				}
+
+				public Cursor getCursor() {
+					return DragCursors.getCursor(DragCursors.OFFSCREEN);
+				}
+			
+			};
+		}
+	
+	};
 
 	/**
 	 * Constructs a new object.
@@ -67,13 +114,8 @@ public class PerspectivePresentation {
 		this.mainLayout = mainLayout;
 
 		// Determine if reparenting is allowed by checking if some arbitrary
-		// Composite
-		// supports reparenting... this is a hack. This is used to determine if
-		// undocked
-		// views should be enabled, which should not depend on SWT's
-		// reparenting facilities.
-		// Views can be destroyed and recreated if SWT does not support
-		// reparenting.
+		// Composite supports reparenting. This is used to determine if
+		// detached views should be enabled.
 		this.detachable = false;
 
 		Composite client = workbenchPage.getClientComposite();
@@ -82,17 +124,6 @@ public class PerspectivePresentation {
 			this.detachable = testChild.isReparentable();
 			testChild.dispose();
 		}
-
-		this.partDropListener = new IPartDropListener() {
-			public void dragOver(PartDropEvent e) {
-				onPartDragOver(e);
-			}
-			public void drop(PartDropEvent e) {
-				onPartDrop(e);
-			}
-		};
-		
-		dragTarget = new CompatibilityDragTarget(partDropListener, IWorkbenchDragDropPart.VIEW, page.getWorkbenchWindow());
 	}
 	
 	/**
@@ -123,7 +154,7 @@ public class PerspectivePresentation {
 		}
 
 		enableAllDrag();
-		enableAllDrop();
+		//enableAllDrop();
 
 		active = true;
 	}
@@ -149,7 +180,7 @@ public class PerspectivePresentation {
 			part.reparent(mainLayout.getParent());
 			LayoutPart relative = mainLayout.findBottomRight();
 			if (relative != null && !(relative instanceof EditorArea)) {
-				stack(part, relative);
+				mainLayout.stack(part, relative);
 			} else {
 				mainLayout.add(part);
 			}
@@ -174,7 +205,7 @@ public class PerspectivePresentation {
 					ViewPane pane = (ViewPane) part;
 					window.getShell().setText(
 						pane.getPartReference().getTitle());
-					window.add(pane, partDropListener);
+					window.add(pane);
 					LayoutPart otherChildren[] = holder.getChildren();
 					for (int i = 0; i < otherChildren.length; i++)
 						part.getContainer().add(otherChildren[i]);
@@ -212,7 +243,7 @@ public class PerspectivePresentation {
 		}
 
 		// enable direct manipulation
-		enableDrop(part);
+		//enableDrop(part);
 	}
 	/**
 	 * Return whether detachable parts can be supported.
@@ -530,7 +561,7 @@ public class PerspectivePresentation {
 	/**
 	 * Create a detached window containing a part.
 	 */
-	private void detach(IWorkbenchDragSource source, int x, int y) {
+	private void detach(LayoutPart source, int x, int y) {
 
 		// Detaching is disabled on some platforms ..
 		if (!detachable)
@@ -570,7 +601,7 @@ public class PerspectivePresentation {
 					ViewPane pane = (ViewPane) children[i];
 					window.getShell().setText(
 						pane.getPartReference().getTitle());
-					window.add(pane, partDropListener);
+					window.add(pane);
 				}
 			}
 			if (visiblePart != null) {
@@ -585,7 +616,7 @@ public class PerspectivePresentation {
 			// add part to detached window.
 			ViewPane pane = (ViewPane) part;
 			window.getShell().setText(pane.getPartReference().getTitle());
-			window.add(pane, partDropListener);
+			window.add(pane);
 			part.setFocus();
 		}
 
@@ -617,7 +648,7 @@ public class PerspectivePresentation {
 		part.createControl(window.getShell());
 		ViewPane pane = (ViewPane) part;
 		window.getShell().setText(pane.getPartReference().getTitle());
-		window.add(pane, partDropListener);
+		window.add(pane);
 
 		// Open window.
 		window.getShell().setBounds(x, y, width, height);
@@ -626,7 +657,7 @@ public class PerspectivePresentation {
 		part.setFocus();
 
 		// enable direct manipulation
-		enableDrop(part);
+		//enableDrop(part);
 	}
 
 	/**
@@ -651,28 +682,28 @@ public class PerspectivePresentation {
 	/**
 	 * enableDragging.
 	 */
-	private void enableAllDrop() {
+//	private void enableAllDrop() {
+//
+//		Vector dropTargets = new Vector();
+//		collectDropTargets(dropTargets, mainLayout.getChildren());
+//
+//		for (int i = 0, length = detachedWindowList.size(); i < length; i++) {
+//			DetachedWindow window = (DetachedWindow) detachedWindowList.get(i);
+//			collectDropTargets(dropTargets, window.getChildren());
+//		}
+//
+//		Enumeration enum = dropTargets.elements();
+//		while (enum.hasMoreElements()) {
+//			LayoutPart part = (LayoutPart) enum.nextElement();
+//			enableDrop(part);
+//		}
+//	}
 
-		Vector dropTargets = new Vector();
-		collectDropTargets(dropTargets, mainLayout.getChildren());
-
-		for (int i = 0, length = detachedWindowList.size(); i < length; i++) {
-			DetachedWindow window = (DetachedWindow) detachedWindowList.get(i);
-			collectDropTargets(dropTargets, window.getChildren());
-		}
-
-		Enumeration enum = dropTargets.elements();
-		while (enum.hasMoreElements()) {
-			LayoutPart part = (LayoutPart) enum.nextElement();
-			enableDrop(part);
-		}
-	}
-
-	private void enableDrop(LayoutPart part) {
-		Control control = part.getControl();
-		if (control != null)
-			control.setData(part);
-	}
+//	private void enableDrop(LayoutPart part) {
+//		Control control = part.getControl();
+//		if (control != null)
+//			control.setData(part);
+//	}
 	/**
 	 * Find the first part with a given ID in the presentation.
 	 */
@@ -769,7 +800,7 @@ public class PerspectivePresentation {
 	/**
 	 * Place the part on the shortcut bar as a fast view
 	 */
-	private void makeFast(IWorkbenchDragSource source) {
+	private void makeFast(LayoutPart source) {
 
 		LayoutPart part = source.getPart();
 
@@ -799,337 +830,6 @@ public class PerspectivePresentation {
 			return 0.25f;
 		}
 		return 0.5f;
-	}
-	
-	/**
-	 * Move a part from one position to another. Supports moving a part within
-	 * the same window and moving a part from a detach window into the main
-	 * window.
-	 */
-	private void movePart(
-		IWorkbenchDragDropPart source,
-		int position,
-		IWorkbenchDragDropPart relative) {
-
-		LayoutPart part = source.getPart();
-		LayoutPart relativePart = relative.getPart();
-
-		ILayoutContainer newContainer = relativePart.getContainer();
-
-		if (newContainer instanceof RootLayoutContainer) {
-			// Determine the position
-			RootLayoutContainer sashContainer =
-				(RootLayoutContainer) newContainer; 
-				
-			int swtPosition = DragCursors.dragCursorToSwtConstant(position); 
-			
-			// folder part from detach window is special
-			if (part instanceof PartTabFolder) {
-				Window window = part.getWindow();
-				if (window instanceof DetachedWindow) {
-					window.getShell().setRedraw(false);
-					parentWidget.setRedraw(false);
-					LayoutPart visiblePart =
-						((PartTabFolder) part).getVisiblePart();
-					// create a new folder and add the children to it
-					PartTabFolder folder = new PartTabFolder(page);
-					sashContainer.addEnhanced(
-						folder,
-						swtPosition,
-						getDockingRatio(part, relativePart),
-						relativePart);
-					LayoutPart[] children =
-						((PartTabFolder) part).getChildren();
-					for (int i = 0; i < children.length; i++) {
-						derefPart(children[i]);
-						folder.add(children[i]);
-
-					}
-					if (visiblePart != null) {
-						bringPartToTop(visiblePart);
-						visiblePart.setFocus();
-					}
-					// No need to set redraw on detach window as it should
-					// be closed now.
-					parentWidget.setRedraw(true);
-					// return so not to add folder from detach window
-					return;
-				}
-			}
-
-			ILayoutContainer oldContainer = part.getContainer();
-			if (oldContainer != sashContainer) {
-				// just a normal move
-				derefPart(part);
-
-				
-				// Create a new folder and add both items
-				PartTabFolder folder = new PartTabFolder(page);
-				sashContainer.addEnhanced(
-					folder,
-					swtPosition,
-					getDockingRatio(part, relativePart),
-					relativePart);
-				folder.add(part);
-			} else {
-				//Move the part to its new position but keep its bounds if
-				// possible.
-				sashContainer.move(part, PageLayout.swtConstantToLayoutPosition(swtPosition), 
-						relativePart);
-			}
-			part.setFocus();
-		} else if (newContainer instanceof PartTabFolder) {
-			// move this part relative to the folder
-			// rather than relative to the part in the folder
-			movePart(part, position, (PartTabFolder)newContainer);
-		}
-	}
-	/**
-	 * Notification sent during drag and drop operation. Only allow views, tab
-	 * folders, and fast view icons to participate in the drag. Only allow the
-	 * drop on a view, tab folder, the shortcut bar, or editor area.
-	 */
-	/* package */
-	void onPartDragOver(PartDropEvent e) {
-		
-		/*
-		 * Note, any drop that is considered invalid for stack or move, will be
-		 * set as OFF_SCREEN causing either a new detach window to be created
-		 * or it the source was a detach window, a location move.
-		 */
-		int offScreenPosition = DragCursors.OFFSCREEN;
-		if (!detachable)
-			offScreenPosition = DragCursors.INVALID;
-
-		// If source and target are in different windows reject.
-		if (e.dragSource != null && e.dropTarget != null) {
-			if (e.dragSource.getWorkbenchWindow()
-				!= e.dropTarget.getWorkbenchWindow()) {
-				e.dropTarget = null;
-				e.relativePosition = offScreenPosition;
-				return;
-			}
-		}
-
-		// If drop target is editor area exclude center.
-		if (e.dropTarget instanceof EditorArea) {
-			if (e.relativePosition == DragCursors.CENTER) {
-				e.dropTarget = null;
-				e.relativePosition = DragCursors.INVALID;
-				return;
-			}
-			return;
-		}
-
-		// If drop target is offscreen ..
-		if (e.relativePosition == DragCursors.OFFSCREEN) {
-			// If detaching is not supported then exclude.
-			if (!detachable || e.dragSource instanceof PartTabFolder) {
-				e.relativePosition = DragCursors.INVALID;
-				return;
-			}
-
-			// e.relativePosition = PartDragDrop.INVALID;
-
-			// If source is in detach window by itself then allow as window
-			// move.
-			Window window = e.dragSource.getWindow();
-			if (window instanceof DetachedWindow) {
-				if (e.dragSource instanceof PartTabFolder) {
-					// there is only one tab folder in a detach window
-					e.relativePosition = DragCursors.OFFSCREEN;
-					return;
-				}
-				ILayoutContainer container = e.dragSource.getContainer();
-				if (container instanceof PartTabFolder) {
-					if (((PartTabFolder) container).getItemCount() == 1) {
-						// only 1 view in folder.
-						e.relativePosition = DragCursors.OFFSCREEN;
-						return;
-					}
-				}
-			}
-
-			// All seems well
-			return;
-		}
-
-		// If drop target is not registered object then reject.
-		if (e.dropTarget == null
-			&& e.relativePosition != DragCursors.OFFSCREEN) {
-			e.relativePosition = DragCursors.INVALID;
-			
-			//e.dropTarget = null;
-			//e.relativePosition = offScreenPosition;
-			return;
-		}
-
-		// If drop target is not over view, or tab folder, reject.
-		if (!(e.dropTarget instanceof ViewPane
-			|| e.dropTarget instanceof PartTabFolder)) {
-			//e.relativePosition = DragCursors.INVALID;
-			e.dropTarget = null;
-			e.relativePosition = offScreenPosition;
-			return;
-		}
-
-		// Disable drag-and-drop when zoomed
-		if (isZoomed()) {
-			e.relativePosition = DragCursors.INVALID;
-			return;
-		}
-		
-		// If drag source is view ..
-		if (e.dragSource instanceof ViewPane) {
-			// If target is detached window force stacking.
-			Window window = e.dropTarget.getWindow();
-			if (window instanceof DetachedWindow) {
-				//e.relativePosition = DragCursors.CENTER;
-				e.relativePosition = offScreenPosition;
-				return;
-			}
-			
-			if (e.dragSource == e.dropTarget) {
-				// Reject stack onto same view
-				if (e.relativePosition == DragCursors.CENTER) {
-					e.dropTarget = null;
-					e.relativePosition = DragCursors.INVALID;
-					return;
-				}
-				// Reject attach & detach to ourself
-				ILayoutContainer container = e.dragSource.getContainer();
-				if (!(container instanceof PartTabFolder)) {
-					e.dropTarget = null;
-					e.relativePosition = DragCursors.INVALID;
-					return;
-				}
-				if (((PartTabFolder) container).getItemCount() == 1) {
-					e.dropTarget = null;
-					e.relativePosition = DragCursors.INVALID;
-					return;
-				}
-			}
-
-			// If drag source's folder same as target
-//			if (e.dragSource.getContainer() == e.dropTarget) {
-//				// Reject stack/detach/attach to ourself
-//				if (e.relativePosition == DragCursors.CENTER 
-//						|| (((PartTabFolder) e.dragSource.getContainer()).getItemCount() == 1)) {
-//					e.dropTarget = null;
-//					e.relativePosition = DragCursors.INVALID;
-//					return;
-//				}
-//			}
-
-			// All seems well
-			return;
-		}
-
-		// If drag source is tab folder..
-		if (e.dragSource instanceof PartTabFolder) {
-			// Reject stack in same tab folder
-			if (e.dragSource == e.dropTarget) {
-				e.dropTarget = null;
-				e.relativePosition = DragCursors.INVALID;
-				return;
-			}
-
-			// Reject stack on view in same tab folder
-			if (e.dropTarget instanceof ViewPane) {
-				if (e.dropTarget.getContainer() == e.dragSource) {
-					e.dropTarget = null;
-					e.relativePosition = DragCursors.INVALID;
-					return;
-				}
-			}
-
-			// All seems well
-			return;
-		}
-
-		// If invalid case reject drop.
-		e.dropTarget = null;
-		e.relativePosition = offScreenPosition;
-	}
-
-	/**
-	 * Notification sent when drop happens. Only views and tab folders were
-	 * allowed to participate.
-	 */
-	/* package */
-	void onPartDrop(PartDropEvent e) {
-		// If invalid drop position ignore the drop (except for possibly
-		// reactivating previous
-		// active fast view.
-		if (e.relativePosition == DragCursors.INVALID) {
-			return;
-		}
-		
-		switch (e.relativePosition) {
-			case DragCursors.OFFSCREEN :
-
-				Window window = e.dragSource.getWindow();
-				if (window instanceof DetachedWindow) {
-					// only one tab folder in a detach window, so do window
-					// move
-					if (e.dragSource instanceof PartTabFolder) {
-						window.getShell().setLocation(e.x, e.y);
-						break;
-					}
-					// if only one view in tab folder then do a window move
-					ILayoutContainer container = e.dragSource.getContainer();
-					if (container instanceof PartTabFolder) {
-						if (((PartTabFolder) container).getItemCount() == 1) {
-							window.getShell().setLocation(e.x, e.y);
-							break;
-						}
-					}
-				}
-
-				// If layout is modified always zoom out.
-				if (isZoomed())
-					zoomOut();
-				// do a normal part detach
-				detach(e.dragSource, e.x, e.y);
-				break;
-			case DragCursors.CENTER :
-				// If layout is modified always zoom out.
-				if (isZoomed())
-					zoomOut();
-//				if (e.dragSource instanceof ViewPane
-//					&& e.dropTarget instanceof PartTabFolder) {
-//					if (e.dragSource.getContainer() == e.dropTarget) {
-//						((PartTabFolder) e.dropTarget).reorderTab(
-//							(ViewPane) e.dragSource,
-//							e.cursorX,
-//							e.cursorY);
-//						break;
-//					}
-//				}
-				if (e.dragSource != e.dropTarget && e.dragSource.getContainer() != e.dropTarget) {
-					stack(e.dragSource, e.dropTarget);
-				}
-				break;
-			case DragCursors.LEFT :
-			case DragCursors.RIGHT :
-			case DragCursors.TOP :
-			case DragCursors.BOTTOM :
-				// If layout is modified always zoom out.
-				if (isZoomed())
-					zoomOut();
-
-				if (!(e.dragSource.getContainer() == e.dropTarget 
-						&& e.dropTarget instanceof PartTabFolder 
-						&& (((PartTabFolder)e.dropTarget).getItemCount() == 1))) {
-					
-						movePart(e.dragSource, e.relativePosition, e.dropTarget);
-					
-						return;
-				}
-
-				
-				break;
-		}
 	}
 
 	/**
@@ -1337,65 +1037,7 @@ public class PerspectivePresentation {
 		}
 		return r;
 	}
-	/**
-	 * Stack a layout part on the reference part
-	 */
-	private void stack(
-		IWorkbenchDragDropPart source,
-		IWorkbenchDragDropPart target) {
-		parentWidget.setRedraw(false);
 
-		LayoutPart part = source.getPart();
-		LayoutPart refPart = target.getPart();
-
-		if (part instanceof PartTabFolder) {
-			LayoutPart visiblePart = ((PartTabFolder) part).getVisiblePart();
-			LayoutPart[] children = ((PartTabFolder) part).getChildren();
-			for (int i = 0; i < children.length; i++) {
-				if (children[i] instanceof ViewPane)
-					stackView((ViewPane) children[i], refPart);
-			}
-			if (visiblePart != null) {
-				bringPartToTop(visiblePart);
-				visiblePart.setFocus();
-			}
-		} else {
-			stackView((ViewPane) part, refPart);
-			bringPartToTop(part);
-			part.setFocus();
-		}
-		parentWidget.setRedraw(true);
-	}
-	/**
-	 * Stack a view on a reference part.
-	 */
-	private void stackView(ViewPane newPart, LayoutPart refPart) {
-		// derefence the part from its current container and shell
-		derefPart(newPart);
-
-		// determine the new container in which to add the part
-		ILayoutContainer newContainer;
-		if (refPart instanceof ILayoutContainer)
-			newContainer = (ILayoutContainer) refPart;
-		else
-			newContainer = refPart.getContainer();
-
-		if (newContainer instanceof PartTabFolder) {
-			// Reparent part. We may be adding it to a different shell !!!
-			PartTabFolder folder = (PartTabFolder) newContainer;
-			Composite newParent = folder.getParent();
-			newPart.reparent(newParent);
-
-			// Add part to existing folder
-			folder.add(newPart);
-		} else if (newContainer instanceof RootLayoutContainer) {
-			// Create a new folder and add both items
-			PartTabFolder folder = new PartTabFolder(page);
-			((RootLayoutContainer) newContainer).replace(refPart, folder);
-			folder.add(refPart);
-			folder.add(newPart);
-		}
-	}
 	/**
 	 * Zoom in on a particular layout part.
 	 */
@@ -1485,15 +1127,5 @@ public class PerspectivePresentation {
 		// Deref all.
 		zoomPart = null;
 	}
-	/**
-	 * Answer a list of the IWorkbenchDropTargets.
-	 */
-	private void collectDropTargets(
-		List result,
-		IWorkbenchDropTarget[] parts) {
-		for (int i = 0, length = parts.length; i < length; i++) {
-			parts[i].addDropTargets(result);
-		}
 
-	}
 }
