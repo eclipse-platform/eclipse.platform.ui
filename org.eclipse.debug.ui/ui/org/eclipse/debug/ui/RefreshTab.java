@@ -393,7 +393,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
-		if (fWorkingSetButton.getSelection() && fWorkingSet == null) {
+		if (fWorkingSetButton.getSelection() && (fWorkingSet == null || fWorkingSet.getElements().length == 0)) {
 			setErrorMessage(StringSubstitutionMessages.getString("RefreshTab.42")); //$NON-NLS-1$
 			return false;
 		}
@@ -624,4 +624,18 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		}
 		return null;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+		// do nothing on activation
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
+		// do nothing on deactivation
+	}
+
 }
