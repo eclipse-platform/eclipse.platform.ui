@@ -292,4 +292,12 @@ public class ChangeVariableValueInputDialog extends Dialog {
 		Point size = super.getInitialSize();
 		return DialogSettingsHelper.getInitialSize(getDialogSettingsSectionName(), size);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#handleShellCloseEvent()
+	 */
+	protected void handleShellCloseEvent() {
+		value= null;
+		super.handleShellCloseEvent();
+	}
 }
