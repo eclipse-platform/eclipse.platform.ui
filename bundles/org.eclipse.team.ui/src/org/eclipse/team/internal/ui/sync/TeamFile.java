@@ -37,6 +37,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.core.TeamPlugin;
@@ -258,7 +259,11 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode, I
 				} catch(CoreException e) {
 					ErrorDialog.openError(TeamUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell(), Policy.bind("TeamFile.saveChanges", name), null, e.getStatus()); //$NON-NLS-1$
 				}
-				fireContentChanged();
+				Display.getDefault().syncExec(new Runnable() {
+					public void run() {
+						fireContentChanged();
+					}
+				});
 			}
 			public ITypedElement replace(ITypedElement child, ITypedElement other) {
 				return null;
@@ -359,14 +364,18 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode, I
 	}
 	
 	private void fireThreeWayInputChange() {
-		if (listeners != null) {
-			Object[] listenerArray = listeners.getListeners();
-			// Iterate backwards so that the model gets updated last
-			// it might want to remove the node completely, which might
-			// upset other listeners.
-			for (int i = listenerArray.length; --i >= 0;)
-				 ((ICompareInputChangeListener) listenerArray[i]).compareInputChanged(this);
-		}
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				if (listeners != null) {
+					Object[] listenerArray = listeners.getListeners();
+					// Iterate backwards so that the model gets updated last
+					// it might want to remove the node completely, which might
+					// upset other listeners.
+					for (int i = listenerArray.length; --i >= 0;)
+						 ((ICompareInputChangeListener) listenerArray[i]).compareInputChanged(TeamFile.this);
+				}
+			}
+		});
 	}
 	
 	public boolean hasBeenSaved() {

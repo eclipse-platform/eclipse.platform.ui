@@ -15,11 +15,13 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
+import org.eclipse.team.internal.core.NullSubProgressMonitor;
 
 /**
  * Policy implements NLS convenience methods for the plugin and
@@ -121,6 +123,7 @@ public class Policy {
 		}
 		return monitor;
 	}	
+	
 	public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks) {
 		if (monitor == null)
 			return new NullProgressMonitor();
@@ -128,11 +131,35 @@ public class Policy {
 			return monitor;
 		return new SubProgressMonitor(monitor, ticks);
 	}
+	
 	public static IProgressMonitor subInfiniteMonitorFor(IProgressMonitor monitor, int ticks) {
 		if (monitor == null)
 			return new NullProgressMonitor();
 		if (monitor instanceof NullProgressMonitor)
 			return monitor;
 		return new InfiniteSubProgressMonitor(monitor, ticks);
+	}
+	
+	public static IProgressMonitor subNullMonitorFor(IProgressMonitor monitor) {
+		if (monitor == null)
+			return new NullProgressMonitor();
+		if (monitor instanceof NullProgressMonitor)
+			return monitor;
+		return new NullSubProgressMonitor(monitor);
+	}
+	
+	public static String toTruncatedPath(IPath path, int split) {
+		// Search backwards until split separators are found
+		int count = 0;
+		String stringPath = path.toString();
+		int index = stringPath.length();
+		while (count++ < split && index != -1) {
+			index = stringPath.lastIndexOf(IPath.SEPARATOR, index - 1);
+		}
+		if (index == -1) {
+			return stringPath;
+		} else {
+			return "..." + stringPath.substring(index); //$NON-NLS-1$
+		}
 	}
 }

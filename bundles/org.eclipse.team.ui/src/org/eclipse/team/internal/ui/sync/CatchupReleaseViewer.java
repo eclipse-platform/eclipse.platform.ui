@@ -313,7 +313,9 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer {
 			manager.add(showInNavigator);
 		}
 		if (syncMode == SyncView.SYNC_COMPARE) {
-			manager.add(copyAllRightToLeft);
+			if(copyAllRightToLeft.isEnabled()) {
+				manager.add(copyAllRightToLeft);
+			}
 		}
 	}
 	
@@ -429,34 +431,37 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer {
 				if (!(s instanceof IStructuredSelection) || s.isEmpty()) {
 					return;
 				}
-				for (Iterator it = ((IStructuredSelection)s).iterator(); it.hasNext();) {
-					final Object element = it.next();
-					if(element instanceof DiffElement) {
-						try {
-							new ProgressMonitorDialog(getTree().getShell()).run(false, false, new IRunnableWithProgress() {
-								public void run(IProgressMonitor monitor)
-									throws InvocationTargetException, InterruptedException {
-										try {
-											ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-												public void run(IProgressMonitor monitor) throws CoreException {
-													try {
-														monitor.beginTask(Policy.bind("CatchupReleaseViewer.Copying_right_contents_into_workspace_2"), 100); //$NON-NLS-1$
-														copyAllRightToLeft((DiffElement)element, Policy.subMonitorFor(monitor, 100));
-													} finally {
-														monitor.done();
-													}
+				// action is only enabled for 1 element. the for loop				
+				final Object element =  ((IStructuredSelection)s).getFirstElement();
+				if(element instanceof DiffElement) {
+					try {
+						new ProgressMonitorDialog(getTree().getShell()).run(true /* fork */, true /* cancellable */, new IRunnableWithProgress() {
+							public void run(IProgressMonitor monitor)
+								throws InvocationTargetException, InterruptedException {
+									try {
+										monitor.beginTask(null, 1000);
+										monitor.setTaskName(Policy.bind("CatchupReleaseViewer.Copying_right_contents_into_workspace_2")); //$NON-NLS-1$
+										ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+											public void run(IProgressMonitor monitor) throws CoreException {
+												try {
+													monitor.beginTask(null, 100);
+													copyAllRightToLeft((DiffElement)element, monitor);
+												} finally {
+													monitor.done();
 												}
-											}, monitor);
-										} catch(CoreException e) {
-											throw new InvocationTargetException(e);
-										}
+											}
+										}, Policy.subInfiniteMonitorFor(monitor, 1000));
+									} catch(CoreException e) {
+										throw new InvocationTargetException(e);
+									} finally {
+										monitor.done();
 									}
-							});
-						} catch(InvocationTargetException e) {
-							ErrorDialog.openError(TeamUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell(), Policy.bind("CatchupReleaseViewer.errorCopyAllRightToLeft"), null, null); //$NON-NLS-1$
-						} catch(InterruptedException e) {
-						}														
-					}						
+								}
+						});
+					} catch(InvocationTargetException e) {
+						ErrorDialog.openError(TeamUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell(), Policy.bind("CatchupReleaseViewer.errorCopyAllRightToLeft"), null, null); //$NON-NLS-1$
+					} catch(InterruptedException e) {
+					}														
 				}
 				refresh();				
 			}
@@ -534,6 +539,8 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer {
 	}
 	
 	protected void copyAllRightToLeft(IDiffElement element, IProgressMonitor monitor) throws CoreException {
+		Policy.checkCanceled(monitor);
+		
 		if(element instanceof DiffContainer) {
 			DiffContainer container = (DiffContainer)element;
 			IDiffElement[] children = container.getChildren();
@@ -542,28 +549,27 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer {
 			}
 		} else if(element instanceof TeamFile) {
 			TeamFile file = (TeamFile)element;
-			try {
-				monitor = Policy.monitorFor(monitor);
-				monitor.beginTask(null, 1);
-				file.setProgressMonitor(Policy.subMonitorFor(monitor, 1));
-				if(file.getKind() != IRemoteSyncElement.IN_SYNC) {
-					if(file.getRight() == null || file.getLeft() == null) {
-						file.copy(false /* right to left */);
-					} 
-					ITypedElement te = file.getLeft();
-					ITypedElement rte = file.getRight();
-					if(te instanceof IEditableContent) {
-						IEditableContent editable = (IEditableContent)te;
-						if(editable.isEditable()) {
-							if(rte instanceof BufferedContent) {
-								editable.setContent(((BufferedContent)rte).getContent());
-							}
+			if(file.getKind() != IRemoteSyncElement.IN_SYNC) {
+				monitor.subTask(
+					Policy.bind("CatchupReleaseViewer.MakingLocalLikeRemote",  //$NON-NLS-1$
+						Policy.toTruncatedPath(file.getMergeResource().getResource().getFullPath(), 3)));
+				file.setProgressMonitor(Policy.subNullMonitorFor(monitor));
+
+				if(file.getRight() == null || file.getLeft() == null) {
+					file.copy(false /* right to left */);
+				} 
+				ITypedElement te = file.getLeft();
+				ITypedElement rte = file.getRight();
+				if(te instanceof IEditableContent) {
+					IEditableContent editable = (IEditableContent)te;
+					if(editable.isEditable()) {
+						if(rte instanceof BufferedContent) {
+							editable.setContent(((BufferedContent)rte).getContent());
 						}
 					}
 				}
 				file.setProgressMonitor(null);
-			} finally {
-				monitor.done();
+				monitor.worked(1);
 			}
 		}
 	}
