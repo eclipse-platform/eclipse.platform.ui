@@ -23,10 +23,14 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
 
 import org.eclipse.jface.operation.IRunnableContext;
 
@@ -50,7 +54,13 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 * 
 	 * @since 2.1
 	 */
-	protected final static int DEFAULT_FILE_SIZE= 15 * 1024;
+	protected static final int DEFAULT_FILE_SIZE= 15 * 1024;
+	
+	/**
+	 * Constant denoting an empty set of properties
+	 * @since 3.1
+	 */
+	private static final QualifiedName[] NO_PROPERTIES= new QualifiedName[0];
 	
 	
 	/**
@@ -401,7 +411,48 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 			}
 		}
 	}
-
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentType(java.lang.Object)
+	 * @since 3.1
+	 */
+	public IContentType getContentType(Object element) throws CoreException {
+		if (element instanceof IStorageEditorInput) {
+			IStorage storage= ((IStorageEditorInput) element).getStorage();
+			InputStream stream= null;
+			try {
+				IDocument document= getDocument(element);
+				if (document != null)
+					stream= new DocumentInputStream(document);
+				else
+					stream= storage.getContents();
+				IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(stream, storage.getName(), NO_PROPERTIES);
+				if (desc != null && desc.getContentType() != null)
+					return desc.getContentType();
+			} catch (IOException x) {
+				IPath path= storage.getFullPath();
+				String name;
+				if (path != null)
+					name= path.toOSString();
+				else
+					name= storage.getName();
+				String message;
+				if (name != null)
+					message= TextEditorMessages.getFormattedString("StorageDocumentProvider.getContentDescriptionFor", name); //$NON-NLS-1$
+				else
+					message= TextEditorMessages.getString("StorageDocumentProvider.getContentDescription"); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, message, x));
+			} finally {
+				try {
+					if (stream != null)
+						stream.close();
+				} catch (IOException x) {
+				}
+			}
+		}
+		return super.getContentType(element);
+	}
+	
 	/**
 	 * Returns the persisted encoding for the given element.
 	 * 
