@@ -70,7 +70,7 @@ public class ReplaceOperation extends UpdateOperation {
 					provider.getProject(), 
 					resources, 
 					"CVSTeamProvider.scrubbingResource", // TODO: This is a key in CVS core! //$NON-NLS-1$
-					recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ZERO, 
+					recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE, 
 					Policy.subMonitorFor(monitor, 30)); //$NON-NLS-1$
 				
 				// Only perform the remote command if some of the resources being replaced were managed
