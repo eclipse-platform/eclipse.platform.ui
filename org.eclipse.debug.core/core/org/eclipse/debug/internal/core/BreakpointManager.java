@@ -220,6 +220,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		return fBreakpoints;
 	}
 	
+	
+	
 	/**
 	 * @see IBreakpointManager#getBreakpoints(String)
 	 */
@@ -569,5 +571,13 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		};
 		new Thread(runnable).start();
 	}		
+
+	/**
+	 * @see IBreakpointManager#hasBreakpoints()
+	 */
+	public boolean hasBreakpoints() {
+		return !getBreakpoints0().isEmpty();
+	}
+
 }
 

@@ -68,6 +68,14 @@ public interface IBreakpointManager {
 	public IBreakpoint[] getBreakpoints();
 	
 	/**
+	 * Returns whether there are any registered breakpoints.
+	 * 
+	 * @return whether there are any registered breakpoints
+	 * @since 2.0
+	 */
+	public boolean hasBreakpoints();
+	
+	/**
 	 * Returns a collection of all breakpoints registered for the
 	 * given debug model. Answers an empty array if no breakpoints are registered
 	 * for the given debug model.

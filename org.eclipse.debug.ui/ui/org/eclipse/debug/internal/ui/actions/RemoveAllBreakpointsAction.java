@@ -52,7 +52,7 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 	
 	protected void update() {
 		getAction().setEnabled(
-			DebugPlugin.getDefault().getBreakpointManager().getBreakpoints().length == 0 ? false : true);
+			DebugPlugin.getDefault().getBreakpointManager().hasBreakpoints());
 	}	
 	
 	/**

@@ -24,6 +24,6 @@ public class RemoveAllExpressionsAction extends AbstractRemoveAllActionDelegate 
 	
 	protected void update() {
 		getAction().setEnabled(
-			DebugPlugin.getDefault().getExpressionManager().getExpressions().length == 0 ? false : true);
+			DebugPlugin.getDefault().getExpressionManager().hasExpressions());
 	}
 }

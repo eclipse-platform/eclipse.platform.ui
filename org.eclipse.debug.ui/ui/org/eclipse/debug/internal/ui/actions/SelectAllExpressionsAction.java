@@ -11,6 +11,6 @@ public class SelectAllExpressionsAction extends SelectAllAction {
 
 	protected void update() {
 		getAction().setEnabled(
-			DebugPlugin.getDefault().getExpressionManager().getExpressions().length != 0);
+			DebugPlugin.getDefault().getExpressionManager().hasExpressions());
 	}
 }

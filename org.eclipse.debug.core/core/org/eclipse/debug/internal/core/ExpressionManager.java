@@ -180,4 +180,11 @@ public class ExpressionManager implements IExpressionManager, IDebugEventListene
 		}
 	}		
 
+	/**
+	 * @see IExpressionManager#hasExpressions()
+	 */
+	public boolean hasExpressions() {
+		return !getExpressions0().isEmpty();
+	}
+
 }

@@ -49,6 +49,13 @@ public interface IExpressionManager {
 	public IExpression[] getExpressions();
 	
 	/**
+	 * Returns whether there are any registered expressions
+	 * 
+	 * @return whether there are any registered expressions
+	 */
+	public boolean hasExpressions();
+	
+	/**
 	 * Returns a collection of all expressions registered for the
 	 * given debug model,possibly empty.
 	 *

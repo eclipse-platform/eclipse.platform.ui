@@ -18,7 +18,7 @@ public class SelectAllBreakpointsAction extends SelectAllAction implements IBrea
 
 	protected void update() {
 		getAction().setEnabled(
-			DebugPlugin.getDefault().getBreakpointManager().getBreakpoints().length != 0);
+			DebugPlugin.getDefault().getBreakpointManager().hasBreakpoints());
 	}
 
 	/**
