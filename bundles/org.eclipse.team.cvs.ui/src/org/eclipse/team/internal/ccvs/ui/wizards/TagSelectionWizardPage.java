@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.ui.*;
@@ -31,21 +32,26 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
- * This page is used to obtain a tag from the user when the project being shared 
- * alreasy exists remotely.
+ * General tag selection page that allows the selection of a tag
+ * for a particular remote folder
  */
-public class SharingWizardTagPage extends CVSWizardPage {
-	
+public class TagSelectionWizardPage extends CVSWizardPage {
+
 	private TreeViewer tagTree;
-	private ICVSFolder remote;
+	private ICVSFolder[] remoteFolders;
 	private CVSTag selectedTag;
 	
 	// Needed to dynamicaly create refresh buttons
 	private Composite composite;
 	private Control buttons;
 	
-	public SharingWizardTagPage(String pageName, String title, ImageDescriptor titleImage) {
-		super(pageName, title, titleImage);
+	private String label;
+	private int includeFlags;
+	
+	public TagSelectionWizardPage(String pageName, String title, ImageDescriptor titleImage, String description, String label, int includeFlags) {
+		super(pageName, title, titleImage, description);
+		this.label = label;
+		this.includeFlags = includeFlags;
 	}
 
 	/* (non-Javadoc)
@@ -58,7 +64,9 @@ public class SharingWizardTagPage extends CVSWizardPage {
 		// set F1 help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARE_WITH_EXISTING_TAG_SELETION_DIALOG);
 		
-		createWrappingLabel(composite, Policy.bind("SharingWizard.selectTag"), 0); //$NON-NLS-1$
+		if (label != null) {
+			createWrappingLabel(composite, label, 0);
+		}
 		
 		tagTree = createTree(composite);
 		tagTree.setSorter(new ProjectElementSorter());
@@ -68,9 +76,25 @@ public class SharingWizardTagPage extends CVSWizardPage {
 	}
 	
 	private void setInput() {
-		if (remote != null && tagTree != null && !tagTree.getControl().isDisposed()) {
-			tagTree.setInput(new ProjectElement(remote, TagSelectionDialog.INCLUDE_HEAD_TAG | TagSelectionDialog.INCLUDE_BRANCHES));
-			tagTree.setSelection(new StructuredSelection(new TagElement(CVSTag.DEFAULT)));
+		if (remoteFolders != null 
+				&& remoteFolders.length > 0 
+				&& tagTree != null 
+				&& !tagTree.getControl().isDisposed()) {
+			tagTree.setInput(new ProjectElement(remoteFolders[0], includeFlags));
+			try {
+				selectedTag = remoteFolders[0].getFolderSyncInfo().getTag();
+			} catch (CVSException e) {
+				CVSUIPlugin.log(e);
+			}
+			if (selectedTag == null) {
+				selectedTag = CVSTag.DEFAULT;
+			}
+			// TODO: Hack to instantiate the model before revealing the selection
+			tagTree.expandToLevel(2);
+			tagTree.collapseAll();
+			// Reveal the selection
+			tagTree.reveal(new TagElement(selectedTag));
+			tagTree.setSelection(new StructuredSelection(new TagElement(selectedTag)));
 			if (buttons != null) {
 				buttons.dispose();
 				buttons = null;
@@ -84,7 +108,7 @@ public class SharingWizardTagPage extends CVSWizardPage {
 					});
 				}
 			};
-			buttons = TagConfigurationDialog.createTagDefinitionButtons(getShell(), composite, new ICVSFolder[] { remote }, 
+			buttons = TagConfigurationDialog.createTagDefinitionButtons(getShell(), composite, remoteFolders, 
 														  convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT), 
 														  convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH),
 														  refresh, refresh);
@@ -109,13 +133,11 @@ public class SharingWizardTagPage extends CVSWizardPage {
 				updateEnablement();
 			}
 		});
-		// select and close on double click
-		// To do: use defaultselection instead of double click
 		result.getTree().addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent e) {
 				IStructuredSelection selection = (IStructuredSelection)tagTree.getSelection();
 				if (!selection.isEmpty() && (selection.getFirstElement() instanceof TagElement)) {
-					SharingWizardTagPage.this.getContainer().showPage(getNextPage());
+					gotoNextPage();
 				}
 			}
 		});
@@ -124,23 +146,28 @@ public class SharingWizardTagPage extends CVSWizardPage {
 		return result;
 	}
 	
-	/**
-	 * Updates the dialog enablement.
-	 */
 	private void updateEnablement() {
 		setPageComplete(selectedTag != null);
 	}
 	
 	public ICVSFolder getFolder() {
-		return remote;
+		return remoteFolders[0];
 	}
 	
 	public void setFolder(ICVSFolder remote) {
-		this.remote = remote;
-		setInput();
+		setFolders(new ICVSFolder[] { remote });
 	}
 	
 	public CVSTag getSelectedTag() {
 		return selectedTag;
+	}
+	
+	protected void gotoNextPage() {
+		TagSelectionWizardPage.this.getContainer().showPage(getNextPage());
+	}
+
+	public void setFolders(ICVSFolder[] remoteFolders) {
+		this.remoteFolders = remoteFolders;
+		setInput();
 	}
 }

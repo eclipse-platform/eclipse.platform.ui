@@ -11,13 +11,14 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
@@ -37,6 +38,7 @@ public class CheckoutAsWizard extends Wizard {
 	private CheckoutAsMainPage mainPage;
 	private CheckoutAsProjectSelectionPage projectSelectionPage;
 	private CheckoutAsLocationSelectionPage locationSelectionPage;
+	private TagSelectionWizardPage tagSelectionPage;
 	private IWorkbenchPart part;
 
 	class NewProjectListener implements IResourceChangeListener {
@@ -86,6 +88,10 @@ public class CheckoutAsWizard extends Wizard {
 		
 		locationSelectionPage = new CheckoutAsLocationSelectionPage(substImage, remoteFolders);
 		addPage(locationSelectionPage);
+		
+		tagSelectionPage = new TagSelectionWizardPage("tagPage", "Select Tag", substImage, "Choose the tag to check out from", "&Select tag", ProjectElement.INCLUDE_ALL_TAGS);
+		tagSelectionPage.setFolders(remoteFolders);
+		addPage(tagSelectionPage);
 	}
 
 	/* (non-Javadoc)
@@ -135,7 +141,7 @@ public class CheckoutAsWizard extends Wizard {
 	 */
 	public IWizardPage getNextPage(IWizardPage page) {
 		if (page == mainPage) {
-			if (mainPage.isPerformConfigure()) return null;
+			if (mainPage.isPerformConfigure()) return tagSelectionPage;
 			if (mainPage.isPerformCheckoutInto()) return projectSelectionPage;
 			if (mainPage.isPerformCheckoutAs()) {
 				if (isSingleFolder()) {
@@ -146,15 +152,11 @@ public class CheckoutAsWizard extends Wizard {
 				return locationSelectionPage; 
 			} 
 		}
+		// The tag selection page is always shown as the last page
+		if (page != tagSelectionPage) {
+			return tagSelectionPage;
+		}
 		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizard#getPreviousPage(org.eclipse.jface.wizard.IWizardPage)
-	 */
-	public IWizardPage getPreviousPage(IWizardPage page) {
-		if (page == mainPage) return null;
-		return mainPage;
 	}
 	
 	private void handle(Throwable e) {
@@ -169,15 +171,42 @@ public class CheckoutAsWizard extends Wizard {
 		IProject newProject = getNewProject();
 		if (newProject == null) return false;
 		// Run the checkout in the background
-		new CheckoutSingleProjectOperation(part, remoteFolders[0], newProject, null, true).run();
+		ICVSRemoteFolder folder = getRemoteFolder();
+		new CheckoutSingleProjectOperation(part, folder, newProject, null, true).run();
 		return true;
 	}
 	
+	/*
+	 * Return the single remote folder to be checked out
+	 */
+	private ICVSRemoteFolder getRemoteFolder() {
+		ICVSRemoteFolder folder = remoteFolders[0];
+		folder = (ICVSRemoteFolder)folder.forTag(getSelectedTag());
+		return folder;
+	}
+	
+	/*
+	 * Return the remote folders to be checked out
+	 */
+	private ICVSRemoteFolder[] getRemoteFolders() {
+		ICVSRemoteFolder[] folders = new ICVSRemoteFolder[remoteFolders.length];
+		for (int i = 0; i < remoteFolders.length; i++) {
+			ICVSRemoteFolder remote = remoteFolders[i];
+			folders[i] = (ICVSRemoteFolder)remote.forTag(getSelectedTag());
+		}
+		return folders;
+	}
+
+	private CVSTag getSelectedTag() {
+		return tagSelectionPage.getSelectedTag();
+	}
+
 	private boolean performSingleCheckoutAs() throws InvocationTargetException, InterruptedException {
 		IProject newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(mainPage.getProjectName());
 		String targetLocation = locationSelectionPage.getTargetLocation();
 		// Run the checkout in the background
-		new CheckoutSingleProjectOperation(part, remoteFolders[0], newProject, targetLocation, false).run();
+		ICVSRemoteFolder folder = getRemoteFolder();
+		new CheckoutSingleProjectOperation(part, folder, newProject, targetLocation, false).run();
 		return true;
 	}
 
@@ -188,7 +217,7 @@ public class CheckoutAsWizard extends Wizard {
 	private boolean performMultipleCheckoutAs() throws InvocationTargetException, InterruptedException {
 		String targetLocation = locationSelectionPage.getTargetLocation();
 		// Run the checkout in the background
-		new CheckoutMultipleProjectsOperation(part, remoteFolders, targetLocation).run();
+		new CheckoutMultipleProjectsOperation(part, getRemoteFolders(), targetLocation).run();
 		return true;
 	}
 
@@ -196,9 +225,10 @@ public class CheckoutAsWizard extends Wizard {
 		CheckoutIntoOperation operation;
 		boolean recursive = projectSelectionPage.isRecurse();
 		if (isSingleFolder()) {
-			operation = new CheckoutIntoOperation(part, remoteFolders[0] , projectSelectionPage.getLocalFolder(), recursive);
+			ICVSRemoteFolder folder = getRemoteFolder();
+			operation = new CheckoutIntoOperation(part, folder, projectSelectionPage.getLocalFolder(), recursive);
 		} else {
-			operation = new CheckoutIntoOperation(part, remoteFolders, projectSelectionPage.getParentFolder(), recursive);
+			operation = new CheckoutIntoOperation(part, getRemoteFolders(), projectSelectionPage.getParentFolder(), recursive);
 		}
 		// Run the checkout in the background
 		operation.run();

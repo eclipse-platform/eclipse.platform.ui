@@ -87,7 +87,7 @@ public class ProjectElement implements IAdaptable, IWorkbenchAdapter {
 		if ((includeFlags & INCLUDE_VERSIONS) > 0) {
 			children.add(versions);
 		}
-		return (Object[]) children.toArray(new Object[children.size()]);
+		return children.toArray(new Object[children.size()]);
 	}
 	public int getIncludeFlags() {
 		return includeFlags;
