@@ -508,9 +508,6 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 */
 	protected void handleDispose() {
 		unconfigure();
-		unconfigure();
-		unconfigure();
-		unconfigure();
 		super.handleDispose();
 	}
 	
