@@ -52,6 +52,7 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IStickyViewDescriptor;
+import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveExtensionReader;
@@ -369,7 +370,12 @@ public class Perspective {
         ViewLayoutRec rec = getViewLayoutRec(id, true);
         if (rec.fastViewWidthRatio == IPageLayout.INVALID_RATIO) {
             IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
-            rec.fastViewWidthRatio = reg.find(id).getFastViewWidthRatio();
+            String primaryId = ViewFactory.extractPrimaryId(id);
+            IViewDescriptor desc = reg.find(primaryId);
+            rec.fastViewWidthRatio = 
+                (desc != null 
+                    ? desc.getFastViewWidthRatio()
+                    : IPageLayout.DEFAULT_FASTVIEW_RATIO);
         }
         return rec.fastViewWidthRatio;
     }
