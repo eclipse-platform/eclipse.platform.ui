@@ -307,7 +307,7 @@ public class OpenStrategy {
 										public void run() {
 											if (id == count[0]) {
 												firePostSelectionEvent(new SelectionEvent(e));
-												if((CURRENT_METHOD & (SINGLE_CLICK | ARROW_KEYS_OPEN)) != 0)
+												if((CURRENT_METHOD & ARROW_KEYS_OPEN) != 0)
 													fireOpenEvent(new SelectionEvent(e));
 											}
 										}
