@@ -22,7 +22,7 @@ import org.osgi.service.prefs.Preferences;
 /**
  * @since 3.0
  */
-public class PreferencesService implements IPreferencesService {
+public class PreferencesService implements IPreferencesService, IRegistryChangeListener {
 
 	// cheat here and add "project" even though we really shouldn't know about it
 	// because of plug-in dependancies and it being defined in the resources plug-in
@@ -33,8 +33,10 @@ public class PreferencesService implements IPreferencesService {
 	private static final char EXPORT_ROOT_PREFIX = '!';
 	private static final float EXPORT_VERSION = 3;
 	private static final String VERSION_KEY = "file_export_version"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_SCOPE = "scope"; //$NON-NLS-1$
+	private static final String ELEMENT_PREFERENCES = "preferences"; //$NON-NLS-1$
 
-	private static IPreferencesService instance = null;
+	private static IPreferencesService instance;
 	private static final RootPreferences root = new RootPreferences();
 	private static final Map defaultsRegistry = Collections.synchronizedMap(new HashMap());
 	private static final Map scopeRegistry = Collections.synchronizedMap(new HashMap());
@@ -56,7 +58,7 @@ public class PreferencesService implements IPreferencesService {
 	/**
 	 * See who is plugged into the extension point.
 	 */
-	private static void initializeScopes() {
+	private void initializeScopes() {
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Platform.PI_RUNTIME, Platform.PT_PREFERENCES);
 		if (point == null)
 			return;
@@ -64,20 +66,21 @@ public class PreferencesService implements IPreferencesService {
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 			for (int j = 0; j < elements.length; j++)
-				if ("preferences".equalsIgnoreCase(elements[j].getName())) //$NON-NLS-1$
+				if (ELEMENT_PREFERENCES.equalsIgnoreCase(elements[j].getName()))
 					scopeAdded(elements[j]);
 		}
+		Platform.getExtensionRegistry().addRegistryChangeListener(this, Platform.PI_RUNTIME);
 	}
 
-	private static void log(IStatus status) {
+	static void log(IStatus status) {
 		InternalPlatform.getDefault().log(status);
 	}
 
 	/*
 	 * Abstracted into a separate method to prepare for dynamic awareness.
 	 */
-	private static void scopeAdded(IConfigurationElement element) {
-		String key = element.getAttribute("scope"); //$NON-NLS-1$
+	static void scopeAdded(IConfigurationElement element) {
+		String key = element.getAttribute(ATTRIBUTE_SCOPE);
 		if (key == null) {
 			String message = Policy.bind("preferences.missingScopeAttribute", element.getDeclaringExtension().getUniqueIdentifier()); //$NON-NLS-1$
 			log(createStatusWarning(message, null));
@@ -90,9 +93,8 @@ public class PreferencesService implements IPreferencesService {
 	/*
 	 * Abstracted into a separate method to prepare for dynamic awareness.
 	 */
-	private static void scopeRemoved(String key) throws BackingStoreException {
+	static void scopeRemoved(String key) {
 		IEclipsePreferences node = (IEclipsePreferences) root.node(key);
-		node.removeNode();
 		root.removeNode(node);
 		scopeRegistry.remove(key);
 	}
@@ -539,6 +541,25 @@ public class PreferencesService implements IPreferencesService {
 
 		// convert the Properties object into an object to return
 		return convertFromProperties(properties);
+	}
+
+	public void registryChanged(IRegistryChangeEvent event) {
+		IExtensionDelta[] deltas = 	event.getExtensionDeltas(Platform.PI_RUNTIME, Platform.PT_PREFERENCES);
+		for (int i=0; i<deltas.length; i++) {
+			IConfigurationElement[] elements = deltas[i].getExtension().getConfigurationElements();
+			for (int j=0; j<elements.length; j++) {
+				switch (deltas[i].getKind()) {
+					case IExtensionDelta.ADDED :
+						scopeAdded(elements[j]);
+						break; 
+					case IExtensionDelta.REMOVED :
+						String scope = elements[j].getAttribute(ATTRIBUTE_SCOPE);
+						if (scope != null)
+							scopeRemoved(scope);
+						break;
+				}
+			}
+		}
 	}
 
 	/*
