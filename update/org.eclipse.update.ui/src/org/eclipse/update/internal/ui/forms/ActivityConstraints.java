@@ -238,6 +238,25 @@ public class ActivityConstraints {
 		ArrayList status) {
 		try {
 			ArrayList features = computeFeatures();
+			ArrayList savedFeatures = features;
+
+			// pass 1: see if we can process the entire "batch"
+			ArrayList tmpStatus = new ArrayList();
+			for (int i = 0; i < jobs.length; i++) {
+				IFeature newFeature = jobs[i].getFeature();
+				IFeature oldFeature = jobs[i].getOldFeature();
+				features =
+					computeFeaturesAfterOperation(
+						features,
+						newFeature,
+						oldFeature);
+			}
+			checkConstraints(features, tmpStatus);
+			if (tmpStatus.size() == 0) // the whole "batch" is OK
+				return;
+
+			// pass 2: we have conflicts
+			features = savedFeatures;
 			for (int i = 0; i < jobs.length; i++) {
 				IFeature newFeature = jobs[i].getFeature();
 				IFeature oldFeature = jobs[i].getOldFeature();
@@ -252,11 +271,10 @@ public class ActivityConstraints {
 						createStatus(
 							newFeature,
 							UpdateUIPlugin.getResourceString(KEY_CONFLICT));
-					status.add(conflict);
+					status.add(0, conflict);
 					return;
 				}
 			}
-
 		} catch (CoreException e) {
 			status.add(e.getStatus());
 		}
