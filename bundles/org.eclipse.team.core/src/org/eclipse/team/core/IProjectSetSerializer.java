@@ -29,14 +29,15 @@ public interface IProjectSetSerializer {
 	 * The format of the String must be such that
 	 * IProjectSetSerializer.addToWorskpace() will be able to
 	 * consume it and recreate a corresponding project.
-	 * @see IProjectSetSerializer.addToWorkspace()
+	 * @see IProjectSetSerializer#addToWorkspace(String[] referenceStrings, String filename, Object context, IProgressMonitor monitor)
 	 * 
 	 * @param providerProjects  an array of projects that the serializer should create
 	 *   text references for
 	 * @param context  a UI context object. This object will either be a 
 	 *                 com.ibm.swt.widgets.Shell or it will be null.
 	 * @param monitor  a progress monitor
-	 * @return an array of serialized reference strings uniquely identifying the projects
+	 * @return String[] an array of serialized reference strings uniquely identifying the projects
+	 * @throws TeamException
 	 */
 	public String[] asReference(IProject[] providerProjects, Object context, IProgressMonitor monitor) throws TeamException;
 	
@@ -47,7 +48,7 @@ public interface IProjectSetSerializer {
 	 * already exists. In the case of failure, a TeamException must be thrown.
 	 * The opaque strings in referenceStrings are guaranteed to have been previously
 	 * produced by IProjectSetSerializer.asReference().
-	 * @see IProjectSetSerializer.asReference()
+	 * @see IProjectSetSerializer#asReference(IProject[] providerProjects, Object context, IProgressMonitor monitor)
 	 * 
 	 * @param referenceStrings  an array of referene strings uniquely identifying the projects
 	 * @param filename  the name of the file that the references were read from. This is included
@@ -55,7 +56,8 @@ public interface IProjectSetSerializer {
 	 * @param context  a UI context object. This object will either be a 
 	 *                 com.ibm.swt.widgets.Shell or it will be null.
 	 * @param monitor  a progress monitor
-	 * @return an array of projects that were created
+	 * @return IProject[]  an array of projects that were created
+	 * @throws TeamException
 	 */
 	public IProject[] addToWorkspace(String[] referenceStrings, String filename, Object context, IProgressMonitor monitor) throws TeamException;
 }

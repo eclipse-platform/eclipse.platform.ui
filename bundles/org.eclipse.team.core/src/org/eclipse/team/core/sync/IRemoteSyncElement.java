@@ -15,7 +15,6 @@ import org.eclipse.team.core.TeamException;
  * if there is a difference, the remote resource is considered the <b>incoming resource</b>. </p>
  * 
  * @see ILocalSyncElement
- * @see ISyncProvider
  */
 public interface IRemoteSyncElement extends ILocalSyncElement {
 	

@@ -54,6 +54,7 @@ public class TeamException extends Exception {
 
 	/**
 	 * Single status constructor for a <code>TeamProviderException</code>.
+	 * @param status
 	 */
 	public TeamException(IStatus status) {
 		super(status.getMessage());	
@@ -63,18 +64,26 @@ public class TeamException extends Exception {
 	/**
 	 * Answer the single status resulting from the attempted API call.
 	 * 
-	 * @return the single status of the result, or <code>null</code> if this is a multi-status
+	 * @return IStatus the single status of the result, or <code>null</code> if this is a multi-status
 	 * response.
 	 */
 	public IStatus getStatus() {
 		return status;
 	}
 	
+	/**
+	 * Method TeamException.
+	 * @param message
+	 * @param e
+	 */
 	public TeamException(String message, Exception e) {
 		super(e.getMessage());
 		this.status = new Status(IStatus.ERROR, TeamPlugin.ID, 0, message, e);
 	}
 	
+	/**
+	 * @see java.lang.Throwable#Throwable(String)
+	 */
 	public TeamException(String message) {
 		super(message);
 		this.status = new Status(IStatus.ERROR, TeamPlugin.ID, 0, message, null);

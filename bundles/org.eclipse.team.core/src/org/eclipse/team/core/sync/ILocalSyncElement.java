@@ -128,14 +128,14 @@ public interface ILocalSyncElement {
  	 * for display to a user.  The name will be used in UI operations, so it is expected that 
  	 * implementations will cache this value.
  	 * 
-	 * @return the simple name that identifies the resource within its parent container.
+	 * @return String the simple name that identifies the resource within its parent container.
 	 */
 	public String getName();
 	
 	/**
 	 * Answer if the sync node is a container and may have children.
 	 * 
- 	 * @return <code>true</code> if the remote resource is a container, and <code>
+ 	 * @return boolean <code>true</code> if the remote resource is a container, and <code>
 	 * false</code> if it is not.
 	 */
 	public boolean isContainer();
@@ -144,7 +144,7 @@ public interface ILocalSyncElement {
 	 * Answers the local sync element of this node. Returns a non-existing local
 	 * resource handle if the local resource does not exist in the workspace. 
 	 * 
-	 * @return the local resource handle in this node. There should always be a local
+	 * @return IResource the local resource handle in this node. There should always be a local
 	 * resource available, however the resource may not exist.
 	 */
 	public IResource getLocal();
@@ -153,7 +153,7 @@ public interface ILocalSyncElement {
 	 * Answers the base sync element of this node. Returns <code>null</code> 
 	 * if there is no base (e.g. conflicting add).
 	 * 
-	 * @return the base resource in this node, or <code>null</code> is there
+	 * @return IRemoteResource the base resource in this node, or <code>null</code> is there
 	 * is none.
 	 */
 	public IRemoteResource getBase();
@@ -163,10 +163,12 @@ public interface ILocalSyncElement {
 	 * children of this sync element, in no particular order. The returned sync nodes are
 	 * a combination of the nodes represented by the sync element (e.g. local, base, remote).
 	 * 
- 	 * @param progress a progress monitor to indicate the duration of the operation, or
+ 	 * @param monitor a progress monitor to indicate the duration of the operation, or
 	 * <code>null</code> if progress reporting is not required.
 	 * 
-	 * @return array of immediate children of this sync node. 
+	 * @return ILocalSyncElement[] array of immediate children of this sync node. 
+	 * 
+	 * @throws TeamException
 	 */
 	public ILocalSyncElement[] members(IProgressMonitor monitor) throws TeamException;
 	
@@ -180,7 +182,7 @@ public interface ILocalSyncElement {
  	 * @param progress a progress monitor to indicate the duration of the operation, or
 	 * <code>null</code> if progress reporting is not required.
 	 * 
-	 * @return an integer describing the synchronization state of this element.
+	 * @return int an integer describing the synchronization state of this element.
 	 */
 	public int getSyncKind(int granularity, IProgressMonitor progress);	
 }
