@@ -57,6 +57,10 @@ public class AddToWorkspaceAction extends CheckoutAction {
 	 * @see CVSAction#execute()
 	 */
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
+		checkoutSelectionIntoWorkspaceDirectory();
+	}
+	
+	protected void checkoutSelectionIntoWorkspaceDirectory() throws InvocationTargetException, InterruptedException {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
