@@ -8,8 +8,10 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
+
 import java.net.*;
 import java.io.*;
 import java.util.*;
@@ -374,12 +376,25 @@ protected void loadPreferenceStore() {
 /**
  * Refreshes the actions for the plugin.
  * This method is called from <code>startup</code>.
- * Subclasses may extend this, but are not expected to.
+ * <p>
+ * This framework method may be overridden, although this is typically 
+ * unnecessary.
+ * </p>
  */
 protected void refreshPluginActions() {
-	Workbench wb = (Workbench)PlatformUI.getWorkbench();
-	if (wb != null)
-		wb.refreshPluginActions(getDescriptor().getUniqueIdentifier());
+	final Workbench wb = (Workbench)PlatformUI.getWorkbench();
+	if (wb != null) {
+		// startup() is not guaranteed to be called in the UI thread,
+		// but refreshPluginActions must run in the UI thread, 
+		// so use asyncExec.  See bug 6623 for more details.
+		Display.getDefault().asyncExec(
+			new Runnable() {
+				public void run() {
+					wb.refreshPluginActions(getDescriptor().getUniqueIdentifier());
+				}
+			}
+		);
+	}
 }	
 /**
  * Saves this plug-in's dialog settings.
