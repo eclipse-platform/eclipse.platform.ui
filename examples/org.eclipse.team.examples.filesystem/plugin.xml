@@ -97,7 +97,7 @@
             class="org.eclipse.team.examples.localhistory.LocalHistorySynchronizeWizard"
             icon="icons/full/wizards/synced.gif"
             description="ExampleSynchronizeSupport.wizard1"
-            name="Latest From Local History Synchronize"
+            name="Synchronize with Latest From Local History"
             id="ExampleSynchronizeSupport.wizard1"/>
    </extension>
       
