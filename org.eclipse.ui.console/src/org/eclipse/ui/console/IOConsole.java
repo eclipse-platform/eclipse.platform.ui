@@ -93,7 +93,7 @@ public class IOConsole extends AbstractConsole {
     }
     
     public IPageBookViewPage createPage(IConsoleView view) {
-        return new IOConsolePage(this);
+        return new IOConsolePage(this, view);
     }
 
     public IOConsoleOutputStream createOutputStream(String streamId) {

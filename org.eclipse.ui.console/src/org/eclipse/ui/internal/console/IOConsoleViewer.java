@@ -147,7 +147,7 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
                 }
             } catch (BadLocationException e) {
             }
-            getTextWidget().setCaretOffset(doc.getLength());
+//            getTextWidget().setCaretOffset(doc.getLength());
         }
     }
     

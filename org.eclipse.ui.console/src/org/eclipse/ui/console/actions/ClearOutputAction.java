@@ -56,6 +56,7 @@ public class ClearOutputAction extends Action {
 					document.set(""); //$NON-NLS-1$
 				}
 				fViewer.setSelectedRange(0, 0);
+				fViewer.getTextWidget().redraw();
 			}
 		});
 	}
