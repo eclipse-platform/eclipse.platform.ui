@@ -29,7 +29,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
@@ -93,14 +92,6 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		addField(editor);
 	}
 	
-	private Button createCheckButton(Composite parent, String label) {
-		Button button= new Button(parent, SWT.CHECK);
-		button.setFont(parent.getFont());
-		button.setText(label);
-		button.setLayoutData(new GridData(GridData.BEGINNING));
-		return button;
-	}
-
 	/**
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
