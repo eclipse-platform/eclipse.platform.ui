@@ -287,7 +287,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		Properties fromDisk = new Properties();
 		InputStream input = null;
 		try {
-			input = new BufferedInputStream(localFile.getContents());
+			input = new BufferedInputStream(localFile.getContents(true));
 			fromDisk.load(input);
 		} catch (CoreException e) {
 			String message = Policy.bind("preferences.loadException", localFile.getFullPath().toString()); //$NON-NLS-1$
