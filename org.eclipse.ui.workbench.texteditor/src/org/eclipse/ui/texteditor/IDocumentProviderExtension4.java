@@ -11,7 +11,7 @@
 package org.eclipse.ui.texteditor;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
 
 
 /**
@@ -30,15 +30,18 @@ import org.eclipse.core.runtime.content.IContentDescription;
 public interface IDocumentProviderExtension4 {
 	
 	/**
-	 * Returns the content description for the given element or
-	 * <code>null</code> if none could be found.
+	 * Returns the content type of for the given element or
+	 * <code>null</code> if none could be determined. If the element's
+	 * document can be saved, the returned content type is determined by the
+	 * document's current content.
 	 * <p>
 	 * Not yet for public use. API under construction.
 	 * </p>
-	 * 
 	 * @param element the element
-	 * @return the content description or <code>null</code>
-	 * @throws CoreException if reading or accessing the underlying store fails
+	 * @return the content type or <code>null</code>
+	 * @throws CoreException if reading or accessing the underlying store
+	 *                 fails
+	 * @since 3.1
 	 */
-	IContentDescription getContentDescription(Object element) throws CoreException;
+	IContentType getContentType(Object element) throws CoreException;
 }

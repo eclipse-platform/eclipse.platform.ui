@@ -12,6 +12,7 @@
 package org.eclipse.ui.texteditor;
 
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,8 +26,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 import org.eclipse.jface.operation.IRunnableContext;
@@ -38,6 +42,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.internal.texteditor.DocumentInputStream;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 
@@ -187,6 +193,12 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @since 2.0
 	 */
 	static final protected IStatus STATUS_ERROR= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.INFO, EditorMessages.getString("AbstractDocumentProvider.error"), null); //$NON-NLS-1$
+	
+	/**
+	 * Constant denoting an empty set of properties
+	 * @since 3.1
+	 */
+	private static final QualifiedName[] NO_PROPERTIES= new QualifiedName[0];
 	
 	
 	/** Element information of all connected elements */
@@ -1028,10 +1040,19 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	}
 	
 	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentDescription(java.lang.Object)
+	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentType(java.lang.Object)
 	 * @since 3.1
 	 */
-	public IContentDescription getContentDescription(Object element) throws CoreException {
-		return null;
+	public IContentType getContentType(Object element) throws CoreException {
+		try {
+			if (element instanceof IEditorInput) {
+				IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(new DocumentInputStream(getDocument(element)), ((IEditorInput) element).getName(), NO_PROPERTIES);
+				if (desc != null && desc.getContentType() != null)
+					return desc.getContentType();
+			}
+			return null;
+		} catch (IOException x) {
+			throw new CoreException(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, EditorMessages.getString("AbstractDocumentProvider.error.queryContentDescription"), x)); //$NON-NLS-1$
+		}
 	}
 }

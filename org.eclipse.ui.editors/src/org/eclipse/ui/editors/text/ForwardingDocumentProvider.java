@@ -13,6 +13,7 @@ package org.eclipse.ui.editors.text;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.content.IContentType;
 
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 
@@ -24,6 +25,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension2;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension3;
+import org.eclipse.ui.texteditor.IDocumentProviderExtension4;
 import org.eclipse.ui.texteditor.IElementStateListener;
 
 
@@ -56,7 +58,7 @@ import org.eclipse.ui.texteditor.IElementStateListener;
  * 
  * @since 3.0
  */
-public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IStorageDocumentProvider {
+public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IDocumentProviderExtension4, IStorageDocumentProvider {
 	
 	private IDocumentProvider fParentProvider;
 	private String fPartitioning;
@@ -329,6 +331,18 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 			return extension.isSynchronized(element);
 		}
 		return true;
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentType(java.lang.Object)
+	 * @since 3.1
+	 */
+	public IContentType getContentType(Object element) throws CoreException {
+		if (fParentProvider instanceof IDocumentProviderExtension4) {
+			IDocumentProviderExtension4 extension= (IDocumentProviderExtension4) fParentProvider;
+			return extension.getContentType(element);
+		}
+		return null;
 	}
 
 	/*

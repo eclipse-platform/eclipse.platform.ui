@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 import org.eclipse.core.resources.IFile;
@@ -899,6 +900,20 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		return super.isSynchronized(element);
 	}
 	
+	/*
+	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentType(java.lang.Object)
+	 * @since 3.1
+	 */
+	public IContentType getContentType(Object element) throws CoreException {
+		if (!canSaveDocument(element) && element instanceof IFileEditorInput) {
+			IContentDescription desc= ((IFileEditorInput) element).getFile().getContentDescription();
+			if (desc != null && desc.getContentType() != null)
+				return desc.getContentType();
+		}
+		
+		return super.getContentType(element);
+	}
+	
 	// --------------- Encoding support ---------------
 	
 	/**
@@ -1106,15 +1121,5 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		} while (parent != null && !parent.exists());
 		
 		return fResourceRuleFactory.createRule(toCreateOrModify);
-	}
-	
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentDescription(java.lang.Object)
-	 * @since 3.1
-	 */
-	public IContentDescription getContentDescription(Object element) throws CoreException {
-		if (element instanceof IFileEditorInput)
-			return ((IFileEditorInput) element).getFile().getContentDescription();
-		return super.getContentDescription(element);
 	}
 }

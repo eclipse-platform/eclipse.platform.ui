@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
 
 import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -87,6 +88,12 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 * Constant denoting UTF-8 encoding.
 	 */
 	private static final String CHARSET_UTF_8= "UTF-8"; //$NON-NLS-1$
+	
+	/**
+	 * Constant denoting an empty set of properties
+	 * @since 3.1
+	 */
+	private static final QualifiedName[] NO_PROPERTIES= new QualifiedName[0];
 	
 	
 	/** The element's document */
@@ -155,6 +162,26 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			return (fDocument == null ? STATUS_ERROR : STATUS_OK);
 		}
 		return STATUS_ERROR;	
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBuffer#getContentType()
+	 * @since 3.1
+	 */
+	public IContentType getContentType() throws CoreException {
+		try {
+			if (isDirty()) {
+				IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(new DocumentInputStream(getDocument()), fFile.getName(), NO_PROPERTIES);
+				if (desc != null && desc.getContentType() != null)
+					return desc.getContentType();
+			}
+			IContentDescription desc= fFile.getContentDescription();
+			if (desc != null && desc.getContentType() != null)
+				return desc.getContentType();
+			return null;
+		} catch (IOException x) {
+			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getFormattedString("FileBuffer.error.queryContentDescription", fFile.getFullPath().toOSString()), x)); //$NON-NLS-1$
+		}
 	}
 	
 	/*

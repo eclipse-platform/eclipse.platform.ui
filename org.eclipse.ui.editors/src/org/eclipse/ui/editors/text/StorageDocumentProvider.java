@@ -18,17 +18,15 @@ import java.io.Reader;
 
 import org.osgi.framework.Bundle;
 
+import org.eclipse.core.resources.IEncodedStorage;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.content.IContentDescription;
-
-import org.eclipse.core.resources.IEncodedStorage;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.operation.IRunnableContext;
 
@@ -443,31 +441,5 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 */
 	protected IRunnableContext getOperationRunner(IProgressMonitor monitor) {
 		return null;
-	}
-
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentDescription(java.lang.Object)
-	 * @since 3.1
-	 */
-	public IContentDescription getContentDescription(Object element) throws CoreException {
-		if (element instanceof IStorageEditorInput) {
-			InputStream in= null;
-			try {
-				in= ((IStorageEditorInput) element).getStorage().getContents();
-				return Platform.getContentTypeManager().getDescriptionFor(in, ((IStorageEditorInput) element).getName(), IContentDescription.ALL);
-			} catch (IOException x) {
-				String message= x.getLocalizedMessage();
-				if (message == null)
-					message= TextEditorMessages.getString("StorageDocumentProvider.getContentDescription"); //$NON-NLS-1$
-				throw new CoreException(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, x));
-			} finally {
-				if (in != null)
-					try {
-						in.close();
-					} catch (IOException x) {
-					}
-			}
-		}
-		return super.getContentDescription(element);
 	}
 }

@@ -47,6 +47,7 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -138,7 +139,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		}
 	}
 	
-	static protected class NullProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IStorageDocumentProvider  {
+	static protected class NullProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IDocumentProviderExtension4, IStorageDocumentProvider  {
 		
 		static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.INFO, TextEditorMessages.getString("NullProvider.error"), null); //$NON-NLS-1$
 		
@@ -171,6 +172,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		public String getDefaultEncoding() { return null; }
 		public String getEncoding(Object element) { return null; }
 		public void setEncoding(Object element, String encoding) {}
+		public IContentType getContentType(Object element) throws CoreException { return null; }
 	}
 	
 	static protected class FileInfo  {
@@ -1125,6 +1127,20 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		else
 			((IStorageDocumentProvider) getParentProvider()).setEncoding(element, encoding);
 	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentType(java.lang.Object)
+	 * @since 3.1
+	 */
+	public IContentType getContentType(Object element) throws CoreException {
+		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		if (info != null)
+			return info.fTextFileBuffer.getContentType();
+		IDocumentProvider parent= getParentProvider();
+		if (parent instanceof IDocumentProviderExtension4)
+			return ((IDocumentProviderExtension4) parent).getContentType(element);
+		return null;
+	}
 	
 	/**
 	 * Defines the standard procedure to handle <code>CoreExceptions</code>. Exceptions
@@ -1253,19 +1269,5 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		} while (parent != null && !parent.exists());
 		
 		return fResourceRuleFactory.createRule(toCreateOrModify);
-	}
-
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentDescription(java.lang.Object)
-	 * @since 3.1
-	 */
-	public IContentDescription getContentDescription(Object element) throws CoreException {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
-		if (info != null)
-			return info.fTextFileBuffer.getContentDescription();
-		IDocumentProvider parent= getParentProvider();
-		if (parent instanceof IDocumentProviderExtension4)
-			return ((IDocumentProviderExtension4) parent).getContentDescription(element);
-		return null;
 	}
 }

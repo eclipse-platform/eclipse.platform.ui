@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
@@ -87,6 +88,12 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	 */
 	private static final String CHARSET_UTF_8= "UTF-8"; //$NON-NLS-1$
 
+	/**
+	 * Constant denoting an empty set of properties
+	 * @since 3.1
+	 */
+	private static final QualifiedName[] NO_PROPERTIES= new QualifiedName[0];
+	
 	
 	/** The element's document */
 	protected IDocument fDocument;
@@ -259,6 +266,34 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		} catch (RuntimeException x) {
 			fManager.fireStateChangeFailed(this);
 			throw x;
+		}
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBuffer#getContentType()
+	 * @since 3.1
+	 */
+	public IContentType getContentType () throws CoreException {
+		InputStream stream= null;
+		try {
+			if (isDirty()) {
+				IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(new DocumentInputStream(getDocument()), fFile.getName(), NO_PROPERTIES);
+				if (desc != null && desc.getContentType() != null)
+					return desc.getContentType();
+			}
+			stream= new FileInputStream(fFile);
+			IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), NO_PROPERTIES);
+			if (desc != null && desc.getContentType() != null)
+				return desc.getContentType();
+			return null;
+		} catch (IOException x) {
+			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getFormattedString("FileBuffer.error.queryContentDescription", fFile.getPath()), x)); //$NON-NLS-1$
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException x) {
+			}
 		}
 	}
 	
