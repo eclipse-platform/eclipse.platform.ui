@@ -51,7 +51,7 @@ public class DebugActionGroupsPreferencePage  extends PreferencePage implements 
 	private final static int SIZING_SELECTION_WIDGET_WIDTH = 200;
 	
 	/**
-	 * Creates an action set selection dialog.
+	 * Creates an action set selection preference page.
 	 */
 	public DebugActionGroupsPreferencePage() {
 		super();
