@@ -19,10 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.GroupMarker;
@@ -423,20 +421,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		return newPage;
 	}
     
-	
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#create()
-     */
-    public void create() {
-        Platform.run(new ISafeRunnable() {
-            public void handleException(Throwable exception) {
-                // just let it get logged by the runtime
-            }
-            public void run() throws Exception {
-                WorkbenchWindow.super.create();
-            }
-        });
-    }
 	/**
 	 * @see Window
 	 */
