@@ -42,11 +42,11 @@ import org.eclipse.core.runtime.QualifiedName;
  */
 public interface IContentDescription {
 	/**
-	 * Key for the byte order mark property.
+	 * Key for the "charset" property.
 	 */
 	public final static QualifiedName CHARSET = new QualifiedName(Platform.PI_RUNTIME, "charset"); //$NON-NLS-1$
 	/**
-	 * Key for the byte order mark property. This property is only meaningful 
+	 * Key for the "byte order mark" property. This property is only meaningful 
 	 * when describing byte streams.  
 	 */
 	public final static QualifiedName BYTE_ORDER_MARK = new QualifiedName(Platform.PI_RUNTIME, "bom"); //$NON-NLS-1$

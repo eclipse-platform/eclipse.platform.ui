@@ -41,8 +41,8 @@ public interface ITextContentDescriber extends IContentDescriber {
 	 * @param description a description to be filled in, or <code>null</code> if 
 	 * only content type validation is to be performed  
 	 * @return one of the following:<ul>
-	 * <li><code>VALID</code></li>,
-	 * <li><code>INVALID</code></li>,
+	 * <li><code>VALID</code></li>
+	 * <li><code>INVALID</code></li>
 	 * <li><code>INDETERMINATE</code></li>
 	 * </ul>
 	 * @throws IOException if an I/O error occurs
