@@ -5,11 +5,14 @@ package org.eclipse.ui.views.bookmarkexplorer;
  * All Rights Reserved.
  */
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.dialogs.DialogUtil;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
+
 import java.util.*;
 
 /**
@@ -29,11 +32,32 @@ public void run() {
 		try {
 			page.openEditor(marker);
 		} catch (PartInitException e) {
-			DialogUtil.openError(
-				getView().getShell(),
-				BookmarkMessages.getString("OpenBookmark.errorTitle"), //$NON-NLS-1$
-				e.getMessage(),
-				e);
+			// Open an error style dialog for PartInitException by
+			// including any extra information from the nested
+			// CoreException if present.
+
+			// Check for a nested CoreException
+			CoreException nestedException = null;
+			IStatus status = e.getStatus();
+			if (status != null && status.getException() instanceof CoreException)
+				nestedException = (CoreException)status.getException();
+
+			if (nestedException != null) {
+				// Open an error dialog and include the extra
+				// status information from the nested CoreException
+				ErrorDialog.openError(
+					getView().getShell(),
+					BookmarkMessages.getString("OpenBookmark.errorTitle"), //$NON-NLS-1$
+					e.getMessage(),
+					nestedException.getStatus());
+			} else {
+				// Open a regular error dialog since there is no
+				// extra information to display
+				MessageDialog.openError(
+					getView().getShell(),
+					BookmarkMessages.getString("OpenBookmark.errorTitle"), //$NON-NLS-1$
+					e.getMessage());
+			}
 		}
 	}
 }
