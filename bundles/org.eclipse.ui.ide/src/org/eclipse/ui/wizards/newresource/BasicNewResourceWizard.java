@@ -76,7 +76,7 @@ public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 	this.workbench = workbench;
 	this.selection = currentSelection;
 
-	if (currentSelection.isEmpty()) {
+	if (currentSelection == null || currentSelection.isEmpty()) {
 		// plan B: get selection from IFile of active editor
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {
