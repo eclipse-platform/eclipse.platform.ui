@@ -245,6 +245,11 @@
             id="org.eclipse.ui.navigate.up">
       </actionDefinition>
       <actionDefinition
+            name="%ActionDefinition.goToResource.name"
+            description="%ActionDefinition.goToResource.description"
+            id="org.eclipse.ui.navigate.goToResource">
+      </actionDefinition>
+      <actionDefinition
             name="%ActionDefinition.openResource.name"
             description="%ActionDefinition.openResource.description"
             id="org.eclipse.ui.navigate.openResource">
@@ -1795,6 +1800,7 @@
             visible="false"
             id="org.eclipse.ui.NavigateActionSet">
          <action
+               definitionId="org.eclipse.ui.navigate.goToResource"
                label="%GoToResourceAction.label"
                retarget="true"
                menubarPath="navigate/goTo/"
