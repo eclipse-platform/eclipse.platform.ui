@@ -223,6 +223,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 				updateTitle();
 				updateObjects();
 				updateSelectionDependentActions();
+				fKeyBindingFollowLinkAction.clearStatusLine();
 			}
 		};
 		asyncExec(r);
