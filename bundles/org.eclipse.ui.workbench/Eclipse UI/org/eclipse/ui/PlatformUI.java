@@ -38,6 +38,7 @@ public final class PlatformUI {
 	 * Return code (value 0) indicating that the workbench terminated normally.
 	 * 
 	 * @see #createAndRunWorkbench
+	 * @since 3.0
 	 */
 	public static final int RETURN_OK = 0;
 
@@ -47,6 +48,7 @@ public final class PlatformUI {
 	 * 
 	 * @see #createAndRunWorkbench
 	 * @see IWorkbench#restart
+	 * @since 3.0
 	 */
 	public static final int RETURN_RESTART = 1;
 
@@ -55,6 +57,7 @@ public final class PlatformUI {
 	 * 
 	 * @see #createAndRunWorkbench
 	 * @see IWorkbench#restart
+	 * @since 3.0
 	 */
 	public static final int RETURN_UNSTARTABLE = 2;
 
@@ -64,6 +67,7 @@ public final class PlatformUI {
 	 * 
 	 * @see #createAndRunWorkbench
 	 * @see IWorkbenchConfigurer#emergencyClose
+	 * @since 3.0
 	 */
 	public static final int RETURN_EMERGENCY_CLOSE = 3;
 
