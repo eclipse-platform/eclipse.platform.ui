@@ -93,10 +93,8 @@ public class IOConsolePage extends TextConsolePage {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.console.AbstractConsolePage#createActions()
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.TextConsolePage#createActions()
      */
     protected void createActions() {
         super.createActions();
@@ -104,10 +102,8 @@ public class IOConsolePage extends TextConsolePage {
         setAutoScroll(!fScrollLockAction.isChecked());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.console.AbstractConsolePage#contextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.TextConsolePage#contextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
      */
     protected void contextMenuAboutToShow(IMenuManager menuManager) {
         super.contextMenuAboutToShow(menuManager);
@@ -135,7 +131,10 @@ public class IOConsolePage extends TextConsolePage {
      * @see org.eclipse.ui.part.IPage#dispose()
      */
     public void dispose() {
-        fScrollLockAction = null;
+        if (fScrollLockAction != null) {
+            fScrollLockAction.dispose();
+            fScrollLockAction = null;
+        }
         getConsole().removePropertyChangeListener(fPropertyChangeListener);
         super.dispose();
     }
