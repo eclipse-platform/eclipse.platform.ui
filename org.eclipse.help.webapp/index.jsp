@@ -6,6 +6,11 @@
 <%
 	request.setCharacterEncoding("UTF-8");
 
+	if (request.getParameter("noscript") != null) {
+		request.getRequestDispatcher("/basic/index.jsp").forward(request, response);
+		return;
+	}
+
 	RequestData data = new RequestData(application,request);
 	if(data.isIE() || data.isMozilla()){
 		request.getRequestDispatcher("/advanced/index.jsp").forward(request, response);
