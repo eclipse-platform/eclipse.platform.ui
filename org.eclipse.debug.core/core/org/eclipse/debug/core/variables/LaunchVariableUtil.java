@@ -421,10 +421,10 @@ public class LaunchVariableUtil {
 			env= getNativeEnvironment();
 			if (envMap != null) {
 				Iterator iter= envMap.entrySet().iterator();
-				// Overwrite system environment with locally defined variables
+				// Add variables from config
 				while (iter.hasNext()) {
-					Map.Entry entry = (Map.Entry) iter.next();
-					env.put(((String) entry.getKey()).toLowerCase(), expandVariables((String) entry.getValue(), status, context));
+					Map.Entry entry= (Map.Entry) iter.next();
+					env.put(entry.getKey(), expandVariables((String) entry.getValue(), status, context));
 				}
 			}
 		} else if (envMap != null) {
@@ -476,7 +476,7 @@ public class LaunchVariableUtil {
 			while (line != null) {
 				int separator= line.indexOf('=');
 				if (separator > 0) {
-					String key= line.substring(0, separator).toLowerCase();
+					String key= line.substring(0, separator);
 					String value= line.substring(separator + 1);
 					nativeEnv.put(key, value);
 				}
