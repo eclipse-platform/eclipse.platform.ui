@@ -5,6 +5,40 @@
 	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
 %>
 
+<% 
+	// Paramters allowed:
+	// tab = toc | search | links
+	// toc
+	// topic
+	// query
+	// contextId
+	
+	// url of NavFrame
+	String srcNavFrame = "nav.html";
+	if(request.getParameter("tab")!=null)
+		srcNavFrame=srcNavFrame+"?tab="+request.getParameter("tab");
+	if(request.getParameter("toc")!=null)
+		srcNavFrame=srcNavFrame+"&toc="+request.getParameter("toc");
+	if(request.getParameter("topic")!=null)
+		srcNavFrame=srcNavFrame+"&topic="+request.getParameter("topic");
+	if(request.getParameter("query")!=null)
+		srcNavFrame=srcNavFrame+"&query="+request.getParameter("query");
+	if(request.getParameter("contextId")!=null)
+		srcNavFrame=srcNavFrame+"&contextId="+request.getParameter("contextId");
+	
+	// url of MainFrame
+	String srcMainFrame = "main.html";
+	if(request.getParameter("topic")!=null)
+		srcMainFrame=request.getParameter("topic");
+	
+	// url of TabsFrame
+	String srcTabsFrame = "tabs.html";
+	if(request.getParameter("tab")!=null)
+		srcTabsFrame=srcTabsFrame+"?tab="+request.getParameter("tab");
+%>
+
+
+
 <html>
 <head>
 	<title>Help</title>
@@ -31,12 +65,6 @@
 	    }
 	    return args;
 	}
-	
-	var args = parseQueryString ();
-
-	// add code to use the input parameters for window size
-	// add code to keep track (cookies?) of the size on closing
-	// window.resizeTo(700, 700);
 
 	</script>
 	
@@ -47,10 +75,10 @@
 <frameset  rows="24,*,26">
 	<frame name="ToolbarFrame" src="toolbar.html" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
     <frameset id="contentFrameset" cols="25%,*">
-        <frame name="NavFrame" src="nav.html" marginwidth="0" marginheight="0" scrolling="no" frameborder="0">
-        <frame name="MainFrame" src="main.html" marginwidth="10" marginheight="10" scrolling="auto" frameborder="1">
+        <frame name="NavFrame" src="<%=srcNavFrame%>" marginwidth="0" marginheight="0" scrolling="no" frameborder="0">
+        <frame name="MainFrame" src="<%=srcMainFrame%>" marginwidth="10" marginheight="10" scrolling="auto" frameborder="1">
     </frameset>
-    <frame name="TabsFrame" src="tabs.html" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
+    <frame name="TabsFrame" src="<%=srcTabsFrame%>" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
 </frameset>
 
 
