@@ -23,7 +23,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ISubscriberManager;
@@ -160,19 +162,31 @@ public class SubscriberManager implements ISubscriberManager, ISaveParticipant {
 	 * Fires a team resource change event to all registered listeners
 	 * Only listeners registered at the time this method is called are notified.
 	 */
-	void fireTeamResourceChange(final TeamDelta[] deltas) {
+	protected void fireTeamResourceChange(TeamDelta[] deltas) {
 		ITeamResourceChangeListener[] allListeners;
 		// Copy the listener list so we're not calling client code while synchronized
 		synchronized(listeners) {
 			allListeners = (ITeamResourceChangeListener[]) listeners.toArray(new ITeamResourceChangeListener[listeners.size()]);
 		}
-		// Fire the events
-		for (int i = 0; i < allListeners.length; i++) {
-			ITeamResourceChangeListener listener = allListeners[i];
-			listener.teamResourceChanged(deltas);	
-		}
+		fireTeamResourceChange(allListeners, deltas);
 	}	
 	
+	public void fireTeamResourceChange(ITeamResourceChangeListener[] listeners, final TeamDelta[] deltas) {
+		// Notify the listeners safely so all will receive notification
+		for (int i = 0; i < listeners.length; i++) {
+			final ITeamResourceChangeListener listener = listeners[i];
+			Platform.run(new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+					// don't log the exception....it is already being logged in Platform#run
+				}
+				public void run() throws Exception {
+					listener.teamResourceChanged(deltas);
+
+				}
+			});
+		}
+	}
+
 	synchronized void restoreSubscribers() {
 		try {
 			SaveContext root = SaveContextXMLWriter.readXMLPluginMetaFile(TeamPlugin.getPlugin(), "subscribers"); //$NON-NLS-1$

@@ -11,7 +11,6 @@
 package org.eclipse.team.core.subscribers;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
@@ -19,7 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
-import org.eclipse.team.internal.core.*;
+import org.eclipse.team.internal.core.SubscriberManager;
 
 /**
  * A TeamSubscriber provides synchronization between local resources and a remote location 
@@ -240,8 +239,10 @@ abstract public class TeamSubscriber {
 	 * @param listener a team resource change listener
 	 */
 	public void addListener(ITeamResourceChangeListener listener) {
-		if(! listeners.contains(listener)) {
-			listeners.add(listener);
+		synchronized (listeners) {
+			if(! listeners.contains(listener)) {
+				listeners.add(listener);
+			}
 		}
 	}
 
@@ -252,18 +253,24 @@ abstract public class TeamSubscriber {
 	 * @param listener a team resource change listener
 	 */	
 	public void removeListener(ITeamResourceChangeListener listener) {
-		listeners.remove(listener);
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
 	}
 	
 	/**
 	 * Fires a team resource change event to all registered listeners
 	 * Only listeners registered at the time this method is called are notified.
+	 * Listener notification makes use of an ISafeRunnable to ensure that
+	 * client exceptions do not effect the notification to other clients.
 	 */
 	protected void fireTeamResourceChange(final TeamDelta[] deltas) {
-		for (Iterator it = listeners.iterator(); it.hasNext();) {
-			final ITeamResourceChangeListener l = (ITeamResourceChangeListener) it.next();
-			l.teamResourceChanged(deltas);	
+		ITeamResourceChangeListener[] allListeners;
+		// Copy the listener list so we're not calling client code while synchronized
+		synchronized(listeners) {
+			allListeners = (ITeamResourceChangeListener[]) listeners.toArray(new ITeamResourceChangeListener[listeners.size()]);
 		}
+		((SubscriberManager)getSubscriberManager()).fireTeamResourceChange(allListeners, deltas);
 	}
 
 	/**

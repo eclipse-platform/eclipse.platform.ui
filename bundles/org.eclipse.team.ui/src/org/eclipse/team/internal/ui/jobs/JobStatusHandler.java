@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
@@ -34,6 +36,30 @@ public class JobStatusHandler extends JobChangeAdapter {
 	private QualifiedName jobType;
 	private Set jobs = new HashSet();
 	private List listeners = new ArrayList();
+	
+	/*
+	 * Private class used to safely notify listeners of job type starts and
+	 * finishes. Subclass override the notify(IJobListener) method to
+	 * fire specific events inside an ISafeRunnable.
+	 */
+	private abstract class Notification implements ISafeRunnable {
+		private IJobListener listener;
+		public void handleException(Throwable exception) {
+			// don't log the exception....it is already being logged in Platform#run
+		}
+		public void run(IJobListener listener) {
+			this.listener = listener;
+			Platform.run(this);
+		}
+		public void run() throws Exception {
+			notify(listener);
+		}
+		/**
+		 * Subsclasses overide this method to send an event safely to a lsistener
+		 * @param listener
+		 */
+		protected abstract void notify(IJobListener listener);
+	}
 	
 	/**
 	 * Associate the job with the given jobType and schedule the job for 
@@ -146,10 +172,17 @@ public class JobStatusHandler extends JobChangeAdapter {
 			listeners.remove(listener);
 		}
 	}
-
-	private IJobListener[] getJobListeners() {
+	
+	private void fireNotification(Notification notification) {
+		// Get a snapshot of the listeners so the list doesn't change while we're firing
+		IJobListener[] listenerArray;
 		synchronized (listeners) {
-			return (IJobListener[]) listeners.toArray(new IJobListener[listeners.size()]);
+			listenerArray = (IJobListener[]) listeners.toArray(new IJobListener[listeners.size()]);
+		}
+		// Notify each listener in a safe manner (i.e. so their exceptions don't kill us)
+		for (int i = 0; i < listenerArray.length; i++) {
+			IJobListener listener = listenerArray[i];
+			notification.run(listener);
 		}
 	}
 	
@@ -182,11 +215,11 @@ public class JobStatusHandler extends JobChangeAdapter {
 	}
 	
 	private void fireStartNotification() {
-		IJobListener[] listenerArray = getJobListeners();
-		for (int i = 0; i < listenerArray.length; i++) {
-			IJobListener listener = listenerArray[i];
-			listener.started(jobType);
-		}
+		fireNotification(new Notification() {
+			public void notify(IJobListener listener) {
+				listener.started(getJobType());
+			}
+		});
 	}
 
 	private void jobDone(Job job) {
@@ -197,11 +230,11 @@ public class JobStatusHandler extends JobChangeAdapter {
 	}
 
 	private void fireEndNotification() {
-		IJobListener[] listenerArray = getJobListeners();
-		for (int i = 0; i < listenerArray.length; i++) {
-			IJobListener listener = listenerArray[i];
-			listener.finished(jobType);
-		}
+		fireNotification(new Notification() {
+			public void notify(IJobListener listener) {
+				listener.finished(getJobType());
+			}
+		});
 	}
 	
 	public boolean hasRunningJobs() {
@@ -214,4 +247,11 @@ public class JobStatusHandler extends JobChangeAdapter {
 	private boolean isEmpty() {
 		return listeners.isEmpty() && jobs.isEmpty();
 	}
+	/**
+	 * @return Returns the jobType.
+	 */
+	public QualifiedName getJobType() {
+		return jobType;
+	}
+
 }

@@ -23,8 +23,10 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 
@@ -58,7 +60,7 @@ public class SyncSet {
 
 	private void fireChanges() {
 		// Use a synchronized block to ensure that the event we send is static
-		SyncSetChangedEvent event;
+		final SyncSetChangedEvent event;
 		synchronized(this) {
 			event = changes;
 			resetChanges();
@@ -70,10 +72,18 @@ public class SyncSet {
 		synchronized(listeners) {
 			allListeners = (ISyncSetChangedListener[]) listeners.toArray(new ISyncSetChangedListener[listeners.size()]);
 		}
-		// Fire the events
+		// Fire the events using an ISafeRunnable
 		for (int i = 0; i < allListeners.length; i++) {
-			ISyncSetChangedListener listener = allListeners[i];
-			listener.syncSetChanged(event);
+			final ISyncSetChangedListener listener = allListeners[i];
+			Platform.run(new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+					// don't log the exception....it is already being logged in Platform#run
+				}
+				public void run() throws Exception {
+					listener.syncSetChanged(event);
+
+				}
+			});
 		}
 	}
 
@@ -243,7 +253,7 @@ public class SyncSet {
 			} else {
 				return new SyncInfo[] { info };
 			}
-		};
+		}
 		IContainer container = (IContainer)resource;
 		IPath path = container.getFullPath();
 		Set children = (Set)parents.get(path);
