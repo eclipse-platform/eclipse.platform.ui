@@ -393,7 +393,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		if (fObject instanceof IDebugElement && source instanceof IDebugElement) {
 			IDebugElement element = (IDebugElement)fObject;
 			IDebugElement sourceElement = (IDebugElement)source;
-			return sourceElement.getDebugTarget().equals(element.getDebugTarget());
+			return sourceElement.equals(element.getDebugTarget());
 		}
 		return false;
 	}
