@@ -37,10 +37,11 @@ import org.eclipse.update.internal.operations.*;
  * Parses the installation log and creates installation configuration objects
  */
 public class InstallLogParser {
-	private IPath fLogPath;
+	private IPath logPath;
 	private BufferedReader buffRead;
 	private InstallConfiguration currentConfiguration;
 	private HashMap installConfigMap;
+	private ArrayList activities;
 	private Comparator comparator;
 	
 	private static final String FEATURE_INSTALL = "feature-install"; //$NON-NLS-1$
@@ -62,12 +63,13 @@ public class InstallLogParser {
 	
 	public InstallLogParser(){
 		String loc = ConfiguratorUtils.getCurrentPlatformConfiguration().getConfigurationLocation().getFile();
-		fLogPath = new Path(loc).removeLastSegments(1).append(".install-log"); 
+		logPath = new Path(loc).removeLastSegments(1).append(".install-log"); 
+		activities = new ArrayList();
 		installConfigMap = new HashMap();
 		try {
 			IInstallConfiguration[] configs = SiteManager.getLocalSite().getConfigurationHistory();
 			for (int i=0;i <configs.length; i++)
-				installConfigMap.put(configs[i].getCreationDate(), configs[i]);
+				installConfigMap.put(configs[i].getCreationDate().toString(), configs[i]);
 		} catch (CoreException e) {
 			UpdateCore.log(e);
 		}
@@ -86,7 +88,7 @@ public class InstallLogParser {
 	
 	private void openLog() throws CoreException {
 		try {
-			buffRead = new BufferedReader(new FileReader(fLogPath.toOSString()));
+			buffRead = new BufferedReader(new FileReader(logPath.toOSString()));
 		} catch (FileNotFoundException e) {
 			throwCoreException(e);
 		}
@@ -135,15 +137,18 @@ public class InstallLogParser {
 					action = htmlCode.nextToken();
 					status = htmlCode.nextToken();
 
-					createActivity(action, date, status, target.toString(), currentConfiguration);
+					IActivity activity = createActivity(action, date, status, target.toString(), currentConfiguration);
+					// keep activities in reverse order, most recent first
+					activities.add(0,activity);
 				}  else {
 					StringBuffer date;
 					date = new StringBuffer();
 					while (htmlCode.countTokens() > 0){
-						date.append(" ");
+						if (date.length() != 0)
+							date.append(" ");
 						date.append(htmlCode.nextToken());
 					}
-					currentConfiguration = (InstallConfiguration)installConfigMap.get(new Date(date.toString()));
+					currentConfiguration = (InstallConfiguration)installConfigMap.get(date.toString());
 				}
 			}
 		} catch (Exception e) {
@@ -187,15 +192,15 @@ public class InstallLogParser {
 		a.setDate(new Date(date));
 		a.setStatus(SUCCESS.equals(status) ? IActivity.STATUS_OK : IActivity.STATUS_NOK);
 		a.setLabel(target);
+		a.setInstallConfigurationModel(config);
 		
-		config.addActivity(a);
+		if (config != null)
+			config.addActivity(a);
+		
 		return a;
 	}
-	private InstallConfiguration createConfiguration(String date){
-		Date d = new Date(date);
-		InstallConfiguration config = new InstallConfiguration();
-		config.setCreationDate(d);
-		config.setLabel(date);
-		return config;
+	
+	public IActivity[] getActivities() {
+		return (IActivity[])activities.toArray(new ConfigurationActivity[activities.size()]);
 	}
 }

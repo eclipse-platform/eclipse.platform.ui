@@ -158,7 +158,6 @@ public class SiteLocalParser {
 					else 
 						continue;
 					Date date = new Date(Long.parseLong(name));
-					System.out.println(date.toString());
 					InstallConfigurationModel config = factory.createInstallConfigurationModel();
 					config.setLocationURLString(backedConfigs[i].getAbsolutePath().replace('\\', '/'));
 					config.setLabel(date.toString());

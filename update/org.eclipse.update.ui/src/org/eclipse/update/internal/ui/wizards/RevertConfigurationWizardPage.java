@@ -117,7 +117,8 @@ public class RevertConfigurationWizardPage extends WizardPage {
 				Color color = new Color(null, 238,238,255);
 				for (int i =0; i<items.length; i++){
 					IActivity activity = (IActivity)items[i].getData();
-					if (isInRevertConfiguration (activity, currentConfig))
+					// for now, we test exact config match. If needed, we can also compare dates, etc.
+					if (activity.getInstallConfiguration() == currentConfig)
 						items[i].setBackground(color);//activitiesViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
 					else
 						items[i].setBackground(activitiesViewer.getControl().getBackground());
@@ -131,23 +132,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 		}
 	}
 
-	private boolean isInRevertConfiguration(IActivity activity, IInstallConfiguration currentConfig){
-		boolean qualifies = false;
-		int currentConfigIndex = -1;
-		TableItem[] configs = configViewer.getTable().getItems();
-		for (int j = 0; j<configs.length; j++){
-			IInstallConfiguration config = (IInstallConfiguration)configs[j].getData();
-			if (config.equals(currentConfig)){
-				currentConfigIndex = j;
-			}
-			if (currentConfigIndex == j){//currentConfigIndex>=j || currentConfigIndex == -1){
-				qualifies = activity.getInstallConfiguration().equals(config);
-				if (qualifies)
-					return qualifies;
-			}
-		}
-		return qualifies;
-	}
+
 	private void createActivitiesSection(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout gridLayout = new GridLayout();
