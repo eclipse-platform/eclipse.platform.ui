@@ -159,6 +159,14 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 			monitor.done();
 		}
 	}
+	
+	/**
+	 * Forces an autobuild to occur, even if nothing has changed since the last
+	 * build. This is used to force a build after a clean.
+	 */
+	public void forceBuild() {
+		forceBuild = true;
+	}
 
 	synchronized boolean isInterrupted() {
 		if (interrupted)

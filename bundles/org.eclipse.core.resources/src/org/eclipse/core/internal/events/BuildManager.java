@@ -276,7 +276,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				if (!status.isOK())
 					throw new ResourceException(status);
 			} finally {
-				cleanup();
+				cleanup(trigger);
 			}
 		} finally {
 			monitor.done();
@@ -285,11 +285,14 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		}
 	}
 
-	private void cleanup() {
+	private void cleanup(int trigger) {
 		building = false;
 		builtProjects.clear();
 		deltaCache.flush();
 		deltaTreeCache.flush();
+		//ensure autobuild runs after a clean
+		if (trigger == IncrementalProjectBuilder.CLEAN_BUILD)
+			autoBuildJob.forceBuild();
 	}
 
 	public void build(IProject project, int trigger, IProgressMonitor monitor) throws CoreException {
@@ -302,25 +305,25 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			if (!status.isOK())
 				throw new ResourceException(status);
 		} finally {
-			cleanup();
+			cleanup(trigger);
 		}
 	}
 
-	public void build(IProject project, int kind, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
+	public void build(IProject project, int trigger, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			String message = Policy.bind("events.building.1", project.getFullPath().toString()); //$NON-NLS-1$
 			monitor.beginTask(message, 1);
-			if (!canRun(kind))
+			if (!canRun(trigger))
 				return;
 			try {
 				building = true;
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, ICoreConstants.MSG_EVENTS_ERRORS, null);
-				basicBuild(project, kind, builderName, args, status, Policy.subMonitorFor(monitor, 1));
+				basicBuild(project, trigger, builderName, args, status, Policy.subMonitorFor(monitor, 1));
 				if (!status.isOK())
 					throw new ResourceException(status);
 			} finally {
-				cleanup();
+				cleanup(trigger);
 			}
 		} finally {
 			monitor.done();
