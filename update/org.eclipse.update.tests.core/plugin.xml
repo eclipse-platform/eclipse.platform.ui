@@ -17,7 +17,7 @@
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.update.core"/>
-      <import plugin="org.eclipse.help"/>
+      <import plugin="org.eclipse.tomcat"/>
    </requires>
 
 

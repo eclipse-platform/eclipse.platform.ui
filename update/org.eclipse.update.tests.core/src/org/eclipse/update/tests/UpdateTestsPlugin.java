@@ -4,7 +4,7 @@ package org.eclipse.update.tests;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.AppServer;
+import org.eclipse.tomcat.AppServer;
 
 /**
  * manages the startuo and shutown of the 
