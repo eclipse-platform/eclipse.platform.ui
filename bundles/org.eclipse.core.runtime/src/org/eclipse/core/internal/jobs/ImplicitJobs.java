@@ -31,7 +31,7 @@ class ImplicitJobs {
 		private boolean running = false;
 		private int top;
 		ThreadJob(ISchedulingRule rule) {
-			super("Rule job: " + rule); //$NON-NLS-1$
+			super("Implicit job"); //$NON-NLS-1$
 			setSystem(true);
 			setPriority(INTERACTIVE);
 			setRule(rule);
@@ -42,6 +42,7 @@ class ImplicitJobs {
 		 * Schedule the job and block the calling thread until the job starts running
 		 */
 		synchronized void joinRun() {
+			running = false;
 			schedule();
 			while (!running) {
 				manager.getLockManager().aboutToWait(null);
@@ -82,7 +83,11 @@ class ImplicitJobs {
 	 * Maps (Thread->ThreadJob), threads to the currently running job
 	 * for that thread.
 	 */
-	private static final Map threadJobs = new HashMap(20);
+	private final Map threadJobs = new HashMap(20);
+	/**
+	 * Cached of unused instance that can be reused
+	 */
+	private ThreadJob jobCache = null;
 	private JobManager manager;
 	ImplicitJobs(JobManager manager) {
 		this.manager = manager;
@@ -106,23 +111,24 @@ class ImplicitJobs {
 				//use the rule from the real job if it has one
 				Job realJob = Platform.getJobManager().currentJob();
 				if (realJob != null && realJob.getRule() != null)
-					threadJob = new ThreadJob(realJob.getRule());
+					threadJob = newThreadJob(realJob.getRule());
 				else {
-					threadJob = new ThreadJob(rule);
+					threadJob = newThreadJob(rule);
 					join = true;
 				}
 				threadJobs.put(currentThread, threadJob);
+				//if this job has a rule, then we are essentially acquiring a lock
+				if (rule != null)
+					manager.getLockManager().addLockThread(Thread.currentThread());
 			}
 			threadJob.push(rule);
 		}
 		//join the thread job outside sync block
 		if (join) {
-			//if this job has a rule, then we are essentially acquiring a lock
-			if (rule != null)
-				manager.getLockManager().addLockThread(Thread.currentThread());
 			threadJob.joinRun();
 		}
 	}
+
 	/* (Non-javadoc)
 	 * @see IJobManager#end
 	 */
@@ -139,6 +145,28 @@ class ImplicitJobs {
 				if (threadJob.getRule() != null)
 					manager.getLockManager().removeLockThread(Thread.currentThread());
 			}
+			recycle(threadJob);
+		}
+	}
+	/**
+	 * Returns a new or reused ThreadJob instance.
+	 */
+	private ThreadJob newThreadJob(ISchedulingRule rule) {
+		if (jobCache != null) {
+			ThreadJob job = jobCache;
+			job.setRule(rule);
+			jobCache = null;
+			return job;
+		}
+		return new ThreadJob(rule);
+	}
+	/**
+	 * Indicates that a thread job is no longer in use and can be reused.
+	 */
+	private void recycle(ThreadJob job) {
+		if (jobCache == null) {
+			job.setRule(null);
+			jobCache = job;
 		}
 	}
 }
