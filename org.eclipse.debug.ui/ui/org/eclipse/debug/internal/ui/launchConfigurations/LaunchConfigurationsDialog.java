@@ -1166,6 +1166,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		try {
 			if (getTabViewer().isDirty()) {
 				getTabViewer().handleApplyPressed();
+				config = getTabViewer().getOriginal();
 			}
 			result = doLaunch(config);
 		} catch (CoreException e) {
