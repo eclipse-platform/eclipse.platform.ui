@@ -629,7 +629,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			int vertOrHoriz = orientation.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH) ? SWT.VERTICAL : SWT.HORIZONTAL;
 			getSashForm().setOrientation(vertOrHoriz);	
 			if (IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN.equals(fCurrentDetailPaneOrientation)) {
-				showDetailPane();			
+				showDetailPane();	
 			}
 		}
 		fCurrentDetailPaneOrientation  = orientation;
@@ -1101,8 +1101,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	}
 	
 	protected boolean isDetailPaneVisible() {
-		IAction action = getAction("ShowDetailPane"); //$NON-NLS-1$
-		return action != null && action.isChecked();
+		return !fToggleDetailPaneActions[2].isChecked();
 	}
 	
 	/**
