@@ -492,9 +492,10 @@ public void testMoveResource() throws Exception {
 	} catch (CoreException e) {
 	}
 	assertTrue("4.3", folder.exists());
+	// FIXME: should #move be a best effort operation?
 	// its ok for the root to be moved but ensure the destination child wasn't moved
 	IResource destChild = ((IContainer) destination).getFile(new Path(anotherFile.getName()));
-	assertTrue("4.4", destination.exists());
+	assertTrue("4.4", !destination.exists());
 	assertTrue("4.5", !destChild.exists());
 	// cleanup and delete the destination
 	try {
