@@ -113,7 +113,7 @@ public static void main (String [] args) {
      	}
      };
      exp.setText("Expandable Section");
-     exp.setExpandable(false);
+     //exp.setExpandable(false);
      FormWidgetFactory factory = new FormWidgetFactory();
      exp.createControl(c, factory);
      //exp.getControl().setBackground(label.getDisplay().getSystemColor(SWT.COLOR_GREEN));

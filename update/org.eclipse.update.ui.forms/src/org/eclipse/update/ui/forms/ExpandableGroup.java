@@ -17,13 +17,14 @@ public abstract class ExpandableGroup {
 	private Composite control;
 	private int style;
 	private boolean expandable=true;
+	private boolean hasFocus;
 	
 class ExpandableLayout extends Layout {
 	protected void layout(Composite parent, boolean changed) {
 		Rectangle clientArea = parent.getClientArea();
 		Point size = textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 		int x = 0;
-		int y = 0;
+		int y = 1;
 		
 		if (expandable) {
 			x = 8 + 8;
@@ -31,7 +32,7 @@ class ExpandableLayout extends Layout {
 		textLabel.setBounds(x, y, size.x, size.y);
 	
 		if (expandable)
-		   y = Math.max(size.y, 8) + 2;
+		   y = Math.max(size.y, 8) + 2 + 2;
 		else
 		   y = size.y + 2;
 		if (expanded) {
@@ -43,7 +44,7 @@ class ExpandableLayout extends Layout {
 		int width = 0, height = 0;
 		Point size = textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 		width = size.x;
-		height = size.y + 2;
+		height = size.y + 2 + 2;
 		if (expanded) {
 			size = expansion.computeSize(wHint, SWT.DEFAULT, changed);
 			width = Math.max(width, size.x);
@@ -69,11 +70,35 @@ class ExpandableLayout extends Layout {
 	}
 	
 	public void createControl(Composite parent, FormWidgetFactory factory) {
-		Composite container = factory.createComposite(parent, style);
+		final Canvas container = new Canvas(parent, SWT.NULL);
+		container.setBackground(factory.getBackgroundColor());
 		container.setLayout(new ExpandableLayout());
 		container.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				if (expandable) repaint(e);
+			}
+		});
+		container.addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent e) {
+				if (!hasFocus) {
+					hasFocus = true;
+					container.redraw();
+				}
+			}
+			public void focusLost(FocusEvent e) {
+				if (hasFocus) {
+					hasFocus = false;
+					container.redraw();
+				}
+			}
+		});
+		container.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (e.character=='\r') {
+					if (isExpandable()) {
+						setExpanded(!isExpanded());
+					}
+				}
 			}
 		});
 		container.addMouseListener(new MouseAdapter() {
@@ -99,6 +124,11 @@ class ExpandableLayout extends Layout {
 	
 	protected Label createTextLabel(Composite parent, FormWidgetFactory factory) {
 		return factory.createLabel(parent, "", SWT.NULL);
+		/*
+		FormText text = new FormText(parent, SWT.WRAP);
+		text.setBackground(factory.getBackgroundColor());
+		return text;
+		*/
 	}
 	
 	protected HyperlinkHandler getHyperlinkHandler(FormWidgetFactory factory) {
@@ -157,6 +187,11 @@ class ExpandableLayout extends Layout {
 		gc.drawLine(box.x+2, box.y+4, box.x+6, box.y+4);
 		if (!isExpanded()) {
 			gc.drawLine(box.x+4, box.y+2, box.x+4, box.y+6);
+		}
+		Rectangle textBox = textLabel.getBounds();
+		if (isExpandable() && hasFocus) {
+			gc.setLineStyle(SWT.LINE_DOT);
+			gc.drawRectangle(textBox.x, textBox.y, textBox.width, textBox.height);
 		}
 	}
 	

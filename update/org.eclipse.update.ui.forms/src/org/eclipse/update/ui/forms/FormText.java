@@ -51,6 +51,10 @@ public class FormText extends Canvas {
 			}
 		});
 	}
+	public boolean traverse(int traversal) {
+		//System.out.println("Traversal = "+traversal+"("+getText()+")");
+		return super.traverse(traversal);
+	}
 	public String getText() {
 		return text;
 	}
