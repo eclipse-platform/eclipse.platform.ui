@@ -357,7 +357,8 @@ public Rectangle getBounds() {
  * @see LayoutPart#getMinimumHeight()
  */
 public int getMinimumHeight() {
-	if (tabFolder != null)
+	if (tabFolder != null && !tabFolder.isDisposed())
+		// +1 for tab border
 		return tabFolder.getTabHeight() + 1;
 	else
 		return super.getMinimumHeight();

@@ -365,12 +365,16 @@ public Rectangle getBounds() {
  * @see LayoutPart#getMinimumHeight()
  */
 public int getMinimumHeight() {
-	if (tabFolder == null || current == null)
-		return super.getMinimumHeight();
-	else if (getItemCount() > 1)
-		return current.getMinimumHeight() + tabFolder.computeTrim(0, 0, 0, 0).height;
-	else
-		return current.getMinimumHeight();
+	if (tabFolder != null && !tabFolder.isDisposed() && current != null) {
+		if (getItemCount() > 1)
+			// +1 for tab border
+			return current.getMinimumHeight() + tabFolder.getTabHeight() + 1;
+		else
+			// +1 for one row of ViewForm border
+			return current.getMinimumHeight() + 1;
+	}
+	return super.getMinimumHeight();
+		
 }
 
 /**

@@ -358,8 +358,9 @@ public MenuManager getMenuManager() {
  * @see LayoutPart#getMinimumHeight()
  */
 public int getMinimumHeight() {
-	if (titleLabel != null)
-		return titleLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+	if (titleLabel != null && !titleLabel.isDisposed())
+		// +1 for one row of ViewForm border
+		return titleLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).y + 1;
 	else
 		return super.getMinimumHeight();
 }
