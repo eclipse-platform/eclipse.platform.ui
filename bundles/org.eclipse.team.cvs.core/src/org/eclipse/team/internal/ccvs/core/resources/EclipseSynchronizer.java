@@ -148,9 +148,12 @@ public class EclipseSynchronizer {
 	
 	public void setIgnored(IContainer resource, String pattern) throws CVSException {
 		String[] ignores = getIgnored(resource);
-		String[] newIgnores = new String[ignores.length+1];
-		System.arraycopy(ignores, 0, newIgnores, 0, ignores.length);
-		newIgnores[ignores.length] = pattern;
+		String[] newIgnores = new String[] {pattern};
+		if(ignores!=null) {
+			newIgnores = new String[ignores.length+1];
+			System.arraycopy(ignores, 0, newIgnores, 0, ignores.length);
+			newIgnores[ignores.length] = pattern;
+		}
 		setCachedFolderIgnores(resource, newIgnores);
 		SyncFileWriter.addCVSIgnoreEntries(CVSWorkspaceRoot.getCVSFolderFor(resource), newIgnores);
 		// broadcast changes to unmanaged children - they are the only candidates for being ignored
@@ -195,7 +198,13 @@ public class EclipseSynchronizer {
 			childResources.addAll(Arrays.asList(folder.members()));
 			return (IResource[])childResources.toArray(new IResource[childResources.size()]);
 		} catch (CoreException e) {
-			throw CVSException.wrapException(e);
+			// return zero length array for non-existing containers
+			if(!folder.exists()) {
+				return new IResource[0];
+			} else {
+			// otherwise throw the exception, it must of been caused by something else
+				throw CVSException.wrapException(e);
+			}
 		}
 	}
 	
