@@ -210,6 +210,6 @@ class TabStopIterator {
 	}
 	
 	LinkedPosition[] getPositions() {
-		return (LinkedPosition[]) fList.toArray(new LinkedPosition[0]);
+		return (LinkedPosition[]) fList.toArray(new LinkedPosition[fSize]);
 	}
 }
