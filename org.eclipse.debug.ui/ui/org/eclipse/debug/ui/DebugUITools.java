@@ -487,7 +487,7 @@ public class DebugUITools {
 	 * 
 	 * @param configuration the configuration to launch
 	 * @param mode launch mode - run or debug
-	 * @since 3.0
+	 * @since 2.1
 	 */
 	public static void launch(ILaunchConfiguration configuration, String mode) {
 		if (DebugUIPlugin.preLaunchSave()) {
