@@ -1609,8 +1609,40 @@ public final class BindingManager implements IContextManagerListener,
 			final Binding current = (Binding) bindingItr.next();
 
 			/*
-			 * CONTEXTS: Check for context superiority, only if we care about
-			 * contexts.
+			 * SCHEME: Test whether the current is in a child scheme. Bindings
+			 * defined in a child scheme will always take priority over bindings
+			 * defined in a parent scheme.
+			 */
+			final String currentScheme = current.getSchemeId();
+			final String bestScheme = bestMatch.getSchemeId();
+			if (!currentScheme.equals(bestScheme)) {
+				boolean goToNextBinding = false;
+				for (int i = 0; i < activeSchemeIds.length; i++) {
+					final String schemePointer = activeSchemeIds[i];
+					if (currentScheme.equals(schemePointer)) {
+						// the current wins
+						bestMatch = current;
+						conflict = false;
+						goToNextBinding = true;
+						break;
+
+					} else if (bestScheme.equals(schemePointer)) {
+						// the best wins
+						goToNextBinding = true;
+						break;
+
+					}
+
+				}
+				if (goToNextBinding) {
+					continue;
+				}
+			}
+			
+			/*
+			 * CONTEXTS: Check for context superiority.  Bindings defined in a
+			 * child context will take priority over bindings defined in a
+			 * parent context -- assuming that the schemes lead to a conflict.
 			 */
 			final String currentContext = current.getContextId();
 			final String bestContext = bestMatch.getContextId();
@@ -1643,38 +1675,6 @@ public final class BindingManager implements IContextManagerListener,
 							.get(contextPointer);
 				}
 
-				if (goToNextBinding) {
-					continue;
-				}
-			}
-
-			/*
-			 * SCHEME: Test whether the current is in a child scheme. Bindings
-			 * defined in a child scheme will take priority over bindings
-			 * defined in a parent scheme -- assuming that consulting their
-			 * contexts led to a conflict.
-			 */
-			final String currentScheme = current.getSchemeId();
-			final String bestScheme = bestMatch.getSchemeId();
-			if (!currentScheme.equals(bestScheme)) {
-				boolean goToNextBinding = false;
-				for (int i = 0; i < activeSchemeIds.length; i++) {
-					final String schemePointer = activeSchemeIds[i];
-					if (currentScheme.equals(schemePointer)) {
-						// the current wins
-						bestMatch = current;
-						conflict = false;
-						goToNextBinding = true;
-						break;
-
-					} else if (bestScheme.equals(schemePointer)) {
-						// the best wins
-						goToNextBinding = true;
-						break;
-
-					}
-
-				}
 				if (goToNextBinding) {
 					continue;
 				}

@@ -471,17 +471,18 @@ public final class BindingInteractionsTest extends UITestCase {
 	 */
 	public void testSchemeOverrideDifferentContexts()
 			throws NotDefinedException {
-		final Context parentContext = contextManager.getContext("parent");
+		final String parent = "parent";
+		final String child = "child";
+		
+		final Context parentContext = contextManager.getContext(parent);
 		parentContext.define("parent", "description", null);
+		final Context childContext = contextManager.getContext(child);
+		childContext.define("child", "description", parent);
 
-		final Context childContext = contextManager.getContext("child");
-		childContext.define("child", "description", null);
-
-		final Scheme parentScheme = bindingManager.getScheme("parent");
+		final Scheme parentScheme = bindingManager.getScheme(parent);
 		parentScheme.define("parent", "parent scheme", null);
-
-		final Scheme childScheme = bindingManager.getScheme("child");
-		childScheme.define("child", "child scheme", "parent");
+		final Scheme childScheme = bindingManager.getScheme(child);
+		childScheme.define("child", "child scheme", parent);
 
 		bindingManager.setActiveScheme(childScheme);
 		final Set activeContextIds = new HashSet();
