@@ -24,6 +24,7 @@ public class EclipseController {
 	// Eclipse connection params
 	protected EclipseConnection connection;
 
+	private Eclipse eclipse = null;
 	/**
 	 * Constructs help system
 	 * @param applicationID ID of Eclipse help application
@@ -79,7 +80,9 @@ public class EclipseController {
 	protected void sendHelpCommand(String command, String[] parameters)
 		throws Exception {
 		if (!"shutdown".equalsIgnoreCase(command)) {
-			startEclipse();
+			if (eclipse == null || !eclipse.isAlive()) {
+				startEclipse();
+			}
 		}
 		if (!connection.isValid()) {
 			connection.renew();
@@ -160,7 +163,7 @@ public class EclipseController {
 				System.out.println("  " + (String) it.next());
 			}
 		}
-		Eclipse eclipse =
+		eclipse =
 			new Eclipse(Options.getEclipseHome(), Options.getEclipseArgs());
 		eclipse.start();
 		if (Options.isDebug()) {
