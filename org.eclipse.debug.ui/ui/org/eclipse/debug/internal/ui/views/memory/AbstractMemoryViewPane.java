@@ -305,13 +305,9 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 				
 				if (obj instanceof IMemoryViewTabFactory)
 					return (IMemoryViewTabFactory)obj;
-				else
-					return null;
+                return null;
 			}
-			else
-			{	
-				return null;
-			}
+            return null;
 		} catch (CoreException e1) {
 			return null;
 		}
@@ -352,13 +348,9 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 				
 				if (obj instanceof AbstractMemoryRenderer)
 					return (AbstractMemoryRenderer)obj;
-				else
-					return null;
+                return null;
 			}
-			else
-			{	
-				return null;
-			}
+            return null;
 		} catch (CoreException e1) {
 			return null;
 		}
@@ -467,12 +459,10 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	}
 
 	public void selectionChanged(SelectionChangedEvent event) {
-		IWorkbenchPart part = fParent;
 		ISelection selection = event.getSelection();
 		selectionChanged(fParent,selection);
 		
 		fSelectionProvider.setSelection(selection);
-
 	}
 	
 	/* (non-Javadoc)
