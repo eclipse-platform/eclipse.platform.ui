@@ -947,7 +947,7 @@ public class KeysPreferencePage extends
     }
 
     private String getContextId() {
-        return comboContext.getSelectionIndex() > 0 ? (String) contextIdsByUniqueName
+        return comboContext.getSelectionIndex() >= 0 ? (String) contextIdsByUniqueName
                 .get(comboContext.getText())
                 : null;
     }
@@ -1300,6 +1300,7 @@ public class KeysPreferencePage extends
      *            combo box; may be <code>null</code>.
      */
     private void setContextId(String contextId) {
+        System.out.println("setContextId(" + contextId + ")");
         // Clear the current selection.
         comboContext.clearSelection();
         comboContext.deselectAll();
