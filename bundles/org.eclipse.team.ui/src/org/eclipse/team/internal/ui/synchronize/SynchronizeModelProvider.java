@@ -475,7 +475,6 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 						} catch(CoreException e) {
 							// the marker has been deleted skip this marker and keep going
 							if(! (e.getStatus().getCode() == IResourceStatus.MARKER_NOT_FOUND)) {
-								TeamUIPlugin.log(e);
 								return;
 							}
 							continue;
@@ -491,9 +490,8 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 					}
 				}
 			} catch (CoreException e) {
-				if(! (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND)) {
-					TeamUIPlugin.log(e);
-				}
+				// ignore problems on this item and keep going
+				return;
 			}
 		}
 	}
