@@ -1607,7 +1607,7 @@
             annotationImageProvider="org.eclipse.debug.internal.ui.BreakpointImageProvider">
       </specification>
       <specification
-            colorPreferenceValue="217,255,226"
+            colorPreferenceValue="198,219,174"
             annotationType="org.eclipse.debug.ui.currentIP"
             icon="icons/full/obj16/inst_ptr_top.gif"
             verticalRulerPreferenceValue="true"
@@ -1623,7 +1623,7 @@
             overviewRulerPreferenceKey="currentIPOverviewRuler">
       </specification>
       <specification
-            colorPreferenceValue="217,255,226"
+            colorPreferenceValue="219,235,204"
             annotationType="org.eclipse.debug.ui.secondaryIP"
             icon="icons/full/obj16/inst_ptr.gif"
             verticalRulerPreferenceValue="true"
