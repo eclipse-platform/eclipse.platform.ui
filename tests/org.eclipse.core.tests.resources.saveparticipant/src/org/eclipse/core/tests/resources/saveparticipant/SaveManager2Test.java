@@ -139,6 +139,7 @@ public void testVerifyProject2() {
 	} catch (CoreException e) {
 		fail("2.5", e);
 	}
+	waitForBuild();
 	SimpleBuilder builder = SimpleBuilder.getInstance();
 	assertTrue("2.6", builder.wasAutoBuild());
 
