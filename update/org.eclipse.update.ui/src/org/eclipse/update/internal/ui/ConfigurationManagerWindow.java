@@ -149,6 +149,14 @@ public class ConfigurationManagerWindow
 		getToolBarManager().update(false);
 		getStatusLineManager().update(false);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#close()
+	 */
+	public boolean close() {
+		if (view != null)
+			view.dispose();
+		return super.close();
+	}
 	public StatusLineManager getStatusLineManager() {
 		return super.getStatusLineManager();
 	}
