@@ -295,24 +295,44 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 		if(root instanceof SynchronizeModelElement) {
 			((SynchronizeModelElement)root).fireChanges();
 		}
-		Utils.asyncExec(new Runnable() {
-			public void run() {
-				StructuredViewer viewer = getViewer();
-				if (viewer != null && !viewer.getControl().isDisposed()) {
-					try {
-						viewer.getControl().setRedraw(false);
-						viewer.refresh();
-						//	restore expansion state
-						if (isRootProvider())
-						    restoreViewerState();
-					} finally {
-						viewer.getControl().setRedraw(true);
-					}
+		
+		if (Utils.canUpdateViewer(getViewer())) {
+		    // If we can update the viewer, that means that the view was updated
+		    // when the model was rebuilt.
+		    refreshModelRoot();
+		} else {
+			Utils.asyncExec(new Runnable() {
+				public void run() {
+					refreshModelRoot();
 				}
-			}
-		}, getViewer());
+			}, getViewer());
+		}
 	}
 	
+    private void refreshModelRoot() {
+        StructuredViewer viewer = getViewer();
+		if (viewer != null && !viewer.getControl().isDisposed()) {
+			try {
+				viewer.getControl().setRedraw(false);
+				if (isRootProvider()) {
+				    // Refresh the entire view
+				    viewer.refresh();
+				} else {
+				    // Only refresh the model root bu also ensure that 
+				    // the parents of the model root and the model root
+				    // itself are added to the view
+				    ((AbstractTreeViewer)viewer).add(getModelRoot().getParent(), getModelRoot());
+				    viewer.refresh(getModelRoot());
+				}
+				//	restore expansion state
+				if (isRootProvider())
+				    restoreViewerState();
+			} finally {
+				viewer.getControl().setRedraw(true);
+			}
+		}
+    }
+    
 	/**
 	 * For each node create children based on the contents of
 	 * @param node

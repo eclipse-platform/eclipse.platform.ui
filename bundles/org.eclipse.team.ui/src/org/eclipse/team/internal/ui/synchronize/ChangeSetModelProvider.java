@@ -33,7 +33,7 @@ import org.eclipse.team.ui.synchronize.*;
  */
 public class ChangeSetModelProvider extends CompositeModelProvider {
 
-    private ViewerSorter viewerSorter = new ChangeSetModelSorter(this, ChangeSetModelSorter.COMMENT);
+    private ViewerSorter viewerSorter;
 	
 	// The id of the sub-provider
     private final String subProvierId;
@@ -240,6 +240,9 @@ public class ChangeSetModelProvider extends CompositeModelProvider {
      * @see org.eclipse.team.internal.ui.synchronize.ISynchronizeModelProvider#getViewerSorter()
      */
     public ViewerSorter getViewerSorter() {
+        if (viewerSorter == null) {
+            viewerSorter = new ChangeSetModelSorter(this, ChangeSetActionGroup.getSortCriteria(getConfiguration()));
+        }
         return viewerSorter;
     }
 

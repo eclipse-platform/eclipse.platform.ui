@@ -230,6 +230,28 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
      */
     private int sortCriteria = ChangeSetModelSorter.DATE;
     
+    public static int getSortCriteria(ISynchronizePageConfiguration configuration) {
+        int sortCriteria = ChangeSetModelSorter.DATE;
+		try {
+			IDialogSettings pageSettings = configuration.getSite().getPageSettings();
+			if(pageSettings != null) {
+				sortCriteria = pageSettings.getInt(P_LAST_COMMENTSORT);
+			}
+		} catch(NumberFormatException e) {
+			// ignore and use the defaults.
+		}
+		switch (sortCriteria) {
+        case ChangeSetModelSorter.COMMENT:
+        case ChangeSetModelSorter.DATE:
+        case ChangeSetModelSorter.USER:
+            break;
+        default:
+            sortCriteria = ChangeSetModelSorter.DATE;
+            break;
+        }
+		return sortCriteria;
+    }
+    
     public ChangeSetActionGroup(ChangeSetModelProvider provider) {
         this.provider = provider;
     }
@@ -238,7 +260,7 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
 		super.initialize(configuration);
 		
 		if (getChangeSetCapability().supportsCheckedInChangeSets()) {
-			initializeSortCriteria(configuration);
+		    sortCriteria = getSortCriteria(configuration);
 			sortByComment = new MenuManager(Policy.bind("ChangeLogModelProvider.0a"));	 //$NON-NLS-1$
 			sortByComment.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.1a"), ChangeSetModelSorter.COMMENT)); //$NON-NLS-1$
 			sortByComment.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.2a"), ChangeSetModelSorter.DATE)); //$NON-NLS-1$
@@ -290,26 +312,6 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
 		if (subActions != null) {
 		    subActions.fillContextMenu(menu);
 		}
-    }
-    
-    private void initializeSortCriteria(ISynchronizePageConfiguration configuration) {
-		try {
-			IDialogSettings pageSettings = getConfiguration().getSite().getPageSettings();
-			if(pageSettings != null) {
-				sortCriteria = pageSettings.getInt(P_LAST_COMMENTSORT);
-			}
-		} catch(NumberFormatException e) {
-			// ignore and use the defaults.
-		}
-		switch (sortCriteria) {
-        case ChangeSetModelSorter.COMMENT:
-        case ChangeSetModelSorter.DATE:
-        case ChangeSetModelSorter.USER:
-            break;
-        default:
-            sortCriteria = ChangeSetModelSorter.DATE;
-            break;
-        }
     }
     
     protected void addChangeSets(IMenuManager manager) {

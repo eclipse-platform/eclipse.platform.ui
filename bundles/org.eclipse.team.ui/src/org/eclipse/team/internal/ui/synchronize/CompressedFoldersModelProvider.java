@@ -277,8 +277,7 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 					// but may still contain children
 					removeFromViewer(resource);
 					if (hasFileMembers((IContainer)resource)) {
-						createModelObject(getModelObject(resource.getProject()), resource);
-						buildModelObjects(getModelObject(resource));
+					    addResources(getFileMembers((IContainer)resource));
 					}
 				}
 			}
@@ -314,5 +313,18 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 		}
 		// The parent does not contain any files
 		return false;
+	}
+	
+	private SyncInfo[] getFileMembers(IContainer parent) {
+		// Check if the sync set has any file children of the parent
+	    List result = new ArrayList();
+		IResource[] members = getSyncInfoTree().members(parent);
+		for (int i = 0; i < members.length; i++) {
+			IResource member = members[i];
+			if (member.getType() == IResource.FILE) {
+			    result.add(getSyncInfoTree().getSyncInfo(member));
+			}
+		}
+		return (SyncInfo[]) result.toArray(new SyncInfo[result.size()]);
 	}
 }
