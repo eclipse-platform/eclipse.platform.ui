@@ -13,11 +13,14 @@ package org.eclipse.ltk.core.refactoring.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.ltk.core.refactoring.tests.participants.FailingParticipantTests;
+
 public class AllTests {
 	
 	public static Test suite() {
 		TestSuite suite= new TestSuite("All LTK Refactoring Core Tests"); //$NON-NLS-1$
 		suite.addTestSuite(EmptySuite.class);
+		suite.addTestSuite(FailingParticipantTests.class);
 		return suite;
 	}
 }

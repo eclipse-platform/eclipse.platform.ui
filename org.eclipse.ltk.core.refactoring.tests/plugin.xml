@@ -23,4 +23,27 @@
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ltk.core.refactoring"/>
    </requires>
+   
+   <extension point="org.eclipse.ltk.core.refactoring.renameParticipants">
+      <renameParticipant
+            class="org.eclipse.ltk.core.refactoring.tests.participants.FailingParticipant"
+            id="org.eclipse.ltk.core.refactoring.tests.participants.FailingParticipant"
+            name="org.eclipse.ltk.core.refactoring.tests.participants.FailingParticipant">
+         <enablement>
+           <with variable="element">
+             <instanceof value="org.eclipse.ltk.core.refactoring.tests.participants.Element"/>
+           </with>
+         </enablement>
+      </renameParticipant>
+      <renameParticipant
+            class="org.eclipse.ltk.core.refactoring.tests.participants.FailingParticipant2"
+            id="org.eclipse.ltk.core.refactoring.tests.participants.FailingParticipant2"
+            name="org.eclipse.ltk.core.refactoring.tests.participants.FailingParticipant2">
+         <enablement>
+           <with variable="element">
+             <instanceof value="org.eclipse.ltk.core.refactoring.tests.participants.Element"/>
+           </with>
+         </enablement>
+      </renameParticipant>
+   </extension>
 </plugin>
