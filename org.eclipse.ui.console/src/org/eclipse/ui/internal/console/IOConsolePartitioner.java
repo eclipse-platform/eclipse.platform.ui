@@ -33,13 +33,14 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
     private ArrayList partitions;
     private ArrayList pendingPartitions;
     private IOConsolePartition lastPartition;
-    private DocumentUpdaterJob updateJob = new DocumentUpdaterJob();
+    private DocumentUpdaterJob updateJob;
     private IOConsoleInputStream inputStream;
     private boolean updateInProgress;
     private ArrayList inputPartitions;
     private String[] lld;
     private int highWaterMark = -1;
     private int lowWaterMark = -1;
+    private IOConsoleOutputStream lastOutputStreamAppended;
     
     public IOConsolePartitioner(IOConsoleInputStream inputStream) {
         this.inputStream = inputStream;
@@ -56,7 +57,9 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
         partitions = new ArrayList();
         pendingPartitions = new ArrayList();
         inputPartitions = new ArrayList();
+        updateJob = new DocumentUpdaterJob();
     }
+    
     
     public void setWaterMarks(int low, int high) {
         lowWaterMark = low;
@@ -85,48 +88,45 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
     }
     
     public ITypedRegion[] computePartitioning(int offset, int length) {
-        synchronized(partitions) {
+        int end = length == 0 ? offset : offset + length - 1;
+        List list = new ArrayList();
+        
+        for (int i = 0; i < partitions.size(); i++) {
+            ITypedRegion partition = (IOConsolePartition) partitions.get(i);
+            int partitionStart = partition.getOffset();
+            int partitionEnd = partitionStart + partition.getLength() - 1;
             
-            int end = length == 0 ? offset : offset + length - 1;
-            List list = new ArrayList();
-            
-            for (Iterator i = partitions.iterator(); i.hasNext(); ) {
-                ITypedRegion partition = (IOConsolePartition) i.next();
-                int partitionStart = partition.getOffset();
-                int partitionEnd = partitionStart + partition.getLength() - 1;
-                
-                if (offset >= partitionStart && offset <= partitionEnd) {
-                    list.add(partition);
-                } else if (end >= partitionStart && end <= partitionEnd) {
-                    list.add(partition);
-                } else if (partitionStart > end) {
-                    break; // don't bother testing more.
-                }
+            if (offset >= partitionStart && offset <= partitionEnd) {
+                list.add(partition);
+            } else if (end >= partitionStart && end <= partitionEnd) {
+                list.add(partition);
+            } else if (partitionStart > end) {
+                break; // don't bother testing more.
             }
-            
-            return (IOConsolePartition[]) list.toArray(new IOConsolePartition[list.size()]);
-        }        
+        }
+        
+        return (IOConsolePartition[]) list.toArray(new IOConsolePartition[list.size()]);
     }
     
     public ITypedRegion getPartition(int offset) {
-        synchronized(partitions) {
-	        for (int i = 0; i < partitions.size(); i++) {
-	            ITypedRegion partition = (ITypedRegion) partitions.get(i);
-	            int start = partition.getOffset();
-	            int end = start + partition.getLength();
-	            if (offset >= start && offset < end) {
-	                return partition;
-	            } 
-	        }
-	
-	        if (lastPartition == null)  {
-	            lastPartition = new IOConsolePartition(inputStream, ""); //$NON-NLS-1$
-	            lastPartition.setOffset(offset);
-	            partitions.add(lastPartition);
-	            inputPartitions.add(lastPartition);
-	        }
-	        return lastPartition;
+        for (int i = 0; i < partitions.size(); i++) {
+            ITypedRegion partition = (ITypedRegion) partitions.get(i);
+            int start = partition.getOffset();
+            int end = start + partition.getLength();
+            if (offset >= start && offset < end) {
+                return partition;
+            } 
         }
+        
+        if (lastPartition == null)  {
+            synchronized(partitions) {
+                lastPartition = new IOConsolePartition(inputStream, ""); //$NON-NLS-1$
+                lastPartition.setOffset(offset);
+                partitions.add(lastPartition);
+                inputPartitions.add(lastPartition);
+            }
+        }
+        return lastPartition;
     }
     
     private void checkBufferSize() {
@@ -180,52 +180,59 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
             return new Region(0, 0);
         }
         
-        synchronized(partitions) {
-            if (!updateInProgress) { // user input.
+        
+        if (updateInProgress) {
+            synchronized(partitions) {
+                lastPartition = new IOConsolePartition(lastOutputStreamAppended, event.fText);
+                lastPartition.setOffset(event.fOffset);
+                partitions.add(lastPartition);
+            }
+        } else {// user input.
+            int amountDeleted = event.getLength() - event.getText().length();
+            
+            if (amountDeleted > 0) {
+                int offset = event.fOffset;    
+                IOConsolePartition partition = (IOConsolePartition) getPartition(offset);
+                if(partition == lastPartition) {
+                    partition.delete(event.fOffset-partition.getOffset(), amountDeleted);
+                } 
+                //else {
+                //make new partition on end with content of inputPartititions. Delete from that
                 
-                int amountDeleted = event.getLength() - event.getText().length();
-                
-                if (amountDeleted > 0) {
-                    int offset = event.fOffset;    
-                    IOConsolePartition partition = (IOConsolePartition) getPartition(offset);
-                    if(partition == lastPartition) {
-                        partition.delete(event.fOffset-partition.getOffset(), amountDeleted);
-                        amountDeleted = 0;
-                    } else {
-                        //make new partition on end with content of inputPartititions. Delete from that
-                        
-                        // deletion can be improved to be more console like. ie Should be able to delete until 'Enter' is pressed.
-                        // requires changes to IOConsoleViewer.handleVerifyEvent(...)
-                        //                        lastPartition = new IOConsolePartition(inputStream, ""); //$NON-NLS-1$
-                        //                        lastPartition.setOffset(document.getLength());
-                        //                        int index = inputPartitions.indexOf(partition);
-                        //                        for(int i = 0; i< index; i++) {
-                        //                            IOConsolePartition p = (IOConsolePartition) inputPartitions.get(i);
-                        //                            p.setReadOnly(true);
-                        //                            lastPartition.append(p.getString());
-                        //                        }
-                        //                        offset = event.fOffset - partition.getOffset() + document.getLength() + lastPartition.getLength();
-                        //                        for (int i = 0; i<inputPartitions.size(); i++) {
-                        //                            IOConsolePartition p = (IOConsolePartition) inputPartitions.get(i);
-                        //                            lastPartition.append(p.getString());
-                        //                        }
-                        //                        inputPartitions.clear();
-                        //                        inputPartitions.add(lastPartition);
-                        //                        
-                        //                        lastPartition.delete(offset, amountDeleted);
-                        //                        ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-                        //                            public void run() {
-                        //                                try {
-                        //                                    setUpdateInProgress(true);
-                        //                                    document.replace(document.getLength(), 0, lastPartition.getString());
-                        //                                    setUpdateInProgress(false);
-                        //                                } catch (BadLocationException e) {
-                        //                                }
-                        //                            }
-                        //                        });
-                    }
-                }
-                
+                // deletion can be improved to be more console like. ie Should be able to delete until 'Enter' is pressed even if other output has been appending to
+                // the console. ie we should behave like a console :-)
+                // requires changes to IOConsoleViewer.handleVerifyEvent(...)
+                //                        lastPartition = new IOConsolePartition(inputStream, ""); //$NON-NLS-1$
+                //                        lastPartition.setOffset(document.getLength());
+                //                        int index = inputPartitions.indexOf(partition);
+                //                        for(int i = 0; i< index; i++) {
+                //                            IOConsolePartition p = (IOConsolePartition) inputPartitions.get(i);
+                //                            p.setReadOnly(true);
+                //                            lastPartition.append(p.getString());
+                //                        }
+                //                        offset = event.fOffset - partition.getOffset() + document.getLength() + lastPartition.getLength();
+                //                        for (int i = 0; i<inputPartitions.size(); i++) {
+                //                            IOConsolePartition p = (IOConsolePartition) inputPartitions.get(i);
+                //                            lastPartition.append(p.getString());
+                //                        }
+                //                        inputPartitions.clear();
+                //                        inputPartitions.add(lastPartition);
+                //                        
+                //                        lastPartition.delete(offset, amountDeleted);
+                //                        ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
+                //                            public void run() {
+                //                                try {
+                //                                    setUpdateInProgress(true);
+                //                                    document.replace(document.getLength(), 0, lastPartition.getString());
+                //                                    setUpdateInProgress(false);
+                //                                } catch (BadLocationException e) {
+                //                                }
+                //                            }
+                //                        });
+                //}
+            }
+            
+            synchronized(partitions) {
                 if (lastPartition == null || lastPartition.isReadOnly()) {
                     lastPartition = new IOConsolePartition(inputStream, event.fText); //$NON-NLS-1$
                     lastPartition.setOffset(event.fOffset);
@@ -249,9 +256,9 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
                         break;
                     }
                 }
-            }   
-        }
-        
+            }
+        }   
+           
         checkBufferSize();
         return new Region(event.fOffset, event.fText.length());
     }
@@ -259,71 +266,67 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
     private void setUpdateInProgress(boolean b) {
         updateInProgress = b;
     }
+        
+    public void streamAppended(IOConsoleOutputStream stream, String s) {
+        synchronized(pendingPartitions) {
+	        PendingPartition last = (PendingPartition) (pendingPartitions.size() > 0 ? pendingPartitions.get(pendingPartitions.size()-1) : null);
+	        if (last != null && last.stream == stream) {
+	            last.append(s);
+	        } else {
+	            pendingPartitions.add(new PendingPartition(stream, s));
+	            updateJob.schedule();
+	        }
+        }
+    }
+    
+    private class PendingPartition {
+        String text;
+        IOConsoleOutputStream stream;
+
+        PendingPartition(IOConsoleOutputStream stream, String text) {
+            this.stream = stream;
+            this.text=text;
+        }
+        
+        void append(String moreText) {
+            text += moreText;
+        }
+    }
     
     private class DocumentUpdaterJob extends Job {
+
         DocumentUpdaterJob() {
             super("IOConsole Updater"); //$NON-NLS-1$
         }
         
         protected IStatus run(IProgressMonitor monitor) {
             while (pendingPartitions.size() > 0) {
-                final ArrayList pendingCopy = pendingPartitions;
-                pendingPartitions = new ArrayList();
+                ArrayList pendingCopy = null;
+                synchronized(pendingPartitions) {
+	                pendingCopy = pendingPartitions;
+	                pendingPartitions = new ArrayList();
+                }
                 
-                
-                final StringBuffer buffer = new StringBuffer();
-                
-                
-                ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-                    public void run() {
-                        synchronized(partitions) {
-                            int off = document.getLength();
-                            for (Iterator i = pendingCopy.iterator(); i.hasNext();) {
-                                IOConsolePartition partition = (IOConsolePartition) i.next();
-                                i.remove();
-                                lastPartition = partition;                    
-                                
-                                partition.setOffset(off);
-                                off += partition.getLength();
-                                partitions.add(partition);
-                                buffer.append(partition.getString());
+                for (Iterator i = pendingCopy.iterator(); i.hasNext(); ) {
+                    final PendingPartition pp = (PendingPartition) i.next();
+                    ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
+                        public void run() {    
+                            setUpdateInProgress(true);
+                            lastOutputStreamAppended = pp.stream;
+                            int len = document.getLength();
+                            try {
+                                document.replace(len, 0, pp.text);
+                            } catch (BadLocationException e) {
                             }
-                        
-	                        try {
-	                            setUpdateInProgress(true);
-	                            int len = document.getLength();
-	                            document.replace(len, 0, buffer.toString());                                
-	                            setUpdateInProgress(false);
-	                        } catch (BadLocationException e) {
-	                            ConsolePlugin.log(e);
-	                        }
+                            lastOutputStreamAppended = null;
+                            setUpdateInProgress(false);
                         }
-                    }
-                });
-            }
-            
+                    });
+                }
+                
+            }            
             return Status.OK_STATUS;
-        }
-        
-        //TODO: scheduling rule is probably necessary...
-        
+        }        
     }
-    
-    public void streamAppended(IOConsoleOutputStream stream, String s) {    
-        if (pendingPartitions.size() != 0) {
-            IOConsolePartition lastPending = (IOConsolePartition) pendingPartitions.get(pendingPartitions.size()-1);
-            String lastId = lastPending.getStreamId();
-            String newId = stream.getStreamId();
-            if (lastId.equals(newId)) {
-                lastPending.append(s);
-                return;
-            } 
-        } else {
-            IOConsolePartition newPartition = new IOConsolePartition(stream, s);
-            pendingPartitions.add(newPartition);
-            updateJob.schedule();
-        }
-    }
-    
-    
+
 }
