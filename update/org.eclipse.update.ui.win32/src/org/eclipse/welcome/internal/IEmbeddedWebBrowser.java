@@ -12,4 +12,5 @@ package org.eclipse.welcome.internal;
 
 public interface IEmbeddedWebBrowser {
 	public void openTo(String url);
+	public void setListener(IWebBrowserListener listener);
 }

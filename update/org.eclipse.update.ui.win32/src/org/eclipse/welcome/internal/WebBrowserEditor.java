@@ -10,17 +10,20 @@
  *******************************************************************************/
 package org.eclipse.welcome.internal;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.ole.win32.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.part.EditorPart;
 
-public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
+public class WebBrowserEditor extends EditorPart implements IEmbeddedWebBrowser {
 	// NL
 	private static final String KEY_NOT_AVAILABLE =
 		"WebBrowserView.notAvailable";
@@ -40,19 +43,53 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 	private Action refreshAction;
 	private Action stopAction;
 	private Action goAction;
-	private Action backwardAction;
-	private Action forwardAction;
 	private GlobalActionHandler globalActionHandler;
+	private IWebBrowserListener listener;
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.welcome.internal.IEmbeddedWebBrowser#setListener(org.eclipse.welcome.internal.IWebBrowserListener)
+	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void setListener(IWebBrowserListener listener) {
-		// TODO Auto-generated method stub
-
+	public void doSave(IProgressMonitor monitor) {
 	}
 
-	public WebBrowserView() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
+	 */
+	public void doSaveAs() {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorPart#gotoMarker(org.eclipse.core.resources.IMarker)
+	 */
+	public void gotoMarker(IMarker marker) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
+	 */
+	public void init(IEditorSite site, IEditorInput input)
+		throws PartInitException {
+		if (!(input instanceof WelcomeEditorInput))
+			throw new PartInitException("Invalid Input: Must be WelcomeEditorInput");
+		setSite(site);
+		setInput(input);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isDirty()
+	 */
+	public boolean isDirty() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
+	 */
+	public boolean isSaveAsAllowed() {
+		return false;
+	}
+
+	public WebBrowserEditor() {
 	}
 
 	/**
@@ -81,7 +118,7 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
 		final BrowserControlSite site = winBrowser.getControlSite();
 		IStatusLineManager smng =
-			getViewSite().getActionBars().getStatusLineManager();
+			getEditorSite().getActionBars().getStatusLineManager();
 		site.setStatusLineManager(smng);
 
 		site.addEventListener(WebBrowser.DownloadComplete, new OleListener() {
@@ -100,6 +137,8 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 			}
 		});
 		WorkbenchHelp.setHelp(container, "org.eclipse.update.ui.WebBrowserView");
+		WelcomeEditorInput input = (WelcomeEditorInput)getEditorInput();
+		openTo(input.getURL());
 	}
 
 	public void openTo(final String url) {
@@ -112,10 +151,14 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 	}
 
 	private void downloadComplete(String url) {
-		backwardAction.setEnabled(browser.isBackwardEnabled());
-		forwardAction.setEnabled(browser.isForwardEnabled());
 		stopAction.setEnabled(false);
 		refreshAction.setEnabled(true);
+		if (listener!=null)
+			listener.stateChanged();
+	}
+	
+	public void setListener(IWebBrowserListener listener) {
+		this.listener = listener;
 	}
 
 	private void createNavBar(Composite parent) {
@@ -145,12 +188,8 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 		ToolBar toolbar = new ToolBar(parent, SWT.FLAT | SWT.HORIZONTAL);
 		toolBarManager = new ToolBarManager(toolbar);
 		makeActions();
-		IActionBars bars = getViewSite().getActionBars();
-		IToolBarManager localBar = bars.getToolBarManager();
+		IActionBars bars = getEditorSite().getActionBars();
 		globalActionHandler = new GlobalActionHandler(bars, addressCombo);
-
-		localBar.add(backwardAction);
-		localBar.add(forwardAction);
 	}
 
 	private void navigate(String url) {
@@ -174,6 +213,19 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 			addressCombo.remove(addressCombo.getItemCount() - 1);
 		}
 		addressCombo.getParent().layout(true);
+	}
+	
+	void back() {
+		browser.back();
+	}
+	void forward() {
+		browser.forward();
+	}
+	boolean isBackwardEnabled() {
+		return browser.isBackwardEnabled();
+	}
+	boolean isForwardEnabled() {
+		return browser.isForwardEnabled();
 	}
 
 	private void makeActions() {
@@ -215,34 +267,6 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 			WelcomePortalImages.DESC_REFRESH_NAV_H);
 		refreshAction.setEnabled(false);
 
-		backwardAction = new Action() {
-			public void run() {
-				browser.back();
-			}
-		};
-		backwardAction.setEnabled(false);
-		backwardAction.setToolTipText(
-			WelcomePortal.getString(KEY_BACKWARD));
-		backwardAction.setImageDescriptor(
-			WelcomePortalImages.DESC_BACKWARD_NAV);
-		backwardAction.setDisabledImageDescriptor(
-			WelcomePortalImages.DESC_BACKWARD_NAV_D);
-		backwardAction.setHoverImageDescriptor(
-			WelcomePortalImages.DESC_BACKWARD_NAV_H);
-
-		forwardAction = new Action() {
-			public void run() {
-				browser.forward();
-			}
-		};
-		forwardAction.setToolTipText(
-			WelcomePortal.getString(KEY_FORWARD));
-		forwardAction.setImageDescriptor(WelcomePortalImages.DESC_FORWARD_NAV);
-		forwardAction.setDisabledImageDescriptor(
-			WelcomePortalImages.DESC_FORWARD_NAV_D);
-		forwardAction.setHoverImageDescriptor(
-			WelcomePortalImages.DESC_FORWARD_NAV_H);
-		forwardAction.setEnabled(false);
 		toolBarManager.add(goAction);
 		toolBarManager.add(new Separator());
 		toolBarManager.add(stopAction);

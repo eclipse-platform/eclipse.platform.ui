@@ -23,7 +23,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 /**
  * The main plugin class to be used in the desktop.
  */
-public class WelcomePortal extends AbstractUIPlugin {
+public class WelcomePortal extends AbstractUIPlugin implements IStartup {
 	public static final String PLUGIN_ID = "org.eclipse.update.ui.win32";
 	public static final String ID_BROWSER = PLUGIN_ID + "WebBrowser";
 	
@@ -31,6 +31,48 @@ public class WelcomePortal extends AbstractUIPlugin {
 	private static WelcomePortal plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
+	private boolean welcomeOpened;
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IStartup#earlyStartup()
+	 */
+	public void earlyStartup() {
+		/*
+		if (WelcomePortal.getActivePage()!=null) {
+			openWelcomePage();
+			return;
+		}
+		PlatformUI.getWorkbench().addWindowListener(new IWindowListener () {
+			public void windowOpened(IWorkbenchWindow w) {
+				if (welcomeOpened==false) {
+					openWelcomePage();
+				}
+			}
+			public void windowActivated(IWorkbenchWindow w) {
+				if (welcomeOpened==false) {
+					openWelcomePage();
+				}
+
+			}
+			public void windowClosed(IWorkbenchWindow w) {
+			}
+			public void windowDeactivated(IWorkbenchWindow w) {
+			}
+		});
+		*/
+	}
+	
+	private void openWelcomePage() {
+		try {
+			WelcomePortal.getActivePage().openEditor(
+				new WelcomeEditorInput("Getting Started", "http://www.eclipse.org"),
+				"org.eclipse.welcome.portal");
+		} catch (PartInitException e) {
+			WelcomePortal.logException(e);
+		}
+		welcomeOpened=true;
+		
+	}
 
 	/**
 	 * The constructor.
