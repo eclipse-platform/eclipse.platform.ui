@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %compatibilityFragmentName
+Bundle-SymbolicName: org.eclipse.core.resources.compatibility
+Bundle-Version: 3.1.0
+Bundle-ClassPath: compatibility.jar
+Bundle-Vendor: %providerName
+Fragment-Host: org.eclipse.core.resources;bundle-version="[3.1.0,4.0.0)"
+Bundle-Localization: plugin
+Export-Package: org.eclipse.core.internal.properties,
+ org.eclipse.core.internal.resources,
+ org.eclipse.core.internal.indexing,
+ org.eclipse.core.internal.localstore
