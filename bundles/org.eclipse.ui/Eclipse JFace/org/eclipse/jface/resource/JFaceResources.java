@@ -71,6 +71,13 @@ public class JFaceResources {
 	 * (value <code>"org.eclipse.jface.viewerfont"</code>).
 	 */
 	public static final String VIEWER_FONT = "org.eclipse.jface.viewerfont";//$NON-NLS-1$
+	
+	/**
+	 * The symbolic font name for the terminal font 
+	 * (value <code>"org.eclipse.jface.terminalfont"</code>).
+	 */
+	public static final String TERMINAL_FONT = "org.eclipse.jface.terminalfont";//$NON-NLS-1$
+	
 
 	/**
 	 * The symbolic font name for the text font 
