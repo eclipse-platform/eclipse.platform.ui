@@ -64,7 +64,7 @@ A {
 	text-decoration:none;
 }
 
-#searchLabel {
+#searchTD {
 	padding-left:7px;
 	padding-right:4px;
 }
@@ -213,8 +213,8 @@ function onloadHandler(e)
 	<form  name="searchForm"   onsubmit="doSearch()">
 		<table id="searchTable" align="left" valign="middle" cellspacing="0" cellpadding="0" border="0">
 			<tr nowrap  valign="middle">
-				<td id="searchLabel">
-					<label for="searchWord">
+				<td id="searchTD">
+					<label id="searchLabel" for="searchWord">
 					&nbsp;<%=ServletResources.getString("Search", request)%>:
 					</label>
 				</td>

@@ -43,10 +43,25 @@ FRAMESET {
 %>
 </style>
 
+<script language="JavaScript">
+
+function onloadHandler(e)
+{
+<% if (data.isIE() || data.isMozilla() && "1.2.1".compareTo(data.getMozillaVersion()) <=0){
+%>	var h=window.ToolbarFrame.document.getElementById("titleText").offsetHeight; <%-- default 13 --%>
+	if(h<=19){
+		return; <%-- no need to resize up to 19px --%>
+	}
+	document.getElementById("contentFrameset").setAttribute("rows", <%=data.isIE()?"11":"14"%>+h+",*"); <%-- default 24, 27 for mozilla --%>
+	window.ToolbarFrame.document.getElementById("titleTextTableDiv").style.height=(<%=data.isIE()?"9":"11"%>+h)+"px"; <%-- default 22 --%>
+<%}%>
+}
+</script>
+
 </head>
 
 
-<frameset  rows='<%=data.isIE()?"24,*":"27,*"%>'  frameborder="0" framespacing="0" border=0 spacing=0>
+<frameset id="contentFrameset" onload="onloadHandler()" rows='<%=data.isIE()?"24,*":"27,*"%>'  frameborder="0" framespacing="0" border=0 spacing=0>
 	<frame name="ToolbarFrame" src='<%="contentToolbar.jsp"+data.getQuery()%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
 	<frame name="ContentViewFrame" src='<%=data.getContentURL()%>'  marginwidth="10" marginheight="0" frameborder="0" >
 </frameset>
