@@ -162,7 +162,7 @@ public class PServerConnection implements IServerConnection {
 		request.append(NEWLINE);
 		out.write(request.toString().getBytes());
 		out.flush();
-		String line = Connection.readLine(cvsroot, getInputStream());
+		String line = Connection.readLine(cvsroot, getInputStream()).trim();
 		
 		// Return if we succeeded
 		if (LOGIN_OK.equals(line))
