@@ -10,14 +10,16 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.preferences;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.io.*;
+import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.tests.runtime.RuntimeTest;
+import org.osgi.framework.Bundle;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -91,7 +93,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		// all test methods are named "test..."
 		return new TestSuite(EclipsePreferencesTest.class);
 		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new EclipsePreferencesTest("testListeners2"));
+		//		suite.addTest(new EclipsePreferencesTest("testLegacy"));
 		//		return suite;
 	}
 
@@ -911,5 +913,73 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		String[] children = node.childrenNames();
 		for (int i = 0; i < children.length; i++)
 			node.node(children[i]).removeNode();
+	}
+
+	/*
+	 * Regression test for bug 56020 - [runtime] prefs: converted preferences not restored on second session
+	 */
+	public void testLegacy() {
+
+		String pluginID = "org.eclipse.core.tests.preferences." + getUniqueString();
+		String key = "key." + getUniqueString();
+		String value = "value." + getUniqueString();
+		String OLD_PREFS_FILENAME = "pref_store.ini";
+		String NEW_PREFS_FILENAME = "prefs.ini";
+
+		// create fake plug-in and store 2.1 format tests in legacy location
+		Bundle runtimeBundle = Platform.getBundle(Platform.PI_RUNTIME);
+		if (runtimeBundle == null)
+			return;
+		String runtimeStateLocation = Platform.getStateLocation(runtimeBundle).toString();
+		IPath pluginStateLocation = new Path(runtimeStateLocation.replaceAll(Platform.PI_RUNTIME, pluginID));
+		IPath oldFile = pluginStateLocation.append(OLD_PREFS_FILENAME);
+		Properties oldProperties = new Properties();
+		oldProperties.put(key, value);
+		OutputStream output = null;
+		try {
+			oldFile.toFile().getParentFile().mkdirs();
+			output = new BufferedOutputStream(new FileOutputStream(oldFile.toFile()));
+			oldProperties.store(output, null);
+		} catch (IOException e) {
+			fail("1.0", e);
+		} finally {
+			if (output != null)
+				try {
+					output.close();
+				} catch (IOException e) {
+					// ignore
+				}
+		}
+
+		// access fake plug-in via new preferences APIs which should invoke conversion
+		Preferences node = Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE).node(pluginID);
+
+		// ensure values are in the workspace
+		String actual = node.get(key, null);
+		assertEquals("3.0", value, actual);
+
+		// ensure the values have been flushed to disk
+		// first indication is the new file exists on disk.
+		IPath newFile = oldFile.removeLastSegments(1).append(NEW_PREFS_FILENAME);
+		assertTrue("4.0", newFile.toFile().exists());
+		// then check to see if the value is in the file
+		String newKey = Path.ROOT.append(InstanceScope.SCOPE).append(pluginID).append(key).toString();
+		Properties newProperties = new Properties();
+		InputStream input = null;
+		try {
+			input = new BufferedInputStream(new FileInputStream(newFile.toFile()));
+			newProperties.load(input);
+		} catch (IOException e) {
+			fail("4.1", e);
+		} finally {
+			if (input != null)
+				try {
+					input.close();
+				} catch (IOException e) {
+					// ignore
+				}
+		}
+		actual = newProperties.getProperty(newKey);
+		assertEquals("4.2", value, actual);
 	}
 }

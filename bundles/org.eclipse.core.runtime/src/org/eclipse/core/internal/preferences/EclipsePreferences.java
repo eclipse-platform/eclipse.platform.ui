@@ -615,7 +615,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 
 	protected void makeDirty() {
 		EclipsePreferences node = this;
-		while (node != null && !node.removed) {
+		while (node != null && !node.dirty && !node.removed) {
 			node.dirty = true;
 			node = (EclipsePreferences) node.parent();
 		}
@@ -938,6 +938,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			result.loadLegacy();
 			result.load(result.getLocation());
 			result.loaded();
+			result.flush();
 		} catch (BackingStoreException e) {
 			String message = "Exception loading preferences";
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);

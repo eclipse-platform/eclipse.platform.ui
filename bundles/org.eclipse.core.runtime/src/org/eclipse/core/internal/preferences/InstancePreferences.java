@@ -140,7 +140,9 @@ public class InstancePreferences extends EclipsePreferences {
 			if (value != null) {
 				if (InternalPlatform.DEBUG_PREFERENCES)
 					System.out.println("Loaded legacy preference: " + key + " -> " + value); //$NON-NLS-1$ //$NON-NLS-2$
+				// call these 2 methods rather than #put() so we don't send out unnecessary notification
 				properties.put(key, value);
+				makeDirty();
 			}
 		}
 
@@ -176,11 +178,7 @@ public class InstancePreferences extends EclipsePreferences {
 		if (qualifier == null)
 			return;
 		// get the base location from the platform
-		InternalPlatform platform = InternalPlatform.getDefault();
-		Bundle bundle = platform.getBundle(qualifier);
-		if (bundle == null)
-			return;
-		location = platform.getStateLocation(bundle).append(DEFAULT_PREFERENCES_FILENAME);
+		location = InternalPlatform.getDefault().getMetaArea().getStateLocation(qualifier).append(DEFAULT_PREFERENCES_FILENAME);
 	}
 
 	/*
