@@ -53,6 +53,7 @@ import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.themes.IThemeDescriptor;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.part.WorkbenchPart;
 
@@ -69,6 +70,7 @@ import org.eclipse.ui.part.WorkbenchPart;
  */
 public class ViewPane extends PartPane implements IPropertyListener {
 	private CLabel titleLabel;
+	private CLabel status;
 
 	private boolean fast = false;
 	private boolean showFocus = false;
@@ -440,6 +442,10 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		if (viewToolBar != null)
 			return;
 
+		status = new CLabel(control, SWT.LEFT);
+		status.setBackground(new Color(status.getDisplay(), 216, 224, 248));
+		status.setFont(new Font(status.getDisplay(), "Arial", 9, SWT.NORMAL)); //$NON-NLS-1$
+		
 		updateTitles();
 
 		// Listen to title changes.
@@ -944,6 +950,46 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * Update the title attributes.
 	 */
 	public void updateTitles() {
+		IViewReference ref = getViewReference();
+		
+		if (status != null && !status.isDisposed()) {
+			boolean changed = false;
+			String text = ref.getTitle();
+			
+			if (text != null) {
+				int i = text.indexOf('(');
+				int j = text.lastIndexOf(')');
+				
+				if (i > 0 && j > 0 && j > i)
+					text = text.substring(i + 1, j - 1).trim();
+				else 
+					text = null;
+			}
+			
+			if (!Util.equals(text, status.getText())) {
+				status.setText(text);
+				changed = true;
+			}
+
+			String toolTipText = ref.getTitleToolTip();
+			
+			if (!Util.equals(toolTipText, status.getToolTipText())) {
+				status.setToolTipText(toolTipText);
+				changed = true;
+			}
+
+			//((ViewForm2) control).setStatus(text != null ? status : null);
+			((ViewForm2) control).setTopLeft(text != null ? status : null);
+			
+			if (changed) {
+				status.update();
+				
+				// notify the page that this view's title has changed
+				// in case it needs to update its fast view button
+				page.updateTitle(ref);
+			}
+		}
+
 		/*
 		IViewReference ref = getViewReference();
 		if (titleLabel != null && !titleLabel.isDisposed()) {
