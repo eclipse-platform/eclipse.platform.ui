@@ -74,7 +74,10 @@ import org.eclipse.ui.help.WorkbenchHelp;
 /**
  * Launch configuration tab for configuring the environment passed
  * into Runtime.exec(...) when a config is launched.
- * 
+ * <p>
+ * This class may be instantiated; this class is not intended
+ * to be subclassed.
+ * </p> 
  * @since 3.0
  */
 public class EnvironmentTab extends AbstractLaunchConfigurationTab {
