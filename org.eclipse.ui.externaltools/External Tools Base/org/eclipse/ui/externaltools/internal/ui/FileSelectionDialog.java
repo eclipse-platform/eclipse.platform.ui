@@ -28,7 +28,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -210,7 +209,7 @@ public class FileSelectionDialog extends MessageDialog {
 		selectionGroup
 			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				getOkButton().setEnabled(
+				getButton(IDialogConstants.OK_ID).setEnabled(
 					!selectionGroup.getListTableSelection().isEmpty());
 			}
 		});
@@ -220,15 +219,9 @@ public class FileSelectionDialog extends MessageDialog {
 			}
 		});
 
-		getOkButton().setEnabled(false);
+		getButton(IDialogConstants.OK_ID).setEnabled(false);
 	}
 
-	/**
-	 * Returns this dialog's OK button.
-	 */
-	protected Button getOkButton() {
-		return getButton(0);
-	}
 	/**
 	 * Returns the file the user chose or <code>null</code> if none.
 	 */
