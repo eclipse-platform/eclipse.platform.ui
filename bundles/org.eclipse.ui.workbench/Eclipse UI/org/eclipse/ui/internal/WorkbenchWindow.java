@@ -545,6 +545,14 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
+
+		if (!getWindowConfigurer().getShowMenuBar()) {
+			shell.setMenuBar(null);
+		}
+		String title = getWindowConfigurer().basicGetTitle();
+		if (title != null) {
+			shell.setText(title);
+		}
 		
 		//Reset the colors for ViewForms
 		// removed temporarily
@@ -2029,13 +2037,19 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 *  
 	 */
 	private void setLayoutDataForContents() {
-		layout.addTrim(topBar, SWT.TOP, null);
+		// @issue this is not ideal; coolbar and perspective shortcuts should be
+		//   separately configurable
+		if (getWindowConfigurer().getShowCoolBar() || getWindowConfigurer().getShowShortcutBar()) {
+			layout.addTrim(topBar, SWT.TOP, null);
+		}
 		if (getWindowConfigurer().getShowProgressIndicator()) {
 			layout.addTrim(animationItem.getControl(), SWT.BOTTOM, null, animationItem.getPreferredWidth(), SWT.DEFAULT);
 		}
 		if (getWindowConfigurer().getShowStatusLine()) {
 			layout.addTrim(getStatusLineManager().getControl(), SWT.BOTTOM, null);
 		}
+		// need to set the bottom trim size if either the progress indicator or the 
+		// status line is shown, and it doesn't hurt to set it if neither are shown
 		layout.setTrimSize(SWT.BOTTOM, 
 			getStatusLineManager().getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 		layout.setCenterControl(getClientComposite());
