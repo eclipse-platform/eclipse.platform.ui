@@ -61,11 +61,11 @@ public interface IStackPresentationSite {
 	public void dragStart(IPresentablePart beingDragged, Point initialPosition, boolean keyboard);
 	
 	/**
-	 * Closes the given part.
+	 * Closes the given set of parts.
 	 * 
-	 * @param toClose the part to close (not null)
+	 * @param toClose the set of parts to close (Not null. All of the entries must be non-null)
 	 */
-	public void close(IPresentablePart toClose);
+	public void close(IPresentablePart[] toClose);
 	
 	/**
 	 * Begins dragging the entire stack of parts
