@@ -93,7 +93,7 @@
       <engine
             scopeFactory="org.eclipse.help.internal.search.federated.LocalSearchScopeFactory"
             label="Local Help"
-            class="org.eclipse.help.ui.internal.search.LocalHelp"
+            class="org.eclipse.help.internal.search.federated.LocalHelp"
             pageClass="org.eclipse.help.ui.internal.search.LocalHelpPage"
             id="org.eclipse.help.ui.localSearch">
          <description>

@@ -10,19 +10,25 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import org.eclipse.core.runtime.jobs.Job;
+import java.util.ArrayList;
+
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.search.federated.*;
+import org.eclipse.help.ui.internal.*;
+import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
 
 public class FederatedSearchResultsPart extends AbstractFormPart implements IHelpPart, ISearchEngineResultCollector { 
 	private ReusableHelpPart parent;
 	private FormText searchResults;
 	private String id;
+	private ArrayList results;
 
 	private String phrase;
 
@@ -36,27 +42,25 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 		searchResults.marginWidth = 10;
 		searchResults.setColor(FormColors.TITLE, toolkit.getColors().getColor(
 				FormColors.TITLE));
-		//searchResults.setImage(topicKey, HelpUIResources.getImage(topicKey));
-		//searchResults.setImage(nwKey, HelpUIResources.getImage(nwKey));
-		//searchResults.setImage(searchKey, HelpUIResources.getImage(searchKey));
+		String topicKey = IHelpUIConstants.IMAGE_KEY_F1TOPIC;
+		String nwKey = IHelpUIConstants.IMAGE_NW;
+		String searchKey = IHelpUIConstants.IMAGE_HELP_SEARCH;
+		searchResults.setImage(topicKey, HelpUIResources.getImage(topicKey));
+		searchResults.setImage(nwKey, HelpUIResources.getImage(nwKey));
+		searchResults.setImage(searchKey, HelpUIResources.getImage(searchKey));
 		searchResults.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				/*
 				Object href = e.getHref();
-				if (href.toString().equals("_more")) //$NON-NLS-1$
-					doMoreResults(phrase);
-				else if (href.toString().equals("_cancel")) { //$NON-NLS-1$
-					if (runningJob!=null) {
-						runningJob.cancel();
-						runningJob=null;
-					}
+				if (href.toString().equals("_cancel")) { //$NON-NLS-1$
+					Platform.getJobManager().cancel(FederatedSearchJob.FAMILY);
+					clearResults();
 				}
 				else
 					doOpenLink(e.getHref());
-					*/
 			}
 		});
 		searchResults.setText("", false, false); //$NON-NLS-1$
+		results = new ArrayList();
 	}
 	
 	/*
@@ -96,8 +100,8 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 		parent.reflow();
 	}
 	
-	void startNewSearch(Job job) {
-		/*
+	void startNewSearch(String phrase) {
+		this.phrase = phrase;
 		StringBuffer buff = new StringBuffer();
 		buff.append("<form>"); //$NON-NLS-1$
 		buff.append("<p><span color=\""); //$NON-NLS-1$
@@ -110,66 +114,45 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 		buff.append("</a></p>"); //$NON-NLS-1$
 		buff.append("</form>"); //$NON-NLS-1$
 		searchResults.setText(buff.toString(), true, false);
+		results.clear();
 		parent.reflow();
-		runningJob = job;
-		job.schedule();
-		*/
 	}
-/*
-	void updateResults(String phrase, StringBuffer buff,
-			HelpSearchResult hresult) {
-		if (runningJob!=null) {
-			runningJob.cancel();
-		}
-		this.phrase = phrase;
-		buff.delete(0, buff.length());
-		if (hresult.getMatchCount() > 0) {
-			buff.append("<form>"); //$NON-NLS-1$
-			buff.append("<p><span color=\""); //$NON-NLS-1$
-			buff.append(FormColors.TITLE);
-			buff.append("\">"); //$NON-NLS-1$
-			buff.append(HelpUIResources.getString("SearchResultsPart.label")); //$NON-NLS-1$
-			buff.append("</span></p>"); //$NON-NLS-1$
-			Object[] elements = hresult.getElements();
-			resultSorter.sort(null, elements);
 
-			for (int i = 0; i < elements.length; i++) {
-				SearchHit hit = (SearchHit) elements[i];
-				buff.append("<li indent=\"21\" style=\"image\" value=\""); //$NON-NLS-1$
-				buff.append(IHelpUIConstants.IMAGE_FILE_F1TOPIC);
-				buff.append("\">"); //$NON-NLS-1$
-				buff.append("<a href=\""); //$NON-NLS-1$
-				buff.append(hit.getHref());
-				buff.append("\">"); //$NON-NLS-1$
-				buff.append(hit.getLabel());
-				buff.append("</a>"); //$NON-NLS-1$
-				buff.append(" <a href=\""); //$NON-NLS-1$
-				buff.append("nw:"); //$NON-NLS-1$
-				buff.append(hit.getHref());
-				buff.append("\"><img href=\""); //$NON-NLS-1$
-				buff.append(IHelpUIConstants.IMAGE_NW);
-				buff.append("\" alt=\""); //$NON-NLS-1$
-				buff.append(HelpUIResources.getString("SearchResultsPart.nwtooltip")); //$NON-NLS-1$
-				buff.append("\""); //$NON-NLS-1$
-				buff.append("/>"); //$NON-NLS-1$
-				buff.append("</a>"); //$NON-NLS-1$
-				buff.append("</li>"); //$NON-NLS-1$
-			}
-			if (elements.length > 0) {
-				buff.append("<p><img href=\"");
-				buff.append(IHelpUIConstants.IMAGE_HELP_SEARCH);
-				buff.append("\"/>");
-				buff.append(" <a href=\"_more\">"); //$NON-NLS-1$
-				buff.append(HelpUIResources.getString("SearchResultsPart.moreResults")); //$NON-NLS-1$
-				buff.append("</a></p>"); //$NON-NLS-1$
-			}
-			buff.append("</form>"); //$NON-NLS-1$
-			searchResults.setText(buff.toString(), true, false);
-		} else
-			searchResults.setText("", false, false); //$NON-NLS-1$
+	void updateResults() {
+		StringBuffer buff= new StringBuffer();
+		buff.append("<form>"); //$NON-NLS-1$
+		buff.append("<p><span color=\""); //$NON-NLS-1$
+		buff.append(FormColors.TITLE);
+		buff.append("\">"); //$NON-NLS-1$
+		buff.append(HelpUIResources.getString("SearchResultsPart.label")); //$NON-NLS-1$
+		buff.append("</span></p>"); //$NON-NLS-1$
+
+		for (int i = 0; i < results.size(); i++) {
+			ISearchEngineResult hit = (ISearchEngineResult)results.get(i);
+			buff.append("<li indent=\"21\" style=\"image\" value=\""); //$NON-NLS-1$
+			buff.append(IHelpUIConstants.IMAGE_FILE_F1TOPIC);
+			buff.append("\">"); //$NON-NLS-1$
+			buff.append("<a href=\""); //$NON-NLS-1$
+			buff.append(hit.getHref());
+			buff.append("\">"); //$NON-NLS-1$
+			buff.append(hit.getLabel());
+			buff.append("</a>"); //$NON-NLS-1$
+			buff.append(" <a href=\""); //$NON-NLS-1$
+			buff.append("nw:"); //$NON-NLS-1$
+			buff.append(hit.getHref());
+			buff.append("\"><img href=\""); //$NON-NLS-1$
+			buff.append(IHelpUIConstants.IMAGE_NW);
+			buff.append("\" alt=\""); //$NON-NLS-1$
+			buff.append(HelpUIResources.getString("SearchResultsPart.nwtooltip")); //$NON-NLS-1$
+			buff.append("\""); //$NON-NLS-1$
+			buff.append("/>"); //$NON-NLS-1$
+			buff.append("</a>"); //$NON-NLS-1$
+			buff.append("</li>"); //$NON-NLS-1$
+		}
+		buff.append("</form>"); //$NON-NLS-1$
+		searchResults.setText(buff.toString(), true, false);
 		parent.reflow();
 	}
-*/
 
 	private void doOpenLink(Object href) {
 		String url = (String) href;
@@ -202,15 +185,16 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 	 * @see org.eclipse.help.internal.search.ISearchEngineResultCollector#add(org.eclipse.help.internal.search.ISearchEngineResult)
 	 */
 	public void add(ISearchEngineResult match) {
-		// TODO Auto-generated method stub
-		
+		results.add(match);
+		updateResults();
 	}
     
     /* (non-Javadoc)
      * @see org.eclipse.help.internal.search.federated.ISearchEngineResultCollector#add(org.eclipse.help.internal.search.federated.ISearchEngineResult[])
      */
     public void add(ISearchEngineResult[] searchResults) {
-        // TODO Auto-generated method stub
-
+    	for (int i=0; i<searchResults.length; i++) 
+    		results.add(searchResults[i]);
+    	updateResults();
     }
 }
