@@ -29,13 +29,7 @@ import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.VariableContextManager;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 import org.eclipse.ui.externaltools.internal.registry.RefreshScopeVariable;
-import org
-	.eclipse
-	.ui
-	.externaltools
-	.internal
-	.registry
-	.RefreshScopeVariableRegistry;
+import org.eclipse.ui.externaltools.internal.registry.RefreshScopeVariableRegistry;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.model.ToolUtil;
 import org.eclipse.ui.externaltools.variable.ExpandVariableContext;

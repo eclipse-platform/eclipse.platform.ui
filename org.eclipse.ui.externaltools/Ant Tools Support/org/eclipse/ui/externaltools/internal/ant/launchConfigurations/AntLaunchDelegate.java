@@ -20,14 +20,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.ui.console.IConsoleContentProvider;
-import org
-	.eclipse
-	.ui
-	.externaltools
-	.internal
-	.program
-	.launchConfigurations
-	.BackgroundResourceRefresher;
+import org.eclipse.ui.externaltools.internal.program.launchConfigurations.BackgroundResourceRefresher;
 import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
 
