@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Blake Meike - patch for bug 31691 and bug 34488
+ *     Blake Meike (blakem@world.std.com)- patch for bug 31691 and bug 34488
  *******************************************************************************/
 
 package org.eclipse.ant.internal.core.ant;
