@@ -6,6 +6,7 @@ package org.eclipse.ui.internal.dialogs;
  */
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
+import java.text.Collator;
 import org.eclipse.jface.viewers.*;
 
 /**
@@ -19,6 +20,7 @@ import org.eclipse.jface.viewers.*;
  */
 class NewWizardCollectionSorter extends ViewerSorter {
 	public final static NewWizardCollectionSorter INSTANCE = new NewWizardCollectionSorter();
+	private Collator collator = Collator.getInstance();
 /**
  * Creates an instance of <code>NewWizardCollectionSorter</code>.  Since this
  * is a stateless sorter, it is only accessible as a singleton; the private
@@ -55,7 +57,7 @@ public int compare(Viewer viewer,Object o1,Object o2) {
 	if (name1.equalsIgnoreCase(NewWizardsRegistryReader.BASE_CATEGORY))
 		return -1;
 		
-	return name1.compareTo(name2);
+	return collator.compare(name1, name2);
 }
 /**
  *	Return true if this sorter is affected by a property 
