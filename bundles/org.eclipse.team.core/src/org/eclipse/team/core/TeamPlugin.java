@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.team.core.target.TargetManager;
 import org.eclipse.team.internal.core.Policy;
 
 /**
@@ -42,6 +43,10 @@ final public class TeamPlugin extends Plugin {
 	public static final String IGNORE_EXTENSION = "ignore"; //$NON-NLS-1$
 	// The id of the project set extension point
 	public static final String PROJECT_SET_EXTENSION = "projectSets"; //$NON-NLS-1$
+	// The id of the targets extension point
+	public static final String TARGETS_EXTENSION = "targets"; //$NON-NLS-1$
+
+
 	// The one and only plug-in instance
 	private static TeamPlugin plugin;	
 
@@ -59,6 +64,7 @@ final public class TeamPlugin extends Plugin {
 	public void startup() throws CoreException {
 		Policy.localize("org.eclipse.team.internal.core.messages"); //$NON-NLS-1$
 		Team.startup();
+		TargetManager.startup();
 	}
 	
 	/**

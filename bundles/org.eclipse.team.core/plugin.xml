@@ -20,6 +20,7 @@
 <extension-point id="fileTypes" name="%FileTypesRegistry"/>
 <extension-point id="ignore" name="%GlobalIgnoreRegistry"/>
 <extension-point id="projectSets" name="%TeamProjectSets"/>
+<extension-point id="targets" name="%Targets"/>
 
 <!-- Define some example text extensions. This will be done
      by other plugins later. -->

@@ -1,9 +1,10 @@
-package org.eclipse.team.core;
+package org.eclipse.team.core.target;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.team.core.TeamException;
 
 public abstract class TargetProvider {
 
