@@ -27,8 +27,6 @@ public class EditorList {
 	private CloseEditorAction closeAction;
 	private SelectionAction selectAllAction;
 	private FullNameAction fullNameAction;
-	private SortAction nameSortAction;
-	private SortAction MRUSortAction;
 	private SetScopeAction windowScopeAction;
 	private SetScopeAction pageScopeAction;
 	private SetScopeAction tabGroupScopeAction;
@@ -40,10 +38,6 @@ public class EditorList {
 	private static final int INVERT_SELECTION = 1;
 	private static final int SELECT_CLEAN = 2;
 
-	private static final int NAME_SORT = 0;
-	private static final int MRU_SORT = 1;
-	private static int sortOrder = NAME_SORT;
-	
 	private static final int SET_WINDOW_SCOPE = 0;
 	private static final int SET_PAGE_SCOPE = 1;
 	private static final int SET_TAB_GROUP_SCOPE = 2;
@@ -58,8 +52,6 @@ public class EditorList {
 		windowScopeAction = new SetScopeAction(SET_WINDOW_SCOPE);
 	  	pageScopeAction = new SetScopeAction(SET_PAGE_SCOPE);
 	  	tabGroupScopeAction = new SetScopeAction(SET_TAB_GROUP_SCOPE);
-		nameSortAction = new SortAction(NAME_SORT);
-	 	MRUSortAction = new SortAction(MRU_SORT);
 	  	bookMarkAction = new BookMarkAction();
 	}
 
@@ -171,17 +163,10 @@ public class EditorList {
 	 *Sorts the editors
 	 */
 	private void sort() {
-		switch (sortOrder) {
-		case NAME_SORT:
-			Adapter a[] = new Adapter[elements.size()];
-			elements.toArray(a);
-			Arrays.sort(a);
-			elements = Arrays.asList(a);
-			break;
-		case MRU_SORT:
-			// The elements are already in MRU order
-			break;
-		}
+		Adapter a[] = new Adapter[elements.size()];
+		elements.toArray(a);
+		Arrays.sort(a);
+		elements = Arrays.asList(a);
 	}
 	/**
 	 * Updates all items in the table
@@ -224,18 +209,12 @@ public class EditorList {
 
 
 	private void fillContextMenu(IMenuManager menuMgr) {
-		// SortBy SubMenu
-		MenuManager sortMenuMgr = new MenuManager(WorkbenchMessages.getString("EditorList.SortBy.text")); //$NON-NLS-1$
-		sortMenuMgr.add(nameSortAction);
-		sortMenuMgr.add(MRUSortAction);
-						
 		menuMgr.add(saveAction);
 		menuMgr.add(closeAction);
 		menuMgr.add(new Separator());
 		menuMgr.add(selectAllAction);
 		menuMgr.add(new Separator());
 		menuMgr.add(fullNameAction);
-		menuMgr.add(sortMenuMgr);
 		menuMgr.add(bookMarkAction);
 	}
 
@@ -430,45 +409,6 @@ public class EditorList {
 				return;
 			}
 			editorsTable.getParent().pack();
-		}
-	}
-
-	private class SortAction extends Action {
-		private int sortOrder;
-		/**
-		 *	Create an instance of this class
-		 */
-		private SortAction(int sortOrder) {
-			this.sortOrder = sortOrder;
-			switch (sortOrder) {
-			case NAME_SORT:
-				setChecked(EditorList.sortOrder==NAME_SORT);
-				setText(WorkbenchMessages.getString("EditorList.SortByName.text")); //$NON-NLS-1$
-				setToolTipText(WorkbenchMessages.getString("EditorList.SortByName.toolTip")); //$NON-NLS-1$
-				break;
-			case MRU_SORT:
-				setChecked(EditorList.sortOrder==MRU_SORT);
-				setText(WorkbenchMessages.getString("EditorList.SortByMostRecentlyUsed.text")); //$NON-NLS-1$
-				setToolTipText(WorkbenchMessages.getString("EditorList.SortByMostRecentlyUsed.toolTip")); //$NON-NLS-1$
-				break;
-			default:
-				break;
-			}
-//			WorkbenchHelp.setHelp(this, IHelpContextIds.SORT_ACTION);
-		}
-		
-		/** 
-		 * Performs the sort.
-		 */
-		public void run() {
-			EditorList.sortOrder = this.sortOrder;
-			nameSortAction.setChecked(EditorList.sortOrder==NAME_SORT);
-			MRUSortAction.setChecked(EditorList.sortOrder==MRU_SORT);
-			TableItem[] items = editorsTable.getItems();
-			if(items.length == 0) {
-				return;
-			}
-			updateItems();
 		}
 	}
 	

@@ -9,6 +9,7 @@ import org.eclipse.ui.PlatformUI;
 
 public class EditorShortcutManager {
 	private List list;
+	private EditorShortcut[] selection;
 	
 	public EditorShortcutManager() {
 		list = new ArrayList();
@@ -26,6 +27,14 @@ public class EditorShortcutManager {
 		EditorShortcut[] e = new EditorShortcut[list.size()];
 		list.toArray(e);
 		return e;
+	}
+	
+	public EditorShortcut[] getSelection() {
+		return selection;
+	}
+	
+	public void setSelection(EditorShortcut[] items) {
+		selection = items;
 	}
 		
 	public IStatus saveState(IMemento mem) {

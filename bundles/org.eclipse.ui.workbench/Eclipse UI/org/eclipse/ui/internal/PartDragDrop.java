@@ -274,7 +274,7 @@ public void mouseDoubleClick(MouseEvent e) {
  */
 public void mouseDown(MouseEvent e) {
 	// track left button only.
-	if (e.button != 1) 
+	if (e.button != 1 || sourcePart == null) 
 		return;
 	if (getSourceBounds().width == 0 || getSourceBounds().height == 0)
 		return;
