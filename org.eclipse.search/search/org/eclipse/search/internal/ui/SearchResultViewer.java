@@ -275,7 +275,7 @@ class SearchResultViewer extends TableViewer {
 	void fillToolBar(IToolBarManager tbm) {
 		tbm.add(fShowNextResultAction);
 		tbm.add(fShowPreviousResultAction);
-		tbm.add(fGotoMarkerAction);
+//		tbm.add(fGotoMarkerAction); see bug 15275
 		tbm.add(fRemoveMatchAction);
 		tbm.add(new Separator());
 		tbm.add(new OpenSearchDialogAction());
