@@ -562,14 +562,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		control.setLayoutData(gd);
 		control.setFont(font);
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			/**
-			 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-			 */
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleLaunchConfigurationSelectionChanged(event);
-			}
-		});
 		
 		fDoubleClickAction = new DoubleClickAction();
 		fLaunchConfigurationView.setAction(IDebugView.DOUBLE_CLICK_ACTION, fDoubleClickAction);
@@ -582,10 +574,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		buttonComposite.setLayoutData(gd);
 		
-		Button newButton = SWTUtil.createPushButton(buttonComposite, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ne&w_13"), null); //$NON-NLS-1$
+		final Button newButton = SWTUtil.createPushButton(buttonComposite, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ne&w_13"), null); //$NON-NLS-1$
 		setButtonActionNew(new ButtonActionNew(newButton.getText(), newButton));
 		
-		Button deleteButton = SWTUtil.createPushButton(buttonComposite, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Dele&te_14"), null); //$NON-NLS-1$
+		final Button deleteButton = SWTUtil.createPushButton(buttonComposite, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Dele&te_14"), null); //$NON-NLS-1$
 		gd= (GridData)deleteButton.getLayoutData();
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.grabExcessHorizontalSpace= true;
@@ -605,6 +597,16 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		getDuplicateAction().setConfirmationRequestor(requestor);
 		getNewAction().setConfirmationRequestor(requestor);
 							
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			/**
+			 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+			 */
+			public void selectionChanged(SelectionChangedEvent event) {
+				handleLaunchConfigurationSelectionChanged(event);
+				newButton.setEnabled(getNewAction().isEnabled());
+				deleteButton.setEnabled(getDeleteAction().isEnabled());
+			}
+		});
 		return comp;
 	}	
 	
