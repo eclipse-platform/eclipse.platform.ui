@@ -114,7 +114,8 @@ public void create() {
 protected void createAdvancedControls(Composite parent) {
 	Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 	
-	if (preferences.getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING) == false) {
+	if (preferences.getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING) == false && 
+		isValidContainer()) {
 		advancedButton = new Button(parent, SWT.PUSH);
 		advancedButton.setFont(parent.getFont());
 		advancedButton.setText(WorkbenchMessages.getString("NewFolderDialog.advancedButtonCollapsed")); //$NON-NLS-1$
@@ -276,6 +277,28 @@ protected void handleAdvancedButtonSelect() {
 		shell.setSize(shellSize);
 		advancedButton.setText(WorkbenchMessages.getString("NewFolderDialog.advancedButtonExpanded")); //$NON-NLS-1$
 	}
+}
+/**
+ * Returns whether the container specified in the constructor is
+ * a valid parent for creating linked resources.
+ * 
+ * @return boolean <code>true</code> if the container specified in 
+ * 	the constructor is a valid parent for creating linked resources.
+ * 	<code>false</code> if no linked resources may be created with the
+ * 	specified container as a parent. 
+ */
+private boolean isValidContainer() {
+	if (container.getType() != IResource.PROJECT)
+		return false;
+		
+	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+	IFolder linkHandle = createFolderHandle("a");
+	IStatus status = workspace.validateLinkLocation(linkHandle,	Path.EMPTY);
+	
+	if (status.getCode() == IResourceStatus.LINKING_NOT_ALLOWED)
+		return false;
+		
+	return true;
 }
 /**
  * Update the dialog's status line to reflect the given status. It is safe to call
