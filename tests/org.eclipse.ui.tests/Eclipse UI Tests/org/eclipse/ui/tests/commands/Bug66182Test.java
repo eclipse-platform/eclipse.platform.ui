@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.tests.commands;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -117,7 +118,7 @@ public final class Bug66182Test extends UITestCase {
         assertSame(
                 "The active workbench window must be the window created in this test.  If you are activating other workbench windows, then this test will fail",
                 windowShell, fWorkbench.getActiveWorkbenchWindow().getShell());
-        final Object result = command.execute(new HashMap());
+        final Object result = command.execute(Collections.EMPTY_MAP);
         assertSame(
                 "The dialog handler was not chosen when both a window and dialog handler were defined.",
                 dialogResult, result);
