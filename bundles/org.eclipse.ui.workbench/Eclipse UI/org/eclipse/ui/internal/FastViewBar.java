@@ -256,6 +256,14 @@ class FastViewBar implements IWindowTrim {
 				
 				public Rectangle getSnapRectangle() {
 					if (position == null) {
+						// As long as the toolbar is not empty, highlight the place
+						// where this view will appear (we
+						// may have compressed it to save space when empty, so the actual
+						// icon location may not be over the toolbar when it is empty)
+						if (getToolBar().getItemCount() > 0) {
+							return getLocationOfNextIcon();
+						}
+						// If the toolbar is empty, highlight the entire toolbar 
 						return DragUtil.getDisplayBounds(getControl());
 					} else {
 						return Geometry.toDisplay(getToolBar(), position.getBounds());
@@ -637,6 +645,30 @@ class FastViewBar implements IWindowTrim {
 			orientation.putInteger(IWorkbenchConstants.TAG_POSITION, ((Integer)viewOrientation.get(next)).intValue());
 		}
 		
+	}
+	
+	/**
+	 * Returns the approximate location where the next fastview icon
+	 * will be drawn (display coordinates)
+	 * 
+	 * @param fastViewMem
+	 */
+	public Rectangle getLocationOfNextIcon() {
+		ToolBar control = getToolBar();
+		
+		Rectangle result = control.getBounds();
+		Point size = control.computeSize(SWT.DEFAULT, SWT.DEFAULT, false);
+		result.height = size.y;
+		result.width = size.x;
+		
+		boolean horizontal = Geometry.isHorizontal(getSide()); 
+		int hoverSide = horizontal ? SWT.RIGHT : SWT.BOTTOM;
+		
+		result = Geometry.getExtrudedEdge(result, 
+				-Geometry.getDimension(result, !horizontal),
+				hoverSide);
+		
+		return Geometry.toDisplay(control.getParent(), result);
 	}
 	
 	/**

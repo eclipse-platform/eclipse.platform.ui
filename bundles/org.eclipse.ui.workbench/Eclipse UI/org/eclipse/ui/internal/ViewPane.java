@@ -20,6 +20,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -41,6 +42,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Sash;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -601,6 +603,16 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * Make this view pane a fast view
 	 */
 	protected void doMakeFast() {
+		Control control = getControl();
+		Shell shell = control.getShell();
+		
+		RectangleAnimation animation = new RectangleAnimation(shell,  
+				DragUtil.getDisplayBounds(control), 
+				((WorkbenchWindow)getPage().getWorkbenchWindow()).getFastViewBar().getLocationOfNextIcon(), 
+				250);
+		
+		animation.schedule();
+		
 		getPage().addFastView(getViewReference());
 	}
 	/**
