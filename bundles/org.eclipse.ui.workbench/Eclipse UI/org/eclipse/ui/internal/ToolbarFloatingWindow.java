@@ -76,15 +76,7 @@ class ToolbarFloatingWindow extends AssociatedWindow {
 		});
 		return childControl;
 	}
-	/**
-	 * Adjust the size of the viewer.
-	 */
-	public void adjustSize() {
-		Shell floatingShell = getShell();
-		floatingShell.layout();
-		moveShell(getShell(), AssociatedWindow.HORIZONTAL_VISIBLE);
-		addRoundBorder(borderSize);
-	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -93,21 +85,9 @@ class ToolbarFloatingWindow extends AssociatedWindow {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		setBackground(newShell);
+		addRoundBorder(newShell,borderSize);
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#close()
-	 */
-	public boolean close() {
-		if (getShell() == null)
-			return super.close();
-		Region oldRegion = getShell().getRegion();
-		boolean result = super.close();
-		if (result && oldRegion != null)
-			oldRegion.dispose();
-		return result;
-	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -115,7 +95,9 @@ class ToolbarFloatingWindow extends AssociatedWindow {
 	 */
 	protected void initializeBounds() {
 		super.initializeBounds();
-		adjustSize();
+		Shell floatingShell = getShell();
+		floatingShell.layout();
+		moveShell(getShell(), AssociatedWindow.HORIZONTAL_VISIBLE);
 	}
 	/**
 	 * Answer the top level control for the receiver, this will be added to

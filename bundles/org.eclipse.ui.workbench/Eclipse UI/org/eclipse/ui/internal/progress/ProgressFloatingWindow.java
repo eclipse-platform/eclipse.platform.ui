@@ -84,6 +84,9 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		super.configureShell(newShell);
 		newShell.setLayout(getLayout());
 		setBackground(newShell);
+		newShell.setSize(getMaximumSize(newShell.getDisplay()));
+		addRoundBorder(newShell,borderSize);
+		
 	}
 	/*
 	 * (non-Javadoc)
@@ -102,7 +105,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			protected void doUpdateItem(Widget widget, Object element,
 					boolean fullMap) {
 				super.doUpdateItem(widget, element, fullMap);
-				adjustSize();
+				moveShell(getShell(), AssociatedWindow.ALWAYS_VISIBLE);
 			}
 		};
 		viewer.setUseHashlookup(true);
@@ -190,14 +193,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			}
 		};
 	}
-	/**
-	 * Adjust the size of the viewer.
-	 */
-	private void adjustSize() {
-		getShell().setSize(getMaximumSize(viewer.getTable().getDisplay()));
-		addRoundBorder(borderSize);
-		moveShell(getShell(), AssociatedWindow.ALWAYS_VISIBLE);
-	}
+	
 	/**
 	 * Get the maximum size of the window based on the display.
 	 * 
@@ -205,7 +201,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 * @return int
 	 */
 	private Point getMaximumSize(Display display) {
-		GC gc = new GC(viewer.getTable());
+		GC gc = new GC(display);
 		FontMetrics fm = gc.getFontMetrics();
 		int charWidth = fm.getAverageCharWidth();
 		int charHeight = fm.getHeight();
@@ -228,22 +224,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		viewer.setContentProvider(provider);
 		viewer.setInput(provider);
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#close()
-	 */
-	public boolean close() {
-		
-		Shell shellToClose = getShell();
-		if (shellToClose == null || shellToClose.isDisposed())
-			return super.close();
-		Region oldRegion = shellToClose.getRegion();
-		boolean result = super.close();
-		if (result && oldRegion != null)
-			oldRegion.dispose();
-		return result;
-	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -13,15 +13,15 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 /**
  * The AssociatedWindow is a window that is associated with another shell.
  */
@@ -36,6 +36,7 @@ public class AssociatedWindow extends Window {
 	private ControlListener controlListener;
 	private int trackStyle;
 	private int moveType;
+	private Region roundRegion;
 	/**
 	 * Create a new instance of the receiver parented from parent and
 	 * associated with the owning Composite.
@@ -201,12 +202,16 @@ public class AssociatedWindow extends Window {
 	 */
 	protected void handleShellCloseEvent() {
 		super.handleShellCloseEvent();
+		if (roundRegion != null)
+			roundRegion.dispose();
+		
+		
+		getParentShell().removeControlListener(controlListener);
+		owner.removeControlListener(controlListener);
 		
 		Region shellRegion = getShell().getRegion();
 		if(shellRegion != null)
 			shellRegion.dispose();
-		getParentShell().removeControlListener(controlListener);
-		owner.removeControlListener(controlListener);
 	}
 	/*
 	 * (non-Javadoc)
@@ -219,48 +224,58 @@ public class AssociatedWindow extends Window {
 	/**
 	 * Add round border to the shell.
 	 * 
-	 * @param shell
-	 *            the shell.
+	 * @param paintShell the shell.
 	 */
-	protected void addRoundBorder(final int borderSize) {
-		final Shell shell = getShell();
-		shell.addPaintListener(new PaintListener() {
+	protected void addRoundBorder(final Shell paintShell, final int borderSize) {
+		
+		paintShell.addPaintListener(new PaintListener() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
+			 */
 			public void paintControl(PaintEvent event) {
-				if (shell == null || shell.isDisposed())
+				
+				if (paintShell == null || paintShell.isDisposed())
 					return;
-				// 2*Border bigger than shell boundes, return
-				if (2 * borderSize >= shell.getBounds().width
-						|| 2 * borderSize >= shell.getBounds().height)
+				// 2*Border bigger than shell bounds, return
+				if (2 * borderSize >= paintShell.getBounds().width
+						|| 2 * borderSize >= paintShell.getBounds().height)
 					return;
+				Rectangle outerShellSize = paintShell.getClientArea();
 				GC gc = event.gc;
-				Rectangle outerShellSize = shell.getClientArea();
-				Rectangle innerShellSize = new Rectangle(borderSize,
-						borderSize, outerShellSize.width - 2 * borderSize,
-						outerShellSize.height - 2 * borderSize);
-				Region r = new Region(getShell().getDisplay());
-				Region region1 = getRoundCorners(outerShellSize);
-				Region region2 = getRoundCorners(innerShellSize);
-				
-				Region oldRegion = shell.getRegion();
-				
-				shell.setRegion(region1);
-				
-				if(oldRegion != null)
-					oldRegion.dispose();
-				
-				r.add(region1);
-				r.subtract(region2);
-				gc.setClipping(r);
-				gc.setBackground(shell.getDisplay().getSystemColor(
+				gc.setClipping(getRegion(outerShellSize,paintShell));
+				gc.setBackground(paintShell.getDisplay().getSystemColor(
 						SWT.COLOR_BLACK));
 				gc.fillRoundRectangle(0, 0, outerShellSize.width,
 						outerShellSize.height, 5, 5);
-				r.dispose();
-				region2.dispose();
+			}
+			
+			/**
+			 * Get the region for the border. If it doesn't exist then
+			 * create it.
+			 * @param outerShellSize
+			 * @return
+			 */
+			private Region getRegion(Rectangle outerShellSize, Shell newShell) {
+				if (roundRegion != null)
+					return roundRegion;
+				
+				Rectangle innerShellSize = new Rectangle(borderSize,
+						borderSize, outerShellSize.width - 2 * borderSize,
+						outerShellSize.height - 2 * borderSize);
+				roundRegion = new Region(getShell().getDisplay());
+				Region outerRegion = getRoundCorners(outerShellSize,newShell);
+				Region innerRegion = getRoundCorners(innerShellSize,newShell);
+				newShell.setRegion(outerRegion);
+				roundRegion.add(outerRegion);
+				roundRegion.subtract(innerRegion);
+				outerRegion.dispose();
+				innerRegion.dispose();
+				return roundRegion;
 			}
 		});
 	}
-	
 	/**
 	 * Round a defined rectangle in the shell.
 	 * 
@@ -269,11 +284,10 @@ public class AssociatedWindow extends Window {
 	 * @param size
 	 *            the rectangle size.
 	 */
-	private Region getRoundCorners(Rectangle size) {
-		Shell shell = getShell();
-		Region r = new Region(shell.getDisplay());
+	private Region getRoundCorners(Rectangle size, Shell roundShell) {
+		Region r = new Region(roundShell.getDisplay());
 		r.add(new Rectangle(size.x, size.y, size.width, size.height));
-		Region cornerRegion = new Region(shell.getDisplay());
+		Region cornerRegion = new Region(roundShell.getDisplay());
 		addTopRightCorner(cornerRegion, size);
 		addBottomRightCorner(cornerRegion, size);
 		addTopLeftCorner(cornerRegion, size);
