@@ -11,7 +11,9 @@ import java.util.Locale;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -31,8 +33,11 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 public class ResourceInfoPage extends PropertyPage {
 	
 	private Button editableBox;
+	private Button derivedBox;
 	private boolean readOnlyValue;
+	private boolean derivedValue;
 	private static String READ_ONLY = WorkbenchMessages.getString("ResourceInfo.readOnly"); //$NON-NLS-1$
+	private static String DERIVED = WorkbenchMessages.getString("ResourceInfo.derived"); //$NON-NLS-1$
 	private static String NAME_TITLE = WorkbenchMessages.getString("ResourceInfo.name"); //$NON-NLS-1$
 	private static String TYPE_TITLE = WorkbenchMessages.getString("ResourceInfo.type"); //$NON-NLS-1$
 	private static String LOCATION_TITLE = WorkbenchMessages.getString("ResourceInfo.location"); //$NON-NLS-1$
@@ -116,6 +121,7 @@ protected Control createContents(Composite parent) {
 	// layout the page
 	IResource resource = (IResource) getElement();
 	this.readOnlyValue = resource.isReadOnly();
+	this.derivedValue = resource.isDerived();
 
 	// top level group
 	Composite composite = new Composite(parent, SWT.NONE);
@@ -134,7 +140,7 @@ protected Control createContents(Composite parent) {
 /**
  * Create the isEditable button and it's associated label as a child of parent
  * using the editableValue of the receiver. The Composite will be the parent of
- * the and the label created.
+ * the button.
  */
 private void createEditableButton(Composite composite) {
 	
@@ -147,7 +153,33 @@ private void createEditableButton(Composite composite) {
 			readOnlyValue = editableBox.getSelection();
 		}
 	});
+	GridData data = new GridData();
+	data.horizontalSpan = 2;
+	this.editableBox.setLayoutData(data);
 }
+
+/**
+ * Create the derived button and it's associated label as a child of parent
+ * using the derived of the receiver. The Composite will be the parent of
+ * the button.
+ */
+private void createDerivedButton(Composite composite) {
+	
+	this.derivedBox = new Button(composite, SWT.CHECK | SWT.RIGHT);
+	this.derivedBox.setAlignment(SWT.LEFT);
+	this.derivedBox.setText(DERIVED);
+	this.derivedBox.setSelection(this.derivedValue);
+	this.derivedBox.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			derivedValue = editableBox.getSelection();
+		}
+	});
+	
+	GridData data = new GridData();
+	data.horizontalSpan = 2;
+	this.derivedBox.setLayoutData(data);
+}
+
 /**
  * Create a separator that goes across the entire page
  */
@@ -185,6 +217,7 @@ private void createStateGroup(Composite parent, IResource resource) {
 	timeStampValue.setText(getDateStringValue(resource));
 
 	createEditableButton(composite);
+	createDerivedButton(composite);
 }
 /**
  * Return the value for the date String for the timestamp of the supplied resource.
@@ -250,6 +283,8 @@ protected void performDefaults() {
 	IResource resource = (IResource) getElement();
 	this.readOnlyValue = false;
 	this.editableBox.setSelection(this.readOnlyValue);
+	this.derivedValue = false;
+	this.derivedBox.setSelection(this.derivedValue);
 }
 /** 
  * Apply the read only state to the resource.
@@ -257,6 +292,14 @@ protected void performDefaults() {
 public boolean performOk() {
 	IResource resource = (IResource) getElement();
 	resource.setReadOnly(editableBox.getSelection());
+	try{
+		resource.setDerived(derivedBox.getSelection());
+	}
+	catch (CoreException exception){
+		MessageDialog.openError(getShell(), WorkbenchMessages.getString("InternalError"), exception.getLocalizedMessage()); //$NON-NLS-1$
+		return false;
+	}
+		
 	return true;
 }
 }
