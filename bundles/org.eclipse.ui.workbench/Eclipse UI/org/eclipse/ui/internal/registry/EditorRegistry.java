@@ -181,6 +181,7 @@ private void firePropertyChange(final int type) {
 }
 /* (non-Javadoc)
  * Method declared on IEditorRegistry.
+ * @issue spec of IEditorRegistry API method changed to allow null if no default editor
  */
 public IEditorDescriptor getDefaultEditor() {
 	// Find the default editor descriptor and return it.
@@ -208,6 +209,7 @@ public IEditorDescriptor getDefaultEditor(String filename) {
 }
 /* (non-Javadoc)
  * Method declared on IEditorRegistry.
+ * @issue former IEditorRegistry API method - should be removed
  */
 public IEditorDescriptor getDefaultEditor(IFile file) {
 	// Try file specific editor.
@@ -257,6 +259,7 @@ public IEditorDescriptor[] getEditors(String filename) {
 }
 /* (non-Javadoc)
  * Method declared on IEditorRegistry.
+ * @issue former IEditorRegistry API method - should be removed
  */
 public IEditorDescriptor[] getEditors(IFile element) {
 	return getEditors(element.getName());
@@ -769,6 +772,7 @@ public void saveAssociations () {
 }
 /* (non-Javadoc)
  * Method declared on IEditorRegistry.
+ * @issue former IEditorRegistry API method - should be removed
  */
 public void setDefaultEditor(IFile file, String editorID) {
 	try {

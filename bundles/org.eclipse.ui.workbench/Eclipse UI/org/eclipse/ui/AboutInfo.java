@@ -32,9 +32,11 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * This class is not intended to be instantiated or subclassed by clients.
  * </p>
  * 
+ * @issue spec should be less specific about where about info comes from
  * @since 3.0
  */
 public final class AboutInfo {
+	// @issue these file name constants should not be declared as API here
 	public final static String INI_FILENAME = "about.ini"; //$NON-NLS-1$
 	public final static String PROPERTIES_FILENAME = "about.properties"; //$NON-NLS-1$
 	public final static String MAPPINGS_FILENAME = "about.mappings"; //$NON-NLS-1$
@@ -68,11 +70,12 @@ public final class AboutInfo {
 	}
 
 	/**
-	 * Creates and loades the about information for the specified feature.
+	 * Creates and loads the about information for the specified feature.
 	 * 
 	 * @param featureId the feature id to read the about information from, or <code>null</code>
 	 * @param versionId the version id of the feature, or <code>null</code>
 	 * @return the initialized about information for the specified feature
+	 * @issue consider making this method internal so that regular plug-ins cannot call
 	 */
 	public final static AboutInfo create(String featureId, PluginVersionIdentifier versionId) throws WorkbenchException {
 		AboutInfo info = new AboutInfo(featureId, versionId);
@@ -238,6 +241,7 @@ public final class AboutInfo {
 	 * Returns the descriptor for the corresponding plug-in of this feature.
 	 * 
 	 * @return the plug-in descriptor or <code>null</code> if none found
+	 * @issue this method is unnecessary; clients can get plug-in descriptor from the plug-in registry using plug-in id
 	 */
 	public IPluginDescriptor getPluginDescriptor() {
 		return pluginDescriptor;
@@ -277,6 +281,7 @@ public final class AboutInfo {
 	 * Returns the plug-in version identifier or <code>null</code>.
 	 *
 	 * @return the plug-in version identifier, or <code>null</code>
+	 * @issue this method is probably unnecessary; clients can get plug-in version ids from the plug-in registry using plug-in id
 	 */
 	public PluginVersionIdentifier getVersionId() {
 		return versionId;

@@ -76,8 +76,11 @@ public interface IWorkbenchConstants {
 	public static final String DEFAULT_LAYOUT_ID = PlatformUI.PLUGIN_ID + ".resourcePerspective";       //$NON-NLS-1$
 
 	// Various editor.
+	// @issue can we have DEFAULT_EDITOR_ID in generic workbench where there are no editors?
 	public static final String DEFAULT_EDITOR_ID = PlatformUI.PLUGIN_ID + ".DefaultTextEditor"; //$NON-NLS-1$
+	// @issue can we have OLE_EDITOR_ID in generic workbench where there are no editors?
 	public static final String OLE_EDITOR_ID = PlatformUI.PLUGIN_ID + ".OleEditor"; //$NON-NLS-1$
+	// @issue can we have SYSTEM_EDITOR_ID in generic workbench where there are no editors?
 	public static final String SYSTEM_EDITOR_ID = PlatformUI.PLUGIN_ID + ".SystemEditor"; //$NON-NLS-1$
 
 	// Default view category.
