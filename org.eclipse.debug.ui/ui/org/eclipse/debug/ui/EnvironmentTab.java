@@ -12,9 +12,11 @@
 package org.eclipse.debug.ui;
 
 import java.text.MessageFormat;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -29,8 +31,10 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.launchConfigurations.EnvironmentVariable;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.preferences.MultipleInputDialog;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -54,11 +58,13 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -403,16 +409,19 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			envVariables.remove(var.getName());
 		}
 		
-		ListSelectionDialog dialog = new ListSelectionDialog(getShell(), envVariables, createSelectionDialogContentProvider(), createSelectionDialogLabelProvider(), LaunchConfigurationsMessages.getString("EnvironmentTab.19")); //$NON-NLS-1$
+		ListSelectionDialog dialog = new NativeEnvironmentDialog(getShell(), envVariables, createSelectionDialogContentProvider(), createSelectionDialogLabelProvider(), LaunchConfigurationsMessages.getString("EnvironmentTab.19")); //$NON-NLS-1$
 		dialog.setTitle(LaunchConfigurationsMessages.getString("EnvironmentTab.20")); //$NON-NLS-1$
 		
 		int button = dialog.open();
 		if (button == Dialog.OK) {
 			Object[] selected = dialog.getResult();		
 			for (int i = 0; i < selected.length; i++) {
-				environmentTable.add((EnvironmentVariable)selected[i]);				
+				environmentTable.add(selected[i]);				
 			}
 		}
+		
+		updateAppendReplace();
+		updateLaunchConfigurationDialog();
 	}
 
 	/**
@@ -449,7 +458,16 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			public Object[] getElements(Object inputElement) {
 				EnvironmentVariable[] elements = null;
 				if (inputElement instanceof HashMap) {
-					HashMap envVars = (HashMap) inputElement;
+					Comparator comparator = new Comparator() {
+						public int compare(Object o1, Object o2) {
+							String s1 = (String)o1;
+							String s2 = (String)o2;
+							return s1.compareTo(s2);
+						}
+					
+					};
+					TreeMap envVars = new TreeMap(comparator);
+					envVars.putAll((Map)inputElement);
 					elements = new EnvironmentVariable[envVars.size()];
 					int index = 0;
 					for (Iterator iterator = envVars.keySet().iterator(); iterator.hasNext(); index++) {
@@ -513,11 +531,13 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * Removes the selected environment variable from the table.
 	 */
 	private void handleEnvRemoveButtonSelected() {
-		IStructuredSelection sel =
-			(IStructuredSelection) environmentTable.getSelection();
-		EnvironmentVariable var =
-			(EnvironmentVariable) sel.getFirstElement();
-		environmentTable.remove(var);
+		IStructuredSelection sel = (IStructuredSelection) environmentTable.getSelection();
+		environmentTable.getControl().setRedraw(false);
+		for (Iterator i = sel.iterator(); i.hasNext(); ) {
+			EnvironmentVariable var = (EnvironmentVariable) i.next();	
+			environmentTable.remove(var);
+		}
+		environmentTable.getControl().setRedraw(true);
 		updateAppendReplace();
 		updateLaunchConfigurationDialog();
 	}
@@ -603,5 +623,83 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when deactivated
+	}
+	
+	
+	private class NativeEnvironmentDialog extends ListSelectionDialog {
+		public NativeEnvironmentDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider, ILabelProvider labelProvider, String message) {
+			super(parentShell, input, contentProvider, labelProvider, message);
+			setShellStyle(getShellStyle() | SWT.RESIZE);
+		}
+		protected IDialogSettings getDialogSettings() {
+			IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+			IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
+			if (section == null) {
+				section = settings.addNewSection(getDialogSettingsSectionName());
+			} 
+			return section;
+		}
+		
+		/**
+		 * Returns the name of the section that this dialog stores its settings in
+		 * 
+		 * @return String
+		 */
+		protected String getDialogSettingsSectionName() {
+			return IDebugUIConstants.PLUGIN_ID + ".ENVIRONMENT_TAB.NATIVE_ENVIROMENT_DIALOG"; //$NON-NLS-1$
+		}
+		
+		private void persistShellGeometry() {
+			Point shellLocation = getShell().getLocation();
+			Point shellSize = getShell().getSize();
+			IDialogSettings settings = getDialogSettings();
+			settings.put(IDebugPreferenceConstants.DIALOG_ORIGIN_X, shellLocation.x);
+			settings.put(IDebugPreferenceConstants.DIALOG_ORIGIN_Y, shellLocation.y);
+			settings.put(IDebugPreferenceConstants.DIALOG_WIDTH, shellSize.x);
+			settings.put(IDebugPreferenceConstants.DIALOG_HEIGHT, shellSize.y);
+		}	
+
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
+		 */
+		protected Point getInitialLocation(Point initialSize) {
+			IDialogSettings settings = getDialogSettings();
+			try {
+				int x, y;
+				x = settings.getInt(IDebugPreferenceConstants.DIALOG_ORIGIN_X);
+				y = settings.getInt(IDebugPreferenceConstants.DIALOG_ORIGIN_Y);
+				return new Point(x,y);
+			} catch (NumberFormatException e) {
+			}
+			return super.getInitialLocation(initialSize);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.window.Window#getInitialSize()
+		 */
+		protected Point getInitialSize() {
+			Point size = super.getInitialSize();
+			
+			IDialogSettings settings = getDialogSettings();
+			try {
+				int x, y;
+				x = settings.getInt(IDebugPreferenceConstants.DIALOG_WIDTH);
+				y = settings.getInt(IDebugPreferenceConstants.DIALOG_HEIGHT);
+				return new Point(Math.max(x,size.x),Math.max(y,size.y));
+			} catch (NumberFormatException e) {
+			}
+			return size;
+		}
+		
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.window.Window#close()
+		 */
+		public boolean close() {
+			persistShellGeometry();
+			return super.close();
+		}
+
 	}
 }
