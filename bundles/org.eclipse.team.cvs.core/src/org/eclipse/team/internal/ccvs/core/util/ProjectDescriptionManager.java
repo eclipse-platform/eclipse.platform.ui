@@ -13,6 +13,7 @@ import java.io.InputStream;
 
 import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -27,12 +28,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -45,8 +47,11 @@ import org.xml.sax.SAXException;
 public class ProjectDescriptionManager {
 
 	public final static IPath PROJECT_DESCRIPTION_PATH = new Path(".vcm_meta"); //$NON-NLS-1$
+	public final static IPath CORE_PROJECT_DESCRIPTION_PATH = new Path(".project"); //$NON-NLS-1$
 	public final static boolean UPDATE_PROJECT_DESCRIPTION_ON_LOAD = true;
 
+	public static final String VCMMETA_MARKER = "org.eclipse.team.cvs.core.vcmmeta";
+	
 	/*
 	 * Read the project meta file into the provider description
 	 */
@@ -127,9 +132,19 @@ public class ProjectDescriptionManager {
 	 * To be called whenever the project description file is believed to have changed by
 	 * a load/loadIfIncoming operation.
 	 */
-	public static void updateProjectIfNecessary(IProject project, IProgressMonitor progress) throws CoreException {
-		IFile descResource = project.getFile(PROJECT_DESCRIPTION_PATH);
+	public static void updateProjectIfNecessary(IProject project, IProgressMonitor progress) throws CoreException, CVSException {
+		
+		IFile descResource = project.getFile(PROJECT_DESCRIPTION_PATH);		
 		if (descResource.exists() && UPDATE_PROJECT_DESCRIPTION_ON_LOAD) {
+								
+			// If a managed .project files exists, don't read the .vcm_meta
+			ICVSFile coreDescResource = CVSWorkspaceRoot.getCVSFileFor(project.getFile(CORE_PROJECT_DESCRIPTION_PATH));
+			if (coreDescResource.exists() && coreDescResource.isManaged()) {
+				createVCMMetaMarker(descResource);
+				Util.logError(".vcm_meta file ignored for project " + project.getName(), null);
+				return;
+			}
+		
 			// update project description file (assuming it has changed)
 			IProjectDescription desc = project.getDescription();
 			DataInputStream is = null;
@@ -141,7 +156,7 @@ public class ProjectDescriptionManager {
 					is.close();
 				}
 				try {
-					project.setDescription(desc, progress);
+					project.setDescription(desc, IResource.FORCE | IResource.KEEP_HISTORY, progress);
 				} catch (CoreException ex) {
 					// Failing to set the description is probably due to a missing nature
 					// Other natures are still set
@@ -150,12 +165,25 @@ public class ProjectDescriptionManager {
 				// Make sure we have the cvs nature (the above read may have removed it)
 				if (!project.getDescription().hasNature(CVSProviderPlugin.getTypeId())) {
 					try {
-						TeamPlugin.addNatureToProject(project, CVSProviderPlugin.getTypeId(), progress);
-					}  catch (TeamException ex) {
+						// TeamPlugin.addNatureToProject(project, CVSProviderPlugin.getTypeId(), progress);
+						
+						// Set the nature manually in order to override any .project file
+						IProjectDescription description = project.getDescription();
+						String[] prevNatures= description.getNatureIds();
+						String[] newNatures= new String[prevNatures.length + 1];
+						System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
+						newNatures[prevNatures.length]= CVSProviderPlugin.getTypeId();
+						description.setNatureIds(newNatures);
+						project.setDescription(description, IResource.FORCE | IResource.KEEP_HISTORY, progress);
+					}  catch (CoreException ex) {
 						// Failing to set the provider is probably due to a missing nature.
 						// Other natures are still set
 						Util.logError(Policy.bind("ProjectDescriptionManager.unableToSetDescription"), ex); //$NON-NLS-1$
 					}
+				}
+				// Mark the .vcm_meta file with a problem marker
+				if (project.getFile(CORE_PROJECT_DESCRIPTION_PATH).exists()) {
+					createVCMMetaMarker(descResource);
 				}
 			} catch(TeamException ex) {
 				Util.logError(Policy.bind("ProjectDescriptionManager.unableToReadDescription"), ex); //$NON-NLS-1$
@@ -178,7 +206,9 @@ public class ProjectDescriptionManager {
 	public static void writeProjectDescriptionIfNecessary(CVSTeamProvider provider, IResource resource, IProgressMonitor monitor) throws CVSException {
 		if (resource.getType() == IResource.PROJECT || isProjectDescription(resource)) {
 			IProject project = resource.getProject();
-			writeProjectDescription(project, monitor);
+			if (project.getFile(PROJECT_DESCRIPTION_PATH).exists() /* || ! project.getFile(CORE_PROJECT_DESCRIPTION_PATH).exists() */) {
+				writeProjectDescription(project, monitor);
+			}
 		}
 	}
 
@@ -232,5 +262,20 @@ public class ProjectDescriptionManager {
 			}
 		};
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(changeListener, IResourceChangeEvent.PRE_AUTO_BUILD);
+	}
+	
+	protected static IMarker createVCMMetaMarker(IResource resource) {
+		try {
+			IMarker[] markers = resource.findMarkers(VCMMETA_MARKER, false, IResource.DEPTH_ZERO);
+   			if (markers.length == 1) {
+   				return markers[0];
+   			}
+			IMarker marker = resource.createMarker(VCMMETA_MARKER);
+			marker.setAttribute(IMarker.MESSAGE, resource.getName() + " file exists in " + resource.getProject().getName() + " but is no longer required and can be deleted");
+			return marker;
+		} catch (CoreException e) {
+			Util.logError("Error creating deletion marker", e);
+		}
+		return null;
 	}
 }

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -35,6 +36,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSListener;
 import org.eclipse.team.ccvs.core.ICVSProvider;
@@ -163,9 +165,23 @@ public class CVSProvider implements ICVSProvider {
 				IProject project = projects[i];
 				// Register the project with Team
 				// (unless the project already has the proper nature from the project meta-information)
-				if (!project.getDescription().hasNature(CVSProviderPlugin.getTypeId())) {
+				
+				// XXX The following workaround is required to ensure that the provider nature is set.
+				// The reasoning is as followings
+				// - if there is a vcm_meta, then the nature is set by the ProjectDescriptionManager
+				// - if there is a managed .project file, it shoudl contain the provider nature which
+				// will be read after the operation ends
+				// - if neither of the above is true, we can set the nature
+				// The workaround should be removed when the .project file updates result in immediate
+				// update of the project description
+				IFile vcm_meta = project.getFile(".vcm_meta");
+				ICVSFile project_meta = CVSWorkspaceRoot.getCVSFileFor(project.getFile(".project"));
+				if ( ! vcm_meta.exists() && ! project_meta.isManaged()) {
 					TeamPlugin.addNatureToProject(project, CVSProviderPlugin.getTypeId(), Policy.subMonitorFor(monitor, 100));
 				}
+//				if (!project.getDescription().hasNature(CVSProviderPlugin.getTypeId())) {
+//					TeamPlugin.addNatureToProject(project, CVSProviderPlugin.getTypeId(), Policy.subMonitorFor(monitor, 100));
+//				}
 			}
 			
 		} finally {

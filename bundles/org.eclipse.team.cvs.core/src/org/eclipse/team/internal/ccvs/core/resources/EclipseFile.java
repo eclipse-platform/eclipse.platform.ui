@@ -36,7 +36,7 @@ import org.eclipse.team.internal.ccvs.core.util.EntryFileDateFormat;
  */
 class EclipseFile extends EclipseResource implements ICVSFile {
 
-	private static final String TEMP_FILE_EXTENSION = ".tmp"; //$NON-NLS-1$
+	private static final String TEMP_FILE_EXTENSION = ".tmp";//$NON-NLS-1$
 	
 	/**
 	 * Create a handle based on the given local resource.
@@ -74,7 +74,13 @@ class EclipseFile extends EclipseResource implements ICVSFile {
 				try {
 					IFile file = getIFile();
 					if (responseType == CREATED || (responseType == UPDATED && ! resource.exists())) {
-						file.create(new ByteArrayInputStream(toByteArray()), false /*force*/, null);
+						if (resource.exists()) {
+							// Special handling for the .project meta-file
+							// XXX This behavior should be restricted to the meta file!
+							file.setContents(new ByteArrayInputStream(toByteArray()), true /*force*/, true /*keep history*/, null);
+						} else {
+							file.create(new ByteArrayInputStream(toByteArray()), false /*force*/, null);
+						}
 					} else if(responseType == UPDATE_EXISTING) {
 						file.setContents(new ByteArrayInputStream(toByteArray()), false /*force*/, keepLocalHistory /*keep history*/, null);
 					} else {
