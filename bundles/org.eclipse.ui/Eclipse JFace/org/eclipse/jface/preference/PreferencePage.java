@@ -424,7 +424,7 @@ public void setErrorMessage(String newMessage) {
  * declared on <code>DialogPage</code> updates the container.
  */
 public void setMessage(String newMessage, int newType) {
-	super.setMessage(newMessage);
+	super.setMessage(newMessage, newType);
 	if (getContainer() != null) {
 		getContainer().updateMessage();
 	}
