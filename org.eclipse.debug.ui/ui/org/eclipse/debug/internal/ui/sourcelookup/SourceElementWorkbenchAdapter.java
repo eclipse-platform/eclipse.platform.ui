@@ -14,6 +14,7 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.internal.core.sourcelookup.containers.LocalFileStorage;
+import org.eclipse.debug.internal.core.sourcelookup.containers.ZipEntryStorage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -35,7 +36,7 @@ public class SourceElementWorkbenchAdapter implements IWorkbenchAdapter {
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
 	 */
 	public ImageDescriptor getImageDescriptor(Object o) {
-		if (o instanceof LocalFileStorage) {
+		if (o instanceof LocalFileStorage || o instanceof ZipEntryStorage) {
 			return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
 		}
 		return null;
@@ -48,6 +49,14 @@ public class SourceElementWorkbenchAdapter implements IWorkbenchAdapter {
 			LocalFileStorage storage = (LocalFileStorage) o;
 			IPath path = storage.getFullPath();
 			return getQualifiedName(path);
+		}
+		if (o instanceof ZipEntryStorage) {
+			ZipEntryStorage storage = (ZipEntryStorage)o;
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(storage.getZipEntry().getName());
+			buffer.append(" - "); //$NON-NLS-1$
+			buffer.append(storage.getArchive().getName());
+			return buffer.toString();
 		}
 		return ""; //$NON-NLS-1$
 	}

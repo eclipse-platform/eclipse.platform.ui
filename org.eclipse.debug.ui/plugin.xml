@@ -1738,6 +1738,11 @@
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
          </factory>
          <factory 
+            class="org.eclipse.debug.internal.ui.sourcelookup.SourceElementAdapterFactory"
+            adaptableType="org.eclipse.debug.internal.core.sourcelookup.containers.ZipEntryStorage">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+         </factory>         
+         <factory 
             class="org.eclipse.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory"
             adaptableType="org.eclipse.debug.internal.core.sourcelookup.containers.FolderSourceContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
