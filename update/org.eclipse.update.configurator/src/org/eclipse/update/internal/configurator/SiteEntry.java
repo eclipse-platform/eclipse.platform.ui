@@ -530,7 +530,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			//       For now, feature url is features/org.eclipse.foo/feature.xml
 			File featureXML = new File(root, feature.getURL());
 			if (!featureXML.exists())
-				featureEntries.remove(feature);
+				featureEntries.remove(feature.getFeatureIdentifier());
 		}
 	}
 	
@@ -566,7 +566,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	public boolean unconfigureFeatureEntry(IFeatureEntry feature) {
 		FeatureEntry existingFeature = getFeatureEntry(feature.getFeatureIdentifier());
 		if (existingFeature != null)
-			featureEntries.remove(existingFeature);
+			featureEntries.remove(existingFeature.getFeatureIdentifier());
 		return existingFeature != null;
 	}
 }

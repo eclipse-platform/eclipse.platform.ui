@@ -440,6 +440,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			if (id.equalsIgnoreCase(entries[k].getVersionedIdentifier().getIdentifier())) {
 				url = getRuntimeConfigurationURL(entries[k], cSite);
 				featurePlugin = entries[k];
+				break;
 			}
 		}
 		String pluginVersion = null;
