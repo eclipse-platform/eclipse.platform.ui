@@ -409,14 +409,19 @@ public abstract class RepositoryProvider implements IProjectNature {
 		return null;
 	}
 	
-	/*
-	 * Provisional.
+	/**
+	 * Provisional non-API method.
+	 *
+	 * This method is here to allow experimentation with 3rd party tools
+	 * calling providers in a repository neutral manner.
+     *
  	 * Returns an object which implements a set of provider neutral operations for this 
  	 * provider. Answers <code>null</code> if the provider does not wish to support these 
  	 * operations.
  	 * 
  	 * @return the repository operations or <code>null</code> if the provider does not
  	 * support provider neutral operations.
+ 	 * @see SimpleAccessOperations
  	 */
 	public SimpleAccessOperations getSimpleAccess() {
  		return null;
