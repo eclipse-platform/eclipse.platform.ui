@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ProgressMonitorWrapper;
+
 import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.ui.internal.progress.BlockedJobsDialog;
-import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 
 /**
  * Used to run an event loop whenever progress monitor methods
