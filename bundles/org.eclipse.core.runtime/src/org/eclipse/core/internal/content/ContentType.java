@@ -19,6 +19,18 @@ import org.eclipse.core.runtime.content.*;
 import org.osgi.service.prefs.Preferences;
 
 public class ContentType implements IContentType {
+
+	/* A placeholder for missing/invalid describers. */
+	private class InvalidDescriber implements IContentDescriber {
+		public int describe(InputStream contents, IContentDescription description) throws IOException {
+			return INVALID;
+		}
+
+		public QualifiedName[] getSupportedOptions() {
+			return new QualifiedName[0];
+		}
+	}
+
 	final static String CONTENT_TYPE_CHARSET_PREF = "charset"; //$NON-NLS-1$	
 	final static String CONTENT_TYPE_FILE_EXTENSIONS_PREF = "file-extensions"; //$NON-NLS-1$
 	final static String CONTENT_TYPE_FILE_NAMES_PREF = "file-names"; //$NON-NLS-1$
@@ -34,9 +46,9 @@ public class ContentType implements IContentType {
 	private ContentType aliasTarget;
 	private String baseTypeId;
 	private IContentType[] children;
-	private String defaultCharset;
 	private IConfigurationElement contentTypeElement;
-	private boolean failedDescriberCreation;
+	private String defaultCharset;
+	private IContentDescriber describer;
 	private List fileSpecs;
 	private ContentTypeManager manager;
 	private String name;
@@ -91,10 +103,6 @@ public class ContentType implements IContentType {
 			items.add(tokenizer.nextToken());
 		} while (tokenizer.hasMoreTokens());
 		return (String[]) items.toArray(new String[items.size()]);
-	}
-
-	public boolean isText() {
-		return isKindOf(manager.getContentType(IContentTypeManager.CT_TEXT));
 	}
 
 	static String toListString(List list) {
@@ -180,16 +188,21 @@ public class ContentType implements IContentType {
 	public IContentDescriber getDescriber() {
 		if (aliasTarget != null)
 			return getTarget().getDescriber();
-		if (!failedDescriberCreation && (contentTypeElement.getChildren("describer").length > 0 || contentTypeElement.getAttributeAsIs("describer") != null)) //$NON-NLS-1$
-			try {
-				return (IContentDescriber) contentTypeElement.createExecutableExtension("describer"); //$NON-NLS-1$
-			} catch (CoreException ce) {
-				// ensure this is logged once during a session
-				failedDescriberCreation = true;
-				String message = Policy.bind("content.invalidContentDescriber", getId()); //$NON-NLS-1$ 
-				IStatus status = new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, message, ce);
-				InternalPlatform.getDefault().log(status);
+		synchronized (this) {
+			if (describer != null)
+				return describer;
+			if (contentTypeElement.getChildren("describer").length > 0 || contentTypeElement.getAttributeAsIs("describer") != null) { //$NON-NLS-1$ //$NON-NLS-2$
+				try {
+					return describer = (IContentDescriber) contentTypeElement.createExecutableExtension("describer"); //$NON-NLS-1$
+				} catch (CoreException ce) {
+					String message = Policy.bind("content.invalidContentDescriber", getId()); //$NON-NLS-1$ 
+					IStatus status = new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, message, ce);
+					InternalPlatform.getDefault().log(status);
+				}
+				// the content type definition was invalid. Ensure we don't try again, and this content type does not accept any contents
+				return describer = new InvalidDescriber();
 			}
+		}
 		ContentType baseType = (ContentType) getBaseType();
 		return baseType == null ? null : baseType.getDescriber();
 	}
@@ -204,20 +217,6 @@ public class ContentType implements IContentType {
 		return internalGetDescriptionFor(buffer, options);
 	}
 
-	IContentDescription internalGetDescriptionFor(ByteArrayInputStream buffer, QualifiedName[] options) throws IOException {
-		if (aliasTarget != null)
-			return getTarget().internalGetDescriptionFor(buffer, options);
-		ContentDescription description = new ContentDescription(options);
-		IContentDescriber describer = this.getDescriber();
-		if (describer != null)
-			describer.describe(buffer, description);
-		// check if any of the defaults need to be applied
-		if (description.isRequested(IContentDescription.CHARSET) && description.getProperty(IContentDescription.CHARSET) == null)
-			description.setProperty(IContentDescription.CHARSET, getDefaultCharset());
-		description.setContentType(this);
-		return description;
-	}
-
 	/**
 	 * @see IContentType
 	 */
@@ -226,23 +225,6 @@ public class ContentType implements IContentType {
 		if (buffer == null)
 			return null;
 		return internalGetDescriptionFor(buffer, options);
-	}
-
-	IContentDescription internalGetDescriptionFor(CharArrayReader buffer, QualifiedName[] options) throws IOException {
-		if (aliasTarget != null)
-			return getTarget().internalGetDescriptionFor(buffer, options);
-		ContentDescription description = new ContentDescription(options);
-		IContentDescriber describer = this.getDescriber();
-		if (describer != null) {
-			if (!(describer instanceof ITextContentDescriber))
-				throw new UnsupportedOperationException();
-			((ITextContentDescriber) describer).describe(buffer, description);
-		}
-		// check if any of the defaults need to be applied
-		if (description.isRequested(IContentDescription.CHARSET) && description.getProperty(IContentDescription.CHARSET) == null)
-			description.setProperty(IContentDescription.CHARSET, getDefaultCharset());
-		description.setContentType(this);
-		return description;
 	}
 
 	public String[] getFileSpecs(int typeMask) {
@@ -316,6 +298,37 @@ public class ContentType implements IContentType {
 		fileSpecs.add(createFileSpec(fileSpec, typeMask));
 	}
 
+	IContentDescription internalGetDescriptionFor(ByteArrayInputStream buffer, QualifiedName[] options) throws IOException {
+		if (aliasTarget != null)
+			return getTarget().internalGetDescriptionFor(buffer, options);
+		ContentDescription description = new ContentDescription(options);
+		IContentDescriber describer = this.getDescriber();
+		if (describer != null)
+			describer.describe(buffer, description);
+		// check if any of the defaults need to be applied
+		if (description.isRequested(IContentDescription.CHARSET) && description.getProperty(IContentDescription.CHARSET) == null)
+			description.setProperty(IContentDescription.CHARSET, getDefaultCharset());
+		description.setContentType(this);
+		return description;
+	}
+
+	IContentDescription internalGetDescriptionFor(CharArrayReader buffer, QualifiedName[] options) throws IOException {
+		if (aliasTarget != null)
+			return getTarget().internalGetDescriptionFor(buffer, options);
+		ContentDescription description = new ContentDescription(options);
+		IContentDescriber describer = this.getDescriber();
+		if (describer != null) {
+			if (!(describer instanceof ITextContentDescriber))
+				throw new UnsupportedOperationException();
+			((ITextContentDescriber) describer).describe(buffer, description);
+		}
+		// check if any of the defaults need to be applied
+		if (description.isRequested(IContentDescription.CHARSET) && description.getProperty(IContentDescription.CHARSET) == null)
+			description.setProperty(IContentDescription.CHARSET, getDefaultCharset());
+		description.setContentType(this);
+		return description;
+	}
+
 	void internalRemoveFileSpec(String fileSpec, int typeMask) {
 		if (aliasTarget != null) {
 			aliasTarget.internalRemoveFileSpec(fileSpec, typeMask);
@@ -352,6 +365,10 @@ public class ContentType implements IContentType {
 			return true;
 		IContentType baseType = getBaseType();
 		return baseType != null && baseType.isKindOf(another);
+	}
+
+	public boolean isText() {
+		return isKindOf(manager.getContentType(IContentTypeManager.CT_TEXT));
 	}
 
 	boolean isValid() {
