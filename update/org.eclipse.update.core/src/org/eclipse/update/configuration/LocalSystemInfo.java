@@ -88,7 +88,6 @@ public class LocalSystemInfo {
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
 				UpdateManagerPlugin.getPlugin().debug("Unable to load native library 'update'."); //$NON-NLS-1$
 			}
-				UpdateManagerPlugin.getPlugin().debug("Unable to load native library 'update'."); //$NON-NLS-1$			
 			hasNatives = false;
 		}
 	}
