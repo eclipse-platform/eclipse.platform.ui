@@ -35,6 +35,9 @@
 	
 	<target name="gather.bin.parts" depends="init" if="destination.temp.folder">
 		<mkdir dir="${destination.temp.folder}/${full.name}"/>
+		<!-- custom addition begin -->
+		<copy file="${build.result.folder}/infocenter/eclipseurl.jar" todir="${destination.temp.folder}/${full.name}"/>
+		<!-- custom end -->
 		<copy file="${build.result.folder}/WEB-INF/lib/webapp.jar" todir="${destination.temp.folder}/${full.name}"/>
 		<copy todir="${destination.temp.folder}/${full.name}">
 			<fileset dir="${basedir}" includes="images/,ns4/,infocenter/,WEB-INF/,*.css,*.html,*.js,*.jsp,plugin.properties,webapp.properties,plugin.xml" excludes="src/,WEB-INF/lib/*.bin.log,WEB-INF/lib/*src.zip,WEB-INF/classes/"/>
@@ -57,7 +60,13 @@
 		<copy todir="${basedir}/webapp.jar.bin">
 			<fileset dir="src/" excludes="**/*.java"/>
 		</copy>
+		<!-- custom change begin -->
+		<!--
 		<jar jarfile="${build.result.folder}/WEB-INF/lib/webapp.jar" basedir="${basedir}/webapp.jar.bin"/>
+		-->
+		<jar jarfile="${build.result.folder}/infocenter/eclipseurl.jar" basedir="${basedir}/webapp.jar.bin" includes="org/eclipse/help/internal/proxy/**"/>
+		<jar jarfile="${build.result.folder}/WEB-INF/lib/webapp.jar" basedir="${basedir}/webapp.jar.bin" excludes="org/eclipse/help/internal/proxy/**"/>
+		<!-- custom end -->
 		<delete dir="${basedir}/webapp.jar.bin"/>
  	</target>
 
@@ -99,6 +108,9 @@
 
 
 	<target name="clean" depends="init">
+		<!-- custom addition begin -->
+		<delete file="${build.result.folder}/infocenter/eclipseurl.jar"/>
+		<!-- custom end -->
 		<delete file="${build.result.folder}/WEB-INF/lib/webapp.jar"/>
 		<delete file="${build.result.folder}/WEB-INF/lib/webapp.jar.bin.log"/>
 		<delete file="${build.result.folder}/WEB-INF/lib/webappsrc.zip"/>
