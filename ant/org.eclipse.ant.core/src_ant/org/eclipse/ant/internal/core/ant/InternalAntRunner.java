@@ -293,12 +293,12 @@ public class InternalAntRunner {
 	public List getTargets() {
 		Project antProject= new Project();
 		
-		/*if (isVersionCompatible("1.6")) { //$NON-NLS-1$
+		if (isVersionCompatible("1.6")) { //$NON-NLS-1$
 			//in Ant version 1.6 or greater all tasks can exist outside the scope of a target
 			antProject= new Project();
 		} else {
 			antProject= new InternalProject();
-		}*/
+		}
 		antProject.init();
 		antProject.setProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
 		parseBuildFile(antProject);
