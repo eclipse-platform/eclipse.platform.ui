@@ -193,7 +193,8 @@ public class PageForm implements IIntroConstants, IPropertyListener {
             // make sure to avoid flicker.
             pageForm.setRedraw(false);
 
-            // update page book with correct Category Form composite.
+
+            // update page book with correct PageContentForm composite.
             String pageId = model.getCurrentPageId();
             if (!categoryPageBook.hasPage(pageId)) {
                 // if we do not have a category form for this page create one.

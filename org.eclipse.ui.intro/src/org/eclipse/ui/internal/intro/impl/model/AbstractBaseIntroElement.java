@@ -18,41 +18,87 @@ import org.w3c.dom.*;
 
 /**
  * An Intro Config component that has an id attribute and a class-id attribute.
- * It is used as a base class for all config elements that can take id and class
- * as attribute.
- * 
- * Note: since some model classes do not have class-id attribute, the attribute
- * is loaded in this base class, but subclasses are responsible for exposing the
- * attribute.
+ * It also has the notion of filtering. Only model elements that have meaning in
+ * the UI, and that are targettable can be filtered. HEAD, for example, only
+ * applied to HTML presentation, and so, it does not need filtering. When model
+ * is first loaded, all elements are not filtered. When the UI is created, and
+ * we know which presentation we are using, the filter state is computed
+ * dynamically. Also, in the SWT presentation, when style manager picks
+ * elements, it may alter the filter state of a given element to prevent it from
+ * appearing twice in the ui. eg: title appearing as a title of the form, and as
+ * a title child text.
  */
-public abstract class AbstractBaseIntroElement extends AbstractIntroElement {
+public abstract class AbstractBaseIntroElement extends AbstractIntroIdElement {
 
-    public static final String ATT_ID = "id"; //$NON-NLS-1$
     private static final String ATT_CLASS_ID = "class-id"; //$NON-NLS-1$
+    private static final String ATT_FIlTERED_FROM = "filteredFrom";
 
-    protected String id;
     protected String class_id;
+    protected String filteredFrom;
+    private boolean isFiltered;
 
     AbstractBaseIntroElement(IConfigurationElement element) {
         super(element);
-        id = element.getAttribute(ATT_ID);
         class_id = element.getAttribute(ATT_CLASS_ID);
+        filteredFrom = element.getAttribute(ATT_FIlTERED_FROM);
     }
 
     AbstractBaseIntroElement(Element element, Bundle bundle) {
         super(element, bundle);
-        id = getAttribute(element, ATT_ID);
         class_id = getAttribute(element, ATT_CLASS_ID);
+        filteredFrom = getAttribute(element, ATT_FIlTERED_FROM);
     }
 
+    /**
+     * Filter this element out based on the presentation kind.
+     *  
+     */
+    private boolean checkFilterState() {
+        if (this.isOfType(AbstractIntroElement.MODEL_ROOT))
+                // root element is not filtered.
+                return false;
+        IntroModelRoot root = (IntroModelRoot) getParentPage().getParent();
+        return root.getPresentation().getImplementationKind().equals(
+                filteredFrom) ? true : false;
+    }
 
 
     /**
-     * @return Returns the id.
+     * @return Returns the class id.
      */
-    public String getId() {
-        return id;
+    public String getClassId() {
+        return class_id;
+    }
+
+    /**
+     * @return Returns the filter_kind.
+     */
+    public String getFilteredFrom() {
+        return filteredFrom;
+    }
+
+    /**
+     * Return the filter state of this intro element. We need to do this when
+     * this element has been added to the model, and it has a parent. Also, this
+     * method will not be valid if the UI has not been loaded yet because it it
+     * the creation of the UI that determines the presentation details.
+     * 
+     * @return Returns the isFiltered.
+     */
+    public boolean isFiltered() {
+        return checkFilterState() || isFiltered;
+    }
+
+    public void setFilterState(boolean state) {
+        isFiltered = state;
     }
 
 
+
+    protected void setParent(AbstractIntroElement parent) {
+        super.setParent(parent);
+
+    }
+
 }
+

@@ -39,11 +39,11 @@ public class FormIntroPartImplementation extends
         // REVISIT: register all common images here. Even if this part
         // implementation is created again, the images will remain in plugin
         // registry.
-        ImageUtil.registerImage(ImageUtil.DEFAULT_ROOT_LINK, "overview_96.gif"); //$NON-NLS-1$
+        ImageUtil.registerImage(ImageUtil.DEFAULT_ROOT_LINK, "overview_48.gif"); //$NON-NLS-1$
         ImageUtil.registerImage(ImageUtil.DEFAULT_SMALL_ROOT_LINK,
-                "overview_64.gif"); //$NON-NLS-1$
+                "overview_32.gif"); //$NON-NLS-1$
         ImageUtil.registerImage(ImageUtil.DEFAULT_FORM_BG, "form_banner.gif"); //$NON-NLS-1$
-        ImageUtil.registerImage(ImageUtil.DEFAULT_LINK, "bpel_16.gif"); //$NON-NLS-1$
+        ImageUtil.registerImage(ImageUtil.DEFAULT_LINK, "welcome_item.gif"); //$NON-NLS-1$
     }
 
     private Action homeAction = new Action() {
@@ -83,15 +83,17 @@ public class FormIntroPartImplementation extends
         Color fg = sharedStyleManager.getColor(toolkit, "title.fg"); //$NON-NLS-1$
         if (fg != null)
                 mainForm.setForeground(fg);
-        // Image bgImage = sharedStyleManager.getImage("title.image", null, null); //$NON-NLS-1$
+        // Image bgImage = sharedStyleManager.getImage("title.image", null,
+        // null); //$NON-NLS-1$
         // if (bgImage != null) {
         //    mainForm.setBackgroundImage(bgImage);
         //    String repeat = sharedStyleManager
         //            .getProperty("title.image.repeat"); //$NON-NLS-1$
-        //    if (repeat != null && repeat.toLowerCase().equals("true")) //$NON-NLS-1$
+        //    if (repeat != null && repeat.toLowerCase().equals("true"))
+        // //$NON-NLS-1$
         //           mainForm.setBackgroundImageTiled(true);
         //}
-        
+
 
         mainPageBook = createMainPageBook(toolkit, mainForm);
         // Add this presentation as a listener to model.

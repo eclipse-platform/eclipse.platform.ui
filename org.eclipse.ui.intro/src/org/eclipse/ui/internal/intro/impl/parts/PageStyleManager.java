@@ -160,9 +160,22 @@ public class PageStyleManager extends SharedStyleManager {
      * @return
      */
     public String getDescription(IntroDiv group) {
-        String key = page.getId() + "." + group.getId() + ".description-id";
+        String key = createGroupKey(group) + ".description-id";
         return doGetDescription(group, key);
     }
+
+    private String createGroupKey(IntroDiv group) {
+        StringBuffer buffer = new StringBuffer(group.getId());
+        AbstractBaseIntroElement parent = (AbstractBaseIntroElement) group
+                .getParent();
+        while (parent != null
+                && !parent.isOfType(AbstractIntroElement.MODEL_ROOT)) {
+            buffer.insert(0, parent.getId() + ".");
+            parent = (AbstractBaseIntroElement) parent.getParent();
+        }
+        return buffer.toString();
+    }
+
 
     /**
      * Finds the description text of the associated page. Looks for the Text
@@ -224,8 +237,10 @@ public class PageStyleManager extends SharedStyleManager {
 
     private String findTextFromPath(AbstractIntroContainer parent, String path) {
         AbstractIntroElement child = parent.findTarget(root, path);
-        if (child != null && child.isOfType(AbstractIntroElement.TEXT))
-                return ((IntroText) child).getText();
+        if (child != null && child.isOfType(AbstractIntroElement.TEXT)) {
+            makeFiltered(child);
+            return ((IntroText) child).getText();
+        }
         return null;
     }
 
@@ -239,13 +254,42 @@ public class PageStyleManager extends SharedStyleManager {
         IntroText[] allText = (IntroText[]) parent
                 .getChildrenOfType(AbstractIntroElement.TEXT);
         for (int i = 0; i < allText.length; i++) {
-            if (allText[i].getClassId().equals(styleId))
-                    return allText[i].getText();
+            if (allText[i].getClassId() == null)
+                    // not all elements have style id.
+                    continue;
+            if (allText[i].getClassId().equals(styleId)) {
+                makeFiltered(allText[i]);
+                return allText[i].getText();
+            }
         }
         return null;
     }
 
+    /**
+     * Util method to check model type, and filter model element out if it is of
+     * the correct type.
+     * 
+     * @param element
+     */
+    private AbstractIntroElement makeFiltered(AbstractIntroElement element) {
+        if (element.isOfType(AbstractIntroElement.BASE_ELEMENT))
+                ((AbstractBaseIntroElement) element).setFilterState(true);
+        return element;
+    }
 
+
+
+    public boolean getShowLinkDescription() {
+        String key = page.getId() + ".show-link-description"; //$NON-NLS-1$
+        String value = getProperty(key);
+        if (value == null)
+                value = "true"; //$NON-NLS-1$
+        return value.toLowerCase().equals("true"); //$NON-NLS-1$
+    }
+
+
+
+    //********* remove later ***********
 
     private String findTextFromIdXX(AbstractIntroContainer parent,
             String childId) {
@@ -293,14 +337,6 @@ public class PageStyleManager extends SharedStyleManager {
     }
 
 
-
-    public boolean getShowLinkDescription() {
-        String key = page.getId() + ".layout.link-description"; //$NON-NLS-1$
-        String value = getProperty(key);
-        if (value == null)
-                value = "false"; //$NON-NLS-1$
-        return value.toLowerCase().equals("true"); //$NON-NLS-1$
-    }
 
 }
 

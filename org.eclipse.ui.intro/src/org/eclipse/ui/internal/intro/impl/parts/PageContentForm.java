@@ -71,11 +71,13 @@ public class PageContentForm implements IIntroConstants {
             label.setLayoutData(td);
         }
 
+        // Store the sub-title data for this composite from this page's
+        // subtitle. Make sure you do this before creatnig the page content to
+        // filter out page sub-title from content area.
+        contentComposite.setData(PAGE_SUBTITLE, styleManager.getPageSubTitle());
+
         createPageChildren(page, contentComposite);
 
-        // Store the sub-title data for this composite from this page's
-        // subtitle.
-        contentComposite.setData(PAGE_SUBTITLE, styleManager.getPageSubTitle());
         // now we can clear all styleManagers, for memory performance.
         styleManager = null;
         sharedStyleManager = null;
@@ -86,11 +88,11 @@ public class PageContentForm implements IIntroConstants {
         Composite pageComposite = createPageTableComposite(page, parent);
         // now add all children
         AbstractIntroElement[] children = page.getChildren();
-        FormsWidgetFactory factory = new FormsWidgetFactory(toolkit, styleManager);
+        FormsWidgetFactory factory = new FormsWidgetFactory(toolkit,
+                styleManager);
         for (int i = 0; i < children.length; i++)
             factory.createIntroElement(pageComposite, children[i]);
-        // clear memory.
-        factory = null;
+
     }
 
     /**
@@ -104,6 +106,7 @@ public class PageContentForm implements IIntroConstants {
     private Composite createPageTableComposite(AbstractIntroPage page,
             Composite parent) {
         int childDivCount = page.getChildrenOfType(AbstractIntroElement.DIV).length;
+        childDivCount = childDivCount == 0 ? 1 : childDivCount;
         Composite client = toolkit.createComposite(parent);
         TableWrapLayout layout = new TableWrapLayout();
         layout.topMargin = 0;
@@ -111,7 +114,7 @@ public class PageContentForm implements IIntroConstants {
         layout.leftMargin = 0;
         layout.rightMargin = 0;
         int numColumns = styleManager.getPageNumberOfColumns();
-        layout.numColumns = numColumns == 0 ? childDivCount : numColumns;
+        layout.numColumns = numColumns < 1 ? childDivCount : numColumns;
         client.setLayout(layout);
 
         // parent has TableWrapLayout, and so update layout of this child.

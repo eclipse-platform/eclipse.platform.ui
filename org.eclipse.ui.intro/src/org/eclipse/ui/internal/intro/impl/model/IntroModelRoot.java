@@ -211,18 +211,18 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
             Document dom = loadDOM(configExtensionElements[i]);
             if (dom == null)
-                // we failed to parse the content file. Intro Parser would have
-                // logged the fact. Parser would also have checked to see if the
-                // content file has the correct root tag.
-                continue;
+                    // we failed to parse the content file. Intro Parser would
+                    // have logged the fact. Parser would also have checked to
+                    // see if the content file has the correct root tag.
+                    continue;
 
             // Find the target of this container extension, and add all its
             // children to target. Make sure to pass pd to propagate to all
             // children.
             Element extensionContentElement = loadExtensionContent(dom, bundle);
             if (extensionContentElement == null)
-                // no extension content defined.
-                continue;
+                    // no extension content defined.
+                    continue;
 
             if (extensionContentElement.hasAttribute("failed")) { //$NON-NLS-1$
                 // we failed to resolve this configExtension, add the extension
@@ -266,8 +266,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 .validateSingleContribution(extensionContents,
                         IntroExtensionContent.ATT_PATH);
         if (extensionContentElement == null)
-            // no extensionContent defined.
-            return null;
+                // no extensionContent defined.
+                return null;
 
         // Create the model class.
         IntroExtensionContent extensionContent = new IntroExtensionContent(
@@ -286,7 +286,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             // because we want the children vector to be initialized and
             // loaded with children for ordering.
             if (!targetContainer.isLoaded())
-                targetContainer.loadChildren();
+                    targetContainer.loadChildren();
             targetContainer.addChildren(extensionContent.getChildren(), bundle);
             handleExtensionStyleInheritence(extensionContent, targetContainer);
         }
@@ -309,14 +309,14 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
         if (targetContainer.getType() == AbstractIntroElement.DIV
                 && targetContainer.getParent().getType() == AbstractIntroElement.MODEL_ROOT)
-            // if we are extending a shared div, defined under a config, we can
-            // not include styles.
-            return;
+                // if we are extending a shared div, defined under a config, we
+                // can not include styles.
+                return;
 
         // Update the parent page styles. skip style if it is null;
         String style = extension.getStyle();
         if (style != null)
-            targetContainer.getParentPage().addStyle(style);
+                targetContainer.getParentPage().addStyle(style);
 
         // for alt-style cache pd for loading resources.
         style = extension.getAltStyle();
@@ -431,20 +431,20 @@ public class IntroModelRoot extends AbstractIntroContainer {
      */
     public AbstractIntroPage getCurrentPage() {
         if (!homePage.isDynamic())
-            return null;
+                return null;
 
         AbstractIntroPage page = null;
         IntroPage[] pages = getPages();
         for (int i = 0; i < pages.length; i++) {
             if (pages[i].getId() != null
                     && pages[i].getId().equals(currentPageId))
-                page = pages[i];
+                    page = pages[i];
         }
         if (page != null)
-            return page;
+                return page;
         // not a page. Test for root page.
         if (homePage.getId().equals(currentPageId))
-            return homePage;
+                return homePage;
         // return null if page is not found.
         return null;
     }
@@ -492,8 +492,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
     protected static String resolveURL(String url, String pluginId) {
         Bundle bundle = null;
         if (pluginId != null)
-            // if pluginId is not null, use it.
-            bundle = Platform.getBundle(pluginId);
+                // if pluginId is not null, use it.
+                bundle = Platform.getBundle(pluginId);
         return resolveURL(url, bundle);
     }
 
@@ -519,7 +519,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     protected static String resolveURL(String url, Bundle bundle) {
         // quick exit
         if (url == null)
-            return null;
+                return null;
         IntroURLParser parser = new IntroURLParser(url);
         if (parser.hasProtocol())
             return url;
@@ -549,16 +549,22 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
         // quick exits.
         if (resource == null || !ModelLoaderUtil.bundleHasValidState(bundle))
-            return null;
+                return null;
 
         URL localLocation = null;
         try {
             // we need to perform a 'resolve' on this URL.
             localLocation = Platform.find(bundle, new Path(resource));
-            if (localLocation == null)
+            if (localLocation == null) {
                 // localLocation can be null if the passed resource could not
-                // be found relative to the plugin. return resource, as is;
+                // be found relative to the plugin. log fact, return resource,
+                // as is.
+                String msg = StringUtil.concat("Could not find resource: ", //$NON-NLS-1$
+                        resource, " in ", ModelLoaderUtil.getBundleHeader( //$NON-NLS-1$
+                                bundle, Constants.BUNDLE_NAME));
+                Log.warning(msg);
                 return resource;
+            }
             localLocation = Platform.asLocalURL(localLocation);
             return localLocation.toExternalForm();
         } catch (Exception e) {

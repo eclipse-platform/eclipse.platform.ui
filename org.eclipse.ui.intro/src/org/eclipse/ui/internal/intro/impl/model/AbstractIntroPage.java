@@ -223,21 +223,6 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     public IntroHead[] getHTMLHeads() {
         return (IntroHead[]) getChildrenOfType(AbstractIntroElement.HEAD);
     }
-    
-
-    // THESE METHODS MIGHT BE REMOVED. ADDED HERE FOR BACKWARD COMPATIBILITY.
-    /**
-     * HTML presentation divs and Navigation divs that are filtered out, for
-     * now. Hack.
-     */
-    public static boolean isFilteredDiv(IntroDiv aDiv) {
-        if (aDiv.getId().equals("navigation-links") //$NON-NLS-1$
-                || aDiv.getId().equals("background-image") //$NON-NLS-1$
-                || aDiv.getId().equals("curve-image")) //$NON-NLS-1$
-                return true;
-        return false;
-    }
 
 
-    
 }

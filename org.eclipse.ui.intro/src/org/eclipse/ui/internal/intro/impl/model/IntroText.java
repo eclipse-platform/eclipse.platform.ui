@@ -22,12 +22,23 @@ public class IntroText extends AbstractBaseIntroElement {
     protected static final String TAG_TEXT = "text"; //$NON-NLS-1$
 
     private String text;
+    /**
+     * boolean flag which is true if the text element contains CData content.
+     * which means we would have to model it as formatted text.
+     */
+    private boolean isFormatted = false;
 
     IntroText(Element element, Bundle bundle) {
         super(element, bundle);
         Node textNode = element.getFirstChild();
-        if (textNode.getNodeType() == Node.TEXT_NODE)
+        if (textNode.getNodeType() == Node.TEXT_NODE) {
             text = textNode.getNodeValue();
+            if (text.equals(" ")) {
+                // we may have CDATA nodes, use first one.
+                text = ((Text) element.getChildNodes().item(1)).getData();
+                isFormatted = checkIfFormatted();
+            }
+        }
     }
 
     /**
@@ -46,11 +57,20 @@ public class IntroText extends AbstractBaseIntroElement {
         return AbstractIntroElement.TEXT;
     }
 
+    /**
+     * @return true if the content of this text element has any " <" which makes
+     *         it formatted.
+     */
+    public boolean checkIfFormatted() {
+        int i = text.indexOf("<");
+        return i == -1 ? false : true;
+    }
+
 
     /**
-     * @return Returns the class id.
+     * @return Returns the isFormatted.
      */
-    public String getClassId() {
-        return super.class_id;
+    public boolean isFormatted() {
+        return isFormatted;
     }
 }

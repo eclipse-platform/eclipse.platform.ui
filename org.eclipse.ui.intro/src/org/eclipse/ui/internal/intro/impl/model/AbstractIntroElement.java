@@ -18,7 +18,11 @@ import org.w3c.dom.*;
 
 /**
  * An intro config component. All config components can get to their defining
- * plugin descriptor.
+ * config element or bindle depending from where the element was loaded. Model
+ * Rules:
+ * <p>
+ * <li>If an element does not appear as a child under any node, then that
+ * element does not need a type to be defined.</li>
  * <p>
  * Note: This is an abstract base class for all classes in the Intro Model. <br>
  * Clients are not expected to implement or subclass this class, or any of its

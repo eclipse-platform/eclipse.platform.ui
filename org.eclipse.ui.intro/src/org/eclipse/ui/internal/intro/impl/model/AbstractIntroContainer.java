@@ -428,11 +428,4 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         return loaded;
     }
 
-    /**
-     * @return Returns the class id.
-     */
-    public String getClassId() {
-        return super.class_id;
-    }
-
 }

@@ -40,8 +40,8 @@ public abstract class AbstractTextElement extends AbstractBaseIntroElement {
             NodeList textElements = element
                     .getElementsByTagName(IntroText.TAG_TEXT);
             if (textElements.getLength() == 0)
-                // no contributions. done.
-                return null;
+                    // no contributions. done.
+                    return null;
             IntroText text = new IntroText((Element) textElements.item(0),
                     getBundle());
             text.setParent(this);
@@ -82,10 +82,4 @@ public abstract class AbstractTextElement extends AbstractBaseIntroElement {
         return AbstractIntroElement.ABSTRACT_TEXT;
     }
 
-    /**
-     * @return Returns the class id.
-     */
-    public String getClassId() {
-        return super.class_id;
-    }
 }

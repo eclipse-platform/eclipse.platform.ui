@@ -30,7 +30,7 @@ public interface IIntroConstants {
     String INTRO_LINK = "IntroLink"; //$NON-NLS-1$
 
     // key to retrive page sub-title from PageContentForm
-    String PAGE_SUBTITLE = "PageSubtitle";
+    String PAGE_SUBTITLE = "PageSubtitle"; //$NON-NLS-1$
 
     // default fonts
     Font DEFAULT_FONT = JFaceResources.getBannerFont();

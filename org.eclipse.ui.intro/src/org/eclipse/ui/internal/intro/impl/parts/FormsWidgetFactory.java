@@ -8,6 +8,7 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.parts;
 
+
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -25,21 +26,19 @@ public class FormsWidgetFactory {
     private HyperlinkAdapter hyperlinkAdapter = new HyperlinkAdapter() {
 
         public void linkActivated(HyperlinkEvent e) {
-            Hyperlink imageLink = (Hyperlink) e.getSource();
-            IntroLink introLink = (IntroLink) imageLink
-                    .getData(IIntroConstants.INTRO_LINK);
-            IntroURLParser parser = new IntroURLParser(introLink.getUrl());
+            String url = (String) e.getHref();
+            IntroURLParser parser = new IntroURLParser(url);
             if (parser.hasIntroUrl()) {
                 // execute the action embedded in the IntroURL
                 parser.getIntroURL().execute();
                 return;
             } else if (parser.hasProtocol()) {
-                Util.openBrowser(introLink.getUrl());
+                Util.openBrowser(url);
                 return;
             }
-            DialogUtil.displayInfoMessage(imageLink.getShell(), IntroPlugin
-                    .getString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
-                    + " " + introLink.getUrl()); //$NON-NLS-1$
+            DialogUtil.displayInfoMessage(((Control) e.getSource()).getShell(),
+                    IntroPlugin.getString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
+                            + " " + url); //$NON-NLS-1$
         }
 
         public void linkEntered(HyperlinkEvent e) {
@@ -49,6 +48,8 @@ public class FormsWidgetFactory {
         }
     };
 
+
+
     private FormToolkit toolkit;
     private PageStyleManager styleManager;
 
@@ -56,19 +57,38 @@ public class FormsWidgetFactory {
     /*
      * protect bad creation.
      */
-    protected FormsWidgetFactory(FormToolkit toolkit, PageStyleManager styleManager) {
+    protected FormsWidgetFactory(FormToolkit toolkit,
+            PageStyleManager styleManager) {
         this.toolkit = toolkit;
         this.styleManager = styleManager;
     }
 
+    /**
+     * Check the filter state of the element. Only base elements have the filter
+     * attribute.
+     * 
+     * @param element
+     * @return
+     */
+    private boolean getFilterState(AbstractIntroElement element) {
+        if (element.isOfType(AbstractIntroElement.BASE_ELEMENT))
+            return ((AbstractBaseIntroElement) element).isFiltered();
+        else
+            return false;
+    }
+
+
+
     public void createIntroElement(Composite parent,
             AbstractIntroElement element) {
+        // check if this element is filtered, and if yes, do not create it.
+        boolean isFiltered = getFilterState(element);
+        if (isFiltered)
+                return;
+
         switch (element.getType()) {
         case AbstractIntroElement.DIV:
-            // DONOW:
             IntroDiv group = (IntroDiv) element;
-            if (AbstractIntroPage.isFilteredDiv(group))
-                    break;
             Control c = createGroup(parent, group);
             updateLayoutData(c);
             // c must be a composite.
@@ -86,7 +106,9 @@ public class FormsWidgetFactory {
             updateLayoutData(c);
             break;
         case AbstractIntroElement.TEXT:
-
+            IntroText text = (IntroText) element;
+            c = createText(parent, text);
+            updateLayoutData(c);
             break;
 
         default:
@@ -135,57 +157,95 @@ public class FormsWidgetFactory {
     }
 
     /**
-     * Creates an Image Hyperlink from an IntroLink. Model object is cached.
+     * Creates an Image Hyperlink from an IntroLink. Model object is NOT cached.
      * 
      * @param body
      * @param link
      */
-    private Control createImageHyperlink(Composite body, IntroLink link) {
+    private Control createImageHyperlink(Composite parent, IntroLink link) {
         Control control;
         Hyperlink linkControl;
         boolean showLinkDescription = styleManager.getShowLinkDescription();
         Image linkImage = styleManager.getImage(link, "link-icon", //$NON-NLS-1$
                 ImageUtil.DEFAULT_LINK);
         if (showLinkDescription && link.getText() != null) {
-            Composite container = toolkit.createComposite(body);
+            Composite container = toolkit.createComposite(parent);
             TableWrapLayout layout = new TableWrapLayout();
             layout.leftMargin = layout.rightMargin = 0;
             layout.topMargin = layout.bottomMargin = 0;
             layout.verticalSpacing = 0;
             layout.numColumns = 2;
             container.setLayout(layout);
+
             Label ilabel = toolkit.createLabel(container, null);
             ilabel.setImage(linkImage);
             TableWrapData td = new TableWrapData();
             td.valign = TableWrapData.TOP;
             td.rowspan = 2;
             ilabel.setLayoutData(td);
+
             linkControl = toolkit.createHyperlink(container, null, SWT.WRAP);
             td = new TableWrapData(TableWrapData.LEFT, TableWrapData.BOTTOM);
             td.grabVertical = true;
             linkControl.setLayoutData(td);
             //Util.highlight(linkControl, SWT.COLOR_RED);
             //Util.highlight(container, SWT.COLOR_DARK_YELLOW);
-            Label desc = toolkit.createLabel(container, link.getText(),
-                    SWT.WRAP);
+
+            Control desc = createText(container, link.getIntroText());
             td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
             td.grabHorizontal = true;
             td.grabVertical = true;
             desc.setLayoutData(td);
             control = container;
         } else {
-            ImageHyperlink imageLink = toolkit.createImageHyperlink(body,
+            ImageHyperlink imageLink = toolkit.createImageHyperlink(parent,
                     SWT.WRAP | SWT.CENTER);
             imageLink.setImage(linkImage);
+            TableWrapData td = new TableWrapData(TableWrapData.FILL,
+                    TableWrapData.CENTER);
+            td.grabHorizontal = true;
+            imageLink.setLayoutData(td);
             linkControl = imageLink;
             control = linkControl;
         }
         linkControl.setText(link.getLabel());
         linkControl.setFont(IIntroConstants.DEFAULT_FONT);
-        // cache the intro link model object for description and URL.
-        linkControl.setData(IIntroConstants.INTRO_LINK, link);
         linkControl.addHyperlinkListener(hyperlinkAdapter);
+        //Util.highlight(linkControl, SWT.COLOR_DARK_YELLOW);
         return control;
     }
 
+    /**
+     * Creates a forms Text or FormattedText.
+     * 
+     * @param body
+     * @param link
+     */
+    private Control createText(Composite parent, IntroText text) {
+        if (text.isFormatted()) {
+
+            FormText formText = toolkit.createFormText(parent, true);
+            formText.addHyperlinkListener(hyperlinkAdapter);
+            formText.setLayoutData(new TableWrapData(TableWrapData.FILL,
+                    TableWrapData.FILL));
+            formText.setText(generateFormText(text.getText()), true, true);
+            return formText;
+        } else {
+            Label label = toolkit.createLabel(parent, text.getText(), SWT.WRAP);
+            return label;
+        }
+    }
+
+
+    private String generateFormText(String text) {
+        StringBuffer sbuf = new StringBuffer();
+        sbuf.append("<form>"); //$NON-NLS-1$
+        sbuf.append(text);
+        sbuf.append("</form>"); //$NON-NLS-1$
+        return sbuf.toString();
+    }
+
 }
+
+
+

@@ -59,11 +59,4 @@ public class IntroImage extends AbstractBaseIntroElement {
         return AbstractIntroElement.IMAGE;
     }
 
-    /**
-     * @return Returns the class id.
-     */
-    public String getClassId() {
-        return super.class_id;
-    }
-
 }
