@@ -1,13 +1,16 @@
 package org.eclipse.jface.wizard;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.resource.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The WizardTableOfContents is a class that displays a series
@@ -19,8 +22,49 @@ class TableOfContentsArea {
 	private ITableOfContentsNode[] nodes = new ITableOfContentsNode[0];
 	private IWizard initialWizard;
 	private ITableOfContentsNode currentNode;
+	/**
+	 * Keys for support images.
+	 */
+	private static final String BREAK_ENABLED = "break_enabled";
+	private static final String BREAK_DISABLED = "break_disabled";
+	private static final String FINISH_NOT_PRESSED = "finish_not_pressed";
+	private static final String FINISH_PRESSED = "finish_pressed";
+	private static final String FINISH_DISABLED = "finish_disabled";
+	private static final String START = "start";
 
-	static final int NODE_SIZE = 20;
+	static {
+		ImageRegistry reg = JFaceResources.getImageRegistry();
+		URL installURL =
+			WorkbenchPlugin.getDefault().getDescriptor().getInstallURL();
+
+		try {
+			installURL = new URL(installURL, "icons/full/");
+
+			reg.put(BREAK_DISABLED, ImageDescriptor.createFromURL(new URL(installURL, "dtoc/break_toc.gif"))); //$NON-NLS-1$
+			reg.put(FINISH_DISABLED, ImageDescriptor.createFromURL(new URL(installURL, "dtoc/finish_toc.gif"))); //$NON-NLS-1$
+
+			reg.put(BREAK_ENABLED, ImageDescriptor.createFromURL(new URL(installURL, "etoc/break_toc.gif"))); //$NON-NLS-1$
+			reg.put(FINISH_NOT_PRESSED, ImageDescriptor.createFromURL(new URL(installURL, "etoc/finish_toc.gif"))); //$NON-NLS-1$
+
+			reg.put(FINISH_PRESSED, ImageDescriptor.createFromURL(new URL(installURL, "ftoc/finish_toc.gif"))); //$NON-NLS-1$
+			reg.put(START, ImageDescriptor.createFromURL(new URL(installURL, "ftoc/start_toc.gif"))); //$NON-NLS-1$
+
+		} catch (MalformedURLException exception) {
+			IStatus errorStatus =
+				new Status(
+					IStatus.ERROR,
+					WorkbenchPlugin
+						.getDefault()
+						.getDescriptor()
+						.getUniqueIdentifier(),
+					0,
+					JFaceResources.getString("Problem_Occurred"),
+				//$NON-NLS-1$
+	exception);
+			WorkbenchPlugin.getDefault().getLog().log(errorStatus);
+		}
+
+	}
 
 	public TableOfContentsArea() {
 		super();
@@ -103,7 +147,7 @@ class TableOfContentsArea {
 						new ITableOfContentsNode[currentIndex];
 					System.arraycopy(nodes, 0, newNodes, 0, currentIndex);
 					nodes = newNodes;
-				} 
+				}
 			}
 			addNodesForWizard(newWizard);
 		}
@@ -179,19 +223,23 @@ class TableOfContentsArea {
 			*/
 			public void mouseDown(MouseEvent event) {
 
-				int index = event.x / NODE_SIZE;
-				if (index < nodes.length) {
+				int nodeSize = getNodeSize();
+				//Take into account that the first entry is the start icon
+				int index = ((event.x - getNodeOffset()) / nodeSize);
+				if (index >= 0 && index < nodes.length) {
 					ITableOfContentsNode selectedNode = nodes[index];
 					IWizardPage page = selectedNode.getPage();
-					page.getWizard().getContainer().showPage(page);
+					if (page != null)
+						page.getWizard().getContainer().showPage(page);
 				}
-			} /**
-																								 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-																								 */
+			}
+			/**
+																									 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+																									 */
 			public void mouseDoubleClick(MouseEvent e) {
 			} /**
-																								 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
-																								 */
+																														 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
+																														 */
 			public void mouseUp(MouseEvent e) {
 			}
 		});
@@ -203,11 +251,24 @@ class TableOfContentsArea {
 
 		return canvas;
 	} /**
-												 * Draw the nodes for the receiver on the supplied gc.
-												 */
+														 * Draw the nodes for the receiver on the supplied gc.
+														 */
 	private void drawNodes(GC gc) {
 		Point size = canvas.getSize();
-		gc.drawLine(0, size.y / 2, size.x, size.y / 2);
+		int nodeSize = getNodeSize();
+		int lineY = nodeSize / 2;
+
+		Image startImage = JFaceResources.getImage(START);
+		Rectangle imageSize = startImage.getBounds();
+		int xOffset = (nodeSize - imageSize.width) / 2;
+		int yOffset = (nodeSize - imageSize.height) / 2;
+		gc.drawImage(startImage, xOffset, yOffset);
+		
+		//Get an offset for centering the nodes.
+		int nodeOffset = getNodeOffset();
+		
+		int xEnd = xOffset + imageSize.width;
+
 		boolean past = true;
 		for (int i = 0; i < nodes.length; i++) {
 			int positionConstant = ITableOfContentsNode.FUTURE_NODE;
@@ -220,10 +281,44 @@ class TableOfContentsArea {
 			}
 
 			Image image = nodes[i].getImage(positionConstant);
-			Rectangle imageSize = image.getBounds();
-			int xOffset = (NODE_SIZE - imageSize.width) / 2;
-			int yOffset = (NODE_SIZE - imageSize.height) / 2;
-			gc.drawImage(image, i * NODE_SIZE + xOffset, yOffset);
+			Rectangle imageBounds = image.getBounds();
+			xOffset = (nodeSize - imageBounds.width) / 2;
+			yOffset = (nodeSize - imageBounds.height) / 2;
+			//Draw the preceeding line
+			int lineEnd = (i * nodeSize) + xOffset + nodeOffset;
+			gc.drawLine(xEnd, lineY, lineEnd, lineY);
+			gc.drawImage(image, lineEnd, yOffset);
+			xEnd = lineEnd + imageBounds.width;
 		}
+
+		Image endImage;
+		if (currentNode.getPage().getWizard().canFinish())
+			endImage = JFaceResources.getImage(FINISH_NOT_PRESSED);
+		else
+			endImage = JFaceResources.getImage(FINISH_DISABLED);
+
+		yOffset = (nodeSize - endImage.getBounds().height) / 2;
+		int stopX = size.x - nodeSize;
+		gc.drawLine(xEnd, lineY, stopX, lineY);
+		gc.drawImage(endImage, stopX, yOffset);
+	}
+
+	/**
+	 * Return the size between nodes in the canvas.
+	 * @return int
+	 */
+	private int getNodeSize() {
+
+		return canvas.getSize().y;
+	}
+
+	/**
+	 * Get the offset required to center the nodes. 
+ 	 * @return int
+	 */
+	private int getNodeOffset() {
+
+		int nodesSpace = getNodeSize() * nodes.length;
+		return (canvas.getSize().x  - nodesSpace) / 2;
 	}
 }

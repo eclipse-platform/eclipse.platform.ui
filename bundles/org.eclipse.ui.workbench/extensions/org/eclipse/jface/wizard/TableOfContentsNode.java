@@ -16,15 +16,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 class TableOfContentsNode implements ITableOfContentsNode {
 
-	/**
-	 * Keys for support images.
-	 */
-	private static final String BREAK_ENABLED = "break_enabled";
-	private static final String BREAK_DISABLED = "break_disabled";
-	private static final String FINISH_NOT_PRESSED = "finish_not_pressed";
-	private static final String FINISH_PRESSED = "finish_pressed";
-	private static final String FINISH_DISABLED = "finish_disabled";
-	private static final String START = "start";
 	private static final String UNKNOWN = "unknown";
 
 	/**
@@ -61,22 +52,17 @@ class TableOfContentsNode implements ITableOfContentsNode {
 		try {
 			installURL = new URL(installURL, "icons/full/");
 
-			reg.put(BREAK_DISABLED, ImageDescriptor.createFromURL(new URL(installURL, "dtoc/break_toc.gif"))); //$NON-NLS-1$
-			reg.put(FINISH_DISABLED, ImageDescriptor.createFromURL(new URL(installURL, "dtoc/break_toc.gif"))); //$NON-NLS-1$
 			reg.put(BRANCH_DISABLED, ImageDescriptor.createFromURL(new URL(installURL, "dtoc/pagebranch_toc.gif"))); //$NON-NLS-1$
 			reg.put(KNOWN_DISABLED, ImageDescriptor.createFromURL(new URL(installURL, "dtoc/pageknown_toc.gif"))); //$NON-NLS-1$
+			
 			reg.put(UNKNOWN, ImageDescriptor.createFromURL(new URL(installURL, "dtoc/pageunknown_toc.gif"))); //$NON-NLS-1$
 
-			reg.put(BREAK_ENABLED, ImageDescriptor.createFromURL(new URL(installURL, "etoc/break_toc.gif"))); //$NON-NLS-1$
-			reg.put(FINISH_NOT_PRESSED, ImageDescriptor.createFromURL(new URL(installURL, "etoc/finish_toc.gif"))); //$NON-NLS-1$
 			reg.put(BRANCH_FUTURE, ImageDescriptor.createFromURL(new URL(installURL, "etoc/pagebranch_toc.gif"))); //$NON-NLS-1$
 			reg.put(KNOWN_FUTURE, ImageDescriptor.createFromURL(new URL(installURL, "etoc/pageknown_toc.gif"))); //$NON-NLS-1$
 
 			reg.put(KNOWN_PAST, ImageDescriptor.createFromURL(new URL(installURL, "ftoc/pageknown_toc.gif"))); //$NON-NLS-1$
-			reg.put(FINISH_PRESSED, ImageDescriptor.createFromURL(new URL(installURL, "ftoc/finish_toc.gif"))); //$NON-NLS-1$
 			reg.put(BRANCH_PAST, ImageDescriptor.createFromURL(new URL(installURL, "ftoc/pagebranch_toc.gif"))); //$NON-NLS-1$
-			reg.put(START, ImageDescriptor.createFromURL(new URL(installURL, "ftoc/start_toc.gif"))); //$NON-NLS-1$
-
+		
 			reg.put(BRANCH_CURRENT, ImageDescriptor.createFromURL(new URL(installURL, "stoc/pagebranch_toc.gif"))); //$NON-NLS-1$
 			reg.put(KNOWN_CURRENT, ImageDescriptor.createFromURL(new URL(installURL, "stoc/pageknown_toc.gif"))); //$NON-NLS-1$
 
@@ -89,9 +75,8 @@ class TableOfContentsNode implements ITableOfContentsNode {
 						.getDescriptor()
 						.getUniqueIdentifier(),
 					0,
-					JFaceResources.getString("Problem_Occurred"),
-				//$NON-NLS-1$
-	exception);
+					JFaceResources.getString("Problem_Occurred"),//$NON-NLS-1$
+					exception);
 			WorkbenchPlugin.getDefault().getLog().log(errorStatus);
 		}
 

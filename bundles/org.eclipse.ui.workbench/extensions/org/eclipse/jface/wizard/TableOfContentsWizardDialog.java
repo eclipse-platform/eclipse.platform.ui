@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Shell;
 public class TableOfContentsWizardDialog extends WizardDialog {
 
 	private TableOfContentsArea tocArea;
+	private static int DEFAULT_NODE_SIZE = 19;
 	/*
 	 * @see WizardDialog()
 	 */
@@ -34,7 +35,7 @@ public class TableOfContentsWizardDialog extends WizardDialog {
 		tocData.top = new FormAttachment(bottomWidget);
 		tocData.left = new FormAttachment(0, 0);
 		tocData.right = new FormAttachment(100, 0);
-		tocData.height = TableOfContentsArea.NODE_SIZE;
+		tocData.height = DEFAULT_NODE_SIZE;
 		tocControl.setLayoutData(tocData);
 		return tocControl;
 	}
@@ -56,8 +57,6 @@ public class TableOfContentsWizardDialog extends WizardDialog {
 		if (tocArea != null)
 			tocArea.updateFor(page);
 	}
-
-	
 
 	/**
 	 * @see org.eclipse.jface.wizard.IWizardContainer#updateButtons()
