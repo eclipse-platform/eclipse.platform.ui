@@ -68,6 +68,7 @@ public abstract class DialogPage implements IDialogPage, IMessageProvider {
 	 * Creates a new empty dialog page.
 	 */
 	protected DialogPage() {
+		//No initial behaviour
 	}
 	/**
 	 * Creates a new dialog page with the given title.
@@ -328,6 +329,7 @@ public abstract class DialogPage implements IDialogPage, IMessageProvider {
 	 * help request.
 	 */
 	public void performHelp() {
+		//No default help
 	}
 	/**
 	 * Set the control for the receiver.

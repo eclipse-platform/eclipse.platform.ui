@@ -214,8 +214,7 @@ public class TitleAreaDialog extends Dialog {
 		determineTitleImageLargest();
 		if (titleImageLargest)
 			return titleImage;
-		else
-			return messageLabel;
+		return messageLabel;
 	}
 	/**
 	 * Determine if the title image is larger than the title message and message
