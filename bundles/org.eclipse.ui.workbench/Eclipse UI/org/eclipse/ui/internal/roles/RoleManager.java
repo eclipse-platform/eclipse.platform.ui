@@ -189,57 +189,7 @@ public class RoleManager implements IActivityListener {
 			fireActivityManagerEvent(deltaCalculator.endDeltaSession());
 		}
 	}
-
-	/**
-	 * Apply default pattern bindings to a subset of keys governed by the given 
-     * manager.
-	 * 
-	 * @param manager
-     * @param keys a Collection of ObjectContributionRecords on which to apply patterns.
-     * @since 3.0
-	 */
-	public void applyPatternBindings(ObjectActivityManager manager, Collection keys) {
-		for (Iterator i = keys.iterator(); i.hasNext();) {
-			IObjectContributionRecord record = (IObjectContributionRecord) i.next();
-			String objectKey = record.toString();
-			for (Iterator j = patternBindings.entrySet().iterator(); j.hasNext();) {
-				Map.Entry patternEntry = (Map.Entry) j.next();
-				if (objectKey.matches((String) patternEntry.getKey())) {
-					Collection activityIds = (Collection) patternEntry.getValue();
-					for (Iterator k = activityIds.iterator(); k.hasNext();) {
-						String activityId = (String) k.next();
-						if (getActivity(activityId) != null) {
-							manager.addActivityBinding(record, activityId);
-						}
-					}
-				}
-			}
-		}
-	}
     
-    /**
-     * Apply default pattern bindings to all of the objects governed by the 
-     * given manager.
-     * 
-     * @param manager
-     * @since 3.0
-     */
-    public void applyPatternBindings(ObjectActivityManager manager) {
-        applyPatternBindings(manager, manager.getObjectIds());
-    }
-    
-    /**
-     * Apply default pattern bindings based on the provided 
-     * ObjectContributionRecord that is governed by the given manager.
-     * 
-     * @param manager
-     * @param record 
-     * @since 3.0
-     */
-    public void applyPatternBindings(ObjectActivityManager manager, IObjectContributionRecord record) {
-        applyPatternBindings(manager, Collections.singleton(record));
-    }            
-
 	/**
 	 * Read the roles from the primary feature. If there is no roles file then
 	 * disable filter roles and leave. Otherwise read the contents of the file

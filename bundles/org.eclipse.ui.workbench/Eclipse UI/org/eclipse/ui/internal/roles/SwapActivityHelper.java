@@ -78,7 +78,6 @@ public class SwapActivityHelper {
     
     private ListViewer activeViewer, potentialViewer;
     private Composite mainComposite;
-    private RoleSystemEnablementHelper roleHelper;
     
     /**
      * Create a swap button.
@@ -106,11 +105,6 @@ public class SwapActivityHelper {
         GridLayout layout = new GridLayout(3, false);
         mainComposite.setLayout(layout);
         
-        roleHelper = new RoleSystemEnablementHelper();
-        roleHelper.createControl(mainComposite);
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
-        data.horizontalSpan = 3;
-        roleHelper.getControl().setLayoutData(data);
         
         //Collection activities = RoleManager.getInstance().getActivities();
         Role [] roles = RoleManager.getInstance().getRoles();
@@ -206,7 +200,6 @@ public class SwapActivityHelper {
     public void updateActivityStates() {
         updateFromListViewer(activeViewer, true);
         updateFromListViewer(potentialViewer, false);
-        roleHelper.updateRoleState();        
     }
     
     /**

@@ -14,6 +14,36 @@ import java.util.Collection;
 
 /**
  * IObjectActivityManager is the interface for using activities in the UI.
+ * 
+ * Example of populating the IObjectActivityManager for an extension point:
+ * 
+ * //add all contributions to the manager
+ * 	ObjectActivityManager objectManager =
+ * 		getWorkspace().getActivityManager(CONTRIBUTION_ID, true);
+ * 	for (Iterator i = entries.iterator(); i.hasNext();) {
+ * 		//IModel is only an example interface.
+ * 		IModel next = (IModel) i.next();
+ * 		objectManager.addObject(next.getPluginId(), next.getId(), next);
+ * 		}
+ * 	}
+ * 	objectManager.applyPatternBindings();
+ * 
+ * Example of lookup of mappings:
+ * 
+ *  //get all contributions from the manager
+ * 	ObjectActivityManager objectManager =
+ * 		getWorkspace().getActivityManager(CONTRIBUTION_ID, false);//Do not create on lookup
+ * 
+ * if(objectManager == null)
+ * 		return;
+ * 
+ * Collection entries = objectManager.getActiveObjects();
+ * for (Iterator i = entries.iterator(); i.hasNext();) {
+ * 		//IModel is only an example interface.
+ * 		IModel next = (IModel) i.next();
+ * 	}
+ * 	objectManager.applyPatternBindings();
+ * 
  * <b> NOTE: This is experimental API and subject to change </b>
  * @since 3.0
  */

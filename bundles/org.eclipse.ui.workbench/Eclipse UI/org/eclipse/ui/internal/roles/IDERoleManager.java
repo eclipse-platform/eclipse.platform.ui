@@ -136,7 +136,7 @@ public class IDERoleManager extends RoleManager {
             manager.addObject(element.getConfigurationElement().getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier(), element.getID(), element.getID());
             
         }
-        RoleManager.getInstance().applyPatternBindings(manager);        
+        manager.applyPatternBindings();        
     }
     
     /**
@@ -168,7 +168,7 @@ public class IDERoleManager extends RoleManager {
             String pluginId = element.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
             manager.addObject(pluginId, localId, localId);              
         }
-        RoleManager.getInstance().applyPatternBindings(manager);        
+       manager.applyPatternBindings();        
     }    
 
 	/**
@@ -188,7 +188,7 @@ public class IDERoleManager extends RoleManager {
 			}
 		}
 		// and then apply the default bindings
-		RoleManager.getInstance().applyPatternBindings(objectManager);
+		objectManager.applyPatternBindings();
 	}
    
     /**
@@ -219,7 +219,7 @@ public class IDERoleManager extends RoleManager {
         }
         
         // and then apply the default bindings
-        RoleManager.getInstance().applyPatternBindings(objectManager);        
+       objectManager.applyPatternBindings();        
     }
     
     /**
