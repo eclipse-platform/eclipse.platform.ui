@@ -175,7 +175,7 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 		fModeIds = (String[])supported.toArray(new String[supported.size()]);
 		
 		// init perspective labels
-		IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
+		final IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		IPerspectiveDescriptor[] descriptors = registry.getPerspectives();
 		fPerspectiveLabels = new String[descriptors.length + 1];
 		fPerspectiveLabels[0] = LaunchConfigurationsMessages.getString("PerspectivesTab.1"); //$NON-NLS-1$
@@ -224,7 +224,6 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 					if (def == null) {
 						fCombos[i].setText(LaunchConfigurationsMessages.getString("PerspectivesTab.4")); //$NON-NLS-1$
 					} else {
-						IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
 						IPerspectiveDescriptor descriptor = registry.findPerspectiveWithId(def);
 						fCombos[i].setText(descriptor.getLabel());
 					}
