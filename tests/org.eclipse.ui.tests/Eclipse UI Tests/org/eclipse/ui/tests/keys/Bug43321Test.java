@@ -75,14 +75,4 @@ public class Bug43321Test extends UITestCase {
 		IAction action = editor.getEditorSite().getActionBars().getGlobalActionHandler(IWorkbenchActionConstants.COPY);
 		assertTrue("Non-checkbox menu item is checked.", !action.isChecked()); //$NON-NLS-1$
 	}
-
-	public static MenuItem getMenuItem(MenuItem[] menuItems, String text) {
-		for (int i = 0; i < menuItems.length; i++) {
-			if (menuItems[i].getText().equals(text)) {
-				return menuItems[i];
-			}
-		}
-
-		return null;
-	}
 }
