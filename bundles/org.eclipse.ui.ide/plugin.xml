@@ -542,7 +542,7 @@
             name="%command.correctionAssistProposals.name"
             description="%command.correctionAssistProposals.description"
             categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.commands.correctionAssistProposals">
+            id="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals">
       </command>
       <keyBinding
             commandId="org.eclipse.ui.commands.correctionAssistProposals"
