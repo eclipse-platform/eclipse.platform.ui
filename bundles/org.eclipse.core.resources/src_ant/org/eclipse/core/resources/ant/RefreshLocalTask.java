@@ -10,7 +10,10 @@
  **********************************************************************/
 package org.eclipse.core.resources.ant;
 
+import java.util.Hashtable;
+
 import org.apache.tools.ant.*;
+import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -75,7 +78,11 @@ public void execute() throws BuildException {
 	if (resource == null)
 		throw new BuildException(Policy.bind("exception.resourceNotSpecified")); //$NON-NLS-1$
 	try {
-		resource.refreshLocal(depth, null);
+		IProgressMonitor monitor = null;
+		Hashtable references = getProject().getReferences();
+		if (references != null)
+			monitor = (IProgressMonitor) references.get(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR);
+		resource.refreshLocal(depth, monitor);
 	} catch (CoreException e) {
 		throw new BuildException(e);
 	}

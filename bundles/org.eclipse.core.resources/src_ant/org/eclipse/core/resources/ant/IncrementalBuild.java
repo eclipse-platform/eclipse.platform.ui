@@ -10,10 +10,14 @@
  **********************************************************************/
 package org.eclipse.core.resources.ant;
 
+import java.util.Hashtable;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Ant task which runs the platform's incremental build facilities.
@@ -63,14 +67,18 @@ public IncrementalBuild() {
  */
 public void execute() throws BuildException {
 	try {
+		IProgressMonitor monitor = null;
+		Hashtable references = getProject().getReferences();
+		if (references != null)
+			monitor = (IProgressMonitor) references.get(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR);
 		if (project == null) {
-			ResourcesPlugin.getWorkspace().build(kind, null);
+			ResourcesPlugin.getWorkspace().build(kind, monitor);
 		} else {
 			IProject target = ResourcesPlugin.getWorkspace().getRoot().getProject(project);
 			if (builder == null)
-				target.build(kind, null);
+				target.build(kind, monitor);
 			else
-				target.build(kind, builder, null, null);
+				target.build(kind, builder, null, monitor);
 		}
 	} catch (CoreException e) {
 		throw new BuildException(e);
