@@ -52,7 +52,8 @@ public class MultiTextEdit extends TextEdit {
 	 * 
 	 * @param offset the edit's offset
 	 * @param length the edit's length.
-	 * @see TextEdit#add(TextEdit)
+	 * @see TextEdit#addChild(TextEdit)
+	 * @see TextEdit#addChildren(TextEdit[])
 	 */
 	public MultiTextEdit(int offset, int length) {
 		super(offset, length);

@@ -20,7 +20,7 @@ import java.util.Vector;
  * The template translator translates a string into a template buffer. Regions
  * marked as variables are translated into <code>TemplateVariable</code>s.
  * <p>
- * The EBNF grammer of a valid string is as follows:</p>
+ * The EBNF grammar of a valid string is as follows:</p>
  * <p>
  * template := (text | escape)*. <br />
  * text := character - dollar. <br />
@@ -55,7 +55,7 @@ public class TemplateTranslator {
     private String fErrorMessage;
 
 	/**
-	 * Returns an error message if an error occured for the last translation,
+	 * Returns an error message if an error occurred for the last translation,
 	 * <code>null</code> otherwise.
 	 * 
 	 * @return the error message if an error occurred during the most recent
@@ -74,6 +74,7 @@ public class TemplateTranslator {
 	 * @return returns the template buffer corresponding to the string, <code>null</code>
 	 *         if there was an error.
 	 * @see #getErrorMessage()
+	 * @throws TemplateException if translation failed
 	 */
 	public TemplateBuffer translate(Template template) throws TemplateException {
 		return translate(template.getPattern());
@@ -88,6 +89,7 @@ public class TemplateTranslator {
 	 * @return returns the template buffer corresponding to the string, <code>null</code>
 	 *         if there was an error.
 	 * @see #getErrorMessage()
+	 * @throws TemplateException if translation failed
 	 */
 	public TemplateBuffer translate(String string) throws TemplateException {
 
@@ -176,7 +178,12 @@ public class TemplateTranslator {
 		return new TemplateVariable(type, name, offsets);
 	}
 
-	/** internal parser */
+	/**
+	 * Internal parser.
+	 * 
+	 * @param string the string to parse
+	 * @return <code>true</code> if parsing was successful
+	 */
 	private boolean parse(String string) {
 
 		for (int i= 0; i != string.length(); i++) {

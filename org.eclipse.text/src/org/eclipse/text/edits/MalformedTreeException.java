@@ -15,7 +15,8 @@ package org.eclipse.text.edits;
  * but the child edit somehow conflicts with the parent or
  * one of it siblings.
  * 
- * @see TextEdit#add(TextEdit)
+ * @see TextEdit#addChild(TextEdit)
+ * @see TextEdit#addChildren(TextEdit[])
  * 
  * @since 3.0
  */

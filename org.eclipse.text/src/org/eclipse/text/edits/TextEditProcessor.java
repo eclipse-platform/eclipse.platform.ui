@@ -48,7 +48,8 @@ public class TextEditProcessor {
 	 *  the modifications. By passing a text edit a a text edit
 	 *  processor the ownership of the edit is transfered to the
 	 *  text edit processors. Clients must not modify the edit
-	 *  (e.g adding new children) any longer. 
+	 *  (e.g adding new children) any longer.
+	 * @param style {@link TextEdit#NONE}, {@link TextEdit#CREATE_UNDO} or {@link TextEdit#UPDATE_REGIONS}) 
 	 */
 	public TextEditProcessor(IDocument document, TextEdit root, int style) {
 		Assert.isNotNull(document);
@@ -83,7 +84,7 @@ public class TextEditProcessor {
 	 * 
 	 * @return the style bits
 	 * @see TextEdit#CREATE_UNDO
-	 * @see TextEdit#UPDATE_POSITIONS
+	 * @see TextEdit#UPDATE_REGIONS
 	 */
 	public int getStyle() {
 		return fStyle;

@@ -46,7 +46,7 @@ package org.eclipse.text.edits;
  * For edits with chldren, the child nodes are visited in increasing order.
  * </p>
  * 
- * @see TextEdit#accept
+ * @see TextEdit#accept(TextEditVisitor)
  * @since 3.0
  */
 public class TextEditVisitor {
@@ -58,7 +58,7 @@ public class TextEditVisitor {
 	 * The default implementation does nothing. Subclasses may reimplement.
 	 * </p>
 	 * 
-	 * @param node the node to visit
+	 * @param edit the node to visit
 	 */
 	public void preVisit(TextEdit edit) {
 		// default implementation: do nothing
@@ -71,7 +71,7 @@ public class TextEditVisitor {
 	 * The default implementation does nothing. Subclasses may reimplement.
 	 * </p>
 	 * 
-	 * @param node the node to visit
+	 * @param edit the node to visit
 	 */
 	public void postVisit(TextEdit edit) {
 		// default implementation: do nothing
@@ -81,7 +81,8 @@ public class TextEditVisitor {
 	 * Visits the given text edit. This method is called by default from
 	 * type-specific visits. It is not called by a edit's accept method. 
 	 * The default implementation returns <code>true</code>.
-	 * 
+	 *
+	 * @param edit the node to visit 
 	 * @return If <code>true</code> is returned, the given node's child 
 	 *  nodes will be visited next; however, if <code>false</code> is
 	 *  returned, the given node's child nodes will not be visited.
@@ -91,8 +92,9 @@ public class TextEditVisitor {
 	}
 	
 	/**
-	 * Visists a <code>CopySourceEdit</code> instance.
+	 * Visits a <code>CopySourceEdit</code> instance.
 	 * 
+	 * @param edit the node to visit
 	 * @return If <code>true</code> is returned, the given node's child 
 	 *  nodes will be visited next; however, if <code>false</code> is
 	 *  returned, the given node's child nodes will not be visited.
@@ -102,8 +104,9 @@ public class TextEditVisitor {
 	}
 	
 	/**
-	 * Visists a <code>CopyTargetEdit</code> instance.
+	 * Visits a <code>CopyTargetEdit</code> instance.
 	 * 
+	 * @param edit the node to visit
 	 * @return If <code>true</code> is returned, the given node's child 
 	 *  nodes will be visited next; however, if <code>false</code> is
 	 *  returned, the given node's child nodes will not be visited.
@@ -113,8 +116,9 @@ public class TextEditVisitor {
 	}
 	
 	/**
-	 * Visists a <code>MoveSourceEdit</code> instance.
+	 * Visits a <code>MoveSourceEdit</code> instance.
 	 * 
+	 * @param edit the node to visit
 	 * @return If <code>true</code> is returned, the given node's child 
 	 *  nodes will be visited next; however, if <code>false</code> is
 	 *  returned, the given node's child nodes will not be visited.
@@ -124,8 +128,9 @@ public class TextEditVisitor {
 	}
 	
 	/**
-	 * Visists a <code>MoveTargetEdit</code> instance.
+	 * Visits a <code>MoveTargetEdit</code> instance.
 	 * 
+	 * @param edit the node to visit
 	 * @return If <code>true</code> is returned, the given node's child 
 	 *  nodes will be visited next; however, if <code>false</code> is
 	 *  returned, the given node's child nodes will not be visited.
@@ -135,8 +140,9 @@ public class TextEditVisitor {
 	}
 
 	/**
-	 * Visists a <code>RangeMarker</code> instance.
+	 * Visits a <code>RangeMarker</code> instance.
 	 * 
+	 * @param edit the node to visit
 	 * @return If <code>true</code> is returned, the given node's child 
 	 *  nodes will be visited next; however, if <code>false</code> is
 	 *  returned, the given node's child nodes will not be visited.
@@ -146,8 +152,9 @@ public class TextEditVisitor {
 	}
 	
 	/**
-	 * Visists a <code>CopyingRangeMarker</code> instance.
+	 * Visits a <code>CopyingRangeMarker</code> instance.
 	 * 
+	 * @param edit the node to visit
 	 * @return If <code>true</code> is returned, the given node's child 
 	 *  nodes will be visited next; however, if <code>false</code> is
 	 *  returned, the given node's child nodes will not be visited.
@@ -157,8 +164,9 @@ public class TextEditVisitor {
 	}
 	
 	/**
-	 * Visists a <code>DeleteEdit</code> instance.
+	 * Visits a <code>DeleteEdit</code> instance.
 	 * 
+	 * @param edit the node to visit
 	 * @return If <code>true</code> is returned, the given node's child 
 	 *  nodes will be visited next; however, if <code>false</code> is
 	 *  returned, the given node's child nodes will not be visited.
@@ -168,8 +176,9 @@ public class TextEditVisitor {
 	}
 	
 	/**
-	 * Visists a <code>InsertEdit</code> instance.
+	 * Visits a <code>InsertEdit</code> instance.
 	 * 
+	 * @param edit the node to visit
 	 * @return If <code>true</code> is returned, the given node's child 
 	 *  nodes will be visited next; however, if <code>false</code> is
 	 *  returned, the given node's child nodes will not be visited.
@@ -179,8 +188,9 @@ public class TextEditVisitor {
 	}
 	
 	/**
-	 * Visists a <code>ReplaceEdit</code> instance.
+	 * Visits a <code>ReplaceEdit</code> instance.
 	 * 
+	 * @param edit the node to visit
 	 * @return If <code>true</code> is returned, the given node's child 
 	 *  nodes will be visited next; however, if <code>false</code> is
 	 *  returned, the given node's child nodes will not be visited.
@@ -190,8 +200,9 @@ public class TextEditVisitor {
 	}
 	
 	/**
-	 * Visists a <code>UndoEdit</code> instance.
+	 * Visits a <code>UndoEdit</code> instance.
 	 * 
+	 * @param edit the node to visit
 	 * @return If <code>true</code> is returned, the given node's child 
 	 *  nodes will be visited next; however, if <code>false</code> is
 	 *  returned, the given node's child nodes will not be visited.
@@ -201,8 +212,9 @@ public class TextEditVisitor {
 	}
 	
 	/**
-	 * Visists a <code>MultiTextEdit</code> instance.
+	 * Visits a <code>MultiTextEdit</code> instance.
 	 * 
+	 * @param edit the node to visit
 	 * @return If <code>true</code> is returned, the given node's child 
 	 *  nodes will be visited next; however, if <code>false</code> is
 	 *  returned, the given node's child nodes will not be visited.

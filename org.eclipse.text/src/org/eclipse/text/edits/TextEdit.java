@@ -68,8 +68,6 @@ import org.eclipse.jface.text.Region;
  * This class isn't intended to be subclassed outside of the edit framework. Clients 
  * are only allowed to subclass <code>MultiTextEdit</code>.
  * 
- * @see TextBufferEditor
- * 
  * @since 3.0
  */
 public abstract class TextEdit {
@@ -152,7 +150,7 @@ public abstract class TextEdit {
 	}
 	
 	/**
-	 * Copy constrcutor
+	 * Copy constructor
 	 * 
 	 * @param source the source to copy form
 	 */
@@ -277,7 +275,7 @@ public abstract class TextEdit {
 	 * Adds the given edit <code>child</code> to this edit.
 	 * 
 	 * @param child the child edit to add
-	 * @exception <code>MalformedTreeException<code> is thrown if the child
+	 * @exception MalformedTreeException is thrown if the child
 	 *  edit can't be added to this edit. This is the case if the child 
 	 *  overlaps with one of its siblings or if the child edit's region
 	 *  isn't fully covered by this edit.
@@ -290,7 +288,7 @@ public abstract class TextEdit {
 	 * Adds all edits in <code>edits</code> to this edit.
 	 * 
 	 * @param edits the text edits to add
-	 * @exception <code>MalformedTreeException</code> is thrown if one of 
+	 * @exception MalformedTreeException is thrown if one of 
 	 *  the given edits can't be added to this edit.
 	 * 
 	 * @see #addChild(TextEdit)
@@ -309,7 +307,7 @@ public abstract class TextEdit {
 	 * 
 	 * @param index the index of the edit to remove
 	 * @return the removed edit
-	 * @exception <code>IndexOutOfBoundsException</code> if the index 
+	 * @exception IndexOutOfBoundsException if the index 
 	 *  is out of range
 	 */
 	public final TextEdit removeChild(int index) {
