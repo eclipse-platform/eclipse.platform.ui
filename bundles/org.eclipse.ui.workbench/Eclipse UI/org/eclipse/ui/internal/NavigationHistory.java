@@ -211,6 +211,8 @@ private void updateActions() {
 /*
  * Restore the specified entry */
 private void gotoEntry(HistoryEntry entry) {
+	if(entry == null)
+		return;
 	try {
 		ignoreEntries++;
 		entry.restoreLocation();
@@ -251,15 +253,15 @@ private void shiftEntry(boolean forward) {
 		activeEntry++;
 	else
 		activeEntry--;
-	HistoryEntry entry = (HistoryEntry)history.get(activeEntry);
+	HistoryEntry entry = getEntry(activeEntry);
 	if (entry != null)
 		gotoEntry(entry);
 }
 /**
  * Save the state of this history into the memento. */
 public void saveState(IMemento memento) {
-	HistoryEntry cEntry = (HistoryEntry)history.get(activeEntry);
-	if(!cEntry.isPersistable())
+	HistoryEntry cEntry = (HistoryEntry)getEntry(activeEntry);
+	if(cEntry == null || !cEntry.isPersistable())
 		return;
 		
 	ArrayList list = new ArrayList(history.size());
@@ -294,7 +296,7 @@ public void restoreState(IMemento memento) {
 		if(item.getString(IWorkbenchConstants.TAG_ACTIVE) != null)
 			activeEntry = i;
 	}
-	gotoEntry((HistoryEntry)history.get(activeEntry));
+	gotoEntry(getEntry(activeEntry));
 }
 /*
  * Wraps the INavigationLocation and keeps the info
