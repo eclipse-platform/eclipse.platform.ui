@@ -1148,7 +1148,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 
 	protected void updateAdditionalEntries(Preferences prefs) {
-		prefs.setValue("urls", ""); //old constant removed
+		prefs.setValue("urls", ""); //old constant removed  //$NON-NLS-1$//$NON-NLS-2$
 		String serialized= null;
 		IAntClasspathEntry toolsJarEntry= getToolsJarEntry();
 		if (additionalEntries.length == 1 && toolsJarEntry != null && additionalEntries[0].getLabel().equals(toolsJarEntry.getLabel())) {
@@ -1172,7 +1172,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 	
 	protected void updateAntHomeEntries(Preferences prefs) {
-		prefs.setValue("ant_urls", ""); //old constant removed
+		prefs.setValue("ant_urls", ""); //old constant removed  //$NON-NLS-1$//$NON-NLS-2$
 		
 		//see if the custom entries are just the default entries
 		IAntClasspathEntry[] defaultEntries= getDefaultAntHomeEntries();
