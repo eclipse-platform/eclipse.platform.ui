@@ -68,8 +68,6 @@ public final class InternalPlatform {
 	// default plugin data
 	private static final String PI_XML = "org.apache.xerces";
 	private static final String PLUGINSDIR = "plugins/";
-	private static final String XML_VERSION = "1.2.1";
-	private static final String XML_JAR = "xerces.jar";
 	private static final String XML_LOCATION = "plugins/" + PI_XML + "/";
 	
 	// execution options
@@ -211,14 +209,14 @@ private static void createXMLClassLoader() {
 	// create a plugin descriptor which is sufficient to be able to create
 	// the class loader through the normal channels.
 	Factory factory = new InternalFactory(null);
-	PluginDescriptor descriptor = (PluginDescriptor) factory.createPluginDescriptor();
+	PluginDescriptor descriptor = (PluginDescriptor) factory.createPluginDescriptor();	
 	descriptor.setEnabled(true);
 	descriptor.setId(PI_XML);
-	descriptor.setVersion(XML_VERSION);
-
+	PlatformConfiguration config = InternalBootLoader.getCurrentPlatformConfiguration();
+	PlatformConfiguration.BootDescriptor bd = config.getPluginBootDescriptor(PI_XML);
+	descriptor.setVersion(bd.getVersion());
 	try {
-		PlatformConfiguration config = InternalBootLoader.getCurrentPlatformConfiguration();
-		URL url = config.getPluginPath(PI_XML, XML_VERSION);
+		URL url = bd.getPluginDirectoryURL();
 		if (url == null)
 			url = new URL(BootLoader.getInstallURL(), XML_LOCATION);
 		descriptor.setLocation(url.toExternalForm());
@@ -226,10 +224,15 @@ private static void createXMLClassLoader() {
 		// ISSUE: What to do when this fails.  It's pretty serious
 	}
 
-	LibraryModel lib = factory.createLibrary();
-	lib.setName(XML_JAR);
-	lib.setExports(new String[] { "*" });
-	descriptor.setRuntime(new LibraryModel[] { lib });
+	ArrayList libList = new ArrayList();
+	String[] libs = bd.getLibraries();
+	for (int i=0; i<libs.length; i++) {
+		LibraryModel lib = factory.createLibrary();
+		lib.setName(libs[i]);
+		lib.setExports(new String[] { "*" });
+		libList.add(lib);
+	}
+	descriptor.setRuntime((LibraryModel[]) libList.toArray(new LibraryModel[0]));
 
 	// use the fake plugin descriptor to create the desired class loader.
 	// Since this class loader will be used before the plugin registry is installed,

@@ -11,8 +11,4 @@
    </library>
 </runtime>
 
-  <requires>
-    <import plugin="org.eclipse.core.runtime" version="1.9.0" match="equivalent"/>
-  </requires>
-
 </plugin>

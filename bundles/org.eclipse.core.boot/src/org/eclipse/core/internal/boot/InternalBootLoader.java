@@ -40,7 +40,8 @@ public final class InternalBootLoader {
 	private static boolean starting = false;
 	private static String[] commandLine;
 	private static ClassLoader loader = null;
-	private static String baseLocation = null;
+	private static String baseLocation = null; // -data argument (workspace location)
+	private static String installLocation = null; // -install argument (product install location)
 	private static String applicationR10 = null; // R1.0 compatibility
 	private static URL installURL = null;
 	private static boolean debugRequested = false;
@@ -106,12 +107,13 @@ public final class InternalBootLoader {
 	// command line arguments
 	private static final String DEBUG = "-debug";
 	private static final String DATA = "-data";
+	private static final String INSTALL = "-install";
 	private static final String DEV = "-dev";
 	private static final String WS = "-ws";
 	private static final String OS = "-os";
 	private static final String ARCH = "-arch";
 	private static final String NL = "-nl";
-
+	
 /**
  * Private constructor to block instance creation.
  */
@@ -180,11 +182,30 @@ public static PlatformConfiguration getCurrentPlatformConfiguration() {
 public static URL getInstallURL() {
 	if (installURL != null)
 		return installURL;
+		
+	// See if install location was explicitly specified
+	// Note: in the regular launch sequence, if the argument was not specified
+	//       on the launch, Main.java is actually defaulting this relative to
+	//       itself. The resulting behavior is consistent with the default
+	//       behavior in 1.0 (with all program files being co-located in the
+	//       eclipse/ install directory). However, the new behavior takes into 
+	//       account an update scenario where we may in fact be executing
+	//       InternalBootLoader that was loaded from some other location.
+	if (installLocation != null && !installLocation.trim().equals("")) {
+		try {
+			installURL = new URL(installLocation);
+			if (debugRequested) 
+				System.out.println("Install URL:\n    "+installURL.toExternalForm());
+			return installURL;
+		} catch(MalformedURLException e) {
+		}
+	}
 
+	// Install location was not specified, or we failed to create a URL.
 	// Get the location of this class and compute the install location.
 	// this involves striping off last element (jar or directory) 
 	URL url = InternalBootLoader.class.getProtectionDomain().getCodeSource().getLocation();
-	String path = url.getFile();
+	String path = decode(url.getFile());
 	if (path.endsWith("/"))
 		path = path.substring(0, path.length() - 1);
 	int ix = path.lastIndexOf('/');
@@ -206,6 +227,57 @@ public static URL getInstallURL() {
 		throw new RuntimeException("Fatal Error: Unable to determine platform installation URL "+e);
 	}
 	return installURL;
+}
+/**
+ * Returns a string representation of the given URL String.  This converts
+ * escaped sequences (%..) in the URL into the appropriate characters.
+ * NOTE: due to class visibility there is a copy of this method
+ *       in Main (the launcher)
+ */
+public static String decode(String urlString) {
+	//try to use Java 1.4 method if available
+	try {
+		Class clazz = URLDecoder.class;
+		Method method = clazz.getDeclaredMethod("decode", new Class[] {String.class, String.class});//$NON-NLS-1$
+		//first encode '+' characters, because URLDecoder incorrectly converts 
+		//them to spaces on certain class library implementations.
+		if (urlString.indexOf('+') >= 0) {
+			int len = urlString.length();
+			StringBuffer buf = new StringBuffer(len);
+			for (int i = 0; i < len; i++) {
+				char c = urlString.charAt(i);
+				if (c == '+')
+					buf.append("%2B");//$NON-NLS-1$
+				else
+					buf.append(c);
+			}
+			urlString = buf.toString();
+		}
+		Object result = method.invoke(null, new Object[] {urlString, "UTF-8"});//$NON-NLS-1$
+		if (result != null)
+			return (String)result;
+	} catch (Exception e) {
+	}
+	//decode URL by hand
+	int len = urlString.length();
+	ByteArrayOutputStream os = new ByteArrayOutputStream(len);
+	for (int i = 0; i < len;) {
+		char c = urlString.charAt(i++);
+		if (c == '%') {
+			if (len >= i + 2) {
+				os.write(Integer.parseInt(urlString.substring(i, i + 2), 16));
+			}
+			i += 2;
+		} else {
+			os.write(c);
+		}
+	}
+	try {
+		return new String(os.toByteArray(), "UTF-8");//$NON-NLS-1$
+	} catch (UnsupportedEncodingException e) {
+		//use default encoding
+		return new String(os.toByteArray());
+	}
 }
 private static String[] getListOption(String option) {
 	String filter = options.getProperty(option);
@@ -245,7 +317,8 @@ public static PlatformConfiguration getPlatformConfiguration(URL url) throws IOE
 private static Object[] getPlatformClassLoaderPath() {
 
 	PlatformConfiguration config = getCurrentPlatformConfiguration();
-	String execBase = config.getPluginPath(RUNTIMENAME).toExternalForm();
+	PlatformConfiguration.BootDescriptor bd = config.getPluginBootDescriptor(RUNTIMENAME);
+	String execBase = bd.getPluginDirectoryURL().toExternalForm();
 	if (execBase == null)
 		execBase = getInstallURL() + RUNTIMEDIR;
 
@@ -263,8 +336,11 @@ private static Object[] getPlatformClassLoaderPath() {
 		}
 	}
 	ArrayList list = new ArrayList(5);
-	list.add("runtime.jar");
-	list.add(exportAll);
+	String[] libs = bd.getLibraries();
+	for (int i=0; i<libs.length; i++) {
+		list.add(libs[i]);
+		list.add(exportAll);
+	}
 
 	// add in the class path entries spec'd in the config.
 	for (Iterator i = list.iterator(); i.hasNext();) {
@@ -405,24 +481,25 @@ private static String[] initialize(URL pluginPathLocation/*R1.0 compatibility*/,
 
 	// if a platform location was not found in the arguments, compute one.		
 	if (baseLocation == null) {
-		// use user.dir.  If user.dir overlaps with the install dir, then make the 
-		// location be a workspace subdir of the install location.
+		// Default location for the workspace is <user.dir>/workspace/
 		baseLocation = System.getProperty("user.dir");
-		URL installURL = resolve(getInstallURL());
-		String installLocation = new File(installURL.getFile()).getAbsolutePath();
-		if (baseLocation.equals(installLocation))
-			baseLocation = new File(installLocation, WORKSPACE).getAbsolutePath();
+		if (!baseLocation.endsWith(File.separator))
+			baseLocation += File.separator;
+		baseLocation += WORKSPACE;
 	}
+	if (debugRequested)
+		System.out.println("Workspace location:\n   " + baseLocation);	
 
 	// load any debug options
 	loadOptions();
 
 	// initialize eclipse URL handling
-	PlatformURLHandlerFactory.startup(baseLocation + File.separator + META_AREA);
+	String metaPath = baseLocation + File.separator + META_AREA;
+	PlatformURLHandlerFactory.startup(metaPath);
 	PlatformURLBaseConnection.startup(getInstallURL()); // past this point we can use eclipse:/platform/ URLs
 
 	// load platform configuration and consume configuration-related arguments (must call after URL handler initialization)
-	appArgs = PlatformConfiguration.startup(appArgs, pluginPathLocation/*R1.0 compatibility*/, applicationR10/*R1.0 compatibility*/);
+	appArgs = PlatformConfiguration.startup(appArgs, pluginPathLocation/*R1.0 compatibility*/, applicationR10/*R1.0 compatibility*/, metaPath);
 
 	// create and configure platform class loader
 	loader = configurePlatformLoader();
@@ -449,8 +526,15 @@ private static void loadOptions() {
 	}
 	options = new Properties();
 	URL optionsFile;
-	if (debugOptionsFilename == null)
-		debugOptionsFilename = getInstallURL().toExternalForm() + OPTIONS;
+	if (debugOptionsFilename == null) {
+		// default options location is user.dir (install location may be r/o so
+		// is not a good candidate for a trace options that need to be updatable by
+		// by the user)
+		String userDir = System.getProperty("user.dir").replace(File.separatorChar,'/');
+		if (!userDir.endsWith("/"))
+			userDir += "/";
+		debugOptionsFilename = "file:" + userDir + OPTIONS;
+	}
 	try {
 		optionsFile = new URL(debugOptionsFilename);
 	} catch (MalformedURLException e) {
@@ -458,7 +542,7 @@ private static void loadOptions() {
 		e.printStackTrace(System.out);
 		return;
 	}
-	System.out.println("Debug-Options: " + debugOptionsFilename);
+	System.out.println("Debug-Options:\n    " + debugOptionsFilename);
 	try {
 		InputStream input = optionsFile.openStream();
 		try {
@@ -529,6 +613,12 @@ private static String[] processCommandLine(String[] args) throws Exception {
 			devClassPath = arg;
 			found = true;
 			continue;
+		}
+
+		// look for the install location. 
+		if (args[i - 1].equalsIgnoreCase(INSTALL)) {
+			found = true;
+			installLocation = arg;
 		}
 
 		// look for the platform location.  Only set it if not already set. This 
