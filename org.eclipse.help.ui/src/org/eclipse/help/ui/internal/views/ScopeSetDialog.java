@@ -164,27 +164,11 @@ public class ScopeSetDialog extends ListDialog {
     protected Control createDialogArea(Composite container) {
     	Composite listContainer = (Composite)super.createDialogArea(container);
     	createEditingButtons(listContainer);
-/*
-    	getTableViewer().setCellEditors(new CellEditor[] {
-    			new TextCellEditor(getTableViewer().getTable()) });
-    	getTableViewer().setCellModifier(new ICellModifier() {
-			public boolean canModify(Object element, String property) {
-				return true;
-			}
-
-			public Object getValue(Object element, String property) {
-				ScopeSet set = (ScopeSet)element;
-				return set.getName();
-			}
-
-			public void modify(Object element, String property, Object value) {
-				ScopeSet set = (ScopeSet)element;
-				if (value!=null)
-					set.setName(value.toString());
+    	getTableViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateButtons();
 			}
 		});
-    	getTableViewer().setColumnProperties(new String [] { "name" });
- */
     	return listContainer;
     }
     
@@ -198,7 +182,8 @@ public class ScopeSetDialog extends ListDialog {
 		composite.setData(data);
     	newButton = createButton(buttonComposite, NEW_ID, "New...", false);
        	editButton = createButton(buttonComposite, EDIT_ID, "Edit...", false);
-       	removeButton = createButton(buttonComposite, REMOVE_ID, "Remove", false);       	
+       	removeButton = createButton(buttonComposite, REMOVE_ID, "Remove", false);
+       	updateButtons();
     }
 	
 	public ScopeSet getActiveSet() {
@@ -286,6 +271,10 @@ public class ScopeSetDialog extends ListDialog {
 	private void updateButtons() {
 		IStructuredSelection ssel = (IStructuredSelection)getTableViewer().getSelection();
 		editButton.setEnabled(ssel.isEmpty()==false);
-		removeButton.setEnabled(ssel.isEmpty()==false);
+		ScopeSet set = (ScopeSet)ssel.getFirstElement();
+		removeButton.setEnabled(set!=null && !set.isDefault());
+		Button okButton = getOkButton();
+		if (okButton!=null)
+			okButton.setEnabled(set!=null);
 	}
 }

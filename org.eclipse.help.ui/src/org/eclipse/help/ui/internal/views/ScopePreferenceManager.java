@@ -49,7 +49,8 @@ public class ScopePreferenceManager extends PreferenceManager implements IHelpUI
 	    public void createPage() {
 	    	IPreferencePage page = desc.createRootPage();
 	    	setPage(page);
-	    	page.setTitle(getLabelText());
+	    	page.setTitle(desc.getLabel());
+	    	page.setImageDescriptor(desc.getImageDescriptor());
 	    	page.setDescription(desc.getDescription());
 	    }
 	}

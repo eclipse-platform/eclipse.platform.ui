@@ -1,9 +1,13 @@
-/*
- * Created on Jan 12, 2005
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.help.ui;
 
 import org.eclipse.help.ui.internal.views.ScopeSet;
@@ -15,14 +19,19 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 /**
- * @author dejan
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * Clients that contribute search scope root page to the 
+ * search engine definition must extend this class and
+ * implement <code>createScopeContents</code> method.
+ * The page will come preset with the engine name, 
+ * image and description, as well as the master switch
+ * that turns the engine on or off. When the engins master
+ * switch is set to false, the entire client composite
+ * will be hidden.
  */
 public abstract class RootScopePage extends PreferencePage implements ISearchScopePage {
 	private String engineId;
 	private Button masterButton;
+	private Control scopeContents;
 	/**
 	 * 
 	 */
@@ -46,13 +55,15 @@ public abstract class RootScopePage extends PreferencePage implements ISearchSco
 				masterValueChanged(masterButton.getSelection());
 			}
 		});
-		Control scopeContents = createScopeContents(container);
+		scopeContents = createScopeContents(container);
 		if (scopeContents!=null)
 			scopeContents.setLayoutData(new GridData(GridData.FILL_BOTH));
+		masterValueChanged(masterValue);
 		return container;
 	}
 	
 	protected void masterValueChanged(boolean value) {
+		scopeContents.setVisible(value);
 	}
 	
     public boolean performOk() {

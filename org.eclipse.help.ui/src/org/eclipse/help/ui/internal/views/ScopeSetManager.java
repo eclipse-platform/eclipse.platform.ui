@@ -36,6 +36,7 @@ public class ScopeSetManager {
 
 	public void remove(ScopeSet set) {
 		sets.remove(set);
+		set.dispose();
 	}
 
 	public void setActiveSet(ScopeSet set) {
@@ -74,6 +75,7 @@ public class ScopeSetManager {
 		IPath location = HelpUIPlugin.getDefault().getStateLocation();
 		location = location.append("scope_sets");
 		File dir = location.toFile();
+		ScopeSet defSet=null;
 		if (dir.exists() && dir.isDirectory()) {
 			File[] files = dir.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
@@ -87,12 +89,16 @@ public class ScopeSetManager {
 				if (loc != -1) {
 					ScopeSet set = new ScopeSet(name.substring(0, loc));
 					sets.add(set);
+					if (set.isDefault())
+						defSet=set;
 				}
 			}
 		}
 		if (sets.size()==1) {
 			activeSet = (ScopeSet)sets.get(0);
 		}
+		if (defSet==null)
+			sets.add(new ScopeSet());
 	}
 
 	/**
@@ -103,23 +109,20 @@ public class ScopeSetManager {
 			IDialogSettings settings = HelpUIPlugin.getDefault()
 					.getDialogSettings();
 			String name = settings.get(ACTIVE_SET);
-			if (name != null) {
-				activeSet = findSet(name);
-			}
-			else {
-				// no active sets - create the default
-				activeSet = new ScopeSet("Default");
-				activeSet.save();
-				sets.add(activeSet);
-			}
+			activeSet = findSet(name);
 		}
 		return activeSet;
 	}
-
+	// if name is not null, return the scope set with the
+	// matching name; otherwise, return the default set
 	public ScopeSet findSet(String name) {
 		for (int i = 0; i < sets.size(); i++) {
 			ScopeSet set = (ScopeSet) sets.get(i);
-			if (set.getName().equals(name))
+			if (name!=null) {
+				if (set.getName().equals(name))
+					return set;
+			}
+			else if (set.isDefault())
 				return set;
 		}
 		return null;

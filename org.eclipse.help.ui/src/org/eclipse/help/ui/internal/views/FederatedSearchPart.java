@@ -164,6 +164,9 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart, 
 		scopeSetLink.setText(set.getName());
 		scopeSetManager.setActiveSet(set);
 		updateMasters(set);
+		scopeSection.layout();
+		if (parent!=null)
+			parent.reflow();
 	}
 	
 	private void updateMasters(ScopeSet set) {
@@ -176,7 +179,7 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart, 
 				Button button = (Button)master;
 				button.setSelection(set.getEngineEnabled(ed));
 			}
-		}		
+		}
 	}
 
 	private void loadEngines(Composite container, FormToolkit toolkit) {

@@ -20,13 +20,26 @@ import org.eclipse.jface.preference.*;
  */
 public class ScopeSet {
 	public static final String SCOPE_DIR_NAME = "scope_sets";
+	private static final String KEY_DEFAULT = "__DEFAULT__";
 	private String name;
 	private PreferenceStore preferenceStore;
 	private boolean needsSaving;
+	private int defaultSet = -1;
+	
+	public ScopeSet() {
+		this("Default");
+		defaultSet = 1;
+	}
 	
 	public ScopeSet(String name) {
 		this.needsSaving = true;
 		this.name = name;
+	}
+	
+	public boolean isDefault() {
+		if (defaultSet==1)
+			return true;
+		return getPreferenceStore().getBoolean(KEY_DEFAULT);
 	}
 
 	public ScopeSet(ScopeSet set) {
@@ -45,8 +58,9 @@ public class ScopeSet {
 			preferenceStore = new PreferenceStore(getFileName(this.name));
 			try {
 				File file = new File(getFileName(this.name));
-				if (file.exists())
+				if (file.exists()) {
 					preferenceStore.load();
+				}
 			}
 			catch (IOException e) {
 				//TODO need to handle this
@@ -71,6 +85,9 @@ public class ScopeSet {
 			FileInputStream fis = new FileInputStream(file);
 			getPreferenceStore();
 			preferenceStore.load(fis);
+			//when we clone the defult set, we should
+			//clear the default marker
+			preferenceStore.setValue(KEY_DEFAULT, false);
 			fis.close();
 		}
 		catch (IOException e) {
@@ -111,8 +128,11 @@ public class ScopeSet {
 	}
 
 	public void save() {
-		if (preferenceStore!=null && (preferenceStore.needsSaving() || needsSaving)) {
+		getPreferenceStore();
+		if (preferenceStore.needsSaving() || needsSaving) {
 			try {
+				if (defaultSet != -1)
+					preferenceStore.setValue(KEY_DEFAULT, defaultSet>0);
 				preferenceStore.save();
 				needsSaving = false;
 			}
@@ -121,12 +141,14 @@ public class ScopeSet {
 			}
 		}
 	}
-	
+
 	public boolean getEngineEnabled(EngineDescriptor desc) {
 		IPreferenceStore store = getPreferenceStore();
 		String key = getMasterKey(desc.getId());
 		if (store.contains(key))
 			return store.getBoolean(key);
+		else
+			store.setValue(key, desc.isEnabled());
 		return desc.isEnabled();
 	}
 	public void setEngineEnabled(EngineDescriptor desc, boolean value) {
