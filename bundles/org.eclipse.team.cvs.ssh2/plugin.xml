@@ -8,7 +8,7 @@
    name="%pluginName"
    version="3.0.0"
    provider-name="%providerName"
-   class="org.eclipse.team.ccvs.ssh2.CVSSSH2Plugin">
+   class="org.eclipse.team.internal.ccvs.ssh2.CVSSSH2Plugin">
 
 <!-- =================================================================================== -->
 <!-- Runtime Libraries                                                                   -->
@@ -41,7 +41,7 @@
 <!-- =================================================================================== -->
 <extension id="ssh2" point="org.eclipse.team.cvs.core.connectionmethods">
 	<adapter>
-		<run class="org.eclipse.team.ccvs.ssh2.CVSSSH2Method">
+		<run class="org.eclipse.team.internal.ccvs.ssh2.CVSSSH2Method">
 			<parameter name="trace" value="false"/>
 		</run>
 	</adapter>
@@ -54,7 +54,7 @@
 	<page
 		name="%ssh2PreferencePage.name"
 		category="org.eclipse.team.cvs.ui.CVSPreferences"
-		class="org.eclipse.team.ccvs.ssh2.CVSSSH2PreferencePage"
+		class="org.eclipse.team.internal.ccvs.ssh2.CVSSSH2PreferencePage"
 		id="org.eclipse.team.cvs.ssh2.CVSSSH2Preferences">
 	</page>
 </extension>

@@ -49,7 +49,7 @@ public class CVSSSH2Plugin extends AbstractUIPlugin {
 	}
 	
 	public void startup() throws CoreException {
-		Policy.localize("org.eclipse.team.ccvs.ssh2.messages"); //$NON-NLS-1$
+		Policy.localize("org.eclipse.team.internal.ccvs.ssh2.messages"); //$NON-NLS-1$
 		super.startup();		
 	}
 }
