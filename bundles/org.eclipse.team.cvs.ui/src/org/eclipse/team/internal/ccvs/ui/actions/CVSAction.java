@@ -33,6 +33,7 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
 import org.eclipse.ui.*;
+import org.eclipse.ui.ide.IDE;
 
 /**
  * CVSAction is the common superclass for all CVS actions. It provides
@@ -443,7 +444,10 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
 					boolean confirm = option == ICVSUIConstants.OPTION_PROMPT;
-					okToContinue[0] = PlatformUI.getWorkbench().saveAllEditors(confirm);
+					IResource[] selectedResources = getSelectedResources();
+					if (selectedResources != null) {
+						okToContinue[0] = IDE.saveAllEditors(selectedResources, confirm);
+					}
 				}
 			});
 		} 
