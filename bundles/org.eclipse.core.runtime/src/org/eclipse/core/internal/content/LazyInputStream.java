@@ -107,7 +107,7 @@ public class LazyInputStream extends InputStream {
 		ensureAvailable(1);
 		if (bufferSize <= offset)
 			return -1;
-		byte nextByte = blocks[offset / blockCapacity][offset % blockCapacity];
+		int nextByte = 0xFF & blocks[offset / blockCapacity][offset % blockCapacity];
 		offset++;
 		return nextByte;
 	}

@@ -47,6 +47,8 @@ public class LazyInputStreamTest extends TestCase {
 	}
 
 	private final static String DATA = "012345678901234567890123456789";
+	
+	private final static int[] VARIOUS_INTS = {0xFF, 0xFE,  0xA0, 0x7F, 0x70, 0x10, 0x00};
 
 	public LazyInputStreamTest(String name) {
 		super(name);
@@ -118,9 +120,28 @@ public class LazyInputStreamTest extends TestCase {
 		assertEquals("2.7", 0, stream.getOffset());
 		assertEquals("2.8", 30, stream.available());
 	}
+	
+	public void testContentHasEOF() throws IOException {
+		byte[] changedData = DATA.getBytes();
+		changedData[0] = (byte) 0xFF;
+		ByteArrayInputStream underlying = new ByteArrayInputStream(changedData);
+		OpenLazyInputStream stream = new OpenLazyInputStream(underlying, 7);
+		int c = stream.read();
+		assertTrue("1.0", -1 != c);
+		assertEquals("2.0", 0xFF, c);
+	}
+	
+	public void testVariedContent() throws IOException {
+		byte [] contents = new byte[VARIOUS_INTS.length];
+		for (int i = 0; i < contents.length; i++)
+			contents[i] = (byte) VARIOUS_INTS[i];
+		ByteArrayInputStream underlying = new ByteArrayInputStream(contents);
+		OpenLazyInputStream stream = new OpenLazyInputStream(underlying, 7);
+		for (int i = 0; i < VARIOUS_INTS.length; i++)
+			assertEquals("1.0." + i, VARIOUS_INTS[i], stream.read());
+	}	
 
 	public static Test suite() {
 		return new TestSuite(LazyInputStreamTest.class);
-	}
-
+	}	
 }
