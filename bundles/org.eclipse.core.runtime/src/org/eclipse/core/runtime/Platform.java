@@ -65,6 +65,35 @@ public final class Platform {
 	 * <code>System.currentTimeMillis()</code> when the platform was started.
  	 */
 	public static final String OPTION_STARTTIME = PI_RUNTIME + "/starttime"; //$NON-NLS-1$
+	
+	/**
+	 * Name of a preference for configuring the performance level for this system.
+	 *
+	 * <p>
+	 * This value can be used by all components to customize features to suit the 
+	 * speed of the user's machine.  The platform job manager uses this value to make
+	 * scheduling decisions about background jobs.
+	 * </p>
+	 * @return a value between MIN_PERFORMANCE and MAX_PERFORMANCE
+	 * @see #MIN_PERFORMANCE
+	 * @see #MAX_PERFORMANCE
+	 * @since 3.0
+	 */
+	public static final String PREF_PLATFORM_PERFORMANCE = "runtime.performance"; //$NON-NLS-1$
+
+	/** 
+	 * Constant (value 1) indicating the minimum allowed value for the 
+	 * <code>PREF_PLATFORM_PERFORMANCE</code> preference setting.
+	 * @since 3.0
+	 */
+	public static final int MIN_PERFORMANCE = 1;
+
+	/** 
+	 * Constant (value 3) indicating the maximum allowed value for the 
+	 * <code>PREF_PLATFORM_PERFORMANCE</code> preference setting.
+	 * @since 3.0
+	 */
+	public static final int MAX_PERFORMANCE = 3;
 
 	/** 
 	 * Status code constant (value 1) indicating a problem in a plug-in
