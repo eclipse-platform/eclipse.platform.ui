@@ -21,6 +21,12 @@ public class ExpandModules extends Command {
 		return "expand-modules"; //$NON-NLS-1$
 	}
 
+	protected ICVSResource[] computeWorkResources(Session session, LocalOption[] localOptions,
+		String[] arguments) throws CVSException {
+			
+		return new ICVSResource[0];
+	}
+	
 	/*
 	 * @see Command#sendLocalResourceState(Session, GlobalOption[], LocalOption[], ICVSResource[], IProgressMonitor)
 	 */

@@ -98,6 +98,13 @@ public interface ICVSProvider {
 	 */
 	public boolean isKnownRepository(String location);
 	
+	/**
+	 * Answer the list of directories that a checkout of the given resources would expand to.
+	 * In other words, the returned strings represent the root paths that the given resources would 
+	 * be loaded into.
+	 */
+	public String[] getExpansions(ICVSRemoteFolder[] resources, IProgressMonitor monitor) throws CVSException;
+	
 	/** 
 	 * Return a list of the know repository locations
 	 */

@@ -218,7 +218,10 @@ public class Session {
 	}
 
 	/**
-	 * Return the list of module expansions communicated from the server
+	 * Return the list of module expansions communicated from the server.
+	 * 
+	 * The modules expansions are typically a directory path of length 1
+	 * but can be of greater length on occasion. 
 	 */
 	public String[] getModuleExpansions() {
 		if (expansions == null) return new String[0];

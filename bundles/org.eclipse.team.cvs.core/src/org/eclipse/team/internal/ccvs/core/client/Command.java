@@ -638,7 +638,7 @@ public abstract class Command {
 	 * @param option the option string to search for
 	 * @return the first element matching the option string, or null if none
 	 */
-	protected static Option findOption(Option[] array, String option) {
+	public static Option findOption(Option[] array, String option) {
 		for (int i = 0; i < array.length; ++i) {
 			// FIXME: can be optimized using identity
 			if (array[i].option.equals(option)) return array[i];

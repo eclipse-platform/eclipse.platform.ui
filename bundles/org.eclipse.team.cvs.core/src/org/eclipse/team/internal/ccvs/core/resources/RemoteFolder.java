@@ -389,6 +389,13 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	}
 	
 	/**
+	 * @see ICVSRemoteFolder#isExpandable()
+	 */
+	public boolean isExpandable() {
+		return true;
+	}
+	
+	/**
 	 * @see ICVSResource#isFolder()
 	 */
 	public boolean isFolder() {

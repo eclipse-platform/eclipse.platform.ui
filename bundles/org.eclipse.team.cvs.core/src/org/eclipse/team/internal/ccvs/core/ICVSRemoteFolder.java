@@ -37,4 +37,13 @@ public interface ICVSRemoteFolder extends ICVSRemoteResource {
 	 *     Command.DO_NOT_RECURSE
 	 */
 	public LocalOption[] getLocalOptions();
+	
+	/**
+	 * Indicates whether the remote folder can be expanded. 
+	 * 
+	 * This is a temporary (hopefully) means of indicating certain types of folders 
+	 * (i.e. module definitions) that are not expandable due to lack of mdoule expansion.
+	 * They can still be checked out.
+	 */
+	public boolean isExpandable();
 }

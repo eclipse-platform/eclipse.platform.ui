@@ -50,6 +50,7 @@ public class Checkout extends Command {
 		// We can determine the local directories using either the -d option or the module expansions
 		Option dOption = findOption(localOptions, "-d");  //$NON-NLS-1$
 		if (dOption != null) {
+			// XXX Should we append the expansions to the -d argument?
 			return new ICVSResource[] {session.getLocalRoot().getFolder(dOption.argument)};
 		}
 		String[] modules = session.getModuleExpansions();
@@ -102,7 +103,7 @@ public class Checkout extends Command {
 			for (int i=0; i<resources.length; i++) {
 				resources[i].accept(visitor);
 			}
-		}	
+		}
 	}
 	
 	/**
@@ -118,8 +119,8 @@ public class Checkout extends Command {
 		if (status.getCode() == CVSStatus.SERVER_ERROR)
 			return status;
 		
-		// Do not shorten paths if there is more than one expansion
-		if (session.getModuleExpansions().length > 1) {
+		// Do not shorten paths if -d is specified
+		if (findOption(localOptions, "-d") == null) { //$NON-NLS-1$
 			if ( ! DO_NOT_SHORTEN.isElementOf(localOptions)) {
 				LocalOption[] newLocalOptions = new LocalOption[localOptions.length + 1];
 				newLocalOptions[0] = DO_NOT_SHORTEN;
@@ -128,7 +129,14 @@ public class Checkout extends Command {
 			}
 		}
 		
-		return super.execute(session, globalOptions, localOptions, arguments, listener, Policy.subMonitorFor(monitor, 90));
+		// Execute the checkout command
+		status = super.execute(session, globalOptions, localOptions, arguments, listener,  Policy.subMonitorFor(monitor, 90));
+		if (status.getCode() == CVSStatus.SERVER_ERROR)
+			return status;
+		
+		// Make the checked out resources known to the workbench
+		
+		return status;
 	}
 	
 	/**

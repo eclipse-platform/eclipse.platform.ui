@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -44,18 +45,14 @@ public class AddToWorkspaceAction extends TeamAction {
 			while (elements.hasNext()) {
 				Object next = elements.next();
 				if (next instanceof ICVSRemoteFolder) {
-					if (!Checkout.ALIAS.isElementOf(((ICVSRemoteFolder)next).getLocalOptions())) {
-						resources.add(next);
-					}
+					resources.add(next);
 					continue;
 				}
 				if (next instanceof IAdaptable) {
 					IAdaptable a = (IAdaptable) next;
 					Object adapter = a.getAdapter(ICVSRemoteFolder.class);
 					if (adapter instanceof ICVSRemoteFolder) {
-						if (!Checkout.ALIAS.isElementOf(((ICVSRemoteFolder)adapter).getLocalOptions())) {
-							resources.add(adapter);
-						}
+						resources.add(adapter);
 						continue;
 					}
 				}
@@ -75,40 +72,26 @@ public class AddToWorkspaceAction extends TeamAction {
 				try {
 					ICVSRemoteFolder[] folders = getSelectedRemoteFolders();
 					boolean yesToAll = false;
-					List targetProjects = new ArrayList();
-					List targetFolders = new ArrayList();
-					for (int i = 0; i < folders.length; i++) {
-						String name = folders[i].getName();
+					String [] expansions = CVSProviderPlugin.getProvider().getExpansions(folders, Policy.subMonitorFor(monitor, 10));
+					for (int i = 0; i < expansions.length; i++) {
+						String name = new Path(expansions[i]).segment(0);
 						IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 						if (!yesToAll) {
 							switch (confirmOverwrite(project)) {
 								// yes
 								case 0:
-									targetFolders.add(folders[i]);
-									targetProjects.add(project);
-									break;
-								// no
-								case 1:
 									break;
 								// yes to all
-								case 2:
+								case 1:
 									yesToAll = true;
-									targetFolders.add(folders[i]);
-									targetProjects.add(project);
 									break;
 								// cancel
-								case 3:
 								default:
 									return;
 							}
-						} else {
-							targetFolders.add(folders[i]);
-							targetProjects.add(project);
 						}
 					}
-					if (targetFolders.size() > 0) {
-						CVSProviderPlugin.getProvider().checkout((ICVSRemoteFolder[]) targetFolders.toArray(new ICVSRemoteFolder[targetFolders.size()]), (IProject[])targetProjects.toArray(new IProject[targetProjects.size()]), monitor);
-					}
+					CVSProviderPlugin.getProvider().checkout(folders, null, Policy.subMonitorFor(monitor, 90));
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
@@ -120,8 +103,7 @@ public class AddToWorkspaceAction extends TeamAction {
 		final MessageDialog dialog = 
 			new MessageDialog(shell, Policy.bind("AddToWorkspaceAction.confirmOverwrite"), null, Policy.bind("AddToWorkspaceAction.thisResourceExists", project.getName()), MessageDialog.QUESTION, 
 				new String[] {
-					IDialogConstants.YES_LABEL, 
-					IDialogConstants.NO_LABEL, 
+					IDialogConstants.YES_LABEL,
 					IDialogConstants.YES_TO_ALL_LABEL, 
 					IDialogConstants.CANCEL_LABEL}, 
 				0);

@@ -5,6 +5,7 @@ package org.eclipse.team.internal.ccvs.ui.model;
  * All Rights Reserved.
  */
  
+import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
@@ -25,6 +26,9 @@ public class RemoteContentProvider extends WorkbenchContentProvider {
 		// the + box will always appear, but then disappear
 		// if not needed after you first click on it.
 		if (element instanceof ICVSRemoteResource) {
+			if (element instanceof ICVSRemoteFolder) {
+				return ((ICVSRemoteFolder)element).isExpandable();
+			}
 			return ((ICVSRemoteResource)element).isContainer();
 		}
 		return true;

@@ -37,6 +37,7 @@ public class RemoteModule extends RemoteFolder {
 	private String label;
 	private ICVSRemoteResource[] referencedModules;
 	private LocalOption[] localOptions;
+	private boolean expandable;
 	
 	public static RemoteModule[] getRemoteModules(ICVSRepositoryLocation repository, CVSTag tag, IProgressMonitor monitor) throws TeamException {
 		
@@ -74,7 +75,6 @@ public class RemoteModule extends RemoteFolder {
 			// Read the options associated with the module
 			List localOptionsList = new ArrayList();
 			String next = tokenizer.nextToken();
-			String localName = null;
 			while (next.charAt(0) == '-') {
 				switch (next.charAt(1)) {
 					case 'a': // alias
@@ -84,7 +84,7 @@ public class RemoteModule extends RemoteFolder {
 						localOptionsList.add(Checkout.DO_NOT_RECURSE);
 						break;
 					case 'd': // directory
-						localName = tokenizer.nextToken();
+						localOptionsList.add(Checkout.makeDirectoryNameOption(tokenizer.nextToken()));
 						break;
 					case 'e':
 					case 'i':
@@ -115,11 +115,11 @@ public class RemoteModule extends RemoteFolder {
 					expansions.add(tokenizer.nextToken());
 					
 				moduleAliases.put(moduleName, (String[]) expansions.toArray(new String[expansions.size()]));
-				modules.put(moduleName, new RemoteModule(moduleName, null, null, repository, null, localOptions, tag, true));
+				modules.put(moduleName, new RemoteModule(moduleName, null, repository, null, localOptions, tag, true));
 
 			} else {
 				
-				// The module definition must have a leading directory which can be followed by some files
+				// The module definition may have a leading directory which can be followed by some files
 				if (!(next.charAt(0) == '&')) {
 					String directory = next;
 					List files = new ArrayList();
@@ -128,7 +128,7 @@ public class RemoteModule extends RemoteFolder {
 						if ((next.charAt(0) != '&'))
 							files.add(next);
 					}
-					RemoteModule remoteModule = new RemoteModule(moduleName, null, localName, repository, new Path(directory), localOptions, tag, ! files.isEmpty());
+					RemoteModule remoteModule = new RemoteModule(moduleName, null, repository, new Path(directory), localOptions, tag, ! files.isEmpty());
 					modules.put(moduleName, remoteModule);
 					if ( ! files.isEmpty()) {
 						ICVSRemoteResource[] children = new ICVSRemoteResource[files.size()];
@@ -138,7 +138,7 @@ public class RemoteModule extends RemoteFolder {
 						}
 					}
 				} else {
-					modules.put(moduleName, new RemoteModule(moduleName, null, localName, repository, null, localOptions, tag, true));
+					modules.put(moduleName, new RemoteModule(moduleName, null, repository, null, localOptions, tag, true));
 				}
 				
 				// Record any referenced modules so that can be cross-referenced below
@@ -160,35 +160,37 @@ public class RemoteModule extends RemoteFolder {
 			RemoteModule module = (RemoteModule)modules.get(moduleName);
 			String[] expansion = (String[])moduleAliases.get(moduleName);
 			List referencedFolders = new ArrayList();
-			boolean acceptable = true;
+			boolean expandable = true;
 			for (int i = 0; i < expansion.length; i++) {
 				if (expansion[i].charAt(0) == '!') {
 					// XXX Unsupported for now
-					acceptable = false;
+					expandable = false;
 				} else {
 					IPath path = new Path(expansion[i]);
 					if (path.segmentCount() > 1) {
 						// XXX Unsupported for now
-						acceptable = false;
+						expandable = false;
 					} else {
 						RemoteModule child = (RemoteModule)modules.get(expansion[i]);
 						if (child == null) {
 							referencedFolders.add(new RemoteFolder(null, repository, path, tag));
 						} else {
-							acceptable = false;
 							// Need to check if the child is a module alias
-//							if (child.isAlias()) {
-//								// XXX Unsupported for now
-//							} else {
-//								 referencedFolders.add(child);
-//							}
+							if (child.isAlias()) {
+								// XXX Unsupported for now
+								expandable = false;
+							} else {
+								 referencedFolders.add(child);
+							}
 						}
 					}
 				}
 			}
-			module.setChildren((ICVSRemoteResource[]) referencedFolders.toArray(new ICVSRemoteResource[referencedFolders.size()]));
-			if (acceptable)
-				acceptableModules.add(module);
+			if (expandable) {
+				module.setChildren((ICVSRemoteResource[]) referencedFolders.toArray(new ICVSRemoteResource[referencedFolders.size()]));
+			} else {
+				module.setExpandable(false);
+			}
 		}
 		
 		// Third pass: Cross reference remote modules where necessary
@@ -199,32 +201,43 @@ public class RemoteModule extends RemoteFolder {
 			if (children != null) {
 				RemoteModule module = (RemoteModule)modules.get(moduleName);
 				List referencedFolders = new ArrayList();
+				boolean expandable = true;
 				for (int i = 0; i < children.length; i++) {
 					RemoteModule child = (RemoteModule)modules.get(children[i].substring(1));
 					if (child.isAlias()) {
 						// Include alias children in-line
-						referencedFolders.addAll(Arrays.asList(child.getChildren()));
+						expandable = false;
+//						referencedFolders.addAll(Arrays.asList(child.getChildren()));
 					} else {
-						referencedFolders.add(child);
+						// XXX not expandable if child has local directory option (-d)
+						if (Command.findOption(child.getLocalOptions(), "-d") != null) {
+							expandable = false;
+						} else {
+							referencedFolders.add(child);
+						}
 					}
 				}
-				module.setReferencedModules((ICVSRemoteResource[]) referencedFolders.toArray(new ICVSRemoteResource[referencedFolders.size()]));
+				if (expandable) {
+					module.setReferencedModules((ICVSRemoteResource[]) referencedFolders.toArray(new ICVSRemoteResource[referencedFolders.size()]));
+				} else {
+					module.setExpandable(false);
+				}
 			}
 		}
 						
-		// return (RemoteModule[])modules.values().toArray(new RemoteModule[modules.size()]);
-		return (RemoteModule[])acceptableModules.toArray(new RemoteModule[acceptableModules.size()]);
+		return (RemoteModule[])modules.values().toArray(new RemoteModule[modules.size()]);
 	}
 		
-	public RemoteModule(String label, RemoteFolder parent, String localName, ICVSRepositoryLocation repository, IPath repositoryRelativePath, LocalOption[] localOptions, CVSTag tag, boolean isStatic) {
+	public RemoteModule(String label, RemoteFolder parent, ICVSRepositoryLocation repository, IPath repositoryRelativePath, LocalOption[] localOptions, CVSTag tag, boolean isStatic) {
 		super(parent, 
-			localName == null ? label : localName, 
+			label, 
 			repository, 
 			repositoryRelativePath == null ? new Path(FolderSyncInfo.VIRTUAL_DIRECTORY) : repositoryRelativePath, 
 			tag, 
 			isStatic);
 		this.localOptions = localOptions;
 		this.label = label;
+		this.expandable = true;
 	}
 	
 	public LocalOption[] getLocalOptions() {
@@ -234,6 +247,9 @@ public class RemoteModule extends RemoteFolder {
 	 * Override of inherited getMembers in order to combine the physical members with any referenced modules
 	 */
 	public ICVSRemoteResource[] getMembers(CVSTag tagName, IProgressMonitor monitor) throws TeamException {
+		
+		if ( ! expandable) return new ICVSRemoteResource[0];
+		
 		ICVSRemoteResource[] physicalChildren;
 		if ( folderInfo.getIsStatic()) {
 			physicalChildren = getChildren();
@@ -277,6 +293,17 @@ public class RemoteModule extends RemoteFolder {
 	
 	public boolean isAlias() {
 		return Checkout.ALIAS.isElementOf(localOptions);
+	}
+	
+	/**
+	 * @see ICVSRemoteFolder#isExpandable()
+	 */
+	public boolean isExpandable() {
+		return expandable;
+	}
+	
+	private void setExpandable(boolean expandable) {
+		this.expandable = expandable;
 	}
 	
 }
