@@ -682,12 +682,39 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		IMemento layoutMemento = memento.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
 		if (layoutMemento != null) {
 			coolBarLayout.restoreState(layoutMemento);
-			int itemOrder[] = new int[coolBarLayout.itemSizes.length];
-			for (int i=0; i < coolBarLayout.itemSizes.length; i++) {
-				CoolBarContributionItem cbItem = (CoolBarContributionItem)find((String)coolBarLayout.items.get(i));
-				CoolItem coolItem = findCoolItem(cbItem);
-				int index = coolBar.indexOf(coolItem);
-				itemOrder[i] = index;
+			int savedNumCoolItems = coolBarLayout.itemSizes.length;
+			int currentNumCoolItems = coolBar.getItemSizes().length;
+			int itemOrder[] = new int[currentNumCoolItems];
+			int foundIndexes[] = new int[currentNumCoolItems];
+			for (int i=0; i<foundIndexes.length; i++) {
+				foundIndexes[i]=-1;
+			}
+			for (int i=0; i<itemOrder.length; i++) {
+				itemOrder[i]=-1;
+			}
+			for (int i=0; i < currentNumCoolItems; i++) {
+				CoolItem coolItem = null;
+				if (i < savedNumCoolItems) {
+					CoolBarContributionItem cbItem = (CoolBarContributionItem)find((String)coolBarLayout.items.get(i));
+					coolItem = findCoolItem(cbItem);
+				}
+				if (coolItem != null) {
+					int index = coolBar.indexOf(coolItem);
+					itemOrder[i] = index;
+					foundIndexes[index] = 0;
+				}
+			}
+			for (int i=0; i<foundIndexes.length; i++) {
+				if (foundIndexes[i] == -1) {
+					for (int j=0; j<itemOrder.length; j++) {
+						if (itemOrder[j] == -1) {
+							itemOrder[j] = i;
+							break;
+						} else {
+							continue;
+						}
+					}
+				}
 			}
 			coolBar.setItemLayout(itemOrder, coolBarLayout.itemWrapIndices, coolBar.getItemSizes());
 			updateItemSizes();
