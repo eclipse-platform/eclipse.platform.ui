@@ -130,6 +130,10 @@ class LightweightDecoratorManager {
 	 * the enabled lightweight decorators. 
 	 */
 	Image decorateWithOverlays(Image image, Object element, Object adapted) {
+		
+		//Do not try to do anything if there is no source
+		if(image == null)
+			return image;
 
 		LightweightDecoratorDefinition[] decorators = getDecoratorsFor(element);
 		LightweightDecoratorDefinition[] adaptedDecorators;
