@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -64,10 +65,14 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 	private final static String SAVE_SETTING = "WorkbenchPreferenceDialog.save"; //$NON-NLS-1$
 	
 	/**
-	 * The extension for prefernces files
+	 * The extension for preferences files
 	 */
-	private final static String[] PREFERENCE_EXT = new String[] {"*.epf", "*.*"};
+	private final static String PREFERENCE_EXT = "epf"; //$NON-NLS-1$
 	
+	/**
+	 * The extensions for the file dialogs
+	 */
+	private final static String[] DIALOG_PREFERENCE_EXTENSIONS = new String[] {"*."+PREFERENCE_EXT, "*.*"}; //$NON-NLS-2$ //$NON-NLS-1$
 
 	/**
 	 * Creates a new preference dialog under the control of the given preference 
@@ -122,16 +127,23 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 		String lastFilename = WorkbenchPlugin.getDefault().getDialogSettings().get(LOAD_SETTING);
 		FileDialog d = new FileDialog(getShell(), SWT.OPEN);
 		d.setFileName(lastFilename);
-		d.setFilterExtensions(PREFERENCE_EXT);
+		d.setFilterExtensions(DIALOG_PREFERENCE_EXTENSIONS);
 		String filename = d.open();
 		if (filename == null)
 			return;
+		// Append the default filename if none was specifed	
+		IPath path = new Path(filename);
+		if (path.getFileExtension() == null) {
+			path = path.addFileExtension(PREFERENCE_EXT);			
+			filename = path.toOSString();
+		}
+
 		WorkbenchPlugin.getDefault().getDialogSettings().put(LOAD_SETTING, filename);
 			
 		// Verify the file
-		IPath path = new Path(filename);
 		IStatus status = Preferences.validatePreferenceVersions(path);		
-		if (!status.isOK()) {
+		if (status.getSeverity() == IStatus.ERROR) {
+			// Show the error and about
 			ErrorDialog.openError(
 				getShell(), 
 				WorkbenchMessages.getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
@@ -139,7 +151,16 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 				status);
 			return;	
 		}
-		
+		if (status.getSeverity() == IStatus.WARNING) {
+			// Show the warning and give the option to continue
+			int result = PreferenceErrorDialog.openError(
+				getShell(), 
+				WorkbenchMessages.getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
+				WorkbenchMessages.format("WorkbenchPreferenceDialog.verifyWarningMessage", new Object[]{filename}), //$NON-NLS-1$
+				status);
+			if (result != Dialog.OK)
+				return;	
+		}
 		// Load file
 		try {
 			Preferences.importPreferences(path);
@@ -169,11 +190,27 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 		String lastFilename = WorkbenchPlugin.getDefault().getDialogSettings().get(SAVE_SETTING);
 		FileDialog d = new FileDialog(getShell(), SWT.SAVE);
 		d.setFileName(lastFilename);
-		d.setFilterExtensions(PREFERENCE_EXT);
+		d.setFilterExtensions(DIALOG_PREFERENCE_EXTENSIONS);
 		String filename = d.open();
 		if (filename == null)
 			return;
+		// Append the default filename if none was specifed	
+		IPath path = new Path(filename);
+		if (path.getFileExtension() == null) {
+			path = path.addFileExtension(PREFERENCE_EXT);			
+			filename = path.toOSString();
+		}
+			
 		WorkbenchPlugin.getDefault().getDialogSettings().put(SAVE_SETTING, filename);
+		
+		// See if the file already exists
+		if(path.toFile().exists()) {
+			if(!MessageDialog.openConfirm(
+				getShell(),
+				WorkbenchMessages.getString("WorkbenchPreferenceDialog.saveTitle"), //$NON-NLS-1$
+				WorkbenchMessages.format("WorkbenchPreferenceDialog.existsErrorMessage", new Object[]{filename}))) //$NON-NLS-1$
+					return;
+		}			
 
 		// Save all the pages and give them a chance to abort
 		Iterator nodes = getPreferenceManager().getElements(PreferenceManager.PRE_ORDER).iterator();
@@ -187,7 +224,6 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 		}
 
 		// Save to file
-		IPath path = new Path(filename);
 		try {
 			Preferences.exportPreferences(path); 
 		} catch (CoreException e) {
