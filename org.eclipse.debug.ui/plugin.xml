@@ -1,663 +1,674 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- File written by PDE 1.0 -->
 <plugin
    id="org.eclipse.debug.ui"
    name="%pluginName"
    version="2.0.0"
    provider-name="Object Technology International, Inc."
    class="org.eclipse.debug.internal.ui.DebugUIPlugin">
-<!-- Required plugins -->
-<requires>
-   <import plugin="org.apache.xerces"/>
-   <import plugin="org.eclipse.core.resources"/>
-   <import plugin="org.eclipse.ui"/>
-   <import plugin="org.eclipse.debug.core"/>
-</requires>
 
 <!-- Runtime -->
-<runtime>
-   <library name="dtui.jar">
-      <export name="*"/>
-   </library>
-</runtime>
+   <runtime>
+      <library name="dtui.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+<!-- Required plugins -->
+   <requires>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.debug.core"/>
+   </requires>
+
 
 <!-- Extension points -->
-<extension-point id="debugModelPresentations" name="%DebugModelPresentationExtensionName"/>
-<extension-point id="launchConfigurationShortcuts" name="%LaunchConfigurationShortcutName"/>
-<extension-point id="launchConfigurationTabGroups" name="%LaunchConfigurationTabGroupExtensionName"/>
-<extension-point id="launchConfigurationTypeImages" name="%LaunchConfigurationTypeImageExtensionName"/>
-<extension-point id="debugActionGroups" name="%DebugActionGroupsExtensionName"/>
+   <extension-point id="debugModelPresentations" name="%DebugModelPresentationExtensionName"/>
+   <extension-point id="launchConfigurationShortcuts" name="%LaunchConfigurationShortcutName"/>
+   <extension-point id="launchConfigurationTabGroups" name="%LaunchConfigurationTabGroupExtensionName"/>
+   <extension-point id="launchConfigurationTypeImages" name="%LaunchConfigurationTypeImageExtensionName"/>
+   <extension-point id="debugActionGroups" name="%DebugActionGroupsExtensionName"/>
 
 <!-- Extensions -->
-<extension
-      point="org.eclipse.ui.perspectives">
-   <perspective
-         name="%DebugPerspective.name"
-         icon="icons/full/cview16/debug_persp.gif"
-         class="org.eclipse.debug.internal.ui.DebugPerspectiveFactory"
-         id="org.eclipse.debug.ui.DebugPerspective">
-   </perspective>
-</extension>
-<extension
-      point="org.eclipse.ui.propertyPages">
-   <page
-         objectClass="org.eclipse.core.resources.IResource"
-         name="%LaunchConfigurationTypePropertyPage.name"
-         class="org.eclipse.debug.internal.ui.LaunchConfigurationTypePropertyPage"
-         id="org.eclipse.debug.internal.ui.LaunchConfigurationTypePropertyPage"
-         adaptable="true">
-   </page>
-</extension>
-<extension
-      point="org.eclipse.ui.views">
-   <category
-         name="%DebugViewsCategory.name"
-         id="org.eclipse.debug.ui">
-   </category>
-   <view
-         name="%DebugView.name"
-         icon="icons/full/cview16/debug_view.gif"
-         category="org.eclipse.debug.ui"
-         class="org.eclipse.debug.internal.ui.views.LaunchView"
-         id="org.eclipse.debug.ui.DebugView">
-   </view>
-   <view
-         name="%BreakpointsView.name"
-         icon="icons/full/cview16/breakpoint_view.gif"
-         category="org.eclipse.debug.ui"
-         class="org.eclipse.debug.internal.ui.views.BreakpointsView"
-         id="org.eclipse.debug.ui.BreakpointView">
-   </view>
-   <view
-         name="%VariablesView.name"
-         icon="icons/full/cview16/variable_view.gif"
-         category="org.eclipse.debug.ui"
-         class="org.eclipse.debug.internal.ui.views.VariablesView"
-         id="org.eclipse.debug.ui.VariableView">
-   </view>
-   <view
-         name="%ExpressionView.name"
-         icon="icons/full/cview16/watchlist_view.gif"
-         category="org.eclipse.debug.ui"
-         class="org.eclipse.debug.internal.ui.views.ExpressionView"
-         id="org.eclipse.debug.ui.ExpressionView">
-   </view>   
-   <view
-         name="%ConsoleView.name"
-         icon="icons/full/cview16/console_view.gif"
-         category="org.eclipse.debug.ui"
-         class="org.eclipse.debug.internal.ui.views.ConsoleView"
-         id="org.eclipse.debug.ui.ConsoleView">
-   </view>
-</extension>
-<extension
-      point="org.eclipse.ui.preferencePages">
-   <page
-         name="%DebugPreferencePage.name"
-         class="org.eclipse.debug.internal.ui.DebugPreferencePage"
-         id="org.eclipse.debug.ui.DebugPreferencePage">
-   </page>
-   <page
-         name="%ConsolePreferencePage.name"
-         category="org.eclipse.debug.ui.DebugPreferencePage"
-         class="org.eclipse.debug.internal.ui.ConsolePreferencePage"
-         id="org.eclipse.debug.ui.ConsolePreferencePage">
-   </page>
-   <page
-         name="%LaunchConfigurationTypesPreferencePage.name"
-         category="org.eclipse.debug.ui.DebugPreferencePage"
-         class="org.eclipse.debug.internal.ui.LaunchConfigurationTypesPreferencePage"
-         id="org.eclipse.debug.ui.LaunchConfigurationTypesPreferencePage">
-   </page>
-   <page
-         name="%LaunchHistoryPreferencePage.name"
-         category="org.eclipse.debug.ui.DebugPreferencePage"
-         class="org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistoryPreferencePage"
-         id="org.eclipse.debug.ui.LaunchHistoryPreferencePage">
-   </page>
-    <page
-         name="%DebugActionGroupsPreferencePage.name"
-         category="org.eclipse.debug.ui.DebugPreferencePage"
-         class="org.eclipse.debug.internal.ui.DebugActionGroupsPreferencePage"
-         id="org.eclipse.debug.ui.DebugActionGroupsPreferencePage">
-   </page>     
-</extension>
-<extension
-      point="org.eclipse.ui.actionSets">
-   <actionSet
-         label="%DebugActionSet.label"
-         visible="false"
-         id="org.eclipse.debug.ui.debugActionSet">
-      <menu
-            label="%DebugMenu.label"
-            id="org.eclipse.debug.ui.DebugMenu">
-         <separator
-               name="stepGroup">
-         </separator>
-      </menu>
-        <action
-            label="%StepReturnAction.label"
-            icon="icons/full/elcl16/stepreturn_co.gif"
-            disabledIcon="icons/full/dlcl16/stepreturn_co.gif"
-            hoverIcon="icons/full/clcl16/stepreturn_co.gif"
-            helpContextId="step_return_action_context"
-            class="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
-            id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate">
-      </action>
-      <action
-            label="%StepOverAction.label"
-            icon="icons/full/elcl16/stepover_co.gif"
-            disabledIcon="icons/full/dlcl16/stepover_co.gif"
-            hoverIcon="icons/full/clcl16/stepover_co.gif"
-            helpContextId="step_over_action_context"
-            class="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
-            id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate">
-      </action>
-      <action
-            label="%StepIntoAction.label"
-            icon="icons/full/elcl16/stepinto_co.gif"
-            disabledIcon="icons/full/dlcl16/stepinto_co.gif"
-            hoverIcon="icons/full/clcl16/stepinto_co.gif"
-            helpContextId="step_into_action_context"
-            class="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
-            id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate">
-      </action>
-      <action
-            label="%TerminateAction.label"
-            icon="icons/full/elcl16/terminate_co.gif"
-            disabledIcon="icons/full/dlcl16/terminate_co.gif"
-            hoverIcon="icons/full/clcl16/terminate_co.gif"
-            helpContextId="terminate_action_context"
-            class="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
-            id="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate">
-      </action>
-      <action
-            label="%SuspendAction.label"
-            icon="icons/full/elcl16/suspend_co.gif"
-            disabledIcon="icons/full/dlcl16/suspend_co.gif"
-            hoverIcon="icons/full/clcl16/suspend_co.gif"
-            helpContextId="suspend_action_context"
-            class="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
-            id="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate">
-      </action>
-      <action
-            label="%ResumeAction.label"
-            icon="icons/full/elcl16/resume_co.gif"
-            disabledIcon="icons/full/dlcl16/resume_co.gif"
-            hoverIcon="icons/full/clcl16/resume_co.gif"
-            helpContextId="resume_action_context"
-            class="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
-            id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate">
-      </action>
-   </actionSet>
-</extension>
-<extension
-      point="org.eclipse.ui.actionSets">
-   <actionSet
-         label="%LaunchActionSet.label"
-         visible="false"
-         id="org.eclipse.debug.ui.launchActionSet">
-      <menu
-            label="%DebugMenu.label"
-            id="org.eclipse.debug.ui.DebugMenu">
-         <separator
-               name="launchGroup">
-         </separator>
-         <separator
-               name="menuGroup">
-         </separator>
-      </menu>
-      <action
-            label="%RelaunchLastAction.label"
-            icon="icons/full/elcl16/relaunch_co.gif"
-            disabledIcon="icons/full/dlcl16/relaunch_co.gif"
-            hoverIcon="icons/full/clcl16/relaunch_co.gif"
-            helpContextId="relaunch_last_action_context"
-            tooltip="%RelaunchLastAction.tooltip"
-            class="org.eclipse.debug.internal.ui.actions.RelaunchLastAction"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/launchGroup"
-            id="org.eclipse.debug.internal.ui.actions.RelaunchLastAction">
-      </action>
-      <action
-            label="%RunAction.label"
-            pulldown="true"
-            icon="icons/full/etool16/run_exc.gif"
-            disabledIcon="icons/full/dtool16/run_exc.gif"
-            hoverIcon="icons/full/ctool16/run_exc.gif"
-            helpContextId="run_action_context"
-            tooltip="%RunAction.tooltip"
-            class="org.eclipse.debug.internal.ui.actions.RunDropDownAction"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/launchGroup"
-            toolbarPath="debug"
-            id="org.eclipse.debug.internal.ui.actions.RunDropDownAction">
-      </action>
-      <action
-            label="%DebugAction.label"
-            pulldown="true"
-            icon="icons/full/etool16/debug_exc.gif"
-            disabledIcon="icons/full/dtool16/debug_exc.gif"
-            hoverIcon="icons/full/ctool16/debug_exc.gif"
-            helpContextId="debug_action_context"
-            tooltip="%DebugAction.tooltip"
-            class="org.eclipse.debug.internal.ui.actions.DebugDropDownAction"
-    		menubarPath="org.eclipse.debug.ui.DebugMenu/launchGroup"
-            toolbarPath="debug"
-            id="org.eclipse.debug.internal.ui.actions.DebugDropDownAction">
-      </action>
-      <action
-            label="%RunHistoryMenuAction.label"
-            class="org.eclipse.debug.internal.ui.actions.RunHistoryMenuAction"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
-            id="org.eclipse.debug.internal.ui.actions.RunHistoryMenuAction">
-      </action>
-      <action
-            label="%DebugHistoryMenuAction.label"
-            class="org.eclipse.debug.internal.ui.actions.DebugHistoryMenuAction"
-    		menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
-            id="org.eclipse.debug.internal.ui.actions.DebugHistoryMenuAction">
-      </action>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="%DebugPerspective.name"
+            icon="icons/full/cview16/debug_persp.gif"
+            class="org.eclipse.debug.internal.ui.DebugPerspectiveFactory"
+            id="org.eclipse.debug.ui.DebugPerspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
+            name="%LaunchConfigurationTypePropertyPage.name"
+            class="org.eclipse.debug.internal.ui.LaunchConfigurationTypePropertyPage"
+            id="org.eclipse.debug.internal.ui.LaunchConfigurationTypePropertyPage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="%DebugViewsCategory.name"
+            id="org.eclipse.debug.ui">
+      </category>
+      <view
+            name="%DebugView.name"
+            icon="icons/full/cview16/debug_view.gif"
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.debug.internal.ui.views.LaunchView"
+            id="org.eclipse.debug.ui.DebugView">
+      </view>
+      <view
+            name="%BreakpointsView.name"
+            icon="icons/full/cview16/breakpoint_view.gif"
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.debug.internal.ui.views.BreakpointsView"
+            id="org.eclipse.debug.ui.BreakpointView">
+      </view>
+      <view
+            name="%VariablesView.name"
+            icon="icons/full/cview16/variable_view.gif"
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.debug.internal.ui.views.VariablesView"
+            id="org.eclipse.debug.ui.VariableView">
+      </view>
+      <view
+            name="%ExpressionView.name"
+            icon="icons/full/cview16/watchlist_view.gif"
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.debug.internal.ui.views.ExpressionView"
+            id="org.eclipse.debug.ui.ExpressionView">
+      </view>
+      <view
+            name="%ConsoleView.name"
+            icon="icons/full/cview16/console_view.gif"
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.debug.internal.ui.views.ConsoleView"
+            id="org.eclipse.debug.ui.ConsoleView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%DebugPreferencePage.name"
+            class="org.eclipse.debug.internal.ui.DebugPreferencePage"
+            id="org.eclipse.debug.ui.DebugPreferencePage">
+      </page>
+      <page
+            name="%ConsolePreferencePage.name"
+            category="org.eclipse.debug.ui.DebugPreferencePage"
+            class="org.eclipse.debug.internal.ui.ConsolePreferencePage"
+            id="org.eclipse.debug.ui.ConsolePreferencePage">
+      </page>
+      <page
+            name="%LaunchConfigurationTypesPreferencePage.name"
+            category="org.eclipse.debug.ui.DebugPreferencePage"
+            class="org.eclipse.debug.internal.ui.LaunchConfigurationTypesPreferencePage"
+            id="org.eclipse.debug.ui.LaunchConfigurationTypesPreferencePage">
+      </page>
+      <page
+            name="%LaunchHistoryPreferencePage.name"
+            category="org.eclipse.debug.ui.DebugPreferencePage"
+            class="org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistoryPreferencePage"
+            id="org.eclipse.debug.ui.LaunchHistoryPreferencePage">
+      </page>
+      <page
+            name="%DebugActionGroupsPreferencePage.name"
+            category="org.eclipse.debug.ui.DebugPreferencePage"
+            class="org.eclipse.debug.internal.ui.DebugActionGroupsPreferencePage"
+            id="org.eclipse.debug.ui.DebugActionGroupsPreferencePage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="%DebugActionSet.label"
+            visible="false"
+            id="org.eclipse.debug.ui.debugActionSet">
+         <menu
+               label="%DebugMenu.label"
+               id="org.eclipse.debug.ui.DebugMenu">
+            <separator
+                  name="stepGroup">
+            </separator>
+            <groupMarker
+                  name="stepIntoGroup">
+            </groupMarker>
+            <groupMarker
+                  name="stepOverGroup">
+            </groupMarker>
+            <groupMarker
+                  name="stepReturnGroup">
+            </groupMarker>
+            <groupMarker
+                  name="emptyStepGroup">
+            </groupMarker>
+         </menu>
+         <action
+               label="%StepReturnAction.label"
+               hoverIcon="icons/full/clcl16/stepreturn_co.gif"
+               icon="icons/full/elcl16/stepreturn_co.gif"
+               helpContextId="step_return_action_context"
+               class="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
+               menubarPath="org.eclipse.debug.ui.DebugMenu/stepReturnGroup"
+               disabledIcon="icons/full/dlcl16/stepreturn_co.gif"
+               id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate">
+         </action>
+         <action
+               label="%StepOverAction.label"
+               hoverIcon="icons/full/clcl16/stepover_co.gif"
+               icon="icons/full/elcl16/stepover_co.gif"
+               helpContextId="step_over_action_context"
+               class="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
+               menubarPath="org.eclipse.debug.ui.DebugMenu/stepOverGroup"
+               disabledIcon="icons/full/dlcl16/stepover_co.gif"
+               id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate">
+         </action>
+         <action
+               label="%StepIntoAction.label"
+               hoverIcon="icons/full/clcl16/stepinto_co.gif"
+               icon="icons/full/elcl16/stepinto_co.gif"
+               helpContextId="step_into_action_context"
+               class="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
+               menubarPath="org.eclipse.debug.ui.DebugMenu/stepIntoGroup"
+               disabledIcon="icons/full/dlcl16/stepinto_co.gif"
+               id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate">
+         </action>
+         <action
+               label="%TerminateAction.label"
+               hoverIcon="icons/full/clcl16/terminate_co.gif"
+               icon="icons/full/elcl16/terminate_co.gif"
+               helpContextId="terminate_action_context"
+               class="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
+               menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
+               disabledIcon="icons/full/dlcl16/terminate_co.gif"
+               id="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate">
+         </action>
+         <action
+               label="%SuspendAction.label"
+               hoverIcon="icons/full/clcl16/suspend_co.gif"
+               icon="icons/full/elcl16/suspend_co.gif"
+               helpContextId="suspend_action_context"
+               class="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
+               menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
+               disabledIcon="icons/full/dlcl16/suspend_co.gif"
+               id="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate">
+         </action>
+         <action
+               label="%ResumeAction.label"
+               hoverIcon="icons/full/clcl16/resume_co.gif"
+               icon="icons/full/elcl16/resume_co.gif"
+               helpContextId="resume_action_context"
+               class="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
+               menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
+               disabledIcon="icons/full/dlcl16/resume_co.gif"
+               id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate">
+         </action>
       </actionSet>
-</extension>
-
-<extension point = "org.eclipse.ui.viewActions">
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="%LaunchActionSet.label"
+            visible="false"
+            id="org.eclipse.debug.ui.launchActionSet">
+         <menu
+               label="%DebugMenu.label"
+               id="org.eclipse.debug.ui.DebugMenu">
+            <separator
+                  name="launchGroup">
+            </separator>
+            <separator
+                  name="menuGroup">
+            </separator>
+         </menu>
+         <action
+               id="org.eclipse.debug.internal.ui.actions.RelaunchLastAction"
+               hoverIcon="icons/full/clcl16/relaunch_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.RelaunchLastAction"
+               disabledIcon="icons/full/dlcl16/relaunch_co.gif"
+               icon="icons/full/elcl16/relaunch_co.gif"
+               helpContextId="relaunch_last_action_context"
+               label="%RelaunchLastAction.label"
+               menubarPath="org.eclipse.debug.ui.DebugMenu/launchGroup"
+               tooltip="%RelaunchLastAction.tooltip">
+         </action>
+         <action
+               toolbarPath="debug"
+               id="org.eclipse.debug.internal.ui.actions.RunDropDownAction"
+               hoverIcon="icons/full/ctool16/run_exc.gif"
+               class="org.eclipse.debug.internal.ui.actions.RunDropDownAction"
+               disabledIcon="icons/full/dtool16/run_exc.gif"
+               icon="icons/full/etool16/run_exc.gif"
+               helpContextId="run_action_context"
+               label="%RunAction.label"
+               menubarPath="org.eclipse.debug.ui.DebugMenu/launchGroup"
+               pulldown="true"
+               tooltip="%RunAction.tooltip">
+         </action>
+         <action
+               toolbarPath="debug"
+               id="org.eclipse.debug.internal.ui.actions.DebugDropDownAction"
+               hoverIcon="icons/full/ctool16/debug_exc.gif"
+               class="org.eclipse.debug.internal.ui.actions.DebugDropDownAction"
+               disabledIcon="icons/full/dtool16/debug_exc.gif"
+               icon="icons/full/etool16/debug_exc.gif"
+               helpContextId="debug_action_context"
+               label="%DebugAction.label"
+               menubarPath="org.eclipse.debug.ui.DebugMenu/launchGroup"
+               pulldown="true"
+               tooltip="%DebugAction.tooltip">
+         </action>
+         <action
+               label="%RunHistoryMenuAction.label"
+               class="org.eclipse.debug.internal.ui.actions.RunHistoryMenuAction"
+               menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
+               id="org.eclipse.debug.internal.ui.actions.RunHistoryMenuAction">
+         </action>
+         <action
+               label="%DebugHistoryMenuAction.label"
+               class="org.eclipse.debug.internal.ui.actions.DebugHistoryMenuAction"
+               menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
+               id="org.eclipse.debug.internal.ui.actions.DebugHistoryMenuAction">
+         </action>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
 <!-- Contributions to Debug View Toolbar -->
-	<viewContribution
-		id = "org.eclipse.debug.ui.debugview.toolbar"
-		targetID = "org.eclipse.debug.ui.DebugView">
+      <viewContribution
+            targetID="org.eclipse.debug.ui.DebugView"
+            id="org.eclipse.debug.ui.debugview.toolbar">
 <!-- Thread Group -->
-		<action
-			id = "org.eclipse.debug.ui.debugview.toolbar.removeAllTerminated"
-			toolbarPath = "threadGroup"
-			icon = "icons/full/elcl16/rem_all_co.gif"
-			disabledIcon="icons/full/dlcl16/rem_all_co.gif"
-            hoverIcon="icons/full/clcl16/rem_all_co.gif"
-			helpContextId = "remove_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.RemoveAllTerminatedAction"
-			tooltip="%RemoveAllTerminatedAction.tooltip"
-			label="%RemoveAllTerminatedAction.label">
-		</action>
-		<action
-			id = "org.eclipse.debug.ui.debugview.toolbar.disconnect"
-			toolbarPath = "threadGroup"
-			icon = "icons/full/elcl16/disconnect_co.gif"
-			disabledIcon="icons/full/dlcl16/disconnect_co.gif"
-            hoverIcon="icons/full/clcl16/disconnect_co.gif"
-			helpContextId = "disconnect_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.DisconnectActionDelegate"
-			tooltip="%DisconnectAction.tooltip"
-			label="%DisconnectAction.label">
-		</action>
-		<action
-			id = "org.eclipse.debug.ui.debugview.toolbar.terminate"
-			toolbarPath = "threadGroup"
-			icon = "icons/full/elcl16/terminate_co.gif"
-			disabledIcon= "icons/full/dlcl16/terminate_co.gif"
-            hoverIcon= "icons/full/clcl16/terminate_co.gif"
-			helpContextId = "terminate_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
-			tooltip="%TerminateAction.tooltip"
-			label="%TerminateAction.label">
-		</action>
-		<action
-			id = "org.eclipse.debug.ui.debugview.toolbar.suspend"
-			toolbarPath = "threadGroup"
-			icon = "icons/full/elcl16/suspend_co.gif"
-			disabledIcon= "icons/full/dlcl16/suspend_co.gif"
-            hoverIcon= "icons/full/clcl16/suspend_co.gif"
-			helpContextId = "suspend_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
-			tooltip="%SuspendAction.tooltip"
-			label="%SuspendAction.label">
-		</action>
-		<action
-			id = "org.eclipse.debug.ui.debugview.toolbar.resume"
-			toolbarPath = "threadGroup"
-			icon = "icons/full/elcl16/resume_co.gif"
-			disabledIcon= "icons/full/dlcl16/resume_co.gif"
-            hoverIcon= "icons/full/clcl16/resume_co.gif"
-			helpContextId = "resume_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
-			tooltip="%ResumeAction.tooltip"
-			label="%ResumeAction.label">
-		</action>
+         <action
+               id="org.eclipse.debug.ui.debugview.toolbar.removeAllTerminated"
+               toolbarPath="threadGroup"
+               hoverIcon="icons/full/clcl16/rem_all_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.RemoveAllTerminatedAction"
+               disabledIcon="icons/full/dlcl16/rem_all_co.gif"
+               icon="icons/full/elcl16/rem_all_co.gif"
+               helpContextId="remove_action_context"
+               label="%RemoveAllTerminatedAction.label"
+               tooltip="%RemoveAllTerminatedAction.tooltip">
+         </action>
+         <action
+               id="org.eclipse.debug.ui.debugview.toolbar.disconnect"
+               toolbarPath="threadGroup"
+               hoverIcon="icons/full/clcl16/disconnect_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.DisconnectActionDelegate"
+               disabledIcon="icons/full/dlcl16/disconnect_co.gif"
+               icon="icons/full/elcl16/disconnect_co.gif"
+               helpContextId="disconnect_action_context"
+               label="%DisconnectAction.label"
+               tooltip="%DisconnectAction.tooltip">
+         </action>
+         <action
+               id="org.eclipse.debug.ui.debugview.toolbar.terminate"
+               toolbarPath="threadGroup"
+               hoverIcon="icons/full/clcl16/terminate_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
+               disabledIcon="icons/full/dlcl16/terminate_co.gif"
+               icon="icons/full/elcl16/terminate_co.gif"
+               helpContextId="terminate_action_context"
+               label="%TerminateAction.label"
+               tooltip="%TerminateAction.tooltip">
+         </action>
+         <action
+               id="org.eclipse.debug.ui.debugview.toolbar.suspend"
+               toolbarPath="threadGroup"
+               hoverIcon="icons/full/clcl16/suspend_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
+               disabledIcon="icons/full/dlcl16/suspend_co.gif"
+               icon="icons/full/elcl16/suspend_co.gif"
+               helpContextId="suspend_action_context"
+               label="%SuspendAction.label"
+               tooltip="%SuspendAction.tooltip">
+         </action>
+         <action
+               id="org.eclipse.debug.ui.debugview.toolbar.resume"
+               toolbarPath="threadGroup"
+               hoverIcon="icons/full/clcl16/resume_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
+               disabledIcon="icons/full/dlcl16/resume_co.gif"
+               icon="icons/full/elcl16/resume_co.gif"
+               helpContextId="resume_action_context"
+               label="%ResumeAction.label"
+               tooltip="%ResumeAction.tooltip">
+         </action>
 <!-- Step Group -->
-		<action
-			id = "org.eclipse.debug.ui.debugview.toolbar.stepReturn"
-			toolbarPath = "stepReturnGroup"
-			icon = "icons/full/elcl16/stepreturn_co.gif"
-			disabledIcon= "icons/full/dlcl16/stepreturn_co.gif"
-            hoverIcon= "icons/full/clcl16/stepreturn_co.gif"
-			helpContextId = "step_return_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
-			tooltip="%StepReturnAction.tooltip"
-			label="%StepReturnAction.label">
-		</action>		
-		<action
-			id = "org.eclipse.debug.ui.debugview.toolbar.stepOver"
-			toolbarPath = "stepOverGroup"
-			icon = "icons/full/elcl16/stepover_co.gif"
-			disabledIcon= "icons/full/dlcl16/stepover_co.gif"
-            hoverIcon= "icons/full/clcl16/stepover_co.gif"
-			helpContextId = "step_over_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
-			tooltip="%StepOverAction.tooltip"
-			label="%StepOverAction.label">
-		</action>			
-		<action
-			id = "org.eclipse.debug.ui.debugview.toolbar.stepInto"
-			toolbarPath = "stepIntoGroup"
-			icon = "icons/full/elcl16/stepinto_co.gif"
-			disabledIcon= "icons/full/dlcl16/stepinto_co.gif"
-            hoverIcon= "icons/full/clcl16/stepinto_co.gif"
-			helpContextId = "step_into_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
-			tooltip="%StepIntoAction.tooltip"
-			label="%StepIntoAction.label">
-		</action>		
-	</viewContribution>
+         <action
+               id="org.eclipse.debug.ui.debugview.toolbar.stepReturn"
+               toolbarPath="stepReturnGroup"
+               hoverIcon="icons/full/clcl16/stepreturn_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
+               disabledIcon="icons/full/dlcl16/stepreturn_co.gif"
+               icon="icons/full/elcl16/stepreturn_co.gif"
+               helpContextId="step_return_action_context"
+               label="%StepReturnAction.label"
+               tooltip="%StepReturnAction.tooltip">
+         </action>
+         <action
+               id="org.eclipse.debug.ui.debugview.toolbar.stepOver"
+               toolbarPath="stepOverGroup"
+               hoverIcon="icons/full/clcl16/stepover_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
+               disabledIcon="icons/full/dlcl16/stepover_co.gif"
+               icon="icons/full/elcl16/stepover_co.gif"
+               helpContextId="step_over_action_context"
+               label="%StepOverAction.label"
+               tooltip="%StepOverAction.tooltip">
+         </action>
+         <action
+               id="org.eclipse.debug.ui.debugview.toolbar.stepInto"
+               toolbarPath="stepIntoGroup"
+               hoverIcon="icons/full/clcl16/stepinto_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
+               disabledIcon="icons/full/dlcl16/stepinto_co.gif"
+               icon="icons/full/elcl16/stepinto_co.gif"
+               helpContextId="step_into_action_context"
+               label="%StepIntoAction.label"
+               tooltip="%StepIntoAction.tooltip">
+         </action>
+      </viewContribution>
 <!-- Contributions to Console View Toolbar -->
-	<viewContribution
-		id = "org.eclipse.debug.ui.consoleview.toolbar"
-		targetID = "org.eclipse.debug.ui.ConsoleView">
-		<action
-			id = "org.eclipse.debug.ui.consoleView.toolbar.terminate"
-			icon = "icons/full/elcl16/terminate_co.gif"
-			disabledIcon= "icons/full/dlcl16/terminate_co.gif"
-            hoverIcon= "icons/full/clcl16/terminate_co.gif"
-			helpContextId = "terminate_action_context"
-			toolbarPath = "launchGroup"
-			class = "org.eclipse.debug.internal.ui.actions.ConsoleTerminateActionDelegate"
-			tooltip="%TerminateAction.tooltip"
-			label="%TerminateAction.label">
-		</action>
-	</viewContribution>
+      <viewContribution
+            targetID="org.eclipse.debug.ui.ConsoleView"
+            id="org.eclipse.debug.ui.consoleview.toolbar">
+         <action
+               id="org.eclipse.debug.ui.consoleView.toolbar.terminate"
+               toolbarPath="launchGroup"
+               hoverIcon="icons/full/clcl16/terminate_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.ConsoleTerminateActionDelegate"
+               disabledIcon="icons/full/dlcl16/terminate_co.gif"
+               icon="icons/full/elcl16/terminate_co.gif"
+               helpContextId="terminate_action_context"
+               label="%TerminateAction.label"
+               tooltip="%TerminateAction.tooltip">
+         </action>
+      </viewContribution>
 <!-- Contributions to Breakpoints View Toolbar -->
-	<viewContribution
-		id = "org.eclipse.debug.ui.breakpointsview.toolbar"
-		targetID = "org.eclipse.debug.ui.BreakpointView">
-		<action
-			id = "org.eclipse.debug.ui.breakpointsView.toolbar.removeAll"
-			icon = "icons/full/elcl16/rem_all_co.gif"
-			disabledIcon= "icons/full/dlcl16/rem_all_co.gif"
-            hoverIcon= "icons/full/clcl16/rem_all_co.gif"
-			helpContextId = "remove_action_context"
-			toolbarPath = "breakpointGroup"
-			class = "org.eclipse.debug.internal.ui.actions.RemoveAllBreakpointsAction"
-			tooltip="%RemoveAllBreakpointsAction.tooltip"
-			label="%RemoveAllAction.label">
-		</action>
-		<action
-			id = "org.eclipse.debug.ui.breakpointsView.toolbar.remove"
-			icon = "icons/full/elcl16/rem_co.gif"
-			disabledIcon= "icons/full/dlcl16/rem_co.gif"
-            hoverIcon=  "icons/full/clcl16/rem_co.gif"
-			helpContextId = "remove_action_context"
-			toolbarPath = "breakpointGroup"
-			class = "org.eclipse.debug.internal.ui.actions.RemoveBreakpointAction"
-			tooltip="%RemoveBreakpointAction.tooltip"
-			label="%RemoveAction.label">
-		</action>
-	</viewContribution>
+      <viewContribution
+            targetID="org.eclipse.debug.ui.BreakpointView"
+            id="org.eclipse.debug.ui.breakpointsview.toolbar">
+         <action
+               id="org.eclipse.debug.ui.breakpointsView.toolbar.removeAll"
+               toolbarPath="breakpointGroup"
+               hoverIcon="icons/full/clcl16/rem_all_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.RemoveAllBreakpointsAction"
+               disabledIcon="icons/full/dlcl16/rem_all_co.gif"
+               icon="icons/full/elcl16/rem_all_co.gif"
+               helpContextId="remove_action_context"
+               label="%RemoveAllAction.label"
+               tooltip="%RemoveAllBreakpointsAction.tooltip">
+         </action>
+         <action
+               id="org.eclipse.debug.ui.breakpointsView.toolbar.remove"
+               toolbarPath="breakpointGroup"
+               hoverIcon="icons/full/clcl16/rem_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.RemoveBreakpointAction"
+               disabledIcon="icons/full/dlcl16/rem_co.gif"
+               icon="icons/full/elcl16/rem_co.gif"
+               helpContextId="remove_action_context"
+               label="%RemoveAction.label"
+               tooltip="%RemoveBreakpointAction.tooltip">
+         </action>
+      </viewContribution>
 <!-- Contributions to Expression View Toolbar -->
-	<viewContribution
-		id = "org.eclipse.debug.ui.expressionsView.toolbar"
-		targetID = "org.eclipse.debug.ui.ExpressionView">
-		<action
-			id = "org.eclipse.debug.ui.expresssionsView.toolbar.removeAll"
-			icon = "icons/full/elcl16/rem_all_co.gif"
-			disabledIcon= "icons/full/dlcl16/rem_all_co.gif"
-            hoverIcon=  "icons/full/clcl16/rem_all_co.gif"
-			helpContextId = "remove_action_context"
-			toolbarPath = "expressionGroup"
-			class = "org.eclipse.debug.internal.ui.actions.RemoveAllExpressionsAction"
-			tooltip="%RemoveAllExpressionsAction.tooltip"
-			label="%RemoveAllAction.label">
-		</action>
-		<action
-			id = "org.eclipse.debug.ui.expresssionsView.toolbar.remove"
-			icon = "icons/full/elcl16/rem_co.gif"
-			disabledIcon= "icons/full/dlcl16/rem_co.gif"
-            hoverIcon=  "icons/full/clcl16/rem_co.gif"
-			helpContextId = "remove_action_context"
-			toolbarPath = "expressionGroup"
-			class = "org.eclipse.debug.internal.ui.actions.RemoveExpressionAction"
-			tooltip="%RemoveExpressionAction.tooltip"
-			label="%RemoveAction.label">
-		</action>
-	</viewContribution>
-</extension>
-
-<extension point = "org.eclipse.ui.popupMenus">
+      <viewContribution
+            targetID="org.eclipse.debug.ui.ExpressionView"
+            id="org.eclipse.debug.ui.expressionsView.toolbar">
+         <action
+               id="org.eclipse.debug.ui.expresssionsView.toolbar.removeAll"
+               toolbarPath="expressionGroup"
+               hoverIcon="icons/full/clcl16/rem_all_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.RemoveAllExpressionsAction"
+               disabledIcon="icons/full/dlcl16/rem_all_co.gif"
+               icon="icons/full/elcl16/rem_all_co.gif"
+               helpContextId="remove_action_context"
+               label="%RemoveAllAction.label"
+               tooltip="%RemoveAllExpressionsAction.tooltip">
+         </action>
+         <action
+               id="org.eclipse.debug.ui.expresssionsView.toolbar.remove"
+               toolbarPath="expressionGroup"
+               hoverIcon="icons/full/clcl16/rem_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.RemoveExpressionAction"
+               disabledIcon="icons/full/dlcl16/rem_co.gif"
+               icon="icons/full/elcl16/rem_co.gif"
+               helpContextId="remove_action_context"
+               label="%RemoveAction.label"
+               tooltip="%RemoveExpressionAction.tooltip">
+         </action>
+      </viewContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
 <!-- Contributions to Debug View Popup Menu -->
-	<viewerContribution
-		id = "org.eclipse.debug.ui.debugview.popupMenu"
-		targetID = "org.eclipse.debug.ui.DebugView">
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.DebugView"
+            id="org.eclipse.debug.ui.debugview.popupMenu">
 <!-- Edit Group -->
-		<action
-			id = "org.eclipse.debug.ui.debugview.popupMenu.copyToClipboard"
-			menubarPath = "editGroup"
-			helpContextId = "copy_to_clipboard_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.CopyToClipboardActionDelegate"
-			label="%CopyToClipboardAction.label">
-		</action>
+         <action
+               label="%CopyToClipboardAction.label"
+               helpContextId="copy_to_clipboard_action_context"
+               class="org.eclipse.debug.internal.ui.actions.CopyToClipboardActionDelegate"
+               menubarPath="editGroup"
+               id="org.eclipse.debug.ui.debugview.popupMenu.copyToClipboard">
+         </action>
 <!-- Launch Group -->
-		<action
-			id = "org.eclipse.debug.ui.debugview.popupMenu.terminateAll"
-			menubarPath = "launchGroup"
-			helpContextId = "terminate_all_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.TerminateAllAction"
-			label="%TerminateAllAction.label">
-		</action>
-		<action
-			id = "org.eclipse.debug.ui.debugview.popupMenu.relaunch"
-			menubarPath = "launchGroup"
-			helpContextId = "relaunch_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.RelaunchActionDelegate"
-			label="%RelaunchAction.label">
-		</action>
-		<action
-			id = "org.eclipse.debug.ui.debugview.popupMenu.terminateAndRemove"
-			menubarPath = "launchGroup"
-			helpContextId = "terminate_and_remove_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.TerminateAndRemoveActionDelegate"
-			label="%TerminateAndRemoveAction.label">
-		</action>
+         <action
+               label="%TerminateAllAction.label"
+               helpContextId="terminate_all_action_context"
+               class="org.eclipse.debug.internal.ui.actions.TerminateAllAction"
+               menubarPath="launchGroup"
+               id="org.eclipse.debug.ui.debugview.popupMenu.terminateAll">
+         </action>
+         <action
+               label="%RelaunchAction.label"
+               helpContextId="relaunch_action_context"
+               class="org.eclipse.debug.internal.ui.actions.RelaunchActionDelegate"
+               menubarPath="launchGroup"
+               id="org.eclipse.debug.ui.debugview.popupMenu.relaunch">
+         </action>
+         <action
+               label="%TerminateAndRemoveAction.label"
+               helpContextId="terminate_and_remove_action_context"
+               class="org.eclipse.debug.internal.ui.actions.TerminateAndRemoveActionDelegate"
+               menubarPath="launchGroup"
+               id="org.eclipse.debug.ui.debugview.popupMenu.terminateAndRemove">
+         </action>
 <!-- Thread Group -->
-		<action
-			id = "org.eclipse.debug.ui.debugview.popupMenu.removeAllTerminated"
-			menubarPath = "launchGroup"
-			icon = "icons/full/clcl16/rem_all_co.gif"
-			helpContextId = "remove_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.RemoveAllTerminatedAction"
-			label="%RemoveAllTerminatedAction.label">
-		</action>
-		<action
-			id = "org.eclipse.debug.ui.debugview.popupMenu.disconnect"
-			menubarPath = "threadGroup"
-			icon = "icons/full/clcl16/disconnect_co.gif"
-			helpContextId = "disconnect_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.DisconnectActionDelegate"
-			label="%DisconnectAction.label">
-		</action>
-		<action
-			id = "org.eclipse.debug.ui.debugview.popupMenu.terminate"
-			menubarPath = "threadGroup"
-			icon = "icons/full/clcl16/terminate_co.gif"
-			helpContextId = "terminate_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
-			label="%TerminateAction.label">
-		</action>
-		<action
-			id = "org.eclipse.debug.ui.debugview.popupMenu.suspend"
-			menubarPath = "threadGroup"
-			icon = "icons/full/clcl16/suspend_co.gif"
-			helpContextId = "suspend_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
-			label="%SuspendAction.label">
-		</action>
-		<action
-			id = "org.eclipse.debug.ui.debugview.popupMenu.resume"
-			menubarPath = "threadGroup"
-			icon = "icons/full/clcl16/resume_co.gif"
-			helpContextId = "resume_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
-			label="%ResumeAction.label">
-		</action>		
-<!-- Step Group -->		
-		<action
-			id = "org.eclipse.debug.ui.debugview.popupMenu.stepReturn"
-			menubarPath = "stepReturnGroup"
-			icon = "icons/full/clcl16/stepreturn_co.gif"
-			helpContextId = "step_return_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
-			label="%StepReturnAction.label">
-		</action>		
-		<action
-			id = "org.eclipse.debug.ui.debugview.popupMenu.stepOver"
-			menubarPath = "stepOverGroup"
-			icon = "icons/full/clcl16/stepover_co.gif"
-			helpContextId = "step_over_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
-			label="%StepOverAction.label">
-		</action>			
-		<action
-			id = "org.eclipse.debug.ui.debugview.popupMenu.stepInto"
-			menubarPath = "stepIntoGroup"
-			icon = "icons/full/clcl16/stepinto_co.gif"
-			helpContextId = "step_into_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
-			label="%StepIntoAction.label">
-		</action>		
-	</viewerContribution>
-	<!-- Contributions to Breakpoints View Popup Menu -->
-	<viewerContribution
-		id = "org.eclipse.debug.ui.breakpointview.popupMenu"
-		targetID = "org.eclipse.debug.ui.BreakpointView">
-		<action
-			id="org.eclipse.debug.ui.actions.RemoveAllBreakpoints"
-			icon = "icons/full/clcl16/rem_all_co.gif"
-			label="%RemoveAllAction.label"
-			menubarPath="breakpointGroup"
-			class="org.eclipse.debug.internal.ui.actions.RemoveAllBreakpointsAction">
-		</action>
-		<action
-			id="org.eclipse.debug.ui.actions.RemoveBreakpoint"
-			label="%RemoveAction.label"
-			icon = "icons/full/clcl16/rem_co.gif"
-			menubarPath="breakpointGroup"
-			class="org.eclipse.debug.internal.ui.actions.RemoveBreakpointAction">
-		</action>
-		<action
-			id="org.eclipse.debug.ui.actions.ManageBreakpointEnablement"
-			label="%DisableBreakpointsAction.label"
-			menubarPath="breakpointGroup"
-			class="org.eclipse.debug.internal.ui.actions.DisableBreakpointsAction"
-			enablesFor="2+">
-		</action>
-		<action
-			id="org.eclipse.debug.ui.actions.ManageBreakpointEnablement"
-			label="%EnableBreakpointsAction.label"
-			menubarPath="breakpointGroup"
-			class="org.eclipse.debug.internal.ui.actions.EnableBreakpointsAction"
-			enablesFor="2+">
-		</action>
-		<action
-			id="org.eclipse.debug.ui.actions.SelectAllAction"
-			label="%SelectAll.label"
-			menubarPath="breakpointGroup"
-			class="org.eclipse.debug.internal.ui.actions.SelectAllBreakpointsAction">
-		</action>
-	</viewerContribution>
-<!-- Contributions to Variables View Popup Menu -->	
-	<viewerContribution
-		id = "org.eclipse.debug.ui.variablesView.popupMenu"
-		targetID = "org.eclipse.debug.ui.VariableView">
-		<!-- Variable Group -->
-		<action
-			id = "org.eclipse.debug.ui.debugview.popupMenu.copyVariablesToClipboard"
-			menubarPath = "variableGroup"
-			helpContextId = "copy_variables_to_clipboard_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate"
-			label="%CopyVariablesToClipboardAction.label">
-		</action>
-		<action
-			id="org.eclipse.debug.ui.actions.SelectAllAction"
-			label="%SelectAll.label"
-			menubarPath="variableGroup"
-			class="org.eclipse.debug.internal.ui.actions.SelectAllVariablesAction">
-		</action>
-	</viewerContribution>
+         <action
+               label="%RemoveAllTerminatedAction.label"
+               icon="icons/full/clcl16/rem_all_co.gif"
+               helpContextId="remove_action_context"
+               class="org.eclipse.debug.internal.ui.actions.RemoveAllTerminatedAction"
+               menubarPath="launchGroup"
+               id="org.eclipse.debug.ui.debugview.popupMenu.removeAllTerminated">
+         </action>
+         <action
+               label="%DisconnectAction.label"
+               icon="icons/full/clcl16/disconnect_co.gif"
+               helpContextId="disconnect_action_context"
+               class="org.eclipse.debug.internal.ui.actions.DisconnectActionDelegate"
+               menubarPath="threadGroup"
+               id="org.eclipse.debug.ui.debugview.popupMenu.disconnect">
+         </action>
+         <action
+               label="%TerminateAction.label"
+               icon="icons/full/clcl16/terminate_co.gif"
+               helpContextId="terminate_action_context"
+               class="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
+               menubarPath="threadGroup"
+               id="org.eclipse.debug.ui.debugview.popupMenu.terminate">
+         </action>
+         <action
+               label="%SuspendAction.label"
+               icon="icons/full/clcl16/suspend_co.gif"
+               helpContextId="suspend_action_context"
+               class="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
+               menubarPath="threadGroup"
+               id="org.eclipse.debug.ui.debugview.popupMenu.suspend">
+         </action>
+         <action
+               label="%ResumeAction.label"
+               icon="icons/full/clcl16/resume_co.gif"
+               helpContextId="resume_action_context"
+               class="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
+               menubarPath="threadGroup"
+               id="org.eclipse.debug.ui.debugview.popupMenu.resume">
+         </action>
+<!-- Step Group -->
+         <action
+               label="%StepReturnAction.label"
+               icon="icons/full/clcl16/stepreturn_co.gif"
+               helpContextId="step_return_action_context"
+               class="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
+               menubarPath="stepReturnGroup"
+               id="org.eclipse.debug.ui.debugview.popupMenu.stepReturn">
+         </action>
+         <action
+               label="%StepOverAction.label"
+               icon="icons/full/clcl16/stepover_co.gif"
+               helpContextId="step_over_action_context"
+               class="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
+               menubarPath="stepOverGroup"
+               id="org.eclipse.debug.ui.debugview.popupMenu.stepOver">
+         </action>
+         <action
+               label="%StepIntoAction.label"
+               icon="icons/full/clcl16/stepinto_co.gif"
+               helpContextId="step_into_action_context"
+               class="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
+               menubarPath="stepIntoGroup"
+               id="org.eclipse.debug.ui.debugview.popupMenu.stepInto">
+         </action>
+      </viewerContribution>
+<!-- Contributions to Breakpoints View Popup Menu -->
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.BreakpointView"
+            id="org.eclipse.debug.ui.breakpointview.popupMenu">
+         <action
+               label="%RemoveAllAction.label"
+               icon="icons/full/clcl16/rem_all_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.RemoveAllBreakpointsAction"
+               menubarPath="breakpointGroup"
+               id="org.eclipse.debug.ui.actions.RemoveAllBreakpoints">
+         </action>
+         <action
+               label="%RemoveAction.label"
+               icon="icons/full/clcl16/rem_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.RemoveBreakpointAction"
+               menubarPath="breakpointGroup"
+               id="org.eclipse.debug.ui.actions.RemoveBreakpoint">
+         </action>
+         <action
+               label="%DisableBreakpointsAction.label"
+               class="org.eclipse.debug.internal.ui.actions.DisableBreakpointsAction"
+               menubarPath="breakpointGroup"
+               enablesFor="2+"
+               id="org.eclipse.debug.ui.actions.ManageBreakpointEnablement">
+         </action>
+         <action
+               label="%EnableBreakpointsAction.label"
+               class="org.eclipse.debug.internal.ui.actions.EnableBreakpointsAction"
+               menubarPath="breakpointGroup"
+               enablesFor="2+"
+               id="org.eclipse.debug.ui.actions.ManageBreakpointEnablement">
+         </action>
+         <action
+               label="%SelectAll.label"
+               class="org.eclipse.debug.internal.ui.actions.SelectAllBreakpointsAction"
+               menubarPath="breakpointGroup"
+               id="org.eclipse.debug.ui.actions.SelectAllAction">
+         </action>
+      </viewerContribution>
+<!-- Contributions to Variables View Popup Menu -->
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.VariableView"
+            id="org.eclipse.debug.ui.variablesView.popupMenu">
+<!-- Variable Group -->
+         <action
+               label="%CopyVariablesToClipboardAction.label"
+               helpContextId="copy_variables_to_clipboard_action_context"
+               class="org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate"
+               menubarPath="variableGroup"
+               id="org.eclipse.debug.ui.debugview.popupMenu.copyVariablesToClipboard">
+         </action>
+         <action
+               label="%SelectAll.label"
+               class="org.eclipse.debug.internal.ui.actions.SelectAllVariablesAction"
+               menubarPath="variableGroup"
+               id="org.eclipse.debug.ui.actions.SelectAllAction">
+         </action>
+      </viewerContribution>
 <!-- Contributions to Expression View Popup Menu -->
-	<viewerContribution
-		id = "org.eclipse.debug.ui.expressionView.popupMenu"
-		targetID = "org.eclipse.debug.ui.ExpressionView">
-		<!-- Expression Group -->
-		<action
-			id = "org.eclipse.debug.ui.debugview.popupMenu.removeAllExpressionsAction"
-			menubarPath = "expressionGroup"
-			class = "org.eclipse.debug.internal.ui.actions.RemoveAllExpressionsAction"
-			icon = "icons/full/clcl16/rem_all_co.gif"
-			label="%RemoveAllAction.label">
-		</action>
-		<action
-			id = "org.eclipse.debug.ui.debugview.popupMenu.removeExpressionAction"
-			menubarPath = "expressionGroup"
-			class = "org.eclipse.debug.internal.ui.actions.RemoveExpressionAction"
-			icon = "icons/full/clcl16/rem_co.gif"
-			label="%RemoveAction.label">
-		</action>
-		<action
-			id = "org.eclipse.debug.ui.debugview.popupMenu.copyVariablesToClipboard"
-			menubarPath = "expressionGroup"
-			helpContextId = "copy_variables_to_clipboard_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate"
-			label="%CopyVariablesToClipboardAction.label">
-		</action>
-		<action
-			id="org.eclipse.debug.ui.actions.SelectAllAction"
-			label="%SelectAll.label"
-			menubarPath="expressionGroup"
-			class="org.eclipse.debug.internal.ui.actions.SelectAllExpressionsAction">
-		</action>
-	</viewerContribution>
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.ExpressionView"
+            id="org.eclipse.debug.ui.expressionView.popupMenu">
+<!-- Expression Group -->
+         <action
+               label="%RemoveAllAction.label"
+               icon="icons/full/clcl16/rem_all_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.RemoveAllExpressionsAction"
+               menubarPath="expressionGroup"
+               id="org.eclipse.debug.ui.debugview.popupMenu.removeAllExpressionsAction">
+         </action>
+         <action
+               label="%RemoveAction.label"
+               icon="icons/full/clcl16/rem_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.RemoveExpressionAction"
+               menubarPath="expressionGroup"
+               id="org.eclipse.debug.ui.debugview.popupMenu.removeExpressionAction">
+         </action>
+         <action
+               label="%CopyVariablesToClipboardAction.label"
+               helpContextId="copy_variables_to_clipboard_action_context"
+               class="org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate"
+               menubarPath="expressionGroup"
+               id="org.eclipse.debug.ui.debugview.popupMenu.copyVariablesToClipboard">
+         </action>
+         <action
+               label="%SelectAll.label"
+               class="org.eclipse.debug.internal.ui.actions.SelectAllExpressionsAction"
+               menubarPath="expressionGroup"
+               id="org.eclipse.debug.ui.actions.SelectAllAction">
+         </action>
+      </viewerContribution>
 <!-- Contributions to Console View popup menu -->
-	<viewerContribution
-		id = "org.eclipse.debug.ui.consoleview.popupMenu"
-		targetID = "org.eclipse.debug.ui.ConsoleView">
-		<action
-			id = "org.eclipse.debug.ui.consoleView.popupMenu.terminate"
-			icon = "icons/full/clcl16/terminate_co.gif"
-			menubarPath = "additions"
-			helpContextId = "terminate_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.ConsoleTerminateActionDelegate"
-			label="%TerminateAction.label">
-		</action>
-	</viewerContribution>
-</extension>
-
-<extension
-      id="instructionPointer"
-      point="org.eclipse.core.resources.markers">
-   <super
-         type="org.eclipse.core.resources.textmarker">
-   </super>
-   <persistent
-         value="false">
-   </persistent>
-</extension>
-
-<extension point = "org.eclipse.debug.ui.launchConfigurationTabs">
-	<launchConfigurationTab
-		id="org.eclipse.debug.ui.launchConfigurationTab.common"
-		class="org.eclipse.debug.ui.CommonTab"
-		name="%commonTabName">
-	</launchConfigurationTab>
-</extension>
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.ConsoleView"
+            id="org.eclipse.debug.ui.consoleview.popupMenu">
+         <action
+               label="%TerminateAction.label"
+               icon="icons/full/clcl16/terminate_co.gif"
+               helpContextId="terminate_action_context"
+               class="org.eclipse.debug.internal.ui.actions.ConsoleTerminateActionDelegate"
+               menubarPath="additions"
+               id="org.eclipse.debug.ui.consoleView.popupMenu.terminate">
+         </action>
+      </viewerContribution>
+   </extension>
+   <extension
+         id="instructionPointer"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+      <persistent
+            value="false">
+      </persistent>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabs">
+      <launchConfigurationTab
+            name="%commonTabName"
+            class="org.eclipse.debug.ui.CommonTab"
+            id="org.eclipse.debug.ui.launchConfigurationTab.common">
+      </launchConfigurationTab>
+   </extension>
 
 </plugin>
