@@ -204,6 +204,33 @@ protected DeltaDataTree basicCompare(DeltaDataTree other, IComparator comparator
 	return newTree;
 }
 /**
+ * Collapses this tree so that the given ancestor becomes its
+ * immediate parent.  Afterwards, this tree will still have exactly the
+ * same contents, but its internal stucture will be compressed.
+ *
+ * <p> This operation should be used to collapse chains of
+ * delta trees that don't contain interesting intermediate states.
+ *
+ * <p>This is a destructive operation, since it modifies the structure of this 
+ * tree instance.  This tree must be immutable at the start of this operation,
+ * and will be immutable afterwards.  
+ * @return this tree.
+ */
+public DeltaDataTree collapseTo(DeltaDataTree parent, IComparator comparator) {
+	if (this == parent || getParent() == parent) {
+		//already collapsed
+		return this;
+	}
+	//collapse my tree to be a forward delta of the parent's tree.
+	//c will have the same content as this tree, but its parent will be "parent".
+	DeltaDataTree c = parent.forwardDeltaWith(this, comparator);
+
+	//update my internal root node and parent pointers.
+	this.parent = parent;
+	this.rootNode = c.rootNode;
+	return this;
+}
+/**
  * Returns a DeltaDataTree that describes the differences between
  * this tree and "other" tree.  Each node of the returned tree
  * will contain a NodeComparison object that describes the differences

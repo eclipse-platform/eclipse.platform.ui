@@ -177,15 +177,12 @@ protected ElementTree(ElementTree parent) {
  */
 public ElementTree collapseTo(ElementTree parent) {
 	Assert.isTrue(tree.isImmutable());
-	if (this == parent || getParent() == parent) {
+	if (this == parent) {
 		//already collapsed
 		return this;
 	}
 	//collapse my tree to be a forward delta of the parent's tree.
-	DeltaDataTree c = parent.tree.forwardDeltaWith(tree, DefaultElementComparator.getComparator());
-
-	//update my internal tree
-	this.tree = c;
+	tree.collapseTo(parent.tree, DefaultElementComparator.getComparator());
 	return this;
 }
 /**
