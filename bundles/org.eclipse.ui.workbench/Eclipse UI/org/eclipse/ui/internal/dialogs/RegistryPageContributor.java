@@ -54,14 +54,13 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 
     private SoftReference filterProperties;
 
-	private String objectClassName;
-
     /**
      * PropertyPageContributor constructor.
      */
     public RegistryPageContributor(String pageId, IConfigurationElement element) {
         this.pageId = pageId;
         this.pageElement = element;
+        adaptable = Boolean.valueOf(pageElement.getAttribute(PropertyPagesRegistryReader.ATT_ADAPTABLE)).booleanValue();
     }
 
 	/**
@@ -94,9 +93,9 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
         
         Object adapted = element;
         if(adaptable) {
-        	adapted = LegacyResourceSupport.getAdapter(element, objectClassName);
+        	adapted = LegacyResourceSupport.getAdapter(element, getObjectClass());
         	if(adapted == null) {
-            	String message = "Error adapting selection to " + objectClassName +  //$NON-NLS-1$
+            	String message = "Error adapting selection to " + getObjectClass() +  //$NON-NLS-1$
             			". Property page " + pageId + " is being ignored"; //$NON-NLS-1$ //$NON-NLS-2$            	
             	throw new CoreException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
                         IStatus.ERROR,message, null));
@@ -168,7 +167,7 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
         }
 
         // Test custom filter	
-        if (filterProperties == null)
+        if (getFilterProperties() == null)
             return true;
         IActionFilter filter = null;
 
@@ -218,7 +217,7 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
     }
     
 	public String getObjectClass() {
-		return objectClassName;
+		return pageElement.getAttribute(PropertyPagesRegistryReader.ATT_OBJECTCLASS);
 	}
 	
     /**
