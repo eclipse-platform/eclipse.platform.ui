@@ -101,6 +101,9 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	 */
 	private void getAdornedMessage(BuildEvent event, StringBuffer fullMessage) {
 		String name = event.getTask().getTaskName();
+		if (name == null) {
+			name = "null";
+		}
 		int size = LEFT_COLUMN_SIZE - (name.length() + 3);
 		for (int i = 0; i < size; i++) {
 			fullMessage.append(" ");
