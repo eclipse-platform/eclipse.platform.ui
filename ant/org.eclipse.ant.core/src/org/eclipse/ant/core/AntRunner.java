@@ -453,9 +453,16 @@ public static void main(String argString) throws Exception {
 					searchForThis= DEFAULT_BUILD_FILENAME;
 			} else if (arg.startsWith("-")) {
 				// we don't have any more args to recognize!
-				System.out.println(Policy.bind("exception.unknownArgument",arg));
-				printUsage();
-				return;
+				//out.print(Policy.bind("exception.unknownArgument",arg));
+				
+				throw new BuildException(Policy.bind("error.unknownArgument",arg));
+				
+//				BuildEvent event = new BuildEvent(new Project());
+//				event.setMessage(Policy.bind("exception.unknownArgument",arg)+" - FROM EVENT -", Project.MSG_ERR);
+//				clientListener.messageLogged(event);
+				
+//				printUsage();
+//				return;
 			} else 
 				targets.addElement(arg); // if it's no other arg, it may be the target
 
@@ -590,15 +597,27 @@ public static void main(String argString) throws Exception {
 			project.fireBuildFinished(error);
 		}
 	}
-/**
- * Run this launcher with the arguments specified in the given string.
- * This is a short cut method for people running the launcher from
- * a scrapbook (i.e., swip-and-doit facility).
- */
-public static String[] tokenizeArgs(String argString) throws Exception {
-	Vector list = new Vector(5);
-	for (StringTokenizer tokens = new StringTokenizer(argString, " "); tokens.hasMoreElements();)
-		list.addElement((String) tokens.nextElement());
-	return (String[]) list.toArray(new String[list.size()]);
-}
+	
+	/**
+	 * Run this launcher with the arguments specified in the given string.
+	 * This is a short cut method for people running the launcher from
+	 * a scrapbook (i.e., swip-and-doit facility).
+	 */
+	public static String[] tokenizeArgs(String argString) throws Exception {
+		Vector list = new Vector(5);
+		for (StringTokenizer tokens = new StringTokenizer(argString, " "); tokens.hasMoreElements();)
+			list.addElement((String) tokens.nextElement());
+		return (String[]) list.toArray(new String[list.size()]);
+	}
+	
+	
+	/**
+	 * Gets the level of output that the user required.
+	 * 
+	 * @return int the chosen level
+	 */
+	public int getOutputMessageLevel() {
+		return msgOutputLevel;
+	}
+
 }
