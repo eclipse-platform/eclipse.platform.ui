@@ -563,7 +563,7 @@ public class OverviewRuler implements IOverviewRuler {
 	 */
 	private void doPaint1(GC gc) {
 
-		if (fTextViewer == null)
+		if (fTextViewer == null || fModel == null)
 			return;
 
 		Rectangle r= new Rectangle(0, 0, 0, 0);
