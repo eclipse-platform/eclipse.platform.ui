@@ -409,7 +409,7 @@ public class RemoteTreeViewer extends TreeViewer {
                             Item item = currentChildren[pos];
                             Object data = item.getData();
                             if (!child.equals(data)) {
-                                validateDeferredUpdates(data);
+                                // no need to cancel pending updates here, the child may have shifted up/down
                                 internalRefresh(item, child, true, true);
                             }   
                         } else {
