@@ -120,12 +120,8 @@ public class NewFolderDialog extends SelectionStatusDialog {
      * Sets the dialog result to the created folder.  
      */
     protected void computeResult() {
-        String linkTarget = linkedResourceGroup.getLinkTarget();
-        IFolder folder = createNewFolder(folderNameField.getText(), linkTarget);
-        if (folder == null)
-            return;
-
-        setSelectionResult(new IFolder[] { folder });
+        //Do nothing here as we 
+    	//need to know the result
     }
 
     /* (non-Javadoc)
@@ -395,17 +391,17 @@ public class NewFolderDialog extends SelectionStatusDialog {
     /**
      * Update the dialog's status line to reflect the given status. It is safe to call
      * this method before the dialog has been opened.
+     * @param severity
+     * @param message
      */
     private void updateStatus(int severity, String message) {
-        updateStatus(new Status(severity, IDEWorkbenchPlugin.getDefault()
-                .getDescriptor().getUniqueIdentifier(), severity, message, null));
+        updateStatus(new Status(severity, IDEWorkbenchPlugin.IDE_WORKBENCH, severity, message, null));
     }
 
     /**
      * Checks whether the folder name and link location are valid.
-     *
-     * @return null if the folder name and link location are valid.
-     * 	a message that indicates the problem otherwise.
+     * Disable the OK button if the folder name and link location are valid.
+     * a message that indicates the problem otherwise.
      */
     private void validateLinkedResource() {
         boolean valid = validateFolderName();
@@ -456,4 +452,18 @@ public class NewFolderDialog extends SelectionStatusDialog {
         updateStatus(IStatus.OK, ""); //$NON-NLS-1$
         return true;
     }
+    
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#okPressed()
+	 */
+	protected void okPressed() {
+		String linkTarget = linkedResourceGroup.getLinkTarget();
+        IFolder folder = createNewFolder(folderNameField.getText(), linkTarget);
+        if (folder == null)
+            return;
+
+        setSelectionResult(new IFolder[] { folder });
+        
+		super.okPressed();
+	}
 }
