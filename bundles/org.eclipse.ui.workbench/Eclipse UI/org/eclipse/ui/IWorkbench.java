@@ -311,4 +311,19 @@ public IDecoratorManager getDecoratorManager();
  * @return boolean false if the operation was cancelled.
  */
 public boolean saveAllEditors(boolean confirm);
+
+/**
+ * Runs the workbench UI. This entails processing and dispatching events
+ * until the workbench is closed or restarted.
+ * <p>
+ * This method is intended to be called by the main class (the "application").
+ * Calls to this method are ignored if the workbench UI is already running.
+ * </p>
+ * 
+ * @return <code>true</code> if the workbench was terminated with a call
+ * to <code>restart</code>, and <code>false</code> otherwise
+ * @since 3.0
+ * @issue consider returning an int or Object rather than a boolean
+ */
+public boolean runUI();
 }

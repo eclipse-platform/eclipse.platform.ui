@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal;
+package org.eclipse.ui.internal.ide;
 
 import java.io.IOException;
 import java.net.URL;
@@ -37,7 +37,6 @@ import org.eclipse.core.runtime.Status;
  * be a standard java property file. A properties file may also be used to NL values
  * in the ini file. 
  * </p>
- * @deprecated Moved to org.eclipse.ui.internal.ide
  */
 public abstract class NewConfigurationInfo {
 
@@ -256,13 +255,13 @@ public abstract class NewConfigurationInfo {
 	 * Report an ini failure
 	 */
 	protected void reportINIFailure(Exception e, String message) {
-		if (!WorkbenchPlugin.DEBUG) {
+		if (!IDEWorkbenchPlugin.DEBUG) {
 			// only report ini problems if the -debug command line argument is used
 			return;
 		}
 		
-		IStatus iniStatus = new Status(IStatus.ERROR, WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+		IStatus iniStatus = new Status(IStatus.ERROR, IDEWorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 										0, message, e);
-		WorkbenchPlugin.log("Problem reading configuration info for: " + getFeatureId(), iniStatus);//$NON-NLS-1$
+		IDEWorkbenchPlugin.log("Problem reading configuration info for: " + getFeatureId(), iniStatus);//$NON-NLS-1$
 	}
 }

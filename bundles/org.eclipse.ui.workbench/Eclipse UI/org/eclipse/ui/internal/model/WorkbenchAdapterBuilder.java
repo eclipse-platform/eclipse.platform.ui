@@ -17,11 +17,11 @@ import org.eclipse.core.runtime.*;
  * Registers the adapters on core constructs
  * used in the workbench UI.
  */
-public class WorkbenchAdapterBuilder {
+public final class WorkbenchAdapterBuilder {
 /**
  * Creates extenders and registers 
  */
-public void registerAdapters() {
+public static void registerAdapters() {
 	IAdapterManager manager = Platform.getAdapterManager();
 	IAdapterFactory factory = new WorkbenchAdapterFactory();
 	manager.registerAdapters(factory, IWorkspace.class);

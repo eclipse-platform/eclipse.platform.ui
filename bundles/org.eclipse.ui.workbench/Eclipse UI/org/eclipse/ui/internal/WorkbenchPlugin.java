@@ -48,6 +48,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
@@ -115,7 +116,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private static char PREFERENCE_PAGE_CATEGORY_SEPARATOR = '/';
 
 	// Other data.
-	private IWorkbench workbench;
 	private PreferenceManager preferenceManager;
 	private ViewRegistry viewRegistry;
 	private PerspectiveRegistry perspRegistry;
@@ -387,11 +387,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		}
 		return viewRegistry;
 	}
-	/*
+	/**
 	 * Answer the workbench.
+	 * @deprecated Use <code>PlatformUI.getWorkbench()</code> instead.
 	 */
 	public IWorkbench getWorkbench() {
-		return workbench;
+		return PlatformUI.getWorkbench();
 	}
 	/** 
 	 * Set default preference values.
@@ -401,6 +402,17 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
 		
 		JFacePreferences.setPreferenceStore(store);
+
+		// new generic workbench preferences
+		store.setDefault(IWorkbenchPreferences.SHOULD_SAVE_WORKBENCH_STATE, false);
+		store.setDefault(IWorkbenchPreferences.SHOULD_CLOSE_EDITORS_ON_EXIT, false);
+		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_TITLE_BAR, true);
+		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_MENU_BAR, true);
+		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_TOOL_BAR, true);
+		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_SHORTCUT_BAR, true);
+		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_STATUS_LINE, true);
+			
+		// @issue most of these are IDE-specific
 		store.setDefault(IPreferenceConstants.AUTO_BUILD, true);
 		store.setDefault(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, false);
 		store.setDefault(IPreferenceConstants.SAVE_INTERVAL, 5); //5 minutes
@@ -408,7 +420,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP, false);
 		store.setDefault(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE, false);
 		store.setDefault(IPreferenceConstants.EDITORLIST_DISPLAY_FULL_NAME, false);
-		store.setDefault(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT, false);
 		store.setDefault(IPreferenceConstants.REUSE_EDITORS_BOOLEAN, false);
 		store.setDefault(IPreferenceConstants.REUSE_DIRTY_EDITORS, true);
 		store.setDefault(IPreferenceConstants.REUSE_EDITORS, 8);
@@ -462,7 +473,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		initializeFont(JFaceResources.BANNER_FONT, registry, store);
 		initializeFont(JFaceResources.HEADER_FONT, registry, store);
 		initializeFont(JFaceResources.TEXT_FONT, registry, store);
-			
+		
 		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
 	}
 
@@ -546,8 +557,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 		//1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
 	}
+	
+	/**
+	 * @deprecated Use <code>PlatformUI.createWorkbench</code> instead.
+	 */
 	public void setWorkbench(IWorkbench aWorkbench) {
-		this.workbench = aWorkbench;
+		// Do nothing
 	}
 
 	/**

@@ -21,12 +21,9 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -38,6 +35,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.SubMenuManager;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.ApplicationWindow;
@@ -51,6 +49,7 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
@@ -88,8 +87,9 @@ import org.eclipse.ui.internal.commands.ActionHandler;
 import org.eclipse.ui.internal.commands.ContextAndHandlerManager;
 import org.eclipse.ui.internal.commands.Manager;
 import org.eclipse.ui.internal.commands.SequenceMachine;
-import org.eclipse.ui.internal.commands.SimpleHandlerService;
 import org.eclipse.ui.internal.commands.util.Sequence;
+import org.eclipse.ui.internal.commands.SimpleHandlerService;
+
 import org.eclipse.ui.internal.commands.util.Stroke;
 import org.eclipse.ui.internal.contexts.SimpleContextService;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
@@ -103,15 +103,12 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 /**
  * A window within the workbench.
  */
-public class WorkbenchWindow
-	extends ApplicationWindow
-	implements IWorkbenchWindow {
+public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWindow {
 
 	private ContextAndHandlerManager contextAndHandlerManager;
 	private IContextService contextService;
 	private IHandlerService handlerService;
 	private int number;
-	private Workbench workbench;
 	private PageList pageList = new PageList();
 	private PageListenerList pageListeners = new PageListenerList();
 	private PerspectiveListenerListOld perspectiveListeners =
@@ -128,11 +125,9 @@ public class WorkbenchWindow
 	private ToolBarManager shortcutBar;
 	private ShortcutBarPart shortcutBarPart;
 	private ShortcutBarPartDragDrop shortcutDND;
-	private WorkbenchActionBuilder actionBuilder;
 	private boolean updateDisabled = true;
 	private boolean closing = false;
 	private boolean shellActivated = false;
-	private String workspaceLocation;
 	private Menu perspectiveBarMenu;
 	private Menu fastViewBarMenu;
 	private MenuItem restoreItem;
@@ -143,8 +138,18 @@ public class WorkbenchWindow
 	private boolean showShortcutBar = true;
 	private boolean showStatusLine = true;
 	private boolean showToolBar = true;
+	private boolean showMenuBar = true;
+	private boolean showTitleBar = true;
 	private Rectangle normalBounds;
 	private boolean asMaximizedState = false;
+
+	/**
+	 * Object for configuring this workbench window. Lazily initialized to
+	 * an instance unique to this window.
+	 *  
+	 * @since 3.0
+	 */
+	private WorkbenchWindowConfigurer windowConfigurer = null;
 
 	// constants for shortcut bar group ids 
 	static final String GRP_PAGES = "pages"; //$NON-NLS-1$
@@ -371,16 +376,19 @@ public class WorkbenchWindow
 
 		}
 	}
+	
 	/**
-		 * Constructs a new workbench window.
-		 * 
-		 * @param workbench the Workbench
-		 * @param number the number for the window
-		 */
-	public WorkbenchWindow(Workbench workbench, int number) {
+	 * Creates and initializes a new workbench window.
+	 * 
+	 * @param number the number for the window
+	 */
+	public WorkbenchWindow(int number) {
 		super(null);
-		this.workbench = workbench;
 		this.number = number;
+		
+		// Make sure there is a workbench. This call will throw
+		// an exception if workbench not created yet. 
+		PlatformUI.getWorkbench();
 
 		// Setup window.
 		addMenuBar();
@@ -390,22 +398,8 @@ public class WorkbenchWindow
 		addShortcutBar(SWT.FLAT | SWT.WRAP | SWT.VERTICAL);
 
 		updateBarVisibility();
-
-		// Add actions.
 		actionPresentation = new ActionPresentation(this);
-		actionBuilder = ((Workbench) getWorkbench()).createActionBuilder(this);
-		actionBuilder.buildActions();
-
-		// include the workspace location in the title 
-		// if the command line option -showlocation is specified
-		String[] args = Platform.getCommandLineArgs();
-		for (int i = 0; i < args.length; i++) {
-			if ("-showlocation".equalsIgnoreCase(args[i])) { //$NON-NLS-1$
-				workspaceLocation = Platform.getLocation().toOSString();
-				break;
-			}
-		}
-
+		
 		this.partDropListener = new IPartDropListener() {
 			public void dragOver(PartDropEvent e) {
 				WorkbenchPage page = getActiveWorkbenchPage();
@@ -420,6 +414,10 @@ public class WorkbenchWindow
 				presentation.onPartDrop(e);
 			};
 		};
+		
+		// @issue Should this not be in the open method? Does the restoreState pass thru this?
+		// let the application do further configuration
+		getAdviser().preWindowOpen(getWindowConfigurer());
 	}
 
 	void updateContextAndHandlerManager() {
@@ -509,8 +507,7 @@ public class WorkbenchWindow
 	/**
 	 * add a shortcut for the page.
 	 */
-	/* package */
-	void addPerspectiveShortcut(
+	/* package */ void addPerspectiveShortcut(
 		IPerspectiveDescriptor perspective,
 		WorkbenchPage page) {
 		SetPagePerspectiveAction action =
@@ -553,6 +550,7 @@ public class WorkbenchWindow
 		try {
 			// Only do the check if it is OK to close if we are not closing
 			// via the workbench as the workbench will check this itself.
+			Workbench workbench = getWorkbenchImpl();
 			int count = workbench.getWorkbenchWindowCount();
 			if (count <= 1 && !workbench.isClosing()) {
 				windowClosed = workbench.close();
@@ -604,7 +602,7 @@ public class WorkbenchWindow
 	public int open() {
 		int result = super.open();
 		contextAndHandlerManager = new ContextAndHandlerManager(this);
-		workbench.fireWindowOpened(this);
+		getWorkbenchImpl().fireWindowOpened(this);
 		return result;
 	}
 	/* (non-Javadoc)
@@ -615,7 +613,7 @@ public class WorkbenchWindow
 			return false;
 
 		// When closing the last window, prompt for confirmation
-		if (workbench.getWorkbenchWindowCount() > 1)
+		if (getWorkbenchImpl().getWorkbenchWindowCount() > 1)
 			return true;
 
 		IPreferenceStore store =
@@ -626,20 +624,21 @@ public class WorkbenchWindow
 
 		if (promptOnExit) {
 			String message;
-			String productName =
-				workbench
-					.getConfigurationInfo()
-					.getAboutInfo()
-					.getProductName();
+			// @issue Where should we get this product name from?
+			// String productName =	getWorkbenchImpl().getConfigurationInfo().getAboutInfo().getProductName();
+			String productName = null;
 			if (productName == null) {
 				message = WorkbenchMessages.getString("PromptOnExitDialog.message0"); //$NON-NLS-1$
 			} else {
 				message = WorkbenchMessages.format("PromptOnExitDialog.message1", new Object[] { productName }); //$NON-NLS-1$
 			}
 
-				MessageDialogWithToggle dlg = MessageDialogWithToggle.openConfirm(getShell(), WorkbenchMessages.getString("PromptOnExitDialog.shellTitle"), //$NON-NLS-1$,
-		message, WorkbenchMessages.getString("PromptOnExitDialog.choice"), //$NON-NLS-1$,
-	false);
+			MessageDialogWithToggle dlg = MessageDialogWithToggle.openConfirm(
+				getShell(), 
+				WorkbenchMessages.getString("PromptOnExitDialog.shellTitle"), //$NON-NLS-1$,
+				message,
+				WorkbenchMessages.getString("PromptOnExitDialog.choice"), //$NON-NLS-1$,
+				false);
 
 			if (dlg.getReturnCode() == MessageDialogWithToggle.OK) {
 				store.setValue(
@@ -667,7 +666,7 @@ public class WorkbenchWindow
 	}
 
 	protected boolean isClosing() {
-		return closing || workbench.isClosing();
+		return closing || getWorkbenchImpl().isClosing();
 	}
 	/**
 	 * Return whether or not the coolbar layout is locked.
@@ -1030,9 +1029,6 @@ public class WorkbenchWindow
 			shortcutDND.addDropListener(partDropListener);
 		}
 	}
-	public void fillActionBars(WWinActionBars actionBars) {
-		getActionBuilder().fillActionBars(actionBars);
-	}
 	/**
 	 * Returns the shortcut for a page.
 	 */
@@ -1124,13 +1120,7 @@ public class WorkbenchWindow
 		}
 		return actionBars;
 	}
-	/**
-	 * Returns the action builder for this window.
-	 */
-	/*package*/
-	final WorkbenchActionBuilder getActionBuilder() {
-		return actionBuilder;
-	}
+
 	/**
 	 * Returns the active page.
 	 *
@@ -1283,8 +1273,7 @@ public class WorkbenchWindow
 	/**
 	 * Returns the PartDragDrop for the shortcut bar part.
 	 */
-	/*package*/
-	ShortcutBarPartDragDrop getShortcutDND() {
+	/*package*/	ShortcutBarPartDragDrop getShortcutDND() {
 		return shortcutDND;
 	}
 
@@ -1313,6 +1302,26 @@ public class WorkbenchWindow
 	 */
 	public boolean getShowToolBar() {
 		return showToolBar;
+	}
+
+	/**
+	 * Returns whether the menu bar should be shown.
+	 * 
+	 * @return <code>true</code> to show it, <code>false</code> to hide it
+	 * @since 3.0
+	 */
+	public boolean getShowMenuBar() {
+		return showMenuBar;
+	}
+
+	/**
+	 * Returns whether the title bar should be shown.
+	 * 
+	 * @return <code>true</code> to show it, <code>false</code> to hide it
+	 * @since 3.0
+	 */
+	public boolean getShowTitleBar() {
+		return showTitleBar;
 	}
 
 	/**
@@ -1349,7 +1358,7 @@ public class WorkbenchWindow
 	 * @see IWorkbenchWindow
 	 */
 	public IWorkbench getWorkbench() {
-		return workbench;
+		return PlatformUI.getWorkbench();
 	}
 	public String getToolbarLabel(String actionSetId) {
 		ActionSetRegistry registry =
@@ -1378,8 +1387,9 @@ public class WorkbenchWindow
 			// Clear the action sets, fix for bug 27416.
 			actionPresentation.clearActionSets();
 			closeAllPages();
-			actionBuilder.dispose();
-			workbench.fireWindowClosed(this);
+			// let the application do further deconfiguration
+			getAdviser().postWindowClose(getWindowConfigurer());
+			getWorkbenchImpl().fireWindowClosed(this);
 		} finally {
 			return super.close();
 		}
@@ -1388,15 +1398,18 @@ public class WorkbenchWindow
 	 * @see IWorkbenchWindow
 	 */
 	public boolean isApplicationMenu(String menuID) {
-		return actionBuilder.isContainerMenu(menuID);
+		// delegate this question to the workbench adviser
+		return getAdviser().isApplicationMenu(getWindowConfigurer(), menuID);
 	}
+	
 	/**
 	 * Return whether or not given id matches the id of the coolitems that
 	 * the workbench creates.
 	 */
 	/* package */
 	boolean isWorkbenchCoolItemId(String id) {
-		return actionBuilder.isWorkbenchCoolItemId(id);
+		// delegate this question to the workbench adviser
+		return getAdviser().isWorkbenchCoolItemId(getWindowConfigurer(), id);
 	}
 	/**
 	 * Locks/unlocks the CoolBar for the workbench.
@@ -1415,7 +1428,7 @@ public class WorkbenchWindow
 	 */
 	public boolean okToClose() {
 		// Save all of the editors.
-		if (!workbench.isClosing())
+		if (!getWorkbenchImpl().isClosing())
 			if (!saveAllPages(true))
 				return false;
 		return true;
@@ -1467,8 +1480,7 @@ public class WorkbenchWindow
 	 */
 	public IWorkbenchPage openPage(IAdaptable input)
 		throws WorkbenchException {
-		String perspId =
-			workbench.getPerspectiveRegistry().getDefaultPerspective();
+		String perspId = getWorkbenchImpl().getPerspectiveRegistry().getDefaultPerspective();
 		return openPage(perspId, input);
 	}
 
@@ -1490,8 +1502,7 @@ public class WorkbenchWindow
 	/**
 	 * Remove the shortcut for a page.
 	 */
-	/* package */
-	void removePerspectiveShortcut(
+	/* package */ void removePerspectiveShortcut(
 		IPerspectiveDescriptor perspective,
 		WorkbenchPage page) {
 		IContributionItem item = findPerspectiveShortcut(perspective, page);
@@ -1604,10 +1615,10 @@ public class WorkbenchWindow
 		// If there are no pages create a default.
 		if (pageList.isEmpty()) {
 			try {
+				// @issue root is app-specific
 				IContainer root =
 					WorkbenchPlugin.getPluginWorkspace().getRoot();
-				String defPerspID =
-					workbench.getPerspectiveRegistry().getDefaultPerspective();
+				String defPerspID = getWorkbenchImpl().getPerspectiveRegistry().getDefaultPerspective();
 				WorkbenchPage newPage =
 					new WorkbenchPage(this, defPerspID, root);
 				pageList.add(newPage);
@@ -1615,11 +1626,9 @@ public class WorkbenchWindow
 			} catch (WorkbenchException e) {
 				WorkbenchPlugin.log("Unable to create default perspective - constructor failed."); //$NON-NLS-1$
 				result.add(e.getStatus());
-				String productName =
-					workbench
-						.getConfigurationInfo()
-						.getAboutInfo()
-						.getProductName();
+				// @issue Where should we get this product name from?
+				//String productName = getWorkbenchImpl().getConfigurationInfo().getAboutInfo().getProductName();
+				String productName = null;
 				if (productName == null) {
 					productName = ""; //$NON-NLS-1$
 				}
@@ -1647,11 +1656,9 @@ public class WorkbenchWindow
 	/* (non-Javadoc)
 	 * Method declared on IRunnableContext.
 	 */
-	public void run(
-		boolean fork,
-		boolean cancelable,
-		IRunnableWithProgress runnable)
+	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
 		throws InvocationTargetException, InterruptedException {
+			
 		ToolBarManager shortcutBar = getShortcutBar();
 		Control shortcutBarControl = null;
 		if (shortcutBar != null)
@@ -1749,8 +1756,7 @@ public class WorkbenchWindow
 	/**
 	 * Select the shortcut for a perspective.
 	 */
-	/* package */
-	void selectPerspectiveShortcut(
+	/* package */ void selectPerspectiveShortcut(
 		IPerspectiveDescriptor perspective,
 		WorkbenchPage page,
 		boolean selected) {
@@ -1835,6 +1841,26 @@ public class WorkbenchWindow
 	 */
 	public void setShowToolBar(boolean show) {
 		showToolBar = show;
+	}
+
+	/**
+	 * Sets whether the menu bar should be visible.
+	 * 
+	 * @param show <code>true</code> to show it, <code>false</code> to hide it
+	 * @since 3.0
+	 */
+	public void setShowMenuBar(boolean show) {
+		showMenuBar = show;
+	}
+
+	/**
+	 * Sets whether the title bar should be visible.
+	 * 
+	 * @param show <code>true</code> to show it, <code>false</code> to hide it
+	 * @since 3.0
+	 */
+	public void setShowTitleBar(boolean show) {
+		showTitleBar = show;
 	}
 
 	/**
@@ -1973,7 +1999,7 @@ public class WorkbenchWindow
 		shell.addShellListener(new ShellAdapter() {
 			public void shellActivated(ShellEvent event) {
 				shellActivated = true;
-				workbench.setActivatedWindow(WorkbenchWindow.this);
+				getWorkbenchImpl().setActivatedWindow(WorkbenchWindow.this);
 				WorkbenchPage currentPage = getActiveWorkbenchPage();
 				if (currentPage != null) {
 					IWorkbenchPart part = currentPage.getActivePart();
@@ -1986,7 +2012,7 @@ public class WorkbenchWindow
 						PartSite site = (PartSite) editor.getSite();
 						site.getPane().shellActivated();
 					}
-					workbench.fireWindowActivated(WorkbenchWindow.this);
+					getWorkbenchImpl().fireWindowActivated(WorkbenchWindow.this);
 				}
 			}
 			public void shellDeactivated(ShellEvent event) {
@@ -2003,7 +2029,7 @@ public class WorkbenchWindow
 						PartSite site = (PartSite) editor.getSite();
 						site.getPane().shellDeactivated();
 					}
-					workbench.fireWindowDeactivated(WorkbenchWindow.this);
+					getWorkbenchImpl().fireWindowDeactivated(WorkbenchWindow.this);
 				}
 			}
 		});
@@ -2120,17 +2146,19 @@ public class WorkbenchWindow
 	/**
 	 * Updates the window title.
 	 */
+	// @issue The adviser should be updating the title. IDE adviser will need to hookup listeners
 	public void updateTitle() {
-		if (updateDisabled)
+/*		if (updateDisabled)
 			return;
-		/* 
-		 * [pageInput -] [currentPerspective -] [editorInput -] [workspaceLocation -] productName
-		 */
-		String title =
-			workbench.getConfigurationInfo().getAboutInfo().getProductName();
+		// 
+		// [pageInput -] [currentPerspective -] [editorInput -] [workspaceLocation -] productName
+		//
+		String title = getWorkbenchImpl().getConfigurationInfo().getAboutInfo().getProductName();
 		if (title == null) {
 			title = ""; //$NON-NLS-1$
 		}
+		
+		// @issue workspace location is likely IDE-specific
 		if (workspaceLocation != null)
 			title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] { workspaceLocation, title }); //$NON-NLS-1$
 
@@ -2146,6 +2174,7 @@ public class WorkbenchWindow
 			if (persp != null)
 				label = persp.getLabel();
 			IAdaptable input = currentPage.getInput();
+			// @issue input is app-specific
 			if ((input != null)
 				&& (!input.equals(ResourcesPlugin.getWorkspace().getRoot())))
 				label = currentPage.getLabel();
@@ -2153,6 +2182,7 @@ public class WorkbenchWindow
 				title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] { label, title }); //$NON-NLS-1$
 		}
 		getShell().setText(title);
+*/
 	}
 
 	/**
@@ -2240,5 +2270,36 @@ public class WorkbenchWindow
 					return (WorkbenchPage) pageStack.get(pageStack.size() - 2);
 			}
 		}
+	}
+	
+	/**
+	 * Returns the unique object that applications use to configure this window.
+	 * <p>
+	 * This method is declared package-private to prevent a client from 
+	 * downcasting IWorkbenchWindow to WorkbenchWindow and getting hold of
+	 * a configurer that would allow them to tamper with the window.
+	 * </p>
+	 */
+	/* package */ WorkbenchWindowConfigurer getWindowConfigurer() {
+		if (windowConfigurer == null) {
+			// lazy initialize
+			windowConfigurer = new WorkbenchWindowConfigurer(this);
+		}
+		return windowConfigurer;
+	}
+	
+	/*
+	 * Returns the workbench adviser. Assumes the workbench
+	 * has been created already.
+	 */
+	private WorkbenchAdviser getAdviser() {
+		return getWorkbenchImpl().getAdviser();
+	}
+	
+	/*
+	 * Returns the IWorkbench implementation.
+	 */
+	private Workbench getWorkbenchImpl() {
+		return Workbench.getInstance();
 	}
 }

@@ -1113,7 +1113,7 @@ public class WorkbenchActionBuilder {
 	 * Add the manual incremental build action
 	 * to both the menu bar and the tool bar.
 	 */
-	protected void addManualIncrementalBuildAction() {
+	public void addManualIncrementalBuildAction() {
 		IMenuManager menubar = getWWinActionBars().getMenuManager();
 		IMenuManager manager =
 			menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
@@ -1147,7 +1147,7 @@ public class WorkbenchActionBuilder {
 	 * Remove the manual incremental build action
 	 * from both the menu bar and the tool bar.
 	 */
-	protected void removeManualIncrementalBuildAction() {
+	public void removeManualIncrementalBuildAction() {
 		IMenuManager menubar = getWWinActionBars().getMenuManager();
 		IMenuManager manager =
 			menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);

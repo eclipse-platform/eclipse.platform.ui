@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.application.WorkbenchAdviser;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * The central class for access to the Eclipse Platform User Interface. 
@@ -20,6 +21,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  * Features provided:
  * <ul>
+ * <li>creation of the workbench.</li>
  * <li>access to the workbench.</li>
  * </ul>
  * <p>
@@ -28,23 +30,58 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public final class PlatformUI {
 	/**
-	 * Identifies the workbench plugin.
+	 * Identifies the workbench plug-in.
 	 */
-	public static final String PLUGIN_ID = "org.eclipse.ui";//$NON-NLS-1$
-	
-	private static IWorkbench instance; 
-/**
- * Block instantiation.
- */
-private PlatformUI() {
-}
-/**
- * Returns the workbench interface.
- */
-public static IWorkbench getWorkbench() {
-	if (instance == null) {
-		instance = WorkbenchPlugin.getDefault().getWorkbench();
+	public static final String PLUGIN_ID = "org.eclipse.ui"; //$NON-NLS-1$
+
+	/**
+	 * Block instantiation.
+	 */
+	private PlatformUI() {
 	}
-	return instance;
-}
+	
+	/**
+	 * Returns the workbench. Fails if the workbench has not been
+	 * created yet.
+	 * 
+	 * @return the workbench
+	 * @throws IllegalStateException If <code>createWorkbench</code> not called once beforehand
+	 */
+	public static IWorkbench getWorkbench() {
+		if (Workbench.getInstance() == null) {
+			// app forgot to call createWorkbench beforehand
+			throw new IllegalStateException(WorkbenchMessages.getString("PlatformUI.NoWorkbench")); //$NON-NLS-1$
+		}
+		return Workbench.getInstance();
+	}
+
+	/**
+	 * Returns whether the workbench has been created.
+	 * 
+	 * @return <code>true</code> if workbench created, <code>false</code> otherwise
+	 */
+	public static boolean isWorkbenchCreated() {
+		return Workbench.getInstance() != null;
+	}
+	
+	/**
+	 * Creates the workbench and associates it with the given workbench adviser.
+	 * <p>
+	 * Note that this method is intended to be called by the application
+	 * (<code>org.eclipse.core.boot.IPlatformRunnable</code>). It must be
+	 * called exactly once, and early on before anyone else asks
+	 * <code>getWorkbench()</code> for the workbench.
+	 * </p>
+	 * 
+	 * @param adviser the application-specific adviser that configures and
+	 * specializes the workbench
+	 * @return the created workbench
+	 * @throws IllegalArgumentException If adviser is invalid
+	 * @throws IllegalStateException If <code>createWorkbench</code> has been called before
+	 * @since 3.0
+	 */
+	public static IWorkbench createWorkbench(WorkbenchAdviser adviser) {
+		// create the workbench instance (but do not run the UI, the app will do that)
+		return new Workbench(adviser);
+	}
 }

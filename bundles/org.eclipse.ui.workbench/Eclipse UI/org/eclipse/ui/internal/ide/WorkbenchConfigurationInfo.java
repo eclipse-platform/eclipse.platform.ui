@@ -8,22 +8,23 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal;
+package org.eclipse.ui.internal.ide;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import java.util.List;
 import java.util.Collections;
-import java.lang.String;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.SystemSummaryEditorInput;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import java.util.ArrayList;
 import org.eclipse.ui.WorkbenchException;
-import java.lang.Exception;
 import java.text.Collator;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IEditorInput;
@@ -31,17 +32,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.ui.PartInitException;
 import java.util.Comparator;
-import java.lang.RuntimeException;
 import java.util.Arrays;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.core.boot.BootLoader;
 import java.net.URL;
 import org.eclipse.core.boot.IPlatformConfiguration;
-import java.lang.Object;
 
-/**
- * @deprecated Moved to org.eclipse.ui.internal.ide
- */
 public class WorkbenchConfigurationInfo {
 	private AboutInfo aboutInfo;
 	private AboutInfo[] featuresInfo;
@@ -92,7 +88,7 @@ protected void openWelcomeEditors(IWorkbenchWindow window) {
 	AboutInfo info = getAboutInfo();
 	AboutInfo[] newFeatures = getNewFeaturesInfo();
 
-	if (WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.WELCOME_DIALOG)) {
+	if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.WELCOME_DIALOG)) {
 		// Show the quick start wizard the first time the workbench opens.
 
 		// See if a welcome page is specified
@@ -101,7 +97,7 @@ protected void openWelcomeEditors(IWorkbenchWindow window) {
 			return;
 
 		// Don't show it again
-		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.WELCOME_DIALOG, false);
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.WELCOME_DIALOG, false);
 
 		openEditor(window, new WelcomeEditorInput(info), Workbench.WELCOME_EDITOR_ID, null);
 	} else {
@@ -156,8 +152,8 @@ protected boolean readInfo() {
 				try {
 					mainPluginVersion = new PluginVersionIdentifier(versionedFeaturePluginVersion);
 				} catch (Exception e) {
-					IStatus iniStatus = new Status(IStatus.ERROR, WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, "Unknown plugin version " + versionedFeatureId, e); //$NON-NLS-1$
-					WorkbenchPlugin.log("Problem obtaining configuration info ", iniStatus); //$NON-NLS-1$
+					IStatus iniStatus = new Status(IStatus.ERROR, IDEWorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, "Unknown plugin version " + versionedFeatureId, e); //$NON-NLS-1$
+					IDEWorkbenchPlugin.log("Problem obtaining configuration info ", iniStatus); //$NON-NLS-1$
 				}
 				aboutInfo = new AboutInfo(versionedFeaturePluginIdentifier, mainPluginVersion);
 			}
@@ -169,7 +165,7 @@ protected boolean readInfo() {
 	try {
 		aboutInfo.readINIFile();
 	} catch (CoreException e) {
-		WorkbenchPlugin.log("Error reading about info file", e.getStatus()); //$NON-NLS-1$
+		IDEWorkbenchPlugin.log("Error reading about info file", e.getStatus()); //$NON-NLS-1$
 		success = false;
 	}
 
@@ -181,7 +177,7 @@ protected boolean readInfo() {
  */
 private void readFeaturesInfo() {
 
-	IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
+	IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
 
 	String[] oldFeaturesArray = settings.getArray(INSTALLED_FEATURES);
 	List oldFeatures = null;
@@ -213,8 +209,8 @@ private void readFeaturesInfo() {
 				// only report a feature as new if we have a previous record of old features
 				newAboutInfos.add(info);
 		} catch (RuntimeException e) {
-			if (WorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
-				WorkbenchPlugin.log("Error parsing version \"" + vid + "\" for plugin: " + id + " in Workbench.readFeaturesInfo()"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (IDEWorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
+				IDEWorkbenchPlugin.log("Error parsing version \"" + vid + "\" for plugin: " + id + " in Workbench.readFeaturesInfo()"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			// continue
 		}
 	}
@@ -246,8 +242,8 @@ private void readFeaturesInfo() {
 				newAboutInfos.remove(featuresInfo[i]);
 			}
 		} catch (CoreException e) {
-			if (WorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
-				WorkbenchPlugin.log("Error reading about info file for feature: " + featuresInfo[i].getFeatureId(), e.getStatus()); //$NON-NLS-1$
+			if (IDEWorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
+				IDEWorkbenchPlugin.log("Error reading about info file for feature: " + featuresInfo[i].getFeatureId(), e.getStatus()); //$NON-NLS-1$
 		}
 	}
 
@@ -284,14 +280,14 @@ private void openEditor(IWorkbenchWindow window, IEditorInput input, String edit
 
 	IWorkbenchWindow win = window;
 	if (perspectiveId != null) {
-		IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
+		IContainer root = IDEWorkbenchPlugin.getPluginWorkspace().getRoot();
 		try {
 			win = getWorkbench().openWorkbenchWindow(perspectiveId, root);
 			if (win == null)
 				win = window;
 		} catch (WorkbenchException e) {
-			if (WorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
-				WorkbenchPlugin.log("Error opening window in Workbench.openEditor(..)"); //$NON-NLS-1$
+			if (IDEWorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
+				IDEWorkbenchPlugin.log("Error opening window in Workbench.openEditor(..)"); //$NON-NLS-1$
 			return;
 		}
 	}
@@ -302,17 +298,17 @@ private void openEditor(IWorkbenchWindow window, IEditorInput input, String edit
 	WorkbenchPage page = (WorkbenchPage) win.getActivePage();
 	String id = perspectiveId;
 	if (id == null)
-		id = WorkbenchPlugin.getDefault().getPerspectiveRegistry().getDefaultPerspective();
+		id = IDEWorkbenchPlugin.getDefault().getPerspectiveRegistry().getDefaultPerspective();
 
 	if (page == null) {
 		// Create the page.
 		try {
-			IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
+			IContainer root = IDEWorkbenchPlugin.getPluginWorkspace().getRoot();
 			page = (WorkbenchPage) window.openPage(id, root);
 		} catch (WorkbenchException e) {
 			ErrorDialog.openError(
 				win.getShell(), 
-				WorkbenchMessages.getString("Problems_Opening_Page"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("Problems_Opening_Page"), //$NON-NLS-1$
 				e.getMessage(),
 				e.getStatus());
 		}
@@ -325,11 +321,11 @@ private void openEditor(IWorkbenchWindow window, IEditorInput input, String edit
 		try {
 			page = (WorkbenchPage)getWorkbench().showPerspective(id, win);
 		} catch (WorkbenchException e) {
-			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$
 			ErrorDialog.openError(
 				win.getShell(),
-				WorkbenchMessages.getString("Workbench.openEditorErrorDialogTitle"),  //$NON-NLS-1$
-			WorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("Workbench.openEditorErrorDialogTitle"),  //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
 			status);
 			return;
 		}
@@ -347,11 +343,11 @@ private void openEditor(IWorkbenchWindow window, IEditorInput input, String edit
 	try {
 		page.openEditor(input, editorId);
 	} catch (PartInitException e) {
-		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$
+		IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$
 		ErrorDialog.openError(
 			win.getShell(),
-			WorkbenchMessages.getString("Workbench.openEditorErrorDialogTitle"),  //$NON-NLS-1$
-		WorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("Workbench.openEditorErrorDialogTitle"),  //$NON-NLS-1$
+		IDEWorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
 		status);
 	}
 	return;

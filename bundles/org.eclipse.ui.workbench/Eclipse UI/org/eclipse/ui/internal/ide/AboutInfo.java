@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal;
+package org.eclipse.ui.internal.ide;
 
 import java.io.*;
 import java.net.URL;
@@ -26,7 +26,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * This file resides within an install configurations directory and must be a 
  * standard java property file.  
  * </p>
- * @deprecated Moved to org.eclipse.ui.internal.ide
  */
 public class AboutInfo extends NewConfigurationInfo {
 
@@ -333,7 +332,7 @@ public class AboutInfo extends NewConfigurationInfo {
 		Hashtable runtimeMappings  = new Hashtable();
 		String featureVersion = getVersion();
 		if (featureVersion==null)
-			featureVersion=WorkbenchMessages.getString("AboutDialog.notSpecified"); //$NON-NLS-1$
+			featureVersion=IDEWorkbenchMessages.getString("AboutDialog.notSpecified"); //$NON-NLS-1$
 		runtimeMappings.put("{featureVersion}", featureVersion); //$NON-NLS-1$
 
 		windowImage = getImage(ini, "windowImage"); //$NON-NLS-1$
