@@ -177,7 +177,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				return policy.getList();
 				
 			if (policy.getType()==ISitePolicy.USER_EXCLUDE) {
-				List detectedPlugins = Arrays.asList(getDetectedPlugins());
+				ArrayList detectedPlugins = new ArrayList(Arrays.asList(getDetectedPlugins()));
 				String[] excludedPlugins = policy.getList();
 				for (int i=0; i<excludedPlugins.length; i++) {
 					if (detectedPlugins.contains(excludedPlugins[i]))
