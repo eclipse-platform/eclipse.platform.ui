@@ -102,7 +102,7 @@ private Map readAttributes(DataInputStream input) throws IOException {
 				value = new Integer(input.readInt());
 				break;
 			case ATTRIBUTE_BOOLEAN :
-				value = new Boolean(input.readBoolean());
+				value = input.readBoolean() ? Boolean.TRUE : Boolean.FALSE;
 				break;
 			case ATTRIBUTE_STRING :
 				value = input.readUTF();

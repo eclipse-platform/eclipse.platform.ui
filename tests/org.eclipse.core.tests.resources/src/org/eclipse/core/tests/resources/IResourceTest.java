@@ -951,7 +951,7 @@ public void testEquals() {
 		public Object invokeMethod(Object[] args, int count) throws Exception {
 			IResource resource0 = (IResource) args[0];
 			IResource resource1 = (IResource) args[1];
-			return new Boolean(resource0.equals(resource1));
+			return resource0.equals(resource1) ? Boolean.TRUE : Boolean.FALSE;
 		}
 		public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 			IResource resource0 = (IResource) args[0];
@@ -984,7 +984,7 @@ public void testExists() {
 		}
 		public Object invokeMethod(Object[] args, int count) throws Exception {
 			IResource resource = (IResource) args[0];
-			return new Boolean(resource.exists());
+			return resource.exists() ? Boolean.TRUE : Boolean.FALSE;
 		}
 		public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 			boolean booleanResult = ((Boolean) result).booleanValue();

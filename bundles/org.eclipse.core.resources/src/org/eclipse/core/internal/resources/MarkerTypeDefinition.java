@@ -55,13 +55,13 @@ public MarkerTypeDefinition(IExtension ext) {
 		if (elements[i].getName().equalsIgnoreCase("persistent")) { //$NON-NLS-1$
 			String bool = element.getAttribute("value"); //$NON-NLS-1$
 			if (bool != null)
-				this.persistent = new Boolean(bool).booleanValue();
+				this.persistent = Boolean.valueOf(bool).booleanValue();
 		}
 		// XXX: legacy code for support of <transient> tag. remove later.
 		if (elements[i].getName().equalsIgnoreCase("transient")) { //$NON-NLS-1$
 			String bool = element.getAttribute("value"); //$NON-NLS-1$
 			if (bool != null)
-				this.persistent = !new Boolean(bool).booleanValue();
+				this.persistent = !Boolean.valueOf(bool).booleanValue();
 		}
 	}
 

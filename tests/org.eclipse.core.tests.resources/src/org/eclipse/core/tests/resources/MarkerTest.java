@@ -1611,7 +1611,7 @@ public void testSetGetAttribute() {
 			Object[] values = new Object[3];
 			values[0] = getRandomString();
 			values[1] = new Integer(5);
-			values[2] = new Boolean(false);
+			values[2] = Boolean.FALSE;
 			marker.setAttributes(keys, values);
 			Object[] found = marker.getAttributes(keys);
 			assertEquals("3.0." + resource.getFullPath(), values, found);
@@ -1747,7 +1747,7 @@ public void testSetGetAttribute2() {
 			Object[] values = new Object[3];
 			values[0] = getRandomString();
 			values[1] = new Integer(5);
-			values[2] = new Boolean(false);
+			values[2] = Boolean.FALSE;
 			marker.setAttributes(keys, values);
 			Object[] found = marker.getAttributes(keys);
 			assertEquals("3.0." + resource.getFullPath(), values, found);
