@@ -69,7 +69,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	public void addPages() {
 		AdaptableList disabledWizards = new AdaptableList();
 		AdaptableList wizards = getAvailableWizards(disabledWizards);	
-		if (wizards.size() == 1) {
+		if (wizards.size() == 1 && disabledWizards.size() == 0) {
 			// If there is only one wizard, skip the first page.
 			// Only skip the first page if the one wizard has at least one page.
 			ConfigurationWizardElement element = (ConfigurationWizardElement)wizards.getChildren()[0];
