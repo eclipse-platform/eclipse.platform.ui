@@ -189,7 +189,7 @@
 	</extension>
 		
 	<!-- Variable Extensions -->
-	<extension point="org.eclipse.debug.ui.contextLaunchVariables">
+	<extension point="org.eclipse.debug.core.contextLaunchVariables">
 		<variable
 			name="build_type"
 			description="%build_type.description"
