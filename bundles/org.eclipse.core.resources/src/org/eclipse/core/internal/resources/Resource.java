@@ -756,6 +756,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			project.internalSetDescription(description, true);
 			project.writeDescription(IResource.FORCE);
 		}
+		
+		// check if we deleted a preferences file 
+		ProjectPreferences.deleted(this);
 
 		/* if we are synchronizing, do not delete the resource. Convert it
 		 into a phantom. Actual deletion will happen when we refresh or push. */
@@ -819,6 +822,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			project.writeDescription(IResource.NONE);
 		}
 
+		// check if we deleted a preferences file 
+		ProjectPreferences.deleted(this);		
+		
 		if (!synchronizing(info)) {
 			workspace.deleteResource(this);
 			return;

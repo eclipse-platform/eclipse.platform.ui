@@ -13,6 +13,8 @@ package org.eclipse.core.internal.resources;
 import java.util.*;
 import org.eclipse.core.internal.localstore.HistoryStore;
 import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.WrappedRuntimeException;
+import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -253,22 +255,48 @@ public abstract class Container extends Resource implements IContainer {
 	/* (non-Javadoc)
 	 * @see IContainer#setDefaultCharset(String, IProgressMonitor)
 	 */
-	public void setDefaultCharset(String charset, IProgressMonitor monitor) throws CoreException {
+	public void setDefaultCharset(String newCharset, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			String message = Policy.bind("resources.settingDefaultCharsetContainer", getFullPath().toString()); //$NON-NLS-1$
 			monitor.beginTask(message, Policy.totalWork);
 			// need to get the project as a scheduling rule because we might be 
 			// creating a new folder/file to hold the project settings
-			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(getProject());
+			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(getType() == ROOT ? this : (IResource) getProject());
 			try {
 				workspace.prepareOperation(rule, monitor);
 				ResourceInfo info = getResourceInfo(false, false);
 				checkAccessible(getFlags(info));
 				workspace.beginOperation(true);
-				// TODO: https://bugs.eclipse.org/bugs/show_bug.cgi?id=59899
-				// Changing the encoding needs to notify clients.
-				workspace.getCharsetManager().setCharsetFor(getFullPath(), charset);
+				workspace.getCharsetManager().setCharsetFor(getFullPath(), newCharset);
+				// now propagate the changes to all children inheriting their setting from this container
+				IElementContentVisitor visitor = new IElementContentVisitor() {
+					boolean visitedRoot = false;
+
+					public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
+						if (elementContents == null)
+							return false;
+						IPath nodePath = requestor.requestPath();
+						// we will always generate an event at least for the root of the sub tree
+						// (skip visiting the root because we already have set the charset above and
+						// that is the condition we are checking later)
+						if (!visitedRoot) {
+							visitedRoot = true;
+							workspace.getResourceInfo(nodePath, false, true).incrementCharsetGenerationCount();
+							return true;
+						}						
+						// does it already have an encoding explicitly set?
+						if (workspace.getCharsetManager().getCharsetFor(nodePath, false) != null)
+							return false;
+						workspace.getResourceInfo(nodePath, false, true).incrementCharsetGenerationCount();
+						return true;
+					}
+				};
+				try {
+					new ElementTreeIterator(workspace.getElementTree(), getFullPath()).iterate(visitor);
+				} catch (WrappedRuntimeException e) {
+					throw (CoreException) e.getTargetException();
+				}
 				monitor.worked(Policy.opWork);
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();

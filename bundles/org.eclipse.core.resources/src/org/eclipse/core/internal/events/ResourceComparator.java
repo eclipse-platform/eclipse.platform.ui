@@ -82,6 +82,8 @@ public class ResourceComparator implements IElementComparator, ICoreConstants {
 			result |= IResourceDelta.SYNC;
 		if (notification && !compareMarkers(oldElement, newElement))
 			result |= IResourceDelta.MARKERS;
+		if (!compareCharsets(oldElement, newElement))
+			result |= IResourceDelta.ENCODING;
 		return result == 0 ? 0 : result | IResourceDelta.CHANGED;
 	}
 
@@ -90,6 +92,10 @@ public class ResourceComparator implements IElementComparator, ICoreConstants {
 	 */
 	private boolean compareContents(ResourceInfo oldElement, ResourceInfo newElement) {
 		return oldElement.getContentId() == newElement.getContentId();
+	}
+
+	private boolean compareCharsets(ResourceInfo oldElement, ResourceInfo newElement) {
+		return oldElement.getCharsetGenerationCount() == newElement.getCharsetGenerationCount();
 	}
 
 	private boolean compareMarkers(ResourceInfo oldElement, ResourceInfo newElement) {

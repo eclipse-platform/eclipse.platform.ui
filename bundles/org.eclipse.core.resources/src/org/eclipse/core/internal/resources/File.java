@@ -12,6 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
+import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
@@ -209,9 +210,13 @@ public class File extends Resource implements IFile {
 	public String getCharset(boolean checkImplicit) throws CoreException {
 		// non-existing resources default to parent's charset
 		ResourceInfo info = getResourceInfo(false, false);
-		int flags = getFlags(info);		
+		int flags = getFlags(info);
 		if (!exists(flags, false))
 			return checkImplicit ? workspace.getCharsetManager().getCharsetFor(getFullPath().removeLastSegments(1), true) : null;
+		return internalGetCharset(checkImplicit, info);
+	}
+
+	private String internalGetCharset(boolean checkImplicit, ResourceInfo info) throws CoreException {
 		// if there is a file-specific user setting, use it
 		String charset = workspace.getCharsetManager().getCharsetFor(getFullPath(), false);
 		if (charset != null || !checkImplicit)
@@ -289,10 +294,10 @@ public class File extends Resource implements IFile {
 			content = new ByteArrayInputStream(new byte[0]);
 		getLocalManager().write(this, location, content, force, keepHistory, append, monitor);
 		ResourceInfo info = getResourceInfo(false, true);
-		info.incrementContentId();		
-		info.clear(M_CONTENT_CACHE);		
+		info.incrementContentId();
+		info.clear(M_CONTENT_CACHE);
 		workspace.updateModificationStamp(info);
-		updateProjectDescription();
+		updateMetadataFiles();
 		workspace.getAliasManager().updateAliases(this, location, IResource.DEPTH_ZERO, monitor);
 	}
 
@@ -360,15 +365,26 @@ public class File extends Resource implements IFile {
 	}
 
 	/**
-	 * If this file represents a project description file (.project), then force
-	 * an update on the project's description.
-	 * 
+	 * Treat the file specially if it represents a metadata file, which includes:
+	 * - project description file (.project)
+	 * - project preferences files (*.prefs)
+	 *  
 	 * This method is called whenever it is discovered that a file has
 	 * been modified (added, removed, or changed).
 	 */
-	public void updateProjectDescription() throws CoreException {
-		if (path.segmentCount() == 2 && path.segment(1).equals(IProjectDescription.DESCRIPTION_FILE_NAME))
+	public void updateMetadataFiles() throws CoreException {
+		int count = path.segmentCount();
+		String name = path.segment(1);
+		// is this a project description file?
+		if (count == 2 && name.equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
 			((Project) getProject()).updateDescription();
+			return;
+		}		
+		// check to see if we are in the .settings directory
+		if (count == 3 && EclipsePreferences.DEFAULT_PREFERENCES_DIRNAME.equals(name)) {
+			ProjectPreferences.updatePreferences(this);
+			return;
+		}		
 	}
 
 	/* (non-Javadoc)
@@ -398,9 +414,9 @@ public class File extends Resource implements IFile {
 				ResourceInfo info = getResourceInfo(false, false);
 				checkAccessible(getFlags(info));
 				workspace.beginOperation(true);
-				// TODO: https://bugs.eclipse.org/bugs/show_bug.cgi?id=59899
-				// Changing the encoding needs to notify clients.
 				workspace.getCharsetManager().setCharsetFor(getFullPath(), newCharset);
+				info = getResourceInfo(false, true);
+				info.incrementCharsetGenerationCount();
 				monitor.worked(Policy.opWork);
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();

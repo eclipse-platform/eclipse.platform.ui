@@ -279,7 +279,7 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 				if (state == RL_IN_SYNC || state == RL_NOT_IN_SYNC) {
 					if (targetType == IResource.FILE) {
 						try {
-							((File) target).updateProjectDescription();
+							((File) target).updateMetadataFiles();
 						} catch (CoreException e) {
 							errors.merge(e.getStatus());
 						}
@@ -291,7 +291,7 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 				synchronizeLastModified(node, target);
 			if (targetType == IResource.FILE) {
 				try {
-					((File) target).updateProjectDescription();
+					((File) target).updateMetadataFiles();
 				} catch (CoreException e) {
 					errors.merge(e.getStatus());
 				}

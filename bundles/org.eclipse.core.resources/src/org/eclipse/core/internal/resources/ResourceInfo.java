@@ -23,6 +23,9 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	/** Set of flags which reflect various states of the info (dirty, transient, ...). */
 	protected int flags = 0;
 
+	/** The generation count for encoding changes. */
+	private int charsetGenerationCount = 0;
+
 	/** Unique content identifier */
 	protected int contentId = 0;
 
@@ -89,6 +92,10 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	 */
 	protected static int getBits(int flags, int mask, int start) {
 		return (flags & mask) >> start;
+	}
+
+	public int getCharsetGenerationCount() {
+		return charsetGenerationCount;
 	}
 
 	public int getContentId() {
@@ -203,6 +210,14 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	 */
 	public static int getType(int flags) {
 		return getBits(flags, M_TYPE, M_TYPE_START);
+	}
+
+	/** 
+	 * Increments the charset generation count.
+	 * The count is incremented whenever the encoding on the resource changes.
+	 */
+	public void incrementCharsetGenerationCount() {
+		++charsetGenerationCount;
 	}
 
 	/** 

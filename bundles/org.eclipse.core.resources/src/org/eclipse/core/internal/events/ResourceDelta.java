@@ -504,6 +504,12 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 			buffer.append("DESCRIPTION"); //$NON-NLS-1$
 			prev = true;
 		}
+		if ((changeFlags & ENCODING) != 0) {
+			if (prev)
+				buffer.append(" | "); //$NON-NLS-1$
+			buffer.append("ENCODING"); //$NON-NLS-1$
+			prev = true;
+		}
 		buffer.append("}"); //$NON-NLS-1$
 		if (isTeamPrivate())
 			buffer.append(" (team private)"); //$NON-NLS-1$

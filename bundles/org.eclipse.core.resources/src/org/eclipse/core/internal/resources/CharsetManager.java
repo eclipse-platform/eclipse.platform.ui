@@ -190,7 +190,15 @@ public class CharsetManager implements IManager {
 	}
 
 	public void setCharsetFor(IPath resourcePath, String newCharset) throws CoreException {
-		Assert.isLegal(resourcePath.segmentCount() >= 1);
+		if (resourcePath.segmentCount() == 0) {
+			org.eclipse.core.runtime.Preferences resourcesPreferences = ResourcesPlugin.getPlugin().getPluginPreferences();
+			if (newCharset != null)
+				resourcesPreferences.setValue(ResourcesPlugin.PREF_ENCODING, newCharset);
+			else
+				resourcesPreferences.setToDefault(ResourcesPlugin.PREF_ENCODING);
+			ResourcesPlugin.getPlugin().savePluginPreferences();
+			return;
+		}
 		IProject project = workspace.getRoot().getProject(resourcePath.segment(0));
 		Preferences encodingSettings = getPreferences(project);
 		if (newCharset == null || newCharset.trim().length() == 0)

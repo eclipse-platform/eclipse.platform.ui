@@ -37,11 +37,6 @@ public class ProjectPreferences extends EclipsePreferences {
 	private IFile file;
 	// cache which nodes have been loaded from disk
 	protected static Set loadedNodes = new HashSet();
-	private static IResourceChangeListener listener = createListener();
-
-	static {
-		addListener();
-	}
 
 	/**
 	 * Default constructor. Should only be called by #createExecutableExtension.
@@ -81,108 +76,6 @@ public class ProjectPreferences extends EclipsePreferences {
 			return null;
 		IPath path = project.getLocation();
 		return computeLocation(path, qualifier);
-	}
-
-	private static IResourceChangeListener createListener() {
-		final IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
-			public boolean visit(IResourceDelta delta) throws CoreException {
-				IPath path = delta.getFullPath();
-				int count = path.segmentCount();
-
-				// we only want to deal with changes in our specific subdir
-				if (count < 2)
-					return true;
-
-				// check to see if we are the .settings directory
-				if (count == 2) {
-					String name = path.segment(1);
-					return DEFAULT_PREFERENCES_DIRNAME.equals(name);
-				}
-
-				// shouldn't have to check this but do it just in case
-				if (count > 3)
-					return false;
-
-				// if we made it this far we are inside /project/.settings and might
-				// have a change to a preference file
-				if (!PREFS_FILE_EXTENSION.equals(path.getFileExtension()))
-					return false;
-
-				String project = path.segment(0);
-				String qualifier = path.removeFileExtension().lastSegment();
-				Preferences root = Platform.getPreferencesService().getRootNode();
-				Preferences node = root.node(ProjectScope.SCOPE).node(project).node(qualifier);
-				String message = null;
-				try {
-					switch (delta.getKind()) {
-						case IResourceDelta.REMOVED :
-							message = Policy.bind("preferences.removeNodeException", node.absolutePath()); //$NON-NLS-1$
-							node.removeNode();
-							loadedNodes.remove(node.absolutePath());
-							break;
-						case IResourceDelta.CHANGED :
-							message = Policy.bind("preferences.syncException", node.absolutePath()); //$NON-NLS-1$
-							if (node instanceof ProjectPreferences)
-								((ProjectPreferences) node).load();
-							break;
-					}
-				} catch (BackingStoreException e) {
-					IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e);
-					throw new CoreException(status);
-				}
-
-				// no more work to do
-				return false;
-			}
-		};
-
-		IResourceChangeListener result = new IResourceChangeListener() {
-			public void resourceChanged(IResourceChangeEvent event) {
-				switch (event.getType()) {
-					case IResourceChangeEvent.POST_CHANGE :
-						handleDelta(event);
-						break;
-					case IResourceChangeEvent.PRE_DELETE :
-						handleProjectDelete(event);
-						break;
-				}
-			}
-
-			private void handleDelta(IResourceChangeEvent event) {
-				IResourceDelta delta = event.getDelta();
-				if (delta == null)
-					return;
-				try {
-					delta.accept(visitor);
-				} catch (CoreException e) {
-					String message = Policy.bind("preferences.visitException"); //$NON-NLS-1$
-					IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e);
-					ResourcesPlugin.getPlugin().getLog().log(status);
-				}
-			}
-
-			private void handleProjectDelete(IResourceChangeEvent event) {
-				IResource resource = event.getResource();
-				if (resource == null)
-					return;
-				Preferences scopeRoot = Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE);
-				try {
-					if (!scopeRoot.nodeExists(resource.getName()))
-						return;
-					// delete the prefs
-					scopeRoot.node(resource.getName()).removeNode();
-				} catch (BackingStoreException e) {
-					String message = Policy.bind("preferences.projectDeleteException", resource.getName()); //$NON-NLS-1$
-					IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e);
-					ResourcesPlugin.getPlugin().getLog().log(status);
-				}
-			}
-		};
-		return result;
-	}
-
-	private static void addListener() {
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.POST_CHANGE);
 	}
 
 	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
@@ -328,5 +221,107 @@ public class ProjectPreferences extends EclipsePreferences {
 				}
 		}
 		convertFromProperties(fromDisk);
+	}
+
+	public static void updatePreferences(IFile file) throws CoreException {
+		IPath path = file.getFullPath();
+		// if we made it this far we are inside /project/.settings and might
+		// have a change to a preference file
+		if (!PREFS_FILE_EXTENSION.equals(path.getFileExtension()))
+			return;
+
+		String project = path.segment(0);
+		String qualifier = path.removeFileExtension().lastSegment();
+		Preferences root = Platform.getPreferencesService().getRootNode();
+		Preferences node = root.node(ProjectScope.SCOPE).node(project).node(qualifier);
+		String message = null;
+		try {
+			message = Policy.bind("preferences.syncException", node.absolutePath()); //$NON-NLS-1$
+			if (node instanceof ProjectPreferences)
+				((ProjectPreferences) node).load();
+		} catch (BackingStoreException e) {
+			IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e);
+			throw new CoreException(status);
+		}
+	}
+
+	static void removeNode(Preferences node) throws CoreException {
+		String message = Policy.bind("preferences.removeNodeException", node.absolutePath()); //$NON-NLS-1$
+		try {
+			node.removeNode();
+		} catch (BackingStoreException e) {
+			IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e);
+			throw new CoreException(status);
+		}
+		String path = node.absolutePath();
+		for (Iterator i = loadedNodes.iterator(); i.hasNext();) {
+			String key = (String) i.next();
+			if (key.startsWith(path))
+				i.remove();
+		}
+	}
+
+	/*
+	 * The whole project has been removed so delete all of the project settings
+	 */
+	static void deleted(IProject project) throws CoreException {
+		// The settings dir has been removed/moved so remove all project prefs
+		// for the resource. We have to do this now because (since we aren't
+		// synchronizing) there is short-circuit code that doesn't visit the
+		// children.
+		Preferences root = Platform.getPreferencesService().getRootNode();
+		Preferences node = root.node(ProjectScope.SCOPE).node(project.getName());
+		removeNode(node);
+	}
+
+	static void deleted(IFile resource) throws CoreException {
+		IPath path = resource.getFullPath();
+		int count = path.segmentCount();
+		if (count != 3)
+			return;
+		// check if we are in the .settings directory
+		if (!EclipsePreferences.DEFAULT_PREFERENCES_DIRNAME.equals(path.segment(1)))
+			return;
+		Preferences root = Platform.getPreferencesService().getRootNode();
+		String project = path.segment(0);
+		String qualifier = path.removeFileExtension().lastSegment();
+		Preferences projectNode = root.node(ProjectScope.SCOPE).node(project);
+		try {
+			if (projectNode.nodeExists(qualifier))
+				removeNode(projectNode.node(qualifier));
+		} catch (BackingStoreException e) {
+			// try to remove it anyway
+			removeNode(projectNode.node(qualifier));
+		}
+	}
+
+	static void deleted(IResource resource) throws CoreException {
+		switch (resource.getType()) {
+			case IResource.FILE :
+				deleted((IFile) resource);
+				return;
+			case IResource.FOLDER :
+				deleted((IFolder) resource);
+				return;
+			case IResource.PROJECT :
+				deleted((IProject) resource);
+				return;
+		}
+	}
+
+	static void deleted(IFolder resource) throws CoreException {
+		IPath path = resource.getFullPath();
+		int count = path.segmentCount();
+		if (count != 2)
+			return;
+		// check if we are the .settings directory
+		if (!EclipsePreferences.DEFAULT_PREFERENCES_DIRNAME.equals(path.segment(1)))
+			return;
+		Preferences root = Platform.getPreferencesService().getRootNode();
+		// The settings dir has been removed/moved so remove all project prefs
+		// for the resource.
+		String project = path.segment(0);
+		Preferences node = root.node(ProjectScope.SCOPE).node(project);
+		removeNode(node);
 	}
 }
