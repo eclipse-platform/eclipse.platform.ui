@@ -116,8 +116,8 @@ public class IEHost implements Runnable {
 		int h = store.getInt(BROWSER_HEIGTH);
 		if (w == 0 || h == 0) {
 			// use defaults
-			w = 640;
-			h = 480;
+			w = 700;
+			h = 500;
 		}
 		shell.setLocation(x, y);
 		shell.setSize(w, h);
