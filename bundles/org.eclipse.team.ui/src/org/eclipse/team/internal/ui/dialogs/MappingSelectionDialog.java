@@ -30,7 +30,7 @@ public abstract class MappingSelectionDialog extends DetailsDialog implements IP
     private ResourceMappingResourceDisplayArea resourceArea;
     private final IResourceMappingResourceFilter filter;
 
-    public MappingSelectionDialog(Shell parentShell, String dialogTitle, ResourceMapping[] mappings, IResourceMappingResourceFilter filter) {
+    protected MappingSelectionDialog(Shell parentShell, String dialogTitle, ResourceMapping[] mappings, IResourceMappingResourceFilter filter) {
         super(parentShell, dialogTitle);
         this.mappings = mappings;
         this.filter = filter;
@@ -90,10 +90,6 @@ public abstract class MappingSelectionDialog extends DetailsDialog implements IP
     protected void updateEnablements() {
         // Can always finish
         setPageComplete(true);
-    }
-
-    protected ResourceMapping[] getCheckedMappings() {
-        return checkedMappings;
     }
     
     /* (non-Javadoc)
@@ -172,8 +168,22 @@ public abstract class MappingSelectionDialog extends DetailsDialog implements IP
      */
     protected abstract String getResourceListMessage(ResourceMapping mapping);
 
-    public ResourceMapping[] getMappings() {
+    /**
+     * Return the <code>ResourceMappings</code> that are being displayed 
+     * by the dialog.
+     * @return the <code>ResourceMappings</code> that are being displayed 
+     * by the dialog
+     */
+    public final ResourceMapping[] getMappings() {
         return mappings;
     }
     
+    /**
+     * Return the <code>ResourceMappings</code> that were checked
+     * by the user.
+     * @return the <code>ResourceMappings</code> that were checked
+     */
+    protected final ResourceMapping[] getCheckedMappings() {
+        return checkedMappings;
+    }
 }
