@@ -229,6 +229,7 @@ public class LicensePage extends WizardPage {
 	public void setVisible(boolean visible) {
 		if (visible) {
 			loadLicenseText();
+			updateDirectionalButtons();
 		}
 		super.setVisible(visible);
 	}
