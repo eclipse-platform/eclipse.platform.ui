@@ -65,7 +65,7 @@ public class TemplateVariableProposal implements ICompletionProposal {
 
 		} catch (BadLocationException e) {
 			Shell shell= fViewer.getTextWidget().getShell();
-			MessageDialog.openError(shell, TemplateMessages.getString("TemplateVariableProposal.error.title"), e.getMessage()); //$NON-NLS-1$
+			MessageDialog.openError(shell, TextEditorTemplateMessages.getString("TemplateVariableProposal.error.title"), e.getMessage()); //$NON-NLS-1$
 		}
 	}
 

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.texteditor.templates;
+package org.eclipse.jface.text.templates;
 
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
@@ -17,12 +17,12 @@ import java.util.ResourceBundle;
 /**
  * @since 3.0
  */
-class TemplateMessages {
+class TextTemplateMessages {
 
-	private static final String RESOURCE_BUNDLE= TemplateMessages.class.getName();
+	private static final String RESOURCE_BUNDLE= TextTemplateMessages.class.getName();
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 
-	private TemplateMessages() {
+	private TextTemplateMessages() {
 	}
 
 	/**

@@ -108,11 +108,11 @@ public class TemplateTranslator {
 		
 		// illegal
 		case ESCAPE:
-			throw new TemplateException(TemplateMessages.getString("TemplateTranslator.error.incomplete.variable")); //$NON-NLS-1$
+			throw new TemplateException(TextTemplateMessages.getString("TemplateTranslator.error.incomplete.variable")); //$NON-NLS-1$
 				
 		// illegal
 		case IDENTIFIER:
-			throw new TemplateException(TemplateMessages.getString("TemplateTranslator.error.incomplete.variable")); //$NON-NLS-1$
+			throw new TemplateException(TextTemplateMessages.getString("TemplateTranslator.error.incomplete.variable")); //$NON-NLS-1$
 		}			
 		
 		int[] offsets= new int[fOffsets.size()];
@@ -216,7 +216,7 @@ public class TemplateTranslator {
 					
 				default:
 					// illegal single escape character, but be tolerant
-					fErrorMessage= TemplateMessages.getString("TemplateTranslator.error.incomplete.variable"); //$NON-NLS-1$
+					fErrorMessage= TextTemplateMessages.getString("TemplateTranslator.error.incomplete.variable"); //$NON-NLS-1$
 					fBuffer.append(ESCAPE_CHARACTER);
 					fBuffer.append(ch);
 					fState= TEXT;
@@ -237,7 +237,7 @@ public class TemplateTranslator {
 						!Character.isUnicodeIdentifierPart(ch))
 					{
 						// illegal identifier character
-						fErrorMessage= TemplateMessages.getString("TemplateTranslator.error.invalid.identifier"); //$NON-NLS-1$
+						fErrorMessage= TextTemplateMessages.getString("TemplateTranslator.error.invalid.identifier"); //$NON-NLS-1$
 						return false;
 					}
 				

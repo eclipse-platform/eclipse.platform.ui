@@ -148,8 +148,8 @@ class EditTemplateDialog extends StatusDialog {
 		setShellStyle(getShellStyle() | SWT.MAX | SWT.RESIZE);
 		
 		String title= edit
-			? TemplateMessages.getString("EditTemplateDialog.title.edit") //$NON-NLS-1$
-			: TemplateMessages.getString("EditTemplateDialog.title.new"); //$NON-NLS-1$
+			? TextEditorTemplateMessages.getString("EditTemplateDialog.title.edit") //$NON-NLS-1$
+			: TextEditorTemplateMessages.getString("EditTemplateDialog.title.new"); //$NON-NLS-1$
 		setTitle(title);
 
 		fTemplate= template;
@@ -187,7 +187,7 @@ class EditTemplateDialog extends StatusDialog {
 		};
 		
 		if (fIsNameModifiable) {
-			createLabel(parent, TemplateMessages.getString("EditTemplateDialog.name")); //$NON-NLS-1$	
+			createLabel(parent, TextEditorTemplateMessages.getString("EditTemplateDialog.name")); //$NON-NLS-1$	
 			
 			Composite composite= new Composite(parent, SWT.NONE);
 			composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -200,7 +200,7 @@ class EditTemplateDialog extends StatusDialog {
 			fNameText= createText(composite);
 			
 			fNameText.addModifyListener(listener);
-			createLabel(composite, TemplateMessages.getString("EditTemplateDialog.context")); //$NON-NLS-1$		
+			createLabel(composite, TextEditorTemplateMessages.getString("EditTemplateDialog.context")); //$NON-NLS-1$		
 			fContextCombo= new Combo(composite, SWT.READ_ONLY);
 	
 			for (int i= 0; i < fContextTypes.length; i++) {
@@ -210,7 +210,7 @@ class EditTemplateDialog extends StatusDialog {
 			fContextCombo.addModifyListener(listener);
 		}
 		
-		createLabel(parent, TemplateMessages.getString("EditTemplateDialog.description")); //$NON-NLS-1$		
+		createLabel(parent, TextEditorTemplateMessages.getString("EditTemplateDialog.description")); //$NON-NLS-1$		
 		
 		int descFlags= fIsNameModifiable ? SWT.BORDER : SWT.BORDER | SWT.READ_ONLY;
 		fDescriptionText= new Text(parent, descFlags );
@@ -218,7 +218,7 @@ class EditTemplateDialog extends StatusDialog {
 		
 		fDescriptionText.addModifyListener(listener);
 
-		Label patternLabel= createLabel(parent, TemplateMessages.getString("EditTemplateDialog.pattern")); //$NON-NLS-1$
+		Label patternLabel= createLabel(parent, TextEditorTemplateMessages.getString("EditTemplateDialog.pattern")); //$NON-NLS-1$
 		patternLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		fPatternEditor= createEditor(parent);
 		
@@ -234,7 +234,7 @@ class EditTemplateDialog extends StatusDialog {
 		
 		fInsertVariableButton= new Button(composite, SWT.NONE);
 		fInsertVariableButton.setLayoutData(getButtonGridData(fInsertVariableButton));
-		fInsertVariableButton.setText(TemplateMessages.getString("EditTemplateDialog.insert.variable")); //$NON-NLS-1$
+		fInsertVariableButton.setText(TextEditorTemplateMessages.getString("EditTemplateDialog.insert.variable")); //$NON-NLS-1$
 		fInsertVariableButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				fPatternEditor.getTextWidget().setFocus();
@@ -416,27 +416,27 @@ class EditTemplateDialog extends StatusDialog {
 
 	private void initializeActions() {
 		TextViewerAction action= new TextViewerAction(fPatternEditor, ITextOperationTarget.UNDO);
-		action.setText(TemplateMessages.getString("EditTemplateDialog.undo")); //$NON-NLS-1$
+		action.setText(TextEditorTemplateMessages.getString("EditTemplateDialog.undo")); //$NON-NLS-1$
 		fGlobalActions.put(ITextEditorActionConstants.UNDO, action);
 
 		action= new TextViewerAction(fPatternEditor, ITextOperationTarget.CUT);
-		action.setText(TemplateMessages.getString("EditTemplateDialog.cut")); //$NON-NLS-1$
+		action.setText(TextEditorTemplateMessages.getString("EditTemplateDialog.cut")); //$NON-NLS-1$
 		fGlobalActions.put(ITextEditorActionConstants.CUT, action);
 
 		action= new TextViewerAction(fPatternEditor, ITextOperationTarget.COPY);
-		action.setText(TemplateMessages.getString("EditTemplateDialog.copy")); //$NON-NLS-1$
+		action.setText(TextEditorTemplateMessages.getString("EditTemplateDialog.copy")); //$NON-NLS-1$
 		fGlobalActions.put(ITextEditorActionConstants.COPY, action);
 
 		action= new TextViewerAction(fPatternEditor, ITextOperationTarget.PASTE);
-		action.setText(TemplateMessages.getString("EditTemplateDialog.paste")); //$NON-NLS-1$
+		action.setText(TextEditorTemplateMessages.getString("EditTemplateDialog.paste")); //$NON-NLS-1$
 		fGlobalActions.put(ITextEditorActionConstants.PASTE, action);
 
 		action= new TextViewerAction(fPatternEditor, ITextOperationTarget.SELECT_ALL);
-		action.setText(TemplateMessages.getString("EditTemplateDialog.select.all")); //$NON-NLS-1$
+		action.setText(TextEditorTemplateMessages.getString("EditTemplateDialog.select.all")); //$NON-NLS-1$
 		fGlobalActions.put(ITextEditorActionConstants.SELECT_ALL, action);
 
 		action= new TextViewerAction(fPatternEditor, ISourceViewer.CONTENTASSIST_PROPOSALS);
-		action.setText(TemplateMessages.getString("EditTemplateDialog.content.assist")); //$NON-NLS-1$
+		action.setText(TextEditorTemplateMessages.getString("EditTemplateDialog.content.assist")); //$NON-NLS-1$
 		fGlobalActions.put("ContentAssistProposal", action); //$NON-NLS-1$
 
 		fSelectionActions.add(ITextEditorActionConstants.CUT);
@@ -509,7 +509,7 @@ class EditTemplateDialog extends StatusDialog {
 		if (!valid) {
 			status = new StatusInfo();
 			if (!fSuppressError) {
-				status.setError(TemplateMessages.getString("EditTemplateDialog.error.noname")); //$NON-NLS-1$
+				status.setError(TextEditorTemplateMessages.getString("EditTemplateDialog.error.noname")); //$NON-NLS-1$
 			}
  		} else {
  			status= fValidationStatus; 

@@ -37,7 +37,7 @@ public class GlobalTemplateVariables {
 		 * Creates a new cursor variable
 		 */
 		public Cursor() {
-			super(NAME, TemplateMessages.getString("GlobalVariables.variable.description.cursor")); //$NON-NLS-1$
+			super(NAME, TextTemplateMessages.getString("GlobalVariables.variable.description.cursor")); //$NON-NLS-1$
 			setEvaluationString(""); //$NON-NLS-1$
 		}
 	}
@@ -55,7 +55,7 @@ public class GlobalTemplateVariables {
 		 * Creates a new word selection variable
 		 */
 		public WordSelection() {
-			super(NAME, TemplateMessages.getString("GlobalVariables.variable.description.selectedWord")); //$NON-NLS-1$
+			super(NAME, TextTemplateMessages.getString("GlobalVariables.variable.description.selectedWord")); //$NON-NLS-1$
 		}
 		protected String resolve(TemplateContext context) {
 			String selection= context.getVariable(SELECTION); //$NON-NLS-1$
@@ -79,7 +79,7 @@ public class GlobalTemplateVariables {
 		 * Creates a new line selection variable
 		 */
 		public LineSelection() {
-			super(NAME, TemplateMessages.getString("GlobalVariables.variable.description.selectedLines")); //$NON-NLS-1$
+			super(NAME, TextTemplateMessages.getString("GlobalVariables.variable.description.selectedLines")); //$NON-NLS-1$
 		}
 		protected String resolve(TemplateContext context) {
 			String selection= context.getVariable(SELECTION); //$NON-NLS-1$
@@ -98,7 +98,7 @@ public class GlobalTemplateVariables {
 		 * Creates a new dollar variable
 		 */
 		public Dollar() {
-			super("dollar", TemplateMessages.getString("GlobalVariables.variable.description.dollar")); //$NON-NLS-1$ //$NON-NLS-2$
+			super("dollar", TextTemplateMessages.getString("GlobalVariables.variable.description.dollar")); //$NON-NLS-1$ //$NON-NLS-2$
 			setEvaluationString("$"); //$NON-NLS-1$
 		}
 	}
@@ -111,7 +111,7 @@ public class GlobalTemplateVariables {
 		 * Creates a new date variable
 		 */
 		public Date() {
-			super("date", TemplateMessages.getString("GlobalVariables.variable.description.date")); //$NON-NLS-1$ //$NON-NLS-2$
+			super("date", TextTemplateMessages.getString("GlobalVariables.variable.description.date")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		protected String resolve(TemplateContext context) {
 			return DateFormat.getDateInstance().format(new java.util.Date());
@@ -126,7 +126,7 @@ public class GlobalTemplateVariables {
 		 * Creates a new year variable
 		 */
 		public Year() {
-			super("year", TemplateMessages.getString("GlobalVariables.variable.description.year")); //$NON-NLS-1$ //$NON-NLS-2$
+			super("year", TextTemplateMessages.getString("GlobalVariables.variable.description.year")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		protected String resolve(TemplateContext context) {
 			return Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
@@ -141,7 +141,7 @@ public class GlobalTemplateVariables {
 		 * Creates a new time variable
 		 */
 		public Time() {
-			super("time", TemplateMessages.getString("GlobalVariables.variable.description.time")); //$NON-NLS-1$ //$NON-NLS-2$
+			super("time", TextTemplateMessages.getString("GlobalVariables.variable.description.time")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		/**
@@ -160,7 +160,7 @@ public class GlobalTemplateVariables {
 		 * Creates a new user name variable
 		 */
 		public User() {
-			super("user", TemplateMessages.getString("GlobalVariables.variable.description.user")); //$NON-NLS-1$ //$NON-NLS-2$
+			super("user", TextTemplateMessages.getString("GlobalVariables.variable.description.user")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		/**

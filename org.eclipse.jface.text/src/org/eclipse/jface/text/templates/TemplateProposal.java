@@ -294,7 +294,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	 */
 	public String getDisplayString() {
 		if (fDisplayString == null) {
-			fDisplayString= fTemplate.getName() + TemplateMessages.getString("TemplateProposal.delimiter") + fTemplate.getDescription(); //$NON-NLS-1$
+			fDisplayString= fTemplate.getName() + JFaceTextTemplateMessages.getString("TemplateProposal.delimiter") + fTemplate.getDescription(); //$NON-NLS-1$
 		}
 		return fDisplayString;
 	}
@@ -314,7 +314,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	}
 
 	private void openErrorDialog(Shell shell, Exception e) {
-		MessageDialog.openError(shell, TemplateMessages.getString("TemplateProposal.errorDialog.title"), e.getMessage()); //$NON-NLS-1$
+		MessageDialog.openError(shell, JFaceTextTemplateMessages.getString("TemplateProposal.errorDialog.title"), e.getMessage()); //$NON-NLS-1$
 	}
 
 	/**
