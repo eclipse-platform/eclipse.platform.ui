@@ -634,13 +634,19 @@ public class AntModel {
 	public void addDTD(String name, int line, int column) {
 		AntDTDNode node= new AntDTDNode(name);
 		fStillOpenElements.push(node);
-		//computeOffset(node, line, column);
 		int offset= -1;
 		try {
-			offset= getOffset(line, column);
-			node.setOffset(offset + 1);
+			if (column <= 0) {
+				offset= getOffset(line, 0);
+				int lastCharColumn= getLastCharColumn(line);
+				offset= computeOffsetUsingPrefix(line, offset, "<!DOCTYPE", lastCharColumn); //$NON-NLS-1$
+			} else {
+				offset= getOffset(line, column);
+			}
 		} catch (BadLocationException e) {
+			AntUIPlugin.log(e);
 		}
+		node.setOffset(offset);
 		fNonStructuralNodes.add(node);
 	}
 
