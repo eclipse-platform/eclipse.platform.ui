@@ -59,7 +59,7 @@ public class ServletFacade implements IPlatformRunnable {
 					HelpContentManager.fillInResponse(errorURL, stream, out);
 				}
 		} catch (IOException e) {
-			Logger.logError(e.getMessage(), e);
+			Logger.logError("", e);
 		}
 	}
 	/**

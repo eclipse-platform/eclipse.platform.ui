@@ -65,7 +65,7 @@ public class HelpNavigationManager {
 				getInfoSetIds();
 			}
 		} catch (Exception e) {
-			Logger.logError(e.getMessage(), e);
+			Logger.logError("", e);
 		}
 	}
 	private void createNavigationModels() {
@@ -88,7 +88,7 @@ public class HelpNavigationManager {
 			// Save a file with all the infosets ids and labels
 			infosetsMap.save();
 		} catch (Exception e) {
-			Logger.logError(e.getMessage(), e);
+			Logger.logError("", e);
 		}
 	}
 	/**
@@ -262,14 +262,14 @@ public class HelpNavigationManager {
 			if (configName != null) {
 				configURL = ii.getConfigurationInstallURLFor(configName);
 			} else {
-				Logger.logWarning(Resources.getString("product_ini"));
+				Logger.logWarning(Resources.getString("W001"));
 				return;
 			}
 			URL iniURL= null;
 			try {
-				iniURL = new URL(configURL, "product.ini");//$NON-NLS-1$
+				iniURL = new URL(configURL, "product.ini");
 			} catch (MalformedURLException e) {
-				Logger.logWarning(Resources.getString("product_ini"));
+				Logger.logWarning(Resources.getString("W001"));
 			}
 	
 			InputStream is = iniURL.openStream();

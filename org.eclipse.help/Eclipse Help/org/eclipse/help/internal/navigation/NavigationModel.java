@@ -140,7 +140,7 @@ public class NavigationModel {
 
 			// Log the error. No need to populate RuntimeHelpStatus
 			// because the parsing already did this.
-			Logger.logError(se.getMessage(), se);
+			Logger.logError("", se);
 
 			
 
@@ -190,7 +190,7 @@ public class NavigationModel {
 
 		} catch (SAXException se) {
 			// Log the error.
-			Logger.logError(se.getMessage(), se);
+			Logger.logError("", se);
 			
 		} catch (Exception e) {
 			// Could not copy the model data from server

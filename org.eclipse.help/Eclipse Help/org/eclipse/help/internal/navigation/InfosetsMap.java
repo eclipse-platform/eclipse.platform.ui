@@ -58,7 +58,7 @@ public class InfosetsMap extends PersistentMap {
 					reader =
 						new BufferedReader(new InputStreamReader(remoteInfosetFile.openStream()));
 				} catch (Exception ioe) {
-					Logger.logError("Could not copy the infoset data from server", ioe);
+					Logger.logError("E013", ioe);
 					return false;
 				}
 				super.parseLines(reader);
@@ -67,7 +67,7 @@ public class InfosetsMap extends PersistentMap {
 				} catch (Exception ioe) {
 				}
 			} catch (Exception ioe) {
-				Logger.logError("Could not copy the infoset data from server", ioe);
+				Logger.logError("E013", ioe);
 				try {
 					if (in != null)
 						in.close();

@@ -66,9 +66,9 @@ public class XMLSearchContributor implements Contributor {
 				parser.parse(input);
 				resultsNode = parser.getContribution();
 			} catch (SAXException se) {
-				Logger.logError(se.getMessage(), se);
+				Logger.logError("", se);
 			} catch (IOException ioe) {
-				Logger.logError(ioe.getMessage(), ioe);
+				Logger.logError("", ioe);
 			}
 		}
 		return resultsNode;

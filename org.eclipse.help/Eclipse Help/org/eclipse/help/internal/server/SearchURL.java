@@ -150,7 +150,7 @@ public class SearchURL extends HelpURL {
 	 * @return java.io.InputStream
 	 */
 	public InputStream openStream() {
-		Logger.logInfo("begining search..");
+		Logger.logInfo("I004");
 		if (searchManager == null) {
 			Logger.logError(Resources.getString("search_not_installed"), null);
 			return new ByteArrayInputStream(

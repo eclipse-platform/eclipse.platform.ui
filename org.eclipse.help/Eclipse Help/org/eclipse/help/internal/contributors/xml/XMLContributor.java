@@ -108,9 +108,9 @@ public abstract class XMLContributor implements Contributor {
 			stream.close();
 			contribution = parser.getContribution();
 		} catch (MalformedURLException ue) {
-			Logger.logError(ue.getMessage(), ue);
+			Logger.logError("", ue);
 		} catch (SAXException se) {
-			Logger.logError(se.getMessage(), se);
+			Logger.logError("", se);
 		} catch (IOException ioe) {
 			String msg = Resources.getString("E009", xmlURL.toString());
 			Logger.logError(msg, ioe);

@@ -32,7 +32,7 @@ public class HelpServer extends Thread {
 			this.port = ssocket.getLocalPort();
 		} catch (Exception e1) {
 			ssocket = null;
-			Logger.logError(e1.getMessage(), e1);
+			Logger.logError("", e1);
 			return;
 		}
 		int timeout = 0;
