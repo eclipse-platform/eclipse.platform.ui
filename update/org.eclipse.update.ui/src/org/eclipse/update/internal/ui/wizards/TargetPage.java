@@ -393,7 +393,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		} catch (CoreException e) {
 			String title = UpdateUI.getString("InstallWizard.TargetPage.location.error.title"); //$NON-NLS-1$
 			ErrorDialog.openError(shell, title, null, e.getStatus());
-			UpdateUI.logException(e);
+			UpdateUI.logException(e,false);
 			return null;
 		}
 	}
