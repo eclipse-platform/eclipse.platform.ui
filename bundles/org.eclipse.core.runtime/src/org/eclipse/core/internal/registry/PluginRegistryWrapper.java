@@ -11,12 +11,13 @@
 package org.eclipse.core.internal.registry;
 
 import org.eclipse.core.internal.plugins.*;
-import org.eclipse.core.internal.plugins.ExtensionWrapper;
-import org.eclipse.core.internal.plugins.Utils;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.registry.*;
 
+/*
+ * An implementation of IExtensionRegistry that wraps an IPluginRegistry. 
+ */
 public class PluginRegistryWrapper implements IExtensionRegistry {
 
 	private IPluginRegistry pluginRegistry;
