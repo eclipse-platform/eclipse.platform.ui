@@ -257,18 +257,27 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		if(memento != null) {
 			IMemento settings = memento.getChild(CTX_SUBSCRIBER_PARTICIPANT_SETTINGS);
 			if(settings != null) {
-				String set = settings.getString(P_SYNCVIEWPAGE_WORKINGSET);
-				String mode = settings.getString(P_SYNCVIEWPAGE_MODE);
+				String setSetting = settings.getString(P_SYNCVIEWPAGE_WORKINGSET);
+				String modeSetting = settings.getString(P_SYNCVIEWPAGE_MODE);
 				SubscriberRefreshSchedule schedule = SubscriberRefreshSchedule.init(settings.getChild(CTX_SUBSCRIBER_SCHEDULE_SETTINGS), this);
 				setRefreshSchedule(schedule);
 				
-				if(set != null) {
-					IWorkingSet workingSet = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(set);
+				if(setSetting != null) {
+					IWorkingSet workingSet = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(setSetting);
 					if(workingSet != null) {
 						setWorkingSet(workingSet);
 					}
 				}
-				setMode(Integer.parseInt(mode));
+				
+				int mode = SubscriberParticipant.BOTH_MODE;
+				if(modeSetting != null) {
+					try {
+						mode = Integer.parseInt(modeSetting);
+					} catch (NumberFormatException e) {
+						mode = SubscriberParticipant.BOTH_MODE;
+					}
+				}
+				setMode(mode);
 			}
 		} else {
 			setMode(BOTH_MODE);
