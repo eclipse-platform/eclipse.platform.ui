@@ -67,6 +67,7 @@ import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
 
 /**
  * Standard workbench wizard that creates a new project resource in the

@@ -22,6 +22,7 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.views.tasklist.TaskListMessages;
 import org.eclipse.ui.part.MarkerTransfer;
 
 /**

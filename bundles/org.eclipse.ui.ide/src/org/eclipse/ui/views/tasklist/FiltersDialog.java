@@ -50,6 +50,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
+import org.eclipse.ui.internal.views.tasklist.TaskListMessages;
 
 class FiltersDialog extends Dialog {
     /**

@@ -21,6 +21,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.DialogUtil;
+import org.eclipse.ui.internal.views.tasklist.TaskListMessages;
 
 /**
  * This action opens an editor for the resource

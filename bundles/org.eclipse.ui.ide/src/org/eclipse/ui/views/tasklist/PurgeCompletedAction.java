@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.views.tasklist.TaskListMessages;
 
 /**
  * This action deletes all the tasks found in the registry that

@@ -19,6 +19,7 @@ import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.MarkerResolutionSelectionDialog;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.views.tasklist.TaskListMessages;
 
 /**
  * This action displays a list of resolutions for the selected marker

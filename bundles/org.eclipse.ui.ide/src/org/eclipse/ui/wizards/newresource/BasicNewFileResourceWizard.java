@@ -25,6 +25,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.DialogUtil;
+import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
 
 /**
  * Standard workbench wizard that create a new file resource in the workspace.

@@ -27,6 +27,7 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.views.tasklist.TaskListMessages;
 
 /**
  * Utility class for accessing marker attributes.

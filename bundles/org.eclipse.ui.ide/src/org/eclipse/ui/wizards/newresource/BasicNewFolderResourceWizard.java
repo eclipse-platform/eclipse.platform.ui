@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardNewFolderMainPage;
+import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
 
 /**
  * Standard workbench wizard that create a new folder resource in the workspace.

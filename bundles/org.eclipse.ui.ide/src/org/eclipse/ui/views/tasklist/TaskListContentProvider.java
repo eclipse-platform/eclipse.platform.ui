@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.internal.views.tasklist.TaskListMessages;
 
 /**
  * Task list content provider returns elements that should be
