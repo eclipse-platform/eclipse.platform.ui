@@ -292,13 +292,13 @@ public class CharsetTest extends EclipseWorkspaceTest {
 			IFile file = project.getFile("file.xml");
 			assertEquals("0.9", "FOO", project.getDefaultCharset());
 			// content-based encoding is BAR			
-			ensureExistsInWorkspace(file, new ByteArrayInputStream("<?xml version=\"1.0\" encoding=\"US-ASCII\"?><root/>".getBytes("UTF-8")));
+			ensureExistsInWorkspace(file, new ByteArrayInputStream("<?xml version=\"1.0\" encoding=\"US-ASCII\"?><org.eclipse.core.resources.tests.root/>".getBytes("UTF-8")));
 			assertEquals("1.0", "US-ASCII", file.getCharset());
 			// content-based encoding is FRED			
-			file.setContents(new ByteArrayInputStream("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><root/>".getBytes("UTF-8")), false, false, null);
+			file.setContents(new ByteArrayInputStream("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.resources.tests.root/>".getBytes("UTF-8")), false, false, null);
 			assertEquals("2.0", "ISO-8859-1", file.getCharset());
 			// content-based encoding is UTF-8 (default for XML)
-			file.setContents(new ByteArrayInputStream("<?xml version=\"1.0\"?><root/>".getBytes("UTF-8")), false, false, null);
+			file.setContents(new ByteArrayInputStream("<?xml version=\"1.0\"?><org.eclipse.core.resources.tests.root/>".getBytes("UTF-8")), false, false, null);
 			assertEquals("3.0", "UTF-8", file.getCharset());
 		} finally {
 			ensureDoesNotExistInWorkspace(project);
