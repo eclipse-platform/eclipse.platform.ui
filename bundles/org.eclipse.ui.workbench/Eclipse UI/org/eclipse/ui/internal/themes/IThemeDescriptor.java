@@ -10,64 +10,51 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
-import org.eclipse.ui.internal.presentation.ColorDefinition;
-import org.eclipse.ui.internal.presentation.FontDefinition;
-import org.eclipse.ui.internal.presentation.GradientDefinition;
 
 /**
  * Interface for the Theme descriptors
  *
  * @since 3.0
  */
-public interface IThemeDescriptor {
-	
-	public static final String VIEW_TITLE_GRADIENT_COLOR_NORMAL = "VIEW_TITLE_GRADIENT_COLOR_NORMAL";
-	public static final String VIEW_TITLE_GRADIENT_COLOR_ACTIVE = "VIEW_TITLE_GRADIENT_COLOR_ACTIVE";
-	public static final String VIEW_TITLE_GRADIENT_COLOR_DEACTIVATED = "VIEW_TITLE_GRADIENT_COLOR_DEACTIVATED";
-	public static final String VIEW_TITLE_GRADIENT_PERCENTS_NORMAL = "VIEW_TITLE_GRADIENT_PERCENTS_NORMAL";
-	public static final String VIEW_TITLE_GRADIENT_PERCENTS_ACTIVE = "VIEW_TITLE_GRADIENT_PERCENTS_ACTIVE";
-	public static final String VIEW_TITLE_GRADIENT_PERCENTS_DEACTIVATED = "VIEW_TITLE_GRADIENT_PERCENTS_DEACTIVATED";
-	public static final String VIEW_TITLE_GRADIENT_DIRECTION = "VIEW_TITLE_GRADIENT_DIRECTION";
-	public static final String VIEW_TITLE_TEXT_COLOR_NORMAL = "VIEW_TITLE_TEXT_COLOR_NORMAL";
-	public static final String VIEW_TITLE_TEXT_COLOR_ACTIVE = "VIEW_TITLE_TEXT_COLOR_ACTIVE";
-	public static final String VIEW_TITLE_TEXT_COLOR_DEACTIVATED = "VIEW_TITLE_TEXT_COLOR_DEACTIVATED";
-	public static final String VIEW_TITLE_FONT = "VIEW_TITLE_FONT";
-	public static final String VIEW_BORDER_STYLE = "VIEW_BORDER_STYLE";
+public interface IThemeDescriptor extends IThemeElementDefinition{
+	public static final String TAB_BORDER_STYLE = "TAB_BORDER_STYLE";	 //$NON-NLS-1$
 
-	public static final String TAB_TITLE_FONT = "TAB_TITLE_FONT";
-	public static final String TAB_TITLE_TEXT_COLOR_HOVER = "TAB_TITLE_TEXT_COLOR_HOVER";
-	public static final String TAB_TITLE_TEXT_COLOR_ACTIVE = "TAB_TITLE_TEXT_COLOR_ACTIVE";
-	public static final String TAB_TITLE_TEXT_COLOR_DEACTIVATED = "TAB_TITLE_TEXT_COLOR_DEACTIVATED";
-	public static final String TAB_BORDER_STYLE = "TAB_BORDER_STYLE";	
-	/**
-	 * Returns the id of the Theme.
-	 * @return String
-	 */
-	public String getID();
+	public static final String TAB_TITLE_FONT = "TAB_TITLE_FONT"; //$NON-NLS-1$
+	public static final String TAB_TITLE_TEXT_COLOR_ACTIVE = "TAB_TITLE_TEXT_COLOR_ACTIVE"; //$NON-NLS-1$
+	public static final String TAB_TITLE_TEXT_COLOR_DEACTIVATED = "TAB_TITLE_TEXT_COLOR_DEACTIVATED"; //$NON-NLS-1$
+	public static final String TAB_TITLE_TEXT_COLOR_HOVER = "TAB_TITLE_TEXT_COLOR_HOVER"; //$NON-NLS-1$
+	public static final String VIEW_BORDER_STYLE = "VIEW_BORDER_STYLE"; //$NON-NLS-1$
+	public static final String VIEW_TITLE_FONT = "VIEW_TITLE_FONT"; //$NON-NLS-1$
+	public static final String VIEW_TITLE_GRADIENT_COLOR_ACTIVE = "VIEW_TITLE_GRADIENT_COLOR_ACTIVE"; //$NON-NLS-1$
+	public static final String VIEW_TITLE_GRADIENT_COLOR_DEACTIVATED = "VIEW_TITLE_GRADIENT_COLOR_DEACTIVATED"; //$NON-NLS-1$
 	
-	/**
-	 * Returns the name of the Theme.
-	 * @return String
-	 */
-	public String getName();
-
+	public static final String VIEW_TITLE_GRADIENT_COLOR_NORMAL = "VIEW_TITLE_GRADIENT_COLOR_NORMAL"; //$NON-NLS-1$
+	public static final String VIEW_TITLE_GRADIENT_DIRECTION = "VIEW_TITLE_GRADIENT_DIRECTION"; //$NON-NLS-1$
+	public static final String VIEW_TITLE_GRADIENT_PERCENTS_ACTIVE = "VIEW_TITLE_GRADIENT_PERCENTS_ACTIVE"; //$NON-NLS-1$
+	public static final String VIEW_TITLE_GRADIENT_PERCENTS_DEACTIVATED = "VIEW_TITLE_GRADIENT_PERCENTS_DEACTIVATED"; //$NON-NLS-1$
+	public static final String VIEW_TITLE_GRADIENT_PERCENTS_NORMAL = "VIEW_TITLE_GRADIENT_PERCENTS_NORMAL"; //$NON-NLS-1$
+	public static final String VIEW_TITLE_TEXT_COLOR_ACTIVE = "VIEW_TITLE_TEXT_COLOR_ACTIVE"; //$NON-NLS-1$
+	public static final String VIEW_TITLE_TEXT_COLOR_DEACTIVATED = "VIEW_TITLE_TEXT_COLOR_DEACTIVATED"; //$NON-NLS-1$
+	public static final String VIEW_TITLE_TEXT_COLOR_NORMAL = "VIEW_TITLE_TEXT_COLOR_NORMAL"; //$NON-NLS-1$
+	
 	/**
 	 * Returns the color overrides for this theme.
 	 * @return ColorDefinition []
 	 */
-	public ColorDefinition [] getColorOverrides();
-	
-	/**
-	 * Returns the gradient overrides for this theme.
-	 * @return GradientDefinition []
-	 */
-	public GradientDefinition [] getGradientOverrides();	
+	public ColorDefinition [] getColors();
 	
 	/**
 	 * Returns the font overrides for this theme.
 	 * @return GradientDefinition []
 	 */
-	public FontDefinition [] getFontOverrides();	
+	public FontDefinition [] getFonts();
+	
+	/**
+	 * Returns the gradient overrides for this theme.
+	 * @return GradientDefinition []
+	 */
+	public GradientDefinition [] getGradients();	
+	
 	/**
 	 * Returns the descriptor of the tab theme.
 	 * @return ITabThemeDescriptor

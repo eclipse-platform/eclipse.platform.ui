@@ -180,11 +180,16 @@
                class="org.eclipse.core.resources.IResource">
          </selection>
       </wizard>
-      
-	  <!-- TODO : these belongs in the same place activities end up -->
-      <primaryWizard id="org.eclipse.ui.wizards.new.project" />
-      <primaryWizard id="org.eclipse.ui.wizards.new.file" />
-      <primaryWizard id="org.eclipse.ui.wizards.new.folder" />      
+<!-- TODO : these belongs in the same place activities end up -->
+      <primaryWizard
+            id="org.eclipse.ui.wizards.new.project">
+      </primaryWizard>
+      <primaryWizard
+            id="org.eclipse.ui.wizards.new.file">
+      </primaryWizard>
+      <primaryWizard
+            id="org.eclipse.ui.wizards.new.folder">
+      </primaryWizard>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -322,7 +327,7 @@
       <page
             name="%PreferencePages.ColorsAndFonts"
             category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.presentation.ColorsAndFontsPreferencePage"
+            class="org.eclipse.ui.internal.themes.ColorsAndFontsPreferencePage"
             id="org.eclipse.ui.preferencePages.ColorsAndFonts">
       </page>
       <page
@@ -419,15 +424,16 @@
       </page>
    </extension>
    <extension
-         point="org.eclipse.ui.colorDefinitions">
+         point="org.eclipse.ui.themes">
       <colorDefinition
             label="%Colors.highlight"
-            categoryId="org.eclipse.ui.workbenchMisc"
             value="COLOR_WIDGET_LIGHT_SHADOW"
+            categoryId="org.eclipse.ui.workbenchMisc"
             id="org.eclipse.ui.highlight">
          <description>
             %Colors.highlight.desc
          </description>
       </colorDefinition>
    </extension>
+
 </plugin>

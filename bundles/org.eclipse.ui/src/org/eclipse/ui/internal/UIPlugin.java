@@ -15,7 +15,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
-import org.eclipse.ui.internal.presentation.FontDefinition;
+import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**

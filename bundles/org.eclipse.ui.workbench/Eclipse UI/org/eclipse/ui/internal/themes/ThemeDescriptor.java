@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.internal.presentation.ColorDefinition;
-import org.eclipse.ui.internal.presentation.ColorDefinitionReader;
-import org.eclipse.ui.internal.presentation.FontDefinition;
-import org.eclipse.ui.internal.presentation.FontDefinitionReader;
-import org.eclipse.ui.internal.presentation.GradientDefinition;
 
 /**
  * Concrete implementation of a theme descriptor.
@@ -27,33 +24,26 @@ import org.eclipse.ui.internal.presentation.GradientDefinition;
  */
 public class ThemeDescriptor implements IThemeDescriptor {
 	
-	private String id;
-	private String name;
-	
 	/* Theme */
 	private static final String ATT_ID="id";//$NON-NLS-1$
-	private static final String ATT_NAME="name";//$NON-NLS-1$
-	private IConfigurationElement configElement;
+	private static final String ATT_NAME="name";//$NON-NLS-1$	
 	/* TabTheme*/
 	public static final String TAG_TABTHEME="tabTheme";//$NON-NLS-1$	
-	private ITabThemeDescriptor tabThemeDescriptor;
 	/* ViewTheme */
 	public static final String TAG_VIEWTHEME="viewTheme";//$NON-NLS-1$
-	/* ColorOverride */
-	public static final String TAG_COLOROVERRIDE="colorOverride";//$NON-NLS-1$
-	/* GradientOverride */
-	public static final String TAG_GRADIENTOVERRIDE="gradientOverride";//$NON-NLS-1$
-	/* FontOverride */
-	public static final String TAG_FONTOVERRIDE="fontOverride";//$NON-NLS-1$
+	
+	private Collection colors = new ArrayList();
+	private IConfigurationElement configElement;
+    private String description;
+	private Collection fonts = new ArrayList();
+	private Collection gradients = new ArrayList();
+	
+	private String id;
+	private String name;
+	private ITabThemeDescriptor tabThemeDescriptor;
 	
 	private IViewThemeDescriptor viewThemeDescriptor;
-	private ColorDefinitionReader colorReader;
-	
-	private ColorDefinition [] colorOverrides = new ColorDefinition[0];
-    private GradientDefinition[] gradientOverrides = new GradientDefinition[0];
-    private FontDefinitionReader fontReader;
-    private FontDefinition[] fontOverrides = new FontDefinition[0];	
-	
+
 	/**
 	 * Create a new ThemeDescriptor for an extension.
 	 */
@@ -61,57 +51,81 @@ public class ThemeDescriptor implements IThemeDescriptor {
 		configElement = e;
 		processExtension();
 	}
+
+    /**
+     * Add a color override to this descriptor.
+     * 
+     * @param definition the definition to add
+     */
+    public void add(ColorDefinition definition) {
+        colors.add(definition);
+    }
+
+    /**
+     * Add a font override to this descriptor.
+     * 
+     * @param definition the definition to add
+     */
+    public void add(FontDefinition definition) {
+        fonts.add(definition);        
+    }    
+    
+    /**
+     * Add a gradient override to this descriptor.
+     * 
+     * @param definition the definition to add
+     */
+    public void add(GradientDefinition definition) {
+        gradients.add(definition);
+    }
 	
-	private ColorDefinitionReader getColorDefinitionReader() {
-	    if (colorReader == null) {
-	    	colorReader = new ColorDefinitionReader();
-	    }
-	    return colorReader;
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.themes.IThemeDescriptor#getColorOverrides()
+	 */
+	public ColorDefinition [] getColors() {	    
+	    ColorDefinition [] defs = (ColorDefinition []) colors.toArray(new ColorDefinition [colors.size()]);
+	    Arrays.sort(defs, IThemeRegistry.ID_COMPARATOR);
+	    return defs;
 	}
-	
-    private FontDefinitionReader getFontDefinitionReader() {
-	    if (fontReader == null) {
-	        fontReader = new FontDefinitionReader();
-	    }
-	    return fontReader;
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.themes.IThemeElementDefinition#getDescription()
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.themes.IThemeDescriptor#getFontOverrides()
+     */
+    public FontDefinition[] getFonts() {       
+	    FontDefinition [] defs = (FontDefinition []) fonts.toArray(new GradientDefinition [colors.size()]);
+	    Arrays.sort(defs, IThemeRegistry.ID_COMPARATOR);
+	    return defs;
     }	
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.themes.IThemeDescriptor#getColorOverrides()
+	 */
+	public GradientDefinition[] getGradients() {
+	    GradientDefinition [] defs = (GradientDefinition []) gradients.toArray(new GradientDefinition [colors.size()]);
+	    Arrays.sort(defs, IThemeRegistry.ID_COMPARATOR);
+	    return defs;
+	}	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.IThemeDescriptor#getID()
 	 */
-	public String getID()  {
+	public String getId()  {
 		return id;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.IThemeDescriptor#getName()
 	 */
-	public String getName() {
+	public String getLabel() {
 		return name;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.themes.IThemeDescriptor#getColorOverrides()
-	 */
-	public ColorDefinition [] getColorOverrides() {
-	    return colorOverrides;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.themes.IThemeDescriptor#getColorOverrides()
-	 */
-	public GradientDefinition[] getGradientOverrides() {
-	    return gradientOverrides;
-	}	
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.themes.IThemeDescriptor#getFontOverrides()
-     */
-    public FontDefinition[] getFontOverrides() {       
-        return fontOverrides;
-    }	
-
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.IThemeDescriptor#getTabLookNFeelDesc()
@@ -145,40 +159,16 @@ public class ThemeDescriptor implements IThemeDescriptor {
 			/* ViewTheme */
 			else if (type.equals(TAG_VIEWTHEME)) {
 				viewThemeDescriptor = new ViewThemeDescriptor(child);
-			}
-			else if (type.equals(TAG_COLOROVERRIDE)) {
-			    getColorDefinitionReader().readElement(child);
-			}
-			else if (type.equals(TAG_GRADIENTOVERRIDE)) {
-			    getColorDefinitionReader().readElement(child);
-			}
-			else if (type.equals(TAG_FONTOVERRIDE)) {
-			    getFontDefinitionReader().readElement(child);
-			}						
+			}									
 		}
-		
-		if (colorReader != null) {		    
-		    Collection colorDefinitions = colorReader.getColorDefinitions();
-		    if (!colorDefinitions.isEmpty()) {
-	            colorOverrides = new ColorDefinition[colorDefinitions.size()];
-				colorDefinitions.toArray(colorOverrides);
-		    }
-		    
-		    Collection gradientDefinitions = colorReader.getGradientDefinitions();
-		    if (!gradientDefinitions.isEmpty()) {
-		        gradientOverrides = new GradientDefinition[gradientDefinitions.size()];
-		        gradientDefinitions.toArray(gradientOverrides);
-		    }		    
-		}
-		
-		if (fontReader != null) {		    
-		    Collection fontDefinitions = fontReader.getValues();
-		    if (!fontDefinitions.isEmpty()) {
-	            fontOverrides = new FontDefinition[fontDefinitions.size()];
-				fontDefinitions.toArray(fontOverrides);
-		    }
-		}
-		
 	}
-
+    
+    /**
+     * Set the description.
+     * 
+     * @param description the description
+     */
+    void setDescription(String description) {
+        this.description = description;
+    }
 }

@@ -54,11 +54,6 @@ import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.decorators.DecoratorRegistryReader;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
-import org.eclipse.ui.internal.presentation.ColorDefinition;
-import org.eclipse.ui.internal.presentation.ColorDefinitionReader;
-import org.eclipse.ui.internal.presentation.FontDefinition;
-import org.eclipse.ui.internal.presentation.FontDefinitionReader;
-import org.eclipse.ui.internal.presentation.PresentationRegistryPopulator;
 import org.eclipse.ui.internal.registry.ActionSetPartAssociationsReader;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.ActionSetRegistryReader;
@@ -76,6 +71,10 @@ import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistryReader;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.internal.registry.WorkingSetRegistryReader;
+import org.eclipse.ui.internal.themes.ColorDefinition;
+import org.eclipse.ui.internal.themes.FontDefinition;
+import org.eclipse.ui.internal.themes.GradientDefinition;
+import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.ThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistryReader;
 
@@ -229,10 +228,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 			loadFontDefinitions(ext);
 			return;
 		}
-		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_COLOR_DEFINITIONS)) {
-			loadColorDefinitions(ext);
-			return;
-		}
 		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_DECORATORS)) {
 			loadDecorators(ext);
 			return;
@@ -243,12 +238,44 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 		}				
 	}	
 
+	/**
+     * @param ext
+     */
+    private void loadFontDefinitions(IExtension ext) {
+		ThemeRegistryReader reader = new ThemeRegistryReader();
+		reader.setRegistry((ThemeRegistry) WorkbenchPlugin.getDefault().getThemeRegistry());
+		IConfigurationElement [] elements = ext.getConfigurationElements();
+		for (int i = 0; i < elements.length; i++) 
+			reader.readElement(elements[i]);
+		
+		Collection fonts = reader.getFontDefinitions();
+		FontDefinition [] fontDefs = (FontDefinition []) fonts.toArray(new ColorDefinition [fonts.size()]);
+		ThemeElementHelper.populateRegistry(JFaceResources.getFontRegistry(), fontDefs, workbench.getPreferenceStore());		
+		
+		((FontDefinition.FontPreferenceListener)FontDefinition.getPreferenceListener()).clearCache();		
+    }
+
+    //TODO: confirm
 	private void loadThemes(IExtension ext) {
 		ThemeRegistryReader reader = new ThemeRegistryReader();
 		reader.setRegistry((ThemeRegistry) WorkbenchPlugin.getDefault().getThemeRegistry());
 		IConfigurationElement [] elements = ext.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) 
 			reader.readElement(elements[i]);	
+		
+		Collection colors = reader.getColorDefinitions();
+		ColorDefinition [] colorDefs = (ColorDefinition []) colors.toArray(new ColorDefinition [colors.size()]);
+		ThemeElementHelper.populateRegistry(JFaceResources.getColorRegistry(), colorDefs, workbench.getPreferenceStore());
+
+		Collection gradients = reader.getGradientDefinitions();
+		GradientDefinition [] gradientDefs = (GradientDefinition []) gradients.toArray(new ColorDefinition [gradients.size()]);
+		ThemeElementHelper.populateRegistry(JFaceResources.getGradientRegistry(), gradientDefs, workbench.getPreferenceStore());
+		
+		Collection fonts = reader.getFontDefinitions();
+		FontDefinition [] fontDefs = (FontDefinition []) fonts.toArray(new ColorDefinition [fonts.size()]);
+		ThemeElementHelper.populateRegistry(JFaceResources.getFontRegistry(), fontDefs, workbench.getPreferenceStore());		
+		
+		((FontDefinition.FontPreferenceListener)FontDefinition.getPreferenceListener()).clearCache();
 	}
 
 	private void loadDecorators(IExtension ext) {
@@ -263,31 +290,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 		for (Iterator i = decorators.iterator(); i.hasNext(); ) {
 			manager.addDecorator((DecoratorDefinition) i.next());
 		}		
-	}
-
-	private void loadColorDefinitions(IExtension ext) {
-		ColorDefinition.clearCache();
-		ColorDefinitionReader reader = new ColorDefinitionReader();
-		IConfigurationElement [] elements = ext.getConfigurationElements();
-		for (int i = 0; i < elements.length; i++) {
-			reader.readElement(elements[i]);	
-		}
-		
-		Collection colors = reader.getColorDefinitions();
-		ColorDefinition [] colorDefs = (ColorDefinition []) colors.toArray(new ColorDefinition [colors.size()]);
-		PresentationRegistryPopulator.populateRegistry(JFaceResources.getColorRegistry(), colorDefs, workbench.getPreferenceStore());
-	}
-
-	private void loadFontDefinitions(IExtension ext) {
-		FontDefinition.clearCache();
-		FontDefinitionReader reader = new FontDefinitionReader();
-		IConfigurationElement [] elements = ext.getConfigurationElements();
-		for (int i = 0; i < elements.length; i++) {
-			reader.readElement(elements[i]);	
-		}
-		Collection fonts = reader.getValues();
-		FontDefinition [] fontDefs = (FontDefinition []) fonts.toArray(new FontDefinition [fonts.size()]);
-		PresentationRegistryPopulator.populateRegistry(JFaceResources.getFontRegistry(), fontDefs, workbench.getPreferenceStore());
 	}
 	
 	private void loadNewWizards(IExtension ext) {

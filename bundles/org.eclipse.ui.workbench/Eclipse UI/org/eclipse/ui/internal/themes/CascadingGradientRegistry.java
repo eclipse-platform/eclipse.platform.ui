@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.presentation;
+package org.eclipse.ui.internal.themes;
 
 import java.util.HashSet;
 import java.util.Set;

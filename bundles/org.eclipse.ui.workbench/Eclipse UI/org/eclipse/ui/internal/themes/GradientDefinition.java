@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.presentation;
+package org.eclipse.ui.internal.themes;
 
 import java.util.Comparator;
 
@@ -21,7 +21,7 @@ import org.eclipse.ui.IPluginContribution;
  * 
  * @since 3.0
  */
-public class GradientDefinition implements IPluginContribution, IPresentationDefinition {
+public class GradientDefinition implements IPluginContribution, ICategorizedThemeElementDefinition {
 
 	/**
 	 * <code>Comparator</code> used in <code>GradientDefinition</code> []

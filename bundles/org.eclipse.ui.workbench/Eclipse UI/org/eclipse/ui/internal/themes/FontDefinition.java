@@ -8,17 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.presentation;
+package org.eclipse.ui.internal.themes;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
@@ -32,7 +26,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * The FontDefiniton is the representation of the fontDefinition
  * from the plugin.xml of a type.
  */
-public class FontDefinition implements IPresentationDefinition {
+public class FontDefinition implements IHierarchalThemeElementDefinition, ICategorizedThemeElementDefinition {
 
 	/**
 	 * The FontPreferenceListener is a class that listens to 
@@ -42,7 +36,7 @@ public class FontDefinition implements IPresentationDefinition {
 	 * 
 	 * TODO is this necessary anymore?
 	 */
-	private static class FontPreferenceListener implements IPropertyChangeListener {
+	public static class FontPreferenceListener implements IPropertyChangeListener {
 
 		//The values that we need to check default fonts for
 		private Set defaultCheckNames;
@@ -90,7 +84,7 @@ public class FontDefinition implements IPresentationDefinition {
 		 */
 		private void processDefaultsTo(String propertyName) {
 
-			FontDefinition[] defs = getDefinitions();
+			FontDefinition[] defs = WorkbenchPlugin.getDefault().getThemeRegistry().getFonts();
 			IPreferenceStore store =
 				WorkbenchPlugin.getDefault().getPreferenceStore();
 			for (int i = 0; i < defs.length; i++) {
@@ -115,7 +109,7 @@ public class FontDefinition implements IPresentationDefinition {
 		private void initializeFontNames() {
 			defaultCheckNames = new HashSet();
 			fontNames = new HashSet();
-			FontDefinition[] defs = getDefinitions();
+			FontDefinition[] defs = WorkbenchPlugin.getDefault().getThemeRegistry().getFonts();
 			for (int i = 0; i < defs.length; i++) {
 				fontNames.add(defs[i].getId());
 				String defaultsTo = defs[i].getDefaultsTo();
@@ -132,70 +126,6 @@ public class FontDefinition implements IPresentationDefinition {
 		}
 	}
 	
-	/**
-	 * <code>Comparator</code> used for sorting FontDefinitions based on their 
-	 * dependency depth.
-	 */
-	public static final Comparator HIERARCHY_COMPARATOR = new Comparator() {
-		public int compare(Object arg0, Object arg1) {
-			String def0 = arg0 == null ? null : ((FontDefinition) arg0).getDefaultsTo();
-			String def1 = arg1 == null ? null : ((FontDefinition) arg1).getDefaultsTo();
-
-			if (def0 == null && def1 == null)
-				return 0;
-
-			if (def0 == null)
-				return -1;
-
-			if (def1 == null)
-				return 1;
-
-			return compare(getDef(def0), getDef(def1));
-		}
-
-		/** 
-		 * @param id the identifier to search for.
-		 * @return the <code>ColorDefinition</code> that matches the id.
-		 */
-		private Object getDef(String id) {
-		    FontDefinition[] defs = FontDefinition.getDefinitions();
-            int idx = Arrays.binarySearch(defs, id, ID_COMPARATOR);
-			if (idx >= 0) 
-				return defs[idx];
-			return null;
-		}
-	};
-	
-	/**
-	 * <code>Comparator</code> used in <code>FontDefinition</code> [] 
-	 * searching.  May match against <code>String</code>s.
-	 */
-	public static final Comparator ID_COMPARATOR = new Comparator() {
-
-		/* (non-Javadoc)
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
-		public int compare(Object arg0, Object arg1) {
-			String str0 = getCompareString(arg0);
-			String str1 = getCompareString(arg1);
-			return str0.compareTo(str1);
-		}
-
-		/**
-		 * @param object
-		 * @return <code>String</code> representation of the object.
-		 */
-		private String getCompareString(Object object) {
-			if (object instanceof String)
-				return (String) object;
-			else if (object instanceof FontDefinition)
-				return ((FontDefinition) object).getId();
-			return ""; //$NON-NLS-1$
-		}
-	};
-	
-	
-	
 	private static FontPreferenceListener fontPreferenceUpdateListener;
 	
 	private String label;
@@ -204,30 +134,6 @@ public class FontDefinition implements IPresentationDefinition {
 	private String categoryId;
 	private String description;
     private String value;
-
-	//The elements for use by the preference page
-	private static FontDefinition[] definitions;
-
-	/**
-	 * Get the currently defined definitions for the workbench. Read them in if
-	 * they are not set.
-	 * @return FontDefinition[]
-	 */
-	public static FontDefinition[] getDefinitions() {
-		if (definitions == null) {
-			FontDefinitionReader reader = new FontDefinitionReader();
-			Collection values =
-				reader.readRegistry(Platform.getPluginRegistry());
-			definitions = new FontDefinition[values.size()];			
-			ArrayList sorted = new ArrayList(values);
-			Collections.sort(sorted, ID_COMPARATOR);
-
-			sorted.toArray(definitions);			
-			
-		}
-		return definitions;
-	}
-	
 	/**
 	 * For dynamic UI
 	 * 
@@ -241,16 +147,6 @@ public class FontDefinition implements IPresentationDefinition {
 		return fontPreferenceUpdateListener;
 		
 	}
-	
-	
-	// clears the definitions cache.
-	// for Dynamic UI
-	public static void clearCache() {
-		definitions = null;
-		if (fontPreferenceUpdateListener != null)
-			fontPreferenceUpdateListener.clearCache();
-		
-	}
 
 	/**
 	 * Create a new instance of the receiver.
@@ -261,7 +157,7 @@ public class FontDefinition implements IPresentationDefinition {
 	 * @param defaultsId The id of the font this defaults to.
 	 * @param fontDescription The description of the font in the preference page.
 	 */
-	FontDefinition(
+	public FontDefinition(
 		String fontName,
 		String uniqueId,
 		String defaultsId,

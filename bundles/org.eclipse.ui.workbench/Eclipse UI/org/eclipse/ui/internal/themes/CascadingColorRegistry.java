@@ -8,25 +8,25 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.presentation;
+package org.eclipse.ui.internal.themes;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 
 /**
  * @since 3.0
  */
-public class CascadingFontRegistry extends FontRegistry {
+public class CascadingColorRegistry extends ColorRegistry {
 
-    private FontRegistry parent;
+    private ColorRegistry parent;
 
     private IPropertyChangeListener listener = new IPropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent event) {
@@ -34,39 +34,38 @@ public class CascadingFontRegistry extends FontRegistry {
         }};
         
     /**
-     * 
+     * @param parent
      */
-    public CascadingFontRegistry(FontRegistry parent) {
+    public CascadingColorRegistry(ColorRegistry parent) {
         this.parent = parent;
         parent.addListener(listener);
     }
         
-
     /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.FontRegistry#get(java.lang.String)
+     * @see org.eclipse.jface.resource.ColorRegistry#get(java.lang.String)
      */
-    public Font get(String symbolicName) {
+    public Color get(String symbolicName) {
 		if (super.hasValueFor(symbolicName))        
         	return super.get(symbolicName); 
 		else
 		    return parent.get(symbolicName);
     }
-
     /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.FontRegistry#getKeySet()
+     * @see org.eclipse.jface.resource.ColorRegistry#getKeySet()
      */
     public Set getKeySet() {
         Set keyUnion = new HashSet(super.getKeySet());
         keyUnion.addAll(parent.getKeySet());
         return keyUnion;
     }
-    
-    
-    public FontData [] getFontData(String symbolicName) {
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.resource.ColorRegistry#getRGB(java.lang.String)
+     */
+    public RGB getRGB(String symbolicName) {
 		if (super.hasValueFor(symbolicName))        
-        	return super.getFontData(symbolicName); 
+        	return super.getRGB(symbolicName); 
 		else
-		    return parent.getFontData(symbolicName);
+		    return parent.getRGB(symbolicName);
     }
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.ColorRegistry#hasValueFor(java.lang.String)

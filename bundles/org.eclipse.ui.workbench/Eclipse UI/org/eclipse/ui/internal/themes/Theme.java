@@ -17,13 +17,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.ui.internal.presentation.CascadingColorRegistry;
-import org.eclipse.ui.internal.presentation.CascadingFontRegistry;
-import org.eclipse.ui.internal.presentation.CascadingGradientRegistry;
-import org.eclipse.ui.internal.presentation.ColorDefinition;
-import org.eclipse.ui.internal.presentation.FontDefinition;
-import org.eclipse.ui.internal.presentation.GradientDefinition;
-import org.eclipse.ui.internal.presentation.PresentationRegistryPopulator;
 
 
 /**
@@ -44,24 +37,24 @@ public class Theme implements ITheme {
     public Theme(IThemeDescriptor descriptor) {
         this.descriptor = descriptor;
         if (descriptor != null) {
-	        ColorDefinition [] definitions = this.descriptor.getColorOverrides();
+	        ColorDefinition [] definitions = this.descriptor.getColors();
 	        if (definitions.length > 0) {
 	            themeColorRegistry = new CascadingColorRegistry(JFaceResources.getColorRegistry());
 	            themeColorRegistry.addListener(getListener());
-	            PresentationRegistryPopulator.populateRegistry(themeColorRegistry, definitions, null);
+	            ThemeElementHelper.populateRegistry(themeColorRegistry, definitions, null);
 	        }
 	        
-	        GradientDefinition [] gradientDefinitions = this.descriptor.getGradientOverrides();
+	        GradientDefinition [] gradientDefinitions = this.descriptor.getGradients();
 	        if (gradientDefinitions.length > 0) {
 	            themeGradientRegistry = new CascadingGradientRegistry(JFaceResources.getGradientRegistry());
 	            themeGradientRegistry.addListener(getListener());
-	            PresentationRegistryPopulator.populateRegistry(themeGradientRegistry, gradientDefinitions, null);
+	            ThemeElementHelper.populateRegistry(themeGradientRegistry, gradientDefinitions, null);
 	        }
-	        FontDefinition [] fontDefinitions = this.descriptor.getFontOverrides();
+	        FontDefinition [] fontDefinitions = this.descriptor.getFonts();
 	        if (fontDefinitions.length > 0) {
 	            themeFontRegistry = new CascadingFontRegistry(JFaceResources.getFontRegistry());
 	            themeFontRegistry.addListener(getListener());
-	            PresentationRegistryPopulator.populateRegistry(themeFontRegistry, fontDefinitions, null);
+	            ThemeElementHelper.populateRegistry(themeFontRegistry, fontDefinitions, null);
 	        }	        	        
         }
     }
@@ -128,7 +121,7 @@ public class Theme implements ITheme {
      * @see org.eclipse.ui.internal.themes.ITheme#getId()
      */
     public String getId() {       
-        return descriptor == null ? null : descriptor.getID();
+        return descriptor == null ? null : descriptor.getId();
     }
     
     /* (non-Javadoc)

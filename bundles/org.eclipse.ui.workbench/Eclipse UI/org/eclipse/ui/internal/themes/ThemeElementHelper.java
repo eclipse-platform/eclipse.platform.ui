@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.presentation;
+package org.eclipse.ui.internal.themes;
 
 import java.util.Arrays;
 
@@ -26,14 +26,14 @@ import org.eclipse.swt.graphics.RGB;
 /**
  * @since 3.0
  */
-public final class PresentationRegistryPopulator {
+public final class ThemeElementHelper {
 
     public static void populateRegistry(FontRegistry registry, FontDefinition [] definitions, IPreferenceStore store) {
 		// sort the definitions by dependant ordering so that we process 
 		// ancestors before children.		
 		FontDefinition [] copyOfDefinitions = new FontDefinition[definitions.length];
 		System.arraycopy(definitions, 0, copyOfDefinitions, 0, definitions.length);
-		Arrays.sort(copyOfDefinitions, FontDefinition.HIERARCHY_COMPARATOR);
+		Arrays.sort(copyOfDefinitions, new IThemeRegistry.HierarchyComparator(definitions));
 
 		for (int i = 0; i < copyOfDefinitions.length; i++) {
 			FontDefinition definition = copyOfDefinitions[i];
@@ -124,7 +124,7 @@ public final class PresentationRegistryPopulator {
 		// ancestors before children.		
 		ColorDefinition [] copyOfDefinitions = new ColorDefinition[definitions.length];
 		System.arraycopy(definitions, 0, copyOfDefinitions, 0, definitions.length);
-		Arrays.sort(copyOfDefinitions, ColorDefinition.HIERARCHY_COMPARATOR);
+		Arrays.sort(copyOfDefinitions, new IThemeRegistry.HierarchyComparator(definitions));
 
 		for (int i = 0; i < copyOfDefinitions.length; i++) {
 			ColorDefinition definition = copyOfDefinitions[i];
@@ -176,7 +176,7 @@ public final class PresentationRegistryPopulator {
     /**
      * Not intended to be instantiated.
      */
-    private PresentationRegistryPopulator() {
+    private ThemeElementHelper() {
         // no-op
     }
 }

@@ -103,13 +103,13 @@ import org.eclipse.ui.internal.intro.IntroMessages;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
-import org.eclipse.ui.internal.presentation.ColorDefinition;
-import org.eclipse.ui.internal.presentation.FontDefinition;
-import org.eclipse.ui.internal.presentation.GradientDefinition;
-import org.eclipse.ui.internal.presentation.PresentationRegistryPopulator;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
+import org.eclipse.ui.internal.themes.ColorDefinition;
+import org.eclipse.ui.internal.themes.FontDefinition;
+import org.eclipse.ui.internal.themes.GradientDefinition;
 import org.eclipse.ui.internal.themes.ITheme;
+import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.keys.KeySequence;
@@ -937,11 +937,11 @@ public final class Workbench implements IWorkbench {
 	 * @since 3.0
 	 */
 	private void initializeApplicationColors() {
-		ColorDefinition[] colorDefinitions = ColorDefinition.getColorDefinitions();
-		PresentationRegistryPopulator.populateRegistry(JFaceResources.getColorRegistry(), colorDefinitions, getPreferenceStore());
+		ColorDefinition[] colorDefinitions = WorkbenchPlugin.getDefault().getThemeRegistry().getColors();
+		ThemeElementHelper.populateRegistry(JFaceResources.getColorRegistry(), colorDefinitions, getPreferenceStore());
 		
-		GradientDefinition [] gradientDefinitions = ColorDefinition.getGradientDefinitions();
-		PresentationRegistryPopulator.populateRegistry(JFaceResources.getGradientRegistry(), gradientDefinitions, getPreferenceStore());
+		GradientDefinition [] gradientDefinitions = WorkbenchPlugin.getDefault().getThemeRegistry().getGradients();
+		ThemeElementHelper.populateRegistry(JFaceResources.getGradientRegistry(), gradientDefinitions, getPreferenceStore());
 	}
 
 	private void initializeSingleClickOption() {
@@ -964,68 +964,9 @@ public final class Workbench implements IWorkbench {
 	 * Initializes the workbench fonts with the stored values. 
 	 */
 	private void initializeFonts() {
-	    FontDefinition[] fontDefinitions = FontDefinition.getDefinitions();
-		PresentationRegistryPopulator.populateRegistry(JFaceResources.getFontRegistry(), fontDefinitions, getPreferenceStore());
+	    FontDefinition[] fontDefinitions = WorkbenchPlugin.getDefault().getThemeRegistry().getFonts();
+		ThemeElementHelper.populateRegistry(JFaceResources.getFontRegistry(), fontDefinitions, getPreferenceStore());
 	}
-	
-//	/**
-//	 * For dynamic UI
-//	 * 
-//	 * @param definitions the fonts to initialize
-//	 * @since 3.0
-//	 */
-//	public void initializeFonts(FontDefinition[] definitions) {
-//		FontRegistry registry = JFaceResources.getFontRegistry();
-//		IPreferenceStore store = getPreferenceStore();		
-//		ArrayList fontsToSet = new ArrayList();
-//
-//		for (int i = 0; i < definitions.length; i++) {
-//			installFont(definitions[i].getId(), registry, store);
-//		}
-//
-//		// post-process the defaults to allow for out-of-order specification.
-//		for (int i = 0; i < definitions.length; i++) {
-//			FontDefinition definition = definitions[i];
-//			String defaultsTo = definition.getDefaultsTo();
-//			if (defaultsTo != null) {
-//				PreferenceConverter.setDefault(
-//					store,
-//					definition.getId(),
-//					PreferenceConverter.getDefaultFontDataArray(store, defaultsTo));
-//
-//				//If there is no value in the registry pass though the mapping
-//				if (!registry.hasValueFor(definition.getId())) {
-//					fontsToSet.add(definition);
-//				}
-//			}
-//		}
-//
-//		/*
-//		 * Now that all of the font have been initialized anything that is
-//		 * still at its defaults and has a defaults to needs to have its value
-//		 * set in the registry. Post process to be sure that all of the fonts
-//		 * have the correct setting before there is an update.
-//		 */
-//		Iterator updateIterator = fontsToSet.iterator();
-//		while (updateIterator.hasNext()) {
-//			FontDefinition update = (FontDefinition) updateIterator.next();
-//			registry.put(update.getId(), registry.getFontData(update.getDefaultsTo()));
-//		}
-//	}
-//
-//	/*
-//	 * Installs the given font in the font registry.
-//	 * 
-//	 * @param fontKey the font key 
-//	 * @param registry the font registry 
-//	 * @param store the preference store from which to obtain font data
-//	 */
-//	private void installFont(String fontKey, FontRegistry registry, IPreferenceStore store) {
-//		if (store.isDefault(fontKey))
-//			return;
-//		FontData[] font = PreferenceConverter.getFontDataArray(store, fontKey);
-//		registry.put(fontKey, font);
-//	}
 
 	/*
 	 * Initialize the workbench images.

@@ -166,7 +166,7 @@ public class WorkbenchThemeManager {
 		ThemeEntry entry = getThemeEntry(theme);
 		Color value = (Color)entry.colors.get(key);
 		if (value == null) {
-			IViewThemeDescriptor vtd = getThemeRegistry().find(theme).getViewThemeDescriptor();
+			IViewThemeDescriptor vtd = getThemeRegistry().findTheme(theme).getViewThemeDescriptor();
 			value = vtd.getColor(key);
 			entry.colors.put(key, value);
 		}		
@@ -177,7 +177,7 @@ public class WorkbenchThemeManager {
 		if (theme == null)
 			return null;
 		ThemeEntry entry = getThemeEntry(theme);
-		IThemeDescriptor td =  getThemeRegistry().find(theme);
+		IThemeDescriptor td =  getThemeRegistry().findTheme(theme);
 		if (td == null) return null;	
 		Color[] value = (Color[])entry.gradients.get(key);
 		if (value == null) {
@@ -197,7 +197,7 @@ public class WorkbenchThemeManager {
 		if (theme == null) {
 			return null;
 		}
-		IThemeDescriptor td =  getThemeRegistry().find(theme);
+		IThemeDescriptor td =  getThemeRegistry().findTheme(theme);
 		if (td == null) return null;
 		IViewThemeDescriptor vtd = td.getViewThemeDescriptor();
 		return vtd.getGradientPercents(key);
@@ -212,7 +212,7 @@ public class WorkbenchThemeManager {
 		if (theme == null) {
 			return 0;
 		}
-		IThemeDescriptor td =  getThemeRegistry().find(theme);
+		IThemeDescriptor td =  getThemeRegistry().findTheme(theme);
 		if (td == null) return 0;
 		IViewThemeDescriptor vtd = td.getViewThemeDescriptor();
 		return vtd.getGradientDirection(key);
@@ -227,7 +227,7 @@ public class WorkbenchThemeManager {
 		if (theme == null) {
 			return 0;
 		}
-		IThemeDescriptor td =  getThemeRegistry().find(theme);
+		IThemeDescriptor td =  getThemeRegistry().findTheme(theme);
 		if (td == null) return 0;
 		IViewThemeDescriptor vtd = td.getViewThemeDescriptor();
 		return vtd.getBorderStyle();
@@ -243,7 +243,7 @@ public class WorkbenchThemeManager {
 			return null;
 		}
 		ThemeEntry entry = getThemeEntry(theme);
-		IThemeDescriptor td =  getThemeRegistry().find(theme);
+		IThemeDescriptor td =  getThemeRegistry().findTheme(theme);
 		if (td == null) return null;
 		Font result = (Font)entry.fonts.get(key);
 		if (result == null) {
@@ -265,7 +265,7 @@ public class WorkbenchThemeManager {
 			return null;
 		}
 		ThemeEntry entry = getThemeEntry(theme);
-		IThemeDescriptor td =  getThemeRegistry().find(theme);
+		IThemeDescriptor td =  getThemeRegistry().findTheme(theme);
 		if (td == null) return null;
 		Font result = (Font)entry.fonts.get(key);
 		if (result == null) {
@@ -282,7 +282,7 @@ public class WorkbenchThemeManager {
 		ThemeEntry entry = getThemeEntry(theme);
 		Color value = (Color)entry.colors.get(key);
 		if (value == null) {
-			ITabThemeDescriptor tabtd = getThemeRegistry().find(theme).getTabThemeDescriptor();
+			ITabThemeDescriptor tabtd = getThemeRegistry().findTheme(theme).getTabThemeDescriptor();
 			value = tabtd.getColor(key);
 			entry.colors.put(key, value);
 		}		
@@ -294,7 +294,7 @@ public class WorkbenchThemeManager {
 	 */
 	public ITabThemeDescriptor getTabThemeDescriptor(String theme) {
 		ITabThemeDescriptor tabtd = null;
-		IThemeDescriptor td =  getThemeRegistry().find(theme);
+		IThemeDescriptor td =  getThemeRegistry().findTheme(theme);
 		if (td != null) {
 			tabtd = td.getTabThemeDescriptor();			
 		}
@@ -303,7 +303,7 @@ public class WorkbenchThemeManager {
 	
 	// kims prototype
 	public ITheme getTheme(String id) {
-	    IThemeDescriptor td = id == null ? null : getThemeRegistry().find(id);
+	    IThemeDescriptor td = id == null ? null : getThemeRegistry().findTheme(id);
 	    return getTheme(td);
 	}
 
