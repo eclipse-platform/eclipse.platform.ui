@@ -36,7 +36,7 @@ public interface IProgressService {
 	 * <b>Note: This is experimental API and subject to change at any time
 	 * </b>. *
 	 * 
-	 * @param job
+	 * @param job UIJob
 	 * @param message
 	 *            The message that informs the user of the waiting UI job.
 	 * @return IStatus

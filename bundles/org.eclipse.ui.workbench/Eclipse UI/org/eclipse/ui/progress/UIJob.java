@@ -31,15 +31,13 @@ public abstract class UIJob extends Job {
 	 * Create a new instance of the receiver with the supplied name.
 	 * The display used will be the one from the workbench if this
 	 * is available.
-	 * <b>NOTE:<b> It is recommended that <code>UIJob(String,Display></code>
-	 * is used if possible so as to prevent unneccessary creation
-	 * of the workbench or a display by the jobs mechanism.
+	 * UIJobs with this constructor will determine thier
+	 * display at runtime.
 	 * 
 	 * @param name the job name
 	 * 
 	 */
-	public UIJob(String name) {
-		
+	public UIJob(String name) {		
 		super(name);
 		
 	}
@@ -59,7 +57,7 @@ public abstract class UIJob extends Job {
 	/**
 	 * Convenience method to return a status for an exception.
 	 * @param exception
-	 * @return
+	 * @return IStatus an error status built from the exception
 	 */
 	public static IStatus errorStatus(Throwable exception) {
 		return new Status(
@@ -114,7 +112,7 @@ public abstract class UIJob extends Job {
 
 	/**
 	 * Sets the display to execute the asyncExec in.
-	 * @param runDisplay
+	 * @param runDisplay Display
 	 */
 	public void setDisplay(Display runDisplay) {
 		Assert.isNotNull(runDisplay);

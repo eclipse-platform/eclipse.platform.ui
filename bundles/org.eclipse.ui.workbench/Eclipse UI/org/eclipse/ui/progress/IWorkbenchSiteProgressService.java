@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.jobs.Job;
 /**
  * IWorkbenchPartProgressService is an IProgressService that adds API for 
  * context sensitive jobs.
+ * @since 3.0
  */
 public interface IWorkbenchSiteProgressService extends IProgressService {
 	
