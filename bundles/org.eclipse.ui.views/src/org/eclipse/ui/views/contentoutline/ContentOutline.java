@@ -65,8 +65,7 @@ import org.eclipse.ui.part.PageBookView;
 public class ContentOutline extends PageBookView implements ISelectionProvider,
         ISelectionChangedListener {
 
-    private static java.util.ResourceBundle resoutline_nls = java.util.ResourceBundle
-            .getBundle("org.eclipse.ui.views.contentoutline.messages"); //$NON-NLS-1$
+
 
     /**
      * The plugin prefix.
@@ -83,8 +82,7 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
     /**
      * Message to show on the default page.
      */
-    private String defaultText = resoutline_nls
-            .getString("ContentOutline.noOutline"); //$NON-NLS-1$
+    private String defaultText =ContentOutlineMessages.ContentOutline_noOutline; 
 
     /**
      * Creates a content outline view with no content outline pages.
