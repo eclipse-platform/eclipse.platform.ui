@@ -769,6 +769,10 @@ public class CheatSheetView extends ViewPart {
 	}
 	
 	private void initCheatSheetView() {
+		// Confirm that we have content to render, if not return.
+		if(contentURL == null) {
+			return;
+		}
 
 		//Re-initialize list to store items collapsed by expand/restore action on c.s. toolbar.
 		expandRestoreList = new ArrayList();
@@ -869,10 +873,7 @@ public class CheatSheetView extends ViewPart {
 	 */
 	private void restoreState(IMemento memento) {
 		IMemento contentMemento = memento.getChild(ICheatSheetResource.URL_MEMENTO);
-		if (contentMemento == null) {
-			
-		} else {
-				
+		if (contentMemento != null) {
 			try {
 				URL fileURL = new URL(contentMemento.getString(ICheatSheetResource.URL_ID));
 				contentURL = fileURL;
