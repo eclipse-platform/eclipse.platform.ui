@@ -104,6 +104,9 @@ public class ViewerLabel {
 		//If we started with null any change is an update
 		if (startImage == null)
 			return newImage != null;
+		
+		if(newImage == null)
+			return false;//If there is no image return false
 
 		return !(startImage.equals(newImage));
 	}
@@ -118,6 +121,9 @@ public class ViewerLabel {
 		//If we started with null any change is an update
 		if (startText == null)
 			return newText != null;
+		
+		if(newText == null)
+			return false;//If there is no new text return false
 
 		return !(startText.equals(newText));
 	}
