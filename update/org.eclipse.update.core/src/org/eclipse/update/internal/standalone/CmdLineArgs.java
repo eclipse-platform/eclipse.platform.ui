@@ -70,7 +70,8 @@ public class CmdLineArgs {
 			|| cmd.equals("search")
 			|| cmd.equals("update")
 			|| cmd.equals("mirror")
-			|| cmd.equals("uninstall");
+			|| cmd.equals("uninstall")
+			|| cmd.equals("listFeatures");
 	}
 
 	public ScriptedCommand getCommand() {
@@ -114,6 +115,8 @@ public class CmdLineArgs {
 					(String) options.get("-version"),
 					(String) options.get("-to"),
 					(String) options.get("-verifyOnly"));
+			else if (cmd.equals("listFeatures"))
+				return new ListConfigFeaturesCommand((String) options.get("-from"));
 			return null;
 		} catch (Exception e) {
 			StandaloneUpdateApplication.exceptionLogged();

@@ -18,13 +18,19 @@ import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.api.search.*;
 
-public class SearchCommand extends ScriptedCommand {
+/**
+ * Lists the configured features.
+ */
+public class ListConfigFeaturesCommand extends ScriptedCommand {
 
 	private URL remoteSiteURL;
 	private UpdateSearchRequest searchRequest;
 	private IUpdateSearchResultCollector collector;
 
-	public SearchCommand(String fromSite) {
+	/**
+	 * @param fromSite if specified, list only the features from the specified local install site
+	 */
+	public ListConfigFeaturesCommand(String fromSite) {
 		try {
 			this.remoteSiteURL = new URL(URLDecoder.decode(fromSite, "UTF-8"));
 			UpdateSearchScope searchScope = new UpdateSearchScope();
