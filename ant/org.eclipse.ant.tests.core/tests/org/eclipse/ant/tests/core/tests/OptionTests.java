@@ -298,7 +298,7 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testSpecifyTargetAsArgAndQuiet() throws CoreException {
 		run("echoing.xml", new String[]{"-logfile", "TestLogFile.txt", "echo3", "-quiet"}, false);
-		assertTrue("1 message should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 2);
+		assertTrue("2 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 2);
 	}
 	
 	/**
