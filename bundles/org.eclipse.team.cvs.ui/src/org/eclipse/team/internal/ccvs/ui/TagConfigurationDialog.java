@@ -183,7 +183,6 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 		cvsResourceTree.setContentProvider(new RemoteContentProvider());
 		cvsResourceTree.setLabelProvider(new WorkbenchLabelProvider());
 		data = new GridData (GridData.FILL_BOTH);
-		data.heightHint = 150;
 		data.horizontalSpan = 1;
 		cvsResourceTree.getTree().setLayoutData(data);
 		if(roots.length==1) {
@@ -216,7 +215,6 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 		
 		final Table table = new Table(comp, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.CHECK);
 		data = new GridData(GridData.FILL_BOTH);
-		data.heightHint = 150;
 		data.horizontalSpan = 1;
 		table.setLayoutData(data);
 		TableLayout layout = new TableLayout();
@@ -295,7 +293,6 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 		cvsDefinedTagsTree.setContentProvider(new WorkbenchContentProvider());
 		cvsDefinedTagsTree.setLabelProvider(new WorkbenchLabelProvider());
 		data = new GridData (GridData.FILL_BOTH);
-		data.heightHint = 100;
 		data.horizontalAlignment = GridData.FILL;
 		data.grabExcessHorizontalSpace = true;
 		cvsDefinedTagsTree.getTree().setLayoutData(data);
@@ -357,7 +354,6 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 			explanation.setText(Policy.bind("TagConfigurationDialog.11")); //$NON-NLS-1$
 			data = new GridData ();
 			data.horizontalSpan = 2;
-			data.widthHint = 300;
 			explanation.setLayoutData(data);
 			
 			autoRefreshFileList = new org.eclipse.swt.widgets.List(rememberedTags, SWT.BORDER | SWT.MULTI);	 
@@ -419,7 +415,7 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 		}
 			
 		Label seperator = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
-		data = new GridData (GridData.FILL_BOTH);		
+		data = new GridData (GridData.FILL_HORIZONTAL);		
 		data.horizontalSpan = 2;
 		seperator.setLayoutData(data);
 
