@@ -25,11 +25,12 @@ public class UIBuildListener implements AntRunnerListener {
 	private Task fTask;
 	private IFile fBuildFile;
 	private int msgOutputLevel = Project.MSG_INFO;
-	private AntConsole console;
-	
-public UIBuildListener(AntRunner runner, IProgressMonitor monitor, IFile file, AntConsole console) {
+	private AntConsole[] consoles;
+
+
+public UIBuildListener(AntRunner runner, IProgressMonitor monitor, IFile file, AntConsole[] consoles) {
 	super();
-	this.console = console;
+	this.consoles = consoles;
 	this.runner = runner;
 	fMonitor = monitor;
 	fBuildFile = file;
@@ -39,10 +40,12 @@ public UIBuildListener(AntRunner runner, IProgressMonitor monitor, IFile file, A
  */
 public UIBuildListener(AntRunner runner, IProgressMonitor monitor, IFile file) {
 	super();
+	
 	this.runner = runner;
 	fMonitor = monitor;
 	fBuildFile = file;
 }
+
 public void buildFinished(BuildEvent be){
 	fMonitor.done();
 	if (be.getException() != null) {
@@ -84,8 +87,9 @@ private int getLineFromLocation(Location l) {
 	}
 }
 private void handleBuildException(Throwable t) {
-	if (console != null)
-		console.append(Policy.bind("exception.buildException", t.toString()) + "\n", Project.MSG_ERR);
+	if (consoles != null)
+		for (int i=0; i < consoles.length; i++)
+			consoles[i].append(Policy.bind("exception.buildException", t.toString()) + "\n", Project.MSG_ERR);
 		
 	if (t instanceof BuildException) {
 		BuildException bex= (BuildException)t;
@@ -99,14 +103,16 @@ private void handleBuildException(Throwable t) {
 }
 public void messageLogged(BuildEvent event) {
 	checkCanceled();
-    if (console != null && event.getPriority() <= msgOutputLevel)
-		console.append(event.getMessage() + "\n", event.getPriority());
+    if (consoles != null && event.getPriority() <= msgOutputLevel)
+    	for (int i=0; i < consoles.length; i++)
+			consoles[i].append(event.getMessage() + "\n", event.getPriority());
 }
 
 public void messageLogged(String message,int priority) {
 	checkCanceled();
-    if ((console != null) && priority <= msgOutputLevel)
-		console.append(message + "\n", priority);
+    if ((consoles != null) && priority <= msgOutputLevel)
+    	for (int i=0; i < consoles.length; i++)
+			consoles[i].append(message + "\n", priority);
 }
 private void removeMarkers() {
 	try {
