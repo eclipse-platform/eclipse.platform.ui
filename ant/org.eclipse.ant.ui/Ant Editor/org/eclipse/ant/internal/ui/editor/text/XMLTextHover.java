@@ -23,7 +23,7 @@ import org.eclipse.ant.internal.ui.editor.derived.HTMLTextPresenter;
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.editor.model.AntPropertyNode;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
@@ -235,11 +235,12 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 		
 		return null;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
 	 */
 	public IInformationControlCreator getHoverControlCreator() {
-		if (Platform.getPlugin("org.eclipse.jdt.ui").getPluginPreferences().getBoolean("PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE")) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE)) {
 			return new IInformationControlCreator() {
 				public IInformationControl createInformationControl(Shell parent) {
 	  				return new DefaultInformationControl(parent, SWT.NONE, 
