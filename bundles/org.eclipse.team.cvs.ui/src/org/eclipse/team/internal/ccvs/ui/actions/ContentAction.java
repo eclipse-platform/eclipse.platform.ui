@@ -58,7 +58,10 @@ public class ContentAction extends ActionDelegate implements IEditorActionDelega
 			if (result && dialog.isDontShowAgain()) {
 				store.setValue(ICVSUIConstants.PREF_PROMPT_ON_CHANGE_GRANULARITY, false);
 			}
-			if (!result) return;
+			if (!result) {
+				action.setChecked(! action.isChecked());
+				return;
+			}
 		}			
 		syncInput.setSyncGranularity(action.isChecked() ? ILocalSyncElement.GRANULARITY_CONTENTS : ILocalSyncElement.GRANULARITY_TIMESTAMP);
 	}
