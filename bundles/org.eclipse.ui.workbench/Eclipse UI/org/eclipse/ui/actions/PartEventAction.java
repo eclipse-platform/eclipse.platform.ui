@@ -90,6 +90,7 @@ public void partActivated(IWorkbenchPart part) {
  * this method if action availability has to be recalculated.
  */
 public void partBroughtToTop(IWorkbenchPart part) {
+	// do nothing
 }
 /**
  * The <code>PartEventAction</code> implementation of this 
@@ -116,5 +117,6 @@ public void partDeactivated(IWorkbenchPart part) {
  * this method if action availability has to be recalculated.
  */
 public void partOpened(IWorkbenchPart part) {
+	// do nothing
 }
 }
