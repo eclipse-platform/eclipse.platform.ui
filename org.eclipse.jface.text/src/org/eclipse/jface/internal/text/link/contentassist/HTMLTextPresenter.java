@@ -148,7 +148,7 @@ class HTMLTextPresenter implements DefaultInformationControl.IInformationPresent
 			
 			if (line != null) {
 				append(buffer, LINE_DELIM, lineFormatted ? presentation : null);
-				append(buffer, "...", presentation); // TODO get the message from somewhere
+				append(buffer, ContentAssistMessages.getString("HTMLTextPresenter.ellipse"), presentation); //$NON-NLS-1$
 			}
 			
 			return trim(buffer, presentation);

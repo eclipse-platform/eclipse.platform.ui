@@ -39,7 +39,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	/**
 	 * The type of projection annotations.
 	 */
-	public static final String TYPE= "org.eclipse.projection";
+	public static final String TYPE= "org.eclipse.projection"; //$NON-NLS-1$
 		
 	
 	private static final int COLOR= SWT.COLOR_DARK_GRAY;

@@ -239,7 +239,7 @@ public class ProjectionDocument extends AbstractDocument {
 			
 			if (index < fragments.length) {
 				if (offsetInMaster == fragments[index].offset)
-					throw new IllegalArgumentException("overlaps with existing fragment"); 
+					throw new IllegalArgumentException("overlaps with existing fragment"); //$NON-NLS-1$
 				if (offsetInMaster + lengthInMaster == fragments[index].offset) 
 					right= (Fragment) fragments[index];
 			}
@@ -247,7 +247,7 @@ public class ProjectionDocument extends AbstractDocument {
 			if (0 < index && index <= fragments.length) {
 				Fragment fragment= (Fragment) fragments[index - 1];
 				if (fragment.includes(offsetInMaster))
-					throw new IllegalArgumentException("overlaps with existing fragment");
+					throw new IllegalArgumentException("overlaps with existing fragment"); //$NON-NLS-1$
 				if (fragment.getOffset() + fragment.getLength() == offsetInMaster)
 					left= fragment;
 			}

@@ -151,9 +151,9 @@ public final class AnnotationTypeLookup {
 	private List getAnnotationTypeMappings() {
 		List annotationTypeMappings= new ArrayList();
 		// read compatibility mode
-		readExtensionPoint(annotationTypeMappings, "markerAnnotationSpecification", "annotationType");
+		readExtensionPoint(annotationTypeMappings, "markerAnnotationSpecification", "annotationType"); //$NON-NLS-1$ //$NON-NLS-2$
 		// read new extension point
-		readExtensionPoint(annotationTypeMappings, "annotationTypes", "name");
+		readExtensionPoint(annotationTypeMappings, "annotationTypes", "name"); //$NON-NLS-1$ //$NON-NLS-2$
 		return annotationTypeMappings;
 	}
 	

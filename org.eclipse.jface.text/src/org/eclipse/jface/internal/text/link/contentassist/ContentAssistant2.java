@@ -235,7 +235,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 
 		protected void start(int showStyle) {
 			fShowStyle= showStyle;
-			fThread= new Thread(this, JFaceTextMessages2.getString("ContentAssistant.assist_delay_timer_name")); //$NON-NLS-1$
+			fThread= new Thread(this, ContentAssistMessages.getString("ContentAssistant.assist_delay_timer_name")); //$NON-NLS-1$
 			fThread.start();
 		}
 

@@ -86,7 +86,7 @@ public final class AnnotationTypeHierarchy {
 	private Map readTypes() {
 		HashMap allTypes= new HashMap();
 		
-		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, "annotationTypes");
+		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, "annotationTypes"); //$NON-NLS-1$
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
 			for (int i= 0; i < elements.length; i++) {
@@ -98,7 +98,7 @@ public final class AnnotationTypeHierarchy {
 				
 				String parent= element.getAttribute("super");  //$NON-NLS-1$
 				if (parent == null || parent.trim().length() == 0)
-					parent= "";
+					parent= ""; //$NON-NLS-1$
 				
 				allTypes.put(name, parent);
 			}

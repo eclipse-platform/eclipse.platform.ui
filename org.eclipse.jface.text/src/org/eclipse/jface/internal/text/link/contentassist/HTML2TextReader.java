@@ -171,7 +171,7 @@ class HTML2TextReader extends SubstitutionTextReader {
 			return "\t"; //$NON-NLS-1$
 		
 		if ("li".equals(html)) //$NON-NLS-1$
-			return LINE_DELIM + "\t" + "-"; //$NON-NLS-1$ TODO internationalize
+			return LINE_DELIM + ContentAssistMessages.getString("HTML2TextReader.listItemPrefix"); //$NON-NLS-1$ //$NON-NLS-2$
 					
 		if ("/b".equals(html)) { //$NON-NLS-1$
 			stopBold();
