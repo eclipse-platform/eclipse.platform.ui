@@ -21,6 +21,7 @@ public class SearchResultSite
 	private ISite site;
 	private Vector candidates;
 	private String label;
+	private SearchObject search;
 
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IWorkbenchAdapter.class)) {
@@ -29,10 +30,15 @@ public class SearchResultSite
 		return super.getAdapter(adapter);
 	}
 
-	public SearchResultSite(String label, ISite site) {
+	public SearchResultSite(SearchObject search, String label, ISite site) {
+		this.search = search;
 		this.label = label;
 		this.site = site;
 		candidates = new Vector();
+	}
+	
+	public SearchObject getSearch() {
+		return search;
 	}
 
 	public ISite getSite() {

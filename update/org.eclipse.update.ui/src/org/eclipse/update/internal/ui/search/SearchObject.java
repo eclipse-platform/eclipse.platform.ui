@@ -289,7 +289,7 @@ public class SearchObject extends NamedModelObject {
 			if (query.matches(candidate)) {
 				// bingo - add this
 				if (searchSite == null) {
-					searchSite = new SearchResultSite(siteAdapter.getLabel(), site);
+					searchSite = new SearchResultSite(this, siteAdapter.getLabel(), site);
 					result.add(searchSite);
 					asyncFireObjectAdded(this, searchSite);
 				}

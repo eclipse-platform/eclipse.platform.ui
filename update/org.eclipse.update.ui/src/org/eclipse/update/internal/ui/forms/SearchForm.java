@@ -65,6 +65,7 @@ public class SearchForm extends UpdateWebForm {
 	private PageBook pagebook;
 	private SearchMonitor monitor;
 	//private UpdateSearchProgressMonitor statusMonitor;
+	//private SearchResultSection searchResultSection;
 	private SearchResultSection searchResultSection;
 	private IDialogSettings settings;
 	private SearchObject searchObject;
@@ -107,6 +108,7 @@ public class SearchForm extends UpdateWebForm {
 			String pattern = UpdateUIPlugin.getResourceString(KEY_LAST_SEARCH);
 			String text = UpdateUIPlugin.getFormattedMessage(pattern, date.toString());
 			infoLabel.setText(text);
+			infoLabel.getParent().layout();
 			reflow(true);
 			searchObject.detachProgressMonitor(this);
 			//			if (statusMonitor != null) {
@@ -161,7 +163,8 @@ public class SearchForm extends UpdateWebForm {
 		parent.setLayout(layout);
 		layout.leftMargin = 10;
 		layout.rightMargin = 1;
-		layout.topMargin = 10;
+		layout.topMargin = 0;
+		layout.bottomMargin = 2;
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 10;
 		layout.numColumns = 2;
@@ -180,13 +183,15 @@ public class SearchForm extends UpdateWebForm {
 				fillQueryGroup(expansion, factory);
 			}
 		};
-
 		Composite optionContainer = factory.createComposite(parent);
 		layout = new HTMLTableLayout();
 		layout.numColumns = 2;
 		layout.leftMargin = 0;
 		layout.rightMargin = 0;
+		layout.bottomMargin = 0;
+		layout.topMargin = 0;
 		layout.horizontalSpacing = 15;
+		layout.verticalSpacing = 0;
 		optionContainer.setLayout(layout);
 		td = new TableData();
 		td.colspan = 2;
@@ -194,10 +199,6 @@ public class SearchForm extends UpdateWebForm {
 
 		queryGroup.setText(UpdateUIPlugin.getResourceString(KEY_QUERY));
 		queryGroup.createControl(optionContainer, factory);
-		//td = new TableData();
-		//td.colspan = 2;
-		//td.align = TableData.FILL;
-		//queryGroup.getControl().setLayoutData(td);
 
 		optionsGroup = new OptionsGroup() {
 			public void fillExpansion(Composite expansion, FormWidgetFactory factory) {
@@ -249,26 +250,22 @@ public class SearchForm extends UpdateWebForm {
 				gd = new GridData();
 				gd.horizontalSpan = 2;
 				bookmarkCheck.setLayoutData(gd);
-
-				fullModeCheck = factory.createButton(expansion, null, SWT.CHECK);
-				fullModeCheck.setText(UpdateUIPlugin.getResourceString(KEY_FULL_MODE_CHECK));
-				fullModeCheck.setSelection(settings.getBoolean(S_FULL_MODE));
-				fullModeCheck.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						toggleMode(fullModeCheck.getSelection());
-					}
-				});
-				gd = new GridData();
-				gd.horizontalSpan = 2;
-				fullModeCheck.setLayoutData(gd);
 			}
 		};
 		optionsGroup.setText(UpdateUIPlugin.getResourceString(KEY_OPTIONS));
 		optionsGroup.createControl(optionContainer, factory);
-		//td = new TableData();
-		//td.colspan = 2;
-		//td.align = TableData.FILL;
-		//optionsGroup.getControl().setLayoutData(td);
+
+		fullModeCheck = factory.createButton(parent, null, SWT.CHECK);
+		fullModeCheck.setText(UpdateUIPlugin.getResourceString(KEY_FULL_MODE_CHECK));
+		fullModeCheck.setSelection(settings.getBoolean(S_FULL_MODE));
+		fullModeCheck.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				toggleMode(fullModeCheck.getSelection());
+			}
+		});
+		td = new TableData();
+		td.colspan = 2;
+		fullModeCheck.setLayoutData(td);
 
 		Composite sep = factory.createCompositeSeparator(parent);
 		td = new TableData();
@@ -278,14 +275,24 @@ public class SearchForm extends UpdateWebForm {
 		sep.setBackground(factory.getColor(factory.COLOR_BORDER));
 		sep.setLayoutData(td);
 
-		infoLabel = factory.createLabel(parent, null);
+		Composite searchContainer = factory.createComposite(parent);
+		GridLayout glayout = new GridLayout();
+		glayout.numColumns = 2;
+		searchContainer.setLayout(glayout);
+		td = new TableData();
+		td.align = TableData.FILL;
+		td.colspan = 2;
+		searchContainer.setLayoutData(td);
+		GridData gd;
+
+		infoLabel = factory.createLabel(searchContainer, null);
 		infoLabel.setText(UpdateUIPlugin.getResourceString(KEY_NO_LAST_SEARCH));
-		td = new TableData(TableData.LEFT, TableData.MIDDLE);
-		infoLabel.setLayoutData(td);
+		gd = new GridData(GridData.VERTICAL_ALIGN_CENTER);
+		infoLabel.setLayoutData(gd);
 
 		searchButton =
 			factory.createButton(
-				parent,
+				searchContainer,
 				UpdateUIPlugin.getResourceString(KEY_SEARCH_NOW),
 				SWT.PUSH);
 		searchButton.addSelectionListener(new SelectionAdapter() {
@@ -293,9 +300,9 @@ public class SearchForm extends UpdateWebForm {
 				performSearch();
 			}
 		});
-		td = new TableData(TableData.LEFT, TableData.MIDDLE);
-		td.indent = 10;
-		searchButton.setLayoutData(td);
+		gd = new GridData(GridData.VERTICAL_ALIGN_CENTER);
+		gd.horizontalIndent = 10;
+		searchButton.setLayoutData(gd);
 
 		monitor = new SearchMonitor(parent);
 		td = new TableData();
