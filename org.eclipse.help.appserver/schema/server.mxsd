@@ -6,16 +6,11 @@
       <meta.schema plugin="org.eclipse.help.appserver" id="server" name="server"/>
    </appInfo>
    <documentation>
-      [Enter description of this extension point]
+      Internal extension point to plug in an application server for help and other eclipse plugins.
    </documentation>
 </annotation>
 
    <element name="extension">
-      <annotation>
-         <documentation>
-            Internal extension point for plugging-in an application server to be used by eclipse components, such as help.
-         </documentation>
-      </annotation>
       <complexType>
          <sequence>
          </sequence>
@@ -44,11 +39,6 @@
    </element>
 
    <element name="server">
-      <annotation>
-         <documentation>
-             Internal extension point for plugging-in an application server to be used by eclipse components, such as help.
-         </documentation>
-      </annotation>
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
@@ -60,7 +50,7 @@
          <attribute name="default" type="boolean" use="default" value="false">
             <annotation>
                <documentation>
-                   When set to true, this is the default application server. Normally, only the platform contributed default implementation should set this attribute to true.
+                  When set to true, this is the default application server. Normally, only the platform contributed default implementation should set this attribute to true.
                </documentation>
             </annotation>
          </attribute>
@@ -72,7 +62,14 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         The following is a sample usage of the support extension point:
+&lt;p&gt;
+&lt;samp&gt;
+&amp;lt;extension id="appserver" name="Tomcat"  point="org.eclipse.help.appserver.server"&amp;gt;
+&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;    &amp;lt;server class="org.eclipse.tomcat.internal.TomcatAppServer" default="true" /&amp;gt; 
+&lt;br&gt;   &amp;lt;/extension&amp;gt;
+&lt;/samp&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -81,7 +78,10 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         The supplied class must implement the
+&lt;tt&gt;org.eclipse.help.internal.appserver.IWebappServer&lt;/tt&gt;
+interface. Methods in that interface control starting and stopping of the application server,
+as well as starting and stopping of a web application.
       </documentation>
    </annotation>
 
@@ -90,7 +90,8 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         The Eclipse Platform provides an implementation of this extension point using the Apache Tomcat
+application server.
       </documentation>
    </annotation>
 
