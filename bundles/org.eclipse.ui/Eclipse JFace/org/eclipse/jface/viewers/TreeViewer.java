@@ -85,9 +85,8 @@ protected void addTreeListener(Control c, TreeListener listener) {
 protected void doUpdateItem(Item item, Object element) {
 	// update icon and label
 	ILabelProvider provider = (ILabelProvider) getLabelProvider();
-	CombinedLabel label = getLabel(element, provider);
-	item.setText(label.getText());
-	Image image = label.getImage();
+	item.setText(provider.getText(element));
+	Image image = provider.getImage(element);
 	if (image != null) {
 		item.setImage(image);
 	}

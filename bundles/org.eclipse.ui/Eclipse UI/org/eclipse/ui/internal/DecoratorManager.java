@@ -24,7 +24,6 @@ import org.eclipse.ui.IDecoratorManager;
  */
 public class DecoratorManager
 	implements
-		ICombinedLabelDecorator,
 		ILabelDecorator,
 		ILabelProviderListener,
 		IDecoratorManager {
@@ -105,40 +104,6 @@ public class DecoratorManager
 		return decorateText(text, element, true);
 	}
 
-	/**
-	 * Assign the result of decorating the text and image in the 
-	 * supplied DecorationResult to the decorators defined
-	 * for element. Apply the adapted decorations as well.
-	 * 			
-	 */
-	public void decorateLabel(Object element, CombinedLabel decorationResult) {
-		decorateLabel(element, decorationResult, true);
-	}
-
-	/**
-	 * Assign the result of decorating the text and image in the 
-	 * supplied DecorationResult to the decorators defined
-	 * for element. Apply the decorators to the adapted result
-	 * if checkAdapted is true.
-	 * 			
-	 */
-	public void decorateLabel(
-		Object element,
-		CombinedLabel decorationResult,
-		boolean checkAdapted) {
-
-		DecoratorDefinition[] decorators = getDecoratorsFor(element);
-		for (int i = 0; i < decorators.length; i++) {
-			decorators[i].decorateLabel(element, decorationResult);
-		}
-
-		if (checkAdapted) {
-			//Get any adaptions to IResource
-			Object adapted = getResourceAdapter(element);
-			if (adapted != null)
-				decorateLabel(adapted, decorationResult, false);
-		}
-	}
 
 	/**
 	 * Decorate the text provided for the element type.

@@ -176,7 +176,7 @@ public class ResourceNavigator
 		viewer.setUseHashlookup(true);
 		viewer.setContentProvider(new WorkbenchContentProvider());
 		viewer.setLabelProvider(
-			new CombinedDecoratingLabelProvider(
+			new DecoratingLabelProvider(
 				new WorkbenchLabelProvider(), 
 				getPlugin().getWorkbench().getDecoratorManager().getLabelDecorator()));
 		viewer.addFilter(this.patternFilter);

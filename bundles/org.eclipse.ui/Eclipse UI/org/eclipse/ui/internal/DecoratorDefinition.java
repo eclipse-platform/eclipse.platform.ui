@@ -247,37 +247,6 @@ public class DecoratorDefinition {
 		}
 		return null;
 	}
-	/**
-	 * Decorate the text and the image provided for the element type.
-	 * If the decorator for the receiver is an instance of 
-	 * <code>ICombinedLabelDecorator</code> then do both at the same
-	 * time - otherwise call the decorateText and decorateImage
-	 * seperately. 
-	 * This method should not be called unless a check for
-	 * isEnabled() has been done first.
-	 */
-	void decorateLabel(
-		Object element,
-		CombinedLabel decorationResult) {
-		try {
-			ILabelDecorator decorator = internalGetDecorator();
-		} catch (CoreException exception) {
-			handleCoreException(exception);
-			return;
-		}
-		if (decorator instanceof ICombinedLabelDecorator)
-			((ICombinedLabelDecorator) decorator).decorateLabel(
-				element,
-				decorationResult);
-		else {
-			String newText = decorator.decorateText(decorationResult.getText(), element);
-			Image newImage = decorator.decorateImage(decorationResult.getImage(), element);
-			if (newText != null)
-				decorationResult.setText(newText);
-			if (newImage != null)
-				decorationResult.setImage(newImage);
-		}
-	}
 
 	/**
 	 * Add a listener for the decorator.If there is an exception

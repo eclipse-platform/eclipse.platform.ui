@@ -97,7 +97,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		tree.setUseHashlookup(true);
 		tree.setContentProvider(new WorkbenchContentProvider());
 		tree.setLabelProvider(
-			new CombinedDecoratingLabelProvider(
+			new DecoratingLabelProvider(
 				new WorkbenchLabelProvider(), 
 				WorkbenchPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator()));
 		tree.setInput(WorkbenchPlugin.getPluginWorkspace().getRoot());

@@ -182,9 +182,8 @@ protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 			}
 			else {
 				if (column == 0) {
-		 	    	CombinedLabel label  = getLabel(element,lprov);
-		    		text = label.getText();
-		    		image = label.getImage();		    	
+		 	    	text = lprov.getText(element);
+		    		image = lprov.getImage(element);		    	
 		    	}
 	    	}
 			ti.setText(column, text);

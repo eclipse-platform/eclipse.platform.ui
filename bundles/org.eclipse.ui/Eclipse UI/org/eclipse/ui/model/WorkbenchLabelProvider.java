@@ -18,7 +18,7 @@ import org.eclipse.swt.graphics.Image;
  * This class provides a facility for subclasses to define annotations
  * on the labels and icons of adaptable objects.
  */
-public class WorkbenchLabelProvider extends LabelProvider implements ICombinedLabelProvider{
+public class WorkbenchLabelProvider extends LabelProvider {
 	/**
 	 * The cache of images that have been dispensed by this provider.
 	 * Maps ImageDescriptor->Image.
@@ -116,11 +116,6 @@ public final String getText(Object element) {
 	//return the decorated label
 	return decorateText(label, element);
 }
-	/**
-	 * @see ICombinedLabelProvider#getCombinedLabel(Object)
-	 */
-	public CombinedLabel getCombinedLabel(Object element) {
-		return new CombinedLabel(getText(element),getImage(element));
-	}
+
 
 }

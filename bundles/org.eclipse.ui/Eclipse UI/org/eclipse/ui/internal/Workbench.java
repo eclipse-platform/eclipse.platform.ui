@@ -32,7 +32,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.jface.viewers.ICombinedLabelDecorator;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
