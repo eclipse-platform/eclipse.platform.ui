@@ -70,6 +70,11 @@ public class RenameResourceAction extends WorkspaceAction {
 	private static String RESOURCE_EXISTS_MESSAGE = IDEWorkbenchMessages.getString("RenameResourceAction.overwriteQuestion"); //$NON-NLS-1$
 	private static String RENAMING_MESSAGE = IDEWorkbenchMessages.getString("RenameResourceAction.progressMessage"); //$NON-NLS-1$
 
+	/* On Mac the text widget already provides a border when it has focus, so there is no need to draw another one.
+	 * The value of INSET controls the inset we apply to the text field bound's in order to get space for drawing a border.
+	 * A value of 1 means a one-pixel wide border around the text field. A negative value supresses the border.
+	 */
+	private static int INSET= "carbon".equals(SWT.getPlatform()) ? -2 : 1;	//$NON-NLS-1$
 /**
  * Creates a new action. Using this constructor directly will rename using a
  * dialog rather than the inline editor of a ResourceNavigator.
@@ -160,23 +165,24 @@ private void createTextEditor(final IResource resource) {
 	// Create text editor parent.  This draws a nice bounding rect.
 	textEditorParent = createParent();
 	textEditorParent.setVisible(false);
-	textEditorParent.addListener(SWT.Paint, new Listener() {
-		public void handleEvent (Event e) {
-			Point textSize = textEditor.getSize();
-			Point parentSize = textEditorParent.getSize();
-			e.gc.drawRectangle(0, 0, Math.min(textSize.x + 4, parentSize.x - 1), parentSize.y - 1);
-		}
-	});
-	
+	if (INSET > 0)	// only register for paint events if we have a border
+		textEditorParent.addListener(SWT.Paint, new Listener() {
+			public void handleEvent (Event e) {
+				Point textSize = textEditor.getSize();
+				Point parentSize = textEditorParent.getSize();
+				e.gc.drawRectangle(0, 0, Math.min(textSize.x + 4, parentSize.x - 1), parentSize.y - 1);
+			}
+		});
 	// Create inner text editor.
 	textEditor = new Text(textEditorParent, SWT.NONE);
+	textEditor.setFont(navigatorTree.getFont());
 	textEditorParent.setBackground(textEditor.getBackground());
 	textEditor.addListener(SWT.Modify, new Listener() {
 		public void handleEvent (Event e) {
 			Point textSize = textEditor.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			textSize.x += textSize.y; // Add extra space for new characters.
 			Point parentSize = textEditorParent.getSize();
-			textEditor.setBounds(2, 1, Math.min(textSize.x, parentSize.x - 4), parentSize.y - 2);
+			textEditor.setBounds(2, INSET, Math.min(textSize.x, parentSize.x - 4), parentSize.y -2*INSET);
 			textEditorParent.redraw();
 		}
 	});
@@ -356,7 +362,7 @@ private void queryNewResourceNameInline(final IResource resource) {
 	Point textSize = textEditor.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	textSize.x += textSize.y; // Add extra space for new characters.
 	Point parentSize = textEditorParent.getSize();
-	textEditor.setBounds(2, 1, Math.min(textSize.x, parentSize.x - 4), parentSize.y - 2);
+	textEditor.setBounds(2, INSET, Math.min(textSize.x, parentSize.x - 4), parentSize.y - 2*INSET);
 	textEditorParent.redraw();
 	textEditor.selectAll ();
 	textEditor.setFocus ();
