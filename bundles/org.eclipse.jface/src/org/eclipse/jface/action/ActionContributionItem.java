@@ -668,7 +668,10 @@ public void update(String propertyName) {
 				if (overrides != null)
 					text = getParent().getOverrides().getText(this);
 				
-				mi.setAccelerator(accelerator != null ? accelerator.intValue() : 0);
+				if (accelerator == null)
+					accelerator = new Integer(action.getAccelerator());
+								
+				mi.setAccelerator(accelerator.intValue());
 
 				if (text == null)
 					text = action.getText();
