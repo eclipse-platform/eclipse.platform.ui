@@ -40,7 +40,7 @@ public interface ICommand {
 	 * @throws NotHandledException
 	 */	
 	void execute()
-		throws NotDefinedException, NotDelegatedException;
+		throws NotDefinedException, NotActiveException;
 
 	/**
 	 * TODO temporary method
@@ -50,7 +50,7 @@ public interface ICommand {
 	 * @throws NotHandledException
 	 */	
 	void execute(Event event)
-		throws NotDefinedException, NotDelegatedException;
+		throws NotDefinedException, NotActiveException;
 
 	/**
 	 * JAVADOC
@@ -131,7 +131,7 @@ public interface ICommand {
 	 * @throws NotHandledException
 	 */	
 	Object getProperty(String propertyName)
-		throws NotDefinedException, NotDelegatedException;
+		throws NotDefinedException, NotActiveException;
 
 	/**
 	 * JAVADOC
@@ -141,7 +141,7 @@ public interface ICommand {
 	 * @throws NotHandledException
 	 */	
 	String[] getPropertyNames()
-		throws NotDefinedException, NotDelegatedException;
+		throws NotDefinedException, NotActiveException;
 
 	/**
 	 * JAVADOC
@@ -157,7 +157,7 @@ public interface ICommand {
 	 * @throws NotHandledException
 	 */	
 	boolean isEnabled()
-		throws NotDefinedException, NotDelegatedException;
+		throws NotDefinedException, NotActiveException;
 	
 	/**
 	 * JAVADOC

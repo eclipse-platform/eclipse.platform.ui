@@ -24,13 +24,12 @@ package org.eclipse.ui.internal.commands.old;
  * 
  * @since 3.0
  */
-public class NotDelegatedException extends Exception {
+public class NotActiveException extends Exception {
 
 	/**
 	 * JAVADOC
 	 */	
-	public NotDelegatedException() {
-		super();
+	public NotActiveException() {
 	}
 
 	/**
@@ -38,7 +37,7 @@ public class NotDelegatedException extends Exception {
 	 *
 	 * @param s
 	 */	
-	public NotDelegatedException(String s) {
+	public NotActiveException(String s) {
 		super(s);
 	}
 }
