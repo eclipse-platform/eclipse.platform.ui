@@ -62,6 +62,12 @@ while (list.size()>5){
 list.get(0)
 
 
+org.eclipse.update.internal.security.KeyStores k = new org.eclipse.update.internal.security.KeyStores();
+while (k.hasNext()){
+	org.eclipse.update.internal.security.KeystoreHandle handle = (org.eclipse.update.internal.security.KeystoreHandle) k.next();
+	System.out.println("KeyStore:"+handle.getLocation()+":"+handle.getType());
+}
+
 *****************************************
 OLD Feature Code
 
