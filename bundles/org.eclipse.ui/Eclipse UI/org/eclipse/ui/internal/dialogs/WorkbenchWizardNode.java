@@ -5,12 +5,14 @@ package org.eclipse.ui.internal.dialogs;
  * All Rights Reserved.
  */
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.graphics.*;
@@ -73,25 +75,42 @@ public IWizard getWizard() {
 		return wizard;						// we've already created it
 
 	final IWorkbenchWizard[] workbenchWizard = new IWorkbenchWizard[1];
-	final CoreException ex[] = new CoreException[1];
+	final IStatus statuses[] = new IStatus[1];
 	// Start busy indicator.
 	BusyIndicator.showWhile(parentWizardPage.getShell().getDisplay(), new Runnable() {
 		public void run() {
-			try {
-				workbenchWizard[0] = createWizard();		// create instance of target wizard
-			} catch (CoreException e) {
-				ex[0] = e;
-			}
+			Platform.run(new SafeRunnable() {
+				public void run() {
+					try {
+						workbenchWizard[0] = createWizard();		// create instance of target wizard
+					} catch (CoreException e) {
+						statuses[0] = e.getStatus();
+					}
+				}
+				
+				/**
+				 * Add the exception details to status is one happens.
+		 		 */
+				public void handleException(Throwable e) {
+					statuses[0] = 
+						new Status(
+							IStatus.ERROR, 
+							wizardElement.getConfigurationElement().getDeclaringExtension().getUniqueIdentifier(),
+		  					IStatus.ERROR, 
+		  					e.getMessage(), 
+		  					e);	
+				}
+			});
 		}
 	});
 
-	if (ex[0] != null) {
+	if (statuses[0] != null) {
 		parentWizardPage.setErrorMessage(WorkbenchMessages.getString("WorkbenchWizard.errorMessage")); //$NON-NLS-1$
 		ErrorDialog.openError(
 			parentWizardPage.getShell(),
 			WorkbenchMessages.getString("WorkbenchWizard.errorTitle"), //$NON-NLS-1$
 			WorkbenchMessages.getString("WorkbenchWizard.errorMessage"), //$NON-NLS-1$
-			ex[0].getStatus());
+			statuses[0]);
 		return null;
 	}
 
