@@ -19,7 +19,6 @@ import java.util.List;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
-import org.eclipse.jface.text.contentassist.ContextInformation;
 import org.eclipse.jface.text.contentassist.ContextInformationValidator;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
@@ -50,20 +49,17 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ICon
 
 		//---------- Proposal Keys ----------
 
-		fgProposalKeys.add("x"); //$NON-NLS-1$
 		fgProposalKeys.add("\\\\"); //$NON-NLS-1$
-		fgProposalKeys.add("\\0n"); //$NON-NLS-1$
-		fgProposalKeys.add("\\0n"); //$NON-NLS-1$
-		fgProposalKeys.add("\\0mnn"); //$NON-NLS-1$
-		fgProposalKeys.add("\\xhh"); //$NON-NLS-1$
-		fgProposalKeys.add("\\uhhh"); //$NON-NLS-1$
+		fgProposalKeys.add("\\0"); //$NON-NLS-1$
+		fgProposalKeys.add("\\x"); //$NON-NLS-1$
+		fgProposalKeys.add("\\u"); //$NON-NLS-1$
 		fgProposalKeys.add("\\t"); //$NON-NLS-1$
 		fgProposalKeys.add("\\n"); //$NON-NLS-1$
 		fgProposalKeys.add("\\r"); //$NON-NLS-1$
 		fgProposalKeys.add("\\f"); //$NON-NLS-1$
 		fgProposalKeys.add("\\a"); //$NON-NLS-1$
 		fgProposalKeys.add("\\e"); //$NON-NLS-1$
-		fgProposalKeys.add("\\cx"); //$NON-NLS-1$
+		fgProposalKeys.add("\\c"); //$NON-NLS-1$
 
 		fgProposalKeys.add("."); //$NON-NLS-1$
 		fgProposalKeys.add("\\d"); //$NON-NLS-1$
@@ -73,59 +69,94 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ICon
 		fgProposalKeys.add("\\w"); //$NON-NLS-1$
 		fgProposalKeys.add("\\W"); //$NON-NLS-1$
 
-		fgProposalKeys.add("[abc]"); //$NON-NLS-1$
-		fgProposalKeys.add("[^abc]"); //$NON-NLS-1$
-		fgProposalKeys.add("[a-zA-Z]"); //$NON-NLS-1$
-		fgProposalKeys.add("[a-d[m-p]]"); //$NON-NLS-1$
-		fgProposalKeys.add("[a-z&&[def]]"); //$NON-NLS-1$
-		fgProposalKeys.add("[a-z&&[^bc]]"); //$NON-NLS-1$
-		fgProposalKeys.add("[a-z&&[^m-p]]"); //$NON-NLS-1$
-
-		fgProposalKeys.add("\\p{Lower}");  //$NON-NLS-1$
-		fgProposalKeys.add("\\p{Upper}"); //$NON-NLS-1$
-		fgProposalKeys.add("\\p{ASCII}"); //$NON-NLS-1$
-		fgProposalKeys.add("\\p{Alpha}"); //$NON-NLS-1$
-		fgProposalKeys.add("\\p{Digit}"); //$NON-NLS-1$
-		fgProposalKeys.add("\\p{Alnum}"); //$NON-NLS-1$
-		fgProposalKeys.add("\\p{Punct}"); //$NON-NLS-1$
-		fgProposalKeys.add("\\p{Graph}"); //$NON-NLS-1$
-		fgProposalKeys.add("\\p{Print}"); //$NON-NLS-1$
-		fgProposalKeys.add("\\p{Blank}"); //$NON-NLS-1$
-		fgProposalKeys.add("\\p{Cntrl}"); //$NON-NLS-1$
-		fgProposalKeys.add("\\p{XDigit}"); //$NON-NLS-1$
-		fgProposalKeys.add("\\p{Space}"); //$NON-NLS-1$
-
-		fgProposalKeys.add("\\p{InGreek}");  //$NON-NLS-1$
-		fgProposalKeys.add("\\p{Lu}");  //$NON-NLS-1$
-		fgProposalKeys.add("\\p{Sc}");  //$NON-NLS-1$
-		fgProposalKeys.add("\\P{InGreek}");  //$NON-NLS-1$
-		fgProposalKeys.add("[\\p{L}&&[^\\p{Lu}]");  //$NON-NLS-1$
- 
 		fgProposalKeys.add("^");  //$NON-NLS-1$
 		fgProposalKeys.add("$");  //$NON-NLS-1$
 		fgProposalKeys.add("\\b");  //$NON-NLS-1$
 		fgProposalKeys.add("\\B");  //$NON-NLS-1$
 		fgProposalKeys.add("\\A");  //$NON-NLS-1$
 		fgProposalKeys.add("\\G");  //$NON-NLS-1$
-		fgProposalKeys.add("\\Z");  //$NON-NLS-1$
+//		fgProposalKeys.add("\\Z");  //$NON-NLS-1$
 		fgProposalKeys.add("\\z");  //$NON-NLS-1$
 
+		fgProposalKeys.add("?");  //$NON-NLS-1$
+		fgProposalKeys.add("*");  //$NON-NLS-1$
+		fgProposalKeys.add("+");  //$NON-NLS-1$
+		fgProposalKeys.add("{n}");  //$NON-NLS-1$
+		fgProposalKeys.add("{n,}");  //$NON-NLS-1$
+		fgProposalKeys.add("{n,m}");  //$NON-NLS-1$
+
+		fgProposalKeys.add("??");  //$NON-NLS-1$
+		fgProposalKeys.add("*?");  //$NON-NLS-1$
+		fgProposalKeys.add("+?");  //$NON-NLS-1$
+		fgProposalKeys.add("{n}?");  //$NON-NLS-1$
+		fgProposalKeys.add("{n,}?");  //$NON-NLS-1$
+		fgProposalKeys.add("{n,m}?");  //$NON-NLS-1$
+
+		fgProposalKeys.add("?+");  //$NON-NLS-1$
+		fgProposalKeys.add("*+");  //$NON-NLS-1$
+		fgProposalKeys.add("++");  //$NON-NLS-1$
+		fgProposalKeys.add("{n}+");  //$NON-NLS-1$
+		fgProposalKeys.add("{n,}+");  //$NON-NLS-1$
+		fgProposalKeys.add("{n,m}+");  //$NON-NLS-1$
+ 
+		fgProposalKeys.add("UV");  //$NON-NLS-1$
+		fgProposalKeys.add("U|V");  //$NON-NLS-1$
+		fgProposalKeys.add("(U)");  //$NON-NLS-1$
+		
+		fgProposalKeys.add("\\n");  //$NON-NLS-1$
+
+		fgProposalKeys.add("\\");  //$NON-NLS-1$
+		fgProposalKeys.add("\\Q");  //$NON-NLS-1$
+		fgProposalKeys.add("\\E");  //$NON-NLS-1$
+
+		fgProposalKeys.add("[ecq]"); //$NON-NLS-1$
+		fgProposalKeys.add("[^ecq]"); //$NON-NLS-1$
+		fgProposalKeys.add("[e-q]"); //$NON-NLS-1$
+		fgProposalKeys.add("&&"); //$NON-NLS-1$
+
+//		fgProposalKeys.add("\\p{Lower}");  //$NON-NLS-1$
+//		fgProposalKeys.add("\\p{Upper}"); //$NON-NLS-1$
+//		fgProposalKeys.add("\\p{ASCII}"); //$NON-NLS-1$
+//		fgProposalKeys.add("\\p{Alpha}"); //$NON-NLS-1$
+//		fgProposalKeys.add("\\p{Digit}"); //$NON-NLS-1$
+//		fgProposalKeys.add("\\p{Alnum}"); //$NON-NLS-1$
+//		fgProposalKeys.add("\\p{Punct}"); //$NON-NLS-1$
+//		fgProposalKeys.add("\\p{Graph}"); //$NON-NLS-1$
+//		fgProposalKeys.add("\\p{Print}"); //$NON-NLS-1$
+//		fgProposalKeys.add("\\p{Blank}"); //$NON-NLS-1$
+//		fgProposalKeys.add("\\p{Cntrl}"); //$NON-NLS-1$
+//		fgProposalKeys.add("\\p{XDigit}"); //$NON-NLS-1$
+//		fgProposalKeys.add("\\p{Space}"); //$NON-NLS-1$
+//
+//		fgProposalKeys.add("\\p{InGreek}");  //$NON-NLS-1$
+//		fgProposalKeys.add("\\p{Lu}");  //$NON-NLS-1$
+//		fgProposalKeys.add("\\p{Sc}");  //$NON-NLS-1$
+//		fgProposalKeys.add("\\P{InGreek}");  //$NON-NLS-1$
+//		fgProposalKeys.add("[\\p{L}&&[^\\p{Lu}]");  //$NON-NLS-1$
+
+//		fgProposalKeys.add("(?idmsux-idmsux)");  //$NON-NLS-1$
+//		fgProposalKeys.add("(?idmsux-idmsux:U)");  //$NON-NLS-1$
+
+//		fgProposalKeys.add("(?:U)");  //$NON-NLS-1$
+//		fgProposalKeys.add("(?=U)");  //$NON-NLS-1$
+//		fgProposalKeys.add("(?!U)");  //$NON-NLS-1$
+//		fgProposalKeys.add("(?<=U)");  //$NON-NLS-1$
+//		fgProposalKeys.add("(?<!U)");  //$NON-NLS-1$
+//		fgProposalKeys.add("(?>U)");  //$NON-NLS-1$
+		
 		//---------- Proposals ----------
 		
-		fgProposalStrings.put("x", "x"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\\\", "\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
-		fgProposalStrings.put("\\0n", "\\0n"); //$NON-NLS-1$ //$NON-NLS-2$
-		fgProposalStrings.put("\\0nn", "\\0n"); //$NON-NLS-1$ //$NON-NLS-2$
-		fgProposalStrings.put("\\0mnn", "\\0mnn"); //$NON-NLS-1$ //$NON-NLS-2$
-		fgProposalStrings.put("\\xhh", "\\xhh"); //$NON-NLS-1$ //$NON-NLS-2$
-		fgProposalStrings.put("\\uhhh", "\\uhhh"); //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("\\0", "\\0"); //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("\\x", "\\x"); //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("\\u", "\\u"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\t", "\\t"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\n", "\\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\r", "\\r"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\f", "\\f"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\a", "\\a"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\e", "\\e"); //$NON-NLS-1$ //$NON-NLS-2$
-		fgProposalStrings.put("\\cx", "\\cx"); //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("\\c", "\\c"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		fgProposalStrings.put(".", "."); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\d", "\\d"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -134,14 +165,50 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ICon
 		fgProposalStrings.put("\\S", "\\S"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\w", "\\w"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\W", "\\W"); //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("^", "^");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("$", "$");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("\\b", "\\b");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("\\B", "\\B");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("\\A", "\\A");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("\\G", "\\G");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("\\Z", "\\Z");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("\\z", "\\z");  //$NON-NLS-1$ //$NON-NLS-2$
+
+		fgProposalStrings.put("?", "?");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("*", "*");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("+", "+");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("{n}", "{}");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("{n,}", "{,}");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("{n,m}", "{,}");  //$NON-NLS-1$ //$NON-NLS-2$
+
+		fgProposalStrings.put("??", "??");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("*?", "*?");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("+?", "+?");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("{n}?", "{}?");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("{n,}?", "{,}?");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("{n,m}?", "{,}?");  //$NON-NLS-1$ //$NON-NLS-2$
+
+		fgProposalStrings.put("?+", "?+");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("*+", "*+");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("++", "++");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("{n}+", "{}+");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("{n,}+", "{,}+");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("{n,m}+", "{,}+");  //$NON-NLS-1$ //$NON-NLS-2$
+ 
+		fgProposalStrings.put("UV", "");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("U|V", "|");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("(U)", "()");  //$NON-NLS-1$ //$NON-NLS-2$
 		
-		fgProposalStrings.put("[abc]", "[abc]"); //$NON-NLS-1$ //$NON-NLS-2$
-		fgProposalStrings.put("[^abc]", "[^abc]"); //$NON-NLS-1$ //$NON-NLS-2$
-		fgProposalStrings.put("[a-zA-Z]", "[a-zA-Z]"); //$NON-NLS-1$ //$NON-NLS-2$
-		fgProposalStrings.put("[a-d[m-p]]", "[a-d[m-p]]"); //$NON-NLS-1$ //$NON-NLS-2$
-		fgProposalStrings.put("[a-z&&[def]]", "[a-z&&[def]]"); //$NON-NLS-1$ //$NON-NLS-2$
-		fgProposalStrings.put("[a-z&&[^bc]]", "[a-z&&[^bc]]"); //$NON-NLS-1$ //$NON-NLS-2$
-		fgProposalStrings.put("[a-z&&[^m-p]]", "[a-z&&[^bc]]"); //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("\\n", "\\");  //$NON-NLS-1$ //$NON-NLS-2$
+
+		fgProposalStrings.put("\\", "\\");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("\\Q", "\\Q");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("\\E", "\\E");  //$NON-NLS-1$ //$NON-NLS-2$
+		
+		fgProposalStrings.put("[ecq]", "[]"); //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("[^ecq]", "^"); //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("[e-q]", "[]"); //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("&&", "&&"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		fgProposalStrings.put("\\p{Lower}", "\\p{Lower}"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\p{Upper}", "\\p{Upper}"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -163,14 +230,14 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ICon
 		fgProposalStrings.put("\\P{InGreek}", "\\P{InGreek}");  //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("[\\p{L}&&[^\\p{Lu}]","[\\p{L}&&[^\\p{Lu}]");  //$NON-NLS-1$ //$NON-NLS-2$
  
-		fgProposalStrings.put("^", "^");  //$NON-NLS-1$ //$NON-NLS-2$
-		fgProposalStrings.put("$", "$");  //$NON-NLS-1$ //$NON-NLS-2$
-		fgProposalStrings.put("\\b", "\\b");  //$NON-NLS-1$ //$NON-NLS-2$
-		fgProposalStrings.put("\\B", "\\B");  //$NON-NLS-1$ //$NON-NLS-2$
-		fgProposalStrings.put("\\A", "\\A");  //$NON-NLS-1$ //$NON-NLS-2$
-		fgProposalStrings.put("\\G", "\\G");  //$NON-NLS-1$ //$NON-NLS-2$
-		fgProposalStrings.put("\\Z", "\\Z");  //$NON-NLS-1$ //$NON-NLS-2$
-		fgProposalStrings.put("\\z", "\\z");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("(?:U)", "(?:)");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("(?idmsux-idmsux)", "(?)");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("(?idmsux-idmsux:U)", "(?:)");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("(?=U)", "(?=)");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("(?!U)", "(?!)");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("(?<=U)", "(?<=)");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("(?<!U)", "(?<!)");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("(?>U)", "(?>)");  //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -196,7 +263,7 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ICon
 	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
 	 */
 	public char[] getCompletionProposalAutoActivationCharacters() {
-		return new char[] {'\\', '['};
+		return new char[] {'\\', '[', '('};
 	}
 	
 	/*
@@ -257,7 +324,7 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ICon
 			} catch (BadLocationException e) {
 				return ;
 			}
-			if (selection == null || selection.length() == 0 || proposal.charAt(0) != selection.charAt(0))
+			if (selection == null || selection.length() == 0 || proposal.length() == 0 || proposal.charAt(0) != selection.charAt(0))
 				return;
 			
 			proposal= proposal.substring(1);
@@ -267,24 +334,20 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ICon
 		String additionalInfo= getString(proposalKey, "additionalInfo"); //$NON-NLS-1$
 		IContextInformation info= createContextInformation(proposalKey);
 
-		// Move cursor on to the left if the proposal ends with '}'
+//		// Move cursor on to the left if the proposal ends with '}'
 		int relativeOffset= proposal.length();
-		if (relativeOffset > 0 && proposal.charAt(relativeOffset - 1) == '}')
-			relativeOffset--;
+		// XXX: currently there's no smartness: position the cursor after the proposal
+//		if (relativeOffset > 0 && proposal.charAt(relativeOffset - 1) == '}')
+//			relativeOffset--;
 		
 		results.add(new CompletionProposal(proposal, documentOffset, 0, Math.max(0, relativeOffset), null, displayString, info, additionalInfo));
-
 	}
 
 	private IContextInformation createContextInformation(String proposalKey) {
-		String contextDisplayInfo= getString(proposalKey, "contextDisplayInfo"); //$NON-NLS-1$
-		String contextInfo= getString(proposalKey, "contextInfo"); //$NON-NLS-1$
-		return new ContextInformation(contextDisplayInfo, contextInfo);
+		return null;
 	}
 	
 	private String getString(String proposalKey, String type) {
-		// FIXME: must get string from properties file
-		return proposalKey + "." + type;
-//		return EditorMessages.getString("RegExProposal." + proposalKey + "." + type);
+		return EditorMessages.getString("FindReplace.regExContentAssist." + type + "." + proposalKey);  //$NON-NLS-1$//$NON-NLS-2$
 	}
 }
