@@ -69,7 +69,15 @@ abstract public class TestPerformer {
 				if (shouldFail(args, count)) {
 					try {
 						invokeMethod(args, count);
-						Assert.assertTrue("invocation " + count + " should fail, but it doesn't", false);
+						StringBuffer buffer = new StringBuffer();
+						buffer.append("invocation " + count + " should fail, but it doesn't [");
+						for (int j=0; j<args.length; j++) {
+							buffer.append(args[j]);
+							buffer.append(',');
+						}
+						buffer.deleteCharAt(buffer.length() - 1);
+						buffer.append(']');
+						Assert.assertTrue(buffer.toString(), false);
 					} catch (Exception ex) {
 					}
 				} else {
