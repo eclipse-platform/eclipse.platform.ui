@@ -76,7 +76,7 @@ public class KnownHosts {
 			boolean found = false;
 			String line;
 			while ((line = r.readLine()) != null) {
-				if (line.length()==0) continue;
+				if (line.trim().length()==0) continue;
 				if (line.startsWith("#")) continue; //$NON-NLS-1$
 				String[] tokens=subStrings(line);
 				if (tokens.length==4 && Character.isDigit(tokens[1].charAt(0)) && tokens[0].equalsIgnoreCase(hostname)) {
