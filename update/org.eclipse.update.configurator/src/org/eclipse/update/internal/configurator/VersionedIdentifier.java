@@ -38,13 +38,15 @@ public class VersionedIdentifier {
 		if (loc != -1) {
 			this.identifier = s.substring(0, loc);
 			version = s.substring(loc + 1);
+			if(version==null)
+				version = "0.0.0";
 			parseVersion(version);
 		} else
 			this.identifier = s;
 	}
 	
 	public VersionedIdentifier(String id, String version) {
-		this(id+ID_SEPARATOR+version);
+		this(id+ID_SEPARATOR+ (version==null?"0.0.0":version) );
 		this.version = version;
 	}
 	
