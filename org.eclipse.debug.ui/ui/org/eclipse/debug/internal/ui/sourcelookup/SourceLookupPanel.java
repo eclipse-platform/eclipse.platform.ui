@@ -64,8 +64,6 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	protected EditContainerAction fEditAction;
 	protected RestoreDefaultAction fRestoreDefaultAction;
 	
-	protected static final String DIALOG_SETTINGS_PREFIX = "sourceTab"; //$NON-NLS-1$
-	
 	/**
 	 * Creates and returns the source lookup control.
 	 * 
@@ -83,8 +81,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 		
 		Label viewerLabel = new Label(comp, SWT.LEFT);
 		viewerLabel.setText(
-				SourceLookupUIMessages.getString(
-						DIALOG_SETTINGS_PREFIX + ".lookupLabel")); //$NON-NLS-1$
+				SourceLookupUIMessages.getString("sourceTab.lookupLabel")); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		viewerLabel.setLayoutData(gd);
@@ -117,8 +114,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 		
 		fDuplicatesButton = new Button(comp, SWT.CHECK);
 		fDuplicatesButton.setText(
-				SourceLookupUIMessages.getString(
-						DIALOG_SETTINGS_PREFIX + ".searchDuplicateLabel")); //$NON-NLS-1$
+				SourceLookupUIMessages.getString("sourceTab.searchDuplicateLabel")); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fDuplicatesButton.setLayoutData(gd);
@@ -401,8 +397,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return SourceLookupUIMessages.getString(
-				DIALOG_SETTINGS_PREFIX + ".tabTitle"); //$NON-NLS-1$
+		return SourceLookupUIMessages.getString("sourceTab.tabTitle"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
