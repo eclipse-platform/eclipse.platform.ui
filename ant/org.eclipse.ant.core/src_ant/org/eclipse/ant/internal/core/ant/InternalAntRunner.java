@@ -235,7 +235,7 @@ public class InternalAntRunner {
 				Class taskClass = Class.forName(task.getClassName());
 				project.addTaskDefinition(task.getTaskName(), taskClass);
 			} catch (ClassNotFoundException e) {
-				throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Class_{0}_not_found_for_task_{1}_1"), new String[]{task.getTaskName(), task.getClassName()}), e); //$NON-NLS-1$
+				throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Class_{0}_not_found_for_task_{1}_1"), new String[]{task.getClassName(), task.getTaskName()}), e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -249,7 +249,7 @@ public class InternalAntRunner {
 				Class typeClass = Class.forName(type.getClassName());
 				project.addDataTypeDefinition(type.getTypeName(), typeClass);
 			} catch (ClassNotFoundException e) {
-				throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Class_{0}_not_found_for_type_{1}_2"), new String[]{type.getTypeName(), type.getClassName()}), e); //$NON-NLS-1$
+				throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Class_{0}_not_found_for_type_{1}_2"), new String[]{type.getClassName(), type.getTypeName()}), e); //$NON-NLS-1$
 			}
 		}
 	}
