@@ -58,15 +58,15 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 		ProjectHelper.importFilesFromDirectory(root, folder.getFullPath(), null);
 		
 		createLaunchConfiguration("echoing");
-		
+		createLaunchConfigurationForSeparateVM("echoingSepVM");
 		
 	}
 	
 	/**
-	 * Creates a shared launch configuration for the type with the given
+	 * Creates a shared launch configuration for launching Ant in a separate VM with the given
 	 * name.
 	 */
-	protected void createLaunchConfiguration(String launchConfigName) throws Exception {
+	protected void createLaunchConfigurationForSeparateVM(String launchConfigName) throws Exception {
 		ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(IAntLaunchConfigurationConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
 		ILaunchConfigurationWorkingCopy config = type.newInstance(getJavaProject().getProject().getFolder("launchConfigurations"), launchConfigName);
 		
@@ -95,6 +95,39 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 //				config.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments);
 //			}
 				
+		config.doSave();
+	}
+	
+	/**
+	 * Creates a shared launch configuration for launching Ant in a separate VM with the given
+	 * name.
+	 */
+	protected void createLaunchConfiguration(String launchConfigName) throws Exception {
+		ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(IAntLaunchConfigurationConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
+		ILaunchConfigurationWorkingCopy config = type.newInstance(getJavaProject().getProject().getFolder("launchConfigurations"), launchConfigName);
+	
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, getJavaProject().getElementName());
+		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, "${workspace_loc:/AntUITests/buildfiles/" + launchConfigName + ".xml}");
+		config.setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, true);
+	 
+		//setClasspath(config);		
+	
+//					String workingDirectory= workDirectoryField.getText().trim();
+//					if (workingDirectory.length() == 0) {
+//						configuration.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String)null);
+//					} else {
+//						configuration.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, workingDirectory);
+//					}
+	
+	
+
+//				String arguments= argumentField.getText().trim();
+//				if (arguments.length() == 0) {
+//					config.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String)null);
+//				} else {
+//					config.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments);
+//				}
+			
 		config.doSave();
 	}
 

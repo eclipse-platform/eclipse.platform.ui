@@ -15,18 +15,32 @@ import java.util.List;
 
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
+import org.eclipse.jdt.internal.debug.core.model.ITimeoutListener;
+import org.eclipse.jdt.internal.debug.core.model.Timer;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 /**
- * Simple console line tracker extension point that delegates messages 
+ * Simple console line tracker extension point that collects the lines
+ * appended to the console. 
  */
 public class ConsoleLineTracker implements IConsoleLineTracker {
 	
 	private static IConsole console;
 	private static List lines= new ArrayList(); 
+	private static Timer timer= new Timer();
 	
+	private static ITimeoutListener timeoutListener= new ITimeoutListener() {
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.internal.debug.core.model.ITimeoutListener#timeout()
+		 */
+		public void timeout() {
+			synchronized (lines) {
+				lines.notifyAll();
+			}
+		}
+	};
 
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
@@ -34,6 +48,7 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 	public void dispose() {
 		console = null;
 		lines= new ArrayList();
+		timer.stop();
 	}
 
 	/**
@@ -42,12 +57,17 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 	public synchronized void init(IConsole c) {
 		ConsoleLineTracker.console= c;
 		lines= new ArrayList();
+		timer.stop();
 	}
 
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#lineAppended(org.eclipse.jface.text.IRegion)
 	 */
 	public void lineAppended(IRegion line) {
+		if (timer.isStarted()) {
+			timer.stop();
+		}
+		timer.start(timeoutListener, 500);
 		lines.add(line);
 	}
 	
@@ -82,5 +102,15 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 	
 	public static IDocument getDocument() {
 		return console.getDocument();
+	}
+	
+	public static void waitForConsole() {
+		try {
+			synchronized (lines) {
+				lines.wait(2000);
+			}
+		} catch (InterruptedException ie) {
+			System.err.println("Interrupted waiting for console");
+		}
 	}
 }

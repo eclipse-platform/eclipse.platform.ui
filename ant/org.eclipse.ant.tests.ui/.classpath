@@ -14,11 +14,11 @@
     <classpathentry kind="var" path="JRE_LIB" sourcepath="JRE_SRC"/>
     <classpathentry kind="src" path="/org.eclipse.ant.ui"/>
     <classpathentry kind="src" path="test plugin"/>
-    <classpathentry kind="src" path="Ant in Separate VM"/>
     <classpathentry kind="src" path="/org.eclipse.debug.ui"/>
     <classpathentry kind="src" path="/org.eclipse.debug.core"/>
     <classpathentry kind="src" path="/org.eclipse.jdt.launching"/>
     <classpathentry kind="src" path="/org.eclipse.ui.externaltools"/>
     <classpathentry kind="src" path="/org.eclipse.jdt.debug"/>
+    <classpathentry kind="src" path="Ant Tests"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
