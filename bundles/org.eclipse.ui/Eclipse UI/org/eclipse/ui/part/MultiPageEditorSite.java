@@ -4,14 +4,14 @@ package org.eclipse.ui.part;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.jface.viewers.*;
+
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.Workbench;
 
 /**
  * Site for a nested editor within a multi-page editor.
@@ -92,6 +92,15 @@ public IEditorPart getEditor() {
 public String getId() {
 	return "";//$NON-NLS-1$
 }
+
+/* (non-Javadoc)
+ * Method declared on IEditorSite.
+ */
+public IKeyBindingService getKeyBindingService() {
+	Workbench w = (Workbench)(getPage().getWorkbenchWindow().getWorkbench());
+	return w.getKeyBindingService();	
+}
+
 /**
  * Returns the multi-page editor.
  *
