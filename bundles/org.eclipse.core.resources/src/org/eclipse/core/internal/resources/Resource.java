@@ -81,44 +81,27 @@ protected void assertCopyRequirements(IPath destination, int destinationType, in
 }
 protected void assertLinkRequirements(IPath localLocation, int updateFlags) throws CoreException {
 	checkDoesNotExist(getFlags(getResourceInfo(false, false)), true);
-	Container parent = (Container) getParent();
-	if (parent == null || parent.getType() != IResource.PROJECT) {
-		String msg = Policy.bind("links.parentNotProject", getFullPath().toString());//$NON-NLS-1$
-		Assert.isLegal(false, msg);
-	}
-	parent.checkAccessible(getFlags(parent.getResourceInfo(false, false)));
 	boolean allowMissingLocal = (updateFlags & IResource.ALLOW_MISSING_LOCAL) != 0;
-	if (localLocation.isAbsolute()) {
-		java.io.File localFile = localLocation.toFile();
-		boolean localExists = localFile.exists();
-		if (!allowMissingLocal && !localExists) {
-			String msg = Policy.bind("links.localDoesNotExist", localFile.toString());//$NON-NLS-1$
-			throw new ResourceException(IResourceStatus.NOT_FOUND_LOCAL, getFullPath(), msg, null);
-		}
-		//resource type and file system type must match
-		if (localExists && ((getType() == IResource.FOLDER) != localFile.isDirectory())) {
-			String msg = Policy.bind("links.wrongLocalType", getFullPath().toString());//$NON-NLS-1$
-			throw new ResourceException(IResourceStatus.WRONG_TYPE_LOCAL, getFullPath(), msg, null);
-		}
-	} else {
-		//relative paths are considered to be variable-relative paths
-		if (!allowMissingLocal) {
-			String msg = Policy.bind("links.pathNotAbsolute", getFullPath().toString());//$NON-NLS-1$
-			throw new ResourceException(IResourceStatus.VARIABLE_NOT_DEFINED, getFullPath(), msg, null);
-		}
+	IStatus locationStatus = workspace.validateLinkLocation(this, localLocation);
+	//the only error we tolerate is an undefined path variable in the allow missing local case
+	if (locationStatus.getSeverity() == IStatus.ERROR && 
+		(locationStatus.getCode() != IResourceStatus.VARIABLE_NOT_DEFINED || !allowMissingLocal)) 
+		throw new ResourceException(locationStatus);
+	//check that the parent exists and is open
+	Container parent = (Container) getParent();
+	parent.checkAccessible(getFlags(parent.getResourceInfo(false, false)));
+	//check if the file exists
+	java.io.File localFile = workspace.getPathVariableManager().resolvePath(localLocation).toFile();
+	boolean localExists = localFile.exists();
+	if (!allowMissingLocal && !localExists) {
+		String msg = Policy.bind("links.localDoesNotExist", localFile.toString());//$NON-NLS-1$
+		throw new ResourceException(IResourceStatus.NOT_FOUND_LOCAL, getFullPath(), msg, null);
 	}
-	//check nature veto
-	String[] natureIds = ((Project)getProject()).internalGetDescription().getNatureIds();
-	IStatus result = workspace.getNatureManager().validateLinkCreation(natureIds);
-	if (!result.isOK())
-		throw new ResourceException(result);
-	//check team provider veto
-	if (getType() == IResource.FILE)
-		result = workspace.getTeamHook().validateCreateLink((IFile)this, updateFlags, localLocation);
-	else
-		result = workspace.getTeamHook().validateCreateLink((IFolder)this, updateFlags, localLocation);
-	if (!result.isOK())
-		throw new ResourceException(result);
+	//resource type and file system type must match
+	if (localExists && ((getType() == IResource.FOLDER) != localFile.isDirectory())) {
+		String msg = Policy.bind("links.wrongLocalType", getFullPath().toString());//$NON-NLS-1$
+		throw new ResourceException(IResourceStatus.WRONG_TYPE_LOCAL, getFullPath(), msg, null);
+	}
 }
 protected void assertMoveRequirements(IPath destination, int destinationType, int updateFlags) throws CoreException {
 	IStatus status = checkMoveRequirements(destination, destinationType, updateFlags);
@@ -461,10 +444,10 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
 		checkValidPath(path, FOLDER);
 		try {
 			workspace.prepareOperation();
+			assertLinkRequirements(localLocation, updateFlags);
+			workspace.beginOperation(true);
 			// resolve any variables used in the location path
 			IPath resolvedLocation = workspace.getPathVariableManager().resolvePath(localLocation);
-			assertLinkRequirements(resolvedLocation, updateFlags);
-			workspace.beginOperation(true);
 			ResourceInfo info = workspace.createResource(this, false);
 			info.set(M_LINK);
 			getLocalManager().link(this, resolvedLocation);
@@ -938,49 +921,15 @@ public void move(IProjectDescription description, boolean force, boolean keepHis
 }
 
 /*
- * Used when a folder is to be moved to a project.
  * @see IResource#move
  */
 public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	Assert.isNotNull(description);
-	monitor = Policy.monitorFor(monitor);
-	try {
-		String message = Policy.bind("resources.moving", getFullPath().toString()); //$NON-NLS-1$
-		monitor.beginTask(message, Policy.totalWork);
-		try {
-			workspace.prepareOperation();
-			// The following assert method throws CoreExceptions as stated in the IResource.move API
-			// and assert for programming errors. See checkCopyRequirements for more information.
-			if (!getName().equals(description.getName())) {
-				IPath path = Path.ROOT.append(description.getName());
-				assertMoveRequirements(path, IResource.PROJECT, updateFlags);
-			}
-			workspace.beginOperation(true);
-			message = Policy.bind("resources.moveProblem"); //$NON-NLS-1$
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
-			ResourceTree tree = new ResourceTree(status);
-			IMoveDeleteHook hook = workspace.getMoveDeleteHook();
-			// if there is a name change then we are deleting the source so notify
-			IProject project = (IProject) this;
-			if (!getName().equals(description.getName())) {
-				workspace.changing(project);
-				workspace.deleting(project);
-			}
-			if (!hook.moveProject(tree, project, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
-				tree.standardMoveProject(project, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
-			// Invalidate the tree for further use by clients.
-			tree.makeInvalid();
-			if (!tree.getStatus().isOK())
-				throw new ResourceException(tree.getStatus());
-		} catch (OperationCanceledException e) {
-			workspace.getWorkManager().operationCanceled();
-			throw e;
-		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
-		}
-	} finally {
-		monitor.done();
+	if (getType() != IResource.PROJECT) {
+		String message = Policy.bind("resources.moveNotProject", getFullPath().toString(), description.getName());//$NON-NLS-1$
+		throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
 	}
+	((Project)this).move(description, updateFlags, monitor);
 }
 
 /**

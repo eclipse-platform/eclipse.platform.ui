@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.*;
 
 public class Project extends Container implements IProject {
@@ -600,6 +601,51 @@ protected boolean isProjectDescriptionFile(IResource resource) {
 public void move(IProjectDescription destination, boolean force, IProgressMonitor monitor) throws CoreException {
 	Assert.isNotNull(destination);
 	move(destination, force ? IResource.FORCE : IResource.NONE, monitor);
+}
+/*
+ * @see IResource#move
+ */
+public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	Assert.isNotNull(description);
+	monitor = Policy.monitorFor(monitor);
+	try {
+		String message = Policy.bind("resources.moving", getFullPath().toString()); //$NON-NLS-1$
+		monitor.beginTask(message, Policy.totalWork);
+		try {
+			workspace.prepareOperation();
+			// The following assert method throws CoreExceptions as stated in the IResource.move API
+			// and assert for programming errors. See checkMoveRequirements for more information.
+			if (!getName().equals(description.getName())) {
+				IPath path = Path.ROOT.append(description.getName());
+				assertMoveRequirements(path, IResource.PROJECT, updateFlags);
+			}
+			IProject destination = workspace.getRoot().getProject(description.getName());
+			checkDescription(destination, description, true);
+			workspace.beginOperation(true);
+			message = Policy.bind("resources.moveProblem"); //$NON-NLS-1$
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
+			ResourceTree tree = new ResourceTree(status);
+			IMoveDeleteHook hook = workspace.getMoveDeleteHook();
+			// if there is a name change then we are deleting the source so notify
+			if (!getName().equals(description.getName())) {
+				workspace.changing(this);
+				workspace.deleting(this);
+			}
+			if (!hook.moveProject(tree, this, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
+				tree.standardMoveProject(this, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
+			// Invalidate the tree for further use by clients.
+			tree.makeInvalid();
+			if (!tree.getStatus().isOK())
+				throw new ResourceException(tree.getStatus());
+		} catch (OperationCanceledException e) {
+			workspace.getWorkManager().operationCanceled();
+			throw e;
+		} finally {
+			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+		}
+	} finally {
+		monitor.done();
+	}
 }
 /**
  * @see IProject

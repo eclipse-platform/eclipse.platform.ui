@@ -1498,7 +1498,7 @@ public IStatus open(IProgressMonitor monitor) throws CoreException {
 	}
 	description = new WorkspacePreferences();
 	description.setDefaults(Workspace.defaultWorkspaceDescription());
-	
+
 	// if we have an old description file, read it (getting rid of it)
 	WorkspaceDescription oldDescription = getMetaArea().readOldWorkspace();
 	if (oldDescription != null) {
@@ -1785,12 +1785,7 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 		message = Policy.bind("links.parentNotProject", resource.getFullPath().toString());//$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
-	//check that the location is absolute
 	IPath location = getPathVariableManager().resolvePath(unresolvedLocation);
-	if (!location.isAbsolute()) {
-		message = Policy.bind("links.relativePath", location.toOSString());//$NON-NLS-1$
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
-	}
 	//check nature veto
 	String[] natureIds = ((Project)parent).internalGetDescription().getNatureIds();
 	IStatus result = getNatureManager().validateLinkCreation(natureIds);
@@ -1824,6 +1819,15 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 	if (isOverlapping(location, testLocation)) {
 		message = Policy.bind("links.locationOverlapsProject", location.toString()); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+	}
+	//check that the location is absolute
+	//Note: this check must be done last because we tolerate this condition in createLink
+	if (!location.isAbsolute()) {
+		if (location.segmentCount() > 0)
+			message = Policy.bind("pathvar.undefined", location.toOSString(), location.segment(0));//$NON-NLS-1$
+		else
+			message = Policy.bind("links.relativePath", location.toOSString());//$NON-NLS-1$
+		return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED, null, message);
 	}
 	// Iterate over each known project and ensure that the location does not
 	// conflict with any project locations or linked resource locations
@@ -1981,19 +1985,27 @@ public IStatus validatePath(String path, int type) {
 /**
  * @see IWorkspace#validateProjectLocation
  */
-public IStatus validateProjectLocation(IProject context, IPath location) {
+public IStatus validateProjectLocation(IProject context, IPath unresolvedLocation) {
 	String message;
 	// the default default is ok for all projects
-	if (location == null) {
-		message = Policy.bind("resources.validLocation"); //$NON-NLS-1$
-		return new ResourceStatus(IResourceStatus.OK, message);
+	if (unresolvedLocation == null) {
+		return ResourceStatus.OK_STATUS;
 	}
 	//check the standard path name restrictions
+	IPath location = getPathVariableManager().resolvePath(unresolvedLocation);
 	int segmentCount = location.segmentCount();
 	for (int i = 0; i < segmentCount; i++) {
 		IStatus result = validateName(location.segment(i), IResource.PROJECT);
 		if (!result.isOK())
 			return result;
+	}
+	//check that the location is absolute
+	if (!location.isAbsolute()) {
+		if (location.segmentCount() > 0)
+			message = Policy.bind("pathvar.undefined", location.toOSString(), location.segment(0));//$NON-NLS-1$
+		else
+			message = Policy.bind("links.relativePath", location.toOSString());//$NON-NLS-1$
+		return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED, null, message);
 	}
 	//if the location doesn't have a device, see if the OS will assign one
 	if (location.getDevice() == null)
@@ -2024,8 +2036,7 @@ public IStatus validateProjectLocation(IProject context, IPath location) {
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 	}
-	message = Policy.bind("resources.validLocation"); //$NON-NLS-1$
-	return new ResourceStatus(IResourceStatus.OK, message);
+	return ResourceStatus.OK_STATUS;
 }
 /**
  * Internal method. To be called only from the following methods:
