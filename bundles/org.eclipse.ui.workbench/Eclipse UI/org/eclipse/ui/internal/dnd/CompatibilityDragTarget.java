@@ -94,9 +94,14 @@ public class CompatibilityDragTarget implements IDragOverListener {
 		event.dragSource = sourcePart;
 		
 		Control sourceControl = sourcePart.getControl();
-		Point relativePosition = sourceControl.toControl(position);
-		event.cursorX = relativePosition.x;
-		event.cursorY = relativePosition.y;
+		if (sourceControl == null) {
+			event.cursorX = event.x;
+			event.cursorY = event.y;
+		} else {
+			Point relativePosition = sourceControl.toControl(position);
+			event.cursorX = relativePosition.x;
+			event.cursorY = relativePosition.y;
+		}
 
 		if (targetControl == null) {
 			// cursor is outside of the shell
