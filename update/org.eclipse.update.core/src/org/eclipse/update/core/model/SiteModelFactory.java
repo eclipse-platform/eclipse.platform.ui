@@ -33,7 +33,7 @@ public class SiteModelFactory {
 	 */
 	public boolean canParseSiteType(String type) {
 		// return true if type was not specified (ie. is null or empty string)
-		return (type == null || type.trim().equals(""));
+		return (type == null || type.trim().equals("")); //$NON-NLS-1$
 	}
 	 
 	/**
@@ -52,9 +52,9 @@ public class SiteModelFactory {
 			if (parser.getStatus().getChildren().length>0){
 				// some internalError were detected
 				IStatus[] children = parser.getStatus().getChildren();
-				String error = "";
+				String error = ""; //$NON-NLS-1$
 				for (int i = 0; i < children.length; i++) {
-					error = error + "\r\n"+children[i].getMessage();
+					error = error + "\r\n"+children[i].getMessage(); //$NON-NLS-1$
 				}
 				throw new ParsingException(new Exception(error));
 			}

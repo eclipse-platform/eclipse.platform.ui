@@ -8,6 +8,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.core.Policy;
 
 /**
  * Base site content provider
@@ -42,7 +43,7 @@ public abstract class SiteContentProvider implements ISiteContentProvider {
 			return new URL(getURL(),archiveID);
 		} catch (MalformedURLException e){
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error creating URL",e);
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,Policy.bind("SiteContentprovider.ErrorCreatingURLForArchiveID",archiveID,getURL().toExternalForm()),e); //$NON-NLS-1$
 			throw new CoreException(status);	
 		}		
 	}

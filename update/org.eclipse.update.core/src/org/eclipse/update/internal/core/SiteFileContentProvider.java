@@ -38,15 +38,7 @@ public class SiteFileContentProvider extends SiteContentProvider {
 		return featurePath;
 	}
 
-	/**
-	 * We do not need to optimize the download
-	 * As the archives are already available on the file system
-	 */
-	public boolean optimize() {
-		return false;
-	}
-		
-
+			
 	/*
 	 * @see ISiteContentProvider#getArchiveReference(String)
 	 */

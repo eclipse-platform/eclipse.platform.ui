@@ -40,9 +40,9 @@ public class FeatureModelFactory {
 			if (parser.getStatus().getChildren().length>0){
 				// some internalError were detected
 				IStatus[] children = parser.getStatus().getChildren();
-				String error = "";
+				String error = ""; //$NON-NLS-1$
 				for (int i = 0; i < children.length; i++) {
-					error = error + "\r\n"+ children[i].getMessage();
+					error = error + "\r\n"+ children[i].getMessage(); //$NON-NLS-1$
 				}
 				throw new ParsingException(new Exception(error));
 			}		

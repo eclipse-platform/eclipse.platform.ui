@@ -78,7 +78,7 @@ public class Utilities {
 			temp = new File(tmpDir, filePath);
 		} else {
 			// create file with temp name
-			temp = File.createTempFile("eclipse",null,tmpDir);
+			temp = File.createTempFile("eclipse",null,tmpDir); //$NON-NLS-1$
 		}
 		temp.deleteOnExit();
 		verifyPath(temp, true);
@@ -99,10 +99,10 @@ public class Utilities {
 	 * @since 2.0
 	 */	
 	public static synchronized File createWorkingDirectory() throws IOException {
-		String tmpName = System.getProperty("java.io.tmpdir");
+		String tmpName = System.getProperty("java.io.tmpdir"); //$NON-NLS-1$
 		// in Linux, returns '/tmp', we must add '/'
 		if (!tmpName.endsWith(File.separator)) tmpName += File.separator;
-		tmpName += "eclipse" + File.separator + ".update" + File.separator + Long.toString((new Date()).getTime()) + File.separator;
+		tmpName += "eclipse" + File.separator + ".update" + File.separator + Long.toString((new Date()).getTime()) + File.separator; //$NON-NLS-1$ //$NON-NLS-2$
 		File tmpDir = new File(tmpName);
 		verifyPath(tmpDir, false);
 		if (!tmpDir.exists())

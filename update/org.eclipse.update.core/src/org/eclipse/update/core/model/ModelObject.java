@@ -15,6 +15,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.eclipse.update.internal.core.Assert;
+import org.eclipse.update.internal.core.Policy;
 
 /**
  * An object which has the general characteristics of all elements
@@ -28,7 +29,7 @@ public abstract class ModelObject {
 	
 	private boolean readOnly = false;
 	
-	private static final String KEY_PREFIX = "%";
+	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = KEY_PREFIX+KEY_PREFIX;
 		
 	/**
@@ -46,7 +47,7 @@ public abstract class ModelObject {
 	 * @since 2.0
 	 */
 	protected final void assertIsWriteable() {
-		Assert.isTrue(!isReadOnly(), "Model is read-only");
+		Assert.isTrue(!isReadOnly(), Policy.bind("ModelObject.ModelReadOnly")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -158,7 +159,7 @@ public abstract class ModelObject {
 	protected URL resolveURL(URL context, ResourceBundle bundle, String urlString) throws MalformedURLException {
 		
 		// URL string was not specified
-		if (urlString == null || urlString.trim().equals(""))
+		if (urlString == null || urlString.trim().equals("")) //$NON-NLS-1$
 			return null;
 		
 		// check to see if we have NL-sensitive URL
@@ -211,7 +212,7 @@ public abstract class ModelObject {
 
 		String s = string.trim();
 		
-		if (s.equals(""))
+		if (s.equals("")) //$NON-NLS-1$
 			return string;
 	
 		if (!s.startsWith(KEY_PREFIX)) 
@@ -220,7 +221,7 @@ public abstract class ModelObject {
 		if (s.startsWith(KEY_DOUBLE_PREFIX)) 
 			return s.substring(1);
 
-		int ix = s.indexOf(" ");
+		int ix = s.indexOf(" "); //$NON-NLS-1$
 		String key = ix == -1 ? s : s.substring(0,ix);
 		String dflt = ix == -1 ? s : s.substring(ix+1);
 	

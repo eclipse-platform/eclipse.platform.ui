@@ -29,7 +29,7 @@ public class ParsingException extends Exception {
 	 */
 	public String toString() {
 		
-		return "org.eclipse.update.core.ParsingException: "+exception.toString();
+		return "org.eclipse.update.core.ParsingException: "+exception.toString(); //$NON-NLS-1$
 	}
 
 }
