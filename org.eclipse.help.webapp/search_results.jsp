@@ -22,6 +22,7 @@ function refresh()
 
 <style type="text/css">
 BODY {
+	background-color: Window;
 	font: icon;
 	margin-top:5px;
 	margin-left:5px;
@@ -47,7 +48,7 @@ A {
 
 
 TABLE {
-
+	background-color: Window;
 	font: icon;
 }
 
@@ -57,7 +58,7 @@ TABLE {
 
 
 .list {
-
+	background-color: Window;
 	padding:2px;
 }
      

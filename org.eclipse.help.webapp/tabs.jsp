@@ -32,7 +32,7 @@ BODY {
 	margin:0px;
 	padding:0px;
 	border:1px black solid;
-
+	background:#000000;
 	height:100%;
 }
 
@@ -47,7 +47,7 @@ BODY {
 }
 
 .pressed {
-
+	background:Window;
 	margin:0px;
 	padding:0px;
 	border:1px black solid;
@@ -60,7 +60,6 @@ BODY {
 	padding:0px;
 	border:0px;
 	height:100%;
-	width:1px;
 	/*background-color:ThreeDShadow;*/
 	background-color:black;
 }
@@ -98,9 +97,9 @@ IMG {
   <table cellspacing="0" cellpadding="0" border="0" width="100%" height="100%">
    <tr>
    <td  title="<%=ContentStr%>" align="center"  class="tab" id="tocTab" onclick="parent.switchTab('toc')"><a  href='javascript:parent.switchTab("toc");' onclick='this.blur()'><img class="tabImage" alt="<%=ContentStr%>" title="<%=ContentStr%>" src="images/contents_view.gif"></a></td>
-   <td width="1px" class="separator"><img src="images/separator.gif" height=20></td>
+   <td width="1px" class="separator"></td>
    <td  title="<%=SearchStr%>" align="center" class="tab" id="searchTab"  onclick="parent.switchTab('search')"><a  href='javascript:parent.switchTab("search")' onclick="this.blur()"><img class="tabImage" alt="<%=SearchStr%>" title="<%=SearchStr%>" src="images/search_results_view.gif"></a></td>
-   <td width="1px" class="separator"><img src="images/separator.gif" height=20></td>
+    <td width="1px" class="separator"></td>
    <td  title="<%=LinksStr%>" align="center" class="tab" id="linksTab"  onclick="parent.switchTab('links')"><a href='javascript:parent.switchTab("links")' onclick="this.blur()"><img class="tabImage" alt="<%=LinksStr%>" title="<%=LinksStr%>" src="images/links_view.gif"></a></td>
    </tr>
    </table>
