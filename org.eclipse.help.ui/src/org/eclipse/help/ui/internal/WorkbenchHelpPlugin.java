@@ -19,7 +19,7 @@ import org.eclipse.ui.plugin.*;
 public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	private static WorkbenchHelpPlugin plugin;
 	private IBrowser browser;
-	private HelpWorkingSetListener workingSetListener;
+	private HelpWorkingSetSynchronizer workingSetListener;
 
 	/**
 	 * WorkbenchHelpPlugin constructor. It is called as part of plugin
@@ -57,7 +57,7 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	 */
 	public void startup() {
 		// register the working set listener to keep the ui and the help working sets in sych
-		workingSetListener = new HelpWorkingSetListener();
+		workingSetListener = new HelpWorkingSetSynchronizer();
 		PlatformUI
 			.getWorkbench()
 			.getWorkingSetManager()

@@ -94,10 +94,12 @@ public class WorkingSetManagerData extends RequestData {
 				IToc[] tocs = new IToc[books.length];
 				for (int i = 0; i < books.length; i++)
 					tocs[i] = tocmgr.getToc(books[i], getLocale());
+					
 				ws.setElements(tocs);
-				
+				ws.setName(name);
 				// should also change the name....
 				
+				// We send this notification, so that the manager fires to its listeners
 				wsmgr.workingSetChanged(ws);
 			}
 		}

@@ -341,12 +341,14 @@ public class WorkingSetManager {
 		}
 	}
 	/**
-	 * Persists all working sets. Should only be called by WorkingSet.
+	 * Persists all working sets. Should only be called by the webapp working
+	 * set dialog.
 	 * 
 	 * @param changedWorkingSet the working set that has changed
 	 */
 	public void workingSetChanged(WorkingSet changedWorkingSet) {
 		saveState();
+		firePropertyChange(CHANGE_WORKING_SET_NAME_CHANGE, null, changedWorkingSet);
 		firePropertyChange(CHANGE_WORKING_SET_CONTENT_CHANGE, null, changedWorkingSet);
 	}
 }
