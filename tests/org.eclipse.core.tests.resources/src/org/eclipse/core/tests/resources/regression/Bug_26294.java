@@ -13,11 +13,9 @@ package org.eclipse.core.tests.resources.regression;
 import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.osgi.service.environment.Constants;
 
@@ -41,7 +39,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 	 * Works only for Windows.
 	 */
 	public void _testDeleteOpenProjectWindows() {
-		if (!(BootLoader.getOS().equals(Constants.OS_WIN32)))
+		if (!(Platform.getOS().equals(Constants.OS_WIN32)))
 			return;
 
 		IProject project = null;
@@ -147,7 +145,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 	 * Works only for Linux with natives.
 	 */
 	public void testDeleteOpenProjectLinux() {
-		if (!(BootLoader.getOS().equals(Constants.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
+		if (!(Platform.getOS().equals(Constants.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
 			return;
 
 		IProject project = null;
@@ -212,7 +210,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 	 * Works only for Windows.
 	 */
 	public void testDeleteClosedProjectWindows() {
-		if (!BootLoader.getOS().equals(Constants.OS_WIN32))
+		if (!Platform.getOS().equals(Constants.OS_WIN32))
 			return;
 
 		IProject project = null;
@@ -290,7 +288,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 	 * Works only for Linux with natives.
 	 */
 	public void testDeleteClosedProjectLinux() {
-		if (!(BootLoader.getOS().equals(Constants.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
+		if (!(Platform.getOS().equals(Constants.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
 			return;
 
 		IProject project = null;
@@ -351,7 +349,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 	 * Works only for Windows.
 	 */
 	public void testDeleteFolderWindows() {
-		if (!BootLoader.getOS().equals(Constants.OS_WIN32))
+		if (!Platform.getOS().equals(Constants.OS_WIN32))
 			return;
 
 		IProject project = null;
@@ -422,7 +420,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 	 * Works only for Linux with natives.
 	 */
 	public void testDeleteFolderLinux() {
-		if (!(BootLoader.getOS().equals(Constants.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
+		if (!(Platform.getOS().equals(Constants.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
 			return;
 
 		IProject project = null;
