@@ -25,7 +25,7 @@ public interface IAntEditorConstants {
 	 * Values of the type attribute stored in XmlElements
 	 */
 	public static final String TYPE_TARGET = "target"; //$NON-NLS-1$
-	public static final String TYPE_PROJECT = "project";
+	public static final String TYPE_PROJECT = "project"; //$NON-NLS-1$
 	public static final String TYPE_PROPERTY = "property"; //$NON-NLS-1$
 	public static final String TYPE_ANTCALL = "antcall"; //$NON-NLS-1$
 	public static final String TYPE_MKDIR = "mkdir"; //$NON-NLS-1$
