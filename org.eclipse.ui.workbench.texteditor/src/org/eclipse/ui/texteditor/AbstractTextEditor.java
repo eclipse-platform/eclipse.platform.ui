@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris.Dennis@invidi.com - http://bugs.eclipse.org/bugs/show_bug.cgi?id=29027
+ *     Michel Ishizuka (cqw10305@nifty.com) - http://bugs.eclipse.org/bugs/show_bug.cgi?id=68963
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -4765,6 +4766,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		// take 'a' as a medium sized character
 		Point charSize= gc.stringExtent("a"); //$NON-NLS-1$
 		caret.setSize(charSize.x, styledText.getLineHeight());
+		caret.setFont(styledText.getFont());
 		gc.dispose();
 			
 		return caret;
@@ -4773,6 +4775,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private Caret createInsertCaret(StyledText styledText) {
 		Caret caret= new Caret(styledText, SWT.NULL);
 		caret.setSize(getCaretWidthPreference(), styledText.getLineHeight());
+		caret.setFont(styledText.getFont());
 		return caret;
 	}
 	
@@ -4812,7 +4815,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			caret.setImage(image);
 		else
 			caret.setSize(getCaretWidthPreference(), styledText.getLineHeight());
-			
+		
+		caret.setFont(styledText.getFont());		
+		
 		return caret;
 	}
 	
