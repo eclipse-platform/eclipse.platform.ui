@@ -85,13 +85,23 @@ class JSchSession{
 	  String _host=store.getString(CVSSSH2PreferencePage.KEY_PROXY_HOST);
 	  String _port=store.getString(CVSSSH2PreferencePage.KEY_PROXY_PORT);
 
+	  boolean useAuth=store.getString(CVSSSH2PreferencePage.KEY_PROXY_AUTH).equals("true");
+	  String _user=store.getString(CVSSSH2PreferencePage.KEY_PROXY_USER);
+	  String _pass=store.getString(CVSSSH2PreferencePage.KEY_PROXY_PASS);
+
 	  Proxy proxy=null;
           String proxyhost=_host+":"+_port;
           if(_type.equals(CVSSSH2PreferencePage.HTTP)){
 	    proxy=new ProxyHTTP(proxyhost);
+	    if(useAuth){
+	      ((ProxyHTTP)proxy).setUserPasswd(_user, _pass);
+	    }
 	  }
 	  else if(_type.equals(CVSSSH2PreferencePage.SOCKS5)){
 	    proxy=new ProxySOCKS5(proxyhost);
+	    if(useAuth){
+	      ((ProxySOCKS5)proxy).setUserPasswd(_user, _pass);
+	    }
 	  }
 	  else{
 	    proxy=null;
@@ -157,7 +167,6 @@ class JSchSession{
 	  }
 	});
     }
-
     private class YesNoPrompt implements Runnable{
       private String prompt;
       private int result;
