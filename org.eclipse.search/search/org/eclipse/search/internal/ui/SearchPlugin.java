@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -34,10 +35,11 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.SearchUI;
+
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
 /**
  * The plug-in runtime class for Search plug-in
@@ -65,6 +67,14 @@ public class SearchPlugin extends AbstractUIPlugin {
 		return fgSearchPlugin;
 	}
 
+	/**
+	 * @see AbstractUIPlugin#initializeDefaultPreferences
+	 */
+	protected void initializeDefaultPreferences(IPreferenceStore store) {
+		super.initializeDefaultPreferences(store);
+		SearchPreferencePage.initDefaults(store);
+	}
+	
 	/**
 	 * Returns the active workbench window.
 	 * <code>null</code> if the active window is not a workbench window
