@@ -16,12 +16,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
-import org.eclipse.core.expressions.EvaluationContext;
-import org.eclipse.core.expressions.EvaluationResult;
-import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -54,16 +49,6 @@ public class LaunchConfigurationPresentationManager {
 	 * used to represent the default tab group (i.e. unspecified mode).
 	 */
 	private Hashtable fTabGroupExtensions;	
-	
-	/**
-	 * Collection of debug view content provider enablement expressions defined in 
-	 * plug-in XML. Entries are keyed by content provider extension id
-	 * (<code>String</code>) and values are expressions
-	 * (<code>Expression</code>).
-	 *  
-	 *  @since 3.1
-	 */
-	private Map fDebugViewContentProviderExpressions;
 			
 	/**
 	 * Constructs the singleton launch configuration presentation
@@ -208,30 +193,5 @@ public class LaunchConfigurationPresentationManager {
 		return extension.getDescription(mode);
 	}	
 	
-	/**
-	 * Returns the identifier of a debug view content provider extension applicable
-	 * to the given object, or <code>null</code> if none.
-	 * 
-	 * @param element element to be rendered in the debug view
-	 * @return the identifier of a debug view content provider extension applicable
-	 * to the given object, or <code>null</code> if none
-	 */
-	public String getDebugViewContentProvderId(Object element) {
-	    IEvaluationContext context = new EvaluationContext(null, element);
-	    Iterator iterator = fDebugViewContentProviderExpressions.entrySet().iterator();
-	    while (iterator.hasNext()) {
-	        Map.Entry entry = (Entry) iterator.next();
-	        Expression expression = (Expression) entry.getValue();
-            try {
-                EvaluationResult result = expression.evaluate(context);
-                if (result == EvaluationResult.TRUE) {
-    	            return (String) entry.getKey();
-    	        }
-            } catch (CoreException e) {
-                DebugUIPlugin.log(e);
-            }
-	    }
-	    return null;
-	}
 }
 
