@@ -718,6 +718,14 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		removeInfo(config);
 		clearConfigNameCache();
 		if (isValid(config)) {
+			try {
+				// in case the config has been refreshed and it was removed from the
+				// index due to 'out of synch with local file system' (see bug 36147),
+				// add it back (will only add if required)
+				launchConfigurationAdded(config);
+			} catch (CoreException e) {
+				DebugPlugin.log(e);
+			}
 			getConfigurationNotifier().notify(config, CHANGED);
 		} else {
 			try {
