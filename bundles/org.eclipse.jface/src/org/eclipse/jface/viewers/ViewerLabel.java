@@ -27,6 +27,9 @@ public class ViewerLabel {
 	private String newText = null;
 
 	private Image newImage = null;
+	
+	private boolean imageUpdated = false;
+	private boolean textUpdated = false;
 
 	private Color background = null;
 
@@ -57,9 +60,9 @@ public class ViewerLabel {
 	 * @return Returns the image.
 	 */
 	public final Image getImage() {
-		if (newImage == null)
-			return startImage;
-		return newImage;
+		if (imageUpdated)
+			return newImage;
+		return startImage;
 	}
 
 	/**
@@ -69,6 +72,7 @@ public class ViewerLabel {
 	 *            The image to set.
 	 */
 	public final void setImage(Image image) {
+		imageUpdated = true;
 		newImage = image;
 	}
 
@@ -79,9 +83,9 @@ public class ViewerLabel {
 	 * @return Returns the text.
 	 */
 	public final String getText() {
-		if (newText == null)
-			return startText;
-		return newText;
+		if (textUpdated)
+			return newText;
+		return startText;
 	}
 
 	/**
@@ -92,6 +96,7 @@ public class ViewerLabel {
 	 */
 	public final void setText(String text) {
 		newText = text;
+		textUpdated = true;
 	}
 
 	/**
@@ -107,10 +112,9 @@ public class ViewerLabel {
 		if (startImage == null)
 			return newImage != null;
 		
-		if(newImage == null)
-			return false;//If there is no image return false
-
-		return !(startImage.equals(newImage));
+		if(imageUpdated)
+			return !(startImage.equals(newImage));
+		return false;
 	}
 
 	/**
@@ -124,10 +128,10 @@ public class ViewerLabel {
 		if (startText == null)
 			return newText != null;
 		
-		if(newText == null)
-			return false;//If there is no new text return false
-
-		return !(startText.equals(newText));
+		if(textUpdated)
+			return !(startText.equals(newText));
+		
+		return false;
 	}
 
 	/**
