@@ -26,78 +26,81 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * The ScopedPreferenceStore is an IPreferenceStore that uses the 
- * scopes provided in org.eclipse.core.runtime.preferences.
+ * The ScopedPreferenceStore is an IPreferenceStore that uses the scopes
+ * provided in org.eclipse.core.runtime.preferences.
  * <p>
- * A ScopedPreferenceStore does the lookup of a preference based on 
- * it's search scopes and sets the value of the preference based on
- * its store scope.
+ * A ScopedPreferenceStore does the lookup of a preference based on it's search
+ * scopes and sets the value of the preference based on its store scope.
  * </p>
  * <p>
- * The default scope is always included in the search scopes when 
- * searching for preference values.
+ * The default scope is always included in the search scopes when searching for
+ * preference values.
  * </p>
+ * 
  * @see org.eclipse.core.runtime.preferences
  * @since 3.1
  */
-public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPreferenceStore {
+public class ScopedPreferenceStore implements IPreferenceStore,
+		IPersistentPreferenceStore {
 
 	/**
-	 * Identity list of old listeners (element type: 
+	 * Identity list of old listeners (element type:
 	 * <code>org.eclipse.jface.util.IPropertyChangeListener</code>).
 	 */
 	private ListenerList listeners = new ListenerList();
 
 	/**
 	 * The storeContext is the context where values will stored with the
-	 * setValue methods. If there are no searchContexts this will be the
-	 * search context. (along with the "default" context)
+	 * setValue methods. If there are no searchContexts this will be the search
+	 * context. (along with the "default" context)
 	 */
 	private IScopeContext storeContext;
 
 	/**
-	 * The searchContext is the array of contexts that will be used by the
-	 * get methods for searching for values. 
+	 * The searchContext is the array of contexts that will be used by the get
+	 * methods for searching for values.
 	 */
 	private IScopeContext[] searchContexts;
 
 	/**
-	 * A boolean to indicate the property changes should not
-	 * be propagated.
+	 * A boolean to indicate the property changes should not be propagated.
 	 */
 	protected boolean silentRunning = false;
 
 	/**
-	 * The listener on the IEclipsePreferences. This is used to forward
-	 * updates to the property change listeners on the preference store.
+	 * The listener on the IEclipsePreferences. This is used to forward updates
+	 * to the property change listeners on the preference store.
 	 */
 	IEclipsePreferences.IPreferenceChangeListener preferencesListener;
 
 	/**
-	 * The default context is the context where getDefault and setDefault 
+	 * The default context is the context where getDefault and setDefault
 	 * methods will search. This context is also used in the search.
 	 */
 	private IScopeContext defaultContext = new DefaultScope();
 
 	/**
-	 * The nodeQualifer is the string used to look up the node in the 
-	 * contexts.
+	 * The nodeQualifer is the string used to look up the node in the contexts.
 	 */
 	String nodeQualifier;
 
 	/**
-	 * Create a new instance of the receiver. Store the values in context
-	 * in the node looked up by qualifier.
+	 * Create a new instance of the receiver. Store the values in context in the
+	 * node looked up by qualifier.
 	 * 
-	 * @param context the scope to store to
-	 * @param qualifier the qualifer used to look up the preference node
+	 * @param context
+	 *            the scope to store to
+	 * @param qualifier
+	 *            the qualifer used to look up the preference node
 	 */
 	public ScopedPreferenceStore(IScopeContext context, String qualifier) {
 		storeContext = context;
 		nodeQualifier = qualifier;
 
 		preferencesListener = new IEclipsePreferences.IPreferenceChangeListener() {
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 			 */
 			public void preferenceChange(PreferenceChangeEvent event) {
@@ -117,27 +120,33 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 		};
 
 		getStorePreferences().addPreferenceChangeListener(preferencesListener);
-		
-		((IEclipsePreferences) getStorePreferences().parent()).addNodeChangeListener(
-				getNodeChangeListener());
+
+		((IEclipsePreferences) getStorePreferences().parent())
+				.addNodeChangeListener(getNodeChangeListener());
 	}
 
 	/**
-	 * Return a node change listener that adds a removes the receiver when
-	 * nodes change.
+	 * Return a node change listener that adds a removes the receiver when nodes
+	 * change.
+	 * 
 	 * @return INodeChangeListener
 	 */
 	private INodeChangeListener getNodeChangeListener() {
 		return new IEclipsePreferences.INodeChangeListener() {
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#added(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
 			 */
 			public void added(NodeChangeEvent event) {
 				if (nodeQualifier.equals(event.getChild().name()))
-					getStorePreferences().addPreferenceChangeListener(preferencesListener);
+					getStorePreferences().addPreferenceChangeListener(
+							preferencesListener);
 			}
 
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#removed(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
 			 */
 			public void removed(NodeChangeEvent event) {
@@ -147,13 +156,15 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 	}
 
 	/**
-	 * Does its best at determining the default value for the given key. Checks the
-	 * given object's type and then looks in the list of defaults to see if a value
-	 * exists. If not or if there is a problem converting the value, the default default 
-	 * value for that type is returned.
+	 * Does its best at determining the default value for the given key. Checks
+	 * the given object's type and then looks in the list of defaults to see if
+	 * a value exists. If not or if there is a problem converting the value, the
+	 * default default value for that type is returned.
 	 * 
-	 * @param key the key to search
-	 * @param obj the object who default we are looking for
+	 * @param key
+	 *            the key to search
+	 * @param obj
+	 *            the object who default we are looking for
 	 * @return Object or <code>null</code>
 	 */
 	Object getDefault(String key, Object obj) {
@@ -169,7 +180,8 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 		else if (obj instanceof Long)
 			return new Long(defaults.getLong(key, LONG_DEFAULT_DEFAULT));
 		else if (obj instanceof Boolean)
-			return new Boolean(defaults.getBoolean(key, BOOLEAN_DEFAULT_DEFAULT));
+			return new Boolean(defaults
+					.getBoolean(key, BOOLEAN_DEFAULT_DEFAULT));
 		else
 			return null;
 	}
@@ -193,7 +205,8 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 	}
 
 	/*
-	 *  (non-Javadoc)
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPreferenceStore#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
@@ -201,27 +214,32 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 	}
 
 	/**
-	 * Return the preference path to search preferences on. This is the list of preference
-	 * nodes based on the scope contexts for this store. If there are no search contexts
-	 * set, then return this store's context. 
+	 * Return the preference path to search preferences on. This is the list of
+	 * preference nodes based on the scope contexts for this store. If there are
+	 * no search contexts set, then return this store's context.
 	 * <p>
-	 * Whether or not the default context should be included in the resulting 
+	 * Whether or not the default context should be included in the resulting
 	 * list is specified by the <code>includeDefault</code> parameter.
 	 * </p>
-	 * @param includeDefault <code>true</code> if the default context should be
-	 * 	included and <code>false</code> otherwise
-	 * @return IEclipsePreferences[] 
+	 * 
+	 * @param includeDefault
+	 *            <code>true</code> if the default context should be included
+	 *            and <code>false</code> otherwise
+	 * @return IEclipsePreferences[]
 	 */
 	private IEclipsePreferences[] getPreferenceNodes(boolean includeDefault) {
 		// if the user didn't specify a search order, then return the scope that
 		// this store was created on. (and optionally the default)
 		if (searchContexts == null) {
 			if (includeDefault)
-				return new IEclipsePreferences[] { storeContext.getNode(nodeQualifier),
+				return new IEclipsePreferences[] {
+						storeContext.getNode(nodeQualifier),
 						defaultContext.getNode(nodeQualifier) };
-			return new IEclipsePreferences[] { storeContext.getNode(nodeQualifier) };
+			return new IEclipsePreferences[] { storeContext
+					.getNode(nodeQualifier) };
 		}
-		// otherwise the user specified a search order so return the appropriate nodes
+		// otherwise the user specified a search order so return the appropriate
+		// nodes
 		// based on it
 		int end = searchContexts.length;
 		if (!includeDefault)
@@ -233,26 +251,30 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 	}
 
 	/**
-	 * Set the search contexts to scopes. When searching for a value the
-	 * seach will be done in the order of scope contexts and will not search the
-	 * storeContext unless it is in this list. 
+	 * Set the search contexts to scopes. When searching for a value the seach
+	 * will be done in the order of scope contexts and will not search the
+	 * storeContext unless it is in this list.
 	 * <p>
-	 * If the given list is <code>null</code>, then clear this store's search 
-	 * contexts. This means that only this store's scope context and default 
+	 * If the given list is <code>null</code>, then clear this store's search
+	 * contexts. This means that only this store's scope context and default
 	 * scope will be used during preference value searching.
 	 * </p>
 	 * <p>
-	 * The defaultContext will be added to the end of this list automatically 
+	 * The defaultContext will be added to the end of this list automatically
 	 * and <em>MUST NOT</em> be included by the user.
 	 * </p>
-	 * @param scopes a list of scope contexts to use when searching, or <code>null</code>
+	 * 
+	 * @param scopes
+	 *            a list of scope contexts to use when searching, or
+	 *            <code>null</code>
 	 */
 	public void setSearchContexts(IScopeContext[] scopes) {
 		// Clear the search scopes if requested by the user.
 		if (scopes == null)
 			this.searchContexts = null;
 
-		// Assert that the default was not included (we automatically add it to the end)
+		// Assert that the default was not included (we automatically add it to
+		// the end)
 		for (int i = 0; i < scopes.length; i++) {
 			if (scopes[i].equals(defaultContext))
 				Assert.isTrue(false, WorkbenchMessages
@@ -266,31 +288,40 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 		searchContexts = newScopes;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPreferenceStore#contains(java.lang.String)
 	 */
 	public boolean contains(String name) {
 		if (name == null)
 			return false;
-		return (Platform.getPreferencesService().get(name, null, getPreferenceNodes(true))) != null;
+		return (Platform.getPreferencesService().get(name, null,
+				getPreferenceNodes(true))) != null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#firePropertyChangeEvent(java.lang.String, java.lang.Object, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.IPreferenceStore#firePropertyChangeEvent(java.lang.String,
+	 *      java.lang.Object, java.lang.Object)
 	 */
-	public void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
+	public void firePropertyChangeEvent(String name, Object oldValue,
+			Object newValue) {
 		// efficiently handle case of 0 listeners
 		if (listeners.isEmpty()) {
 			// no one interested
 			return;
 		}
-		// important: create intermediate array to protect against listeners 
+		// important: create intermediate array to protect against listeners
 		// being added/removed during the notification
 		final Object[] list = listeners.getListeners();
-		final PropertyChangeEvent event = new PropertyChangeEvent(this, name, oldValue, newValue);
+		final PropertyChangeEvent event = new PropertyChangeEvent(this, name,
+				oldValue, newValue);
 		for (int i = 0; i < list.length; i++) {
 			final IPropertyChangeListener listener = (IPropertyChangeListener) list[i];
-			Platform.run(new SafeRunnable(JFaceResources.getString("PreferenceStore.changeError")) { //$NON-NLS-1$
+			Platform.run(new SafeRunnable(JFaceResources
+					.getString("PreferenceStore.changeError")) { //$NON-NLS-1$
 						public void run() {
 							listener.propertyChange(event);
 						}
@@ -298,57 +329,75 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPreferenceStore#getBoolean(java.lang.String)
 	 */
 	public boolean getBoolean(String name) {
 		String value = internalGet(name);
-		return value == null ? BOOLEAN_DEFAULT_DEFAULT : Boolean.valueOf(value).booleanValue();
+		return value == null ? BOOLEAN_DEFAULT_DEFAULT : Boolean.valueOf(value)
+				.booleanValue();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultBoolean(java.lang.String)
 	 */
 	public boolean getDefaultBoolean(String name) {
-		return getDefaultPreferences().getBoolean(name, BOOLEAN_DEFAULT_DEFAULT);
+		return getDefaultPreferences()
+				.getBoolean(name, BOOLEAN_DEFAULT_DEFAULT);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultDouble(java.lang.String)
 	 */
 	public double getDefaultDouble(String name) {
 		return getDefaultPreferences().getDouble(name, DOUBLE_DEFAULT_DEFAULT);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultFloat(java.lang.String)
 	 */
 	public float getDefaultFloat(String name) {
 		return getDefaultPreferences().getFloat(name, FLOAT_DEFAULT_DEFAULT);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultInt(java.lang.String)
 	 */
 	public int getDefaultInt(String name) {
 		return getDefaultPreferences().getInt(name, INT_DEFAULT_DEFAULT);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultLong(java.lang.String)
 	 */
 	public long getDefaultLong(String name) {
 		return getDefaultPreferences().getLong(name, LONG_DEFAULT_DEFAULT);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultString(java.lang.String)
 	 */
 	public String getDefaultString(String name) {
 		return getDefaultPreferences().get(name, STRING_DEFAULT_DEFAULT);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPreferenceStore#getDouble(java.lang.String)
 	 */
 	public double getDouble(String name) {
@@ -363,17 +412,22 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 	}
 
 	/**
-	 * Return the string value for the specified key. Look in the nodes which 
-	 * are specified by this object's list of search scopes. If the value does not
-	 * exist then return <code>null</code>.
-	 * @param key the key to search with
+	 * Return the string value for the specified key. Look in the nodes which
+	 * are specified by this object's list of search scopes. If the value does
+	 * not exist then return <code>null</code>.
+	 * 
+	 * @param key
+	 *            the key to search with
 	 * @return String or <code>null</code> if the value does not exist.
 	 */
 	private String internalGet(String key) {
-		return Platform.getPreferencesService().get(key, null, getPreferenceNodes(true));
+		return Platform.getPreferencesService().get(key, null,
+				getPreferenceNodes(true));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPreferenceStore#getFloat(java.lang.String)
 	 */
 	public float getFloat(String name) {
@@ -387,7 +441,9 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPreferenceStore#getInt(java.lang.String)
 	 */
 	public int getInt(String name) {
@@ -401,7 +457,9 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPreferenceStore#getLong(java.lang.String)
 	 */
 	public long getLong(String name) {
@@ -415,7 +473,9 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPreferenceStore#getString(java.lang.String)
 	 */
 	public String getString(String name) {
@@ -423,16 +483,21 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 		return value == null ? STRING_DEFAULT_DEFAULT : value;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPreferenceStore#isDefault(java.lang.String)
 	 */
 	public boolean isDefault(String name) {
 		if (name == null)
 			return false;
-		return (Platform.getPreferencesService().get(name, null, getPreferenceNodes(false))) == null;
+		return (Platform.getPreferencesService().get(name, null,
+				getPreferenceNodes(false))) == null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPreferenceStore#needsSaving()
 	 */
 	public boolean needsSaving() {
@@ -442,8 +507,11 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#putValue(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.IPreferenceStore#putValue(java.lang.String,
+	 *      java.lang.String)
 	 */
 	public void putValue(String name, String value) {
 		try {
@@ -455,121 +523,179 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPreferenceStore#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		listeners.remove(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, double)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String,
+	 *      double)
 	 */
 	public void setDefault(String name, double value) {
 		getDefaultPreferences().putDouble(name, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, float)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String,
+	 *      float)
 	 */
 	public void setDefault(String name, float value) {
 		getDefaultPreferences().putFloat(name, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String,
+	 *      int)
 	 */
 	public void setDefault(String name, int value) {
 		getDefaultPreferences().putInt(name, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, long)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String,
+	 *      long)
 	 */
 	public void setDefault(String name, long value) {
 		getDefaultPreferences().putLong(name, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String,
+	 *      java.lang.String)
 	 */
 	public void setDefault(String name, String defaultObject) {
 		getDefaultPreferences().put(name, defaultObject);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String,
+	 *      boolean)
 	 */
 	public void setDefault(String name, boolean value) {
 		getDefaultPreferences().putBoolean(name, value);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setToDefault(java.lang.String)
 	 */
 	public void setToDefault(String name) {
-		// removing a non-existant preference is a no-op so call the Core API directly
+		// removing a non-existant preference is a no-op so call the Core API
+		// directly
 		getStorePreferences().remove(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, double)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String,
+	 *      double)
 	 */
 	public void setValue(String name, double value) {
 		silentRunning = true;//Turn off updates from the store
-		double oldValue = getDouble(name);
-		if (getDefaultDouble(name) == value)
-			getStorePreferences().remove(name);
-		else
-			getStorePreferences().putDouble(name, value);
-		firePropertyChangeEvent(name,new Double(oldValue),new Double(value));
-		silentRunning = false;//Restart listening to preferences
+		try {
+			double oldValue = getDouble(name);
+			if (getDefaultDouble(name) == value)
+				getStorePreferences().remove(name);
+			else
+				getStorePreferences().putDouble(name, value);
+			if (oldValue != value)
+				firePropertyChangeEvent(name, new Double(oldValue), new Double(
+						value));
+		} finally {
+			silentRunning = false;//Restart listening to preferences
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, float)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String,
+	 *      float)
 	 */
-	public void setValue(String name, float value) {	
+	public void setValue(String name, float value) {
 		silentRunning = true;//Turn off updates from the store
-		float oldValue = getFloat(name);
-		if (getDefaultFloat(name) == value)
-			getStorePreferences().remove(name);
-		else
-			getStorePreferences().putFloat(name, value);
-		firePropertyChangeEvent(name,new Float(oldValue),new Float(value));
-		silentRunning = false;//Restart listening to preferences
+		try {
+			float oldValue = getFloat(name);
+			if (getDefaultFloat(name) == value)
+				getStorePreferences().remove(name);
+			else
+				getStorePreferences().putFloat(name, value);
+			if (oldValue != value)
+				firePropertyChangeEvent(name, new Float(oldValue), new Float(
+						value));
+		} finally {
+			silentRunning = false;//Restart listening to preferences
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String,
+	 *      int)
 	 */
 	public void setValue(String name, int value) {
 		silentRunning = true;//Turn off updates from the store
-		int oldValue = getInt(name);
-		if (getDefaultInt(name) == value)
-			getStorePreferences().remove(name);
-		else
-			getStorePreferences().putInt(name, value);
-		firePropertyChangeEvent(name,new Integer(oldValue),new Integer(value));
-		silentRunning = false;//Restart listening to preferences
+		try {
+			int oldValue = getInt(name);
+			if (getDefaultInt(name) == value)
+				getStorePreferences().remove(name);
+			else
+				getStorePreferences().putInt(name, value);
+			if (oldValue != value)
+				firePropertyChangeEvent(name, new Integer(oldValue),
+						new Integer(value));
+		} finally {
+			silentRunning = false;//Restart listening to preferences
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, long)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String,
+	 *      long)
 	 */
 	public void setValue(String name, long value) {
 		silentRunning = true;//Turn off updates from the store
-		long oldValue = getLong(name);
-		if (getDefaultLong(name) == value)
-			getStorePreferences().remove(name);
-		else
-			getStorePreferences().putLong(name, value);
-		firePropertyChangeEvent(name,new Long(oldValue),new Long(value));
-		silentRunning = false;//Restart listening to preferences
+		try {
+			long oldValue = getLong(name);
+			if (getDefaultLong(name) == value)
+				getStorePreferences().remove(name);
+			else
+				getStorePreferences().putLong(name, value);
+			if (oldValue != value)
+				firePropertyChangeEvent(name, new Long(oldValue), new Long(
+						value));
+		} finally {
+			silentRunning = false;//Restart listening to preferences
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String,
+	 *      java.lang.String)
 	 */
 	public void setValue(String name, String value) {
 		//Do not turn on silent running here as Strings are propagated
@@ -579,21 +705,31 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 			getStorePreferences().put(name, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String,
+	 *      boolean)
 	 */
 	public void setValue(String name, boolean value) {
 		silentRunning = true;//Turn off updates from the store
-		boolean oldValue = getBoolean(name);
-		if (getDefaultBoolean(name) == value)
-			getStorePreferences().remove(name);
-		else
-			getStorePreferences().putBoolean(name, value);
-		firePropertyChangeEvent(name,new Boolean(oldValue),new Boolean(value));
-		silentRunning = false;//Restart listening to preferences
+		try {
+			boolean oldValue = getBoolean(name);
+			if (getDefaultBoolean(name) == value)
+				getStorePreferences().remove(name);
+			else
+				getStorePreferences().putBoolean(name, value);
+			if (oldValue != value)
+				firePropertyChangeEvent(name, new Boolean(oldValue),
+						new Boolean(value));
+		} finally {
+			silentRunning = false;//Restart listening to preferences
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPersistentPreferenceStore#save()
 	 */
 	public void save() throws IOException {
