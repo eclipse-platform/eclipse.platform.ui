@@ -35,7 +35,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
-import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSListener;
 import org.eclipse.team.ccvs.core.ICVSProvider;
@@ -46,7 +45,6 @@ import org.eclipse.team.ccvs.core.IConnectionMethod;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.client.Checkout;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Import;
@@ -130,7 +128,7 @@ public class CVSProvider implements ICVSProvider {
 		try {	
 			for (int i=0;i<projects.length;i++) {
 				IProject project = projects[i];
-				if(project != null && project.exists()) {
+				if (project != null && project.exists()) {
 					if(!project.isOpen()) {
 						project.open(Policy.subMonitorFor(monitor, 10));
 					}
@@ -149,6 +147,12 @@ public class CVSProvider implements ICVSProvider {
 						subMonitor.done();
 					}
 					CVSWorkspaceRoot.getCVSFolderFor(project).unmanage(Policy.subMonitorFor(monitor, 10));
+				} else if (project != null) {
+					// Make sure there is no directory in the local file system.
+					File location = new File(project.getParent().getLocation().toFile(), project.getName());
+					if (location.exists()) {
+						deepDelete(location);
+					}
 				}
 			}
 		} catch (CoreException e) {
@@ -156,6 +160,16 @@ public class CVSProvider implements ICVSProvider {
 		} finally {
 			monitor.done();
 		}
+	}
+	
+	private void deepDelete(File resource) {
+		if (resource.isDirectory()) {
+			File[] fileList = resource.listFiles();
+			for (int i = 0; i < fileList.length; i++) {
+				deepDelete(fileList[i]);
+			}
+		}
+		resource.delete();
 	}
 	
 	/*

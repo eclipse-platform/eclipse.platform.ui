@@ -39,6 +39,9 @@ public interface ICVSProvider {
 	 * then the project name will be used as the module to
 	 * check out. If both are absent, an exception is thrown.
 	 * 
+	 * Resources existing in the local file system at the target project location but now 
+	 * known to the workbench will be overwritten.
+	 * 
 	 * After the successful completion of this method, the project will exist
 	 * and be open.
 	 */
@@ -48,6 +51,9 @@ public interface ICVSProvider {
 	 * Checkout the remote resources into the local workspace. Each resource will 
 	 * be checked out into the corresponding project. If the corresponding project is
 	 * null or if projects is null, the name of the remote resource is used as the name of the project.
+	 * 
+	 * Resources existing in the local file system at the target project location but now 
+	 * known to the workbench will be overwritten.
 	 */
 	public void checkout(ICVSRemoteFolder[] resources, IProject[] projects, IProgressMonitor monitor) throws TeamException;
 

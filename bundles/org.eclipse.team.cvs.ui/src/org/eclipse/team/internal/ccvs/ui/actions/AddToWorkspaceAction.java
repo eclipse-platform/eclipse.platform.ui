@@ -5,6 +5,7 @@ package org.eclipse.team.internal.ccvs.ui.actions;
  * All Rights Reserved.
  */
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,7 +15,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -81,35 +81,36 @@ public class AddToWorkspaceAction extends TeamAction {
 
 					
 					boolean yesToAll = false;
+					boolean yesToAllExternal = false;
+					int action;
 					List targetProjects = new ArrayList();
 					List targetFolders = new ArrayList();
 					for (int i = 0; i < folders.length; i++) {
 						String name = folders[i].getName();
 						IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-						if (!yesToAll) {
-							switch (confirmOverwrite(project)) {
-								// yes
-								case 0:
-									targetFolders.add(folders[i]);
-									targetProjects.add(project);
-									break;
-								// no
-								case 1:
-									break;
-								// yes to all
-								case 2:
-									yesToAll = true;
-									targetFolders.add(folders[i]);
-									targetProjects.add(project);
-									break;
-								// cancel
-								case 3:
-								default:
-									return;
-							}
+						if (project.exists()) {
+							action = confirmOverwrite(project, yesToAll);
+							yesToAll = action == 2;
 						} else {
-							targetFolders.add(folders[i]);
-							targetProjects.add(project);
+							File location = new File(project.getParent().getLocation().toFile(), project.getName());
+							action = confirmOverwriteExternalFile(location, yesToAllExternal);
+							yesToAllExternal = action == 2;
+						}
+						switch (action) {
+							// no
+							case 1:
+								break;
+							// yes to all
+							case 2:
+							// yes
+							case 0:
+								targetFolders.add(folders[i]);
+								targetProjects.add(project);
+								break;
+							// cancel
+							case 3:
+							default:
+								return;
 						}
 					}
 					if (targetFolders.size() > 0) {
@@ -134,10 +135,31 @@ public class AddToWorkspaceAction extends TeamAction {
 		}
 	}
 	
-	private int confirmOverwrite(IProject project) {
-		if (!project.exists()) return 0;
+	private int confirmOverwrite(IProject project, boolean yesToAll) {
+		if (yesToAll) return 2;
+		if ( ! project.exists()) return 0;
 		final MessageDialog dialog = 
 			new MessageDialog(shell, Policy.bind("AddToWorkspaceAction.confirmOverwrite"), null, Policy.bind("AddToWorkspaceAction.thisResourceExists", project.getName()), MessageDialog.QUESTION, 
+				new String[] {
+					IDialogConstants.YES_LABEL,
+					IDialogConstants.NO_LABEL,
+					IDialogConstants.YES_TO_ALL_LABEL, 
+					IDialogConstants.CANCEL_LABEL}, 
+				0);
+		final int[] result = new int[1];
+		shell.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				result[0] = dialog.open();
+			}
+		});
+		return result[0];
+	}
+	
+	private int confirmOverwriteExternalFile(File location, boolean yesToAll) {
+		if (yesToAll) return 2;
+		if ( ! location.exists()) return 0;
+		final MessageDialog dialog = 
+			new MessageDialog(shell, Policy.bind("AddToWorkspaceAction.confirmOverwrite"), null, Policy.bind("AddToWorkspaceAction.thisExternalFileExists", location.getName()), MessageDialog.QUESTION, 
 				new String[] {
 					IDialogConstants.YES_LABEL,
 					IDialogConstants.NO_LABEL,
