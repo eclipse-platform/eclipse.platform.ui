@@ -953,6 +953,16 @@
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
+            commandId="org.eclipse.ui.edit.redo"
+            keySequence="Ctrl+X R"
+            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.redo"
+            keySequence="Ctrl+Shift++"
+            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
             commandId="org.eclipse.ui.file.close"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
