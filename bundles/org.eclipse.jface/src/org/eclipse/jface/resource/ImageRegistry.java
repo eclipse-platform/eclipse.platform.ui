@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,9 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- * 	   Steven Ketcham (sketcham@dsicdi.com) - Bug 42451
- * 			[Dialogs] ImageRegistry throws null pointer exception in 
- * 			application with multiple Display's
+ *     Steven Ketcham (sketcham@dsicdi.com) - Bug 42451
+ *     [Dialogs] ImageRegistry throws null pointer exception in
+ *     application with multiple Display's
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
