@@ -87,7 +87,6 @@ public class UIPlugin extends AbstractUIPlugin {
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
 		
-		JFacePreferences.setPreferenceStore(store);
 		store.setDefault(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID, IWorkbenchConstants.DEFAULT_LAYOUT_ID); 
 		store.setDefault(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 		store.setDefault(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
