@@ -90,6 +90,7 @@ import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.XmlLogger;
 import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.core.AntSecurityException;
 import org.eclipse.ant.core.Task;
 import org.eclipse.ant.core.Type;
 import org.eclipse.core.runtime.IPath;
@@ -434,7 +435,10 @@ public class InternalAntRunner {
 		Throwable error = null;
 		PrintStream originalErr = System.err;
 		PrintStream originalOut = System.out;
+		SecurityManager originalSM= System.getSecurityManager();
+		
 		boolean executeScript= true;
+		boolean canceled= false;
 		try {
 			getCurrentProject().init();
 			if (argList != null) {
@@ -470,14 +474,19 @@ public class InternalAntRunner {
 			if (fExtraArguments != null) {
 				printArguments(getCurrentProject());
 			}
+			System.setSecurityManager(new AntSecurityManager(originalSM));
+			
 			if (fTargets != null && !fTargets.isEmpty()) {
 				getCurrentProject().executeTargets(fTargets);
 			} else {
 				getCurrentProject().executeTarget(getCurrentProject().getDefaultTarget());
 			}
 		} catch (OperationCanceledException e) {
+			canceled= true;
 			logMessage(getCurrentProject(), e.getMessage(), Project.MSG_INFO);
 			throw e;
+		} catch (AntSecurityException e) {
+			//expected
 		} catch (RuntimeException e) {
 			error = e;
 			throw e;
@@ -487,6 +496,7 @@ public class InternalAntRunner {
 		} finally {
 			System.setErr(originalErr);
 			System.setOut(originalOut);
+			System.setSecurityManager(originalSM);
 			//close any user specified build log
 			if (fErr != originalErr) {
 				fErr.close();
@@ -494,7 +504,7 @@ public class InternalAntRunner {
 			if (fOut != originalOut) {
 				fOut.close();
 			}
-			if (executeScript) {
+			if (executeScript && !canceled) {
 				fireBuildFinished(getCurrentProject(), error);
 			}
 		}
