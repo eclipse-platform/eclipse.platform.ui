@@ -101,10 +101,13 @@ public class AntClasspathLabelProvider implements ILabelProvider, IColorProvider
 	 */
 	public Color getBackground(Object element) {
 		if (element instanceof GlobalClasspathEntries) {
-			Display display= Display.getCurrent();
-			return display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);		
+            int type= ((GlobalClasspathEntries) element).getType();
+            if (type == ClasspathModel.CONTRIBUTED) {
+                Display display= Display.getCurrent();
+                return display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+            }
 		} else if (element instanceof ClasspathEntry) {
-			
+            return getBackground(((ClasspathEntry) element).getParent());
 		}
 		return null;
 	}
