@@ -436,9 +436,16 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			Session.run(this, root, false, new ICVSRunnable() {
 				public void run(IProgressMonitor monitor) throws CVSException {
 					IStatus status = Command.VERSION.execute(null, CVSRepositoryLocation.this, monitor);
-					// Only report errors on validation (ignoring warnings)
-					if (status.getSeverity() == IStatus.ERROR) {
-						throw new CVSException(status);
+					// Log any non-ok status
+					if (! status.isOK()) {
+						if (status.isMultiStatus()) {
+							IStatus[] children = status.getChildren();
+							for (int i = 0; i < children.length; i++) {
+								CVSProviderPlugin.log(children[i]);
+							}
+						} else {
+							CVSProviderPlugin.log(status);
+						}
 					}
 				}
 			}, monitor);
