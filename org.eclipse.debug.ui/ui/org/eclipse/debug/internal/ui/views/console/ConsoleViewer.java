@@ -267,17 +267,21 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 				Runnable r = new Runnable() {
 					public void run() {
 						IConsoleColorProvider contentProvider = partitioner.getContentProvider();
-						ITypedRegion[] regions = partitioner.computePartitioning(0, getDocument().getLength());
-						StyleRange[] styles = new StyleRange[regions.length];
-						for (int i = 0; i < regions.length; i++) {
-							StreamPartition partition = (StreamPartition)regions[i];
-							Color color = contentProvider.getColor(partition.getStreamIdentifier());
-							styles[i] = new StyleRange(partition.getOffset(), partition.getLength(), color, null);
-						}	
-						try {
-							getTextWidget().setStyleRanges(styles);
-						} catch (IllegalArgumentException e) {
-							// style ranges are out of bounds - likely an old/changed document.
+						// bug 28227
+						IDocument doc = getDocument();
+						if (doc != null) {
+							ITypedRegion[] regions = partitioner.computePartitioning(0, getDocument().getLength());
+							StyleRange[] styles = new StyleRange[regions.length];
+							for (int i = 0; i < regions.length; i++) {
+								StreamPartition partition = (StreamPartition)regions[i];
+								Color color = contentProvider.getColor(partition.getStreamIdentifier());
+								styles[i] = new StyleRange(partition.getOffset(), partition.getLength(), color, null);
+							}	
+							try {
+								getTextWidget().setStyleRanges(styles);
+							} catch (IllegalArgumentException e) {
+								// style ranges are out of bounds - likely an old/changed document.
+							}
 						}
 					}
 				};
