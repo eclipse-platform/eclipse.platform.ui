@@ -19,14 +19,17 @@ package org.eclipse.core.internal.utils;
  * breakage when assertions in the code are added or removed.
  * </p>
  */
-/* package */ class AssertionFailedException extends RuntimeException {
-/** Constructs a new exception.
- */
-public AssertionFailedException() {
-}
-/** Constructs a new exception with the given message.
- */
-public AssertionFailedException(String detail) {
-	super(detail);
-}
+class AssertionFailedException extends RuntimeException {
+	/** 
+	 * Constructs a new exception.
+	 */
+	public AssertionFailedException() {
+		super();
+	}
+	/** 
+	 * Constructs a new exception with the given message.
+	 */
+	public AssertionFailedException(String detail) {
+		super(detail);
+	}
 }

@@ -30,70 +30,71 @@ import org.eclipse.core.runtime.*;
  * @since 2.1
  */
 public abstract class TeamHook {
-/**
- * Creates a new team hook.  Default constructor for use by subclasses and the 
- * resources plugin only.
- */
-protected TeamHook() {
-}	
-/**
- * Validates whether a particular attempt at link creation is allowed.  This gives
- * team providers an opportunity to hook into the beginning of the implementation
- * of <code>IFile.createLink</code>.
- * <p>
- * The implementation of this method runs "below" the resources API and is
- * therefore very restricted in what resource API method it can call. The
- * list of useable methods includes most resource operations that read but
- * do not update the resource tree; resource operations that modify 
- * resources and trigger deltas must not be called from within the dynamic
- * scope of the invocation of this method.
- * </p>
- * <p>
- * This method should be overridden by subclasses that want to control what
- * links are created.  The default implementation of this method allows all links
- * to be created.
- * </p>
- * 
- * @param file the file to be linked
- * @param updateFlags bit-wise or of update flag constants
- *   (only ALLOW_MISSING_LOCAL is relevant here)
- * @param location a file system path where the file should be linked
- * @return a status object with code <code>IStatus.OK</code> 
- * 	if linking is allowed, otherwise a status object with severity 
- * 	<code>IStatus.ERROR</code> indicating why the creation is not allowed.
- * @see org.eclipse.core.resources.IResource#ALLOW_MISSING_LOCAL
- */
-public IStatus validateCreateLink(IFile file, int updateFlags, IPath location) {
-	return Status.OK_STATUS;
-}
-/**
- * Validates whether a particular attempt at link creation is allowed.  This gives
- * team providers an opportunity to hook into the beginning of the implementation
- * of <code>IFolder.createLink</code>.
- * <p>
- * The implementation of this method runs "below" the resources API and is
- * therefore very restricted in what resource API method it can call. The
- * list of useable methods includes most resource operations that read but
- * do not update the resource tree; resource operations that modify 
- * resources and trigger deltas must not be called from within the dynamic
- * scope of the invocation of this method.
- * </p>
- * <p>
- * This method should be overridden by subclasses that want to control what
- * links are created.  The default implementation of this method allows all links
- * to be created.
- * </p>
- * 
- * @param folder the file to be linked
- * @param updateFlags bit-wise or of update flag constants
- *   (only ALLOW_MISSING_LOCAL is relevant here)
- * @param location a file system path where the folder should be linked
- * @return a status object with code <code>IStatus.OK</code> 
- * 	if linking is allowed, otherwise a status object with severity 
- * 	<code>IStatus.ERROR</code> indicating why the creation is not allowed.
- * @see org.eclipse.core.resources.IResource#ALLOW_MISSING_LOCAL
- */
-public IStatus validateCreateLink(IFolder folder, int updateFlags, IPath location) {
-	return Status.OK_STATUS;
-}
+	/**
+	 * Creates a new team hook.  Default constructor for use by subclasses and the 
+	 * resources plugin only.
+	 */
+	protected TeamHook() {
+		super();
+	}
+	/**
+	 * Validates whether a particular attempt at link creation is allowed.  This gives
+	 * team providers an opportunity to hook into the beginning of the implementation
+	 * of <code>IFile.createLink</code>.
+	 * <p>
+	 * The implementation of this method runs "below" the resources API and is
+	 * therefore very restricted in what resource API method it can call. The
+	 * list of useable methods includes most resource operations that read but
+	 * do not update the resource tree; resource operations that modify 
+	 * resources and trigger deltas must not be called from within the dynamic
+	 * scope of the invocation of this method.
+	 * </p>
+	 * <p>
+	 * This method should be overridden by subclasses that want to control what
+	 * links are created.  The default implementation of this method allows all links
+	 * to be created.
+	 * </p>
+	 * 
+	 * @param file the file to be linked
+	 * @param updateFlags bit-wise or of update flag constants
+	 *   (only ALLOW_MISSING_LOCAL is relevant here)
+	 * @param location a file system path where the file should be linked
+	 * @return a status object with code <code>IStatus.OK</code> 
+	 * 	if linking is allowed, otherwise a status object with severity 
+	 * 	<code>IStatus.ERROR</code> indicating why the creation is not allowed.
+	 * @see org.eclipse.core.resources.IResource#ALLOW_MISSING_LOCAL
+	 */
+	public IStatus validateCreateLink(IFile file, int updateFlags, IPath location) {
+		return Status.OK_STATUS;
+	}
+	/**
+	 * Validates whether a particular attempt at link creation is allowed.  This gives
+	 * team providers an opportunity to hook into the beginning of the implementation
+	 * of <code>IFolder.createLink</code>.
+	 * <p>
+	 * The implementation of this method runs "below" the resources API and is
+	 * therefore very restricted in what resource API method it can call. The
+	 * list of useable methods includes most resource operations that read but
+	 * do not update the resource tree; resource operations that modify 
+	 * resources and trigger deltas must not be called from within the dynamic
+	 * scope of the invocation of this method.
+	 * </p>
+	 * <p>
+	 * This method should be overridden by subclasses that want to control what
+	 * links are created.  The default implementation of this method allows all links
+	 * to be created.
+	 * </p>
+	 * 
+	 * @param folder the file to be linked
+	 * @param updateFlags bit-wise or of update flag constants
+	 *   (only ALLOW_MISSING_LOCAL is relevant here)
+	 * @param location a file system path where the folder should be linked
+	 * @return a status object with code <code>IStatus.OK</code> 
+	 * 	if linking is allowed, otherwise a status object with severity 
+	 * 	<code>IStatus.ERROR</code> indicating why the creation is not allowed.
+	 * @see org.eclipse.core.resources.IResource#ALLOW_MISSING_LOCAL
+	 */
+	public IStatus validateCreateLink(IFolder folder, int updateFlags, IPath location) {
+		return Status.OK_STATUS;
+	}
 }
