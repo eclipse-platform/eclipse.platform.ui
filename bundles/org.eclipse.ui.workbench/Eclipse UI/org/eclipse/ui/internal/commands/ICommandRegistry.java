@@ -18,8 +18,6 @@ public interface ICommandRegistry {
     void addCommandRegistryListener(
             ICommandRegistryListener commandRegistryListener);
 
-    List getActiveKeyConfigurationDefinitions();
-
     List getCategoryDefinitions();
 
     List getCommandDefinitions();

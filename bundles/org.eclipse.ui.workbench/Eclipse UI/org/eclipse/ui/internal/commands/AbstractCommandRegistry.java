@@ -17,8 +17,6 @@ import java.util.List;
 
 abstract class AbstractCommandRegistry implements ICommandRegistry {
 
-    protected List activeKeyConfigurationDefinitions = Collections.EMPTY_LIST;
-
     protected List categoryDefinitions = Collections.EMPTY_LIST;
 
     protected List commandDefinitions = Collections.EMPTY_LIST;
@@ -61,10 +59,6 @@ abstract class AbstractCommandRegistry implements ICommandRegistry {
                         .commandRegistryChanged(commandRegistryEvent);
             }
         }
-    }
-
-    public List getActiveKeyConfigurationDefinitions() {
-        return activeKeyConfigurationDefinitions;
     }
 
     public List getCategoryDefinitions() {

@@ -199,9 +199,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
             IConfigurationElement configurationElement = configurationElements[i];
             String name = configurationElement.getName();
 
-            if (Persistence.TAG_ACTIVE_KEY_CONFIGURATION.equals(name))
-                readActiveKeyConfigurationDefinition(configurationElement);
-            else if (Persistence.TAG_CATEGORY.equals(name))
+            if (Persistence.TAG_CATEGORY.equals(name))
                 readCategoryDefinition(configurationElement);
             else if (Persistence.TAG_COMMAND.equals(name))
                 readCommandDefinition(configurationElement);
@@ -214,13 +212,6 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
         }
 
         boolean commandRegistryChanged = false;
-
-        if (!activeKeyConfigurationDefinitions
-                .equals(super.activeKeyConfigurationDefinitions)) {
-            super.activeKeyConfigurationDefinitions = Collections
-                    .unmodifiableList(activeKeyConfigurationDefinitions);
-            commandRegistryChanged = true;
-        }
 
         if (!categoryDefinitions.equals(super.categoryDefinitions)) {
             super.categoryDefinitions = Collections
@@ -261,18 +252,6 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 
         if (commandRegistryChanged)
             fireCommandRegistryChanged();
-    }
-
-    private void readActiveKeyConfigurationDefinition(
-            IConfigurationElement configurationElement) {
-        ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = Persistence
-                .readActiveKeyConfigurationDefinition(
-                        new ConfigurationElementMemento(configurationElement),
-                        getNamespace(configurationElement));
-
-        if (activeKeyConfigurationDefinition != null)
-            activeKeyConfigurationDefinitions
-                    .add(activeKeyConfigurationDefinition);
     }
 
     private void readCategoryDefinition(

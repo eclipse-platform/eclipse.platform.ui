@@ -23,7 +23,6 @@ import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.contexts.ContextManagerEvent;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
@@ -577,28 +576,6 @@ public final class CommandManagerWrapper implements ICommandManager,
 		definedHandlers.clear();
 		definedHandlers.addAll(commandRegistry.getHandlers());
 		definedHandlers.addAll(mutableCommandRegistry.getHandlers());
-
-		// Set up the active scheme.
-		try {
-			final List activeSchemeDefinitions = new ArrayList();
-			activeSchemeDefinitions.addAll(commandRegistry
-					.getActiveKeyConfigurationDefinitions());
-			activeSchemeDefinitions.addAll(mutableCommandRegistry
-					.getActiveKeyConfigurationDefinitions());
-			if (activeSchemeDefinitions.isEmpty()) {
-				bindingManager
-						.setActiveScheme(bindingManager
-								.getScheme("org.eclipse.ui.defaultAcceleratorConfiguration")); //$NON-NLS-1$
-			} else {
-				final ActiveKeyConfigurationDefinition definition = (ActiveKeyConfigurationDefinition) activeSchemeDefinitions
-						.get(activeSchemeDefinitions.size() - 1);
-				final String schemeId = definition.getKeyConfigurationId();
-				bindingManager.setActiveScheme(bindingManager
-						.getScheme(schemeId));
-			}
-		} catch (final NotDefinedException e) {
-			// Oh, well....
-		}
 
 		// Copy in the key bindings.
 		List commandRegistryKeySequenceBindingDefinitions = new ArrayList(

@@ -11,18 +11,6 @@
 
 package org.eclipse.ui.internal.commands;
 
-import java.util.List;
 
 public interface IMutableCommandRegistry extends ICommandRegistry {
-
-    void setActiveKeyConfigurationDefinitions(
-            List activeKeyConfigurationDefinitions);
-
-    void setCategoryDefinitions(List categoryDefinitions);
-
-    void setCommandDefinitions(List commandDefinitions);
-
-    void setKeyConfigurationDefinitions(List keyConfigurationDefinitions);
-
-    void setKeySequenceBindingDefinitions(List keySequenceBindingDefinitions);
 }

@@ -36,6 +36,14 @@ import org.eclipse.ui.IService;
 public interface IBindingService extends IService {
 
 	/**
+	 * The default default value for the active scheme id. This value can be
+	 * overridden using the "plugin_customization.ini" file. The
+	 * <code>BindingPersistence</code> code needs to know this value so it can
+	 * try to decide if someone overrode the default.
+	 */
+	public static final String DEFAULT_DEFAULT_ACTIVE_SCHEME_ID = "org.eclipse.ui.defaultAcceleratorConfiguration"; //$NON-NLS-1$
+
+	/**
 	 * Gets the active bindings for a given command identifier.
 	 * 
 	 * @param commandId
@@ -149,6 +157,17 @@ public interface IBindingService extends IService {
 	 *         bindings; <code>false</code> otherwise.
 	 */
 	public boolean isPerfectMatch(TriggerSequence trigger);
+	
+	/**
+	 * <p>
+	 * Reads the binding information from the registry and the preferences. This
+	 * will overwrite any of the existing information in the binding service.
+	 * This method is intended to be called during start-up. When this method
+	 * completes, this binding service will reflect the current state of the
+	 * registry and preference store.
+	 * </p>
+	 */
+	public void readRegistryAndPreferences();
 
 	/**
 	 * <p>

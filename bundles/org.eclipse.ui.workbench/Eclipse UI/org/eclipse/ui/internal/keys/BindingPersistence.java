@@ -11,18 +11,25 @@
 package org.eclipse.ui.internal.keys;
 
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
+import org.eclipse.ui.keys.IBindingService;
 
 /**
  * <p>
@@ -52,6 +59,14 @@ public final class BindingPersistence {
 	private static final String ATTRIBUTE_CONTEXT_ID = "contextId"; //$NON-NLS-1$
 
 	/**
+	 * The name of the attribute storing the identifier for the active key
+	 * configuration identifier. This provides legacy support for the
+	 * <code>activeKeyConfiguration</code> element in the commands extension
+	 * point.
+	 */
+	private static final String ATTRIBUTE_KEY_CONFIGURATION_ID = "keyConfigurationId"; //$NON-NLS-1$
+
+	/**
 	 * The name of the attribute storing the trigger sequence for a binding.
 	 * This is called a 'keySequence' for legacy reasons.
 	 */
@@ -71,7 +86,14 @@ public final class BindingPersistence {
 	 * The name of the attribute storing the identifier for the active scheme.
 	 * This is called a 'keyConfigurationId' for legacy reasons.
 	 */
-	private static final String ATTRIBUTE_SCHEME_ID = "keyConfigurationId"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_SCHEME_ID = ATTRIBUTE_KEY_CONFIGURATION_ID; //$NON-NLS-1$
+
+	/**
+	 * The name of the deprecated attribute of the deprecated
+	 * <code>activeKeyConfiguration</code> element in the commands extension
+	 * point.
+	 */
+	private static final String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
 
 	/**
 	 * Whether this class should print out debugging information when it reads
@@ -80,10 +102,16 @@ public final class BindingPersistence {
 	private static final boolean DEBUG = Policy.DEBUG_KEY_BINDINGS;
 
 	/**
+	 * The name of the element storing the active key configuration from the
+	 * commands extension point.
+	 */
+	private static final String ELEMENT_ACTIVE_KEY_CONFIGURATION = "activeKeyConfiguration"; //$NON-NLS-1$
+
+	/**
 	 * The name of the element storing the active scheme. This is called a
 	 * 'keyConfiguration' for legacy reasons.
 	 */
-	private static final String ELEMENT_ACTIVE_SCHEME = "activeKeyConfiguration"; //$NON-NLS-1$
+	private static final String ELEMENT_ACTIVE_SCHEME = ELEMENT_ACTIVE_KEY_CONFIGURATION; //$NON-NLS-1$
 
 	/**
 	 * The name of the element storing the binding. This is called a
@@ -95,7 +123,7 @@ public final class BindingPersistence {
 	 * The preference key for the workbench preference store. This keys is
 	 * called 'commands' for legacy reasons.
 	 */
-	private static final String WORKBENCH_PREFERENCE_KEY = "org.eclipse.ui.commands"; //$NON-NLS-1$
+	private static final String KEY = "org.eclipse.ui.commands"; //$NON-NLS-1$
 
 	/**
 	 * Returns the default scheme identifier for the currently running
@@ -138,8 +166,7 @@ public final class BindingPersistence {
 		writeActiveScheme(activeScheme);
 
 		// Build the XML block for writing the bindings and active scheme.
-		final XMLMemento xmlMemento = XMLMemento
-				.createWriteRoot(WORKBENCH_PREFERENCE_KEY);
+		final XMLMemento xmlMemento = XMLMemento.createWriteRoot(KEY);
 		if (activeScheme != null) {
 			writeActiveScheme(xmlMemento, activeScheme);
 		}
@@ -159,11 +186,126 @@ public final class BindingPersistence {
 		final Writer writer = new StringWriter();
 		try {
 			xmlMemento.save(writer);
-			preferenceStore.setValue(WORKBENCH_PREFERENCE_KEY, writer
-					.toString());
+			preferenceStore.setValue(KEY, writer.toString());
 		} finally {
 			writer.close();
 		}
+	}
+
+	/**
+	 * Reads all of the binding information from the registry and from the
+	 * preference store.
+	 * 
+	 * @return The active scheme identifier; this value is never
+	 *         <code>null</code>, but it may point to undefined scheme.
+	 */
+	public static final String read() {
+		// Create the extension registry mementos.
+		final IExtensionRegistry registry = Platform.getExtensionRegistry();
+		final IConfigurationElement[] configurationElements = registry
+				.getConfigurationElementsFor(KEY);
+
+		// Create the preference memento.
+		final IPreferenceStore store = WorkbenchPlugin.getDefault()
+				.getPreferenceStore();
+		final String preferenceString = store.getString(KEY);
+		IMemento preferenceMemento = null;
+		if ((preferenceString != null) && (preferenceString.length() > 0)) {
+			final Reader reader = new StringReader(preferenceString);
+			try {
+				preferenceMemento = XMLMemento.createReadRoot(reader);
+			} catch (final WorkbenchException e) {
+				// Could not initialize the preference memento.
+			}
+		}
+
+		return readActiveScheme(configurationElements, preferenceMemento);
+	}
+
+	/**
+	 * <p>
+	 * Reads the registry and the preference store, and determines the
+	 * identifier for the scheme that should be active. There is a complicated
+	 * order of priorities for this. The registry will only be read if there is
+	 * no user preference, and the default active scheme id is different than
+	 * the default default active scheme id.
+	 * </p>
+	 * <ol>
+	 * <li>A non-default preference.</li>
+	 * <li>The legacy preference XML memento.</li>
+	 * <li>A default preference value that is different than the default
+	 * default active scheme id.</li>
+	 * <li>The registry.</li>
+	 * <li>The default default active scheme id.</li>
+	 * </ol>
+	 * 
+	 * @param configurationElements
+	 *            The configuration elements from the commands extension point;
+	 *            must not be <code>null</code>.
+	 * @param preferences
+	 *            The memento wrapping the commands preference key; may be
+	 *            <code>null</code>.
+	 * @return The active scheme identifier; this value is never
+	 *         <code>null</code>.
+	 */
+	private static final String readActiveScheme(
+			final IConfigurationElement[] configurationElements,
+			final IMemento preferences) {
+		// A non-default preference.
+		final IPreferenceStore store = PlatformUI.getPreferenceStore();
+		final String defaultActiveSchemeId = store
+				.getDefaultString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
+		final String preferenceActiveSchemeId = store
+				.getString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
+		if ((preferenceActiveSchemeId != null)
+				&& (!preferenceActiveSchemeId.equals(defaultActiveSchemeId))) {
+			return preferenceActiveSchemeId;
+		}
+
+		// A legacy preference XML memento.
+		if (preferences != null) {
+			final IMemento[] preferenceMementos = preferences
+					.getChildren(ELEMENT_ACTIVE_KEY_CONFIGURATION);
+			int preferenceMementoCount = preferenceMementos.length;
+			for (int i = preferenceMementoCount - 1; i >= 0; i--) {
+				final IMemento memento = preferenceMementos[i];
+				String id = memento.getString(ATTRIBUTE_KEY_CONFIGURATION_ID);
+				if (id != null) {
+					return id;
+				}
+			}
+		}
+
+		// A default preference value that is different than the default.
+		if ((defaultActiveSchemeId != null)
+				&& (!defaultActiveSchemeId
+						.equals(IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID))) {
+			return defaultActiveSchemeId;
+		}
+
+		// The registry.
+		final int configurationElementCount = configurationElements.length;
+		for (int i = 0; i < configurationElementCount; i++) {
+			final IConfigurationElement configurationElement = configurationElements[i];
+			if (!ELEMENT_ACTIVE_KEY_CONFIGURATION.equals(configurationElement
+					.getName())) {
+				continue;
+			}
+
+			String id = configurationElement
+					.getAttribute(ATTRIBUTE_KEY_CONFIGURATION_ID);
+			if (id != null) {
+				return id;
+			}
+
+			id = configurationElement.getAttribute(ATTRIBUTE_VALUE);
+			if (id != null) {
+				return id;
+			}
+		}
+
+		// The default default active scheme id.
+		return IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID;
 	}
 
 	/**

@@ -112,6 +112,7 @@ import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.themes.IThemeManager;
@@ -849,8 +850,9 @@ public final class Workbench implements IWorkbench {
 				contextManager);
 		BindingManager.DEBUG = Policy.DEBUG_KEY_BINDINGS;
 		bindingManager = new BindingManager(contextManager);
-		services[IWorkbenchServices.BINDING] = new BindingService(
+		final IBindingService bindingService = new BindingService(
 				bindingManager);
+		services[IWorkbenchServices.BINDING] = bindingService;
 
 		/*
 		 * TODO This is the deprecated support. It would be nice to pull out all
@@ -862,6 +864,9 @@ public final class Workbench implements IWorkbench {
 				bindingManager, commandManager, contextManager);
         workbenchContextSupport.initialize(); // deferred key binding support
         initializeCommandResolver();
+		
+		// TODO Initialize the services code.
+		bindingService.readRegistryAndPreferences();
 
         addWindowListener(windowListener);
 

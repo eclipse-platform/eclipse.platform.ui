@@ -19,11 +19,8 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.internal.commands.ws.HandlerProxy;
 import org.eclipse.ui.internal.util.Util;
@@ -206,73 +203,6 @@ final class Persistence {
         }
 
         return value;
-    }
-    
-    /**
-     * Retrieves the active key configuration from the preference store.
-     * 
-     * @return The active key configuration identifier stored in the preference
-     *         store; never <code>null</code>.
-     * @since 3.1
-     */
-    static final ActiveKeyConfigurationDefinition readActiveKeyConfigurationDefinition() {
-        final IPreferenceStore store = PlatformUI.getPreferenceStore();
-        if (!store.contains(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID)) {
-            return null;
-        }
-
-        final String keyConfigurationId = store
-                .getString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
-        return new ActiveKeyConfigurationDefinition(keyConfigurationId, null);
-    }
-
-    static ActiveKeyConfigurationDefinition readActiveKeyConfigurationDefinition(
-            IMemento memento, String sourceIdOverride) {
-        if (memento == null)
-            throw new NullPointerException();
-
-        String keyConfigurationId = memento.getString(TAG_KEY_CONFIGURATION_ID);
-
-        // TODO deprecated start
-        if (keyConfigurationId == null)
-            keyConfigurationId = memento.getString("value"); //$NON-NLS-1$ 
-        // TODO deprecated end
-
-        String sourceId = sourceIdOverride != null ? sourceIdOverride : memento
-                .getString(TAG_SOURCE_ID);
-
-        // TODO deprecated start
-        if (sourceIdOverride == null && sourceId == null)
-            sourceId = memento.getString("plugin"); //$NON-NLS-1$ 
-        // TODO deprecated end
-
-        return new ActiveKeyConfigurationDefinition(keyConfigurationId,
-                sourceId);
-    }
-
-    static List readActiveKeyConfigurationDefinitions(IMemento memento,
-            String name, String sourceIdOverride) {
-        if (memento == null || name == null)
-            throw new NullPointerException();
-
-        IMemento[] mementos = memento.getChildren(name);
-
-        if (mementos == null)
-            throw new NullPointerException();
-
-        List list = new ArrayList(mementos.length);
-
-        for (int i = 0; i < mementos.length; i++)
-            list.add(readActiveKeyConfigurationDefinition(mementos[i],
-                    sourceIdOverride));
-        
-        // Add the standalone preference key.
-        final ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = readActiveKeyConfigurationDefinition();
-        if (activeKeyConfigurationDefinition != null) {
-            list.add(activeKeyConfigurationDefinition);
-        }
-
-        return list;
     }
 
     static CategoryDefinition readCategoryDefinition(IMemento memento,
@@ -543,70 +473,6 @@ final class Persistence {
                     sourceIdOverride));
 
         return list;
-    }
-    
-    /**
-     * This writes the active key configuration to its own preference key. This
-     * key is used by RCP applications as part of their plug-in customization.
-     * 
-     * @param activeKeyConfigurationDefinition
-     *            The key configuration identifier to write to the preference
-     *            store.
-     * @since 3.1
-     */
-    static final void writeActiveKeyConfigurationDefinition(
-            final ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition) {
-        final IPreferenceStore store = PlatformUI.getPreferenceStore();
-        store.setValue(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID,
-                activeKeyConfigurationDefinition.getKeyConfigurationId());
-    }
-
-    static void writeActiveKeyConfigurationDefinition(IMemento memento,
-            ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition) {
-        if (memento == null || activeKeyConfigurationDefinition == null)
-            throw new NullPointerException();
-
-        memento.putString(TAG_KEY_CONFIGURATION_ID,
-                activeKeyConfigurationDefinition.getKeyConfigurationId());
-        memento.putString(TAG_SOURCE_ID, activeKeyConfigurationDefinition
-                .getSourceId());
-    }
-
-    static void writeActiveKeyConfigurationDefinitions(IMemento memento,
-            String name, List activeKeyConfigurationDefinitions) {
-        if (memento == null || name == null
-                || activeKeyConfigurationDefinitions == null)
-            throw new NullPointerException();
-
-        activeKeyConfigurationDefinitions = new ArrayList(
-                activeKeyConfigurationDefinitions);
-        Iterator iterator = activeKeyConfigurationDefinitions.iterator();
-
-        while (iterator.hasNext())
-            Util.assertInstance(iterator.next(),
-                    ActiveKeyConfigurationDefinition.class);
-
-        final IPreferenceStore store = PlatformUI.getPreferenceStore();
-        final String defaultConfig = store
-                .getDefaultString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
-
-        iterator = activeKeyConfigurationDefinitions.iterator();
-        while (iterator.hasNext()) {
-            final ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = (ActiveKeyConfigurationDefinition) iterator
-                    .next();
-            final String currentConfig = activeKeyConfigurationDefinition
-                    .getKeyConfigurationId();
-            if ((defaultConfig == null) ? (currentConfig != null)
-                    : (!defaultConfig.equals(currentConfig))) {
-                writeActiveKeyConfigurationDefinition(
-                        memento.createChild(name),
-                        activeKeyConfigurationDefinition);
-                writeActiveKeyConfigurationDefinition(activeKeyConfigurationDefinition);
-            } else {
-                store
-                        .setToDefault(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
-            }
-        }
     }
 
     static void writeCategoryDefinition(IMemento memento,
