@@ -180,7 +180,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			Display d= fSubjectControl.getDisplay();
 			d.asyncExec(new Runnable() {
 				public void run() {
-					if ( !fInformationControl.isFocusControl())
+					if (fInformationControl == null || !fInformationControl.isFocusControl())
 						stop();
 				}
 			});

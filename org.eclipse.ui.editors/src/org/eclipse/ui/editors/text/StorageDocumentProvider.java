@@ -12,7 +12,7 @@ Contributors:
 package org.eclipse.ui.editors.text;
 
 
-import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -45,6 +45,9 @@ import org.eclipse.ui.texteditor.AbstractDocumentProvider;
  * Shareable document provider specialized for <code>IStorage</code>s.
  */
 public class StorageDocumentProvider extends AbstractDocumentProvider implements IStorageDocumentProvider {
+	
+	/** Default file size. */
+	protected final static int DEFAULT_FILE_SIZE= 15 * 1024;
 	
 	
 	/**
@@ -113,8 +116,8 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 			if (encoding == null)
 				encoding= getDefaultEncoding();
 				
-			in= new InputStreamReader(new BufferedInputStream(contentStream), encoding);
-			StringBuffer buffer= new StringBuffer();
+			in= new BufferedReader(new InputStreamReader(contentStream, encoding), DEFAULT_FILE_SIZE);
+			StringBuffer buffer= new StringBuffer(DEFAULT_FILE_SIZE);
 			char[] readBuffer= new char[2048];
 			int n= in.read(readBuffer);
 			while (n > 0) {
