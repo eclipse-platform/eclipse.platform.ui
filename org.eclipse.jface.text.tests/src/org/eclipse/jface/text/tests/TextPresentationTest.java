@@ -89,7 +89,7 @@ public class TextPresentationTest extends TestCase {
 		return createStyleRange(start, end, createColor(foreground, foreground, foreground), createColor(background, background, background), style);
 	}
 
-	private static Display fDisplay= new Display();
+	private Display fDisplay= Display.getDefault();
 	
 	/**
 	 * @return <code>null</code> if any of the parameters is smaller than 0 or greater than 255 
