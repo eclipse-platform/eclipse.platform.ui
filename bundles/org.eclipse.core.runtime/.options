@@ -7,6 +7,22 @@ org.eclipse.core.runtime/debug=false
 # Prints out values of OS, WS, NL, and ARCH
 org.eclipse.core.runtime/debug/context=false
 
+# Prints time taken by Plugin constructors and startup() and shutdown() methods.
+org.eclipse.core.runtime/timing/startup=false
+
+# Captures performance event information (See org.eclipse.core.runtime.PerformanceStats)
+org.eclipse.core.runtime/perf=false
+# Logs performance events that take longer than specified threshold value
+org.eclipse.core.runtime/perf/failure=true
+# Tracks performance events that take less than specified threshold value
+org.eclipse.core.runtime/perf/success=true
+
+# Turn on debugging for the compatibility layer
+org.eclipse.core.runtime/compatibility/debug=false
+
+# Turn on debugging for content types
+org.eclipse.core.runtime/contenttypes/debug=false
+
 # Prints debug information on running background jobs
 org.eclipse.core.runtime/jobs=false
 # Includes current date and time in job debug information
@@ -17,21 +33,6 @@ org.eclipse.core.runtime/jobs/beginend=false
 org.eclipse.core.runtime/jobs/locks=false
 # Throws an IllegalStateException when deadlock occurs
 org.eclipse.core.runtime/jobs/errorondeadlock=false
-
-# Prints time taken by Plugin constructors and startup() and shutdown() methods.
-org.eclipse.core.runtime/timing/startup=false
-
-# Captures performance event information
-org.eclipse.core.runtime/trace=false
-
-# Logs performance events that take longer than specified threshold value
-org.eclipse.core.runtime/trace/logfailure=false
-
-# Turn on debugging for the compatibility layer
-org.eclipse.core.runtime/compatibility/debug=false
-
-# Debug NLS message loading
-org.eclipse.core.runtime/messagebundles=false
 
 # Turn on debugging for the registry.
 org.eclipse.core.runtime/registry/debug=false
@@ -80,6 +81,3 @@ org.eclipse.core.runtime/preferences/set=false
 
 # Turn on debugging for the plugin stopper
 org.eclipse.core.runtime/debug/pluginstopper=false
-
-# Turn on debugging for content types
-org.eclipse.core.runtime/contenttypes/debug=false

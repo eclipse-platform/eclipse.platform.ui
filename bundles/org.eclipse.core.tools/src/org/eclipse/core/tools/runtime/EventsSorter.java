@@ -13,7 +13,7 @@ package org.eclipse.core.tools.runtime;
 import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
-import org.eclipse.core.runtime.EventStats;
+import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.core.tools.ISorter;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -73,8 +73,8 @@ public class EventsSorter extends ViewerSorter implements ISorter {
 			 * then by subsequent columns, depending on the column sort order.
 			 */
 			public int compare(Object o1, Object o2) {
-				EventStats s1 = (EventStats) o1;
-				EventStats s2 = (EventStats) o2;
+				PerformanceStats s1 = (PerformanceStats) o1;
+				PerformanceStats s2 = (PerformanceStats) o2;
 				int[] columnSortOrder = SORT_ORDERS_BY_COLUMN[columnNumber];
 				int result = 0;
 				for (int i = 0; i < columnSortOrder.length; ++i) {
@@ -90,12 +90,12 @@ public class EventsSorter extends ViewerSorter implements ISorter {
 			/**
 			 * Compares two markers, based only on the value of the specified column.
 			 */
-			int compareColumnValue(int column, EventStats s1, EventStats s2) {
+			int compareColumnValue(int column, PerformanceStats s1, PerformanceStats s2) {
 				switch (column) {
 					case EventsView.COLUMN_EVENT:
 						return c.compare(s1.getEvent(), s2.getEvent());
 					case EventsView.COLUMN_BLAME:
-						return c.compare(s1.getBlame(), s2.getBlame());
+						return c.compare(s1.getBlameString(), s2.getBlameString());
 					case EventsView.COLUMN_CONTEXT:
 						String name1 = s1.getContext() == null ? "" : s1.getContext(); //$NON-NLS-1$
 						String name2 = s2.getContext() == null ? "" : s2.getContext(); //$NON-NLS-1$

@@ -13,7 +13,7 @@ package org.eclipse.core.tools.runtime;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import org.eclipse.core.runtime.EventStats;
+import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.core.tools.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
@@ -60,8 +60,8 @@ public class EventsView extends TableWithTotalView {
 		}
 
 		/** @see IStructuredContentProvider#getElements(Object) */
-		public Object[] getElements(Object arg0) {
-			return EventStats.getAllStats();
+		public Object[] getElements(Object input) {
+			return PerformanceStats.getAllStats();
 		}
 
 		/** @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object) */
@@ -98,15 +98,15 @@ public class EventsView extends TableWithTotalView {
 		 * @see ITableLabelProvider#getColumnText(Object, int)
 		 */
 		public String getColumnText(Object element, int columnIndex) {
-			if (!(element instanceof EventStats)) {
+			if (!(element instanceof PerformanceStats)) {
 				return Policy.bind("stats.badStat"); //$NON-NLS-1$
 			}
-			EventStats stats = (EventStats) element;
+			PerformanceStats stats = (PerformanceStats) element;
 			switch (columnIndex) {
 				case COLUMN_EVENT :
 					return stats.getEvent();
 				case COLUMN_BLAME :
-					return stats.getBlame();
+					return stats.getBlameString();
 				case COLUMN_CONTEXT :
 					return stats.getContext(); //$NON-NLS-1$
 				case COLUMN_FAILURES :
@@ -120,10 +120,10 @@ public class EventsView extends TableWithTotalView {
 		}
 
 		public Color getForeground(Object element) {
-			if (!(element instanceof EventStats)) {
+			if (!(element instanceof PerformanceStats)) {
 				return null;
 			}
-			EventStats stats = (EventStats) element;
+			PerformanceStats stats = (PerformanceStats) element;
 			if (stats.getFailureCount() > 0)
 				return Display.getDefault().getSystemColor(SWT.COLOR_RED);
 			return null;
@@ -134,7 +134,7 @@ public class EventsView extends TableWithTotalView {
 		}
 	}
 	
-	class StatsListener extends EventStats.EventStatsListener {
+	class StatsListener extends PerformanceStats.PerformanceListener {
 		private void asyncExec(Runnable runnable) {
 			final Control control = viewer.getControl();
 			if (control == null || control.isDisposed())
@@ -145,9 +145,9 @@ public class EventsView extends TableWithTotalView {
 			display.asyncExec(runnable);
 		}
 		/**
-		 * @see EventStats.EventStatsListener#eventsOccurred(EventStats[])
+		 * @see PerformanceStats.PerformanceListener#eventsOccurred(PerformanceStats[])
 		 */
-		public void eventsOccurred(final EventStats[] event) {
+		public void eventsOccurred(final PerformanceStats[] event) {
 			asyncExec(new Runnable() {
 				public void run() {
 					if (!getViewer().getControl().isDisposed())
@@ -155,7 +155,7 @@ public class EventsView extends TableWithTotalView {
 				}
 			});
 		}
-		public void eventFailed(final EventStats event, final long duration) {
+		public void eventFailed(final PerformanceStats event, final long duration) {
 			asyncExec(new Runnable() {
 				public void run() {
 					String msg = "Performance event failure: " + event.getEvent() + " blame: " + event.getBlame() + " context: " + event.getContext()+ " duration: " + duration; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -206,7 +206,7 @@ public class EventsView extends TableWithTotalView {
 			iter = Arrays.asList(elements == null ? new Object[0] : elements).iterator();
 		}
 		while (iter.hasNext()) {
-			EventStats element = (EventStats) iter.next();
+			PerformanceStats element = (PerformanceStats) iter.next();
 			events += element.getRunCount();
 			time += element.getRunningTime();
 			count++;
@@ -223,8 +223,8 @@ public class EventsView extends TableWithTotalView {
 	protected void createActions() {
 		resetAction = new Action("Reset") { //$NON-NLS-1$
 			public void run() {
-				EventStats.clear();
-				getViewer().refresh();
+				PerformanceStats.clear();
+				getViewer().setInput("");
 				updateTotals();
 			}
 		};
@@ -255,7 +255,7 @@ public class EventsView extends TableWithTotalView {
 	 */
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-		EventStats.addEventListener(statsListener);
+		PerformanceStats.addListener(statsListener);
 		viewer.setInput(""); //$NON-NLS-1$
 	}
 
@@ -272,7 +272,7 @@ public class EventsView extends TableWithTotalView {
 	 */
 	public void dispose() {
 		super.dispose();
-		EventStats.removeEventListener(statsListener);
+		PerformanceStats.removeListener(statsListener);
 	}
 
 	/**
@@ -314,9 +314,9 @@ public class EventsView extends TableWithTotalView {
 	 * @see org.eclipse.core.tools.TableWithTotalView#getStatusLineMessage(Object)
 	 */
 	protected String getStatusLineMessage(Object element) {
-		if (!(element instanceof EventStats))
+		if (!(element instanceof PerformanceStats))
 			return ""; //$NON-NLS-1$
-		return  ((EventStats) element).getBlame();
+		return  ((PerformanceStats) element).getBlameString();
 	}
 
 	protected TableTreeViewer getViewer() {

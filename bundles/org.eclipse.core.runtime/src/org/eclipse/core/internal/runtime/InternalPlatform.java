@@ -55,14 +55,11 @@ public final class InternalPlatform {
 	// debug support:  set in loadOptions()
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_CONTEXT = false;
-	public static boolean DEBUG_TRACE = false;
-	public static boolean DEBUG_TRACE_LOG = false;
 	public static boolean DEBUG_PREFERENCE_GENERAL = false;
 	public static boolean DEBUG_PREFERENCE_GET = false;
 	public static boolean DEBUG_PREFERENCE_SET = false;
 	public static boolean DEBUG_REGISTRY = false;
 	public static String DEBUG_REGISTRY_DUMP = null;
-	public static boolean DEBUG_MESSAGE_BUNDLES = false;
 	private static Runnable endOfInitializationHandler = null;
 	private static final String FEATURE = "-feature"; //$NON-NLS-1$
 	private static final String FIRST_USE = "-firstUse"; //$NON-NLS-1$
@@ -718,14 +715,11 @@ public final class InternalPlatform {
 		DEBUG = getBooleanOption(Platform.PI_RUNTIME + "/debug", false); //$NON-NLS-1$
 		if (DEBUG) {
 			DEBUG_CONTEXT = getBooleanOption(Platform.PI_RUNTIME + "/debug/context", false); //$NON-NLS-1$
-			DEBUG_TRACE = getBooleanOption(Platform.PI_RUNTIME + "/trace", false);//$NON-NLS-1$
-			DEBUG_TRACE_LOG = getBooleanOption(Platform.PI_RUNTIME + "/trace/logfailure", false); //$NON-NLS-1$
 			DEBUG_REGISTRY = getBooleanOption(Platform.PI_RUNTIME + "/registry/debug", false); //$NON-NLS-1$
 			DEBUG_REGISTRY_DUMP = getOption(Platform.PI_RUNTIME + "/registry/debug/dump"); //$NON-NLS-1$
 			DEBUG_PREFERENCE_GENERAL = getBooleanOption(Platform.PI_RUNTIME + "/preferences/general", false); //$NON-NLS-1$
 			DEBUG_PREFERENCE_GET = getBooleanOption(Platform.PI_RUNTIME + "/preferences/get", false); //$NON-NLS-1$
 			DEBUG_PREFERENCE_SET = getBooleanOption(Platform.PI_RUNTIME + "/preferences/set", false); //$NON-NLS-1$
-			DEBUG_MESSAGE_BUNDLES = getBooleanOption(Platform.PI_RUNTIME + "/messagebundles", false); //$NON-NLS-1$
 		}
 	}
 

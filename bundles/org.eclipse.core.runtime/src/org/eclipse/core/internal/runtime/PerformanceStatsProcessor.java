@@ -13,15 +13,15 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.EventStats.EventStatsListener;
+import org.eclipse.core.runtime.PerformanceStats.PerformanceListener;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * Processes, records, and performs notification of performance events
  * that occur in the system.
  */
-public class EventStatsProcessor extends Job {
-	private static final EventStatsProcessor instance = new EventStatsProcessor();
+public class PerformanceStatsProcessor extends Job {
+	private static final PerformanceStatsProcessor instance = new PerformanceStatsProcessor();
 
 	private static final long SCHEDULE_DELAY = 2000;
 
@@ -32,7 +32,7 @@ public class EventStatsProcessor extends Job {
 
 	/**
 	 * Event failures that have occurred but have not yet been broadcast.
-	 * Maps (EventStats -> Long).
+	 * Maps (PerformanceStats -> Long).
 	 */
 	private final HashMap failures = new HashMap();
 
@@ -42,9 +42,9 @@ public class EventStatsProcessor extends Job {
 	private final ListenerList listeners = new ListenerList();
 
 	/*
-	 * @see EventStats#addEventListener
+	 * @see PerformanceStats#addListener
 	 */
-	public static void addEventListener(EventStatsListener listener) {
+	public static void addListener(PerformanceListener listener) {
 		instance.listeners.add(listener);
 	}
 
@@ -53,7 +53,7 @@ public class EventStatsProcessor extends Job {
 	 * 
 	 * @param stats The event that occurred
 	 */
-	public static void changed(EventStats stats) {
+	public static void changed(PerformanceStats stats) {
 		synchronized (instance) {
 			instance.changes.add(stats);
 		}
@@ -66,30 +66,37 @@ public class EventStatsProcessor extends Job {
 	 * @param stats The event that occurred
 	 * @param elapsed The elapsed time for this failure
 	 */
-	public static void failed(EventStats stats, long elapsed) {
+	public static void failed(PerformanceStats stats, long elapsed) {
 		synchronized (instance) {
 			instance.failures.put(stats, new Long(elapsed));
 		}
 		instance.schedule(SCHEDULE_DELAY);
+		//log the failure
+		final InternalPlatform platform = InternalPlatform.getDefault();
+		String pluginId = platform.getBundleId(stats.getBlame());
+		if (pluginId == null)
+			pluginId = Platform.PI_RUNTIME;
+		String msg = "Performance event failure: " + stats.getEvent() + " blame: " + stats.getBlameString() + " context: " + stats.getContext() + " duration: " + elapsed; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		platform.log(new Status(IStatus.WARNING, pluginId, 1, msg, new RuntimeException()));
 	}
 
 	/*
-	 * @see EventStats#printStats(PrintWriter)
+	 * @see PerformanceStats#printStats(PrintWriter)
 	 */
 	public static void printStats(PrintWriter out) {
 		/* gather totals */
 		long totalTime = 0;
 		int totalCount = 0;
-		EventStats[] allStats = EventStats.getAllStats();
+		PerformanceStats[] allStats = PerformanceStats.getAllStats();
 		for (int i = 0; i < allStats.length; i++) {
-			EventStats stats = allStats[i];
+			PerformanceStats stats = allStats[i];
 			totalTime += stats.getRunningTime();
 			totalCount += stats.getRunCount();
 		}
 		//dump stats
 		out.println("---------------------------------------------------------------"); //$NON-NLS-1$
 		for (int i = 0; i < allStats.length; i++) {
-			EventStats stats = allStats[i];
+			PerformanceStats stats = allStats[i];
 			out.print("Event: "); //$NON-NLS-1$
 			out.print(stats.getEvent());
 			out.print(" Blame: "); //$NON-NLS-1$
@@ -122,13 +129,16 @@ public class EventStatsProcessor extends Job {
 	}
 
 	/*
-	 * @see EventStats#removeEventListener
+	 * @see PerformanceStats#removeListener
 	 */
-	public static void removeEventListener(EventStatsListener listener) {
+	public static void removeListener(PerformanceListener listener) {
 		instance.listeners.remove(listener);
 	}
 
-	private EventStatsProcessor() {
+	/**
+	 * Private constructor to enforce singleton usage.
+	 */
+	private PerformanceStatsProcessor() {
 		super("Event Stats"); //$NON-NLS-1$
 		setSystem(true);
 		setPriority(DECORATE);
@@ -138,19 +148,19 @@ public class EventStatsProcessor extends Job {
 	 * @see Job#run(IProgressMonitor)
 	 */
 	protected IStatus run(IProgressMonitor monitor) {
-		EventStats[] events;
-		EventStats[] failedEvents;
+		PerformanceStats[] events;
+		PerformanceStats[] failedEvents;
 		Long[] failedTimes;
 		synchronized (this) {
-			events = (EventStats[]) changes.toArray(new EventStats[changes.size()]);
+			events = (PerformanceStats[]) changes.toArray(new PerformanceStats[changes.size()]);
 			changes.clear();
-			failedEvents = (EventStats[]) failures.keySet().toArray(new EventStats[failures.size()]);
+			failedEvents = (PerformanceStats[]) failures.keySet().toArray(new PerformanceStats[failures.size()]);
 			failedTimes = (Long[]) failures.values().toArray(new Long[failures.size()]);
 			failures.clear();
 		}
 		Object[] toNotify = listeners.getListeners();
 		for (int i = 0; i < toNotify.length; i++) {
-			final EventStats.EventStatsListener listener = ((EventStats.EventStatsListener) toNotify[i]);
+			final PerformanceStats.PerformanceListener listener = ((PerformanceStats.PerformanceListener) toNotify[i]);
 			if (events.length > 0)
 				listener.eventsOccurred(events);
 			for (int j = 0; j < failedEvents.length; j++)

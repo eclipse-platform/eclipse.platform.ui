@@ -11,7 +11,7 @@
 package org.eclipse.core.tools;
 
 import java.util.Iterator;
-import org.eclipse.core.runtime.EventStats;
+import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.jface.viewers.*;
 
 /**
@@ -68,8 +68,8 @@ public class TableSelectionProviderDecorator implements ISelectionProvider {
 		copyText.append('\n');
 		for (Iterator selectionIter = structuredSelection.iterator(); selectionIter.hasNext();) {
 			Object obj = selectionIter.next();
-			if (obj instanceof EventStats) {
-				copyText.append(prettyPluginStats((EventStats) obj));
+			if (obj instanceof PerformanceStats) {
+				copyText.append(prettyPluginStats((PerformanceStats) obj));
 				copyText.append('\n');
 			}
 		}
@@ -87,7 +87,7 @@ public class TableSelectionProviderDecorator implements ISelectionProvider {
 		return retString;
 	}
 
-	private String prettyPluginStats(EventStats stats) {
+	private String prettyPluginStats(PerformanceStats stats) {
 		String retString = ""; //$NON-NLS-1$
 		retString += stats.getEvent() + "\t\t"; //$NON-NLS-1$
 		retString += stats.getBlame() + "\t\t"; //$NON-NLS-1$
