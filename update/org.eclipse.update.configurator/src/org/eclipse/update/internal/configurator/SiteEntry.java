@@ -54,7 +54,16 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		if (policy == null)
 			policy = new SitePolicy(DEFAULT_POLICY_TYPE, DEFAULT_POLICY_LIST);
 
-		this.url = url;
+		if (url.getProtocol().equals("file")) {
+			try {
+				// TODO remove this when platform fixes local file url's
+				this.url = new File(url.getFile()).toURL(); 
+			} catch (MalformedURLException e1) {
+				this.url = url;
+			}
+		} else
+			this.url = url;
+		
 		this.policy = policy;
 		this.resolvedURL = this.url;
 		if (url.getProtocol().equals(PlatformURLHandler.PROTOCOL)) {
