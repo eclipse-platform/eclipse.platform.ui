@@ -38,11 +38,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	private IPath fLocation;
 	
 	/**
-	 * 
-	 */	
-	private String fRawName;
-		
-	/**
 	 * Constructs a launch configuration in the given location.
 	 * 
 	 * @param location path to where this launch configuration's
@@ -87,14 +82,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return getLastLocationSegment();
 	}
 	
-	protected final String getRawName() {
-		return fRawName;
-	}
-	
-	private void setRawName(String name) {
-		fRawName = name;
-	}
-	
 	private String getLastLocationSegment() {
 		String name = getLocation().lastSegment();
 		name = name.substring(0, name.length() - (LAUNCH_CONFIGURATION_FILE_EXTENSION.length() + 1));
@@ -117,7 +104,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 */
 	private void setLocation(IPath location) {
 		fLocation = location;
-		setRawName(getLastLocationSegment());
 	}
 
 	/**

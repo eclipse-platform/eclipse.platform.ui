@@ -51,10 +51,14 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	private boolean fDirty = false;
 	
 	/**
-	 * The new name for this configuration, or <code>null</code>
-	 * if this configuration is not to be re-named or created.
+	 * The name for this configuration.
 	 */
 	private String fName;
+	
+	/**
+	 * Indicates whether this working copy has been explicitly renamed.
+	 */
+	private boolean fRenamed = false;
 	
 	/**
 	 * Suppress change notification until created
@@ -78,6 +82,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 */
 	protected LaunchConfigurationWorkingCopy(LaunchConfiguration original) throws CoreException {
 		super(original.getLocation());
+		setName(original.getName());
 		copyFrom(original);
 		setOriginal(original);
 		fSuppressChange = false;
@@ -97,7 +102,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	protected LaunchConfigurationWorkingCopy(LaunchConfiguration original, String name) throws CoreException {
 		super(original.getLocation());
 		copyFrom(original);
-		setNewName(name);
+		setName(name);
 		fSuppressChange = false;
 	}
 	
@@ -112,7 +117,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 */
 	protected LaunchConfigurationWorkingCopy(IContainer container, String name, ILaunchConfigurationType type) {
 		super(null);
-		setNewName(name);
+		setName(name);
 		setInfo(new LaunchConfigurationInfo());
 		getInfo().setType(type);
 		setContainer(container);
@@ -355,7 +360,8 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 */
 	public void rename(String name) {
 		if (!getName().equals(name)) {
-			setNewName(name);
+			setName(name);
+			fRenamed = true;
 		}
 	}
 
@@ -364,34 +370,16 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * 
 	 * @param name the new name for this configuration
 	 */
-	private void setNewName(String name) {
+	private void setName(String name) {
 		fName = name;
 		setDirty();
-	}
-	
-	/**
-	 * Returns the new name for this configuration, or
-	 * <code>null</code> if this configuration is not
-	 * to be renamed or created.
-	 * 
-	 * @return the new name for this configuration, or
-	 *  <code>null</code> if this configuration is not
-	 *  to be renamed or created
-	 */
-	private String getNewName() {
-		return fName;
 	}
 	
 	/**
 	 * @see ILaunchConfiguration#getName()
 	 */
 	public String getName() {
-		if (getNewName() == null) {
-			//return super.getName();
-			return getRawName();
-		} else {
-			return getNewName();
-		}
+		return fName;
 	}
 	
 	/**
@@ -441,7 +429,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * location has changed from that of its original
 	 */
 	protected boolean isMoved() {
-		if (isNew() || getNewName() != null) {
+		if (isNew() || fRenamed) {
 			return true;
 		}
 		IContainer newContainer = getContainer();
