@@ -211,7 +211,9 @@ protected void valueChanged(boolean oldValue, boolean newValue) {
  * @see FieldEditor.setEnabled
  */
 public void setEnabled(boolean enabled, Composite parent){
-	super.setEnabled(enabled,parent);
+	//Only call super if there is a label already
+	if(style == SEPARATE_LABEL)
+		super.setEnabled(enabled,parent);
 	getChangeControl(parent).setEnabled(enabled);
 }
 
