@@ -31,8 +31,10 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 public final class PlatformUI {
 	/**
 	 * Identifies the workbench plug-in.
+	 * 
+	 * @issue needs to be org.eclipse.ui when we rename this plugin to be org.eclipse.ui
 	 */
-	public static final String PLUGIN_ID = "org.eclipse.ui"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.ui.workbench"; //$NON-NLS-1$
 	
 	/**
 	 * Return code (value 0) indicating that the workbench terminated normally.
