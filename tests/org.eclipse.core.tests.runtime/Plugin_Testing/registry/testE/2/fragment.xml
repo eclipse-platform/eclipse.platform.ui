@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<fragment
+   id="testE2"
+   name="TestE2 Plug-in"
+   version="1.0.0"
+
+   plugin-id="testE1"
+   plugin-version="1.0.0">
+  
+  	<extension point="testE1.xptE1" id="ext1">
+	</extension>
+
+</fragment>
