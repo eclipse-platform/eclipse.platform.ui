@@ -57,38 +57,38 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     private IPageListener pageListener = new IPageListener() {
 
         public void pageActivated(IWorkbenchPage workbenchPage) {
-            processHandlerSubmissionsByCommandId(false);
+            processHandlerSubmissions(false);
         }
 
         public void pageClosed(IWorkbenchPage workbenchPage) {
-            processHandlerSubmissionsByCommandId(false);
+            processHandlerSubmissions(false);
         }
 
         public void pageOpened(IWorkbenchPage workbenchPage) {
-            processHandlerSubmissionsByCommandId(false);
+            processHandlerSubmissions(false);
         }
     };
 
     private IPartListener partListener = new IPartListener() {
 
         public void partActivated(IWorkbenchPart workbenchPart) {
-            processHandlerSubmissionsByCommandId(false);
+            processHandlerSubmissions(false);
         }
 
         public void partBroughtToTop(IWorkbenchPart workbenchPart) {
-            processHandlerSubmissionsByCommandId(false);
+            processHandlerSubmissions(false);
         }
 
         public void partClosed(IWorkbenchPart workbenchPart) {
-            processHandlerSubmissionsByCommandId(false);
+            processHandlerSubmissions(false);
         }
 
         public void partDeactivated(IWorkbenchPart workbenchPart) {
-            processHandlerSubmissionsByCommandId(false);
+            processHandlerSubmissions(false);
         }
 
         public void partOpened(IWorkbenchPart workbenchPart) {
-            processHandlerSubmissionsByCommandId(false);
+            processHandlerSubmissions(false);
         }
     };
 
@@ -96,31 +96,33 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
         public void perspectiveActivated(IWorkbenchPage workbenchPage,
                 IPerspectiveDescriptor perspectiveDescriptor) {
-            processHandlerSubmissionsByCommandId(false);
+            processHandlerSubmissions(false);
         }
 
         public void perspectiveChanged(IWorkbenchPage workbenchPage,
                 IPerspectiveDescriptor perspectiveDescriptor, String changeId) {
-            processHandlerSubmissionsByCommandId(false);
+            processHandlerSubmissions(false);
         }
     };
+
+    private boolean processingHandlerSubmissions;
 
     private IWindowListener windowListener = new IWindowListener() {
 
         public void windowActivated(IWorkbenchWindow window) {
-            processHandlerSubmissionsByCommandId(false);
+            processHandlerSubmissions(false);
         }
 
         public void windowClosed(IWorkbenchWindow window) {
-            processHandlerSubmissionsByCommandId(false);
+            processHandlerSubmissions(false);
         }
 
         public void windowDeactivated(IWorkbenchWindow window) {
-            processHandlerSubmissionsByCommandId(false);
+            processHandlerSubmissions(false);
         }
 
         public void windowOpened(IWorkbenchWindow window) {
-            processHandlerSubmissionsByCommandId(false);
+            processHandlerSubmissions(false);
         }
     };
 
@@ -169,7 +171,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             handlerSubmissions2.add(handlerSubmission);
         }
 
-        processHandlerSubmissionsByCommandId(true);
+        processHandlerSubmissions(true);
     }
 
     public void deregisterFromKeyBindings(Shell shell) {
@@ -211,7 +213,14 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         }
     }
 
-    private void processHandlerSubmissionsByCommandId(boolean force) {
+    public final boolean isProcessingHandlerSubmissions() {
+        return processingHandlerSubmissions;
+    }
+
+    private void processHandlerSubmissions(boolean force) {
+        if (!processingHandlerSubmissions)
+            return;
+
         Map handlersByCommandId = new HashMap();
         String activePartId = null;
         String activePerspectiveId = null;
@@ -340,7 +349,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             }
         }
 
-        processHandlerSubmissionsByCommandId(true);
+        processHandlerSubmissions(true);
     }
 
     public final void setKeyFilterEnabled(boolean keyFilterEnabled) {
@@ -357,6 +366,14 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             }
 
             this.keyFilterEnabled = keyFilterEnabled;
+        }
+    }
+
+    public final void setProcessingHandlerSubmissions(
+            boolean processingHandlerSubmissions) {
+        if (this.processingHandlerSubmissions != processingHandlerSubmissions) {
+            this.processingHandlerSubmissions = processingHandlerSubmissions;
+            processHandlerSubmissions(true);
         }
     }
 }

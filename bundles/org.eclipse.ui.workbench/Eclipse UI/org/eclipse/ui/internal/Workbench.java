@@ -899,6 +899,7 @@ public final class Workbench implements IWorkbench {
 		forceOpenPerspective();
 
 		isStarting = false;
+		workbenchCommandSupport.setProcessingHandlerSubmissions(true);
 		return true;
 	}
 
@@ -1944,9 +1945,9 @@ public final class Workbench implements IWorkbench {
 		return ProgressManager.getInstance();
 	}
 
-	private IWorkbenchActivitySupport workbenchActivitySupport;
-	private IWorkbenchCommandSupport workbenchCommandSupport;
-	private IWorkbenchContextSupport workbenchContextSupport;
+	private WorkbenchActivitySupport workbenchActivitySupport;
+	private WorkbenchCommandSupport workbenchCommandSupport;
+	private WorkbenchContextSupport workbenchContextSupport;
 
 	public IWorkbenchActivitySupport getActivitySupport() {
 		return workbenchActivitySupport;
