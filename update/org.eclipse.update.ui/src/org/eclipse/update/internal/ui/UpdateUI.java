@@ -146,9 +146,8 @@ public class UpdateUI extends AbstractUIPlugin {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
-		super.startup();
+		super.start(context);
 		readInfo();
-		model = new UpdateModel();
 		authenticator = new UpdateManagerAuthenticator();
 		Authenticator.setDefault(authenticator);
 		int historyPref =
@@ -157,6 +156,8 @@ public class UpdateUI extends AbstractUIPlugin {
 			SiteLocalModel.DEFAULT_HISTORY = historyPref;
 		}
 	}
+	
+	
 
 	public boolean isWebAppStarted() {
 		return appServerHost != null;
@@ -174,7 +175,8 @@ public class UpdateUI extends AbstractUIPlugin {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		model.shutdown();
+		if (model != null)
+			model.shutdown();
 
 		if (labelProvider != null)
 			labelProvider.dispose();
@@ -183,6 +185,8 @@ public class UpdateUI extends AbstractUIPlugin {
 	}
 
 	public UpdateModel getUpdateModel() {
+		if (model == null)
+			model = new UpdateModel();
 		return model;
 	}
 
