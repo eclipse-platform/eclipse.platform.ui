@@ -116,11 +116,14 @@ public class LayoutData extends RequestData {
 	}
 
 	public String getVisibleView() {
-		String view = request.getParameter("tab");
-		if (view != null && view.length() > 0)
-			return view;
-		else
-			return "toc";
+		String requestedView = request.getParameter("tab");
+		View[] allViews=getViews();
+		for(int i=0; i<allViews.length; i++){
+			if(allViews[i].getName().equals(requestedView)){
+				 return requestedView;
+			}
+		}
+		return "toc";
 	}
 
 	public View getCurrentView() {
