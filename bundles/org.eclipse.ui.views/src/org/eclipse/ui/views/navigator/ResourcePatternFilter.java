@@ -14,8 +14,10 @@ import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.ui.internal.ViewsPlugin;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -63,7 +65,18 @@ public String[] getPatterns() {
  */
 private void initializeFromPreferences() {
 	// get the filters that were saved by ResourceNavigator.setFiltersPreference
-	String storedPatterns = WorkbenchPlugin.getDefault().getPreferenceStore().getString(FILTERS_TAG);
+	IPreferenceStore viewsPrefs = ViewsPlugin.getDefault().getPreferenceStore(); 
+	String storedPatterns = viewsPrefs.getString(FILTERS_TAG);
+
+	if (storedPatterns.length() == 0) {
+		// try to migrate patterns from old workbench preference store location
+		IPreferenceStore workbenchPrefs = WorkbenchPlugin.getDefault().getPreferenceStore();
+		storedPatterns = workbenchPrefs.getString(FILTERS_TAG);
+		if (storedPatterns.length() > 0) {
+			viewsPrefs.setValue(FILTERS_TAG, storedPatterns);
+			workbenchPrefs.setValue(FILTERS_TAG, ""); 	//$NON-NLS-1$
+		}
+	}
 
 	if (storedPatterns.length() == 0) {
 		// revert to all filter extensions with selected == "true"

@@ -3,7 +3,8 @@
    id="org.eclipse.ui.views"
    name="%pluginName"
    version="2.1.0"
-   provider-name="%providerName">
+   provider-name="%providerName"
+   class="org.eclipse.ui.internal.ViewsPlugin">
 
    <runtime>
       <library name="views.jar">

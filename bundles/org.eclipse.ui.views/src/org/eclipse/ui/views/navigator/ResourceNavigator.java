@@ -11,12 +11,13 @@ Contributors:
 **********************************************************************/
 
 import java.util.*;
-import java.util.List; // Otherwise ambiguous
+import java.util.List;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
@@ -28,6 +29,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.ViewsPlugin;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -51,12 +53,19 @@ public class ResourceNavigator
 	private ResourceWorkingSetFilter workingSetFilter =
 		new ResourceWorkingSetFilter();
 
-	/** Settings constant for sort order. */
+	/** 
+	 * Settings constant for section name (value <code>ResourceNavigator</code>).
+	 */
+	private static final String STORE_SECTION = "ResourceNavigator"; //$NON-NLS-1$
+	/** 
+	 * Settings constant for sort order (value <code>ResourceViewer.STORE_SORT_TYPE</code>).
+	 */
 	private static final String STORE_SORT_TYPE = "ResourceViewer.STORE_SORT_TYPE"; //$NON-NLS-1$
-
-	/** Settings constant for working set. */
+	/** 
+	 * Settings constant for working set (value <code>ResourceWorkingSetFilter.STORE_WORKING_SET</code>).
+	 */
 	private static final String STORE_WORKING_SET = "ResourceWorkingSetFilter.STORE_WORKING_SET"; //$NON-NLS-1$
-
+	
 	/**
 	 * @deprecated No longer used but preserved to avoid an api change.
 	 */
@@ -115,12 +124,14 @@ public class ResourceNavigator
 	 * Constructs a new resource navigator view.
 	 */
 	public ResourceNavigator() {
-		IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
-		settings = workbenchSettings.getSection("ResourceNavigator"); //$NON-NLS-1$
-		if (settings == null)
-			settings = workbenchSettings.addNewSection("ResourceNavigator"); //$NON-NLS-1$
+		IDialogSettings viewsSettings = getPlugin().getDialogSettings();
+		
+		settings = viewsSettings.getSection(STORE_SECTION);
+		if (settings == null) {
+			settings = viewsSettings.addNewSection(STORE_SECTION);
+			migrateDialogSettings();
+		}
 	}
-
 	/**
 	 * Converts the given selection into a form usable by the viewer,
 	 * where the elements are resources.
@@ -421,7 +432,7 @@ public class ResourceNavigator
 	 * Returns the navigator's plugin.
 	 */
 	public AbstractUIPlugin getPlugin() {
-		return (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
+		return (AbstractUIPlugin) Platform.getPlugin(ViewsPlugin.PLUGIN_ID);
 	}
 
 	/**
@@ -695,6 +706,29 @@ public class ResourceNavigator
 	}
 
 	/**
+	 * Migrates the dialog settings from the UI plugin store to the 
+	 * Views plugin store.
+	 */
+	private void migrateDialogSettings() {
+		AbstractUIPlugin uiPlugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
+		IDialogSettings uiSettings = uiPlugin.getDialogSettings();
+			
+		uiSettings = uiSettings.getSection(STORE_SECTION);
+		if (uiSettings != null) {
+			String workingSetName = uiSettings.get(STORE_WORKING_SET);
+			if (workingSetName.length() > 0) {
+				settings.put(STORE_WORKING_SET, workingSetName);
+				uiSettings.put(STORE_WORKING_SET, "");			//$NON-NLS-1$
+			}
+			String sortType = uiSettings.get(STORE_SORT_TYPE);
+			if (sortType.length() > 0) {
+				settings.put(STORE_SORT_TYPE, sortType);
+				uiSettings.put(STORE_SORT_TYPE, "");			//$NON-NLS-1$
+			}
+		}
+	}
+
+	/**
 	 * Restores the saved filter settings.
 	 */
 	private void restoreFilters() {
@@ -848,9 +882,15 @@ public class ResourceNavigator
 			sb.append(patterns[i]);
 		}
 
-		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(
+		getPlugin().getPreferenceStore().setValue(
 			ResourcePatternFilter.FILTERS_TAG,
 			sb.toString());
+			
+		// remove value in old workbench preference store location 
+		IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
+		String storedPatterns = preferenceStore.getString(ResourcePatternFilter.FILTERS_TAG);
+		if (storedPatterns.length() > 0)
+			preferenceStore.setValue(ResourcePatternFilter.FILTERS_TAG, ""); 	//$NON-NLS-1$
 	}
 
 	/**
