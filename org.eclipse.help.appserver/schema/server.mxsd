@@ -62,7 +62,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is a sample usage of the support extension point:
+         The following is a sample usage of the server extension point:
 &lt;p&gt;
 &lt;samp&gt;
 &amp;lt;extension id=&quot;appserver&quot; name=&quot;Tomcat&quot;  point=&quot;org.eclipse.help.appserver.server&quot;&amp;gt;
