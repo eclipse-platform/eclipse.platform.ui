@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.operations;
 
+import java.util.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
@@ -25,9 +27,18 @@ public class InstallOperation
 	private static final String KEY_OLD = "OperationsManager.error.old";
 
 	private IFeatureReference[] optionalFeatures;
-	private IFeature[] unconfiguredOptionalElements;
+	private IFeature[] unconfiguredOptionalFeatures;
 	private IVerificationListener verifier;
 
+	/**
+	 * Constructor
+	 * @param config
+	 * @param site
+	 * @param feature
+	 * @param optionalFeatures optional features to install. If null, the operation will install them all (if any)
+	 * @param unconfiguredOptionalElements optional features unconfigured before the operation. They should remain unconfigured after the install.
+	 * @param verifier
+	 */
 	public InstallOperation(
 		IInstallConfiguration config,
 		IConfiguredSite site,
@@ -39,7 +50,7 @@ public class InstallOperation
 		IFeature[] installed = UpdateUtils.getInstalledFeatures(feature);
 		if (installed.length > 0)
 			this.oldFeature = installed[0];
-		this.unconfiguredOptionalElements = unconfiguredOptionalElements;
+		this.unconfiguredOptionalFeatures = unconfiguredOptionalElements;
 		this.optionalFeatures = optionalFeatures;
 		this.verifier = verifier;
 	}
@@ -56,6 +67,8 @@ public class InstallOperation
 			&& feature.getVersionedIdentifier().equals(
 				oldFeature.getVersionedIdentifier()))
 			reinstall = true;
+
+		setOptionalFeatures();
 
 		if (optionalFeatures == null)
 			targetSite.install(feature, verifier, pm);
@@ -95,22 +108,40 @@ public class InstallOperation
 	}
 
 	private void preserveOptionalState() {
-		if (unconfiguredOptionalElements == null)
+		if (unconfiguredOptionalFeatures == null)
 			return;
 
-		for (int i = 0; i < unconfiguredOptionalElements.length; i++) {
+		for (int i = 0; i < unconfiguredOptionalFeatures.length; i++) {
 			try {
 				// Get the feature that matches the original unconfigured ones.
 				IFeature localFeature =
 					UpdateUtils.getLocalFeature(
 						targetSite,
-						unconfiguredOptionalElements[i]);
+						unconfiguredOptionalFeatures[i]);
 				if (localFeature != null)
 					targetSite.unconfigure(localFeature);
 
 			} catch (CoreException e) {
 				// Ignore this - we will leave with it
 			}
+		}
+	}
+	
+	private void setOptionalFeatures() {
+		// Ensure optional features are correctly set
+		if (optionalFeatures == null && UpdateUtils.hasOptionalFeatures(feature) ) {
+			JobRoot jobRoot = new JobRoot(config, this);
+			
+			HashSet set = new HashSet();
+			boolean update = oldFeature != null;
+			boolean patch = UpdateUtils.isPatch(feature);
+			FeatureHierarchyElement[] elements = jobRoot.getElements();
+			for (int i = 0; i < elements.length; i++) {
+				elements[i].addCheckedOptionalFeatures(update, patch, config, set);
+			}
+			optionalFeatures = new IFeatureReference[set.size()];
+			set.toArray(optionalFeatures);
+			unconfiguredOptionalFeatures = jobRoot.getUnconfiguredOptionalFeatures(config, targetSite);
 		}
 	}
 }

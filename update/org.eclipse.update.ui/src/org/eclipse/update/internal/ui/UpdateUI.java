@@ -301,50 +301,6 @@ public class UpdateUI extends AbstractUIPlugin {
 		return (IFeature[]) features.toArray(new IFeature[features.size()]);
 	}
 
-	public static boolean isPatch(IFeature candidate) {
-		IImport[] imports = candidate.getImports();
-
-		for (int i = 0; i < imports.length; i++) {
-			IImport iimport = imports[i];
-			if (iimport.isPatch())
-				return true;
-		}
-		return false;
-	}
-
-	public static boolean isPatch(IFeature target, IFeature candidate) {
-		VersionedIdentifier vid = target.getVersionedIdentifier();
-		IImport[] imports = candidate.getImports();
-
-		for (int i = 0; i < imports.length; i++) {
-			IImport iimport = imports[i];
-			if (iimport.isPatch()) {
-				VersionedIdentifier ivid = iimport.getVersionedIdentifier();
-				if (vid.equals(ivid)) {
-					// Bingo.
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	public static IInstallConfiguration getBackupConfigurationFor(IFeature feature) {
-		VersionedIdentifier vid = feature.getVersionedIdentifier();
-		String key = "@" + vid.getIdentifier() + "_" + vid.getVersion(); //$NON-NLS-1$ //$NON-NLS-2$
-		try {
-			ILocalSite lsite = SiteManager.getLocalSite();
-			IInstallConfiguration[] configs =
-				lsite.getPreservedConfigurations();
-			for (int i = 0; i < configs.length; i++) {
-				IInstallConfiguration config = configs[i];
-				if (config.getLabel().startsWith(key))
-					return config;
-			}
-		} catch (CoreException e) {
-		}
-		return null;
-	}
 
 	/**
 	 * Gets the authenticator.
