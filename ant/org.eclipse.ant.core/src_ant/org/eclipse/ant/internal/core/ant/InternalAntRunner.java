@@ -452,7 +452,6 @@ public class InternalAntRunner {
 	 * @exception execution exceptions
 	 */
 	public void run(Object argArray) throws Exception {
-		AntCorePlugin.getPlugin().getPreferences().setRunningHeadless(true);
 		run(getArrayList((String[]) argArray));
 	}
 

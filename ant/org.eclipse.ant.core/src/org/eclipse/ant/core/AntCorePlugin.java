@@ -155,9 +155,16 @@ public class AntCorePlugin extends Plugin {
 	 */
 	public AntCorePreferences getPreferences() {
 		if (preferences == null) {
-			preferences = new AntCorePreferences(extractExtensions(PT_TASKS), extractExtensions(PT_EXTRA_CLASSPATH), extractExtensions(PT_TYPES));
+			preferences = new AntCorePreferences(extractExtensions(PT_TASKS), extractExtensions(PT_EXTRA_CLASSPATH), extractExtensions(PT_TYPES), false);
 		}
 		return preferences;
+	}
+	
+	/**
+	 * Set this plug-in's preferences for running headless.
+	 */
+	protected void setRunningHeadless() {
+		preferences = new AntCorePreferences(extractExtensions(PT_TASKS), extractExtensions(PT_EXTRA_CLASSPATH), extractExtensions(PT_TYPES), true);
 	}
 
 	/**

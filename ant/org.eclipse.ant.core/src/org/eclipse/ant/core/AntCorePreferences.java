@@ -42,7 +42,8 @@ public class AntCorePreferences {
 	
 	private boolean runningHeadless= false;
 
-	protected AntCorePreferences(List defaultTasks, List defaultExtraClasspath, List defaultTypes) {
+	protected AntCorePreferences(List defaultTasks, List defaultExtraClasspath, List defaultTypes, boolean headless) {
+		runningHeadless= headless;
 		initializePluginClassLoaders();
 		defaultURLs = new ArrayList(20);
 		this.defaultTasks = computeDefaultTasks(defaultTasks);
@@ -653,9 +654,5 @@ public class AntCorePreferences {
 	
 	public String getAntHome() {
 		return antHome;
-	}
-	
-	public void setRunningHeadless(boolean runningHeadless) {
-		this.runningHeadless = runningHeadless;
 	}
 }

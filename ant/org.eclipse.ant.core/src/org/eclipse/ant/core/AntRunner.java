@@ -404,6 +404,9 @@ public class AntRunner implements IPlatformRunnable {
 	 * @exception Exception if a problem occurred during the script execution
 	 */
 	public Object run(Object argArray) throws Exception {
+		//set the preferences for headless mode
+		AntCorePlugin.getPlugin().setRunningHeadless();
+		
 		// Add debug information if necessary - fix for bug 5672.
 		// Since the platform parses the -debug command line arg
 		// and removes it from the args passed to the applications,
