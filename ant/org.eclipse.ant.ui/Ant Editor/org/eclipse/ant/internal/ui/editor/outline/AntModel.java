@@ -843,17 +843,8 @@ public class AntModel {
 			return;
 		}
 		try {
-			int offset;
 			String prefix= "<" + element.getName(); //$NON-NLS-1$
-			if (column <= 0) {
-				offset= getOffset(line, 0);
-				int lastCharColumn= getLastCharColumn(line);
-				offset= computeOffsetUsingPrefix(line, offset, prefix, lastCharColumn);
-			} else {
-				offset= getOffset(line, column);
-				offset= computeOffsetUsingPrefix(line, offset, prefix, column);
-			}
- 			
+			int offset = computeOffset(line, column, prefix);
 			element.setOffset(offset + 1);
 			element.setSelectionLength(element.getName().length());
 		} catch (BadLocationException e) {
@@ -861,6 +852,19 @@ public class AntModel {
 		}
 	}
 	
+	private int computeOffset(int line, int column, String prefix) throws BadLocationException {
+		int offset;
+		if (column <= 0) {
+			offset= getOffset(line, 0);
+			int lastCharColumn= getLastCharColumn(line);
+			offset= computeOffsetUsingPrefix(line, offset, prefix, lastCharColumn);
+		} else {
+			offset= getOffset(line, column);
+			offset= computeOffsetUsingPrefix(line, offset, prefix, column);
+		}
+		return offset;
+	}
+
 	private int computeOffsetUsingPrefix(int line, int offset, String prefix, int column) throws BadLocationException {
 		String lineText= fDocument.get(fDocument.getLineOffset(line - 1), column);
 		int lastIndex= lineText.indexOf(prefix);
@@ -1312,13 +1316,7 @@ public class AntModel {
 		AntCommentNode commentNode= new AntCommentNode();
 		int offset= -1;
 		try {
-			if (columnNumber <= 0) {
-				offset= getOffset(lineNumber, 0);
-				int lastCharColumn= getLastCharColumn(lineNumber);
-				offset= computeOffsetUsingPrefix(lineNumber, offset, "-->", lastCharColumn); //$NON-NLS-1$
-			} else {
-				offset= getOffset(lineNumber, columnNumber);
-			}
+			offset= computeOffset(lineNumber, columnNumber, "-->"); //$NON-NLS-1$
 		} catch (BadLocationException e) {
 			AntUIPlugin.log(e);
 		}
