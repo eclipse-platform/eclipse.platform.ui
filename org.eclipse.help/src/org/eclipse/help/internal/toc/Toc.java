@@ -12,7 +12,6 @@ package org.eclipse.help.internal.toc;
 import java.util.*;
 
 import org.eclipse.help.*;
-import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.model.*;
 import org.xml.sax.*;
 /** 
