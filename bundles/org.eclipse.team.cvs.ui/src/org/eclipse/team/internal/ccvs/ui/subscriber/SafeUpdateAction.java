@@ -73,15 +73,21 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 			});
 			
 			// Ask the user if a replace should be performed on the remaining nodes
-			if (!failedSet.isEmpty() && promptForOverwrite(failedSet)) {
-				overwriteUpdate(failedSet, Policy.subMonitorFor(monitor, willFail.length * 100));
-				syncSet.addAll(failedSet);
+			if(getOverwriteLocalChanges()) {
+				if (!failedSet.isEmpty() && promptForOverwrite(failedSet)) {
+					overwriteUpdate(failedSet, Policy.subMonitorFor(monitor, willFail.length * 100));
+					syncSet.addAll(failedSet);
+				}
 			}
 			
 			updated(syncSet.getResources());
 		} finally {
 			monitor.done();
 		}
+	}
+
+	protected boolean getOverwriteLocalChanges(){
+		return false;
 	}
 
 	/**

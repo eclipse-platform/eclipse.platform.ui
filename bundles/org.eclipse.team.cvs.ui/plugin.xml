@@ -580,6 +580,15 @@
             </action>
   
 			<action
+				label="%CVSWorkspaceSubscriber.overcommit.label"
+				menubarPath="SubscriberActions"
+				tooltip="%CVSWorkspaceSubscriber.overcommit.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.subscriber.OverrideAndCommitAction"
+				helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_overcommit_action"
+				id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriber.overcommit">
+			</action>
+  
+			<action
 				label="%CVSWorkspaceSubscriber.commit.label"
 				menubarPath="SubscriberActions"
 				tooltip="%CVSWorkspaceSubscriber.commit.tooltip"

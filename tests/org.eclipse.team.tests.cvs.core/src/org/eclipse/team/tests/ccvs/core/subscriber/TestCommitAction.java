@@ -11,10 +11,10 @@
 package org.eclipse.team.tests.ccvs.core.subscriber;
 
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberCommitAction;
+import org.eclipse.team.internal.ccvs.ui.subscriber.OverrideAndCommitAction;
 import org.eclipse.team.ui.sync.SyncInfoSet;
 
-class TestCommitAction extends SubscriberCommitAction {
+class TestCommitAction extends OverrideAndCommitAction {
 
 	public IRunnableWithProgress getRunnable(SyncInfoSet syncSet) {
 		return super.getRunnable(syncSet);

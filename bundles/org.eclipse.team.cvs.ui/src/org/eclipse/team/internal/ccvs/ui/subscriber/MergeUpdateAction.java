@@ -43,6 +43,13 @@ import org.eclipse.team.ui.sync.SyncInfoSet;
 public class MergeUpdateAction extends SafeUpdateAction {
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SafeUpdateAction#getOverwriteLocalChanges()
+	 */
+	protected boolean getOverwriteLocalChanges() {
+		return true;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.sync.SubscriberAction#getSyncInfoFilter()
 	 */
 	protected SyncInfoFilter getSyncInfoFilter() {
@@ -198,5 +205,5 @@ public class MergeUpdateAction extends SafeUpdateAction {
 		if (!cvsFolder.exists()) {
 			cvsFolder.mkdir();
 		}
-	}	
+	}
 }

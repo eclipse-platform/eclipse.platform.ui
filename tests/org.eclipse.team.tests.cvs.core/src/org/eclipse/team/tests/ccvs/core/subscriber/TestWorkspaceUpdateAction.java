@@ -19,6 +19,13 @@ import org.eclipse.team.ui.sync.SyncInfoSet;
 class TestWorkspaceUpdateAction extends WorkspaceUpdateAction {
 	boolean allowOverwrite = false;
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SafeUpdateAction#getOverwriteLocalChanges()
+	 */
+	protected boolean getOverwriteLocalChanges() {
+		return allowOverwrite;
+	}
+
 	public TestWorkspaceUpdateAction(boolean allowOverwrite) {
 		this.allowOverwrite = allowOverwrite;
 	}

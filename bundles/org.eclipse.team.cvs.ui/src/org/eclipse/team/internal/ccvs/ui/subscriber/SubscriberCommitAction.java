@@ -30,14 +30,9 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.sync.ToolTipMessageDialog;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.sync.SyncInfoSet;
 
-/**
- * @author Administrator
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
- */
 public class SubscriberCommitAction extends CVSSubscriberAction {
 
 	private String comment;
@@ -51,34 +46,16 @@ public class SubscriberCommitAction extends CVSSubscriberAction {
 		try {
 			if (!promptForUnaddedHandling(syncSet)) return null;
 		} catch (CVSException e) {
-			// TODO Could prompt the user with option to continue
-			// instead of just continuing
-			CVSUIPlugin.log(e);
+			Utils.handle(e);
 		}
 		return syncSet;
 	}
 	
-	/**
-	 * @param syncSet
-	 * @return
-	 */
-	private boolean promptForConflictHandling(SyncInfoSet syncSet) {
-		// If there is a conflict in the syncSet, we need to prompt the user before proceeding.
+	protected boolean promptForConflictHandling(SyncInfoSet syncSet) {
+		// If there is a conflict in the syncSet, remove from sync set.
 		if (syncSet.hasConflicts() || syncSet.hasIncomingChanges()) {
-			switch (promptForConflicts(syncSet)) {
-				case 0:
-					// Yes, synchronize conflicts as well
-					break;
-				case 1:
-					// No, only synchronize non-conflicting changes.
-					syncSet.removeConflictingNodes();
-					syncSet.removeIncomingNodes();
-					break;
-				case 2:
-				default:
-					// Cancel
-					return false;
-			}	
+			syncSet.removeConflictingNodes();
+			syncSet.removeIncomingNodes();
 		}
 		return true;
 	}
