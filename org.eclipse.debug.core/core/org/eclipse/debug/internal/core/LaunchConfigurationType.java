@@ -113,9 +113,9 @@ public class LaunchConfigurationType implements ILaunchConfigurationType {
 	 * @see ILaunchConfigurationType#isPublic()
 	 */
 	public boolean isPublic() {
-		String publicString = getConfigurationElement().getAttribute("public");
+		String publicString = getConfigurationElement().getAttribute("public"); //$NON-NLS-1$
 		if (publicString != null) {
-			if (publicString.equalsIgnoreCase("false")) {
+			if (publicString.equalsIgnoreCase("false")) { //$NON-NLS-1$
 				return false;
 			}
 		} 

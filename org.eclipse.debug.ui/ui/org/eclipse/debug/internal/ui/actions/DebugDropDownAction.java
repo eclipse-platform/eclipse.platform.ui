@@ -43,11 +43,10 @@ public class DebugDropDownAction extends LaunchDropDownAction {
 	}	
 
 	/**
-	 * @see ExecutionAction#getTooltipPrefix()
+	 * @see LaunchDropDownAction#getTooltipPrefix()
 	 */
 	protected String getTooltipPrefix() {
-		return "Debug";
+		return ActionMessages.getString("DebugDropDownAction.Debug__1"); //$NON-NLS-1$
 	}
-
 }
 

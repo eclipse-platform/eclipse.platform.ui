@@ -42,11 +42,10 @@ public class RunDropDownAction extends LaunchDropDownAction {
 	}		
 
 	/**
-	 * @see ExecutionAction#getTooltipPrefix()
+	 * @see LaunchDropDownAction#getTooltipPrefix()
 	 */
 	protected String getTooltipPrefix() {
-		return "Run";
+		return ActionMessages.getString("RunDropDownAction.Run__1"); //$NON-NLS-1$
 	}
-
 }
 

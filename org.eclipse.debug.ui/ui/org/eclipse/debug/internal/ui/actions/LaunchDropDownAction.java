@@ -97,7 +97,7 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 		LaunchConfigurationHistoryElement[] history = getHistory();
 		String newTooltip = fOriginalTooltip;
 		if ((history != null) && (history.length > 0)) {
-			newTooltip = getTooltipPrefix() + ' ' + history[0].getLaunchConfiguration().getName();
+			newTooltip = getTooltipPrefix() + history[0].getLaunchConfiguration().getName();
 		}
 		getActionProxy().setToolTipText(newTooltip);
 	}
