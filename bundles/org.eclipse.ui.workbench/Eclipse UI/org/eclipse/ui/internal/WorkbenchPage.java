@@ -2949,13 +2949,28 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		if (pane.getWindow() instanceof DetachedWindow)
 			return;
 
+				
 		// Update zoom status.
 		if (isZoomed()) {
 			zoomOut();
+			
+			ILayoutContainer container = pane.getContainer();
+			if (container != null && container instanceof PartTabFolder) {
+				PartTabFolder folder = (PartTabFolder) container;
+				
+				folder.setZoomed(false);
+			}
 			return;
 		} else {
 			persp.getPresentation().zoomIn(ref);
 			activate(ref.getPart(true));
+			
+			ILayoutContainer container = pane.getContainer();
+			if (container != null && container instanceof PartTabFolder) {
+				PartTabFolder folder = (PartTabFolder) container;
+				
+				folder.setZoomed(true);
+			}
 		}
 	}
 	/**
