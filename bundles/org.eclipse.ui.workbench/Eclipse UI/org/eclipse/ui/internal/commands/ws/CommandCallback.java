@@ -172,7 +172,7 @@ public final class CommandCallback implements ICallback {
             final IActionTextListener listener) {
         final ICommand command = workbench.getCommandSupport()
                 .getCommandManager().getCommand(commandId);
-        final Object associatedListener = registeredTextListeners.get(listener);
+        final Object associatedListener = registeredTextListeners.remove(listener);
         if (associatedListener instanceof ICommandListener) {
             final ICommandListener commandListener = (ICommandListener) associatedListener;
             command.removeCommandListener(commandListener);
