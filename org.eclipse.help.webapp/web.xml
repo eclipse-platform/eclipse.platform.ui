@@ -89,8 +89,8 @@
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.ns4.banner</servlet-name>
-		<servlet-class>jsp.ns4.banner</servlet-class>
+		<servlet-name>jsp.ns4.searach</servlet-name>
+		<servlet-class>jsp.ns4.search</servlet-class>
 	</servlet>
 
 	<servlet>
@@ -233,8 +233,8 @@
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.ns4.banner</servlet-name>
-		<url-pattern>/ns4/banner.jsp</url-pattern>
+		<servlet-name>jsp.ns4.search</servlet-name>
+		<url-pattern>/ns4/search.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>

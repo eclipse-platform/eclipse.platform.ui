@@ -25,7 +25,7 @@ BODY {
 A {
 	text-decoration:none; 
 	color:black;
-	height:18;
+
 	padding:0px;
 	white-space: nowrap;
 }
@@ -34,30 +34,6 @@ DIV {
 	padding-left:20px;
 	width:100%;
 	font: 8pt Tahoma;
-}
-
-DIV {
-	background-image: url("../images/container_obj.gif");
-	background-position:center left;
-	background-repeat:no-repeat;
-}
-    
-DIV.active { 
-	background-image: url("../images/container_obj.gif");
-	background-position:center left;
-	background-repeat:no-repeat;
-}
-
-#bookshelf {
-	background-image: url("../images/home_obj.gif");
-	background-position:center left;
-	background-repeat:no-repeat;
-}
-   
-#bookshelf.active { 
-	background-image: url("../images/home_obj.gif");
-	background-position:center left;
-	background-repeat:no-repeat;
 }
 
 
@@ -70,7 +46,7 @@ DIV.active {
 ContentUtil content = new ContentUtil(application, request);
 String bookshelf = WebappResources.getString("Bookshelf", request);
 %>
-	<div id='bookshelf' class='active'><a href='javascript:void 0;' target="MainFrame" onmouseover='window.status="<%=bookshelf%>"'> <nobr> <%=bookshelf%> </nobr> </a></div>
+	<div id='bookshelf' class='active'><a href='javascript:void 0;' target="MainFrame" onmouseover='window.status="<%=bookshelf%>"'> <nobr> <img src="../images/home_obj.gif" border=0> <%=bookshelf%> </nobr> </a></div>
 <%
 Element tocsElement = content.loadTocs();
 if (tocsElement == null) return;
@@ -81,7 +57,7 @@ for (int i=0; i<tocs.getLength(); i++)
 	String label = toc.getAttribute("label");
 	String id = toc.getAttribute("href");
 %>
-		<div class='list'><a  href='javascript:parent.loadTOC("<%=id%>");' onmouseover='window.status="<%=label%>"'><nobr> <%=label%> </nobr> </a></div>
+		<div class='list'><a  href='javascript:parent.loadTOC("<%=id%>");' onmouseover='window.status="<%=label%>"'><nobr><img src="../images/container_obj.gif" border=0> <%=label%> </nobr> </a></div>
 <%		
 }
 %>

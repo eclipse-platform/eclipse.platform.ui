@@ -1,0 +1,43 @@
+<%@ page import="org.eclipse.help.servlet.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
+
+<% 
+	// calls the utility class to initialize the application
+	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
+%>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!--
+ (c) Copyright IBM Corp. 2000, 2002.
+ All Rights Reserved.
+-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<!--
+	<base target="NavFrame.document.all.search">
+	-->
+     
+<style type="text/css">
+
+
+BODY {
+	background:black;
+}
+
+</style>
+
+
+</head>
+
+<body >
+
+	<table align="left" cellspacing="0" cellpadding="0" border="0">
+		<tr>
+			<td align=left valign=top><img src="../images/banner_prod.jpg">
+			</td>
+		</tr>
+	</table>
+</body>
+</html>
+

@@ -1,4 +1,4 @@
-<%@ page import="org.eclipse.help.servlet.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
+<%@ page import="org.w3c.dom.*,org.eclipse.help.servlet.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
 
 <% 
 	// calls the utility class to initialize the application
@@ -16,6 +16,27 @@
 	 String tocColor = tab.equals("toc") ? "white" : "#D4D0C8";
 	 String searchColor = tab.equals("search") ? "white" : "#D4D0C8";
 	 String linksColor = tab.equals("links") ? "white" : "#D4D0C8";
+	 
+	 // Load the preferences
+	boolean linksView = true;
+	
+	ContentUtil content = new ContentUtil(application, request);
+	Element prefsElement = content.loadPreferences();
+
+	if (prefsElement != null){
+		NodeList prefs = prefsElement.getElementsByTagName("pref");
+		for (int i=0; i<prefs.getLength(); i++)
+		{
+			Element pref = (Element)prefs.item(i);
+			String name = pref.getAttribute("name");
+			if (name.equals("linksView"))
+			{
+				linksView = "true".equals(pref.getAttribute("value"));
+				break;
+			}
+		}
+	}
+	
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -50,8 +71,14 @@ BODY {
    <td  bgcolor="<%=tocColor%>" title="<%=ContentStr%>" align="center"  class="tab" id="tocTab" onclick="parent.switchTab('toc')"><a  href='javascript:parent.switchTab("toc");' ><img class="tabImage" alt="<%=ContentStr%>" title="<%=ContentStr%>" src="../images/contents_view.gif" border=0></a></td>
    <td width=1><img src="../images/separator.gif" border=0 width=0 height=23></td>
    <td  bgcolor="<%=searchColor%>"  title="<%=SearchStr%>" align="center" class="tab" id="searchTab"  onclick="parent.switchTab('search')"><a  href='javascript:parent.switchTab("search")' ><img class="tabImage" alt="<%=SearchStr%>" title="<%=SearchStr%>" src="../images/search_results_view.gif" border=0></a></td>
+<%
+if (linksView) {
+%>
    <td width=1 border=0><img src="../images/separator.gif" border=0 width=0 height=23></td>
    <td  bgcolor="<%=linksColor%>" title="<%=LinksStr%>" align="center" class="tab" id="linksTab"  onclick="parent.switchTab('links')"><a href='javascript:parent.switchTab("links")' ><img class="tabImage" alt="<%=LinksStr%>" title="<%=LinksStr%>" src="../images/links_view.gif" border=0></a></td>
+<%
+}
+%>
    </tr>
    </table>
 
