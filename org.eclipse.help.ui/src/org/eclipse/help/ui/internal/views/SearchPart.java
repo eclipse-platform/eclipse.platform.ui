@@ -13,6 +13,7 @@ package org.eclipse.help.ui.internal.views;
 import java.util.*;
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.help.internal.base.BaseHelpSystem;
@@ -378,6 +379,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 				b.setText(desc.getLabel());
 				Label d = (Label) children[i + 2];
 				d.setText(desc.getDescription());
+				d.getParent().layout();
 				reflowNeeded = true;
 				break;
 			}
@@ -412,6 +414,9 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 
 							public void add(ISearchEngineResult[] searchResults) {
 								results.add(ed, searchResults);
+							}
+							public void error(IStatus status) {
+								results.error(ed, status);
 							}
 						});
 				entries.add(entry);

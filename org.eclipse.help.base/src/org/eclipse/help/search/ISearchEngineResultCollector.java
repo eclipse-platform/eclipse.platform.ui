@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.search;
 
+import org.eclipse.core.runtime.IStatus;
+
 /**
  * A collector for the search hits (asynchronously) returned by the help search
  * participants.
@@ -32,4 +34,19 @@ public interface ISearchEngineResultCollector {
 	 *            an array of search result objects
 	 */
 	void add(ISearchEngineResult[] searchResults);
+
+	/**
+	 * Notifies the collector that an error has
+	 * occured in the search engine. The kinds
+	 * of errors that are reported this way
+	 * are not abnormal problems or internal
+	 * errors that are reported to the job
+	 * manager itself. Instead, these errors
+	 * are expected to occur from time to time
+	 * (for example, server down, server timeout,
+	 * incorrect URL etc.).
+	 * 
+	 * @param status the reporter error status
+	 */
+	void error(IStatus status);
 }

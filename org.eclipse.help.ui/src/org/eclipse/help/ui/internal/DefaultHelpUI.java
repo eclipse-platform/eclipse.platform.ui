@@ -32,7 +32,7 @@ import org.eclipse.ui.help.*;
 public class DefaultHelpUI extends AbstractHelpUI {
 	private ContextHelpDialog f1Dialog = null;
 
-	private static final String HELP_VIEW_ID = "org.eclipse.help.ui.HelpView";
+	private static final String HELP_VIEW_ID = "org.eclipse.help.ui.HelpView"; //$NON-NLS-1$
 
 	/**
 	 * Constructor.

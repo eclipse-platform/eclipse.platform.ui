@@ -12,6 +12,7 @@ package org.eclipse.help.ui.internal.views;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
@@ -241,26 +242,22 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.internal.search.ISearchEngineResultCollector#add(org.eclipse.help.internal.search.ISearchEngineResult)
-	 */
 	public synchronized void add(EngineDescriptor ed, ISearchEngineResult match) {
 		EngineResultSection ers = findEngineResult(ed);
 		if (match != null)
 			ers.add(match);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.internal.search.federated.ISearchEngineResultCollector#add(org.eclipse.help.internal.search.federated.ISearchEngineResult[])
-	 */
 	public synchronized void add(EngineDescriptor ed,
 			ISearchEngineResult[] matches) {
 		EngineResultSection ers = findEngineResult(ed);
 		ers.add(matches);
+	}
+	
+	public synchronized void error(EngineDescriptor ed, 
+			IStatus status) {
+		EngineResultSection ers = findEngineResult(ed);
+		ers.error(status);
 	}
 
 	private synchronized EngineResultSection findEngineResult(

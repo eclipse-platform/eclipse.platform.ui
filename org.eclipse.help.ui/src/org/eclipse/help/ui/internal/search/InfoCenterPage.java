@@ -19,7 +19,6 @@ import javax.xml.parsers.*;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.help.*;
-import org.eclipse.help.internal.base.HelpBaseResources;
 import org.eclipse.help.internal.workingset.*;
 import org.eclipse.help.ui.RootScopePage;
 import org.eclipse.help.ui.internal.*;
@@ -59,7 +58,7 @@ public class InfoCenterPage extends RootScopePage {
 
 	class RemoteWorkingSet extends WorkingSet {
 		public RemoteWorkingSet() {
-			super("InfoCenter");
+			super("InfoCenter"); //$NON-NLS-1$
 		}
 
 		public void load(IPreferenceStore store) {
@@ -121,13 +120,14 @@ public class InfoCenterPage extends RootScopePage {
 		initializeDialogUnits(parent);
 
 		Label label = new Label(parent, SWT.NULL);
-		label.setText(HelpUIResources.getString("url"));
+		label.setText(HelpUIResources.getString("InfoCenterPage.url")); //$NON-NLS-1$
 
 		urlText = new Text(parent, SWT.BORDER);
 		urlText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		urlText.setEditable(getEngineDescriptor().isUserDefined());
 
 		searchAll = new Button(parent, SWT.RADIO);
-		searchAll.setText(HelpBaseResources.getString("selectAll")); //$NON-NLS-1$
+		searchAll.setText(HelpUIResources.getString("selectAll")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		searchAll.setLayoutData(gd);
@@ -139,7 +139,7 @@ public class InfoCenterPage extends RootScopePage {
 		});
 
 		searchSelected = new Button(parent, SWT.RADIO);
-		searchSelected.setText(HelpBaseResources.getString("selectWorkingSet")); //$NON-NLS-1$
+		searchSelected.setText(HelpUIResources.getString("selectWorkingSet")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		searchSelected.setLayoutData(gd);
@@ -152,7 +152,7 @@ public class InfoCenterPage extends RootScopePage {
 
 		label = new Label(parent, SWT.WRAP);
 		label.setFont(font);
-		label.setText(HelpBaseResources.getString("WorkingSetContent")); //$NON-NLS-1$
+		label.setText(HelpUIResources.getString("WorkingSetContent")); //$NON-NLS-1$
 		gd = new GridData(GridData.GRAB_HORIZONTAL
 				| GridData.HORIZONTAL_ALIGN_FILL
 				| GridData.VERTICAL_ALIGN_CENTER);
@@ -202,14 +202,14 @@ public class InfoCenterPage extends RootScopePage {
 
 		// Set help for the page
 		// WorkbenchHelp.setHelp(tree, "help_workingset_page");
-		return 1;
+		return 2;
 	}
 
 	private void loadTocs(String urlName) {
 		InputStream is = null;
 		try {
 			URL url = new URL(urlName);
-			url = new URL(url, "toc/");
+			url = new URL(url, "toc/"); //$NON-NLS-1$
 			URLConnection connection = url.openConnection();
 			is = connection.getInputStream();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -217,9 +217,9 @@ public class InfoCenterPage extends RootScopePage {
 			load(reader);
 			reader.close();
 		} catch (MalformedURLException e) {
-			HelpUIPlugin.logError("Invalid URL", e);
+			HelpUIPlugin.logError(HelpUIResources.getString("InfoCenterPage.invalidURL"), e); //$NON-NLS-1$
 		} catch (IOException e) {
-			HelpUIPlugin.logError("Error while loading table of contents", e);
+			HelpUIPlugin.logError(HelpUIResources.getString("InfoCenterPage.tocError"), e); //$NON-NLS-1$
 		} finally {
 			if (is != null) {
 				try {
@@ -256,7 +256,7 @@ public class InfoCenterPage extends RootScopePage {
 
 	private void load(Document doc, Element root) {
 		ArrayList list = new ArrayList();
-		NodeList engines = root.getElementsByTagName("toc");
+		NodeList engines = root.getElementsByTagName("toc"); //$NON-NLS-1$
 		for (int i = 0; i < engines.getLength(); i++) {
 			final Node node = engines.item(i);
 			IToc toc = new IToc() {
@@ -269,12 +269,12 @@ public class InfoCenterPage extends RootScopePage {
 				}
 
 				public String getHref() {
-					return node.getAttributes().getNamedItem("href")
+					return node.getAttributes().getNamedItem("href") //$NON-NLS-1$
 							.getNodeValue();
 				}
 
 				public String getLabel() {
-					return node.getAttributes().getNamedItem("label")
+					return node.getAttributes().getNamedItem("label") //$NON-NLS-1$
 							.getNodeValue();
 				}
 			};
@@ -292,7 +292,7 @@ public class InfoCenterPage extends RootScopePage {
 			url = (String) getEngineDescriptor().getParameters().get(
 					InfoCenterSearchScopeFactory.P_URL);
 			if (url == null)
-				url = "";
+				url = ""; //$NON-NLS-1$
 		}
 		urlText.setText(url);
 		busyLoadTocs(url);
@@ -424,6 +424,6 @@ public class InfoCenterPage extends RootScopePage {
 	}
 
 	private String getKey(String key) {
-		return getEngineDescriptor().getId() + "." + key;
+		return getEngineDescriptor().getId() + "." + key; //$NON-NLS-1$
 	}
 }

@@ -12,6 +12,7 @@ package org.eclipse.help.ui.internal.views;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.search.ISearchEngineResult;
@@ -33,6 +34,8 @@ public class EngineResultSection {
 	private SearchResultsPart part;
 
 	private EngineDescriptor desc;
+	
+	private IStatus errorStatus;
 
 	private ArrayList hits;
 
@@ -75,7 +78,7 @@ public class EngineResultSection {
 
 	public Control createControl(Composite parent, final FormToolkit toolkit) {
 		section = toolkit.createSection(parent, Section.COMPACT
-				| Section.TWISTIE | Section.EXPANDED);
+				| Section.TWISTIE | Section.EXPANDED | Section.LEFT_TEXT_CLIENT_ALIGNMENT);
 		// section.marginHeight = 10;
 		container = toolkit.createComposite(section);
 		//container.setBackground(container.getDisplay().getSystemColor(SWT.COLOR_CYAN));
@@ -122,6 +125,9 @@ public class EngineResultSection {
 		searchResults.setImage(ISharedImages.IMG_TOOL_BACK, PlatformUI
 				.getWorkbench().getSharedImages().getImage(
 						ISharedImages.IMG_TOOL_BACK));
+		searchResults.setImage(ISharedImages.IMG_OBJS_ERROR_TSK, PlatformUI.
+				getWorkbench().getSharedImages().getImage(
+						ISharedImages.IMG_OBJS_ERROR_TSK));
 		searchResults.setImage(desc.getId(), desc.getIconImage());
 		searchResults.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkActivated(HyperlinkEvent e) {
@@ -193,6 +199,11 @@ public class EngineResultSection {
 		for (int i = 0; i < matches.length; i++)
 			hits.add(matches[i]);
 		asyncUpdateResults(false, false);
+	}
+
+	public synchronized void error(IStatus status) {
+		errorStatus = status;
+		asyncUpdateResults(false, false);		
 	}
 
 	private void asyncUpdateResults(boolean now, final boolean scrollToBeginning) {
@@ -295,12 +306,29 @@ public class EngineResultSection {
 			}
 			buff.append("</li>"); //$NON-NLS-1$
 		}
+		if (errorStatus!=null)
+			updateErrorStatus(buff);
 		updateNavigation();
 		buff.append("</form>"); //$NON-NLS-1$
 		searchResults.setText(buff.toString(), true, false);
 		section.layout();
 		if (reflow)
 			part.reflow();
+	}
+
+	private void updateErrorStatus(StringBuffer buff) {
+		int indent = 21;
+		buff.append("<li indent=\"" + indent + "\" style=\"image\" value=\""); //$NON-NLS-1$ //$NON-NLS-2$
+		buff.append(ISharedImages.IMG_OBJS_ERROR_TSK);
+		buff.append("\">"); //$NON-NLS-1$
+		buff.append("<b>"); //$NON-NLS-1$
+		buff.append(escapeSpecialChars(errorStatus.getMessage()));
+		buff.append("</b>"); //$NON-NLS-1$
+		buff.append("<br/>"); //$NON-NLS-1$
+		Throwable t = errorStatus.getException();
+		if (t!=null)
+			buff.append(escapeSpecialChars(t.getMessage()));
+		buff.append("</li>"); //$NON-NLS-1$
 	}
 
 	private void updateNavigation() {
@@ -405,6 +433,16 @@ public class EngineResultSection {
 	}
 
 	private void updateSectionTitle() {
+		if (errorStatus!=null) {
+			Label label = part.getToolkit().createLabel(section, null);
+			label.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
+			section.setTextClient(label);
+			section.setText(HelpUIResources.getString(
+					"EngineResultSection.sectionTitle.error"));//$NON-NLS-1$
+		}
+		else {
+			section.setTextClient(null);
+		}
 		if (hits.size() == 1)
 			section.setText(HelpUIResources.getString(
 					"EngineResultSection.sectionTitle.hit", desc.getLabel(), "" //$NON-NLS-1$ //$NON-NLS-2$

@@ -11,10 +11,8 @@
 package org.eclipse.help.ui.internal.search;
 
 import java.util.*;
-import java.util.Dictionary;
 
 import org.eclipse.help.search.*;
-import org.eclipse.help.search.ISearchScope;
 import org.eclipse.help.ui.ISearchScopeFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -22,10 +20,10 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * Creates the scope for local search using the help working sets
  */
 public class InfoCenterSearchScopeFactory implements ISearchScopeFactory {
-	public static final String P_URL = "url";
-	public static final String P_SEARCH_SELECTED = "searchSelected";
-	public static final String P_TOCS = "tocs";
-	public static final String TOC_SEPARATOR = ";";
+	public static final String P_URL = "url"; //$NON-NLS-1$
+	public static final String P_SEARCH_SELECTED = "searchSelected"; //$NON-NLS-1$
+	public static final String P_TOCS = "tocs"; //$NON-NLS-1$
+	public static final String TOC_SEPARATOR = ";"; //$NON-NLS-1$
     
     /* (non-Javadoc)
      * @see org.eclipse.help.ui.ISearchScopeFactory#createSearchScope(org.eclipse.jface.preference.IPreferenceStore)
@@ -33,7 +31,7 @@ public class InfoCenterSearchScopeFactory implements ISearchScopeFactory {
     public ISearchScope createSearchScope(IPreferenceStore store, String engineId, Dictionary parameters) {
         String url = getProperty(P_URL, store, engineId, parameters);
         String ssvalue = getProperty(P_SEARCH_SELECTED, store, engineId, parameters);
-        boolean searchSelected = ssvalue!=null && ssvalue.equalsIgnoreCase("true");
+        boolean searchSelected = ssvalue!=null && ssvalue.equalsIgnoreCase("true"); //$NON-NLS-1$
         String [] tocs=null;
         if (searchSelected) {
         	String tvalue = getProperty(P_TOCS, store, engineId, parameters);
@@ -53,7 +51,7 @@ public class InfoCenterSearchScopeFactory implements ISearchScopeFactory {
     
     private String getProperty(String key, IPreferenceStore store, String engineId, Dictionary parameters) {
     	// try the store first
-    	String value = store.getString(engineId+"."+key);
+    	String value = store.getString(engineId+"."+key); //$NON-NLS-1$
     	if (value!=null && value.length()>0) return value;
     	// try the parameters
     	return (String)parameters.get(key);

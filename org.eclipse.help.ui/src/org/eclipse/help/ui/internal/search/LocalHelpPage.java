@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.workingset.*;
 import org.eclipse.help.ui.*;
+import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -69,7 +70,7 @@ public class LocalHelpPage extends RootScopePage {
 		initializeDialogUnits(parent);
 
 		searchAll = new Button(parent, SWT.RADIO);
-		searchAll.setText(HelpBaseResources.getString("selectAll")); //$NON-NLS-1$
+		searchAll.setText(HelpUIResources.getString("selectAll")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		searchAll.setLayoutData(gd);
@@ -81,7 +82,7 @@ public class LocalHelpPage extends RootScopePage {
 		});
 
 		searchSelected = new Button(parent, SWT.RADIO);
-		searchSelected.setText(HelpBaseResources.getString("selectWorkingSet")); //$NON-NLS-1$
+		searchSelected.setText(HelpUIResources.getString("selectWorkingSet")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		searchSelected.setLayoutData(gd);
@@ -99,7 +100,7 @@ public class LocalHelpPage extends RootScopePage {
 
 		Label label = new Label(parent, SWT.WRAP);
 		label.setFont(font);
-		label.setText(HelpBaseResources.getString("WorkingSetContent")); //$NON-NLS-1$
+		label.setText(HelpUIResources.getString("WorkingSetContent")); //$NON-NLS-1$
 		gd = new GridData(GridData.GRAB_HORIZONTAL
 				| GridData.HORIZONTAL_ALIGN_FILL
 				| GridData.VERTICAL_ALIGN_CENTER);
@@ -148,7 +149,7 @@ public class LocalHelpPage extends RootScopePage {
 		});
 		tree.getTree().setEnabled(workingSet != null);
 		capabilityFiltering = new Button(parent, SWT.CHECK);
-		capabilityFiltering.setText(HelpBaseResources
+		capabilityFiltering.setText(HelpUIResources
 				.getString("LocalHelpPage.capabilityFiltering.name")); //$NON-NLS-1$
 		initializeCheckedState();
 
@@ -161,7 +162,7 @@ public class LocalHelpPage extends RootScopePage {
 		IPreferenceStore store = getPreferenceStore();
 		capabilityFiltering.setSelection(store.getBoolean(getEngineDescriptor()
 				.getId()
-				+ "." + LocalSearchScopeFactory.P_CAPABILITY_FILTERING));
+				+ "." + LocalSearchScopeFactory.P_CAPABILITY_FILTERING)); //$NON-NLS-1$
 		if (workingSet == null)
 			return;
 
@@ -291,6 +292,6 @@ public class LocalHelpPage extends RootScopePage {
 	}
 
 	private String getKey(String key) {
-		return getEngineDescriptor().getId() + "." + key;
+		return getEngineDescriptor().getId() + "." + key; //$NON-NLS-1$
 	}
 }

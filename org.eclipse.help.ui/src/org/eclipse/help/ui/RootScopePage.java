@@ -12,6 +12,7 @@ package org.eclipse.help.ui;
 
 import java.util.Hashtable;
 
+import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.views.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
@@ -73,7 +74,7 @@ public abstract class RootScopePage extends PreferencePage implements
 			layout.numColumns = 2;
 		container.setLayout(layout);
 		masterButton = new Button(container, SWT.CHECK);
-		masterButton.setText("Enable search engine");
+		masterButton.setText(HelpUIResources.getString("RootScopePage.masterButton")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = ed.isUserDefined() ? 2 : 1;
 		masterButton.setLayoutData(gd);
@@ -91,13 +92,13 @@ public abstract class RootScopePage extends PreferencePage implements
 		});
 		if (ed.isUserDefined()) {
 			Label label = new Label(container, SWT.NULL);
-			label.setText("Name:");
+			label.setText(HelpUIResources.getString("RootScopePage.name")); //$NON-NLS-1$
 			labelText = new Text(container, SWT.BORDER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.widthHint = 200;
 			labelText.setLayoutData(gd);
 			label = new Label(container, SWT.NULL);
-			label.setText("Description:");
+			label.setText(HelpUIResources.getString("RootScopePage.desc")); //$NON-NLS-1$
 			gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 			label.setLayoutData(gd);
 			descText = new Text(container, SWT.BORDER | SWT.MULTI | SWT.WRAP);

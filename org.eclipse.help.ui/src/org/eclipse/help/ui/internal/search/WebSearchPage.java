@@ -12,6 +12,7 @@
 package org.eclipse.help.ui.internal.search;
 
 import org.eclipse.help.ui.RootScopePage;
+import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -36,7 +37,7 @@ public class WebSearchPage extends RootScopePage {
 		initializeDialogUnits(parent);
 
 		Label label = new Label(parent, SWT.NULL);
-		label.setText("&URL template:");
+		label.setText(HelpUIResources.getString("WebSearchPage.label")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
 		urlText = new Text(parent, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL
@@ -53,7 +54,7 @@ public class WebSearchPage extends RootScopePage {
 		urlText.setEditable(getEngineDescriptor().isUserDefined());
 		new Label(parent, SWT.NULL);
 		label = new Label(parent, SWT.WRAP);
-		label.setText("You can capture the URL template by copying the web query from the browser address field and replacing the search word with {expression}.");
+		label.setText(HelpUIResources.getString("WebSearchPage.info")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 100;
 		label.setLayoutData(gd);
@@ -81,7 +82,7 @@ public class WebSearchPage extends RootScopePage {
 	private void updateControls() {
 		String template = getPreferenceStore().getString(
 				getStoreKey(WebSearchScopeFactory.P_URL));
-		urlText.setText(template != null ? template : "http://");
+		urlText.setText(template != null ? template : "http://"); //$NON-NLS-1$
 		validate();
 	}
 
@@ -103,6 +104,6 @@ public class WebSearchPage extends RootScopePage {
 	}
 
 	private String getStoreKey(String key) {
-		return getEngineDescriptor().getId() + "." + key;
+		return getEngineDescriptor().getId() + "." + key; //$NON-NLS-1$
 	}
 }

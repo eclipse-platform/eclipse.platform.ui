@@ -13,7 +13,6 @@ package org.eclipse.help.ui.internal.search;
 import java.util.Dictionary;
 
 import org.eclipse.help.search.*;
-import org.eclipse.help.search.ISearchScope;
 import org.eclipse.help.ui.ISearchScopeFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -21,7 +20,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * Factory for creating scope objects for the generic web search engine
  */
 public class WebSearchScopeFactory implements ISearchScopeFactory {
-	public final static String P_URL = "url";
+	public final static String P_URL = "url"; //$NON-NLS-1$
     
     /* (non-Javadoc)
      * @see org.eclipse.help.ui.ISearchScopeFactory#createSearchScope(org.eclipse.jface.preference.IPreferenceStore)
@@ -33,7 +32,7 @@ public class WebSearchScopeFactory implements ISearchScopeFactory {
     
     private String getProperty(IPreferenceStore store, String engineId, Dictionary parameters) {
     	// try the store first
-    	String value = store.getString(engineId+"."+P_URL);
+    	String value = store.getString(engineId+"."+P_URL); //$NON-NLS-1$
     	if (value!=null && value.length()>0) return value;
     	// try the parameters
     	return (String)parameters.get(P_URL);

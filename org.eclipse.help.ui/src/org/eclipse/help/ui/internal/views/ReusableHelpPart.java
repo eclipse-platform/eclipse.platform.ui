@@ -490,7 +490,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	private void executeHistoryEntry(HistoryEntry entry) {
 		history.setBlocked(true);
 		if (entry.getType()==HistoryEntry.PAGE) {
-			HelpPartPage page = showPage(entry.getTarget());
+			HelpPartPage page = showPage(entry.getTarget(), true);
 			mform.setInput(entry.getData());
 		}
 		else if (entry.getType()==HistoryEntry.URL) {
@@ -650,7 +650,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			return part;
 
 		if (id.equals(HV_TOPIC_TREE)) {
-			part = new AllTopicsPart(parent, mform.getToolkit());
+			part = new AllTopicsPart(parent, mform.getToolkit(), tbm);
 		} else if (id.equals(HV_CONTEXT_HELP)) {
 			part = new ContextHelpPart(parent, mform.getToolkit());
 			((ContextHelpPart)part).setDefaultText(getDefaultContextHelpText());
@@ -901,7 +901,8 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		IStatusLineManager mng = getStatusLineManager();
 		if (mng!=null) {
 			String href = (String)e.getHref();
-			href = href.replaceAll("&", "&&"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (href!=null)
+				href = href.replaceAll("&", "&&"); //$NON-NLS-1$ //$NON-NLS-2$
 			mng.setMessage(href);
 		}
 	}

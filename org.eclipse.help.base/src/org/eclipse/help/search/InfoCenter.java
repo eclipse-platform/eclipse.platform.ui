@@ -108,7 +108,7 @@ public final class InfoCenter implements ISearchEngine {
 				return url+"topic"+href;
 			}
 			else
-				return url+"nftopic"+href;
+				return url+"topic"+href + "&noframes=true";
 		}
 	}
 
@@ -138,10 +138,10 @@ public final class InfoCenter implements ISearchEngine {
 					is, "utf-8"));//$NON-NLS-1$
 			load(((Scope)scope).url, reader, collector, monitor);
 			reader.close();
+		} catch (FileNotFoundException e) {
+			reportError("File not found", e, collector);
 		} catch (IOException e) {
-			Status status = new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID,
-					IStatus.OK, "I/O exception during remote search", e);
-			throw new CoreException(status);
+			reportError("I/O exception during search", e, collector);
 		} finally {
 			if (is != null) {
 				try {
@@ -150,6 +150,12 @@ public final class InfoCenter implements ISearchEngine {
 				}
 			}
 		}
+	}
+	
+	private void reportError(String message, IOException e, ISearchEngineResultCollector collector) {
+		Status status = new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID,
+				IStatus.OK, message, e);
+		collector.error(status);
 	}
 
 	private void load(String baseURL, Reader r, ISearchEngineResultCollector collector,
