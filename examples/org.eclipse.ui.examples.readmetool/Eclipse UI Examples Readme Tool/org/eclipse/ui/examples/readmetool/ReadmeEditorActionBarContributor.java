@@ -141,12 +141,30 @@ public void contributeToToolBar(IToolBarManager toolBarManager) {
 /** (non-Javadoc)
  * Method declared on IEditorActionBarContributor
  */
-public void init(IActionBars bars) {
-	super.init(bars);
+public void dispose() {
+	// Remove retarget actions as page listeners
+	getPage().removePartListener(action2);
+	getPage().removePartListener(action3);
+}
+
+/** (non-Javadoc)
+ * Method declared on IEditorActionBarContributor
+ */
+public void init(IActionBars bars, IWorkbenchPage page) {
+	super.init(bars, page);
 	bars.setGlobalActionHandler(IReadmeConstants.RETARGET2, handler2);
 	bars.setGlobalActionHandler(IReadmeConstants.LABELRETARGET3, handler3);
 	bars.setGlobalActionHandler(IReadmeConstants.ACTION_SET_RETARGET4, handler4);
 	bars.setGlobalActionHandler(IReadmeConstants.ACTION_SET_LABELRETARGET5, handler5);
+	
+	// Hook retarget actions as page listeners
+	page.addPartListener(action2);
+	page.addPartListener(action3);
+	IWorkbenchPart activePart = page.getActivePart();
+	if (activePart != null) {
+		action2.partActivated(activePart);
+		action3.partActivated(activePart);
+	}
 }
 
 /** (non-Javadoc)
@@ -156,11 +174,6 @@ public void setActiveEditor(IEditorPart editor) {
 	// Run super.
 	super.setActiveEditor(editor);
 	
-	// Ensure retarget actions are page listeners
-	IWorkbenchPage page = editor.getSite().getPage();	
-	page.addPartListener(action2);
-	page.addPartListener(action3);
-
 	// Target shared actions to new editor
 	action1.setActiveEditor(editor);
 	handler2.setActiveEditor(editor);
