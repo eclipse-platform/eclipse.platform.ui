@@ -24,6 +24,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.core.Property;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.tests.ui.editor.performance.EditorTestHelper;
 import org.eclipse.ant.tests.ui.editor.support.TestTextCompletionProcessor;
@@ -197,6 +200,35 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertContains("basedir", proposals);
         assertContains("ant.home", proposals);
         assertContains("ant.library.dir", proposals);
+    }
+    
+    /**
+     * Test the code completion for extension point / preference properties
+     */
+    public void testPreferencePropertyProposals() throws BadLocationException {
+    	AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
+    	try {
+    		
+    		prefs.setCustomProperties(new Property[] {new Property("test", "result")});
+    		prefs.updatePluginPreferences();
+    		
+    		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("buildtest1.xml"));
+    		
+    		int lineNumber= 18;
+    		int columnNumber= 25;
+    		int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    		processor.setLineNumber(lineNumber);
+    		processor.setColumnNumber(columnNumber);
+    		processor.setCursorPosition(lineOffset + columnNumber);
+    		ICompletionProposal[] proposals = processor.getPropertyProposals(getCurrentDocument(), "", lineOffset + columnNumber);
+    		assertTrue(proposals.length >= 3);
+    		assertContains("eclipse.home", proposals); //contributed
+    		assertContains("property.ui.testing2", proposals); //contributed
+    		assertContains("test", proposals);
+    	} finally {
+    		prefs.setCustomProperties(new Property[]{});
+    		prefs.updatePluginPreferences();
+    	}
     }
     
     /**
