@@ -126,6 +126,17 @@ public class BrowserIntroPartImplementation extends
         // with history.
         browser.addLocationListener(urlListener);
 
+        // Enable IE pop-up menu only in debug mode.
+        browser.addListener(SWT.MenuDetect, new Listener() {
+
+            public void handleEvent(Event event) {
+                if (IntroPlugin.getDefault().isDebugging())
+                    event.doit = true;
+                else
+                    event.doit = false;
+            }
+        });
+
         addToolBarActions();
 
         if (!getModelRoot().hasValidConfig()) {
@@ -312,7 +323,6 @@ public class BrowserIntroPartImplementation extends
         }
     }
 
-    
 
 
 }
