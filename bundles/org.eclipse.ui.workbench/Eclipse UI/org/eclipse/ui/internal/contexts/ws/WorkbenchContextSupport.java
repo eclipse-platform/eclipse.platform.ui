@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -38,8 +37,6 @@ import org.eclipse.ui.internal.contexts.ProxyContextManager;
 import org.eclipse.ui.internal.util.Util;
 
 public class WorkbenchContextSupport implements IWorkbenchContextSupport {
-
-    private final static int TIME = 100;
 
     private IPerspectiveDescriptor activePerspectiveDescriptor;
 
@@ -106,16 +103,6 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 
     private ProxyContextManager proxyContextManager;
 
-    private boolean request = false;
-
-    private Runnable timer = new Runnable() {
-
-        public void run() {
-            request = false;
-            processEnabledSubmissionsImpl(true);
-        }
-    };
-
     private IWindowListener windowListener = new IWindowListener() {
 
         public void windowActivated(IWorkbenchWindow window) {
@@ -178,15 +165,6 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
     }
 
     private void processEnabledSubmissions(boolean force) {
-        if (!processingEnabledSubmissions) return;
-
-        if (!request) {
-            request = true;
-            Display.getCurrent().timerExec(TIME, timer);
-        }
-    }
-
-    private void processEnabledSubmissionsImpl(boolean force) {
         IPerspectiveDescriptor activePerspectiveDescriptor = null;
         IWorkbenchSite activeWorkbenchSite = null;
         IWorkbenchWindow activeWorkbenchWindow = workbench
@@ -241,12 +219,10 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                 Map.Entry entry = (Map.Entry) iterator.next();
                 String contextId = (String) entry.getKey();
                 List enabledSubmissions = (List) entry.getValue();
-                //SortedSet matchingEnabledSubmissions = null;
 
-                for (Iterator iterator2 = enabledSubmissions.iterator(); iterator2
-                        .hasNext();) {
-                    EnabledSubmission enabledSubmission = (EnabledSubmission) iterator2
-                            .next();
+                for (int i = 0; i < enabledSubmissions.size(); i++) {
+                    EnabledSubmission enabledSubmission = (EnabledSubmission) enabledSubmissions
+                            .get(i);
                     IPerspectiveDescriptor activePerspectiveDescriptor2 = enabledSubmission
                             .getActivePerspectiveDescriptor();
                     IWorkbenchSite activeWorkbenchSite2 = enabledSubmission
@@ -261,20 +237,8 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                             continue;
 
                     enabledContextIds.add(contextId);
-                    /*
-                     * if (matchingEnabledSubmissions == null)
-                     * matchingEnabledSubmissions = new TreeSet();
-                     * 
-                     * matchingEnabledSubmissions.add(enabledSubmission);
-                     */
+                    break;
                 }
-
-                /*
-                 * if (matchingEnabledSubmissions != null) { EnabledSubmission
-                 * bestEnabledSubmission = (EnabledSubmission)
-                 * matchingEnabledSubmissions .last();
-                 * enabledContextIds.add(contextId); }
-                 */
             }
 
             mutableContextManager.setEnabledContextIds(enabledContextIds);

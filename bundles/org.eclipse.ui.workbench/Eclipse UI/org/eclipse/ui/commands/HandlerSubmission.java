@@ -75,20 +75,20 @@ public final class HandlerSubmission implements Comparable {
         return compareTo;
     }
 
-    public boolean equals(Object object) {
-        if (!(object instanceof HandlerSubmission)) return false;
-
-        HandlerSubmission castedObject = (HandlerSubmission) object;
-        boolean equals = true;
-        equals &= Util.equals(activePerspectiveDescriptor,
-                castedObject.activePerspectiveDescriptor);
-        equals &= Util.equals(activeWorkbenchSite,
-                castedObject.activeWorkbenchSite);
-        equals &= Util.equals(commandId, castedObject.commandId);
-        equals &= Util.equals(handler, castedObject.handler);
-        equals &= Util.equals(priority, castedObject.priority);
-        return equals;
-    }
+    //    public boolean equals(Object object) {
+    //        if (!(object instanceof HandlerSubmission)) return false;
+    //
+    //        HandlerSubmission castedObject = (HandlerSubmission) object;
+    //        boolean equals = true;
+    //        equals &= Util.equals(activePerspectiveDescriptor,
+    //                castedObject.activePerspectiveDescriptor);
+    //        equals &= Util.equals(activeWorkbenchSite,
+    //                castedObject.activeWorkbenchSite);
+    //        equals &= Util.equals(commandId, castedObject.commandId);
+    //        equals &= Util.equals(handler, castedObject.handler);
+    //        equals &= Util.equals(priority, castedObject.priority);
+    //        return equals;
+    //    }
 
     public IPerspectiveDescriptor getActivePerspectiveDescriptor() {
         return activePerspectiveDescriptor;

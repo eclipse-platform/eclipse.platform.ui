@@ -15,8 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -46,8 +44,6 @@ import org.eclipse.ui.keys.KeyFormatterFactory;
 import org.eclipse.ui.keys.SWTKeySupport;
 
 public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
-
-    private final static int TIME = 100;
 
     private IPerspectiveDescriptor activePerspectiveDescriptor;
 
@@ -115,16 +111,6 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     };
 
     private boolean processingHandlerSubmissions;
-
-    private boolean request = false;
-
-    private Runnable timer = new Runnable() {
-
-        public void run() {
-            request = false;
-            processHandlerSubmissionsImpl(true);
-        }
-    };
 
     private IWindowListener windowListener = new IWindowListener() {
 
@@ -212,15 +198,6 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     }
 
     private void processHandlerSubmissions(boolean force) {
-        if (!processingHandlerSubmissions) return;
-
-        if (!request) {
-            request = true;
-            Display.getCurrent().timerExec(TIME, timer);
-        }
-    }
-
-    private void processHandlerSubmissionsImpl(boolean force) {
         IPerspectiveDescriptor activePerspectiveDescriptor = null;
         IWorkbenchSite activeWorkbenchSite = null;
         IWorkbenchWindow activeWorkbenchWindow = workbench
@@ -275,12 +252,12 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                 Map.Entry entry = (Map.Entry) iterator.next();
                 String commandId = (String) entry.getKey();
                 List handlerSubmissions = (List) entry.getValue();
-                SortedSet matchingHandlerSubmissions = null;
+                HandlerSubmission bestHandlerSubmission = null;
+                boolean conflict = false;
 
-                for (Iterator iterator2 = handlerSubmissions.iterator(); iterator2
-                        .hasNext();) {
-                    HandlerSubmission handlerSubmission = (HandlerSubmission) iterator2
-                            .next();
+                for (int i = 0; i < handlerSubmissions.size(); i++) {
+                    HandlerSubmission handlerSubmission = (HandlerSubmission) handlerSubmissions
+                            .get(i);
                     IPerspectiveDescriptor activePerspectiveDescriptor2 = handlerSubmission
                             .getActivePerspectiveDescriptor();
                     IWorkbenchSite activeWorkbenchSite2 = handlerSubmission
@@ -294,18 +271,36 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                             && activeWorkbenchSite2 != activeWorkbenchSite)
                             continue;
 
-                    if (matchingHandlerSubmissions == null)
-                            matchingHandlerSubmissions = new TreeSet();
+                    if (bestHandlerSubmission == null)
+                        bestHandlerSubmission = handlerSubmission;
+                    else {
+                        int compareTo = Util.compare(
+                                activePerspectiveDescriptor2,
+                                bestHandlerSubmission
+                                        .getActivePerspectiveDescriptor());
 
-                    matchingHandlerSubmissions.add(handlerSubmission);
+                        if (compareTo == 0) {
+                            compareTo = Util.compare(activeWorkbenchSite2,
+                                    bestHandlerSubmission
+                                            .getActiveWorkbenchSite());
+
+                            if (compareTo == 0)
+                                    compareTo = Util.compare(-handlerSubmission
+                                            .getPriority(),
+                                            -bestHandlerSubmission
+                                                    .getPriority());
+                        }
+
+                        if (compareTo > 0) {
+                            conflict = false;
+                            bestHandlerSubmission = handlerSubmission;
+                        } else if (compareTo == 0) conflict = true;
+                    }
                 }
 
-                if (matchingHandlerSubmissions != null) {
-                    HandlerSubmission bestHandlerSubmission = (HandlerSubmission) matchingHandlerSubmissions
-                            .last();
-                    handlersByCommandId.put(commandId, bestHandlerSubmission
-                            .getHandler());
-                }
+                if (bestHandlerSubmission != null && !conflict)
+                        handlersByCommandId.put(commandId,
+                                bestHandlerSubmission.getHandler());
             }
 
             ((CommandManager) mutableCommandManager)

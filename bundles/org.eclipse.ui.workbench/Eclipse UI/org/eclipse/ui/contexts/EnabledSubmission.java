@@ -58,18 +58,18 @@ public final class EnabledSubmission implements Comparable {
         return compareTo;
     }
 
-    public boolean equals(Object object) {
-        if (!(object instanceof EnabledSubmission)) return false;
-
-        EnabledSubmission castedObject = (EnabledSubmission) object;
-        boolean equals = true;
-        equals &= Util.equals(activePerspectiveDescriptor,
-                castedObject.activePerspectiveDescriptor);
-        equals &= Util.equals(activeWorkbenchSite,
-                castedObject.activeWorkbenchSite);
-        equals &= Util.equals(contextId, castedObject.contextId);
-        return equals;
-    }
+    //    public boolean equals(Object object) {
+    //        if (!(object instanceof EnabledSubmission)) return false;
+    //
+    //        EnabledSubmission castedObject = (EnabledSubmission) object;
+    //        boolean equals = true;
+    //        equals &= Util.equals(activePerspectiveDescriptor,
+    //                castedObject.activePerspectiveDescriptor);
+    //        equals &= Util.equals(activeWorkbenchSite,
+    //                castedObject.activeWorkbenchSite);
+    //        equals &= Util.equals(contextId, castedObject.contextId);
+    //        return equals;
+    //    }
 
     public IPerspectiveDescriptor getActivePerspectiveDescriptor() {
         return activePerspectiveDescriptor;

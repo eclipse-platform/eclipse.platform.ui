@@ -25,8 +25,7 @@ import java.util.List;
 public interface IWorkbenchContextSupport {
 
     /**
-     * TODO - sends request only; context manager not necessarily updated right
-     * away
+     * TODO
      * 
      * @param enabledSubmissions
      */
@@ -41,8 +40,7 @@ public interface IWorkbenchContextSupport {
     IContextManager getContextManager();
 
     /**
-     * TODO - sends request only; context manager not necessarily updated right
-     * away
+     * TODO
      * 
      * @param enabledSubmissions
      */
