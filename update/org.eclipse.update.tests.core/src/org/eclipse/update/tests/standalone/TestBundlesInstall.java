@@ -11,8 +11,6 @@
 
 package org.eclipse.update.tests.standalone;
 
-
-import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
