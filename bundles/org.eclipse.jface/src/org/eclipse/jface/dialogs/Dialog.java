@@ -95,7 +95,7 @@ public abstract class Dialog extends Window {
 		reg.put(DLG_IMG_WARNING, ImageDescriptor.createFromFile(Dialog.class, "images/warning.gif")); //$NON-NLS-1$
 		reg.put(DLG_IMG_ERROR, ImageDescriptor.createFromFile(Dialog.class, "images/error.gif")); //$NON-NLS-1$
 
-		reg.put(DLG_IMG_LOCKED, ImageDescriptor.createFromFile(Dialog.class, "images/locked.gif")); //$NON-NLS-1$
+		reg.put(DLG_IMG_LOCKED, ImageDescriptor.createFromFile(Dialog.class, "images/waiting_ind.gif")); //$NON-NLS-1$
 
 		
 		reg.put(DLG_IMG_MESSAGE_INFO, ImageDescriptor.createFromFile(Dialog.class, "images/message_info.gif")); //$NON-NLS-1$
