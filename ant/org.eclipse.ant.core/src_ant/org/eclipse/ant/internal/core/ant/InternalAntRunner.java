@@ -315,7 +315,10 @@ public class InternalAntRunner {
 		List chosenTargets = fTargets;
 		if (chosenTargets == null || chosenTargets.isEmpty()) {
 			chosenTargets = new ArrayList(1);
-			chosenTargets.add(project.getDefaultTarget());
+			String defltTarget= project.getDefaultTarget();
+			if (defltTarget != null) {
+				chosenTargets.add(defltTarget);
+			}
 		}
 		project.addBuildListener(new ProgressBuildListener(project, chosenTargets, fMonitor));
 	}
