@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import java.io.FileDescriptor;
 import java.net.InetAddress;
+import java.net.SocketPermission;
 import java.security.Permission;
 
 import org.eclipse.ant.core.AntSecurityException;
@@ -131,10 +132,9 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkListen(int)
 	 */
 	public void checkListen(int port) {
-				if (securityManager != null) {
+		if (securityManager != null) {
 			securityManager.checkListen(port);
 		}
-
 	}
 
 	/**
@@ -144,7 +144,6 @@ public class AntSecurityManager extends SecurityManager {
 		if (securityManager != null) {
 			securityManager.checkMemberAccess(clazz, which);
 		}
-
 	}
 
 	/**
@@ -153,7 +152,11 @@ public class AntSecurityManager extends SecurityManager {
 	 */
 	public void checkMulticast(InetAddress maddr, byte ttl) {
 		if (securityManager != null) {
-			securityManager.checkMulticast(maddr, ttl);
+			String host = maddr.getHostAddress();
+			if (!host.startsWith("[") && host.indexOf(':') != -1) {
+	   			host = "[" + host + "]";
+			}
+	    	checkPermission(new SocketPermission(host, "accept,connect"));
 		}
 	}
 
@@ -164,7 +167,6 @@ public class AntSecurityManager extends SecurityManager {
 		if (securityManager != null) {
 			securityManager.checkMulticast(maddr);
 		}
-
 	}
 
 	/**
@@ -317,7 +319,7 @@ public class AntSecurityManager extends SecurityManager {
 	 * @deprecated
 	 */
 	protected int classDepth(String name) {
-		return super.classDepth(name);
+		return -1;
 	}
 
 	/**
@@ -325,7 +327,7 @@ public class AntSecurityManager extends SecurityManager {
 	 * @deprecated
 	 */
 	protected int classLoaderDepth() {
-		return super.classLoaderDepth();
+		return -1;
 	}
 
 	/**
@@ -333,7 +335,7 @@ public class AntSecurityManager extends SecurityManager {
 	 * @deprecated
 	 */
 	protected ClassLoader currentClassLoader() {
-		return super.currentClassLoader();
+		return null;
 	}
 
 	/**
@@ -341,7 +343,7 @@ public class AntSecurityManager extends SecurityManager {
 	 * @deprecated
 	 */
 	protected Class currentLoadedClass() {
-		return super.currentLoadedClass();
+		return null;
 	}
 
 	/**
@@ -356,9 +358,6 @@ public class AntSecurityManager extends SecurityManager {
 	 * @deprecated
 	 */
 	public boolean getInCheck() {
-		if (securityManager != null) {
-			return securityManager.getInCheck();
-		}
 		return false;
 	}
 
@@ -387,7 +386,7 @@ public class AntSecurityManager extends SecurityManager {
 	 * @deprecated
 	 */
 	protected boolean inClass(String name) {
-		return super.inClass(name);
+		return false;
 	}
 
 	/**
@@ -395,41 +394,6 @@ public class AntSecurityManager extends SecurityManager {
 	 * @deprecated
 	 */
 	protected boolean inClassLoader() {
-		return super.inClassLoader();
-	}
-
-	/**
-	 * @see java.lang.Object#hashCode()
-	 */
-	public int hashCode() {
-		return super.hashCode();
-	}
-
-	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object obj) {
-		return super.equals(obj);
-	}
-
-	/**
-	 * @see java.lang.Object#clone()
-	 */
-	protected Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
-
-	/**
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return super.toString();
-	}
-
-	/**
-	 * @see java.lang.Object#finalize()
-	 */
-	protected void finalize() throws Throwable {
-		super.finalize();
+		return false;
 	}
 }
