@@ -6,6 +6,7 @@ package org.eclipse.ui.actions;
  */
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.*;
@@ -106,7 +107,7 @@ public class CopyProjectOperation {
 						createProjectDescription(project, projectName, newLocation);
 					monitor.worked(50);
 	
-					project.copy(newDescription, true, monitor);
+					project.copy(newDescription, IResource.SHALLOW | IResource.FORCE, monitor);
 	
 					monitor.worked(50);
 	

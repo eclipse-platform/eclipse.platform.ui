@@ -72,7 +72,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 				}
 				// was the resource deleted successfully or was there no existing resource to delete?
 				if (canMove) {
-					source.move(destinationPath, IResource.KEEP_HISTORY, new SubProgressMonitor(subMonitor, 0));
+					source.move(destinationPath, IResource.KEEP_HISTORY | IResource.SHALLOW, new SubProgressMonitor(subMonitor, 0));
 				}
 				subMonitor.worked(1);
 				if (subMonitor.isCanceled()) {

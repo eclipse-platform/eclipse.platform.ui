@@ -213,7 +213,7 @@ public class CopyFilesAndFoldersOperation {
 				}
 				// was the resource deleted successfully or was there no existing resource to delete?
 				if (canCopy) {
-					source.copy(destinationPath, false, new SubProgressMonitor(subMonitor, 0));
+					source.copy(destinationPath, IResource.SHALLOW, new SubProgressMonitor(subMonitor, 0));
 				}
 				subMonitor.worked(1);
 				if (subMonitor.isCanceled()) {
@@ -577,7 +577,7 @@ public class CopyFilesAndFoldersOperation {
 				}
 				if (destinationPath != null) {
 					try {
-						currentResource.copy(destinationPath, false, new SubProgressMonitor(subMonitor, 0));
+						currentResource.copy(destinationPath, IResource.SHALLOW, new SubProgressMonitor(subMonitor, 0));
 					} catch (CoreException e) {
 						recordError(e); // log error
 						return false;

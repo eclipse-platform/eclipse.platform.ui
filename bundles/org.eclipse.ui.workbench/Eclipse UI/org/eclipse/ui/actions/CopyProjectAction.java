@@ -149,7 +149,7 @@ boolean performCopy(
 					createDescription(project, projectName, newLocation);
 				monitor.worked(50);
 
-				project.copy(newDescription, true, monitor);
+				project.copy(newDescription, IResource.SHALLOW | IResource.FORCE, monitor);
 
 				monitor.worked(50);
 

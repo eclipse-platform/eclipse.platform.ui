@@ -282,7 +282,7 @@ void invokeOperation(IResource resource, IProgressMonitor monitor)
 		description.setName(newPath.segment(0));
 		project.move(description, true, monitor);
 	} else
-		resource.move(newPath, IResource.KEEP_HISTORY, new SubProgressMonitor(monitor, 50));
+		resource.move(newPath, IResource.KEEP_HISTORY | IResource.SHALLOW, new SubProgressMonitor(monitor, 50));
 }
 /**
  * Return the new name to be given to the target resource.
