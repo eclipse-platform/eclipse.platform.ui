@@ -88,7 +88,6 @@ public class AddSyncAction extends MergeAction {
 				IResource resource = changed[i].getResource();
 				if (resource.getType() == resource.FILE) {
 					syncSet.remove(node);
-					makeFolderInSync((DiffContainer)node.getParent());
 				}
 			}
 		} catch (final TeamException e) {
@@ -101,19 +100,6 @@ public class AddSyncAction extends MergeAction {
 		}
 		
 		return syncSet;
-	}
-	
-	protected void makeFolderInSync(DiffContainer parentElement) throws TeamException {
-		// Recursively make the parent element (and its parents) in sync.
-		// Walk up and find the parents which need to be made in sync too. (For
-		// each parent that doesn't already have sync info).
-		Vector v = new Vector();
-		int parentKind = parentElement.getKind();
-		while (((parentKind & Differencer.CHANGE_TYPE_MASK) == Differencer.ADDITION)) {
-			parentElement.setKind(IRemoteSyncElement.IN_SYNC);
-			parentElement = (DiffContainer)parentElement.getParent();
-			parentKind = parentElement == null ? 0 : parentElement.getKind();
-		}
 	}
 	
 	/**
