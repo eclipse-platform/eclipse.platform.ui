@@ -12,7 +12,6 @@
 package org.eclipse.ui.texteditor;
 
 
-import java.text.BreakIterator;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -746,7 +745,6 @@ class FindReplaceDialog extends Dialog {
 			public void widgetSelected(SelectionEvent e) {
 				boolean newState= fIsRegExCheckBox.getSelection();
 				fIncrementalCheckBox.setEnabled(!newState);
-				fWholeWordCheckBox.setEnabled(!newState);
 				updateButtonState();
 				storeSettings();
 				setContentAssistsEnablement(newState);
@@ -1063,7 +1061,7 @@ class FindReplaceDialog extends Dialog {
 	private void storeSettings() {
 		fDialogPositionInit= getDialogBoundaries();
 		fWrapInit= isWrapSearch();
-		fWholeWordInit= isWholeWordSearch();
+		fWholeWordInit= isWholeWordSetting();
 		fCaseInit= isCaseSensitiveSearch();
 		fIsRegExInit= isRegExSearch();
 		fIncrementalInit= isIncrementalSearch();
@@ -1169,11 +1167,23 @@ class FindReplaceDialog extends Dialog {
 	 * Retrieves and returns the option search whole words from the appropriate check box.
 	 * @return <code>true</code> if searching for whole words
 	 */
-	private boolean isWholeWordSearch() {
+	private boolean isWholeWordSetting() {
 		if (okToUse(fWholeWordCheckBox)) {
 			return fWholeWordCheckBox.getSelection();
 		}
 		return fWholeWordInit;
+	}
+
+	/**
+	 * Returns <code>true</code> if searching should be restricted to entire
+	 * words, <code>false</code> if not. This is the case if the respective
+	 * checkbox is turned on, regex is off, and the checkbox is enabled, i.e. 
+	 * the current find string is an entire word.
+	 * 
+	 * @return <code>true</code> if the search is restricted to whole words
+	 */
+	private boolean isWholeWordSearch() {
+		return isWholeWordSetting() && !isRegExSearchAvailableAndChecked() && (okToUse(fWholeWordCheckBox) ? fWholeWordCheckBox.isEnabled() : true);
 	}
 
 	/**
@@ -1289,7 +1299,7 @@ class FindReplaceDialog extends Dialog {
 			class ReplaceAllRunnable implements Runnable {
 				public int numberOfOccurrences;
 				public void run() {
-					numberOfOccurrences= replaceAll(findString, replaceString == null ? "" : replaceString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch() && !isRegExSearchAvailableAndChecked(), isRegExSearchAvailableAndChecked());	//$NON-NLS-1$
+					numberOfOccurrences= replaceAll(findString, replaceString == null ? "" : replaceString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isRegExSearchAvailableAndChecked());	//$NON-NLS-1$
 				}				
 			}
 			
@@ -1391,7 +1401,7 @@ class FindReplaceDialog extends Dialog {
 		if (findString != null && findString.length() > 0) {
 
 			try {
-				boolean somethingFound= findNext(findString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch() && !isRegExSearchAvailableAndChecked(), isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), isRegExSearchAvailableAndChecked());
+				boolean somethingFound= findNext(findString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), isRegExSearchAvailableAndChecked());
 				if (somethingFound) {
 					statusMessage(""); //$NON-NLS-1$
 				} else {
@@ -1512,7 +1522,10 @@ class FindReplaceDialog extends Dialog {
 
 			boolean enable= fTarget != null && (fActiveShell == fParentShell || fActiveShell == getShell());
 			String str= getFindString();
-			boolean findString= str != null && str.length() > 0 && (isRegExSearchAvailableAndChecked() || !isWholeWordSearch() || isWord(str));
+			boolean findString= str != null && str.length() > 0;
+			
+			boolean wholeWord= isWord(str) && !isRegExSearchAvailableAndChecked();
+			fWholeWordCheckBox.setEnabled(wholeWord);
 
 			fFindNextButton.setEnabled(enable && findString);
 			fReplaceSelectionButton.setEnabled(!disableReplace && enable && isEditable() && selection && (!fNeedsInitialFindBeforeReplace || !isRegExSearchAvailableAndChecked()));
@@ -1530,15 +1543,14 @@ class FindReplaceDialog extends Dialog {
 	 * @since 3.0
 	 */
 	private boolean isWord(String str) {
-		if (str == null)
+		if (str == null || str.length() == 0)
 			return false;
 		
-		BreakIterator wordIterator= BreakIterator.getWordInstance();
-		wordIterator.setText(str);
-		int first= wordIterator.first();
-		if (first > 0)
-			return false;
-		return wordIterator.next() == str.length();
+		for (int i= 0; i < str.length(); i++) {
+			if (!Character.isJavaIdentifierPart(str.charAt(i)))
+				return false;
+		}
+		return true;
 	}
 	
 	/**
