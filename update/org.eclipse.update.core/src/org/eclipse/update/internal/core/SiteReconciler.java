@@ -56,7 +56,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	 * At the end, go over all the site, get the configured features and make sure that if we find duplicates
 	 * only one feature is configured
 	 */
-	public void reconcile() throws CoreException {
+	public void reconcile(boolean isOptimistic) throws CoreException {
 
 		IPlatformConfiguration platformConfig =
 			BootLoader.getCurrentPlatformConfiguration();
@@ -86,7 +86,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				currentConfigurationSite = oldConfiguredSites[index];
 				if (currentConfigurationSite.getSite().getURL().equals(resolvedURL)) {
 					found = true;
-					ConfiguredSite reconciledConfiguredSite = reconcile(currentConfigurationSite);
+					ConfiguredSite reconciledConfiguredSite = reconcile(currentConfigurationSite, isOptimistic);
 					reconciledConfiguredSite.setPreviousPluginPath(
 						currentSiteEntry.getSitePolicy().getList());
 					newDefaultConfiguration.addConfiguredSite(reconciledConfiguredSite);
@@ -162,7 +162,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		}
 		return resolvedURL;
 	}
-
+	
 	/**
 	 * Compare the old state of ConfiguredSite with
 	 * the 'real' features we found in Site
@@ -178,7 +178,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	 * If they didn't exist before we add them as configured
 	 * Otherwise we use the old policy and add them to teh new configuration site
 	 */
-	private ConfiguredSite reconcile(IConfiguredSite oldConfiguredSite)
+	private ConfiguredSite reconcile(IConfiguredSite oldConfiguredSite, boolean isOptimistic)
 		throws CoreException {
 
 		ConfiguredSite newConfiguredSite = createNewConfigSite(oldConfiguredSite);
@@ -210,8 +210,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 
 			// new feature found: add as configured if the policy is optimistic
 			if (!newFeatureFound) {
-				if (oldSitePolicy.getPolicy()
-					== IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
+				if (isOptimistic) {
 					newSitePolicy.addConfiguredFeatureReference(currentFeatureRefModel);
 				} else {
 					newSitePolicy.addUnconfiguredFeatureReference(currentFeatureRefModel);

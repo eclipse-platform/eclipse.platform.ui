@@ -137,8 +137,8 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 			//       were changes
 			if (DEBUG)
 				debug("mode: " + (optimistic ? "optimistic" : "pessimistic")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			/*changes = */SiteManager.getLocalSite(/*optimistic*/);
-			if (DEBUG)
+			changes = InternalSiteManager.reconcile(optimistic);
+			if (DEBUG) 
 				debug(changes ? "changes detected" :"no changes detected"); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (CoreException e){
 			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());

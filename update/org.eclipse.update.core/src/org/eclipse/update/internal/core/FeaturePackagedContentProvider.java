@@ -42,16 +42,12 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	 * otherwise reinitialize)
 	 */
 	public IVerifier getVerifier() throws CoreException {
-		if (jarVerifier == null) {
+		if (jarVerifier == null || jarVerifier.getParent() == null) {
 			jarVerifier = new JarVerifier();
 			return jarVerifier;
 		}
 		
-		if (jarVerifier.getParent() == null) {
-			jarVerifier = new JarVerifier();
-			return jarVerifier;
-		}
-		
+		// re-init will be done if the parent changes
 		return jarVerifier;
 	}
 

@@ -307,6 +307,9 @@ public class InstallConfiguration
 				//$NON-NLS-1$
 			}
 
+			// IF primary feature URL or platform feature URL that we need to pass to runtime config
+			// is part of platform:base:, write it as platform:base: URL
+
 			// write the primary features
 			IFeatureReference[] configuredFeaturesRef =
 				configurationPolicy.getConfiguredFeatures();
@@ -316,14 +319,14 @@ public class InstallConfiguration
 					String id = feature.getVersionedIdentifier().getIdentifier();
 					String version = feature.getVersionedIdentifier().getVersion().toString();
 					String application = feature.getApplication();
-					URL url = feature.getURL();
+					URL url = feature.getURL(); // get the URL of teh plugin that corresponds to teh feature (pluginid = featureid)
 					IPlatformConfiguration.IFeatureEntry featureEntry =
 						runtimeConfiguration.createFeatureEntry(id, version, application, url);
 					runtimeConfiguration.configureFeatureEntry(featureEntry);
 				}
 			}
 
-			// write the platform 
+			// write the platform features (features that contain special platform plugins)
 			// FIXME
 		}
 

@@ -238,19 +238,6 @@ public class Feature extends FeatureModel implements IFeature {
 		IFeatureContentConsumer consumer = null;
 
 		try {
-			// install the children feature
-			IFeatureReference[] children = getIncludedFeatureReferences();
-			for (int i = 0; i < children.length; i++) {
-				Site targetSite = (Site) targetFeature.getSite();
-				IFeature childFeature = children[i].getFeature();
-				targetSite.install(
-					childFeature,
-					targetFeature.getFeatureContentConsumer(),
-					verifier,
-					verificationListener,
-					monitor);
-			}
-
 			// determine list of plugins to install
 			// find the intersection between the plugin entries already contained
 			// on the target site, and plugin entries packaged in source feature
@@ -331,6 +318,19 @@ public class Feature extends FeatureModel implements IFeature {
 
 			// All archives are downloaded and verified. Get ready to install
 			consumer = targetFeature.getFeatureContentConsumer();
+
+			// install the children feature
+			IFeatureReference[] children = getIncludedFeatureReferences();
+			for (int i = 0; i < children.length; i++) {
+				IFeature childFeature = children[i].getFeature();
+				((Site)targetSite).install( // need to cast
+					childFeature,
+					consumer,
+					verifier,
+					verificationListener,
+					monitor);
+			}
+
 
 			//Install feature files
 			if (monitor != null)

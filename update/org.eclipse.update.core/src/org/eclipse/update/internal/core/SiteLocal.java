@@ -34,13 +34,18 @@ public class SiteLocal
 
 	private static final String UPDATE_STATE_SUFFIX = ".metadata";
 
-	/**
+	/*
 	 * initialize the configurations from the persistent model.
-	 * The configurations are per user, so we save the data in the 
-	 * user path, not the .metadata of any workspace, so the data
-	 * is shared between the workspaces.
+	 * Set the reconciliation as non optimistic
 	 */
 	public static ILocalSite getLocalSite() throws CoreException {
+		return internalGetLocalSite(false);
+	}
+
+	/*
+	 *Internal call is reconciliation needs to be optimistic
+	 */
+	public static ILocalSite internalGetLocalSite(boolean isOptimistic) throws CoreException {
 
 		SiteLocal localSite = new SiteLocal();
 
@@ -50,7 +55,6 @@ public class SiteLocal
 		localSite.isTransient(currentPlatformConfiguration.isTransient());
 
 		try {
-
 			// obtain LocalSite.xml location
 			URL location;
 			try {
@@ -66,7 +70,8 @@ public class SiteLocal
 			localSite.setLocationURLString(configXML.toExternalForm());
 			localSite.resolve(configXML, null);
 
-			parseLocalSiteFile(localSite, currentPlatformConfiguration, configXML);
+			// this may result in a reconciliation or a recovery
+			parseLocalSiteFile(localSite, currentPlatformConfiguration, configXML, isOptimistic);
 
 			// check if we have to reconcile, if the timestamp has changed
 			long bootStamp = currentPlatformConfiguration.getChangeStamp();
@@ -79,8 +84,7 @@ public class SiteLocal
 							+ localSite.getStamp());
 					//$NON-NLS-1$ //$NON-NLS-2$
 				}
-
-				localSite.reconcile();
+				localSite.reconcile(isOptimistic);
 
 			} else {
 				// no reconciliation, preserve the list of plugins from the platform anyway
@@ -98,14 +102,15 @@ public class SiteLocal
 		return localSite;
 	}
 
+	
 	/**
 	 * Create the localSite object either by parsing, recovering from the file system, or reconciling with the platform configuration
 	 */
 	private static void parseLocalSiteFile(
 		SiteLocal localSite,
 		IPlatformConfiguration currentPlatformConfiguration,
-		URL configXML)
-		throws MalformedURLException, CoreException {
+		URL configXML,
+		boolean isOptimistic) throws CoreException, MalformedURLException {
 
 		//attempt to parse the LocalSite.xml	
 		URL resolvedURL = URLEncoder.encode(configXML);
@@ -120,9 +125,8 @@ public class SiteLocal
 						+ " does not exist, there is no previous state or install history we can recover from, we shall use default from platform configuration.");
 				//$NON-NLS-1$
 			}
-
-			localSite.reconcile();
-
+			localSite.reconcile(isOptimistic);
+			
 		} catch (SAXException exception) {
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
 				Utilities.logException(
@@ -141,7 +145,6 @@ public class SiteLocal
 					exception);
 				//$NON-NLS-1$
 			}
-
 			recoverSiteLocal(resolvedURL, localSite);
 		}
 	}
@@ -635,8 +638,8 @@ public class SiteLocal
 	 * At the end, go over all the site, get the configured features and make sure that if we find duplicates
 	 * only one feature is configured
 	 */
-	public void reconcile() throws CoreException {
-		getReconciler().reconcile();
+	public void reconcile(boolean isOptimistic) throws CoreException {
+		getReconciler().reconcile(isOptimistic);
 	}
 
 	/*
