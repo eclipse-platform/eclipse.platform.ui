@@ -312,7 +312,6 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 			shell.setVisible(true);
 			shell.setMinimized(false);
 			shell.moveAbove(null);
-			shell.forceFocus();
 		}
 	}
 }
