@@ -304,6 +304,7 @@ public class AntRunner implements IPlatformRunnable {
 			// J9 throws NoClassDefFoundError nested in a InvocationTargetException
 			if ((realException instanceof NoClassDefFoundError) || (realException instanceof ClassNotFoundException)) {
 				problemLoadingClass(e);
+				return;
 			}
 			String message = (realException.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : realException.getMessage(); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, realException));
