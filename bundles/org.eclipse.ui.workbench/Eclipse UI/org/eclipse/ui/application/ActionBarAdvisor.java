@@ -14,10 +14,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
@@ -298,5 +301,37 @@ public class ActionBarAdvisor {
             ((ActionFactory.IWorkbenchAction) action).dispose();
         }
     }
+	
+	/**
+	 * Saves arbitrary application-specific state information
+     * for this action bar advisor.
+     * <p>
+     * The default implementation simply returns an OK status.
+     * Subclasses may extend or override.
+     * </p>
+	 * 
+	 * @param memento the memento in which to save the advisor's state
+	 * @return a status object indicating whether the save was successful
+	 * @since 3.1
+	 */
+	public IStatus saveState(IMemento memento) {
+		return Status.OK_STATUS;
+	}
+	
+	/**
+	 * Restores arbitrary application-specific state information
+     * for this action bar advisor.
+     * <p>
+     * The default implementation simply returns an OK status.
+     * Subclasses may extend or override.
+     * </p>
+	 * 
+     * @param memento the memento from which to restore the advisor's state
+	 * @return a status object indicating whether the restore was successful
+	 * @since 3.1
+	 */
+	public IStatus restoreState(IMemento memento) {
+		return Status.OK_STATUS;
+	}
 
 }

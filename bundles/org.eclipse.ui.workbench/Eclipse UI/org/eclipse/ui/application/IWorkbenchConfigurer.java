@@ -77,27 +77,17 @@ public interface IWorkbenchConfigurer {
      * 	<code>false</code> to forget current workbench state on close.
      */
     public void setSaveAndRestore(boolean enabled);
-
-	/**
-	 * Saves the current state of the specified workbench window 
-	 * using the specified memento.
-	 * 
-	 * @param window the window to be recorded
-	 * @param memento the storage area for object's state
-	 * @return a status object indicating whether the save was successful
-	 * @since 3.1
-	 */
-	public IStatus recordWorkbenchWindowState(IWorkbenchWindow window, IMemento memento);
 	
 	/**
-	 * Restores a workbench window with state using the specified memento.
+	 * Restores a workbench window from the given memento.
 	 * 
-	 * @param memento the storage area for object's state
-	 * @return the <code>IWorkbenchWindow</code> that is restored or null if there was an error.
-	 * @throws WorkbenchException 
+	 * @param memento the memento from which to restore the window's state
+	 * @return the configurer for the restored window
+	 * @throws WorkbenchException if an error occurred during the restore
+     * @see IWorkbenchWindowConfigurer#saveState(IMemento)
 	 * @since 3.1
 	 */
-	public IWorkbenchWindow restoreWorkbenchWindow(IMemento memento)
+	public IWorkbenchWindowConfigurer restoreWorkbenchWindow(IMemento memento)
 			throws WorkbenchException;
 
     /**

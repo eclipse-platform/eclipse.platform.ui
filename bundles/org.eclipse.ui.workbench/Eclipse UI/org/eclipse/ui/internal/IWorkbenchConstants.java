@@ -132,6 +132,12 @@ public interface IWorkbenchConstants {
     public static final String TRUE = "true"; //$NON-NLS-1$
 
     public static final String FALSE = "false"; //$NON-NLS-1$
+	
+	public static final String TAG_WORKBENCH_ADVISOR = "workbenchAdvisor"; //$NON-NLS-1$
+	
+	public static final String TAG_WORKBENCH_WINDOW_ADVISOR = "workbenchWindowAdvisor"; //$NON-NLS-1$
+	
+	public static final String TAG_ACTION_BAR_ADVISOR = "actionBarAdvisor"; //$NON-NLS-1$
 
     public static final String TAG_ID = "id"; //$NON-NLS-1$
 

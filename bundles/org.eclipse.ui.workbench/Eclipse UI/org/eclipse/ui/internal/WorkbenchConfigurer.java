@@ -181,16 +181,9 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
     }
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#recordWorkbenchWindowState(org.eclipse.ui.IWorkbenchWindow, org.eclipse.ui.IMemento)
-	 */
-	public IStatus recordWorkbenchWindowState(IWorkbenchWindow window, IMemento memento) {
-		return ((WorkbenchWindow)window).saveState(memento);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#restoreWorkbenchWindow(org.eclipse.ui.IMemento)
 	 */
-	public IWorkbenchWindow restoreWorkbenchWindow(IMemento memento) throws WorkbenchException {
-		return ((Workbench)getWorkbench()).restoreWorkbenchWindow(memento);
+	public IWorkbenchWindowConfigurer restoreWorkbenchWindow(IMemento memento) throws WorkbenchException {
+		return getWindowConfigurer(((Workbench) getWorkbench()).restoreWorkbenchWindow(memento));
 	}
 }

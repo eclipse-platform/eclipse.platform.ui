@@ -1383,6 +1383,18 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 PlatformUI.PLUGIN_ID,
                 IStatus.OK,
                 WorkbenchMessages.WorkbenchWindow_problemsRestoringWindow, null); 
+		
+		// Restore the window advisor state.
+		IMemento windowAdvisorState = memento.getChild(
+				IWorkbenchConstants.TAG_WORKBENCH_WINDOW_ADVISOR);
+		if (windowAdvisorState != null)
+			result.add(getWindowAdvisor().restoreState(windowAdvisorState));
+		
+		// Restore actionbar advisor state.
+		IMemento actionBarAdvisorState = memento
+				.getChild(IWorkbenchConstants.TAG_ACTION_BAR_ADVISOR);
+		if (actionBarAdvisorState != null)
+			result.add(getActionBarAdvisor().restoreState(actionBarAdvisorState));
 
         // Read window's bounds and state.
         Rectangle displayBounds = getShell().getDisplay().getBounds();
@@ -2139,6 +2151,17 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 }
             }
         }
+		
+		// Save window advisor state.
+		IMemento windowAdvisorState = memento.createChild(
+				IWorkbenchConstants.TAG_WORKBENCH_WINDOW_ADVISOR);
+		result.add(getWindowAdvisor().saveState(windowAdvisorState));
+		
+		// Save actionbar advisor state.
+		IMemento actionBarAdvisorState = memento
+				.createChild(IWorkbenchConstants.TAG_ACTION_BAR_ADVISOR);
+		result.add(getActionBarAdvisor().saveState(actionBarAdvisorState));
+		
         return result;
     }
 

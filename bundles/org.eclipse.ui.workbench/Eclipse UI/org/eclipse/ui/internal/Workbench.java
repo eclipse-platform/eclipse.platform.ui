@@ -1370,6 +1370,13 @@ public final class Workbench implements IWorkbench {
 		} finally {
 			UIStats.end(UIStats.RESTORE_WORKBENCH, this, "MRUList"); //$NON-NLS-1$
 		}
+		
+		// Restore advisor state.
+		IMemento advisorState = memento
+				.getChild(IWorkbenchConstants.TAG_WORKBENCH_ADVISOR);
+		if (advisorState != null)
+			result.add(getAdvisor().restoreState(advisorState));
+		
 		// Get the child windows.
 		IMemento[] children = memento
 				.getChildren(IWorkbenchConstants.TAG_WINDOW);
@@ -1578,6 +1585,11 @@ public final class Workbench implements IWorkbench {
 
 		// Save the version number.
 		memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING[1]);
+		
+		// Save the advisor state.
+		IMemento advisorState = memento
+				.createChild(IWorkbenchConstants.TAG_WORKBENCH_ADVISOR);
+		result.add(getAdvisor().saveState(advisorState));
 
 		// Save the workbench windows.
 		IWorkbenchWindow[] windows = getWorkbenchWindows();

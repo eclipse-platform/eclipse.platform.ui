@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.application;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 
@@ -393,4 +395,14 @@ public interface IWorkbenchWindowConfigurer {
      * @return the page composite, suitable for laying out in the parent 
      */
     public Control createPageComposite(Composite parent);
+	
+	/**
+	 * Saves the current state of the window using the specified memento.
+	 * 
+	 * @param memento the memento in which to save the window's state
+	 * @return a status object indicating whether the save was successful
+     * @see IWorkbenchConfigurer#restoreWorkbenchWindow(IMemento)
+	 * @since 3.1
+	 */
+	public IStatus saveState(IMemento memento);
 }

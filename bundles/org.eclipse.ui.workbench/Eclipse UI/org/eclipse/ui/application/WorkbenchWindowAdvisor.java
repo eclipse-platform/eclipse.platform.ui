@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.application;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
@@ -282,5 +285,28 @@ public class WorkbenchWindowAdvisor {
     public void dispose() {
         // do nothing.
     }
-    
+	
+	/**
+	 * Saves arbitrary application specific state information.
+	 * 
+	 * @param memento the storage area for object's state
+	 * @return a status object indicating whether the save was successful
+	 * @since 3.1
+	 */
+	public IStatus saveState(IMemento memento) {
+		// do nothing
+		return Status.OK_STATUS;
+	}
+	
+	/**
+	 * Restores arbitrary application specific state information.
+	 * 
+	 * @param memento the storage area for object's state
+	 * @return a status object indicating whether the restore was successful
+	 * @since 3.1
+	 */
+	public IStatus restoreState(IMemento memento) {
+		// do nothing
+		return Status.OK_STATUS;
+	}
 }
