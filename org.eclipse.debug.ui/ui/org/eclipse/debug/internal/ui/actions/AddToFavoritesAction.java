@@ -76,7 +76,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 					setLaunchConfiguration(configuration);
 					setMode(launch.getLaunchMode());
 					setGroup(DebugUITools.getLaunchGroup(configuration, getMode()));
-					setText(MessageFormat.format(ActionMessages.getString("AddToFavoritesAction.1"), new String[]{getGroup().getLabel()})); //$NON-NLS-1$
+					setText(MessageFormat.format(ActionMessages.getString("AddToFavoritesAction.1"), new String[]{DebugUIPlugin.removeAccelerators(getGroup().getLabel())})); //$NON-NLS-1$
 				}
 			}
 		}
