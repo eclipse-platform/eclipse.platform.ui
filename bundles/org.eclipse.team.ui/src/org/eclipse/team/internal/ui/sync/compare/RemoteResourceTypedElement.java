@@ -102,4 +102,8 @@ public class RemoteResourceTypedElement extends BufferedContent implements IType
 		}
 		return null;
 	}
+	
+	public IRemoteResource getRemote() {
+		return remote;
+	}
 }
