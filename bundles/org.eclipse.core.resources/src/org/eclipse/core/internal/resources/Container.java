@@ -86,14 +86,10 @@ public abstract class Container extends Resource implements IContainer {
 			((Resource) members[i]).fixupAfterMoveSource();
 	}
 
-	protected IResource[] getChildren(Container parent, boolean phantom) {
-		return getChildren(parent.getFullPath(), phantom);
-	}
-
-	protected IResource[] getChildren(IPath parentPath, boolean phantom) {
+	protected IResource[] getChildren(int memberFlags) {
 		IPath[] children = null;
 		try {
-			children = workspace.tree.getChildren(parentPath);
+			children = workspace.tree.getChildren(path);
 		} catch (IllegalArgumentException e) {
 			//concurrency problem: the container has been deleted by another 
 			//thread during this call.  Just return empty children set
@@ -101,19 +97,22 @@ public abstract class Container extends Resource implements IContainer {
 		if (children == null || children.length == 0)
 			return ICoreConstants.EMPTY_RESOURCE_ARRAY;
 		Resource[] result = new Resource[children.length];
-		int j = 0;
+		int found = 0;
 		for (int i = 0; i < children.length; i++) {
-			ResourceInfo info = workspace.getResourceInfo(children[i], phantom, false);
-			if (info != null)
-				result[j++] = workspace.newResource(children[i], info.getType());
+			ResourceInfo info = workspace.getResourceInfo(children[i], true, false);
+			if (info != null && isMember(info.getFlags(), memberFlags))
+				result[found++] = workspace.newResource(children[i], info.getType());
 		}
-		if (j == result.length)
+		if (found == result.length)
 			return result;
-		Resource[] trimmedResult = new Resource[j];
-		System.arraycopy(result, 0, trimmedResult, 0, j);
+		Resource[] trimmedResult = new Resource[found];
+		System.arraycopy(result, 0, trimmedResult, 0, found);
 		return trimmedResult;
 	}
 
+	/* (non-Javadoc)
+	 * @see IFolder#getFile(String) and IProject#getFile(String)
+	 */
 	public IFile getFile(String name) {
 		return (IFile) workspace.newResource(getFullPath().append(name), FILE);
 	}
@@ -125,6 +124,9 @@ public abstract class Container extends Resource implements IContainer {
 		return (IFile) workspace.newResource(getFullPath().append(childPath), FILE);
 	}
 
+	/* (non-Javadoc)
+	 * @see IFolder#getFolder(String) and IProject#getFolder(String)
+	 */
 	public IFolder getFolder(String name) {
 		return (IFolder) workspace.newResource(getFullPath().append(name), FOLDER);
 	}
@@ -145,7 +147,7 @@ public abstract class Container extends Resource implements IContainer {
 			depth = DEPTH_ZERO;
 		// get the children via the workspace since we know that this
 		// resource exists (it is local).
-		IResource[] children = getChildren(this, false);
+		IResource[] children = getChildren(IResource.NONE);
 		for (int i = 0; i < children.length; i++)
 			if (!children[i].isLocal(depth))
 				return false;
@@ -174,37 +176,12 @@ public abstract class Container extends Resource implements IContainer {
 	public IResource[] members(int memberFlags) throws CoreException {
 		final boolean phantom = (memberFlags & INCLUDE_PHANTOMS) != 0;
 		ResourceInfo info = getResourceInfo(phantom, false);
-		checkExists(getFlags(info), true);
+		final int flags = getFlags(info);
+		checkExists(flags, true);
 		//if children are currently unknown, ask for refresh asap
 		if (info.isSet(ICoreConstants.M_CHILDREN_UNKNOWN))
 			workspace.refreshManager.refresh(this);
-		IResource[] allMembers = getChildren(this, phantom);
-		// if team-private members are wanted, return the whole list
-		if ((memberFlags & INCLUDE_TEAM_PRIVATE_MEMBERS) != 0)
-			return allMembers;
-		// filter out team-private members (if any)
-		int teamPrivateMemberCount = 0;
-		// make a quick first pass to see if there is anything to exclude
-		for (int i = 0; i < allMembers.length; i++) {
-			Resource child = (Resource) allMembers[i];
-			ResourceInfo childInfo = child.getResourceInfo(phantom, false);
-			if (isTeamPrivateMember(getFlags(childInfo))) {
-				teamPrivateMemberCount++;
-				allMembers[i] = null;//null array entry so we know not to include it
-			}
-		}
-		// common case: nothing to exclude
-		if (teamPrivateMemberCount == 0)
-			return allMembers;
-		// make a second pass to copy the ones we want
-		IResource[] reducedMembers = new IResource[allMembers.length - teamPrivateMemberCount];
-		int nextPosition = 0;
-		for (int i = 0; i < allMembers.length; i++) {
-			Resource child = (Resource) allMembers[i];
-			if (child != null)
-				reducedMembers[nextPosition++] = child;
-		}
-		return reducedMembers;
+		return getChildren(memberFlags);
 	}
 
 	/* (non-Javadoc)

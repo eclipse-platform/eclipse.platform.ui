@@ -87,7 +87,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * Returns true if all of the bits indicated by the mask are set.
 	 */
 	public static boolean isSet(int flags, int mask) {
-		return (flags & mask) != 0;
+		return (flags & mask) == mask;
 	}
 
 	/** 

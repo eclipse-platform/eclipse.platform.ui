@@ -868,13 +868,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 
 	/**
-	 * For debugging purposes only.  Dumps plugin stats to console
-	 */
-	public void dumpStats() {
-		EventStats.dumpStats();
-	}
-
-	/**
 	 * End an operation (group of resource changes).
 	 * Notify interested parties that resource changes have taken place.  All
 	 * registered resource change listeners are notified.  If autobuilding is

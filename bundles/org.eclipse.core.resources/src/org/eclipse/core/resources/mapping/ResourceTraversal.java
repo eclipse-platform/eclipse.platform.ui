@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,17 @@
 package org.eclipse.core.resources.mapping;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.runtime.CoreException;
 
 /**
- * A model element traversal is simply a set of resources and the depth to which
+ * A resource traversal is simply a set of resources and the depth to which
  * each is to be traversed. A set of traversals is used to describe the
  * resources that constitute a model element.
- *
+ * <p>
+ * The flags of the traversal indicate which special resources should be
+ * included or excluded from the traversal. The flags used are the same as
+ * those passed to the <code>IResource#accept(IResourceVisitor, int, int)</code> method.
  * <p>
  * NOTE: This API is work in progress and will likely change before the final API freeze.
  * </p>
@@ -25,17 +30,38 @@ import org.eclipse.core.resources.IResource;
  * @since 3.1
  */
 public class ResourceTraversal {
+
 	private int depth;
+	private int flags;
 	private IResource[] resources;
 
 	/**
 	 * Creates a new resource traversal.
 	 * @param resources The resources in the traversal
 	 * @param depth The traversal depth
+	 * @param flags the flags for this traversal. The traversal flags match those
+	 * that are passed to the <code>IResource#accept</code> method.
 	 */
-	public ResourceTraversal(IResource[] resources, int depth) {
+	public ResourceTraversal(IResource[] resources, int depth, int flags) {
 		this.resources = resources;
 		this.depth = depth;
+	}
+
+	/**
+	 * Visit the resources of this traversal to the depth specified
+	 * 
+	 * @param visitor a resource visitor
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> A resource in this traversal does not exist.</li>
+	 * <li> The visitor failed with this exception.</li>
+	 * </ul>
+	 */
+	public void accept(IResourceVisitor visitor) throws CoreException {
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			resource.accept(visitor, depth, flags);
+		}
 	}
 
 	/**
@@ -50,6 +76,21 @@ public class ResourceTraversal {
 	}
 
 	/**
+	 * Return the flags for this traversal. 
+	 * The flags of the traversal indicate which special resources should be
+	 * included or excluded from the traversal. The flags used are the same as
+	 * those passed to the <code>IResource#accept(IResourceVisitor, int, int)</code> method.
+	 * Clients who traverse the resources manually (i.e. without calling <code>accept</code>)
+	 * should respect the flags when determining which resources are included
+	 * in the traversal.
+	 * 
+	 * @return the flags for this traversal
+	 */
+	public int getFlags() {
+		return flags;
+	}
+
+	/**
 	 * Returns the file system resource(s) for this traversal. The returned
 	 * resources must be contained within the same project and need not exist in
 	 * the local file system. The traversal of the returned resources should be
@@ -59,6 +100,8 @@ public class ResourceTraversal {
 	 * visited if the folder is IResource.DEPTH_ONE or IResource.DEPTH_INFINITE.
 	 * Child folders should only be visited if the depth is
 	 * IResource.DEPTH_INFINITE.
+	 * 
+	 * @return The resources in this traversal
 	 */
 	public IResource[] getResources() {
 		return resources;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.resources.mapping;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -91,4 +90,27 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * </ul>
 	 */
 	public abstract ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException;
+
+    /**
+	 * Accepts the given visitor for the resources in this maping.
+	 * The visitor's <code>visit</code> method is called for each resource
+	 * in this mapping. 
+	 * 
+     * @param context the traversal context
+	 * @param visitor the visitor
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting is not desired
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> This resource does not exist.</li>
+	 * <li> The visitor failed with this exception.</li>
+	 * </ul>
+	 */
+    public void accept(ResourceMappingContext context, IResourceVisitor visitor, IProgressMonitor monitor) throws CoreException {
+        ResourceTraversal[] traversals = getTraversals(context, monitor);
+        for (int i = 0; i < traversals.length; i++) {
+            ResourceTraversal traversal = traversals[i];
+            traversal.accept(visitor);
+        }
+    }
 }

@@ -55,6 +55,15 @@ public interface IContainer extends IResource, IAdaptable {
 	public static final int INCLUDE_TEAM_PRIVATE_MEMBERS = 2;
 
 	/**
+	 * Member constant (bit mask value 4) indicating that derived resources
+	 * are to be excluded
+	 * 
+	 * @see IResource#isDerived()
+	 * @since 3.1
+	 */
+	public static final int EXCLUDE_DERIVED = 4;
+
+	/**
 	 * Returns whether a resource of some type with the given path 
 	 * exists relative to this resource.
 	 * The supplied path may be absolute or relative; in either case, it is
@@ -333,10 +342,15 @@ public interface IContainer extends IResource, IAdaptable {
 	 * is not specified (recommended), the result will omit any team private
 	 * member resources.
 	 * </p>
+	 * <p>
+	 * If the <code>EXCLUDE_DERIVED</code> flag is not specified, derived 
+	 * resources are included. If the <code>EXCLUDE_DERIVED</code> flag is 
+	 * specified in the member flags, derived resources are not included.
+	 * </p>
 	 *
 	 * @param memberFlags bit-wise or of member flag constants
-	 *   (<code>INCLUDE_PHANTOMS</code> and <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>)
-	 *   indicating which members are of interest
+	 *   (<code>INCLUDE_PHANTOMS</code>, <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>
+	 *   and <code>EXCLUDE_DERIVED</code>) indicating which members are of interest
 	 * @return an array of members of this resource
 	 * @exception CoreException if this request fails. Reasons include:
 	 * <ul>

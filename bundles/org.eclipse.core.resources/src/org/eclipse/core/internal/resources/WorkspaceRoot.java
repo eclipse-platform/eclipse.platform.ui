@@ -148,7 +148,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 * @see IWorkspaceRoot#getProjects()
 	 */
 	public IProject[] getProjects() {
-		IResource[] roots = getChildren(Path.ROOT, false);
+		IResource[] roots = getChildren(IResource.NONE);
 		IProject[] result = new IProject[roots.length];
 		System.arraycopy(roots, 0, result, 0, roots.length);
 		return result;
@@ -169,7 +169,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 			depth = IResource.DEPTH_ZERO;
 		// get the children via the workspace since we know that this
 		// resource exists (it is local).
-		IResource[] children = getChildren(this, false);
+		IResource[] children = getChildren(IResource.NONE);
 		for (int i = 0; i < children.length; i++)
 			((Resource) children[i]).internalSetLocal(flag, depth);
 	}
@@ -193,7 +193,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 			depth = DEPTH_ZERO;
 		// get the children via the workspace since we know that this
 		// resource exists (it is local).
-		IResource[] children = getChildren(this, false);
+		IResource[] children = getChildren(IResource.NONE);
 		for (int i = 0; i < children.length; i++)
 			if (!children[i].isLocal(depth))
 				return false;

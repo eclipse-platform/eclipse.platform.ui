@@ -38,16 +38,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	/* (non-Javadoc)
 	 * @see IResource#accept(IResourceProxyVisitor, int)
 	 */
-	public void accept(final IResourceProxyVisitor visitor, int memberFlags) throws CoreException {
+	public void accept(final IResourceProxyVisitor visitor, final int memberFlags) throws CoreException {
 		final ResourceProxy proxy = new ResourceProxy();
-		final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
-		final boolean includeTeamPrivate = (memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) != 0;
 		IElementContentVisitor elementVisitor = new IElementContentVisitor() {
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object contents) {
 				ResourceInfo info = (ResourceInfo) contents;
-				if (!includePhantoms && info.isSet(M_PHANTOM))
-					return false;
-				if (!includeTeamPrivate && info.isSet(M_TEAM_PRIVATE_MEMBER))
+				if (!isMember(getFlags(info), memberFlags))
 					return false;
 				proxy.requestor = requestor;
 				proxy.info = info;
@@ -110,9 +106,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			}, memberFlags);
 			return;
 		}
-		// ignore team private member entry point when INCLUDE_TEAM_PRIVATE_MEMBERS is not specified
-		final boolean includeTeamPrivateMembers = (memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) != 0;
-		if (!includeTeamPrivateMembers && isTeamPrivateMember(flags))
+		//check that this resource matches the member flags
+		if (!isMember(flags, memberFlags))
 			return;
 		// visit this resource		
 		if (!visitor.visit(this) || depth == DEPTH_ZERO)
@@ -1095,6 +1090,26 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			return flags != NULL_FLAG; // exists
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_LOCAL_EXISTS);
 	}
+	
+	/**
+	 * Returns whether a resource should be included in a traversal
+	 * based on the provided member flags.
+	 * 
+	 * @param flags The resource info flags
+	 * @param memberFlags The member flag mask
+	 * @return Whether the resource is included
+	 */
+	protected boolean isMember(int flags, int memberFlags) {
+		int excludeMask = 0;
+		if ((memberFlags & IContainer.INCLUDE_PHANTOMS) == 0)
+			excludeMask |= M_PHANTOM;
+		if ((memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) == 0)
+			excludeMask |= M_TEAM_PRIVATE_MEMBER;
+		if ((memberFlags & IContainer.EXCLUDE_DERIVED) != 0)
+			excludeMask |= M_DERIVED;
+		//the resource is a matching member if it matches none of the exclude flags
+		return flags != NULL_FLAG && (flags & excludeMask) == 0;
+	}
 
 	/* (non-Javadoc)
 	 * @see IResource#isPhantom()
@@ -1475,17 +1490,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 */
 	public boolean isTeamPrivateMember() {
 		ResourceInfo info = getResourceInfo(false, false);
-		return isTeamPrivateMember(getFlags(info));
-	}
-
-	/**
-	 * Returns whether the team private member flag is set in the given resource info flags.
-	 * 
-	 * @param flags resource info flags (bitwise or of M_* constants)
-	 * @return <code>true</code> if the team private member flag is set, and 
-	 *    <code>false</code> if the flag is not set or if the flags are <code>NULL_FLAG</code>
-	 */
-	public boolean isTeamPrivateMember(int flags) {
+		int flags = getFlags(info);
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_TEAM_PRIVATE_MEMBER);
 	}
 

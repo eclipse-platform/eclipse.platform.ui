@@ -636,7 +636,7 @@ public class Project extends Container implements IProject {
 			depth = IResource.DEPTH_ZERO;
 		// get the children via the workspace since we know that this
 		// resource exists (it is local).
-		IResource[] children = getChildren(this, false);
+		IResource[] children = getChildren(IResource.NONE);
 		for (int i = 0; i < children.length; i++)
 			((Resource) children[i]).internalSetLocal(flag, depth);
 	}
@@ -667,7 +667,7 @@ public class Project extends Container implements IProject {
 			depth = DEPTH_ZERO;
 		// get the children via the workspace since we know that this
 		// resource exists (it is local).
-		IResource[] children = getChildren(this, false);
+		IResource[] children = getChildren(IResource.NONE);
 		for (int i = 0; i < children.length; i++)
 			if (!children[i].isLocal(depth))
 				return false;
@@ -880,7 +880,7 @@ public class Project extends Container implements IProject {
 			} else {
 				//no conflicting old resource, just create the new link
 				try {
-					Resource toLink = newLink.getType() == IResource.FILE ? (Resource) getFile(newLink.getName()) : (Resource) getFolder(newLink.getName());
+					Resource toLink = workspace.newResource(getFullPath().append(newLink.getName()), newLink.getType());
 					toLink.createLink(newLink.getLocation(), IResource.ALLOW_MISSING_LOCAL, null);
 				} catch (CoreException e) {
 					status.merge(e.getStatus());

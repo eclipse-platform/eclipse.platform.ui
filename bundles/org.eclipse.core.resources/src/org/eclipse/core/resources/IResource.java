@@ -383,15 +383,21 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * If the <code>INCLUDE_PHANTOMS</code> flag is not specified in the member 
-	 * flags (recommended), only member resources that exists will be visited.
-	 * If the <code>INCLUDE_PHANTOMS</code> flag is specified, the visit will
-	 * also include any phantom member resource that the workspace is keeping track of.
+	 * flags (recommended), only member resources that exists are visited.
+	 * If the <code>INCLUDE_PHANTOMS</code> flag is specified, the visit also
+	 * includes any phantom member resource that the workspace is keeping track of.
 	 * </p>
 	 * <p>
 	 * If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag is not specified
-	 * (recommended), team private members will not be visited. If the 
+	 * (recommended), team private members are not visited. If the 
 	 * <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag is specified in the member
 	 * flags, team private member resources are visited as well.
+	 * </p>
+	 * <p>
+	 * If the <code>EXCLUDE_DERIVED</code> flag is not specified
+	 * (recommended), derived resources are visited. If the 
+	 * <code>EXCLUDE_DERIVED</code> flag is specified in the member
+	 * flags, derived resources are not visited.
 	 * </p>
 	 *
 	 * @param visitor the visitor
@@ -399,8 +405,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *		visited.  One of <code>DEPTH_ZERO</code>, <code>DEPTH_ONE</code>,
 	 *		or <code>DEPTH_INFINITE</code>.
 	 * @param memberFlags bit-wise or of member flag constants
-	 *   (<code>IContainer.INCLUDE_PHANTOMS</code> and <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>)
-	 *   indicating which members are of interest
+	 *   (<code>INCLUDE_PHANTOMS</code>, <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>
+	 *   and <code>EXCLUDE_DERIVED</code>) indicating which members are of interest
 	 * @exception CoreException if this request fails. Reasons include:
 	 * <ul>
 	 * <li> the <code>INCLUDE_PHANTOMS</code> flag is not specified and
@@ -411,6 +417,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </ul>
 	 * @see IContainer#INCLUDE_PHANTOMS
 	 * @see IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS
+	 * @see IContainer#EXCLUDE_DERIVED
+	 * @see IResource#isDerived()
 	 * @see IResource#isPhantom()
 	 * @see IResource#isTeamPrivateMember()
 	 * @see IResource#DEPTH_ZERO
