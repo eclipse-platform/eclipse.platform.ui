@@ -127,6 +127,8 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
    
     private boolean autoScroll = true;
     
+    private boolean partitionerFinished = false;
+    
     private MatchJob matchJob = new MatchJob();
 
     public IOConsole(String title, String consoleType, ImageDescriptor imageDescriptor) {
@@ -334,7 +336,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
      * processed and the console's lifecycle is complete.
      */
     public void partitionerFinished() {
-        firePropertyChange(this, IOConsole.P_CONSOLE_OUTPUT_COMPLETE, null, null);
+        partitionerFinished = true;
     }
     
     /**
@@ -506,6 +508,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         	String text = null;
         	int prevBaseOffset = -1;
         	if (doc != null) {
+        	    boolean allDone = true;
 	        	int docLength = doc.getLength();
 	        	for (int i = 0; i < patterns.size(); i++) {
 	        		CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) patterns.get(i);
@@ -527,7 +530,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 								if (quick != null) {
 									if (quick.find(start)) {
 										int line = doc.getLineOfOffset(baseOffset + quick.start());
-										start = doc.getLineOffset(line) - baseOffset;
+										start = doc.getLineOffset(line) - notifier.end;
 									} else {
 										start = length;
 									}
@@ -549,7 +552,11 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 		            	}
 					}
 					prevBaseOffset = baseOffset;
+					allDone = allDone && (notifier.end >= doc.getLength()); 
 		        }
+	        	if (allDone && partitionerFinished) {
+	        	    firePropertyChange(this, IOConsole.P_CONSOLE_OUTPUT_COMPLETE, null, null);
+	        	}
         	}
             return Status.OK_STATUS;
         } 
