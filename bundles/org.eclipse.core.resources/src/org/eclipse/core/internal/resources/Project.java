@@ -570,7 +570,6 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 			assertCopyRequirements(destPath, IResource.PROJECT);
 			Project destProject = (Project) workspace.getRoot().getProject(destName);
 			checkDescription(destProject, destDesc, false);
-			IProjectDescription sourceDesc = internalGetDescription();
 			workspace.changing(this);
 
 			workspace.beginOperation(true);
