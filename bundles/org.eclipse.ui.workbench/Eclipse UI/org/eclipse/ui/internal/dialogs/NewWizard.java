@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-
 import java.util.StringTokenizer;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
+import org.eclipse.ui.internal.roles.RoleManager;
 
 /**
  * The new wizard is responsible for allowing the user to choose which
@@ -36,18 +37,14 @@ public class NewWizard extends Wizard {
 	 * Create the wizard pages
 	 */
 	public void addPages() {
-		NewWizardsRegistryReader rdr =
-			new NewWizardsRegistryReader(projectsOnly);
-		WizardCollectionElement wizards =
-			(WizardCollectionElement) rdr.getWizards();
+		NewWizardsRegistryReader rdr = new NewWizardsRegistryReader(projectsOnly);
+		WizardCollectionElement wizards = (WizardCollectionElement) rdr.getWizards();
 
 		if (categoryId != null) {
 			WizardCollectionElement categories = wizards;
-			StringTokenizer familyTokenizer =
-				new StringTokenizer(categoryId, CATEGORY_SEPARATOR);
+			StringTokenizer familyTokenizer = new StringTokenizer(categoryId, CATEGORY_SEPARATOR);
 			while (familyTokenizer.hasMoreElements()) {
-				categories =
-					getChildWithID(categories, familyTokenizer.nextToken());
+				categories = getChildWithID(categories, familyTokenizer.nextToken());
 				if (categories == null)
 					break;
 			}
@@ -55,20 +52,16 @@ public class NewWizard extends Wizard {
 				wizards = categories;
 		}
 
-		mainPage =
-			new NewWizardSelectionPage(this.workbench, this.selection, wizards);
+		mainPage = new NewWizardSelectionPage(this.workbench, this.selection, wizards);
 		addPage(mainPage);
 	}
 	/**
 	 * Returns the child collection element for the given id
 	 */
-	private WizardCollectionElement getChildWithID(
-		WizardCollectionElement parent,
-		String id) {
+	private WizardCollectionElement getChildWithID(WizardCollectionElement parent, String id) {
 		Object[] children = parent.getChildren();
 		for (int i = 0; i < children.length; ++i) {
-			WizardCollectionElement currentChild =
-				(WizardCollectionElement) children[i];
+			WizardCollectionElement currentChild = (WizardCollectionElement) children[i];
 			if (currentChild.getId().equals(id))
 				return currentChild;
 		}
@@ -97,9 +90,7 @@ public class NewWizard extends Wizard {
 	/**
 	 *	Lazily create the wizards pages
 	 */
-	public void init(
-		IWorkbench aWorkbench,
-		IStructuredSelection currentSelection) {
+	public void init(IWorkbench aWorkbench, IStructuredSelection currentSelection) {
 		this.workbench = aWorkbench;
 		this.selection = currentSelection;
 
@@ -108,8 +99,7 @@ public class NewWizard extends Wizard {
 		else
 			setWindowTitle(WorkbenchMessages.getString("NewWizard.title")); //$NON-NLS-1$
 		setDefaultPageImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ));
+			WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ));
 		setNeedsProgressMonitor(true);
 	}
 	/**
@@ -121,6 +111,9 @@ public class NewWizard extends Wizard {
 	public boolean performFinish() {
 		//save our selection state
 		mainPage.saveWidgetValues();
+		IWizard selectedWizard = mainPage.getSelectedNode().getWizard();
+		RoleManager.getInstance().enableRoles(selectedWizard.getClass().getName());
+
 		return true;
 	}
 	/**
