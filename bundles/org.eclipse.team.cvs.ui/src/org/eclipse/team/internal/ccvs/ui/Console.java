@@ -15,15 +15,20 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 /**
  * Console is a view that displays the communication with the CVS server
@@ -33,8 +38,8 @@ public class Console extends ViewPart {
 	public final static String CONSOLE_ID = "org.eclipse.team.ccvs.ui.console";
 	
 	private TextViewer viewer;
-	private Action copyAction;
-	private Action selectAllAction;
+	private TextViewerAction copyAction;
+	private TextViewerAction selectAllAction;
 	private Action clearOutputAction;
 	private IDocument document;
 	
@@ -62,18 +67,6 @@ public class Console extends ViewPart {
 	 * Create contributed actions
 	 */
 	protected void createActions() {
-		copyAction = new Action(Policy.bind("Console.copy")) {
-			public void run() {
-				viewer.doOperation(viewer.COPY);
-			}
-		};
-		
-		selectAllAction = new Action(Policy.bind("Console.selectAll")) {
-			public void run() {
-				viewer.doOperation(viewer.SELECT_ALL);
-			}
-		};
-		
 		clearOutputAction = new Action(Policy.bind("Console.clearOutput"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_CLEAR)) {
 			public void run() {
 				clearOutput();
@@ -94,6 +87,20 @@ public class Console extends ViewPart {
 		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
 		tbm.add(clearOutputAction);
 		tbm.update(false);
+
+
+		// Create actions for the text editor
+		IActionBars actionBars = getViewSite().getActionBars();
+		
+		copyAction = new TextViewerAction(viewer, ITextOperationTarget.COPY);
+		copyAction.setText(Policy.bind("Console.copy"));
+		actionBars.setGlobalActionHandler(ITextEditorActionConstants.COPY, copyAction);
+		
+		selectAllAction = new TextViewerAction(viewer, ITextOperationTarget.SELECT_ALL);
+		selectAllAction.setText(Policy.bind("Console.selectAll"));
+		actionBars.setGlobalActionHandler(ITextEditorActionConstants.SELECT_ALL, selectAllAction);
+
+		actionBars.updateActionBars();
 	}
 
 	/**
@@ -152,8 +159,6 @@ public class Console extends ViewPart {
 	 * @param manager  the manager of the context menu
 	 */
 	protected void fillContextMenu(IMenuManager manager) {
-		copyAction.setEnabled(viewer.canDoOperation(viewer.COPY));
-		selectAllAction.setEnabled(viewer.canDoOperation(viewer.SELECT_ALL));
 		manager.add(copyAction);
 		manager.add(selectAllAction);
 		manager.add(new Separator());
@@ -183,7 +188,11 @@ public class Console extends ViewPart {
 		viewer.setEditable(false);
 		viewer.getControl().setLayoutData(data);
 		viewer.setDocument(document);
-		
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				copyAction.update();
+			}
+		});
 		createActions();
 	}
 

@@ -95,30 +95,6 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 	private static final int COL_AUTHOR = 3;
 	private static final int COL_COMMENT = 4;
 
-	class TextViewerAction extends Action implements IUpdate {
-		private int operationCode= -1;
-		private ITextOperationTarget operationTarget;
-	
-		public TextViewerAction(ITextViewer viewer, int operationCode) {
-			this.operationCode = operationCode;
-			operationTarget = viewer.getTextOperationTarget();
-			update();
-		}
-		public void update() {
-			boolean wasEnabled = isEnabled();
-			boolean isEnabled = (operationTarget != null && operationTarget.canDoOperation(operationCode));
-			setEnabled(isEnabled);
-			if (wasEnabled != isEnabled) {
-				firePropertyChange(ENABLED, wasEnabled ? Boolean.TRUE : Boolean.FALSE, isEnabled ? Boolean.TRUE : Boolean.FALSE);
-			}
-		}
-		public void run() {
-			if (operationCode != -1 && operationTarget != null) {
-				operationTarget.doOperation(operationCode);
-			}
-		}
-	};
-	
 	class HistoryLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
