@@ -34,7 +34,7 @@ public class JarContentReference extends ContentReference {
 	 * 
 	 * @since 2.0
 	 */
-	public class ContentSelector {
+	public static class ContentSelector {
 		
 		/**
 		 * Indicates whether the archive content entry should be
