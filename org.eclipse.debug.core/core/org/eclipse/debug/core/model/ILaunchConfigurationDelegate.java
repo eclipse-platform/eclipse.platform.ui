@@ -31,8 +31,8 @@ public interface ILaunchConfigurationDelegate {
 	 * 
 	 * @param configuration the configuration to launch
 	 * @param mode the mode in which to launch, one of the mode constants
-	 *  defined by this <code>ILaunchConfiguration</code> -
-	 *  <code>RUN</code> or <code>DEBUG</code>.
+	 *  defined by <code>ILaunchManager</code> -
+	 *  <code>RUN_MODE</code> or <code>DEBUG_MODE</code>.
 	 * @param monitor progress monitor, or <code>null</code>
 	 * @param launch the launch object to contribute processes and debug
 	 *  targets to
