@@ -1,5 +1,3 @@
-package org.eclipse.ui.externaltools.internal.ant.view.actions;
-
 /*******************************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
@@ -10,6 +8,7 @@ package org.eclipse.ui.externaltools.internal.ant.view.actions;
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+package org.eclipse.ui.externaltools.internal.ant.view.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
@@ -41,13 +40,13 @@ public class RefreshBuildFilesAction extends Action implements IUpdate {
 
 	/**
 	 * Creates a new <code>RefreshBuildFilesAction</code> which will refresh buildfiles 
-	 * in the given ant view
+	 * in the given Ant view.
 	 * @param view the Ant view whose selection this action will use when
 	 * determining which buildfiles to refresh.
 	 */
 	public RefreshBuildFilesAction(AntView view) {
 		super(AntViewActionMessages.getString("RefreshBuildFilesAction.Refresh_Buildfiles_1"), ExternalToolsImages.getImageDescriptor(IExternalToolConstants.IMG_ACTION_REFRESH)); //$NON-NLS-1$
-		setToolTipText(AntViewActionMessages.getString("RefreshBuildFilesAction.Refresh_Buildfiles_2")); //$NON-NLS-1$
+		setToolTipText(AntViewActionMessages.getString("RefreshBuildFilesAction.Refresh_Buildfiles_1")); //$NON-NLS-1$
 		this.view = view;
 		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.REFRESH_BUILDFILE_ACTION);
 	}
