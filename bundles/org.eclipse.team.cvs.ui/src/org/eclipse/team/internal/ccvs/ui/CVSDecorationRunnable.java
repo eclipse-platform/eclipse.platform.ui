@@ -52,6 +52,11 @@ public class CVSDecorationRunnable implements Runnable {
 	// Provides resources to be decorated and is notified when decoration has been calculated
 	private IDecorationNotifier notifier;
 
+	// Remember the non posted decorated resources
+	List resources = new ArrayList();
+	List decorations = new ArrayList();
+	private final static int NUM_TO_BATCH = 50;
+
 	/*
 	 * Define a cached image descriptor which only creates the image data once
 	 */
@@ -90,33 +95,48 @@ public class CVSDecorationRunnable implements Runnable {
 			if (resource == null) {
 				return;
 			}
-			// it is possible that the resource to be decorated is no longer associated
-			// with a CVS provider. This could happen if the team nature was removed
-			// between the time the decoration event was posted to the thread and the time
-			// the thread processes the decoration.
-			ITeamProvider provider = TeamPlugin.getManager().getProvider(resource);
-			if(!resource.exists() || provider==null || !(provider instanceof CVSTeamProvider)) {
-				continue;
-			}
 			
-			// determine a if resource has outgoing changes (e.g. is dirty).
-			IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
-			boolean isDirty = false;
-			boolean computeDeepDirtyCheck = store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY);
-			int type = resource.getType();
-			if(type == IResource.FILE || computeDeepDirtyCheck) {
-				isDirty = isDirty(resource);
-			}
-
-			// compute decorations						
-			CVSDecoration decoration = computeTextLabelFor(resource, isDirty, provider);
-			decoration.setOverlays(computeLabelOverlaysFor(resource, isDirty, provider));
+			CVSDecoration decoration = decorate(resource);
 			
 			// notify that decoration is ready
-			notifier.decorated(resource, decoration);
+			if(decoration!=null) {
+				resources.add(resource);
+				decorations.add(decoration);
+				if(!resources.isEmpty() && (notifier.remaining()==0 || resources.size() >= NUM_TO_BATCH)) {
+					notifier.decorated((IResource[])resources.toArray(new IResource[resources.size()]), 
+									   (CVSDecoration[])decorations.toArray(new CVSDecoration[decorations.size()]));
+					resources.clear();
+					decorations.clear();
+				}
+			}
 		}
 	}
 
+	public CVSDecoration decorate(IResource resource) {
+		// it is possible that the resource to be decorated is no longer associated
+		// with a CVS provider. This could happen if the team nature was removed
+		// between the time the decoration event was posted to the thread and the time
+		// the thread processes the decoration.
+		ITeamProvider provider = TeamPlugin.getManager().getProvider(resource);
+		if(!resource.exists() || provider==null || !(provider instanceof CVSTeamProvider)) {
+			return null;
+		}
+			
+		// determine a if resource has outgoing changes (e.g. is dirty).
+		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+		boolean isDirty = false;
+		boolean computeDeepDirtyCheck = store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY);
+		int type = resource.getType();
+		if(type == IResource.FILE || computeDeepDirtyCheck) {
+			isDirty = isDirty(resource);
+		}
+
+		// compute decorations						
+		CVSDecoration decoration = computeTextLabelFor(resource, isDirty, provider);
+		decoration.setOverlays(computeLabelOverlaysFor(resource, isDirty, provider));
+		return decoration;
+	}
+	
 	private CVSDecoration computeTextLabelFor(IResource resource, boolean isDirty, ITeamProvider provider) {
 		Map bindings = new HashMap(3);
 		String format = ""; //$NON-NLS-1$

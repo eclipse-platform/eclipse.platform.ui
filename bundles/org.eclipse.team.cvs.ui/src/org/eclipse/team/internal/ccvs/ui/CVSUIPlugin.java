@@ -246,7 +246,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * @see Plugin#shutdown()
 	 */
 	public void shutdown() throws CoreException {
-		CVSDecorator.shutdownAll();
 		changeListener.deregister();
 		super.shutdown();
 		try {

@@ -82,6 +82,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		}
 		protected void finished() {
 			resourceStateChanged((IResource[])changedResources.toArray(new IResource[changedResources.size()]));
+			changedResources.clear();
 		}
 		protected int getEventMask() {
 			return IResourceChangeEvent.PRE_AUTO_BUILD;
@@ -89,15 +90,14 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	}
 	
 	public CVSDecorator() {
-		// The decorator is a singleton, there should never be more than one instance.
-		// temporary until the UI component properly calls dispose when the workbench shutsdown
-		// UI Bug 9633
-		Assert.isTrue(theDecorator==null);
-		theDecorator = this;
-		
+		// thread that calculates the decoration for a resource
 		decoratorUpdateThread = new Thread(new CVSDecorationRunnable(this), "CVS"); //$NON-NLS-1$
 		decoratorUpdateThread.start();
+		
+		// listener for cvs state change (e.g. any sync info changes)
 		TeamPlugin.getManager().addResourceStateChangeListener(this);
+		
+		// listener for workspace resource changes
 		changeListener = new ChangeListener();
 		changeListener.register();
 	}
@@ -190,20 +190,28 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	}
 
 	/*
-	 * @see IDecorationNotifier#notify(IResource, CVSDecoration)
+	 * @see IDecorationNotifier#decorated(IResource[], CVSDecoration[])
 	 */
-	public synchronized void decorated(IResource resource, CVSDecoration decoration) {
-		// ignore resources that aren't in the workbench anymore.
-		if(resource.exists() && !shutdown) {
-			cache.put(resource, decoration);
-			postLabelEvents(new LabelProviderChangedEvent[] { new LabelProviderChangedEvent(this, resource)});
+	public synchronized void decorated(IResource[] resources, CVSDecoration[] decorations) {
+		List events = new ArrayList();
+		if(!shutdown) {
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource= resources[i];
+				if(resource.exists()) {
+					cache.put(resource, decorations[i]);
+					events.add(new LabelProviderChangedEvent(this, resource));
+				}
+			}
+			postLabelEvents((LabelProviderChangedEvent[]) events.toArray(new LabelProviderChangedEvent[events.size()]));
 		}
 	}
 
 	/*
-	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
+	 * @see IDecorationNotifier#remaining()
 	 */
-
+	public int remaining() {
+		return decoratorNeedsUpdating.size();
+	}
 	/*
 	 * @see IResourceStateChangeListener#resourceStateChanged(IResource[])
 	 */
@@ -345,13 +353,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		} catch (InterruptedException e) {
 		}
 	}
-
-	public static void shutdownAll() {
-		if(theDecorator!=null) {
-			theDecorator.dispose();
-		}
-	}
-	
+		
 	/*
 	 * @see IBaseLabelProvider#dispose()
 	 */
@@ -362,7 +364,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		shutdown();
 		
 		// unregister change listeners
-		changeListener.register();
+		changeListener.deregister();
 		TeamPlugin.getManager().removeResourceStateChangeListener(this);
 		
 		// dispose of images created as overlays

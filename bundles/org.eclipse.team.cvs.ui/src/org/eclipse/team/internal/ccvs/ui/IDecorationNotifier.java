@@ -17,5 +17,10 @@ public interface IDecorationNotifier {
 	/**
 	 * Called to associate a decoration to a resource.
 	 */
-	public void decorated(IResource resource, CVSDecoration decoration);
+	public void decorated(IResource[] resource, CVSDecoration[] decoration);
+	
+	/**
+	 * Number of resources remaining to be decorated
+	 */
+	public int remaining();
 }
