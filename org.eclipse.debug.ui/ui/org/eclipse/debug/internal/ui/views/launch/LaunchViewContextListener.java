@@ -404,6 +404,9 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 	 * 	enabled
 	 */
 	public void contextEnabled(Set contextIds) {
+		if (!launchView.isAutoManageViews()) {
+			return;
+		}
 		IWorkbenchPage page= getActiveWorkbenchPage();
 		// We ignore the "Debugging" context since we use it
 		// to provide a base set of views for other context
