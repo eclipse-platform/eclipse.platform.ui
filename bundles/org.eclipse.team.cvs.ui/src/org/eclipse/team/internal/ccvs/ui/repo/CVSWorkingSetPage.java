@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2002 International Business Machines Corp. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v0.5 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v05.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -48,6 +47,9 @@ import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.model.ModulesCategory;
 import org.eclipse.team.internal.ccvs.ui.wizards.CVSWizardPage;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -60,20 +62,22 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class CVSWorkingSetFolderSelectionPage extends CVSWizardPage {
-	
+public class CVSWorkingSetPage extends CVSWizardPage implements IWorkingSetPage {
+
+	private IWorkingSet workingSet;
 	private String workingSetName;
-	private String originalWorkingSetName;
 	private Set checkedFolders;
 	private Map modulesCategoryCache = new HashMap();
 	private boolean editing = false;
-	
+
 	private Text nameField;
 	private CheckboxTreeViewer tree;
 	private ICheckStateListener checkStateListener;
 
-	/**	 * @see org.eclipse.team.internal.ccvs.ui.wizards.CVSWizardPage#CVSWizardPage(String, String, ImageDescriptor, String)	 */
-	public CVSWorkingSetFolderSelectionPage(String pageName, String title, ImageDescriptor titleImage, String description) {
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.wizards.CVSWizardPage#CVSWizardPage(String, String, ImageDescriptor, String)
+	 */
+	public CVSWorkingSetPage(String pageName, String title, ImageDescriptor titleImage, String description) {
 		super(pageName, title, titleImage, description);
 		checkedFolders = new HashSet();
 		workingSetName = "";
@@ -84,9 +88,9 @@ public class CVSWorkingSetFolderSelectionPage extends CVSWizardPage {
 	public void createControl(Composite parent) {
 		Composite composite= createComposite(parent, 2);
 		setControl(composite);
-		
+
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.WORKING_SET_FOLDER_SELECTION_PAGE);
-		
+
 		createLabel(composite, Policy.bind("CVSWorkingSetFolderSelectionPage.name")); //$NON-NLS-1$
 		nameField = createTextField(composite);
 		nameField.addModifyListener(new ModifyListener() {
@@ -95,13 +99,13 @@ public class CVSWorkingSetFolderSelectionPage extends CVSWizardPage {
 				updateWidgetEnablements();
 			}
 		});
-		
+
 		createWrappingLabel(composite, Policy.bind("CVSWorkingSetFolderSelectionPage.treeLabel"), 0, 2); //$NON-NLS-1$
-		
+
 		tree = createFolderSelectionTree(composite, 2);
 		checkStateListener = new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				CVSWorkingSetFolderSelectionPage.this.handleChecked(event.getElement(), event.getChecked());
+				CVSWorkingSetPage.this.handleChecked(event.getElement(), event.getChecked());
 			}
 		};
 		tree.addCheckStateListener(checkStateListener);
@@ -110,10 +114,10 @@ public class CVSWorkingSetFolderSelectionPage extends CVSWizardPage {
 				// Ignore
 			}
 			public void treeExpanded(TreeExpansionEvent event) {
-				CVSWorkingSetFolderSelectionPage.this.handleExpansion(event.getElement());
+				CVSWorkingSetPage.this.handleExpansion(event.getElement());
 			}
 		});
-		
+
 		createLabel(composite, ""); //$NON-NLS-1$
 		Button refresh = new Button(composite, SWT.PUSH);
 		refresh.setText(Policy.bind("CVSWorkingSetFolderSelectionPage.refresh"));
@@ -123,10 +127,10 @@ public class CVSWorkingSetFolderSelectionPage extends CVSWizardPage {
 		refresh.setLayoutData(data);
 		refresh.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				CVSWorkingSetFolderSelectionPage.this.refreshTree();
+				CVSWorkingSetPage.this.refreshTree();
 			}
 		});
-		
+
 		initializeValues();
 		updateWidgetEnablements();
 		nameField.setFocus();
@@ -138,11 +142,11 @@ public class CVSWorkingSetFolderSelectionPage extends CVSWizardPage {
 	public void handleExpansion(Object element) {
 		if (element instanceof ICVSRepositoryLocation) {
 			ICVSRepositoryLocation location = (ICVSRepositoryLocation) element;
-			tree.setGrayed(CVSWorkingSetFolderSelectionPage.this.getModuleCategory(location), true);
+			tree.setGrayed(CVSWorkingSetPage.this.getModuleCategory(location), true);
 		}
 		updateCheckState(element);
 	}
-	
+
 	/**
 	 * Method handleChecked.
 	 * @param object
@@ -173,7 +177,7 @@ public class CVSWorkingSetFolderSelectionPage extends CVSWizardPage {
 		}
 		updateWidgetEnablements();
 	}
-	
+
 	public ModulesCategory getModuleCategory(ICVSRepositoryLocation location) {
 		ModulesCategory category = (ModulesCategory)modulesCategoryCache.get(location.getLocation());
 		if (category == null) {
@@ -187,7 +191,7 @@ public class CVSWorkingSetFolderSelectionPage extends CVSWizardPage {
 	private void folderUnchecked(ICVSRemoteFolder folder) {
 		checkedFolders.remove(folder);
 	}
-		
+
 	private void folderChecked(ICVSRemoteFolder folder) {
 		checkedFolders.add(folder);
 	}
@@ -208,7 +212,7 @@ public class CVSWorkingSetFolderSelectionPage extends CVSWizardPage {
 			tree.setChecked(location, false);
 		}
 	}
-	
+
 	private void repositoryLocationUnchecked(ICVSRepositoryLocation location) {
 		for (Iterator iter = checkedFolders.iterator(); iter.hasNext();) {
 			ICVSRemoteFolder folder = (ICVSRemoteFolder) iter.next();
@@ -218,7 +222,7 @@ public class CVSWorkingSetFolderSelectionPage extends CVSWizardPage {
 			}
 		}
 	}
-	
+
 	private void modulesCategoryChecked(ModulesCategory category) {
 		ICVSRepositoryLocation location = category.getRepository();
 		Object[] elements = tree.getCheckedElements();
@@ -236,7 +240,7 @@ public class CVSWorkingSetFolderSelectionPage extends CVSWizardPage {
 			tree.setChecked(category, false);
 		}
 	}
-	
+
 	private void modulesCategoryUnchecked(ModulesCategory category) {
 		ICVSRepositoryLocation location = category.getRepository();
 		for (Iterator iter = checkedFolders.iterator(); iter.hasNext();) {
@@ -247,14 +251,14 @@ public class CVSWorkingSetFolderSelectionPage extends CVSWizardPage {
 			}
 		}
 	}
-	
+
 	/**
 	 * Method refreshTree.
 	 */
 	public void refreshTree() {
 		tree.refresh();
 	}
-	
+
 	/**
 	 * Method initializeValues.
 	 */
@@ -323,7 +327,7 @@ public class CVSWorkingSetFolderSelectionPage extends CVSWizardPage {
 				tree.setChecked(element, checkedCategories.contains(element));
 		}
 	}
-		
+
 	/**
 	 * Method isValidName.
 	 * @param workingSetName
@@ -343,39 +347,39 @@ public class CVSWorkingSetFolderSelectionPage extends CVSWizardPage {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Method isDuplicateName.
 	 * @param workingSetName
 	 * @return boolean
 	 */
 	private boolean isDuplicateName(String workingSetName) {
+		String originalWorkingSetName = workingSet.getName();
 		if (originalWorkingSetName != null && workingSetName.equals(originalWorkingSetName)) {
 			return false;
 		}
-		String names[] = CVSUIPlugin.getPlugin().getRepositoryManager().getWorkingSetNames();
-		for (int i = 0; i < names.length; i++) {
-			String string = names[i];
-			if (workingSetName.equals(string)) {
+		IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets();
+		for (int i= 0; i < workingSets.length; i++) {
+			if (workingSetName.equals(workingSets[i].getName())) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	protected CheckboxTreeViewer createFolderSelectionTree(Composite composite, int span) {
 		CheckboxTreeViewer tree = new CheckboxTreeViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		tree.setUseHashlookup(true);
 		tree.setContentProvider(new WorkbenchContentProvider() {
 			public Object[] getChildren(Object parentElement) {
-				if (parentElement instanceof CVSWorkingSetFolderSelectionPage) {
+				if (parentElement instanceof CVSWorkingSetPage) {
 					return getRepositoryManager().getKnownRepositoryLocations();
 				}
 				if (parentElement instanceof ICVSRepositoryLocation) {
 					ICVSRepositoryLocation location = (ICVSRepositoryLocation)parentElement;
 					List result = new ArrayList();
 					result.add(getModuleCategory(location));
-					result.addAll(Arrays.asList(CVSWorkingSetFolderSelectionPage.this.getChildren((ICVSRepositoryLocation)parentElement)));
+					result.addAll(Arrays.asList(CVSWorkingSetPage.this.getChildren((ICVSRepositoryLocation)parentElement)));
 					return (Object[]) result.toArray(new Object[result.size()]);
 				}
 				if (parentElement instanceof ModulesCategory) {
@@ -391,20 +395,20 @@ public class CVSWorkingSetFolderSelectionPage extends CVSWizardPage {
 				return null;
 			}
 			public boolean hasChildren(Object parentElement) {
-				return parentElement instanceof CVSWorkingSetFolderSelectionPage || parentElement instanceof ICVSRepositoryLocation || parentElement instanceof ModulesCategory;
+				return parentElement instanceof CVSWorkingSetPage || parentElement instanceof ICVSRepositoryLocation || parentElement instanceof ModulesCategory;
 			}
 		});
 		tree.setLabelProvider(new WorkbenchLabelProvider());
 		tree.setSorter(new RepositorySorter());
 		tree.setInput(this);
-		
+
 		GridData data = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
 		data.heightHint = LIST_HEIGHT_HINT;
 		data.horizontalSpan = span;
 		tree.getControl().setLayoutData(data);
 		return tree;
 	}
-	
+
 	/**
 	 * Method getChildren.
 	 * @param iCVSRepositoryLocation
@@ -445,34 +449,29 @@ public class CVSWorkingSetFolderSelectionPage extends CVSWizardPage {
 	public String getWorkingSetName() {
 		return workingSetName;
 	}
-	
+
 	public ICVSRemoteFolder[] getSelectedFolders() {
 		return (ICVSRemoteFolder[]) checkedFolders.toArray(new ICVSRemoteFolder[checkedFolders.size()]);
 	}
-	
+
 	/**
-	 * Method setOriginalWorkingSet.
-	 * @param editedSet
+	 * @see org.eclipse.ui.dialogs.IWorkingSetPage#finish()
 	 */
-	public void setOriginalWorkingSet(final CVSWorkingSet editedSet) {
-		if (editedSet == null) return;
-		originalWorkingSetName = editedSet.getName();
-		workingSetName = editedSet.getName();
-		try {
-			new ProgressMonitorDialog(getShell()).run(false, false, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						ICVSRemoteFolder[] folders = editedSet.getFolders(monitor);
-						checkedFolders.addAll(Arrays.asList(folders));
-					} catch (CVSException e) {
-						throw new InvocationTargetException(e);
-					}
-				}
-			});
-		} catch (InvocationTargetException e) {
-			CVSUIPlugin.openError(null, null, null , e, CVSUIPlugin.PERFORM_SYNC_EXEC);
-		} catch (InterruptedException e) {
-		}
+	public void finish() {
+		// todo
+	}
+	/**
+	 * @see org.eclipse.ui.dialogs.IWorkingSetPage#getSelection()
+	 */
+	public IWorkingSet getSelection() {
+		return workingSet;
+	}
+	/**
+	 * @see org.eclipse.ui.dialogs.IWorkingSetPage#setSelection(org.eclipse.ui.IWorkingSet)
+	 */
+	public void setSelection(IWorkingSet workingSet) {
+		this.workingSet = workingSet;
+		workingSetName = workingSet.getName();
 	}
 
 }

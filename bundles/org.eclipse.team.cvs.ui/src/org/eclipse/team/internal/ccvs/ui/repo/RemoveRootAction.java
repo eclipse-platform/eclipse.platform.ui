@@ -27,7 +27,6 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ui.DetailsDialogWithProjects;
@@ -115,7 +114,6 @@ public class RemoveRootAction extends CVSAction {
 	 * @see TeamAction#isEnabled()
 	 */
 	protected boolean isEnabled() throws TeamException {
-		if (CVSUIPlugin.getPlugin().getRepositoryManager().getCurrentWorkingSet() != null) return false;
 		ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
 		return roots.length > 0;
 	}

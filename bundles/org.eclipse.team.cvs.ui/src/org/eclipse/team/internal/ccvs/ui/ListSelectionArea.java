@@ -15,7 +15,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.swt.SWT;
@@ -41,10 +43,14 @@ public class ListSelectionArea extends DialogArea {
 
 	// the visual selection widget group
 	private CheckboxTableViewer listViewer;
+	
+	private Object[] previousCheckedElements;
 
 	// sizing constants
 	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 250;
 	private final static int SIZING_SELECTION_WIDGET_WIDTH = 300;
+	
+	public static final String LIST_SELECTION = "ListSelection";
 	
 	/**
 	 * Constructor for ListSelectionArea.
@@ -84,6 +90,14 @@ public class ListSelectionArea extends DialogArea {
 		listViewer.setLabelProvider(labelProvider);
 		listViewer.setContentProvider(contentProvider);
 		listViewer.getControl().setFont(composite.getFont());
+		
+		listViewer.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				Object[] checkedElements = getViewer().getCheckedElements();
+				firePropertyChangeChange(LIST_SELECTION, previousCheckedElements, checkedElements);
+				previousCheckedElements = checkedElements;
+			}
+		});
 
 		addSelectionButtons(composite);
 

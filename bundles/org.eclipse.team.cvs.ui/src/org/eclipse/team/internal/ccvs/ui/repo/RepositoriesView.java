@@ -70,9 +70,6 @@ public class RepositoriesView extends RemoteViewPart {
 		public void repositoriesChanged(ICVSRepositoryLocation[] roots) {
 			refresh();
 		}
-		public void workingSetChanged(CVSWorkingSet set) {
-			refresh();
-		}
 		private void refresh() {
 			Display display = getViewer().getControl().getDisplay();
 			display.syncExec(new Runnable() {
@@ -83,6 +80,14 @@ public class RepositoriesView extends RemoteViewPart {
 		}
 	};
 	
+	/**
+	 * Constructor for RepositoriesView.
+	 * @param partName
+	 */
+	public RepositoriesView() {
+		super(VIEW_ID);
+	}
+
 	/**
 	 * Contribute actions to the view
 	 */

@@ -1,14 +1,20 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v0.5 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.model;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
  
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
 /**
@@ -18,6 +24,9 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
  * on the tree expansion box.
  */
 public class RemoteContentProvider extends WorkbenchContentProvider {
+	
+	IWorkingSet workingSet;
+	
 	/* (non-Javadoc)
 	 * Method declared on WorkbenchContentProvider.
 	 */
@@ -50,4 +59,35 @@ public class RemoteContentProvider extends WorkbenchContentProvider {
 		}
 		return super.hasChildren(element);
 	}
+	
+	/**
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+	 */
+	public Object[] getChildren(Object parentElement) {
+		if (workingSet != null) {
+			// Filter the children of the tag elements
+			IWorkbenchAdapter adapter = getAdapter(parentElement);
+			if (adapter instanceof CVSModelElement) {
+				return ((CVSModelElement)adapter).getChildren(parentElement, workingSet);
+			}
+		}
+		return super.getChildren(parentElement);
+	}
+
+	/**
+	 * Sets the workingSet.
+	 * @param workingSet The workingSet to set
+	 */
+	public void setWorkingSet(IWorkingSet workingSet) {
+		this.workingSet = workingSet;
+	}
+
+	/**
+	 * Returns the workingSet.
+	 * @return IWorkingSet
+	 */
+	public IWorkingSet getWorkingSet() {
+		return workingSet;
+	}
+
 }

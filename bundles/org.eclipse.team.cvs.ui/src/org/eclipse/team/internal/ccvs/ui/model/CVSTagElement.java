@@ -15,9 +15,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class CVSTagElement extends CVSModelElement implements IAdaptable {
@@ -50,11 +52,22 @@ public class CVSTagElement extends CVSModelElement implements IAdaptable {
 	public int hashCode() {
 		return root.hashCode() ^ tag.hashCode();
 	}
+	
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.model.CVSModelElement#internalGetChildren(java.lang.Object, org.eclipse.ui.IWorkingSet, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public Object[] internalGetChildren(Object o, IWorkingSet set, IProgressMonitor monitor) throws TeamException {
+		ICVSRemoteResource[] children = CVSUIPlugin.getPlugin().getRepositoryManager().getFoldersForTag(root, tag, monitor);
+		if (set != null)	
+			children = CVSUIPlugin.getPlugin().getRepositoryManager().filterResources(set, children);
+		return children;
+	}
+	
 	/**
 	 * Return children of the root with this tag.
 	 */
 	public Object[] internalGetChildren(Object o, IProgressMonitor monitor) throws TeamException {
-		return CVSUIPlugin.getPlugin().getRepositoryManager().getWorkingFoldersForTag(root, tag, monitor);
+		return internalGetChildren(o, null, monitor);
 	}
 	
 	public boolean isNeedsProgress() {

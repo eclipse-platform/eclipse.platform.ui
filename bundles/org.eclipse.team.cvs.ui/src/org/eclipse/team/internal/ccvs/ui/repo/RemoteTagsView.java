@@ -24,6 +24,14 @@ public class RemoteTagsView extends RemoteViewPart {
 	public static final String VIEW_ID = "org.eclipse.team.ccvs.ui.RemoteTagsView"; //$NON-NLS-1$
 
 	/**
+	 * Constructor for RemoteTagsView.
+	 * @param partName
+	 */
+	public RemoteTagsView() {
+		super(VIEW_ID);
+	}
+
+	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.repo.RemoteViewPart#getTreeInput()
 	 */
 	protected Object getTreeInput() {

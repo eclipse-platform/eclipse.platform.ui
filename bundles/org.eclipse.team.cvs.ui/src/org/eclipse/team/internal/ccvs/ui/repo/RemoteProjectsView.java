@@ -27,6 +27,14 @@ public class RemoteProjectsView extends RemoteViewPart {
 	
 	private RemoteProjectsElement root;
 
+	/**
+	 * Constructor for RemoteProjectsView.
+	 * @param partName
+	 */
+	public RemoteProjectsView() {
+		super(VIEW_ID);
+	}
+
 	protected void initializeSelectionListeners() {
 		// listen for selection changes in the repo view
 		getSite().getWorkbenchWindow().getSelectionService().addPostSelectionListener(RepositoriesView.VIEW_ID, this);

@@ -18,7 +18,6 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -38,6 +37,7 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 	public static final String ID_ATTRIBUTE = "id"; //$NON-NLS-1$
 	public static final String NAME_ATTRIBUTE = "name"; //$NON-NLS-1$
 	public static final String PATH_ATTRIBUTE = "path"; //$NON-NLS-1$
+	public static final String FULL_PATH_ATTRIBUTE = "full-path"; //$NON-NLS-1$
 	public static final String TYPE_ATTRIBUTE = "type"; //$NON-NLS-1$
 	public static final String REPOSITORY_PROGRAM_NAME_ATTRIBUTE = "program-name"; //$NON-NLS-1$
 	
@@ -52,7 +52,7 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 	private String currentRemotePath;
 	private List tags;
 	private List autoRefreshFiles;
-	private CVSWorkingSet currentWorkingSet;
+	private boolean ignoreElements;
 
 	public RepositoriesViewContentHandler(RepositoryManager manager) {
 		this.manager = manager;
@@ -77,17 +77,18 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 		if (localName.equals(REPOSITORIES_VIEW_TAG)) {
 			// all done
 		} else if (localName.equals(REPOSITORY_TAG)) {
-			if (currentWorkingSet == null) {
+			if (!ignoreElements) {
 				manager.add(currentRepositoryRoot);
 			}
 			currentRepositoryRoot = null;
 		} else if (localName.equals(WORKING_SET_TAG)) {
-			manager.addWorkingSet(currentWorkingSet);
-			currentWorkingSet = null;
+			// This tag is no longer used
+			ignoreElements = false;
+		} else if (localName.equals(CURRENT_WORKING_SET_TAG)) {
+			// This tag is no longer used
+			ignoreElements = false;
 		} else if (localName.equals(MODULE_TAG)) {
-			if (currentWorkingSet != null) {
-				currentWorkingSet.addRemotePath(currentRepositoryRoot.getRoot(), currentRemotePath);
-			} else if (currentRepositoryRoot != null) {
+			if (! ignoreElements && currentRepositoryRoot != null) {
 				currentRepositoryRoot.addTags(currentRemotePath, 
 					(CVSTag[]) tags.toArray(new CVSTag[tags.size()]));
 				currentRepositoryRoot.setAutoRefreshFiles(currentRemotePath,
@@ -130,7 +131,8 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 			if (name == null) {
 				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", WORKING_SET_TAG, NAME_ATTRIBUTE));
 			}
-			startWorkingSet(name);
+			// Ignore any elements until the corresponding end tag is reached
+			ignoreElements = true;
 		}  else if (localName.equals(MODULE_TAG)) {
 			String path = atts.getValue(PATH_ATTRIBUTE);
 			if (path == null) {
@@ -158,23 +160,12 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 			}
 			autoRefreshFiles.add(path);
 		} else if (localName.equals(CURRENT_WORKING_SET_TAG)) {
-			String name = atts.getValue(NAME_ATTRIBUTE);
-			if (name == null) {
-				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", CURRENT_WORKING_SET_TAG, NAME_ATTRIBUTE));
-			}
-			CVSUIPlugin.getPlugin().getRepositoryManager().setCurrentWorkingSet(name);
+			// Ignore any elements until the corresponding end tag is reached
+			ignoreElements = true;
 		}
 		// empty buffer
 		buffer = new StringBuffer();
 		tagStack.push(localName);
-	}
-	
-	/**
-	 * Method startWorkingSet.
-	 * @param name
-	 */
-	private void startWorkingSet(String name) {
-		currentWorkingSet = new CVSWorkingSet(name);
 	}
 
 	private void startModule(String path) {

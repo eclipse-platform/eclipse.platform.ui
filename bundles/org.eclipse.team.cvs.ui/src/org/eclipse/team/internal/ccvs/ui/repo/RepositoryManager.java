@@ -26,7 +26,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xerces.parsers.SAXParser;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
@@ -53,6 +55,7 @@ import org.eclipse.team.internal.ccvs.ui.IRepositoryListener;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.ReleaseCommentDialog;
 import org.eclipse.team.internal.ccvs.ui.XMLWriter;
+import org.eclipse.ui.IWorkingSet;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -70,8 +73,6 @@ public class RepositoryManager {
 	private static final String REPOSITORIES_VIEW_FILE = "repositoriesView.xml"; //$NON-NLS-1$
 
 	private Map repositoryRoots = new HashMap();
-	private List workingSets = new ArrayList();
-	private String currentWorkingSet;
 	
 	List listeners = new ArrayList();
 
@@ -99,14 +100,10 @@ public class RepositoryManager {
 	private RepositoryRoot[] getRepositoryRoots(ICVSRepositoryLocation[] locations) {
 		List roots = new ArrayList();
 		for (int i = 0; i < locations.length; i++) {
-			try {
-				ICVSRepositoryLocation location = locations[i];
-				RepositoryRoot root = getRepositoryRootFor(location);
-				if (root != null)
-					roots.add(root);
-			} catch (CVSException e) {
-				CVSUIPlugin.log(e);
-			}
+			ICVSRepositoryLocation location = locations[i];
+			RepositoryRoot root = getRepositoryRootFor(location);
+			if (root != null)
+				roots.add(root);
 		}
 		return (RepositoryRoot[]) roots.toArray(new RepositoryRoot[roots.size()]);
 	}
@@ -156,6 +153,28 @@ public class RepositoryManager {
 		return (CVSTag[])result.toArray(new CVSTag[0]);
 	}
 	
+	/**
+	 * Method getKnownTags.
+	 * @param repository
+	 * @param set
+	 * @param i
+	 * @param monitor
+	 * @return CVSTag[]
+	 */
+	public CVSTag[] getKnownTags(ICVSRepositoryLocation repository, IWorkingSet set, int tagType, IProgressMonitor monitor) throws CVSException {
+		if (set == null) {
+			return getKnownTags(repository, tagType);
+		}
+		ICVSRemoteResource[] folders = getFoldersForTag(repository, CVSTag.DEFAULT, monitor);
+		folders = filterResources(set, folders);
+		Set tags = new HashSet();
+		for (int i = 0; i < folders.length; i++) {
+			ICVSRemoteFolder folder = (ICVSRemoteFolder)folders[i];
+			tags.addAll(Arrays.asList(getKnownTags(folder, tagType)));
+		}
+		return (CVSTag[]) tags.toArray(new CVSTag[tags.size()]);
+	}
+	
 	public CVSTag[] getKnownTags(ICVSFolder project) throws CVSException {
 		RepositoryRoot root = getRepositoryRootFor(project);
 		String remotePath = RepositoryRoot.getRemotePathFor(project);
@@ -166,17 +185,13 @@ public class RepositoryManager {
 	 * XXX I hope this methos is not needed in this form	 */
 	public Map getKnownProjectsAndVersions(ICVSRepositoryLocation location) {
 		Map knownTags = new HashMap();
-		try {
-			RepositoryRoot root = getRepositoryRootFor(location);
-			String[] paths = root.getKnownRemotePaths();
-			for (int i = 0; i < paths.length; i++) {
-				String path = paths[i];
-				Set result = new HashSet();
-				result.addAll(Arrays.asList(root.getKnownTags(path)));
-				knownTags.put(path, result);
-			}
-		} catch (CVSException e) {
-			CVSUIPlugin.log(e);
+		RepositoryRoot root = getRepositoryRootFor(location);
+		String[] paths = root.getKnownRemotePaths();
+		for (int i = 0; i < paths.length; i++) {
+			String path = paths[i];
+			Set result = new HashSet();
+			result.addAll(Arrays.asList(root.getKnownTags(path)));
+			knownTags.put(path, result);
 		}
 		return knownTags;
 	}
@@ -384,17 +399,6 @@ public class RepositoryManager {
 			CVSRepositoryLocation location = (CVSRepositoryLocation)it.next();
 			RepositoryRoot root = getRepositoryRootFor(location);
 			root.writeState(writer);
-		}
-		it = workingSets.iterator();
-		while (it.hasNext()) {
-			CVSWorkingSet workingSet = (CVSWorkingSet)it.next();
-			workingSet.writeState(writer);
-		}
-		if (getCurrentWorkingSet() != null) {
-			HashMap attributes = new HashMap();
-			attributes.clear();
-			attributes.put(RepositoriesViewContentHandler.NAME_ATTRIBUTE, getCurrentWorkingSet().getName());
-			writer.startAndEndTag(RepositoriesViewContentHandler.CURRENT_WORKING_SET_TAG, attributes, true);
 		}
 		writer.endTag(RepositoriesViewContentHandler.REPOSITORIES_VIEW_TAG);
 	}
@@ -654,7 +658,7 @@ public class RepositoryManager {
 		return getRepositoryRootFor(location);
 	}
 	
-	public RepositoryRoot getRepositoryRootFor(ICVSRepositoryLocation location) throws CVSException {
+	public RepositoryRoot getRepositoryRootFor(ICVSRepositoryLocation location) {
 		RepositoryRoot root = (RepositoryRoot)repositoryRoots.get(location.getLocation());
 		if (root == null) {
 			root = new RepositoryRoot(location);
@@ -691,14 +695,6 @@ public class RepositoryManager {
 		}
 	}
 	
-	private void broadcastWorkingSetChange(CVSWorkingSet set) {
-		Iterator it = listeners.iterator();
-		while (it.hasNext()) {
-			IRepositoryListener listener = (IRepositoryListener)it.next();
-			listener.workingSetChanged(set);
-		}
-	}
-	
 	/**
 	 * Run the given runnable, waiting until the end to perform a refresh
 	 * 	 * @param runnable	 * @param monitor	 */
@@ -729,139 +725,39 @@ public class RepositoryManager {
 	}
 	
 	/**
-	 * Method addWorkingSet.
-	 * @param set
-	 */
-	public void addWorkingSet(CVSWorkingSet set) {
-		CVSWorkingSet oldSet = getWorkingSet(set.getName());
-		if (oldSet != null) {
-			removeWorkingSet(oldSet);
-		}
-		if (!workingSets.contains(set)) {
-			workingSets.add(set);
-		}
-		broadcastWorkingSetChange(set);
-	}
-	
-	/**
-	 * Method removeWorkingSet.
-	 * @param set
-	 */
-	public void removeWorkingSet(CVSWorkingSet set) {
-		workingSets.remove(set);
-		if (currentWorkingSet.equals(set.getName()))
-			currentWorkingSet = null;
-		broadcastWorkingSetChange(set);
-	}
-	
-	/**
-	 * Method setCurrentWorkingSet.
-	 * @param string
-	 */
-	public void setCurrentWorkingSet(String string) {
-		this.currentWorkingSet = string;
-		CVSWorkingSet current = getCurrentWorkingSet();
-		if (current != null)
-			broadcastWorkingSetChange(current);
-	}
-	
-	/**
-	 * Method getWorkingSet.
-	 * @param string
-	 * @return String
-	 */
-	public CVSWorkingSet getWorkingSet(String string) {
-		if (string == null) return null;
-		for (Iterator iter = workingSets.iterator(); iter.hasNext();) {
-			CVSWorkingSet workingSet = (CVSWorkingSet) iter.next();
-			if (workingSet.getName().equals(string))
-				return workingSet;
-		}
-		return null;
-	}
-	/**
-	 * Returns the currentWorkingSet.
-	 * @return CVSWorkingSet
-	 */
-	public CVSWorkingSet getCurrentWorkingSet() {
-		return getWorkingSet(currentWorkingSet);
-	}
-
-	/**
-	 * Sets the currentWorkingSet.
-	 * @param currentWorkingSet The currentWorkingSet to set
-	 */
-	public void setCurrentWorkingSet(CVSWorkingSet currentWorkingSet) {
-		setCurrentWorkingSet(currentWorkingSet.getName());
-	}
-	
-	/**
-	 * Method getWorkingFoldersForTag.
-	 * @param root
-	 * @param tag
-	 * @param monitor
-	 * @return Object[]
-	 */
-	public ICVSRemoteResource[] getWorkingFoldersForTag(ICVSRepositoryLocation root, CVSTag tag, IProgressMonitor monitor) throws CVSException {
-		CVSWorkingSet current = getCurrentWorkingSet();
-		ICVSRemoteResource[] resources = getFoldersForTag(root, tag, monitor);
-		resources = filterResources(current, resources);
-		if (!(CVSTag.DEFAULT.equals(tag) || tag == null)) {
-			resources =  getRepositoryRootFor(root).filterResources(resources);
-		}
-		return resources;
-	}
-	
-	/**
 	 * Method filterResources filters the given resources using the given
 	 * working set.
-	 * 
+	 *
 	 * @param current
 	 * @param resources
 	 * @return ICVSRemoteResource[]
 	 */
-	private ICVSRemoteResource[] filterResources(CVSWorkingSet current, ICVSRemoteResource[] resources) {
-		if (current == null) return resources;
-		return current.filterResources(resources);
-	}
-	
-	/**
-	 * Method getWorkingTags.
-	 * @param repository
-	 * @param i
-	 * @return CVSTag[]
-	 */
-	public CVSTag[] getWorkingTags(ICVSRepositoryLocation repository, int tagType, IProgressMonitor monitor) throws CVSException {
-		// todo: needs changing
-		CVSWorkingSet current = getCurrentWorkingSet();
-		if (current == null) {
-			return getKnownTags(repository, tagType);
-		} else {
-			Set tags = new HashSet();
-			ICVSRemoteFolder[] folders = current.getFoldersForTag(repository, CVSTag.DEFAULT, monitor);
-			for (int i = 0; i < folders.length; i++) {
-				ICVSRemoteFolder folder = folders[i];
-				tags.addAll(Arrays.asList(getKnownTags(folder, tagType)));
+	public ICVSRemoteResource[] filterResources(IWorkingSet workingSet, ICVSRemoteResource[] resources) {
+		if (workingSet == null) return resources;
+		// get the projects associated with the working set
+		IAdaptable[] adaptables = workingSet.getElements();
+		Set projects = new HashSet();
+		for (int i = 0; i < adaptables.length; i++) {
+			IAdaptable adaptable = adaptables[i];
+			Object adapted = adaptable.getAdapter(IResource.class);
+			if (adapted != null) {
+				// Can this code be generalized?
+				IProject project = ((IResource)adapted).getProject();
+				projects.add(project);
 			}
-			return (CVSTag[]) tags.toArray(new CVSTag[tags.size()]);
 		}
-	}
-	
-	public String[] getWorkingSetNames() {
-		Set names = new HashSet();
-		for (Iterator iter = workingSets.iterator(); iter.hasNext();) {
-			CVSWorkingSet workingSet = (CVSWorkingSet) iter.next();
-			names.add(workingSet.getName());
+		List result = new ArrayList();
+		for (int i = 0; i < resources.length; i++) {
+			ICVSRemoteResource resource = resources[i];
+			for (Iterator iter = projects.iterator(); iter.hasNext();) {
+				IProject project = (IProject) iter.next();
+				if (project.getName().equals(resource.getName())) {
+					result.add(resource);
+					break;
+				}
+			}
 		}
-		return (String[]) names.toArray(new String[names.size()]);
-	}
-	
-	/**
-	 * Method getWorkingSets.
-	 * @return Object[]
-	 */
-	CVSWorkingSet[] getWorkingSets() {
-		return (CVSWorkingSet[]) workingSets.toArray(new CVSWorkingSet[workingSets.size()]);
+		return (ICVSRemoteResource[]) result.toArray(new ICVSRemoteResource[result.size()]);
 	}
 	
 	/**

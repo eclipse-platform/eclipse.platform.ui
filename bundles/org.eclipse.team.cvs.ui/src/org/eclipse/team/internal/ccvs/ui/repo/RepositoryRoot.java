@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -205,22 +206,64 @@ public class RepositoryRoot extends PlatformObject {
 	}
 	
 	/**
-	 * Returns the autoRefreshFiles.
+	 * Returns the auto refresh file paths relative to the given remote path.
+	 * This approach doesn't work for defined modules.
+	 * 
 	 * @return String[]
+	 * @deprecated
 	 */
 	public String[] getAutoRefreshFiles(String remotePath) {
 		String name = getCachePathFor(remotePath);
 		Set files = (Set)autoRefreshFiles.get(name);
+		IPath parentPath = new Path(remotePath);
 		if (files == null || files.isEmpty()) {
 			return DEFAULT_AUTO_REFRESH_FILES;
 		} else {
-			return (String[]) files.toArray(new String[files.size()]);
+			// Convert the absolute paths to relative paths
+			List result = new ArrayList();
+			for (Iterator iter = files.iterator(); iter.hasNext();) {
+				IPath absolutePath = new Path((String) iter.next());
+				if (parentPath.isPrefixOf(absolutePath)) {
+					IPath relativePath = absolutePath.removeFirstSegments(parentPath.segmentCount());
+					result.add(relativePath.toString());
+				}
+			}
+			if (result.isEmpty()) return DEFAULT_AUTO_REFRESH_FILES;
+			return (String[]) result.toArray(new String[result.size()]);
 		}
 	}
 
 	/**
-	 * Sets the autoRefreshFiles.
+	 * Return the absolute paths names of the files used to refresh the tags of
+	 * the given remote path.
+	 * 
+	 * @param remotePath
+	 * @return String[]
+	 */
+	public String[] getAutoRefreshFilePaths(String remotePath) {
+		String name = getCachePathFor(remotePath);
+		Set files = (Set)autoRefreshFiles.get(name);
+		if (files == null || files.isEmpty()) {
+			// convert the default relative file paths to full paths
+			// todo: special handling for defined modules?
+			List result = new ArrayList();
+			for (int i = 0; i < DEFAULT_AUTO_REFRESH_FILES.length; i++) {
+				String relativePath = DEFAULT_AUTO_REFRESH_FILES[i];
+				result.add(new Path(remotePath).append(relativePath).toString());
+			}
+			return (String[]) result.toArray(new String[result.size()]);
+		} else {
+			return (String[]) files.toArray(new String[files.size()]);
+		}
+	}
+	
+	/**
+	 * Sets the auto refresh files for the given remote path to the given
+	 * stirng values which are file paths relative to the given remote path.
+	 * This doesn't work properly for modules.
+	 * 
 	 * @param autoRefreshFiles The autoRefreshFiles to set
+	 * @deprecated
 	 */
 	public void setAutoRefreshFiles(String remotePath, String[] autoRefreshFiles) {
 		List newFiles = Arrays.asList(autoRefreshFiles);
@@ -239,8 +282,12 @@ public class RepositoryRoot extends PlatformObject {
 				return;
 			}
 		}
-		Set files = new HashSet(newFiles);
-		files.addAll(newFiles);
+		// Convert the relative paths to absolute
+		Set files = new HashSet();
+		for (Iterator iter = newFiles.iterator(); iter.hasNext();) {
+			String relativePath = (String) iter.next();
+			files.add(new Path(remotePath).append(relativePath).toString());
+		}
 		this.autoRefreshFiles.put(getCachePathFor(remotePath), files);
 	}
 
@@ -248,13 +295,12 @@ public class RepositoryRoot extends PlatformObject {
 	 * Fetches tags from auto-refresh files.
 	 */
 	public void refreshDefinedTags(String remotePath, boolean replace, IProgressMonitor monitor) throws TeamException {
-		String[] filesToRefresh = getAutoRefreshFiles(remotePath);
+		String[] filesToRefresh = getAutoRefreshFilePaths(remotePath);
 		monitor.beginTask(null, filesToRefresh.length * 10); //$NON-NLS-1$
 		try {
 			List tags = new ArrayList();
 			for (int i = 0; i < filesToRefresh.length; i++) {
-				String relativePath = new Path(remotePath).append(filesToRefresh[i]).toString();
-				ICVSRemoteFile file = root.getRemoteFile(relativePath, CVSTag.DEFAULT);
+				ICVSRemoteFile file = root.getRemoteFile(filesToRefresh[i], CVSTag.DEFAULT);
 				tags.addAll(Arrays.asList(fetchTags(file, Policy.subMonitorFor(monitor, 5))));
 			}
 			clearTags(remotePath);

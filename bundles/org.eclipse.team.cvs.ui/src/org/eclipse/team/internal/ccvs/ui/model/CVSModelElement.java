@@ -12,6 +12,7 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public abstract class CVSModelElement implements IWorkbenchAdapter {
@@ -29,14 +30,14 @@ public abstract class CVSModelElement implements IWorkbenchAdapter {
 	 * Gets the children of the receiver by invoking the <code>internalGetChildren</code>.
 	 * A appropriate progress indicator will be used if requested.
 	 */
-	public Object[] getChildren(final Object o, boolean needsProgress) {
+	public Object[] getChildren(final Object o, boolean needsProgress, final IWorkingSet set) {
 		try {
 			if (needsProgress) {
 				final Object[][] result = new Object[1][];
 				IRunnableWithProgress runnable = new IRunnableWithProgress() {
 					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 						try {
-							result[0] = CVSModelElement.this.internalGetChildren(o, monitor);
+							result[0] = CVSModelElement.this.internalGetChildren(o, set, monitor);
 						} catch (TeamException e) {
 							throw new InvocationTargetException(e);
 						}
@@ -45,7 +46,7 @@ public abstract class CVSModelElement implements IWorkbenchAdapter {
 				getRunnableContext().run(isInterruptable() /*fork*/, isInterruptable() /*cancelable*/, runnable);
 				return result[0];
 			} else {
-				return internalGetChildren(o, null);
+				return internalGetChildren(o, set, null);
 			}
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {
@@ -61,18 +62,31 @@ public abstract class CVSModelElement implements IWorkbenchAdapter {
 	 * @param o
 	 * @return Object[]
 	 */
+	public Object[] internalGetChildren(Object o, IWorkingSet set, IProgressMonitor monitor) throws TeamException {
+		return internalGetChildren(o, monitor);
+	}
+	
+	/**
+	 * Method internalGetChildren.
+	 * @param o
+	 * @return Object[]
+	 */
 	public abstract Object[] internalGetChildren(Object o, IProgressMonitor monitor) throws TeamException;
 	
 	/**
-	 * Get the childen using <code>internalGetChildren</code> without requesting a
-	 * progress indicator.
-	 * 
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object o) {
-		return getChildren(o, isNeedsProgress());
+		return getChildren(o, null);
 	}
 
+	/**
+	 * Get the childen filtered by the given working set.
+	 */
+	public Object[] getChildren(Object o, IWorkingSet set) {
+		return getChildren(o, isNeedsProgress(), set);
+	}
+	
 	public boolean isNeedsProgress() {
 		return false;
 	}

@@ -11,12 +11,14 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -69,6 +71,14 @@ public abstract class DialogArea {
 		listeners.remove(listener);
 	}
 
+	protected void firePropertyChangeChange(String property, Object oldValue, Object newValue) {
+		PropertyChangeEvent event = new PropertyChangeEvent(this, property, oldValue, newValue);
+		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
+			IPropertyChangeListener listener = (IPropertyChangeListener) iter.next();
+			listener.propertyChange(event);
+		}
+	}
+	
 	/**
 	 * Code copied from <code>org.eclipse.jface.dialogs.Dialog</code> to obtain
 	 * a FontMetrics.

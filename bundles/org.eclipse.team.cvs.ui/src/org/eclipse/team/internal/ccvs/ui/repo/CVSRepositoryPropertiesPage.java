@@ -289,12 +289,8 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		
 		// get the repository label
 		String label = null;
-		try {
-			RepositoryRoot root = CVSUIPlugin.getPlugin().getRepositoryManager().getRepositoryRootFor(location);
-			label = root.getName();
-		} catch (CVSException e) {
-			CVSUIPlugin.log(e);
-		}
+		RepositoryRoot root = CVSUIPlugin.getPlugin().getRepositoryManager().getRepositoryRootFor(location);
+		label = root.getName();
 		useLocationAsLabel.setSelection(label == null);
 		useCustomLabel.setSelection(!useLocationAsLabel.getSelection());
 		if (label == null) {

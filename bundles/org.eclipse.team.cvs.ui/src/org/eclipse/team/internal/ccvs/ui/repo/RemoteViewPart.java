@@ -16,8 +16,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -42,6 +41,11 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
+import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.DrillDownAdapter;
@@ -59,20 +63,38 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 	private DrillDownAdapter drillPart;
 	
 	private Action refreshAction;
-	private Action newWorkingSetAction;
+	private Action selectWorkingSetAction;
 	private Action deselectWorkingSetAction;
 	private Action editWorkingSetAction;
 	private OpenRemoteFileAction openAction;
+	
+	private RemoteContentProvider contentProvider;
+	private IDialogSettings settings;
+	private static final String SELECTED_WORKING_SET = "SelectedWorkingSet"; //$NON-NLS-1$
 
-	public class ChangeWorkingSetAction extends Action {
+	private class ChangeWorkingSetAction extends Action {
 		String name;
 		public ChangeWorkingSetAction(String name, int index) {
 			super(Policy.bind("RepositoriesView.workingSetMenuItem", new Integer(index).toString(), name));
 			this.name = name;
 		}
 		public void run() {
-			CVSUIPlugin.getPlugin().getRepositoryManager().setCurrentWorkingSet(name);
+			IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
+			setWorkingSet(manager.getWorkingSet(name), true);
 		}
+	}
+	
+	protected RemoteViewPart(String partName) {
+		IDialogSettings workbenchSettings = CVSUIPlugin.getPlugin().getDialogSettings();
+		settings = workbenchSettings.getSection(partName);
+		if (settings == null) {
+			settings = workbenchSettings.addNewSection(partName);
+		}
+		String name = settings.get(SELECTED_WORKING_SET);
+		IWorkingSet set = null;
+		if (name != null)
+			set = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(name);
+		setWorkingSet(set, false);
 	}
 	
 	/**
@@ -124,8 +146,11 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.repo.RemoteViewPart#getContentProvider()
 	 */
-	protected IContentProvider getContentProvider() {
-		return new RemoteContentProvider();
+	protected RemoteContentProvider getContentProvider() {
+		if (contentProvider == null) {
+			contentProvider = new RemoteContentProvider();
+		}
+		return contentProvider;
 	};
 
 	protected KeyAdapter getKeyListener() {
@@ -141,6 +166,21 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 	protected void initializeSelectionListeners() {
 		// listen for selection changes in the repo view
 		getSite().getWorkbenchWindow().getSelectionService().addPostSelectionListener(this);
+	}
+	
+	protected IWorkingSet getWorkingSet() {
+		return getContentProvider().getWorkingSet();
+	}
+	
+	protected void setWorkingSet(IWorkingSet workingSet, boolean refreshViewer) {
+		if (settings != null) {
+			String name = null;
+			if (workingSet != null)
+				name = workingSet.getName();
+			settings.put(SELECTED_WORKING_SET, name);
+		}
+		getContentProvider().setWorkingSet(workingSet);
+		if (refreshViewer) refreshViewer();
 	}
 	
 	/**
@@ -162,18 +202,21 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH));
 
 		// New Working Set (popup)
-		newWorkingSetAction = new Action(Policy.bind("RepositoriesView.newWorkingSet")) { //$NON-NLS-1$
+		selectWorkingSetAction = new Action(Policy.bind("RepositoriesView.newWorkingSet")) { //$NON-NLS-1$
 			public void run() {
-				WorkingSetSelectionDialog dialog = new WorkingSetSelectionDialog(shell, false);
-				dialog.open();
-				CVSWorkingSet[] sets = dialog.getSelection();
-				if (sets != null && sets.length > 0) {
-					RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-					manager.setCurrentWorkingSet(sets[0]);
-					try {
-						manager.saveState();
-					} catch (TeamException e) {
-						CVSUIPlugin.openError(null, null, null, e);
+				IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
+				IWorkingSetSelectionDialog dialog = manager.createWorkingSetSelectionDialog(shell, false);
+				IWorkingSet workingSet = null;
+				if (workingSet != null)
+					dialog.setSelection(new IWorkingSet[]{workingSet});
+
+				if (dialog.open() == Window.OK) {
+					IWorkingSet[] result = dialog.getSelection();
+					if (result != null && result.length > 0) {
+						setWorkingSet(result[0], true);
+						manager.addRecentWorkingSet(result[0]);
+					} else {
+						setWorkingSet(null, true);
 					}
 				}
 			}
@@ -183,9 +226,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		// Deselect Working Set (popup)
 		deselectWorkingSetAction = new Action(Policy.bind("RepositoriesView.deselectWorkingSet")) { //$NON-NLS-1$
 			public void run() {
-				String name = null;
-				CVSUIPlugin.getPlugin().getRepositoryManager().setCurrentWorkingSet(name);
-				refreshViewer();
+				setWorkingSet(null, true);
 			}
 		};
 		//WorkbenchHelp.setHelp(newAction, IHelpContextIds.NEW_CVS_WORKING_SET_ACTION);
@@ -193,21 +234,24 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		// Edit Working Set (popup)
 		editWorkingSetAction = new Action(Policy.bind("RepositoriesView.editWorkingSet")) { //$NON-NLS-1$
 			public void run() {
-				String name = null;
-				CVSWorkingSet set = CVSUIPlugin.getPlugin().getRepositoryManager().getCurrentWorkingSet();
-				RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-				CVSWorkingSetWizard wizard = new CVSWorkingSetWizard(set);
-				WizardDialog dialog = new WizardDialog(shell, wizard);
-				if (dialog.open() == Window.OK) {
-					CVSWorkingSet newSet = wizard.getSelection();
-					manager.addWorkingSet(newSet);
-					manager.setCurrentWorkingSet(newSet);
-					try {
-						manager.saveState();
-					} catch (TeamException e) {
-						CVSUIPlugin.openError(null, null, null, e);
-					}
+				IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
+				IWorkingSet workingSet = getWorkingSet();
+				if (workingSet == null) {
+					setEnabled(false);
+					return;
 				}
+				IWorkingSetEditWizard wizard = manager.createWorkingSetEditWizard(workingSet);
+				if (wizard == null) {
+					// todo
+					String title = Policy.bind("EditWorkingSetAction.error.nowizard.title"); //$NON-NLS-1$
+					String message = Policy.bind("EditWorkingSetAction.error.nowizard.message"); //$NON-NLS-1$
+					CVSUIPlugin.openError(shell, title, message, null);
+					return;
+				}
+				WizardDialog dialog = new WizardDialog(shell, wizard);
+				dialog.create();
+				if (dialog.open() == WizardDialog.OK)
+					setWorkingSet(wizard.getSelection(), true);
 			}
 		};
 		//WorkbenchHelp.setHelp(newAction, IHelpContextIds.NEW_CVS_WORKING_SET_ACTION);
@@ -276,22 +320,21 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 
 		mgr.removeAll();
 
-		mgr.add(newWorkingSetAction);
+		mgr.add(selectWorkingSetAction);
 		mgr.add(deselectWorkingSetAction);
-		deselectWorkingSetAction.setEnabled(CVSUIPlugin.getPlugin().getRepositoryManager().getCurrentWorkingSet() != null);
+		deselectWorkingSetAction.setEnabled(getWorkingSet() != null);
 		mgr.add(editWorkingSetAction);
-		editWorkingSetAction.setEnabled(CVSUIPlugin.getPlugin().getRepositoryManager().getCurrentWorkingSet() != null);
+		editWorkingSetAction.setEnabled(getWorkingSet() != null);
 
 		mgr.add(new Separator());
 
-		RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-		String[] workingSets = manager.getWorkingSetNames();
-		CVSWorkingSet current = manager.getCurrentWorkingSet();
+		IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
+		IWorkingSet[] workingSets = manager.getWorkingSets();
 		for (int i = 0; i < workingSets.length; i++) {
-			String name = workingSets[i];
+			String name = workingSets[i].getName();
 			ChangeWorkingSetAction action = new ChangeWorkingSetAction(name, i + 1);
 			mgr.add(action);
-			action.setChecked(current != null && current.getName().equals(name));
+			action.setChecked(getWorkingSet() != null && getWorkingSet().getName().equals(name));
 		}
 
 		bars.updateActionBars();

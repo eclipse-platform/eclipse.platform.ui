@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
-import java.util.Iterator;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -204,11 +202,7 @@ public class WorkingSetSelectionArea extends DialogArea {
 	}
 	
 	private void handleWorkingSetChange() {
-		PropertyChangeEvent event = new PropertyChangeEvent(this, SELECTED_WORKING_SET, oldWorkingSet, workingSet);
-		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
-			IPropertyChangeListener listener = (IPropertyChangeListener) iter.next();
-			listener.propertyChange(event);
-		}
+		firePropertyChangeChange(SELECTED_WORKING_SET, oldWorkingSet, workingSet);
 	}
 	
 	/**

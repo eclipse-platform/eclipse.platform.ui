@@ -47,4 +47,20 @@ public class CVSRootFolderElement extends CVSResourceElement {
 	public ICVSResource getCVSResource() {
 		return null;
 	}
+	/**
+	 * Returns the roots.
+	 * @return ICVSFolder[]
+	 */
+	public ICVSFolder[] getRoots() {
+		return roots;
+	}
+
+	/**
+	 * Sets the roots.
+	 * @param roots The roots to set
+	 */
+	public void setRoots(ICVSFolder[] roots) {
+		this.roots = roots;
+	}
+
 }
