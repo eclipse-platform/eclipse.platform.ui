@@ -1049,6 +1049,7 @@ private void updateSizeForPage(IWizardPage page) {
 		Shell shell = getShell();
 		Point shellSize = shell.getSize();
 		setShellSize(shellSize.x + delta.x, shellSize.y + delta.y);
+		constrainShellSize();
 	}
 }
 /**

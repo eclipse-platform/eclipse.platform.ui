@@ -253,6 +253,25 @@ protected void cancelPressed() {
 	close();
 }
 /**
+ * Constrain the shell size to be no larger than the display bounds.
+ * Reduce the shell size and move its origin as required.
+ * 
+ * @since 2.0
+ */
+protected void constrainShellSize() {
+	// limit the shell size to the display size
+	super.constrainShellSize();
+	Shell shell = getShell();
+	Point size = shell.getSize();
+	Rectangle bounds = shell.getDisplay().getBounds();
+	
+	// move the shell origin as required
+	Point loc = shell.getLocation();
+	shell.setLocation(
+		Math.min(loc.x, bounds.width - size.x), 
+		Math.min(loc.y, bounds.height - size.y));
+}
+/**
  * Returns the number of pixels corresponding to the
  * height of the given number of characters.
  * <p>

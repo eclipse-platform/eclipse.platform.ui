@@ -20,8 +20,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.List; // disambiguate from SWT List
-
+import java.util.List;
 /**
  * A preference dialog is a hierarchical presentation of preference
  * pages.  Each page is represented by a node in the tree shown
@@ -55,6 +54,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	private Image messageImage;
 	private Image errorMsgImage;
 	private boolean showingError = false;
+	private Point lastShellSize;
 	
 	/**
 	 * Preference store, initially <code>null</code> meaning none.
@@ -163,6 +163,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
  */
 public PreferenceDialog(Shell parentShell, PreferenceManager manager) {
 	super(parentShell);
+	setShellStyle(getShellStyle() | SWT.RESIZE);
 	preferenceManager = manager;
 }
 /* (non-Javadoc)
@@ -229,6 +230,15 @@ protected void configureShell(Shell newShell) {
 			}	
 		}
 	});
+}
+/*(non-Javadoc)
+ * Method declared on Window.
+ */
+protected void constrainShellSize() {
+	super.constrainShellSize();
+	// record opening shell size
+	if (lastShellSize == null)
+		lastShellSize = getShell().getSize();
 }
 /* (non-Javadoc)
  * Method declared on Dialog.
@@ -904,7 +914,10 @@ protected boolean showPage(IPreferenceNode node) {
 	// Do we need resizing. Computation not needed if the
 	// first page is inserted since computing the dialog's
 	// size is done by calling dialog.open().
-	if (oldPage != null) {
+	// Also prevent auto resize if the user has manually resized
+	Shell shell= getShell();
+	Point shellSize= shell.getSize();
+	if (oldPage != null && lastShellSize.equals(shellSize)) {
 		Rectangle rect= pageContainer.getClientArea();
 		Point containerSize= new Point(rect.width, rect.height);
 		int hdiff= contentSize.x - containerSize.x;
@@ -913,11 +926,9 @@ protected boolean showPage(IPreferenceNode node) {
 		if (hdiff > 0 || vdiff > 0) {
 			hdiff= Math.max(0, hdiff);
 			vdiff= Math.max(0, vdiff);
-			Shell shell= getShell();
-			Point shellSize= shell.getSize();
 			setShellSize(shellSize.x + hdiff, shellSize.y + vdiff);
-		} else if (hdiff < 0 || vdiff < 0) {
-			currentPage.setSize(containerSize);
+			constrainShellSize();
+			lastShellSize = shell.getSize();
 		}
 	}
 

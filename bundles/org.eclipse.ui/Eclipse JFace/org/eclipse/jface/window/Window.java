@@ -249,6 +249,18 @@ protected void configureShell(Shell newShell) {
 	newShell.setLayout(layout);
 }
 /**
+ * Constrain the shell size to be no larger than the display bounds.
+ * Reduce the shell size and move its origin as required.
+ * 
+ * @since 2.0
+ */
+protected void constrainShellSize() {
+	// limit the shell size to the display size
+	Point size = shell.getSize();
+	Rectangle bounds = shell.getDisplay().getBounds();
+	shell.setSize(Math.min(size.x, bounds.width), Math.min(size.y, bounds.height));
+}
+/**
  * Creates this window's widgetry in a new top-level shell.
  * <p>
  * The default implementation of this framework method
@@ -512,10 +524,8 @@ public int open() {
 		create();
 	}
 
-	// constrain the shell size to be no larger than the display bounds
-	Point size = shell.getSize();
-	Rectangle bounds = shell.getDisplay().getBounds();
-	shell.setSize(Math.min(size.x, bounds.width), Math.min(size.y, bounds.height));
+	// limit the shell size to the display size
+	constrainShellSize();
 	
 	// open the window
 	shell.open();
