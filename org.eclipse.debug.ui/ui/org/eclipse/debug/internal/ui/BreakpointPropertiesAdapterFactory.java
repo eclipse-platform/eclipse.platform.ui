@@ -1,5 +1,10 @@
 package org.eclipse.debug.internal.ui;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
 import java.util.HashMap;
 
 import org.eclipse.core.resources.IMarker;
@@ -7,7 +12,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugConstants;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.BreakpointPropertySource;
@@ -45,18 +49,20 @@ import org.eclipse.ui.views.properties.IPropertySource;
 			if (obj instanceof IBreakpoint) {
 				IBreakpoint breakpoint = (IBreakpoint) obj;
 				IMarker marker = breakpoint.getMarker();
-				try {
-					IConfigurationElement config = (IConfigurationElement)fAdapterExtensions.get(marker.getType());
-					IPropertySource propertySource = (IPropertySource)config.createExecutableExtension("class");
-					// If no adapter was specified, use the default adapter
-					if (propertySource == null) {
-						propertySource = new BreakpointPropertySource();
+				if (marker.exists()) {
+					try {
+						IConfigurationElement config = (IConfigurationElement)fAdapterExtensions.get(marker.getType());
+						IPropertySource propertySource = (IPropertySource)config.createExecutableExtension("class");
+						// If no adapter was specified, use the default adapter
+						if (propertySource == null) {
+							propertySource = new BreakpointPropertySource();
+						}
+						propertySource.setPropertyValue("breakpoint", breakpoint);
+						return propertySource;
+					} catch (CoreException ce) {
+						DebugUIUtils.logError(ce);
+						return null;
 					}
-					propertySource.setPropertyValue("breakpoint", breakpoint);
-					return propertySource;
-				} catch (CoreException ce) {
-					ce.printStackTrace();
-					return null;
 				}
 			}
 		}
@@ -71,6 +77,5 @@ import org.eclipse.ui.views.properties.IPropertySource;
 			IPropertySource.class
 		};
 	}
-
 }
 
