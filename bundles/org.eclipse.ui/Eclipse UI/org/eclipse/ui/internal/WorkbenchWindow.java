@@ -537,10 +537,20 @@ protected MenuManager createMenuManager() {
 			if(!(item instanceof ActionContributionItem))
 				return null;
 			ActionContributionItem aci = (ActionContributionItem)item;
+			String registeredAction = null;
+			int acc[] = new int[]{aci.getAction().getAccelerator()};
+			if(acc[0] != 0)
+				registeredAction = getKeyBindingService().getDefinitionId(acc);
 			String defId = aci.getAction().getActionDefinitionId();
-			if(defId == null)
-				return null;
-			return getKeyBindingService().getAcceleratorText(defId);
+			if(registeredAction != null) {
+				if(defId == null)
+					return ""; //$NON-NLS-1$
+				else if(defId.equals(registeredAction))
+					return getKeyBindingService().getAcceleratorText(defId);
+				else
+					return ""; //$NON-NLS-1$
+			}
+			return null;
 		}
 		public String getText(IContributionItem item) {
 			if(getKeyBindingService().acceleratorsAllowed())
@@ -548,12 +558,20 @@ protected MenuManager createMenuManager() {
 			if(!(item instanceof MenuManager))
 				return null;
 			MenuManager itemManager = (MenuManager)item;
-			if(itemManager.getParent() != result)
-				return null;		
+			IContributionManager parent = itemManager.getParent();
+			if(parent != result) {
+				if(parent instanceof SubMenuManager) {
+					parent = ((SubMenuManager)parent).getParent();
+					if (parent != result) 
+						return null;
+				} else {
+ 					return null;		
+				}
+			}	
 			String text = itemManager.getMenu().getParentItem().getText();
 			int index = text.indexOf('&');
 			if (index < 0)
-				return null;
+				return text;
 			else if (index == 0)
 				return text.substring(1);
 			else
@@ -1197,6 +1215,7 @@ public void setActivePage(final IWorkbenchPage in) {
 			shortcutBar.update(false);
 			if (newPage != null && newPage.getPerspective() != null)
 				newPage.setToolBarLayout();
+			getMenuManager().update(IAction.TEXT);
 		}
 	});
 }
