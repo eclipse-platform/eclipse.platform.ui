@@ -31,7 +31,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.debug.ui.launchVariables.VariableContextManager;
+import org.eclipse.debug.ui.launchVariables.LaunchVariableContextManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -240,7 +240,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		if (fAllTargets == null) {
 			setErrorMessage(null);
 			MultiStatus status = new MultiStatus(IAntUIConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
-			String expandedLocation = LaunchVariableUtil.expandVariables(fLocation, status, VariableContextManager.getDefault().getVariableContext());
+			String expandedLocation = LaunchVariableUtil.expandVariables(fLocation, status, LaunchVariableContextManager.getDefault().getVariableContext());
 			if (expandedLocation != null && status.isOK()) {
 				try {
 					String[] arguments = ExternalToolsUtil.getArguments(fLaunchConfiguration);

@@ -23,7 +23,7 @@ import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.launchVariables.RefreshTab;
-import org.eclipse.debug.ui.launchVariables.VariableContextManager;
+import org.eclipse.debug.ui.launchVariables.LaunchVariableContextManager;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 
@@ -51,7 +51,7 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		super.setDefaults(configuration);
 		// set default name for script
-		VariableContextManager manager = VariableContextManager.getDefault();
+		LaunchVariableContextManager manager = LaunchVariableContextManager.getDefault();
 		ExpandVariableContext context = manager.getVariableContext();
 		IResource resource = context.getSelectedResource();
 		if (resource != null && resource instanceof IFile) {
