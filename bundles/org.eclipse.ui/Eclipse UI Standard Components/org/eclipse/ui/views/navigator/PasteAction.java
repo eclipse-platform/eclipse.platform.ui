@@ -7,6 +7,7 @@ package org.eclipse.ui.views.navigator;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -74,13 +75,12 @@ public void run() {
 		if (resourceData[0].getType() == IResource.PROJECT){
 			CopyProjectOperation operation = new CopyProjectOperation(this.shell);
 			operation.copyProject((IProject) resourceData[0]);
-		}
-		else {
+		} else {
+			// enablement should ensure that we always have access to a container
+			IContainer container = getContainer();
+				
 			CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(this.shell);
-			// enablement should ensure that we always have a container
-			List selection = getSelectedResources();
-			if (selection.size() == 1 && selection.get(0) instanceof IContainer)
-				operation.copyResources(resourceData, (IContainer)selection.get(0));
+			operation.copyResources(resourceData, container);
 		}
 		return;
 	}
@@ -90,12 +90,23 @@ public void run() {
 	String[] fileData = (String[])clipboard.getContents(fileTransfer);
 	
 	if (fileData != null) {
+		// enablement should ensure that we always have access to a container
+		IContainer container = getContainer();
+				
 		CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(this.shell);
-		// enablement should ensure that we always have a container
-		List selection = getSelectedResources();
-		if (selection.size() == 1 || selection.get(0) instanceof IContainer)
-			operation.copyFiles(fileData, (IContainer)selection.get(0));
+		operation.copyFiles(fileData, container);
 	}
+}
+
+/**
+ * Returns the container to hold the pasted resources.
+ */
+private IContainer getContainer() {
+	List selection = getSelectedResources();
+	if (selection.get(0) instanceof IFile)
+		return ((IFile)selection.get(0)).getParent();
+	else 
+		return (IContainer)selection.get(0);
 }
 
 /**
@@ -115,22 +126,37 @@ protected boolean updateSelection(IStructuredSelection selection) {
 	if (resourceData == null && fileData == null)
 		return false;
 
-	// can paste a project regardless of selection
-	if (resourceData != null && resourceData[0].getType() == IResource.PROJECT)
+	// can paste an open project regardless of selection
+	if (resourceData != null 
+		&& resourceData[0].getType() == IResource.PROJECT
+		&& ((IProject)resourceData[0]).isOpen())
 		return true;
 
-	// can only paste files and folders to a single selection of a project (open) or folder
+	// can paste files and folders to a single selection (project must be open)
+	// or multiple file selection with the same parent
 	if (getSelectedNonResources().size() > 0) 
 		return false;
 	List selectedResources = getSelectedResources();
-	if (selectedResources.size() != 1)
-		return false;
-	if (selectionIsOfType(IResource.FOLDER))
+	if (selectedResources.size() == 1) {
+		if (selectedResources.get(0) instanceof IProject)
+			return ((IProject)selectedResources.get(0)).isOpen();
+		else 
+			return true;
+	}	
+	if (selectedResources.size() > 1) {
+		IContainer parent = null;
+		for (int i = 0; i < selectedResources.size(); i++) {
+			IResource resource = (IResource)selectedResources.get(i);
+			if (resource.getType() != IResource.FILE)
+				return false;
+			if (parent == null)
+				parent = resource.getParent();
+			else if (!parent.equals(resource.getParent()))
+				return false;
+		}
 		return true;
-	if (selectedResources.get(0) instanceof IProject)
-		return ((IProject)selectedResources.get(0)).isOpen();
-
-	return false;
+	}
+	return true;
 }
 
 }
