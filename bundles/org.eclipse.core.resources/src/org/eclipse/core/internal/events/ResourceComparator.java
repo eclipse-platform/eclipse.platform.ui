@@ -44,10 +44,18 @@ public int compare(Object o1, Object o2) {
 	if (o1 == o2)
 		return IResourceDelta.NO_CHANGE;
 	int result = 0;
-	if (o1 == null)
-		return ((ResourceInfo) o2).isSet(M_PHANTOM) ? IResourceDelta.ADDED_PHANTOM : IResourceDelta.ADDED;
-	if (o2 == null)
-		return ((ResourceInfo) o1).isSet(M_PHANTOM) ? IResourceDelta.REMOVED_PHANTOM : IResourceDelta.REMOVED;
+	if (o1 == null) {
+		result = ((ResourceInfo) o2).isSet(M_PHANTOM) ? IResourceDelta.ADDED_PHANTOM : IResourceDelta.ADDED;
+		if (((ResourceInfo) o2).getType() == IResource.PROJECT)
+			result |= ((ResourceInfo) o2).isSet(M_OPEN) ? IResourceDelta.OPEN : 0;
+		return result;
+	}
+	if (o2 == null) {
+ 		result = ((ResourceInfo) o1).isSet(M_PHANTOM) ? IResourceDelta.REMOVED_PHANTOM : IResourceDelta.REMOVED;
+		if (((ResourceInfo) o1).getType() == IResource.PROJECT)
+			result |= ((ResourceInfo) o2).isSet(M_OPEN) ? IResourceDelta.OPEN : 0;
+		return result;
+	}
 	if (!(o1 instanceof ResourceInfo && o2 instanceof ResourceInfo))
 		return IResourceDelta.NO_CHANGE;
 	ResourceInfo oldElement = (ResourceInfo) o1;
