@@ -253,7 +253,7 @@ public boolean isEmpty() {
  * The given item was added to the list of contributions.
  * Marks the manager as dirty and updates the number of dynamic items, and the memento.
  */
-private void itemAdded(IContributionItem item) {
+protected void itemAdded(IContributionItem item) {
 	markDirty();
 	if (item.isDynamic())
 		dynamicItems++;
@@ -262,7 +262,7 @@ private void itemAdded(IContributionItem item) {
  * The given item was removed from the list of contributions.
  * Marks the manager as dirty and updates the number of dynamic items.
  */
-private void itemRemoved(IContributionItem item) {
+protected void itemRemoved(IContributionItem item) {
 	markDirty();
 	if (item.isDynamic())
 		dynamicItems--;	

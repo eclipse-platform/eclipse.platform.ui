@@ -7,6 +7,7 @@ package org.eclipse.ui.internal;
  * http://www.eclipse.org/legal/cpl-v10.html
  */
 
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -27,6 +28,16 @@ public class CoolItemToolBarManager extends ToolBarManager {
 	}
 	protected CoolBarManager getParentManager() {
 		return parentManager;
+	}
+	protected void itemAdded(IContributionItem item) {
+		super.itemAdded(item);
+		update(true);
+		parentManager.updateSizeFor(coolBarItem);
+	}
+	protected void itemRemoved(IContributionItem item) {
+		super.itemRemoved(item);
+		update(true);
+		parentManager.updateSizeFor(coolBarItem);
 	}
 	protected void relayout(ToolBar toolBar, int oldCount, int newCount) {
 		if (oldCount == newCount) return;

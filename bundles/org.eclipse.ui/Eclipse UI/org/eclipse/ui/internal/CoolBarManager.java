@@ -93,7 +93,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	}
 	/**
 	 */
-	public CoolBar createControl(Composite parent) {
+	/* package */ CoolBar createControl(Composite parent) {
 		if (!coolBarExist() && parent != null) {
 			// Create the CoolBar and its popup menu.
 			coolBar = new CoolBar(parent, style);
@@ -123,16 +123,10 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		} else if (cbItem.isOrderAfter()) {
 			index = getInsertAfterIndex(cbItem);
 		}
-		// Figure out how much space is used on the row on which this
-		// cool item will be added.  Calculate this value before we
-		// add the cool item.
-		int spaceUsed = 0;
 		if (index == -1) {
 			index = coolBar.getItemCount();
-			spaceUsed = getSpaceUsed(index);
 			coolItem = new CoolItem(coolBar, SWT.DROP_DOWN);
 		} else {
-			spaceUsed = getSpaceUsed(index);
 			coolItem = new CoolItem(coolBar, SWT.DROP_DOWN, index);
 		}
 		coolItem.setControl(toolBar);
@@ -146,18 +140,11 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				}
 			}
 		});
-		
-		if (coolItem.getPreferredSize().x > (coolBar.getClientArea().width - spaceUsed)) {
-			// item will not fit on the row on which it is being added
-			// wrap the last item on the row
-			int rowEnd = getRowEndIndex(index);		
-			redoLayoutStartingAt(rowEnd);
-		}
 		return coolItem;
 	}
 	/**
 	 */
-	public void dispose(CoolBarContributionItem cbItem) {
+	/* package */ void dispose(CoolBarContributionItem cbItem) {
 		CoolItem coolItem = findCoolItem(cbItem);
 		if (coolItem != null) {
 			dispose(coolItem);
@@ -167,7 +154,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	}
 	/**
 	 */
-	protected void dispose(CoolItem coolItem) {
+	private void dispose(CoolItem coolItem) {
 		if ((coolItem != null) && !coolItem.isDisposed()) {
 			coolItem.setData(null);
 			Control control = coolItem.getControl();
@@ -182,7 +169,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	}		
 	/**
 	 */
-	public void dispose() {
+	/* package */ void dispose() {
 		if (coolBarExist()) {
 			IContributionItem[] cbItems = getItems();
 			for (int i=0; i<cbItems.length; i++) {
@@ -203,17 +190,19 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	}
 	/**
 	 */
-	CoolItem findCoolItem(CoolBarContributionItem item) {
+	private CoolItem findCoolItem(CoolBarContributionItem item) {
+		if (coolBar == null) return null;
 		CoolItem[] items = coolBar.getItems();
 		for (int i = 0; i < items.length; i++) {
 			CoolItem coolItem = items[i];
-			if (coolItem.getData().equals(item)) return coolItem;
+			CoolBarContributionItem data = (CoolBarContributionItem)coolItem.getData();
+			if (data != null && data.equals(item)) return coolItem;
 		}
 		return null;
 	}
 	/**
 	 */
-	CoolBarContributionItem findSubId(String id) {
+	/* package */ CoolBarContributionItem findSubId(String id) {
 		IContributionItem[] items = getItems();
 		for (int i = 0; i < items.length; i++) {
 			CoolBarContributionItem item = (CoolBarContributionItem)items[i];
@@ -222,39 +211,12 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		}
 		return null;
 	}
-	/**
-	 */
-	private boolean fits(int itemIndex) {
-		// Does the coolitem fit on the row it is on?  Assume the item is at
-		// the end and assume it does not fit if the sum of the preferred 
-		// sizes for the items on the row is greater than the width of the 
-		// coolbar.  This method is used when determining whether or not to
-		// wrap added items when restoring/switching to a perspective.
-		int[] wrapIndices = getAdjustedWrapIndices();
-		int rowEndIndex = itemIndex;
-		int rowStartIndex = 0;
-		// We will have at least one wrap index of 0.
-		for (int i = 0; i < wrapIndices.length; i++) {
-			int wrapIndex = wrapIndices[i];
-			if (itemIndex < wrapIndex) {
-				break;
-			} else {
-				rowStartIndex = wrapIndex;
-			}
-		}
-		int width = 0;
-		for (int i=rowStartIndex; i<=rowEndIndex; i++) {
-			CoolItem item = coolBar.getItem(i);
-			width += item.getPreferredSize().x;
-		}
-		return width <= coolBar.getClientArea().width;
-	}
-
 	/** 
 	 * Return a consistent set of wrap indices.  The return value
 	 * will always include at least one entry and the first entry will 
 	 * always be zero.  CoolBar.getWrapIndices() is inconsistent 
-	 * in whether or not it returns an index for the first row.
+	 * in whether or not it returns an index for the first row when one
+	 * row exists.
 	 */
 	private int[] getAdjustedWrapIndices() {
 		int[] wrapIndices = coolBar.getWrapIndices();
@@ -292,14 +254,14 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		ArrayList ids = new ArrayList(coolItems.length);
 		for (int i = 0; i < coolItems.length; i++) {
 			CoolBarContributionItem group = (CoolBarContributionItem) coolItems[i].getData();
-			ids.add(group.getId());
+			if (group != null) ids.add(group.getId());
 		}
 		return ids;
 	}
 	/**
 	 * Return the SWT control for this manager.
 	 */
-	public CoolBar getControl() {
+	/* package */ CoolBar getControl() {
 		return coolBar;
 	}
 	private int getInsertAfterIndex(CoolBarContributionItem coolBarItem) {
@@ -383,7 +345,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	}
 	/**
 	 */
-	public CoolBarLayout getLayout() {
+	/* package */ CoolBarLayout getLayout() {
 		if (!coolBarExist())
 			return null;
 	
@@ -409,75 +371,11 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				layout.itemSizes[lastIndex] = lastItem.getPreferredSize();
 			}
 		}
-			
 		return layout;
 	}
 	/**
-	 * Get the row end for the given index.
 	 */
-	private int getRowEndIndex (int index) {		
-		int[] wrapIndices = getAdjustedWrapIndices();
-		int rowEndIndex = -1;
-		// We will have at least one wrap index of 0.
-		for (int i = 0; i < wrapIndices.length; i++) {
-			int wrapIndex = wrapIndices[i];
-			if (index < wrapIndex) {
-				rowEndIndex = wrapIndices[i] - 1;
-				break;
-			} else if (index == wrapIndex) {
-				if (i < (wrapIndices.length - 1)) {
-					rowEndIndex = wrapIndices[i+1] - 1;
-				}
-				break;
-			}
-		}
-		if (rowEndIndex == -1) {
-			rowEndIndex = coolBar.getItemCount() - 1;
-		}
-		return rowEndIndex;
-	}
-	/**
-	 * Get the space used by the items on the row that the item added
-	 * at index will be on.
-	 */
-	private int getSpaceUsed (int index) {
-		// If no items exist, no space is used.
-		if (coolBar.getItemCount() == 0) return 0;
-		
-		// Get row start and row end.  		
-		int[] wrapIndices = getAdjustedWrapIndices();
-		int rowEndIndex = -1;
-		int rowStartIndex = wrapIndices[0];
-		// We will have at least one wrap index of 0.
-		for (int i = 0; i < wrapIndices.length; i++) {
-			int wrapIndex = wrapIndices[i];
-			// want to use the equals here since the item at index 
-			// has not been added, for example wrapIndices[0,3] and
-			// index = 3 - the item will be added to the end of the 
-			// first row, so we want our start/end to be 0/2
-			if (index <= wrapIndex) {
-				rowEndIndex = wrapIndices[i] - 1;
-				break;
-			} else {
-				rowStartIndex = wrapIndex;
-			}
-		}
-		if (rowEndIndex == -1) {
-			rowEndIndex = coolBar.getItemCount() - 1;
-		}
-		int width = 0;
-		for (int i = rowStartIndex; i < rowEndIndex; i++) {
-			width += coolBar.getItem(i).getSize().x;
-		}
-		// For row end item need to calculate size differently since 
-		// last item on a row is given a size to account for the 
-		// extra space on the row.
-		width += coolBar.getItem(rowEndIndex).getPreferredSize().x;
-		return width;
-	}
-	/**
-	 */
-	public int getStyle() {
+	/* package */ int getStyle() {
 		return style;
 	}
 	/**
@@ -593,13 +491,13 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	}
 	/**
 	 */
-	public boolean isLayoutLocked() {
+	/* package */ boolean isLayoutLocked() {
 		if (!coolBarExist()) return false;
 		return coolBar.getLocked();
 	}
 	/**
 	 */
-	public void lockLayout(boolean value) {
+	/* package */ void lockLayout(boolean value) {
 		coolBar.setLocked(value);
 	}
 	/**
@@ -614,85 +512,22 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		coolBarMenu.setVisible(true);
 	}
 	/**
-	 * Layout out the coolbar items so that each one is completely visible, 
-	 * wrapping when necessary.
+	 * Layout out the coolbar items so that each one is sized to its preferred size.
 	 */
-	protected void redoLayout() {
-		redoLayoutStartingAt(0);
-	}
-	/**
-	 * Layout out the coolbar items so that each one is completely visible, 
-	 * wrapping when necessary.
-	 */
-	protected void redoLayoutStartingAt(int index) {
-		// We must reset the wrap indices, otherwise coolItem.setSize(int)
-		// may not work as expected.  The coolbar sets the size of the last 
-		// item on each row to the size of the item plus any remaining  
-		// area to the right of the item and you cannot set this size any 
-		// smaller.  For reset/auto-wrapping purposes we only want the last
-		// item in the coolbar to have extra space associated to it, so make
-		// the appropriate number of rows.
-		int[] currentWrapIndices = getAdjustedWrapIndices();
-		ArrayList wrapIndices = new ArrayList();
-		for (int i=0; i<currentWrapIndices.length; i++) {
-			int wrapIndex = currentWrapIndices[i];
-			if (wrapIndex < index) {
-				wrapIndices.add(new Integer(wrapIndex));
-			} else {
-				break;
-			}
-		}
-		
-		int[] wraps = new int[wrapIndices.size()];
-		for (int i=0; i<wrapIndices.size(); i++) {
-			wraps[i] = ((Integer)wrapIndices.get(i)).intValue();
-		}
-		boolean redrawOff = false;
-		if (wraps.length < currentWrapIndices.length) {
-			// only set this if we have to, doing so will reduce
-			// unnecessary flash
-			redrawOff = true;
-			coolBar.setRedraw(false);
-			coolBar.setWrapIndices(wraps);
-		}
-		
-		// Reset the item sizes, necessary to do so before we wrap the items.
+	/* package */ void redoLayout() {
+		// Reset the wrap indices and the cool item sizes.  The coolbar will automatically
+		// wrap the items to the next row that do not fit.
+		coolBar.setWrapIndices(new int[0]);		
 		CoolItem[] coolItems = coolBar.getItems();
-		for (int i = index; i < coolItems.length; i++) {
+		for (int i = 0; i < coolItems.length; i++) {
 			CoolItem coolItem = coolItems[i];
 			setSizeFor(coolItem);
 		}
-		
-		// Wrap the items
-		int coolBarWidth = coolBar.getClientArea().width;
-		int spaceLeft = 0;
-		for (int i=index; i<coolItems.length; i++) {
-			CoolItem coolItem = coolItems[i];
-			int preferredWidth = coolItem.getPreferredSize().x;
-			if (preferredWidth <= spaceLeft) {
-				// item fits, continue
-				spaceLeft -= preferredWidth;
-			} else {
-				// item doesn't fit, starting a new row
-				wrapIndices.add(new Integer(i));
-				spaceLeft = coolBarWidth - preferredWidth;
-			}
-		}
-
-		wraps = new int[wrapIndices.size()];
-		for (int i=0; i<wrapIndices.size(); i++) {
-			wraps[i] = ((Integer)wrapIndices.get(i)).intValue();
-		}
-		if (!redrawOff) {
-			coolBar.setRedraw(false);
-		}
-		coolBar.setWrapIndices(wraps);
 		relayout();		
-		coolBar.setRedraw(true);
 	}
 	/**
 	 */
-	protected void resetLayout() {
+	private void resetLayout() {
 		coolBar.setRedraw(false);
 		CoolItem[] coolItems = coolBar.getItems();
 		for (int i = 0; i < coolItems.length; i++) {
@@ -719,12 +554,12 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	}
 	/**
 	 */
-	protected void relayout() {
+	private void relayout() {
 		coolBar.getParent().layout();
 	}
 	/**
 	 */
-	public void setLayout(CoolBarLayout layout) {
+	/* package */ void setLayout(CoolBarLayout layout) {
 		try {
 			setLayoutTo(layout);
 		} catch (Exception e) {
@@ -736,7 +571,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	}
 	/**
 	 */
-	protected void setLayoutTo(CoolBarLayout layout) {
+	private void setLayoutTo(CoolBarLayout layout) {
 		// This method is called after update.  All of the coolbar items have
 		// been created, now apply the layout to the coolbar. 
 
@@ -765,7 +600,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			coolBar.setRedraw(true);
 			return;
 		}
-
 
 		int maxItemCount = coolBar.getItemCount();
 		int[] itemOrder = new int[maxItemCount];
@@ -853,36 +687,23 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		System.arraycopy(wrapIndices, 0, itemWraps, 0, j);
 		coolBar.setWrapIndices(itemWraps);
 		
-		if (!addedItems.isEmpty()) {
-			// these items have already been added to the coolbar
-			// see if the items fit
-			int startIndex = coolBar.getItemCount();
-			for (int i=0; i<addedItems.size(); i++) {
-				CoolItem item = (CoolItem)addedItems.get(i);
-				int itemIndex = coolBar.indexOf(item);
-				if (!fits(itemIndex)) {
-					if (itemIndex < startIndex) {
-						startIndex = itemIndex;
-					}
-				}
-			}
-			if (startIndex != coolBar.getItemCount()) {
-				// redo the layout starting at the first visible item that
-				// does not fit
-				redoLayoutStartingAt(startIndex);
-			}
-		}
 		coolBar.setRedraw(true);
 	}
 	private void setSizeFor(CoolItem coolItem) {
 		ToolBar toolBar = (ToolBar) coolItem.getControl();
-		int minWidth = toolBar.getItems()[0].getWidth();
 		Point size = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		Point coolSize = coolItem.computeSize(size.x, size.y);
 		// note setMinimumSize must be called before setSize, see PR 15565
-		coolItem.setMinimumSize(minWidth, coolSize.y);
+		coolItem.setMinimumSize(size.x, size.y);
 		coolItem.setSize(coolSize);
 		coolItem.setPreferredSize(coolSize);
+	}
+	/**
+	 * Recalculate and set the size for the given CoolBarContributionItem's coolitem.
+	 */
+	/* package */ void updateSizeFor(CoolBarContributionItem cbItem) {
+		CoolItem coolItem = findCoolItem(cbItem);
+		if (coolItem != null) setSizeFor(coolItem);
 	}
 	/**
 	 */
@@ -923,7 +744,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				for (Iterator e = coolItemsToRemove.iterator(); e.hasNext();) {
 					CoolItem coolItem = (CoolItem) e.next();
 					ToolBar tBar = (ToolBar) coolItem.getControl();
-						tBar.setVisible(false);
+					tBar.setVisible(false);
 					dispose(coolItem);
 				}
 
