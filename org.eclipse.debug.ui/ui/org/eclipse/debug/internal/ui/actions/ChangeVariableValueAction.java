@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.actions;
 
  
+import java.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.debug.core.DebugException;
@@ -75,7 +76,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 			fInputDialog= null;
 			return;
 		}
-		fInputDialog= new ChangeVariableValueInputDialog(activeShell, ActionMessages.getString("ChangeVariableValueSet_Variable_Value_1"), ActionMessages.getString("ChangeVariableValueEnter_a_new_value_for__2") + name + ':', value, new IInputValidator() { //$NON-NLS-1$ //$NON-NLS-2$
+		fInputDialog= new ChangeVariableValueInputDialog(activeShell, ActionMessages.getString("ChangeVariableValue.1"), MessageFormat.format(ActionMessages.getString("ChangeVariableValue.2"), new String[] {name}), value, new IInputValidator() { //$NON-NLS-1$ //$NON-NLS-2$
 			/**
 			 * Returns an error string if the input is invalid
 			 */
@@ -85,9 +86,9 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 						return null; // null means valid
 					}
 				} catch (DebugException exception) {
-					return ActionMessages.getString("ChangeVariableValueAn_exception_occurred_3"); //$NON-NLS-1$
+					return ActionMessages.getString("ChangeVariableValue.3"); //$NON-NLS-1$
 				}
-				return ActionMessages.getString("ChangeVariableValueInvalid_value_4"); //$NON-NLS-1$
+				return ActionMessages.getString("ChangeVariableValue.4"); //$NON-NLS-1$
 			}
 		});
 		
