@@ -84,6 +84,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -95,7 +96,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.IMarkRegionTarget;
-import org.eclipse.jface.text.IPostSelectionProvider;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextInputListener;
@@ -1084,7 +1084,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Editor specific selection provider which wraps the source viewer's selection provider.
 	 * @since 2.1
 	 */
-	class SelectionProvider implements ISelectionProvider, IPostSelectionProvider {
+	class SelectionProvider implements IPostSelectionProvider {
 	
 		/*
 		 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(ISelectionChangedListener)
