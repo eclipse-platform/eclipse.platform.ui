@@ -1249,10 +1249,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		updateAdditionalEntries(prefs);
 		updateProperties(prefs);
 		updatePropertyFiles(prefs);
-		boolean classpathChanged= false;
-		if (AntCorePlugin.getPlugin().getPluginPreferences().needsSaving()) {
-			classpathChanged= true;
-		}
+		boolean classpathChanged= AntCorePlugin.getPlugin().getPluginPreferences().needsSaving();
 		AntCorePlugin.getPlugin().savePluginPreferences();
 		if (classpathChanged) {
 			prefs.setValue(IAntCoreConstants.PREFERENCE_CLASSPATH_CHANGED, true);

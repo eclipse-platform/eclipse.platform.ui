@@ -102,7 +102,7 @@ public class AntModel {
 		public void propertyChange(Preferences.PropertyChangeEvent event) {
 			if (event.getProperty().equals(IAntCoreConstants.PREFERENCE_CLASSPATH_CHANGED)) {
 				if (((Boolean)event.getNewValue()) == Boolean.TRUE) {
-					reconcileForPropertyChange();		
+					reconcileForPropertyChange(true);		
 				}
 			}
 		}
@@ -113,8 +113,8 @@ public class AntModel {
 			String property= event.getProperty();
 			if (property.equals(AntEditorPreferenceConstants.PROBLEM)) {
 				AntUIPlugin.getDefault().getPluginPreferences().removePropertyChangeListener(fUIPropertyChangeListener);
-				reconcileForPropertyChange();
-				AntUIPlugin.getDefault().getPluginPreferences().setValue(AntEditorPreferenceConstants.PROBLEM, ""); //$NON-NLS-1$
+				reconcileForPropertyChange(false);
+				AntUIPlugin.getDefault().getPluginPreferences().setToDefault(AntEditorPreferenceConstants.PROBLEM);
 				AntUIPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(fUIPropertyChangeListener);
 			}
 		}
@@ -133,9 +133,11 @@ public class AntModel {
 		fgInstanceCount++;
 	}
 
-	private void reconcileForPropertyChange() {
-		fgClassLoader= null;
-		AntDefiningTaskNode.setJavaClassPath();
+	private void reconcileForPropertyChange(boolean classpathChanged) {
+		if (classpathChanged) {
+			fgClassLoader= null;
+			AntDefiningTaskNode.setJavaClassPath();
+		}
 		fIsDirty= true;
 		reconcile(null);
 		updateMarkers();
