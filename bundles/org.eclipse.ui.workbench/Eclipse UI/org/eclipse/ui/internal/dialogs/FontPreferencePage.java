@@ -11,6 +11,7 @@ import java.text.Collator;
 import java.util.*;
 
 import org.eclipse.jface.preference.*;
+import org.eclipse.jface.resource.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.SWT;
@@ -554,6 +555,7 @@ public class FontPreferencePage
 
 		FontDefinition[] definitions = getDefinitions();
 		IPreferenceStore store = getPreferenceStore();
+		ArrayList defaultFonts = new ArrayList();
 		for (int i = 0; i < definitions.length; i++) {
 			FontDefinition definition = definitions[i];
 			String preferenceId = definition.getId();
@@ -563,6 +565,7 @@ public class FontPreferencePage
 
 			if (DEFAULT_TOKEN.equals(setValue)) {
 				store.setToDefault(registryKey);
+				defaultFonts.add(definition);
 			} else {
 				FontData[] newData = (FontData[]) setValue;
 				//Don't update the preference store if there has been no change
@@ -573,6 +576,19 @@ public class FontPreferencePage
 				}
 
 			}
+		}
+		
+		//Now do a post process to be sure that anything
+		//that defaults to anything else is up to date
+		//in the font registry.
+		Iterator defaults = defaultFonts.iterator();
+		FontRegistry registry = JFaceResources.getFontRegistry();
+		while(defaults.hasNext()){
+			FontDefinition nextDefinition = (FontDefinition) defaults.next();
+			String defaultsTo = nextDefinition.getDefaultsTo();
+			if(defaultsTo != null){
+				registry.put(nextDefinition.getId(),registry.getFontData(defaultsTo));
+			}			
 		}
 
 		return super.performOk();

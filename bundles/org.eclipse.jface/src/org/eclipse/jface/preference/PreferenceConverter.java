@@ -410,7 +410,12 @@ public class PreferenceConverter {
 	 * in the given preference store. This method also sets the corresponding
 	 * key in the JFace font registry to the value and fires a 
 	 * property change event to listeners on the preference store.
-	 *
+	 * 
+	 * <p>
+	 * Note that this API does not update any other settings that may
+	 * be dependant upon it. Only the value in the preference store 
+	 * and in the font registry is updated.
+	 * </p> 
 	 * @param store the preference store
 	 * @param name the name of the preference
 	 * @param value the new current value of the preference
