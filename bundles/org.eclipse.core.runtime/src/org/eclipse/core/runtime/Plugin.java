@@ -153,7 +153,16 @@ import org.osgi.framework.*;
  * </p>
  */
 public abstract class Plugin implements BundleActivator {
+	/**
+	 * The bundle associated this plug-in
+	 * @since 3.0
+	 */
 	protected Bundle bundle;
+	
+	/**
+	 * The context in which this plug-in operates.  Note that this value is private and should not be
+	 * shared with others as this posses a security risk.
+	 */
 	private BundleContext context;
 	/**
 	 * The debug flag for this plug-in.  The flag is false by default.
@@ -204,6 +213,14 @@ public abstract class Plugin implements BundleActivator {
 	 * strongly recommended that this method avoid synchronized blocks or other thread locking mechanisms,
 	 * as this would lead to deadlock vulnerability.
 	 * </p>
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
+	 * 
 	 * @since 3.0
 	 */
 	public Plugin() {
@@ -222,6 +239,14 @@ public abstract class Plugin implements BundleActivator {
 	 * strongly recommended that this method avoid synchronized blocks or other thread locking mechanisms,
 	 * as this would lead to deadlock vulnerability.
 	 * </p>
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
+	 *
 	 * @param context the bundle context
 	 * @since 3.0
 	 */
@@ -240,6 +265,11 @@ public abstract class Plugin implements BundleActivator {
 	 * strongly recommended that this method avoid synchronized blocks or other thread locking mechanisms,
 	 * as this would lead to deadlock vulnerability.
 	 * </p>
+	 * <p>
+	 * <b>Note</b>: This is obsolete API that will be replaced in time with
+	 * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
+	 * This API will be deprecated once the APIs for the new Eclipse Platform
+	 * Runtime achieve their final and stable form (post-3.0). </p>
 	 *
 	 * @param descriptor the plug-in descriptor
 	 * @see #getDescriptor
@@ -290,6 +320,11 @@ public abstract class Plugin implements BundleActivator {
 	}
 	/**
 	 * Returns the plug-in descriptor for this plug-in runtime object.
+	 * <p>
+	 * <b>Note</b>: This is obsolete API that will be replaced in time with
+	 * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
+	 * This API will be deprecated once the APIs for the new Eclipse Platform
+	 * Runtime achieve their final and stable form (post-3.0). </p>
 	 *
 	 * @return the plug-in descriptor for this plug-in runtime object
 	 */
@@ -702,6 +737,11 @@ public abstract class Plugin implements BundleActivator {
 	 * that do not complete in a timely fashion.
 	 * </p>
 	 * <b>Clients must never explicitly call this method.</b>
+	 * <p>
+	 * <b>Note</b>: This is obsolete API that will be replaced in time with
+	 * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
+	 * This API will be deprecated once the APIs for the new Eclipse Platform
+	 * Runtime achieve their final and stable form (post-3.0). </p>
 	 *
 	 * @exception CoreException if this method fails to shut down
 	 *   this plug-in
@@ -762,6 +802,11 @@ public abstract class Plugin implements BundleActivator {
 	 * as this would lead to deadlock vulnerability.
 	 * </p>
 	 * <b>Clients must never explicitly call this method.</b>
+	 * <p>
+	 * <b>Note</b>: This is obsolete API that will be replaced in time with
+	 * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
+	 * This API will be deprecated once the APIs for the new Eclipse Platform
+	 * Runtime achieve their final and stable form (post-3.0). </p>
 	 *
 	 * @exception CoreException if this plug-in did not start up properly
 	 */
@@ -811,6 +856,13 @@ public abstract class Plugin implements BundleActivator {
 	 * Note 4: This method is not called on plug-ins operating in compatibility mode.
 	 * </p>
 	 * <b>Clients must never explicitly call this method.</b>
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
 	 *
 	 * @exception BundleException if this plug-in did not start up properly
 	 * @since 3.0
@@ -849,6 +901,13 @@ public abstract class Plugin implements BundleActivator {
 	 * Note 3: This method is not called on plug-ins operating in compatibility mode.
 	 * </p>
 	 * <b>Clients must never explicitly call this method.</b>
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
 	 *
 	 * @exception BundleException if this method fails to shut down
 	 *   this plug-in
@@ -861,6 +920,13 @@ public abstract class Plugin implements BundleActivator {
 	
 	/**
 	 * Returns the bundle
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
 	 * 
 	 * @return the associated bundle
 	 * @since 3.0

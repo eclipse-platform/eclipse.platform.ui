@@ -25,6 +25,11 @@ import java.util.*;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * <p>
+ * <b>Note</b>: This is obsolete API that will be replaced in time with
+ * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
+ * This API will be deprecated once the APIs for the new Eclipse Platform
+ * Runtime achieve their final and stable form (post-3.0). </p>
  *
  * @see #getPlugin
  */
@@ -330,6 +335,13 @@ public interface IPluginDescriptor {
 	 * is a pre-3.0 style plugin and requires backward compatibility support.
 	 * Invoking this method will not cause the
 	 * plug-in to be activated.
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
 	 *
 	 * @return <code>true</code> if this plug-in requires backward compatibility, and
 	 *   <code>false</code> otherwise

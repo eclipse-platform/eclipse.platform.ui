@@ -19,6 +19,8 @@ package org.eclipse.core.runtime;
  * <p>
  * Clients may implement this interface.
  * </p>
+ * 
+ * @since 3.0
  */
 public interface IPlatformRunnable {
 

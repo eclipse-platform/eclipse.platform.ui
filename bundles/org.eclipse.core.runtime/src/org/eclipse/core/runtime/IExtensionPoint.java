@@ -34,6 +34,11 @@ public interface IExtensionPoint {
 	public IConfigurationElement[] getConfigurationElements();
 	/** 
 	 * Returns the descriptor of the plug-in that declares this extension point.
+	 * <p>
+	 * <b>Note</b>: This is obsolete API that will be replaced in time with
+	 * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
+	 * This API will be deprecated once the APIs for the new Eclipse Platform
+	 * Runtime achieve their final and stable form (post-3.0). </p>
 	 *
 	 * @return the plug-in that declares this extension point
 	 */
@@ -42,6 +47,13 @@ public interface IExtensionPoint {
 	/**
 	 * Returns the identifier of the parent of this extension point.  This value can be used
 	 * in various global facilities to discover the actual parent.
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
 	 * 
 	 * @return the idenifier of the parent
 	 * @see Plarform.getBundle(String)

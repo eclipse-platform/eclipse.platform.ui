@@ -19,10 +19,12 @@ import java.net.URL;
  * changes do not take effect until next startup of the Eclipse
  * platform
  * 
+ * <b>Note</b>: This is obsolete API that will be replaced in time with
+ * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
+ * This API will be deprecated once the APIs for the new Eclipse Platform
+ * Runtime achieve their final and stable form (post-3.0).
+ *
  * @since 2.0
-
- * the class now moved into the update component. See {@link org.eclipse.update.configurator.IPlatformConfiguration org.eclipse.update.configurator.IPlatformConfiguration}.
- * Note that now the platform exposes a concept of configuration area and also makes available the last modification time.
  */
 public interface IPlatformConfiguration {
 

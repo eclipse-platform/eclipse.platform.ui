@@ -171,6 +171,7 @@ public interface IConfigurationElement {
 	 *
 	 * @return the parent of this configuration element
 	 *  or <code>null</code>
+	 * @since 3.0
 	 */
 	public Object getParent();
 

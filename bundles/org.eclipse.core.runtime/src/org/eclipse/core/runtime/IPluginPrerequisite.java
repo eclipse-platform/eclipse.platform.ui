@@ -19,6 +19,11 @@ import org.eclipse.core.runtime.PluginVersionIdentifier;
  * <p>
  * This interface is not intended to be implemented by developers.
  * </p>
+ * <p>
+ * <b>Note</b>: This is obsolete API that will be replaced in time with
+ * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
+ * This API will be deprecated once the APIs for the new Eclipse Platform
+ * Runtime achieve their final and stable form (post-3.0). </p>
  *
  * @see IPluginDescriptor#getPluginPrerequisites
  */

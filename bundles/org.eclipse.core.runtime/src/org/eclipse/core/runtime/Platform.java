@@ -339,6 +339,11 @@ public final class Platform {
 	 * or <code>null</code> if no such plug-in can be found.  If
 	 * the plug-in is defined but not yet activated, the plug-in will
 	 * be activated before being returned.
+	 * <p>
+	 * <b>Note</b>: This is obsolete API that will be replaced in time with
+	 * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
+	 * This API will be deprecated once the APIs for the new Eclipse Platform
+	 * Runtime achieve their final and stable form (post-3.0). </p>
 	 *
 	 * @param id the unique identifier of the desired plug-in 
 	 *		(e.g., <code>"com.example.acme"</code>).
@@ -357,6 +362,11 @@ public final class Platform {
 	}
 	/**
 	 * Returns the plug-in registry for this platform.
+	 * <p>
+	 * <b>Note</b>: This is obsolete API that will be replaced in time with
+	 * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
+	 * This API will be deprecated once the APIs for the new Eclipse Platform
+	 * Runtime achieve their final and stable form (post-3.0). </p>
 	 *
 	 * @return the plug-in registry
 	 * @see IPluginRegistry
@@ -448,6 +458,8 @@ public final class Platform {
 	}
 	/**
 	 * Returns the platform job manager.
+	 * 
+	 * @since 3.0
 	 */
 	public static IJobManager getJobManager() {
 		return InternalPlatform.getDefault().getJobManager();
@@ -465,6 +477,13 @@ public final class Platform {
 	/**
 	 * Returns a URL for the given path in the given bundle.  Returns <code>null</code> if the URL
 	 * could not be computed or created.
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
 	 * 
 	 * @param bundle the bundle in which to search
 	 * @param file path relative to plug-in installation location 
@@ -510,6 +529,13 @@ public final class Platform {
 	 * 
 	 * If a locale other than the default locale is desired, use an
 	 * override map.
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
 	 * 
 	 * @param bundle the bundle in which to search
 	 * @param path file path relative to plug-in installation location
@@ -529,6 +555,13 @@ public final class Platform {
 	/**
 	 * Returns an input stream for the specified file in the given bundle. The file path
 	 * must be specified relative this the plug-in's installation location.
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
 	 *
 	 * @param bundle the bundle in which to search
 	 * @param file path relative to plug-in installation location
@@ -550,6 +583,13 @@ public final class Platform {
 	 * <p>
 	 * The caller must close the returned stream when done.
 	 * </p>
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
 	 *
 	 * @param bundle the bundle in which to search
 	 * @param file path relative to plug-in installation location
@@ -576,6 +616,13 @@ public final class Platform {
 	 * it puts there. It is recommended for plug-in preference settings and 
 	 * other configuration parameters.
 	 * </p>
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
 	 *
 	 * @param bundle the bundle whose state location if returned
 	 * @return a local file system path
@@ -587,6 +634,13 @@ public final class Platform {
 	
 	/**
 	 * Returns the log for the given bundle.  If no such log exists, one is created.
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
 	 *
 	 * @param bundle the bundle whose log is returned
 	 * @return the log for the given bundle
@@ -603,6 +657,13 @@ public final class Platform {
 	 * strings used in the plug-in manifest file (<code>plugin.xml</code>)
 	 * along with other resource strings used by the plug-in implementation.
 	 * </p>
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
 	 *
 	 * @return the resource bundle
 	 * @exception MissingResourceException if the resource bundle was not found
@@ -627,6 +688,13 @@ public final class Platform {
 	 * <p>
 	 * Equivalent to <code>getResourceString(bundle, value, getResourceBundle())</code>
 	 * </p>
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
 	 *
 	 * @param bundle the runtime bundle 
 	 * @param value the value
@@ -663,6 +731,13 @@ public final class Platform {
 	 *     getResourceString("%%name") returns "%name"</li>
 	 * </pre>
 	 * </p>
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
 	 *
 	 * @param bundle the runtime bundle
 	 * @param value the value
@@ -681,6 +756,7 @@ public final class Platform {
 	 * returned by <code>java.lang.System.getProperty("os.arch")</code>.
 	 * 
 	 * @return the string name of the current system architecture
+	 * @since 3.0
 	 */
 	public static String getOSArch() {
 		return InternalPlatform.getDefault().getOSArch();
@@ -691,6 +767,7 @@ public final class Platform {
 	 * whose path starts with <code>$nl$</code>.
 	 *
 	 * @return the string name of the current locale
+	 * @since 3.0
 	 */
 	public static String getNL() {
 		return InternalPlatform.getDefault().getNL();
@@ -706,7 +783,7 @@ public final class Platform {
 	 *
 	 * @return the string name of the current operating system
 	 * @see #knownOSValues
-	 * 
+	 * @since 3.0
 	 */
 	public static String getOS() {
 		return InternalPlatform.getDefault().getOS();
@@ -718,6 +795,7 @@ public final class Platform {
 	 * if the window system cannot be determined.
 	 *
 	 * @return the string name of the current window system or <code>null</code>
+	 * @since 3.0
 	 */
 	public static String getWS() {
 		return InternalPlatform.getDefault().getWS();
@@ -725,7 +803,16 @@ public final class Platform {
 	
 	/**
 	 * Returns all command line arguments specified when the running framework was started.
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
+	 * 
 	 * @return the array of command line arguments.
+	 * @since 3.0
 	 */
 	public static String[] getAllArgs() {
 		return InternalPlatform.getDefault().getAllArgs();
@@ -734,7 +821,16 @@ public final class Platform {
 	/**
 	 * Returns the arguments consumed by the framework implementation itself.  Which
 	 * arguments are consumed is implementation specific.
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
+	 * 
 	 * @return the array of command line arguments consumed by the framework.
+	 * @since 3.0
 	 */
 	public static String[] getFrameworkArgs() {
 		return InternalPlatform.getDefault().getFrameworkArgs();
@@ -744,7 +840,16 @@ public final class Platform {
 	 * Returns the arguments not consumed by the framework implementation itself.  Which
 	 * arguments are consumed is implementation specific. These arguments are available 
 	 * for use by the application.
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
+	 * 
 	 * @return the array of command line arguments not consumed by the framework.
+	 * @since 3.0
 	 */
 	public static String[] getApplicationArgs() {
 		return InternalPlatform.getDefault().getApplicationArgs();
