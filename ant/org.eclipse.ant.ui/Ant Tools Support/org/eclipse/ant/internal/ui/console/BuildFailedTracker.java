@@ -63,7 +63,7 @@ public class BuildFailedTracker implements IConsoleLineTracker {
 					index= fileStart;
 				}
 			} else if (fBuildFailed && fErrorMatcher2.match(text)) {
-				//output resulting from failures occured in nested build from using the ant task:
+				//output resulting from failures which occurred in nested build from using the ant task:
 				//BUILD FAILED: C:\Darins\Debugger\20021213\eclipse\runtime-workspace\Mine\build.xml:4: Following error occured while executing this line
 				//C:\Darins\Debugger\20021213\eclipse\runtime-workspace\Mine\subbuild.xml:4: srcdir attribute must be set!
 				index= 0;
