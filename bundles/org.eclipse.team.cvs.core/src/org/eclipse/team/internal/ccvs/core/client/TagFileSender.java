@@ -8,6 +8,7 @@ package org.eclipse.team.internal.ccvs.core.client;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
@@ -26,6 +27,7 @@ class TagFileSender extends FileStructureVisitor {
 	 * Added resources are skipped. Deleted resources are sent as if they were not deleted.
 	 */
 	protected void sendFile(ICVSFile mFile) throws CVSException {
+		Policy.checkCanceled(monitor);
 		if (mFile.isManaged()) {
 			// Send the parent folder if it hasn't been sent already
 			sendFolder(mFile.getParent());

@@ -25,4 +25,15 @@ class ValidRequests extends Command {
 	
 	protected void sendLocalWorkingDirectory(Session session) throws CVSException {
 	}
+	
+	/**
+	 * Returns the default global options for all commands. Subclasses can override but
+	 * must call this method and return superclasses global options.
+	 * 
+	 * @param globalOptions are the options already specified by the user.
+	 * @return the default global options that will be sent with every command.
+	 */
+	protected GlobalOption[] getDefaultGlobalOptions(Session session, GlobalOption[] globalOptions, LocalOption[] localOptions) {
+		return Command.NO_GLOBAL_OPTIONS;		
+	}
 }

@@ -77,6 +77,8 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 	 */
 	protected void sendFolder(ICVSFolder mFolder) throws CVSException {
 
+		Policy.checkCanceled(monitor);
+		
 		// Do not send the same folder twice
 		if (isLastSent(mFolder)) return;
 
@@ -129,6 +131,8 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 	 * If the file is modified, its contents are sent as well.
 	 */
 	protected void sendFile(ICVSFile mFile) throws CVSException {
+
+		Policy.checkCanceled(monitor);
 
 		// Send the file's entry line to the server
 		ResourceSyncInfo info = null;
