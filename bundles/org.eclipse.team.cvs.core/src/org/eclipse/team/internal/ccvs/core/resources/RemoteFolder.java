@@ -341,6 +341,13 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IM
 		return getRepository().getRootDirectory() + Client.SERVER_SEPARATOR + getRemotePath();
 	}
 	
+	/*
+	 * @see IRemoteResource#isContainer()
+	 */
+	public boolean isContainer() {
+		return true;
+	}
+
 	/**
 	 * @see IManagedFolder#isCVSFolder()
 	 */
