@@ -94,6 +94,15 @@
 &lt;/pre&gt;
       </documentation>
    </annotation>
+   
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Value of the attribute &lt;b&gt;resolver&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.core.variables.IDynamicVariableResolver&lt;/b&gt;.
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>

@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.debug.core">
+<schema targetNamespace="org.eclipse.core.variables">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.debug.core" id="valueVariables" name="Value Variables"/>
+         <meta.schema plugin="org.eclipse.core.variables" id="valueVariables" name="Value Variables"/>
       </appInfo>
       <documentation>
          This extension point provides a mechanism for defining variables used for string substitution. A value variable has a static value.
@@ -58,10 +58,10 @@
          <attribute name="initializerClass" type="string">
             <annotation>
                <documentation>
-                  specifies the fully qualified name of the Java class that implements &lt;samp&gt;org.eclipse.debug.core.stringsubstitution.IValueVariableInitializer&lt;/samp&gt;. When specified, an &lt;samp&gt;initialValue&lt;/samp&gt; attribute must not be specified.
+                  specifies the fully qualified name of the Java class that implements &lt;samp&gt;org.eclipse.core.variables.IValueVariableInitializer&lt;/samp&gt;. When specified, an &lt;samp&gt;initialValue&lt;/samp&gt; attribute must not be specified.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.debug.core.variables.ILaunchVariableInitializer"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.variables.IValueVariableInitializer"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -93,7 +93,7 @@
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point=&quot;org.eclipse.debug.core.valueVariables&quot;&gt;
+ &lt;extension point=&quot;org.eclipse.core.variables.valueVariables&quot;&gt;
   &lt;variable
    name=&quot;FOO_HOME&quot;
    initialValue=&quot;/usr/local/foo&quot;&gt;
@@ -107,7 +107,7 @@ In the example above, the specified variable is created with the initial value &
          The following is an example of a value variable contribution with an initializer class:
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point=&quot;org.eclipse.debug.core.valueVariables&quot;&gt;
+ &lt;extension point=&quot;org.eclipse.core.variables.valueVariables&quot;&gt;
   &lt;variable
    name=&quot;FOO_HOME&quot;
    initializerClass=&quot;com.example.FooLocator&quot;&gt;
@@ -126,7 +126,7 @@ used to initialize the value the first time it&apos;s requested.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Value of the attribute &lt;b&gt;initializerClass&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.stringSubstitution.IValueVariableInitializer&lt;/b&gt;.
+         Value of the attribute &lt;b&gt;initializerClass&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.core.variables.IValueVariableInitializer&lt;/b&gt;.
       </documentation>
    </annotation>
 
