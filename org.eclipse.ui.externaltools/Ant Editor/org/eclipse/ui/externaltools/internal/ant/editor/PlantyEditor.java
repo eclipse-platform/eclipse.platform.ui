@@ -144,7 +144,7 @@ public class PlantyEditor extends TextEditor {
          */
         XmlElement tempSelectedXmlElement = (XmlElement)selection.getFirstElement(); 
         if(tempSelectedXmlElement != null) {
-			setSelection(tempSelectedXmlElement, true);
+			setSelection(tempSelectedXmlElement, !isActivePart());
         }
     }
 
