@@ -15,6 +15,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * The images provided by the debug plugin.
@@ -33,21 +34,31 @@ public class DebugPluginImages {
 
 	/* Declare Common paths */
 	private static URL ICON_BASE_URL= null;
+
+	// Determine display depth. If depth > 4 then we use high color images. Otherwise low color
+	// images are used
 	static {
+		String pathSuffix= "icons/basic/"; //$NON-NLS-1$
+		// Don't consider the default display since accessing it throws an SWTException anyway.
+		Display display= Display.getCurrent(); 	
+		
+		if (display != null && display.getIconDepth() > 4)
+			pathSuffix = "icons/full/"; //$NON-NLS-1$
+			
 		try {
-			ICON_BASE_URL= new URL(DebugUIPlugin.getDefault().getDescriptor().getInstallURL(), "icons/");
+			ICON_BASE_URL= new URL(DebugUIPlugin.getDefault().getDescriptor().getInstallURL(), pathSuffix);
 		} catch (MalformedURLException e) {
 			// do nothing
 		}
 	}
 
 	// Use IPath and toOSString to build the names to ensure they have the slashes correct
-	private final static String CTOOL= "full/ctool16/"; //basic colors - size 16x16
-	private final static String LOCALTOOL= "full/clcl16/"; //basic colors - size 16x16
-	private final static String DLCL= "full/dlcl16/"; //disabled - size 16x16
-	private final static String ELCL= "full/elcl16/"; //enabled - size 16x16
-	private final static String OBJECT= "full/obj16/"; //basic colors - size 16x16
-	private final static String WIZBAN= "full/wizban/"; //basic colors - size 16x16
+	private final static String CTOOL= "ctool16/"; //basic colors - size 16x16
+	private final static String LOCALTOOL= "clcl16/"; //basic colors - size 16x16
+	private final static String DLCL= "dlcl16/"; //disabled - size 16x16
+	private final static String ELCL= "elcl16/"; //enabled - size 16x16
+	private final static String OBJECT= "obj16/"; //basic colors - size 16x16
+	private final static String WIZBAN= "wizban/"; //basic colors - size 16x16
 	
 	/**
 	 * Declare all images
