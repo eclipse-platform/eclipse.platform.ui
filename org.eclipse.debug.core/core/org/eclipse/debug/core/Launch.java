@@ -26,8 +26,8 @@ import org.eclipse.debug.internal.core.LaunchManager;
  * use.
  * <p>
  * Clients may instantiate this class. Clients may subclass this class.
- * All of the methods in this class that are part of the launcher interface are
- * final. Clients that subclass this class are not intended to change the behavior
+ * Many of the methods in this class that are part of the <code>ILaunch</code> interface 
+ * are final. Clients that subclass this class are not intended to change the behavior
  * or implementation of the provided methods. Subclassing is only intended
  * to add additional information to a specific launch. For example, a client that
  * implements a launch object representing a Java launch might store a classpath
