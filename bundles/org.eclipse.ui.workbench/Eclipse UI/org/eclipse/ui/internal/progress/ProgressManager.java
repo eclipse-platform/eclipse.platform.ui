@@ -51,8 +51,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
@@ -1050,26 +1048,7 @@ public class ProgressManager extends ProgressProvider
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		Shell[] shells = workbench.getDisplay().getShells();
 		for (int i = 0; i < shells.length; i++) {
-			setActive(shells[i], active);
-		}
-	}
-
-	/**
-	 * Set all of the children of the composite to have their enabled state set
-	 * to active. Recurse through' the children if required.
-	 * 
-	 * @param composite
-	 *            the composite to recurse through
-	 * @param active
-	 *            the state to set
-	 */
-	private void setActive(Composite composite, boolean active) {
-		Control[] children = composite.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i] instanceof Composite)
-				setActive((Composite) children[i], active);
-			else
-				children[i].setEnabled(active);
+			shells[i].setEnabled(active);
 		}
 	}
 	/**
