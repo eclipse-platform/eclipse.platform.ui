@@ -19,7 +19,7 @@ import org.eclipse.update.internal.core.*;
 
 
 /**
- * Lists the configured features.
+ * Lists installed features.
  * <p>
  * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to
  * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
@@ -28,13 +28,13 @@ import org.eclipse.update.internal.core.*;
  * </p>
  * @since 3.0
  */
-public class ListConfigFeaturesCommand extends ScriptedCommand {
+public class ListFeaturesCommand extends ScriptedCommand {
 	private IConfiguredSite[] sites = getConfiguration().getConfiguredSites();
 	
 	/**
 	 * @param fromSite if specified, list only the features from the specified local install site
 	 */
-	public ListConfigFeaturesCommand(String fromSite) throws Exception {
+	public ListFeaturesCommand(String fromSite) throws Exception {
 		try {
 			if (fromSite != null) {
 				File sitePath = new File(fromSite);
@@ -68,7 +68,7 @@ public class ListConfigFeaturesCommand extends ScriptedCommand {
 						IFeatureReference[] features = sites[i].getFeatureReferences();
 						for (int f=0; f<features.length; f++) {
 							boolean configured = sites[i].isConfigured(features[f].getFeature(null));
-							System.out.println("  Feature: " + features[f].getVersionedIdentifier() + "  " + (configured ? "configured" : "unconfigured"));
+							System.out.println("  Feature: " + features[f].getVersionedIdentifier() + "  " + (configured ? "enabled" : "disabled"));
 						}
 					}
 				}

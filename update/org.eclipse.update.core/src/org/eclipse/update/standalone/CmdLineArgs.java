@@ -128,7 +128,7 @@ public class CmdLineArgs {
 					(String) options.get("-to"),
 					(String) options.get("-verifyOnly"));
 			else if (cmd.equals("listFeatures"))
-				return new ListConfigFeaturesCommand((String) options.get("-from"));
+				return new ListFeaturesCommand((String) options.get("-from"));
 			else if (cmd.equals("addSite"))
 				return new AddSiteCommand((String) options.get("-from"));
 			else if (cmd.equals("removeSite"))
