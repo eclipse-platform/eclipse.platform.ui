@@ -65,7 +65,7 @@ public class SyncSet {
 		}
 		// Ensure that the list of listeners is not changed while events are fired.
 		// Copy the listeners so that addition/removal is not blocked by event listeners
-		if(event.isEmpty()) return;
+		if(event.isEmpty() && ! event.isReset()) return;
 		ISyncSetChangedListener[] allListeners;
 		synchronized(listeners) {
 			allListeners = (ISyncSetChangedListener[]) listeners.toArray(new ISyncSetChangedListener[listeners.size()]);
