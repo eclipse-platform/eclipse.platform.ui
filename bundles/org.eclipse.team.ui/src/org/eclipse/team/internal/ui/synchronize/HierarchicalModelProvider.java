@@ -148,6 +148,7 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 		if(diffNode instanceof SyncInfoModelElement) {
 			((SyncInfoModelElement)diffNode).update(info);
 			propogateConflictState(diffNode, false);
+			queueForLabelUpdate(diffNode);
 		} else {
 			removeFromViewer(local);
 			addResources(new IResource[] {local});
