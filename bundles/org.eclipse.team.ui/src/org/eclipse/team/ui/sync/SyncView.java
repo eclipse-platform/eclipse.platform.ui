@@ -27,6 +27,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.UIConstants;
 import org.eclipse.team.ui.TeamUIPlugin;
@@ -184,7 +185,9 @@ public class SyncView extends ViewPart {
 		} catch (InvocationTargetException e) {
 			Throwable throwable = e.getTargetException();
 			IStatus error = null;
-			if (throwable instanceof CoreException) {
+			if (throwable instanceof TeamException) {
+				error = ((TeamException)throwable).getStatus();
+			} else if (throwable instanceof CoreException) {
 				error = ((CoreException)throwable).getStatus();
 			} else {
 				error = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("simpleInternal"), throwable);
