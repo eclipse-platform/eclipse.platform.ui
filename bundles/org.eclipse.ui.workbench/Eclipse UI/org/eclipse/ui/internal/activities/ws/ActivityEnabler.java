@@ -414,6 +414,11 @@ public class ActivityEnabler {
 	protected void toggleTreeEnablement(boolean enabled) {
 		Object[] elements = provider.getElements(activitySupport
 				.getActivityManager());
+		
+		//reset grey state to null
+		dualViewer.setGrayedElements(new Object[0]);
+		
+		//enable all categories
 		for (int i = 0; i < elements.length; i++) {
 			dualViewer
 					.expandToLevel(elements[i], AbstractTreeViewer.ALL_LEVELS);
