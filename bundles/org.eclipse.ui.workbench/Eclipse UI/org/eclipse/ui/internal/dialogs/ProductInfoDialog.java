@@ -350,10 +350,17 @@ protected void openLink(String href) {
 		Thread launcher = new Thread("About Link Launcher") {//$NON-NLS-1$
 			public void run() {
 				try {
+					/*
+					 * encoding the href as the browser does not open if there
+					 * is a space in the url. Bug 77840
+					 */
+					String encodedLocalHref = urlEncodeForSpaces(localHref
+							.toCharArray());
+
 					if (webBrowserOpened) {
-						Runtime.getRuntime().exec(webBrowser + " -remote openURL(" + localHref + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+						Runtime.getRuntime().exec(webBrowser + " -remote openURL(" + encodedLocalHref + ")"); //$NON-NLS-1$ //$NON-NLS-2$ // 77840
 					} else {
-						Process p = openWebBrowser(localHref);
+						Process p = openWebBrowser(encodedLocalHref); // 77840
 						webBrowserOpened = true;
 						try {
 							if (p != null)
@@ -371,6 +378,25 @@ protected void openLink(String href) {
 		};
 		launcher.start();
 	}
+}
+
+/**
+ * This method encodes the url, removes the spaces from the url and replaces
+ * the same with <code>"%20"</code>. This method is required to fix Bug
+ * 77840.
+ * 
+ * @since 3.0.2
+ */
+private String urlEncodeForSpaces(char[] input) {
+	StringBuffer retu = new StringBuffer(input.length);
+	for (int i = 0; i < input.length; i++) {
+		if (input[i] == ' ')
+			retu.append("%20");
+		else
+			retu.append(input[i]);
+	}
+	return retu.toString();
+
 }
 
 /**
