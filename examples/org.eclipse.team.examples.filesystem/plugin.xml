@@ -51,6 +51,13 @@
                menubarPath="team.main/group1"
                id="org.eclipse.team.examples.filesystem.put">
          </action>
+         <action
+               label="%Replace.name"
+               tooltip="%ReplaceAction.tooltip"
+               class="org.eclipse.team.examples.filesystem.ui.ReplaceAction"
+               menubarPath="replaceWithMenu/replaceWithGroup"
+               id="org.eclipse.team.examples.filesystem.replace">
+         </action>
       </objectContribution>
       
       <objectContribution

@@ -15,8 +15,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Provider;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFileModificationValidator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ISynchronizer;
@@ -167,4 +169,11 @@ public class FileSystemProvider extends RepositoryProvider {
 	public SimpleAccessOperations getSimpleAccess() {
 		return new FileSystemSimpleAccessOperations(this);
 	}
+	/**
+	 * @see org.eclipse.team.core.RepositoryProvider#getFileModificationValidator()
+	 */
+	public IFileModificationValidator getFileModificationValidator() {
+		return new FileModificationValidator(this);
+	}
+
 }

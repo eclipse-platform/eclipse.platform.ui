@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -33,7 +34,7 @@ import org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations;
  * synchronizer (<code>ISynchronizer</code>).
  */
 public class FileSystemSimpleAccessOperations implements SimpleAccessOperations {
-	
+
 	// A reference to the provider
 	private FileSystemProvider provider;
 
@@ -44,7 +45,7 @@ public class FileSystemSimpleAccessOperations implements SimpleAccessOperations 
 	FileSystemSimpleAccessOperations(FileSystemProvider provider) {
 		this.provider = provider;
 	}
-	
+
 	/**
 	 * Given a local resource, finds the remote counterpart.
 	 * @param resource The local resource to lookup
@@ -60,11 +61,10 @@ public class FileSystemSimpleAccessOperations implements SimpleAccessOperations 
 	public void get(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
 		// ensure the progress monitor is not null
 		progress = Policy.monitorFor(progress);
-		progress.beginTask("Checking resources in...", resources.length);
+		progress.beginTask(Policy.bind("GetAction.working"), resources.length);
 		for (int i = 0; i < resources.length; i++) {
 			Policy.checkCanceled(progress);
 			IPath rootdir = provider.getRoot();
-
 			FileSystemRemoteResource remote = getRemoteResourceFor(resources[i]);
 			if (resources[i].getType() == IResource.FILE) {
 				//Copy the resource over to the other side:
@@ -76,7 +76,7 @@ public class FileSystemSimpleAccessOperations implements SimpleAccessOperations 
 						InputStream source = null;
 						try {
 							// Get the remote file content.
-							source = remote.getContents(progress); //new FileInputStream(diskFile);
+							source = remote.getContents(progress);
 							// Set the local file content to be the same as the remote file.
 							if (localFile.exists())
 								localFile.setContents(source, false, false, progress);
@@ -93,47 +93,100 @@ public class FileSystemSimpleAccessOperations implements SimpleAccessOperations 
 					}
 				}
 			} else if (depth > 0) { //Assume that resources are either files or containers.
-				//Recursively copy children, if any, over as well:
-				try {
-					IResource[] children;
-					if (resources[i].getType() == IResource.PROJECT) {
-						children = provider.getProject().members();
-					} else {
-						IRemoteResource[] estranged = remote.members(progress);
-						children = new IResource[estranged.length];
-						for (int j = 0; j < estranged.length; j++) {
+				//If the resource is a container, copy its children over.
+				IRemoteResource[] estranged = remote.members(progress);
+				IResource[] children = new IResource[estranged.length];
+
+				if (resources[i].getType() == IResource.PROJECT) {
+					for (int j = 0; j < estranged.length; j++) {
+						if (estranged[j].isContainer())
+							children[j] = provider.getProject().getFolder(estranged[j].getName());
+						else
 							children[j] = provider.getProject().getFile(estranged[j].getName());
+					}
+				} else if (resources[i].getType() == IResource.FOLDER) {
+					//Make sure that the folder exists before trying to put anything into it:
+					IFolder localFolder = (IFolder) resources[i];
+					if (!localFolder.exists()) {
+						try {
+							localFolder.create(false, true, progress);
+						} catch (CoreException e) {
+							throw FileSystemPlugin.wrapException(e);
 						}
 					}
+
+					//Create placeholder local resources to place data into:
+					for (int j = 0; j < estranged.length; j++) {
+						if (estranged[j].isContainer())
+							children[j] = provider.getProject().getFolder(resources[i].getProjectRelativePath().append(estranged[j].getName()));
+						else
+							children[j] = provider.getProject().getFile(resources[i].getProjectRelativePath().append(estranged[j].getName()));
+					}
+				}
+
+				//Recurse into children:
+				if (children.length > 0)
+					get(children, depth - 1, null);
+			}
+			progress.worked(1);
+		}
+		progress.done();
+	}
+
+	/**
+	 * Simply make sure that the local resource is not read only.
+	 * 
+	 * @see SimpleAccessOperations#checkout(IResource[], int, IProgressMonitor)
+	 */
+	public void checkout(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
+		progress = Policy.monitorFor(progress);
+		progress.beginTask("Checking resources out...", resources.length);
+		IPath rootdir = provider.getRoot();
+		for (int i = 0; i < resources.length; i++) {
+			Policy.checkCanceled(progress);
+
+			//Do the actual file locking:
+			FileSystemRemoteResource remote = getRemoteResourceFor(resources[i]);
+			File diskFile = new File(rootdir.append(resources[i].getProjectRelativePath()).toOSString());
+			if (resources[i].getType() == IResource.FILE) {
+				//TODO: lock the file on the 'server'.
+				resources[i].setReadOnly(false);
+			} else if (depth > 0) {
+				diskFile.mkdirs();
+				//Recursively checkout children too:
+				try {
+					IResource[] children;
+					if (resources[i].getType() == IResource.PROJECT)
+						children = provider.getProject().members();
+					else
+						children = provider.getProject().getFolder(resources[i].getName()).members();
 					if (children.length > 0)
-						get(children, depth - 1, null);
+						checkout(children, depth - 1, null);
 				} catch (CoreException e) {
 					throw FileSystemPlugin.wrapException(e);
 				}
 			}
 			progress.worked(1);
 		}
-		//TODO: release lock (i.e. diskFile should no longer be locked).
 		progress.done();
 	}
 
 	/**
-	 * @see SimpleAccessOperations#checkout(IResource[], int, IProgressMonitor)
-	 */
-	public void checkout(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {}
-
-	/**
-	 * Checkin the resources to the given depth.
+	 * Checkin the resources to the given depth. Mark all checked in resources as read only.
+	 * 
 	 * @see org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations#checkin(IResource[], int, IProgressMonitor)
 	 */
 	public void checkin(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
 		// ensure the progress monitor is not null
 		progress = Policy.monitorFor(progress);
-		progress.beginTask("Checking resources in...", resources.length);
+		progress.beginTask(Policy.bind("PutAction.working"), resources.length);
 		for (int i = 0; i < resources.length; i++) {
 			Policy.checkCanceled(progress);
-			//TODO: verify that the resources are checked out.
 			IPath rootdir = provider.getRoot();
+			// Verify that the resources are checked out:
+			if (!isCheckedOut(resources[i]))
+				return;
+
 			File diskFile = new File(rootdir.append(resources[i].getProjectRelativePath()).toOSString());
 			if (resources[i].getType() == IResource.FILE) {
 				//Copy the resource over to the other side:
@@ -179,14 +232,47 @@ public class FileSystemSimpleAccessOperations implements SimpleAccessOperations 
 			}
 			progress.worked(1);
 		}
-		//TODO: release lock (i.e. diskFile should no longer be locked).
+		uncheckout(resources, depth, progress);
 		progress.done();
 	}
 
 	/**
+	 * Mark all checked in resources as read only.
+	 * 
 	 * @see org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations#uncheckout(IResource[], int, IProgressMonitor)
 	 */
-	public void uncheckout(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {}
+	public void uncheckout(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
+		progress = Policy.monitorFor(progress);
+		progress.beginTask("Re-locking resources...", resources.length);
+		IPath rootdir = provider.getRoot();
+		for (int i = 0; i < resources.length; i++) {
+			Policy.checkCanceled(progress);
+
+			//Do the actual file unlocking:
+			FileSystemRemoteResource remote = getRemoteResourceFor(resources[i]);
+			File diskFile = new File(rootdir.append(resources[i].getProjectRelativePath()).toOSString());
+			if (resources[i].getType() == IResource.FILE) {
+				//TODO: unlock the file on the 'server'.
+				resources[i].setReadOnly(true);
+			} else if (depth > 0) {
+				diskFile.mkdirs();
+				//Recursively uncheckout children too:
+				try {
+					IResource[] children;
+					if (resources[i].getType() == IResource.PROJECT)
+						children = provider.getProject().members();
+					else
+						children = provider.getProject().getFolder(resources[i].getName()).members();
+					if (children.length > 0)
+						uncheckout(children, depth - 1, null);
+				} catch (CoreException e) {
+					throw FileSystemPlugin.wrapException(e);
+				}
+			}
+			progress.worked(1);
+		}
+		progress.done();
+	}
 
 	/**
 	 * @see org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations#delete(IResource[], IProgressMonitor)
@@ -199,10 +285,12 @@ public class FileSystemSimpleAccessOperations implements SimpleAccessOperations 
 	public void moved(IPath source, IResource target, IProgressMonitor progress) throws TeamException {}
 
 	/**
+	 * A resource is checked out if it is not read only.
+	 * 
 	 * @see org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations#isCheckedOut(IResource)
 	 */
 	public boolean isCheckedOut(IResource resource) {
-		return false;
+		return !resource.isReadOnly();
 	}
 
 	/**
