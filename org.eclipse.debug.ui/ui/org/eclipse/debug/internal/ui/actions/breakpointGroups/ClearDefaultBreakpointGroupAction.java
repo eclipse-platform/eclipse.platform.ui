@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
-import org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetBreakpointOrganizer;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointSetOrganizer;
 import org.eclipse.jface.action.IAction;
 
 /**
@@ -23,10 +23,10 @@ public class ClearDefaultBreakpointGroupAction extends BreakpointWorkingSetActio
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     public void run(IAction action) {
-        WorkingSetBreakpointOrganizer.setDefaultWorkingSet(null);
+        BreakpointSetOrganizer.setDefaultWorkingSet(null);
     }
 
     protected void update() {
-        fAction.setEnabled(WorkingSetBreakpointOrganizer.getDefaultWorkingSet() != null);
+        fAction.setEnabled(BreakpointSetOrganizer.getDefaultWorkingSet() != null);
     }
 }

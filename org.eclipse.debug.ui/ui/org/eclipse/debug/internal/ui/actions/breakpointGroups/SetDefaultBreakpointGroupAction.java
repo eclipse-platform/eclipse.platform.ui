@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetBreakpointOrganizer;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointSetOrganizer;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
@@ -29,7 +29,7 @@ public class SetDefaultBreakpointGroupAction extends AbstractBreakpointsViewActi
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     public void run(IAction action) {
-        IWorkingSet workingSet = WorkingSetBreakpointOrganizer.getDefaultWorkingSet();
+        IWorkingSet workingSet = BreakpointSetOrganizer.getDefaultWorkingSet();
         IWorkingSetSelectionDialog selectionDialog = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(DebugUIPlugin.getShell(), false);
         if (workingSet != null) {
             selectionDialog.setSelection(new IWorkingSet[]{workingSet});
@@ -37,7 +37,7 @@ public class SetDefaultBreakpointGroupAction extends AbstractBreakpointsViewActi
         if (selectionDialog.open() == Window.OK) {
             IWorkingSet[] sets = selectionDialog.getSelection();
             if (sets.length == 1) {
-                WorkingSetBreakpointOrganizer.setDefaultWorkingSet(sets[0]);
+                BreakpointSetOrganizer.setDefaultWorkingSet(sets[0]);
             }
         }
     }

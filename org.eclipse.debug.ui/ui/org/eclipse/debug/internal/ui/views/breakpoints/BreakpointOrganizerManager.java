@@ -61,14 +61,24 @@ public class BreakpointOrganizerManager {
 	 */
 	private BreakpointOrganizerManager() {
         loadOrganizers();
-        // force the working set organizer to initialize its listeners
-        IBreakpointOrganizer organizer = getOrganizer("org.eclipse.debug.ui.breakpointWorkingSetOrganizer"); //$NON-NLS-1$
+        // force the working set organizers to initialize their listeners
+        start("org.eclipse.debug.ui.workingSetOrganizer"); //$NON-NLS-1$
+        start("org.eclipse.debug.ui.breakpointWorkingSetOrganizer"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Forces instantiation of orgranizer delegate.
+	 * 
+	 * @param organizerId organizer to start
+	 */
+	private void start(String organizerId) {
+        IBreakpointOrganizer organizer = getOrganizer(organizerId);
         IPropertyChangeListener listener = new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
             }
         };
         organizer.addPropertyChangeListener(listener);
-        organizer.removePropertyChangeListener(listener);
+        organizer.removePropertyChangeListener(listener);		
 	}
     
     /**

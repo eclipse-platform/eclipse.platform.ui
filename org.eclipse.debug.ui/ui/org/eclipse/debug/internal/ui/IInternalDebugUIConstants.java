@@ -266,4 +266,11 @@ public interface IInternalDebugUIConstants {
      * @since 3.1
      */
     public static final String MEMENTO_BREAKPOINT_WORKING_SET_NAME = DebugUIPlugin.getUniqueIdentifier() + ".MEMENTO_BREAKPOINT_WORKING_SET_NAME"; //$NON-NLS-1$
+
+    /**
+     * Breakpoint working set identifier.
+     * 
+     * @since 3.1
+     */
+	public static final String ID_BREAKPOINT_WORKINGSET = "org.eclipse.debug.ui.breakpointWorkingSet"; //$NON-NLS-1$
 }

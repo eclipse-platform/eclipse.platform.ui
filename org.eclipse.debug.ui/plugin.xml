@@ -2358,12 +2358,17 @@ M4 = Platform-specific fourth key
           label="%WorkingSet.label"
           icon="icons/full/obj16/fldr_obj.gif"
           class="org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetBreakpointOrganizer"
-          id="org.eclipse.debug.ui.breakpointWorkingSetOrganizer"/>          	
+          id="org.eclipse.debug.ui.workingSetOrganizer"/>          	
           <breakpointOrganizer
           	class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointTypeOrganizer"
           	id="org.eclipse.debug.ui.breakpointTypeOrganizer"
           	label="%BreakpointType.label"
           	icon="icons/full/obj16/brkp_type.gif"/>
+          <breakpointOrganizer
+                label="%BreakpointWorkingSet.label"
+                icon="icons/full/obj16/brkp_grp.gif"
+                class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointSetOrganizer"
+                id="org.eclipse.debug.ui.breakpointWorkingSetOrganizer"/>
     </extension>    
 	<extension point="org.eclipse.core.runtime.adapters">
          <factory 

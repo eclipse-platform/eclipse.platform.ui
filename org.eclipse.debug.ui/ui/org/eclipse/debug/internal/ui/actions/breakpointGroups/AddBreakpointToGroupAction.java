@@ -17,7 +17,8 @@ import java.util.Set;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetBreakpointOrganizer;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointSetOrganizer;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -41,7 +42,7 @@ public class AddBreakpointToGroupAction extends AbstractBreakpointsViewAction {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-        IWorkingSet workingSet = WorkingSetBreakpointOrganizer.getDefaultWorkingSet();
+        IWorkingSet workingSet = BreakpointSetOrganizer.getDefaultWorkingSet();
         IWorkingSetSelectionDialog selectionDialog = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(DebugUIPlugin.getShell(), false);
         if (workingSet != null) {
             selectionDialog.setSelection(new IWorkingSet[]{workingSet});
@@ -50,7 +51,7 @@ public class AddBreakpointToGroupAction extends AbstractBreakpointsViewAction {
             IWorkingSet[] sets = selectionDialog.getSelection();
             if (sets.length == 1) {
                 IWorkingSet set = sets[0];
-                if ("org.eclipse.debug.ui.breakpointWorkingSet".equals(set.getId())) { //$NON-NLS-1$
+                if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) { //$NON-NLS-1$
                     IAdaptable[] elements = set.getElements();
                     Set newElements = new HashSet(elements.length + fBreakpoints.length);
                     for (int i = 0; i < elements.length; i++) {

@@ -183,6 +183,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IBreakpointOrganizerDelegate.P_CATEGORY_CHANGED)) {
+			// TODO: only re-organize if showing the changed category
 			reorganize();
 		}
 	}
