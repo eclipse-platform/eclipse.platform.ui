@@ -13,13 +13,11 @@ package org.eclipse.ui.internal.console;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentAdapter;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.LineBackgroundEvent;
@@ -46,6 +44,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IHyperlink;
+import org.eclipse.ui.console.IOConsole;
 
 /**
  * Viewer used to display an IOConsole
@@ -65,11 +64,13 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
     private Cursor handCursor;
     private Cursor textCursor;
     private int consoleWidth = -1;
-    private IDocumentListener documentListener; 
+    private IDocumentListener documentListener;
+    private IOConsole console;
     
-    public IOConsoleViewer(Composite parent, IDocument document) {
+    public IOConsoleViewer(Composite parent, IOConsole console) {
         super(parent, SWT.H_SCROLL | SWT.V_SCROLL);
-        setDocument(document);
+        this.console = console; 
+        setDocument(console.getDocument());
         
         StyledText styledText = getTextWidget();
         styledText.setDoubleClickEnabled(true);
@@ -87,7 +88,7 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
                 revealEndOfDocument();
             }
         };
-        document.addDocumentListener(documentListener);
+        getDocument().addDocumentListener(documentListener);
     }
     
     public boolean isAutoScroll() {
@@ -332,20 +333,8 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
 	}
 	
 	public IHyperlink getHyperlink(int offset) {
-		if (offset >= 0 && getDocument() != null) {
-			Position[] positions = null;
-			try {
-				positions = getDocument().getPositions(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
-			} catch (BadPositionCategoryException ex) {
-				// no links have been added
-				return null;
-			}
-			for (int i = 0; i < positions.length; i++) {
-				Position position = positions[i];
-				if (offset >= position.getOffset() && offset <= (position.getOffset() + position.getLength())) {
-					return ((IOConsoleHyperlinkPosition)position).getHyperLink();
-				}
-			}
+		if (offset >= 0 && console != null) {
+			return console.getHyperlink(offset);
 		}
 		return null;
 	}
@@ -417,6 +406,7 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
         handCursor=null;
         textCursor=null;
         hyperlink = null;
+        console=null;
     }
 
     /**

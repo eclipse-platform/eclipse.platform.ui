@@ -120,7 +120,7 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
      * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
      */
     public void createControl(Composite parent) {
-		viewer = new IOConsoleViewer(parent, console.getDocument());
+		viewer = new IOConsoleViewer(parent, console);
 		viewer.setConsoleWidth(console.getConsoleWidth());
 		console.addPropertyChangeListener(this);
 		JFaceResources.getFontRegistry().addListener(this);

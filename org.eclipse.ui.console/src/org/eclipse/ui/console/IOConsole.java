@@ -516,11 +516,9 @@ public class IOConsole extends AbstractConsole {
     public IHyperlink getHyperlink(int offset) {
         try {
             Position[] positions = getDocument().getPositions(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
-            for (int i = 0; i < positions.length; i++) {
-                IOConsoleHyperlinkPosition position = (IOConsoleHyperlinkPosition) positions[i];
-                if (offset >= position.getOffset() && offset <= (position.getOffset() + position.getLength())) {
-                    return position.getHyperLink();
-                }
+            Position position = findPosition(offset, positions);
+            if (position instanceof IOConsoleHyperlinkPosition) {
+                return ((IOConsoleHyperlinkPosition) position).getHyperLink();
             }
         } catch (BadPositionCategoryException e) {
         }        
@@ -535,4 +533,49 @@ public class IOConsole extends AbstractConsole {
             partitioner.clearBuffer();
         }
     }
+    
+    
+	/**
+	 * Binary search for the position at a given offset.
+	 *
+	 * @param offset the offset whose position should be found
+	 * @return the position containing the offset, or <code>null</code>
+	 */
+	private Position findPosition(int offset, Position[] positions) {
+		
+		if (positions.length == 0)
+			return null;
+			
+		int left= 0;
+		int right= positions.length -1;
+		int mid= 0;
+		Position position= null;
+		
+		while (left < right) {
+			
+			mid= (left + right) / 2;
+				
+			position= positions[mid];
+			if (offset < position.getOffset()) {
+				if (left == mid)
+					right= left;
+				else
+					right= mid -1;
+			} else if (offset > (position.getOffset() + position.getLength() - 1)) {
+				if (right == mid)
+					left= right;
+				else
+					left= mid  +1;
+			} else {
+				left= right= mid;
+			}
+		}
+		
+		position= positions[left];
+		if (offset >= position.getOffset() && (offset < (position.getOffset() + position.getLength()))) {
+			return position;
+		}
+		return null;
+	}
+    
 }
