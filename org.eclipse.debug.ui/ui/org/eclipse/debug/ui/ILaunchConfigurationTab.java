@@ -35,6 +35,8 @@ import org.eclipse.swt.widgets.Control;
  * To support single-click launching, tabs are required to initialize
  * default values into launch configurations (possibly when their controls
  * have not been created). See <code>setDefatul(ILaunchConfigurationWorkingCopy)</code>.
+ * As well, the method <code>lanuched</code> can be called when the tab's
+ * control does not exist.
  * </p>
  * <p>
  * A launch configuration tab extension is defined in <code>plugin.xml</code>.
@@ -80,19 +82,19 @@ import org.eclipse.swt.widgets.Control;
 public interface ILaunchConfigurationTab {
 
 	/**
-	 * Returns whether it is ok to leave this page and display
-	 * another page.
+	 * Returns whether it is ok to leave this tab and display
+	 * another tab.
 	 *
-	 * @return whether it is ok to leave this page and display
-	 *  another page
+	 * @return whether it is ok to leave this tab and display
+	 *  another tab
 	 */
 	public boolean okToLeave();
 
 	/**
 	 * Creates the top level control for this launch configuration
-	 * page under the given parent composite. Marks the beginning
-	 * of this page's lifecycle. This method is called once on
-	 * page creation, after <code>setLaunchConfigurationDialog</code>
+	 * tab under the given parent composite. Marks the beginning
+	 * of this tab's lifecycle. This method is called once on
+	 * tab creation, after <code>setLaunchConfigurationDialog</code>
 	 * is called.
 	 * <p>
 	 * Implementors are responsible for ensuring that
@@ -104,7 +106,7 @@ public interface ILaunchConfigurationTab {
 	public void createControl(Composite parent);
 	
 	/**
-	 * Returns the top level control for this page.
+	 * Returns the top level control for this tab.
 	 * <p>
 	 * May return <code>null</code> if the control
 	 * has not been created yet.
@@ -116,35 +118,35 @@ public interface ILaunchConfigurationTab {
 	
 	/**
 	 * Initializes the given launch configuration with
-	 * default values for this page. This method
+	 * default values for this tab. This method
 	 * is called when a new launch configuration is created
 	 * such that the configuration can be initialized with
 	 * meaningful values. This method may be called before this
-	 * page's control is created, to support single-click launching.
+	 * tab's control is created, to support single-click launching.
 	 * 
 	 * @param configuration launch configuration
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration);	
 	
 	/**
-	 * Initializes this page's controls with values from the given
+	 * Initializes this tab's controls with values from the given
 	 * launch configuration. This method is called when
 	 * a configuration is selected to view or edit, after this
-	 * page's control has been created.
+	 * tab's control has been created.
 	 * 
 	 * @param configuration launch configuration
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration);		
 	
 	/**
-	 * Notifies this launch configuration page that it has
-	 * been disposed. Marks the end of this page's lifecycle,
-	 * allowing this page to perform any cleanup required.
+	 * Notifies this launch configuration tab that it has
+	 * been disposed. Marks the end of this tab's lifecycle,
+	 * allowing this tab to perform any cleanup required.
 	 */
 	public void dispose();
 	
 	/**
-	 * Copies values from this page into the given 
+	 * Copies values from this tab into the given 
 	 * launch configuration.
 	 * 
 	 * @param configuration launch configuration
@@ -152,7 +154,7 @@ public interface ILaunchConfigurationTab {
 	public void performApply(ILaunchConfigurationWorkingCopy configuration);
 	
 	/**
-	 * Returns the current error message for this page.
+	 * Returns the current error message for this tab.
 	 * May be <code>null</null> to indicate no error message.
 	 * <p>
 	 * An error message should describe some error state,
@@ -165,7 +167,7 @@ public interface ILaunchConfigurationTab {
 	public String getErrorMessage();
 	
 	/**
-	 * Returns the current message for this page.
+	 * Returns the current message for this tab.
 	 * <p>
 	 * A message provides instruction or information to the 
 	 * user, as opposed to an error message which should 
@@ -177,18 +179,18 @@ public interface ILaunchConfigurationTab {
 	public String getMessage();	
 	
 	/**
-	 * Returns whether this page is in a valid state.
+	 * Returns whether this tab is in a valid state.
 	 * <p>
 	 * This information is typically used by the launch configuration
 	 * dialog to decide when it is okay to launch.
 	 * </p>
 	 *
-	 * @return whether this page is in a valid state
+	 * @return whether this tab is in a valid state
 	 */
 	public boolean isValid();	
 	
 	/**
-	 * Sets the launch configuration dialog that hosts this page.
+	 * Sets the launch configuration dialog that hosts this tab.
 	 * This is the first method called on a launch configuration
 	 * tab, and marks the beginning of this tab's lifecycle.
 	 * 
@@ -197,8 +199,10 @@ public interface ILaunchConfigurationTab {
 	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog);
 	
 	/**
-	 * Notifies this page that the current configuration has been
-	 * launched, resulting in the given launch.
+	 * Notifies this tab that the specified configuration has been
+	 * launched, resulting in the given launch. This method can be
+	 * called when a tab's control does not exist, to support single-click
+	 * launching.
 	 * 
 	 * @param launch the result of launching the current
 	 *  launch configuration

@@ -1628,9 +1628,20 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		// notify pages
 		if (launch != null) {
 			ILaunchConfigurationTab[] tabs = getTabs();
-			if (tabs != null) {
+			boolean disposeTabs = false;
+			if (tabs == null) {
+				// when doing a single click launch, tabs
+				// may not exist - create and then dispose
+				// so we can notify them of a launch
+				disposeTabs = true;
+				tabs = createTabs(config.getType());
+			}
+			for (int i = 0; i < tabs.length; i++) {
+				tabs[i].launched(launch);
+			}
+			if (disposeTabs) {
 				for (int i = 0; i < tabs.length; i++) {
-					tabs[i].launched(launch);
+					tabs[i].dispose();
 				}
 			}
 		}
