@@ -49,56 +49,34 @@ public interface IInstallConfiguration {
 	
 	
 	/**
-	 * Returns an array of local install sites that can be used as 
-	 * targets for installing local features. The sites
+	 * Returns an array of local configuration sites that the sites
+	 * configured.
+	 * 
+	 * The sites can be pure link sites or install sites.
+	 * 
+	 *  The install sites
 	 * must be read-write accessible from the current client, otherwise
 	 * subsequent installation attampts will fail.
 	 * 
 	 * @return IConfigurationSite[] local install sites. Returns an empty array
 	 * if there are no local install sites
 	 */
-	public IConfigurationSite[] getInstallSites();
+	public IConfigurationSite[] getConfigurationSites();
 	
 	/**
-	 * Adds an additional local install site to this configuration.
-	 * The site must be read-write accessible from the current
-	 * client, otherwise subsequent installation
-	 * attempts will fail. Note, that this method does not verify
-	 * the site is read-write accessible.
+	 * Adds an additional configuration site to this configuration.
 	 * 
-	 * @param site local install site
+	 * @param site configuration site
 	 */
-	public void addInstallSite(IConfigurationSite site);
+	public void addConfigurationSite(IConfigurationSite site);
 	
 	/**
-	 * Removes a local install site from this configuration.
+	 * Removes a configuration site from this configuration.
 	 * 
-	 * @param site local install site
+	 * @param site configuration site
 	 */
-	public void removeInstallSite(IConfigurationSite site);
+	public void removeConfigurationSite(IConfigurationSite site);
 	
-	/**
-	 * Returns an array of sites (generally read-only) used for accessing
-	 * additional features
-	 * 
-	 * @return IConfigurationSite[] array of linked sites. Returns an empty array
-	 * if there are no linked sites
-	 */
-	public IConfigurationSite[] getLinkedSites();
-	
-	/**
-	 * Adds an additional linked site to this configuration
-	 * 
-	 * @param site linked site
-	 */
-	public void addLinkedSite(IConfigurationSite site);
-	
-	/**
-	 * Removes a linked site from this configuration
-	 * 
-	 * @param site linked site
-	 */
-	public void removeLinkedSite(IConfigurationSite site);	
 	
 	void addInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener);
 	void removeInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener);

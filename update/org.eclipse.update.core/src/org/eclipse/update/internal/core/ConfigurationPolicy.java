@@ -31,7 +31,7 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 	/*
 	 * @see IConfigurationPolicy#getFilteredFeatures(IFeatureReference[])
 	 */
-	public IFeatureReference[] getFilteredFeatures(IFeatureReference[] features) {
+	public IFeatureReference[] getFilteredFeatures(IFeatureReference[] featuresToFilter) {
 		return null;
 	}
 

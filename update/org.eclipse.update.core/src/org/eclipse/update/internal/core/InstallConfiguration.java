@@ -17,8 +17,7 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	private URL location;
 	private Date date;
 	private String label;
-	private List installSites;
-	private List linkedSites;
+	private List configurationSites;
 	private List featuresConfigured;
 	private List featuresUnconfigured;
 
@@ -35,13 +34,13 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	 * copy constructor
 	 */
 	public InstallConfiguration(IInstallConfiguration config,URL newLocation, String label) {
-		this.location = newLocation;
-		this.label = label;
+		this(newLocation,label);
 		// do not copy list of listeners
-		installSites = Arrays.asList(config.getInstallSites());
-		linkedSites = Arrays.asList(config.getLinkedSites());
-		featuresConfigured = Arrays.asList(config.getConfiguredFeatures());
-		featuresUnconfigured = Arrays.asList(config.getUnconfiguredFeatures());
+		if (config!=null){
+			configurationSites = Arrays.asList(config.getConfigurationSites());
+			featuresConfigured = Arrays.asList(config.getConfiguredFeatures());
+			featuresUnconfigured = Arrays.asList(config.getUnconfiguredFeatures());
+		}
 		this.isCurrent = false;
 	}
 	/**
@@ -55,24 +54,16 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		if (featuresConfigured == null) {
 			featuresConfigured = new ArrayList();
 
-			if (installSites != null) {
-				Iterator iter = installSites.iterator();
+			if (configurationSites != null) {
+				Iterator iter = configurationSites.iterator();
 				while (iter.hasNext()) {
-					ISite currentSite = (ISite) iter.next();
-					featuresConfigured.addAll(Arrays.asList(currentSite.getFeatureReferences()));
-				}
-			}
-
-			if (linkedSites != null) {
-				Iterator iter = linkedSites.iterator();
-				while (iter.hasNext()) {
-					ISite currentSite = (ISite) iter.next();
-					featuresConfigured.addAll(Arrays.asList(currentSite.getFeatureReferences()));
+					IConfigurationSite currentSite = (IConfigurationSite) iter.next();
+					featuresConfigured.addAll(Arrays.asList(currentSite.getConfiguredFeatures()));
+					// unconfigured features are getSIte.getFeatures - configuredFeatures ?
 				}
 			}
 		}
 
-		System.out.println(featuresConfigured);
 		if (featuresConfigured != null && !featuresConfigured.isEmpty()) {
 			// move List in Array
 			result = new IFeatureReference[featuresConfigured.size()];
@@ -83,27 +74,28 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	}
 
 	/*
-	 * @see IInstallConfiguration#getInstallSites()
+	 * @see IInstallConfiguration#getConfigurationSites()
 	 */
-	public IConfigurationSite[] getInstallSites() {
+	public IConfigurationSite[] getConfigurationSites() {
 		IConfigurationSite[] sites = new IConfigurationSite[0];
-		if (installSites != null && !installSites.isEmpty()) {
-			sites = new IConfigurationSite[installSites.size()];
-			installSites.toArray(sites);
+		if (configurationSites != null && !configurationSites.isEmpty()) {
+			sites = new IConfigurationSite[configurationSites.size()];
+			configurationSites.toArray(sites);
 		}
 		return sites;
 	}
 
+
 	/*
-	 * @see IInstallConfiguration#addInstallSite(IConfigurationSite)
+	 * @see IInstallConfiguration#addConfigurationSite(IConfigurationSite)
 	 */
-	public void addInstallSite(IConfigurationSite site) {
+	public void addConfigurationSite(IConfigurationSite site) {
 		if (!isCurrent)
 			return;
-		if (installSites == null) {
-			installSites = new ArrayList();
+		if (configurationSites == null) {
+			configurationSites = new ArrayList();
 		}
-		installSites.add(site);
+		configurationSites.add(site);
 
 		// notify listeners
 		Object[] configurationListeners = listeners.getListeners();
@@ -113,65 +105,19 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	}
 
 	/*
-	 * @see IInstallConfiguration#removeInstallSite(IConfigurationSite)
+	 * @see IInstallConfiguration#removeConfigurationSite(IConfigurationSite)
 	 */
-	public void removeInstallSite(IConfigurationSite site) {
+	public void removeConfigurationSite(IConfigurationSite site) {
 		if (!isCurrent)
 			return;
 		//FIXME: remove should make sure we synchronize
-		if (installSites != null) {
-			installSites.remove(site);
+		if (configurationSites != null) {
+			configurationSites.remove(site);
 
 			// notify listeners
 			Object[] configurationListeners = listeners.getListeners();
 			for (int i = 0; i < configurationListeners.length; i++) {
 				((IInstallConfigurationChangedListener) configurationListeners[i]).installSiteRemoved(site);
-			}
-		}
-	}
-
-	/*
-	 * @see IInstallConfiguration#getLinkedSites()
-	 */
-	public IConfigurationSite[] getLinkedSites() {
-		IConfigurationSite[] sites = new IConfigurationSite[0];
-		if (linkedSites != null) {
-			sites = new IConfigurationSite[linkedSites.size()];
-			linkedSites.toArray(sites);
-		}
-		return sites;
-	}
-
-	/*
-	 * @see IInstallConfiguration#addLinkedSite(IConfigurationSite)
-	 */
-	public void addLinkedSite(IConfigurationSite site) {
-		if (!isCurrent)
-			return;
-		if (linkedSites == null) {
-			linkedSites = new ArrayList();
-		}
-		linkedSites.add(site);
-		// notify listeners
-		Object[] configurationListeners = listeners.getListeners();
-		for (int i = 0; i < configurationListeners.length; i++) {
-			((IInstallConfigurationChangedListener) configurationListeners[i]).linkedSiteAdded(site);
-		}
-	}
-	
-	/*
-	 * @see IInstallConfiguration#removeLinkedSite(IConfigurationSite)
-	 */
-	public void removeLinkedSite(IConfigurationSite site) {
-		if (!isCurrent)
-			return;
-		//FIXME: remove should make sure we synchronize
-		if (linkedSites != null) {
-			linkedSites.remove(site);
-			// notify listeners
-			Object[] configurationListeners = listeners.getListeners();
-			for (int i = 0; i < configurationListeners.length; i++) {
-				((IInstallConfigurationChangedListener) configurationListeners[i]).linkedSiteRemoved(site);
 			}
 		}
 	}
@@ -313,15 +259,26 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 			increment += " ";
 		
 		
-		w.print(gap + "<" + SiteLocalParser.CONFIG + " ");
-		//String URLInfoString = UpdateManagerUtils.getURLAsString(getLocation(),config.getURL());
-		//w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\" ");
-
-		//if (config.getLabel() != null) {
-		//	w.print("label=\"" + Writer.xmlSafe(config.getLabel()) + "\"");
-		//}
-
-		w.println("/>");
+		w.print(gap + "<" + InstallConfigurationParser.CONFIGURATION + " ");
+		w.print("date=\"" + date.getTime() + "\" ");
+		w.println(">");
+		w.println("");
+		
+		// site configurations
+		if (configurationSites!=null){
+		Iterator iter = configurationSites.iterator();
+		while (iter.hasNext()) {
+			ConfigurationSite element = (ConfigurationSite) iter.next();
+			((IWritable)element).write(indent+IWritable.INDENT,w);
+		}
+		}
+		
+		// activities
+		//FIXME
+		
+		// end
+		w.println(gap+"</"+InstallConfigurationParser.CONFIGURATION+">");
+		
 		
 	}
 

@@ -113,7 +113,8 @@ public class SiteLocal implements ILocalSite, IWritable {
 		try {
 			URL execURL = BootLoader.getInstallURL();
 			ISite site = SiteManager.getSite(execURL);
-			addConfiguration(new InstallConfiguration(UpdateManagerUtils.getURL(location,DEFAULT_LOCATION,null), DEFAULT_LABEL));
+			addConfiguration(createConfiguration(UpdateManagerUtils.getURL(location,DEFAULT_LOCATION,null), DEFAULT_LABEL));
+			
 		
 			// notify listeners
 			Object[] localSiteListeners = listeners.getListeners();
@@ -122,9 +123,10 @@ public class SiteLocal implements ILocalSite, IWritable {
 			}
 		
 			//FIXME: the plugin site may not be read-write
-			//FIXEM: 0 ??? what about USER_EXCLUDE ?
-			IConfigurationSite configSite = SiteManager.createConfigurationSite(site,0);
-			currentConfiguration.addInstallSite(configSite);
+			//the default is USER_EXCLUDE 
+			ConfigurationSite configSite = (ConfigurationSite)SiteManager.createConfigurationSite(site,IPlatformConfiguration.ISitePolicy.USER_EXCLUDE);
+			configSite.setInstallSite(true);
+			currentConfiguration.addConfigurationSite(configSite);
 		
 			// FIXME: always save ?
 			this.save();

@@ -8,6 +8,7 @@ import java.io.*;
 import java.net.URL;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.internal.core.IWritable;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.internal.core.Writer;
 import org.eclipse.update.tests.UpdateManagerTestCase;
@@ -37,7 +38,7 @@ public class TestSiteGeneration extends UpdateManagerTestCase {
 		File file = new File(tempSite.getURL().getFile()+"site.xml");
 		PrintWriter fileWriter = new PrintWriter(new FileOutputStream(file));
 		Writer writer = new Writer();
-		writer.writeSite(remoteSite,fileWriter);
+		writer.writeSite((IWritable)remoteSite,fileWriter); 
 		fileWriter.close();
 		
 		//get the local Site again

@@ -8,7 +8,17 @@ import java.util.Date;
  */
 
 public interface IConfigurationPolicy {
+	/**
+	 * return the policy used
+	 * @see org.eclipse.core.boot.IPlatformConfiguration.ISitePolicy
+	 */
 	int getPolicy();
-	IFeatureReference[] getFilteredFeatures(IFeatureReference[] features);
+	
+	/**
+	 * return the list of filtered features based on the policy (include/exclude list)
+	 * @see org.eclipse.core.boot.IPlatformConfiguration.ISitePolicy#getList()
+	 */
+	IFeatureReference[] getFilteredFeatures(IFeatureReference[] featuresToFilter);
+
 }
 

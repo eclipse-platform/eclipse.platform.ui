@@ -23,12 +23,12 @@ public interface IConfigurationSite {
 	/**
 	 * returns the policy for this configuration Site
 	 */
-	IConfigurationPolicy getPolicy();
+	IConfigurationPolicy getConfigurationPolicy();
 	
 	/**
 	 * Sets a new policy. The configured features are recaculated
 	 */
-	void setPolicy(IConfigurationPolicy policy);
+	void setConfigurationPolicy(IConfigurationPolicy policy);
 	
 	/**
 	 * Returns teh configured features for this Site based on the current policy
@@ -44,6 +44,11 @@ public interface IConfigurationSite {
 	 * Returns true if features can be installed in this Site
 	 */
 	boolean isInstallSite();
+	
+	/**
+	 * sets if the site is an installable site
+	 */
+	void setInstallSite(boolean installable);
 	
 	/**
 	 * Configure the Feature to be available at next startup
