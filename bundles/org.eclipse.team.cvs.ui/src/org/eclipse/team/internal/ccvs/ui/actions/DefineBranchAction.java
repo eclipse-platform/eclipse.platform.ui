@@ -7,27 +7,18 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.core.ITeamManager;
-import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.model.BranchCategory;
@@ -86,7 +77,8 @@ public class DefineBranchAction extends TeamAction {
 					public void run() {
 						InputDialog dialog = new InputDialog(getShell(), Policy.bind("DefineBranchAction.enterTag"), Policy.bind("DefineBranchAction.enterTagLong"), null, null);
 						if (dialog.open() == InputDialog.OK) {
-							CVSUIPlugin.getPlugin().getRepositoryManager().addBranchTag(roots[0], new BranchTag(dialog.getValue(), roots[0]));
+							CVSTag tag = new CVSTag(dialog.getValue(), CVSTag.BRANCH);
+							CVSUIPlugin.getPlugin().getRepositoryManager().addBranchTag(roots[0], new BranchTag(tag, roots[0]));
 						}
 					}
 				});

@@ -38,8 +38,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.ccvs.core.ICVSTag;
 import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction;
@@ -84,7 +84,7 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 				case COL_REVISION:
 					return entry.getRevision();
 				case COL_TAGS:
-					ICVSTag[] tags = entry.getTags();
+					CVSTag[] tags = entry.getTags();
 					StringBuffer result = new StringBuffer();
 					for (int i = 0; i < tags.length; i++) {
 						result.append(tags[i].getName());

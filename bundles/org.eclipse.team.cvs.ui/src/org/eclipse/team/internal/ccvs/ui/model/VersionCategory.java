@@ -7,8 +7,8 @@ package org.eclipse.team.internal.ccvs.ui.model;
  
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
@@ -46,7 +46,7 @@ public class VersionCategory extends CVSModelElement implements IAdaptable {
 	 */
 	public Object[] getChildren(Object o) {
 		try {
-			ICVSRemoteResource[] resources = repository.members("HEAD", new NullProgressMonitor());
+			ICVSRemoteResource[] resources = repository.members(new CVSTag(), new NullProgressMonitor());
 			Object[] result = new Object[resources.length];
 			for (int i = 0; i < resources.length; i++) {
 				result[i] = new RemoteModule((ICVSRemoteFolder)resources[i], this);

@@ -7,14 +7,15 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 
 public class RepositorySorter extends ViewerSorter {
 	public int compare(Viewer viewer, Object o1, Object o2) {
 		if (o1 instanceof BranchTag && o2 instanceof BranchTag) {
-			String tag1 = ((BranchTag)o1).getTag();
-			String tag2 = ((BranchTag)o2).getTag();
+			CVSTag tag1 = ((BranchTag)o1).getTag();
+			CVSTag tag2 = ((BranchTag)o2).getTag();
 			return tag1.compareTo(tag2);
 		}
 		if (o1 instanceof ICVSRepositoryLocation && o2 instanceof ICVSRepositoryLocation) {

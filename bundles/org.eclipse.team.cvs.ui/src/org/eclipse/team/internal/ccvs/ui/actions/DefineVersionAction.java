@@ -7,28 +7,18 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.core.ITeamManager;
-import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteModule;
@@ -88,7 +78,8 @@ public class DefineVersionAction extends TeamAction {
 						InputDialog dialog = new InputDialog(getShell(), Policy.bind("DefineVersionAction.enterTag"), Policy.bind("DefineVersionAction.enterTagLong"), null, null);
 						if (dialog.open() == InputDialog.OK) {
 							ICVSRemoteResource resource = projects[0].getCVSResource();
-							CVSUIPlugin.getPlugin().getRepositoryManager().addVersionTag(resource, dialog.getValue());
+							CVSTag tag = new CVSTag(dialog.getValue(), CVSTag.VERSION);
+							CVSUIPlugin.getPlugin().getRepositoryManager().addVersionTag(resource, tag);
 						}
 					}
 				});

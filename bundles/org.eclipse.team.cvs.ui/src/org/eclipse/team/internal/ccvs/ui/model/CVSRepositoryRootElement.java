@@ -6,6 +6,7 @@ package org.eclipse.team.internal.ccvs.ui.model;
  */
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -33,7 +34,7 @@ public class CVSRepositoryRootElement extends CVSModelElement {
 	public Object[] getChildren(Object o) {
 		if (!(o instanceof ICVSRepositoryLocation)) return null;
 		return new Object[] {
-			new BranchTag("HEAD", (ICVSRepositoryLocation)o),
+			new BranchTag(new CVSTag(), (ICVSRepositoryLocation)o),
 			new BranchCategory((ICVSRepositoryLocation)o),
 			new VersionCategory((ICVSRepositoryLocation)o)
 		};

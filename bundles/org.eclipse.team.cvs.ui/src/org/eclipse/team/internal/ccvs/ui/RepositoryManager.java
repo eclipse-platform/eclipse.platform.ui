@@ -25,6 +25,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
@@ -44,7 +45,7 @@ public class RepositoryManager {
 	Hashtable repositories = new Hashtable();
 	// Map ICVSRepositoryLocation -> List of Tags
 	Hashtable branchTags = new Hashtable();
-	// Map ICVSRepositoryLocation -> Hashtable of (Project name -> Set of String tags)
+	// Map ICVSRepositoryLocation -> Hashtable of (Project name -> Set of CVSTags)
 	Hashtable versionTags = new Hashtable();
 	
 	List listeners = new ArrayList();
@@ -102,12 +103,12 @@ public class RepositoryManager {
 	/**
 	 * Get the list of known version tags for a given project.
 	 */
-	public String[] getKnownVersionTags(ICVSRemoteResource resource) {
+	public CVSTag[] getKnownVersionTags(ICVSRemoteResource resource) {
 		Hashtable table = (Hashtable)versionTags.get(resource.getRepository());
-		if (table == null) return new String[0];
+		if (table == null) return new CVSTag[0];
 		Set set = (Set)table.get(resource.getName());
-		if (set == null) return new String[0];
-		return (String[])set.toArray(new String[0]);
+		if (set == null) return new CVSTag[0];
+		return (CVSTag[])set.toArray(new CVSTag[0]);
 	}
 	/**
 	 * Add the given branch tag to the list of known tags for the given
@@ -143,7 +144,7 @@ public class RepositoryManager {
 	 * Add the given version tag to the list of known tags for the given
 	 * remote project.
 	 */
-	public void addVersionTag(ICVSRemoteResource resource, String tag) {
+	public void addVersionTag(ICVSRemoteResource resource, CVSTag tag) {
 		String name = resource.getName();
 		Hashtable table = (Hashtable)versionTags.get(resource.getRepository());
 		if (table == null) {
@@ -180,7 +181,7 @@ public class RepositoryManager {
 	 * Remove the given tag from the list of known tags for the
 	 * given remote root.
 	 */
-	public void removeVersionTag(ICVSRemoteResource resource, String tag) {
+	public void removeVersionTag(ICVSRemoteResource resource, CVSTag tag) {
 		Hashtable table = (Hashtable)versionTags.get(resource.getRepository());
 		if (table == null) return;
 		Set set = (Set)table.get(resource.getName());
@@ -215,7 +216,7 @@ public class RepositoryManager {
 				Set tagSet = (Set)vTags.get(projectName);
 				Iterator tagIt = tagSet.iterator();
 				while (tagIt.hasNext()) {
-					String tag = (String)tagIt.next();
+					CVSTag tag = (CVSTag)tagIt.next();
 					listener.versionTagRemoved(tag, root);
 				}
 			}
@@ -297,7 +298,8 @@ public class RepositoryManager {
 			BranchTag[] branchTags = getKnownBranchTags(root);
 			dos.writeInt(branchTags.length);
 			for (int i = 0; i < branchTags.length; i++) {
-				dos.writeUTF(branchTags[i].getTag());
+				dos.writeUTF(branchTags[i].getTag().getName());
+				dos.writeInt(branchTags[i].getTag().getType());
 			}
 			// write number of projects for which there are tags in this root
 			Hashtable table = (Hashtable)versionTags.get(root);
@@ -336,8 +338,9 @@ public class RepositoryManager {
 			ICVSRepositoryLocation root = getRoot(properties);
 			int tagsSize = dis.readInt();
 			for (int j = 0; j < tagsSize; j++) {
-				String tag = dis.readUTF();
-				addBranchTag(root, new BranchTag(tag, root));
+				String tagName = dis.readUTF();
+				int tagType = dis.readInt();
+				addBranchTag(root, new BranchTag(new CVSTag(tagName, tagType), root));
 			}
 			// read the number of projects for this root that have version tags
 			int projSize = dis.readInt();

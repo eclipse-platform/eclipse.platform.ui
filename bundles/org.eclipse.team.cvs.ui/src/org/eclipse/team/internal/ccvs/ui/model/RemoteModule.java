@@ -5,8 +5,11 @@ package org.eclipse.team.internal.ccvs.ui.model;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IAdaptable;import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.swt.widgets.Display;import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
@@ -49,10 +52,10 @@ public class RemoteModule extends CVSModelElement implements IAdaptable {
 	 * are the versions for that 
 	 */
 	public Object[] getChildren(Object o) {
-		String[] tags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownVersionTags(folder);
+		CVSTag[] tags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownVersionTags(folder);
 		ModuleVersion[] result = new ModuleVersion[tags.length];
 		for (int i = 0; i < result.length; i++) {
-			String tag = tags[i];
+			CVSTag tag = tags[i];
 			// There should be a better way of getting the resource with a given tag.
 			try {
 				ICVSRemoteResource[] members = folder.getRepository().members(tag, new NullProgressMonitor());

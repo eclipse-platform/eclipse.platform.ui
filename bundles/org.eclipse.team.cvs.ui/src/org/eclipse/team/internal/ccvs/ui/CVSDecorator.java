@@ -14,15 +14,17 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.Client;
-import org.eclipse.team.internal.ccvs.core.resources.api.FileProperties;
-import org.eclipse.team.internal.ccvs.core.resources.api.FolderProperties;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedResource;
+import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
+import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.ITeamDecorator;
 import org.eclipse.team.ui.TeamUIPlugin;
@@ -72,22 +74,22 @@ public class CVSDecorator implements ITeamDecorator {
 		try {	
 			switch (resource.getType()) {
 				case IResource.PROJECT:
-					IManagedFolder project = Client.getManagedFolder(resource.getLocation().toFile());
-					FolderProperties folderInfo = project.getFolderInfo();
-					return Policy.bind("CVSDecorator.projectDecoration", text, folderInfo.getRoot());
-				case IResource.FILE:
-					IManagedResource file = Client.getManagedResource(resource.getLocation().toFile());
-					FileProperties fileInfo =  file.getParent().getFile(resource.getName()).getFileInfo();
-					String tag = "";
-					if (file.showManaged()) {
-						tag = fileInfo.getTag();
-					} else {
-						return text;
+					ICVSFolder folder = new LocalFolder(resource.getLocation().toFile());
+					FolderSyncInfo folderInfo = folder.getFolderSyncInfo();
+					if(folderInfo!=null) {
+						return Policy.bind("CVSDecorator.projectDecoration", text, folderInfo.getRoot());
 					}
-					if (tag.equals("")) {
-						return Policy.bind("CVSDecorator.fileDecorationNoTag", text, fileInfo.getVersion());
-					} else {
-						return Policy.bind("CVSDecorator.fileDecorationWithTag", new Object[] {text, tag, fileInfo.getVersion()});
+					break;
+				case IResource.FILE:
+					ICVSFile file = new LocalFile(resource.getLocation().toFile());
+					ResourceSyncInfo fileInfo = file.getSyncInfo();
+					if(fileInfo!=null) {
+						CVSTag tag = fileInfo.getTag();
+						if (tag!=null && tag.getType() == CVSTag.HEAD) {
+							return Policy.bind("CVSDecorator.fileDecorationNoTag", text, fileInfo.getRevision());
+						} else {
+							return Policy.bind("CVSDecorator.fileDecorationWithTag", new Object[] {text, tag.getName(), fileInfo.getRevision()});
+						}
 					}
 			}	
 		} catch (CVSException e) {

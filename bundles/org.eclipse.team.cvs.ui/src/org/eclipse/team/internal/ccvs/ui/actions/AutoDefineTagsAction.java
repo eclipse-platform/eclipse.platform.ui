@@ -16,9 +16,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.ccvs.core.ICVSTag;
 import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -79,16 +79,16 @@ public class AutoDefineTagsAction extends TeamAction {
 						return;
 					}
 					for (int j = 0; j < entries.length; j++) {
-						ICVSTag[] tags = entries[j].getTags();
+						CVSTag[] tags = entries[j].getTags();
 						for (int k = 0; k < tags.length; k++) {
 							tagSet.add(tags[k]);
 						}
 					}
 					Iterator it = tagSet.iterator();
 					while (it.hasNext()) {
-						ICVSTag tag = (ICVSTag)it.next();
-						if (tag.isBranch()) {
-							manager.addBranchTag(root, new BranchTag(tag.getName(), root));
+						CVSTag tag = (CVSTag)it.next();
+						if (tag.getType()==CVSTag.BRANCH) {
+							manager.addBranchTag(root, new BranchTag(tag, root));
 						} else {
 							// Problem: need to get the root remote project. Can't do this without
 							// additional API to get parent.

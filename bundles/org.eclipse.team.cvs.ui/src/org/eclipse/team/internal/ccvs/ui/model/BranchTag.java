@@ -8,6 +8,7 @@ package org.eclipse.team.internal.ccvs.ui.model;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -15,13 +16,13 @@ import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class BranchTag extends CVSModelElement implements IAdaptable {
-	String tag;
+	CVSTag tag;
 	ICVSRepositoryLocation root;
 	
 	/**
 	 * Create a branch tag
 	 */
-	public BranchTag(String tag, ICVSRepositoryLocation root) {
+	public BranchTag(CVSTag tag, ICVSRepositoryLocation root) {
 		this.tag = tag;
 		this.root = root;
 	}
@@ -32,7 +33,7 @@ public class BranchTag extends CVSModelElement implements IAdaptable {
 		if (adapter == IWorkbenchAdapter.class) return this;
 		return null;
 	}
-	public String getTag() {
+	public CVSTag getTag() {
 		return tag;
 	}
 	public boolean equals(Object o) {
@@ -59,11 +60,10 @@ public class BranchTag extends CVSModelElement implements IAdaptable {
 	}
 	public String getLabel(Object o) {
 		if (!(o instanceof BranchTag)) return null;
-		return ((BranchTag)o).tag;
+		return ((BranchTag)o).tag.getName();
 	}
 	public Object getParent(Object o) {
 		if (!(o instanceof BranchTag)) return null;
 		return ((BranchTag)o).root;
 	}
 }
-

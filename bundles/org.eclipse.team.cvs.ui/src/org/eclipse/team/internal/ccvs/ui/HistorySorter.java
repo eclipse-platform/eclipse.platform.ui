@@ -7,7 +7,7 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.team.ccvs.core.ICVSTag;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ILogEntry;
 
 /**
@@ -60,8 +60,8 @@ class HistorySorter extends ViewerSorter {
 			case 0: /* version */
 				return versionCollator.compare(e1.getRevision(), e2.getRevision());
 			case 1: /* tags */
-				ICVSTag[] tags1 = e1.getTags();
-				ICVSTag[] tags2 = e2.getTags();
+				CVSTag[] tags1 = e1.getTags();
+				CVSTag[] tags2 = e2.getTags();
 				if (tags2.length == 0) {
 					return -1;
 				}

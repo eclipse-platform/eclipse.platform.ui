@@ -24,8 +24,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction;
 import org.eclipse.team.internal.ccvs.ui.model.AllRootsElement;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
@@ -91,7 +92,7 @@ public class RepositoriesView extends ViewPart {
 				}
 			});
 		}
-		public void versionTagAdded(String tag, final ICVSRepositoryLocation root) {
+		public void versionTagAdded(CVSTag tag, final ICVSRepositoryLocation root) {
 			Display display = viewer.getControl().getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
@@ -99,7 +100,7 @@ public class RepositoriesView extends ViewPart {
 				}
 			});
 		}
-		public void versionTagRemoved(String tag, final ICVSRepositoryLocation root) {
+		public void versionTagRemoved(CVSTag tag, final ICVSRepositoryLocation root) {
 			Display display = viewer.getControl().getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {

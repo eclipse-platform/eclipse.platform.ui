@@ -8,6 +8,7 @@ package org.eclipse.team.internal.ccvs.ui.model;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
@@ -23,19 +24,19 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  */
 public class ModuleVersion extends CVSModelElement implements IAdaptable {
 	ICVSRemoteFolder resource;
-	String tag;
+	CVSTag tag;
 	RemoteModule parent;
 		
 	/**
 	 * RemoteProject constructor.
 	 */
-	public ModuleVersion(ICVSRemoteFolder resource, String tag, RemoteModule parent) {
+	public ModuleVersion(ICVSRemoteFolder resource, CVSTag tag, RemoteModule parent) {
 		this.resource = resource;
 		this.tag = tag;
 		this.parent = parent;
 	}
 	
-	public String getTag() {
+	public CVSTag getTag() {
 		return tag;
 	}
 	public ICVSRemoteResource getCVSResource() {
@@ -84,7 +85,7 @@ public class ModuleVersion extends CVSModelElement implements IAdaptable {
 	 * in the UI.
 	 */
 	public String getLabel(Object o) {
-		return resource.getName() + " " + tag;
+		return resource.getName() + " " + tag.getName();
 	}
 	
 	/**
