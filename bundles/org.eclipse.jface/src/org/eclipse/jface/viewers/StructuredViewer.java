@@ -216,29 +216,29 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		 * @param control
 		 */
 		public void applyFontsAndColors(TableItem control) {
-			if(usedDecorators){
-				if(background != null)
-					control.setBackground(background);
 			
-				if(foreground != null)
-					control.setForeground(foreground);
-			
-				if(font != null)
-					control.setFont(font);
+			if(colorProvider == null){
+				if(usedDecorators){
+					//If there is no provider only apply set values
+					if(background != null)
+						control.setBackground(background);
 				
-			}else{
-			
-				//If there is a color provider and no decoration
-				//always apply
-				if(colorProvider != null){
-					control.setBackground(background);
-					control.setForeground(foreground);
-				}
-				
-				if(fontProvider != null){
-					control.setFont(font);
+					if(foreground != null)
+						control.setForeground(foreground);
 				}
 			}
+			else{
+				//Always set the value if there is a provider
+				control.setBackground(background);
+				control.setForeground(foreground);
+			}
+			
+			if(fontProvider == null){
+				if(usedDecorators && font != null)
+					control.setFont(font);
+			}
+			else//Always set the value if there is a provider
+				control.setFont(font);
 			
 			clear();
 		}
@@ -249,29 +249,29 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		 * @param control
 		 */
 		public void applyFontsAndColors(TreeItem control) {
-			if(usedDecorators){
-				if(background != null)
-					control.setBackground(background);
 			
-				if(foreground != null)
-					control.setForeground(foreground);
-			
-				if(font != null)
-					control.setFont(font);
+			if(colorProvider == null){
+				if(usedDecorators){
+					//If there is no provider only apply set values
+					if(background != null)
+						control.setBackground(background);
 				
-			}else{
-			
-				//If there is a color provider and no decoration
-				//always apply
-				if(colorProvider != null){
-					control.setBackground(background);
-					control.setForeground(foreground);
-				}
-				
-				if(fontProvider != null){
-					control.setFont(font);
+					if(foreground != null)
+						control.setForeground(foreground);
 				}
 			}
+			else{
+				//Always set the value if there is a provider
+				control.setBackground(background);
+				control.setForeground(foreground);
+			}
+			
+			if(fontProvider == null){
+				if(usedDecorators && font != null)
+					control.setFont(font);
+			}
+			else//Always set the value if there is a provider
+				control.setFont(font);
 			
 			clear();
 		}
@@ -282,29 +282,30 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		 * @param control
 		 */
 		public void applyFontsAndColors(TableTreeItem control) {
-			if(usedDecorators){
-				if(background != null)
-					control.setBackground(background);
 			
-				if(foreground != null)
-					control.setForeground(foreground);
-			
-				if(font != null)
-					control.setFont(font);
+			if(colorProvider == null){
+				if(usedDecorators){
+					//If there is no provider only apply set values
+					if(background != null)
+						control.setBackground(background);
 				
-			}else{
-			
-				//If there is a color provider and no decoration
-				//always apply
-				if(colorProvider != null){
-					control.setBackground(background);
-					control.setForeground(foreground);
-				}
-				
-				if(fontProvider != null){
-					control.setFont(font);
+					if(foreground != null)
+						control.setForeground(foreground);
 				}
 			}
+			else{
+				//Always set the value if there is a provider
+				control.setBackground(background);
+				control.setForeground(foreground);
+			}
+			
+			if(fontProvider == null){
+				if(usedDecorators && font != null)
+					control.setFont(font);
+			}
+			else//Always set the value if there is a provider
+				control.setFont(font);
+			
 			clear();
 		}
 		
