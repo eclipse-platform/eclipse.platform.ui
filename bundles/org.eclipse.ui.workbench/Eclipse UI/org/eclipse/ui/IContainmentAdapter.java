@@ -18,7 +18,31 @@ package org.eclipse.ui;
  * @since 2.1
  */
 public interface IContainmentAdapter {
-	
+	/**
+	 * Only the containment context and direct children should be
+	 * considered when testing for element containment.
+	 * (value is 1)
+	 * 
+	 * @see #contains
+	 */
+	public static final int CHECK_CONTEXT = 1;
+	/**
+	 * Check all descendents of the containment context when testing
+	 * for element containment. Recurse into children.
+	 * (value is 2)
+	 * 
+	 * @see #contains
+	 */
+	public static final int CHECK_DESCENDENTS = 2;
+	/**
+	 * Check all ancestors of the containment context when testing
+	 * for element containment.
+	 * (value is 4)
+	 * 
+	 * @see #contains
+	 */
+	public static final int CHECK_ANCESTORS = 4;
+ 	
 /**
  * Returns whether the given element is considered contained 
  * in the specified containment context or if it is the context 
@@ -28,10 +52,11 @@ public interface IContainmentAdapter {
  * 	context for the element. This is typically a container object 
  * 	(e.g., IFolder) and may be the element object itself. 
  * @param element object that should be tested for containment
- * @param includeDescendents whether to consider descendents of the 
- * 	container elements. Direct children are always tested.
- * @param includeAncestors whether to consider ancestors of the 
- * 	container.
+ * @param flags one or more of <code>CHECK_CONTEXT</code>, 
+ * 	<code>CHECK_ANCESTORS</code>, <code>CHECK_DESCENDENTS</code>
+ *	logically ORed together..
+ *	<code>CHECK_CONTEXT</code> always has to be specified if the 
+ *	context itself and its direct children should be checked,
  */
-boolean contains(Object containmentContext, Object element, boolean includeDescendents, boolean includeAncestors);
+public boolean contains(Object containmentContext, Object element, int flags);
 }
