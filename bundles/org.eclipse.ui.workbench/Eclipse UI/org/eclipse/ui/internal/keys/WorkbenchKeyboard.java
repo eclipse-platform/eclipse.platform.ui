@@ -49,8 +49,8 @@ import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.KeySupport;
 import org.eclipse.ui.keys.ParseException;
-import org.eclipse.ui.keys.SWTKeySupport;
 
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
@@ -77,6 +77,10 @@ import org.eclipse.ui.internal.util.Util;
  */
 public class WorkbenchKeyboard {
 
+	static {
+		initializeOutOfOrderKeys();
+	}
+
 	/**
 	 * The maximum height of the multi-stroke key binding assistant shell.
 	 */
@@ -97,10 +101,6 @@ public class WorkbenchKeyboard {
 	 */
 	private final static ResourceBundle RESOURCE_BUNDLE =
 		ResourceBundle.getBundle(WorkbenchKeyboard.class.getName());
-
-	static {
-		initializeOutOfOrderKeys();
-	}
 
 	/**
 	 * Generates any key strokes that are near matches to the given event. The
@@ -126,17 +126,17 @@ public class WorkbenchKeyboard {
 		// Add each unique key stroke to the list for consideration.
 		KeyStroke keyStroke;
 		keyStrokes.add(
-			SWTKeySupport.convertAcceleratorToKeyStroke(
-				SWTKeySupport.convertEventToUnmodifiedAccelerator(event)));
+			KeySupport.convertAcceleratorToKeyStroke(
+				KeySupport.convertEventToUnmodifiedAccelerator(event)));
 		keyStroke =
-			SWTKeySupport.convertAcceleratorToKeyStroke(
-				SWTKeySupport.convertEventToUnshiftedModifiedAccelerator(event));
+			KeySupport.convertAcceleratorToKeyStroke(
+				KeySupport.convertEventToUnshiftedModifiedAccelerator(event));
 		if (!keyStrokes.contains(keyStroke)) {
 			keyStrokes.add(keyStroke);
 		}
 		keyStroke =
-			SWTKeySupport.convertAcceleratorToKeyStroke(
-				SWTKeySupport.convertEventToModifiedAccelerator(event));
+			KeySupport.convertAcceleratorToKeyStroke(
+				KeySupport.convertEventToModifiedAccelerator(event));
 		if (!keyStrokes.contains(keyStroke)) {
 			keyStrokes.add(keyStroke);
 		}
@@ -668,10 +668,8 @@ public class WorkbenchKeyboard {
 		// If the shell loses focus, it should be closed.
 		multiKeyAssistShell.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event event) {
-				if (multiKeyAssistShell != null) {
-					multiKeyAssistShell.close();
-					multiKeyAssistShell = null;
-				}
+				multiKeyAssistShell.close();
+				multiKeyAssistShell = null;
 			}
 		});
 

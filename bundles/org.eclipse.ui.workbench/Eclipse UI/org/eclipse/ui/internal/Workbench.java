@@ -42,12 +42,10 @@ import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
@@ -58,7 +56,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -91,7 +88,6 @@ import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
-import org.eclipse.ui.internal.colors.ColorDefinition;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
@@ -104,7 +100,7 @@ import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.SWTKeySupport;
+import org.eclipse.ui.keys.KeySupport;
 import org.eclipse.ui.progress.IProgressService;
 
 /**
@@ -794,7 +790,7 @@ public final class Workbench implements IWorkbench {
 						if (keyStrokes.size() == 1) {
 							KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
 							accelerator =
-							new Integer(SWTKeySupport.convertKeyStrokeToAccelerator(keyStroke));
+							new Integer(KeySupport.convertKeyStrokeToAccelerator(keyStroke));
 						}
 					}
 				}
@@ -821,7 +817,7 @@ public final class Workbench implements IWorkbench {
 
 			public boolean isAcceleratorInUse(int accelerator) {
 				KeySequence keySequence =
-				KeySequence.getInstance(SWTKeySupport.convertAcceleratorToKeyStroke(accelerator));
+				KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
 				return workbenchCommandSupport.getCommandManager().isPerfectMatch(keySequence)
 				|| workbenchCommandSupport.getCommandManager().isPartialMatch(keySequence);
 			}
@@ -857,7 +853,6 @@ public final class Workbench implements IWorkbench {
 		initializeImages(windowImage);
 		initializeFonts();
 		initializeColors();
-		initializeApplicationColors();
 
 		// now that the workbench is sufficiently initialized, let the advisor
 		// have a turn.
@@ -910,85 +905,6 @@ public final class Workbench implements IWorkbench {
 		isStarting = false;
 		return true;
 	}
-
-	/**
-	 * Initialize colors defined by the new colorDefinitions extension point.  
-	 * Note this will be rolled into initializeColors() at some point.
-	 * 
-	 * @since 3.0
-	 */
-	private void initializeApplicationColors() {
-		IPreferenceStore store = getPreferenceStore();
-		ColorRegistry registry = JFaceResources.getColorRegistry();
-
-		//Iterate through the definitions and initialize thier
-		//defaults in the preference store.
-		ColorDefinition[] definitions = ColorDefinition.getDefinitions();
-		ArrayList colorsToSet = new ArrayList();
-
-		for (int i = 0; i < definitions.length; i++) {
-			ColorDefinition definition = definitions[i];
-			installColor(definition, registry, store);			
-		}
-
-		// post-process the defaults to allow for out-of-order specification.
-		for (int i = 0; i < definitions.length; i++) {
-			ColorDefinition definition = definitions[i];
-			String defaultsTo = definition.getDefaultsTo();		
-			if (defaultsTo != null 
-					&& PreferenceConverter.getDefaultColor(store, definition.getId()) == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
-				PreferenceConverter.setDefault(
-						store,
-						definition.getId(),
-						PreferenceConverter.getColor(store, defaultsTo));
-	
-				//If there is no value in the registry pass though the mapping
-				if (!registry.hasValueFor(definition.getId())) {
-					colorsToSet.add(definition);
-				}
-			}
-		}
-
-		/*
-		 * Now that all of the colors have been initialized anything that is
-		 * still at its defaults and has a defaults to needs to have its value
-		 * set in the registry. Post process to be sure that all of the colors
-		 * have the correct setting before there is an update.
-		 */
-		Iterator updateIterator = colorsToSet.iterator();
-		while (updateIterator.hasNext()) {
-			ColorDefinition update = (ColorDefinition) updateIterator.next();
-			RGB rgb = registry.getRGB(update.getDefaultsTo());
-			if (rgb != null) // dont add colors whos dependencies are missing.
-				registry.put(update.getId(), rgb);
-		}
-	}
-
-	/**
-	 * Installs the given color in the color registry.
-	 * 
-	 * @param definition the color definition 
-	 * @param registry the color registry 
-	 * @param store the preference store from which to obtain color data
-	 */
-	private void installColor(ColorDefinition definition, ColorRegistry registry, IPreferenceStore store) {		
-		RGB color = PreferenceConverter.getColor(store, definition.getId());
-		if (color == PreferenceConverter.COLOR_DEFAULT_DEFAULT) { // process RGB if no good value is set.
-			color = StringConverter.asRGB(definition.getValue(), null);
-			
-			if (color != null) {
-				PreferenceConverter.setDefault(
-						store,
-						definition.getId(),
-						color);
-			}			
-		}
-		
-		if (color != null) {
-			registry.put(definition.getId(), color);
-		}
-	}
-	
 
 	private void initializeSingleClickOption() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();

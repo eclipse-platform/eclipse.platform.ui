@@ -14,18 +14,21 @@ package org.eclipse.ui.keys;
 import java.util.Comparator;
 
 /**
- * Formats the keys in the internal key sequence grammar. This is used for
- * persistence, and is not really intended for display to the user.
- * 
- * @since 3.0
+ * TODO javadoc
  */
 public class FormalKeyFormatter extends AbstractKeyFormatter {
 
 	/**
-	 * A comparator that guarantees that modifier keys will be sorted the same
+	 * A comparator that guarantees that modifier keys will be sorted the same 
 	 * across different platforms.
 	 */
-	private static final Comparator FORMAL_MODIFIER_KEY_COMPARATOR = new AlphabeticModifierKeyComparator();
+	private static final Comparator FORMAL_MODIFIER_KEY_COMPARATOR = new Comparator() {
+		public int compare(Object left, Object right) {
+			ModifierKey modifierKeyLeft = (ModifierKey) left;
+			ModifierKey modifierKeyRight = (ModifierKey) right;
+			return modifierKeyLeft.name.compareTo(modifierKeyRight.name);
+		}
+	};
 
 	/*
 	 * (non-Javadoc)

@@ -44,7 +44,7 @@ import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.SWTKeySupport;
+import org.eclipse.ui.keys.KeySupport;
 
 
 /**
@@ -118,8 +118,8 @@ public class CyclePartAction extends PageEventAction {
 			public void keyPressed(KeyEvent e) {
 				int keyCode = e.keyCode;
 				char character = e.character;
-				int accelerator = SWTKeySupport.convertEventToUnmodifiedAccelerator(e);
-				KeyStroke keyStroke = SWTKeySupport.convertAcceleratorToKeyStroke(accelerator);
+				int accelerator = KeySupport.convertEventToUnmodifiedAccelerator(e);
+				KeyStroke keyStroke = KeySupport.convertAcceleratorToKeyStroke(accelerator);
 
 				//System.out.println("\nPRESSED");
 				//printKeyEvent(e);
