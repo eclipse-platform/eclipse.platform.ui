@@ -18,6 +18,7 @@ import org.eclipse.ui.internal.ReopenEditorMenu;
 import org.eclipse.ui.internal.ShowInMenu;
 import org.eclipse.ui.internal.ShowViewMenu;
 import org.eclipse.ui.internal.SwitchToWindowMenu;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.actions.PinEditorContributionItem;
 
 /**
@@ -129,6 +130,8 @@ public abstract class ContributionItemFactory {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
+			// indicate that a show views submenu has been created
+		   ((WorkbenchWindow)window).addSubmenu(WorkbenchWindow.SHOW_VIEW_SUBMENU);
 			IContributionItem item = new ShowViewMenu(window, getId());
 			return item;
 		}
@@ -184,6 +187,8 @@ public abstract class ContributionItemFactory {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
+			// indicate that a open perspectives submenu has been created
+			((WorkbenchWindow)window).addSubmenu(WorkbenchWindow.OPEN_PERSPECTIVE_SUBMENU);
 			IContributionItem item = new ChangeToPerspectiveMenu(window, getId());
 			return item;
 		}

@@ -131,7 +131,15 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private Label noOpenPerspective;
 	private Rectangle normalBounds;
 	private boolean asMaximizedState = false;
-
+	
+	/**
+	 * Bit flags indication which submenus (New, Show Views, ...) this
+	 * window contains. Initially none.
+	 * 
+	 * @since 3.0
+	 */
+	private int submenus = 0x00;
+	
 	/**
 	 * Object for configuring this workbench window. Lazily initialized to
 	 * an instance unique to this window.
@@ -150,6 +158,63 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	static final int CLIENT_INSET = 3;
 	static final int BAR_SIZE = 23;
 
+	/**
+	 * Constant (bit mask) indicating which the Show View submenu is
+	 * probably present somewhere in this window.
+	 * 
+	 * @see #addSubmenu
+	 * @since 3.0
+	 */
+	public static final int SHOW_VIEW_SUBMENU = 0x01;
+
+	/**
+	 * Constant (bit mask) indicating which the Open Perspective submenu is
+	 * probably present somewhere in this window.
+	 * 
+	 * @see #addSubmenu
+	 * @since 3.0
+	 */
+	public static final int OPEN_PERSPECTIVE_SUBMENU = 0x02;
+
+	/**
+	 * Constant (bit mask) indicating which the New Wizard submenu is
+	 * probably present somewhere in this window.
+	 * 
+	 * @see #addSubmenu
+	 * @since 3.0
+	 */
+	public static final int NEW_WIZARD_SUBMENU = 0x04;
+	
+	/**
+	 * Remembers that this window contains the given submenu.
+	 * 
+	 * @param type the type of submenu, one of: 
+	 * {@link #NEW_WIZARD_SUBMENU NEW_WIZARD_SUBMENU},
+	 * {@link #OPEN_PERSPECTIVE_SUBMENU OPEN_PERSPECTIVE_SUBMENU},
+	 * {@link #SHOW_VIEW_SUBMENU SHOW_VIEW_SUBMENU}
+	 * @see #containsSubmenu
+	 * @since 3.0
+	 */
+	public void addSubmenu(int type) {
+		submenus |= type;
+	}
+	
+	/**
+	 * Checks to see if this window contains the given type of submenu.
+	 * 
+	 * @param type the type of submenu, one of: 
+	 * {@link #NEW_WIZARD_SUBMENU NEW_WIZARD_SUBMENU},
+	 * {@link #OPEN_PERSPECTIVE_SUBMENU OPEN_PERSPECTIVE_SUBMENU},
+	 * {@link #SHOW_VIEW_SUBMENU SHOW_VIEW_SUBMENU}
+	 * @return <code>true</code> if window contains submenu,
+	 * <code>false</code> otherwise
+	 * @see #addSubmenu
+	 * @since 3.0
+	 */
+	public boolean containsSubmenu(int type) {
+		return ((submenus & type) != 0);
+	}
+	
 	/**
 	 * Constant indicating that all the actions bars should be
 	 * filled.

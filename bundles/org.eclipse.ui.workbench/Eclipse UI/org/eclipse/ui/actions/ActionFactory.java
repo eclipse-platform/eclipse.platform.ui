@@ -42,6 +42,7 @@ import org.eclipse.ui.internal.ToggleEditorsVisibilityAction;
 import org.eclipse.ui.internal.WorkbenchEditorsAction;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * Access to standard actions provided by the workbench.
@@ -1137,6 +1138,8 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new NewWizardAction(window);
 			action.setId(getId());
+			// indicate that a open perspectives submenu has been created
+ 		    ((WorkbenchWindow)window).addSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU);
 			return action;
 		}
 	};

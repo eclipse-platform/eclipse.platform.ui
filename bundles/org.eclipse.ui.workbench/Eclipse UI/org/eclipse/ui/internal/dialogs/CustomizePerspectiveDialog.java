@@ -586,7 +586,12 @@ public CustomizePerspectiveDialog(Shell parentShell, Perspective persp) {
 	initializeShortcutMenuInput();
 }
 
-private void addListeners() {
+/**
+ * Adds listeners for the Commands tab.
+ * 
+ * @since 3.0
+ */
+private void addActionSetsListeners() {
 	tabFolder.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent event) {
 			handleTabSelected(event);
@@ -615,6 +620,14 @@ private void addListeners() {
 		}
 		public void keyReleased(KeyEvent e) {}
 	});
+}
+
+/**
+ * Adds listeners for the Shortcuts tab.
+ * 
+ * @since 3.0
+ */
+private void addShortcutListeners() {
 	menusCombo.addSelectionListener(new SelectionListener() {
 		public void widgetDefaultSelected(SelectionEvent e) {
 			// do nothing
@@ -644,6 +657,7 @@ private void addListeners() {
 		}
 	});
 }
+
 private void buildMenusAndToolbarsFor (ActionSetDescriptor actionSetDesc) {
 	String id = actionSetDesc.getId();
 	ActionSetActionBars bars = new ActionSetActionBars(customizeWorkbenchActionBars, id);
@@ -677,7 +691,9 @@ private void checkInitialMenuCategorySelections(ShortcutMenu menu) {
 	}
 }
 public boolean close() {
-	lastSelectedMenuIndex = menusCombo.getSelectionIndex();
+	if (showShortcutTab()) {
+		lastSelectedMenuIndex = menusCombo.getSelectionIndex();
+	}
 	lastSelectedTab = tabFolder.getSelectionIndex();
 	StructuredSelection selection = (StructuredSelection)actionSetsViewer.getSelection();
 	if (selection.isEmpty()) lastSelectedActionSetId = null;
@@ -810,30 +826,51 @@ private Composite createActionSetsPage(Composite parent) {
 
 	return actionSetsComposite;
 }
+/**
+ * Returns whether the shortcut tab should be shown.
+ * 
+ * @return <code>true</code> if the shortcut tab should be shown,
+ * and <code>false</code> otherwise
+ * @since 3.0
+ */
+private boolean showShortcutTab() {
+	return window.containsSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU)
+			|| window.containsSubmenu(WorkbenchWindow.OPEN_PERSPECTIVE_SUBMENU)
+			|| window.containsSubmenu(WorkbenchWindow.SHOW_VIEW_SUBMENU);
+}
+
+
 protected Control createDialogArea(Composite parent) {
 	Composite composite = (Composite)super.createDialogArea(parent);
 	
+	// tab folder
 	tabFolder = new TabFolder(composite, SWT.NONE);
 	GridData gd = new GridData(GridData.FILL_BOTH);
 	tabFolder.setLayoutData(gd);
 	
+	// Shortcuts tab
+	if (showShortcutTab()) {	
+		TabItem item1 = new TabItem(tabFolder, SWT.NONE);
+		item1.setText(WorkbenchMessages.getString("ActionSetSelection.menuTab")); //$NON-NLS-1$
+		item1.setControl(createMenusPage(tabFolder));
+		addShortcutListeners();
+		ArrayList children = rootMenu.getChildren();
+		String[] itemNames = new String[children.size()];
+		for (int i=0; i<children.size(); i++) {
+			itemNames[i]=((ShortcutMenu)children.get(i)).label;
+		}
+		menusCombo.setItems(itemNames);
+	}
+	
+	// Commands tab
 	TabItem item = new TabItem(tabFolder, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("ActionSetSelection.menuTab")); //$NON-NLS-1$
-	item.setControl(createMenusPage(tabFolder));
-
-	item = new TabItem(tabFolder, SWT.NONE);
 	item.setText(WorkbenchMessages.getString("ActionSetSelection.actionSetsTab")); //$NON-NLS-1$
 	item.setControl(createActionSetsPage(tabFolder));
-		
-	addListeners();
+	addActionSetsListeners();
 	actionSetsViewer.setInput(actionSets);
 	checkInitialActionSetSelections();
-	ArrayList children = rootMenu.getChildren();
-	String[] itemNames = new String[children.size()];
-	for (int i=0; i<children.size(); i++) {
-		itemNames[i]=((ShortcutMenu)children.get(i)).label;
-	}
-	menusCombo.setItems(itemNames);
+	
+	// now that both tabs are set up, initialize selections
 	setInitialSelections();
 
 	return composite;
@@ -1180,60 +1217,72 @@ private void initializeShortCutMenu(ShortcutMenu menu, WizardCollectionElement e
 }
 private void initializeShortcutMenuInput() {
 	rootMenu = new ShortcutMenu(null, "Root", ""); //$NON-NLS-1$ //$NON-NLS-2$
-	ShortcutMenu wizardMenu = new ShortcutMenu(rootMenu, ShortcutMenu.ID_WIZARD, WorkbenchMessages.getString("ActionSetDialogInput.wizardCategory")); //$NON-NLS-1$
-	NewWizardsRegistryReader rdr = new NewWizardsRegistryReader();
-	WizardCollectionElement wizardCollection = rdr.getWizardElements();
+	ArrayList activeIds;
 	
-	// @issue should not pass in null
-	Object [] wizardCategories = wizardCollection.getChildren(null);
-	ArrayList activeIds = perspective.getNewWizardActionIds();
-	for (int i = 0; i < wizardCategories.length; i ++) {
-		WizardCollectionElement element = (WizardCollectionElement)wizardCategories[i];
-		initializeShortCutMenu(wizardMenu, element, activeIds);
+	if (window.containsSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU)) {	
+		ShortcutMenu wizardMenu = new ShortcutMenu(rootMenu, ShortcutMenu.ID_WIZARD, WorkbenchMessages.getString("ActionSetDialogInput.wizardCategory")); //$NON-NLS-1$
+		NewWizardsRegistryReader rdr = new NewWizardsRegistryReader();
+		WizardCollectionElement wizardCollection = rdr.getWizardElements();
+		
+		// @issue should not pass in null
+		Object [] wizardCategories = wizardCollection.getChildren(null);
+		activeIds = perspective.getNewWizardActionIds();
+		for (int i = 0; i < wizardCategories.length; i ++) {
+			WizardCollectionElement element = (WizardCollectionElement)wizardCategories[i];
+			initializeShortCutMenu(wizardMenu, element, activeIds);
+		}
 	}
-
-	ShortcutMenu perspMenu = new ShortcutMenu(rootMenu, ShortcutMenu.ID_PERSP, WorkbenchMessages.getString("ActionSetDialogInput.perspectiveCategory")); //$NON-NLS-1$
-	IPerspectiveRegistry perspReg = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
-	IPerspectiveDescriptor [] persps = perspReg.getPerspectives();
-	for (int i = 0; i < persps.length; i ++) {
-		perspMenu.addItem(persps[i]);
+	
+	if (window.containsSubmenu(WorkbenchWindow.OPEN_PERSPECTIVE_SUBMENU)) {
+		ShortcutMenu perspMenu = new ShortcutMenu(rootMenu, ShortcutMenu.ID_PERSP, WorkbenchMessages.getString("ActionSetDialogInput.perspectiveCategory")); //$NON-NLS-1$
+		IPerspectiveRegistry perspReg = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
+		IPerspectiveDescriptor [] persps = perspReg.getPerspectives();
+		for (int i = 0; i < persps.length; i ++) {
+			perspMenu.addItem(persps[i]);
+		}
+		activeIds = perspective.getPerspectiveActionIds();
+		for (int i = 0; i < activeIds.size(); i++) {
+			String id = (String)activeIds.get(i);
+			Object item = perspMenu.getItem(id);
+			if (item != null) perspMenu.addCheckedItem(item);
+		}
 	}
-	activeIds = perspective.getPerspectiveActionIds();
-	for (int i = 0; i < activeIds.size(); i++) {
-		String id = (String)activeIds.get(i);
-		Object item = perspMenu.getItem(id);
-		if (item != null) perspMenu.addCheckedItem(item);
-	}
-
-	ShortcutMenu viewMenu = new ShortcutMenu(rootMenu, ShortcutMenu.ID_VIEW, WorkbenchMessages.getString("ActionSetDialogInput.viewCategory")); //$NON-NLS-1$
-	IViewRegistry viewReg = WorkbenchPlugin.getDefault().getViewRegistry();
-	Category[] categories = viewReg.getCategories();
-	activeIds = perspective.getShowViewActionIds();
-	for (int i=0; i<categories.length; i++) {
-		Category category = categories[i];
-		ShortcutMenu viewCategory = new ShortcutMenu(viewMenu, category.getId(), category.getLabel());
-		ArrayList views = category.getElements();
-		if (views != null) {
-			for (int j=0; j<views.size(); j++) {
-				IViewDescriptor view = (IViewDescriptor)views.get(j);
-				viewCategory.addItem(view);
-				if (activeIds.contains(view.getId())) viewCategory.addCheckedItem(view);
+	
+	if (window.containsSubmenu(WorkbenchWindow.SHOW_VIEW_SUBMENU)) {
+		ShortcutMenu viewMenu = new ShortcutMenu(rootMenu, ShortcutMenu.ID_VIEW, WorkbenchMessages.getString("ActionSetDialogInput.viewCategory")); //$NON-NLS-1$
+		IViewRegistry viewReg = WorkbenchPlugin.getDefault().getViewRegistry();
+		Category[] categories = viewReg.getCategories();
+		activeIds = perspective.getShowViewActionIds();
+		for (int i=0; i<categories.length; i++) {
+			Category category = categories[i];
+			ShortcutMenu viewCategory = new ShortcutMenu(viewMenu, category.getId(), category.getLabel());
+			ArrayList views = category.getElements();
+			if (views != null) {
+				for (int j=0; j<views.size(); j++) {
+					IViewDescriptor view = (IViewDescriptor)views.get(j);
+					viewCategory.addItem(view);
+					if (activeIds.contains(view.getId())) viewCategory.addCheckedItem(view);
+				}
 			}
 		}
 	}
+	
 }
 protected void okPressed() {
-	ArrayList menus = rootMenu.children;
-	for (int i=0; i < menus.size(); i++) {
-		ShortcutMenu menu = (ShortcutMenu)menus.get(i);
-		if (menu.id == ShortcutMenu.ID_VIEW) {
-			perspective.setShowViewActionIds(menu.getCheckedItemIds());
-		} else if (menu.id == ShortcutMenu.ID_PERSP) {
-			perspective.setPerspectiveActionIds(menu.getCheckedItemIds());
-		} else if (menu.id == ShortcutMenu.ID_WIZARD) {
-			perspective.setNewWizardActionIds(menu.getCheckedItemIds());
+	if (showShortcutTab()) {
+		ArrayList menus = rootMenu.children;
+		for (int i=0; i < menus.size(); i++) {
+			ShortcutMenu menu = (ShortcutMenu)menus.get(i);
+			if (ShortcutMenu.ID_VIEW.equals(menu.id)) {
+				perspective.setShowViewActionIds(menu.getCheckedItemIds());
+			} else if (ShortcutMenu.ID_PERSP.equals(menu.id)) {
+				perspective.setPerspectiveActionIds(menu.getCheckedItemIds());
+			} else if (ShortcutMenu.ID_WIZARD.equals(menu.id)) {
+				perspective.setNewWizardActionIds(menu.getCheckedItemIds());
+			}
 		}
 	}
+	
 	ArrayList actionSetList = new ArrayList();
 	Object[] selected = actionSetsViewer.getCheckedElements();
 	for (int i = 0; i < selected.length; i ++) {
@@ -1324,17 +1373,21 @@ private void setInitialSelections() {
 	StructuredSelection sel = new StructuredSelection(item);
 	actionSetsViewer.setSelection(sel, true);
 	
-	menusCombo.select(lastSelectedMenuIndex);
-
+	if (showShortcutTab()) {
+		menusCombo.select(lastSelectedMenuIndex);
+	}
+	
 	if (lastSelectedTab != -1) {
 		tabFolder.setSelection(lastSelectedTab);
 	}
-	if (tabFolder.getSelectionIndex() == 0) {
+	
+	if ((tabFolder.getSelectionIndex() == 0) && showShortcutTab()) {
 		menusCombo.setFocus();
 	} else {
 		actionSetsViewer.getControl().setFocus();
 	}
 }
+
 private void updateMenuCategoryCheckedState(ShortcutMenu menu) {
 	if (menu == rootMenu) return;
 	if (menu.isFullyChecked()) {
