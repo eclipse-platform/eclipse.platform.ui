@@ -163,8 +163,9 @@ public class EncodingChangeTests extends TestCase {
 				ITextFileBuffer fileBuffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath());
 				DefaultEncodingSupport encodingSupport= (DefaultEncodingSupport)editor.getAdapter(IEncodingSupport.class);
 				String expected= encodingSupport.getStatusMessage(fileBuffer.getStatus());
-				ScrolledComposite composite= (ScrolledComposite)accessor.get("fStatusControl");
-				Label statusText= (Label)((Composite)composite.getContent()).getChildren()[5];
+				Composite composite= (Composite)accessor.get("fStatusControl");
+				ScrolledComposite scrolledComposite= (ScrolledComposite)composite.getChildren()[0];
+				Label statusText= (Label)((Composite)scrolledComposite.getContent()).getChildren()[5];
 				String actual= statusText.getText();
 				assertEquals(expected, actual);
 			} else
