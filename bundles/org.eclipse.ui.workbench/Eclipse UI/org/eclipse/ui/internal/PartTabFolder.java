@@ -356,6 +356,10 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		// do not support close box on unselected tabs.
 		tabFolder.setUnselectedCloseVisible(false);
 		
+		// do not support icons in unselected tabs.
+		tabFolder.setUnselectedImageVisible(false);
+		
+		
 		//tabFolder.setBorderVisible(true);
 		// set basic colors
 		ColorSchemeService.setTabColors(tabFolder);
