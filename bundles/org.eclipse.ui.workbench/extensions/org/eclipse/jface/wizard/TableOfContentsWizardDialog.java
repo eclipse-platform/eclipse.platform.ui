@@ -59,4 +59,13 @@ public class TableOfContentsWizardDialog extends WizardDialog {
 
 	
 
+	/**
+	 * @see org.eclipse.jface.wizard.IWizardContainer#updateButtons()
+	 */
+	public void updateButtons() {
+		super.updateButtons();
+		//Now also check for the page
+		tocArea.updateFor(getCurrentPage());
+	}
+
 }

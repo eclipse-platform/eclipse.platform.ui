@@ -152,6 +152,8 @@ class TableOfContentsArea {
 				nodes[i].setEnabled(checkNode.getPage().canFlipToNextPage());
 				checkNode = nodes[i];
 			}
+			if(canvas != null)
+				canvas.redraw();
 		}
 	}
 
