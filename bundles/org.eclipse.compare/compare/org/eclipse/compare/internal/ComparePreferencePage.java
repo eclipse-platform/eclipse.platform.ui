@@ -10,23 +10,26 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import java.util.*;
 import java.io.*;
+import java.text.MessageFormat;
+import java.util.*;
 
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.util.*;
-
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
@@ -70,6 +73,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	//public static final String USE_SPLINES= PREFIX + "UseSplines"; //$NON-NLS-1$
 	public static final String USE_SINGLE_LINE= PREFIX + "UseSingleLine"; //$NON-NLS-1$
 	//public static final String USE_RESOLVE_UI= PREFIX + "UseResolveUI"; //$NON-NLS-1$
+	public static final String PATH_FILTER= PREFIX + "PathFilter"; //$NON-NLS-1$
 	
 	
 	private TextMergeViewer fPreviewViewer;
@@ -95,6 +99,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_SPLINES),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_SINGLE_LINE),
 		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_RESOLVE_UI),
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PATH_FILTER),
 	};
 	
 	
@@ -109,6 +114,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		//store.setDefault(USE_SPLINES, false);
 		store.setDefault(USE_SINGLE_LINE, true);
 		//store.setDefault(USE_RESOLVE_UI, false);
+		store.setDefault(PATH_FILTER, ""); //$NON-NLS-1$
 		
 		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
 	}
@@ -229,6 +235,36 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		new Label(composite, SWT.NONE);
 
 		addCheckBox(composite, "ComparePreferencePage.saveBeforePatching.label", PREF_SAVE_ALL_EDITORS, 0);	//$NON-NLS-1$
+
+		// a spacer
+		new Label(composite, SWT.NONE);
+		
+		Label l= new Label(composite, SWT.WRAP);
+		l.setText(Utilities.getString("ComparePreferencePage.filter.description")); //$NON-NLS-1$
+		
+		Composite c2= new Composite(composite, SWT.NONE);
+		c2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		layout= new GridLayout(2, false);
+		c2.setLayout(layout);
+		
+		l= new Label(c2, SWT.NONE);
+		l.setText(Utilities.getString("ComparePreferencePage.filter.label")); //$NON-NLS-1$
+		
+		final Text t= new Text(c2, SWT.BORDER);
+		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		t.setText(fOverlayStore.getString(PATH_FILTER));
+		t.addModifyListener(
+			new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					String filters= t.getText();
+					String message= validateResourceFilters(filters);
+					setValid(message == null);
+					setMessage(null);
+					setErrorMessage(message);
+					fOverlayStore.setValue(PATH_FILTER, filters);
+				}
+			}
+		);
 		
 		return composite;
 	}
@@ -304,6 +340,35 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 			b.setSelection(fOverlayStore.getBoolean(key));
 		}
 	}
+
+	private String validateResourceFilters(String text) {
+		IWorkspace workspace= ResourcesPlugin.getWorkspace();
+		String[] filters= getTokens(text, ","); //$NON-NLS-1$
+		for (int i= 0; i < filters.length; i++) {
+			String fileName= filters[i].replace('*', 'x');
+			int resourceType= IResource.FILE;
+			int lastCharacter= fileName.length() - 1;
+			if (lastCharacter >= 0 && fileName.charAt(lastCharacter) == '/') {
+				fileName= fileName.substring(0, lastCharacter);
+				resourceType= IResource.FOLDER;
+			}
+			IStatus status= workspace.validateName(fileName, resourceType);
+			if (status.matches(IStatus.ERROR)) {		
+				String format= Utilities.getString("ComparePreferencePage.filter.invalidsegment.error"); //$NON-NLS-1$
+				return MessageFormat.format(format, new String[] { status.getMessage() } );
+			}
+		}
+		return null;
+	}
+	
+	private static String[] getTokens(String text, String separator) {
+		StringTokenizer tok= new StringTokenizer(text, separator); //$NON-NLS-1$
+		int nTokens= tok.countTokens();
+		String[] res= new String[nTokens];
+		for (int i= 0; i < res.length; i++)
+			res[i]= tok.nextToken().trim();
+		return res;
+	}	
 
 	// overlay stuff
 	

@@ -10,30 +10,29 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.MalformedURLException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.net.*;
 import java.util.*;
+import java.util.List;
 
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.*;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.*;
+
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.*;
+
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.Viewer;
+
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.*;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 
 /**
@@ -97,6 +96,8 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	private static ResourceBundle fgResourceBundle;
 
 	private static CompareUIPlugin fgComparePlugin;
+	
+	private Filter fFilter;
 
 	/**
 	 * Creates the <code>CompareUIPlugin</code> object and registers all
@@ -280,6 +281,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			}
 			ps.setValue(STRUCTUREVIEWER_ALIASES_PREFERENCE_NAME, sb.toString());
 		}
+		fFilter.dispose();
 		
 		super.shutdown();
 		
@@ -831,7 +833,8 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 					}
 				}
 			}
-		}		
+			fFilter= new Filter(ps);
+		}
 	}
 	
 	public static void addStructureViewerAlias(String type, String alias) {
@@ -887,5 +890,10 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	
 	public static String getPluginId() {
 		return getDefault().getDescriptor().getUniqueIdentifier();
+	}
+
+	public static boolean filter(String name, boolean isFolder, boolean isArchive) {
+		Filter f= getDefault().fFilter;
+		return f.filter(name, isFolder, isArchive);
 	}
 }

@@ -10,20 +10,16 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import java.text.MessageFormat;
 import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.swt.widgets.Composite;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
+import java.text.MessageFormat;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+
+import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.*;
@@ -81,6 +77,18 @@ class ResourceCompareInput extends CompareEditorInput {
 				return fLastId;
 			fLastId= id;
 			return id;
+		}
+	}
+	
+	static class FilteredBufferedResourceNode extends BufferedResourceNode {
+		FilteredBufferedResourceNode(IResource resource) {
+			super(resource);
+		}
+		protected IStructureComparator createChild(IResource child) {
+			String name= child.getName();
+			if (CompareUIPlugin.filter(name, child instanceof IContainer, false))
+				return null;
+			return new FilteredBufferedResourceNode(child);
 		}
 	}
 	
@@ -237,10 +245,10 @@ class ResourceCompareInput extends CompareEditorInput {
 	private IStructureComparator getStructure(IResource input) {
 		
 		if (input instanceof IContainer)
-			return new BufferedResourceNode(input);
+			return new FilteredBufferedResourceNode(input);
 			
 		if (input instanceof IFile) {
-			IStructureComparator rn= new BufferedResourceNode(input);
+			IStructureComparator rn= new FilteredBufferedResourceNode(input);
 			IFile file= (IFile) input;
 			String type= normalizeCase(file.getFileExtension());
 			if ("JAR".equals(type) || "ZIP".equals(type)) //$NON-NLS-2$ //$NON-NLS-1$
