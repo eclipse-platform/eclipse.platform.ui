@@ -32,12 +32,14 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * This class can be used to merge the TaskDescriptions xml
- * file containing information if attributes are required or not.
+ * This class can be used to merge the tasks.xml and XDOCtasks.xml.
+ * These files can be found in the Ant Editor Content Assist Dev folder.
+ * Move the files to the Ant Editor folder to use this class.
+ * 
  * The xml automatically generated from the proposed xdoclet in the Apache Ant's
- * project currently has no such information. In the future the task writers
- * hopefully will include this information in the surce code comments. Our
- * template currently inserts an attriubte required="NOTDEFINED" and this class
+ * project currently has no information on required attributes. In the future the task writers
+ * hopefully will include this information in the source code comments. Our
+ * template currently inserts an attribute required="NOTDEFINED" and this class
  * replaces that field if its defined in the xml file we have generated from the
  * information based on the html files in the Apache Ant's manual directory.
  */
