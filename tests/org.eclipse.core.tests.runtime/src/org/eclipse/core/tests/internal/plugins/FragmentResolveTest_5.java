@@ -11,14 +11,13 @@
 package org.eclipse.core.tests.internal.plugins;
 
 import java.net.URL;
-import junit.framework.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.internal.plugins.InternalFactory;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.internal.plugins.*;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
-import org.eclipse.core.tests.harness.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.PluginDescriptorModel;
+import org.eclipse.core.runtime.model.PluginFragmentModel;
+import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class FragmentResolveTest_5 extends EclipseWorkspaceTest {
 public FragmentResolveTest_5() {

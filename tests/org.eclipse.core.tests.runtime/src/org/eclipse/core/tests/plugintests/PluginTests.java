@@ -10,15 +10,17 @@
  ******************************************************************************/
 package org.eclipse.core.tests.plugintests;
 
-import org.eclipse.core.resources.*;
+import java.io.*;
+import java.util.MissingResourceException;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.internal.plugins.*;
+import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.internal.runtime.*;
-import org.eclipse.core.internal.plugins.*;
-import org.eclipse.core.tests.harness.*;
-import java.io.*;
-import java.util.MissingResourceException;import junit.framework.*;
-import org.xml.sax.*;
+import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXParseException;
 
 public class PluginTests extends EclipseWorkspaceTest {
 	PluginDescriptor plugin = null;

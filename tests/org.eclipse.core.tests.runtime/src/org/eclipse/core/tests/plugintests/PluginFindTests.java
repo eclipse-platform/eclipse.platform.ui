@@ -14,15 +14,11 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
-
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.boot.InternalBootLoader;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.SafeFileInputStream;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.PluginFragmentModel;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;

@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.core.tests.internal.plugins;
 
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.core.internal.runtime.*;

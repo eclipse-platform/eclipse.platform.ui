@@ -10,16 +10,16 @@
  ******************************************************************************/
 package org.eclipse.core.tests.internal.plugins;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.internal.runtime.*;
-import org.eclipse.core.internal.plugins.*;
-import org.eclipse.core.tests.harness.*;
-import java.io.*;
 import java.net.URL;
-import junit.framework.*;
-import org.xml.sax.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.internal.plugins.InternalFactory;
+import org.eclipse.core.internal.plugins.PluginDescriptor;
+import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.PluginDescriptorModel;
+import org.eclipse.core.runtime.model.PluginPrerequisiteModel;
+import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class ExtensiveRequiresTest extends EclipseWorkspaceTest {
 

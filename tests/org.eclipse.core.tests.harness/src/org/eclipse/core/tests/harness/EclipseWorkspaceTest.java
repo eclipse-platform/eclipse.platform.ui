@@ -308,7 +308,7 @@ private IPath computeDefaultLocation(IResource target) {
 			return location;
 	}
 }
-private void create(final IResource resource, boolean local) throws CoreException {
+protected void create(final IResource resource, boolean local) throws CoreException {
 	if (resource == null || resource.exists())
 		return;
 	if (!resource.getParent().exists())

@@ -15,7 +15,6 @@ import junit.framework.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.plugins.InternalFactory;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
-import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 /**
  */

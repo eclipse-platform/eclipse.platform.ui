@@ -10,17 +10,11 @@ package org.eclipse.core.tests.plugintests;
  * Contributors:
  *     IBM Corporation - initial test suite
  ******************************************************************************/
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.SafeFileInputStream;
-import org.eclipse.core.internal.runtime.SafeFileOutputStream;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.WorkspaceSessionTest;
+
 
 public class CmdLineAndPluginLocalAndPrimaryFeatureTest extends PrimaryFeaturePreferenceHelperTests {
 

@@ -21,12 +21,12 @@ package org.eclipse.core.tests.internal.plugins;
  * platform:platform/	maps to platform installation location
  */
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
-import junit.framework.*;
-import org.eclipse.core.internal.boot.*;
-import org.eclipse.core.tests.harness.*;
+import java.io.IOException;
+import java.net.URL;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.internal.boot.PlatformURLConnection;
+import org.eclipse.core.internal.boot.PlatformURLHandler;
 
 public class PlatformURLPerformanceTestConnection extends PlatformURLConnection {
 

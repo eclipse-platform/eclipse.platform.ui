@@ -10,11 +10,8 @@
  ******************************************************************************/
 package org.eclipse.core.tests.internal.plugins;
 
-import junit.framework.*;
-import java.net.URL;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.plugins.*;
-import org.eclipse.core.tests.harness.*;
+import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public abstract class PluginResolveTest extends EclipseWorkspaceTest {
 public PluginResolveTest() {

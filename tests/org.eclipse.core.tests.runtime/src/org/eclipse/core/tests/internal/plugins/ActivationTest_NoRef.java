@@ -57,7 +57,7 @@ public void testExtensionNoReferenceTest() {
 
 	// run the extension
 	try {
-		Object result = o.run(null);
+		o.run(null);
 	} catch (Exception e) {
 		fail("4.0");
 	}

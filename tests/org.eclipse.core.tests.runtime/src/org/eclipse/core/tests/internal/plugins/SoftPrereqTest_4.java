@@ -11,12 +11,12 @@
 package org.eclipse.core.tests.internal.plugins;
 
 import java.net.URL;
-import junit.framework.*;
-import org.eclipse.core.runtime.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.internal.plugins.InternalFactory;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
-import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.runtime.*;
 /**
  */
 public class SoftPrereqTest_4 extends PluginResolveTest {

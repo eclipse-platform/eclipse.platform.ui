@@ -10,19 +10,10 @@
  ******************************************************************************/
 package org.eclipse.core.tests.internal.plugins;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.*;
 import java.util.*;
-
-import org.eclipse.core.internal.boot.InternalBootLoader;
-import org.eclipse.core.internal.boot.PlatformURLConnection;
-import org.eclipse.core.internal.boot.PlatformURLHandler;
-import org.eclipse.core.internal.plugins.PluginDescriptor;
+import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;

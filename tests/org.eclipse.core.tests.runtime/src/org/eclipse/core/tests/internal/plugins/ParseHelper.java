@@ -10,9 +10,7 @@
  ******************************************************************************/
 package org.eclipse.core.tests.internal.plugins;
 
-import java.net.*;
-import org.eclipse.core.internal.plugins.InternalFactory;
-import org.eclipse.core.internal.runtime.Policy;
+import java.net.URL;
 import org.eclipse.core.internal.plugins.*;
 import org.eclipse.core.runtime.IStatus;
 public class ParseHelper extends PluginVersionTest {

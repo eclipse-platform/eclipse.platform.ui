@@ -10,18 +10,8 @@
  ******************************************************************************/
 package org.eclipse.core.tests.internal.plugins;
 
-import java.io.File;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.internal.plugins.PluginDescriptor;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.PlatformMetaArea;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.tests.harness.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 
 public class JarSearchTests extends WorkspaceSessionTest {
 	

@@ -12,8 +12,7 @@ package org.eclipse.core.tests.internal.plugins;
 
 import java.io.*;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 
 public class GetPluginPathTest extends WorkspaceSessionTest {

@@ -13,15 +13,11 @@ package org.eclipse.core.tests.plugintests;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.SafeFileInputStream;
-import org.eclipse.core.internal.runtime.SafeFileOutputStream;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.PluginFragmentModel;
-import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 
 public class PreferencesRuntimeTests extends PrimaryFeaturePreferenceHelperTests {
 	
