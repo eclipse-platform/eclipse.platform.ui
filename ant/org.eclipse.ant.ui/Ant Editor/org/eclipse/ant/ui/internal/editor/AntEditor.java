@@ -130,7 +130,7 @@ public class AntEditor extends TextEditor {
 		if (page == null) {
 			page= new AntEditorContentOutlinePage(XMLCore.getDefault());
 			page.addPostSelectionChangedListener(selectionChangedListener);
-			setOutlinePageInput(page, getEditorInput());
+			setOutlinePageInput(getEditorInput());
 		}
 		return page;
 	}
@@ -261,10 +261,10 @@ public class AntEditor extends TextEditor {
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
-		setOutlinePageInput(page, input);
+		setOutlinePageInput(input);
 	}
 
-	protected void setOutlinePageInput(AntEditorContentOutlinePage page, IEditorInput input) {
+	private void setOutlinePageInput(IEditorInput input) {
 		if (page != null) {
 			IDocumentProvider provider= getDocumentProvider();
 			if (provider instanceof AntEditorDocumentProvider) {
