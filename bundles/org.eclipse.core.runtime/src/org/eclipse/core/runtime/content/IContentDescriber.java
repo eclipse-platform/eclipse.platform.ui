@@ -20,6 +20,7 @@ import java.io.InputStream;
  * Clients may implement this interface.
  * </p>
  * <p>
+ * TODO: remove this note before 3.0 release
  * <b>Note</b>: This interface is part of early access API that may well 
  * change in incompatible ways until it reaches its finished form. 
  * </p>
@@ -32,14 +33,14 @@ public interface IContentDescriber {
 	 * Description result constant, indicating the contents are valid for 
 	 * the intended content type.
 	 * 
-	 * @see #describe
+	 * @see #describe(InputStream, IContentDescription, int)
 	 */
 	public final static int VALID = 0;
 	/**
 	 * Description result constant, indicating the contents are invalid for 
 	 * the intended content type.
 	 * 
-	 * @see #describe
+	 * @see #describe(InputStream, IContentDescription, int)
 	 */	
 	public final static int INVALID = 1;
 	/**
@@ -47,7 +48,7 @@ public interface IContentDescriber {
 	 * to determinate whether the contents were valid for 
 	 * the intended content type.
 	 * 
-	 * @see #describe
+	 * @see #describe(InputStream, IContentDescription, int)
 	 */	
 	public final static int INDETERMINATE = -1;	
 
@@ -86,7 +87,7 @@ public interface IContentDescriber {
 	 * Returns the options supported by this describer as a bit mask. 
 	 *   
 	 * @return the supported options
-	 * @see #describe
+	 * @see #describe(InputStream, IContentDescription, int)
 	 */
 	public int getSupportedOptions();
 }

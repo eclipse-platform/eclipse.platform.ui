@@ -20,6 +20,7 @@ import java.io.InputStream;
  * This interface is not intended to be implemented by clients.
  * </p>
  * <p> 
+ * TODO remove this before the 3.0 release
  * <b>Note</b>: This interface is part of early access API that may well 
  * change in incompatible ways until it reaches its finished form. 
  * </p>
@@ -59,17 +60,20 @@ public interface IContentTypeManager {
 	 * will flow to the caller.
 	 * </p> 
 	 * 
+	 * @param contents
+	 * @param fileName
 	 * @return the preferred content type associated to the given file name, or <code>null</code>
 	 */	
-	IContentType findContentTypeFor(InputStream contents, String fileName) throws IOException;
+	public IContentType findContentTypeFor(InputStream contents, String fileName) throws IOException;
 	/**
 	 * Returns the preferred content type for the given file name. If multiple content types 
 	 * are associated with the given file name, the one considered the most appropriated will
 	 * be returned. If there are no content types associated, <code>null</code> is returned.
 	 * 
+	 * @param fileName the name of the file
 	 * @return the preferred content type associated to the given file name, or <code>null</code>
 	 */
-	IContentType findContentTypeFor(String fileName);
+	public IContentType findContentTypeFor(String fileName);
 	/**
 	 * Returns the content types associated to the given contents and file name.
 	 * <p>
@@ -89,16 +93,17 @@ public interface IContentTypeManager {
 	 * @param fileName the file name associated to the contents, or <code>null</code> 
 	 * @return all content types associated to the given contents and file name
 	 */	
-	IContentType[] findContentTypesFor(InputStream contents, String fileName) throws IOException;	
+	public IContentType[] findContentTypesFor(InputStream contents, String fileName) throws IOException;	
 	/**
 	 * Returns all content types known by the platform that are associated to the given file name.
 	 * <p> 
 	 * Returns an empty array if there are no content types associated.
 	 * </p>
 	 * 
+	 * @param fileName the name of the file
 	 * @return all content types associated to the given file spec
 	 */
-	IContentType[] findContentTypesFor(String fileName);
+	public IContentType[] findContentTypesFor(String fileName);
 	/**
 	 * Returns all content types known by the platform. 
 	 * <p>
@@ -107,7 +112,7 @@ public interface IContentTypeManager {
 	 * 
 	 * @return all content types known by the platform.
 	 */
-	IContentType[] getAllContentTypes();
+	public IContentType[] getAllContentTypes();
 	/**
 	 * Returns the content type with the given identifier, or <code>null</code>
 	 * if no such content type is known by the platform.
@@ -115,7 +120,7 @@ public interface IContentTypeManager {
 	 * @param contentTypeIdentifier the identifier for the content type
 	 * @return the content type, or <code>null</code>
 	 */
-	IContentType getContentType(String contentTypeIdentifier);
+	public IContentType getContentType(String contentTypeIdentifier);
 	/**
 	 * Tries to obtain a description for the given contents and file name. 
 	 * <p>
@@ -134,5 +139,5 @@ public interface IContentTypeManager {
 	 * @return a content description if one could be obtained, or <code>null</code>
 	 * @see IContentDescription
 	 */
-	IContentDescription getDescriptionFor(InputStream contents, String fileName, int optionsMask) throws IOException;
+	public IContentDescription getDescriptionFor(InputStream contents, String fileName, int optionsMask) throws IOException;
 }

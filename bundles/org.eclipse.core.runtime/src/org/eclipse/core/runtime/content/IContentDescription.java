@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.QualifiedName;
  * This interface is not intended to be implemented by clients.
  * </p>
  * <p>
+ * TODO: remove this before the 3.0 release
  * <b>Note</b>: This interface is part of early access API that may well 
  * change in incompatible ways until it reaches its finished form. 
  * </p>

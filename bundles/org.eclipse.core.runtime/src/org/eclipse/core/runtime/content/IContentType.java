@@ -20,6 +20,7 @@ import java.io.InputStream;
  * This interface is not intended to be implemented by clients.
  * </p> 
  * <p>
+ * TODO: remove this before the 3.0 release
  * <b>Note</b>: This interface is part of early access API that may well 
  * change in incompatible ways until it reaches its finished form. 
  * </p>
@@ -108,8 +109,7 @@ public interface IContentType {
 	 * is a bit-wise or of file specification type constants indicating the 
 	 * file specification types of interest.
 	 * 
-	 * @param fileSpec the file specification
-	 * @param typeMask a bit-wise or of file specification type constants. Valid
+	 * @param type a bit-wise or of file specification type constants. Valid
 	 * flags are:
 	 *<ul>
 	 *<li>one of <code>FILE_EXTENSION_SPEC</code> or 
@@ -117,6 +117,7 @@ public interface IContentType {
 	 *<li>and optionally, one of <code>IGNORE_PRE_DEFINED</code>
 	 *or <code>IGNORE_USER_DEFINED</code></li>
 	 *</ul>
+	 * @return the file specification
 	 * @see #FILE_NAME_SPEC
 	 * @see #FILE_EXTENSION_SPEC
 	 * @see #IGNORE_PRE_DEFINED
@@ -140,6 +141,7 @@ public interface IContentType {
 	 * Returns whether this content type is associated with the 
 	 * given file name.
 	 * 
+	 * @param fileName the file name
 	 * @return <code>true</code> if this content type is associated with
 	 * the given file name, <code>false</code> otherwise 
 	 */
