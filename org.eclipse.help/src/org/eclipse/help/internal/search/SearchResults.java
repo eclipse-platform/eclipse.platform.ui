@@ -130,9 +130,9 @@ public class SearchResults implements ISearchHitCollector {
 			String s = (String)it.next();
 			WorkingSet ws = wsmgr.getWorkingSet(s);
 			if (ws != null) {
-				IHelpResource[] elements = ws.getElements();
+				AdaptableHelpResource[] elements = ws.getElements();
 				for (int i=0; i<elements.length; i++)
-					scopeTocs.add(elements[i]);
+					scopeTocs.add(elements[i].getAdapter(IHelpResource.class));
 			}
 			else {
 				IToc toc = tocmgr.getToc(s, locale);
