@@ -1004,6 +1004,10 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		if (!isAvailable()) {
+			return;
+		}
+		
 		if (selection == null) {
 			setViewerInput(new StructuredSelection());
 		} else if (selection instanceof IStructuredSelection) {

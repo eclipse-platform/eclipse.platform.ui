@@ -135,7 +135,9 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	public void selectionChanged(IAction action, ISelection s) {
 		boolean wasInitialized= initialize(action, s);		
 		if (!wasInitialized) {
-			update(action, s);
+			if (getView() != null) {
+				update(action, s);
+			}
 		}
 	}
 	
