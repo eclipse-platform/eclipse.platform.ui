@@ -88,7 +88,9 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 		if (ResourceInfo.isSet(flags, ICoreConstants.M_LINK)) {
 			//just clear local sync info
 			info = target.getResourceInfo(false, true);
-			info.clearModificationStamp();
+			//handle concurrent deletion
+			if (info != null)
+				info.clearModificationStamp();
 			return;
 		}
 		if (target.exists(flags, false))
