@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.progress;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-
 /**
  * The TaskInfo is the info on a task with a job. It is 
  * assumed that there is only one task running at a time -
@@ -61,6 +60,10 @@ public class TaskInfo extends SubTaskInfo {
 	 * @return String
 	 */
 	String getDisplayString() {
+		
+		if(totalWork == IProgressMonitor.UNKNOWN)
+			return unknownProgress();
+		
 		if (taskName == null) {
 			return getDisplayStringWithoutTask();
 		} else {
@@ -79,6 +82,9 @@ public class TaskInfo extends SubTaskInfo {
 	 */
 	public String getDisplayStringWithoutTask() {
 		
+		if(totalWork == IProgressMonitor.UNKNOWN)
+			return jobInfo.getJob().getName();
+		
 		String[] messageValues = new String[2];
 		messageValues[0] = jobInfo.getJob().getName();
 		messageValues[1] = String.valueOf(getPercentDone());
@@ -93,5 +99,20 @@ public class TaskInfo extends SubTaskInfo {
 		return (int) (preWork * 100 / totalWork);
 	}
 
+	/**
+	 * Return the progress for a monitor whose totalWork
+	 * is <code>IProgressMonitor.UNKNOWN</code>.
+	 * @return String
+	 */
+	private String unknownProgress(){
+		if (taskName == null) {
+			return jobInfo.getJob().getName();
+		} else {
+			String[] messageValues = new String[2];
+			messageValues[0] = jobInfo.getJob().getName();
+			messageValues[1] = taskName;			
+			return ProgressMessages.format("JobInfo.UnknownProgress", messageValues); //$NON-NLS-1$
+		}
+	}
 	
 }
