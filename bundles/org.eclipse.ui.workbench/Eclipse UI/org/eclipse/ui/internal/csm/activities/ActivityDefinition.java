@@ -20,12 +20,12 @@ import java.util.Set;
 
 import org.eclipse.ui.internal.util.Util;
 
-public final class ActivityDefinition implements Comparable, IActivityDefinition {
+final class ActivityDefinition implements Comparable, IActivityDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = ActivityDefinition.class.getName().hashCode();
 
-	public static Map activityDefinitionsById(Collection activityDefinitions, boolean allowNullIds) {
+	static Map activityDefinitionsById(Collection activityDefinitions, boolean allowNullIds) {
 		if (activityDefinitions == null)
 			throw new NullPointerException();
 
@@ -45,7 +45,7 @@ public final class ActivityDefinition implements Comparable, IActivityDefinition
 		return map;
 	}
 
-	public static Map activityDefinitionsByName(Collection activityDefinitions, boolean allowNullNames) {
+	static Map activityDefinitionsByName(Collection activityDefinitions, boolean allowNullNames) {
 		if (activityDefinitions == null)
 			throw new NullPointerException();
 
@@ -83,7 +83,7 @@ public final class ActivityDefinition implements Comparable, IActivityDefinition
 	private transient boolean hashCodeComputed;
 	private transient String string;
 	
-	public ActivityDefinition(String description, String id, String name, String parentId, String pluginId) {
+	ActivityDefinition(String description, String id, String name, String parentId, String pluginId) {
 		this.description = description;
 		this.id = id;
 		this.name = name;

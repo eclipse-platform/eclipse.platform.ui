@@ -21,6 +21,7 @@ abstract class AbstractActivityRegistry implements IActivityRegistry {
 	private List activityRegistryListeners;
 	
 	protected List activityDefinitions = Collections.EMPTY_LIST;
+	protected List patternBindingDefinitions = Collections.EMPTY_LIST;	
 	
 	protected AbstractActivityRegistry() {
 	}
@@ -39,6 +40,10 @@ abstract class AbstractActivityRegistry implements IActivityRegistry {
 	public List getActivityDefinitions() {
 		return activityDefinitions;
 	}
+
+	public List getPatternBindingDefinitions() {
+		return patternBindingDefinitions;
+	}	
 	
 	public void removeActivityRegistryListener(IActivityRegistryListener activityRegistryListener) {
 		if (activityRegistryListener == null)

@@ -39,7 +39,7 @@ final class PatternBinding implements IPatternBinding {
 		int compareTo = Util.compare(inclusive, patternBinding.inclusive);			
 		
 		if (compareTo == 0)			
-			compareTo = pattern.compareTo(patternBinding.pattern);
+			compareTo = Util.compare(pattern, patternBinding.pattern);
 		
 		return compareTo;	
 	}
@@ -50,8 +50,8 @@ final class PatternBinding implements IPatternBinding {
 
 		PatternBinding patternBinding = (PatternBinding) object;	
 		boolean equals = true;
-		equals &= inclusive == patternBinding.inclusive;
-		equals &= pattern.equals(patternBinding.pattern);
+		equals &= Util.equals(inclusive, patternBinding.inclusive);
+		equals &= Util.equals(pattern, patternBinding.pattern);
 		return equals;
 	}
 
@@ -67,7 +67,7 @@ final class PatternBinding implements IPatternBinding {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(inclusive);
-			hashCode = hashCode * HASH_FACTOR + pattern.hashCode();
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pattern);
 			hashCodeComputed = true;
 		}
 			

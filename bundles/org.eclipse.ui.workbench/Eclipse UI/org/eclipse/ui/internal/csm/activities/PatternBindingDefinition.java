@@ -13,13 +13,13 @@ package org.eclipse.ui.internal.csm.activities;
 
 import org.eclipse.ui.internal.util.Util;
 
-public final class PatternBindingDefinition implements IActivityPatternBindingDefinition {
+final class PatternBindingDefinition implements IPatternBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = PatternBindingDefinition.class.getName().hashCode();
 
 	private String activityId;
-	// TODO pattern is out of order
+	private boolean inclusive;
 	private String pattern;
 	private String pluginId;
 
@@ -27,21 +27,26 @@ public final class PatternBindingDefinition implements IActivityPatternBindingDe
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	public PatternBindingDefinition(String activityId, String pluginId, String pattern) {
+	PatternBindingDefinition(String activityId, boolean inclusive, String pattern, String pluginId) {
 		this.activityId = activityId;
-		this.pluginId = pluginId;
+		this.inclusive = inclusive;
 		this.pattern = pattern;
+		this.pluginId = pluginId;
 	}
 	
 	public int compareTo(Object object) {
-		PatternBindingDefinition activityBindingDefinition = (PatternBindingDefinition) object;
-		int compareTo = Util.compare(activityId, activityBindingDefinition.activityId);
-		
+		PatternBindingDefinition patternBindingDefinition = (PatternBindingDefinition) object;
+		int compareTo = Util.compare(activityId, patternBindingDefinition.activityId);
+
 		if (compareTo == 0) {		
-			compareTo = Util.compare(pluginId, activityBindingDefinition.pluginId);			
+			compareTo = Util.compare(inclusive, patternBindingDefinition.inclusive);			
 		
-			if (compareTo == 0)
-				compareTo = Util.compare(pattern, activityBindingDefinition.pattern);								
+			if (compareTo == 0) {		
+				compareTo = Util.compare(pattern, patternBindingDefinition.pattern);				
+		
+				if (compareTo == 0)
+					compareTo = Util.compare(pluginId, patternBindingDefinition.pluginId);							
+			}
 		}
 		
 		return compareTo;	
@@ -51,11 +56,12 @@ public final class PatternBindingDefinition implements IActivityPatternBindingDe
 		if (!(object instanceof PatternBindingDefinition))
 			return false;
 
-		PatternBindingDefinition activityBindingDefinition = (PatternBindingDefinition) object;	
+		PatternBindingDefinition patternBindingDefinition = (PatternBindingDefinition) object;	
 		boolean equals = true;
-		equals &= Util.equals(activityId, activityBindingDefinition.activityId);
-		equals &= Util.equals(pluginId, activityBindingDefinition.pluginId);
-		equals &= Util.equals(pattern, activityBindingDefinition.pattern);
+		equals &= Util.equals(activityId, patternBindingDefinition.activityId);
+		equals &= Util.equals(inclusive, patternBindingDefinition.inclusive);
+		equals &= Util.equals(pattern, patternBindingDefinition.pattern);
+		equals &= Util.equals(pluginId, patternBindingDefinition.pluginId);
 		return equals;
 	}
 
@@ -63,35 +69,42 @@ public final class PatternBindingDefinition implements IActivityPatternBindingDe
 		return activityId;
 	}
 
+	public String getPattern() {
+		return pattern;
+	}	
+	
 	public String getPluginId() {
 		return pluginId;
 	}
-
-	public String getPattern() {
-		return pattern;
-	}
-
+	
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(inclusive);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pattern);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
 			hashCodeComputed = true;
 		}
 			
 		return hashCode;
 	}
 
+	public boolean isInclusive() {
+		return inclusive;
+	}	
+	
 	public String toString() {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
 			stringBuffer.append(activityId);
 			stringBuffer.append(',');
-			stringBuffer.append(pluginId);
+			stringBuffer.append(inclusive);
 			stringBuffer.append(',');
 			stringBuffer.append(pattern);
+			stringBuffer.append(',');
+			stringBuffer.append(pluginId);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}

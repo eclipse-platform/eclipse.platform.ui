@@ -11,53 +11,15 @@
 
 package org.eclipse.ui.internal.csm.activities;
 
-/**
- * <p>
- * JAVADOC
- * </p>
- * <p>
- * This interface is not intended to be extended or implemented by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
- * 
- * @since 3.0
- */
 public interface IActivityDefinition extends Comparable {
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
 	String getDescription();
 		
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
 	String getId();
 	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
 	String getName();
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
 	String getParentId();
 	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
 	String getPluginId();
 }

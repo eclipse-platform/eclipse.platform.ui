@@ -103,6 +103,24 @@ public interface IActivity extends Comparable {
 
 	/**
 	 * <p>
+	 * Returns the identifier of the parent of the activity represented by this 
+	 * handle, suitable for display to the user.
+	 * </p>
+	 * <p>
+	 * Notification is set to all registered listeners if this attribute 
+	 * changes.
+	 * </p>
+	 *  
+	 * @return the identifier of the parent of the activity represented by this 
+	 * 		   handle. May be <code>null</code>. 
+	 * @throws ActivityNotDefinedException if the activity represented by this 
+	 *                                     handle is not defined.
+	 */	
+	String getParentId()
+		throws ActivityNotDefinedException;
+	
+	/**
+	 * <p>
 	 * Returns the list of pattern bindings for this handle. This method will
 	 * return all pattern bindings for this handle's identifier, whether or not 
 	 * the activity represented by this handle is defined. 
@@ -118,7 +136,7 @@ public interface IActivity extends Comparable {
 	 *         <code>IPatternBinding</code>.
 	 */	
 	List getPatternBindings();
-
+	
 	/**
 	 * <p>
 	 * Returns whether or not this activity is active. Instances of 

@@ -154,6 +154,10 @@ public final class Util {
 		}
 	}
 
+	public static boolean equals(boolean left, boolean right) {
+		return left == right;		
+	}	
+	
 	public static boolean equals(Object left, Object right) {
 		return left == null ? right == null : left.equals(right);
 	}

@@ -117,6 +117,7 @@ final class Command implements ICommand {
 		boolean equals = true;
 		equals &= active == command.active;	
 		equals &= Util.equals(categoryId, command.categoryId);
+		// TODO can these not be null?
 		equals &= contextBindings.equals(command.contextBindings);
 		equals &= defined == command.defined;
 		equals &= Util.equals(description, command.description);

@@ -11,25 +11,7 @@
 
 package org.eclipse.ui.internal.csm.activities;
 
-/**
- * <p>
- * JAVADOC
- * </p>
- * <p>
- * This interface is not intended to be extended by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
- * 
- * @since 3.0
- */
 public interface IActivityRegistryListener {
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @param activityRegistryEvent
-	 */
 	void activityRegistryChanged(IActivityRegistryEvent activityRegistryEvent);
 }

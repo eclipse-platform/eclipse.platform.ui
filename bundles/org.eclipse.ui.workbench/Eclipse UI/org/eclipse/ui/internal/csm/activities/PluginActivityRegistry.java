@@ -34,13 +34,17 @@ final class PluginActivityRegistry extends AbstractActivityRegistry {
 			if (Persistence.TAG_ACTIVITY.equals(name))
 				return readActivityDefinition(element);
 
-			return true; // TODO return false;
+			if (Persistence.TAG_PATTERN_BINDING.equals(name))
+				return readPatternBindingDefinition(element);
+			
+			return true;
 		}		
 	}
 
 	private final static String TAG_ROOT = Persistence.PACKAGE_BASE;
 	
 	private List activityDefinitions;
+	private List patternBindingDefinitions;
 	private IPluginRegistry pluginRegistry;
 	private PluginRegistryReader pluginRegistryReader;
 	
@@ -58,6 +62,11 @@ final class PluginActivityRegistry extends AbstractActivityRegistry {
 		else 
 			activityDefinitions.clear();
 
+		if (patternBindingDefinitions == null)
+			patternBindingDefinitions = new ArrayList();
+		else 
+			patternBindingDefinitions.clear();		
+		
 		if (pluginRegistryReader == null)
 			pluginRegistryReader = new PluginRegistryReader();
 
@@ -68,7 +77,12 @@ final class PluginActivityRegistry extends AbstractActivityRegistry {
 			super.activityDefinitions = Collections.unmodifiableList(activityDefinitions);		
 			activityRegistryChanged = true;
 		}				
-				
+
+		if (!patternBindingDefinitions.equals(super.patternBindingDefinitions)) {
+			super.patternBindingDefinitions = Collections.unmodifiableList(patternBindingDefinitions);		
+			activityRegistryChanged = true;
+		}		
+		
 		if (activityRegistryChanged)
 			fireActivityRegistryChanged();
 	}
@@ -98,4 +112,13 @@ final class PluginActivityRegistry extends AbstractActivityRegistry {
 		
 		return true;
 	}
+	
+	private boolean readPatternBindingDefinition(IConfigurationElement element) {
+		IPatternBindingDefinition patternBindingDefinition = Persistence.readPatternBindingDefinition(new ConfigurationElementMemento(element), getPluginId(element));
+	
+		if (patternBindingDefinition != null)
+			patternBindingDefinitions.add(patternBindingDefinition);	
+		
+		return true;
+	}	
 }

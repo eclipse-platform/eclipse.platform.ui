@@ -13,39 +13,13 @@ package org.eclipse.ui.internal.csm.activities;
 
 import java.util.List;
 
-/**
- * <p>
- * JAVADOC
- * </p>
- * <p>
- * This interface is not intended to be extended or implemented by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
- * 
- * @since 3.0
- */
 public interface IActivityRegistry {
 
-	/**
-	 * Registers an IActivityRegistryListener instance with this activity registry.
-	 *
-	 * @param activityRegistryListener the IActivityRegistryListener instance to register.
-	 */
 	void addActivityRegistryListener(IActivityRegistryListener activityRegistryListener);
 
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */
 	List getActivityDefinitions();
 
-	/**
-	 * Unregisters an IActivityRegistryListener instance with this activity registry.
-	 *
-	 * @param activityRegistryListener the IActivityRegistryListener instance to unregister.
-	 */
+	List getPatternBindingDefinitions();
+	
 	void removeActivityRegistryListener(IActivityRegistryListener activityRegistryListener);
 }

@@ -13,12 +13,12 @@ package org.eclipse.ui.internal.csm.activities;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedSet;
 
 import org.eclipse.ui.activities.ActivityNotDefinedException;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityEvent;
 import org.eclipse.ui.activities.IActivityListener;
+import org.eclipse.ui.activities.IPatternBinding;
 import org.eclipse.ui.internal.util.Util;
 
 final class Activity implements IActivity {
@@ -27,7 +27,6 @@ final class Activity implements IActivity {
 	private final static int HASH_INITIAL = Activity.class.getName().hashCode();
 
 	private boolean active;
-	private SortedSet activityBindings;
 	private IActivityEvent activityEvent;
 	private List activityListeners;
 	private boolean defined;
@@ -35,9 +34,12 @@ final class Activity implements IActivity {
 	private boolean enabled;
 	private String id;
 	private String name;
+	private String parentId;
+	private List patternBindings;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
+	private transient IPatternBinding[] patternBindingsAsArray;
 	private transient String string;
 	
 	Activity(String id) {	
@@ -60,22 +62,30 @@ final class Activity implements IActivity {
 
 	public int compareTo(Object object) {
 		Activity activity = (Activity) object;
-		int compareTo = active == false ? (activity.active == true ? -1 : 0) : 1;
+		int compareTo = Util.compare(active, activity.active);
 
 		if (compareTo == 0) {
-			compareTo = defined == false ? (activity.defined == true ? -1 : 0) : 1;
+			compareTo = Util.compare(defined, activity.defined);
 			
 			if (compareTo == 0) {
 				compareTo = Util.compare(description, activity.description);
 
 				if (compareTo == 0) {
-					compareTo = enabled == false ? (activity.enabled == true ? -1 : 0) : 1;
+					compareTo = Util.compare(enabled, activity.enabled);
 								
 					if (compareTo == 0) {		
-						compareTo = id.compareTo(activity.id);			
+						compareTo = Util.compare(id, activity.id);			
 					
-						if (compareTo == 0)
+						if (compareTo == 0) {
 							compareTo = Util.compare(name, activity.name);
+
+							if (compareTo == 0) {
+								compareTo = Util.compare(parentId, activity.parentId);
+
+								if (compareTo == 0) 
+									compareTo = Util.compare((Comparable[]) patternBindingsAsArray, (Comparable[]) activity.patternBindingsAsArray); 
+							}
+						}
 					}
 				}
 			}
@@ -90,18 +100,15 @@ final class Activity implements IActivity {
 
 		Activity activity = (Activity) object;	
 		boolean equals = true;
-		equals &= active == activity.active;
-		equals &= defined == activity.defined;
+		equals &= Util.equals(active, activity.active);
+		equals &= Util.equals(defined, activity.defined);
 		equals &= Util.equals(description, activity.description);
-		equals &= enabled == activity.enabled;
-		equals &= id.equals(activity.id);
+		equals &= Util.equals(enabled, activity.enabled);
+		equals &= Util.equals(id, activity.id);
 		equals &= Util.equals(name, activity.name);
+		equals &= Util.equals(parentId, activity.parentId);
+		equals &= Util.equals(patternBindings, activity.patternBindings);		
 		return equals;
-	}
-
-	public List getPatternBindings() {
-		// TODO 
-		return null;
 	}
 
 	public String getDescription()
@@ -124,15 +131,29 @@ final class Activity implements IActivity {
 		return name;
 	}	
 
+	public String getParentId()
+		throws ActivityNotDefinedException {
+		if (!defined)
+			throw new ActivityNotDefinedException();
+
+		return parentId;
+	}			
+	
+	public List getPatternBindings() {
+		return patternBindings;
+	}		
+	
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + (active ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());			
-			hashCode = hashCode * HASH_FACTOR + (defined ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());			
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(active);			
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);	
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
-			hashCode = hashCode * HASH_FACTOR + (enabled ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());
-			hashCode = hashCode * HASH_FACTOR + id.hashCode();
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(patternBindings);
 			hashCodeComputed = true;
 		}
 			
@@ -174,6 +195,10 @@ final class Activity implements IActivity {
 			stringBuffer.append(id);
 			stringBuffer.append(',');
 			stringBuffer.append(name);
+			stringBuffer.append(',');
+			stringBuffer.append(parentId);
+			stringBuffer.append(',');
+			stringBuffer.append(patternBindings);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
@@ -251,4 +276,31 @@ final class Activity implements IActivity {
 
 		return false;
 	}
+
+	boolean setParentId(String parentId) {
+		if (!Util.equals(parentId, this.parentId)) {
+			this.parentId = parentId;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}		
+
+		return false;
+	}	
+	
+	boolean setPatternBindings(List patternBindings) {
+		patternBindings = Util.safeCopy(patternBindings, IPatternBinding.class);
+		
+		if (!Util.equals(patternBindings, this.patternBindings)) {
+			this.patternBindings = patternBindings;
+			this.patternBindingsAsArray = (IPatternBinding[]) this.patternBindings.toArray(new IPatternBinding[this.patternBindings.size()]);
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}		
+	
+		return false;
+	}	
 }

@@ -12,7 +12,6 @@
 package org.eclipse.ui.activities;
 
 import java.util.Set;
-import java.util.SortedSet;
 
 /**
  * <p>
@@ -88,7 +87,7 @@ public interface IActivityManager {
 	 *         is not empty, it is guaranteed to only contain instances of 
 	 *         <code>String</code>.
 	 */	
-	SortedSet getDefinedActivityIds();
+	Set getDefinedActivityIds();
 
 	/**
 	 * <p>

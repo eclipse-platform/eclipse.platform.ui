@@ -15,14 +15,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Platform;
@@ -30,12 +29,11 @@ import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManagerListener;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 
 public final class ActivityManager implements IActivityManager {
 
-	public static boolean isActivityDefinitionChildOf(String ancestor, String id, Map activityDefinitionsById) {
+	static boolean isActivityDefinitionChildOf(String ancestor, String id, Map activityDefinitionsById) {
 		Set visited = new HashSet();
 
 		while (id != null && !visited.contains(id)) {
@@ -49,14 +47,16 @@ public final class ActivityManager implements IActivityManager {
 		return false;
 	}	
 
-	private Set activeActivityIds = new TreeSet();
+	private Set activeActivityIds = new HashSet();
 	private IActivityManagerEvent activityManagerEvent;
 	private List activityManagerListeners;
-	private SortedMap activityDefinitionsById = new TreeMap();
-	private SortedMap activitiesById = new TreeMap();
-	private SortedSet definedActivityIds = new TreeSet();
+	private Map activityDefinitionsById = new HashMap();
+	private Map activitiesById = new HashMap();
+	private Set definedActivityIds = new HashSet();
+	private Set enabledActivityIds = new HashSet();	
+	private Map patternBindingDefinitionsByActivityId = new HashMap();
+	private Map patternBindingsByActivityId = new HashMap();	
 	private PluginActivityRegistry pluginActivityRegistry;
-	private PreferenceActivityRegistry preferenceActivityRegistry;
 
 	public ActivityManager() {
 		if (pluginActivityRegistry == null)
@@ -70,17 +70,6 @@ public final class ActivityManager implements IActivityManager {
 			}
 		});
 
-		if (preferenceActivityRegistry == null)
-			preferenceActivityRegistry = new PreferenceActivityRegistry(WorkbenchPlugin.getDefault().getPreferenceStore());	
-
-		loadPreferenceActivityRegistry();
-
-		preferenceActivityRegistry.addActivityRegistryListener(new IActivityRegistryListener() {
-			public void activityRegistryChanged(IActivityRegistryEvent activityRegistryEvent) {
-				readRegistry();
-			}
-		});
-		
 		readRegistry();
 	}
 
@@ -114,13 +103,12 @@ public final class ActivityManager implements IActivityManager {
 		return activity;
 	}
 	
-	public SortedSet getDefinedActivityIds() {
-		return Collections.unmodifiableSortedSet(definedActivityIds);
+	public Set getDefinedActivityIds() {
+		return Collections.unmodifiableSet(definedActivityIds);
 	}
 
 	public Set getEnabledActivityIds() {
-		// TODO
-		return Collections.unmodifiableSet(activeActivityIds);
+		return Collections.unmodifiableSet(enabledActivityIds);
 	}	
 	
 	public void removeActivityManagerListener(IActivityManagerListener activityManagerListener) {
@@ -139,62 +127,34 @@ public final class ActivityManager implements IActivityManager {
 		if (!this.activeActivityIds.equals(activeActivityIds)) {
 			this.activeActivityIds = activeActivityIds;
 			activityManagerChanged = true;	
-			updatedActivityIds = updateActivitys(this.definedActivityIds);	
+			updatedActivityIds = updateActivities(this.definedActivityIds);	
 		}
 		
 		if (activityManagerChanged)
 			fireActivityManagerChanged();
 
 		if (updatedActivityIds != null)
-			notifyActivitys(updatedActivityIds);	
+			notifyActivities(updatedActivityIds);	
 	}
 	
-	public void setEnabledActivityIds(Set activeActivityIds) {
-		// TODO
-		
-		activeActivityIds = Util.safeCopy(activeActivityIds, String.class);
+	public void setEnabledActivityIds(Set enabledActivityIds) {	
+		enabledActivityIds = Util.safeCopy(enabledActivityIds, String.class);
 		boolean activityManagerChanged = false;
 		SortedSet updatedActivityIds = null;
 
-		if (!this.activeActivityIds.equals(activeActivityIds)) {
-			this.activeActivityIds = activeActivityIds;
+		if (!this.enabledActivityIds.equals(enabledActivityIds)) {
+			this.enabledActivityIds = enabledActivityIds;
 			activityManagerChanged = true;	
-			updatedActivityIds = updateActivitys(this.definedActivityIds);	
+			updatedActivityIds = updateActivities(this.definedActivityIds);	
 		}
 		
 		if (activityManagerChanged)
 			fireActivityManagerChanged();
 
 		if (updatedActivityIds != null)
-			notifyActivitys(updatedActivityIds);	
+			notifyActivities(updatedActivityIds);	
 	}	
-
-	// TODO private
-	public IActivityRegistry getPluginActivityRegistry() {
-		return pluginActivityRegistry;
-	}
-
-	// TODO private
-	public IActivityRegistry getPreferenceActivityRegistry() {
-		return preferenceActivityRegistry;
-	}
-
-	private void loadPluginActivityRegistry() {
-		try {
-			pluginActivityRegistry.load();
-		} catch (IOException eIO) {
-			eIO.printStackTrace();
-		}
-	}
 	
-	private void loadPreferenceActivityRegistry() {
-		try {
-			preferenceActivityRegistry.load();
-		} catch (IOException eIO) {
-			eIO.printStackTrace();
-		}		
-	}
-
 	private void fireActivityManagerChanged() {
 		if (activityManagerListeners != null) {
 			for (int i = 0; i < activityManagerListeners.size(); i++) {
@@ -206,7 +166,15 @@ public final class ActivityManager implements IActivityManager {
 		}			
 	}
 
-	private void notifyActivitys(Collection activityIds) {	
+	private void loadPluginActivityRegistry() {
+		try {
+			pluginActivityRegistry.load();
+		} catch (IOException eIO) {
+			eIO.printStackTrace();
+		}
+	}
+	
+	private void notifyActivities(Collection activityIds) {	
 		Iterator iterator = activityIds.iterator();
 		
 		while (iterator.hasNext()) {
@@ -221,8 +189,11 @@ public final class ActivityManager implements IActivityManager {
 	private void readRegistry() {
 		List activityDefinitions = new ArrayList();
 		activityDefinitions.addAll(pluginActivityRegistry.getActivityDefinitions());
-		activityDefinitions.addAll(preferenceActivityRegistry.getActivityDefinitions());
-		SortedMap activityDefinitionsById = new TreeMap(ActivityDefinition.activityDefinitionsById(activityDefinitions, false));
+		
+		List patternBindingDefinitions = new ArrayList();
+		patternBindingDefinitions.addAll(pluginActivityRegistry.getPatternBindingDefinitions());
+		
+		Map activityDefinitionsById = new HashMap(ActivityDefinition.activityDefinitionsById(activityDefinitions, false));
 
 		for (Iterator iterator = activityDefinitionsById.values().iterator(); iterator.hasNext();) {
 			IActivityDefinition activityDefinition = (IActivityDefinition) iterator.next();
@@ -245,26 +216,30 @@ public final class ActivityManager implements IActivityManager {
 		}
 
 		this.activityDefinitionsById = activityDefinitionsById;
-		SortedSet updatedActivityIds = updateActivitys(this.definedActivityIds);	
+		SortedSet updatedActivityIds = updateActivities(this.definedActivityIds);	
 		
 		if (activityManagerChanged)
 			fireActivityManagerChanged();
 
 		if (updatedActivityIds != null)
-			notifyActivitys(updatedActivityIds);		
+			notifyActivities(updatedActivityIds);		
 	}
 
 	private boolean updateActivity(Activity activity) {
 		boolean updated = false;
-		updated |= activity.setActive(activeActivityIds.contains(activity.getId()));
+		updated |= activity.setActive(activeActivityIds.contains(activity.getId()));		
 		IActivityDefinition activityDefinition = (IActivityDefinition) activityDefinitionsById.get(activity.getId());
 		updated |= activity.setDefined(activityDefinition != null);
-		updated |= activity.setDescription(activityDefinition != null ? activityDefinition.getDescription() : null);
+		updated |= activity.setDescription(activityDefinition != null ? activityDefinition.getDescription() : null);		
+		updated |= activity.setEnabled(enabledActivityIds.contains(activity.getId()));
 		updated |= activity.setName(activityDefinition != null ? activityDefinition.getName() : null);
+		updated |= activity.setParentId(activityDefinition != null ? activityDefinition.getParentId() : null);		
+		List patternBindings = (List) patternBindingsByActivityId.get(activity.getId());
+		updated |= activity.setPatternBindings(patternBindings != null ? patternBindings : Collections.EMPTY_LIST);
 		return updated;
 	}
 
-	private SortedSet updateActivitys(Collection activityIds) {
+	private SortedSet updateActivities(Collection activityIds) {
 		SortedSet updatedIds = new TreeSet();
 		Iterator iterator = activityIds.iterator();
 		

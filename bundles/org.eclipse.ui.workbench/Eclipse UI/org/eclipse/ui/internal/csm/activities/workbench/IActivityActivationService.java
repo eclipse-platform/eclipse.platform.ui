@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.csm.activities;
+package org.eclipse.ui.internal.csm.activities.workbench;
 
 import java.util.SortedSet;
 
