@@ -24,16 +24,23 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.*;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamStatus;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.operations.*;
+import org.eclipse.team.internal.ccvs.ui.operations.DisconnectOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.ReconcileProjectOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.ShareProjectOperation;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -159,25 +166,32 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 		if (page == createLocationPage) {
 			return modulePage;
 		}
-		if (page == modulePage) {
-			if (aboutToShow) {
-				ICVSRemoteFolder remoteFolder = getRemoteFolder();
-				if (exists(remoteFolder)) {
-					prepareTagPage(remoteFolder);
-					return tagPage;
+		try {
+			if (page == modulePage) {
+				if (aboutToShow) {
+					ICVSRemoteFolder remoteFolder = getRemoteFolder();
+					if (exists(remoteFolder)) {
+						prepareTagPage(remoteFolder);
+						return tagPage;
+					} else {
+						populateSyncPage(false /* remote exists */);
+						return syncPage;
+					}
 				} else {
-					populateSyncPage(false /* remote exists */);
 					return syncPage;
 				}
-			} else {
+			}
+			if (page == tagPage) {
+				if (aboutToShow) {
+					populateSyncPage(true /* remote exists */);
+				}
 				return syncPage;
 			}
-		}
-		if (page == tagPage) {
-			if (aboutToShow) {
-				populateSyncPage(true /* remote exists */);
-			}
-			return syncPage;
+		} catch (InvocationTargetException e) {
+			// Show the error and fall through to return null as the next page
+			CVSUIPlugin.openError(getShell(), null, null, e);
+		} catch (InterruptedException e) {
+			// The user cancelled. Falll through and return null as the next page.
 		}
 		return null;
 	}
@@ -241,9 +255,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 			} else {
 				try {
 					getContainer().run(true, true, new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor)
-								throws InvocationTargetException,
-								InterruptedException {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							new DisconnectOperation(null, new IProject[] { project }, true)
 								.run(monitor);
 						}
@@ -472,46 +484,34 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 		}
 	}
 	
-	private boolean exists(final ICVSRemoteFolder folder) {
+	private boolean exists(final ICVSRemoteFolder folder) throws InvocationTargetException, InterruptedException {
 		final boolean[] result = new boolean[] { false };
-		try {
-			getContainer().run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor)
-						throws InvocationTargetException, InterruptedException {
-					try {
-						result[0] = exists(folder, monitor);
-					} catch (TeamException e) {
-						throw new InvocationTargetException(e);
-					}
+		getContainer().run(true, true, new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor)
+					throws InvocationTargetException, InterruptedException {
+				try {
+					result[0] = exists(folder, monitor);
+				} catch (TeamException e) {
+					throw new InvocationTargetException(e);
 				}
-			});
-		} catch (InvocationTargetException e) {
-			CVSUIPlugin.openError(getContainer().getShell(), null, null, e);
-		} catch (InterruptedException e) {
-			// Cancelled. Assume the folder doesn't exist
-		}
+			}
+		});
 		return result[0];
 	}
 	
-	private void populateSyncPage(final boolean exists) {
-		try {
-			getContainer().run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					if (exists) {
-						reconcileProject(monitor);
-					} else {
-						shareProject(monitor);
-					}
-					if (monitor.isCanceled()) {
-						syncPage.showError(new TeamStatus(IStatus.ERROR, CVSUIPlugin.ID, 0, "The population of this view was canceled by the user.", null, null));
-					}
+	private void populateSyncPage(final boolean exists) throws InvocationTargetException, InterruptedException {
+		getContainer().run(true, true, new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				if (exists) {
+					reconcileProject(monitor);
+				} else {
+					shareProject(monitor);
 				}
-			});
-		} catch (InvocationTargetException e) {
-			syncPage.showError(new TeamStatus(IStatus.ERROR, CVSUIPlugin.ID, 0, e.getTargetException().getMessage(), e.getTargetException(), null));
-		} catch (InterruptedException e) {
-			// Cancelled. Just return
-		}
+				if (monitor.isCanceled()) {
+					throw new InterruptedException();
+				}
+			}
+		});
 	}
 	
 	/* (non-Javadoc)
@@ -528,6 +528,5 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 	private void prepareTagPage(ICVSRemoteFolder remote) {
 		tagPage.setFolder(remote);
 		tagPage.setDescription(Policy.bind("SharingWizard.25", remote.getRepositoryRelativePath())); //$NON-NLS-1$
-
 	}
 }

@@ -135,6 +135,17 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 		// will call it's own performFinish().		
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.IWizard#performCancel()
+	 */
+	public boolean performCancel() {
+		if (wizard != null) {
+			return wizard.performCancel();
+		}
+		return super.performCancel();
+	}
+	
 	/**
 	 * Returns the configuration wizards that are available for invocation.
 	 * 
