@@ -50,7 +50,7 @@
             <meta.element labelAttribute="name" icon="icon"/>
          </appInfo>
          <documentation>
-            A collection of font, color and data overrides.  Such a collection may be used to alter the appearance of the workbench.
+            A collection of font, color and data overrides.  Such a collection may be used to alter the appearance of the workbench.  Many theme elements may exist with the same id.  This allows compontent authors to contribute to existing themes.
          </documentation>
       </annotation>
       <complexType>
@@ -67,10 +67,10 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="name" type="string" use="required">
+         <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  a translatable name of the theme to be presented to the user
+                  a translatable name of the theme to be presented to the user.  At least one theme definition with any given id should contain this attribute.
                </documentation>
             </annotation>
          </attribute>
