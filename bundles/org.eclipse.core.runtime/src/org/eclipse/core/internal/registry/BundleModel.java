@@ -137,23 +137,14 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 		return findInFragments(bundle, path + ".properties");
 	}
 	private URL findInPlugin(Bundle bundle, String filePath) {
-		try {
-			return bundle.getEntry(filePath);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+		return bundle.getEntry(filePath);
 	}
 	private URL findInFragments(Bundle bundle, String filePath) {
 		Bundle[] fragments = InternalPlatform.getDefault().getFragments(bundle);
 		URL fileURL = null;
 		int i = 0;
 		while (fragments != null && i < fragments.length && fileURL == null) {
-			try {
-				fileURL = fragments[i].getEntry(filePath);
-			} catch (IOException e) {
-				//ignore
-			}
+			fileURL = fragments[i].getEntry(filePath);
 			i++;
 		}
 		return fileURL;

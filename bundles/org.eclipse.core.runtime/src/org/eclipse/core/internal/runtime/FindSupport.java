@@ -249,12 +249,7 @@ public class FindSupport {
 	}
 
 	private static URL findInPlugin(Bundle b, IPath filePath) {
-		try {
-			return b.getEntry(filePath.toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+		return b.getEntry(filePath.toString());
 	}
 
 	private static URL findInFragments(Bundle b, IPath filePath) {
@@ -265,11 +260,7 @@ public class FindSupport {
 		URL fileURL = null;
 		int i = 0;
 		while (i < fragments.length && fileURL == null) {
-			try {
-				fileURL = fragments[i].getEntry(filePath.toString());
-			} catch (IOException e) {
-				//ignore
-			}
+			fileURL = fragments[i].getEntry(filePath.toString());
 			i++;
 		}
 		return fileURL;
