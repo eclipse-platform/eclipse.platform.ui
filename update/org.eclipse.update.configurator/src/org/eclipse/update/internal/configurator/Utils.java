@@ -71,10 +71,12 @@ public class Utils {
 	}
 	
 	public static void log(IStatus status) {
-		if (Platform.getLog(ConfigurationActivator.getBundle())!= null)
-			Platform.getLog(ConfigurationActivator.getBundle()).log(status);
-		else 
+//		if (Platform.getLog(ConfigurationActivator.getBundle())!= null)
+//			Platform.getLog(ConfigurationActivator.getBundle()).log(status);
+//		else 
 			System.out.println(status.getMessage());
+			if (status.getException() != null)
+				status.getException().printStackTrace();
 	}
 	
 	/**
