@@ -426,6 +426,13 @@ public class DecorationScheduler {
 				if (!pendingUpdate.isEmpty())
 					decorated();
 			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+			 */
+			public boolean belongsTo(Object family) {
+				return DecoratorManager.FAMILY_DECORATE == family;
+			}
 		};
 
 		job.setSystem(true);
