@@ -362,6 +362,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		
 		ILaunchConfigurationWorkingCopy copy= configuration.getWorkingCopy();
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, commandLine.toString());
+		//copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"); //$NON-NLS-1$
 		JavaLocalApplicationLaunchConfigurationDelegate delegate= new JavaLocalApplicationLaunchConfigurationDelegate();
 		delegate.launch(copy, ILaunchManager.RUN_MODE, launch, monitor);
 		IProcess[] processes= launch.getProcesses();
