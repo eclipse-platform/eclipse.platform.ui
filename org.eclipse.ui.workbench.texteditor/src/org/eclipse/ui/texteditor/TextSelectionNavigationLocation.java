@@ -231,9 +231,11 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	}
 	
 	public void partSaved(IEditorPart part) {
-		if (fPosition == null)
-			return;
-		fSavedPosition= new Position(fPosition.offset, fPosition.length);
+		// http://dev.eclipse.org/bugs/show_bug.cgi?id=25440
+		if (fPosition == null || fPosition.isDeleted())
+			fSavedPosition= null;
+		else
+			fSavedPosition= new Position(fPosition.offset, fPosition.length);
 	}
 	
 	public void update() {
