@@ -393,7 +393,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 			IWorkbenchPage[] pages = window.getPages();
 			for (int i = 0; i < pages.length; i++) {
 				WorkbenchPage page = (WorkbenchPage) pages[i];
-				DropTarget dropTarget = ((EditorArea) page.getEditorPresentation().getLayoutPart()).getDropTarget();
+				DropTarget dropTarget = ((EditorSashContainer) page.getEditorPresentation().getLayoutPart()).getDropTarget();
 				if (dropTarget != null) {
 					dropTarget.setTransfer(transfers);
 				}
@@ -410,7 +410,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 			IWorkbenchPage[] pages = window.getPages();
 			for (int i = 0; i < pages.length; i++) {
 				WorkbenchPage page = (WorkbenchPage) pages[i];
-				DropTarget dropTarget = ((EditorArea) page.getEditorPresentation().getLayoutPart()).getDropTarget();
+				DropTarget dropTarget = ((EditorSashContainer) page.getEditorPresentation().getLayoutPart()).getDropTarget();
 				if (dropTarget != null) {
 					dropTarget.addDropListener(this.dropTargetListener);
 				}

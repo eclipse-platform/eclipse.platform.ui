@@ -201,7 +201,7 @@ public class PerspectivePresentation {
 		if (placeholder == null) {
 			part.reparent(mainLayout.getParent());
 			LayoutPart relative = mainLayout.findBottomRight();
-			if (relative != null && !(relative instanceof EditorArea)) {
+			if (relative != null && !(relative instanceof EditorSashContainer)) {
 				mainLayout.stack(part, relative);
 			} else {
 				mainLayout.add(part);
@@ -843,7 +843,7 @@ public class PerspectivePresentation {
 				if (sm.match(id))
 					matchingParts.add(new MatchingPart(part.getID(), null, part));
 			}
-			else if (part instanceof EditorArea) {
+			else if (part instanceof EditorSashContainer) {
 				// Skip.
 			} 
 			else if (part instanceof ILayoutContainer) {
@@ -908,7 +908,7 @@ public class PerspectivePresentation {
 					}
 				}									
 			} 
-			else if (part instanceof EditorArea) {
+			else if (part instanceof EditorSashContainer) {
 				// Skip.
 			}
 		}
@@ -984,7 +984,7 @@ public class PerspectivePresentation {
 	 * after it is docked
 	 */
 	public static float getDockingRatio(LayoutPart source, LayoutPart target) {
-		if ((source instanceof ViewPane || source instanceof ViewStack) && target instanceof EditorArea) {
+		if ((source instanceof ViewPane || source instanceof ViewStack) && target instanceof EditorSashContainer) {
 			return 0.25f;
 		}
 		return 0.5f;
@@ -1232,7 +1232,7 @@ public class PerspectivePresentation {
 		else if (pane instanceof EditorPane) {
 			parentWidget.setRedraw(false);
 			EditorStack wb = ((EditorPane) pane).getWorkbook();
-			EditorArea ea = wb.getEditorArea();
+			EditorSashContainer ea = wb.getEditorArea();
 			mainLayout.zoomIn(ea);
 			ea.zoomIn(wb);
 			wb.setZoomed(true);
@@ -1270,7 +1270,7 @@ public class PerspectivePresentation {
 		} else if (pane instanceof EditorPane) {
 			parentWidget.setRedraw(false);
 			EditorStack wb = ((EditorPane) pane).getWorkbook();
-			EditorArea ea = wb.getEditorArea();
+			EditorSashContainer ea = wb.getEditorArea();
 			wb.setZoomed(false);
 			ea.zoomOut();
 			mainLayout.zoomOut();

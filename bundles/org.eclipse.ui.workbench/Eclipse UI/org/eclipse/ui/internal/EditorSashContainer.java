@@ -33,7 +33,7 @@ import org.eclipse.ui.PlatformUI;
  *
  * Note no views are allowed within this container.
  */
-public class EditorArea extends PartSashContainer {
+public class EditorSashContainer extends PartSashContainer {
 	
 	private static final String DEFAULT_WORKBOOK_ID = "DefaultEditorWorkbook";//$NON-NLS-1$
 	private ArrayList editorWorkbooks = new ArrayList(3);
@@ -41,7 +41,7 @@ public class EditorArea extends PartSashContainer {
 	private DropTarget dropTarget;
 	private WorkbenchPage page;
 	
-public EditorArea(String editorId, WorkbenchPage page) {
+public EditorSashContainer(String editorId, WorkbenchPage page) {
 	super(editorId,page);
 
 	//this.partDropListener = listener;

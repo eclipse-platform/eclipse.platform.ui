@@ -38,14 +38,14 @@ import org.eclipse.ui.presentations.StackPresentation;
  */
 public class EditorStack extends PartStack {
 	
-    private EditorArea editorArea;
+    private EditorSashContainer editorArea;
 
     private WorkbenchPage page;  
     
     private SystemMenuSize sizeItem = new SystemMenuSize(null);
     private SystemMenuPinEditor pinEditorItem = new SystemMenuPinEditor(null);
 	 
-    public EditorStack(EditorArea editorArea, WorkbenchPage page) {
+    public EditorStack(EditorSashContainer editorArea, WorkbenchPage page) {
         super(); //$NON-NLS-1$
         this.editorArea = editorArea;
         setID(this.toString());
@@ -82,7 +82,7 @@ public class EditorStack extends PartStack {
     /**
      * Factory method for editor workbooks.
      */
-    public static EditorStack newEditorWorkbook(EditorArea editorArea,
+    public static EditorStack newEditorWorkbook(EditorSashContainer editorArea,
             WorkbenchPage page) {
         return new EditorStack(editorArea, page);
     }
@@ -169,7 +169,7 @@ public class EditorStack extends PartStack {
     }
 
     public boolean isActiveWorkbook() {
-        EditorArea area = getEditorArea();
+        EditorSashContainer area = getEditorArea();
 
         if (area != null)
             return area.isActiveWorkbook(this);
@@ -178,7 +178,7 @@ public class EditorStack extends PartStack {
     }
 
     public void becomeActiveWorkbook(boolean hasFocus) {
-        EditorArea area = getEditorArea();
+        EditorSashContainer area = getEditorArea();
 
         if (area != null) area.setActiveWorkbook(this, hasFocus);
     }
@@ -206,7 +206,7 @@ public class EditorStack extends PartStack {
         return panes;
     }
 
-    public EditorArea getEditorArea() {
+    public EditorSashContainer getEditorArea() {
         return editorArea;
     }
 

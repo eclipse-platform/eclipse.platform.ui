@@ -1442,7 +1442,7 @@ protected void showEditorArea() {
 }
 
 private void setEditorAreaVisible(boolean visible) {
-	ArrayList workbooks = ((EditorArea)editorArea).getEditorWorkbooks();
+	ArrayList workbooks = ((EditorSashContainer)editorArea).getEditorWorkbooks();
 	for (Iterator iter = workbooks.iterator(); iter.hasNext();) {
 		EditorStack workbook = (EditorStack) iter.next();
 		workbook.setVisible(visible);

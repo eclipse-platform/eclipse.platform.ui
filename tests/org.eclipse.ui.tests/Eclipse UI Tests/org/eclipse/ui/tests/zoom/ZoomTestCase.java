@@ -24,10 +24,10 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.EditorArea;
+import org.eclipse.ui.internal.EditorSashContainer;
 import org.eclipse.ui.internal.EditorPane;
 import org.eclipse.ui.internal.EditorSite;
-import org.eclipse.ui.internal.EditorWorkbook;
+import org.eclipse.ui.internal.EditorStack;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.PartPane;
 import org.eclipse.ui.internal.PartSite;
@@ -73,8 +73,8 @@ public class ZoomTestCase extends UITestCase {
 	// opens editor2 in a seperate workbook
 	protected void differentWorkbookSetUp() {
 		EditorPane pane = (EditorPane)((PartSite)editor1.getSite()).getPane();
-		EditorArea area = pane.getWorkbook().getEditorArea();
-		EditorWorkbook workbook = EditorWorkbook.newEditorWorkbook(area, page);
+		EditorSashContainer area = pane.getWorkbook().getEditorArea();
+		EditorStack workbook = EditorStack.newEditorWorkbook(area, page);
 
 		area.add(workbook, IPageLayout.BOTTOM, (float) 0.5, pane.getWorkbook());
 		workbook.add(pane);

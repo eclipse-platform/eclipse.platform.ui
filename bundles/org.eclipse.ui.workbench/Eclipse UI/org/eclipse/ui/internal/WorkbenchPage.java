@@ -3023,7 +3023,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 				getClientComposite().setTabList(tabList);
 			}
 		} else if (pane instanceof EditorPane) {
-			EditorArea ea = ((EditorPane) pane).getWorkbook().getEditorArea();
+			EditorSashContainer ea = ((EditorPane) pane).getWorkbook().getEditorArea();
 			ea.updateTabList();
 			getClientComposite().setTabList(new Control[] { ea.getParent()});
 		}

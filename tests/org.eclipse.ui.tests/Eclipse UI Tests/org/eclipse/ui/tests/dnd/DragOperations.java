@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.internal.EditorSite;
-import org.eclipse.ui.internal.EditorWorkbook;
+import org.eclipse.ui.internal.EditorStack;
 import org.eclipse.ui.internal.LayoutPart;
 import org.eclipse.ui.internal.PartPane;
 import org.eclipse.ui.internal.ViewSite;
@@ -43,7 +43,7 @@ public class DragOperations {
 		DragUtil.forceDropLocation(target);
 		
 		PartPane pane = ((EditorSite)editor.getSite()).getPane();
-		EditorWorkbook parent = ((EditorWorkbook)(pane.getContainer()));
+		EditorStack parent = ((EditorStack)(pane.getContainer()));
 		
 		IPresentablePart part = wholeFolder ? null : pane.getPresentablePart(); 
 		parent.dragStart(part, Display.getDefault().getCursorLocation(), false);

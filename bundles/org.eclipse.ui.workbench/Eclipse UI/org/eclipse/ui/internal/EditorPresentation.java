@@ -34,7 +34,7 @@ import org.eclipse.ui.part.MultiEditor;
 public class EditorPresentation {
 	private WorkbenchPage page;
 	private ArrayList editorTable = new ArrayList(4);
-	private EditorArea editorArea;
+	private EditorSashContainer editorArea;
 	private HandlerSubmission openEditorDropDownHandlerSubmission;
 	/**
 	 * Creates a new EditorPresentation.
@@ -42,7 +42,7 @@ public class EditorPresentation {
 	public EditorPresentation(WorkbenchPage page) {
 
 		this.page = page;
-		this.editorArea = new EditorArea(IPageLayout.ID_EDITOR_AREA, page);
+		this.editorArea = new EditorSashContainer(IPageLayout.ID_EDITOR_AREA, page);
 		
         final Shell shell = page.getWorkbenchWindow().getShell();
         IHandler openEditorDropDownHandler = new AbstractHandler() {
