@@ -305,7 +305,8 @@ public interface IDialogConstants {
     /**
      * Button height in dialog units (value 14).
      * 
-     * @deprecated
+     * @deprecated This constant is no longer in use.
+     * The button heights are now determined by the layout.
      */
     public int BUTTON_HEIGHT = 14;
 
