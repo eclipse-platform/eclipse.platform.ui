@@ -435,7 +435,9 @@ public Object getAdapter(Class key) {
 	// delegate to the current page, if supported
 	IPage page = getCurrentPage();
 	if (page instanceof IAdaptable) {
-		return ((IAdaptable) page).getAdapter(key);
+		Object adaptable =  ((IAdaptable) page).getAdapter(key);
+		if(adaptable != null)
+			return adaptable;
 	}
 	return super.getAdapter(key);
 }
