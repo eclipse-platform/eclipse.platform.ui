@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -145,8 +146,19 @@ public class ForceCommitSyncAction extends MergeAction {
 				}				
 			}
 
-			// Make any incoming file changes or deletions into outgoing changes before committing.
+			// Handle any incomming folder deletions
 			Iterator it = incoming.iterator();
+			while (it.hasNext()) {
+				ITeamNode node = (ITeamNode)it.next();
+				if (node instanceof ChangedTeamContainer 
+						&& node.getChangeDirection() == ITeamNode.INCOMING 
+						&& node.getChangeType() == Differencer.DELETION) {
+					handleIncomingFolderDeletion((CVSRemoteSyncElement)((ChangedTeamContainer)node).getMergeResource().getSyncElement(), monitor);
+				}
+			}
+			
+			// Make any incoming file changes or deletions into outgoing changes before committing.
+			it = incoming.iterator();
 			while (it.hasNext()) {
 				ITeamNode node = (ITeamNode)it.next();
 				if (node instanceof TeamFile) {
@@ -166,6 +178,8 @@ public class ForceCommitSyncAction extends MergeAction {
 			}
 			manager.commit(changedResources, comment, monitor);
 			
+			// This code will prune empty folders (even if they were recommited deletions!)
+			// XXX It will need to be changed if we allow backing out of folder deletions
 			it = incoming.iterator();
 			while (it.hasNext()) {
 				ITeamNode node = (ITeamNode)it.next();
@@ -264,6 +278,22 @@ public class ForceCommitSyncAction extends MergeAction {
 		set.removeOutgoingNodes();
 		if (syncMode != SyncView.SYNC_BOTH) {
 			set.removeIncomingNodes();
+		}
+	}
+	
+	/*
+	 * Handle incoming folder deletion.
+	 * 
+	 * Special handling is required in the case were a folder has been deleted remotely
+	 * (i.e using "rm -rf" on the server). 
+	 * 
+	 * We need to determine if there is a remote folder corresponding to this folder
+	 * If there isn't, we need to unmanage the local resource and then add the folder
+	 * Unfortunately, unmanaging may effect the state of the children which are also incoming deletions
+	 */
+	private void handleIncomingFolderDeletion(CVSRemoteSyncElement element, IProgressMonitor monitor) throws TeamException {
+		ILocalSyncElement[] members = element.members(monitor);
+		if (members.length != 0) {
 		}
 	}
 }
