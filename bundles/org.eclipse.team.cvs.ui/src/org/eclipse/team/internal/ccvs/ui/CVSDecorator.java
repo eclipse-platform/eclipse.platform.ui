@@ -43,9 +43,9 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.ui.internal.DecoratorDefinition;
-import org.eclipse.ui.internal.DecoratorManager;
+
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.IDecoratorManager;
 
 /**
  * Classes registered with the workbench decoration extension point. The <code>CVSDecorationRunnable</code> class
@@ -74,7 +74,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	private Thread decoratorUpdateThread;
 
 	private boolean shutdown = false;
-	
+
 	private OverlayIconCache iconCache = new OverlayIconCache();
 	
 	// Keep track of deconfigured projects
@@ -94,6 +94,44 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		}
 	}
 	
+	/*
+	 * Return the CVSDecorator instance that is currently enabled.
+	 * Return null if we don't have a decorator or its not enabled.
+	 */ 
+	private static CVSDecorator getActiveCVSDecorator() {
+		IDecoratorManager manager = CVSUIPlugin.getPlugin().getWorkbench().getDecoratorManager();
+		if (manager.getEnabled(CVSUIPlugin.DECORATOR_ID))
+			return (CVSDecorator) manager.getLabelDecorator(CVSUIPlugin.DECORATOR_ID);
+		return null;
+	}
+	
+	/*
+	 * Blanket refresh the displaying of our decorator.
+	 */ 
+	public static void refresh() {
+		CVSDecorator activeDecorator = getActiveCVSDecorator();
+		
+		if(activeDecorator == null)
+			return;	//nothing to do, our decorator isn't active
+		activeDecorator.clearCache();  //clear the cache of previous decorations so we can compute them anew
+		
+		//update all displaying of our decorator;
+		activeDecorator.fireLabelProviderChanged(new LabelProviderChangedEvent(activeDecorator));
+	}
+	
+	/*
+	 * Answers null if a provider does not exist or the provider is not a CVS provider. These resources
+	 * will be ignored by the decorator.
+	 */
+	private static CVSTeamProvider getCVSProviderFor(IResource resource) {
+		RepositoryProvider p = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
+		if (p == null) {
+			return null;
+		}
+		return (CVSTeamProvider) p;
+	}	
+
+
 	public CVSDecorator() {
 		// thread that calculates the decoration for a resource
 		decoratorUpdateThread = new Thread(new CVSDecorationRunnable(this), "CVS"); //$NON-NLS-1$
@@ -278,42 +316,10 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		}
 	}
 
-	/*
-	 * Return the ILabelDecorator for our CVS decorator, null if its not active.
-	 */	 
-	private static ILabelDecorator findCVSDecorator() {
-		DecoratorManager decoratorManager = WorkbenchPlugin.getDefault().getDecoratorManager();
-		DecoratorDefinition[] definitions = decoratorManager.getDecoratorDefinitions();
-		for (int i = 0; i < definitions.length; i++) {
-			DecoratorDefinition decoratorDefinition = definitions[i];
-			if(decoratorDefinition.getId().equals(CVSUIPlugin.DECORATOR_ID))
-				try {
-					return decoratorDefinition.getDecorator();
-				} catch (CoreException e) {
-					CVSUIPlugin.log(e.getStatus()); //todo: need to inform user too
-					return null;
-				}
-		}
-		return null;
-	}
-			
 	private void clearCache() {
 		cache.clear();
 	}
 	
-	/*
-	 * Blanket refresh the displaying of our decorator.
-	 */
-	 
-	public static void refresh() {
-		CVSDecorator cvsDecorator = (CVSDecorator) findCVSDecorator();
-		if(cvsDecorator == null)
-			return;	//nothing to do, our decorator isn't active
-		cvsDecorator.clearCache();  //clear the cache of previous decorations so we can compute them anew
-		
-		WorkbenchPlugin.getDefault().getDecoratorManager().reset();
-	}
-
 	public void refresh(IProject project) {
 		final List resources = new ArrayList();
 		try {
@@ -352,18 +358,6 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		}
 	}
 
-	/** 
-	 * Answers null if a provider does not exist or the provider is not a CVS provider. These resources
-	 * will be ignored by the decorator.
-	 */
-	private static CVSTeamProvider getCVSProviderFor(IResource resource) {
-		RepositoryProvider p = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
-		if (p == null) {
-			return null;
-		}
-		return (CVSTeamProvider) p;
-	}
-	
 	/**
 	 * Returns the resource for the given input object, or
 	 * null if there is no resource associated with it.
