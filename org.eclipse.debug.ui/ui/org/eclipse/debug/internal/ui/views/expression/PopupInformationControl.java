@@ -152,8 +152,8 @@ public abstract class PopupInformationControl implements IInformationControl, II
 		if (command != null) {
 			List keyBindings = command.getKeySequenceBindings();
 			if (keyBindings != null && keyBindings.size() > 0) {
-				IKeySequenceBinding lastBinding = (IKeySequenceBinding)keyBindings.get(keyBindings.size()-1);
-				label.setText(MessageFormat.format(DebugUIMessages.getString("PopupInformationControl.1"), new String[] {lastBinding.getKeySequence().format(), labelText})); //$NON-NLS-1$
+				IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding)keyBindings.get(0);
+				label.setText(MessageFormat.format(DebugUIMessages.getString("PopupInformationControl.1"), new String[] {keySequenceBinding.getKeySequence().format(), labelText})); //$NON-NLS-1$
 				label.getParent().layout();
 			}			
 		}
