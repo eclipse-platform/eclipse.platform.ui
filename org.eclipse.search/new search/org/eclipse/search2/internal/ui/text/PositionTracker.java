@@ -188,7 +188,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 			return null;
 		if (!file.exists())
 			return null;
-		return FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getLocation());
+		return FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath());
 	}
 	
 	public Position getCurrentPosition(Match match) {
