@@ -10,21 +10,22 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 
+import java.util.TreeSet;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import java.util.TreeSet;
+import org.eclipse.ui.*;
+import org.eclipse.ui.actions.GlobalBuildAction;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.*;
 
 /**
  * The BuildOrderPage is the page that is used to determine what order projects
@@ -33,6 +34,8 @@ import java.util.TreeSet;
 public class BuildOrderPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
+		
+	private IWorkbench workbench;
 		
 	private Button defaultOrderButton;
 	private Label buildLabel;
@@ -59,6 +62,10 @@ public class BuildOrderPreferencePage
 	// the index of the first project with an unspecified build order
 	// the rest of the list consists of projects with unspecified build orders
 	private int markedItemsStartIndex = 0;
+	
+	// whether or not the use defaults option was selected when Apply (or OK) was last pressed
+	// (or when the preference page was opened). This represents the most recent applied state.
+	private boolean defaultOrderInitiallySelected;
 	
 /**
  * Add another project to the list at the end.
@@ -190,6 +197,8 @@ protected Control createContents(Composite parent) {
  * @param selected - the boolean that indicates the buttons initial state
  */
 private void createDefaultPathButton(Composite composite, boolean selected) {
+
+	defaultOrderInitiallySelected = selected;
 
 	this.defaultOrderButton = new Button(composite, SWT.LEFT | SWT.CHECK);
 	this.defaultOrderButton.setSelection(selected);
@@ -365,6 +374,7 @@ private boolean includes(String[] testArray, String searchElement) {
  * See IWorkbenchPreferencePage. This class does nothing with he Workbench.
  */
 public void init(IWorkbench workbench) {
+	this.workbench = workbench;
 }
 /**
  * Move the current selection in the build list down.
@@ -413,9 +423,10 @@ protected void performDefaults() {
 public boolean performOk() {
 
 	String[] buildOrder = null;
+	boolean useDefault = defaultOrderButton.getSelection();
 
 	// if use defaults is turned off
-	if (!this.defaultOrderButton.getSelection())
+	if (!useDefault)
 		buildOrder = buildList.getItems();
 
 	//Get a copy of the description from the workspace, set the build order and then
@@ -427,6 +438,19 @@ public boolean performOk() {
 	} catch (CoreException exception) {
 		//failed - return false
 		return false;
+	}
+	
+	// Perform auto-build if use default is off (because
+	// order could have changed) or if use default setting
+	// was changed.
+	if (!useDefault || (useDefault != defaultOrderInitiallySelected)) {
+		defaultOrderInitiallySelected = useDefault;
+		// If auto build is turned on, then do a global incremental
+		// build on all the projects.
+		if (ResourcesPlugin.getWorkspace().isAutoBuilding()) {
+			GlobalBuildAction action = new GlobalBuildAction(workbench, getShell(), IncrementalProjectBuilder.AUTO_BUILD);
+			action.doBuild();
+		}	
 	}
 
 	// Clear the custom build order cache
