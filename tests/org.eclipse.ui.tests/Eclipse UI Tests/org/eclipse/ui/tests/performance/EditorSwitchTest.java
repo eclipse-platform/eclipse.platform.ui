@@ -75,8 +75,10 @@ public class EditorSwitchTest extends BasicPerformanceTest {
         textFile.create(inputStream, true, null);
         inputStream.close();
 
-        // Open the file.
+        // Open both files outside the loop so as not to include
+        // the initial time to open, just switching.
         IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
+        IDE.openEditor(activePage, textFile, true);
         IDE.openEditor(activePage, javaFile, true);
 
         // Switch between the two editors one hundred times.
@@ -85,8 +87,8 @@ public class EditorSwitchTest extends BasicPerformanceTest {
             IDE.openEditor(activePage, textFile, true);
             processEvents();
             IDE.openEditor(activePage, javaFile, true);
-            performanceMeter.stop();
             processEvents();
+            performanceMeter.stop();
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {

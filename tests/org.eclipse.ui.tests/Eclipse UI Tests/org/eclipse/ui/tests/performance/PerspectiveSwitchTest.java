@@ -46,7 +46,7 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
     }
 	
     /**
-     * Test perspective switching performance. This test always fails.
+     * Test perspective switching performance. 
      */
     public void testPerspectiveSwitching() throws CoreException, IOException,
             WorkbenchException {
@@ -78,13 +78,18 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
         IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
         IDE.openEditor(activePage, javaFile, true);
 
+        // Open both perspective outside the loop so as not to include
+        // the initial time to open, just switching.
+        activePage.setPerspective(resourcePerspective);
+        activePage.setPerspective(javaPerspective);
+
         for (int i = 0; i < 20; i++) {
             performanceMeter.start();
             activePage.setPerspective(resourcePerspective);
             processEvents();
             activePage.setPerspective(javaPerspective);
-            performanceMeter.stop();
             processEvents();
+            performanceMeter.stop();
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
