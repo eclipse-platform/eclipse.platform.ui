@@ -502,7 +502,6 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 *           levels of the tree
 	 */
 	public void expandToLevel(Object element, int level) {
-		Assert.isNotNull(element);
 		Widget w = internalExpand(element, true);
 		if (w != null)
 			internalExpandToLevel(w, level);
