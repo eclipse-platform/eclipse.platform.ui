@@ -61,8 +61,8 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
      * @see org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler#filterEvents(org.eclipse.debug.core.DebugEvent[])
      */
     protected DebugEvent[] filterEvents(DebugEvent[] events) {
-        for (int i = 0; i < events.length; i++) {
-            DebugEvent event = events[i];
+        if (events.length > 0) {
+            DebugEvent event = events[0];
             Object source = event.getSource();
             ILaunch launch = null;
             if (source instanceof IDebugElement) {
