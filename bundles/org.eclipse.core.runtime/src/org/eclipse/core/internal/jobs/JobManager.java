@@ -63,7 +63,7 @@ public class JobManager implements IJobManager {
 	 * Should only be modified from changeState
 	 */
 	private final JobQueue sleeping;
-	private final ImplicitJobs implicitJobs = new ImplicitJobs();
+	private final ImplicitJobs implicitJobs = new ImplicitJobs(this);
 	/**
 	 * jobs that are waiting to be run. Should only be modified from changeState
 	 */

@@ -44,11 +44,13 @@ class ImplicitJobs {
 		synchronized void joinRun() {
 			schedule();
 			while (!running) {
+				jobManager.getLockManager().aboutToWait(null);
 				try {
 					wait();
 				} catch (InterruptedException e) {
 				}
 			}
+			jobManager.getLockManager().aboutToRelease();
 		}
 		/**
 		 * Pops a rule.  Returns true if it was the last rule for this thread job, and false
@@ -81,6 +83,15 @@ class ImplicitJobs {
 	 * for that thread.
 	 */
 	private static final Map threadJobs = new HashMap(20);
+	private JobManager jobManager;
+	ImplicitJobs(JobManager manager) {
+		this.jobManager = manager;
+	}
+	/**
+	 * The lock to wait on when joining a run.  One lock is sufficient because
+	 * it is used within the synchronized block of begin
+	 * @param rule
+	 */
 	/* (Non-javadoc)
 	 * @see IJobManager#begin
 	 */
