@@ -24,6 +24,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -76,7 +77,8 @@ public class OpenLaunchDialogAction extends Action implements IWorkbenchWindowAc
 		} else {
 			selection = new StructuredSelection(configuration);
 		}
-		DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), selection, fIdentifier);
+		int result = DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), selection, fIdentifier);
+		notifyResult(result == Window.OK);
 	}
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
