@@ -11,37 +11,37 @@ Contributors:
 package org.eclipse.ui;
 
 /**
- * This adapter interface provides a way to test element containment.
- * The workbench uses this interface in the Navigator and Tasks views
+ * This adapter interface provides a way to test element containment 
+ * in a model-independent way.
+ * The workbench uses this interface in certain views
  * to test if a given resource is part of a working set.
  * 
  * @since 2.1
  */
 public interface IContainmentAdapter {
 	/**
-	 * Only the containment context and direct children should be
-	 * considered when testing for element containment.
-	 * (value is 1)
-	 * 
-	 * @see #contains
-	 */
+	 * Checks whether the given element corresponds to the containment context.
+     */
 	public static final int CHECK_CONTEXT = 1;
+
 	/**
-	 * Check all descendents of the containment context when testing
-	 * for element containment. Recurse into children.
-	 * (value is 2)
-	 * 
-	 * @see #contains
+	 * Checks whether the given element corresponds to a direct child of the 
+     * containment context.  Does not include the containment context itself.
 	 */
-	public static final int CHECK_DESCENDENTS = 2;
+	public static final int CHECK_IF_CHILD = 2;
+
 	/**
-	 * Check all ancestors of the containment context when testing
-	 * for element containment.
-	 * (value is 4)
-	 * 
-	 * @see #contains
+	 * Checks whether the given element corresponds to an ancestor of the
+     * containment context.  Does not include the containment context itself.
 	 */
-	public static final int CHECK_ANCESTORS = 4;
+	public static final int CHECK_IF_ANCESTOR = 4;
+
+	/**
+	 * Checks whether the given element corresponds to a descendant of the 
+     * containment context.  Does not include the containment context itself.
+	 */
+	public static final int CHECK_IF_DESCENDANT = 8;
+
  	
 /**
  * Returns whether the given element is considered contained 
@@ -53,10 +53,8 @@ public interface IContainmentAdapter {
  * 	(e.g., IFolder) and may be the element object itself. 
  * @param element object that should be tested for containment
  * @param flags one or more of <code>CHECK_CONTEXT</code>, 
- * 	<code>CHECK_ANCESTORS</code>, <code>CHECK_DESCENDENTS</code>
- *	logically ORed together..
- *	<code>CHECK_CONTEXT</code> always has to be specified if the 
- *	context itself and its direct children should be checked,
+ *    <code>CHECK_IF_CHILD</code>, <code>CHECK_IF_ANCESTOR</code>, 
+ *    <code>CHECK_IF_DESCENDENT</code> logically ORed together.
  */
 public boolean contains(Object containmentContext, Object element, int flags);
 }

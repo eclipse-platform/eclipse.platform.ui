@@ -155,7 +155,7 @@ class TasksFilter extends ViewerFilter implements Cloneable {
 			// set element type fall back to using resource based  
 			// containment check 
 			if (containmentAdapter != null) {
-				if (containmentAdapter.contains(workingSetElement, element, IContainmentAdapter.CHECK_CONTEXT | IContainmentAdapter.CHECK_DESCENDENTS))
+				if (containmentAdapter.contains(workingSetElement, element, IContainmentAdapter.CHECK_CONTEXT | IContainmentAdapter.CHECK_IF_CHILD | IContainmentAdapter.CHECK_IF_DESCENDANT))
 					return true;
 			} else if (isEnclosedResource(element, elementPath, workingSetElement)) {
 				return true;
