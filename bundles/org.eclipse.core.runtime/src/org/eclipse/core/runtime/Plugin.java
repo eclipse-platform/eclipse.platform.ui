@@ -682,6 +682,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @since 3.0
 	 */
 	public void stop(BundleContext context) throws Exception {
+		// sub-classes to override
 	}
 
 	/**

@@ -55,7 +55,7 @@ public interface IPluginPrerequisite {
 	 * or null, if the dependency is not resolved.
 	 * 
 	 * @return the plug-in version identifier, or null
-	 * @deprecated Callers of this method should interrogate the current {@link State)
+	 * @deprecated Callers of this method should interrogate the current {@link State}
 	 * of the platform.  For example, 
 	 * <pre>
 	 *     State state = Platform.getPlatformAdmin().getState();
@@ -84,7 +84,7 @@ public interface IPluginPrerequisite {
 	 * 
 	 * @return the plug-in version identifier, or <code>null</code> if 
 	 *    none was specified
-	 * @deprecated Callers of this method should interrogate the current {@link State)
+	 * @deprecated Callers of this method should interrogate the current {@link State}
 	 * of the platform.  For example, 
 	 * <pre>
 	 *     State state = Platform.getPlatformAdmin().getState();
@@ -122,7 +122,7 @@ public interface IPluginPrerequisite {
 	 * @return <code>true</code> if greater or equal match is allowed,
 	 *   <code>false</code> otherwise.
 	 * @since 2.0
-	 * @deprecated Callers of this method should interrogate the current {@link State)
+	 * @deprecated Callers of this method should interrogate the current {@link State}
 	 * of the platform.  For example, 
 	 * <pre>
 	 *     State state = Platform.getPlatformAdmin().getState();
@@ -146,7 +146,7 @@ public interface IPluginPrerequisite {
 	 *
 	 * @return <code>true</code> if compatible match is allowed,
 	 *   <code>false</code> if exact match is required.
-	 * @deprecated Callers of this method should interrogate the current {@link State)
+	 * @deprecated Callers of this method should interrogate the current {@link State}
 	 * of the platform.  For example, 
 	 * <pre>
 	 *     State state = Platform.getPlatformAdmin().getState();
@@ -174,7 +174,7 @@ public interface IPluginPrerequisite {
 	 * @return <code>true</code> if only equivalent identifier match
 	 * satisfies this dependency, <code>false</code> otherwise.
 	 * @since 2.0
-	 * @deprecated Callers of this method should interrogate the current {@link State)
+	 * @deprecated Callers of this method should interrogate the current {@link State}
 	 * of the platform.  For example, 
 	 * <pre>
 	 *     State state = Platform.getPlatformAdmin().getState();
@@ -207,7 +207,7 @@ public interface IPluginPrerequisite {
 	 * identifier match satisfies this dependency,
 	 * <code>false</code> otherwise.
 	 * @since 2.0
-	 * @deprecated Callers of this method should interrogate the current {@link State)
+	 * @deprecated Callers of this method should interrogate the current {@link State}
 	 * of the platform.  For example, 
 	 * <pre>
 	 *     State state = Platform.getPlatformAdmin().getState();
@@ -233,7 +233,7 @@ public interface IPluginPrerequisite {
 	 * @return <code>true</code> if only exact identifier match
 	 * satisfies this dependency, <code>false</code> if compatible
 	 * plug-in will satisfy this dependency.
-	 * @deprecated Callers of this method should interrogate the current {@link State)
+	 * @deprecated Callers of this method should interrogate the current {@link State}
 	 * of the platform.  For example, 
 	 * <pre>
 	 *     State state = Platform.getPlatformAdmin().getState();
