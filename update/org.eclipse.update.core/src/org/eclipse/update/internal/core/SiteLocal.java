@@ -3,46 +3,16 @@ package org.eclipse.update.internal.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved. 
  */
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.IActivity;
-import org.eclipse.update.core.IConfigurationSite;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.IInstallConfiguration;
-import org.eclipse.update.core.ILocalSite;
-import org.eclipse.update.core.ILocalSiteChangedListener;
-import org.eclipse.update.core.IPluginEntry;
-import org.eclipse.update.core.IProblemHandler;
-import org.eclipse.update.core.ISite;
-import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.core.model.ConfigurationActivityModel;
-import org.eclipse.update.core.model.ConfigurationSiteModel;
-import org.eclipse.update.core.model.InstallConfigurationModel;
-import org.eclipse.update.core.model.SiteLocalModel;
-import org.eclipse.update.core.model.SiteLocalParser;
 import org.xml.sax.SAXException;
 
 /**
@@ -565,6 +535,13 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 					//the site may not be read-write
 					configSite.setInstallSite(siteEntries[siteIndex].isUpdateable());
+					
+					// check if the features are configured
+					IFeatureReference[] ref = configSite.getSite().getFeatureReferences();
+					for (int i = 0; i < ref.length; i++) {
+							checkConfigure(ref[i], configSite);
+					}
+					
 					toInstall.add(configSite);
 				}
 			}
@@ -669,7 +646,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "The feature " + element.getURL().toExternalForm() + " requires some missing plugins from the site:" + currentSite.getURL().toExternalForm() + listOfMissingPlugins, null);
 				UpdateManagerPlugin.getPlugin().getLog().log(status);
 			}
-			checkConfigure(element, (IConfigurationSite) newSiteModel);
+			checkConfigure(element, (ConfigurationSite) newSiteModel);
 		}
 
 		//add broken features
@@ -724,16 +701,20 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 * A feature may be broken because all the plugins are not in the Site, but may be configured
 	 * because soem of the needed plugins come from other site
 	 */
-	private void checkConfigure(IFeatureReference ref, IConfigurationSite newSite) throws CoreException {
+	private void checkConfigure(IFeatureReference ref, ConfigurationSite newConfigSite) throws CoreException {
 		// check if all the needed plugins are part of all plugin
-
 		IPluginEntry[] allPlugins = getAllRunningPlugin();
-		IPluginEntry[] featurePlugins = ref.getFeature().getPluginEntries();
-		IPluginEntry[] result = intersection(featurePlugins, allPlugins);
-		ConfigurationSite newConfigSite = (ConfigurationSite)newSite;
+		IFeature feature = ref.getFeature();
+		IPluginEntry[] result = new IPluginEntry[0];
+		if ( feature!=null){
+			IPluginEntry[] featurePlugins = ref.getFeature().getPluginEntries();
+			result = intersection(featurePlugins, allPlugins);
+		} else {
+			((FeatureReference)ref).setBroken(true);
+		}
 
 		// there are some plugins the feature need that are not present
-		if (result.length != 0) {
+		if (result.length != 0 || ref.isBroken()) {
 			(newConfigSite.getConfigurationPolicyModel()).addUnconfiguredFeatureReference((FeatureReferenceModel)ref);			
 		} else {
 			(newConfigSite.getConfigurationPolicyModel()).addConfiguredFeatureReference((FeatureReferenceModel)ref);			

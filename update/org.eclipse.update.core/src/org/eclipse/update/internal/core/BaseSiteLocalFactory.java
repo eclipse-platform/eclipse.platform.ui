@@ -49,7 +49,6 @@ public class BaseSiteLocalFactory {
 		//create config site
 		ConfigurationSiteModel configSite = this.createConfigurationSiteModel();
 		configSite.setSiteModel(site);
-		//configSite.setPlatformURLString(site.getURL().toExternalForm());
 				
 		ConfigurationPolicyModel policyModel = this.createConfigurationPolicyModel(); 
 		policyModel.setPolicy(policy);

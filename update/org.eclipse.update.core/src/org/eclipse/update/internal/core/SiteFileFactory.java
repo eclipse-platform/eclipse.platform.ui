@@ -66,6 +66,11 @@ public class SiteFileFactory extends BaseSiteFactory {
 			String path = url.getFile();
 			File siteLocation = new File(path);
 			if (siteLocation.isDirectory()) {
+				// need to add '/' if it is not there
+				if (!(path.endsWith("/") || path.endsWith(File.separator))){
+					url = new URL(url.getProtocol(),url.getHost(),url.getPort(),url.getFile()+"/");
+				}
+
 				if (new File(siteLocation, Site.SITE_XML).exists()) {
 					siteStream = new FileInputStream(new File(siteLocation, Site.SITE_XML));
 					site = (Site) factory.parseSite(siteStream);

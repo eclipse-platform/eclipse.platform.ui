@@ -307,7 +307,17 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				key = nowConfigSites[i].getSite().getURL().toExternalForm();
 				IConfigurationSite oldSite = (IConfigurationSite) oldSitesMap.get(key);
 				if (oldSite != null) {
+					// the Site existed before, calculate teh delta between its current state and the
+					// state we are reverting to
 					((ConfigurationSite) oldSite).deltaWith(nowConfigSites[i], monitor, handler);
+					nowConfigSites[i] = oldSite;
+				} else {
+					// the site didn't exist in the InstallConfiguration we are reverting to
+					// unconfigure everything from this site so it is still present
+					IFeatureReference[] featuresToUnconfigure = nowConfigSites[i].getSite().getFeatureReferences();
+					for (int j = 0; j < featuresToUnconfigure.length; j++) {
+						nowConfigSites[i].unconfigure(featuresToUnconfigure[i],null);
+					}	
 				}
 			}
 			// the new configuration has the exact same sites as the old configuration
