@@ -14,7 +14,8 @@ package org.eclipse.team.internal.ccvs.ssh2;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Map;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -30,7 +31,14 @@ class JSchSession {
 	private static java.util.Hashtable pool = new java.util.Hashtable();
 
 	private static String current_ssh_home = null;
+    private final Session session;
+    private final UserInfo prompter;
+    private final ICVSRepositoryLocation location;
 
+    protected static int getCVSTimeoutInMillis() {
+        return CVSProviderPlugin.getPlugin().getTimeout() * 1000;
+    }
+    
 	public static class SimpleSocketFactory implements SocketFactory {
 		InputStream in = null;
 		OutputStream out = null;
@@ -63,11 +71,104 @@ class JSchSession {
 			// (i.e. the SSH2 session will keep a handle to the socket factory around
 			monitor = new NullProgressMonitor();
 			// Set the socket timeout
-			socket.setSoTimeout(CVSProviderPlugin.getPlugin().getTimeout() * 1000);
+			socket.setSoTimeout(getCVSTimeoutInMillis());
 			return socket;
 		}
 	}
 	
+    /**
+     * UserInfo wrapper class that will time how long each prompt takes
+     */
+    private static class UserInfoTimer implements UserInfo, UIKeyboardInteractive {
+
+        private UserInfo wrappedInfo;
+        private long startTime;
+        private long endTime;
+        private boolean prompting;
+        
+        public UserInfoTimer(UserInfo wrappedInfo) {
+            this.wrappedInfo = wrappedInfo;
+        }
+        
+        private synchronized void startTimer() {
+            prompting = true;
+            startTime = System.currentTimeMillis();
+        }
+        
+        private synchronized void endTimer() {
+            prompting = false;
+            endTime = System.currentTimeMillis();
+        }
+        
+        public long getLastDuration() {
+            return Math.max(0, endTime-startTime);
+        }
+        
+        public boolean hasPromptExceededTimeout() {
+            if (!isPrompting()) {
+                return getLastDuration() > getCVSTimeoutInMillis();
+            }
+            return false;
+        }
+        
+        public String getPassphrase() {
+            return wrappedInfo.getPassphrase();
+        }
+
+        public String getPassword() {
+            return wrappedInfo.getPassword();
+        }
+
+        public boolean promptPassword(String arg0) {
+            try {
+                startTimer();
+                return wrappedInfo.promptPassword(arg0);
+            } finally {
+                endTimer();
+            }
+        }
+
+        public boolean promptPassphrase(String arg0) {
+            try {
+                startTimer();
+                return wrappedInfo.promptPassphrase(arg0);
+            } finally {
+                endTimer();
+            }
+        }
+
+        public boolean promptYesNo(String arg0) {
+            try {
+                startTimer();
+                return wrappedInfo.promptYesNo(arg0);
+            } finally {
+                endTimer();
+            }
+        }
+
+        public void showMessage(String arg0) {
+            try {
+                startTimer();
+                wrappedInfo.showMessage(arg0);  
+            } finally {
+                endTimer();
+            }
+        }
+
+        public String[] promptKeyboardInteractive(String arg0, String arg1, String arg2, String[] arg3, boolean[] arg4) {
+            try {
+                startTimer();
+                return ((UIKeyboardInteractive)wrappedInfo).promptKeyboardInteractive(arg0, arg1, arg2, arg3, arg4);
+            } finally {
+                endTimer();
+            }
+        }
+
+        public boolean isPrompting() {
+            return prompting;
+        }
+    }
+    
 	/**
 	 * User information delegates to the IUserAuthenticator. This allows
 	 * headless access to the connection method.
@@ -228,13 +329,18 @@ class JSchSession {
                 // We were prompted for and returned a password so record it with the location
                 location.setPassword(password);
             }
-        } 		
+        }		
 	}
-	
-	static Session getSession(ICVSRepositoryLocation location, String username, String password, String hostname, int port, SocketFactory socketFactory) throws JSchException {
-		if (port == 0)
-			port = SSH_DEFAULT_PORT;
 
+    public static boolean isAuthenticationFailure(JSchException ee) {
+        return ee.getMessage().equals("Auth fail"); //$NON-NLS-1$
+    }
+    
+    static JSchSession getSession(ICVSRepositoryLocation location, String username, String password, String hostname, int port, SocketFactory socketFactory) throws JSchException {
+
+        if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT)
+            port = getPort(location);
+        
 		IPreferenceStore store = CVSSSH2Plugin.getDefault().getPreferenceStore();
 		String ssh_home = store.getString(ISSHContants.KEY_SSH2HOME);
 
@@ -259,19 +365,19 @@ class JSchSession {
 			}
 		}
 
-		String key = username + "@" + hostname + ":" + port; //$NON-NLS-1$ //$NON-NLS-2$
+		String key = getPoolKey(username, hostname, port);
 
 		try {
-			Session session = (Session) pool.get(key);
-			if (session != null && !session.isConnected()) {
+			JSchSession jschSession = (JSchSession) pool.get(key);
+			if (jschSession != null && !jschSession.getSession().isConnected()) {
 				pool.remove(key);
-				session = null;
+                jschSession = null;
 			}
 
-			if (session == null) {
-				session = jsch.getSession(username, hostname, port);
+			if (jschSession == null) {
 
 				boolean useProxy = store.getString(ISSHContants.KEY_PROXY).equals("true"); //$NON-NLS-1$
+                Proxy proxy = null;
 				if (useProxy) {
 					String _type = store.getString(ISSHContants.KEY_PROXY_TYPE);
 					String _host = store.getString(ISSHContants.KEY_PROXY_HOST);
@@ -288,7 +394,6 @@ class JSchSession {
 				      _pass=(String) map.get(ISSHContants.KEY_PROXY_PASS);
 				    }
 
-					Proxy proxy = null;
 					String proxyhost = _host + ":" + _port; //$NON-NLS-1$
 					if (_type.equals(ISSHContants.HTTP)) {
 						proxy = new ProxyHTTP(proxyhost);
@@ -303,33 +408,68 @@ class JSchSession {
 					} else {
 						proxy = null;
 					}
-					if (proxy != null) {
-						session.setProxy(proxy);
-					}
 				}
 
-				session.setPassword(password);
-
-				MyUserInfo ui = new MyUserInfo(username, password, location);
-				session.setUserInfo(ui);
-				session.setSocketFactory(socketFactory);
-
-				ui.aboutToConnect();
-				session.connect();
-				ui.connectionMade();
-				pool.put(key, session);
-			}
-			return session;
+                MyUserInfo ui = new MyUserInfo(username, password, location);
+                UserInfoTimer wrapperUI = new UserInfoTimer(ui);
+                ui.aboutToConnect();
+                
+                Session session = null;
+                try {
+                    session = createSession(username, password, hostname, port, socketFactory, proxy, wrapperUI);
+                } catch (JSchException e) {
+                    if (isAuthenticationFailure(e) && wrapperUI.hasPromptExceededTimeout()) {
+                        // Try again since the previous prompt may have obtained the proper credentials from the user
+                        session = createSession(username, password, hostname, port, socketFactory, proxy, wrapperUI);
+                    } else {
+                        throw e;
+                    }
+                }
+                ui.connectionMade();
+                JSchSession schSession = new JSchSession(session, location, wrapperUI);
+                pool.put(key, schSession);
+                return schSession;
+			} else {
+                return jschSession;
+            }
 		} catch (JSchException e) {
 			pool.remove(key);
 			if(e.toString().indexOf("Auth cancel")!=-1){  //$NON-NLS-1$
-				throw new OperationCanceledException(""); //$NON-NLS-1$
+				throw new OperationCanceledException();
 			}
 			throw e;
 		}
 	}
 
-	static void loadKnownHosts(){
+    private static Session createSession(String username, String password, String hostname, int port, SocketFactory socketFactory, Proxy proxy, UserInfo wrapperUI) throws JSchException {
+        Session session = jsch.getSession(username, hostname, port);
+        if (proxy != null) {
+            session.setProxy(proxy);
+        }
+        session.setPassword(password);
+        session.setUserInfo(wrapperUI);
+        session.setSocketFactory(socketFactory);
+        // This is where the server is contacted and authentication occurs
+        session.connect();
+        return session;
+    }
+
+    private static String getPoolKey(String username, String hostname, int port) {
+        return username + "@" + hostname + ":" + port; //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    private static String getPoolKey(ICVSRepositoryLocation location){
+        return location.getUsername() + "@" + location.getHost() + ":" + getPort(location); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+	private static int getPort(ICVSRepositoryLocation location) {
+        int port = location.getPort();
+        if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT)
+            port = SSH_DEFAULT_PORT;
+        return port;
+    }
+
+    static void loadKnownHosts(){
 		IPreferenceStore store = CVSSSH2Plugin.getDefault().getPreferenceStore();
 		String ssh_home = store.getString(ISSHContants.KEY_SSH2HOME);
 
@@ -347,9 +487,9 @@ class JSchSession {
 	static void shutdown() {
 		if (jsch != null && pool.size() > 0) {
 			for (Enumeration e = pool.elements(); e.hasMoreElements(); ) {
-				Session session = (Session) (e.nextElement());
+                JSchSession session = (JSchSession) (e.nextElement());
 				try {
-					session.disconnect();
+					session.getSession().disconnect();
 				} catch (Exception ee) {
 				}
 			}
@@ -359,4 +499,36 @@ class JSchSession {
   static JSch getJSch(){
     return jsch;
   }
+  
+    private JSchSession(Session session, ICVSRepositoryLocation location, UserInfo prompter) {
+        this.session = session;
+        this.location = location;
+        this.prompter = prompter;
+    }
+
+    public Session getSession() {
+        return session;
+    }
+
+    public UserInfo getPrompter() {
+        return prompter;
+    }
+
+    public boolean hasPromptExceededTimeout() {
+        if (prompter instanceof UserInfoTimer) {
+            UserInfoTimer timer = (UserInfoTimer) prompter;
+            if (!timer.isPrompting()) {
+                return timer.getLastDuration() > getCVSTimeoutInMillis();
+            }
+        }
+        return false;
+    }
+    
+    public void dispose() {
+        if (session.isConnected()) {
+            session.disconnect();
+        }
+        pool.remove(getPoolKey(location));
+    }
+
 }

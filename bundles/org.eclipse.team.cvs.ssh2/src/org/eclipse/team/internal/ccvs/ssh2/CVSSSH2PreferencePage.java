@@ -974,7 +974,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
       */
 
       IProgressMonitor pm=new org.eclipse.core.runtime.NullProgressMonitor();
-      Session session=JSchSession.getSession(null, user, "", host, port, new JSchSession.ResponsiveSocketFacory(pm)); //$NON-NLS-1$
+      Session session=JSchSession.getSession(null, user, "", host, port, new JSchSession.ResponsiveSocketFacory(pm)).getSession(); //$NON-NLS-1$
       if(session.getServerVersion().indexOf("OpenSSH")==-1){ //$NON-NLS-1$
       	setErrorMessage(Policy.bind("CVSSSH2PreferencePage.110")); //$NON-NLS-1$
     	return;
