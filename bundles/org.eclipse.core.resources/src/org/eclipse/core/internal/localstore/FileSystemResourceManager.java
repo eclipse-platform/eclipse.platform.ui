@@ -398,7 +398,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			case IResource.ROOT :
 				return Platform.getLocation();
 			case IResource.PROJECT :
-				Project project = (Project) target.getProject();
+				Project project = (Project) target;
 				ProjectDescription description = project.internalGetDescription();
 				if (description != null && description.getLocation() != null) {
 					IPath resolved = workspace.getPathVariableManager().resolvePath(description.getLocation());
