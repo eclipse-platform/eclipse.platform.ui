@@ -55,7 +55,8 @@ class ProjectionSummary {
 		public void run() {
 			while (true) {
 				synchronized (fLock) {
-					if(!fReset) break;
+					if (!fReset)
+						break;
 					fReset= false;
 				}
 				internalUpdateSummaries(fProgressMonitor);
@@ -85,26 +86,32 @@ class ProjectionSummary {
 	}
 	
 	public void addAnnotationType(String annotationType) {
-		if (fConfiguredAnnotationTypes == null) {
-			fConfiguredAnnotationTypes= new ArrayList();
-			fConfiguredAnnotationTypes.add(annotationType);
-		} else if (!fConfiguredAnnotationTypes.contains(annotationType))
-			fConfiguredAnnotationTypes.add(annotationType);
+		synchronized(fLock) {
+			if (fConfiguredAnnotationTypes == null) {
+				fConfiguredAnnotationTypes= new ArrayList();
+				fConfiguredAnnotationTypes.add(annotationType);
+			} else if (!fConfiguredAnnotationTypes.contains(annotationType))
+				fConfiguredAnnotationTypes.add(annotationType);
+		}
 	}
 	
 	public void removeAnnotationType(String annotationType) {
-		if (fConfiguredAnnotationTypes != null) {
-			fConfiguredAnnotationTypes.remove(annotationType);
-			if (fConfiguredAnnotationTypes.size() == 0)
-				fConfiguredAnnotationTypes= null;
+		synchronized (fLock) {
+			if (fConfiguredAnnotationTypes != null) {
+				fConfiguredAnnotationTypes.remove(annotationType);
+				if (fConfiguredAnnotationTypes.size() == 0)
+					fConfiguredAnnotationTypes= null;
+			}
 		}
 	}
 	
 	public void updateSummaries(IProgressMonitor monitor) {
 		synchronized (fLock) {
-			if (fSummarizer == null)
-				fSummarizer= new Summarizer(monitor);
-			fSummarizer.reset();
+			if (fConfiguredAnnotationTypes != null) {			
+				if (fSummarizer == null)
+					fSummarizer= new Summarizer(monitor);
+				fSummarizer.reset();
+			}
 		}
 	}
 	
@@ -220,13 +227,23 @@ class ProjectionSummary {
 	}
 	
 	private void createSummary(Map additions, IRegion summaryRange, Position summaryAnchor) {
-		Map map= new HashMap();
 		
-		int size= fConfiguredAnnotationTypes.size();
-		for (int i= 0; i < size; i++) {
-			String type= (String) fConfiguredAnnotationTypes.get(i);
-			map.put(type, new AnnotationBag(type));
+		int size= 0;
+		Map map= null;
+		
+		synchronized (fLock) {
+			if (fConfiguredAnnotationTypes != null) {
+				size= fConfiguredAnnotationTypes.size();
+				map= new HashMap();
+				for (int i= 0; i < size; i++) {
+					String type= (String) fConfiguredAnnotationTypes.get(i);
+					map.put(type, new AnnotationBag(type));
+				}
+			}
 		}
+		
+		if (map == null)
+			return;
 		
 		IAnnotationModel model= fProjectionViewer.getAnnotationModel();
 		Iterator e= model.getAnnotationIterator();
