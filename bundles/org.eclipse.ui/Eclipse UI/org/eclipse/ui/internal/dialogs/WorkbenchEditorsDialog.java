@@ -42,7 +42,10 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	private Table editorsTable;
 	private Button saveSelected;
 	private Button closeSelected;
-
+	private Button selectClean;
+	private Button invertSelection;
+	
+	private boolean showAllPersp = false;
 	private int sortColumn;
 	private List elements = new ArrayList();
 	private HashMap imageCache = new HashMap(11);
@@ -82,6 +85,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		if(s.get(ALLPERSP) == null) {
 			sortColumn = 0;			
 		} else {
+			showAllPersp = s.getBoolean(ALLPERSP);
 			sortColumn = s.getInt(SORT);
 			String[] array = s.getArray(BOUNDS);
 			if(array != null) {
@@ -164,7 +168,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		//A composite for save editors and close editors buttons
 		Composite selectionButtons = new Composite(dialogArea,SWT.NULL);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 4;
 		selectionButtons.setLayout(layout);
 		//Close editors button
 		closeSelected = new Button(selectionButtons,SWT.PUSH);
@@ -182,6 +186,35 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 				saveItems(editorsTable.getItems(),null);
 			}
 		});
+		//Select clean editors button
+		selectClean = new Button(selectionButtons,SWT.PUSH);
+		selectClean.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.selectClean"));
+		selectClean.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				editorsTable.setSelection(selectClean(editorsTable.getItems()));
+				updateButtons();
+			}
+		});
+		//Invert selection button
+		invertSelection = new Button(selectionButtons,SWT.PUSH);
+		invertSelection.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.invertSelection"));
+		invertSelection.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				editorsTable.setSelection(invertedSelection(editorsTable.getItems(),editorsTable.getSelection()));
+				updateButtons();
+			}
+		});
+		
+		//Show only active perspective button
+		final Button showAllPerspButton = new Button(dialogArea,SWT.CHECK);
+		showAllPerspButton.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.showAllPersp"));
+		showAllPerspButton.setSelection(showAllPersp);
+		showAllPerspButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				showAllPersp = showAllPerspButton.getSelection();
+				updateItems();
+			}
+		});		
 		//Create the items and update buttons state
 		updateItems();
 		updateButtons();
@@ -213,29 +246,33 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	 * Updates the button state (enabled/disabled)
 	 */
 	private void updateButtons() {
-		TableItem items[] = editorsTable.getSelection();
+		TableItem selectedItems[] = editorsTable.getSelection();
 		boolean hasDirty = false;
-		for (int i = 0; i < items.length; i ++) {
-			Adapter editor = (Adapter)items[i].getData();
+		for (int i = 0; i < selectedItems.length; i ++) {
+			Adapter editor = (Adapter)selectedItems[i].getData();
 			if(editor.isDirty()) {
 				hasDirty = true;
 				break;
 			}
 		}
-		boolean isOpened = false;
 		saveSelected.setEnabled(hasDirty);
-		for (int i = 0; i < items.length; i ++) {
-			Adapter editor = (Adapter)items[i].getData();
-			if(editor.isOpened()) {
-				isOpened = true;
+		
+		TableItem allItems[] = editorsTable.getItems();
+		boolean hasClean = false;
+		for (int i = 0; i < allItems.length; i ++) {
+			Adapter editor = (Adapter)allItems[i].getData();
+			if(!editor.isDirty()) {
+				hasClean = true;
 				break;
 			}
 		}
-		closeSelected.setEnabled(isOpened);
+		selectClean.setEnabled(hasClean);
+		invertSelection.setEnabled(allItems.length > 0);		
+		closeSelected.setEnabled(selectedItems.length > 0);
+		
 		Button ok = getOkButton();
-		if (ok != null) {
-			ok.setEnabled(items.length == 1);
-		}
+		if (ok != null)
+			ok.setEnabled(selectedItems.length == 1);
 	}
 	/**
 	 * Closes the specified editors
@@ -266,6 +303,40 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		updateItems();
 	}
 	/**
+	 * Returns all clean editors from items[];
+	 */
+	private TableItem[] selectClean(TableItem items[]) {
+		if(items.length == 0)
+			return new TableItem[0];
+		ArrayList cleanItems = new ArrayList(items.length);
+		for (int i = 0; i < items.length; i++) {
+			Adapter editor = (Adapter)items[i].getData();
+			if(!editor.isDirty())
+				cleanItems.add(items[i]);
+		}
+		TableItem result[] = new TableItem[cleanItems.size()];
+		cleanItems.toArray(result);
+		return result;
+	}
+	/**
+	 * Returns all clean editors from items[];
+	 */
+	private TableItem[] invertedSelection(TableItem allItems[],TableItem selectedItems[]) {
+		if(allItems.length == 0)
+			return allItems;
+		ArrayList invertedSelection = new ArrayList(allItems.length - selectedItems.length);
+		outerLoop: for (int i = 0; i < allItems.length; i++) {
+			for (int j = 0; j < selectedItems.length; j++) {
+				if(allItems[i] == selectedItems[j])
+					continue outerLoop;
+			}
+			invertedSelection.add(allItems[i]);
+		}
+		TableItem result[] = new TableItem[invertedSelection.size()];
+		invertedSelection.toArray(result);
+		return result;
+	}		
+	/**
 	 * Updates the specified item
 	 */
 	private void updateItem(TableItem item,Adapter editor) {
@@ -294,9 +365,15 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	private void updateItems() {
 		editorsTable.removeAll();
 		elements = new ArrayList();
-		IWorkbenchPage page = window.getActivePage();
-		if (page != null) {
-			updateEditors(new IWorkbenchPage[]{page});
+		if(showAllPersp) {
+			IWorkbenchWindow windows[] = window.getWorkbench().getWorkbenchWindows();
+			for (int i = 0; i < windows.length; i++)
+				updateEditors(windows[i].getPages());
+		} else {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				updateEditors(new IWorkbenchPage[]{page});
+			}
 		}
 		sort();
 		Object selection = null;
@@ -345,6 +422,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	 */
 	private void saveDialogSettings() {
 		IDialogSettings s = getDialogSettings();
+		s.put(ALLPERSP,showAllPersp);
 		s.put(SORT,sortColumn);
 		bounds = getShell().getBounds();
 		String array[] = new String[4];
