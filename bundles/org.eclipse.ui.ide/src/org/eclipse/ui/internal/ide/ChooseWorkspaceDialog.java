@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.ide;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -81,16 +82,25 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	 * and returns a new <code>Composite</code> with no margins and spacing.
 	 * </p>
 	 *
-	 * @param the parent composite to contain the dialog area
+	 * @param parent the parent composite to contain the dialog area
 	 * @return the dialog area control
 	 */
 	protected Control createDialogArea(Composite parent) {
+		String productName = null;
+		IProduct product = Platform.getProduct();
+		if (product != null) {
+			productName = product.getName();
+		}
+		if (productName == null) {
+		    productName = IDEWorkbenchMessages.getString("ChooseWorkspaceDialog.defaultProductName"); //$NON-NLS-1$
+		}
+
 		Composite composite = (Composite) super.createDialogArea(parent);
 		setTitle(IDEWorkbenchMessages
 				.getString("ChooseWorkspaceDialog.dialogTitle")); //$NON-NLS-1$
 		setMessage(IDEWorkbenchMessages
 				.format("ChooseWorkspaceDialog.dialogMessage", //$NON-NLS-1$
-						new Object[]{ Platform.getProduct().getName() } ));
+						new Object[]{ productName } ));
 		setTitleImage();
 
 		createWorkspaceBrowseRow(composite);
