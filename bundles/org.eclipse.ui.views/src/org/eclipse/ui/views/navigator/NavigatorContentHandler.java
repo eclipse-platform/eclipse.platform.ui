@@ -50,6 +50,7 @@ protected INavigatorContentProvider createContentProvider(String id) {
 	return null;
 }
 public INavigatorContentProvider createContentProvider(NavigatorContentDescriptor descriptor) {
+	if (descriptor == null) return null;
 	INavigatorContentProvider contentProvider = (INavigatorContentProvider)contentProviders.get(descriptor.getId());
 	if  (contentProvider != null) return contentProvider;
 	try {

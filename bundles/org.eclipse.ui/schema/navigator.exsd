@@ -231,10 +231,10 @@
          <attribute name="elementClass" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The element class of the root elements.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=""/>
+                  <meta.attribute kind="java"/>
                </appInfo>
             </annotation>
          </attribute>
