@@ -1034,21 +1034,6 @@
             keySequence="Ctrl+X Ctrl+B"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
-      <keyBinding
-            commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
-            keySequence="Alt+/"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
-            keySequence="Alt+?"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
-            keySequence="Alt+Shift+?"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
       <keyConfiguration
             name="%keyConfiguration.default.name"
             description="%keyConfiguration.default.description"
