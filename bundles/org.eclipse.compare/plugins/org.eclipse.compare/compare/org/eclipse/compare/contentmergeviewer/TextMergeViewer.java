@@ -3509,11 +3509,17 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 			
 	static RGB interpolate(RGB fg, RGB bg, double scale) {
-		return new RGB(
-			(int)((1.0-scale) * fg.red + scale * bg.red),
-			(int)((1.0-scale) * fg.green + scale * bg.green),
-			(int)((1.0-scale) * fg.blue + scale * bg.blue)
-		);
+		if (fg != null && bg != null)
+			return new RGB(
+				(int)((1.0-scale) * fg.red + scale * bg.red),
+				(int)((1.0-scale) * fg.green + scale * bg.green),
+				(int)((1.0-scale) * fg.blue + scale * bg.blue)
+			);
+		if (fg != null)
+			return fg;
+		if (bg != null)
+			return bg;
+		return new RGB(128, 128, 128);	// a gray
 	}
 	
 	//---- Navigating and resolving Diffs
