@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -84,7 +85,10 @@ public class FileLabelProvider extends LabelProvider {
 			}
 		}
 		
-		int matchCount= fPage.getInput().getMatchCount(element);
+		int matchCount= 0;
+		AbstractTextSearchResult result= fPage.getInput();
+		if (result != null)
+			matchCount= result.getMatchCount(element);
 		if (matchCount <= 1)
 			return text;
 		String format= SearchMessages.getString("FileLabelProvider.count.format"); //$NON-NLS-1$

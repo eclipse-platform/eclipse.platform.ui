@@ -30,6 +30,7 @@ import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
+import org.eclipse.search2.internal.ui.text.AnnotationManager;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
@@ -46,7 +47,11 @@ public class AnnotationManagerTest extends TestCase {
 	}
 		
 	public static Test allTests() {
-		return new JUnitSetup(new TestSuite(AnnotationManagerTest.class));
+		TestSuite suite= new TestSuite();
+		
+		suite.addTest(new JUnitSetup(new AnnotationManagerSetup(new TestSuite(AnnotationManagerTest.class), AnnotationManager.HIGHLIGHTER_ANNOTATION)));
+		suite.addTest(new JUnitSetup(new AnnotationManagerSetup(new TestSuite(AnnotationManagerTest.class), AnnotationManager.HIGHLIGHTER_MARKER)));
+		return suite;
 	}
 	
 	public static Test suite() {
@@ -60,6 +65,13 @@ public class AnnotationManagerTest extends TestCase {
 		scope.addExtension("*.java");
 		fQuery1= new FileSearchQuery(scope,  "", "Test");
 		fQuery2= new FileSearchQuery(scope, "", "TestCase");
+	}
+	
+	protected void tearDown() throws Exception {
+		InternalSearchUI.getInstance().removeAllQueries();
+		fQuery1= null;
+		fQuery2= null;
+		super.tearDown();
 	}
 	
 	public void testAddAnnotation() throws Exception {

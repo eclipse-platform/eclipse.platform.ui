@@ -1,46 +1,51 @@
-/*
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 
 package org.eclipse.search2.internal.ui.text;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.Annotation;
+
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
-import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.IEditorMatchAdapter;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.MatchEvent;
 import org.eclipse.search.ui.text.RemoveAllEvent;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 public class AnnotationManager implements ISearchResultListener, IPartListener {
 	private AbstractTextSearchResult fResult;
-	private Map fMatchesToAnnotations;
-	private AnnotationTypeLookup fAnnotationTypeLookup= EditorsUI.getAnnotationTypeLookup();
 	private IEditorPart fEditor;
+	private Highlighter fHighlighter;
 	private IWorkbenchWindow fWindow;
 	private static HashMap fSearchResultMap;
 	private static AnnotationManager fgManager;
+	
+	public static final int HIGHLLIGHTER_ANY= 0;
+	public static final int HIGHLIGHTER_MARKER= 1;
+	public static final int HIGHLIGHTER_ANNOTATION= 2;
+	private static int fgHighlighterType= HIGHLLIGHTER_ANY;
+	
 	static {
 		fSearchResultMap= new HashMap();
 		fgManager= new AnnotationManager();
@@ -63,6 +68,10 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 		};
 		PlatformUI.getWorkbench().addWindowListener(listener);
 	}
+	
+	public static final void debugSetHighlighterType(int type) {
+		fgHighlighterType= type;
+	}
 
 	public static void searchResultActivated(IWorkbenchWindow window, AbstractTextSearchResult result) {
 		fSearchResultMap.put(window, result);
@@ -70,14 +79,11 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 	}
 
 	public static void switchedTo(IWorkbenchWindow window) {
-		fgManager.setWindow(window);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fSearchResultMap.get(window);
 		fgManager.setSearchResult(result);
+		fgManager.setWindow(window);
 	}
 
-	public AnnotationManager() {
-		fMatchesToAnnotations= new HashMap();
-	}
 
 	public synchronized void setSearchResult(AbstractTextSearchResult result) {
 		if (result == fResult)
@@ -111,9 +117,9 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 		IEditorMatchAdapter adapter= fResult.getEditorMatchAdapter();
 		if (fEditor != null && adapter != null && adapter.isShownInEditor(match, fEditor)) {
 			if (kind == MatchEvent.ADDED) {
-				addAnnotations(fEditor, new Match[]{match});
+				addAnnotations(new Match[]{match});
 			} else {
-				removeAnnotations(fEditor, new Match[]{match});
+				removeAnnotations(new Match[]{match});
 			}
 		}
 	}
@@ -124,8 +130,47 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 			if (fResult != null)
 				removeAnnotations();
 			fEditor= (IEditorPart) part;
+			fHighlighter= createHighlighter(fEditor);
 			addAnnotations();
 		}
+	}
+
+	private void removeAnnotations() {
+		if (fHighlighter != null)
+			fHighlighter.removeAll();
+	}
+
+	private static Highlighter createHighlighter(IEditorPart editor) {
+		if (fgHighlighterType != HIGHLLIGHTER_ANY) {
+			return debugCreateHighlighter(editor);
+		}
+		IAnnotationModel model= getAnnotationModel(editor);
+		if (model != null)
+			return new AnnotationHighlighter(model);
+		IEditorInput input= editor.getEditorInput();
+		if (input instanceof IFileEditorInput) {
+			IFile file= ((IFileEditorInput)input).getFile();
+			if (file != null)
+				return new MarkerHighlighter(file);
+		}
+		return null;
+	}
+
+	private static Highlighter debugCreateHighlighter(IEditorPart editor) {
+		if (fgHighlighterType == HIGHLIGHTER_ANNOTATION) {
+			IAnnotationModel model= getAnnotationModel(editor);
+			if (model != null)
+				return new AnnotationHighlighter(model);		
+		} else if (fgHighlighterType == HIGHLIGHTER_MARKER) {
+			IEditorInput input= editor.getEditorInput();
+			if (input instanceof IFileEditorInput) {
+				IFile file= ((IFileEditorInput)input).getFile();
+				if (file != null)
+					return new MarkerHighlighter(file);
+			}
+			
+		}
+		return null;
 	}
 
 	private void addAnnotations() {
@@ -137,17 +182,9 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 		Match[] matches= matchAdapter.computeContainedMatches(fResult, fEditor);
 		if (matches == null)
 			return;
-		addAnnotations(fEditor, matches);
+		addAnnotations(matches);
 	}
 
-	private void removeAnnotations() {
-		IEditorPart editor= fEditor;
-		if (editor == null)
-			return;
-		Set matchSet= fMatchesToAnnotations.keySet();
-		Match[] matches= new Match[matchSet.size()];
-		removeAnnotations(editor, (Match[]) matchSet.toArray(matches));
-	}
 
 	public void partBroughtToTop(IWorkbenchPart part) {
 		partActivated(part);
@@ -157,6 +194,7 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 		if (part == fEditor) {
 			removeAnnotations();
 			fEditor= null;
+			fHighlighter= null;
 		}
 	}
 
@@ -178,82 +216,19 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 		// ignore, will be handled by activate
 	}
 
-	private void addAnnotations(IEditorPart editor, Match[] matches) {
-		HashMap map= new HashMap(matches.length);
-		for (int i= 0; i < matches.length; i++) {
-			int offset= matches[i].getOffset();
-			int length= matches[i].getLength();
-			if (offset >= 0 && length >= 0) {
-				Annotation annotation= new Annotation(fAnnotationTypeLookup.getAnnotationType(SearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO), true, null);
-				fMatchesToAnnotations.put(matches[i], annotation);
-				map.put(annotation, new Position(matches[i].getOffset(), matches[i].getLength()));
-			}
-		}
-		addAnnotations(editor, map);
+	private void addAnnotations(Match[] matches) {
+		if (fHighlighter != null)
+			fHighlighter.addHighlights(matches);
 	}
 
-	private void removeAnnotations(IEditorPart editor, Match[] matches) {
-		HashSet annotations= new HashSet(matches.length);
-		for (int i= 0; i < matches.length; i++) {
-			Annotation annotation= (Annotation) fMatchesToAnnotations.remove(matches[i]);
-			if (annotation != null) {
-				annotations.add(annotation);
-			}
-		}
-		removeAnnotations(editor, annotations);
+	private void removeAnnotations(Match[] matches) {
+		if (fHighlighter != null)
+			fHighlighter.removeHighlights(matches);
 	}
 
-	/**
-	 * Removes annotations from the given editor. The default implementation works for editors that
-	 * implement <code>ITextEditor</code>.
-	 * Subclasses may override this method. 
-	 * @param editor
-	 * @param annotations A set containing the annotations to be removed.
-	 * 			 @see Annotation
-	 */
-	private void removeAnnotations(IWorkbenchPart editor, Set annotations) {
-		IAnnotationModel model= getAnnotationModel(editor);
-		if (model == null)
-			return;
-		if (model instanceof IAnnotationModelExtension) {
-			IAnnotationModelExtension ame= (IAnnotationModelExtension) model;
-			Annotation[] annotationArray= new Annotation[annotations.size()];
-			ame.replaceAnnotations((Annotation[]) annotations.toArray(annotationArray), Collections.EMPTY_MAP);
-		} else {
-			for (Iterator iter= annotations.iterator(); iter.hasNext();) {
-				Annotation element= (Annotation) iter.next();
-				model.removeAnnotation(element);
-			}
-		}
-	}
 
-	/**
-	 * Adds annotations to the given editor. The default implementation works for editors that
-	 * implement <code>ITextEditor</code>.
-	 * Subclasses may override this method. 
-	 * @param editor
-	 * @param annotationToPositionMap A map containing annotations as keys and Positions as values.
-	 * 			 @see Annotation
-	 * 			 @see Position
-	 */
-	private void addAnnotations(IWorkbenchPart editor, Map annotationToPositionMap) {
-		IAnnotationModel model= getAnnotationModel(editor);
-		if (model == null) {
-			return;
-		}
-		if (model instanceof IAnnotationModelExtension) {
-			IAnnotationModelExtension ame= (IAnnotationModelExtension) model;
-			ame.replaceAnnotations(new Annotation[0], annotationToPositionMap);
-		} else {
-			for (Iterator elements= annotationToPositionMap.keySet().iterator(); elements.hasNext();) {
-				Annotation element= (Annotation) elements.next();
-				Position p= (Position) annotationToPositionMap.get(element);
-				model.addAnnotation(element, p);
-			}
-		}
-	}
 
-	private IAnnotationModel getAnnotationModel(IWorkbenchPart part) {
+	private static IAnnotationModel getAnnotationModel(IWorkbenchPart part) {
 		IAnnotationModel model= null;
 		model= (IAnnotationModel) part.getAdapter(IAnnotationModel.class); 
 		if (model == null) {

@@ -26,17 +26,20 @@ import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Assert;
-
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
+import org.eclipse.search.ui.IContextMenuConstants;
+import org.eclipse.search.ui.ISearchResultView;
+import org.eclipse.search.ui.ISearchResultViewEntry;
+import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search2.internal.ui.InternalSearchUI;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -44,15 +47,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-
-import org.eclipse.search.ui.IContextMenuConstants;
-import org.eclipse.search.ui.ISearchResultView;
-import org.eclipse.search.ui.ISearchResultViewEntry;
-import org.eclipse.search.ui.SearchUI;
-
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
-
-import org.eclipse.search2.internal.ui.InternalSearchUI;
 
 /**
  * The plug-in runtime class for Search plug-in
@@ -90,7 +84,6 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
 		SearchPreferencePage.initDefaults(store);
-		WorkInProgressPreferencePage.initDefaults(store);
 	}
 	
 	/**
@@ -351,6 +344,10 @@ public class SearchPlugin extends AbstractUIPlugin {
 		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
 
+	public static boolean useNewSearch() {
+		return true;
+	}
+	
 	/**
 	 * Creates the Search plugin standard groups in a context menu.
 	 */
