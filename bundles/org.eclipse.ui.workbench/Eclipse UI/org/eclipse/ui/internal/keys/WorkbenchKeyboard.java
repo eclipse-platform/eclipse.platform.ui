@@ -494,7 +494,7 @@ public final class WorkbenchKeyboard {
                 }
 
             } else {
-                widget.addListener(event.type, new OutOfOrderListener(this));
+                widget.addListener(SWT.KeyDown, new OutOfOrderListener(this));
 
             }
 
