@@ -67,8 +67,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 */
 	private static WorkbenchPreferenceDialog instance = null;
 
-	// The id of the last page that was selected
-	private static String lastGroupId = null;
 
 	/**
 	 * The Load button id.
@@ -208,7 +206,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
     //The title for pageContent area
 	private Label title;
 
-	private ToolBar toolBar;
 
 	private Composite toolBarComposite;
 
