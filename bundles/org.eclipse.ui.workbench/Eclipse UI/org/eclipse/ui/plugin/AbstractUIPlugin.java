@@ -498,8 +498,17 @@ public abstract class AbstractUIPlugin extends Plugin {
 		super(descriptor);
 	}
 	
-	/*
-	 * @see Plugin()
+	/**
+	 * Creates an abstract UI plug-in runtime object.
+	 * <p>
+	 * Plug-in runtime classes are <code>BundleActivators</code> and so must
+	 * have an default constructor.  This method is called by the runtime when 
+	 * the associated bundle is being activated.  
+	 * <p>
+	 * For more details, see <code>Plugin</code>'s default constructor.
+     *
+	 * @see Plugin#Plugin()
+     * @since 3.0
 	 */
 	public AbstractUIPlugin() {
 		super();
