@@ -32,9 +32,12 @@ public class GroupAllByFileAction extends AbstractGroupBreakpointsAction {
             group.append(resource.getName());
             IContainer parent = resource.getParent();
             if (parent != null) {
-                group.append(" ["); //$NON-NLS-1$
-                group.append(parent.getFullPath().toString().substring(1));
-                group.append(']');
+            	String parentPath= parent.getFullPath().toString().substring(1);
+            	if (parentPath.length() > 0) {
+            		group.append(" ["); //$NON-NLS-1$
+            		group.append(parentPath);
+            		group.append(']');
+            	}
             }
         }
         return group.toString();
