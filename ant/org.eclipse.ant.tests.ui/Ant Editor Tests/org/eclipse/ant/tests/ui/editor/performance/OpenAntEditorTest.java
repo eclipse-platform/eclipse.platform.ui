@@ -30,13 +30,13 @@ public class OpenAntEditorTest extends PerformanceTestCase {
 	public void testOpenAntEditor1() throws PartInitException {
 		// cold run
 		IFile file= getIFile("build.xml");
-		measureOpenInEditor(new IFile[]{file});
+		measureOpenInEditor(file);
 	}
 	
 	public void testOpenAntEditor2() throws PartInitException {
 		// warm run
 		IFile file= getIFile("build.xml");
-		measureOpenInEditor(new IFile[]{file});
+		measureOpenInEditor(file);
 	}
 	
 	protected IFile getIFile(String buildFileName) {
@@ -58,12 +58,13 @@ public class OpenAntEditorTest extends PerformanceTestCase {
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(ProjectHelper.PROJECT_NAME);
 	}
 	
-	protected void measureOpenInEditor(IFile[] files) throws PartInitException {
+	protected void measureOpenInEditor(IFile file) throws PartInitException {
 		try {
-			for (int i= 0, n= files.length; i < n; i++) {
+			for (int i= 0; i < 20; i++) {
 				startMeasuring();
-				EditorTestHelper.openInEditor(files[i], true);
+				EditorTestHelper.openInEditor(file, true);
 				stopMeasuring();
+				EditorTestHelper.closeAllEditors();
 				sleep(2000); // NOTE: runnables posted from other threads, while the main thread waits here, are executed and measured only in the next iteration
 			}
 			 commitMeasurements();
