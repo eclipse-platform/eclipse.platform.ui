@@ -137,7 +137,7 @@ public class CustomBrowser implements IBrowser {
 		
 		if (isWindows){
 			if (isWindows98orME)
-				tokenList.add(0, "command");
+				tokenList.add(0, "command.com");
 			else
 				tokenList.add(0, "cmd");
 			tokenList.add(1, "/c");
