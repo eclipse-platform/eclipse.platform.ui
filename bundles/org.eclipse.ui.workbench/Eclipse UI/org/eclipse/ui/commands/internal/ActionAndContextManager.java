@@ -13,13 +13,13 @@ package org.eclipse.ui.commands.internal;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.jface.action.ContextResolver;
@@ -47,10 +47,11 @@ import org.eclipse.ui.commands.IActionServiceListener;
 import org.eclipse.ui.commands.IContextService;
 import org.eclipse.ui.commands.IContextServiceListener;
 import org.eclipse.ui.internal.AcceleratorMenu;
+import org.eclipse.ui.internal.CoolBarManager;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.commands.Command;
+import org.eclipse.ui.internal.commands.ContextBinding;
 import org.eclipse.ui.internal.commands.CoreRegistry;
 import org.eclipse.ui.internal.commands.KeySupport;
 import org.eclipse.ui.internal.commands.LocalRegistry;
@@ -122,6 +123,7 @@ public class ActionAndContextManager implements IContextResolver {
 	private WorkbenchWindow workbenchWindow;
 	private IActionService workbenchWindowActionService;
 	private IContextService workbenchWindowContextService;
+	private Map contextsByCommand;
 
 	public ActionAndContextManager(WorkbenchWindow workbenchWindow) {
 		super();
@@ -365,40 +367,68 @@ public class ActionAndContextManager implements IContextResolver {
 		ContextResolver.getInstance().setContextResolver(this);
 		MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
 		menuManager.update(IAction.TEXT);
+
+		/* TODO: coolbars are weird. make this work like it does for menus
+		CoolBarManager coolBarManager = ((WorkbenchWindow) workbenchWindow).getCoolBarManager();
+		
+		if (coolBarManager != null)
+			coolBarManager.update(true);
+		*/
 	}
 
-	private Map commandsById;
-	private Set contexts;
-	
 	public boolean inContext(String commandId) {
-		/*
 		if (commandId != null) {
-			Command command = (Command) commandsById.get(commandId);
+			Set set = (Set) contextsByCommand.get(commandId);
+		
+			if (set != null) {
+				if (activeWorkbenchPartContextService != null) {
+					List contexts = activeWorkbenchPartContextService.getContexts();
+
+					if (contexts != null) {
+						// TODO: get rid of this
+						contexts = new ArrayList(contexts);
+						if (contexts.size() == 0)
+							contexts.add(IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID);
 			
-			if (command != null) {
-				List contexts = command.getContexts();
+						Iterator iterator = contexts.iterator();
 				
-				if (contexts != null && contexts.size() >= 1) {
-					Iterator iterator = contexts.iterator();
+						while (iterator.hasNext()) {
+							String context = (String) iterator.next();
 					
-					while (iterator.hasNext()) {
-						String context = (String) iterator.next();
-						
-						if (this.contexts.contains(context))
-							return true;
+							if (set.contains(context))
+								return true;
+						}
 					}
-					
-					return false;				
 				}
+
+				if (workbenchWindowContextService != null) {
+					List contexts = workbenchWindowContextService.getContexts();
+		
+					if (contexts != null) {
+						// TODO: get rid of this
+						contexts = new ArrayList(contexts);
+						if (contexts.size() == 0)
+							contexts.add(IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID);
+
+						Iterator iterator = contexts.iterator();
+				
+						while (iterator.hasNext()) {
+							String context = (String) iterator.next();
+					
+							if (set.contains(context))
+								return true;
+						}
+					}
+				}
+
+				return false;				
 			}
 		}
-		*/
 
 		return true;			
 	}
 	
 	void reset() {
-		contexts = Collections.EMPTY_SET;
 		CoreRegistry coreRegistry = CoreRegistry.getInstance();
 		LocalRegistry localRegistry = LocalRegistry.getInstance();
 		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
@@ -418,10 +448,25 @@ public class ActionAndContextManager implements IContextResolver {
 		} catch (IOException eIO) {
 		}		
 
-		List commands = new ArrayList();
-		commands.addAll(coreRegistry.getCommands());
-		commands.addAll(localRegistry.getCommands());
-		commands.addAll(preferenceRegistry.getCommands());		
-		commandsById = Collections.unmodifiableSortedMap(Command.sortedMapById(commands));
+		List contextBindings = new ArrayList();
+		contextBindings.addAll(coreRegistry.getContextBindings());
+		contextBindings.addAll(localRegistry.getContextBindings());
+		contextBindings.addAll(preferenceRegistry.getContextBindings());	
+		contextsByCommand = new TreeMap();
+		Iterator iterator = contextBindings.iterator();
+		
+		while (iterator.hasNext()) {		
+			ContextBinding contextBinding = (ContextBinding) iterator.next();
+			String command = contextBinding.getCommand();
+			String context = contextBinding.getContext();			
+			Set set = (Set) contextsByCommand.get(command);
+			
+			if (set == null) {
+				set = new TreeSet();
+				contextsByCommand.put(command, set);
+			}
+			
+			set.add(context);
+		}
 	}	
 }

@@ -16,16 +16,16 @@ public final class ContextBinding implements Comparable {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = ContextBinding.class.getName().hashCode();
 	
-	public static ContextBinding create(String command, String plugin, String context)
+	public static ContextBinding create(String command, String context, String plugin)
 		throws IllegalArgumentException {
-		return new ContextBinding(command, plugin, context);
+		return new ContextBinding(command, context, plugin);
 	}
 
 	private String command;
-	private String plugin;
 	private String context;
+	private String plugin;
 
-	private ContextBinding(String command, String plugin, String context)
+	private ContextBinding(String command, String context, String plugin)
 		throws IllegalArgumentException {
 		super();
 		
@@ -34,6 +34,7 @@ public final class ContextBinding implements Comparable {
 		
 		this.command = command;	
 		this.context = context;
+		this.plugin = plugin;
 	}
 
 	public int compareTo(Object object) {
@@ -41,10 +42,10 @@ public final class ContextBinding implements Comparable {
 		int compareTo = Util.compare(command, contextBinding.command);
 
 		if (compareTo == 0) {		
-			compareTo = Util.compare(plugin, contextBinding.plugin);
-
+			compareTo = context.compareTo(contextBinding.context);
+			
 			if (compareTo == 0)
-				compareTo = context.compareTo(contextBinding.context);
+				compareTo = Util.compare(plugin, contextBinding.plugin);
 		}
 
 		return compareTo;
@@ -55,26 +56,26 @@ public final class ContextBinding implements Comparable {
 			return false;
 		
 		ContextBinding contextBinding = (ContextBinding) object;
-		return Util.equals(command, contextBinding.command) && Util.equals(plugin, contextBinding.plugin) && context.equals(contextBinding.context);
+		return Util.equals(command, contextBinding.command) && context.equals(contextBinding.context) && Util.equals(plugin, contextBinding.plugin);
 	}
 
 	public String getCommand() {
 		return command;
 	}
 
-	public String getPlugin() {
-		return plugin;
-	}
-
 	public String getContext() {
 		return context;
+	}
+
+	public String getPlugin() {
+		return plugin;
 	}
 
 	public int hashCode() {
 		int result = HASH_INITIAL;
 		result = result * HASH_FACTOR + Util.hashCode(command);		
-		result = result * HASH_FACTOR + Util.hashCode(plugin);	
 		result = result * HASH_FACTOR + context.hashCode();
+		result = result * HASH_FACTOR + Util.hashCode(plugin);	
 		return result;
 	}
 }
