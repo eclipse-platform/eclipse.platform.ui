@@ -1062,13 +1062,12 @@ public class WorkbenchActionBuilder {
 							IncrementalProjectBuilder.INCREMENTAL_BUILD);
 					action.doBuild();
 				}
+
+				if (autoBuildSetting)
+					removeManualIncrementalBuildAction();
+				else
+					addManualIncrementalBuildAction();
 			}
-
-			if (autoBuildSetting)
-				removeManualIncrementalBuildAction();
-			else
-				addManualIncrementalBuildAction();
-
 		} else if (
 			event.getProperty().equals(
 				IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
