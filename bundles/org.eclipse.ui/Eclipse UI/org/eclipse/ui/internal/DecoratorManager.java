@@ -72,13 +72,12 @@ public class DecoratorManager implements ILabelDecorator {
 		for (int i = 0; i < decorators.length; i++) {
 			result = decorators[i].decorateText(text, element);
 		}
-		
-		
+
 		//Get any adaptions to IResource
 		Object adapted = getResourceAdapter(element);
-		if(adapted != null)
-			result = decorateText(result,adapted);
-				
+		if (adapted != null)
+			result = decorateText(result, adapted);
+
 		return result;
 	}
 
@@ -93,26 +92,26 @@ public class DecoratorManager implements ILabelDecorator {
 		for (int i = 0; i < decorators.length; i++) {
 			result = decorators[i].decorateImage(image, element);
 		}
-		
+
 		//Get any adaptions to IResource
 		Object adapted = getResourceAdapter(element);
-		if(adapted != null)
-			result = decorateImage(result,adapted);
-		
+		if (adapted != null)
+			result = decorateImage(result, adapted);
+
 		return result;
 	}
-	
+
 	/**
 	 * Get the resource adapted object for the supplied
 	 * element. return null if there isn't one.
 	 */
-	private Object getResourceAdapter(Object element){
-		
-		if(element instanceof IResource)
+	private Object getResourceAdapter(Object element) {
+
+		if (element instanceof IResource)
 			return null;
-			
+
 		//Get any adaptions to IResource
-		if(element instanceof IAdaptable)
+		if (element instanceof IAdaptable)
 			return ((IAdaptable) element).getAdapter(IResource.class);
 		return null;
 	}
@@ -120,7 +119,8 @@ public class DecoratorManager implements ILabelDecorator {
 	/**
 	 * Get the decorators registered for elements of this type.
 	 * If there is one return it. If not search for one first
-	 * via superclasses and then via interfaces.
+	 * via superclasses and then via interfaces. Also use the 
+	 * adapted decorators if appropriate.
 	 * If still nothing is found then add in a decorator that
 	 * does nothing.
 	 */
@@ -131,9 +131,34 @@ public class DecoratorManager implements ILabelDecorator {
 		if (cachedDecorators.containsKey(className))
 			return (ILabelDecorator[]) cachedDecorators.get(className);
 
+		Collection enabledDefinitions = enabledDefinitions();
+		Collection decorators =
+			getDecoratorsFromDefinitions(elementClass, enabledDefinitions());
+
+		//Get any adaptions to IResource
+		Object adapted = getResourceAdapter(element);
+		if (adapted != null)
+			decorators.addAll(
+				getDecoratorsFromDefinitions(
+					adapted.getClass(),
+					adaptableDefinitions(enabledDefinitions)));
+
+		ILabelDecorator[] decoratorArray = new ILabelDecorator[decorators.size()];
+		decorators.toArray(decoratorArray);
+		cachedDecorators.put(element.getClass().getName(), decoratorArray);
+		return decoratorArray;
+	}
+
+	/**
+	 * Search for the decorators in enabledDefinitions
+	 * via superclasses and then via interfaces and return the result.
+	 */
+	private Collection getDecoratorsFromDefinitions(
+		Class elementClass,
+		Collection enabledDefinitions) {
+
 		List allClasses = computeClassOrder(elementClass);
 		ArrayList decorators = new ArrayList();
-		DecoratorDefinition[] enabledDefinitions = enabledDefinitions();
 
 		findDecorators(allClasses, enabledDefinitions, decorators);
 
@@ -142,10 +167,7 @@ public class DecoratorManager implements ILabelDecorator {
 			enabledDefinitions,
 			decorators);
 
-		ILabelDecorator[] decoratorArray = new ILabelDecorator[decorators.size()];
-		decorators.toArray(decoratorArray);
-		cachedDecorators.put(element.getClass().getName(), decoratorArray);
-		return decoratorArray;
+		return decorators;
 	}
 
 	/** 
@@ -154,15 +176,17 @@ public class DecoratorManager implements ILabelDecorator {
 	 */
 	private void findDecorators(
 		Collection classList,
-		DecoratorDefinition[] enabledDefinitions,
+		Collection enabledDefinitions,
 		ArrayList result) {
 
 		Iterator classes = classList.iterator();
 		while (classes.hasNext()) {
 			String className = ((Class) classes.next()).getName();
-			for (int i = 0; i < enabledDefinitions.length; i++) {
-				if (className.equals(enabledDefinitions[i].getObjectClass()))
-					result.add(enabledDefinitions[i].getDecorator());
+			Iterator definitions = enabledDefinitions.iterator();
+			while (definitions.hasNext()) {
+				DecoratorDefinition definition = (DecoratorDefinition) definitions.next();
+				if (className.equals(definition.getObjectClass()))
+					result.add(definition.getDecorator());
 			}
 		}
 
@@ -238,16 +262,30 @@ public class DecoratorManager implements ILabelDecorator {
 	/**
 	 * Return the enabled decorator definitions
 	 */
-	private DecoratorDefinition[] enabledDefinitions() {
+	private Collection enabledDefinitions() {
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < definitions.length; i++) {
 			if (definitions[i].isEnabled())
 				result.add(definitions[i]);
 		}
-		DecoratorDefinition[] returnArray = new DecoratorDefinition[result.size()];
-		result.toArray(returnArray);
-		return returnArray;
+		return result;
 	}
+
+	/**
+	 * Return the definitions that are adaptable
+	 * from the list of enabled definitions.
+	 */
+	private Collection adaptableDefinitions(Collection enabledDefinitions) {
+		ArrayList result = new ArrayList();
+		Iterator enabled = enabledDefinitions().iterator();
+		while (enabled.hasNext()) {
+			DecoratorDefinition definition = (DecoratorDefinition) enabled.next();
+			if (definition.isAdaptable())
+				result.add(definition);
+		}
+		return result;
+	}
+
 	/*
 	 * @see IBaseLabelProvider#dispose()
 	 */
@@ -262,12 +300,12 @@ public class DecoratorManager implements ILabelDecorator {
 		cachedDecorators = new HashMap();
 		fireListeners(new LabelProviderChangedEvent(this));
 	}
-	
+
 	/**
 	 * Get the DecoratorDefinitions defined on the receiver.
 	 */
-	public DecoratorDefinition[] getDecoratorDefinitions(){
+	public DecoratorDefinition[] getDecoratorDefinitions() {
 		return definitions;
 	}
-		
+
 }

@@ -14,6 +14,7 @@ public class DecoratorDefinition {
 	private String objectClass;
 	private ILabelDecorator decorator;
 	private boolean enabled;
+	private boolean adaptable;
 
 	/**
 	 * Create a new instance of the receiver with the
@@ -24,10 +25,12 @@ public class DecoratorDefinition {
 		String label,
 		String className,
 		boolean apply,
+		boolean isAdaptable,
 		ILabelDecorator definedDecorator) {
 		name = label;
 		objectClass = className;
 		enabled = apply;
+		adaptable = isAdaptable;
 		decorator = definedDecorator;
 	}
 
@@ -95,4 +98,12 @@ public class DecoratorDefinition {
 		this.enabled = enabled;
 	}
 
+	/**
+	 * Return whether or not this decorator should be 
+	 * applied to adapted types.
+	 */
+	
+	public boolean isAdaptable(){
+		return adaptable;
+	}
 }
