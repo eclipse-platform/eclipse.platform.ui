@@ -415,13 +415,14 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 		/* initialize common objects */
 		final IProject project = projects[0];
 
-		/* remove project location and write */
-		IPath location = getLocalManager().locationFor(project);
-		ensureDoesNotExistInFileSystem(project);
-		assertTrue("2.1", !location.toFile().isDirectory());
-		//write project in a runnable, otherwise tree will be locked
+		final IPath location = getLocalManager().locationFor(project);
+		// create project and then delete from file system
+		// wrap in runnable to prevent snapshot from occurring in the middle.
 		getWorkspace().run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
+				ensureDoesNotExistInFileSystem(project);
+				assertTrue("2.1", !location.toFile().isDirectory());
+				//write project in a runnable, otherwise tree will be locked
 				((Project) project).writeDescription(IResource.FORCE);
 			}
 		}, null);
