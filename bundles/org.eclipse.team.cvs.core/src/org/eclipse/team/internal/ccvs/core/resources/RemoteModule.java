@@ -10,14 +10,18 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
@@ -74,38 +78,41 @@ public class RemoteModule extends RemoteFolder {
 			// Read the module name
 			StringTokenizer tokenizer = new StringTokenizer(moduleDefinitionStrings[i]);
 			String moduleName = tokenizer.nextToken();
-			if ( ! tokenizer.hasMoreTokens()) {
-				// If it only has a name and no tokens, skip it.
-				continue;
-			}
-			
-			// Read the options associated with the module
-			List localOptionsList = new ArrayList();
-			String next = tokenizer.nextToken();
-			while (next.charAt(0) == '-') {
-				switch (next.charAt(1)) {
-					case 'a': // alias
-						localOptionsList.add(Checkout.ALIAS);
-						break;
-					case 'l': // don't recurse
-						localOptionsList.add(Checkout.DO_NOT_RECURSE);
-						break;
-					case 'd': // directory
-						localOptionsList.add(Checkout.makeDirectoryNameOption(tokenizer.nextToken()));
-						break;
-					case 'e':
-					case 'i':
-					case 'o':
-					case 't':
-					case 'u': // Ignore any programs
-						tokenizer.nextToken();
-						break;
-					case 's': // status
-						localOptionsList.add(Checkout.makeStatusOption(tokenizer.nextToken()));
-						break;
-					default: // unanticipated option. Ignore it and go on
-				}
+			List localOptionsList;
+			String next;
+			try {
+				// Read the options associated with the module
+				localOptionsList = new ArrayList();
 				next = tokenizer.nextToken();
+				while (next.charAt(0) == '-') {
+					switch (next.charAt(1)) {
+						case 'a': // alias
+							localOptionsList.add(Checkout.ALIAS);
+							break;
+						case 'l': // don't recurse
+							localOptionsList.add(Checkout.DO_NOT_RECURSE);
+							break;
+						case 'd': // directory
+							localOptionsList.add(Checkout.makeDirectoryNameOption(tokenizer.nextToken()));
+							break;
+						case 'e':
+						case 'i':
+						case 'o':
+						case 't':
+						case 'u': // Ignore any programs
+							tokenizer.nextToken();
+							break;
+						case 's': // status
+							localOptionsList.add(Checkout.makeStatusOption(tokenizer.nextToken()));
+							break;
+						default: // unanticipated option. Ignore it and go on
+					}
+					next = tokenizer.nextToken();
+				}
+			} catch (NoSuchElementException e) {
+				// There is an invalid entry in the modules file. Log it and continue
+				CVSProviderPlugin.log(new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0, Policy.bind("RemoteModule.invalidDefinition", moduleDefinitionStrings[i], repository.getLocation()), null)); //$NON-NLS-1$
+				continue;
 			}
 			LocalOption[] localOptions = (LocalOption[]) localOptionsList.toArray(new LocalOption[localOptionsList.size()]);
 			
