@@ -186,7 +186,7 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
      * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#showBusyForFamily(java.lang.Object)
      */
     public void showBusyForFamily(Object family) {
-       ProgressManager.getInstance().addListenerToFamily(family,this);
+      //ProgressManager.getInstance().addListenerToFamily(family,this);
 
     }
 	
