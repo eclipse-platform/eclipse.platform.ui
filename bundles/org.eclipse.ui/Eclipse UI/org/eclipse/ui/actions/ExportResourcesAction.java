@@ -5,6 +5,7 @@ package org.eclipse.ui.actions;
  * All Rights Reserved.
  */
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -22,7 +23,6 @@ import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ExportWizard;
-import org.eclipse.ui.views.navigator.ResourceSelectionUtil;
 
 /**
  * Action representing the initiation of an Export operation by the user.
@@ -31,7 +31,7 @@ import org.eclipse.ui.views.navigator.ResourceSelectionUtil;
  * </p>
  * @since 2.0
  */
-public class ExportResourcesAction extends Action {
+public class ExportResourcesAction extends SelectionListenerAction {
 	private static final int SIZING_WIZARD_WIDTH = 470;
 	private static final int SIZING_WIZARD_HEIGHT = 550;
 	private IWorkbench workbench;
@@ -46,27 +46,19 @@ public ExportResourcesAction(IWorkbench aWorkbench) {
 	WorkbenchHelp.setHelp(this, IHelpContextIds.EXPORT_ACTION);
 	this.workbench = aWorkbench;
 }
-/**
- * Sets the current selection. 
- * <p>
- * The action will enable based on the selection. The action may be run without
- * setting the selection.
- * </p>
- * @param selection the new selection
+/*
+ * @see SelectionListenerAction.updateSelection()
  */
-public void setSelection(IStructuredSelection selection) {
-	this.selection = selection;
-
-	// disable if the selection is empty or contains only closed projects
+protected boolean updateSelection(IStructuredSelection selection) {
 	
-	if (selection.isEmpty()) {
-		setEnabled(false);
-		return;
-	}
+	if(!super.updateSelection(selection))
+		return false;
+		
+	if (selection.isEmpty()) 
+		return false;
 	
-	if (ResourceSelectionUtil.allResourcesAreOfType(selection, IResource.PROJECT)) {
-		IStructuredSelection projects = 
-			ResourceSelectionUtil.allResources(selection, IResource.PROJECT);
+	if (selectionIsOfType(IResource.PROJECT)) {
+		List projects = getSelectedResources();
 		if (projects != null) {	
 			Iterator iterator = projects.iterator();
 			boolean found = false;
@@ -74,13 +66,12 @@ public void setSelection(IStructuredSelection selection) {
 				found = ((IProject)iterator.next()).isOpen();
 			}
 			if (!found) {
-				setEnabled(false);
-				return;
+				return false;
 			}
 		}
 	}
 	
-	setEnabled(ResourceSelectionUtil.hasResources(this.selection));
+	return getSelectedResources() != null;
 }
 
 /**

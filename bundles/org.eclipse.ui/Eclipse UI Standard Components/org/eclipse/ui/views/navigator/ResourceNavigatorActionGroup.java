@@ -101,8 +101,8 @@ public class ResourceNavigatorActionGroup extends ActionGroup {
 		
 		menu.add(importAction);
 		menu.add(exportAction);
-		importAction.setSelection(selection);
-		exportAction.setSelection(selection);
+		importAction.selectionChanged(selection);
+		exportAction.selectionChanged(selection);
 		menu.add(new Separator());
 				
 		if (onlyFilesSelected) {

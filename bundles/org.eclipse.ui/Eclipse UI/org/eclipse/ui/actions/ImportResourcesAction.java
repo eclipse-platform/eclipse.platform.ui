@@ -4,6 +4,10 @@ package org.eclipse.ui.actions;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.Action;
@@ -29,7 +33,7 @@ import org.eclipse.ui.views.navigator.ResourceSelectionUtil;
  * </p>
  * @since 2.0
  */
-public class ImportResourcesAction extends Action {
+public class ImportResourcesAction extends SelectionListenerAction {
 	private static final int SIZING_WIZARD_WIDTH = 470;
 	private static final int SIZING_WIZARD_HEIGHT = 550;
 	private IWorkbench workbench;
@@ -44,43 +48,43 @@ public ImportResourcesAction(IWorkbench aWorkbench) {
 	WorkbenchHelp.setHelp(this, IHelpContextIds.IMPORT_ACTION);
 	this.workbench = aWorkbench;
 }
-/**
- * Sets the current selection. 
- * <p>
- * The action will enable based on the selection. The action may be run without
- * setting the selection.
- * </p>
- * @param selection the new selection
+/*
+ * @see SelectionListenerAction.updateSelection()
  */
-public void setSelection(IStructuredSelection selection) {
-	this.selection = selection;
+protected boolean updateSelection(IStructuredSelection selection) {
 	
-	// enable only for single folder or open project or empty selection
+	if(!super.updateSelection(selection))
+		return false;
 	
 	if (selection.size() != 1) {
-		setEnabled(selection.size() == 0); 
-		return;
+		return selection.size() == 0;
 	} 
 	
-	if (!ResourceSelectionUtil.allResourcesAreOfType(
-		selection, IResource.PROJECT | IResource.FOLDER)) {
-			setEnabled(false);
-			return;
-	} 
+	Iterator iterator = getSelectedResources().iterator();
+	boolean hasFile = false;
+	List projects = new ArrayList();
 	
-	IStructuredSelection resources = ResourceSelectionUtil.allResources(selection, IResource.PROJECT);
-	if (resources == null) {
-		setEnabled(false);
-		return;
+	while(iterator.hasNext()){
+		IResource resource = (IResource) iterator.next();
+		if(resource.getType() == IResource.PROJECT){
+			projects.add(resource);
+			break;
+		}
+		
+		if(resource.getType() == IResource.FOLDER)
+			break;
+		hasFile = true;
+	}
+	
+	if(hasFile)
+		return false;
+	 
+	if (projects.isEmpty()) {
+		return false;
 	}
 
-	IProject project = (IProject)resources.getFirstElement();
-	if (project != null && !project.isOpen()) {
-		setEnabled(false);		
-		return;
-	}
-	
-	setEnabled(true);
+	IProject project = (IProject)projects.get(0);
+	return(project.isOpen());
 }
 
 
