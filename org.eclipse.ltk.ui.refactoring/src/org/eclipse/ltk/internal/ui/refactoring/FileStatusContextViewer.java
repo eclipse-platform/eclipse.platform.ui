@@ -79,8 +79,8 @@ public class FileStatusContextViewer extends TextStatusContextViewer {
 				manager.disconnect(path, new NullProgressMonitor());
 			}
 		} catch (CoreException e) {
-			// fall through
+			RefactoringUIPlugin.log(e);
 		}
-		return new Document("Couldn't read content of file");
+		return new Document(RefactoringUIMessages.getString("FileStatusContextViewer.error_reading_file")); //$NON-NLS-1$
 	}	
 }

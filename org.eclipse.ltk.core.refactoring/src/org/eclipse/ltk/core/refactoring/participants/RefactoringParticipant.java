@@ -27,8 +27,7 @@ import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
  * </p>
  * <p>
  * The change created from a participant must not conflict with any changes
- * provided by other participants or the refactoring itself. If the change 
- * conflicts it will be ignored during change execution.
+ * provided by other participants or the refactoring itself. 
  * </p>
  * <p>
  * A refactoring participant can not assume that all resources are saved before any 
@@ -124,16 +123,26 @@ public abstract class RefactoringParticipant {
 	public abstract RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context);
 	
 	/**
-	 * Creates a {@link Change} object that contains the workspace modifications
-	 * of this participant. The changes provided by a participant must not conflict
-	 * with any changes provided by other participants ot by the refactoring itself.
-	 * If the change conflicts it will be ignored during change execution.
+	 * Creates a {@link Change}object that contains the workspace modifications
+	 * of this participant. The changes provided by a participant <em>must</em>
+	 * not conflict with any change provided by other participants or by the
+	 * refactoring itself.
+	 * <p>
+	 * If the change conflicts with any change provided by other participants or
+	 * by the refactoring itself then change execution will fail and the
+	 * participant will be disabled for the rest of the eclipse session.
+	 * </p>
+	 * <p>
+	 * If an exception occurs while creating the change the refactoring can not
+	 * be carried out and the particpant will be disabled for the rest of the
+	 * eclipse session.
+	 * </p>
 	 * 
 	 * @param pm a progress monitor to report progress
 	 * 
 	 * @return the change representing the workspace modifications
 	 * 
-	 * @throws CoreException if an error occurred while creating the change 
+	 * @throws CoreException if an error occurred while creating the change
 	 */
 	public abstract Change createChange(IProgressMonitor pm) throws CoreException;
 

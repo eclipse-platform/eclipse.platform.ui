@@ -13,7 +13,12 @@ package org.eclipse.ltk.core.refactoring;
 /**
  * A <code>RefactoringStatusContext<code> can be used to annotate a 
  * {@link RefactoringStatusEntry} with additional information 
- * typically presented in the UI.
+ * typically presented in the user interface.
+ * <p>
+ * To present a context in the user interface a corresponding context
+ * viewer can be registered via the extension point <code>
+ * org.eclipse.ltk.ui.refactoring.statusContextViewers</code>. 
+ * </p>
  * 
  * @since 3.0
  */

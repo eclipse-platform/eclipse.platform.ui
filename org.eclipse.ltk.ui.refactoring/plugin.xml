@@ -28,8 +28,8 @@
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
    </requires>
 
-   <extension-point id="statusContextViewers" name="%statusViewerExtensionPoint"/>
-   <extension-point id="changePreviewViewers" name="%changeViewerExtensionPoint"/>
+   <extension-point id="statusContextViewers" name="%statusViewerExtensionPoint" schema="schema/statusContextViewers.exsd"/>
+   <extension-point id="changePreviewViewers" name="%changeViewerExtensionPoint" schema="schema/changePreviewViewers.exsd"/>
 
    <extension point="org.eclipse.ltk.ui.refactoring.statusContextViewers">
       <statusContextViewer

@@ -19,9 +19,6 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionTagNames;
 
-import org.eclipse.jface.util.Assert;
-
-
 public abstract class AbstractDescriptor {
 
 	protected IConfigurationElement fConfigurationElement;
@@ -39,9 +36,13 @@ public abstract class AbstractDescriptor {
 		return fConfigurationElement.getAttribute(ID);
 	}
 	
-	public boolean matches(Object element) throws CoreException {
+	public boolean matches(Object element, String variableName) throws CoreException {
+		Assert.isNotNull(element);
+		Assert.isNotNull(variableName);
 		Expression exp= getExpression();
-		if (exp.evaluate(new EvaluationContext(null, element)) == EvaluationResult.FALSE)
+		EvaluationContext evaluationContext= new EvaluationContext(null, element);
+		evaluationContext.addVariable(variableName, element);
+		if (exp.evaluate(evaluationContext) == EvaluationResult.FALSE)
 			return false;
 		return true;
 	}

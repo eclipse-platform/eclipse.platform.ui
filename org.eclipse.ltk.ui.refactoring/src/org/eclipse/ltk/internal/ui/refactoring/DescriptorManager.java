@@ -22,10 +22,14 @@ import org.eclipse.core.runtime.Platform;
 public abstract class DescriptorManager {
 	
 	private String fExtensionPoint;
+	private String fVariableName;
 	private AbstractDescriptor[] fExtensions;
 
-	public DescriptorManager(String extensionPoint) {
+	public DescriptorManager(String extensionPoint, String variableName) {
+		Assert.isNotNull(extensionPoint);
+		Assert.isNotNull(variableName);
 		fExtensionPoint= extensionPoint;
+		fVariableName= variableName;
 	}
 	
 	public AbstractDescriptor getDescriptor(Object element) throws CoreException {
@@ -35,17 +39,15 @@ public abstract class DescriptorManager {
 		List candidates= new ArrayList(1);
 		for (int i= 0; i < fExtensions.length; i++) {
 			AbstractDescriptor descriptor= fExtensions[i];
-			if (descriptor.matches(element)) {
+			if (descriptor.matches(element, fVariableName)) {
 				candidates.add(descriptor);
 			}
 			descriptor.clear();
 		}
 		if (candidates.size() == 0)
 			return null;
-		if (candidates.size() == 1)
-			return (AbstractDescriptor)candidates.get(0);
-		Assert.isTrue(false,"Not support for conflict resolution yet");
-		return null;
+		// No support for conflicts yet. 
+		return (AbstractDescriptor)candidates.get(0);
 	}
 	
 	protected abstract AbstractDescriptor createDescriptor(IConfigurationElement element);

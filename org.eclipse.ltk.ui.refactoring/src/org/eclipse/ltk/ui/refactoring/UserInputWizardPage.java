@@ -30,7 +30,7 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringPreferences;
  * inside a {@link org.eclipse.ltk.ui.refactoring.RefactoringWizard refactoring wizard}.
  * User input pages are shown at the beginning of a wizard. As soon as the last input
  * page is left the refactoring's condition checking is performed. Depending on the 
- * outcome a error page or the preview page is shown. 
+ * outcome an error page or the preview page is shown. 
  * 
  * @since 3.0
  */

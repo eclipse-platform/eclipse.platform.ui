@@ -143,14 +143,6 @@ class ChangeElementLabelProvider extends LabelProvider {
 			result.append(projectRelativePath);
 		}
 		return result.toString();
-	}
-	
-	private ChangeElement getParent(TextEditChangeElement element) {
-		ChangeElement parent= element.getParent();
-		while (parent != null && !(parent instanceof PseudoJavaChangeElement) && !(parent instanceof DefaultChangeElement)) {
-			parent= parent.getParent();
-		}
-		return parent;
-	}
+	}	
 }
 

@@ -25,7 +25,7 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringWizardDialog2;
  * core plug-in.
  * 
  * <p> 
- * Note: this class is not intented to be subclassed by clients.
+ * Note: this class is not intended to be subclassed by clients.
  * </p>
  * 
  * @since 3.0
@@ -77,13 +77,13 @@ public class RefactoringUI {
 	 * dialog is not necessarily an instance of {@link org.eclipse.jface.wizard.WizardDialog
 	 * WizardDialog}.
 	 * 
+	 * @param wizard the refactoring wizard to create a dialog for
 	 * @param parent the parent of the created dialog or <code>null</code> if the dialog
 	 *  is unparanted
-	 * @param wizard the refactoring wizard to create a dialog for
 	 * 
 	 * @return the dialog 
 	 */
-	public static Dialog createRefactoringWizardDialog(Shell parent, RefactoringWizard wizard) {
+	public static Dialog createRefactoringWizardDialog(RefactoringWizard wizard, Shell parent) {
 		Dialog result;
 		if (wizard.needsWizardBasedUserInterface())
 			result= new RefactoringWizardDialog(parent, wizard);

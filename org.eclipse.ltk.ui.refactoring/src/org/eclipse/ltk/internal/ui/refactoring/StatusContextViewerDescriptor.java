@@ -19,7 +19,7 @@ public class StatusContextViewerDescriptor extends AbstractDescriptor {
 	
 	private static final String EXT_ID= "statusContextViewers"; //$NON-NLS-1$
 	
-	private static DescriptorManager fgDescriptions= new DescriptorManager(EXT_ID) {
+	private static DescriptorManager fgDescriptions= new DescriptorManager(EXT_ID, "context") { //$NON-NLS-1$
 		protected AbstractDescriptor createDescriptor(IConfigurationElement element) {
 			return new StatusContextViewerDescriptor(element);
 		}
