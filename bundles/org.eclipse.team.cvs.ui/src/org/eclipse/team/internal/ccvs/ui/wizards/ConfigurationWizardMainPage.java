@@ -19,10 +19,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -136,33 +138,45 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			}
 		};
 		
-		createLabel(composite, Policy.bind("ConfigurationWizardMainPage.connection")); //$NON-NLS-1$
-		connectionMethodCombo = createCombo(composite);
-
-		createLabel(composite, Policy.bind("ConfigurationWizardMainPage.userName")); //$NON-NLS-1$
-		userCombo = createEditableCombo(composite);
-		userCombo.addListener(SWT.Selection, listener);
-		userCombo.addListener(SWT.Modify, listener);
+		Group g = createGroup(composite, Policy.bind("ConfigurationWizardMainPage.Location_1")); //$NON-NLS-1$
 		
-		createLabel(composite, Policy.bind("ConfigurationWizardMainPage.password")); //$NON-NLS-1$
-		passwordText = createTextField(composite);
-		passwordText.setEchoChar('*');
-
-		createLabel(composite, Policy.bind("ConfigurationWizardMainPage.host")); //$NON-NLS-1$
-		hostCombo = createEditableCombo(composite);
+		// Host name
+		createLabel(g, Policy.bind("ConfigurationWizardMainPage.host")); //$NON-NLS-1$
+		hostCombo = createEditableCombo(g);
 		hostCombo.addListener(SWT.Selection, listener);
 		hostCombo.addListener(SWT.Modify, listener);
 		
-		useDefaultPort = createRadioButton(composite, Policy.bind("ConfigurationWizardMainPage.useDefaultPort"), 2); //$NON-NLS-1$
-		useCustomPort = createRadioButton(composite, Policy.bind("ConfigurationWizardMainPage.usePort"), 1); //$NON-NLS-1$
-		useCustomPort.addListener(SWT.Selection, listener);
-		portText = createTextField(composite);
-		portText.addListener(SWT.Selection, listener);
-		
-		createLabel(composite, Policy.bind("ConfigurationWizardMainPage.repositoryPath")); //$NON-NLS-1$
-		repositoryPathCombo = createEditableCombo(composite);
+		// Repository Path
+		createLabel(g, Policy.bind("ConfigurationWizardMainPage.repositoryPath")); //$NON-NLS-1$
+		repositoryPathCombo = createEditableCombo(g);
 		repositoryPathCombo.addListener(SWT.Selection, listener);
 		repositoryPathCombo.addListener(SWT.Modify, listener);
+
+		g = createGroup(composite, Policy.bind("ConfigurationWizardMainPage.Authentication_2")); //$NON-NLS-1$
+		
+		// User name
+		createLabel(g, Policy.bind("ConfigurationWizardMainPage.userName")); //$NON-NLS-1$
+		userCombo = createEditableCombo(g);
+		userCombo.addListener(SWT.Selection, listener);
+		userCombo.addListener(SWT.Modify, listener);
+		
+		// Password
+		createLabel(g, Policy.bind("ConfigurationWizardMainPage.password")); //$NON-NLS-1$
+		passwordText = createTextField(g);
+		passwordText.setEchoChar('*');
+
+		g = createGroup(composite, Policy.bind("ConfigurationWizardMainPage.Connection_3")); //$NON-NLS-1$
+		
+		// Connection type
+		createLabel(g, Policy.bind("ConfigurationWizardMainPage.connection")); //$NON-NLS-1$
+		connectionMethodCombo = createCombo(g);
+
+		// Port number
+		useDefaultPort = createRadioButton(g, Policy.bind("ConfigurationWizardMainPage.useDefaultPort"), 2); //$NON-NLS-1$
+		useCustomPort = createRadioButton(g, Policy.bind("ConfigurationWizardMainPage.usePort"), 1); //$NON-NLS-1$
+		useCustomPort.addListener(SWT.Selection, listener);
+		portText = createTextField(g);
+		portText.addListener(SWT.Selection, listener);
 		
 		// create a composite to ensure the validate button is in its own tab group
 		if (showValidate) {
@@ -183,9 +197,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		
 		initializeValues();
 		updateWidgetEnablements();
-		if (userCombo != null) {
-			userCombo.setFocus();
-		}
+		hostCombo.setFocus();
 		
 		setControl(composite);
 	}
@@ -202,6 +214,21 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		combo.setLayoutData(data);
 		return combo;
 	}
+	
+	protected Group createGroup(Composite parent, String text) {
+		Group group = new Group(parent, SWT.NULL);
+		group.setText(text);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		//data.widthHint = GROUP_WIDTH;
+		
+		group.setLayoutData(data);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		group.setLayout(layout);
+		return group;
+	}
+	
 	/**
 	 * @see CVSWizardPage#finish
 	 */
