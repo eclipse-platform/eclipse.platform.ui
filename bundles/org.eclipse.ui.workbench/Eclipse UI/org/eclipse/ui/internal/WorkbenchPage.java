@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -802,7 +803,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	/**
 	 * See IWorkbenchPage
 	 */
-	public boolean closeEditors(IEditorReference[] editorRefs, boolean save) {
+	public boolean closeEditors(IEditorReference[] editorReferences, boolean save) {
+	    return closeEditors2(editorReferences, save);
+	    
+	    /*
 		if (save) {
 			// Intersect the dirty editors with the editors that are closing
 			IEditorPart[] dirty = getDirtyEditors();
@@ -869,12 +873,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 
 		// Return true on success.
 		return true;
+		*/
 	}
 	
 	/**
 	 * See IWorkbenchPage#closeEditor
 	 */
-	public boolean closeEditor(IEditorReference editorRef, boolean save) {
+	public boolean closeEditor(IEditorReference editorReference, boolean save) {
+	    return closeEditors2(new IEditorReference[] { editorReference }, save);	    
+	    
+	    /*
 		IEditorPart editor = editorRef.getEditor(false);
 		if (editor != null)
 			return closeEditor(editor, save);
@@ -882,11 +890,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		activationList.remove(editorRef);
 		firePartClosed(editorRef);
 		return true;
+		*/
 	}
 	/**
 	 * See IWorkbenchPage#closeEditor
 	 */
-	public boolean closeEditor(IEditorPart editor, boolean save) {
+	public boolean closeEditor(IEditorPart editorPart, boolean save) {
+	    return closeEditors2(new IEditorPart[] { editorPart }, save);
+	    
+	    /*
 		// Sanity check.
 		if (!certifyPart(editor))
 			return false;
@@ -945,7 +957,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			// editor).
 			// If this is the case, bringToTop will not call
 			// firePartBroughtToTop.
-			// We must fire it from here.
+			// We must fire it from here.			
 			if (top != null) {
 				boolean isTop = editorMgr.getVisibleEditor() == top;
 				bringToTop(top);
@@ -960,7 +972,95 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 
 		// Return true on success.
 		return true;
+		*/
 	}
+
+	
+
+	
+	private boolean closeEditors2(IEditorReference[] editorReferences, boolean save) {
+		IEditorPart[] editorParts = new IEditorPart[editorReferences.length];
+	    
+		for (int i = 0; i < editorReferences.length; i++) {
+		    editorParts[i] = editorReferences[i].getEditor(false);
+		}
+		
+		return closeEditors2(editorParts, save);
+	}
+	
+	private boolean closeEditors2(IEditorPart[] editorParts, boolean save) {
+	    for (int i = 0; i < editorParts.length; i++)
+	        if (!certifyPart(editorParts[i]))
+	            return false;
+	    
+		if (save) {
+		    if (editorParts.length == 1) {
+		        if (!getEditorManager().saveEditor(editorParts[0], true))
+		            return false;
+		    } else if (editorParts.length > 1) {
+				List dirtyEditorPartsToClose = new ArrayList(Arrays.asList(getDirtyEditors()));
+				dirtyEditorPartsToClose.retainAll(Arrays.asList(editorParts));
+							
+				if (!dirtyEditorPartsToClose.isEmpty())
+					if (!EditorManager.saveAll(dirtyEditorPartsToClose, true, getWorkbenchWindow()))
+						return false;   
+		    }
+		}
+
+		boolean partWasActive = false;
+		boolean partWasVisible = false;
+		
+	    for (int i = 0; i < editorParts.length; i++) {
+	        IEditorPart editorPart = editorParts[i];
+	        partWasActive |= editorPart == activePart;
+	        partWasVisible |= editorPart == getActiveEditor();	        
+		    IEditorReference editorReference = (IEditorReference) getReference(editorPart);
+			activationList.remove(editorReference);			
+			getEditorManager().closeEditor(editorReference);
+			firePartClosed(editorReference);
+			disposePart(editorReference);
+	    }
+		
+		window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
+		
+		if (partWasActive) {
+			IWorkbenchPart topEditor = activationList.getTopEditor();
+			zoomOutIfNecessary(topEditor);
+			if (topEditor == null) {
+				actionSwitcher.updateTopEditor(null);				
+			    for (int i = 0; i < editorParts.length; i++)
+			        if (lastActiveEditor == editorParts[i])
+			            lastActiveEditor = null;			        
+				topEditor = activationList.getActive();
+			}			
+			if (topEditor != null)
+				activate(topEditor);
+			else
+				setActivePart(null);			
+		} else if (partWasVisible) {
+			IEditorPart topEditor = activationList.getTopEditor();
+			zoomOutIfNecessary(topEditor);
+			// The editor we are bringing to top may already the visible
+			// editor (due to editor manager behavior when it closes and
+			// editor).
+			// If this is the case, bringToTop will not call
+			// firePartBroughtToTop.
+			// We must fire it from here.			
+			if (topEditor != null) {
+				boolean isTop = editorMgr.getVisibleEditor() == topEditor;
+				bringToTop(topEditor);
+				if (isTop)
+					firePartBroughtToTop(topEditor);
+			} else
+				actionSwitcher.updateTopEditor(topEditor);
+		}
+
+		lastPartClosePerspective();
+		return true;
+	}
+	
+	
+	
 	/**
 	 * Closes the specified perspective. If last perspective, then entire page
 	 * is closed.
