@@ -26,6 +26,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.ui.internal.intro.impl.IIntroConstants;
+import org.eclipse.ui.internal.intro.impl.model.BundleUtil;
 import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
@@ -52,29 +54,21 @@ public class IntroContentParser {
      */
     private static Hashtable dtdMap = new Hashtable();
     {
-        // INTRO: hack for now. DTDs should be picked up from intro plugin.
-        String dtdBaseLocation = System.getProperty("dtdBaseLocation"); //$NON-NLS-1$
-        if (dtdBaseLocation == null)
-            dtdBaseLocation = ""; //$NON-NLS-1$
-        String dtdLocation = dtdBaseLocation
-                + "/xhtml1-20020801/DTD/xhtml1-transitional.dtd"; //$NON-NLS-1$
-        // String dtdLocation = BundleUtil.getResolvedBundleLocation(
-        // "xhtml1-20020801/DTD/xhtml1-transitional.dtd",
-        // IIntroConstants.PLUGIN_ID);
+        String dtdBaseLocation = "dtds/xhtml1-20020801/";
+
+        String dtdLocation = dtdBaseLocation + "xhtml1-transitional.dtd"; //$NON-NLS-1$
+        dtdLocation = BundleUtil.getResolvedBundleLocation(dtdLocation,
+            IIntroConstants.PLUGIN_ID);
         dtdMap.put(XHTML1_TRANSITIONAL, dtdLocation);
 
-        dtdLocation = dtdBaseLocation
-                + "/xhtml1-20020801/DTD/xhtml1-strict.dtd"; //$NON-NLS-1$
-        // dtdLocation = BundleUtil.getResolvedBundleLocation(
-        // "xhtml1-20020801/DTD/xhtml1-strict.dtd",
-        // IIntroConstants.PLUGIN_ID);
+        dtdLocation = dtdBaseLocation + "xhtml1-strict.dtd"; //$NON-NLS-1$
+        dtdLocation = BundleUtil.getResolvedBundleLocation(dtdLocation,
+            IIntroConstants.PLUGIN_ID);
         dtdMap.put(XHTML1_STRICT, dtdLocation);
 
-        dtdLocation = dtdBaseLocation
-                + "/xhtml1-20020801/DTD/xhtml1-frameset.dtd"; //$NON-NLS-1$
-        // dtdLocation = BundleUtil.getResolvedBundleLocation(
-        // "xhtml1-20020801/DTD/xhtml1-frameset.dtd",
-        // IIntroConstants.PLUGIN_ID);
+        dtdLocation = dtdBaseLocation + "xhtml1-frameset.dtd"; //$NON-NLS-1$
+        dtdLocation = BundleUtil.getResolvedBundleLocation(dtdLocation,
+            IIntroConstants.PLUGIN_ID);
         dtdMap.put(XHTML1_FRAMESET, dtdLocation);
     }
 
