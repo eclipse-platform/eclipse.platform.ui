@@ -668,7 +668,7 @@ protected void onActivate() {
 	
 	if (shouldHideEditorsOnActivate) {
 		// We do this here to ensure that createPartControl is called on the top editor
-		// before it is hidden
+		// before it is hidden. See bug 20166.
 		hideEditorArea();
 		shouldHideEditorsOnActivate = false;
 	}
@@ -921,6 +921,9 @@ public void restoreState() {
 	// Hide the editor area if needed. Need to wait for the
 	// presentation to be fully setup first.
 	Integer areaVisible = memento.getInteger(IWorkbenchConstants.TAG_AREA_VISIBLE);
+	// Rather than hiding the editors now we must wait until after their controls
+	// are created. This ensures that if an editor is instantiated, createPartControl
+	// is also called. See bug 20166.
 	shouldHideEditorsOnActivate = (areaVisible != null && areaVisible.intValue() == 0);
 }
 /**
