@@ -162,42 +162,36 @@
       </command>
       <command
             name="%command.import.name"
-            icon="icons/full/etool16/import_wiz.gif"
             description="%command.import.description"
             categoryId="org.eclipse.ui.category.file"
             id="org.eclipse.ui.file.import">
       </command>
       <command
             name="%command.export.name"
-            icon="icons/full/etool16/export_wiz.gif"
             description="%command.export.description"
             categoryId="org.eclipse.ui.category.file"
             id="org.eclipse.ui.file.export">
       </command>
       <command
             name="%command.save.name"
-            icon="icons/full/etool16/save_edit.gif"
             description="%command.save.description"
             categoryId="org.eclipse.ui.category.file"
             id="org.eclipse.ui.file.save">
       </command>
       <command
             name="%command.saveAs.name"
-            icon="icons/full/etool16/saveas_edit.gif"
             description="%command.saveAs.description"
             categoryId="org.eclipse.ui.category.file"
             id="org.eclipse.ui.file.saveAs">
       </command>
       <command
             name="%command.saveAll.name"
-            icon="icons/full/etool16/saveall_edit.gif"
             description="%command.saveAll.description"
             categoryId="org.eclipse.ui.category.file"
             id="org.eclipse.ui.file.saveAll">
       </command>
       <command
             name="%command.print.name"
-            icon="icons/full/etool16/print_edit.gif"
             description="%command.print.description"
             categoryId="org.eclipse.ui.category.file"
             id="org.eclipse.ui.file.print">
@@ -210,7 +204,6 @@
       </command>
       <command
             name="%command.refresh.name"
-            icon="icons/full/elcl16/refresh_nav.gif"
             description="%command.refresh.description"
             categoryId="org.eclipse.ui.category.file"
             id="org.eclipse.ui.file.refresh">
@@ -229,56 +222,48 @@
       </command>
       <command
             name="%command.undo.name"
-            icon="icons/full/etool16/undo_edit.gif"
             description="%command.undo.description"
             categoryId="org.eclipse.ui.category.edit"
             id="org.eclipse.ui.edit.undo">
       </command>
       <command
             name="%command.redo.name"
-            icon="icons/full/etool16/redo_edit.gif"
             description="%command.redo.description"
             categoryId="org.eclipse.ui.category.edit"
             id="org.eclipse.ui.edit.redo">
       </command>
       <command
             name="%command.cut.name"
-            icon="icons/full/etool16/cut_edit.gif"
             description="%command.cut.description"
             categoryId="org.eclipse.ui.category.edit"
             id="org.eclipse.ui.edit.cut">
       </command>
       <command
             name="%command.copy.name"
-            icon="icons/full/etool16/copy_edit.gif"
             description="%command.copy.description"
             categoryId="org.eclipse.ui.category.edit"
             id="org.eclipse.ui.edit.copy">
       </command>
       <command
             name="%command.paste.name"
-            icon="icons/full/etool16/paste_edit.gif"
             description="%command.paste.description"
             categoryId="org.eclipse.ui.category.edit"
             id="org.eclipse.ui.edit.paste">
       </command>
       <command
             name="%command.delete.name"
-            icon="icons/full/etool16/delete_edit.gif"
             description="%command.delete.description"
             categoryId="org.eclipse.ui.category.edit"
             id="org.eclipse.ui.edit.delete">
       </command>
       <command
             name="%command.move.name"
-            icon="icons/full/etool16/move_edit.gif"
             description="%command.move.description"
             categoryId="org.eclipse.ui.category.file"
             id="org.eclipse.ui.edit.move">
       </command>
       <command
             name="%command.rename.name"
-            icon="icons/full/etool16/rename_edit.gif"
             description="%command.rename.description"
             categoryId="org.eclipse.ui.category.file"
             id="org.eclipse.ui.edit.rename">
@@ -297,7 +282,6 @@
       </command>
       <command
             name="%command.addBookmark.name"
-            icon="icons/full/obj16/bkmrk_tsk.gif"
             description="%command.addBookmark.description"
             categoryId="org.eclipse.ui.category.edit"
             id="org.eclipse.ui.edit.addBookmark">
@@ -310,49 +294,42 @@
       </command>
       <command
             name="%command.back.name"
-            icon="icons/full/elcl16/backward_nav.gif"
             description="%command.back.description"
             categoryId="org.eclipse.ui.category.navigate"
             id="org.eclipse.ui.navigate.back">
       </command>
       <command
             name="%command.forward.name"
-            icon="icons/full/elcl16/forward_nav.gif"
             description="%command.forward.description"
             categoryId="org.eclipse.ui.category.navigate"
             id="org.eclipse.ui.navigate.forward">
       </command>
       <command
             name="%command.up.name"
-            icon="icons/full/elcl16/up_nav.gif"
             description="%command.up.description"
             categoryId="org.eclipse.ui.category.navigate"
             id="org.eclipse.ui.navigate.up">
       </command>
       <command
             name="%command.next.name"
-            icon="icons/full/etool16/next_nav.gif"
             description="%command.next.description"
             categoryId="org.eclipse.ui.category.navigate"
             id="org.eclipse.ui.navigate.next">
       </command>
       <command
             name="%command.backwardHistory.name"
-            icon="icons/full/elcl16/backward_nav.gif"
             description="%command.backwardHistory.description"
             categoryId="org.eclipse.ui.category.navigate"
             id="org.eclipse.ui.navigate.backwardHistory">
       </command>
       <command
             name="%command.forwardHistory.name"
-            icon="icons/full/elcl16/forward_nav.gif"
             description="%command.forwardHistory.description"
             categoryId="org.eclipse.ui.category.navigate"
             id="org.eclipse.ui.navigate.forwardHistory">
       </command>
       <command
             name="%command.previous.name"
-            icon="icons/full/etool16/prev_nav.gif"
             description="%command.previous.description"
             categoryId="org.eclipse.ui.category.navigate"
             id="org.eclipse.ui.navigate.previous">
