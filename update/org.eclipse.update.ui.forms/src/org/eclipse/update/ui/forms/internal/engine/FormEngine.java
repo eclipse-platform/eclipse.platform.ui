@@ -20,7 +20,7 @@ public class FormEngine extends Canvas {
 	TextModel model;
 	Hashtable objectTable = new Hashtable();
 	public int marginWidth = 0;
-	public int marginHeight = 0;
+	public int marginHeight = 1;
 	IHyperlinkSegment entered;
 
 	public boolean getFocus() {
@@ -125,9 +125,10 @@ public class FormEngine extends Canvas {
 			// select a hyperlink
 			IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
 			if (segmentUnder != null) {
+				IHyperlinkSegment oldLink = model.getSelectedLink();
 				model.selectLink(segmentUnder);
 				enterLink(segmentUnder);
-				redraw();
+				paintFocusTransfer(oldLink, segmentUnder);
 			}
 		} else {
 			IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
@@ -173,7 +174,7 @@ public class FormEngine extends Canvas {
 		
 		if (valid)
 			enterLink(model.getSelectedLink());
-		redraw();
+		paintFocusTransfer(current, model.getSelectedLink());
 		return !valid;
 	}
 
@@ -185,10 +186,11 @@ public class FormEngine extends Canvas {
 		if (hasFocus) {
 			model.traverseLinks(true);
 			enterLink(model.getSelectedLink());
+			paintFocusTransfer(null, model.getSelectedLink());
 		} else {
+			paintFocusTransfer(model.getSelectedLink(), null);
 			model.selectLink(null);
 		}
-		redraw();
 	}
 
 	private void enterLink(IHyperlinkSegment link) {
@@ -239,7 +241,7 @@ public class FormEngine extends Canvas {
 		FontMetrics fm = gc.getFontMetrics();
 		int lineHeight = fm.getHeight();
 
-		IHyperlinkSegment selected = model.getSelectedLink();
+		IHyperlinkSegment selectedLink = model.getSelectedLink();
 
 		for (int i = 0; i < paragraphs.length; i++) {
 			IParagraph p = paragraphs[i];
@@ -250,27 +252,7 @@ public class FormEngine extends Canvas {
 			loc.indent = p.getIndent();
 			loc.resetCaret();
 			loc.rowHeight = 0;
-			
-			if (p instanceof IBulletParagraph) {
-				((IBulletParagraph)p).paintBullet(gc, loc, lineHeight, objectTable);
-			}
-
-			IParagraphSegment[] segments = p.getSegments();
-			if (segments.length > 0) {
-				if (segments[0] instanceof ITextSegment &&
-					((ITextSegment)segments[0]).isSelectable())
-					loc.x +=1;
-				for (int j = 0; j < segments.length; j++) {
-					IParagraphSegment segment = segments[j];
-					boolean doSelect = false;
-					if (selected != null && segment.equals(selected))
-						doSelect = true;
-					segment.paint(gc, width, loc, objectTable, doSelect);
-				}
-				loc.y += loc.rowHeight;
-			} else {
-				loc.y += lineHeight;
-			}
+			p.paint(gc, width, loc, lineHeight, objectTable, selectedLink);
 		}
 	}
 
@@ -298,5 +280,25 @@ public class FormEngine extends Canvas {
 		if (!model.hasFocusSegments())
 			return false;
 		return super.setFocus();
+	}
+	
+	private void paintFocusTransfer(IHyperlinkSegment oldLink, IHyperlinkSegment newLink) {
+		GC gc = new GC(this);
+		Color bg = getBackground();
+		Color fg = getForeground();
+		
+		gc.setFont(getFont());
+
+		if (oldLink!=null) {
+			gc.setBackground(bg);
+			gc.setForeground(fg);
+			oldLink.paintFocus(gc, bg, fg, false);
+		}
+		if (newLink!=null) {
+			gc.setBackground(bg);
+			gc.setForeground(fg);
+			newLink.paintFocus(gc, bg, fg, true);
+		}
+		gc.dispose();
 	}
 }

@@ -10,6 +10,7 @@ import java.util.Hashtable;
 import org.eclipse.swt.SWT;
 import java.text.BreakIterator;
 import java.util.Vector;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * @version 	1.0
@@ -164,7 +165,7 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 			gc.setFont(oldFont);
 		}
 	}
-
+	
 	public void paint(
 		GC gc,
 		int width,
@@ -307,4 +308,20 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 			gc.setForeground(oldColor);
 		}
 	}
+	
+	public void paintFocus(GC gc, Color bg, Color fg, boolean selected) {
+		if (areaRectangles==null) return;
+		for (int i=0; i<areaRectangles.size(); i++) {
+			Rectangle br = (Rectangle)areaRectangles.get(i);
+			if (selected) {
+				gc.setBackground(bg);
+				gc.setForeground(fg);
+				gc.drawFocus(br.x, br.y, br.width, br.height);
+			}
+			else {
+				gc.setForeground(bg);
+				gc.drawRectangle(br.x, br.y, br.width-1, br.height-1);
+			}
+		}
+	}	
 }

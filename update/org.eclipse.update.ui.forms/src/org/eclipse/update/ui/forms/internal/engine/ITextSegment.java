@@ -4,8 +4,7 @@
  */
 package org.eclipse.update.ui.forms.internal.engine;
 
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.*;
 
 /**
  * @version 	1.0
@@ -17,4 +16,5 @@ public interface ITextSegment extends IParagraphSegment {
 	Font getFont();
 	boolean isWordWrapAllowed();
 	boolean isSelectable();
+	void paintFocus(GC gc, Color bg, Color fg, boolean selected);
 }
