@@ -945,17 +945,21 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer,
     }
 
     private void updateControlBounds() {
-        Rectangle bounds = getPresentation().getControl().getBounds();
-        int minimumHeight = getMinimumHeight();
-
-        if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED
-                && bounds.height != minimumHeight) {
-            bounds.width = getMinimumWidth();
-            bounds.height = minimumHeight;
-            getPresentation().setBounds(bounds);
-
-            forceLayout();
-        }
+    	StackPresentation presentation = getPresentation();
+    	
+    	if (presentation != null) {
+	        Rectangle bounds = presentation.getControl().getBounds();
+	        int minimumHeight = getMinimumHeight();
+	
+	        if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED
+	                && bounds.height != minimumHeight) {
+	            bounds.width = getMinimumWidth();
+	            bounds.height = minimumHeight;
+	            getPresentation().setBounds(bounds);
+	
+	            forceLayout();
+	        }
+    	}
     }
 
     /**
