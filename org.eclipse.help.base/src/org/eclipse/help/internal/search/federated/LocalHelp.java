@@ -1,9 +1,13 @@
-/*
- * Created on Jan 12, 2005
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.help.internal.search.federated;
 
 import org.eclipse.core.runtime.*;
@@ -12,10 +16,7 @@ import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.workingset.*;
 
 /**
- * @author dorian
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * Local Help search engine participant in the federated search.
  */
 public class LocalHelp implements ISearchEngine {
     private static final int MAX_HITS = 500;
