@@ -198,6 +198,18 @@ protected void ensureClosed(InputStream stream) {
 	}
 }
 /**
+ * @see IEncodedStorage#getCharset
+ */
+public String getCharset() throws CoreException {
+	IProjectDescription projectDescription =  ((Project) getProject()).internalGetDescription();
+	if (projectDescription == null)
+		return ResourcesPlugin.getEncoding();
+	String projectDefaultCharset = projectDescription.getDefaultCharset();
+	if (projectDefaultCharset == null)
+		return ResourcesPlugin.getEncoding();
+	return projectDefaultCharset;
+}
+/**
  * @see IFile#getContents
  */
 public InputStream getContents() throws CoreException {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,12 @@ public FileState(HistoryStore store, IPath fullPath, long lastModified, Universa
  */
 public boolean exists() {
 	return store.exists(this);
+}
+/**
+ * @see IEncodedStorage#getCharset
+ */
+public String getCharset() throws CoreException {
+	return null;
 }
 /**
  * @see IFileState#getContents

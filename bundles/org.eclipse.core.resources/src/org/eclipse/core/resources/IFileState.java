@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ import java.io.InputStream;
  * @see IStorage
  * @see Platform#getAdapterManager
  */
-public interface IFileState extends IStorage, IAdaptable {
+public interface IFileState extends IEncodedStorage, IAdaptable {
 /**
  * Returns whether this file state still exists in the local history.
  *

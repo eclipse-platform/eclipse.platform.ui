@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	protected ICommand[] buildSpec = EMPTY_COMMAND_ARRAY;
 	protected HashMap linkDescriptions = null;
 	protected String comment = ""; //$NON-NLS-1$
+	protected String defaultCharset;
 
 	//flags to indicate when we are in the middle of reading or writing a
 	// workspace description
@@ -59,6 +60,12 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			return EMPTY_COMMAND_ARRAY;
 		return makeCopy ? (ICommand[]) buildSpec.clone() : buildSpec;
 	}
+	/**
+	 * @see IProjectDescription
+	 */
+	public String getDefaultCharset() {
+		return defaultCharset;
+	}	
 	/**
 	 * @see IProjectDescription
 	 */
@@ -135,6 +142,12 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	public void setBuildSpec(ICommand[] value) {
 		Assert.isLegal(value != null);
 		buildSpec = (ICommand[]) value.clone();
+	}
+	/**
+	 * @see IProjectDescription
+	 */
+	public void setDefaultCharset(String value) {
+		defaultCharset = value;
 	}
 	/**
 	 * @see IProjectDescription

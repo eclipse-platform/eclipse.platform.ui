@@ -33,12 +33,13 @@ import java.io.InputStream;
  *
  * @see Platform#getAdapterManager
  */
-public interface IFile extends IResource, IStorage, IAdaptable {
+public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	/**
 	 * Character encoding constant (value 0) which identifies
 	 * files that have an unknown character encoding scheme.
 	 * 
 	 * @see IFile#getEncoding
+	 * @deprecated
 	 */
 	public int ENCODING_UNKNOWN = 0;
 	/**
@@ -46,6 +47,7 @@ public interface IFile extends IResource, IStorage, IAdaptable {
 	 * files that are encoded with the US-ASCII character encoding scheme.
 	 * 
 	 * @see IFile#getEncoding
+	 * @deprecated
 	 */
 	public int ENCODING_US_ASCII = 1;
 	/**
@@ -54,6 +56,7 @@ public interface IFile extends IResource, IStorage, IAdaptable {
 	 * also known as ISO-LATIN-1.
 	 * 
 	 * @see IFile#getEncoding
+	 * @deprecated
 	 */
 	public int ENCODING_ISO_8859_1 = 2;
 	/**
@@ -61,6 +64,7 @@ public interface IFile extends IResource, IStorage, IAdaptable {
 	 * files that are encoded with the UTF-8 character encoding scheme.
 	 * 
 	 * @see IFile#getEncoding
+	 * @deprecated
 	 */
 	public int ENCODING_UTF_8 = 3;
 	/**
@@ -68,6 +72,7 @@ public interface IFile extends IResource, IStorage, IAdaptable {
 	 * files that are encoded with the UTF-16BE character encoding scheme.
 	 * 
 	 * @see IFile#getEncoding
+	 * @deprecated
 	 */
 	public int ENCODING_UTF_16BE = 4;
 	/**
@@ -75,6 +80,7 @@ public interface IFile extends IResource, IStorage, IAdaptable {
 	 * files that are encoded with the UTF-16LE character encoding scheme.
 	 * 
 	 * @see IFile#getEncoding
+	 * @deprecated
 	 */
 	public int ENCODING_UTF_16LE = 5;
 	/**
@@ -82,6 +88,7 @@ public interface IFile extends IResource, IStorage, IAdaptable {
 	 * files that are encoded with the UTF-16 character encoding scheme.
 	 * 
 	 * @see IFile#getEncoding
+	 * @deprecated
 	 */
 	public int ENCODING_UTF_16 = 6;
 
@@ -396,7 +403,25 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
  * @see IResourceRuleFactory#deleteRule
  */
 public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
-
+/**
+ * Returns the name of a charset to be used when decoding the contents of this 
+ * file into characters. If this file's encoding cannot be determined based on 
+ * its contents, this refinement of the corresponding 
+ * <code>IEncodingStorage</code> method returns the default charset for this 
+ * file's project description, if one is defined, or the default encoding for 
+ * the workspace (which may be <code>null</code>).
+ * <p>
+ * <b>Note</b>: This method is part of early access API that may well 
+ * change in incompatible ways until it reaches its finished form. 
+ * </p>
+ * 
+ * @return the name of a charset, or <code>null</code>
+ * @see IEncodedStorage#getCharset
+ * @see IProjectDescription#getDefaultCharset
+ * @see ResourcesPlugin#getEncoding
+ * @since 3.0
+ */
+public String getCharset() throws CoreException;
 /**
  * Returns an open input stream on the contents of this file.
  * This refinement of the corresponding <code>IStorage</code> method 
@@ -454,6 +479,7 @@ public InputStream getContents(boolean force) throws CoreException;
  * <li> The corresponding location in the local file system
  *       is occupied by a directory.</li>
  * </ul>
+ * @deprecated use IFile#getCharset instead
  */
 public int getEncoding() throws CoreException;
 /**

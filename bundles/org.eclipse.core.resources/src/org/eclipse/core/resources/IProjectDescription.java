@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,18 @@ public ICommand[] getBuildSpec();
  * @return the comment for the described project
  */
 public String getComment();
+/**
+ * Returns the default charset for the described project, or <code>null</code>
+ * if none has been defined.
+ * <p>
+ * <b>Note</b>: This method is part of early access API that may well 
+ * change in incompatible ways until it reaches its finished form. 
+ * </p>
+ * 
+ * @return the name of the default charset for the described project, or <code>null</code>
+ * @since 3.0 
+ */
+public String getDefaultCharset();
 /**
  * Returns the  local file system location for the described project.  The path
  * will be either an absolute file system path, or a relative path whose first
@@ -120,6 +132,20 @@ public void setBuildSpec(ICommand[] buildSpec);
  * @see #getComment
  */
 public void setComment(String comment);
+/**
+ * Sets the default charset for the described project.
+ * <p>
+ * <b>Note</b>: This method is part of early access API that may well 
+ * change in incompatible ways until it reaches its finished form. 
+ * </p>
+ * 
+ * @param charset the name of the default charset for the described project, or 
+ * <code>null</code>
+ * @see IProject#setDescription
+ * @see #getDefaultCharset 
+ * @since 3.0
+ */
+public void setDefaultCharset(String charset);
 /**
  * Sets the local file system location for the described project.  The path must
  * be either an absolute file system path, or a relative path whose first
