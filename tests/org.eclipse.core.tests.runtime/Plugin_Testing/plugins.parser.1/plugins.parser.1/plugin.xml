@@ -21,7 +21,7 @@
      </library>
   </runtime>
 
-  <extension-point id="xpt1" name="First extension point" schema="pde\xpt1.xml"/>
+  <extension-point id="xpt1" name="First extension point" schema="pde/xpt1.xml"/>
   <extension-point id="xpt2" name="Second extension point"/>
 
   <extension point="xpt1" id="ext1" name="First extension">
