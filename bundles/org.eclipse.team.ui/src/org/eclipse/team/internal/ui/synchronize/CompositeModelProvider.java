@@ -26,9 +26,9 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  */
 public abstract class CompositeModelProvider extends AbstractSynchronizeModelProvider {
     
-    List providers = new ArrayList();
-    Map resourceToElements = new HashMap(); // Map IResource to List of ISynchronizeModelElement
-    Map elementToProvider = new HashMap(); // Map ISynchronizeModelElement -> AbstractSynchronizeModelProvider
+    private final List providers = new ArrayList();
+    private final Map resourceToElements = new HashMap(); // Map IResource to List of ISynchronizeModelElement
+    private final Map elementToProvider = new HashMap(); // Map ISynchronizeModelElement -> AbstractSynchronizeModelProvider
 	
     protected CompositeModelProvider(ISynchronizePageConfiguration configuration, SyncInfoSet set) {
         super(configuration, set);
