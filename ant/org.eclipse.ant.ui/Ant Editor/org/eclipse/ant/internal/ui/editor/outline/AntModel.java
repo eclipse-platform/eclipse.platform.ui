@@ -89,8 +89,6 @@ public class AntModel {
 			public void documentChanged(DocumentEvent event) {}
 		};
 		fDocument.addDocumentListener(fListener);
-		
-		reconcile();
 	}
 	
 	public void dispose() {		
@@ -181,6 +179,7 @@ public class AntModel {
     	} finally {
     		configureProperties();
     		endReporting();
+    		fTaskToNode= new HashMap();
     	}
 	}
 
