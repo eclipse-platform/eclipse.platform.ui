@@ -11,6 +11,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.help.ui.browser.IBrowser;
 
 /**
@@ -53,9 +54,7 @@ implements IWorkbenchWindowActionDelegate, IExecutableExtension {
 							+ ":"
 							+ appServer.getPort()
 							+ "/help";
-					if(browser==null)
-						browser=BrowserManager.getInstance().createBrowser();
-					browser.displayURL(url);
+					((DefaultHelp)WorkbenchHelp.getHelpSupport()).getHelpBrowser().displayURL(url);
 				} catch (Exception e) {
 				}
 			}
