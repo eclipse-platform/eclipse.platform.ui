@@ -296,6 +296,8 @@ public abstract class WorkbenchAdviser {
 	 * 
 	 * @param configurer an object for configuring the particular workbench
 	 * window being opened
+	 * 
+	 * @issue no postWindowOpen call
 	 */
 	public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
 		// do nothing

@@ -149,6 +149,9 @@ public interface IWorkbenchWindowConfigurer {
 	 * 
 	 * @param show <code>true</code> for a shortcut bar, and <code>false</code>
 	 * for no shortcut bar
+	 * 
+	 * @issue if the shortcut bar is hidden, the status line loses some space on the left
+	 *   (presumably to the progress indicator)
 	 */
 	public void setShowShortcutBar(boolean show);
 
