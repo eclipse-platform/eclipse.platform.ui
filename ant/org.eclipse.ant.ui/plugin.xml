@@ -236,8 +236,8 @@
    <extension
          point="org.eclipse.ui.externaltools.configurationDuplicationMaps">
       <configurationMap
-            builderType="org.eclipse.ant.AntBuilderLaunchConfigurationType"
-            sourceType="org.eclipse.ant.AntLaunchConfigurationType">
+            sourceType="org.eclipse.ant.AntLaunchConfigurationType"
+            builderType="org.eclipse.ant.AntBuilderLaunchConfigurationType">
       </configurationMap>
    </extension>
    <extension
