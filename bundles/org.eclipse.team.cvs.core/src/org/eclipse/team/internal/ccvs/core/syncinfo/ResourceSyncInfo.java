@@ -619,10 +619,12 @@ public class ResourceSyncInfo {
 	 */
 	public static boolean isAddition(byte[] syncBytes) throws CVSException {
 		int start = startOfSlot(syncBytes, 2);
-		if (start == -1 || start >= syncBytes.length) {
+		// There must be a slot and, in the very least, there must be two characters after the slot
+		if (start == -1 || start > syncBytes.length - 3) {
 			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes))); //$NON-NLS-1$
 		}
-		return syncBytes[start + 1] == '0';
+		// If the zero is followed by a dot, then it is a valid revision and not an addition
+		return syncBytes[start + 1] == '0' && syncBytes[start + 2] != '.';
 	}
 	
 	/**
