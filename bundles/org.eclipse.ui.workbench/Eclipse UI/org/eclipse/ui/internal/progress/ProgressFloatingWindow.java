@@ -10,14 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.AssociatedWindow;
@@ -45,13 +51,28 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eclipse.jface.window.Window#getLayout()
+	 */
+	protected Layout getLayout() {
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 5;
+		layout.marginWidth = 5;
+		return layout;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite root) {
 
 		viewer = new TableViewer(root, SWT.MULTI) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.TableViewer#doUpdateItem(org.eclipse.swt.widgets.Widget, java.lang.Object, boolean)
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.TableViewer#doUpdateItem(org.eclipse.swt.widgets.Widget,
+			 *      java.lang.Object, boolean)
 			 */
 			protected void doUpdateItem(
 				Widget widget,
@@ -67,13 +88,15 @@ class ProgressFloatingWindow extends AssociatedWindow {
 
 		viewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		initContentProvider();
-		viewer.setLabelProvider(new LabelProvider(){
-			/* (non-Javadoc)
+		viewer.setLabelProvider(new LabelProvider() {
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 			 */
 			public String getText(Object element) {
 				JobInfo info = (JobInfo) element;
-				if(info.hasTaskInfo())
+				if (info.hasTaskInfo())
 					return info.getTaskInfo().getDisplayStringWithoutTask();
 				else
 					return info.getJob().getName();
@@ -95,9 +118,19 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		if (size.x > 500)
 			size.x = 500;
 		getShell().setSize(size);
-
 		moveShell(getShell());
 
+	}
+
+	/**
+	 * Dispose the region in the shell if any.
+	 */
+	private void disposeRegion() {
+		Region oldRegion = getShell().getRegion();
+		if(oldRegion != null){
+			getShell().setRegion(null);
+			oldRegion.dispose();
+		}
 	}
 
 	/**
@@ -105,7 +138,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 */
 	protected void initContentProvider() {
 		IContentProvider provider = new ProgressTableContentProvider(viewer);
-		
+
 		viewer.setContentProvider(provider);
 		viewer.setInput(provider);
 	}
@@ -118,5 +151,30 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	protected int getTransparencyValue() {
 		return 95;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.AssociatedWindow#configureShell(org.eclipse.swt.widgets.Shell)
+	 */
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		newShell.setBackground(
+			JFaceColors.getSchemeBackground(newShell.getDisplay()));
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#close()
+	 */
+	public boolean close() {
+		Region oldRegion = getShell().getRegion();
+		boolean result = super.close();
+		if(result && oldRegion != null){
+			oldRegion.dispose();
+		}
+		return result;
+	}
+	
 
 }
