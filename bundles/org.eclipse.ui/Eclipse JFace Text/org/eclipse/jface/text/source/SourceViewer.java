@@ -334,6 +334,9 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 			fVerticalRulerHoveringController= null;
 		}
 		
+		// http://dev.eclipse.org/bugs/show_bug.cgi?id=15300
+		fComposite= null;
+		
 		super.handleDispose();
 	}
 	
@@ -480,7 +483,10 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	public void showAnnotations(boolean show) {
 		boolean old= fIsVerticalRulerVisible;
 		fIsVerticalRulerVisible= (show && fVerticalRuler != null);
-		if (old != fIsVerticalRulerVisible)
-			fComposite.layout();
+		if (old != fIsVerticalRulerVisible) {
+			// http://dev.eclipse.org/bugs/show_bug.cgi?id=15300
+			if (fComposite != null && !fComposite.isDisposed())
+				fComposite.layout();
+		}
 	}		
 }
