@@ -39,7 +39,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
@@ -422,41 +421,12 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		                def = (ICategorizedThemeElementDefinition) themeRegistry.findFont(((IHierarchalThemeElementDefinition)element).getDefaultsTo());
 		            
 		            if (!ColorsAndFontsPreferencePage.equals(def.getCategoryId(), myCategory)) {
-		                return MessageFormat.format(RESOURCE_BUNDLE.getString("defaultFormat"), new Object[] {((IThemeElementDefinition) element).getLabel(), createPath(def)}); //$NON-NLS-1$ 	                
+		                return MessageFormat.format(RESOURCE_BUNDLE.getString("defaultFormat"), new Object[] {((IThemeElementDefinition) element).getLabel(), def.getLabel()}); //$NON-NLS-1$ 	                
 		            }
-		                
 		        }
     	    }
 			return ((IThemeElementDefinition) element).getLabel();
     	}
-
-        /**
-         * @param def
-         * @return
-         */
-        private String createPath(ICategorizedThemeElementDefinition def) {
-            ArrayList list = new ArrayList();
-            list.add(def.getLabel());
-            if (def.getCategoryId() != null) {
-                ThemeElementCategory cat = themeRegistry.findCategory(def.getCategoryId());
-                while (cat != null) {
-                    list.add(cat.getLabel());
-                    if (cat.getParentId() != null)
-                        cat = themeRegistry.findCategory(cat.getParentId());
-                    else 
-                        cat = null;
-                }
-            }
-            
-            StringBuffer buffer = new StringBuffer("/"); //$NON-NLS-1$
-            String [] parts = (String []) list.toArray(new String [list.size()]);
-            for (int i = parts.length - 1; i >= 0; i--) {
-               buffer.append(parts[i]);
-               if (i != 0) 
-                   buffer.append('/');               
-            }            
-            return buffer.toString();
-        }
     }    
     
 	/**
@@ -574,10 +544,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     private IWorkbench workbench;
     
     private FilteredTree tree;
-
-    private Button colorEditParentButton;
-
-    private Button fontEditParentButton;
     
 	/**
 	 * Create a new instance of the receiver. 
@@ -633,9 +599,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		colorSelector.setEnabled(false);
 
 		colorResetButton = createButton(composite, RESOURCE_BUNDLE.getString("reset")); //$NON-NLS-1$
-		
-		colorEditParentButton = createButton(composite, RESOURCE_BUNDLE.getString("editParent")); //$NON-NLS-1$
-        ((GridData)colorEditParentButton.getLayoutData()).horizontalSpan = 2;        		
 	}
 
 
@@ -743,10 +706,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		fontChangeButton = createButton(composite, JFaceResources.getString("openChange")); //$NON-NLS-1$
 
 		fontResetButton = createButton(composite, RESOURCE_BUNDLE.getString("reset")); //$NON-NLS-1$
-		
-		fontEditParentButton = createButton(composite, RESOURCE_BUNDLE.getString("editParent")); //$NON-NLS-1$
-        fontEditParentButton.setEnabled(true);
-        ((GridData)fontEditParentButton.getLayoutData()).horizontalSpan = 2;
     }
     
 	/**
@@ -1132,32 +1091,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 				}
 			}
 		});
-		
-		fontEditParentButton.addSelectionListener(new SelectionAdapter() {
-		
-	        /* (non-Javadoc)
-	         * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-	         */
-	        public void widgetSelected(SelectionEvent e) {
-	            IStructuredSelection selection = (IStructuredSelection) tree.getViewer().getSelection();
-	            IHierarchalThemeElementDefinition def = (IHierarchalThemeElementDefinition) selection.getFirstElement();
-                tree.getViewer().setSelection(new StructuredSelection(themeRegistry.findFont(def.getDefaultsTo())), true);
-	        }
-	    });
-	    
-	    colorEditParentButton.addSelectionListener(new SelectionAdapter() {
-		
-	        /* (non-Javadoc)
-	         * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-	         */
-	        public void widgetSelected(SelectionEvent e) {
-	            IStructuredSelection selection = (IStructuredSelection) tree.getViewer().getSelection();
-	            IHierarchalThemeElementDefinition def = (IHierarchalThemeElementDefinition) selection.getFirstElement();
-                tree.getViewer().setSelection(new StructuredSelection(themeRegistry.findColor(def.getDefaultsTo())), true);
-	        }
-	    });        		
-	            		
-		
 	}
 
     /* (non-Javadoc)
@@ -1644,24 +1577,15 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			colorResetButton.setEnabled(false);
 			colorSelector.setEnabled(false);
 			descriptionText.setText(""); //$NON-NLS-1$
-			colorEditParentButton.setEnabled(false);
 			return;
 	    }
 	    
 		colorSelector.setColorValue(getColorValue(definition));
 
-		colorResetButton.setEnabled(true);
+		colorResetButton.setEnabled(!isDefault(definition));
 		colorSelector.setEnabled(true);
 		String description = definition.getDescription();
-		descriptionText.setText(description == null ? "" : description); //$NON-NLS-1$
-		if (definition.getDefaultsTo() != null) {
-		    ColorDefinition parent = themeRegistry.findColor(definition.getDefaultsTo());
-		    if (parent != null) {
-			    colorEditParentButton.setEnabled(true);
-			    return;
-		    }
-		}
-		colorEditParentButton.setEnabled(false);
+		descriptionText.setText(description == null ? "" : description); //$NON-NLS-1$		
 	}
 
     protected void updateFontControls(FontDefinition definition) {
@@ -1670,23 +1594,14 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			fontResetButton.setEnabled(false);
 			fontChangeButton.setEnabled(false);
 			descriptionText.setText(""); //$NON-NLS-1$
-			fontEditParentButton.setEnabled(false);
 			return;
         }
         
 	    fontSystemButton.setEnabled(true);
-		fontResetButton.setEnabled(true);
+		fontResetButton.setEnabled(!isDefault(definition));
 		fontChangeButton.setEnabled(true);
 		String description = definition.getDescription();
-		descriptionText.setText(description == null ? "" : description); //$NON-NLS-1$
-		if (definition.getDefaultsTo() != null) {
-		    FontDefinition parent = themeRegistry.findFont(definition.getDefaultsTo());
-		    if (parent != null) {			   
-			    fontEditParentButton.setEnabled(true);
-			    return;
-		    }
-		}
-		fontEditParentButton.setEnabled(false);
+		descriptionText.setText(description == null ? "" : description); //$NON-NLS-1$		
     }
     
 	/**
