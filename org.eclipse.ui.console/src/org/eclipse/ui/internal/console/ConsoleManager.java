@@ -67,7 +67,7 @@ public class ConsoleManager implements IConsoleManager {
 	
     private IWindowListener fWindowListener;
     
-    private boolean fUpdating = false;
+    private boolean fWarnQueued = false;
     
 	/**
 	 * Notifies a console listener of additions or removals
@@ -268,8 +268,8 @@ public class ConsoleManager implements IConsoleManager {
 	 * @see org.eclipse.ui.console.IConsoleManager#warnOfContentChange(org.eclipse.ui.console.IConsole)
 	 */
 	public void warnOfContentChange(final IConsole console) {
-		if (!fUpdating) {
-			fUpdating = true;
+		if (!fWarnQueued) {
+			fWarnQueued = true;
 			ConsolePlugin.getStandardDisplay().asyncExec(new Runnable(){
 				public void run() {
 					IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -281,11 +281,11 @@ public class ConsoleManager implements IConsoleManager {
 								consoleView.warnOfContentChange(console);
 							}
 						} 
-					}				
+					}	
+					fWarnQueued = false;
 				}			
 			});
 		}
-		fUpdating = false;
 	}
 
     /* (non-Javadoc)
