@@ -96,9 +96,10 @@ function highlightTopic(topic)
   		var a = getAnchorNode(tr);
   		if (a)
   		{
-  			a.blur();
   			// set toolbar title
   			a.onclick();
+  			if (isIE)
+  				a.hideFocus = "true";
    		}
   }
 }
