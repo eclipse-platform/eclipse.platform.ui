@@ -61,7 +61,7 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncInf
 		this.totalChanges = new StatusLineCLabelContribution(TOTALS_ID, TEXT_FIELD_MAX_SIZE);
 		this.workingSet = new StatusLineCLabelContribution(WORKINGSET_ID, TEXT_FIELD_MAX_SIZE);
 		this.workingSet.setTooltip(Policy.bind("StatisticsPanel.workingSetTooltip")); //$NON-NLS-1$
-		updateWorkingSetText();
+		updateWorkingSetText(participant.getWorkingSet());
 
 		this.workingSet.addListener(SWT.MouseDoubleClick, new Listener() {
 			public void handleEvent(Event event) {
@@ -80,8 +80,7 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncInf
 		return participant.getSubscriber().getResourceComparator().isThreeWay();
 	}
 	
-	private void updateWorkingSetText() {
-		IWorkingSet set = participant.getWorkingSet();
+	private void updateWorkingSetText(IWorkingSet set) {
 		if (set == null) {
 			workingSet.setText(Policy.bind("StatisticsPanel.noWorkingSet")); //$NON-NLS-1$
 		} else {
@@ -114,8 +113,8 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncInf
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(SubscriberParticipant.P_SYNCVIEWPAGE_WORKINGSET)) {
-			updateWorkingSetText();
+		if (event.getProperty().equals(SubscriberParticipant.P_SYNCVIEWPAGE_WORKINGSET)) {	
+			updateWorkingSetText((IWorkingSet)event.getNewValue());
 			updateCounts();
 		}
 	}
