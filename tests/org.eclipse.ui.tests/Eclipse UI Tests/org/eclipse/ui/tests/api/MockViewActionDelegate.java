@@ -23,7 +23,7 @@ public class MockViewActionDelegate extends MockActionDelegate
 	 * @see IViewActionDelegate#init(IViewPart)
 	 */
 	public void init(IViewPart view) {
-		callHistory.add(this, "init");
+		callHistory.add("init");
 	}
 }
 

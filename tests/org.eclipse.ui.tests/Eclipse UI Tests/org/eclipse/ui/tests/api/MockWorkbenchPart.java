@@ -1,12 +1,12 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.test.harness.util.*;
+import org.eclipse.ui.test.harness.util.CallHistory;
 
 public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	IExecutableExtension
@@ -29,6 +29,10 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 		return callTrace;
 	}	
 
+	public ISelectionProvider getSelectionProvider() {
+		return selectionProvider;
+	}
+	
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		title = (String)config.getAttribute("name");
 	}

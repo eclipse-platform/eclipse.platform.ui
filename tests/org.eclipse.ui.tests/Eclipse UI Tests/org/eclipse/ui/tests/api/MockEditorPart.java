@@ -10,6 +10,7 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart {
 	private static final String BASE = "org.eclipse.ui.tests.api.MockEditorPart";
 	public static final String ID1 = BASE + "1";
 	public static final String ID2 = BASE + "2";
+	public static final String NAME = "Mock Editor 1";
 
 	private IEditorInput input;
 	private boolean dirty = false;

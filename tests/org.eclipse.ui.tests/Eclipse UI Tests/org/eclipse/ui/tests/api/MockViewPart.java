@@ -7,6 +7,7 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
 	public static String ID = "org.eclipse.ui.tests.api.MockViewPart";
 	public static String ID2 = ID + "2";
 	public static String ID3 = ID + "3";
+	public static String NAME = "Mock View 1";
 
 	public MockViewPart()
 	{
