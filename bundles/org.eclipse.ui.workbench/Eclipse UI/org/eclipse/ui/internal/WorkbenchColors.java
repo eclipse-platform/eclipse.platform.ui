@@ -26,6 +26,9 @@ public class WorkbenchColors {
 	static private HashMap colorMap;
 	static private HashMap systemColorMap;
 	
+	// the base color ID to use for gradients in the workbench
+	static private int BASE_COLOR = SWT.COLOR_WHITE;
+	
 	// colors created for gradients to be disposed on shutdown
 	static private Color activeGradientBlend;
 	static private Color inactiveGradientBlend;
@@ -325,19 +328,13 @@ static public void startup() {
 	initWorkbenchColors(display);
 	// Define active view gradient using same OS title gradient colors.
 	// Color 1 is halfway between the base color (white) and Color 2
-	Color base = getSystemColor(SWT.COLOR_WHITE);
+	Color base = getSystemColor(BASE_COLOR);
 	Color clr2 = JFaceColors.getTabFolderSelectionBackground(display);
 	Color clr3 = JFaceColors.getTabFolderInactiveSelectionBackground(display);
-	int red, green, blue;
-
-	red = blend(base.getRed(), clr2.getRed());
-	green = blend(base.getGreen(), clr2.getGreen());
-	blue = blend(base.getBlue(), clr2.getBlue());
-	activeGradientBlend = new Color(display, red, green, blue);
 	
-	red = blend(base.getRed(), clr3.getRed());
-	green = blend(base.getGreen(), clr3.getGreen());
-	blue = blend(base.getBlue(), clr3.getBlue());
+	activeGradientBlend = createGradient(display, base, clr2);
+	//inactiveGradientBlend = createGradient(display, base, clr3);
+	
 	// TODO: 
 	// temporarily experiment with brighter color here
 	//inactiveGradientBlend = new Color(display, red, green, blue);
@@ -395,4 +392,65 @@ static public void startup() {
 private static int blend(int temp1, int temp2) {
 	return (Math.abs(temp1 - temp2) / 2) + Math.min(temp1,temp2);
 }
+
+/**
+ * @param color
+ * @return
+ */
+public static Color createGradient(Display display, Color color) {
+	return createGradient(display, getSystemColor(BASE_COLOR), color);
+}
+
+/**
+ * Create an blended gradient color between the base color and the end color returning
+ * the blended color.
+ * 
+ * NOTE: the caller must call <code>Color.dispose()</code> on the returned color
+ * 
+ * @param display
+ * @param startColor
+ * @param endColor
+ * @return a <code>Color</code>  the blend of the two colors provided
+ */
+public static Color createGradient(Display display, Color startColor, Color endColor) {
+	int red = blend(startColor.getRed(), endColor.getRed());
+	int green = blend(startColor.getGreen(), endColor.getGreen());
+	int blue = blend(startColor.getBlue(), endColor.getBlue());
+	return new Color(display, red, green, blue);	
+}
+
+/**
+ * Create an array to be used in combination with a gradient percent array to render colors 
+ * blending a start color with the end color and answering an array with the blended and the 
+ * end color as the color start and end for the gradient.
+ * 
+ * NOTE: the caller must call <code>Color.dispose()</code> on the first element of the array
+ * 
+ * @param display
+ * @param startColor
+ * @param endColor
+ * @return an array of <code>Color</code> objects representing the gradients
+ */
+public static Color[] createGradientArray(Display display, Color startColor, Color endColor) {
+	int red = blend(startColor.getRed(), endColor.getRed());
+	int green = blend(startColor.getGreen(), endColor.getGreen());
+	int blue = blend(startColor.getBlue(), endColor.getBlue());
+	return new Color[] {new Color(display, red, green, blue), endColor};	
+}
+
+/**
+ * Create an array to be used in combination with a gradient percent array to render colors 
+ * blending the default base color with the end color and answering an array with the blended and the 
+ * end color as the color start and end for the gradient.
+ * 
+ * NOTE: the caller must call <code>Color.dispose()</code> on the first element of the array
+ * 
+ * @param display
+ * @param endColor
+ * @return an array of <code>Color</code> objects representing the gradients
+ */
+public static Color[] createGradientArray(Display display, Color endColor) {
+	return createGradientArray(display, getSystemColor(BASE_COLOR), endColor);
+}
+
 }
