@@ -760,4 +760,18 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		return getRelativePathFromRootRelativePath((ICVSFolder)root.getChild(path.segment(0)), path.removeFirstSegments(1));
 	}
 
+	/**
+	 * @see ICVSRemoteFolder#forTag(CVSTag)
+	 */
+	public ICVSRemoteResource forTag(ICVSRemoteFolder parent, CVSTag tagName) {
+		return new RemoteFolder((RemoteFolder)parent, info.getName(), repository, new Path(folderInfo.getRepository()), tagName, folderInfo.getIsStatic());
+	}
+	
+	/**
+	 * @see ICVSRemoteFolder#forTag(CVSTag)
+	 */
+	public ICVSRemoteFolder forTag(CVSTag tagName) {
+		return (ICVSRemoteFolder)forTag(null, tagName);
+	}
+
 }

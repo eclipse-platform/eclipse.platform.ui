@@ -20,6 +20,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -313,6 +314,32 @@ public class RemoteModule extends RemoteFolder {
 	
 	private void setExpandable(boolean expandable) {
 		this.expandable = expandable;
+	}
+	
+	/**
+	 * @see ICVSRemoteFolder#forTag(CVSTag)
+	 */
+	public ICVSRemoteResource forTag(ICVSRemoteFolder parent, CVSTag tagName) {
+		RemoteModule r = new RemoteModule(label, (RemoteFolder)parent, getRepository(), new Path(folderInfo.getRepository()), localOptions, tagName, folderInfo.getIsStatic());
+		r.setExpandable(expandable);
+		if (folderInfo.getIsStatic()) {
+			ICVSRemoteResource[] children = getChildren();
+			List taggedChildren = new ArrayList(children.length);
+			for (int i = 0; i < children.length; i++) {
+				ICVSRemoteResource resource = children[i];
+				taggedChildren.add(((RemoteResource)resource).forTag(r, tagName));
+			}
+			r.setChildren((ICVSRemoteResource[]) taggedChildren.toArray(new ICVSRemoteResource[taggedChildren.size()]));
+		}
+		if (referencedModules != null) {
+			List taggedModules = new ArrayList(referencedModules.length);
+			for (int i = 0; i < referencedModules.length; i++) {
+				RemoteModule module = (RemoteModule)referencedModules[i];
+				taggedModules.add(module.forTag(r, tagName));
+			}
+			r.setReferencedModules((ICVSRemoteResource[]) taggedModules.toArray(new ICVSRemoteResource[taggedModules.size()]));
+		}
+		return r;
 	}
 	
 }

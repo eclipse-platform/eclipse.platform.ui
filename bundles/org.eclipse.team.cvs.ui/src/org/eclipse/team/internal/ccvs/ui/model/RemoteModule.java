@@ -69,7 +69,7 @@ public class RemoteModule extends CVSModelElement implements IAdaptable {
 					CVSTag[] tags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownVersionTags(folder);
 					Object[] versions = new Object[tags.length];
 					for (int i = 0; i < versions.length; i++) {
-						versions[i] = folder.getRepository().getRemoteFolder(folder.getRepositoryRelativePath(), tags[i]);
+						versions[i] = folder.forTag(tags[i]);
 					}
 					result[0] = versions;
 				}

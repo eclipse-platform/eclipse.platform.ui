@@ -38,6 +38,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
@@ -570,6 +571,13 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 */
 	public NotifyInfo getPendingNotification() throws CVSException {
 		return null;
+	}
+
+	/**
+	 * @see RemoteResource#forTag(ICVSRemoteFolder, CVSTag)
+	 */
+	public ICVSRemoteResource forTag(ICVSRemoteFolder parent, CVSTag tagName) {
+		return new RemoteFile((RemoteFolder)parent, getWorkspaceSyncState(), getName(), tagName);
 	}
 
 }

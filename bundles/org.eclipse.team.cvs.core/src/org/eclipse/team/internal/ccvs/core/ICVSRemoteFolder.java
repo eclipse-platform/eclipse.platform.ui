@@ -23,7 +23,7 @@ public interface ICVSRemoteFolder extends ICVSRemoteResource, ICVSFolder {
 	 * be used to browse the main branch) use this method to change the
 	 * context to another branch tag or to a version tag.
 	 */
-	public void setTag(CVSTag tagName);
+	public ICVSRemoteFolder forTag(CVSTag tagName);
 	
 	/**
 	 * Return the context of this handle. The returned tag can be a branch or
