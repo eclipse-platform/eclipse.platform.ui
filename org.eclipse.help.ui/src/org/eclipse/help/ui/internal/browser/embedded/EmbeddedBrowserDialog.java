@@ -26,7 +26,7 @@ public class EmbeddedBrowserDialog {
 	Shell shell;
 	Browser webBrowser;
 	/**
-	 * Constructor used for launching in process embeded IE (for debugging)
+	 * Constructor
 	 */
 	public EmbeddedBrowserDialog(
 		Shell parent,
