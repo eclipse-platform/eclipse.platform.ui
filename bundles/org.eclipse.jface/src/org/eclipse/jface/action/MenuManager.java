@@ -507,11 +507,16 @@ protected void update(boolean force, boolean recursive) {
 			
 			// remove obsolete (removed or non active)
 			MenuItem[] mi= menu.getItems();
+			
 			for (int i= 0; i < mi.length; i++) {
-				Object data= mi[i].getData();
-				if (data == null || !clean.contains(data) || !PERMANENT.equals(mi[i].getData(PERMANENT))) {
+				if (PERMANENT.equals(mi[i].getData(PERMANENT)))
+					continue;
+								
+				Object data = mi[i].getData();					
+					
+				if (data == null || !clean.contains(data)) {
 					mi[i].dispose();
-				} else if(data instanceof IContributionItem && 
+				} else if (data instanceof IContributionItem && 
 					((IContributionItem)data).isDynamic() && 
 					((IContributionItem)data).isDirty()) {
 						mi[i].dispose();
