@@ -654,12 +654,9 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	 * @param secondaryId
 	 *            the secondary id to use, or <code>null</code> for no secondary id 
 	 * @param mode
-	 * 			  the activation mode.  Must be <code>VIEW_ACTIVATE</code>, 
-	 * 			  <code>VIEW_VISIBLE</code> or <code>VIEW_CREATE</code>
+	 * 			  the activation mode.  Must be {@link #VIEW_ACTIVATE}, 
+	 * 			  {@link #VIEW_VISIBLE} or {@link #VIEW_CREATE}
 	 * @return a view
-	 * @see VIEW_ACTIVATE
-	 * @see VIEW_VISIBLE
-	 * @see VIEW_CREATE
 	 * @exception PartInitException
 	 *                if the view could not be initialized
 	 * @exception IllegalArgumentException

@@ -100,13 +100,17 @@ public interface IWorkbenchPart extends IAdaptable {
 
 	/**
 	 * The property id for <code>getPartName</code> (used by IWorkbenchPart2)
+	 * 
+	 * @since 3.0
 	 */
 	public static final int PROP_NAME = 0x104;
 	
 	/**
-	 * The property id for <code>getStatus</code> (used by IWorkbenchPart2)
+	 * The property id for <code>getStatusText</code> (used by IWorkbenchPart2)
+	 * 
+	 * @since 3.0
 	 */
-	public static final int PROP_STATUS = 0x105;
+	public static final int PROP_STATUS_TEXT = 0x105;
 	
 /**
  * Adds a listener for changes to properties of this workbench part.

@@ -33,17 +33,17 @@ import org.eclipse.jface.preference.IPreferencePage;
  */
 public interface IWorkbenchPropertyPage extends IPreferencePage {
 /**
- * Returns the object that owns the properties shown in this property page.
+ * Returns the object that owns the properties shown in this page.
  *
- * @return the object that owns the properties in this page
+ * @return the object that owns the properties shown in this page
  */
 public IAdaptable getElement();
 /**
- * Sets the object that owns the properties shown in this property page.
+ * Sets the object that owns the properties shown in this page.
  * The page is expected to store this object and provide it if
  * <code>getElement</code> is called.
  *
- * @param the object that owns the properties in this page
+ * @param element the object that owns the properties shown in this page
  */
 public void setElement(IAdaptable element);
 }

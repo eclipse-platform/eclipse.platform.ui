@@ -26,10 +26,10 @@ public interface IPartListener2 {
 /**
  * Notifies this listener that the given part has been activated.
  *
- * @param part the part that was activated
+ * @param partRef the part that was activated
  * @see IWorkbenchPage#activate
  */
-public void partActivated(IWorkbenchPartReference ref)
+public void partActivated(IWorkbenchPartReference partRef)
 ;
 /**
  * Notifies this listener that the given part has been brought to the top.
@@ -41,53 +41,53 @@ public void partActivated(IWorkbenchPartReference ref)
  * activated by the user clicking on it, only <code>partActivated</code> is sent.
  * </p>
  *
- * @param part the part that was surfaced
+ * @param partRef the part that was surfaced
  * @see IWorkbenchPage#bringToTop
  */
-public void partBroughtToTop(IWorkbenchPartReference ref);
+public void partBroughtToTop(IWorkbenchPartReference partRef);
 
 /**
  * Notifies this listener that the given part has been closed.
  *
- * @param part the part that was closed
+ * @param partRef the part that was closed
  * @see IWorkbenchPage#hideView
  */
-public void partClosed(IWorkbenchPartReference ref);
+public void partClosed(IWorkbenchPartReference partRef);
 
 /**
  * Notifies this listener that the given part has been deactivated.
  *
- * @param part the part that was deactivated
+ * @param partRef the part that was deactivated
  * @see IWorkbenchPage#activate
  */
-public void partDeactivated(IWorkbenchPartReference ref);
+public void partDeactivated(IWorkbenchPartReference partRef);
 
 /**
  * Notifies this listener that the given part has been opened.
  *
- * @param part the part that was opened
+ * @param partRef the part that was opened
  * @see IWorkbenchPage#showView
  */ 
-public void partOpened(IWorkbenchPartReference ref);
+public void partOpened(IWorkbenchPartReference partRef);
 
 /**
  * Notifies this listener that the given part is hidden.
  *
- * @param part the part that is hidden
+ * @param partRef the part that is hidden
  */	
-public void partHidden(IWorkbenchPartReference ref);
+public void partHidden(IWorkbenchPartReference partRef);
 
 /**
  * Notifies this listener that the given part is visible.
  *
- * @param part the part that is visible
+ * @param partRef the part that is visible
  */
-public void partVisible(IWorkbenchPartReference ref);
+public void partVisible(IWorkbenchPartReference partRef);
 
 /**
  * Notifies this listener that the given part input was changed.
  *
- * @param part the part that is visible
+ * @param partRef the part that is visible
  */
-public void partInputChanged(IWorkbenchPartReference ref);
+public void partInputChanged(IWorkbenchPartReference partRef);
 }

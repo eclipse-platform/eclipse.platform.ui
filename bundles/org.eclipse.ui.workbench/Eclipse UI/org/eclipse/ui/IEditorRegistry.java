@@ -107,7 +107,7 @@ public interface IEditorRegistry {
 	 * file and obtaining the default editor for that extension.
 	 * </p>
 	 *
-	 * @param filename the file name in the system
+	 * @param fileName the file name in the system
 	 * @return the descriptor of the default editor, or <code>null</code> if not
 	 *   found
 	 */
@@ -121,10 +121,10 @@ public interface IEditorRegistry {
 	 * editor rather than all candidate editors.
 	 * </p>
 	 *
-	 * @param filename the file name in the system
+	 * @param fileName the file name in the system
 	 * @return a list of editor descriptors
 	 */
-	public IEditorDescriptor[] getEditors(String filename);
+	public IEditorDescriptor[] getEditors(String fileName);
 	
 	/**
 	 * Returns a list of mappings from file type to editor.  The resulting list
@@ -167,7 +167,7 @@ public interface IEditorRegistry {
 	 * specified file name or extension. The specified editor must be
 	 * defined as an editor for that file name or extension.
 	 *
-	 * @param fileNamePattern the file name or pattern (e.g. "*.xml");
+	 * @param fileNameOrExtension the file name or extension pattern (e.g. "*.xml");
 	 * @param editorId the editor id or <code>null</code> for no default
 	 */
 	public void setDefaultEditor(String fileNameOrExtension, String editorId);

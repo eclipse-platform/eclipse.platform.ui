@@ -94,7 +94,7 @@ public interface IWorkbench {
 	 *            the window listener to remove
 	 * @since 2.0
 	 */
-	public void removeWindowListener(IWindowListener l);
+	public void removeWindowListener(IWindowListener listener);
 	/**
 	 * Closes this workbench and all its open windows.
 	 * <p>
@@ -204,7 +204,7 @@ public interface IWorkbench {
 	 * 
 	 * @see IWorkbench#showPerspective
 	 */
-	public IWorkbenchWindow openWorkbenchWindow(String perspID, IAdaptable input)
+	public IWorkbenchWindow openWorkbenchWindow(String perspectiveId, IAdaptable input)
 		throws WorkbenchException;
 	/**
 	 * Creates and opens a new workbench window with one page. The perspective

@@ -65,10 +65,9 @@ public final class PlatformUI {
 
 	/**
 	 * Return code (value 3) indicating that the workbench was terminated with
-	 * a call to <code>IWorkbenchConfigurer.emergencyClose</code>.
+	 * a call to {@link org.eclipse.ui.application.IWorkbenchConfigurer.emergencyClose}.
 	 * 
 	 * @see #createAndRunWorkbench
-	 * @see IWorkbenchConfigurer#emergencyClose
 	 * @since 3.0
 	 */
 	public static final int RETURN_EMERGENCY_CLOSE = 3;

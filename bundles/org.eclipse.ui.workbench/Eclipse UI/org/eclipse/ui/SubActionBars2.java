@@ -45,8 +45,8 @@ public class SubActionBars2 extends SubActionBars implements IActionBars2 {
 	 * @param parent the parent coolbar manager
 	 * @return the cool bar manager
 	 */
-	protected SubCoolBarManager createSubCoolBarManager(ICoolBarManager coolBarManager) {
-		return new SubCoolBarManager(coolBarManager);
+	protected SubCoolBarManager createSubCoolBarManager(ICoolBarManager parent) {
+		return new SubCoolBarManager(parent);
 	}
 	
 	/* (non-Javadoc)

@@ -104,7 +104,7 @@ public interface IWorkingSetManager {
 	 * 
 	 * @param name the name of the new working set. Should not have 
 	 * 	leading or trailing whitespace.
-	 * @param elememts the working set contents
+	 * @param elements the working set contents
 	 * @return a new working set with the specified name and content
 	 */
 	public IWorkingSet createWorkingSet(String name, IAdaptable[] elements);
@@ -159,14 +159,14 @@ public interface IWorkingSetManager {
 	 * extracting the selected working sets using 
 	 * <code>IWorkingSetSelectionDialog#getSelection</code>.
 	 * 
-	 * @param shell the parent of the working set selection dialog
+	 * @param parentShell the parent shell of the working set selection dialog
 	 * @param multi true=more than one working set can be chosen 
 	 * 	in the dialog. false=only one working set can be chosen. Multiple
 	 * 	working sets can still be selected and removed from the list but
 	 * 	the dialog can only be closed when a single working set is selected.
 	 * @return a working set selection dialog
 	 */
-	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent, boolean multi);
+	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parentShell, boolean multi);
 	
 	/**
 	 * Returns the list of most recently used working sets.
