@@ -670,10 +670,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 			if (eventSource instanceof ILaunch) {
 				launch= (ILaunch) eventSource;
 			}
-		String perspectiveID= launch == null ? null : launch.getLauncher().getPerspectiveIdentifier();
-		if (perspectiveID == null) {
-			perspectiveID= IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
-		}
+		String perspectiveID= IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
+		if (launch != null) {
+			if (launch.getLauncher() != null) {
+				perspectiveID= launch.getLauncher().getPerspectiveIdentifier();
+			}
+		} 
 		return perspectiveID;
 	}
 
