@@ -77,8 +77,10 @@ public class ExpandableComposite extends Composite {
 	 * 0).
 	 */
 	public int marginHeight = 0;
-	protected int GAP = 4;
 	private int VSPACE = 3;
+	public int clientVerticalSpacing = VSPACE;
+	protected int GAP = 4;
+
 	private int SEPARATOR_HEIGHT = 2;
 	private int expansionStyle = TWISTIE | FOCUS_TITLE | EXPANDED;
 	private boolean expanded;
@@ -163,8 +165,10 @@ public class ExpandableComposite extends Composite {
 						dsize = desc.computeSize(areaWidth, SWT.DEFAULT,
 								changed);
 						desc.setBounds(cx, y, dsize.x, dsize.y);
-						y += dsize.y + VSPACE;
+						y += dsize.y + clientVerticalSpacing;
 					}
+					else
+						y += clientVerticalSpacing - VSPACE;
 					//int cwidth = clientArea.width - marginWidth - marginWidth
 							//- cx;
 					int cwidth = areaWidth;
@@ -243,8 +247,10 @@ public class ExpandableComposite extends Composite {
 						dsize.x -= twidth;
 					width = Math.max(width, dsize.x);
 					if (expanded)
-						height += dsize.y + VSPACE;
+						height += dsize.y + clientVerticalSpacing;
 				}
+				else
+					height += clientVerticalSpacing - VSPACE;
 				if ((expansionStyle & CLIENT_INDENT) != 0)
 					csize.x -= twidth;
 				width = Math.max(width, csize.x);
