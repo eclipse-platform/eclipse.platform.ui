@@ -42,8 +42,15 @@ public class UninstallFeatureAction extends Action {
 					adapter.getFeature(null));
 
 			boolean restartNeeded = uninstallOperation.execute(null, null);
-			if (restartNeeded)
+			if (restartNeeded) {
 				UpdateUI.requestRestart();
+				// if the user does not want a restart, we need to tag the feature as uninstalled
+				Object parent = adapter.getParent(adapter);
+				if (parent instanceof ConfiguredFeatureAdapter) {
+					ConfiguredFeatureAdapter parentAdapter = (ConfiguredFeatureAdapter)parent;
+					parentAdapter.uninstall(adapter);
+				}
+			}
 
 		} catch (CoreException e) {
 			ErrorDialog.openError(
