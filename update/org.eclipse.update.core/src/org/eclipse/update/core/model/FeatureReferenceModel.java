@@ -27,7 +27,8 @@ public class FeatureReferenceModel extends ModelObject {
 	private String type;
 	private URL url;
 	private String urlString;
-	private VersionedIdentifier versionID;
+	private String featureId;
+	private String featureVersion;	
 	private SiteModel site;
 	private List /* of String*/
 	categoryNames;
@@ -119,6 +120,28 @@ public class FeatureReferenceModel extends ModelObject {
 	}
 
 	/**
+	 * Returns the feature identifier as a string
+	 * 
+	 * @see org.eclipse.update.core.IFeatureReference#getVersionedIdentifier()
+	 * @return feature identifier
+	 * @since 2.0
+	 */
+	public String getFeatureIdentifier() {
+		return featureId;
+	}
+
+	/**
+	 * Returns the feature version as a string
+	 * 
+	 * @see org.eclipse.update.core.IFeatureReference#getVersionedIdentifier()
+	 * @return feature version 
+	 * @since 2.0
+	 */
+	public String getFeatureVersion() {
+		return featureVersion;
+	}
+
+	/**
 	 * Sets the referenced feature type.
 	 * Throws a runtime exception if this object is marked read-only.
 	 * 
@@ -156,16 +179,27 @@ public class FeatureReferenceModel extends ModelObject {
 	}
 
 	/**
-	 * Sets the identifier and version for the feature reference.
+	 * Sets the feature identifier.
 	 * Throws a runtime exception if this object is marked read-only.
 	 * 
-	 * @param id identifier of the feature reference
-	 * @param ver version of the feature reference
+	 * @param featureId feature identifier
 	 * @since 2.0
 	 */
-	public void setIndentifier(String id, String ver) {
+	public void setFeatureIdentifier(String featureId) {
 		assertIsWriteable();
-		versionID = new VersionedIdentifier(id,ver);
+		this.featureId = featureId;
+	}
+
+	/**
+	 * Sets the feature version.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param featureVersion feature version
+	 * @since 2.0
+	 */
+	public void setFeatureVersion(String featureVersion) {
+		assertIsWriteable();
+		this.featureVersion = featureVersion;
 	}
 
 	/**
@@ -234,7 +268,6 @@ public class FeatureReferenceModel extends ModelObject {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(getClass().toString()+" :");
-		if (versionID!=null) buffer.append(versionID.toString());
 		buffer.append(" at ");
 		if (url!=null) buffer.append(url.toExternalForm());
 		return buffer.toString();

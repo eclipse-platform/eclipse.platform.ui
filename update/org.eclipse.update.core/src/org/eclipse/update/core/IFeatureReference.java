@@ -55,6 +55,15 @@ public interface IFeatureReference extends IAdaptable {
 	public IFeature getFeature() throws CoreException;
 
 	/**
+	 * Returns the feature identifier.
+	 * 
+	 * @return the feature identifier.
+	 * @exception CoreException
+	 * @since 2.0 
+	 */
+	public VersionedIdentifier getVersionedIdentifier() throws CoreException;
+
+	/**
 	 * Adds a category to the referenced feature.
 	 * 
 	 * @param category new category

@@ -29,6 +29,7 @@ public class FeatureReference
 
 	private IFeature feature;
 	private List categories;
+	private VersionedIdentifier versionId;
 
 	/**
 	 * Feature reference default constructor
@@ -50,6 +51,13 @@ public class FeatureReference
 				type = getSite().getDefaultPackagedFeatureType();
 			}
 			feature = createFeature(type, getURL(), getSite());
+			if (feature!=null){
+				VersionedIdentifier featureID = feature.getVersionedIdentifier();
+				if (versionId!=null && !versionId.equals(featureID)){
+					UpdateManagerPlugin.warn("The versionId of the referenced feature doesn't match the one of the feature reference:"+getURL());
+				}
+				versionId=featureID;
+			}
 		}
 
 		return feature;
@@ -150,5 +158,31 @@ public class FeatureReference
 		IFeatureFactory factory =
 			FeatureTypeFactory.getInstance().getFactory(featureType);
 		return factory.createFeature(url, site);
+	}
+
+	/**
+	 * Returns the feature identifier.
+	 * 
+	 * @see IFeatureReference#getVersionedIdentifier()
+	 * @exception CoreException
+	 * @since 2.0
+	 */
+	public VersionedIdentifier getVersionedIdentifier() throws CoreException {
+		
+		if (versionId!=null)
+			return versionId;
+			
+		String id = getFeatureIdentifier();
+		String ver = getFeatureVersion();
+		if (id!=null && ver!=null){
+			try {
+				versionId= new VersionedIdentifier(id,ver);
+				return versionId;
+			} catch (Exception e){
+				UpdateManagerPlugin.warn("Unable to create versioned identifier:"+id+":"+ver);
+			}
+		}
+		
+		return getFeature().getVersionedIdentifier();
 	}
 }
