@@ -23,7 +23,7 @@ import org.eclipse.update.search.*;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class OptionalFeatureSearchCategory extends UpdateSearchCategory {
+public class OptionalFeatureSearchCategory extends BaseSearchCategory {
 	private IUpdateSearchQuery[] queries;
 	private ArrayList vids;
 	private static final String CATEGORY_ID =

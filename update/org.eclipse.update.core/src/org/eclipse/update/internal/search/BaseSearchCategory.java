@@ -12,10 +12,10 @@ package org.eclipse.update.internal.search;
 
 import org.eclipse.update.search.*;
 
-public abstract class UpdateSearchCategory implements IUpdateSearchCategory {
+public abstract class BaseSearchCategory implements IUpdateSearchCategory {
 	private String id;
 	
-	protected UpdateSearchCategory(String id) {
+	protected BaseSearchCategory(String id) {
 		setId(id);
 	}
 	
