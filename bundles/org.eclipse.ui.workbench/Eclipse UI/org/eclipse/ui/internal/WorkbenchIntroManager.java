@@ -96,7 +96,6 @@ public class WorkbenchIntroManager implements IIntroManager {
 	/**	 
 	 * @param window the window to test
 	 * @return whether the intro exists in the given window
-	 * @since 3.0
 	 */
 	/*package*/ boolean isIntroInWindow(IWorkbenchWindow testWindow) {
 		ViewIntroAdapterPart viewPart = getViewIntroAdapterPart();	
@@ -116,7 +115,6 @@ public class WorkbenchIntroManager implements IIntroManager {
      * descriptor for this workbench then no work is done.
      *
 	 * @param preferredWindow the window to create the intro in.
-	 * @since 3.0
 	 */
 	private void createIntro(WorkbenchWindow preferredWindow) {
 		if (this.workbench.getIntroDescriptor() == null)
@@ -139,14 +137,18 @@ public class WorkbenchIntroManager implements IIntroManager {
 		if (introPart == null || !introPart.equals(part))
 			return;
 		
-		PartPane pane = ((PartSite)getViewIntroAdapterPart().getSite()).getPane();
+		ViewIntroAdapterPart viewIntroAdapterPart = getViewIntroAdapterPart();
+		if (viewIntroAdapterPart == null)
+			return;
+		
+		PartPane pane = ((PartSite)viewIntroAdapterPart.getSite()).getPane();
 		if (standby == !pane.isZoomed()) {
 		    // the zoom state is already correct - just update the part's state.
-		    getViewIntroAdapterPart().setStandby(standby);
+		    viewIntroAdapterPart.setStandby(standby);
 			return;
 		}
 		
-		((WorkbenchPage)getViewIntroAdapterPart().getSite().getPage()).toggleZoom(pane.getPartReference());
+		((WorkbenchPage)viewIntroAdapterPart.getSite().getPage()).toggleZoom(pane.getPartReference());
 	}
 
 	/* (non-Javadoc)
@@ -156,7 +158,11 @@ public class WorkbenchIntroManager implements IIntroManager {
 		if (introPart == null || !introPart.equals(part))
 			return false;
 
-		return !((PartSite)getViewIntroAdapterPart().getSite()).getPane().isZoomed();
+		ViewIntroAdapterPart viewIntroAdapterPart = getViewIntroAdapterPart();
+		if (viewIntroAdapterPart == null)
+			return false;
+		
+		return !((PartSite)viewIntroAdapterPart.getSite()).getPane().isZoomed();
 	}
 
 	/* (non-Javadoc)
@@ -169,7 +175,6 @@ public class WorkbenchIntroManager implements IIntroManager {
 	/** 
 	 * @return the <code>ViewIntroAdapterPart</code> for this workbench, <code>null</code> if it 
      * cannot be found.
-	 * @since 3.0
 	 */
 	/*package*/ ViewIntroAdapterPart getViewIntroAdapterPart() {
 		IWorkbenchWindow [] windows = this.workbench.getWorkbenchWindows();
@@ -184,9 +189,9 @@ public class WorkbenchIntroManager implements IIntroManager {
 				IPerspectiveDescriptor descriptor = perspDescs[j];
 				IViewReference reference = page.findPerspective(descriptor).findView(IIntroConstants.INTRO_VIEW_ID);
 				if (reference != null) {
-					ViewIntroAdapterPart part = (ViewIntroAdapterPart) reference.getView(false);
-					if (part != null)
-						return part;
+					IViewPart part = reference.getView(false);
+					if (part != null && part instanceof ViewIntroAdapterPart)
+						return (ViewIntroAdapterPart) part;
 				}
 			}
 		}
@@ -196,7 +201,6 @@ public class WorkbenchIntroManager implements IIntroManager {
 	/**
 	 * @return a new IIntroPart.  This has the side effect of setting the introPart field to the new
 	 * value.
-	 * @since 3.0
 	 */
 	/*package*/ IIntroPart createNewIntroPart() throws CoreException {	
 		return introPart = workbench.getIntroDescriptor() == null ? null : workbench.getIntroDescriptor().createIntro();
