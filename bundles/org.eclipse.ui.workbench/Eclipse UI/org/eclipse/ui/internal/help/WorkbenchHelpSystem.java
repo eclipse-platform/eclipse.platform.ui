@@ -784,6 +784,18 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eclipse.ui.help.IWorkbenchHelpSystem#displaySearch()
+	 */
+	public void displayDynamicHelp() {
+		AbstractHelpUI helpUI = getHelpUI();
+		if (helpUI != null) {
+			helpUI.displayDynamicHelp();
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.help.IWorkbenchHelpSystem#search(java.lang.String)
 	 */
 	public void search(String expression) {

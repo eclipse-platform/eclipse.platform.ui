@@ -77,6 +77,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IWorkbenchAction helpContentsAction;
 
     private IWorkbenchAction helpSearchAction;
+	
+    private IWorkbenchAction dynamicHelpAction;
     
     private IWorkbenchAction aboutAction;
 
@@ -761,6 +763,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		addSeparatorOrGroupMarker(menu, "group.main"); //$NON-NLS-1$
 		menu.add(helpContentsAction);
         menu.add(helpSearchAction);
+		menu.add(dynamicHelpAction);
         
 		// See if a tips and tricks page is specified
 		if (tipsAndTricksAction != null)
@@ -1087,6 +1090,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         saveAllAction = null;
         helpContentsAction = null;
         helpSearchAction = null;
+		dynamicHelpAction = null;
         aboutAction = null;
         openPreferencesAction = null;
         saveAsAction = null;
@@ -1277,6 +1281,9 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         helpSearchAction = ActionFactory.HELP_SEARCH.create(window);
         register(helpSearchAction);
+		
+        dynamicHelpAction = ActionFactory.DYNAMIC_HELP.create(window);
+        register(dynamicHelpAction);
         
         aboutAction = ActionFactory.ABOUT.create(window);
         aboutAction

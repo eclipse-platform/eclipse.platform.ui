@@ -272,6 +272,18 @@ public interface IWorkbenchPreferenceConstants {
      * @since 3.1
      */
     public static String HELP_SEARCH_ACTION_TEXT = "helpSearchActionText"; //$NON-NLS-1$
+	
+    /**
+     * A named preference for the text of the Dynamic Help action. 
+     * 
+     * String-valued.  If not specified, <code>"&Dynamic Help"</code> is used.
+     * <p>
+     * The default value for this preference is: <code>null</code>
+     * </p>
+     * 
+     * @since 3.1
+     */
+    public static String DYNAMIC_HELP_ACTION_TEXT = "dynamicHelpActionText"; //$NON-NLS-1$
     
     /**
      * A named preference for enabling animations when a layout transition occurs

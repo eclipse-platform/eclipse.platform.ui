@@ -50,6 +50,15 @@ public interface IWorkbenchHelpSystem {
 	 * </p>
 	 */
 	void displaySearch();
+	
+	/**
+	 * Displays the dynamic help for the 
+	 * current UI context. 
+	 * <p>
+	 * Ignored if no help UI is available.
+	 * </p>
+	 */
+	void displayDynamicHelp();
 
 	/**
 	 * Starts the search using the help search system.

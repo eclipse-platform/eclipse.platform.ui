@@ -48,6 +48,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbookEditorsAction;
 import org.eclipse.ui.internal.about.AboutAction;
+import org.eclipse.ui.internal.actions.DynamicHelpAction;
 import org.eclipse.ui.internal.actions.HelpContentsAction;
 import org.eclipse.ui.internal.actions.HelpSearchAction;
 
@@ -1210,6 +1211,23 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             IWorkbenchAction action = new HelpSearchAction(window);
+            action.setId(getId());
+            return action;
+        }
+    };
+	
+    /**
+     * Workbench action (id "dynamicHelp"): Open the dynamic help. This action
+     * is always enabled.
+     */
+    public static final ActionFactory DYNAMIC_HELP = new ActionFactory(
+            "dynamicHelp") {//$NON-NLS-1$
+        /* (non-javadoc) method declared on ActionFactory */
+        public IWorkbenchAction create(IWorkbenchWindow window) {
+            if (window == null) {
+                throw new IllegalArgumentException();
+            }
+            IWorkbenchAction action = new DynamicHelpAction(window);
             action.setId(getId());
             return action;
         }

@@ -48,6 +48,16 @@ public abstract class AbstractHelpUI {
     public void displaySearch() {
         // do nothing
     }
+	
+    /**
+     * Displays the dynamic help for the active context.
+     * For backward compatibility, the default implementation
+     * does nothing. 
+     * @since 3.1
+     */
+    public void displayDynamicHelp() {
+        // do nothing
+    }
     
     /**
      * Starts the help search using the help search facility.

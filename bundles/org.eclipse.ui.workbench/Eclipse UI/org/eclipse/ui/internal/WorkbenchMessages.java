@@ -213,6 +213,8 @@ public class WorkbenchMessages extends NLS {
 	public static String HelpContentsAction_toolTip;
 	public static String HelpSearchAction_text;
 	public static String HelpSearchAction_toolTip;
+	public static String DynamicHelpAction_text;
+	public static String DynamicHelpAction_toolTip;
 	public static String AboutDialog_shellTitle;
 	public static String AboutDialog_featureInfo;
 	public static String AboutDialog_pluginInfo;
