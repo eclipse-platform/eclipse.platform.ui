@@ -59,6 +59,65 @@ public PasteAction(Shell shell, Clipboard clipboard) {
 	WorkbenchHelp.setHelp(this, INavigatorHelpContextIds.PASTE_ACTION);
 }
 /**
+ * Returns whether the given resources and files exist.
+ * 
+ * @param resources IResources to check for existence. may be null
+ * @param files IFiles to check for existence. may be null 
+ * @return true=all given resources and files exist.
+ * 	false=none of the resources and files exist
+ */
+private boolean exists(IResource[] resources, String[] files) {
+	if (resources != null) {
+		for (int i = 0; i < resources.length; i++) {
+			if (resources[i].exists() == false)
+				return false;
+		}
+	}
+	if (files != null) {
+		for (int i = 0; i < files.length; i++) {
+			File file = new File(files[i]);
+			if (file.exists() == false)
+				return false;
+		}
+	}
+	return true;
+}
+/**
+ * Returns the actual target of the paste action. Returns null
+ * if no valid target is selected.
+ * 
+ * @return the actual target of the paste action
+ */
+private IResource getTarget() {
+	List selectedResources = getSelectedResources();
+	
+	for (int i = 0; i < selectedResources.size(); i++) {
+		IResource resource = (IResource)selectedResources.get(i);
+		
+		if (resource instanceof IProject && !((IProject)resource).isOpen())
+			return null;
+		if (resource.getType() == IResource.FILE)
+			resource = resource.getParent();
+		if (resource != null)
+			return resource;
+	}
+	return null;
+}
+/**
+ * Returns whether any of the given resources are linked resources.
+ *  * @param resources resource to check for linked type. may be null * @return true=one or more resources are linked. false=none of the 
+ * 	resources are linked */
+private boolean isLinked(IResource[] resources) {
+	if (resources != null) {
+		for (int i = 0; i < resources.length; i++) {
+			if (resources[i].isLinked()) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+/**
  * Implementation of method defined on <code>IAction</code>.
  */
 public void run() {
@@ -92,7 +151,6 @@ public void run() {
 		operation.copyFiles(fileData, container);
 	}
 }
-
 /**
  * Returns the container to hold the pasted resources.
  */
@@ -103,7 +161,6 @@ private IContainer getContainer() {
 	else 
 		return (IContainer)selection.get(0);
 }
-
 /**
  * The <code>PasteAction</code> implementation of this
  * <code>SelectionListenerAction</code> method enables this action if 
@@ -130,55 +187,46 @@ protected boolean updateSelection(IStructuredSelection selection) {
 		else 
 			return false;
 	}
-
 	// can paste files and folders to a single selection (project must be open)
 	// or multiple file selection with the same parent
 	if (getSelectedNonResources().size() > 0) 
 		return false;
 	List selectedResources = getSelectedResources();
-	IResource targetResource = null;
-	if (selectedResources.size() == 1) {
-		targetResource = (IResource)selectedResources.get(0);
-		if (targetResource instanceof IProject && !((IProject)targetResource).isOpen())
-			return false;
-	} else if (selectedResources.size() > 1) {
+	IResource targetResource = getTarget();
+
+	// targetResource is null if no valid target is selected or 
+	// selection is empty	
+	if (targetResource == null)
+		return false;
+
+	// linked resources can only be pasted into projects
+	if (isLinked(resourceData) && targetResource.getType() != IResource.PROJECT) 
+		return false;
+		
+	if (selectedResources.size() > 1) {
+		// if more than one resource is selected the selection has 
+		// to be all files with the same parent
 		for (int i = 0; i < selectedResources.size(); i++) {
 			IResource resource = (IResource)selectedResources.get(i);
 			if (resource.getType() != IResource.FILE)
 				return false;
-			if (targetResource == null)
-				targetResource = resource.getParent();
-			else if (!targetResource.equals(resource.getParent()))
+			if (!targetResource.equals(resource.getParent()))
 				return false;
 		}
-	} else {
-		// no selection
-		return false;
 	}
-	if (targetResource != null && 
-		targetResource.getType() == IResource.FOLDER && 
+	
+	if (targetResource.getType() == IResource.FOLDER && 
 		resourceData != null) {
-			// don't try to copy folder to self
-			for (int i = 0; i < resourceData.length; i++) {
-				if (targetResource.equals(resourceData[i]))
-					return false;
-			}
-	}
-	if (resourceData != null) {
+		// don't try to copy folder to self
 		for (int i = 0; i < resourceData.length; i++) {
-			if (resourceData[i].exists() == false)
+			if (targetResource.equals(resourceData[i]))
 				return false;
 		}
 	}
-	if (fileData != null) {
-		for (int i = 0; i < fileData.length; i++) {
-			File file = new File(fileData[i]);
-			if (file.exists() == false)
-				return false;
-		}
-	}
+	if (exists(resourceData, fileData) == false)
+		return false;
+		
 	return true;
 }
-
 }
 
