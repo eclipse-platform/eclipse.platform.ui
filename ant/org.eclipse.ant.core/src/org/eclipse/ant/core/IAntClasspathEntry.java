@@ -26,7 +26,8 @@ public interface IAntClasspathEntry {
 	public String getLabel();
 	
 	/**
-	 * Returns the URL for this classpath entry.
+	 * Returns the URL for this classpath entry or <code>null</code>
+	 * if it cannot be resolved.
 	 * 
 	 * @return the url for this classpath entry.
 	 */
