@@ -139,12 +139,6 @@ public class AntEditorPreferenceConstants {
 	 * </p>
 	 */
 	public static final String FORMATTER_WRAP_LONG= "formatter_wrap_long"; //$NON-NLS-1$
-	
-	/**
-	 * Boolean preference identifier constant which specifies whether the Ant editor should
-	 * fully validate the current Ant build file to check for errors.
-	 */
-	public static final String VALIDATE_BUILDFILES= "validate_Buildfiles"; //$NON-NLS-1$
 
 	public static void initializeDefaultValues(IPreferenceStore store) {
 		TextEditorPreferenceConstants.initializeDefaultValues(store);
@@ -163,7 +157,5 @@ public class AntEditorPreferenceConstants {
 		store.setDefault(AntEditorPreferenceConstants.FORMATTER_DELETE_BLANK_LINES, false);
 		store.setDefault(AntEditorPreferenceConstants.FORMATTER_COMMENTS, false);
 		store.setDefault(AntEditorPreferenceConstants.FORMATTER_WRAP_LONG, false);
-		
-		store.setDefault(AntEditorPreferenceConstants.VALIDATE_BUILDFILES, false);
 	}
 }
