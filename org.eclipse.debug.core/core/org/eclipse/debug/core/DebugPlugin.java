@@ -206,7 +206,7 @@ public class DebugPlugin extends Plugin {
 	public static final String ATTR_PROCESS_FACTORY_ID = "process_factory_id"; //$NON-NLS-1$
 	
 	/**
-	 * The launch configuration attribute that designates whether or not it's associated
+	 * The launch attribute that designates whether or not it's associated
 	 * launch should capture output.
 	 * 
 	 * @since 3.1
