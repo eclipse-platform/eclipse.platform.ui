@@ -212,6 +212,7 @@ protected Control createDialogArea(Composite parent) {
 	if (item != null) {
 		// text on the right
 		StyledText styledText = new StyledText(topContainer, SWT.MULTI | SWT.READ_ONLY);
+		styledText.setCaret(null);
 		styledText.setFont(parent.getFont());
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
