@@ -295,6 +295,16 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		 * The time allotted before a thread will be updated
 		 */
 		private long TIMEOUT= 500;
+		/**
+		 * Time in milliseconds that the thread timer started
+		 * running with no timers.
+		 */
+		private long timeEmpty= 0;
+		/**
+		 * The maximum time in milliseconds that the thread
+		 * will continue running with no timers.
+		 */
+		private long MAX_TIME_EMPTY= 3000;
 		private boolean fStopped= false;
 		private Object fLock= new Object();
 		
@@ -384,6 +394,16 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			long timeToWait= TIMEOUT;
 			Map.Entry[] entries;
 			synchronized (fLock) {
+				if (fStopTimes.size() == 0) {
+					if (timeEmpty == 0) {
+						timeEmpty= System.currentTimeMillis();
+					} else 	if (System.currentTimeMillis() - timeEmpty > MAX_TIME_EMPTY) {
+						stop();
+						return;
+					}
+				} else {
+					timeEmpty= 0;
+				}
 				entries= (Map.Entry[])fStopTimes.entrySet().toArray(new Map.Entry[0]);
 			}
 			long stopTime, currentTime= System.currentTimeMillis();
