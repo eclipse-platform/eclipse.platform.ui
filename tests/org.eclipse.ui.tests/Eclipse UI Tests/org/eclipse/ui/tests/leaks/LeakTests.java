@@ -49,12 +49,12 @@ public class LeakTests extends UITestCase {
     public static void checkRef(ReferenceQueue queue, Reference ref)
             throws IllegalArgumentException, InterruptedException {
         boolean flag = false;
-        for (int i = 0; i < 10; i++) {
-            System.gc();
+        for (int i = 0; i < 100; i++) {
             System.runFinalization();
+            System.gc();
             Thread.yield();
             processEvents();
-            Reference checkRef = queue.remove(1000);
+            Reference checkRef = queue.remove(100);
             if (checkRef != null && checkRef.equals(ref)) {
                 flag = true;
                 break;

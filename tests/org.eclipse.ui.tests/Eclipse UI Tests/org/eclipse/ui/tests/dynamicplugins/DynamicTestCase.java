@@ -93,15 +93,12 @@ public abstract class DynamicTestCase extends UITestCase implements
 			}
 
 			long startTime = System.currentTimeMillis();
-			long potentialEndTime = startTime + 50000000;
+			long potentialEndTime = startTime + 5000;
 			boolean timeToFail = false;
 			while (!hasAddedEventPropagated() && !timeToFail) {
 				processEvents();
 				timeToFail = System.currentTimeMillis() > potentialEndTime;
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-				}
+     			Thread.yield();
 			}
 			assertFalse("Test failed due to timeout on addition", timeToFail);
 			try {
@@ -237,15 +234,12 @@ public abstract class DynamicTestCase extends UITestCase implements
 			try {
 				DynamicUtils.uninstallPlugin(newBundle);
 				long startTime = System.currentTimeMillis();
-				long potentialEndTime = startTime + 5000000;
+				long potentialEndTime = startTime + 5000;
 				boolean timeToFail = false;
 				while (!hasRemovedEventPropagated() && !timeToFail) {
 					processEvents();
 					timeToFail = System.currentTimeMillis() > potentialEndTime;
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-					}
+					Thread.yield();
 				}
 				assertFalse("Test failed due to timeout on removal", timeToFail);
 				try {
