@@ -106,6 +106,7 @@ public class AddCustomDialog extends StatusDialog {
 		dialogArea.setFont(parent.getFont());
 
 		createNameGroup(dialogArea);
+		new Label(dialogArea, SWT.NULL);
 		createRootDirectoryGroup(dialogArea);
 		createFileSelectionGroup(dialogArea);
 		
@@ -119,6 +120,8 @@ public class AddCustomDialog extends StatusDialog {
 		Composite nameContainerGroup = new Composite(dialogArea, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
 		nameContainerGroup.setLayout(layout);
 		nameContainerGroup.setFont(dialogArea.getFont());
 		nameContainerGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
@@ -180,6 +183,9 @@ public class AddCustomDialog extends StatusDialog {
 		Composite sourceContainerGroup = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		layout.marginHeight=0;
+		layout.marginWidth=0;
+		
 		sourceContainerGroup.setLayout(layout);
 		sourceContainerGroup.setFont(parent.getFont());
 		sourceContainerGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
@@ -538,16 +544,15 @@ public class AddCustomDialog extends StatusDialog {
 	protected void setClassName(String className) {
 		this.className= className;
 	}
+	
 	/**
-	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
+	 * @see org.eclipse.jface.window.Window#create()
 	 */
-	protected Control createContents(Composite parent) {
-		Control control= super.createContents(parent);
+	public void create() {
+		super.create();
 		if (library == null) {
 			//need information to add
 			getButton(IDialogConstants.OK_ID).setEnabled(false);
 		}
-		return control;
 	}
-
 }

@@ -7,7 +7,6 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -161,24 +160,7 @@ public class AddCustomTreeAndListGroup implements ISelectionChangedListener {
 		treeViewer.setLabelProvider(treeLabelProvider);
 		treeViewer.addSelectionChangedListener(this);
 	}
-
-	/**
-	 * Get the full label of the treeElement (its name and its parent's name).
-	 * @param treeElement - the element being exported
-	 * @param parentLabel - the label of the parent, can be null
-	 * @return String
-	 */
-	protected String getFullLabel(Object treeElement, String parentLabel) {
-		String parentName = parentLabel;
-
-		if (parentLabel == null)
-			parentName = ""; //$NON-NLS-1$
-
-		if (parentName.length() > 0 && (!parentName.endsWith(File.separator))) {
-			parentName += File.separatorChar;
-		}
-		return parentName + treeLabelProvider.getText(treeElement);
-	}
+	
 	protected IStructuredSelection getListTableSelection() {
 		ISelection selection=  this.listViewer.getSelection();
 		if (selection instanceof IStructuredSelection) {
