@@ -13,8 +13,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.ui.progress.WorkbenchJob;
+
 import org.eclipse.ui.internal.progress.BlockedJobsDialog;
+import org.eclipse.ui.internal.WorkbenchMessages;
 /**
  * Used to run an event loop whenever progress monitor methods
  * are invoked.  <p>
@@ -60,8 +66,10 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper
 	 */
 	public void clearBlocked() {
 		//the UI operation is no longer blocked so get rid of the progress dialog
-		if (dialog == null || dialog.getShell() == null || dialog.getShell().isDisposed())
+		if (dialog == null || dialog.getShell() == null || dialog.getShell().isDisposed()){
+			dialog = null;
 			return;
+		}
 		dialog.close();
 		dialog = null;
 	}
@@ -118,12 +126,32 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper
 	 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
 	 */
 	public void setBlocked(IStatus reason) {
+		
 		//The UI operation has been blocked.  Open a progress dialog
 		//to report the situation and give the user an opportunity to cancel.
-		dialog = new BlockedJobsDialog(null, this);
+		
+		final IStatus finalReason = reason;
+		dialog = new BlockedJobsDialog(null, EventLoopProgressMonitor.this);
 		dialog.setBlockOnOpen(false);
-		dialog.setStatus(reason);
-		dialog.open();
+		dialog.setStatus(finalReason);
+		
+		WorkbenchJob dialogJob = new WorkbenchJob(WorkbenchMessages.getString("EventLoopProgressMonitor.OpenDialogJobName")){ //$NON-NLS-1$
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				
+				if(dialog == null)
+					return Status.CANCEL_STATUS;
+				dialog.open();
+				return Status.OK_STATUS;
+			}
+		};
+		
+		//Wait 3 second to prevent too many dialogs.
+		dialogJob.setSystem(true);
+		dialogJob.schedule(3000);
+		
 	}
 	/**
 	 * @see IProgressMonitor#setCanceled
