@@ -163,7 +163,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private static final int RESTORE_CODE_RESET = 1;
 	private static final int RESTORE_CODE_EXIT = 2;
 	protected static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditor"; //$NON-NLS-1$
-	
+
 	/**
 	 * Workbench constructor comment.
 	 */
@@ -172,7 +172,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		WorkbenchPlugin.getDefault().setWorkbench(this);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(getShowTasksChangeListener(), IResourceChangeEvent.POST_CHANGE);
 	}
-
+	
 
 	/* begin command and context support */
 
@@ -240,7 +240,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			updateCommandsAndContexts();
 		}
 	};
-		
+				
 	private IWindowListener windowListener = new IWindowListener() {
 		public void windowActivated(IWorkbenchWindow workbenchWindow) {
 			updateCommandsAndContexts();
@@ -339,7 +339,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				((WorkbenchWindow) this.activeWorkbenchWindow).getPerspectiveService().addPerspectiveListener(internalPerspectiveListener);					
 			}			
 		}
-
+		
 		/*
 		if (activeWorkbenchWindowActionService != this.activeWorkbenchWindowActionService) {
 			if (this.activeWorkbenchWindowActionService != null)
@@ -377,7 +377,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		
 		SortedMap actionsById = new TreeMap();
 		actionsById.putAll(getActionService().getActionsById());
-
+		
 		//if (this.activeWorkbenchWindowActionService != null)
 		//	actionsById.putAll(this.activeWorkbenchWindowActionService.getActionsById());
 
@@ -385,7 +385,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			actionsById.putAll(((WorkbenchWindow) this.activeWorkbenchWindow).getActionsForGlobalActions());
 			actionsById.putAll(((WorkbenchWindow) this.activeWorkbenchWindow).getActionsForActionSets());			
 		}
-		
+			
 		if (this.activeWorkbenchPageActionService != null)
 			actionsById.putAll(this.activeWorkbenchPageActionService.getActionsById());
 
@@ -431,7 +431,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		
 		SortedSet activeContextIds = new TreeSet();
 		activeContextIds.addAll(getContextActivationService().getActiveContextIds());
-
+		
 		//if (this.activeWorkbenchWindowContextActivationService != null)
 		//	activeContextIds.addAll(this.activeWorkbenchWindowContextActivationService.getActiveContextIds());
 		
@@ -1101,7 +1101,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 *
 	 * @return true if init succeeded.
 	 */
-	private boolean init(String[] commandLineArgs) {	
+	private boolean init(String[] commandLineArgs) {
 		initializeCommandsAndContexts();
 		this.commandLineArgs = commandLineArgs;
 
@@ -1117,10 +1117,10 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		WorkbenchColors.startup();
 		boolean useColorIcons = getPreferenceStore().getBoolean(IPreferenceConstants.COLOR_ICONS);
 		ActionContributionItem.setUseColorIconsInToolbars(useColorIcons);
-		initializeFonts();	
+		initializeFonts();
 		initializeSingleClickOption();
 		boolean avoidDeadlock = true;
-		
+
 		for (int i = 0; i < commandLineArgs.length; i++) {
 			if (commandLineArgs[i].equalsIgnoreCase("-allowDeadlock")) //$NON-NLS-1$
 				avoidDeadlock = false;
@@ -1128,14 +1128,10 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 		// deadlock code
 		if (avoidDeadlock) {
-			try {
-				Display display = Display.getCurrent();
-				UIWorkspaceLock uiLock = new UIWorkspaceLock(WorkbenchPlugin.getPluginWorkspace(), display);
-				WorkbenchPlugin.getPluginWorkspace().setWorkspaceLock(uiLock);
-				display.setSynchronizer(new UISynchronizer(display, uiLock));
-			} catch (CoreException e) {
-				e.printStackTrace(System.out);
-			}
+			Display display = Display.getCurrent();
+			UILockListener uiLockListener = new UILockListener(display);
+			Platform.getJobManager().setLockListener(uiLockListener);
+			display.setSynchronizer(new UISynchronizer(display, uiLockListener));
 		}
 
 		try {

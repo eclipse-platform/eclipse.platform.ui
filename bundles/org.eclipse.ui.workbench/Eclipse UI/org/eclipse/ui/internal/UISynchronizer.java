@@ -14,31 +14,36 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Synchronizer;
 
 public class UISynchronizer extends Synchronizer {
-	protected UIWorkspaceLock uiLock;
-public UISynchronizer(Display display, UIWorkspaceLock lock) {
-	super(display);
-	this.uiLock = lock;
-}
-public void syncExec(Runnable runnable) {
-	if ((runnable == null) || uiLock.isUI() || !uiLock.isCurrentOperation()) {
-		super.syncExec(runnable);
-		return;
+	protected UILockListener lockListener;
+	public UISynchronizer(Display display, UILockListener lock) {
+		super(display);
+		this.lockListener = lock;
 	}
-	Runnable runOnce = new Runnable() {
-		public void run() {
-			uiLock.doPendingWork();
+	public void syncExec(Runnable runnable) {
+		//if this thread is the UI or this thread does not own any locks, just do the syncExec
+		if ((runnable == null) || lockListener.isUI() || !lockListener.isLockOwner()) {
+			super.syncExec(runnable);
+			return;
 		}
-	};
-	Semaphore work = new Semaphore(runnable);
-	work.setOperationThread(Thread.currentThread());
-	uiLock.addPendingWork(work);
-	if (!uiLock.isUIWaiting())
-		asyncExec(runOnce);
-	else
-		uiLock.interruptUI();
-	try {
-		work.acquire();
-	} catch (InterruptedException e) {
+		Semaphore work = new Semaphore(runnable);
+		work.setOperationThread(Thread.currentThread());
+		lockListener.addPendingWork(work);
+		if (!lockListener.isUIWaiting()) {
+			asyncExec(new Runnable() {
+				public void run() {
+					lockListener.doPendingWork();
+				}
+			});
+		} else
+			lockListener.interruptUI();
+		try {
+			//even if the UI was not blocked earlier, it might become blocked
+			//before it can serve the asyncExec to do the pending work
+			while (!work.acquire(1000)) {
+				if (lockListener.isUIWaiting())
+					lockListener.interruptUI();
+			}
+		} catch (InterruptedException e) {
+		}
 	}
-}
 }
