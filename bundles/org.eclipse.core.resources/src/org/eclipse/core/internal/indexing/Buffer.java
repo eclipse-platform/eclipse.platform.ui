@@ -11,7 +11,7 @@ import java.io.*;
  */
 public class Buffer {
 	protected byte[] contents;
-	private static final byte[] ZEROES = new byte[8192];
+	private static final byte[] ZEROES = new byte[1024];
 /**
  * Default constructor.
  */
@@ -57,11 +57,9 @@ private static void clear(byte[] buffer, int offset, int length, byte value) {
 }
 public void clear(int offset, int length) {
 	clear(contents, offset, length);
-	modified();
 }
 public void clear(int offset, int length, byte value) {
 	clear(contents, offset, length, value);
-	modified();
 }
 private static int compare(byte[] buffer1, int offset1, int length1, byte[] buffer2, int offset2, int length2) {
 	if (length1 < length2) {
@@ -85,9 +83,16 @@ public static int compare(Buffer buffer1, int offset1, int length1, Buffer buffe
 public static int compare(Buffer buffer1, Buffer buffer2) {
 	return compare(buffer1.contents, 0, buffer1.contents.length, buffer2.contents, 0, buffer2.contents.length);
 }
-public void copy(int fromOffset, int toOffset, int length) {
+public void copyInternal(int fromOffset, int toOffset, int length) {
 	System.arraycopy(contents, fromOffset, contents, toOffset, length);
-	modified();
+}
+public void copyTo(byte[] buffer) {
+	int n = Math.min(buffer.length, contents.length);
+	System.arraycopy(contents, 0, buffer, 0, n);
+}
+public void copyFrom(byte[] buffer) {
+	int n = Math.min(buffer.length, contents.length);
+	System.arraycopy(buffer, 0, contents, 0, n);
 }
 public byte[] get() {
 	return get(0, contents.length);
@@ -100,102 +105,95 @@ public byte[] get(int offset, int length) {
 public Field getField(int offset, int length) {
 	return new Field(this, offset, length);
 	}
+public byte getByte(int offset) {
+	return contents[offset];
+}
 public int getInt(int offset, int length) {
-	if (length == 0) return 0;
-	int v = contents[offset];
-	for (int i = offset + 1; i < offset + length; i++) {
-		v = (v << 8) | (contents[i] & 255);
-	}
-	return v;
+	return (int)getLong(offset, length);
+}
+public int getUInt(int offset, int length) {
+	int shift = Math.max(0, 32 - (length * 8));
+	int mask = (-1 >>> shift) & Integer.MAX_VALUE;
+	return getInt(offset, length) & mask;
 }
 public long getLong(int offset, int length) {
-	if (length == 0) return 0;
+	if (length <= 0) return 0;
 	long v = contents[offset];
 	for (int i = offset + 1; i < offset + length; i++) {
 		v = (v << 8) | (contents[i] & 255);
 	}
 	return v;
 }
-public int getUInt(int offset, int length) {
-	if (length == 0) return 0;
-	int v = 0;
-	for (int i = offset; i < offset + length; i++) {
-		v = (v << 8) | (contents[i] & 255);
-	}
-	return v;
+public byte[] getByteArray() {
+	return contents;
 }
 public int length() {
 	return contents.length;
 	}
-protected void modified() {
-}
 public Pointer pointTo(int offset) {
 	return new Pointer(this, offset);
 }
+public void put(int offset, byte value) {
+	contents[offset] = value;
+}
 public void put(int offset, byte[] source) {
 	System.arraycopy(source, 0, contents, offset, source.length);
-	modified();
 }
 public void put(int offset, int length, byte[] source) {
 	int n = Math.min(length, source.length);
 	System.arraycopy(source, 0, contents, offset, n);
-	modified();
-}
-public void put(int offset, int length, int n) {
-	int v = n;
-	for (int j = length - 1; j >= 0; j--) {
-		contents[offset + j] = (byte) v;
-		v = (v >> 8);
-	}
-	modified();
 }
 public void put(int offset, int length, long n) {
 	long v = n;
-	for (int j = length - 1; j >= 0; j--) {
-		contents[offset + j] = (byte) v;
-		v = (v >> 8);
+	int i = offset + length;
+	while (i > offset) {
+		i--;
+		contents[i] = (byte)v;
+		v = (v >>> 8);
 	}
-	modified();
+}
+public void put(int offset, int length, int n) {
+	put(offset, length, (long)n);
 }
 public void put(int offset, Insertable source) {
 	put(offset, source.toByteArray());
 }
-public void readFrom(InputStream in) throws IOException {
-	in.read(contents);
-}
-public void readFrom(InputStream in, int offset, int length) throws IOException {
-	in.read(contents, offset, length);
-}
-public void readFrom(RandomAccessFile file, long offset) throws IOException {
-	long n = file.length() - offset;
-	if (n <= 0) {
-		clear(contents, 0, contents.length);
-		return;
-	}
-	file.seek(offset);
-	int m = (int)Math.min((long)contents.length, n);
-	file.readFully(contents, 0, m);
-	if (m < contents.length) {
-		clear(contents, m, contents.length - m);
-	}
-}
-public void writeTo(OutputStream out) throws IOException {
-	out.write(contents);
-}
-public void writeTo(OutputStream out, int offset, int length) throws IOException {
-	out.write(contents, offset, length);
-}
-public void writeTo(RandomAccessFile file, long offset) throws IOException {
-	long p = file.length();
-	long n = offset - p;
-	while (n > 0) {
-		int m = (int)Math.min((long)ZEROES.length, n);
-		file.seek(p);
-		file.write(ZEROES, 0, m);
-		p += m;
-		n -= m;
-	}
-	file.seek(offset);
-	file.write(contents);
-}
+//public void readFrom(InputStream in) throws IOException {
+//	in.read(contents);
+//}
+//public void readFrom(InputStream in, int offset, int length) throws IOException {
+//	in.read(contents, offset, length);
+//}
+//public void readFrom(RandomAccessFile file, long offset) throws IOException {
+//	long n = file.length() - offset;
+//	if (n <= 0) {
+//		clear(contents, 0, contents.length);
+//		return;
+//	}
+//	file.seek(offset);
+//	int m = (int)Math.min((long)contents.length, n);
+//	file.readFully(contents, 0, m);
+//	if (m < contents.length) {
+//		clear(contents, m, contents.length - m);
+//	}
+//}
+//public void writeTo(OutputStream out) throws IOException {
+//	out.write(contents);
+//}
+//public void writeTo(OutputStream out, int offset, int length) throws IOException {
+//	out.write(contents, offset, length);
+//}
+//public void writeTo(RandomAccessFile file, long offset) throws IOException {
+//	long p = file.length();
+//	long n = offset - p;
+//	while (n > 0) {
+//		int m = (int)Math.min((long)ZEROES.length, n);
+//		file.seek(p);
+//		file.write(ZEROES, 0, m);
+//		p += m;
+//		n -= m;
+//	}
+//	file.seek(offset);
+//	file.write(contents);
+//}
 }

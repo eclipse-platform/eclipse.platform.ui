@@ -11,51 +11,13 @@ class SpaceMapPage extends ObjectStorePage {
 		4066, 3356, 2646, 1936, 1226, 
 		516, 258, 129, 64, 32, 0};
 
-	private static IPageFactory pageFactory = new IPageFactory() {
-		public Page create(PageStore store, int pageNumber) {
-			SpaceMapPage p = new SpaceMapPage();
-			p.initialize(store, pageNumber);
-			return p;
-		}
-	};
-
-	/**
-	 * Default constructor -- used only by the factory.
-	 */
-	protected SpaceMapPage() {
-	}
-	/**
-	 * Acquires a new page from a page store.
-	 */
-	public static Page acquire(PageStore store) throws PageStoreException {
-		return store.acquire(pageFactory);
-	}
-	/**
-	 * Acquires an existing page from a page store.
-	 */
-	public static Page acquire(PageStore store, int pageNumber) throws PageStoreException {
-		return store.acquire(pageFactory, pageNumber);
-	}
-	/**
-	 * Searches a space map page in the page file for an object page
-	 * that has at least "bytesNeeded" bytes free.  Returns 0 if there is no
-	 * object page in this space map page that meets this criteria.  0 is not a valid
-	 * object page number.  All page numbers that are 0 mod 8192 are space map pages.
-	 */
-	public int findObjectPageNumberForSize(int bytesNeeded) throws ObjectStoreException {
-		for (int i = 1; i < Page.Size; i++) {		// begin at 1, 0 is the space map page
-			int spaceClass = contents[i];
-			int freeSpace = freeSpaceForClass(spaceClass);
-			if (freeSpace >= bytesNeeded) return pageNumber + i;
-		}
-		return 0;
-	}
 	/**
 	 * Returns the guaranteed amount of free space available for a given space class.
 	 */
 	public static int freeSpaceForClass(int spaceClass) {
 		return SpaceClassSize[spaceClass];
 	}
+
 	/**
 	 * Determines the initial values for the static field SpaceClassSize.
 	 * It is run at development time and the results used for the initializer.  It is
@@ -75,27 +37,55 @@ class SpaceMapPage extends ObjectStorePage {
 		result[15] = 0;
 		return result;
 	}
+
 	/**
-	 * Initializes an instance of this page.
+	 * Creates a new page from a buffer.
 	 */
-	protected void initialize(PageStore store, int pageNumber) {
-		super.initialize(store, pageNumber);
+	public SpaceMapPage(int pageNumber, byte[] buffer, PageStore pageStore) {
+		super(pageNumber, buffer, pageStore);
 	}
+	
 	/**
-	 * Returns the space class of for a given number of bytes of free space.  
-	 * The space class is indicates approximately 
-	 * how much of the object space on a page is free.
+	 * Writes the contents of the page to a buffer.
 	 */
-	public static byte spaceClass(int freeSpace) {
-		byte i = 0;
-		while (SpaceClassSize[i] > freeSpace) i++;
-		return i;
+	public void toBuffer(byte[] buffer) {
+		int n = Math.min(buffer.length, pageBuffer.length());
+		System.arraycopy(pageBuffer.getByteArray(), 0, buffer, 0, n);
 	}
+	
+	/**
+	 * Searches a space map page in the page file for an object page
+	 * that has at least "bytesNeeded" bytes free.  Returns 0 if there is no
+	 * object page in this space map page that meets this criteria.  0 is not a valid
+	 * object page number.  All page numbers that are 0 mod 8192 are space map pages.
+	 */
+	public int findObjectPageNumberForSize(int bytesNeeded) throws ObjectStoreException {
+		for (int i = 1; i < SIZE; i++) {		// begin at 1, 0 is the space map page
+			int spaceClass = pageBuffer.getByte(i);
+			int freeSpace = freeSpaceForClass(spaceClass);
+			if (freeSpace >= bytesNeeded) return pageNumber + i;
+		}
+		return 0;
+	}
+
 	/**
 	 * Sets the spaceClass for a given object page.
 	 */
-	public void updateForObjectPage(ObjectPage page) {
-		contents[page.getPageNumber() - pageNumber] = page.spaceClass();
-		modified();
+	public void updateForObjectPage(int pageNumber, int freeSpace) {
+		int slot = pageNumber - this.pageNumber;
+		if (slot < 1 || slot >= SIZE) return;
+		byte spaceClass = 0;
+		while (SpaceClassSize[spaceClass] > freeSpace) spaceClass++;
+		pageBuffer.put(slot, spaceClass);
+		setChanged();
+		notifyObservers();
 	}
+	
+	public boolean isSpaceMapPage() {
+		return true;
+	}
+	
+	protected void materialize() {
+	}
+
 }

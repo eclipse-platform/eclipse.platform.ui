@@ -4,6 +4,7 @@ package org.eclipse.core.internal.indexing;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+
 import java.io.*;
 
 public class Field implements Insertable {
@@ -99,18 +100,10 @@ public Field put(long n) {
 public Field put(Insertable anObject) {
 	return put(anObject.toByteArray());
 	}
-public Field readFrom(InputStream in) throws IOException {
-	buffer.readFrom(in, offset, length);
-	return this;
-	}
 /**
  * Implementation of the Insertable interface.
  */
 public byte[] toByteArray() {
 	return get();
 }
-public Field writeTo(OutputStream out) throws IOException {
-	buffer.writeTo(out, offset, length);
-	return this;
-	}
 }

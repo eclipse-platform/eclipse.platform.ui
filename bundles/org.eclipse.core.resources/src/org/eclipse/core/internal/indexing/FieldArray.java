@@ -51,7 +51,7 @@ public Field insert(int i) {
 	int s = offset + (i * stride); // source offset
 	int t = s + stride; // target offset
 	int n = (count - (i + 1)) * stride; // number of bytes to move
-	buffer.copy(s, t, n);
+	buffer.copyInternal(s, t, n);
 	return fieldAt(i).clear();
 }
 /**
@@ -63,7 +63,7 @@ public void remove(int i) {
 	int s = offset + ((i + 1) * stride); // source offset
 	int t = s - stride; // target offset
 	int n = (count - (i + 1)) * stride; // number of bytes to move
-	buffer.copy(s, t, n);
+	buffer.copyInternal(s, t, n);
 	fieldAt(count - 1).clear();
 	count--;
 }

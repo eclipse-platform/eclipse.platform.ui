@@ -18,48 +18,50 @@ public class ObjectStore {
 	private HashMap acquiredObjects; /* initialized in open */
 	private HashMap modifiedObjects; /* initialized in open */
 	private String name; /* initialized in open */
+	private ObjectStorePSPolicy policy;
 
 	/**
 	 * Creates an object store.  This store is unusable until opened.
 	 */
 	public ObjectStore() {
-		super();
+		policy = new ObjectStorePSPolicy();
 	}
-/**
- * Returns the StoredObject at a given address.
- */
-public StoredObject acquireObject(ObjectAddress address) throws ObjectStoreException {
-	StoredObject object = (StoredObject) acquiredObjects.get(address);
-	if (object == null) {
-		int pageNumber = address.getPageNumber();
-		ObjectPage page = acquireObjectPage(pageNumber);
-		object = page.getObject(address);
-		object.setStore(this);
-		object.setAddress(address);
-		acquiredObjects.put(address, object);
-		object.acquired();
-		releaseObjectPage(page);
+	/**
+	 * Returns the StoredObject at a given address.
+	 */
+	public StoredObject acquireObject(ObjectAddress address) throws ObjectStoreException {
+		StoredObject object = (StoredObject) acquiredObjects.get(address);
+		if (object == null) {
+			int pageNumber = address.getPageNumber();
+			ObjectPage page = acquireObjectPage(pageNumber);
+			object = page.getObject(address);
+			object.setStore(this);
+			object.setAddress(address);
+			acquiredObjects.put(address, object);
+			object.acquired();
+			page.release();
+		}
+		object.addReference();
+		return object;
 	}
-	object.addReference();
-	return object;
-}
-/** 
- * Acquires an object page.  This is a convenience method to translate exceptions.
- */
-ObjectPage acquireObjectPage(int pageNumber) throws ObjectStoreException {
-	ObjectPage page;
-	try {
-		page = (ObjectPage) ObjectPage.acquire(pageStore, pageNumber);
-	} catch (PageStoreException e) {
-		throw new ObjectStoreException(ObjectStoreException.PageReadFailure);
+
+	/** 
+	 * Acquires an object page.  This is a convenience method to translate exceptions.
+	 */
+	protected ObjectPage acquireObjectPage(int pageNumber) throws ObjectStoreException {
+		ObjectPage page;
+		try {
+			page = (ObjectPage) pageStore.acquire(pageNumber);
+		} catch (PageStoreException e) {
+			throw new ObjectStoreException(ObjectStoreException.PageReadFailure);
+		}
+		return page;
 	}
-	return page;
-}
 	/**
 	 * Checks to see if the metadata stored in the object store matches that expected by this
 	 * code.  If not, a conversion is necessary.
 	 */
-	private void checkMetadata() throws ObjectStoreException {
+	protected void checkMetadata() throws ObjectStoreException {
 		Buffer metadata = getMetadataArea(ObjectStoreMetadataAreaID);
 		Field versionField = metadata.getField(0, 4);
 		int objectStoreVersion = versionField.getInt();
@@ -104,19 +106,19 @@ ObjectPage acquireObjectPage(int pageNumber) throws ObjectStoreException {
 	/**
 	 * Commits an object to its page.
 	 */
-	private void commitObject(StoredObject object)
+	protected void commitObject(StoredObject object)
 		throws ObjectStoreException {
 		ObjectAddress address = object.getAddress();
 		int pageNumber = address.getPageNumber();
 		ObjectPage op = acquireObjectPage(pageNumber);
 		op.updateObject(object);
-		releaseObjectPage(op);
+		op.release();
 	}
 	/**
 	 * Converts the object store from a previous to the current version.  
 	 * No conversions are yet defined.
 	 */
-	private void convert(int fromVersion) throws ObjectStoreException {
+	protected void convert(int fromVersion) throws ObjectStoreException {
 		throw new ObjectStoreException(ObjectStoreException.StoreConversionFailure);
 	}
 	/**
@@ -151,7 +153,7 @@ ObjectPage acquireObjectPage(int pageNumber) throws ObjectStoreException {
 	}
 	public Buffer getMetadataArea(int i) throws ObjectStoreException {
 		try {
-			return pageStore.getMetadataArea(i);
+			return new Buffer(pageStore.readMetadataArea(i));
 		} catch (PageStoreException e) {
 			throw new ObjectStoreException(ObjectStoreException.MetadataRequestFailure);
 		}
@@ -168,9 +170,9 @@ ObjectPage acquireObjectPage(int pageNumber) throws ObjectStoreException {
 	 */
 	public ObjectAddress insertObject(StoredObject object) throws ObjectStoreException {
 		object.setStore(this);
-		ObjectPage page = ObjectPage.acquireForObject(pageStore, object);
+		ObjectPage page = acquirePageForObject(pageStore, object);
 		page.insertObject(object);
-		releaseObjectPage(page);
+		page.release();
 		ObjectAddress address = object.getAddress();
 		return address;
 	}
@@ -179,7 +181,7 @@ ObjectPage acquireObjectPage(int pageNumber) throws ObjectStoreException {
 	 */
 	public void open(String name) throws ObjectStoreException {
 		try {
-			pageStore = new PageStore();
+			pageStore = new PageStore(policy);
 			pageStore.open(name);
 		} catch (PageStoreException e) {
 			throw new ObjectStoreException(ObjectStoreException.StoreOpenFailure);
@@ -190,7 +192,7 @@ ObjectPage acquireObjectPage(int pageNumber) throws ObjectStoreException {
 	}
 	public void putMetadataArea(int i, Buffer buffer) throws ObjectStoreException {
 		try {
-			pageStore.putMetadataArea(i, buffer);
+			pageStore.writeMetadataArea(i, buffer.getByteArray());
 		} catch (PageStoreException e) {
 			throw new ObjectStoreException(ObjectStoreException.MetadataRequestFailure);
 		}
@@ -212,16 +214,6 @@ public void releaseObject(StoredObject object) throws ObjectStoreException {
 	acquiredObjects.remove(object.getAddress());
 	object.released();
 }
-/**
- * Releases an object page.  Convenience method.
- */
-void releaseObjectPage(ObjectPage page) throws ObjectStoreException {
-	try {
-		page.release();
-	} catch (PageStoreException e) {
-		throw new ObjectStoreException(ObjectStoreException.PageWriteFailure);
-	}
-}
 	/**
 	 * Removes an object from the object store.  In doing so, it must remove it from the cache as well.
 	 */
@@ -237,7 +229,7 @@ void releaseObjectPage(ObjectPage page) throws ObjectStoreException {
 		int pageNumber = address.getPageNumber();
 		ObjectPage page = acquireObjectPage(pageNumber);
 		page.removeObject(address);
-		releaseObjectPage(page);
+		page.release();
 	}
 /**
  * Rollback the modified objects collection.
@@ -266,4 +258,43 @@ public void updateObject(StoredObject object) {
 		}
 	}
 }
+
+
+	/** 
+	 * Looks for the first page that guarantees enough space to meet the criteria.
+	 * This is the "first fit" algorithm and will get slow as the page file grows since
+	 * it is O(n**2).  (Each addition of a new page is preceded by a search of all pages.)
+	 * We reduce the overhead by maintaining SpaceMapPages that tell us how full each page
+	 * is.  A space map page is the first page of a span of 8K pages (64M total).
+	 * Each byte in a space map page indicates the fullness of each page in the span.
+	 * Since databases are expected to be quite small (<200Mb) we might be able to live with
+	 * this simple algorithm.
+	 */
+	protected ObjectPage acquirePageForObject(PageStore pageStore, StoredObject object)
+		throws ObjectStoreException {
+		int bytesNeeded = object.length() + ObjectHeader.Size;
+		int oPageNumber = 0;
+		int numberOfSpans = ((pageStore.numberOfPages() - 1) / ObjectStorePage.SIZE) + 1;
+		for (int i = 0; i <= numberOfSpans; i++) {
+			try {
+				int sPageNumber = i * ObjectStorePage.SIZE;
+				SpaceMapPage sPage = (SpaceMapPage) pageStore.acquire(sPageNumber);
+				oPageNumber = sPage.findObjectPageNumberForSize(bytesNeeded); 
+				sPage.release();
+			} catch (PageStoreException e) {
+				throw new ObjectStoreException(ObjectStoreException.PageReadFailure);
+			}
+			if (oPageNumber != 0) break;
+		}
+		if (oPageNumber == 0) {
+			throw new ObjectStoreException(ObjectStoreException.PageReadFailure);
+		}
+		try {
+			ObjectPage oPage = (ObjectPage) pageStore.acquire(oPageNumber);
+			return oPage;
+		} catch (PageStoreException e) {
+			throw new ObjectStoreException(ObjectStoreException.PageReadFailure);
+		}
+	}
+
 }

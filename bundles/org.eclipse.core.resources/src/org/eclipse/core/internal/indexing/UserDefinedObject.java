@@ -71,7 +71,7 @@ protected void materialize() throws ObjectStoreException {
 /**
  * Registers the factory for this type.
  */
-static void registerFactory() {
+protected static void registerFactory() {
 	ObjectStore.registerFactory(Type, new UserDefinedObjectFactory());
 }
 /**

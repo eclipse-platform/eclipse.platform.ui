@@ -33,7 +33,7 @@ public class ObjectAddress implements Insertable {
 			return;
 		}
 		if (pageNumber < 0 || pageNumber >= 16777216) throw new IllegalArgumentException();
-		if (pageNumber % Page.Size == 0) throw new IllegalArgumentException();
+		if (pageNumber % ObjectStorePage.SIZE == 0) throw new IllegalArgumentException();
 		if (objectNumber < 1 || objectNumber >= 256) throw new IllegalArgumentException();
 		this.pageNumber = pageNumber;
 		this.objectNumber = objectNumber;

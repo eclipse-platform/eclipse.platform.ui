@@ -6,11 +6,23 @@ package org.eclipse.core.internal.indexing;
  */
 
 abstract class ObjectStorePage extends Page {
+	
+	public static final int SIZE = 8192;
+	
+	public ObjectStorePage(int pageNumber, byte[] buffer, PageStore pageStore) {
+		super(pageNumber, pageStore);
+		pageBuffer = new Buffer(SIZE);
+		pageBuffer.copyFrom(buffer);
+		materialize();
+	}
 
-	boolean isObjectPage() {
-		return (!isSpaceMapPage());
+	public boolean isObjectPage() {
+		return false;
 	}
-	boolean isSpaceMapPage() {
-		return (pageNumber % Page.Size == 0);
+	public boolean isSpaceMapPage() {
+		return false;
 	}
+	
+	protected abstract void materialize();
+	
 }

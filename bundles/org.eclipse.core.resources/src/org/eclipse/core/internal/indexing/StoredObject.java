@@ -107,7 +107,7 @@ public final boolean hasReferences() {
  * Returns true if the object is mapped directly onto a page.  This will be true only if the object is
  * guaranteed to never move on the page.
  */
-boolean isPageMapped() {
+protected boolean isPageMapped() {
 	return false;
 }
 /**
@@ -134,14 +134,14 @@ protected final void modified() {
  * Registers the factory for this type.  There is no factory for Stored Objects.  Concrete subclasses
  * must implement and define their own factories.
  */
-static void registerFactory() {
+protected static void registerFactory() {
 }
 /**
  * Notifies an object that it has been released.  Page Mapped objects need to release their page.
  */
 final void released() throws ObjectStoreException {
 	if (this.isPageMapped())
-		store.releaseObjectPage(page);
+		page.release();
 }
 /**
  * Removes a reference.

@@ -539,7 +539,7 @@ boolean isLeaf() {
  * Returns true if the object is mapped directly onto a page.  This will be true only if the object is
  * guaranteed to never move on the page.
  */
-boolean isPageMapped() {
+protected boolean isPageMapped() {
 	return true;
 }
 boolean isRoot() {
@@ -563,7 +563,7 @@ protected void materialize() throws ObjectStoreException {
 /**
  * Initializer to register the factory for this type.
  */
-static void registerFactory() {
+protected static void registerFactory() {
 	ObjectStore.registerFactory(Type, new IndexNodeFactory());
 }
 /**
