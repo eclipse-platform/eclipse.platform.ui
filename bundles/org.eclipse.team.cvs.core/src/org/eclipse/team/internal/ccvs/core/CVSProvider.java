@@ -60,6 +60,7 @@ import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 public class CVSProvider implements ICVSProvider {
 
@@ -467,12 +468,6 @@ public class CVSProvider implements ICVSProvider {
 
 			// NOTE: we should check to see the results of the import
 		}
-
-	public static void initialize() {
-		if (instance == null) {
-			instance = new CVSProvider();
-		}
-	}
 	
 	private boolean isCached(ICVSRepositoryLocation repository) {
 		return repositories.containsKey(repository.getLocation());
@@ -546,12 +541,23 @@ public class CVSProvider implements ICVSProvider {
 		return message;
 	}
 
-	public void startup() throws TeamException {
-		loadState();
+	public static void startup() {
+		if (instance == null) {
+			instance = new CVSProvider();
+		}
+		try {
+			getInstance().loadState();
+		} catch (TeamException e) {
+			Util.logError("Error loading state", e);
+		}
 	}
 	
-	public void shutdown() throws TeamException {
-		saveState();
+	public static void shutdown() {
+		try {
+			getInstance().saveState();
+		} catch (TeamException e) {
+			Util.logError("Error saving state", e);
+		}
 	}
 	
 	private void loadState() throws TeamException {
@@ -574,9 +580,13 @@ public class CVSProvider implements ICVSProvider {
 				ITeamProvider provider = manager.getProvider(projects[i]);
 				if (provider instanceof CVSTeamProvider) {
 					CVSTeamProvider cvsProvider = (CVSTeamProvider)provider;
-					ICVSRepositoryLocation result = cvsProvider.getRemoteResource(projects[i]).getRepository();
-					addToCache(result);
-					repositoryAdded(result);
+					ICVSFolder folder = (ICVSFolder)Session.getManagedResource(projects[i]);
+					FolderSyncInfo info = folder.getFolderSyncInfo();
+					if (info != null) {
+						ICVSRepositoryLocation result = getRepository(info.getRoot());
+						addToCache(result);
+						repositoryAdded(result);
+					}
 				}
 			}
 		}
