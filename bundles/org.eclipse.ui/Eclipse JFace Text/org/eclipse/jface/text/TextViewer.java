@@ -2348,7 +2348,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			
 			IDocument document= getDocument();
 			int startLine= document.getLineOfOffset(s.x);
-			int endLine= document.getLineOfOffset(s.x + s.y -1);
+			int endLine= document.getLineOfOffset(s.x + s.y);
 			return startLine != endLine;
 		
 		} catch (BadLocationException x) {
