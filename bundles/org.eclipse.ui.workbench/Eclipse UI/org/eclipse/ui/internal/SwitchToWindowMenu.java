@@ -103,7 +103,7 @@ public class SwitchToWindowMenu extends ContributionItem {
 							Shell windowShell = window.getShell();
 							if (windowShell.getMinimized())
 								windowShell.setMinimized(false);
-							windowShell.forceFocus();
+							windowShell.setActive();
 							windowShell.moveAbove(null);
 						}
 					});
