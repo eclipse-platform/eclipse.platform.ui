@@ -135,8 +135,6 @@ public class IntroContentParser {
                         URL dtdURL = (URL) dtdMap.get(systemId);
                         InputSource in = new InputSource(dtdURL.openStream());
                         in.setSystemId(dtdURL.toExternalForm());
-                        System.out.println("Intro parser used URL: "
-                                + dtdURL.toExternalForm());
                         return in;
                     } else
                         return null;
