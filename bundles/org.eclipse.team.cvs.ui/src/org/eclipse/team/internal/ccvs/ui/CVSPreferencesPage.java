@@ -19,6 +19,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -366,6 +367,10 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		createConnectionTab(tabFolder);
 		createPromptingTab(tabFolder);
 		
+		initializeValues();
+		
+		Dialog.applyDialogFont(parent);
+		
 		return tabFolder;
 	}
 
@@ -386,11 +391,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		final TabItem tab= new TabItem(tabFolder, SWT.NONE);
 		tab.setText(Policy.bind("CVSPreferencesPage.19")); //$NON-NLS-1$
 		tab.setControl(composite);
-		new Checkbox(composite, ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION,  Policy.bind("CVSPreferencesPage.20"), IHelpContextIds.PREF_DETERMINE_SERVER_VERSION); //$NON-NLS-1$
-		new Checkbox(composite, ICVSUIConstants.PREF_DEBUG_PROTOCOL, Policy.bind("CVSPreferencesPage.21"), IHelpContextIds.PREF_DEBUG_PROTOCOL); //$NON-NLS-1$
-		new Checkbox(composite, ICVSUIConstants.PREF_AUTO_REFRESH_TAGS_IN_TAG_SELECTION_DIALOG, Policy.bind("CVSPreferencesPage.22"), IHelpContextIds.PREF_AUTOREFRESH_TAG); //$NON-NLS-1$
-
-		SWTUtils.createPlaceholder(composite, 1);
+		
 		final Composite textComposite= SWTUtils.createHFillComposite(composite, SWTUtils.MARGINS_NONE, 2);
 		new TextField(
 				textComposite, 
@@ -505,8 +506,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	    		IHelpContextIds.PREF_DEFAULT_PERSPECTIVE_FOR_SHOW_ANNOTATIONS,
 	    		PERSPECTIVE_LABELS,
 	    		PERSPECTIVE_VALUES);
-
-		initializeValues();
 
 		return composite;
 	}
