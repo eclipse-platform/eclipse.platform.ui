@@ -93,6 +93,11 @@ public class DebugPlugin extends Plugin {
 	 * The collection of debug event listeners.
 	 */
 	private ListenerList fEventListeners= new ListenerList(20);
+	
+	/**
+	 * Event filters, or <code>null</code> if none.
+	 */
+	private ListenerList fEventFilters = null;
 
 	/**
 	 * Whether this plugin is in the process of shutting
@@ -145,12 +150,15 @@ public class DebugPlugin extends Plugin {
 	}
 
 	/**
-	 * Notifies all registered debug event listeners of the given event.
+	 * Notifies all registered debug event listeners of the given even.
+	 * Has no effect if the event is filtered by a registered
+	 * debug event filter.
 	 *
 	 * @param event the debug event to fire
+	 * @see IDebugEventFilter
 	 */
 	public void fireDebugEvent(DebugEvent event) {
-		if (isShuttingDown() || event == null)
+		if (isShuttingDown() || event == null || isFiltered(event))
 			return;
 		
 		Object[] listeners= getEventListeners();
@@ -317,6 +325,56 @@ public class DebugPlugin extends Plugin {
 	private Object[] getEventListeners() {
 		return fEventListeners.getListeners();
 	}
+	
+	/**
+	 * Adds the given debug event filter to the registered
+	 * event filters. Has no effect if an identical filter
+	 * is already registerd.
+	 * 
+	 * @param filter debug event filter
+	 * @since 2.0
+	 */
+	public void addDebugEventFilter(IDebugEventFilter filter) {
+		if (fEventFilters == null) {
+			fEventFilters = new ListenerList(2);
+		}
+		fEventFilters.add(filter);
+	}
+	
+	/**
+	 * Removed the given debug event filter from the registered
+	 * event filters. Has no effect if an identical filter
+	 * is not already registerd.
+	 * 
+	 * @param filter debug event filter
+	 * @since 2.0
+	 */
+	public void removeDebugEventFilter(IDebugEventFilter filter) {
+		if (fEventFilters != null) {
+			fEventFilters.remove(filter);
+			if (fEventFilters.size() == 0) {
+				fEventFilters = null;
+			}
+		}
+	}	
+	
+	/**
+	 * Returns whether the given event is filtered.
+	 * 
+	 * @param event debug event
+	 * @return whether the given event is filtered
+	 */
+	private boolean isFiltered(DebugEvent event) {
+		if (fEventFilters != null) {
+			Object[] filters = fEventFilters.getListeners();
+			for (int i = 0; i < filters.length; i++) {
+				if (((IDebugEventFilter)filters[i]).filterDebugEvent(event)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}	
 }
 
 
