@@ -101,7 +101,7 @@ public class ActivityEnabler {
 				new CategoryLabelProvider(
 					activitySupport.getActivityManager()));
 			categoryViewer.setSorter(new ViewerSorter());
-			categoryViewer.setInput(activitySupport);
+			categoryViewer.setInput(activitySupport.getActivityManager());
 			categoryViewer.setSelection(new StructuredSelection());
 			setCategoryStates();
 		}

@@ -77,7 +77,7 @@ public final class WorkbenchActivityHelper {
 		if (support == null)
 			return false;
 		
-		return support
+		return !support
 			.getActivityManager()
 			.getDefinedCategoryIds()
 			.isEmpty();
