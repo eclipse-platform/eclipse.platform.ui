@@ -919,34 +919,56 @@ protected void internalRefresh(Object element, boolean updateLabels) {
  * @param doStruct <code>true</code> if structural changes are to be picked up,
  *   and <code>false</code> if only label provider changes are of interest
  * @param updateLabels <code>true</code> to update labels for existing elements,
- * <code>false</code> to only update labels as needed, assuming that labels
- * for existing elements are unchanged.
+ *   <code>false</code> to only update labels as needed, assuming that labels
+ *   for existing elements are unchanged.
  */
 private void internalRefresh(Widget widget, Object element, boolean doStruct, boolean updateLabels) {
 	
 	if (widget instanceof Item) {
 		if (doStruct) {
 			updatePlus((Item)widget, element);
+		}	
+		if (updateLabels || !equals(element, widget.getData())) {
+			doUpdateItem(widget, element, true);
 		}
-		// TODO: ignore updateLabels for now	
-		doUpdateItem(widget, element, true);
+		else {
+			associate(element, (Item) widget);
+		}
 	}
 
 	if (doStruct) {
-		// pass null for children, to allow updateChildren to get them only if needed
-		updateChildren(widget, element, null);
+		internalRefreshStruct(widget, element, updateLabels);
 	}
-	// recurse
+	else {
+		Item[] children= getChildren(widget);
+		if (children != null) {
+			for (int i= 0; i < children.length; i++) {
+				Widget item= children[i];
+				Object data= item.getData();
+				if (data != null)
+					internalRefresh(item, data, doStruct, updateLabels);
+			}
+		}
+	}
+}
+
+/**
+ * Update the structure and recurse.
+ * Items are updated in updateChildren, as needed.
+ */
+private void internalRefreshStruct(Widget widget, Object element, boolean updateLabels) {
+	updateChildren(widget, element, null, updateLabels);
 	Item[] children= getChildren(widget);
 	if (children != null) {
 		for (int i= 0; i < children.length; i++) {
 			Widget item= children[i];
 			Object data= item.getData();
 			if (data != null)
-				internalRefresh(item, data, doStruct, updateLabels);
+				internalRefreshStruct(item, data, updateLabels);
 		}
 	}
 }
+
 /**
  * Removes the given elements from this viewer.
  *
@@ -1247,17 +1269,35 @@ protected void setSelectionToWidget(List v, boolean reveal) {
  * @param item the item
  */
 protected abstract void showItem(Item item);
+
 /**
  * Updates the tree items to correspond to the child elements of the given parent element.
  * If null is passed for the children, this method obtains them (only if needed).
- * This method avoids calling <code>updatePlus</code> or <code>updateItem</code>, 
- * leaving this to be done by the calling method (i.e. internalRefresh).
  *
  * @param widget the widget
  * @param parent the parent element
  * @param elementChildren the child elements, or null
+ * 
+ * @deprecated this is no longer called by the framework
  */
 protected void updateChildren(Widget widget, Object parent, Object[] elementChildren) {
+	updateChildren(widget, parent, elementChildren, true);
+}
+
+/**
+ * Updates the tree items to correspond to the child elements of the given parent element.
+ * If null is passed for the children, this method obtains them (only if needed).
+ *
+ * @param widget the widget
+ * @param parent the parent element
+ * @param elementChildren the child elements, or null
+ * @param updateLabels <code>true</code> to update labels for existing elements,
+ *   <code>false</code> to only update labels as needed, assuming that labels
+ *   for existing elements are unchanged.
+ * 
+ * @since 2.1
+ */
+private void updateChildren(Widget widget, Object parent, Object[] elementChildren, boolean updateLabels) {
 	// optimization! prune collapsed subtrees
 	if (widget instanceof Item) {
 		Item ti= (Item) widget;
@@ -1354,22 +1394,36 @@ protected void updateChildren(Widget widget, Object parent, Object[] elementChil
 	}
 	for (int i = 0; i < min; ++i) {
 		Item item = items[i];
+		Object newElement = elementChildren[i];
 		if (item.getData() == null) {
-			Object newElement = elementChildren[i];
+			// old and new elements are not equal
 			associate(newElement, item);
-//			updatePlus(item, newElement);
-//			updateItem(item, newElement);
+			updatePlus(item, newElement);
+			updateItem(item, newElement);
 			// Restore expanded state for items that changed position.
 			// Make sure setExpanded is called after updatePlus, since
 			// setExpanded(false) fails if item has no children.
 			setExpanded(item, expanded.contains(newElement));
 		}
+		else {
+			// old and new elements are equal
+			updatePlus(item, newElement);
+			if (updateLabels) {
+				updateItem(item, newElement);
+			}
+		}
 	}
 	
-	// add any remaining elements (without updating the items)
+	// add any remaining elements
 	for (int i = min; i < elementChildren.length; ++i) {
+		Object newElement = elementChildren[i];
 		Item item = newItem(widget, SWT.NULL, i);
-		associate(elementChildren[i], item);
+		updateItem(item, newElement);
+		updatePlus(item, newElement);
+		// Restore expanded state for items that changed position.
+		// Make sure setExpanded is called after updatePlus, since
+		// setExpanded(false) fails if item has no children.
+		setExpanded(item, expanded.contains(newElement));
 	}
 	
 	// WORKAROUND
