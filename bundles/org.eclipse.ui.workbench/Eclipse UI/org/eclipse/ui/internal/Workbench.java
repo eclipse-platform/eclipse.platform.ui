@@ -43,6 +43,8 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ExternalActionManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.ExternalActionManager.CommandCallback;
+import org.eclipse.jface.action.ExternalActionManager.IActiveChecker;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -97,7 +99,6 @@ import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.commands.CommandService;
-import org.eclipse.ui.internal.commands.ws.CommandCallback;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
@@ -1041,12 +1042,20 @@ public final class Workbench implements IWorkbench {
 	}
 
     /**
-     * Establishes the relationship between JFace actions and the command manager.
-     */
-    private void initializeCommandResolver() {
-        ExternalActionManager.getInstance().setCallback(
-                new CommandCallback(this));
-    }
+	 * Establishes the relationship between JFace actions and the command
+	 * manager.
+	 */
+	private void initializeCommandResolver() {
+		ExternalActionManager.getInstance().setCallback(
+				new CommandCallback(bindingManager, commandManager,
+						new IActiveChecker() {
+							public final boolean isActive(final String commandId) {
+								return workbenchActivitySupport
+										.getActivityManager().getIdentifier(
+												commandId).isEnabled();
+							}
+						}));
+	}
 
     /**
      * Initialize colors defined by the new colorDefinitions extension point.
