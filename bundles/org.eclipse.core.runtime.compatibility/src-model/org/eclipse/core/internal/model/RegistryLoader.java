@@ -27,8 +27,7 @@ public class RegistryLoader {
 
 	// debug support
 	private boolean debug = false;
-	private long startTick = (new java.util.Date()).getTime(); // used for performance timings
-	private long lastTick = startTick;
+	private long lastTick = System.currentTimeMillis();//used for performance timing
 
 	private RegistryLoader(Factory factory, boolean debug) {
 		super();
