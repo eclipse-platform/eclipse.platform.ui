@@ -709,7 +709,7 @@ public class HistoryView extends ViewPart {
 	 */
 	protected void editorActivated(IEditorPart editor) {
 		// Only fetch contents if the view is shown in the current page.
-		if (!isLinkingEnabled() || !checkIfPageIsVisible()) {
+		if (editor == null || !isLinkingEnabled() || !checkIfPageIsVisible()) {
 			return;
 		}		
 		IEditorInput input = editor.getEditorInput();
@@ -891,10 +891,7 @@ public class HistoryView extends ViewPart {
 	
 		// if turning linking on, update the selection to correspond to the active editor
 		if (enabled) {
-			IEditorPart editor = getSite().getPage().getActiveEditor();
-			if (editor != null) {
-				editorActivated(editor);
-			}
+			editorActivated(getSite().getPage().getActiveEditor());
 		}
 	}
 	
