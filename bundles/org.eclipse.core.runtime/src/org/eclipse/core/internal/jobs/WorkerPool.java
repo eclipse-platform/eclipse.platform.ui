@@ -118,7 +118,7 @@ class WorkerPool {
 				sleep(Math.min(hint, BEST_BEFORE));
 			job = manager.startJob();
 			//if we were already idle, and there are still no new jobs, then the thread can expire
-			if (job == null && (System.currentTimeMillis() - idleStart > BEST_BEFORE) && threads.size() > MIN_THREADS)
+			if (job == null && (System.currentTimeMillis() - idleStart > BEST_BEFORE) && (threads.size()-busyThreads) > MIN_THREADS)
 				break;
 		}
 		if (job != null) {
