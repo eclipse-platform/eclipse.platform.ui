@@ -23,7 +23,9 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.*;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleListener;
 
 //TODO 1: this class must be made thread safe (query methods must be sync'd as well)
 //TODO 2: only resolved bundles should appear in the plugin registry - this implementation exposes all known bundles
@@ -34,6 +36,7 @@ public class PluginRegistry implements IPluginRegistry {
 
 	public PluginRegistry() {
 		extRegistry = InternalPlatform.getDefault().getRegistry();
+		InternalPlatform.getDefault().getBundleContext().addBundleListener(new RegistryListener());
 	}
 
 	public IConfigurationElement[] getConfigurationElementsFor(String uniqueId) {
@@ -101,7 +104,7 @@ public class PluginRegistry implements IPluginRegistry {
 		Bundle[] bundles = InternalPlatform.getDefault().getBundleContext().getBundles();
 		ArrayList pds = new ArrayList(bundles.length);
 		for (int i = 0; i < bundles.length; i++)
-			if (!bundles[i].isFragment() && bundles[i].getGlobalName() != null)
+			if (!bundles[i].isFragment() && bundles[i].getGlobalName() != null && (bundles[i].getState() == Bundle.RESOLVED || bundles[i].getState() == Bundle.STARTING || bundles[i].getState() == Bundle.ACTIVE))
 				pds.add(getPluginDescriptor(bundles[i].getGlobalName()));
 		IPluginDescriptor[] result = new IPluginDescriptor[pds.size()];
 		return (IPluginDescriptor[]) pds.toArray(result);
@@ -113,4 +116,14 @@ public class PluginRegistry implements IPluginRegistry {
 			System.out.println(status.getMessage());
 	}
 
+	public class RegistryListener implements BundleListener {
+		public synchronized void bundleChanged(BundleEvent event) {
+			if (event.getType() == BundleEvent.UNINSTALLED || event.getType() == BundleEvent.UNRESOLVED) {
+				String globalName = event.getBundle().getGlobalName();
+				if (globalName != null && descriptors.containsKey(globalName)) {
+					descriptors.remove(globalName);
+				}
+			}
+		}
+	}
 }
