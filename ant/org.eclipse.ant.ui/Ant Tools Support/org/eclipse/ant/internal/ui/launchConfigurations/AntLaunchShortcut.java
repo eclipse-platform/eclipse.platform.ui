@@ -130,11 +130,14 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	
 	private IPath getExternalBuildFilePath() {
 		IWorkbenchPage page= AntUIPlugin.getActiveWorkbenchWindow().getActivePage();
-		IEditorInput editorInput= page.getActiveEditor().getEditorInput();
 		IPath filePath= null;
-		if (editorInput instanceof ILocationProvider) {
-	    	filePath= ((ILocationProvider)editorInput).getPath(editorInput);
-	    }
+		IEditorPart editor= page.getActiveEditor();
+		if (editor != null) {
+		    IEditorInput editorInput= editor.getEditorInput();
+		    if (editorInput instanceof ILocationProvider) {
+		        filePath= ((ILocationProvider)editorInput).getPath(editorInput);
+		    }
+		}
 		return filePath;
 	}
 	
