@@ -84,7 +84,7 @@ class IndexingOperation {
 		if (numDocs <= 0)
 			return;
 		int workTotal = WORK_PREPARE + numDocs * WORK_INDEXDOC + WORK_SAVEINDEX;
-		pm.beginTask(Resources.getString("Index_needs_updated"), workTotal);
+		pm.beginTask(""/*Resources.getString("Index_needs_updated")*/, workTotal);
 		pm.subTask(Resources.getString("Preparing_for_indexing"));
 		checkCancelled(pm);
 		// first delete all the removed documents
