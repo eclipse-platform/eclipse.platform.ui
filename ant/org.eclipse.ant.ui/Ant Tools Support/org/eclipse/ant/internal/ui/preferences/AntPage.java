@@ -33,7 +33,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -120,17 +119,6 @@ public abstract class AntPage {
 		buttonGroup.setFont(top.getFont());
 		
 		addButtonsToButtonGroup(buttonGroup);
-	}
-
-	/**
-	 * Creates a space between controls
-	 */
-	protected final Label createSeparator(Composite parent) {
-		Label separator = new Label(parent, SWT.NONE);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
-		gd.heightHint = 4;
-		separator.setLayoutData(gd);
-		return separator;
 	}
 	
 	/**

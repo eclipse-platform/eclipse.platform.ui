@@ -51,7 +51,6 @@ public class AntTypesPage extends AntPage {
 	protected void addButtonsToButtonGroup(Composite parent) {
 		createPushButton(parent, AntPreferencesMessages.getString("AntTypesPage.2"), ADD_TYPE_BUTTON); //$NON-NLS-1$
 		editButton = createPushButton(parent, AntPreferencesMessages.getString("AntTypesPage.3"), EDIT_TYPE_BUTTON); //$NON-NLS-1$
-		createSeparator(parent);
 		removeButton = createPushButton(parent, AntPreferencesMessages.getString("AntTypesPage.1"), REMOVE_BUTTON); //$NON-NLS-1$
 	}
 	
