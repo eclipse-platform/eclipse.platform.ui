@@ -625,7 +625,6 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		
 		toolBarMgr.add(addBuildFileAction);
 		toolBarMgr.add(searchForBuildFilesAction);
-		toolBarMgr.add(refreshBuildFilesAction);
 
 		toolBarMgr.add(runTargetAction);
 		toolBarMgr.add(removeProjectAction);

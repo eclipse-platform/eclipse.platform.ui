@@ -31,6 +31,7 @@ public interface IExternalToolsHelpContextIds {
 	public static final String RUN_TARGET_ACTION = PREFIX + "run_target_action_context"; //$NON-NLS-1$
 	public static final String REMOVE_PROJECT_ACTION = PREFIX + "remove_project_action_context"; //$NON-NLS-1$
 	public static final String ADD_BUILDFILE_ACTION = PREFIX + "add_buildfile_action_context"; //$NON-NLS-1$
+	public static final String REFRESH_BUILDFILE_ACTION = PREFIX + "refresh_buildfile_action_context"; //$NON-NLS-1$
 
 	// Dialogs
 	public static final String FILE_SELECTION_DIALOG = PREFIX + "file_selection_dialog_context"; //$NON-NLS-1$
