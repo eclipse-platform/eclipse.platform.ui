@@ -125,7 +125,7 @@ public abstract class WorkbenchWizardNode implements IWizardNode, IPluginContrib
 									.getDeclaringExtension()
 									.getUniqueIdentifier(),
 								IStatus.OK,
-								e.getMessage(),
+								e.getMessage() == null ? "" : e.getMessage(), //$NON-NLS-1$,
 								e);
 					}
 					public void run() {

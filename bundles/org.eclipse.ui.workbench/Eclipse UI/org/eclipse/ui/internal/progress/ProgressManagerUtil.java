@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -29,6 +28,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.RectangleAnimation;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.BundleUtility;
 /**
  * The ProgressUtil is a class that contains static utility methods used for the
@@ -49,9 +49,11 @@ public class ProgressManagerUtil {
 	 * @param exception
 	 * @return
 	 */
-	static Status exceptionStatus(Throwable exception) {
-		return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR,
-				exception.getMessage(), exception);
+	static IStatus exceptionStatus(Throwable exception) {
+		return StatusUtil.newStatus(
+			IStatus.ERROR, 
+			exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$, 
+			exception);
 	}
 	/**
 	 * Log the exception for debugging.

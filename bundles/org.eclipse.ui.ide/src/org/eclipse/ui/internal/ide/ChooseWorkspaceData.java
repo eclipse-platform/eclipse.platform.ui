@@ -184,9 +184,12 @@ public class ChooseWorkspaceData {
 			}
 			memento.save(writer);
 		} catch (IOException e) {
-			IDEWorkbenchPlugin.log("Unable to write recent workspace data", new Status( //$NON-NLS-1$
-					IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
-					IStatus.ERROR, e.getMessage(), e));
+			IDEWorkbenchPlugin.log(
+					"Unable to write recent workspace data",  //$NON-NLS-1$
+					StatusUtil.newStatus(
+						IStatus.ERROR,
+						e.getMessage() == null ? "" : e.getMessage(), //$NON-NLS-1$
+						e));
 		}
 		finally {
 			if(writer != null)

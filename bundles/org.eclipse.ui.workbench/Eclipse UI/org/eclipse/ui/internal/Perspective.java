@@ -46,6 +46,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.intro.IIntroConstants;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IStickyViewDescriptor;
@@ -831,7 +832,11 @@ private IStatus createReferences(IMemento views[]) {
 			}
 		} catch (PartInitException e) {
 			childMem.putString(IWorkbenchConstants.TAG_REMOVED,"true"); //$NON-NLS-1$
-			result.add(new Status(IStatus.ERROR,PlatformUI.PLUGIN_ID,0,e.getMessage(),e));
+			result.add(
+				StatusUtil.newStatus(
+					IStatus.ERROR,
+					e.getMessage() == null ? "" : e.getMessage(), //$NON-NLS-1$
+					e));
 		}
 	}
 	return result;

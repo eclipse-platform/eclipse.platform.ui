@@ -26,6 +26,7 @@ import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.themes.IColorFactory;
 
@@ -441,11 +442,8 @@ public class ThemeRegistryReader extends RegistryReader {
             } catch (Exception e) {
                 WorkbenchPlugin.log(
                         RESOURCE_BUNDLE.getString("Colors.badFactory"), //$NON-NLS-1$ 
-                        new Status(
-                                IStatus.ERROR, 
-                                WorkbenchPlugin.PI_WORKBENCH, 
-                                IStatus.ERROR, 
-                                e.getMessage(), 
+                        StatusUtil.newStatus(IStatus.ERROR, 
+                               e.getMessage() == null ? "" : e.getMessage(), //$NON-NLS-1$, 
                                 e)); 
             }
 	    }	

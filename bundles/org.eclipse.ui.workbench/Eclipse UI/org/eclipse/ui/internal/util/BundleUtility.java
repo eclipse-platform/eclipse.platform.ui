@@ -70,7 +70,8 @@ public class BundleUtility {
             return;
 
         IStatus status = new Status(IStatus.ERROR, bundleId, IStatus.ERROR,
-                exception.getMessage(), exception);
+        		exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$
+        		exception);
 
         Platform.getLog(bundle).log(status);
     }

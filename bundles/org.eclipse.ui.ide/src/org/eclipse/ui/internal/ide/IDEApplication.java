@@ -409,7 +409,9 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 		} catch (IOException e) {
 			IDEWorkbenchPlugin.log("Could not read version file", new Status( //$NON-NLS-1$
 					IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
-					IStatus.ERROR, e.getMessage(), e));
+					IStatus.ERROR, 
+					e.getMessage() == null ? "" : e.getMessage(), //$NON-NLS-1$, 
+					e));
 			return null;
 		}
 	}
@@ -435,9 +437,8 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 			output = new FileOutputStream(versionFile);
 			output.write(versionLine.getBytes("UTF-8")); //$NON-NLS-1$
 		} catch (IOException e) {
-			IDEWorkbenchPlugin.log("Could not write version file", new Status( //$NON-NLS-1$
-					IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
-					IStatus.ERROR, e.getMessage(), e));
+			IDEWorkbenchPlugin.log("Could not write version file", //$NON-NLS-1$
+					StatusUtil.newStatus(IStatus.ERROR, e.getMessage(), e));
 		} finally {
 			try {
 				if (output != null)
