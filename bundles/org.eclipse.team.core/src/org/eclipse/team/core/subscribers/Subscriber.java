@@ -330,7 +330,7 @@ abstract public class Subscriber {
 		monitor.subTask(Policy.bind("SubscriberEventHandler.2", resource.getFullPath().toString())); //$NON-NLS-1$
 		try {
 			SyncInfo info = getSyncInfo(resource);
-			if (info == null) {
+			if (info == null || info.getKind() == SyncInfo.IN_SYNC) {
 				// Resource is no longer under the subscriber control.
 				// This can occur for the resources past as arguments to collectOutOfSync
 				set.remove(resource);
