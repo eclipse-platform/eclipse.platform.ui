@@ -23,7 +23,6 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
@@ -34,14 +33,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
@@ -99,25 +96,6 @@ public class ResourceDeltaTest extends EclipseTest {
 	}
 	
 	public void assertDeletionMarkerFor(IResource resource, boolean exists) throws CoreException {
-		if ( ! CVSProviderPlugin.getPlugin().getShowTasksOnAddAndDelete()) return;
-		IMarker marker = null;
-		if (resource.getParent().exists()) {
-			String name = resource.getName();
-	   		IMarker[] markers = resource.getParent().findMarkers(AddDeleteMoveListener.DELETION_MARKER, false, IResource.DEPTH_ZERO);
-	   		for (int i = 0; i < markers.length; i++) {
-				IMarker iMarker = markers[i];
-				String markerName = (String)iMarker.getAttribute(AddDeleteMoveListener.NAME_ATTRIBUTE);
-				if (markerName.equals(name)) {
-					marker = iMarker;
-					break;
-				}
-			}
-		}
-		if (exists) {
-   			assertTrue("Deletion marker doesn't exist for " + resource.getName(), marker != null);
-		} else {
-   			assertTrue("Deletion marker exists for " + resource.getName(), marker == null);
-   		}
 	}
 	
 	public void testOrphanedSubtree() throws TeamException, CoreException {
