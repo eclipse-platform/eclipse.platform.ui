@@ -20,7 +20,7 @@ public class Status implements IStatus {
 	/**
 	 * A standard OK status with no message.
 	 */
-	public static final IStatus OK_STATUS = new Status(OK, Platform.PI_RUNTIME, 1, "", null); //$NON-NLS-1$
+	public static final IStatus OK_STATUS = new Status(OK, Platform.PI_RUNTIME, OK, "", null); //$NON-NLS-1$
 	/**
 	 * A standard CANCEL status with no message.
 	 */
