@@ -38,6 +38,9 @@ However since viewers don&apos;t have a default constructor the extension point 
                <documentation>
                   
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

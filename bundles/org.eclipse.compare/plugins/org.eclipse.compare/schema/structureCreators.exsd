@@ -39,6 +39,9 @@ The extension point must implement the interface &lt;samp&gt;org.eclipse.compare
                <documentation>
                   
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

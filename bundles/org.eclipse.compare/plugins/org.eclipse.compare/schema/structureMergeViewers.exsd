@@ -40,6 +40,9 @@ for viewers &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;.
                <documentation>
                   
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
