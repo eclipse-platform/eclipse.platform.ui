@@ -1,4 +1,4 @@
-package org.eclipse.team.ui.synchronize.subscribers;
+package org.eclipse.team.internal.ui.synchronize;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -8,7 +8,8 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.synchronize.RefreshUserNotificationPolicy;
+import org.eclipse.team.internal.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionFactory;
 
@@ -106,7 +107,7 @@ public class SubscriberRefreshSchedule {
 		}
 	}
 	
-	protected void startJob() {
+	public void startJob() {
 		SyncInfoSet set = participant.getSubscriberSyncInfoCollector().getSyncInfoSet();
 		if(set == null) { 
 			return;

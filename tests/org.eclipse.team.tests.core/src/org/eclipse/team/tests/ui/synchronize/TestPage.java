@@ -16,6 +16,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.team.internal.ui.synchronize.StructuredViewerAdvisor;
+import org.eclipse.team.internal.ui.synchronize.TreeViewerAdvisor;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.Page;

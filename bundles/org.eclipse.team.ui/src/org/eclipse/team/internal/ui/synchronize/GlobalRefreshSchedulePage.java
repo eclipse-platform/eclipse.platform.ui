@@ -8,13 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.synchronize.subscribers;
+package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.synchronize.ConfigureSynchronizeScheduleComposite;
-import org.eclipse.team.internal.ui.synchronize.IPageValidator;
+import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 
 /**
  * Wizard page that allows configuration a synchronize schedule for a subscriber participant.

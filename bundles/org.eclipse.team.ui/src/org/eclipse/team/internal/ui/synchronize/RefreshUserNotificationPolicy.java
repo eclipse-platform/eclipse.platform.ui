@@ -8,9 +8,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizeView;
-import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
-import org.eclipse.team.ui.synchronize.subscribers.*;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.actions.ActionFactory;
 
 /**

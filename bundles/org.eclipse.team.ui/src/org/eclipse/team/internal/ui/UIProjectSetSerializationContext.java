@@ -11,7 +11,7 @@
 
  **********************************************************************/
 
-package org.eclipse.team.ui;
+package org.eclipse.team.internal.ui;
 
 import java.util.Arrays;
 import java.util.List;

@@ -17,8 +17,8 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.ConfigureRefreshScheduleDialog;
+import org.eclipse.team.internal.ui.synchronize.SubscriberRefreshWizard;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.team.ui.synchronize.subscribers.*;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkingSet;
 

@@ -21,7 +21,6 @@ import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.team.ui.synchronize.subscribers.*;
 import org.eclipse.ui.actions.ActionFactory;
 
 public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubscriberListener {

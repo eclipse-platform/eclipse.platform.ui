@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.synchronize.subscribers;
+package org.eclipse.team.ui.synchronize;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
@@ -20,15 +20,13 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.core.synchronize.SyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
+import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.progress.ProgressManager;
@@ -44,11 +42,6 @@ import org.eclipse.ui.progress.UIJob;
  * 2. synchronize schedule
  * 3. APIs for creating specific: sync page, sync wizard, sync advisor (control ui pieces)
  * 4. allows refreshing the participant synchronization state
- * 
- * Push Down:
- * 1. working set
- * 2. modes
- * 3. working set/filtered sync sets
  *
  * @since 3.0
  */
@@ -175,6 +168,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 					}
 
 					ActionFactory.IWorkbenchAction runnable = listener.refreshDone(event);
+					if(runnable != null) {
 					// If the job is being run modally then simply prompt the user immediatly
 					if(isModal) {
 						if(runnable != null) {
@@ -201,6 +195,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 								}
 							}
 						});
+					}
 					}
 					RefreshSubscriberJob.removeRefreshListener(this);
 				}

@@ -16,7 +16,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.ui.synchronize.subscribers.SubscriberRefreshSchedule;
 
 /**
  * A composite that allows editing a subscriber refresh schedule. A validator can be used to allow

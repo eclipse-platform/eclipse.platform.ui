@@ -8,19 +8,20 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.synchronize.subscribers;
+package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.core.subscribers.FilteredSyncInfoCollector;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
+import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 
 /**
  * A dialog that is displayed at the end of a synchronize. The dialog shows the result of
@@ -30,8 +31,6 @@ import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
  * @since 3.0
  */
 public class RefreshCompleteDialog extends DetailsDialog {
-	private SyncInfoFilter filter;
-	private FilteredSyncInfoCollector collector;
 	private IRefreshEvent event;
 	private SubscriberParticipant participant;
 	private Button dontShowAgainButton;
@@ -48,34 +47,7 @@ public class RefreshCompleteDialog extends DetailsDialog {
 		setShellStyle(shellStyle | SWT.RESIZE | SWT.MAX);
 		this.event = event;
 		setImageKey(DLG_IMG_INFO);
-		// Set-up a sync info set that contains the resources that where found
-		// when the refresh occured.
-		filter = new SyncInfoFilter() {
-			public boolean select(SyncInfo info, IProgressMonitor monitor) {
-				IResource[] resources = getResources();
-				for (int i = 0; i < resources.length; i++) {
-					IResource resource = resources[i];
-					if (info.getLocal().equals(resource)) {
-						return true;
-					}
-				}
-				return false;
-			}
-		};
-		this.collector = new FilteredSyncInfoCollector(
-				participant.getSubscriberSyncInfoCollector().getSyncInfoSet(), 
-				syncInfoSet, 
-				filter);		
 		IDialogSettings workbenchSettings = TeamUIPlugin.getPlugin().getDialogSettings();
-	}
-
-	/**
-	 * Populate the dialog with the new changes discovered during the refresh
-	 */
-	public void initialize() {
-		// The collector is connected to a subcriber collector which we know is populated in the
-		// background. As such, there is no need for a progress monitor here.
-		this.collector.start(new NullProgressMonitor());
 	}
 
 	/* (non-Javadoc)
