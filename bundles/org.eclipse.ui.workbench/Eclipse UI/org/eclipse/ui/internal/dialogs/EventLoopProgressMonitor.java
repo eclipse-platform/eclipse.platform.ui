@@ -15,9 +15,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ExceptionHandler;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.progress.BlockedJobsDialog;
+import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.progress.WorkbenchJob;
 /**
  * Used to run an event loop whenever progress monitor methods
@@ -148,14 +150,17 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper
 				
 				if(dialog == null)
 					return Status.CANCEL_STATUS;
+				if(ProgressManagerUtil.rescheduleIfModalShellOpen(this))
+					return Status.CANCEL_STATUS;
 				dialog.open();
 				return Status.OK_STATUS;
 			}
 		};
 		
-		//Wait 3 second to prevent too many dialogs.
+		//Wait for long operation time to prevent a proliferation
+		//of dialogs
 		dialogJob.setSystem(true);
-		dialogJob.schedule(3000);
+		dialogJob.schedule(PlatformUI.getWorkbench().getProgressService().getLongOperationTime());
 		
 	}
 	/**

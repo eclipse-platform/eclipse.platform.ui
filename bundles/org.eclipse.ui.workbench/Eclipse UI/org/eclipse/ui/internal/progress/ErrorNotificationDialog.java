@@ -51,7 +51,7 @@ public class ErrorNotificationDialog extends Dialog {
 	 * @param parentShell
 	 */
 	public ErrorNotificationDialog(Shell parentShell) {
-		super(parentShell);
+		super(parentShell == null ? ProgressManagerUtil.getDefaultParent() : parentShell);
 		setBlockOnOpen(false);
 		setShellStyle(SWT.CLOSE | SWT.MODELESS | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
 	}

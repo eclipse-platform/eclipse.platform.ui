@@ -35,25 +35,24 @@ import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.runtime.jobs.ProgressProvider;
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.IProgressService;
-import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardBlockedHandler;
 import org.eclipse.ui.internal.util.BundleUtility;
+import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.progress.WorkbenchJob;
 /**
  * JobProgressManager provides the progress monitor to the job manager and
  * informs any ProgressContentProviders of changes.
@@ -810,24 +809,8 @@ public class ProgressManager extends ProgressProvider
 			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				Display currentDisplay = getDisplay();
-				if (currentDisplay == null || currentDisplay.isDisposed())
+				if (ProgressManagerUtil.rescheduleIfModalShellOpen(this))
 					return Status.CANCEL_STATUS;
-				//If there is a modal shell open then wait
-				Shell[] shells = currentDisplay.getShells();
-				int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL
-						| SWT.PRIMARY_MODAL;
-				for (int i = 0; i < shells.length; i++) {
-					//Do not stop for shells that will not block the user.
-					if (shells[i].isVisible()) {
-						int style = shells[i].getStyle();
-						if ((style & modal) != 0) {
-							//try again in a few seconds
-							schedule(getLongOperationTime());
-							return Status.CANCEL_STATUS;
-						}
-					}
-				}
 				dialog.open();
 				return Status.OK_STATUS;
 			}
@@ -957,9 +940,11 @@ public class ProgressManager extends ProgressProvider
 		showInDialog(shell, job);
 	}
 	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
-	 */	
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean,
+	 *      org.eclipse.jface.operation.IRunnableWithProgress)
+	 */
 	public void run(boolean fork, boolean cancelable,
 			IRunnableWithProgress runnable) throws InvocationTargetException,
 			InterruptedException {
@@ -976,7 +961,6 @@ public class ProgressManager extends ProgressProvider
 		final InvocationTargetException[] invokes = new InvocationTargetException[1];
 		final InterruptedException[] interrupt = new InterruptedException[1];
 		//show a busy cursor until the dialog opens
-		
 		final IRunnableWithProgress finalRunnable = runnable;
 		Runnable dialogWaitRunnable = new Runnable() {
 			public void run() {
@@ -996,8 +980,9 @@ public class ProgressManager extends ProgressProvider
 		if (interrupt[0] != null)
 			throw interrupt[0];
 	}
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.progress.IProgressService#getLongOperationTime()
 	 */
 	public int getLongOperationTime() {

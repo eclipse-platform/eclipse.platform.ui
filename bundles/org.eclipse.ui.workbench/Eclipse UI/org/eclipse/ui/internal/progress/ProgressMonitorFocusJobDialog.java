@@ -41,11 +41,11 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	/**
 	 * Create a new instance of the receiver with progress reported on the job.
 	 * 
-	 * @param parent
+	 * @param parentShell
 	 *            The shell this is parented from.
 	 */
-	public ProgressMonitorFocusJobDialog(Shell parent) {
-		super(parent);
+	public ProgressMonitorFocusJobDialog(Shell parentShell) {
+		super(parentShell == null ? ProgressManagerUtil.getDefaultParent() : parentShell);
 		setCancelable(true);
 	}
 	/**

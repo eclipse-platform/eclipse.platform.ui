@@ -151,7 +151,9 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 *            The monitor that is blocking the job
 	 */
 	public BlockedJobsDialog(Shell parentShell, IProgressMonitor blocking, IStatus blockingStatus) {
-		super(parentShell);
+		
+		super(parentShell == null ? ProgressManagerUtil.getDefaultParent() : parentShell);
+		
 		blockingMonitor = blocking;
 		setShellStyle(SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL);
 		// no close button
