@@ -61,7 +61,7 @@ function onloadHandler(e)
 </head>
 
 
-<frameset id="contentFrameset" onload="onloadHandler()" rows=24,*" frameborder="0" framespacing="0" border=0 spacing=0>
+<frameset id="contentFrameset" onload="onloadHandler()" rows="24,*" frameborder="0" framespacing="0" border=0 spacing=0>
 	<frame name="ContentToolbarFrame" title="<%=ServletResources.getString("topicViewToolbar", request)%>" src='<%="contentToolbar.jsp"+data.getQuery()%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
 	<frame name="ContentViewFrame" title="<%=ServletResources.getString("topicView", request)%>" src='<%=data.getContentURL()%>'  marginwidth="10" marginheight="0" frameborder="0" >
 </frameset>
