@@ -63,6 +63,10 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 					break;
 				case DebugEvent.RESUME:
 					doHandleResumeEvent(event);
+					break;
+				case DebugEvent.TERMINATE:
+					doHandleTerminateEvent(event);
+					break;
 			}
 		}
 	}
@@ -74,10 +78,18 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 		if (!event.isStepStart() && !event.isEvaluation()) {
 			// Clear existing variables from the view
 			getViewer().setInput(null);
+			// clear the cache of expanded variables for the resumed thread/target
+			getVariablesView().clearExpandedVariables(event.getSource());
 		}
 	}
 
-
+	/**
+	 * Clear any cached variable expansion state for the
+	 * terminated thread/target.
+	 */
+	protected void doHandleTerminateEvent(DebugEvent event) {
+		getVariablesView().clearExpandedVariables(event.getSource());
+	}
 
 
 	protected VariablesView getVariablesView() {

@@ -8,14 +8,17 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -200,6 +203,23 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	private List fSelectionActions = new ArrayList(3);
 	
 	/**
+	 * A map of stack frames to expanded variables. Used to
+	 * restore the expanded state of the variables view on
+	 * re-selection of the same stack frame. The cache is on
+	 * a frame by frame basis when a thread/target is resumed
+	 * or terminated.
+	 */
+	private HashMap fExpandedVariables = new HashMap(10);
+	/**
+	 * A map of stack frames to selected variables. Used to
+	 * restore the selection of the variables view on
+	 * re-selection of the same stack frame. The cache is on
+	 * a frame by frame basis when a thread/target is resumed
+	 * or terminated.
+	 */	
+	private HashMap fExpandedSelection = new HashMap(10);
+	
+	/**
 	 * These are used to initialize and persist the position of the sash that
 	 * separates the tree viewer from the detail pane.
 	 */
@@ -242,6 +262,12 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		getDetailViewer().setEditable(frame != null);
 		
 		Object current= getViewer().getInput();
+		if (current != null) {
+			// save state
+			fExpandedVariables.put(current, getVariablesViewer().getExpandedElements());
+			fExpandedSelection.put(current, getVariablesViewer().getSelection());
+		}
+		
 		if (current == null && frame == null) {
 			return;
 		}
@@ -254,6 +280,88 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		}
 		showViewer();
 		getViewer().setInput(frame);
+		
+		// restore state
+		Object[] exapndedVariables = (Object[])fExpandedVariables.get(frame);
+		if (exapndedVariables != null) {
+			getVariablesViewer().setExpandedElements(exapndedVariables);
+		}
+		ISelection selection = (ISelection)fExpandedSelection.get(frame);
+		if (selection != null) {
+			getVariablesViewer().setSelection(selection);
+		}
+	}
+	
+	/**
+	 * Returns the variables viewer for this view
+	 */
+	protected VariablesViewer getVariablesViewer() {
+		return (VariablesViewer)getViewer();
+	}
+	
+	/**
+	 * Clears expanded state for stack frames which are
+	 * a child of the given thread or debug target.
+	 */
+	protected void clearExpandedVariables(Object parent) {
+		List list = null;
+		if (parent instanceof IThread) {
+			list = getCachedFrames((IThread)parent);
+		} else if (parent instanceof IDebugTarget) {
+			list = getCachedFrames((IDebugTarget)parent);
+		}
+		if (list != null) {
+			Iterator frames = list.iterator();
+			while (frames.hasNext()) {
+				Object frame = frames.next();
+				fExpandedVariables.remove(frame);
+				fExpandedSelection.remove(frame);
+			}
+		}
+	}
+	
+	/**
+	 * Returns a list of stack frames in the specified 
+	 * thread that have cached an expansion state.
+	 * 
+	 * @return a list of stack frames in the specified 
+	 * thread that have cached an expansion state
+	 */
+	protected List getCachedFrames(IThread thread) {
+		List list = null;
+		Iterator frames = fExpandedVariables.keySet().iterator();
+		while (frames.hasNext()) {
+			IStackFrame frame = (IStackFrame)frames.next();
+			if (frame.getThread().equals(thread)) {
+				if (list == null) {
+					list = new ArrayList();
+				}
+				list.add(frame);
+			}
+		}	
+		return list;	
+	}
+	
+	/**
+	 * Returns a list of stack frames in the specified 
+	 * thread that have cached an expansion state.
+	 * 
+	 * @return a list of stack frames in the specified 
+	 * thread that have cached an expansion state
+	 */
+	protected List getCachedFrames(IDebugTarget target) {
+		List list = new ArrayList();
+		Iterator frames = fExpandedVariables.keySet().iterator();
+		while (frames.hasNext()) {
+			IStackFrame frame = (IStackFrame)frames.next();
+			if (frame.getDebugTarget().equals(target)) {
+				if (list == null) {
+					list = new ArrayList();
+				}				
+				list.add(frame);
+			}
+		}	
+		return list;	
 	}
 	
 	/**
