@@ -1344,6 +1344,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  			getEditArea().setVisible(false);
  			setWorkingCopy(null);
  			setSelectedTreeObject(null);
+ 			setDefaultMessage();
  			updateButtons();
  			return;
  		}
@@ -2690,10 +2691,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			return;
 		}
 		
-		// If there is no current working copy, show a default informational message and clear the error message
+		// If there is no current working copy, clear the error message
 		if (getLaunchConfiguration() == null) {
 			setErrorMessage(null);
-			setMessage(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Select_a_type_of_configuration_to_create,_and_press___new__51")); //$NON-NLS-1$
+			setMessage(null);
 			return;
 		}
 		
@@ -2736,6 +2737,13 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			}
 		}
 		setErrorMessage(errorMessage);				
+	}
+	
+	/**
+	 * Show the default informational message that explains how to create a new configuration.
+	 */
+	protected void setDefaultMessage() {
+		setMessage(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Select_a_type_of_configuration_to_create,_and_press___new__51")); //$NON-NLS-1$		
 	}
 	
 	/**
