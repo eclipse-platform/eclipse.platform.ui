@@ -67,7 +67,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 
 		PlatformURLBaseConnection.startup(InternalPlatform.getDefault().getInstallURL());
 
-		Hashtable properties = new Hashtable();
+		Hashtable properties = new Hashtable(1);
 		properties.put(URLConstants.URL_HANDLER_PROTOCOL, new String[] { PlatformURLHandler.PROTOCOL });
 		context.registerService(URLStreamHandlerService.class.getName(), new PlatformURLHandler(), properties);
 	}
