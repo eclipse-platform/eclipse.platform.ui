@@ -33,6 +33,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 
@@ -44,6 +45,10 @@ public abstract class ExecutionAction extends Action {
 	 * @see Action#run
 	 */
 	public void run() {
+		
+		if (!DebugUIPlugin.saveAllPages(true)) {
+			return;
+		}
 
 		final IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
 		final IStructuredSelection selection= resolveSelection(dwindow);
@@ -305,4 +310,5 @@ public abstract class ExecutionAction extends Action {
 			display.beep();
 		}
 	}
+	
 }

@@ -42,6 +42,9 @@ public class RelaunchLastAction extends Action implements IWorkbenchWindowAction
 		if (recent == null) {
 			Display.getCurrent().beep();
 		} else {
+			if (!DebugUIPlugin.saveAllPages(true)) {
+				return;
+			}
 			BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 				public void run() {
 					RelaunchActionDelegate.relaunch(recent);

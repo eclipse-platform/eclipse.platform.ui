@@ -1535,5 +1535,25 @@ public static Object createExtension(final IConfigurationElement element, final 
 			System.out.println();
 		}
 	}
+	
+	/**
+	 * Save all dirty editors of all the workbench pages.
+	 * Returns whether the operation succeeded.
+	 * 
+	 * @param confirm whether to prompt for saving
+	 */
+	protected static boolean saveAllPages(boolean confirm) {
+		IWorkbench wb = getActiveWorkbenchWindow().getWorkbench();
+		IWorkbenchWindow[] windows = wb.getWorkbenchWindows();
+		for (int i = 0; i < windows.length; i++) {
+			IWorkbenchPage[] pages = windows[i].getPages();
+			for (int j = 0; j < pages.length; j++) {
+				if (!pages[j].saveAllEditors(confirm)) {
+					return false;
+				};
+			}
+		}
+		return true;
+	}	
 }
 
