@@ -40,6 +40,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
 	 * Returns whether this action should be enabled given the selection.
 	 */
 	public boolean shouldEnable(IStructuredSelection selection) {
+		if (selection.size() != 1)
+			return false;
 		IMarker marker = (IMarker) selection.getFirstElement();
 		if (marker == null)
 			return false;

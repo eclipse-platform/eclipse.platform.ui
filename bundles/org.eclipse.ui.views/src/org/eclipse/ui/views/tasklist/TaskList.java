@@ -603,6 +603,14 @@ public class TaskList extends ViewPart {
 	 * Contributes actions to the pop-up menu.
 	 */
 	void fillContextMenu(IMenuManager menu) {
+		// update enabled state for actions that aren't updated in selectionChanged
+		IStructuredSelection selection = (IStructuredSelection) getSelection();
+		markCompletedAction.setEnabled(
+			markCompletedAction.shouldEnable(selection));
+		resolveMarkerAction.setEnabled(
+			resolveMarkerAction.shouldEnable(selection));
+		
+		// add the actions to the menu
 		menu.add(newTaskAction);
 		menu.add(gotoTaskAction);
 		menu.add(new Separator());
@@ -1133,8 +1141,6 @@ public class TaskList extends ViewPart {
 			removeTaskAction.setEnabled(false);
 			gotoTaskAction.setEnabled(false);
 			propertiesAction.setEnabled(false);
-			markCompletedAction.setEnabled(false);
-			resolveMarkerAction.setEnabled(false);
 			return;
 		};
 
@@ -1175,11 +1181,6 @@ public class TaskList extends ViewPart {
 				}
 			}
 		}
-
-		markCompletedAction.setEnabled(
-			markCompletedAction.shouldEnable(selection));
-		resolveMarkerAction.setEnabled(
-			resolveMarkerAction.shouldEnable(selection));
 	}
 
 	/* (non-Javadoc)
