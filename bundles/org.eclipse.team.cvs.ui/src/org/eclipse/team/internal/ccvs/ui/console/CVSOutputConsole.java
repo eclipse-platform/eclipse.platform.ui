@@ -86,27 +86,28 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		showOnMessage = CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE);
 		showOnError = CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_ERROR);	
 		document = new ConsoleDocument();
-		
-		// Ensure that initialization occurs in the ui thread
-		CVSUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-			public void run() {
-				commandStream = newMessageStream();
-				errorStream = newMessageStream();
-				messageStream = newMessageStream();
-				// install colors
-				commandColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR);
-				commandStream.setColor(commandColor);
-				messageColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_MESSAGE_COLOR);
-				messageStream.setColor(messageColor);
-				errorColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_ERROR_COLOR);
-				errorStream.setColor(errorColor);
-				// install font
-				setFont(JFaceResources.getFontRegistry().get(ICVSUIConstants.PREF_CONSOLE_FONT));
-				CVSProviderPlugin.getPlugin().setConsoleListener(CVSOutputConsole.this);
-				CVSUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(CVSOutputConsole.this);
-			}
-		});
+		CVSProviderPlugin.getPlugin().setConsoleListener(CVSOutputConsole.this);
+		CVSUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(CVSOutputConsole.this);
 		showConsole();
+	}
+	
+	/*
+	 * Initialize thre streams of the console. Must be 
+	 * called from the UI thread.
+	 */
+	private void initializeStreams() {
+		commandStream = newMessageStream();
+		errorStream = newMessageStream();
+		messageStream = newMessageStream();
+		// install colors
+		commandColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR);
+		commandStream.setColor(commandColor);
+		messageColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_MESSAGE_COLOR);
+		messageStream.setColor(messageColor);
+		errorColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_ERROR_COLOR);
+		errorStream.setColor(errorColor);
+		// install font
+		setFont(JFaceResources.getFontRegistry().get(ICVSUIConstants.PREF_CONSOLE_FONT));
 	}
 	
 	/* (non-Javadoc)
@@ -118,7 +119,8 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		//	Ensure that initialization occurs in the ui thread
 		CVSUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
-				JFaceResources.getFontRegistry().addListener(CVSOutputConsole.this);	
+				JFaceResources.getFontRegistry().addListener(CVSOutputConsole.this);
+				initializeStreams();
 				dump();
 			}
 		});
