@@ -292,9 +292,6 @@ public class DefaultLabelProvider implements ILabelProvider {
 				}
 			}
 		}
-		if (expression.isObsolete()) {
-			result.append(DebugUIMessages.getString("DefaultLabelProvider.14")); //$NON-NLS-1$
-		}
 		if (!expression.isEnabled()) {
 			result.append(DebugUIMessages.getString("DefaultLabelProvider.15")); //$NON-NLS-1$
 		}

@@ -36,7 +36,6 @@ public class WatchExpression implements IWatchExpression {
 	protected IDebugTarget fDebugTarget;
 	protected IDebugElement fCurrentContext;
 	private boolean fEnabled= true;
-	private boolean fObsolete= false;
 	private boolean fPending= false;
 	
 	/**
@@ -89,15 +88,11 @@ public class WatchExpression implements IWatchExpression {
 	 */
 	public void setExpressionContext(IDebugElement context) {
 		fCurrentContext= context;
-		setObsolete(false);
 		if (context == null) {
 			setResult(null);
 			return;
 		}
 		if (!isEnabled()) {
-			if (fResult != null) {
-				setObsolete(true);
-			}
 			return;
 		}
 		
@@ -236,24 +231,6 @@ public class WatchExpression implements IWatchExpression {
 			return new String[0];
 		}
 		return fResult.getErrorMessages();
-	}
-
-	/**
-	 * @see org.eclipse.debug.core.model.IWatchExpression#isObsolete()
-	 */
-	public boolean isObsolete() {
-		return fObsolete;
-	}
-	
-	/**
-	 * Sets the obsolete state of this expression.
-	 * 
-	 * @param obsolete whether or not this expression should be
-	 * 		flagged as obsolete
-	 */
-	protected void setObsolete(boolean obsolete) {
-		fObsolete= obsolete;
-		watchExpressionChanged();
 	}
 
 }

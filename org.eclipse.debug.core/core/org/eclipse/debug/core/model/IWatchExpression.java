@@ -81,13 +81,5 @@ public interface IWatchExpression extends IErrorReportingExpression {
 	 * @param enabled whether this expression should be enabled
 	 */
 	public void setEnabled(boolean enabled);
-	/**
-	 * Returns whether this expression's value is obsolete. An expression is
-	 * obsolete if it has a value, is disabled, and then has a new
-	 * context set.
-	 * 
-	 * @return whether this expression's value is obsolete
-	 */
-	public boolean isObsolete();
 
 }
