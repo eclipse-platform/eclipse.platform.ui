@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions;
 
+import org.eclipse.debug.ui.actions.*;
+
 
 /**
  * Retargettable breakpoint action.

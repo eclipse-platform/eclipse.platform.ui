@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.actions;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.actions.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.ISelectionListener;
@@ -69,7 +70,8 @@ public class RetargetRunToLineAction extends RetargetAction {
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#canPerformAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
 	protected boolean canPerformAction(Object target, ISelection selection,	IWorkbenchPart part) {
-		return targetElement != null;
+		return targetElement != null &&
+			((IRunToLineTarget)target).canRunToLine(part, selection, targetElement);
 	}
 	
 	/* (non-Javadoc)

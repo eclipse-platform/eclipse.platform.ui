@@ -8,33 +8,36 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.actions;
+package org.eclipse.debug.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * An adapter to support breakpoint creation/deletion for an active part.
- * The debug platform provides retargettable actions for toggling line breakpoints,
- * method breakpoints, and watchpoints. Debugger implementations provide debug model
- * specific targets for the global actions by contribuing an adapter of this type
- * to perform the actual breakpoint creation/removal.
+ * An adapter to support breakpoint creation/deletion for an active part
+ * or selection within an active part. The debug platform provides
+ * retargettable actions for toggling line breakpoints, method breakpoints,
+ * and watchpoints. A debug implementation can plug into the global actions
+ * by providing an adapter of this type on relevant parts and objects.
+ * The debug platform provides one command and keybinding for each breakpoint
+ * operation.
  * <p>
  * When a part is activated, a retargettable action asks the part
- * for its 'toggle breakpoint' adapter. If one exists, that adapter is
- * delegated to to perform 'toggle breakpoint' operations when the user
- * invokes an associated action. This allows the platform to provide one
- * command and keybinding for each 'toggle breakpoint' function that can be
- * shared by many debuggers.
+ * for its <code>IToggleBreakpointTarget</code> adapter. If one exists,
+ * that adapter is delegated to to perform breakpoint operations when
+ * the user invokes an associated action. If an adapter does not exist
+ * for the part, the retargettable actions asks selected objects in the
+ * active part for an adapter. Generally, a debug implementation will
+ * provide breakpoint adapters for relevant editors and model objects. 
  * </p> 
  * <p>
  * EXPERIMENTAL
  * </p>
  * <p>
  * Clients are intended to implement this interface and provide instances as
- * an adapter on applicable parts (for example, editors) that support breakpoint
- * toggling.
+ * an adapter on applicable parts (for example, editors) and objects (for
+ * example, methods and fields) that support breakpoint toggling.
  * </p>
  * @since 3.0
  */
