@@ -47,9 +47,10 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 		DragSource dragSource = (DragSource) event.widget;
 		Control control = dragSource.getControl();
 		Shell shell = control.getShell();
-		IResource[] resources = getSelectedResources(typeMask, shell);
 		
 		if (event.detail == DND.DROP_MOVE) {
+			IResource[] resources = getSelectedResources(typeMask, shell);
+			
 			//delete the old elements
 			if (resources == null)
 				return;
@@ -61,6 +62,8 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 				}
 			}
 		} else if (event.detail == DND.DROP_TARGET_MOVE) {
+			IResource[] resources = getSelectedResources(typeMask, shell);
+
 			// file moved for us by OS, no need to delete the resources, just
 			// update the view
 			if (resources == null)
