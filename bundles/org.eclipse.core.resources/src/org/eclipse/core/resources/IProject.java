@@ -573,6 +573,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see #close(IProgressMonitor)
 	 * @see IResource#BACKGROUND_REFRESH
 	 * @see IResourceRuleFactory#modifyRule(IResource)
+	 * @since 3.1
 	 */
 	public void open(int updateFlags, IProgressMonitor monitor) throws CoreException;
 	

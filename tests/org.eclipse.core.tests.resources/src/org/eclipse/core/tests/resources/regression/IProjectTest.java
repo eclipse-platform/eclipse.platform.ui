@@ -13,8 +13,7 @@ package org.eclipse.core.tests.resources.regression;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.internal.builders.AbstractBuilderTest;
 import org.eclipse.core.tests.resources.usecase.SignaledBuilder;
 
@@ -237,5 +236,43 @@ public class IProjectTest extends AbstractBuilderTest {
 		} catch (CoreException e) {
 			fail("20.0", e);
 		}
+	}
+
+	/*
+	 * Create a project with resources already existing on disk and ensure
+	 * that the resources are automatically discovered and brought into the workspace.
+	 */
+	public void testBug78711() {
+		String name = getUniqueString();
+		IProject project = getWorkspace().getRoot().getProject(name);
+		IFolder folder = project.getFolder("folder");
+		IFile file1 = project.getFile("file1.txt");
+		IFile file2 = folder.getFile("file2.txt");
+
+		IPath location = Platform.getLocation().append(project.getFullPath());
+		location.toFile().mkdirs();
+
+		// create in file-system
+		try {
+			location.append(folder.getName()).toFile().mkdirs();
+			createFileInFileSystem(location.append(folder.getName()).append(file2.getName()));
+			createFileInFileSystem(location.append(file1.getName()));
+		} catch (CoreException e) {
+			fail("0.0", e);
+		}
+		
+		// create
+		try {
+			project.create(getMonitor());
+			project.open(getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		
+		// verify discovery
+		assertTrue("2.0", project.isAccessible());
+		assertTrue("2.1", folder.exists());
+		assertTrue("2.2", file1.exists());
+		assertTrue("2.3", file2.exists());
 	}
 }

@@ -265,10 +265,11 @@ public class Project extends Container implements IProject {
 				}
 				desc.setName(getName());
 				info.setDescription(desc);
-				//look for a description on disk
-				boolean hasSavedProject = getLocalManager().hasSavedProject(this);
+				// see if there potentially are already contents on disk
+				boolean hasContent = getLocalManager().locationFor(this).toFile().exists();
 				try {
-					if (hasSavedProject) {
+					// look for a description on disk
+					if (getLocalManager().hasSavedProject(this)) {
 						updateDescription();
 						//make sure the .location file is written
 						workspace.getMetaArea().writePrivateDescription(this);
@@ -284,8 +285,8 @@ public class Project extends Container implements IProject {
 				// set this after setting the description as #setDescription
 				// updates the stamp
 				info.setModificationStamp(IResource.NULL_STAMP);
-				//if a project already existed on disk, mark the project as having unknown children
-				if (hasSavedProject)
+				//if a project already had content on disk, mark the project as having unknown children
+				if (hasContent)
 					info.set(ICoreConstants.M_CHILDREN_UNKNOWN);
 				workspace.getSaveManager().requestSnapshot();
 			} catch (OperationCanceledException e) {
@@ -608,7 +609,7 @@ public class Project extends Container implements IProject {
 	 * during workspace restore (i.e., when you cannot do an operation)
 	 */
 	void internalSetDescription(IProjectDescription value, boolean incrementContentId) {
-		ProjectInfo info = (ProjectInfo)getResourceInfo(false, true);
+		ProjectInfo info = (ProjectInfo) getResourceInfo(false, true);
 		info.setDescription((ProjectDescription) value);
 		if (incrementContentId) {
 			info.incrementContentId();
