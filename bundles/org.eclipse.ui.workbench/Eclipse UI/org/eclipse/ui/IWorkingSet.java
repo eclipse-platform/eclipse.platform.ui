@@ -1,8 +1,14 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui;
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.runtime.IAdaptable;
 
@@ -18,23 +24,53 @@ import org.eclipse.core.runtime.IAdaptable;
  */
 public interface IWorkingSet {
 	/**
-	 * Returns the name of the working set.
-	 * 
-	 * @return	the name of the working set
-	 */
-	public String getName();
-	/**
 	 * Returns the elements that are contained in this working set.
 	 * 
 	 * @return	the working set's elements
 	 */
 	public IAdaptable[] getElements();
+
+	/**
+	 * Returns the working set id. Returns <code>null</code> if no
+	 * working set id has been set.
+	 * This is one of the ids defined by extensions of the 
+	 * org.eclipse.ui.workingSets extension point.
+	 * It is used by the workbench to determine the page to use in 
+	 * the working set edit wizard. The default resource edit page
+	 * is used if this value is <code>null</code>.
+	 * 
+	 * @return the working set id. May be <code>null</code>
+	 * @since 2.1 
+	 */
+	public String getId();
+
+	/**
+	 * Returns the name of the working set.
+	 * 
+	 * @return	the name of the working set
+	 */
+	public String getName();
+
 	/**
 	 * Sets the elements that are contained in this working set.
 	 * 
 	 * @param elements the elements to set in this working set
 	 */
 	public void setElements(IAdaptable[] elements);
+
+	/**
+	 * Sets the working set id.
+	 * This is one of the ids defined by extensions of the 
+	 * org.eclipse.ui.workingSets extension point.
+	 * It is used by the workbench to determine the page to use in 
+	 * the working set edit wizard. The default resource edit page
+	 * is used if this value is <code>null</code>.
+	 * 
+	 * @param id the working set id. May be <code>null</code>
+	 * @since 2.1 
+	 */
+	public void setId(String id);
+
 	/**
 	 * Sets the name of the working set. 
 	 * The working set name should be unique.

@@ -72,8 +72,8 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 		}
 		if (object instanceof WorkingSet) {
 			WorkingSet workingSet = (WorkingSet) object;
-			String objectPageId = workingSet.getEditPageId();
-			String pageId = getEditPageId();
+			String objectPageId = workingSet.getId();
+			String pageId = getId();
 			boolean pageIdEqual = (objectPageId == null && pageId == null) || (objectPageId != null && objectPageId.equals(pageId));
 			return workingSet.getName().equals(getName()) && workingSet.getElementsArray().equals(getElementsArray()) && pageIdEqual;
 		}
@@ -102,13 +102,13 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 		return name;
 	}
 	/**
-	 * Returns the id of the working set page that was used to
-	 * create the receiver.
+	 * Implements IWorkingSet
 	 * 
-	 * @return the id of the working set page.
+	 * @see org.eclipse.ui.IWorkingSet#getId()
 	 * @see org.eclipse.ui.dialogs.IWorkingSetPage
+	 * @since 2.1
 	 */
-	public String getEditPageId() {
+	public String getId() {
 		return editPageId;
 	}
 	/** 
@@ -238,13 +238,13 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 		}
 	}
 	/**
-	 * Sets the id of the working set page that was used to 
-	 * create the receiver.
+	 * Implements IWorkingSet
 	 * 
-	 * @param pageId the id of the working set page.
+	 * @see org.eclipse.ui.IWorkingSet#setId(String)
 	 * @see org.eclipse.ui.dialogs.IWorkingSetPage
+	 * @since 2.1
 	 */
-	public void setEditPageId(String pageId) {
+	public void setId(String pageId) {
 		editPageId = pageId;
 	}
 	/** 

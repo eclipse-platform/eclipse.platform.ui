@@ -1,15 +1,15 @@
-/*******************************************************************************
- * Copyright (c) 2002, 2003 International Business Machines Corp. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0 
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- * Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
- * activated and used by other components.
- * *****************************************************************************/
+/************************************************************************
+Copyright (c) 2002, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+	Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font 
+		should be activated and used by other components.
+*************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
@@ -199,8 +199,8 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 					resources.add(oldResource);
 				}
 			}
-			((WorkingSet) workingSet).setName(getWorkingSetName());
-			((WorkingSet) workingSet).setElements((IAdaptable[]) resources.toArray(new IAdaptable[resources.size()]));
+			workingSet.setName(getWorkingSetName());
+			workingSet.setElements((IAdaptable[]) resources.toArray(new IAdaptable[resources.size()]));
 		}
 	}	
 	/**

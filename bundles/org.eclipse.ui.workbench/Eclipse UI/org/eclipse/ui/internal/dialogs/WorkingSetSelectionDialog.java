@@ -1,11 +1,16 @@
-package org.eclipse.ui.internal.dialogs;
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- * Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
- * activated and used by other components.
- */
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
+Contributors:
+    IBM - Initial implementation
+	Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font 
+		should be activated and used by other components.
+*************************************************************************/
+package org.eclipse.ui.internal.dialogs;
 
 import java.util.*;
 import java.util.List;
@@ -59,10 +64,11 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 			}
 			super.dispose();
 		}
-		public Image getImage(Object workingSet) {
-			Assert.isTrue(workingSet instanceof WorkingSet);
+		public Image getImage(Object object) {
+			Assert.isTrue(object instanceof IWorkingSet);
+			IWorkingSet workingSet = (IWorkingSet) object; 
 			WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
-			WorkingSetDescriptor descriptor = registry.getWorkingSetDescriptor(((WorkingSet) workingSet).getEditPageId());
+			WorkingSetDescriptor descriptor = registry.getWorkingSetDescriptor(workingSet.getId());
 			
 			if (descriptor == null) {
 				return null;
@@ -78,9 +84,10 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 			}
 			return icon;
 		}
-		public String getText(Object workingSet) {
-			Assert.isTrue(workingSet instanceof WorkingSet);
-			return ((IWorkingSet) workingSet).getName();
+		public String getText(Object object) {
+			Assert.isTrue(object instanceof IWorkingSet);
+			IWorkingSet workingSet = (IWorkingSet) object; 
+			return workingSet.getName();
 		}
 	}
 
@@ -254,10 +261,10 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 	 */
 	private void editSelectedWorkingSet() {
 		IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();			
-		WorkingSet editWorkingSet = (WorkingSet) getSelectedWorkingSets().get(0);		
+		IWorkingSet editWorkingSet = (IWorkingSet) getSelectedWorkingSets().get(0);		
 		IWorkingSetEditWizard wizard = manager.createWorkingSetEditWizard(editWorkingSet);
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
-		WorkingSet originalWorkingSet = (WorkingSet) editedWorkingSets.get(editWorkingSet);
+		IWorkingSet originalWorkingSet = (IWorkingSet) editedWorkingSets.get(editWorkingSet);
 		boolean firstEdit = originalWorkingSet == null;
 		
 		// save the original working set values for restoration when selection 
@@ -271,7 +278,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		dialog.create();
 		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.WORKING_SET_EDIT_WIZARD);
 		if (dialog.open() == Window.OK) {		
-			editWorkingSet = (WorkingSet) wizard.getSelection();
+			editWorkingSet = (IWorkingSet) wizard.getSelection();
 			listViewer.update(editWorkingSet, null);
 		}
 		editedWorkingSets.put(editWorkingSet, originalWorkingSet);

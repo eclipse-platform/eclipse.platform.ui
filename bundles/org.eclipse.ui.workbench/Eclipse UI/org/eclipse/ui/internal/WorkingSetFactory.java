@@ -1,5 +1,5 @@
 /************************************************************************
-Copyright (c) 2002 IBM Corporation and others.
+Copyright (c) 2002, 2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -36,12 +36,12 @@ public class WorkingSetFactory implements IElementFactory {
 
 		WorkingSet workingSet = new WorkingSet(workingSetName, memento);
 		if (workingSetEditPageId != null) {
-			workingSet.setEditPageId(workingSetEditPageId);
+			workingSet.setId(workingSetEditPageId);
 		}
 		else {
 			// working sets created with builds 20020418 and 20020419 will not
 			// have an edit page id. fix this automatically.
-			workingSet.setEditPageId("org.eclipse.ui.resourceWorkingSetPage");
+			workingSet.setId("org.eclipse.ui.resourceWorkingSetPage");
 		}
 		return workingSet;
 	}
