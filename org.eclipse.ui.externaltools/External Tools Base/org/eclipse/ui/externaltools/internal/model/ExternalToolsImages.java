@@ -45,13 +45,8 @@ public class ExternalToolsImages {
 	private static URL ICON_BASE_URL= null;
 
 	static {
-		String pathSuffix = "icons/full/"; //$NON-NLS-1$
-			
-		try {
-			ICON_BASE_URL= new URL(ExternalToolsPlugin.getDefault().getDescriptor().getInstallURL(), pathSuffix);
-		} catch (MalformedURLException e) {
-			// do nothing
-		}
+		String pathSuffix = "icons/full/"; //$NON-NLS-1$	
+		ICON_BASE_URL= ExternalToolsPlugin.getDefault().getBundle().getEntry(pathSuffix);
 	}
 
 	// Use IPath and toOSString to build the names to ensure they have the slashes correct

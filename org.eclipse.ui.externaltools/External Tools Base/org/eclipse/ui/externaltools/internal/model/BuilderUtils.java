@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -166,7 +167,7 @@ public class BuilderUtils {
 	 * if an extension has been specified to explicitly declare the mapping.
 	 */
 	public static ILaunchConfigurationType getConfigurationDuplicationType(ILaunchConfiguration config) throws CoreException {
-		IExtensionPoint ep= ExternalToolsPlugin.getDefault().getDescriptor().getExtensionPoint(IExternalToolConstants.EXTENSION_POINT_CONFIGURATION_DUPLICATION_MAPS); 
+		IExtensionPoint ep= Platform.getExtensionRegistry().getExtensionPoint(IExternalToolConstants.PLUGIN_ID, IExternalToolConstants.EXTENSION_POINT_CONFIGURATION_DUPLICATION_MAPS); 
 		IConfigurationElement[] elements = ep.getConfigurationElements();
 		String sourceType= config.getType().getIdentifier();
 		String builderType= null;

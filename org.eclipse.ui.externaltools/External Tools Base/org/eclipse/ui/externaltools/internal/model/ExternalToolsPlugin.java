@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -26,6 +25,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 /**
  * External tools plug-in class
@@ -43,8 +44,8 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	/**
 	 * Create an instance of the External Tools plug-in.
 	 */
-	public ExternalToolsPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public ExternalToolsPlugin() {
+		super();
 		plugin = this;
 	}
 
@@ -96,7 +97,8 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	 */
 	public ImageDescriptor getImageDescriptor(String path) {
 		try {
-			URL installURL = getDescriptor().getInstallURL();
+			Bundle bundle= getDefault().getBundle();
+			URL installURL = bundle.getEntry("/"); //$NON-NLS-1$
 			URL url = new URL(installURL, path);
 			return ImageDescriptor.createFromURL(url);
 		} catch (MalformedURLException e) {
@@ -153,25 +155,18 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 		return display;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#createImageRegistry()
 	 */
 	protected ImageRegistry createImageRegistry() {
 		return ExternalToolsImages.initializeImageRegistry();
 	}
 
-	/**
-	 * @see org.eclipse.core.runtime.Plugin#startup()
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
-	public void startup() throws CoreException {
-		super.startup();
-	}
-
-	/**
-	 * @see org.eclipse.core.runtime.Plugin#shutdown()
-	 */
-	public void shutdown() throws CoreException {
-		super.shutdown();
+	public void stop(BundleContext context) throws Exception {
+		super.stop(context);
 		ExternalToolsImages.disposeImageDescriptorRegistry();
 	}
 }

@@ -65,7 +65,7 @@ class BuilderLabelProvider extends LabelProvider {
 		
 		private String getBuilderName(String builderID) {
 			// Get the human-readable name of the builder
-			IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderID);
+			IExtension extension = Platform.getExtensionRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderID);
 			String builderName;
 			if (extension != null) {
 				builderName = extension.getLabel();
