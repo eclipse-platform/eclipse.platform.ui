@@ -182,22 +182,20 @@ public IResource[] members(int memberFlags) throws CoreException {
 			ResourceInfo childInfo = child.getResourceInfo(phantom, false);
 			if (isTeamPrivateMember(getFlags(childInfo))) {
 				teamPrivateMemberCount++;
+				allMembers[i] = null;//null array entry so we know not to include it
 			}
 		}
 		// common case: nothing to exclude
 		if (teamPrivateMemberCount == 0) {
 			return allMembers;
 		}
-		// FIXME - investigate potential concurrency issues (2 calls to members)
 		// make a second pass to copy the ones we want
 		IResource[] reducedMembers = new IResource[allMembers.length - teamPrivateMemberCount];
 		int nextPosition = 0;
 		for (int i = 0; i < allMembers.length; i++) {
 			Resource child = (Resource) allMembers[i];
-			ResourceInfo childInfo = child.getResourceInfo(phantom, false);
-			if (!isTeamPrivateMember(getFlags(childInfo))) {
-				reducedMembers[nextPosition] = child;
-				nextPosition++;
+			if (child != null) {
+				reducedMembers[nextPosition++] = child;
 			}
 		}
 		return reducedMembers;
