@@ -11,7 +11,8 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.util.ArrayList;
-import org.eclipse.debug.internal.core.memory.MemoryByte;
+
+import org.eclipse.debug.core.model.MemoryByte;
 
 /**
  * @since 3.0
@@ -89,8 +90,8 @@ public class MemoryViewLine extends Object {
 			int bufferCounter = 0;
 			for (int i=0; i<fBytes.length; i++)
 			{ 
-				// if byte is valid
-				if ((fBytes[i].flags & MemoryByte.VALID) != MemoryByte.VALID)
+				// if byte is invalid
+				if (!fBytes[i].isValid())
 				{
 					if (paddedString == null)
 					{
@@ -139,7 +140,7 @@ public class MemoryViewLine extends Object {
 		boolean available = true;
 		for (int i=start; i<end; i++)
 		{	
-			if ((fBytes[i].flags & MemoryByte.VALID) != MemoryByte.VALID)
+			if (!fBytes[i].isValid())
 			{	
 				available = false;
 				break;
@@ -156,7 +157,7 @@ public class MemoryViewLine extends Object {
 			fByteArray = new byte[fBytes.length];
 			for (int i=0; i<fBytes.length; i++)
 			{
-				fByteArray[i] = fBytes[i].value;
+				fByteArray[i] = fBytes[i].getValue();
 			}			
 		}
 		
@@ -170,7 +171,7 @@ public class MemoryViewLine extends Object {
 		
 		for (int i=start; i<end; i++)
 		{
-			ret[j] = fBytes[i].value;
+			ret[j] = fBytes[i].getValue();
 			j++;
 		}
 		return ret;
@@ -196,18 +197,20 @@ public class MemoryViewLine extends Object {
 			
 		for (int i=0; i<fBytes.length; i++)
 		{
-			if ((fBytes[i].flags & MemoryByte.VALID) != (oldMemory[i].flags & MemoryByte.VALID))
+			// turn off unknown bit
+			fBytes[i].setUnknown(false);
+			
+			if ((fBytes[i].getFlags() & MemoryByte.VALID) != (oldMemory[i].getFlags() & MemoryByte.VALID))
 			{
-				fBytes[i].flags |= MemoryByte.CHANGED;
+				fBytes[i].setChanged(true);
 				continue;
 			}
 				
-			if (((fBytes[i].flags & MemoryByte.VALID) == MemoryByte.VALID) && 
-					((oldMemory[i].flags & MemoryByte.VALID) == MemoryByte.VALID))
+			if (fBytes[i].isValid() && oldMemory[i].isValid())
 			{
-				if (fBytes[i].value != oldMemory[i].value)
+				if (fBytes[i].getValue() != oldMemory[i].getValue())
 				{
-					fBytes[i].flags |= MemoryByte.CHANGED;
+					fBytes[i].setChanged(true);
 				}
 			}
 		}
@@ -230,7 +233,7 @@ public class MemoryViewLine extends Object {
 			
 		for (int i=0; i<fBytes.length; i++)
 		{
-			fBytes[i].flags = oldMemory[i].flags;
+			fBytes[i].setFlags(oldMemory[i].getFlags());
 		}		
 	}
 	
@@ -258,13 +261,14 @@ public class MemoryViewLine extends Object {
 	
 	public boolean isRangeChange(int offset, int endOffset)
 	{	
-		byte ret = fBytes[offset].flags;
+		byte ret = fBytes[offset].getFlags();
 		for (int i=offset; i<=endOffset; i++)
 		{
-			ret |= fBytes[i].flags;
+			ret |= fBytes[i].getFlags();
 		}
 		
-		if ((ret&MemoryByte.CHANGED) == MemoryByte.CHANGED) {
+		if ((ret&MemoryByte.CHANGED) == MemoryByte.CHANGED &&
+			 (ret&MemoryByte.UNKNOWN) != MemoryByte.UNKNOWN) {
 			return true;
 		}
 		return false;
@@ -275,8 +279,8 @@ public class MemoryViewLine extends Object {
 		for (int i=0; i<fBytes.length; i++)
 		{
 			// unset the change bit
-			if ((fBytes[i].flags & MemoryByte.CHANGED) == MemoryByte.CHANGED)
-				fBytes[i].flags ^= MemoryByte.CHANGED;
+			if (fBytes[i].isChanged())
+				fBytes[i].setChanged(false);
 		}
 	}
 	

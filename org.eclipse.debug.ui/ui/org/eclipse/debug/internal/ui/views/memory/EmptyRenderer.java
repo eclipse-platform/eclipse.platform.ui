@@ -12,7 +12,8 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
-import org.eclipse.debug.internal.core.memory.MemoryByte;
+
+import org.eclipse.debug.core.model.MemoryByte;
 
 /**
  * When a MemoryViewTab is created without a renderer defined, use

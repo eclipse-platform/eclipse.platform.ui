@@ -15,7 +15,7 @@ import java.math.BigInteger;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.internal.core.memory.MemoryByte;
+import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -72,9 +72,8 @@ public class MemoryViewCellModifier implements ICellModifier
 			for (int i=offset; i<end; i++)
 			{
 				MemoryByte oneByte = line.getByte(i);
-//				if (((oneByte.flags & MemoryByte.VALID) != MemoryByte.VALID) || 
-//					((oneByte.flags & MemoryByte.READONLY) == MemoryByte.READONLY))
-				if ((oneByte.flags & MemoryByte.READONLY) == MemoryByte.READONLY)
+
+				if (oneByte.isReadonly())
 				{
 					canModify = false;
 				}

@@ -13,7 +13,6 @@ package org.eclipse.debug.core.model;
 import java.math.BigInteger;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.internal.core.memory.MemoryByte;
 
 /**
  * Represents a memory block.

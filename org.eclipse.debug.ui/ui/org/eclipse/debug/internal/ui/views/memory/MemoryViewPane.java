@@ -603,4 +603,12 @@ public class MemoryViewPane extends AbstractMemoryViewPane {
 			fPrintViewTabAction.setEnabled(false);
 		}		
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.memory.AbstractMemoryViewPane#emptyFolder()
+	 */
+	protected void emptyFolder() {
+		super.emptyFolder();
+		updateToolBarActionsEnablement();
+		fSelectionProvider.setSelection(new StructuredSelection(new Object[0]));
+	}
 }

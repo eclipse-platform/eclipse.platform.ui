@@ -609,7 +609,7 @@ public class ViewTabCursorManager
 	 * Hook up context menu with the cursor.
 	 * This is needed when user RMC at cursor.  Without this the context
 	 * menu activation will not be detected by the cursor
-	 * @return 
+	 * @return created context menu
 	 */
 	private Menu createContextMenu()
 	{
@@ -835,7 +835,7 @@ public class ViewTabCursorManager
 	}
 	
 	/**
-	 * @return
+	 * @return number of columns
 	 */
 	private int getNumCol() {
 		

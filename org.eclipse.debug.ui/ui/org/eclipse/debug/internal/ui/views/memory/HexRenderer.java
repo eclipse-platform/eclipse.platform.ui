@@ -11,7 +11,8 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
-import org.eclipse.debug.internal.core.memory.MemoryByte;
+
+import org.eclipse.debug.core.model.MemoryByte;
 
 
 /**
@@ -33,9 +34,9 @@ public class HexRenderer extends AbstractMemoryRenderer implements IFixedLengthO
 		
 		for (int i=0; i<data.length; i++)
 		{
-			if ((data[i].flags & MemoryByte.VALID) != 0)
+			if (data[i].isValid())
 			{
-				strBuffer.append(new String(convertByteToCharArray(data[i].value)));
+				strBuffer.append(new String(convertByteToCharArray(data[i].getValue())));
 			}
 			else
 			{

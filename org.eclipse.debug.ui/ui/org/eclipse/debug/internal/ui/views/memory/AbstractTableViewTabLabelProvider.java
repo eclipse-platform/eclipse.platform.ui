@@ -11,7 +11,8 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
-import org.eclipse.debug.internal.core.memory.MemoryByte;
+
+import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jface.viewers.ITableLabelProvider;

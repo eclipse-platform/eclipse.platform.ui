@@ -1062,4 +1062,12 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		}
         return null;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.memory.AbstractMemoryViewPane#emptyFolder()
+	 */
+	protected void emptyFolder() {
+		super.emptyFolder();
+		updateToolBarActionsEnablement();
+		fSelectionProvider.setSelection(new StructuredSelection(new Object[0]));
+	}
 }

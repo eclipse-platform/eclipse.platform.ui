@@ -12,7 +12,7 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
 
-import org.eclipse.debug.internal.core.memory.MemoryByte;
+import org.eclipse.debug.core.model.MemoryByte;
 
 
 
@@ -51,7 +51,7 @@ public class ASCIIRenderer extends AbstractTextRenderer{
 		// undo the replacement of 1's to 0's.
 		for (int i=0; i<bytes.length; i++)
 		{
-			if (bytes[i] == 1 && currentValues[i].value == 0)
+			if (bytes[i] == 1 && currentValues[i].getValue() == 0)
 			{
 				bytes[i] = 0;
 			}
@@ -76,15 +76,15 @@ public class ASCIIRenderer extends AbstractTextRenderer{
 		// Replace all null with 1's
 		for (int i=0; i<data.length; i++){
 			copy[i] = new RendererMemoryByte();
-			if (data[i].value == 0)
+			if (data[i].getValue() == 0)
 			{
-				copy[i].value = 1;
+				copy[i].setValue((byte)1);
 			}
 			else
 			{
-				copy[i].value = data[i].value;
+				copy[i].setValue(data[i].getValue());
 			}
-			copy[i].flags = data[i].flags;
+			copy[i].setFlags(data[i].getFlags());
 		}
 		
 		return super.getString(renderingId, address, copy, paddedStr);

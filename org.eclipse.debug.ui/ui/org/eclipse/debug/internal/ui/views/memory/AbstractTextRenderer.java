@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.views.memory;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 
-import org.eclipse.debug.internal.core.memory.MemoryByte;
+import org.eclipse.debug.core.model.MemoryByte;
 
 
 /**
@@ -43,7 +43,7 @@ abstract public class AbstractTextRenderer extends AbstractMemoryRenderer implem
 			boolean invalid = false;
 			for (int i=0; i<data.length; i++)
 			{
-				if ((data[i].flags & MemoryByte.VALID) == 0)
+				if (!data[i].isValid())
 				{
 					invalid = true;
 					break;
@@ -63,7 +63,7 @@ abstract public class AbstractTextRenderer extends AbstractMemoryRenderer implem
 			byte byteArray[] = new byte[data.length];
 			for (int i=0; i<byteArray.length; i++)
 			{
-				byteArray[i] = data[i].value; 
+				byteArray[i] = data[i].getValue(); 
 			}
 
 			return new String(byteArray, fCodePage);

@@ -26,7 +26,7 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockExtensionRetrieval;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.core.memory.MemoryByte;
+import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -66,8 +66,7 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 	{
 		protected MByte(byte value, byte flags)
 		{
-			this.value = value;
-			this.flags = flags;
+			super(value, flags);
 		}
 		
 		protected MByte()
@@ -273,8 +272,8 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 				for (int i=0; i<numBytes; i++)
 				{
 					MByte tmp = new MByte();
-					tmp.value = 0;
-					tmp.flags |= MemoryByte.READONLY;
+					tmp.setValue((byte)0);
+					tmp.setReadonly(true);
 					memoryBuffer[i] = tmp;
 				}
 				
@@ -283,8 +282,8 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 				for (int i=0; i<memory.length; i++)
 				{
 					MByte tmp = new MByte();
-					tmp.value = memory[i];
-					tmp.flags |= MemoryByte.VALID;
+					tmp.setValue(memory[i]);
+					tmp.setValid(true);
 					memoryBuffer[j] = tmp;
 					j++;
 				}
@@ -318,6 +317,8 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 				flags |= MemoryByte.READONLY;
 				newBuffer.add(new MByte(value, flags));
 			}
+			
+			memoryBuffer = (MemoryByte[])newBuffer.toArray(new MemoryByte[newBuffer.size()]);
 			
 		}
 		
@@ -373,31 +374,28 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 				j++)
 			{
 				
-				byte changeFlag = memoryBuffer[j].flags;
+				byte changeFlag = memoryBuffer[j].getFlags();
 				if (manageDelta)
 				{
 					// turn off both change and unchanged bits to make sure that
 					// the change bits returned by debug adapters do not take
 					// any effect
 					
+					changeFlag |= MemoryByte.UNKNOWN;
+					
 					changeFlag |= MemoryByte.CHANGED;
 					changeFlag ^= MemoryByte.CHANGED;
-					
-					changeFlag |= MemoryByte.UNCHANGED;
-					changeFlag ^= MemoryByte.UNCHANGED;
 				}
 				
-				MByte newByteObj = new MByte(memoryBuffer[j].value, changeFlag);
+				MByte newByteObj = new MByte(memoryBuffer[j].getValue(), changeFlag);
 				memory[k] =  newByteObj;
 				k++;
 				
 				
 				if (!manageDelta)
 				{
-					// if byte is not changed nor unchanged, we do not currently have 
-					// history for it.
-					if ((memoryBuffer[j].flags & MemoryByte.CHANGED) == 0 &&
-						(memoryBuffer[j].flags & MemoryByte.UNCHANGED) == 0)
+					// If the byte is marked as unknown, the line is not monitored
+					if (memoryBuffer[j].isUnknown())
 					{
 						isMonitored = false;
 					}
@@ -482,8 +480,8 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 		
 		for (int i=0; i<memoryBuffer.length; i++){
 			memoryBuffer[i] = new MByte();
-			memoryBuffer[i].value = 0;
-			memoryBuffer[i].flags |= MemoryByte.READONLY;
+			memoryBuffer[i].setValue((byte)0);
+			memoryBuffer[i].setReadonly(true);
 		}
 		return memoryBuffer;
 	}
@@ -553,8 +551,8 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 				for (int i=0; i<memory.length; i++)
 				{
 					MByte tmp = new MByte();
-					tmp.value = memory[i];
-					tmp.flags |= MemoryByte.VALID;
+					tmp.setValue(memory[i]);
+					tmp.setValid(true);
 					newMemory.add(tmp);
 				}
 			}
@@ -593,16 +591,15 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 				MemoryByte oldByte = lineToCheck.getByte(i%fViewTab.getBytesPerLine());
 				
 				// if a byte becomes available or unavailable
-				if ((newByte.flags & MemoryByte.VALID)!= (oldByte.flags & MemoryByte.VALID))
+				if ((newByte.getFlags() & MemoryByte.VALID)!= (oldByte.getFlags() & MemoryByte.VALID))
 				{
 					refreshNeeded = true;
 					break;
 				}
-				if (((newByte.flags & MemoryByte.VALID) == MemoryByte.VALID) && 
-						((oldByte.flags & MemoryByte.VALID)==MemoryByte.VALID))
+				if (newByte.isValid() && oldByte.isValid())
 				{
 					// compare value if both bytes are available
-					if (newByte.value != oldByte.value)
+					if (newByte.getValue() != oldByte.getValue())
 					{
 						refreshNeeded = true;
 						break;
