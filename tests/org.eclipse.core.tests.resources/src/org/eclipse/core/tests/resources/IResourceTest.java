@@ -15,6 +15,7 @@ import java.util.*;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.*;
@@ -995,14 +996,14 @@ public void testExists() {
 }
 /**
  * Performs black box testing of the following method:
- *     IPath getLocalLocation()
+ *     IPath getLocation()
  */
-public void testGetLocalLocation() {
+public void testGetLocation() {
 	if (true)
 		return;
 	noSideEffects = true;
 	Object[][] inputs = new Object[][] {interestingResources};
-	new TestPerformer("IResourceTest.testGetLocalLocation") {
+	new TestPerformer("IResourceTest.testGetLocation") {
 		public boolean shouldFail(Object[] args, int count) {
 			return false;
 		}
@@ -1027,6 +1028,139 @@ public void testGetLocalLocation() {
 		}
 	}
 	.performTest(inputs);
+}
+/**
+ * Performs black box testing of the following method:
+ *     IPath getRawLocation()
+ */
+public void testGetRawLocation() {
+	IProject project = getWorkspace().getRoot().getProject("Project");
+	IFolder topFolder = project.getFolder("TopFolder");
+	IFile topFile = project.getFile("TopFile");
+	IFile deepFile = topFolder.getFile("DeepFile");
+	IResource[] allResources = new IResource[] {project, topFolder, topFile, deepFile};
+	
+	//non existing project
+	assertNull("2.0", project.getRawLocation());
+	
+	//resources in non-existing project
+	assertNull("2.1", topFolder.getRawLocation());
+	assertNull("2.2", topFile.getRawLocation());
+	assertNull("2.3", deepFile.getRawLocation());
+	
+	ensureExistsInWorkspace(allResources, true);
+	//open project
+	assertNull("2.0", project.getRawLocation());
+	//resources in open project
+	assertEquals("2.1", Platform.getLocation().append(topFolder.getFullPath()), topFolder.getRawLocation());
+	assertEquals("2.2", Platform.getLocation().append(topFile.getFullPath()), topFile.getRawLocation());
+	assertEquals("2.3", Platform.getLocation().append(deepFile.getFullPath()), deepFile.getRawLocation());
+	
+	try {
+		project.close(getMonitor());
+	} catch (CoreException e) {
+		fail("1.99", e);
+	}
+	//closed project
+	assertNull("3.0", project.getRawLocation());
+	//resource in closed project
+	assertEquals("3.1", Platform.getLocation().append(topFolder.getFullPath()), topFolder.getRawLocation());
+	assertEquals("3.2", Platform.getLocation().append(topFile.getFullPath()), topFile.getRawLocation());
+	assertEquals("3.3", Platform.getLocation().append(deepFile.getFullPath()), deepFile.getRawLocation());
+	
+	IPath projectLocation = getRandomLocation();
+	IPath folderLocation = getRandomLocation();
+	IPath fileLocation = getRandomLocation();
+	IPath variableLocation = getRandomLocation();
+	final String variableName = "IResourceTest_VariableName";
+	IPathVariableManager varMan = getWorkspace().getPathVariableManager();
+	try {
+		varMan.setValue(variableName, variableLocation);
+		project.open(getMonitor());
+		IProjectDescription description = project.getDescription();
+		description.setLocation(projectLocation);
+		project.move(description, IResource.NONE, getMonitor());
+		
+		//open project not in default location
+		assertEquals("4.0", projectLocation, project.getRawLocation());
+		//resource in open project not in default location
+		assertEquals("4.1", projectLocation.append(topFolder.getProjectRelativePath()), topFolder.getRawLocation());
+		assertEquals("4.2", projectLocation.append(topFile.getProjectRelativePath()), topFile.getRawLocation());
+		assertEquals("4.3", projectLocation.append(deepFile.getProjectRelativePath()), deepFile.getRawLocation());
+
+		project.close(getMonitor());
+
+		//closed project not in default location
+		assertEquals("5.0", projectLocation, project.getRawLocation());
+		//resource in closed project not in default location
+		assertEquals("5.1", projectLocation.append(topFolder.getProjectRelativePath()), topFolder.getRawLocation());
+		assertEquals("5.2", projectLocation.append(topFile.getProjectRelativePath()), topFile.getRawLocation());
+		assertEquals("5.3", projectLocation.append(deepFile.getProjectRelativePath()), deepFile.getRawLocation());
+
+		project.open(getMonitor());
+		ensureDoesNotExistInWorkspace(topFolder);
+		ensureDoesNotExistInWorkspace(topFile);
+		createFileInFileSystem(fileLocation);
+		folderLocation.toFile().mkdirs();
+		topFolder.createLink(folderLocation, IResource.NONE, getMonitor());
+		topFile.createLink(fileLocation, IResource.NONE, getMonitor());
+		ensureExistsInWorkspace(deepFile, true);
+		
+		//linked file
+		assertEquals("6.0", fileLocation, topFile.getRawLocation());
+		//linked folder
+		assertEquals("6.1", folderLocation, topFolder.getRawLocation());
+		//resource below linked folder
+		assertEquals("6.2", folderLocation.append(deepFile.getName()), deepFile.getRawLocation());
+		
+		project.close(getMonitor());
+		
+		//linked file in closed project (should default to project location)
+		assertEquals("7.0", projectLocation.append(topFile.getProjectRelativePath()), topFile.getRawLocation());
+		//linked folder in closed project
+		assertEquals("7.1", projectLocation.append(topFolder.getProjectRelativePath()), topFolder.getRawLocation());
+		//resource below linked folder in closed project
+		assertEquals("7.3", projectLocation.append(deepFile.getProjectRelativePath()), deepFile.getRawLocation());
+		
+		project.open(getMonitor());
+		IPath variableFolderLocation = new Path(variableName).append("/VarFolderName");
+		IPath variableFileLocation = new Path(variableName).append("/VarFileName");
+		ensureDoesNotExistInWorkspace(topFolder);
+		ensureDoesNotExistInWorkspace(topFile);
+		createFileInFileSystem(varMan.resolvePath(variableFileLocation));
+		varMan.resolvePath(variableFolderLocation).toFile().mkdirs();
+		topFolder.createLink(variableFolderLocation, IResource.NONE, getMonitor());
+		topFile.createLink(variableFileLocation, IResource.NONE, getMonitor());
+		ensureExistsInWorkspace(deepFile, true);
+
+		//linked file with variable
+		assertEquals("8.0", variableFileLocation, topFile.getRawLocation());
+		//linked folder with variable
+		assertEquals("8.1", variableFolderLocation, topFolder.getRawLocation());
+		//resource below linked folder with variable
+		assertEquals("8.3", varMan.resolvePath(variableFolderLocation).append(deepFile.getName()), deepFile.getRawLocation());
+		
+		project.close(getMonitor());
+
+		//linked file in closed project with variable
+		assertEquals("9.0", projectLocation.append(topFile.getProjectRelativePath()), topFile.getRawLocation());
+		//linked folder in closed project with variable
+		assertEquals("9.1", projectLocation.append(topFolder.getProjectRelativePath()), topFolder.getRawLocation());
+		//resource below linked folder in closed project with variable
+		assertEquals("9.3", projectLocation.append(deepFile.getProjectRelativePath()), deepFile.getRawLocation());
+	} catch (CoreException e) {
+		fail("99.99", e);
+	} finally {
+		try {
+			getWorkspace().getRoot().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
+			varMan.setValue(variableName, null);
+		} catch (CoreException e) {
+		}
+		Workspace.clear(projectLocation.toFile());
+		Workspace.clear(folderLocation.toFile());
+		Workspace.clear(fileLocation.toFile());
+		Workspace.clear(variableLocation.toFile());
+	}
 }
 public void testGetModificationStamp() {
 	// cleanup auto-created resources
@@ -1533,9 +1667,6 @@ public void testRefreshWithMissingParent() throws CoreException {
  *     isTeamPrivateMember() and setTeamPrivateMember(boolean)
  */
 public void testTeamPrivateMember() {
-	// FIXME: enable this test when team private members are enabled.
-	if (true)
-		return;
 	IWorkspaceRoot root = getWorkspace().getRoot();
 	IProject project = root.getProject("Project");
 	IFolder folder = project.getFolder("folder"); 
