@@ -11,14 +11,27 @@
  	<meta http-equiv="Pragma" content="no-cache">
  	<meta http-equiv="Expires" content="-1">
 	<title>Search</title>
-	<link rel="stylesheet" TYPE="text/css" HREF="toc.css" TITLE="nav">
-    <link rel="stylesheet" TYPE="text/css" HREF="search.css" TITLE="sea">
-	<base target="MainFrame">
+	<link rel="stylesheet" TYPE="text/css" HREF="help.css" TITLE="nav">
+ 	<base target="MainFrame">
 	<script language="JavaScript" src="toc.js"></script>
+	
+	<script language="JavaScript">
+	function adjustMargins(title)
+	{
+		// little change for mozilla margins
+		if (isMozilla)
+		{
+			var ul = document.body.childNodes;
+			for (var i=0; i<ul.length; i++)
+				if (ul[i].tagName == "UL")
+					ul[i].style.marginLeft = -18;
+		}
+	}
+	</script>
 </head>
 
 
-<body style="background-color: Window;" >
+<body onload="adjustMargins()" >
  
 <%
 	// Generate the results

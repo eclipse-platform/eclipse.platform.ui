@@ -15,8 +15,7 @@
 	<title>Links</title>
 	<base target="MainFrame">
 	<script language="JavaScript" src="toc.js"></script>
-    <link rel="stylesheet" TYPE="text/css" HREF="search.css" TITLE="sea">
-    <link rel="stylesheet" TYPE="text/css" HREF="toc.css" TITLE="nav">
+    <link rel="stylesheet" TYPE="text/css" HREF="help.css" TITLE="sea">
 
 <script language="JavaScript">
 function mouseover(img)

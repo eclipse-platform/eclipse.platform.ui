@@ -208,7 +208,12 @@ function onloadHandler(title)
 {
 	// little change for mozilla margins
 	if (isMozilla)
- 		getChildNode(document.body, "UL").style.marginLeft = -18;
+	{
+		var ul = document.body.childNodes;
+		for (var i=0; i<ul.length; i++)
+			if (ul[i].tagName == "UL")
+				ul[i].style.marginLeft = -18;
+	}
  		
 	parent.tocTitle=title;
 	if(parent.currentNavFrame=="toc")

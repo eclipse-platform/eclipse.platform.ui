@@ -8,7 +8,7 @@
 
 <html>
 <head>
-    <link rel="stylesheet" TYPE="text/css" HREF="toc.css" TITLE="nav">
+    <link rel="stylesheet" TYPE="text/css" HREF="help.css" TITLE="nav">
     <script language="JavaScript" src="toc.js"></script>
       
 <script language="JavaScript">
