@@ -700,14 +700,7 @@ public abstract class Command extends Request {
 	public final IStatus execute(GlobalOption[] globalOptions, LocalOption[] localOptions, ICVSResource[] arguments, 
 		ICommandOutputListener listener, IProgressMonitor pm) throws CVSException {
 		
-		// We assume that all the passed resources have the same root
-		Session openSession;
-		if (arguments.length == 0) {
-			// If there are no arguments to the command, assume that the command is rooted at the workspace root
-			openSession = Session.getOpenSession(CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()));
-		} else {
-			openSession = Session.getOpenSession(arguments[0]);
-		}
+		Session openSession = getOpenSession(arguments);
 		if (openSession == null) {
 			throw new CVSException(Policy.bind("Command.noOpenSession")); //$NON-NLS-1$
 		} else {
@@ -718,7 +711,17 @@ public abstract class Command extends Request {
 			}
 			return execute(openSession, globalOptions, localOptions, (String[]) stringArguments.toArray(new String[stringArguments.size()]), listener, pm);
 		}
-				
-		
+	}
+	
+	protected Session getOpenSession(ICVSResource[] arguments) {
+		// We assume that all the passed resources have the same root
+		Session openSession;
+		if (arguments == null || arguments.length == 0) {
+			// If there are no arguments to the command, assume that the command is rooted at the workspace root
+			openSession = Session.getOpenSession(CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()));
+		} else {
+			openSession = Session.getOpenSession(arguments[0]);
+		}
+		return openSession;
 	}
 }

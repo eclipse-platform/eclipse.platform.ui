@@ -43,6 +43,17 @@ public class Version extends RemoteCommand {
 
 	public IStatus execute(Session session, final ICVSRepositoryLocation location, IProgressMonitor monitor) throws CVSException {
 		
+		// The server may not support the version request
+		if (session == null) {
+			session = getOpenSession(null);
+		}
+		if ( ! session.isValidRequest(getRequestId())) {
+			IStatus status = new CVSStatus(IStatus.WARNING, CVSStatus.SERVER_IS_UNKNOWN, Policy.bind("Version.versionNotValidRequest", location.getHost()));//$NON-NLS-1$
+			((CVSRepositoryLocation)location).setServerPlaform(status);
+			CVSProviderPlugin.log(status);
+			return status;
+		}
+		
 		ICommandOutputListener listener = new ICommandOutputListener() {
 			public IStatus messageLine(String line, ICVSFolder commandRoot, IProgressMonitor monitor) {
 				String knownPrefix = null;
@@ -75,10 +86,6 @@ public class Version extends RemoteCommand {
 			}
 		};
 		
-		if (session == null) {
-			return execute(NO_GLOBAL_OPTIONS, NO_LOCAL_OPTIONS, new ICVSResource[] {}, listener, monitor);
-		} else {
-			return execute(session, NO_GLOBAL_OPTIONS, NO_LOCAL_OPTIONS, new String[] {}, listener, monitor);
-		}
+		return execute(session, NO_GLOBAL_OPTIONS, NO_LOCAL_OPTIONS, new String[] {}, listener, monitor);
 	}
 }
