@@ -63,7 +63,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	
 	private static List propertyChangeListeners = new ArrayList(5);
 	
-	private static Hashtable imageDescriptors = new Hashtable(20);
+	private Hashtable imageDescriptors = new Hashtable(20);
 	private static List disposeOnShutdownImages= new ArrayList();
 	
 	private RefreshSubscriberInputJob refreshJob;
@@ -140,6 +140,16 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	 * @return the singleton plugin instance
 	 */
 	public static TeamUIPlugin getPlugin() {
+		// If the instance has not been initialized, we will wait.
+		// This can occur if multiple threads try to load the plugin at the same
+		// time (see bug 33825: http://bugs.eclipse.org/bugs/show_bug.cgi?id=33825)
+		while (instance == null) {
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				// ignore and keep trying
+			}
+		}
 		return instance;
 	}
 	/**
@@ -252,6 +262,10 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	 * @param baseURL  the base URL for the image
 	 */
 	protected static void createImageDescriptor(String id, URL baseURL) {
+		// Delegate to the plugin instance to avoid concurrent class loading problems
+		getPlugin().privateCreateImageDescriptor(id, baseURL);
+	}
+	private void privateCreateImageDescriptor(String id, URL baseURL) {
 		URL url = null;
 		try {
 			url = new URL(baseURL, ICON_PATH + id);
@@ -268,6 +282,10 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	 * @return the image associated with the given ID
 	 */
 	public static ImageDescriptor getImageDescriptor(String id) {
+		// Delegate to the plugin instance to avoid concurrent class loading problems
+		return getPlugin().privateGetImageDescriptor(id);
+	}
+	private ImageDescriptor privateGetImageDescriptor(String id) {
 		if(! imageDescriptors.containsKey(id)) {
 			URL baseURL = TeamUIPlugin.getPlugin().getDescriptor().getInstallURL();
 			createImageDescriptor(id, baseURL);
@@ -363,6 +381,10 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	 * Dispose of images
 	 */
 	public static void disposeImages() {
+		// Delegate to the plugin instance to avoid concurrent class loading problems
+		getPlugin().privateDisposeImages();
+	}
+	private void privateDisposeImages() {
 		if (disposeOnShutdownImages != null) {
 			Iterator i= disposeOnShutdownImages.iterator();
 			while (i.hasNext()) {
