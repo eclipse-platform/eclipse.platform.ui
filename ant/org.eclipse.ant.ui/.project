@@ -12,6 +12,7 @@
 		<project>org.eclipse.debug.ui</project>
 		<project>org.eclipse.jdt.debug.ui</project>
 		<project>org.eclipse.jdt.launching</project>
+		<project>org.eclipse.jdt.ui</project>
 		<project>org.eclipse.jface.text</project>
 		<project>org.eclipse.ui</project>
 		<project>org.eclipse.ui.console</project>
