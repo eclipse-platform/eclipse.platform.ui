@@ -28,6 +28,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
@@ -490,29 +491,33 @@ public abstract class ResourceState {
 		progress = Policy.monitorFor(progress);
 		progress.beginTask(null, 100);
 		try {
-			IResource localResource = getLocal();
-			
 			// If remote does not exist then simply ensure no local resource exists.
 			if (!hasRemote(Policy.subMonitorFor(progress, 10))) {
-				deleteLocal(Policy.subMonitorFor(progress, 90));
+				if (hasLocal()) 
+					deleteLocal(Policy.subMonitorFor(progress, 90));
 				return;
+			}
+			
+			// Ensure that the required local folders exist
+			if (!hasLocal()) {
+				mkLocalDirs(Policy.subMonitorFor(progress, 5));
 			}
 			
 			// If the remote resource is a file, download the remote contents
 			if (getRemoteType() == IResource.FILE) {
-				download(Policy.subMonitorFor(progress, 90));
+				download(Policy.subMonitorFor(progress, 80));
 				return;
 			}
 			
 			// The remote resource is a container.
 			
 			// If the local resource is a file, we must remove it first.
-			if (localResource.getType() == IResource.FILE)
-				deleteLocal(Policy.subMonitorFor(progress, 5)); // May not exist.
-			
-			// If the local resource does not exist then it is created as a container.
-			if (!localResource.exists()) {
-				// Create a corresponding local directory.
+			if (getLocal().getType() == IResource.FILE) {
+				if (hasLocal()) {
+					deleteLocal(Policy.subMonitorFor(progress, 5)); // May not exist.
+				}
+				// change the local resource to a folder and create it
+				localResource = localResource.getParent().getFolder(new Path(localResource.getName()));
 				mkLocalDirs(Policy.subMonitorFor(progress, 5));
 			}
 			
@@ -523,11 +528,11 @@ public abstract class ResourceState {
 					return;
 				case IResource.DEPTH_ONE :
 					// If we are considering only the immediate members of the collection
-					getFolderShallow(Policy.subMonitorFor(progress, 90));
+					getFolderShallow(Policy.subMonitorFor(progress, 80));
 					return;
 				case IResource.DEPTH_INFINITE :
 					// We are going in deep.
-					getFolderDeep(Policy.subMonitorFor(progress, 90));
+					getFolderDeep(Policy.subMonitorFor(progress, 80));
 					return;
 				default :
 					// We have covered all the legal cases.
@@ -632,17 +637,20 @@ public abstract class ResourceState {
 	}
 	
 	/**
-	 * Make local directories matching the description of the local resource state.
-	 * XXX There has to be a better way.
+	 * Make the local directories matching the description of the local resource state.
 	 */
 	protected final void mkLocalDirs(IProgressMonitor progress) throws TeamException {	
 		try {
 			IResource resource = getLocal();
-			if (resource.getType() == IResource.FOLDER) {
+			if (resource.getType() == IResource.FILE) {
+				resource = resource.getParent();
+			}
+			if (resource.getType() == IResource.FOLDER && ! resource.exists()) {
 				((IFolder)resource).create(false /* force */, true /* make local */, progress);
 				// Mark the folders as having a base
 				storeState();
 			}
+
 		} catch (CoreException exception) {
 			// The creation failed.
 			throw TeamPlugin.wrapException(exception);
