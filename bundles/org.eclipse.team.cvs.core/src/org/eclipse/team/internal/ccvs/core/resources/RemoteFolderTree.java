@@ -24,6 +24,10 @@ public class RemoteFolderTree extends RemoteFolder  {
 	public RemoteFolderTree(RemoteFolder parent, ICVSRepositoryLocation repository, IPath repositoryRelativePath, CVSTag tag) {
 		super(parent, repository, repositoryRelativePath, tag);
 	}
+	
+	public RemoteFolderTree(RemoteFolder parent, String name, ICVSRepositoryLocation repository, IPath repositoryRelativePath, CVSTag tag) {
+		super(parent, name, repository, repositoryRelativePath, tag, false);
+	}
 
 	/* 
 	 * Override of inherited method which persists the children
