@@ -92,7 +92,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		data.widthHint = Math.max(widthHint, b.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		b.setLayoutData(data);
 		final Text formatToInsert = format;
-		b.addListener(SWT.MouseDown, new Listener() {
+		b.addListener(SWT.Selection, new Listener() {
 			public void handleEvent (Event event) {
 				addVariables(formatToInsert, supportedBindings);
 			}			
