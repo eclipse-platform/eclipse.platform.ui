@@ -9,10 +9,15 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.jface.dialogs.MessageDialog;
 
 public class RelaunchActionDelegate extends ControlActionDelegate {
 	
 	private static final String PREFIX= "relaunch_action.";
+	private static final String ERROR= "error.";
+	private static final String LAUNCH_PREFIX= "launch_action.";
+	private static final String LAUNCH_ERROR_TITLE= LAUNCH_PREFIX + ERROR + "title";
+	private static final String LAUNCH_ERROR_MESSAGE= LAUNCH_PREFIX + ERROR + "message";		
 
 	/**
 	 * @see ControlActionDelegate
@@ -44,7 +49,10 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 			ILauncher launcher= launch.getLauncher();
 			Object element= launch.getElement();
 			String launchMode= (mode == null) ? launch.getLaunchMode() : mode;
-			launcher.launch(new Object[]{element}, launchMode);
+			boolean ok= launcher.launch(new Object[]{element}, launchMode);
+			if (!ok) {
+				MessageDialog.openError(DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIUtils.getResourceString(LAUNCH_ERROR_TITLE), DebugUIUtils.getResourceString(LAUNCH_ERROR_MESSAGE));	
+			}				
 		}
 	}
 

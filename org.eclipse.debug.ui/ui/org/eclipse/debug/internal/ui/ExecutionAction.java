@@ -5,16 +5,26 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.util.*;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugStatusConstants;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -33,6 +43,9 @@ public abstract class ExecutionAction extends Action {
 	private final static String PREFIX= "execution_action.";
 	private final static String ERROR= "error.";
 	private final static String STATUS= PREFIX + "status";
+	private static final String LAUNCH_PREFIX= "launch_action.";
+	private static final String LAUNCH_ERROR_TITLE= LAUNCH_PREFIX + ERROR + "title";
+	private static final String LAUNCH_ERROR_MESSAGE= LAUNCH_PREFIX + ERROR + "message";	
 
 	/**
 	 * @see Action
@@ -62,7 +75,12 @@ public abstract class ExecutionAction extends Action {
 				if (launchers.length == 1 && selection != null) {
 					ILauncher launcher= (ILauncher)launchers[0];
 					Object[] elements= selection.toArray();
-					launcher.launch(elements, getMode());
+					boolean ok= launcher.launch(elements, getMode());
+					if (!ok) {
+						String string= DebugUIUtils.getResourceString(LAUNCH_ERROR_MESSAGE);
+						String message= MessageFormat.format(string, new String[] {launcher.getLabel()});
+						MessageDialog.openError(DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIUtils.getResourceString(LAUNCH_ERROR_TITLE), message);	
+					}					
 				} else {
 					// must choose a launcher
 					useWizard(launchers, dwindow.getShell(), selection);

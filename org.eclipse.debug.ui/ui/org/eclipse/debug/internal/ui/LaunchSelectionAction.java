@@ -5,9 +5,27 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.ILaunchManager;import org.eclipse.debug.core.ILauncher;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.Action;import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.jface.viewers.IStructuredSelection;import org.eclipse.jface.viewers.StructuredSelection;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.swt.widgets.Display;import org.eclipse.swt.widgets.Shell;import org.eclipse.ui.help.WorkbenchHelp;
+import java.text.MessageFormat;
+
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILauncher;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class LaunchSelectionAction extends Action {
+	
+	private static final String PREFIX= "launch_action.";
+	private static final String ERROR= PREFIX + "error.";
+	private static final String ERROR_TITLE= ERROR + "title";
+	private static final String ERROR_MESSAGE= ERROR + "message";
 
 	protected ILauncher fLauncher;
 	protected String fMode;
@@ -42,7 +60,12 @@ public class LaunchSelectionAction extends Action {
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
 				if (fElement != null || !DebugUIPlugin.getDefault().hasWizard(fLauncher)) {
-					fLauncher.launch(new Object[] {fElement}, fMode);
+					boolean ok= fLauncher.launch(new Object[] {fElement}, fMode);
+					if (!ok) {
+						String string= DebugUIUtils.getResourceString(ERROR_MESSAGE);
+						String message= MessageFormat.format(string, new String[] {fLauncher.getLabel()});
+						MessageDialog.openError(DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIUtils.getResourceString(ERROR_TITLE), message);	
+					}
 				} else {
 					Shell shell= DebugUIPlugin.getActiveWorkbenchWindow().getShell();
 					if (shell != null) {
