@@ -56,6 +56,10 @@ public final class KeySequenceText {
 	private KeyStroke temporaryStroke = null;
 	/** The text widget that is wrapped for this class. */
 	private final Text text;
+	/** The listener that makes sure that the text widget remains up-to-date
+	 * with regards to external modification of the text (e.g., cut & pasting).
+	 */
+	private final UpdateSequenceListener updateSequenceListener = new UpdateSequenceListener();
 
 	/**
 	 * Constructs an instance of <code>KeySequenceTextField</code> with the 
@@ -92,7 +96,7 @@ public final class KeySequenceText {
 		text.addTraverseListener(new FocusTrapListener());
 
 		// Add an internal modify listener.
-		text.addModifyListener(new UpdateSequenceListener());
+		text.addModifyListener(updateSequenceListener);
 	}
 
 	/**
@@ -121,7 +125,30 @@ public final class KeySequenceText {
 	public final KeySequence getKeySequence() {
 		return keySequence;
 	}
+	
+	/**
+	 * An accessor for the <code>KeyStroke</code> that is currently held as an
+	 * incomplete stroke (i.e., one without a natural key).
+	 * @return The incomplete stroke; may be <code>null</code> if there are no
+	 * incomplete strokes.
+	 */
+	final KeyStroke getTemporaryStroke() {
+		return temporaryStroke;
+	}
+	
+	/** 
+	 * An accessor for the underlying text widget used by this entry field.
+	 * @return The <code>Text</code> instance; never <code>null</code>.
+	 */
+	final Text getText() {
+		return text;
+	}
 
+	/**
+	 * Tests whether the current key sequence has a stroke with no natural key.
+	 * @return <code>true</code> is there is an incomplete stroke; 
+	 * <code>false</code> otherwise.
+	 */
 	public final boolean hasIncompleteStroke() {
 		return (temporaryStroke != null);
 	}
@@ -133,7 +160,7 @@ public final class KeySequenceText {
 	 * @return <code>true</code> if the key stroke has no natural key; 
 	 * <code>false</code> otherwise.
 	 */
-	private static final boolean isComplete(final KeyStroke keyStroke) {
+	static final boolean isComplete(final KeyStroke keyStroke) {
 		if (keyStroke != null) {
 			final NaturalKey naturalKey = keyStroke.getNaturalKey();
 
@@ -219,7 +246,6 @@ public final class KeySequenceText {
 		 * formatting
 		 */
 		final KeySequence dummySequence;
-
 		if (keySequence == null) {
 			if (temporaryStroke == null) {
 				dummySequence = KeySequence.getInstance();
@@ -233,9 +259,12 @@ public final class KeySequenceText {
 			}
 			dummySequence = KeySequence.getInstance(keyStrokes);
 		}
-
+		
+		// We need to update the text, but we don't need to synchronize.
+		text.removeModifyListener(updateSequenceListener);
 		text.setText(/* TODO "carbon".equals(SWT.getPlatform()) ? KeySupport.formatCarbon(dummySequence) : */
 		dummySequence.format());
+		text.addModifyListener(updateSequenceListener);
 
 		// Update the caret position.
 		text.setSelection(text.getText().length());
@@ -397,13 +426,13 @@ public final class KeySequenceText {
 				// The original sequence.
 				final KeySequence originalSequence = getKeySequence();
 				final List keyStrokes = new ArrayList(originalSequence.getKeyStrokes());
-				if (temporaryStroke != null) {
-					keyStrokes.add(temporaryStroke);
+				if (getTemporaryStroke() != null) {
+					keyStrokes.add(getTemporaryStroke());
 				}
 				final KeySequence sequenceFromStrokes = KeySequence.getInstance(keyStrokes);
 
 				// The new sequence drawn from the text.
-				final String contents = text.getText();
+				final String contents = getText().getText();
 				final KeySequence sequenceFromText = KeySequence.getInstance(contents);
 
 				// Check to see if they're the same.
@@ -413,7 +442,7 @@ public final class KeySequenceText {
 					while (strokeItr.hasNext()) {
 						// Make sure that it's a valid sequence.
 						if (!isComplete((KeyStroke) strokeItr.next())) {
-							setKeySequence(getKeySequence(), temporaryStroke);
+							setKeySequence(getKeySequence(), getTemporaryStroke());
 							return;
 						}
 					}
@@ -421,7 +450,7 @@ public final class KeySequenceText {
 				}
 			} catch (final ParseException e) {
 				// Abort any cut/paste-driven modifications
-				setKeySequence(getKeySequence(), temporaryStroke);
+				setKeySequence(getKeySequence(), getTemporaryStroke());
 			}
 		}
 	}
