@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
@@ -45,10 +44,9 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -56,8 +54,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
@@ -76,21 +72,16 @@ public class AntClasspathBlock {
 	private Button downButton;
 	private Button removeButton;
 
-	private AntClasspathLabelProvider labelProvider = new AntClasspathLabelProvider();
+	private AntClasspathLabelProvider labelProvider = new AntClasspathLabelProvider(this);
 	private Button addFolderButton;
 	private Button addJARButton;
 	private Button addExternalJARButton;
 	
-	private Button restoreButton;
+	private Button antHomeButton;
 	
-	private boolean localBlock= false;
-	
-	private Text antHome;
-	private Button browseAntHomeButton;
+	private String antHome;
 
 	private IDialogSettings dialogSettings = AntUIPlugin.getDefault().getDialogSettings();
-	
-	private boolean initializing = true;
 	
 	private IAntBlockContainer container;
 	
@@ -98,11 +89,27 @@ public class AntClasspathBlock {
 	
 	private IClasspathEntry currentParent;
 	
-	public AntClasspathBlock(boolean localClasspathBlock) {
-		super();
-		this.localBlock= localClasspathBlock; 
-	}
-
+	private SelectionListener selectionListener= new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			Object source = e.getSource();
+			if (source == addJARButton) {
+				addJars(treeViewer);
+			} else if (source == addExternalJARButton) {
+				addExternalJars(treeViewer);
+			} else if (source == addFolderButton) {
+				addFolder(treeViewer, AntPreferencesMessages.getString("AntClasspathBlock.1")); //$NON-NLS-1$
+			} else if (upButton == source) {
+					handleMoveUp();
+			} else if (downButton == source) {
+				handleMoveDown();
+			} else if (removeButton == source) {
+				remove(treeViewer);
+			} else if (antHomeButton == source) {
+				browseAntHome();
+			}
+		}
+	};
+	
 	public void setContainer(IAntBlockContainer container) {
 		this.container= container; 
 	}
@@ -110,95 +117,20 @@ public class AntClasspathBlock {
 	private void addButtonsToButtonGroup(Composite parent) {
 	
 		addJARButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.addJarButtonTitle")); //$NON-NLS-1$;
-		addJARButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				addJars(treeViewer);
-			}
-		});
+		addJARButton.addSelectionListener(selectionListener);
 	
 		addExternalJARButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.42")); //$NON-NLS-1$
-		addExternalJARButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				addExternalJars(treeViewer);
-			
-			}
-		});
+		addExternalJARButton.addSelectionListener(selectionListener);
 		addFolderButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.addFolderButtonTitle")); //$NON-NLS-1$;
-		addFolderButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				addFolder(treeViewer, AntPreferencesMessages.getString("AntClasspathBlock.1")); //$NON-NLS-1$
-			}
-		});
-
+		addFolderButton.addSelectionListener(selectionListener);
 		upButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.upButtonTitle")); //$NON-NLS-1$;
-		upButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleMoveUp();
-			}
-		});
+		upButton.addSelectionListener(selectionListener);
 		downButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.downButtonTitle")); //$NON-NLS-1$;
-		downButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleMoveDown();
-			}
-		});
+		downButton.addSelectionListener(selectionListener);
 		removeButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.removeButtonTitle")); //$NON-NLS-1$;
-		removeButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				remove(treeViewer);
-			}
-		});
-		if (localBlock) {
-			restoreButton= container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.54")); //$NON-NLS-1$
-			restoreButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent evt) {
-					restoreGlobalEntries();
-				}
-			});
-		}
-	}
-	
-	private void restoreGlobalEntries() {
-		GlobalClasspathEntriesSelectionDialog dialog= new GlobalClasspathEntriesSelectionDialog(treeViewer.getControl().getShell(), (AntClasspathLabelProvider)treeViewer.getLabelProvider());
-		ClasspathModel model= antContentProvider.getModel();
-		Object[] removed= model.getRemovedGlobalEntries();
-		Object[] elements= new Object[removed.length + 1];
-		elements[0]= model.getAntHomeEntry();
-		for (int i = 0; i < removed.length; i++) {
-			elements[i+1] = removed[i];
-		}
-		dialog.setElements(elements);
-		if (dialog.open() == Window.OK) {
-			Object[] result= dialog.getResult();
-			for (int i = 0; i < result.length; i++) {
-				GlobalClasspathEntries entry = (GlobalClasspathEntries)result[i];
-				if (entry.canBeRemoved()) {
-					if (dialog.addAsUnit()) {
-						model.setGlobalEntries(AntCorePlugin.getPlugin().getPreferences().getAdditionalClasspathEntries());
-						treeViewer.refresh();
-					} else {
-						IAntClasspathEntry[] entries= AntCorePlugin.getPlugin().getPreferences().getAdditionalClasspathEntries();
-						addEntries(entries);
-					}
-				} else {
-					if (dialog.addAsUnit()) {
-						initializeAntHome(AntCorePlugin.getPlugin().getPreferences().getAntHome(), false);
-					} else {
-						IAntClasspathEntry[] entries= AntCorePlugin.getPlugin().getPreferences().getAntHomeClasspathEntries();
-						addEntries(entries);
-					}
-				}
-			}	
-			updateContainer();
-		}
-	}
-
-	private void addEntries(IAntClasspathEntry[] entries) {
-		antContentProvider.setRefreshEnabled(false);
-		for (int j = 0; j < entries.length; j++) {
-			antContentProvider.add(ClasspathModel.USER, entries[j]);
-		}
-		antContentProvider.setRefreshEnabled(true);
+		removeButton.addSelectionListener(selectionListener);
+		antHomeButton= container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.30")); //$NON-NLS-1$
+		antHomeButton.addSelectionListener(selectionListener);
 	}
 	
 	/**
@@ -426,10 +358,8 @@ public class AntClasspathBlock {
 		treeViewer.setLabelProvider(labelProvider);
 		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				if (!initializing) {
-					tableSelectionChanged((IStructuredSelection) event.getSelection(),
-						(AntClasspathContentProvider) treeViewer.getContentProvider());
-				}
+				tableSelectionChanged((IStructuredSelection) event.getSelection(),
+					(AntClasspathContentProvider) treeViewer.getContentProvider());
 			}
 		});
 	}
@@ -437,63 +367,10 @@ public class AntClasspathBlock {
 	public void createContents(Composite parent) {
 		createClasspathTree(parent);
 		createButtonGroup(parent);
-
-		createAntHome(parent);
 		
 		tableSelectionChanged((IStructuredSelection)treeViewer.getSelection(), antContentProvider);
 	}
-
-	private void createAntHome(Composite top) {
-		Composite antHomeComposite = new Composite(top, SWT.NONE);
-		antHomeComposite.setLayoutData(
-			new GridData(
-				GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		antHomeComposite.setLayout(layout);
-		antHomeComposite.setFont(top.getFont());
-
-		Label antHomeLabel = new Label(antHomeComposite, SWT.NONE);
-		antHomeLabel.setFont(top.getFont());
-		antHomeLabel.setText(AntPreferencesMessages.getString("AntClasspathBlock.55"));  //$NON-NLS-1$
-		
-		antHome = new Text(antHomeComposite, SWT.BORDER);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-		antHome.setLayoutData(gd);
-		antHome.setFont(top.getFont());
-		antHome.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (initializing) {
-					return;
-				}
-				String path= antHome.getText();
-				if (path.length() > 0) {
-					File rootDir = new File(path, "lib"); //$NON-NLS-1$
-					if (rootDir.exists()) {
-						setAntHome(rootDir);
-					} else {
-						updateContainer();
-					}
-				} else {
-					updateContainer();
-				}
-			}
-		});
-
-		browseAntHomeButton = container.createPushButton(top, AntPreferencesMessages.getString("AntClasspathBlock.&Browse..._10")); //$NON-NLS-1$
-		browseAntHomeButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				browseAntHome();
-			}
-		});
-	}
 	
-	/* (non-Javadoc)
-	 * Method declared on AntPage.
-	 */
 	private void tableSelectionChanged(IStructuredSelection selection, AntClasspathContentProvider contentProvider) {
 		
 		boolean notEmpty = !selection.isEmpty();
@@ -501,20 +378,16 @@ public class AntClasspathBlock {
 		boolean first = false;
 		boolean last = false;
 		boolean canRemove= true;
-		boolean haveGlobalEntrySelected= false;
 		
 		while (selected.hasNext()) {
 			IClasspathEntry element = (IClasspathEntry) selected.next();
 			
 			if (element instanceof GlobalClasspathEntries) {
-				if (!((GlobalClasspathEntries)element).canBeRemoved() || !localBlock) {
+				if (!((GlobalClasspathEntries)element).canBeRemoved()) {
 					canRemove= false;
 				}
 			}
 			IClasspathEntry parent= element.getParent();
-			if (parent instanceof GlobalClasspathEntries) {
-				haveGlobalEntrySelected= ((GlobalClasspathEntries)parent).canBeRemoved();
-			}
 			Object[] childEntries = contentProvider.getChildren(parent);
 			List entries = Arrays.asList(childEntries);
 			int lastEntryIndex = entries.size() - 1;
@@ -526,28 +399,16 @@ public class AntClasspathBlock {
 			}
 		}
 
-		boolean canAdd= false;
-		if (localBlock) {
-			if (!notEmpty) {
-				canAdd= true;
-				currentParent= antContentProvider.getModel();
-			} else {
-				resolveCurrentParent(selection);
-				if (haveGlobalEntrySelected) {
-					canRemove= false;
-				}
-			}
-		} else {
-			canAdd= resolveCurrentParent(selection) && notEmpty;	
-		}
+		boolean canAdd= resolveCurrentParent(selection) && notEmpty;	
+		
 		if (addJARButton != null) {
 			addJARButton.setEnabled(canAdd);
 		}
 		addExternalJARButton.setEnabled(canAdd);
 		addFolderButton.setEnabled(canAdd);
 		removeButton.setEnabled(notEmpty && canRemove);
-		upButton.setEnabled((canRemove || localBlock) && notEmpty && !first);
-		downButton.setEnabled((canRemove || localBlock) && notEmpty && !last);
+		upButton.setEnabled((canRemove) && notEmpty && !first);
+		downButton.setEnabled((canRemove) && notEmpty && !last);
 		
 	}
 	
@@ -616,8 +477,17 @@ public class AntClasspathBlock {
 		if (path == null) {
 			return;
 		}
-	
-		antHome.setText(path); //the container will be updated as a side effect of this call
+		if (path.length() > 0) {
+			File rootDir = new File(path, "lib"); //$NON-NLS-1$
+			if (rootDir.exists()) {
+				antHome= path;
+				setAntHome(rootDir);
+			} else {
+				updateContainer();
+			}
+		} else {
+			updateContainer();
+		}
 		dialogSettings.put(IAntUIConstants.DIALOGSTORE_LASTANTHOME, path);
 	}
 		
@@ -643,17 +513,11 @@ public class AntClasspathBlock {
 	}
 	
 	public String getAntHome() {
-		String antHomeText= antHome.getText().trim();
-		if (antHomeText.length() == 0) {
-			antHomeText= ""; //$NON-NLS-1$
-		}
-		return antHomeText;
+		return antHome;
 	}
 	
-	public void initializeAntHome(String antHomeString, boolean setInitializing) {
-		this.initializing= setInitializing; //possible turn off the modifytext callback
-		antHome.setText(antHomeString);
-		this.initializing= false;
+	public void initializeAntHome(String antHomeString) {
+		antHome= antHomeString;
 	}
 	
 	public void setInput(ClasspathModel model) {
@@ -661,13 +525,9 @@ public class AntClasspathBlock {
 		validated= 0;
 	}
 	
-	public boolean isAntHomeEnabled() {
-		return antHome.isEnabled();
-	}
-	
 	public boolean validateAntHome() {
 		validated++;
-		return validateAntHome(antHome.getText()) != null;
+		return validateAntHome(antHome) != null;
 	}
 	
 	public Image getClasspathImage() {

@@ -15,13 +15,15 @@ import java.util.List;
 
 public class GlobalClasspathEntries extends AbstractClasspathEntry {
 	private String name;
+	private int type;
 	
 	private boolean canBeRemoved= true;
 	
-	public GlobalClasspathEntries(String name, IClasspathEntry parent, boolean canBeRemoved) {
+	public GlobalClasspathEntries(String name, IClasspathEntry parent, boolean canBeRemoved, int type) {
 		this.parent= parent;
 		this.name= name;
 		this.canBeRemoved= canBeRemoved;
+		this.type= type;
 	}
 		
 	public void addEntry(ClasspathEntry entry) {
@@ -54,5 +56,13 @@ public class GlobalClasspathEntries extends AbstractClasspathEntry {
 	 */
 	public void setEntries(List entries) {
 		childEntries= entries;
+	}
+	/**
+	 * @return Returns the type of this global classpath entry.
+	 * @see ClasspathModel#ANT_HOME
+	 * @see ClasspathModel#GLOBAL_USER
+	 */
+	public int getType() {
+		return type;
 	}
 }

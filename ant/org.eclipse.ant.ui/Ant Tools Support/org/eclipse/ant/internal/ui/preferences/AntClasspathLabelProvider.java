@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,13 @@ import org.eclipse.ui.PlatformUI;
  * Label provider for classpath elements
  */
 public class AntClasspathLabelProvider implements ILabelProvider, IColorProvider {
+
+
+	private AntClasspathBlock fBlock;
+	
+	public AntClasspathLabelProvider(AntClasspathBlock block) {
+		fBlock= block;
+	}
 
 	private Image getFolderImage() {
 		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
@@ -62,7 +69,13 @@ public class AntClasspathLabelProvider implements ILabelProvider, IColorProvider
 	 */
 	public String getText(Object element) {
 		if (element instanceof IAntClasspathEntry) {
-			return ((IAntClasspathEntry)element).getLabel();
+			StringBuffer label= new StringBuffer(((IAntClasspathEntry)element).getLabel());
+			if (element instanceof GlobalClasspathEntries && ((GlobalClasspathEntries)element).getType() == ClasspathModel.ANT_HOME) {
+				label.append(" ("); //$NON-NLS-1$
+				label.append(fBlock.getAntHome());
+				label.append(')');
+			}
+			return label.toString();
 		}
 		return element.toString();
 	}

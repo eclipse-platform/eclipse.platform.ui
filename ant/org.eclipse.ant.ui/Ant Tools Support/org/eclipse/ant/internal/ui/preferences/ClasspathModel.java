@@ -64,14 +64,14 @@ public class ClasspathModel extends AbstractClasspathEntry {
 			case ANT_HOME :
 				if (antHomeEntry == null) {
 					String name= AntPreferencesMessages.getString("ClasspathModel.2"); //$NON-NLS-1$
-					antHomeEntry= createGlobalEntry(new IAntClasspathEntry[0], name, false, true);
+					antHomeEntry= createGlobalEntry(new IAntClasspathEntry[0], name, false, true, ANT_HOME);
 				}
 				entryParent= antHomeEntry;
 				break;
 			case GLOBAL_USER :
 				if (userGlobalEntry == null) {
 					String name= AntPreferencesMessages.getString("ClasspathModel.3"); //$NON-NLS-1$
-					userGlobalEntry= createGlobalEntry(new IAntClasspathEntry[0], name, true, true);
+					userGlobalEntry= createGlobalEntry(new IAntClasspathEntry[0], name, true, true, GLOBAL_USER);
 				}
 				entryParent= userGlobalEntry;
 				break;
@@ -183,7 +183,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	public void setAntHomeEntries(IAntClasspathEntry[] entries) {
 		if (antHomeEntry == null) {
 			String name= AntPreferencesMessages.getString("ClasspathModel.2"); //$NON-NLS-1$
-			antHomeEntry= createGlobalEntry(entries, name, false, true);
+			antHomeEntry= createGlobalEntry(entries, name, false, true, ANT_HOME);
 		} else {
 			antHomeEntry.removeAll();
 			for (int i = 0; i < entries.length; i++) {
@@ -192,9 +192,9 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		}
 	}
 
-	private GlobalClasspathEntries createGlobalEntry(IAntClasspathEntry[] entries, String name, boolean canBeRemoved, boolean addEntry) {
+	private GlobalClasspathEntries createGlobalEntry(IAntClasspathEntry[] entries, String name, boolean canBeRemoved, boolean addEntry, int type) {
 		
-		GlobalClasspathEntries global= new GlobalClasspathEntries(name, this, canBeRemoved);
+		GlobalClasspathEntries global= new GlobalClasspathEntries(name, this, canBeRemoved, type);
 		
 		for (int i = 0; i < entries.length; i++) {
 			global.addEntry(new ClasspathEntry(entries[i], global));
@@ -209,7 +209,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	public void setGlobalEntries(IAntClasspathEntry[] entries) {
 		if (userGlobalEntry == null) {
 			String name= AntPreferencesMessages.getString("ClasspathModel.3"); //$NON-NLS-1$
-			userGlobalEntry= createGlobalEntry(entries, name, true, true);
+			userGlobalEntry= createGlobalEntry(entries, name, true, true, GLOBAL_USER);
 		} else {
 			userGlobalEntry.removeAll();
 			for (int i = 0; i < entries.length; i++) {
@@ -343,7 +343,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	public Object[] getRemovedGlobalEntries() {
 		if (userGlobalEntry == null) {
 			String name= AntPreferencesMessages.getString("ClasspathModel.3"); //$NON-NLS-1$
-			return new Object[] {createGlobalEntry(new IAntClasspathEntry[0], name, true, false)};
+			return new Object[] {createGlobalEntry(new IAntClasspathEntry[0], name, true, false, GLOBAL_USER)};
 		}
 		return new Object[] {};
 	}

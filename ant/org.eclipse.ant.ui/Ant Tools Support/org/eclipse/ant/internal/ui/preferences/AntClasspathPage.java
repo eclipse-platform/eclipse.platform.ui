@@ -31,7 +31,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class AntClasspathPage implements IAntBlockContainer {
 
-	private AntClasspathBlock antClasspathBlock= new AntClasspathBlock(false);
+	private AntClasspathBlock antClasspathBlock= new AntClasspathBlock();
 	private AntRuntimePreferencePage preferencePage;
 	private ClasspathModel model;
 	
@@ -69,8 +69,8 @@ public class AntClasspathPage implements IAntBlockContainer {
 		
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		createClasspathModel();
+		antClasspathBlock.initializeAntHome(prefs.getAntHome());
 		antClasspathBlock.setInput(model);
-		antClasspathBlock.initializeAntHome(prefs.getAntHome(), true);
 		
 		preferencePage.setErrorMessage(null);
 		preferencePage.setValid(true);
@@ -95,8 +95,8 @@ public class AntClasspathPage implements IAntBlockContainer {
 			additionalEntries= new IAntClasspathEntry[] {toolsEntry};
 		}
 		model.setGlobalEntries(additionalEntries);
+		antClasspathBlock.initializeAntHome(prefs.getDefaultAntHome());
 		antClasspathBlock.setInput(model);
-		antClasspathBlock.initializeAntHome(prefs.getDefaultAntHome(), false);
 		update();
 	}
 	
@@ -145,10 +145,8 @@ public class AntClasspathPage implements IAntBlockContainer {
 		}
 		setMessage(null);
 		setErrorMessage(null);
-		boolean valid= true;
-		if (antClasspathBlock.isAntHomeEnabled()) {
-			valid= antClasspathBlock.validateAntHome();
-		}
+		boolean valid= antClasspathBlock.validateAntHome();
+	
 		if (valid) {
 			valid= antClasspathBlock.validateToolsJAR();
 		}
