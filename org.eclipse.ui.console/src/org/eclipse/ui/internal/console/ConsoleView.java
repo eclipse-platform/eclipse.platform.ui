@@ -126,7 +126,8 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 */
 	protected void showPageRec(PageRec pageRec) {
         // don't show the page when pinned, unless this is the first console to be added
-        if (fPinned && fConsoleToPart.size() > 1) {
+        // or its the default page
+        if (pageRec.page != getDefaultPage() && fPinned && fConsoleToPart.size() > 1) {
             IConsole console = (IConsole)fPartToConsole.get(pageRec.part);
             if (!fStack.contains(console)) {
                 fStack.add(console);
@@ -390,7 +391,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * @see org.eclipse.ui.console.IConsoleView#display(org.eclipse.ui.console.IConsole)
 	 */
 	public void display(IConsole console) {
-	    if (fPinned) {
+	    if (fPinned && fActiveConsole != null) {
             return;
         }
 	    ConsoleWorkbenchPart part = (ConsoleWorkbenchPart)fConsoleToPart.get(console);
