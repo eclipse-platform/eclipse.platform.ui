@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ package org.eclipse.ant.internal.ui.antsupport;
 /*
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999, 2000 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999, 2003 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -88,7 +88,6 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.DefaultLogger;
-import org.apache.tools.ant.DemuxInputStream;
 import org.apache.tools.ant.DemuxOutputStream;
 import org.apache.tools.ant.Diagnostics;
 import org.apache.tools.ant.Main;
@@ -163,11 +162,13 @@ public class InternalAntRunner {
     /** 
      * Indicates whether to execute all targets that 
      * do not depend on failed targes(s)
+     * @since Ant 1.6.0
      */
     private boolean keepGoing= false;
 
     /** 
      * Indicates whether this build is to support interactive input 
+     * @since Ant 1.6.0
      */
     private boolean allowInput = true;
     
@@ -355,7 +356,7 @@ public class InternalAntRunner {
 			
 			addInputHandler(getCurrentProject());
 			
-			System.setIn(new DemuxInputStream(getCurrentProject()));
+			remapSystemIn();
 			System.setOut(new PrintStream(new DemuxOutputStream(getCurrentProject(), false)));
 			System.setErr(new PrintStream(new DemuxOutputStream(getCurrentProject(), true)));
 			
@@ -379,12 +380,16 @@ public class InternalAntRunner {
 			//as we currently have no means for querying from System.in for input.
 			//see bug 45484
 			if (allowInput && inputHandlerClassname != null) {
-				getCurrentProject().setDefaultInputStream(originalIn);
+				if (isVersionCompatible("1.6")) { //$NON-NLS-1$
+					getCurrentProject().setDefaultInputStream(originalIn);
+				}
 			}
 			
 			getCurrentProject().log(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Build_file__{0}_1"), new String[]{getBuildFileLocation()})); //$NON-NLS-1$
 			
-			getCurrentProject().setKeepGoingMode(keepGoing);
+			if (isVersionCompatible("1.6")) { //$NON-NLS-1$
+				getCurrentProject().setKeepGoingMode(keepGoing);
+			}
 			
 			parseBuildFile(getCurrentProject());
 			validateDefaultTarget();
@@ -430,6 +435,14 @@ public class InternalAntRunner {
 				out.close();
 			}
 		}
+	}
+	
+	private void remapSystemIn() {
+		if (!isVersionCompatible("1.6")) { //$NON-NLS-1$
+			return;
+		}
+		DemuxInputStreamSetter setter= new DemuxInputStreamSetter();
+		setter.remapSystemIn(getCurrentProject());
 	}
 	
 	private void validateDefaultTarget() {
@@ -727,12 +740,18 @@ public class InternalAntRunner {
 			setBuildFileLocation(args[0]);
 		}
 		
-		if (commands.remove("-k") || commands.remove("-keep-going")) { //$NON-NLS-1$ //$NON-NLS-2$
-			keepGoing= true;
-		} 
-		
-		if (commands.remove("-noinput")) { //$NON-NLS-1$
-			allowInput= false;
+		if (isVersionCompatible("1.6")) { //$NON-NLS-1$
+			if (commands.remove("-k") || commands.remove("-keep-going")) { //$NON-NLS-1$ //$NON-NLS-2$
+				keepGoing= true;
+			}
+			if (commands.remove("-noinput")) { //$NON-NLS-1$
+				allowInput= false;
+			}
+			args= getArgument(commands, "-lib"); //$NON-NLS-1$
+			if (args != null) {
+				logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.157"), Project.MSG_ERR); //$NON-NLS-1$
+				return false;
+			}
 		}
 		
 		args= getArgument(commands, "-find"); //$NON-NLS-1$
@@ -744,11 +763,6 @@ public class InternalAntRunner {
 			return false;
 		}
 		
-		args= getArgument(commands, "-lib"); //$NON-NLS-1$
-		if (args != null) {
-			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.157"), Project.MSG_ERR); //$NON-NLS-1$
-			return false;
-		}
 
 		if ((commands != null) && (!commands.isEmpty())) {
 			processUnrecognizedCommands(commands);
