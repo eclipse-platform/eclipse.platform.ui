@@ -10,7 +10,7 @@ import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.ui.util.*;
 import org.eclipse.help.internal.util.Logger;
-import org.eclipse.help.topics.ITopics;
+import org.eclipse.help.ITopic;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.*;
 import org.eclipse.help.internal.context.*;
@@ -76,7 +76,7 @@ public class DefaultHelp implements IHelp {
 		if (topic == null || topic.getHref() == null)
 			return;
 		// Do not start help view if documentaton is not available, display error
-		if (HelpSystem.getTopicsNavigationManager().getTopicsHrefs().size() <= 0) {
+		if (HelpSystem.getTopicsNavigationManager().getTopicsIDs().size() <= 0) {
 			ErrorUtil.displayErrorDialog(WorkbenchResources.getString("WW001"));
 			//Documentation is not installed.
 			return;
@@ -107,15 +107,15 @@ public class DefaultHelp implements IHelp {
 	/**
 	 * Display help.
 	 */
-	public void displayHelp(String topicsHref) {
-		displayHelp(topicsHref, null);
+	public void displayHelp(String topicsFileHref) {
+		displayHelp(topicsFileHref, null);
 	}
 	/**
 	 * Display help and selected specified topic.
 	 */
-	public void displayHelp(String topicsHref, String topicHref) {
+	public void displayHelp(String topicsFileHref, String topicHref) {
 		// Do not start help view if documentaton is not available, display error
-		if (HelpSystem.getTopicsNavigationManager().getTopicsHrefs().size() <= 0) {
+		if (HelpSystem.getTopicsNavigationManager().getTopicsIDs().size() <= 0) {
 			// There is no documentation
 			ErrorUtil.displayErrorDialog(WorkbenchResources.getString("WW001"));
 			//Documentation is not installed.
@@ -123,23 +123,23 @@ public class DefaultHelp implements IHelp {
 		}
 		// 1.0 nav support
 		// change topicshref to a href of one of a views
-		if (topicsHref != null) {
-			Collection hrefsCol = HelpSystem.getTopicsNavigationManager().getTopicsHrefs();
-			for (Iterator it = hrefsCol.iterator(); it.hasNext();) {
-				String newHref = (String) it.next();
-				if (newHref.indexOf(topicsHref) == 0
-					&& newHref.indexOf("..") == topicsHref.length()) {
-					topicsHref = newHref;
+		if (topicsFileHref != null) {
+			Collection idCol = HelpSystem.getTopicsNavigationManager().getTopicsIDs();
+			for (Iterator it = idCol.iterator(); it.hasNext();) {
+				String newFileHref = (String) it.next();
+				if (newFileHref.indexOf(topicsFileHref) == 0
+					&& newFileHref.indexOf("..") == topicsFileHref.length()) {
+					topicsFileHref = newFileHref;
 					break;
 				}
 			}
 		}
 		// eo 1.0 nav support
-		ITopics topics = HelpSystem.getTopicsNavigationManager().getTopics(topicsHref);
+		ITopic topics = HelpSystem.getTopicsNavigationManager().getTopics(topicsFileHref);
 		if (topics == null) {
 			// if topics href specified, but not found, log it
-			if (topicsHref != null && topicsHref.trim().length() != 0)
-				Logger.logWarning(WorkbenchResources.getString("WE008", topicsHref));
+			if (topicsFileHref != null && topicsFileHref.trim().length() != 0)
+				Logger.logWarning(WorkbenchResources.getString("WE008", topicsFileHref));
 			//Help Topics %1 are not installed.
 		}
 		EmbeddedHelpView helpView = getHelpView();

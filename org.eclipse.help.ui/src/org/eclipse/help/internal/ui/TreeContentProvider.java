@@ -3,8 +3,8 @@ package org.eclipse.help.internal.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.help.topics.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.help.*;
 /**
  * A basic tree content provider
  */
@@ -21,8 +21,6 @@ public class TreeContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object element) {
 		if (element instanceof ITopic) 
 			return ((ITopic) element).getSubtopics();
-		else if (element instanceof ITopics)
-			return ((ITopics)element).getTopics();
 		else
 			return null;
 	}
@@ -38,8 +36,6 @@ public class TreeContentProvider implements ITreeContentProvider {
 	public boolean hasChildren(Object element) {
 		if (element instanceof ITopic)
 			return ((ITopic) element).getSubtopics().length > 0;
-		else if (element instanceof ITopics)
-			return ((ITopics)element).getTopics().length > 0;
 		else
 			return false;
 	}

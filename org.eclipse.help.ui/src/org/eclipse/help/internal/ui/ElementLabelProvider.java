@@ -6,7 +6,6 @@ package org.eclipse.help.internal.ui;
 import java.util.Iterator;
 import org.eclipse.help.IHelpTopic;
 import org.eclipse.help.internal.ui.util.WorkbenchResources;
-import org.eclipse.help.topics.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -51,9 +50,6 @@ public class ElementLabelProvider extends LabelProvider {
 				ITopic[] children = null;
 				if (element instanceof ITopic)
 					children = ((ITopic)element).getSubtopics();
-				else if (element instanceof ITopics)
-					children = ((ITopics)element).getTopics();
-
 				if (children == null || children.length == 0)
 					return imgRegistry.get(IMAGE_TOPIC);
 			}

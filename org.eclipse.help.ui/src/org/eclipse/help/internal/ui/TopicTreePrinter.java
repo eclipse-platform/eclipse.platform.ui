@@ -10,7 +10,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.util.Logger;
 import org.eclipse.help.internal.ui.util.*;
-import org.eclipse.help.topics.ITopic;
+import org.eclipse.help.ITopic;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.*;

@@ -10,15 +10,13 @@ import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.contributions1_0.Contribution;
 import org.eclipse.help.internal.contributions1_0.InfoView;
 import org.eclipse.help.internal.ui.util.*;
-import org.eclipse.help.topics.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.help.*;
 /**
  * Help viewer based on the IE5 ActiveX component.
  */
 public class HTMLHelpViewer implements ISelectionChangedListener {
-	private final static String defaultSplash =
-		"/org.eclipse.help/" + WorkbenchResources.getString("splash_location");
 	private IBrowser webBrowser;
 	/**
 	 * HelpViewer constructor comment.
@@ -76,7 +74,7 @@ public class HTMLHelpViewer implements ISelectionChangedListener {
 			return;
 		// use the client locale to load the correct document
 		String locale = Locale.getDefault().toString();
-		if (input instanceof ITopic && !(input instanceof InfoView) || input instanceof String) {
+		if (input instanceof ITopic || input instanceof String) {
 			String url;
 			if(input instanceof ITopic){
 				ITopic topicElement = (ITopic) input;
@@ -99,21 +97,6 @@ public class HTMLHelpViewer implements ISelectionChangedListener {
 				url = url + "?lang=" + locale;
 			if (fragment != null)
 				url = url + fragment;
-			if (url.indexOf("http:") == -1) {
-				try {
-					url = (new URL(HelpSystem.getLocalHelpServerURL(), url)).toExternalForm();
-				} catch (MalformedURLException mue) {
-				}
-			}
-			webBrowser.navigate(url);
-		} else if (input instanceof ITopics) {
-			ITopics topics = (ITopics) input;
-			String url =
-				defaultSplash
-					+ "?title="
-					+ URLEncoder.encode(TString.getUnicodeNumbers(topics.getLabel()))
-					+ "&lang="
-					+ locale;
 			if (url.indexOf("http:") == -1) {
 				try {
 					url = (new URL(HelpSystem.getLocalHelpServerURL(), url)).toExternalForm();

@@ -6,7 +6,7 @@ package org.eclipse.help.internal.ui;
 import org.eclipse.help.internal.ui.util.WorkbenchResources;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.help.topics.ITopic;
+import org.eclipse.help.ITopic;
 /**
  * PrintTopicTree action
  */

@@ -5,8 +5,8 @@ package org.eclipse.help.internal.ui;
  */
 import java.util.*;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.topics.TopicsNavigationManager;
-import org.eclipse.help.topics.*;
+import org.eclipse.help.internal.topics.*;
+import org.eclipse.help.internal.contributions.xml1_0.HelpInfoView;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -15,6 +15,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.help.*;
 /**
  * Navigation Viewer.  Contains combo for InfoSet selection and Workbook for display
  * of views.
@@ -22,7 +23,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class NavigationViewer implements ISelectionProvider, IMenuListener {
 	private Composite contents;
 	private EmbeddedHelpView helpView;
-	private ArrayList topicsHrefs = new ArrayList();
+	private ArrayList topicsIDs = new ArrayList();
 	private Combo topics_Combo;
 	private TreeViewer viewer;
 	private Collection selectionChangedListeners = new ArrayList();
@@ -40,7 +41,7 @@ public class NavigationViewer implements ISelectionProvider, IMenuListener {
 	}
 	protected Control createControl(Composite parent) {
 		// Create a list of available Topics_
-		topicsHrefs.addAll(HelpSystem.getTopicsNavigationManager().getTopicsHrefs());
+		topicsIDs.addAll(HelpSystem.getTopicsNavigationManager().getTopicsIDs());
 		//
 		contents = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -60,20 +61,20 @@ public class NavigationViewer implements ISelectionProvider, IMenuListener {
 		);
 		topics_Combo.setLayoutData(gd);
 		TopicsNavigationManager navManager = HelpSystem.getTopicsNavigationManager();
-		for (int i = 0; i < topicsHrefs.size(); i++) {
-			topics_Combo.add(navManager.getTopicsLabel((String) topicsHrefs.get(i)));
+		for (int i = 0; i < topicsIDs.size(); i++) {
+			topics_Combo.add(navManager.getTopicsLabel((String) topicsIDs.get(i)));
 		}
 		topics_Combo.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				int index = ((Combo) e.widget).getSelectionIndex();
-				final String href = (String) topicsHrefs.get(index);
+				final String id = (String) topicsIDs.get(index);
 				// Switching to another infoset may be time consuming
 				// so display the busy cursor
 				BusyIndicator.showWhile(null, new Runnable() {
 					public void run() {
 						try {
-							ITopics selectedTopics =
-								HelpSystem.getTopicsNavigationManager().getTopics(href);
+							ITopic selectedTopics =
+								HelpSystem.getTopicsNavigationManager().getTopics(id);
 							setInput(selectedTopics);
 						} catch (Exception e) {
 						}
@@ -176,19 +177,22 @@ public class NavigationViewer implements ISelectionProvider, IMenuListener {
 	 *   of InfoView element and each of Infoset's children (InfoViews)
 	 */
 	public void setInput(Object input) {
-		if (input instanceof ITopics) {
+		if (input instanceof Topics || input instanceof HelpInfoView) {
 			// do nothing if asked to display the same infoset
 			if (input == getInput())
 				return;
-			ITopics topics = (ITopics) input;
-			int index = topicsHrefs.indexOf(topics.getHref());
+			int index;
+			if(input instanceof Topics)
+				index = topicsIDs.indexOf(((Topics)input).getTopicsID());
+			else
+				index = topicsIDs.indexOf(((HelpInfoView)input).getTopicsID());
 			if (index != -1)
 				topics_Combo.select(index);
 			// remove selection, so it is gray not blue;
 			topics_Combo.clearSelection();
 			viewer.setInput(input);
 			// update htmlViewer
-			setSelection(new StructuredSelection(topics));
+			setSelection(new StructuredSelection(input));
 		}
 	}
 	/**

@@ -7,7 +7,7 @@ import java.util.Iterator;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.ui.Actions.ShowHideAction;
 import org.eclipse.help.internal.ui.util.*;
-import org.eclipse.help.topics.*;
+import org.eclipse.help.internal.topics.Topics;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.help.*;
 /**
  * EmbeddedHelpView
  */
@@ -33,7 +34,7 @@ public class EmbeddedHelpView extends ViewPart {
 	protected float viewsWidthPercentage = 0.25f;
 	protected HTMLHelpViewer htmlViewer = null;
 	protected NavigationViewer navigationViewer = null;
-	private ITopics topicsToDisplay;
+	private ITopic topicsToDisplay;
 	private String topicHrefToDisplay;
 	private Action showHideAction;
 	private Action backAction;
@@ -70,7 +71,7 @@ public class EmbeddedHelpView extends ViewPart {
 			if (topicsToDisplay == null) {
 				// get first Topics available
 				Iterator topicsHrefsIt =
-					HelpSystem.getTopicsNavigationManager().getTopicsHrefs().iterator();
+					HelpSystem.getTopicsNavigationManager().getTopicsIDs().iterator();
 				if (topicsHrefsIt.hasNext()) {
 					String topicsHref = (String) topicsHrefsIt.next();
 					topicsToDisplay = HelpSystem.getTopicsNavigationManager().getTopics(topicsHref);
@@ -135,7 +136,7 @@ public class EmbeddedHelpView extends ViewPart {
 	/**
 	 * Show the specified infoset and (optional) topic
 	 */
-	public void displayHelp(ITopics topics, String topicHref) {
+	public void displayHelp(ITopic topics, String topicHref) {
 		navigationViewer.setInput(topics);
 		if (topicHref != null)
 			navigationViewer.setSelection(new StructuredSelection(topicHref));
@@ -266,9 +267,9 @@ public class EmbeddedHelpView extends ViewPart {
 	public void saveState(IMemento memento) {
 		try {
 			if (navigationViewer != null) {
-				ITopics topics = (ITopics) navigationViewer.getInput();
+				Topics topics = (Topics)navigationViewer.getInput();
 				if (topics != null)
-					memento.putString("topicsToDisplay", topics.getHref());
+					memento.putString("topicsToDisplay", topics.getTopicsID());
 				ISelection sel = navigationViewer.getSelection();
 				if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
 					Object selectedTopic = ((IStructuredSelection) sel).getFirstElement();
@@ -343,9 +344,9 @@ public class EmbeddedHelpView extends ViewPart {
 	}
 	/**
 	 * Gets the topicsToDisplay.
-	 * @return Returns a ITopics
+	 * @return Returns a ITopic
 	 */
-	public ITopics getTopicsToDisplay() {
+	public ITopic getTopicsToDisplay() {
 		return topicsToDisplay;
 	}
 
