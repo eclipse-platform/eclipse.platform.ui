@@ -140,6 +140,7 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IPer
 	/* (non-Javadoc)
 	 * Method declared on IPathEditorInput
 	 * @since 3.0
+	 * @issue consider using an internal adapter for IPathEditorInput rather than adding this as API
 	 */
 	public IPath getPath() {
 		return file.getLocation();
