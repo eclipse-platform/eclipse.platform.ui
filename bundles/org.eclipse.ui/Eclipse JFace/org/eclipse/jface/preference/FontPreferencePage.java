@@ -11,7 +11,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-
 public class FontPreferencePage
 	extends FieldEditorPreferencePage
 	implements IWorkbenchPreferencePage {
@@ -89,12 +88,9 @@ public class FontPreferencePage
 		Composite editorParent) {
 
 		//Initialize the preference store first
-		Font font = JFaceResources.getTextFont();
-		if (font != null) {
-			FontData[] data = font.getFontData();
-			if (data != null && data.length > 0)
-				PreferenceConverter.setDefault(getPreferenceStore(), preferenceName, data[0]);
-		}
+		FontData[] data = currentSetting.getFontData();
+		if (data != null && data.length > 0)
+			PreferenceConverter.setDefault(getPreferenceStore(), preferenceName, data[0]);
 
 		addField(new FontFieldEditor(preferenceName, title, editorParent));
 	}
@@ -113,9 +109,8 @@ public class FontPreferencePage
 	private void setRegistryValue(String preferenceName) {
 		String localeName = Locale.getDefault().toString();
 		String preferenceKey = localizedName(preferenceName, localeName);
-		String fontValue = getPreferenceStore().getString(preferenceKey);
 		FontData[] data = new FontData[1];
-		data[0] = StringConverter.asFontData(fontValue);
+		data[0] = PreferenceConverter.getFontData(getPreferenceStore(), preferenceKey);
 		JFaceResources.getFontRegistry().put(preferenceKey, data);
 	}
 
