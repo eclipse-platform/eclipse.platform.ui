@@ -137,7 +137,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 
 		if (configuration != null) {
 			if (fShowDialog) {
-				IStatus status = new Status(IStatus.INFO, IExternalToolConstants.PLUGIN_ID, IExternalToolConstants.STATUS_INIT_RUN_ANT, "", null);
+				IStatus status = new Status(IStatus.INFO, IExternalToolConstants.PLUGIN_ID, IExternalToolConstants.STATUS_INIT_RUN_ANT, "", null); //$NON-NLS-1$
 				DebugUITools.openLaunchConfigurationDialog(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), configuration, IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP, status);
 			} else {
 				if (targetAttribute != null) {
@@ -146,7 +146,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 						configuration= configuration.copy(newName);
 						((ILaunchConfigurationWorkingCopy) configuration).setAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, targetAttribute);
 					} catch (CoreException exception) {
-						reportError(MessageFormat.format("An exception occurred while launching {0}", new String[] {file.getName()}), exception);
+						reportError(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Exception_launching"), new String[] {file.getName()}), exception); //$NON-NLS-1$
 						return;
 					}
 				}

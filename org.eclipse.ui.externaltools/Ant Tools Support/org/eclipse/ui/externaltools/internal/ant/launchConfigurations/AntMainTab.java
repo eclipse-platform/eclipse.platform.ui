@@ -72,7 +72,7 @@ public class AntMainTab extends ExternalToolsMainTab {
 	 */
 	protected void createCaptureOutputComponent(Composite parent) {
 		captureOutputButton = new Button(parent, SWT.CHECK);
-		captureOutputButton.setText("Capture &output");
+		captureOutputButton.setText(AntLaunchConfigurationMessages.getString("AntMainTab.Capture_&output_1")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		captureOutputButton.setLayoutData(data);

@@ -557,17 +557,17 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 			return message.toString();
 		} else if (node instanceof TargetNode) {
 			TargetNode target = (TargetNode) node;
-			StringBuffer message= new StringBuffer("Name: ");
+			StringBuffer message= new StringBuffer(AntViewMessages.getString("AntView.Name___1")); //$NON-NLS-1$
 			message.append(target.getName());
 			String[] depends= target.getDependencies();
 			if (depends.length > 0 ) {
-				message.append(" Dependencies: ");
+				message.append(AntViewMessages.getString("AntView._Dependencies___2")); //$NON-NLS-1$
 				message.append(depends[0]); // Unroll the loop to avoid trailing comma
 				for (int i = 1; i < depends.length; i++) {
-					message.append(", ").append(depends[i]);
+					message.append(", ").append(depends[i]); //$NON-NLS-1$
 				}
 			}
-			message.append(" Description: ");
+			message.append(AntViewMessages.getString("AntView._Description___4")); //$NON-NLS-1$
 			String description= target.getDescription();
 			if (description == null || description.length() == 0) {
 				description= AntViewMessages.getString("AntView.(no_description)_9"); //$NON-NLS-1$
