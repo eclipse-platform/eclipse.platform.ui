@@ -16,10 +16,11 @@ package org.eclipse.ui.contexts;
 public interface IWorkbenchPartSiteContextSupport {
 
 	/**
-	 * Returns the mutable context activation service for the workbench part site.
+	 * Returns the mutable context activation service for the workbench part
+	 * site.
 	 * 
-	 * @return the mutable context activation service for the workbench part site.
-	 *         Guaranteed not to be <code>null</code>.
+	 * @return the mutable context activation service for the workbench part
+	 *         site. Guaranteed not to be <code>null</code>.
 	 */
 	IMutableContextActivationService getMutableContextActivationService();
 }

@@ -32,8 +32,10 @@ public abstract class AbstractContextActivationService
 		if (contextActivationServiceListeners == null)
 			contextActivationServiceListeners = new ArrayList();
 
-		if (!contextActivationServiceListeners.contains(contextActivationServiceListener))
-			contextActivationServiceListeners.add(contextActivationServiceListener);
+		if (!contextActivationServiceListeners
+			.contains(contextActivationServiceListener))
+			contextActivationServiceListeners.add(
+				contextActivationServiceListener);
 	}
 
 	protected void fireContextActivationServiceChanged(ContextActivationServiceEvent contextActivationServiceEvent) {
@@ -55,6 +57,7 @@ public abstract class AbstractContextActivationService
 			throw new NullPointerException();
 
 		if (contextActivationServiceListeners != null)
-			contextActivationServiceListeners.remove(contextActivationServiceListener);
+			contextActivationServiceListeners.remove(
+				contextActivationServiceListener);
 	}
 }

@@ -33,9 +33,7 @@ final class ContextContextBindingDefinition {
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(
-				object,
-				ContextContextBindingDefinition.class);
+			Util.assertInstance(object, ContextContextBindingDefinition.class);
 			ContextContextBindingDefinition contextContextBindingDefinition =
 				(ContextContextBindingDefinition) object;
 			String parentContextId =
@@ -47,9 +45,7 @@ final class ContextContextBindingDefinition {
 
 				if (contextContextBindingDefinitions2 == null) {
 					contextContextBindingDefinitions2 = new HashSet();
-					map.put(
-						parentContextId,
-						contextContextBindingDefinitions2);
+					map.put(parentContextId, contextContextBindingDefinitions2);
 				}
 
 				contextContextBindingDefinitions2.add(

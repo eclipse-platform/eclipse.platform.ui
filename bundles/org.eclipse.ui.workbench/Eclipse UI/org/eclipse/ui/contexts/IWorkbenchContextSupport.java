@@ -16,12 +16,12 @@ package org.eclipse.ui.contexts;
 public interface IWorkbenchContextSupport {
 
 	/**
-	 * Returns the context manager for the workbench.
+	 * Returns the compound context activation service for the workbench.
 	 * 
-	 * @return the context manager for the workbench. Guaranteed not to be
-	 *         <code>null</code>.
+	 * @return the compound context activation service for the workbench.
+	 *         Guaranteed not to be <code>null</code>.
 	 */
-	IContextManager getContextManager();
+	ICompoundContextActivationService getCompoundContextActivationService();
 
 	/**
 	 * Returns the context activation service for the workbench.
@@ -32,10 +32,10 @@ public interface IWorkbenchContextSupport {
 	IContextActivationService getContextActivationService();
 
 	/**
-	 * Returns the compound context activation service for the workbench.
+	 * Returns the context manager for the workbench.
 	 * 
-	 * @return the compound context activation service for the workbench.
-	 *         Guaranteed not to be <code>null</code>.
+	 * @return the context manager for the workbench. Guaranteed not to be
+	 *         <code>null</code>.
 	 */
-	ICompoundContextActivationService getCompoundContextActivationService();
+	IContextManager getContextManager();
 }

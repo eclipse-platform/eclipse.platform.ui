@@ -33,8 +33,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.activities.ICategory;
+import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
 /**
@@ -56,14 +56,16 @@ public class ActivityEnabler {
 	/**
 	 * Create a new instance.
 	 * 
-	 * @param activityManager the activity manager that will be used.
+	 * @param activityManager
+	 *            the activity manager that will be used.
 	 */
 	public ActivityEnabler(IWorkbenchActivitySupport activityManager) {
 		this.activitySupport = activityManager;
 	}
 
 	/**
-	 * @param categoryId the id to check.
+	 * @param categoryId
+	 *            the id to check.
 	 * @return whether all activities in the category are enabled.
 	 */
 	private boolean categoryEnabled(String categoryId) {
@@ -76,7 +78,8 @@ public class ActivityEnabler {
 	/**
 	 * Create the controls.
 	 * 
-	 * @param parent the parent in which to create the controls.
+	 * @param parent
+	 *            the parent in which to create the controls.
 	 * @return the composite in which the controls exist.
 	 */
 	public Control createControl(Composite parent) {
@@ -164,7 +167,8 @@ public class ActivityEnabler {
 	}
 
 	/**
-	 * @param categoryId the id to fetch.
+	 * @param categoryId
+	 *            the id to fetch.
 	 * @return all activity ids in the category.
 	 */
 	private Collection getCategoryActivities(String categoryId) {

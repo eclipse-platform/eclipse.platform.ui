@@ -22,9 +22,9 @@ final class Persistence {
 	final static String PACKAGE_BASE = "contexts"; //$NON-NLS-1$
 	final static String PACKAGE_FULL = "org.eclipse.ui.contexts"; //$NON-NLS-1$
 	final static String PACKAGE_PREFIX = "org.eclipse.ui"; //$NON-NLS-1$
+	final static String TAG_CHILD_CONTEXT_ID = "childContextId"; //$NON-NLS-1$		
 	final static String TAG_CONTEXT = "context"; //$NON-NLS-1$	
 	final static String TAG_CONTEXT_CONTEXT_BINDING = "contextContextBinding"; //$NON-NLS-1$		
-	final static String TAG_CHILD_CONTEXT_ID = "childContextId"; //$NON-NLS-1$		
 	final static String TAG_ID = "id"; //$NON-NLS-1$
 	final static String TAG_NAME = "name"; //$NON-NLS-1$	
 	final static String TAG_PARENT_CONTEXT_ID = "parentContextId"; //$NON-NLS-1$		

@@ -53,16 +53,6 @@ public final class CompoundContextActivationService
 		return Collections.unmodifiableSet(activeContextIds);
 	}
 
-	public void removeContextActivationService(IContextActivationService contextActivationService) {
-		if (contextActivationService == null)
-			throw new NullPointerException();
-
-		contextActivationServices.remove(contextActivationService);
-		contextActivationService.removeContextActivationServiceListener(
-			contextActivationServiceListener);
-		refreshActiveContextIds();
-	}
-
 	private void refreshActiveContextIds() {
 		Set activeContextIds = new HashSet();
 
@@ -76,6 +66,16 @@ public final class CompoundContextActivationService
 		}
 
 		setActiveContextIds(activeContextIds);
+	}
+
+	public void removeContextActivationService(IContextActivationService contextActivationService) {
+		if (contextActivationService == null)
+			throw new NullPointerException();
+
+		contextActivationServices.remove(contextActivationService);
+		contextActivationService.removeContextActivationServiceListener(
+			contextActivationServiceListener);
+		refreshActiveContextIds();
 	}
 
 	private void setActiveContextIds(Set activeContextIds) {

@@ -14,8 +14,8 @@ package org.eclipse.ui.contexts;
 import java.util.Set;
 
 /**
- * An instance of this interface allows clients to manage contexts, as
- * defined by the extension point <code>org.eclipse.ui.contexts</code>.
+ * An instance of this interface allows clients to manage contexts, as defined
+ * by the extension point <code>org.eclipse.ui.contexts</code>.
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
@@ -62,7 +62,7 @@ public interface IContextManager {
 	 *         <code>String</code>.
 	 */
 	Set getDefinedContextIds();
-	
+
 	/**
 	 * Returns the set of identifiers to enabled contexts.
 	 * <p>
@@ -75,7 +75,7 @@ public interface IContextManager {
 	 *         set is not empty, it is guaranteed to only contain instances of
 	 *         <code>String</code>.
 	 */
-	Set getEnabledContextIds();	
+	Set getEnabledContextIds();
 
 	/**
 	 * Unregisters an instance of <code>IContextManagerListener</code>

@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.activities.ws;
 
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.jface.viewers.LabelProvider;
-
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.NotDefinedException;

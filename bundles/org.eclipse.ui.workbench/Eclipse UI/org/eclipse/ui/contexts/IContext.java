@@ -53,17 +53,17 @@ public interface IContext extends Comparable {
 	/**
 	 * Returns the set of context context bindings for this instance.
 	 * <p>
-	 * This method will return all context context bindings for this
-	 * instance, whether or not this instance is defined.
+	 * This method will return all context context bindings for this instance,
+	 * whether or not this instance is defined.
 	 * </p>
 	 * <p>
 	 * Notification is sent to all registered listeners if this property
 	 * changes.
 	 * </p>
 	 * 
-	 * @return the set of context context bindings. This set may be empty,
-	 *         but is guaranteed not to be <code>null</code>. If this set is
-	 *         not empty, it is guaranteed to only contain instances of <code>IContextContextBinding</code>.
+	 * @return the set of context context bindings. This set may be empty, but
+	 *         is guaranteed not to be <code>null</code>. If this set is not
+	 *         empty, it is guaranteed to only contain instances of <code>IContextContextBinding</code>.
 	 */
 	Set getContextContextBindings();
 
@@ -123,8 +123,8 @@ public interface IContext extends Comparable {
 	boolean isEnabled();
 
 	/**
-	 * Unregisters an instance of <code>IContextListener</code> listening
-	 * for changes to properties of this instance.
+	 * Unregisters an instance of <code>IContextListener</code> listening for
+	 * changes to properties of this instance.
 	 * 
 	 * @param contextListener
 	 *            the instance to unregister. Must not be <code>null</code>.

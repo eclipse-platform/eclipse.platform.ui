@@ -58,8 +58,7 @@ final class CategoryDefinition implements Comparable {
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			Util.assertInstance(object, CategoryDefinition.class);
-			CategoryDefinition categoryDefinition =
-				(CategoryDefinition) object;
+			CategoryDefinition categoryDefinition = (CategoryDefinition) object;
 			String name = categoryDefinition.getName();
 
 			if (allowNullNames || name != null) {

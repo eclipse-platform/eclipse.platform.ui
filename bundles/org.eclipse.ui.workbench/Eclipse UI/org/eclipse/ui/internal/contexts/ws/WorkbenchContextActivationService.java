@@ -20,6 +20,9 @@ import org.eclipse.ui.internal.contexts.AbstractContextActivationService;
 final class WorkbenchContextActivationService
 	extends AbstractContextActivationService {
 
+	private ICompoundContextActivationService compoundContextActivationService =
+		ContextActivationServiceFactory.getCompoundContextActivationService();
+
 	private IWindowListener windowListener = new IWindowListener() {
 		public void windowActivated(IWorkbenchWindow workbenchWindow) {
 			update();
@@ -37,9 +40,6 @@ final class WorkbenchContextActivationService
 			update();
 		}
 	};
-
-	private ICompoundContextActivationService compoundContextActivationService =
-		ContextActivationServiceFactory.getCompoundContextActivationService();
 	private IWorkbench workbench;
 	private Set workbenchWindows = Collections.EMPTY_SET;
 

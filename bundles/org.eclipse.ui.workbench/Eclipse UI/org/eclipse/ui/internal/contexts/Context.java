@@ -144,8 +144,7 @@ final class Context implements IContext {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
 			hashCode =
-				hashCode * HASH_FACTOR
-					+ Util.hashCode(contextContextBindings);
+				hashCode * HASH_FACTOR + Util.hashCode(contextContextBindings);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
@@ -178,18 +177,13 @@ final class Context implements IContext {
 
 	boolean setContextContextBindings(Set contextContextBindings) {
 		contextContextBindings =
-			Util.safeCopy(
-				contextContextBindings,
-				IContextContextBinding.class);
+			Util.safeCopy(contextContextBindings, IContextContextBinding.class);
 
 		if (!Util
 			.equals(contextContextBindings, this.contextContextBindings)) {
 			this.contextContextBindings = contextContextBindings;
 			this.contextContextBindingsAsArray =
-				(
-					IContextContextBinding[]) this
-						.contextContextBindings
-						.toArray(
+				(IContextContextBinding[]) this.contextContextBindings.toArray(
 					new IContextContextBinding[this
 						.contextContextBindings
 						.size()]);

@@ -102,8 +102,7 @@ final class ExtensionContextRegistry extends AbstractContextRegistry {
 		if (!contextContextBindingDefinitions
 			.equals(super.contextContextBindingDefinitions)) {
 			super.contextContextBindingDefinitions =
-				Collections.unmodifiableList(
-					contextContextBindingDefinitions);
+				Collections.unmodifiableList(contextContextBindingDefinitions);
 			contextRegistryChanged = true;
 		}
 

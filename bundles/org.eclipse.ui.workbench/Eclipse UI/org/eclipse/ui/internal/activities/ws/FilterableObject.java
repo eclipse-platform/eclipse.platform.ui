@@ -33,19 +33,19 @@ public abstract class FilterableObject {
 	}
 
 	/**
-     * @return whether this objectis currently set to filter its content
-     *         based on activity enablement.
-     */
+	 * @return whether this objectis currently set to filter its content based
+	 *         on activity enablement.
+	 */
 	public boolean getFiltering() {
 		return filtering;
 	}
 
-    /**
-     * @param filtering
-     *            whether this object should filter its content based on
-     *            activity enablement.
-     */
-    public void setFiltering(boolean filtering) {
+	/**
+	 * @param filtering
+	 *            whether this object should filter its content based on
+	 *            activity enablement.
+	 */
+	public void setFiltering(boolean filtering) {
 		this.filtering = filtering;
 	}
 }

@@ -26,6 +26,9 @@ import org.eclipse.ui.internal.contexts.AbstractContextActivationService;
 final class WorkbenchWindowContextActivationService
 	extends AbstractContextActivationService {
 
+	private ICompoundContextActivationService compoundContextActivationService =
+		ContextActivationServiceFactory.getCompoundContextActivationService();
+
 	private IPageListener pageListener = new IPageListener() {
 		public void pageActivated(IWorkbenchPage workbenchPage) {
 			update();
@@ -77,9 +80,6 @@ final class WorkbenchWindowContextActivationService
 			update();
 		}
 	};
-
-	private ICompoundContextActivationService compoundContextActivationService =
-		ContextActivationServiceFactory.getCompoundContextActivationService();
 	private IWorkbench workbench;
 	private IContextActivationService workbenchPageCompoundContextActivationService;
 	private IContextActivationService workbenchPartSiteMutableContextActivationService;
@@ -103,7 +103,7 @@ final class WorkbenchWindowContextActivationService
 			public void contextActivationServiceChanged(ContextActivationServiceEvent contextActivationServiceEvent) {
 				ContextActivationServiceEvent proxyContextActivationServiceEvent =
 					new ContextActivationServiceEvent(
-							WorkbenchWindowContextActivationService.this,
+						WorkbenchWindowContextActivationService.this,
 						contextActivationServiceEvent
 							.haveActiveContextIdsChanged());
 				fireContextActivationServiceChanged(
