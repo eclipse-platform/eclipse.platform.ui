@@ -115,6 +115,8 @@ public class ResourceDeltaTest extends EclipseTest {
 	public void testOrphanedSubsubtree() throws TeamException, CoreException {
 		IProject project = createProject("testOrphanedSubsubtree", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/folder2/b.txt"});
 		IFolder folder = project.getFolder(new Path("folder1"));
+		IFolder target = project.getFolder("sub");
+		target.create(false, true, null);
 		folder.move(new Path("sub/moved"), false, false, null);
 		folder = project.getFolder(new Path("sub/moved"));
 		ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
