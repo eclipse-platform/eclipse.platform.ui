@@ -423,6 +423,11 @@ abstract public class AbstractReconciler implements IReconciler {
 	public void install(ITextViewer textViewer) {
 		
 		Assert.isNotNull(textViewer);
+		synchronized (this) {
+			if (fThread != null)
+				return;
+			fThread= new BackgroundThread(getClass().getName());
+		}
 		
 		fViewer= textViewer;
 		
@@ -430,7 +435,6 @@ abstract public class AbstractReconciler implements IReconciler {
 		fViewer.addTextInputListener(fListener);
 		
 		fDirtyRegionQueue= new DirtyRegionQueue();
-		fThread= new BackgroundThread(getClass().getName());
 	}
 	
 	/*
@@ -518,10 +522,18 @@ abstract public class AbstractReconciler implements IReconciler {
 		if (fThread == null)
 			return;
 			
-		if (!fThread.isAlive())
-			fThread.start();
-		else
+		if (!fThread.isAlive()) {
+			try {
+				fThread.start();
+			} catch (IllegalThreadStateException e) {
+				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=40549
+				// This is the only instance where the thread is started; since
+				// we checked that it is not alive, it must be dead already due
+				// to a run-time exception or error. Exit.
+			}
+		} else {
 			fThread.reset();
+		}
 	}
     
     /**
