@@ -30,7 +30,7 @@ public class CascadingFontRegistry extends FontRegistry {
 
     private IPropertyChangeListener listener = new IPropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent event) {
-            fireFontMappingChanged(event.getProperty(), (FontData [])event.getOldValue(), (FontData [])event.getNewValue());
+            fireMappingChanged(event.getProperty(), event.getOldValue(), event.getNewValue());
         }};
         
     /**

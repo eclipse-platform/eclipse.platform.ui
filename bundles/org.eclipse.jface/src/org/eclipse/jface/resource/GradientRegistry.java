@@ -19,9 +19,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -44,18 +41,13 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @since 3.0
  */
-public class GradientRegistry {
+public class GradientRegistry extends ResourceRegistry{
 
 	/**
 	 * This registries <code>Display</code>. All gradients will be allocated using 
 	 * it.
 	 */
 	protected Display display;
-
-	/**
-	 * List of property change listeners (element type: <code>org.eclipse.jface.util.IPropertyChangeListener</code>).
-	 */
-	private ListenerList listeners = new ListenerList();
 
 	/**
 	 * Collection of <code>Gradient</code> that are now stale to be disposed when 
@@ -106,15 +98,6 @@ public class GradientRegistry {
 	}
 
 	/**
-	 * Adds a property change listener to this registry.
-	 * 
-	 * @param listener a property change listener
-	 */
-	public void addListener(IPropertyChangeListener listener) {
-		listeners.add(listener);
-	}
-
-	/**
 	 * Create a new <code>Gradient</code> on the receivers <code>Display</code>.
 	 * 
 	 * @param symbolicName the symbolic gradient name.
@@ -134,32 +117,6 @@ public class GradientRegistry {
 		while (iterator.hasNext()) {
 			Object next = iterator.next();
 			((Gradient) next).dispose();
-		}
-	}
-
-	/**
-	 * Fires a <code>PropertyChangeEvent</code>.
-	 * 
-	 * @param name the name of the symbolic gradient that is changing.
-	 * @param oldValue the old <code>GradientData</code> value.
-	 * @param newValue the new <code>GradientData</code> value.
-	 */
-	protected void fireGradientMappingChanged(
-		String name,
-		GradientData oldValue,
-		GradientData newValue) {
-		final Object[] myListeners = this.listeners.getListeners();
-		if (myListeners.length > 0) {
-			PropertyChangeEvent event =
-				new PropertyChangeEvent(this, name, oldValue, newValue);
-			for (int i = 0; i < myListeners.length; ++i) {
-				try {
-					((IPropertyChangeListener) myListeners[i]).propertyChange(
-						event);
-				} catch (Exception e) {
-					// TODO: how to log?
-				}
-			}
 		}
 	}
 
@@ -191,8 +148,8 @@ public class GradientRegistry {
 		return gradient;
 	}
 	
-	/** 
-	 * @return the set of keys this manager knows about.
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.resource.ResourceRegistry#getKeySet()
 	 */
 	public Set getKeySet() {	    
 	    return Collections.unmodifiableSet(stringToGradientData.keySet());
@@ -209,23 +166,19 @@ public class GradientRegistry {
 		return (GradientData) stringToGradientData.get(symbolicName);
 	}
 
-	/**
-	 * Disposes all currently allocated colours.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.resource.ResourceRegistry#clearCaches()
 	 */
-	private void clearCaches() {
+	protected void clearCaches() {
 		disposeGradients(stringToGradient.values().iterator());
 		disposeGradients(staleGradients.iterator());
 		stringToGradient.clear();
-		staleGradients.clear();
-		listeners.clear();						
+		staleGradients.clear();				
 	}
 
-	/**
-	 * Return whether or not the receiver has a value for the supplied gradient 
-	 * key.
-	 * 
-	 * @param gradientKey the key for the gradient.
-	 * @return <code>true</code> if there is a key for the gradient.
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.resource.ResourceRegistry#hasValueFor(java.lang.String)
 	 */
 	public boolean hasValueFor(String gradientKey) {
 		return stringToGradientData.containsKey(gradientKey);
@@ -281,19 +234,9 @@ public class GradientRegistry {
 		Gradient oldGradient = (Gradient) stringToGradient.remove(symbolicName);
 		stringToGradientData.put(symbolicName, gradientData);
 		if (update)
-			fireGradientMappingChanged(symbolicName, existing, gradientData);
+			fireMappingChanged(symbolicName, existing, gradientData);
 
 		if (oldGradient != null)
 			staleGradients.add(oldGradient);
 	}
-
-	/**
-	 * Removes the given listener from this registry. Has no affect if the
-	 * listener is not registered.
-	 * 
-	 * @param listener a property change listener
-	 */
-	public void removeListener(IPropertyChangeListener listener) {
-		listeners.remove(listener);
-	}	
 }

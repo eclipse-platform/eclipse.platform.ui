@@ -30,7 +30,7 @@ public class CascadingColorRegistry extends ColorRegistry {
 
     private IPropertyChangeListener listener = new IPropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent event) {
-            fireColorMappingChanged(event.getProperty(), (RGB)event.getOldValue(), (RGB)event.getNewValue());
+            fireMappingChanged(event.getProperty(), event.getOldValue(), event.getNewValue());
         }};
         
     /**

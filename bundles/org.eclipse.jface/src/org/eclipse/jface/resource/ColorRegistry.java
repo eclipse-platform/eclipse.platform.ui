@@ -19,9 +19,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -46,18 +43,13 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @since 3.0
  */
-public class ColorRegistry {
+public class ColorRegistry extends ResourceRegistry {
 
 	/**
 	 * This registries <code>Display</code>. All colors will be allocated using 
 	 * it.
 	 */
 	protected Display display;
-
-	/**
-	 * List of property change listeners (element type: <code>org.eclipse.jface.util.IPropertyChangeListener</code>).
-	 */
-	private ListenerList listeners = new ListenerList();
 
 	/**
 	 * Collection of <code>Color</code> that are now stale to be disposed when 
@@ -107,14 +99,7 @@ public class ColorRegistry {
 		hookDisplayDispose();
 	}
 
-	/**
-	 * Adds a property change listener to this registry.
-	 * 
-	 * @param listener a property change listener
-	 */
-	public void addListener(IPropertyChangeListener listener) {
-		listeners.add(listener);
-	}
+	
 
 	/**
 	 * Create a new <code>Color</code> on the receivers <code>Display</code>.
@@ -136,32 +121,6 @@ public class ColorRegistry {
 		while (iterator.hasNext()) {
 			Object next = iterator.next();
 			((Color) next).dispose();
-		}
-	}
-
-	/**
-	 * Fires a <code>PropertyChangeEvent</code>.
-	 * 
-	 * @param name the name of the symbolic color that is changing.
-	 * @param oldValue the old <code>RGB</code> value.
-	 * @param newValue the new <code>RGB</code> value.
-	 */
-	protected void fireColorMappingChanged(
-		String name,
-		RGB oldValue,
-		RGB newValue) {
-		final Object[] myListeners = this.listeners.getListeners();
-		if (myListeners.length > 0) {
-			PropertyChangeEvent event =
-				new PropertyChangeEvent(this, name, oldValue, newValue);
-			for (int i = 0; i < myListeners.length; ++i) {
-				try {
-					((IPropertyChangeListener) myListeners[i]).propertyChange(
-						event);
-				} catch (Exception e) {
-					// TODO: how to log?
-				}
-			}
 		}
 	}
 
@@ -193,9 +152,9 @@ public class ColorRegistry {
 		return color;
 	}
 	
-	/** 
-	 * @return the set of keys this manager knows about.
-	 */
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.resource.ResourceRegistry#getKeySet()
+	 */	
 	public Set getKeySet() {	    
 	    return Collections.unmodifiableSet(stringToRGB.keySet());
 	}
@@ -211,23 +170,19 @@ public class ColorRegistry {
 		return (RGB) stringToRGB.get(symbolicName);
 	}
 
-	/**
-	 * Disposes all currently allocated colours.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.resource.ResourceRegistry#clearCaches()
 	 */
-	private void clearCaches() {
+	protected void clearCaches() {
 		disposeColors(stringToColor.values().iterator());
 		disposeColors(staleColors.iterator());
 		stringToColor.clear();
-		staleColors.clear();
-		listeners.clear();						
+		staleColors.clear();					
 	}
 
-	/**
-	 * Return whether or not the receiver has a value for the supplied color 
-	 * key.
-	 * 
-	 * @param colorKey the key for the color.
-	 * @return <code>true</code> if there is a key for the color.
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.resource.ResourceRegistry#hasValueFor(java.lang.String)
 	 */
 	public boolean hasValueFor(String colorKey) {
 		return stringToRGB.containsKey(colorKey);
@@ -283,19 +238,9 @@ public class ColorRegistry {
 		Color oldColor = (Color) stringToColor.remove(symbolicName);
 		stringToRGB.put(symbolicName, colorData);
 		if (update)
-			fireColorMappingChanged(symbolicName, existing, colorData);
+			fireMappingChanged(symbolicName, existing, colorData);
 
 		if (oldColor != null)
 			staleColors.add(oldColor);
-	}
-
-	/**
-	 * Removes the given listener from this registry. Has no affect if the
-	 * listener is not registered.
-	 * 
-	 * @param listener a property change listener
-	 */
-	public void removeListener(IPropertyChangeListener listener) {
-		listeners.remove(listener);
-	}
+	}	
 }

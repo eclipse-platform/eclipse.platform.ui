@@ -10,9 +10,19 @@
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+import java.util.Set;
 
-import org.eclipse.jface.util.*;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -40,16 +50,12 @@ import org.eclipse.swt.widgets.Shell;
  * <p>
  * Clients may instantiate this class (it was not designed to be subclassed).
  * </p>
+ * 
+ * Since 3.0 this class extends ResourceRegistry.
  */
-public class FontRegistry {
+public class FontRegistry extends ResourceRegistry {
 
-	/**
-	 * List of property change listeners
-	 * (element type: <code>org.eclipse.jface.util.IPropertyChangeListener</code>).
-	 */
-	private ListenerList listeners = new ListenerList();
-
-	/**
+    /**
 	 * Table of known fonts, keyed by symbolic font name
 	 * (key type: <code>String</code>, 
 	 *  value type: <code>org.eclipse.swt.graphics.Font</code>.
@@ -74,7 +80,7 @@ public class FontRegistry {
 	 */	
 	protected Runnable displayRunnable = new Runnable() {
 		public void run() {
-			handleDisplayDispose();
+			clearCaches();
 		}
 	};
 
@@ -213,14 +219,6 @@ public class FontRegistry {
 		Assert.isNotNull(display);
 		hookDisplayDispose(display);
 	}
-	/**
-	 * Adds a property change listener to this registry.
-	 *
-	 * @param listener a property change listener
-	 */
-	public void addListener(IPropertyChangeListener listener) {
-		listeners.add(listener);
-	}
 
 	/**
 	 * Find the first valid fontData in the provided list. 
@@ -275,7 +273,7 @@ public class FontRegistry {
 	}
 
 	/**
-	 * Creates a new font with the given font datas or nulk
+	 * Creates a new font with the given font datas or <code>null</code>
 	 * if there is no data.
 	 */
 	private Font createFont(String symbolicName, FontData[] fonts) {
@@ -293,6 +291,7 @@ public class FontRegistry {
 			return new Font(display, validData);
 		}
 	}
+	
 	/**
 	 * Returns the default font.  Creates it if necessary.
 	 */
@@ -306,31 +305,14 @@ public class FontRegistry {
 		} else
 			return current.getSystemFont();
 	}
+	
 	/**
 	 * Returns the default font data.  Creates it if necessary.
 	 */
 	private FontData[] defaultFontData() {
 		return defaultFont().getFontData();
 	}
-	/**
-	 * Fires a PropertyChangeEvent.
-	 */
-	protected void fireFontMappingChanged(String name, FontData[] oldValue, FontData[] newValue) {
-		final String finalName = name;
-		final Object[] myListeners = this.listeners.getListeners();
-		if (myListeners.length > 0) {
-			//	FIXME: need to do this without dependency on org.eclipse.core.runtime
-			//		Platform.run(new SafeRunnable(JFaceResources.getString("FontRegistry.changeError")) { //$NON-NLS-1$
-			//			public void run() {
-			PropertyChangeEvent event =
-				new PropertyChangeEvent(this, finalName, oldValue, newValue);
-			for (int i = 0; i < myListeners.length; ++i) {
-				((IPropertyChangeListener) myListeners[i]).propertyChange(event);
-			}
-			//			}	
-			//		});
-		}
-	}
+	
 	/**
 	 * Returns the font data associated with the given symbolic font name.
 	 * Returns the default font data if there is no special value associated
@@ -348,6 +330,7 @@ public class FontRegistry {
 
 		return (FontData[]) result;
 	}
+	
 	/**
 	 * Returns the font associated with the given symbolic font name.
 	 * Returns the default font if there is no special value associated
@@ -383,35 +366,31 @@ public class FontRegistry {
 		return font;
 	}
 
-	/** 
-	 * @return the set of keys this manager knows about.
-	 * @since 3.0
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.resource.ResourceRegistry#getKeySet()
 	 */
 	public Set getKeySet() {
 	    return Collections.unmodifiableSet(stringToFontData.keySet());
 	}
 	
-	/**
-	 * Return whether or not the receiver has a value
-	 * for the supplied fontKey.
-	 * 
-	 * @param String. The key for the font.
-	 * @return boolean. true if there is a key for the font.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.resource.ResourceRegistry#hasValueFor(java.lang.String)
 	 */
 	public boolean hasValueFor(String fontKey){
 		return stringToFontData.containsKey(fontKey);
 	}
-	
-	/**
-	 * Shut downs this resource registry and disposes of all registered fonts.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.resource.ResourceRegistry#clearCaches()
 	 */
-	private void handleDisplayDispose() {
+	protected void clearCaches() {
 
 		disposeFonts(stringToFont.values().iterator());
 		disposeFonts(staleFonts.iterator());
 		stringToFont.clear();
 		staleFonts.clear();
-		listeners.clear();
 	}
 	
 	/**
@@ -431,6 +410,7 @@ public class FontRegistry {
 	private void hookDisplayDispose(Display display) {
 		display.disposeExec(displayRunnable);
 	}
+	
 	/**
 	 * Checks whether the given font is in the list of fixed fonts.
 	 */
@@ -507,7 +487,7 @@ public class FontRegistry {
 		Font oldFont = (Font) stringToFont.remove(symbolicName);
 		stringToFontData.put(symbolicName, fontData);
 		if (update)
-			fireFontMappingChanged(symbolicName,existing,fontData);
+			fireMappingChanged(symbolicName,existing,fontData);
 
 		if (oldFont == defaultFont())
 			return;
@@ -553,14 +533,5 @@ public class FontRegistry {
 				elements[i] = makeFontData(bundle.getString(key));
 			}
 		}
-	}
-	/**
-	 * Removes the given listener from this registry.
-	 * Has no affect if the listener is not registered.
-	 *
-	 * @param listener a property change listener
-	 */
-	public void removeListener(IPropertyChangeListener listener) {
-		listeners.remove(listener);
 	}
 }

@@ -30,7 +30,7 @@ public class CascadingGradientRegistry extends GradientRegistry {
 
     private IPropertyChangeListener listener = new IPropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent event) {
-            fireGradientMappingChanged(event.getProperty(), (GradientData)event.getOldValue(), (GradientData)event.getNewValue());
+            fireMappingChanged(event.getProperty(), event.getOldValue(), event.getNewValue());
         }};
         
     /**
