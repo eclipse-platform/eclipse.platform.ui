@@ -163,10 +163,10 @@ public boolean isVisible() {
 	
 	if (action != null) {
 		String commandId = action.getActionDefinitionId();
-		ICommandResolver commandResolver = CommandResolver.getInstance().getCommandResolver();
+		CommandResolver.ICallback callback = CommandResolver.getInstance().getCommandResolver();
 		
-		if (commandResolver != null) {
-			return commandResolver.inContext(commandId);
+		if (callback != null) {
+			return callback.inContext(commandId);
 		}
 	}
 	
@@ -648,19 +648,20 @@ public void update(String propertyName) {
 				String text = null;
 				
 				if (action != null) {				
-					String commandId = action.getActionDefinitionId();
-				
-					if (commandId != null) {
-						ICommandResolver commandResolver = CommandResolver.getInstance().getCommandResolver();
+					CommandResolver.ICallback callback = CommandResolver.getInstance().getCommandResolver();
 		
-						if (commandResolver != null) {
-							accelerator = commandResolver.getAccelerator(commandId);
-							acceleratorText = commandResolver.getAcceleratorText(commandId);
-						}					
+					if (callback != null) {
+						String commandId = action.getActionDefinitionId();
+				
+						if (commandId == null)
+							commandId = callback.guessCommandIdFromActionId(action.getId());
+				
+						if (commandId != null) {
+							accelerator = callback.getAccelerator(commandId);
+							acceleratorText = callback.getAcceleratorText(commandId);
+						} else
+							System.out.println("command is null for action: " + action + ", " + action.getId() + ", " + action.getText());
 					} 
-					/* else
-						System.out.println("command is null for action: " + action + ", " + action.getId() + ", " + action.getText());
-					*/
 				} 
 				
 				IContributionManagerOverrides overrides = null;

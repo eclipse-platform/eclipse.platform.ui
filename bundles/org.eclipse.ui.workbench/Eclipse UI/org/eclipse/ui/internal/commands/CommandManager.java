@@ -311,6 +311,11 @@ public final class CommandManager implements ICommandManager {
 		return keyBindingMachine.setMode(mode);
 	}
 
+	public String guessCommandIdFromActionId(String actionId) {
+		// TODO
+		return actionId;	
+	}
+
 	public Integer getAccelerator(String commandId) {
 		Integer accelerator = null;
 		

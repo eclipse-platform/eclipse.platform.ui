@@ -11,7 +11,18 @@
 
 package org.eclipse.jface.action;
 
-public class CommandResolver {
+public final class CommandResolver {
+
+	public static interface ICallback {
+		
+		String guessCommandIdFromActionId(String actionId);
+
+		Integer getAccelerator(String commandId);
+	
+		String getAcceleratorText(String commandId);
+
+		boolean inContext(String commandId);
+	}
 
 	private static CommandResolver instance;
 
@@ -22,16 +33,16 @@ public class CommandResolver {
 		return instance;	
 	}
 
-	private ICommandResolver commandResolver;
+	private ICallback commandResolver;
 
 	private CommandResolver() {
 	}
 	
-	public ICommandResolver getCommandResolver() {
+	public ICallback getCommandResolver() {
 		return commandResolver;
 	}
 	
-	public void setCommandResolver(ICommandResolver commandResolver) {
+	public void setCommandResolver(ICallback commandResolver) {
 		this.commandResolver = commandResolver;
 	}
 }

@@ -59,7 +59,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.CommandResolver;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.ICommandResolver;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -158,7 +157,7 @@ import org.eclipse.update.core.SiteManager;
  * responsability is the management of workbench windows and other ISV windows.
  */
 public class Workbench
-	implements ICommandResolver, IWorkbench, IPlatformRunnable, IExecutableExtension {
+	implements CommandResolver.ICallback, IWorkbench, IPlatformRunnable, IExecutableExtension {
 
 	private WindowManager windowManager;
 	private WorkbenchWindow activatedWindow;
@@ -418,6 +417,11 @@ public class Workbench
 		}
 
 		return name;
+	}
+
+	public String guessCommandIdFromActionId(String actionId) {
+		// TODO bad cast
+		return ((CommandManager) getCommandManager()).guessCommandIdFromActionId(actionId);		
 	}
 
 	public Integer getAccelerator(String commandId) {
