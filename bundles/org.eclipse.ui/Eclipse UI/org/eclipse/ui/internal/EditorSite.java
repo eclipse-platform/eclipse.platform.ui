@@ -4,12 +4,8 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.ui.internal.registry.EditorDescriptor;
 
 /**
  * An editor container manages the services for an editor.
@@ -60,6 +56,14 @@ public IEditorPart getEditorPart() {
 
 public EditorDescriptor getEditorDescriptor() {
 	return desc;
+}
+
+/* (non-Javadoc)
+ * Method declared on IEditorSite.
+ */
+public IKeyBindingService getKeyBindingService() {
+	Workbench w = (Workbench)(getPage().getWorkbenchWindow().getWorkbench());
+	return w.getKeyBindingService();
 }
 
 public boolean getReuseEditor() {

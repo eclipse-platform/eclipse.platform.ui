@@ -42,6 +42,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private static final String P_PRODUCT_INFO = "productInfo"; //$NON-NLS-1$
 	private static final String DEFAULT_PRODUCT_INFO_FILENAME = "product.ini"; //$NON-NLS-1$
 	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml"; //$NON-NLS-1$
+	private IKeyBindingService keyBindingService;
 	private WindowManager windowManager;
 	private EditorHistory editorHistory;
 	private PerspectiveHistory perspHistory;
@@ -310,6 +311,14 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	public ISharedImages getSharedImages() {
 		return WorkbenchPlugin.getDefault().getSharedImages();
+	}
+	/**
+	 * Returns the key binding service in use.
+	 */
+	public IKeyBindingService getKeyBindingService() {
+		if (keyBindingService == null)
+			keyBindingService = new KeyBindingService(this);
+		return keyBindingService;	
 	}
 	/* (non-Javadoc)
 	 * Method declared on IWorkbench.

@@ -74,6 +74,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private PreferenceManager preferenceManager;
 	private ViewRegistry viewRegistry;
 	private PerspectiveRegistry perspRegistry;
+	private ActionDefinitionRegistry actionDefinitionRegistry;
+	private AcceleratorRegistry acceleratorRegistry;
 	private ActionSetRegistry actionSetRegistry;
 	private SharedImages sharedImages;
 	private MarkerImageProviderRegistry markerImageProviderRegistry;
@@ -133,6 +135,30 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 */
 	protected ImageRegistry createImageRegistry() {
 		return WorkbenchImages.getImageRegistry();
+	}
+	/**
+	 *Returns the action definition registry.
+	 * 
+	 * @return the action definition registry
+	 */
+	public ActionDefinitionRegistry getActionDefinitionRegistry() {
+		if (actionDefinitionRegistry == null) {
+			actionDefinitionRegistry = new ActionDefinitionRegistry();
+			actionDefinitionRegistry.load();
+		}
+		return actionDefinitionRegistry;
+	}
+	/**
+	 *Returns the accelerator registry.
+	 * 
+	 * @return the accelerator registry
+	 */
+	public AcceleratorRegistry getAcceleratorRegistry() {
+		if (acceleratorRegistry == null) {
+			acceleratorRegistry = new AcceleratorRegistry();
+			acceleratorRegistry.load();
+		}
+		return acceleratorRegistry;
 	}
 	/**
 	 * Returns the action set registry for the workbench.
