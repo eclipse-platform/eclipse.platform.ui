@@ -49,12 +49,23 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 				case DebugEvent.RESUME:
 						doHandleResumeEvent(event);
 					break;
+			}
+		}
+	}
+	
+	/**
+	 * @see AbstractDebugEventHandler#updateForDebugEvents(DebugEvent[])
+	 */
+	protected void updateForDebugEvents(DebugEvent[] events) {
+		for (int i = 0; i < events.length; i++) {	
+			DebugEvent event = events[i];
+			switch (event.getKind()) {
 				case DebugEvent.TERMINATE:
 					doHandleTerminateEvent(event);
 					break;
 			}
 		}
-	}
+	}	
 
 	/**
 	 * Clear the variables immediately upon resume.
