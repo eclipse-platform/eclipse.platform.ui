@@ -18,7 +18,7 @@ import org.eclipse.compare.internal.Utilities;
  * As long as the contents of <code>BufferedContent</code> is only retrieved as an input stream
  * (by means of <code>getContents</code>) and the <code>BufferedContent</code> is not modified (with
  * <code>setContent</code>) no buffering takes place.
- * Buffering starts when either methods <code>getContent</code> or <code>setContent</code> is called.
+ * Buffering starts when either method <code>getContent</code> or <code>setContent</code> is called.
  * 
  * @see IContentChangeNotifier
  * @see IStreamContentAccessor
@@ -86,7 +86,6 @@ public abstract class BufferedContent implements IContentChangeNotifier, IStream
 	 */
 	public void discardBuffer() {
 		fContent= null;
-		//fireContentChanged();
 	}
 	
 	/* (non-Javadoc)

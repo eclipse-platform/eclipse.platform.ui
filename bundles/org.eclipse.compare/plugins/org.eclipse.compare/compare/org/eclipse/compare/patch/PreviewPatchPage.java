@@ -5,6 +5,7 @@
 package org.eclipse.compare.patch;
 
 import java.util.*;
+import java.io.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -14,14 +15,16 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.graphics.*;
 
 import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.IFile;
 
-import org.eclipse.compare.structuremergeviewer.Differencer;
-import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.internal.DiffImage;
-import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.*;
+import org.eclipse.compare.internal.*;
+import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.compare.contentmergeviewer.*;
 
 
 /**
@@ -31,16 +34,43 @@ import org.eclipse.compare.internal.CompareUIPlugin;
  */
 /* package */ class PreviewPatchPage extends WizardPage {
 	
+	/**
+	 * Used with CompareInput
+	 */
+	static class HunkInput implements ITypedElement, IStreamContentAccessor {
+		String fContent;
+		String fType;
+		
+		HunkInput(String type, String s) {
+			fType= type;
+			fContent= s;
+		}
+		public Image getImage() {
+			return null;
+		}
+		public String getName() {
+			return "no name";
+		}
+		public String getType() {
+			return fType;
+		}
+		public InputStream getContents() {
+			return new ByteArrayInputStream(fContent.getBytes());
+		}
+	};
+		
 	private PatchWizard fPatchWizard;
 	
 	private Tree fTree;
 	private Combo fStripPrefixSegments;
-	private StyledText fText;
+	private CompareViewerSwitchingPane fHunkViewer;
 	
 	private Image fNullImage;
 	private Image fAddImage;
 	private Image fDelImage;
-		
+	
+	private CompareConfiguration fCompareConfiguration;
+	
 	
 	/* package */ PreviewPatchPage(PatchWizard pw) {
 		super("Preview Patch", "Preview Patch", null);
@@ -51,6 +81,14 @@ import org.eclipse.compare.internal.CompareUIPlugin;
 		fNullImage= new DiffImage(null, null, w).createImage();
 		fAddImage= new DiffImage(null, CompareUIPlugin.getImageDescriptor("ovr16/add_ov.gif"), w).createImage();
 		fDelImage= new DiffImage(null, CompareUIPlugin.getImageDescriptor("ovr16/del_ov.gif"), w).createImage();
+		
+		fCompareConfiguration= new CompareConfiguration();
+		
+		fCompareConfiguration.setLeftEditable(false);
+		fCompareConfiguration.setLeftLabel("Original");
+		
+		fCompareConfiguration.setRightEditable(false);
+		fCompareConfiguration.setRightLabel("Result");
 	}
 	
 	/* (non-Javadoc)
@@ -58,7 +96,7 @@ import org.eclipse.compare.internal.CompareUIPlugin;
 	 */
 	public void setVisible(boolean visible) {
 		if (visible)
-			update();
+			buildTree();
 		super.setVisible(visible);
 	}
 
@@ -70,95 +108,6 @@ import org.eclipse.compare.internal.CompareUIPlugin;
 			return fDelImage;
 		}
 		return fNullImage;
-	}
-	
-	/**
-	 * Updates tree and text controls from
-	 * list of Diffs.
-	 */
-	private void update() {
-		setPageComplete(true);
-		if (fTree != null && !fTree.isDisposed()) {
-			fTree.removeAll();
-			fText.setText("");
-			
-			int length= 99;
-			
-			Diff[] diffs= fPatchWizard.getDiffs();			
-			if (diffs != null) {
-				for (int i= 0; i < diffs.length; i++) {
-					Diff diff= diffs[i];
-					TreeItem d= new TreeItem(fTree, SWT.NULL);
-					d.setData(diff);
-					d.setText(diff.getDescription(0));
-					d.setImage(getImage(diff));
-					
-					if (diff.fOldPath != null)
-						length= Math.min(length, diff.fOldPath.segmentCount());
-					if (diff.fNewPath != null)
-						length= Math.min(length, diff.fNewPath.segmentCount());
-					
-					boolean isOk= false;
-					IFile file= null;
-					if (diff.getType() == Differencer.ADDITION) {
-						file= fPatchWizard.existsInSelection(diff.fNewPath);
-						isOk= file == null;
-					} else {
-						file= fPatchWizard.existsInSelection(diff.fOldPath);
-						isOk= file != null;
-					}
-						
-					java.util.List hunks= diff.fHunks;
-					java.util.Iterator iter= hunks.iterator();
-					while (iter.hasNext()) {
-						Hunk hunk= (Hunk) iter.next();
-						TreeItem h= new TreeItem(d, SWT.NULL);
-						h.setData(hunk);
-						h.setText(hunk.getDescription());
-						
-						h.setChecked(isOk);
-					}
-					
-					d.setChecked(isOk);
-				}
-			}
-			if (length != 99)
-				for (int i= 1; i < length; i++)
-					fStripPrefixSegments.add(Integer.toString(i));
-		}
-	}
-	
-	private void update(int strip) {
-		if (fTree == null || fTree.isDisposed())
-			return;
-		TreeItem[] children= fTree.getItems();
-		for (int i= 0; i < children.length; i++) {
-			TreeItem item= children[i];
-			Diff diff= (Diff) item.getData();
-								
-			item.setText(diff.getDescription(strip));
-			
-			boolean isOk= false;
-			IFile file= null;
-			if (diff.getType() == Differencer.ADDITION) {
-				IPath p= diff.fNewPath;
-				if (strip > 0 && strip < p.segmentCount())
-					p= p.removeFirstSegments(strip);
-				file= fPatchWizard.existsInSelection(p);
-				isOk= file == null;
-			} else {
-				IPath p= diff.fOldPath;
-				if (strip > 0 && strip < p.segmentCount())
-					p= p.removeFirstSegments(strip);
-				file= fPatchWizard.existsInSelection(p);
-				isOk= file != null;
-			}
-			item.setChecked(isOk);
-			
-			TreeItem[] hunkItems= item.getItems();
-			for (int h= 0; h < hunkItems.length; h++)
-				hunkItems[h].setChecked(isOk);
-		}
 	}
 	
 	public void createControl(Composite parent) {
@@ -178,33 +127,217 @@ import org.eclipse.compare.internal.CompareUIPlugin;
 		fTree.setLayoutData(data);
 		
 		createStripPrefixSegmentsGroup(composite);
-		
-		fText= new StyledText(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		fText.setEditable(false);
+				
+		fHunkViewer= new CompareViewerSwitchingPane(composite, SWT.BORDER) {
+			protected Viewer getViewer(Viewer oldViewer, Object input) {
+				return CompareUI.findContentViewer(oldViewer, (ICompareInput)input, this, fCompareConfiguration);
+			}
+		};
+								
 		GridData data2= new GridData();
 		data2.verticalAlignment= GridData.FILL;
 		data2.horizontalAlignment= GridData.FILL;
 		data2.grabExcessHorizontalSpace= true;
 		data2.grabExcessVerticalSpace= true;
-		fText.setLayoutData(data2);
+		fHunkViewer.setLayoutData(data2);
 		
-		update();
-
 		fTree.addSelectionListener(
 			new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
+					TreeItem ti= (TreeItem) e.item;
 					Object data= e.item.getData();
-					String s= "";
-					if (data instanceof Hunk) {
-						Hunk hunk= (Hunk) data;
-						s= hunk.getContent();
+					if (e.detail == SWT.CHECK) {
+						boolean enabled= ti.getChecked();
+						if (data instanceof Hunk) {
+							((Hunk)data).fIsEnabled= enabled;
+							updateGrayedState(ti);
+						} else if (data instanceof Diff) {
+							((Diff)data).fIsEnabled= enabled;
+							updateCheckedState(ti);
+						}
+					} else {
+						if (data instanceof Hunk)
+							PreviewPatchPage.this.fHunkViewer.setInput(createInput((Hunk)data));
+						else
+							PreviewPatchPage.this.fHunkViewer.setInput(null);
 					}
-					fText.setText(s);
-				} 
+				}
 			}
 		);
 		
+		buildTree();
+
 		// WorkbenchHelp.setHelp(composite, new DialogPageContextComputer(this, PATCH_HELP_CONTEXT_ID));								
+	}
+	
+	ICompareInput createInput(Hunk hunk) {
+		
+		String[] lines= hunk.fLines;
+		StringBuffer left= new StringBuffer();
+		StringBuffer right= new StringBuffer();
+		
+		for (int i= 0; i < lines.length; i++) {
+			String line= lines[i];
+			String rest= line.substring(1);
+			switch (line.charAt(0)) {
+			case ' ':
+				left.append(rest);
+				right.append(rest);
+				break;
+			case '-':
+				left.append(rest);
+				break;
+			case '+':
+				right.append(rest);
+				break;
+			}
+		}
+		
+		Diff diff= hunk.fParent;
+		IPath path= diff.getPath();
+		String type= path.getFileExtension();
+		
+		return new DiffNode(new HunkInput(type, left.toString()), new HunkInput(type, right.toString()));
+	}		
+	
+	/**
+	 * Builds a tree from list of Diffs.
+	 * As a side effect it calculates the maximum number of segments
+	 * in all paths.
+	 */
+	private void buildTree() {
+		setPageComplete(true);
+		if (fTree != null && !fTree.isDisposed()) {
+			fTree.removeAll();
+			fHunkViewer.setInput(null);
+			
+			int length= 99;
+			
+			Diff[] diffs= fPatchWizard.getPatcher().getDiffs();			
+			if (diffs != null) {
+				for (int i= 0; i < diffs.length; i++) {
+					Diff diff= diffs[i];
+					TreeItem d= new TreeItem(fTree, SWT.NULL);
+					d.setData(diff);
+					d.setImage(getImage(diff));
+					
+					if (diff.fOldPath != null)
+						length= Math.min(length, diff.fOldPath.segmentCount());
+					if (diff.fNewPath != null)
+						length= Math.min(length, diff.fNewPath.segmentCount());
+					
+					java.util.List hunks= diff.fHunks;
+					java.util.Iterator iter= hunks.iterator();
+					while (iter.hasNext()) {
+						Hunk hunk= (Hunk) iter.next();
+						TreeItem h= new TreeItem(d, SWT.NULL);
+						h.setData(hunk);
+						h.setText(hunk.getDescription());
+					}
+				}
+			}
+			if (length != 99)
+				for (int i= 1; i < length; i++)
+					fStripPrefixSegments.add(Integer.toString(i));
+		}
+		
+		updateTree(0);
+	}
+	
+	/**
+	 * Updates label and checked state of tree items.
+	 */
+	private void updateTree(int strip) {
+		if (fTree == null || fTree.isDisposed())
+			return;
+		TreeItem[] children= fTree.getItems();
+		for (int i= 0; i < children.length; i++) {
+			TreeItem item= children[i];
+			Diff diff= (Diff) item.getData();
+								
+			item.setText(diff.getDescription(strip));
+			
+			IFile file= null;
+			if (diff.getType() == Differencer.ADDITION) {
+				IPath p= diff.fNewPath;
+				if (strip > 0 && strip < p.segmentCount())
+					p= p.removeFirstSegments(strip);
+				file= fPatchWizard.existsInSelection(p);
+				diff.fIsEnabled= file == null;
+			} else {
+				IPath p= diff.fOldPath;
+				if (strip > 0 && strip < p.segmentCount())
+					p= p.removeFirstSegments(strip);
+				file= fPatchWizard.existsInSelection(p);
+				diff.fIsEnabled= file != null;
+			}			
+			
+			boolean checked= false;
+				
+			ArrayList failedHunks= new ArrayList();		// collect rejected hunks here
+			
+			java.util.List lines= null;
+			InputStream is= null;
+			try {
+				if (file != null) {
+					is= file.getContents();
+					BufferedReader reader= new BufferedReader(new InputStreamReader(is));
+					lines= new LineReader(reader).readLines();
+				}
+			} catch(CoreException ex) {
+				System.out.println("CoreException: " + ex);
+			} finally {
+				if (is != null)
+					try {
+						is.close();
+					} catch(IOException ex) {
+					}
+			}
+			
+			if (lines == null)
+				lines= new ArrayList();
+			fPatchWizard.getPatcher().patch(diff, lines, failedHunks);
+			
+			int checkedSubs= 0;	// counts checked hunk items
+			TreeItem[] hunkItems= item.getItems();
+			for (int h= 0; h < hunkItems.length; h++) {
+				Hunk hunk= (Hunk) hunkItems[h].getData();
+				hunk.fIsEnabled= diff.fIsEnabled && !failedHunks.contains(hunk);
+				hunkItems[h].setChecked(hunk.fIsEnabled);
+				if (hunk.fIsEnabled) {
+					checkedSubs++;
+					checked= true;
+				}
+			}
+			
+			item.setChecked(checked);
+			item.setGrayed((checkedSubs > 0 &&  checkedSubs < hunkItems.length));
+		}
+	}
+	
+	/**
+	 * Updates the gray state of the given diff and the checked state of its children.
+	 */
+	void updateCheckedState(TreeItem diff) {
+		boolean checked= diff.getChecked();
+		diff.setGrayed(false);
+		TreeItem[] hunks= diff.getItems();
+		for (int i= 0; i < hunks.length; i++)
+			hunks[i].setChecked(checked);
+	}
+	
+	/**
+	 * Updates the gray state of the given items parent.
+	 */
+	void updateGrayedState(TreeItem hunk) {
+		TreeItem diff= hunk.getParentItem();
+		TreeItem[] hunks= diff.getItems();
+		int checked= 0;
+		for (int i= 0; i < hunks.length; i++)
+			if (hunks[i].getChecked())
+				checked++;
+		diff.setChecked(checked > 0);
+		diff.setGrayed(checked > 0 && checked < hunks.length);
 	}
 	
 	/**
@@ -218,7 +351,7 @@ import org.eclipse.compare.internal.CompareUIPlugin;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 	
-		new Label(group, SWT.NONE).setText("Number of leading directories to ignore in path names:");
+		new Label(group, SWT.NONE).setText("Ignore leading path name segments:");
 
 		fStripPrefixSegments= new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.SIMPLE);
 		fStripPrefixSegments.add("0");
@@ -227,8 +360,7 @@ import org.eclipse.compare.internal.CompareUIPlugin;
 			new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					int ix= fStripPrefixSegments.getSelectionIndex();
-					//System.out.println("ix: " + ix);
-					update(ix);
+					updateTree(ix);
 				}
 			}
 		);

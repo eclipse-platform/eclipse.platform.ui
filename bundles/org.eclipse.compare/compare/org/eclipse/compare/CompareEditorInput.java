@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.compare;
+package org.eclipse.compare; 
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -31,6 +31,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.compare.*;
 
 
 /**
@@ -342,7 +343,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			
 		final Splitter h= new Splitter(fComposite, SWT.HORIZONTAL);
 
-		fStructureInputPane= new CompareViewerSwitchingPane(h, SWT.NONE, true) {
+		fStructureInputPane= new CompareViewerSwitchingPane(h, SWT.BORDER | SWT.FLAT, true) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
 				if (input instanceof DiffNode) {
 					DiffNode dn= (DiffNode) input;
@@ -355,7 +356,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			}
 		};
 		
-		fStructurePane1= new CompareViewerSwitchingPane(h, SWT.NONE, true) {
+		fStructurePane1= new CompareViewerSwitchingPane(h, SWT.BORDER | SWT.FLAT, true) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
 				if (input instanceof ICompareInput)
 					return findStructureViewer(oldViewer, (ICompareInput)input, this);
@@ -364,7 +365,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		};
 		h.setVisible(fStructurePane1, false);
 		
-		fStructurePane2= new CompareViewerSwitchingPane(h, SWT.NONE, true) {
+		fStructurePane2= new CompareViewerSwitchingPane(h, SWT.BORDER | SWT.FLAT, true) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
 				if (input instanceof ICompareInput)
 					return findStructureViewer(oldViewer, (ICompareInput)input, this);
@@ -373,7 +374,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		};
 		h.setVisible(fStructurePane2, false);
 				
-		fContentInputPane= new CompareViewerSwitchingPane(fComposite, SWT.NONE) {
+		fContentInputPane= new CompareViewerSwitchingPane(fComposite, SWT.BORDER | SWT.FLAT) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
 				if (input instanceof ICompareInput)
 					return findContentViewer(oldViewer, (ICompareInput)input, this);

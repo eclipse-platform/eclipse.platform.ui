@@ -145,7 +145,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private static final int CENTER_WIDTH= 40;
 	/** */
 	private static final int LW= 1;
-	/** Provide more merge controls in Pane toolbar */
+	/** Provide more merge controls in CompareViewerPane toolbar */
 	private static final boolean USE_MORE_CONTROLS= true;
 	/** Selects between smartTokenDiff and mergingTokenDiff */
 	private static final boolean USE_MERGING_TOKEN_DIFF= false;

@@ -1,20 +1,21 @@
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 package org.eclipse.compare.patch;
 
 import java.io.*;
-import java.util.*;
 import java.text.*;
+import java.util.*;
 
 import org.eclipse.jface.util.Assert;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
+import org.eclipse.core.runtime.*;
 
-/* package */ class PatchParser {
-		
+/**
+ * A Patcher 
+ * - knows how to parse various patch file formats into some in-memory structure,
+ * - holds onto the parsed data and the options to use when applying the patches,
+ * - knows how to apply the patches to files and folders.
+ */
+public class Patcher {
+	
 	private static final String DEV_NULL= "/dev/null";
 
 	// diff formats
@@ -30,15 +31,61 @@ import org.eclipse.core.runtime.Path;
 		new SimpleDateFormat("EEE MMM dd kk:mm:ss yyyy", Locale.US)
 	};
 		
-	//---- public methods
+	private String fName;
+	private Diff[] fDiffs;
+	private int fStripPrefixSegments;
+	private int fFuzz;
+	private boolean fIgnoreWhitespace;
 	
-	/* package */ PatchParser() {
+	
+	Patcher() {
 	}
 	
-	/* package */ Diff[] parse(BufferedReader reader) throws IOException {
+	//---- options
+	
+	void setName(String name) {
+		fName= name;
+	}
+	
+	String getName() {
+		return fName;
+	}
+	
+	/**
+	 * Returns an array of Diffs after a sucessfull call to <code>parse</code>.
+	 * If <code>parse</code> hasn't been called returns <code>null</code>.
+	 */
+	Diff[] getDiffs() {
+		return fDiffs;
+	}
+	
+	void setStripPrefixSegments(int strip) {
+		fStripPrefixSegments= strip;
+	}
+	
+	IPath getPath(Diff diff) {
+		IPath path= diff.getPath();
+		if (fStripPrefixSegments > 0 && fStripPrefixSegments < path.segmentCount())
+			path= path.removeFirstSegments(fStripPrefixSegments);
+		return path;
+	}
+
+	void setFuzz(int fuzz) {
+		fFuzz= fuzz;
+	}
+	
+	void setIgnoreWhitespace(boolean ignoreWhitespace) {
+		fIgnoreWhitespace= ignoreWhitespace;
+	}
+	
+	//---- parsing patch files
+		
+	/* package */ void parse(BufferedReader reader) throws IOException {
 		List diffs= new ArrayList();
 		String line= null;
-		boolean	reread= false;
+		boolean reread= false;
+		String diffArgs= null;
+		String fileName= null;
 		
 		LineReader lr= new LineReader(reader);
 		
@@ -53,33 +100,31 @@ import org.eclipse.core.runtime.Path;
 				continue;	// too short
 								
 			// remember some infos
-			String fileName= null;
 			if (line.startsWith("Index: ")) {
-				fileName= line.substring(7);
+				fileName= line.substring(7).trim();
 				continue;
 			}
-			String diffArgs= null;
 			if (line.startsWith("diff")) {
-				diffArgs= line.substring(4);
+				diffArgs= line.substring(4).trim();
 				continue;
 			}
 
 			if (line.startsWith("--- ")) {
 				line= readUnifiedDiff(diffs, lr, line, diffArgs, fileName);
+				diffArgs= fileName= null;
 				reread= true;
 			} else if (line.startsWith("*** ")) {
 				line= readContextDiff(diffs, lr, line, diffArgs, fileName);
+				diffArgs= fileName= null;
 				reread= true;
 			}
 		}
 		
 		lr.close();
 		
-		return (Diff[]) diffs.toArray((Diff[]) new Diff[diffs.size()]);
+		fDiffs= (Diff[]) diffs.toArray((Diff[]) new Diff[diffs.size()]);
 	}
-				
-	//---- private helpers
-	
+
 	/**
 	 * Returns the next line that does not belong to this diff
 	 */
@@ -94,8 +139,8 @@ import org.eclipse.core.runtime.Path;
 			
 		String[] newArgs= split(line.substring(4));
 	
-		Diff diff= new Diff(extractPath(oldArgs, 0), extractDate(oldArgs, 1),
-				   			extractPath(newArgs, 0), extractDate(newArgs, 1));
+		Diff diff= new Diff(extractPath(oldArgs, 0, fileName), extractDate(oldArgs, 1),
+				   			extractPath(newArgs, 0, fileName), extractDate(newArgs, 1));
 		diffs.add(diff);
 				   
 		int[] oldRange= new int[2];
@@ -117,7 +162,7 @@ import org.eclipse.core.runtime.Path;
 						if (line.startsWith("@@ ")) {
 							// flush old hunk
 							if (lines.size() > 0) {
-								diff.add(new Hunk(oldRange, newRange, lines));
+								new Hunk(diff, oldRange, newRange, lines);
 								lines.clear();
 							}
 									
@@ -160,7 +205,7 @@ import org.eclipse.core.runtime.Path;
 			}
 		} finally {
 			if (lines.size() > 0)
-				diff.add(new Hunk(oldRange, newRange, lines));
+				new Hunk(diff, oldRange, newRange, lines);
 			diff.finish();
 		}
 	}
@@ -179,8 +224,8 @@ import org.eclipse.core.runtime.Path;
 		
 		String[] newArgs= split(line.substring(4));
 						
-		Diff diff= new Diff(extractPath(oldArgs, 0), extractDate(oldArgs, 1),
-				   			extractPath(newArgs, 0), extractDate(newArgs, 1));
+		Diff diff= new Diff(extractPath(oldArgs, 0, fileName), extractDate(oldArgs, 1),
+				   			extractPath(newArgs, 0, fileName), extractDate(newArgs, 1));
 		diffs.add(diff);
 				   
 		int[] oldRange= new int[2];
@@ -206,7 +251,7 @@ import org.eclipse.core.runtime.Path;
 						if (line.startsWith("***************")) {	// new hunk
 							// flush old hunk
 							if (oldLines.size() > 0 || newLines.size() > 0) {
-								diff.add(new Hunk(oldRange, newRange, unifyLines(oldLines, newLines)));
+								new Hunk(diff, oldRange, newRange, unifyLines(oldLines, newLines));
 								oldLines.clear();
 								newLines.clear();
 							}
@@ -250,7 +295,7 @@ import org.eclipse.core.runtime.Path;
 		} finally {
 			// flush last hunk
 			if (oldLines.size() > 0 || newLines.size() > 0)
-				diff.add(new Hunk(oldRange, newRange, unifyLines(oldLines, newLines)));
+				new Hunk(diff, oldRange, newRange, unifyLines(oldLines, newLines));
 			diff.finish();
 		}
 	}
@@ -414,7 +459,7 @@ import org.eclipse.core.runtime.Path;
 	/**
 	 * Returns null if file name is "/dev/null".
 	 */
-	private IPath extractPath(String[] args, int n) {
+	private IPath extractPath(String[] args, int n, String path2) {
 		if (n < args.length) {
 			String path= args[n];
 			if (DEV_NULL.equals(path))
@@ -422,6 +467,10 @@ import org.eclipse.core.runtime.Path;
 			int pos= path.lastIndexOf(':');
 			if (pos >= 0)
 				path= path.substring(0, pos);
+			if (path2 != null && !path2.equals(path)) {
+				System.out.println("path mismatch: " + path2);
+				path= path2;
+			}
 			return new Path(path);
 		}
 		return null;
@@ -459,5 +508,190 @@ import org.eclipse.core.runtime.Path;
 			pair[1]= Integer.parseInt(line.substring(comma+1));
 		}
 	}
-}
+	
+		//---- applying a patch file
+	
+	/**
+	 * Tries to patch the given lines with the specified Diff.
+	 * Any hunk that couldn't be applied is returned in the list failedHunks.
+	 */
+	/* package */ void patch(Diff diff, List lines, List failedHunks) {
+		
+		int shift= 0;
+		Iterator iter= diff.fHunks.iterator();
+		while (iter.hasNext()) {
+			Hunk hunk= (Hunk) iter.next();
+			shift= patch(hunk, lines, shift, failedHunks);
+		}
+	}
 
+	/**
+	 * Tries to patch the contents of the given reader with the specified Diff.
+	 * Any hunk that couldn't be applied is returned in the list failedHunks.
+	 */
+	/* package */ String patch(Diff diff, BufferedReader reader, List failedHunks) {
+		
+		List lines= new LineReader(reader).readLines();
+		if (lines == null)
+			lines= new ArrayList();
+
+		patch(diff, lines, failedHunks);
+		
+		StringBuffer sb= new StringBuffer();
+		Iterator iter= lines.iterator();
+		while (iter.hasNext())
+			sb.append((String)iter.next());
+		return sb.toString();
+	}
+
+	/**
+	 * Tries to apply the specified hunk to the given lines.
+	 * If the hunk cannot be applied at the original position
+	 * the methods tries Fuzz lines before and after.
+	 * If this fails the Hunk is added to the given list of failed hunks.
+	 */
+	private int patch(Hunk hunk, List lines, int shift, List failedHunks) {
+		if (tryPatch(hunk, lines, shift)) {
+			shift+= doPatch(hunk, lines, shift);
+		} else {
+			boolean found= false;
+			int oldShift= shift;
+			
+			for (int i= shift-1; i > shift-fFuzz; i--) {
+				if (tryPatch(hunk, lines, i)) {
+					shift= i;
+					found= true;
+					break;
+				}
+			}
+			
+			if (! found) {
+				for (int i= shift+1; i < shift+fFuzz; i++) {
+					if (tryPatch(hunk, lines, i)) {
+						shift= i;
+						found= true;
+						break;
+					}
+				}
+			}
+			
+			if (found) {
+				//System.out.println("patched hunk at offset: " + (shift-oldShift));
+				shift+= doPatch(hunk, lines, shift);
+			} else {
+				if (failedHunks != null)
+					failedHunks.add(hunk);
+				System.out.println("hunk ignored");
+			}
+		}
+		return shift;
+	}
+		
+	private boolean tryPatch(Hunk hunk, List lines, int shift) {
+		int pos= hunk.fOldStart + shift;
+		int contextMatches= 0;
+		int deleteMatches= 0;
+		for (int i= 0; i < hunk.fLines.length; i++) {
+			String s= hunk.fLines[i];
+			Assert.isTrue(s.length() > 0);
+			String line= s.substring(1);
+			switch (s.charAt(0)) {
+			case ' ':	// context lines
+				while (true) {
+					if (pos < 0 || pos >= lines.size())
+						return false;
+					if (linesMatch(line, (String) lines.get(pos))) {
+						contextMatches++;
+						pos++;
+						break;
+					}
+					if (contextMatches <= 0)
+						return false;
+					pos++;
+				}
+				break;
+			case '-':	// deleted lines
+				while (true) {
+					if (pos < 0 || pos >= lines.size())
+						return false;
+					if (linesMatch(line, (String) lines.get(pos))) {
+						deleteMatches++;
+						pos++;
+						break;
+					}
+					if (deleteMatches <= 0)
+						return false;
+					pos++;
+				}
+				break;
+			case '+':	// added lines
+				break;
+			}
+		}
+		return true;
+	}
+	
+	private int doPatch(Hunk hunk, List lines, int shift) {
+		int pos= hunk.fOldStart + shift;
+		for (int i= 0; i < hunk.fLines.length; i++) {
+			String s= hunk.fLines[i];
+			Assert.isTrue(s.length() > 0);
+			String line= s.substring(1);
+			char type= s.charAt(0);
+			switch (type) {
+			case ' ':	// context lines
+				while (true) {
+					Assert.isTrue(pos < lines.size(), "3");
+					if (linesMatch(line, (String) lines.get(pos))) {
+						pos++;
+						break;
+					}
+					pos++;
+				}
+				break;
+			case '-':	// deleted lines
+				while (true) {
+					Assert.isTrue(pos < lines.size(), "3");
+					if (linesMatch(line, (String) lines.get(pos))) {
+						break;
+					}
+					pos++;
+				}
+				lines.remove(pos);
+				break;			
+			case '+':	// added lines
+				lines.add(pos,  line);
+				pos++;
+				break;
+			}
+		}
+		return hunk.fNewLength - hunk.fOldLength;
+	}
+
+	/**
+	 * Compares two strings without taking the line endings into account.
+	 * Supported line endings are "\n", "\r", and "\r\n".
+	 */
+	private boolean linesMatch(String line1, String line2) {
+		if (fIgnoreWhitespace) {
+			int l1= length(line1);
+			int l2= length(line2);
+			if (l1 != l2)
+				return false;
+			return line1.regionMatches(0, line2, 0, l1);
+		}
+		return line1.equals(line2);
+	}
+	
+	/**
+	 * Returns the length (exluding end-of-line characters) of the given string.
+	 */
+	/* package */ static int length(String s) {
+		int l= s.length();
+		if (l > 0 && s.charAt(l-1) == '\n')
+			l--;
+		if (l > 1 && s.charAt(l-2) == '\r')
+			l--;
+		return l;
+	}
+}

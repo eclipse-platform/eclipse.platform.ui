@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.compare.CompareEditorInput;
+import org.eclipse.compare.*;
 
 /**
  * Supports cross-pane navigation through differences.
@@ -35,7 +36,7 @@ public class CompareNavigator {
 		
 		fLastDirection= next;
 		
-		// find most down stream Pane
+		// find most down stream CompareViewerPane
 		int n= 0;
 		INavigatable[] navigators= new INavigatable[4];
 		for (int i= 0; i < fPanes.length; i++) {

@@ -520,7 +520,7 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 					setRightDirty(false);
 					break;
 				case 2:
-					throw new CompareViewerSwitchingPane.ViewerSwitchingCancelled();
+					throw new ViewerSwitchingCancelled();
 				}
 			} else
 				saveContent(oldInput);

@@ -2,33 +2,35 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.compare.internal;
+package org.eclipse.compare;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
-
-import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.widgets.*;
 
 import org.eclipse.jface.action.ToolBarManager;
 
+import org.eclipse.compare.internal.Splitter;
+
 /**
- * A Pane is a convenience class which installs a CustomLabel and a Toolbar (on demand).
- * Double clicking onto the Pane's title bar maximizes the Pane 
- * to the size of an enclosing Splitter (if there is one).
- * If more Splitters are nested maximizing walks up and maximizes to the outermost Splitter.
+ * A <code>CompareViewerPane</code> is a convenience class which installs a
+ * <code>CLabel</code> and a <code>Toolbar</code> in a <code>ViewForm</code>.
+ * <P>
+ * Double clicking onto the <code>CompareViewerPane</code>'s title bar maximizes
+ * the <code>CompareViewerPane</code> to the size of an enclosing <code>Splitter</code>
+ * (if there is one).
+ * If more <code>Splitters</code> are nested maximizing walks up and
+ * maximizes to the outermost <code>Splitter</code>.
  */
-public class Pane extends ViewForm {
+public class CompareViewerPane extends ViewForm {
 	
 	private ToolBarManager fToolBarManager;
 
-	public Pane(Composite parent, int style) {
-		super(parent, SWT.BORDER | SWT.FLAT);	// added style bits SWT.FLAT for PR 1GEV8R3
+
+	public CompareViewerPane(Composite parent, int style) {
+		super(parent, style);
 		
 		marginWidth= 0;
 		marginHeight= 0;
@@ -40,7 +42,7 @@ public class Pane extends ViewForm {
 			public void mouseDoubleClick(MouseEvent e) {
 				Control parent= getParent();
 				if (parent instanceof Splitter)
-					((Splitter)parent).setMaximizedControl(Pane.this);
+					((Splitter)parent).setMaximizedControl(CompareViewerPane.this);
 			}
 		};	
 				
@@ -59,18 +61,18 @@ public class Pane extends ViewForm {
 	}
 	
 	/**
-	 * Returns a <code>ToolBarManager</code> if the given parent is a <code>ViewerPane</code>.
+	 * Returns a <code>ToolBarManager</code> if the given parent is a <code>CompareViewerPane</code>.
 	 */
 	public static ToolBarManager getToolBarManager(Composite parent) {
-		if (parent instanceof Pane) {
-			Pane pane= (Pane) parent;
+		if (parent instanceof CompareViewerPane) {
+			CompareViewerPane pane= (CompareViewerPane) parent;
 			return pane.getToolBarManager();
 		}
 		return null;
 	}
 
 	/**
-	 * Clear tool items in <code>ViewerPane</code>'s control bar.
+	 * Clear tool items in <code>CompareViewerPane</code>'s control bar.
 	 */
 	public static void clearToolBar(Composite parent) {
 		ToolBarManager tbm= getToolBarManager(parent);

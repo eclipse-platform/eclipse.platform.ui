@@ -4,6 +4,8 @@
  */
 package org.eclipse.compare.patch;
 
+import org.eclipse.swt.graphics.Image;
+
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.jface.viewers.ISelection;
@@ -13,6 +15,7 @@ import org.eclipse.core.runtime.*;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.*;
+import org.eclipse.compare.structuremergeviewer.Differencer;
 
 
 /* package */ class PatchWizard extends Wizard {
@@ -22,12 +25,12 @@ import org.eclipse.compare.internal.*;
 
 	private boolean fHasNewDialogSettings;
 	
-	private Diff[] fDiffs;
-	private ISelection fSelection;
-	
 	private InputPatchPage fPatchWizardPage;
 	private PreviewPatchPage fPreviewPatchPage;
 	
+	private Patcher fPatcher;
+	private ISelection fSelection;
+
 		
 	/**
 	 * Creates a wizard for applying a patch file to the workspace.
@@ -35,6 +38,7 @@ import org.eclipse.compare.internal.*;
 	/* package */ PatchWizard(ISelection selection) {
 		
 		fSelection= selection;
+		fPatcher= new Patcher();
 		
 		setWindowTitle("Apply Patch");
 
@@ -45,7 +49,15 @@ import org.eclipse.compare.internal.*;
 		else {
 			fHasNewDialogSettings= false;
 			setDialogSettings(section);
-		}
+		}	
+	}
+	
+	Patcher getPatcher() {
+		return fPatcher;
+	}
+	
+	ISelection getSelection() {
+		return fSelection;
 	}
 	
 	/*package */ IFile existsInSelection(IPath path) {
@@ -63,14 +75,6 @@ import org.eclipse.compare.internal.*;
 		return null;
 	}
 	
-	/* package */ Diff[] getDiffs() {
-		return fDiffs;
-	}
-
-	/* package */ void setDiffs(Diff[] diffs) {
-		fDiffs= diffs;
-	}
-				
 	/* (non-Javadoc)
 	 * Method declared on IWizard.
 	 */
@@ -86,12 +90,30 @@ import org.eclipse.compare.internal.*;
 	 */
 	public boolean performFinish() {
 		
-		CompareConfiguration cc= new CompareConfiguration();
+		CompareConfiguration cc= new CompareConfiguration() {
+			public Image getImage(int kind) {
+				if (kind == Differencer.ADDITION)
+					kind= Differencer.DELETION;
+				else if (kind == Differencer.DELETION)
+					kind= Differencer.ADDITION;
+				return super.getImage(kind);
+			}
+			public Image getImage(Image base, int kind) {
+				if (kind == Differencer.ADDITION)
+					kind= Differencer.DELETION;
+				else if (kind == Differencer.DELETION)
+					kind= Differencer.ADDITION;
+				return super.getImage(base, kind);
+			}
+		};
 		cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, new Boolean(false));
 
-		int strip= fPreviewPatchPage.getStripPrefixSegments();
-		CompareUI.openCompareEditor(
-			new PatchCompareInput(cc, fSelection, fDiffs, fPatchWizardPage.getPatchName(), strip));
+		fPatcher.setName(fPatchWizardPage.getPatchName());
+		fPatcher.setStripPrefixSegments(fPreviewPatchPage.getStripPrefixSegments());
+		fPatcher.setFuzz(3);
+		fPatcher.setIgnoreWhitespace(true);
+		
+		CompareUI.openCompareEditor(new PatchCompareInput(cc, fPatcher, fSelection));
 
 		// Save the dialog settings
 		if (fHasNewDialogSettings) {

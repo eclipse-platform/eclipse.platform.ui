@@ -19,8 +19,7 @@ public interface IModificationDate {
 	 * Note that this value should only be used to give the user a general idea of how
 	 * old the object is.
 	 *
-	 * @return the time of last modification, in milliseconds since 
-	 * January 1, 1970, 00:00:00 GMT
+	 * @return the time of last modification, in milliseconds since January 1, 1970, 00:00:00 GMT
 	 */
 	long getModificationDate();
 }

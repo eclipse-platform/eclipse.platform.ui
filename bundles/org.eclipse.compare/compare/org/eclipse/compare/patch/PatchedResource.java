@@ -6,24 +6,26 @@ package org.eclipse.compare.patch;
 
 import java.io.*;
 
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.swt.graphics.Image;
+
+import org.eclipse.core.runtime.*;
 
 import org.eclipse.compare.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swt.graphics.Image;
 
 
 /* package */ class PatchedResource implements ITypedElement, IStreamContentAccessor {
 	
-	Diff fDiff;
-	IStreamContentAccessor fCurrent;
-	IPath fPath;
-	byte[] fContent;
+	private Diff fDiff;
+	private IStreamContentAccessor fCurrent;
+	private IPath fPath;
+	private byte[] fContent;
+	private Patcher fPatcher;
 	
-	/* package */ PatchedResource(IStreamContentAccessor current, Diff diff, IPath path) {
+	/* package */ PatchedResource(IStreamContentAccessor current, Diff diff, IPath path, Patcher patcher) {
 		fDiff= diff;
 		fCurrent= current;
 		fPath= path;
+		fPatcher= patcher;
 	}
 	
 	public InputStream getContents() throws CoreException {
@@ -36,7 +38,8 @@ import org.eclipse.swt.graphics.Image;
 				is= new ByteArrayInputStream(new byte[0]);
 			}
 			if (is != null) {
-				String s= fDiff.patch(is);
+				BufferedReader br= new BufferedReader(new InputStreamReader(is));
+				String s= fPatcher.patch(fDiff,br, null);
 				if (s != null)
 					fContent= s.getBytes();
 				try {
@@ -62,6 +65,5 @@ import org.eclipse.swt.graphics.Image;
 			return type;
 		return ITypedElement.UNKNOWN_TYPE;
 	}
-
 }
 

@@ -2,55 +2,32 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.compare.internal;
+package org.eclipse.compare;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 
-import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.viewers.*;
 
-import org.eclipse.compare.*;
+import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.compare.contentmergeviewer.ContentMergeViewer;
-import org.eclipse.compare.structuremergeviewer.DiffTreeViewer;
 
 
 /**
- * A custom <code>Pane</code> which supports viewer switching.
+ * A custom <code>CompareViewerPane</code> which supports viewer switching.
  * <p>
- * If a property with the name CompareUI.COMPARE_VIEWER_TITLE is set
- * on the top level SWT control of a viewer, it is used as a title in the pane's
+ * Clients must implement the viewer switching strategy by implementing
+ * <code>getViewer</code>method.
+ * <p>
+ * If a property with the name <code>CompareUI.COMPARE_VIEWER_TITLE</code> is set
+ * on the top level SWT control of a viewer, it is used as a title in the <code>CompareViewerPane</code>'s
  * title bar.
  */
-public abstract class CompareViewerSwitchingPane extends Pane
+public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 				implements ISelectionChangedListener, ISelectionProvider, IDoubleClickListener {
-	
-	
-	public static class ViewerSwitchingCancelled extends Error {
-	}
-	
-	/**
-	 * Used whenever the input is null or no viewer can be found.
-	 */
-	private static class NullViewer extends AbstractViewer {
-	
-		private Control fDummy;
-	
-		public NullViewer(Composite parent) {
-	
-			fDummy= new Tree(parent, SWT.NULL);
-	
-			CompareViewerSwitchingPane.clearToolBar(parent);
-		}
-	
-		public Control getControl() {
-			return fDummy;
-		}
-	}
 	
 	private Viewer fViewer;
 	private Object fInput;
@@ -58,8 +35,9 @@ public abstract class CompareViewerSwitchingPane extends Pane
 	private ListenerList fOpenListeners= new ListenerList();
 	private boolean fControlVisibility= false;
 
+
 	/**
-	 * Creates a ViewerPane as a child of the given parent and with the
+	 * Creates a <code>CompareViewerSwitchingPane</code> as a child of the given parent and with the
 	 * specified SWT style bits.
 	 */
 	public CompareViewerSwitchingPane(Composite parent, int style) {
@@ -67,7 +45,7 @@ public abstract class CompareViewerSwitchingPane extends Pane
 	}
 	
 	/**
-	 * Creates a ViewerPane as a child of the given parent and with the
+	 * Creates a <code>CompareViewerSwitchingPane</code> as a child of the given parent and with the
 	 * specified SWT style bits.
 	 */
 	public CompareViewerSwitchingPane(Composite parent, int style, boolean visibility) {

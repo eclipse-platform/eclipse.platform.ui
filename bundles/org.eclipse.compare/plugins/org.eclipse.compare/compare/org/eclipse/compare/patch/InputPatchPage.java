@@ -5,20 +5,22 @@
 package org.eclipse.compare.patch;
 
 import java.io.*;
+import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.dnd.*;
 
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.help.DialogPageContextComputer;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.model.*;
 
-
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 import org.eclipse.compare.internal.Utilities;
@@ -29,6 +31,9 @@ import org.eclipse.compare.internal.Utilities;
 	// constants
 	protected static final int SIZING_TEXT_FIELD_WIDTH= 250;
 	protected static final int COMBO_HISTORY_LENGTH= 5;
+	
+	private final static int SIZING_SELECTION_WIDGET_WIDTH= 400;
+	private final static int SIZING_SELECTION_WIDGET_HEIGHT= 150;
 
 	// dialog store id constants
 	private final static String PAGE_NAME= "PatchWizardPage"; //$NON-NLS-1$
@@ -44,14 +49,14 @@ import org.eclipse.compare.internal.Utilities;
 	private Combo fPatchFileNameField;
 	private Button fPatchFileBrowseButton;
 	private Button fUsePatchFileButton;
-	private Composite fPatchFileGroup;
+	private Group fPatchFileGroup;
+	private CheckboxTreeAndListGroup fInputGroup;
 	private PatchWizard fPatchWizard;
 
 
 	InputPatchPage(PatchWizard pw) {
 		super("Select Patch Input", "Select Patch Input", null);
 		fPatchWizard= pw;
-		//setPageComplete(false);
 	}
 	
 	/**
@@ -72,29 +77,16 @@ import org.eclipse.compare.internal.Utilities;
 				
 		Composite composite= new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+		composite.setLayoutData(new GridData(/* GridData.VERTICAL_ALIGN_FILL | */ GridData.HORIZONTAL_ALIGN_FILL));
 		setControl(composite);
 		
-		fUsePatchFileButton= new Button(composite, SWT.RADIO);
-		fUsePatchFileButton.setText("Select Patch File");
+		Label l= new Label(composite, SWT.NONE);	// a spacer
+		l.setText("Select the resources to patch:");
+		buildInputGroup(composite);
 		
-		fPatchFileGroup= createPatchFileGroup(composite);
-
-		new Label(composite, SWT.NONE);	// a spacer
-
-		fUseClipboardButton= new Button(composite, SWT.RADIO);
-		fUseClipboardButton.setText("Extract Patch from Clipboard");
-	
-		// set up handlers
+		new Label(composite, SWT.NONE);	// a spacer		
 		
-		fUsePatchFileButton.addSelectionListener(
-			new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					Utilities.setEnableComposite(fPatchFileGroup, !getUseClipboard());
-					updateWidgetEnablements();
-				}
-			}
-		);
+		buildPatchFileGroup(composite);		
 			
 		restoreWidgetValues();
 
@@ -110,7 +102,8 @@ import org.eclipse.compare.internal.Utilities;
 	public IWizardPage getNextPage() {
 		if (true) {
 			
-			Diff[] diffs= null;
+			Patcher patcher= ((PatchWizard) getWizard()).getPatcher();
+			
 			Reader reader= null;
 			if (getUseClipboard()) {
 				Control c= getControl();
@@ -128,13 +121,12 @@ import org.eclipse.compare.internal.Utilities;
 					} catch (FileNotFoundException ex) {
 						MessageDialog.openError(null, "Error", "Patch file not found: " + patchFilePath);
 					}
-				}		
+				}
 			}
 			
 			if (reader != null) {
-				PatchParser pp= new PatchParser();
 				try {
-					diffs= pp.parse(new BufferedReader(reader));
+					patcher.parse(new BufferedReader(reader));
 				} catch (IOException ex) {
 					MessageDialog.openError(null, "Error", "Error while parsing patch");
 				}
@@ -145,17 +137,11 @@ import org.eclipse.compare.internal.Utilities;
 				}
 			}
 			
+			Diff[] diffs= patcher.getDiffs();
 			if (diffs == null || diffs.length == 0) {
 				MessageDialog.openError(null, "Error", "No diffs found in " + getPatchName());
 				return this;
 			}
-			
-			IWizard w= getWizard();
-			if (w instanceof PatchWizard) {
-				PatchWizard pw= (PatchWizard) w;
-				pw.setDiffs(diffs);
-			}
-
 		}
 		return super.getNextPage();
 	}
@@ -174,24 +160,50 @@ import org.eclipse.compare.internal.Utilities;
 		}
 	}
 	
-	/**
-	 *	Create the group for selecting the patch file
-	 */
-	private Composite createPatchFileGroup(Composite parent) {
+	
+	private void setEnablePatchFile(boolean enable) {
+		fPatchFileNameField.setEnabled(enable);
+		fPatchFileBrowseButton.setEnabled(enable);
+	}
+
+	public void buildPatchFileGroup(Composite parent) {
 		
-		Composite group= new Composite(parent, SWT.NONE);
+		fPatchFileGroup= new Group(parent, SWT.NONE);
+		fPatchFileGroup.setText("Select Patch");
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 3;
-		group.setLayout(layout);
-		group.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-	
-		new Label(group, SWT.NONE).setText("Patch File:");
-	
-		// source name entry field
-		fPatchFileNameField= new Combo(group, SWT.BORDER);
-		GridData data= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-		data.widthHint= SIZING_TEXT_FIELD_WIDTH;
-		fPatchFileNameField.setLayoutData(data);
+		fPatchFileGroup.setLayout(layout);
+		fPatchFileGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		// 1st row
+		fUsePatchFileButton= new Button(fPatchFileGroup, SWT.RADIO);
+		fUsePatchFileButton.setText("File: ");
+		
+		fPatchFileNameField= new Combo(fPatchFileGroup, SWT.BORDER);
+		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalIndent= 8;
+		gd.widthHint= SIZING_TEXT_FIELD_WIDTH; // SWTUtil.convertWidthInCharsToPixels(30, fWorkingSetText);
+		fPatchFileNameField.setLayoutData(gd);
+		
+		fPatchFileBrowseButton= new Button(fPatchFileGroup, SWT.PUSH);
+		fPatchFileBrowseButton.setText("Choose...");
+		fPatchFileBrowseButton.setLayoutData(new GridData());
+		//SWTUtil.setButtonDimensionHint(fPatchFileBrowseButton);
+		
+		// 2nd row
+		fUseClipboardButton= new Button(fPatchFileGroup, SWT.RADIO);
+		fUseClipboardButton.setText("Clipboard");
+
+
+		// Add listeners
+		fUsePatchFileButton.addSelectionListener(
+			new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					setEnablePatchFile(!getUseClipboard());
+					updateWidgetEnablements();
+				}
+			}
+		);
 		fPatchFileNameField.addSelectionListener(
 			new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -208,12 +220,6 @@ import org.eclipse.compare.internal.Utilities;
 				}
 			}
 		);
-	
-		// patch file browse button
-		fPatchFileBrowseButton= new Button(group, SWT.PUSH);
-		fPatchFileBrowseButton.setText("Browse...");
-		fPatchFileBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		//SWTUtil.setButtonDimensionHint(fDestinationBrowseButton);
 		fPatchFileBrowseButton.addSelectionListener(
 			new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -222,32 +228,170 @@ import org.eclipse.compare.internal.Utilities;
 				}
 			}
 		);
-	
-		fPatchFileNameField.setFocus();
+	}
+
+	/**
+	 *	Create the group for selecting the patch file
+	 */
+//	private void buildPatchFileGroup2(Composite parent) {
+//		
+//		fPatchFileGroup= new Composite(parent, SWT.NONE);
+//		GridLayout layout= new GridLayout();
+//		layout.numColumns= 3;
+//		fPatchFileGroup.setLayout(layout);
+//		fPatchFileGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+//	
+//		fUsePatchFileButton= new Button(fPatchFileGroup, SWT.RADIO);
+//		fUsePatchFileButton.setText("Patch File: ");
+//	
+//		// source name entry field
+//		fPatchFileNameField= new Combo(fPatchFileGroup, SWT.BORDER);
+//		GridData data= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+//		data.widthHint= SIZING_TEXT_FIELD_WIDTH;
+//		fPatchFileNameField.setLayoutData(data);
+//		fPatchFileNameField.addSelectionListener(
+//			new SelectionAdapter() {
+//				public void widgetSelected(SelectionEvent e) {
+//					setSourceName(fPatchFileNameField.getText());
+//					//Update enablements when this is selected
+//					updateWidgetEnablements();
+//				}
+//			}
+//		);
+//		fPatchFileNameField.addModifyListener(
+//			new ModifyListener() {
+//				public void modifyText(ModifyEvent e) {
+//					updateWidgetEnablements();
+//				}
+//			}
+//		);
+//	
+//		// patch file browse button
+//		fPatchFileBrowseButton= new Button(fPatchFileGroup, SWT.PUSH);
+//		fPatchFileBrowseButton.setText("Browse...");
+//		fPatchFileBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+//		//SWTUtil.setButtonDimensionHint(fDestinationBrowseButton);
+//		fPatchFileBrowseButton.addSelectionListener(
+//			new SelectionAdapter() {
+//				public void widgetSelected(SelectionEvent e) {
+//					handlePatchFileBrowseButtonPressed();
+//					updateWidgetEnablements();
+//				}
+//			}
+//		);
+//	
+//		fPatchFileNameField.setFocus();
+//	}
+
+	protected void buildInputGroup(Composite parent) {
 		
-		return group;
+		IWorkspaceRoot root= null;
+		IResource[] selection= null;
+		PatchWizard pw= (PatchWizard) getWizard();
+		ISelection s= pw.getSelection();
+		if (s != null && !s.isEmpty()) {
+			selection= Utilities.getResources(s);
+			IWorkspace workspace= selection[0].getWorkspace();
+			root= workspace.getRoot();
+		}
+				
+		fInputGroup=
+			new CheckboxTreeAndListGroup(
+				parent,
+				root,
+				getResourceProvider(IResource.FOLDER | IResource.PROJECT | IResource.ROOT),
+				new WorkbenchLabelProvider(),
+				getResourceProvider(IResource.FILE),
+				new WorkbenchLabelProvider(),
+				SWT.NONE,
+				SIZING_SELECTION_WIDGET_WIDTH,	
+				SIZING_SELECTION_WIDGET_HEIGHT);
+	
+		WorkbenchViewerSorter sorter= new WorkbenchViewerSorter();
+		fInputGroup.setTreeSorter(sorter);
+		fInputGroup.setListSorter(sorter);
+		
+		for (int i= 0; i < selection.length; i++) {
+			if (/* selection[i] instanceof ICompilationUnit || */ selection[i] instanceof IFile)
+				fInputGroup.initialCheckListItem(selection[i]);
+			else
+				fInputGroup.initialCheckTreeItem(selection[i]);
+		}
+		
+		MouseAdapter ma= new MouseAdapter() {
+			public void mouseUp(MouseEvent e) {
+				updateWidgetEnablements();
+			}
+		};
+		fInputGroup.getTree().addMouseListener(ma);
+		fInputGroup.getTable().addMouseListener(ma);
+	}
+		
+	/**
+	 * Returns a content provider for <code>IResource</code>s that returns 
+	 * only children of the given resource type.
+	 */
+	private ITreeContentProvider getResourceProvider(final int resourceType) {
+		return new WorkbenchContentProvider() {
+			public Object[] getChildren(Object o) {
+				if (o instanceof IContainer) {
+					try {
+						ArrayList results= new ArrayList();
+						IResource[] members= ((IContainer)o).members();
+						for (int i= 0; i < members.length; i++)
+							// filter out the desired resource types
+							if ((members[i].getType() & resourceType) != 0)
+								results.add(members[i]);
+						return results.toArray();
+					} catch (CoreException e) {
+					}
+				}
+				// just return an empty set of children
+				return new Object[0];
+			}
+		};
 	}
 
 	/**
 	 * Updates the enable state of this page's controls.
 	 */
-	protected void updateWidgetEnablements() {
-		boolean enabled= false;
+	private void updateWidgetEnablements() {
+		
 		String error= null;
+
+		boolean anySelected= fInputGroup.getCheckedElementCount() > 0;
+		if (!anySelected)
+			error= "nothing selected to apply patch to";
+
+		boolean gotPatch= false;
 		if (getUseClipboard()) {
-			enabled= true;
+			Control c= getControl();
+			if (c != null) {
+				Clipboard clipboard= new Clipboard(c.getDisplay());
+				Object o= clipboard.getContents(TextTransfer.getInstance());
+				if (o instanceof String) {
+					String s= ((String) o).trim();
+					if (s.length() > 0)
+						gotPatch= true;
+					else
+						error= "clipboard is empty";
+				} else
+					error= "clipboard does not contain text";					
+			} else
+				error= "couldn't retrieve clipboard contents";					
 		} else {
 			String path= fPatchFileNameField.getText();
-			if (path.length() > 0) {
-				try {
-					new FileReader(path);
-					enabled= true;
-				} catch (FileNotFoundException ex) {
-					error= ex.getMessage();
-				}
+			if (path != null && path.length() > 0) {
+				File file= new File(path);
+				gotPatch= file.exists() && file.isFile() && file.length() > 0;
+				if (!gotPatch)
+					error= "can't locate path file";
+			} else {
+				error= "no file name";
 			}
-		}	
-		setPageComplete(enabled);
+		}
+		
+		setPageComplete(anySelected && gotPatch);
 		setErrorMessage(error);
 	}
 	
@@ -388,7 +532,7 @@ import org.eclipse.compare.internal.Utilities;
 			fUseClipboardButton.setSelection(true);
 		else
 			fUsePatchFileButton.setSelection(true);
-		Utilities.setEnableComposite(fPatchFileGroup, !useClipboard);
+		setEnablePatchFile(!useClipboard);
 	}
 	
 	private boolean getUseClipboard() {

@@ -24,7 +24,7 @@ public class CompareWithPatchAction implements IActionDelegate {
 			super(parent, wizard);
 			
 			setShellStyle(getShellStyle() | SWT.RESIZE);
-			setMinimumPageSize(600, 400);
+			setMinimumPageSize(700, 500);
 		}
 	}
 	

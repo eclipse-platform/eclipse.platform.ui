@@ -28,17 +28,16 @@ import java.util.*;
      * @exception IOException If an I/O error occurs
      */
 	/* package */ String readLine() throws IOException {
-		StringBuffer sb= new StringBuffer();
-		
-		if (fSawEOF)
-			return null;
-		
-		while (true) {
+		StringBuffer sb= null;
+				
+		while (!fSawEOF) {
 			int c= readChar();
 			if (c == -1) {
 				fSawEOF= true;
 				break;
 			}
+			if (sb == null)
+				sb= new StringBuffer();
 			sb.append((char)c);
 			if (c == '\n')
 				break;
@@ -57,7 +56,9 @@ import java.util.*;
 			}
 		}
 		
-		return sb.toString();
+		if (sb != null)
+			return sb.toString();
+		return null;
 	}
 	
 	/* package */ void close() {

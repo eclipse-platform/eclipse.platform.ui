@@ -122,9 +122,7 @@ public class Utilities {
 				}
 			}
 		}
-		IResource[] resourceSelection= new IResource[tmp.size()];
-		tmp.toArray(resourceSelection);
-		return resourceSelection;
+		return (IResource[]) tmp.toArray(new IResource[tmp.size()]);
 	}
 
 	public static byte[] readBytes(InputStream in) {

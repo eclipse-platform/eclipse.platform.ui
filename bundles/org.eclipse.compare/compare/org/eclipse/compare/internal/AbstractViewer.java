@@ -8,7 +8,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.Viewer;
 
 
-abstract class AbstractViewer extends Viewer {
+public abstract class AbstractViewer extends Viewer {
 
 	public void setInput(Object input) {
 	}

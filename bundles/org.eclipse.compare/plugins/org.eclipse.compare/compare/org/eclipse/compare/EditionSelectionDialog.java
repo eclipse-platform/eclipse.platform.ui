@@ -44,6 +44,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.compare.*;
 
 /**
  * A dialog where one input element can be compared against
@@ -174,9 +175,9 @@ public class EditionSelectionDialog extends Dialog {
 	private CompareViewerSwitchingPane fContentPane;
 	private Button fCommitButton;
 	private Table fMemberTable;
-	private Pane fMemberPane;
+	private CompareViewerPane fMemberPane;
 	private Tree fEditionTree;
-	private Pane fEditionPane;
+	private CompareViewerPane fEditionPane;
 	private Image fDateImage;
 	private Image fTimeImage;	
 	
@@ -497,7 +498,7 @@ public class EditionSelectionDialog extends Dialog {
 		);
 		
 		if (fReplaceMode) {
-			fEditionPane= new Pane(vsplitter, SWT.NONE);
+			fEditionPane= new CompareViewerPane(vsplitter, SWT.BORDER | SWT.FLAT);
 			
 			String titleFormat= Utilities.getString(fBundle, "treeTitleFormat"); //$NON-NLS-1$
 			String title= MessageFormat.format(titleFormat, new Object[] { fTargetPair.getItem().getName() });
@@ -505,7 +506,7 @@ public class EditionSelectionDialog extends Dialog {
 		} else {
 			Splitter hsplitter= new Splitter(vsplitter,  SWT.HORIZONTAL);
 			
-			fMemberPane= new Pane(hsplitter, SWT.NONE);
+			fMemberPane= new CompareViewerPane(hsplitter, SWT.BORDER | SWT.FLAT);
 			fMemberPane.setText(Utilities.getString(fBundle, "memberPaneTitle")); //$NON-NLS-1$
 			fMemberTable= new Table(fMemberPane, SWT.H_SCROLL + SWT.V_SCROLL);
 			fMemberTable.addSelectionListener(
@@ -518,7 +519,7 @@ public class EditionSelectionDialog extends Dialog {
 			
 			fMemberPane.setContent(fMemberTable);
 			
-			fEditionPane= new Pane(hsplitter, SWT.NONE);
+			fEditionPane= new CompareViewerPane(hsplitter, SWT.BORDER | SWT.FLAT);
 		}
 		
 		fEditionTree= new Tree(fEditionPane, SWT.H_SCROLL + SWT.V_SCROLL);
