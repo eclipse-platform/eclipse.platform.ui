@@ -30,13 +30,6 @@ import java.util.ArrayList;
  * A preference page to enable/disable default launchers for a resource.
  */
 public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPreferencePage {
-	
-	/*private static final String PREFIX= "launcher_preferences.";
-	private static final String DESCRIPTION= PREFIX + "description";
-	private static final String RUN_DEBUG= PREFIX + "run_debug";
-	private static final String NONE= PREFIX + "none";
-	private static final String ERROR= PREFIX + "error.";
-	private static final String CLOSED_PROJECT= PREFIX + "closed_project";*/
 
 	protected Combo fCombo;
 	
@@ -245,13 +238,5 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 			return false;
 		}
 		return true;
-	}
-
-	/**
-	 * The push button has been double clicked
-	 */
-	public void widgetDoubleSelected(SelectionEvent event) {
-
-		// The select all button has been double clicked
 	}
 }
