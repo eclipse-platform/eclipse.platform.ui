@@ -57,24 +57,14 @@
 			<fileset dir="src/" excludes="**/*.java"/>
 		</copy>
 		<mkdir dir="${build.result.folder}/WEB-INF/lib"/>
-		<!-- custom change begin -->
-		<!--
 		<jar jarfile="${build.result.folder}/WEB-INF/lib/webapp.jar" basedir="${temp.folder}/WEB-INF/lib/webapp.jar.bin"/>
-		-->
-		<jar jarfile="${build.result.folder}/WEB-INF/lib/webapp.jar" basedir="${temp.folder}/WEB-INF/lib/webapp.jar.bin" excludes="org/eclipse/help/internal/proxy/**"/>
-		<!-- custom end -->
 		<delete dir="${temp.folder}/WEB-INF/lib/webapp.jar.bin"/>
 	</target>
 
 	<target name="WEB-INF/lib/webappsrc.zip" depends="init" unless="WEB-INF/lib/webappsrc.zip">
 		<mkdir dir="${build.result.folder}/WEB-INF/lib"/>
 		<zip zipfile="${build.result.folder}/WEB-INF/lib/webappsrc.zip" filesonly="false">
-		<!-- custom change begin -->
-		<!--
 			<fileset dir="src/" includes="**/*.java"/>
-		-->
-			<fileset dir="src/" includes="**/*.java" excludes="org/eclipse/help/internal/proxy/**"/>
-		<!-- custom end -->
 		</zip>
 	</target>
 
