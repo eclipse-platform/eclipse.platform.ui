@@ -178,7 +178,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		}
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex == 0) {
-				return DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_ENVIRONMENT);
+				return DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_ENV_VAR);
 			}
 			return null;
 		}
