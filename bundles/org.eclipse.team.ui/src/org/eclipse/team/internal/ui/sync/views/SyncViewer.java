@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -532,12 +533,13 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		// cancel and wait 
 		RefreshSubscriberInputJob job = TeamUIPlugin.getPlugin().getRefreshJob();
 		
+		job.setRestartOnCancel(false);
 		job.cancel();
-//		try {
-//			job.join();
-//		} catch (InterruptedException e) {
-//			// continue with shutdown
-//		}
+		try {
+			job.join();
+		} catch (InterruptedException e) {
+			// continue with shutdown
+		}
 		job.setSubscriberInput(null);
 		
 		TeamProvider.removeListener(this);
@@ -577,6 +579,13 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		this.memento = memento;
+		
+		RefreshSubscriberInputJob refreshJob = TeamUIPlugin.getPlugin().getRefreshJob();
+		if(TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC) && refreshJob.getState() == Job.NONE) {
+			refreshJob.setReschedule(true);
+			// start once the UI has started and stabilized
+			refreshJob.schedule(20000 /* 20 seconds */);
+		}
 	}
 
 	/* (non-Javadoc)

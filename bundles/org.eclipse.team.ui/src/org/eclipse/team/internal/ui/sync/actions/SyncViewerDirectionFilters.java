@@ -179,6 +179,9 @@ public class SyncViewerDirectionFilters extends SyncViewerActionGroup {
 				outgoingMode.setEnabled(true);	
 			}
 			bothMode.setChecked(true);
+			incomingMode.setChecked(false);
+			outgoingMode.setChecked(false);
+			conflictsMode.setChecked(false);
 		}
 	}
 	

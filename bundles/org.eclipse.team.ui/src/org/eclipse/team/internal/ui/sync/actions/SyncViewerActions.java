@@ -179,8 +179,8 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		manager.add(chooseSubscriberAction);
 		manager.add(new Separator());
 		directionsFilters.fillActionBars(actionBars);
-		manager.add(chooseChangeFilterAction);
 		manager.add(new Separator());
+		manager.add(chooseChangeFilterAction);		
 		manager.add(collapseAll);
 		manager.add(toggleViewerType);
 		
