@@ -746,7 +746,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			currentID = element.getID();
 	
 			Bundle bundle = null;
-			if(element != null)
+			if(element != null && element.getConfigurationElement() != null)
 				try{
 					String pluginId = element.getConfigurationElement().getDeclaringExtension().getNamespace();
 					bundle = Platform.getBundle(pluginId);
@@ -761,7 +761,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 				URL checker;
 				try {
 					checker = new URL(element.getContentFile());
-					if (checker.getProtocol().equals("http")) { //$NON-NLS-1$
+					if (checker.getProtocol().equalsIgnoreCase("http")) { //$NON-NLS-1$
 						this.contentURL = checker;
 					}
 				} catch (MalformedURLException mue) {
