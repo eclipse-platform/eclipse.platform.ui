@@ -13,7 +13,6 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -317,7 +316,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		if (!separateVM) {
 			properties= prefs.getProperties();
 		} else {
-			properties= Arrays.asList(prefs.getCustomProperties());
+			properties= prefs.getRemoteAntProperties();
 		}
 		
 		String key;
