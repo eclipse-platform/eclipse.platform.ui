@@ -452,6 +452,9 @@ public void edit(IMarker marker) {
  */
 void fillActionBars() {
 	IActionBars actionBars = getViewSite().getActionBars();
+	IMenuManager menu = actionBars.getMenuManager();
+	menu.add(filtersAction);
+	
 	IToolBarManager toolBar = actionBars.getToolBarManager();
 	toolBar.add(newTaskAction);
 	toolBar.add(removeTaskAction);
@@ -462,21 +465,18 @@ void fillActionBars() {
  */
 void fillContextMenu(IMenuManager menu) {
 	menu.add(newTaskAction);
+	menu.add(gotoTaskAction);
+	menu.add(new Separator());
 	menu.add(copyTaskAction);
 	menu.add(pasteTaskAction);
 	menu.add(removeTaskAction);
-	menu.add(gotoTaskAction);
 	menu.add(new Separator());
 	menu.add(markCompletedAction);
 	menu.add(purgeCompletedAction);
 	menu.add(new Separator());
 	menu.add(resolveMarkerAction);
-	menu.add(new Separator());
-	menu.add(filtersAction);
-	menu.add(new Separator());
 	menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));	
 	menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));	 //$NON-NLS-1$
-	menu.add(new Separator());
 	menu.add(propertiesAction);
 }
 /**
