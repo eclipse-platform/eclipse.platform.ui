@@ -390,7 +390,7 @@ protected boolean validatePage() {
 	IStatus linkedResourceStatus = null;
 	if (valid && linkedResourceGroup != null) {
 		linkedResourceStatus = validateLinkedResource();
-		if (linkedResourceStatus.getCode() == IStatus.ERROR)
+		if (linkedResourceStatus.getSeverity() == IStatus.ERROR)
 			valid = false;
 	}
 	// validateLinkedResource sets messages itself

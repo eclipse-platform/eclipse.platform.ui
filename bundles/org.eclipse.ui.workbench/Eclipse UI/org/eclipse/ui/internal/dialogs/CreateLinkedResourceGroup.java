@@ -333,7 +333,6 @@ public void setLinkTarget(String target) {
  * 	given file is valid.
  */
 private IStatus validateFileType(File linkTargetFile) {
-	
 	if (type == IResource.FILE && linkTargetFile.isFile() == false) {
 		return createStatus(
 			IStatus.ERROR,
@@ -385,7 +384,7 @@ public IStatus validateLinkLocation(IResource linkHandle) {
 		return createStatus(IStatus.OK, "");
 
 	IStatus locationStatus = workspace.validateLinkLocation(linkHandle,	path);
-	if (locationStatus.getCode() == IStatus.ERROR) 
+	if (locationStatus.getSeverity() == IStatus.ERROR) 
 		return locationStatus;
 	
 	IStatus nameStatus = validateLinkTargetName(linkTargetName); 
