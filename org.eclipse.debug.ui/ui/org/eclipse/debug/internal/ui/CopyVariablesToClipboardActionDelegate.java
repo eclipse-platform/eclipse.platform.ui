@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.*;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.*;
 
 /**
@@ -97,5 +98,12 @@ public class CopyVariablesToClipboardActionDelegate extends CopyToClipboardActio
 		}
 			
 		return walkHierarchy(((IValue)parent).getVariable(), elements);
+	}
+	
+	/**
+	 * @see IActionDelegate
+	 */
+	public void selectionChanged(IAction action, ISelection s) {
+		action.setEnabled(!s.isEmpty());
 	}
 }
