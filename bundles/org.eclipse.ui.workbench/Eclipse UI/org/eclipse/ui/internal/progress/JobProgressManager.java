@@ -27,15 +27,27 @@ public class JobProgressManager implements IProgressProvider {
 	private ArrayList providers = new ArrayList();
 	private static JobProgressManager singleton;
 
+	/**
+	 * Get the progress manager currently in use.
+	 * @return JobProgressManager
+	 */
 	public static JobProgressManager getInstance() {
 		if (singleton == null)
 			singleton = new JobProgressManager();
 		return singleton;
 	}
 
+	/**
+	 * The JobMonitor is the inner class that handles the IProgressMonitor 
+	 * integration with the ProgressMonitor.
+	 */
 	private class JobMonitor implements IProgressMonitor {
 		Job job;
 
+		/**
+		 * Create a monitor on the supplied job.
+		 * @param newJob
+		 */
 		JobMonitor(Job newJob) {
 			job = newJob;
 		}
@@ -54,9 +66,8 @@ public class JobProgressManager implements IProgressProvider {
 		 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 		 */
 		public void done() {
-			// XXX Auto-generated method stub
-
 		}
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
 		 */
@@ -73,23 +84,21 @@ public class JobProgressManager implements IProgressProvider {
 		 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
 		 */
 		public boolean isCanceled() {
-			// XXX Auto-generated method stub
 			return false;
 		}
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
 		 */
 		public void setCanceled(boolean value) {
-			// XXX Auto-generated method stub
-
 		}
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
 		 */
 		public void setTaskName(String name) {
-			// XXX Auto-generated method stub
-
 		}
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
 		 */
@@ -102,6 +111,7 @@ public class JobProgressManager implements IProgressProvider {
 			}
 
 		}
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
 		 */
@@ -115,7 +125,10 @@ public class JobProgressManager implements IProgressProvider {
 		}
 	};
 
-	public JobProgressManager() {
+	/**
+	 * Create a new instance of the receiver.	 *
+	 */
+	JobProgressManager() {
 		JobManager.getInstance().setProgressProvider(this);
 	}
 
@@ -126,10 +139,18 @@ public class JobProgressManager implements IProgressProvider {
 		return new JobMonitor(job);
 	}
 
+	/**
+	 * Add a progress content provider to listen to the changes.
+	 * @param provider
+	 */
 	void addProvider(ProgressContentProvider provider) {
 		providers.add(provider);
 	}
 
+	/**
+	 * Remove the supplied provider from the list of providers.
+	 * @param provider
+	 */
 	void removeProvider(ProgressContentProvider provider) {
 		providers.remove(provider);
 	}

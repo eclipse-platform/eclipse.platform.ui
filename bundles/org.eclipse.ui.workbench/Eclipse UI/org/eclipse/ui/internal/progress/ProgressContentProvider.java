@@ -18,6 +18,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.viewers.*;
 
+/**
+ * The ProgressContentProvider is the content provider used for
+ * classes that listen to the progress changes.
+ */
 public class ProgressContentProvider
 	implements ITreeContentProvider, IJobChangeListener {
 

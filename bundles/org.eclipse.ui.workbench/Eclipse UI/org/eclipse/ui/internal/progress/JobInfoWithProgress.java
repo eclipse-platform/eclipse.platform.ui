@@ -12,16 +12,29 @@ package org.eclipse.ui.internal.progress;
 
 import org.eclipse.swt.widgets.ProgressBar;
 
+/**
+ * The JobInfoWithProgress is a JobInfo that also keeps track of progress.
+ */
 public class JobInfoWithProgress extends JobInfo {
 	int multiplier;
 	int preWork = 0;
 	ProgressBar indicator;
 
+	/**
+	 * Create a new instance of the receiver with the supplied total
+	 * work.
+	 * @param taskName
+	 * @param total
+	 */
 	JobInfoWithProgress(String taskName, int total) {
 		super(taskName);
 		multiplier = 10000 / total;
 	}
-
+	
+	/**
+	 * Add the work increment to the total.
+	 * @param workIncrement
+	 */
 	void addWork(double workIncrement) {
 		int newWork = (int) (multiplier * workIncrement);
 		preWork += newWork;
@@ -50,7 +63,10 @@ public class JobInfoWithProgress extends JobInfo {
 		this.indicator.setSelection(preWork);
 	}
 
-	
+	/**
+	 * Get the progress bar this info is using.
+	 * @return ProgressBar.
+	 */
 	public ProgressBar getProgressBar() {
 		return indicator;
 	}
