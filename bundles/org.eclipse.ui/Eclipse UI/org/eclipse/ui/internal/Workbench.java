@@ -133,7 +133,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 *
 	 * Assumes that busy cursor is active.
 	 */
-	private boolean busyClose() {
+	private boolean busyClose(final boolean force) {
 		isClosing = true;
 		Platform.run(new SafeRunnableAdapter() {
 			public void run() {
@@ -152,7 +152,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 					isClosing = false;
 			}
 		});
-		if (!isClosing)
+		if (!isClosing && !force)
 			return false;
 
 		Platform.run(new SafeRunnableAdapter(WorkbenchMessages.getString("ErrorClosing")) { //$NON-NLS-1$
@@ -180,14 +180,14 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 					IWorkbenchWindow w = getActiveWorkbenchWindow();
 					if(w == null)
 						w = windows[0];
-					isClosing = EditorManager.saveAll(dirtyEditors,true,w);					
+					isClosing = EditorManager.saveAll(dirtyEditors,!force,w);					
 				}
-				if(isClosing)
+				if(isClosing || force)
 					isClosing = windowManager.close();
 			}
 		});
 
-		if (!isClosing)
+		if (!isClosing && !force)
 			return false;
 
 		if (WorkbenchPlugin.getPluginWorkspace() != null)
@@ -235,11 +235,17 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Closes the workbench, returning the given return code from the run method.
 	 */
 	public boolean close(Object returnCode) {
+		return close(returnCode,false);
+	}
+	/**
+	 * Closes the workbench, returning the given return code from the run method.
+	 */
+	public boolean close(Object returnCode,final boolean force) {
 		this.returnCode = returnCode;
 		final boolean[] ret = new boolean[1];
 		BusyIndicator.showWhile(null, new Runnable() {
 			public void run() {
-				ret[0] = busyClose();
+				ret[0] = busyClose(force);
 			}
 		});
 		return ret[0];

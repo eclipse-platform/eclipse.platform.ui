@@ -5,12 +5,19 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.internal.dialogs.InternalErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * Handles exceptions or errors caught in the event loop.
@@ -23,6 +30,8 @@ import org.eclipse.swt.SWTException;
 class ExceptionHandler implements Window.IExceptionHandler {
 	
 	private int exceptionCount = 0; //To avoid recursive errors
+	private List dialogs = new ArrayList(3);
+	private boolean closing = false;
 	private Workbench workbench;
 	
 	//Pre-load all Strings trying to run as light as possible in case of fatal errors.
@@ -57,8 +66,10 @@ public void handleException(Throwable t) {
 			throw (ThreadDeath)t;
 		} else {
 			log(t);
-			if(openQuestionDialog(t))
-				closeWorkbench();
+			if(openQuestionDialog(t)) {
+				if(!closing)
+					closeWorkbench();
+			}
 		}
 	} finally {
 		exceptionCount--;
@@ -69,7 +80,13 @@ public void handleException(Throwable t) {
  */
 private void closeWorkbench() {
 	try {
-		workbench.close();
+		closing = true;
+		for (Iterator iterator = dialogs.iterator(); iterator.hasNext();) {
+			InternalErrorDialog dialog = (InternalErrorDialog)iterator.next();
+			if(dialog != null && dialog.getShell() != null && !dialog.getShell().isDisposed())
+				dialog.close();
+		}
+		workbench.close(IPlatformRunnable.EXIT_OK,true);
 	} catch (RuntimeException th) {
 		/* It may not be possible to show the inform the user about this exception we may not 
 		 * have more memory or OS handles etc. */
@@ -137,7 +154,7 @@ private boolean openQuestionDialog(Throwable t) {
 			} else {
 				msg = WorkbenchMessages.format("InternalErrorOneArg", new Object[] {t.getMessage()}); //$NON-NLS-1$
 			} 
-			return InternalErrorDialog.openQuestion(null, WorkbenchMessages.getString("Internal_error"), msg,t,1); //$NON-NLS-1$
+			return openQuestion(null, WorkbenchMessages.getString("Internal_error"), msg,t,1); //$NON-NLS-1$
 	    }	
 		return InternalErrorDialog.openQuestion(null, WorkbenchMessages.getString("Internal_error"), msg + MSG_FATAL_ERROR,t,1); //$NON-NLS-1$
 	} catch (Throwable th) {
@@ -149,5 +166,29 @@ private boolean openQuestionDialog(Throwable t) {
 		th.printStackTrace();
 		return true;
 	}	
+}
+
+private boolean openQuestion(Shell parent, String title, String message, Throwable detail,int defaultIndex) {
+	String[] labels;
+	if(detail == null)
+		labels = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL};
+    else
+		labels = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,IDialogConstants.SHOW_DETAILS_LABEL};
+
+	InternalErrorDialog dialog = new InternalErrorDialog(
+		parent,
+		title, 
+		null,	// accept the default window icon
+		message,
+		detail,
+		InternalErrorDialog.QUESTION, 
+		labels, 
+		defaultIndex);
+	dialogs.add(dialog);
+	if(detail != null)
+	    dialog.setDetailButton(2);
+	boolean result = dialog.open() == 0;
+	dialogs.remove(dialog);
+	return result;
 }
 }

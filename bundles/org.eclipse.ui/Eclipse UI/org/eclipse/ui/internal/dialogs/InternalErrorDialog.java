@@ -48,6 +48,12 @@ public InternalErrorDialog(
 		defaultIndex);
 	this.detail = detail;
 }
+/**
+ * Set the detail button;
+ */
+public void setDetailButton(int index) {
+	detailButtonID = index;
+}
 /* (non-Javadoc)
  * Method declared on Dialog.
  */
@@ -137,7 +143,7 @@ public static void openError(Shell parent, String title, String message, Throwab
 		labels, 
 		0); 	// ok is the default
 	if(detail != null)
-		dialog.detailButtonID = 1;
+		dialog.setDetailButton(1);
 	dialog.open();
 	return;
 }
@@ -167,7 +173,7 @@ public static boolean openQuestion(Shell parent, String title, String message, T
 		labels, 
 		defaultIndex);
 	if(detail != null)
-	    dialog.detailButtonID = 2;
+	    dialog.setDetailButton(2);
 	return dialog.open() == 0;
 }
 
