@@ -5,6 +5,8 @@ package org.eclipse.debug.internal.ui.actions;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
+
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.ConsoleViewer;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -84,7 +86,7 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 			fLastLine= document.getLineOfOffset(document.getLength()) + 1;
 			int startLine= selection == null ? 1 : fTextViewer.getTextWidget().getLineAtOffset(selection.x) + 1;
 			String title= ActionMessages.getString("TextViewerGotoLineAction.Go_to_Line_5"); //$NON-NLS-1$
-			String message= ActionMessages.getString("TextViewerGotoLineAction.Enter_line_number__8"); //$NON-NLS-1$
+			String message= MessageFormat.format(ActionMessages.getString("TextViewerGotoLineAction.Enter_line_number__8"), new Object[] {new Integer(fLastLine)}); //$NON-NLS-1$
 			String value= Integer.toString(startLine);
 			Shell activeShell= DebugUIPlugin.getActiveWorkbenchWindow().getShell();
 			InputDialog d= new InputDialog(activeShell, title, message, value, new NumberValidator());
