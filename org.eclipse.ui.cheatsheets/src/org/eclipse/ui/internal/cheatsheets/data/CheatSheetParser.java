@@ -19,6 +19,7 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
 import org.eclipse.ui.internal.cheatsheets.*;
+import org.eclipse.ui.internal.cheatsheets.registry.*;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.w3c.dom.*;
 import org.xml.sax.*;
@@ -282,7 +283,7 @@ public class CheatSheetParser {
 			}
 
 			// Remove the new line, form feed and tab chars
-			item.setDescription(stripWhiteSpace(text.toString()));
+			item.setDescription(text.toString().trim());
 		} else {
 			item.setDescription(""); //$NON-NLS-1$
 		}
@@ -622,14 +623,14 @@ public class CheatSheetParser {
 			return null;
 
 		for (int i = 0; i < itemExtensionContainerList.size(); i++) {
-			AbstractItemExtensionElement itemElement = (AbstractItemExtensionElement) itemExtensionContainerList.get(i);
-			String itemExtensionAtt = itemElement.getAttributeName();
+			CheatSheetItemExtensionElement itemExtensionElement = (CheatSheetItemExtensionElement) itemExtensionContainerList.get(i);
 
-			if (itemExtensionAtt.equals(item.getNodeName())) {
-				// TODO (lorne) - please verify that item.getNodeValue() returns attribute string value sans extra quotes
-				// i.e., for attr="xxx" we want to pass "xxx" not "\"xxx\""
-				itemElement.handleAttribute(item.getNodeValue());
-				al.add(itemElement);
+			if (itemExtensionElement.getItemAttribute().equals(item.getNodeName())) {
+				AbstractItemExtensionElement itemElement = itemExtensionElement.createInstance();
+				if(itemElement != null) {
+					itemElement.handleAttribute(item.getNodeValue());
+					al.add(itemElement);
+				}
 			}
 		}
 
@@ -727,34 +728,5 @@ public class CheatSheetParser {
 		}
 		
 		return null;
-	}
-	
-	private String stripWhiteSpace(String string) {
-		if( string.indexOf('\n') != -1 ||
-			string.indexOf('\f') != -1 ||
-			string.indexOf('\r') != -1 ||
-			string.indexOf('\t') != -1 ||
-			string.indexOf("  ") != -1) { //$NON-NLS-1$
-			StringBuffer buffer = new StringBuffer(string);
-
-			char last = 'x';
-			for (int i = string.length()-1; i > -1; i--) {
-				char c = string.charAt(i);
-				if(c == '\n' || c == '\f' || c == '\r' || c == '\t') {
-					buffer.deleteCharAt(i);
-				}
-
-				//TODO determine if the following is really needed, double spaces after a period is common.
-				//now take out double/tripple/etc. spaces.
-				if(c == ' ' && last == ' ') {
-					buffer.deleteCharAt(i+1);
-				}
-				last = c;
-			}
-			return buffer.toString();
-		}
-		
-		
-		return string;
 	}
 }
