@@ -37,10 +37,16 @@ function mouseout(img)
 <body onloadHandler="adjustMargins()" >
  
 <%
-	// Generate the links
-	Links links = (Links)application.getAttribute("org.eclipse.help.links");
-	if (links != null){
-		links.generateResults(request.getQueryString(), out);
+	if(request.getParameter("contextId")!=null){
+		// Generate the links
+		Links links = (Links)application.getAttribute("org.eclipse.help.links");
+		if (links != null){
+			links.generateResults(request.getQueryString(), out);
+		}
+	}else{
+%>
+		<%=WebappResources.getString("pressF1", null)%>
+<%
 	}
 %>
 

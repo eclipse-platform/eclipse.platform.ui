@@ -1,4 +1,4 @@
-<%@ page import="org.eclipse.help.servlet.Links" errorPage="err.jsp"%>
+<%@ page import="org.eclipse.help.servlet.*" errorPage="err.jsp"%>
 
 <% 
 	// calls the utility class to initialize the application
@@ -37,24 +37,30 @@ function mouseout(img)
 <body onloadHandler="adjustMargins()" >
  
 <%
-	// Generate the links
-	Links links = (Links)application.getAttribute("org.eclipse.help.links");
-	if (links != null){
-		links.generateResults(request.getQueryString(), out);
-	}
-	
-	// Highlight topic
-	String topic = request.getParameter("topic");
-	if (topic != null && !topic.equals(""))
-	{
-		// remove the port if the port is 80
-		int i = topic.indexOf(":80/");
-		if (i != -1)
-			topic = topic.substring(0,i) + topic.substring(i+3);
+	if(request.getParameter("contextId")!=null){
+		// Generate the links
+		Links links = (Links)application.getAttribute("org.eclipse.help.links");
+		if (links != null){
+			links.generateResults(request.getQueryString(), out);
+		}
+		
+		// Highlight topic
+		String topic = request.getParameter("topic");
+		if (topic != null && !topic.equals(""))
+		{
+			// remove the port if the port is 80
+			int i = topic.indexOf(":80/");
+			if (i != -1)
+				topic = topic.substring(0,i) + topic.substring(i+3);
 %>
-		<script language="JavaScript">
-	 		selectTopic('<%=topic%>');
-		</script>
+			<script language="JavaScript">
+		 		selectTopic('<%=topic%>');
+			</script>
+<%
+		}
+	}else{
+%>
+		<%=WebappResources.getString("pressF1", null)%>
 <%
 	}
 %>
