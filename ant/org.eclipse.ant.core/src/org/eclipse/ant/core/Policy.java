@@ -6,7 +6,10 @@ package org.eclipse.ant.core;
  */
 import java.util.*;
 
-class Policy {
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+
+public class Policy {
 	private static ResourceBundle bundle;
 	private static final String bundleName = "org.eclipse.ant.core.messages";
 
@@ -19,6 +22,11 @@ class Policy {
  */
 public static String bind(String id) {
 	return bind(id, (String[])null);
+}
+public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
+	if (monitor == null)
+		return new NullProgressMonitor();
+	return monitor;
 }
 /**
  * Lookup the message with the given ID in this catalog and bind its
