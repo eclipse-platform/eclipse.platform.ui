@@ -418,8 +418,9 @@ public class WizardProjectsImportPage extends WizardPage {
 	 * creations were successful.
 	 */
 	public boolean createProjects() {
-		for (int i = 0; i < selectedProjects.length; i++) {
-			ProjectRecord record = selectedProjects[i];
+		Object[] selected = projectsList.getCheckedElements();
+		for (int i = 0; i < selected.length; i++) {
+			ProjectRecord record = (ProjectRecord) selected[i];
 			if (!createExistingProject(record))
 				return false;
 		}
