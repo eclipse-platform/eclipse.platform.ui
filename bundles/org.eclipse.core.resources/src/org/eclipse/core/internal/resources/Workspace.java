@@ -1792,7 +1792,7 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 			return result;
 	}
 	//if the location doesn't have a device, see if the OS will assign one
-	if (location.getDevice() == null)
+	if (location.isAbsolute() && location.getDevice() == null)
 		location = new Path(location.toFile().getAbsolutePath());
 	// test if the given location overlaps the platform metadata location
 	IPath testLocation = getMetaArea().getLocation();
