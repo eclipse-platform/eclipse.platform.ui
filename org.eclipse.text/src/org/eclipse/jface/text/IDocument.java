@@ -491,7 +491,7 @@ public interface IDocument {
 	 * the document supports multiple partitionings. In that case this method is equivalent to:
 	 * <pre>
 	 *    IDocumentExtension3 extension= (IDocumentExtension3) document;
-	 *    return extension.setDocumentPartitioner(IDocumentExtension3.DEFAULT_PARTITIONING, partitioner);
+	 *    extension.setDocumentPartitioner(IDocumentExtension3.DEFAULT_PARTITIONING, partitioner);
 	 * </pre>
 	 *
 	 * @param partitioner the document's new partitioner

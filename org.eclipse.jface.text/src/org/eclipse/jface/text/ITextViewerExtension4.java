@@ -12,21 +12,27 @@ package org.eclipse.jface.text;
 
 
 /**
- * Extension interface for <code>ITextViewer</code>. Adds the following functionality:
- * <ul>
- * <li>focus handling for widget token keepers</li>
- * <li>introduces text presentation listener</li>
- * </ul>
+ * Extension interface for {@link org.eclipse.jface.text.ITextViewer}.
+ * Introduces the concept of text presentation listeners and improves focus
+ * handling among widget token keepers.
+ * <p>
+ * A {@link org.eclipse.jface.text.ITextPresentationListener}is a listener that
+ * is informed by the viewer that a text presentation is about to be applied.
+ * During this callback the listener is allowed to modify the presentation. Text
+ * presentation listeners are thus a mean to participate in the process of text
+ * presentation creation.
  * 
  * @since 3.0
  */
 public interface ITextViewerExtension4 {
 	
 	/**
-	 * Instructs the receiver to request the <code>IWidgetTokenKeeper</code>
-	 * currently holding the widget token to take the keyboard focus. 
+	 * Instructs the receiver to request the {@link IWidgetTokenKeeper}
+	 * currently holding the widget token to take the keyboard focus.
 	 * 
-	 * @return <code>true</code> if there was any <code>IWidgetTokenKeeper</code> that was asked to take the focus, <code>false</code> otherwise
+	 * @return <code>true</code> if there was any
+	 *         <code>IWidgetTokenKeeper</code> that was asked to take the
+	 *         focus, <code>false</code> otherwise
 	 */
 	boolean moveFocusToWidgetToken();
 	

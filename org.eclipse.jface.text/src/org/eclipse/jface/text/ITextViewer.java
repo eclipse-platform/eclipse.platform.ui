@@ -20,37 +20,90 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 
 
 /**
- * A text viewer turns a text widget into a document-based text widget.
+ * A text viewer connects a text widget with an
+ * {@link org.eclipse.jface.text.IDocument}. The document is used as the
+ * widget's text model.
+ * <p>
  * It supports the following kinds of listeners:
  * <ul>
- * <li> view port listeners to inform about changes of the viewer's view port
- * <li> text listeners to inform about changes of the document and the subsequent viewer change
- * <li> text input listeners to inform about changes of the viewer's input document.
+ * <li>view port listeners to inform about changes of the viewer's view port
+ * <li>text listeners to inform about changes of the document and the
+ * subsequent viewer change
+ * <li>text input listeners to inform about changes of the viewer's input
+ * document.
  * </ul>
- * A text viewer supports a set of plug-ins which define its behavior:
+ * A text viewer supports a set of configuration options and plug-ins defining
+ * its behavior:
  * <ul>
- * <li> undo manager
- * <li> double click behavior
- * <li> auto indentation
- * <li> text hover
+ * <li>undo manager
+ * <li>double click behavior
+ * <li>auto indentation
+ * <li>text hover
  * </ul>
- * Installed plug-ins are not automatically activated. Plug-ins must be activated with the
- * <code>activatePlugins</code> call. Most plug-ins can be defined per content type. 
- * Content types are derived from the partitioning of the text viewer's input document.<p>
- * A text viewer also provides the concept of event consumption. Events handled by the 
- * viewer can be filtered and processed by a dynamic event consumer.<p>
- * A text viewer provides several text editing functions, some of them are configurable,
- * through a text operation target interface. It also supports a presentation mode
- * in which it only shows specified sections of its document. The viewer's presentation mode
- * does not affect any client of the viewer other than text listeners.<p>
- * Clients may implement this interface or use the standard implementation
- * <code>TextViewer</code>.
- *
- * @see IDocument
- * @see ITextInputListener
- * @see IViewportListener
- * @see ITextListener
- * @see IEventConsumer
+ * Installed plug-ins are not automatically activated. Plug-ins must be
+ * activated with the <code>activatePlugins</code> call. Most plug-ins can be
+ * defined per content type. Content types are derived from a partitioning of
+ * the text viewer's input document. In case of documents that support multiple
+ * partitionings, the implementer is responsible for determining the
+ * partitioning to use.
+ * <p>
+ * A text viewer also provides the concept of event consumption. Events handled
+ * by the viewer can be filtered and processed by a dynamic event consumer. With
+ * {@link org.eclipse.jface.text.ITextViewerExtension}this mechanism has been
+ * replaced with the support for
+ * {@link org.eclipse.swt.custom.VerifyKeyListener}.
+ * <p>
+ * A text viewer provides several text editing functions, some of them are
+ * configurable, through a text operation target interface. It also supports a
+ * presentation mode in which it only shows a specified section of its document.
+ * By calling <code>setVisibleRegion</code> clients define which section is
+ * visible. Clients can get access to this section by calling
+ * <code>getVisibleRegion</code>. The viewer's presentation mode does not
+ * affect any client of the viewer other than text listeners. With
+ * {@link org.eclipse.jface.text.ITextViewerExtension5}the visible region
+ * support has been reworked. With that extension interface, text viewers are
+ * allowed to show fractions of their input document. I.e. a widget selection of
+ * two visually neighboring characters is no longer guaranteed to be two
+ * neighboring characters in the viewer's input document. Thus, viewers
+ * implementing {@link org.eclipse.jface.text.ITextViewerExtension5}are
+ * potentially forced to change the fractions of the input document that are
+ * shown when clients ask for the visible region.
+ * <p>
+ * 
+ * In order to provide backward compatibility for clients of
+ * <code>ITextViewer</code>, extension interfaces are used as a means of
+ * evolution. The following extension interfaces exist:
+ * <ul>
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension}since version 2.0
+ * replacing the event consumer mechanism and introducing the concept of rewrite
+ * targets and means to manage the viewer's redraw behavior</li>
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension2}since version 2.1
+ * adding a way to invalidate a viewer's presentation and setters for hovers.
+ * </li>
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension3}since version 2.1
+ * which itself was replaced by
+ * {@link org.eclipse.jface.text.ITextViewerExtension5}in version 3.0</li>
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension4}since version 3.0
+ * introducing focus handling for widget token keepers and the concept of text
+ * presentation listeners.</li>
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension5}since version 3.0
+ * extending the visible region concept with explicit handling and conversation
+ * of widget and model coordinates.</li>
+ * </ul>
+ * 
+ * Clients may implement this interface and its extension interfaces or use the
+ * standard implementation {@link org.eclipse.jface.text.TextViewer}.
+ * 
+ * @see org.eclipse.jface.text.ITextViewerExtension
+ * @see org.eclipse.jface.text.ITextViewerExtension2
+ * @see org.eclipse.jface.text.ITextViewerExtension3
+ * @see org.eclipse.jface.text.ITextViewerExtension4
+ * @see org.eclipse.jface.text.ITextViewerExtension5
+ * @see org.eclipse.jface.text.IDocument
+ * @see org.eclipse.jface.text.ITextInputListener
+ * @see org.eclipse.jface.text.IViewportListener
+ * @see org.eclipse.jface.text.ITextListener
+ * @see org.eclipse.jface.text.IEventConsumer
  */
 public interface ITextViewer {
 	
@@ -60,7 +113,7 @@ public interface ITextViewer {
 	/**
 	 * Returns this viewer's SWT control, <code>null</code> if the control is disposed.
 	 * 
-	 * @return the SWT control
+	 * @return the SWT control or <code>null</code>
 	 */
 	StyledText getTextWidget();
 	
@@ -83,17 +136,38 @@ public interface ITextViewer {
 	void setTextDoubleClickStrategy(ITextDoubleClickStrategy strategy, String contentType);
 	
 	/**
-	 * Sets this viewer's auto indent strategy for the given content type.
-	 *
-	 * @param strategy the new auto indent strategy. <code>null</code> is a valid argument.
+	 * Sets this viewer's auto indent strategy for the given content type. If
+	 * the given strategy is <code>null</code> any installed strategy for the
+	 * content type is removed. This method has been replaced by
+	 * {@link ITextViewerExtension2#prependAutoEditStrategy(IAutoEditStrategy, String)}
+	 * and
+	 * {@link ITextViewerExtension2#removeAutoEditStrategy(IAutoEditStrategy, String)}.
+	 * It is now equivalent to
+	 * <pre>
+	 *    ITextViewerExtension2 extension= (ITextViewerExtension2) viewer;
+	 *    extension.removeAutoEditStrategy(oldStrategy, contentType);
+	 *    extension.prependAutoEditStrategy(strategy, contentType);
+	 * </pre>
+	 * 
+	 * @param strategy the new auto indent strategy. <code>null</code> is a
+	 *            valid argument.
 	 * @param contentType the type for which the strategy is registered
 	 */
 	void setAutoIndentStrategy(IAutoIndentStrategy strategy, String contentType);
 		
 	/**
-	 * Sets this viewer's text hover for the given content type. 
-	 *
-	 * @param textViewerHover the new hover. <code>null</code> is a valid argument.
+	 * Sets this viewer's text hover for the given content type.
+	 * <p>
+	 * This method has been replaced by {@link ITextViewerExtension2#setTextHover(ITextHover, String, int)}.
+	 * It is now equivalent to
+	 * <pre>
+	 *    ITextViewerExtension2 extension= (ITextViewerExtension2) document;
+	 *    extension.setTextHover(textViewerHover, contentType, ITextViewerExtension2#DEFAULT_HOVER_STATE_MASK);
+	 * </pre>
+	 * 
+	 * 
+	 * @param textViewerHover the new hover. <code>null</code> is a valid
+	 *            argument.
 	 * @param contentType the type for which the hover is registered
 	 */
 	void setTextHover(ITextHover textViewerHover, String contentType);
@@ -107,7 +181,7 @@ public interface ITextViewer {
 	/**
 	 * Resets the installed plug-ins. If plug-ins change their state or 
 	 * behavior over the course of time, this method causes them to be set
-	 * back to their initial state and behavior. E.g., if an <code>IUndoManager</code>
+	 * back to their initial state and behavior. E.g., if an {@link IUndoManager}
 	 * has been installed on this text viewer, the manager's list of remembered 
      * text editing operations is removed.
 	 */
@@ -194,23 +268,26 @@ public interface ITextViewer {
 	/* -------------- event handling ----------------- */
 	
 	/**
-	 * Registers an event consumer with this viewer.
-	 *
-	 * @param consumer the viewer's event consumer. <code>null</code> is a valid argument.
+	 * Registers an event consumer with this viewer. This method has been
+	 * replaces with the {@link org.eclipse.swt.custom.VerifyKeyListener}
+	 * management methods in {@link ITextViewerExtension}.
+	 * 
+	 * @param consumer the viewer's event consumer. <code>null</code> is a
+	 *            valid argument.
 	 */
 	void setEventConsumer(IEventConsumer consumer);
 		
 	/**
-	 * Sets the editable flag.
+	 * Sets the editable state.
 	 *
-	 * @param editable the editable flag
+	 * @param editable the editable state
 	 */
 	void setEditable(boolean editable);
 
 	/**
 	 * Returns whether the shown text can be manipulated.
 	 *
-	 * @return the viewer's editable flag
+	 * @return the viewer's editable state
 	 */
 	boolean isEditable();
 	
@@ -231,8 +308,10 @@ public interface ITextViewer {
 	void setDocument(IDocument document, int modelRangeOffset, int modelRangeLength);
 	
 	/**
-	 * Sets the region of this viewer's document which will be visible in the presentation.
-	 *
+	 * Defines and sets the region of this viewer's document which will be
+	 * visible in the presentation. Every character inside the specified region
+	 * is supposed to be visible in the viewer's widget after that call.
+	 * 
 	 * @param offset the offset of the visible region
 	 * @param length the length of the visible region
 	 */
@@ -240,25 +319,38 @@ public interface ITextViewer {
 	
 	/**
 	 * Resets the region of this viewer's document which is visible in the presentation.
-	 * Afterwards, the whole document is presented again.
+	 * Afterwards, the whole input document is visible.
 	 */
 	void resetVisibleRegion();
 	
 	/**
-	 * Returns the current visible region of this viewer's document.
-	 * The result may differ from the argument passed to <code>setVisibleRegion</code>
-	 * if the document has been modified since then.
-	 *
+	 * Returns the current visible region of this viewer's document. The result
+	 * may differ from the argument passed to <code>setVisibleRegion</code> if
+	 * the document has been modified since then. The visible region is supposed
+	 * to be a consecutive region in viewer's input document and every character
+	 * inside that region is supposed to visible in the viewer's widget.
+	 * <p>
+	 * Viewers implementing {@link ITextViewerExtension5} may be forced to
+	 * change the fractions of the input document that are shown, in order to
+	 * fulfill this contract.
+	 * 
 	 * @return this viewer's current visible region
 	 */
 	IRegion getVisibleRegion();
 	
 	/**
-	 * Returns whether a given range overlaps with the visible region of this viewer's document.
-	 *
+	 * Returns whether a given range overlaps with the visible region of this
+	 * viewer's document.
+	 * <p>
+	 * Viewers implementing {@link ITextViewerExtension5}may be forced to
+	 * change the fractions of the input document that are shown in order to
+	 * fulfill this request. This is because the overlap is supposed to be
+	 * without gaps.
+	 * 
 	 * @param offset the offset
 	 * @param length the length
-	 * @return <code>true</code> if the specified range overlaps with the visible region
+	 * @return <code>true</code> if the specified range overlaps with the
+	 *         visible region
 	 */
 	boolean overlapsWithVisibleRegion(int offset, int length);	
 	
@@ -270,7 +362,7 @@ public interface ITextViewer {
 	 * Applies the color information encoded in the given text presentation.
 	 * <code>controlRedraw</code> tells this viewer whether it should take care of 
 	 * redraw management or not. If, e.g., this call is one in a sequence of multiple
-	 * coloring calls, it is more appropriate to explicitly control redrawing at the
+	 * presentation calls, it is more appropriate to explicitly control redrawing at the
 	 * beginning and the end of the sequence.
 	 *
 	 * @param presentation the presentation to be applied to this viewer
@@ -279,28 +371,34 @@ public interface ITextViewer {
 	void changeTextPresentation(TextPresentation presentation, boolean controlRedraw);
 	
 	/**
-	 * Marks the currently applied text presentation as invalid. It is the viewer's
-	 * responsibility to take any action it can to repair the text presentation.
+	 * Marks the currently applied text presentation as invalid. It is the
+	 * viewer's responsibility to take any action it can to repair the text
+	 * presentation.
+	 * <p>
+	 * See {@link ITextViewerExtension2#invalidateTextPresentation(int, int)}
+	 * for a way to invalidate specific regions rather than the presentation as
+	 * a whole.
 	 * 
 	 * @since 2.0
 	 */
 	void invalidateTextPresentation();
 		
 	/**
-	 * Applies the given color to this viewer's selection.
-	 *
+	 * Applies the given color as text foreground color to this viewer's
+	 * selection.
+	 * 
 	 * @param color the color to be applied
 	 */
 	void setTextColor(Color color);
 	
 	/**
-	 * Applies the given color to the specified section of this viewer. 
-	 * <code>controlRedraw</code> tells this viewer whether it should take care of
-	 * redraw management or not.
-	 *
+	 * Applies the given color as text foreground color to the specified section
+	 * of this viewer. <code>controlRedraw</code> tells this viewer whether it
+	 * should take care of redraw management or not.
+	 * 
 	 * @param color the color to be applied
-	 * @param offset the offset of the range to be colored
-	 * @param length the length of the range to be colored
+	 * @param offset the offset of the range to be changed
+	 * @param length the length of the range to be changed
 	 * @param controlRedraw indicates whether this viewer should manage redraws
 	 */
 	void setTextColor(Color color, int offset, int length, boolean controlRedraw);

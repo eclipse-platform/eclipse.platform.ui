@@ -12,14 +12,12 @@ package org.eclipse.jface.text;
 
 
 /**
- * Extension interface for <code>ITextViewer</code>. Extends <code>ITextViewer</code> with the explicit
- * concept of model and widget coordinates.  For example, a selection returned by the text viewer's control is
- * a widget selection. A widget selection always maps to a certain range of the viewer's document. This
- * range is considered the model selection.<p> 
- * This general concepts replaces the notion of <code>visible region</code>.
- * 
+ * Extension interface for {@link org.eclipse.jface.text.ITextViewer}. <p>
+ * This interface has been replaced by {@link org.eclipse.jface.text.ITextViewerExtension5}.
+ * Clients are not supposed to use this interface any longer.
+ *  
  * @since 2.1
- * @deprecated completely replaced by <code>ITextViewerExtension5</code>
+ * @deprecated replaced by {@link org.eclipse.jface.text.ITextViewerExtension5}
  */
 public interface ITextViewerExtension3 {
 	
