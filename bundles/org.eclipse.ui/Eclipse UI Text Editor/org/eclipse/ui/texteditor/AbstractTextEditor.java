@@ -193,23 +193,28 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @see IElementStateListenerExtension#elementStateValidationChanged(Object, boolean)
 		 */
 		public void elementStateValidationChanged(Object element, boolean isStateValidated) {
-			if (isStateValidated && fValidator != null) {
-				ISourceViewer viewer= getSourceViewer();
-				if (viewer != null) {
-					StyledText textWidget= viewer.getTextWidget();
-					if (textWidget != null && !textWidget.isDisposed())
-						textWidget.removeVerifyListener(fValidator);
-					fValidator= null;
-				}
-			} else if (!isStateValidated && fValidator == null) {
-				ISourceViewer viewer= getSourceViewer();
-				if (viewer != null) {
-					StyledText textWidget= viewer.getTextWidget();
-					if (textWidget != null && !textWidget.isDisposed()) {
-						fValidator= new Validator();
-						textWidget.addVerifyListener(fValidator);
+			
+			if (element != null && element.equals(getEditorInput())) {
+				
+				if (isStateValidated && fValidator != null) {
+					ISourceViewer viewer= getSourceViewer();
+					if (viewer != null) {
+						StyledText textWidget= viewer.getTextWidget();
+						if (textWidget != null && !textWidget.isDisposed())
+							textWidget.removeVerifyListener(fValidator);
+						fValidator= null;
+					}
+				} else if (!isStateValidated && fValidator == null) {
+					ISourceViewer viewer= getSourceViewer();
+					if (viewer != null) {
+						StyledText textWidget= viewer.getTextWidget();
+						if (textWidget != null && !textWidget.isDisposed()) {
+							fValidator= new Validator();
+							textWidget.addVerifyListener(fValidator);
+						}
 					}
 				}
+				
 			}
 		}
 		
