@@ -344,8 +344,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		prefs.setDefault(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, false);
 		prefs.setDefault(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, true);
 		prefs.setDefault(IDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, true);
-		prefs.setDefault(IDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, AlwaysNeverDialog.PROMPT);
-		prefs.setDefault(IDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, AlwaysNeverDialog.NEVER);
+		prefs.setDefault(IDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, AlwaysNeverDialog.NEVER);
+		prefs.setDefault(IDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, AlwaysNeverDialog.PROMPT);
 		prefs.setDefault(IDebugUIConstants.PREF_WAIT_FOR_BUILD, AlwaysNeverDialog.PROMPT);
 		prefs.setDefault(IDebugUIConstants.PREF_REUSE_EDITOR, true);
 		
