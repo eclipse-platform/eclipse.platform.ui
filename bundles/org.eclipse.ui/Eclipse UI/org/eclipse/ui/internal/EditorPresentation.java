@@ -11,6 +11,8 @@ import org.eclipse.ui.part.MultiEditor;
 
 import java.util.*;
 import java.util.List;
+
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 
@@ -360,16 +362,16 @@ private EditorPane initPane(EditorPane pane, IEditorReference ref) {
 /**
  * @see IPersistablePart
  */
-public void restoreState(IMemento memento) {
+public IStatus restoreState(IMemento memento) {
 	// Restore the editor area workbooks layout/relationship
-	editorArea.restoreState(memento);
+	return editorArea.restoreState(memento);
 }
 /**
  * @see IPersistablePart
  */
-public void saveState(IMemento memento) {
+public IStatus saveState(IMemento memento) {
 	// Save the editor area workbooks layout/relationship
-	editorArea.saveState(memento);
+	return editorArea.saveState(memento);
 }
 /**
  * @see IEditorPresentation

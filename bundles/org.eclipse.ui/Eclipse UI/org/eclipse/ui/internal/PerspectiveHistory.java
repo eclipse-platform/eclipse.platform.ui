@@ -6,6 +6,8 @@ package org.eclipse.ui.internal;
  */
 import java.util.*;
 
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.ui.*;
 
@@ -42,7 +44,7 @@ public class PerspectiveHistory {
 		}
 	}
 	
-	public void restoreState(IMemento memento) {
+	public IStatus restoreState(IMemento memento) {
 		IMemento [] children = memento.getChildren("desc"); //$NON-NLS-1$
 		for (int i = 0; i < children.length && i < DEFAULT_DEPTH; i++) {
 			IPerspectiveDescriptor desc =
@@ -50,14 +52,16 @@ public class PerspectiveHistory {
 			if (desc != null) 
 				shortcuts.add(desc);
 		}
+		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 	}
 	
-	public void saveState(IMemento memento) {
+	public IStatus saveState(IMemento memento) {
 		Iterator iter = shortcuts.iterator();
 		while (iter.hasNext()) {
 			IPerspectiveDescriptor desc = (IPerspectiveDescriptor)iter.next();
 			memento.createChild("desc", desc.getId()); //$NON-NLS-1$
 		}
+		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 	}
 
 	public void add(String id) {

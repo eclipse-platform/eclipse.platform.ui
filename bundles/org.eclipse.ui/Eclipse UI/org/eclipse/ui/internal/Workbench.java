@@ -793,8 +793,15 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				}
 				
 				// Restore the saved state
-				restoreState(memento);
+				IStatus restoreResult = restoreState(memento);
 				reader.close();
+				if(restoreResult.getSeverity() == IStatus.ERROR) {
+					ErrorDialog.openError(
+						null,
+						WorkbenchMessages.getString("Workspace.problemsTitle"),
+						WorkbenchMessages.getString("Workbench.problemsRestoringMsg"),
+						restoreResult);
+				}
 			}
 			public void handleException(Throwable e) {
 				super.handleException(e);
@@ -1045,7 +1052,13 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	private XMLMemento recordWorkbenchState() {
 		XMLMemento memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_WORKBENCH);
-		saveState(memento);
+		IStatus status = saveState(memento);
+		if(status.getSeverity() != IStatus.OK) {
+			ErrorDialog.openError((Shell)null,
+				WorkbenchMessages.getString("Workbench.problemsSaving"),  //$NON-NLS-1$
+				WorkbenchMessages.getString("Workbench.problemsSavingMsg"), //$NON-NLS-1$
+				status);
+		}
 		return memento;
 	}
 	/* (non-Javadoc)
@@ -1057,17 +1070,22 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	/**
 	 * Restores the state of the previously saved workbench
 	 */
-	private void restoreState(IMemento memento) {
+	private IStatus restoreState(IMemento memento) {
+
+		MultiStatus result = new MultiStatus(
+			PlatformUI.PLUGIN_ID,IStatus.OK,
+			WorkbenchMessages.getString("Workbench.problemsRestoring"),null);
 		// Read perspective history.
 		// This must be done before we recreate the windows, because it is
 		// consulted during the recreation.
 		IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVE_HISTORY);
 		if (childMem != null)
-			getPerspectiveHistory().restoreState(childMem);
-
+			result.add(getPerspectiveHistory().restoreState(childMem));
+				
 		IMemento mruMemento = memento.getChild(IWorkbenchConstants.TAG_MRU_LIST); //$NON-NLS-1$
-		if (mruMemento != null)
-			getEditorHistory().restoreState(mruMemento);
+		if (mruMemento != null) {
+			result.add(getEditorHistory().restoreState(mruMemento));
+		}
 
 		// Get the child windows.
 		IMemento[] children = memento.getChildren(IWorkbenchConstants.TAG_WINDOW);
@@ -1077,10 +1095,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			childMem = children[x];
 			WorkbenchWindow newWindow = new WorkbenchWindow(this, getNewWindowNumber());
 			newWindow.create();
-			newWindow.restoreState(childMem);
+			result.merge(newWindow.restoreState(childMem));
 			windowManager.add(newWindow);
 			newWindow.open();
 		}
+		return result;
 	}
 	public IPluginDescriptor[] getEarlyActivatedPlugins() {
 		IPluginRegistry registry = Platform.getPluginRegistry();
@@ -1184,7 +1203,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	/**
 	 * Saves the current state of the workbench so it can be restored later on
 	 */
-	private void saveState(IMemento memento) {
+	private IStatus saveState(IMemento memento) {
+		MultiStatus result = new MultiStatus(
+			PlatformUI.PLUGIN_ID,IStatus.OK,
+			WorkbenchMessages.getString("Workbench.problemsSaving"),null);
+
 		// Save the version number.
 		memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING[1]);
 
@@ -1193,11 +1216,12 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		for (int nX = 0; nX < windows.length; nX++) {
 			WorkbenchWindow window = (WorkbenchWindow) windows[nX];
 			IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_WINDOW);
-			window.saveState(childMem);
+			result.merge(window.saveState(childMem));
 		}
-		getEditorHistory().saveState(memento.createChild(IWorkbenchConstants.TAG_MRU_LIST)); //$NON-NLS-1$
+		result.add(getEditorHistory().saveState(memento.createChild(IWorkbenchConstants.TAG_MRU_LIST))); //$NON-NLS-1$
 		// Save perspective history.
-		getPerspectiveHistory().saveState(memento.createChild(IWorkbenchConstants.TAG_PERSPECTIVE_HISTORY)); //$NON-NLS-1$
+		result.add(getPerspectiveHistory().saveState(memento.createChild(IWorkbenchConstants.TAG_PERSPECTIVE_HISTORY))); //$NON-NLS-1$
+		return result;
 	}
 	/**
 	 * Save the workbench UI in a persistence file.

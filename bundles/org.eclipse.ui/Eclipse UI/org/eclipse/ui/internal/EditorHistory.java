@@ -7,6 +7,8 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.*;
 
 /**
@@ -113,7 +115,7 @@ public class EditorHistory {
 	 * 
 	 * @param memento the memento to restore the mru history from
 	 */
-	public void restoreState(IMemento memento) {
+	public IStatus restoreState(IMemento memento) {
 		IMemento[] mementos = memento.getChildren(IWorkbenchConstants.TAG_FILE);
 		for (int i = 0; i < mementos.length; i++) {
 			EditorHistoryItem item = new EditorHistoryItem();
@@ -122,13 +124,14 @@ public class EditorHistory {
 				add(item, fifoList.size());
 			}
 		}
+		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 	}
 	/**
 	 * Save the most-recently-used history in the given memento.
 	 * 
 	 * @param memento the memento to save the mru history in
 	 */
-	public void saveState(IMemento memento) {
+	public IStatus saveState(IMemento memento) {
 		Iterator iterator = fifoList.iterator();
 
 		while (iterator.hasNext()) {
@@ -140,5 +143,6 @@ public class EditorHistory {
 				historyItem.saveState(itemMemento);
 			}
 		}
+		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 	}
 }

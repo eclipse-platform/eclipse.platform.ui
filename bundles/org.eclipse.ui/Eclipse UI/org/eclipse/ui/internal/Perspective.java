@@ -565,25 +565,33 @@ private void loadCustomPersp(PerspectiveDescriptor persp)
 		InputStreamReader reader = new InputStreamReader(stream, "utf-8"); //$NON-NLS-1$
 		// Restore the layout state.
 		IMemento memento = XMLMemento.createReadRoot(reader);
-		restoreState(memento);
-		restoreState();
+		MultiStatus status = new MultiStatus(
+			PlatformUI.PLUGIN_ID,IStatus.OK,
+			WorkbenchMessages.format("Perspective.unableToRestorePerspective",new String[]{persp.getLabel()}),
+			null);
+		status.merge(restoreState(memento));
+		status.merge(restoreState());
+		if(status.getSeverity() != IStatus.OK) {
+			unableToOpenPerspective(persp,status);
+		}
 		reader.close();
 	} catch (IOException e) {
-		persp.deleteCustomFile();
-		MessageDialog.openError((Shell)null, 
-			WorkbenchMessages.getString("Perspective.problemRestoringTitle"),  //$NON-NLS-1$
-			WorkbenchMessages.getString("Perspective.errorReadingState")); //$NON-NLS-1$
-		return;
+		unableToOpenPerspective(persp,null);
 	} catch (WorkbenchException e) {
-		persp.deleteCustomFile();
-		ErrorDialog.openError(
-			(Shell) null, 
-			WorkbenchMessages.getString("Perspective.problemRestoringTitle"),//$NON-NLS-1$
-			WorkbenchMessages.getString("Perspective.errorReadingState"), //$NON-NLS-1$
-			e.getStatus());
-		return;
+		unableToOpenPerspective(persp,e.getStatus());
 	}
 }
+private void unableToOpenPerspective(PerspectiveDescriptor persp,IStatus status) {
+	persp.deleteCustomFile();
+	String title = WorkbenchMessages.getString("Perspective.problemRestoringTitle");  //$NON-NLS-1$
+	String msg = WorkbenchMessages.getString("Perspective.errorReadingState"); //$NON-NLS-1$
+	if(status == null) {
+		MessageDialog.openError((Shell)null,title,msg); 
+	} else {
+		ErrorDialog.openError((Shell)null,title,msg,status); 
+	}
+}
+
 /**
  * Create a presentation for a perspective.
  * Note: This method should not modify the current state of the perspective.
@@ -725,10 +733,14 @@ public void removeFastView(IViewPart view) {
  * Fills a presentation with layout data.
  * Note: This method should not modify the current state of the perspective.
  */
-public void restoreState(IMemento memento) {
+public IStatus restoreState(IMemento memento) {
+	MultiStatus result = new MultiStatus(
+		PlatformUI.PLUGIN_ID,IStatus.OK,
+		WorkbenchMessages.getString("Perspective.problemsRestoringPerspective"),null);
+
 	// Create persp descriptor.
 	descriptor = new PerspectiveDescriptor(null,null,null);
-	descriptor.restoreState(memento);
+	result.add(descriptor.restoreState(memento));
 	PerspectiveDescriptor desc = (PerspectiveDescriptor)WorkbenchPlugin
 		.getDefault().getPerspectiveRegistry().findPerspectiveWithId(descriptor.getId());
 	if (desc != null)
@@ -738,20 +750,25 @@ public void restoreState(IMemento memento) {
 	IMemento layoutMem = memento.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
 	if (layoutMem != null) {
 		toolBarLayout = new CoolBarLayout();
-		toolBarLayout.restoreState(layoutMem);
+		result.add(toolBarLayout.restoreState(layoutMem));
 	}	
 	this.memento = memento;
 	// Add the visible views.
 	IMemento views[] = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
-	createReferences(views);
+	result.merge(createReferences(views));
 	
 	memento = memento.getChild(IWorkbenchConstants.TAG_FAST_VIEWS);
 	if(memento != null) {
 		views = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
-		createReferences(views);	
+		result.merge(createReferences(views));	
 	}
+	return result;
 }
-private void createReferences(IMemento views[]) {
+private IStatus createReferences(IMemento views[]) {
+	MultiStatus result = new MultiStatus(
+		PlatformUI.PLUGIN_ID,IStatus.OK,
+		WorkbenchMessages.getString("Perspective.problemsRestoringViews"),null);
+	
 	for (int x = 0; x < views.length; x ++) {
 		// Get the view details.
 		IMemento childMem = views[x];
@@ -761,18 +778,24 @@ private void createReferences(IMemento views[]) {
 		try {
 			viewFactory.createView(viewID);
 		} catch (PartInitException e) {
+			result.add(new Status(IStatus.ERROR,PlatformUI.PLUGIN_ID,0,e.getMessage(),e));
 		}
 	}
+	return result;
 }
 
 /**
  * Fills a presentation with layout data.
  * Note: This method should not modify the current state of the perspective.
  */
-public void restoreState() {
+public IStatus restoreState() {
 	if(this.memento == null)
-		return;
-		
+		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
+
+	MultiStatus result = new MultiStatus(
+		PlatformUI.PLUGIN_ID,IStatus.OK,
+		WorkbenchMessages.getString("Perspective.problemsRestoringPerspective"),null);
+				
 	IMemento memento = this.memento;
 	this.memento = null;
 	
@@ -793,7 +816,7 @@ public void restoreState() {
 	PerspectivePresentation pres = new PerspectivePresentation(page, mainLayout);
 
 	// Read the layout.
-	pres.restoreState(memento.getChild(IWorkbenchConstants.TAG_LAYOUT));
+	result.merge(pres.restoreState(memento.getChild(IWorkbenchConstants.TAG_LAYOUT)));
 
 	// Add the editor workbook. Do not hide it now.
 	pres.replacePlaceholderWithPart(editorArea);
@@ -810,13 +833,23 @@ public void restoreState() {
 		IViewReference ref = viewFactory.getView(viewID);
 		if(ref == null) {
 			WorkbenchPlugin.log("Could not create view: '" + viewID + "'."); //$NON-NLS-1$
+			result.add(new Status(
+				Status.ERROR,PlatformUI.PLUGIN_ID,0,
+				WorkbenchMessages.format("Perspective.couldNotFind", new String[]{viewID}), //$NON-NLS-1$
+				null));
 			continue;
 		}		
 		page.addPart(ref);
-		IViewPart view = (IViewPart)ref.getPart(true);
-		ViewSite site = (ViewSite)view.getSite();
-		ViewPane pane = (ViewPane)site.getPane();			
-		pres.replacePlaceholderWithPart(pane);
+		IStatus restoreStatus = viewFactory.restoreView(ref);
+		result.add(restoreStatus);
+		if(restoreStatus.getSeverity() == IStatus.OK) {
+			IViewPart view = (IViewPart)ref.getPart(true);
+			ViewSite site = (ViewSite)view.getSite();
+			ViewPane pane = (ViewPane)site.getPane();			
+			pres.replacePlaceholderWithPart(pane);
+		} else {
+			page.removePart(ref);
+		}
 	}
 
 	// Load the fast views
@@ -840,36 +873,31 @@ public void restoreState() {
 			IViewReference ref = viewFactory.getView(viewID);
 			if(ref == null) {
 				WorkbenchPlugin.log("Could not create view: '" + viewID + "'."); //$NON-NLS-1$
+				result.add(new Status(
+					Status.ERROR,PlatformUI.PLUGIN_ID,0,
+					WorkbenchMessages.format("Perspective.couldNotFind", new String[]{viewID}), //$NON-NLS-1$
+					null));
 				continue;
 			}		
 			page.addPart(ref);
-			fastViews.add(ref.getPart(true));
+			IStatus restoreStatus = viewFactory.restoreView(ref);
+			result.add(restoreStatus);
+			if(restoreStatus.getSeverity() == IStatus.OK) {
+				fastViews.add(ref.getPart(true));
+			} else {
+				page.removePart(ref);
+			}
 		}
-	}
-
-	if(errors.size() > 0) {
-		String message;
-		Status s;
-		if(errors.size() == 1) {
-			s = (Status)errors.get(0);
-			message = WorkbenchMessages.getString("Perspective.oneErrorRestoring"); //$NON-NLS-1$
-		} else {
-			Status allErrors[] = new Status[errors.size()];
-			errors.toArray(allErrors);
-			message = WorkbenchMessages.getString("Perspective.couldNotCreateAllViews"); //$NON-NLS-1$
-			s = new MultiStatus(PlatformUI.PLUGIN_ID,0,allErrors,WorkbenchMessages.getString("Perspective.multipleErrorsRestoring"),null); //$NON-NLS-1$
-		}
-		ErrorDialog.openError(null,WorkbenchMessages.getString("Error"),message,s); //$NON-NLS-1$
 	}
 		
 	// Load the action sets.
 	IMemento [] actions = memento.getChildren(IWorkbenchConstants.TAG_ACTION_SET);
-	ArrayList result = new ArrayList(actions.length);
+	ArrayList actionsArray = new ArrayList(actions.length);
 	for (int x = 0; x < actions.length; x ++) {
 		String actionSetID = actions[x].getString(IWorkbenchConstants.TAG_ID);
-		result.add(actionSetID);
+		actionsArray.add(actionSetID);
 	}
-	createInitialActionSets(result);
+	createInitialActionSets(actionsArray);
 
 	// Load the always on action sets.
 	actions = memento.getChildren(IWorkbenchConstants.TAG_ALWAYS_ON_ACTION_SET);
@@ -925,6 +953,7 @@ public void restoreState() {
 	// are created. This ensures that if an editor is instantiated, createPartControl
 	// is also called. See bug 20166.
 	shouldHideEditorsOnActivate = (areaVisible != null && areaVisible.intValue() == 0);
+	return result;
 }
 /**
  * Save the layout.
@@ -938,7 +967,14 @@ public void saveDesc() {
 public void saveDescAs(IPerspectiveDescriptor desc) {		
 	// Capture the layout state.	
 	XMLMemento memento = XMLMemento.createWriteRoot("perspective");//$NON-NLS-1$
-	saveState(memento, (PerspectiveDescriptor)desc, false);
+	IStatus status = saveState(memento, (PerspectiveDescriptor)desc, false);
+	if(status.getSeverity() == IStatus.ERROR) {
+		ErrorDialog.openError((Shell)null, 
+			WorkbenchMessages.getString("Perspective.problemSavingTitle"),  //$NON-NLS-1$
+			WorkbenchMessages.getString("Perspective.problemSavingMessage"), //$NON-NLS-1$
+			status);
+		return;
+	}
 
 	// Save it to a file.
 	PerspectiveDescriptor realDesc = (PerspectiveDescriptor)desc;
@@ -958,29 +994,37 @@ public void saveDescAs(IPerspectiveDescriptor desc) {
 /**
  * Save the layout.
  */
-public void saveState(IMemento memento)
-{
-	saveState(memento, descriptor, true);
+public IStatus saveState(IMemento memento) {
+	MultiStatus result = new MultiStatus(
+		PlatformUI.PLUGIN_ID,IStatus.OK,
+		WorkbenchMessages.getString("Perspective.problemsSavingPerspective"),null);
+		
+	result.merge(saveState(memento, descriptor, true));
 	// Save the toolbar layout.
 	if (toolBarLayout != null) {
 		IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
-		toolBarLayout.saveState(childMem);
+		result.add(toolBarLayout.saveState(childMem));
 	}
+	return result;
 }
 /**
  * Save the layout.
  */
-private void saveState(IMemento memento, PerspectiveDescriptor p,
+private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 	boolean saveInnerViewState)
 {
+	MultiStatus result = new MultiStatus(
+		PlatformUI.PLUGIN_ID,IStatus.OK,
+		WorkbenchMessages.getString("Perspective.problemsSavingPerspective"),null);
+
 	if(this.memento != null) {
 		memento.putMemento(this.memento);
-		return;
+		return result;
 	}
-		
+			
 	// Save the version number.
 	memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING);
-	p.saveState(memento);
+	result.add(p.saveState(memento));
 	if(!saveInnerViewState) {
 		Rectangle bounds = page.getWorkbenchWindow().getShell().getBounds();
 		IMemento boundsMem = memento.createChild(IWorkbenchConstants.TAG_WINDOW);
@@ -1074,13 +1118,14 @@ private void saveState(IMemento memento, PerspectiveDescriptor p,
 	
 	// Save the layout.
 	IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_LAYOUT);
-	presentation.saveState(childMem);
+	result.add(presentation.saveState(childMem));
 
 	// Save the editor visibility state
 	if (isEditorAreaVisible())
 		memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 1);
 	else
 		memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 0);
+	return result;
 }
 /**
  * Sets the visible action sets. 

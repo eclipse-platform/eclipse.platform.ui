@@ -4,6 +4,8 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import java.util.*;
@@ -64,8 +66,12 @@ public Control getControl() {
 /**
  * @see IPersistablePart
  */
-public void restoreState(IMemento memento) 
+public IStatus restoreState(IMemento memento) 
 {
+	MultiStatus result = new MultiStatus(
+		PlatformUI.PLUGIN_ID,IStatus.OK,
+		WorkbenchMessages.getString("RootLayoutContainer.problemsRestoringPerspective"),null);
+	
 	// Read the info elements.
 	IMemento [] children = memento.getChildren(IWorkbenchConstants.TAG_INFO);
 
@@ -94,7 +100,7 @@ public void restoreState(IMemento memento)
 		else {
 			PartTabFolder folder = new PartTabFolder();
 			folder.setID(partID);
-			folder.restoreState(childMem.getChild(IWorkbenchConstants.TAG_FOLDER));
+			result.add(folder.restoreState(childMem.getChild(IWorkbenchConstants.TAG_FOLDER)));
 			ContainerPlaceholder placeholder = new ContainerPlaceholder(partID);
 			placeholder.setRealContainer(folder);
 			part = placeholder;
@@ -115,16 +121,20 @@ public void restoreState(IMemento memento)
 		}
 		mapIDtoPart.put(partID, part);
 	}
+	return result;
 }
 /**
  * @see IPersistablePart
  */
-public void saveState(IMemento memento) 
-{
+public IStatus saveState(IMemento memento) {
 	RelationshipInfo[] relationships = computeRelation();
+
+	MultiStatus result = new MultiStatus(
+		PlatformUI.PLUGIN_ID,IStatus.OK,
+		WorkbenchMessages.getString("RootLayoutContainer.problemsSavingPerspective"),null);
+	
 	// Loop through the relationship array.
-	for (int i = 0; i < relationships.length; i ++) 
-	{
+	for (int i = 0; i < relationships.length; i ++) {
 		// Save the relationship info ..
 		//		private LayoutPart part;
 		// 		private int relationship;
@@ -153,8 +163,9 @@ public void saveState(IMemento memento)
 		if (folder != null) {
 			childMem.putString(IWorkbenchConstants.TAG_FOLDER, "true");//$NON-NLS-1$
 			IMemento folderMem = childMem.createChild(IWorkbenchConstants.TAG_FOLDER);
-			folder.saveState(folderMem);
+			result.add(folder.saveState(folderMem));
 		}
 	}
+	return result;
 }
 }

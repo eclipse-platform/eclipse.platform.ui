@@ -20,6 +20,8 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.window.Window;
 import java.util.*;
 
@@ -700,7 +702,7 @@ private void replaceChild(PartPlaceholder oldChild, LayoutPart newChild) {
 /**
  * @see IPersistable
  */
-public void restoreState(IMemento memento) 
+public IStatus restoreState(IMemento memento) 
 {
 	// Read the active tab.
 	String activeTabID = memento.getString(IWorkbenchConstants.TAG_ACTIVE_PAGE_ID);
@@ -731,11 +733,12 @@ public void restoreState(IMemento memento)
 			}
 		}
 	}
+	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 }
 /**
  * @see IPersistable
  */
-public void saveState(IMemento memento) 
+public IStatus saveState(IMemento memento) 
 {
 	
 	// Save the active tab.
@@ -787,6 +790,7 @@ public void saveState(IMemento memento)
 			}
 		}
 	}
+	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 }
 /**
  * Sets the presentation bounds.

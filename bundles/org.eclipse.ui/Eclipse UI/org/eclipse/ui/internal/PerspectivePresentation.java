@@ -7,6 +7,7 @@ are made available under the terms of the Common Public License v0.5
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
 **********************************************************************/
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
@@ -1412,10 +1413,10 @@ public void replacePlaceholderWithPart(LayoutPart part) {
 /**
  * @see IPersistablePart
  */
-public void restoreState(IMemento memento) {
+public IStatus restoreState(IMemento memento) {
 	// Restore main window.
 	IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_MAIN_WINDOW);
-	mainLayout.restoreState(childMem);
+	return mainLayout.restoreState(childMem);
 
 	/*
 	 * Detached window no longer supported - remove when confirmed
@@ -1440,10 +1441,10 @@ public void restoreState(IMemento memento) {
 /**
  * @see IPersistablePart
  */
-public void saveState(IMemento memento) {
+public IStatus saveState(IMemento memento) {
 	// Persist main window.
 	IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_MAIN_WINDOW);
-	mainLayout.saveState(childMem);
+	return mainLayout.saveState(childMem);
 
 	/*
 	 * Detached window no longer supported - remove when confirmed

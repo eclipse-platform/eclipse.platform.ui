@@ -8,7 +8,10 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.ui.*;
 import org.eclipse.ui.IMemento;
 
 public class CoolBarLayout {
@@ -32,7 +35,7 @@ public class CoolBarLayout {
 	 * 
 	 * @param memento the memento to save the object state in
 	 */
-	public void restoreState(IMemento memento) {
+	public IStatus restoreState(IMemento memento) {
 		IMemento [] sizes = memento.getChildren(IWorkbenchConstants.TAG_ITEM_SIZE);
 		itemSizes = new Point[sizes.length];
 		for (int i = 0; i < sizes.length; i++) {
@@ -54,14 +57,15 @@ public class CoolBarLayout {
 			IMemento savedMem = savedItems[i];
 			String id = savedMem.getString(IWorkbenchConstants.TAG_ID);
 			items.add(id);
-		}	
+		}
+		return new Status(Status.OK,PlatformUI.PLUGIN_ID,0,"",null);	
 	}
 	/**
 	 * Saves the object state in the given memento. 
 	 * 
 	 * @param memento the memento to save the object state in
 	 */
-	public void saveState(IMemento memento) {
+	public IStatus saveState(IMemento memento) {
 		for (int i = 0; i < itemSizes.length; i++) {
 			IMemento child = memento.createChild(IWorkbenchConstants.TAG_ITEM_SIZE);
 			Point pt = itemSizes[i];
@@ -79,6 +83,7 @@ public class CoolBarLayout {
 			String item = (String)iter.next();
 			child.putString(IWorkbenchConstants.TAG_ID, item);
 		}
+		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 	}
 	public String toString() {
 		StringBuffer buffer = new StringBuffer(20);
