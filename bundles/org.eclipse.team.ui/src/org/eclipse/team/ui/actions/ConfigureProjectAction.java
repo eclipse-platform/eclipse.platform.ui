@@ -46,6 +46,7 @@ public class ConfigureProjectAction extends TeamAction {
 	protected boolean isEnabled() {
 		IProject[] selectedProjects = getSelectedProjects();
 		if (selectedProjects.length != 1) return false;
+		if (!selectedProjects[0].isAccessible()) return false;
 		if (TeamPlugin.getManager().getProvider(selectedProjects[0]) == null) return true;
 		return false;
 	}
