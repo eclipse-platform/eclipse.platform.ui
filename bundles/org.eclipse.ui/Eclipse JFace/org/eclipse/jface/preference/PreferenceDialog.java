@@ -240,7 +240,7 @@ protected Control createContents(Composite parent) {
 
 	// Add the first page
 	selectFirstItem();
-	
+
 	return control;
 }
 /* (non-Javadoc)
@@ -398,6 +398,9 @@ private void createTree(Composite parent) {
 								// Everything went well
 								currentTreeItem = (TreeItem) event.item;
 							}
+							
+						// Keep focus in tree.  See bugs 2692, 2621, and 6775.
+						tree.setFocus();
 					}
 				}
 			});
@@ -543,6 +546,9 @@ protected void selectFirstItem() {
 				tree.setSelection(new TreeItem[] { items[0] });
 				currentTreeItem = items[0];
 				showPage((IPreferenceNode) data);
+				
+				// Keep focus in tree.  See bugs 2692, 2621, and 6775.
+				tree.setFocus();
 			}
 		}
 	}
@@ -712,9 +718,6 @@ protected boolean showPage(IPreferenceNode node) {
 	if (oldPage != null)
 		oldPage.setVisible(false);
 
-	// Keep focus in tree.  See bugs 2692, 2621, and 6775.
-	tree.setFocus();
-	
 	// update the dialog controls
 	update();
 
