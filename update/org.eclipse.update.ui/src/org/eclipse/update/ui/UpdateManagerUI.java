@@ -40,7 +40,7 @@ public class UpdateManagerUI {
 	 * features, or to find and install new features.
 	 * @param shell the dialog parent shell
 	 */
-	public static void openInstallWizard(Shell shell) {
+	public static void openInstaller(Shell shell) {
 		InstallWizard wizard = new InstallWizard();
 		WizardDialog dialog = new ResizableInstallWizardDialog(shell, wizard, UpdateUI.getString("InstallWizardAction.title")); //$NON-NLS-1$
 		dialog.create();

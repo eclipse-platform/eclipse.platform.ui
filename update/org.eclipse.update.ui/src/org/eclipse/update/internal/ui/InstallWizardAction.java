@@ -39,7 +39,7 @@ public class InstallWizardAction extends Action implements IWorkbenchWindowActio
 		BusyIndicator
 			.showWhile(window.getShell().getDisplay(), new Runnable() {
 			public void run() {
-				UpdateManagerUI.openInstallWizard(window.getShell());
+				UpdateManagerUI.openInstaller(window.getShell());
 			}
 		});
 	}
