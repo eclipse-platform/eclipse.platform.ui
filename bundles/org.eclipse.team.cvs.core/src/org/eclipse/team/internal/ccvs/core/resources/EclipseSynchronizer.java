@@ -536,13 +536,21 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 * Begin an access to the internal data structures of the synchronizer
 	 */
 	private void beginOperation() {
+		// Do not try to acquire the lock if the resources tree is locked
+		// The reason for this is that during the resource delta phase (i.e. when the tree is locked)
+		// the workspace lock is held. If we obtain our lock, there is 
+		// a chance of dealock. It is OK if we don't as we are still protected
+		// by scheduling rules and the workspace lock.
+		if (ResourcesPlugin.getWorkspace().isTreeLocked()) return;
 		lock.acquire();
 	}
 	
 	/*
 	 * End an access to the internal data structures of the synchronizer
 	 */
-	private void endOperation() {						
+	private void endOperation() {
+		// See beginOperation() for a description of why the lock is not obtained when the tree is locked
+		if (ResourcesPlugin.getWorkspace().isTreeLocked()) return;
 		lock.release();
 	}
 	
