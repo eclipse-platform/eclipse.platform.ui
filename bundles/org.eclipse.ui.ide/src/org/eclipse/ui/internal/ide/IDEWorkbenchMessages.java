@@ -838,6 +838,19 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WorkbenchEncoding_invalidCharset;
 	public static String SelectionDialog_selectLabel;
 	public static String SelectionDialog_deselectLabel;
+    
+    // ==============================================================================
+    // Content Types preference page
+    // ==============================================================================
+    
+    public static String ContentTypes_lockedFormat;
+    public static String ContentTypes_characterSetLabel;
+    public static String ContentTypes_characterSetUpdateLabel;
+    public static String ContentTypes_fileAssociationsLabel;
+    public static String ContentTypes_fileAssociationsAddLabel;
+    public static String ContentTypes_fileAssociationsRemoveLabel;
+    public static String ContentTypes_contentTypesLabel;
+    public static String ContentTypes_errorDialogMessage;
 
 	static {
 		// load message values from bundle file

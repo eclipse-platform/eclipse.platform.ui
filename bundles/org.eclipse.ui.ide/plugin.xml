@@ -376,6 +376,13 @@
             class="org.eclipse.ui.internal.performance.PerformancePrefererencePage"
             id="org.eclipse.ui.ide.performance"
             name="%PreferencePages.Performance"/>
+      <page
+            class="org.eclipse.ui.internal.ide.dialogs.ContentTypesPreferencePage"
+            id="org.eclipse.ui.preferencePages.ContentTypes"
+            category="org.eclipse.ui.preferencePages.Editors"
+            name="%PreferencePages.ContentTypes">
+         <keywordReference id="org.eclipse.ui.ide.editing"/>
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.views">
