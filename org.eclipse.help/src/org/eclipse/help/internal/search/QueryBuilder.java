@@ -103,14 +103,21 @@ public class QueryBuilder {
 		for (int i = 0; i < tokens.size(); i++) {
 			QueryWordsToken token = (QueryWordsToken) tokens.get(i);
 			if (token.type == QueryWordsToken.WORD) {
-				if (token.value.indexOf('?') >= 0
-					|| token.value.indexOf('*') >= 0) {
-					newTokens.add(
-						QueryWordsToken.word(token.value.toLowerCase(locale)));
+				int questionMIndex = token.value.indexOf('?');
+				int starIndex = token.value.indexOf('*');
+				if (starIndex >= 0 || questionMIndex >= 0) {
+					if (questionMIndex != 0 && starIndex != 0) {
+						newTokens.add(
+							QueryWordsToken.word(
+								token.value.toLowerCase(locale)));
 
-					// add word to the list of words to highlight
-					if (!highlightWords.contains(token.value))
-						highlightWords.add(token.value);
+						// add word to the list of words to highlight
+						if (!highlightWords.contains(token.value)) {
+							highlightWords.add(token.value);
+						}
+					} else {
+						// wild card not allowed as the first character
+					}
 				} else {
 					List wordList =
 						analyzeText(analyzer, "contents", token.value);
