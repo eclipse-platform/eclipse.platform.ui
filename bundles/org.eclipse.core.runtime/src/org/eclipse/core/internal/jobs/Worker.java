@@ -65,7 +65,8 @@ public class Worker extends Thread {
 				} finally {
 					//clear interrupted state for this thread
 					Thread.interrupted();
-					if (!result.isOK())
+					int severity = result.getSeverity();
+					if (severity == IStatus.ERROR || severity == IStatus.WARNING)
 						InternalPlatform.log(result);
 					pool.endJob(currentJob, result);
 					currentJob = null;
