@@ -496,6 +496,7 @@
 			id = "org.eclipse.debug.ui.debugview.popupMenu.terminateAll"
 			menubarPath = "launchGroup"
 			helpContextId = "terminate_all_action_context"
+			icon = "icons/full/clcl16/terminate_all_co.gif"
 			class = "org.eclipse.debug.internal.ui.actions.TerminateAllAction"
 			label="%TerminateAllAction.label">
 		</action>
@@ -511,6 +512,7 @@
 			id = "org.eclipse.debug.ui.debugview.popupMenu.terminateAndRemove"
 			menubarPath = "launchGroup"
 			helpContextId = "terminate_and_remove_action_context"
+			icon = "icons/full/clcl16/terminate_rem_co.gif"
 			class = "org.eclipse.debug.internal.ui.actions.TerminateAndRemoveActionDelegate"
 			label="%TerminateAndRemoveAction.label">
 		</action>
