@@ -17,7 +17,8 @@ import org.eclipse.core.runtime.CoreException;
  * extension point.
  * <p>
  * Clients are not intended to implement this interface. Instead, clients contributing a rendering
- * implement <code>IMemoryRenderingTypeDelegate</code> and <code>IMemoryRendering</code>.
+ * implement {@link org.eclipse.debug.ui.memory.IMemoryRenderingTypeDelegate}
+ * and {@link org.eclipse.debug.ui.memory.IMemoryRendering}.
  * </p>
  * @since 3.1
  */
@@ -38,13 +39,12 @@ public interface IMemoryRenderingType {
     public String getId();
     
     /**
-     * Creates and returns a new rendering of this type.
-     * Return null if the rendering is not to be created.  Creation of a memory
-     * has been canceled.  No error message will be displayed.
-     * Throws an exception if an error has occurred.
+     * Creates and returns a new rendering of this type or <code>null</code>
+     * if none.
      * 
      * @return a new rendering of this type
-     * @exception CoreException if unable to create the rendering
+     * @exception CoreException if an exception occurrs creating
+     *  the rendering
      */
     public IMemoryRendering createRendering() throws CoreException;
 

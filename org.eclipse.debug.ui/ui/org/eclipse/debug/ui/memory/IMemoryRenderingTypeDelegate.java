@@ -16,9 +16,10 @@ import org.eclipse.core.runtime.CoreException;
  * A factory that creates memory renderings.
  * <p>
  * Clients contributing a memory rendering type are intended to implement this
- * interface. The factory will be used to create renderings. 
+ * interface. This factory will be used to create renderings. 
  * </p>
  * @since 3.1
+ * @see org.eclipse.debug.ui.memory.IMemoryRendering
  */
 public interface IMemoryRenderingTypeDelegate {
     
