@@ -34,12 +34,17 @@ public class CVSTestSetup extends TestSetup {
 	public static final int WAIT_FACTOR;
 	public static final int COMPRESSION_LEVEL;
 	
+	public static final String READ_REPOSITORY_LOCATION;
+	public static final String WRITE_REPOSITORY_LOCATION;
+	
 	public static CVSRepositoryLocation repository;
 	
 	// Static initializer for constants
 	static {
 		loadProperties();
 		REPOSITORY_LOCATION = System.getProperty("eclipse.cvs.repository");
+		READ_REPOSITORY_LOCATION = System.getProperty("eclipse.cvs.repository.read");
+		WRITE_REPOSITORY_LOCATION = System.getProperty("eclipse.cvs.repository.write");
 		INITIALIZE_REPO = Boolean.valueOf(System.getProperty("eclipse.cvs.initrepo", "false")).booleanValue();
 		DEBUG = Boolean.valueOf(System.getProperty("eclipse.cvs.debug", "false")).booleanValue();
 		RSH = System.getProperty("eclipse.cvs.rsh", "rsh");
@@ -162,8 +167,9 @@ public class CVSTestSetup extends TestSetup {
 	}
 	
 	public void setUp() throws CVSException {
-		if (repository == null)
+		if (repository == null) {
 			repository = setupRepository(REPOSITORY_LOCATION);
+		}
 		CVSProviderPlugin.getPlugin().setCompressionLevel(COMPRESSION_LEVEL);
 	}
 
@@ -173,8 +179,11 @@ public class CVSTestSetup extends TestSetup {
 		// is important for the UI tests.
 		CVSRepositoryLocation repository = (CVSRepositoryLocation)CVSProviderPlugin.getPlugin().getRepository(location);
 
+		repository.setReadLocation(READ_REPOSITORY_LOCATION);
+		repository.setWriteLocation(WRITE_REPOSITORY_LOCATION);
+		
 		// Give some info about which repository the tests are running with
-		System.out.println("Connecting to: " + repository.toString());
+		System.out.println("Connecting to: " + repository.getHost());
 		
 		try {
 			repository.validateConnection(new NullProgressMonitor());
