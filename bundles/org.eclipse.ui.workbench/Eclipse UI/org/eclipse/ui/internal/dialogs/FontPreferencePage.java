@@ -8,38 +8,23 @@ package org.eclipse.ui.internal.dialogs;
  */
 
 import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.FontDialog;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.fonts.FontDefinition;
 import org.eclipse.ui.internal.misc.Sorter;
 
@@ -64,12 +49,22 @@ public class FontPreferencePage
 	 * The label that displays the selected font, or <code>null</code> if none.
 	 */
 	private Label valueControl;
+	
+	/**
+	 *  The label that displays the selected font, or <code>null</code> if none.
+	 */
+	private Label noteControl;
 
 	/**
 	 * The previewer, or <code>null</code> if none.
 	 */
 	private DefaultPreviewer previewer;
-
+	
+	/**
+	 * The sorted value of the workbench font definitions.
+	 */
+	private FontDefinition[] definitions;
+	
 	private static class DefaultPreviewer {
 		private Text text;
 		private Font font;
@@ -186,10 +181,25 @@ public class FontPreferencePage
 
 		createUseDefaultsControl(buttonColumn, WorkbenchMessages.getString("FontsPreference.useSystemFont")); //$NON-NLS-1$
 		createChangeControl(buttonColumn, JFaceResources.getString("openChange")); //$NON-NLS-1$
+		createNoteControl(previewColumn);
 
 		createDescriptionControl(parent);
 
 		return mainColumn;
+	}
+	
+	/**
+	 * Create the note control that informs about
+	 * the font mappings.
+	 * @param parent
+	 */
+	private void createNoteControl(Composite parent) {
+		this.noteControl = new Label(parent, SWT.WRAP | SWT.CENTER | SWT.BORDER);
+		GridData noteData = new GridData(GridData.FILL_BOTH);
+		noteData.grabExcessHorizontalSpace = true;
+		noteData.grabExcessHorizontalSpace = true;
+		this.noteControl.setLayoutData(noteData);
+		this.noteControl.setFont(parent.getFont());
 	}
 
 	/**
@@ -413,7 +423,15 @@ public class FontPreferencePage
 	 */
 	private void updateForSelectedFontDefinition(FontDefinition definition) {
 
-		FontData[] font = getFontDataSetting(definition);
+		FontData[] font;
+
+		String fontId = definition.getId();
+
+		Object setting = fontDataSettings.get(fontId);
+		if (DEFAULT_TOKEN.equals(setting))
+			font = getDefaultFont(definition);
+		else
+			font = (FontData[]) setting;
 
 		valueControl.setText(StringConverter.asString(font[0]));
 		previewer.setFont(font);
@@ -423,6 +441,16 @@ public class FontPreferencePage
 			descriptionText.setText(WorkbenchMessages.getString("PreferencePage.noDescription")); //$NON-NLS-1$
 		else
 			descriptionText.setText(text);
+
+		if (DEFAULT_TOKEN.equals(setting)
+			&& definition.getDefaultsTo() != null) {
+			FontDefinition mapped = getDefinition(definition.getDefaultsTo());
+			this.noteControl.setText(
+				WorkbenchMessages.format(
+					"FontsPreference.defaultsNote", //$NON-NLS-1$
+					new String[] { mapped.getLabel()}));
+		} else
+			this.noteControl.setText(""); //$NON-NLS-1$
 	}
 
 	/**
@@ -548,7 +576,32 @@ public class FontPreferencePage
 	 * @return FontDefinition[]
 	 */
 	private FontDefinition[] getDefinitions() {
-		return FontDefinition.getDefinitions();
+		
+		if (definitions == null){
+			definitions =  FontDefinition.getDefinitions();
+			Arrays.sort(definitions,new Comparator() {
+				public int compare(Object o1, Object o2) {
+					FontDefinition def1 = ((FontDefinition)o1);
+					FontDefinition def2 = ((FontDefinition)o2);
+					
+					//Make the ones without definitions first
+					//in the list so that all actions on them
+					//are done first.
+					if(def1.getDefaultsTo() == null){
+						if(def2.getDefaultsTo() == null)
+							return 0;
+						else
+							return -1;
+					}
+					else{
+						if(def2.getDefaultsTo() != null)
+							return 0;
+						else
+							return 1;
+					}
+			}});
+		}
+		return definitions;
 	}
 
 	/**
@@ -565,14 +618,6 @@ public class FontPreferencePage
 		return null;
 	}
 
-	/**
-	 * Return whether the definition has a non default setting.
-	 * @param definition
-	 * @return boolean
-	 */
-	private boolean hasSetting(FontDefinition definition) {
-		return fontDataSettings.get(definition.getId()) instanceof FontData[];
-	}
 
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
