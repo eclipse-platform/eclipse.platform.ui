@@ -167,7 +167,7 @@ public abstract class AbstractTableInformationControl {
     private Shell fShell;
 
     /** The composite */
-    Composite fComposite;
+    protected Composite fComposite;
 
     /** The control's text widget */
     private Text fFilterText;
@@ -329,7 +329,7 @@ public abstract class AbstractTableInformationControl {
 
     protected abstract TableViewer createTableViewer(Composite parent, int style);
 
-    protected TableViewer getTableViewer() {
+    public TableViewer getTableViewer() {
         return fTableViewer;
     }
 

@@ -290,6 +290,22 @@ public/*final*/class WorkbenchImages {
         declareImage(IWorkbenchGraphicConstants.IMG_LCL_LINKTO_HELP,
                 PATH_ELOCALTOOL + "linkto_help.gif", true); //$NON-NLS-1$
 
+        declareImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW_THIN,
+                PATH_ELOCALTOOL + "thin_close_view.gif", true); //$NON-NLS-1$
+        declareImage(IWorkbenchGraphicConstants.IMG_LCL_HIDE_TOOLBAR_THIN,
+                PATH_ELOCALTOOL + "thin_hide_toolbar.gif", true); //$NON-NLS-1$
+        declareImage(IWorkbenchGraphicConstants.IMG_LCL_MAX_VIEW_THIN,
+                PATH_ELOCALTOOL + "thin_max_view.gif", true); //$NON-NLS-1$
+        declareImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW_THIN,
+                PATH_ELOCALTOOL + "thin_min_view.gif", true); //$NON-NLS-1$
+        declareImage(IWorkbenchGraphicConstants.IMG_LCL_RESTORE_VIEW_THIN,
+                PATH_ELOCALTOOL + "thin_restore_view.gif", true); //$NON-NLS-1$
+        declareImage(IWorkbenchGraphicConstants.IMG_LCL_SHOW_TOOLBAR_THIN,
+                PATH_ELOCALTOOL + "thin_show_toolbar.gif", true); //$NON-NLS-1$
+        declareImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_THIN,
+                PATH_ELOCALTOOL + "thin_view_menu.gif", true); //$NON-NLS-1$
+
+        
         declareImage(ISharedImages.IMG_OBJS_ERROR_TSK, PATH_OBJECT
                 + "error_tsk.gif", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_OBJS_WARN_TSK, PATH_OBJECT

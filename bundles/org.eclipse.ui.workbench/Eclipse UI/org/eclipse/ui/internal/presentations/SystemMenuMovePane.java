@@ -19,9 +19,10 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
 /**
  * @since 3.0
  */
-public class SystemMenuMovePane extends Action implements ISelfUpdatingAction {
+public class SystemMenuMovePane extends Action {
 
     IStackPresentationSite site;
+    IPresentablePart part;
 
     public SystemMenuMovePane(IStackPresentationSite site) {
         this.site = site;
@@ -32,16 +33,12 @@ public class SystemMenuMovePane extends Action implements ISelfUpdatingAction {
      * @see org.eclipse.jface.action.IAction#run()
      */
     public void run() {
-        site.dragStart(site.getSelectedPart(), Display.getDefault()
-                .getCursorLocation(), true);
+        site.dragStart(part, Display.getDefault().getCursorLocation(), true);
     }
 
-    public void update() {
-        IPresentablePart part = site.getSelectedPart();
+    public void setTarget(IPresentablePart part) {
+        this.part = part;
         setEnabled(part != null && site.isPartMoveable(part));
     }
 
-    public boolean shouldBeVisible() {
-        return true;
-    }
 }

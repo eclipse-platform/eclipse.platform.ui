@@ -110,6 +110,42 @@ public class SwtUtil {
         return null;
     }
 
+    public static Control[] getAncestors(Control theControl) {
+        return getAncestors(theControl, 1);
+    }
+    
+    private static Control[] getAncestors(Control theControl, int children) {
+        Control[] result;
+        
+        if (theControl.getParent() == null) {
+            result = new Control[children]; 
+        } else {
+            result = getAncestors(theControl.getParent(), children + 1);
+        }
+        
+        result[result.length - children] = theControl;
+        
+        return result;
+    }
+    
+    public static Control findCommonAncestor(Control control1, Control control2) {
+        Control[] control1Ancestors = getAncestors(control1);
+        Control[] control2Ancestors = getAncestors(control2);
+        
+        Control mostSpecific = null;
+        
+        for (int idx = 0; idx < Math.min(control1Ancestors.length, control2Ancestors.length); idx++) {
+            Control control1Ancestor = control1Ancestors[idx];
+            if (control1Ancestor == control2Ancestors[idx]) {
+                mostSpecific = control1Ancestor;
+            } else {
+                break;
+            }
+        }
+        
+        return mostSpecific;
+    }
+    
     /**
      * Finds the control in the given location
      * 

@@ -1,22 +1,30 @@
 package org.eclipse.ui.internal.presentations.newapi;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.internal.dnd.SwtUtil;
-import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.preferences.IDynamicPropertyMap;
+import org.eclipse.ui.internal.preferences.PreferenceStoreAdapter;
+import org.eclipse.ui.internal.preferences.PreferencesAdapter;
+import org.eclipse.ui.internal.preferences.PropertyMapAdapter;
+import org.eclipse.ui.internal.preferences.ThemeManagerAdapter;
+import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultPartList;
+import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.presentations.IPartMenu;
 import org.eclipse.ui.presentations.IPresentablePart;
+import org.eclipse.ui.presentations.IPresentationSerializer;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.StackDropResult;
 import org.eclipse.ui.presentations.StackPresentation;
@@ -26,338 +34,271 @@ import org.eclipse.ui.presentations.StackPresentation;
  */
 public final class TabbedStackPresentation extends StackPresentation {
 
-    private final static String TAB_DATA = "part"; //$NON-NLS-1$
-
-    private final static String BOLD_DATA = "isBold"; //$NON-NLS-1$
-
-    private AbstractTabFolder tabFolder;
-
+    private PresentablePartFolder folder;
+    private ISystemMenu systemMenu;
+    private ISystemMenu partList;
+    private PreferenceStoreAdapter apiPreferences = new PreferenceStoreAdapter(PrefUtil
+            .getAPIPreferenceStore());
+    private ThemeManagerAdapter themePreferences = new ThemeManagerAdapter(
+            PlatformUI.getWorkbench().getThemeManager());
+    
     private TabOrder tabs;
 
     private TabDragHandler dragBehavior;
 
-    private int ignoreSelectionChanges = 0;
-
     private boolean initializing = true;
+    private int ignoreSelectionChanges = 0;
+    
+    private TabFolderListener tabFolderListener = new TabFolderListener() {
+        public void handleEvent(TabFolderEvent e) {
+            switch (e.type) {
+             	case TabFolderEvent.EVENT_MINIMIZE: {
+             	    getSite().setState(IStackPresentationSite.STATE_MINIMIZED);
+             		break;
+             	}
+             	case TabFolderEvent.EVENT_MAXIMIZE: {
+             	    getSite().setState(IStackPresentationSite.STATE_MAXIMIZED);
+             		break;
+             	}
+             	case TabFolderEvent.EVENT_RESTORE: {
+             	    getSite().setState(IStackPresentationSite.STATE_RESTORED);
+             		break;
+             	}
+             	case TabFolderEvent.EVENT_CLOSE: {
+                    IPresentablePart part = folder.getPartForTab(e.tab);
+
+             		if (part != null) {
+             		    getSite().close(new IPresentablePart[] { part });
+             		}
+             		break;
+             	}
+             	case TabFolderEvent.EVENT_SHOW_LIST: {
+             	    showPartList();
+             	    break;
+             	}
+             	case TabFolderEvent.EVENT_GIVE_FOCUS_TO_PART: { 
+                    IPresentablePart part = getSite().getSelectedPart();
+             		if (part != null) {
+             		    part.setFocus();
+             		}
+             		break;
+             	}
+             	case TabFolderEvent.EVENT_PANE_MENU: {
+             	    TabbedStackPresentation.this.showPaneMenu(folder.getPartForTab(e.tab), new Point(e.x, e.y)); 	    
+             	    break;
+             	}
+             	case TabFolderEvent.EVENT_DRAG_START: {
+             	    AbstractTabItem beingDragged = e.tab;
+             	    Point initialLocation = new Point(e.x, e.y);
+             	    
+                    if (beingDragged == null) {
+                        getSite().dragStart(initialLocation, false);
+                    } else {
+                        IPresentablePart part = folder.getPartForTab(beingDragged);
+                        
+                        try {
+                            dragStart = folder.indexOf(part);
+                            getSite().dragStart(part, initialLocation, false);                    
+                        } finally {
+                            dragStart = -1;
+                        }
+                    }
+                    break;
+             	}
+             	case TabFolderEvent.EVENT_TAB_SELECTED: {
+                    if (ignoreSelectionChanges > 0) {
+                        return;
+                    }
+                    
+                    IPresentablePart part = folder.getPartForTab(e.tab);
+                    
+                    if (part != null) {
+                        getSite().selectPart(part);
+                    }
+             	    break;
+             	}
+             	case TabFolderEvent.EVENT_SYSTEM_MENU: {
+                    IPresentablePart part = folder.getPartForTab(e.tab);
+                    
+                    if (part == null) {
+                        part = getSite().getSelectedPart();
+                    }
+                    
+                    if (part != null) {
+                        showSystemMenu(new Point(e.x, e.y), part);
+                    }
+             	    break;
+             	}
+             	
+            }
+        }
+    };
 
     private int dragStart = -1;
-
-    private IPresentablePartList tabOrderListener = new IPresentablePartList() {
-        public void insert(IPresentablePart part, int idx) {
-            doInsert(part, idx);
-        }
-
-        public void remove(IPresentablePart part) {
-            doRemove(part);
-        }
-
-        public void move(IPresentablePart part, int newIndex) {
-            doMove(part, newIndex);
-        }
-
-        public int size() {
-            return tabFolder.getItemCount();
-        }
-
-        public void select(IPresentablePart toSelect) {
-            doSelect(toSelect);
-        }
-    };
-
-    /**
-     * Listener attached to all child parts. It responds to changes in part properties
-     */
-    private IPropertyListener childPropertyChangeListener = new IPropertyListener() {
-        public void propertyChanged(Object source, int property) {
-
-            if (source instanceof IPresentablePart) {
-                IPresentablePart part = (IPresentablePart) source;
-
-                childPropertyChanged(part, property);
-            }
-        }
-    };
-
-    /**
-     * Listener attached to all tool items. It removes listeners from the associated
-     * part when the tool item is destroyed. This is required to prevent memory leaks.
-     */
-    private DisposeListener tabDisposeListener = new DisposeListener() {
-        public void widgetDisposed(DisposeEvent e) {
-            IPresentablePart part = getPartForTab(e.widget);
-
-            part.removePropertyListener(childPropertyChangeListener);
-        }
-    };
-
-    private DisposeListener toolbarDisposeListener = new DisposeListener() {
-        public void widgetDisposed(DisposeEvent e) {
-            setToolbar(null);
-        }
-    };
-
-    private AbstractTabFolderListener tabFolderListener = new AbstractTabFolderListener() {
-        public void stateButtonPressed(int buttonId) {
-            getSite().setState(buttonId);
-        }
-
-        public void closeButtonPressed(AbstractTabItem item) {
-            IPresentablePart part = getPartForTab(item.getControl());
-
-            getSite().close(new IPresentablePart[] { part });
-        }
-
-        public void showList() {
-            showPartList();
-        }
-
-        /**
-         * Called to show the pane menu at the given location (display coordinates)
-         */
-        public void showPaneMenu(Point location) {
-            TabbedStackPresentation.this.showPaneMenu(location);
-        }
-
-        public void dragStart(AbstractTabItem beingDragged,
-                Point initialLocation) {
-            if (beingDragged == null) {
-                getSite().dragStart(initialLocation, false);
-            } else {
-                dragStart = tabFolder.indexOf(beingDragged);
-                try {
-                    IPresentablePart part = getPartForTab(beingDragged
-                            .getControl());
-                    getSite().dragStart(part, initialLocation, false);
-                } finally {
-                    dragStart = -1;
-                }
-            }
-        }
-
-    };
-
-    private ShellListener shellListener = new ShellAdapter() {
-        public void shellActivated(ShellEvent e) {
-            tabFolder.shellActive(true);
-        }
-
-        public void shellDeactivated(ShellEvent e) {
-            tabFolder.shellActive(false);
-        }
-    };
-
+    private Map prefs = new HashMap();
+    
+    public TabbedStackPresentation(IStackPresentationSite site, AbstractTabFolder widget, ISystemMenu systemMenu) {
+        this(site, new PresentablePartFolder(widget), systemMenu);
+    }
+    
+    public TabbedStackPresentation(IStackPresentationSite site, PresentablePartFolder folder, ISystemMenu systemMenu) {
+        this(site, folder, new LeftToRightTabOrder(folder), new ReplaceDragHandler(folder.getTabFolder()), systemMenu);
+    }
+    
     public TabbedStackPresentation(IStackPresentationSite site,
-            AbstractTabFolder folder, TabOrder tabs, TabDragHandler dragBehavior) {
+            PresentablePartFolder newFolder, TabOrder tabs, TabDragHandler dragBehavior, ISystemMenu systemMenu) {
         super(site);
-
-        tabFolder = folder;
+        this.systemMenu = systemMenu;
+        
+        this.folder = newFolder;
         this.tabs = tabs;
         this.dragBehavior = dragBehavior;
 
         // Add a dispose listener. This will call the presentationDisposed()
         // method when the widget is destroyed.
-        folder.getControl().addDisposeListener(new DisposeListener() {
+        folder.getTabFolder().getControl().addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e) {
                 presentationDisposed();
             }
         });
 
-        folder.allowMaximizeButton(getSite().supportsState(
-                IStackPresentationSite.STATE_MAXIMIZED));
-        folder.allowMinimizeButton(getSite().supportsState(
-                IStackPresentationSite.STATE_MINIMIZED));
-        folder.addListener(tabFolderListener);
-
-        tabFolder.getControl().getShell().addShellListener(shellListener);
-        tabFolder.shellActive(tabFolder.getControl().getDisplay()
-                .getActiveShell() == tabFolder.getControl().getShell());
-
+        folder.getTabFolder().addListener(tabFolderListener);
+        
+        this.partList = new DefaultPartList(site, newFolder);
     }
-
-    private void childPropertyChanged(IPresentablePart part, int property) {
-        AbstractTabItem tab = getTab(part);
-        // If we're in the process of removing this part, it's possible that we might still receive
-        // some events for it. If everything is working perfectly, this should never happen... however,
-        // we check for this case just to be safe.
-        if (tab == null) {
-            return;
-        }
-
-        switch (property) {
-        case IPresentablePart.PROP_HIGHLIGHT_IF_BACK:
-            if (getCurrent() != part) {//Set bold if it does currently have focus
-                tab.getControl().setData(BOLD_DATA, BOLD_DATA);
-                initTab(tab, part);
-            }
-            break;
-        case IPresentablePart.PROP_CONTENT_DESCRIPTION:
-        case IPresentablePart.PROP_TOOLBAR:
-        case IPresentablePart.PROP_PANE_MENU:
-        case IPresentablePart.PROP_TITLE:
-            if (getCurrent() == part) {
-                initTab(tab, part);
-                layout(true);
-            }
-            break;
-        default:
-            initTab(tab, part);
-        }
-    }
-
-    protected void initTab(AbstractTabItem item, IPresentablePart part) {
-        if (!Util.equals(part.getName(), item.getPartName())) {
-            item.setPartName(part.getName());
-        }
-
-        if (item.getImage() != part.getTitleImage()) {
-            item.setImage(part.getTitleImage());
-        }
-
-        if (!(Util.equals(part.getTitleToolTip(), item.getTitleToolTip()))) {
-            item.setTitleToolTip(part.getTitleToolTip());
-        }
-
-        boolean isBold = item.getControl().getData(BOLD_DATA) != null;
-        item.setBusyState(part.isBusy(), isBold);
-    }
-
+    
     /**
-     * Returns the currently selected part, or <code>null</code>.
+     * Restores a presentation from a previously stored state
      * 
-     * @return the currently selected part, or <code>null</code>
+     * @param serializer (not null)
+     * @param savedState (not null)
      */
-    private IPresentablePart getCurrent() {
-        Assert.isTrue(!isDisposed());
-
-        return getSite().getSelectedPart();
+    public void restoreState(IPresentationSerializer serializer,
+            IMemento savedState) {
+        tabs.restoreState(serializer, savedState);
     }
 
-    private IPresentablePart getPartForTab(Widget tab) {
-        Assert.isTrue(!isDisposed());
-
-        IPresentablePart part = (IPresentablePart) tab.getData(TAB_DATA);
-
-        return part;
-    }
-
-    /**
-     * Returns the tab for the given part, or null if there is no such tab
-     * 
-     * @param part the part being searched for
-     * @return the tab for the given part, or null if there is no such tab
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.presentations.StackPresentation#saveState(org.eclipse.ui.presentations.IPresentationSerializer, org.eclipse.ui.IMemento)
      */
-    protected final AbstractTabItem getTab(IPresentablePart part) {
-        Assert.isTrue(!isDisposed());
-        AbstractTabItem[] items = tabFolder.getItems();
+    public void saveState(IPresentationSerializer context, IMemento memento) {
+        super.saveState(context, memento);
 
-        for (int idx = 0; idx < items.length; idx++) {
-            AbstractTabItem item = items[idx];
-
-            if (getPartForTab(item.getControl()) == part) {
-                return item;
-            }
-        }
-
-        return null;
+        tabs.saveState(context, memento);
     }
-
-    private int indexOf(IPresentablePart part) {
-        AbstractTabItem item = getTab(part);
-
-        if (item == null) {
-            return -1;
-        }
-
-        return tabFolder.indexOf(item);
-    }
-
+    
     /**
      * Returns true iff the presentation has been disposed
      * 
      * @return true iff the presentation has been disposed
      */
     private boolean isDisposed() {
-        return tabFolder != null && !SwtUtil.isDisposed(tabFolder.getControl());
+        return folder == null || folder.isDisposed();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.StackPresentation#setBounds(org.eclipse.swt.graphics.Rectangle)
      */
     public void setBounds(Rectangle bounds) {
-        // Set the tab folder's bounds
-        tabFolder.getControl().setBounds(bounds);
-
-        layout(false);
-    }
-
-    public void layout(boolean changed) {
-        // Lay out the tab folder and compute the client area
-        tabFolder.layout(changed);
-
-        // Lay out the current part if necessary
-        IPresentablePart current = getSite().getSelectedPart();
-
-        if (current != null) {
-            // Compute the client area (in the tabFolder's local coordinate system)
-            Rectangle clientArea = tabFolder.getClientArea();
-
-            // Convert into the same coordinate system as the presentation
-            Point clientAreaStart = tabFolder.getControl().getParent()
-                    .toControl(
-                            tabFolder.getControl().toDisplay(clientArea.x,
-                                    clientArea.y));
-            clientArea.x = clientAreaStart.x;
-            clientArea.y = clientAreaStart.y;
-
-            // Set the bounds of the current part
-            current.setBounds(clientArea);
-        }
+        folder.setBounds(bounds);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.StackPresentation#computeMinimumSize()
      */
     public Point computeMinimumSize() {
-        return tabFolder.computeMinimumSize();
+        return folder.getTabFolder().computeSize(SWT.DEFAULT, SWT.DEFAULT);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.ISizeProvider#computePreferredSize(boolean, int, int, int)
+     */
+    public int computePreferredSize(boolean width, int availableParallel,
+            int availablePerpendicular, int preferredResult) {
+        
+        if (preferredResult != INFINITE || getSite().getState() == IStackPresentationSite.STATE_MINIMIZED) {
+            int minSize = 0;
+	        if (width) {
+	            int heightHint = availablePerpendicular == INFINITE ? SWT.DEFAULT : availablePerpendicular;
+	            minSize = folder.getTabFolder().computeSize(SWT.DEFAULT, heightHint).x;
+	        } else {
+	            int widthHint = availablePerpendicular == INFINITE ? SWT.DEFAULT : availablePerpendicular;
+	            minSize = folder.getTabFolder().computeSize(widthHint, SWT.DEFAULT).y;
+	        }
+	        
+	        if (getSite().getState() == IStackPresentationSite.STATE_MINIMIZED) {
+	            return minSize;
+	        }
+	        
+	        return Math.max(minSize, preferredResult);
+        }
+        
+        return INFINITE;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.presentations.StackPresentation#showPartList()
+     */
+    public void showPartList() {
+        if (partList != null) {
+            partList.show(getControl(), folder.getTabFolder().getPartListLocation(), 
+                    getSite().getSelectedPart());
+        }
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.StackPresentation#dispose()
      */
     public void dispose() {
         // Dispose the tab folder's widgetry
-        tabFolder.getControl().dispose();
+        folder.getTabFolder().getControl().dispose();
     }
 
     /**
      * Called when the tab folder is disposed.
      */
     private void presentationDisposed() {
-        setToolbar(null);
-        // Notify the tab folder that it has been disposed
-        tabFolder.disposed();
+        apiPreferences.dispose();
+        themePreferences.dispose();
+        
+        Iterator iter = prefs.values().iterator();
+        while(iter.hasNext()) {
+            PropertyMapAdapter next = (PropertyMapAdapter)iter.next();
+            next.dispose();
+        }
+
+//        if (systemMenu != null) {
+//            systemMenu.dispose();
+//        }
+//        
+//        if (partList != null) {
+//            partList.dispose();
+//        }
+        systemMenu = null;
+        partList = null;
+        
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.StackPresentation#setActive(int)
      */
     public void setActive(int newState) {
-        tabFolder.setActive(newState);
+        folder.getTabFolder().setActive(newState);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.StackPresentation#setVisible(boolean)
      */
     public void setVisible(boolean isVisible) {
-        tabFolder.getControl().setVisible(isVisible);
+        folder.getTabFolder().getControl().setVisible(isVisible);
 
         IPresentablePart current = getSite().getSelectedPart();
         if (current != null) {
-            current.setVisible(true);
+            current.setVisible(isVisible);
         }
 
         if (isVisible) {
-            layout(true);
+            folder.layout(true);
         }
     }
 
@@ -365,14 +306,14 @@ public final class TabbedStackPresentation extends StackPresentation {
      * @see org.eclipse.ui.presentations.StackPresentation#setState(int)
      */
     public void setState(int state) {
-        tabFolder.setState(state);
+        folder.getTabFolder().setState(state);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.StackPresentation#getControl()
      */
     public Control getControl() {
-        return tabFolder.getControl();
+        return folder.getTabFolder().getControl();
     }
 
     /* (non-Javadoc)
@@ -381,133 +322,48 @@ public final class TabbedStackPresentation extends StackPresentation {
     public void addPart(IPresentablePart newPart, Object cookie) {
         ignoreSelectionChanges++;
         try {
-            if (initializing) {
-                tabs.addInitial(newPart, tabOrderListener);
-            } else {
-                if (cookie == null) {
-                    tabs.add(newPart, tabOrderListener);
-                } else {
-                    int insertionPoint = dragBehavior
-                            .getInsertionPosition(cookie);
-
-                    tabs.insert(newPart, insertionPoint, tabOrderListener);
-                }
-            }
+	        if (initializing) {
+	            tabs.addInitial(newPart);
+	        } else {
+	            if (cookie == null) {
+	                tabs.add(newPart);
+	            } else {
+	                int insertionPoint = dragBehavior
+	                        .getInsertionPosition(cookie);
+	
+	                tabs.insert(newPart, insertionPoint);
+	            }
+	        }
         } finally {
             ignoreSelectionChanges--;
         }
     }
 
-    /**
-     * Adds the given presentable part directly into this presentation at the 
-     * given index. Does nothing if a tab already exists for the given part.
-     * This is intended to be called by TabOrder and its subclasses.
-     *
-     * @param newPart
-     * @param index
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.presentations.StackPresentation#movePart(org.eclipse.ui.presentations.IPresentablePart, java.lang.Object)
      */
-    private void doInsert(IPresentablePart part, int insertionIndex) {
-        Assert.isTrue(!isDisposed());
-
-        if (getTab(part) != null) {
-            return;
-        }
-
-        insertionIndex = Math.min(insertionIndex, tabFolder.getItemCount());
-
-        AbstractTabItem item;
-
+    public void movePart(IPresentablePart toMove, Object cookie) {
         ignoreSelectionChanges++;
         try {
-            item = tabFolder.add(insertionIndex);
-        } finally {
-            ignoreSelectionChanges--;
-        }
-
-        item.setCloseable(getSite().isCloseable(part));
-        item.getControl().setData(TAB_DATA, part);
-
-        initTab(item, part);
-
-        part.addPropertyListener(childPropertyChangeListener);
-        item.getControl().addDisposeListener(tabDisposeListener);
-    }
-
-    private void doRemove(IPresentablePart toRemove) {
-        ignoreSelectionChanges++;
-        try {
-            AbstractTabItem item = getTab(toRemove);
-            item.getControl().dispose();
+	        int insertionPoint = dragBehavior.getInsertionPosition(cookie);
+	        
+	        if (insertionPoint == folder.indexOf(toMove)) {
+	            return;
+	        }
+	        
+	        tabs.move(toMove, insertionPoint);
         } finally {
             ignoreSelectionChanges--;
         }
     }
-
-    private void doSelect(IPresentablePart toSelect) {
-        if (ignoreSelectionChanges > 0) {
-            return;
-        }
-
-        AbstractTabItem selectedItem = getTab(toSelect);
-
-        tabFolder.setSelection(selectedItem);
-
-        if (selectedItem != null && !(selectedItem.getControl().isDisposed())) {
-            // Determine if we need to un-bold this tab
-            if (selectedItem.getControl().getData(BOLD_DATA) != null) {
-                selectedItem.getControl().setData(BOLD_DATA, null);
-                initTab(selectedItem, toSelect);
-            }
-
-            setToolbar(toSelect.getToolBar());
-
-        } else {
-            setToolbar(null);
-        }
-
-        layout(true);
-    }
-
-    private void setToolbar(Control newToolbar) {
-        Control oldToolbar = tabFolder.getToolbar();
-        if (oldToolbar != null) {
-            if (!oldToolbar.isDisposed()) {
-                oldToolbar.removeDisposeListener(toolbarDisposeListener);
-            }
-        }
-
-        if (newToolbar != null) {
-            newToolbar.addDisposeListener(toolbarDisposeListener);
-        }
-
-        tabFolder.setToolbar(newToolbar);
-    }
-
-    /**
-     * Moves the given part to the given index. When this method returns,
-     * indexOf(part) will return newIndex.
-     * 
-     * @param part
-     * @param newIndex
-     */
-    protected void doMove(IPresentablePart part, int newIndex) {
-        int currentIndex = indexOf(part);
-
-        if (currentIndex == newIndex) {
-            return;
-        }
-
-        doRemove(part);
-        doInsert(part, newIndex);
-    }
-
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.StackPresentation#removePart(org.eclipse.ui.presentations.IPresentablePart)
      */
     public void removePart(IPresentablePart oldPart) {
         ignoreSelectionChanges++;
         try {
-            tabs.remove(oldPart, tabOrderListener);
+            tabs.remove(oldPart);
         } finally {
             ignoreSelectionChanges--;
         }
@@ -519,7 +375,7 @@ public final class TabbedStackPresentation extends StackPresentation {
     public void selectPart(IPresentablePart toSelect) {
         initializing = false;
 
-        tabs.select(toSelect, tabOrderListener);
+        tabs.select(toSelect);
     }
 
     /* (non-Javadoc)
@@ -529,22 +385,40 @@ public final class TabbedStackPresentation extends StackPresentation {
         return dragBehavior.dragOver(currentControl, location, dragStart);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.presentations.StackPresentation#showSystemMenu()
+    /**
+     * @param part
+     * @param point
      */
     public void showSystemMenu() {
-
+        showSystemMenu(folder.getTabFolder().getSystemMenuLocation(), getSite().getSelectedPart());
+    }
+    
+    public void showSystemMenu(Point displayCoordinates, IPresentablePart context) {
+        if (context != getSite().getSelectedPart()) {
+            getSite().selectPart(context);
+        }
+        systemMenu.show(getControl(), displayCoordinates, context);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.StackPresentation#showPaneMenu()
      */
     public void showPaneMenu() {
-        showPaneMenu(tabFolder.getPaneMenuLocation());
+        IPresentablePart part = getSite().getSelectedPart();
+        
+        if (part != null) {
+            showPaneMenu(part, folder.getTabFolder().getPaneMenuLocation());
+        }
     }
+        
+    public void showPaneMenu(IPresentablePart part, Point location) {
+        Assert.isTrue(!isDisposed());
+        
+        IPartMenu menu = part.getMenu();
 
-    public void showPaneMenu(Point location) {
-
+        if (menu != null) {
+            menu.showMenu(location);
+        }
     }
 
     /* (non-Javadoc)
@@ -552,21 +426,47 @@ public final class TabbedStackPresentation extends StackPresentation {
      */
     public Control[] getTabList(IPresentablePart part) {
         ArrayList list = new ArrayList();
-        if (tabFolder.getTabPosition() == SWT.BOTTOM) {
+        if (folder.getTabFolder().getTabPosition() == SWT.BOTTOM) {
             if (part.getControl() != null)
                 list.add(part.getControl());
         }
 
-        Control[] tabFolderTabList = tabFolder.getTabList();
-        for (int i = 0; i < tabFolderTabList.length; i++) {
-            list.add(tabFolderTabList[i]);
+        list.add(folder.getTabFolder().getControl());
+        
+        if (part.getToolBar() != null) {
+            list.add(part.getToolBar());
         }
-
-        if (tabFolder.getTabPosition() == SWT.TOP) {
+        
+        if (folder.getTabFolder().getTabPosition() == SWT.TOP) {
             if (part.getControl() != null)
                 list.add(part.getControl());
         }
 
         return (Control[]) list.toArray(new Control[list.size()]);
+    }
+
+    public void setPartList(ISystemMenu menu) {
+        this.partList = menu;
+    }
+    
+    public IDynamicPropertyMap getTheme() {
+        return themePreferences;
+    }
+    
+    public IDynamicPropertyMap getApiPreferences() {
+        return apiPreferences;
+    }
+    
+    public IDynamicPropertyMap getPluginPreferences(Plugin toQuery) {
+        String id = toQuery.getBundle().getSymbolicName();
+        IDynamicPropertyMap result = (IDynamicPropertyMap)prefs.get(id);
+        
+        if (result != null) {
+            return result;
+        }
+        
+        result = new PreferencesAdapter(toQuery.getPluginPreferences());
+        prefs.put(id, result);
+        return result;
     }
 }

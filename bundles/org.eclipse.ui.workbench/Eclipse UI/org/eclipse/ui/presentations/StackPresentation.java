@@ -197,6 +197,24 @@ public abstract class StackPresentation implements ISizeProvider {
     public abstract void removePart(IPresentablePart oldPart);
 
     /**
+     * Moves a part to a new location as the result of a drag/drop
+     * operation within this presentation.
+     * 
+     * @param toMove a part that already belongs to this presentation
+     * @param cookie a drop cookie returned by <code>StackPresentation#dragOver</code> 
+     * @since 3.1
+     */
+    public void movePart(IPresentablePart toMove, Object cookie) {
+        removePart(toMove);
+        addPart(toMove, cookie);
+        
+        if (getSite().getSelectedPart() == toMove) {
+            selectPart(toMove);
+            toMove.setFocus();
+        }
+    }
+    
+    /**
      * Brings the specified part to the foreground. This should not affect
      * the current focus.
      * 

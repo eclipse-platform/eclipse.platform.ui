@@ -10,42 +10,23 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.newapi;
 
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Widget;
 
 /**
- * @since 3.0
+ * @since 3.1
  */
 public abstract class AbstractTabItem {
     public abstract Rectangle getBounds();
-
-    public abstract Widget getControl();
-
-    public abstract String getTitleToolTip();
-
-    public abstract String getTitle();
-
-    public abstract String getContentDescription();
-
-    public abstract String getPartName();
-
-    public abstract Image getImage();
-
-    public abstract void setTitle(String title);
-
-    public abstract void setContentDescription(String contentDescription);
-
-    public abstract void setPartName(String partName);
-
-    public abstract void setImage(Image titleImage);
-
-    public abstract void setTitleToolTip(String toolTip);
-
-    public void setBusyState(boolean isBusy, boolean isBold) {
+    public abstract void setInfo(PartInfo info);
+    public abstract void dispose();
+    public void setBusy(boolean busy) {};
+    public void setBold(boolean bold) {};
+    
+    public abstract Object getData();
+    public abstract void setData(Object data);
+    
+    public boolean isShowing() {
+        return true;
     }
-
-    public abstract boolean isShowing();
-
-    public abstract void setCloseable(boolean isCloseable);
+    
 }

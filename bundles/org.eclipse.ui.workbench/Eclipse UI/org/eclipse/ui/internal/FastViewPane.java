@@ -170,18 +170,6 @@ public class FastViewPane {
                     "size", new SystemMenuSizeFastView(FastViewPane.this)); //$NON-NLS-1$
         }
 
-        public boolean isCloseable(IPresentablePart toClose) {
-            if (currentPane == null)
-                return true;
-            Perspective perspective = currentPane.getPage()
-                    .getActivePerspective();
-            if (perspective == null) {
-                // Shouldn't happen -- can't have a FastViewPane without a perspective
-                return true;
-            }
-            return perspective.isCloseable(currentPane.getViewReference());
-        }
-
         public boolean isPartMoveable(IPresentablePart toMove) {
             return isPartMoveable();
         }
@@ -209,6 +197,10 @@ public class FastViewPane {
             if (currentPane.getPage().isFixedLayout())
                 return false;
             return true;
+        }
+
+        public IPresentablePart[] getPartList() {
+            return new IPresentablePart[] {getSelectedPart()};
         }
 
     };

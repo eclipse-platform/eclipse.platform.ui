@@ -22,10 +22,10 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
  * 
  * @since 3.0
  */
-public final class SystemMenuClose extends Action implements
-        ISelfUpdatingAction {
+public final class SystemMenuClose extends Action implements ISelfUpdatingAction {
 
     private IStackPresentationSite site;
+    private IPresentablePart part;
 
     public SystemMenuClose(IStackPresentationSite site) {
         this.site = site;
@@ -37,17 +37,26 @@ public final class SystemMenuClose extends Action implements
     }
 
     public void run() {
-        IPresentablePart part = site.getSelectedPart();
         if (part != null) {
             site.close(new IPresentablePart[] { part });
         }
     }
 
-    public void update() {
-        IPresentablePart presentablePart = site.getSelectedPart();
+    public void setTarget(IPresentablePart presentablePart) {
+        this.part = presentablePart;
         setEnabled(presentablePart != null && site.isCloseable(presentablePart));
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.presentations.ISelfUpdatingAction#update()
+     */
+    public void update() {
+        setTarget(site.getSelectedPart());
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.presentations.ISelfUpdatingAction#shouldBeVisible()
+     */
     public boolean shouldBeVisible() {
         return true;
     }

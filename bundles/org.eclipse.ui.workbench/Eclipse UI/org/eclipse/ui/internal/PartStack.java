@@ -85,10 +85,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             PartStack.this.dragStart(null, initialLocation, keyboard);
         }
 
-        public boolean isCloseable(IPresentablePart part) {
-            return PartStack.this.isCloseable(part);
-        }
-
         public boolean isPartMoveable(IPresentablePart part) {
             return PartStack.this.isMoveable(part);
         }
@@ -120,6 +116,12 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         public void flushLayout() {
         	PartStack.this.flushLayout();
         }
+
+        public IPresentablePart[] getPartList() {
+            List parts = getPresentableParts();
+            
+            return (IPresentablePart[]) parts.toArray(new IPresentablePart[parts.size()]);
+        }
     };
 
     private static final class PartStackDropResult extends AbstractDropTarget {
@@ -137,18 +139,18 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             // If we're dragging a pane over itself do nothing
             //if (dropResult.getInsertionPoint() == pane.getPresentablePart()) { return; };
 
-            // Don't worry about reparenting the view if we're
-            // simply rearranging tabs within this folder
             if (pane.getContainer() != stack) {
+                // Moving from another stack
                 stack.derefPart(pane);
                 pane.reparent(stack.getParent());
+                stack.add(pane, dropResult.getCookie());
+                stack.setSelection(pane);
+                pane.setFocus();
             } else {
-                stack.remove(pane);
+                // Rearranging within this stack
+                stack.getPresentation().movePart(pane.getPresentablePart(), dropResult.getCookie());
             }
 
-            stack.add(pane, dropResult.getCookie());
-            stack.setSelection(pane);
-            pane.setFocus();
         }
 
         public Cursor getCursor() {
@@ -163,8 +165,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     private static final PartStackDropResult dropResult = new PartStackDropResult(); 
             
     protected abstract boolean isMoveable(IPresentablePart part);
-
-    protected abstract boolean isCloseable(IPresentablePart part);
 
     protected abstract void addSystemActions(IMenuManager menuManager);
 

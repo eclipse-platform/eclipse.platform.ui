@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.newapi;
 
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.presentations.IPresentablePart;
+import org.eclipse.ui.presentations.IPresentationSerializer;
 
 /**
  * @since 3.0
@@ -21,8 +23,7 @@ public abstract class TabOrder {
      * 
      * @param newPart part being added 
      */
-    public abstract void add(IPresentablePart newPart,
-            IPresentablePartList output);
+    public abstract void add(IPresentablePart newPart);
 
     /**
      * Adds a part at initialization-time (the part was added as
@@ -30,31 +31,36 @@ public abstract class TabOrder {
      * 
      * @param newPart the part being added
      */
-    public abstract void addInitial(IPresentablePart newPart,
-            IPresentablePartList output);
+    public abstract void addInitial(IPresentablePart newPart);
 
+    public abstract void restoreState(IPresentationSerializer serializer,
+            IMemento savedState);
+    
+    public abstract void saveState(IPresentationSerializer serializer, IMemento memento);
+    
     /**
      * Adds a part at a particular index due to a drag/drop operation. 
      * 
      * @param added part being added
      * @param index index where the part is added at
      */
-    public abstract void insert(IPresentablePart added, int index,
-            IPresentablePartList output);
+    public abstract void insert(IPresentablePart added, int index);
 
+    public abstract void move(IPresentablePart toMove, int newIndex);
+    
     /**
      * Removes a part
      * 
      * @param removed part being removed
      */
-    public abstract void remove(IPresentablePart removed,
-            IPresentablePartList output);
+    public abstract void remove(IPresentablePart removed);
 
     /**
      * Selects a part
      * 
      * @param selected part being selected
      */
-    public abstract void select(IPresentablePart selected,
-            IPresentablePartList output);
+    public abstract void select(IPresentablePart selected);
+    
+    public abstract IPresentablePart[] getPartList();
 }

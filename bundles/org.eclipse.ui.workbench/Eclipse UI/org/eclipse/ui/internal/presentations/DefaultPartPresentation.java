@@ -43,6 +43,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -80,6 +81,8 @@ import org.eclipse.ui.themes.IThemeManager;
 public class DefaultPartPresentation extends StackPresentation {
 
     private PaneFolder tabFolder;
+    
+    private Control contentProxy;
 
     private IPresentablePart current;
 
@@ -125,7 +128,7 @@ public class DefaultPartPresentation extends StackPresentation {
             showPartList();
         }
     };
-
+    
     private MouseListener mouseListener = new MouseAdapter() {
         public void mouseDown(MouseEvent e) {
             if (e.widget instanceof Control) {
@@ -289,6 +292,10 @@ public class DefaultPartPresentation extends StackPresentation {
 
         tabFolder.getControl().getShell().addShellListener(shellListener);
 
+        contentProxy = new Composite(tabFolder.getContentParent(), SWT.NONE);
+        contentProxy.setVisible(false);
+        tabFolder.setContent(contentProxy);
+        
         titleLabel = new Label(tabFolder.getControl(), SWT.NONE);
         titleLabel.setVisible(false);
         titleLabel.moveAbove(null);
@@ -752,11 +759,10 @@ public class DefaultPartPresentation extends StackPresentation {
         tabFolder.layout(changed);
 
         if (current != null) {
-            Rectangle clientArea = tabFolder.getClientArea();
-            Rectangle bounds = tabFolder.getControl().getBounds();
-            clientArea.x += bounds.x;
-            clientArea.y += bounds.y;
-
+            Rectangle clientArea = Geometry.toControl(
+                    tabFolder.getControl().getParent(), 
+                    DragUtil.getDisplayBounds(contentProxy));
+            
             current.setBounds(clientArea);
         }
     }
@@ -1529,4 +1535,24 @@ public class DefaultPartPresentation extends StackPresentation {
 
         return shellActive;
     }
+    
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.presentations.StackPresentation#movePart(org.eclipse.ui.presentations.IPresentablePart, java.lang.Object)
+     */
+    public void movePart(IPresentablePart toMove, Object cookie) {
+        
+        if (cookie instanceof Integer) {
+            int idx = ((Integer) cookie).intValue();
+            int oldIdx = indexOf(toMove);
+            
+            // Don't do anything if this move is a NOP
+            if (idx == oldIdx) {
+                return;
+            }
+        }
+        
+        super.movePart(toMove, cookie);
+    }
+
 }

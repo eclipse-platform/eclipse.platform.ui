@@ -37,6 +37,7 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.presentations.newapi.EnhancedFillLayout;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.StackPresentation;
@@ -58,6 +59,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
     // toolbar that is not part of the view form
     private boolean locked = true;
 
+    Composite toolbarWrapper;
     ToolBar isvToolBar;
 
     // create initially toolbarless bar manager so that actions may be added in the 
@@ -235,13 +237,13 @@ public class ViewPane extends PartPane implements IPropertyListener {
     }
 
     private void toolBarResized(ToolBar toolBar, int newSize) {
-        if (isvToolBar != null) {
+        if (toolbarWrapper != null) {
             Control ctrl = getControl();
 
             boolean visible = ctrl != null && ctrl.isVisible()
                     && toolbarIsVisible();
 
-            isvToolBar.setVisible(visible);
+            toolbarWrapper.setVisible(visible);
         }
 
         presentableAdapter.firePropertyChange(IPresentablePart.PROP_TOOLBAR);
@@ -252,9 +254,12 @@ public class ViewPane extends PartPane implements IPropertyListener {
      */
     private void createToolBars() {
         Composite parentControl = control;
+        
+        toolbarWrapper = new Composite(parentControl.getParent(), SWT.NO_BACKGROUND);
+        toolbarWrapper.setLayout(new EnhancedFillLayout());
         // ISV toolbar.
         //			// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
-        isvToolBar = isvToolBarMgr.createControl(parentControl.getParent());
+        isvToolBar = isvToolBarMgr.createControl(toolbarWrapper);
 
         if (locked) {
             //((ViewForm2)control).setTopCenter(isvToolBar);	
@@ -577,8 +582,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
     public void reparent(Composite newParent) {
         super.reparent(newParent);
 
-        if (isvToolBar != null) {
-            isvToolBar.setParent(newParent);
+        if (toolbarWrapper != null) {
+            toolbarWrapper.setParent(newParent);
         }
     }
 
@@ -588,7 +593,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
     public void moveAbove(Control refControl) {
         super.moveAbove(refControl);
 
-        isvToolBar.moveAbove(control);
+        toolbarWrapper.moveAbove(control);
     }
 
     /* (non-Javadoc)
@@ -597,8 +602,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
     public void setVisible(boolean makeVisible) {
         super.setVisible(makeVisible);
 
-        if (isvToolBar != null) {
-            isvToolBar.setVisible(makeVisible && toolbarIsVisible());
+        if (toolbarWrapper != null) {
+            toolbarWrapper.setVisible(makeVisible && toolbarIsVisible());
         }
     }
 
@@ -660,19 +665,34 @@ public class ViewPane extends PartPane implements IPropertyListener {
         if (!toolbarIsVisible()) {
             return null;
         }
+        
+        return toolbarWrapper;
 
-        ToolBarManager toolbarManager = getToolBarManager();
+//        ToolBarManager toolbarManager = getToolBarManager();
+//
+//        if (toolbarManager == null) {
+//            return null;
+//        }
+//
+//        ToolBar control = toolbarManager.getControl();
+//
+//        if (control == null || control.isDisposed()) {
+//            return null;
+//        }
+//
+//        return control;
+    }
 
-        if (toolbarManager == null) {
-            return null;
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.PartPane#isCloseable()
+     */
+    public boolean isCloseable() {
+        Perspective perspective = page.getActivePerspective();
+        if (perspective == null) {
+            // Shouldn't happen -- can't have a ViewStack without a
+            // perspective
+            return true;
         }
-
-        ToolBar control = toolbarManager.getControl();
-
-        if (control == null || control.isDisposed()) {
-            return null;
-        }
-
-        return control;
+        return perspective.isCloseable(getViewReference());
     }
 }

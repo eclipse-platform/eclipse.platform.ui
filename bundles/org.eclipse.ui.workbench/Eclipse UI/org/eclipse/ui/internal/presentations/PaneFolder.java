@@ -33,9 +33,11 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.layout.SizeCache;
+import org.eclipse.ui.internal.presentations.newapi.ProxyControl;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
@@ -210,7 +212,7 @@ public final class PaneFolder {
             tabFolder = new CTabFolder(parent, flags);
 
             // Create a proxy control to measure the title area of the tab folder
-            titleAreaProxy = new Composite(tabFolder, SWT.NONE);
+            titleAreaProxy = new Composite(tabFolder, SWT.NO_BACKGROUND);
             titleAreaProxy.setVisible(false);
             titleAreaProxy.addControlListener(new ControlListener() {
                 public void controlMoved(ControlEvent e) {
@@ -232,7 +234,7 @@ public final class PaneFolder {
 
         // Initialize view form
         {
-            viewForm = new ViewForm(tabFolder, SWT.NONE);
+            viewForm = new ViewForm(tabFolder, SWT.NO_BACKGROUND);
 
             // Only attach these to the viewForm when there's actually a control to display
             viewFormTopLeftProxy = new ProxyControl(viewForm);
@@ -281,11 +283,15 @@ public final class PaneFolder {
             topCenter.addDisposeListener(prematureDisposeListener);
             if (!putTrimOnTop) {
                 viewFormTopCenterProxy.setTarget(topCenterCache);
-                viewForm.setTopCenter(viewFormTopCenterProxy.getControl());
+                if (!viewForm.isDisposed()) {
+                    viewForm.setTopCenter(viewFormTopCenterProxy.getControl());
+                }
             }
         } else {
             if (!putTrimOnTop) {
-                viewForm.setTopCenter(null);
+                if (!viewForm.isDisposed()) {
+                    viewForm.setTopCenter(null);
+                }
             }
         }
     }
@@ -335,7 +341,7 @@ public final class PaneFolder {
             viewFormTopLeftProxy.setTarget(topLeftCache);
             viewForm.setTopLeft(viewFormTopLeftProxy.getControl());
         } else {
-            viewFormTopLeftProxy.setTarget(null);
+            viewFormTopLeftProxy.setTargetControl(null);
             viewForm.setTopLeft(null);
         }
     }
@@ -401,8 +407,8 @@ public final class PaneFolder {
             // of the viewForm.
             if (!lastTrimOnTop) {
                 //	Arrange controls in the title bar
-                viewFormTopCenterProxy.setTarget(null);
-                viewFormTopRightProxy.setTarget(null);
+                viewFormTopCenterProxy.setTargetControl(null);
+                viewFormTopRightProxy.setTargetControl(null);
                 viewForm.setTopCenter(null);
                 viewForm.setTopRight(null);
             }
@@ -442,28 +448,28 @@ public final class PaneFolder {
             }
         }
 
-        viewForm.setBounds(tabFolder.getClientArea());
+        Rectangle oldBounds = viewForm.getBounds();
+        Rectangle newBounds = tabFolder.getClientArea(); 
+        viewForm.setBounds(newBounds);
+
+        if (newBounds.equals(oldBounds) && 
+                flushCache) {
+            viewForm.layout(true);
+        }
+        
         viewFormTopRightProxy.layout();
         viewFormTopLeftProxy.layout();
         viewFormTopCenterProxy.layout();
     }
 
-    /**
-     * Returns the client area for this PaneFolder, relative to the pane folder's control.
-     * 
-     * @return
-     */
-    public Rectangle getClientArea() {
-        Rectangle bounds = contentProxy.getControl().getBounds();
-
-        Rectangle formArea = viewForm.getBounds();
-
-        bounds.x += formArea.x;
-        bounds.y += formArea.y;
-
-        return bounds;
+    public Composite getContentParent() {
+        return viewForm;
     }
-
+    
+    public void setContent(Control newContent) {
+        viewForm.setContent(newContent);
+    }
+    
     /**
      * Returns the current state of the folder (as shown on the button icons)
      * 
@@ -489,6 +495,10 @@ public final class PaneFolder {
         }
     }
 
+    public Control getContent() {
+        return viewForm.getContent();
+    }
+    
     /**
      * Notifies all listeners that the user clicked on the chevron
      * 
@@ -586,6 +596,28 @@ public final class PaneFolder {
         topRightCache.setControl(null);
         removeDisposeListener(topLeftCache.getControl());
         topLeftCache.setControl(null);
+    }
+    
+    public Point getChevronLocation() {
+        Shell shell = getControl().getShell();
+
+        // get the last visible item
+        int numItems = tabFolder.getItemCount();
+        CTabItem item = null, tempItem = null;
+        for (int i = 0; i < numItems; i++) {
+            tempItem = tabFolder.getItem(i);
+            if (tempItem.isShowing())
+                item = tempItem;
+        }
+
+        // if we have no visible tabs, abort.
+        if (item == null)
+            return new Point(0,0);
+
+        Rectangle itemBounds = item.getBounds();
+        int x = itemBounds.x + itemBounds.width;
+        int y = itemBounds.y + itemBounds.height;
+        return new Point(x, y);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////

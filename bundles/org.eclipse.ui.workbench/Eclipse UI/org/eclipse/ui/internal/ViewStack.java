@@ -97,17 +97,6 @@ public class ViewStack extends PartStack {
         sizeItem.setPane(pane);
     }
 
-    public boolean isCloseable(IPresentablePart part) {
-        ViewPane pane = (ViewPane) getPaneFor(part);
-        Perspective perspective = page.getActivePerspective();
-        if (perspective == null) {
-            // Shouldn't happen -- can't have a ViewStack without a
-            // perspective
-            return true;
-        }
-        return perspective.isCloseable(pane.getViewReference());
-    }
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.PartStack#isMoveable(org.eclipse.ui.presentations.IPresentablePart)
      */

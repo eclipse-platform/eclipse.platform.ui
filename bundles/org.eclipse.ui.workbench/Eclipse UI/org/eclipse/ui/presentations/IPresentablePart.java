@@ -191,7 +191,15 @@ public interface IPresentablePart {
      * @return boolean true if busy
      */
     public boolean isBusy();
-
+    
+    /**
+     * Returns true iff this part can be closed
+     * 
+     * @return true iff this part can be closed
+     * @since 3.1
+     */
+    public boolean isCloseable();
+    
     /**
      * Returns the local toolbar for this part, or null if this part does not
      * have a local toolbar. Callers must not dispose or downcast the return value.

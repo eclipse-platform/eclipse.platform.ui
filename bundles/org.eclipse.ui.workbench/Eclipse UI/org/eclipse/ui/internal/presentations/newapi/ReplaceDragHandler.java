@@ -31,6 +31,10 @@ public class ReplaceDragHandler extends TabDragHandler {
 
     private AbstractTabFolder tabFolder;
 
+    public ReplaceDragHandler(AbstractTabFolder folder) {
+        this.tabFolder = folder;
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.presentations.newapi.TabDragHandler#dragOver(org.eclipse.swt.widgets.Control, org.eclipse.swt.graphics.Point)
      */
@@ -57,12 +61,18 @@ public class ReplaceDragHandler extends TabDragHandler {
                 if (!lastTab.isShowing()) {
                     return null;
                 }
+                
+                // If we are unable to compute the bounds for this tab, then ignore the drop
+                Rectangle lastTabBounds = lastTab.getBounds();
+                if (lastTabBounds.isEmpty()) {
+                    return null;
+                }
 
                 if (dragStart >= 0) {
                     dragOverIndex--;
 
                     return new StackDropResult(Geometry.toDisplay(tabFolder
-                            .getControl(), lastTab.getBounds()), new Integer(
+                            .getControl(), lastTabBounds), new Integer(
                             dragOverIndex));
                 }
 
@@ -82,6 +92,12 @@ public class ReplaceDragHandler extends TabDragHandler {
         }
 
         if (!tabUnderPointer.isShowing()) {
+            return null;
+        }
+        
+        Rectangle tabBounds = tabUnderPointer.getBounds();
+        
+        if (tabBounds.isEmpty()) {
             return null;
         }
 

@@ -10,17 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations;
 
-import java.util.List;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.presentations.IPresentablePart;
+import org.eclipse.ui.presentations.IStackPresentationSite;
 
 public class SystemMenuCloseAll extends Action implements ISelfUpdatingAction {
 
-    private DefaultPartPresentation presentation;
+    private IStackPresentationSite presentation;
 
-    public SystemMenuCloseAll(DefaultPartPresentation presentation) {
+    public SystemMenuCloseAll(IStackPresentationSite presentation) {
         this.presentation = presentation;
         setText(WorkbenchMessages.getString("PartPane.closeAll")); //$NON-NLS-1$
     }
@@ -30,14 +29,12 @@ public class SystemMenuCloseAll extends Action implements ISelfUpdatingAction {
     }
 
     public void run() {
-        List parts = presentation.getPresentableParts();
-        presentation.close((IPresentablePart[]) parts
-                .toArray(new IPresentablePart[parts.size()]));
+        presentation.close(presentation.getPartList());
     }
 
     public void update() {
-        List parts = presentation.getPresentableParts();
-        setEnabled(parts.size() != 0);
+        IPresentablePart[] parts = presentation.getPartList();
+        setEnabled(parts.length != 0);
     }
 
     public boolean shouldBeVisible() {

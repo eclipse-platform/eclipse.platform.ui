@@ -14,46 +14,171 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.presentations.IStackPresentationSite;
+import org.eclipse.ui.presentations.PresentationUtil;
 
 /**
- * @since 3.0
+ * @since 3.1
  */
 public abstract class AbstractTabFolder {
+    
     private List listeners = new ArrayList(1);
 
     private Control toolbar;
+    private int state;
 
-    public abstract Point computeMinimumSize();
+    public abstract Point computeSize(int widthHint, int heightHint);
 
-    public abstract AbstractTabItem add(int index);
+    public abstract AbstractTabItem add(int index, int flags);
 
-    public abstract Rectangle getClientArea();
-
-    public abstract Control getControl();
-
-    public abstract AbstractTabItem getItem(Point location);
-
+    public abstract Composite getContentParent();
+    public abstract void setContent(Control newContent);
+    
     public abstract AbstractTabItem[] getItems();
 
-    public abstract void layout(boolean flushCache);
-
+    public abstract AbstractTabItem getSelection();
     public abstract void setSelection(AbstractTabItem toSelect);
+    public abstract void setSelectedInfo(PartInfo info);
+    public abstract void enablePaneMenu(boolean enabled);
+    private int activeState = IStackPresentationSite.STATE_RESTORED;
+    
+	private Listener menuListener = new Listener() {
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+		 */
+		public void handleEvent(Event event) {
+			Point globalPos = new Point(event.x, event.y);
+		    handleContextMenu(globalPos, event);			
+		}
+	};
 
-    public abstract void setTabPosition(int tabPosition);
+    private Listener dragListener = new Listener() {
+        public void handleEvent(Event e) {
+            Point globalPos = ((Control)e.widget).toDisplay(e.x, e.y);
+            handleDragStarted(globalPos, e);
+        }
+    };
+	
+	private MouseListener mouseListener = new MouseAdapter() {
+		
+		// If we single-click on an empty space on the toolbar, move focus to the
+		// active control
+		public void mouseDown(MouseEvent e) {
+			Point p = ((Control)e.widget).toDisplay(e.x, e.y);
 
-    public abstract void setActive(int activeState);
+			handleMouseDown(p, e);
+		}
+		
+		
+		// If we double-click on the toolbar, maximize the presentation
+		public void mouseDoubleClick(MouseEvent e) {
+			Point p = ((Control)e.widget).toDisplay(e.x, e.y);
 
-    public abstract int getTabPosition();
+			handleDoubleClick(p, e);						
+		}
+	};
+    
+    public void setActive(int activeState) {
+        this.activeState = activeState;
+    }
+    
+    public int getActive() {
+        return activeState;
+    }
 
-    public abstract Point getPaneMenuLocation();
+    /**
+     * Returns the location where the pane menu should be opened when activated
+     * by a keyboard shortcut (display coordinates)
+     * 
+     * @return the location for the pane menu (display coordinates)
+     * @since 3.1
+     */
+    public Point getPaneMenuLocation() {
+        return getControl().toDisplay(new Point(0,0));
+    };
 
+    /**
+     * Returns the location where the part list should be opened when activated
+     * by a keyboard shortcut (display coordinates)
+     * 
+     * @return the location for the part list (display coordinates)
+     * @since 3.1
+     */
+    public Point getPartListLocation() {
+        return getSystemMenuLocation();
+    }
+
+    /**
+     * Returns the location where the pane menu should be opened when activated
+     * by a keyboard shortcut (display coordinates)
+     * 
+     * @return the location for the pane menu (display coordinates)
+     * @since 3.1
+     */
+    public Point getSystemMenuLocation() {
+        return getControl().toDisplay(new Point(0,0));
+    };
+    
+    /**
+     * Returns the parent composite that should be used for creating the toolbar.
+     * Any control passed into setToolbar must have this composite as its parent.
+     * 
+     * @return the parent composite that should be used for creating the toolbar
+     * 
+     * @since 3.1
+     */
+    public abstract Composite getToolbarParent();
+
+    /**
+     * Returns the main control for this folder.
+     * 
+     * @return the main control for the folder
+     * @since 3.1
+     */
+    public abstract Control getControl();
+    
     public AbstractTabItem getItem(int idx) {
         return getItems()[idx];
     }
 
+    public AbstractTabItem getItem(Point toFind) {
+        AbstractTabItem[] items = getItems();
+        
+        for (int i = 0; i < items.length; i++) {
+            AbstractTabItem item = items[i];
+            
+            if (item.getBounds().contains(toFind)) {
+                return item;
+            }
+        }
+        
+        return null;
+    }
+    
+    public AbstractTabItem findItem(Object dataToFind) {
+        AbstractTabItem[] items = getItems();
+        
+        for (int i = 0; i < items.length; i++) {
+            AbstractTabItem item = items[i];
+            
+            if (item.getData() == dataToFind) {
+                return item;
+            }
+        }
+        
+        return null;
+    }
+    
     /**
      * Returns the index of the given item, or -1 if the given item is
      * not found in this tab folder. Subclasses should override this if
@@ -80,22 +205,6 @@ public abstract class AbstractTabFolder {
         return getItems().length;
     }
 
-    /**
-     * Enables or disables the maximized state
-     * 
-     * @param isVisible true iff the maximized state is supported
-     */
-    public void allowMaximizeButton(boolean isVisible) {
-    }
-
-    public Control[] getTabList() {
-        if (toolbar != null) {
-            return new Control[] { getControl(), toolbar };
-        } else {
-            return new Control[] { getControl() };
-        }
-    }
-
     public void setToolbar(Control toolbarControl) {
         this.toolbar = toolbarControl;
     }
@@ -105,19 +214,12 @@ public abstract class AbstractTabFolder {
     }
 
     /**
-     * Enables or disables the minimized state
-     * 
-     * @param isVisible true iff the minimized state is supported
-     */
-    public void allowMinimizeButton(boolean isVisible) {
-    }
-
-    /**
      * Sets the current state for the folder
      * 
      * @param state one of the IStackPresentationSite.STATE_* constants
      */
     public void setState(int state) {
+        this.state = state;
     }
 
     /**
@@ -126,14 +228,6 @@ public abstract class AbstractTabFolder {
      * @return
      */
     public abstract Rectangle getTabArea();
-
-    /**
-     * Called when the tab folder's control is disposed. If the subclass has
-     * registered any listeners with other objects, they should be removed
-     * here.
-     */
-    public void disposed() {
-    }
 
     /**
      * Called when the tab folder's shell becomes active or inactive. Subclasses
@@ -149,7 +243,7 @@ public abstract class AbstractTabFolder {
      * 
      * @param newListener the listener to add
      */
-    public final void addListener(AbstractTabFolderListener newListener) {
+    public final void addListener(TabFolderListener newListener) {
         listeners.add(newListener);
     }
 
@@ -158,60 +252,110 @@ public abstract class AbstractTabFolder {
      * 
      * @param toRemove the listener to remove
      */
-    public final void removeListener(AbstractTabFolderListener toRemove) {
+    public final void removeListener(TabFolderListener toRemove) {
         listeners.remove(toRemove);
     }
 
+    protected final void fireEvent(TabFolderEvent e) {
+        for (Iterator iter = listeners.iterator(); iter.hasNext();) {
+            TabFolderListener next = (TabFolderListener)iter.next();
+
+            next.handleEvent(e);
+        }        
+    }
+    
+    protected final void fireEvent(int id) {
+        fireEvent(new TabFolderEvent(id));
+    }
+    
+    protected final void fireEvent(int id, AbstractTabItem w) {
+        fireEvent(new TabFolderEvent(id, w, 0, 0));
+    }
+    
+    protected final void fireEvent(int id, AbstractTabItem w, Point pos) {
+        fireEvent(new TabFolderEvent(id, w, pos));
+    }
+    
+    public void layout(boolean flushCache) {
+    }
+    
+    public void setTabPosition(int tabPosition) {
+    }
+    
+    public int getTabPosition() {
+        return SWT.TOP;
+    }
+    
+    public int getState() {
+        return state;
+    }
+    
+    protected void attachListeners(Control theControl, boolean recursive) {
+        theControl.addListener(SWT.MenuDetect, menuListener);
+        theControl.addMouseListener(mouseListener);
+        PresentationUtil.addDragListener(theControl, dragListener);
+        
+        if (recursive && theControl instanceof Composite) {
+            Composite composite = (Composite) theControl;
+            Control[] children = composite.getChildren();
+            
+            for (int i = 0; i < children.length; i++) {
+                Control control = children[i];
+                
+                attachListeners(control, recursive);
+            }
+        }
+    }
+    
+    protected void handleContextMenu(Point displayPos, Event e) {
+        if (isOnBorder(displayPos)) {
+            return;
+        }
+        
+        Point localPos = getControl().toControl(displayPos);
+        AbstractTabItem tab = getItem(localPos); 
+        
+        fireEvent(TabFolderEvent.EVENT_SYSTEM_MENU, tab, displayPos);
+    }
+    
+    protected void handleMouseDown(Point displayPos, MouseEvent e) {
+        fireEvent(TabFolderEvent.EVENT_GIVE_FOCUS_TO_PART);
+    }
+
+    protected void handleDoubleClick(Point displayPos, MouseEvent e) {
+        if (isOnBorder(displayPos)) {
+            return;
+        }
+        
+		if (getState() == IStackPresentationSite.STATE_MAXIMIZED) {
+			fireEvent(TabFolderEvent.EVENT_RESTORE);
+		} else {
+		    fireEvent(TabFolderEvent.EVENT_MAXIMIZE);
+		}
+    }
+    
+    protected void handleDragStarted(Point displayPos, Event e) {
+        Point localPos = getControl().toControl(displayPos);
+        
+        if (isOnBorder(displayPos)) {
+            return;
+        }
+        
+        AbstractTabItem tab = getItem(localPos);
+        fireEvent(TabFolderEvent.EVENT_DRAG_START, tab, displayPos);
+    }
+
     /**
-     * Fires a stateButtonPressed event to all AbstractTabFolderListeners. Convenience
-     * method for subclasses.
-     * 
-     * @param buttonId one of the IStackPresentationSite.STATE_* constants
+     * Returns true iff the given point is on the border of the folder.
+     * By default, double-clicking, context menus, and drag/drop are disabled
+     * on the folder's border.
+     *  
+     * @param toTest a point (display coordinates)
+     * @return true iff the point is on the presentation border
+     * @since 3.1
      */
-    protected final void fireStateButtonPressed(int buttonId) {
-        for (Iterator iter = listeners.iterator(); iter.hasNext();) {
-            AbstractTabFolderListener next = (AbstractTabFolderListener) iter
-                    .next();
-
-            next.stateButtonPressed(buttonId);
-        }
+    public boolean isOnBorder(Point toTest) {
+        return false;
     }
-
-    protected final void fireDragStart(AbstractTabItem tab, Point displayLoc) {
-        for (Iterator iter = listeners.iterator(); iter.hasNext();) {
-            AbstractTabFolderListener next = (AbstractTabFolderListener) iter
-                    .next();
-
-            next.dragStart(tab, displayLoc);
-        }
-    }
-
-    /**
-     * Fires a closeButtonPressed event to all AbstractTabFolderListeners. Convenience
-     * method for subclasses.
-     * 
-     * @param item the item whose close button was pressed
-     */
-    protected final void fireCloseButtonPressed(AbstractTabItem item) {
-        for (Iterator iter = listeners.iterator(); iter.hasNext();) {
-            AbstractTabFolderListener next = (AbstractTabFolderListener) iter
-                    .next();
-
-            next.closeButtonPressed(item);
-        }
-    }
-
-    /**
-     * Fires a showList event to all AbstractTabFolderListeners. Convenience
-     * method for subclasses.
-     */
-    protected final void showList() {
-        for (Iterator iter = listeners.iterator(); iter.hasNext();) {
-            AbstractTabFolderListener next = (AbstractTabFolderListener) iter
-                    .next();
-
-            next.showList();
-        }
-    }
-
+    
 }

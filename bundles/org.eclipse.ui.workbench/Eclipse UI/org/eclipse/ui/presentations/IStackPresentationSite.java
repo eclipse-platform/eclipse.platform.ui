@@ -140,4 +140,12 @@ public interface IStackPresentationSite {
      * @since 3.1
      */
     public void flushLayout();
+    
+    /**
+     * Returns the list of presentable parts currently in this site
+     * 
+     * @return the list of presentable parts currently in this site
+     * @since 3.1
+     */
+    public IPresentablePart[] getPartList();
 }

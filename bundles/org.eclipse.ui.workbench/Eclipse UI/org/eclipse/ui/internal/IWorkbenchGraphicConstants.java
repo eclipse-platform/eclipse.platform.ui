@@ -119,6 +119,20 @@ public interface IWorkbenchGraphicConstants {
 
     public static final String IMG_LCL_LINKTO_HELP = "IMGS_LCL_LINKTO_HELP"; //$NON-NLS-1$
 
+    public static final String IMG_LCL_CLOSE_VIEW_THIN = "IMG_LCL_CLOSE_VIEW_THIN"; //$NON-NLS-1$
+
+    public static final String IMG_LCL_MIN_VIEW_THIN = "IMG_LCL_MIN_VIEW_THIN"; //$NON-NLS-1$
+    
+    public static final String IMG_LCL_MAX_VIEW_THIN = "IMG_LCL_MAX_VIEW_THIN"; //$NON-NLS-1$
+    
+    public static final String IMG_LCL_RESTORE_VIEW_THIN = "IMG_LCL_RESTORE_VIEW_THIN"; //$NON-NLS-1$
+    
+    public static final String IMG_LCL_SHOW_TOOLBAR_THIN = "IMG_LCL_SHOW_TOOLBAR_THIN"; //$NON-NLS-1$
+    
+    public static final String IMG_LCL_HIDE_TOOLBAR_THIN = "IMG_LCL_HIDE_TOOLBAR_THIN"; //$NON-NLS-1$
+    
+    public static final String IMG_LCL_VIEW_MENU_THIN = "IMG_LCL_VIEW_MENU_THIN"; //$NON-NLS-1$
+    
     //wizard images
     public final static String IMG_WIZBAN_NEW_WIZ = "IMG_WIZBAN_NEW_WIZ"; //$NON-NLS-1$
 
@@ -165,7 +179,7 @@ public interface IWorkbenchGraphicConstants {
     public static final String IMG_OBJS_DND_TOFASTVIEW_SOURCE = "IMG_OBJS_DND_TOFASTVIEW_SOURCE"; //$NON-NLS-1$
 
     public static final String IMG_OBJS_DND_TOFASTVIEW_MASK = "IMG_OBJS_DND_TOFASTVIEW_MASK"; //$NON-NLS-1$    
-
+    
     /**
      * Identifies an activity category.
      * 

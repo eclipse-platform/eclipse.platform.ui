@@ -162,11 +162,11 @@ public class DefaultEditorPresentation extends DefaultPartPresentation {
 
         getSystemMenuManager().add(
                 new UpdatingActionContributionItem(new SystemMenuCloseOthers(
-                        this)));
+                        getSite())));
         getSystemMenuManager()
                 .add(
                         new UpdatingActionContributionItem(
-                                new SystemMenuCloseAll(this)));
+                                new SystemMenuCloseAll(getSite())));
 
         init();
     }

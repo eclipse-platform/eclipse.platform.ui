@@ -25,4 +25,6 @@ public interface IPresentablePartList {
     public int size();
 
     public void select(IPresentablePart part);
+    
+    public IPresentablePart[] getPartList();
 }

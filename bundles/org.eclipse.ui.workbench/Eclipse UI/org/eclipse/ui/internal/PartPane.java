@@ -588,7 +588,7 @@ public abstract class PartPane extends LayoutPart implements Listener {
     public void showViewMenu(Point location) {
 
     }
-
+    
     public boolean isBusy() {
         return false;
     }
@@ -600,4 +600,10 @@ public abstract class PartPane extends LayoutPart implements Listener {
         return presentableAdapter;
     }
 
+    /**
+     * @return
+     * @since 3.1
+     */
+    public abstract boolean isCloseable();
+    
 }

@@ -10,18 +10,22 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations;
 
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.presentations.IPresentablePart;
+import org.eclipse.ui.presentations.IStackPresentationSite;
 
 public class SystemMenuCloseOthers extends Action implements
         ISelfUpdatingAction {
 
-    private DefaultPartPresentation stackPresentation;
+    private IStackPresentationSite stackPresentation;
+    private IPresentablePart current;
 
-    public SystemMenuCloseOthers(DefaultPartPresentation stackPresentation) {
+    public SystemMenuCloseOthers(IStackPresentationSite stackPresentation) {
         this.stackPresentation = stackPresentation;
         setText(WorkbenchMessages.getString("PartPane.closeOthers")); //$NON-NLS-1$
     }
@@ -31,20 +35,27 @@ public class SystemMenuCloseOthers extends Action implements
     }
 
     public void run() {
-        IPresentablePart current = stackPresentation.getCurrent();
-        List others = stackPresentation.getPresentableParts();
+        List others = new LinkedList();
+        others.addAll(Arrays.asList(stackPresentation.getPartList()));
         others.remove(current);
         stackPresentation.close((IPresentablePart[]) others
                 .toArray(new IPresentablePart[others.size()]));
     }
 
     public void update() {
-        IPresentablePart current = stackPresentation.getCurrent();
-
-        setEnabled(current != null);
+        setTarget(stackPresentation.getSelectedPart());
     }
 
     public boolean shouldBeVisible() {
         return true;
+    }
+
+    /**
+     * @param currentSelection
+     * @since 3.1
+     */
+    public void setTarget(IPresentablePart current) {
+        this.current = current;
+        setEnabled(current != null);
     }
 }

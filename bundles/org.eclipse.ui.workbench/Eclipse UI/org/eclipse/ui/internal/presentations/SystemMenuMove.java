@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
 public class SystemMenuMove extends MenuManager {
@@ -23,12 +24,19 @@ public class SystemMenuMove extends MenuManager {
     private SystemMenuMovePane movePaneAction;
 
     private SystemMenuMoveFolder moveFolderAction;
+    private boolean assumeActivePart = false;
 
     public SystemMenuMove(IStackPresentationSite stackPresentationSite,
             String partName) {
+        this(stackPresentationSite, partName, true);
+    }
+    
+    public SystemMenuMove(IStackPresentationSite stackPresentationSite,
+            String partName, boolean assumeActivePart) {
         super(WorkbenchMessages.getString("PartPane.move")); //$NON-NLS-1$
         this.stackPresentationSite = stackPresentationSite;
         this.movePart = partName;
+        this.assumeActivePart = assumeActivePart;
 
         movePaneAction = new SystemMenuMovePane(stackPresentationSite);
         movePaneAction.setText(partName);
@@ -38,11 +46,18 @@ public class SystemMenuMove extends MenuManager {
         add(moveFolderAction);
     }
 
+    public void setTarget(IPresentablePart part) {
+        movePaneAction.setTarget(part);
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.MenuManager#update(boolean, boolean)
      */
     protected void update(boolean force, boolean recursive) {
-        movePaneAction.update();
+        if (assumeActivePart) {
+            setTarget(stackPresentationSite.getSelectedPart());
+        }
+        
         moveFolderAction.update();
 
         super.update(force, recursive);

@@ -78,10 +78,6 @@ public class EditorStack extends PartStack {
         return true;
     }
 
-    public boolean isCloseable(IPresentablePart part) {
-        return true;
-    }
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.IStackPresentationSite#supportsState(int)
      */

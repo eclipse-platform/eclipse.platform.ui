@@ -96,7 +96,7 @@ public abstract class DefaultStackPresentationSite implements
      * @see org.eclipse.ui.internal.skins.IPresentablePart#isClosable()
      */
     public boolean isCloseable(IPresentablePart part) {
-        return true;
+        return part.isCloseable();
     }
 
     /* (non-Javadoc)

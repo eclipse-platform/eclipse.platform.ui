@@ -259,4 +259,11 @@ public class EditorPane extends PartPane {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.PartPane#isCloseable()
+     */
+    public boolean isCloseable() {
+        return true;
+    }
+
 }

@@ -206,6 +206,13 @@ public class PresentablePart implements IPresentablePart {
     }
 
     /* (non-Javadoc)
+     * @see org.eclipse.ui.presentations.IPresentablePart#isCloseable()
+     */
+    public boolean isCloseable() {        
+        return part.isCloseable();
+    }
+    
+    /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.IPresentablePart#getControl()
      */
     public Control getControl() {
