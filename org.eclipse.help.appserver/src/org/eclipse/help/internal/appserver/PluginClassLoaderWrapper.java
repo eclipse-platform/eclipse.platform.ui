@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.help.internal.appserver;
 
-import java.io.*;
 import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.*;
 import org.osgi.framework.*;
 
 /**
@@ -47,11 +47,11 @@ public class PluginClassLoaderWrapper extends URLClassLoader {
 	 * NOTE: for now, assume that the web app plugin requires the tomcat plugin
 	 */
 	public URL[] getURLs() {
-		List urlList = getPluginClasspath(plugin);
-		return (URL[]) urlList.toArray(new URL[urlList.size()]);
+		Set urls = getPluginClasspath(plugin);
+		return (URL[]) urls.toArray(new URL[urls.size()]);
 	}
-	private List getPluginClasspath(String pluginId) {
-		List urls = new ArrayList();
+	private Set getPluginClasspath(String pluginId) {
+		Set urls = new LinkedHashSet();
 		IPluginDescriptor pd = // TODO remove compatibility requirement
 			Platform.getPluginRegistry().getPluginDescriptor(pluginId);
 		if (pd == null)
@@ -64,12 +64,30 @@ public class PluginClassLoaderWrapper extends URLClassLoader {
 				urls.add(pluginURLs[i]);
 			}
 		}
-		IPluginPrerequisite[] prereqs = pd.getPluginPrerequisites();
+		String[] prereqs = getPluginPrereqs(pluginId);
 		for (int i = 0; i < prereqs.length; i++) {
-			String id = prereqs[i].getUniqueIdentifier();
-			urls.addAll(getPluginClasspath(id));
+			urls.addAll(getPluginClasspath(prereqs[i]));
 		}
 		return urls;
+	}
+	private String[] getPluginPrereqs(String pluginId) {
+		try {
+			Bundle bundle = Platform.getBundle(pluginId);
+			String header = (String) bundle.getHeaders().get(
+					Constants.REQUIRE_BUNDLE);
+			ManifestElement[] requires = ManifestElement.parseHeader(
+					Constants.REQUIRE_BUNDLE, header);
+			if (requires != null) {
+				String[] reqs = new String[requires.length];
+				for (int i = 0; i < requires.length; i++) {
+					reqs[i] = requires[i].getValue();
+				}
+				return reqs;
+			}
+		} catch (BundleException e) {
+			e.printStackTrace();
+		}
+		return new String[0];
 	}
 
 }
