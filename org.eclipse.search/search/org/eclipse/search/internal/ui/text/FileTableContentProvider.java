@@ -37,9 +37,12 @@ public class FileTableContentProvider extends FileContentProvider implements ISt
 	
 	public void elementsChanged(Object[] updatedElements) {
 		for (int i= 0; i < updatedElements.length; i++) {
-			if (fResult.getMatchCount(updatedElements[i]) > 0)
-				fTableViewer.add(updatedElements[i]);
-			else
+			if (fResult.getMatchCount(updatedElements[i]) > 0) {
+				if (fTableViewer.testFindItem(updatedElements[i]) != null)
+					fTableViewer.update(updatedElements[i], null);
+				else
+					fTableViewer.add(updatedElements[i]);
+			} else
 				fTableViewer.remove(updatedElements[i]);
 		}
 	}
