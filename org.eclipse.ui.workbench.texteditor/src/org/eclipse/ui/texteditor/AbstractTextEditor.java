@@ -1,12 +1,13 @@
 /**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
+Copyright (c) 2000, 2003 IBM Corp. and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 
 Contributors:
-    IBM Corporation - Initial implementation
+	IBM Corporation - Initial implementation
+	Chris.Dennis@invidi.com - http://bugs.eclipse.org/bugs/show_bug.cgi?id=29027
 **********************************************************************/
 
 
@@ -1163,6 +1164,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		new IdMapEntry(ITextEditorActionDefinitionIds.PASTE, ST.PASTE),
 		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_PREVIOUS, ST.DELETE_PREVIOUS),
 		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_NEXT, ST.DELETE_NEXT),
+//		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_PREVIOUS_WORD, ST.DELETE_PREVIOUS_WORD),
+//		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_NEXT_WORD, ST.DELETE_NEXT_WORD),
 		// miscellaneous
 		new IdMapEntry(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE, ST.TOGGLE_OVERWRITE)
 	};

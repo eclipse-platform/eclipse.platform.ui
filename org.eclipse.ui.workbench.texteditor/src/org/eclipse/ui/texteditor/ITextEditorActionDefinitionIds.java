@@ -1,12 +1,13 @@
 /**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
+Copyright (c) 2000, 2003 IBM Corp. and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 
 Contributors:
-    IBM Corporation - Initial implementation
+	IBM Corporation - Initial implementation
+		Chris.Dennis@invidi.com - http://bugs.eclipse.org/bugs/show_bug.cgi?id=29027
 **********************************************************************/
 
 package org.eclipse.ui.texteditor;
@@ -283,6 +284,18 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * Value: <code>"org.eclipse.ui.edit.text.deleteNext"</code>
 	 */
 	public static final String DELETE_NEXT= "org.eclipse.ui.edit.text.deleteNext"; //$NON-NLS-1$
+	
+	/**
+	 * Action definition id of the edit delete previous word action. Value:
+	 * <code>"org.eclipse.ui.edit.text.deletePreviousWord"</code>
+	 */
+	public static final String DELETE_PREVIOUS_WORD= "org.eclipse.ui.edit.text.deletePreviousWord"; //$NON-NLS-1$
+	
+	/**
+	 * Action definition id of the edit delete next word action. Value: <code>"
+	 * org.eclipse.ui.edit.text.deleteNextWord"</code>
+	 */
+	public static final String DELETE_NEXT_WORD= "org.eclipse.ui.edit.text.deleteNextWord"; //$NON-NLS-1$
 	
 	/**
 	 * Action definition id of the edit shift right action.
