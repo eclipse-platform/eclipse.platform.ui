@@ -136,21 +136,25 @@ public int isInstallable(IComponentDescriptor compInstalled) {
 	if (compInstalled == null)
 		return UpdateManagerConstants.OK_TO_INSTALL;
 
-	// Check whether the parent products of the existing installed component allows it to be upgraded
-	//-----------------------------------------------------------------------------------------------
-	if (compInstalled.isUpdateable() == false)
-		return UpdateManagerConstants.NOT_UPDATABLE;
-
+	VersionIdentifier newVer = getVersionIdentifier();
+	// Check whether the installed component's parent products allow it to be upgraded
+	// if not upgradeable, can still install service
+	//--------------------------------------------------------------------------------
+	if (!compInstalled.isUpdateable()) {
+		if (!newVer.isEquivalentTo(compInstalled.getVersionIdentifier()))
+			return UpdateManagerConstants.NOT_UPDATABLE;
+	}
+			
 	// Check version against installed component
 	//------------------------------------------
-	if (compInstalled.isDanglingComponent()) {
+	IProductDescriptor[] containingProds = compInstalled.getContainingProducts();
+	if (containingProds.length == 0) {		// not constrained by a product
 		if (this.compare(compInstalled) > 0)	// newer
 			return UpdateManagerConstants.OK_TO_INSTALL;
 		return UpdateManagerConstants.NOT_NEWER;
 	} else {
 		// Check version compatibility
 		//----------------------------
-		VersionIdentifier newVer = getVersionIdentifier();
 
 		if (!newVer.isCompatibleWith(compInstalled.getVersionIdentifier())) // same major, newer minor or service
 			return UpdateManagerConstants.NOT_COMPATIBLE;
