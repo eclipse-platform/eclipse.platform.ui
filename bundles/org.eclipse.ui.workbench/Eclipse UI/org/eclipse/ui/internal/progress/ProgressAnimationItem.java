@@ -46,6 +46,8 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	ToolItem toolButton;
 	ProgressRegion progressRegion;
     Image noneImage, okImage, errorImage;
+    boolean animationRunning;
+    long timeStamp;
 	
 	
 	/**
@@ -89,7 +91,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
             public void widgetDisposed(DisposeEvent e) {
         	    FinishedJobs.getInstance().removeListener(ProgressAnimationItem.this);
                 noneImage.dispose();
-    	   		okImage.dispose();
+    	   			okImage.dispose();
      	        errorImage.dispose();
            }
 		});
@@ -113,8 +115,8 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		toolButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 progressRegion.processDoubleClick();
-        		toolButton.setImage(noneImage);
-            }
+                infoVisited();
+           }
         });
 
 		return top;
@@ -136,9 +138,15 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	 */
 	void animationDone() {
 		super.animationDone();
+		animationRunning= false;
 		if (bar.isDisposed())
 			return;
 		bar.setVisible(false);
+		
+		long ts= FinishedJobs.getInstance().getTimeStamp();
+		if (ts <= timeStamp) {
+	        toolbar.setVisible(false);		    
+		}
 	}
 
 	/*
@@ -148,30 +156,36 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	 */
 	void animationStart() {
 		super.animationStart();
+		animationRunning= true;
 		if (bar.isDisposed())
 			return;
 		bar.setVisible(true);
+		
+		long ts= FinishedJobs.getInstance().getTimeStamp();
+		if (ts <= timeStamp) {
+	        toolButton.setImage(noneImage);
+	        toolbar.setVisible(true);
+		}
 	}
 
     public void removed(JobInfo info) {
-    	infoVisited();
+        infoVisited();
     }
     
-    public void finished(JobInfo info) {
-        final Job job= info.getJob();
-        if (job != null) {
-		    final Display display= Display.getDefault();
-		    display.asyncExec(new Runnable() {
-		        public void run() {
-		            setStatus(job);
-		        }
-		    });
-        }
+    public void finished(final JobInfo info) {
+	    final Display display= Display.getDefault();
+	    display.asyncExec(new Runnable() {
+	        public void run() {
+	            Job job= info.getJob();
+	            if (job != null)
+	                setStatus(job);
+	        }
+	    });
     }
     
-	void setStatus(Job job) {
+	private void setStatus(Job job) {
 	    IStatus status= job.getResult();
-	    if (status != null) {
+	    if (status != null && !toolbar.isDisposed()) {
 	        toolbar.getDisplay().beep();
 	        if (status.getSeverity() == IStatus.ERROR)
 	            toolButton.setImage(errorImage);
@@ -184,7 +198,13 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	    final Display display= Display.getDefault();
 	    display.asyncExec(new Runnable() {
 	        public void run() {
-	        	toolButton.setImage(noneImage);
+	            if (!toolbar.isDisposed()) {
+	                if (animationRunning)
+    						toolButton.setImage(noneImage);
+	                else
+                			toolbar.setVisible(false);
+	            }
+	        		timeStamp= FinishedJobs.getInstance().getTimeStamp();
 	        }
 	    });
 	}
