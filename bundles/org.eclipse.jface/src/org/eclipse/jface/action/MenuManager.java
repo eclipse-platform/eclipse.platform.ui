@@ -70,10 +70,6 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 	 */
 	private IContributionManagerOverrides overrides;
 
-	private static String OLD_ACCELERATOR = "org.eclipse.jface.action.MenuManager.oldAccelerator"; //$NON-NLS-1$
-	private static String OLD_LABEL = "org.eclipse.jface.action.MenuManager.oldLabel"; //$NON-NLS-1$
-	private static String ACCELERATORS_ALLOWED = "org.eclipse.jface.action.MenuManager.accelerators_allowed"; //$NON-NLS-1$
-
 	
 /**
  * Creates a menu manager.  The text and id are <code>null</code>.
@@ -501,14 +497,15 @@ protected void update(boolean force, boolean recursive) {
 			}
 			
 			// remove obsolete (removed or non active)
-			Item[] mi= menu.getItems();
+			MenuItem[] mi= menu.getItems();
 			for (int i= 0; i < mi.length; i++) {
 				Object data= mi[i].getData();
 				if (data == null || !clean.contains(data)) {
 					mi[i].dispose();
-				} else if(data instanceof IContributionItem && ((IContributionItem)data).isDirty()) {
-					((IContributionItem)data).isDirty();
-					mi[i].dispose();
+				} else if(data instanceof IContributionItem && 
+					((IContributionItem)data).isDynamic() && 
+					((IContributionItem)data).isDirty()) {
+						mi[i].dispose();
 				}
 			}
 
