@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.registry;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -161,17 +160,5 @@ public ImageDescriptor getImageDescriptor(Object object) {
  */
 public Object getParent(Object o) {
 	return null;
-}
-/* (non-Javadoc)
- * @see org.eclipse.ui.model.IWorkbenchAdapter#getForeground(java.lang.Object)
- */
-public RGB getForeground(Object element) {
-    return null;
-}
-/* (non-Javadoc)
- * @see org.eclipse.ui.model.IWorkbenchAdapter#getBackground(java.lang.Object)
- */
-public RGB getBackground(Object element) {
-    return null;
 }
 }

@@ -11,7 +11,6 @@
 package org.eclipse.ui.model;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.RGB;
 
 /**
  * This adapter interface provides visual presentation and hierarchical structure
@@ -58,25 +57,4 @@ public String getLabel(Object o);
  * @param object The object to get the parent for.
  */
 public Object getParent(Object o);
-
-/**
- * Provides a foreground color for the given element.
- * 
- * @param element the element
- * @return	the foreground color for the element, or <code>null</code> 
- *   to use the default foreground color
- * @since 3.0
- */
-public RGB getForeground(Object element);
-
-/**
- * Provides a background color for the given element.
- * 
- * @param element the element
- * @return	the background color for the element, or <code>null</code> 
- *   to use the default background color
- * @since 3.0
- */
-public RGB getBackground(Object element);
-
 }

@@ -15,7 +15,6 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.WorkbenchException;
@@ -221,18 +220,4 @@ public class Category implements IWorkbenchAdapter, IPluginContribution {
 	public String getPluginId() {		
 		return pluginId;
 	}
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getForeground(java.lang.Object)
-     */
-    public RGB getForeground(Object element) {
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getBackground(java.lang.Object)
-     */
-    public RGB getBackground(Object element) {
-        return null;
-    }
 }

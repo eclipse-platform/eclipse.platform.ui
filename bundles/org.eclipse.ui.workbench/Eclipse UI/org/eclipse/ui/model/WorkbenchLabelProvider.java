@@ -122,6 +122,20 @@ public class WorkbenchLabelProvider extends LabelProvider implements IColorProvi
 		return (IWorkbenchAdapter) ((IAdaptable) o).getAdapter(
 			IWorkbenchAdapter.class);
 	}
+	
+	/**
+	 * Returns the implementation of IWorkbenchAdapter2 for the given
+	 * object.  Returns <code>null</code> if the adapter is not defined or the
+	 * object is not adaptable.
+	 */
+	protected final IWorkbenchAdapter2 getAdapter2(Object o) {
+		if (!(o instanceof IAdaptable)) {
+			return null;
+		}
+		return (IWorkbenchAdapter2) ((IAdaptable) o).getAdapter(
+			IWorkbenchAdapter.class);
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on ILabelProvider
 	 */
@@ -178,7 +192,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements IColorProvi
     }
     
     private Color getColor(Object element, boolean forground) {
-		IWorkbenchAdapter adapter = getAdapter(element);
+		IWorkbenchAdapter2 adapter = getAdapter2(element);
 		if (adapter == null) {
 			return null;
 		}
@@ -202,5 +216,4 @@ public class WorkbenchLabelProvider extends LabelProvider implements IColorProvi
 		return color;
         
     }
-
 }

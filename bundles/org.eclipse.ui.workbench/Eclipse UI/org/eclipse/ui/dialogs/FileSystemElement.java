@@ -13,7 +13,6 @@ package org.eclipse.ui.dialogs;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -78,20 +77,6 @@ public class FileSystemElement implements IAdaptable {
 				return WorkbenchPlugin.getDefault().getEditorRegistry().getImageDescriptor(name);
 			}
 		}
-		
-		/**
-		 * Returns <code>null</code>
-		 */
-        public RGB getForeground(Object element) {
-            return null;
-        }
-        
-		/**
-		 * Returns <code>null</code>
-		 */        
-        public RGB getBackground(Object element) {
-            return null;
-        }
 };
 /**
  * Creates a new <code>FileSystemElement</code> and initializes it

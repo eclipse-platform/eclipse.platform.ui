@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.RGB;
  * 
  * @since 3.0
  */
-public abstract class WorkbenchAdapter implements IWorkbenchAdapter {
+public abstract class WorkbenchAdapter implements IWorkbenchAdapter, IWorkbenchAdapter2 {
 	/**
 	 * The empty list of children.
 	 */
@@ -59,7 +59,7 @@ public abstract class WorkbenchAdapter implements IWorkbenchAdapter {
 	}
 
 	/**
-	 * The default implementation of this <code>IWorkbenchAdapter</code> method
+	 * The default implementation of this <code>IWorkbenchAdapter2</code> method
 	 * returns <code>null</code>. Subclasses may override.
 	 */
     public RGB getBackground(Object element) {
@@ -67,7 +67,7 @@ public abstract class WorkbenchAdapter implements IWorkbenchAdapter {
     }
     
 	/**
-	 * The default implementation of this <code>IWorkbenchAdapter</code> method
+	 * The default implementation of this <code>IWorkbenchAdapter2</code> method
 	 * returns <code>null</code>. Subclasses may override.
 	 */
     public RGB getForeground(Object element) {

@@ -29,6 +29,7 @@ import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.model.IWorkbenchAdapter2;
 import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**
@@ -102,7 +103,7 @@ public class WorkbenchWizardElement
 	 * found.
 	 */
 	public Object getAdapter(Class adapter) {
-		if (adapter == IWorkbenchAdapter.class) {
+		if (adapter == IWorkbenchAdapter.class || adapter == IWorkbenchAdapter2.class) {
 			return this;
 		}
 		return Platform.getAdapterManager().getAdapter(this, adapter);
