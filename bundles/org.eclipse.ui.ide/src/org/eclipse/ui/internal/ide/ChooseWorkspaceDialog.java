@@ -19,8 +19,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -39,7 +37,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	private ChooseWorkspaceData launchData;
-	private String currentSelection;
+	private Combo text;
 
 	/**
 	 * Create a modal dialog on the arugment shell, using and updating the argument
@@ -134,7 +132,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	 * </p>
 	 */
 	protected void okPressed() {
-		launchData.workspaceSelected(currentSelection);
+		launchData.workspaceSelected(text.getText());
 		super.okPressed();
 	}
 
@@ -147,8 +145,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	 * </p>
 	 */
 	protected void cancelPressed() {
-		currentSelection = null;
-		launchData.workspaceSelected(currentSelection);
+		launchData.workspaceSelected(null);
 		super.cancelPressed();
 	}
 
@@ -188,17 +185,12 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		label.setText(IDEWorkbenchMessages
 				.getString("ChooseWorkspaceDialog.workspaceEntryLabel")); //$NON-NLS-1$
 
-		final Combo text = new Combo(panel, SWT.BORDER | SWT.LEAD
+		text = new Combo(panel, SWT.BORDER | SWT.LEAD
 				| SWT.DROP_DOWN);
 		text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
 				| GridData.FILL_HORIZONTAL));
 		setInitialTextValues(text);
-		text.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				currentSelection = text.getText();
-			}
-		});
-
+		
 		Button browseButton = new Button(panel, SWT.PUSH);
 		browseButton.setText(IDEWorkbenchMessages
 				.getString("ChooseWorkspaceDialog.browseLabel")); //$NON-NLS-1$
@@ -213,16 +205,10 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 								.getString("ChooseWorkspaceDialog.directoryBrowserTitle")); //$NON-NLS-1$
 				dialog.setMessage(IDEWorkbenchMessages
 								.getString("ChooseWorkspaceDialog.directoryBrowserMessage")); //$NON-NLS-1$
-				dialog.setFilterPath(currentSelection);
+				dialog.setFilterPath(text.getText());
 				String dir = dialog.open();
-				if (dir != null) {
+				if (dir != null)
 					text.setText(dir);
-
-					// bug#56145: workaround for bug on mac (bug#43396) where modify
-					//            events are not sent for combo boxes
-					if("carbon".equalsIgnoreCase(SWT.getPlatform())) //$NON-NLS-1$ //$NON-NLS-2$
-						currentSelection = dir;
-				}
 			}
 		});
 	}
@@ -259,9 +245,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 			if(recentWorkspaces[i] != null)
 				text.add(recentWorkspaces[i]);
 
-		currentSelection = text.getItemCount() > 0
-				? text.getItem(0)
-				: launchData.getInitialDefault();
-		text.setText(currentSelection);
+		text.setText(text.getItemCount() > 0 ? text.getItem(0) : launchData
+				.getInitialDefault());
 	}
 }
