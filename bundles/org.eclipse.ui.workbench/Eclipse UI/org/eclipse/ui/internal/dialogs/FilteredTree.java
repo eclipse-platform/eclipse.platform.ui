@@ -122,6 +122,8 @@ public class FilteredTree extends Composite {
              * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
              */
             public void keyReleased(KeyEvent e) {
+            	if(e.keyCode == SWT.ARROW_DOWN)
+            		treeViewer.getTree().setFocus();
                 textChanged();
             }
         });
