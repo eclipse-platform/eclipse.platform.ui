@@ -26,20 +26,7 @@ the workspace to find and run builders. The symbolic name it the id of
 the builder extension.
 <p><b><i>Configuration Markup:</i></b>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT builder run?></tt>
-<br><tt>&nbsp;&nbsp; &lt;!ATTLIST builder</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp; ></tt>
-<ul>
-<li>
-<b>id -</b> a unique name that can be used to identify this builder</li>
-
-<li>
-<b>name</b> - a translatable name that may be presented to the user to
-identify this builder</li>
-</ul>
+<p>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT run parameter*></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST run</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -63,7 +50,7 @@ the specified builder class</li>
 
 <li>
 <b>value</b> - an arbitrary value associated with the given name and made
-available to instances of the specificed builder class</li>
+available to instances of the specified builder class</li>
 </ul>
 <b><i>Examples:</i></b>
 <p>Following is an example of a builder configuration:
