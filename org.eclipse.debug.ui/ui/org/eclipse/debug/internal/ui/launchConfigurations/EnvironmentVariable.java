@@ -9,7 +9,7 @@
  *     Keith Seitz (keiths@redhat.com) - initial implementation
  *     IBM Corporation - integration and code cleanup
  *******************************************************************************/
-package org.eclipse.debug.ui;
+package org.eclipse.debug.internal.ui.launchConfigurations;
 
 /**
  * A key/value set whose data is passed into Runtime.exec(...)

@@ -25,6 +25,7 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.launchConfigurations.*;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.internal.ui.preferences.MultipleInputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -61,6 +62,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
 /**
  * Launch configuration tab for configuring the environment passed
  * into Runtime.exec(...) when a config is launched.
+ * 
+ * @since 3.0
  */
 public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 
