@@ -795,4 +795,19 @@ public class AntModel {
 		//ClassLoader[] pluginLoaders = corePreferences.getPluginClassLoaders();
 		return new URLClassLoader(urls, this.getClass().getClassLoader());
 	}
+
+	
+	public String getTargetDescription(String targetRename) {
+
+		AntElementNode[] nodes= getRootElements();
+		AntProjectNode projectNode= (AntProjectNode)nodes[0];
+		
+		Project project= projectNode.getProject();
+		Map targets= project.getTargets();
+		Target target= (Target)targets.get(targetRename);
+		if (target != null) {
+			return target.getDescription();
+		}
+		return null;
+	}
 }

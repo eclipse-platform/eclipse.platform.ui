@@ -112,7 +112,10 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 			if (value != null) {
 				return formatMessage(value);
 			}
-			
+			value= antModel.getTargetDescription(text);
+			if (value != null) {
+				return formatMessage(value);
+			}
 			Object referencedObject= antModel.getReferenceObject(text);
 			if (referencedObject != null) {
 				if (referencedObject instanceof Path) {
