@@ -1,5 +1,5 @@
 /**********************************************************************
-Copyright (c) 2003 IBM Corp. and others.
+Copyright (c) 2003, 2004 IBM Corp. and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.custom.BusyIndicator;
 
-public class PropertyFileFilter extends ViewerFilter {
+public class FileFilter extends ViewerFilter {
 
 	/**
 	 * Objects to filter
@@ -33,13 +33,16 @@ public class PropertyFileFilter extends ViewerFilter {
 	 * Collection of property files and containers to display
 	 */
 	private Set fPropertyFiles;
+	
+	private String fExtension;
 
 	/**
 	 * Creates a new filter that filters the given 
 	 * objects.
 	 */
-	public PropertyFileFilter(List objects) {
+	public FileFilter(List objects, String extension) {
 		fFilter = objects;
+		fExtension= extension;
 		init();
 	}
 
@@ -75,7 +78,7 @@ public class PropertyFileFilter extends ViewerFilter {
 				if (resource instanceof IFile) {
 					IFile file = (IFile) resource;
 					String ext = file.getFileExtension();
-					if (ext != null && ext.equalsIgnoreCase("properties")) { //$NON-NLS-1$
+					if (ext != null && ext.equalsIgnoreCase(fExtension)) {
 						set.add(file);
 						added = true;
 					}

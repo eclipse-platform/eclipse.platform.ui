@@ -11,6 +11,7 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 import java.util.List;
+
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -18,8 +19,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -31,21 +30,24 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
-public class AntPropertiesFileSelectionDialog extends ElementTreeSelectionDialog {
+public class FileSelectionDialog extends ElementTreeSelectionDialog {
 	
 	private ViewerFilter fFilter;
+	private String fFilterMessage;
 	private boolean fShowAll= false;
 	private final static String DIALOG_SETTING= "AntPropertiesFileSelectionDialog.showAll";  //$NON-NLS-1$
 	
-	public AntPropertiesFileSelectionDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider, List propertyFiles) {
-		super(parent, labelProvider, contentProvider);
+	public FileSelectionDialog(Shell parent, List propertyFiles, String title, String message, String filterExtension, String filterMessage) {
+		super(parent, new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 		
-		setTitle(AntPreferencesMessages.getString("AntPropertiesFileSelectionDialog.12"));  //$NON-NLS-1$
-		setMessage(AntPreferencesMessages.getString("AntPropertiesFileSelectionDialog.13")); //$NON-NLS-1$
-		fFilter= new PropertyFileFilter(propertyFiles);
-		
+		setTitle(title);  //$NON-NLS-1$
+		setMessage(message); //$NON-NLS-1$
+		fFilter= new FileFilter(propertyFiles, filterExtension);
+		fFilterMessage= filterMessage;
 		setInput(ResourcesPlugin.getWorkspace().getRoot());	
 		setSorter(new ResourceSorter(ResourceSorter.NAME));
 		
@@ -72,7 +74,7 @@ public class AntPropertiesFileSelectionDialog extends ElementTreeSelectionDialog
 		
 		Composite result= (Composite)super.createDialogArea(parent);
 		final Button button = new Button(result, SWT.CHECK);
-		button.setText(AntPreferencesMessages.getString("AntPropertiesFileSelectionDialog.14")); //$NON-NLS-1$
+		button.setText(fFilterMessage);
 		
 		button.setFont(parent.getFont());
 		GridData data= new GridData();

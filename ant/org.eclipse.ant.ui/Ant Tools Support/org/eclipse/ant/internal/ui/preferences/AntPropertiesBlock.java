@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Property;
@@ -29,10 +30,8 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
@@ -49,8 +48,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class AntPropertiesBlock {
 	
@@ -131,11 +128,11 @@ public class AntPropertiesBlock {
 	}
 
 	private void addPropertyFile() {
-		
-		ILabelProvider lp= new WorkbenchLabelProvider();
-		ITreeContentProvider cp= new WorkbenchContentProvider();
-
-		AntPropertiesFileSelectionDialog dialog= new AntPropertiesFileSelectionDialog(propertyTableViewer.getControl().getShell(), lp, cp, Arrays.asList(getPropertyFiles()));
+		String title= AntPreferencesMessages.getString("AntPropertiesFileSelectionDialog.12"); //$NON-NLS-1$
+		String message= AntPreferencesMessages.getString("AntPropertiesFileSelectionDialog.13"); //$NON-NLS-1$
+		String filterExtension= "properties"; //$NON-NLS-1$
+		String filterMessage= AntPreferencesMessages.getString("AntPropertiesFileSelectionDialog.14"); //$NON-NLS-1$
+		FileSelectionDialog dialog= new FileSelectionDialog(propertyTableViewer.getControl().getShell(), Arrays.asList(getPropertyFiles()), title, message, filterExtension, filterMessage);
 		if (dialog.open() == Window.OK) {
 			Object[] elements= dialog.getResult();
 			for (int i = 0; i < elements.length; i++) {
