@@ -1,12 +1,12 @@
 package org.eclipse.ui.internal;
 
 import java.text.Collator;
-import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ViewForm;
@@ -245,7 +245,9 @@ public class EditorList {
 			if(items.length == 0) {
 				return;
 			}
-			EditorManager.saveAll(dirtyEditorList, false, window);
+			if (dirtyEditorList != null) {
+				EditorManager.saveAll(dirtyEditorList, false, window);
+			}
 			destroyControl();
 		}
 	}
@@ -491,41 +493,91 @@ public class EditorList {
 			if(items.length == 0) {
 				return;
 			}
+			
 			keepListOpen = true;
+			boolean checkOverwrite = true;		
+			EditorShortcutManager manager = ((Workbench) window.getWorkbench()).getEditorShortcutManager();
 			for (int i = 0; i < items.length; i++) {
 				Adapter e = (Adapter)items[i].getData();
-				EditorShortcutManager manager = ((Workbench) window.getWorkbench()).getEditorShortcutManager();
 				EditorShortcut shortcut = EditorShortcut.create(e.editorRef);
-				int index = manager.indexof(shortcut) ;
-				if (index != -1) {
+				int index = manager.indexof(shortcut);
+				if (index == -1) {
+					manager.add(shortcut);
+				} else {
 					EditorShortcut[] shortcuts = manager.getItems();
 					newValue = e.getText()[0] + " (" + shortcuts[index].getTitle() + ")";
-					if(checkOverwrite()) {
+					if (checkOverwrite) {
+						int overwrite = checkOverwrite();
+						if (overwrite == IDialogConstants.YES_ID || overwrite == IDialogConstants.YES_TO_ALL_ID) {
+							shortcuts[index].setTitle(e.getText()[0]);
+							shortcut.dispose();
+							manager.add(shortcut);
+							if (overwrite == IDialogConstants.YES_TO_ALL_ID) {
+								checkOverwrite = false;
+							}
+						} else {
+							shortcut.dispose();
+							if (overwrite == IDialogConstants.CANCEL_ID) {
+								break;
+							}
+						}					
+					} else {
 						shortcuts[index].setTitle(e.getText()[0]);
+						shortcut.dispose();
+						manager.add(shortcut);						
 					}
-					shortcut.dispose();
-				} else {
-					manager.add(shortcut);
 				}
 			}
 			keepListOpen = false;
 			destroyControl();
 		}
+		
 		/**
-		 * Check if the user wishes to overwrite the supplied resource
-		 * @returns true if there is no collision or delete was successful
-		 * @param shell the shell to create the dialog in 
-		 * @param destination - the resource to be overwritten
+		 * Check if the user wishes to overwrite the supplied resource or 
+		 * all resources.
+		 * 
+		 * @param shell the shell to create the overwrite prompt dialog in 
+		 * @param destination the resource to be overwritten
+		 * @return one of IDialogConstants.YES_ID, IDialogConstants.YES_TO_ALL_ID,
+		 * 	IDialogConstants.NO_ID, IDialogConstants.CANCEL_ID indicating whether
+		 * 	the current resource or all resources can be overwritten, or if the 
+		 * 	operation should be canceled.
 		 */
-		private boolean checkOverwrite() {
-			final String RESOURCE_EXISTS_TITLE = WorkbenchMessages.getString("RenameResourceAction.resourceExists"); //$NON-NLS-1$
-			final String RESOURCE_EXISTS_MESSAGE = WorkbenchMessages.getString("RenameResourceAction.overwriteQuestion"); //$NON-NLS-1$
-
-			return MessageDialog.openQuestion(window.getShell(), 
-				RESOURCE_EXISTS_TITLE,
-				MessageFormat.format(RESOURCE_EXISTS_MESSAGE,new Object[] {newValue}));
-		}				
+		private int checkOverwrite() {
+			final int[] result = new int[1];
+			final Shell shell = window.getShell();
+	
+			// Dialogs need to be created and opened in the UI thread
+			Runnable query = new Runnable() {
+				public void run() {
+					int resultId[] = {
+						IDialogConstants.YES_ID,
+						IDialogConstants.YES_TO_ALL_ID,
+						IDialogConstants.NO_ID,
+						IDialogConstants.CANCEL_ID};
+	 
+					MessageDialog dialog = new MessageDialog(
+						shell, 
+						WorkbenchMessages.getString("EditorShortcut.resourceExists"), //$NON-NLS-1$
+						null,
+						WorkbenchMessages.format("EditorShortcut.overwriteQuestion", new Object[] {newValue}), //$NON-NLS-1$
+						MessageDialog.QUESTION,
+						new String[] {
+							IDialogConstants.YES_LABEL,
+							IDialogConstants.YES_TO_ALL_LABEL,
+							IDialogConstants.NO_LABEL,
+							IDialogConstants.CANCEL_LABEL },
+						0);
+					dialog.open();
+					result[0] = resultId[dialog.getReturnCode()];
+				}
+			};
+			shell.getDisplay().syncExec(query);
+			return result[0];
+		}		
+				
 	}
+	
 	/**
 	 * A helper inner class to adapt EditorHistoryItem and IEditorPart
 	 * in the same type.
