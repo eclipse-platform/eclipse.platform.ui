@@ -124,25 +124,23 @@ public class DefaultSiteParser extends DefaultHandler {
 	 * process the Feature info
 	 */
 	private void processFeature(Attributes attributes) {
-		// if the type doesn';t exist ask teh site for default type
-		String id = attributes.getValue("id");
-		String ver = attributes.getValue("version");
-		VersionedIdentifier versionedId = new VersionedIdentifier(id, ver);
+
+		// url
+		URL url = UpdateManagerUtils.getURL(site.getURL(),attributes.getValue("url"),null);
 
 		// the type of the feature
 		String type = attributes.getValue("type");
 		IFeature feature = null;
 		if (type == null || type.equals("")) {
-			feature = new DefaultPackagedFeature(versionedId, site);
+			feature = new DefaultPackagedFeature(url, site);
 		} else {
 			Assert.isTrue(false,"Not implemented Yet... do not use 'type' in the feature tag of site.xml");
 			//FIXME: manages creation of feature...
 		}
-
-		// url
-		String defaultString = "features/"+feature.getIdentifier().toString()+".jar";
-		URL url = UpdateManagerUtils.getURL(site.getURL(),attributes.getValue("url"),defaultString);
-		((AbstractFeature) feature).setURL(url);
+		
+		// category
+		String category = attributes.getValue("category");
+		((AbstractFeature) feature).setCategoryString(category);
 		
 		// add the feature
 		site.addFeature(feature);
@@ -150,7 +148,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
-			UpdateManagerPlugin.getPlugin().debug("End Processing Feature Tag: id:"+id+" ver:"+ver+" type:"+type+" url"+url.toExternalForm());
+			UpdateManagerPlugin.getPlugin().debug("End Processing Feature Tag: url:"+url.toExternalForm()+" type"+type);
 		}
 		
 	}

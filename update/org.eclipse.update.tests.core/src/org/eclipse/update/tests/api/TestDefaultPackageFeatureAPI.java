@@ -26,7 +26,7 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 	private AbstractFeature getFeature(){
 		if (remoteFeature == null){
 		ISite site = new FileSite(SOURCE_FILE_SITE);
-		VersionedIdentifier id = new VersionedIdentifier("org.eclipse.update.core.feature1","1.0.0");
+		URL id = UpdateManagerUtils.getURL(site.getURL(),"org.eclipse.update.core.feature1_1.0.0.jar",null);					
 		remoteFeature = new DefaultPackagedFeature(id,site);
 		}
 		return remoteFeature;
@@ -36,22 +36,22 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 	 * @see IFeature#testIdentifier()
 	 */
 	public void testIdentifier() {
-		String ident1 = "org.eclipse.test.feature_1.0.0";
-		String ident2 = "org.eclipse_test_feature";
-		String ver2   = "2.0.2";
+		
+		String id1 = "features/org.eclipse.test.feature_1.0.0.jar";
+		String id2 = "features/org.eclipse_test_feature.jar";
+		VersionedIdentifier ident1 = new VersionedIdentifier("org.test1.ident1","1.0.0");
+		VersionedIdentifier ident2 = new VersionedIdentifier("org.test1.ident2","1.0.0");		
 		
 
 			ISite site = new FileSite(SOURCE_FILE_SITE);
 			
-			VersionedIdentifier id = new VersionedIdentifier(ident1);
-			remoteFeature = new DefaultPackagedFeature(id,site);
-			assertEquals(id,remoteFeature.getIdentifier());
+			URL url1 = UpdateManagerUtils.getURL(site.getURL(),id1,null);			
+			remoteFeature = new DefaultPackagedFeature(url1,site);
+			assertEquals(ident1.toString(),remoteFeature.getIdentifier().toString());
 		
-			VersionedIdentifier id2 = new VersionedIdentifier(ident2,ver2);
-			remoteFeature = new DefaultPackagedFeature(id2,site);
-			assertEquals(id2,remoteFeature.getIdentifier());
-		
-
+			 URL url2 = UpdateManagerUtils.getURL(site.getURL(),id2,null);		
+			remoteFeature = new DefaultPackagedFeature(url2,site);
+			assertEquals(ident2.toString(),remoteFeature.getIdentifier().toString());
 	}
 
 
@@ -59,11 +59,11 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 	 * @see IFeature#testSite()
 	 */
 	public void testSite() {
-		String ident1 = "org.eclipse.test.feature_1.0.0";		
+		String ident1 = "org.eclipse.test.feature_1.0.0.jar";		
 
 			ISite site = new FileSite(SOURCE_FILE_SITE);
 			
-			VersionedIdentifier id = new VersionedIdentifier(ident1);
+			URL id = UpdateManagerUtils.getURL(site.getURL(),ident1,null);		
 			remoteFeature = new DefaultPackagedFeature(id,site);
 			assertEquals(site,remoteFeature.getSite());
 

@@ -17,22 +17,8 @@ public class TestInstall extends UpdateManagerTestCase {
 	
 	
 	private IFeature getFeature1(ISite site){
-		VersionedIdentifier id = new VersionedIdentifier("org.eclipse.update.core.tests.feature1","1.0.4");
+		URL id = UpdateManagerUtils.getURL(site.getURL(),"features/org.eclipse.update.core.tests.feature1_1.0.4.jar",null);
 		DefaultPackagedFeature remoteFeature = new DefaultPackagedFeature(id,site);
-		//VersionedIdentifier pluginEntryId = new VersionedIdentifier("org.eclipse.update.core.feature1.plugin1","1.1.1");
-		//PluginEntry pluginEntry= new PluginEntry(pluginEntryId);		
-		//pluginEntry.setContainer(remoteFeature);
-		//pluginEntry.setLabel("FIRST PLUGIN ENTRY");
-		//remoteFeature.addPluginEntry(pluginEntry);
-		
-		// url
-		
-		String defaultString = "features/"+id.toString()+".jar";
-		URL url = UpdateManagerUtils.getURL(site.getURL(),null,defaultString);
-		((AbstractFeature) remoteFeature).setURL(url);
-		
-		
-		
 		return remoteFeature;
 	}	
 	
@@ -61,19 +47,8 @@ public class TestInstall extends UpdateManagerTestCase {
 
 
 	private IFeature getFeature2(ISite site){
-		VersionedIdentifier id = new VersionedIdentifier("org.eclipse.update.core.tests.feature1","1.0.4");
+		URL id = UpdateManagerUtils.getURL(site.getURL(),"features/features2.jar",null);
 		DefaultPackagedFeature remoteFeature = new DefaultPackagedFeature(id,site);
-		//VersionedIdentifier pluginEntryId = new VersionedIdentifier("org.eclipse.update.core.feature2.plugin2","2.2.2");
-		//PluginEntry pluginEntry= new PluginEntry(pluginEntryId);		
-		//pluginEntry.setContainer(remoteFeature);
-		//pluginEntry.setLabel("SECOND PLUGIN ENTRY");
-		//remoteFeature.addPluginEntry(pluginEntry);
-		
-		// url
-		String defaultString = "features/features2.jar";
-		URL url = UpdateManagerUtils.getURL(site.getURL(),null,defaultString);
-		((AbstractFeature) remoteFeature).setURL(url);
-		
 		return remoteFeature;
 	}	
 	

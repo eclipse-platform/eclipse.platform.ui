@@ -68,21 +68,23 @@ public class URLSite extends AbstractSite {
 	public int getPluginEntryCount() {
 		return getPluginEntries().length;
 	}
-
-	/**
+	/**
 	 * @see IPluginContainer#getDownloadSize(IPluginEntry)
 	 */
 	public int getDownloadSize(IPluginEntry entry) {
-		return 0;
+		Assert.isTrue(entry instanceof PluginEntry);
+		return ((PluginEntry)entry).getDownloadSize();
 	}
-
+
+
 	/**
 	 * @see IPluginContainer#getInstallSize(IPluginEntry)
 	 */
 	public int getInstallSize(IPluginEntry entry) {
-		return 0;
+		Assert.isTrue(entry instanceof PluginEntry);
+		return ((PluginEntry)entry).getInstallSize();
 	}
-
+	
 	/**
 	 * @see IPluginContainer#addPluginEntry(IPluginEntry)
 	 */

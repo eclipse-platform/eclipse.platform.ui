@@ -81,7 +81,7 @@ public static boolean isLegal(boolean expression) {
  */
 public static boolean isLegal(boolean expression, String message) {
 	if (!expression)
-		throw new IllegalArgumentException();
+		throw new IllegalArgumentException(message);
 	return expression;
 }
 /**

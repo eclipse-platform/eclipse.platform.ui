@@ -7,6 +7,11 @@ import java.net.URL;
 import org.eclipse.update.core.*; 
 
 public class DefaultExecutableFeature extends AbstractFeature {
+	
+	/**
+	 * 
+	 */
+	private URL rootURL;
 
 	/**
 	 * Constructor for DefaultExecutableFeature
@@ -18,10 +23,8 @@ public class DefaultExecutableFeature extends AbstractFeature {
 	/**
 	 * Constructor for DefaultExecutableFeature
 	 */
-	public DefaultExecutableFeature(
-		VersionedIdentifier identifier,
-		ISite targetSite) {
-		super(identifier, targetSite);
+	public DefaultExecutableFeature(URL url,	ISite targetSite) {
+		super(url, targetSite);
 	}
 
 	/**
@@ -119,7 +122,20 @@ public class DefaultExecutableFeature extends AbstractFeature {
 	public boolean isExecutable() {
 		return true;
 	}
-
+
+	/**
+	 * @see IFeature#getRootURL()
+	 * Make sure the rotURL ends with '/' as it shoudl be a directory
+	 */
+	public URL getRootURL()  throws MalformedURLException {
+		if (rootURL==null){
+			rootURL = getURL();
+			if (!rootURL.getPath().endsWith("/")){
+				rootURL = new URL(getURL().getProtocol(),getURL().getHost(),getURL().getPath()+"/");
+			}
+		}
+		return rootURL;
+	}
 	/**
 	 * @see AbstractFeature#getInputStreamFor(String)
 	 */

@@ -18,7 +18,6 @@ public class VersionedIdentifier {
 			}
 		
 		int loc = idWithVersion.lastIndexOf(SEPARATOR);
-		String id = idWithVersion;
 		if (loc != -1) {
 			id = idWithVersion.substring(0, loc);
 			String versionName = idWithVersion.substring(loc+1);

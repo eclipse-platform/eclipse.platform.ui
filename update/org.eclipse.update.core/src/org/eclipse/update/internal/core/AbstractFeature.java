@@ -114,7 +114,8 @@ public abstract class AbstractFeature implements IFeature {
 	 * Copy constructor
 	 */
 	public AbstractFeature(IFeature sourceFeature, ISite targetSite) {
-		this(sourceFeature.getIdentifier(), targetSite);
+		this(sourceFeature.getURL(), targetSite);
+		this.versionIdentifier = sourceFeature.getIdentifier();
 		this.label = sourceFeature.getLabel();
 		this.url = sourceFeature.getURL();
 		this.updateInfo = sourceFeature.getUpdateInfo();
@@ -130,16 +131,16 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * Constructor
 	 */
-	public AbstractFeature(VersionedIdentifier identifier, ISite targetSite) {
+	public AbstractFeature(URL url, ISite targetSite) {
 		this.site = targetSite;
-		this.versionIdentifier = identifier;
+		this.url = url;
 	}
 
 	/**
 	 * @see IFeature#getIdentifier()
-	 * Do not hydrate, varibale set in constructor
 	 */
 	public VersionedIdentifier getIdentifier() {
+		if (versionIdentifier == null && !isInitialized)init();
 		return versionIdentifier;
 	}
 
@@ -186,7 +187,7 @@ public abstract class AbstractFeature implements IFeature {
 	 * 
 	 * Can be overriden 
 	 */
-	public URL getRootURL() {
+	public URL getRootURL() throws MalformedURLException {
 		return url;
 	}
 
@@ -302,6 +303,14 @@ public abstract class AbstractFeature implements IFeature {
 	 */
 	public void setSite(ISite site) {
 		this.site = site;
+	}
+
+	/**
+	 * Sets the identifier
+	 * @param identifier The identifier to set
+	 */
+	public void setIdentifier(VersionedIdentifier identifier) {
+		this.versionIdentifier = identifier;
 	}
 
 	/**
@@ -570,7 +579,6 @@ public abstract class AbstractFeature implements IFeature {
 	private void init() {
 		if (url != null) {
 			try {
-				DefaultFeatureParser parser =
 					new DefaultFeatureParser(getFeatureInputStream(), this);
 			} catch (IOException e) {
 				//FIXME:
@@ -699,8 +707,7 @@ public abstract class AbstractFeature implements IFeature {
 	 * returns the Stream corresponding to the XML file
 	 */
 	protected InputStream getFeatureInputStream() throws IOException{
-		InputStream result = null;
-
+
 		//FIXME: is that global to ALL implementation ?
 		
 		// get the stream inside the Feature

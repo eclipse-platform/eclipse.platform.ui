@@ -14,6 +14,8 @@ import org.eclipse.update.core.*;
 public class DefaultPackagedFeature extends AbstractFeature {
 
 	private JarFile currentOpenJarFile = null;
+	
+	private URL rootURL;
 
 	public static final String JAR_EXTENSION = ".jar";
 	
@@ -30,13 +32,9 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	 * You have to transfrom the URL
 	 * 
 	 */
-	public URL getRootURL() {
-		URL rootURL = null;
-		try {
-			rootURL = new URL("jar",null,getURL().toExternalForm()+"!/");
-		} catch (MalformedURLException e){
-			//FIXME:
-			e.printStackTrace();
+	public URL getRootURL() throws MalformedURLException {
+		if (rootURL==null){
+					rootURL = new URL("jar",null,getURL().toExternalForm()+"!/");
 		}
 		return rootURL;
 	}
@@ -52,10 +50,8 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	/**
 	 * Constructor for DefaultPackagedFeature
 	 */
-	public DefaultPackagedFeature(
-		VersionedIdentifier identifier,
-		ISite targetSite) {
-		super(identifier, targetSite);
+	public DefaultPackagedFeature(URL url,	ISite targetSite) {
+		super(url, targetSite);
 	}
 
 	/**
@@ -179,11 +175,14 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	private void transferLocally() throws IOException {
 		// install in DEFAULT PATH for feature
 		// as we OWN the temp site
-		String newFile = 
-				AbstractSite.DEFAULT_FEATURE_PATH
-				+ getIdentifier().toString()
-				+ JAR_EXTENSION;
-		URL resolvedURL = UpdateManagerUtils.resolveAsLocal(getURL(),newFile);		this.setURL(resolvedURL);
+
+		// FIXME:
+		//String newFile = 
+		//		AbstractSite.DEFAULT_FEATURE_PATH
+		//		+ getIdentifier().toString()
+		//		+ JAR_EXTENSION;
+				
+		URL resolvedURL = UpdateManagerUtils.resolveAsLocal(getURL(),null);		this.setURL(resolvedURL);
 
 		// DEBUG:
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL){

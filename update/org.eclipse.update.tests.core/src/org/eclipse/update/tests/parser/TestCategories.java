@@ -6,30 +6,28 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.URLSite;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
-public class TestSiteParse extends UpdateManagerTestCase {
+public class TestCategories extends UpdateManagerTestCase {
 	/**
 	 * Constructor for Test1
 	 */
-	public TestSiteParse(String arg0) {
+	public TestCategories(String arg0) {
 		super(arg0);
 	}
 	
 	
-	public void testParse(){
+	public void testCategories() throws Exception {
 	
-		try {		
+
 			URL remoteUrl = new URL(SOURCE_FILE_SITE+"xmls/site1/");
-			ISite remoteSite = new URLSite(remoteUrl);
+			ISite remoteSite = SiteManager.getSite(remoteUrl);
 			
 			IFeature[] feature = remoteSite.getFeatures();
 			ICategory[] categories = remoteSite.getCategories();
 			
-			assertEquals(remoteUrl.getPath()+"info/siteInfo.html",remoteSite.getInfoURL().getPath());
+			ICategory featureCategory = feature[0].getCategory();
 			
-		} catch (Exception e){
-			fail(e.toString());
-			e.printStackTrace();
-		}
+			assertEquals("UML tools",featureCategory.getLabel());
+			
 	}
 }
 

@@ -2,6 +2,7 @@ package org.eclipse.update.internal.core;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
@@ -9,6 +10,7 @@ import java.util.*;
 import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IInfo;
+import org.eclipse.update.core.VersionedIdentifier;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -75,6 +77,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 			UpdateManagerPlugin.getPlugin().debug("Start Element: uri:"+uri+" local Name:"+localName+" qName:"+qName);
 		}
 		
+		try {
 		String tag = localName.trim();
 	
 		if (tag.equalsIgnoreCase(FEATURE)){
@@ -115,20 +118,22 @@ public class DefaultFeatureParser extends DefaultHandler {
 		if (tag.equalsIgnoreCase(PLUGIN)){
 			processPlugin(attributes);
 		}
-
+
+		} catch (MalformedURLException e){
+			throw new SAXException("error processing URL. Check the validity of the URLs",e);
+		}
 	}
 	
 	
 	/** 
 	 * process the Feature info
 	 */
-	private void processFeature(Attributes attributes){
+	private void processFeature(Attributes attributes) throws MalformedURLException {
 		// if the type doesn't exist ask the site for default type
 		String id = attributes.getValue("id");
 		String ver= attributes.getValue("version");
-		// TODO:
-		//Assert.isTrue(id.equals(feature.getIdentifier().getIdentifier()),"The feature identifier declared in the Site is different from the one found in the feature");
-		//Assert.isTrue(ver.equals(feature.getIdentifier().getVersion()),"The feature version declared in the Site is different from the one found in the feature");
+		VersionedIdentifier versionedId = new VersionedIdentifier(id, ver);
+		feature.setIdentifier(versionedId);
 		
 		// Feature Label
 		String label = UpdateManagerUtils.getResourceString(attributes.getValue("label"),bundle);
@@ -164,7 +169,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	/** 
 	 * process the info
 	 */
-	private IInfo processInfo(Attributes attributes){
+	private IInfo processInfo(Attributes attributes) throws MalformedURLException {
 		String infoURL = attributes.getValue("url");
 		infoURL = UpdateManagerUtils.getResourceString(infoURL,bundle);
 		URL url = UpdateManagerUtils.getURL(feature.getRootURL(),infoURL,null);
@@ -181,7 +186,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	/** 
 	 * process the info
 	 */
-	private IInfo processURLInfo(Attributes attributes){
+	private IInfo processURLInfo(Attributes attributes) throws MalformedURLException {
 		String infoURL = attributes.getValue("url");
 		infoURL = UpdateManagerUtils.getResourceString(infoURL,bundle);
 		URL url = UpdateManagerUtils.getURL(feature.getRootURL(),infoURL,null);

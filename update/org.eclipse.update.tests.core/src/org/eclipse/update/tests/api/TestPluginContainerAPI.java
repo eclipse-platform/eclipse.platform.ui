@@ -1,5 +1,6 @@
 package org.eclipse.update.tests.api;
 
+import java.net.URL;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.VersionedIdentifier;
 import org.eclipse.update.internal.core.*;
@@ -28,8 +29,7 @@ public class TestPluginContainerAPI extends UpdateManagerTestCase {
 	private AbstractFeature getFeature() {
 		if (feature == null) {
 			ISite site = getSite();
-			VersionedIdentifier id =
-				new VersionedIdentifier("org.eclipse.update.core.feature1", "1.0.0");
+			URL id = UpdateManagerUtils.getURL(site.getURL(),"org.eclipse.update.core.feature1_1.0.0.jar",null);						
 			feature = new DefaultPackagedFeature(id, site);
 		}
 		return feature;
