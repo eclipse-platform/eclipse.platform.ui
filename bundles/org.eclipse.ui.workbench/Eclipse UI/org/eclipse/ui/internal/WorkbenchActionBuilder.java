@@ -20,7 +20,6 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
@@ -76,14 +75,6 @@ public class WorkbenchActionBuilder {
 	private static final String backwardHistoryActionDefId = "org.eclipse.ui.navigate.backwardHistory"; //$NON-NLS-1$
 	private static final String forwardHistoryActionDefId = "org.eclipse.ui.navigate.forwardHistory"; //$NON-NLS-1$
 	private static final String showInActionDefId = "org.eclipse.ui.navigate.showIn"; //$NON-NLS-1$
-
-	private static final String workbenchToolGroupId = "org.eclipse.ui.internal"; //$NON-NLS-1$
-
-	//pin editor group in the toolbar
-	private static final String pinEditorGroup = "pinEditorGroup"; //$NON-NLS-1$
-
-	//history group in the toolbar
-	private static final String historyGroup = "historyGroup"; //$NON-NLS-1$
 
 	/**
 	 * The window to which this is contributing.
@@ -555,35 +546,33 @@ public class WorkbenchActionBuilder {
 	private void fillToolBar() {
 		// Create a CoolBar item for the workbench
 		CoolBarManager cBarMgr = getWindow().getCoolBarManager();
-		CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, workbenchToolGroupId); //$NON-NLS-1$
+		CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, IWorkbenchActionConstants.TOOLBAR_FILE); //$NON-NLS-1$
 		cBarMgr.add(coolBarItem);
 		coolBarItem.setVisible(true);
-		IContributionManager toolsManager =
-			(IContributionManager) coolBarItem.getToolBarManager();
+		IContributionManager toolsManager = (IContributionManager) coolBarItem.getToolBarManager();
 		cBarMgr.addToMenu(new ActionContributionItem(lockToolBarAction));
 		cBarMgr.addToMenu(new ActionContributionItem(editActionSetAction));
-
-		toolsManager.add(newWizardDropDownAction);
-		toolsManager.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
-		toolsManager.add(new Separator());
-		toolsManager.add(saveAction);
-		toolsManager.add(saveAsAction);
-		toolsManager.add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
-		toolsManager.add(printAction);
-		toolsManager.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
-		toolsManager.prependToGroup(
-			IWorkbenchActionConstants.BUILD_EXT,
-			new Separator());
-		toolsManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+	
+		CoolItemToolBarManager tBarMgr =(CoolItemToolBarManager) toolsManager;
+		String id = IWorkbenchActionConstants.TOOLBAR_FILE;
+		tBarMgr.addGroup(IWorkbenchActionConstants.NEW_GROUP, id);
+		tBarMgr.add(newWizardDropDownAction);
+		tBarMgr.addSubGroup(IWorkbenchActionConstants.NEW_EXT, id);
+		tBarMgr.addGroup(IWorkbenchActionConstants.SAVE_GROUP, id);
+		tBarMgr.add(saveAction);
+		tBarMgr.add(saveAsAction);
+		tBarMgr.addSubGroup(IWorkbenchActionConstants.SAVE_EXT, id);
+		tBarMgr.add(printAction);
+		tBarMgr.addGroup(IWorkbenchActionConstants.BUILD_GROUP, id);
+		tBarMgr.addSubGroup(IWorkbenchActionConstants.BUILD_EXT, id);
+		tBarMgr.addGroup(IWorkbenchActionConstants.MB_ADDITIONS, id);
+		
 		// Only add the manual incremental build if auto build off
 		if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-			toolsManager.appendToGroup(
-				IWorkbenchActionConstants.BUILD_EXT,
-				buildAllAction);
+			addManualIncrementalBuildToolAction();
 		}
-		addHistoryActions();
-		IPreferenceStore store =
-			WorkbenchPlugin.getDefault().getPreferenceStore();
+		addHistoryNavigateActions();
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		if (store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
 			addPinEditorAction();
 		}
@@ -627,6 +616,15 @@ public class WorkbenchActionBuilder {
 			return true;
 		if (menuId.equals(IWorkbenchActionConstants.M_WINDOW))
 			return true;
+		return false;
+	}
+	/**
+	 * Return whether or not given id matches the id of the coolitems that
+	 * the workbench creates.
+	 */
+	public boolean isWorkbenchCoolItemId(String id) {
+		if (IWorkbenchActionConstants.TOOLBAR_FILE.equalsIgnoreCase(id)) return true;
+		if (IWorkbenchActionConstants.TOOLBAR_NAVIGATE.equalsIgnoreCase(id)) return true;
 		return false;
 	}
 
@@ -1088,9 +1086,9 @@ public class WorkbenchActionBuilder {
 	/**
 	 * Adds the editor history navigation actions to the toolbar.
 	 */
-	private void addHistoryActions() {
+	private void addHistoryNavigateActions() {
 		CoolBarManager cBarMgr = getWindow().getCoolBarManager();
-		CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, historyGroup); //$NON-NLS-1$
+		CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, IWorkbenchActionConstants.TOOLBAR_NAVIGATE); //$NON-NLS-1$
 		// we want to add the history cool item before the editor cool item (if it exists)
 		IContributionItem refItem =
 			cBarMgr.findSubId(IWorkbenchActionConstants.GROUP_EDITOR);
@@ -1100,46 +1098,47 @@ public class WorkbenchActionBuilder {
 			cBarMgr.insertBefore(refItem.getId(), coolBarItem);
 		}
 		coolBarItem.setVisible(true);
-		IToolBarManager tBarMgr =
-			(IToolBarManager) coolBarItem.getToolBarManager();
-		tBarMgr.add(new GroupMarker(historyGroup));
-		tBarMgr.insertAfter(historyGroup, forwardHistoryAction);
-		tBarMgr.insertAfter(historyGroup, backwardHistoryAction);
+		CoolItemToolBarManager tBarMgr =(CoolItemToolBarManager) coolBarItem.getToolBarManager();
+		tBarMgr.addGroup(IWorkbenchActionConstants.HISTORY_GROUP, IWorkbenchActionConstants.TOOLBAR_NAVIGATE);
+		tBarMgr.add(backwardHistoryAction);
+		tBarMgr.add(forwardHistoryAction);
+		
+		tBarMgr.addGroup(IWorkbenchActionConstants.PIN_GROUP, IWorkbenchActionConstants.TOOLBAR_NAVIGATE);
 		cBarMgr.update(true);
 	}
 
 	/**
-	 * Adds the pin action to the toolbar.
+	 * Adds the pin action to the toolbar.  Add it to the navigate toolbar.
 	 */
 	private void addPinEditorAction() {
 		CoolBarManager cBarMgr = getWindow().getCoolBarManager();
-		CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, pinEditorGroup); //$NON-NLS-1$
-		// we want to add the pin editor cool item before the editor cool item (if it exists)
-		IContributionItem refItem =
-			cBarMgr.findSubId(IWorkbenchActionConstants.GROUP_EDITOR);
-		if (refItem == null) {
-			cBarMgr.add(coolBarItem);
-		} else {
-			cBarMgr.insertBefore(refItem.getId(), coolBarItem);
+		CoolBarContributionItem coolBarItem = (CoolBarContributionItem)cBarMgr.find(IWorkbenchActionConstants.TOOLBAR_NAVIGATE);
+		if (coolBarItem == null) {
+			// error if this happens, navigate toolbar assumed to always exist
+			WorkbenchPlugin.log("Navigate toolbar is missing"); //$NON-NLS-1$
+			return;
 		}
-		coolBarItem.setVisible(true);
-		IToolBarManager tBarMgr =
-			(IToolBarManager) coolBarItem.getToolBarManager();
-		tBarMgr.add(new GroupMarker(pinEditorGroup));
-		pinEditorAction.setVisible(true);
-		tBarMgr.insertAfter(pinEditorGroup, pinEditorAction);
-		cBarMgr.update(true);
+		CoolItemToolBarManager tBarMgr = coolBarItem.getToolBarManager();
+		String groupId = tBarMgr.getSubGroupId(IWorkbenchActionConstants.PIN_GROUP, IWorkbenchActionConstants.TOOLBAR_NAVIGATE);
+		tBarMgr.appendToGroup(groupId, pinEditorAction);
+		tBarMgr.update(true);
 	}
-
+	
 	/**
 	 * Removes the pin action from the toolbar.
 	 */
 	private void removePinEditorAction() {
 		CoolBarManager cBarMgr = getWindow().getCoolBarManager();
-		CoolBarContributionItem coolBarItem = (CoolBarContributionItem) cBarMgr.find(pinEditorGroup); //$NON-NLS-1$
-		if (coolBarItem != null)
-			coolBarItem.dispose();
-		cBarMgr.update(true);
+		CoolBarContributionItem coolBarItem = (CoolBarContributionItem) cBarMgr.find(IWorkbenchActionConstants.TOOLBAR_NAVIGATE); //$NON-NLS-1$
+		if (coolBarItem != null) {
+			IContributionManager tBarMgr = coolBarItem.getToolBarManager();
+			try {
+				tBarMgr.remove(pinEditorAction.getId());
+				tBarMgr.update(true);
+			} catch (IllegalArgumentException e) {
+				// action was not in toolbar
+			}
+		}
 	}
 
 	/**
@@ -1162,13 +1161,19 @@ public class WorkbenchActionBuilder {
 				// action not found!
 			}
 		}
+		addManualIncrementalBuildToolAction();
+	}
+	private void addManualIncrementalBuildToolAction() {
 		IContributionManager cBarMgr = getWindow().getCoolBarManager();
-		CoolBarContributionItem groupItem =
-			(CoolBarContributionItem) cBarMgr.find(workbenchToolGroupId);
-		IContributionManager tBarMgr = groupItem.getToolBarManager();
-		tBarMgr.appendToGroup(
-			IWorkbenchActionConstants.BUILD_EXT,
-			buildAllAction);
+		CoolBarContributionItem coolBarItem = (CoolBarContributionItem) cBarMgr.find(IWorkbenchActionConstants.TOOLBAR_FILE);
+		if (coolBarItem == null) {
+			// error if this happens, navigate toolbar assumed to always exist
+			WorkbenchPlugin.log("File toolbar is missing"); //$NON-NLS-1$
+			return;
+		}
+		CoolItemToolBarManager tBarMgr = coolBarItem.getToolBarManager();
+		String groupId = tBarMgr.getSubGroupId(IWorkbenchActionConstants.BUILD_GROUP, IWorkbenchActionConstants.TOOLBAR_FILE);
+		tBarMgr.appendToGroup(groupId, buildAllAction);
 		tBarMgr.update(true);
 	}
 
@@ -1188,11 +1193,13 @@ public class WorkbenchActionBuilder {
 				// action was not in menu
 			}
 		}
+		removeManualIncrementalBuildToolAction();
+	}
+	protected void removeManualIncrementalBuildToolAction() {
 		CoolBarManager cBarMgr = getWindow().getCoolBarManager();
-		CoolBarContributionItem groupItem =
-			(CoolBarContributionItem) cBarMgr.find(workbenchToolGroupId);
-		if (groupItem != null) {
-			IContributionManager tBarMgr = groupItem.getToolBarManager();
+		CoolBarContributionItem coolBarItem = (CoolBarContributionItem) cBarMgr.find(IWorkbenchActionConstants.TOOLBAR_FILE);
+		if (coolBarItem != null) {
+			IContributionManager tBarMgr = coolBarItem.getToolBarManager();
 			try {
 				tBarMgr.remove(IWorkbenchActionConstants.BUILD);
 				tBarMgr.update(true);

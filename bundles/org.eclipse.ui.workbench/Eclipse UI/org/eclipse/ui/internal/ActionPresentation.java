@@ -43,22 +43,6 @@ public ActionPresentation(WorkbenchWindow window) {
 	this.window = window;
 }
 /**
- * Create an action set from a descriptor.
- */
-public void addActionSet(IActionSetDescriptor desc) {
-	try {
-		IActionSet set = desc.createActionSet();
-		SubActionBars bars = new ActionSetActionBars(window.getActionBars(),
-			desc.getId());
-		SetRec rec = new SetRec(desc, set, bars);
-		mapDescToRec.put(desc, rec);
-		set.init(window, bars);
-		bars.activate();
-	} catch (CoreException e) {
-		WorkbenchPlugin.log("Unable to create ActionSet: " + desc.getId());//$NON-NLS-1$
-	}
-}
-/**
  * Remove all action sets.
  */
 public void clearActionSets() {
@@ -113,11 +97,33 @@ public void setActionSets(IActionSetDescriptor [] newArray) {
 	
 	// Add new actions.
 	iter = newList.iterator();
+	ArrayList sets = new ArrayList();
 	while (iter.hasNext()) {
 		IActionSetDescriptor desc = (IActionSetDescriptor)iter.next();
 		if (!mapDescToRec.containsKey(desc)) {
-			addActionSet(desc);
+			try {
+				IActionSet set = desc.createActionSet();
+				SubActionBars bars = new ActionSetActionBars(window.getActionBars(),
+					desc.getId());
+				SetRec rec = new SetRec(desc, set, bars);
+				mapDescToRec.put(desc, rec);
+				set.init(window, bars);
+				sets.add(set);
+			} catch (CoreException e) {
+				WorkbenchPlugin.log("Unable to create ActionSet: " + desc.getId());//$NON-NLS-1$
+			}
 		}
+	}
+	// We process action sets in two passes for coolbar purposes.  First we process base contributions
+	// (i.e., actions that the action set contributes to its toolbar), then we process adjunct contributions
+	// (i.e., actions that the action set contributes to other toolbars).  Therefore, process the action
+	// sets as a group.
+	PluginActionSetBuilder.processActionSets(sets, window);
+	
+	iter = sets.iterator();
+	while (iter.hasNext()) {
+		PluginActionSet set = (PluginActionSet)iter.next();
+		set.getBars().activate();
 	}
 }
 /**

@@ -196,6 +196,9 @@ public class CoolBarLayout {
 	 * @param memento the memento to save the object state in
 	 */
 	public boolean restoreState(IMemento memento) {
+		Integer newLayout = memento.getInteger(IWorkbenchConstants.TAG_ACTION_SET);
+		if (newLayout == null) return false;
+		
 		IMemento [] sizes = memento.getChildren(IWorkbenchConstants.TAG_ITEM_SIZE);
 		if (sizes == null) return false;
 		itemSizes = new Point[sizes.length];
@@ -250,6 +253,10 @@ public class CoolBarLayout {
 	 * @param memento the memento to save the object state in
 	 */
 	public IStatus saveState(IMemento memento) {
+		// tag used to indicate whether or not adding actions to other
+		// coolitems is supported
+		memento.putInteger(IWorkbenchConstants.TAG_ACTION_SET, 1);
+
 		for (int i = 0; i < itemSizes.length; i++) {
 			IMemento child = memento.createChild(IWorkbenchConstants.TAG_ITEM_SIZE);
 			Point pt = itemSizes[i];

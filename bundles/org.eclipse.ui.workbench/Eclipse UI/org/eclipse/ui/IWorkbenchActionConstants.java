@@ -386,6 +386,40 @@ public interface IWorkbenchActionConstants {
 	 */
 	public static final String REBUILD_ALL = "rebuildAll"; //$NON-NLS-1$
 
+
+// Workbench toolbar ids:
+	/**
+	 * Workbench toolbar id for file toolbar group.
+	 * 
+	 * @since 2.1
+	 */
+	public static final String TOOLBAR_FILE = "org.eclipse.ui.workbench.file"; //$NON-NLS-1$
+
+	/**
+	 * Workbench toolbar id for navigate toolbar group.
+	 * 
+	 * @since 2.1
+	 */
+	public static final String TOOLBAR_NAVIGATE = "org.eclipse.ui.workbench.navigate"; //$NON-NLS-1$
+
+// Workbench toolbar group ids.  To add an item at the beginning of the group, 
+// use the GROUP id.  To add an item at the end of the group, use the EXT id.
+	/**
+	 * Group ids for navigate toolbar groups.
+	 * 
+	 * @since 2.1
+	 */
+	public static final String PIN_GROUP = "pin.group"; //$NON-NLS-1$
+	public static final String HISTORY_GROUP = "history.group"; //$NON-NLS-1$
+	/**
+	 * Group ids for file toolbar groups
+	 * 
+	 * @since 2.1
+	 */
+	public static final String NEW_GROUP = "new.group"; //$NON-NLS-1$
+	public static final String SAVE_GROUP = "save.group"; //$NON-NLS-1$
+	public static final String BUILD_GROUP = "build.group"; //$NON-NLS-1$
+
 // Pop-up menu groups:
 	/**
 	 * Pop-up menu: name of group for Managing actions (value <code>"group.managing"</code>).

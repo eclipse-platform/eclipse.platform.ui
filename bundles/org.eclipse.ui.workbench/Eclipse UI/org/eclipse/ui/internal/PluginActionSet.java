@@ -4,11 +4,15 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
-import org.eclipse.core.runtime.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.internal.registry.*;
-import java.util.*;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.registry.ActionSetDescriptor;
+import org.eclipse.ui.internal.registry.IActionSet;
 
 /**
  * A PluginActionSet is a proxy for an action set defined in XML.
@@ -18,6 +22,7 @@ import java.util.*;
 public class PluginActionSet implements IActionSet {
 	private ActionSetDescriptor desc;
 	private ArrayList pluginActions = new ArrayList(4);
+	private ActionSetActionBars bars;
 /**
  * PluginActionSet constructor comment.
  */
@@ -48,6 +53,12 @@ public void dispose() {
 		WWinPluginAction action = (WWinPluginAction)iter.next();
 		action.dispose();
 	}
+	bars = null;
+}
+/**
+ */
+/* package */ ActionSetActionBars getBars() {
+	return bars;
 }
 /**
  * Returns the config element.
@@ -69,7 +80,6 @@ public ActionSetDescriptor getDesc() {
  * @param bars the action bars
  */
 public void init(IWorkbenchWindow window, IActionBars bars) {
-	PluginActionSetBuilder builder = new PluginActionSetBuilder();
-	builder.readActionExtensions(this, window, bars);
+	this.bars = (ActionSetActionBars)bars;
 }
 }

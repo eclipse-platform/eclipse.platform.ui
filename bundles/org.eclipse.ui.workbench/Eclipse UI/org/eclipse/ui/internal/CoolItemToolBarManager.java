@@ -7,6 +7,7 @@ package org.eclipse.ui.internal;
  * http://www.eclipse.org/legal/cpl-v10.html
  */
 
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
@@ -22,6 +23,58 @@ public class CoolItemToolBarManager extends ToolBarManager {
 	
 	public CoolItemToolBarManager(int style) {
 		super(style);
+	}
+	/* package */ void addGroup(String groupId, String contributingId) {
+		// Add a new group to the coolitem.  Add the group at the end of the toolbar.
+		addGroupBefore(groupId, contributingId, null);
+	}
+	/* package */ void addGroupBefore(String groupId, String contributingId, String beforeGroupId) {
+		// Add a new group to the coolitem.  Add the group before the group with the given id
+		// or at the end of the toolbar if no before group id is specified.
+		if (beforeGroupId != null) {
+			IContributionItem item = find(beforeGroupId);
+			if (item == null) beforeGroupId = null;
+		}
+		// Groups are delineated by an ActionSetSeparator.  Within each group,
+		// ActionSetGroupMarkers are used to delineate the items contributed by
+		// a particular action set.  Groups can have items contributed from 
+		// multiple action sets.  Groups are visually separated by separators.
+		String subGroupId = getSubGroupId(groupId, contributingId);
+		CoolItemGroupSeparator group = new CoolItemGroupSeparator(groupId, contributingId);
+		CoolItemSubGroupMarker subGroup = new CoolItemSubGroupMarker(subGroupId, contributingId);
+		if (beforeGroupId == null) {
+			add(group);
+			add(subGroup);
+		} else {
+			insertBefore(beforeGroupId, group);
+			insertBefore(beforeGroupId, subGroup);
+		}
+	}
+	/* package */ void addSubGroup(String groupId, String contributingId) {
+		// Add a sub group to the group identified by groupId.  Add the subGroup
+		// at the end of the group.  Subgroups have an id of their groupId + the
+		// id of the action set that is contributing the subGroup.
+		String subGroupId = getSubGroupId(groupId, contributingId);
+		CoolItemSubGroupMarker subGroup = new CoolItemSubGroupMarker(subGroupId, contributingId);
+		IContributionItem refItem = findEndOfGroup(groupId);
+		if (refItem == null) {
+			add(subGroup);
+		} else {
+			insertBefore(refItem.getId(), subGroup);
+		}
+	}
+	/* package */ void addToGroup(String groupId, String contributingId, IContributionItem actionContribution) {
+		// Add the item to an existing subgroup within the given group.  Subgroups have
+		// an id of their groupId + the id of the action set that is contributing the
+		// item
+		String subGroupId = getSubGroupId(groupId, contributingId);
+		CoolItemSubGroupMarker subGroup = (CoolItemSubGroupMarker)find(subGroupId);	
+		if (subGroup == null) {
+			// create the subgroup marker if it does not exist
+			addSubGroup(groupId, contributingId);
+		} 
+		// insert the item, add it to the beginning of the subgroup.
+		insertAfter(subGroupId, actionContribution);
 	}
 	public ToolBar createControl(Composite parent) {
 		ToolBar tBar = super.createControl(parent);
@@ -40,6 +93,35 @@ public class CoolItemToolBarManager extends ToolBarManager {
 	protected CoolBarContributionItem getCoolBarItem() {
 		return coolBarItem;
 	}
+	protected IContributionItem findEndOfGroup(String groupId) {
+		// Get items.
+		IContributionItem[] items = getItems();
+		// Find the group item.
+		int insertIndex = 0;
+		while (insertIndex < items.length) {
+			if (groupId.equals(items[insertIndex].getId())) {
+				// the found item will be the ActionSetSeparator for
+				// the group
+				++insertIndex;
+				break;
+			}
+			++insertIndex;
+		}
+		while (insertIndex < items.length) {
+			ContributionItem item = (ContributionItem)items[insertIndex];
+			if (item instanceof CoolItemGroupSeparator) {
+				// when we find another ActionSetSeparator we are
+				// at the end of the group
+				break;
+			}
+			++insertIndex;
+		}
+		if (insertIndex >= items.length) return null;
+		else return items[insertIndex];	
+	}
+	/* package */ String getSubGroupId(String groupId, String toolBarId) {
+		return groupId + "-" + toolBarId;
+	}
 	protected CoolBarManager getParentManager() {
 		return parentManager;
 	}
@@ -55,6 +137,7 @@ public class CoolItemToolBarManager extends ToolBarManager {
 		parentManager.updateSizeFor(coolBarItem);
 	}
 	protected void itemRemoved(IContributionItem item) {
+		if (coolBarItem.isEmpty()) parentManager.saveToolBarLayout(coolBarItem);
 		super.itemRemoved(item);
 		update(true);
 		parentManager.updateSizeFor(coolBarItem);

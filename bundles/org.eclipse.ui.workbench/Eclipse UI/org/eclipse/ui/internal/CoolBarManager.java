@@ -16,10 +16,13 @@ import java.util.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.registry.ActionSetRegistry;
 
 /**
  */
@@ -54,6 +57,10 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 * Stack for remembering positions of coolitems that have been removed.
 	 */
 	private ArrayList rememberedPositions = new ArrayList();
+	/** 
+	 * Table for remembering coolitem layouts.
+	 */
+	private Hashtable toolBarLayouts = new Hashtable();
 	
 	private class RestoreItemData {
 		CoolItemPosition savedPosition;
@@ -708,6 +715,15 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		if (!coolBarExist()) return false;
 		return coolBar.getLocked();
 	}
+	/* package */ boolean isValidCoolItemId(String id) {
+		ActionSetRegistry registry = WorkbenchPlugin.getDefault().getActionSetRegistry();
+		if (registry.findActionSet(id) != null) return true;
+		WorkbenchWindow window = (WorkbenchWindow)((Workbench)PlatformUI.getWorkbench()).getActiveWorkbenchWindow();
+		if (window != null) {
+			return window.isWorkbenchCoolItemId(id);
+		}
+		return false;
+	}
 	/**
 	 */
 	/* package */ void lockLayout(boolean value) {
@@ -830,6 +846,9 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		perspective.setToolBarLayout(getLayout());
 		rememberPositions = false;
 		rememberedPositions = new ArrayList();
+	}
+	void saveToolBarLayout(CoolBarContributionItem cbItem) {
+		toolBarLayouts.put(cbItem.getId(), cbItem.getToolBarManager().getItems());
 	}
 	void setLayoutFor(Perspective perspective) {
 		rememberedPositions = new ArrayList();
@@ -1017,6 +1036,17 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		} else {
 			coolItem.setSize(new Point(coolWidth, coolSize.y));
 		} 
+	}
+	void setToolBarLayout(CoolBarContributionItem cbItem) {
+		IContributionItem[] items = (IContributionItem[])toolBarLayouts.get(cbItem.getId());
+		if (items != null) {
+			CoolItemToolBarManager tBarMgr = cbItem.getToolBarManager();
+			for (int i=0; i<items.length; i++) {
+				IContributionItem item = items[i];
+				tBarMgr.add(item);
+			}	
+			toolBarLayouts.remove(cbItem.getId());
+		}
 	}
 	/**
 	 */

@@ -1110,6 +1110,13 @@ public boolean isApplicationMenu(String menuID) {
 	return actionBuilder.isContainerMenu(menuID);
 }
 /**
+ * Return whether or not given id matches the id of the coolitems that
+ * the workbench creates.
+ */
+/* package */ boolean isWorkbenchCoolItemId(String id) {
+	return actionBuilder.isWorkbenchCoolItemId(id);
+}
+/**
  * Locks/unlocks the CoolBar for the workbench.
  * 
  * @param lock whether the CoolBar should be locked or unlocked

@@ -51,6 +51,7 @@ public class CoolBarContributionItem extends ContributionItem {
 		this.toolBarManager = tBarMgr;
 		tBarMgr.setParentMgr(parent);
 		tBarMgr.setCoolBarItem(this);
+		parent.setToolBarLayout(this);
 	}
 	/**
 	 * Creates the SWT control for the CoolBarContributionItem.
