@@ -17,9 +17,11 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -28,13 +30,16 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IUserInfo;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.wizards.UpdateWizard;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 public class CVSPropertiesPage extends PropertyPage {
@@ -48,8 +53,10 @@ public class CVSPropertiesPage extends PropertyPage {
 	Label pathLabel;
 	Label moduleLabel;
 	Label portLabel;
+	Label tagLabel;
 	
 	boolean passwordChanged;
+	boolean connectionInfoChanged;
 
 	IUserInfo info;
 	CVSTeamProvider provider;
@@ -63,35 +70,86 @@ public class CVSPropertiesPage extends PropertyPage {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 3;
 		composite.setLayout(layout);
 		
 		Label label = createLabel(composite, Policy.bind("CVSPropertiesPage.connectionType"));
 		methodType = createCombo(composite);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		methodType.setLayoutData(data);
 		
 		label = createLabel(composite, Policy.bind("CVSPropertiesPage.user"));
 		userText = createTextField(composite);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		userText.setLayoutData(data);
 		
 		label = createLabel(composite, Policy.bind("CVSPropertiesPage.password"));
 		passwordText = createTextField(composite);
 		passwordText.setEchoChar('*');
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		passwordText.setLayoutData(data);
 		
 		label = createLabel(composite, Policy.bind("CVSPropertiesPage.host"));
 		hostLabel = createLabel(composite, "");
+		data = new GridData();
+		data.horizontalSpan = 2;
+		hostLabel.setLayoutData(data);
 		
 		label = createLabel(composite, Policy.bind("CVSPropertiesPage.port"));
 		portLabel = createLabel(composite, "");
+		data = new GridData();
+		data.horizontalSpan = 2;
+		portLabel.setLayoutData(data);
 		
 		label = createLabel(composite, Policy.bind("CVSPropertiesPage.path"));
 		pathLabel = createLabel(composite, "");
+		data = new GridData();
+		data.horizontalSpan = 2;
+		pathLabel.setLayoutData(data);
 		
 		label = createLabel(composite, Policy.bind("CVSPropertiesPage.module"));
 		moduleLabel = createLabel(composite, "");
+		data = new GridData();
+		data.horizontalSpan = 2;
+		moduleLabel.setLayoutData(data);
+		
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.tag"));
+		tagLabel = createLabel(composite, "");
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		tagLabel.setLayoutData(data);
+		
+		Button changeTag = new Button(composite, SWT.PUSH);
+		data = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		changeTag.setLayoutData(data);
+		changeTag.setText(Policy.bind("CVSPropertiesPage.update"));
+		changeTag.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				UpdateWizard wizard = new UpdateWizard();
+				wizard.setProject(project);
+				WizardDialog dialog = new WizardDialog(getShell(), wizard);
+				dialog.open();
+				initializeTag();
+			}
+		});
 		
 		initializeValues();
 		passwordText.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {
 				passwordChanged = true;
+				connectionInfoChanged = true;
+			}
+		});
+		userText.addListener(SWT.Modify, new Listener() {
+			public void handleEvent(Event event) {
+				connectionInfoChanged = true;
+			}
+		});
+		methodType.addListener(SWT.Modify, new Listener() {
+			public void handleEvent(Event event) {
+				connectionInfoChanged = true;
 			}
 		});
 		return composite;
@@ -198,11 +256,35 @@ public class CVSPropertiesPage extends PropertyPage {
 		} catch (TeamException e) {
 			handle(e);
 		}
+		
+		initializeTag();
+	}
+	
+	private void initializeTag() {
+		provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(project);
+		if (provider == null) return;
+		CVSWorkspaceRoot cvsRoot = provider.getCVSWorkspaceRoot();
+		try {
+			ICVSFolder local = cvsRoot.getCVSFolderFor(project);
+			CVSTag tag = local.getFolderSyncInfo().getTag();
+			String tagName;
+			if (tag == null) {
+				tagName = "HEAD";
+			} else {
+				tagName = tag.getName();
+			}
+			tagLabel.setText(tagName);
+		} catch (TeamException e) {
+			handle(e);
+		}
 	}
 	/*
 	 * @see PreferencesPage#performOk
 	 */
 	public boolean performOk() {
+		if ( ! connectionInfoChanged) {
+			return true;
+		}
 		info.setUsername(userText.getText());
 		if (passwordChanged) {
 			info.setPassword(passwordText.getText());
