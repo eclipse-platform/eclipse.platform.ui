@@ -106,13 +106,16 @@ public class ListenerList {
 	}
 
 	/**
-	 * Returns an array containing all the registered listeners.
+	 * Returns an array containing all the registered listeners,
+	 * in the order in which they were added.
+	 * <p>
 	 * The resulting array is unaffected by subsequent adds or removes.
 	 * If there are no listeners registered, the result is an empty array
 	 * singleton instance (no garbage is created).
 	 * Use this method when notifying listeners, so that any modifications
 	 * to the listener list during the notification will have no effect on the
 	 * notification itself.
+	 * </p>
 	 *
 	 * @return the list of registered listeners
 	 */
