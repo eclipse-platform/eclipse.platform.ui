@@ -38,7 +38,13 @@
 			<fileset dir="${basedir}" includes="advanced/,basic/,WEB-INF/,*.css,*.html,*.js,*.jsp,plugin.properties,plugin.xml,webapp.properties" excludes="cpl-v10.html,notice.html,WEB-INF/classes/"/>
 		</copy>
 <!-- custom begin -->
-		<copy file="${basedir}/web.xml" todir="${destination.temp.folder}/${full.name}/WEB-INF" overwrite="true"/>
+		<loadfile
+			property="temp_web.xml"
+			srcFile="${temp.folder}/WEB-INF/lib/jsp.jar.src/temp_web.xml"/>
+		<replace
+			file="${destination.temp.folder}/${full.name}/WEB-INF/web.xml"
+			token="&lt;!-- placeholder for JSPs web.xml --&gt;"
+			value="${temp_web.xml}" />
 <!-- custom end -->
 	</target>
 
@@ -91,7 +97,7 @@
 			<arg value="-v3" />
 			<arg value="-d" /><arg value="${temp.folder}/WEB-INF/lib/jsp.jar.src" />
 			<arg value="-die" />
-			<arg value="-p" /><arg value="jsp"/>
+			<arg value="-p" /><arg value="org.eclipse.help.jsp"/>
 			<arg value="-webinc" /><arg value="${temp.folder}/WEB-INF/lib/jsp.jar.src/temp_web.xml" />
 			<arg value="-webapp" /><arg value="${basedir}" />
 		</java>

@@ -22,6 +22,8 @@
         <servlet-class>org.eclipse.help.servlet.LiveHelpServlet</servlet-class>
     </servlet>
         
+<!-- placeholder for JSPs web.xml -->
+
     <servlet-mapping>
         <servlet-name>control</servlet-name>
         <url-pattern>/control.html</url-pattern>
