@@ -617,6 +617,12 @@ public void refresh(boolean updateLabels) {
 
 /**
  * Refreshes this viewer starting with the given element.
+ * <p>
+ * Unlike the <code>update</code> methods, this handles structural changes
+ * to the given element (e.g. addition or removal of children).
+ * If only the given element needs updating, it is more efficient to use
+ * the <code>update</code> methods.
+ * </p>
  *
  * @param element the element
  */
@@ -632,6 +638,11 @@ public void refresh(final Object element) {
  * Refreshes this viewer starting with the given element.
  * Labels are updated as described in <code>refresh(boolean updateLabels)</code>.
  * <p>
+ * Unlike the <code>update</code> methods, this handles structural changes
+ * to the given element (e.g. addition or removal of children).
+ * If only the given element needs updating, it is more efficient to use
+ * the <code>update</code> methods.
+ * </p>
  * 
  * @param element the element
  * @param updateLabels <code>true</code> to update labels for existing elements,
@@ -874,7 +885,12 @@ protected void unmapElement(Object element, Widget item) {
 
 /**
  * Updates the given elements' presentation when one or more of their properties change.
- * Only the given elements are updated.
+ * Only the given elements are updated.  
+ * <p>
+ * This does not handle structural changes (e.g. addition or removal of elements),
+ * and does not update any other related elements (e.g. child elements).
+ * To handle structural changes, use the <code>refresh</code> methods instead.
+ * </p>
  * <p>
  * This should be called when an element has changed in the model, in order to have the viewer
  * accurately reflect the model.  This method only affects the viewer, not the model.
@@ -904,7 +920,12 @@ public void update(Object[] elements, String[] properties) {
 }
 /**
  * Updates the given element's presentation when one or more of its properties changes.
- * Children of the element are unaffected.
+ * Only the given element is updated.
+ * <p>
+ * This does not handle structural changes (e.g. addition or removal of elements),
+ * and does not update any other related elements (e.g. child elements).
+ * To handle structural changes, use the <code>refresh</code> methods instead.
+ * </p>
  * <p>
  * This should be called when an element has changed in the model, in order to have the viewer
  * accurately reflect the model.  This method only affects the viewer, not the model.
