@@ -319,7 +319,9 @@ class FastViewPane {
 	 * of the view itself.
 	 */
 	public void dispose() {
-		sash.dispose();
+		if (sash != null) {
+			sash.dispose();
+		}
 				
 		StackPresentation presentation = getPresentation();
 		if (presentation != null) {
