@@ -154,12 +154,10 @@ public final class ContentDescription implements IContentDescription {
 	public String toString() {
 		StringBuffer result = new StringBuffer("{"); //$NON-NLS-1$
 		if (keys != null)
-			if (keys instanceof QualifiedName)
+			if (keys instanceof QualifiedName) {
 				if (values != null)
 					result.append(keys + "=" + values); //$NON-NLS-1$
-				else
-					;
-			else {
+			} else {
 				QualifiedName[] tmpKeys = (QualifiedName[]) keys;
 				Object[] tmpValues = (Object[]) values;
 				boolean any = false;

@@ -94,22 +94,17 @@ public class OrderedLock implements ILock, ISchedulingRule {
 		boolean success = false;
 		if (delay <= 0)
 			return attempt();
-		else {
-			Semaphore semaphore = createSemaphore();
-			if (semaphore == null)
-				return true;
-			else {
-				if (DEBUG)
-					System.out.println("[" + Thread.currentThread() + "] Operation waiting to be executed... " + this); //$NON-NLS-1$ //$NON-NLS-2$
-
-				success = doAcquire(semaphore, delay);
-				manager.resumeSuspendedLocks(Thread.currentThread());
-				if (DEBUG && success)
-					System.out.println("[" + Thread.currentThread() + "] Operation started... " + this); //$NON-NLS-1$ //$NON-NLS-2$
-				else if (DEBUG)
-					System.out.println("[" + Thread.currentThread() + "] Operation timed out... " + this); //$NON-NLS-1$ //$NON-NLS-2$	
-			}
-		}
+		Semaphore semaphore = createSemaphore();
+		if (semaphore == null)
+			return true;
+		if (DEBUG)
+			System.out.println("[" + Thread.currentThread() + "] Operation waiting to be executed... " + this); //$NON-NLS-1$ //$NON-NLS-2$
+		success = doAcquire(semaphore, delay);
+		manager.resumeSuspendedLocks(Thread.currentThread());
+		if (DEBUG && success)
+			System.out.println("[" + Thread.currentThread() + "] Operation started... " + this); //$NON-NLS-1$ //$NON-NLS-2$
+		else if (DEBUG)
+			System.out.println("[" + Thread.currentThread() + "] Operation timed out... " + this); //$NON-NLS-1$ //$NON-NLS-2$	
 		return success;
 	}
 
