@@ -182,7 +182,7 @@ public class PluginParser extends DefaultHandler {
 				for (int i = 0; i < requires.size(); i++) {
 					if ("org.eclipse.ui".equals(requires.get(i))) { //$NON-NLS-1$
 						requires.add(i + 1, "org.eclipse.ui.workbench.texteditor;" + Constants.OPTIONAL_ATTRIBUTE + "=" + "true");
-						requires.add(i + 1, "org.eclipse.ui.jface.text;" + Constants.OPTIONAL_ATTRIBUTE + "=" + "true");
+						requires.add(i + 1, "org.eclipse.jface.text;" + Constants.OPTIONAL_ATTRIBUTE + "=" + "true");
 						requires.add(i + 1, "org.eclipse.ui.editors;" + Constants.OPTIONAL_ATTRIBUTE + "=" + "true");
 						requires.add(i + 1, "org.eclipse.ui.views;" + Constants.OPTIONAL_ATTRIBUTE + "=" + "true");
 						requires.add(i + 1, "org.eclipse.ui.ide;" + Constants.OPTIONAL_ATTRIBUTE + "=" + "true");
