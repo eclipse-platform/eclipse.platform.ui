@@ -15,6 +15,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
@@ -38,6 +42,8 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
@@ -45,6 +51,7 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.layout.CellLayout;
 import org.eclipse.ui.internal.layout.Row;
 import org.eclipse.ui.presentations.PresentationUtil;
+import org.osgi.framework.Bundle;
 
 /**
  * Represents the fast view bar.
@@ -70,7 +77,7 @@ public class FastViewBar implements IWindowTrim {
 	private Cursor moveCursor;
 	private MenuItem closeItem;
 	private MenuItem orientationItem;
-	private IntModel side = new IntModel(SWT.BOTTOM);
+	private IntModel side = new IntModel(getInitialSide());
 	private IntModel currentOrientation = new IntModel(SWT.VERTICAL);
 	private RadioMenu radioButtons;
 	private IViewReference selectedView;
@@ -106,7 +113,49 @@ public class FastViewBar implements IWindowTrim {
 			}
 		});
 	}
-	
+
+	/**
+	 * Returns the platform's idea of where the fast view bar should be docked in a fresh
+	 * workspace.  This value is meaningless after a workspace has been setup, since the
+	 * fast view bar state is then persisted in the workbench.  This preference is just
+	 * used for applications that want the initial docking location to be somewhere other
+	 * than bottom. 
+	 */
+	private static int getInitialSide() {
+	    String loc = Platform.getPreferencesService().getString(
+                PlatformUI.PLUGIN_ID,
+                IWorkbenchPreferenceConstants.INITIAL_FAST_VIEW_BAR_LOCATION,
+                "", //$NON-NLS-1$
+                null);
+
+        if (IWorkbenchPreferenceConstants.BOTTOM.equals(loc))
+                return SWT.BOTTOM;
+        if (IWorkbenchPreferenceConstants.LEFT.equals(loc))
+                return SWT.LEFT;
+        if (IWorkbenchPreferenceConstants.RIGHT.equals(loc))
+                return SWT.RIGHT;
+
+        Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
+        if (bundle != null) {
+            IStatus status = new Status(
+                    IStatus.WARNING,
+                    PlatformUI.PLUGIN_ID,
+                    IStatus.WARNING,
+                    "Invalid value for " //$NON-NLS-1$
+                            + PlatformUI.PLUGIN_ID + "/" //$NON-NLS-1$
+                            + IWorkbenchPreferenceConstants.INITIAL_FAST_VIEW_BAR_LOCATION
+                            + " preference.  Value \"" + loc //$NON-NLS-1$
+                            + "\" should be one of \"" //$NON-NLS-1$
+                            + IWorkbenchPreferenceConstants.LEFT + "\", \"" //$NON-NLS-1$
+                            + IWorkbenchPreferenceConstants.BOTTOM + "\", or \"" //$NON-NLS-1$
+                            + IWorkbenchPreferenceConstants.RIGHT + "\".", null); //$NON-NLS-1$
+            Platform.getLog(bundle).log(status);
+        }
+
+	    // use bottom as the default-default
+        return SWT.BOTTOM;
+	}
+
 	/**
 	 * @param selectedView2
 	 * @param object

@@ -139,4 +139,35 @@ public interface IWorkbenchPreferenceConstants {
 	 * @since 3.0
 	 */
 	public static final String PRESENTATION_FACTORY_ID = "presentationFactoryId"; //$NON-NLS-1$
+
+	/**
+	 * A preference value indicating where the fast view bar should be docked in a
+	 * fresh workspace.  This preference is meaningless after a workspace has been
+	 * setup, since the fast view bar state is then persisted in the workbench.  This
+	 * preference is intended for applications that want the initial docking location
+	 * to be somewhere specific.  The default value (when this preference is not set)
+	 * is the bottom.
+	 */ 
+	public static final String INITIAL_FAST_VIEW_BAR_LOCATION = "initialFastViewBarLocation"; //$NON-NLS-1$
+
+	/**
+	 * Setting the INITIAL_FAST_VIEW_BAR_LOCATION preference to this value will cause
+	 * the fast view bar to be docked on the bottom of a fresh workspace.
+	 * @see #INITIAL_FAST_VIEW_BAR_LOCATION
+	 */
+	public static final String BOTTOM = "bottom"; //$NON-NLS-1$
+
+	/**
+	 * Setting the INITIAL_FAST_VIEW_BAR_LOCATION preference to this value will cause
+	 * the fast view bar to be docked on the left of a fresh workspace.
+	 * @see #INITIAL_FAST_VIEW_BAR_LOCATION
+	 */
+	public static final String LEFT = "left"; //$NON-NLS-1$
+
+	/**
+	 * Setting the INITIAL_FAST_VIEW_BAR_LOCATION preference to this value will cause
+	 * the fast view bar to be docked on the right of a fresh workspace.
+	 * @see #INITIAL_FAST_VIEW_BAR_LOCATION
+	 */
+	public static final String RIGHT = "right"; //$NON-NLS-1$
 }

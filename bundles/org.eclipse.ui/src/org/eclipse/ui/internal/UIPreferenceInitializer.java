@@ -41,7 +41,12 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, false);
 
 		store.setDefault(IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID, "org.eclipse.ui.presentations.default"); //$NON-NLS-1$
-		
+
+		// the fast view bar should be on the bottom of a fresh workspace
+		store.setDefault(
+                IWorkbenchPreferenceConstants.INITIAL_FAST_VIEW_BAR_LOCATION,
+                IWorkbenchPreferenceConstants.BOTTOM);
+
 		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
     }
 
