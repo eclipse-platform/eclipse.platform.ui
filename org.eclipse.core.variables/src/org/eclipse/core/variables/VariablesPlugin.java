@@ -11,6 +11,7 @@
 
 package org.eclipse.core.variables;
 
+import org.eclipse.core.internal.variables.StringVariableManager;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
@@ -70,7 +71,26 @@ public class VariablesPlugin extends Plugin {
 	 * @param t throwable to log 
 	 */
 	public static void log(Throwable t) {
-		IStatus status= new Status(IStatus.ERROR, PI_CORE_VARIABLES, INTERNAL_ERROR, "Error logged from Core Variables: ", t); //$NON-NLS-1$
+		log(new Status(IStatus.ERROR, PI_CORE_VARIABLES, INTERNAL_ERROR, "Error logged from Core Variables: ", t)); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Logs the given message with this plug-in's log and the given
+	 * throwable or <code>null</code> if none.
+	 * @param message the message to log
+	 * @param throwable the exception that occurred or <code>null</code> if none
+	 */
+	public static void logMessage(String message, Throwable throwable) {
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, message, throwable));
+	}
+	
+	/**
+	 * Logs the specified status with this plug-in's log.
+	 * 
+	 * @param status status to log
+	 * @since 2.0
+	 */
+	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
 	
@@ -86,4 +106,15 @@ public class VariablesPlugin extends Plugin {
 		}
 		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
+	
+	/**
+	 * Returns the string variable manager.
+	 * 
+	 * @return the string variable manager
+	 * @since 3.0
+	 */
+	public IStringVariableManager getStringVariableManager() {
+		return StringVariableManager.getDefault();
+	}
+	
 }

@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
+   id="org.eclipse.core.variables"
    name="%pluginName"
    version="3.0.0"
    provider-name="%providerName"
-   id="org.eclipse.core.variables"
-   class= "org.eclipse.core.variables.VariablesPlugin">
+   class="org.eclipse.core.variables.VariablesPlugin">
 
    <runtime>
    </runtime>
+
+   <extension-point id="valueVariables" name="%valueVariablesExtensionPointName" schema="schema/valueVariables.exsd"/>
+   <extension-point id="dynamicVariables" name="%dynamicVariablesExtensionPointName" schema="schema/dynamicVariables.exsd"/>
 
 </plugin>
