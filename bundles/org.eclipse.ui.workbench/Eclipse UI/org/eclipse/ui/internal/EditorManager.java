@@ -27,6 +27,7 @@ import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.part.*;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
 
@@ -249,7 +250,7 @@ public class EditorManager {
 	/*
 	 * Answer the editor registry.
 	 */
-	private IEditorRegistry getEditorRegistry() {
+	private static IEditorRegistry getEditorRegistry() {
 		return WorkbenchPlugin.getDefault().getEditorRegistry();
 	}
 	/*
@@ -650,12 +651,12 @@ public class EditorManager {
 		}
 	}
 	
-	private ImageDescriptor findImage(EditorDescriptor desc,IFile file) {
+	public static ImageDescriptor findImage(EditorDescriptor desc,IFile file) {
 		ImageDescriptor iDesc;
 		if(desc != null) {
 			iDesc = desc.getImageDescriptor();
 		} else if(file != null && (testForSystemEditor(file) || ComponentSupport.testForOleEditor(file))) {
-			iDesc = PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(file);;
+			iDesc = PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(file);
 		} else {
 			// There is no registered editor.  
 			// Use the default text editor's.
@@ -1121,7 +1122,7 @@ public class EditorManager {
 	 * Answer true if a system editor exists for the input file.
 	 * @see openSystemEditor.
 	 */
-	private boolean testForSystemEditor(IFile input) {
+	private static boolean testForSystemEditor(IFile input) {
 		String strName = input.getName();
 		int nDot = strName.lastIndexOf('.');
 		if (nDot >= 0) {
@@ -1215,6 +1216,18 @@ public class EditorManager {
 		}			
 		public IMemento getMemento() {
 			return editorMemento;
+		}
+		public ImageDescriptor getImageDescriptor() {
+			if(imageDescriptor == null && part != null) {
+				EditorSite site = (EditorSite)part.getSite();
+				EditorDescriptor desc = site.getEditorDescriptor();
+				IEditorInput input = ((EditorPart)part).getEditorInput();
+				IFile file = null;
+				if (input instanceof IFileEditorInput)
+					file = ((IFileEditorInput)input).getFile();
+				imageDescriptor = findImage(desc,null);
+			}
+			return imageDescriptor;
 		}
 		public boolean isDirty() {
 			if(part == null)

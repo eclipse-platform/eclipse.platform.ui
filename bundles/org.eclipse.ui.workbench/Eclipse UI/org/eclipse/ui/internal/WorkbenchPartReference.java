@@ -22,7 +22,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 	private String title;
 	private String tooltip;
 	private Image image;
-	private ImageDescriptor imageDescritor;
+	protected ImageDescriptor imageDescriptor;
 	private ListenerList propChangeListeners = new ListenerList(2);		
 	
 	public WorkbenchPartReference() {
@@ -31,7 +31,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 		this.id = id;
 		this.title = title;
 		this.tooltip = tooltip;
-		this.imageDescritor = desc;
+		this.imageDescriptor = desc;
 	}
 	public void releaseReferences() {
 		id = null;
@@ -41,12 +41,11 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 		if(part != null)
 			part.getTitleImage();
 		ReferenceCounter imageCache = WorkbenchImages.getImageCache();
-		Image image = (Image)imageCache.get(imageDescritor);
+		Image image = (Image)imageCache.get(imageDescriptor);
 		if(image != null) {
-			imageCache.removeRef(imageDescritor);
+			imageCache.removeRef(imageDescriptor);
 		}
 		image = null;
-		imageDescritor = null;
 	}
 	/**
 	 * @see IWorkbenchPart
@@ -94,13 +93,13 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 		if(image != null)
 			return image;
 		ReferenceCounter imageCache = WorkbenchImages.getImageCache();
-		image = (Image)imageCache.get(imageDescritor);
+		image = (Image)imageCache.get(imageDescriptor);
 		if(image != null) {
-			imageCache.addRef(imageDescritor);
+			imageCache.addRef(imageDescriptor);
 			return image;
 		}
-		image = imageDescritor.createImage();
-		imageCache.put(imageDescritor,image);
+		image = imageDescriptor.createImage();
+		imageCache.put(imageDescriptor,image);
 		return image;		
 	}	
 	public void setPart(IWorkbenchPart part) {
@@ -132,18 +131,25 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 		if(result == null)
 			result = pane;
 		return result;
-	}	
+	}
+	public ImageDescriptor getImageDescriptor() {
+		return imageDescriptor;
+	}
 	public void dispose() {
-		if(image != null && imageDescritor != null) {
+		if(image != null && imageDescriptor != null) {
 			ReferenceCounter imageCache = WorkbenchImages.getImageCache();
 			if(image != null) {
-				int count = imageCache.removeRef(imageDescritor);
+				int count = imageCache.removeRef(imageDescriptor);
 				if(count <= 0)
 					image.dispose();				
 			}
-			imageDescritor = null;
+			imageDescriptor = null;
 			image = null;
 		}
 	}	
 	public abstract String getRegisteredName();
+	
+	public IMemento getMemento() {
+		return null;
+	}
 }
