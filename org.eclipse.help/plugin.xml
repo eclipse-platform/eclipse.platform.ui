@@ -24,14 +24,20 @@
       </library>
    </runtime>
 
-   <!-- For remote install, run this application -->
-   <!-- ======================================== -->
-   <extension id="servletFacade" point="org.eclipse.core.runtime.applications">
-     <application> 
-        <run class="org.eclipse.help.internal.remote.ServletFacade">
-        </run>
-     </application>
-   </extension>
+   <!-- ========================================================================== -->
+   <!-- Extension point: org.eclipse.help.topics                                   -->
+   <!-- Purpose: Extension point for registering documentation components          -->
+   <!--          by individual plugins                                             -->
+   <!-- Extension Implementation: must provide one or more topics files for        -->
+   <!--                           documentation navigation, and linking            -->
+   <!-- Sample usage:                                                              -->
+   <!--   <extension point="org.eclipse.help.topics">                              -->
+   <!--	  	<topics href="infoTopics.xml"/>                                    -->
+   <!--	  	<require href="../mainDocPluing/categories.xml"/>                  -->
+   <!--   </extension>                                                             -->
+   <!-- ========================================================================== -->
+   <extension-point id="topics" name="%topics_extention_point_name"/>
+
 
    <!-- ========================================================================== -->
    <!-- Extension point: org.eclipse.help.support                              -->
