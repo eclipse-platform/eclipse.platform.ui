@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -152,27 +153,22 @@ final class CommandWrapper implements ICommand {
 	 */
 	public final List getKeySequenceBindings() {
 		// TODO Make this go faster.
-		final List bindings = new ArrayList();
-		final Map allBindings = bindingManager.getActiveBindings();
-		if (allBindings == null) {
-			return bindings;
-		}
-
-		final Iterator allBindingItr = allBindings.entrySet().iterator();
-		while (allBindingItr.hasNext()) {
-			final Map.Entry entry = (Map.Entry) allBindingItr.next();
-			final String commandId = (String) entry.getValue();
-			if (getId().equals(commandId)) {
-				try {
-					bindings.add(new KeySequenceBinding(KeySequence
-							.getInstance(entry.getKey().toString()), 0));
-				} catch (final ParseException e) {
-					// Oh, well....
-				}
+		final List legacyBindings = new ArrayList();
+		final Collection activeBindings = bindingManager
+				.getActiveBindingsFor(command.getId());
+		final Iterator activeBindingItr = activeBindings.iterator();
+		while (activeBindingItr.hasNext()) {
+			final String formalRepresentation = activeBindingItr.next()
+					.toString();
+			try {
+				legacyBindings.add(new KeySequenceBinding(KeySequence
+						.getInstance(formalRepresentation), 0));
+			} catch (final ParseException e) {
+				// Oh, well...
 			}
 		}
 
-		return bindings;
+		return legacyBindings;
 	}
 
 	/*
