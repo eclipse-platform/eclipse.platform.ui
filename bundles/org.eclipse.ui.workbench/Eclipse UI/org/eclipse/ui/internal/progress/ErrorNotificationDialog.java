@@ -59,7 +59,7 @@ public class ErrorNotificationDialog extends Dialog {
 	public ErrorNotificationDialog(Shell parentShell) {
 		super(parentShell);
 		setBlockOnOpen(false);
-		setShellStyle(SWT.CLOSE | SWT.MODELESS | SWT.BORDER | SWT.TITLE);
+		setShellStyle(SWT.CLOSE | SWT.MODELESS | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
 	}
 
 	/* (non-Javadoc)
@@ -103,6 +103,8 @@ public class ErrorNotificationDialog extends Dialog {
 		initContentProvider();
 		initLabelProvider();
 		initContextMenu();
+		
+		applyDialogFont(parent);
 		return topArea;
 	}
 
