@@ -73,6 +73,8 @@ public class ProgressMonitorPart extends Composite implements IProgressMonitorWi
 	/**
 	 * Attaches the progress monitor part to the given cancel
 	 * component. 
+	 * @param cancelComponent the control whose selection will
+	 * trigger a cancel
 	 */
 	public void attachToCancelComponent(Control cancelComponent) {
 		Assert.isNotNull(cancelComponent);
@@ -105,6 +107,8 @@ public class ProgressMonitorPart extends Composite implements IProgressMonitorWi
 	 * Escapes any occurrence of '&' in the given String so that
 	 * it is not considered as a mnemonic
 	 * character in SWT ToolItems, MenuItems, Button and Labels.
+	 * @param in the original String
+	 * @return The converted String
 	 */
 	protected static String escapeMetaCharacters(String in) {
 		if (in == null || in.indexOf('&') < 0)
@@ -124,6 +128,8 @@ public class ProgressMonitorPart extends Composite implements IProgressMonitorWi
 	 * Creates the progress monitor's UI parts and layouts them
 	 * according to the given layout. If the layou is <code>null</code>
 	 * the part's default layout is used.
+	 * @param layout The layoutfor the receiver.
+	 * @param progressIndicatorHeight The suggested height of the indicator
 	 */
 	protected void initialize(Layout layout, int progressIndicatorHeight) {
 		if (layout == null) {
@@ -168,8 +174,9 @@ public class ProgressMonitorPart extends Composite implements IProgressMonitorWi
 		return fIsCanceled;
 	}
 	/**
-	 * Detached the progress monitor part to the given cancel
+	 * Detach the progress monitor part from the given cancel
 	 * component
+	 * @param cc
 	 */
 	public void removeFromCancelComponent(Control cc) {
 		Assert.isTrue(fCancelComponent == cc && fCancelComponent != null);
@@ -191,16 +198,17 @@ public class ProgressMonitorPart extends Composite implements IProgressMonitorWi
 		fLabel.setFont(font);
 		fProgressIndicator.setFont(font);
 	}
-	/**
-	 * @see IProgressMonitor#setTaskName(java.lang.String)
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
 	 */
 	public void setTaskName(String name) {
 		fTaskName= name;
 		updateLabel();
 	}
-	/**
-	 * Implements <code>IProgressMonitor.subTask</code>.
-	 * @see IProgressMonitor#subTask(java.lang.String)
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
 	 */
 	public void subTask(String name) {
 		fSubTaskName= name;
@@ -226,7 +234,7 @@ public class ProgressMonitorPart extends Composite implements IProgressMonitorWi
 
 	/**
 	 * Return the label for showing tasks
-	 * @return
+	 * @return String
 	 */
 	private String taskLabel() {
 		String text = fSubTaskName == null ? "" : fSubTaskName; //$NON-NLS-1$

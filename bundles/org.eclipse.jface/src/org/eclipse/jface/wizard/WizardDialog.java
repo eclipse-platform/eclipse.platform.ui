@@ -343,8 +343,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 			cancelButton.setEnabled(false);
 		}
 	}
-	/* (non-Javadoc)
-	 * Method declared on Dialog.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	public boolean close() {
 		if (okToClose())
@@ -479,6 +480,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 	 * Create the progress monitor part in the receiver.
 	 * @param composite
 	 * @param pmlayout
+	 * @return ProgressMonitorPart
 	 */
 	protected ProgressMonitorPart createProgressMonitorPart(Composite composite, GridLayout pmlayout) {
 		return new ProgressMonitorPart(composite, pmlayout, SWT.DEFAULT) {
@@ -526,6 +528,8 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 	}
 	/**
 	 * Creates the container that holds all pages.
+	 * @param parent
+	 * @return Composite
 	 */
 	private Composite createPageContainer(Composite parent) {
 		Composite result = new Composite(parent, SWT.NULL);
@@ -582,6 +586,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 	}
 	/**
 	 * Creates and return a new wizard closing dialog without openiong it.
+	 * @return MessageDalog
 	 */
 	private MessageDialog createWizardClosingDialog() {
 		MessageDialog result = new MessageDialog(getShell(), JFaceResources
@@ -760,7 +765,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 	 * @param key the key
 	 * @param enabled <code>true</code> to enable the control, 
 	 *   and <code>false</code> to disable it
-	 * @see #restoreEnableStateAndSet
+	 * @see #restoreEnableState(Control, Map, String)
 	 */
 	private void saveEnableStateAndSet(Control w, Map h, String key, boolean enabled) {
 		if (w != null) {
@@ -1091,7 +1096,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 	 * Computes the correct dialog size for the given wizard and resizes 
 	 * its shell if nessessary.
 	 *
-	 * @param wizard the wizard
+	 * @param sizingWizard the wizard
 	 */
 	private void updateSizeForWizard(IWizard sizingWizard) {
 		Point delta = new Point(0, 0);
