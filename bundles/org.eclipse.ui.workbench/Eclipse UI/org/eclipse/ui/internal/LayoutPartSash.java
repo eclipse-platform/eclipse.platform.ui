@@ -178,10 +178,10 @@ class LayoutPartSash extends LayoutPart {
 		x -= nodeBounds.x;
 		y -= nodeBounds.y;
 		if (style == SWT.VERTICAL) {
-			setSizes(x, nodeBounds.width - x);
+			setSizes(x, nodeBounds.width - x - LayoutTreeNode.SASH_WIDTH);
 			//setRatio((float)(x - nodeBounds.x)/(float)nodeBounds.width);
 		} else {
-			setSizes(y, nodeBounds.height - y);
+			setSizes(y, nodeBounds.height - y - LayoutTreeNode.SASH_WIDTH);
 			//setRatio((float)(y - nodeBounds.y)/(float)nodeBounds.height);
 		}
 

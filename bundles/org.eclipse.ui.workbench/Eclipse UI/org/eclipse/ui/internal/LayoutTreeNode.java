@@ -31,7 +31,7 @@ public class LayoutTreeNode extends LayoutTree {
 	/* The node children witch may be another node or a leaf */
 	private LayoutTree children[] = new LayoutTree[2];
 	/* The sash's width when vertical and hight on horizontal */
-	private final static int SASH_WIDTH = 3;
+	final static int SASH_WIDTH = 3;
 /**
  * Initialize this tree with its sash.
  */
