@@ -211,7 +211,7 @@ public abstract class ModelObject {
 		String s = string.trim();
 		
 		if (s.equals(""))
-			return s;
+			return string;
 	
 		if (!s.startsWith(KEY_PREFIX)) 
 			return string;
