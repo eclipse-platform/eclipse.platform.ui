@@ -427,13 +427,9 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 *   getCharset(true);
 	 * </pre>
 	 * </p><p>
-	 * <b>Note 1</b>:  this method does not check whether the result is a supported
+	 * <b>Note</b>:  this method does not check whether the result is a supported
 	 * charset name. Callers should be prepared to handle 
 	 * <code>UnsupportedEncodingException</code> where this charset is used. 
-	 * </p><p>
-	 * TODO: remove this note before 3.0 release
-	 * <b>Note 2</b>: This method is part of early access API that may well 
-	 * change in incompatible ways until it reaches its finished form. 
 	 * </p>
 	 *  
 	 * @return the name of a charset
@@ -462,13 +458,9 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <code>IContainer#getDefaultCharset</code>).</li>
 	 * </ol>
 	 * </p><p>
-	 * <b>Note 1</b>:  this method does not check whether the result is a supported
+	 * <b>Note</b>:  this method does not check whether the result is a supported
 	 * charset name. Callers should be prepared to handle 
 	 * <code>UnsupportedEncodingException</code> where this charset is used. 
-	 * </p><p>
-	 * TODO: remove this note before 3.0 release
-	 * <b>Note 2</b>: This method is part of early access API that may well 
-	 * change in incompatible ways until it reaches its finished form. 
 	 * </p>
 	 *  
 	 * @return the name of a charset, or <code>null</code>
@@ -644,11 +636,6 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 
 	/**
 	 * Sets the charset for this file.
-	 * <p>
-	 * TODO: remove before 3.0 release
-	 * <b>Note</b>: This method is part of early access API that may well 
-	 * change in incompatible ways until it reaches its finished form. 
-	 * </p> 
 	 * 
 	 * @param newCharset a charset name, or <code>null</code>
 	 * @throws CoreException if this method fails. Reasons include:

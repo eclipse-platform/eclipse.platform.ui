@@ -20,10 +20,6 @@ import org.eclipse.core.runtime.CoreException;
  * contents. 
  * </p><p>
  * Clients may implement this interface.
- * </p><p>
- * TODO: remove this note before 3.0 release
- * <b>Note</b>: This interface is part of early access API that may well 
- * change in incompatible ways until it reaches its finished form. 
  * </p>
  * 
  * @since 3.0
@@ -34,13 +30,9 @@ public interface IEncodedStorage extends IStorage {
 	 * storage's contents into characters. Returns <code>null</code> if a proper 
 	 * encoding cannot be determined.
 	 * <p>
-	 * <b>Note 1</b>:  this method does not check whether the result is a supported
+	 * Note that this method does not check whether the result is a supported
 	 * charset name. Callers should be prepared to handle 
 	 * <code>UnsupportedEncodingException</code> where this charset is used. 
-	 * </p><p>
-	 * TODO: remove this note before 3.0 release
-	 * <b>Note 2</b>: This method is part of early access API that may well 
-	 * change in incompatible ways until it reaches its finished form. 
 	 * </p>
 	 *
 	 * @return the name of a charset, or <code>null</code>

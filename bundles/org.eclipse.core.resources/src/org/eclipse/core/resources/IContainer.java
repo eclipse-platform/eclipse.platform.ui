@@ -176,13 +176,9 @@ public interface IContainer extends IResource, IAdaptable {
 	 *   getDefaultCharset(true);
 	 * </pre>
 	 * </p><p>
-	 * <b>Note 1</b>:  this method does not check whether the result is a supported
+	 * Note that  this method does not check whether the result is a supported
 	 * charset name. Callers should be prepared to handle 
 	 * <code>UnsupportedEncodingException</code> where this charset is used. 
-	 * </p><p>
-	 * TODO: remove this note before 3.0 release
-	 * <b>Note 2</b>: This method is part of early access API that may well 
-	 * change in incompatible ways until it reaches its finished form. 
 	 * </p>
 	 *
 	 * @return the name of the default charset encoding for this container 
@@ -211,13 +207,9 @@ public interface IContainer extends IResource, IAdaptable {
 	 * <li>the charset returned by ResourcesPlugin#getEncoding.</li> 
 	 * </ol>
 	 *  </p><p>
-	 * <b>Note 1</b>:  this method does not check whether the result is a supported
+	 * Note that  this method does not check whether the result is a supported
 	 * charset name. Callers should be prepared to handle 
 	 * <code>UnsupportedEncodingException</code> where this charset is used. 
-	 * </p><p>
-	 * TODO: remove this note before 3.0 release
-	 * <b>Note 2</b>: This method is part of early access API that may well 
-	 * change in incompatible ways until it reaches its finished form. 
 	 * </p>
 	 * @return the name of the default charset encoding for this container,
 	 * or <code>null</code> 
@@ -398,10 +390,6 @@ public interface IContainer extends IResource, IAdaptable {
 
 	/**
 	 * Sets the default charset for this container.
-	 * <p>
-	 * <b>Note</b>: This method is part of early access API that may well 
-	 * change in incompatible ways until it reaches its finished form. 
-	 * </p>
 	 *
 	 * @param charset a charset string, or <code>null</code>
 	 * @throws CoreException if this method fails Reasons include:
