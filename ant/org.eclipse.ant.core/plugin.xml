@@ -13,6 +13,7 @@
    <runtime>
      <library name="antsupport.jar">
        <export name="*"/>
+       <packages prefixes="org.eclipse.ant"/>
      </library>
    </runtime>
 
