@@ -110,7 +110,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	protected ReplaceDialog2(Shell parentShell, IFile[] entries, FileSearchPage page) {
 		super(parentShell);
 		Assert.isNotNull(entries);
-		Assert.isNotNull(fPage.getInput());
+		Assert.isNotNull(page.getInput());
 		fPage= page;
 		fMarkers= new ArrayList();
 		initializeMarkers(entries);
