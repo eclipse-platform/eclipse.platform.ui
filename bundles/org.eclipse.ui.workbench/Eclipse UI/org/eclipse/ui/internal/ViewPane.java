@@ -26,6 +26,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -603,7 +604,18 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 */
 	void setActive(boolean active){
 		if(getContainer() instanceof PartTabFolder){
-			((PartTabFolder) getContainer()).setBorderVisible(active);
+			((PartTabFolder) getContainer()).setActive(active);
+		}
+		if (active) {
+			Color color = WorkbenchColors.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+			getControl().setBackground(color);
+			viewToolBar.setBackground(color);
+			isvToolBar.setBackground(color);
+		} else {
+			Color color = JFaceColors.getTabFolderSelectionBackground(isvToolBar.getDisplay());
+			getControl().setBackground(color);
+			viewToolBar.setBackground(color);
+			isvToolBar.setBackground(color);
 		}
 	}
 
@@ -618,10 +630,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		//		CTabFolder2 f = (CTabFolder2) tf.getControl();
 		//		f.setBorderVisible(inFocus);
 		//	}
-//		if (inFocus)
-//			showToolBarShell();
-//		else
-//			hideToolBarShell();
 		setActive(inFocus);
 
 	}

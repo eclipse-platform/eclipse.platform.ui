@@ -14,12 +14,12 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
@@ -210,26 +210,14 @@ public abstract class EditorWorkbook
 
 		switch (activeState) {
 			case ACTIVE_FOCUS :
-				if (getShellActivated()) {
-					
-					fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
-					bgColors[0] =
-						getControl().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-					//				WorkbenchColors.getActiveEditorGradient();
-					//				bgPercents = WorkbenchColors.getActiveEditorGradientPercents();
-				} else {
-					fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
-					bgColors[0] =
-						getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
-					//				bgPercents = WorkbenchColors.getDeactivatedEditorGradientPercents();
-				}
+				fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+				bgColors[0] = WorkbenchColors.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 				break;
 			case ACTIVE_NOFOCUS :
-				fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
-				bgColors[0] = getControl().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-
-				break;
 			case INACTIVE :
+				fgColor = JFaceColors.getTabFolderSelectionForeground(getControl().getDisplay());
+				bgColors[0] = JFaceColors.getTabFolderSelectionBackground(getControl().getDisplay());
+				break;
 			default :
 				fgColor = null;
 				bgColors[0] = null;

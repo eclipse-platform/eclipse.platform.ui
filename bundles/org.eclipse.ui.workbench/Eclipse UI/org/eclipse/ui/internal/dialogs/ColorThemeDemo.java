@@ -102,7 +102,6 @@ public class ColorThemeDemo {
 		CLabel clabel = new CLabel(sampleComposite, SWT.NONE);
 		clabel.setText("Status Text");
 		clabel.setData(new GridData(GridData.FILL_HORIZONTAL));
-		ColorSchemeService.setStatusColors(clabel);
 		
 		resetColors();
 	}

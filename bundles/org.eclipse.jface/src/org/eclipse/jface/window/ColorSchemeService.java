@@ -12,12 +12,8 @@ package org.eclipse.jface.window;
 
 import org.eclipse.jface.resource.JFaceColors;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CBanner;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -93,9 +89,6 @@ public class ColorSchemeService {
 		control.setForeground(JFaceColors.getTabFolderForeground(d));
 		control.setSelectionBackground(JFaceColors.getTabFolderSelectionBackground(d));
 		control.setSelectionForeground(JFaceColors.getTabFolderSelectionForeground(d));
-		
-		control.setBorderColor(d.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
-
 	}
 
 	static void setCompositeColors(Composite control) {
@@ -103,17 +96,6 @@ public class ColorSchemeService {
 		for (int i = 0; i < children.length; i++) {
 			setSchemeColors(children[i]);
 		}
-	}
-
-	/**
-	 * @param clabel
-	 */
-	public static void setStatusColors(CLabel clabel) {
-		Color[] colors = new Color[2];
-		colors[0] = clabel.getParent().getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
-		colors[1] = clabel.getBackground();
-		int[] gradient = new int[] {JFaceColors.STATUS_PERCENT};
-		clabel.setBackground(colors, gradient);
 	}
 
 	/**

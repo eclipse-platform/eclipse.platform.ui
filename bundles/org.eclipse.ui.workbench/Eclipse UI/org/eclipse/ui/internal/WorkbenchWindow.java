@@ -589,10 +589,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		super.configureShell(shell);
 		
 		//Reset the colors for ViewForms
-		ViewForm.borderInsideRGB = 
-			JFaceColors.getTabFolderSelectionBackground(shell.getDisplay()).getRGB();
-		
-		
+		// removed temporarily
+//		ViewForm.borderInsideRGB = 
+//			JFaceColors.getTabFolderSelectionBackground(shell.getDisplay()).getRGB();
+//		
 		WorkbenchHelp.setHelp(shell, IHelpContextIds.WORKBENCH_WINDOW);
 
 		trackShellActivation(shell);

@@ -37,11 +37,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.window.ColorSchemeService;
 import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.ui.internal.registry.IViewDescriptor;
@@ -998,10 +998,18 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	}
 	
 	/**
-	 * Set the border visibility on the tab folder.
-	 * @param visible
+	 * Set the active appearence on the tab folder.
+	 * @param active
 	 */
-	public void setBorderVisible(boolean visible){
-		tabFolder.setBorderVisible(visible);
+	public void setActive(boolean active){
+		tabFolder.setBorderVisible(active);
+		if (active) {
+			tabFolder.setSelectionBackground(WorkbenchColors.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+			tabFolder.setSelectionForeground(WorkbenchColors.getSystemColor(SWT.COLOR_INFO_FOREGROUND));	
+		} else {
+			tabFolder.setSelectionBackground(JFaceColors.getTabFolderSelectionBackground(tabFolder.getDisplay()));
+			tabFolder.setSelectionForeground(JFaceColors.getTabFolderSelectionForeground(tabFolder.getDisplay()));	
+		
+		}		
 	}
 }
