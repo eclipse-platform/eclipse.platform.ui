@@ -20,9 +20,6 @@ import java.util.*;
 
 /**
  * The launcher for Eclipse.
- * TODO fill in the rest of the doc here relating to command line args and system props.
- * Most of the content will atually go in the User and ISV doc but special/internal things will be 
- * documented here.
  */
 public class Main {
 	/**
