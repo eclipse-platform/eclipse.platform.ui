@@ -23,12 +23,11 @@ public interface IDecoratorManager extends ILabelDecorator {
 	ILabelDecorator getLabelDecorator();
 
 	/**
-	 * Returns the label decorator for the specified decoratorID if it
-	 * exists.
+	 * Returns the label decorator for the specified decoratorId if it
+	 * exists. Otherwise return null.
 	 * 
 	 * @return ILabelDecorator
 	 * @param decoratorId String
-	 * @see DecoratingLabelProvider
 	 */
 	ILabelDecorator getLabelDecorator(String decoratorId);
 
@@ -52,10 +51,8 @@ public interface IDecoratorManager extends ILabelDecorator {
 	void setEnabled(String decoratorId, boolean enabled) throws CoreException;
 
 	/**
-	 * Reset the cachedDecorators and fire listeners as
-	 * the enabled state of some decorators has changed.
-	 * Also store the currently enabled decorators as
-	 * a workbench preference.
+	 * Fire listeners as enabled state of some decorators has changed.
+	 * @deprecated use getLabelDecorator().fireListeners(LabelProviderChangedEvent);
 	 */
 	public void reset();
 }
