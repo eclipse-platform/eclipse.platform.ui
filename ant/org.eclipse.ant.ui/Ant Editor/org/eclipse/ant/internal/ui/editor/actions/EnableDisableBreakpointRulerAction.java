@@ -24,7 +24,7 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 	public EnableDisableBreakpointRulerAction(ITextEditor editor, IVerticalRulerInfo info) {
 		setInfo(info);
 		setTextEditor(editor);
-		setText("&Enable Breakpoint");
+		setText(AntEditorActionMessages.getString("EnableDisableBreakpointRulerAction.0")); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -35,7 +35,7 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 			try {
 				getBreakpoint().setEnabled(!getBreakpoint().isEnabled());
 			} catch (CoreException e) {
-				ErrorDialog.openError(getTextEditor().getEditorSite().getShell(), "Enabling/Disabling Breakpoints", "Exception(s) occurred enabling/disabling the breakpoint", e.getStatus());
+				ErrorDialog.openError(getTextEditor().getEditorSite().getShell(), AntEditorActionMessages.getString("EnableDisableBreakpointRulerAction.1"), AntEditorActionMessages.getString("EnableDisableBreakpointRulerAction.2"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -52,7 +52,7 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 		setEnabled(true);
 		try {
 			boolean enabled= getBreakpoint().isEnabled();
-			setText(enabled ? "&Disable Breakpoint": "&Enable Breakpoint");
+			setText(enabled ? AntEditorActionMessages.getString("EnableDisableBreakpointRulerAction.3"): AntEditorActionMessages.getString("EnableDisableBreakpointRulerAction.4")); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (CoreException ce) {
 			AntUIPlugin.log(ce);
 		}

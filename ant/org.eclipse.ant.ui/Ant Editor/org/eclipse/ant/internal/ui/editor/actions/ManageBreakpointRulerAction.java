@@ -46,7 +46,7 @@ public class ManageBreakpointRulerAction extends Action {
 	private ToggleLineBreakpointAction fBreakpointAdapter;
 
 	public ManageBreakpointRulerAction(IVerticalRulerInfo ruler, ITextEditor editor) {
-		super("Toggle &Breakpoint");
+		super(AntEditorActionMessages.getString("ManageBreakpointRulerAction.0")); //$NON-NLS-1$
 		fRuler= ruler;
 		fTextEditor= editor;
 		fBreakpointAdapter = new ToggleLineBreakpointAction();
@@ -121,7 +121,7 @@ public class ManageBreakpointRulerAction extends Action {
 				}
 			}
 		} catch (CoreException e) {
-			AntUIPlugin.log("Cannot add breakpoint", e);
+			AntUIPlugin.log(AntEditorActionMessages.getString("ManageBreakpointRulerAction.1"), e); //$NON-NLS-1$
 		}
 	}		
 	
