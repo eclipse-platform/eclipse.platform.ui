@@ -16,12 +16,15 @@ import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 import org.eclipse.jface.preference.*;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -44,13 +47,17 @@ public class ViewsPreferencePage
 	 * Editors for working with colors in the Views/Appearance preference page 
 	 */
 	private BooleanFieldEditor colorIconsEditor;
+	private ColorThemeDemo colorThemeDemo;
 	private ColorFieldEditor errorColorEditor;
 	private ColorFieldEditor hyperlinkColorEditor;
 	private ColorFieldEditor activeHyperlinkColorEditor;
-	private ColorFieldEditor colorSchemeBGColorEditor;
-	private ColorFieldEditor colorSchemeFGColorEditor;
-	private ColorFieldEditor colorSchemeSelBGColorEditor;
-	private ColorFieldEditor colorSchemeSelFGColorEditor;
+	BooleanFieldEditor useDefault;	
+	private ColorFieldEditor colorSchemeTabBGColorEditor;
+	private ColorFieldEditor colorSchemeTabFGColorEditor;
+//	ColorFieldEditor colorSchemeBGColorEditor;
+//	ColorFieldEditor colorSchemeFGColorEditor;
+//	ColorFieldEditor colorSchemeSelBGColorEditor;
+//	ColorFieldEditor colorSchemeSelFGColorEditor;
 	
 	/*
 	 * No longer supported - removed when confirmed!
@@ -111,7 +118,7 @@ public class ViewsPreferencePage
 	 */
 	protected Control createContents(Composite parent) {
 
-		Font font = parent.getFont();
+ 		Font font = parent.getFont();
 
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.VIEWS_PREFERENCE_PAGE);
 
@@ -164,13 +171,13 @@ public class ViewsPreferencePage
 		spacingComposite.setLayout(spacingLayout);
 		spacingComposite.setFont(font);
 
-			errorColorEditor = new ColorFieldEditor(JFacePreferences.ERROR_COLOR, WorkbenchMessages.getString("ViewsPreference.ErrorText"), //$NON-NLS-1$,
+		errorColorEditor = new ColorFieldEditor(JFacePreferences.ERROR_COLOR, WorkbenchMessages.getString("ViewsPreference.ErrorText"), //$NON-NLS-1$,
 	spacingComposite);
 
 		errorColorEditor.setPreferenceStore(doGetPreferenceStore());
 		errorColorEditor.load();
 
-			hyperlinkColorEditor = new ColorFieldEditor(JFacePreferences.HYPERLINK_COLOR, WorkbenchMessages.getString("ViewsPreference.HyperlinkText"), //$NON-NLS-1$
+		hyperlinkColorEditor = new ColorFieldEditor(JFacePreferences.HYPERLINK_COLOR, WorkbenchMessages.getString("ViewsPreference.HyperlinkText"), //$NON-NLS-1$
 	spacingComposite);
 
 		hyperlinkColorEditor.setPreferenceStore(doGetPreferenceStore());
@@ -190,39 +197,101 @@ public class ViewsPreferencePage
 		new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		colorSchemeComposite.setLayoutData(data2); 
+
+		//Add in the demo viewing area for color settings
+		colorThemeDemo = new ColorThemeDemo(colorSchemeComposite);
+		
+		useDefault =
+		new BooleanFieldEditor(
+				JFacePreferences.USE_DEFAULT_THEME,
+				"Use System Colors",
+				colorSchemeComposite);
+		useDefault.setPreferencePage(this);
+		useDefault.setPreferenceStore(doGetPreferenceStore());
+		useDefault.load();		
 		
 		//Add in an intermediate composite to allow for spacing
-		Composite spacingComposite2 = new Composite(colorSchemeComposite, SWT.NONE);
+		final Composite spacingComposite2 = new Composite(colorSchemeComposite, SWT.NONE);
 		GridLayout spacingLayout2 = new GridLayout();
-		spacingLayout2.numColumns = 4;
+		spacingLayout2.numColumns = 2;
 		spacingComposite2.setLayout(spacingLayout2);
 		spacingComposite2.setFont(font);
 
-		colorSchemeBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_BACKGROUND_COLOR, "Color Scheme Background", spacingComposite2);
 
-		colorSchemeBGColorEditor.setPreferenceStore(doGetPreferenceStore());
-		colorSchemeBGColorEditor.load();
+		// it is not possible to set the default value in workbench start up so it may need to happen now
+		if (store.isDefault(JFacePreferences.SCHEME_INACTIVE_TAB_BACKGROUND)) {
+			PreferenceConverter.setValue(store, JFacePreferences.SCHEME_INACTIVE_TAB_BACKGROUND, JFaceColors.getTabFolderBackground(composite.getDisplay()).getRGB());
+		}
+		colorSchemeTabBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_INACTIVE_TAB_BACKGROUND, "Color Scheme Tab Background", spacingComposite2);
+		colorSchemeTabBGColorEditor.setPreferenceStore(doGetPreferenceStore());
+		colorSchemeTabBGColorEditor.load();
 		
-		colorSchemeFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_FOREGROUND_COLOR, "Color Scheme Foreground", spacingComposite2);
+		// it is not possible to set the default value in workbench start up so it may need to happen now
+		if (store.isDefault(JFacePreferences.SCHEME_INACTIVE_TAB_FOREGROUND)) {
+			PreferenceConverter.setValue(store, JFacePreferences.SCHEME_INACTIVE_TAB_FOREGROUND, JFaceColors.getTabFolderForeground(composite.getDisplay()).getRGB());
+		}		
+		colorSchemeTabFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_INACTIVE_TAB_FOREGROUND, "Color Scheme Tab Foreground", spacingComposite2);
+		colorSchemeTabFGColorEditor.setPreferenceStore(doGetPreferenceStore());
+		colorSchemeTabFGColorEditor.load();
+		
+//		colorSchemeSelFGColorEditor.setPreferenceStore(doGetPreferenceStore());
+//		colorSchemeSelFGColorEditor.load();
+//		
+//		colorSchemeSelFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_SELECTION_FOREGROUND_COLOR, "Color Scheme Selection Foreground", spacingComposite2);
+//
+//		colorSchemeSelFGColorEditor.setPreferenceStore(doGetPreferenceStore());
+//		colorSchemeSelFGColorEditor.load();
+//		
+//		
+//		colorSchemeBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_BACKGROUND_COLOR, "Color Scheme Background", spacingComposite2);
+//
+//		colorSchemeBGColorEditor.setPreferenceStore(doGetPreferenceStore());
+//		colorSchemeBGColorEditor.load();
+//		
+//		colorSchemeFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_FOREGROUND_COLOR, "Color Scheme Foreground", spacingComposite2);
+//
+//		colorSchemeFGColorEditor.setPreferenceStore(doGetPreferenceStore());
+//		colorSchemeFGColorEditor.load();
+//		
+//		colorSchemeSelBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_SELECTION_BACKGROUND_COLOR, "Color Scheme Selection Background", spacingComposite2);
+//
+//		colorSchemeSelBGColorEditor.setPreferenceStore(doGetPreferenceStore());
+//		colorSchemeSelBGColorEditor.load();
+//		
+//		colorSchemeSelFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_SELECTION_FOREGROUND_COLOR, "Color Scheme Selection Foreground", spacingComposite2);
+//
+//		colorSchemeSelFGColorEditor.setPreferenceStore(doGetPreferenceStore());
+//		colorSchemeSelFGColorEditor.load();
 
-		colorSchemeFGColorEditor.setPreferenceStore(doGetPreferenceStore());
-		colorSchemeFGColorEditor.load();
 		
-		colorSchemeSelBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_SELECTION_BACKGROUND_COLOR, "Color Scheme Selection Background", spacingComposite2);
+		IPropertyChangeListener colorSettingsListener = new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				updateColorThemeDemo(spacingComposite2);				
+			}
+		};
 
-		colorSchemeSelBGColorEditor.setPreferenceStore(doGetPreferenceStore());
-		colorSchemeSelBGColorEditor.load();
-		
-		colorSchemeSelFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_SELECTION_FOREGROUND_COLOR, "Color Scheme Selection Foreground", spacingComposite2);
-
-		colorSchemeSelFGColorEditor.setPreferenceStore(doGetPreferenceStore());
-		colorSchemeSelFGColorEditor.load();
-		
-//		ColorThemeDemo colorThemeDemo = new ColorThemeDemo(spacingComposite2);
+		useDefault.setPropertyChangeListener(colorSettingsListener);
+		colorSchemeTabBGColorEditor.setPropertyChangeListener(colorSettingsListener);
+		colorSchemeTabFGColorEditor.setPropertyChangeListener(colorSettingsListener);
+		//initialize
+		updateColorThemeDemo(spacingComposite2);
 		
 		return composite;
 	}
 
+	void updateColorThemeDemo(Composite parentComposite) {
+		boolean defaultColor = !useDefault.getBooleanValue();
+		
+		parentComposite.setEnabled(defaultColor);
+		colorSchemeTabBGColorEditor.setEnabled(defaultColor, parentComposite);
+		colorSchemeTabFGColorEditor.setEnabled(defaultColor, parentComposite);
+//			colorSchemeSelBGColorEditor.setEnabled(defaultColor, spacingComposite2);
+//			colorSchemeSelFGColorEditor.setEnabled(defaultColor, spacingComposite2);
+		
+		colorThemeDemo.resetColors();
+		
+	}
+	
 	/**
 	 * Create a composite that contains buttons for selecting tab position for the edit selection. 
 	 * @param composite Composite
@@ -364,11 +433,14 @@ public class ViewsPreferencePage
 		colorIconsEditor.loadDefault();
 		errorColorEditor.loadDefault();
 		hyperlinkColorEditor.loadDefault();
+		useDefault.loadDefault();
 		activeHyperlinkColorEditor.loadDefault();
-		colorSchemeBGColorEditor.loadDefault();
-		colorSchemeFGColorEditor.loadDefault();
-		colorSchemeSelBGColorEditor.loadDefault();
-		colorSchemeSelFGColorEditor.loadDefault();
+		colorSchemeTabBGColorEditor.loadDefault();
+		colorSchemeTabFGColorEditor.loadDefault();
+//		colorSchemeBGColorEditor.loadDefault();
+//		colorSchemeFGColorEditor.loadDefault();
+//		colorSchemeSelBGColorEditor.loadDefault();
+//		colorSchemeSelFGColorEditor.loadDefault();
 		
 		/*
 		 * No longer supported - remove when confirmed!
@@ -397,10 +469,11 @@ public class ViewsPreferencePage
 		errorColorEditor.store();
 		hyperlinkColorEditor.store();
 		activeHyperlinkColorEditor.store();
-		colorSchemeBGColorEditor.store();
-		colorSchemeFGColorEditor.store();
-		colorSchemeSelBGColorEditor.store();
-		colorSchemeSelFGColorEditor.store();
+		useDefault.store();
+//		colorSchemeBGColorEditor.store();
+//		colorSchemeFGColorEditor.store();
+//		colorSchemeSelBGColorEditor.store();
+//		colorSchemeSelFGColorEditor.store();
 		
 		return true;
 	}

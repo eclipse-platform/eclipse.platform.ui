@@ -33,6 +33,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -42,6 +43,7 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.OpenStrategy;
 
@@ -385,6 +387,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.SHOW_STATUS_LINE, true);
 		store.setDefault(IPreferenceConstants.SHOW_TOOL_BAR, true);
 		
+		store.setDefault(JFacePreferences.USE_DEFAULT_THEME, true);
 		// @issue get rid of PreferenceConverter - just hard code the RGB string		
 		//Set the default error colour to red
 		PreferenceConverter.setDefault(store,JFacePreferences.ERROR_COLOR, new RGB(255, 0, 0));
@@ -393,23 +396,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		//Set the default active hyperlink line colour to blue
 		PreferenceConverter.setDefault(store,JFacePreferences.ACTIVE_HYPERLINK_COLOR, new RGB(0, 0, 255));
 		
-//		
-//		Color selected = new Color(display, 232, 238, 248);
-//		Color unselected = new Color(display, 195, 210, 236);
-//		Color parentbk = new Color(display, 162, 178, 205);
-//		Color selectedfg = new Color(display, 83, 98, 134);
-		
-		PreferenceConverter.setDefault(store,JFacePreferences.SCHEME_PARENT_BACKGROUND_COLOR, new RGB(162, 178, 205));// new RGB(192, 210, 237));
-		//Set the default colour scheme background to light blue		
-		PreferenceConverter.setDefault(store,JFacePreferences.SCHEME_BACKGROUND_COLOR, new RGB(195, 210, 236));// new RGB(192, 210, 237));
-		PreferenceConverter.setDefault(store,JFacePreferences.SCHEME_BORDER_COLOR, new RGB(121, 142, 194));
-		//Set the default colour scheme foreground to light
-		PreferenceConverter.setDefault(store,JFacePreferences.SCHEME_FOREGROUND_COLOR, new RGB(83, 98, 134)); // new RGB(231, 238, 248));
-		//Set the default colour scheme background to light blue
-		PreferenceConverter.setDefault(store,JFacePreferences.SCHEME_SELECTION_BACKGROUND_COLOR, new RGB(232, 238, 248));
-		//Set the default colour scheme foreground to light
-		PreferenceConverter.setDefault(store,JFacePreferences.SCHEME_SELECTION_FOREGROUND_COLOR, new RGB(83, 98, 134));
-		
+		//Set the default inactive tab background, if this value is the default then it is queried
+		// from JFaceColors
+		PreferenceConverter.setDefault(store, JFacePreferences.SCHEME_INACTIVE_TAB_BACKGROUND, PreferenceConverter.COLOR_DEFAULT_DEFAULT);
+		//Set the default inactive tab foreground, if this value is the default then it is queried
+		// from JFaceColors
+		PreferenceConverter.setDefault(store, JFacePreferences.SCHEME_INACTIVE_TAB_FOREGROUND, PreferenceConverter.COLOR_DEFAULT_DEFAULT);
 		
 		// Temporary option to enable wizard for project capability
 		store.setDefault("ENABLE_CONFIGURABLE_PROJECT_WIZARD", false); //$NON-NLS-1$

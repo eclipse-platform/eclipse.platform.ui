@@ -20,7 +20,7 @@ import java.util.Map;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.ColorSchemeService;
-import org.eclipse.jface.resource.JFaceColors;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.custom.CTabFolderAdapter;
@@ -142,7 +142,7 @@ protected void createPresentation(Composite parent) {
 		}
 	});
 
-	int shellStyle= SWT.RESIZE;
+	int shellStyle= SWT.RESIZE | SWT.ON_TOP | SWT.NO_TRIM;
 	int tableStyle= SWT.V_SCROLL | SWT.H_SCROLL;
 	final EditorsInformationControl info = new EditorsInformationControl(tabFolder.getShell(), shellStyle, tableStyle);
 

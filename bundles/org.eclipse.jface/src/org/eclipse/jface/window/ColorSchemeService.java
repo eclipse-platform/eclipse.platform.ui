@@ -13,13 +13,17 @@ package org.eclipse.jface.window;
 import org.eclipse.jface.resource.JFaceColors;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CBanner;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Sash;
 
@@ -31,6 +35,11 @@ public class ColorSchemeService {
 
 	static void setSchemeColors(Control control) {
 
+		if (control instanceof Composite) {
+			setCompositeColors((Composite) control);
+			return;
+		}
+		
 		if (control instanceof List) {
 			return;
 		}
@@ -52,11 +61,6 @@ public class ColorSchemeService {
 			return;
 		}
 
-		if (control instanceof Composite) {
-			setCompositeColors((Composite) control);
-			return;
-		}
-
 		if (control instanceof Sash) {
 //			control.setBackground(
 //			JFaceColors.getSchemeParentBackground(control.getDisplay()));
@@ -68,63 +72,68 @@ public class ColorSchemeService {
 //		control.setForeground(
 //			JFaceColors.getSchemeForeground(control.getDisplay()));
 
+		if (control instanceof CBanner) {
+			setCBannerColors((CBanner)control);
+		}
+	}
+
+	/**
+	 * @param banner
+	 */
+	public static void setCBannerColors(CBanner control) {
+		Display d = control.getDisplay();
+		control.setBackground(JFaceColors.getSchemeBackground(d));
+		control.setForeground(JFaceColors.getTabFolderSelectionBackground(d));		
+		
 	}
 
 	public static void setTabColors(CTabFolder2 control) {
-//		Color back = control.getDisplay().getSystemColor(
-//				SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
-//		Color fore = control.getDisplay().getSystemColor(
-//				SWT.COLOR_WIDGET_FOREGROUND);
-//		Color selback = control.getDisplay().getSystemColor(
-//				SWT.COLOR_INFO_BACKGROUND);
-//		Color selfore = control.getDisplay().getSystemColor(
-//				SWT.COLOR_WIDGET_LIGHT_SHADOW);
-//		
-//		control.setSelectionBackground(selback);
-//		control.setSelectionForeground(selfore);
-//		control.setBackground(back);
-//		control.setForeground(fore);
+		Display d = control.getDisplay();
+		control.setBackground(JFaceColors.getTabFolderBackground(d));
+		control.setForeground(JFaceColors.getTabFolderForeground(d));
+		control.setSelectionBackground(JFaceColors.getTabFolderSelectionBackground(d));
+		control.setSelectionForeground(JFaceColors.getTabFolderSelectionForeground(d));
 		
-		
-		control.setBackground(
-			control.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND));
-//			JFaceColors.getSchemeBackground(control.getDisplay()));
-		control.setForeground(
-			control.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));			
-//			JFaceColors.getSchemeForeground(control.getDisplay()));
-		control.setSelectionBackground(
-			control.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND));
-			//new Color(control.getDisplay(), 255,0,0));
-			//control.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-			//JFaceColors.getSchemeSelectionBackground(parent.getDisplay()));
-		control.setSelectionForeground(
-			control.getDisplay().getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
-		control.setBorderColor(
-				control.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
-//			JFaceColors.getSchemeSelectionForeground(control.getDisplay()));
-//		Control[] children = control.getChildren();
-//		for (int i = 0; i < children.length; i++) {
-//			setSchemeColors(children[i]);
-//		}
-		
-//		Composite parent = control.getParent();
-//		while (parent != null) {
-//			parent.setBackground(
-//				JFaceColors.getSchemeParentBackground(parent.getDisplay()));
-//			parent = parent.getParent();
-//		}
+		control.setBorderColor(d.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+
 	}
 
 	static void setCompositeColors(Composite control) {
-
-//		control.setBackground(
-//			JFaceColors.getSchemeBackground(control.getDisplay()));
-//		control.setForeground(
-//			JFaceColors.getSchemeForeground(control.getDisplay()));
-
 		Control[] children = control.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			setSchemeColors(children[i]);
 		}
+	}
+
+	/**
+	 * @param clabel
+	 */
+	public static void setStatusColors(CLabel clabel) {
+		Color[] colors = new Color[2];
+		colors[0] = clabel.getParent().getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+		colors[1] = clabel.getBackground();
+		int[] gradient = new int[] {JFaceColors.STATUS_PERCENT};
+		clabel.setBackground(colors, gradient);
+	}
+
+	/**
+	 * @param control
+	 */
+	public static void setCoolBarColors(Control control) {
+		setBasicColors(control);
+	}
+
+	private static void setBasicColors(Control control) {
+		control.setBackground(
+				JFaceColors.getSchemeBackground(control.getDisplay()));
+		control.setForeground(
+				JFaceColors.getSchemeForeground(control.getDisplay()));
+	}
+
+	/**
+	 * @param bar
+	 */
+	public static void setPerspectiveToolBarColors(ToolBar control) {
+		setBasicColors(control);
 	}
 }

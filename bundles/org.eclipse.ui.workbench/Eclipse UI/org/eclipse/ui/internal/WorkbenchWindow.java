@@ -61,6 +61,7 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.window.ApplicationWindow;
+import org.eclipse.jface.window.ColorSchemeService;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
@@ -621,25 +622,24 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	protected void createTrimWidgets(Shell shell) {
 
-		Color background = JFaceColors.getSchemeBackground(getWorkbench().getDisplay());
-		Color foreground = JFaceColors.getSchemeForeground(getWorkbench().getDisplay());
+		//Color background = JFaceColors.getSchemeBackground(getWorkbench().getDisplay());
+		//Color foreground = JFaceColors.getSchemeForeground(getWorkbench().getDisplay());
 
 		topBar = new CBanner(shell, SWT.NONE);
-		topBar.setBackground(background);
-		topBar.setForeground(foreground);
+		
 		FormLayout layout = new FormLayout();
 		topBar.setLayout(layout);
 
 		createToolBarControl(topBar);
 		createPerspectiveBar(topBar);
 
-		topBar.setLeft(getToolBarControl());
-		getToolBarControl().setBackground(background);
-
+		topBar.setLeft(getToolBarControl());		
 		topBar.setRight(perspectiveBar.getControl());
-		perspectiveBar.getControl().setBackground(foreground);
-		perspectiveBar.getControl().setForeground(background);
 
+		ColorSchemeService.setCBannerColors(topBar);
+		ColorSchemeService.setCoolBarColors(getToolBarControl());
+		ColorSchemeService.setPerspectiveToolBarColors(perspectiveBar.getControl());
+		
 		FormData perspectiveData = new FormData();
 
 		perspectiveData.top = new FormAttachment(0);
