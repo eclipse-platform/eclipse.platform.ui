@@ -702,4 +702,23 @@
             <part id="org.eclipse.debug.ui.DebugView"/>
       </actionSetPartAssociation>
 </extension>
+
+<extension point="org.eclipse.ui.workingSets">
+	<workingSet
+		id="org.eclipse.debug.ui.LaunchConfigurationWorkingSetPage"
+		icon="icons/full/obj16/rundebug.gif"
+		name="%LaunchConfigurationWorkingSetPage.name"
+		pageClass="org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationWorkingSetPage">
+	</workingSet>
+</extension>
+
+<extension point = "org.eclipse.ui.elementFactories">
+    <factory id ="org.eclipse.debug.ui.PersistableLaunchConfigurationFactory"
+      class="org.eclipse.debug.internal.ui.launchConfigurations.PersistableLaunchConfigurationFactory">
+	</factory>
+    <factory id ="org.eclipse.debug.ui.PersistableLaunchConfigurationTypeFactory"
+      class="org.eclipse.debug.internal.ui.launchConfigurations.PersistableLaunchConfigurationTypeFactory">
+	</factory>
+</extension>
+
 </plugin>

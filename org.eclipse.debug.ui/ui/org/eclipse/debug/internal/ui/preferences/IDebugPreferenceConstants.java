@@ -96,6 +96,11 @@ public interface IDebugPreferenceConstants {
 	public static final String PREF_LAUNCH_CONFIGURATION_DIALOG_SASH_WEIGHTS = IDebugUIConstants.PLUGIN_ID + "launchConfigurationDialogSashWeights"; //$NON-NLS-1$
 	
 	/**
+	 * The name of the working set applied to the tree viewer in the launch configuration dialog.
+	 */
+	public static final String PREF_LAUNCH_CONFIGURATION_DIALOG_WORKING_SET_NAME = IDebugUIConstants.PLUGIN_ID + "launchConfigurationDialogWorkingSetName"; //$NON-NLS-1$
+	
+	/**
 	 * The maximum size of the launch history list
 	 */
 	public static int MAX_LAUNCH_HISTORY_SIZE= 20;

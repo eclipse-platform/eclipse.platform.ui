@@ -1,10 +1,12 @@
 package org.eclipse.debug.internal.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+ 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -26,6 +28,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -258,8 +262,12 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 		ConsoleDocumentManager.getDefault().startup();
 		
 		IAdapterManager manager= Platform.getAdapterManager();
-		manager.registerAdapters(new DebugUIPropertiesAdapterFactory(), IDebugElement.class);
-		manager.registerAdapters(new DebugUIPropertiesAdapterFactory(), IProcess.class);
+		DebugUIPropertiesAdapterFactory propertiesFactory = new DebugUIPropertiesAdapterFactory();
+		manager.registerAdapters(propertiesFactory, IDebugElement.class);
+		manager.registerAdapters(propertiesFactory, IProcess.class);
+		DebugUIAdapterFactory uiFactory = new DebugUIAdapterFactory();
+		manager.registerAdapters(uiFactory, ILaunchConfiguration.class);
+		manager.registerAdapters(uiFactory, ILaunchConfigurationType.class);
 
 		getStandardDisplay().asyncExec(
 			new Runnable() {

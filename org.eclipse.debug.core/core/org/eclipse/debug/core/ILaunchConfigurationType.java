@@ -1,12 +1,15 @@
 package org.eclipse.debug.core;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+ 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 
 /**
@@ -49,7 +52,7 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
  * @see ILaunchConfiguration
  * @since 2.0
  */
-public interface ILaunchConfigurationType {
+public interface ILaunchConfigurationType extends IAdaptable {
 		
 	/**
 	 * Returns whether this type of launch configuration supports

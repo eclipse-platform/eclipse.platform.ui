@@ -1,9 +1,11 @@
 package org.eclipse.debug.internal.core;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +14,7 @@ import java.util.StringTokenizer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
@@ -21,7 +24,7 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
  * element for a <code>launchConfigurationType</code>
  * extension.
  */
-public class LaunchConfigurationType implements ILaunchConfigurationType {
+public class LaunchConfigurationType extends PlatformObject implements ILaunchConfigurationType {
 	
 	/**
 	 * The configuration element of the extension.

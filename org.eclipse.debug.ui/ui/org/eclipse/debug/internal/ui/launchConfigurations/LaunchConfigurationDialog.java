@@ -1,13 +1,14 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -42,6 +44,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -56,11 +59,9 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -88,6 +89,9 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
@@ -155,6 +159,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * The 'Delete configuration' action.
 	 */
 	private ButtonAction fButtonActionDelete;
+	
+	/**
+	 * Manager for working set related a actions.
+	 */
+	private LaunchConfigurationWorkingSetActionManager fWorkingSetActionManager;
 	
 	/**
 	 * The 'apply' button
@@ -434,7 +443,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	/**
 	 * Returns the appropriate text for the launch button - run or debug.
 	 */
-	protected String getLaunchButtonText() {
+	private String getLaunchButtonText() {
 		if (getMode() == ILaunchManager.DEBUG_MODE) {
 			return LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Deb&ug_4"); //$NON-NLS-1$
 		} else {
@@ -449,9 +458,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		Control contents = super.createContents(parent);
 		initializeBounds();
 		initializeSashForm();
-		createContextMenu(getTreeViewer().getControl());
+		createTreeContextMenu(getTreeViewer().getControl());
 		getLaunchManager().addLaunchConfigurationListener(this);
 		ensureSelectionAreaWidth();
+		initializeWorkingSet();
 		doInitialTreeSelection();
 		return contents;
 	}
@@ -459,7 +469,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	/**
 	 * Initialize the relative weights (widths) of the 2 sides of the sash.
 	 */
-	protected void initializeSashForm() {
+	private void initializeSashForm() {
 		int[] sashWeights = DEFAULT_SASH_WEIGHTS;
 		String sashWeightString = getPreferenceStore().getString(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_SASH_WEIGHTS);
 		if (sashWeightString.length() > 0) {
@@ -471,6 +481,17 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}
 		getSashForm().setWeights(sashWeights);
 	}
+	
+	/**
+	 * Retrieve the last working set in use and apply it to the tree.
+	 */
+	private void initializeWorkingSet() {
+		String workingSetName = getPreferenceStore().getString(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_WORKING_SET_NAME);
+		IWorkingSet workingSet = getWorkingSetManager().getWorkingSet(workingSetName);
+		if (workingSet != null) {
+			getWorkingSetActionManager().setWorkingSet(workingSet, true);
+		}
+	}
 
 	/**
 	 * Check if the selection area is currently wide enough so that both the 'New' &
@@ -478,7 +499,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * increase the width of this dialog's Shell just enough so that both buttons 
 	 * are shown cleanly.
 	 */
-	protected void ensureSelectionAreaWidth() {
+	private void ensureSelectionAreaWidth() {
 		Button newButton = getButtonActionNew().getButton();
 		Button deleteButton = getButtonActionDelete().getButton();		
 		int requiredWidth = newButton.getBounds().width + deleteButton.getBounds().width;
@@ -501,12 +522,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	/**
 	 * Creates a pop-up menu on the specified control.
 	 */
-	protected void createContextMenu(Control menuControl) {
+	private void createTreeContextMenu(Control menuControl) {
 		MenuManager menuMgr= new MenuManager("#PopUp"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager mgr) {
-				fillContextMenu(mgr);
+				fillTreeContextMenu(mgr);
 			}
 		});
 		Menu menu= menuMgr.createContextMenu(menuControl);
@@ -517,7 +538,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * Fill the specified context menu with the basic launch configuration
 	 * management actions - New, Duplicate & Delete.
 	 */
-	protected void fillContextMenu(IMenuManager menu) {	
+	private void fillTreeContextMenu(IMenuManager menu) {	
 		if (getButtonActionNew().isEnabled()) {
 			menu.add(getButtonActionNew());
 		}
@@ -527,19 +548,21 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		if (getButtonActionDelete().isEnabled()) {
 			menu.add(getButtonActionDelete());
 		}
+		menu.add(new Separator());
+		getWorkingSetActionManager().contributeToMenu(menu);
 	}	
 	
 	/**
 	 * Set the initial selection in the tree.
 	 */
-	protected void doInitialTreeSelection() {
+	private void doInitialTreeSelection() {
 		getTreeViewer().setSelection(getInitialSelection());
 	}
 	
 	/**
 	 * Write out this dialog's Shell size, location & sash weights to the preference store.
 	 */
-	protected void persistShellGeometry() {
+	private void persistShellGeometry() {
 		Point shellLocation = getShell().getLocation();
 		Point shellSize = getShell().getSize();
 		int[] sashWeights = getSashForm().getWeights();
@@ -552,11 +575,26 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
+	 * Store the current working set.
+	 */
+	private void persistWorkingSet() {
+		IWorkingSet workingSet = getWorkingSetActionManager().getWorkingSet();
+		if (workingSet != null) {
+			getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_WORKING_SET_NAME, workingSet.getName());
+		} else {
+			getPreferenceStore().setToDefault(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_WORKING_SET_NAME);			
+		}
+		
+	}
+	
+	/**
 	 * @see Window#close()
 	 */
 	public boolean close() {
 		getLaunchManager().removeLaunchConfigurationListener(this);
+		getWorkingSetActionManager().dispose();
 		persistShellGeometry();
+		persistWorkingSet();
 		return super.close();
 	}
 	
@@ -901,7 +939,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}
 	}
 	
-	protected Display getDisplay() {
+	private Display getDisplay() {
 		Shell shell = getShell();
 		if (shell != null) {
 			return shell.getDisplay();
@@ -918,7 +956,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * 
 	 * @return the composite used for launch configuration selection area
 	 */ 
-	protected Composite createLaunchConfigurationSelectionArea(Composite parent) {
+	private Composite createLaunchConfigurationSelectionArea(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setSelectionArea(comp);
 		GridLayout layout = new GridLayout();
@@ -940,7 +978,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		// width of the 'New' & 'Delete' buttons.  Otherwise tree wants to be much wider.
 		gd.widthHint = 0;
 		tree.getControl().setLayoutData(gd);
-		tree.setContentProvider(new LaunchConfigurationContentProvider());
+		tree.setContentProvider(new LaunchConfigurationTreeContentProvider(getMode(), getShell()));
 		tree.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		tree.setSorter(new WorkbenchViewerSorter());
 		setTreeViewer(tree);
@@ -962,6 +1000,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		
 		setButtonActionDuplicate(new ButtonActionDuplicate(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Duplicate_1"), null)); //$NON-NLS-1$
 		
+		setWorkingSetActionManager(new LaunchConfigurationWorkingSetActionManager(tree, getShell()));
+		
 		return comp;
 	}	
 	
@@ -973,7 +1013,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * 
 	 * @return the composite used for launch configuration editing
 	 */ 
-	protected Composite createLaunchConfigurationEditArea(Composite parent) {
+	private Composite createLaunchConfigurationEditArea(Composite parent) {
 		Composite outerComp = new Composite(parent, SWT.NONE);
 		GridLayout outerCompLayout = new GridLayout();
 		outerCompLayout.numColumns = 1;
@@ -1140,7 +1180,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * X value is 123 and Y value is 456.  Return <code>null</code> if the String
 	 * is not in the specified form.
 	 */
-	protected Point parseCoordinates(String coordString) {
+	private Point parseCoordinates(String coordString) {
 		int byIndex = coordString.indexOf('x');
 		if (byIndex < 0) {
 			return null;
@@ -1158,7 +1198,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	/**
 	 * Given a Point object, return a String of the form "XCoordxYCoord".
 	 */
-	protected String serializeCoords(Point coords) {
+	private String serializeCoords(Point coords) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(coords.x);
 		buffer.append('x');
@@ -1170,7 +1210,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		fSashForm = sashForm;
 	}
 	
-	protected SashForm getSashForm() {
+	private SashForm getSashForm() {
 		return fSashForm;
 	}
 
@@ -1189,135 +1229,39 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * 
 	 * @param the tree viewer used to display launch configurations
 	 */
-	protected TreeViewer getTreeViewer() {
+	private TreeViewer getTreeViewer() {
 		return fConfigTree;
 	}
 	
-	protected IStructuredSelection getTreeViewerSelection() {
+	private IStructuredSelection getTreeViewerSelection() {
 		return (IStructuredSelection)getTreeViewer().getSelection();
 	}
 	
-	protected Object getTreeViewerFirstSelectedElement() {
+	private Object getTreeViewerFirstSelectedElement() {
 		IStructuredSelection selection = getTreeViewerSelection();
 		if (selection == null) {
 			return null;
 		}
 		return selection.getFirstElement();
 	}
-		
-	/**
-	 * Content provider for launch configuration tree.
-	 */
-	class LaunchConfigurationContentProvider implements ITreeContentProvider {
-		
-		/**
-		 * Actual launch configurations have no children.  Launch configuration types have
-		 * all configurations of that type as children, minus any configurations that are 
-		 * marked as private.
-		 * 
-		 * @see ITreeContentProvider#getChildren(Object)
-		 */
-		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof ILaunchConfiguration) {
-				return EMPTY_ARRAY;
-			} else if (parentElement instanceof ILaunchConfigurationType) {
-				try {
-					ILaunchConfigurationType type = (ILaunchConfigurationType)parentElement;
-					ILaunchConfiguration[] allConfigs = getLaunchManager().getLaunchConfigurations(type);
-					ArrayList filteredConfigs = new ArrayList(allConfigs.length);
-					for (int i = 0; i < allConfigs.length; i++) {
-						ILaunchConfiguration config = allConfigs[i];
-						if (config.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false)) {
-							continue;
-						}
-						filteredConfigs.add(config);
-					}
-					return filteredConfigs.toArray();
-				} catch (CoreException e) {
-					DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Error_19"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.An_exception_occurred_while_retrieving_launch_configurations_20"), e); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-			} else {
-				return getLaunchManager().getLaunchConfigurationTypes();
-			}
-			return EMPTY_ARRAY;
-		}
-
-		/**
-		 * @see ITreeContentProvider#getParent(Object)
-		 */
-		public Object getParent(Object element) {
-			if (element instanceof ILaunchConfiguration) {
-				if (!((ILaunchConfiguration)element).exists()) {
-					return null;
-				}
-				try {
-					return ((ILaunchConfiguration)element).getType();
-				} catch (CoreException e) {
-					DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Error_19"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.An_exception_occurred_while_retrieving_launch_configurations_20"), e); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-			} else if (element instanceof ILaunchConfigurationType) {
-				return ResourcesPlugin.getWorkspace().getRoot();
-			}
-			return null;
-		}
-
-		/**
-		 * @see ITreeContentProvider#hasChildren(Object)
-		 */
-		public boolean hasChildren(Object element) {
-			if (element instanceof ILaunchConfiguration) {
-				return false;
-			} else {
-				return getChildren(element).length > 0;
-			}
-		}
-
-		/**
-		 * Return only the launch configuration types that support the current mode AND
-		 * are marked as 'public'.
-		 * 
-		 * @see IStructuredContentProvider#getElements(Object)
-		 */
-		public Object[] getElements(Object inputElement) {
-			ILaunchConfigurationType[] allTypes = getLaunchManager().getLaunchConfigurationTypes();
-			ArrayList list = new ArrayList(allTypes.length);
-			String mode = getMode();
-			for (int i = 0; i < allTypes.length; i++) {
-				ILaunchConfigurationType configType = allTypes[i];
-				if (configType.supportsMode(mode) && configType.isPublic()) {
-					list.add(configType);
-				}
-			}			
-			return list.toArray();
-		}
-
-		/**
-		 * @see IContentProvider#dispose()
-		 */
-		public void dispose() {
-		}
-
-		/**
-		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
-		 */
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
-
-	}
-	
+			
 	/**
 	 * Returns the launch manager.
 	 * 
 	 * @return the launch manager
 	 */
-	protected ILaunchManager getLaunchManager() {
+	private ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
+	}
+
+	private IWorkingSetManager getWorkingSetManager() {
+		return PlatformUI.getWorkbench().getWorkingSetManager();
 	}
 
 	/**
 	 * Returns whether this dialog is currently open
 	 */
-	protected boolean isVisible() {
+	private boolean isVisible() {
 		return getTreeViewer() != null;
 	}	
 		
@@ -1333,7 +1277,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	public void selectionChanged(SelectionChangedEvent event) {
  		
  		// Ignore selectionChange events that occur while saving
- 		if (ignoreSelectionChanges()) {
+ 		if (ignoreSelectionChanges()) { 
  			return;
  		}
  		
@@ -1400,19 +1344,19 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		}
  	}
  	
- 	protected void setProgressMonitorPart(ProgressMonitorPart part) {
+ 	private void setProgressMonitorPart(ProgressMonitorPart part) {
  		fProgressMonitorPart = part;
  	}
  	
- 	protected ProgressMonitorPart getProgressMonitorPart() {
+ 	private ProgressMonitorPart getProgressMonitorPart() {
  		return fProgressMonitorPart;
  	}
  	
- 	protected void setProgressMonitorCancelButton(Button button) {
+ 	private void setProgressMonitorCancelButton(Button button) {
  		fProgressMonitorCancelButton = button;
  	}
  	
- 	protected Button getProgressMonitorCancelButton() {
+ 	private Button getProgressMonitorCancelButton() {
  		return fProgressMonitorCancelButton;
  	}
  	
@@ -1424,7 +1368,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	 * @param config the launch configuration to display/edit
  	 * @param init whether to initialize the config with default values
  	 */
- 	protected void setLaunchConfiguration(ILaunchConfiguration config, boolean init) {
+ 	private void setLaunchConfiguration(ILaunchConfiguration config, boolean init) {
 		try {
 			
 			// turn on initializing flag to ignore message updates
@@ -1471,7 +1415,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	 * Clears the configuration being shown/edited.   
  	 * Resets all configuration-related state.
  	 */
- 	protected void clearLaunchConfiguration() {
+ 	private void clearLaunchConfiguration() {
  		setWorkingCopy(null);
  		fUnderlyingConfig = null;
  		setLastSavedName(null);
@@ -1483,7 +1427,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	 * Populate the tabs in the configuration edit area to be appropriate to the current
  	 * launch configuration type.
  	 */
- 	protected void showTabsForConfigType(ILaunchConfigurationType configType) {		
+ 	private void showTabsForConfigType(ILaunchConfigurationType configType) {		
  		
  		// Don't do any work if the current tabs are for the current config type
  		if (getTabType() != null && getTabType().equals(configType)) {
@@ -1596,7 +1540,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	 * is given to the edit area (tab folder), and the selection area (tree) stays
  	 * the same width.
  	 */
-	protected int[] calculateNewSashWeights(int widthIncrease) {
+	private int[] calculateNewSashWeights(int widthIncrease) {
 		int[] newWeights = new int[2];
 		newWeights[0] = getSelectionArea().getBounds().width;
 		newWeights[1] = getEditArea().getBounds().width + widthIncrease;
@@ -1612,7 +1556,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		getShell().setSize(Math.min(width, bounds.width), Math.min(height, bounds.height));
 	}
 	
- 	protected void disposeExistingTabs() {
+ 	private void disposeExistingTabs() {
 		setDisposingTabs(true);
 		TabItem[] oldTabs = getTabFolder().getItems();
 		for (int i = 0; i < oldTabs.length; i++) {
@@ -1630,11 +1574,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	 * Sets the current launch configuration that is being
  	 * displayed/edited.
  	 */
- 	protected void setWorkingCopy(ILaunchConfigurationWorkingCopy workingCopy) {
+ 	private void setWorkingCopy(ILaunchConfigurationWorkingCopy workingCopy) {
  		fWorkingCopy = workingCopy;
  	}
  	
- 	protected boolean isWorkingCopyDirty() {
+ 	private boolean isWorkingCopyDirty() {
  		ILaunchConfigurationWorkingCopy workingCopy = getLaunchConfiguration();
  		if (workingCopy == null) {
  			return false;
@@ -1660,20 +1604,20 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	/**
  	 * Return <code>true</code> if the name has been modified since the last time it was saved.
  	 */
- 	protected boolean isNameDirty() {
+ 	private boolean isNameDirty() {
  		String currentName = getNameTextWidget().getText().trim();
  		return !currentName.equals(getLastSavedName());
  	}
  	
- 	protected void setContext(Object context) {
+ 	private void setContext(Object context) {
  		fContext = context;
  	}
  	
- 	protected Object getContext() {
+ 	private Object getContext() {
  		return fContext;
  	}
  	 	
- 	protected void setMode(String mode) {
+ 	private void setMode(String mode) {
  		fMode = mode;
  	}
  	
@@ -1702,7 +1646,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * @return the text widget used to display the name
 	 *  of the configuration being displayed/edited
 	 */
-	protected Text getNameTextWidget() {
+	private Text getNameTextWidget() {
 		return fNameText;
 	} 
 	
@@ -1720,7 +1664,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	 * 
  	 * @return the 'apply' button
  	 */
- 	protected Button getApplyButton() {
+ 	private Button getApplyButton() {
  		return fApplyButton;
  	}	
  	
@@ -1764,7 +1708,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	 * 
  	 * @return the tab folder
  	 */
- 	protected TabFolder getTabFolder() {
+ 	private TabFolder getTabFolder() {
  		return fTabFolder;
  	}	 	
  	
@@ -1826,11 +1770,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		getTreeViewer().remove(configuration);		
 	}
 	
-	protected void setIgnoreSelectionChanges(boolean ignore) {
+	private void setIgnoreSelectionChanges(boolean ignore) {
 		fIgnoreSelectionChanges = ignore;
 	}
 	
-	protected boolean ignoreSelectionChanges() {
+	private boolean ignoreSelectionChanges() {
 		return fIgnoreSelectionChanges;
 	}
 	
@@ -1838,7 +1782,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * Return whether the current configuration can be discarded.  This involves determining
 	 * if it is dirty, and if it is, asking the user what to do.
 	 */
-	protected boolean canDiscardCurrentConfig() {		
+	private boolean canDiscardCurrentConfig() {		
 		// If there is no working copy, there's no problem, return true
 		ILaunchConfigurationWorkingCopy workingCopy = getLaunchConfiguration();
 		if (workingCopy == null) {
@@ -1858,7 +1802,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * the current config, either by saving changes or by discarding the, return <code>false</code>
 	 * otherwise.
 	 */
-	protected boolean showUnsavedChangesDialog() {
+	private boolean showUnsavedChangesDialog() {
 		if (canSaveConfig()) {
 			return showSaveChangesDialog();
 		} else {
@@ -1871,7 +1815,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * unsaved changes.  Return <code>true </code> if they chose to save changes,
 	 * <code>false</code> otherwise.
 	 */
-	protected boolean showSaveChangesDialog() {
+	private boolean showSaveChangesDialog() {
 		StringBuffer buffer = new StringBuffer(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.The_configuration___29")); //$NON-NLS-1$
 		buffer.append(getLaunchConfiguration().getName());
 		buffer.append(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.__has_unsaved_changes.__Do_you_wish_to_save_them__30")); //$NON-NLS-1$
@@ -1901,7 +1845,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * unsaved changes.  Return <code>true</code> if they chose to discard changes,
 	 * <code>false</code> otherwise.
 	 */
-	protected boolean showDiscardChangesDialog() {
+	private boolean showDiscardChangesDialog() {
 		StringBuffer buffer = new StringBuffer(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.The_configuration___35")); //$NON-NLS-1$
 		buffer.append(getNameTextWidget().getText());
 		buffer.append(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.__has_unsaved_changes_that_CANNOT_be_saved_because_of_the_following_error_36")); //$NON-NLS-1$
@@ -1929,7 +1873,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * config can be saved without causing a serious error.  For example, a shared config that
 	 * has no specified location would cause this method to return <code>false</code>.
 	 */
-	protected boolean canSaveConfig() {
+	private boolean canSaveConfig() {
 		
 		fCantSaveErrorMessage = null;
 
@@ -2030,7 +1974,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	/**
 	 * Make a copy of the specified configuration and select it in the tree.
 	 */
-	protected void doHandleCopyConfiguration(ILaunchConfiguration copyFromConfig) {
+	private void doHandleCopyConfiguration(ILaunchConfiguration copyFromConfig) {
 		String newName = getLaunchManager().generateUniqueLaunchConfigurationNameFrom(copyFromConfig.getName());
 		try {
 			ILaunchConfigurationWorkingCopy newWorkingCopy = copyFromConfig.copy(newName);
@@ -2048,7 +1992,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * same type as the selected config.
 	 * protected void constructNewConfig() {
 	 */
-	protected void constructNewConfig(ILaunchConfigurationType configType) {	
+	private void constructNewConfig(ILaunchConfigurationType configType) {	
 		try {
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(DEFAULT_NEW_CONFIG_NAME));
 			setLastSavedName(null);
@@ -2206,7 +2150,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	/**
 	 * Iterate over the pages to update the working copy
 	 */
-	protected void updateWorkingCopyFromPages() {
+	private void updateWorkingCopyFromPages() {
 		ILaunchConfigurationWorkingCopy workingCopy = getLaunchConfiguration();
 		if (getTabGroup() != null) {
 			getTabGroup().performApply(workingCopy);
@@ -2216,7 +2160,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	/**
 	 * Do the save
 	 */
-	protected void doSave() throws CoreException {
+	private void doSave() throws CoreException {
 		ILaunchConfigurationWorkingCopy workingCopy = getLaunchConfiguration();
 		updateWorkingCopyFromPages();
 		if (isWorkingCopyDirty()) {
@@ -2259,7 +2203,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * 
 	 * @return one of CANCEL or OK
 	 */
-	protected int doLaunch(ILaunchConfiguration config) throws CoreException {
+	private int doLaunch(ILaunchConfiguration config) throws CoreException {
 		
 		if (!DebugUITools.saveAndBuildBeforeLaunch()) {
 			return CANCEL;
@@ -2341,7 +2285,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		return launchResult[0];		
 	}
 	
-	protected IPreferenceStore getPreferenceStore() {
+	private IPreferenceStore getPreferenceStore() {
 		return DebugUIPlugin.getDefault().getPreferenceStore();
 	}
 
@@ -2521,11 +2465,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}
 	}
 	
-	protected void setCancelButtonPressed(boolean pressed) {
+	private void setCancelButtonPressed(boolean pressed) {
 		fCancelButtonPressed = pressed;
 	}
 	
-	protected boolean cancelButtonPressed() {
+	private boolean cancelButtonPressed() {
 		return fCancelButtonPressed;
 	}
 
@@ -2602,7 +2546,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		return true;
 	}
 
-	protected ILaunchConfigurationWorkingCopy getLaunchConfiguration() {
+	private ILaunchConfigurationWorkingCopy getLaunchConfiguration() {
 		return fWorkingCopy;
 	}
 
@@ -2684,7 +2628,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * 
 	 * @return launch configuration tab item
 	 */
-	protected TabItem getActiveTabItem() {
+	private TabItem getActiveTabItem() {
 		TabFolder folder = getTabFolder();
 		TabItem tabItem = null;
 		int selectedIndex = folder.getSelectionIndex();
@@ -2753,14 +2697,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	/**
 	 * Show the default informational message that explains how to create a new configuration.
 	 */
-	protected void setDefaultMessage() {
+	private void setDefaultMessage() {
 		setMessage(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Select_a_type_of_configuration_to_create,_and_press___new__51")); //$NON-NLS-1$		
 	}
 	
 	/**
 	 * Force the tab to update it's error state and return any error message.
 	 */
-	protected String checkTabForError(ILaunchConfigurationTab tab) {
+	private String checkTabForError(ILaunchConfigurationTab tab) {
 		tab.isValid(getLaunchConfiguration());
 		return tab.getErrorMessage();
 	}
@@ -2769,7 +2713,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * Set the specified tab item's icon to an error icon if <code>error</code> is true,
 	 * or a transparent icon of the same size otherwise.
 	 */
-	protected void setTabIcon(TabItem tabItem, boolean error, ILaunchConfigurationTab tab) {
+	private void setTabIcon(TabItem tabItem, boolean error, ILaunchConfigurationTab tab) {
 		Image image = null;
 		if (error) {			
 			image = LaunchConfigurationManager.getDefault().getErrorTabImage(tab);
@@ -2780,9 +2724,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Return a copy of the specified string 
+	 * Return a copy of the specified string without ampersands.
 	 */
-	protected String removeAmpersandsFrom(String string) {
+	private String removeAmpersandsFrom(String string) {
 		String newString = new String(string);
 		int index = newString.indexOf('&');
 		while (index != -1) {
@@ -2797,7 +2741,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * 
 	 * @return control
 	 */
-	protected Composite getSelectionArea() {
+	private Composite getSelectionArea() {
 		return fSelectionArea;
 	}
 
@@ -2815,7 +2759,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * 
 	 * @return control
 	 */
-	protected Composite getEditArea() {
+	private Composite getEditArea() {
 		return fEditArea;
 	}
 
@@ -2834,7 +2778,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * 
 	 * @return launch configuration type or <code>null</code>
 	 */
-	protected ILaunchConfigurationType getTabType() {
+	private ILaunchConfigurationType getTabType() {
 		return fTabType;
 	}
 
@@ -2848,11 +2792,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		fTabType = tabType;
 	}
 
-	protected Object getSelectedTreeObject() {
+	private Object getSelectedTreeObject() {
 		return fSelectedTreeObject;
 	}
 	
-	protected void setSelectedTreeObject(Object obj) {
+	private void setSelectedTreeObject(Object obj) {
 		fSelectedTreeObject = obj;
 	}	
 	
@@ -2913,14 +2857,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * and should not bother to refresh status (butttons
 	 * and message).
 	 */
-	protected boolean isInitializingTabs() {
+	private boolean isInitializingTabs() {
 		return fInitializingTabs;
 	}	
 	
 	/**
 	 * Returns the initial launch configuration type, or <code>null</code> if none has been set.
 	 */
-	protected ILaunchConfigurationType getInitialConfigType() {
+	private ILaunchConfigurationType getInitialConfigType() {
 		return fInitialConfigType;
 	}
 	
@@ -2935,7 +2879,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * Returns the initial selection shown in this dialog when opened in
 	 * <code>LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION</code> mode.
 	 */
-	protected IStructuredSelection getInitialSelection() {
+	private IStructuredSelection getInitialSelection() {
 		return fInitialSelection;
 	}
 	
@@ -2959,28 +2903,36 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		} 
 	}
 	
-	protected void setButtonActionNew(ButtonAction action) {
+	private void setButtonActionNew(ButtonAction action) {
 		fButtonActionNew = action;
 	}
 	
-	protected ButtonAction getButtonActionNew() {
+	private ButtonAction getButtonActionNew() {
 		return fButtonActionNew;
 	}
 
-	protected void setButtonActionDuplicate(ButtonAction action) {
+	private void setButtonActionDuplicate(ButtonAction action) {
 		fButtonActionDuplicate = action;
 	}
 	
-	protected ButtonAction getButtonActionDuplicate() {
+	private ButtonAction getButtonActionDuplicate() {
 		return fButtonActionDuplicate;
 	}
 
-	protected void setButtonActionDelete(ButtonAction action) {
+	private void setButtonActionDelete(ButtonAction action) {
 		fButtonActionDelete = action;
 	}
 	
-	protected ButtonAction getButtonActionDelete() {
+	private ButtonAction getButtonActionDelete() {
 		return fButtonActionDelete;
+	}
+
+	private void setWorkingSetActionManager(LaunchConfigurationWorkingSetActionManager actionManager) {
+		fWorkingSetActionManager = actionManager;
+	}
+
+	private LaunchConfigurationWorkingSetActionManager getWorkingSetActionManager() {
+		return fWorkingSetActionManager;
 	}
 
 	/**
