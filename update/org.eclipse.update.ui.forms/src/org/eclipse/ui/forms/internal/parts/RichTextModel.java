@@ -34,9 +34,6 @@ public class RichTextModel {
 		reset();
 	}
 
-	class LocalHyperlinkSettings extends HyperlinkSettings {
-	}
-
 	/*
 	 * @see ITextModel#getParagraphs()
 	 */
@@ -339,7 +336,7 @@ public class RichTextModel {
 
 	public HyperlinkSettings getHyperlinkSettings() {
 		if (hyperlinkSettings == null) {
-			hyperlinkSettings = new LocalHyperlinkSettings();
+			hyperlinkSettings = new HyperlinkSettings();
 		}
 		return hyperlinkSettings;
 	}
@@ -439,7 +436,8 @@ public class RichTextModel {
 	}
 
 	public void dispose() {
-		if (hyperlinkSettings instanceof LocalHyperlinkSettings)
-			hyperlinkSettings.dispose();
+		paragraphs = null;
+		selectedLinkIndex = -1;
+		hyperlinks = null;
 	}
 }

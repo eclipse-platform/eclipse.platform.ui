@@ -48,7 +48,6 @@ import org.eclipse.ui.forms.parts.RichText;
 import org.eclipse.ui.forms.parts.SelectableFormLabel;
 import org.eclipse.update.ui.forms.internal.AbstractSectionForm;
 import org.eclipse.update.ui.forms.internal.FormSection;
-import org.eclipse.update.ui.forms.internal.IHyperlinkListener;
 
 public class FormWidgetFactory {
 	public static final String KEY_DRAW_BORDER = "FormWidgetFactory.drawBorder";
@@ -65,7 +64,7 @@ public class FormWidgetFactory {
 	public static final int BORDER_STYLE = SWT.NONE; //SWT.BORDER;
 	private BorderPainter borderPainter;
 	private Color borderColor;
-	private HyperlinkManager hyperlinkHandler;
+	private HyperlinkGroup hyperlinkHandler;
 	/* default */ VisibilityHandler visibilityHandler;
 	/* default */ KeyboardHandler keyboardHandler;
 
@@ -236,21 +235,6 @@ public class FormWidgetFactory {
 		return label;
 	}
 
-	public Label createHyperlinkLabel(
-		Composite parent,
-		String text,
-		IHyperlinkListener listener) {
-		return createHyperlinkLabel(parent, text, listener, SWT.NULL);
-	}
-	public Label createHyperlinkLabel(
-		Composite parent,
-		String text,
-		IHyperlinkListener listener,
-		int style) {
-		Label label = createLabel(parent, text, style);
-		turnIntoHyperlink(label, listener);
-		return label;
-	}
 	public Label createLabel(Composite parent, String text) {
 		return createLabel(parent, text, SWT.NONE);
 	}
@@ -348,7 +332,6 @@ public class FormWidgetFactory {
 			Color c = (Color) colors.nextElement();
 			c.dispose();
 		}
-		hyperlinkHandler.dispose();
 		colorRegistry = null;
 	}
 	public Color getBackgroundColor() {
@@ -366,7 +349,7 @@ public class FormWidgetFactory {
 	public Color getForegroundColor() {
 		return foregroundColor;
 	}
-	public HyperlinkManager getHyperlinkHandler() {
+	public HyperlinkGroup getHyperlinkHandler() {
 		return hyperlinkHandler;
 	}
 	public Cursor getHyperlinkCursor() {
@@ -403,7 +386,7 @@ public class FormWidgetFactory {
 		else
 			borderColor = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 		foregroundColor = display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
-		hyperlinkHandler = new HyperlinkManager();
+		hyperlinkHandler = new HyperlinkGroup();
 		hyperlinkHandler.setBackground(backgroundColor);
 		updateHyperlinkColors();
 		visibilityHandler = new VisibilityHandler();
@@ -446,7 +429,7 @@ public class FormWidgetFactory {
 	public void setHyperlinkUnderlineMode(int newHyperlinkUnderlineMode) {
 		hyperlinkHandler.setHyperlinkUnderlineMode(newHyperlinkUnderlineMode);
 	}
-	public void turnIntoHyperlink(Control control, IHyperlinkListener listener) {
-		hyperlinkHandler.registerHyperlink(control, listener);
+	public void turnIntoHyperlink(HyperlinkLabel label) {
+		hyperlinkHandler.add(label);
 	}
 }

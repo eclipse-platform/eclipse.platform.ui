@@ -95,6 +95,7 @@ public class FormLabel extends Canvas {
 
 	public void setUnderlined(boolean underlined) {
 		this.underlined = underlined;
+		redraw();
 	}
 
 	public boolean isUnderlined() {

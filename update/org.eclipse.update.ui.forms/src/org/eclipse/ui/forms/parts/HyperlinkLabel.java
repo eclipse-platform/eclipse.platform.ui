@@ -11,24 +11,22 @@ import java.util.Vector;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.FormsResources;
 
 /**
- * HyperlinkLabel is a selectable label that acts as
- * a browser hyperlink. It is capable of notifying
- * listeners when it is entered, exited and activated.
- * A group of hyperlinks should be managed using
- * a HyperlinkManager that is responsible for managing
- * shared cursors, color changes, changes in underline
+ * HyperlinkLabel is a selectable label that acts as a browser hyperlink. It is
+ * capable of notifying listeners when it is entered, exited and activated. A
+ * group of hyperlinks should be managed using a HyperlinkManager that is
+ * responsible for managing shared cursors, color changes, changes in underline
  * status and focus traversal between hyperlinks.
  */
 public class HyperlinkLabel extends SelectableFormLabel {
 	private Vector listeners;
-	
-/**
- * 
- * @param parent
- * @param style
- */
+
+	/**
+	 * @param parent
+	 * @param style
+	 */
 	public HyperlinkLabel(Composite parent, int style) {
 		super(parent, style);
 		addListener(SWT.Selection, new Listener() {
@@ -59,44 +57,42 @@ public class HyperlinkLabel extends SelectableFormLabel {
 				handleMouseUp(e);
 			}
 		});
+		setCursor(FormsResources.getHandCursor());
 	}
-/**
- * 
- * @param listener
- */
+	/**
+	 * @param listener
+	 */
 	public void addHyperlinkListener(HyperlinkListener listener) {
 		if (listeners == null)
 			listeners = new Vector();
 		if (!listeners.contains(listener))
 			listeners.add(listener);
 	}
-/**
- * 
- * @param listener
- */
+	/**
+	 * @param listener
+	 */
 	public void removeHyperlinkListener(HyperlinkListener listener) {
 		if (listeners == null)
 			return;
 		listeners.remove(listener);
 	}
-	
+
 	/**
-	 * 
 	 * @param href
 	 */
 	public void setHref(Object href) {
 		setData("href", href);
 	}
 	/**
-	 * 
 	 * @return
 	 */
 	public Object getHref() {
 		return getData("href");
 	}
-	
+
 	void handleEnter() {
-		if (listeners==null) return;
+		if (listeners == null)
+			return;
 		int size = listeners.size();
 		HyperlinkEvent e = new HyperlinkEvent(this, getHref(), getText());
 		for (int i = 0; i < size; i++) {
@@ -104,9 +100,10 @@ public class HyperlinkLabel extends SelectableFormLabel {
 			listener.linkEntered(e);
 		}
 	}
-	
+
 	void handleExit() {
-		if (listeners==null) return;
+		if (listeners == null)
+			return;
 		int size = listeners.size();
 		HyperlinkEvent e = new HyperlinkEvent(this, getHref(), getText());
 		for (int i = 0; i < size; i++) {
@@ -114,16 +111,21 @@ public class HyperlinkLabel extends SelectableFormLabel {
 			listener.linkExited(e);
 		}
 	}
-	
+
 	void handleActivate() {
-		if (listeners==null) return;
+		if (listeners == null)
+			return;
 		int size = listeners.size();
+		setCursor(FormsResources.getBusyCursor());
 		HyperlinkEvent e = new HyperlinkEvent(this, getHref(), getText());
 		for (int i = 0; i < size; i++) {
 			HyperlinkListener listener = (HyperlinkListener) listeners.get(i);
 			listener.linkActivated(e);
 		}
+		if (!isDisposed())
+			setCursor(FormsResources.getHandCursor());
 	}
+
 	private void handleMouseUp(Event e) {
 		if (e.button != 1)
 			return;

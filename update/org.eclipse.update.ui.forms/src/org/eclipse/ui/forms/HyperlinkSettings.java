@@ -10,58 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.forms;
 
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.*;
 
 public class HyperlinkSettings {
 	public static final int UNDERLINE_NEVER = 1;
 	public static final int UNDERLINE_ROLLOVER = 2;
 	public static final int UNDERLINE_ALWAYS = 3;
 
-	protected boolean hyperlinkCursorUsed = true;
-	protected int hyperlinkUnderlineMode = UNDERLINE_ALWAYS;
-	protected Color background;
-	protected Color foreground;
-	protected Color activeBackground;
-	protected Color activeForeground;
-	protected static Cursors cursors = new Cursors();
-
-	private static class Cursors {
-		Cursor hyperlinkCursor;
-		Cursor busyCursor;
-		Cursor textCursor;
-		int counter = 0;
-
-		public void allocate() {
-			if (counter == 0) {
-				hyperlinkCursor =
-					new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
-				busyCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_WAIT);
-				textCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_IBEAM);
-			}
-			counter++;
-		}
-		public void dispose() {
-			counter--;
-			if (counter == 0) {
-				hyperlinkCursor.dispose();
-				busyCursor.dispose();
-				textCursor.dispose();
-				hyperlinkCursor = null;
-				busyCursor = null;
-				textCursor = null;
-			}
-		}
-	}
+	private int hyperlinkUnderlineMode = UNDERLINE_ALWAYS;
+	private Color background;
+	private Color foreground;
+	private Color activeBackground;
+	private Color activeForeground;
 
 	public HyperlinkSettings() {
-		cursors.allocate();
-	}
-
-	public void dispose() {
-		if (cursors != null)
-			cursors.dispose();
 	}
 
 	public Color getActiveBackground() {
@@ -74,23 +36,19 @@ public class HyperlinkSettings {
 		return background;
 	}
 	public Cursor getBusyCursor() {
-		return cursors.busyCursor;
+		return FormsResources.getBusyCursor();
 	}
 	public Cursor getTextCursor() {
-		return cursors.textCursor;
+		return FormsResources.getTextCursor();
 	}
 	public Color getForeground() {
 		return foreground;
 	}
 	public Cursor getHyperlinkCursor() {
-		return cursors.hyperlinkCursor;
+		return FormsResources.getHandCursor();
 	}
 	public int getHyperlinkUnderlineMode() {
 		return hyperlinkUnderlineMode;
-	}
-
-	public boolean isHyperlinkCursorUsed() {
-		return hyperlinkCursorUsed;
 	}
 
 	public void setActiveBackground(Color newActiveBackground) {
@@ -105,11 +63,8 @@ public class HyperlinkSettings {
 	public void setForeground(Color newForeground) {
 		foreground = newForeground;
 	}
-	public void setHyperlinkCursorUsed(boolean newHyperlinkCursorUsed) {
-		hyperlinkCursorUsed = newHyperlinkCursorUsed;
-	}
+
 	public void setHyperlinkUnderlineMode(int newHyperlinkUnderlineMode) {
 		hyperlinkUnderlineMode = newHyperlinkUnderlineMode;
 	}
-
 }
