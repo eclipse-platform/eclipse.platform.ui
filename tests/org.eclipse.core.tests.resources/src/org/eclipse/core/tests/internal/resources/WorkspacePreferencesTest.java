@@ -101,7 +101,17 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 
 		preferences.setValue(ResourcesPlugin.PREF_BUILD_ORDER, "");
 		assertTrue("2.3", workspace.getDescription().getBuildOrder().length == 0);
-
+		
+		long snapshotInterval = 800000000L;
+		preferences.setValue(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, snapshotInterval);
+		assertEquals("3.0", snapshotInterval, workspace.getDescription().getSnapshotInterval());
+		
+		long defaultSnapshotInterval = preferences.getDefaultLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL);
+		preferences.setValue(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, defaultSnapshotInterval);
+		assertEquals("3.1", defaultSnapshotInterval, workspace.getDescription().getSnapshotInterval());
+		
+		preferences.setToDefault(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL);
+		assertEquals("3.2", defaultSnapshotInterval, workspace.getDescription().getSnapshotInterval());
 		assertEquals("Description not synchronized", workspace.getDescription(), preferences);
 
 	}
