@@ -14,6 +14,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandlerListener;
+import org.eclipse.ui.internal.misc.Policy;
 
 /**
  * A handler that wraps a legacy handler. This provide backward compatibility
@@ -22,6 +23,13 @@ import org.eclipse.core.commands.IHandlerListener;
  * @since 3.1
  */
 public final class LegacyHandlerWrapper implements IHandler {
+
+	/**
+	 * This flag can be set to <code>true</code> if commands should print
+	 * information to <code>System.out</code> when changing handlers.
+	 */
+	private static final boolean DEBUG_HANDLERS = Policy.DEBUG_HANDLERS
+			&& Policy.DEBUG_HANDLERS_VERBOSE;
 
 	/**
 	 * The wrapped handler; never <code>null</code>.
@@ -49,7 +57,7 @@ public final class LegacyHandlerWrapper implements IHandler {
 	 * 
 	 * @see org.eclipse.core.commands.IHandler#addHandlerListener(org.eclipse.core.commands.IHandlerListener)
 	 */
-	public void addHandlerListener(IHandlerListener handlerListener) {
+	public final void addHandlerListener(final IHandlerListener handlerListener) {
 		handler.addHandlerListener(new LegacyHandlerListenerWrapper(this,
 				handlerListener));
 	}
@@ -59,7 +67,7 @@ public final class LegacyHandlerWrapper implements IHandler {
 	 * 
 	 * @see org.eclipse.core.commands.IHandler#dispose()
 	 */
-	public void dispose() {
+	public final void dispose() {
 		handler.dispose();
 	}
 
@@ -80,7 +88,21 @@ public final class LegacyHandlerWrapper implements IHandler {
 	 * 
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	public final Object execute(final ExecutionEvent event)
+			throws ExecutionException {
+		// Debugging output
+		if (DEBUG_HANDLERS) {
+			System.out
+					.print("HANDLERS >>> Executing LegacyHandlerWrapper for "); //$NON-NLS-1$
+			if (handler == null) {
+				System.out.println("no handler"); //$NON-NLS-1$
+			} else {
+				System.out.print('\''); //$NON-NLS-1$
+				System.out.print(handler.getClass().getName());
+				System.out.println('\'');
+			}
+		}
+		
 		try {
 			return handler.execute(event.getParameters());
 		} catch (final org.eclipse.ui.commands.ExecutionException e) {
@@ -97,7 +119,7 @@ public final class LegacyHandlerWrapper implements IHandler {
 	 * 
 	 * @see org.eclipse.core.commands.IHandler#isEnabled()
 	 */
-	public boolean isEnabled() {
+	public final boolean isEnabled() {
 		final Object enabled = handler.getAttributeValuesByName().get(
 				ILegacyAttributeNames.ENABLED);
 		if (enabled instanceof Boolean) {
@@ -112,7 +134,7 @@ public final class LegacyHandlerWrapper implements IHandler {
 	 * 
 	 * @see org.eclipse.core.commands.IHandler#isHandled()
 	 */
-	public boolean isHandled() {
+	public final boolean isHandled() {
 		final Object handled = handler.getAttributeValuesByName().get(
 				ILegacyAttributeNames.HANDLED);
 		if (handled instanceof Boolean) {
@@ -127,9 +149,9 @@ public final class LegacyHandlerWrapper implements IHandler {
 	 * 
 	 * @see org.eclipse.core.commands.IHandler#removeHandlerListener(org.eclipse.core.commands.IHandlerListener)
 	 */
-	public void removeHandlerListener(IHandlerListener handlerListener) {
+	public final void removeHandlerListener(
+			final IHandlerListener handlerListener) {
 		handler.removeHandlerListener(new LegacyHandlerListenerWrapper(this,
 				handlerListener));
 	}
-
 }
