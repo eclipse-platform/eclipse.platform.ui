@@ -45,7 +45,7 @@ BODY {
 </head>
 
 <body>
-	<div id="textLayer" style="position:absolute; z-index:1; left:0; top:0; height:100%; width:3000;">
+	<div id="textLayer" style="position:absolute; z-index:1; left:0; top:0; height:100%; width:100%;">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100%" style="padding-left:5;">
 			<tr>
 				<td style="font: icon;">
