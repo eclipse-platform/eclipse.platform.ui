@@ -16,17 +16,23 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
+/**
+ * Actions which runs the selected target or the default target of the selected
+ * project in the AntView.
+ */
 public class RunTargetAction extends Action implements IUpdate {
 	
 	private AntView view;
 	
 	public RunTargetAction(AntView view) {
-		super("Run Target");
-		setDescription("Run the selected target");
+		super("Run", ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_RUN));
+		setDescription("Run the selected target or build file");
 		this.view= view;
 	}
 
@@ -74,14 +80,16 @@ public class RunTargetAction extends Action implements IUpdate {
 			return null;
 		}
 		Iterator iter= selection.iterator();
-		while (iter.hasNext()) {
-			Object data= iter.next();
-			if (iter.hasNext() || !(data instanceof TargetNode)) {
-				// Only enable for single selection of a TargetNode
-				return null;
-			}
+		Object data= iter.next();
+		if (iter.hasNext() || (!(data instanceof TargetNode) && !(data instanceof ProjectNode))) {
+			// Only enable for single selection of a TargetNode or ProjectNode
+			return null;
 		}
-		return (TargetNode)selection.getFirstElement();
+		if (data instanceof TargetNode) {
+			return (TargetNode)selection.getFirstElement();
+		} else {
+			return ((ProjectNode)selection.getFirstElement()).getDefaultTarget();
+		}
 	}
 
 }

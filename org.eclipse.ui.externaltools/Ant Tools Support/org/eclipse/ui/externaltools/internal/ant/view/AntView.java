@@ -7,7 +7,7 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 
 Contributors:
-	Roscoe Rush - Prototype implementation
+	Roscoe Rush - Concept and prototype implementation
 	IBM Corporation - Final implementation
 *********************************************************************/
 
@@ -122,17 +122,19 @@ public class AntView extends ViewPart {
 	 * selection changed.
 	 */
 	private List updateActions = new ArrayList();
-	// Actions
+	// Ant View Actions
 	private AddBuildFileAction addBuildFileAction;
-	private RemoveProjectAction removeProjectAction;
-	private RunActiveTargetsAction runActiveTargetsAction;
 	private SearchForBuildFilesAction searchForBuildFilesAction;
+	// ProjectViewer actions
 	private RunTargetAction runTargetAction;
+	private RemoveProjectAction removeProjectAction;
+	private RemoveAllAction removeAllAction;
 	private ActivateTargetAction activateTargetAction;
+	// TargetsViewer actions
+	private RunActiveTargetsAction runActiveTargetsAction;
 	private DeactivateTargetAction deactivateTargetAction;
 	private TargetMoveUpAction moveUpAction;
 	private TargetMoveDownAction moveDownAction;
-	private RemoveAllAction removeAllAction;
 
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -183,6 +185,7 @@ public class AntView extends ViewPart {
 			menu.add(removeProjectAction);
 			menu.add(removeAllAction);
 		} else if (viewer == targetViewer) {
+			menu.add(runActiveTargetsAction);
 			menu.add(deactivateTargetAction);
 			menu.add(new Separator());
 			menu.add(moveUpAction);
@@ -196,16 +199,17 @@ public class AntView extends ViewPart {
 	 */
 	private void createToolbarActions() {
 		IToolBarManager toolBarMgr = getViewSite().getActionBars().getToolBarManager();
-		toolBarMgr.add(runActiveTargetsAction);
 		toolBarMgr.add(addBuildFileAction);
 		toolBarMgr.add(searchForBuildFilesAction);
 		
 		ToolBarManager projectManager= new ToolBarManager(projectToolBar);
+		projectManager.add(runTargetAction);
 		projectManager.add(removeProjectAction);
 		projectManager.add(removeAllAction);
 		projectManager.update(true);
 		
 		ToolBarManager targetManager= new ToolBarManager(targetToolBar);
+		targetManager.add(runActiveTargetsAction);
 		targetManager.add(moveDownAction);
 		targetManager.add(moveUpAction);
 		targetManager.update(true);
