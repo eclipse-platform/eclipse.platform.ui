@@ -45,6 +45,8 @@ public class WorkspaceSynchronizeAdvisor extends CVSSynchronizeViewerAdvisor {
 		WorkspaceUpdateAction action = new WorkspaceUpdateAction();
 		action.setPromptBeforeUpdate(true);
 		updateToolbar = new ActionDelegateManager.WrappedActionDelegate(action, getSynchronizeView(), treeViewer);
+		getDelegateManager().addDelegate(commitToolbar);
+		getDelegateManager().addDelegate(updateToolbar);
 
 		Utils.initAction(commitToolbar, "action.SynchronizeViewCommit.", Policy.getBundle()); //$NON-NLS-1$
 		Utils.initAction(updateToolbar, "action.SynchronizeViewUpdate.", Policy.getBundle()); //$NON-NLS-1$

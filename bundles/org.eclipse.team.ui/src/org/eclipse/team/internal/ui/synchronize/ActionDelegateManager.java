@@ -68,5 +68,6 @@ public class ActionDelegateManager {
 
 		public void addDelegate(WrappedActionDelegate delagate) {
 			delegates.add(delagate);
+			delagate.getDelegate().selectionChanged(delagate, new StructuredSelection());
 		}
 }
