@@ -159,8 +159,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 								keySequenceBindingDefinition.getKeySequence(),
 								keySequenceBindingDefinition.getLocale(),
 								keySequenceBindingDefinition.getPlatform(),
-								keySequenceBindingDefinition.getPluginId(),
-								keySequenceBindingDefinition.isAllowedInDialogs());
+								keySequenceBindingDefinition.getPluginId());
 
 						keySequenceBindingDefinitions.add(
 							keySequenceBindingDefinition);

@@ -69,7 +69,6 @@ public final class KeySequenceBindingDefinition
 	private String locale;
 	private String platform;
 	private String pluginId;
-	private boolean allowedInDialogs;
 	private transient String string;
 
 	public KeySequenceBindingDefinition(
@@ -79,8 +78,7 @@ public final class KeySequenceBindingDefinition
 		KeySequence keySequence,
 		String locale,
 		String platform,
-		String pluginId,
-		boolean allowInDialogs) {
+		String pluginId) {
 		this.contextId = contextId;
 		this.commandId = commandId;
 		this.keyConfigurationId = keyConfigurationId;
@@ -88,7 +86,6 @@ public final class KeySequenceBindingDefinition
 		this.locale = locale;
 		this.platform = platform;
 		this.pluginId = pluginId;
-		this.allowedInDialogs = allowInDialogs;
 	}
 
 	public int compareTo(Object object) {
@@ -116,20 +113,11 @@ public final class KeySequenceBindingDefinition
 							compareTo =
 								Util.compare(platform, castedObject.platform);
 
-							if (compareTo == 0) {
+							if (compareTo == 0)
 								compareTo =
 									Util.compare(
 										pluginId,
 										castedObject.pluginId);
-								
-								if (compareTo == 0) {
-								    if (allowedInDialogs && !castedObject.allowedInDialogs) {
-								        compareTo = 1;
-								    } else if (!allowedInDialogs && castedObject.allowedInDialogs) {
-								        compareTo = -1;
-								    }
-								}
-							}
 						}
 					}
 				}
@@ -154,7 +142,6 @@ public final class KeySequenceBindingDefinition
 		equals &= Util.equals(locale, castedObject.locale);
 		equals &= Util.equals(platform, castedObject.platform);
 		equals &= Util.equals(pluginId, castedObject.pluginId);
-		equals &= (allowedInDialogs == castedObject.allowedInDialogs);
 		return equals;
 	}
 
@@ -201,10 +188,6 @@ public final class KeySequenceBindingDefinition
 		}
 
 		return hashCode;
-	}
-	
-	public boolean isAllowedInDialogs() {
-	    return allowedInDialogs;
 	}
 
 	public String toString() {

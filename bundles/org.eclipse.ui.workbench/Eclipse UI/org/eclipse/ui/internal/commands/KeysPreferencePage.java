@@ -28,6 +28,13 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -56,15 +63,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.jface.preference.StringFieldEditor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -75,14 +73,13 @@ import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
-
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.keys.KeySequenceText;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
 
 public class KeysPreferencePage
 	extends org.eclipse.jface.preference.PreferencePage
@@ -101,9 +98,8 @@ public class KeysPreferencePage
 			if (compareTo == 0) {
 				compareTo = Util.compare(keySequence, castedObject.keySequence);
 
-				if (compareTo == 0) {
+				if (compareTo == 0)
 					compareTo = Util.compare(assignment, castedObject.assignment);
-				}
 			}
 
 			return compareTo;
@@ -168,7 +164,6 @@ public class KeysPreferencePage
 	private Button buttonRestore;
 	private Map categoryIdsByUniqueName;
 	private Map categoryUniqueNamesById;
-	private Button checkBoxAllowInDialog;
 	private Button checkBoxMultiKeyAssist;
 	private Combo comboCategory;
 	private Combo comboCommand;
@@ -306,7 +301,6 @@ public class KeysPreferencePage
 				tableItem.setText(1, (String) contextUniqueNamesById.get(contextId)); //$NON-NLS-1$
 
 			tableItem.setText(2, commandString);
-			tableItem.setText(3, assignment.allowedInDialogs ? Util.translateString(RESOURCE_BUNDLE, "yes") : Util.translateString(RESOURCE_BUNDLE, "no")); //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (difference == DIFFERENCE_MINUS)
 				tableItem.setForeground(new Color(getShell().getDisplay(), RGB_MINUS));
@@ -555,11 +549,6 @@ public class KeysPreferencePage
 		tableColumnKeySequence.setText(Util.translateString(RESOURCE_BUNDLE, "tableColumnKeySequence")); //$NON-NLS-1$
 		tableColumnKeySequence.pack();
 		tableColumnKeySequence.setWidth(300);
-		TableColumn tableColumnAllowInDialogs =
-		    new TableColumn(tableAssignmentsForCommand, SWT.NULL, 3);
-		tableColumnAllowInDialogs.setResizable(true);
-		tableColumnAllowInDialogs.setText(Util.translateString(RESOURCE_BUNDLE, "tableColumnAllowInDialogs")); //$NON-NLS-1$
-		tableColumnKeySequence.pack();
 
 		tableAssignmentsForCommand.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent mouseEvent) {
@@ -690,14 +679,6 @@ public class KeysPreferencePage
 				selectedTableAssignmentsForKeySequence();
 			}
 		});
-
-		// The check box allowing the key sequence in a dialog.
-		checkBoxAllowInDialog = new Button(groupKeySequence, SWT.CHECK);
-		checkBoxAllowInDialog.setText(Util.translateString(RESOURCE_BUNDLE, "checkBoxAllowInDialog.Text")); //$NON-NLS-1$
-		checkBoxAllowInDialog.setToolTipText(Util.translateString(RESOURCE_BUNDLE, "checkBoxAllowInDialog.ToolTipText")); //$NON-NLS-1$
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 2;
-		checkBoxAllowInDialog.setLayoutData(gridData);
 
 		Composite compositeContext = new Composite(composite, SWT.NULL);
 		gridLayout = new GridLayout();
@@ -843,10 +824,6 @@ public class KeysPreferencePage
 		commandAssignments = new TreeSet();
 		keySequenceAssignments = new TreeSet();
 	}
-	
-	private boolean isAllowedInDialogs() {
-	    return checkBoxAllowInDialog.getSelection();
-	}
 
 	private void modifiedTextKeySequence() {
 		update();
@@ -989,7 +966,6 @@ public class KeysPreferencePage
 		String contextId = getContextId();
 		String keyConfigurationId = getKeyConfigurationId();
 		KeySequence keySequence = getKeySequence();
-		boolean allowInDialogs = isAllowedInDialogs();
 		KeySequenceBindingNode.remove(
 			tree,
 			keySequence,
@@ -1006,8 +982,7 @@ public class KeysPreferencePage
 			0,
 			null,
 			null,
-			commandId,
-			allowInDialogs);
+			commandId);
 		List preferenceKeySequenceBindingDefinitions = new ArrayList();
 		KeySequenceBindingNode.getKeySequenceBindingDefinitions(
 			tree,
@@ -1021,7 +996,6 @@ public class KeysPreferencePage
 		String contextId = getContextId();
 		String keyConfigurationId = getKeyConfigurationId();
 		KeySequence keySequence = getKeySequence();
-		boolean allowInDialogs = isAllowedInDialogs();
 		KeySequenceBindingNode.remove(
 			tree,
 			keySequence,
@@ -1038,8 +1012,7 @@ public class KeysPreferencePage
 			0,
 			null,
 			null,
-			null,
-			allowInDialogs);
+			null);
 		List preferenceKeySequenceBindingDefinitions = new ArrayList();
 		KeySequenceBindingNode.getKeySequenceBindingDefinitions(
 			tree,
@@ -1095,9 +1068,10 @@ public class KeysPreferencePage
 			&& tableAssignmentsForCommand.getSelectionCount() == 1) {
 			CommandAssignment commandAssignment =
 				(CommandAssignment) commandAssignmentsAsList.get(selection);
-			setContextId(commandAssignment.contextId);
-			setKeySequence(commandAssignment.keySequence);
-			setAllowedInDialogs(commandAssignment.assignment.allowedInDialogs);
+			String contextId = commandAssignment.contextId;
+			KeySequence keySequence = commandAssignment.keySequence;
+			setContextId(contextId);
+			setKeySequence(keySequence);
 		}
 
 		update();
@@ -1167,10 +1141,6 @@ public class KeysPreferencePage
 			}
 
 		buildKeySequenceAssignmentsTable();
-	}
-	
-	private void setAllowedInDialogs(boolean allowInDialogs) {
-	    checkBoxAllowInDialog.setSelection(allowInDialogs);
 	}
 
 	private void setCommandId(String commandId) {
@@ -1582,8 +1552,7 @@ public class KeysPreferencePage
 					1,
 					keySequenceBindingDefinition.getPlatform(),
 					keySequenceBindingDefinition.getLocale(),
-					keySequenceBindingDefinition.getCommandId(),
-					keySequenceBindingDefinition.isAllowedInDialogs());
+					keySequenceBindingDefinition.getCommandId());
 			}
 
 			for (Iterator iterator = preferenceKeySequenceBindingDefinitions.iterator();
@@ -1599,8 +1568,7 @@ public class KeysPreferencePage
 					0,
 					keySequenceBindingDefinition.getPlatform(),
 					keySequenceBindingDefinition.getLocale(),
-					keySequenceBindingDefinition.getCommandId(),
-					keySequenceBindingDefinition.isAllowedInDialogs());
+					keySequenceBindingDefinition.getCommandId());
 			}
 
 			// TODO?

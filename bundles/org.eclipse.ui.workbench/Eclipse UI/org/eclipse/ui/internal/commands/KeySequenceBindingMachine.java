@@ -236,8 +236,7 @@ final class KeySequenceBindingMachine {
 						i,
 						keySequenceBindingDefinition.getPlatform(),
 						keySequenceBindingDefinition.getLocale(),
-						keySequenceBindingDefinition.getCommandId(),
-						keySequenceBindingDefinition.isAllowedInDialogs());
+						keySequenceBindingDefinition.getCommandId());
 				}
 			}
 		}
