@@ -37,14 +37,17 @@ import org.eclipse.ui.ide.IDEEncoding;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
- * The abstract superclass of editors used to set an 
- * enconding. Any user entered
- * encodings will be added to the list of encodings in the 
- * IDEEncoding.
- * @since 3.1
+ * The abstract superclass of field editors used to set an encoding. 
+ * Any user entered encodings will be added to the list of encodings available via {@link org.eclipse.ui.ide.IDEEncoding}.
+ * <p>
+ * Subclasses may extend, but must call <code>createEncodingGroup</code> during <code>doFillIntoGrid</code>.
+ * </p>
+ * 
  * @see org.eclipse.ui.ide.IDEEncoding
+ * @since 3.1
  */
 public abstract class AbstractEncodingFieldEditor extends FieldEditor {
+    
 	private Composite container;
 
 	private Button defaultEncodingButton;
@@ -60,21 +63,20 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	private String oldSelectedEncoding;
 
 	/**
-	 * Create an instance of the receiver with no parameters
-	 * set.
+	 * Creates a new encoding field editor with no settings set.
 	 */
-	public AbstractEncodingFieldEditor() {
+	protected AbstractEncodingFieldEditor() {
 		super();
 	}
 
 	/**
-	 * Create a new instance of the receiver on the preference called name
-	 * with a label of labelText.
-	 * @param name
-	 * @param labelText
-	 * @param parent
+	 * Creates a new encoding field editor with the given preference name, label and parent.
+     * 
+     * @param name the name of the preference this field editor works on
+     * @param labelText the label text of the field editor
+     * @param parent the parent of the field editor's control
 	 */
-	public AbstractEncodingFieldEditor(String name, String labelText, Composite parent) {
+	protected AbstractEncodingFieldEditor(String name, String labelText, Composite parent) {
 		super(name, labelText, parent);
 	}
 
@@ -105,8 +107,9 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	}
 
 	/**
-	 * Get the value that is current stored for the encoding.
-	 * @return String
+	 * Returns the value that is currently stored for the encoding.
+     * 
+	 * @return the currently stored encoding
 	 */
 	protected abstract String getStoredValue();
 
@@ -156,12 +159,16 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	}
 
 	/**
-	 * Create the Groupd will all of the controls.
+	 * Creates a composite with all the encoding controls.
+     * <p>
+     * Subclasses may extend.
+     * </p>
+     * 
 	 * @param parent the parent widget
 	 * @param numColumns the number of columns in the parent
-	 * @return Group
+	 * @return the group control
 	 */
-	protected Group createEncodingGroup(Composite parent, int numColumns) {
+	protected Composite createEncodingGroup(Composite parent, int numColumns) {
 
 		Font font = parent.getFont();
 		Group group = new Group(parent, SWT.NONE);
@@ -208,27 +215,29 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	}
 
 	/**
-	 * Get the default encoding for the object being shown.
-	 * @return String
+	 * Returns the default encoding for the object being shown.
+     * 
+	 * @return the default encoding for the object being shown
 	 */
 	protected String findDefaultEncoding() {
 		return WorkbenchEncoding.getWorkbenchDefaultEncoding();
 	}
 
 	/**
-	 * Return the text for the default encoding button.
-	 * @return String
+	 * Returns the text for the default encoding button.
+     * 
+	 * @return the text for the default encoding button 
 	 */
 	protected String defaultButtonText() {
 		return NLS.bind(IDEWorkbenchMessages.WorkbenchPreference_defaultEncoding, defaultEnc);
 	}
 
 	/**
-	 * Populate the encodings combo. Set the text based on the
-	 * selectedEncoding. If selectedEncoding is null set it to the
-	 * default.
-	 * @param encodings
-	 * @param selectedEncoding
+	 * Populates the encodings combo. Sets the text based on the
+	 * selected encoding. If there is no selected encoding, the text is set to the default encoding.
+     * 
+	 * @param encodings the list of encodings (list of String)
+	 * @param selectedEncoding the selected encoding, or <code>null</code>
 	 */
 	private void populateEncodingsCombo(List encodings, String selectedEncoding) {
 		String[] encodingStrings = new String[encodings.size()];
@@ -268,8 +277,9 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	}
 
 	/**
-	 * Get the encoding current selected.
-	 * @return String
+	 * Returns the currently selected encoding.
+     * 
+	 * @return the currently selected encoding
 	 */
 	protected String getSelectedEncoding() {
 		if (defaultEncodingButton.getSelection()) {
@@ -283,9 +293,10 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	}
 
 	/**
-	 * Return whether or not this is a valid encoding.
-	 * @param enc
-	 * @return boolean
+	 * Returns whether or not the given encoding is valid.
+     * 
+	 * @param enc the encoding to validate
+	 * @return <code>true</code> if the encoding is valid, <code>false</code> otherwise
 	 */
 	private boolean isValidEncoding(String enc) {
 		try {
@@ -298,18 +309,20 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	}
 
 	/**
-	 * Return the default encoding.
-	 * @return String
+	 * Returns the default encoding.
+     * 
+	 * @return the default encoding
 	 */
 	protected String getDefaultEnc() {
 		return defaultEnc;
 	}
 
 	/**
-	 * Return whether or not the encoding setting changed.
+	 * Returns whether or not the encoding setting changed.
+     * 
 	 * @param encodingSetting the setting from the page.
 	 * @return boolean <code>true</code> if the resource encoding
-	 * is the same as before.
+	 *   is the same as before.
 	 */
 	protected boolean hasSameEncoding(String encodingSetting) {
 

@@ -52,7 +52,7 @@ import org.eclipse.ui.internal.ide.dialogs.PathVariablesGroup;
  * 
  * @since 3.1
  */
-public class PathVariableSelectionDialog extends SelectionDialog {
+public final class PathVariableSelectionDialog extends SelectionDialog {
     private static final int EXTEND_ID = IDialogConstants.CLIENT_ID + 1;
 
     private PathVariablesGroup pathVariablesGroup;

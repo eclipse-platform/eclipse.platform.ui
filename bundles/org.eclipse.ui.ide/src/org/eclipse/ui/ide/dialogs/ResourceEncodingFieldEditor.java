@@ -23,46 +23,50 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.ide.IDEEncoding;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * The ResourceEncodingFieldEditor is a field editor for
  * editing the encoding of a resource and does not use a 
  * preference store.
+ * <p>
+ * This class may be instantiated; it is not intended to be subclassed.
+ * </p>
  * 
  * @since 3.1
  */
-public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
+public final class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 
 	/**
 	 * The resource being edited.
 	 */
 	private IResource resource;
 
-	/**
-	 * Create a new instance of the receiver for setting the
-	 * encoding on charsetResource.
-	 * @param labelText
-	 * @param parent
-	 * @param charsetResource Must be an IContainer or an IFile.
+    /**
+     * Creates a new encoding field editor for setting the
+	 * encoding on the given resource.
+     * 
+     * @param labelText the label text of the field editor
+     * @param parent the parent of the field editor's control
+	 * @param charsetResource must be an <code>IContainer</code> or an <code>IFile</code>.
+     * 
 	 * @see org.eclipse.core.resources.IContainer#getDefaultCharset()
 	 * @see org.eclipse.core.resources.IFile#getCharset()
 	 */
 	public ResourceEncodingFieldEditor(String labelText, Composite parent, IResource charsetResource) {
 		super();
+        Assert.isTrue(charsetResource instanceof IContainer || charsetResource instanceof IFile);
 		setLabelText(labelText);
-		Assert.isTrue(charsetResource instanceof IContainer || charsetResource instanceof IFile);
 		this.resource = charsetResource;
 		createControl(parent);
 	}
@@ -77,7 +81,7 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 			return ((IFile) resource).getCharset();
 
 		} catch (CoreException e) {//If there is an error return the default
-			WorkbenchPlugin.log(IDEWorkbenchMessages.ResourceEncodingFieldEditor_ErrorLoadingMessage, e.getStatus());
+			IDEWorkbenchPlugin.log(IDEWorkbenchMessages.ResourceEncodingFieldEditor_ErrorLoadingMessage, e.getStatus());
 			return WorkbenchEncoding.getWorkbenchDefaultEncoding();
 		}
 
@@ -130,7 +134,7 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 						((IFile) resource).setCharset(finalEncoding, monitor);
 					return Status.OK_STATUS;
 				} catch (CoreException e) {//If there is an error return the default
-					WorkbenchPlugin.log(IDEWorkbenchMessages.ResourceEncodingFieldEditor_ErrorStoringMessage, e.getStatus());
+					IDEWorkbenchPlugin.log(IDEWorkbenchMessages.ResourceEncodingFieldEditor_ErrorStoringMessage, e.getStatus());
 					return e.getStatus();
 				}
 			}
@@ -191,8 +195,9 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 	}
 
 	/**
-	 * Get the charset from the content description if there is one.
-	 * @return String or <code>null</code>.
+	 * Returns the charset from the content description if there is one.
+     * 
+	 * @return the charset from the content description, or <code>null</code>
 	 */
 	private String getCharsetFromDescription() {
 		IContentDescription description = getContentDescription();
@@ -230,8 +235,8 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ide.dialogs.AbstractEncodingFieldEditor#createEncodingGroup(org.eclipse.swt.widgets.Composite, int)
 	 */
-	protected Group createEncodingGroup(Composite parent, int numColumns) {
-		Group group = super.createEncodingGroup(parent, numColumns);
+	protected Composite createEncodingGroup(Composite parent, int numColumns) {
+        Composite group = super.createEncodingGroup(parent, numColumns);
 		String byteOrderLabel = IDEEncoding.getByteOrderMarkLabel(getContentDescription());
 		if (byteOrderLabel != null) {
 			Label label = new Label(group, SWT.NONE);
@@ -245,10 +250,11 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 	}
 
 	/**
-	 * Get the content description of the resource if it is 
+	 * Returns the content description of the resource if it is 
 	 * a file and it has a content description.
-	 * @return IContentDescription or <code>null</code> if resource is
-	 * not an IFile or it does not have a descrption.
+     * 
+	 * @return the content description or <code>null</code> if resource is
+	 *   not an <code>IFile</code> or it does not have a description
 	 */
 	private IContentDescription getContentDescription() {
 		try {
