@@ -256,7 +256,10 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * @param value the new default value for the property
 	 */
 	public void setDefault(String name, boolean value) {
-		getDefaultPreferences().putBoolean(name, value);
+		if (BOOLEAN_DEFAULT_DEFAULT == value)
+			getDefaultPreferences().remove(name);
+		else
+			getDefaultPreferences().putBoolean(name, value);
 	}
 
 	/**
@@ -335,7 +338,10 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	public void setDefault(String name, double value) {
 		if (Double.isNaN(value))
 			throw new IllegalArgumentException();
-		getDefaultPreferences().putDouble(name, value);
+		if (DOUBLE_DEFAULT_DEFAULT == value)
+			getDefaultPreferences().remove(name);
+		else
+			getDefaultPreferences().putDouble(name, value);
 	}
 
 	/**
@@ -414,7 +420,10 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	public void setDefault(String name, float value) {
 		if (Float.isNaN(value))
 			throw new IllegalArgumentException();
-		getDefaultPreferences().putFloat(name, value);
+		if (FLOAT_DEFAULT_DEFAULT == value)
+			getDefaultPreferences().remove(name);
+		else
+			getDefaultPreferences().putFloat(name, value);
 	}
 
 	/**
@@ -487,7 +496,10 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * @param value the new default value for the property
 	 */
 	public void setDefault(String name, int value) {
-		getDefaultPreferences().putInt(name, value);
+		if (INT_DEFAULT_DEFAULT == value)
+			getDefaultPreferences().remove(name);
+		else
+			getDefaultPreferences().putInt(name, value);
 	}
 
 	/**
@@ -560,7 +572,10 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * @param value the new default value for the property
 	 */
 	public void setDefault(String name, long value) {
-		getDefaultPreferences().putLong(name, value);
+		if (LONG_DEFAULT_DEFAULT == value)
+			getDefaultPreferences().remove(name);
+		else
+			getDefaultPreferences().putLong(name, value);
 	}
 
 	/**
@@ -636,7 +651,10 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	public void setDefault(String name, String value) {
 		if (value == null)
 			throw new IllegalArgumentException();
-		getDefaultPreferences().put(name, value);
+		if (STRING_DEFAULT_DEFAULT.equals(value))
+			getDefaultPreferences().remove(name);
+		else
+			getDefaultPreferences().put(name, value);
 	}
 
 	/**
