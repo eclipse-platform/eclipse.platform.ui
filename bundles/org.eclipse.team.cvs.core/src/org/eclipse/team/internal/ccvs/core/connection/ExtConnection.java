@@ -65,7 +65,7 @@ public class ExtConnection implements IServerConnection {
 				if (outputStream != null) outputStream.close();
 			} finally {
 				outputStream = null;
-				process.destroy();
+				if (process != null) process.destroy();
 			}
 		}
 	}
