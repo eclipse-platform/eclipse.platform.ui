@@ -3,11 +3,9 @@ package org.eclipse.ui.externaltools.internal.ui;
 /**********************************************************************
 Copyright (c) 2002 IBM Corp. and others.
 All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
+are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
-Contributors:
+http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,13 +30,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org
-	.eclipse
-	.debug
-	.internal
-	.ui
-	.launchConfigurations
-	.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -515,7 +507,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		return MessageDialogWithToggle.openQuestion(getShell(), "Migrate project builder",
 			"This project builder is stored in a format that is no longer supported. If you wish to edit this builder, it will first be migrated to the new format. If you proceed, this project builder will not be understood by installations running versions 2.0 or earlier of the org.eclipse.ui.externaltools plugin.\n\nProceed with migration?",
 			IPreferenceConstants.PROMPT_FOR_MIGRATION,
-			"Always prompt before migrating project builders",
+			"&Always prompt before migrating project builders",
 			ExternalToolsPlugin.getDefault().getPreferenceStore());
 	}
 
