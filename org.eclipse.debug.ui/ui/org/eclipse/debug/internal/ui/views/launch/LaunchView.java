@@ -6,7 +6,14 @@ package org.eclipse.debug.internal.ui.views.launch;
  */
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -65,7 +72,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener, IPageListener, IPropertyChangeListener {
+public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener, IPageListener, IPropertyChangeListener, IResourceChangeListener {
 	
 	/**
 	 * A marker for the source selection and icon for an
@@ -118,12 +125,18 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	private boolean fReuseEditor = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_REUSE_EDITOR);
 	
 	/**
+	 * Resource delta visitor
+	 */
+	private IResourceDeltaVisitor fVisitor = null;
+	
+	/**
 	 * Creates a launch view and an instruction pointer marker for the view
 	 */
 	public LaunchView() {
 		try {
 			fInstructionPointer = ResourcesPlugin.getWorkspace().getRoot().createMarker(IInternalDebugUIConstants.INSTRUCTION_POINTER);
 			DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
 		}
@@ -278,6 +291,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		setEditorInput(null);
 		setStackFrame(null);
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		super.dispose();
 	}
 	
@@ -916,5 +930,73 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			}
 		}
 	}
+
+	/**
+	 * Visitor for handling resource deltas. When a project is closed, we must clear
+	 * the cache of editor input/stack frame, etc., as the elements can become invalid.
+	 */
+	class LaunchViewVisitor implements IResourceDeltaVisitor {
+		/**
+		 * @see IResourceDeltaVisitor#visit(IResourceDelta)
+		 */
+		public boolean visit(IResourceDelta delta) {
+			if (delta == null) {
+				return false;
+			}
+			IResource resource = delta.getResource();
+			if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
+				if (resource instanceof IProject) {
+					IProject project = (IProject)resource;
+					if (!project.isOpen()) {
+						// clear
+					    setStackFrame(null);
+					    setEditorId(null);
+					    setEditorInput(null);
+					}
+				}
+				return false;
+			}
+			return resource instanceof IWorkspaceRoot;
+		}		
+	}
+	
+	/**
+	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		IResourceDelta delta= event.getDelta();
+		if (delta != null) {
+			try {
+				delta.accept(getVisitor());
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e);
+			}
+		}		
+	}
+
+
+	/**
+	 * Returns the resource delta visitor for this view,
+	 * creating if required.
+	 * 
+	 * @return resource delta visitor
+	 */
+	protected IResourceDeltaVisitor getVisitor() {
+		if (fVisitor == null) {
+			fVisitor = new LaunchViewVisitor();
+		}
+		return fVisitor;
+	}
+
+
+	/**
+	 * Sets the resource delta visitor for this view
+	 * .
+	 * @param visitor resource delta visitor
+	 */
+	private void setVisitor(IResourceDeltaVisitor visitor) {
+		fVisitor = visitor;
+	}
+
 
 }
