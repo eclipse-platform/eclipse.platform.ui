@@ -29,6 +29,8 @@ public class UpdateManagerUtils {
 	}
 
 	private static Writer writer;
+	// manage URL to File
+	private static Map urlFileMap;
 
 	/**
 	 * return the urlString if it is a absolute URL
@@ -392,13 +394,26 @@ public class UpdateManagerUtils {
 		if (!"file".equalsIgnoreCase(url2.getProtocol()))
 			return false;
 
-		File file1 = new File(url1.getFile());
-		File file2 = new File(url2.getFile());
+		File file1 = getFileFor(url1);//new File(url1.getFile());
+		File file2 = getFileFor(url2);
 
 		if (file1 == null)
 			return false;
 
 		return (file1.equals(file2));
+	}
+	
+	/*
+	 * Method getFileFor.
+	 * @param url1
+	 * @return File
+	 */
+	private static File getFileFor(URL url1) {
+		if (urlFileMap == null) urlFileMap = new HashMap();
+		if (urlFileMap.get(url1)!=null) return (File)urlFileMap.get(url1);
+		File newFile = new File(url1.getFile());
+		urlFileMap.put(url1,newFile);
+		return newFile; 
 	}
 
 	/*

@@ -21,8 +21,8 @@ public class ConfigurationPolicyModel extends ModelObject {
 	
 
 	private int policy;
-	private List /* of FeatureReferenceModel */configuredFeatureReferences;
-	private List /* of FeatureReferenceModel */unconfiguredFeatureReferences;
+	private Map /* of FeatureReferenceModel */configuredFeatureReferences;
+	private Map /* of FeatureReferenceModel */unconfiguredFeatureReferences;
 	
 	// since 2.0.2
 	private ConfiguredSiteModel configuredSiteModel;
@@ -32,8 +32,8 @@ public class ConfigurationPolicyModel extends ModelObject {
 	 */
 	public ConfigurationPolicyModel() {
 		super();
-		configuredFeatureReferences = new ArrayList();
-		unconfiguredFeatureReferences = new ArrayList();		
+		configuredFeatureReferences = new HashMap();
+		unconfiguredFeatureReferences = new HashMap();		
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 	public FeatureReferenceModel[] getConfiguredFeaturesModel() {
 		if (configuredFeatureReferences==null || configuredFeatureReferences.isEmpty())
 			return new FeatureReferenceModel[0];
-		return (FeatureReferenceModel[]) configuredFeatureReferences.toArray(arrayTypeFor(configuredFeatureReferences));
+		return (FeatureReferenceModel[]) configuredFeatureReferences.keySet().toArray(arrayTypeFor(configuredFeatureReferences.keySet()));
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 	public FeatureReferenceModel[] getUnconfiguredFeaturesModel() {
 	if (unconfiguredFeatureReferences==null || unconfiguredFeatureReferences.isEmpty())
 			return new FeatureReferenceModel[0];			
-		return (FeatureReferenceModel[]) unconfiguredFeatureReferences.toArray(arrayTypeFor(unconfiguredFeatureReferences));		
+		return (FeatureReferenceModel[]) unconfiguredFeatureReferences.keySet().toArray(arrayTypeFor(unconfiguredFeatureReferences.keySet()));		
 	}
 
 	/**
@@ -91,10 +91,10 @@ public class ConfigurationPolicyModel extends ModelObject {
 	/**
 	 * 
 	 */
-	private boolean remove(FeatureReferenceModel feature, List list) {
+	private boolean remove(FeatureReferenceModel feature, Map list) {
 		URL featureURL = feature.getURL();
 		boolean found = false;
-		Iterator iter = list.iterator();
+		Iterator iter = list.keySet().iterator();
 		while (iter.hasNext() && !found) {
 			FeatureReferenceModel element = (FeatureReferenceModel) iter.next();
 			if (UpdateManagerUtils.sameURL(element.getURL(),featureURL)) {
@@ -114,10 +114,10 @@ public class ConfigurationPolicyModel extends ModelObject {
 	/**
 	 * 
 	 */
-	private void add(FeatureReferenceModel feature, List list) {
+	private void add(FeatureReferenceModel feature, Map list) {
 		URL featureURL = feature.getURL();
 		boolean found = false;
-		Iterator iter = list.iterator();
+		Iterator iter = list.keySet().iterator();
 		while (iter.hasNext() && !found) {
 			FeatureReferenceModel element = (FeatureReferenceModel) iter.next();
 			if (UpdateManagerUtils.sameURL(element.getURL(),featureURL)) {
@@ -126,7 +126,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 		}
 
 		if (!found) {
-			list.add(feature);
+			list.put(feature,null);
 		} else {
 			UpdateManagerPlugin.warn("Feature Reference :"+feature+" already part of the list.");
 		}
@@ -140,8 +140,8 @@ public class ConfigurationPolicyModel extends ModelObject {
 		assertIsWriteable();
 		
 		if (configuredFeatureReferences == null)
-			this.configuredFeatureReferences = new ArrayList();
-		if (!configuredFeatureReferences.contains(feature)){
+			this.configuredFeatureReferences = new HashMap();
+		if (!configuredFeatureReferences.containsKey(feature)){
 			//DEBUG:
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION){
 				UpdateManagerPlugin.debug("Configuring "+feature.getURLString());
@@ -167,8 +167,8 @@ public class ConfigurationPolicyModel extends ModelObject {
 	public void addUnconfiguredFeatureReference(FeatureReferenceModel feature) {
 		assertIsWriteable();
 		if (unconfiguredFeatureReferences == null)
-			this.unconfiguredFeatureReferences = new ArrayList();
-		if (!unconfiguredFeatureReferences.contains(feature)){
+			this.unconfiguredFeatureReferences = new HashMap();
+		if (!unconfiguredFeatureReferences.containsKey(feature)){
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION){
 				UpdateManagerPlugin.debug("Unconfiguring "+feature.getURLString());
 			}
@@ -207,8 +207,10 @@ public class ConfigurationPolicyModel extends ModelObject {
 	 * @param unconfiguredFeatureReferences The unconfiguredFeatureReferences to set
 	 */
 	protected void setUnconfiguredFeatureReferences(IFeatureReference[] featureReferences) {
-		unconfiguredFeatureReferences = new ArrayList();
-		unconfiguredFeatureReferences.addAll(Arrays.asList(featureReferences));
+		unconfiguredFeatureReferences = new HashMap();
+		for (int i = 0; i < featureReferences.length; i++) {
+			unconfiguredFeatureReferences.put(featureReferences[i],null);
+		}
 	}
 
 
@@ -217,8 +219,10 @@ public class ConfigurationPolicyModel extends ModelObject {
 	 * @param configuredFeatureReferences The configuredFeatureReferences to set
 	 */
 	protected void setConfiguredFeatureReferences(IFeatureReference[] featureReferences) {
-		configuredFeatureReferences = new ArrayList();
-		configuredFeatureReferences.addAll(Arrays.asList(featureReferences));
+		configuredFeatureReferences = new HashMap();
+		for (int i = 0; i < featureReferences.length; i++) {
+			configuredFeatureReferences.put(featureReferences[i],null);
+		}		
 	
 	}
 
