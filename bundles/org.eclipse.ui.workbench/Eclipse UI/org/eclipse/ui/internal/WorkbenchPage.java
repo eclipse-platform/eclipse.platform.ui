@@ -1838,9 +1838,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 
 		// Just in case view was fast.
 		window.updateFastViewBar();
-
-		//if it was the last part, close the perspective
-//		lastPartClosePerspective();
 	}
 
 	/**
