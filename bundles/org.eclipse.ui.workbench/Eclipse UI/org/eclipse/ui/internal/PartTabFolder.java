@@ -36,7 +36,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
-import org.eclipse.ui.internal.presentations.PartTabFolderPresentation;
 import org.eclipse.ui.internal.presentations.PartTabFolderSystemContribution;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
