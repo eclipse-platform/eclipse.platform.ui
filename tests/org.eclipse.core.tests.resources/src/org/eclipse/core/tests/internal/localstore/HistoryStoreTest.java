@@ -12,29 +12,52 @@ package org.eclipse.core.tests.internal.localstore;
 
 import java.io.*;
 import java.util.*;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.localstore.HistoryStore;
+import org.eclipse.core.internal.indexing.IndexedStoreException;
+import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
-import org.eclipse.core.tests.internal.localstore.HistoryStoreTest.LogListenerVerifier.VerificationFailedException;
 
 /**
  * This class defines all tests for the HistoryStore Class.
  */
 
 public class HistoryStoreTest extends EclipseWorkspaceTest {
-	class LogListenerVerifier implements ILogListener {
-		class VerificationFailedException extends Exception {
-			VerificationFailedException(String message) {
-				super(message);
+
+	class VerificationFailedException extends Exception {
+		VerificationFailedException(String message) {
+			super(message);
+		}
+	}
+	class HistoryStoreVisitorVerifier implements IHistoryStoreVisitor {
+		Set expected = new HashSet();
+		Set actual = new HashSet();
+		public boolean visit(HistoryStoreEntry state) throws IndexedStoreException {
+			actual.add(state.getPath());
+			return true;
+		}
+		public void reset() {
+			expected = new HashSet();
+			actual = new HashSet();
+		}
+		public void addExpected(IPath path) {
+			expected.add(path);
+		}
+		public void verify() throws VerificationFailedException {
+			if (expected.size() != actual.size())
+				throw new VerificationFailedException("Expected size (" + expected.size() + ") and actual size (" + actual.size() + ") differ.");
+			for (Iterator i = expected.iterator(); i.hasNext();) {
+				IPath path = (IPath) i.next();
+				if (!actual.contains(path))
+					throw new VerificationFailedException("Did not visit expected path: " + path);
 			}
 		}
-		
+	}
+	class LogListenerVerifier implements ILogListener {
 		List expected = new ArrayList();
 		List actual = new ArrayList();
 		
@@ -88,7 +111,7 @@ public HistoryStoreTest(String name) {
 }
 public static Test suite() {
 //	TestSuite suite = new TestSuite();
-//	suite.addTest(new HistoryStoreTest("testCopyHistoryFile"));
+//	suite.addTest(new HistoryStoreTest("testAccept"));
 //	return suite;
 	return new TestSuite(HistoryStoreTest.class);
 }
@@ -1985,5 +2008,62 @@ public void testBug28238() {
 	
 	states = store.getStates(destinationFile);
 	assertEquals("3.0", 1, states.length);
+}
+protected void addToHistory(String message, HistoryStore store, IPath path, InputStream input) {
+	IPath localLocation = getRandomLocation();
+	try {
+		createFileInFileSystem(localLocation, input);
+	} catch (IOException e) {
+		fail(message, e);
+	}
+	store.addState(path, localLocation, System.currentTimeMillis(), true);
+}
+public void testAccept() {
+	HistoryStore store = ((Resource) getWorkspace().getRoot()).getLocalManager().getHistoryStore();
+	IPath a = new Path("/a");
+	IPath ab = a.append("b");
+	IPath abc = ab.append("c");
+	
+	IPath a1 = new Path("/a1");
+	
+	addToHistory("1.0", store, a, getRandomContents());
+	addToHistory("1.1", store, ab, getRandomContents());
+	addToHistory("1.2", store, abc, getRandomContents());
+	addToHistory("1.3", store, a1, getRandomContents());
+
+	// visit only /a
+	HistoryStoreVisitorVerifier verifier = new HistoryStoreVisitorVerifier();
+	verifier.addExpected(a);
+	org.eclipse.core.internal.localstore.TestingSupport.accept(store, a, verifier, false);
+	try {
+		verifier.verify();
+	} catch (VerificationFailedException e) {
+		fail("2.0", e);
+	}
+
+	// visit /a and all its children. Ensure that we don't visit /a1
+	verifier.reset();
+	verifier.addExpected(a);
+	verifier.addExpected(ab);
+	verifier.addExpected(abc);
+	org.eclipse.core.internal.localstore.TestingSupport.accept(store, a, verifier, true);
+	try {
+		verifier.verify();
+	} catch (VerificationFailedException e) {
+		fail("2.1", e);
+	}
+	
+	// visit starting at the root. Should visit all entries
+	verifier.reset();
+	verifier.addExpected(a);
+	verifier.addExpected(ab);
+	verifier.addExpected(abc);
+	verifier.addExpected(a1);
+	org.eclipse.core.internal.localstore.TestingSupport.accept(store, Path.ROOT, verifier, true);
+	try {
+		verifier.verify();
+	} catch (VerificationFailedException e) {
+		fail("2.2", e);
+	}
 }
 }
