@@ -39,10 +39,19 @@ public class SiteFile extends SiteURL {
 	public void store(IPluginEntry pluginEntry, String contentKey, InputStream inStream) throws CoreException {
 
 		String path = UpdateManagerUtils.getPath(getURL());
-		String pluginPath = path + DEFAULT_PLUGIN_PATH + pluginEntry.getIdentifier().toString();
+
+		// FIXME: fragment code
+		String pluginPath = null;
+		if (pluginEntry.isFragment()) {
+			pluginPath = path + DEFAULT_FRAGMENT_PATH + pluginEntry.getIdentifier().toString();
+		} else {
+			pluginPath = path + DEFAULT_PLUGIN_PATH + pluginEntry.getIdentifier().toString();			
+		}
 		pluginPath += pluginPath.endsWith(File.separator) ? contentKey : File.separator + contentKey;
+
 		try {
 			UpdateManagerUtils.copyToLocal(inStream, pluginPath);
+
 		} catch (IOException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error creating file:" + pluginPath, e);
@@ -51,8 +60,7 @@ public class SiteFile extends SiteURL {
 			try {
 				// close stream
 				inStream.close();
-			} catch (Exception e) {
-			}
+			} catch (Exception e) {}
 		}
 	}
 
@@ -74,8 +82,7 @@ public class SiteFile extends SiteURL {
 			try {
 				// close stream
 				inStream.close();
-			} catch (Exception e) {
-			}
+			} catch (Exception e) {}
 		}
 
 	}
@@ -115,11 +122,13 @@ public class SiteFile extends SiteURL {
 				}
 			} catch (MalformedURLException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error during parsing of the site:"+featurePath,e);
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during parsing of the site:" + featurePath, e);
 				throw new CoreException(status);
 			}
 
 			//FIXME: handle the archives
+			// look into each plugin directory, crack the plugin.xml open (or fragmen.xml ???)
+			// get id and version, calculate URL...
 		}
 
 	}

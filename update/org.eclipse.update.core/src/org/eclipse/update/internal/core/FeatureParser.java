@@ -248,7 +248,7 @@ public class FeatureParser extends DefaultHandler {
 		PluginEntry pluginEntry = new PluginEntry(id,ver);
 		
 		String fragment = attributes.getValue("fragment");
-		pluginEntry.setFragment(fragment.trim().equalsIgnoreCase("true"));
+		pluginEntry.setFragment(fragment!=null && fragment.trim().equalsIgnoreCase("true"));
 
 		//feature.setOS
 		String os = attributes.getValue("os");

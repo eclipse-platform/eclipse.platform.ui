@@ -18,7 +18,13 @@ public abstract class Site implements ISite {
 	 * default path under the site where plugins will be installed
 	 */
 	public static final String DEFAULT_PLUGIN_PATH = "plugins/";
-
+	/**
+	 * default path under the site where plugins will be installed
+	 */
+	//FIXME: framgment
+	public static final String DEFAULT_FRAGMENT_PATH = "fragments/";
+
+
 	/**
 	 * default path, under site, where features will be installed
 	 */
