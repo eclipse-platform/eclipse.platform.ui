@@ -5,6 +5,7 @@
 package org.eclipse.compare.internal;
 
 import java.io.InputStream;
+import java.io.ByteArrayInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ResourceBundle;
 
@@ -12,12 +13,14 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.BadLocationException;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.FileEditorInput;
@@ -26,9 +29,41 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 import org.eclipse.compare.*;
+import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.IStreamContentAccessor;
 
 
 public class EditionAction implements IActionDelegate {
+
+	/**
+	 * Implements the IStreamContentAccessor and ITypedElement protocols
+	 * for a Document.
+	 */
+	class DocumentBufferNode implements ITypedElement, IStreamContentAccessor {
+		
+		private IDocument fDocument;
+		private String type;
+		
+		DocumentBufferNode(IDocument document, String type) {
+			fDocument= document;
+		}
+		
+		public String getName() {
+			return "Editor Buffer";
+		}
+		
+		public String getType() {
+			return type;
+		}
+		
+		public Image getImage() {
+			return null;
+		}
+		
+		public InputStream getContents() {
+			return new ByteArrayInputStream(fDocument.get().getBytes());
+		}
+	}
 
 	private ISelection fSelection;
 	private String fBundleName;
@@ -66,12 +101,9 @@ public class EditionAction implements IActionDelegate {
 
 	private void doFromHistory(final IFile file) {
 						
-		final ResourceBundle bundle= ResourceBundle.getBundle(fBundleName);
+		ResourceBundle bundle= ResourceBundle.getBundle(fBundleName);
 		String title= Utilities.getString(bundle, "title"); //$NON-NLS-1$
-		
-		//IDocument doc= getDocument(file);
-		//System.out.println("doc: " + doc);
-	
+			
 		Shell parentShell= CompareUIPlugin.getShell();
 		
 		IFileState states[]= null;
@@ -89,6 +121,11 @@ public class EditionAction implements IActionDelegate {
 		}
 		
 		ITypedElement base= new ResourceNode(file);
+		
+		IDocument document= getDocument(file);
+		ITypedElement target= base;
+		if (document != null)
+			target= new DocumentBufferNode(document, file.getFileExtension());
 	
 		ITypedElement[] editions= new ITypedElement[states.length+1];
 		editions[0]= base;
@@ -99,28 +136,16 @@ public class EditionAction implements IActionDelegate {
 		d.setHideIdenticalEntries(false);
 		
 		if (fReplaceMode) {
-			final ITypedElement ti= d.selectEdition(base, editions, null);			
+			final ITypedElement ti= d.selectEdition(target, editions, null);		
 			if (ti instanceof IStreamContentAccessor) {
-								
-				WorkspaceModifyOperation operation= new WorkspaceModifyOperation() {
-					public void execute(IProgressMonitor pm) throws InvocationTargetException {
-						try {
-							String taskName= Utilities.getString(bundle, "taskName"); //$NON-NLS-1$
-							pm.beginTask(taskName, IProgressMonitor.UNKNOWN);
-							InputStream is= ((IStreamContentAccessor)ti).getContents();
-							file.setContents(is, false, true, pm);
-						} catch (CoreException e) {
-							throw new InvocationTargetException(e);
-						} finally {
-							pm.done();
-						}
-					}
-				};
-				
+				IStreamContentAccessor sa= (IStreamContentAccessor)ti;
 				try {
-					ProgressMonitorDialog pmdialog= new ProgressMonitorDialog(parentShell);				
-					pmdialog.run(false, true, operation);
-												
+
+					if (document != null)
+						updateDocument(document, sa);	
+					else
+						updateWorkspace(bundle, parentShell, sa, file);
+						
 				} catch (InterruptedException x) {
 					// Do nothing. Operation has been canceled by user.
 					
@@ -132,7 +157,41 @@ public class EditionAction implements IActionDelegate {
 		} else {
 			d.setCompareMode(true);
 
-			d.selectEdition(base, editions, null);			
+			d.selectEdition(target, editions, null);			
+		}
+	}
+	
+	private void updateWorkspace(final ResourceBundle bundle, Shell shell,
+						final IStreamContentAccessor sa, final IFile file)
+									throws InvocationTargetException, InterruptedException {
+		
+		WorkspaceModifyOperation operation= new WorkspaceModifyOperation() {
+			public void execute(IProgressMonitor pm) throws InvocationTargetException {
+				try {
+					String taskName= Utilities.getString(bundle, "taskName"); //$NON-NLS-1$
+					pm.beginTask(taskName, IProgressMonitor.UNKNOWN);
+					file.setContents(sa.getContents(), false, true, pm);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				} finally {
+					pm.done();
+				}
+			}
+		};
+		
+		ProgressMonitorDialog pmdialog= new ProgressMonitorDialog(shell);				
+		pmdialog.run(false, true, operation);									
+	}
+	
+	private void updateDocument(IDocument document, IStreamContentAccessor sa) throws InvocationTargetException {
+		try {
+			InputStream is= sa.getContents();
+			String text= Utilities.readString(is);
+			document.replace(0, document.getLength(), text);
+		} catch (CoreException e) {
+			throw new InvocationTargetException(e);
+		} catch (BadLocationException e) {
+			throw new InvocationTargetException(e);
 		}
 	}
 	
