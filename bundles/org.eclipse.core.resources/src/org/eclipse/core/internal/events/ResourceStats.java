@@ -29,42 +29,26 @@ public class ResourceStats {
 	public static boolean TRACE_SNAPSHOT = PerformanceStats.isEnabled(ResourceStats.EVENT_SNAPSHOT);
 
 	/**
-	 * The start time of the current build or notification
-	 */
-	private static long currentStart;
-
-	/**
 	 * The event that is currently occurring, maybe <code>null</code>
 	 */
 	private static PerformanceStats currentStats;
 	
-	/**
-	 * Context information for the event that is occurring.
-	 */
-	private static String currentContext;
-
 	public static void endBuild() {
-		long end = System.currentTimeMillis();
-		if (currentStart > 0 && currentStats != null)
-			currentStats.addRun(end - currentStart, currentContext);
+		if (currentStats != null)
+			currentStats.endRun();
 		currentStats = null;
-		currentStart = -1;
 	}
 
 	public static void endNotify() {
-		long end = System.currentTimeMillis();
-		if (currentStart > 0 && currentStats != null)
-			currentStats.addRun(end - currentStart, currentContext);
+		if (currentStats != null)
+			currentStats.endRun();
 		currentStats = null;
-		currentStart = -1;
 	}
 
 	public static void endSnapshot() {
-		long end = System.currentTimeMillis();
-		if (currentStart > 0 && currentStats != null)
-			currentStats.addRun(end - currentStart, currentContext);
+		if (currentStats != null)
+			currentStats.endRun();
 		currentStats = null;
-		currentStart = -1;
 	}
 
 	/**
@@ -85,19 +69,16 @@ public class ResourceStats {
 
 	public static void startBuild(IncrementalProjectBuilder builder) {
 		currentStats = PerformanceStats.getStats(EVENT_BUILDERS, builder);
-		currentContext = builder.getProject().getName();
-		currentStart = System.currentTimeMillis();
+		currentStats.startRun(builder.getProject().getName());
 	}
 
 	public static void startNotify(IResourceChangeListener listener) {
 		currentStats = PerformanceStats.getStats(EVENT_LISTENERS, listener);
-		currentContext = null;
-		currentStart = System.currentTimeMillis();
+		currentStats.startRun();
 	}
 
 	public static void startSnapshot() {
 		currentStats = PerformanceStats.getStats(EVENT_SNAPSHOT, ResourcesPlugin.getWorkspace());
-		currentContext = null;
-		currentStart = System.currentTimeMillis();
+		currentStats.startRun();
 	}
 }
