@@ -1,0 +1,994 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="IBM">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (WinNT; U) [Netscape]">
+   <title>Platform Debug Release Notes</title>
+</head>
+<body>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>3.0 - RC4</p>
+<h3>Problem Reports Fixed</h3>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=68181">68181</a>: [doc] Error in IDebugUIConstants javadoc (launchActionSet)<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>3.0 - RC3</p>
+<h3>Problem Reports Fixed</h3>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61992">61992</a>: Slow selection change in debug view<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=66586">66586</a>: Debug-related views no longer "come to front" in non-debug perspective<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=66990">66990</a>: PopupInformationControl does not specify shell for handler<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=66330">66330</a>: Remote Debug Connection not disconnected when JDIDebugModel.newDebugTarget(...) fails<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=66443">66443</a>: Review LaunchView call to IEditorReference#getEditor(true)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=67522">67522</a>: Views don't open when auto-manage initially activated<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=67463">67463</a>: Launch Shortcuts schema is incorrect<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=67507">67507</a>: Ampersand ('&') in label when adding directory to source lookup path<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=67620">67620</a>: Breakpoints should not be shown in the overview ruler<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=65051">65051</a>: string_prompt variable prevents other variables from executing<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=67781">67781</a>: color tuning<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>3.0 - RC2</p>
+<h3>Problem Reports Fixed</h3>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=64638">64638</a>: Don't use new "Run" icon on Debug objects<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=45980">45980</a>: Check calls to IWorkspace.run(...)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=65067">65067</a>: switch perspective when breakpoint hit not honored<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57293">57293</a>: [doc] Beef up contextViewBinding schema<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=66033">66033</a>: Move isAutoManageViews() to LaunchViewContextListener<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63340">63340</a>: Remove DebugContextManager<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=65814">65814</a>: o.e.debug.core.memoryRenderings extension point<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=65581">65581</a>: broken doc link for stringVariablePresentations<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=65351">65351</a>: Breakpoint migration from 2.1 to 3.0<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=64940">64940</a>: Delay on breakpoint rendering when enable/disable<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=66187">66187</a>: Polish patch: support view activation via a keyboard shortcut<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=65356">65356</a>: source lookup tab migration from 2.1 to 3.0<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=65072">65072</a>: workbench not activated when breakpoint hit<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=64984">64984</a>: Inspect doesn't work in Display View<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=65039">65039</a>: Launch view should use IPerspectiveListener2<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=64666">64666</a>: Run/Debug prompts to continue before compiling [JUnit]<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=52336">52336</a>: [Viewers] Internal error at start of debug session<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62677">62677</a>: Adding working set to Source Lookup Tabs causes problems in the tab.<br>
+ 
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>June 1, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56012">56012</a>: Consistency in space at top of launch configuration tabs<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=64188">64188</a>: Classcast exception when trying to resolve non-stackframe object<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63468">63468</a>: ConsoleView should set it's title using setContentDescription()<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=64019">64019</a>: IllegalArgumentException when editing ant builder<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63449">63449</a>: Wrong menu path for profile action set.<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61117">61117</a>: enable checkbox state after "Show Breakpoints Supported by Selected Target"<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62322">62322</a>: Green triangle for Run is confused with the Resume button<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63951">63951</a>: Wrong window activated when new window is opened<br> 
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>May 25, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63323">63328</a>: Move "show debug action set" to LaunchView<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63493">63493</a>: LaunchView keeps lots of state from last debug session in memory<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63016">63016</a>: Display view always brought to the top<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=64337">64337</a>: unqualified source lookup fails in external archive<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62803">62803</a>: ExternalArchiveSourceContainer needs to handle multiple root paths<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>May 21, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63348">63348</a>: NPE from popup<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63374">63374</a>: NPE in LaunchView.partClosed<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63575">63575</a>: Invalid button states in EnvironmentTab of Launch Configuration<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>May 20, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62798">62798</a>: Ok to launch Yes/No should also honor cancel<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62960">62960</a>: NullPointerException when restoring default in Source Lookup Tab<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62677">62677</a>: Adding working set to Source Lookup Tabs causes problems in the tab.<br>  
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63009">63009</a>: Source Lookup Tab does not properly show icons for Jar files<br>  
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63182">63182</a>: Warning about error in pre-requisite wrong<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63090">63090</a>: Console scroll button has its logic reversed.<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63053">63053</a>: View Management view menu drop down has no mnemonic<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63249">63249</a>: uneccessary error logging<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63029">63029</a>: Show As for logical structure has no mnemonic<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62564">62564</a>: A runnable may not be run, if the previous one throws an exception<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=54407">54407</a>: Make a pass on all the properties files<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62643">62643</a>: [External Tools] Quoted args send quote to process<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63027">63027</a>: View Management "Reset Now" button does not layed out correctly<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56042">56042</a>: [Coolbar] [Workbench] Toolbar flash selecting stack frames<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62592">62592</a>: Debug view can fail to close generic debugging views<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63050">63050</a>: NPE in VariablesViewContentProvider<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62574">62574</a>: Expose Debug view's "view tracking" behavior<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63293">63293</a>: Pressing "Reset Now/Cancel" does not cancel<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63256">63256</a>: NPE when adding a breakpoint in an external Java file<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62391">62391</a>: View management: Views opened in wrong perspective<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>May 18, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57519">57519</a>: Console should bold title when new output is available<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=53508">53508</a>: Activate debug action set with debug view<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61801">61801</a>: A null String object reference becomes the value "null"<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62069">62069</a>: NullPointerException in LaunchViewContextListener#initViewCollection<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61940">61940</a>: Customized perspective opens closed views<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61064">61064</a>: improve string variable descriptions<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61116">61116</a>: Common watch expressions don't work for wrapper adapters<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60024">60024</a>: Memory view code could make use of Debug plugin logging support<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61385">61385</a>: Remove debug action group doc<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=47295">47295</a>: Hard to pin down a console<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62236">62236</a>: Debug color settings should NOT be shown in Workbench>Colors and Fonts<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61938">61938</a>: Add source location dialog always selects Java Classpath Variable<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62193">62193</a>: No RunToLine action in context menu<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62488">62488</a>: Default pref settings<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62490">62490</a>: out-of-box experience<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61412">61412</a>: Source lookup tab causes config to need saving<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=44632">44632</a>: Debug view need to be error-proof<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61958">61958</a>: dangerous practice of catching Throwable<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60327">60327</a>: Review LaunchViewContextListener multi-window behavior<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56412">56412</a>: Duplicate favorites after rename<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61630">61630</a>: schema for external tools configurationDuplicationMaps ext point<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=55400">55400</a>: context menu&gt;watch from the variables view doesn't open/activate the expressions view<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62258">62258</a>: No vertical scroll bar on inspect results<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61826">61826</a>: Add file extension filtering for run/debug context menu<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=51435">51435</a>: CommonSourceNotFoundEditor#resetEditor<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60016">60016</a>: Accessibility: Run config, Arguments tab: Working directory not read<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61868">61868</a>: Double tree viewer in debug view<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61917">61917</a>: use .exsd for extension pt schemas<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62202">62202</a>: Run context menu does not filter actions based on enabled activities<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62269">62269</a>: Uneccessary label computation<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=61928">61928</a>: Launch Views leaking<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>May 11, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=54598">54598</a>: Launch configuration; wizard buttons New/Delete margins<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57637">57637</a>: turn Remove All Terminated Launches on by default<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60305">60305</a>: Layout problems on the Environment tab<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=58384">58384</a>: Profile toolbar launch menu should use "Profile As &gt;"<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=51916">51916</a>: Add ability to change source lookup of a running launch<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=58725">58725</a>: [Debug] "Switch to assciated perspective when launching" should set to "Prompt" by default<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60286">60286</a>: API Request: Ability to open launch configuration properties dialog on a specific tab<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60838">60838</a>: Support matchesContentType property test<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=45656">45656</a>: New Annotation Features<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=59319">59319</a>: make scroll lock global to all process consoles<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60927">60927</a>: notifyResult(...) in OpenLaunchDialogAction<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60952">60952</a>: Chkpii errors in I20040504<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60364">60364</a>: debug used deprecated runtime code<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61321">61321</a>: ui.console should not depend on core.resources<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60918">60918</a>: [KeyBindings] Some key bindings not working<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60974">60974</a>: make org.eclipse.debug.internal.ui.views.console.ProcessConsolePage.getConsoleViewer() method public<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61105">61105</a>: Configure view management per perspective<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60010">60010</a>: Auto manage view action move to view menu<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61221">61221</a>: No progress dialog when prompted to wait for build<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57763">57763</a>: NPE running from scrapbook<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61166">61166</a>: source not found<br> 
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61120">61120</a>: Should closed projects be skipped?<br>  
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=55423">55423</a>: don't schedule build if already building<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=41376">41376</a>: Incorrect english: doesn't account for case where launch config type starts with vowel<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=53722">53722</a>: Run As... menu disabled if selection is empty<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61634">61634</a>: Compile errors in workspace message should be more general<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61336">61336</a>: Compile errors prompt should use a warning dialog<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61291">61291</a>: Breakpoint view is displayed when a breakpoint is hit<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57052">57052</a>: [KeyBindings] F11 (Debug Last Launched) Conflict on MacOS X<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=46168">46168</a>: fork() methods should use jobs<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61427">61427</a>: LaunchConfigurationDialog leaked for each use<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=54946">54946</a>: Contextual launch contribution should not set adaptable=true<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60051">60051</a>: Launching with Ant buildfile errors <br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61308">61308</a>: Display var/expression shows in unreadable popup<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57333">57333</a>: Provide API to specify whether a substitution variable supports arguments<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57164">57164</a>: Context view activation should maintain view "stack"<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57588">57588</a>: Removing process from launch doesn't remove associated console<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61810">61810</a>: NPE in the log<br>
+ 
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>May 4, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60064">60064</a>: Memory preference page is missing mnemonic<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60254">60254</a>: Change required in AbstractMemoryRenderer<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56146">56146</a>: Memory View Contribution to Eclipse<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56827">56827</a>: NPE - ExpressionManager expects a delegate for all debug models<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57862">57862</a>: Ability to configure variables from variable selection dialog<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=54726">54726</a>: Fix schema reference in launch shortcut extension<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=51503">51503</a>: Add filter button to Expressions view to show expressions by debug target<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=59776">59776</a>: Migrate memory view pref page to view setting<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60203">60203</a>: Launch job waiting forever<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60655">60655</a>: Memory Block is not enabled / disabled by the Memory View properly<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=59986">59986</a>: Move from ProgressMonitorDialog to IProgressService.busyCursorWhile()<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57272">57272</a>: AlwaysNeverDialog should have "Eclipse standard" look<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60708">60708</a>: Edit String Substitution Variable dialog does not use the dialog font<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=58933">58933</a>: Remove activity filtering in Breakpoints view<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=59330">59330</a>: migrate to new search API<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=59183">59183</a>: Cancelling foreground launch waits for build to complete<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=59535">59535</a>: Opening launch configuration dialog with "profile" mode.<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=59356">59356</a>: LaunchConfigurationDelegate needs a way to tell it per instance to not put up status prompts.<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60409">60409</a>: Use of deprecated fontDefinition extension point<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=59854">59854</a>: Debug keybindings wrong on Mac<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=59990">59990</a>: function keys not working<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=58528">58528</a>: User prompted to switch to debug when debug perspective is active<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>April 27, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=58957">58957</a>: breakpoints : Remove BreakpointManagerListener on dispose<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57305">57305</a>: flashing breakpoints view<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57173">57173</a>: Activity filtering not working for debug<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=58684">58684</a>: Installed JRE can't be named "."<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=42138">42138</a>: Provide a way to dynamically change the process label shown in the console title and debug view<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=47164">47164</a>: Need to be able to disable go to file action for breakpoints.<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57517">57517</a>: eval popup are initially too small<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57735">57735</a>: When including assert tags in private method, breakpoint can't be set<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=59483">59483</a>: Predefine some launch conifiguration variables<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=59042">59042</a>: Invalid Launch configurations are never cleaned up<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=58725">58725</a>: [Debug] "Switch to assciated perspective when launching" should set to "Prompt" by default<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=39024">39024</a>: Need better icon for object browsers action<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57999">57999</a>: Breakpoints added to view while breakpoint manager disabled are not greyed<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=58516">58516</a>: HandlerSubmission constructor marked as deprecated<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=58766">58766</a>: doc/enhance stratum breakpoint<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=59002">59002</a>: Do we need marker definitions for instruction pointers<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57642">57642</a>: [ViewMgmt] debug tests failures due to missing selection<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57836">57836</a>: Support to put paths in variable values<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=59729">59729</a>: Run-> context menu only enabled for a single selection<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56246">56246</a>: InstructionPointerAnnotation and IDebugEditorPresentation<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=58209">58209</a>: Support multi-select for Resume action<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=58377">58377</a>: 'Esc' out of change variable dialog doesn't cancel action<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=58650">58650</a>: replace debugModelActivityBinding with pattern binding<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=59828">59828</a>: Various issues with SelectedResourceManager<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=7552">7552</a>: Keep breakpoints when renaming a resource<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>April 20, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=58290">58290</a>: Launch error message spelling<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56850">56850</a>: DebugViewDecoratingLabelProvider.computedText never cleared<br>  
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=29890">29890</a>: Debug Platform Source Lookup Facilites<br>  
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=45877">45887</a>: When selecting "Build before launching", the build is not specific to the project launched, but the whole workspace<br>  
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=58754">58754</a>: Wait for build never and prompt preferences reversed<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=55419">55419</a>: Generalize compilation error detection for other launchers<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56191">56191</a>: Skip breakpoints in run-to-line<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57306">57306</a>: Improve progress feedback when user wants to wait on build before a launch<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>April 13, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=57790">57790</a>: Support multiple debug-model-to-context extensions<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=53222">53222</a>: Trigger activities when debug elements selected<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=53640">53640</a>: Registers view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=57929">57929</a>: Scope step actions with debuging context<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=58052">58052</a>: Launch view can open views in the wrong window<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=57788">57788</a>: API changes to IHandler causing compile errors<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>April 6, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=56235">56235</a>: Organize Favorites dialog could remember size<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56266">56266</a>: Reorder preference choices for Save dirty editors<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56966">56966</a>: Skip All Breakpoints should have a keyboard shortcut<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=30639">30639</a>: Debug preference pages cut of in High Contrast<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57328">57328</a>: NPE from ResourceResolver<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=55685">55685</a>: Get rid of MoveResultToViewerAction<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=55808">55808</a>: SelectedResourceManager holds onto selections too long<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56192">56192</a>: Remove unused command for close popup<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=55612">55612</a>: Rename "Run" keybinding category to "Run/Debug"<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56035">56035</a>: Console text font should be moved to Workbench Appearance<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=51901">51901</a>: Breakpoint image specification is on jdt.ui instead of debug.ui<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56214">56214</a>: ProjectSourceContainer#getSourceContainers() and referenced projects<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=51084">51084</a>: Launch view should not track view open/close during perspective reset<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=52524">52524</a>: Blocked launch dialog should offer cancel as an option<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56013">56013</a>: Remove the use of the deprecated shared icons<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56070">56070</a>: New and Delete buttons remained disabled after cancelling search<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=53548">53548</a>: Automatically close views that were opened automatically<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>March 30, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=56677">56677</a>: AssertionFailed from LaunchConfigurationView<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=56082">56082</a>: no junit test for LaunchConfigurationDelegate.preLaunchCheck()<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=55309">55309</a>: Leak: RetargetWatchpointAction hangs onto last activated part<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=56672">56672</a>: 'Marker id not found' error in breakpoint view during fast create/delete breakpoint actions<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>March 25, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=55704">55704</a>: Step into selection leads to too many breakpoints being skipped<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=56238">56238</a>: Continue Launch when compile errors preference: Never<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>March 23, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=53677">53677</a>: Remove "debug popup" scope when dialogs support key bindings<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=52613">52613</a>: [New Look] Duplicate debugger perspective opened while stopping at brk pt<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=55124">55124</a>: Warning reported in the builds<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=36495">36495</a>: Debugger support for roles and activities<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=55040">55040</a>: Don't provide ILaunchListener2 API<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=54925">54925</a>: want option to not run programs with errors<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=54631">54631</a>: debug view opens while prompting for perspective change<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=6400">6400</a>: DCR - suggestion to improve running vs. debugging<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=55183">55183</a>: Preference to switch perspective on suspend is too eager<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=55442">55442</a>: ClassCastException in LaunchViewEventHandler<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=55194">55194</a>: "String" problems with the DebugPreferencePage<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=55430">55430</a>: "[KeyBindings] Migrate Popup keybinding support to new EnabledSubmission API<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>March 16, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=50156">50156</a>: Disable "Use Step Filters" toggle for targets that do not support step filters<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=54189">54189</a>: Disable "Use ToggleAutoManageViewsActionDelegate is missing required id<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=37485">37485</a>: Icons for launch short-cuts should be optional<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=44234">44234</a>: Type names always qualified in expressions view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=53223">53223</a>: Expression popup should also show toString()/details<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=54073">54073</a>: Chkpii warnings in plugin.xml files<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=10302">10302</a>: 'Run to Line' stops at breakpoints<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=52809">52809</a>: Evaluating in debugger should not stop on breakpoint<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38950">38950</a>: Display offset of cursor in variables detail pane<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=10078">10078</a>: Feature: Global enable/disable of breakpoints (and leave breakpoints list untouched)<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=54182">54182</a>: Two prompts when starting a debug session<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=44632">44632</a>: Debug view need to be error-proof<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=12746">12746</a>: refactoring support for launch configurations<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=52017">52017</a>: Add createCheckButton API to AbstractLaunchConfigurationTab<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=34345">34345</a>: Disabled watch expression label includes "obsolete"<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=53001">53001</a>: Need a separator between 'Include type inheriting ...' and 'stop in main' in the main Java launch configuration tab<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=54859">54859</a>: Breakpoint are not set as non-registered when deleted from the breakpoint view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=54117">54117</a>: Contextual Launch should use XML Expression Language<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=52952">52952</a>: show all env vars when replacing environment<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=48933">48933</a>: Move to use the Platform UI color support<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=50384">50384</a>: Debugger perspective: default layout improvements<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=37514">37514</a>: global retargettable breakpoint action<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=52450">52450</a>: Don't open Expression View by default<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=51402">51402</a>: [Generic console] need showConsoleView() method<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=51935">51935</a>: Add UI support for variables when specifying environment variable values<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=54065">54065</a>: Tooltip text for profile button in toolbar is wrong<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=54901">54901</a>: Better error logging when launch configuration blows up<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=51568">51568</a>: Numerated accelerators for launch shorts in context menu<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=54924">54924</a>: Variable selection dialog needs mneumonic for Variable Desc<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=54619">54619</a>: Doc for breakpoint manager enablement<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>March 9, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=14414">14414</a>: Use detail pane for variable value setting<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=53636">53636</a>: Label changes after display/inspect popup is visible<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=53665">53665</a>: NPE with "double click"<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=48313">48313</a>: Message console does not support tab size<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=52964">52964</a>: Persist size of debug pop-ups (or size better)<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=53470">53470</a>: launch waiting for build shows up in context menu<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=53693">53693</a>: Variables view doesn't show variables.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=51787">51787</a>: Stepping in Java Perspective<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=53554">53554</a>: Default perspective switching preferences are backwards<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=53954">53954</a>: "Change variable value" action.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=50886">50886</a>: Update debug markerAnnotationSpecification<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=44135">44135</a>: ability to prompt for arguments in run/debug profiles<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>March 2, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=52607">52607</a>: console: no action when drop down is pressed<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=51387">51387</a>: API for retreiving console associated with a process<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=52867">52867</a>: New look - console no longer has a view title<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=53225">53225</a>: Display keybinding for default close action in debug popup<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=51386">51386</a>:	Variables view does not persist size of details area<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=13933">13933</a>:	Terminating launch does not send launchChanged event<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=53313">53313</a>:	StringIndexOutOfBoundsException from LaunchConfiguration<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=52330">52330</a>:	Logical Structure should have a single value<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=52974">52974</a>: NPE in launch dialog when creating a new config<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=53409">53409</a>: Launch view doesn't persist "views to not close"<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=49877">49887</a>: Expose the exit value of IProcess<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Feb 24, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=29953">29953</a>: Launch configuration not found, many stacktraces in the .log<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=13449">13449</a>: Better description when launch configuration type is selected<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=52397">52397</a>: NPE from AddFavoritesAction and others when rename launch config<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=52763">52763</a>:	Edit String Substitution Variable dialog clears value on name change<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=52170">52170</a>:	Improve debug context inheritance<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Feb 17, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=51998">51998</a>: Bad label for a menu item<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=51465">51465</a>: Variable subranges<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=51635">51635</a>: Debug view is not brought to the front when a breakpoint is hit<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=37942">37942</a>: Launch config dialog should have some way to determine the full location of JARs that are listed on the classpath<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Feb 12, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=51803">51803</a>: ClassCastException importing preferences<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Feb 10, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=18338">18338</a>: Run/Debug in the context menu<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=51388">51388</a>: Show "Selection Not Applicable"<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=51422">51422</a>: NPE on hitting breakpoint<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=49934">49934</a>: Promote views with debugging contexts<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Feb 3, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=50155">50155</a>: New Job#schedule() behavior<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=50203">50203</a>: Exception in error log + blank rendered in sessions view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=50543">50543</a>: Cannot override PATH environment variable<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Jan 27, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=49972">49972</a>: Nothing happens when launching<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=50232">50232</a>: Missing localizations for extension point names<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=49891">49891</a>: Problems launching a program, when using linked resources in CLASSPATH, which are not set<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=50407">50407</a>: NPE in selected text resolver<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=50223">50223</a>: Missing localizations for extension point names<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Jan 20, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=46781">46781</a>: Console buffer size limit<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=46869">46869</a>: Message console does not buffer output<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=49288">49288</a>: Set Variable dialog not sized properly or resizable.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=47601">47601</a>: external tools: add ${selection} as a variable<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=48320">48320</a>: Adapt to annotation deprecations<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=49977">49977</a>: Less invasive background labels<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41510">41510</a>: Step with Filters: unify function across languages by allowing filters to be enabled/disabled on the 3 basic step functions<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=50232">50232</a>: Missing localizations for extension point names<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Jan 13, 2004 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=45603">45603</a>: Cycles in string substitutions<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=46363">46363</a>: Lazy label provider for variables view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=49884">49884</a>: ProcessConsolePage does not deregister hyperlink action<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Dec 15, 2003 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=48608">48608</a>: Handle null for IProcess#getStreamsProxy()<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=46868">46868</a>: Changing text color via a MessageStream doesn't update colors<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=46797">46797</a>: Possible NPE when writing launch configurations<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=48226">48226</a>: Tooltip text for "External Tools" toolbar button not updated.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=47668">47668</a>: Exclude exception location<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=37506">37506</a>: RefreshTab makes use of WorkbenchPlugin<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=45991">45991</a>: need package.html in "variables" plug-in<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=47848">47848</a>: IDebugEditorPresentation methods called in different order<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=47855">47855</a>: Review VariableViewToggleAction<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=48224">48224</a>: Target execution order hidden<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=47268">47268</a>: Selected launch configuration incorrect<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=48190">48190</a>: Variables context menu actions need eclipses [...]<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=40541">40541</a>: NPE in launch configuration dialog<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Dec 9, 2003 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=37918">37918</a>: Console uses Date format that is not appropriate for Japanese<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=47949">47949</a>: Nothing added to launch history<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=47924">47924</a>: Thread label flicker<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=47834">47834</a>: No feedback that launch got queued/postponed<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=47377">47377</a>: Console: order of local toolbar items should remain stable<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=42272">42272</a>: Resize problem in Launch Config dialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41609">41609</a>: invalid tab size (rendering) in console<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=48315">48315</a>: LaunchView thread timer runs too long<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=47389">47389</a>: Use of deprecated API from IActivityManager<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38419">38419</a>: Variable "filters" is a misnomer<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Dec 2, 2003 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=47478">47478</a>: Switching to use JRE Library container<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=47107">47107</a>: Open Resource not available in Debug perspective<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=45981">45981</a>: Move debug projects to use PDE dynamic classpath support<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=46811">46811</a>: Deadlock saving working copied<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Nov 25, 2003 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=47248">47248</a>: NPE starting run-time workspace<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38979">38979</a>: Should not be able to remove contributed variables<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Nov 21, 2003 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=47100">47100</a>: TitleAreaDialog image has been disposed<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Nov 20, 2003 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=47071">47071</a>: Set instruction point layer to 6 in code<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Nov 19, 2003 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=46858">46858</a>: FileLink needs to resolve an editorId<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Nov 18, 2003 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=45524">45524</a>: Artwork for array partitions<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=46728">46728</a>: org.eclipse.ui.console should be tagged as 3.0 plug-in<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=44479">44479</a>: Exception when trying to start RuntimeWorkbench while workspace is building<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Nov 11, 2003 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=43388">43388</a>: Possible problem with DebugPlugin$AsynchJob<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=36942">36942</a>: [plan item] Present logical view of Java objects in debugger<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=45903">45903</a>: Breakpoint incorrectly enabled after activity filtering<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=43387">43387</a>: Refresh tab and specific resources<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=44566">44566</a>: Refresh tab does not enable "Apply" when changing selection<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Nov 4, 2003 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=45849">45849</a>: ConcurrentModificationException in Expression manager<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=43332">43332</a>: String Substitution Support - org.eclipse.core.variables<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=43952">43952</a>: Improve launch tab interface/notification<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=44100">44100</a>: UI blocked removing breakpoints from breakpoints view with other jobs<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=46152">46152</a>: Revise usage of IWorkspace.run<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=46035">46035</a>: NPE in Run... pages<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=45858">45858</a>: User gets prompted multiple times to save the same resources<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Oct 28, 2003 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=43388">43388</a>: Possible problem with DebugPlugin$AsynchJob<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=45195">45195</a>: Debug View: Copy Stack only copies <pending...><br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=44856">44856</a>: errors in label update<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=44723">44723</a>: Redundant launching job message<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=36735">36735</a>: Would like automatic partitioning of large arrays<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=44099">44099</a>: organize favorites...<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=44577">44577</a>: Suspended debug target not given "suspended" overlay<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Oct 21, 2003 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=44934">44934</a>: Remove dependancies on Xerces plugin<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Oct 15, 2003 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=44660">44660</a>: MessageConsole.appendToDocument(...)<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=44040">44040</a>: IConsoleLineTrackerExtension and after consoleClosed<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=44012">44012</a>: missing closed notification for console line tracker<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Oct 07, 2003 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=40609">40609</a>: Launch configuration dialog re-initializes all of the tabs on close<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=43226">43226</a>: Deadlock using 0916<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=44048">44048</a>: Cannot create New String Substitutions<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Sep 30, 2003 </p>
+<h3>API Changes</h3>
+<ul>
+  <li>Support for variables that support string substitution has been changed. 
+    The previously experimental extension points for simpleLaunchVariables, contextLaunchVariables, 
+    and refreshLaunchVariables have been replaced with new (and yet experimental) 
+    extension points valueVariables and contextVariables. The new support is purely 
+    string based and is currently implemented in internal packages. It is percieved 
+    that the new support could be moved to a new plug-in such that more clients 
+    could leverage the support, as the current implementation is not tied to the 
+    debug plug-in. </li>
+  <li>A console line tracker (IConsoleLineTracker) can be notified when its associated 
+    console is closed (i.e. all of its streams are closed), by implementing the 
+    new interface IConsoleLineTrackerExtension. The notification indicates that 
+    no more output will be appended to the console.</li>
+</ul>
+
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=31734">31734</a>: Console line trackers not notified of last line<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=43608">43608</a>: NPE removing an existing program in the external tools launching configuration<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=43477">43477</a>: Console plug-in needs package.html<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=43704">43704</a>: LaunchConfiguration.getFile does not handle linked resources: NPE<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41579">41579</a>: Move selection to next suspended thread after resuming<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=43197">43197</a>: Race condition between console line tracker and debug terminate event<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Sep 23, 2003 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=43225">43225</a>: No prompt to save dirty editors <br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=43353">43353</a>: Environment variable names all lowercased when appending to native environment<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=43331">43331</a>: Rework Refresh Tab to avoid use of "refresh variables"<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=43334">43334</a>: Refresh Tab always needs "apply" when working set specified<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=33866">33866</a>: Move to using the PDE generated build.xml for exporting plugins<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=37263">37263</a>: Support for generic console<br>
+ 
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Sep 16, 2003 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=42570">42570</a>: Promote RuntimeProcess to API<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=42779">42779</a>: Duplicate entry in expression view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=42814">42814</a>: Ability of "override" environment<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=42877">42877</a>: Clean up Launch in Background / Run in Background<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=19292">19292</a>: Icons for enable/disable breakpoints very confusing<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=37091">37091</a>: Need icon for environment tab and variables<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=10668">10668</a>: Variable view - should reselect selected variable name<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=42177">42177</a>: Installed JRE's preference page is huge<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=40863">40863</a>: Env var usability<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=37784">37784</a>: Rename "Debug" preference page to "Run/Debug"<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Sep 09, 2003 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=42020">42020</a>: Move "Run in background" to builders only<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41866">41866</a>: Reference to IConsoleDocumentContentProvider in error message<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=42179">42179</a>: Reevaluate watch expression enabled with no active targets<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41633">41633</a>: ILaunchManager#getLaunchConfigurations returns private configs<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41352">41352</a>: Incorrect lineAppended notification from ConsoleLineNotifier<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=1562">1562</a>: Suspending on a breakpoint...select that breakpoint (1GD5P0D)<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=42184">42184</a>: Edit->Find action for the console is only enabled after some text is selected<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Sep 2, 2003 </p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41758">41758</a>: "Profile Last Launched" menu item is at the bottom, should be at the top<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=42218">42218</a>: LAUNCH_CONFIGURATION_DIALOG_LAUNCH_LAST no longer used<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41947">41947</a>: LaunchConfigurationDialog and cancellation<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=42064">42064</a>: "New Launch Variable" and "Edit Launch Variable" dialogs do not use dialog font<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=42189">42189</a>: NPE during shutdown<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+<p>Aug 27, 2003 </p>
+<h3>New Features in Milestone 3 (release 3.0)</h3>
+<h4>Extensible Watch Expressions</h4>
+<p>In release 3.0, the debug platform provides an implementation of watch expressions. 
+  Debug models can contribute watch expression delegates if they support watch 
+  expressions. When a stack frame is selected, the associated delegate is queried 
+  to provide a value for a watch expression in the given (stack frame) context. 
+  The debug platform provides persistence, enabling, disabling, entering, and 
+  editing of watch expressions. See the new extension point <code>org.eclipse.debug.core.watchExpressionDelegates</code> 
+  for more details.</p>
+<h3>API Changes</h3>
+<h4>Launch Tabs &amp; Tab Groups</h4>
+<p>Launch tab groups and launch tabs are no longer notified when a launch completes. 
+  The method <code>launched(ILaunch)</code> in the interfaces <code>ILaunchConfigurationTab</code> 
+  and <code>ILaunchConfigurationTabGroup</code> has been deprecated and is no 
+  longer called. Relying on this method for launch function was always problematic, 
+  since tabs only exist when launching is performed from the launch dialog. Also, 
+  with the introduction of background launching, this method can no longer be 
+  called, as the launch dialog is be closed before the resulting launch object 
+  exists.</p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41675">41675</a>: breakpoints no longer visible in overview ruler<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38842">38842</a>: Make enabling and disabling expressions part of the debug framework.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=27493">27493</a>: Re-use "watch list" actions<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41940">41940</a>: watch item not updated when enabled<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41941">41941</a>: API method should be internal<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41550">41550</a>: launch in the background<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41977">41977</a>: watch items will not disappear<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=42013">42013</a>: Launching should not be UIJob<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=42037">42037</a>: Breakpoint not shown as checked when enabled.<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+Aug 19, 2003
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41499">41499</a>: Update doc for watchExpressionDelegates extension point<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41448">41448</a>: launch shortcuts should be sorted<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41506">41506</a>: NPE attempting to create watch expression<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=27281">27281</a>: The watch expressions don't persist across workbench invocations<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41575">41575</a>: Can't open breakpoint view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41585">41585</a>: shared launch configurations are not being encoded with UTF-8<br>
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+Aug 12, 2003
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41290">41290</a>: Typo: "persepctive" in launch configurations window<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41276">41276</a>: Clarify ILaunchConfiguration#getLocation()<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41384">41384</a>: Chkpii errors in debug<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+Aug 5, 2003
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=40964">40964</a>: Got DebugException when stepping and removing a breakpoint<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38365">38365</a>: current instruction pointer annotation only added for ITextEditor<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=40961">40961</a>: Refresh tab indicates working set error when no refresh<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=40962">40962</a>: Refresh tab revert enabled incorrectly<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=19581">19581</a>: Single launch config error logged many time<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+July 29, 2003
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=40576">40576</a>: NPE with pinned console<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=40844">40844</a>: NPE using debug<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=35453">35453</a>: Process output causes switch to wrong console view.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=35573">35573</a>: Console output on new run or debug<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+July 22, 2003
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=40235">40235</a>: preference page 'launch variables' uses borderless table, which looks suboptimal<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=40275">40275</a>: Superfluous semicolons in the generated jdt eval tests<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+July 15, 2003 
+<h3>New Features in Milestone 2 (release 3.0)</h3>
+<h4>Extensible Debug Events</h4>
+<p>The debug platform supports an extensible set of debug events. A debug event 
+  kind of <code>MODEL_SPECIFIC</code> has been added in the 3.0 release to indicate 
+  an application specific debug event. When a debug event of kind <code>MODEL_SPECIFIC</code> 
+  is created, the detail code in the event is client defined. The source of the 
+  event (debug element that generated the event) identifies the debug model from 
+  which the event was generated. The debug platform and user interface ignores 
+  model specific debug events.</p>
+<p>A data field has been added to debug events to allow clients to store application 
+  specific data in debug events.</p>
+<h4>Extensible Instruction Pointer Images</h4>
+<p>When a stack frame is selected in the debug view, the debugger opens a corresponding 
+  editor and displays an image in the editor ruler on the line that corresponds 
+  to the selected stack frame. In releases prior to 3.0, the images were provided 
+  by the debug plug-in and could not be overridden by a debug model. In release 
+  3.0, a debug model presentation (<code>IDebugModelPresentation</code>) can provide 
+  specialized images by implementing the debug editor presentation interface (<code>IDebugEditorPresentation</code>).</p>
+<h4>Editor Positioning and Custom Decorations</h4>
+<p>In release 3.0, debug model presentations can control the positioning of editors 
+  opened by the debugger for a stack frame, and may add extra decorations to the 
+  editor for a stack frame (for example, custom background coloring, etc.). This 
+  can be acheived by having a debug model presentation implement the new interface 
+  <code>IDebugEditorPresentation</code>, and implementing the appropriate methods 
+  - <code>selectAndReveal</code>,<code> decorateEditor</code>, and <code>removeDecorations</code>.</p>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=33598">33598</a>: Need to dynamically set icon for current line<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38976">38976</a>: Cancelling on launch var pref page does not work<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38980">38980</a>: var descriptions not persisted.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=37793">37793</a>: When moving folders and/or files in the navigator window UI hangs<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=36147">36147</a>: Launch framework doesn't handle out of sync launch files<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=37092">37092</a>: Environment tab variables should be sorted<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38534">38534</a>: Duplicate environment variables<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=39979">39979</a>: Edit button should be disabled for multiselect<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=36597">36597</a>: Would like to say what text attributes to use when selecting the executing statement<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=35208">35208</a>: IAE in JavaMainTab when entering project name with path seperator<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=39980">39980</a>: Selection of launch variables in the Launch Variable pref page<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38324">38324</a>: Double dialog for launch variable is unnecessary<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=40122">40122</a>: NPE in TextEditorSelection.remove<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+July 9, 2003
+<h3>
+Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=39058">39058</a>: Would like "collapse all" action in variable view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38577">38577</a>: Setting detail pane to be visible can hide selected variable<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=39482">39482</a>: NPE adding Java Watch expressions<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=39709">39709</a>: Duplicated entries in the debugger<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+July 1, 2003
+<h3>
+Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38584">38584</a>: Book Capitilization for the tooltip for Toggle Variable Filters<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38508">38508</a>: [Dialog] [Font] Remote Java Application/Connect Page<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38302">38302</a>: An IProcess that returns null for getStreamsProxy generates 2 null pointer exceptions<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=39397">39397</a>: Consolidate variables & general debug preference page<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=39208">39208</a>: Context menu "Copy" should show Icon from ISharedImages [Console]<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=39344">39344</a>: Convert ProcessMonitor to be a Job<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=39258">39258</a>: Launch Configuration dialog: Screen cheese when switching between nodes<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=39394">39394</a>: Extensible debug events<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=23432">23432</a>: Some exceptions should not be logged.<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+June 17, 2003
+<h3>
+Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38676">38676</a>: can't debug into class if file/class name identifier has _$$_<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38722">38722</a>: Need restoration of preference store for those actions that are enabled only<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38532">38532</a>: Variables view orientation actions should more closely mimic the type hierarchy<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=22941">22941</a>: Details area orientation<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=37241">37241</a>: Support for core variables<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38837">38837</a>: CHKPII errors with launch variables<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38972">38972</a>: variable values only persisted when added/removed<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38967">38967</a>: simple launch variables & lazy init of plug-in<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38725">38725</a>: Debug context variables missing descriptions<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38727">38727</a>: IVariableComponent#setEnabled(boolean)<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+June 10, 2003
+<h3>
+Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38671">38671</a>: NPE from LaunchVariableManager<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38649">38649</a>: Plugin.xml and schema validation<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+June 5, 2003
+<h3>
+Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38423">38423</a>: NPE during creation of varibles view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38529">38529</a>: UI locks up toggline on the variable filters<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38420">38420</a>: Details pane does not populate when first opened<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+June 3, 2003
+
+<h3> Extensible Launch Modes</h3>
+<p>The debug platform supports an extensible set of launch modes. Releases prior 
+  to 3.0 only supported two launch modes - run and debug. The debug platform now 
+  provides an extension point for contributing new launch modes - <code>org.eclipse.debug.core.launchModes</code>. 
+  The debug platform now defines (contributes) three basic launch modes - run, 
+  debug, and profile. Other clients may contribute new launch modes. The launch 
+  manager (<code>ILaunchManager</code>) has additional API to retrieve all launch 
+  modes, and a human readable label for each launch mode.</p>
+<p>The debug platform has a new extension point to support the contribution of 
+  a launch delegate for a specific launch configuration type and launch mode - 
+  <code>org.eclipse.debug.core.launchDelegates</code>. This allows launch configurations 
+  to be extended by third parties, to support new launch modes. For example, a 
+  client could contribute a launch delegate that launches a Java Application in 
+  profile mode (currently, the SDK does not provide a profiler).</p>
+<p>The debug platform has added an optional element (<code>launchMode</code>), 
+  to the definition of a launch tab group extension - <code>(org.eclipse.debug.ui.launchConfigurationTabGroup</code>), 
+  to support the contribution of a set of tabs for a specific launch configuration 
+  type and launch mode. This allows third parties to extend an existing lauch 
+  configuration user interface. For example, a client contributing a launch delegate 
+  to profile a Java Application would also contribute a set of tabs to configure 
+  the profiler. The launchMode element defines a perpsective attribute to specify 
+  the default perspective associated with the launch configuration type and mode. 
+  This controls the perspective that is switched to/opened, by default, when a 
+  configuration is launched in the associated mode. For example, a client contributing 
+  a profiler may also contribute a profiling perspective that should be displayed 
+  when an application is profiled.</p>
+
+<h3>
+Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38083">38083</a>: [Viewers] Debug exception when double-clicking on hashtable<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38249">38249</a>: NPE trying to create project builder<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=37141">37141</a>: Common tab icon should not be a bug<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38283">38283</a>: Remove the setting of the target perspective on working copies<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38102">38102</a>: [Debug] [Preferences] Launch Variables Page; Table Columns truncated<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38330">38330</a>: No double click to edit for launch variable<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38325">38325</a>: Launch variable not removed from table on remove<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38336">38336</a>: Support delete key in launch variable table<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38328">38328</a>: Launch variable table needs to be sorted alphabetically<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+May 27, 2003
+<h3>
+Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38070">38070</a>: AbstractLaunchConfigurationTabGroup#launched() javadoc typo<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+May 06, 2003
+<h3>
+Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=37090">37090</a>: Apply/Revert incorrectly enabled for Environment tab<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=36930">36930</a>: Support variables in launch configurations<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+April 29, 2003
+<h3>
+Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=27243">27243</a>: Environment for external tools<br>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+April 22, 2003
+<h3>
+Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=35740">35740</a>: Disable edit launch config popup action for private launch<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=36390">36390</a>: Doc error in schema for consoleColorProviders and consoleLineTrackers<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=36152">36152</a>: Workbench Help set on wrong Composite<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=36035">36035</a>: Request a variant on DebugPlugin.exec that takes an environment pointer<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=36409">36409</a>: TODO marker for help context for OpenLaunchDialogAction<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=27444">27444</a>: [Dialogs] Dialog font should be used by debug components<br>
+
+</body>
+</html>
