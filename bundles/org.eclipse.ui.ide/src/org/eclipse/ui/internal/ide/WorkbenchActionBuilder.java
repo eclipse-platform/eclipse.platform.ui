@@ -561,12 +561,11 @@ public final class WorkbenchActionBuilder {
 	 */
 	private MenuManager createHelpMenu() {
 		MenuManager menu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.help"), IWorkbenchActionConstants.M_HELP); //$NON-NLS-1$
-		// See if a welcome page is specified
-		if (introAction == null && quickStartAction != null)
-			menu.add(quickStartAction);
-
+		// See if a welcome or intro page is specified
 		if (introAction != null)
 			menu.add(introAction);
+		else if (quickStartAction != null)
+			menu.add(quickStartAction);
 		
         // See if a tips and tricks page is specified
 		if (tipsAndTricksAction != null)
