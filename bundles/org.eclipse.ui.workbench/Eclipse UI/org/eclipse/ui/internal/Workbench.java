@@ -107,10 +107,12 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationServiceEvent;
 import org.eclipse.ui.contexts.IContextActivationServiceListener;
 import org.eclipse.ui.contexts.IContextManager;
+import org.eclipse.ui.internal.commands.CommandManager;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
 import org.eclipse.ui.internal.contexts.ContextManager;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
@@ -161,12 +163,27 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		super();
 		WorkbenchPlugin.getDefault().setWorkbench(this);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(getShowTasksChangeListener(), IResourceChangeEvent.POST_CHANGE);
-		initializeContexts();
+		initializeCommands();
+		initializeContexts();		
 	}
 
 
-	/* begin context support */
+	/* begin command support */
 
+	private ICommandManager commandManager;
+
+	public ICommandManager getCommandManager() {
+		return commandManager;
+	}
+	
+	private void initializeCommands() {
+		commandManager = new CommandManager();
+	}
+	
+	/* end command support */
+
+
+	/* begin context support */
 
 	private IContextActivationServiceListener contextActivationServiceListener = new IContextActivationServiceListener() {
 		public void contextActivationServiceChanged(IContextActivationServiceEvent contextActivationServiceEvent) {
@@ -326,7 +343,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			
 		((ContextManager) getContextManager()).setActiveContextIds(activeContextIds);
 	}
-	
 	
 	/* end context support */
 	
