@@ -54,7 +54,6 @@
 /* need this one for Mozilla */
 
 BODY {
-	margin:0px;
 	padding:0px;
 	background:#000000;
 }
@@ -69,7 +68,7 @@ window.onresize = function (evt) { location.reload(); };
 
 </head>
    
-<body>
+<body marginwidth="1" marginheight="1">
 
   <table cellspacing="0" cellpadding="0" border="0" width="100%" height="100%">
    <tr cols=5>
