@@ -11,8 +11,8 @@
 package org.eclipse.core.runtime;
 
 /**
- * A progress monitor that uses the a given amount of work ticks
- * form a parent monitor. It can be used as follows:
+ * A progress monitor that uses a given amount of work ticks
+ * from a parent monitor. It can be used as follows:
  * <pre>
  *     try {
  *         pm.beginTask("Main Task", 100);
