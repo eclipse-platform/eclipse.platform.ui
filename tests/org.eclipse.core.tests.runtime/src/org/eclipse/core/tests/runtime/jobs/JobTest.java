@@ -337,6 +337,37 @@ public class JobTest extends TestCase {
 		assertNull("14.4", jobs[4].getThread());
 	}
 
+	/**
+	 * Tests cancelation of a job from the aboutToRun job event.
+	 * See bug 70434 for details.
+	 */
+	public void testCancelFromAboutToRun() {
+		final int[] doneCount = new int[] {0};
+		final int[] runningCount = new int[] {0};
+		TestJob job = new TestJob("testCancelFromAboutToRun", 0, 0);
+		job.addJobChangeListener(new JobChangeAdapter() {
+			public void aboutToRun(IJobChangeEvent event) {
+				event.getJob().cancel();
+			}
+			public void done(IJobChangeEvent event) {
+				doneCount[0]++;
+			}
+			public void running(IJobChangeEvent event) {
+				runningCount[0]++;
+			}
+		});
+		job.schedule();
+		try {
+			job.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			fail("0.99 " + e.getMessage());
+		}
+		assertEquals("1.0", 0, job.getRunCount());
+		assertEquals("1.1", 1, doneCount[0]);
+		assertEquals("1.2", 0, runningCount[0]);
+	}
+	
 	public void testGetName() {
 		assertTrue("1.0", shortJob.getName().equals("Short Test Job"));
 		assertTrue("1.1", longJob.getName().equals("Long Test Job"));
