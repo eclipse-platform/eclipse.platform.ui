@@ -24,20 +24,13 @@ import org.eclipse.ui.texteditor.AbstractRulerActionDelegate;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextOperationAction;
 
-
-
-/**
- * Groups the AntEditor folding actions.
- *  
- * @since 3.0
- */
 public class FoldingToggleRulerAction extends AbstractRulerActionDelegate {
 
 	private IAction fUIAction;
 	private TextOperationAction fAction;
 	private ITextEditor fTextEditor;
 
-	/*
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractRulerActionDelegate#createAction(org.eclipse.ui.texteditor.ITextEditor, org.eclipse.jface.text.source.IVerticalRulerInfo)
 	 */
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
@@ -48,16 +41,16 @@ public class FoldingToggleRulerAction extends AbstractRulerActionDelegate {
 		return fAction;
 	}
 	
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractRulerActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
 	public void setActiveEditor(IAction callerAction, IEditorPart targetEditor) {
 		fUIAction= callerAction;
 		super.setActiveEditor(callerAction, targetEditor);
 	}
 	
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractRulerActionDelegate#menuAboutToShow(org.eclipse.jface.action.IMenuManager)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IMenuListener#menuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
 	public void menuAboutToShow(IMenuManager manager) {
 		update();

@@ -18,12 +18,6 @@ import org.eclipse.ui.texteditor.AbstractRulerActionDelegate;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextOperationAction;
 
-
-/**
- * Groups the Ant folding actions.
- *  
- * @since 3.0
- */
 public class FoldingExpandAllRulerAction extends AbstractRulerActionDelegate {
 
 	/*
