@@ -136,7 +136,9 @@ public class ZoomTestCase extends UITestCase {
     }
 
     protected IViewPart findView(String id) {
-        return page.findView(id);
+        IViewPart view = page.findView(id);
+        assertNotNull("View " + id + " not found", view);
+        return view;
     }
     
     // show the given view as a regular view
