@@ -55,12 +55,7 @@ public class ResourceVariantCache {
 	public static synchronized void enableCaching(String cacheId) {
 		if (isCachingEnabled(cacheId)) return;
 		ResourceVariantCache cache = new ResourceVariantCache(cacheId);
-		try {
-			cache.createCacheDirectory();
-		} catch (TeamException e) {
-			// Log the exception and continue
-			TeamPlugin.log(e);
-		}
+		cache.createCacheDirectory();
 		caches.put(cacheId, cache);
 	}
 	
@@ -89,12 +84,7 @@ public class ResourceVariantCache {
 			return;
 		}
 		caches.remove(cacheId);
-		try {
-			cache.deleteCacheDirectory();
-		} catch (TeamException e) {
-			// Log the exception and continue
-			TeamPlugin.log(e);
-		}
+		cache.deleteCacheDirectory();
 	}
 	
 	/**
@@ -163,21 +153,28 @@ public class ResourceVariantCache {
 		cacheEntries.remove(id);
 	}
 	
-	private synchronized void createCacheDirectory() throws TeamException {
+	private synchronized void createCacheDirectory() {
 		IPath cacheLocation = getCachePath();
 		File file = cacheLocation.toFile();
 		if (file.exists()) {
-			deleteFile(file);
+			try {
+				deleteFile(file);
+			} catch (TeamException e) {
+				// Check to see if were in an acceptable state
+				if (file.exists() && (!file.isDirectory() || file.listFiles().length != 0)) {
+					TeamPlugin.log(e);
+				}
+			}
 		}
-		if (! file.mkdirs()) {
-			throw new TeamException(Policy.bind("RemoteContentsCache.fileError", file.getAbsolutePath())); //$NON-NLS-1$
+		if (! file.exists() && ! file.mkdirs()) {
+			TeamPlugin.log(new TeamException(Policy.bind("RemoteContentsCache.fileError", file.getAbsolutePath()))); //$NON-NLS-1$
 		}
 		cacheEntries = new HashMap();
 		lastCacheCleanup = -1;
 		cacheDirSize = 0;
 	}
 			
-	private synchronized void deleteCacheDirectory() throws TeamException {
+	private synchronized void deleteCacheDirectory() {
 		cacheEntries = null;
 		lastCacheCleanup = -1;
 		cacheDirSize = 0;
