@@ -17,6 +17,7 @@ import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.console.IHyperlink;
+import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.IPatternMatchListener;
 
 /**
@@ -118,7 +119,26 @@ public interface IConsole {
 	 */
 	public IProcess getProcess();
 	
+	/**
+	 * Adds the given pattern match listener to this console. The listener will
+     * be connected and receive match notifications.
+	 * @param matchListener the listener to add
+	 * @since 3.1
+	 */
+	public void addPatternMatchListener(IPatternMatchListener matchListener);
 	
-	public void addPatternMatchListener(IPatternMatchListener matchHandler);
-	public void removePatternMatchListener(IPatternMatchListener matchHandler);
+    /**
+     * Removes the given pattern match listener from this console. The listener will be
+     * disconnected and will no longer receive match notifications. 
+     * @param listener the pattern match listener to remove.
+     * @since 3.1
+     */
+	public void removePatternMatchListener(IPatternMatchListener matchListener);
+	
+	/**
+	 * Returns the stream associated with the specified stream identifier.
+     * @param streamIdentifier Uniquely idenifies the required stream 
+     * @return The stream or null if none found with matching streamIdentifier
+     */
+	public IOConsoleOutputStream getStream(String streamIdentifier);
 }

@@ -222,7 +222,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
      * @param streamIdentifier Uniquely idenifies the required stream 
      * @return The stream or null if none found with matching streamIdentifier
      */
-    private IOConsoleOutputStream getStream(String streamIdentifier) {
+    public IOConsoleOutputStream getStream(String streamIdentifier) {
         for (Iterator i = streamListeners.iterator(); i.hasNext(); ) {
             StreamListener listener = (StreamListener) i.next();
             if (listener.streamId.equals(streamIdentifier)) {
