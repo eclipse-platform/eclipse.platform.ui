@@ -318,10 +318,10 @@ public class LayoutTree implements ISizeProvider {
      * @since 3.1
      */
     public static void printCacheStatistics() {
-    	System.out.println("minimize cache " + minCacheHits + " / " + (minCacheHits + minCacheMisses) + " hits " +
-    			minCacheHits * 100 / (minCacheHits + minCacheMisses) + "%");
-    	System.out.println("maximize cache " + maxCacheHits + " / " + (maxCacheHits + maxCacheMisses) + " hits" +
-    			maxCacheHits * 100 / (maxCacheHits + maxCacheMisses) + "%");
+    	System.out.println("minimize cache " + minCacheHits + " / " + (minCacheHits + minCacheMisses) + " hits " + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    			minCacheHits * 100 / (minCacheHits + minCacheMisses) + "%"); //$NON-NLS-1$
+    	System.out.println("maximize cache " + maxCacheHits + " / " + (maxCacheHits + maxCacheMisses) + " hits" + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    			maxCacheHits * 100 / (maxCacheHits + maxCacheMisses) + "%"); //$NON-NLS-1$
     }
     
 	public int doComputeMinimumSize(boolean width, int availablePerpendicular) {
