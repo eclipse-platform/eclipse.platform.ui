@@ -261,7 +261,15 @@ final class Command implements ICommand {
     }
 
     public boolean isHandled() {
-        return handler != null;
+        if (handler == null) { return false; }
+
+        try {
+            Object value = handler
+                    .getAttributeValue(ActionHandler.ATTRIBUTE_HANDLED);
+            return ((Boolean) value).booleanValue();
+        } catch (NoSuchAttributeException e) {
+            return true;
+        }
     }
 
     public void removeCommandListener(ICommandListener commandListener) {

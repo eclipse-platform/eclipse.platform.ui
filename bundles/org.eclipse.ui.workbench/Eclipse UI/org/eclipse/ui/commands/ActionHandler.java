@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.actions.RetargetAction;
 
 /**
  * This class adapts instances of <code>IAction</code> to <code>IHandler</code>.
@@ -27,6 +28,13 @@ public class ActionHandler extends AbstractHandler {
     private final static String ATTRIBUTE_CHECKED = "checked"; //$NON-NLS-1$
 
     private final static String ATTRIBUTE_ENABLED = "enabled"; //$NON-NLS-1$
+    
+    /**
+     * The name of the boolean attribute representing whether this handler is
+     * handler. This only has meaning for <code>ActionHandler</code> instances
+     * wrapping <code>RetargetAction</code> instances.
+     */
+    public static String ATTRIBUTE_HANDLED = "handled"; //$NON-NLS-1$
 
     private final static String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 
@@ -50,6 +58,7 @@ public class ActionHandler extends AbstractHandler {
         definedAttributeNames = new HashSet();
         definedAttributeNames.add(ATTRIBUTE_CHECKED);
         definedAttributeNames.add(ATTRIBUTE_ENABLED);
+        definedAttributeNames.add(ATTRIBUTE_HANDLED);
         definedAttributeNames.add(ATTRIBUTE_ID);
         definedAttributeNames.add(ATTRIBUTE_STYLE);
         definedAttributeNames = Collections
@@ -90,7 +99,17 @@ public class ActionHandler extends AbstractHandler {
             return action.isChecked() ? Boolean.TRUE : Boolean.FALSE;
         else if (ATTRIBUTE_ENABLED.equals(attributeName))
             return action.isEnabled() ? Boolean.TRUE : Boolean.FALSE;
-        else if (ATTRIBUTE_ID.equals(attributeName))
+        else if (ATTRIBUTE_HANDLED.equals(attributeName)) {
+            if (action instanceof RetargetAction) {
+                RetargetAction retargetAction = (RetargetAction) action;
+                return (retargetAction.getActionHandler() != null) ? Boolean.TRUE
+                        : Boolean.FALSE;
+            }
+
+            // Non-retargettable actions are always handled.
+            return Boolean.TRUE;
+
+        } else if (ATTRIBUTE_ID.equals(attributeName))
             return action.getId();
         else if (ATTRIBUTE_STYLE.equals(attributeName))
             return new Integer(action.getStyle());

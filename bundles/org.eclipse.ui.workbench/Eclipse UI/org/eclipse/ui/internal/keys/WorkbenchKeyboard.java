@@ -852,7 +852,7 @@ public final class WorkbenchKeyboard {
 
             } else if (isPerfectMatch(sequenceAfterKeyStroke)) {
                 String commandId = getPerfectMatch(sequenceAfterKeyStroke);
-                return (executeCommand(commandId, event) || sequenceBeforeKeyStroke
+                return (executeCommand(commandId, event) || !sequenceBeforeKeyStroke
                         .isEmpty());
 
             } else if ((multiKeyAssistShell != null)
