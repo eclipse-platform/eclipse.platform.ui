@@ -1,15 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.tests.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.Enumeration;
 import java.util.Hashtable;
 
 import junit.framework.Assert;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -122,6 +128,23 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 public void addExpectedChange(IResource[] resources, int status, int changeFlags) {
 	for (int i = 0; i < resources.length; i++)
 		addExpectedChange(resources[i], null, status, changeFlags, null);
+}
+/**
+ * Adds an expected deletion for the given resource and all children.
+ */
+public void addExpectedDeletion(IResource resource) {
+	addExpectedChange(resource, IResourceDelta.REMOVED, 0);
+	if (resource instanceof IContainer) {
+		try {
+			IResource[] children = ((IContainer)resource).members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+			for (int i = 0; i < children.length; i++) {
+				addExpectedDeletion(children[i]);
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+			fail("Failed to get children in addExpectedDeletion");
+		}
+	}
 }
 /**
  * Signals to the comparer that the given resource is expected to

@@ -41,19 +41,14 @@ public void testRefreshLocal() {
 	IFile file = project.getFile("file.txt");
 	IFile subFile = folder.getFile("subfile.txt");
 	IResource[] resources = new IResource[] {project, folder, file, subFile};
-	IResource[] members = null;
 	ensureExistsInWorkspace(resources, true);
 	
 	ResourceDeltaVerifier listener = new ResourceDeltaVerifier();
 	listener.addExpectedChange(subFile, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
 	getWorkspace().addResourceChangeListener(listener);
 	try {
-		try {
-			Thread.sleep(5000);
-		} catch(InterruptedException e) {
-		}
 		setTeamPrivateMember("3.0", folder, true, IResource.DEPTH_ZERO);
-		modifyInFileSystem(subFile);
+		ensureOutOfSync(subFile);
 		try {
 			project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 			assertTrue(listener.getMessage(), listener.isDeltaValid());
@@ -74,7 +69,6 @@ public void testFindMember() {
 	IFile file = project.getFile("file.txt");
 	IFile subFile = folder.getFile("subfile.txt");
 	IResource[] resources = new IResource[] {project, folder, file, subFile};
-	IResource[] members = null;
 	ensureExistsInWorkspace(resources, true);
 
 	// no team private members

@@ -385,10 +385,7 @@ public void testWriteFile() {
 	}
 
 	/* test the overwrite parameter (false) */
-	try {
-		Thread.sleep(sleepTime); // it's a shame doing this but the timestamp resolution is not good enough
-	} catch (InterruptedException e) {}
-	ensureExistsInFileSystem(file);
+	ensureOutOfSync(file);
 	another = getContents(anotherContent);
 	try {
 		write(file, another, false, null);
@@ -407,9 +404,6 @@ public void testWriteFile() {
 	}
 
 	/* test the overwrite parameter (false) */
-	try {
-		Thread.sleep(sleepTime); // it's a shame doing this but the timestamp resolution is not good enough
-	} catch (InterruptedException e) {}
 	ensureDoesNotExistInFileSystem(file);
 	another = getContents(anotherContent);
 	try {

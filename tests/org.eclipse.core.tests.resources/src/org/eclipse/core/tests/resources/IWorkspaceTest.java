@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.tests.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -189,23 +194,7 @@ public void testCopy() throws CoreException {
 	}
 
 	//resource out of sync with filesystem
-	try {
-		// Need to pause to make sure it gets a new timestamp.
-		// Granularity of timestamps is not great
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-		}
-		java.io.File osFile = Platform.getLocation().append(file.getFullPath()).toFile();
-		java.io.RandomAccessFile raf = new java.io.RandomAccessFile(osFile, "rw");
-		raf.seek(raf.length());
-		raf.write(1);
-		raf.write(2);
-		raf.write(3);
-		raf.close();
-	} catch (java.io.IOException e) {
-		fail("2.4", e);
-	}
+	ensureOutOfSync(file);
 	try {
 		getWorkspace().copy(new IResource[] {file}, folder2.getFullPath(), false, getMonitor());
 		fail("2.5");

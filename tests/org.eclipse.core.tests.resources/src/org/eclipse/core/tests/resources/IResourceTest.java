@@ -1,18 +1,25 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.tests.resources;
 
+import java.io.File;
+import java.util.*;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.*;
-import java.io.*;
-import java.util.*;
-import junit.framework.*;
-import junit.textui.TestRunner;
-//
-import org.eclipse.core.internal.localstore.FileSystemResourceManager;
-//
+
 public class IResourceTest extends EclipseWorkspaceTest {
-
-
 	static boolean noSideEffects = false;
 	protected static IResource[] interestingResources;
 	protected static Set nonExistingResources = new HashSet();
@@ -71,6 +78,23 @@ public IResourceTest() {
 public IResourceTest(String name) {
 	super(name);
 }
+/**
+ * Returns interesting resources for refresh local / sync tests.
+ */
+protected IResource[] buildInterestingResources() {
+	IProject emptyProject = getWorkspace().getRoot().getProject("EmptyProject");
+	IProject fullProject = getWorkspace().getRoot().getProject("FullProject");
+	//resource pattern is: empty file, empty folder, full folder, repeat with full folder
+	IResource[] resources = buildResources(fullProject, new String[] {"1", "2/", "3/", "3/1", "3/2/", "3/3/", "3/3/1", "3/3/2/"});
+
+	IResource[] result = new IResource[resources.length + 3];
+	result[0] = getWorkspace().getRoot();
+	result[1] = emptyProject;
+	result[2] = fullProject;
+	System.arraycopy(resources, 0, result, 3, resources.length);
+	ensureExistsInWorkspace(result, true);
+	return result;
+}
 private IResource[] buildSampleResources(IContainer root) throws CoreException {
 	// do not change the example resources unless you change references to specific indices in setUp()
 	IResource[] result = buildResources(root, new String[] {"1/", "1/1/", "1/1/1/", "1/1/1/1", "1/1/2/", "1/1/2/1/", "1/1/2/2/", "1/1/2/3/", "1/2/", "1/2/1", "1/2/2", "1/2/3/", "1/2/3/1", "1/2/3/2", "1/2/3/3", "1/2/3/4", "2", "2"});
@@ -83,16 +107,15 @@ private IResource[] buildSampleResources(IContainer root) throws CoreException {
 	for(int i = 0; i < deleted.length; ++i){
 		nonExistingResources.add(deleted[i]);
 	}
-
-	try {
-		Thread.sleep(5000);
-	} catch (InterruptedException e) {}
+	//out of sync
+	IResource[] unsynchronized = buildResources(root, new String[] {"1/2/3/3"});
+	ensureOutOfSync(unsynchronized[0]);
+	unsynchronizedResources.add(unsynchronized[0]);
 	
-	IResource[] unsynchronized = buildResources(root, new String[] {"1/1/2/2/1", "1/2/3/3"});
+	//filesystem only
+	unsynchronized = buildResources(root, new String[] {"1/1/2/2/1"});
 	ensureExistsInFileSystem(unsynchronized);
-	for(int i = 0; i < unsynchronized.length; ++i)
-		unsynchronizedResources.add(unsynchronized[i]);
-
+	unsynchronizedResources.add(unsynchronized[0]);
 	return result;
 }
 /**
@@ -137,15 +160,25 @@ protected boolean checkAfterState(IResource receiver, IResource target, int stat
 		case S_FILE_TO_FOLDER:
 			break;		
 	}
-
-	//now clean up the state
-	try {
-		tearDown();
-	} catch (Exception e) {
-		fail("Exception tearing down in checkAfterState", e);
-	}
-
 	return true;
+}
+public void cleanUpAfterRefreshTest(Object[] args) {
+	IResource receiver = (IResource) args[0];
+	IResource target = (IResource)args[1];
+	int state = ((Integer) args[2]).intValue();
+	int depth = ((Integer) args[3]).intValue();
+	if (!makesSense(receiver, target, state, depth))
+		return;
+	try {
+		getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
+	} catch (CoreException e) {
+		fail("Exception tearing down in cleanUpAfterRefreshTest", e);
+	}
+	//target may have changed gender
+	IResource changedTarget = getWorkspace().getRoot().findMember(target.getFullPath());
+	if (changedTarget != null && changedTarget.getType() != target.getType())
+		ensureDoesNotExistInWorkspace(changedTarget);
+	ensureExistsInWorkspace(interestingResources, true);
 }
 /**
  * @return Set
@@ -255,20 +288,7 @@ protected Integer[] interestingDepths() {
 		new Integer(IResource.DEPTH_ONE),
 		new Integer(IResource.DEPTH_INFINITE)};
 }
-/**
- * Returns interesting resources.
- */
-protected IResource[] interestingResources() {
-	IProject emptyProject = getWorkspace().getRoot().getProject("EmptyProject");
-	IProject fullProject = getWorkspace().getRoot().getProject("FullProject");
-	IResource[] resources = buildResources(fullProject, defineHierarchy());
 
-	IResource[] result = new IResource[resources.length + 2];
-	result[0] = emptyProject;
-	result[1] = fullProject;
-	System.arraycopy(resources, 0, result, 2, resources.length);
-	return result;
-}
 /**
  * Returns interesting resource states.
  */
@@ -278,9 +298,10 @@ protected Integer[] interestingStates() {
 		new Integer(S_FILESYSTEM_ONLY),
 		new Integer(S_UNCHANGED),
 		new Integer(S_CHANGED),
-		new Integer(S_DOES_NOT_EXIST)};
+		new Integer(S_DOES_NOT_EXIST),
 //		new Integer(S_FOLDER_TO_FILE),
-//		new Integer(S_FILE_TO_FOLDER)};
+//		new Integer(S_FILE_TO_FOLDER),
+	};
 }
 protected boolean isFile(IResource r) {
 	return r.getType() == IResource.FILE;
@@ -295,8 +316,8 @@ protected boolean isProject(IResource r) {
  * Returns true if this combination of arguments makes sense.
  */
 protected boolean makesSense(IResource receiver, IResource target, int state, int depth) {
-	/* don't allow projects as targets for now */
-	if (isProject(target)) {
+	/* don't allow projects or the root as targets */
+	if (target.getType() == IResource.PROJECT || target.getType() == IResource.ROOT) {
 		return false;
 	}
 
@@ -387,15 +408,14 @@ protected void setUp() throws Exception {
 /**
  * Sets up the workspace and filesystem for this test.
  */
-protected void setupBeforeState(IResource receiver, IResource target, int state, int depth) throws CoreException {
-	/* make sure we're starting with a clean workspace */
-	assertTrue("workspace not clean in setupBeforeState", getWorkspace().getRoot().getProjects().length == 0);
-	assertTrue("workspace not clean in setupBeforeState", !target.getProject().exists());
-
-	/* install the verifier */
-	verifier = new ResourceDeltaVerifier();
-	IResourceChangeListener listener = (IResourceChangeListener) verifier;
-	getWorkspace().addResourceChangeListener(listener);
+protected void setupBeforeState(IResource receiver, IResource target, int state, int depth, boolean addVerifier) throws CoreException {
+	if (addVerifier) {
+		/* install the verifier */
+		if (verifier == null) {
+			verifier = new ResourceDeltaVerifier();
+			getWorkspace().addResourceChangeListener(verifier);
+		}
+	}
 
 	/* the target's parents must exist */
 	ensureExistsInWorkspace(target.getParent(), true);
@@ -403,89 +423,86 @@ protected void setupBeforeState(IResource receiver, IResource target, int state,
 		case S_WORKSPACE_ONLY :
 			ensureExistsInWorkspace(target, true);
 			ensureDoesNotExistInFileSystem(target);
-			verifier.reset();
-			// we only get a delta if the receiver of refreshLocal
-			// is a parent of the changed resource, or they're the same resource.
-			if (hasParent(target, receiver, depth) || target.equals(receiver))
-				verifier.addExpectedChange(target, IResourceDelta.REMOVED, 0);
+			if (addVerifier) {
+				verifier.reset();
+				// we only get a delta if the receiver of refreshLocal
+				// is a parent of the changed resource, or they're the same resource.
+				if (hasParent(target, receiver, depth) || target.equals(receiver))
+					verifier.addExpectedDeletion(target);
+			}
 			break;
 		case S_FILESYSTEM_ONLY :
+			ensureDoesNotExistInWorkspace(target);
 			ensureExistsInFileSystem(target);
-			assertDoesNotExistInWorkspace(target);
-			verifier.reset();
-			// we only get a delta if the receiver of refreshLocal
-			// is a parent of the changed resource, or they're the same resource.
-			if (hasParent(target, receiver, depth) || target.equals(receiver))
-				verifier.addExpectedChange(target, IResourceDelta.ADDED, 0);
+			if (addVerifier) {
+				verifier.reset();
+				// we only get a delta if the receiver of refreshLocal
+				// is a parent of the changed resource, or they're the same resource.
+				if (hasParent(target, receiver, depth) || target.equals(receiver))
+					verifier.addExpectedChange(target, IResourceDelta.ADDED, 0);
+			}
 			break;
 		case S_UNCHANGED :
 			ensureExistsInWorkspace(target, true);
-			verifier.reset();
+			if (addVerifier)
+				verifier.reset();
 			break;
 		case S_CHANGED :
 			ensureExistsInWorkspace(target, true);
-			try {
-				Thread.sleep(2500); //see PR:1FPNLSM
-			} catch (InterruptedException e) {
+			ensureOutOfSync(target);
+			if (addVerifier) {
+				verifier.reset();
+				// we only get a delta if the receiver of refreshLocal
+				// is a parent of the changed resource, or they're the same resource.
+				if (hasParent(target, receiver, depth) || target.equals(receiver))
+					verifier.addExpectedChange(target, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
 			}
-			modifyInFileSystem((IFile) target);
-			verifier.reset();
-			// we only get a delta if the receiver of refreshLocal
-			// is a parent of the changed resource, or they're the same resource.
-			if (hasParent(target, receiver, depth) || target.equals(receiver))
-				verifier.addExpectedChange(target, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
 			break;
 		case S_DOES_NOT_EXIST :
-			verifier.reset();
+			ensureDoesNotExistInWorkspace(target);
+			ensureDoesNotExistInFileSystem(target);
+			if (addVerifier)
+				verifier.reset();
 			break;
 		case S_FOLDER_TO_FILE :
 			ensureExistsInWorkspace(target, true);
 			ensureDoesNotExistInFileSystem(target);
 			IPath location = target.getLocation();
 			createFileInFileSystem(location);
-			verifier.reset();
-			// we only get a delta if the receiver of refreshLocal
-			// is a parent of the changed resource, or they're the same resource.
-			if (hasParent(target, receiver, depth) || target.equals(receiver))
-				verifier.addExpectedChange(target, IResourceDelta.CHANGED, IResourceDelta.CONTENT | IResourceDelta.TYPE);
+			if (addVerifier) {
+				verifier.reset();
+				// we only get a delta if the receiver of refreshLocal
+				// is a parent of the changed resource, or they're the same resource.
+				if (hasParent(target, receiver, depth) || target.equals(receiver))
+					verifier.addExpectedChange(target, IResourceDelta.CHANGED, IResourceDelta.REPLACED | IResourceDelta.TYPE | IResourceDelta.CONTENT);
+			}
 			break;
 		case S_FILE_TO_FOLDER :
 			ensureExistsInWorkspace(target, true);
 			ensureDoesNotExistInFileSystem(target);
 			target.getLocation().toFile().mkdirs();
-			verifier.reset();
-			// we only get a delta if the receiver of refreshLocal
-			// is a parent of the changed resource, or they're the same resource.
-			if (hasParent(target, receiver, depth) || target.equals(receiver))
-				verifier.addExpectedChange(target, IResourceDelta.CHANGED, IResourceDelta.CONTENT | IResourceDelta.TYPE);
+			if (addVerifier) {
+				verifier.reset();
+				// we only get a delta if the receiver of refreshLocal
+				// is a parent of the changed resource, or they're the same resource.
+				if (hasParent(target, receiver, depth) || target.equals(receiver))
+					verifier.addExpectedChange(target, IResourceDelta.CHANGED, IResourceDelta.REPLACED | IResourceDelta.TYPE | IResourceDelta.CONTENT);
+			}
 			break;
 	}
 }
 public static Test suite() {
-	TestSuite suite = new TestSuite();
-	suite.addTest(new IResourceTest("testAddLocalProject"));
-	suite.addTest(new IResourceTest("testMultiCreation"));
-	suite.addTest(new IResourceTest("testRefreshLocal"));
-	suite.addTest(new IResourceTest("testRefreshWithMissingParent"));
-	suite.addTest(new IResourceTest("testRefreshLocalWithDepth"));
-	suite.addTest(new IResourceTest("testAccept2"));
-	suite.addTest(new IResourceTest("testEquals"));
-	suite.addTest(new IResourceTest("testCopy"));
-	suite.addTest(new IResourceTest("testMove"));
-	suite.addTest(new IResourceTest("testExists"));
-	suite.addTest(new IResourceTest("testGetLocalLocation"));
-	suite.addTest(new IResourceTest("testGetModificationStamp"));
-	suite.addTest(new IResourceTest("testReadOnly"));
-	suite.addTest(new IResourceTest("testConstants"));
-	suite.addTest(new IResourceTest("testProjectDescriptionFileModification"));
-	suite.addTest(new IResourceTest("testDerived"));
-	suite.addTest(new IResourceTest("testTeamPrivateMember"));
-	suite.addTest(new IResourceTest("testDelete")); // make sure that last test has side effects
+	return new TestSuite(IResourceTest.class);
 	
-	return suite;
+//	TestSuite suite = new TestSuite();
+//	suite.addTest(new IResourceTest("testRefreshLocal"));
+//	suite.addTest(new IResourceTest("testIsSynchronized"));
+//	return suite;
 }
 protected void tearDown() throws Exception {
 	if(noSideEffects) return;
+	if (verifier != null)
+		getWorkspace().removeResourceChangeListener(verifier);
 	getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
 	ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
 	interestingPaths = null;
@@ -629,6 +646,19 @@ public void testConstants() {
  *     void copy(IPath, boolean, IProgressMonitor)
  */
 public void testCopy() {
+	//add markers to all resources ... markers should not be copied
+	try {
+		getWorkspace().getRoot().accept(new IResourceVisitor() {
+			public boolean visit(IResource resource) throws CoreException {
+				if (resource.isAccessible())
+					resource.createMarker(IMarker.TASK);
+				return true;
+			}
+		});
+	} catch(CoreException e) {
+		fail("1.0", e);
+	}
+	
 	Object[][] inputs = new Object[][] { interestingResources, interestingPaths, TRUE_AND_FALSE, PROGRESS_MONITORS };
 	new TestPerformer("IResourceTest.testCopy") {
 		public boolean shouldFail(Object[] args, int count) {
@@ -658,7 +688,20 @@ public void testCopy() {
 				((FussyProgressMonitor) monitor).sanityCheck();
 			return null;
 		}
-		public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
+		public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws CoreException {
+			IResource source = (IResource) args[0];
+			IPath destination = (IPath) args[1];
+			//ensure the destination exists 
+			//"Relative paths are considered to be relative to the container of the resource being copied."
+			IPath path = destination.isAbsolute() ? destination : source.getParent().getFullPath().append(destination);
+			IResource copy = getWorkspace().getRoot().findMember(path);
+			if (copy == null)
+				return false;
+			if (!copy.exists())
+				return false;
+			//markers are never copied, so ensure copy has none
+			if (copy.findMarkers(IMarker.TASK, true, IResource.DEPTH_INFINITE).length > 0)
+				return false;
 			return true;
 		}
 	}
@@ -1208,6 +1251,69 @@ public void testGetModificationStamp() {
 	}
 }
 /**
+ * This method tests the IResource.isSynchronized() operation
+ */
+public void testIsSynchronized() {
+	//don't need auto-created resources
+	try {
+		getWorkspace().getRoot().delete(true, true, getMonitor());
+	} catch(CoreException e) {
+		fail("1.0", e);
+	}
+	
+	interestingResources = buildInterestingResources();
+	Object[][] args = new Object[][] {interestingResources, interestingResources, interestingStates(), interestingDepths()};
+	new TestPerformer("IResourceTest.testRefreshLocal") {
+		public Object invokeMethod(Object[] args, int count) throws CoreException {
+			IResource receiver = (IResource) args[0];
+			IResource target = (IResource)args[1];
+			int state = ((Integer) args[2]).intValue();
+			int depth = ((Integer) args[3]).intValue();
+			if (!makesSense(receiver, target, state, depth))
+				return null;
+			setupBeforeState(receiver, target, state, depth, false);
+			boolean result = receiver.isSynchronized(depth);
+			return result ? Boolean.TRUE : Boolean.FALSE;
+		}
+		public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
+			if (result == null)
+				return true;//combination didn't make sense
+			boolean bResult = ((Boolean)result).booleanValue();
+			IResource receiver = (IResource) args[0];
+			IResource target = (IResource)args[1];
+			int state = ((Integer) args[2]).intValue();
+			int depth = ((Integer) args[3]).intValue();
+			
+			//only !synchronized if target is same as or child of receiver
+			if (!(receiver.equals(target) || hasParent(target, receiver, depth)))
+				return bResult;
+			switch (state) {
+				case S_UNCHANGED:
+				case S_DOES_NOT_EXIST:
+					//these cases correspond to being in sync
+					return bResult;
+				case S_WORKSPACE_ONLY:
+				case S_FILESYSTEM_ONLY:
+				case S_CHANGED:
+				case S_FOLDER_TO_FILE:
+				case S_FILE_TO_FOLDER:
+					//these cases correspond to being out of sync
+					return !bResult;
+				default:
+					//shouldn't be possible
+					return false;
+			}
+		}
+		public boolean shouldFail(Object[] args, int count) {
+			return false;
+		}
+		public void cleanUp(Object[] args,int count) {
+			cleanUpAfterRefreshTest(args);
+		}
+	}
+	.performTest(args);
+}
+/**
  * Performs black box testing of the following method:
  *     void move(IPath, boolean, IProgressMonitor)
  */
@@ -1338,37 +1444,42 @@ public void testReadOnly() {
  * This method tests the IResource.refreshLocal() operation
  */
 public void testRefreshLocal() {
-	Object[][] args = new Object[][] {interestingResources(), interestingResources(), interestingStates(), interestingDepths()};
+	//don't need auto-created resources
+	try {
+		getWorkspace().getRoot().delete(true, true, getMonitor());
+	} catch(CoreException e) {
+		fail("1.0", e);
+	}
+	
+	interestingResources = buildInterestingResources();
+	Object[][] args = new Object[][] {interestingResources, interestingResources, interestingStates(), interestingDepths()};
 	new TestPerformer("IResourceTest.testRefreshLocal") {
 		public Object invokeMethod(Object[] args, int count) throws CoreException {
-			//if (count % 10 == 0) {
-				//System.out.println("refreshLocal iteration: " + count);
-			//}
 			IResource receiver = (IResource) args[0];
 			IResource target = (IResource)args[1];
 			int state = ((Integer) args[2]).intValue();
 			int depth = ((Integer) args[3]).intValue();
 			if (!makesSense(receiver, target, state, depth))
 				return null;
-			setupBeforeState(receiver, target, state, depth);
+			setupBeforeState(receiver, target, state, depth, true);
 			receiver.refreshLocal(depth, getMonitor());
-			return null;
+			return Boolean.TRUE;
 		}
 		public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
+			if (result == null)
+				return true;//permutation didn't make sense
 			IResource receiver = (IResource) args[0];
 			IResource target = (IResource)args[1];
 			int state = ((Integer) args[2]).intValue();
 			int depth = ((Integer) args[3]).intValue();
-			if (!makesSense(receiver, target, state, depth))
-				return true;
 			return checkAfterState(receiver, target, state, depth);
 		}
 		public boolean shouldFail(Object[] args, int count) {
 			return false;
 		}
-		public Object[] interestingOldState(Object[] args) {
-			return null;
-		}		
+		public void cleanUp(Object[] args,int count) {
+			cleanUpAfterRefreshTest(args);
+		}
 	}
 	.performTest(args);
 }

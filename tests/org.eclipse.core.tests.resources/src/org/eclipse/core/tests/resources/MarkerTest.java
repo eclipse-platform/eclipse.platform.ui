@@ -1650,6 +1650,29 @@ public void testSetGetAttribute() {
 			fail("4.14", e);
 		} catch (RuntimeException e) {
 		}
+		//set attributes on deleted marker
+		try {
+			marker.delete();
+		} catch(CoreException e) {
+			fail("5.0", e);
+		}
+		try {
+			marker.setAttribute(IMarker.MESSAGE, "Hello");
+			fail("5.1");
+		} catch (CoreException e) {
+		}
+		try {
+			marker.setAttributes(new String[] {IMarker.LINE_NUMBER}, new Object[] {new Integer(4)});
+			fail("5.2");
+		} catch (CoreException e) {
+		}
+		try {
+			HashMap attributes = new HashMap();
+			attributes.put(IMarker.MESSAGE, "Hello");
+			marker.setAttributes(attributes);
+			fail("5.3");
+		} catch (CoreException e) {
+		}
 	}
 }
 public void testSetGetAttribute2() {

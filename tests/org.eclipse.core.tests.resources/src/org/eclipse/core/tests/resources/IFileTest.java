@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.tests.resources;
 
 import org.eclipse.core.boot.BootLoader;
@@ -206,13 +216,7 @@ public void refreshFile(IFile file) {
 	}
 	if (file.getName().equals(OUT_OF_SYNC)) {
 		ensureExistsInWorkspace(file, true);
-
-		// delay to make sure out of sync files get new timestamps
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-		}
-		modifyInFileSystem(file);
+		ensureOutOfSync(file);
 		return;
 	}
 }
@@ -581,11 +585,7 @@ public void testGetContents2() throws IOException {
 		fail("0.0", e);
 	}
 
-	try {
-		Thread.sleep(5000);
-	} catch (InterruptedException e) {
-	}
-	ensureExistsInFileSystem(target);
+	ensureOutOfSync(target);
 
 	InputStream content = null;
 	try {

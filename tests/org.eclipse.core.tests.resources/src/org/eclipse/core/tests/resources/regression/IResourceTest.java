@@ -280,12 +280,7 @@ public void testDelete_Bug8754() {
 	
 	// setup
 	ensureExistsInWorkspace(new IResource[] {project, file}, true);
-	// delay to make sure out of sync files get new timestamps
-	try {
-		Thread.sleep(5000);
-	} catch (InterruptedException e) {
-	}
-	modifyInFileSystem(file);
+	ensureOutOfSync(file);
 	
 	// doit
 	try {
