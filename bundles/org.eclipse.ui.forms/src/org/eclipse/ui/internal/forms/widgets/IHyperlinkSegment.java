@@ -18,8 +18,7 @@ import org.eclipse.swt.graphics.GC;
 public interface IHyperlinkSegment {
 	String getHref();
 	String getText();
-	boolean isWordWrapAllowed();
-	void paintFocus(GC gc, Color bg, Color fg, boolean selected);
+	void paintFocus(GC gc, Color bg, Color fg, boolean selected, Rectangle repaintRegion);
 	Rectangle getBounds();
 	boolean contains(int x, int y);
 	boolean intersects(Rectangle rect);

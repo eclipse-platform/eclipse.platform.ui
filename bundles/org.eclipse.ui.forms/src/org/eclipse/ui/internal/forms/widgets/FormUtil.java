@@ -22,10 +22,14 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.*;
 
 public class FormUtil {
+	public static final String PLUGIN_ID = "org.eclipse.ui.forms";
 	static final int H_SCROLL_INCREMENT = 5;
 
 	static final int V_SCROLL_INCREMENT = 64;
-
+	
+	public static final String DEBUG = PLUGIN_ID + "/debug";
+	public static final String DEBUG_TEXT = DEBUG + "/text";
+	
 	public static Text createText(Composite parent, String label,
 			FormToolkit factory) {
 		return createText(parent, label, factory, 1);

@@ -7,7 +7,6 @@
 package org.eclipse.ui.internal.forms.widgets;
 
 import org.eclipse.swt.graphics.*;
-import org.eclipse.ui.forms.HyperlinkSettings;
 
 /**
  * @author dejan
@@ -18,11 +17,9 @@ import org.eclipse.ui.forms.HyperlinkSettings;
 public class ImageHyperlinkSegment extends ImageSegment implements
 		IHyperlinkSegment {
 	private String href;
-	private HyperlinkSettings settings;
 	private String tooltipText;
 	
-	public ImageHyperlinkSegment(HyperlinkSettings settings) {
-		this.settings = settings;
+	public ImageHyperlinkSegment() {
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#setHref(java.lang.String)
@@ -38,7 +35,7 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 		return href;
 	}
 
-	public void paintFocus(GC gc, Color bg, Color fg, boolean selected) {
+	public void paintFocus(GC gc, Color bg, Color fg, boolean selected, Rectangle repaintRegion) {
 		Rectangle bounds = getBounds();
 		if (bounds == null)
 			return;

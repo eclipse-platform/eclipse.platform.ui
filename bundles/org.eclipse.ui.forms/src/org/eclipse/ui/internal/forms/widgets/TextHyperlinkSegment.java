@@ -45,20 +45,21 @@ public class TextHyperlinkSegment extends TextSegment implements
 	public void setHref(String href) {
 		this.href = href;
 	}
-
+/*
 	public void paint(GC gc, int width, Locator locator,
 			Hashtable resourceTable, boolean selected, SelectionData selData) {
 		resourceTable.put(LINK_FG, settings.getForeground());
 		setColorId(LINK_FG);
 		super.paint(gc, width, locator, resourceTable, selected, selData);
 	}
+*/
 	
-	public void repaint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData) {
+	public void paint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData, Rectangle repaintRegion) {
 		boolean rolloverMode = settings.getHyperlinkUnderlineMode() == HyperlinkSettings.UNDERLINE_HOVER;
 		Color savedFg = gc.getForeground();
 		gc.setForeground(hover ? settings.getActiveForeground() : settings
 				.getForeground());		
-		super.repaint(gc, hover, resourceTable, selected, rolloverMode, selData);
+		super.repaint(gc, hover, resourceTable, selected, rolloverMode, selData, repaintRegion);
 		gc.setForeground(savedFg);
 	}
 

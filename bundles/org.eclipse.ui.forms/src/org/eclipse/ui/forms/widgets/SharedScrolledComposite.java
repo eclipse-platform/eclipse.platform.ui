@@ -36,6 +36,7 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 	private boolean expandHorizontal = false;
 	private boolean expandVertical = false;
 	private SizeCache contentCache = new SizeCache();
+	private boolean reflowPending=false;
 	
 	/**
 	 *  Creates the new instance.
@@ -47,7 +48,7 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 		addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event e) {
 			    if (!ignoreResizes) {
-			        reflow(false);
+			        scheduleReflow(false);
 			    }
 			}
 		});
@@ -151,7 +152,6 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 		if (flushCache) {
 		    contentCache.flush();
 		}
-		
 		Point newSize = contentCache.computeSize(FormUtil
 				.getWidthHint(clientArea.width, c), FormUtil.getHeightHint(
 						clientArea.height, c));
@@ -170,6 +170,19 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 		
 		contentCache.layoutIfNecessary();
 	}
+
+	private void scheduleReflow(final boolean flushCache) {
+		if (reflowPending)
+			return;
+		getDisplay().timerExec(100, new Runnable() {
+			public void run() {
+				reflow(flushCache);
+				reflowPending=false;
+			}
+		});
+		reflowPending=true;
+	}
+	
 	private void initializeScrollBars() {
 		ScrollBar hbar = getHorizontalBar();
 		if (hbar != null) {

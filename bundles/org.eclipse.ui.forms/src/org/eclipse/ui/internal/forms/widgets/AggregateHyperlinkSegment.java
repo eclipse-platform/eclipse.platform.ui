@@ -1,42 +1,34 @@
-/*
- * Created on Jan 2, 2005
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
 import java.util.*;
-import java.util.Hashtable;
 
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.ui.forms.HyperlinkSettings;
 
 /**
- * @author dejan
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * This segment contains a collection of images and links
+ * that all belong to one logical hyperlink.
  */
 public class AggregateHyperlinkSegment extends ParagraphSegment implements IHyperlinkSegment {
 	private String href;
-	private boolean wordWrapAllowed=true;
 	private Vector segments=new Vector();
-	private HyperlinkSettings settings;
 	
-	public AggregateHyperlinkSegment(HyperlinkSettings settings) {
-		this.settings = settings;
+	public AggregateHyperlinkSegment() {
 	}
 
 	public void add(TextHyperlinkSegment segment) {
-		segment.setHref(href);
-		segment.setWordWrapAllowed(wordWrapAllowed);
 		segments.add(segment);
 	}
 	public void add(ImageHyperlinkSegment segment) {
-		segment.setHref(href);
-		segment.setWordWrapAllowed(wordWrapAllowed);
 		segments.add(segment);
 	}
 	/* (non-Javadoc)
@@ -53,16 +45,6 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements IHype
 		return newLine;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.forms.widgets.ParagraphSegment#paint(org.eclipse.swt.graphics.GC, int, org.eclipse.ui.internal.forms.widgets.Locator, java.util.Hashtable, boolean, org.eclipse.ui.internal.forms.widgets.SelectionData)
-	 */
-	public void paint(GC gc, int width, Locator loc, Hashtable resourceTable,
-			boolean selected, SelectionData selData) {
-		for (int i=0; i<segments.size(); i++) {
-			ParagraphSegment segment = (ParagraphSegment)segments.get(i);
-			segment.paint(gc, width, loc, resourceTable, selected, selData);
-		}
-	}
 	/**
 	 * @return Returns the href.
 	 */
@@ -75,27 +57,13 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements IHype
 	public void setHref(String href) {
 		this.href = href;
 	}
-	/**
-	 * @return Returns the wrapAllowed.
-	 */
-	public boolean isWordWrapAllowed() {
-		return wordWrapAllowed;
-	}
-	/**
-	 * @param wrapAllowed The wrapAllowed to set.
-	 */
-	public void setWordWrapAllowed(boolean wrapAllowed) {
-		this.wordWrapAllowed = wrapAllowed;
-	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#repaint(org.eclipse.swt.graphics.GC, boolean)
 	 */
-	public void repaint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData) {
+	public void paint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData, Rectangle repaintRegion) {
 		for (int i=0; i<segments.size(); i++) {
 			ParagraphSegment segment = (ParagraphSegment)segments.get(i);
-			segment.setRepaintRegion(repaintRegion);
-			segment.repaint(gc, hover, resourceTable, selected, selData);
-			segment.setRepaintRegion(null);
+			segment.paint(gc, hover, resourceTable, selected, selData, repaintRegion);
 		}
 	}
 	public String getText() {
@@ -109,10 +77,10 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements IHype
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#paintFocus(org.eclipse.swt.graphics.GC, org.eclipse.swt.graphics.Color, org.eclipse.swt.graphics.Color, boolean)
 	 */
-	public void paintFocus(GC gc, Color bg, Color fg, boolean selected) {
+	public void paintFocus(GC gc, Color bg, Color fg, boolean selected, Rectangle repaintRegion) {
 		for (int i=0; i<segments.size(); i++) {
 			IHyperlinkSegment segment = (IHyperlinkSegment)segments.get(i);
-			segment.paintFocus(gc, bg, fg, selected);
+			segment.paintFocus(gc, bg, fg, selected, repaintRegion);
 		}		
 	}
 	/* (non-Javadoc)
@@ -146,5 +114,15 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements IHype
 				return true;
 		}
 		return false;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.forms.widgets.ParagraphSegment#layout(org.eclipse.swt.graphics.GC, int, org.eclipse.ui.internal.forms.widgets.Locator, java.util.Hashtable, boolean, org.eclipse.ui.internal.forms.widgets.SelectionData)
+	 */
+	public void layout(GC gc, int width, Locator locator, Hashtable resourceTable,
+			boolean selected) {
+		for (int i=0; i<segments.size(); i++) {
+			ParagraphSegment segment = (ParagraphSegment)segments.get(i);
+			segment.layout(gc, width, locator, resourceTable, selected);
+		}
 	}
 }

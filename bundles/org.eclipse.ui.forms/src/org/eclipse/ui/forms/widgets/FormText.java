@@ -13,6 +13,7 @@ package org.eclipse.ui.forms.widgets;
 import java.io.InputStream;
 import java.util.*;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.accessibility.*;
@@ -119,9 +120,12 @@ public final class FormText extends Canvas {
 	 * Value of hte horizontal margin (default is 1).
 	 */
 	public int marginHeight = 1;
+	
+	private static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_TEXT));  //$NON-NLS-1$//$NON-NLS-2$	
 
 	// private fields
 	private boolean hasFocus;
+	
 
 	private boolean paragraphsSeparated = true;
 
@@ -133,10 +137,7 @@ public final class FormText extends Canvas {
 
 	private IHyperlinkSegment entered;
 	private boolean mouseFocus = false;
-	private boolean incrementalRepaint = false;
-
 	private boolean mouseDown = false;
-
 	private SelectionData selData;
 
 	private Action openAction;
@@ -167,6 +168,10 @@ public final class FormText extends Canvas {
 		 */
 		public Point computeSize(Composite composite, int wHint, int hHint,
 				boolean changed) {
+			long start=0;
+
+			if (DEBUG)
+				start = System.currentTimeMillis();
 			int innerWidth = wHint;
 			if (isLoading()) {
 				return computeLoading();
@@ -177,6 +182,10 @@ public final class FormText extends Canvas {
 			int textWidth = textSize.x + 2 * marginWidth;
 			int textHeight = textSize.y + 2 * marginHeight;
 			Point result = new Point(textWidth, textHeight);
+			if (DEBUG) {
+				long stop = System.currentTimeMillis();
+				System.out.println("FormText computeSize: "+(stop-start)+"ms");
+			}
 			return result;
 		}
 
@@ -232,8 +241,46 @@ public final class FormText extends Canvas {
 		}
 
 		protected void layout(Composite composite, boolean flushCache) {
+			long start = 0;
+			
+			if (DEBUG) {
+				start = System.currentTimeMillis();
+			}			
 			selData = null;
-			incrementalRepaint = false;
+			if (loading) return;						
+			Rectangle carea = composite.getClientArea();
+			GC gc = new GC(composite);
+			gc.setFont(getFont());
+			ensureBoldFontPresent(getFont());
+			gc.setForeground(getForeground());
+			gc.setBackground(getBackground());
+			if (loading) return;
+			
+			Locator loc = new Locator();
+			loc.marginWidth = marginWidth;
+			loc.marginHeight = marginHeight;
+			loc.x = marginWidth;
+			loc.y = marginHeight;
+			FontMetrics fm = gc.getFontMetrics();
+			int lineHeight = fm.getHeight();
+
+			Paragraph[] paragraphs = model.getParagraphs();
+			IHyperlinkSegment selectedLink = model.getSelectedLink();
+			for (int i = 0; i < paragraphs.length; i++) {
+				Paragraph p = paragraphs[i];
+				if (i > 0 && paragraphsSeparated && p.getAddVerticalSpace())
+					loc.y += getParagraphSpacing(lineHeight);
+				loc.indent = p.getIndent();
+				loc.resetCaret();
+				loc.rowHeight = 0;
+				p.layout(gc, carea.width, loc, lineHeight, resourceTable,
+							selectedLink);
+			}
+			gc.dispose();
+			if (DEBUG) {
+				long stop = System.currentTimeMillis();
+				System.out.println("FormText.layout: "+(stop-start)+"ms");
+			}
 		}
 	}
 
@@ -506,7 +553,6 @@ public final class FormText extends Canvas {
 		else
 			model.parseRegularText(text, expandURLs);
 		loading = false;
-		incrementalRepaint = false;
 		layout();
 		redraw();
 	}
@@ -527,7 +573,6 @@ public final class FormText extends Canvas {
 		disposeResourceTable(false);
 		model.parseInputStream(is, expandURLs);
 		loading = false;
-		incrementalRepaint = false;
 		layout();
 		redraw();
 	}
@@ -1030,10 +1075,10 @@ public final class FormText extends Canvas {
 		gc.setBackground(getBackground());
 		gc.setFont(getFont());
 		boolean selected = (link == model.getSelectedLink());
-		((ParagraphSegment)link).repaint(gc, hover, resourceTable, selected, selData);
+		((ParagraphSegment)link).paint(gc, hover, resourceTable, selected, selData, null);
 		if (selected) {
-			link.paintFocus(gc, getBackground(), getForeground(), false);
-			link.paintFocus(gc, getBackground(), getForeground(), true);
+			link.paintFocus(gc, getBackground(), getForeground(), false, null);
+			link.paintFocus(gc, getBackground(), getForeground(), true, null);
 		}
 		gc.dispose();
 	}
@@ -1078,61 +1123,18 @@ public final class FormText extends Canvas {
 	}
 
 	private void paint(PaintEvent e) {
-		Rectangle carea = getClientArea();
 		GC gc = e.gc;
 		gc.setFont(getFont());
 		ensureBoldFontPresent(getFont());
 		gc.setForeground(getForeground());
 		gc.setBackground(getBackground());
-		
-		if (!loading && incrementalRepaint) {
-			repaint(gc, e.x, e.y, e.width, e.height);
-			return;
-		}
-
-		Locator loc = new Locator();
-		loc.marginWidth = marginWidth;
-		loc.marginHeight = marginHeight;
-		loc.x = marginWidth;
-		loc.y = marginHeight;
-		FontMetrics fm = gc.getFontMetrics();
-		int lineHeight = fm.getHeight();
-		// Use double-buffering to reduce flicker
-		Image textBuffer = new Image(getDisplay(), carea.width, carea.height);
-		textBuffer.setBackground(getBackground());
-		GC textGC = new GC(textBuffer, gc.getStyle());
-		textGC.setForeground(getForeground());
-		textGC.setBackground(getBackground());
-		textGC.setFont(getFont());
-		textGC.fillRectangle(0, 0, carea.width, carea.height);
-		if (selData != null)
-			selData.reset();
-
-		if (loading) {
-			int textWidth = gc.textExtent(loadingText).x;
-			textGC.drawText(loadingText, carea.width / 2 - textWidth / 2,
-					getClientArea().height / 2 - lineHeight / 2);
-		} else {
-			Paragraph[] paragraphs = model.getParagraphs();
-			IHyperlinkSegment selectedLink = model.getSelectedLink();
-			for (int i = 0; i < paragraphs.length; i++) {
-				Paragraph p = paragraphs[i];
-				if (i > 0 && paragraphsSeparated && p.getAddVerticalSpace())
-					loc.y += getParagraphSpacing(lineHeight);
-				loc.indent = p.getIndent();
-				loc.resetCaret();
-				loc.rowHeight = 0;
-				p.paint(textGC, carea.width, loc, lineHeight, resourceTable,
-						selectedLink, selData);
-			}
-		}
-		gc.drawImage(textBuffer, 0, 0);
-		textGC.dispose();
-		textBuffer.dispose();
-		incrementalRepaint=true;
+		repaint(gc, e.x, e.y, e.width, e.height);
 	}
 	
 	private void repaint(GC gc, int x, int y, int width, int height) {
+		long start=0;
+		if (DEBUG)
+			start = System.currentTimeMillis();
 		Image textBuffer = new Image(getDisplay(), width, height);
 		textBuffer.setBackground(getBackground());
 		GC textGC = new GC(textBuffer, gc.getStyle());
@@ -1146,12 +1148,15 @@ public final class FormText extends Canvas {
 		IHyperlinkSegment selectedLink = model.getSelectedLink();
 		for (int i = 0; i < paragraphs.length; i++) {
 			Paragraph p = paragraphs[i];
-			p.repaint(textGC, repaintRegion, resourceTable, selectedLink, selData);
+			p.paint(textGC, repaintRegion, resourceTable, selectedLink, selData);
 		}
 		gc.drawImage(textBuffer, x, y);
 		textGC.dispose();
-		textBuffer.dispose();
-		incrementalRepaint=true;		
+		textBuffer.dispose();	
+		if (DEBUG) {
+			long stop = System.currentTimeMillis();
+			System.out.println("FormText.repaint: "+(stop-start)+"ms");
+		}
 	}
 
 	private int getParagraphSpacing(int lineHeight) {
@@ -1167,13 +1172,13 @@ public final class FormText extends Canvas {
 		if (oldLink != null) {
 			gc.setBackground(bg);
 			gc.setForeground(fg);
-			oldLink.paintFocus(gc, bg, fg, false);
+			oldLink.paintFocus(gc, bg, fg, false, null);
 		}
 		if (newLink != null) {
 			// ensureVisible(newLink);
 			gc.setBackground(bg);
 			gc.setForeground(fg);
-			newLink.paintFocus(gc, bg, fg, true);
+			newLink.paintFocus(gc, bg, fg, true, null);
 		}
 		gc.dispose();
 	}

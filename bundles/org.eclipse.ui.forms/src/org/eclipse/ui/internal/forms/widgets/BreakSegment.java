@@ -35,6 +35,7 @@ public class BreakSegment extends ParagraphSegment {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.internal.widgets.ParagraphSegment#paint(org.eclipse.swt.graphics.GC, int, org.eclipse.ui.forms.internal.widgets.Locator, java.util.Hashtable, boolean)
 	 */
+/*
 	public void paint(GC gc, int width, Locator locator, Hashtable resourceTable,
 			boolean selected, SelectionData selData) {
 		locator.resetCaret();
@@ -42,12 +43,23 @@ public class BreakSegment extends ParagraphSegment {
 		locator.rowHeight = 0;
 		locator.rowCounter++;		
 	}
-	public void repaint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData) {
+*/
+	public void paint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData, Rectangle repaintRegion) {
 	}
 	public boolean contains(int x, int y) {
 		return false;
 	}
 	public boolean intersects(Rectangle rect) {
 		return false;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.forms.widgets.ParagraphSegment#layout(org.eclipse.swt.graphics.GC, int, org.eclipse.ui.internal.forms.widgets.Locator, java.util.Hashtable, boolean, org.eclipse.ui.internal.forms.widgets.SelectionData)
+	 */
+	public void layout(GC gc, int width, Locator locator, Hashtable ResourceTable,
+			boolean selected) {
+		locator.resetCaret();
+		locator.y += locator.rowHeight;
+		locator.rowHeight = 0;
+		locator.rowCounter++;		
 	}
 }

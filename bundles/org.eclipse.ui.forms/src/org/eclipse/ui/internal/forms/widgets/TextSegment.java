@@ -205,28 +205,23 @@ public class TextSegment extends ParagraphSegment {
 		BreakIterator wb = BreakIterator.getLineInstance();
 		wb.setText(text);
 
-		int saved = 0;
-		int last = 0;
-
+		int lineStart = 0;
+		int cursor = 0;
 		int width = 0;
-
-		Point lastExtent = null;
+		Point lineExtent = new Point(0,0);
 
 		for (int loc = wb.first(); loc != BreakIterator.DONE; loc = wb.next()) {
-			String word = text.substring(saved, loc);
+			String word = text.substring(cursor, loc);
 			Point extent = gc.textExtent(word);
 
-			if (locator.x + extent.x > wHint) {
+			if (locator.x + lineExtent.x + extent.x > wHint) {
 				// overflow
-				String savedWord = text.substring(saved, last);
-				if (lastExtent == null)
-					lastExtent = gc.textExtent(savedWord);
-				int lineWidth = locator.x + lastExtent.x;
+				String line = text.substring(lineStart, cursor);
+				int lineWidth = locator.x + lineExtent.x;
 				if (isSelectable())
 					lineWidth += 2;
-
-				saved = last;
-				locator.rowHeight = Math.max(locator.rowHeight, lastExtent.y);
+				lineStart = cursor;
+				locator.rowHeight = Math.max(locator.rowHeight, lineExtent.y);
 				locator.leading = Math.max(locator.leading, fm.getLeading());
 				if (computeHeightOnly)
 					locator.collectHeights();
@@ -235,147 +230,30 @@ public class TextSegment extends ParagraphSegment {
 				locator.y += locator.rowHeight;
 				locator.rowHeight = 0;
 				locator.leading = 0;
+				lineExtent.x = 0;
+				lineExtent.y = 0;				
 				width = Math.max(width, lineWidth);
 				newLine = true;
 			}
-			last = loc;
-			lastExtent = extent;
+			cursor = loc;
+			lineExtent.x += extent.x;
+			lineExtent.y = Math.max(extent.y, lineExtent.y);	
 		}
-		String lastString = text.substring(saved, last);
-		Point extent = gc.textExtent(lastString);
-		int lineWidth = extent.x;
+		
+		String lastString = text.substring(lineStart, cursor);
+		int lineWidth = lineExtent.x;
 		if (isSelectable())
 			lineWidth += 2;
 		locator.x += lineWidth;
 		locator.width = width;
 		locator.height = lineHeight;
-		locator.rowHeight = Math.max(locator.rowHeight, extent.y);
+		locator.rowHeight = Math.max(locator.rowHeight, lineExtent.y);
 		locator.leading = Math.max(locator.leading, fm.getLeading());
 		if (oldFont != null) {
 			gc.setFont(oldFont);
 		}
 		return newLine;
 	}
-
-	public void paint(GC gc, int width, Locator locator,
-			Hashtable resourceTable, boolean selected, SelectionData selData) {
-		Font oldFont = null;
-		Color oldColor = null;
-		Color oldBg = null;
-
-		areaRectangles.clear();
-
-		if (fontId != null) {
-			oldFont = gc.getFont();
-			Font newFont = (Font) resourceTable.get(fontId);
-			if (newFont != null)
-				gc.setFont(newFont);
-		}
-		if (colorId != null) {
-			oldColor = gc.getForeground();
-			Color newColor = (Color) resourceTable.get(colorId);
-			if (newColor != null)
-				gc.setForeground(newColor);
-		}
-		oldBg = gc.getBackground();
-		FontMetrics fm = gc.getFontMetrics();
-		int lineHeight = fm.getHeight();
-		int descent = fm.getDescent();
-
-		if (!wrapAllowed) {
-			paintLineWithoutWrapping(gc, width, locator, selected, selData,
-					oldColor, fm, lineHeight, descent);
-		} else {
-			BreakIterator wb = BreakIterator.getLineInstance();
-			wb.setText(text);
-
-			int lineStart = 0;
-			int lastLoc = 0;
-			SelectionRange selRange = new SelectionRange();
-
-			for (int breakLoc = wb.first(); breakLoc != BreakIterator.DONE; breakLoc = wb
-					.next()) {
-				if (breakLoc == 0)
-					continue;
-				String word = text.substring(lineStart, breakLoc);
-				Point extent = gc.textExtent(word);
-				int ewidth = extent.x;
-				if (isSelectable())
-					ewidth += 2;
-				computeSelectionRange(gc, locator, word, ewidth, selData,
-						selRange);
-				if (locator.x + ewidth > width) {
-					// overflow
-					String prevLine = text.substring(lineStart, lastLoc);
-					Point prevExtent = gc.textExtent(prevLine);
-					int ly = locator.getBaseline(lineHeight - fm.getLeading());
-					Rectangle br = new Rectangle(locator.x - 1, ly,
-							prevExtent.x + 2, lineHeight - descent + 3);
-					int lineY = ly + lineHeight - descent + 1;	
-					drawString(gc, prevLine, prevExtent.x, locator, ly, lineY, 
-							selRange, selData);
-					int prevWidth = prevExtent.x;
-					if (isSelectable())
-						prevWidth += 2;
-
-					if (selected) {
-						if (colorId != null)
-							gc.setForeground(oldColor);
-						gc.drawFocus(br.x, br.y, br.width, br.height);
-						Color newColor = (Color) resourceTable.get(colorId);
-						if (newColor != null)
-							gc.setForeground(newColor);
-					}
-					areaRectangles
-							.add(new AreaRectangle(br, lineStart, lastLoc));
-
-					locator.rowHeight = Math.max(locator.rowHeight,
-							prevExtent.y);
-					locator.resetCaret();
-					if (isSelectable())
-						locator.x += 1;
-					locator.y += locator.rowHeight;
-					locator.rowCounter++;
-					locator.rowHeight = 0;
-					lineStart = lastLoc;
-					selRange.reset();
-				}
-				lastLoc = breakLoc;
-			}
-			// paint the last line
-			String lastLine = text.substring(lineStart, lastLoc);
-			int ly = locator.getBaseline(lineHeight - fm.getLeading());
-			Point lastExtent = gc.textExtent(lastLine);
-			int lastWidth = lastExtent.x;
-			if (isSelectable())
-				lastWidth += 2;
-			Rectangle br = new Rectangle(locator.x - 1, ly, lastExtent.x + 2,
-					lineHeight - descent + 3);
-			selRange.reset();
-			computeSelectionRange(gc, locator, lastLine, lastWidth, selData,
-					selRange);
-			int lineY = ly + lineHeight - descent + 1;			
-			drawString(gc, lastLine, lastWidth, locator, ly, lineY, selRange, selData);
-			areaRectangles.add(new AreaRectangle(br, lineStart, lastLoc));
-			if (selected) {
-				if (colorId != null)
-					gc.setForeground(oldColor);
-				gc.drawFocus(br.x, br.y, br.width, br.height);
-			}
-			locator.x += lastWidth;
-			locator.rowHeight = Math.max(locator.rowHeight, lastExtent.y);
-		}
-		if (oldFont != null) {
-			gc.setFont(oldFont);
-		}
-		if (oldColor != null) {
-			gc.setForeground(oldColor);
-		}
-		if (oldBg != null) {
-			gc.setBackground(oldBg);
-		}
-	}
-
 	/**
 	 * @param gc
 	 * @param width
@@ -387,9 +265,8 @@ public class TextSegment extends ParagraphSegment {
 	 * @param lineHeight
 	 * @param descent
 	 */
-	private void paintLineWithoutWrapping(GC gc, int width, Locator locator,
-			boolean selected, SelectionData selData, Color color,
-			FontMetrics fm, int lineHeight, int descent) {
+	private void layoutWithoutWrapping(GC gc, int width, Locator locator,
+			boolean selected, FontMetrics fm, int lineHeight, int descent) {
 		Point extent = gc.textExtent(text);
 		int ewidth = extent.x;
 		if (isSelectable())
@@ -404,18 +281,10 @@ public class TextSegment extends ParagraphSegment {
 			locator.rowCounter++;
 		}
 		int ly = locator.getBaseline(fm.getHeight() - fm.getLeading());
-		SelectionRange selRange = new SelectionRange();
-		computeSelectionRange(gc, locator, text, ewidth, selData, selRange);
 		int lineY = ly + lineHeight - descent + 1;		
-		drawString(gc, text, ewidth, locator, ly, lineY, selRange, selData);
 		Rectangle br = new Rectangle(locator.x - 1, ly, extent.x + 2,
 				lineHeight - descent + 3);
 		areaRectangles.add(new AreaRectangle(br, 0, -1));
-		if (selected) {
-			if (colorId != null)
-				gc.setForeground(color);
-			gc.drawFocus(br.x, br.y, br.width, br.height);
-		}
 		locator.x += ewidth;
 		locator.width = ewidth;
 		locator.height = lineHeight;
@@ -516,7 +385,7 @@ public class TextSegment extends ParagraphSegment {
 
 	// private boolean insideSelection(SelectionData selData, )
 
-	public void paintFocus(GC gc, Color bg, Color fg, boolean selected) {
+	public void paintFocus(GC gc, Color bg, Color fg, boolean selected, Rectangle repaintRegion) {
 		if (areaRectangles == null)
 			return;
 		for (int i = 0; i < areaRectangles.size(); i++) {
@@ -539,11 +408,11 @@ public class TextSegment extends ParagraphSegment {
 		}
 	}
 	
-	public void repaint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData) {
-		this.repaint(gc, hover, resourceTable, selected, false, selData);
+	public void paint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData, Rectangle repaintRegion) {
+		this.repaint(gc, hover, resourceTable, selected, false, selData, repaintRegion);
 	}
 
-	protected void repaint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, boolean rollover, SelectionData selData) {
+	protected void repaint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, boolean rollover, SelectionData selData, Rectangle repaintRegion) {
 		Font oldFont = null;
 		Color oldColor = null;
 		Color oldBg = null;
@@ -574,7 +443,7 @@ public class TextSegment extends ParagraphSegment {
 			int textX = rect.x + 1;
 			int lineY = rect.y + lineHeight - descent + 1;
 			repaintString(gc, text, extent.x, textX, rect.y, lineY, selData,
-					rect, hover, rollover);
+					rect, hover, rollover, repaintRegion);
 			if (selected)
 				gc.drawFocus(rect.x, rect.y, rect.width, rect.height);			
 		}
@@ -590,7 +459,7 @@ public class TextSegment extends ParagraphSegment {
 	}
 
 	private void repaintString(GC gc, String s, int swidth, int x, int y,
-			int lineY, SelectionData selData, Rectangle bounds, boolean hover, boolean rolloverMode) {
+			int lineY, SelectionData selData, Rectangle bounds, boolean hover, boolean rolloverMode, Rectangle repaintRegion) {
 		if (selData != null && selData.isEnclosed()) {
 			Color savedBg = gc.getBackground();
 			Color savedFg = gc.getForeground();
@@ -608,7 +477,7 @@ public class TextSegment extends ParagraphSegment {
 
 			if ((firstRow && x + swidth < leftOffset)
 					|| (lastRow && x > rightOffset)) {
-				repaintStringSegment(gc, s, gc.textExtent(s).x, x, y, lineY, hover, rolloverMode);
+				repaintStringSegment(gc, s, gc.textExtent(s).x, x, y, lineY, hover, rolloverMode, repaintRegion);
 				return;
 			}
 
@@ -624,7 +493,7 @@ public class TextSegment extends ParagraphSegment {
 			if (firstRow && sstart != -1) {
 				String left = s.substring(0, sstart);
 				int width = gc.textExtent(left).x;
-				repaintStringSegment(gc, left, width, x, y, lineY, hover, rolloverMode);
+				repaintStringSegment(gc, left, width, x, y, lineY, hover, rolloverMode, repaintRegion);
 				x += width;
 			}
 			if (selectedRow) {
@@ -635,19 +504,19 @@ public class TextSegment extends ParagraphSegment {
 				gc.setForeground(selData.fg);
 				gc.setBackground(selData.bg);
 				gc.fillRectangle(x, y, extent.x, extent.y);
-				repaintStringSegment(gc, mid, extent.x, x, y, lineY, hover, rolloverMode);
+				repaintStringSegment(gc, mid, extent.x, x, y, lineY, hover, rolloverMode, repaintRegion);
 				x += extent.x;
 				gc.setForeground(savedFg);
 				gc.setBackground(savedBg);
 			} else {
-				repaintStringSegment(gc, s, gc.textExtent(s).x, x, y, lineY, hover, rolloverMode);
+				repaintStringSegment(gc, s, gc.textExtent(s).x, x, y, lineY, hover, rolloverMode, repaintRegion);
 			}
 			if (lastRow && sstop != -1) {
 				String right = s.substring(sstop);
-				repaintStringSegment(gc, right, gc.textExtent(right).x, x, y, lineY, hover, rolloverMode);
+				repaintStringSegment(gc, right, gc.textExtent(right).x, x, y, lineY, hover, rolloverMode, repaintRegion);
 			}
 		} else {
-			repaintStringSegment(gc, s, gc.textExtent(s).x, x, y, lineY, hover, rolloverMode);
+			repaintStringSegment(gc, s, gc.textExtent(s).x, x, y, lineY, hover, rolloverMode, repaintRegion);
 		}
 	}
 
@@ -660,7 +529,7 @@ public class TextSegment extends ParagraphSegment {
 	 * @param hover
 	 * @param rolloverMode
 	 */
-	private void repaintStringSegment(GC gc, String s, int swidth, int x, int y, int lineY, boolean hover, boolean rolloverMode) {
+	private void repaintStringSegment(GC gc, String s, int swidth, int x, int y, int lineY, boolean hover, boolean rolloverMode, Rectangle repaintRegion) {
 		boolean reverse = false;
 		int clipX = x;
 		int clipY = y;
@@ -695,6 +564,90 @@ public class TextSegment extends ParagraphSegment {
 			gc.drawLine(x, y, x + swidth, y);
 			if (saved != null)
 				gc.setForeground(saved);
+		}
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.forms.widgets.ParagraphSegment#layout(org.eclipse.swt.graphics.GC, int, org.eclipse.ui.internal.forms.widgets.Locator, java.util.Hashtable, boolean, org.eclipse.ui.internal.forms.widgets.SelectionData)
+	 */
+	public void layout(GC gc, int width, Locator locator, Hashtable resourceTable,
+			boolean selected) {
+		Font oldFont = null;
+
+		areaRectangles.clear();
+
+		if (fontId != null) {
+			oldFont = gc.getFont();
+			Font newFont = (Font) resourceTable.get(fontId);
+			if (newFont != null)
+				gc.setFont(newFont);
+		}
+		FontMetrics fm = gc.getFontMetrics();
+		int lineHeight = fm.getHeight();
+		int descent = fm.getDescent();
+
+		if (!wrapAllowed) {
+			layoutWithoutWrapping(gc, width, locator, selected,
+					fm, lineHeight, descent);
+		} else {
+			BreakIterator wb = BreakIterator.getLineInstance();
+			wb.setText(text);
+
+			int lineStart = 0;
+			int lastLoc = 0;
+			Point lineExtent = new Point(0,0);
+
+			for (int breakLoc = wb.first(); breakLoc != BreakIterator.DONE; breakLoc = wb
+					.next()) {
+				if (breakLoc == 0)
+					continue;
+				String word = text.substring(lastLoc, breakLoc);
+				Point extent = gc.textExtent(word);
+				int ewidth = extent.x;
+				if (isSelectable())
+					ewidth += 2;
+				if (locator.x + lineExtent.x + ewidth > width) {
+					// overflow
+					String prevLine = text.substring(lineStart, lastLoc);
+					int ly = locator.getBaseline(lineHeight - fm.getLeading());
+					Rectangle br = new Rectangle(locator.x - 1, ly,
+							lineExtent.x + 2, lineHeight - descent + 3);
+					int lineY = ly + lineHeight - descent + 1;
+					int prevWidth = lineExtent.x;
+					if (isSelectable())
+						prevWidth += 2;
+					areaRectangles
+							.add(new AreaRectangle(br, lineStart, lastLoc));
+
+					locator.rowHeight = Math.max(locator.rowHeight,
+							lineExtent.y);
+					locator.resetCaret();
+					if (isSelectable())
+						locator.x += 1;
+					locator.y += locator.rowHeight;
+					locator.rowCounter++;
+					locator.rowHeight = 0;
+					lineStart = lastLoc;
+					lineExtent.x = 0;
+					lineExtent.y = 0;
+				}
+				lastLoc = breakLoc;
+				lineExtent.x += extent.x;
+				lineExtent.y = Math.max(extent.y, lineExtent.y);
+			}
+			String lastLine = text.substring(lineStart, lastLoc);
+			int ly = locator.getBaseline(lineHeight - fm.getLeading());
+			int lastWidth = lineExtent.x;
+			if (isSelectable())
+				lastWidth += 2;
+			Rectangle br = new Rectangle(locator.x - 1, ly, lineExtent.x + 2,
+					lineHeight - descent + 3);
+			int lineY = ly + lineHeight - descent + 1;			
+			areaRectangles.add(new AreaRectangle(br, lineStart, lastLoc));
+			locator.x += lastWidth;
+			locator.rowHeight = Math.max(locator.rowHeight, lineExtent.y);
+		}
+		if (oldFont != null) {
+			gc.setFont(oldFont);
 		}
 	}
 }

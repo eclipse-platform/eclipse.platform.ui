@@ -364,7 +364,7 @@ public class FormTextModel {
 		Object status = checkChildren(link);
 		if (status instanceof Node) {
 			Node child = (Node)status;
-			ImageHyperlinkSegment segment = new ImageHyperlinkSegment(settings);
+			ImageHyperlinkSegment segment = new ImageHyperlinkSegment();
 			segment.setHref(href);
 			segment.setWordWrapAllowed(wrapAllowed);
 			Node alt = child.getAttributes().getNamedItem("alt");
@@ -384,10 +384,8 @@ public class FormTextModel {
 			segment.setWordWrapAllowed(wrapAllowed);
 			return segment;
 		} else {
-			AggregateHyperlinkSegment parent = new AggregateHyperlinkSegment(
-					settings);
+			AggregateHyperlinkSegment parent = new AggregateHyperlinkSegment();
 			parent.setHref(href);
-			parent.setWordWrapAllowed(wrapAllowed);
 			NodeList children = link.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++) {
 				Node child = children.item(i);
@@ -397,18 +395,19 @@ public class FormTextModel {
 							getNormalizedText(value), settings, null);
 					Node alt = atts.getNamedItem("alt");
 					if (alt!=null)
-						ts.setTooltipText(alt.getNodeValue());					
+						ts.setTooltipText(alt.getNodeValue());
+					ts.setWordWrapAllowed(wrapAllowed);
 					parent.add(ts);
 				} else if (child.getNodeType() == Node.ELEMENT_NODE) {
 					String name = child.getNodeName();
 					if (name.equalsIgnoreCase("img")) {
-						ImageHyperlinkSegment is = new ImageHyperlinkSegment(
-								settings);
+						ImageHyperlinkSegment is = new ImageHyperlinkSegment();
 						processImageSegment(is, child);
 						Node alt = child.getAttributes().getNamedItem("alt");
 						if (alt!=null)
 							is.setTooltipText(alt.getNodeValue());
 						parent.add(is);
+						is.setWordWrapAllowed(wrapAllowed);
 					}
 				}
 			}

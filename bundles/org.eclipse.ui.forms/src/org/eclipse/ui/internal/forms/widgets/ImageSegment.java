@@ -112,7 +112,7 @@ public class ImageSegment extends ParagraphSegment {
 			return null;
 		return SEL_IMAGE_PREFIX + imageId;
 	}
-
+/*
 	public void paint(GC gc, int width, Locator loc, Hashtable resourceTable,
 			boolean selected, SelectionData selData) {
 		Image image = getImage(resourceTable);
@@ -164,7 +164,7 @@ public class ImageSegment extends ParagraphSegment {
 			gc.drawFocus(bounds.x, bounds.y, bounds.width, bounds.height);
 		}
 	}
-	
+*/
 	public boolean contains(int x, int y) {
 		if (bounds==null) 
 			return false;
@@ -195,7 +195,7 @@ public class ImageSegment extends ParagraphSegment {
 	public void setNowrap(boolean nowrap) {
 		this.nowrap = nowrap;
 	}
-	public void repaint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData) {
+	public void paint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData, Rectangle repaintRegion) {
 		Image image = getImage(resourceTable);
 		int iwidth = 0;
 		int iheight = 0;
@@ -220,7 +220,7 @@ public class ImageSegment extends ParagraphSegment {
 			if (selectedRow) {
 				if ((firstRow && leftOffset > ix) ||
 					(lastRow && rightOffset < ix + iwidth/2)) {
-					drawClipImage(gc, image, ix, iy);
+					drawClipImage(gc, image, ix, iy, repaintRegion);
 				}
 				else {
 					Color savedBg = gc.getBackground();
@@ -238,9 +238,9 @@ public class ImageSegment extends ParagraphSegment {
 				}
 			}
 			else
-				drawClipImage(gc, image, ix, iy);
+				drawClipImage(gc, image, ix, iy, repaintRegion);
 		} else
-			drawClipImage(gc, image, ix, iy);
+			drawClipImage(gc, image, ix, iy, repaintRegion);
 		if (selected) {
 			int fx = bounds.x;
 			int fy = bounds.y;
@@ -251,11 +251,41 @@ public class ImageSegment extends ParagraphSegment {
 			gc.drawFocus(fx, fy, bounds.width, bounds.height);
 		}
 	}
-	private void drawClipImage(GC gc, Image image, int ix, int iy) {
+	private void drawClipImage(GC gc, Image image, int ix, int iy, Rectangle repaintRegion) {
 		if (repaintRegion!=null) {
 			ix -= repaintRegion.x;
 			iy -= repaintRegion.y;
 		}
 		gc.drawImage(image, ix, iy);			
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.forms.widgets.ParagraphSegment#layout(org.eclipse.swt.graphics.GC, int, org.eclipse.ui.internal.forms.widgets.Locator, java.util.Hashtable, boolean, org.eclipse.ui.internal.forms.widgets.SelectionData)
+	 */
+	public void layout(GC gc, int width, Locator loc, Hashtable resourceTable,
+			boolean selected) {
+		Image image = getImage(resourceTable);
+
+		int iwidth = 0;
+		int iheight = 0;
+		if (image != null) {
+			Rectangle rect = image.getBounds();
+			iwidth = rect.width + (isSelectable()?2:0);
+			iheight = rect.height + (isSelectable()?2:0);
+		} else
+			return;
+		loc.width = iwidth;
+		loc.height = iheight;
+
+		if (!nowrap && loc.x + iwidth > width) {
+			// new row
+			loc.newLine();
+			loc.rowCounter++;
+		}
+		int ix = loc.x+(isSelectable()?1:0);
+		int iy = loc.getBaseline(iheight, false)+(isSelectable()?1:0);
+		loc.x += iwidth + (isSelectable()?1:0);
+		loc.rowHeight = Math.max(loc.rowHeight, iheight);
+		bounds = new Rectangle(ix-(isSelectable()?1:0), 
+				iy-(isSelectable()?1:0), iwidth+1, iheight+1);
 	}
 }
