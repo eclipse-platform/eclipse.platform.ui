@@ -1,6 +1,7 @@
 package org.eclipse.ui.tests.api;
 import junit.framework.*;
 import junit.textui.TestRunner;
+import org.eclipse.swt.SWT;
 
 /**
  * Test all areas of the UI API.
