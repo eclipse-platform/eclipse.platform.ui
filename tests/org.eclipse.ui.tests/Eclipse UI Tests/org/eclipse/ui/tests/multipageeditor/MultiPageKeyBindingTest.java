@@ -18,6 +18,8 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -79,8 +81,11 @@ public class MultiPageKeyBindingTest extends UITestCase {
         IEditorPart editorPart = page.openEditor(editorInput,
                 "org.eclipse.ui.tests.multipageeditor.TestMultiPageEditor"); //$NON-NLS-1$
         TestMultiPageEditor multiPageEditorPart = (TestMultiPageEditor) editorPart;
-
+        
         // Switch to the second tab
+        window.getShell().forceActive();
+        Display display = Display.getCurrent();
+        while (display.readAndDispatch());
         multiPageEditorPart.setPage(1);
 
         // Check that "Ctrl+Shift+5" is the bound key.
