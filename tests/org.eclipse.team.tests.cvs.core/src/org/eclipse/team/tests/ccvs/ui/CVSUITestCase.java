@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -42,6 +43,7 @@ import org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithRemoteAction;
 import org.eclipse.team.internal.ccvs.ui.actions.TagAction;
 import org.eclipse.team.internal.ccvs.ui.actions.UpdateAction;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
+import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncSet;
 import org.eclipse.team.internal.ccvs.ui.sync.CommitSyncAction;
 import org.eclipse.team.internal.ccvs.ui.sync.ForceCommitSyncAction;
 import org.eclipse.team.internal.ccvs.ui.sync.ForceUpdateSyncAction;
@@ -212,7 +214,7 @@ public class CVSUITestCase extends LoggingTestCase {
 	protected void actionCVSTag(IResource[] resources, final String name) {
 		assertNotNull(name);
 		TagAction action = new TagAction() {
-			protected String promptForTag() {
+			protected String promptForTag(ICVSFolder folder) {
 				return name;
 			}
 			protected IPromptCondition getPromptCondition() {
@@ -357,6 +359,9 @@ public class CVSUITestCase extends LoggingTestCase {
 			protected int promptForConflicts(SyncSet syncSet) {
 				return 0; // yes! sync conflicting changes
 			}
+			protected int promptForAdditions(CVSSyncSet cvsSyncSet) {
+				return 0; // yes! add unadded files
+			}
 			protected String promptForComment(RepositoryManager manager) {
 				return comment; // use our comment
 			}
@@ -367,6 +372,9 @@ public class CVSUITestCase extends LoggingTestCase {
 			testWindow.getShell()) {
 			protected int promptForConflicts(SyncSet syncSet) {
 				return 0; // yes! sync conflicting changes
+			}
+			protected int promptForAdditions(CVSSyncSet cvsSyncSet) {
+				return 0; // yes! add unadded files
 			}
 			protected String promptForComment(RepositoryManager manager) {
 				return comment; // use our comment
