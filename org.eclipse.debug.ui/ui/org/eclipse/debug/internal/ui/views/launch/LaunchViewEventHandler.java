@@ -28,7 +28,6 @@ import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * Handles debug events, updating the launch view and viewer.
