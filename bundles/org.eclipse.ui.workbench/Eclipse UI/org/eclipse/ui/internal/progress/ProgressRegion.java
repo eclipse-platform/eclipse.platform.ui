@@ -12,10 +12,8 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -47,39 +45,31 @@ public class ProgressRegion {
 	 */
 	public Control createContents(Composite parent, WorkbenchWindow window) {
 		workbenchWindow = window;
+		
 		region = new Composite(parent, SWT.NONE);
-		FormLayout regionLayout = new FormLayout();
-		region.setLayout(regionLayout);
-		Label seperator = new Label(region, SWT.SEPARATOR);
-		item = new ProgressAnimationItem(this);
-		item.createControl(region);
-		Control itemControl = item.getControl();
+		GridLayout gl= new GridLayout();
+		gl.marginHeight= 0;
+		gl.marginWidth= 0;
+		gl.numColumns= 3;
+		region.setLayout(gl);
+
+		new Label(region, SWT.SEPARATOR);
+		
 		viewer = new ProgressViewer(region, SWT.NO_FOCUS, 1, 36);
 		viewer.setUseHashlookup(true);
 		Control viewerControl = viewer.getControl();
-		//int widthPreference = AnimationManager.getInstance().getPreferredWidth();
-		int widthPreference = AnimationManager.getInstance().getPreferredWidth() + 10;	// Andre temporary
-		Point preferredSize = viewer.getSizeHints();
-		int margin = 2;
-		FormData labelData = new FormData();
-		labelData.left = new FormAttachment(0, margin);
-		labelData.top = new FormAttachment(0);
-		seperator.setLayoutData(labelData);
-		FormData itemData = new FormData();
-		itemData.right = new FormAttachment(100, (-1 * margin));
-		itemData.top = new FormAttachment(viewerControl, margin, SWT.TOP);
-		itemData.width = widthPreference + (margin * 2);
-		//itemData.height = preferredSize.y;
-		itemData.height = preferredSize.y + 5;	// Andre temporary
-		itemControl.setLayoutData(itemData);
-		FormData viewerData = new FormData();
-		viewerData.left = new FormAttachment(seperator, margin);
-		viewerData.right = new FormAttachment(itemControl, margin);
-		viewerData.top = new FormAttachment(0);
-		viewerData.bottom = new FormAttachment(100);
-		viewerData.width = preferredSize.x + margin;
-		viewerData.height = preferredSize.y;
-		viewerControl.setLayoutData(viewerData);
+		GridData gd= new GridData(GridData.FILL_BOTH);
+		gd.widthHint= viewer.getSizeHints().x;
+		viewerControl.setLayoutData(gd);
+
+		int widthPreference = AnimationManager.getInstance().getPreferredWidth() + 25;
+		item = new ProgressAnimationItem(this);
+		item.createControl(region);
+		Control itemControl = item.getControl();
+		gd= new GridData(GridData.FILL_VERTICAL);
+		gd.widthHint= widthPreference;
+		itemControl.setLayoutData(gd);
+		
 		viewerControl.addMouseListener(new MouseAdapter() {
 			/*
 			 * (non-Javadoc)
@@ -90,9 +80,9 @@ public class ProgressRegion {
 				processDoubleClick();
 			}
 		});
-		
+
 		//Never show debug info
-		IContentProvider provider = new ProgressViewerContentProvider(viewer,true);
+		IContentProvider provider = new ProgressViewerContentProvider(viewer, true);
 		viewer.setContentProvider(provider);
 		viewer.setInput(provider);
 		viewer.setLabelProvider(new ProgressViewerLabelProvider(viewerControl));

@@ -82,7 +82,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	        noneImage= ImageDescriptor.createFromFile(getClass(), "newprogress_none.gif").createImage(display);
 	        okImage= ImageDescriptor.createFromFile(getClass(), "newprogress_ok.gif").createImage(display);
 	        errorImage= ImageDescriptor.createFromFile(getClass(), "newprogress_error.gif").createImage(display);
-	    }
+	   	}
 		
 		top = new Composite(parent, SWT.NULL);
 		top.addDisposeListener(new DisposeListener() {
@@ -101,7 +101,13 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		gl.horizontalSpacing= 0;
 		top.setLayout(gl);
 		
+		bar = new ProgressBar(top, SWT.HORIZONTAL | SWT.INDETERMINATE);
+		bar.setVisible(false);
+		bar.addMouseListener(mouseListener);
+		bar.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.FILL_HORIZONTAL));
+		
 		toolbar= new ToolBar(top, SWT.FLAT);
+		//toolbar.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
 		toolButton= new ToolItem(toolbar, SWT.NONE);
 		toolButton.setImage(noneImage);
 		toolButton.addSelectionListener(new SelectionAdapter() {
@@ -110,15 +116,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
         		toolButton.setImage(noneImage);
             }
         });
-		toolbar.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		bar = new ProgressBar(top, SWT.HORIZONTAL | SWT.INDETERMINATE);
-		bar.addMouseListener(mouseListener);
-		GridData gd= new GridData();
-		gd.widthHint= 20;
-		gd.verticalAlignment= GridData.CENTER | GridData.FILL_HORIZONTAL;
-		bar.setLayoutData(gd);
-		
+
 		return top;
 	}
 
