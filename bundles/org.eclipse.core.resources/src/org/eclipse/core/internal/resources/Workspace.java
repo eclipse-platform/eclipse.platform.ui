@@ -1791,8 +1791,13 @@ public IStatus validateEdit(final IFile[] files, final Object context) {
  * Method declared on IWorkspace.
  */
 public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation) {
-	//check that the resource has a project as its parent
 	String message;
+	//check if resource linking is disabled
+	if (ResourcesPlugin.getPlugin().getPluginPreferences().getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING)) {
+		message = Policy.bind("links.workspaceVeto", resource.getName());//$NON-NLS-1$
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
+	}
+	//check that the resource has a project as its parent
 	IContainer parent = resource.getParent();
 	if (parent == null || parent.getType() != IResource.PROJECT) {
 		message = Policy.bind("links.parentNotProject", resource.getName());//$NON-NLS-1$

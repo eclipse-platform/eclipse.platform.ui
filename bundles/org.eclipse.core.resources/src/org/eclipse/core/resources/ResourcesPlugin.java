@@ -144,6 +144,12 @@ public final class ResourcesPlugin extends Plugin {
 	 * between automatic workspace snapshots
 	 */
 	public static final String PREF_SNAPSHOT_INTERVAL = PREF_DESCRIPTION_PREFIX + "snapshotinterval"; //$NON-NLS-1$	
+
+	/**
+	 * Name of a preference for turning off support for linked resources.  When
+	 * this preference is set to "true", attempting to create linked resources will fail.
+	 */
+	public static final String PREF_DISABLE_LINKING = PREF_DESCRIPTION_PREFIX + "disableLinking";//$NON-NLS-1$
 	
 	/**
 	 * The single instance of this plug-in runtime class.
