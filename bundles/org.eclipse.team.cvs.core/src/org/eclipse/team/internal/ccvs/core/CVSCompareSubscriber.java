@@ -42,23 +42,37 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 		tree = new CVSResourceVariantTree(new SessionResourceVariantByteStore(), tag, getCacheFileContentsHint());
 		initialize();
 	}
-	
-	/**
-	 * @deprecated this needs to remain until Releng plugin is rebuilt
-	 */
-	public CVSCompareSubscriber(IProject[] resources, CVSTag[] tags, String name) {
-		this((IResource[])resources, tags, name);
-	}
 
 	public CVSCompareSubscriber(IResource[] resources, CVSTag[] tags, String name) {
 		super(getUniqueId(), Policy.bind("CVSCompareSubscriber.2", name), Policy.bind("CVSCompareSubscriber.3")); //$NON-NLS-1$ //$NON-NLS-2$
+		resetRoots(resources, tags);
+		initialize();
+	}
+
+	/**
+	 * @param resources
+	 * @param tags
+	 */
+	public void resetRoots(IResource[] resources, CVSTag[] tags) {
+		if (this.resources != null) {
+			List removed = new ArrayList();
+			for (int i = 0; i < this.resources.length; i++) {
+				IResource resource = this.resources[i];
+				removed.add(new SubscriberChangeEvent(this, ISubscriberChangeEvent.ROOT_REMOVED, resource));
+			}
+			this.resources = new IResource[0];
+			fireTeamResourceChange((ISubscriberChangeEvent[]) removed.toArray(new ISubscriberChangeEvent[removed.size()]));
+			if (tree != null) {
+				tree.dispose();
+				tree = null;
+			}
+		}
 		this.resources = resources;
 		MultiTagResourceVariantTree multiTree = new MultiTagResourceVariantTree(new SessionResourceVariantByteStore(), getCacheFileContentsHint());
 		for (int i = 0; i < tags.length; i++) {
 			multiTree.addResource(resources[i], tags[i]);
 		}
 		tree = multiTree;
-		initialize();
 	}
 
 	private void initialize() {

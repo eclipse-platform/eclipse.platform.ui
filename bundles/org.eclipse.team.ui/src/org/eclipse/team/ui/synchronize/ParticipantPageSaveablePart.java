@@ -452,4 +452,20 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 			}
 		};
 	}
+	
+	/**
+	 * Return the synchronize page configiration for this part
+	 * @return Returns the pageConfiguration.
+	 */
+	public ISynchronizePageConfiguration getPageConfiguration() {
+		return pageConfiguration;
+	}
+	
+	/**
+	 * Return the Synchronize participant for this part
+	 * @return Returns the participant.
+	 */
+	public ISynchronizeParticipant getParticipant() {
+		return participant;
+	}
 }

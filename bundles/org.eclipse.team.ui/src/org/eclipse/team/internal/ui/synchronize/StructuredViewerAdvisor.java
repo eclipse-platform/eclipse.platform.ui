@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.internal.ui.synchronize.actions.StatusLineContributionGroup;
 import org.eclipse.team.internal.ui.synchronize.actions.WorkingSetFilterActionGroup;
 import org.eclipse.team.ui.synchronize.*;

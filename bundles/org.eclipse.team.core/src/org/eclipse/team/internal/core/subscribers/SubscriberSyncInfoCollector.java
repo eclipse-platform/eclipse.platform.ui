@@ -17,7 +17,6 @@ import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.Policy;
-import org.eclipse.team.internal.core.subscribers.*;
 
 /**
  * This collector maintains a {@link SyncInfoSet} for a particular team subscriber keeping
