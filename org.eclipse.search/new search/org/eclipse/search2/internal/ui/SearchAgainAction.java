@@ -26,7 +26,7 @@ class SearchAgainAction extends Action {
 		setText(SearchMessages.getString("SearchAgainAction.label")); //$NON-NLS-1$
 		setToolTipText(SearchMessages.getString("SearchAgainAction.tooltip")); //$NON-NLS-1$
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_TOOL, SearchPluginImages.IMG_TOOL_SEARCH);
-		fView= view;
+		fView= view;	
 	}
 	/**
 	 *	Invoke the resource wizard selection wizard
@@ -36,8 +36,8 @@ class SearchAgainAction extends Action {
 	public void run() {
 		final ISearchResult search= fView.getCurrentSearchResult();
 		if (search != null) {
-			InternalSearchUI.getInstance().cancelSearch(search);
-			InternalSearchUI.getInstance().runAgain(search);
+			InternalSearchUI.getInstance().cancelSearch(search.getQuery());;
+			InternalSearchUI.getInstance().runAgain(search.getQuery(), search);
 		}
 	}
 }

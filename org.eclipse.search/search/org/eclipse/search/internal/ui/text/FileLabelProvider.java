@@ -32,7 +32,7 @@ public class FileLabelProvider extends LabelProvider {
 	public static final int SHOW_PATH_LABEL= 3;
 	public static final int SHOW_PATH= 4;
 	
-	private static final String fgSeparatorFormat= "{0} - {1}";
+	private static final String fgSeparatorFormat= "{0} - {1}"; //$NON-NLS-1$
 	
 	private WorkbenchLabelProvider fLabelProvider;
 	private ILabelDecorator fDecorator;
@@ -50,6 +50,10 @@ public class FileLabelProvider extends LabelProvider {
 		fOrder= orderFlag;
 	}
 	
+	public int getOrder() {
+		return fOrder;
+	}
+
 	public String getText(Object element) {
 		if (!(element instanceof IResource))
 			return null; //$NON-NLS-1$
@@ -57,7 +61,7 @@ public class FileLabelProvider extends LabelProvider {
 		IResource resource= (IResource)element;
 		String text= null;
 
-		if (resource == null || !resource.exists())
+		if (!resource.exists())
 			text= "<removed resource>";
 		
 		else {

@@ -21,9 +21,7 @@ import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.search.ui.ISearchResult;
-import org.eclipse.search.ui.ISearchResultPresentation;
 import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.text.ITextSearchResult;
 
 import org.eclipse.search.internal.ui.SearchPluginImages;
 
@@ -60,17 +58,11 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 		fMenu= new Menu(parent);
 		ISearchResult[] searches= NewSearchUI.getSearchManager().getSearchResults();
 		for (int i= 0; i < searches.length; i++) {
-			ITextSearchResult search= (ITextSearchResult) searches[i];
-			ISearchResultPresentation category= fSearchView.getSearchCategory(searches[i]);
-			String label= searches[i].toString();
-			String tooltip= searches[i].getUserData().toString();
-			ImageDescriptor image= null;
-			if (category != null) {
-				label= category.getText(search);
-				tooltip= category.getTooltip(search);
-				image= category.getImageDescriptor(search);
-			}
-			if (search.isRunning())
+			ISearchResult search= searches[i];
+			String label= search.getText();
+			String tooltip= search.getTooltip();
+			ImageDescriptor image= search.getImageDescriptor();
+			if (InternalSearchUI.getInstance().isQueryRunning(search.getQuery()))
 				label= label+ SearchMessages.getString("SearchDropDownAction.running.message"); //$NON-NLS-1$
 			ShowSearchAction action= new ShowSearchAction(fSearchView, searches[i], label, image, tooltip );
 			if (searches[i].equals(currentSearch))
@@ -88,6 +80,6 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 	}
 
 	public void run() {
-			new ShowSearchesAction(fSearchView).run(true);
+			new ShowSearchesAction(fSearchView).run();
 	}
 }

@@ -12,15 +12,17 @@ package org.eclipse.search2.internal.ui.basic.views;
 
 import org.eclipse.jface.action.Action;
 
+import org.eclipse.search.ui.text.*;
+
 import org.eclipse.search.internal.ui.SearchPluginImages;
 
 import org.eclipse.search2.internal.ui.SearchMessages;
 
-class RemoveMatchAction extends Action {
+public class RemoveMatchAction extends Action {
 
-	private DefaultSearchViewPage fPage;
+	private AbstractTextSearchViewPage fPage;
 
-	public RemoveMatchAction(DefaultSearchViewPage page) {
+	public RemoveMatchAction(AbstractTextSearchViewPage page) {
 		fPage= page;
 		setText(SearchMessages.getString("RemoveMatchAction.label")); //$NON-NLS-1$
 		setToolTipText(SearchMessages.getString("RemoveMatchAction.tooltip")); //$NON-NLS-1$
@@ -28,7 +30,10 @@ class RemoveMatchAction extends Action {
 	}
 	
 	public void run() {
-		fPage.removeCurrentMatch();
+		Match match= fPage.getCurrentMatch();
+		AbstractTextSearchResult result= fPage.getInput();
+		if (match != null && result != null)
+			result.removeMatch(match);
 	}
 	
 }

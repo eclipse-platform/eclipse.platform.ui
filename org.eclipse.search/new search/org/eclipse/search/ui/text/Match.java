@@ -24,7 +24,6 @@ public class Match {
 	
 	/**
 	 * Constructs a new Match object.
-	 * @param result
 	 * @param element
 	 * @param offset
 	 * @param length
@@ -58,7 +57,7 @@ public class Match {
 	}
 
 	/**
-	 * Sets the length field. 
+	 * Sets the length. 
 	 * @param length
 	 */
 	public void setLength(int length) {

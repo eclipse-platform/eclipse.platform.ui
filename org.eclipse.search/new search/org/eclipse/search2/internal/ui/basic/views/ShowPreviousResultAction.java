@@ -12,15 +12,17 @@ package org.eclipse.search2.internal.ui.basic.views;
 
 import org.eclipse.jface.action.Action;
 
+import org.eclipse.search.ui.text.*;
+
 import org.eclipse.search.internal.ui.SearchPluginImages;
 
 import org.eclipse.search2.internal.ui.SearchMessages;
 
-class ShowPreviousResultAction extends Action {
+public class ShowPreviousResultAction extends Action {
 	
-	private DefaultSearchViewPage fPage;
+	private AbstractTextSearchViewPage fPage;
 
-	public ShowPreviousResultAction(DefaultSearchViewPage page) {
+	public ShowPreviousResultAction(AbstractTextSearchViewPage page) {
 		super(SearchMessages.getString("ShowPreviousResultAction.label")); //$NON-NLS-1$
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_PREV);
 		setToolTipText(SearchMessages.getString("ShowPreviousResultAction.tooltip")); //$NON-NLS-1$

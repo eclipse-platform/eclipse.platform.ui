@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.search.ui;
 
-import org.eclipse.ui.IViewPart;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Represents the result of a search. No assumptions about the
@@ -25,43 +25,39 @@ import org.eclipse.ui.IViewPart;
  */
 public interface ISearchResult {
 	/**
-	 * @return Some user data object defined by the creator of the
-	 * 			ISearchResult. Typically used to remember stuff like
-	 * 			the description of the search result.
+	 * Adds a ISearchResultChangedListener. Has no effect when the 
+	 * listener has already been added.
+	 * @param l
 	 */
-	Object getUserData();
+	public void addListener(ISearchResultListener l);
 	/**
-	 * Creates a new search result presentation. May be called multiple times.
-	 * @see ISearchResultPresentation
-	 * @param searchView
-	 * @return
+	 * Removes a ISearchResultChangedListener. Has no effect when the
+	 * listener hasn't previously been added.
+	 * @param l
 	 */
-	ISearchResultPresentation createPresentation(IViewPart searchView);
+	public void removeListener(ISearchResultListener l);
 	/**
-	 * Will be called at the start of a search job that fills
-	 * A corresponding SearchJobEvent should be sent out.
-	 * this ISearchResult.
+	 * Returns a user readeable label for the given ISearchResult.
+	 * @return The label for this search result.
 	 */
-	void jobStarted();
+	String getText();
 	/**
-	 * Will be called at the end of a search job that fills
-	 * this ISearchResult.
-	 * A corresponding SearchJobEvent should be sent out.
+	 * Returns a tooltip for the given ISearchResult.
+	 * @return A user readeable String.
 	 */
-	void jobFinished();
+	public String getTooltip();
 	/**
-	 * @return Whether a search is presently running on this
+	 * Returns an image descriptor for the given ISearchResult.
+	 * The image descriptor will be used for rendereing in menus, 
+	 * view titles, etc.
+	 * @return An image representing this search result or <code>null</code>.
+	 */
+	ImageDescriptor getImageDescriptor();
+	
+	/**
+	 * Returns the query that is responsible for putting matches for this
 	 * search result.
+	 * @return The query producing this result or <code>null</code>
 	 */
-	boolean isRunning();
-	/**
-	 * Adds a ISearchResultChangedListener.
-	 * @param l
-	 */
-	public void addListener(ISearchResultChangedListener l);
-	/**
-	 * Removes a ISearchResultChangedListener.
-	 * @param l
-	 */
-	public void removeListener(ISearchResultChangedListener l);
+	ISearchQuery getQuery();
 }

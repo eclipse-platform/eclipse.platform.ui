@@ -8,27 +8,28 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.search2.internal.ui.basic.views;
-
-import org.eclipse.jface.action.Action;
+package org.eclipse.search.internal.ui.text;
 
 /**
  * @author Thomas Mäder
  *
  */
-public class SortByAction extends Action {
-	private DefaultSearchViewPage fPage;
-	private String fSortAttribute;
+public class FileSearchDescription {
+	private String fSearchString;
+	private String fScopeDescription;
 
-	public SortByAction(DefaultSearchViewPage page, String sortAttribute) {
+	public FileSearchDescription(String searchString, String scopeDescription) {
 		super();
-		setText(sortAttribute);
-		fPage= page;
-		fSortAttribute= sortAttribute;
+		fSearchString= searchString;
+		fScopeDescription= scopeDescription;
 	}
-	
-	public void run() {
-		fPage.setSortAttribute(fSortAttribute);
+
+	public String getScopeDescription() {
+		return fScopeDescription;
+	}
+
+	public String getSearchString() {
+		return fSearchString;
 	}
 
 }

@@ -6,23 +6,17 @@
  * 
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.search.ui;
+package org.eclipse.search.ui.text;
+import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.SearchResultEvent;
 /**
- * Listener interface for changes to <code>ISearchResult</code>.
- * 
+ * An event indicating that all matches have been removed from a <code>AbstractTextSearchResult</code>.
  * This API is preliminary and subject to change at any time.
  * 
  * @since 3.0
  */
-public interface ISearchResultListener {
-	/**
-	 * Called to notify listeners of changes in a <code>ISearchResult</code>.
-	 * The event object <code>e</code> can only guarantueed to be valid for
-	 * the duration of the call.
-	 * 
-	 * @param e The event object describing the change. Notice that
-	 *            implementers of <code>ISearchResult</code> will be sending
-	 *            subclasses of <code>SearchResultEvent</code>.
-	 */
-	void searchResultChanged(SearchResultEvent e);
+public class RemoveAllEvent extends SearchResultEvent {
+	public RemoveAllEvent(ISearchResult searchResult) {
+		super(searchResult);
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,27 +8,26 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.search2.internal.ui.basic.views;
+package org.eclipse.search.internal.ui.text;
 
 import org.eclipse.jface.action.Action;
 
-/**
- * @author Thomas Mäder
- *
- */
-public class NoSortAction extends Action {
 
-	private DefaultSearchViewPage fPage;
-	private int fDirection;
-
-	public NoSortAction(DefaultSearchViewPage page, String label, int direction) {
+public class SortAction extends Action {
+	private int fSortOrder;
+	private FileSearchPage fPage;
+	
+	public SortAction(String label, FileSearchPage page, int sortOrder) {
 		super(label);
 		fPage= page;
-		fDirection= direction;
-	}
-	
-	public void run() {
-		fPage.setSortDirection(fDirection);
+		fSortOrder= sortOrder;
 	}
 
+	public void run() {
+		fPage.setSortOrder(this);
+	}
+
+	public int getSortOrder() {
+		return fSortOrder;
+	}
 }

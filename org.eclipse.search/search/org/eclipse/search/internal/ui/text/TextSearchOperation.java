@@ -14,8 +14,12 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
+
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+
 import org.eclipse.search.internal.core.ISearchScope;
 import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
 import org.eclipse.search.internal.core.text.MatchLocator;
@@ -23,7 +27,6 @@ import org.eclipse.search.internal.core.text.TextSearchEngine;
 import org.eclipse.search.internal.core.text.TextSearchScope;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPluginImages;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * An operation to perform a regular text search.

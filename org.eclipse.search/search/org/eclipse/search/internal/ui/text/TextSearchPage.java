@@ -67,10 +67,10 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.search.ui.IReplacePage;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
+import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.search.ui.SearchUI;
 
-import org.eclipse.search.internal.core.text.TextSearchJob;
 import org.eclipse.search.internal.core.text.TextSearchScope;
 import org.eclipse.search.internal.ui.ISearchHelpContextIds;
 import org.eclipse.search.internal.ui.ScopePart;
@@ -82,10 +82,6 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.internal.ui.util.FileTypeEditor;
 import org.eclipse.search.internal.ui.util.RowLayouter;
 import org.eclipse.search.internal.ui.util.SWTUtil;
-
-import org.eclipse.search.ui.ISearchJob;
-import org.eclipse.search.ui.text.ITextSearchResult;
-import org.eclipse.search.ui.text.TextSearchResultFactory;
 
 public class TextSearchPage extends DialogPage implements ISearchPage, IReplacePage {
 
@@ -261,12 +257,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		}		
 		scope.addExtensions(patternData.fileNamePatterns);
 	
-			
-		ITextSearchResult search= TextSearchResultFactory.createTextSearchResult(new ResourceStructureProvider(), new FilePresentationFactory()	, new FileSearchDesription(patternData.textPattern, scope.getDescription()));
-		org.eclipse.search.ui.NewSearchUI.getSearchManager().addSearchResult(search);
-		
-		ISearchJob wsJob= new TextSearchJob(search, scope, getSearchOptions(), patternData.textPattern, "Searching for "+patternData.textPattern);
-		org.eclipse.search.ui.NewSearchUI.runSearchInBackground(search, wsJob);
+		FileSearchQuery wsJob= new FileSearchQuery(scope, getSearchOptions(), patternData.textPattern, "Searching for "+patternData.textPattern);
+		ISearchResult result= new FileSearchResult(wsJob);
+		org.eclipse.search.ui.NewSearchUI.runSearchInBackground(wsJob, result);
 	
 		return true;
 	}

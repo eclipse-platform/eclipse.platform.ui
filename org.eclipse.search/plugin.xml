@@ -157,11 +157,11 @@
    
 <!-- Default search results view -->
    	<extension
-    	id="DefaultSearchResultsViewPage"
+    	id="FileSearchPage"
         point="org.eclipse.search.searchResultViewPages">
 		<viewPage
-			targetClass="org.eclipse.search.ui.text.ITextSearchResult"
-			class="org.eclipse.search2.internal.ui.basic.views.DefaultSearchViewPage">
+			targetClass="org.eclipse.search.internal.ui.text.FileSearchResult"
+			class="org.eclipse.search.internal.ui.text.FileSearchPage">
 		</viewPage>
 	</extension>
 	

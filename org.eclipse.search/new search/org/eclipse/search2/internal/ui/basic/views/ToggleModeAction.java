@@ -12,13 +12,15 @@ package org.eclipse.search2.internal.ui.basic.views;
 
 import org.eclipse.jface.action.Action;
 
+import org.eclipse.search.ui.text.*;
+
 import org.eclipse.search2.internal.ui.SearchMessages;
 
-class ToggleModeAction extends Action {
+public class ToggleModeAction extends Action {
 
-	private DefaultSearchViewPage fPage;
+	private AbstractTextSearchViewPage fPage;
 
-	public ToggleModeAction(DefaultSearchViewPage page) {
+	public ToggleModeAction(AbstractTextSearchViewPage page) {
 		fPage= page;
 		setText(SearchMessages.getString("ToggleModeAction.label")); //$NON-NLS-1$
 		setToolTipText(SearchMessages.getString("ToggleModeAction.tooltip")); //$NON-NLS-1$

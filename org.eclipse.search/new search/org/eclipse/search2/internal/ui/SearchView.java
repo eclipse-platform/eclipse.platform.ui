@@ -1,7 +1,6 @@
 package org.eclipse.search2.internal.ui;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -23,19 +22,17 @@ import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
 
+import org.eclipse.search.ui.IContextMenuConstants;
+import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
-import org.eclipse.search.ui.ISearchResultChangedListener;
 import org.eclipse.search.ui.ISearchResultListener;
+import org.eclipse.search.ui.ISearchResultManagerListener;
 import org.eclipse.search.ui.ISearchResultPage;
-import org.eclipse.search.ui.ISearchResultPageContainer;
-import org.eclipse.search.ui.ISearchResultPresentation;
+import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.SearchJobEvent;
 import org.eclipse.search.ui.SearchResultEvent;
 
 import org.eclipse.search.internal.ui.SearchPluginImages;
-
-import org.eclipse.search2.internal.ui.basic.views.IContextMenuConstants;
 
 /*******************************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
@@ -52,7 +49,7 @@ import org.eclipse.search2.internal.ui.basic.views.IContextMenuConstants;
  * @author Thomas Mäder
  *
  */
-public class SearchView extends PageBookView implements ISearchResultPageContainer, ISearchResultListener, ISearchResultChangedListener {
+public class SearchView extends PageBookView implements ISearchResultViewPart, ISearchResultManagerListener, ISearchResultListener, ISearchQueryListener {
 	private HashMap fPartsToPages;
 	private HashMap fPagesToParts;
 	private HashMap fSearchViewStates;
@@ -60,7 +57,6 @@ public class SearchView extends PageBookView implements ISearchResultPageContain
 	private Action fSearchesDropDownAction;
 	private ISearchResult fCurrentSearch;
 	private DummyPart fDefaultPart;
-	private HashMap fSearchCategories;
 	private long fLastUpdateTime= 0;
 	private SearchAgainAction fSearchAgainAction;
 	
@@ -104,7 +100,7 @@ public class SearchView extends PageBookView implements ISearchResultPageContain
 		/* (non-Javadoc)
 		 * @see org.eclipse.search2.ui.ISearchResultsPage#setViewPart(org.eclipse.search2.ui.ISearchResultView)
 		 */
-		public void setViewPart(ISearchResultPageContainer part) {
+		public void setViewPart(ISearchResultViewPart part) {
 			// do nothing
 		}
 
@@ -125,8 +121,8 @@ public class SearchView extends PageBookView implements ISearchResultPageContain
 		fPagesToParts= new HashMap();
 		setTitleImage(SearchPluginImages.get(SearchPluginImages.T_VIEW));
 		fSearchViewPageService= new ExtensionService("org.eclipse.search.searchResultViewPages", "targetClass"); //$NON-NLS-1$ //$NON-NLS-2$
-		fSearchCategories= new HashMap();
 		fSearchViewStates= new HashMap();
+		InternalSearchUI.getInstance().addSearchQueryListener(this);
 	}
 
 	protected IPage createDefaultPage(PageBook book) {
@@ -206,12 +202,10 @@ public class SearchView extends PageBookView implements ISearchResultPageContain
 	private void updateTitle(ISearchResult search) {
 		String label= SearchMessages.getString("SearchView.title.search"); //$NON-NLS-1$
 		if (search != null) {
-			ISearchResultPresentation category= getSearchCategory(search);
-			if (search.isRunning()) {
+			if (InternalSearchUI.getInstance().isQueryRunning(search.getQuery())) {
 				label= label+SearchMessages.getString("SearchView.title.running"); //$NON-NLS-1$
 			}
-			if (category != null) 
-				label= label+" ("+category.getText(search)+")"; //$NON-NLS-1$ //$NON-NLS-2$
+			label= label+" ("+search.getText()+")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		setTitle(label);
 	}
@@ -252,48 +246,29 @@ public class SearchView extends PageBookView implements ISearchResultPageContain
 
 	public void dispose() {
 		NewSearchUI.getSearchManager().removeSearchResultListener(this);
-		Iterator categories= fSearchCategories.values().iterator();
-		while (categories.hasNext()) {
-			ISearchResultPresentation element= (ISearchResultPresentation) categories.next();
-			element.dispose();
-		}
 		if (fCurrentSearch != null)
 			fCurrentSearch.removeListener(this);
+		InternalSearchUI.getInstance().removeSearchQueryListener(this);
 		super.dispose();
 	}
 
 	public void searchResultAdded(ISearchResult search) {
-		// should post to ui thread
-		fSearchCategories.put(search, search.createPresentation(this));
 		showSearchResult(search);
 	}
 
 	public void searchResultRemoved(ISearchResult search) {
-		NewSearchUI.cancelSearch(search);
+		InternalSearchUI.getInstance().cancelSearch(search.getQuery());
 		if (search.equals(fCurrentSearch)) {
 			showSearchResult(null);
 			partActivated(fDefaultPart);
 		}
-		ISearchResultPresentation category= (ISearchResultPresentation) fSearchCategories.remove(search);
-		if (category != null)
-			category.dispose();
 	}
 
-	public ISearchResultPresentation getSearchCategory(ISearchResult result) {
-		return (ISearchResultPresentation) fSearchCategories.get(result);
-	}
-
-
-	public void searchResultsChanged(SearchResultEvent e) {
-		if (e instanceof SearchJobEvent) {
+	public void searchResultChanged(SearchResultEvent e) {
+		long now= System.currentTimeMillis();
+		if (now-fLastUpdateTime > 500) {
+			fLastUpdateTime= now;
 			updateTitle();
-			fLastUpdateTime= 0;
-		} else {
-			long now= System.currentTimeMillis();
-			if (now-fLastUpdateTime > 500) {
-				fLastUpdateTime= now;
-				updateTitle();
-			}
 		}
 	}
 
@@ -302,5 +277,13 @@ public class SearchView extends PageBookView implements ISearchResultPageContain
 	 */
 	public void fillContextMenu(IMenuManager menuManager) {
 		menuManager.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fSearchAgainAction);
+	}
+
+	public void searchQueryStarted(ISearchQuery query) {
+		updateTitle();
+	}
+
+	public void searchQueryFinished(ISearchQuery query) {
+		updateTitle();
 	}
 }

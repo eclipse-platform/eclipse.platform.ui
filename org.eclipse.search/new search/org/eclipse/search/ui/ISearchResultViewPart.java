@@ -7,22 +7,22 @@
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
 package org.eclipse.search.ui;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.ui.IViewPart;
 /**
- * Listener interface for changes to <code>ISearchResult</code>.
+ * Interface for the search result view. This interface is not intended to be
+ * implemented.
  * 
  * This API is preliminary and subject to change at any time.
  * 
  * @since 3.0
  */
-public interface ISearchResultListener {
+public interface ISearchResultViewPart extends IViewPart {
 	/**
-	 * Called to notify listeners of changes in a <code>ISearchResult</code>.
-	 * The event object <code>e</code> can only guarantueed to be valid for
-	 * the duration of the call.
+	 * Search result pages can call this method to have the search results view
+	 * contribute to their context menus.
 	 * 
-	 * @param e The event object describing the change. Notice that
-	 *            implementers of <code>ISearchResult</code> will be sending
-	 *            subclasses of <code>SearchResultEvent</code>.
+	 * @param menuManager
 	 */
-	void searchResultChanged(SearchResultEvent e);
+	void fillContextMenu(IMenuManager menuManager);
 }

@@ -12,16 +12,17 @@ package org.eclipse.search2.internal.ui.basic.views;
 
 import org.eclipse.jface.action.Action;
 
-import org.eclipse.search.ui.text.ITextSearchResult;
+import org.eclipse.search.ui.text.*;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
 
 import org.eclipse.search.internal.ui.SearchPluginImages;
 
 import org.eclipse.search2.internal.ui.SearchMessages;
 
-class RemoveAllResultsAction extends Action {
-	DefaultSearchViewPage fPage;
+public class RemoveAllResultsAction extends Action {
+	AbstractTextSearchViewPage fPage;
 
-	public RemoveAllResultsAction(DefaultSearchViewPage page) {
+	public RemoveAllResultsAction(AbstractTextSearchViewPage page) {
 		super(SearchMessages.getString("RemoveAllResultsAction.label")); //$NON-NLS-1$
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM_ALL);		
 		setToolTipText(SearchMessages.getString("RemoveAllResultsAction.tooltip")); //$NON-NLS-1$
@@ -29,7 +30,7 @@ class RemoveAllResultsAction extends Action {
 	}
 	
 	public void run() {
-		ITextSearchResult search= fPage.getCurrentSearch();
+		AbstractTextSearchResult search= fPage.getInput();
 		if (search != null)
 			search.removeAll();
 	}

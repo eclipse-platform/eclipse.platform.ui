@@ -28,72 +28,65 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import org.eclipse.search.ui.ISearchResultChangedListener;
+import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.search.ui.SearchUI;
-import org.eclipse.search.ui.text.ITextSearchResult;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
+import org.eclipse.search.ui.text.MatchEvent;
+import org.eclipse.search.ui.text.RemoveAllEvent;
 
-/**
- * @author Administrator
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
-public class AnnotationManager implements ISearchResultChangedListener, IPartListener {
+public class AnnotationManager implements ISearchResultListener, IPartListener {
 
-	private ITextSearchResult fResult;
+	private AbstractTextSearchResult fResult;
 	private Map fMatchesToAnnotations;
 	private ITextEditor fEditor;
+	private IWorkbenchWindow fWindow;
 	private AnnotationTypeLookup fAnnotationTypeLookup= EditorsUI.getAnnotationTypeLookup();
 	
-	public AnnotationManager() {
-		fMatchesToAnnotations= new HashMap();
+	private static HashMap fSearchResultMap;
+	private static AnnotationManager fgManager;
+	
+	static {
+		fSearchResultMap= new HashMap();
+		fgManager= new AnnotationManager();
 		IWindowListener listener= new IWindowListener() {
-			private IWorkbenchWindow fWindow;
-			private void stopListeningToParts() {
-				if (fWindow == null)
-					return;
-				fWindow.getPartService().removePartListener(AnnotationManager.this);
-			}
-
-			private void listenToParts() {
-				if (fWindow == null)
-					return;
-				fWindow.getPartService().addPartListener(AnnotationManager.this);
-			}
 			
 			public void windowActivated(IWorkbenchWindow window) {
-				if (window != fWindow) {
-					stopListeningToParts();
-					fWindow= window;
-					listenToParts();
-				}
+				switchedTo(window);
 			}
 
 			public void windowDeactivated(IWorkbenchWindow window) {
-				if (window == fWindow) {
-					stopListeningToParts();
-					fWindow= null;
-				}				
+				// ignore
 			}
 
 			public void windowClosed(IWorkbenchWindow window) {
-				windowDeactivated(window);
+				fSearchResultMap.remove(window);
 			}
 
 			public void windowOpened(IWorkbenchWindow window) {
-				// TODO Auto-generated method stub
-
+				// ignore
 			}
 		};
-		IWorkbenchWindow activeWindow= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (activeWindow != null)
-			listener.windowActivated(activeWindow);
 		PlatformUI.getWorkbench().addWindowListener(listener);
 	}
 	
-	public void setSearchResult(ITextSearchResult result) {
+	public static void searchResultActivated(IWorkbenchWindow window, AbstractTextSearchResult result) {
+		fSearchResultMap.put(window, result);
+		switchedTo(window);
+	}
+	
+	public static void switchedTo(IWorkbenchWindow window) {
+		fgManager.setWindow(window);
+		AbstractTextSearchResult result= (AbstractTextSearchResult) fSearchResultMap.get(window);
+		fgManager.setSearchResult(result);
+	}
+	
+	public AnnotationManager() {
+		fMatchesToAnnotations= new HashMap();
+	}
+
+	public void setSearchResult(AbstractTextSearchResult result) {
 		if (result == fResult)
 			return;
 		removeAnnotations();
@@ -106,26 +99,25 @@ public class AnnotationManager implements ISearchResultChangedListener, IPartLis
 			addAnnotations();
 		}
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.search2.ui.ISearchResultChangedListener#searchResultsChanged(org.eclipse.search2.ui.SearchResultEvent)
 	 */
-	public synchronized void searchResultsChanged(SearchResultEvent e) {
+	public synchronized void searchResultChanged(SearchResultEvent e) {
 		if (e instanceof MatchEvent) {
 			MatchEvent me= (MatchEvent) e;
-			if (fEditor != null && fResult.getStructureProvider().isShownInEditor(me.getMatch(), fEditor)) {
+			if (fEditor != null && fResult.isShownInEditor(me.getMatch(), fEditor)) {
 				if (me.getKind() == MatchEvent.ADDED) {
 					addAnnotation(fEditor, me.getMatch());
 				} else {
 					removeAnnotation(fEditor, me.getMatch());
 				}
 			}
-		}
+		} else if (e instanceof RemoveAllEvent)
+			removeAnnotations();
 	}
 
 
-	/**
-	 * @param match
-	 */
 	private void addAnnotation(ITextEditor textEditor, Match match) {
 		IAnnotationModel model= textEditor.getDocumentProvider().getAnnotationModel(textEditor.getEditorInput());
 		if (model != null) {
@@ -135,10 +127,6 @@ public class AnnotationManager implements ISearchResultChangedListener, IPartLis
 		}
 	}
 
-	/**
-	 * @param textEditor
-	 * @param match
-	 */
 	private void removeAnnotation(ITextEditor textEditor, Match match) {
 		Annotation annotation= (Annotation) fMatchesToAnnotations.remove(match);
 		if (annotation != null) {
@@ -150,9 +138,6 @@ public class AnnotationManager implements ISearchResultChangedListener, IPartLis
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
-	 */
 	public synchronized void partActivated(IWorkbenchPart part) {
 		if (part instanceof ITextEditor && part != fEditor) {
 			removeAnnotations();
@@ -164,7 +149,7 @@ public class AnnotationManager implements ISearchResultChangedListener, IPartLis
 	private void addAnnotations() {
 		if (fEditor == null || fResult == null)
 			return;
-		Match[] matches= fResult.getStructureProvider().findContainedMatches(fResult, fEditor.getEditorInput());
+		Match[] matches= fResult.findContainedMatches(fEditor);
 		if (matches == null)
 			return;
 		for (int i= 0; i < matches.length; i++) {
@@ -196,6 +181,14 @@ public class AnnotationManager implements ISearchResultChangedListener, IPartLis
 			removeAnnotations();
 			fEditor= null;
 		}
+	}
+	
+	public void setWindow(IWorkbenchWindow window) {
+		if (fWindow != null)
+			fWindow.getPartService().removePartListener(AnnotationManager.this);
+		fWindow= window;
+		fWindow.getPartService().addPartListener(this);
+		partActivated(window.getActivePage().getActiveEditor());
 	}
 
 	/* (non-Javadoc)

@@ -17,13 +17,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.search.ui.ISearchResult;
-import org.eclipse.search.ui.ISearchResultListener;
+import org.eclipse.search.ui.ISearchResultManagerListener;
 import org.eclipse.search.ui.ISearchResultManager;
 
-/**
- * @author Thomas Mäder
- *
- */
 public class SearchResultsManager implements ISearchResultManager {
 	private List fSearches;
 	private List fListeners;
@@ -54,13 +50,13 @@ public class SearchResultsManager implements ISearchResultManager {
 		fireAdded(search);
 	}
 	
-	public void addSearchResultListener(ISearchResultListener l) {
+	public void addSearchResultListener(ISearchResultManagerListener l) {
 		synchronized (fListeners) {
 			fListeners.add(l);
 		}
 	}
 
-	public void removeSearchResultListener(ISearchResultListener l) {
+	public void removeSearchResultListener(ISearchResultManagerListener l) {
 		synchronized (fListeners) {
 			fListeners.remove(l);
 		}
@@ -72,7 +68,7 @@ public class SearchResultsManager implements ISearchResultManager {
 		}
 		Iterator listeners= copiedListeners.iterator();
 		while (listeners.hasNext()) {
-			((ISearchResultListener) listeners.next()).searchResultAdded(search);
+			((ISearchResultManagerListener) listeners.next()).searchResultAdded(search);
 		}
 	}
 
@@ -83,7 +79,7 @@ public class SearchResultsManager implements ISearchResultManager {
 		}
 		Iterator listeners= fListeners.iterator();
 		while (listeners.hasNext()) {
-			((ISearchResultListener) listeners.next()).searchResultRemoved(search);
+			((ISearchResultManagerListener) listeners.next()).searchResultRemoved(search);
 		}
 	}
 

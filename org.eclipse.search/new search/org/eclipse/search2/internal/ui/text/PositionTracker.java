@@ -16,31 +16,35 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.IFileBuffer;
-import org.eclipse.core.filebuffers.IFileBufferListener;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.IFileBuffer;
+import org.eclipse.core.filebuffers.IFileBufferListener;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Position;
+
 import org.eclipse.search.ui.ISearchResult;
-import org.eclipse.search.ui.ISearchResultChangedListener;
 import org.eclipse.search.ui.ISearchResultListener;
-import org.eclipse.search.ui.SearchResultEvent;
+import org.eclipse.search.ui.ISearchResultManagerListener;
 import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.text.IStructureProvider;
-import org.eclipse.search.ui.text.ITextSearchResult;
+import org.eclipse.search.ui.SearchResultEvent;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
+import org.eclipse.search.ui.text.MatchEvent;
+import org.eclipse.search.ui.text.RemoveAllEvent;
 
 
 /**
  * @author Thomas Mäder
  *
  */
-public class PositionTracker implements ISearchResultListener, ISearchResultChangedListener, IFileBufferListener {
+public class PositionTracker implements ISearchResultManagerListener, ISearchResultListener, IFileBufferListener {
 
 	private Map fMatchesToPositions= new HashMap();
 	private Map fMatchesToSearchResults= new HashMap();
@@ -57,42 +61,42 @@ public class PositionTracker implements ISearchResultListener, ISearchResultChan
 	
 	// tracking search results --------------------------------------------------------------
 	public void searchResultAdded(org.eclipse.search.ui.ISearchResult result) {
-		if (result instanceof ITextSearchResult) {
+		if (result instanceof AbstractTextSearchResult) {
 			result.addListener(this);
 		}
 	}
 	
 	public void searchResultRemoved(ISearchResult result) {
-		if (result instanceof ITextSearchResult) {
-			untrackAll((ITextSearchResult)result);
+		if (result instanceof AbstractTextSearchResult) {
+			untrackAll((AbstractTextSearchResult)result);
 			result.removeListener(this);
 		}
 	}
 
 	// tracking matches ---------------------------------------------------------------------
-	public void searchResultsChanged(SearchResultEvent e) {
+	public void searchResultChanged(SearchResultEvent e) {
 		if (e instanceof MatchEvent) {
 			MatchEvent evt= (MatchEvent)e;
-			ITextFileBuffer fb= getTrackedFileBuffer((ITextSearchResult)evt.getSearch(), evt.getMatch().getElement());
+			ITextFileBuffer fb= getTrackedFileBuffer((AbstractTextSearchResult)evt.getSearchResult(), evt.getMatch().getElement());
 			if (fb != null) {
 				if (evt.getKind() == MatchEvent.ADDED) {
-					trackPosition((ITextSearchResult) e.getSearch(), fb, evt.getMatch());
+					trackPosition((AbstractTextSearchResult) e.getSearchResult(), fb, evt.getMatch());
 				} else if (evt.getKind() == MatchEvent.REMOVED) {
 					untrackPosition(fb, evt.getMatch());
 				}
 			}
 		} else if (e instanceof RemoveAllEvent) {
 			RemoveAllEvent evt= (RemoveAllEvent)e;
-			ISearchResult result= evt.getSearch();
-			untrackAll((ITextSearchResult)result);
+			ISearchResult result= evt.getSearchResult();
+			untrackAll((AbstractTextSearchResult)result);
 		}
 	}
 
-	private void untrackAll(ITextSearchResult result) {
+	private void untrackAll(AbstractTextSearchResult result) {
 		Set matchSet= new HashSet(fMatchesToPositions.keySet());
 		for (Iterator matches= matchSet.iterator(); matches.hasNext();) {
 			Match match= (Match) matches.next();
-			ITextSearchResult matchContainer= (ITextSearchResult) fMatchesToSearchResults.get(match);
+			AbstractTextSearchResult matchContainer= (AbstractTextSearchResult) fMatchesToSearchResults.get(match);
 			if (result.equals(matchContainer)) {
 				ITextFileBuffer fb= getTrackedFileBuffer(result, match.getElement());
 				if (fb != null) {
@@ -112,7 +116,7 @@ public class PositionTracker implements ISearchResultListener, ISearchResultChan
 		}
 	}
 
-	private void trackPosition(ITextSearchResult result, ITextFileBuffer fb, Match match) {
+	private void trackPosition(AbstractTextSearchResult result, ITextFileBuffer fb, Match match) {
 		Position position= new Position(match.getOffset(), match.getLength());
 		try {
 			fb.getDocument().addPosition(position);
@@ -142,8 +146,8 @@ public class PositionTracker implements ISearchResultListener, ISearchResultChan
 		}
 	}
 	
-	private ITextFileBuffer getTrackedFileBuffer(ITextSearchResult result, Object element) {
-		IFile file= result.getStructureProvider().getFile(element);
+	private ITextFileBuffer getTrackedFileBuffer(AbstractTextSearchResult result, Object element) {
+		IFile file= result.getFile(element);
 		if (file == null)
 			return null;
 		return FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getLocation());
@@ -172,12 +176,11 @@ public class PositionTracker implements ISearchResultListener, ISearchResultChan
 			file= ws.getRoot().getFile(buffer.getLocation());
 		ISearchResult[] results= NewSearchUI.getSearchManager().getSearchResults();
 		for (int i= 0; i < results.length; i++) {
-			if (results[i] instanceof ITextSearchResult) {
-				IStructureProvider structureProvider= ((ITextSearchResult)results[i]).getStructureProvider();
-				Match[] matches= structureProvider.findContainedMatches((ITextSearchResult) results[i], file);
+			if (results[i] instanceof AbstractTextSearchResult) {
+				Match[] matches= ((AbstractTextSearchResult)results[i]).findContainedMatches(file);
 				for (int j= 0; j < matches.length; j++) {
 					trackCount[0]++;
-					trackPosition((ITextSearchResult)results[i], (ITextFileBuffer) buffer, matches[j]);
+					trackPosition((AbstractTextSearchResult)results[i], (ITextFileBuffer) buffer, matches[j]);
 				}
 			}
 		}
@@ -226,7 +229,7 @@ public class PositionTracker implements ISearchResultListener, ISearchResultChan
 			public void run(ITextFileBuffer textBuffer, Match match) {
 				trackCount[0]++;
 				untrackPosition(textBuffer, match);
-				ITextSearchResult result= (ITextSearchResult) fMatchesToSearchResults.get(match);
+				AbstractTextSearchResult result= (AbstractTextSearchResult) fMatchesToSearchResults.get(match);
 				trackPosition(result, textBuffer, match);
 			}
 		});
@@ -255,7 +258,7 @@ public class PositionTracker implements ISearchResultListener, ISearchResultChan
 				Position pos= (Position) fMatchesToPositions.get(match);
 				if (pos != null) {
 					if (pos.isDeleted()) {
-						ITextSearchResult result= (ITextSearchResult) fMatchesToSearchResults.get(match);
+						AbstractTextSearchResult result= (AbstractTextSearchResult) fMatchesToSearchResults.get(match);
 						result.removeMatch(match);
 					} else {
 						match.setOffset(pos.getOffset());

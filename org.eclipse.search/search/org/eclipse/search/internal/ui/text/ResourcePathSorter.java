@@ -14,10 +14,11 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
-import org.eclipse.search.internal.ui.util.FileLabelProvider;
 import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.search.ui.SearchUI;
+
+import org.eclipse.search.internal.ui.util.FileLabelProvider;
 
 /**
  * Sorts the search result viewer by the resource path.

@@ -17,9 +17,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultManager;
-import org.eclipse.search.ui.ISearchResultPresentation;
 import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.text.ITextSearchResult;
 
 /**
  * Invoke the resource creation wizard selection Wizard.
@@ -68,48 +66,20 @@ class ShowSearchesAction extends Action {
 		setToolTipText(SearchMessages.getString("ShowSearchesAction.tooltip")); //$NON-NLS-1$
 		fSearchView= searchView;
 	}
-	/*
-	 * Overrides method from Action
-	 */
-	public void run() {
-		run(false);
-	}
 	 
-	public void run(boolean showAll) {
+	public void run() {
 		ISearchResultManager sm= NewSearchUI.getSearchManager();
 		ISearchResult[] searches= sm.getSearchResults();
 
 		ArrayList input= new ArrayList();
 		int i= 0;
 		for (int j= 0; j < searches.length; j++) {
-			ITextSearchResult search= (ITextSearchResult) searches[i];
-			ISearchResultPresentation category= fSearchView.getSearchCategory(searches[i]);
-			String label= searches[i].toString();
-			String tooltip= searches[i].getUserData().toString();
-			ImageDescriptor image= null;
-			if (category != null) {
-				label= category.getText(search);
-				tooltip= category.getTooltip(search);
-				image= category.getImageDescriptor(search);
-			}
+			ISearchResult search= searches[i];
+			String label= searches[i].getText();
+			String tooltip= search.getTooltip();
+			ImageDescriptor image= search.getImageDescriptor();
 			ShowSearchAction action= new ShowSearchAction(fSearchView, searches[i], label, image, tooltip );
 			input.add(action);
 		}
-
-		// Open a list dialog
-		/*String title;
-		String message;
-		title= SearchMessages.getString("ShowSearchesAction.dialog.title"); //$NON-NLS-1$
-		message= SearchMessages.getString("ShowSearchesAction.dialog.message"); //$NON-NLS-1$
-
-		LabelProvider labelProvider=new SearchesLabelProvider();
-
-		ListDialog dlg= new ListDialog(null,input, title, message, new SearchContentProvider(), labelProvider);
-		if (dlg.open() == Window.OK) {
-			List result= Arrays.asList(dlg.getResult());
-			if (result != null && result.size() == 1) {
-				((ShowSearchAction)result.get(0)).run();
-			}
-		}*/
 	}
 }
