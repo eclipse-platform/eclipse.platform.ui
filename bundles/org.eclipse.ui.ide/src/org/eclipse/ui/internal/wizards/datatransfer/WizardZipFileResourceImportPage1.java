@@ -45,7 +45,7 @@ public class WizardZipFileResourceImportPage1 extends
     ZipFileStructureProvider currentProvider;
 
     // constants
-    private static final String FILE_IMPORT_MASK = "*.jar;*.zip"; //$NON-NLS-1$
+    private static final String[] FILE_IMPORT_MASK = { "*.jar;*.zip", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
 
     // dialog store id constants
     private final static String STORE_SOURCE_NAMES_ID = "WizardZipFileResourceImportPage1.STORE_SOURCE_NAMES_ID"; //$NON-NLS-1$
@@ -327,7 +327,7 @@ public class WizardZipFileResourceImportPage1 extends
      */
     protected String queryZipFileToImport() {
         FileDialog dialog = new FileDialog(sourceNameField.getShell(), SWT.OPEN);
-        dialog.setFilterExtensions(new String[] { FILE_IMPORT_MASK });
+        dialog.setFilterExtensions(FILE_IMPORT_MASK);
         dialog.setText(DataTransferMessages.getString("ZipImportSource.title")); //$NON-NLS-1$
 
         String currentSourceString = sourceNameField.getText();
