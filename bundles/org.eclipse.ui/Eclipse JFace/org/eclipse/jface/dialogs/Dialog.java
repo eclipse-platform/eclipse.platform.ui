@@ -123,6 +123,10 @@ protected void cancelPressed() {
  * Returns the number of pixels corresponding to the
  * height of the given number of characters.
  * <p>
+ * This method may only be called after <code>initializeDialogUnits</code>
+ * has been called.
+ * </p>
+ * <p>
  * Clients may call this framework method, but should not override it.
  * </p>
  *
@@ -135,6 +139,10 @@ protected int convertHeightInCharsToPixels(int chars) {
 /**
  * Returns the number of pixels corresponding to the
  * given number of horizontal dialog units.
+ * <p>
+ * This method may only be called after <code>initializeDialogUnits</code>
+ * has been called.
+ * </p>
  * <p>
  * Clients may call this framework method, but should not override it.
  * </p>
@@ -149,6 +157,10 @@ protected int convertHorizontalDLUsToPixels(int dlus) {
  * Returns the number of pixels corresponding to the
  * given number of vertical dialog units.
  * <p>
+ * This method may only be called after <code>initializeDialogUnits</code>
+ * has been called.
+ * </p>
+ * <p>
  * Clients may call this framework method, but should not override it.
  * </p>
  *
@@ -161,6 +173,10 @@ protected int convertVerticalDLUsToPixels(int dlus) {
 /**
  * Returns the number of pixels corresponding to the
  * width of the given number of characters.
+ * <p>
+ * This method may only be called after <code>initializeDialogUnits</code>
+ * has been called.
+ * </p>
  * <p>
  * Clients may call this framework method, but should not override it.
  * </p>
@@ -368,6 +384,10 @@ public static Image getImage(String key) {
 /**
  * Initializes the values of the horizontal and vertical dialog units
  * based on the size of current font.
+ * <p>
+ * This method must be called before any of the dialog unit based
+ * conversion methods are called.
+ * </p>
  *
  * @param control a control from which to obtain the current font
  */
