@@ -38,8 +38,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AntPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-
-	private StringFieldEditor fBuildFileNames;
 	
 	private List fConsoleColorList;
 	private ColorEditor fConsoleColorEditor;
@@ -75,23 +73,23 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		Label label= new Label(getFieldEditorParent(), SWT.WRAP);
 		label.setText(AntPreferencesMessages.getString("AntPreferencePage.Enter")); //$NON-NLS-1$
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 2;
+		gd.horizontalSpan= 3;
 		gd.widthHint= convertWidthInCharsToPixels(60);
 		label.setLayoutData(gd);
 		label.setLayoutData(gd);
 		label.setFont(font);
 		
-		fBuildFileNames = new StringFieldEditor(IAntUIPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES, AntPreferencesMessages.getString("AntPreferencePage.&Names__3"), getFieldEditorParent()); //$NON-NLS-1$
-		addField(fBuildFileNames);
+		StringFieldEditor editor = new StringFieldEditor(IAntUIPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES, AntPreferencesMessages.getString("AntPreferencePage.&Names__3"), getFieldEditorParent()); //$NON-NLS-1$
+		addField(editor);
 		
-		new Label(getFieldEditorParent(), SWT.NONE);
+		createSpace();
 	
 		if (!AntUIPlugin.isMacOS()) {
 			//the mac does not have a tools.jar Bug 40778
 		    label= new Label(getFieldEditorParent(), SWT.WRAP);
 			label.setText(AntPreferencesMessages.getString("AntPreferencePage.0")); //$NON-NLS-1$
 			gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-			gd.horizontalSpan= 2;
+			gd.horizontalSpan= 3;
 			gd.widthHint= convertWidthInCharsToPixels(60);
 			label.setLayoutData(gd);
 			label.setFont(font);
@@ -101,12 +99,25 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		}
 		
 		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, AntPreferencesMessages.getString("AntPreferencePage.12"), getFieldEditorParent())); //$NON-NLS-1$
-		new Label(getFieldEditorParent(), SWT.NONE);
-				
+		
+		createSpace();
+		
+		editor = new URLFieldEditor(IAntUIPreferenceConstants.DOCUMENTATION_URL, AntPreferencesMessages.getString("AntPreferencePage.2"), getFieldEditorParent()); //$NON-NLS-1$
+		addField(editor);
+		
+		createSpace();
+		
 		createColorComposite();
 		getPreferenceStore().addPropertyChangeListener(this);
 	}
 	
+	private void createSpace() {
+		Label label= new Label(getFieldEditorParent(), SWT.NONE);
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 3;
+		label.setLayoutData(gd);
+	}
+
 	/**
 	 * Stores the initial values of the color preferences. The preference values are updated 
 	 * on the fly as the user edits them (instead of only when they press "Apply"). We need

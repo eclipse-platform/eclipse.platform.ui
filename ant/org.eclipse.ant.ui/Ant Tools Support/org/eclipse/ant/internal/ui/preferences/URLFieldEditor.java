@@ -50,10 +50,19 @@ public class URLFieldEditor extends StringButtonFieldEditor {
      * Opens the directory chooser dialog and returns the <code>URL</code> of the selected directory.
      */
     protected String changePressed() {
-        File f = new File(getTextControl().getText());
-        if (!f.exists()) {
-            f = null;
-        }
+    	URL url= null;
+		try {
+			url = new URL(getTextControl().getText());
+		} catch (MalformedURLException e1) {
+		}
+		File f = null;
+		if (url != null) {
+			f= new File(url.getFile());
+			if (!f.exists()) {
+	            f = null;
+	        }
+		}
+        
         File d = getDirectory(f);
         if (d == null) {
             return null;
