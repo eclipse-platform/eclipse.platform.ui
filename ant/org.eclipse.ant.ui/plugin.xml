@@ -140,24 +140,7 @@
 			category="org.eclipse.ant.ui.AntPreferencePage">
 		</page>
 	</extension>
-	
-	<extension point="org.eclipse.ui.popupMenus">
-		<objectContribution
-			id="org.eclipse.ant.ui.RunAnt"
-			objectClass="org.eclipse.core.resources.IFile"
-			adaptable="true"
-			nameFilter="*.xml">
-			<action
-				id="org.eclipse.ant.ui.RunAntAction"
-				label="%PopupMenu.runAnt"
-				tooltip="%PopupMenu.runAntTip"
-				menubarPath="additions"
-				enablesFor="1"
-				class="org.eclipse.ant.ui.internal.launchConfigurations.AntRunActionDelegate">
-			</action>
-		</objectContribution>			
-	</extension>
-	
+
 	<extension point="org.eclipse.ui.popupMenus">
 		<viewerContribution
 			targetID="org.eclipse.ant.ui.internal.editor.AntEditor.RulerContext"
@@ -179,6 +162,20 @@
 				id="org.eclipse.ui.texteditor.BookmarkRulerAction">
 			</action>
 		</viewerContribution>
+		<objectContribution
+			id="org.eclipse.ant.ui.RunAnt"
+			objectClass="org.eclipse.core.resources.IFile"
+			adaptable="true"
+			nameFilter="*.xml">
+			<action
+				id="org.eclipse.ant.ui.RunAntAction"
+				label="%PopupMenu.runAnt"
+				tooltip="%PopupMenu.runAntTip"
+				menubarPath="additions"
+				enablesFor="1"
+				class="org.eclipse.ant.ui.internal.launchConfigurations.AntRunActionDelegate">
+			</action>
+		</objectContribution>			
 	</extension>
 	
 	<extension point="org.eclipse.ant.core.extraClasspathEntries">
@@ -256,12 +253,17 @@
 	<extension point = "org.eclipse.debug.ui.consoleLineTrackers">
 		<consoleLineTracker
 			id = "org.eclipse.ant.ui.javacLineTracker"
-			class = "org.eclipse.ant.ui.internal.launchConfigurations.JavacLineTracker"
+			class = "org.eclipse.ant.ui.internal.console.JavacLineTracker"
 			processType = "org.eclipse.ant.ui.antProcess">
 		</consoleLineTracker>
 		<consoleLineTracker
 			id = "org.eclipse.ant.ui.taskLineTracker"
 			class = "org.eclipse.ant.ui.internal.console.TaskLineTracker"
+			processType = "org.eclipse.ant.ui.antProcess">
+		</consoleLineTracker>		
+		<consoleLineTracker
+			id = "org.eclipse.ant.ui.buildFailedTracker"
+			class = "org.eclipse.ant.ui.internal.console.BuildFailedTracker"
 			processType = "org.eclipse.ant.ui.antProcess">
 		</consoleLineTracker>		
 	</extension>
