@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.actions;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.Dialog;
+
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.activities.IMutableActivityManager;
+
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.activities.ui.ActivityEnabler;
 
@@ -27,7 +30,8 @@ import org.eclipse.ui.internal.activities.ui.ActivityEnabler;
  * @since 3.0
  */
 public class ActivityEnablerAction extends Action implements ActionFactory.IWorkbenchAction {
-    protected ActivityEnabler enabler;
+	private IWorkbenchWindow workbenchWindow;
+    private ActivityEnabler enabler;
 	private IMutableActivityManager activityManager;
 
     /**
@@ -35,16 +39,25 @@ public class ActivityEnablerAction extends Action implements ActionFactory.IWork
      * 
      * @since 3.0
      */
-    public ActivityEnablerAction(IMutableActivityManager activityManager) {
+    public ActivityEnablerAction(IWorkbenchWindow window) {
         super(WorkbenchMessages.getString("ActivityEnablementAction.text")); //$NON-NLS-1$
-        this.activityManager = activityManager;
+        if (window == null) {
+        	throw new IllegalArgumentException();
+        }
+        this.workbenchWindow = window;
+        // TODO: down-cast
+        this.activityManager = (IMutableActivityManager) window.getWorkbench().getActivityManager();
     }
 
     /*
      * (non-Javadoc) @see org.eclipse.jface.action.IAction#run()
      */
     public void run() {
-        Dialog d = new Dialog(Display.getCurrent().getActiveShell()) {
+    	if (workbenchWindow == null) {
+    		// action has been disposed
+    		return;
+    	}
+        Dialog d = new Dialog(workbenchWindow.getShell()) {
 
             /*
              * (non-Javadoc) @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
@@ -78,5 +91,6 @@ public class ActivityEnablerAction extends Action implements ActionFactory.IWork
 	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
 	 */
 	public void dispose() {
+		workbenchWindow = null;
 	}
 }

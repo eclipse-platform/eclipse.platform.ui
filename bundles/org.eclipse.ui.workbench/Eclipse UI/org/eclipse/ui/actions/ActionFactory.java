@@ -11,9 +11,7 @@ package org.eclipse.ui.actions;
 import org.eclipse.jface.action.IAction;
 
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 import org.eclipse.ui.internal.ActivateEditorAction;
@@ -225,10 +223,7 @@ public abstract class ActionFactory {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
-			IWorkbench workbench = window.getWorkbench();
-			// TODO cast
-			IWorkbenchAction action =
-				new ActivityEnablerAction((IMutableActivityManager) workbench.getActivityManager());
+			IWorkbenchAction action = new ActivityEnablerAction(window);
 			action.setId(getId());
 			return action;
 		}
