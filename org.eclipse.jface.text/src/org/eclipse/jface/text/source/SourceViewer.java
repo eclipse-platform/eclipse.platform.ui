@@ -658,14 +658,26 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 						target.beginCompoundChange();
 
 						final IDocument document= getDocument();
-						if (fContentFormatter instanceof IContentFormatterExtension2) {
-
-							final IContentFormatterExtension2 extension= (IContentFormatterExtension2)fContentFormatter;
-							extension.format(document, context);
-
-						} else
-							fContentFormatter.format(document, region);
-
+						final String rememberedContents= document.get();
+						
+						try {
+							
+							if (fContentFormatter instanceof IContentFormatterExtension2) {
+								
+								final IContentFormatterExtension2 extension= (IContentFormatterExtension2)fContentFormatter;
+								extension.format(document, context);
+								
+							} else
+								fContentFormatter.format(document, region);
+							
+						} catch (RuntimeException x) {
+							// firewall for https://bugs.eclipse.org/bugs/show_bug.cgi?id=47472
+							// if something went wrong we undo the changes we just did
+							// TODO to be removed
+							document.set(rememberedContents);
+							throw x;
+						}
+						
 					} finally {
 
 						target.endCompoundChange();

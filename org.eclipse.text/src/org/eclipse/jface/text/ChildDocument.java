@@ -72,7 +72,7 @@ public final class ChildDocument extends AbstractDocument {
 			} catch (BadLocationException x) {
 			}
 			
-			return null;
+			return "";
 		}
 		
 		/*
