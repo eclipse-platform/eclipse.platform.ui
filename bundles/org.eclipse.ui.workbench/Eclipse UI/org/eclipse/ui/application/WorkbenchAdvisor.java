@@ -602,8 +602,8 @@ public abstract class WorkbenchAdvisor {
      * @return <code>true</code> for application menus, and <code>false</code>
      * for part-specific menus
      * 
-     * @deprecated since 3.1, override {@link WorkbenchWindowAdvisor#isApplicationMenu(String)} instead
-     * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
+     * @deprecated since 3.1, override {@link ActionBarAdvisor#isApplicationMenu(String)} instead
+     * @see WorkbenchWindowAdvisor#createActionBarAdvisor(IActionBarConfigurer)
      */
     public boolean isApplicationMenu(IWorkbenchWindowConfigurer configurer,
             String menuId) {

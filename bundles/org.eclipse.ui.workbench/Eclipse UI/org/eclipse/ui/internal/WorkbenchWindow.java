@@ -1320,8 +1320,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
      * @see IWorkbenchWindow
      */
     public boolean isApplicationMenu(String menuID) {
-        // delegate this question to the workbench advisor
-        return getWindowAdvisor().isApplicationMenu(menuID);
+        // delegate this question to the action bar advisor
+        return getActionBarAdvisor().isApplicationMenu(menuID);
     }
 
     /**

@@ -199,18 +199,64 @@ public class ActionBarAdvisor {
         return (IAction) actions.get(id);
     }
     
+    /**
+     * Fills the menu bar with the main menus for the window.
+     * <p>
+     * The default implementation does nothing.
+     * Subclasses may override.
+     * </p>
+     * 
+     * @param menuBar the menu manager for the menu bar
+     */
     protected void fillMenuBar(IMenuManager menuBar) {
         // do nothing
     }
     
+    /**
+     * Fills the cool bar with the main toolbars for the window.
+     * <p>
+     * The default implementation does nothing.
+     * Subclasses may override.
+     * </p>
+     * 
+     * @param coolBar the cool bar manager
+     */
     protected void fillCoolBar(ICoolBarManager coolBar) {
         // do nothing
     }
     
+    /**
+     * Fills the status line with the main status line contributions 
+     * for the window.
+     * <p>
+     * The default implementation does nothing.
+     * Subclasses may override.
+     * </p>
+     * 
+     * @param statusLine the status line manager
+     */
     protected void fillStatusLine(IStatusLineManager statusLine) {
         // do nothing
+    }    
+
+    /**
+     * Returns whether the menu with the given id is an application menu of the
+     * given window. This is used during OLE "in place" editing.  Application
+     * menus should be preserved during menu merging. All other menus may be
+     * removed from the window.
+     * <p>
+     * The default implementation returns false. Subclasses may override.
+     * </p>
+     * 
+     * @param menuId the menu id
+     * @return <code>true</code> for application menus, and <code>false</code>
+     * for part-specific menus
+     */
+    public boolean isApplicationMenu(String menuId) {
+        // default: not an application menu
+        return false;
     }
-    
+
     /**
      * Disposes this action bar advisor.
      * Called when the window is being closed.
@@ -252,4 +298,5 @@ public class ActionBarAdvisor {
             ((ActionFactory.IWorkbenchAction) action).dispose();
         }
     }
+
 }

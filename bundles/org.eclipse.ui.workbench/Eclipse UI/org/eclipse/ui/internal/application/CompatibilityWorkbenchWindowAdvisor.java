@@ -47,12 +47,8 @@ public class CompatibilityWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor 
         wbAdvisor.preWindowOpen(getWindowConfigurer());
     }
 
-    public ActionBarAdvisor createActionBarAdvisor(final IActionBarConfigurer actionBarConfigurer) {
-        return new ActionBarAdvisor(actionBarConfigurer) {
-            public void fillActionBars(int flags) {
-                wbAdvisor.fillActionBars(getWindowConfigurer().getWindow(), actionBarConfigurer, flags);
-            }
-        };
+    public ActionBarAdvisor createActionBarAdvisor(IActionBarConfigurer configurer) {
+        return new CompatibilityActionBarAdvisor(wbAdvisor, configurer);
     }
     
     public void postWindowRestore() throws WorkbenchException {

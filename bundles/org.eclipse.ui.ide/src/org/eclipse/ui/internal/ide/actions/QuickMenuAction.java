@@ -51,6 +51,7 @@ public abstract class QuickMenuAction extends Action {
      *  the sub menu 
      */
     public QuickMenuAction(String commandId) {
+        setId(commandId);
         setActionDefinitionId(commandId);
     }
 

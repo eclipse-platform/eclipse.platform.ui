@@ -119,7 +119,9 @@ public final class IDEActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            return new BuildCleanAction(window);
+            IWorkbenchAction action = new BuildCleanAction(window);
+            action.setId(getId());
+            return action;
         }
     };
 
@@ -134,7 +136,9 @@ public final class IDEActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            return new ToggleAutoBuildAction(window);
+            IWorkbenchAction action = new ToggleAutoBuildAction(window);
+            action.setId(getId());
+            return action;
         }
     };
 
