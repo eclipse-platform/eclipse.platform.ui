@@ -19,6 +19,25 @@ import java.nio.channels.*;
  * should be launched from command line.
  */
 public class EclipseController implements EclipseLifeCycleListener {
+	public static final String CMD_INSTALL = "install";
+
+	public static final String CMD_UPDATE = "update";
+
+	public static final String CMD_ENABLE = "enable";
+
+	public static final String CMD_DISABLE = "disable";
+
+	public static final String CMD_UNINSTALL = "uninstall";
+
+	public static final String CMD_SEARCH = "search";
+
+	public static final String CMD_LIST = "listFeatures";
+
+	public static final String CMD_ADDSITE = "addSite";
+
+	public static final String CMD_REMOVESITE = "removeSite";
+
+	public static final String CMD_APPLY = "apply";
 
 	// control servlet path
 	private static final String CONTROL_SERVLET_PATH = "/helpControl/control.html"; //$NON-NLS-1$
@@ -30,9 +49,12 @@ public class EclipseController implements EclipseLifeCycleListener {
 	protected EclipseConnection connection;
 
 	public Eclipse eclipse = null;
+
 	// Inter process lock
 	private FileLock lock;
+
 	private boolean eclipseEnded = false;
+
 	/**
 	 * Constructs help system
 	 * 
@@ -139,6 +161,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 		// in case controller is killed
 		Runtime.getRuntime().addShutdownHook(new EclipseCleaner());
 	}
+
 	private void sendHelpCommandInternal(String command, String[] parameters)
 			throws Exception {
 		if (!"shutdown".equalsIgnoreCase(command)) { //$NON-NLS-1$
@@ -208,6 +231,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 		eclipseEnded = true;
 		connection.reset();
 	}
+
 	private void obtainLock() throws IOException {
 		if (lock != null) {
 			// we already have lock
@@ -222,6 +246,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 			System.out.println("Lock obtained."); //$NON-NLS-1$
 		}
 	}
+
 	private void releaseLock() {
 		if (lock != null) {
 			try {
@@ -234,6 +259,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 			}
 		}
 	}
+
 	/**
 	 * Tests whether HelpApplication is running by testing if .applicationlock
 	 * is locked
@@ -267,11 +293,22 @@ public class EclipseController implements EclipseLifeCycleListener {
 		}
 		return applicationLock == null;
 	}
+
 	public class EclipseCleaner extends Thread {
 		public void run() {
 			if (eclipse != null) {
 				eclipse.killProcess();
 			}
 		}
+	}
+
+	/**
+	 * @return true if commands contained a known command and it was executed
+	 */
+	protected boolean executeUpdateCommand(String updateCommand)
+			throws Exception {
+		String[] parameters = Options.getUpdateParameters();
+		sendHelpCommandInternal(updateCommand, parameters);
+		return true;
 	}
 }

@@ -78,6 +78,7 @@ public class StandaloneHelp extends EclipseController {
 	 */
 	public void displayContextInfopop(String contextId, int x, int y) {
 	}
+
 	/**
 	 * @see org.eclipse.help.standalone.Help#displayHelp()
 	 */
@@ -115,6 +116,16 @@ public class StandaloneHelp extends EclipseController {
 				displayHelp();
 			}
 			return true;
+		} else if (CMD_INSTALL.equalsIgnoreCase(command)
+				|| CMD_ENABLE.equalsIgnoreCase(command)
+				|| CMD_DISABLE.equalsIgnoreCase(command)
+				|| CMD_UNINSTALL.equalsIgnoreCase(command)
+				|| CMD_SEARCH.equalsIgnoreCase(command)
+				|| CMD_LIST.equalsIgnoreCase(command)
+				|| CMD_ADDSITE.equalsIgnoreCase(command)
+				|| CMD_REMOVESITE.equalsIgnoreCase(command)
+				|| CMD_APPLY.equalsIgnoreCase(command)) {
+			return executeUpdateCommand(command);
 		} else if ("displayContext".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			if (helpCommands.size() >= 4) {
 				displayContext((String) helpCommands.get(1), Integer
@@ -134,6 +145,7 @@ public class StandaloneHelp extends EclipseController {
 
 		return false;
 	}
+
 	/**
 	 * Prints usage of this class as a program.
 	 */

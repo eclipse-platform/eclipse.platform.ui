@@ -69,6 +69,16 @@ public class StandaloneInfocenter extends EclipseController {
 		} else if ("shutdown".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			shutdown();
 			return true;
+		} else if (CMD_INSTALL.equalsIgnoreCase(command)
+				|| CMD_ENABLE.equalsIgnoreCase(command)
+				|| CMD_DISABLE.equalsIgnoreCase(command)
+				|| CMD_UNINSTALL.equalsIgnoreCase(command)
+				|| CMD_SEARCH.equalsIgnoreCase(command)
+				|| CMD_LIST.equalsIgnoreCase(command)
+				|| CMD_ADDSITE.equalsIgnoreCase(command)
+				|| CMD_REMOVESITE.equalsIgnoreCase(command)
+				|| CMD_APPLY.equalsIgnoreCase(command)) {
+			return executeUpdateCommand(command);
 		}
 		return false;
 	}

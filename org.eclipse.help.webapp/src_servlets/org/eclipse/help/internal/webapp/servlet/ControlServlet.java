@@ -11,20 +11,82 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.*;
+import java.lang.reflect.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.webapp.data.*;
+import org.osgi.framework.*;
+
 /**
  * Servlet to control Eclipse helpApplication from standalone application.
  * Accepts the following paramters: command=displayHelp | shutdown href - may be
  * provided if comand==displayHelp
  */
 public class ControlServlet extends HttpServlet {
+	public static final String UPDATE_PLUGIN_ID = "org.eclipse.update.core";
+
+	public static final String CMD_INSTALL = "install";
+
+	public static final String CMD_UPDATE = "update";
+
+	public static final String CMD_ENABLE = "enable";
+
+	public static final String CMD_DISABLE = "disable";
+
+	public static final String CMD_UNINSTALL = "uninstall";
+
+	public static final String CMD_SEARCH = "search";
+
+	public static final String CMD_LIST = "listFeatures";
+
+	public static final String CMD_ADDSITE = "addSite";
+
+	public static final String CMD_APPLY = "apply";
+
+	public static final String CMD_REMOVESITE = "removeSite";
+
+	public static final String PACKAGE_PREFIX = "org.eclipse.update.standalone.";
+
+	public static final String CLASS_INSTALL = PACKAGE_PREFIX
+			+ "InstallCommand";
+
+	public static final String CLASS_UPDATE = PACKAGE_PREFIX + "UpdateCommand";
+
+	public static final String CLASS_ENABLE = PACKAGE_PREFIX + "EnableCommand";
+
+	public static final String CLASS_DISABLE = PACKAGE_PREFIX
+			+ "DisableCommand";
+
+	public static final String CLASS_UNINSTALL = PACKAGE_PREFIX
+			+ "UninstallCommand";
+
+	public static final String CLASS_SEARCH = PACKAGE_PREFIX + "SearchCommand";
+
+	public static final String CLASS_LIST = PACKAGE_PREFIX
+			+ "ListFeaturesCommand";
+
+	public static final String CLASS_ADDSITE = PACKAGE_PREFIX
+			+ "AddSiteCommand";
+
+	public static final String CLASS_REMOVESITE = PACKAGE_PREFIX
+			+ "RemoveSiteCommand";
+
+	public static final String PARAM_FEATUREID = "featureId";
+
+	public static final String PARAM_VERSION = "version";
+
+	public static final String PARAM_FROM = "from";
+
+	public static final String PARAM_TO = "to";
+
+	public static final String PARAM_VERIFYONLY = "verifyOnly";
 
 	private HelpDisplay helpDisplay = null;
+
 	private boolean shuttingDown = false;
 
 	/**
@@ -46,6 +108,7 @@ public class ControlServlet extends HttpServlet {
 			throws ServletException, IOException {
 		processRequest(req, resp);
 	}
+
 	/**
 	 * Called by the server (via the <code>service</code> method) to allow a
 	 * servlet to handle a POST request.
@@ -54,6 +117,7 @@ public class ControlServlet extends HttpServlet {
 			throws ServletException, IOException {
 		processRequest(req, resp);
 	}
+
 	private void processRequest(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
@@ -94,11 +158,126 @@ public class ControlServlet extends HttpServlet {
 			if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_STANDALONE) {
 				displayHelp(req);
 			}
+		} else if (CMD_INSTALL.equalsIgnoreCase(command)
+				|| CMD_ENABLE.equalsIgnoreCase(command)
+				|| CMD_DISABLE.equalsIgnoreCase(command)
+				|| CMD_UNINSTALL.equalsIgnoreCase(command)
+				|| CMD_SEARCH.equalsIgnoreCase(command)
+				|| CMD_LIST.equalsIgnoreCase(command)
+				|| CMD_ADDSITE.equalsIgnoreCase(command)
+				|| CMD_REMOVESITE.equalsIgnoreCase(command)
+				|| CMD_APPLY.equalsIgnoreCase(command)) {
+			updateDocs(command, req);
 		} else {
 			// this should never happen and is invisible to the user
 			resp.getWriter().print("Unrecognized command."); //$NON-NLS-1$
 		}
 	}
+
+	private void updateDocs(String command, HttpServletRequest req) {
+		Bundle bundle = Platform.getBundle(UPDATE_PLUGIN_ID);
+		if (bundle == null) {
+			// no update plugin present
+			return;
+		}
+		try {
+			String className = getStandaloneClassName(command);
+			if (className == null) {
+				System.out.println("No class name for command " + command);
+				return;
+			}
+			Class c = bundle.loadClass(className);
+			if (c == null) {
+				System.out.println("No class for command " + command);
+				return;
+			}
+			Class[] parameterTypes = getParameterTypes(className);
+			Constructor constr = c.getConstructor(parameterTypes);
+			if (constr == null) {
+				System.out.println("No expected constructor for command "
+						+ command);
+				return;
+			}
+			Method run = c.getMethod("run", new Class[]{});
+			Method apply = c.getMethod("applyChangesNow", new Class[]{});
+			Object[] initargs = getInitArgs(className, req);
+			Object o = constr.newInstance(initargs);
+			if (CMD_APPLY.equalsIgnoreCase(command)) {
+				apply.invoke(o, new Object[]{});
+			} else {
+				run.invoke(o, new Object[]{});
+			}
+			System.out.println(command + " done.");
+		} catch (Exception e) {
+			Throwable t = e;
+			if (e instanceof InvocationTargetException) {
+				t = ((InvocationTargetException) e).getTargetException();
+			}
+			System.out.println(t.getLocalizedMessage());
+			t.printStackTrace();
+		}
+	}
+
+	private String getStandaloneClassName(String command) {
+		if (CMD_INSTALL.equalsIgnoreCase(command))
+			return CLASS_INSTALL;
+		else if (CMD_UPDATE.equalsIgnoreCase(command))
+			return CLASS_UPDATE;
+		else if (CMD_ENABLE.equalsIgnoreCase(command))
+			return CLASS_ENABLE;
+		else if (CMD_DISABLE.equalsIgnoreCase(command))
+			return CLASS_DISABLE;
+		else if (CMD_UNINSTALL.equalsIgnoreCase(command))
+			return CLASS_UNINSTALL;
+		else if (CMD_SEARCH.equalsIgnoreCase(command))
+			return CLASS_SEARCH;
+		else if (CMD_LIST.equalsIgnoreCase(command)
+				|| CMD_APPLY.equalsIgnoreCase(command))
+			return CLASS_LIST;
+		else if (CMD_ADDSITE.equalsIgnoreCase(command))
+			return CLASS_ADDSITE;
+		else if (CMD_REMOVESITE.equalsIgnoreCase(command))
+			return CLASS_REMOVESITE;
+		else
+			return null;
+	}
+
+	private Class[] getParameterTypes(String className) {
+		if (CLASS_INSTALL.equals(className))
+			return new Class[]{String.class, String.class, String.class,
+					String.class, String.class};
+		else if (CLASS_UPDATE.equals(className))
+			return new Class[]{String.class, String.class, String.class};
+		else if (CLASS_ENABLE.equals(className)
+				|| CLASS_DISABLE.equals(className)
+				|| CLASS_UNINSTALL.equals(className))
+			return new Class[]{String.class, String.class, String.class,
+					String.class};
+		else
+			return new Class[]{String.class};
+	}
+
+	private Object[] getInitArgs(String className, HttpServletRequest req) {
+		String featureId = req.getParameter(PARAM_FEATUREID); //$NON-NLS-1$
+		String version = req.getParameter(PARAM_VERSION); //$NON-NLS-1$
+		String fromSite = req.getParameter(PARAM_FROM); //$NON-NLS-1$
+		String toSite = req.getParameter(PARAM_TO); //$NON-NLS-1$
+		String verifyOnly = req.getParameter(PARAM_VERIFYONLY); //$NON-NLS-1$
+		if (CLASS_INSTALL.equals(className))
+			return new Object[]{featureId, version, fromSite, toSite,
+					verifyOnly};
+		else if (CLASS_UPDATE.equals(className))
+			return new Object[]{featureId, version, verifyOnly};
+		else if (CLASS_ENABLE.equals(className)
+				|| CLASS_DISABLE.equals(className)
+				|| CLASS_UNINSTALL.equals(className))
+			return new Object[]{featureId, version, toSite, verifyOnly};
+		else if (CLASS_REMOVESITE.equals(className))
+			return new Object[]{toSite};
+		else
+			return new Object[]{fromSite};
+	}
+
 	/**
 	 * Shuts-down Eclipse helpApplication.
 	 */

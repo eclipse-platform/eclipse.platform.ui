@@ -17,31 +17,57 @@ import java.util.*;
  * Options for starting stand alone help and infocenter.
  */
 public class Options {
+	// Update command parameters' keys
+	public static final String PARAM_FEATUREID = "featureId";
+
+	public static final String PARAM_VERSION = "version";
+
+	public static final String PARAM_FROM = "from";
+
+	public static final String PARAM_TO = "to";
+
+	public static final String PARAM_VERIFYONLY = "verifyOnly";
+
 	// debugging
 	private static boolean debug = false;
+
 	// use eclipse.exe
 	private static boolean useExe = true;
+
 	// Eclipse installation directory
 	private static File eclipseHome;
+
 	// workspace directory to be used by Eclipse
 	private static File workspace;
+
 	// Eclipse .lock file
 	private static File lockFile;
+
 	// .hostport file to obtain help server host and port from Eclipse help
 	// application
 	private static File hostPortFile;
+
 	// vm to use
 	private static String vm;
+
 	// arguments to pass to Eclipse
 	private static List vmArgs;
+
 	// arguments to pass to VM
 	private static List eclipseArgs;
+
 	// help command to execute
 	private static List helpCommand;
+
 	// host to override appserver preferences
 	private static String host;
+
 	// port to override appserver preferences
 	private static String port;
+
+	// update parameters, ex: "version=1.0.0", "from=file:///c:/site"
+	private static String[] updateParameters;
+
 	/**
 	 * Initializes options.
 	 * 
@@ -63,6 +89,7 @@ public class Options {
 
 		init(appId, list);
 	}
+
 	/**
 	 * Initializes options.
 	 * 
@@ -85,6 +112,30 @@ public class Options {
 		if (helpCommand == null) {
 			helpCommand = new ArrayList(0);
 		}
+		// consume update commands' parameters
+		List parameters = new ArrayList();
+		List param = extractOption(eclipseArgs, "-" + PARAM_FEATUREID); //$NON-NLS-1$
+		if (param != null) {
+			parameters.add(PARAM_FEATUREID + "=" + (String) param.get(0));
+		}
+		param = extractOption(eclipseArgs, "-" + PARAM_VERSION); //$NON-NLS-1$
+		if (param != null) {
+			parameters.add(PARAM_VERSION + "=" + (String) param.get(0));
+		}
+		param = extractOption(eclipseArgs, "-" + PARAM_FROM); //$NON-NLS-1$
+		if (param != null) {
+			parameters.add(PARAM_FROM + "=" + (String) param.get(0));
+		}
+		param = extractOption(eclipseArgs, "-" + PARAM_TO); //$NON-NLS-1$
+		if (param != null) {
+			parameters.add(PARAM_TO + "=" + (String) param.get(0));
+		}
+		param = extractOption(eclipseArgs, "-" + PARAM_VERIFYONLY); //$NON-NLS-1$
+		if (param != null) {
+			parameters.add(PARAM_VERIFYONLY + "=" + (String) param.get(0));
+		}
+		updateParameters = (String[]) parameters.toArray(new String[parameters
+				.size()]);
 
 		// read -debug option
 		if (getOption(eclipseArgs, "-debug") != null) { //$NON-NLS-1$
@@ -204,6 +255,10 @@ public class Options {
 		return helpCommand;
 	}
 
+	public static String[] getUpdateParameters() {
+		return updateParameters;
+	}
+
 	public static List getEclipseArgs() {
 		return eclipseArgs;
 	}
@@ -274,12 +329,15 @@ public class Options {
 		}
 		return values;
 	}
+
 	public static String getVm() {
 		return vm;
 	}
+
 	public static List getVmArgs() {
 		return vmArgs;
 	}
+
 	/**
 	 * Returns the useExe.
 	 * 
