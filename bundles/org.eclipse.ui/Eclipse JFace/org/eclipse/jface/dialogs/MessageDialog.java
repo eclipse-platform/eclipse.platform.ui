@@ -212,9 +212,7 @@ protected void createButtonsForButtonBar(Composite parent) {
  * @return the custom area control, or <code>null</code>
  */
 protected Control createCustomArea(Composite parent) {
-	
-	Label emptyLabel = new Label(parent,SWT.NULL);
-	return emptyLabel;
+	return null;
 }
 /**
  * This implementation of the <code>Dialog</code> framework 
@@ -229,7 +227,7 @@ protected Control createDialogArea(Composite parent) {
 	createMessageArea(parent);
 	
 	// create the top level composite for the dialog area
-	Composite composite = new Composite(parent, SWT.NULL);
+	Composite composite = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.marginHeight = 0;
 	layout.marginWidth = 0;
@@ -242,7 +240,11 @@ protected Control createDialogArea(Composite parent) {
 	composite.setFont(parent.getFont());
 
 	// allow subclasses to add custom controls
-	createCustomArea(composite);
+	Control customArea = createCustomArea(composite);
+	
+	//If it is null create a dummy label for spacing purposes
+	if(customArea == null)
+		new Label(composite,SWT.NULL);
 
 	return composite;
 }
