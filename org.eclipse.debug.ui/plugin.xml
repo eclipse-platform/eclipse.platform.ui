@@ -3,12 +3,10 @@
 <plugin
    id="org.eclipse.debug.ui"
    name="DebugToolsUI"
-   version="0.105.0"
+   version="0.9"
    provider-name="Object Technology International, Inc."
    class="org.eclipse.debug.internal.ui.DebugUIPlugin">
-
 <!-- Required plugins -->
-
 <requires>
    <import plugin="org.apache.xerces"/>
    <import plugin="org.eclipse.core.resources"/>
@@ -17,7 +15,6 @@
 </requires>
 
 <!-- Runtime -->
-
 <runtime>
    <library name="dtui.jar">
       <export name="*"/>
@@ -25,7 +22,6 @@
 </runtime>
 
 <!-- Extension points -->
-
 <extension-point id="debugModelPresentations" name="Debug Model Presentation"/>
 
 <!-- Extensions -->
@@ -136,31 +132,31 @@
             label="%RunAction.label"
             pulldown="true"
             icon="icons/full/ctool16/run_exc.gif"
+            helpContextId="run_action_context"
             tooltip="%RunAction.tooltip"
             class="org.eclipse.debug.internal.ui.RunDropDownAction"
             toolbarPath="debug"
-            id="org.eclipse.debug.internal.ui.RunDropDownAction"
-            helpContextId="run_action_context">
+            id="org.eclipse.debug.internal.ui.RunDropDownAction">
       </action>
       <action
             label="%DebugAction.label"
             pulldown="true"
             icon="icons/full/ctool16/debug_exc.gif"
+            helpContextId="debug_action_context"
             tooltip="%DebugAction.tooltip"
             class="org.eclipse.debug.internal.ui.DebugDropDownAction"
             toolbarPath="debug"
-            id="org.eclipse.debug.internal.ui.DebugDropDownAction"
-            helpContextId="debug_action_context">
+            id="org.eclipse.debug.internal.ui.DebugDropDownAction">
       </action>
       <action
             label="%StepReturnAction.label"
             icon="icons/full/clcl16/stepreturn_co.gif"
+            helpContextId="step_return_action_context"
             tooltip="%StepReturnAction.tooltip"
             class="org.eclipse.debug.internal.ui.StepReturnActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
             enablesFor="1"
-            id="org.eclipse.debug.internal.ui.StepReturnActionDelegate"
-            helpContextId="step_return_action_context">
+            id="org.eclipse.debug.internal.ui.StepReturnActionDelegate">
          <selection
                class="org.eclipse.debug.core.model.IStep">
          </selection>
@@ -168,12 +164,12 @@
       <action
             label="%StepOverAction.label"
             icon="icons/full/clcl16/stepover_co.gif"
+            helpContextId="step_over_action_context"
             tooltip="%StepOverAction.tooltip"
             class="org.eclipse.debug.internal.ui.StepOverActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
             enablesFor="1"
-            id="org.eclipse.debug.internal.ui.StepOverActionDelegate"
-            helpContextId="step_over_action_context">
+            id="org.eclipse.debug.internal.ui.StepOverActionDelegate">
          <selection
                class="org.eclipse.debug.core.model.IStep">
          </selection>
@@ -181,12 +177,12 @@
       <action
             label="%StepIntoAction.label"
             icon="icons/full/clcl16/stepinto_co.gif"
+            helpContextId="step_into_action_context"
             tooltip="%StepIntoAction.tooltip"
             class="org.eclipse.debug.internal.ui.StepIntoActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
             enablesFor="1"
-            id="org.eclipse.debug.internal.ui.StepIntoActionDelegate"
-            helpContextId="step_into_action_context">
+            id="org.eclipse.debug.internal.ui.StepIntoActionDelegate">
          <selection
                class="org.eclipse.debug.core.model.IStep">
          </selection>
@@ -194,12 +190,12 @@
       <action
             label="%SuspendAction.label"
             icon="icons/full/clcl16/suspend_co.gif"
+            helpContextId="suspend_action_context"
             tooltip="%SuspendAction.tooltip"
             class="org.eclipse.debug.internal.ui.SuspendActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
             enablesFor="+"
-            id="org.eclipse.debug.internal.ui.SuspendActionDelegate"
-            helpContextId="suspend_action_context">
+            id="org.eclipse.debug.internal.ui.SuspendActionDelegate">
          <selection
                class="org.eclipse.debug.core.model.ISuspendResume">
          </selection>
@@ -207,23 +203,23 @@
       <action
             label="%ResumeAction.label"
             icon="icons/full/clcl16/resume_co.gif"
+            helpContextId="resume_action_context"
             tooltip="%ResumeAction.tooltip"
             class="org.eclipse.debug.internal.ui.ResumeActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
             enablesFor="+"
-            id="org.eclipse.debug.internal.ui.ResumeActionDelegate"
-            helpContextId="resume_action_context">
+            id="org.eclipse.debug.internal.ui.ResumeActionDelegate">
          <selection
                class="org.eclipse.debug.core.model.ISuspendResume">
          </selection>
       </action>
       <action
             label="%RelaunchLastAction.label"
+            helpContextId="relaunch_last_action_context"
             tooltip="%RelaunchLastAction.tooltip"
             class="org.eclipse.debug.internal.ui.RelaunchLastAction"
             menubarPath="org.eclipse.debug.ui.DebugMenu/relaunchGroup"
-            id="org.eclipse.debug.internal.ui.RelaunchLastAction"
-            helpContextId="relaunch_last_action_context">
+            id="org.eclipse.debug.internal.ui.RelaunchLastAction">
       </action>
    </actionSet>
 </extension>

@@ -3,19 +3,16 @@
 <plugin
    id="org.eclipse.debug.core"
    name="DebugTools"
-   version="0.105.0"
+   version="0.9"
    provider-name="Object Technology International, Inc."
    class="org.eclipse.debug.core.DebugPlugin">
-
 <!-- Required plugins -->
-
 <requires>
    <import plugin="org.apache.xerces"/>
    <import plugin="org.eclipse.core.resources"/>
 </requires>
 
 <!-- Runtime -->
-
 <runtime>
    <library name="dtcore.jar">
       <export name="*"/>
@@ -23,7 +20,6 @@
 </runtime>
 
 <!-- Extension points -->
-
 <extension-point id="launchers" name="Launcher"/>
 
 <!-- Extensions -->
