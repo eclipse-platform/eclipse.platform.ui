@@ -157,11 +157,13 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		if (fInstalled)
 			return;
 
+		StyledText text= fTextViewer.getTextWidget();
+		if (text == null)
+			return;
+		
+		text.addMouseListener(this);
 		fTextViewer.addTextListener(this);
 					
-		StyledText text= fTextViewer.getTextWidget();
-		text.addMouseListener(this);
-		
 		if (fTextViewer instanceof ITextViewerExtension) {
 			ITextViewerExtension e= (ITextViewerExtension) fTextViewer;
 			e.prependVerifyKeyListener(this);

@@ -52,7 +52,7 @@ public interface ITextViewer {
 	/* ---------- widget --------- */
 	
 	/**
-	 * Returns this viewer's SWT control
+	 * Returns this viewer's SWT control, <code>null</code> if the control is disposed.
 	 * 
 	 * @return the SWT control
 	 */

@@ -367,16 +367,20 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	 * @exception CoreException if there is a problem getting the markers
 	 */
 	private void catchupWithMarkers() throws CoreException {
-
-		removeAllAnnotations(false);
-
+		
+		for (Iterator e= fAnnotations.keySet().iterator(); e.hasNext();) {
+			Annotation a= (Annotation) e.next();
+			if (a instanceof MarkerAnnotation)
+				removeAnnotation(a, false);
+		}
+		
 		IMarker[] markers= retrieveMarkers();
 		if (markers != null) {
 			for (int i= 0; i < markers.length; i++)
 				addMarkerAnnotation(markers[i]);
 		}
 	}
-
+	
 	/**
 	 * Returns this model's annotation for the given marker.
 	 *
@@ -520,21 +524,20 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	 */
 	public void resetMarkers() {
 		
-		// reinitializes the markers
+		// reinitializes the positions from the markers
 		for (Iterator e= getAnnotationIterator(false); e.hasNext();) {
 			Object o= e.next();
 			if (o instanceof MarkerAnnotation) {
 				MarkerAnnotation a= (MarkerAnnotation) o;
-				Position p1= createPositionFromMarker(a.getMarker());
-				if (p1 != null) {
-					Position p0= (Position) fAnnotations.get(a);
-					p0.setOffset(p1.getOffset());
-					p0.setLength(p1.getLength());
+				Position p= createPositionFromMarker(a.getMarker());
+				if (p != null) {
+					removeAnnotation(a, false);
+					addAnnotation(a, p, false);
 				}
 			}
 		}
 		
-		// add the deleted markers back to the annotation model
+		// add the markers of deleted positions back to the annotation model
 		for (Iterator e= fDeletedAnnotations.iterator(); e.hasNext();) {
 			Object o= e.next();
 			if (o instanceof MarkerAnnotation) {
@@ -545,5 +548,8 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 			}
 		}
 		fDeletedAnnotations.clear();
+		
+		// fire annotation model changed
+		fireModelChanged();
 	}
 }

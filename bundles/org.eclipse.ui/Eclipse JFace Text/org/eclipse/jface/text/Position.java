@@ -63,10 +63,17 @@ public class Position {
 	 }
 	
 	/**
-	 * Marks this posiiton as deleted.
+	 * Marks this position as deleted.
 	 */
 	public void delete() {
 		isDeleted= true;
+	}
+	
+	/**
+	 * Marks this position as not deleted.
+	 */
+	public void undelete() {
+		isDeleted= false;
 	}
 	
 	/*
