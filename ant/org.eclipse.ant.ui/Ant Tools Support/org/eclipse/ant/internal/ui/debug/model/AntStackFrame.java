@@ -85,6 +85,10 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 		fFileName= new Path(fFilePath).lastSegment();
 	}
 	
+	protected String getFilePath() {
+		return fFilePath;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getCharStart()
 	 */

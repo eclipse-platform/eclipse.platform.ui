@@ -315,7 +315,8 @@ public class AntThread extends AntDebugElement implements IThread {
     
     private void addFrame(int stackFrameId, String name, String filePath, int lineNumber) {
     	AntStackFrame frame= getOldFrame();
-    	if (frame == null) {
+    	
+    	if (frame == null || !frame.getFilePath().equals(filePath)) {
     		frame= new AntStackFrame(this, stackFrameId, name, filePath, lineNumber);
     	} else {
     		frame.setFilePath(filePath);
