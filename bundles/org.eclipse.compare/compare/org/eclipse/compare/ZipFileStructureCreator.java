@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.compare.internal;
+package org.eclipse.compare;
 
 import java.io.*;
 import java.util.Iterator;
@@ -18,9 +18,10 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.compare.internal.Utilities;
 
 
-public class ZipStructureCreator implements IStructureCreator {
+public class ZipFileStructureCreator implements IStructureCreator {
 
 	/**
 	 * Common base class for ZipFolder and ZipFile
@@ -38,7 +39,7 @@ public class ZipStructureCreator implements IStructureCreator {
 		}
 
 		public Image getImage() {
-			return CompareUIPlugin.getImage(getType());
+			return CompareUI.getImage(getType());
 		}
 
 		/**
@@ -157,11 +158,11 @@ public class ZipStructureCreator implements IStructureCreator {
 	
 	private String fTitle;
 
-	public ZipStructureCreator() {
+	public ZipFileStructureCreator() {
 		this(Utilities.getString("ZipStructureCreator.name")); //$NON-NLS-1$
 	}
 	
-	public ZipStructureCreator(String title) {
+	public ZipFileStructureCreator(String title) {
 		fTitle= title;
 	}
 

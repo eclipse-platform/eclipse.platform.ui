@@ -121,7 +121,7 @@ class ResourceCompareInput extends CompareEditorInput {
 			IFile file= (IFile) input;
 			String type= normalizeCase(file.getFileExtension());
 			if ("JAR".equals(type) || "ZIP".equals(type)) //$NON-NLS-2$ //$NON-NLS-1$
-				return new ZipStructureCreator().getStructure(rn);
+				return new ZipFileStructureCreator().getStructure(rn);
 			return rn;
 		}
 		return null;

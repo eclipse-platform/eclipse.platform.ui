@@ -118,7 +118,7 @@
 	<extension point="org.eclipse.compare.structureCreators">
 		<structureCreator
 			extensions="zip"
-			class="org.eclipse.compare.internal.ZipStructureCreator">
+			class="org.eclipse.compare.ZipFileStructureCreator">
 		</structureCreator>
 	</extension>
 	
