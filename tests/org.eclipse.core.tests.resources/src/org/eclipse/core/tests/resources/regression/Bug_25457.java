@@ -14,9 +14,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.osgi.service.environment.Constants;
 
@@ -40,7 +40,7 @@ public class Bug_25457 extends EclipseWorkspaceTest {
 
 	public void testFile() {
 		//this test only works on windows
-		if (!BootLoader.getOS().equals(Constants.OS_WIN32))
+		if (!Platform.getOS().equals(Constants.OS_WIN32))
 			return;
 		IProject source = getWorkspace().getRoot().getProject("project");
 		IFile sourceFile = source.getFile("file.txt");
@@ -83,7 +83,7 @@ public class Bug_25457 extends EclipseWorkspaceTest {
 
 	public void testFolder() {
 		//this test only works on windows
-		if (!BootLoader.getOS().equals(Constants.OS_WIN32))
+		if (!Platform.getOS().equals(Constants.OS_WIN32))
 			return;
 		IProject source = getWorkspace().getRoot().getProject("SourceProject");
 		IFolder sourceFolder = source.getFolder("folder");
@@ -131,7 +131,7 @@ public class Bug_25457 extends EclipseWorkspaceTest {
 
 	public void testProject() {
 		//this test only works on windows
-		if (!BootLoader.getOS().equals(Constants.OS_WIN32))
+		if (!Platform.getOS().equals(Constants.OS_WIN32))
 			return;
 		IProject source = getWorkspace().getRoot().getProject("project");
 		IProject destination = getWorkspace().getRoot().getProject("Project");
