@@ -11,6 +11,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.internal.progress.ProgressMessages;
 
 public class ProgressView extends ViewPart implements IViewPart {
 
@@ -106,7 +107,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 	private void initPulldownMenu() {
 		IMenuManager menuMgr =
 			((ViewSite) getSite()).getActionBars().getMenuManager();
-		menuMgr.add(new Action("Verbose", IAction.AS_CHECK_BOX) {
+		menuMgr.add(new Action(ProgressMessages.getString("ProgressView.VerboseAction"), IAction.AS_CHECK_BOX) { //$NON-NLS-1$
 			
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.action.Action#run()
