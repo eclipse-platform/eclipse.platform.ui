@@ -13,9 +13,19 @@ package org.eclipse.ui.console;
 import java.util.EventObject;
 
 public class PatternMatchEvent extends EventObject {
-    
+    /*
+     * required by EventObject for ObjectSerialization.
+     */
     private static final long serialVersionUID = 876890383326854537L;
+    
+    /**
+     * The offset of the match within the console's document. 
+     */
     private int offset;
+    
+    /**
+     * The length of the matched string
+     */
     private int length;
 
     public PatternMatchEvent(IOConsole console, int matchOffset, int matchLength) {
@@ -25,7 +35,7 @@ public class PatternMatchEvent extends EventObject {
     }
 
     /**
-     * @return Returns the length of the match.
+     * @return Returns the length of the matched string.
      */
     public int getLength() {
         return length;

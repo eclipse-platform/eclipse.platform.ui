@@ -107,6 +107,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 		document = null;
 		partitions = null;
 		connected = false;
+		inputStream.disconnect();
 	}
 	
 	/*

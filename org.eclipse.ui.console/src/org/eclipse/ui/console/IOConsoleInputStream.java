@@ -17,38 +17,83 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 
 /**
- * InputStream used to read input from an IOConsole
+ * InputStream used to read input from an IOConsole. 
+ * This stream will buffer input that it receives from the console
+ * until it has been read.
  * @since 3.1
  *
  */
 public class IOConsoleInputStream extends InputStream {
-    
+    /**
+     * Buffer to hold data from console until it is read.
+     */
     private byte[] input = new byte[1024*2];
+    
+    /**
+     * Location in the buffer that the next byte of data from the
+     * console should be stored.
+     */
     private int inPointer = 0;
+    
+    /**
+     * Location in the buffer that the next byte of data read from
+     * this stream should come from.
+     */
     private int outPointer = 0;
+    
+    /**
+     * The number of bytes of real data currently in the buffer. 
+     */
     private int size = 0;
     
+    /**
+     * Flag to indicate that EOF has been sent already.
+     */
     private boolean eofSent = false;
+    
+    /**
+     * Flag to indicate that the stream has been closed.
+     */
     private boolean closed = false;
-    private boolean terminated;
+    
+    /**
+     * Flag to indicate that the console has been disconnected from this
+     * inputStream. EOF will sent once data remaining in buffer has
+     * been read.
+     */
+    private boolean disconnected;
+    
+    /**
+     * The console that this stream is connected to.
+     */
     private IOConsole console;
+    
+    /**
+     * The color used to display input in the console.
+     */
     private Color color;
+    
+    /**
+     * The font stye used to decorate input in the console.
+     */
     private int fontStyle = SWT.NORMAL;
 
-    private String streamId;
 
     IOConsoleInputStream(IOConsole console) {
         this.console = console;
-        streamId = "IO_CONSOLE_INPUT_STREAM"; //$NON-NLS-1$
     }
     
+    /*
+     *  (non-Javadoc)
+     * @see java.io.InputStream#read(byte[], int, int)
+     */
     public int read(byte[] b, int off, int len) throws IOException {
-        if (available() == -1) {
-            return -1;
-        }
-        
         synchronized(input) {
             waitForData();
+	        if (available() == -1) {
+	            return -1;
+	        }
+        
             int toCopy = Math.min(len, size);
             if(input.length-outPointer > toCopy) {
                 System.arraycopy(input, outPointer, b, off, toCopy);
@@ -65,17 +110,24 @@ public class IOConsoleInputStream extends InputStream {
         }
     }
     
+    /*
+     *  (non-Javadoc)
+     * @see java.io.InputStream#read(byte[])
+     */
     public int read(byte[] b) throws IOException {
         return read(b, 0, b.length);
     }
 
+    /*
+     *  (non-Javadoc)
+     * @see java.io.InputStream#read()
+     */
     public int read() throws IOException {
-        if (available() == -1) { 
-            return -1;
-        }
-        
         synchronized(input) {
-           waitForData();
+            waitForData();
+	        if (available() == -1) { 
+	            return -1;
+	        }
             
             byte b = input[outPointer];
             outPointer++;
@@ -86,8 +138,11 @@ public class IOConsoleInputStream extends InputStream {
         }
     }
     
+    /**
+     * blocks until data is available to be read.
+     */
     private void waitForData() {
-        while (size == 0) {
+        while (size == 0 && !disconnected) {
             try {
                 input.wait();
             } catch (InterruptedException e) {
@@ -95,6 +150,10 @@ public class IOConsoleInputStream extends InputStream {
         }
     }
 
+    /**
+     * appends data to this input stream's buffer
+     * @param text The data to append to the buffer.
+     */
     public void appendData(String text) {
         byte[] newData = text.getBytes();
         synchronized(input) {
@@ -125,6 +184,9 @@ public class IOConsoleInputStream extends InputStream {
         }
     }
     
+    /**
+     * Enlarges the buffer.
+     */
     private void growArray() {
         byte[] newInput = new byte[input.length+1024];
         if (outPointer < inPointer) {
@@ -139,14 +201,18 @@ public class IOConsoleInputStream extends InputStream {
         newInput = null;
     }
 
-    public String getStreamId() {
-        return streamId;
-    }
-    
+    /**
+     * Returns this console's font style.
+     * @return The font style used to decorate input in the associated console
+     */
     public int getFontStyle() {
         return fontStyle;
     }
 
+    /**
+     * Sets the font style
+     * @param newFontStyle The font style to be used to decorate input in the associated console
+     */
     public void setFontStyle(int newFontStyle) {
         if (newFontStyle != fontStyle) {
             int old = fontStyle;
@@ -155,6 +221,10 @@ public class IOConsoleInputStream extends InputStream {
         }
     }
     
+    /**
+     * Sets the color to used to decorate input in the associated console.
+     * @param newColor The color to used to decorate input in the associated console.
+     */
     public void setColor(Color newColor) {
         Color old = color;
         if (old == null || !old.equals(newColor)) {
@@ -163,6 +233,10 @@ public class IOConsoleInputStream extends InputStream {
         }
     }
     
+    /**
+     * Returns the color used to decorate input in the associated console
+     * @return The color used to decorate input in the associated console
+     */
     public Color getColor() {
         return color;
     }
@@ -173,7 +247,7 @@ public class IOConsoleInputStream extends InputStream {
     public int available() throws IOException {
         if (closed) {
             throw new IOException("Input Stream Closed"); //$NON-NLS-1$
-        } else if (terminated) {
+        } else if (size == 0 && disconnected) {
             if (!eofSent) {
                 eofSent = true;
                 return -1;
@@ -194,7 +268,10 @@ public class IOConsoleInputStream extends InputStream {
         closed = true;
     }
 
-
-
-
+    /**
+     *  Disconnects the console from this stream. 
+     */
+    public void disconnect() {
+        disconnected = true;
+    }
 }
