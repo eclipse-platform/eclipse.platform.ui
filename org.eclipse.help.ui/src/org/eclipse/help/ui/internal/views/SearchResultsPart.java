@@ -15,6 +15,8 @@ import java.net.URLEncoder;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.help.*;
+import org.eclipse.help.IContext;
 import org.eclipse.help.internal.search.SearchHit;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.IMenuManager;
@@ -26,9 +28,9 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
-	private static final String CANCEL_HREF = "__cancel__";
+	private static final String CANCEL_HREF = "__cancel__"; //$NON-NLS-1$
 
-	private static final String MORE_HREF = "__more__";
+	private static final String MORE_HREF = "__more__"; //$NON-NLS-1$
 
 	private ReusableHelpPart parent;
 
@@ -43,6 +45,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	private Job runningJob;
 
 	private JobListener jobListener;
+	public static final int SHORT_COUNT = 8;
 
 	class JobListener implements IJobChangeListener {
 		public void aboutToRun(IJobChangeEvent event) {
@@ -174,7 +177,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		job.schedule();
 	}
 
-	void updateResults(String phrase, StringBuffer buff, SearchHit[] hits) {
+	void updateResults(String phrase, IContext excludeContext, StringBuffer buff, SearchHit[] hits) {
 		if (runningJob != null) {
 			runningJob.cancel();
 		}
@@ -188,15 +191,20 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 			buff.append(HelpUIResources.getString("SearchResultsPart.label")); //$NON-NLS-1$
 			buff.append("</span></p>"); //$NON-NLS-1$
 			resultSorter.sort(null, hits);
+			IHelpResource [] excludedTopics = excludeContext!=null?excludeContext.getRelatedTopics():null;
 
 			for (int i = 0; i < hits.length; i++) {
 				SearchHit hit = hits[i];
+				if (isExcluded(hit.getHref(), excludedTopics))
+					continue;
+				if (i==SHORT_COUNT)
+					break;
 				buff.append("<li indent=\"21\" style=\"image\" value=\""); //$NON-NLS-1$
 				buff.append(IHelpUIConstants.IMAGE_FILE_F1TOPIC);
 				buff.append("\">"); //$NON-NLS-1$
 				buff.append("<a href=\""); //$NON-NLS-1$
 				buff.append(hit.getHref());
-				buff.append("\" alt=\"");
+				buff.append("\" alt=\""); //$NON-NLS-1$
 				buff.append(hit.getToc().getLabel());
 				buff.append("\">"); //$NON-NLS-1$
 				buff.append(hit.getLabel());
@@ -215,10 +223,10 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 				buff.append("</li>"); //$NON-NLS-1$
 			}
 			if (hits.length > 0) {
-				buff.append("<p><img href=\"");
+				buff.append("<p><img href=\""); //$NON-NLS-1$
 				buff.append(IHelpUIConstants.IMAGE_HELP_SEARCH);
-				buff.append("\"/>");
-				buff.append(" <a href=\"");
+				buff.append("\"/>"); //$NON-NLS-1$
+				buff.append(" <a href=\""); //$NON-NLS-1$
 				buff.append(MORE_HREF);
 				buff.append("\">"); //$NON-NLS-1$
 				buff.append(HelpUIResources
@@ -230,6 +238,15 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		} else
 			searchResults.setText("", false, false); //$NON-NLS-1$
 		parent.reflow();
+	}
+	
+	private boolean isExcluded(String href, IHelpResource [] excludedTopics) {
+		if (excludedTopics==null) return false;
+		for (int i=0; i<excludedTopics.length; i++) {
+			if (href.equals(excludedTopics[i].getHref()))
+				return true;
+		}
+		return false;
 	}
 
 	private void doMore() {

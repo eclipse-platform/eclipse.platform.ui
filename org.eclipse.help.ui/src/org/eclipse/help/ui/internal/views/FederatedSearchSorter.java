@@ -10,17 +10,26 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import org.eclipse.help.internal.search.SearchHit;
+import org.eclipse.help.IHelpResource;
+import org.eclipse.help.internal.search.federated.ISearchEngineResult;
 import org.eclipse.jface.viewers.*;
 
-public class SorterByScore extends ViewerSorter {
+public class FederatedSearchSorter extends ViewerSorter {
 	/**
 	 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer,java.lang.Object,java.lang.Object)
 	 */
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		try {
-			float rank1 = ((SearchHit) e1).getScore();
-			float rank2 = ((SearchHit) e2).getScore();
+			ISearchEngineResult r1 = (ISearchEngineResult) e1;
+			ISearchEngineResult r2 = (ISearchEngineResult) e2;
+			IHelpResource c1 = r1.getCategory();
+			IHelpResource c2 = r2.getCategory();
+			if (c1!=null && c2!=null) {
+				int cat = compare(viewer, r1.getCategory(), r2.getCategory());
+				if (cat!=0) return cat;
+			}
+			float rank1 = ((ISearchEngineResult) e1).getScore();
+			float rank2 = ((ISearchEngineResult) e2).getScore();
 			if (rank1 - rank2 > 0) {
 				return -1;
 			} else if (rank1 == rank2) {

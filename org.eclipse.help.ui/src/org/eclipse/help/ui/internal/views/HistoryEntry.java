@@ -14,18 +14,23 @@ public class HistoryEntry {
 	public static final int URL = 1;
 	public static final int PAGE = 2;
 	private int type;
-	private String data;
+	private String target;
+	private Object data;
 	/**
 	 * 
 	 */
-	public HistoryEntry(int type, String data) {
+	public HistoryEntry(int type, String target, Object data) {
 		this.type = type;
+		this.target = target;
 		this.data = data;
 	}
 	public int getType() {
 		return type;
 	}
-	public String getData() {
+	public String getTarget() {
+		return target;
+	}
+	public Object getData() {
 		return data;
 	}
 }

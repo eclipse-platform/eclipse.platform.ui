@@ -13,6 +13,7 @@ package org.eclipse.help.ui.internal.views;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.help.IContext;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.ui.internal.*;
@@ -30,6 +31,7 @@ public class SearchPart extends SectionPart implements IHelpPart {
 	private ReusableHelpPart parent;
 	private Text phraseText;
 	private Button goButton;
+	private IContext context;
 	private String id;
 	/**
 	 * @param parent
@@ -50,7 +52,7 @@ public class SearchPart extends SectionPart implements IHelpPart {
 				if (e.getState()) {
 					String phrase = phraseText.getText();
 					if (phrase.length()>0)
-						startInPlaceSearch(phrase);
+						startInPlaceSearch(phrase, context);
 				}
 			}
 		});
@@ -85,7 +87,7 @@ public class SearchPart extends SectionPart implements IHelpPart {
 				"Go", SWT.PUSH); //$NON-NLS-1$
 		goButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				startInPlaceSearch(phraseText.getText());
+				startInPlaceSearch(phraseText.getText(), null);
 			}
 		});
 		goButton.setEnabled(false);
@@ -99,7 +101,7 @@ public class SearchPart extends SectionPart implements IHelpPart {
 			public void keyReleased(KeyEvent e) {
 				if (e.character == '\r') {
 					if (goButton.isEnabled())
-						startInPlaceSearch(phraseText.getText());
+						startInPlaceSearch(phraseText.getText(), null);
 				}
 			}
 		});
@@ -132,46 +134,47 @@ public class SearchPart extends SectionPart implements IHelpPart {
 		getSection().setVisible(visible);
 	}
 
-	public void startSearch(String phrase) {
+	public void startSearch(String phrase, IContext excludeContext) {
 		String currentPhrase = phraseText.getText();
 		if (currentPhrase.equals(phrase))
 			return;
 		phraseText.setText(phrase);
+		this.context = excludeContext; 
 		phraseText.selectAll();
 		if (getSection().isExpanded())
-			startInPlaceSearch(phrase);
+			startInPlaceSearch(phrase, excludeContext);
 	}
 
-	private void startInPlaceSearch(final String phrase) {
-		Job job = new Job("Quick search") {
+	private void startInPlaceSearch(final String phrase, final IContext excludeContext) {
+		Job job = new Job(HelpUIResources.getString("SearchPart.dynamicJob")) { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					performSearch(phrase, monitor);
+					performSearch(phrase, excludeContext, monitor);
 					return Status.OK_STATUS;
 				}
 				catch (OperationCanceledException e) {
-					return new Status(IStatus.ERROR, HelpUIPlugin.PLUGIN_ID, IStatus.OK, "Errors during search", e);
+					return new Status(IStatus.ERROR, HelpUIPlugin.PLUGIN_ID, IStatus.OK, HelpUIResources.getString("SearchPart.errors"), e); //$NON-NLS-1$
 				}
 			}
 		};
 		doStartSearch(job);
 	}
 	
-	private void performSearch(String phrase, IProgressMonitor monitor) {
+	private void performSearch(String phrase, IContext excludeContext, IProgressMonitor monitor) {
 		SearchQuery searchQuery = new SearchQuery();
 		searchQuery.setSearchWord(phrase);
-		SearchResults localResults = new SearchResults(null, 8, Platform.getNL());
+		SearchResults localResults = new SearchResults(null, SearchResultsPart.SHORT_COUNT*2, Platform.getNL());
 		BaseHelpSystem.getSearchManager().search(searchQuery, localResults, monitor);
 		SearchHit [] hits = localResults.getSearchHits();
-		updateResults(phrase, new StringBuffer(), hits);
+		updateResults(phrase, excludeContext, new StringBuffer(), hits);
 	}
 	
-	private void updateResults(final String phrase, final StringBuffer buffer, final SearchHit [] hits) {
+	private void updateResults(final String phrase, final IContext excludeContext, final StringBuffer buffer, final SearchHit [] hits) {
 		final SearchResultsPart part = (SearchResultsPart)parent.findPart(IHelpUIConstants.HV_SEARCH_RESULT);
 		if (part!=null) {
 			phraseText.getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					part.updateResults(phrase, buffer, hits);
+					part.updateResults(phrase, excludeContext, buffer, hits);
 				}
 			});
 		}

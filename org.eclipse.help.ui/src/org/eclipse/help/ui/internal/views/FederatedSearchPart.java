@@ -131,7 +131,7 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 		// Filtering group
 		scopeSection = toolkit.createSection(container, Section.TWISTIE
 				| Section.COMPACT | Section.LEFT_TEXT_CLIENT_ALIGNMENT);
-		scopeSection.setText(HelpUIResources.getString("limit_to"));
+		scopeSection.setText(HelpUIResources.getString("limit_to")); //$NON-NLS-1$
 		td = new TableWrapData();
 		td.colspan = 2;
 		td.align = TableWrapData.FILL;
@@ -147,7 +147,7 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 		toolkit.paintBordersFor(filteringGroup);
 		loadEngines(filteringGroup, toolkit);
 		Hyperlink advanced = toolkit.createHyperlink(filteringGroup,
-				"Advanced Settings", SWT.NULL);
+				HelpUIResources.getString("FederatedSearchPart.advanced"), SWT.NULL); //$NON-NLS-1$
 		advanced.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				doAdvanced();
@@ -166,7 +166,7 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 				doChangeScopeSet();
 			}
 		});
-		scopeSetLink.setToolTipText("Change the current scope set");
+		scopeSetLink.setToolTipText(HelpUIResources.getString("FederatedSearchPart.changeScopeSet")); //$NON-NLS-1$
 		section.setTextClient(scopeSetLink);
 		ScopeSet active = scopeSetManager.getActiveSet();
 		setActiveScopeSet(active);
@@ -201,7 +201,7 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 				.getConfigurationElementsFor(ENGINE_EXP_ID);
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
-			if (element.getName().equals("engine")) {
+			if (element.getName().equals("engine")) { //$NON-NLS-1$
 				EngineDescriptor desc = loadEngine(element, container, toolkit);
 				engineDescriptors.add(desc);
 			}
@@ -239,6 +239,11 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 //		
 		return edesc;
 	}
+	
+	public void startSearch(String text) {
+		searchWordCombo.setText(text);
+		doSearch(text);
+	}
 
 	private void doSearch(String text) {
 		ScopeSet set = scopeSetManager.getActiveSet();
@@ -251,7 +256,7 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 				ISearchScope scope = ed.createSearchScope(set
 						.getPreferenceStore());
 				FederatedSearchEntry entry = new FederatedSearchEntry(ed
-						.getId(), scope, ed.getEngine(), new ISearchEngineResultCollector() {
+						.getId(), ed.getLabel(), scope, ed.getEngine(), new ISearchEngineResultCollector() {
 							public void add(ISearchEngineResult searchResult) {
 								results.add(ed, searchResult);
 							}
@@ -270,6 +275,7 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 			scopeSection.setExpanded(false);
 			parent.reflow();
 		}
+		results.clearResults();
 		BaseHelpSystem.getSearchManager().search(text, array);
 		results.startNewSearch(text);
 	}

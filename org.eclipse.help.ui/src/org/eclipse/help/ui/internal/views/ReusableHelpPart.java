@@ -178,7 +178,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 				PartRec rec = (PartRec) partRecs.get(i);
 				if (visible) {
 					if (rec.part == null)
-						rec.part = createPart(rec.id);
+						rec.part = createPart(rec.id, toolBarManager);
 				}
 				rec.part.setVisible(visible);
 				toolBarManager.setVisible(visible);
@@ -401,10 +401,12 @@ public class ReusableHelpPart implements IHelpUIConstants {
 
 	private void executeHistoryEntry(HistoryEntry entry) {
 		history.setBlocked(true);
-		if (entry.getType()==HistoryEntry.PAGE)
-			showPage(entry.getData());
+		if (entry.getType()==HistoryEntry.PAGE) {
+			HelpPartPage page = showPage(entry.getTarget());
+			mform.setInput(entry.getData());
+		}
 		else if (entry.getType()==HistoryEntry.URL)
-			showURL(entry.getData());
+			showURL(entry.getTarget());
 	}
 
 	public void createControl(Composite parent, FormToolkit toolkit) {
@@ -447,23 +449,33 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			oldPage.setVisible(false);
 		mform.getForm().setText(newPage.getText());			
 		newPage.setVisible(true);
+		toolBarManager.update(true);
 		currentPage = newPage;		
 		mform.getForm().getBody().layout(true);
 		mform.reflow(true);
 		if (newPage.getId().equals(IHelpUIConstants.HV_BROWSER_PAGE)==false) {
 			if (!history.isBlocked()) {
-				history.addEntry(new HistoryEntry(HistoryEntry.PAGE, newPage.getId()));
+				history.addEntry(new HistoryEntry(HistoryEntry.PAGE, newPage.getId(), null));
 			}
 			updateNavigation();
 		}
 	}
+	void addPageHistoryEntry(String id, Object data) {
+		if (!history.isBlocked()) {
+			history.addEntry(new HistoryEntry(HistoryEntry.PAGE, id, data));
+		}
+		updateNavigation();
+	}
 	public HelpPartPage getCurrentPage() {
 		return currentPage;
+	}
+	public String getCurrentPageId() {
+		return currentPage.getId();
 	}
 
 	void browserChanged(String url) {
 		if (!history.isBlocked()) {
-			history.addEntry(new HistoryEntry(HistoryEntry.URL, url));
+			history.addEntry(new HistoryEntry(HistoryEntry.URL, url, null));
 		}
 		updateNavigation();
 	}
@@ -522,7 +534,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		mform.setInput(new ContextHelpProviderInput(provider, control, part));
 	}
 
-	private IHelpPart createPart(String id) {
+	private IHelpPart createPart(String id, IToolBarManager tbm) {
 		IHelpPart part = null;
 		Composite parent = mform.getForm().getBody();
 		
@@ -542,7 +554,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		} else if (id.equals(HV_SEARCH_RESULT)) {
 			part = new SearchResultsPart(parent, mform.getToolkit());
 		} else if (id.equals(HV_FSEARCH_RESULT)) {
-			part = new FederatedSearchResultsPart(parent, mform.getToolkit());
+			part = new FederatedSearchResultsPart(parent, mform.getToolkit(), tbm);
 		} else if (id.equals(HV_SEE_ALSO)) {
 			part = new SeeAlsoPart(parent, mform.getToolkit());
 		} else if (id.equals(HV_FSEARCH)) {
@@ -578,8 +590,13 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		this.defaultContextHelpText = defaultContextHelpText;
 	}
 
-	public void showURL(String url) {
-		showURL(url, getShowDocumentsInPlace());
+	public void showURL(final String url) {
+		BusyIndicator.showWhile(getControl().getDisplay(),
+				new Runnable() {
+			public void run() {
+				showURL(url, getShowDocumentsInPlace());
+			}
+		});
 	}
 
 	public void showURL(String url, boolean replace) {

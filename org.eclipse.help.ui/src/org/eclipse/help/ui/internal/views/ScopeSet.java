@@ -13,6 +13,7 @@ package org.eclipse.help.ui.internal.views;
 import java.io.*;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.jface.preference.*;
 
@@ -20,15 +21,15 @@ import org.eclipse.jface.preference.*;
  * Federated search scope.
  */
 public class ScopeSet {
-	public static final String SCOPE_DIR_NAME = "scope_sets";
-	private static final String KEY_DEFAULT = "__DEFAULT__";
+	public static final String SCOPE_DIR_NAME = "scope_sets"; //$NON-NLS-1$
+	private static final String KEY_DEFAULT = "__DEFAULT__"; //$NON-NLS-1$
 	private String name;
 	private PreferenceStore preferenceStore;
 	private boolean needsSaving;
 	private int defaultSet = -1;
 	
 	public ScopeSet() {
-		this("Default");
+		this(HelpUIResources.getString("ScopeSet.default")); //$NON-NLS-1$
 		defaultSet = 1;
 	}
 	
@@ -44,7 +45,7 @@ public class ScopeSet {
 	}
 
 	public ScopeSet(ScopeSet set) {
-		this(set.getName()+"_new");
+		this(set.getName()+"_new"); //$NON-NLS-1$
 		copy((PreferenceStore)set.getPreferenceStore());
 	}
 	
@@ -73,15 +74,15 @@ public class ScopeSet {
 	private String getFileName(String name) {
 		IPath location = HelpUIPlugin.getDefault().getStateLocation();
 		location = location.append(SCOPE_DIR_NAME);
-		location = location.append(name+".pref");
+		location = location.append(name+".pref"); //$NON-NLS-1$
 		return location.toOSString();
 	}
 
 	private void copy(PreferenceStore store) {
 		try {
-			File file = File.createTempFile("sset", null);
+			File file = File.createTempFile("sset", null); //$NON-NLS-1$
 			FileOutputStream fos = new FileOutputStream(file);
-			store.save(fos, "");
+			store.save(fos, ""); //$NON-NLS-1$
 			fos.close();
 			FileInputStream fis = new FileInputStream(file);
 			getPreferenceStore();
@@ -158,6 +159,6 @@ public class ScopeSet {
 		store.setValue(key, value);
 	}
 	public static String getMasterKey(String id) {
-		return id + ".master";
+		return id + ".master"; //$NON-NLS-1$
 	}
 }

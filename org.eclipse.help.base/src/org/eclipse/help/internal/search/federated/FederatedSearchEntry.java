@@ -17,6 +17,7 @@ import org.eclipse.help.internal.search.*;
  */
 public class FederatedSearchEntry {
 	private String engineId;
+	private String engineName;
 	private ISearchScope scope;
 	private ISearchEngine engine;
 	private ISearchEngineResultCollector collector;
@@ -24,8 +25,9 @@ public class FederatedSearchEntry {
 	/**
 	 * 
 	 */
-	public FederatedSearchEntry(String engineId, ISearchScope scope, ISearchEngine engine, ISearchEngineResultCollector collector) {
+	public FederatedSearchEntry(String engineId, String engineName, ISearchScope scope, ISearchEngine engine, ISearchEngineResultCollector collector) {
 		this.engineId = engineId;
+		this.engineName = engineName;
 		this.scope = scope;
 		this.engine = engine;
 		this.collector = collector;
@@ -34,6 +36,10 @@ public class FederatedSearchEntry {
 	public String getEngineId() {
 		return engineId;
 	}
+	
+	public String getEngineName() {
+		return engineName;
+	}	
 
 	public ISearchEngine getEngine() {
 		return engine;

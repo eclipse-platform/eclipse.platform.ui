@@ -181,9 +181,9 @@ public class ScopeSetDialog extends ListDialog {
 		GridData data= new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
 		data.grabExcessHorizontalSpace= true;
 		composite.setData(data);
-    	newButton = createButton(buttonComposite, NEW_ID, "New...", false);
-       	editButton = createButton(buttonComposite, EDIT_ID, "Edit...", false);
-       	removeButton = createButton(buttonComposite, REMOVE_ID, "Remove", false);
+    	newButton = createButton(buttonComposite, NEW_ID, HelpUIResources.getString("ScopeSetDialog.new"), false); //$NON-NLS-1$
+       	editButton = createButton(buttonComposite, EDIT_ID, HelpUIResources.getString("ScopeSetDialog.edit"), false); //$NON-NLS-1$
+       	removeButton = createButton(buttonComposite, REMOVE_ID, HelpUIResources.getString("ScopeSetDialog.remove"), false); //$NON-NLS-1$
        	updateButtons();
     }
 	

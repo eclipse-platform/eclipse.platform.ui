@@ -24,7 +24,7 @@ public interface IHelpUIConstants {
 	public static final String PREF_PAGE_CUSTOM_BROWSER_PATH = HELP_UI_PLUGIN_ID
 			+ "prefPageCustomBrowserPath"; //$NON-NLS-1$
 	public static final String IMAGE_KEY_F1TOPIC = "f1_topic_icon"; //$NON-NLS-1$
-	public static final String IMAGE_FILE_F1TOPIC = "topic.gif"; //$NON-NLS-1$
+	public static final String IMAGE_FILE_F1TOPIC = "topic_small.gif"; //$NON-NLS-1$
 	
 	// Help view images
 	public static final String IMAGE_CONTAINER = "container_obj.gif"; //$NON-NLS-1$
@@ -33,6 +33,8 @@ public interface IHelpUIConstants {
 	public static final String IMAGE_HELP_SEARCH = "e_search_menu.gif"; //$NON-NLS-1$
 	public static final String IMAGE_CLEAR = "clear.gif"; //$NON-NLS-1$
 	public static final String IMAGE_NW = "nw.gif"; //$NON-NLS-1$
+	public static final String IMAGE_SHOW_CATEGORIES = "show_categories.gif"; //$NON-NLS-1$
+	public static final String IMAGE_SHOW_DESC = "desc_obj.gif";
 	// Help view constants
 	public static final String HV_SEARCH = "search";
 	public static final String HV_FSEARCH = "fsearch";

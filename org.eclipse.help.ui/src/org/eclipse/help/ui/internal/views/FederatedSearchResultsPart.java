@@ -15,46 +15,35 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.search.federated.*;
 import org.eclipse.help.ui.internal.*;
-import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
 
 public class FederatedSearchResultsPart extends AbstractFormPart implements IHelpPart { 
 	private ReusableHelpPart parent;
 	private Composite separator;
 	private Composite container;
+	private ScrolledForm innerForm;
 	private FormText searchResults;
 	private String id;
+	private Action showCategoriesAction;
+	private Action showDescriptionAction;
 	private ArrayList results;
 
 	private String phrase;
 	
-	class EngineResult {
-		EngineDescriptor ed;
-		ArrayList hits;
-
-		public EngineResult(EngineDescriptor ed) {
-			this.ed = ed;
-			hits = new ArrayList();
-		}
-		public void clear() {
-			hits.clear();
-		}
-	}
-
 	/**
 	 * @param parent
 	 * @param toolkit
 	 * @param style
 	 */
-	public FederatedSearchResultsPart(Composite parent, FormToolkit toolkit) {
+	public FederatedSearchResultsPart(Composite parent, FormToolkit toolkit, IToolBarManager tbm) {
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
 		layout.verticalSpacing = 0;
@@ -64,21 +53,18 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 		separator.setVisible(false);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 1;
-		separator.setLayoutData(gd);		
-		ScrolledFormText stext = new ScrolledFormText(container, false);
-		stext.setLayoutData(new GridData(GridData.FILL_BOTH));
-		toolkit.adapt(stext, false, true);
-		searchResults = toolkit.createFormText(stext, true);
-		stext.setFormText(searchResults);
-		searchResults.marginWidth = 10;
+		separator.setLayoutData(gd);
+		innerForm = toolkit.createScrolledForm(container);
+		innerForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+		TableWrapLayout tlayout = new TableWrapLayout();
+		//tlayout.leftMargin = tlayout.rightMargin = 0;
+		tlayout.topMargin = tlayout.bottomMargin = 0;
+		//tlayout.verticalSpacing = 0;
+		innerForm.getBody().setLayout(tlayout);
+		searchResults = toolkit.createFormText(innerForm.getBody(), true);
+		searchResults.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		searchResults.setColor(FormColors.TITLE, toolkit.getColors().getColor(
 				FormColors.TITLE));
-		String topicKey = IHelpUIConstants.IMAGE_FILE_F1TOPIC;
-		String nwKey = IHelpUIConstants.IMAGE_NW;
-		String searchKey = IHelpUIConstants.IMAGE_HELP_SEARCH;
-		searchResults.setImage(topicKey, HelpUIResources.getImage(topicKey));
-		searchResults.setImage(nwKey, HelpUIResources.getImage(nwKey));
-		searchResults.setImage(searchKey, HelpUIResources.getImage(searchKey));
 		searchResults.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
@@ -86,12 +72,49 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 					Platform.getJobManager().cancel(FederatedSearchJob.FAMILY);
 					clearResults();
 				}
-				else
-					doOpenLink(e.getHref());
 			}
 		});
 		searchResults.setText("", false, false); //$NON-NLS-1$
 		results = new ArrayList();
+		contributeToToolBar(tbm);
+	}
+	
+	private void contributeToToolBar(IToolBarManager tbm) {
+		showCategoriesAction = new Action() {
+			public void run() {
+				toggleShowCategories(showCategoriesAction.isChecked());
+			}
+		};
+		showCategoriesAction.setImageDescriptor(HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_CATEGORIES));
+		showCategoriesAction.setChecked(true);
+		tbm.add(showCategoriesAction);
+		
+		showDescriptionAction = new Action() {
+			public void run() {
+				toggleShowDescription(showDescriptionAction.isChecked());
+			}
+		};
+		showDescriptionAction.setImageDescriptor(HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_DESC));
+		showDescriptionAction.setChecked(false);
+		tbm.add(showDescriptionAction);
+	}
+	
+	private void toggleShowCategories(boolean checked) {
+		for (int i=0; i<results.size(); i++) {
+			EngineResultSection section = (EngineResultSection)results.get(i);
+			section.setShowCategories(checked);
+		}
+		reflow();
+		markThisState();
+	}
+	
+	private void toggleShowDescription(boolean checked) {
+		for (int i=0; i<results.size(); i++) {
+			EngineResultSection section = (EngineResultSection)results.get(i);
+			section.setShowDescription(checked);
+		}
+		reflow();
+		markThisState();
 	}
 	
 	/*
@@ -127,10 +150,19 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 	}
 
 	void clearResults() {
+		clearResultSections();
 		searchResults.setText("", false, false); //$NON-NLS-1$
 		parent.reflow();
 		separator.setVisible(false);
 	}
+	void clearResultSections() {
+		for (int i=0; i<results.size(); i++) {
+			EngineResultSection section = (EngineResultSection)results.get(i);
+			section.dispose();
+		}
+		results.clear();
+	}
+	
 	
 	void startNewSearch(String phrase) {
 		this.phrase = phrase;
@@ -146,9 +178,15 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 		buff.append("</a></p>"); //$NON-NLS-1$
 		buff.append("</form>"); //$NON-NLS-1$
 		searchResults.setText(buff.toString(), true, false);
-		results.clear();
-		parent.reflow();
 		separator.setVisible(true);
+		markThisState();
+	}
+	
+	private void markThisState() {
+		parent.addPageHistoryEntry(parent.getCurrentPageId(), 
+				new FederatedSearchResultData(phrase,
+						showDescriptionAction.isChecked(),
+						showCategoriesAction.isChecked()));		
 	}
 	
 	private void asyncUpdateResults() {
@@ -159,91 +197,12 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 		});
 	}
 	
-	private synchronized void updateResults() {
-		StringBuffer buff= new StringBuffer();
-		buff.append("<form>"); //$NON-NLS-1$
-		buff.append("<p><span color=\""); //$NON-NLS-1$
-		buff.append(FormColors.TITLE);
-		buff.append("\">"); //$NON-NLS-1$
-		buff.append(HelpUIResources.getString("SearchResultsPart.label")); //$NON-NLS-1$
-		buff.append("</span></p>"); //$NON-NLS-1$
-		for (int i=0; i<results.size(); i++) {
-			EngineResult er = (EngineResult)results.get(i);
-			buff.append("<p><b>");
-			buff.append(er.ed.getLabel());
-			buff.append(" ("+er.hits.size()+" hits)");
-			buff.append("</b></p>");
-			updateResults(er, buff);
-		}
-		buff.append("</form>"); //$NON-NLS-1$
-		searchResults.setText(buff.toString(), true, false);
-		//parent.reflow();
-		ScrolledFormText stext = (ScrolledFormText)searchResults.getParent();
-		stext.reflow(true);
+	private void updateResults() {
+		searchResults.setText("", false, false); //$NON-NLS-1$
+		searchResults.getParent().layout();
 	}
 
-	private void updateResults(EngineResult er, StringBuffer buff) {
-		for (int i = 0; i < er.hits.size(); i++) {
-			ISearchEngineResult hit = (ISearchEngineResult)er.hits.get(i);
-			buff.append("<li indent=\"31\" bindent=\"10\" style=\"image\" value=\""); //$NON-NLS-1$
-			buff.append(IHelpUIConstants.IMAGE_FILE_F1TOPIC);
-			buff.append("\">"); //$NON-NLS-1$
-			buff.append("<a href=\""); //$NON-NLS-1$
-			buff.append(escapeSpecialChars(hit.getHref()));
-			buff.append("\"");
-			if (hit.getCategory()!=null) {
-				buff.append(" alt=\"");
-				buff.append(hit.getCategory().getLabel());
-				buff.append("\"");
-			}
-			buff.append(">"); //$NON-NLS-1$
-			buff.append(hit.getLabel());
-			buff.append("</a>"); //$NON-NLS-1$
-			/*
-			buff.append(" <a href=\""); //$NON-NLS-1$
-			buff.append("nw:"); //$NON-NLS-1$
-			buff.append(hit.getHref());
-			buff.append("\"><img href=\""); //$NON-NLS-1$
-			buff.append(IHelpUIConstants.IMAGE_NW);
-			buff.append("\" alt=\""); //$NON-NLS-1$
-			buff.append(HelpUIResources.getString("SearchResultsPart.nwtooltip")); //$NON-NLS-1$
-			buff.append("\""); //$NON-NLS-1$
-			buff.append("/>"); //$NON-NLS-1$
-			buff.append("</a>"); //$NON-NLS-1$
-			*/
-			buff.append("</li>"); //$NON-NLS-1$
-		}
-	}
-	
-	private String escapeSpecialChars(String value) {
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < value.length(); i++) {
-			char c = value.charAt(i);
-			switch (c) {
-				case '&' :
-					buf.append("&amp;"); //$NON-NLS-1$
-					break;
-				case '<' :
-					buf.append("&lt;"); //$NON-NLS-1$
-					break;
-				case '>' :
-					buf.append("&gt;"); //$NON-NLS-1$
-					break;
-				case '\'' :
-					buf.append("&apos;"); //$NON-NLS-1$
-					break;
-				case '\"' :
-					buf.append("&quot;"); //$NON-NLS-1$
-					break;
-				default :
-					buf.append(c);
-					break;
-			}
-		}
-		return buf.toString();
-	}
-
-	private void doOpenLink(Object href) {
+	void doOpenLink(Object href) {
 		String url = (String) href;
 
 		if (url.startsWith("nw:")) { //$NON-NLS-1$
@@ -274,29 +233,50 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 	 * @see org.eclipse.help.internal.search.ISearchEngineResultCollector#add(org.eclipse.help.internal.search.ISearchEngineResult)
 	 */
 	public synchronized void add(EngineDescriptor ed, ISearchEngineResult match) {
-		EngineResult er = findEngineResult(ed);
-		er.hits.add(match);
 		asyncUpdateResults();
+		EngineResultSection ers = findEngineResult(ed);
+		ers.add(match);
 	}
  
     /* (non-Javadoc)
      * @see org.eclipse.help.internal.search.federated.ISearchEngineResultCollector#add(org.eclipse.help.internal.search.federated.ISearchEngineResult[])
      */
-    public synchronized void add(EngineDescriptor ed, ISearchEngineResult[] searchResults) {
-    	EngineResult er = findEngineResult(ed);
-    	for (int i=0; i<searchResults.length; i++) 
-    		er.hits.add(searchResults[i]);
-    	asyncUpdateResults();
-    }
-    
-    private synchronized EngineResult findEngineResult(EngineDescriptor ed) {
+    public synchronized void add(EngineDescriptor ed, ISearchEngineResult[] matches) {
+    	asyncUpdateResults(); 	
+    	EngineResultSection ers = findEngineResult(ed);
+    	ers.add(matches);
+     }
+
+    private synchronized EngineResultSection findEngineResult(EngineDescriptor ed) {
     	for (int i=0; i<results.size(); i++) {
-    		EngineResult er = (EngineResult)results.get(i);
-    		if (er.ed==ed)
+    		EngineResultSection er = (EngineResultSection)results.get(i);
+    		if (er.matches(ed))
     			return er;
     	}
-    	EngineResult er = new EngineResult(ed);
+    	final EngineResultSection er = new EngineResultSection(this, ed, true);
+    	Display display = parent.getForm().getToolkit().getColors().getDisplay();
+    	display.syncExec(new Runnable() {
+    		public void run() {
+    			Control c = er.createControl(innerForm.getBody(), parent.getForm().getToolkit());
+    			c.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+    		}
+    	});
     	results.add(er);
     	return er;
     }
+    void reflow() {
+    	innerForm.reflow(true);
+     	parent.reflow();
+    }
+	public boolean setFormInput(Object input) {
+		if (input instanceof FederatedSearchResultData) {
+			FederatedSearchResultData data = (FederatedSearchResultData)input;
+			showCategoriesAction.setChecked(data.showCategories);
+			showDescriptionAction.setChecked(data.showDescription);
+			FederatedSearchPart part = (FederatedSearchPart)parent.findPart(IHelpUIConstants.HV_FSEARCH);
+			part.startSearch(data.expression);
+			return true;
+		}
+		return false;
+	}    
 }

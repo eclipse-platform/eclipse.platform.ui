@@ -14,6 +14,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 
@@ -22,7 +23,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
  */
 public class ScopeSetManager {
 	private ScopeSet activeSet;
-	private static final String ACTIVE_SET = "activeScopeSet";
+	private static final String ACTIVE_SET = "activeScopeSet"; //$NON-NLS-1$
 
 	private ArrayList sets;
 
@@ -49,7 +50,7 @@ public class ScopeSetManager {
 	
 	public static void ensureLocation() {
 		IPath location = HelpUIPlugin.getDefault().getStateLocation();
-		location = location.append("scope_sets");
+		location = location.append("scope_sets"); //$NON-NLS-1$
 		File dir = location.toFile();
 		if (dir.exists()==false)
 			dir.mkdir();
@@ -74,19 +75,19 @@ public class ScopeSetManager {
 	private void loadScopeSets() {
 		sets = new ArrayList();
 		IPath location = HelpUIPlugin.getDefault().getStateLocation();
-		location = location.append("scope_sets");
+		location = location.append("scope_sets"); //$NON-NLS-1$
 		File dir = location.toFile();
 		ScopeSet defSet=null;
 		if (dir.exists() && dir.isDirectory()) {
 			File[] files = dir.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
-					return name.endsWith(".pref");
+					return name.endsWith(".pref"); //$NON-NLS-1$
 				}
 			});
 			for (int i = 0; i < files.length; i++) {
 				File file = files[i];
 				String name = file.getName();
-				int loc = name.indexOf(".pref");
+				int loc = name.indexOf(".pref"); //$NON-NLS-1$
 				if (loc != -1) {
 					ScopeSet set = new ScopeSet(name.substring(0, loc));
 					sets.add(set);

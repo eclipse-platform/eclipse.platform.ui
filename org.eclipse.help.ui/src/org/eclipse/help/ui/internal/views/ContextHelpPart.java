@@ -40,6 +40,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	private Button quickSearchButton;
 	private Control lastControl;
 	private IContextProvider lastProvider;
+	private IContext lastContext;
 	private IWorkbenchPart lastPart;
 
 	private String defaultText = ""; //$NON-NLS-1$
@@ -197,7 +198,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				.findPart(IHelpUIConstants.HV_SEARCH);
 		if (part != null) {
 			if (expression != null)
-				part.startSearch(expression);
+				part.startSearch(expression, lastContext);
 		}
 	}
 
@@ -244,20 +245,22 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 
 	private String createContextHelp(IContextProvider provider, Control c) {
 		if (provider==null) return createContextHelp(c);
-		IContext helpContext = provider.getContext(c);
-		if (helpContext != null) {
-			return formatHelpContext(helpContext);
+		lastContext = provider.getContext(c);
+		if (lastContext != null) {
+			return formatHelpContext(lastContext);
 		}
 		return null;
 	}
 
 	private String createContextHelp(Control page) {
 		String text = null;
+		lastContext = null;		
 		if (page != null) {
 			if (page != null /* && page.isVisible() */&& !page.isDisposed()) {
 				IContext helpContext = findHelpContext(page);
 				if (helpContext != null) {
 					text = formatHelpContext(helpContext);
+					lastContext = helpContext;
 				}
 			}
 		}
@@ -300,7 +303,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				sbuf.append("\" indent=\"21\">"); //$NON-NLS-1$
 				sbuf.append("<a href=\""); //$NON-NLS-1$
 				sbuf.append(link.getHref());
-				sbuf.append("\" alt=\"");
+				sbuf.append("\" alt=\""); //$NON-NLS-1$
 				sbuf.append(getTopicCategory(link.getHref(), locale));
 				sbuf.append("\">"); //$NON-NLS-1$
 				sbuf.append(link.getLabel());
