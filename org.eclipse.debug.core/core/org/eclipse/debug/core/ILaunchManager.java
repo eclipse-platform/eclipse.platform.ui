@@ -326,6 +326,15 @@ public interface ILaunchManager {
 	 * @since 2.0
 	 */
 	public void setDefaultLaunchConfigurationType(String fileExtension, ILaunchConfigurationType configType);
+	
+	/**
+	 * Return <code>true</code> if there is a launch configuration with the specified name, 
+	 * <code>false</code> otherwise.
+	 * 
+	 * @param name the name of the launch configuration whose existence is being checked
+	 * @since 2.0
+	 */
+	public boolean isExistingLaunchConfigurationName(String name);
 }
 
 

@@ -141,8 +141,6 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	
 	private String fLastSavedName = null;
 	
-	private String[] fSortedConfigNames = null;
-	
 	/**
 	 * The tab folder
 	 */
@@ -510,7 +508,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		}				
 		
 		// Otherwise, if there's already a config with the same name, complain
-		if (configExists(currentName)) {
+		if (getLaunchManager().isExistingLaunchConfigurationName(currentName)) {
 			throw new CoreException(new Status(IStatus.ERROR,
 												 DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 												 0,
@@ -519,44 +517,11 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		}						
 	}
 	
-	/**
-	 * Return whether or not there is an existing launch configuration with
-	 * the specified name.
-	 */
-	protected boolean configExists(String name) {
-		String[] sortedConfigNames = getAllSortedConfigNames();
-		int index = Arrays.binarySearch(sortedConfigNames, name);
-		if (index < 0) {
-			return false;
-		} 
-		return true;
-	}
-	
 	protected void updateConfigFromName() {
 		if (getWorkingCopy() != null) {
 			getWorkingCopy().rename(getNameTextWidget().getText());
 			refreshStatus();
 		}
-	}
-	
-	/**
-	 * Return a sorted array of the names of all <code>ILaunchConfiguration</code>s in 
-	 * the workspace.
-	 */
-	protected String[] getAllSortedConfigNames() {
-		if (fSortedConfigNames == null) {
-			ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
-			fSortedConfigNames = new String[configs.length];
-			for (int i = 0; i < configs.length; i++) {
-				fSortedConfigNames[i] = configs[i].getName();
-			}
-			Arrays.sort(fSortedConfigNames);
-		}
-		return fSortedConfigNames;
-	}
-	
-	protected void clearConfigNameCache() {
-		fSortedConfigNames = null;
 	}
 	
 	protected void setStatusErrorMessage(String message) {
@@ -1420,7 +1385,6 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * @see ILaunchConfigurationListener#launchConfigurationAdded(ILaunchConfiguration)
 	 */
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
-		clearConfigNameCache();
 		getTreeViewer().refresh();		
 	}
 
@@ -1564,7 +1528,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		Object selectedElement = getTreeViewerFirstSelectedElement();
 		if (selectedElement instanceof ILaunchConfiguration) {
 			ILaunchConfiguration selectedConfig = (ILaunchConfiguration) selectedElement;
-			String newName = generateNewNameFrom(selectedConfig.getName());
+			String newName = generateUniqueNameFrom(selectedConfig.getName());
 			try {
 				ILaunchConfigurationWorkingCopy newWorkingCopy = selectedConfig.copy(newName);
 				ILaunchConfigurationType configType = newWorkingCopy.getType();
@@ -1581,10 +1545,10 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * Construct a new config name using the name of the given config as a starting point.
 	 * The new name is guaranteed not to collide with any existing config name.
 	 */
-	protected String generateNewNameFrom(String startingName) {
+	protected String generateUniqueNameFrom(String startingName) {
 		String newName = startingName;
 		int index = 1;
-		while (configExists(newName)) {
+		while (getLaunchManager().isExistingLaunchConfigurationName(newName)) {
 			StringBuffer buffer = new StringBuffer(startingName);
 			buffer.append(" (copy#");
 			buffer.append(String.valueOf(index));

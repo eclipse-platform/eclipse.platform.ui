@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +23,6 @@ import java.util.Vector;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xml.serialize.Method;
 import org.apache.xml.serialize.OutputFormat;
@@ -91,6 +91,11 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * values are <code>LaunchConfigurationInfo</code>.
 	 */
 	private HashMap fLaunchConfigurations = new HashMap(10);
+	
+	/**
+	 * A cache of launch configuration names currently in the workspace.
+	 */
+	private String[] fSortedConfigNames = null;
 	
 	/**
 	 * Collection of all launch configurations in the workspace.
@@ -877,6 +882,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				listener.launchConfigurationRemoved(config);
 			}
 		}
+		clearConfigNameCache();			
 	}
 	
 	/**
@@ -894,7 +900,8 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				ILaunchConfigurationListener listener = (ILaunchConfigurationListener)listeners[i];
 				listener.launchConfigurationAdded(config);
 			}
-		}			
+		}
+		clearConfigNameCache();			
 	}
 	
 	/**
@@ -909,7 +916,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	protected void launchConfigurationChanged(ILaunchConfiguration config) {
 		removeInfo(config);
 		notifyChanged(config);
-					
+		clearConfigNameCache();								
 	}
 	
 	/**
@@ -926,6 +933,42 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				listener.launchConfigurationChanged(configuration);
 			}
 		}		
+	}
+	
+	/**
+	 * @see ILaunchManager#isExistingLaunchConfigurationName(String)
+	 */
+	public boolean isExistingLaunchConfigurationName(String name) {
+		String[] sortedConfigNames = getAllSortedConfigNames();
+		int index = Arrays.binarySearch(sortedConfigNames, name);
+		if (index < 0) {
+			return false;
+		} 
+		return true;
+	}
+	
+	/**
+	 * Return a sorted array of the names of all <code>ILaunchConfiguration</code>s in 
+	 * the workspace.  These are cached, and cache is cleared when a new config is added,
+	 * deleted or changed.
+	 */
+	protected String[] getAllSortedConfigNames() {
+		if (fSortedConfigNames == null) {
+			ILaunchConfiguration[] configs = getLaunchConfigurations();
+			fSortedConfigNames = new String[configs.length];
+			for (int i = 0; i < configs.length; i++) {
+				fSortedConfigNames[i] = configs[i].getName();
+			}
+			Arrays.sort(fSortedConfigNames);
+		}
+		return fSortedConfigNames;
+	}
+	
+	/**
+	 * The launch config name cache is cleared when a config is added, deleted or changed.
+	 */
+	protected void clearConfigNameCache() {
+		fSortedConfigNames = null;
 	}
 	
 	/**
