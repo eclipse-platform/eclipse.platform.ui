@@ -106,7 +106,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	 *
 	 * @param markerDeltas the list of marker deltas
 	 */
-	private void update(IMarkerDelta[] markerDeltas) {
+	protected void update(IMarkerDelta[] markerDeltas) {
 		
 		if (markerDeltas.length ==  0)
 			return;
