@@ -3,22 +3,20 @@
 <schema targetNamespace="org.eclipse.compare">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.compare" id="structureMergeViewers" name="StructureMerge Viewers"/>
+         <meta.schema plugin="org.eclipse.compare" id="streamMergers" name="Stream Merger"/>
       </appInfo>
       <documentation>
-         This extension point allows a plug-in to register compare/merge 
-viewers for structural content types. The viewer is expected to 
-extend &lt;samp&gt;org.eclipse.jface.viewers.Viewer&lt;/samp&gt;. 
-However, since viewers don&apos;t have a default constructor, 
-the extension point must implement the factory interface 
-for viewers &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;.
+         This extension point allows a plug-in to register a stream merger 
+for specific content types. The stream merger is expected to perform a three-way merge
+on three input streams and write the result to an output stream.
+The extension point must implement the interface &lt;samp&gt;org.eclipse.compare.IStreamMerger&lt;/samp&gt;.
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="viewer" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="streamMerger" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -44,29 +42,29 @@ for viewers &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;.
       </complexType>
    </element>
 
-   <element name="viewer">
+   <element name="streamMerger">
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique identifier that can be used to reference the viewer
+                  a unique identifier that can be used to reference the stream merger
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  name of a class that implements &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;
+                  name of a class that implements &lt;samp&gt;org.eclipse.compare.IStreamMerger&lt;/samp&gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.Viewer:org.eclipse.compare.IViewerCreator"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.compare.IStreamMerger"/>
                </appInfo>
             </annotation>
          </attribute>
          <attribute name="extensions" type="string" use="required">
             <annotation>
                <documentation>
-                  a comma separated list of file extensions e.g. &quot;zip, jar&quot;
+                  a comma separated list of file extensions e.g. &quot;java, properties&quot;
                </documentation>
             </annotation>
          </attribute>
@@ -78,15 +76,14 @@ for viewers &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of compare/merge viewer 
-for zip files (extension &quot;zip&quot;): 
+         The following is an example of a stream merger for property files (extension &quot;properties&quot;): 
 &lt;p&gt;
 &lt;pre&gt;
-&lt;extension point = &quot;org.eclipse.compare.structureMergeViewers&quot;&gt; 
-     &lt;viewer 
-         id=&quot;org.eclipse.compare.ZipCompareViewer&quot; 
-         class=&quot;org.eclipse.compare.ZipCompareViewerCreator&quot; 
-         extensions=&quot;zip&quot; 
+&lt;extension point = &quot;org.eclipse.compare.streamMergers&quot;&gt; 
+     &lt;streamMerger 
+         id=&quot;org.eclipse.compare.merge.TextMerger&quot; 
+         class=&quot;org.eclipse.compare.merge.TextMerger&quot; 
+         extensions=&quot;properties&quot; 
     /&gt; 
 &lt;/extension&gt; 
 &lt;/pre&gt;
@@ -99,7 +96,7 @@ for zip files (extension &quot;zip&quot;):
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The contributed class must implement &lt;code&gt;org.eclipse.compare.IViewerCreator&lt;/code&gt;
+         The contributed class must implement &lt;code&gt;org.eclipse.compare.IStreamMerger&lt;/code&gt;
       </documentation>
    </annotation>
 
@@ -108,8 +105,7 @@ for zip files (extension &quot;zip&quot;):
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The Compare UI plugin defines a structure compare 
-viewer for zip archives.
+         The Compare UI plugin defines a stream merger for line oriented text files.
       </documentation>
    </annotation>
 

@@ -98,7 +98,7 @@ java files (extension &quot;java&quot;):
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         
+         The contributed class must implement &lt;code&gt;org.eclipse.compare.structuremergeviewer.IStructureCreator&lt;/code&gt;
       </documentation>
    </annotation>
 
@@ -119,7 +119,7 @@ java files (extension &quot;java&quot;):
          &lt;p&gt;
 &lt;a href=&quot;hglegal.htm&quot;&gt;
  &lt;img SRC=&quot;ngibmcpy.gif&quot;
-   ALT=&quot;Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved.&quot;
+   ALT=&quot;Copyright (c) 2000, 2004 IBM Corporation and others. All Rights Reserved.&quot;
    BORDER=0 height=14 width=324&gt;&lt;/a&gt;
 &lt;/p&gt;
       </documentation>

@@ -8,8 +8,7 @@
       <documentation>
          This extension point allows a plug-in to register 
 viewers for specific content types. 
-These viewers are used in the &lt;samp&gt;EditionSelectionDialog&lt;/samp&gt; when presenting an edition of a resource or a subsection thereof. The viewer 
-is expected to extend &lt;samp&gt;org.eclipse.jface.viewers.Viewer&lt;/samp&gt;. 
+These viewers are used in the &lt;samp&gt;EditionSelectionDialog&lt;/samp&gt; when presenting an edition of a resource or a subsection thereof. The viewer is expected to extend &lt;samp&gt;org.eclipse.jface.viewers.Viewer&lt;/samp&gt;. 
 However since viewers don&apos;t have a default constructor the extension point must implement the factory interface for viewers &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;.
       </documentation>
    </annotation>
@@ -100,7 +99,7 @@ files (extension &quot;txt&quot;):
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         
+         The contributed class must implement &lt;code&gt;org.eclipse.compare.IViewerCreator&lt;/code&gt;
       </documentation>
    </annotation>
 
@@ -122,7 +121,7 @@ text and images.
          &lt;p&gt;
 &lt;a href=&quot;hglegal.htm&quot;&gt;
  &lt;img SRC=&quot;ngibmcpy.gif&quot;
-   ALT=&quot;Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved.&quot;
+   ALT=&quot;Copyright (c) 2000, 2004 IBM Corporation and others. All Rights Reserved.&quot;
    BORDER=0 height=14 width=324&gt;&lt;/a&gt;
 &lt;/p&gt;
       </documentation>

@@ -274,7 +274,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 		IStructureCreator structureCreator= null;
 		if (ppath != null) {
 			String type= target.getType();
-			IStructureCreatorDescriptor scd= CompareUIPlugin.getStructureCreator(type);
+			StructureCreatorDescriptor scd= CompareUIPlugin.getStructureCreator(type);
 			if (scd != null)
 				structureCreator= scd.createStructureCreator();
 		}
@@ -345,7 +345,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 		IStructureCreator structureCreator= null;
 		if (ppath != null) {
 			String type= target.getType();
-			IStructureCreatorDescriptor scd= CompareUIPlugin.getStructureCreator(type);
+			StructureCreatorDescriptor scd= CompareUIPlugin.getStructureCreator(type);
 			if (scd != null)
 				structureCreator= scd.createStructureCreator();
 		}

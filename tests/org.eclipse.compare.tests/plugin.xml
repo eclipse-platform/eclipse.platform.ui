@@ -18,6 +18,7 @@
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.jdt.junit"/>
+      <import plugin="org.eclipse.core.runtime"/>
    </requires>
 
 

@@ -25,6 +25,7 @@
 
 
 <!-- Compare extension point definitions -->
+   <extension-point id="streamMergers" name="%streamMergers" schema="schema/streamMergers.exsd"/>
    <extension-point id="structureCreators" name="%structureCreators" schema="schema/structureCreators.exsd"/>
    <extension-point id="structureMergeViewers" name="%structureMergeViewers" schema="schema/structureMergeViewers.exsd"/>
    <extension-point id="contentMergeViewers" name="%contentMergeViewers" schema="schema/contentMergeViewers.exsd"/>
@@ -306,6 +307,16 @@
          </action>
       </objectContribution>
    </extension>
+   
+   <extension
+         point="org.eclipse.compare.streamMergers">
+      <structureCreator
+            extensions="txt"
+            class="org.eclipse.compare.internal.merge.TextMerger"
+            id="org.eclipse.compare.internal.merge.TextMerger">
+      </structureCreator>
+   </extension>
+   
    <extension
          point="org.eclipse.compare.structureCreators">
       <structureCreator
@@ -314,6 +325,7 @@
             id="org.eclipse.compare.ZipFileStructureCreator">
       </structureCreator>
    </extension>
+   
    <extension
          point="org.eclipse.compare.contentMergeViewers">
       <viewer
@@ -332,6 +344,7 @@
             id="org.eclipse.compare.ImageMergeViewerCreator">
       </viewer>
    </extension>
+   
    <extension
          point="org.eclipse.compare.contentViewers">
       <viewer
