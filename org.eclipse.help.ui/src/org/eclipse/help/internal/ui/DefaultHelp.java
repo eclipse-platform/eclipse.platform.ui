@@ -3,17 +3,16 @@ package org.eclipse.help.internal.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.*;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.help.*;
-import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.context.ContextImpl;
 import org.eclipse.help.internal.ui.util.*;
 import org.eclipse.help.internal.util.Logger;
-import org.eclipse.help.ITopic;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.help.ui.browser.IBrowser;
+import org.eclipse.help.ui.internal.browser.BrowserManager;
 import org.eclipse.ui.*;
-import org.eclipse.help.internal.context.*;
 /**
  * This class is an implementation of the pluggable help support.
  * In is registered into the support extension point, and all 
@@ -25,8 +24,9 @@ public class DefaultHelp implements IHelp {
 	private static DefaultHelp instance;
 	private IWorkbenchPage helpPage = null;
 	private ContextHelpDialog f1Dialog = null;
+	private IBrowser browser;
 	/**
-	 * BaseHelpViewer constructor comment.
+	 * BaseHelpViewer constructor.
 	 */
 	public DefaultHelp() {
 		super();
@@ -43,7 +43,6 @@ public class DefaultHelp implements IHelp {
 			if (helpPage != null)
 				workbenchWindow.setActivePage(helpPage);
 	}
-		
 	/**
 	 * Displays context-sensitive help for specified context
 	 * @param contextIds context identifier
@@ -51,10 +50,9 @@ public class DefaultHelp implements IHelp {
 	 * @param y int positioning information
 	 */
 	public void displayHelp(String contextId, int x, int y) {
-		String[] contextIds = new String[] {contextId};
+		String[] contextIds = new String[] { contextId };
 		displayHelp(contextIds, x, y);
 	}
-	
 	/**
 	 * Displays context-sensitive help for specified contexts
 	 * @param contextIds java.lang.String[]. 
@@ -74,7 +72,7 @@ public class DefaultHelp implements IHelp {
 	 * @param y int positioning information
 	 */
 	public void displayHelp(IContext context, int x, int y) {
-		IContext[] contexts = new IContext[]{context};
+		IContext[] contexts = new IContext[] { context };
 		displayHelp(contexts, x, y);
 	}
 	/**
@@ -115,16 +113,15 @@ public class DefaultHelp implements IHelp {
 			return;
 		}
 		RelatedTopicsView aRelatedTopicsView;
-		try{
-			aRelatedTopicsView =(RelatedTopicsView) activeP.showView(RelatedTopicsView.ID);
-		}catch(PartInitException pie){
+		try {
+			aRelatedTopicsView = (RelatedTopicsView) activeP.showView(RelatedTopicsView.ID);
+		} catch (PartInitException pie) {
 			return;
 		}
 		// check to see if the view was created successfully
-		if (aRelatedTopicsView==null)
+		if (aRelatedTopicsView == null)
 			return;
 		aRelatedTopicsView.displayHelp(relatedTopics, topic);
-
 	}
 	/**
 	 * Display help.
@@ -143,7 +140,6 @@ public class DefaultHelp implements IHelp {
 			//Documentation is not installed.
 			return;
 		}
-
 		IToc toc = HelpSystem.getTocManager().getToc(tocFileHref);
 		if (toc == null) {
 			// if toc href specified, but not found, log it
@@ -171,8 +167,7 @@ public class DefaultHelp implements IHelp {
 	 * Returns the list of all integrated tables of contents available.
 	 * @return an array of TOC's
 	 */
-	public IToc[] getTocs()
-	{
+	public IToc[] getTocs() {
 		return HelpSystem.getTocManager().getTocs();
 	}
 	/**
@@ -299,5 +294,10 @@ public class DefaultHelp implements IHelp {
 	}
 	public static DefaultHelp getInstance() {
 		return instance;
+	}
+	public IBrowser getHelpBrowser() {
+		if (browser == null)
+			browser = BrowserManager.getInstance().createBrowser();
+		return browser;
 	}
 }
