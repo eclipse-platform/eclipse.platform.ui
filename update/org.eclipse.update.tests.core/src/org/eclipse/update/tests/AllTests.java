@@ -15,6 +15,7 @@ import junit.framework.TestSuite;
 import org.eclipse.update.tests.api.AllAPITests;
 import org.eclipse.update.tests.configurations.AllConfigurationsTests;
 import org.eclipse.update.tests.core.boot.AllPlatformConfigurationTests;
+import org.eclipse.update.tests.mirror.*;
 import org.eclipse.update.tests.model.AllModelTests;
 import org.eclipse.update.tests.nestedfeatures.AllNestedTests;
 import org.eclipse.update.tests.parser.AllParserTests;
@@ -43,7 +44,8 @@ public class AllTests extends TestSuite {
 		suite.addTest(AllRegularRemoveTests.suite());
 		suite.addTest(AllNestedTests.suite());	
 		suite.addTest(AllReconciliationTests.suite());					
-		suite.addTest(AllModelTests.suite());		
+		suite.addTest(AllModelTests.suite());	
+		suite.addTest(AllMirrorTests.suite());	
 		return suite;
 	}
 }

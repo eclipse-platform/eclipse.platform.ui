@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/update.feature1_1.0.0.jar" id="update.feature1" version="1.0.0">
+      <category name="Site1Category"/>
+   </feature>
+   <feature url="features/update.feature2_1.0.0.jar" id="update.feature2" version="1.0.0">
+      <category name="Site1Category2"/>
+   </feature>
+   <feature url="features/update.feature3_1.0.0.jar" id="update.feature3" version="1.0.0">
+      <category name="Site1Category"/>
+   </feature>
+   <category-def name="Site1Category" label="Category-RemoteUpdateSite1">
+      <description>
+         ecetera.
+      </description>
+   </category-def>
+   <category-def name="Site1Category2" label="Category2-RemoteUpdateSite1">
+      <description>
+         ecetera.
+      </description>
+   </category-def>
+</site>
