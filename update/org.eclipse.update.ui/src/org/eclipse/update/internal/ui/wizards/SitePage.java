@@ -303,6 +303,9 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		for (int i = 0; i < items.length; i++) {
 			SiteBookmark bookmark = (SiteBookmark) items[i].getData();
 			treeViewer.setChecked(bookmark, bookmark.isSelected());
+			String[] ignoredCats = bookmark.getIgnoredCategories();
+			treeViewer.setGrayed(bookmark, ignoredCats.length > 0
+					&& bookmark.isSelected());
 		}
 	}
 
