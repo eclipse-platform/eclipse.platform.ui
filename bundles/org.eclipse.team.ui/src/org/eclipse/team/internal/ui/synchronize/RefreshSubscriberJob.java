@@ -239,7 +239,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 				code = IRefreshEvent.STATUS_NO_CHANGES;
 				text.append(Policy.bind("RefreshCompleteDialog.6")); //$NON-NLS-1$
 			}
-			return new Status(IStatus.INFO, TeamUIPlugin.ID, code, text.toString(), null);
+			return new Status(IStatus.OK, TeamUIPlugin.ID, code, text.toString(), null);
 		}
 		return Status.OK_STATUS;
 	}
@@ -263,12 +263,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	
 	private void initialize(final IRefreshSubscriberListener listener) {
 		final IWorkbenchAction[] gotoAction = new IWorkbenchAction[] {null};
-		IProgressMonitor group = Platform.getJobManager().createProgressGroup();
-		group.beginTask(participant.getName(), 100);
-		setProgressGroup(group, 80);
-		getCollector().setProgressGroup(group, 20);
-		setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "icon"), participant.getImageDescriptor());
-		setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "goto"), new WorkbenchAction() {
+		final IWorkbenchAction actionWrapper = new WorkbenchAction() {
 			public void run() {
 				if(gotoAction[0] != null) {
 					gotoAction[0].run();
@@ -287,7 +282,14 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 					gotoAction[0].dispose();
 				}
 			}
-		});
+		};
+		
+		IProgressMonitor group = Platform.getJobManager().createProgressGroup();
+		group.beginTask(participant.getName(), 100);
+		setProgressGroup(group, 80);
+		getCollector().setProgressGroup(group, 20);
+		setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "icon"), participant.getImageDescriptor());
+		setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "goto"), actionWrapper);
 		// Listener delagate
 		IRefreshSubscriberListener autoListener = new IRefreshSubscriberListener() {
 			public void refreshStarted(IRefreshEvent event) {
@@ -317,12 +319,12 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 					// to perform the results.
 					} else {
 						gotoAction[0] = runnable;
-						gotoAction[0].setEnabled(runnable.isEnabled());
+						actionWrapper.setEnabled(runnable.isEnabled());
 						runnable.addPropertyChangeListener(new IPropertyChangeListener() {
 							public void propertyChange(PropertyChangeEvent event) {
 								if(event.getProperty().equals(IAction.ENABLED)) {
 									Boolean bool = (Boolean) event.getNewValue();
-									gotoAction[0].setEnabled(bool.booleanValue());
+									actionWrapper.setEnabled(bool.booleanValue());
 								}
 							}
 						});
