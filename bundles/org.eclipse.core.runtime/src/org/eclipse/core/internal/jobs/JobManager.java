@@ -307,13 +307,18 @@ public class JobManager implements IJobManager {
 	protected InternalJob findBlockingJob(InternalJob waiting) {
 		if (waiting.getRule() == null)
 			return null;
-		for (Iterator it = running.iterator(); it.hasNext();) {
-			InternalJob job = (InternalJob) it.next();
-			//check the running job and all blocked jobs
-			while (job != null) {
-				if (waiting.isConflicting(job))
-					return job;
-				job = job.previous();
+		// TODO: The javadoc for the "lock" field says not to execute
+		// user code. Re-visit this use of the lock and determine the 
+		// correct course of action. 
+		synchronized (lock) {
+			for (Iterator it = running.iterator(); it.hasNext();) {
+				InternalJob job = (InternalJob) it.next();
+				//check the running job and all blocked jobs
+				while (job != null) {
+					if (waiting.isConflicting(job))
+						return job;
+					job = job.previous();
+				}
 			}
 		}
 		return null;
