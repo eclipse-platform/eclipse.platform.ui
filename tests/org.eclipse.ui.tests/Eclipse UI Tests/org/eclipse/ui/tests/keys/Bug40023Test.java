@@ -15,7 +15,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -37,9 +36,9 @@ public class Bug40023Test extends UITestCase {
 	 * array of menu items.
 	 * 
 	 * @param menuItems
-	 *           The array of menu items to search; must not be <code>null</code>
+	 *            The array of menu items to search; must not be <code>null</code>
 	 * @param text
-	 *           The text to look for; may be <code>null</code>.
+	 *            The text to look for; may be <code>null</code>.
 	 * @return The menu item, if any is found; <code>null</code> otherwise.
 	 */
 	public static MenuItem getMenuItem(MenuItem[] menuItems, String text) {
@@ -56,7 +55,7 @@ public class Bug40023Test extends UITestCase {
 	 * Constructor for Bug40023Test.
 	 * 
 	 * @param name
-	 *           The name of the test
+	 *            The name of the test
 	 */
 	public Bug40023Test(String name) {
 		super(name);
@@ -67,15 +66,15 @@ public class Bug40023Test extends UITestCase {
 	 * the keyboard.
 	 * 
 	 * @throws CoreException
-	 *            If the exported preferences file is invalid for some reason.
+	 *             If the exported preferences file is invalid for some reason.
 	 * @throws FileNotFoundException
-	 *            If the temporary file is removed before it can be read in.
-	 *            (Wow)
+	 *             If the temporary file is removed before it can be read in.
+	 *             (Wow)
 	 * @throws IOException
-	 *            If the creation of or the writing to the temporary file fails
-	 *            for some reason.
+	 *             If the creation of or the writing to the temporary file
+	 *             fails for some reason.
 	 * @throws ParseException
-	 *            If the key binding cannot be parsed.
+	 *             If the key binding cannot be parsed.
 	 */
 	public void testCheckOnCheckbox() throws CoreException, FileNotFoundException, IOException, ParseException {
 		// Open a window to run the test.
@@ -87,17 +86,13 @@ public class Bug40023Test extends UITestCase {
 		String keySequenceText = "CTRL+ALT+L"; //$NON-NLS-1$
 		PreferenceMutator.setKeyBinding(commandId, keySequenceText);
 
-		// Update the display.
-		Shell shell = window.getShell();
-		Display display = shell.getDisplay();
-		while (display.readAndDispatch());
-
 		// Press "CTRL+ALT+L" to lock the toolbars.
 		KeyStroke[] keyStrokes = { KeyStroke.getInstance(keySequenceText)};
 		Event event = new Event();
 		workbench.press(keyStrokes, event);
 
 		// Check that the "Lock Toolbars" menu item is now checked.
+		Shell shell = window.getShell();
 		MenuItem windowMenu = getMenuItem(shell.getMenuBar().getItems(), "&Window"); //$NON-NLS-1$
 		MenuItem lockToolBarsMenuItem = getMenuItem(windowMenu.getMenu().getItems(), "Lock the &Toolbars"); //$NON-NLS-1$
 		assertTrue("Checkbox menu item is not checked.", lockToolBarsMenuItem.getSelection()); //$NON-NLS-1$
