@@ -307,6 +307,8 @@ public void run() {
 }
 
 protected void printArguments(Project project) {
+	if ((messageOutputLevel != Project.MSG_DEBUG) && (messageOutputLevel != Project.MSG_VERBOSE))
+		return;
 	StringBuffer sb = new StringBuffer();
 	for (int i = 0; i < extraArguments.length; i++)
 		sb.append(extraArguments[i]);
