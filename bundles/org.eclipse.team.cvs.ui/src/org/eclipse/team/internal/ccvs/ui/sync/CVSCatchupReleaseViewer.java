@@ -283,6 +283,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				forceUpdateAction.update(SyncView.SYNC_INCOMING);
 				manager.add(forceUpdateAction);
 				manager.add(new Separator());
+				confirmMerge.setEnabled(confirmMerge.isEnabled());				
 				manager.add(confirmMerge);
 				break;
 			case SyncView.SYNC_OUTGOING:
@@ -295,7 +296,9 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				ignoreAction.update();
 				manager.add(ignoreAction);
 				manager.add(new Separator());
+				confirmMerge.setEnabled(confirmMerge.isEnabled());				
 				manager.add(confirmMerge);
+				selectAdditions.setEnabled(selectAdditions.isEnabled());				
 				manager.add(selectAdditions);
 				break;
 			case SyncView.SYNC_BOTH:
@@ -311,6 +314,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				forceUpdateAction.update(SyncView.SYNC_BOTH);
 				manager.add(forceUpdateAction);				
 				manager.add(new Separator());
+				confirmMerge.setEnabled( confirmMerge.isEnabled());				
 				manager.add(confirmMerge);
 				break;
 			case SyncView.SYNC_MERGE:
@@ -447,13 +451,11 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 					Object element = (Object) it.next();
 					if(element instanceof TeamFile) {
 						TeamFile file = (TeamFile)element;						
-						if(file.hasBeenSaved()) {
-							int direction = file.getChangeDirection();
-							int type = file.getChangeType();
-							if(direction == IRemoteSyncElement.INCOMING ||
-							   direction == IRemoteSyncElement.CONFLICTING) {
-								continue;
-							}
+						int direction = file.getChangeDirection();
+						int type = file.getChangeType();
+						if(direction == IRemoteSyncElement.INCOMING ||
+						   direction == IRemoteSyncElement.CONFLICTING) {
+							continue;
 						}
 					}
 					return false;
