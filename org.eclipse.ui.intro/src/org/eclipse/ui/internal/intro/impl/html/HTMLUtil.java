@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.html;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 
@@ -152,21 +152,25 @@ public final class HTMLUtil {
 		return closing;
 	}
 	/**
-	 * Get the absolute path of the given plugin, in the form
+	 * Get the absolute path of the given bundle, in the form
 	 * file:/path_to_plugin
 	 * 
-	 * @param descriptor
+	 * @param bundle
 	 * @return
 	 */
 	public static String getResolvedBundleLocation(Bundle bundle) {
 		try {
-			URL url = bundle.getEntry("");
-			if (url == null)
+			URL bundleLocation = bundle.getEntry("");
+			if (bundleLocation == null)
 				return null;
-			url = Platform.asLocalURL(url);
-			return url.toExternalForm();
+			bundleLocation = Platform.asLocalURL(bundleLocation);
+			return bundleLocation.toExternalForm();
+		} catch (IllegalStateException e) {
+			Log.error("Failed to access bundle: "
+					+ bundle.getSymbolicName(), e);
+			return null;
 		} catch (IOException e) {
-			Log.error("Failed to resolve path for "
+			Log.error("Failed to resolve URL path for bundle: "
 					+ bundle.getSymbolicName(), e);
 			return null;
 		}
