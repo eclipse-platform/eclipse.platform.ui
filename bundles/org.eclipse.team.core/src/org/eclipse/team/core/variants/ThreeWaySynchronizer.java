@@ -376,12 +376,12 @@ public class ThreeWaySynchronizer implements IFlushOperation {
 	 * @param monitor a progress monitor
 	 * @throws TeamException
 	 */
-	public void run(ISchedulingRule resourceRule, IWorkspaceRunnable runnable, IProgressMonitor monitor) throws TeamException {
+	public void run(IResource resourceRule, IWorkspaceRunnable runnable, IProgressMonitor monitor) throws TeamException {
 		monitor = Policy.monitorFor(monitor);
 		monitor.beginTask(null, 100);
 		ISchedulingRule rule = beginBatching(resourceRule, Policy.subMonitorFor(monitor, 10));
 		try {
-			runnable.run(Policy.subMonitorFor(monitor, 80));
+			cache.run(resourceRule, runnable, Policy.subMonitorFor(monitor, 80));
 		} catch (CoreException e) {
 			throw TeamException.asTeamException(e);
 		} finally {

@@ -11,6 +11,9 @@
 package org.eclipse.team.core.variants;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 
 /**
@@ -64,6 +67,12 @@ public abstract class ThreeWayRemoteTree extends ResourceVariantTree {
 		}
 	}
 	
+	/**
+	 * Create a remote resource variant tree that stores and obtains
+	 * it's bytes from the remote slot of the synchronizer of the
+	 * given subscriber
+	 * @param subscriber a three-way subscriber
+	 */
 	public ThreeWayRemoteTree(ThreeWaySubscriber subscriber) {
 		super(new RemoteResourceVariantByteStore(subscriber.getSynchronizer()));
 		this.subscriber = subscriber;
@@ -83,7 +92,26 @@ public abstract class ThreeWayRemoteTree extends ResourceVariantTree {
 		return getSubscriber().getResourceVariant(resource, getByteStore().getBytes(resource));
 	}
 
+	/**
+	 * Return the subscriber associated with this resource variant tree.
+	 * @return the subscriber associated with this resource variant tree
+	 */
 	protected ThreeWaySubscriber getSubscriber() {
 		return subscriber;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.AbstractResourceVariantTree#collectChanges(org.eclipse.core.resources.IResource, org.eclipse.team.core.variants.IResourceVariant, int, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected IResource[] collectChanges(final IResource local,
+			final IResourceVariant remote, final int depth, IProgressMonitor monitor)
+			throws TeamException {
+		final IResource[][] resources = new IResource[][] { null };
+		getSubscriber().getSynchronizer().run(local, new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				resources[0] = ThreeWayRemoteTree.super.collectChanges(local, remote, depth, monitor);
+			}
+		}, monitor);
+		return resources[0];
 	}
 }

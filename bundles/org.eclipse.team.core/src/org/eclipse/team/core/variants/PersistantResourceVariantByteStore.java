@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.Assert;
@@ -153,6 +154,18 @@ public class PersistantResourceVariantByteStore extends ResourceVariantByteStore
 	private byte[] internalGetSyncBytes(IResource resource) throws TeamException {
 		try {
 			return getSynchronizer().getSyncInfo(getSyncName(), resource);
+		} catch (CoreException e) {
+			throw TeamException.asTeamException(e);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.ResourceVariantByteStore#run(org.eclipse.core.resources.IWorkspaceRunnable, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void run(IResource root, IWorkspaceRunnable runnable, IProgressMonitor monitor)
+			throws TeamException {
+		try {
+			ResourcesPlugin.getWorkspace().run(runnable, root, 0, monitor);
 		} catch (CoreException e) {
 			throw TeamException.asTeamException(e);
 		}

@@ -95,6 +95,15 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 		} else {
 			kind = info.getKind() & conflictTypeMask;
 		}
+		// Special handling for folders
+		if (kind != kindOther && resource.getType() == IResource.FOLDER) {
+			// The only two states for folders are outgoing addition and in-sync.
+			// Other additions will appear as in-sync
+			if (info.getKind() == SyncInfo.IN_SYNC 
+					&& (syncKind & SyncInfo.ADDITION) != 0) {
+				return;
+			}
+		}
 		assertTrue(message + ": improper sync state for " + resource + " expected " + 
 				   SyncInfo.kindToString(kindOther) + " but was " +
 				   SyncInfo.kindToString(kind), kind == kindOther);

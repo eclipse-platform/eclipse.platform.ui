@@ -11,6 +11,10 @@
 package org.eclipse.team.core.variants;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.team.core.TeamException;
 
 /**
@@ -109,5 +113,24 @@ public abstract class ResourceVariantByteStore {
 			if (syncBytes1[i] != syncBytes2[i]) return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Run the given action which may contain multiple modfications
+	 * to the byte store. By default, the action is run. Subclasses
+	 * may override to obtain scheduling rules or batch deltas (if
+	 * the byte store modifies workspace resources).
+	 * @param root the root resource for all modifications
+	 * @param action the action to perform
+	 * @param monitor a progress monitor.
+	 * @exception CoreException if the operation failed.
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 */
+	public void run(IResource root, IWorkspaceRunnable runnable, IProgressMonitor monitor) throws TeamException {
+		try {
+			runnable.run(monitor);
+		} catch (CoreException e) {
+			throw TeamException.asTeamException(e);
+		}
 	}
 }

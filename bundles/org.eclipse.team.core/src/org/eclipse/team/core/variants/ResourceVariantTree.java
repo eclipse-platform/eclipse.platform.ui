@@ -11,6 +11,9 @@
 package org.eclipse.team.core.variants;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 
 /**
@@ -92,5 +95,20 @@ public abstract class ResourceVariantTree extends AbstractResourceVariantTree {
 	protected byte[] getBytes(IResource local, IResourceVariant remote) throws TeamException {
 		if (remote == null) return null;
 		return remote.asBytes();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.AbstractResourceVariantTree#collectChanges(org.eclipse.core.resources.IResource, org.eclipse.team.core.variants.IResourceVariant, int, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected IResource[] collectChanges(final IResource local,
+			final IResourceVariant remote, final int depth, IProgressMonitor monitor)
+			throws TeamException {
+		final IResource[][] resources = new IResource[][] { null };
+		getByteStore().run(local, new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				resources[0] = ResourceVariantTree.super.collectChanges(local, remote, depth, monitor);
+			}
+		}, monitor);
+		return resources[0];
 	}
 }

@@ -14,6 +14,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.*;
 
@@ -170,5 +172,12 @@ public abstract class DescendantResourceVariantByteStore extends ResourceVariant
 			}
 		}
 		return (IResource[]) members.toArray(new IResource[members.size()]);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.ResourceVariantByteStore#run(org.eclipse.core.resources.IResource, org.eclipse.core.resources.IWorkspaceRunnable, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void run(IResource root, IWorkspaceRunnable runnable, IProgressMonitor monitor) throws TeamException {
+		remoteStore.run(root, runnable, monitor);
 	}
 }

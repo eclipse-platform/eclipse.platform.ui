@@ -23,10 +23,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.Policy;
@@ -76,8 +73,6 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 	 * Helper method invoked from <code>refresh(IResource[], int, IProgressMonitor monitor)</code>
 	 * for each resource. The default implementation performs the following steps:
 	 * <ol>
-	 * <li>obtain the scheduling rule for the resource
-	 * as returned from <code>getSchedulingRule(IResource)</code>. 
 	 * <li>get the resource variant handle corresponding to the local resource by calling
 	 * <code>getRemoteTree</code>.
 	 * <li>pass the local resource and the resource variant handle to <code>collectChanges</code>
@@ -93,14 +88,7 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 	protected IResource[] refresh(IResource resource, int depth, IProgressMonitor monitor) throws TeamException {
 		IResource[] changedResources = null;
 		monitor.beginTask(null, 100);
-		ISchedulingRule rule = getSchedulingRule(resource);
 		try {
-			Platform.getJobManager().beginRule(rule, monitor);
-			if (!resource.getProject().isAccessible()) {
-				// The project is closed so silently skip it
-				return new IResource[0];
-			}
-			
 			monitor.setTaskName(Policy.bind("SynchronizationCacheRefreshOperation.0", resource.getFullPath().makeRelative().toString())); //$NON-NLS-1$
 			
 			// build the remote tree only if an initial tree hasn't been provided
@@ -115,22 +103,10 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 				sub.done();	 
 			}
 		} finally {
-			Platform.getJobManager().endRule(rule);
 			monitor.done();
 		}
 		if (changedResources == null) return new IResource[0];
 		return changedResources;
-	}
-
-	/**
-	 * Return the scheduling rule that should be obtained for the given resource.
-	 * This method is invoked from <code>refresh(IResource, int, IProgressMonitor)</code>.
-	 * By default, the resource's project is returned. Subclasses may override.
-	 * @param resource the resource being refreshed
-	 * @return a scheduling rule or <code>null</code>
-	 */
-	protected ISchedulingRule getSchedulingRule(IResource resource) {
-		return resource.getProject();
 	}
 
 	/**
@@ -263,12 +239,7 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 			while (e.hasNext()) {
 				String keyChildName = (String) e.next();
 	
-				if (progress != null) {
-					if (progress.isCanceled()) {
-						throw new OperationCanceledException();
-					}
-					// XXX show some progress?
-				}
+				Policy.checkCanceled(progress);
 	
 				IResource localChild =
 					localSet != null ? (IResource) localSet.get(keyChildName) : null;

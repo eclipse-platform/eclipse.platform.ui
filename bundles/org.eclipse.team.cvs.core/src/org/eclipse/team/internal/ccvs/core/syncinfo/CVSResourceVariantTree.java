@@ -15,10 +15,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
@@ -169,6 +174,16 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 		}
 		return bytes;
 	}
+	
+	private boolean hasLocalSyncInfo(IContainer folder) {
+		ICVSFolder local = CVSWorkspaceRoot.getCVSFolderFor(folder);
+		try {
+			return local.getFolderSyncInfo() != null;
+		} catch (CVSException e) {
+			// Say that there is sync info and let the failure occur elsewhere
+			return true;
+		}
+	}
 
 	public CVSTag getTag(IResource resource) {
 		return tag;
@@ -185,6 +200,17 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#setVariant(org.eclipse.core.resources.IResource, org.eclipse.team.core.synchronize.IResourceVariant)
 	 */
 	protected boolean setVariant(IResource local, IResourceVariant remote) throws TeamException {
+		if (local.getType() == IResource.FOLDER && remote != null 
+				&& !hasLocalSyncInfo((IFolder)local)
+				&& hasLocalSyncInfo(local.getParent())) {
+			// Manage the folder locally since folders exist in all versions, etc
+			// Use the info from the remote except get the tag from the locla parent
+			CVSTag tag = CVSWorkspaceRoot.getCVSFolderFor(local.getParent()).getFolderSyncInfo().getTag();
+			FolderSyncInfo info = FolderSyncInfo.getFolderSyncInfo(remote.asBytes());
+			FolderSyncInfo newInfo = new FolderSyncInfo(info.getRepository(), info.getRoot(), tag, info.getIsStatic());
+			ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IFolder)local);
+			cvsFolder.setFolderSyncInfo(newInfo);
+		}
 		boolean changed = super.setVariant(local, remote);
 		if (local.getType() == IResource.FILE && getByteStore().getBytes(local) != null && !parentHasSyncBytes(local)) {
 			// Log a warning if there is no sync bytes available for the resource's
@@ -231,7 +257,6 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 	private IResource[] getStoredMembers(IResource local) throws TeamException {			
 		try {
 			if (local.getType() != IResource.FILE && (local.exists() || local.isPhantom())) {
-				// TODO: Not very generic! 
 				IResource[] allChildren = ((IContainer)local).members(true /* include phantoms */);
 				List childrenWithSyncBytes = new ArrayList();
 				for (int i = 0; i < allChildren.length; i++) {
@@ -247,5 +272,64 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 			throw TeamException.asTeamException(e);
 		}
 		return new IResource[0];
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.AbstractResourceVariantTree#refresh(org.eclipse.core.resources.IResource, int, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected IResource[] refresh(IResource resource, int depth, IProgressMonitor monitor) throws TeamException {
+		IResource[] changedResources = null;
+		monitor.beginTask(null, 100);
+		// Wait up to 10 seconds for build to finish
+		int count = 0;
+		while (count < 10 
+				&& (isJobInFamilyRunning(ResourcesPlugin.FAMILY_AUTO_BUILD)
+				|| isJobInFamilyRunning(ResourcesPlugin.FAMILY_MANUAL_BUILD))) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// Conitinue
+			}	
+			count++;
+			Policy.checkCanceled(monitor);
+		}
+		ISchedulingRule rule = getSchedulingRule(resource);
+		try {
+			Platform.getJobManager().beginRule(rule, monitor);
+			if (!resource.getProject().isAccessible()) {
+				// The project is closed so silently skip it
+				return new IResource[0];
+			}
+			changedResources = super.refresh(resource, depth, monitor);
+		} finally {
+			Platform.getJobManager().endRule(rule);
+			monitor.done();
+		}
+		if (changedResources == null) return new IResource[0];
+		return changedResources;
+	}
+	
+	/**
+	 * Return the scheduling rule that should be obtained for the given resource.
+	 * This method is invoked from <code>refresh(IResource, int, IProgressMonitor)</code>.
+	 * By default, the resource's project is returned. Subclasses may override.
+	 * @param resource the resource being refreshed
+	 * @return a scheduling rule or <code>null</code>
+	 */
+	protected ISchedulingRule getSchedulingRule(IResource resource) {
+		return resource.getProject();
+	}
+	
+	private boolean isJobInFamilyRunning(Object family) {
+		Job[] jobs = Platform.getJobManager().find(family);
+		if (jobs != null && jobs.length > 0) {
+			for (int i = 0; i < jobs.length; i++) {
+				Job job = jobs[i];
+				if (job.getState() != Job.NONE) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
