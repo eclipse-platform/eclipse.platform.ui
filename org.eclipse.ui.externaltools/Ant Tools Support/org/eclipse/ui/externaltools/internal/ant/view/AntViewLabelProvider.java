@@ -13,9 +13,13 @@ package org.eclipse.ui.externaltools.internal.ant.view;
 
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
 import org.eclipse.ui.externaltools.internal.model.AntImageDescriptor;
@@ -26,7 +30,7 @@ import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
  * A label provider that provides labels for elements displayed in the
  * <code>AntView</code>
  */
-public class AntViewLabelProvider implements ILabelProvider {
+public class AntViewLabelProvider implements ILabelProvider, IColorProvider {
 
 	/**
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
@@ -109,4 +113,23 @@ public class AntViewLabelProvider implements ILabelProvider {
 	public void removeListener(ILabelProviderListener listener) {
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
+	 */
+	public Color getForeground(Object element) {
+		if (element instanceof TargetNode) {
+			TargetNode target= (TargetNode)element;
+			if (target == target.getProject().getDefaultTarget()) {
+				return Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
+			}
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
+	 */
+	public Color getBackground(Object element) {
+		return null;
+	}
 }
