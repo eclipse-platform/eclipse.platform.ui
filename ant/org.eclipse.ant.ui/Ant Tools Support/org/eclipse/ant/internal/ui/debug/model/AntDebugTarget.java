@@ -13,12 +13,12 @@ package org.eclipse.ant.internal.ui.debug.model;
 import org.eclipse.ant.internal.ui.debug.IAntDebugConstants;
 import org.eclipse.ant.internal.ui.debug.IAntDebugController;
 import org.eclipse.core.internal.variables.StringVariableManager;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -31,7 +31,7 @@ import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 /**
  * Ant Debug Target
  */
-public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
+public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDebugEventSetListener {
 	
 	// associated system process (Ant Build)
 	private IProcess fProcess;
@@ -74,6 +74,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 		fThreads = new IThread[] {fThread};
 		
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
+        DebugPlugin.getDefault().addDebugEventListener(this);
 	}
 	
 	/* (non-Javadoc)
@@ -117,19 +118,9 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	 */
 	public boolean supportsBreakpoint(IBreakpoint breakpoint) {
 		if (breakpoint.getModelIdentifier().equals(IAntDebugConstants.ID_ANT_DEBUG_MODEL)) {
-			try {
-				String buildFilePath = getLaunch().getLaunchConfiguration().getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
-				buildFilePath= StringVariableManager.getDefault().performStringSubstitution(buildFilePath);
-				if (buildFilePath != null) {
-					IMarker marker = breakpoint.getMarker();
-					if (marker != null) {
-						//need to consider all breakpoints as no way to tell which set
-					    //or buildfiles will be executed (ant task)
-					    return true;
-					}
-				}
-			} catch (CoreException e) {
-			}			
+		    //need to consider all breakpoints as no way to tell which set
+		    //of buildfiles will be executed (ant task)
+		    return true;
 		}
 		return false;
 	}
@@ -152,14 +143,14 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
 	public boolean canTerminate() {
-		return !fTerminated;
+		return !fTerminated && fProcess.canTerminate();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
 	public boolean isTerminated() {
-		return fTerminated;
+		return fTerminated || fProcess.isTerminated();
 	}
 	
 	/* (non-Javadoc)
@@ -203,7 +194,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	 * 
 	 * @param detail reason for the suspend
 	 */
-	protected void suspended(int detail) {
+	public void suspended(int detail) {
 		fSuspended = true;
 		fThread.setStepping(false);
 		fThread.fireSuspendEvent(detail);
@@ -312,9 +303,11 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 		fTerminated = true;
 		fSuspended = false;
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
+        DebugPlugin.getDefault().removeDebugEventListener(this);
 		if (!getProcess().isTerminated()) {
 		    try {
-		        getProcess().terminate();
+                fProcess.terminate();
+                resume();
 		    } catch (DebugException e) {       
 		    }
 		}
@@ -326,7 +319,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	 * 
 	 * @throws DebugException if the request fails
 	 */
-	protected void stepOver() throws DebugException {
+	protected void stepOver() {
 	    fSuspended= false;
 		fController.stepOver();
 	}
@@ -336,7 +329,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	 * 
 	 * @throws DebugException if the request fails
 	 */
-	protected void stepInto() throws DebugException {
+	protected void stepInto() {
 	    fSuspended= false;
 	    fController.stepInto();
 	}
@@ -372,6 +365,11 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 		suspended(DebugEvent.BREAKPOINT);
 	}	
 	
+    public void breakpointHit (IBreakpoint breakpoint) {
+        fThread.setBreakpoints(new IBreakpoint[]{breakpoint});
+        suspended(DebugEvent.BREAKPOINT);
+    }
+    
 	protected void getStackFrames() {
 		fController.getStackFrames();
 	}
@@ -379,4 +377,16 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	protected void getProperties() {
 		fController.getProperties();
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
+     */
+    public void handleDebugEvents(DebugEvent[] events) {
+        for (int i = 0; i < events.length; i++) {
+            DebugEvent event = events[i];
+            if (event.getKind() == DebugEvent.TERMINATE && event.getSource().equals(fProcess)) {
+                terminated();
+            }
+        }
+    }
 }

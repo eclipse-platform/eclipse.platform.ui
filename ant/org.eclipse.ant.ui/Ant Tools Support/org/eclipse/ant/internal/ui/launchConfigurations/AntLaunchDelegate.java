@@ -254,7 +254,9 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		
 		AntRunner runner= new AntRunner();
 		runner.setBuildFileLocation(location.toOSString());
-		if (ExternalToolsUtil.getCaptureOutput(configuration)) {
+        if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
+            runner.addBuildLogger(ANT_DEBUG_LOGGER_CLASS);
+        } else if (ExternalToolsUtil.getCaptureOutput(configuration)) {
 			runner.addBuildLogger(ANT_LOGGER_CLASS);
 		} else {
 			runner.addBuildLogger(NULL_LOGGER_CLASS);

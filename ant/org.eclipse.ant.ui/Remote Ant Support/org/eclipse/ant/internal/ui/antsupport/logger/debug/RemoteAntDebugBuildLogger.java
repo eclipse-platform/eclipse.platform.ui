@@ -209,48 +209,46 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		waitIfSuspended();
 	}
 	
-	private void waitIfSuspended() {
-		synchronized (this) {
-			if (fCurrentTask != null) {
-				String detail= null;
-				boolean shouldSuspend= true;
-				RemoteAntBreakpoint breakpoint= breakpointAtLineNumber(fCurrentTask.getLocation());
-				if (breakpoint != null) {
-					detail= breakpoint.toMarshallString();
-				} else if (fStepIntoSuspend) {
-					detail= DebugMessageIds.STEP;
-					fStepIntoSuspend= false;
-				} else if (fStepOverSuspend) {
-				    if (fLastTaskFinished == fStepOverTask) {
-				        detail= DebugMessageIds.STEP;
-				        fStepOverSuspend= false;
-				        fStepOverTask= null;
-				    } else {
-				        shouldSuspend= false;
-				    }
-				} else if (fClientSuspend) {
-					detail= DebugMessageIds.CLIENT_REQUEST;
-					fClientSuspend= false;
-				} else {
-					shouldSuspend= false;
-				}
-				if (shouldSuspend) {
-					StringBuffer message= new StringBuffer(DebugMessageIds.SUSPENDED);
-					message.append(detail);
-					sendRequestResponse(message.toString());
-					try {
-						wait();
-					} catch (InterruptedException e) {
-					}
-				}
-			} else if (fShouldSuspend) {
-				try {
-					fShouldSuspend= false;
-					wait();
-				} catch (InterruptedException e) {
-				}
-			}
-		}
+	private synchronized void waitIfSuspended() {
+	    if (fCurrentTask != null) {
+	        String detail= null;
+	        boolean shouldSuspend= true;
+	        RemoteAntBreakpoint breakpoint= breakpointAtLineNumber(fCurrentTask.getLocation());
+	        if (breakpoint != null) {
+	            detail= breakpoint.toMarshallString();
+	        } else if (fStepIntoSuspend) {
+	            detail= DebugMessageIds.STEP;
+	            fStepIntoSuspend= false;
+	        } else if (fStepOverSuspend) {
+	            if (fLastTaskFinished == fStepOverTask) {
+	                detail= DebugMessageIds.STEP;
+	                fStepOverSuspend= false;
+	                fStepOverTask= null;
+	            } else {
+	                shouldSuspend= false;
+	            }
+	        } else if (fClientSuspend) {
+	            detail= DebugMessageIds.CLIENT_REQUEST;
+	            fClientSuspend= false;
+	        } else {
+	            shouldSuspend= false;
+	        }
+	        if (shouldSuspend) {
+	            StringBuffer message= new StringBuffer(DebugMessageIds.SUSPENDED);
+	            message.append(detail);
+	            sendRequestResponse(message.toString());
+	            try {
+	                wait();
+	            } catch (InterruptedException e) {
+	            }
+	        }
+	    } else if (fShouldSuspend) {
+	        try {
+	            fShouldSuspend= false;
+	            wait();
+	        } catch (InterruptedException e) {
+	        }
+	    }
 	}
 
 	private RemoteAntBreakpoint breakpointAtLineNumber(Location location) {

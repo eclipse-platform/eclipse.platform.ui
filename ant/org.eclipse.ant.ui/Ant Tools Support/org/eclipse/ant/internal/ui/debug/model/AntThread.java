@@ -73,12 +73,17 @@ public class AntThread extends AntDebugElement implements IThread {
 	
 	/**
 	 * Returns the current stack frames in the thread
-	 * 
+	 * possibly waiting until the frames are populating
+     * 
 	 * @return the current stack frames in the thread
 	 * @throws DebugException if unable to perform the request
 	 */
-	private void getStackFrames0() throws DebugException {
+	private void getStackFrames0() {
 		fTarget.getStackFrames();
+        if (fFrames != null && fFrames.size() > 0) {
+            //frames set..no need to wait
+            return;
+        }
 		try {
 		    wait();
 		} catch (InterruptedException e) {
@@ -323,18 +328,21 @@ public class AntThread extends AntDebugElement implements IThread {
 	    		}
 	    	}
 	    } finally {
+            fRefreshProperties= false;
 	        //wake up the call from getVariables
 	    	notifyAll();
 	    }
 	}
     
-    protected synchronized IVariable[] getVariables() throws DebugException {
+    protected synchronized IVariable[] getVariables() {
         if (fRefreshProperties) {
-            fRefreshProperties= false;
             fTarget.getProperties();
-            try {
-                wait();
-            } catch (InterruptedException ie) {
+            if (fRefreshProperties) { 
+            //properties have not been set; need to wait
+                try {
+                    wait();
+                } catch (InterruptedException ie) {
+                }
             }
         }
         
