@@ -38,7 +38,7 @@ public class FetchMembersOperation extends RemoteOperation {
 	private IElementCollector collector;
 	
 	public class InternalRemoteFolderMemberFetcher extends RemoteFolderMemberFetcher {
-		int sendIncrement = 10;
+		int sendIncrement = 100;
 		int foldersSent = 0;
 		List unsent = new ArrayList();
 		protected InternalRemoteFolderMemberFetcher(RemoteFolder parentFolder, CVSTag tag) {
