@@ -24,6 +24,7 @@ import org.osgi.service.startlevel.*;
 import org.osgi.util.tracker.*;
 
 public class ConfigurationActivator implements BundleActivator {
+
 	public static String PI_CONFIGURATOR = "org.eclipse.update.configurator";
 	// debug options
 	public static String OPTION_DEBUG = PI_CONFIGURATOR + "/debug";
@@ -157,13 +158,23 @@ public class ConfigurationActivator implements BundleActivator {
 	}
 
 	private void installBundles() {
-
 		ServiceReference reference = context.getServiceReference(StartLevel.class.getName());
 		StartLevel start = null;
 		if (reference != null)
 			start = (StartLevel) context.getService(reference);
 		try {
+			// Get the list of cached bundles and compare with the ones to be installed.
+			// Uninstall all the cached bundles that do not appear on the new list
+			Bundle[] cachedBundles = context.getBundles();
 			URL[] plugins = configuration.getPluginPath();
+			Bundle[] bundlesToUninstall = getBundlesToUninstall(cachedBundles, plugins);
+			for (int i=0; i<bundlesToUninstall.length; i++) {
+				try {
+					bundlesToUninstall[i].uninstall();
+				} catch (Exception e) {
+					System.err.println("Could not uninstall unused bundle " + bundlesToUninstall[i].getLocation());
+				}
+			}
 			ArrayList installed = new ArrayList(plugins.length);
 			for (int i = 0; i < plugins.length; i++) {
 				String location = plugins[i].toExternalForm();
@@ -198,6 +209,35 @@ public class ConfigurationActivator implements BundleActivator {
 		}
 	}
 
+	// Temp method
+	private Bundle[] getBundlesToUninstall(Bundle[] cachedBundles, URL[] newPlugins) {
+		ArrayList bundlesToUninstall = new ArrayList();
+		for (int i=1; i<cachedBundles.length; i++) {
+			String location1 = cachedBundles[i].getLocation();
+			boolean found = false;
+			for (int j=0; !found && j<newPlugins.length; j++) {
+				String location2 = newPlugins[j].toExternalForm();
+				location2 = "reference:" + location2.substring(0, location2.lastIndexOf('/'));
+				if (isWindows) {
+					if (location2.equalsIgnoreCase(location1))
+						found = true;
+					// may need to add a trailing /
+					else if ((location2+'/').equalsIgnoreCase(location1))
+						found = true;
+				} else {
+					if (location2.equals(location1))
+						found = true;
+					// may need to add a trailing /
+					else if ((location2+'/').equals(location1))
+						found = true;
+				}
+			}
+			if (!found)
+				bundlesToUninstall.add(cachedBundles[i]);
+		}
+		return (Bundle[])bundlesToUninstall.toArray(new Bundle[bundlesToUninstall.size()]);
+	}
+			
 	private BundleListener reconcilerListener() {
 		return new BundleListener() {
 			public void bundleChanged(BundleEvent event) {
@@ -333,4 +373,6 @@ public class ConfigurationActivator implements BundleActivator {
 	public static BundleContext getBundleContext() {
 		return context;
 	}
+	
+	
 }
