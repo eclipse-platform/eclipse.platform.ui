@@ -168,7 +168,6 @@ public class Main {
 	};
 
 	// command line args
-	private static final String BOOT = "-boot"; //$NON-NLS-1$
 	private static final String FRAMEWORK = "-framework"; //$NON-NLS-1$
 	private static final String INSTALL = "-install"; //$NON-NLS-1$
 	private static final String INITIALIZE = "-initialize"; //$NON-NLS-1$
@@ -210,6 +209,7 @@ public class Main {
 	private static final String PROP_SPLASHLOCATION = "osgi.splashLocation"; //$NON-NLS-1$
 	private static final String PROP_CLASSPATH = "osgi.frameworkClassPath"; //$NON-NLS-1$
 	private static final String PROP_EOF = "eof"; //$NON-NLS-1$
+	
 	private static final String PROP_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
 	private static final String PROP_EXITDATA = "eclipse.exitdata"; //$NON-NLS-1$
 	private static final String PROP_VM = "eclipse.vm"; //$NON-NLS-1$
@@ -892,11 +892,6 @@ public class Main {
 				found = true;
 			}
 
-			// consume the old -boot option			
-			if (arguments[i - 1].equalsIgnoreCase(BOOT)) 
-				found = true;  // ignore
-
-			
 			// look for the VM location arg
 			if (arguments[i - 1].equalsIgnoreCase(VM)) {
 				vm = arg;
