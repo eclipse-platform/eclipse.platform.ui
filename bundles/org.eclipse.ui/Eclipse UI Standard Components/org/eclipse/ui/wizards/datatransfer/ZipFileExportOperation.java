@@ -138,9 +138,17 @@ protected void exportResource(IResource resource) throws InterruptedException {
 		try {
 			exporter.write((IFile) resource, destinationName);
 		} catch (IOException e) {
-			addError(DataTransferMessages.format("DataTransfer.errorExporting", new Object[] {resource.getFullPath()}), e); //$NON-NLS-1$
+			addError(
+				DataTransferMessages.format(
+					"DataTransfer.errorExporting", //$NON-NLS-1$
+					new Object[] {resource.getFullPath().makeRelative(), e.getMessage()}), 
+					e); 
 		} catch (CoreException e) {
-			addError(DataTransferMessages.format("DataTransfer.errorExporting", new Object[] {resource.getFullPath()}), e); //$NON-NLS-1$
+			addError(
+				DataTransferMessages.format(
+					"DataTransfer.errorExporting", //$NON-NLS-1$
+					new Object[] {resource.getFullPath().makeRelative(), e.getMessage()}), 
+					e); 
 		}
 
 		monitor.worked(1);

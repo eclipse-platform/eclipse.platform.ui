@@ -229,7 +229,7 @@ protected void exportFile(IFile file, IPath location)
 				0,
 				DataTransferMessages.format(
 					"DataTransfer.errorExporting", //$NON-NLS-1$
-					new Object[] { fullPath }),
+					new Object[] { fullPath, e.getMessage() }),
 		e));
 	} catch (CoreException e) {
 		errorTable
@@ -239,7 +239,7 @@ protected void exportFile(IFile file, IPath location)
 				0,
 				DataTransferMessages.format(
 					"DataTransfer.errorExporting", //$NON-NLS-1$
-					new Object[] { fullPath }),
+					new Object[] { fullPath, e.getMessage() }),
 		e));
 	}
 
