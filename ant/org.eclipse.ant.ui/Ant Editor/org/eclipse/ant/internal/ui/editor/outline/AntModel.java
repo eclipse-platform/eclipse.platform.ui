@@ -520,12 +520,17 @@ public class AntModel {
 						return;
 					}
 				} else {
-					originalOffset= getOffset(line, 1);
-					nonWhitespaceOffset= originalOffset;
-					length= getLastCharColumn(line) - (nonWhitespaceOffset - originalOffset);
-					try {
-						nonWhitespaceOffset= getNonWhitespaceOffset(line, 1);
-					} catch (BadLocationException be) {
+					if (node == null) {
+						originalOffset= getOffset(line, 1);
+						nonWhitespaceOffset= originalOffset;
+						try {
+							nonWhitespaceOffset= getNonWhitespaceOffset(line, 1);
+						} catch (BadLocationException be) {
+						}
+						length= getLastCharColumn(line) - (nonWhitespaceOffset - originalOffset);
+					} else {
+						nonWhitespaceOffset= node.getOffset();
+						length= node.getLength();
 					}
 				}
 			}
