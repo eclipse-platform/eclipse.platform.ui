@@ -40,9 +40,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.CommandEvent;
 import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.ICommandListener;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.contexts.EnabledSubmission;
@@ -104,11 +102,6 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	 */
 	private IWorkbenchPart parentPart = null;
 
-	private ICommandListener commandListener;
-
-	private ICommand command;
-
-	private Label label;
 	/**
 	 * Creates a popup to display information provided by adapter
 	 * Style is set to SWT.NONE
@@ -176,35 +169,28 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 		GridData data= new GridData(GridData.FILL_BOTH);
 		Composite composite = createInformationComposite();
 		composite.setLayoutData(data);
-		
+		register();
+		ICommandManager commandManager= PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
+		ICommand command = commandManager.getCommand(closeAction.getActionDefinitionId());
 		if (action != null) {
 			Label separator= new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_DOT);
 			separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			
-			label = new Label(shell, SWT.SHADOW_NONE | SWT.RIGHT);
+			Label label = new Label(shell, SWT.SHADOW_NONE | SWT.RIGHT);
 			label.setText(closeAction.getText());
 			label.setToolTipText(action.getDescription());
 			label.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 			label.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 			label.setEnabled(false);
 			label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL));
+			List keyBindings = command.getKeySequenceBindings();
+			if (keyBindings != null && keyBindings.size() > 0) {
+				IKeySequenceBinding lastBinding = (IKeySequenceBinding)keyBindings.get(keyBindings.size()-1);
+				label.setText(MessageFormat.format(DebugUIMessages.getString("PopupInformationControl.1"), new String[] {lastBinding.getKeySequence().format(), closeAction.getText()})); //$NON-NLS-1$
+				label.getParent().layout();
+			}							
 		}
 		
-		ICommandManager commandManager= PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
-		command = commandManager.getCommand(closeAction.getActionDefinitionId());
-		
-		commandListener = new ICommandListener() {
-			public void commandChanged(CommandEvent commandEvent) {
-				List keyBindings = command.getKeySequenceBindings();
-				if (keyBindings != null && keyBindings.size() > 0) {
-					IKeySequenceBinding lastBinding = (IKeySequenceBinding)keyBindings.get(keyBindings.size()-1);
-					label.setText(MessageFormat.format(DebugUIMessages.getString("PopupInformationControl.1"), new String[] {lastBinding.getKeySequence().format(), closeAction.getText()})); //$NON-NLS-1$
-					label.getParent().layout();
-				}				
-			}
-		};
-		
-		command.addCommandListener(commandListener);	
 	}
 	
 	/**
@@ -245,7 +231,6 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	 */
 	public void dispose() {		
 		deregister();
-		command.removeCommandListener(commandListener);
 		shell= null;
 	}
 	
@@ -347,11 +332,6 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	 */
 	public void setVisible(boolean visible) {
 		shell.setVisible(visible);
-		if (visible) {
-			register();			
-		} else {
-			deregister();
-		}
 	}
 	
 	/**
