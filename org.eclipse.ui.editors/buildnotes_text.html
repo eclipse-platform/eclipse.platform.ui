@@ -23,9 +23,15 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <pre>
 - ComboContentAssistSubjectAdapter and TextContentAssistSubjectAdapter allow to
   show cue with tooltip.
+- Annotations drawing in text may now be configured. Current drawing styles are boxes, underline, 
+  squiggly lines, and an i-beam.
+  We might introduce an extension point for specifying custom drawing strategies.
+- A roll-over annotation hover has been introduced to cope with many annotations drawn over each 
+  other in the vertical ruler. Enable for the Java editor using the roll over preference under 
+  Java->Work in Progress. 
 </pre>
 <br>
-========== Eclipse Build Input Januray 27th 2004 ==========<br>
+========== Eclipse Build Input January 27th 2004 ==========<br>
 <pre>
 - Improved performance when installing contributed actions.
 - The displayed tab width in the text editor can now be configured,
@@ -36,7 +42,7 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
     create non-marker based annotations has been replaced by new API in Annotation.
 </pre>
 <br>
-========== Eclipse Build Input Januray 20th 2004 ==========<br>
+========== Eclipse Build Input January 20th 2004 ==========<br>
 <pre>
 - Improved annotation painting: adapted painter to fine grained annotation model delta.
 </pre>
