@@ -19,19 +19,19 @@ import java.io.File;
 import java.util.ArrayList;
 
 /**
- * The ProjectLocationSelectionDialog is the dialog used to select the name
- * and location of a project for copying.
+ * The ProjectLocationMoveDialog is the dialog used to select the
+ * location of a project for moving.
  */
-public class ProjectLocationSelectionDialog extends SelectionDialog {
+public class ProjectLocationMoveDialog extends SelectionDialog {
+	private IProject project;
+	private IPath originalPath;
+	
 	// widgets
-	private Text projectNameField;
 	private Text locationPathField;
 	private Label locationLabel;
-	private IProject project;
 	private Label statusMessageLabel;
 	private Button browseButton;
 
-	private static String PROJECT_NAME_LABEL = WorkbenchMessages.getString("ProjectLocationSelectionDialog.nameLabel"); //$NON-NLS-1$
 	private static String LOCATION_LABEL = WorkbenchMessages.getString("ProjectLocationSelectionDialog.locationLabel"); //$NON-NLS-1$
 	private static String BROWSE_LABEL = WorkbenchMessages.getString("ProjectLocationSelectionDialog.browseLabel"); //$NON-NLS-1$
 	private static String DIRECTORY_DIALOG_LABEL = WorkbenchMessages.getString("ProjectLocationSelectionDialog.directoryLabel"); //$NON-NLS-1$
@@ -45,20 +45,19 @@ public class ProjectLocationSelectionDialog extends SelectionDialog {
 	private boolean useDefaults = true;
 
 /**
- * Create a ProjectLocationSelectionDialog on the supplied project parented by the parentShell.
+ * Create a ProjectLocationMoveDialog on the supplied project parented by the parentShell.
  * @param parentShell
  * @param existingProject
  */
-public ProjectLocationSelectionDialog(
-	Shell parentShell,
-	IProject existingProject) {
+public ProjectLocationMoveDialog(Shell parentShell, IProject existingProject) {
 	super(parentShell);
 	setTitle(PROJECT_LOCATION_SELECTION_TITLE);
 	this.project = existingProject;
 	try {
-		this.useDefaults = this.getProject().getDescription().getLocation() == null;
+		this.originalPath = this.getProject().getDescription().getLocation();
+		this.useDefaults = this.originalPath == null;
 	} catch (CoreException exception) {
-		//Leave it as the default if we get a selection.
+		// Leave it as the default.
 	}
 }
 /**
@@ -83,19 +82,19 @@ private void applyValidationResult(String errorMsg) {
  * return a string that indicates the problem.
  */
 private String checkValid() {
-	String valid = checkValidName();
-	if (valid != null)
-		return valid;
 	return checkValidLocation();
 }
 /**
- * Check if the entry in the widget location is valid. If it is valid return null. Otherwise
- * return a string that indicates the problem.
+ * Check if the entry in the widget location is valid. If it is valid return null.
+ * Otherwise return a string that indicates the problem.
  */
 private String checkValidLocation() {
 
-	if (useDefaults)
+	if (useDefaults) {
+		if (this.originalPath == null)
+			return INVALID_LOCATION_MESSAGE;
 		return null;
+	}
 	else {
 		String locationFieldContents = locationPathField.getText();
 		if (!locationFieldContents.equals("")) {//$NON-NLS-1$
@@ -105,34 +104,21 @@ private String checkValidLocation() {
 			}
 		}
 
+		Path newPath = new Path(locationFieldContents);
 		IStatus locationStatus =
 			this.project.getWorkspace().validateProjectLocation(
 				this.project,
-				new Path(locationFieldContents));
+				newPath);
 
 		if (!locationStatus.isOK())
 			return locationStatus.getMessage();
 
+		if (originalPath != null && originalPath.equals(newPath)) {
+			return INVALID_LOCATION_MESSAGE;
+		}
+		
 		return null;
 	}
-}
-/**
- * Check if the entries in the widget are valid. If they are return null otherwise
- * return a string that indicates the problem.
- */
-private String checkValidName() {
-
-	String name = this.projectNameField.getText();
-	IWorkspace workspace = getProject().getWorkspace();
-	IStatus nameStatus = workspace.validateName(name, IResource.PROJECT);
-	if (!nameStatus.isOK())
-		return nameStatus.getMessage();
-	IProject newProject = workspace.getRoot().getProject(name);
-	if (newProject.exists()) {
-		return WorkbenchMessages.format("CopyProjectAction.alreadyExists", new Object[] { name }); //$NON-NLS-1$
-	}
-
-	return null;
 }
 /* (non-Javadoc)
  * Method declared in Window.
@@ -144,6 +130,14 @@ protected void configureShell(Shell shell) {
 /* (non-Javadoc)
  * Method declared on Dialog.
  */
+protected Control createContents(Composite parent) {
+	Control content = super.createContents(parent);
+	getOkButton().setEnabled(false);
+	return content;
+}
+/* (non-Javadoc)
+ * Method declared on Dialog.
+ */
 protected Control createDialogArea(Composite parent) {
 	// page group
 	Composite composite = (Composite) super.createDialogArea(parent);
@@ -151,7 +145,6 @@ protected Control createDialogArea(Composite parent) {
 	composite.setLayout(new GridLayout());
 	composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-	createProjectNameGroup(composite);
 	createProjectLocationGroup(composite);
 
 	//Add in a label for status messages if required
@@ -167,26 +160,11 @@ private void createLocationListener() {
 
 	Listener listener = new Listener() {
 		public void handleEvent(Event event) {
-
 			applyValidationResult(checkValid());
 		}
 	};
 
 	this.locationPathField.addListener(SWT.Modify, listener);
-}
-/**
- * Create the listener that is used to validate the entries for the receiver
- */
-private void createNameListener() {
-
-	Listener listener = new Listener() {
-		public void handleEvent(Event event) {
-			setLocationForSelection();
-			applyValidationResult(checkValid());
-		}
-	};
-
-	this.projectNameField.addListener(SWT.Modify, listener);
 }
 /**
  * Creates the project location specification controls.
@@ -219,42 +197,15 @@ private final void createProjectLocationGroup(Composite parent) {
 			locationPathField.setEnabled(!useDefaults);
 			locationLabel.setEnabled(!useDefaults);
 			setLocationForSelection();
-			if (!useDefaults)
-				locationPathField.setText(""); //$NON-NLS-1$
+			if (!useDefaults) {
+				if (originalPath != null)
+					locationPathField.setText(originalPath.toOSString());
+				else
+					locationPathField.setText(""); //$NON-NLS-1$
+			}
 		}
 	};
 	useDefaultsButton.addSelectionListener(listener);
-}
-/**
- * Creates the project name specification controls.
- *
- * @param parent the parent composite
- */
-private void createProjectNameGroup(Composite parent) {
-	// project specification group
-	Composite projectGroup = new Composite(parent,SWT.NONE);
-	GridLayout layout = new GridLayout();
-	layout.numColumns = 2;
-	projectGroup.setLayout(layout);
-	projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-	// new project label
-	Label projectLabel = new Label(projectGroup,SWT.NONE);
-	projectLabel.setText(PROJECT_NAME_LABEL);
-
-	// new project name entry field
-	projectNameField = new Text(projectGroup, SWT.BORDER);
-	GridData data = new GridData(GridData.FILL_HORIZONTAL);
-	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
-	projectNameField.setLayoutData(data);
-	
-	// Set the initial value first before listener
-	// to avoid handling an event during the creation.
-	projectNameField.setText(getCopyNameFor(getProject().getName()));
-	projectNameField.selectAll();
-	
-	createNameListener();
-	
 }
 /**
  * Creates the project location specification controls.
@@ -263,9 +214,7 @@ private void createProjectNameGroup(Composite parent) {
  * @param projectGroup the parent composite
  * @param enabled - sets the initial enabled state of the widgets
  */
-private Composite createUserSpecifiedProjectLocationGroup(
-	Composite projectGroup,
-	boolean enabled) {
+private Composite createUserSpecifiedProjectLocationGroup(Composite projectGroup, boolean enabled) {
 
 	// location label
 	locationLabel = new Label(projectGroup, SWT.NONE);
@@ -291,44 +240,13 @@ private Composite createUserSpecifiedProjectLocationGroup(
 
 	// Set the initial value first before listener
 	// to avoid handling an event during the creation.
-	try {
-		IPath location = this.getProject().getDescription().getLocation();
-		if (location == null)
-			setLocationForSelection();
-		else
-			locationPathField.setText(location.toString());
-	} catch (CoreException exception) {
-		//Do nothing as it is just an initialization problem
-	}
+	if (originalPath == null)
+		setLocationForSelection();
+	else
+		locationPathField.setText(originalPath.toOSString());
 
 	createLocationListener();
 	return projectGroup;
-
-}
-/**
- * Generates a new name for the project that does not have any collisions.
- */
-private String getCopyNameFor(String projectName) {
-
-	IWorkspace workspace = getProject().getWorkspace();
-	if (!workspace.getRoot().getProject(projectName).exists())
-		return projectName;
-
-	int counter = 1;
-	while (true) {
-		String nameSegment;
-		if (counter > 1) {
-			nameSegment = WorkbenchMessages.format(WorkbenchMessages.getString("CopyProjectAction.copyNameTwoArgs"), new Object[] {new Integer(counter), projectName}); //$NON-NLS-1$
-		}
-		else {
-			nameSegment = WorkbenchMessages.format(WorkbenchMessages.getString("CopyProjectAction.copyNameOneArg"), new Object[] {projectName}); //$NON-NLS-1$
-		}
-	
-		if (!workspace.getRoot().getProject(nameSegment).exists())
-			return nameSegment;
-
-		counter++;
-	}
 
 }
 /**
@@ -356,14 +274,14 @@ private void handleLocationBrowseButtonPressed() {
 		locationPathField.setText(selectedDirectory);
 }
 /**
- * The <code>ProjectLocationSelectionDialog</code> implementation of this 
+ * The <code>ProjectLocationMoveDialog</code> implementation of this 
  * <code>Dialog</code> method builds a two element list - the first element
  * is the project name and the second one is the location.
  */
 protected void okPressed() {
 	
 	ArrayList list = new ArrayList();
-	list.add(this.projectNameField.getText());
+	list.add(getProject().getName());
 	if(useDefaults)
 		list.add(Platform.getLocation().toString());
 	else
@@ -376,7 +294,7 @@ protected void okPressed() {
  */
 private void setLocationForSelection() {
 	if (useDefaults) {
-		IPath defaultPath = Platform.getLocation().append(projectNameField.getText());
+		IPath defaultPath = Platform.getLocation().append(getProject().getName());
 		locationPathField.setText(defaultPath.toOSString());
 	}
 }

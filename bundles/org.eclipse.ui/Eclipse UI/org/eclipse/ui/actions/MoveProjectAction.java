@@ -8,6 +8,7 @@ package org.eclipse.ui.actions;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ProjectLocationMoveDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -104,6 +105,18 @@ boolean performMove(
 	}
 
 	return true;
+}
+/**
+ * Query for a new project destination using the parameters in the existing
+ * project.
+ * @return Object[]  or null if the selection is cancelled
+ * @param IProject - the project we are going to move.
+ */
+protected Object[] queryDestinationParameters(IProject project) {
+	ProjectLocationMoveDialog dialog =
+		new ProjectLocationMoveDialog(shell, project);
+	dialog.open();
+	return dialog.getResult();
 }
 /**
  * Implementation of method defined on <code>IAction</code>.
