@@ -18,7 +18,6 @@ import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
-import org.eclipse.ui.internal.intro.IntroMessages;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.tests.api.PerspectiveWithFastView;
