@@ -52,6 +52,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
@@ -111,6 +112,7 @@ public class WorkbenchWindow extends ApplicationWindow
 	private Menu fastViewBarMenu;
 	private MenuItem restoreItem;
 	private CoolBarManager coolBarManager = new CoolBarManager();
+	private Label noOpenPerspective;
 	
 	final private String TAG_INPUT = "input";//$NON-NLS-1$
 	final private String TAG_LAYOUT = "layout";//$NON-NLS-1$
@@ -415,6 +417,8 @@ private void closeAllPages()
 		firePageClosed(page);
 		page.dispose();
 	}
+	if(!closing)
+		showEmptyWindowMessage();
 }
 /**
  * Save and close all of the pages.
@@ -457,8 +461,17 @@ protected boolean closePage(IWorkbenchPage in, boolean save) {
 		if (newPage != null)
 			setActivePage(newPage);
 	}
-
+	if(!closing && pageList.isEmpty())
+		showEmptyWindowMessage();
 	return true;
+}
+private void showEmptyWindowMessage() {
+	Composite parent = getClientComposite();
+	if(noOpenPerspective == null) {
+		noOpenPerspective = new Label(parent,SWT.NONE);
+		noOpenPerspective.setText(WorkbenchMessages.getString("WorkbenchWindow.noPerspective")); //$NON-NLS-1$
+		noOpenPerspective.setBounds(parent.getClientArea());
+	}
 }
 /**
  * Sets the ApplicationWindows's content layout.
@@ -1298,6 +1311,11 @@ public void setActivePage(final IWorkbenchPage in) {
 			if (newPage != null && newPage.getPerspective() != null)
 				newPage.setToolBarLayout();
 			getMenuManager().update(IAction.TEXT);
+			
+			if(noOpenPerspective != null && in != null) {
+				noOpenPerspective.dispose();
+				noOpenPerspective = null;
+			}
 		}
 	});
 }
