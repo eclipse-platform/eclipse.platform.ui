@@ -153,6 +153,9 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		int added= 0;
 		for (Iterator it= diffInfos.iterator(); it.hasNext();) {
 			ILineDiffInfo info= (ILineDiffInfo)it.next();
+			if (info == null)
+				continue;
+				
 			String[] original= info.getOriginalText();
 			int type= info.getChangeType();
 			int i= 0;
