@@ -65,7 +65,20 @@ public class OtherBreakpointOrganizer extends AbstractBreakpointOrganizer implem
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#canAdd(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
+     */
+    public boolean canAdd(IBreakpoint breakpoint, IAdaptable category) {
+        return true;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#canRemove(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
+     */
+    public boolean canRemove(IBreakpoint breakpoint, IAdaptable category) {
+        return true;
+    }
 }
 
 class OtherCategory extends PlatformObject {

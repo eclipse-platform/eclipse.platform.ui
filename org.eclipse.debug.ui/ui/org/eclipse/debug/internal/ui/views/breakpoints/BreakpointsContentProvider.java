@@ -170,6 +170,31 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
     }
     
     /**
+     * Returns leaf containers containing the given breakpoint, or <code>null</code>
+     * if none.
+     * 
+     * @param breakpoint
+     * @return leaf containers containing the given breakpoint, or <code>null</code>
+     * if none
+     */
+    public BreakpointContainer[] getLeafContainers(IBreakpoint breakpoint) {
+        if (isShowingGroups()) {
+            List list = new ArrayList();
+            for (int i = 0; i < fElements.length; i++) {
+                BreakpointContainer container = (BreakpointContainer) fElements[i];
+                BreakpointContainer[] containers = container.getContainers(breakpoint);
+                if (containers != null) {
+                    for (int j = 0; j < containers.length; j++) {
+                        list.add(containers[j]);
+                    }
+                }
+            }
+            return (BreakpointContainer[]) list.toArray(new BreakpointContainer[list.size()]);
+        }
+        return null;
+    }
+    
+    /**
      * Returns the nested order of breakpoint organizers being used, or <code>null</code>
      * if none.
      * 
@@ -265,7 +290,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
      * 
      * @return whether content is grouped by categories
      */
-    private boolean isShowingGroups() {
+    protected boolean isShowingGroups() {
         return fOrganizers != null;
     }
 }

@@ -197,4 +197,67 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizer implemen
         }
         DebugUIPlugin.getDefault().getPluginPreferences().setValue(IInternalDebugUIConstants.MEMENTO_BREAKPOINT_WORKING_SET_NAME, name);
     }    
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#canRemove(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
+     */
+    public boolean canRemove(IBreakpoint breakpoint, IAdaptable category) {
+        IAdaptable[] categories = getCategories(breakpoint);
+        if (categories != null && categories.length > 0) {
+            for (int i = 0; i < categories.length; i++) {
+                if (categories[i].equals(category)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#canAdd(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
+     */
+    public boolean canAdd(IBreakpoint breakpoint, IAdaptable category) {
+        IAdaptable[] categories = getCategories(breakpoint);
+        if (categories != null && categories.length > 0) {
+            for (int i = 0; i < categories.length; i++) {
+                if (categories[i].equals(category)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#addBreakpoint(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
+     */
+    public void addBreakpoint(IBreakpoint breakpoint, IAdaptable category) {
+        if (category instanceof WorkingSetCategory) {
+            IWorkingSet workingSet = ((WorkingSetCategory) category).getWorkingSet();
+            IAdaptable[] elements = workingSet.getElements();
+            IAdaptable[] newElements = new IAdaptable[elements.length + 1];
+            System.arraycopy(elements, 0, newElements, 0, elements.length);
+            newElements[elements.length] = breakpoint;
+            workingSet.setElements(newElements);
+        }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#removeBreakpoint(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
+     */
+    public void removeBreakpoint(IBreakpoint breakpoint, IAdaptable category) {
+        if (category instanceof WorkingSetCategory) {
+            IWorkingSet workingSet = ((WorkingSetCategory) category).getWorkingSet();
+            IAdaptable[] elements = workingSet.getElements();
+            List list = new ArrayList();
+            for (int i = 0; i < elements.length; i++) {
+                IAdaptable adaptable = elements[i];
+                if (!adaptable.equals(breakpoint)) {
+                    list.add(adaptable);
+                }
+            }
+            workingSet.setElements((IAdaptable[]) list.toArray(new IAdaptable[list.size()]));
+        }
+    }
 }

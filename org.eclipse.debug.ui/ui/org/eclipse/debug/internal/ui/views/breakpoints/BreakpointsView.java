@@ -56,6 +56,8 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -70,6 +72,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 /**
  * This view shows the breakpoints registered with the breakpoint manager
@@ -130,8 +133,25 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		initBreakpointOrganizers();
 		setEventHandler(new BreakpointsViewEventHandler(this));
         initializeCheckedState();
+        initDragAndDrop();
 		return viewer;
 	}
+    
+    private void initDragAndDrop() {
+        StructuredViewer viewer = (StructuredViewer)getViewer();
+        int ops= DND.DROP_MOVE;
+        // drop
+        Transfer[] dropTransfers= new Transfer[] {
+            LocalSelectionTransfer.getInstance()
+        };
+        viewer.addDropSupport(ops, dropTransfers, new BreakpointsDropAdapter(viewer));
+        
+        // Drag 
+        Transfer[] dragTransfers= new Transfer[] {
+            LocalSelectionTransfer.getInstance()
+        };
+        viewer.addDragSupport(ops, dragTransfers, new BreakpointsDragAdapter((BreakpointsContentProvider)(viewer.getContentProvider()), viewer));
+    }    
 	
 	/**
 	 * Initializes whether this view tracks selection in the

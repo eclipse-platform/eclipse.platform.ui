@@ -154,4 +154,31 @@ public class BreakpointContainer extends PlatformObject    {
     public boolean contains(IBreakpoint breakpoint) {
         return fBreakpoints.contains(breakpoint);
     }
+    
+    /**
+     * Returns the leaf containers the given breakpoint is contained in, or <code>null</code>
+     * if none.
+     *  
+     * @param breakpoint
+     * @return leaf containers the given breakpoint is contained in, or <code>null</code>
+     * if none
+     */
+    public BreakpointContainer[] getContainers(IBreakpoint breakpoint) {
+        if (contains(breakpoint)) {
+            BreakpointContainer[] containers = getContainers();
+            if (containers.length == 0) {
+                return new BreakpointContainer[]{this};
+            }
+            List list = new ArrayList();
+            for (int i = 0; i < containers.length; i++) {
+                BreakpointContainer container = containers[i];
+                BreakpointContainer[] subcontainers = container.getContainers(breakpoint);
+                for (int j = 0; j < subcontainers.length; j++) {
+                    list.add(subcontainers[j]);
+                }
+            }
+            return (BreakpointContainer[]) list.toArray(new BreakpointContainer[list.size()]);
+        }
+        return null;
+    }
 }
