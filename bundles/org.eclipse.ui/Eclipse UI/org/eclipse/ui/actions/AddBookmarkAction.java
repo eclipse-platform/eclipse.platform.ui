@@ -6,6 +6,7 @@ package org.eclipse.ui.actions;
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -15,6 +16,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+
 import java.util.Iterator;
 
 /**
@@ -58,8 +60,13 @@ void createMarker(String markerType) {
 	IStructuredSelection selection = getStructuredSelection();
 	for (Iterator enum = selection.iterator(); enum.hasNext();) {
 		Object o = enum.next();
-		if (o instanceof IFile)
+		if (o instanceof IFile) {
 			createMarker((IFile) o, markerType);
+		} else if (o instanceof IAdaptable) {
+			Object resource = ((IAdaptable)o).getAdapter(IResource.class);
+			if (resource instanceof IFile)
+				createMarker((IFile)resource, markerType);
+		}
 	}
 }
 /**
