@@ -23,7 +23,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.progress.UIJob;
 
 /**
  * This job creates an animated rectangle that moves from a source rectangle to
@@ -54,17 +53,15 @@ public class RectangleAnimation extends Job {
 		return result;
 	}
 	
-	private UIJob paintJob = new UIJob(WorkbenchMessages.getString("RectangleAnimation.Animating_Rectangle")) { //$NON-NLS-1$
+	private Runnable paintJob = new Runnable() { //$NON-NLS-1$
 
-		public IStatus runInUIThread(IProgressMonitor monitor) {
+		public void run() {
 			if (canvas == null || canvas.isDisposed()) {
 				done = true;
-				return Status.OK_STATUS;
+				return;
 			}
 			
 			canvas.redraw();
-			
-			return Status.OK_STATUS;
 		}
 		
 	};
@@ -137,9 +134,6 @@ public class RectangleAnimation extends Job {
 		});
 		
 		canvas.moveAbove(null);
-
-		paintJob.setPriority(Job.INTERACTIVE);
-		paintJob.setSystem(true);
 	}
 
 	/* (non-Javadoc)
@@ -150,12 +144,7 @@ public class RectangleAnimation extends Job {
 		startTime = System.currentTimeMillis();
 		
 		while (!done) {
-			paintJob.schedule();
-			try {
-				paintJob.join();
-			} catch (InterruptedException e) {
-				break;
-			}
+			canvas.getDisplay().syncExec(paintJob);
 		}
 
 		if (!canvas.isDisposed()) {
