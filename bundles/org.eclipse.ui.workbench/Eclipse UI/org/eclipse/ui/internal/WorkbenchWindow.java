@@ -1344,7 +1344,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				String defPerspID =
 					getWorkbenchImpl().getPerspectiveRegistry().getDefaultPerspective();
 				WorkbenchPage newPage =
-					new WorkbenchPage(this, defPerspID, getAdvisor().getDefaultWindowInput());
+					new WorkbenchPage(this, defPerspID, getAdvisor().getDefaultPageInput());
 				pageList.add(newPage);
 				firePageOpened(newPage);
 			} catch (WorkbenchException e) {

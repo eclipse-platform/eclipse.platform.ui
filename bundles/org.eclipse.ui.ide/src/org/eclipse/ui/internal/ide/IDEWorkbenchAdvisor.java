@@ -408,7 +408,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			// if the window does not contain a page, create one
 			String perspectiveId = ((AboutInfo) welcomePerspectiveInfos.get(index)).getWelcomePerspectiveId();
 			if (page == null) {
-				IAdaptable root = getDefaultWindowInput();
+				IAdaptable root = getDefaultPageInput();
 				page = windowConfigurer.getWindow().openPage(perspectiveId, root);
 			} else {
 				IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
@@ -661,9 +661,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdvisor#getDefaultWindowInput
+	 * @see org.eclipse.ui.application.WorkbenchAdvisor#getDefaultPageInput
 	 */
-	public IAdaptable getDefaultWindowInput() {
+	public IAdaptable getDefaultPageInput() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
@@ -855,7 +855,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		IWorkbenchWindow win = window;
 		if (perspectiveId != null) {
 			try {
-				win = configurer.getWorkbench().openWorkbenchWindow(perspectiveId, getDefaultWindowInput());
+				win = configurer.getWorkbench().openWorkbenchWindow(perspectiveId, getDefaultPageInput());
 				if (win == null) {
 					win = window;
 				}
@@ -877,7 +877,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	
 		if (page == null) {
 			try {
-				page = win.openPage(id, getDefaultWindowInput());
+				page = win.openPage(id, getDefaultPageInput());
 			} catch (WorkbenchException e) {
 				ErrorDialog.openError(
 					win.getShell(), 
@@ -955,7 +955,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			if (persp != null)
 				label = persp.getLabel();
 			IAdaptable input = currentPage.getInput();
-			if (input != null && !input.equals(getDefaultWindowInput())) {
+			if (input != null && !input.equals(getDefaultPageInput())) {
 				label = currentPage.getLabel();
 			}
 			if (label != null && !label.equals("")) { //$NON-NLS-1$	

@@ -1141,7 +1141,7 @@ public final class Workbench implements IWorkbench {
 		try {
 			newWindow.openPage(
 				getPerspectiveRegistry().getDefaultPerspective(),
-				getAdvisor().getDefaultWindowInput());
+				getDefaultPageInput());
 		} catch (WorkbenchException e) {
 			ErrorDialog.openError(newWindow.getShell(), WorkbenchMessages.getString("Problems_Opening_Page"), //$NON-NLS-1$
 			e.getMessage(), e.getStatus());
@@ -1584,7 +1584,7 @@ public final class Workbench implements IWorkbench {
 		// If another window that has the workspace root as input and the
 		// requested
 		// perpective open and active, then the window is given focus.
-		IAdaptable input = advisor.getDefaultWindowInput();
+		IAdaptable input = getDefaultPageInput();
 		IWorkbenchWindow[] windows = getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
 			win = (WorkbenchWindow) windows[i];
@@ -1864,12 +1864,12 @@ public final class Workbench implements IWorkbench {
 	}
 
 	/**
-	 * Returns the default workbench window input.
+	 * Returns the default workbench window page input.
 	 * 
-	 * @return the default window input or <code>null</code> if none
+	 * @return the default window page input or <code>null</code> if none
 	 */
-	public IAdaptable getDefaultWindowInput() {
-		return getAdvisor().getDefaultWindowInput();
+	public IAdaptable getDefaultPageInput() {
+		return getAdvisor().getDefaultPageInput();
 	}
 
 	/**
