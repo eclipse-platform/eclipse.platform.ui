@@ -254,21 +254,21 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="command" type="string">
             <annotation>
                <documentation>
-                  
+                  The unique identifier of the command to which the key sequence specified by this key binding is assigned. If the value of this attribute is an empty string, the key sequence is assigned to an internal &apos;no operation&apos; command. This is useful for &apos;undefining&apos; key bindings in specific key configurations and scopes which may have been borrowed from their parents.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="locale" type="string">
             <annotation>
                <documentation>
-                  
+                  An optional attribute indicating that this key binding is only defined for the specified locale. Locales are specified according to the format declared in &lt;code&gt;java.util.Locale&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="platform" type="string">
             <annotation>
                <documentation>
-                  
+                  An optional attribute indicating that this key binding is only defined for the specified platform. The possible values of the &lt;code&gt;platform&lt;/code&gt; attribute are the set of the possible values returned by &lt;code&gt;org.eclipse.swt.SWT.getPlatform()&lt;code&gt;.
                </documentation>
             </annotation>
          </attribute>
