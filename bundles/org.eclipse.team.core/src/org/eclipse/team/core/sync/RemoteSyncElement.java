@@ -253,7 +253,12 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	 * contents.
 	 */
 	private boolean compare(int granularity, boolean force, IResource e1, IRemoteResource e2, IProgressMonitor monitor) {
-		boolean timestampEquals = force || timestampEquals(e1, e2);
+		boolean timestampEquals;
+		if (force) {
+			timestampEquals = false;
+		} else {
+			timestampEquals = timestampEquals(e1, e2);
+		}
 		if (!timestampEquals && (granularity == GRANULARITY_CONTENTS)) {
 			try {
 				monitor.beginTask(null, 100);
@@ -267,7 +272,12 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	}
 	
 	private boolean compare(int granularity, boolean force, IRemoteResource e1, IRemoteResource e2, IProgressMonitor monitor) {
-		boolean timestampEquals = force || timestampEquals(e1, e2);
+		boolean timestampEquals;
+		if (force) {
+			timestampEquals = false;
+		} else {
+			timestampEquals = timestampEquals(e1, e2);
+		}
 		if (!timestampEquals && (granularity == GRANULARITY_CONTENTS)) {
 			try {
 				monitor.beginTask(null, 100);
