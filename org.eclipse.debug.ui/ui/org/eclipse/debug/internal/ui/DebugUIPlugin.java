@@ -30,6 +30,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -69,7 +70,7 @@ import org.w3c.dom.Document;
  * The Debug UI Plugin.
  *
  */
-public class DebugUIPlugin extends AbstractUIPlugin {															   
+public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {															   
 									   	
 	/**
 	 * The singleton debug plugin instance
@@ -92,6 +93,16 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	 * is produced.
 	 */
 	private boolean fTrace = false;	
+	
+	/**
+	 * Singleton console document manager
+	 */
+	private ConsoleDocumentManager fConsoleDocumentManager = null;
+	
+	/**
+	 * Perspective manager
+	 */
+	private PerspectiveManager fPerspectiveManager = null;
 	
 	/**
 	 * Returns whether the debug UI plug-in is in trace
@@ -231,17 +242,17 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	 * </p>
 	 */
 	public void shutdown() throws CoreException {
-		
-		// shutdown the perspective manager
-		PerspectiveManager.getDefault().shutdown();
+		if (fPerspectiveManager != null) {
+			fPerspectiveManager.shutdown();
+		}
 		if (DebugActionGroupsManager.defaultExists()) {
 			DebugActionGroupsManager.getDefault().shutdown();
 		}
 		if (LaunchConfigurationManager.defaultExists()) {
 			LaunchConfigurationManager.getDefault().shutdown();
 		}
-		if (ConsoleDocumentManager.defaultExists()) {
-			ConsoleDocumentManager.getDefault().shutdown();
+		if (fConsoleDocumentManager != null) {
+			fConsoleDocumentManager.shutdown();
 		}
 		
 		ColorManager.getDefault().dispose();
@@ -258,8 +269,8 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	public void startup() throws CoreException {
 		super.startup();
 		
-		PerspectiveManager.getDefault().startup();
-		ConsoleDocumentManager.getDefault().startup();
+		// Listen to launches to lazily create "launch processors"
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		
 		IAdapterManager manager= Platform.getAdapterManager();
 		DebugUIPropertiesAdapterFactory propertiesFactory = new DebugUIPropertiesAdapterFactory();
@@ -486,8 +497,17 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 		return ColorManager.getDefault().getColor(PreferenceConverter.getColor(getDefault().getPreferenceStore(), type));
 	}
 
-	public static ConsoleDocumentManager getConsoleDocumentManager() {
-		return ConsoleDocumentManager.getDefault();
+	/**
+	 * Returns the console document manager. The manager will be created lazily on 
+	 * the first access.
+	 * 
+	 * @return ConsoleDocumentManager
+	 */
+	public  ConsoleDocumentManager getConsoleDocumentManager() {
+		if (fConsoleDocumentManager == null) {
+			fConsoleDocumentManager = new ConsoleDocumentManager();
+		}
+		return fConsoleDocumentManager;
 	}
 	
 	/**
@@ -543,5 +563,38 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 		return (IStructuredSelection)selection;
 	}
 	
+	/**
+	 * When the first launch is added, instantiate launch processors,
+	 * and stop listening to launch notifications.
+	 * <p>
+	 * Launch processors are:
+	 * <ul>
+	 * <li>console document manager</li>
+	 * <li>perspective manager</li>
+	 * </ul>
+	 * </p>
+	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
+	 */
+	public void launchAdded(ILaunch launch) {
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+		getConsoleDocumentManager().startup();
+		
+		fPerspectiveManager = new PerspectiveManager();
+		fPerspectiveManager.startup();
+		fPerspectiveManager.launchAdded(launch);
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
+	 */
+	public void launchChanged(ILaunch launch) {
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
+	 */
+	public void launchRemoved(ILaunch launch) {
+	}
+
 }
 

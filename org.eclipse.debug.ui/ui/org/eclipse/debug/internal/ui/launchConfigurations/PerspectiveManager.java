@@ -37,28 +37,7 @@ import org.eclipse.ui.WorkbenchException;
  * @see IDebugUIContants.ATTR_DEBUG_PERSPECTIVE
  */
 public class PerspectiveManager implements ILaunchListener, IDebugEventSetListener {
-	
-	/**
-	 * Singleton perspective manager
-	 */
-	private static PerspectiveManager fgManager;
-	
-	/**
-	 * Constructs the perspective manager
-	 */
-	private PerspectiveManager() {
-	}
-	
-	/**
-	 * Returns the perspective manager
-	 */
-	public static PerspectiveManager getDefault() {
-		if (fgManager == null) {
-			fgManager = new PerspectiveManager();
-		}
-		return fgManager;
-	}
-	
+		
 	/**
 	 * Called by the debug ui plug-in on startup.
 	 * The perspective manager starts listening for

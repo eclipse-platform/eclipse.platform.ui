@@ -98,8 +98,6 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		
 		setEventHandler(new ConsoleViewEventHandler(this));
-		//initialize the default instance
-		DebugUIPlugin.getConsoleDocumentManager();
 		return cv;
 	}
 	
@@ -150,7 +148,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 				}
 				IDocument doc = null;
 				if (getProcess() != null) {
-					doc = DebugUIPlugin.getConsoleDocumentManager().getConsoleDocument(getProcess());
+					doc = DebugUIPlugin.getDefault().getConsoleDocumentManager().getConsoleDocument(getProcess());
 				}
 				if (doc == null) {
 					doc = new EmptyConsoleDocument();

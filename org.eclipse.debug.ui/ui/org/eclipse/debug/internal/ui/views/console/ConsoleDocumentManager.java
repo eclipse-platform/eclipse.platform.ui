@@ -43,13 +43,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
- * Creates documents for processes as they are registered with a launch. */
+ * Creates documents for processes as they are registered with a launch.
+ * The singleton manager is accessible from the debug UI plugin. */
 public class ConsoleDocumentManager implements ILaunchListener {
-
-	/**
-	 * Singleton console document manager
-	 */
-	private static ConsoleDocumentManager fgConsoleDocumentManager= null;
 	
 	/**
 	 * The process that is/can provide output to the console
@@ -68,24 +64,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	
 	/**
 	 * Default document provider.	 */
-	protected IDocumentProvider fDefaultDocumentProvider = new ConsoleDocumentProvider();
-	
-	public static ConsoleDocumentManager getDefault() {
-		if (fgConsoleDocumentManager == null) {
-			fgConsoleDocumentManager= new ConsoleDocumentManager();
-		}	
-		return fgConsoleDocumentManager;
-	}
-	
-	/**
-	 * Returns whether the singleton instance of the manager exists
-	 */
-	public static boolean defaultExists() {
-		return fgConsoleDocumentManager != null;
-	}
-	
-	private ConsoleDocumentManager() {
-	}
+	protected IDocumentProvider fDefaultDocumentProvider = null;
 	
 	/**
 	 * @see ILaunchListener#launchRemoved(ILaunch)
@@ -311,6 +290,9 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	 * Returns the document provider applicable for the given process.
 	 * 	 * @param process	 * @return document provider	 */
 	protected IDocumentProvider getDocumentProvider(IProcess process) {
+		if (fDefaultDocumentProvider == null) {
+			fDefaultDocumentProvider = new ConsoleDocumentProvider();
+		}
 		return fDefaultDocumentProvider;
 	}
 	

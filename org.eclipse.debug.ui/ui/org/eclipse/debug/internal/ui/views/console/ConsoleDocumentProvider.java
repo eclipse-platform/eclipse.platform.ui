@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.console.ConsoleColorProvider;
 import org.eclipse.debug.ui.console.IConsoleColorProvider;
 import org.eclipse.jface.text.IDocument;
@@ -76,7 +77,7 @@ public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 		String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
 		IConsoleColorProvider contentProvider = null;
 		if (type != null) {
-			contentProvider = ConsoleDocumentManager.getDefault().getColorProvider(type);
+			contentProvider = getConsoleDocumentManager().getColorProvider(type);
 		}
 		if (contentProvider == null) {
 			contentProvider = new ConsoleColorProvider();
@@ -93,8 +94,17 @@ public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 	protected ConsoleLineNotifier getLineNotifier(IProcess process) {
 		String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
 		if (type != null) {
-			return ConsoleDocumentManager.getDefault().newLineNotifier(type);
+			return getConsoleDocumentManager().newLineNotifier(type);
 		}
 		return null;
+	}
+	
+	/**
+	 * Convenience accessor
+	 * 
+	 * @return ConsoleDocumentManager
+	 */
+	private ConsoleDocumentManager getConsoleDocumentManager() {
+		return DebugUIPlugin.getDefault().getConsoleDocumentManager();
 	}
 }
