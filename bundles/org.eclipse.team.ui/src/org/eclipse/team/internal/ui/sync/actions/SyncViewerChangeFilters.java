@@ -17,7 +17,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
-import org.eclipse.ui.IMemento;
 
 /**
  * This class provides a set of actions that support sync set filtering by 
@@ -25,8 +24,6 @@ import org.eclipse.ui.IMemento;
  * filter on the sync set.
  */
 public class SyncViewerChangeFilters extends SyncViewerActionGroup {
-	
-	private static final String MEMENTO_KEY_PREFIX = "SyncViewerChangeFilters"; //$NON-NLS-1$
 	
 	// array of actions for filtering by change type (additions, deletions and changes)
 	private ChangeFilterAction[] actions;	
@@ -142,50 +139,6 @@ public class SyncViewerChangeFilters extends SyncViewerActionGroup {
 	public void setAllEnabled() {
 		for (int i = 0; i < actions.length; i++) {
 			actions[i].setChecked(true);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see SyncViewerActionGroup#restore(org.eclipse.ui.IMemento)
-	 */
-	public void restore(IMemento memento) {
-		super.restore(memento);
-		// Uncheck everything
-		setActiveFilters(new ChangeFilterAction[0]);
-		// Check those in the memento
-		Integer i;
-		int count = 0;
-		do {
-			i = memento.getInteger(MEMENTO_KEY_PREFIX + "." + count); //$NON-NLS-1$
-			if (i != null) {
-				count++;
-				actions[i.intValue()].setChecked(true);
-			}
-		} while (i != null);
-		
-		// Make sure at least one is checked
-		if (count == 0) {
-			setActiveFilters(actions);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * 
-	 * Save each active change filter as follows:
-	 * 
-	 *    MEMENTO_KEY_PREFIX.0 = ?
-	 *    MEMENTO_KEY_PREFIX.1 = ?
-	 * 
-	 * @see org.eclipse.team.ccvs.syncviews.actions.SyncViewerActionGroup#save(org.eclipse.ui.IMemento)
-	 */
-	public void save(IMemento memento) {
-		super.save(memento);
-		int count = 0;
-		for (int i = 0; i < actions.length; i++) {
-			Action action = actions[i];
-			if (action.isChecked()) {
-				memento.putInteger(MEMENTO_KEY_PREFIX + "." + count++, i); //$NON-NLS-1$
-			}
 		}
 	}
 	
