@@ -7,10 +7,10 @@
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="build.result.folder" value="${basedir}"/>
 		<property name="version.suffix" value="_3.1.0"/>
-		<property name="win32.jar" value="${eclipse.home}/plugins/org.eclipse.swt.win32${version.suffix}/ws/win32/swt.jar"/>
-		<property name="gtk.jar" value="${eclipse.home}/plugins/org.eclipse.swt.gtk${version.suffix}/ws/gtk/swt.jar"/>
-		<property name="motif.jar" value="${eclipse.home}/plugins/org.eclipse.swt.motif${version.suffix}/ws/motif/swt.jar"/>
-		<property name="osx.jar" value="${eclipse.home}/plugins/org.eclipse.swt.carbon${version.suffix}/ws/carbon/swt.jar"/>
+		<property name="win32.jar" value="${eclipse.home}/plugins/org.eclipse.swt.win32${version.suffix}.jar"/>
+		<property name="gtk.jar" value="${eclipse.home}/plugins/org.eclipse.swt.gtk${version.suffix}.jar"/>
+		<property name="motif.jar" value="${eclipse.home}/plugins/org.eclipse.swt.motif${version.suffix}.jar"/>
+		<property name="osx.jar" value="${eclipse.home}/plugins/org.eclipse.swt.carbon${version.suffix}.jar"/>
 		<available file="${win32.jar}" property="swt.jar" value="${win32.jar}"/>
 		<available file="${gtk.jar}" property="swt.jar" value="${gtk.jar}"/>
 		<available file="${motif.jar}" property="swt.jar" value="${motif.jar}"/>

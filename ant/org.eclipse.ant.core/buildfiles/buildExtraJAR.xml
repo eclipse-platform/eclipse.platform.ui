@@ -26,11 +26,11 @@
 			debug="on"
 			bootclasspath="${bootclasspath}" 
 			classpath="${basedir}/../org.eclipse.core.runtime/bin;
-					${eclipse.home}/plugins/org.eclipse.core.runtime${version.suffix}/runtime.jar;
+					${eclipse.home}/plugins/org.eclipse.core.runtime${version.suffix}.jar;
 					${basedir}/../org.eclipse.core.variables/bin;
 					${eclipse.home}/plugins/org.eclipse.core.variables${version.suffix}/variables.jar;
 					${basedir}/../org.eclipse.osgi/bin;
-					${eclipse.home}/plugins/org.eclipse.osgi${version.suffix}/core.jar;
+					${eclipse.home}/plugins/org.eclipse.osgi${version.suffix}.jar;
 					${basedir}/bin">
 			<src path="src_ant/"/>
 		</javac>
