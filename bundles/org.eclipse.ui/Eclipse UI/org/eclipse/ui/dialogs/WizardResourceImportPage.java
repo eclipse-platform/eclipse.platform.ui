@@ -204,14 +204,14 @@ protected void createFileSelectionGroup(Composite parent) {
  * @param parent the parent control
  */
 protected abstract void createSourceGroup(Composite parent);
-/**
- * Display an error dialog with the specified message.
- *
- * @param message the error message
+
+/*
+ * @see WizardDataTransferPage.getErrorDialogTitle()
  */
-protected void displayErrorDialog(String message) {
-	MessageDialog.openError(getContainer().getShell(), WorkbenchMessages.getString("WizardImportPage.errorDialogTitle"), message); //$NON-NLS-1$
+protected String getErrorDialogTitle(){
+	return WorkbenchMessages.getString("WizardImportPage.errorDialogTitle");
 }
+
 /**
  * Returns the path of the container resource specified in the container
  * name entry field, or <code>null</code> if no name has been typed in.

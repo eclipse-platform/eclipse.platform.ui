@@ -272,13 +272,11 @@ protected final void createResourcesGroup(Composite parent) {
 			SIZING_SELECTION_WIDGET_HEIGHT);
 
 }
-/**
- * Display an error dialog with the specified message.
- *
- * @param message the error message
+/*
+ * @see WizardDataTransferPage.getErrorDialogTitle()
  */
-protected void displayErrorDialog(String message) {
-	MessageDialog.openError(getContainer().getShell(), WorkbenchMessages.getString("WizardExportPage.errorDialogTitle"),message); //$NON-NLS-1$
+protected String getErrorDialogTitle(){
+	return WorkbenchMessages.getString("WizardExportPage.errorDialogTitle");
 }
 /**
  * Ensures that all resources have local contents.  Retrieves server contents 

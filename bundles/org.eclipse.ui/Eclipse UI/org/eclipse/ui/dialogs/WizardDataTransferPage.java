@@ -349,4 +349,36 @@ protected void createOptionsGroup(Composite parent) {
 	
 }
 
+/**
+ * Display an error dialog with the specified message.
+ *
+ * @param message the error message
+ */
+protected void displayErrorDialog(String message) {
+	MessageDialog.openError(getContainer().getShell(),getErrorDialogTitle(),message); //$NON-NLS-1$
+}
+
+/**
+ * Display an error dislog with the information from the
+ * supplied exception.
+ * @param exception Throwable
+ */
+protected void displayErrorDialog(Throwable exception){
+	String message = exception.getMessage();
+	//Some system exceptions have no message
+	if(message == null)
+		message = 
+			WorkbenchMessages.format(
+				"WizardDataTransfer.exceptionMessage",
+				new String [] {exception.toString()});
+	displayErrorDialog(message);
+}
+
+/**
+ * Get the title for an error dialog. Subclasses should
+ * override.
+ */
+protected String getErrorDialogTitle(){
+	return WorkbenchMessages.getString("WizardExportPage.internalErrorTitle");
+}
 }
