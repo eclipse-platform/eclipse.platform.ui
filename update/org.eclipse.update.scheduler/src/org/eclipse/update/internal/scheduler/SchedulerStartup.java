@@ -21,6 +21,7 @@ import org.eclipse.ui.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.update.search.*;
+import org.eclipse.update.ui.*;
 
 
 /**
@@ -88,8 +89,8 @@ public class SchedulerStartup implements IStartup {
 
     private class AutomaticUpdateJob extends UpdateJob {
 
-        public AutomaticUpdateJob(String name, boolean isUpdate, boolean isAutomatic, boolean download) {
-            super(name, isUpdate, isAutomatic, download);
+        public AutomaticUpdateJob(String name, boolean isAutomatic, boolean download) {
+            super(name, isAutomatic, download);
         }
 
         public AutomaticUpdateJob(String name, UpdateSearchRequest searchRequest) {
@@ -106,7 +107,7 @@ public class SchedulerStartup implements IStartup {
 			if (event.getJob() == SchedulerStartup.this.job) {
                 
                 // prompt the user
-                if (SchedulerStartup.this.job.getUpdates().size() > 0 && !InstallWizard.isRunning()) {
+                if (SchedulerStartup.this.job.getUpdates().length > 0 && !InstallWizard.isRunning()) {
                     if (UpdateScheduler.getDefault().getPluginPreferences().getBoolean(UpdateScheduler.P_DOWNLOAD)) {
                         UpdateUI.getStandardDisplay().asyncExec(new Runnable() {
                             public void run() {
@@ -318,7 +319,7 @@ public class SchedulerStartup implements IStartup {
 		}
         String jobName = UpdateScheduler.getString("AutomaticUpdatesJob.AutomaticUpdateSearch"); //$NON-NLS-1$);
         boolean download = UpdateScheduler.getDefault().getPluginPreferences().getBoolean(UpdateScheduler.P_DOWNLOAD);
-		job = new AutomaticUpdateJob(jobName, true, true, download );
+		job = new AutomaticUpdateJob(jobName,true, download );
 		job.schedule(delay);
 	}
 }

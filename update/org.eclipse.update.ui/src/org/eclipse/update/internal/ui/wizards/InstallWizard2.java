@@ -48,10 +48,14 @@ public class InstallWizard2
 	private Job job;
 	public static final Object jobFamily = new Object();
 	private IJobChangeListener jobListener;
-    private final boolean isUpdate;
+    private boolean isUpdate;
+
+	public InstallWizard2(UpdateSearchRequest searchRequest, IInstallFeatureOperation[] jobs, boolean isUpdate) {
+		this (searchRequest, new ArrayList(Arrays.asList(jobs)), isUpdate);
+	}
 
 	public InstallWizard2(UpdateSearchRequest searchRequest, ArrayList jobs, boolean isUpdate) {
-        this.isUpdate = isUpdate;
+		this.isUpdate = isUpdate;
         this.searchRequest = searchRequest;
         this.jobs = jobs;
         isRunning = true;

@@ -9,34 +9,29 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
-import java.util.*;
-
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.internal.search.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.operations.*;
+import java.util.ArrayList;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.update.internal.search.SiteSearchCategory;
+import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIImages;
 import org.eclipse.update.search.*;
-
+import org.eclipse.update.ui.UpdateJob;
 
 public class InstallWizard
 	extends Wizard
 	implements ISearchProvider {
 	private ModeSelectionPage modePage;
 	private SitePage sitePage;
-	private IInstallConfiguration config;
 	private int installCount = 0;
 	private UpdateSearchRequest searchRequest;
-	private ArrayList jobs;
 	private boolean needsRestart;
 	private static boolean isRunning;
-	private IBatchOperation installOperation;
 	private UpdateJob job;
-	private IJobChangeListener jobListener;
+	private InstallWizardOperation operation;
 
 
 	public InstallWizard(UpdateSearchRequest searchRequest) {
@@ -58,7 +53,6 @@ public class InstallWizard
 
 	public InstallWizard(UpdateSearchRequest searchRequest, ArrayList jobs) {
 		this(searchRequest);
-		this.jobs = jobs;
 	}
 
 	public boolean isRestartNeeded() {
@@ -82,17 +76,7 @@ public class InstallWizard
 			modePage.saveSettings();
 	}
 
-	private boolean isPageRequired(IWizardPage page) {
-		if (page == null)
-			return false;
-		return true;
-	}
-
 	public IWizardPage getNextPage(IWizardPage page) {
-		IWizardPage[] pages = getPages();
-		boolean start = false;
-		IWizardPage nextPage = null;
-
 		if (modePage != null && page.equals(modePage)) {
 			boolean update = modePage.isUpdateMode();
 			if (!update)
@@ -137,15 +121,8 @@ public class InstallWizard
 		// Downloads the feature content in the background.
 		// The job listener will then install the feature when download is finished.
 
-		if (jobListener != null)
-			Platform.getJobManager().removeJobChangeListener(jobListener);
-		if (job != null)
-			Platform.getJobManager().cancel(job);
-		jobListener = new UpdateJobChangeListener();
-		Platform.getJobManager().addJobChangeListener(jobListener);
-		
         if (isUpdate())
-            job = new UpdateJob(UpdateUI.getString("InstallWizard.jobName"), true, false, false);  //$NON-NLS-1$
+            job = new UpdateJob(UpdateUI.getString("InstallWizard.jobName"), false, false);  //$NON-NLS-1$
         else
             job = new UpdateJob(UpdateUI.getString("InstallWizard.jobName"), searchRequest);  //$NON-NLS-1$    
 		job.setUser(true);
@@ -153,56 +130,14 @@ public class InstallWizard
 //		if (wait) {
 //			progressService.showInDialog(workbench.getActiveWorkbenchWindow().getShell(), job); 
 //		}
-		job.schedule();
+		getOperation().run(UpdateUI.getActiveWorkbenchShell(), job);
 	}
     
-    private class UpdateJobChangeListener extends JobChangeAdapter {
-        public void done(final IJobChangeEvent event) {  
-            // the job listener is triggered when the search job is done, and proceeds to next wizard
-            if (event.getJob() == InstallWizard.this.job) {
-                isRunning = false;
-                Platform.getJobManager().removeJobChangeListener(this);
-                Platform.getJobManager().cancel(job);
-                
-                if (InstallWizard.this.job.getStatus() == Status.CANCEL_STATUS)
-                    return;
-                
-                if (InstallWizard.this.job.getStatus() != Status.OK_STATUS)
-                    UpdateUI.getStandardDisplay().syncExec(new Runnable() {
-                        public void run() {
-                            UpdateUI.log(InstallWizard.this.job.getStatus(), true);
-                        }
-                    });
-                
-                UpdateUI.getStandardDisplay().asyncExec(new Runnable() {
-                    public void run() {
-                        UpdateUI.getStandardDisplay().beep();
-                        BusyIndicator.showWhile(UpdateUI.getStandardDisplay(),
-                                new Runnable() {
-                                    public void run() {
-                                        openInstallWizard2();
-                                    }
-                                });
-                    }
-                });
-            }
-        }
-        
-        private void openInstallWizard2() {
-            if (InstallWizard2.isRunning())
-                // job ends and a new one is rescheduled
-                return;
-                
-            InstallWizard2 wizard = new InstallWizard2(job.getSearchRequest(), job.getUpdates(), job.isUpdate());
-            WizardDialog dialog =
-                new ResizableInstallWizardDialog(
-                    UpdateUI.getActiveWorkbenchShell(),
-                    wizard,
-                    UpdateUI.getString("AutomaticUpdatesJob.Updates")); //$NON-NLS-1$
-            dialog.create();
-            dialog.open();
-        }
-    }
+    private InstallWizardOperation getOperation() {
+		if (operation == null)
+			operation = new InstallWizardOperation();
+		return operation;
+	}
 
     public boolean canFinish() {
         if (isUpdate())

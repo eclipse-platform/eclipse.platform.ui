@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.internal.ui;
+package org.eclipse.update.ui;
 
 import java.util.*;
 
@@ -21,6 +21,11 @@ import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
 
+/**
+ * An UpdateJob performs the lookup for new features or updates to the existing features,
+ * depending on how you construct it.
+ *
+ */
 public class UpdateJob extends Job {
 	
 	private class SearchResultCollector implements IUpdateSearchResultCollector {
@@ -44,21 +49,25 @@ public class UpdateJob extends Job {
     private IStatus jobStatus = Status.OK_STATUS;
 
     /**
-     * 
-     * @param isUpdate true if searching for updates
+     * Use this constructor to search for updates to installed features
      * @param isAutomatic true if automatically searching for updates   
      * @param name the job name
      * @param download download updates automatically
      */
-	public UpdateJob( String name, boolean isUpdate, boolean isAutomatic, boolean download ) {
+	public UpdateJob( String name, boolean isAutomatic, boolean download ) {
 		super(name);
-        this.isUpdate = isUpdate;
+        this.isUpdate = true;
         this.isAutomatic = isAutomatic;
         this.download = download;
 		updates = new ArrayList();
 		setPriority(Job.DECORATE);
 	}
 
+    /**
+     * Use this constructor to search for features as indicated by the search request
+     * @param name the job name
+     * @param searchRequest the search request to execute
+     */
     public UpdateJob( String name, UpdateSearchRequest searchRequest ) {
         super(name);
         this.searchRequest = searchRequest;
@@ -83,7 +92,7 @@ public class UpdateJob extends Job {
         return Status.OK_STATUS;
     }
     
-    public IStatus runSearchForNew(IProgressMonitor monitor) {
+    private IStatus runSearchForNew(IProgressMonitor monitor) {
         if (UpdateCore.DEBUG) {
             UpdateCore.debug("Search for features started."); //$NON-NLS-1$
         }
@@ -103,7 +112,7 @@ public class UpdateJob extends Job {
     }
     
 
-	public IStatus runUpdates(IProgressMonitor monitor) {
+	private IStatus runUpdates(IProgressMonitor monitor) {
         ArrayList statusList = new ArrayList();
         if (UpdateCore.DEBUG) {
             if (isAutomatic)
@@ -165,8 +174,8 @@ public class UpdateJob extends Job {
         }
     }
 
-    public ArrayList getUpdates() {
-        return updates;
+    public IInstallFeatureOperation[] getUpdates() {
+        return (IInstallFeatureOperation[]) updates.toArray(new IInstallFeatureOperation[updates.size()]);
     }
     
     public IStatus getStatus() {

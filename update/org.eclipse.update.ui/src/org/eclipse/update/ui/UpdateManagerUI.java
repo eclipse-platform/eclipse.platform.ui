@@ -52,4 +52,15 @@ public class UpdateManagerUI {
 		dialog.create();
 		dialog.open();
 	}
+
+	/**
+	 * Opens the install wizard dialog. This wizard is used to find and install updates to existing
+	 * features, or to find and install new features as described by the given update job
+	 * @param shell the dialog parent shell	
+	 * @param job the job to run
+	 * @since 3.1
+	 */
+	public static void openInstaller(Shell shell, UpdateJob job) {
+		new InstallWizardOperation().run(shell, job);
+	}
 }

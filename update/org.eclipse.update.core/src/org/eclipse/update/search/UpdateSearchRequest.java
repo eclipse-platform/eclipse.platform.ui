@@ -96,6 +96,27 @@ public class UpdateSearchRequest {
 	}
 
 	/**
+	 * Returns an updates search category for use in discovering updates
+	 * to existing function on update sites.
+	 * 
+	 * @return an updates search category
+	 * @since 3.1
+	 */
+	public static IUpdateSearchCategory createDefaultUpdatesSearchCategory() {
+		return new UpdatesSearchCategory();
+	}
+	
+	/**
+	 * Returns a site search category for use in discovering new function on update sites.
+	 * 
+	 * @return a site search category
+	 * @since 3.1
+	 */
+	public static IUpdateSearchCategory createDefaultSiteSearchCategory() {
+		return new SiteSearchCategory();
+	}
+	
+	/**
 	 * The constructor that accepts the search category and 
 	 * scope objects.
 	 * @param category the actual search pattern that should be applied
