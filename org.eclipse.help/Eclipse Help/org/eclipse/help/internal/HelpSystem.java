@@ -105,9 +105,6 @@ public final class HelpSystem {
 	 */
 	public static HelpNavigationManager getNavigationManager() {
 		if (getInstance().navigationManager == null) {
-			// launch the help server to serve documents
-			// Do this first to ensure that the HelpSystem server info is valid.
-			HelpServer.instance();
 			
 			getInstance().navigationManager = new HelpNavigationManager();
 		}
@@ -242,6 +239,10 @@ public final class HelpSystem {
 	 */
 	public static void startup() {
 		try {
+			// launch the help server to serve documents
+			// Do this first to ensure that the HelpSystem server info is valid.
+			HelpServer.instance();
+
 			if (isServer()) {
 				// This is a server install, so need to generate navigation first
 				getNavigationManager();
