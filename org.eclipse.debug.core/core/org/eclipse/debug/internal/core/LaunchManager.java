@@ -552,6 +552,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		// restoreNonLocalIndex();
 		// restoreLocalIndex();
 		
+		// XXX: see bug 11326
 		// while launch config index format is unstable - rebuild
 		rebuildLaunchConfigIndex();
 		
