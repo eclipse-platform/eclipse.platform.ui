@@ -72,6 +72,13 @@ public class ReleaseCommentDialog extends DetailsDialog {
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#includeErrorMessage()
+	 */
+	protected boolean includeErrorMessage() {
+		return false;
+	}
+	
 	/*
 	 * @see Dialog#createDialogArea(Composite)
 	 */
