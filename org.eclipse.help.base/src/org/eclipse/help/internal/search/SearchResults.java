@@ -132,7 +132,7 @@ public class SearchResults implements ISearchHitCollector {
 	 * or within a scope if specified
 	 */
 	private IToc getTocForTopic(String href, String locale) {
-		IToc[] tocs = HelpCore.getTocManager().getTocs(locale);
+		IToc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
 		for (int i = 0; i < tocs.length; i++) {
 			ITopic topic = tocs[i].getTopic(href);
 			if (topic != null)

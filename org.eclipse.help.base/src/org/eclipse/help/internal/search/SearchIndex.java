@@ -311,7 +311,7 @@ public class SearchIndex {
 	public PluginVersionInfo getDocPlugins() {
 		if (docPlugins == null) {
 			Iterator docPluginsIterator =
-				HelpCore.getTocManager().getContributingPlugins().iterator();
+				HelpPlugin.getTocManager().getContributingPlugins().iterator();
 			docPlugins =
 				new PluginVersionInfo(
 					"nl"

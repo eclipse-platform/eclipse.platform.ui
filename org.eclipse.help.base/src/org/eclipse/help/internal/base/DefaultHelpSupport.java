@@ -74,7 +74,7 @@ public class DefaultHelpSupport {
 	 */
 	public void displayHelpResource(String href) {
 		// check if this is a toc
-		IToc toc = HelpCore.getTocManager().getToc(href, BootLoader.getNL());
+		IToc toc = HelpPlugin.getTocManager().getToc(href, BootLoader.getNL());
 		if (toc != null)
 			displayHelpResource(toc);
 		else if (
@@ -154,7 +154,7 @@ public class DefaultHelpSupport {
 			return ((Context) context).getID();
 		if (context instanceof ContextProxy)
 			return ((ContextProxy) context).getID();
-		return HelpCore.getContextManager().addContext(context);
+		return HelpPlugin.getContextManager().addContext(context);
 	}
 
 	private String getBaseURL() {

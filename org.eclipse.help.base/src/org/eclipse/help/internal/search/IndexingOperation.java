@@ -244,7 +244,7 @@ class IndexingOperation {
 	 */
 	private Set getAllDocuments(String locale) {
 		HashSet hrefs = new HashSet();
-		IToc[] tocs = HelpCore.getTocManager().getTocs(locale);
+		IToc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
 		for (int i = 0; i < tocs.length; i++) {
 			ITopic[] topics = tocs[i].getTopics();
 			for (int j = 0; j < topics.length; j++) {

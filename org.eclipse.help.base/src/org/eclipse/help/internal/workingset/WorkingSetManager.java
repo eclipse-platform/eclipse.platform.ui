@@ -96,7 +96,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		if (root == null)
 			root =
 				new AdaptableTocsArray(
-					HelpCore.getTocManager().getTocs(locale));
+					HelpPlugin.getTocManager().getTocs(locale));
 		return root;
 	}
 
