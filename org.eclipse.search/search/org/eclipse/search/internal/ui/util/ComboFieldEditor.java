@@ -128,7 +128,7 @@ public class ComboFieldEditor extends FieldEditor {
 	 * @see FieldEditor#getNumberOfControls()
 	 */
 	public int getNumberOfControls() {
-		return 1;
+		return 2;
 	}
 
 	/**
@@ -180,6 +180,7 @@ public class ComboFieldEditor extends FieldEditor {
 		}
 		if (fEntryNamesAndValues.length > 0) {
 			fValue= fEntryNamesAndValues[0][1];
+			fCombo.setText(fEntryNamesAndValues[0][0]);
 		}
 	}
 }
