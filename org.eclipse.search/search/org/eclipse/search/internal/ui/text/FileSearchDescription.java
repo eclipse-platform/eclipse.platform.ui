@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
-/**
- * @author Thomas Mäder
- *
- */
 public class FileSearchDescription {
+	
 	private String fSearchString;
 	private String fScopeDescription;
 
@@ -31,5 +28,4 @@ public class FileSearchDescription {
 	public String getSearchString() {
 		return fSearchString;
 	}
-
 }

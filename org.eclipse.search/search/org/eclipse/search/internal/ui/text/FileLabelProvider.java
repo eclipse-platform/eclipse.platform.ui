@@ -11,15 +11,21 @@
 package org.eclipse.search.internal.ui.text;
 
 import java.text.MessageFormat;
-import org.eclipse.core.resources.IResource;
+
 import org.eclipse.core.runtime.IPath;
+
+import org.eclipse.core.resources.IResource;
+
+import org.eclipse.swt.graphics.Image;
+
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProvider;
+
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 
 public class FileLabelProvider extends LabelProvider {

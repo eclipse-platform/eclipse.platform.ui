@@ -62,7 +62,7 @@ public class SearchAgainConfirmationDialog extends Dialog {
 		
 	}
 	
-	SearchAgainConfirmationDialog(Shell shell, ILabelProvider labelProvider, List outOfSync, List outOfDate) {
+	public SearchAgainConfirmationDialog(Shell shell, ILabelProvider labelProvider, List outOfSync, List outOfDate) {
 		super(shell);
 		fOutOfSync= outOfSync;
 		fOutOfDate= outOfDate;

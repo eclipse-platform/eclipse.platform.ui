@@ -21,10 +21,7 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
-/**
- * @author Thomas Mäder
- *  
- */
+
 public class FileTreeContentProvider extends FileContentProvider implements ITreeContentProvider {
 	private AbstractTreeViewer fTreeViewer;
 	private Map fChildrenMap;

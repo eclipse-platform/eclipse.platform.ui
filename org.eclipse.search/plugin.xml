@@ -220,25 +220,6 @@
 		</page>
 	</extension>
 	
-	<extension point="org.eclipse.search.searchResultSorters">
-		<sorter
-			id="org.eclipse.search.internal.ui.ResourcenameSorter"
-			pageId="org.eclipse.search.internal.ui.text.TextSearchPage"
-			label="%ResourcenameSorter.label"
-			tooltip="%ResourcenameSorter.tooltip"
-			icon="icons/full/elcl16/search_sortmatch.gif"
-			class="org.eclipse.search.internal.ui.text.ResourcenameSorter">
-		</sorter>
-		<sorter
-			id="org.eclipse.search.internal.ui.ResourcePathSorter"
-			pageId="org.eclipse.search.internal.ui.text.TextSearchPage"
-			label="%ResourcePathSorter.label"
-			tooltip="%ResourcePathSorter.tooltip"
-			icon="icons/full/elcl16/search_sortmatch.gif"
-			class="org.eclipse.search.internal.ui.text.ResourcePathSorter">
-		</sorter>
-	</extension>
-	
 	<extension
 		point="org.eclipse.ui.preferencePages">
 		<page name="%SearchPreferencePage.label"

@@ -345,10 +345,6 @@ public class SearchPlugin extends AbstractUIPlugin {
 		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
 
-	public static boolean useNewSearch() {
-		return true;
-	}
-	
 	/**
 	 * Creates the Search plugin standard groups in a context menu.
 	 */

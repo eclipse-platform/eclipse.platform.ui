@@ -12,12 +12,14 @@ package org.eclipse.search.internal.ui.text;
 
 import java.text.MessageFormat;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
+
 import org.eclipse.search.internal.core.SearchScope;
 import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
 import org.eclipse.search.internal.core.text.MatchLocator;
@@ -28,7 +30,6 @@ import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
-
 
 public class FileSearchQuery implements ISearchQuery {
 	private String fSearchString;
@@ -145,7 +146,7 @@ public class FileSearchQuery implements ISearchQuery {
 		return isRegexSearch(getSearchOptions());
 	}
 	
-	static boolean isRegexSearch(String options) {
+	public static boolean isRegexSearch(String options) {
 		return options.indexOf('r') != -1;
 	}
 
@@ -153,7 +154,7 @@ public class FileSearchQuery implements ISearchQuery {
 		return isCaseSensitive(getSearchOptions());
 	}
 
-	static boolean isCaseSensitive(String options) {
+	public static boolean isCaseSensitive(String options) {
 		return options.indexOf('i') == -1;
 	}
 

@@ -13,6 +13,7 @@ package org.eclipse.search.internal.ui.text;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+
 import org.eclipse.search.internal.ui.SearchPreferencePage;
 
 public class FileTableContentProvider extends FileContentProvider implements IStructuredContentProvider {

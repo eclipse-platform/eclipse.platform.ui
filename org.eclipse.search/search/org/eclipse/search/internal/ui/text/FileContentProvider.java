@@ -9,10 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
+
 public abstract class FileContentProvider implements IStructuredContentProvider {
 	protected final Object[] EMPTY_ARR= new Object[0];
 	protected AbstractTextSearchResult fResult;
