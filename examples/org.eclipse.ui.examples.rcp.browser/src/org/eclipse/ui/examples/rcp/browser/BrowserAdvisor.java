@@ -80,7 +80,7 @@ public class BrowserAdvisor extends WorkbenchAdvisor {
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor
 	 */
 	public String getInitialWindowPerspectiveId() {
-		return BrowserApp.PLUGIN_ID + ".browserPerspective"; //$NON-NLS-1$
+		return BrowserApp.BROWSER_PERSPECTIVE_ID; //$NON-NLS-1$
 	}
 		
 	/* (non-Javadoc)
