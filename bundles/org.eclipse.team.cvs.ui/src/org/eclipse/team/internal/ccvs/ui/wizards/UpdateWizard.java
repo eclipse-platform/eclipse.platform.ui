@@ -12,78 +12,75 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 
  
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
+import org.eclipse.ui.IWorkbenchPart;
 
 public class UpdateWizard extends Wizard {
 
-	UpdateWizardPage updatePage;
-	IProject project;
+	private IResource[] resources;
+	private final IWorkbenchPart part;
+	private UpdateWizardPage optionsPage;
+	private TagSelectionWizardPage tagSelectionPage;
 	
-	public UpdateWizard() {
-		setNeedsProgressMonitor(true);
+	public UpdateWizard(IWorkbenchPart part, IResource[] resources) {
+		this.part = part;
+		this.resources = resources;
 		setWindowTitle(Policy.bind("UpdateWizard.title")); //$NON-NLS-1$
 	}
 	
 	public void addPages() {
-		// Provide a progress monitor to indicate what is going on
-		try {
-			new ProgressMonitorDialog(getShell()).run(false, false, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					monitor.beginTask(null, 100);
-					updatePage = new UpdateWizardPage("updatePage", Policy.bind("UpdateWizard.updatePage"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_SHARE)); //$NON-NLS-1$ //$NON-NLS-2$
-					updatePage.setProject(project);
-					addPage(updatePage);
-					monitor.done();
-				}
-			});
-		} catch (InvocationTargetException e) {
-			CVSUIPlugin.log(IStatus.ERROR, Policy.bind("internal"), e.getTargetException()); //$NON-NLS-1$
-		} catch (InterruptedException e) {
-			// Ignore
-		}
+		ImageDescriptor substImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_CHECKOUT);
+
+		tagSelectionPage = new TagSelectionWizardPage("tagPage", "Select Tag", substImage, "Select the tag for the update", null /* no laqbel */, ProjectElement.INCLUDE_ALL_TAGS); //$NON-NLS-1$
+		tagSelectionPage.setAllowNoTag(true);
+		tagSelectionPage.setFolders(getCVSFolders());
+		addPage(tagSelectionPage);
+		
+		optionsPage = new UpdateWizardPage("updatePage", Policy.bind("UpdateWizard.updatePage"), substImage); //$NON-NLS-1$ //$NON-NLS-2$
+		addPage(optionsPage);
 	}
 	
+	private ICVSFolder[] getCVSFolders() {
+		Set projects = new HashSet();
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			projects.add(resource.getProject());
+		}
+		ICVSFolder[] folders = new ICVSFolder[projects.size()];
+		int i = 0;
+		for (Iterator iter = projects.iterator(); iter.hasNext();) {
+			IProject project = (IProject) iter.next();
+			folders[i++] = CVSWorkspaceRoot.getCVSFolderFor(project);
+		}
+		return folders;
+	}
+
 	/*
 	 * @see IWizard#performFinish()
 	 */
 	public boolean performFinish() {
-		final boolean[] result = new boolean[] {false};
 		try {
-			getContainer().run(false, false, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException {
-					try {
-						new UpdateOperation(
-							null, /* workbench part */ // TODO: Shoild have a part
-							new IResource[] { project }, 
-							updatePage.getLocalOptions(),
-							updatePage.getTag())
-								.run(monitor);
-						result[0] = true;
-					} catch (InterruptedException e) {
-						// User cancelled
-					} finally {
-						monitor.done();
-					}
-				}
-			});
-		} catch (InterruptedException e) {
-			return true;
+			new UpdateOperation(part, resources, optionsPage.getLocalOptions(), tagSelectionPage.getSelectedTag()).run();
 		} catch (InvocationTargetException e) {
 			CVSUIPlugin.openError(getShell(), null, null, e);
+			return false;
+		} catch (InterruptedException e) {
+			return false;
 		}
-		return result[0];
-	}
-
-	public void setProject(IProject project) {
-		this.project = project;
+		return true;
 	}
 }

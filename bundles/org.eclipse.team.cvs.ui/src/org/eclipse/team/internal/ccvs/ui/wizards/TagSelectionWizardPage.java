@@ -13,16 +13,28 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
+import org.eclipse.team.internal.ccvs.ui.TagConfigurationDialog;
 import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
 import org.eclipse.team.internal.ccvs.ui.merge.TagElement;
 import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement.ProjectElementSorter;
@@ -48,6 +60,12 @@ public class TagSelectionWizardPage extends CVSWizardPage {
 	private String label;
 	private int includeFlags;
 	
+	// Fields for allowing the use of the tag from the local workspace
+	boolean allowNoTag = false;
+	private Button useResourceTagButton;
+	private Button selectTagButton;
+	private boolean useResourceTag = false;
+	
 	public TagSelectionWizardPage(String pageName, String title, ImageDescriptor titleImage, String description, String label, int includeFlags) {
 		super(pageName, title, titleImage, description);
 		this.label = label;
@@ -64,7 +82,21 @@ public class TagSelectionWizardPage extends CVSWizardPage {
 		// set F1 help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARE_WITH_EXISTING_TAG_SELETION_DIALOG);
 		
-		if (label != null) {
+		if (allowNoTag) {
+			SelectionListener listener = new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					useResourceTag = useResourceTagButton.getSelection();
+					updateEnablement();
+				}
+			};
+			useResourceTag = true;
+			useResourceTagButton = createRadioButton(composite, "&Use the tag currently associated with the workspace resources", 1);
+			selectTagButton = createRadioButton(composite, "&Select the tag from the following list", 1);
+			useResourceTagButton.setSelection(useResourceTag);
+			selectTagButton.setSelection(!useResourceTag);
+			useResourceTagButton.addSelectionListener(listener);
+			selectTagButton.addSelectionListener(listener);
+		} else if (label != null) {
 			createWrappingLabel(composite, label, 0);
 		}
 		
@@ -147,7 +179,8 @@ public class TagSelectionWizardPage extends CVSWizardPage {
 	}
 	
 	private void updateEnablement() {
-		setPageComplete(selectedTag != null);
+		tagTree.getControl().setEnabled(!useResourceTag);
+		setPageComplete(useResourceTag || selectedTag != null);
 	}
 	
 	public ICVSFolder getFolder() {
@@ -159,6 +192,8 @@ public class TagSelectionWizardPage extends CVSWizardPage {
 	}
 	
 	public CVSTag getSelectedTag() {
+		if (useResourceTag) 
+			return null;
 		return selectedTag;
 	}
 	
@@ -169,5 +204,9 @@ public class TagSelectionWizardPage extends CVSWizardPage {
 	public void setFolders(ICVSFolder[] remoteFolders) {
 		this.remoteFolders = remoteFolders;
 		setInput();
+	}
+	
+	public void setAllowNoTag(boolean b) {
+		allowNoTag = b;
 	}
 }

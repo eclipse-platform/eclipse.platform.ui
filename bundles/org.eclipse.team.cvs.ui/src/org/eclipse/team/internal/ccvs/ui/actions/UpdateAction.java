@@ -13,8 +13,8 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.team.internal.ccvs.ui.wizards.UpdateWizard;
 
 /**
  * UpdateAction performs a 'cvs update' command on the selected resources.
@@ -28,8 +28,9 @@ public class UpdateAction extends WorkspaceAction {
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
-		new UpdateOperation(getTargetPart(), getSelectedResources(), Command.NO_LOCAL_OPTIONS, null /* use the tag of the resources */)
-			.run();
+		UpdateWizard wizard = new UpdateWizard(getTargetPart(), getSelectedResources());
+		WizardDialog dialog = new WizardDialog(getShell(), wizard);
+		dialog.open();
 	}
 
 	/**
