@@ -49,6 +49,11 @@ public interface IDebugPreferenceConstants {
 	public static final String VARIABLES_DETAIL_PANE_ORIENTATION = "Variables.detail.orientation"; //$NON-NLS-1$
 	public static final String VARIABLES_DETAIL_PANE_RIGHT = "Variables.detail.orientation.right"; //$NON-NLS-1$
 	public static final String VARIABLES_DETAIL_PANE_UNDERNEATH = "Variables.detail.orientation.underneath"; //$NON-NLS-1$
+	
+	/**
+	 * The RGB for the color to be used to indicate changed variables
+	 */
+	public static final String CHANGED_VARIABLE_RGB= "Changed.Variable.RGB";
 
 	/**
 	 * The type of launching to perform

@@ -18,8 +18,8 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.internal.ui.ConsoleOutputTextStore;
-import org.eclipse.debug.internal.ui.ConsolePreferencePage;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugPreferenceConstants;
 import org.eclipse.jface.text.AbstractDocument;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
@@ -296,8 +296,8 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 		if (docLength != fNewStreamWriteEnd) {
 			StyleRange input= 
 				new StyleRange(fNewStreamWriteEnd, docLength - fNewStreamWriteEnd, 
-								ConsolePreferencePage.getPreferenceColor(ConsolePreferencePage.CONSOLE_SYS_IN_RGB),
-								null);
+						DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB),
+						null);
 			if (!fStyleRanges.isEmpty()) {
 				if (((StyleRange)fStyleRanges.get(fStyleRanges.size() - 1)).similarTo(input)) {
 					//remove the top "input" range...continuing input
@@ -327,13 +327,13 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 		}
 
 		Color newRangeColor= 
-			(sourceStream == ConsoleDocument.OUT) ? ConsolePreferencePage.getPreferenceColor(ConsolePreferencePage.CONSOLE_SYS_OUT_RGB) : ConsolePreferencePage.getPreferenceColor(ConsolePreferencePage.CONSOLE_SYS_ERR_RGB);
+			(sourceStream == ConsoleDocument.OUT) ? DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB) : DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB);
 
 		StyleRange newRange= new StyleRange(fLastStreamWriteEnd, fNewStreamWriteEnd - fLastStreamWriteEnd, newRangeColor, null);
 		if (!fStyleRanges.isEmpty()) {
 			if ((docLength != fNewStreamWriteEnd) && 
 				((StyleRange)fStyleRanges.get(fStyleRanges.size() - 1)).foreground ==
-				ConsolePreferencePage.getPreferenceColor(ConsolePreferencePage.CONSOLE_SYS_IN_RGB)) {
+				DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB)) {
 				//remove the top "input" range..it will get recalculated in updateInputStyleRanges
 				fStyleRanges.remove(fStyleRanges.size() - 1);
 			}

@@ -11,7 +11,6 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
@@ -70,20 +69,6 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
-	}
-	
-	/**
-	 * Returns the a color based on the type of output.
-	 * Valid types:
-	 * <li>CONSOLE_SYS_OUT_RGB</li>
-	 * <li>CONSOLE_SYS_ERR_RGB</li>
-	 * <li>CONSOLE_SYS_IN_RGB</li>
-	 */
-	public static Color getPreferenceColor(String type) {
-		IPreferenceStore pstore= DebugUIPlugin.getDefault().getPreferenceStore();
-		RGB outRGB= PreferenceConverter.getColor(pstore, type);
-		ColorManager colorManager= DebugUIPlugin.getDefault().getColorManager();
-		return colorManager.getColor(outRGB);
 	}
 	
 	/**

@@ -65,6 +65,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -72,6 +73,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewPart;
@@ -1540,5 +1543,20 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 			setEmptyLaunchHistories();
 		}
 	}	
+	
+	/**
+	 * Returns the a color based on the type of output.
+	 * Valid types:
+	 * <li>CONSOLE_SYS_OUT_RGB</li>
+	 * <li>CONSOLE_SYS_ERR_RGB</li>
+	 * <li>CONSOLE_SYS_IN_RGB</li>
+	 * <li>CHANGED_VARIABLE_RGB</li>
+	 */
+	public static Color getPreferenceColor(String type) {
+		IPreferenceStore pstore= DebugUIPlugin.getDefault().getPreferenceStore();
+		RGB rgb= PreferenceConverter.getColor(pstore, type);
+		ColorManager colorManager= DebugUIPlugin.getDefault().getColorManager();
+		return colorManager.getColor(rgb);
+	}
 }
 

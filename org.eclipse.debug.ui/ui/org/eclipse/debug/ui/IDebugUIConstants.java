@@ -153,21 +153,6 @@ public interface IDebugUIConstants {
 	 * @since 2.0
 	 */
 	public static final String PREF_AUTO_REMOVE_OLD_LAUNCHES= PLUGIN_ID + ".auto_remove_old_launches"; //$NON-NLS-1$
-	
-	/**
-	 * Boolean preference controlling the rendering of variable
-	 * in the variables and expression views. When <code>true</code>
-	 * the variables and expressions views display variables that
-	 * have changed value on the last operation (step, etc), with
-	 * their default images, and those that have not changed with
-	 * disabled images. When <code>false</code>, all variables
-	 * are rendered with their default images.
-	 * 
-	 * @since 2.0
-	 * @deprecated to be removed - the variable view will show changes (i.e.
-	 *   will not be configurable)
-	 */
-	public static final String PREF_SHOW_VARIABLE_VALUE_CHANGES = PLUGIN_ID + ".show_variable_value_changes"; //$NON-NLS-1$	
 		
 	/**
 	 * Boolean preference controlling the appearance of the launch configuration dialog

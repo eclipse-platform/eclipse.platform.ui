@@ -203,7 +203,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		Viewer viewer = getViewer();
 		if (viewer != null) {
-			((VariablesViewer)viewer).dispose();
 			getDetailDocument().removeDocumentListener(getDetailDocumentListener());
 		}
 		super.dispose();
@@ -266,7 +265,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		String propertyName= event.getProperty();
 		if (propertyName.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION)) {
 			setDetailPaneOrientation((String)event.getNewValue());
-		} else if (propertyName.equals(IDebugUIConstants.PREF_SHOW_VARIABLE_VALUE_CHANGES)) {
+		} else if (propertyName.equals(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB)) {
 			getEventHandler().refresh();
 		}
 	}
