@@ -17,7 +17,12 @@
         <servlet-class>org.eclipse.help.servlet.InitServlet</servlet-class>
     </servlet>
     
-    <!-- **** begin precompiled JSP config ***** -->
+    <servlet>
+        <servlet-name>livehelp</servlet-name>
+        <servlet-class>org.eclipse.help.servlet.LiveHelpServlet</servlet-class>
+    </servlet>
+        
+     <!-- **** begin precompiled JSP config ***** -->
 	<servlet>
 		<servlet-name>jsp.advanced</servlet-name>
 		<servlet-class>jsp.advanced</servlet-class>
@@ -158,6 +163,11 @@
     <servlet-mapping>
         <servlet-name>content</servlet-name>
         <url-pattern>/ns4/content/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>livehelp</servlet-name>
+        <url-pattern>/livehelp/*</url-pattern>
     </servlet-mapping>
     
     <!-- **** begin precompiled JSP config ***** -->
