@@ -191,8 +191,8 @@ public final void selectionChanged(SelectionChangedEvent event) {
  *   <code>IResource</code>.{<code>FILE</code>, <code>FOLDER</code>,
  *   <code>PROJECT</code>, <code>ROOT</code>}
  * @return <code>true</code> if all resources in the current selection are of the
- *   specified types, and <code>false</code> if some elements are resources of a
- *   different type or not resources
+ *   specified types or if the current selection is empty, and <code>false</code> if some
+ *   elements are resources of a different type or not resources
  * @see IResource
  */
 protected boolean selectionIsOfType(int resourceMask) {
