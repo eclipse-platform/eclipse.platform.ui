@@ -30,7 +30,7 @@ public class BreakpointsViewContentProvider
 	 */
 	public Object[] getElements(Object parent) {
 		IBreakpoint[] breakpoints= ((IBreakpointManager) parent).getBreakpoints();
-		IWorkbenchActivitySupport support = ((IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(IWorkbenchActivitySupport.class));
+		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 		if (support == null)  {
 			return breakpoints;
 		}

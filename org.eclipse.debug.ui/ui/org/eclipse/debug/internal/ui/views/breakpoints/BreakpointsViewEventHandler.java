@@ -42,7 +42,7 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 	public BreakpointsViewEventHandler(BreakpointsView view) {
 		fView= view;
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
-		IWorkbenchActivitySupport activitySupport = (IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
+		IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
 		if (activitySupport != null) {
 			activitySupport.getActivityManager().addActivityManagerListener(this);
 		}
@@ -53,7 +53,7 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 	 */
 	public void dispose() {
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
-		IWorkbenchActivitySupport activitySupport = (IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
+		IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
 		if (activitySupport != null) {
 			activitySupport.getActivityManager().removeActivityManagerListener(this);
 		}

@@ -137,7 +137,7 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	private List filterTypes(ILaunchConfigurationType[] allTypes) {
 		List filteredTypes= new ArrayList();
 		String mode = getMode();
-		IWorkbenchActivitySupport activitySupport = (IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
+		IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
 		IActivityManager activityManager = activitySupport.getActivityManager();
 		for (int i = 0; i < allTypes.length; i++) {
 			ILaunchConfigurationType type = allTypes[i];

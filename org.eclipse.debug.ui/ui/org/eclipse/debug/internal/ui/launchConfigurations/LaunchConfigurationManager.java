@@ -149,7 +149,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	 * @return the given collection minus any configurations from disabled activities
 	 */
 	public static ILaunchConfiguration[] filterConfigs(ILaunchConfiguration[] configurations) {
-		IWorkbenchActivitySupport activitySupport = (IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
+		IWorkbenchActivitySupport activitySupport= PlatformUI.getWorkbench().getActivitySupport();
 		if (activitySupport == null) {
 			return configurations;
 		}
