@@ -123,7 +123,8 @@ void invokeOperation(IResource resource, IProgressMonitor monitor) throws CoreEx
 /**
  * The <code>RefreshAction</code> implementation of this
  * <code>SelectionListenerAction</code> method ensures that this action is
- * disabled if any of the selections are not resources.
+ * enabled if the selection is empty, but is disabled if any of the selected 
+ * elements are not resources.
  */
 protected boolean updateSelection(IStructuredSelection s) {
 	return (super.updateSelection(s) || s.isEmpty()) && getSelectedNonResources().size() == 0;
