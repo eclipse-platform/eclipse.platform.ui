@@ -6,13 +6,7 @@ package org.eclipse.debug.ui;
  * (c) Copyright IBM Corp 2000
  */
 
-import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.internal.ui.*;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.debug.core.model.IValue;import org.eclipse.debug.internal.ui.*;import org.eclipse.jface.preference.IPreferenceStore;import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.swt.graphics.Image;import org.eclipse.ui.*;
 
 /**
  * This class provides utilities for clients of the debug UI.
@@ -46,7 +40,9 @@ public class DebugUITools {
 		if (view == null) {
 			// open a new view
 			try {
+				IWorkbenchPart activePart= p.getActivePart();
 				view= (InspectorView) p.showView(IDebugUIConstants.ID_INSPECTOR_VIEW);
+				p.activate(activePart);
 			} catch (PartInitException e) {
 				DebugUIUtils.logError(e);
 				return;
@@ -54,7 +50,7 @@ public class DebugUITools {
 		}
 		InspectItem item = new InspectItem(label, value);
 		view.addToInspector(item);
-		p.activate(view);
+		p.bringToTop(view);
 	}
 	
 	/**
