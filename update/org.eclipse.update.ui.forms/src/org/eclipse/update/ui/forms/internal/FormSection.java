@@ -13,6 +13,7 @@ import org.eclipse.swt.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.dnd.Clipboard;
 
 public abstract class FormSection implements IPropertyChangeListener {
 	public static final int SELECTION = 1;
@@ -404,5 +405,9 @@ public abstract class FormSection implements IPropertyChangeListener {
 
 	public void setCollapsed(boolean collapsed) {
 		this.collapsed = collapsed;
+	}
+	
+	public boolean canPaste(Clipboard clipboard) {
+		return false;
 	}
 }

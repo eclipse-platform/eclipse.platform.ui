@@ -5,6 +5,7 @@ package org.eclipse.update.ui.forms.internal;
  */
 import java.util.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.dnd.Clipboard;
 
 /**
  * This form class understands form sections.
@@ -63,8 +64,7 @@ public void commitChanges(boolean onSave) {
 }
 
 public boolean doGlobalAction(String actionId) {
-	Display display = getControl().getDisplay();
-	Control focusControl = display.getFocusControl();
+	Control focusControl = getFocusControl();
 	if (focusControl==null) return false;
 
 	if (canPerformDirectly(actionId, focusControl)) return true;
@@ -80,6 +80,34 @@ public boolean doGlobalAction(String actionId) {
 	}
 	if (targetSection!=null) {
 		return targetSection.doGlobalAction(actionId);
+	}
+	return false;
+}
+
+protected Control getFocusControl() {
+	Control control = getControl();
+	if (control==null || control.isDisposed()) return null;
+	Display display = control.getDisplay();
+	Control focusControl = display.getFocusControl();
+	if (focusControl==null || focusControl.isDisposed()) return null;
+	return focusControl;
+}
+
+public boolean canPaste(Clipboard clipboard) {
+	Control focusControl = getFocusControl();
+	if (focusControl==null) return false;
+	Composite parent = focusControl.getParent();
+	FormSection targetSection=null;
+	while (parent!=null) {
+		Object data = parent.getData();
+		if (data!=null && data instanceof FormSection) {
+			targetSection = (FormSection)data;
+			break;
+		}
+		parent = parent.getParent();
+	}
+	if (targetSection!=null) {
+		return targetSection.canPaste(clipboard);
 	}
 	return false;
 }
