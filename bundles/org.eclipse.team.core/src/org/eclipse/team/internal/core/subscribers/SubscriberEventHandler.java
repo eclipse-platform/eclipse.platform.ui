@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.*;
 import org.eclipse.team.core.subscribers.Subscriber;
@@ -146,6 +147,15 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 			job.setSystem(true);
 		}
 		getEventHandlerJob().schedule();
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.core.BackgroundEventHandler#jobDone(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+	 */
+	protected void jobDone(IJobChangeEvent event) {
+		super.jobDone(event);
+		progressGroup = null;
 	}
 	
 	/**
