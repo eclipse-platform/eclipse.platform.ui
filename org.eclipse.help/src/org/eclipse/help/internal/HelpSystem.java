@@ -28,16 +28,12 @@ public final class HelpSystem {
 	// Topics NavigationManager for topics navigation
 	protected TopicsNavigationManager topicsNavigationManager;
 	protected IContextManager contextManager;
-	int debug_level;
+
 	private String browserPath;
 	// constants
 	private static final String SEARCH_ENGINE_EXTENSION_POINT =
 		"org.eclipse.help.searchEngine";
 	private static final String SEARCH_ENGINE_CONFIG = "config";
-	// Contants indicating level of logging
-	public static final int LOG_ERROR = 0; // log errors
-	public static final int LOG_WARNING = 1; // log errors and warnings
-	public static final int LOG_DEBUG = 2;
 	private String localServerAddress;
 	private String localServerPort;
 	protected HelpPreferences preferences = null;
@@ -85,11 +81,7 @@ public final class HelpSystem {
 		return getInstance().navigationManager;
 	}
 	// eof 1.0 nav support
-	/**
-	 */
-	public static int getDebugLevel() {
-		return getInstance().debug_level;
-	}
+
 	public static HelpPreferences getPreferences() {
 		return getInstance().preferences;
 	}
@@ -130,10 +122,6 @@ public final class HelpSystem {
 	public static void setBrowserPath(String path) {
 		getInstance().browserPath = path;
 	}
-	public static void setDebugLevel(int debug_level) {
-		getInstance().debug_level = debug_level;
-		Logger.setDebugLevel(debug_level);
-	}
 	public static void setLocalServerInfo(String addr, String port) {
 		getInstance().localServerAddress = addr;
 		getInstance().localServerPort = port;
@@ -141,6 +129,9 @@ public final class HelpSystem {
 	}
 	public static void setPreferences(HelpPreferences newPreferences) {
 		getInstance().preferences = newPreferences;
+			
+		Logger.setDebugLevel(newPreferences.getInt(HelpPreferences.LOG_LEVEL_KEY));
+				
 		if (newPreferences.getInt(HelpPreferences.LOCAL_SERVER_CONFIG) > 0) {
 			setLocalServerInfo(
 				newPreferences.getString(HelpPreferences.LOCAL_SERVER_ADDRESS_KEY),
@@ -148,7 +139,7 @@ public final class HelpSystem {
 		} else {
 			setLocalServerInfo(null, "0");
 		}
-		HelpSystem.setDebugLevel(newPreferences.getInt(HelpPreferences.LOG_LEVEL_KEY));
+
 		HelpSystem.setBrowserPath(
 			newPreferences.getString(HelpPreferences.BROWSER_PATH_KEY));
 	}

@@ -9,6 +9,10 @@ package org.eclipse.help.topics;
  * these objects.
  */
 public interface IDescriptor {
+
+	public final static String HREF = "href";
+	public final static String LABEL = "label";
+	
 	/**
 	 * Obtains href
 	 */

@@ -6,7 +6,7 @@ package org.eclipse.help.internal.util;
 
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.HelpPlugin;
 
 /**
  * Generic Help System Logger class for handling logging and tracing.
@@ -16,6 +16,12 @@ import org.eclipse.help.internal.*;
  * DEBUG boolean flag for optimizing out heavy duty Level 3 developer messages
  */
 public class Logger {
+	// Contants indicating level of logging
+	public static final int LOG_ERROR = 0; // log errors
+	public static final int LOG_WARNING = 1; // log errors and warnings
+	public static final int LOG_DEBUG = 2;
+
+
 	// This SHOULD be set to false in production
 	public final static boolean DEBUG = false;
 
@@ -38,9 +44,6 @@ public class Logger {
 
 	private static void initialize() {
 		try {
-			// get the debug level from the HelpSystem instance
-			debug_level = HelpSystem.getDebugLevel();
-
 			// get unique pluging ID and cash it for later use.
 			Plugin helpPlugin = HelpPlugin.getDefault();
 			workbenchPluginID = helpPlugin.getDescriptor().getUniqueIdentifier();
@@ -55,6 +58,7 @@ public class Logger {
 			init_ok = false;
 		}
 	}
+	
 	/* 
 	 * Log a Debug message. This is intended to be wrapped as follows:
 	 * if (Logger.DEBUG)
@@ -75,7 +79,7 @@ public class Logger {
 	public static synchronized void logDebugMessage(
 		String className,
 		String message) {
-		if ((init_ok) && (debug_level >= HelpSystem.LOG_DEBUG)) {
+		if ((init_ok) && (debug_level >= LOG_DEBUG)) {
 			// ie: print all INFO, WARNING and ERROR messages
 			MultiStatus debugStatus =
 				new MultiStatus(workbenchPluginID, IStatus.OK, className, null);
@@ -92,7 +96,7 @@ public class Logger {
 	 */
 
 	public static synchronized void logError(String message, Throwable ex) {
-		if ((init_ok) && (debug_level >= HelpSystem.LOG_ERROR)) {
+		if ((init_ok) && (debug_level >= LOG_ERROR)) {
 			// ie: print only ERROR messages
 			if (message == null)
 				message = "";
@@ -109,7 +113,7 @@ public class Logger {
 	 */
 
 	public static synchronized void logInfo(String message) {
-		if ((init_ok) && (debug_level >= HelpSystem.LOG_DEBUG)) {
+		if ((init_ok) && (debug_level >= LOG_DEBUG)) {
 			if (message == null)
 				message = "";
 			// ie: print all INFO, WARNING and ERROR messages
@@ -127,7 +131,7 @@ public class Logger {
 	 */
 
 	public static synchronized void logWarning(String message) {
-		if ((init_ok) && (debug_level >= HelpSystem.LOG_WARNING)) {
+		if ((init_ok) && (debug_level >= LOG_WARNING)) {
 			if (message == null)
 				message = "";
 			// ie: print all WARNING and ERROR messages
@@ -137,6 +141,13 @@ public class Logger {
 		}
 
 	}
+		
+	/**
+	 */
+	public static int getDebugLevel() {
+		return debug_level;
+	}
+	
 	public static synchronized void setDebugLevel(int level) {
 		debug_level = level;
 	}

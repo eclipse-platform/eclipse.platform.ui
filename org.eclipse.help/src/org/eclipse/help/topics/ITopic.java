@@ -7,5 +7,6 @@ package org.eclipse.help.topics;
  * ITopic is one topic in a hierarchy of topics.
  */
 public interface ITopic extends IDescriptor, ITopicNode {
+	public final static String TOPIC = "topic";
 }
 

@@ -5,7 +5,7 @@
 package org.eclipse.help.internal.topics;
 import java.util.*;
 import org.eclipse.help.internal.util.Resources;
-import org.eclipse.help.topics.ITopics;
+import org.eclipse.help.topics.*;
 import org.xml.sax.*;
 import sun.java2d.pipe.NullPixelPipe;
 /** 
@@ -73,6 +73,30 @@ class Topics extends NavigationElement implements ITopics {
 	public String getLabel() {
 		return label;
 	}
+	
+	/**
+	 * Returns a topic with the specified href.
+	 * <br> It is possible that multiple topics have 
+	 * the same href, in which case there is no guarantee 
+	 * which one is returned.
+	 * @param href The topic's href value.
+	 */
+	public ITopic getTopic(String href)
+	{
+		// At some point we may want to cache the topics
+		// by href, but for now let's just traverse the
+		// tree and find the topic.
+		Stack stack = new Stack();
+		stack.addAll(getChildTopics());
+		while(!stack.isEmpty())
+		{
+			ITopic topic = (ITopic)stack.pop();
+			if (topic.getHref().equals(href))
+				return topic;
+		}
+		return null;
+	}
+	
 	/**
 	 * Used by debugger
 	 */

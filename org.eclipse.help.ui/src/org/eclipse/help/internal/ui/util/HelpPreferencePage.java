@@ -4,6 +4,7 @@ package org.eclipse.help.internal.ui.util;
  * All Rights Reserved.
  */
 import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.util.Logger;
 import org.eclipse.help.internal.ui.*;
 import org.eclipse.help.internal.util.HelpPreferences;
 import org.eclipse.jface.preference.*;
@@ -274,13 +275,13 @@ public class HelpPreferencePage
 		radioButtonDebug.setSelection(false);
 		int choice = store.getDefaultInt(HelpPreferences.LOG_LEVEL_KEY);
 		switch (choice) {
-			case HelpSystem.LOG_ERROR :
+			case Logger.LOG_ERROR :
 				radioButtonError.setSelection(true);
 				break;
-			case HelpSystem.LOG_WARNING :
+			case Logger.LOG_WARNING :
 				radioButtonWarning.setSelection(true);
 				break;
-			case HelpSystem.LOG_DEBUG :
+			case Logger.LOG_DEBUG :
 				radioButtonDebug.setSelection(true);
 				break;
 		}
@@ -318,13 +319,13 @@ public class HelpPreferencePage
 		radioButtonDebug.setSelection(false);
 		int choice = store.getInt(HelpPreferences.LOG_LEVEL_KEY);
 		switch (choice) {
-			case HelpSystem.LOG_ERROR :
+			case Logger.LOG_ERROR :
 				radioButtonError.setSelection(true);
 				break;
-			case HelpSystem.LOG_WARNING :
+			case Logger.LOG_WARNING :
 				radioButtonWarning.setSelection(true);
 				break;
-			case HelpSystem.LOG_DEBUG :
+			case Logger.LOG_DEBUG :
 				radioButtonDebug.setSelection(true);
 				break;
 		}
@@ -368,7 +369,7 @@ public class HelpPreferencePage
 		else if (radioButtonDebug.getSelection())
 			choice = 2;
 		store.setValue(HelpPreferences.LOG_LEVEL_KEY, choice);
-		HelpSystem.setDebugLevel(choice);
+
 		if (!System.getProperty("os.name").startsWith("Win")) {
 			store.setValue(HelpPreferences.BROWSER_PATH_KEY, textBrowserPath.getText());
 		}
