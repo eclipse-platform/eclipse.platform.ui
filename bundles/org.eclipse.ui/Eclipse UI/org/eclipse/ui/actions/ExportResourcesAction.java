@@ -80,7 +80,7 @@ public void setSelection(IStructuredSelection selection) {
 		}
 	}
 	
-	setEnabled(true);
+	setEnabled(ResourceSelectionUtil.hasResources(this.selection));
 }
 
 /**
