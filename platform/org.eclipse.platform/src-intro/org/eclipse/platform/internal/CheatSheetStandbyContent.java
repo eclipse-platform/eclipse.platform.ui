@@ -15,8 +15,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.cheatsheets.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.internal.intro.impl.parts.IStandbyContentPart;
 import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.intro.config.IStandbyContentPart;
 
 public final class CheatSheetStandbyContent implements IStandbyContentPart {
 
