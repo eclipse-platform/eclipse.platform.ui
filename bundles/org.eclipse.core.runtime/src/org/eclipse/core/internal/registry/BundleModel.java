@@ -167,8 +167,13 @@ public class BundleModel extends NestedRegistryModelObject implements IRegistryE
 		if (missingResourceBundle)
 			return value;
 		
-		if (resourceBundle == null)
-			resourceBundle = ResourceTranslator.getResourceBundle(bundle);
+		if (resourceBundle == null) {
+			try{
+				resourceBundle = ResourceTranslator.getResourceBundle(bundle);
+			} catch(MissingResourceException e) {
+				resourceBundle = null;
+			}
+		}
 		
 		if (resourceBundle == null) {
 			missingResourceBundle = true;
