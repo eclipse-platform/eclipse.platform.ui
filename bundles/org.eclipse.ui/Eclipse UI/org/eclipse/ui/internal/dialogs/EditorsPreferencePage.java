@@ -185,15 +185,19 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		java.util.Collection encodings = EncodingDefinitionManager.getLabelSortedEncodings();
 		Iterator iterator = encodings.iterator();
 		
-		String enc = ResourcesPlugin.getPlugin().getPluginPreferences().getString(ResourcesPlugin.PREF_ENCODING);
+		String encodingValue = ResourcesPlugin.getPlugin().getPluginPreferences().getString(ResourcesPlugin.PREF_ENCODING);
+		String selectedLabel = null;
 		
 		while (iterator.hasNext()) {
-			encodingCombo.add(((EncodingDefinition) iterator.next()).getLabel());
+			EncodingDefinition next = (EncodingDefinition) iterator.next();
+			encodingCombo.add(next.getLabel());
+			if(next.getValue().equals(encodingValue))
+				selectedLabel = next.getLabel();
 		}
 
-		boolean isDefault = enc == null;
+		boolean isDefault = Preferences.STRING_DEFAULT_DEFAULT.equals(encodingValue);
 		
-		encodingCombo.setText(isDefault ? defaultEnc : enc);
+		encodingCombo.setText(isDefault ? defaultEnc : selectedLabel);
 		
 		updateEncodingState(isDefault);
 	}
