@@ -1011,12 +1011,10 @@ private void deactivatePart(IWorkbenchPart part) {
 	}
 }
 private void disposePart(IWorkbenchPartReference ref) {
-	final IWorkbenchPart part = ref.getPart(false);
-	if(part == null)
-		return;
+	final WorkbenchPartReference ref0 = (WorkbenchPartReference)ref;
 	Platform.run(new SafeRunnable() {
 		public void run() {
-			part.dispose();
+			ref0.dispose();
 		}
 		public void handleException(Throwable e) {
 			//Exception has already being logged by Core. Do nothing.
@@ -1051,18 +1049,16 @@ public void dispose() {
 	// Dispose views.
 	final int errors[] = {0};
 	for (int i = 0; i < refs.length; i ++) {
-		final IViewPart view = (IViewPart)refs[i].getPart(false);
+		final WorkbenchPartReference ref = (WorkbenchPartReference)refs[i];
 		firePartClosed(refs[i]);
-		if(view != null) {
-			Platform.run(new SafeRunnable() {
-				public void run() {
-					view.dispose();
-				}
-				public void handleException(Throwable e) {
-					errors[0]++;
-				}
-			});
-		}
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				ref.dispose();
+			}
+			public void handleException(Throwable e) {
+				errors[0]++;
+			}
+		});
 	}
 	if (errors[0] > 0) {
 		String message;

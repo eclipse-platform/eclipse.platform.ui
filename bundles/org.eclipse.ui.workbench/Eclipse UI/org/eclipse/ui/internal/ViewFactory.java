@@ -282,7 +282,7 @@ public void releaseView(String id) {
 
 private class ViewReference extends WorkbenchPartReference implements IViewReference {
 	
-	boolean failedToCreate = false;
+	boolean create = true;
 
 	public ViewReference(String id) {
 		ViewDescriptor desc = (ViewDescriptor)viewReg.find(id);
@@ -320,12 +320,12 @@ private class ViewReference extends WorkbenchPartReference implements IViewRefer
 	public IWorkbenchPart getPart(boolean restore) {
 		if(part != null)
 			return part;
-		if(failedToCreate)
+		if(!create)
 			return null;
 		if(restore) {
 			IStatus status = restoreView(this);
 			if(status.getSeverity() == IStatus.ERROR) {
-				failedToCreate = true;
+				create = false;
 				Workbench workbench = (Workbench)PlatformUI.getWorkbench();
 				if(!workbench.isStarting()) {
 					ErrorDialog.openError(
@@ -343,6 +343,10 @@ private class ViewReference extends WorkbenchPartReference implements IViewRefer
 	}
 	public IWorkbenchPage getPage() {
 		return page;
+	}
+	public void dispose() {
+		super.dispose();
+		create = false;
 	}
 }
 

@@ -1250,6 +1250,8 @@ public class EditorManager {
 			
 		public void setPart(IWorkbenchPart part) {
 			super.setPart(part);
+			if(part == null)
+				return;
 			EditorSite site = (EditorSite)part.getSite();
 			if(site != null) {
 				site.setReuseEditor(!pinned);
@@ -1273,6 +1275,10 @@ public class EditorManager {
 		}		
 		public IWorkbenchPage getPage() {
 			return page;
+		}
+		public void dispose() {
+			super.dispose();
+			editorMemento = null;
 		}
 	}
 }

@@ -150,6 +150,9 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 			imageDescritor = null;
 			image = null;
 		}
+		if(part != null)
+			part.dispose();
+		part = null;
 	}	
 	public abstract String getRegisteredName();
 }
