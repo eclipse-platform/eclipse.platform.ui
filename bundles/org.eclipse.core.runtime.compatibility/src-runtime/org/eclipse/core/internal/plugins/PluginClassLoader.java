@@ -16,9 +16,9 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.ILibrary;
+import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleException;
 
 public class PluginClassLoader extends URLClassLoader {
 	private Bundle bundle;
@@ -82,16 +82,7 @@ public class PluginClassLoader extends URLClassLoader {
 	}
 
 	protected Class findClass(String name) throws ClassNotFoundException {
-		Class clazz = bundle.loadClass(name); // if no CNFE is thrown, activate the bundle (if needed)
-		if (bundle.getState() == Bundle.RESOLVED)
-			try {
-				bundle.start();
-			} catch (BundleException e) {
-				String message = Policy.bind("plugin.OSGiError", e.toString()); //$NON-NLS-1$
-				IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, message, e);
-				InternalPlatform.getDefault().log(status);
-			}
-		return clazz;
+		return bundle.loadClass(name); // if no CNFE is thrown, activate the bundle (if needed)
 	}
 	public URL findResource(String name) {
 		return bundle.getResource(name);
