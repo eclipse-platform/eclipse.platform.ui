@@ -505,7 +505,7 @@ public class TextEditor extends StatusTextEditor {
 
 	private boolean isOverviewRulerVisible() {
 		IPreferenceStore store= getPreferenceStore();
-		return store.getBoolean(OVERVIEW_RULER);
+		return store != null ? store.getBoolean(OVERVIEW_RULER) : false;
 	}
 
 	/**
@@ -537,7 +537,7 @@ public class TextEditor extends StatusTextEditor {
 	 */
 	private boolean isLineNumberRulerVisible() {
 		IPreferenceStore store= getPreferenceStore();
-		return store.getBoolean(LINE_NUMBER_RULER);
+		return store != null ? store.getBoolean(LINE_NUMBER_RULER) : false;
 	}
 
 	/**
