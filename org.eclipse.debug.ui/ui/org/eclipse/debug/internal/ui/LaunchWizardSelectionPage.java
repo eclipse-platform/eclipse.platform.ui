@@ -6,25 +6,21 @@ package org.eclipse.debug.internal.ui;
  */
 
 import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.ILauncher;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.IWizardContainer;
-import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.jface.wizard.WizardSelectionPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.omg.CORBA.UNKNOWN;
 
 public class LaunchWizardSelectionPage extends WizardSelectionPage {
 	
@@ -61,6 +57,11 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 	 * needs updating.
 	 */	
 	protected boolean fLaunchablesUpdateNeeded;
+	
+	/**
+	 * The selected launcher or <code>null</code> if none.
+	 */
+	protected ILauncher fLauncher;
 
 	/**
 	 * A content provider for the elements list
@@ -90,10 +91,11 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 		}
 	}
 	
-	public LaunchWizardSelectionPage(Object[] allLaunchers, String mode) {
+	public LaunchWizardSelectionPage(Object[] allLaunchers, String mode, ILauncher initialLauncher) {
 		super(DebugUIUtils.getResourceString(PREFIX + "title"));
 		fLaunchers= allLaunchers;
 		fMode= mode;
+		fLauncher = initialLauncher;
 	}
 
 	public void createControl(Composite ancestor) {
@@ -143,13 +145,18 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 			public void selectionChanged(SelectionChangedEvent e) {
 				if (e.getSelection() instanceof IStructuredSelection) {
 					IStructuredSelection ss= (IStructuredSelection) e.getSelection();
-					if (!ss.isEmpty()) {
+					if (ss.isEmpty()) {
+						launcherSelected(null);
+					} else {
 						launcherSelected((ILauncher)ss.getFirstElement());
 					}
 				}
 			}
 		});
 		fLaunchersList.setInput(fLaunchersList);
+		if (fLauncher != null) {
+			fLaunchersList.setSelection(new StructuredSelection(fLauncher));
+		}
 		fSetAsDefaultLauncher= new Button(root, SWT.CHECK);
 		updateDefaultProject();
 		fLaunchablesUpdateNeeded= false;
@@ -159,11 +166,15 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 	 * Updates the elements list for the given launcher
 	 */
 	protected void launcherSelected(ILauncher launcher) {
-		LaunchWizardNode node= new LaunchWizardNode(this, launcher, fMode);
-		setSelectedNode(node);
+		fLauncher = launcher;
 		setMessage(null);
+		if (launcher != null) {
+			LaunchWizardNode node= new LaunchWizardNode(this, launcher, fMode);
+			setSelectedNode(node);
+			setDescription(node.getDescription());
+		}
 		updateDefaultLauncherButton(launcher);
-		setDescription(node.getDescription());
+		
 	}
 
 	/**
@@ -231,11 +242,7 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 	}
 	
 	protected ILauncher getLauncher() {
-		IStructuredSelection selection= (IStructuredSelection)fLaunchersList.getSelection();
-		if (selection.isEmpty()) {
-			return null;
-		}
-		return (ILauncher) selection.getFirstElement();
+		return fLauncher;
 	}
 	
 	/**
@@ -262,6 +269,7 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 		super.setVisible(visible);
 		if (visible) {
 			initializeSettings();
+			updateDefaultProject();
 		} else {
 			fLaunchablesUpdateNeeded= false;
 		}

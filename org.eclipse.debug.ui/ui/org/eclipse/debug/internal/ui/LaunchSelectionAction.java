@@ -6,7 +6,8 @@ package org.eclipse.debug.internal.ui;
  */
 
 import java.text.MessageFormat;
-
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -18,6 +19,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class LaunchSelectionAction extends Action {
@@ -69,7 +71,19 @@ public class LaunchSelectionAction extends Action {
 				} else {
 					Shell shell= DebugUIPlugin.getActiveWorkbenchWindow().getShell();
 					if (shell != null) {
-						useWizard(new Object[] {fLauncher}, shell, StructuredSelection.EMPTY);
+						IProject project = null;
+						IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
+						IStructuredSelection selection= ExecutionAction.resolveSelection(dwindow);
+						IProject[] projects = null;
+						if (selection == null) {
+							projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+						} else {
+							projects = ExecutionAction.resolveProjects(selection);
+						}
+						if (projects.length == 1) {
+							project = projects[0];
+						}
+						useWizard(new Object[] {fLauncher}, shell, StructuredSelection.EMPTY, fLauncher, project);
 					}
 				}
 			}
@@ -79,8 +93,8 @@ public class LaunchSelectionAction extends Action {
 	/**
 	 * Use the launch wizard to do the launch.
 	 */
-	protected void useWizard(Object[] launchers, Shell shell, IStructuredSelection selection) {
-		LaunchWizard wizard= new LaunchWizard(launchers, selection, fMode, false);
+	protected void useWizard(Object[] launchers, Shell shell, IStructuredSelection selection, ILauncher launcher, IProject project) {
+		LaunchWizard wizard= new LaunchWizard(launchers, selection, fMode, project, launcher);
 		LaunchWizardDialog dialog= new LaunchWizardDialog(shell, wizard);
 		dialog.open();
 	}

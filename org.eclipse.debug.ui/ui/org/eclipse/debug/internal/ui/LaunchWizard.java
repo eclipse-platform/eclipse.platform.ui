@@ -27,7 +27,7 @@ public class LaunchWizard extends Wizard {
 	/**
 	 * The collection of available launchers
 	 */
-	protected Object[] fLaunchers;
+	protected Object[] fAvailableLaunchers;
 
 	/**
 	 * The selection providing context to determine launchables
@@ -35,15 +35,30 @@ public class LaunchWizard extends Wizard {
 	protected IStructuredSelection fSelection;
 
 	/**
-	 * The launch page
+	 * The launcher selection page
 	 */
-	protected LaunchWizardSelectionPage fPage;
+	protected LaunchWizardSelectionPage fLauncherPage;
+	
+	/**
+	 * The project selection page
+	 */
+	protected LaunchWizardProjectSelectionPage fProjectPage;
 
 	/** 
 	 * The mode of the wizard.
 	 * @see ExecutionAction#getMode()
 	 */
 	protected String fMode;
+	
+	/**
+	 * The initial project selection, or <code>null</code> if none.
+	 */
+	protected IProject fInitialProject;
+	
+	/**
+	 * The initial launcher selection, or <code>null</code> if none.
+	 */
+	protected ILauncher fInitialLauncher;
 	
 	/**
 	 * The old default launcher set for the <code>IProject</code>
@@ -55,29 +70,17 @@ public class LaunchWizard extends Wizard {
 	 * Indicates if the default launcher has been set for the <code>IProject</code>
 	 * associated with the current selection.
 	 */
-	 protected boolean fDefaultLauncherSet= false;
+	protected boolean fDefaultLauncherSet= false;
 
-	/**
-	 * Indicates if the wizard needs to determine the launcher to use
-	 */
-	 protected boolean fSelectLauncher;
-	 
-	/**
-	 * Constructs a wizard with a set of launchers, a selection, a mode 
-	 * and whether to select a launcher.
-	 */
-	public LaunchWizard(Object[] allLaunchers, IStructuredSelection selection, String mode, boolean selectLauncher) {
-		fSelectLauncher= selectLauncher;
-		fLaunchers= allLaunchers;
+	public LaunchWizard(Object[] availableLaunchers, IStructuredSelection selection, String mode, IProject initialProject, ILauncher initialLauncher) {
+		fAvailableLaunchers= availableLaunchers;
 		fSelection= selection;
 		fMode= mode;
+		fInitialProject = initialProject;
+		fInitialLauncher = initialLauncher;
 		initialize();
 	}
 	
-	public LaunchWizard(Object[] allLaunchers, IStructuredSelection selection, String mode) {
-		this(allLaunchers, selection, mode, true);
-	}
-
 	public void createPageControls(Composite pageContainer) {
 		super.createPageControls(pageContainer);
 		WorkbenchHelp.setHelp(
@@ -99,12 +102,8 @@ public class LaunchWizard extends Wizard {
 	 * @see Wizard#addPages
 	 */
 	public void addPages() {
-		if (fSelection == null || fSelection.isEmpty()) {
-			addPage(new LaunchWizardProjectSelectionPage(fMode));
-		}
-		if (fSelectLauncher) {		
-			addPage(fPage= new LaunchWizardSelectionPage(fLaunchers, fMode));	
-		}
+		addPage(fProjectPage = new LaunchWizardProjectSelectionPage(fMode, fInitialProject));
+		addPage(fLauncherPage= new LaunchWizardSelectionPage(fAvailableLaunchers, fMode, fInitialLauncher));
 	}
 	
 	public IStructuredSelection getSelection() {
@@ -117,8 +116,8 @@ public class LaunchWizard extends Wizard {
 	 */
 	public void updateDefaultLauncher() {
 		IProject project= getProject();
-		if (fSelectLauncher && fPage.fSetAsDefaultLauncher.getSelection()) {
-			ILauncher launcher= fPage.getLauncher();
+		if (fLauncherPage.fSetAsDefaultLauncher.getSelection()) {
+			ILauncher launcher= fLauncherPage.getLauncher();
 			if (launcher != null) {
 				try {
 					fOldDefaultLauncher= DebugPlugin.getDefault().getLaunchManager().getDefaultLauncher(project);
@@ -135,32 +134,10 @@ public class LaunchWizard extends Wizard {
 	 * or <code>null</code> if there is no single project associated with the selection.
 	 */
 	protected IProject getProject() {
-		if (fSelection == null) {
-			return null;
+		if (fProjectPage == null) {
+			return fInitialProject;
 		}
-		IProject project= null;
-		Iterator elements= fSelection.iterator();
-		while (elements.hasNext()) {
-			Object e= elements.next();
-			IResource res= null;
-			if (e instanceof IAdaptable) {
-				res= (IResource) ((IAdaptable) e).getAdapter(IResource.class);
-				if (res == null) {
-					res= (IResource) ((IAdaptable) e).getAdapter(IProject.class);
-				}
-			}
-			if (res != null) {
-				IProject p= res.getProject();
-				if (project == null) {
-					project= p;
-				} else
-					if (!project.equals(p)) {
-						return null;
-					}
-			}
-		}
-
-		return project;
+		return fProjectPage.getProject();
 	}
 	
 	/**
@@ -189,21 +166,11 @@ public class LaunchWizard extends Wizard {
 	}
 	
 	/**
-	 * Sets the selection that is the context for the launch.
-	 */
-	public void setProjectSelection(IStructuredSelection selection) {
-		fSelection= selection;
-		if (fPage != null) {
-			fPage.updateDefaultProject();
-		}
-	}
-	
-	/**
 	 * @see IWizard#getNextPage(IWizardPage)
 	 */
 	public IWizardPage getNextPage(IWizardPage page) {
-		if (!fSelectLauncher) {
-			IWizardNode node= new LaunchWizardNode(page, (ILauncher)fLaunchers[0], fMode);			
+		if (page == fLauncherPage) {
+			IWizardNode node= new LaunchWizardNode(page, fLauncherPage.getLauncher(), fMode);			
 			IWizard wizard = node.getWizard();
 			wizard.addPages();
 			return wizard.getStartingPage();
@@ -217,6 +184,14 @@ public class LaunchWizard extends Wizard {
 	public boolean canFinish() {
 		//it is the nested wizard that will finish
 		return false;
+	}
+	
+	public IWizardPage getStartingPage() {
+		if (getProject() == null) {
+			return fProjectPage;
+		} else {
+			return fLauncherPage;
+		}
 	}
 }
 

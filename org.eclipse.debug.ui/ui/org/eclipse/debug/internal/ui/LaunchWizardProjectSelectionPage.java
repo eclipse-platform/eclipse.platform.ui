@@ -5,24 +5,20 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.IWizardContainer;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * Used to select the project that will be used as a launch context.
@@ -49,6 +45,11 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 	 * The filtered array
 	 */
 	protected Object[] fFilteredElements;
+	
+	/**
+	 * The selected project, or <code>null</code> if none.
+	 */
+	protected IProject fProject;
 	
 	/**
 	 * A content provider for the elements list
@@ -118,7 +119,7 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 	/**
 	 * Constructs a this page for the given mode
 	 */
-	public LaunchWizardProjectSelectionPage(String mode) {
+	public LaunchWizardProjectSelectionPage(String mode, IProject initialSelection) {
 		super(DebugUIUtils.getResourceString(PREFIX + "title"));
 		// Set the image for the wizard based on the mode
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
@@ -126,6 +127,7 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 		} else {
 			setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_WIZBAN_RUN));
 		}
+		fProject = initialSelection;
 	}
 
 	/**
@@ -204,19 +206,24 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 		fElementsList.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENT));
-				if (e.getSelection().isEmpty()) {
+				IStructuredSelection ss = null;
+				if (e.getSelection() instanceof IStructuredSelection) {
+					ss = (IStructuredSelection) e.getSelection();
+				}
+				if (ss != null && ss.size() == 1) {
+					fProject = (IProject)ss.getFirstElement();
+					setPageComplete(true);
+				} else {
 					setPageComplete(false);
-				} else if (e.getSelection() instanceof IStructuredSelection) {
-					IStructuredSelection ss= (IStructuredSelection) e.getSelection();
-					if (!ss.isEmpty()) {
-						((LaunchWizard)getWizard()).setProjectSelection(ss);
-						setPageComplete(true);
-					}
+					fProject = null;
 				}
 			}
 		});
 
 		fElementsList.setInput(ResourcesPlugin.getWorkspace().getRoot());
+		if (fProject != null) {
+			fElementsList.setSelection(new StructuredSelection(fProject));
+		}
 	}
 
 	/**
@@ -295,6 +302,10 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 		if (visible) {
 			initializeSettings();
 		}
+	}
+	
+	protected IProject getProject() {
+		return fProject;
 	}
 }
 

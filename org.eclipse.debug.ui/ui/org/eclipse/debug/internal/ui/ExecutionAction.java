@@ -6,34 +6,20 @@ package org.eclipse.debug.internal.ui;
  */
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
+import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugStatusConstants;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.ILauncher;
+import org.eclipse.core.runtime.*;
+import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.*;
 
 /**
  * This is the debug action which appears in the desktop menu and toolbar.
@@ -61,7 +47,8 @@ public abstract class ExecutionAction extends Action {
 		}
 
 		// otherwise, resolve a launcher and an element
-		final Object[] launchers= resolveLaunchers(selection);
+		final IProject[] projects= resolveProjects(selection);
+		final ILauncher[] launchers= resolveLaunchers(projects);
 		if (launchers.length == 0) {
 			// could not determine any launchers to use to launch
 			// very unlikely to happen
@@ -83,7 +70,15 @@ public abstract class ExecutionAction extends Action {
 					}					
 				} else {
 					// must choose a launcher
-					useWizard(launchers, dwindow.getShell(), selection);
+					IProject selectedProject = null;
+					if (projects.length == 1) {
+						selectedProject = projects[0];
+					}
+					ILauncher selectedLauncher = null;
+					if (launchers.length == 1) {
+						selectedLauncher = launchers[0];
+					}
+					useWizard(launchers, dwindow.getShell(), selection, selectedProject, selectedLauncher);
 				}
 			}
 		});
@@ -112,7 +107,7 @@ public abstract class ExecutionAction extends Action {
 	 * Determines and returns the selection that provides context for the launch,
 	 * or <code>null</code> if there is no selection.
 	 */
-	protected IStructuredSelection resolveSelection(IWorkbenchWindow window) {
+	protected static IStructuredSelection resolveSelection(IWorkbenchWindow window) {
 		if (window == null) {
 			return null;
 		}
@@ -141,36 +136,57 @@ public abstract class ExecutionAction extends Action {
 	}
 
 	/**
-	 * Resolves and returns the applicable launcher(s) to be used to launch the
+	 * Resolves and returns the applicable project(s) associated with the
 	 * elements in the specified selection.
 	 */
-	protected Object[] resolveLaunchers(IStructuredSelection selection) {
-		List launchers;
+	protected static IProject[] resolveProjects(IStructuredSelection selection) {
+		
 		if (selection == null || selection.isEmpty()) {
+			return new IProject[0];
+		} else {
+			Vector projects = new Vector(1);
+			Iterator elements= selection.iterator();
+			while (elements.hasNext()) {
+				Object element= elements.next();
+				IResource resource= null;
+				if (element instanceof IAdaptable) {
+					IAdaptable el= (IAdaptable)element;
+					resource= (IResource)el.getAdapter(IResource.class);
+					if (resource == null) {
+						resource= (IProject)el.getAdapter(IProject.class);
+					}
+				}
+				IProject project= null;
+				if (resource != null) {
+					project= resource.getProject();
+				}
+				if (project != null && !projects.contains(project)) {
+					projects.add(project);
+				}
+			}
+			IProject[] list= new IProject[projects.size()];
+			projects.copyInto(list);
+			return list;
+		}
+		
+	}
+
+	/**
+	 * Resolves and returns the applicable launcher(s) to be used to launch the
+	 * specified projects.
+	 */
+	protected ILauncher[] resolveLaunchers(IProject[] projects) {
+		List launchers;
+		if (projects.length == 0) {
 			launchers= Arrays.asList(getLaunchManager().getLaunchers(getMode()));
 		} else {
 			launchers= new ArrayList(2);
-			Iterator elements= selection.iterator();
 			MultiStatus status= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, DebugUIUtils.getResourceString(STATUS), null);
-			while (elements.hasNext()) {
-				Object element= elements.next();
+			for (int i = 0; i < projects.length; i++) {
+				IProject project= projects[i];
 				ILauncher defaultLauncher= null;
 				try {
-					IResource resource= null;
-					if (element instanceof IAdaptable) {
-						IAdaptable el= (IAdaptable)element;
-						resource= (IResource)el.getAdapter(IResource.class);
-						if (resource == null) {
-							resource= (IProject)el.getAdapter(IProject.class);
-						}
-					}
-					IProject project= null;
-					if (resource != null) {
-						project= resource.getProject();
-					}
-					if (project != null) {
-						defaultLauncher= getLaunchManager().getDefaultLauncher(project);
-					}
+					defaultLauncher = getLaunchManager().getDefaultLauncher(project);
 					if (defaultLauncher != null) {
 						if (!defaultLauncher.getModes().contains(getMode())) {
 							defaultLauncher= null;
@@ -196,28 +212,32 @@ public abstract class ExecutionAction extends Action {
 		return resolveVisibleLaunchers(launchers);
 	}
 
-	protected Object[] resolveVisibleLaunchers(List launchers) {
-		List visibleLaunchers= new ArrayList(2);
+	protected ILauncher[] resolveVisibleLaunchers(List launchers) {
+		Vector visibleLaunchers= new Vector(launchers.size());
 		Iterator itr= launchers.iterator();
 		while (itr.hasNext()) {
 			ILauncher launcher= (ILauncher)itr.next();
 			if (DebugUIPlugin.getDefault().isVisible(launcher)) {
 				//cannot use itr.remove() as the list may be a fixed size list
-				visibleLaunchers.add(launcher);
+				visibleLaunchers.addElement(launcher);
 			}
 		}
-		return visibleLaunchers.toArray();
+		ILauncher[] ls = new ILauncher[visibleLaunchers.size()];
+		visibleLaunchers.copyInto(ls);
+		return ls;
 	}
 	
-	protected Object[] resolveWizardLaunchers(Object[] launchers) {
-		List wizardLaunchers= new ArrayList(2);
+	protected ILauncher[] resolveWizardLaunchers(ILauncher[] launchers) {
+		Vector wizardLaunchers= new Vector(launchers.length);
 		for (int i= 0 ; i < launchers.length; i++) {
-			ILauncher launcher= (ILauncher)launchers[i];
+			ILauncher launcher= launchers[i];
 			if (DebugUIPlugin.getDefault().hasWizard(launcher)) {
 				wizardLaunchers.add(launcher);
 			}
 		}
-		return wizardLaunchers.toArray();
+		ILauncher[] wl = new ILauncher[wizardLaunchers.size()];
+		wizardLaunchers.copyInto(wl);
+		return wl;
 	}
 
 	/**
@@ -261,9 +281,9 @@ public abstract class ExecutionAction extends Action {
 	/**
 	 * Use the wizard to do the launch.
 	 */
-	protected void useWizard(Object[] launchers, Shell shell, IStructuredSelection selection) {
+	protected void useWizard(ILauncher[] launchers, Shell shell, IStructuredSelection selection, IProject selectedProject, ILauncher selectedLauncher) {
 		launchers= resolveWizardLaunchers(launchers);
-		LaunchWizard lw= new LaunchWizard(launchers, selection, getMode());
+		LaunchWizard lw= new LaunchWizard(launchers, selection, getMode(), selectedProject, selectedLauncher);
 		LaunchWizardDialog dialog= new LaunchWizardDialog(shell, lw);
 		dialog.open();
 	}
