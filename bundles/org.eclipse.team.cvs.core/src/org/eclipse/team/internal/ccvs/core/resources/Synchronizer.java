@@ -271,7 +271,7 @@ public class Synchronizer {
 			}
 		}
 		
-		deleteFolderAndChildEntries(folder);
+		deleteFolderAndChildEntries(folder, true);
 	}
 	
 	/**
@@ -370,10 +370,17 @@ public class Synchronizer {
 		if (folder instanceof LocalFolder) {
 			LocalFolder fsFolder = (LocalFolder) folder;
 			File file = fsFolder.getLocalFile();
-			getFolderSync(file, true);
+			FolderSyncInfo info = getFolderSync(file, true);
 			
-			// XXX not a great way to force a reload of the entries file :<			
-			getResourceSync(new File(file, "dummy"), true);
+			// info will be null if the CVS subdirectory or folder does not exist, then we can safely
+			// clear this folder from the cache. Otherwise, reload the entries file for this folder as
+			// well.
+			if(info==null) {
+				deleteFolderAndChildEntries(file, false);
+			} else {			
+				getResourceSync(new File(file, "dummy"), true);
+			}
+			
 			monitor.worked(1);
 			
 			ICVSFolder[] folders = folder.getFolders();
@@ -406,8 +413,7 @@ public class Synchronizer {
 		SyncFile folderSync = (SyncFile)folderConfigCache.get(folder);
 		if(folderSync==null || reload) {
 			
-			if(!folder.exists()) {
-				deleteFolderAndChildEntries(folder);
+			if(!folder.exists()) {				
 				return null;
 			}
 			
@@ -463,11 +469,11 @@ public class Synchronizer {
 		
 		if(!file.exists()) {
 			file = file.getParentFile();
-			// project is gone, there is nobody left to update
-			if(file.equals(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile())) {
-				return;
-			}
 			depth = IResource.DEPTH_ONE;
+		}
+		
+		if(file.equals(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile())) {
+			return;
 		}
 		
 		if(file.isDirectory()) {
@@ -494,14 +500,16 @@ public class Synchronizer {
 	 * 
 	 * @param folder the root folder at which to start deleting sync information.
 	 */
-	protected void deleteFolderAndChildEntries(File folder) throws CVSException {
+	protected void deleteFolderAndChildEntries(File folder, boolean deleteResourceSync) throws CVSException {
 		
 		// remove resource sync entries file from the cache
 		File entriesFile = new File(SyncFileUtil.getCVSSubdirectory(folder), SyncFileUtil.ENTRIES);
 		entriesCache.remove(entriesFile);
 		
 		// remove from parent
-		deleteResourceSync(folder);
+		if(deleteResourceSync) {
+			deleteResourceSync(folder);
+		}
 		
 		// remove folder sync
 		folderConfigCache.remove(folder);
