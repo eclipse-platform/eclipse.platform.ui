@@ -620,67 +620,67 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		fSelectionCategory= null;
 	}
 
-	/*
-	 * @see ITextOperationTarget#doOperation(int)
-	 */
-	public void doOperation(int operation) {
-
-		if (getTextWidget() == null || !redraws())
-			return;
-
-		switch (operation) {
-			case CONTENTASSIST_PROPOSALS:
-				fContentAssistant.showPossibleCompletions();
+		/*
+		 * @see ITextOperationTarget#doOperation(int)
+		 */
+		public void doOperation(int operation) {
+	
+			if (getTextWidget() == null || !redraws())
 				return;
-			case CONTENTASSIST_CONTEXT_INFORMATION:
-				fContentAssistant.showContextInformation();
-				return;
-			case INFORMATION:
-				fInformationPresenter.showInformation();
-				return;
-			case FORMAT :
-				{
-					final Point selection= rememberSelection();
-
-					final IRegion region= new Region(selection.x, selection.y);
-					final IRewriteTarget target= getRewriteTarget();
-					final IFormattingContext context= createFormattingContext();
-
-					if (selection.y == 0) {
-						context.setProperty(FormattingContextProperties.CONTEXT_DOCUMENT, Boolean.TRUE);
-					} else {
-						context.setProperty(FormattingContextProperties.CONTEXT_DOCUMENT, Boolean.FALSE);
-						context.setProperty(FormattingContextProperties.CONTEXT_REGION, region);
-					}
-					try {
-						setRedraw(false);
-						startSequentialRewriteMode(false);
-						target.beginCompoundChange();
-
-						final IDocument document= getDocument();
-						if (fContentFormatter instanceof IContentFormatterExtension2) {
-
-							final IContentFormatterExtension2 extension= (IContentFormatterExtension2)fContentFormatter;
-							extension.format(document, context);
-
-						} else
-							fContentFormatter.format(document, region);
-
-					} finally {
-						target.endCompoundChange();
-
-						restoreSelection();
-						context.dispose();
-
-						stopSequentialRewriteMode();
-						setRedraw(true);
-					}
+	
+			switch (operation) {
+				case CONTENTASSIST_PROPOSALS:
+					fContentAssistant.showPossibleCompletions();
 					return;
-				}
-			default :
-				super.doOperation(operation);
+				case CONTENTASSIST_CONTEXT_INFORMATION:
+					fContentAssistant.showContextInformation();
+					return;
+				case INFORMATION:
+					fInformationPresenter.showInformation();
+					return;
+				case FORMAT :
+					{
+						final Point selection= rememberSelection();
+	
+						final IRegion region= new Region(selection.x, selection.y);
+						final IRewriteTarget target= getRewriteTarget();
+						final IFormattingContext context= createFormattingContext();
+	
+						if (selection.y == 0) {
+							context.setProperty(FormattingContextProperties.CONTEXT_DOCUMENT, Boolean.TRUE);
+						} else {
+							context.setProperty(FormattingContextProperties.CONTEXT_DOCUMENT, Boolean.FALSE);
+							context.setProperty(FormattingContextProperties.CONTEXT_REGION, region);
+						}
+						try {
+							setRedraw(false);
+	//						startSequentialRewriteMode(false);
+							target.beginCompoundChange();
+	
+							final IDocument document= getDocument();
+							if (fContentFormatter instanceof IContentFormatterExtension2) {
+	
+								final IContentFormatterExtension2 extension= (IContentFormatterExtension2)fContentFormatter;
+								extension.format(document, context);
+	
+							} else
+								fContentFormatter.format(document, region);
+	
+						} finally {
+							target.endCompoundChange();
+	
+							restoreSelection();
+							context.dispose();
+	
+	//						stopSequentialRewriteMode();
+							setRedraw(true);
+						}
+						return;
+					}
+				default :
+					super.doOperation(operation);
+			}
 		}
-	}
 	
 	/*
 	 * @see ITextOperationTargetExtension#enableOperation(int, boolean)
