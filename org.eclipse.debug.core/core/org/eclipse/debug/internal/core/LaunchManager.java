@@ -175,7 +175,12 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * Visitor used to process resource deltas,
 	 * to update launch configuration index.
 	 */
-	private IResourceDeltaVisitor fgVisitor;
+	private LaunchManagerVisitor fgVisitor;
+	
+	/**
+	 * Whether this manager is listening for resouce change events
+	 */
+	private boolean fListening = false;
 	
 	/**
 	 * Launch configuration listeners
@@ -274,13 +279,23 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				configs = findLaunchConfigurations(getWorkspaceRoot());
 				verifyConfigurations(configs, fLaunchConfigurationIndex);
 			} finally {
-				getWorkspace().addResourceChangeListener(this);				
+				hookResourceChangeListener();				
 			}
 		}
 		return fLaunchConfigurationIndex;
 	}
 	
 	/**
+     * Starts listening for resource change events
+     */
+    private synchronized void hookResourceChangeListener() {
+        if (!fListening) {
+            getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_DELETE);
+            fListening = true;
+        }
+    }
+
+    /**
 	 * Verify basic integrity of launch configurations in the given list,
 	 * adding valid configs to the collection of all launch configurations.
 	 * Exceptions are logged for invalid configs.
@@ -642,7 +657,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @see ILaunchManager#getLaunchConfiguration(IFile)
 	 */
 	public ILaunchConfiguration getLaunchConfiguration(IFile file) {
-		getWorkspace().addResourceChangeListener(this);				
+		hookResourceChangeListener();				
 		return new LaunchConfiguration(file.getLocation());
 	}
 	
@@ -650,7 +665,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @see ILaunchManager#getLaunchConfiguration(String)
 	 */
 	public ILaunchConfiguration getLaunchConfiguration(String memento) throws CoreException {
-		getWorkspace().addResourceChangeListener(this);
+		hookResourceChangeListener();
 		return new LaunchConfiguration(memento);
 	}
 	
@@ -683,7 +698,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	
 	private synchronized void initializeLaunchConfigurationTypes() {
 		if (fLaunchConfigurationTypes == null) {
-			getWorkspace().addResourceChangeListener(this);
+			hookResourceChangeListener();
 			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPES);
 			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 			fLaunchConfigurationTypes= new ArrayList(infos.length);
@@ -931,16 +946,35 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta= event.getDelta();
-		if (delta != null) {
+		if (delta == null) {
+		    // pre-delete
+		    LaunchManagerVisitor visitor = getDeltaVisitor();
+		    IResource resource = event.getResource();
+		    if (resource instanceof IProject) {
+                IProject project = (IProject) resource;
+                visitor.preDelete(project);
+            }
+		} else {
 			try {
-				if (fgVisitor == null) {
-					fgVisitor= new LaunchManagerVisitor();
-				}
-				delta.accept(fgVisitor);
+			    LaunchManagerVisitor visitor = getDeltaVisitor();
+				delta.accept(visitor);
+				visitor.reset();
 			} catch (CoreException e) {
 				DebugPlugin.log(e);
 			}
 		}		
+	}
+	
+	/**
+	 * Returns the resource delta visitor for the launch manager.
+	 * 
+	 * @return the resource delta visitor for the launch manager
+	 */
+	private LaunchManagerVisitor getDeltaVisitor() {
+	    if (fgVisitor == null) {
+			fgVisitor= new LaunchManagerVisitor();
+		}
+	    return fgVisitor;
 	}
 	
 	/**
@@ -1027,6 +1061,13 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * Visitor for handling resource deltas.
 	 */
 	class LaunchManagerVisitor implements IResourceDeltaVisitor {
+	    
+	    /**
+	     * Map of files to associated (shared) launch configs in a project
+	     * that is going to be deleted.
+	     */
+	    private Map fFileToConfig = new HashMap();
+	    
 		/**
 		 * @see IResourceDeltaVisitor#visit(IResourceDelta)
 		 */
@@ -1051,32 +1092,55 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				IFile file = (IFile)resource;
 				if (ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.equals(file.getFileExtension())) {
 					IPath configPath = file.getLocation();
-					// If the file has already been deleted, reconstruct the full
-					// filesystem path
+					ILaunchConfiguration handle = null;
+					// If the file has already been deleted, reconstruct the handle from our cache
 					if (configPath == null) {
-						IPath workspaceRelativePath = delta.getFullPath();
-						configPath = getWorkspaceRoot().getLocation().append(workspaceRelativePath);
+					    handle = (ILaunchConfiguration) fFileToConfig.get(file);
+					} else {
+					    handle = new LaunchConfiguration(configPath);
 					}
-					ILaunchConfiguration handle = new LaunchConfiguration(configPath);
-					
-					switch (delta.getKind()) {						
-						case IResourceDelta.ADDED :
-							LaunchManager.this.launchConfigurationAdded(handle);
-							break;
-						case IResourceDelta.REMOVED :
-							LaunchManager.this.launchConfigurationDeleted(handle);
-							break;
-						case IResourceDelta.CHANGED :
-							LaunchManager.this.launchConfigurationChanged(handle);
-							break;
-					}					
+					if (handle != null) {
+						switch (delta.getKind()) {						
+							case IResourceDelta.ADDED :
+								LaunchManager.this.launchConfigurationAdded(handle);
+								break;
+							case IResourceDelta.REMOVED :
+								LaunchManager.this.launchConfigurationDeleted(handle);
+								break;
+							case IResourceDelta.CHANGED :
+								LaunchManager.this.launchConfigurationChanged(handle);
+								break;
+						}
+					}
 				}
 				return false;
 			} else if (resource instanceof IContainer) {
 				return true;
 			}
 			return true;
-		}		
+		}	
+		
+		/**
+         * Builds a cache of configs that will be deleted in the given project
+         */
+        public void preDelete(IProject project) {
+            List list = findLaunchConfigurations(project);
+            Iterator configs = list.iterator();
+            while (configs.hasNext()) {
+                ILaunchConfiguration configuration = (ILaunchConfiguration) configs.next();
+                IFile file = configuration.getFile();
+                if (file != null) {
+                    fFileToConfig.put(file, configuration);
+                }
+            }
+        }
+
+        /**
+		 * Resets this resource delta visitor for a new pass.
+		 */
+		public void reset() {
+		      fFileToConfig.clear();
+		}
 	}
 	
 	/**
