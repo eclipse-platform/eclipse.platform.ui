@@ -47,7 +47,7 @@ import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
-	protected final static String FIRST_EDIT = "editedByExternalToolsMainTab"; //$NON-NLS-1$
+	public final static String FIRST_EDIT = "editedByExternalToolsMainTab"; //$NON-NLS-1$
 
 	protected Text locationField;
 	protected Text workDirectoryField;
@@ -62,7 +62,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	protected SelectionAdapter selectionAdapter;
 	
 	protected boolean fInitializing= false;
-	protected boolean firstEdit = false;
+	private boolean userEdited= false;
 	
 	/**
 	 * A listener to update for text modification and widget selection.
@@ -71,6 +71,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		public void modifyText(ModifyEvent e) {
 			if (!fInitializing) {
 				setDirty(true);
+				userEdited= true;
 				updateLaunchConfigurationDialog();
 			}
 		}
@@ -262,17 +263,13 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
+		configuration.setAttribute(FIRST_EDIT, true);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
-		try {
-			firstEdit = configuration.getAttribute(FIRST_EDIT, true);
-		} catch (CoreException e) {
-			// assume false...
-		}
 		fInitializing= true;
 		updateLocation(configuration);
 		updateWorkingDirectory(configuration);
@@ -336,8 +333,8 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			configuration.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments);
 		}
 		
-		if (firstEdit) {
-			configuration.setAttribute(FIRST_EDIT, false);
+		if(userEdited) {
+			configuration.setAttribute(FIRST_EDIT, (String)null);
 		}
 	}
 
@@ -354,18 +351,29 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
-		return validateLocation() && validateWorkDirectory();
+		boolean newConfig = false;
+		try {
+			newConfig = launchConfig.getAttribute(FIRST_EDIT, false);
+		} catch (CoreException e) {
+			//assume false is correct
+		}
+		return validateLocation(newConfig) && validateWorkDirectory();
 	}
 	
 	/**
 	 * Validates the content of the location field.
 	 */
-	protected boolean validateLocation() {
+	protected boolean validateLocation(boolean newConfig) {
 		String value = locationField.getText().trim();
 		
-		if (value.length() < 1 && isDirty()) {
-			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_location_cannot_be_empty_18")); //$NON-NLS-1$
-			setMessage(null);
+		if (value.length() < 1) {
+			if (newConfig) {
+				setErrorMessage(null);
+				setMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.30"));  //$NON-NLS-1$
+			} else {
+				setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_location_cannot_be_empty_18")); //$NON-NLS-1$
+				setMessage(null);
+			}
 			return false;
 		}
 		
@@ -380,16 +388,17 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		
 		File file = new File(location);
 		if (!file.exists()) { // The file does not exist.
-			if (!firstEdit) {
+			if (!newConfig) {
 				setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_location_does_not_exist_19")); //$NON-NLS-1$
-				return false;
 			}
+			return false;
 		}
 		if (!file.isFile()) {
-			if (!firstEdit) {
+			if (!newConfig) {
 				setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_location_specified_is_not_a_file_20")); //$NON-NLS-1$
-				return false;
+				
 			}
+			return false;
 		}
 		return true;
 	}
