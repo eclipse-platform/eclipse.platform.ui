@@ -33,7 +33,7 @@ public HistoryStoreTest(String name) {
 }
 public static Test suite() {
 //	TestSuite suite = new TestSuite();
-//	suite.addTest(new HistoryStoreTest("testMove"));
+//	suite.addTest(new HistoryStoreTest("testAddStateAndPolicies"));
 //	return suite;
 	return new TestSuite(HistoryStoreTest.class);
 }
@@ -69,10 +69,8 @@ public void testAddStateAndPolicies() {
 	/* test max file states */
 	for (int i = 0; i < 8; i++) {
 		try {
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-			}
+			ensureOutOfSync(file);
+			file.refreshLocal(IResource.DEPTH_ZERO, getMonitor());
 			file.setContents(getRandomContents(), true, true, getMonitor());
 		} catch (CoreException e) {
 			fail("1.0", e);
@@ -104,7 +102,7 @@ public void testAddStateAndPolicies() {
 	}
 	file = project.getFile("file1.txt");
 	try {
-		file.create(null, true, getMonitor());
+		file.create(new ByteArrayInputStream(new byte[0]), true, getMonitor());
 	} catch (CoreException e) {
 		fail("2.0", e);
 	}
@@ -116,8 +114,10 @@ public void testAddStateAndPolicies() {
 		}
 	}
 	try {
+		getWorkspace().save(true, null);
 		states = file.getHistory(getMonitor());
-		assertEquals("2.2", description.getMaxFileStateSize(), states.length);
+		// #states = size + 1 for the 0 byte length file to begin with.
+		assertEquals("2.2", description.getMaxFileStateSize() + 1, states.length);
 	} catch (CoreException e) {
 		fail("2.3", e);
 	}
@@ -198,10 +198,12 @@ public void testClean() {
 
 	for (int i = 0; i < 8; i++) {
 		try {
-			try {
-				Thread.sleep(5000); // necessary because of lastmodified granularity in some file systems
-			} catch (InterruptedException e) {
-			}
+			ensureOutOfSync(file);
+			file.refreshLocal(IResource.DEPTH_ZERO, getMonitor());
+//			try {
+//				Thread.sleep(5000); // necessary because of lastmodified granularity in some file systems
+//			} catch (InterruptedException e) {
+//			}
 			file.setContents(getRandomContents(), true, true, getMonitor());
 		} catch (CoreException e) {
 			fail("1.0", e);
