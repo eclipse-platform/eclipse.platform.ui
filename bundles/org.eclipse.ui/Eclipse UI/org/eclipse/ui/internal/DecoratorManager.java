@@ -344,7 +344,12 @@ public class DecoratorManager
 	 * @see IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
-		//Do nothing as this is a shared object
+		//Disable all fo the enabled decorators 
+		//so as to force a dispose of thier decorators
+		for (int i = 0; i < definitions.length; i++) {
+			if (definitions[i].isEnabled())
+				definitions[i].setEnabled(false,this);
+		}
 	}
 
 	/**
