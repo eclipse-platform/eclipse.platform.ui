@@ -101,17 +101,34 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 		fTextChangeListeners.remove(listener);
 	}
 	
+	private void repairLineInformation() {
+		if (fDocument instanceof IRepairableDocument) {
+			IRepairableDocument repairable= (IRepairableDocument) fDocument;
+			repairable.repairLineInformation();
+		}
+	}
+	
+	private String doGetLine(int line) throws BadLocationException {
+		IRegion r= fDocument.getLineInformation(line);
+		return fDocument.get(r.getOffset(), r.getLength());
+	}
+	
 	/*
 	 * @see StyledTextContent#getLine(int)
 	 */
 	public String getLine(int line) {
 		try {
-			IRegion r= fDocument.getLineInformation(line);
-			return fDocument.get(r.getOffset(), r.getLength());
+			return doGetLine(line);
 		} catch (BadLocationException x) {
-			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-			return null;
+			repairLineInformation();
+			try {
+				return doGetLine(line);
+			} catch (BadLocationException x2) {
+			}
 		}
+		
+		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+		return null;
 	}
 	
 	/*
@@ -121,9 +138,15 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 		try {
 			return fDocument.getLineOfOffset(offset);
 		} catch (BadLocationException x) {
-			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-			return -1;
+			repairLineInformation();
+			try {
+				return fDocument.getLineOfOffset(offset);
+			} catch (BadLocationException x2) {
+			}
 		}
+		
+		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+		return -1;
 	}
 	
 	/*
@@ -140,9 +163,15 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 		try {
 			return fDocument.getLineOffset(line);
 		} catch (BadLocationException x) {
-			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-			return -1;
+			repairLineInformation();
+			try {
+				return fDocument.getLineOffset(line);
+			} catch (BadLocationException x2) {
+			}
 		}
+
+		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+		return -1;
 	}
 	
 	/*
