@@ -5,12 +5,12 @@ package org.eclipse.core.internal.events;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.internal.resources.IManager;
+import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.internal.utils.ResourceStats;
+import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.utils.*;
-import org.eclipse.core.internal.watson.ElementTree;
-import java.util.*;
 
 public class NotificationManager implements IManager {
 	protected ResourceChangeListenerList listeners;
@@ -55,14 +55,13 @@ public void broadcastChanges(IResourceChangeListener listener, int type, IResour
 /**
  * The main broadcast point for notification deltas
  */
-public IResourceDelta broadcastChanges(IResourceDelta delta, ElementTree lastState, int type, boolean lockTree, boolean updateState) {
+public void broadcastChanges(ElementTree lastState, int type, boolean lockTree, boolean updateState) {
 	try {
 		// Do the notification if there are listeners for events of the given type.
 		// Be sure to do all of this inside the try/finally as the finally will update the state 
 		// if requested.  This needs to happen regardless of whether people are listening.
 		if (listeners.hasListenerFor(type)) {
-			delta = getDelta(lastState);
-			broadcastChanges(getListeners(), type, delta, lockTree);
+			broadcastChanges(getListeners(), type, getDelta(lastState), lockTree);
 		}
 	} finally {
 		// Remember the current state as the last notified state if requested.
@@ -76,7 +75,6 @@ public IResourceDelta broadcastChanges(IResourceDelta delta, ElementTree lastSta
 			lastMarkerChangeId = 0;
 		}
 	}
-	return delta;
 }
 
 public void changing(IProject project) {
@@ -96,7 +94,7 @@ protected ResourceDelta getDelta(ElementTree tree) {
 	long id = workspace.getMarkerManager().getChangeId();
 	// if we have a delta from last time and no resources have changed since then, we
 	// can reuse the delta structure
-	if (lastDelta != null && !workspace.haveResourcesChanged(tree, lastDeltaState, true)) {
+	if (lastDelta != null && !ElementTree.hasChanges(tree, lastDeltaState, true)) {
 		// Markers may have changed since the delta was generated.  If so, get the new
 		// marker state and insert it in to the delta which is being reused.
 		if (id != lastMarkerChangeId) 
