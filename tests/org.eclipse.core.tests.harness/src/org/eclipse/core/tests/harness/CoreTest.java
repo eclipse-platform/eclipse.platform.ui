@@ -38,7 +38,7 @@ public class CoreTest extends TestCase {
 			// subclasses to override
 		}
 
-		public void run(TestCase testCase, int inner, final int outer) {
+		public void run(TestCase testCase, int outer, int inner) {
 			Performance perf = Performance.getDefault();
 			PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(testCase));
 			try {
