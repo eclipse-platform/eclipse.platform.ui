@@ -22,17 +22,17 @@ public class PluginActivator implements BundleActivator {
 	private static final String PI_APPLICATION_RUNNER = "org.eclipse.core.applicationrunner"; //$NON-NLS-1$ //TODO To remove
 	private BundleContext context;
 	private Plugin plugin;
-	
+
 	private static ServiceTracker startLevelTracker = null;
-	
+
 	public static StartLevel getStartLevel(BundleContext context) {
 		if (startLevelTracker == null) {
 			startLevelTracker = new ServiceTracker(context, StartLevel.class.getName(), null);
 			startLevelTracker.open();
 		}
-		return (StartLevel)startLevelTracker.getService();
+		return (StartLevel) startLevelTracker.getService();
 	}
-	
+
 	public BundleContext getBundleContext() {
 		return context;
 	}
@@ -40,6 +40,7 @@ public class PluginActivator implements BundleActivator {
 	public PluginActivator() {
 		super();
 	}
+
 	public void start(BundleContext context) throws Exception {
 		// will bail if it is not time to start
 		ensureNormalStartup(context);
@@ -47,8 +48,9 @@ public class PluginActivator implements BundleActivator {
 		PluginDescriptor pd = (PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor(context.getBundle().getSymbolicName());
 		plugin = pd.getPlugin();
 		plugin.startup();
-		plugin.start(context);
+		plugin.start(context);	//TODO Why do we need to call startup before start()?
 	}
+
 	private void ensureNormalStartup(BundleContext context) throws BundleException {
 		// TODO look at other ways of doing this to make it faster (getService is not as fast 
 		// as we might like but it is not horrible.  Also, we never close the tracker.
@@ -61,6 +63,7 @@ public class PluginActivator implements BundleActivator {
 			throw new BundleException(status.getMessage());
 		}
 	}
+
 	public void stop(BundleContext context) throws Exception {
 		try {
 			plugin.shutdown();
