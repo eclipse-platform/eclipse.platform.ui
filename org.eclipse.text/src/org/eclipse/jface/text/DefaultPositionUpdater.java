@@ -233,6 +233,8 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 			
 		} catch (BadPositionCategoryException x) {
 			// do nothing
+		} finally {
+			fDocument= null;
 		}
 	}
 }
