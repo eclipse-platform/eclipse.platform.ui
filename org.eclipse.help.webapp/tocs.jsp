@@ -34,7 +34,7 @@ function selectTopic(topic)
 
 </head>
 
-<body onload='onloadHandler("<%=WebappResources.getString("Bookshelf", null)%>")'>
+<body onload='onloadHandler("", "<%=WebappResources.getString("Bookshelf", null)%>")'>
 
 <ul class='expanded'>
 <% 
