@@ -3,10 +3,7 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.ui.internal.browser.solaris;
-import java.io.IOException;
-
 import org.eclipse.help.ui.browser.*;
-import org.eclipse.help.ui.internal.util.StreamConsumer;
 public class NetscapeFactory implements IBrowserFactory {
 	/**
 	 * Constructor.
@@ -21,19 +18,7 @@ public class NetscapeFactory implements IBrowserFactory {
 		if (!System.getProperty("os.name").startsWith("SunOS")) {
 			return false;
 		}
-		try {
-			Process pr = Runtime.getRuntime().exec("which netscape");
-			(new StreamConsumer(pr.getInputStream())).start();
-			(new StreamConsumer(pr.getErrorStream())).start();
-			pr.waitFor();
-			int ret = pr.exitValue();
-			if (ret == 0) {
-				return true;
-			}
-		} catch (InterruptedException e) {
-		} catch (IOException e) {
-		}
-		return false;
+		return true;
 	}
 	/*
 	 * @see IBrowserFactory#createBrowser()
