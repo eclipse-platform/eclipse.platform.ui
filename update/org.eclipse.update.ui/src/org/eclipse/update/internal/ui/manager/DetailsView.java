@@ -27,6 +27,7 @@ public static final String HOME_PAGE = "Home";
 public static final String SITE_PAGE = "Site";
 public static final String DETAILS_PAGE = "Details";
 public static final String BROWSER_PAGE = "Browser";
+public static final String CONFIG_PAGE = "Config";
 
 private Action homeAction;
 private UpdateAction backAction;
@@ -58,6 +59,7 @@ public void createPages() {
 	SitePage sitePage = 
 		new SitePage(this, "Site");
 	addPage(SITE_PAGE, sitePage);
+	addPage(CONFIG_PAGE, new LocalSitePage(this, "Configuration"));
 	if (SWT.getPlatform().equals("win32")) {
 		addWebBrowser();
 	}
@@ -140,12 +142,17 @@ public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 		if (ssel.size()==1) {
 			Object el = ssel.getFirstElement();
 			if (el instanceof IFeature || el instanceof ChecklistJob ||
-			el instanceof CategorizedFeature) {
+								el instanceof CategorizedFeature) {
 				showPageWithInput(DETAILS_PAGE, el);
 				return;
 			}
 			if (el instanceof SiteBookmark) {
 				showPageWithInput(SITE_PAGE, el);
+				return;
+			}
+			if (el instanceof ILocalSite) {
+				showPageWithInput(CONFIG_PAGE, el);
+				return;
 			}
 		}
 	}

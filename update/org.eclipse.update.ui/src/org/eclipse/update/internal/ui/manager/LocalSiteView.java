@@ -52,7 +52,6 @@ class FolderObject {
 	}
 }
 
-FolderObject myEclipse = new FolderObject("Installed Features");
 FolderObject updates = new FolderObject("Available Updates");
 Image eclipseImage;
 Image updatesImage;
@@ -67,9 +66,13 @@ class LocalSiteProvider extends DefaultContentProvider
 	 */
 	public Object[] getChildren(Object parent) {
 		if (parent instanceof UpdateModel) {
-			return new Object [] { myEclipse, updates };
+			ILocalSite localSite = getLocalSite();
+			if (localSite!=null)
+				return new Object [] { getLocalSite(), updates };
+			else
+				return new Object [0];
 		}
-		if (parent == myEclipse) {
+		if (parent instanceof ILocalSite) {
 			return openLocalSite();
 		}
 		if (parent instanceof ISite) {
@@ -103,7 +106,7 @@ class LocalSiteProvider extends DefaultContentProvider
 		if (child instanceof IFeature)
 		   return ((IFeature)child).getSite();
 		if (child instanceof ISite)
-		   return myEclipse;
+		   return getLocalSite();
 		return null;
 	}
 
@@ -124,6 +127,9 @@ class LocalSiteProvider extends DefaultContentProvider
 
 class LocalSiteLabelProvider extends LabelProvider {
 	public String getText(Object obj) {
+		if (obj instanceof ILocalSite) {
+			return "Current Configuration";
+		}
 		if (obj instanceof ISite) {
 			ISite site = (ISite)obj;
 			return site.getURL().toString();
@@ -136,7 +142,7 @@ class LocalSiteLabelProvider extends LabelProvider {
 		return super.getText(obj);
 	}
 	public Image getImage(Object obj) {
-		if (obj.equals(myEclipse))
+		if (obj  instanceof ILocalSite)
 		   return eclipseImage;
 		if (obj.equals(updates))
 		   return updatesImage;
@@ -159,6 +165,16 @@ public void initProviders() {
 	viewer.setContentProvider(new LocalSiteProvider());
 	viewer.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
 	viewer.setLabelProvider(new LocalSiteLabelProvider());
+}
+
+private ILocalSite getLocalSite() {
+	try {
+		return SiteManager.getLocalSite();
+	}
+	catch (CoreException e) {
+		UpdateUIPlugin.logException(e);
+		return null;
+	}
 }
 
 private Object [] openLocalSite() {
@@ -248,7 +264,7 @@ private void unregisterListeners() {
 	 * @see IInstallConfigurationChangedListener#installSiteAdded(ISite)
 	 */
 	public void installSiteAdded(ISite site) {
-		viewer.add(myEclipse, site);
+		viewer.add(getLocalSite(), site);
 	}
 
 	/**
