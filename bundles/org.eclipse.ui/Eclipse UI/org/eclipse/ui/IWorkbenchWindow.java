@@ -110,7 +110,7 @@ public boolean isApplicationMenu(String menuId);
  * @param perspectiveId the perspective id for the window's initial page
  * @param input the page input, or <code>null</code> if there is no current input.
  *		This is used to seed the input for the new page's views.
- * @return the new workbench window
+ * @return the new workbench page
  * @exception WorkbenchException if a new window and page could not be opened
  */
 public IWorkbenchPage openPage(String perspectiveId, IAdaptable input)
