@@ -64,13 +64,17 @@ public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implemen
 	 * @see ITokenScanner#nextToken()
 	 */
 	public IToken nextToken() {
-		
-		if (fContentType == null || fRules == null)
-			return super.nextToken();
-		
-		fTokenOffset= fOffset;
-		fColumn= UNDEFINED;
+
 		boolean resume= (fPartitionOffset < fOffset);
+		
+		if (fContentType == null || fRules == null) {
+			if (resume)
+				fOffset= fPartitionOffset;
+			return super.nextToken();
+		}
+		
+		fColumn= UNDEFINED;
+		fTokenOffset= resume ? fPartitionOffset : fOffset;
 				
 		IPredicateRule rule;
 		IToken token;
@@ -79,8 +83,6 @@ public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implemen
 			rule= (IPredicateRule) fRules[i];
 			token= rule.getSuccessToken();
 			if (fContentType.equals(token.getData())) {
-				if (resume)
-					fTokenOffset= fPartitionOffset;
 				token= rule.evaluate(this, resume);
 				if (!token.isUndefined()) {
 					fContentType= null;
@@ -90,6 +92,8 @@ public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implemen
 		}
 		
 		fContentType= null;
+		if (resume)
+			fOffset= fPartitionOffset;
 		return super.nextToken();
 	}
 }
