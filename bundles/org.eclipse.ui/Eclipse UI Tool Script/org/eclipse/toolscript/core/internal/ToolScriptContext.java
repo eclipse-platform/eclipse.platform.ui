@@ -44,20 +44,33 @@ public final class ToolScriptContext implements IToolScriptContext {
 	 * Method declared on IToolScriptContext.
 	 */
 	public String getExpandedLocation() {
-		return null;
+		if (expandedLocation == null)
+			expandedLocation = expandVariables(script.getLocation());
+		return expandedLocation;
 	}
 
 	/* (non-Javadoc)
 	 * Method declared on IToolScriptContext.
 	 */
 	public String getExpandedArguments() {
-		return null;
+		if (expandedArguments == null)
+			expandedArguments = expandVariables(script.getArguments());
+		return expandedArguments;
 	}
 
 	/* (non-Javadoc)
 	 * Method declared on IToolScriptContext.
 	 */
 	public String getExpandedWorkingDirectory() {
-		return null;
+		if (expandedDirectory == null)
+			expandedDirectory = expandVariables(script.getWorkingDirectory());
+		return expandedDirectory;
+	}
+
+	/**
+	 * Expands the variables found in the text.
+	 */
+	private String expandVariables(String text) {
+		return text;
 	}
 }
