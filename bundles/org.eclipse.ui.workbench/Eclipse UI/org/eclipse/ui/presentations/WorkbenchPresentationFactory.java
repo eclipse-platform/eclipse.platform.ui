@@ -55,13 +55,9 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
         final IPreferenceStore store = PlatformUI.getPreferenceStore();
         if (store
                 .contains(IWorkbenchPreferenceConstants.EDITOR_MINIMUM_CHARACTERS)) {
-            final int actualMinimumCharacters = store
+            final int minimumCharacters = store
                     .getInt(IWorkbenchPreferenceConstants.EDITOR_MINIMUM_CHARACTERS);
-            final int defaultMinimumCharacters = store
-                    .getDefaultInt(IWorkbenchPreferenceConstants.EDITOR_MINIMUM_CHARACTERS);
-            if (actualMinimumCharacters != defaultMinimumCharacters) {
-                folder.setMinimumCharacters(actualMinimumCharacters);
-            }
+            folder.setMinimumCharacters(minimumCharacters);
         }
         
         PresentablePartFolder partFolder = new PresentablePartFolder(folder);
