@@ -92,6 +92,7 @@ public class InternalAntRunner {
 	private Vector targets;
 
 	private Map userProperties;
+	private boolean noExplicitUserProperties= true;
 	
 	private Project currentProject;
 	
@@ -171,6 +172,7 @@ public class InternalAntRunner {
 		}
 		
 		userProperties.putAll(properties);
+		noExplicitUserProperties= false;
 	}
 	
 	/**
@@ -210,13 +212,14 @@ public class InternalAntRunner {
 		project.setUserProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
 		project.setUserProperty("ant.version", Main.getAntVersion()); //$NON-NLS-1$
 		if (userProperties != null) {
-			int count= 0;
 			for (Iterator iterator = userProperties.entrySet().iterator(); iterator.hasNext();) {
 				Map.Entry entry = (Map.Entry) iterator.next();
 				project.setUserProperty((String) entry.getKey(), (String) entry.getValue());
-				count++;
 			}
-			if (count == 1) {
+			//may have properties set (always have the Ant process ID)
+			//using the Arguments and not the Properties page
+			//if set using the arguments, still include the global properties
+			if (noExplicitUserProperties) {
 				setGlobalProperties(project);
 			}
 		} else {
