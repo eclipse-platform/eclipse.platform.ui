@@ -836,6 +836,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEEncoding_EncodingJob;
 	public static String IDEEditorsPreferencePage_WorkbenchPreference_viewsRelatedLink;
 	public static String IDEEditorsPreferencePage_WorkbenchPreference_FileEditorsRelatedLink;
+    public static String IDEEditorsPreferencePage_WorkbenchPreference_contentTypesRelatedLink;
 	public static String IDEWorkspacePreferencePage_WorkbenchPreference_relatedLink;
 	public static String WorkbenchEncoding_invalidCharset;
 	public static String SelectionDialog_selectLabel;

@@ -402,6 +402,7 @@ public class WorkbenchMessages extends NLS {
 	public static String FileEditorPreference_existsTitle;
 	public static String FileEditorPreference_existsMessage;
 	public static String FileEditorPreference_defaultLabel;
+    public static String FileEditorPreference_contentTypesRelatedLink;
 
 	public static String FileExtension_extensionEmptyMessage;
 	public static String FileExtension_fileNameInvalidMessage;

@@ -38,6 +38,7 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -45,6 +46,7 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.FileEditorMapping;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
  * The file editors page presents the collection of file names and extensions
@@ -159,6 +161,13 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         pageComponent.setFont(font);
 
         //layout the contents
+
+        PreferenceLinkArea contentTypeArea = new PreferenceLinkArea(pageComponent, SWT.NONE,
+                "org.eclipse.ui.preferencePages.ContentTypes", WorkbenchMessages.FileEditorPreference_contentTypesRelatedLink,//$NON-NLS-1$
+                (IWorkbenchPreferenceContainer) getContainer(),null);
+        
+        data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+        contentTypeArea.getControl().setLayoutData(data);
 
         //layout the top table & its buttons
         Label label = new Label(pageComponent, SWT.LEFT);

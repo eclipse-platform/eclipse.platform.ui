@@ -17,18 +17,15 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.ide.IDEEncoding;
 import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
-
 import org.eclipse.ui.internal.dialogs.EditorsPreferencePage;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
@@ -56,12 +53,19 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		fileEditorsArea.getControl().setLayoutData(data);
 
+        PreferenceLinkArea contentTypeArea = new PreferenceLinkArea(composite, SWT.NONE,
+                "org.eclipse.ui.preferencePages.ContentTypes", IDEWorkbenchMessages.IDEEditorsPreferencePage_WorkbenchPreference_contentTypesRelatedLink,//$NON-NLS-1$
+                (IWorkbenchPreferenceContainer) getContainer(),null);
+        
+        data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+        contentTypeArea.getControl().setLayoutData(data);
+        
 		PreferenceLinkArea appearanceArea = new PreferenceLinkArea(composite, SWT.NONE,
 				"org.eclipse.ui.preferencePages.Views", IDEWorkbenchMessages.IDEEditorsPreferencePage_WorkbenchPreference_viewsRelatedLink,//$NON-NLS-1$
 				(IWorkbenchPreferenceContainer) getContainer(),null);
 
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-		appearanceArea.getControl().setLayoutData(gd);
+		data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+		appearanceArea.getControl().setLayoutData(data);
 		
 		Label space = new Label(composite,SWT.NONE);
 		space.setLayoutData(new GridData());

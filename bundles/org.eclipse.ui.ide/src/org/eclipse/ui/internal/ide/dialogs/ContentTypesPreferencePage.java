@@ -48,8 +48,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
  * Preference page that allows manipulation of core content types. Unlike most
@@ -273,6 +275,14 @@ public class ContentTypesPreferencePage extends PreferencePage implements
         GridLayout layout = new GridLayout(2, false);
         layout.marginHeight = layout.marginWidth = 0;
         composite.setLayout(layout);
+        
+        PreferenceLinkArea contentTypeArea = new PreferenceLinkArea(composite, SWT.NONE,
+                "org.eclipse.ui.preferencePages.FileEditors", IDEWorkbenchMessages.IDEEditorsPreferencePage_WorkbenchPreference_FileEditorsRelatedLink,//$NON-NLS-1$
+                (IWorkbenchPreferenceContainer) getContainer(),null);
+                
+        GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+        contentTypeArea.getControl().setLayoutData(data);
+        
         createContentTypesTree(composite);
         createFileAssociations(composite);
         createCharset(composite);
