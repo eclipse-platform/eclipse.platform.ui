@@ -365,7 +365,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	}
 			
 	/**
-	 * Handles key events in viewer. Imvokes the 
+	 * Handles key events in viewer. Invokes the 
 	 * <code>REMOVE_ACTION</code> when the delete
 	 * key is pressed.
 	 */
