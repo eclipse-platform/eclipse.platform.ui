@@ -4,26 +4,27 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.model.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Iterator;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * A property page for viewing and modifying the set
@@ -47,6 +48,7 @@ public ProjectReferencePage() {
 protected Control createContents(Composite parent) {
 
 	WorkbenchHelp.setHelp(parent, IHelpContextIds.PROJECT_REFERENCE_PROPERTY_PAGE);
+	Font font = parent.getFont();
 
 	Composite composite = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
@@ -54,6 +56,7 @@ protected Control createContents(Composite parent) {
 	layout.marginHeight = 0;
 	composite.setLayout(layout);
 	composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	composite.setFont(font);
 
 	listViewer = CheckboxTableViewer.newCheckList(composite, SWT.TOP | SWT.BORDER);
 	GridData data = new GridData();
@@ -62,6 +65,7 @@ protected Control createContents(Composite parent) {
 	data.heightHint =
 		getDefaultFontHeight(listViewer.getTable(), PROJECT_LIST_MULTIPLIER);
 	listViewer.getTable().setLayoutData(data);
+	listViewer.getTable().setFont(font);
 
 	listViewer.setLabelProvider(new WorkbenchLabelProvider());
 	listViewer.setContentProvider(getContentProvider(project));
@@ -93,6 +97,7 @@ public void createControl(Composite parent) {
 	GridLayout layout= new GridLayout();
 	layout.marginHeight = layout.marginWidth = 0;
 	content.setLayout(layout);
+	content.setFont(parent.getFont());
 
 	createDescriptionLabel(content);
 		

@@ -105,6 +105,7 @@ public CheckboxTableViewer(Composite parent, int style) {
  */
 public static CheckboxTableViewer newCheckList(Composite parent, int style) {
 	Table table = new Table(parent, SWT.CHECK | style);
+	table.setFont(parent.getFont());
 	return new CheckboxTableViewer(table);
 }
 
@@ -142,6 +143,7 @@ protected static Table createTable(Composite parent, int style) {
 	TableLayout layout = new TableLayout();
 	layout.addColumnData(new ColumnWeightData(100));
 	table.setLayout(layout);
+	table.setFont(parent.getFont());
 	
 	return table;
 }
