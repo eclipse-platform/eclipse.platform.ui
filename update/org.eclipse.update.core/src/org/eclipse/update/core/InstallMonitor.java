@@ -1,5 +1,4 @@
 package org.eclipse.update.core;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
@@ -11,8 +10,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.internal.core.Policy;
 
 /**
- * Delegating wrapper for IProgressMonitor used for 
- * installation handling.
+ * Install progress monitor
+ * Delegating wrapper for IProgressMonitor used for installation handling.
  * 
  * @since 2.0
  */
@@ -33,7 +32,7 @@ public class InstallMonitor implements IProgressMonitor {
 		private boolean showDetails;
 		private long totalCopyCount;
 
-		public MonitorState(
+		private MonitorState(
 			String taskString,
 			String subTaskString,
 			boolean showDetails,
@@ -44,23 +43,32 @@ public class InstallMonitor implements IProgressMonitor {
 			this.totalCopyCount = totalCopyCount;
 		}
 
-		public String getTaskString() {
+		private String getTaskString() {
 			return this.taskString;
 		}
 
-		public String getSubTaskString() {
+		private String getSubTaskString() {
 			return this.subTaskString;
 		}
 
-		public boolean getShowDetails() {
+		private boolean getShowDetails() {
 			return this.showDetails;
 		}
 
-		public long getTotalCopyCount() {
+		private long getTotalCopyCount() {
 			return this.totalCopyCount;
 		}
 	}
+	
+	private InstallMonitor() {
+	}
 
+	/**
+	 * Install monitor constructor
+	 * 
+	 * @param monitor base install monitor
+	 * @since 2.0
+	 */
 	public InstallMonitor(IProgressMonitor monitor) {
 		this.monitor = monitor;
 		this.tasks = new Stack();
@@ -70,44 +78,62 @@ public class InstallMonitor implements IProgressMonitor {
 		this.totalCopyCount = 0;
 	}
 
-	/*
+	/**
+	 * Begin new monitor task.
+	 * 
 	 * @see IProgressMonitor#beginTask(String, int)
+	 * @since 2.0
 	 */
 	public void beginTask(String name, int totalWork) {
 		taskString = name;
 		monitor.beginTask(name, totalWork);
 	}
 
-	/*
+	/**
+	 * Indicate completion of monitor activity.
+	 * 
 	 * @see IProgressMonitor#done()
+	 * @since 2.0
 	 */
 	public void done() {
 		monitor.done();
 	}
 
-	/*
+	/**
+	 * Indicate monitor progress.
+	 * 
 	 * @see IProgressMonitor#internalWorked(double)
+	 * @since 2.0
 	 */
 	public void internalWorked(double work) {
 		monitor.internalWorked(work);
 	}
 
-	/*
+	/**
+	 * Check is use indicated that the operation be cancelled.
+	 * 
 	 * @see IProgressMonitor#isCanceled()
+	 * @since 2.0
 	 */
 	public boolean isCanceled() {
 		return monitor.isCanceled();
 	}
 
-	/*
+	/**
+	 * Set the cancellation state.
+	 * 
 	 * @see IProgressMonitor#setCanceled(boolean)
+	 * @since 2.0
 	 */
 	public void setCanceled(boolean value) {
 		monitor.setCanceled(value);
 	}
 
-	/*
+	/**
+	 * Set task name.
+	 * 
 	 * @see IProgressMonitor#setTaskName(String)
+	 * @since 2.0
 	 */
 	public void setTaskName(String name) {
 		this.taskString = name;
@@ -118,8 +144,11 @@ public class InstallMonitor implements IProgressMonitor {
 		monitor.setTaskName(name);
 	}
 
-	/*
+	/**
+	 * Set subtask name.
+	 * 
 	 * @see IProgressMonitor#subTask(String)
+	 * @since 2.0
 	 */
 	public void subTask(String name) {
 		this.subTaskString = name;
@@ -128,18 +157,35 @@ public class InstallMonitor implements IProgressMonitor {
 		monitor.subTask(name);
 	}
 
-	/*
+	/**
+	 * Indicate monitor progress.
+	 * 
 	 * @see IProgressMonitor#worked(int)
+	 * @since 2.0
 	 */
 	public void worked(int work) {
 		monitor.worked(work);
 	}
 
+	/**
+	 * Save the current monitor state.
+	 * The states are saved on a push-down stack. Prior states
+	 * can be restored by calling restorState()
+	 * 
+	 * @see #restoreState()
+	 * @since 2.0
+	 */
 	public void saveState() {
 		tasks.push(
 			new MonitorState(taskString, subTaskString, showDetails, totalCopyCount));
 	}
 
+	/**
+	 * Restore the monitor state.
+	 * 
+	 * @see #saveState()
+	 * @since 2.0
+	 */
 	public void restoreState() {
 		if (tasks.size() > 0) {
 			MonitorState state = (MonitorState) tasks.pop();
@@ -150,14 +196,40 @@ public class InstallMonitor implements IProgressMonitor {
 		}
 	}
 
+	/**
+	 * Indicate whether the monitor subtask message should include
+	 * copy progress counts.
+	 * 
+	 * @see #setCopyCount(long)
+	 * @see #setTotalCount(long)
+	 * @param setting <code>true</code> to show the copy count,
+	 * <code>false</code> otherwise
+	 * @since 2.0
+	 */
 	public void showCopyDetails(boolean setting) {
 		this.showDetails = setting;
 	}
 
+	/**
+	 * Sets the total number of bytes to copy.
+	 * 
+	 * @see #showCopyDetails(boolean)
+	 * @see #setCopyCount(long)
+	 * @param count total number of bytes to copy.
+	 * @since 2.0
+	 */
 	public void setTotalCount(long count) {
 		this.totalCopyCount = count;
 	}
 
+	/**
+	 * Sets the number of bytes already copied.
+	 * 
+	 * @see #showCopyDetails(boolean)
+	 * @see #setTotalCount(long)
+	 * @param count number of bytes already copied.
+	 * @since 2.0
+	 */
 	public void setCopyCount(long count) {
 		if (showDetails && count > 0) {
 			long countK = count / 1024;
