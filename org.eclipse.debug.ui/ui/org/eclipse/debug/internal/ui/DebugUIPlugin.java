@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -957,14 +958,25 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		
 		final boolean waitInJob = wait;
 		Job job = new Job(DebugUIMessages.getString("DebugUITools.3")) { //$NON-NLS-1$
-			public IStatus run(IProgressMonitor monitor) {
+			public IStatus run(final IProgressMonitor monitor) {
 				try {
 					if(waitInJob) {						
 						StringBuffer buffer= new StringBuffer(configuration.getName());
 						buffer.append(DebugUIMessages.getString("DebugUIPlugin.0")); //$NON-NLS-1$
 						ILaunchConfigurationWorkingCopy workingCopy= configuration.copy(buffer.toString());
 						workingCopy.setAttribute(ATTR_LAUNCHING_CONFIG_HANDLE, configuration.getMemento());
-						ILaunch pendingLaunch= new Launch(workingCopy, mode, null);
+						ILaunch pendingLaunch= new Launch(workingCopy, mode, null) {
+                            // Allow the user to terminate the dummy launch as a means of
+                            // cancelling the launch while waiting for a build to finish.
+                            public boolean canTerminate() {
+                                return true;
+                            }
+                            public void terminate() throws DebugException {
+                                monitor.setCanceled(true);
+                                DebugPlugin.getDefault().getLaunchManager().removeLaunch(this);
+                            }
+                            
+                        };
 						DebugPlugin.getDefault().getLaunchManager().addLaunch(pendingLaunch);
 
 						try {
