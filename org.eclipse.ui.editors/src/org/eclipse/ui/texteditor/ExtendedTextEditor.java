@@ -277,7 +277,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		if (fSourceViewerDecorationSupport != null)
-			fSourceViewerDecorationSupport.install(getNewPreferenceStore());
+			fSourceViewerDecorationSupport.install(getPreferenceStore());
 		
 		if (isPrefQuickDiffAlwaysOn())
 			showChangeInformation(true);
@@ -289,7 +289,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 * @return whether the overview ruler is visible
 	 */
 	protected boolean isOverviewRulerVisible() {
-		IPreferenceStore store= getNewPreferenceStore();
+		IPreferenceStore store= getPreferenceStore();
 		return store != null ? store.getBoolean(OVERVIEW_RULER) : false;
 	}
 
@@ -380,7 +380,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 		IAnnotationModel differ= getDiffer();
 		// create diff model if it doesn't
 		if (differ == null) {
-			IPreferenceStore store= getNewPreferenceStore();
+			IPreferenceStore store= getPreferenceStore();
 			if (store != null) {
 				String defaultId= store.getString(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER);
 				differ= new QuickDiff().createQuickDiffAnnotationModel(this, defaultId);
@@ -452,7 +452,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 		IVerticalRuler v= getVerticalRuler();
 		if (v instanceof CompositeRuler) {
 			CompositeRuler c= (CompositeRuler) v;
-			if (show && fChangeRulerColumn == null && getNewPreferenceStore().getBoolean(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_SHOW_CHANGE_RULER))
+			if (show && fChangeRulerColumn == null && getPreferenceStore().getBoolean(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_SHOW_CHANGE_RULER))
 				c.addDecorator(1, createChangeRulerColumn());
 			else if (!show && fChangeRulerColumn != null) {
 				c.removeDecorator(fChangeRulerColumn);
@@ -499,7 +499,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 * @return <code>true</code> if the line numbers should be visible
 	 */
 	protected boolean isLineNumberRulerVisible() {
-		IPreferenceStore store= getNewPreferenceStore();
+		IPreferenceStore store= getPreferenceStore();
 		return store != null ? store.getBoolean(LINE_NUMBER_RULER) : false;
 	}
 
@@ -510,7 +510,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 * @return <code>true</code> if the line numbers should be visible
 	 */
 	protected boolean isPrefQuickDiffAlwaysOn() {
-		IPreferenceStore store= getNewPreferenceStore();
+		IPreferenceStore store= getPreferenceStore();
 		return store != null ? store.getBoolean(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON) : false;
 	}
 	
@@ -521,7 +521,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 */
 	protected void initializeLineNumberRulerColumn(LineNumberRulerColumn rulerColumn) {
 		ISharedTextColors sharedColors= getSharedColors();
-		IPreferenceStore store= getNewPreferenceStore();
+		IPreferenceStore store= getPreferenceStore();
 		if (store != null) {
 		
 			RGB rgb=  null;
@@ -560,7 +560,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 */
 	private void initializeChangeRulerColumn(IChangeRulerColumn changeColumn) {
 		ISharedTextColors sharedColors= getSharedColors();
-		IPreferenceStore store= getNewPreferenceStore();
+		IPreferenceStore store= getPreferenceStore();
 	
 		if (store != null) {
 			ISourceViewer v= getSourceViewer();
@@ -684,7 +684,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 */
 	protected IVerticalRuler createVerticalRuler() {
 		CompositeRuler ruler= createCompositeRuler();
-		IPreferenceStore store= getNewPreferenceStore();
+		IPreferenceStore store= getPreferenceStore();
 		if (ruler != null && store != null) {
 			for (Iterator iter=  ruler.getDecoratorIterator(); iter.hasNext();) {
 				IVerticalRulerColumn column= (IVerticalRulerColumn)iter.next();
@@ -756,11 +756,11 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 			
 			if (ExtendedTextEditorPreferenceConstants.QUICK_DIFF_SHOW_CHANGE_RULER.equals(property)) {
 				if (isChangeInformationShowing())
-					showChangeRuler(getNewPreferenceStore().getBoolean(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_SHOW_CHANGE_RULER));
+					showChangeRuler(getPreferenceStore().getBoolean(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_SHOW_CHANGE_RULER));
 			}
 
 			if (ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH.equals(property)) {
-				sourceViewer.getTextWidget().setTabs(getNewPreferenceStore().getInt(ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
+				sourceViewer.getTextWidget().setTabs(getPreferenceStore().getInt(ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
 				return;
 			}
 

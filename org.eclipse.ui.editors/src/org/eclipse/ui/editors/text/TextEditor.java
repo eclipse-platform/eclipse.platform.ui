@@ -73,7 +73,7 @@ public class TextEditor extends ExtendedTextEditor {
 		super();
 		if (getSourceViewerConfiguration() == null) {
 			// configuration not yet set by subclass
-			setSourceViewerConfiguration(new TextSourceViewerConfiguration(getNewPreferenceStore()));
+			setSourceViewerConfiguration(new TextSourceViewerConfiguration(getPreferenceStore()));
 		}
 
 	}
