@@ -44,10 +44,10 @@ class WorkManager implements IManager {
 	}
 	protected NotifyRule notifyRule = new NotifyRule();
 	/**
-	 * Indicates that the last checkIn failed due to the tree being locked.  Checkout
-	 * must not be done in this case
+	 * Indicates that the last checkIn failed, either due to cancelation or due to the
+	 * workspace tree being locked for modifications (during resource change events).
 	 */
-	private boolean checkInFailed = false;
+	private final ThreadLocal checkInFailed = new ThreadLocal();
 	/**
 	 * Indicates whether any operations have run that may require a build. 
 	 */
@@ -82,45 +82,56 @@ class WorkManager implements IManager {
 	 * free to run.
 	 */
 	public void checkIn(ISchedulingRule rule, IProgressMonitor monitor) throws CoreException {
-		boolean shouldBeginRule = !workspace.isTreeLocked();
+		boolean success = false;
 		try {
-			if (shouldBeginRule)
-				jobManager.beginRule(rule, monitor);
-		} finally {
-			//must increment regardless of failure because checkOut is always
-			// in finally
+			if (workspace.isTreeLocked()) {
+				String msg = Policy.bind("resources.cannotModify"); //$NON-NLS-1$
+				throw new ResourceException(IResourceStatus.WORKSPACE_LOCKED, null, msg, null);
+			}
+			jobManager.beginRule(rule, monitor);
 			lock.acquire();
 			incrementPreparedOperations();
-			//don't modify checkInFailed until this thread has the workspace lock
-			if (!shouldBeginRule) {
-				checkInFailed = true;
-				String message = Policy.bind("resources.cannotModify"); //$NON-NLS-1$
-				throw new ResourceException(IResourceStatus.WORKSPACE_LOCKED, null, message, null);
-			}
+			success = true;
+		} finally {
+			//remember if we failed to check in, so we can avoid check out
+			if (!success)
+				checkInFailed.set(Boolean.TRUE);
 		}
 	}
 	/**
 	 * Inform that an operation has finished. 
 	 */
-	public synchronized void checkOut(ISchedulingRule rule) throws CoreException {
+	public synchronized void checkOut(ISchedulingRule rule) {
 		decrementPreparedOperations();
 		rebalanceNestedOperations();
 		//reset state if this is the end of a top level operation
-		if (preparedOperations == 0) {
-			operationCanceled = false;
-			hasBuildChanges = false;
-		}
-		//clear checkInFailed flag before releasing lock
-		boolean shouldEndRule = !checkInFailed;
-		checkInFailed = false;
+		if (preparedOperations == 0) 
+			operationCanceled = 	hasBuildChanges = false;
 		try {
 			lock.release();
 		} finally {
 			//end rule in finally in case lock.release throws an exception
-			//don't release rule if check in failed
-			if (shouldEndRule)
-				jobManager.endRule(rule);
+			jobManager.endRule(rule);
 		}
+	}
+	/**
+	 * Returns true if the check in for this thread failed, in which case the
+	 * check out and other end of operation code should not run.
+	 * <p>
+	 * The failure flag is reset immediately after calling this method. Subsequent
+	 * calls to this method will indicate no failure (unless a new failure has occurred).
+	 * @return <code>true</code> if the checkIn failed, and <code>false</code> otherwise.
+	 */
+	public boolean checkInFailed(ISchedulingRule rule) {
+		if (checkInFailed.get() != null) {
+			//clear the failure flag for this thread
+			checkInFailed.set(null);
+			//must still end the rule even in the case of failure
+			if (!workspace.isTreeLocked())
+				jobManager.endRule(rule);
+			return true;
+		}
+		return false;
 	}
 	/**
 	 * This method can only be safelly called from inside a workspace

@@ -821,6 +821,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	public void endOperation(ISchedulingRule rule, boolean build, IProgressMonitor monitor) throws CoreException {
 		WorkManager workManager = getWorkManager();
+		//don't do any end operation work if we failed to check in
+		if (workManager.checkInFailed(rule))
+			return;
 		// This is done in a try finally to ensure that we always decrement the operation count
 		// and release the workspace lock.  This must be done at the end because snapshot
 		// and "hasChanges" comparison have to happen without interference from other threads.
