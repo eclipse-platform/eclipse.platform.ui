@@ -86,7 +86,7 @@ abstract class TocNode implements ITocNode {
 			if ((c instanceof Topic)) {
 				childTopics.add(c);
 			} else {
-				// it is a toc, anchor or include,
+				// it is a Toc, Anchor or Link,
 				// which may have children attached to it.
 				childTopics.addAll(c.getChildTopics());
 			}
