@@ -149,4 +149,11 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput,
     public IPath getPath() {
         return file.getLocation();
     }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return getClass().getName() + "(" + getFile().getFullPath() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+    }
 }
