@@ -77,6 +77,48 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 */
 	public static final String SWAP_MARK= "org.eclipse.ui.edit.text.swap.mark"; //$NON-NLS-1$
 	
+	/**
+	 * Action definition id of the smart enter action.
+	 * Value: <code>"org.eclipse.ui.edit.text.smartEnter"</code>
+	 * @since 3.0
+	 */
+	public static final String SMART_ENTER= "org.eclipse.ui.edit.text.smartEnter"; //$NON-NLS-1$
+	
+	/**
+	 * Action definition id of the smart enter (inverse) action.
+	 * Value: <code>"org.eclipse.ui.edit.text.smartEnterInverse"</code>
+	 * @since 3.0
+	 */
+	public static final String SMART_ENTER_INVERSE= "org.eclipse.ui.edit.text.smartEnterInverse"; //$NON-NLS-1$
+	
+	/**
+	 * Action definition id of the move lines upwards action.
+	 * Value: <code>"org.eclipse.ui.edit.text.moveLineUp"</code>
+	 * @since 3.0
+	 */
+	public static final String MOVE_LINES_UP= "org.eclipse.ui.edit.text.moveLineUp"; //$NON-NLS-1$
+	
+	/**
+	 * Action definition id of the move lines downwards action.
+	 * Value: <code>"org.eclipse.ui.edit.text.moveLineDown"</code>
+	 * @since 3.0
+	 */
+	public static final String MOVE_LINES_DOWN= "org.eclipse.ui.edit.text.moveLineDown"; //$NON-NLS-1$
+	
+	/**
+	 * Action definition id of the upper case action.
+	 * Value: <code>"org.eclipse.ui.edit.text.upperCase"</code>
+	 * @since 3.0
+	 */
+	public static final String UPPER_CASE= "org.eclipse.ui.edit.text.upperCase"; //$NON-NLS-1$
+	
+	/**
+	 * Action definition id of the lower case action.
+	 * Value: <code>"org.eclipse.ui.edit.text.lowerCase"</code>
+	 * @since 3.0
+	 */
+	public static final String LOWER_CASE= "org.eclipse.ui.edit.text.lowerCase"; //$NON-NLS-1$
+	
 
 	// navigation
 	

@@ -1046,7 +1046,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 
 	};
-
+	
 	/**
 	 * Internal action to show the editor's ruler context menu (accessibility).
 	 * @since 2.0
@@ -3660,6 +3660,37 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_GOTO);
 		setAction(ITextEditorActionConstants.GOTO_LINE, action);
 		
+		action = new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.MoveLineUp.", this, true); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.MOVE_LINES_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.MOVE_LINES_UP);
+		setAction(ITextEditorActionConstants.MOVE_LINE_UP, action);
+		
+		action = new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.MoveLineDown.", this, false); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.MOVE_LINES_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.MOVE_LINES_DOWN);
+		setAction(ITextEditorActionConstants.MOVE_LINE_DOWN, action);
+		
+		action = new CaseAction(EditorMessages.getResourceBundle(), "Editor.UpperCase.", this, true); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.UPPER_CASE_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.UPPER_CASE);
+		setAction(ITextEditorActionConstants.UPPER_CASE, action);
+		
+		action = new CaseAction(EditorMessages.getResourceBundle(), "Editor.LowerCase.", this, false); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.LOWER_CASE_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LOWER_CASE);
+		setAction(ITextEditorActionConstants.LOWER_CASE, action);
+		
+		action = new SmartEnterAction(EditorMessages.getResourceBundle(), "Editor.SmartEnter.", this, false); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SMART_ENTER_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SMART_ENTER);
+		setAction(ITextEditorActionConstants.SMART_ENTER, action);
+		
+		action = new SmartEnterAction(EditorMessages.getResourceBundle(), "Editor.SmartEnter.", this, true); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SMART_ENTER_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SMART_ENTER_INVERSE);
+		setAction(ITextEditorActionConstants.SMART_ENTER_INVERSE, action);
+		
+		
 		markAsContentDependentAction(ITextEditorActionConstants.UNDO, true);
 		markAsContentDependentAction(ITextEditorActionConstants.REDO, true);
 		markAsContentDependentAction(ITextEditorActionConstants.FIND, true);
@@ -3674,6 +3705,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsSelectionDependentAction(ITextEditorActionConstants.DELETE, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.SHIFT_RIGHT, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.SHIFT_LEFT, true);
+		markAsSelectionDependentAction(ITextEditorActionConstants.UPPER_CASE, true);
+		markAsSelectionDependentAction(ITextEditorActionConstants.LOWER_CASE, true);
 		
 		markAsPropertyDependentAction(ITextEditorActionConstants.REVERT_TO_SAVED, true);
 		
@@ -3688,6 +3721,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsStateDependentAction(ITextEditorActionConstants.DELETE_LINE, true);
 		markAsStateDependentAction(ITextEditorActionConstants.DELETE_LINE_TO_BEGINNING, true);
 		markAsStateDependentAction(ITextEditorActionConstants.DELETE_LINE_TO_END, true);
+		markAsStateDependentAction(ITextEditorActionConstants.MOVE_LINE_UP, true);
+		markAsStateDependentAction(ITextEditorActionConstants.MOVE_LINE_DOWN, true);
 		markAsStateDependentAction(ITextEditorActionConstants.CUT_LINE, true);
 		markAsStateDependentAction(ITextEditorActionConstants.CUT_LINE_TO_BEGINNING, true);
 		markAsStateDependentAction(ITextEditorActionConstants.CUT_LINE_TO_END, true);

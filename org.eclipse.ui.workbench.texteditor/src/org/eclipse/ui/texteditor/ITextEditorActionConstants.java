@@ -156,6 +156,48 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	static final String GOTO_LINE= "GotoLine"; //$NON-NLS-1$
 	
 	/** 
+	 * Name of the action to insert a new line below the current position. 
+	 * Value: <code>"SmartEnter"</code>
+	 * @since 3.0
+	 */
+	static final String SMART_ENTER= "SmartEnter"; //$NON-NLS-1$
+	
+	/** 
+	 * Name of the action to insert a new line above the current position. 
+	 * Value: <code>"SmartEnterInverse"</code>
+	 * @since 3.0
+	 */
+	static final String SMART_ENTER_INVERSE= "SmartEnterInverse"; //$NON-NLS-1$
+	
+	/** 
+	 * Name of the action to move lines upwards 
+	 * Value: <code>"MoveLineUp"</code>
+	 * @since 3.0
+	 */
+	static final String MOVE_LINE_UP= "MoveLineUp"; //$NON-NLS-1$
+	
+	/** 
+	 * Name of the action to move lines downwards 
+	 * Value: <code>"MoveLineDown"</code>
+	 * @since 3.0
+	 */
+	static final String MOVE_LINE_DOWN= "MoveLineDown"; //$NON-NLS-1$
+	
+	/** 
+	 * Name of the action to turn a selection to upper case 
+	 * Value: <code>"UpperCase"</code>
+	 * @since 3.0
+	 */
+	static final String UPPER_CASE= "UpperCase"; //$NON-NLS-1$
+	
+	/** 
+	 * Name of the action to turn a selection to lower case 
+	 * Value: <code>"LowerCase"</code>
+	 * @since 3.0
+	 */
+	static final String LOWER_CASE= "LowerCase"; //$NON-NLS-1$
+	
+	/** 
 	 * Name of the action to find next. 
 	 * Value: <code>"FindNext"</code>
 	 * @since 2.0

@@ -258,4 +258,32 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * @since 2.1
 	 */
 	public static final String GOTO_LAST_EDIT_POSITION_ACTION= PREFIX + "goto_last_edit_position" + ACTION_POSTFIX; //$NON-NLS-1$
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.move_lines_action_context"</code>
+	 * @since 3.0
+	 */
+	public static final String MOVE_LINES_ACTION= PREFIX + "move_lines" + ACTION_POSTFIX; //$NON-NLS-1$
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.upper_case_action_context"</code>
+	 * @since 3.0
+	 */
+	public static final String UPPER_CASE_ACTION= PREFIX + "upper_case" + ACTION_POSTFIX; //$NON-NLS-1$
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.lower_case_action_context"</code>
+	 * @since 3.0
+	 */
+	public static final String LOWER_CASE_ACTION= PREFIX + "lower_case" + ACTION_POSTFIX; //$NON-NLS-1$
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.smart_enter_action_context"</code>
+	 * @since 3.0
+	 */
+	public static final String SMART_ENTER_ACTION= PREFIX + "smart_enter" + ACTION_POSTFIX; //$NON-NLS-1$;
 }
