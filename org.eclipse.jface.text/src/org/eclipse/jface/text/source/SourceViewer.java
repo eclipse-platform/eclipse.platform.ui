@@ -20,10 +20,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 
+import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
+
 import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
-import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.DocumentRewriteSession;
 import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IDocument;
@@ -51,7 +52,7 @@ import org.eclipse.jface.text.reconciler.IReconciler;
 
 /**
  * SWT based implementation of
- * {@link org.eclipse.jface.text.source.ISourceViewer}and its extension
+ * {@link org.eclipse.jface.text.source.ISourceViewer} and its extension
  * interfaces. The same rules apply as for
  * {@link org.eclipse.jface.text.TextViewer}. A source viewer uses an
  * <code>IVerticalRuler</code> as its annotation presentation area. The
@@ -630,7 +631,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 		if (fSelections.isEmpty()) {
 			fSelectionCategory= _SELECTION_POSITION_CATEGORY + hashCode();
-			fSelectionUpdater= new DefaultPositionUpdater(fSelectionCategory);
+			fSelectionUpdater= new NonDeletingPositionUpdater(fSelectionCategory);
 			document.addPositionCategory(fSelectionCategory);
 			document.addPositionUpdater(fSelectionUpdater);
 		}

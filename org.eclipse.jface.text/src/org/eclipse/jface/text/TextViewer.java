@@ -57,6 +57,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
 
+import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -1199,6 +1200,11 @@ public class TextViewer extends Viewer implements
 	/** Internal name of the position category used selection preservation during shift. */
 	protected static final String SHIFTING= "__TextViewer_shifting"; //$NON-NLS-1$
 
+	/**
+	 * Base position category name used by the selection updater
+	 * @since 3.1
+	 */
+	private static final String SELECTION_POSITION_CATEGORY= "_textviewer_selection_category"; //$NON-NLS-1$
 	/** The viewer's text widget */
 	private StyledText fTextWidget;
 	/** The viewer's input document */
@@ -1386,6 +1392,16 @@ public class TextViewer extends Viewer implements
 	 * @since 3.1
 	 */
 	protected int fHyperlinkStateMask;
+	/**
+	 * Position category used by the selection updater
+	 * @since 3.1
+	 */
+	private String fRememberedSelectionCategory;
+	/**
+	 * Position updater for saved selections
+	 * @since 3.1
+	 */
+	private IPositionUpdater fSelectionUpdater;
 	
 	
 	//---- Construction and disposal ------------------
@@ -2019,7 +2035,7 @@ public class TextViewer extends Viewer implements
 		if (fTextWidget == null)
 			return;
 			
-		IRegion widgetSelection= modelRange2WidgetRange(new Region(selectionOffset, selectionLength));
+		IRegion widgetSelection= modelRange2ClosestWidgetRange(new Region(selectionOffset, selectionLength));
 		if (widgetSelection != null) {
 			
 			int[] selectionRange= new int[] { widgetSelection.getOffset(), widgetSelection.getLength() };
@@ -2789,7 +2805,7 @@ public class TextViewer extends Viewer implements
 			return;
 			
 		IRegion modelRange= new Region(start, length);
-		IRegion widgetRange= modelRange2WidgetRange(modelRange);
+		IRegion widgetRange= modelRange2ClosestWidgetRange(modelRange);
 		if (widgetRange != null) {
 			
 			int[] range= new int[] { widgetRange.getOffset(), widgetRange.getLength() };
@@ -4477,8 +4493,18 @@ public class TextViewer extends Viewer implements
 			
 		Point selection= fDocumentSelection.isDeleted() ? null : fDocumentSelection.getSelection();
 		IDocument document= getDocument();
-		if (document != null)
-			document.removePosition(fDocumentSelection);
+		if (document != null) {
+			try {
+				document.removePosition(fRememberedSelectionCategory, fDocumentSelection);
+				document.removePositionUpdater(fSelectionUpdater);
+				fSelectionUpdater= null;
+				document.removePositionCategory(fRememberedSelectionCategory);
+				fRememberedSelectionCategory= null;
+			} catch (BadPositionCategoryException exception) {
+				// Should not happen
+			}
+		}
+		
 		fDocumentSelection= null;
 		
 		return selection;
@@ -4545,9 +4571,16 @@ public class TextViewer extends Viewer implements
 			IDocument document= getDocument();
 			if (document != null) {
 				try {
-					document.addPosition(p);
+					fRememberedSelectionCategory= SELECTION_POSITION_CATEGORY + hashCode();
+					fSelectionUpdater= new NonDeletingPositionUpdater(fRememberedSelectionCategory);
+					document.addPositionCategory(fRememberedSelectionCategory);
+					document.addPositionUpdater(fSelectionUpdater);
+					document.addPosition(fRememberedSelectionCategory, p);
 					fDocumentSelection= p;
-				} catch (BadLocationException x) {
+				} catch (BadLocationException exception) {
+					// Should not happen
+				} catch (BadPositionCategoryException exception) {
+					// Should not happen
 				}
 			}
 		}
@@ -4773,6 +4806,35 @@ public class TextViewer extends Viewer implements
 					return new Region(result.getOffset() + result.getLength(), -result.getLength());
 			}
 			return fInformationMapping.toImageRegion(modelRange);
+			
+		} catch (BadLocationException x) {
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Similar to {@link #modelRange2WidgetRange(IRegion)}, but more forgiving:
+	 * if <code>modelRange</code> describes a region entirely hidden in the
+	 * image, then this method returns the zero-length region at the offset of
+	 * the folded region.
+	 * 
+	 * @param modelRange the model range
+	 * @return the corresponding widget range, or <code>null</code>
+	 * @since 3.1
+	 */
+	private IRegion modelRange2ClosestWidgetRange(IRegion modelRange) {
+		if (!(fInformationMapping instanceof IDocumentInformationMappingExtension2))
+			return modelRange2WidgetRange(modelRange);
+			
+		try {
+			if (modelRange.getLength() < 0) {
+				Region reversed= new Region(modelRange.getOffset() + modelRange.getLength(), -modelRange.getLength());
+				IRegion result= ((IDocumentInformationMappingExtension2) fInformationMapping).toClosestImageRegion(reversed);
+				if (result != null)
+					return new Region(result.getOffset() + result.getLength(), -result.getLength());
+			}
+			return ((IDocumentInformationMappingExtension2) fInformationMapping).toClosestImageRegion(modelRange);
 			
 		} catch (BadLocationException x) {
 		}
