@@ -702,11 +702,12 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			assertTrue("1.4", !file.getResourceAttributes().isExecutable());
 
 			// folder
-			assertTrue("2.0", !project.getResourceAttributes().isExecutable());
-			setExecutable(project, true);
-			assertTrue("2.2", project.getResourceAttributes().isExecutable());
+			//folder is executable initially
+			assertTrue("2.0", project.getResourceAttributes().isExecutable());
 			setExecutable(project, false);
-			assertTrue("2.4", !project.getResourceAttributes().isExecutable());
+			assertTrue("2.2", !project.getResourceAttributes().isExecutable());
+			setExecutable(project, true);
+			assertTrue("2.4", project.getResourceAttributes().isExecutable());
 		} catch (CoreException e1) {
 			fail("2.99", e1);
 		}
