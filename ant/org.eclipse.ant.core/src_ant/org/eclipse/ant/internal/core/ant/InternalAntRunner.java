@@ -143,8 +143,6 @@ public class InternalAntRunner {
     
     private String buildAntHome= null;
 
-	private static final String PROPERTY_ECLIPSE_RUNNING = "eclipse.running"; //$NON-NLS-1$
-
 	/**
 	 * Adds a build listener.
 	 * 
@@ -209,16 +207,18 @@ public class InternalAntRunner {
 	}
 
 	private void setProperties(Project project) {
-		project.setUserProperty(PROPERTY_ECLIPSE_RUNNING, "true"); //$NON-NLS-1$
 		project.setUserProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
 		project.setUserProperty("ant.version", Main.getAntVersion()); //$NON-NLS-1$
 		
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		Property[] properties= prefs.getCustomProperties();
+		List properties= prefs.getProperties();
 		if (properties != null) {
-			for (int i = 0; i < properties.length; i++) {
-				Property property = properties[i];
-				project.setUserProperty(property.getName(), property.getValue());
+			for (Iterator iter = properties.iterator(); iter.hasNext();) {
+				Property property = (Property) iter.next();
+				String value= property.getValue();
+				if (value != null) {
+					project.setUserProperty(property.getName(), value);
+				}
 			}
 		}
 		if (userProperties == null) {

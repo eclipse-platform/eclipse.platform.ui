@@ -62,6 +62,14 @@ public class AntCorePlugin extends Plugin {
 	 * for the Ant types extension point.
 	 */
 	public static final String PT_TYPES = "antTypes"; //$NON-NLS-1$
+	
+	/**
+	 * Simple identifier constant (value <code>"antProperties"</code>)
+	 * for the Ant properties extension point.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String PT_PROPERTIES = "antProperties"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"class"</code>)
@@ -87,6 +95,13 @@ public class AntCorePlugin extends Plugin {
 	 * @since 2.1
 	 */
 	public static final String HEADLESS = "headless"; //$NON-NLS-1$
+	
+	/**
+	 * Simple identifier constant (value <code>"value"</code>) of a tag
+	 * that appears in Ant extensions.
+	 * @since 3.0
+	 */
+	public static final String VALUE = "value"; //$NON-NLS-1$
 
 	/**
 	 * Key to access the <code>IProgressMonitor</code> reference. When a
@@ -161,16 +176,18 @@ public class AntCorePlugin extends Plugin {
 	 */
 	public AntCorePreferences getPreferences() {
 		if (preferences == null) {
-			preferences = new AntCorePreferences(extractExtensions(PT_TASKS), extractExtensions(PT_EXTRA_CLASSPATH), extractExtensions(PT_TYPES), false);
+			preferences = new AntCorePreferences(extractExtensions(PT_TASKS), extractExtensions(PT_EXTRA_CLASSPATH), extractExtensions(PT_TYPES), extractExtensions(PT_PROPERTIES), false);
 		}
 		return preferences;
 	}
 	
 	/**
 	 * Set this plug-in's preferences for running headless.
+	 * This method is public for testing purposes only. It should not
+	 * be called outside of the Ant integration framework.
 	 */
-	protected void setRunningHeadless() {
-		preferences = new AntCorePreferences(extractExtensions(PT_TASKS), extractExtensions(PT_EXTRA_CLASSPATH), extractExtensions(PT_TYPES), true);
+	public void setRunningHeadless() {
+		preferences = new AntCorePreferences(extractExtensions(PT_TASKS), extractExtensions(PT_EXTRA_CLASSPATH), extractExtensions(PT_TYPES), extractExtensions(PT_PROPERTIES), true);
 	}
 
 	/**

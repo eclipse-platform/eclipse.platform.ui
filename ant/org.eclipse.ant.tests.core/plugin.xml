@@ -29,5 +29,27 @@
             library="lib/antTestsSupport.jar">
       </extraClasspathEntry>
    </extension>
+   
+   <extension
+         point="org.eclipse.ant.core.antProperties">
+      <antProperty
+            name="property.testing"
+            value="true">
+      </antProperty>
+       <antProperty
+            name="property.testing2"
+            value="hey"
+            class= "org.eclipse.does.not.exist">
+      </antProperty>
+      <antProperty
+            name="property.testing3"
+            class= "org.eclipse.ant.tests.core.testplugin.AntTestPropertyValueProvider">
+      </antProperty>
+       <antProperty
+            name="property.headless"
+            value="headless"
+            headless= "false">
+      </antProperty>
+   </extension>
 
 </plugin>

@@ -20,7 +20,8 @@
    <extension-point id="extraClasspathEntries" name="%classpathName" schema="schema/extraClasspathEntries.exsd"/>
    <extension-point id="antTasks" name="%tasksName" schema="schema/antTasks.exsd"/>
    <extension-point id="antTypes" name="%typesName" schema="schema/antTypes.exsd"/>
-
+   <extension-point id="antProperties" name="%propertiesName" schema="schema/antProperties.exsd"/>
+   
 <!-- Applications -->
    <extension
          id="antRunner"
@@ -38,5 +39,16 @@
             library="lib/antsupportlib.jar">
       </extraClasspathEntry>
    </extension>
+    <extension
+      	 point="org.eclipse.ant.core.antProperties">
+      <antProperty
+            name="eclipse.home"
+            class="org.eclipse.ant.internal.core.AntPropertyValueProvider">
+      </antProperty>
+       <antProperty
+            name="eclipse.running"
+            class="org.eclipse.ant.internal.core.AntPropertyValueProvider">
+      </antProperty>
+    </extension>
 
 </plugin>

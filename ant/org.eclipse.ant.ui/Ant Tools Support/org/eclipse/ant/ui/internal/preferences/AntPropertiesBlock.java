@@ -281,9 +281,23 @@ public class AntPropertiesBlock {
 	 * Handles selection changes in the Property file table viewer.
 	 */
 	private void propertyTableSelectionChanged(IStructuredSelection newSelection) {
-		int size= newSelection.size();
-		removeButton.setEnabled(size > 0);
-		editButton.setEnabled(size == 1);
+		int size = newSelection.size();
+		boolean enabled= true;
+
+		Iterator itr= newSelection.iterator();
+		while (itr.hasNext()) {
+			Object element = itr.next();
+			if (element instanceof Property) {
+				Property property= (Property)element;
+				if (property.isDefault()) {
+					enabled= false;
+					break;
+				}
+			}
+		}
+		editButton.setEnabled(enabled && size == 1);
+		removeButton.setEnabled(enabled && size > 0);
+		
 	}
 	
 	public void populatePropertyViewer(Map properties) {

@@ -11,6 +11,7 @@
 package org.eclipse.ant.tests.core.tests;
 
 
+import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
 import org.eclipse.core.resources.IFile;
@@ -33,7 +34,41 @@ public class ProjectTests extends AbstractAntTest {
 		String fullName= buildFile.getLocation().toFile().getAbsolutePath();
 		assertTrue("eclipse.running should have been set as true", "true".equals(AntTestChecker.getDefault().getUserProperty("eclipse.running")));
 		assertTrue("ant.file should have been set as the build file name", fullName.equals(AntTestChecker.getDefault().getUserProperty("ant.file")));
+		assertNotNull("ant.java.version should have been set", AntTestChecker.getDefault().getUserProperty("ant.java.version"));
 		assertNotNull("ant.version should have been set", AntTestChecker.getDefault().getUserProperty("ant.version"));
+		assertNotNull("eclipse.home should have been set", AntTestChecker.getDefault().getUserProperty("eclipse.home"));
+	}
+
+	public void testValue() throws CoreException {
+		String buildFileName="TestForEcho.xml"; 
+		run(buildFileName);
+		assertTrue("property.testing should have been set as true", "true".equals(AntTestChecker.getDefault().getUserProperty("property.testing")));
+	}
+
+	public void testValueWithClass() throws CoreException {
+		
+		String buildFileName="TestForEcho.xml"; 
+		run(buildFileName);
+		assertTrue("property.testing2 should have been set as hey", "hey".equals(AntTestChecker.getDefault().getUserProperty("property.testing2")));
+	}
+
+	public void testClass() throws CoreException {
+		String buildFileName="TestForEcho.xml"; 
+		run(buildFileName);
+		assertTrue("property.testing3 should have been set as AntTestPropertyProvider", "AntTestPropertyValueProvider".equals(AntTestChecker.getDefault().getUserProperty("property.testing3")));
+	}
+	
+	public void testHeadless() throws CoreException {
+		AntCorePlugin.getPlugin().setRunningHeadless();
+		String buildFileName="TestForEcho.xml"; 
+		run(buildFileName);
+		assertNull("property.headless should not have been set as AntTestPropertyProvider", AntTestChecker.getDefault().getUserProperty("property.headless"));
+	}
+	
+	public void testNotHeadless() throws CoreException {
+		String buildFileName="TestForEcho.xml"; 
+		run(buildFileName);
+		assertTrue("property.headless should not have been set as AntTestPropertyProvider", "headless".equals(AntTestChecker.getDefault().getUserProperty("property.headless")));
 	}
 }
 

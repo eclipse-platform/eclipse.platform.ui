@@ -15,6 +15,7 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.ant.core.AntCorePlugin;
@@ -275,12 +276,12 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		}
 		
 		//global
-		Property[] properties= prefs.getCustomProperties();
+		List properties= prefs.getProperties();
 		String key;
-		for (int i = 0; i < properties.length; i++) {
-			Property property = properties[i];
+		for (Iterator iter = properties.iterator(); iter.hasNext();) {
+			Property property = (Property) iter.next();
 			key= property.getName();
-			if (userProperties == null || userProperties.get(key) == null) {
+			if (property.getValue() != null && (userProperties == null || userProperties.get(key) == null)) {
 				appendProperty(commandLine, key, property.getValue());
 			}
 		}

@@ -11,10 +11,12 @@
 package org.eclipse.ant.ui.internal.preferences;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.core.Property;
 import org.eclipse.ant.ui.internal.model.AntUIImages;
 import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
@@ -78,13 +80,15 @@ public class AntPropertiesPage implements IAntBlockContainer {
 	 * Sets the contents of the tables on this page.
 	 */
 	protected void initialize() {
-		antPropertiesBlock.setPropertiesInput(AntCorePlugin.getPlugin().getPreferences().getCustomProperties());
+		List allProperties= AntCorePlugin.getPlugin().getPreferences().getDefaultProperties();
+		allProperties.addAll(Arrays.asList(AntCorePlugin.getPlugin().getPreferences().getCustomProperties()));
+		antPropertiesBlock.setPropertiesInput((Property[]) allProperties.toArray(new Property[allProperties.size()]));
 		antPropertiesBlock.setPropertyFilesInput(AntCorePlugin.getPlugin().getPreferences().getCustomPropertyFiles());
 		antPropertiesBlock.update();
 	}
 	
 	protected void performDefaults() {
-		antPropertiesBlock.populatePropertyViewer(null);
+		antPropertiesBlock.setPropertiesInput((Property[]) AntCorePlugin.getPlugin().getPreferences().getDefaultProperties().toArray());
 		antPropertiesBlock.setPropertyFilesInput(new String[0]);
 		antPropertiesBlock.update();
 	}
@@ -135,6 +139,14 @@ public class AntPropertiesPage implements IAntBlockContainer {
 	}
 	
 	protected List getProperties() {
-		return Arrays.asList(antPropertiesBlock.getProperties());
+		Object[] allProperties= antPropertiesBlock.getProperties();
+		List properties= new ArrayList(allProperties.length);
+		for (int i = 0; i < allProperties.length; i++) {
+			Property property = (Property)allProperties[i];
+			if (!property.isDefault()) {
+				properties.add(property);
+			}
+		}
+		return properties;
 	}
 }
