@@ -236,9 +236,21 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 		if (!(buffer instanceof ITextFileBuffer))
 			return;
 		IWorkspace ws= ResourcesPlugin.getWorkspace();
-		IFile file= ws.getRoot().getFileForLocation(buffer.getLocation());
-		if (file == null)
-			file= ws.getRoot().getFile(buffer.getLocation());
+		IPath location= buffer.getLocation();
+		
+		/*
+		 * FIXME: After 3.1 M3 replace the code to find the file with: 
+		 */ 
+//		IFile file= FileBuffers.getWorkspaceFileAtLocation(buffer.getLocation());
+//		if (file == null)
+//			return;
+		
+		IFile file= ws.getRoot().getFileForLocation(location);
+		if (file == null) {
+			if (location.segmentCount() < 2)
+				return;
+			file= ws.getRoot().getFile(location);
+		}
 		ISearchQuery[] queries= NewSearchUI.getQueries();
 		for (int i = 0; i < queries.length; i++) {
 			ISearchResult result = queries[i].getSearchResult();
