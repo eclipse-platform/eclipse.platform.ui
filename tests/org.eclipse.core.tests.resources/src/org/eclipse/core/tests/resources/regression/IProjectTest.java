@@ -36,6 +36,8 @@ public void test_1G0XIMA() throws CoreException {
 	/* define a visitor that renames all resources it visits */
 	IResourceVisitor renameVisitor = new IResourceVisitor() {
 		public boolean visit(IResource resource) throws CoreException {
+			if (!resource.exists())
+				return false;
 			IPath path = resource.getFullPath();
 			path = path.removeLastSegments(1);
 			long timestamp = System.currentTimeMillis();

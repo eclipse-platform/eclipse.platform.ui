@@ -496,8 +496,7 @@ public static Test suite() {
 	return new TestSuite(IResourceTest.class);
 	
 //	TestSuite suite = new TestSuite();
-//	suite.addTest(new IResourceTest("testRefreshLocal"));
-//	suite.addTest(new IResourceTest("testIsSynchronized"));
+//	suite.addTest(new IResourceTest("testAccept2"));
 //	return suite;
 }
 protected void tearDown() throws Exception {
@@ -569,11 +568,11 @@ public void testAccept2() {
 			//Boolean includePhantoms = (Boolean) args[2];
 			Vector visitedResources = visitor.visitedResources;
 			if (visitor == shallowVisitor) {
-				return visitedResources.size() == 1 && visitedResources.elementAt(0) == resource;
+				return visitedResources.size() == 1 && visitedResources.elementAt(0).equals(resource);
 			} else
 				if (visitor == deepVisitor) {
 					if (resource.getType() == IResource.FILE) {
-						return visitedResources.size() == 1 && visitedResources.elementAt(0) == resource;
+						return visitedResources.size() == 1 && visitedResources.elementAt(0).equals(resource);
 					} else {
 						IContainer container = (IContainer) resource;
 						int memberCount = 0;
@@ -582,7 +581,7 @@ public void testAccept2() {
 						} catch (CoreException ex) {
 							return false;
 						}
-						return visitedResources.size() >= memberCount + 1 && visitedResources.elementAt(0) == resource;
+						return visitedResources.size() >= memberCount + 1 && visitedResources.elementAt(0).equals(resource);
 					}
 				} else {
 					return false;
