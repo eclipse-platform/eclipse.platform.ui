@@ -40,14 +40,14 @@ public class SelectLogicalStructureAction extends Action {
 		fIndex = index;
 	}
 
-	/**
-	 * @see Action#run()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		valueChanged(isChecked());
+		valueChanged();
 	}
 
-	private void valueChanged(final boolean on) {
+	private void valueChanged() {
 		if (!getView().isAvailable()) {
 			return;
 		}
@@ -73,5 +73,4 @@ public class SelectLogicalStructureAction extends Action {
 	protected void setView(VariablesView view) {
 		fView = view;
 	}
-
 }
