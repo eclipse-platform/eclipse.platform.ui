@@ -46,6 +46,13 @@
 		<attribute name="potentialMatch"/>
 	</extension>
 	
+	<extension point="org.eclipse.ui.editors.annotationTypes">
+      <type
+        name="org.eclipse.search.results"
+		markerType="org.eclipse.search.searchmarker">
+      </type>
+	</extension>
+	
 	<extension 
 		point="org.eclipse.ui.ide.markerImageProviders">
 		<imageprovider 
@@ -211,7 +218,6 @@
 	      		annotationType="org.eclipse.search.results"
 	            label="%SearchMarkerPreference.label"
 	            icon="icons/full/obj16/searchm_obj.gif"
-	            markerType="org.eclipse.search.searchmarker"
 	            textPreferenceKey="searchResultIndication"
 	            textPreferenceValue="true"
 	            highlightPreferenceKey="searchResultHighlighting"
