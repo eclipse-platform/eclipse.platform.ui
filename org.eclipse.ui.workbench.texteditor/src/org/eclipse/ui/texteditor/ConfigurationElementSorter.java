@@ -151,7 +151,8 @@ public abstract class ConfigurationElementSorter {
                 try {
                     manifestElements = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, requires);
                 } catch (BundleException e) {
-                	String message= "ConfigurationElementSorter: getting required plug-ins for '" + bundle.getSymbolicName() + "' failed"; //$NON-NLS-1$ //$NON-NLS-2$
+                	String uid= getExtensionPointUniqueIdentifier(bundle);
+                	String message= "ConfigurationElementSorter for '" + uid + "': getting required plug-ins for '" + bundle.getSymbolicName() + "' failed"; //$NON-NLS-1$ //$NON-NLS-2$
     				Status status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, e);
     				TextEditorPlugin.getDefault().getLog().log(status);
                     continue;
@@ -174,6 +175,32 @@ public abstract class ConfigurationElementSorter {
 					i++;
 				}
 			}
+		}
+		
+		/**
+		 * Returns the unique extension point identifier for the
+		 * configuration element which belongs to the given bundle.
+		 * 
+		 * @param bundle the bundle
+		 * @return the unique extension point identifier or "unknown" if not found
+		 * @since 3.0.1
+		 */
+		private String getExtensionPointUniqueIdentifier(Bundle bundle) {
+			if (bundle != null) {
+				String bundleName= bundle.getSymbolicName();
+				if (bundleName != null) {
+					Set entries= fDescriptorMapping.entrySet();
+					Iterator iter= entries.iterator();
+					while (iter.hasNext()) {
+						Map.Entry entry= (Map.Entry)iter.next();
+						if (bundleName.equals(entry.getValue())) {
+						    IExtension extension = getConfigurationElement(entry.getKey()).getDeclaringExtension();
+							return extension.getExtensionPointUniqueIdentifier();
+						}
+					}
+				}
+			}
+			return "unknown";  //$NON-NLS-1$
 		}
 
 	}
