@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.configurator;
 
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.boot.*;
@@ -91,6 +92,9 @@ public class Utils {
 		try {
 			URL platformURL = new URL(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + "base" + "/"); //$NON-NLS-1$ //$NON-NLS-2$ // try using platform-relative URL
 			URL resolvedPlatformURL = Platform.asLocalURL(platformURL);
+			// TODO workaround bug in platform url resolution
+			if (resolvedPlatformURL.getProtocol().equals("file"))
+				resolvedPlatformURL = new File(resolvedPlatformURL.getFile()).toURL();
 			String platformURLAsString = resolvedPlatformURL.toExternalForm();
 			String urlAsString = url.toExternalForm();
 			if (urlAsString.startsWith(platformURLAsString))
