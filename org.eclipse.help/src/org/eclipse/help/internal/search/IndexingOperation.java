@@ -262,7 +262,7 @@ class IndexingOperation {
 		return hrefs;
 	}
 	/**
-	 * Checks if document is indexable, and crates
+	 * Checks if document is indexable, and creates
 	 * a URL to obtain contents.
 	 * @param url specified in the navigation
 	 * @return URL to obtain document content or null
