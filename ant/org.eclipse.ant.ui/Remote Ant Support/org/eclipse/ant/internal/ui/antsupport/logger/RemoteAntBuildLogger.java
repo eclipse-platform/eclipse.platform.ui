@@ -186,28 +186,32 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	 */
 	public void targetStarted(BuildEvent event) {
 		if (!fSentProcessId) {
-			String portProperty= event.getProject().getProperty("eclipse.connect.port"); //$NON-NLS-1$
-			if (portProperty != null) {
-				fPort= Integer.parseInt(portProperty);
-				connect();
-			}
-			
-			fSentProcessId= true;
-			StringBuffer message= new StringBuffer(MessageIds.PROCESS_ID);
-			message.append(event.getProject().getProperty("org.eclipse.ant.ui.ATTR_ANT_PROCESS_ID")); //$NON-NLS-1$
-			sendMessage(message.toString());
-			if (fEventQueue != null) {
-				for (Iterator iter = fEventQueue.iterator(); iter.hasNext();) {
-					processEvent((BuildEvent)iter.next());
-				}
-				fEventQueue= null;
-			}
+			establishConnection(event);
 		}
 
 		if (Project.MSG_INFO <= msgOutputLevel) {
 			String msg= event.getTarget().getName() + ":"; //$NON-NLS-1$
 			printMessage(msg, out, Project.MSG_INFO);
         }
+	}
+
+	private void establishConnection(BuildEvent event) {
+		String portProperty= event.getProject().getProperty("eclipse.connect.port"); //$NON-NLS-1$
+		if (portProperty != null) {
+			fPort= Integer.parseInt(portProperty);
+			connect();
+		}
+		
+		fSentProcessId= true;
+		StringBuffer message= new StringBuffer(MessageIds.PROCESS_ID);
+		message.append(event.getProject().getProperty("org.eclipse.ant.ui.ATTR_ANT_PROCESS_ID")); //$NON-NLS-1$
+		sendMessage(message.toString());
+		if (fEventQueue != null) {
+			for (Iterator iter = fEventQueue.iterator(); iter.hasNext();) {
+				processEvent((BuildEvent)iter.next());
+			}
+			fEventQueue= null;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -230,42 +234,67 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	}
 
 	private void processEvent(BuildEvent event) {
-		
 		if (event.getTask() != null & !emacsMode) {
 			try {
-				BufferedReader r = new BufferedReader(new StringReader(event.getMessage()));
-				String line = r.readLine();
-				StringBuffer message;
-				String taskName= event.getTask().getTaskName();
-				StringBuffer labelBuff= new StringBuffer();
-				labelBuff.append('[');
-				labelBuff.append(taskName);
-				labelBuff.append("] "); //$NON-NLS-1$
-				String label= labelBuff.toString();
-				Location location= event.getTask().getLocation();
-				while (line != null) {
-					message= new StringBuffer(MessageIds.TASK);
-					message.append(event.getPriority());
-					message.append(',');
-					message.append(taskName);
-					message.append(',');
-					line= (label + line).trim();
-					message.append(line.length());
-					message.append(',');
-					message.append(line);
-					message.append(',');
-					message.append(location);
-					sendMessage(message.toString());
-					line = r.readLine();
-				}
+				marshalTaskMessage(event);
 			} catch (IOException e) {
 			}
 		} else {
-			StringBuffer sendMessage= new StringBuffer();
-			sendMessage.append(event.getPriority());
-			sendMessage.append(',');
-			sendMessage.append(event.getMessage().trim());
-			sendMessage(sendMessage.toString());
+			marshalMessage(event);
 		}
+	}
+	private void marshalMessage(BuildEvent event) {
+		try {
+			BufferedReader r = new BufferedReader(new StringReader(event.getMessage().trim()));
+			String line = r.readLine();
+			StringBuffer message;
+			int priority= event.getPriority();
+			while (line != null) {
+				message= new StringBuffer();
+				message.append(priority);
+				message.append(',');
+				message.append(line);
+				sendMessage(message.toString());
+				line = r.readLine();
+			}
+		} catch (IOException e) {
+		}
+	}
+
+	private void marshalTaskMessage(BuildEvent event) throws IOException {
+		BufferedReader r = new BufferedReader(new StringReader(event.getMessage()));
+		String line = r.readLine();
+		StringBuffer message;
+		String taskName= event.getTask().getTaskName();
+		StringBuffer labelBuff= new StringBuffer();
+		labelBuff.append('[');
+		labelBuff.append(taskName);
+		labelBuff.append("] "); //$NON-NLS-1$
+		String label= labelBuff.toString();
+		Location location= event.getTask().getLocation();
+		int priority= event.getPriority();
+		while (line != null) {
+			message= new StringBuffer(MessageIds.TASK);
+			message.append(priority);
+			message.append(',');
+			message.append(taskName);
+			message.append(',');
+			line= (label + line).trim();
+			message.append(line.length());
+			message.append(',');
+			message.append(line);
+			message.append(',');
+			message.append(location);
+			sendMessage(message.toString());
+			line = r.readLine();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
+	 */
+	public void buildStarted(BuildEvent event) {
+		establishConnection(event);
+		super.buildStarted(event);
 	}
 }
