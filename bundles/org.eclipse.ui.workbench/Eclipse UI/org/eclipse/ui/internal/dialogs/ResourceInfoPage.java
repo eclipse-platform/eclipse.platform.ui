@@ -174,9 +174,10 @@ protected Control createContents(Composite parent) {
 
 	// layout the page
 	IResource resource = (IResource) getElement();
-	this.previousReadOnlyValue = resource.isReadOnly();
-	if(resource.getType()!= IResource.PROJECT)
+	if(resource.getType()!= IResource.PROJECT) {
+		this.previousReadOnlyValue = resource.isReadOnly();
 		this.previousDerivedValue = resource.isDerived();
+	}
 
 	// top level group
 	Composite composite = new Composite(parent, SWT.NONE);
@@ -274,11 +275,11 @@ private void createStateGroup(Composite parent, IResource resource) {
 	timeStampValue.setLayoutData(
 		new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
 
-	createEditableButton(composite);
-	
 	//Not relevant to projects
-	if(resource.getType() != IResource.PROJECT)
+	if(resource.getType() != IResource.PROJECT) {
+		createEditableButton(composite);
 		createDerivedButton(composite);
+	}
 }
 /**
  * Return the value for the date String for the timestamp of the supplied resource.
@@ -397,9 +398,11 @@ private String getTypeString(IResource resource) {
  * Reset the editableBox to the false.
  */
 protected void performDefaults() {
-
-	this.editableBox.setSelection(false);
 	
+	//Nothing to update if we never made the box
+	if(this.editableBox != null)
+		this.editableBox.setSelection(false);
+
 	//Nothing to update if we never made the box
 	if(this.derivedBox != null)
 		this.derivedBox.setSelection(false);
@@ -409,9 +412,12 @@ protected void performDefaults() {
  */
 public boolean performOk() {
 	IResource resource = (IResource) getElement();
-	boolean localReadOnlyValue = editableBox.getSelection();
-	if (previousReadOnlyValue != localReadOnlyValue) {
-		resource.setReadOnly(localReadOnlyValue);
+	//Nothing to update if we never made the box
+	if(this.editableBox != null) {
+		boolean localReadOnlyValue = editableBox.getSelection();
+		if (previousReadOnlyValue != localReadOnlyValue) {
+			resource.setReadOnly(localReadOnlyValue);
+		}
 	}
 	
 	//Nothing to update if we never made the box
