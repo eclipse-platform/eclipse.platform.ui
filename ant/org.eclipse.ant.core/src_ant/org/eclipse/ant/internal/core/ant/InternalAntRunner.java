@@ -181,8 +181,8 @@ public class InternalAntRunner {
 	 * Adds user property files.
 	 * @since 2.1
 	 */
-	public void addPropertyFiles(String[] propertyFiles) {
-		this.propertyFiles.addAll(Arrays.asList(propertyFiles));
+	public void addPropertyFiles(String[] additionalPropertyFiles) {
+		propertyFiles.addAll(Arrays.asList(additionalPropertyFiles));
 	}
 
 	private void addBuildListeners(Project project) {
@@ -312,15 +312,15 @@ public class InternalAntRunner {
 		
 		parseBuildFile(antProject);
 		defaultTarget = antProject.getDefaultTarget();
-		Enumeration targets = antProject.getTargets().elements();
+		Enumeration projectTargets = antProject.getTargets().elements();
 		List infos= new ArrayList();
 		infos.add(antProject.getName());
 		infos.add(antProject.getDescription());
 		List info;
 		Target target;
 		boolean defaultFound= false;
-		while (targets.hasMoreElements()) {
-			target = (Target) targets.nextElement();
+		while (projectTargets.hasMoreElements()) {
+			target = (Target) projectTargets.nextElement();
 			String name= target.getName();
 			if (name.length() == 0) {
 				//"no name" implicit target of Ant 1.6
@@ -429,13 +429,13 @@ public class InternalAntRunner {
 		Collections.sort(topNames);
 		Collections.sort(topDescriptions);
 		
-		String defaultTarget = project.getDefaultTarget();
-		if (defaultTarget != null && !"".equals(defaultTarget)) { // shouldn't need to check but... //$NON-NLS-1$
+		String defaultTargetName = project.getDefaultTarget();
+		if (defaultTargetName != null && !"".equals(defaultTargetName)) { // shouldn't need to check but... //$NON-NLS-1$
 			List defaultName = new ArrayList(1);
 			List defaultDesc = null;
-			defaultName.add(defaultTarget);
+			defaultName.add(defaultTargetName);
 
-			int indexOfDefDesc = topNames.indexOf(defaultTarget);
+			int indexOfDefDesc = topNames.indexOf(defaultTargetName);
 			if (indexOfDefDesc >= 0) {
 				defaultDesc = new ArrayList(1);
 				defaultDesc.add(topDescriptions.get(indexOfDefDesc));
@@ -621,10 +621,10 @@ public class InternalAntRunner {
 	private void validateDefaultTarget() {
 		defaultTarget = getCurrentProject().getDefaultTarget();
 		
-		Enumeration targets = getCurrentProject().getTargets().elements();
+		Enumeration currentTargets = getCurrentProject().getTargets().elements();
 		boolean defaultFound= false;
-		while (targets.hasMoreElements()) {
-			Target target = (Target) targets.nextElement();
+		while (currentTargets.hasMoreElements()) {
+			Target target = (Target) currentTargets.nextElement();
 			if (target.getName().equals(defaultTarget)) {
 				defaultFound= true;
 				break;
