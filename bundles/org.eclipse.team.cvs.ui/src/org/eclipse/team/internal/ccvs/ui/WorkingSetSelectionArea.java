@@ -129,11 +129,7 @@ public class WorkingSetSelectionArea extends DialogArea {
 		data.horizontalIndent=15;
 		mruList.setLayoutData(data);
 		mruList.setFont(composite.getFont());
-		mruList.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleMruSelection();
-			}
-		});
+
 		selectButton = createButton(composite, Policy.bind("WorkingSetSelectionArea.workingSetOther"), GridData.HORIZONTAL_ALIGN_FILL); //$NON-NLS-1$
 		selectButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
@@ -143,6 +139,13 @@ public class WorkingSetSelectionArea extends DialogArea {
 
 		initializeMru();
 		initializeWorkingSet();
+		
+		mruList.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleMruSelection();
+			}
+		});
+
 		return composite;
 	}
 
