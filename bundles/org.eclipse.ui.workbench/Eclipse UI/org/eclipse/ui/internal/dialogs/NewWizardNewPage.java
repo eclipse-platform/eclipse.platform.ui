@@ -49,6 +49,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
@@ -96,11 +98,13 @@ class NewWizardNewPage
 //	}
 
 	// id constants
-	private final static String DIALOG_SETTING_SECTION_NAME = "NewWizardSelectionPage."; //$NON-NLS-1$
+	private static final int DESCRIPTION_IMAGE_HEIGHT = 150;
+	private static final int DESCRIPTION_IMAGE_WIDTH = 200;
+	private static final String DIALOG_SETTING_SECTION_NAME = "NewWizardSelectionPage."; //$NON-NLS-1$
 
 	private final static int SIZING_LISTS_HEIGHT = 200;
-	private final static int SIZING_VIEWER_WIDTH = 180;
-	private final static int SIZING_DESC_WIDTH = 120;
+	private final static int SIZING_VIEWER_WIDTH = 300;
+	private final static int SIZING_DESC_WIDTH = 200;
 	private final static String STORE_EXPANDED_CATEGORIES_ID = DIALOG_SETTING_SECTION_NAME + "STORE_EXPANDED_CATEGORIES_ID"; //$NON-NLS-1$
 	private final static String STORE_SELECTED_ID = DIALOG_SETTING_SECTION_NAME + "STORE_SELECTED_ID"; //$NON-NLS-1$
 	private static final String SHOW_ALL_ENABLED = DIALOG_SETTING_SECTION_NAME + ".SHOW_ALL_SELECTED"; //$NON-NLS-1$
@@ -122,7 +126,7 @@ class NewWizardNewPage
     
     private Object[] expandedElements = new Object[0];
 
-    private Button helpButton;
+    private ToolItem helpButton;
 
     private String wizardHelpHref;
 
@@ -167,7 +171,7 @@ class NewWizardNewPage
 		outerContainer.setFont(wizardFont);
 
 		createViewer(outerContainer);
-		createDescriptionText(outerContainer);
+		createDescription(outerContainer);
 
 		showAllCheck = new Button(outerContainer, SWT.CHECK);
 		
@@ -213,18 +217,18 @@ class NewWizardNewPage
 	}
 
 	/**
-	 * Create a new description text control.
+	 * Create the description controls.
 	 * 
 	 * @param parent the parent <code>Composite</code>.
 	 * @since 3.0
 	 */
-	private void createDescriptionText(Composite parent) {	    	   
+	private void createDescription(Composite parent) {	    	   
 	    Composite descParent = new Composite(parent, SWT.NONE);	    
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = SIZING_DESC_WIDTH;
 		descParent.setLayoutData(data);
 		
-		GridLayout layout = new GridLayout(1, true);
+		GridLayout layout = new GridLayout(2, true);
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		descParent.setLayout(layout);
@@ -232,23 +236,18 @@ class NewWizardNewPage
 	    Label descLabel = new Label(descParent, SWT.NONE);	
 	    descLabel.setFont(parent.getFont());
 	    descLabel.setText(WorkbenchMessages.getString("NewWizardNewPage.descriptionLabel")); //$NON-NLS-1$
-	    
+	    	    
 	    data = new GridData(GridData.FILL_HORIZONTAL);
-	    descLabel.setLayoutData(data);		
-		
-		descriptionText = new Text(descParent, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP);
-		descriptionText.setFont(parent.getFont());				
-		data = new GridData(GridData.FILL_BOTH);
-		data.grabExcessVerticalSpace = true;
-		descriptionText.setLayoutData(data);
-		
-		helpButton = new Button(descParent, SWT.FLAT);
+	    descLabel.setLayoutData(data);
+	    
+	    Image buttonImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_LINKTO_HELP);
+	    ToolBar toolBar =  new ToolBar(descParent, SWT.HORIZONTAL | SWT.FLAT);
+	    helpButton = new ToolItem(toolBar, SWT.NONE);
+	    helpButton.setImage(buttonImage);	    	
 		helpButton.setToolTipText(WorkbenchMessages.getString("NewWizardNewPage.moreHelp")); //$NON-NLS-1$
         data = new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END);
-	    helpButton.setLayoutData(data);
+	    toolBar.setLayoutData(data);
 	    
-		Image buttonImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_LINKTO_HELP);
-        helpButton.setImage(buttonImage);
         helpButton.addSelectionListener(new SelectionAdapter() {
         	/* (non-Javadoc)
         	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
@@ -256,17 +255,25 @@ class NewWizardNewPage
         	public void widgetSelected(SelectionEvent e) {
         		WorkbenchHelp.displayHelpResource(wizardHelpHref);
         	}
-        });
-        
+        });	    
+		
+		descriptionText = new Text(descParent, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP);
+		descriptionText.setFont(parent.getFont());				
+		data = new GridData(GridData.FILL_BOTH);
+		data.grabExcessVerticalSpace = true;
+		data.horizontalSpan = 2;
+		descriptionText.setLayoutData(data);
+		        
         imageSeperator = new Label(descParent, SWT.SEPARATOR | SWT.HORIZONTAL);
         data = new GridData(GridData.FILL_HORIZONTAL);
+        data.horizontalSpan = 2;
         imageSeperator.setLayoutData(data);
                 
         descImageCanvas = new Canvas(descParent, SWT.NONE);
-        data = new GridData(GridData.FILL_BOTH | GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_CENTER);
-// 		  no fixed size for the time being        
-//        data.widthHint = SIZING_DESC_WIDTH;
-//        data.heightHint = 100;
+        data = new GridData(GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_CENTER);
+        data.horizontalSpan = 2;        
+        data.widthHint = DESCRIPTION_IMAGE_WIDTH;
+        data.heightHint = DESCRIPTION_IMAGE_HEIGHT;
 	    descImageCanvas.setLayoutData(data);    
 	    
 	    // hook a listener to get rid of cached images.
@@ -663,10 +670,10 @@ class NewWizardNewPage
 		} 
 		
 		if (wizardHelpHref != null) {
-			helpButton.setVisible(true);
+			helpButton.getParent().setVisible(true);
 		}
 		else {
-			helpButton.setVisible(false);
+			helpButton.getParent().setVisible(false);
 		}
 		
 		descImageCanvas.redraw();
