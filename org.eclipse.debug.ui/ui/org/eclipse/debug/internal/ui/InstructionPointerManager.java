@@ -71,15 +71,20 @@ public class InstructionPointerManager {
 	 */
 	public void addAnnotation(ITextEditor textEditor, IStackFrame stackFrame) {
 		
-		// Create the annotation object
 		IDocumentProvider docProvider = textEditor.getDocumentProvider();
 		IEditorInput editorInput = textEditor.getEditorInput();
+        // If there is no annotation model, there's nothing more to do
+        IAnnotationModel annModel = docProvider.getAnnotationModel(editorInput);
+        if (annModel == null) {
+            return;
+        }        
 		IThread thread = stackFrame.getThread();
 		boolean tos = false;
 		try {
 			tos = stackFrame.equals(thread.getTopStackFrame());
 		} catch (DebugException de) {
-		}			
+		}
+        // Create the annotation object
 		InstructionPointerAnnotation instPtrAnnotation = new InstructionPointerAnnotation(stackFrame, tos);
 		
 		// Create the Position object that specifies a location for the annotation
@@ -113,11 +118,6 @@ public class InstructionPointerManager {
 		position = new Position(charStart, length);
 		
 		// Add the annotation at the position to the editor's annotation model.
-		// If there is no annotation model, there's nothing more to do
-		IAnnotationModel annModel = docProvider.getAnnotationModel(editorInput);
-		if (annModel == null) {
-			return;
-		}
 		annModel.removeAnnotation(instPtrAnnotation);
 		annModel.addAnnotation(instPtrAnnotation, position);	
 		
