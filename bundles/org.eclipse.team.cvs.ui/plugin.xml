@@ -945,6 +945,11 @@
             command="org.eclipse.team.ccvs.ui.AnnotateView"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      <command
+            description="%CVSRepositoryExploring.openPerspectiveDescription"
+            categoryId="org.eclipse.ui.category.perspectives"
+            name="%CVSRepositoryExploring"
+            id="org.eclipse.team.cvs.ui.cvsPerspective"/>
    </extension>
    
 <!-- ********** Color and Font Definitions ************** -->   

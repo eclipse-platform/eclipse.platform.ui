@@ -228,6 +228,11 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
+        name="%Synchronizing.perspective"
+        description="%Synchronizing.openPerspectiveDescription"
+        categoryId="org.eclipse.ui.category.perspectives"
+        id="org.eclipse.team.ui.TeamSynchronizingPerspective" />
+      <command
             name="%ViewCommand.synchronizeView.name"
             description="%ViewCommand.synchronizeView.description"
             category="org.eclipse.ui.category.views"
