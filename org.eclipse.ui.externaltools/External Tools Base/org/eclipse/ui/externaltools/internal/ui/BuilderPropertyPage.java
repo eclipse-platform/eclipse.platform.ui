@@ -7,6 +7,7 @@ are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -77,6 +78,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private ArrayList imagesToDispose = new ArrayList();
 	private Image builderImage, invalidBuildToolImage;
 	private IDebugModelPresentation debugModelPresentation;
+	
+	private boolean userHasMadeChanges= false;
 
 	/**
 	 * Creates an initialized property page
@@ -366,6 +369,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private void handleRemoveButtonPressed() {
 		TableItem[] selection = builderTable.getSelection();
 		if (selection != null) {
+			userHasMadeChanges= true;
 			for (int i = 0; i < selection.length; i++) {
 				Object data= selection[i].getData();
 				if (data instanceof ILaunchConfiguration) {
@@ -401,6 +405,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 				// If the user cancelled, delete the newly created config
 				config.delete();
 			} else {
+				userHasMadeChanges= true;
 				addConfig(config, builderTable.getItemCount(), true);
 			}
 		} catch (CoreException e) {
@@ -454,6 +459,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 					// Replace the working copy in the table with the migrated configuration
 					selection.setData(config);
 				}
+				userHasMadeChanges= true;
 				DebugUITools.openLaunchConfigurationPropertiesDialog(getShell(), config, IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP);
 				updateConfigItem(selection, (ILaunchConfiguration) data);
 			}
@@ -540,8 +546,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 			status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, ToolMessages.getString("BuilderPropertyPage.statusMessage"), e); //$NON-NLS-1$
 		}
 		ErrorDialog.openError(getShell(), ToolMessages.getString("BuilderPropertyPage.errorTitle"), //$NON-NLS-1$
-		ToolMessages.getString("BuilderPropertyPage.errorMessage"), //$NON-NLS-1$
-		status);
+				ToolMessages.getString("BuilderPropertyPage.errorMessage"), //$NON-NLS-1$
+				status);
 	}
 
 	/**
@@ -575,6 +581,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 * Moves an entry in the builder table to the given index.
 	 */
 	private void move(TableItem item, int index) {
+		userHasMadeChanges= true;
 		Object data = item.getData();
 		String text = item.getText();
 		Image image = item.getImage();
@@ -615,6 +622,10 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 * Method declared on IPreferencePage.
 	 */
 	public boolean performOk() {
+		if (!userHasMadeChanges) {
+			return super.performOk();
+		}
+		userHasMadeChanges= false;
 		IProject project = getInputProject();
 		//get all the build commands
 		int numCommands = builderTable.getItemCount();
@@ -635,15 +646,64 @@ public final class BuilderPropertyPage extends PropertyPage {
 			}
 			commands[i] = (ICommand) data;
 		}
-		//set the build spec
-		try {
-			IProjectDescription desc = project.getDescription();
-			desc.setBuildSpec(commands);
-			project.setDescription(desc, IResource.FORCE, null);
-		} catch (CoreException e) {
-			handleException(e);
+		
+		if (checkCommandsForChange(commands)) {
+			//set the build spec
+			try {
+				IProjectDescription desc = project.getDescription();
+				desc.setBuildSpec(commands);
+				project.setDescription(desc, IResource.FORCE, null);
+			} catch (CoreException e) {
+				handleException(e);
+			}
 		}
 		return super.performOk();
+	}
+	
+	/**
+	 * Returns whether any of the commands have changed.
+	 */
+	private boolean checkCommandsForChange(ICommand[] newCommands) {
+		try {
+			ICommand[] oldCommands = getInputProject().getDescription().getBuildSpec();
+			if (oldCommands.length != newCommands.length) {
+				return true;
+			}
+			for (int i = 0; i < oldCommands.length; i++) {
+				ICommand oldCommand = oldCommands[i];
+				ICommand newCommand= newCommands[i];
+				String oldName= oldCommand.getBuilderName();
+				String newName= newCommand.getBuilderName();
+				if (oldName == null && newName != null) {
+					return true;
+				}
+				
+				if(oldName != null && !oldName.equals(newName)) {
+					return true;
+				}
+				Map oldArgs= oldCommand.getArguments();
+				Map newArgs= newCommand.getArguments();
+				if (oldArgs == null && newArgs != null) {
+					return true;
+				}
+				if (oldArgs == null && newArgs == null) {
+					continue;
+				}
+				if(oldArgs.size() != newArgs.size()) {
+					return true;
+				}
+				Iterator keySet= oldArgs.keySet().iterator();
+				while (keySet.hasNext()) {
+					Object key = keySet.next();
+					if (!oldArgs.get(key).equals(newArgs.get(key))) {
+						return true;
+					}
+				}
+			}
+		} catch (CoreException ce) {
+			return true;
+		}
+		return false;	
 	}
 
 	/**
