@@ -209,7 +209,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 			String updateURLString = attributes.getValue("updateURL"); //$NON-NLS-1$
 			URLEntry entry = new URLEntry();
 			entry.setURLString(updateURLString);
-			entry.resolve(siteURL, null);
+			entry.resolve(siteURL,null);
 
 			// DEBUG:		
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
@@ -271,11 +271,9 @@ public class InstallConfigurationParser extends DefaultHandler {
 		
 		//timeline
 		String timelineString = attributes.getValue("timeline"); //$NON-NLS-1$
-		long timeline = 0;
+		long timeline = date;
 		if (timelineString!=null) {
 			timeline = Long.parseLong(timelineString);
-		} else {
-			timeline = config.getCreationDate().getTime();			
 		}
 		config.setTimeline(timeline);
 
