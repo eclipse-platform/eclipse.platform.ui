@@ -58,12 +58,16 @@ public interface IAntLaunchConfigurationConstants {
 	 * description) should be hidden from the user in the launch configuration dialog.
 	 * Default value is <code>false</code> which indicates that all targets will be
 	 * displayed.
+	 * 
+	 * @since 3.0
 	 */
 	public static final String ATTR_HIDE_INTERNAL_TARGETS = IExternalToolConstants.PLUGIN_ID + ".ATTR_HIDE_INTERNAL_TARGETS"; //$NON-NLS-1$
 	/**
 	 * Integer attribute indicating which column targets should be sorted on. A
 	 * value of 0 indicates target name, 1 indicates target description, and -1
 	 * indicates no sort. Default value is -1.
+	 * 
+	 * @since 3.0
 	 */
 	public static final String ATTR_SORT_TARGETS = IExternalToolConstants.PLUGIN_ID + "ATTR_SORT_TARGETS"; //$NON-NLS-1$
 
