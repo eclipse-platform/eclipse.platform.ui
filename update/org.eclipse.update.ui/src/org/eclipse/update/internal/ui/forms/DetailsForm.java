@@ -288,8 +288,10 @@ public class DetailsForm extends PropertyWebForm {
 	}
 
 	protected void updateHeadings() {
+		Control control = getControl();
+		if (control==null) return;
 		sectionHandler.setForeground(
-			UpdateColors.getTopicColor(getControl().getDisplay()));
+			UpdateColors.getTopicColor(control.getDisplay()));
 		super.updateHeadings();
 	}
 
