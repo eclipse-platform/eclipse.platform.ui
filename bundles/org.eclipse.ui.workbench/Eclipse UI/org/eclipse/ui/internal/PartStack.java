@@ -835,7 +835,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         
         if (savedPresentationState != null) {
         	IMemento presentationState = memento.createChild(IWorkbenchConstants.TAG_PRESENTATION);
-        	presentationState.putString(IWorkbenchConstants.TAG_ID, current.getID());
         	presentationState.putMemento(savedPresentationState);
         }
         
