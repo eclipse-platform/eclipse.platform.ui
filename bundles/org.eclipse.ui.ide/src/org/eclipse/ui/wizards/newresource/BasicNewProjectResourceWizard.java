@@ -27,7 +27,8 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
-import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -341,13 +342,10 @@ public static void updatePerspective(IConfigurationElement configElement) {
 	if (configElement == null)
 		return;
 		
-	AbstractUIPlugin uiPlugin =
-		(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-		
 	// Retrieve the new project open perspective preference setting
 	String perspSetting =
-		uiPlugin.getPreferenceStore().getString(
-			IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE);
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore().getString(
+			IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE);
 
 	// Return if do not switch perspective setting
 	if (perspSetting.equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE))
@@ -419,9 +417,8 @@ public static void updatePerspective(IConfigurationElement configElement) {
  */
 private static boolean confirmPerspectiveSwitch(IWorkbenchWindow window, IPerspectiveDescriptor finalPersp) {
 	IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-	// @issue Constants need to move to IDE project
-	String pspm = store.getString(IPreferenceConstants.PROJECT_SWITCH_PERSP_MODE);
-	if (!IPreferenceConstants.PSPM_PROMPT.equals(pspm)) {
+	String pspm = store.getString(IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE);
+	if (!IDEInternalPreferences.PSPM_PROMPT.equals(pspm)) {
 		return true;
 	}
 	// @issue need to clone MessageDialogWithToggle
@@ -437,17 +434,15 @@ private static boolean confirmPerspectiveSwitch(IWorkbenchWindow window, IPerspe
 	if (result >= 0 && dialog.getToggleState()) {
 		if (result == 0) {
 			// User chose Yes/Don't ask again, so always switch
-			store.setValue(IPreferenceConstants.PROJECT_SWITCH_PERSP_MODE, IPreferenceConstants.PSPM_ALWAYS);
+			store.setValue(IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE, IDEInternalPreferences.PSPM_ALWAYS);
 			// leave PROJECT_OPEN_NEW_PERSPECTIVE as is
 		}
 		else {
 			// User chose No/Don't ask again, so never switch
-			store.setValue(IPreferenceConstants.PROJECT_SWITCH_PERSP_MODE, IPreferenceConstants.PSPM_NEVER);
+			store.setValue(IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE, IDEInternalPreferences.PSPM_NEVER);
 			// update PROJECT_OPEN_NEW_PERSPECTIVE to correspond
-			AbstractUIPlugin uiPlugin =
-				(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-			uiPlugin.getPreferenceStore().setValue(
-				IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
+			IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(
+				IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE,
 				IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE);
 		}
 	}

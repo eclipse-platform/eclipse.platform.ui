@@ -40,8 +40,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.AboutInfo;
@@ -262,7 +260,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			return true;
 
 		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-		boolean promptOnExit =	store.getBoolean(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW);
+		boolean promptOnExit =	store.getBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW);
 
 		if (promptOnExit) {
 			String message;
@@ -288,7 +286,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 
 			if (dlg.getReturnCode() == MessageDialogWithToggle.OK) {
 				store.setValue(
-					IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW,
+					IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW,
 					!dlg.getToggleState());
 				return true;
 			} else {
@@ -411,7 +409,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		return new IResourceChangeListener() {
 			public void resourceChanged(final IResourceChangeEvent event) {	
 				IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-				if (store.getBoolean(IPreferenceConstants.SHOW_TASKS_ON_BUILD)) {
+				if (store.getBoolean(IDEInternalPreferences.SHOW_TASKS_ON_BUILD)) {
 					IMarker error = findProblemToShow(event);
 					if (error != null) {
 						Display.getDefault().asyncExec(new Runnable() {
@@ -555,7 +553,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	private void refreshFromLocal() {
 		String[] commandLineArgs = Platform.getCommandLineArgs();
 		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-		boolean refresh = store.getBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP);
+		boolean refresh = store.getBoolean(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP);
 		if (!refresh)
 			return;
 			
@@ -696,14 +694,13 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			}
 		}
 
-		// @issue the preference WELCOME_DIALOG should be moved to the IDE preference store
-		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.WELCOME_DIALOG)) {
+		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IDEInternalPreferences.WELCOME_DIALOG)) {
 			// Show the quick start wizard the first time the workbench opens.
 			URL url = primaryInfo.getWelcomePageURL();
 			if (url == null) {
 				return;
 			}
-			IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.WELCOME_DIALOG, false);
+			IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(IDEInternalPreferences.WELCOME_DIALOG, false);
 			openWelcomeEditor(window, new WelcomeEditorInput(primaryInfo), null);
 		} else {
 			// Show the welcome page for any newly installed features

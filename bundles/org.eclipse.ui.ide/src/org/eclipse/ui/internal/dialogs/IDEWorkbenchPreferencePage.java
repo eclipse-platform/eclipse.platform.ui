@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.ide.IPreferenceConstants;
+import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
@@ -114,10 +114,10 @@ public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkb
 		// set initial values
 		IPreferenceStore store = getPreferenceStore();
 		autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
-		autoSaveAllButton.setSelection(store.getBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
-		refreshButton.setSelection(store.getBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP));
-		exitPromptButton.setSelection(store.getBoolean(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
-		showTasks.setSelection(store.getBoolean(IPreferenceConstants.SHOW_TASKS_ON_BUILD));
+		autoSaveAllButton.setSelection(store.getBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
+		refreshButton.setSelection(store.getBoolean(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP));
+		exitPromptButton.setSelection(store.getBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
+		showTasks.setSelection(store.getBoolean(IDEInternalPreferences.SHOW_TASKS_ON_BUILD));
 		
 		return composite;
 	}
@@ -136,15 +136,15 @@ public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkb
 		groupComposite.setLayoutData(gd);	
 		groupComposite.setFont(composite.getFont());
 		
-		saveInterval = new IntegerFieldEditor(IPreferenceConstants.SAVE_INTERVAL, IDEWorkbenchMessages.getString("WorkbenchPreference.saveInterval"), groupComposite); //$NON-NLS-1$
+		saveInterval = new IntegerFieldEditor(IDEInternalPreferences.SAVE_INTERVAL, IDEWorkbenchMessages.getString("WorkbenchPreference.saveInterval"), groupComposite); //$NON-NLS-1$
 
 		// @issue we should drop our preference constant and let clients use core's pref. ours is not up-to-date anyway if someone changes this interval directly thru core api.
 		saveInterval.setPreferenceStore(getPreferenceStore());
 		saveInterval.setPreferencePage(this);
-		saveInterval.setTextLimit(Integer.toString(IPreferenceConstants.MAX_SAVE_INTERVAL).length());
-		saveInterval.setErrorMessage(IDEWorkbenchMessages.format("WorkbenchPreference.saveIntervalError", new Object[] { new Integer(IPreferenceConstants.MAX_SAVE_INTERVAL)})); //$NON-NLS-1$
+		saveInterval.setTextLimit(Integer.toString(IDEInternalPreferences.MAX_SAVE_INTERVAL).length());
+		saveInterval.setErrorMessage(IDEWorkbenchMessages.format("WorkbenchPreference.saveIntervalError", new Object[] { new Integer(IDEInternalPreferences.MAX_SAVE_INTERVAL)})); //$NON-NLS-1$
 		saveInterval.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
-		saveInterval.setValidRange(1, IPreferenceConstants.MAX_SAVE_INTERVAL);
+		saveInterval.setValidRange(1, IDEInternalPreferences.MAX_SAVE_INTERVAL);
 
 		IWorkspaceDescription description = ResourcesPlugin.getWorkspace().getDescription();
 		long interval = description.getSnapshotInterval() / 60000;
@@ -361,10 +361,10 @@ public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkb
 		autoBuildButton.setSelection(autoBuild);
 		
 		IPreferenceStore store = getPreferenceStore();
-		autoSaveAllButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
-		refreshButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP));
-		exitPromptButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
-		showTasks.setSelection(store.getBoolean(IPreferenceConstants.SHOW_TASKS_ON_BUILD));
+		autoSaveAllButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
+		refreshButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP));
+		exitPromptButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
+		showTasks.setSelection(store.getBoolean(IDEInternalPreferences.SHOW_TASKS_ON_BUILD));
 		saveInterval.loadDefault();
 		
 		super.performDefaults();
@@ -399,16 +399,16 @@ public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkb
 		IPreferenceStore store = getPreferenceStore();
 
 		// store the save all prior to build setting
-		store.setValue(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, autoSaveAllButton.getSelection());
+		store.setValue(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD, autoSaveAllButton.getSelection());
 
 		// store the refresh workspace on startup setting
-		store.setValue(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP, refreshButton.getSelection());
+		store.setValue(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP, refreshButton.getSelection());
 
 		// store the exit prompt on last window close setting
-		store.setValue(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, exitPromptButton.getSelection());
+		store.setValue(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, exitPromptButton.getSelection());
 
 		// store the preference for bringing task view to front on build
-		store.setValue(IPreferenceConstants.SHOW_TASKS_ON_BUILD, showTasks.getSelection());
+		store.setValue(IDEInternalPreferences.SHOW_TASKS_ON_BUILD, showTasks.getSelection());
 
 		// store the workspace save interval
 		// @issue we should drop our preference constant and let clients use core's pref. ours is not up-to-date anyway if someone changes this interval directly thru core api.
@@ -418,7 +418,7 @@ public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkb
 			try {
 				description.setSnapshotInterval(newSaveInterval * 60000);
 				ResourcesPlugin.getWorkspace().setDescription(description);
-				store.firePropertyChangeEvent(IPreferenceConstants.SAVE_INTERVAL, new Integer((int)oldSaveInterval), new Integer((int)newSaveInterval));
+				store.firePropertyChangeEvent(IDEInternalPreferences.SAVE_INTERVAL, new Integer((int)oldSaveInterval), new Integer((int)newSaveInterval));
 			} catch (CoreException e) {
 				IDEWorkbenchPlugin.log("Error changing save interval preference", e.getStatus()); //$NON-NLS-1$
 			}

@@ -12,9 +12,9 @@
 package org.eclipse.ui.internal.ide;
 
 /**
- * The IPreferenceConstants are the internal constants used by the Workbench.
+ * The IDEInternalPreferences are the internal constants used by the Workbench.
  */
-public interface IPreferenceConstants {
+public interface IDEInternalPreferences {
 	// (boolean) Save all dirty editors before running a full or incremental build 
 	public static final String SAVE_ALL_BEFORE_BUILD = "SAVE_ALL_BEFORE_BUILD"; //$NON-NLS-1$
 
@@ -31,4 +31,13 @@ public interface IPreferenceConstants {
 	
 	// (boolean) Prompt for exit confirmation when last window closed.
 	public static final String EXIT_PROMPT_ON_CLOSE_LAST_WINDOW = "EXIT_PROMPT_ON_CLOSE_LAST_WINDOW"; //$NON-NLS-1$
+
+	// Switch perspectives when creating a new project
+	public static final String PROJECT_SWITCH_PERSP_MODE = "SWITCH_PERSPECTIVE_ON_PROJECT_CREATION"; //$NON-NLS-1$
+	public static final String PSPM_PROMPT = "prompt"; //$NON-NLS-1$
+	public static final String PSPM_ALWAYS = "always"; //$NON-NLS-1$
+	public static final String PSPM_NEVER = "never"; //$NON-NLS-1$
+
+	// (boolean) Whether or not to display the Welcome dialog on startup.
+	public static final String WELCOME_DIALOG = "WELCOME_DIALOG"; //$NON-NLS-1$
 }
