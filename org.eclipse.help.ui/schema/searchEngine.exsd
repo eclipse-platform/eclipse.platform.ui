@@ -89,8 +89,11 @@ Search engines can simply compose a URL and fire only one hit containing that UR
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a fully qualified name of the class that implements &lt;code&gt;org.eclipse.help.internal.search.federated.ISearchEngine&lt;/code&gt;. The class is responsible for searching based on a given query and scope.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.help.internal.search.federated.ISearchEngine"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="pageClass" type="string">
