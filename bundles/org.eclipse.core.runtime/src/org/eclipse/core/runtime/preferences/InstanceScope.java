@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
  * platform's instance area as specified by <code>IPlatform#getInstanceLocation</code>.
  * </p>
  * <p>
- * The path for preferences defined in the configuration scope hierarchy
+ * The path for preferences defined in the instance scope hierarchy
  * is as follows: <code>/instance/&lt;qualifier&gt;</code>
  * </p>
  * @see IPlatform#getInstanceLocation()
