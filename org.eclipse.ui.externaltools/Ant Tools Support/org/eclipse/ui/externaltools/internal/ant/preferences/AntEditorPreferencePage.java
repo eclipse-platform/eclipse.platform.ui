@@ -370,13 +370,13 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		contentAssistComposite.setLayout(layout);
 
 		String text;		
-		text= "Insert single &proposals automatically";
+		text= AntPreferencesMessages.getString("AntEditorPreferencePage.Insert"); //$NON-NLS-1$
 		addCheckBox(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT, 0);		
 
 		//text= "&Fill parameters automatically";
 		//addCheckBox(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_FILL_ARGUMENT_NAMES, 0);
 
-		text= "&Enable auto activation";
+		text= AntPreferencesMessages.getString("AntEditorPreferencePage.&Enable_auto_activation_2"); //$NON-NLS-1$
 		final Button autoactivation= addCheckBox(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION, 0);
 		autoactivation.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
@@ -385,18 +385,18 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		});		
 		
 		Control[] labelledTextField;
-		text= "Auto activation &delay:";
+		text= AntPreferencesMessages.getString("AntEditorPreferencePage.Auto_activation_&delay__3"); //$NON-NLS-1$
 		labelledTextField= addLabelledTextField(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY, 4, 0, true);
 		fAutoInsertDelayLabel= getLabelControl(labelledTextField);
 		fAutoInsertDelayText= getTextControl(labelledTextField);
 		
-		text= "Auto activation tri&ggers:";
+		text= AntPreferencesMessages.getString("AntEditorPreferencePage.Auto_activation_tri&ggers__4"); //$NON-NLS-1$
 		labelledTextField= addLabelledTextField(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS, 4, 0, false);
 		fAutoInsertJavaTriggerLabel= getLabelControl(labelledTextField);
 		fAutoInsertJavaTriggerText= getTextControl(labelledTextField);
 		
 		Label label= new Label(contentAssistComposite, SWT.LEFT);
-		label.setText("Code assist colo&r options:");
+		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.Code_assist_colo&r_options__5")); //$NON-NLS-1$
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		label.setLayoutData(gd);
@@ -425,7 +425,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		label= new Label(stylesComposite, SWT.LEFT);
-		label.setText("Col&or:");
+		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.Col&or__6")); //$NON-NLS-1$
 		gd= new GridData();
 		gd.horizontalAlignment= GridData.BEGINNING;
 		label.setLayoutData(gd);
