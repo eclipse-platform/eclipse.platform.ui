@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -485,7 +487,13 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 			return ""; //$NON-NLS-1$
 		}
         
-		InputStreamReader tempReader = new InputStreamReader(tempStream);
+		InputStreamReader tempReader;
+		try {
+			tempReader = new InputStreamReader(tempStream, ResourcesPlugin.getEncoding()); //$NON-NLS-1$
+		} catch (UnsupportedEncodingException e) {
+			ExternalToolsPlugin.getDefault().log(e);
+			return ""; //$NON-NLS-1$
+		}
 		BufferedReader tempBufferedReader = new BufferedReader(tempReader);
 
 		StringBuffer tempResult = new StringBuffer();
