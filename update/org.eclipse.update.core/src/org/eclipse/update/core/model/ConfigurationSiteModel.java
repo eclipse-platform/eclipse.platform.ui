@@ -18,8 +18,9 @@ import org.eclipse.update.core.IFeatureReference;
  * 
  */
 public class ConfigurationSiteModel extends ModelObject {
+	private String[] previousPluginPath;
 
-	private boolean broken=false;
+	private boolean broken = false;
 	private SiteMapModel site;
 	private String platformURLString;
 	private ConfigurationPolicyModel policy;
@@ -50,7 +51,6 @@ public class ConfigurationSiteModel extends ModelObject {
 		assertIsWriteable();
 		this.site = site;
 	}
-
 
 	/**
 	 * returns the policy
@@ -83,7 +83,6 @@ public class ConfigurationSiteModel extends ModelObject {
 		this.installable = installable;
 	}
 
-	
 	/**
 	 * Gets the installConfiguration.
 	 * @return Returns a InstallConfigurationModel
@@ -131,6 +130,24 @@ public class ConfigurationSiteModel extends ModelObject {
 	 */
 	public void setBroken(boolean broken) {
 		this.broken = broken;
+	}
+	/**
+	 * Gets the previousPluginPath. The list of plugins the platform had.
+	 * @return Returns a String[]
+	 */
+	public String[] getPreviousPluginPath() {
+		if (previousPluginPath == null)
+			previousPluginPath = new String[0];
+		return previousPluginPath;
+	}
+
+	/**
+	 * Sets the previousPluginPath.
+	 * @param previousPluginPath The previousPluginPath to set
+	 */
+	public void setPreviousPluginPath(String[] previousPluginPath) {
+		this.previousPluginPath = new String[previousPluginPath.length];
+		System.arraycopy(previousPluginPath, 0, this.previousPluginPath, 0, previousPluginPath.length);
 	}
 
 }

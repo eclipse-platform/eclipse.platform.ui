@@ -110,5 +110,11 @@ public interface IConfigurationSite {
 	 */
 	IInstallConfiguration getInstallConfiguration();
 	
+	/**
+	 * returns the plugin path declared in the platform.
+	 * This is the exact list of the plugin URL saved in the platform configuration.
+	 */
+	String[] getPreviousPluginPath();
+	
 }
 

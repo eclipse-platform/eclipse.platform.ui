@@ -27,7 +27,6 @@ import org.eclipse.update.core.model.SiteMapModel;
 public class ConfigurationSite extends ConfigurationSiteModel implements IConfigurationSite, IWritable {
 
 
-	private String[] previousPluginPath;
 	
 	/**
  	 * 
@@ -35,7 +34,7 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 	public ConfigurationSite() {
 	}
 
-	
+	 
 	/**
 	 * Copy Constructor
 	 */
@@ -43,6 +42,7 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 		setSiteModel((SiteMapModel)configSite.getSite());
 		setConfigurationPolicyModel(new ConfigurationPolicy(configSite.getConfigurationPolicy()));
 		setInstallSite(configSite.isInstallSite());
+		setPreviousPluginPath(configSite.getPreviousPluginPath());
 		//
 		if (configSite instanceof ConfigurationSiteModel){
 			ConfigurationSiteModel siteModel = (ConfigurationSiteModel)configSite;
@@ -217,22 +217,28 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 
 	/**
 	 * process the delta with the configuration site
+	 * 
 	 */
 	/*package*/
 	void deltaWith(IConfigurationSite currentConfiguration, IProgressMonitor monitor, IProblemHandler handler) throws CoreException, InterruptedException {
+
+		// copy the plugins as they are transient
+		this.setPreviousPluginPath(currentConfiguration.getPreviousPluginPath());			
+		
+		// retrieve the feature that were configured
 		IFeatureReference[] configuredFeatures = processConfiguredFeatures(handler);
 
 		// we only care about unconfigured features if the Site policy is USER_EXCLUDE
+		// calculate all the features we have to unconfigure from the current state to this state
+		// in the history. 
 		if (getConfigurationPolicyModel().getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
 			List featureToUnconfigure = processUnconfiguredFeatures();
 
-			// ok
-			// we have all teh unconfigured feature for this site config
+			// we have all the unconfigured feature for this site config
 			// for the history
 			// remove the one that are configured 
-			// (may have been unconfigured in teh past, but the revert makes it configurd)
+			// (may have been unconfigured in the past, but the revert makes them configurd)
 			featureToUnconfigure = remove(configuredFeatures, featureToUnconfigure);
-
 
 			// for each unconfigured feature
 			// check if it still exists
@@ -437,20 +443,6 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 
 	
 	
-	/**
-	 * Gets the previousPluginPath. The list of plugins the platform had.
-	 * @return Returns a String[]
-	 */
-	public String[] getPreviousPluginPath() {
-		return previousPluginPath;
-	}
-
-	/**
-	 * Sets the previousPluginPath.
-	 * @param previousPluginPath The previousPluginPath to set
-	 */
-	public void setPreviousPluginPath(String[] previousPluginPath) {
-		this.previousPluginPath = previousPluginPath;
-	}
-
+	
+	
 }

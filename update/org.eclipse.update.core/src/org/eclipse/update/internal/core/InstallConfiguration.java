@@ -187,7 +187,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		ConfigurationSiteModel[] configurationSites = getConfigurationSitesModel();
 		
 		for (int i = 0; i < configurationSites.length; i++) {
-			ConfigurationSite element = (ConfigurationSite) configurationSites[i];
+			IConfigurationSite element = (IConfigurationSite) configurationSites[i];
 			ConfigurationPolicy configurationPolicy = (ConfigurationPolicy) element.getConfigurationPolicy();
 			
 			// obtain the list of plugins
@@ -341,7 +341,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	/**
 	 * Returns and array with the union of plugins
 	 */
-	private String[] union(String[] sourceArray, String[] targetArray) {
+	private String[] union(String[] targetArray, String[] sourceArray) {
 
 		// No string 
 		if (sourceArray == null || sourceArray.length == 0) {
@@ -355,7 +355,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 		// if a String from sourceArray is NOT in
 		// targetArray, add it to targetArray
-		List list1 = Arrays.asList(targetArray);
+		List list1 =  new ArrayList();
+		list1.addAll(Arrays.asList(targetArray));
 		for (int i = 0; i < sourceArray.length; i++) {
 			if (!list1.contains(sourceArray[i]))
 				list1.add(sourceArray[i]);

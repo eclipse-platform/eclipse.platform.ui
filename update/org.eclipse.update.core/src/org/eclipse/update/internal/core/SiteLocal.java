@@ -51,7 +51,7 @@ import org.xml.sax.SAXException;
 
 public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
-	private IPluginEntry[] allRunningPluginEntry;
+	private static IPluginEntry[] allRunningPluginEntry;
 	private ListenersList listeners = new ListenersList();
 
 	/**
@@ -84,20 +84,23 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
 					UpdateManagerPlugin.getPlugin().debug("Reconcile platform stamp:" + bootStamp + " is different from LocalSite stamp:" + site.getStamp());
 				}
+				site.setStamp(bootStamp);
 				site.reconcile();
 				site.save();
+			} else {
+				// no reconciliation, preserve the list of plugins from the platform anyway
+				site.preserveRuntimePluginPath();
 			}
 
 		} catch (FileNotFoundException exception) {
-			// file doesn't exist, ok, log it and continue 
+			// file SITE_LOCAL_FILE doesn't exist, ok, log it 
+			// and reconcile
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
 				UpdateManagerPlugin.getPlugin().debug(site.getLocationURLString() + " does not exist, there is no previous state or install history we can recover, we shall use default.");
 			}
-
+			long bootStamp = BootLoader.getCurrentPlatformConfiguration().getChangeStamp();
+			site.setStamp(bootStamp);			
 			site.reconcile();
-			//createDefaultConfiguration(site);
-
-			// FIXME: always save ?
 			site.save();
 
 		} catch (SAXException exception) {
@@ -529,19 +532,26 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			List toInstall = new ArrayList();
 			List brokenLink = new ArrayList();
 			IConfigurationSite[] configured = new IConfigurationSite[0];
+
+			// sites from the current configuration
 			if (getCurrentConfiguration() != null)
 				configured = getCurrentConfiguration().getConfigurationSites();
 
+			// sites from the platform			
 			for (int siteIndex = 0; siteIndex < siteEntries.length; siteIndex++) {
 
 				URL resolvedURL = Platform.resolve(siteEntries[siteIndex].getURL());
 				boolean found = false;
 				for (int index = 0; index < configured.length && !found; index++) {
-					if (configured[index].getSite().getURL().equals(resolvedURL)) {
-						found = true;
-						((ConfigurationSite)configured[index]).setPreviousPluginPath(siteEntries[siteIndex].getPlugins());						
-						modified.add(configured[index]);
-						configured[index] = null;
+
+					// the array may have hole as we set found site to null
+					if (configured[index] != null) {
+						if (configured[index].getSite().getURL().equals(resolvedURL)) {
+							found = true;
+							((ConfigurationSite) configured[index]).setPreviousPluginPath(siteEntries[siteIndex].getSitePolicy().getList());
+							modified.add(configured[index]);
+							configured[index] = null;
+						}
 					}
 				}
 				// new site not found, create it
@@ -551,7 +561,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 					IPlatformConfiguration.ISitePolicy sitePolicy = siteEntries[siteIndex].getSitePolicy();
 					ConfigurationSite configSite = (ConfigurationSite) new BaseSiteLocalFactory().createConfigurationSiteModel((SiteMapModel) site, sitePolicy.getType());
 					configSite.setPlatformURLString(siteEntries[siteIndex].getURL().toExternalForm());
-					configSite.setPreviousPluginPath(siteEntries[siteIndex].getPlugins());
+					configSite.setPreviousPluginPath(siteEntries[siteIndex].getSitePolicy().getList());
 
 					//the site may not be read-write
 					configSite.setInstallSite(siteEntries[siteIndex].isUpdateable());
@@ -596,39 +606,42 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			this.addConfiguration(newDefaultConfiguration);
 
 		} catch (IOException e) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create the Local Site: " + e.getMessage(), e);
-			throw new CoreException(status);
+			throw newCoreException("Cannot create the Local Site: " + e.getMessage(),e);
 		}
 	}
 
 	private IConfigurationSite reconcile(IConfigurationSite toReconcile) throws CoreException {
 
+		// create a copy of the ConfigSite without any feature
+		// this is not a clone
+		SiteMapModel siteModel = (SiteMapModel) toReconcile.getSite();		
 		int policy = toReconcile.getConfigurationPolicy().getPolicy();
-		SiteMapModel siteModel = (SiteMapModel) toReconcile.getSite();
 		ConfigurationSiteModel newSiteModel = new BaseSiteLocalFactory().createConfigurationSiteModel(siteModel, policy);
+		
+		// copy values
 		newSiteModel.setInstallSite(toReconcile.isInstallSite());
-		IConfigurationSite newSite = (IConfigurationSite) newSiteModel;
+		newSiteModel.setPlatformURLString(((ConfigurationSiteModel)toReconcile).getPlatformURLString());
+		newSiteModel.setPreviousPluginPath(toReconcile.getPreviousPluginPath());
 
 		// check the Features that are still here
 		List toCheck = new ArrayList();
-		List brokenfeature = new ArrayList();
+		List brokenFeature = new ArrayList();
 		IFeatureReference[] configured = toReconcile.getSite().getFeatureReferences();
-		IFeatureReference[] found = newSite.getSite().getFeatureReferences();
+		FeatureReferenceModel[] found = newSiteModel.getSiteModel().getFeatureReferenceModels();
 
 		for (int i = 0; i < found.length; i++) {
 			for (int j = 0; j < configured.length; j++) {
-				if (configured[j].equals(found[i])) {
+				if (configured[j]!=null && configured[j].equals(found[i])) {
 					toCheck.add(configured[j]);
 					configured[j] = null;
 				}
 			}
 		}
 
-		// teh features that are still in the array are broken
+		// the features that are still in the array are broken
 		for (int k = 0; k < configured.length; k++) {
 			if (configured[k] != null)
-				brokenfeature.add(configured[k]);
+				brokenFeature.add(configured[k]);
 		}
 
 		// check the Plugins of all the features
@@ -639,7 +652,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		while (featureIter.hasNext()) {
 			IFeatureReference element = (IFeatureReference) featureIter.next();
 
-			if (currentSite==null || !currentSite.equals(element.getSite())) {
+			if (currentSite == null || !currentSite.equals(element.getSite())) {
 				currentSite = element.getSite();
 				siteEntries = currentSite.getPluginEntries();
 			}
@@ -656,20 +669,20 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "The feature " + element.getURL().toExternalForm() + " requires some missing plugins from the site:" + currentSite.getURL().toExternalForm() + listOfMissingPlugins, null);
 				UpdateManagerPlugin.getPlugin().getLog().log(status);
 			}
-			checkConfigure(element, newSite);
+			checkConfigure(element, (IConfigurationSite) newSiteModel);
 		}
 
 		//add broken features
-		Iterator brokenIter = brokenfeature.iterator();
+		Iterator brokenIter = brokenFeature.iterator();
 		while (brokenIter.hasNext()) {
 			IFeatureReference element = (IFeatureReference) featureIter.next();
 			((FeatureReferenceModel) element).setBroken(true);
 			// if it is broken (ie the feature does not exist, we 
 			//cannot check the plugins... consider as unconfigured)
-			newSite.unconfigure(element,null);
+			((IConfigurationSite)newSiteModel).unconfigure(element, null);
 		}
 
-		return newSite;
+		return (IConfigurationSite)newSiteModel;
 	}
 
 	/**
@@ -713,21 +726,22 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 */
 	private void checkConfigure(IFeatureReference ref, IConfigurationSite newSite) throws CoreException {
 		// check if all the needed plugins are part of all plugin
-		
+
 		IPluginEntry[] allPlugins = getAllRunningPlugin();
 		IPluginEntry[] featurePlugins = ref.getFeature().getPluginEntries();
-		IPluginEntry[] result = intersection(featurePlugins,allPlugins);
-		
-		// there are soem plugins the feature need that are not present
-		if (result.length!=0){
-			newSite.unconfigure(ref,null);
+		IPluginEntry[] result = intersection(featurePlugins, allPlugins);
+		ConfigurationSite newConfigSite = (ConfigurationSite)newSite;
+
+		// there are some plugins the feature need that are not present
+		if (result.length != 0) {
+			(newConfigSite.getConfigurationPolicyModel()).addUnconfiguredFeatureReference((FeatureReferenceModel)ref);			
 		} else {
-			newSite.configure(ref);
+			(newConfigSite.getConfigurationPolicyModel()).addConfiguredFeatureReference((FeatureReferenceModel)ref);			
 		}
-		
+
 	}
 
-	private IPluginEntry[] getAllRunningPlugin() throws CoreException {
+	private static IPluginEntry[] getAllRunningPlugin() throws CoreException {
 		if (allRunningPluginEntry == null) {
 			// get all the running plugins
 			URL[] pluginPathURL = BootLoader.getCurrentPlatformConfiguration().getPluginPath();
@@ -739,9 +753,14 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				for (int i = 0; i < pluginPathURL.length; i++) {
 					try {
 						IPluginEntry entry = parser.parse(pluginPathURL[i].openStream());
-						allRunningPluginEntry[i] = entry;						
-					} catch (Exception e){
-						throw newCoreException("Unable to parse file"+pluginPathURL[i]+".\r\n"+e.toString(),e);
+						allRunningPluginEntry[i] = entry;
+					} catch (FileNotFoundException e) {
+						//FIXME some of the URL pointot a directory, ignore ???
+						if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+							UpdateManagerPlugin.getPlugin().debug("Cannot find the plugin or fragment:"+pluginPathURL[i].toExternalForm());
+						}
+					} catch (Exception e) {
+						throw newCoreException("Unable to parse file" + pluginPathURL[i] + ".\r\n" + e.toString(), e);
 					}
 				}
 			}
@@ -750,9 +769,45 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	}
 	
 	/**
+	 * Add teh list of plugins the platform found for each site. This list will ba preserved in 
+	 * a transient way so we do not lose explicitly set plugins
+	 */
+	private void preserveRuntimePluginPath() throws CoreException{
+		try {		
+			IPlatformConfiguration platformConfig = BootLoader.getCurrentPlatformConfiguration();
+			IPlatformConfiguration.ISiteEntry[] siteEntries = platformConfig.getConfiguredSites();
+
+			// sites from the current configuration
+			IConfigurationSite[] configured = new IConfigurationSite[0];
+			if (getCurrentConfiguration() != null)
+				configured = getCurrentConfiguration().getConfigurationSites();
+
+			// sites from the platform			
+			for (int siteIndex = 0; siteIndex < siteEntries.length; siteIndex++) {
+
+				URL resolvedURL = Platform.resolve(siteEntries[siteIndex].getURL());
+				boolean found = false;
+				for (int index = 0; index < configured.length && !found; index++) {
+
+					// the array may have hole as we set found site to null
+					if (configured[index] != null) {
+						if (configured[index].getSite().getURL().equals(resolvedURL)) {
+							found = true;
+							((ConfigurationSite) configured[index]).setPreviousPluginPath(siteEntries[siteIndex].getSitePolicy().getList());
+							configured[index] = null;
+						}
+					}
+				}
+			}
+		} catch (IOException e) {
+			throw newCoreException("Cannot create the Local Site: " + e.getMessage(),e);
+		}			
+	}
+
+	/**
 	 * returns a Core Exception
 	 */
 	private static CoreException newCoreException(String s, Throwable e) throws CoreException {
 		return new CoreException(new Status(IStatus.ERROR, "org.eclipse.update.core", 0, s, e));
-	}	
+	}
 }
