@@ -3,7 +3,7 @@
 <plugin
    id="org.eclipse.team.cvs.ssh2"
    name="%pluginName"
-   version="0.1.0"
+   version="3.0.0"
    provider-name="%providerName"
    class="org.eclipse.team.ccvs.ssh2.CVSSSH2Plugin">
 
@@ -12,7 +12,7 @@
          <export name="*"/>
          <packages prefixes="org.eclipse.team.cvs.ssh2"/>
       </library>
-      <library name="%jschJar">
+      <library name="jsch-0.1.11.jar">
          <packages prefixes="com.jcraft.jsch"/>
       </library>
    </runtime>
@@ -25,7 +25,6 @@
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.team.cvs.ssh"/>
    </requires>
-
 
    <extension
          id="ssh2"
