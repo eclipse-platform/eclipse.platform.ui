@@ -138,7 +138,8 @@ public void add(Object parentElement, Object[] childElements) {
 			
 			// couldn't handle this child:
 			// skip other children and do general case
-			updateChildren(widget, parentElement, children.toArray());
+			// call refresh rather than internalRefresh to preserve selection
+			refresh(parentElement);
 			return;
 		}
 	}
