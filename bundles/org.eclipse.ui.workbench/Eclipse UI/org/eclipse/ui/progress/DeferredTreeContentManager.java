@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
@@ -94,8 +95,7 @@ public class DeferredTreeContentManager {
      * @throws RuntimeException if the element is null.
      */
     public boolean mayHaveChildren(Object element) {
-    	Assert.isNotNull(element, ProgressMessages
-                .getString("DeferredTreeContentManager.NotDeferred")); //$NON-NLS-1$
+    	Assert.isNotNull(element, ProgressMessages.DeferredTreeContentManager_NotDeferred); 
         IDeferredWorkbenchAdapter adapter = getAdapter(element);
         return adapter != null && adapter.isContainer();
     }
@@ -249,9 +249,9 @@ public class DeferredTreeContentManager {
      * @return job name
      */
     protected String getFetchJobName(Object parent, IDeferredWorkbenchAdapter adapter) {
-        return ProgressMessages.format(
-                "DeferredTreeContentManager.FetchingName", //$NON-NLS-1$
-                new Object[] { adapter.getLabel(parent) });
+        return NLS.bind(
+				ProgressMessages.DeferredTreeContentManager_FetchingName,
+               adapter.getLabel(parent));
     }
 
     /**
@@ -263,8 +263,8 @@ public class DeferredTreeContentManager {
      */
     protected void addChildren(final Object parent, final Object[] children,
             IProgressMonitor monitor) {
-        WorkbenchJob updateJob = new WorkbenchJob(ProgressMessages
-                .getString("DeferredTreeContentManager.AddingChildren")) {//$NON-NLS-1$
+        WorkbenchJob updateJob = new WorkbenchJob(
+				ProgressMessages.DeferredTreeContentManager_AddingChildren) {
             /*
              * (non-Javadoc)
              * 
@@ -309,8 +309,7 @@ public class DeferredTreeContentManager {
         if (placeholder.isRemoved() || !PlatformUI.isWorkbenchRunning())
             return;
         //Clear the placeholder if it is still there
-        WorkbenchJob clearJob = new WorkbenchJob(ProgressMessages
-                .getString("DeferredTreeContentManager.ClearJob")) {//$NON-NLS-1$
+        WorkbenchJob clearJob = new WorkbenchJob(ProgressMessages.DeferredTreeContentManager_ClearJob) {
             /*
              * (non-Javadoc)
              * 
