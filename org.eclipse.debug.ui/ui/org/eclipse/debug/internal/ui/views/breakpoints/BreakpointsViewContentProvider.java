@@ -32,16 +32,14 @@ public class BreakpointsViewContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object parent) {
-		if (parent instanceof IBreakpoint) {
-			return new Object[0];
-		}
 		Object children[];
 		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
-		if (fBreakpointContainerFactories.isEmpty()) {
+		if (parent instanceof IBreakpointManager) {
 			children= breakpoints;
-		} else if (parent instanceof IBreakpointManager) {
-			IBreakpointContainerFactory factory = (IBreakpointContainerFactory) fBreakpointContainerFactories.get(0);
-			children= getFactoryChildren(factory, "", breakpoints); //$NON-NLS-1$
+			if (!fBreakpointContainerFactories.isEmpty()) {
+				IBreakpointContainerFactory factory = (IBreakpointContainerFactory) fBreakpointContainerFactories.get(0);
+				children= getFactoryChildren(factory, "", breakpoints); //$NON-NLS-1$
+			} 
 		} else if (parent instanceof IBreakpointContainer) {
 			IBreakpointContainer container = ((IBreakpointContainer) parent);
 			IBreakpointContainerFactory parentFactory = container.getParentFactory();
