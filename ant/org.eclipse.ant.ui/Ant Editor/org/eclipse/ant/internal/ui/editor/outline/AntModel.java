@@ -829,23 +829,35 @@ public class AntModel {
 	}
 	
 	public void acceptProblem(IProblem problem) {
-		fProblemRequestor.acceptProblem(problem);
-		fMarkerUpdater.acceptProblem(problem);
+		if (fProblemRequestor != null) {
+			fProblemRequestor.acceptProblem(problem);
+			fMarkerUpdater.acceptProblem(problem);
+		}
 	}
 	
 	protected IFile getFile() {
 		IPath location= fLocationProvider.getLocation();
+		if (location == null) {
+			return null;
+		}
 		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location);
-		return files[0];
+		if (files.length > 0) {
+			return files[0];
+		} 
+		return null;
 	}
 
 	private void beginReporting() {
-		fProblemRequestor.beginReporting();
-		fMarkerUpdater.beginReporting();
+		if (fProblemRequestor != null) {
+			fProblemRequestor.beginReporting();
+			fMarkerUpdater.beginReporting();
+		}
 	}
 	
 	private void endReporting() {
-		fProblemRequestor.endReporting();
+		if (fProblemRequestor != null) {
+			fProblemRequestor.endReporting();
+		}
 	}
 
 	private IProblem createProblem(Exception exception, int offset, int length,  int severity) {
@@ -863,8 +875,10 @@ public class AntModel {
 	}
 	
 	protected void notifyProblemRequestor(Exception exception, int offset, int length, int severity) {
-		IProblem problem= createProblem(exception, offset, length, severity);
-		acceptProblem(problem);
+		if (fProblemRequestor != null) {
+			IProblem problem= createProblem(exception, offset, length, severity);
+			acceptProblem(problem);
+		}
 	}
 
 	public void warning(Exception exception) {
@@ -886,10 +900,19 @@ public class AntModel {
 	}
 	
 	public void errorFromElementText(Exception exception, int start, int count) {
-			computeEndLocationForErrorNode(fLastNode, start, count);
+		AntElementNode node= fLastNode;
+		if (node == null) {
+			if (!fStillOpenElements.empty()) {
+				node= (AntElementNode)fStillOpenElements.peek();
+			} 
+		}
+		if (node == null) {
+			return;
+		}
+		computeEndLocationForErrorNode(node, start, count);
 		notifyProblemRequestor(exception, start, count, XMLProblem.SEVERITY_ERROR);
-			markHierarchy(fLastNode, XMLProblem.SEVERITY_ERROR);
-		} 
+		markHierarchy(fLastNode, XMLProblem.SEVERITY_ERROR);
+	} 
 	
 	public void errorFromElement(Exception exception, AntElementNode node, int lineNumber, int column) {
 		if (node == null) {

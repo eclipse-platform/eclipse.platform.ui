@@ -12,19 +12,30 @@ package org.eclipse.ant.internal.ui.editor.outline;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.editors.text.ILocationProvider;
 
 public class LocationProvider {
-	private IFile fFile;
+	private IEditorInput fEditorInput;
 	
-	public LocationProvider(IFile file) {
-		fFile= file;
+	public LocationProvider(IEditorInput input) {
+		fEditorInput= input;
 	}
 
 	public IPath getLocation() {
-		return fFile != null ? fFile.getLocation() : null;
+		if(fEditorInput instanceof IFileEditorInput) {
+			return ((IFileEditorInput)fEditorInput).getFile().getLocation();
+		} else if (fEditorInput instanceof ILocationProvider) {
+			return ((ILocationProvider)fEditorInput).getPath(fEditorInput);
+		}
+		return null;
 	}
 	
 	public IFile getFile() {
-		return fFile;
+		if(fEditorInput instanceof IFileEditorInput) {
+			return ((IFileEditorInput)fEditorInput).getFile();
+		}
+		return null;
 	}
 }

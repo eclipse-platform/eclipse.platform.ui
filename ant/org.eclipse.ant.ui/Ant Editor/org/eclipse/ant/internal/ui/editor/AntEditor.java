@@ -146,12 +146,16 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 		 */
 		public void selectionChanged(SelectionChangedEvent event) {
+			AntModel model= getAntModel();
+			if (model == null) { //external file
+				return;
+			}
 			ISelection selection= event.getSelection();
 			AntElementNode node= null;
 			if (selection instanceof ITextSelection) {
 				ITextSelection textSelection= (ITextSelection)selection;
 				int offset= textSelection.getOffset();
-				node= getAntModel().getNode(offset, false);
+				node= model.getNode(offset, false);
 			}
 		
 			if (AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.OUTLINE_LINK_WITH_EDITOR)) {
@@ -763,12 +767,16 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 	}
 	
 	private AntElementNode getNode() {
+		AntModel model= getAntModel();
+		if (model == null) {
+			return null;
+		}
 		AntElementNode node= null;
 		ISelection selection= getSelectionProvider().getSelection();
 		if (selection instanceof ITextSelection) {
 			ITextSelection textSelection= (ITextSelection)selection;
 			int offset= textSelection.getOffset();
-			node= getAntModel().getNode(offset, false);
+			node= model.getNode(offset, false);
 		}
 		return node;
 	}

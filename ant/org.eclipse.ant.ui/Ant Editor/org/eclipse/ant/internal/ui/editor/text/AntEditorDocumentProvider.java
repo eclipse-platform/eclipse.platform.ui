@@ -17,7 +17,6 @@ package org.eclipse.ant.internal.ui.editor.text;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.ant.internal.ui.editor.outline.AntEditorMarkerUpdater;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.editor.outline.IProblem;
@@ -25,24 +24,22 @@ import org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor;
 import org.eclipse.ant.internal.ui.editor.outline.LocationProvider;
 import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.rules.DefaultPartitioner;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.editors.text.FileDocumentProvider;
+import org.eclipse.ui.editors.text.TextFileDocumentProvider;
+import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.MarkerUtilities;
-import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
 /*
  * This file originates from an internal package of Eclipse's 
@@ -50,9 +47,9 @@ import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
  * permanently use those features. It has been renamed and edited by GEBIT 
  * after copying.
  */
-public class AntEditorDocumentProvider extends FileDocumentProvider {
+public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 
-	protected class XMLAnnotationModel extends ResourceMarkerAnnotationModel implements IProblemRequestor {
+	protected class AntAnnotationModel extends AbstractMarkerAnnotationModel implements IProblemRequestor {
 		
 		private List fGeneratedAnnotations= new ArrayList();
 		private List fCollectedProblems= new ArrayList();
@@ -61,8 +58,8 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
 		private List fPreviouslyOverlaid= null; 
 		private List fCurrentlyOverlaid= new ArrayList();
 
-		public XMLAnnotationModel(IFileEditorInput input) {
-			super(input.getFile());
+		public AntAnnotationModel() {
+			super();
 		}
 
 		/*
@@ -236,18 +233,48 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
 				
 			super.removeAnnotation(annotation, fireModelChanged);
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel#retrieveMarkers()
+		 */
+		protected IMarker[] retrieveMarkers() throws CoreException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel#deleteMarkers(org.eclipse.core.resources.IMarker[])
+		 */
+		protected void deleteMarkers(IMarker[] markers) throws CoreException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel#listenToMarkerChanges(boolean)
+		 */
+		protected void listenToMarkerChanges(boolean listen) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel#isAcceptable(org.eclipse.core.resources.IMarker)
+		 */
+		protected boolean isAcceptable(IMarker marker) {
+			// TODO Auto-generated method stub
+			return false;
+		}
 	}
 	
 	/**
-	 * Remembers a XML document model for each element.
+	 * Remembers a Ant document model for each element.
 	 */
-	protected class XMLFileInfo extends FileInfo {
+	protected class AntFileInfo extends FileInfo {
 		
 		public AntModel fAntModel;
 		
-		public XMLFileInfo(IDocument document, IAnnotationModel annotationModel, FileSynchronizer fileSynchronizer, AntModel model) {
-			super(document, annotationModel, fileSynchronizer);
-			fAntModel= model;
+		public AntFileInfo() {
 		}
 	}
 	
@@ -335,114 +362,82 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
 	private XMLCore fCore;
 
 	public AntEditorDocumentProvider(XMLCore core) {
-		super();
+		super(new TextFileDocumentProvider(new AntStorageDocumentProvider()));
 		fCore= core;
 	}
 
-    private IDocumentPartitioner createDocumentPartitioner() {
-        DefaultPartitioner partitioner =
-            new DefaultPartitioner(
-                new AntEditorPartitionScanner(),
-                new String[] {
-                    AntEditorPartitionScanner.XML_TAG,
-                    AntEditorPartitionScanner.XML_COMMENT });
-        return partitioner;
-    }
-
-    public IDocument createDocument(Object element) throws CoreException {
-	    IDocument document;
-	    if (element instanceof IEditorInput) {
-		    document= new PartiallySynchronizedDocument();
-		    if (setDocumentContent(document, (IEditorInput) element, getEncoding(element))) {
-			    initializeDocument(document);
-		    }
-	    } else {
-		    document= null;
-	    }
-	    return document;
-    }
-	
-    protected void initializeDocument(IDocument document) {
-	    IDocumentPartitioner partitioner= createDocumentPartitioner();
-	    document.setDocumentPartitioner(partitioner);
-	    partitioner.connect(document);
-    }
-
     public AntModel getAntModel(Object element) {
-	    ElementInfo info= getElementInfo(element);
-	    if (info instanceof XMLFileInfo) {
-		    XMLFileInfo xmlInfo= (XMLFileInfo) info;
+	    FileInfo info= getFileInfo(element);
+	    if (info instanceof AntFileInfo) {
+		    AntFileInfo xmlInfo= (AntFileInfo) info;
 		    return xmlInfo.fAntModel;
 	    }
 	    return null;
     }
 
-    /*
-     * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#createAnnotationModel(java.lang.Object)
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createAnnotationModel(org.eclipse.core.resources.IFile)
      */
-    protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
-	    if (element instanceof IFileEditorInput) {
-		    IFileEditorInput input= (IFileEditorInput) element;
-		    return new XMLAnnotationModel(input);
-	    }
-	    return super.createAnnotationModel(element);
+    protected IAnnotationModel createAnnotationModel(IFile file) {
+		   return new AntAnnotationModel();
     }
 
     protected AntModel createAntModel(Object element, IDocument document, IAnnotationModel annotationModel) {
 	    IProblemRequestor requestor= annotationModel instanceof IProblemRequestor ? (IProblemRequestor) annotationModel : null;
-	    return new AntModel(fCore, document, requestor, new LocationProvider(element instanceof IFileEditorInput ? ((IFileEditorInput) element).getFile() : null));
+	    return new AntModel(fCore, document, requestor, new LocationProvider(element instanceof IEditorInput ? (IEditorInput) element : null));
     }
-
+    
     /*
-     * @see org.eclipse.ui.editors.text.FileDocumentProvider#createElementInfo(java.lang.Object)
-     */
-    protected ElementInfo createElementInfo(Object element) throws CoreException {
-	    if (element instanceof IFileEditorInput) {
-			
-		    IFileEditorInput input= (IFileEditorInput) element;
-			
-		    try {
-			    refreshFile(input.getFile());
-		    } catch (CoreException x) {
-			    handleCoreException(x, "XMLDocumentProvider.createElementInfo: Core exception"); //$NON-NLS-1$
-		    }
-			
-		    IDocument d= null;
-		    IStatus s= null;
-			
-		    try {
-			    d= createDocument(element);
-		    } catch (CoreException x) {
-			    s= x.getStatus();
-			    d= createEmptyDocument();
-		    }
-			
-		    IAnnotationModel m= createAnnotationModel(element);
-		    AntModel o= createAntModel(element, d, m);
-		    o.install();
-		    FileSynchronizer f= new FileSynchronizer(input);
-		    f.install();
-			
-		    XMLFileInfo info= new XMLFileInfo(d, m, f, o);
-		    info.fModificationStamp= computeModificationStamp(input.getFile());
-		    info.fStatus= s;
-		    info.fEncoding= getPersistedEncoding(input);
-			
-		    return info;
-	    }
+	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createFileInfo(java.lang.Object)
+	 */
+	protected FileInfo createFileInfo(Object element) throws CoreException {
 		
-	    return super.createElementInfo(element);
-    }
+		
+		FileInfo info= super.createFileInfo(element);
+		if (!(info instanceof AntFileInfo)) {
+			return null;
+		}
 	
-    /*
-     * @see org.eclipse.ui.editors.text.FileDocumentProvider#disposeElementInfo(java.lang.Object, org.eclipse.ui.texteditor.AbstractDocumentProvider.ElementInfo)
+		AntFileInfo xmlInfo= (AntFileInfo) info;
+		IAnnotationModel model= xmlInfo.fModel;
+		if (model == null) {
+			model= createAnnotationModel(null);
+			model.connect(xmlInfo.fTextFileBuffer.getDocument());
+		}
+		AntModel antModel= createAntModel(element, xmlInfo.fTextFileBuffer.getDocument(), model);
+		antModel.install();
+		xmlInfo.fAntModel= antModel;
+		setUpSynchronization(xmlInfo);
+		
+		return xmlInfo;
+	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#disposeFileInfo(java.lang.Object, org.eclipse.ui.editors.text.TextFileDocumentProvider.FileInfo)
      */
-    protected void disposeElementInfo(Object element, ElementInfo info) {
-	    if (info instanceof XMLFileInfo) {
-		    XMLFileInfo xmlInfo= (XMLFileInfo) info;
+    protected void disposeFileInfo(Object element, FileInfo info) {
+	    if (info instanceof AntFileInfo) {
+		    AntFileInfo xmlInfo= (AntFileInfo) info;
 		    if (xmlInfo.fAntModel != null)
 			    xmlInfo.fAntModel.dispose();
 	    }
-	    super.disposeElementInfo(element, info);	
+	    super.disposeFileInfo(element, info);	
+    }
+    
+    /*
+	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createEmptyFileInfo()
+	 */
+	protected FileInfo createEmptyFileInfo() {
+		return new AntFileInfo();
+	}
+	
+	 private void setUpSynchronization(AntFileInfo antInfo) {
+        IDocument document= antInfo.fTextFileBuffer.getDocument();
+        IAnnotationModel model= antInfo.fModel;
+        
+        if (document instanceof ISynchronizable && model instanceof ISynchronizable) {
+            Object lock= ((ISynchronizable) document).getLockObject();
+            ((ISynchronizable) model).setLockObject(lock);
+        }
     }
 }

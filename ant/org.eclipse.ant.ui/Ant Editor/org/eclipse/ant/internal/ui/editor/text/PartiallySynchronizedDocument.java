@@ -14,51 +14,55 @@ package org.eclipse.ant.internal.ui.editor.text;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.ISynchronizable;
 
 /**
  * Document that can also be used by a background reconciler.
  */
-public class PartiallySynchronizedDocument extends Document {
+public class PartiallySynchronizedDocument extends Document implements ISynchronizable {
+    
+    private final Object fInternalLockObject= new Object();
+    private Object fLockObject;
 	
-	AntModel fAntModel= null; 
+	private AntModel fAntModel= null; 
 			
-	/*
-	 * @see IDocumentExtension#startSequentialRewrite(boolean)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocumentExtension#startSequentialRewrite(boolean)
 	 */
 	synchronized public void startSequentialRewrite(boolean normalized) {
 		super.startSequentialRewrite(normalized);
 	}
 		
-	/*
-	 * @see IDocumentExtension#stopSequentialRewrite()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocumentExtension#stopSequentialRewrite()
 	 */
 	synchronized public void stopSequentialRewrite() {
 		super.stopSequentialRewrite();
 	}
 			
-	/*
-	 * @see IDocument#get()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocument#get()
 	 */
 	synchronized public String get() {
 		return super.get();
 	}
 			
-	/*
-	 * @see IDocument#get(int, int)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocument#get(int, int)
 	 */
 	synchronized public String get(int offset, int length) throws BadLocationException {
 		return super.get(offset, length);
 	}
 			
-	/*
-	 * @see IDocument#getChar(int)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocument#getChar(int)
 	 */
 	synchronized public char getChar(int offset) throws BadLocationException {
 		return super.getChar(offset);
 	}
 			
-	/*
-	 * @see IDocument#replace(int, int, String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocument#replace(int, int, java.lang.String)
 	 */
 	synchronized public void replace(int offset, int length, String text) throws BadLocationException {
 		super.replace(offset, length, text);
@@ -71,8 +75,8 @@ public class PartiallySynchronizedDocument extends Document {
 		}
 	}
 			
-	/*
-	 * @see IDocument#set(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocument#set(java.lang.String)
 	 */
 	synchronized public void set(String text) {
 		super.set(text);
@@ -81,4 +85,18 @@ public class PartiallySynchronizedDocument extends Document {
 	public void setAntModel(AntModel model) {
 		fAntModel= model;
 	}
+	
+	/*
+     * @see org.eclipse.jface.text.ISynchronizable#setLockObject(java.lang.Object)
+     */
+    public void setLockObject(Object lockObject) {
+        fLockObject= lockObject;
+    }
+
+    /*
+     * @see org.eclipse.jface.text.ISynchronizable#getLockObject()
+     */
+    public Object getLockObject() {
+        return fLockObject == null ? fInternalLockObject : fLockObject;
+    }
 }
