@@ -1269,9 +1269,14 @@ public class NewProgressViewer extends TreeViewer implements FinishedJobs.KeptJo
  	        return;
  	    if (filtered(element))
  	    	return;
- 	    JobTreeItem ji= findJobItem(element, true);
-		if (ji != null && ji.refresh())
-			relayout(true, true);
+ 	    JobTreeItem ji= findJobItem(element, false);
+ 	    if (ji == null) {	// not found -> add it (workaround for #68151)
+ 	    	ji= findJobItem(element, true);
+ 	    	relayout(true, true);
+ 	    } else { // just a refresh
+ 	 		if (ji.refresh())
+ 	 			relayout(true, true);
+ 	    }
 	}
 	
 	public void refresh(boolean updateLabels) {
