@@ -112,7 +112,12 @@ public interface IDebugUIConstants {
 	 * Debug perspective identifier (value <code>"org.eclipse.debug.ui.DebugPerspective"</code>).
 	 */
 	public static final String ID_DEBUG_PERSPECTIVE = PLUGIN_ID + ".DebugPerspective"; //$NON-NLS-1$
-			
+	
+	/**
+	 * Console type identifier (value <code>"org.eclipse.debug.ui.ProcessConsoleType"</code>).
+	 */
+	public static final String ID_PROCESS_CONSOLE_TYPE = PLUGIN_ID + ".ProcessConsoleType"; //$NON-NLS-1$
+	
 	/**
 	 * Constant for referring to no perspective.
 	 */
@@ -788,6 +793,13 @@ public interface IDebugUIConstants {
 	 * @since 3.0
 	 */
 	public static final String ATTR_LAUNCH_IN_BACKGROUND = PLUGIN_ID + ".ATTR_LAUNCH_IN_BACKGROUND"; //$NON-NLS-1$
+	
+	/**
+	 * ProcessConsole attribute - references the process that was launched.
+	 * 
+	 * @since 3.1 
+	 */
+	public static final String ATTR_CONSOLE_PROCESS = PLUGIN_ID + ".ATTR_CONSOLE_PROCESS"; //$NON-NLS-1$
 	
 	// Extension points
 	

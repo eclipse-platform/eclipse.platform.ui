@@ -304,7 +304,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		mgr.add(new Separator("fixedGroup")); //$NON-NLS-1$
 		mgr.add(fPinAction);
 		mgr.add(fDisplayConsoleAction);
-//		mgr.add(fOpenConsoleAction);
+		mgr.add(fOpenConsoleAction);
 	}
 
 	/* (non-Javadoc)

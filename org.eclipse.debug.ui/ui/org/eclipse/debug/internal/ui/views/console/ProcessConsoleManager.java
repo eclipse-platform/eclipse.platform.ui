@@ -143,6 +143,7 @@ public class ProcessConsoleManager implements ILaunchListener {
 						//create a new console.
 						IConsoleColorProvider colorProvider = getColorProvider(process.getAttribute(IProcess.ATTR_PROCESS_TYPE));
 						ProcessConsole pc = new ProcessConsole(process, colorProvider);
+						pc.setAttribute(IDebugUIConstants.ATTR_CONSOLE_PROCESS, process);
 						//add new console to console manager.
 						ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{pc});
 					}

@@ -71,6 +71,7 @@ public class ConsolePluginImages {
 		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_CLEAR, ELCL + "clear_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_PIN, ELCL + "pin.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_LOCK, ELCL + "lock_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_NEW_CON, ELCL + "new_con.gif"); //$NON-NLS-1$
 		
 		// Views
 		declareRegistryImage(IConsoleConstants.IMG_VIEW_CONSOLE, VIEW + "console_view.gif"); //$NON-NLS-1$				

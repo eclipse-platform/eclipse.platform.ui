@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleFactory;
 
 /**
@@ -35,7 +34,7 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
         fFactoryExtensions = ConsolePlugin.getDefault().getConsoleManager().getConsoleFactoryExtensions();
 		setText(ConsoleMessages.getString("OpenConsoleAction.0")); //$NON-NLS-1$
 		setToolTipText(ConsoleMessages.getString("OpenConsoleAction.1"));  //$NON-NLS-1$
-		setImageDescriptor(ConsolePluginImages.getImageDescriptor(IConsoleConstants.IMG_VIEW_CONSOLE));
+		setImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_ELCL_NEW_CON));
 		setMenuCreator(this);
     }
     

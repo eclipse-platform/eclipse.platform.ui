@@ -1915,6 +1915,12 @@ M4 = Platform-specific fourth key
 			class="org.eclipse.debug.internal.ui.actions.LaunchablePropertyTester"
 			id="org.eclipse.debug.ui.propertyTesters.launchable">		
 	  </propertyTester>      
+      <propertyTester
+            namespace="org.eclipse.debug.ui"
+            type="org.eclipse.ui.console.IOConsole"
+            class="org.eclipse.debug.internal.ui.views.console.JavaConsoleTrackerPropertyTester"
+            properties="processTypeTest"
+            id="org.eclipse.jdt.debug.ui.JavaConsolePropertyTester"/>
    </extension>
 <!-- Context extensions -->
   <extension

@@ -61,8 +61,6 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
  * @since 3.0
  */
 public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSetListener, IPropertyChangeListener {
-    public static final String TYPE = "org.eclipse.debug.ProcessConsole"; //$NON-NLS-1$
-	
 	private IProcess fProcess = null;
 	private List streamListeners = new ArrayList();
     private IConsoleColorProvider fColorProvider;
@@ -73,7 +71,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	 * Proxy to a console document
 	 */
 	public ProcessConsole(IProcess process, IConsoleColorProvider colorProvider) {
-		super("", TYPE, null); //$NON-NLS-1$
+		super("", IDebugUIConstants.ID_PROCESS_CONSOLE_TYPE, null); //$NON-NLS-1$
 		fProcess = process;
 		
 		fColorProvider = colorProvider;

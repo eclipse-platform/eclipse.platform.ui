@@ -28,4 +28,5 @@ public interface IInternalConsoleConstants {
 	public static final String IMG_ELCL_PIN = "IMG_ELCL_PIN"; //$NON-NLS-1$
 	public static final String IMG_ELCL_CLEAR= "IMG_ELCL_CLEAR"; //$NON-NLS-1$
 	public static final String IMG_ELCL_LOCK = "IMG_ELCL_LOCK"; //$NON-NLS-1$
+    public static final String IMG_ELCL_NEW_CON = "IMG_ELCL_NEW_CON"; //$NON-NLS-1$
 }
