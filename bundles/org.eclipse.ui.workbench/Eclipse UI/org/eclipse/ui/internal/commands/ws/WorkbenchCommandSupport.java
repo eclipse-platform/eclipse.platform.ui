@@ -304,7 +304,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             update = true;
         }
 
-        if ((newWorkbenchWindow != null) && (newWorkbenchWindow.getShell().equals(newActiveShell))) {
+        if ((newWorkbenchWindow != null) && (newWorkbenchWindow.getShell() == newActiveShell)) {
             IWorkbenchPage activeWorkbenchPage = newWorkbenchWindow
                     .getActivePage();
 
