@@ -918,10 +918,6 @@ public final class WorkbenchActionBuilder {
 	public boolean isContainerMenu(String menuId) {
 		if (menuId.equals(IWorkbenchActionConstants.M_FILE))
 			return true;
-		if (menuId.equals(IWorkbenchActionConstants.M_VIEW))
-			return true;
-		if (menuId.equals(IWorkbenchActionConstants.M_WORKBENCH))
-			return true;
 		if (menuId.equals(IWorkbenchActionConstants.M_WINDOW))
 			return true;
 		return false;

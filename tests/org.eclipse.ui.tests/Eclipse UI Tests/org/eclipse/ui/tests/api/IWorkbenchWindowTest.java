@@ -160,9 +160,7 @@ public class IWorkbenchWindowTest extends UITestCase {
 	public void testIsApplicationMenu() {
 		String[] ids = {
 			IWorkbenchActionConstants.M_FILE,
-			IWorkbenchActionConstants.M_VIEW,
-			IWorkbenchActionConstants.M_VIEW,
-			IWorkbenchActionConstants.M_WORKBENCH,
+			IWorkbenchActionConstants.M_WINDOW,
 		};
 
 		for( int i = 0; i < ids.length; i ++ )

@@ -154,12 +154,14 @@ public interface IWorkbenchActionConstants {
 	public static final String M_EDIT = MENU_PREFIX+"edit"; //$NON-NLS-1$
 
 	/**
-	 * Name of standard Perspective menu (value <code>"view"</code>).
+	 * Name of standard View menu (value <code>"view"</code>).
+	 * @deprecated Since 3.0.  This is no longer used.
 	 */
 	public static final String M_VIEW = MENU_PREFIX+"view"; //$NON-NLS-1$
 
 	/**
 	 * Name of standard Workbench menu (value <code>"workbench"</code>).
+	 * @deprecated Since 3.0.  This is no longer used.
 	 */
 	public static final String M_WORKBENCH = MENU_PREFIX+"workbench"; //$NON-NLS-1$
 
