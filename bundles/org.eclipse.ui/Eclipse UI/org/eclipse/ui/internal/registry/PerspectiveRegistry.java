@@ -5,6 +5,8 @@ package org.eclipse.ui.internal.registry;
  * All Rights Reserved.
  */
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import java.io.IOException;
 import java.io.File;
 import org.eclipse.core.runtime.*;
@@ -128,10 +130,6 @@ public void load() {
 	
 	defPerspID = 
 		WorkbenchPlugin.getDefault().getPreferenceStore().getString(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
-	IDialogSettings dialogSettings = WorkbenchPlugin.getDefault().getDialogSettings();
-	String str = dialogSettings.get(ID_DEF_PERSP);
-	if (str != null)
-		defPerspID = str;
 	verifyDefaultPerspective();
 }
 /**
@@ -174,8 +172,8 @@ public void setDefaultPerspective(String id) {
 	IPerspectiveDescriptor desc = findPerspectiveWithId(id);
 	if (desc != null) {
 		defPerspID = id;
-		IDialogSettings dialogSettings = WorkbenchPlugin.getDefault().getDialogSettings();
-		dialogSettings.put(ID_DEF_PERSP, id);
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		store.setValue(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID, id);
 	}
 }
 /**
@@ -189,8 +187,7 @@ public boolean validateLabel(String label) {
 }
 /**
  * Verifies the id of the default perspective.  If the
- * default perspective is invalid select another from the 
- * product.ini or use workbench default.
+ * default perspective is invalid use the workbench default.
  */
 private void verifyDefaultPerspective() {
 	// Step 1: Try current defPerspId value.
@@ -200,9 +197,9 @@ private void verifyDefaultPerspective() {
 	if (desc != null)
 		return;
 
-	// Step 2. Read product info preference.
+	// Step 2. Read default value.
 	defPerspID = 
-		WorkbenchPlugin.getDefault().getPreferenceStore().getString(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
+		WorkbenchPlugin.getDefault().getPreferenceStore().getDefaultString(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
 	if (defPerspID != null)
 		desc = findPerspectiveWithId(defPerspID);
 	if (desc != null)
