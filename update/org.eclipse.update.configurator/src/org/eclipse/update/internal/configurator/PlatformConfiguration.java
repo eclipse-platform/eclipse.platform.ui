@@ -13,9 +13,7 @@ package org.eclipse.update.internal.configurator;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import org.eclipse.core.internal.boot.PlatformURLConnection;
-import org.eclipse.core.internal.boot.PlatformURLHandler;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.internal.boot.*;
 import org.eclipse.update.configurator.*;
 
 public class PlatformConfiguration implements IPlatformConfiguration {
@@ -55,6 +53,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String CONFIG_NAME = "platform.cfg"; //$NON-NLS-1$
 	private static final String CONFIG_FILE = CONFIG_DIR + "/" + CONFIG_NAME; //$NON-NLS-1$
 	private static final String CONFIG_FILE_INIT = "install.ini"; //$NON-NLS-1$
+	private static final String CONFIG_INI = "config.ini"; //NON-NLS-1$
 	private static final String CONFIG_FILE_LOCK_SUFFIX = ".lock"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_TEMP_SUFFIX = ".tmp"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_BAK_SUFFIX = ".bak"; //$NON-NLS-1$
@@ -525,6 +524,9 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			if (cfigDir != null)
 				cfigDir.mkdirs();
 
+			// If config.ini does not exist, generate it
+			writeConfigIni(cfigDir);
+			
 			// first save the file as temp
 			File cfigTmp = new File(cfigFile.getAbsolutePath() + CONFIG_FILE_TEMP_SUFFIX);
 			os = new FileOutputStream(cfigTmp);
@@ -569,6 +571,19 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				// case we will restart with the previous state.
 				throw new IOException(Messages.getString("cfig.unableToSave", cfigTmp.getAbsolutePath())); //$NON-NLS-1$
 			}
+		}
+	}
+	
+	private void writeConfigIni(File configDir) {
+		try {
+			File configIni = new File(configDir, CONFIG_INI);
+			if (!configIni.exists()) {
+				URL configIniURL = ConfigurationActivator.getBundleContext().getBundle().getEntry(CONFIG_INI);
+				File sourceConfigIni = new File(configIniURL.getFile());
+				copy(sourceConfigIni, configIni);
+			}
+		} catch (IOException e) {
+			System.out.println(Messages.getString("cfg.unableToCreateConfig.ini"));
 		}
 	}
 
