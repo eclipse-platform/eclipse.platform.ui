@@ -177,7 +177,6 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 	 * @return the created title area composite
 	 */
 	private Composite createTitleArea(Composite parent) {
-		Font font = parent.getFont();
 		
 		// Create the title area which will contain
 		// a title, message, and image.
@@ -377,18 +376,15 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 	 * </p>
 	 */
 	protected void handleSave() {
-		if (page instanceof PreferencePage) {
-			// Save now in case tbe workbench does not shutdown cleanly
-			IPreferenceStore store =
-				((PreferencePage) page).getPreferenceStore();
-			if (store != null
-				&& store.needsSaving()
-				&& store instanceof IPersistentPreferenceStore) {
-				try {
-					((IPersistentPreferenceStore) store).save();
-				} catch (IOException e) {
-					Utils.handle(e); 
-				}
+		// Save now in case tbe workbench does not shutdown cleanly
+		IPreferenceStore store = page.getPreferenceStore();
+		if (store != null
+			&& store.needsSaving()
+			&& store instanceof IPersistentPreferenceStore) {
+			try {
+				((IPersistentPreferenceStore) store).save();
+			} catch (IOException e) {
+				Utils.handle(e); 
 			}
 		}
 	}

@@ -14,10 +14,7 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.internal.ui.ITeamUIImages;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.registry.SynchronizeWizardDescription;
-import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
 import org.eclipse.team.ui.TeamImages;
-import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipantReference;
 import org.eclipse.ui.IWorkbench;
 
@@ -43,7 +40,6 @@ public class GlobalSynchronizeWizard extends Wizard {
 	 * @see Wizard#addPages
 	 */
 	public void addPages() {
-		SynchronizeWizardDescription[] wizards = getWizards();
 		mainPage = new GlobalRefreshWizardSelectionPage();
 		addPage(mainPage);
 	}	
@@ -78,9 +74,4 @@ public class GlobalSynchronizeWizard extends Wizard {
 		}
 		return true;
 	}
-
-	protected SynchronizeWizardDescription[] getWizards() {
-		SynchronizeManager manager = (SynchronizeManager) TeamUI.getSynchronizeManager();
-		return manager.getWizardDescriptors();
-	}	
 }

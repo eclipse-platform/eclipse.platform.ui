@@ -20,7 +20,7 @@
       <import plugin="org.eclipse.ui.workbench.texteditor" optional="true"/>
       <import plugin="org.eclipse.ui.editors" optional="true"/>
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.team.core"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.compare"/>

@@ -175,14 +175,12 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 	 * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#updateEnablements()
 	 */
 	public void updateEnablements() {
-		boolean complete = false;
 		try {
 			long number = Long.parseLong(time.getText());
 			if(number <= 0) {
 				validator.setComplete(Policy.bind("ConfigureRefreshScheduleDialog.7")); //$NON-NLS-1$
 			} else {
 				validator.setComplete(null);
-				complete = true;
 			}
 		} catch (NumberFormatException e) {
 			validator.setComplete(Policy.bind("ConfigureRefreshScheduleDialog.8")); //$NON-NLS-1$

@@ -31,7 +31,6 @@ import org.eclipse.ui.PlatformUI;
  */
 public class RemoveSynchronizeParticipantAction extends Action {
 
-	private ISynchronizeParticipant participant;
 	private final ISynchronizeView view;
 	private boolean removeAll;
 

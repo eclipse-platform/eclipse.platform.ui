@@ -85,7 +85,6 @@ public class DetailsDialogWithProjects extends DetailsDialog {
 		}
 		
 		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
 			detailsList.add(projects[i].getName()); //$NON-NLS-1$
 		}			
 		return composite;

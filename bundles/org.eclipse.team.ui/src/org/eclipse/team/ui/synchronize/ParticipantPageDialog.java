@@ -49,7 +49,6 @@ public class ParticipantPageDialog extends SaveablePartDialog {
 	 */
 	protected Control createDialogArea(Composite parent2) {
 		Composite parent = (Composite) super.createDialogArea(parent2);	
-		ISynchronizeParticipantReference[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();	
 		if (participant != null && ! particantRegisteredWithSynchronizeManager(participant)) {
 			rememberParticipantButton = new Button(parent, SWT.CHECK);
 			rememberParticipantButton.setText(Policy.bind("ParticipantCompareDialog.1")); //$NON-NLS-1$

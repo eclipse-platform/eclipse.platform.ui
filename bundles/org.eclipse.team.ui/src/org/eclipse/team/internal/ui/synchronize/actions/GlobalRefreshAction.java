@@ -150,7 +150,6 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 	public void run() {
 		String id = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT);
 		String secondaryId = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT_SEC_ID);
-		IWizard wizard = new GlobalSynchronizeWizard();
 		ISynchronizeParticipantReference participant = TeamUI.getSynchronizeManager().get(id, secondaryId);
 		if (participant != null) {
 			run(participant);

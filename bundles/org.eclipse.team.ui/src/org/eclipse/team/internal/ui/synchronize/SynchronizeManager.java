@@ -496,7 +496,6 @@ public class SynchronizeManager implements ISynchronizeManager {
 		}
 		
 		if(perspectiveDescriptor != null) {
-			String perspectiveName = perspectiveDescriptor.getLabel();
 			
 			MessageDialogWithToggle m = MessageDialogWithToggle.openYesNoQuestion(Utils.getShell(null),
 						Policy.bind("SynchronizeManager.27"),  //$NON-NLS-1$
@@ -527,9 +526,9 @@ public class SynchronizeManager implements ISynchronizeManager {
 	public void init() {
 		try {
 			// Initialize the participant registry - reads all participant extension descriptions.
-			participantRegistry.readRegistry(Platform.getPluginRegistry(), TeamUIPlugin.ID, SynchronizeParticipantRegistry.PT_SYNCPARTICIPANTS);
+			participantRegistry.readRegistry(Platform.getExtensionRegistry(), TeamUIPlugin.ID, SynchronizeParticipantRegistry.PT_SYNCPARTICIPANTS);
 			// Initialize the wizard registry
-			wizardRegistry.readRegistry(Platform.getPluginRegistry(), TeamUIPlugin.ID, SynchronizeWizardRegistry.PT_SYNCHRONIZE_WIZARDS);
+			wizardRegistry.readRegistry(Platform.getExtensionRegistry(), TeamUIPlugin.ID, SynchronizeWizardRegistry.PT_SYNCHRONIZE_WIZARDS);
 			
 			// Instantiate and register any dynamic participants saved from a
 			// previous session.
@@ -595,7 +594,6 @@ public class SynchronizeManager implements ISynchronizeManager {
 	 */
 	private void saveState() {
 		XMLMemento xmlMemento = XMLMemento.createWriteRoot(CTX_PARTICIPANTS);
-		List children = new ArrayList();
 		for (Iterator it = participantReferences.values().iterator(); it.hasNext(); ) {
 			ParticipantInstance ref = (ParticipantInstance) it.next();
 			// Participants can opt out of being saved between sessions

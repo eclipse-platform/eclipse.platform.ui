@@ -24,7 +24,6 @@ public class WorkbenchPartSynchronizePageSite implements ISynchronizePageSite {
 	private IWorkbenchPart part;
 	private IDialogSettings settings;
 	private IPageSite site;
-	private IActionBars actionBars;
 
 	public WorkbenchPartSynchronizePageSite(IWorkbenchPart part, IPageSite site, IDialogSettings settings) {
 		this.part = part;

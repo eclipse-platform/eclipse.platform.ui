@@ -46,5 +46,5 @@ public interface IPreferenceIds {
 	/*
 	 * Preference to determine if the workspace  is started for the first time.
 	 */
-	public static final String PREF_WORKSPACE_FIRST_TIME = PREFIX + "first_time";
+	public static final String PREF_WORKSPACE_FIRST_TIME = PREFIX + "first_time"; //$NON-NLS-1$
 }

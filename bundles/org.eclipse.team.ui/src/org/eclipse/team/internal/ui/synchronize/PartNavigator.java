@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.CompareViewerSwitchingPane;
-import org.eclipse.compare.internal.*;
+import org.eclipse.compare.internal.INavigatable;
+import org.eclipse.compare.internal.IOpenable;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
@@ -31,7 +31,6 @@ import org.eclipse.team.internal.ui.synchronize.actions.NavigateAction;
  */
 public class PartNavigator implements INavigatable {
 	
-	private boolean fLastDirection= true;
 	private Object[] fPanes;
 	// Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
 	private boolean fNextFirstTime= true;
@@ -45,8 +44,6 @@ public class PartNavigator implements INavigatable {
 	}
 	
 	public boolean gotoDifference(boolean next) {
-		
-		fLastDirection= next;
 
 		// Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
 		if (next && fNextFirstTime && mustOpen()) {
@@ -95,26 +92,6 @@ public class PartNavigator implements INavigatable {
 			return (INavigatable)((IAdaptable)p).getAdapter(INavigatable.class);
 		}	
 		return null;
-	}
-	
-	private static CompareNavigator findNavigator(Control c) {
-		while (c != null && !c.isDisposed()) {	// PR 1GEUVV2
-			Object data= c.getData();
-			if (data instanceof CompareEditorInput) {
-				CompareEditorInput cei= (CompareEditorInput) data;
-				Object adapter= cei.getAdapter(CompareNavigator.class);
-				if (adapter instanceof CompareNavigator)
-					return (CompareNavigator)adapter;
-			}
-			c= c.getParent();
-		}
-		return null;
-	}
-	
-	private boolean resetDirection() {
-		boolean last= fLastDirection;
-		fLastDirection= true;
-		return last;
 	}
 	
 	/*

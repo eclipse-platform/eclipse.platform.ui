@@ -11,8 +11,8 @@
 package org.eclipse.team.internal.ui.preferences;
 
 import java.text.Collator;
-import java.text.DateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -32,7 +32,6 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	
 	private BooleanFieldEditor compressFolders = null;
 	private BooleanFieldEditor showSyncInLabels = null;
-	private BooleanFieldEditor useDefaultPerspective = null;
 	private RadioGroupFieldEditor synchronizePerspectiveSwitch = null;
 	
 	private static class PerspectiveDescriptorComparator implements Comparator {
@@ -136,20 +135,6 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 		layout.horizontalSpacing = 5;
 		layout.verticalSpacing = 5;
 		composite.setLayout(layout);
-	}
-
-	private void updateLastRunTime(Label label) {
-		String text;
-		long mills = 0;
-		if(mills == 0) {
-			String never = Policy.bind("SyncViewPreferencePage.lastRefreshRunNever"); //$NON-NLS-1$
-			text = Policy.bind("SyncViewPreferencePage.lastRefreshRun", never); //$NON-NLS-1$
-		} else {
-			Date lastTimeRun = new Date(mills);
-			String sLastTimeRun = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(lastTimeRun);
-			text = Policy.bind("SyncViewPreferencePage.lastRefreshRun", sLastTimeRun); //$NON-NLS-1$
-		}
-		label.setText(text);		
 	}
 
 	/* (non-Javadoc)

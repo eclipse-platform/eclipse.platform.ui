@@ -94,7 +94,7 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
                                         providerType = TeamPlugin.getAliasType(id);
                                     }
                                     if (providerType == null) {
-                                        throw new TeamException(new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, "Projects for repository type {0} could not be loaded as the type could not be found." + id, null));
+                                        throw new TeamException(new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, Policy.bind("ProjectSetImportWizard.0", id), null)); //$NON-NLS-1$
                                     }
                                 	ProjectSetCapability serializer = providerType.getProjectSetCapability();
                                 	ProjectSetCapability.ensureBackwardsCompatible(providerType, serializer);
@@ -116,7 +116,7 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 							        for (int i = 0; i < exceptions.length; i++) {
                                         status[i] = exceptions[i].getStatus();
                                     }
-							        throw new TeamException(new MultiStatus(TeamUIPlugin.ID, 0, status, "The following errors occurred while importing projects. Some projects may not be loaded.", null));
+							        throw new TeamException(new MultiStatus(TeamUIPlugin.ID, 0, status, Policy.bind("ProjectSetImportWizard.1"), null)); //$NON-NLS-1$
 							    }
 							}
 						}

@@ -29,7 +29,6 @@ import org.eclipse.team.internal.ui.Policy;
 public class SaveablePartDialog extends ResizableDialog {
 		
 	private ISaveableWorkbenchPart input;
-	private Button saveButton;
 
 	/**
 	 * Creates a dialog with the given title and input. The input is not created until the dialog

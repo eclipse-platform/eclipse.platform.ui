@@ -42,9 +42,8 @@ public abstract class RegistryReader {
 	 */
 	protected void logError(IConfigurationElement element, String text) {
 		IExtension extension = element.getDeclaringExtension();
-		IPluginDescriptor descriptor = extension.getDeclaringPluginDescriptor();
 		StringBuffer buf = new StringBuffer();
-		buf.append("Plugin " + descriptor.getUniqueIdentifier() + ", extension " + extension.getExtensionPointUniqueIdentifier()); //$NON-NLS-2$//$NON-NLS-1$
+		buf.append("Plugin " + extension.getNamespace() + ", extension " + extension.getExtensionPointUniqueIdentifier()); //$NON-NLS-2$//$NON-NLS-1$
 		buf.append("\n" + text); //$NON-NLS-1$
 		WorkbenchPlugin.log(buf.toString());
 	}
@@ -79,8 +78,8 @@ public abstract class RegistryReader {
 		// dependent in the order listed in the XML file.
 		Sorter sorter = new Sorter() {
 			public boolean compare(Object extension1, Object extension2) {
-				String s1 = ((IExtension) extension1).getDeclaringPluginDescriptor().getUniqueIdentifier();
-				String s2 = ((IExtension) extension2).getDeclaringPluginDescriptor().getUniqueIdentifier();
+				String s1 = ((IExtension) extension1).getNamespace();
+				String s2 = ((IExtension) extension2).getNamespace();
 				//Return true if elementTwo is 'greater than' elementOne
 				return s2.compareToIgnoreCase(s1) > 0;
 			}
@@ -128,7 +127,7 @@ public abstract class RegistryReader {
 	 * Start the registry reading process using the supplied plugin ID and
 	 * extension point.
 	 */
-	public void readRegistry(IPluginRegistry registry, String pluginId, String extensionPoint) {
+	public void readRegistry(IExtensionRegistry registry, String pluginId, String extensionPoint) {
 		String pointId = pluginId + "-" + extensionPoint; //$NON-NLS-1$
 		IExtension[] extensions = (IExtension[]) extensionPoints.get(pointId);
 		if (extensions == null) {

@@ -382,7 +382,6 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 					final SyncInfoModelElement node = getElement(s);
 					if (node != null) {
 						IResource resource = node.getResource();
-						int kind = node.getKind();
 						if (resource != null && resource.getType() == IResource.FILE) {
 							// Cache the contents because compare doesn't show progress
 							// when calling getContents on a diff node.
@@ -468,12 +467,10 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	
 	private void setDirty(Object source, boolean dirty) {
 		Assert.isNotNull(source);
-		boolean oldDirty= fDirtyViewers.size() > 0;
 		if (dirty)
 			fDirtyViewers.add(source);
 		else
 			fDirtyViewers.remove(source);
-		boolean newDirty= fDirtyViewers.size() > 0;
 	}	
 	
 	private void createActionBars(final IToolBarManager toolbar) {

@@ -170,7 +170,6 @@ public class SubscriberRefreshSchedule {
 			return Policy.bind("SyncViewPreferencePage.lastRefreshRunNever"); //$NON-NLS-1$
 		}
 		long stopMills = event.getStopTime();
-		long startMills = event.getStartTime();
 		StringBuffer text = new StringBuffer();
 		if(stopMills <= 0) {
 			text.append(Policy.bind("SyncViewPreferencePage.lastRefreshRunNever")); //$NON-NLS-1$

@@ -190,7 +190,7 @@ public class SynchronizeModelElementLabelProvider extends LabelProvider implemen
 	 * @return whether the node has descendant conflicts
 	 */
 	private boolean hasDecendantConflicts(ISynchronizeModelElement node) {
-		return ((ISynchronizeModelElement)node).getProperty(ISynchronizeModelElement.PROPAGATED_CONFLICT_PROPERTY);
+		return node.getProperty(ISynchronizeModelElement.PROPAGATED_CONFLICT_PROPERTY);
 	}
 	
 	/**

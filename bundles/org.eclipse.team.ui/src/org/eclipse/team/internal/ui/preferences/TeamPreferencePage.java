@@ -54,7 +54,6 @@ public class TeamPreferencePage extends PreferencePage implements IWorkbenchPref
 		// Create the checkbox for sync mode
 		syncModeButton = createCheckBox(composite, Policy.bind("TeamPreferencePage.&Use_Incoming/Outgoing_mode_when_synchronizing_2")); //$NON-NLS-1$
 
-		initializeValues();
 		Dialog.applyDialogFont(parent);
 		return composite;
 	}
@@ -84,36 +83,20 @@ public class TeamPreferencePage extends PreferencePage implements IWorkbenchPref
 	protected IPreferenceStore doGetPreferenceStore() {
 		return TeamUIPlugin.getPlugin().getPreferenceStore();
 	}
-	/**
-	 * Defaults was clicked. Restore the CVS preferences to
-	 * their default values
-	 */
-	protected void performDefaults() {
-		super.performDefaults();
-		IPreferenceStore store = getPreferenceStore();
-		//syncModeButton.setSelection(store.getDefaultBoolean(ISharedImages.PREF_ALWAYS_IN_INCOMING_OUTGOING));
-	}
+	
 	/**
 	 * OK was clicked. Store the CVS preferences.
 	 *
 	 * @return whether it is okay to close the preference page
 	 */
 	public boolean performOk() {
-		IPreferenceStore store = getPreferenceStore();
-		//store.setValue(ISharedImages.PREF_ALWAYS_IN_INCOMING_OUTGOING, syncModeButton.getSelection());
 		TeamUIPlugin.getPlugin().savePluginPreferences();
 		return true;
 	}
+	
 	/**
-	 * Initializes states of the controls from the preference store.
+	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
-	private void initializeValues() {
-		IPreferenceStore store = getPreferenceStore();
-		//syncModeButton.setSelection(store.getBoolean(ISharedImages.PREF_ALWAYS_IN_INCOMING_OUTGOING));
-	}
-   /**
-	* @see IWorkbenchPreferencePage#init(IWorkbench)
-	*/
 	public void init(IWorkbench workbench) {
 	}
 }

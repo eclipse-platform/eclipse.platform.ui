@@ -376,7 +376,6 @@ public class Utils {
 			a.setDescription(s);
 		String relPath = Policy.bind(imageKey, bundle);
 		if (relPath != null && !relPath.equals(imageKey) && relPath.trim().length() > 0) {
-			String cPath;
 			String dPath;
 			String ePath;
 			if (relPath.indexOf("/") >= 0) { //$NON-NLS-1$
@@ -575,7 +574,6 @@ public class Utils {
 	public static String stripAmpersand(String string) {
 		if( string.indexOf('&') != -1)  { 
 			StringBuffer buffer = new StringBuffer(string);
-			char last = 'x';
 			for (int i = string.length()-1; i > -1; i--) {
 				char c = string.charAt(i);
 				if(c == '&') {

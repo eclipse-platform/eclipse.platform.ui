@@ -157,7 +157,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	 */
 	protected AdaptableList getAvailableWizards(AdaptableList disabledWizards) {
 		AdaptableList result = new AdaptableList();
-		IPluginRegistry registry = Platform.getPluginRegistry();
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint point = registry.getExtensionPoint(pluginId, getExtensionPoint());
 		if (point != null) {
 			IExtension[] extensions = point.getExtensions();
@@ -181,7 +181,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	
 	private boolean filterItem(IConfigurationElement element) {
 		String extensionId = element.getAttribute(ATT_ID);
-		String extensionPluginId = element.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
+		String extensionPluginId = element.getDeclaringExtension().getNamespace();
 	    IActivityManager activityMgr = PlatformUI.getWorkbench().getActivitySupport().getActivityManager();
 	    IIdentifier id = activityMgr.getIdentifier(extensionPluginId + "/" +  extensionId); //$NON-NLS-1$
 	    return (!id.isEnabled());

@@ -90,7 +90,7 @@ public class TeamCapabilityHelper {
 				IConfigurationElement[] elements = extension.getConfigurationElements();
 				for (int j = 0; j < elements.length; j++) {
 					IConfigurationElement element = elements[j];
-					final String pluginId = extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
+					final String pluginId = extension.getNamespace();
 					if (element.getName().equals(TeamPlugin.REPOSITORY_EXTENSION)) {
 						final String id = element.getAttribute("id"); //$NON-NLS-1$
 						if (id == null) {
