@@ -83,10 +83,9 @@ public class Extension extends RegistryModelObject implements IExtension {
 				RegistryCacheReader reader = ((ExtensionRegistry) getRegistry()).getCacheReader();
 				if (reader != null)
 					elements = reader.loadConfigurationElements(this, subElementsCacheOffset);
-			} else {
-				if (elements == null)
-					return new IConfigurationElement[0];
-			}
+			} 
+			if (elements == null)
+				elements = new  IConfigurationElement[0];
 		}
 		return elements;
 	}
