@@ -18,6 +18,8 @@ import org.eclipse.ui.ide.IDEEncoding;
  * The EncodingFieldEditor is a field editor that allows the 
  * user to set an encoding on a preference in a preference
  * store.
+ * 
+ * @since 3.1
  */
 public class EncodingFieldEditor extends AbstractEncodingFieldEditor {
 

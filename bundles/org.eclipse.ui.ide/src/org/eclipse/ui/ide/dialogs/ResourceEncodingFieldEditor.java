@@ -40,6 +40,8 @@ import org.eclipse.ui.internal.misc.Assert;
  * The ResourceEncodingFieldEditor is a field editor for
  * editing the encoding of a resource and does not use a 
  * preference store.
+ * 
+ * @since 3.1
  */
 public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 
