@@ -1,13 +1,16 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.ui.*;
+import org.eclipse.jface.action.IToolBarManager;
+
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.tests.util.CallHistory;
+import org.eclipse.ui.part.EditorActionBarContributor;
 
 public class MockEditorActionBarContributor
-	implements IEditorActionBarContributor 
+	extends EditorActionBarContributor 
 {
 	protected CallHistory callHistory;
-	protected IActionBars bars;
 	protected IEditorPart target;
 	protected int ACTION_COUNT = 5;
 	protected MockAction [] actions;
@@ -29,15 +32,22 @@ public class MockEditorActionBarContributor
 	 */
 	public void init(IActionBars bars) {
 		callHistory.add("init");
-		this.bars = bars;
 		actions = new MockAction[ACTION_COUNT];
 		for (int nX = 0; nX < ACTION_COUNT; nX ++) {
 			actions[nX] = new MockAction(Integer.toString(nX));
 			if (nX % 2 > 0)
 				actions[nX].setEnabled(false);
-			bars.getToolBarManager().add(actions[nX]);
 		}
-		bars.updateActionBars();
+		super.init(bars);
+	}
+	
+	/**
+	 * @see EditorActionBarContributor#contributeToToolBar(IToolBarManager)
+	 */
+	public void contributeToToolBar(IToolBarManager toolBarManager) {
+		for (int i = 0; i < actions.length; ++i) {
+			toolBarManager.add(actions[i]);
+		}
 	}
 
 	/**
@@ -54,14 +64,7 @@ public class MockEditorActionBarContributor
 	public IEditorPart getActiveEditor() {
 		return target;
 	}
-	
-	/**
-	 * Returns the action bars.
-	 */
-	public IActionBars getActionBars() {
-		return bars;
-	}
-	
+		
 	/**
 	 * Returns the actions.
 	 */
