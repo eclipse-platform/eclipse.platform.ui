@@ -67,8 +67,8 @@ public String createMessageString(String strPrefix, Exception ex) {
 	StringBuffer strb = new StringBuffer(strPrefix);
 
 	if (ex != null) {
-		if (ex.getMessage() != null) {
-			strb.append(": " + ex.getMessage());
+		if (ex.getLocalizedMessage() != null) {
+			strb.append(": " + ex.getLocalizedMessage());
 		}
 
 		else if (ex.toString() != null && ex.toString().length() > 0) {

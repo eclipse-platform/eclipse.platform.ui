@@ -51,7 +51,7 @@ public static BaseURLHandler.Response open(URL url) throws IOException {
 		return new Response(new org.eclipse.webdav.http.client.Response(UNKNOWN_STATUS,UNKNOWN_MSG,ctx,is));
 	}
 	else {
-		if (http==null) throw new IllegalStateException("HTTP client not set");		
+		if (http==null) throw new IllegalStateException(UpdateManagerStrings.getString("S_HTTP_client_not_set"));	
 		Request request = new Request("GET", url, null);
 		return new Response(http.invoke(request));
 	}	

@@ -186,7 +186,7 @@ public void createControl(Composite compositeParent) {
 	// Label: Uniform Resource Locator
 	//--------------------------------
 	label = new Label(compositeBottomContent, SWT.NULL);
-	label.setText(UpdateManagerStrings.getString("S_Uniform_Resource_Locator") + ":");
+	label.setText(UpdateManagerStrings.getString("S_Location") + ":");
 	gridData = new GridData();
 	gridData.horizontalAlignment = GridData.FILL;
 	label.setLayoutData(gridData);
