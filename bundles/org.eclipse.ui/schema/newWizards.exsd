@@ -128,6 +128,14 @@ added to the "Other" category.
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="project" type="boolean">
+            <annotation>
+               <documentation>
+                  an optional attribute indicating the wizard will create an IProject resource.
+Also causes the wizard to appear as a choice within the "New Project Dialog".
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="finalPerspective" type="string">
             <annotation>
                <documentation>
@@ -135,11 +143,10 @@ added to the "Other" category.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="project" type="boolean">
+         <attribute name="preferredPerspectives" type="string">
             <annotation>
                <documentation>
-                  an optional attribute indicating the wizard will create an IProject resource.
-Also cause the wizard to appear as a choice within the "New Project Dialog".
+                  an optional attribute specifying a comma-separated list of perspective IDs.  If the current perspective is in this list, then no perspective activation occurs when IProject resource creation is finished.
                </documentation>
             </annotation>
          </attribute>
