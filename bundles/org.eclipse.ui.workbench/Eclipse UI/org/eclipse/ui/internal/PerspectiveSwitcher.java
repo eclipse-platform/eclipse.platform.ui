@@ -420,21 +420,6 @@ public class PerspectiveSwitcher {
 		ToolBar toolbar = perspectiveBar.getControl();
 		if (toolbar == null) 
 			return;
-		// calculate the minimum width
-/*		int minWidth = 0;
-		if (perspectiveBar.getControl().getItemCount() > 0)
-			minWidth = perspectiveBar.getControl().getItem(0).getBounds().width +
-						PerspectiveBarContributionItem.getMaxWidth(perspectiveBar.getControl().getItem(0).getImage()) +
-						 50;
-		Point coolBarSize = coolItem.getParent().getSize();
-
-		if (coolBarSize.x < minWidth) {
-			Composite banner = coolItem.getParent().getParent().getParent();
-			if (banner instanceof CBanner)
-				((CBanner)banner).setRightWidth(minWidth);
-		}
-*/		
-		Rectangle area = perspectiveCoolBar.getClientArea();
 
 		int rowHeight = toolbar.getItem(0).getBounds().height;
 		
@@ -443,9 +428,7 @@ public class PerspectiveSwitcher {
 			rowHeight = Math.max(rowHeight, perspectiveBar.getControl().getItem(i).getBounds().height);
 		}
 		
-		// update the height in the case that we need to resize smaller.  In that 
-		// case the client area might be too high
-		area.height = topBar.getLeft() == null ? 0 : topBar.getLeft().getBounds().height;
+		Rectangle area = perspectiveCoolBar.getClientArea();
 		int rows = rowHeight <= 0 ? 1 : (int)Math.max(1, Math.floor(area.height / rowHeight));
 		if (rows == 1 || (toolbar.getStyle() & SWT.WRAP) == 0 || currentLocation == TOP_LEFT) {
 			Point p = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
