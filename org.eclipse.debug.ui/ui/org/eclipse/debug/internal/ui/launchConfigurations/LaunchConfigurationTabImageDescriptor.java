@@ -86,8 +86,6 @@ public class LaunchConfigurationTabImageDescriptor extends CompositeImageDescrip
 	 */
 	protected void drawOverlays() {
 		int flags= getFlags();
-		int x= 0;
-		int y= 0;
 		ImageData data= null;
 		if ((flags & ERROR) != 0) {
 			data= DebugUITools.getImage(IDebugUIConstants.IMG_OVR_ERROR).getImageData();
