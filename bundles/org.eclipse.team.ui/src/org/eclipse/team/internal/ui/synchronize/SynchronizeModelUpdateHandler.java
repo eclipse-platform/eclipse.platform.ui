@@ -518,7 +518,7 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
 				provider.handleChanges((ISyncInfoTreeChangeEvent)event, monitor);
 				firePendingLabelUpdates();
             }
-        });
+        }, true /* preserve expansion */);
     }
 
     /* (non-Javadoc)
@@ -538,9 +538,9 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
         getProvider().getSyncInfoSet().connect(this, monitor);
     }
     
-    public void runViewUpdate(final Runnable runnable) {
+    public void runViewUpdate(final Runnable runnable, final boolean preserveExpansion) {
         if (Utils.canUpdateViewer(getViewer()) || isPerformingBackgroundUpdate()) {
-            internalRunViewUpdate(runnable);
+            internalRunViewUpdate(runnable, preserveExpansion);
         } else {
             if (Thread.currentThread() != getEventHandlerJob().getThread()) {
                 // Run view update should only be called from the UI thread or
@@ -555,7 +555,7 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
 	        			if (!ctrl.isDisposed()) {
 	        				BusyIndicator.showWhile(ctrl.getDisplay(), new Runnable() {
 	        					public void run() {
-	    						    internalRunViewUpdate(runnable);
+	    						    internalRunViewUpdate(runnable, preserveExpansion);
 	        					}
 	        				});
 	        			}
@@ -573,15 +573,32 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
         return Thread.currentThread() == getEventHandlerJob().getThread() && performingBackgroundUpdate;
     }
 
-    private void internalRunViewUpdate(final Runnable runnable) {
+    /*
+     * Method that can be called from the UI thread to update the view model.
+     */
+    private void internalRunViewUpdate(final Runnable runnable, boolean preserveExpansion) {
         StructuredViewer viewer = getViewer();
+        IResource[] expanded = null;
+        IResource[] selected = null;
 		try {
-		    if (Utils.canUpdateViewer(viewer))
+		    if (Utils.canUpdateViewer(viewer)) {
 		        viewer.getControl().setRedraw(false);
+		        if (preserveExpansion) {
+		            expanded = provider.getExpandedResources();
+		            selected = provider.getSelectedResources();
+		        }
+		    }
 			runnable.run();
 		} finally {
-		    if (Utils.canUpdateViewer(viewer))
+		    if (Utils.canUpdateViewer(viewer)) {
+		        if (expanded != null) {
+		            provider.expandResources(expanded);
+		        }
+		        if (selected != null) {
+		            provider.selectResources(selected);
+		        }
 		        viewer.getControl().setRedraw(true);
+		    }
 		}
 
 		ISynchronizeModelElement root = provider.getModelRoot();
@@ -616,18 +633,13 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
                 final CoreException[] exception = new CoreException[] { null };
                 runViewUpdate(new Runnable() {
                     public void run() {
-    	                IResource[] resources = null;
-    	                if (preserveExpansion)
-    	                    resources = provider.getExpandedResources();
     	                try {
     		                runnable.run(monitor);
     	                } catch (CoreException e) {
                             exception[0] = e;
                         }
-                        if (preserveExpansion)
-                            provider.expandResources(resources);
                     }
-                });
+                }, true /* preserve expansion */);
                 if (exception[0] != null)
                     throw exception[0];
             }
@@ -640,41 +652,45 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
      */
     private IWorkspaceRunnable getBackgroundUpdateRunnable(final IWorkspaceRunnable runnable, final boolean preserveExpansion) {
         return new IWorkspaceRunnable() {
+            IResource[] expanded;
+            IResource[] selected;
             public void run(IProgressMonitor monitor) throws CoreException {
                 IResource[] resources = null;
                 if (preserveExpansion)
-                    resources = getExpandedResources();
+                    recordExpandedResources();
                 try {
                     performingBackgroundUpdate = true;
 	                runnable.run(monitor);
                 } finally {
                     performingBackgroundUpdate = false;
                 }
-                updateView(resources);
+                updateView();
                 
             }
-            private IResource[] getExpandedResources() {
-                final IResource[][] resources = new IResource[1][0];
+            private void recordExpandedResources() {
         	    final StructuredViewer viewer = getViewer();
         		if (viewer != null && !viewer.getControl().isDisposed() && viewer instanceof AbstractTreeViewer) {
         			viewer.getControl().getDisplay().syncExec(new Runnable() {
         				public void run() {
         					if (viewer != null && !viewer.getControl().isDisposed()) {
-        					    resources[0] = provider.getExpandedResources();
+        					    expanded = provider.getExpandedResources();
+        					    selected = provider.getSelectedResources();
         					}
         				}
         			});
         		}
-                return resources[0];
             }
-            private void updateView(final IResource[] resources) {
+            private void updateView() {
+                // Refresh the view and then set the expansion
                 runViewUpdate(new Runnable() {
                     public void run() {
                         provider.getViewer().refresh();
-                        if (resources != null)
-                            provider.expandResources(resources);
+                        if (expanded != null)
+                            provider.expandResources(expanded);
+                        if (selected != null)
+                            provider.selectResources(selected);
                     }
-                });
+                }, false /* do not preserve expansion (since it is done above) */);
             }
         };
     }

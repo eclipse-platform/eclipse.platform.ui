@@ -361,9 +361,19 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
             // There is still saved state for the expanded resources so use it
             return resourcesToExpand;
         }
-        final StructuredViewer viewer = getViewer();
+        StructuredViewer viewer = getViewer();
         Object[] objects = ((AbstractTreeViewer) viewer).getVisibleExpandedElements();
         return getResources(objects);
+    }
+    
+    /*
+     * Return all the resources that are selected in the page.
+     * This method should only be called in the UI thread
+     * after validating that the viewer is still valid.
+     */
+    protected IResource[] getSelectedResources() {
+        StructuredViewer viewer = getViewer();
+        return getResources(((IStructuredSelection) viewer.getSelection()).toArray());
     }
     
     /*
@@ -451,7 +461,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 				public void run() {
 					if (viewer != null && !viewer.getControl().isDisposed()) {
 					    expandedResources[0] = getExpandedResources();
-					    selectedResources[0] = getResources(((IStructuredSelection) viewer.getSelection()).toArray());
+					    selectedResources[0] = getSelectedResources();
 					}
 				}
 			});
@@ -477,7 +487,11 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 		}
 	}
 
-    private void selectResources(IResource[] resourcesToSelect) {
+	/*
+	 * Select the given resources in the view. This method can
+	 * only be invoked from the UI thread.
+	 */
+    protected void selectResources(IResource[] resourcesToSelect) {
         StructuredViewer viewer = getViewer();
         final ArrayList selectedElements = new ArrayList();
         for (int i = 0; i < resourcesToSelect.length; i++) {
@@ -659,7 +673,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
                 public void run() {
                     handleChanges((ISyncInfoTreeChangeEvent)event, monitor);
                 }
-            });
+            }, true /* preserve expansion */);
 		}
     }
     
@@ -904,10 +918,6 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 			Policy.checkCanceled(monitor);
 		}
 		monitor.worked(1);
-    }
-    
-    protected void runViewUpdate(final Runnable runnable) {
-        updateHandler.runViewUpdate(runnable);
     }
     
     /* (non-Javadoc)
