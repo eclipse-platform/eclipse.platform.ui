@@ -66,6 +66,8 @@ public final class CheatSheetStandbyContent implements IStandbyContentPart {
      * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#setInput(java.lang.Object)
      */
     public void setInput(Object input) {
+        if(input==null) 
+            return;
         viewer.setInput((String)input);
     }
 
