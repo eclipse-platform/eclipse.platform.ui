@@ -27,7 +27,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderMemberFetcher;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
  * Fetch the members of a remote folder in the background, passing incremental
@@ -122,7 +122,7 @@ public class FetchMembersOperation extends RemoteOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return "Fetching members of" + getRemoteFolder().getName();
+		return Policy.bind("FetchMembersOperation.0", getRemoteFolder().getName()); //$NON-NLS-1$
 	}
 
 	private ICVSRemoteFolder getRemoteFolder() {
