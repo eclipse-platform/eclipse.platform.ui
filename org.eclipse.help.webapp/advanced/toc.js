@@ -561,7 +561,7 @@ function keyDownHandler(e)
   	}
   	
   	 			
-  	return false;
+  	return true;
 }
 
 if (isMozilla) {
