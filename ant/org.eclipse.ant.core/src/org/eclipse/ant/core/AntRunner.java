@@ -323,7 +323,7 @@ public class AntRunner implements IPlatformRunnable {
 		String missingClassName= e.getMessage();
 		String message;
 		if (missingClassName != null) {
-			missingClassName= missingClassName.replaceAll("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
+			missingClassName= missingClassName.replace('/', '.');
 			message= InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._2"); //$NON-NLS-1$
 			message= MessageFormat.format(message, new String[]{missingClassName});
 		} else {
