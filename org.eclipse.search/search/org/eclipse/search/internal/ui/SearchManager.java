@@ -320,36 +320,24 @@ public class SearchManager implements IResourceChangeListener {
 		Assert.isNotNull(viewer);
 		fListeners.remove(viewer);
 	}
-	/**
-	 * Received a resource event. Since the delta could be created in a 
-	 * separate thread this methods post the event into the viewer's 
-	 * display thread.
-	 */
-	public final void handleResourceChanged(final IResourceChangeEvent event) {
+
+	private final void handleSearchMarkersChanged(final IResourceChangeEvent event, IMarkerDelta[] markerDeltas) {
 		if (fIsNewSearch) {
 			fIsNewSearch= false;
 			handleNewSearchResult();
 			return;
 		}
+		Iterator iter= fListeners.iterator();
+		while (iter.hasNext())
+			((SearchResultViewer)iter.next()).getControl().setRedraw(false);
+	
+		for (int i=0; i < markerDeltas.length; i++)
+			handleSearchMarkerChanged(markerDeltas[i]);
 
-		IMarkerDelta[] markerDeltas= event.findMarkerDeltas(SearchUI.SEARCH_MARKER, true);
-		if (markerDeltas == null)
-			return;
+		iter= fListeners.iterator();
+		while (iter.hasNext())
+			((SearchResultViewer)iter.next()).getControl().setRedraw(true);
 
-		int deltasLength= markerDeltas.length;
-		
-		if (deltasLength > 0) {
-			Iterator iter= fListeners.iterator();
-			while (iter.hasNext())
-				((SearchResultViewer)iter.next()).getControl().setRedraw(false);
-		
-			for (int i=0; i < deltasLength; i++)
-				handleSearchMarkerChanged(markerDeltas[i]);
-
-			iter= fListeners.iterator();
-			while (iter.hasNext())
-				((SearchResultViewer)iter.next()).getControl().setRedraw(true);
-		}
 	}
 
 	private void handleSearchMarkerChanged(IMarkerDelta markerDelta) {
@@ -455,12 +443,20 @@ public class SearchManager implements IResourceChangeListener {
 	 * display thread.
 	 */
 	public final void resourceChanged(final IResourceChangeEvent event) {
+		if (event == null)
+			return;
+
+		final IMarkerDelta[] markerDeltas= event.findMarkerDeltas(SearchUI.SEARCH_MARKER, true);
+		if (markerDeltas == null || markerDeltas.length < 1)
+			return;
+		
 		Display display= getDisplay();
 		if (display == null || display.isDisposed())
 			return;
+
 		Runnable runnable= new Runnable() {
 			public void run() {
-				handleResourceChanged(event);
+				handleSearchMarkersChanged(event, markerDeltas);
 				// update title and actions
 				Iterator iter= fListeners.iterator();
 				while (iter.hasNext()) {
