@@ -28,8 +28,8 @@ import org.eclipse.jface.text.TypedPosition;
  * <p>
  * Two kinds of formatting strategies can be registered with this formatter:
  * <ul>
- * <li>Master formatting strategies</li>
- * <li>Slave formatting strategies</li>
+ * <li>one master formatting strategy for the default content type</li>
+ * <li>one formatting strategy for each non-default content type</li>
  * </ul>
  * The master formatting strategy always formats the whole region to be
  * formatted in the first pass. In a second pass, all partitions of the region
@@ -300,9 +300,9 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	/**
 	 * Registers a slave formatting strategy for a certain content type.
 	 * <p>
-	 * The strategy may already be registered as master strategy. If it is
-	 * already registered as slave strategy for the specified content type,
-	 * nothing happens. However, the same strategy may be registered with
+	 * The strategy may already be registered as master strategy. An
+	 * already registered slave strategy for the specified content type
+	 * will be replaced. However, the same strategy may be registered with
 	 * several content types. Slave strategies cannot be registered for the
 	 * default content type of documents.
 	 * 
