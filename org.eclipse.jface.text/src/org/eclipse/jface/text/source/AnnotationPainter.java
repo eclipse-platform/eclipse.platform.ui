@@ -97,11 +97,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * since 3.0
 	 */
 	private ArrayList fStyleRanges= new ArrayList();
-	/**
-	 * Cached visible region offset.
-	 * since 3.0
-	 */
-	private int fCachedVisibleRegionOffset= -1;
+
 //	private int fBgRepairOffset= -1;
 //	private int fBgRepairLength= -1;
 	
@@ -229,7 +225,6 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		
 		// Add background to style ranges
 		applyBackground(false); // faster than invalidateTextPresentation();
-		fCachedVisibleRegionOffset= fSourceViewer.getVisibleRegion().getOffset();
 		
 		catchupWithModel();							
 		
@@ -640,18 +635,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				fIsActive= true;
 				setModel(fSourceViewer.getAnnotationModel());
 			}
-		} else if (CONFIGURATION == reason || INTERNAL == reason || hasVisibleRegionChanged())
+		} else if (CONFIGURATION == reason || INTERNAL == reason)
 			updatePainting();
-	}
-
-	/**
-	 * Tells whether the visible region has changed.
-	 *
-	 * @return <code>true</code> if the visible region has changed
-	 * @since 3.0
-	 */
-	private boolean hasVisibleRegionChanged() {
-		return fCachedVisibleRegionOffset != fSourceViewer.getVisibleRegion().getOffset();
 	}
 
 	/*
