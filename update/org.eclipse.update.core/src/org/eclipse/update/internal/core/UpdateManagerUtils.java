@@ -184,6 +184,14 @@ public class UpdateManagerUtils {
 		result = localFile.toURL();
 		return result;
 	}
+	
+	/*
+	 * [20305] need to slam permissions for executable libs on some
+	 * platforms. This is a temporary fix
+	 */
+	public static void checkPermissions(String filePath) {
+	}
+	
 	/**
 	 * Returns a random file name for the local system
 	 * attempt to conserve the extension if there is a '.' in the path
