@@ -38,7 +38,7 @@ public CopyVisitor(IResource rootSource, IResource destination, boolean force, I
 	this.force = force;
 	this.monitor = monitor;
 	this.segmentsToDrop = rootSource.getFullPath().segmentCount();
-	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INFO, Policy.bind("copyProblem"), null);
+	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INFO, Policy.bind("localstore.copyProblem"), null);
 }
 protected void copy(UnifiedTreeNode node) {
 	Resource source = (Resource) node.getResource();
