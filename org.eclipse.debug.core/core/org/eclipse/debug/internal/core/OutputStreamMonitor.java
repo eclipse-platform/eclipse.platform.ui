@@ -78,7 +78,9 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 * @see org.eclipse.debug.core.model.IStreamMonitor#addListener(org.eclipse.debug.core.IStreamListener)
 	 */
 	public void addListener(IStreamListener listener) {
-		fListeners.add(listener);
+		synchronized (fListeners) {
+			fListeners.add(listener);
+		}
 	}
 
 	/**
@@ -132,10 +134,12 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 				read= fStream.read(bytes);
 				if (read > 0) {
 					String text= new String(bytes, 0, read);
-					if (isBuffered()) {
-						fContents.append(text);
+					synchronized (fListeners) {
+						if (isBuffered()) {
+							fContents.append(text);
+						}
+						fireStreamAppended(text);
 					}
-					fireStreamAppended(text);
 				}
 			} catch (IOException ioe) {
 				DebugPlugin.log(ioe);
@@ -164,7 +168,9 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 * @see org.eclipse.debug.core.model.IStreamMonitor#removeListener(org.eclipse.debug.core.IStreamListener)
 	 */
 	public void removeListener(IStreamListener listener) {
-		fListeners.remove(listener);
+		synchronized (fListeners) {
+			fListeners.remove(listener);
+		}
 	}
 
 	/**
