@@ -26,6 +26,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -375,30 +376,11 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		
 		fComposite.layout();
 
-		// setup the wiring (no focus wiring yet)
+		// setup the wiring for top left pane
 		fStructureInputPane.addSelectionChangedListener(
 			new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent e) {
-					ISelection s= e.getSelection();
-					Object input= null;
-					if (s.isEmpty()) {
-						input= fStructureInputPane.getInput();
-						fContentInputPane.setInput(input);
-						fStructurePane2.setInput(null); // clear downstream pane
-						fStructurePane1.setInput(null);
-					} else {
-						Object o= getElement(e.getSelection());
-						if (o != null)
-							input= o;
-						fContentInputPane.setInput(input);
-						fStructurePane2.setInput(null); // clear downstream pane
-						
-						if (PR1GB0P4S) {
-							if (fStructurePane1.getInput() != input)
-								fStructurePane1.setInput(null);
-						} else
-							fStructurePane1.setInput(input);
-					}
+					feed1(e.getSelection());
 				}
 			}
 		);
@@ -407,52 +389,26 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			fStructureInputPane.addDoubleClickListener(
 				new IDoubleClickListener() {
 					public void doubleClick(DoubleClickEvent e) {
-						ISelection s= e.getSelection();
-						Object input= null;
-						if (!s.isEmpty()) {
-							Object o= getElement(e.getSelection());
-							if (o != null)
-								input= o;
-							fStructurePane1.setInput(input);
-						}
+						feedDefault1(e.getSelection());
 					}
 				}
 			);
 		}
 
+		// setup the wiring for second pane
 		fStructurePane1.addSelectionChangedListener(
 			new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent e) {
-					ISelection s= e.getSelection();
-					Object input= null;
-					if (s.isEmpty()) {
-						input= fStructurePane1.getInput();
-						fContentInputPane.setInput(input);
-						fStructurePane2.setInput(null);
-					} else {
-						Object o= getElement(e.getSelection());
-						if (o != null)
-							input= o;
-						fContentInputPane.setInput(input);
-						fStructurePane2.setInput(input);
-					}
+					feed2(e.getSelection());
 				}
 			}
 		);
 
+		// setup the wiring for third pane
 		fStructurePane2.addSelectionChangedListener(
 			new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent e) {
-					ISelection s= e.getSelection();
-					Object input= null;
-					if (s.isEmpty()) {
-						input= fStructurePane2.getInput();
-					} else {
-						Object o= getElement(e.getSelection());
-						if (o != null)
-							input= o;
-					}
-					fContentInputPane.setInput(input);
+					feed3(e.getSelection());
 				}
 			}
 		);
@@ -478,6 +434,74 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		}
 	
 		return fComposite;
+	}
+	
+	private void feed1(final ISelection selection) {
+		BusyIndicator.showWhile(fComposite.getDisplay(),
+			new Runnable() {
+				public void run() {
+					if (selection.isEmpty()) {
+						Object input= fStructureInputPane.getInput();
+						fContentInputPane.setInput(input);
+						fStructurePane2.setInput(null); // clear downstream pane
+						fStructurePane1.setInput(null);
+					} else {
+						Object input= getElement(selection);
+						fContentInputPane.setInput(input);
+						fStructurePane2.setInput(null); // clear downstream pane
+						
+						if (PR1GB0P4S) {
+							if (fStructurePane1.getInput() != input)
+								fStructurePane1.setInput(null);
+						} else
+							fStructurePane1.setInput(input);
+					}
+				}
+			}
+		);
+	}
+	
+	private void feedDefault1(final ISelection selection) {
+		BusyIndicator.showWhile(fComposite.getDisplay(),
+			new Runnable() {
+				public void run() {
+					if (!selection.isEmpty())
+						fStructurePane1.setInput(getElement(selection));
+				}
+			}
+		);
+	}
+	
+	private void feed2(final ISelection selection) {
+		BusyIndicator.showWhile(fComposite.getDisplay(),
+			new Runnable() {
+				public void run() {
+					if (selection.isEmpty()) {
+						Object input= fStructurePane1.getInput();
+						fContentInputPane.setInput(input);
+						fStructurePane2.setInput(null);
+					} else {
+						Object input= getElement(selection);
+						fContentInputPane.setInput(input);
+						fStructurePane2.setInput(input);
+					}
+				}
+			}
+		);
+	}
+	
+	private void feed3(final ISelection selection) {
+		BusyIndicator.showWhile(fComposite.getDisplay(),
+			new Runnable() {
+				public void run() {
+					if (selection.isEmpty())
+						fContentInputPane.setInput(fStructurePane2.getInput());
+					else
+						fContentInputPane.setInput(getElement(selection));
+				}
+			}
+		);
+		
 	}
 	
 	/**
