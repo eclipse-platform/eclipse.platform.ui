@@ -3,8 +3,8 @@ package org.eclipse.update.internal.ui;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Control;
@@ -13,19 +13,21 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.update.internal.ui.model.DiscoveryFolder;
+import org.eclipse.update.internal.ui.model.IUpdateModelChangedListener;
 import org.eclipse.update.internal.ui.model.SiteBookmark;
 
 /**
  * @see IWorkbenchWindowActionDelegate
  */
-public class UpdateWebSitesAction implements IWorkbenchWindowPulldownDelegate2 {
+public class UpdateWebSitesAction implements IWorkbenchWindowPulldownDelegate2, IUpdateModelChangedListener {
 	private Menu fMenu;
-	private boolean fRecreateMenu = true;
+	private boolean fRecreateMenu = false;
 
 	/**
 	 *
 	 */
 	public UpdateWebSitesAction() {
+		UpdateUI.getDefault().getUpdateModel().addUpdateModelChangedListener(this);
 	}
 
 	/**
@@ -47,6 +49,7 @@ public class UpdateWebSitesAction implements IWorkbenchWindowPulldownDelegate2 {
 		if (fMenu != null) {
 			fMenu.dispose();
 		}
+		UpdateUI.getDefault().getUpdateModel().removeUpdateModelChangedListener(this);
 	}
 
 	/**
@@ -78,7 +81,6 @@ public class UpdateWebSitesAction implements IWorkbenchWindowPulldownDelegate2 {
 	
 	protected void fillMenu(Menu menu) {
 		addActionToMenu(menu, new WebBookmarksAction());
-		addSeparator(menu);
 		DiscoveryFolder folder = new DiscoveryFolder();
 		Object[] children = folder.getChildren(folder);
 		for (int i = 0; i < children.length; i++) {
@@ -88,6 +90,15 @@ public class UpdateWebSitesAction implements IWorkbenchWindowPulldownDelegate2 {
 					addActionToMenu(menu, new GoToWebsiteAction(bookmark));
 			}
 		}
+		SiteBookmark[] bookmarks = UpdateUI.getDefault().getUpdateModel().getBookmarkLeafs();
+		for (int i = 0; i < bookmarks.length; i++) {
+			if (bookmarks[i].isWebBookmark())
+				addActionToMenu(menu, new GoToWebsiteAction(bookmarks[i]));
+		}
+		
+		if (menu.getItemCount() > 1) 
+			new Separator().fill(menu, 1);
+			
 	}
 	
 	private void initMenu() {
@@ -112,8 +123,17 @@ public class UpdateWebSitesAction implements IWorkbenchWindowPulldownDelegate2 {
 		item.fill(parent, -1);
 	}
 	
-	private void addSeparator(Menu parent) {
-		new MenuItem(parent, SWT.SEPARATOR);
+
+	public void objectsAdded(Object parent, Object[] children) {
+		fRecreateMenu = true;		
+	}
+
+	public void objectsRemoved(Object parent, Object[] children) {
+		fRecreateMenu = true;		
+	}
+
+	public void objectChanged(Object object, String property) {
+		fRecreateMenu = true;		
 	}
 
 

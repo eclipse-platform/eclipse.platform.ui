@@ -19,6 +19,11 @@ public class WebBookmarksAction extends Action {
 	}
 	
 	public void run() {
+		WebBookmarksDialog dialog = new WebBookmarksDialog(UpdateUI.getActiveWorkbenchShell());
+		dialog.create();
+		dialog.getShell().setText("Bookmarks");
+		dialog.getShell().setSize(300,300);
+		dialog.open();
 	}
 
 

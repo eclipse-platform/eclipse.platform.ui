@@ -17,6 +17,7 @@ public class GoToWebsiteAction extends Action {
 	public GoToWebsiteAction(SiteBookmark bookmark) {
 		this.bookmark = bookmark;
 		setText(bookmark.getLabel());
+		setImageDescriptor(UpdateUIImages.DESC_WEB_SITE_OBJ);
 	}
 	
 	public void run() {

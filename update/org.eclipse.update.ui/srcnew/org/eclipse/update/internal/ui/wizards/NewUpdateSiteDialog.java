@@ -20,7 +20,7 @@ import org.eclipse.update.internal.ui.model.*;
 /**
  * @author wassimm
  */
-public class NewSiteDialog extends Dialog {
+public class NewUpdateSiteDialog extends Dialog {
 	
 	protected Text name;
 	protected Text url;
@@ -28,7 +28,7 @@ public class NewSiteDialog extends Dialog {
 	/**
 	 * @param parentShell
 	 */
-	public NewSiteDialog(Shell parentShell) {
+	public NewUpdateSiteDialog(Shell parentShell) {
 		super(parentShell);
 	}
 	

@@ -13,7 +13,6 @@ package org.eclipse.update.internal.ui.model;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.UpdateUI;
 
@@ -21,15 +20,15 @@ public class UpdateModel implements IAdaptable {
 	private Vector changes = new Vector();
 	private Vector bookmarks = new Vector();
 	private Vector listeners = new Vector();
-	private IDialogSettings settings;
 	private static final String BOOKMARK_FILE = "bookmarks.xml";
 	
 	public UpdateModel() {
-		settings = UpdateUI.getDefault().getDialogSettings();
+		reset();
 	}
 	
-	public void startup() {
+	public void reset() {
 		// load bookmarks
+		bookmarks.clear();
 		BookmarkUtil.parse(getBookmarksFileName(), bookmarks);
 	}
 	

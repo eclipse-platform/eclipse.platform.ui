@@ -148,7 +148,6 @@ public class UpdateUI extends AbstractUIPlugin {
 		super.startup();
 		readInfo();
 		model = new UpdateModel();
-		model.startup();
 		IAdapterManager manager = Platform.getAdapterManager();
 		adapterFactory = new UpdateAdapterFactory();
 		manager.registerAdapters(adapterFactory, UIModelObject.class);

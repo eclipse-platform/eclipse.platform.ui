@@ -256,7 +256,7 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 	}
 
 	private void handleAddSite() {
-		NewSiteDialog dialog = new NewSiteDialog(getShell());
+		NewUpdateSiteDialog dialog = new NewUpdateSiteDialog(getShell());
 		dialog.create();
 		dialog.getShell().setText("New Update Site");
 		dialog.open();

@@ -15,7 +15,7 @@ import org.eclipse.update.operations.*;
 /**
  * @author Wassim Melhem
  */
-public class EditSiteDialog extends NewSiteDialog {
+public class EditSiteDialog extends NewUpdateSiteDialog {
 	SiteBookmark bookmark;
 
 	public EditSiteDialog(Shell parentShell, SiteBookmark bookmark) {
