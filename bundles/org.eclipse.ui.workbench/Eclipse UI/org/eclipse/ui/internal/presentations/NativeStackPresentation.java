@@ -42,7 +42,10 @@ import org.eclipse.ui.presentations.StackDropResult;
 import org.eclipse.ui.presentations.StackPresentation;
 
 /**
- * Base class for StackPresentations that display IPresentableParts in a CTabFolder. 
+ * A stack presentation using native widgets.
+ * <p>
+ * EXPERIMENTAL
+ * </p> 
  * 
  * @since 3.0
  */

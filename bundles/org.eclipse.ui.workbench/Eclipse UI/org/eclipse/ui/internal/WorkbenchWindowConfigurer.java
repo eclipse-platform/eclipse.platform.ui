@@ -14,6 +14,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.ICoolBarManager;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetListener;
@@ -23,20 +30,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.ICoolBarManager;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.preference.IPreferenceStore;
-
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
+import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.WorkbenchPresentationFactory;
 
@@ -137,9 +139,10 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	private Point initialSize = new Point(1024, 768);
 
 	/**
-	 * The presentation factory.
+	 * The presentation factory.  Lazily initialized in getPresentationFactory
+	 * if not already assigned in setPresentationFactory.
 	 */
-	private AbstractPresentationFactory presentationFactory = new WorkbenchPresentationFactory();
+	private AbstractPresentationFactory presentationFactory = null;
 	    
 	/**
 	 * Action bar configurer that changes this workbench window.
@@ -529,13 +532,39 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
     public AbstractPresentationFactory getPresentationFactory() {
+        if (presentationFactory == null) {
+            presentationFactory = createDefaultPresentationFactory();
+        }
         return presentationFactory;
+    }
+
+    /**
+     * Creates the default presentation factory by looking up the presentation
+     * factory extension with the id specified by the presentation factory preference.
+     * If the preference is null or if no matching extension is found, a
+     * factory default presentation factory is used.
+     */
+    private AbstractPresentationFactory createDefaultPresentationFactory() {
+	    String factoryId = Platform.getPreferencesService().getString(
+                PlatformUI.PLUGIN_ID,
+                IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID, "", //$NON-NLS-1$
+                null);
+	    if (factoryId != null && factoryId.length() > 0) {
+	        AbstractPresentationFactory factory = WorkbenchPlugin.getDefault().getPresentationFactory(factoryId);
+	        if (factory != null) {
+	            return factory;
+	        }
+	    }
+        return new WorkbenchPresentationFactory();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
     public void setPresentationFactory(AbstractPresentationFactory factory) {
+		if (factory == null) {
+			throw new IllegalArgumentException();
+		}
         presentationFactory = factory;
     }
 

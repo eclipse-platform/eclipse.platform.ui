@@ -16,6 +16,7 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 /**
  * The plug-in class for the org.eclipse.ui plug-in.
@@ -86,7 +87,6 @@ public final class UIPlugin extends AbstractUIPlugin {
 	 * because the default values are not stored in the preference store.
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		
 		store.setDefault(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 
 		//Deprecated but kept for backwards compatibility
@@ -100,8 +100,18 @@ public final class UIPlugin extends AbstractUIPlugin {
 		// initial state of linking in the Navigator.
 		// By default, linking is off.
 		store.setDefault(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, false);
+
+		store.setDefault(IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID, "org.eclipse.ui.presentations.default"); //$NON-NLS-1$
 		
 		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
 	}
 
+	
+    public void start(BundleContext context) throws Exception {
+        super.start(context);
+        // Workaround for bug 58975 - New preference mechanism does not properly initialize defaults
+        // Force the prefs to get initialized so that they can be accessed
+        // from the workbench plugin.
+        getPluginPreferences().getString(IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID);
+    }
 }

@@ -339,6 +339,10 @@ public interface IWorkbenchWindowConfigurer {
 	 * </p>
 	 * 
 	 * @return the presentation factory used for this window
+	 * 
+	 * @deprecated the presentation factory is now obtained via extension point
+	 *   and a preference on org.eclipse.ui specifying which one to use;
+	 *   see IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID
 	 */
 	public AbstractPresentationFactory getPresentationFactory();
 
@@ -352,6 +356,10 @@ public interface IWorkbenchWindowConfigurer {
 	 * </p>
 	 * 
 	 * @param factory the presentation factory to use for this window
+	 * 
+	 * @deprecated the presentation factory is now obtained via extension point
+	 *   and a preference on org.eclipse.ui specifying which one to use;
+	 *   see IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID
 	 */
 	public void setPresentationFactory(AbstractPresentationFactory factory);
 

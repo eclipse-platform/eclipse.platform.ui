@@ -26,12 +26,6 @@ import org.eclipse.ui.internal.presentations.PartTabFolderPresentation;
  */
 public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
 
-    public StackPresentation createPartPresentation(Composite parent,
-            IStackPresentationSite site, int role, int flags,
-            String perspectiveId, String folderId) {
-        return null;
-    }
-
     /*
      * (non-Javadoc)
      * 

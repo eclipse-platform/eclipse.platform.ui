@@ -145,4 +145,11 @@ public interface IWorkbenchPreferenceConstants {
 	 */
     public static final String SHOULD_PROMPT_FOR_ENABLEMENT = "shouldPromptForEnablement"; //$NON-NLS-1$
 
+	/**
+	 * A preference value indicating the presentation factory
+	 * to use for the workbench look and feel.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String PRESENTATION_FACTORY_ID = "presentationFactoryId"; //$NON-NLS-1$
 }
