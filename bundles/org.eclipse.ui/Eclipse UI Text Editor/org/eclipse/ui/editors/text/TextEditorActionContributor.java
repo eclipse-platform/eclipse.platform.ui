@@ -37,18 +37,13 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		// character encoding
 		fEncodingActionGroup= new EncodingActionGroup();
 	}	
-
-	/*
-	 * @see IEditorActionBarContributor#setActiveEditor(IEditorPart)
-	 */
-	public void setActiveEditor(IEditorPart part) {
-		super.setActiveEditor(part);
-		
-		if (!(part instanceof ITextEditor))
-			return;
+	
+	private void doSetActiveEditor(IEditorPart part) {
+				
+		ITextEditor textEditor= null;
+		if (part instanceof ITextEditor)
+			textEditor= (ITextEditor) part;
 			
-		ITextEditor textEditor= (ITextEditor) part;
-		
 		// line delimiter conversion
 		fConvertToWindows.setAction(getAction(textEditor, ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_WINDOWS));
 		fConvertToUNIX.setAction(getAction(textEditor, ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_UNIX));
@@ -56,6 +51,14 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		
 		// character encoding
 		fEncodingActionGroup.retarget(textEditor);
+	}
+	
+	/*
+	 * @see IEditorActionBarContributor#setActiveEditor(IEditorPart)
+	 */
+	public void setActiveEditor(IEditorPart part) {
+		super.setActiveEditor(part);
+		doSetActiveEditor(part);
 	}
 	
 	/*
@@ -79,5 +82,13 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		
 		// character encoding
 		fEncodingActionGroup.fillActionBars(bars);
+	}
+	
+	/*
+	 * @see IEditorActionBarContributor#dispose()
+	 */
+	public void dispose() {
+		doSetActiveEditor(null);
+		super.dispose();
 	}
 }

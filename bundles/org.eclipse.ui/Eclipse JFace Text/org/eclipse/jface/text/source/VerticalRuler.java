@@ -17,6 +17,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -43,7 +44,7 @@ import org.eclipse.jface.text.TextEvent;
  *
  * @see ITextViewer
  */
-public final class VerticalRuler implements IVerticalRuler {
+public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtension {
 	
 	/**
 	 * Internal listener class.
@@ -397,4 +398,18 @@ public final class VerticalRuler implements IVerticalRuler {
 		if (fCanvas != null && !fCanvas.isDisposed())
 			fCanvas.removeMouseListener(listener);
 	}
+
+	/*
+	 * @see IVerticalRulerExtension#setFont(Font)
+	 */
+	public void setFont(Font font) {
+	}
+
+	/*
+	 * @see IVerticalRulerExtension#setLocationOfLastMouseButtonActivity(int, int)
+	 */
+	public void setLocationOfLastMouseButtonActivity(int x, int y) {
+		fLastMouseButtonActivityLine= toDocumentLineNumber(y);
+	}
+
 }

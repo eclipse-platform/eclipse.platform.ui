@@ -1,5 +1,7 @@
 package org.eclipse.ui.texteditor;
 
+import org.eclipse.jface.action.IMenuListener;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -25,5 +27,16 @@ public interface ITextEditorExtension {
 	 * <b>not</b> about the editor document.
 	 */
 	boolean isEditorInputReadOnly();
+
+	/**
+	 * Adds a ruler context menu listener to the editor.
+	 */
+	void addRulerContextMenuListener(IMenuListener listener);
+	
+	/**
+	 * Removes a ruler context menu listener from the editor.
+	 */
+	void removeRulerContextMenuListener(IMenuListener listener);
+
 }
 

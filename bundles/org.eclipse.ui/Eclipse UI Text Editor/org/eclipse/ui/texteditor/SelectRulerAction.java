@@ -15,11 +15,10 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
 
 public class SelectRulerAction extends AbstractRulerActionDelegate {
 
-	/**
+	/*
 	 * @see AbstractRulerActionDelegate#createAction(ITextEditor, IVerticalRulerInfo)
 	 */
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
-		return new SelectMarkerRulerInfoAction(EditorMessages.getResourceBundle(), "Editor.SelectMarker.", rulerInfo, editor); //$NON-NLS-1$
+		return new SelectMarkerRulerAction(EditorMessages.getResourceBundle(), "Editor.SelectMarker.", editor, rulerInfo); //$NON-NLS-1$
 	}
-
 }

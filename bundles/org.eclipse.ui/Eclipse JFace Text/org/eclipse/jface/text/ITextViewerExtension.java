@@ -56,4 +56,17 @@ public interface ITextViewerExtension {
 	 * @return the control of this viewer
 	 */ 
 	Control getControl();
+
+	/**
+	 * Sets or clears the mark. If offset is <code>-1</code>, the mark is cleared.
+	 * If a mark is set and the selection is empty, cut and copy actions performed on the
+	 * text viewer peform on the region limited by the positions of the mark and the cursor.
+	 */
+	void setMark(int offset);
+
+	/**
+	 * Returns the mark position, <code>-1</code> if mark is not set.
+	 */
+	int getMark();
+
 }

@@ -28,6 +28,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.viewers.StructuredSelection;
 
 import org.eclipse.ui.IEditorInput;
@@ -46,7 +47,7 @@ import org.eclipse.ui.views.tasklist.TaskList;
  */
 public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 
-	private IVerticalRuler fRuler;
+	private IVerticalRulerInfo fRuler;
 	private ITextEditor fTextEditor;
 	private List fMarkers;
 
@@ -61,18 +62,25 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @param prefix a prefix to be prepended to the various resource keys
 	 *   (described in <code>ResourceAction</code> constructor), or 
 	 *   <code>null</code> if none
-	 * @param ruler the ruler
 	 * @param editor the editor
+	 * @param ruler the ruler
 	 * 
 	 * @see ResourceAction#ResourceAction
 	 */
-	public SelectMarkerRulerAction(ResourceBundle bundle, String prefix, IVerticalRuler ruler, ITextEditor editor) {
+	public SelectMarkerRulerAction(ResourceBundle bundle, String prefix, ITextEditor editor, IVerticalRulerInfo ruler) {
 		super(bundle, prefix);
 		fRuler= ruler;
 		fTextEditor= editor;
 
 		fBundle= bundle;
 		fPrefix= prefix;
+	}
+	
+	/**
+	 * @deprecated use <code>SelectMarkerRulerInfoAction(ResourceBundle, String, IVerticalRulerInfo, ITextEditor)</code>
+	 */
+	public SelectMarkerRulerAction(ResourceBundle bundle, String prefix, IVerticalRuler ruler, ITextEditor editor) {
+		this(bundle, prefix, editor, ruler);
 	}
 			
 	/*
@@ -95,6 +103,11 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 			if (view instanceof TaskList) {
 				StructuredSelection ss= new StructuredSelection(marker);
 				((TaskList) view).setSelection(ss, true);
+			} else {
+				int offset= MarkerUtilities.getCharStart(marker);
+				int endOffset= MarkerUtilities.getCharEnd(marker);
+				if (offset > -1 && endOffset > -1)
+					fTextEditor.selectAndReveal(offset, endOffset - offset);
 			}
 		}
 	}

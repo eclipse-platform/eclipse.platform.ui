@@ -17,5 +17,10 @@ public interface IVerticalRulerExtension {
 	 * @param font the new font of the vertical ruler
 	 */
 	void setFont(Font font);
+	
+	/**
+	 * Sets the location of the last mouse button activity.
+	 */
+	void setLocationOfLastMouseButtonActivity(int x, int y);
 
 }

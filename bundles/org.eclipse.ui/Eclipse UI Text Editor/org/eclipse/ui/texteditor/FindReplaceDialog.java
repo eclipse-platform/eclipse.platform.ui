@@ -615,6 +615,9 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean incremental, boolean global) {
 
+		if (fTarget == null)
+			return false;
+
 		Point r= fTarget.getSelection();
 		int findReplacePosition= r.x;
 		if (forwardSearch)

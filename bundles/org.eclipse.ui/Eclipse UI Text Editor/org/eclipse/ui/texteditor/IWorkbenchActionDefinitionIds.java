@@ -25,11 +25,11 @@ public interface IWorkbenchActionDefinitionIds {
 	public static final String SELECT_ALL= "org.eclipse.ui.edit.selectAll"; //$NON-NLS-1$
 	public static final String FIND_REPLACE= "org.eclipse.ui.edit.findReplace"; //$NON-NLS-1$
 	public static final String ADD_BOOKMARK= "org.eclipse.ui.edit.addBookmark"; //$NON-NLS-1$
+	public static final String ADD_TASK= "org.eclipse.ui.edit.addTask"; //$NON-NLS-1$
 	
 	// future workbench edit actions
 	public static final String FIND_NEXT= "org.eclipse.ui.edit.findNext"; //$NON-NLS-1$
 	public static final String FIND_PREVIOUS= "org.eclipse.ui.edit.findPrevious"; //$NON-NLS-1$
 	public static final String FIND_INCREMENTAL= "org.eclipse.ui.edit.findIncremental"; //$NON-NLS-1$
 	public static final String REVERT_TO_SAVED= "org.eclipse.ui.edit.revertToSaved"; //$NON-NLS-1$
-	public static final String ADD_TASK= "org.eclipse.ui.edit.addTask"; //$NON-NLS-1$
 }

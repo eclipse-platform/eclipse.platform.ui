@@ -29,6 +29,12 @@ public interface IAbstractTextEditorHelpContextIds {
 	public static final String COPY_ACTION= PREFIX + ITextEditorActionConstants.COPY + ACTION_POSTFIX;
 	public static final String PASTE_ACTION= PREFIX + ITextEditorActionConstants.PASTE + ACTION_POSTFIX;
 	public static final String DELETE_ACTION= PREFIX + ITextEditorActionConstants.DELETE + ACTION_POSTFIX;
+	public static final String DELETE_LINE_ACTION= PREFIX + ITextEditorActionConstants.DELETE_LINE + ACTION_POSTFIX;
+	public static final String DELETE_LINE_TO_BEGINNING_ACTION= PREFIX + ITextEditorActionConstants.DELETE_LINE_TO_BEGINNING + ACTION_POSTFIX;
+	public static final String DELETE_LINE_TO_END_ACTION= PREFIX + ITextEditorActionConstants.DELETE_LINE_TO_END + ACTION_POSTFIX;
+	public static final String SET_MARK_ACTION= PREFIX + ITextEditorActionConstants.SET_MARK + ACTION_POSTFIX;
+	public static final String CLEAR_MARK_ACTION= PREFIX + ITextEditorActionConstants.CLEAR_MARK + ACTION_POSTFIX;
+	public static final String SWAP_MARK_ACTION= PREFIX + ITextEditorActionConstants.SWAP_MARK + ACTION_POSTFIX;
 	public static final String SELECT_ALL_ACTION= PREFIX + ITextEditorActionConstants.SELECT_ALL + ACTION_POSTFIX;
 	public static final String SHIFT_RIGHT_ACTION= PREFIX + ITextEditorActionConstants.SHIFT_RIGHT + ACTION_POSTFIX;
 	public static final String SHIFT_LEFT_ACTION= PREFIX + ITextEditorActionConstants.SHIFT_LEFT + ACTION_POSTFIX;

@@ -265,6 +265,10 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			case SWT.CTRL:
 			case SWT.ARROW_LEFT:
 			case SWT.ARROW_RIGHT:
+			case SWT.HOME:
+			case SWT.END:
+			case SWT.PAGE_DOWN:
+			case SWT.PAGE_UP:
 				leave();
 				break;
 			

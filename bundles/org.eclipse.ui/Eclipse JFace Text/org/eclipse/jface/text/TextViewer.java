@@ -755,7 +755,12 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	private Object fWidgetTokenKeeper;
 	/** The viewer's manager of verify key listeners */
 	private VerifyKeyListenersManager fVerifyKeyListenersManager= new VerifyKeyListenersManager();
-
+	/** The mark position. */
+	private Position fMarkPosition;
+	/** The mark position category. */
+	private final String MARK_POSITION_CATEGORY="__mark_category_" + hashCode();
+	/** The mark position updater */
+	private final IPositionUpdater fMarkPositionUpdater= new DefaultPositionUpdater(MARK_POSITION_CATEGORY);
 	
 	/** Should the auto indent strategies ignore the next edit operation */
 	protected boolean  fIgnoreAutoIndent= false;
@@ -1163,9 +1168,12 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			
 		int end= offset + length;
 		
-		IDocument doc= getVisibleDocument();
-		if (doc instanceof ChildDocument) {
-			Position p= ((ChildDocument) doc).getParentDocumentRange();
+		IDocument document= getVisibleDocument();
+		if (document == null)
+			return;
+			
+		if (document instanceof ChildDocument) {
+			Position p= ((ChildDocument) document).getParentDocumentRange();
 			if (p.overlapsWith(offset, length)) {
 				
 				if (offset < p.getOffset())
@@ -1288,7 +1296,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	}
 	
 	/**
-	 * Sends out a selection changed event to all registered listeners.
+	 * Sends out a text selection changed event to all registered listeners.
 	 *
 	 * @param offset the offset of the newly selected range in the visible document
 	 * @param length the length of the newly selected range in the visible document
@@ -1299,6 +1307,19 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 		fireSelectionChanged(event);
 	}
 	
+	/**
+	 * Sends out a mark selection changed event to all registered listeners.
+	 * 
+	 * @param offset the offset of the mark selection in the visible document, the offset is <code>-1</code> if the mark was cleared
+	 * @param length the length of the mark selection, may be negative if the caret is before the mark.
+	 */
+	protected void markChanged(int offset, int length) {
+		if (offset != -1)
+			offset += getVisibleRegionOffset();
+		ISelection selection= new MarkSelection(getDocument(), offset, length);
+		SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
+		fireSelectionChanged(event);
+	}
 	
 	
 	//---- Text listeners
@@ -1722,10 +1743,13 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 		
 		int end= start + length;
 
-		IDocument doc= getVisibleDocument();
-		Position p= (doc instanceof ChildDocument)
-			? ((ChildDocument) doc).getParentDocumentRange()
-			: new Position(0, doc.getLength());
+		IDocument document= getVisibleDocument();
+		if (document == null)
+			return;
+			
+		Position p= (document instanceof ChildDocument)
+			? ((ChildDocument) document).getParentDocumentRange()
+			: new Position(0, document.getLength());
 			
 		if (p.overlapsWith(start, length)) {
 				
@@ -2160,7 +2184,26 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	}
 	
 	//---- text manipulation
-	
+
+	private boolean isMarkedRegionEmpty() {
+
+		if (fTextWidget == null)
+			return true;
+
+		IRegion region= getVisibleRegion();
+		int offset= region.getOffset();
+		int length= region.getLength();
+
+		return
+			fMarkPosition == null ||
+			fMarkPosition.isDeleted() ||
+			fMarkPosition.offset < offset ||
+			fMarkPosition.offset > offset + length;
+			
+//			ignore empty mark region			
+//			fMarkPosition.getOffset() == fTextWidget.getCaretOffset();
+	}
+
 	/*
 	 * @see ITextViewer#canDoOperation
 	 */
@@ -2171,9 +2214,9 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 
 		switch (operation) {
 			case CUT:
-				return isEditable() && fTextWidget.getSelectionCount() > 0;
-			case COPY:
-				return fTextWidget.getSelectionCount() > 0;
+				return isEditable() &&(fTextWidget.getSelectionCount() > 0 || !isMarkedRegionEmpty());
+			case COPY:				
+				return fTextWidget.getSelectionCount() > 0 || !isMarkedRegionEmpty();
 			case DELETE:
 			case PASTE:
 				return isEditable();
@@ -2219,10 +2262,16 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 				}
 				break;
 			case CUT:
-				fTextWidget.cut();
+				if (fTextWidget.getSelectionCount() == 0)
+					copyMarkedRegion(true);
+				else
+					fTextWidget.cut();
 				break;
 			case COPY:
-				fTextWidget.copy();
+				if (fTextWidget.getSelectionCount() == 0)
+					copyMarkedRegion(false);
+				else
+					fTextWidget.copy();
 				break;
 			case PASTE:
 				fIgnoreAutoIndent= true;
@@ -2249,6 +2298,38 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			case PRINT:
 				print();
 				break;
+		}
+	}
+
+	/*
+	 * Copies/cuts the marked region.
+	 */
+	private void copyMarkedRegion(boolean delete) {
+		
+		if (fTextWidget == null)
+			return;
+
+		IRegion region= getVisibleRegion();
+		int offset= region.getOffset();
+		int length= region.getLength();
+
+		if (fMarkPosition == null || fMarkPosition.isDeleted() ||
+			fMarkPosition.offset < offset || fMarkPosition.offset > offset + length)
+			return;
+					
+		int markOffset= fMarkPosition.offset - offset;
+		
+		Point selection= fTextWidget.getSelection();		
+		if (selection.x <= markOffset)
+			fTextWidget.setSelection(selection.x, markOffset);
+		else
+			fTextWidget.setSelection(markOffset, selection.x);
+
+		if (delete) {
+			fTextWidget.cut();			
+		} else {
+			fTextWidget.copy();
+			fTextWidget.setSelection(selection.x); // restore old cursor position
 		}
 	}
 	
@@ -2800,4 +2881,102 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	public void removeVerifyKeyListener(VerifyKeyListener listener) {
 		fVerifyKeyListenersManager.removeListener(listener);
 	}
+
+	/*
+	 * @see ITextViewerExtension#getMark()
+	 */
+	public int getMark() {
+		return fMarkPosition == null || fMarkPosition.isDeleted()
+			? -1
+			: fMarkPosition.getOffset();
+	}
+
+	/*
+	 * @see ITextViewerExtension#setMark(int)
+	 */
+	public void setMark(int offset) {
+
+		// clear
+		if (offset == -1) {
+			if (fMarkPosition != null && !fMarkPosition.isDeleted()) {
+
+				IDocument document= getDocument();
+				if (document != null)
+					document.removePosition(fMarkPosition);
+			}			
+
+			fMarkPosition= null;
+
+			markChanged(-1, 0);
+
+		// set
+		} else {
+			if (fMarkPosition == null) {
+
+				IDocument document= getDocument();
+				if (document == null)
+					return;			
+
+				if (offset < 0 || offset > document.getLength())
+					return;
+
+				try {	
+					Position position= new Position(offset);			
+					document.addPosition(MARK_POSITION_CATEGORY, position);
+					fMarkPosition= position;
+
+				} catch (BadLocationException e) {
+					return;
+				} catch (BadPositionCategoryException e) {
+					return;
+				}
+		
+			} else {
+
+				IDocument document= getDocument();
+				if (document == null) {
+					fMarkPosition= null;
+					return;			
+				}				
+				
+				if (offset < 0 || offset > document.getLength())
+					return;
+
+				fMarkPosition.setOffset(offset);
+				fMarkPosition.undelete();
+			}
+
+			markChanged(fMarkPosition.offset - getVisibleRegionOffset(), 0);
+		}		
+	}
+
+	/**
+	 * @see Viewer#inputChanged(Object, Object)
+	 */
+	protected void inputChanged(Object newInput, Object oldInput) {
+
+		IDocument oldDocument= (IDocument) oldInput;
+		if (oldDocument != null) {
+			if (fMarkPosition != null && !fMarkPosition.isDeleted())
+				oldDocument.removePosition(fMarkPosition);
+
+			try {
+				oldDocument.removePositionUpdater(fMarkPositionUpdater);
+				oldDocument.removePositionCategory(MARK_POSITION_CATEGORY);
+	
+			} catch (BadPositionCategoryException e) {
+			}
+		}
+
+		fMarkPosition= null;
+
+		super.inputChanged(newInput, oldInput);
+
+		IDocument newDocument= (IDocument) newInput;
+		if (newDocument != null) {
+			newDocument.addPositionCategory(MARK_POSITION_CATEGORY);
+			newDocument.addPositionUpdater(fMarkPositionUpdater);			
+		}
+	}
+
 }

@@ -6,8 +6,8 @@ package org.eclipse.ui.texteditor;
  */
 
 
-import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,9 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ST;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -28,17 +25,20 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.custom.ST;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -54,6 +54,16 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -61,16 +71,13 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
+import org.eclipse.jface.text.IMarkRegionTarget;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextListener;
@@ -88,12 +95,6 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.VerticalRuler;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
@@ -108,11 +109,12 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.texteditor.AbstractTextEditor.ElementStateListener.Validator;
 
 
 
@@ -600,7 +602,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @see IAction#run()
 		 */
 		public void run() {
-				fRulerContextMenu.setVisible(true);
+			if (fSourceViewer == null)
+				return;
+
+			StyledText text= fSourceViewer.getTextWidget();
+			if (text == null || text.isDisposed())
+				return;
+					
+			Point location= text.getLocationAtOffset(text.getCaretOffset());
+			location.x= 0;
+
+			if (fVerticalRuler instanceof IVerticalRulerExtension)
+			((IVerticalRulerExtension) fVerticalRuler).setLocationOfLastMouseButtonActivity(location.x, location.y);
+
+			location= text.toDisplay(location);
+			fRulerContextMenu.setLocation(location.x, location.y);
+			fRulerContextMenu.setVisible(true);
 		}		
 	}
 	
@@ -772,9 +789,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private int fErrorCorrectionOnSave;
 	/** The incremental find target */
 	private IncrementalFindTarget fIncrementalFindTarget;
+	/** The mark region target */
+	private IMarkRegionTarget fMarkRegionTarget;
 	/** Cached modification stamp of the editor's input */
 	private long fModificationStamp= -1;
-	
+	/** Ruler context menu listeners. */	
+	private List fRulerContextMenuListeners= new ArrayList();
 
 	
 	
@@ -1075,6 +1095,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				}
 				
 				public void mouseDown(MouseEvent e) {
+					StyledText text= fSourceViewer.getTextWidget();
+					if (text != null && !text.isDisposed()) {
+							Display display= text.getDisplay();
+							Point location= display.getCursorLocation();
+							fRulerContextMenu.setLocation(location.x, location.y);
+					}					
 				}
 			};
 		}
@@ -2422,7 +2448,37 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE);
 		setAction(ITextEditorActionConstants.DELETE, action);
-		
+
+		action= new DeleteLineAction(EditorMessages.getResourceBundle(), "Editor.DeleteLine.", this, DeleteLineAction.WHOLE); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_LINE_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE_LINE);
+		setAction(ITextEditorActionConstants.DELETE_LINE, action);
+
+		action= new DeleteLineAction(EditorMessages.getResourceBundle(), "Editor.DeleteLineToBeginning.", this, DeleteLineAction.TO_BEGINNING); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_LINE_TO_BEGINNING_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE_LINE_TO_BEGINNING);
+		setAction(ITextEditorActionConstants.DELETE_LINE_TO_BEGINNING, action);
+
+		action= new DeleteLineAction(EditorMessages.getResourceBundle(), "Editor.DeleteLineToEnd.", this, DeleteLineAction.TO_END); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_LINE_TO_END_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE_LINE_TO_END);
+		setAction(ITextEditorActionConstants.DELETE_LINE_TO_END, action);
+
+		action= new MarkAction(EditorMessages.getResourceBundle(), "Editor.SetMark.", this, MarkAction.SET_MARK); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SET_MARK_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SET_MARK);
+		setAction(ITextEditorActionConstants.SET_MARK, action);
+
+		action= new MarkAction(EditorMessages.getResourceBundle(), "Editor.ClearMark.", this, MarkAction.CLEAR_MARK); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CLEAR_MARK_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CLEAR_MARK);
+		setAction(ITextEditorActionConstants.CLEAR_MARK, action);
+
+		action= new MarkAction(EditorMessages.getResourceBundle(), "Editor.SwapMark.", this, MarkAction.SWAP_MARK); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SWAP_MARK_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SWAP_MARK);
+		setAction(ITextEditorActionConstants.SWAP_MARK, action);
+
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.SelectAll.", this, ITextOperationTarget.SELECT_ALL, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SELECT_ALL_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SELECT_ALL);
@@ -2468,7 +2524,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.ADD_BOOKMARK);
 		setAction(ITextEditorActionConstants.BOOKMARK, action);
 		
-		action= new AddMarkerAction(EditorMessages.getResourceBundle(), "Editor.AddTask.", this, IMarker.TASK, true); //$NON-NLS-1$
+		action= new AddTaskAction(EditorMessages.getResourceBundle(), "Editor.AddTask.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.ADD_TASK_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.ADD_TASK);
 		setAction(ITextEditorActionConstants.ADD_TASK, action);
@@ -2568,6 +2624,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @param menu the menu
 	 */
 	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
+
+		for (Iterator i = fRulerContextMenuListeners.iterator(); i.hasNext();)
+			((IMenuListener) i.next()).menuAboutToShow(menu);					
+		
 		addAction(menu, ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS);
 		addAction(menu, ITextEditorActionConstants.RULER_MANAGE_TASKS);
 		
@@ -2606,7 +2666,20 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 
 	}
-		
+
+	private IStatusLineManager getStatusLineManager() {
+
+		IEditorActionBarContributor contributor= getEditorSite().getActionBarContributor();		
+		if (!(contributor instanceof EditorActionBarContributor))
+			return null;
+			
+		IActionBars actionBars= ((EditorActionBarContributor) contributor).getActionBars();
+		if (actionBars == null)
+			return null;
+			
+		return actionBars.getStatusLineManager();
+	}
+	
 	/*
 	 * @see IAdaptable#getAdapter(Class)
 	 */
@@ -2617,16 +2690,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				return fVerticalRuler;
 		}
 		
+		if (IMarkRegionTarget.class.equals(required)) {
+			if (fMarkRegionTarget == null) {
+				IStatusLineManager manager= getStatusLineManager();
+				if (manager != null)
+					fMarkRegionTarget= (fSourceViewer == null ? null : new MarkRegionTarget(fSourceViewer, manager));
+			}
+			return fMarkRegionTarget;
+		}
+		
 		if (IncrementalFindTarget.class.equals(required)) {
 			if (fIncrementalFindTarget == null) {
-				IEditorActionBarContributor contributor= getEditorSite().getActionBarContributor();
-				if (contributor instanceof EditorActionBarContributor) {
-					IActionBars actionBars= ((EditorActionBarContributor) contributor).getActionBars();
-					if (actionBars != null) {
-						IStatusLineManager manager= actionBars.getStatusLineManager();
-						fIncrementalFindTarget= (fSourceViewer == null ? null : new IncrementalFindTarget(fSourceViewer, manager));
-					}
-				}
+				IStatusLineManager manager= getStatusLineManager();				
+				fIncrementalFindTarget= (fSourceViewer == null ? null : new IncrementalFindTarget(fSourceViewer, manager));
 			}
 			return fIncrementalFindTarget;
 		}
@@ -2918,7 +2994,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		int offset= fSourceViewer.getVisibleRegion().getOffset();
 		int caret= offset + styledText.getCaretOffset();
 		IDocument document= fSourceViewer.getDocument();
-		
+
+		if (document == null)
+			return fErrorLabel;
+	
 		try {
 			
 			int line=document.getLineOfOffset(caret);
@@ -2952,4 +3031,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		return true;
 	}
+
+	/*
+	 * @see ITextEditorExtension#addRulerContextMenuListener(IMenuListener)
+	 */
+	public void addRulerContextMenuListener(IMenuListener listener) {
+		fRulerContextMenuListeners.add(listener);	
+	}
+
+	/*
+	 * @see ITextEditorExtension#removeRulerContextMenuListener(IMenuListener)
+	 */
+	public void removeRulerContextMenuListener(IMenuListener listener) {
+		fRulerContextMenuListeners.remove(listener);
+	}
+
 }

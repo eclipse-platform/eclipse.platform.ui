@@ -15,6 +15,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -30,6 +31,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -94,12 +96,24 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		};
 		
 		private List fCachedListeners= new ArrayList();
+		private MouseListener fMouseListener;
 		
 		/**
 		 * Creates a new composite ruler canvas.
 		 */
 		public CompositeRulerCanvas(Composite parent, int style) {
 			super(parent, style);
+			fMouseListener= new MouseAdapter() {
+				public void mouseUp(MouseEvent e) {
+					if (3 == e.button) {
+						Menu menu= getMenu();
+						if (menu != null) {
+							menu.setLocation(e.x, e.y);
+							menu.setVisible(true);
+						}
+					}
+				}
+			};
 		}
 		
 		/* 
@@ -149,11 +163,14 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		 */
 		public void childAdded(Control child) {
 			if (child != null && !child.isDisposed()) {
+				
 				int length= fCachedListeners.size();
 				for (int i= 0; i < length; i++) {
 					ListenerInfo info= (ListenerInfo) fCachedListeners.get(i);
 					child.addListener(info.eventType, info.listener);
 				}
+				
+				child.addMouseListener(fMouseListener);
 			}
 		}
 		
@@ -162,11 +179,14 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		 */
 		public void childRemoved(Control child) {
 			if (child != null && !child.isDisposed()) {
+				
 				int length= fCachedListeners.size();
 				for (int i= 0; i < length; i++) {
 					ListenerInfo info= (ListenerInfo) fCachedListeners.get(i);
 					child.removeListener(info.eventType, info.listener);
 				}
+				
+				child.removeMouseListener(fMouseListener);
 			}
 		}
 	};
@@ -356,12 +376,13 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		return fTextViewer;
 	}
 	
-	/**
-	 * Sets the location of the last mouse button activity.
+	/*
+	 * @see IVerticalRulerExtension#setLocationOfLastMouseButtonActivity(int, int)
 	 */
 	public void setLocationOfLastMouseButtonActivity(int x, int y) {
 		fLocation.x= x;
 		fLocation.y= y;
 		fLastMouseButtonActivityLine= -1;
 	}
+
 }

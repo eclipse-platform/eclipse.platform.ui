@@ -113,6 +113,15 @@
             id="org.eclipse.ui.edit.delete">
       </actionDefinition>
       <actionDefinition
+            id="org.eclipse.ui.edit.text.delete.line">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.edit.text.delete.line.to.beginning">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.edit.text.delete.line.to.end">
+      </actionDefinition>
+      <actionDefinition
             id="org.eclipse.ui.edit.move">
       </actionDefinition>
       <actionDefinition
@@ -120,6 +129,15 @@
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.selectAll">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.edit.text.set.mark">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.edit.text.clear.mark">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.edit.text.swap.mark">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.findReplace">
@@ -414,7 +432,7 @@
                id="org.eclipse.ui.edit.cut">
          </accelerator>
          <accelerator
-               key="Alt+W||Ctrl+INSERT"
+               key="Alt+W||Esc W||Ctrl+INSERT"
                id="org.eclipse.ui.edit.copy">
          </accelerator>
          <accelerator
@@ -427,6 +445,18 @@
          </accelerator>
          <accelerator
                key=""
+               id="org.eclipse.ui.edit.text.delete.line">
+         </accelerator>
+         <accelerator
+               key="Alt+0 Ctrl+K||Esc 0 Ctrl+K"
+               id="org.eclipse.ui.edit.text.delete.line.to.beginning">
+         </accelerator>
+         <accelerator
+               key="Ctrl+K"
+               id="org.eclipse.ui.edit.text.delete.line.to.end">
+         </accelerator>
+         <accelerator
+               key=""
                id="org.eclipse.ui.edit.move">
          </accelerator>
          <accelerator
@@ -436,6 +466,18 @@
          <accelerator
                key="Ctrl+X H"
                id="org.eclipse.ui.edit.selectAll">
+         </accelerator>
+         <accelerator
+               key="Ctrl+@"
+               id="org.eclipse.ui.edit.text.set.mark">
+         </accelerator>
+         <accelerator
+               key="Ctrl+G"
+               id="org.eclipse.ui.edit.text.clear.mark">
+         </accelerator>
+         <accelerator
+               key="Ctrl+X Ctrl+X"
+               id="org.eclipse.ui.edit.text.swap.mark">
          </accelerator>
          <accelerator
                key="Ctrl+X F"
@@ -570,7 +612,7 @@
                id="org.eclipse.ui.edit.text.goto.wordPrevious">
          </accelerator>
          <accelerator
-               key="Alt+F"
+               key="Alt+F||Esc F"
                id="org.eclipse.ui.edit.text.goto.wordNext">
          </accelerator>
          <accelerator
@@ -766,6 +808,18 @@
          </accelerator>
          <accelerator
                key=""
+               id="org.eclipse.ui.edit.text.delete.line">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.delete.line.to.beginning">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.delete.line.to.end">
+         </accelerator>
+         <accelerator
+               key=""
                id="org.eclipse.ui.edit.move">
          </accelerator>
          <accelerator
@@ -775,6 +829,18 @@
          <accelerator
                key="Ctrl+A"
                id="org.eclipse.ui.edit.selectAll">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.set.mark">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.clear.mark">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.swap.mark">
          </accelerator>
          <accelerator
                key="Ctrl+F"

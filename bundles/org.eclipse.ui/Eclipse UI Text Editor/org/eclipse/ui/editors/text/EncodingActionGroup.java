@@ -253,7 +253,7 @@ public class EncodingActionGroup extends ActionGroup {
 		Iterator e= fRetargetActions.iterator();
 		while (e.hasNext()) {
 			RetargetTextEditorAction a= (RetargetTextEditorAction) e.next();
-			a.setAction(editor.getAction(a.getId()));
+			a.setAction(editor == null ? null : editor.getAction(a.getId()));
 		}
 	}
 	

@@ -12,6 +12,14 @@ package org.eclipse.ui.texteditor;
  */
 public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefinitionIds {
 	
+	// edit
+	public static final String DELETE_LINE= "org.eclipse.ui.edit.text.delete.line"; //$NON-NLS-1$
+	public static final String DELETE_LINE_TO_BEGINNING= "org.eclipse.ui.edit.text.delete.line.to.beginning"; //$NON-NLS-1$
+	public static final String DELETE_LINE_TO_END= "org.eclipse.ui.edit.text.delete.line.to.end"; //$NON-NLS-1$
+	public static final String SET_MARK= "org.eclipse.ui.edit.text.set.mark"; //$NON-NLS-1$
+	public static final String CLEAR_MARK= "org.eclipse.ui.edit.text.clear.mark"; //$NON-NLS-1$
+	public static final String SWAP_MARK= "org.eclipse.ui.edit.text.swap.mark"; //$NON-NLS-1$
+	
 	// navigation
 	public static final String LINE_UP= "org.eclipse.ui.edit.text.goto.lineUp"; //$NON-NLS-1$
 	public static final String LINE_DOWN= "org.eclipse.ui.edit.text.goto.lineDown"; //$NON-NLS-1$

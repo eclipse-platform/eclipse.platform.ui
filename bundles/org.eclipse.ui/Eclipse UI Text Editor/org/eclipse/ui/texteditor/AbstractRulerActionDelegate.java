@@ -11,11 +11,14 @@ Contributors:
 package org.eclipse.ui.texteditor;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.Control;
+
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 
@@ -24,10 +27,13 @@ import org.eclipse.ui.IEditorPart;
  * Extending classes must implement the factory method
  * <code>createAction(ITextEditor editor, IVerticalRulerInfo)</code>.
  */
-public abstract class AbstractRulerActionDelegate implements IEditorActionDelegate, MouseListener {
+public abstract class AbstractRulerActionDelegate implements IEditorActionDelegate, MouseListener, IMenuListener {
 
+	/** The editor. */
 	private IEditorPart fEditor;
+	/** The action calling the action delegate. */
 	private IAction fCallerAction;
+	/** The underlying action. */
 	private IAction fAction;
 
 	/*
@@ -41,6 +47,9 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 				if (control != null && !control.isDisposed())
 					control.removeMouseListener(this);
 			}
+
+			if (fEditor instanceof ITextEditorExtension)			
+				((ITextEditorExtension) fEditor).removeRulerContextMenuListener(this);
 		}
 
 		fEditor= targetEditor;		
@@ -48,6 +57,9 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 		fAction= null;
 
 		if (fEditor != null && fEditor instanceof ITextEditor) {
+			if (fEditor instanceof ITextEditorExtension)
+				((ITextEditorExtension) fEditor).addRulerContextMenuListener(this);
+
 			IVerticalRulerInfo rulerInfo= (IVerticalRulerInfo) fEditor.getAdapter(IVerticalRulerInfo.class);
 			if (rulerInfo != null) {
 				fAction= createAction((ITextEditor) fEditor, rulerInfo);
@@ -55,7 +67,7 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 				
 				Control control= rulerInfo.getControl();
 				if (control != null && !control.isDisposed())
-					control.addMouseListener(this);
+					control.addMouseListener(this);				
 			}
 		}
 	}
@@ -79,6 +91,23 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 	 */
 	protected abstract IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo);
 
+	private void update() {
+		if (fAction != null && fAction instanceof IUpdate) {
+			((IUpdate) fAction).update();
+			if (fCallerAction != null) {
+				fCallerAction.setText(fAction.getText());
+				fCallerAction.setEnabled(fAction.isEnabled());
+			}
+		}
+	}
+
+	/*
+	 * @see IMenuListener#menuAboutToShow(IMenuManager)
+	 */
+	public void menuAboutToShow(IMenuManager manager) {
+		update();
+	}
+
 	/*
 	 * @see MouseListener#mouseDoubleClick(MouseEvent)	
 	 */
@@ -98,13 +127,4 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 	public void mouseUp(MouseEvent e) {
 	}
 
-	private void update() {
-		if (fAction != null && fAction instanceof IUpdate) {
-			((IUpdate) fAction).update();
-			if (fCallerAction != null) {
-				fCallerAction.setText(fAction.getText());
-				fCallerAction.setEnabled(fAction.isEnabled());
-			}
-		}
-	}
 }

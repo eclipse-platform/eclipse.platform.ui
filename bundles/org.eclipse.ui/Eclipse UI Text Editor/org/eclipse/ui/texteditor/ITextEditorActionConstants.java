@@ -59,14 +59,34 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 */
 	static final String SHIFT_LEFT= "ShiftLeft"; //$NON-NLS-1$
 	/** 
-	 * Name of the action for creating tasks based on the text selection. 
-	 */
-	static final String ADD_TASK= "AddTask"; //$NON-NLS-1$
-	/** 
 	 * Name of the action for re-establishing the state after the 
 	 * most recent save operation. 
 	 */
 	static final String REVERT_TO_SAVED= REVERT;
+	/** 
+	 * Name of the action to delete the current line. 
+	 */
+	static final String DELETE_LINE= "DeleteLine"; //$NON-NLS-1$
+	/** 
+	 * Name of the action to delete line to beginning. 
+	 */
+	static final String DELETE_LINE_TO_BEGINNING= "DeleteLineToBeginning"; //$NON-NLS-1$
+	/** 
+	 * Name of the action to delete line to end. 
+	 */
+	static final String DELETE_LINE_TO_END= "DeleteLineToEnd"; //$NON-NLS-1$
+	/** 
+	 * Name of the action to set the mark.
+	 */
+	static final String SET_MARK= "SetMark"; //$NON-NLS-1$
+	/** 
+	 * Name of the action to set the mark.
+	 */
+	static final String CLEAR_MARK= "ClearMark"; //$NON-NLS-1$
+	/** 
+	 * Name of the action to swap the mark with the cursor position. 
+	 */
+	static final String SWAP_MARK= "SwapMark"; //$NON-NLS-1$
 	/** 
 	 * Name of the action to jump to a certain text line. 
 	 */
@@ -76,7 +96,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 */
 	static final String FIND_NEXT= "FindNext"; //$NON-NLS-1$
 	/** 
-	 * Name of the action to find next. 
+	 * Name of the action to find previous. 
 	 */
 	static final String FIND_PREVIOUS= "FindPrevious"; //$NON-NLS-1$
 	/** 

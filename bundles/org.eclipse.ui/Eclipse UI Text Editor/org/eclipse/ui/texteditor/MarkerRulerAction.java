@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -22,8 +24,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -33,11 +33,11 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.views.tasklist.TaskPropertiesDialog;
 
 
 
@@ -50,7 +50,7 @@ import org.eclipse.ui.views.tasklist.TaskPropertiesDialog;
  */
 public class MarkerRulerAction extends ResourceAction implements IUpdate {
 
-	private IVerticalRuler fRuler;
+	private IVerticalRulerInfo fRuler;
 	private ITextEditor fTextEditor;
 	private String fMarkerType;
 	private List fMarkers;
@@ -62,6 +62,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	private String fAddLabel;
 	private String fRemoveLabel;
 
+	
 	/**
 	 * Creates a new action for the given ruler and editor. The action configures
 	 * its visual representation from the given resource bundle.
@@ -70,14 +71,14 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @param prefix a prefix to be prepended to the various resource keys
 	 *   (described in <code>ResourceAction</code> constructor), or 
 	 *   <code>null</code> if none
-	 * @param ruler the ruler
 	 * @param editor the editor
+	 * @param ruler the ruler
 	 * @param markerType the type of marker
 	 * @param askForLabel <code>true</code> if the user should be asked for 
 	 *   a label when a new marker is created 
 	 * @see ResourceAction#ResourceAction
 	 */
-	public MarkerRulerAction(ResourceBundle bundle, String prefix, IVerticalRuler ruler, ITextEditor editor, String markerType, boolean askForLabel) {
+	public MarkerRulerAction(ResourceBundle bundle, String prefix,  ITextEditor editor, IVerticalRulerInfo ruler, String markerType, boolean askForLabel) {
 		super(bundle, prefix);
 		fRuler= ruler;
 		fTextEditor= editor;
@@ -92,6 +93,14 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	}
 	
 	/**
+	 * @deprecated use <code>MarkerRulerAction(ResourceBundle, String,  ITextEditor, IVerticalRulerInfo, String, boolean)</code> instead
+	 */
+	public MarkerRulerAction(ResourceBundle bundle, String prefix, IVerticalRuler ruler, ITextEditor editor, String markerType, boolean askForLabel) {
+		this(bundle, prefix, editor, ruler, markerType, askForLabel);
+	}
+
+	
+	/**
 	 * Returns this action's editor.
 	 *
 	 * @return this action's editor
@@ -104,8 +113,20 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 * Returns this action's vertical ruler.
 	 *
 	 * @return this action's vertical ruler
+	 * @deprecated use <code>getVerticalRulerInfo</code> instead
 	 */
 	protected IVerticalRuler getVerticalRuler() {
+		if (fRuler instanceof IVerticalRuler)
+			return (IVerticalRuler) fRuler;
+		return null;
+	}
+	
+	/**
+	 * Returns this action's vertical ruler info.
+	 *
+	 * @return this action's vertical ruler
+	 */
+	protected IVerticalRulerInfo getVerticalRulerInfo() {
 		return fRuler;
 	}
 	
@@ -273,13 +294,6 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 			return;
 		Map attributes= getInitialAttributes();
 		if (fAskForLabel) {
-			if (IMarker.TASK.equals(fMarkerType)) {
-                TaskPropertiesDialog dialog = new TaskPropertiesDialog(getTextEditor().getSite().getShell());
-                dialog.setResource(resource);
-                dialog.setInitialAttributes(attributes);
-                dialog.open();
-                return;
-	        }
 			if (!askForLabel(attributes))
 				return;
 		}

@@ -84,6 +84,10 @@ public final class RetargetTextEditorAction extends ResourceAction {
 			setText((String) event.getNewValue());
 		else if (TOOL_TIP_TEXT.equals(event.getProperty()))
 			setToolTipText((String) event.getNewValue());
+		else if (CHECKED.equals(event.getProperty())) {
+			Boolean bool= (Boolean) event.getNewValue();
+			setChecked(bool.booleanValue());
+		}
 	}
 	
 	/**
