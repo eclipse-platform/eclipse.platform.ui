@@ -767,4 +767,8 @@ public class CVSProviderPlugin extends Plugin {
 	public boolean crashOnLastRun() {
 		return crash;
 	}
+	
+	public RemoteContentsCache getRemoteContentsCache() {
+		return RemoteContentsCache.getCache(CVSProviderPlugin.ID);
+	}
 }
