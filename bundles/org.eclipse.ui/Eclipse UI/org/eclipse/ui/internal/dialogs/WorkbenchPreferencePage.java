@@ -20,50 +20,30 @@ import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 
-public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, Listener {
+public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private IWorkbench workbench;
 	private Button autoBuildButton;
 	private Button autoSaveAllButton;
 	private Button linkButton;
+	private IntegerFieldEditor reuseEditors;
 	private IntegerFieldEditor recentFilesEditor;
-
-	//Widgets for menu based perspective operation
-	private Button openInNewWindowButton;
-	private Button openInNewPageButton;
-	private Button switchOnNewProjectButton;
-	private Button version2PerspectivesButton;
-	private Text openInNewWindowText;
-	private Text openInNewPageText;
 
 	//Widgets for perspective switching when creating new projects
 	private Button openProjectInNewWindowButton;
 	private Button openProjectInNewPageButton;
 	private Button replaceProjectButton;
+	private Button switchOnNewProjectButton;
 
-	private String currentPerspectiveSetting;
 	private String newProjectPerspectiveSetting;
 
 	//Labels
-	private static final String NEW_PERSPECTIVE_TITLE = WorkbenchMessages.getString("WorkbenchPreference.openNewPerspective"); //$NON-NLS-1$
 	private static final String NEW_PROJECT_PERSPECTIVE_TITLE = WorkbenchMessages.getString("WorkbenchPreference.projectOptionsTitle"); //$NON-NLS-1$
-
-	private static final String OPEN_NEW_WINDOW_LABEL = WorkbenchMessages.getString("WorkbenchPreference.newWindow"); //$NON-NLS-1$
-	private static final String OPEN_NEW_PAGE_LABEL = WorkbenchMessages.getString("WorkbenchPreference.sameWindow"); //$NON-NLS-1$
-	private static final String OPEN_REPLACE_LABEL = WorkbenchMessages.getString("WorkbenchPreference.replaceCurrent"); //$NON-NLS-1$
 
 	private static final String OPEN_NEW_WINDOW_PROJECT_LABEL = WorkbenchMessages.getString("WorkbenchPreference.projectNewWindow"); //$NON-NLS-1$
 	private static final String OPEN_NEW_PAGE_PROJECT_LABEL = WorkbenchMessages.getString("WorkbenchPreference.projectSameWindow"); //$NON-NLS-1$
 	private static final String OPEN_REPLACE_PROJECT_LABEL = WorkbenchMessages.getString("WorkbenchPreference.replacePerspective"); //$NON-NLS-1$
 	private static final String DO_NOT_SWITCH_PERSPECTIVES = WorkbenchMessages.getString("WorkbenchPreference.noSwitch"); //$NON-NLS-1$
 
-	private static final String SHIFT_LABEL = WorkbenchMessages.getString("WorkbenchPreference.shift"); //$NON-NLS-1$
-	private static final String ALT_LABEL = getAlternateString();
-	/**
-	 * Get the values for the alt perspective setting. It will be replace unless replace is selected.
-	 */
-	private String altPerspectiveSetting() {
-		return shiftPerspectiveSetting();
-	}
 	/**
 	 * Creates composite control and sets the default layout data.
 	 *
@@ -110,9 +90,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		linkButton.setText(WorkbenchMessages.getString("WorkbenchPreference.linkNavigator")); //$NON-NLS-1$
 
 		createEditorGroup(composite);
-
-		createPerspectiveGroup(composite);
-
+		
+		createSpace(composite);
 		createProjectPerspectiveGroup(composite);
 
 		// set initial values
@@ -137,6 +116,16 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		gd.grabExcessHorizontalSpace = true;
 		groupComposite.setLayoutData(gd);
 
+		reuseEditors = new IntegerFieldEditor(IPreferenceConstants.REUSE_EDITORS, WorkbenchMessages.getString("WorkbenchPreference.reuseEditors"), groupComposite);
+
+		reuseEditors.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
+		reuseEditors.setPreferencePage(this);
+		reuseEditors.setTextLimit(2);
+		reuseEditors.setErrorMessage(WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsError"));
+		reuseEditors.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
+		reuseEditors.setValidRange(1, 99);
+		reuseEditors.load();
+
 		recentFilesEditor = new IntegerFieldEditor(IPreferenceConstants.RECENT_FILES, WorkbenchMessages.getString("WorkbenchPreference.recentFiles"), groupComposite);
 
 		int recentFilesMax = IPreferenceConstants.MAX_RECENT_FILES_SIZE;
@@ -149,68 +138,18 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		recentFilesEditor.load();
 	}
 	/**
-	 * Create a composite that contains buttons for selecting the preference opening selections. 
-	 */
-	private void createPerspectiveGroup(Composite composite) {
-
-		Group buttonComposite = new Group(composite, SWT.LEFT);
-		buttonComposite.setText(NEW_PERSPECTIVE_TITLE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		buttonComposite.setLayout(layout);
-		GridData data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
-		data.grabExcessHorizontalSpace = true;
-		buttonComposite.setLayoutData(data);
-
-		//Open New Window button
-		this.openInNewWindowButton = createRadioButton(buttonComposite, OPEN_NEW_WINDOW_LABEL);
-		this.openInNewWindowButton.setSelection(this.currentPerspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW));
-
-		this.openInNewWindowButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				currentPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW;
-				setTextValuesForPerspective();
-			}
-		});
-
-		this.openInNewWindowText = new Text(buttonComposite, SWT.NONE);
-		this.openInNewWindowText.setEditable(false);
-
-		//Open New Page button
-		this.openInNewPageButton = createRadioButton(buttonComposite, OPEN_NEW_PAGE_LABEL);
-		this.openInNewPageButton.setSelection(this.currentPerspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE));
-
-		this.openInNewPageButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				currentPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE;
-				setTextValuesForPerspective();
-			}
-		});
-
-		this.openInNewPageText = new Text(buttonComposite, SWT.NONE);
-		this.openInNewPageText.setEditable(false);
-
-		version2PerspectivesButton = new Button(composite, SWT.CHECK);
-		version2PerspectivesButton.setText(WorkbenchMessages.getString("WorkbenchPreference.reusePerspectives")); //$NON-NLS-1$
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		version2PerspectivesButton.setSelection(store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES));
-
-		setTextValuesForPerspective();
-	}
-	/**
 	 * Create a composite that contains buttons for selecting the 
 	 * preference opening new project selections. 
 	 */
 	private void createProjectPerspectiveGroup(Composite composite) {
 
-		Group buttonComposite = new Group(composite, SWT.LEFT);
-		buttonComposite.setText(NEW_PROJECT_PERSPECTIVE_TITLE);
+		Label titleLabel = new Label(composite, SWT.NONE);
+		titleLabel.setText(NEW_PROJECT_PERSPECTIVE_TITLE);
+
+		Composite buttonComposite = new Composite(composite, SWT.LEFT);
 		GridLayout layout = new GridLayout();
 		buttonComposite.setLayout(layout);
-		GridData data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
-		data.grabExcessHorizontalSpace = true;
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL);
 		buttonComposite.setLayoutData(data);
 
 		//Open New Page button
@@ -265,7 +204,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private Button createRadioButton(Composite parent, String label) {
 		Button button = new Button(parent, SWT.RADIO | SWT.LEFT);
 		button.setText(label);
-		button.addListener(SWT.Selection, this);
 		GridData data = new GridData();
 		button.setLayoutData(data);
 		return button;
@@ -294,35 +232,11 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		return WorkbenchPlugin.getDefault().getPreferenceStore();
 	}
 	/**
-	 * Get the label for the alternate setting for this platform - either Control for Windows
-	 * or Shift-Alt for Motif.
-	 * @return java.lang.String
-	 */
-	private static String getAlternateString() {
-		if (SWT.getPlatform().equals("win32")) //$NON-NLS-1$
-			return WorkbenchMessages.getString("WorkbenchPreference.control"); //$NON-NLS-1$
-		else
-			return WorkbenchMessages.getString("WorkbenchPreference.shiftAlt"); //$NON-NLS-1$
-	}
-	/**
-	 * Handles events generated by controls on this page.
-	 *
-	 * @param e  the event to handle
-	 */
-	public void handleEvent(Event e) {
-		// get widget that generates the event
-		Widget source = e.widget;
-
-		// add the code that should react to
-		// some widget event
-	}
-	/**
 	 *	@see IWorkbenchPreferencePage
 	 */
 	public void init(IWorkbench aWorkbench) {
 		this.workbench = aWorkbench;
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		this.currentPerspectiveSetting = store.getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
 		this.newProjectPerspectiveSetting = store.getString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE);
 	}
 	/**
@@ -333,14 +247,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
 		autoSaveAllButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 		linkButton.setSelection(store.getDefaultBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
+		reuseEditors.loadDefault();
 		recentFilesEditor.loadDefault();
-
-		//Perspective preferences
-		String defaultPreference = store.getDefaultString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
-		this.currentPerspectiveSetting = defaultPreference;
-		openInNewWindowButton.setSelection(defaultPreference.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW));
-		openInNewPageButton.setSelection(defaultPreference.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE));
-		version2PerspectivesButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_PERSPECTIVES));
 
 		//Project perspective preferences
 		String projectPreference = store.getDefaultString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE);
@@ -350,7 +258,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		replaceProjectButton.setSelection(projectPreference.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE));
 		switchOnNewProjectButton.setSelection(projectPreference.equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE));
 
-		setTextValuesForPerspective();
 		super.performDefaults();
 	}
 	/**
@@ -389,48 +296,15 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		// store the link navigator to editor setting
 		store.setValue(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, linkButton.getSelection());
 
+		// store the reuse editors setting
+		reuseEditors.store();
+
 		// store the recent files setting
 		recentFilesEditor.store();
 
-		// store reuse perspctives setting
-		store.setValue(IPreferenceConstants.REUSE_PERSPECTIVES, version2PerspectivesButton.getSelection());
-
-		// store the open in new window settings
-		store.setValue(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE, currentPerspectiveSetting);
-
-		// store the open in new window shift settings
-		store.setValue(IWorkbenchPreferenceConstants.SHIFT_OPEN_NEW_PERSPECTIVE, shiftPerspectiveSetting());
-
-		// store the open in new window alt settings
-		store.setValue(IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE, altPerspectiveSetting());
-
-		// store the open in new project settings
+		// store the open new project perspective settings
 		store.setValue(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE, newProjectPerspectiveSetting);
 
 		return true;
-	}
-	/**
-	 * Set the values for the text based on the current setting.
-	 */
-	private void setTextValuesForPerspective() {
-		if (this.currentPerspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE)) {
-			this.openInNewWindowText.setText(SHIFT_LABEL);
-			this.openInNewPageText.setText(""); //$NON-NLS-1$
-		} else {
-			if (this.currentPerspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW)) {
-				this.openInNewPageText.setText(SHIFT_LABEL);
-				this.openInNewWindowText.setText(""); //$NON-NLS-1$
-			}
-
-		}
-	}
-	/**
-	 * Get the values for the shift perspective setting. It will be window unless window is selected.
-	 */
-	private String shiftPerspectiveSetting() {
-		if (this.currentPerspectiveSetting == IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW)
-			return IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE;
-		else
-			return IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW;
 	}
 }
