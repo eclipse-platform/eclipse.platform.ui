@@ -25,12 +25,13 @@ import org.eclipse.jface.text.source.ImageUtilities;
 
 /**
  * Annotation used to represent the projection of a master document onto a
- * <code>ProjectionDocument</code>. A projection annotation can be either
- * expanded or collapsed. If expanded it corresponds to a segment of the
- * projection document. If collapsed, it represents a region of the master
- * document that does not have a corresponding segment in the projection
- * document.
+ * {@link org.eclipse.jface.text.projection.ProjectionDocument}. A projection
+ * annotation can be either expanded or collapsed. If expanded it corresponds to
+ * a segment of the projection document. If collapsed, it represents a region of
+ * the master document that does not have a corresponding segment in the
+ * projection document.
  * <p>
+ * Clients may subclass or use as is.
  * 
  * @since 3.0
  */
@@ -67,17 +68,28 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	private boolean fIsRangeIndication= false;
 	
 	/** 
-	 * Creates a new projection annotation.
+	 * Creates a new expanded projection annotation.
 	 */
 	public ProjectionAnnotation() {
 		this(false);
 	}
 	
+	/**
+	 * Creates a new projection annotation. When <code>isCollapsed</code>
+	 * is <code>true</code> the annotation is initially collapsed.
+	 * 
+	 * @param isCollapsed <code>true</code> if the annotation should initially be collapsed, <code>false</code> otherwise
+	 */
 	public ProjectionAnnotation(boolean isCollapsed) {
 		super(TYPE, false, null);
 		fIsCollapsed= isCollapsed;
 	}
 	
+	/**
+	 * Enables and disables the range indication for this annotation.
+	 * 
+	 * @param rangeIndication the enable state for the range indication
+	 */
 	public void setRangeIndication(boolean rangeIndication) {
 		fIsRangeIndication= rangeIndication;
 	}

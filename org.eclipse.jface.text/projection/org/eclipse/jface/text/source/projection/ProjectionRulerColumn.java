@@ -34,9 +34,7 @@ import org.eclipse.jface.text.source.IAnnotationModelExtension;
 
 /**
  * A ruler column for controlling the behavior of a
- * <code>ProjectionSourceViewer</code>.
- * <p>
- * Internal class. Do not use. Public only for testing purposes.
+ * {@link org.eclipse.jface.text.source.projection.ProjectionViewer}.
  * 
  * @since 3.0
  */
@@ -82,6 +80,7 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 	 * model that contains the given line.
 	 * 
 	 * @param line the line
+	 * @param exact <code>true</code> if the annotation range must match exactly
 	 * @return the projection annotation containing the given line
 	 */
 	private ProjectionAnnotation findAnnotation(int line, boolean exact) {
@@ -207,16 +206,14 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.source.AnnotationRulerColumn#isDelegatingToParentRuler()
-	 * @since 3.0
+	 * @see org.eclipse.jface.text.source.AnnotationRulerColumn#isPropagatingMouseListener()
 	 */
 	protected boolean isPropagatingMouseListener() {
 		return false;
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.source.AnnotationRulerColumn#hasLineAnnotations(int)
-	 * @since 3.0
+	 * @see org.eclipse.jface.text.source.AnnotationRulerColumn#hasAnnotation(int)
 	 */
 	protected boolean hasAnnotation(int lineNumber) {
 		return findAnnotation(lineNumber, true) != null;

@@ -39,12 +39,20 @@ class ProjectionSummary {
 		
 		private boolean fReset= true;
 		
+		/**
+		 * Creates a new thread.
+		 * 
+		 * @param monitor the progress monitor
+		 */
 		public Summarizer(IProgressMonitor monitor) {
 			fProgressMonitor= monitor;
 			setDaemon(true);
 			start();
 		}
 		
+		/**
+		 * Resets the thread.
+		 */
 		public void reset() {
 			fReset= true;
 		}
@@ -78,13 +86,24 @@ class ProjectionSummary {
 	private IProgressMonitor fProgressMonitor;
 	private volatile Summarizer fSummarizer;
 
-	
+	/**
+	 * Creates a new projection summary.
+	 * 
+	 * @param projectionViewer the projection viewer
+	 * @param annotationAccess the annotation access
+	 */
 	public ProjectionSummary(ProjectionViewer projectionViewer, IAnnotationAccess annotationAccess) {
 		super();
 		fProjectionViewer= projectionViewer;
 		fAnnotationAccess= annotationAccess;
 	}
 	
+	/**
+	 * Adds the given annotation type. For now on, annotations of that type are
+	 * also reflected in their enclosing collapsed regions.
+	 * 
+	 * @param annotationType the annotation type to add
+	 */
 	public void addAnnotationType(String annotationType) {
 		synchronized(fLock) {
 			if (fConfiguredAnnotationTypes == null) {
@@ -95,6 +114,12 @@ class ProjectionSummary {
 		}
 	}
 	
+	/**
+	 * Removes the given annotation. Annotation of that type are no 
+	 * longer reflected in their enclosing collapsed region.
+	 * 
+	 * @param annotationType the annotation type to remove
+	 */
 	public void removeAnnotationType(String annotationType) {
 		synchronized (fLock) {
 			if (fConfiguredAnnotationTypes != null) {
@@ -105,6 +130,11 @@ class ProjectionSummary {
 		}
 	}
 	
+	/**
+	 * Forces an updated of the annotation summary.
+	 * 
+	 * @param monitor the progress monitor
+	 */
 	public void updateSummaries(IProgressMonitor monitor) {
 		synchronized (fLock) {
 			if (fConfiguredAnnotationTypes != null) {			

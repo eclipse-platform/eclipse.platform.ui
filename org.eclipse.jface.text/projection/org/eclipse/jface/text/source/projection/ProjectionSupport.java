@@ -33,7 +33,8 @@ import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
- * Supports the configuration of projection capabilities for projection viewers.
+ * Supports the configuration of projection capabilities a {@link org.eclipse.jface.text.source.projection.ProjectionViewer}.<p>
+ * This class is not intended to be subclassed. Clients are supposed to use it as is.
  * 
  * @since 3.0
  */
@@ -46,6 +47,13 @@ public class ProjectionSupport {
 	public final static Object PROJECTION= new Object();
 
 	private static class ProjectionAnnotationsPainter extends AnnotationPainter {
+		
+		/**
+		 * Creates a new painter indicating the location of collapsed regions.
+		 * 
+		 * @param sourceViewer the source viewer for the painter
+		 * @param access the annotation access
+		 */
 		public ProjectionAnnotationsPainter(ISourceViewer sourceViewer, IAnnotationAccess access) {
 			super(sourceViewer, access);
 		}
@@ -150,13 +158,25 @@ public class ProjectionSupport {
 	private ProjectionAnnotationsPainter fPainter;
 	private ProjectionRulerColumn fColumn;
 	
-	
+	/**
+	 * Creates new projection support for the given projection viewer.
+	 * 
+	 * @param viewer the projection viewer
+	 * @param annotationAccess the annotation access
+	 * @param sharedTextColors the shared text colors to use
+	 */
 	public ProjectionSupport(ProjectionViewer viewer, IAnnotationAccess annotationAccess, ISharedTextColors sharedTextColors) {
 		fViewer= viewer;
 		fAnnotationAccess= annotationAccess;
 		fSharedTextColors= sharedTextColors;
 	}
 	
+	/**
+	 * Marks the given annotation type to be considered when creating summaries for
+	 * collapsed regions of the projection viewer.
+	 * 
+	 * @param annotationType the annotation type to consider
+	 */
 	public void addSummarizableAnnotationType(String annotationType) {
 		if (fSummarizableTypes == null) {
 			fSummarizableTypes= new ArrayList();
@@ -165,6 +185,14 @@ public class ProjectionSupport {
 			fSummarizableTypes.add(annotationType);
 	}
 	
+	/**
+	 * Marks the given annotation type to be ignored when creating summaries for
+	 * collapsed regions of the projection viewer. This method has only an effect
+	 * when <code>addSummarizableAnnotationType</code> has been called before for
+	 * the give annotation type.
+	 * 
+	 * @param annotationType the annotation type to remove
+	 */
 	public void removeSummarizableAnnotationType(String annotationType) {
 		if (fSummarizableTypes != null)
 			fSummarizableTypes.remove(annotationType);
@@ -172,10 +200,19 @@ public class ProjectionSupport {
 			fSummarizableTypes= null;
 	}
 	
+	/**
+	 * Sets the hover control creator that is used for the annotation hovers
+	 * that are shown in the projection viewer's projection ruler column.
+	 * 
+	 * @param creator the hover control creator
+	 */
 	public void setHoverControlCreator(IInformationControlCreator creator) {
 		fInformationControlCreator= creator;
 	}
-		
+	
+	/**
+	 * Installs this projection support on its viewer.
+	 */
 	public void install() {
 		fViewer.setProjectionSummary(createProjectionSummary());
 		
@@ -183,6 +220,9 @@ public class ProjectionSupport {
 		fViewer.addProjectionListener(fProjectionListener);
 	}
 	
+	/**
+	 * Disposes this projection support.
+	 */
 	public void dispose() {
 		if (fProjectionListener != null) {
 			fViewer.removeProjectionListener(fProjectionListener);
@@ -190,6 +230,12 @@ public class ProjectionSupport {
 		}
 	}
 	
+	/**
+	 * Enables projection mode. If not yet done, installs the projection ruler
+	 * column in the viewer's vertical ruler and installs a painter that
+	 * indicate the locations of collapsed regions.
+	 *  
+	 */
 	protected void doEnableProjection() {
 		
 		if (fPainter == null) {
@@ -210,6 +256,10 @@ public class ProjectionSupport {
 		fColumn.setModel(fViewer.getVisualAnnotationModel());
 	}
 	
+	/**
+	 * Removes the projection ruler column and the painter from the projection
+	 * viewer.
+	 */
 	protected void doDisableProjection() {
 		if (fPainter != null) {
 			fViewer.removePainter(fPainter);
@@ -240,7 +290,13 @@ public class ProjectionSupport {
 	}
 
 	/**
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 * Implements the contract of {@link org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)}
+	 * by forwarding the adapter requests to the given viewer.
+	 * 
+	 * @param viewer the viewer 
+	 * @param required the required class of the adapter
+	 * @return the adapter or <code>null</code>
+	 * 
 	 */
 	public Object getAdapter(ISourceViewer viewer, Class required) {
 		if (ProjectionAnnotationModel.class.equals(required)) {

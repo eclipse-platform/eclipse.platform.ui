@@ -39,10 +39,8 @@ import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
 /**
- * Source viewer based implementation of <code>IInformationControl</code>.
+ * Source viewer based implementation of {@link org.eclipse.jface.text.IInformationControl}.
  * Displays information in a source viewer.
- * <p>
- * Internal class. Do not use. Public only for testing purposes.
  * 
  * @since 3.0
  */
@@ -174,8 +172,9 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		addDisposeListener(this);
 	}
 	
-	/*
+	/**
 	 * @see org.eclipse.jface.text.IInformationControlExtension2#setInput(java.lang.Object)
+	 * @param input the input object
 	 */
 	public void setInput(Object input) {
 		if (input instanceof String)

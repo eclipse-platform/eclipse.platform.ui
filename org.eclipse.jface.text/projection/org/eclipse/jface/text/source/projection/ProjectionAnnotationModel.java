@@ -20,13 +20,19 @@ import org.eclipse.jface.text.source.AnnotationModel;
 
 
 /**
- * A projection annotation model.
+ * A projection annotation model. It provides methods for modifying the
+ * expansion state of the managed projection annotations.
+ * <p>
+ * Do not subclass. Use it as is.
  * 
  * @since 3.0
  */
 public class ProjectionAnnotationModel extends AnnotationModel {
 		
 	
+	/**
+	 * Creates a new, empty projection annotation model.
+	 */
 	public ProjectionAnnotationModel() {
 	}
 

@@ -11,7 +11,10 @@
 package org.eclipse.jface.text.source.projection;
 
 /**
- * Internal class. Do not use.
+ * Implementers registered with a
+ * {@link org.eclipse.jface.text.source.projection.ProjectionViewer} get
+ * informed when the projection mode of the viewer gets enabled and when it gets
+ * disabled.
  * 
  * @since 3.0
  */

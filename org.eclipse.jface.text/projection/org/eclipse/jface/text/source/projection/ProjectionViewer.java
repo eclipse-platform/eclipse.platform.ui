@@ -59,14 +59,13 @@ import org.eclipse.jface.text.source.SourceViewer;
 
 
 /**
- * A projection source viewer is a source viewer which does not support the
- * concept of a single visible region. Instead it supports multiple visible
+ * A projection source viewer is a source viewer which supports multiple visible
  * regions which can dynamically be changed.
  * <p>
  * A projection source viewer uses a <code>ProjectionDocumentManager</code>
  * for the management of the visible document.
  * <p>
- * API in progress. Do not yet use.
+ * This class should not be subclassed.
  * 
  * @since 3.0
  */
@@ -122,10 +121,20 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		private IDocument fSlaveDocument;
 		private IDocument fExecutionTrigger;
 		
+		/**
+		 * Creates a new executor in order to free the given slave document.
+		 * 
+		 * @param slaveDocument the slave document to free
+		 */
 		public ReplaceVisibleDocumentExecutor(IDocument slaveDocument) {
 			fSlaveDocument= slaveDocument;
 		}
-
+		
+		/**
+		 * Installs this executor on the given trigger document.
+		 * 
+		 * @param executionTrigger the trigger document
+		 */
 		public void install(IDocument executionTrigger) {
 			if (executionTrigger != null && fSlaveDocument != null) {
 				fExecutionTrigger= executionTrigger;
@@ -149,7 +158,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	}
 	
 	/**
-	 * A command reifying a change of the projection document. This can be either
+	 * A command representing a change of the projection document. This can be either
 	 * adding a master document range, removing a master document change, or invalidating
 	 * the viewer text presentation.
 	 */
@@ -324,6 +333,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * Removes the projection annotation model from the given annotation model.
 	 * 
 	 * @param model the mode from which the projection annotation model is removed
+	 * @return the removed projection annotation model or <code>null</code> if there was none
 	 */
 	private IAnnotationModel removeProjectionAnnotationModel(IAnnotationModel model) {
 		if (model instanceof IAnnotationModelExtension) {
@@ -415,6 +425,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		return false;
 	}
 	
+	/**
+	 * Adds a projection annotation listener to this viewer. The listener may
+	 * not be <code>null</code>. If the listener is already registered, this method
+	 * does not have any effect.
+	 * 
+	 * @param listener the listener to add
+	 */
 	public void addProjectionListener(IProjectionListener listener) {
 
 		Assert.isNotNull(listener);
@@ -426,6 +443,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			fProjectionListeners.add(listener);
 	}
 	
+	/**
+	 * Removes the given listener from this viewer. The listener may not be
+	 * <code>null</code>. If the listener is not registered with this viewer,
+	 * this method is without effect.
+	 * 
+	 * @param listener the listener to remove
+	 */
 	public void removeProjectionListener(IProjectionListener listener) {
 
 		Assert.isNotNull(listener);
@@ -437,6 +461,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 	}
 	
+	/**
+	 * Notifies all registered projection listeners
+	 * that projection mode has been enabled.
+	 */
 	protected void fireProjectionEnabled() {
 		if (fProjectionListeners != null) {
 			Iterator e= new ArrayList(fProjectionListeners).iterator();
@@ -446,7 +474,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			}
 		}
 	}
-
+	
+	/**
+	 * Notifies all registered projection listeners
+	 * that projection mode has been disabled.
+	 */
 	protected void fireProjectionDisabled() {
 		if (fProjectionListeners != null) {
 			Iterator e= new ArrayList(fProjectionListeners).iterator();
@@ -550,8 +582,14 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	}
 	
 	/**
-	 * Remembers whether to listen to projection changes of the visible
-	 * document.
+	 * Adds the given master range to the given projection document. While the
+	 * modification is processed, the viewer no longer handles projection
+	 * changes, as it is causing them.
+	 * 
+	 * @param projection the projection document
+	 * @param offset the offset in the master document
+	 * @param length the length in the master document
+	 * @throws BadLocationException in case the specified range is invalid
 	 * 
 	 * @see ProjectionDocument#addMasterDocumentRange(int, int)
 	 */
@@ -570,8 +608,14 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	}
 	
 	/**
-	 * Remembers whether to listen to projection changes of the visible
-	 * document.
+	 * Removes the given master range from the given projection document. While the
+	 * modification is processed, the viewer no longer handles projection
+	 * changes, as it is causing them.
+	 * 
+	 * @param projection the projection document
+	 * @param offset the offset in the master document
+	 * @param length the length in the master document
+	 * @throws BadLocationException in case the specified range is invalid
 	 * 
 	 * @see ProjectionDocument#removeMasterDocumentRange(int, int)
 	 */
@@ -651,7 +695,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * Replace the visible document with the given document. Maintains the
 	 * scroll offset and the selection.
 	 * 
-	 * @param visibleDocument the visible document
+	 * @param slave the visible document
 	 */
 	private void replaceVisibleDocument(IDocument slave) {
 		if (fReplaceVisibleDocumentExecutionTrigger != null) {
@@ -824,7 +868,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * this is identical to a world change event.
 	 * 
 	 * @param event the annotation model event or <code>null</code>
-	 * @exception BadLocationException in case the annotation model event is no longer in sync with the document
+	 * @exception BadLocationException in case the annotation model event is no longer in synchronization with the document
 	 */
 	private void catchupWithProjectionAnnotationModel(AnnotationModelEvent event) throws BadLocationException {
 		if (event == null) {
@@ -1001,7 +1045,14 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			}
 		}
 	}
-
+	
+	/**
+	 * Computes the region that must be collapsed when the given position is the
+	 * position of an expanded projection annotation.
+	 * 
+	 * @param position the position
+	 * @return the range that must be collapsed
+	 */
 	public IRegion computeCollapsedRegion(Position position) {
 		try {
 			IDocument document= getDocument();
@@ -1017,6 +1068,15 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		return null;
 	}
 	
+	/**
+	 * Computes the collapsed region anchor for the given position. Assuming
+	 * that the position is the position of an expanded projection annotation,
+	 * the anchor is the region that is still visible after the projection
+	 * annotation has been collapsed.
+	 * 
+	 * @param position the position
+	 * @return the collapsed region anchor
+	 */
 	public Position computeCollapsedRegionAnchor(Position position) {
 		try {
 			IDocument document= getDocument();
@@ -1062,7 +1122,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 		return false;
 	}
-
+	
+	/**
+	 * Forces this viewer to throw away any old state and to initialize its content
+	 * from its projection annotation model.
+	 * 
+	 * @throws BadLocationException in case something goes wrong during initialization
+	 */
 	public final void reinitializeProjection() throws BadLocationException {
 		
 		ProjectionDocument projection= null;
@@ -1429,7 +1495,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	}
 	
 	/**
-	 * Adapts the behavior to line based folding.
+	 * Adapts the behavior of the super class to respect line based folding.
+	 * 
+	 * @param widgetSelection the widget selection
+	 * @return the model selection while respecting line based folding
 	 */
 	protected Point widgetSelection2ModelSelection(Point widgetSelection) {
 		

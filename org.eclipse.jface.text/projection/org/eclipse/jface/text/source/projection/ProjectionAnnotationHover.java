@@ -33,8 +33,6 @@ import org.eclipse.jface.text.source.LineRange;
 
 /**
  * Annotation hover for projection annotations.
- * <p>
- * Internal class. Do not use. Public for testing purposes only.
  * 
  * @since 3.0
  */
