@@ -524,25 +524,33 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	private void validateFeatureEntries() {
 		File root = new File(resolvedURL.getFile().replace('/', File.separatorChar));
 		Iterator iterator = featureEntries.values().iterator();
+		Collection deletedFeatures = new ArrayList();
 		while(iterator.hasNext()) {
 			FeatureEntry feature = (FeatureEntry)iterator.next();
 			// Note: in the future, we can check for absolute url as well.
 			//       For now, feature url is features/org.eclipse.foo/feature.xml
 			File featureXML = new File(root, feature.getURL());
 			if (!featureXML.exists())
-				featureEntries.remove(feature.getFeatureIdentifier());
+				deletedFeatures.add(feature.getFeatureIdentifier());
+		}
+		for(Iterator it=deletedFeatures.iterator(); it.hasNext();){
+			featureEntries.remove(it.next());
 		}
 	}
 	
 	private void validatePluginEntries() {
 		File root = new File(resolvedURL.getFile().replace('/', File.separatorChar));
+		Collection deletedPlugins = new ArrayList();
 		for (int i=0; i<pluginEntries.size(); i++) {
 			PluginEntry plugin = (PluginEntry)pluginEntries.get(i);
 			// Note: in the future, we can check for absolute url as well.
 			//       For now, feature url is plugins/org.eclipse.foo/plugin.xml
 			File pluginXML = new File(root, plugin.getURL());
 			if (!pluginXML.exists())
-				pluginEntries.remove(plugin);
+				deletedPlugins.add(plugin);
+		}
+		for(Iterator it=deletedPlugins.iterator(); it.hasNext();){
+			pluginEntries.remove(it.next());
 		}
 	}
 	
