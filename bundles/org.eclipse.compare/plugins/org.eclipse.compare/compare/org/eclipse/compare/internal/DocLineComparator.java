@@ -17,7 +17,7 @@ import org.eclipse.compare.contentmergeviewer.ITokenComparator;
  * A <code>DocLineComparator</code> doesn't know anything about line separators because
  * its notion of lines is solely defined in the underlying <code>IDocument</code>.
  */
-public class DocLineComparator implements IRangeComparator {
+public class DocLineComparator implements ITokenComparator {
 
 	private IDocument fDocument;
 	private int fLineOffset;
@@ -66,57 +66,38 @@ public class DocLineComparator implements IRangeComparator {
 	}
 
 	/**
-	 * Returns the content of lines in the specified range as a String.
-	 * This includes the line separators.
-	 *
-	 * @param start index of first line
-	 * @param length number of lines
-	 * @return the contents of the specified line range as a String
-	 */
-	public String extract(int start, int length) {
-		if (length == 0)
-			return "";
-		if (fLength > 0) {
-			//if (fLineCount == 1)
-			if (length == 1)
-				return extract(start);
-				
-			int startPos= getTokenStart(start);
-			int endPos= getTokenStart(start + length);
-			try {
-				return fDocument.get(startPos, endPos - startPos);
-			} catch (BadLocationException e) {
-				//System.out.println("extract("+fDocument.getLength()+"): " + startPos + " " + endPos);
-			}
-		}
-		return ""; //$NON-NLS-1$
-	}
-
-	/**
-	 * Extract a single line from the underlying document without the line separator.
-	 *
-	 * @param line the number of the line to extract
-	 * @return the contents of the line as a String
-	 */
-	public String extract(int line) {
-		if (line < fLineCount) {
-			try {
-				IRegion r= fDocument.getLineInformation(fLineOffset + line);
-				return fDocument.get(r.getOffset(), r.getLength());
-				// return fDocument.getLine(line);
-			} catch(BadLocationException e) {
-			}
-		}
-		return ""; //$NON-NLS-1$
-	}
-
-	/**
 	 * Returns the number of lines in the document.
 	 *
 	 * @return number of lines
 	 */
 	public int getRangeCount() {
 		return fLineCount;
+	}
+
+	/* (non Javadoc)
+	 * see ITokenComparator.getTokenStart
+	 */
+	public int getTokenStart(int line) {
+		try {
+			IRegion r= fDocument.getLineInformation(fLineOffset + line);
+			return r.getOffset();
+		} catch (BadLocationException ex) {
+			return fDocument.getLength();
+		}
+	}
+
+	/* (non Javadoc)
+	 * Returns the length of the given line.
+	 * see ITokenComparator.getTokenLength
+	 */
+	public int getTokenLength(int line) {
+		return getTokenStart(line+1) - getTokenStart(line);
+//		try {
+//			IRegion r= fDocument.getLineInformation(fLineOffset + line);
+//			return r.getLength();
+//		} catch (BadLocationException ex) {
+//		}
+//		return 0;
 	}
 
 	/**
@@ -157,32 +138,23 @@ public class DocLineComparator implements IRangeComparator {
 		return false;
 	}
 
-	/* (non Javadoc)
-	 * see ITokenComparator.getTokenStart
-	 */
-	public int getTokenStart(int line) {
-		try {
-			IRegion r= fDocument.getLineInformation(fLineOffset + line);
-			return r.getOffset();
-			//return fDocument.getLineStartOffset(fLineOffset + line);
-		} catch (BadLocationException ex) {
-			return fDocument.getLength();
-		}
-	}
-
-	/* (non Javadoc)
-	 * see ITokenComparator.getTokenEnd
-	 */
-	public int getTokenEnd(int start, int length) {
-		return getTokenStart(start + length);
-	}
-
 	//---- private methods
 	
-	private int getTokenLength(int line) {
-		if (fLength == 0)
-			return 0;
-		return getTokenStart(line + 1) - getTokenStart(line);
+	/**
+	 * Extract a single line from the underlying document without the line separator.
+	 *
+	 * @param line the number of the line to extract
+	 * @return the contents of the line as a String
+	 */
+	private String extract(int line) {
+		if (line < fLineCount) {
+			try {
+				IRegion r= fDocument.getLineInformation(fLineOffset + line);
+				return fDocument.get(r.getOffset(), r.getLength());
+			} catch(BadLocationException e) {
+			}
+		}
+		return ""; //$NON-NLS-1$
 	}
 
 	private boolean compare(String s1, String s2) {

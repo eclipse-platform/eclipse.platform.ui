@@ -1160,14 +1160,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				int ancestorEnd= 0;
 				if (sancestor != null) {
 					ancestorStart= sancestor.getTokenStart(es.ancestorStart());
-					ancestorEnd= sancestor.getTokenEnd(es.ancestorStart(), es.ancestorLength());
+					ancestorEnd= getTokenEnd2(sancestor, es.ancestorStart(), es.ancestorLength());
 				}
 				
 				int leftStart= sleft.getTokenStart(es.leftStart());
-				int leftEnd= sleft.getTokenEnd(es.leftStart(), es.leftLength());
+				int leftEnd= getTokenEnd2(sleft, es.leftStart(), es.leftLength());
 				
 				int rightStart= sright.getTokenStart(es.rightStart());
-				int rightEnd= sright.getTokenEnd(es.rightStart(), es.rightLength());
+				int rightEnd= getTokenEnd2(sright, es.rightStart(), es.rightLength());
 				
 				Diff diff= new Diff(null, kind,
 					aDoc, ancestorStart, ancestorEnd,
@@ -1178,9 +1178,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 				if (ignoreWhiteSpace) {
 					if (sancestor != null)
-						a= sancestor.extract(es.ancestorStart(), es.ancestorLength());
-					s= sleft.extract(es.leftStart(), es.leftLength());
-					d= sright.extract(es.rightStart(), es.rightLength());
+						a= extract2(aDoc, sancestor, es.ancestorStart(), es.ancestorLength());
+					s= extract2(lDoc, sleft, es.leftStart(), es.leftLength());
+					d= extract2(rDoc, sright, es.rightStart(), es.rightLength());
 				
 					if ((a == null || a.trim().length() == 0) && s.trim().length() == 0 && d.trim().length() == 0)
 						continue;
@@ -1191,13 +1191,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					updateDiffBackground(diff);
 	
 					if (s == null)
-						s= sleft.extract(es.leftStart(), es.leftLength());
+						s= extract2(lDoc, sleft, es.leftStart(), es.leftLength());
 					if (d == null)
-						d= sright.extract(es.rightStart(), es.rightLength());
+						d= extract2(rDoc, sright, es.rightStart(), es.rightLength());
 					
 					if (s.length() > 0 && d.length() > 0) {
 						if (a == null && sancestor != null)
-							a= sancestor.extract(es.ancestorStart(), es.ancestorLength());
+							a= extract2(aDoc, sancestor, es.ancestorStart(), es.ancestorLength());
 						if (USE_MERGING_TOKEN_DIFF)
 							mergingTokenDiff(diff, aDoc, a, rDoc, d, lDoc, s);
 						else
@@ -1231,6 +1231,50 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return tc.getTokenStart(index) + tc.getTokenLength(index);
 	}
 	
+	private static int getTokenEnd2(ITokenComparator tc, int start, int length) {
+		return tc.getTokenStart(start + length);
+	}
+
+	/**
+	 * Returns the content of lines in the specified range as a String.
+	 * This includes the line separators.
+	 *
+	 * @param doc the document from which to extract the characters
+	 * @param start index of first line
+	 * @param length number of lines
+	 * @return the contents of the specified line range as a String
+	 */
+	private String extract2(IDocument doc, ITokenComparator tc, int start, int length) {
+		int count= tc.getRangeCount();
+		if (length > 0 && count > 0) {
+			
+//			
+//			int startPos= tc.getTokenStart(start);
+//			int endPos= startPos;
+//			
+//			if (length > 1)
+//				endPos= tc.getTokenStart(start + (length-1));
+//			endPos+= tc.getTokenLength(start + (length-1));
+//				
+
+			int startPos= tc.getTokenStart(start);
+			int endPos;
+			
+			if (length == 1) {
+				endPos= startPos + tc.getTokenLength(start);
+			} else {
+				endPos= tc.getTokenStart(start + length);
+			}
+
+			try {
+				return doc.get(startPos, endPos - startPos);
+			} catch (BadLocationException e) {
+			}
+
+		}
+		return ""; //$NON-NLS-1$
+	}
+
 	/**
 	 * Performs a token based 3-way diff on the character range specified by the given baseDiff.
 	 */
@@ -1807,7 +1851,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private RGB getFillColor(Diff diff) {
 		boolean selected= fCurrentDiff != null && fCurrentDiff.fParent == diff;
 		
-		if (isThreeWay()) {
+		if (isThreeWay() && !fIgnoreAncestor) {
 			switch (diff.fDirection) {
 			case RangeDifference.RIGHT:
 				if (fLeftIsLocal)
@@ -1830,7 +1874,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private RGB getStrokeColor(Diff diff) {
 		boolean selected= fCurrentDiff != null && fCurrentDiff.fParent == diff;
 		
-		if (isThreeWay()) {
+		if (isThreeWay() && !fIgnoreAncestor) {
 			switch (diff.fDirection) {
 			case RangeDifference.RIGHT:
 				if (fLeftIsLocal)
@@ -2245,8 +2289,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		int vh= te.getClientArea().height;
 		if (vh == 0) {
-			// seems to be a bug in TextEditor.getClientArea(): returns bogus value on first
-			// call; as a workaround we calculate the clientArea from its container...
 			Rectangle trim= te.computeTrim(0, 0, 0, 0);
 			int scrollbarHeight= trim.height;
 			

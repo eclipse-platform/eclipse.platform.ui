@@ -4,11 +4,14 @@
  */
 package org.eclipse.compare.internal;
 
+import org.eclipse.jface.util.Assert;
+
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.compare.contentmergeviewer.ITokenComparator;
 
 /**
- * Implements the <code>ITokenComparator</code> interface for words (or tokens) in a string.
+ * Implements the <code>ITokenComparator</code> interface for words (or tokens)
+ * in a string.
  * A <code>TokenComparator</code> is used as the input for the <code>RangeDifferencer</code>
  * engine to perform a token oriented compare on strings.
  */
@@ -25,12 +28,11 @@ public class TokenComparator implements ITokenComparator {
 	 *
 	 * @param string the string that is split into token
 	 */
-	public TokenComparator(String string) {
+	public TokenComparator(String text) {
 		
-		if (string != null)
-			fText= string;
-		else
-			fText= ""; //$NON-NLS-1$
+		Assert.isNotNull(text);
+
+		fText= text;
 		
 		int length= fText.length();
 		fStarts= new int[length];	// pessimistic assumption!
@@ -56,13 +58,6 @@ public class TokenComparator implements ITokenComparator {
 			}
 			fLengths[fCount-1]++;
 		}
-		
-//		System.out.println("Tokens:");
-//		for (int j= 0; j < fCount; j++) {
-//			int s= fStarts[j];
-//			int e= s+fLengths[j];
-//			System.out.println("  <" + fText.substring(s, e) + ">");
-//		}
 	}
 	
 	/**
