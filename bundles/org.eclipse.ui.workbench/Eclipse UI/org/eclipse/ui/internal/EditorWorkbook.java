@@ -104,7 +104,8 @@ public void createControl(Composite parent) {
 
 	this.parent = parent;
 	workbookForm = new ViewForm(parent,SWT.BORDER);
-	workbookForm.setContent(new Composite(workbookForm,SWT.NONE));
+	Composite content = new Composite(workbookForm,SWT.NONE);
+	workbookForm.setContent(content);
 	workbookForm.setBorderVisible(true);
 	
 	header = new EditorCoolBar(getEditorArea().getWorkbenchWindow(),this,tabLocation); 
@@ -115,7 +116,7 @@ public void createControl(Composite parent) {
 	workbookForm.setData((IPartDropTarget) this);
 
 	// listener to resize visible components
-	workbookForm.addListener(SWT.Resize, new Listener() {
+	content.addListener(SWT.Resize, new Listener() {
 		public void handleEvent(Event e) {
 			setControlSize(visibleEditor);
 		}
