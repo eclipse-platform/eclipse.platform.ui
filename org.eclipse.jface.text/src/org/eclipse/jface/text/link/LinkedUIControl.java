@@ -538,6 +538,8 @@ public class LinkedUIControl {
 			
 		}
 	};
+	/** Whether this ui is in simple highlighting mode or not. */
+	private boolean fSimple;
 
 	/**
 	 * Creates a new UI on the given model (environment) and the set of
@@ -926,6 +928,12 @@ public class LinkedUIControl {
 	private void createAnnotationModel() {
 		if (fCurrentTarget.fAnnotationModel == null) {
 			LinkedPositionAnnotations lpa= new LinkedPositionAnnotations();
+			if (fSimple) {
+				lpa.markExitTarget(true);
+				lpa.markFocus(false);
+				lpa.markSlaves(false);
+				lpa.markTargets(false);
+			}
 			lpa.setTargets(fIterator.getPositions());
 			lpa.setExitTarget(fExitPosition);
 			lpa.connect(fCurrentTarget.getViewer().getDocument());
@@ -1115,6 +1123,18 @@ public class LinkedUIControl {
 	public void setPositionListener(ILinkedFocusListener listener) {
 		Assert.isNotNull(listener);
 		fPositionListener= listener;
+	}
+	
+	/**
+	 * Sets the "simple" mode of the receiver. A linked ui in simple mode 
+	 * merely draws the exit position, but not the target, focus, and slave
+	 * positions. Default is <code>false</code>. This method must be called
+	 * before it is entered.
+	 * 
+	 * @param simple <code>true</code> if the ui should be in simple mode.
+	 */
+	public void setSimpleMode(boolean simple) {
+		fSimple= simple;
 	}
 
 }

@@ -39,10 +39,10 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 	private static final String EXIT_ANNOTATION_TYPE= "org.eclipse.jdt.ui.link.exit"; //$NON-NLS-1$
 	
 	/* configuration */
-	private final static boolean markTargets= true;
-	private final static boolean markSlaves= true;
-	private final static boolean markFocus= true;
-	private final static boolean markExitTarget= true;
+	private boolean fMarkTargets= true;
+	private boolean fMarkSlaves= true;
+	private boolean fMarkFocus= true;
+	private boolean fMarkExitTarget= true;
 	
 	private Annotation fFocusAnnotation= null;
 	private Annotation fExitAnnotation= null;
@@ -59,7 +59,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 	 * @param position the new focus position, or <code>null</code> if no focus is set.
 	 */
 	private void setFocusPosition(Position position) throws BadLocationException {
-		if (markFocus && getPosition(fFocusAnnotation) != position) {
+		if (fMarkFocus && getPosition(fFocusAnnotation) != position) {
 			removeAnnotation(fFocusAnnotation, false);
 			if (position != null) {
 				fFocusAnnotation= new Annotation(FOCUS_ANNOTATION_TYPE, false, ""); //$NON-NLS-1$
@@ -77,7 +77,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 	 * @param position the new exit position, or <code>null</code> if no focus is set.
 	 */
 	private void setExitPosition(Position position) throws BadLocationException {
-		if (markExitTarget && getPosition(fExitAnnotation) != position) {
+		if (fMarkExitTarget && getPosition(fExitAnnotation) != position) {
 			removeAnnotation(fExitAnnotation, false);
 			if (position != null) {
 				fExitAnnotation= new Annotation(EXIT_ANNOTATION_TYPE, false, ""); //$NON-NLS-1$
@@ -94,7 +94,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 	 * @param positions the new slave positions, or <code>null</code> if no slave positions are to be set
 	 */
 	private void setGroupPositions(List positions) throws BadLocationException {
-		if (!markSlaves)
+		if (!fMarkSlaves)
 			return;
 		
 		// remove all positions which are already there
@@ -127,7 +127,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 	 * @param positions the new target positions, or <code>null</code> if no target positions are to be set
 	 */
 	private void setTargetPositions(List positions) throws BadLocationException {
-		if (!markTargets)
+		if (!fMarkTargets)
 			return;
 		
 		// remove all positions which are already there
@@ -270,4 +270,39 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 		super.fireModelChanged();
 	}
 	
+	/**
+	 * Sets the drawing state for the exit target. Default is <code>true</code>.
+	 * 
+	 * @param markExitTargets the new drawing state for exit targets
+	 */
+	public void markExitTarget(boolean markExitTargets) {
+		fMarkExitTarget= markExitTargets;
+	}
+	
+	/**
+	 * Sets the drawing state for the focus position. Default is <code>true</code>.
+	 * 
+	 * @param markFocus the new drawing state for exit targets
+	 */
+	public void markFocus(boolean markFocus) {
+		fMarkFocus= markFocus;
+	}
+
+	/**
+	 * Sets the drawing state for slave positions. Default is <code>true</code>.
+	 * 
+	 * @param markSlaves the new drawing state for slaves
+	 */
+	public void markSlaves(boolean markSlaves) {
+		fMarkSlaves= markSlaves;
+	}
+	
+	/**
+	 * Sets the drawing state for targets. Default is <code>true</code>.
+	 * 
+	 * @param markTargets the new drawing state for targets
+	 */
+	public void markTargets(boolean markTargets) {
+		fMarkTargets= markTargets;
+	}
 }
