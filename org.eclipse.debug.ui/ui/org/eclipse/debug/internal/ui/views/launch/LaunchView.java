@@ -443,9 +443,12 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (fContextListener != null) {
 			fContextListener.dispose();
 		}
-		getSite().getPage().removePartListener((IPartListener2) this);
-		getSite().getWorkbenchWindow().removePerspectiveListener(this);
-		getSite().getWorkbenchWindow().removePageListener(this);
+		IWorkbenchPage page = getSite().getPage();
+		page.removePartListener((IPartListener2) this);
+		page.removePartListener(fContextListener);
+		IWorkbenchWindow window = getSite().getWorkbenchWindow();
+		window.removePerspectiveListener(this);
+		window.removePageListener(this);
 		
 		cleanup();
 		
