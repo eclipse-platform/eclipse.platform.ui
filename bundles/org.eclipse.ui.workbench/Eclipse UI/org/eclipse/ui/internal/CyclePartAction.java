@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.ui.internal;
 
 import java.util.Iterator;
@@ -45,22 +43,22 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.keys.KeySequence;
 
+import org.eclipse.ui.internal.keys.KeySupport;
+
 /**
- * Implements a action to enable the user switch between parts
- * using keyboard.
+ * Implements a action to enable the user switch between parts using keyboard.
  */
 public class CyclePartAction extends PageEventAction {
-	
-	private String commandForward = null;
 	private String commandBackward = null;
-	
+
+	private String commandForward = null;
+
 	protected boolean forward;
-	
+
 	private Object selection;
-	
+
 	/**
 	 * Creates a CyclePartAction.
 	 */
@@ -70,7 +68,409 @@ public class CyclePartAction extends PageEventAction {
 		setText();
 		updateState();
 	}
-	
+
+	/**
+	 * Activate the selected item.
+	 */
+	public void activate(IWorkbenchPage page, Object selectedItem) {
+		if (selectedItem != null) {
+			if (selectedItem instanceof IEditorReference)
+				page.setEditorAreaVisible(true);
+
+			IWorkbenchPart part = ((IWorkbenchPartReference) selectedItem).getPart(true);
+
+			if (part != null)
+				page.activate(part);
+		}
+	}
+
+	/**
+	 * Add all views to the dialog in the activation order
+	 */
+	protected void addItems(Table table, WorkbenchPage page) {
+		IWorkbenchPartReference refs[] = page.getSortedParts();
+		boolean includeEditor = true;
+
+		for (int i = refs.length - 1; i >= 0; i--) {
+			if (refs[i] instanceof IEditorReference) {
+				if (includeEditor) {
+					IEditorReference activeEditor = (IEditorReference) refs[i];
+					TableItem item = new TableItem(table, SWT.NONE);
+					item.setText(WorkbenchMessages.getString("CyclePartAction.editor")); //$NON-NLS-1$
+					item.setImage(activeEditor.getTitleImage());
+					item.setData(activeEditor);
+					includeEditor = false;
+				}
+			} else {
+				TableItem item = new TableItem(table, SWT.NONE);
+				item.setText(refs[i].getTitle());
+				item.setImage(refs[i].getTitleImage());
+				item.setData(refs[i]);
+			}
+		}
+	}
+
+	private void addKeyListener(final Table table, final Shell dialog) {
+		table.addKeyListener(new KeyListener() {
+			private boolean firstKey = true;
+			private boolean quickReleaseMode = false;
+
+			public void keyPressed(KeyEvent e) {
+				int keyCode = e.keyCode;
+				char character = e.character;
+				int accelerator = KeySupport.convertEventToUnmodifiedAccelerator(e);
+				KeySequence keySequence =
+					KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
+
+				//System.out.println("\nPRESSED");
+				//printKeyEvent(e);
+				//System.out.println("accelerat:\t" + accelerator + "\t (" +
+				// KeySupport.formatStroke(Stroke.create(accelerator), true) +
+				// ")");
+
+				boolean acceleratorForward = false;
+				boolean acceleratorBackward = false;
+				ICommandManager commandManager = PlatformUI.getWorkbench().getCommandManager();
+
+				if (commandForward != null) {
+					ICommand command = commandManager.getCommand(commandForward);
+
+					if (command.isDefined()) {
+						List keySequenceBindings = command.getKeySequenceBindings();
+						Iterator iterator = keySequenceBindings.iterator();
+
+						while (iterator.hasNext()) {
+							IKeySequenceBinding keySequenceBinding =
+								(IKeySequenceBinding) iterator.next();
+
+							if (keySequenceBinding.getKeySequence().equals(keySequence)) {
+								acceleratorForward = true;
+								break;
+							}
+						}
+					}
+				}
+
+				if (commandBackward != null) {
+					ICommand command = commandManager.getCommand(commandBackward);
+
+					if (command.isDefined()) {
+						List keySequenceBindings = command.getKeySequenceBindings();
+						Iterator iterator = keySequenceBindings.iterator();
+
+						while (iterator.hasNext()) {
+							IKeySequenceBinding keySequenceBinding =
+								(IKeySequenceBinding) iterator.next();
+
+							if (keySequenceBinding.getKeySequence().equals(keySequence)) {
+								acceleratorBackward = true;
+								break;
+							}
+						}
+					}
+				}
+
+				if (character == SWT.CR || character == SWT.LF)
+					ok(dialog, table);
+				else if (acceleratorForward) {
+					if (firstKey && e.stateMask != 0)
+						quickReleaseMode = true;
+
+					int index = table.getSelectionIndex();
+					table.setSelection((index + 1) % table.getItemCount());
+				} else if (acceleratorBackward) {
+					if (firstKey && e.stateMask != 0)
+						quickReleaseMode = true;
+
+					int index = table.getSelectionIndex();
+					table.setSelection(index >= 1 ? index - 1 : table.getItemCount() - 1);
+				} else if (
+					keyCode != SWT.ALT
+						&& keyCode != SWT.COMMAND
+						&& keyCode != SWT.CTRL
+						&& keyCode != SWT.SHIFT
+						&& keyCode != SWT.ARROW_DOWN
+						&& keyCode != SWT.ARROW_UP
+						&& keyCode != SWT.ARROW_LEFT
+						&& keyCode != SWT.ARROW_RIGHT)
+					cancel(dialog);
+
+				firstKey = false;
+			}
+
+			public void keyReleased(KeyEvent e) {
+				int keyCode = e.keyCode;
+				int stateMask = e.stateMask;
+				//char character = e.character;
+				//int accelerator = stateMask | (keyCode != 0 ? keyCode :
+				// convertCharacter(character));
+
+				//System.out.println("\nRELEASED");
+				//printKeyEvent(e);
+				//System.out.println("accelerat:\t" + accelerator + "\t (" +
+				// KeySupport.formatStroke(Stroke.create(accelerator), true) +
+				// ")");
+
+				final IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+				final boolean stickyCycle = store.getBoolean(IPreferenceConstants.STICKY_CYCLE);
+				if ((!stickyCycle && (firstKey || quickReleaseMode)) && keyCode == stateMask)
+					ok(dialog, table);
+			}
+		});
+	}
+
+	/*
+	 * Add mouse listener to the table closing it when the mouse is pressed.
+	 */
+	private void addMouseListener(final Table table, final Shell dialog) {
+		table.addMouseListener(new MouseListener() {
+			public void mouseDoubleClick(MouseEvent e) {
+				ok(dialog, table);
+			}
+
+			public void mouseDown(MouseEvent e) {
+				ok(dialog, table);
+			}
+
+			public void mouseUp(MouseEvent e) {
+				ok(dialog, table);
+			}
+		});
+	}
+	/**
+	 * Adds a listener to the given table that blocks all traversal operations.
+	 * 
+	 * @param table
+	 *            The table to which the traversal suppression should be added;
+	 *            must not be <code>null</code>.
+	 */
+	private final void addTraverseListener(final Table table) {
+		table.addTraverseListener(new TraverseListener() {
+			/**
+			 * Blocks all key traversal events.
+			 * 
+			 * @param event
+			 *            The trigger event; must not be <code>null</code>.
+			 */
+			public final void keyTraversed(final TraverseEvent event) {
+				event.doit = false;
+			}
+		});
+	}
+
+	/*
+	 * Close the dialog and set selection to null.
+	 */
+	private void cancel(Shell dialog) {
+		selection = null;
+		dialog.close();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.ICycleAction
+	 */
+	public String getBackwardActionDefinitionId() {
+		return commandBackward;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.ICycleAction
+	 */
+	public String getForwardActionDefinitionId() {
+		return commandForward;
+	}
+
+	/**
+	 * Returns the string which will be shown in the table header.
+	 */
+	protected String getTableHeader() {
+		return WorkbenchMessages.getString("CyclePartAction.header"); //$NON-NLS-1$
+	}
+
+	//private static void printKeyEvent(KeyEvent keyEvent) {
+	//	System.out.println("keyCode:\t" + keyEvent.keyCode + "\t (" +
+	// KeySupport.formatStroke(Stroke.create(keyEvent.keyCode), true) + ")");
+	//	System.out.println("stateMask:\t" + keyEvent.stateMask + "\t (" +
+	// KeySupport.formatStroke(Stroke.create(keyEvent.stateMask), true) + ")");
+	//	System.out.println("character:\t" + (int) keyEvent.character + "\t (" +
+	// keyEvent.character + ")");
+	//}
+
+	/*
+	 * Close the dialog saving the selection
+	 */
+	private void ok(Shell dialog, final Table table) {
+		TableItem[] items = table.getSelection();
+
+		if (items != null && items.length == 1)
+			selection = items[0].getData();
+
+		dialog.close();
+	}
+
+	/*
+	 * Open a dialog showing all views in the activation order
+	 */
+	private void openDialog(WorkbenchPage page) {
+		final int MAX_ITEMS = 22;
+
+		selection = null;
+		final Shell dialog = new Shell(getWorkbenchWindow().getShell(), SWT.MODELESS);
+		Display display = dialog.getDisplay();
+		dialog.setLayout(new FillLayout());
+
+		final Table table = new Table(dialog, SWT.SINGLE | SWT.FULL_SELECTION);
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
+		TableColumn tc = new TableColumn(table, SWT.NONE);
+		tc.setResizable(false);
+		tc.setText(getTableHeader());
+		addItems(table, page);
+		int tableItemCount = table.getItemCount();
+
+		switch (tableItemCount) {
+			case 0 :
+				// do nothing;
+				break;
+			case 1 :
+				table.setSelection(0);
+				break;
+			default :
+				table.setSelection(forward ? 1 : table.getItemCount() - 1);
+		}
+
+		tc.pack();
+		table.pack();
+		Rectangle tableBounds = table.getBounds();
+		tableBounds.height = Math.min(tableBounds.height, table.getItemHeight() * MAX_ITEMS);
+		table.setBounds(tableBounds);
+		dialog.pack();
+
+		tc.setWidth(table.getClientArea().width);
+		table.setFocus();
+		table.addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent e) {
+				// Do nothing
+			}
+
+			public void focusLost(FocusEvent e) {
+				cancel(dialog);
+			}
+		});
+
+		Rectangle dialogBounds = dialog.getBounds();
+		Rectangle displayBounds = display.getClientArea();
+		Rectangle parentBounds = dialog.getParent().getBounds();
+
+		//Place it in the center of its parent;
+		dialogBounds.x = parentBounds.x + ((parentBounds.width - dialogBounds.width) / 2);
+		dialogBounds.y = parentBounds.y + ((parentBounds.height - dialogBounds.height) / 2);
+		if (!displayBounds.contains(dialogBounds.x, dialogBounds.y)
+			|| !displayBounds.contains(
+				dialogBounds.x + dialogBounds.width,
+				dialogBounds.y + dialogBounds.height)) {
+			//Place it in the center of the display if it is not visible
+			//when placed in the center of its parent;
+			dialogBounds.x = (displayBounds.width - dialogBounds.width) / 2;
+			dialogBounds.y = (displayBounds.height - dialogBounds.height) / 2;
+		}
+		dialogBounds.height = dialogBounds.height + 3 - table.getHorizontalBar().getSize().y;
+
+		dialog.setBounds(dialogBounds);
+
+		table.removeHelpListener(getHelpListener());
+		table.addHelpListener(new HelpListener() {
+			public void helpRequested(HelpEvent event) {
+				// Do nothing
+			}
+		});
+
+		// TODO Bold cast to Workbench
+		final Workbench workbench = (Workbench) page.getWorkbenchWindow().getWorkbench();
+		try {
+			dialog.open();
+			addMouseListener(table, dialog);
+			workbench.disableKeyFilter();
+			addKeyListener(table, dialog);
+			addTraverseListener(table);
+
+			while (!dialog.isDisposed())
+				if (!display.readAndDispatch())
+					display.sleep();
+		} finally {
+			if (!dialog.isDisposed())
+				cancel(dialog);
+			workbench.enableKeyFilter();
+		}
+	}
+
+	/**
+	 * See IPageListener
+	 */
+	public void pageActivated(IWorkbenchPage page) {
+		super.pageActivated(page);
+		updateState();
+	}
+
+	/**
+	 * See IPageListener
+	 */
+	public void pageClosed(IWorkbenchPage page) {
+		super.pageClosed(page);
+		updateState();
+	}
+
+	/**
+	 * See IPartListener
+	 */
+	public void partClosed(IWorkbenchPart part) {
+		super.partClosed(part);
+		updateState();
+	}
+
+	/**
+	 * See IPartListener
+	 */
+	public void partOpened(IWorkbenchPart part) {
+		super.partOpened(part);
+		updateState();
+	}
+
+	/**
+	 * @see Action#run()
+	 */
+	public void runWithEvent(Event e) {
+		if (getWorkbenchWindow() == null) {
+			// action has been disposed
+			return;
+		}
+		IWorkbenchPage page = getActivePage();
+		openDialog((WorkbenchPage) page);
+		activate(page, selection);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.ICycleAction
+	 */
+	public void setBackwardActionDefinitionId(String actionDefinitionId) {
+		commandBackward = actionDefinitionId;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.ICycleAction
+	 */
+	public void setForwardActionDefinitionId(String actionDefinitionId) {
+		commandForward = actionDefinitionId;
+	}
+
 	/**
 	 * Set text and tooltips in the action.
 	 */
@@ -90,39 +490,7 @@ public class CyclePartAction extends PageEventAction {
 			setActionDefinitionId("org.eclipse.ui.window.previousView"); //$NON-NLS-1$
 		}
 	}
-	
-	/**
-	 * See IPageListener
-	 */
-	public void pageActivated(IWorkbenchPage page) {
-		super.pageActivated(page);
-		updateState();
-	}
-	
-	/**
-	 * See IPageListener
-	 */
-	public void pageClosed(IWorkbenchPage page) {
-		super.pageClosed(page);
-		updateState();
-	}
-	
-	/**
-	 * See IPartListener
-	 */
-	public void partOpened(IWorkbenchPart part) {
-		super.partOpened(part);
-		updateState();
-	}
-	
-	/**
-	 * See IPartListener
-	 */
-	public void partClosed(IWorkbenchPart part) {
-		super.partClosed(part);
-		updateState();
-	}
-	
+
 	/**
 	 * Updates the enabled state.
 	 */
@@ -139,347 +507,6 @@ public class CyclePartAction extends PageEventAction {
 			++count;
 		}
 		setEnabled(count >= 1);
-	}
-	
-	/**
-	 * @see Action#run()
-	 */
-	public void runWithEvent(Event e) {
-		if (getWorkbenchWindow() == null) {
-			// action has been disposed
-			return;
-		}
-		IWorkbenchPage page = getActivePage();
-		openDialog((WorkbenchPage) page); 
-		activate(page, selection);	
-	}
-	
-	/**
-	 * Activate the selected item.
-	 */
-	public void activate(IWorkbenchPage page,Object selection) {
-		if (selection != null) {
-			if (selection instanceof IEditorReference)
-				page.setEditorAreaVisible(true);
-			
-			IWorkbenchPart part = ((IWorkbenchPartReference) selection).getPart(true);
-			
-			if (part != null) 
-				page.activate(part);
-		}	
-	}
-	
-	/*
-	 * Open a dialog showing all views in the activation order
-	 */
-	private void openDialog(WorkbenchPage page) {
-		final int MAX_ITEMS = 22;
-		
-		selection = null;
-		final Shell dialog = new Shell(getWorkbenchWindow().getShell(),SWT.MODELESS);
-		Display display = dialog.getDisplay();
-		dialog.setLayout(new FillLayout());
-		
-		final Table table = new Table(dialog,SWT.SINGLE | SWT.FULL_SELECTION);
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
-		TableColumn tc = new TableColumn(table,SWT.NONE);
-		tc.setResizable(false);
-		tc.setText(getTableHeader());
-		addItems(table,page);
-		int tableItemCount = table.getItemCount();
-	
-		switch (tableItemCount) {
-			case 0:
-				// do nothing;
-				break;
-			case 1:
-				table.setSelection(0);
-				break;
-			default:
-				table.setSelection(forward ? 1 : table.getItemCount() - 1);
-		}
-	
-		tc.pack();
-		table.pack();
-		Rectangle tableBounds = table.getBounds();
-		tableBounds.height = Math.min(tableBounds.height, table.getItemHeight()*MAX_ITEMS);
-		table.setBounds(tableBounds);
-		dialog.pack();
-	
-	 	tc.setWidth(table.getClientArea().width);	
-		table.setFocus();
-		table.addFocusListener(new FocusListener() {
-			public void focusGained(FocusEvent e) {
-			}
-			
-			public void focusLost(FocusEvent e) {
-				cancel(dialog);
-			}
-		});
-		
-		Rectangle dialogBounds = dialog.getBounds();
-		Rectangle displayBounds = display.getClientArea();
-		Rectangle parentBounds = dialog.getParent().getBounds();
-		
-		//Place it in the center of its parent;
-		dialogBounds.x = parentBounds.x + ((parentBounds.width - dialogBounds.width) / 2);
-		dialogBounds.y = parentBounds.y + ((parentBounds.height - dialogBounds.height) / 2);
-		if(!displayBounds.contains(dialogBounds.x,dialogBounds.y) ||
-			!displayBounds.contains(dialogBounds.x + dialogBounds.width,dialogBounds.y + dialogBounds.height)) {
-			//Place it in the center of the display if it is not visible
-			//when placed in the center of its parent;
-			dialogBounds.x = (displayBounds.width - dialogBounds.width) / 2;
-			dialogBounds.y = (displayBounds.height - dialogBounds.height) / 2;
-		}			
-		dialogBounds.height = dialogBounds.height + 3 - table.getHorizontalBar().getSize().y;
-		
-		dialog.setBounds(dialogBounds);
-	
-		table.removeHelpListener(getHelpListener());
-		table.addHelpListener(new HelpListener() {
-			public void helpRequested(HelpEvent event) {
-			}
-		});
-
-        // TODO Bold cast to Workbench
-        final Workbench workbench = (Workbench) page.getWorkbenchWindow().getWorkbench();
-		try {
-			dialog.open();
-			addMouseListener(table, dialog);
-            workbench.disableKeyFilter();
-			addKeyListener(table, dialog);
-			addTraverseListener(table);
-			
-			while (!dialog.isDisposed())
-				if (!display.readAndDispatch())
-					display.sleep();
-		} finally {
-			if(!dialog.isDisposed())
-				cancel(dialog);
-            workbench.enableKeyFilter();
-		}
-	}
-	
-	/**
-	 * Returns the string which will be shown in the table header.
-	 */ 
-	protected String getTableHeader() {
-		return WorkbenchMessages.getString("CyclePartAction.header"); //$NON-NLS-1$
-	}
-	
-	/**
-	 * Add all views to the dialog in the activation order
-	 */
-	protected void addItems(Table table,WorkbenchPage page) {
-		IWorkbenchPartReference refs[] = page.getSortedParts();
-		boolean includeEditor = true;
-		
-		for (int i = refs.length - 1; i >= 0 ; i--) {
-			if(refs[i] instanceof IEditorReference) {
-				if(includeEditor) {
-					IEditorReference activeEditor = (IEditorReference)refs[i];
-					TableItem item = new TableItem(table,SWT.NONE);
-					item.setText(WorkbenchMessages.getString("CyclePartAction.editor")); //$NON-NLS-1$
-					item.setImage(activeEditor.getTitleImage());
-					item.setData(activeEditor);
-					includeEditor = false;
-				}
-			} else {
-				TableItem item = new TableItem(table,SWT.NONE);
-				item.setText(refs[i].getTitle());
-				item.setImage(refs[i].getTitleImage());
-				item.setData(refs[i]);
-			}
-		}
-	}
-	
-	private void addKeyListener(final Table table, final Shell dialog) {
-		table.addKeyListener(new KeyListener() {
-			private boolean firstKey = true;
-			private boolean quickReleaseMode = false;
-			
-			public void keyPressed(KeyEvent e) {
-				int keyCode = e.keyCode;
-				int stateMask = e.stateMask;
-				char character = e.character;
-				int accelerator = KeySupport.convertEventToUnmodifiedAccelerator(e);
-				KeySequence keySequence = KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
-
-				//System.out.println("\nPRESSED");
-				//printKeyEvent(e);
-				//System.out.println("accelerat:\t" + accelerator + "\t (" + KeySupport.formatStroke(Stroke.create(accelerator), true) + ")");				
-				
-				boolean acceleratorForward = false;
-				boolean acceleratorBackward = false;
-				ICommandManager commandManager = PlatformUI.getWorkbench().getCommandManager();
-
-				if (commandForward != null) {
-					ICommand command = commandManager.getCommand(commandForward);
-					
-					if (command.isDefined()) {
-						List keySequenceBindings = command.getKeySequenceBindings();
-						Iterator iterator = keySequenceBindings.iterator();
-						
-						while (iterator.hasNext()) {
-							IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) iterator.next();
-							
-							if (keySequenceBinding.getKeySequence().equals(keySequence)) {
-								acceleratorForward = true;
-								break;
-							}
-						}
-					}
-				}
-				
-				if (commandBackward != null) {
-					ICommand command = commandManager.getCommand(commandBackward);
-					
-					if (command.isDefined()) {
-						List keySequenceBindings = command.getKeySequenceBindings();
-						Iterator iterator = keySequenceBindings.iterator();
-								
-						while (iterator.hasNext()) {
-							IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) iterator.next();
-									
-							if (keySequenceBinding.getKeySequence().equals(keySequence)) {
-								acceleratorBackward = true;
-								break;
-							}
-						}
-					}
-				}
-
-				if (character == SWT.CR || character == SWT.LF)
-					ok(dialog, table);
-				else if (acceleratorForward) {
-					if (firstKey && e.stateMask != 0)
-						quickReleaseMode = true;				
-					
-					int index = table.getSelectionIndex();
-					table.setSelection((index + 1) % table.getItemCount());
-				} else if (acceleratorBackward) {
-					if (firstKey && e.stateMask != 0)
-						quickReleaseMode = true;					
-
-					int index = table.getSelectionIndex();
-					table.setSelection(index >= 1 ? index - 1 : table.getItemCount() - 1);
-				} else if (keyCode != SWT.ALT && keyCode != SWT.COMMAND && keyCode != SWT.CTRL && keyCode != SWT.SHIFT && 
-					keyCode != SWT.ARROW_DOWN && keyCode != SWT.ARROW_UP && keyCode != SWT.ARROW_LEFT && keyCode != SWT.ARROW_RIGHT)
-					cancel(dialog);
-
-				firstKey = false;
-			}
-			
-			public void keyReleased(KeyEvent e) {		
-				int keyCode = e.keyCode;
-				int stateMask = e.stateMask;
-				//char character = e.character;
-				//int accelerator = stateMask | (keyCode != 0 ? keyCode : convertCharacter(character));
-
-				//System.out.println("\nRELEASED");
-				//printKeyEvent(e);
-				//System.out.println("accelerat:\t" + accelerator + "\t (" + KeySupport.formatStroke(Stroke.create(accelerator), true) + ")");
-				
-				final IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-				final boolean stickyCycle = store.getBoolean(IPreferenceConstants.STICKY_CYCLE);
-				if ((!stickyCycle && (firstKey || quickReleaseMode)) && keyCode == stateMask)
-					ok(dialog, table);
-			}
-		});
-	}
-	/**
-	 * Adds a listener to the given table that blocks all traversal operations.
-	 * @param table The table to which the traversal suppression should be 
-	 * added; must not be <code>null</code>.
-	 */
-	private final void addTraverseListener(final Table table) {
-		table.addTraverseListener(new TraverseListener() {
-			/**
-			 * Blocks all key traversal events.
-			 * @param event The trigger event; must not be <code>null</code>.
-			 */
-			public final void keyTraversed(final TraverseEvent event) {
-				event.doit = false;
-			}
-		});
-	}
-	private static char convertCharacter(char c) {
-		return c >= 0 && c <= 31 ? (char) (c + '@') : Character.toUpperCase(c);
-	}
-
-	//private static void printKeyEvent(KeyEvent keyEvent) {
-	//	System.out.println("keyCode:\t" + keyEvent.keyCode + "\t (" + KeySupport.formatStroke(Stroke.create(keyEvent.keyCode), true) + ")");
-	//	System.out.println("stateMask:\t" + keyEvent.stateMask + "\t (" + KeySupport.formatStroke(Stroke.create(keyEvent.stateMask), true) + ")");
-	//	System.out.println("character:\t" + (int) keyEvent.character + "\t (" + keyEvent.character + ")");
-	//}
-
-	/*
-	 * Close the dialog saving the selection
-	 */
-	private void ok(Shell dialog, final Table table) {
-		TableItem[] items = table.getSelection();
-	
-		if (items != null && items.length == 1)
-			selection = items[0].getData();
-	
-		dialog.close();
-	}
-	
-	/*
-	 * Close the dialog and set selection to null.
-	 */
-	private void cancel(Shell dialog) {
-		selection = null;
-		dialog.close();
-	}
-	
-	/*
-	 * Add mouse listener to the table closing it when
-	 * the mouse is pressed.
-	 */			
-	private void addMouseListener(final Table table,final Shell dialog) {
-		table.addMouseListener(new MouseListener() {
-			public void mouseDoubleClick(MouseEvent e){
-				ok(dialog,table);
-			}
-			
-			public void mouseDown(MouseEvent e){
-				ok(dialog,table);
-			}
-			
-			public void mouseUp(MouseEvent e){
-				ok(dialog,table);
-			}
-		});
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ICycleAction
-	 */
-	public String getBackwardActionDefinitionId() {
-		return commandBackward;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ICycleAction
-	 */
-	public String getForwardActionDefinitionId() {
-		return commandForward;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ICycleAction
-	 */
-	public void setBackwardActionDefinitionId(String actionDefinitionId) {
-		commandBackward = actionDefinitionId;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ICycleAction
-	 */
-	public void setForwardActionDefinitionId(String actionDefinitionId) {
-		commandForward = actionDefinitionId;
 	}
 
 }
