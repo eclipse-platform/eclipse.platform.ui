@@ -92,9 +92,9 @@ public class AntCorePlugin extends Plugin {
 	public static final String ECLIPSE_PROGRESS_MONITOR = "eclipse.progress.monitor"; //$NON-NLS-1$
 	
 	/**
-	 * Status code indicating an error occurred running a script.
+	 * Status code indicating an error occurred running a build.
 	 * @since 2.1	 */
-	public static final int ERROR_RUNNING_SCRIPT = 1;
+	public static final int ERROR_RUNNING_BUILD = 1;
 	
 	/**
 	 * Status code indicating an error occurred due to a malformed URL.
