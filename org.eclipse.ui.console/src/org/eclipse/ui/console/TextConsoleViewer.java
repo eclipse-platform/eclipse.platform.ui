@@ -301,16 +301,17 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
 
                 int startLine = text.getLineAtOffset(start);
                 int endLine = text.getLineAtOffset(end);
+                int baseLineBias = text.getBaseline() - (metrics.getAscent() + metrics.getLeading());
 
                 for (int i = startLine; i <= endLine; i++) {
                     int styleStart = i == startLine ? start : text.getOffsetAtLine(i);
                     int styleEnd = i == endLine ? end : text.getOffsetAtLine(i + 1);
                     Point p1 = text.getLocationAtOffset(styleStart);
                     Point p2 = text.getLocationAtOffset(styleEnd - 1);
-                    e.gc.drawLine(p1.x, p1.y + height, p2.x + width, p2.y + height);
+                    e.gc.drawLine(p1.x, p1.y + height + baseLineBias, p2.x + width, p2.y + height + baseLineBias);
                     
                     String hyperlinkText = text.getText(styleStart, styleEnd-1);
-                    e.gc.drawString(hyperlinkText, p1.x, p1.y);
+                    e.gc.drawString(hyperlinkText, p1.x, p1.y + baseLineBias);
                 }
                 e.gc.setForeground(color);
             }
