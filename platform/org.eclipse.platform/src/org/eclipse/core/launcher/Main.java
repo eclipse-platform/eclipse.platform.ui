@@ -130,6 +130,7 @@ public class Main {
 
 	private static final String PROP_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
 	private static final String PROP_EXITDATA = "eclipse.exitdata"; //$NON-NLS-1$
+
 	private static final String PROP_VM = "eclipse.vm"; //$NON-NLS-1$
 	private static final String PROP_VMARGS = "eclipse.vmargs"; //$NON-NLS-1$
 	private static final String PROP_COMMANDS = "eclipse.commands"; //$NON-NLS-1$
@@ -667,11 +668,14 @@ public class Main {
 		return result;
 	}
 
+
+
 	private void setExitData() {
 		String data = System.getProperty(PROP_EXITDATA);
 		if (exitData == null || data == null)
 			return;
-		runCommand(exitData, data, " " + EXITDATA); //$NON-NLS-1$
+		// sync call to the launcher
+		runCommand(true, exitData, data, " " + EXITDATA); //$NON-NLS-1$
 	}
 
 	/**
@@ -1117,10 +1121,11 @@ public class Main {
 			System.out.println("Splash location:\n    " + location); //$NON-NLS-1$
 		if (location == null)
 			return;
-		showProcess = runCommand(showSplash, location, " " + SHOWSPLASH); //$NON-NLS-1$
+		// async call to the launcher		
+		showProcess = runCommand(false, showSplash, location, " " + SHOWSPLASH); //$NON-NLS-1$
 	}
 
-	private Process runCommand(String command, String data, String separator) {
+	private Process runCommand(boolean block, String command, String data, String separator) {
 		// Parse the showsplash command into its separate arguments.
 		// The command format is: 
 		//     <executable> -show <magicArg> [<splashPath>]
@@ -1152,6 +1157,8 @@ public class Main {
 		Process result = null;
 		try {
 			result = Runtime.getRuntime().exec(args);
+			if (block)
+				result.waitFor();
 		} catch (Exception e) {
 			log("Exception running command: " + command); //$NON-NLS-1$
 			log(e);
