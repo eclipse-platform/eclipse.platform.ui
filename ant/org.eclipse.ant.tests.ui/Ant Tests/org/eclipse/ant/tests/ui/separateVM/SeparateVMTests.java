@@ -37,7 +37,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
      * Tests launching Ant in a separate vm and getting messages
      * logged to the console.
      */
-    public void testSeparateVM() throws CoreException {
+    public void testBuild() throws CoreException {
       	launch("echoingSepVM");
       	assertTrue("Incorrect number of messages logged for build. Should be 5. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 5);
       	assertTrue("Incorrect last message. Should start with Total time:. Message: " + ConsoleLineTracker.getMessage(4), ConsoleLineTracker.getMessage(4).startsWith("Total time:"));
@@ -47,7 +47,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	 * Tests launching Ant in a separate vm and that the
 	 * correct links are in the console doc
 	 */
-	public void testSeparateVMLinks() throws CoreException {
+	public void testLinks() throws CoreException {
 		launch("echoingSepVM");
 		int offset= 15; //buildfile link
 		IConsoleHyperlink link= getHyperlink(offset, ConsoleLineTracker.getDocument());
@@ -65,14 +65,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	 * Tests launching Ant in a separate vm and that the
 	 * correct colors are in the console doc
 	 */
-	public void testSeparateVMColor() throws BadLocationException, CoreException {
-		
-		//AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_INFO_RGB);	
-		//AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_ERROR_RGB);
-		//AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_DEBUG_RGB);
-		//AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_VERBOSE_RGB);
-		//AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_WARNING_RGB);
-		
+	public void testColor() throws BadLocationException, CoreException {
 		launch("echoingSepVM");
 		int offset= 15; //buildfile
 		Color color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
