@@ -33,7 +33,9 @@ public class RemoveDateTagAction extends SelectionListenerAction {
 
 	protected boolean updateSelection(IStructuredSelection selection) {
 		this.selection = selection;
-		return containsDataTag();
+		boolean b = containsDataTag();
+		setEnabled(b);
+		return b;
 	}
 	
 	private boolean containsDataTag(){

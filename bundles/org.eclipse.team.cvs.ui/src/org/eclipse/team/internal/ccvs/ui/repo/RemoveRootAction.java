@@ -143,9 +143,10 @@ public class RemoveRootAction extends SelectionListenerAction {
 
 	protected boolean updateSelection(IStructuredSelection selection) {
 		this.selection = selection;
-
 		ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
-		return roots.length > 0;
+		boolean b = roots.length > 0;
+		setEnabled(b);
+		return b;
 	}
 
 }

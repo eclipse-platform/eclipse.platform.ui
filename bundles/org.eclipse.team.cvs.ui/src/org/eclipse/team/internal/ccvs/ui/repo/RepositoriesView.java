@@ -15,6 +15,7 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -27,7 +28,6 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -66,6 +66,7 @@ public class RepositoriesView extends RemoteViewPart {
 	private AllRootsElement root;
 	
 	// Actions
+	private IAction removeAction;
 	private Action newAction;
 	private Action newAnonAction;
 	private PropertyDialogAction propertiesAction;
@@ -102,7 +103,7 @@ public class RepositoriesView extends RemoteViewPart {
 	 * @param partName
 	 */
 	public RepositoriesView() {
-		super(VIEW_ID);
+		super(VIEW_ID);		
 	}
 
 	/**
@@ -160,12 +161,23 @@ public class RepositoriesView extends RemoteViewPart {
 		removeRootAction.selectionChanged((IStructuredSelection)null);
 		removeDateTagAction = new RemoveDateTagAction();
 		removeDateTagAction.selectionChanged( (IStructuredSelection)null);
+		removeAction = new Action(){
+			public void run(){
+				if(removeRootAction.isEnabled()){
+					removeRootAction.run();
+				}
+				if(removeDateTagAction.isEnabled()){
+					removeDateTagAction.run();
+				}
+			}
+		};
 		WorkbenchHelp.setHelp(removeRootAction, IHelpContextIds.REMOVE_REPOSITORY_LOCATION_ACTION);
 		IActionBars bars = getViewSite().getActionBars();
-		bars.setGlobalActionHandler(ActionFactory.DELETE.getId(), removeRootAction);
+		bars.setGlobalActionHandler(ActionFactory.DELETE.getId(), removeAction);
+		
 		super.contributeActions();
 	}
-	
+
 	/**
 	 * Method includeEclipseConnection.
 	 * @return boolean
@@ -229,22 +241,12 @@ public class RepositoriesView extends RemoteViewPart {
 		super.initializeListeners();
 		viewer.addSelectionChangedListener(removeRootAction);
 		viewer.addSelectionChangedListener(removeDateTagAction);
-		viewer.getControl().addKeyListener(new KeyListener() {
-			public void keyPressed(KeyEvent event) {
-				handleKeyPressed(event);
-			}
-			public void keyReleased(KeyEvent event) {
-				handleKeyReleased(event);
-			}
+		viewer.addSelectionChangedListener(new ISelectionChangedListener(){
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection)event.getSelection();
+				handleChange(selection);	
+			}			
 		});
-	}
-	public void handleKeyPressed(KeyEvent event) {
-		if (event.character == SWT.DEL && event.stateMask == 0) {
-			removeRootAction.run();
-			removeDateTagAction.run();
-		}
-	}
-	protected void handleKeyReleased(KeyEvent event) {
 	}
 	
 	/**
@@ -315,5 +317,11 @@ public class RepositoriesView extends RemoteViewPart {
 				}
 			}
 		};
+	}
+		
+	private void handleChange(IStructuredSelection selection){
+		removeRootAction.updateSelection(selection);
+		removeDateTagAction.updateSelection(selection);
+		removeAction.setEnabled(removeRootAction.isEnabled() || removeDateTagAction.isEnabled());
 	}
 }
