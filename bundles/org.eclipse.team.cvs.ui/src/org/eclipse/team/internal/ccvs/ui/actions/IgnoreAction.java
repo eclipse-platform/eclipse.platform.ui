@@ -42,7 +42,7 @@ public class IgnoreAction extends TeamAction {
 		}
 		return true;
 	}
-	public void run(IAction action) {
+	public void run(final IAction action) {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				IResource[] resources = getSelectedResources();
@@ -57,12 +57,15 @@ public class IgnoreAction extends TeamAction {
 							cvsResource = new LocalFolder(resource.getLocation().toFile());
 							break;
 					}
-					if (cvsResource != null) {
-						try {
-							cvsResource.setIgnored();
-						} catch (CVSException e) {
-							ErrorDialog.openError(getShell(), null, null, e.getStatus());
+					if (cvsResource == null) return;
+					try {
+						cvsResource.setIgnored();
+						if (action != null) {
+							action.setEnabled(false);
 						}
+					} catch (CVSException e) {
+						ErrorDialog.openError(getShell(), null, null, e.getStatus());
+						return;
 					}
 				}
 			}
