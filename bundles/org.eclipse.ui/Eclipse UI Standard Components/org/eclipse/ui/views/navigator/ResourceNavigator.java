@@ -495,9 +495,10 @@ void handleDoubleClick(DoubleClickEvent event) {
 void handleSelectionActivated(SelectionActivatedEvent event) {
 	IStructuredSelection s = (IStructuredSelection)event.getSelection();
 	Object element = s.getFirstElement();
-	if (element instanceof IFile)
+	if (element instanceof IFile) {
 		openFileAction.selectionChanged(s);
 		openFileAction.run();
+	}
 }
 
 /**
