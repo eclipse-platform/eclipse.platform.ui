@@ -770,17 +770,15 @@ public class ConfiguredSite
 		ISite currentSite = getSite();
 		IPluginEntry[] siteEntries = getSite().getPluginEntries();
 		IPluginEntry[] featuresEntries = feature.getPluginEntries();
-		IPluginEntry[] result =
-			UpdateManagerUtils.diff(featuresEntries, siteEntries);
-		if (result == null || (result.length != 0)) {
+		IPluginEntry[] result =	UpdateManagerUtils.diff(featuresEntries, siteEntries);
+		if (result != null && (result.length != 0)) {
 			String msg = Policy.bind("SiteLocal.FeatureUnHappy");			
 			MultiStatus multi = new MultiStatus(featureStatus.getPlugin(),IFeature.STATUS_UNHAPPY,msg,null);				
-			IPluginEntry[] missing =
-				UpdateManagerUtils.diff(featuresEntries, result);
-			for (int k = 0; k < missing.length; k++) {
+				
+			for (int k = 0; k < result.length; k++) {
 				String[] values =
 					new String[] {
-						missing[k].getVersionedIdentifier().toString()};
+						result[k].getVersionedIdentifier().toString()};
 				String msg1 =
 						Policy.bind(
 							"ConfiguredSite.MissingPluginsBrokenFeature",
@@ -789,8 +787,8 @@ public class ConfiguredSite
 				UpdateManagerPlugin.warn(msg1);
 				IStatus status=createStatus(IStatus.ERROR,IFeature.STATUS_UNHAPPY,msg1,null);
 				multi.add(status);
+				return multi;
 			}
-			return multi;
 		}
 
 		String msg = Policy.bind("SiteLocal.FeatureHappy"); 
