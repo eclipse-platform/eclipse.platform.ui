@@ -472,7 +472,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 */
 		protected void handleChangeBreakpoint(IMarker marker, IMarkerDelta delta) {
 			final IBreakpoint breakpoint= getBreakpoint(marker);
-			if (isRegistered(breakpoint)) {
+			if (breakpoint != null && isRegistered(breakpoint)) {
 				fireUpdate(breakpoint, delta, CHANGED);
 			}
 		}
