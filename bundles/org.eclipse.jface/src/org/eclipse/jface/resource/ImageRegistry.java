@@ -7,9 +7,11 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * 	   Steven Ketcham (sketcham@dsicdi.com) - Bug 42451
+ * 			[Dialogs] ImageRegistry throws null pointer exception in 
+ * 			application with multiple Display's
  *******************************************************************************/
 package org.eclipse.jface.resource;
-
 
 import java.util.*;
 
@@ -43,8 +45,8 @@ public class ImageRegistry {
 	 *  value type: <code>org.eclipse.swt.graphics.Image</code>
 	 *  or <code>ImageDescriptor</code>).
 	 */
-	private Map table = new HashMap(10);
-	
+	private Map table = null;
+
 	/**
 	 * Creates an empty image registry.
 	 * <p>
@@ -55,7 +57,7 @@ public class ImageRegistry {
 	public ImageRegistry() {
 		this(Display.getCurrent());
 	}
-	
+
 	/**
 	 * Creates an empty image registry.
 	 */
@@ -64,7 +66,7 @@ public class ImageRegistry {
 		Assert.isNotNull(display);
 		hookDisplayDispose(display);
 	}
-	
+
 	/**
 	 * Returns the image associated with the given key in this registry, 
 	 * or <code>null</code> if none.
@@ -73,7 +75,7 @@ public class ImageRegistry {
 	 * @return the image, or <code>null</code> if none
 	 */
 	public Image get(String key) {
-		Entry entry = (Entry)table.get(key);
+		Entry entry = getEntry(key);
 		if (entry == null) {
 			return null;
 		}
@@ -82,7 +84,7 @@ public class ImageRegistry {
 		}
 		return entry.image;
 	}
-	
+
 	/**
 	 * Returns the descriptor associated with the given key in this registry, 
 	 * or <code>null</code> if none.
@@ -92,26 +94,31 @@ public class ImageRegistry {
 	 * @since 2.1
 	 */
 	public ImageDescriptor getDescriptor(String key) {
-		Entry entry = (Entry)table.get(key);
+		Entry entry = getEntry(key);
 		if (entry == null) {
 			return null;
 		}
 		return entry.descriptor;
 	}
-	
+
 	/**
 	 * Shut downs this resource registry and disposes of all registered images.
 	 */
 	void handleDisplayDispose() {
+
+		//Do not bother if the table was never used
+		if (table == null)
+			return;
+
 		for (Iterator e = table.values().iterator(); e.hasNext();) {
-			Entry entry = (Entry)e.next();
+			Entry entry = (Entry) e.next();
 			if (entry.image != null) {
 				entry.image.dispose();
 			}
 		}
 		table = null;
 	}
-	
+
 	/**
 	 * Hook a dispose listener on the SWT display.
 	 *
@@ -124,7 +131,7 @@ public class ImageRegistry {
 			}
 		});
 	}
-	
+
 	/**
 	 * Adds (or replaces) an image descriptor to this registry. The first time
 	 * this new entry is retrieved, the image descriptor's image will be computed 
@@ -137,10 +144,10 @@ public class ImageRegistry {
 	 * @exception IllegalArgumentException if the key already exists
 	 */
 	public void put(String key, ImageDescriptor descriptor) {
-		Entry entry = (Entry)table.get(key);
+		Entry entry = getEntry(key);
 		if (entry == null) {
 			entry = new Entry();
-			table.put(key, entry);
+			putEntry(key, entry);
 		}
 		if (entry.image == null) {
 			entry.descriptor = descriptor;
@@ -148,7 +155,7 @@ public class ImageRegistry {
 		}
 		throw new IllegalArgumentException("ImageRegistry key already in use: " + key); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Adds an image to this registry.  This method fails if there
 	 * is already an image or descriptor for the given key.
@@ -164,10 +171,10 @@ public class ImageRegistry {
 	 * @exception IllegalArgumentException if the key already exists
 	 */
 	public void put(String key, Image image) {
-		Entry entry = (Entry)table.get(key);
+		Entry entry = getEntry(key);
 		if (entry == null) {
 			entry = new Entry();
-			table.put(key, entry);
+			putEntry(key, entry);
 		}
 		if (entry.image == null && entry.descriptor == null) {
 			entry.image = image;
@@ -175,13 +182,28 @@ public class ImageRegistry {
 		}
 		throw new IllegalArgumentException("ImageRegistry key already in use: " + key); //$NON-NLS-1$
 	}
-	
-	
+
 	/**
 	 * Contains the data for an entry in the registry. 
- 	 */
+		 */
 	private static class Entry {
 		protected Image image;
 		protected ImageDescriptor descriptor;
 	}
+
+	private Entry getEntry(String key) {
+		return (Entry) getTable().get(key);
+	}
+
+	private void putEntry(String key, Entry entry) {
+		getTable().put(key, entry);
+	}
+
+	private Map getTable() {
+		if (table == null) {
+			table = new HashMap(10);
+		}
+		return table;
+	}
+
 }
