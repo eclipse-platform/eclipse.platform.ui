@@ -208,6 +208,9 @@ public abstract class PartPane extends LayoutPart implements Listener {
         // Create a title bar.
         createTitleBar();
 
+        // Create content.
+        createChildControl();
+        
         // When the pane or any child gains focus, notify the workbench.
         control.addListener(SWT.Activate, this);
 
@@ -329,6 +332,7 @@ public abstract class PartPane extends LayoutPart implements Listener {
      */
     public void setVisible(boolean makeVisible) {
     	if (makeVisible) {
+    	    partReference.getPart(true);
     		createChildControl();
     	}
     	
@@ -338,7 +342,9 @@ public abstract class PartPane extends LayoutPart implements Listener {
     protected final void createChildControl() {
 
     	// Force the view to be loaded if it isn't already
-    	partReference.getPart(true);
+    	if (partReference.getPart(false) == null) {
+    	    return;
+    	}
     	
         Assert.isNotNull(control);
 

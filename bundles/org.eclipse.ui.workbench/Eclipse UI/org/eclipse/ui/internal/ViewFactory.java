@@ -22,6 +22,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -386,7 +387,11 @@ import org.eclipse.ui.internal.util.Util;
                 }
 
                 resetPart[0] = false;
-                pane.createControl(page.getClientComposite());
+                Control ctrl = pane.getControl();
+                if (ctrl == null)
+                    pane.createControl(page.getClientComposite());
+                else
+                    pane.createChildControl();
                 result[0] = new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0,
                         "", null); //$NON-NLS-1$
             }

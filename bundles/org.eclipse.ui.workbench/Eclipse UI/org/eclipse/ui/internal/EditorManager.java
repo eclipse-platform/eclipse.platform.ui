@@ -52,6 +52,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionBarContributor;
@@ -1086,16 +1087,23 @@ public class EditorManager {
                     if (desc.isInternal()) {
                         openInternalEditor(ref, desc, editorInput, false);
 
-                        ref.getPane().createControl(
-                                    (Composite) page.getEditorPresentation()
-                                            .getLayoutPart().getControl());
-                        
-                    } else if (desc.getId().equals(
-                            IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID)) {
-                        if (openSystemInPlaceEditor(ref, desc, editorInput) != null) {
+                        // TODO: workaround, it should be possible for the following 
+                        // code to be as follows:
+                        // ref.getPane().createControl((Composite)page.getEditorPresentation().getLayoutPart().getControl());
+                        // OR something simpler like:
+                        // ref.getPane().createControl();
+                        //
+                        Control ctrl = ref.getPane().getControl();
+                        if (ctrl == null)
                             ref.getPane().createControl(
                                     (Composite) page.getEditorPresentation()
                                             .getLayoutPart().getControl());
+                        else
+                            ref.getPane().createChildControl();
+                    } else if (desc.getId().equals(
+                            IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID)) {
+                        if (openSystemInPlaceEditor(ref, desc, editorInput) != null) {
+                            ref.getPane().createChildControl();
                         } else {
                             WorkbenchPlugin
                                     .log("Unable to restore in-place editor.  In-place support is missing."); //$NON-NLS-1$
