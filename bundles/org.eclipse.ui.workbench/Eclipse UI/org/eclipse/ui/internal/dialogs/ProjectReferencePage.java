@@ -47,7 +47,9 @@ public ProjectReferencePage() {
  */
 protected Control createContents(Composite parent) {
 
-	WorkbenchHelp.setHelp(parent, IHelpContextIds.PROJECT_REFERENCE_PROPERTY_PAGE);
+	WorkbenchHelp.setHelp(
+		parent,
+		IHelpContextIds.PROJECT_REFERENCE_PROPERTY_PAGE);
 	Font font = parent.getFont();
 
 	Composite composite = new Composite(parent, SWT.NONE);
@@ -58,7 +60,8 @@ protected Control createContents(Composite parent) {
 	composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	composite.setFont(font);
 
-	listViewer = CheckboxTableViewer.newCheckList(composite, SWT.TOP | SWT.BORDER);
+	listViewer =
+		CheckboxTableViewer.newCheckList(composite, SWT.TOP | SWT.BORDER);
 	listViewer.getTable().setFont(font);
 	GridData data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
@@ -70,7 +73,8 @@ protected Control createContents(Composite parent) {
 
 	listViewer.setLabelProvider(new WorkbenchLabelProvider());
 	listViewer.setContentProvider(getContentProvider(project));
-	listViewer.setSorter(new ViewerSorter() {});
+	listViewer.setSorter(new ViewerSorter() {
+	});
 	listViewer.setInput(project.getWorkspace());
 	try {
 		listViewer.setCheckedElements(project.getReferencedProjects());
@@ -87,13 +91,13 @@ protected Control createContents(Composite parent) {
 
 	return composite;
 }
-/* (non-Javadoc)
- * Method declared on IDialogPage.
- */
-public void createControl(Composite parent) {
-	initialize();
-	
-	Composite content= new Composite(parent, SWT.NULL);
+	/* (non-Javadoc)
+	 * Method declared on IDialogPage.
+	 */
+	public void createControl(Composite parent) {
+		initialize();
+
+		Composite content = new Composite(parent, SWT.NULL);
 	GridLayout layout= new GridLayout();
 	layout.marginHeight = layout.marginWidth = 0;
 	content.setLayout(layout);
