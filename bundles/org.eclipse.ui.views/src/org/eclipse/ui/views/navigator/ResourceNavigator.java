@@ -650,7 +650,10 @@ public class ResourceNavigator
 			IWorkingSet workingSet = workingSetManager.getWorkingSet(workingSetName);
 
 			if (workingSet != null) {
-				setWorkingSet(workingSet);
+				// Only initialize filter. Don't set working set into viewer.
+				// Working set is set via WorkingSetFilterActionGroup
+				// during action creation.
+				workingSetFilter.setWorkingSet(workingSet);
 			}
 		}
 	}

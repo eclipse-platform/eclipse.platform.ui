@@ -18,7 +18,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
@@ -44,6 +47,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 	protected GotoActionGroup gotoGroup;
 	protected OpenActionGroup openGroup;
 	protected RefactorActionGroup refactorGroup;
+	protected WorkingSetFilterActionGroup workingSetGroup;
 	protected SortAndFilterActionGroup sortAndFilterGroup;
 	protected WorkspaceActionGroup workspaceGroup;
 
@@ -84,6 +88,28 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		gotoGroup = new GotoActionGroup(navigator);
 		openGroup = new OpenActionGroup(navigator);
 		refactorGroup = new RefactorActionGroup(navigator);
+		IPropertyChangeListener workingSetUpdater = new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				String property = event.getProperty();
+				
+				if (WorkingSetFilterActionGroup.CHANGE_WORKING_SET.equals(property)) {
+					IResourceNavigator navigator = getNavigator();
+					Object newValue = event.getNewValue();
+					
+					if (newValue instanceof IWorkingSet) {	
+						navigator.setWorkingSet((IWorkingSet) newValue);
+					}
+					else 
+					if (newValue == null) {
+						navigator.setWorkingSet(null);
+					}
+				}
+			}
+		};
+		TreeViewer treeView = navigator.getViewer(); 
+		Shell shell = treeView.getControl().getShell();
+		workingSetGroup = new WorkingSetFilterActionGroup(shell, workingSetUpdater);
+		workingSetGroup.setWorkingSet(navigator.getWorkingSet());
 		sortAndFilterGroup = new SortAndFilterActionGroup(navigator);
 		workspaceGroup = new WorkspaceActionGroup(navigator);
 	}
@@ -186,6 +212,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		gotoGroup.fillActionBars(actionBars);
 		openGroup.fillActionBars(actionBars);
 		refactorGroup.fillActionBars(actionBars);
+		workingSetGroup.fillActionBars(actionBars);
 		sortAndFilterGroup.fillActionBars(actionBars);
 		workspaceGroup.fillActionBars(actionBars);
 		
@@ -211,6 +238,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		gotoGroup.updateActionBars();
 		openGroup.updateActionBars();
 		refactorGroup.updateActionBars();
+		workingSetGroup.updateActionBars();
 		sortAndFilterGroup.updateActionBars();
 		workspaceGroup.updateActionBars();
 	} 
@@ -238,6 +266,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		gotoGroup.dispose();
 		openGroup.dispose();
 		refactorGroup.dispose();
+		workingSetGroup.dispose();
 		sortAndFilterGroup.dispose();
 		workspaceGroup.dispose();
 		super.dispose();

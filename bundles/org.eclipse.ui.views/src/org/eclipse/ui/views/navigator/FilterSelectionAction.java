@@ -1,17 +1,21 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.views.navigator;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.dialogs.FilterDialog;
 
 /**
  * The FilterSelectionAction opens the filters dialog.
@@ -41,10 +45,9 @@ public void run() {
 	IResourceNavigator navigator = getNavigator();
 	ResourcePatternFilter filter = navigator.getPatternFilter();
 	FiltersContentProvider contentProvider = new FiltersContentProvider(filter);
-	IWorkingSet workingSet = navigator.getWorkingSet();
 
-	FilterDialog dialog =
-		new FilterDialog(
+	ListSelectionDialog dialog =
+		new ListSelectionDialog(
 			getShell(),
 			getViewer(),
 			contentProvider,
@@ -53,30 +56,17 @@ public void run() {
 
 	dialog.setTitle(FILTER_TITLE_MESSAGE);
 	dialog.setInitialSelections(contentProvider.getInitialSelections());
-	dialog.setWorkingSet(workingSet);
 	dialog.open();
 	if (dialog.getReturnCode() == Dialog.OK) {
 		Object[] results = dialog.getResult();
 		String[] selectedPatterns = new String[results.length];
-		IWorkingSetManager workingSetManager = WorkbenchPlugin.getDefault().getWorkingSetManager();
-
 		System.arraycopy(results, 0, selectedPatterns, 0, results.length);
 		filter.setPatterns(selectedPatterns);
-		workingSet = dialog.getWorkingSet();			
-		navigator.setWorkingSet(workingSet);
-		if (workingSet != null) {
-			workingSetManager.addRecentWorkingSet(workingSet);
-		}
-
 		navigator.setFiltersPreference(selectedPatterns);
 		Viewer viewer = getViewer();
 		viewer.getControl().setRedraw(false);
 		viewer.refresh();
 		viewer.getControl().setRedraw(true);
-	}
-	else
-	if (navigator.getWorkingSet() != workingSet) {
-		navigator.setWorkingSet(workingSet);
 	}
 }
 
