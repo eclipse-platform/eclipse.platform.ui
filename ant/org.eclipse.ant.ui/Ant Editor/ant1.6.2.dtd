@@ -141,8 +141,9 @@
 <!ATTLIST param
           id ID #IMPLIED
           name CDATA #IMPLIED
-          type CDATA #IMPLIED
-          value CDATA #IMPLIED>
+          expression CDATA #IMPLIED
+          if CDATA #IMPLIED
+          unless CDATA #IMPLIED>
 
 <!ELEMENT none (custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | date | and | depth)*>
 <!ATTLIST none
@@ -1335,7 +1336,9 @@
 
 <!ELEMENT attribute EMPTY>
 <!ATTLIST attribute
-          id ID #IMPLIED>
+          id ID #IMPLIED
+          name CDATA #IMPLIED
+          value CDATA #IMPLIED>
 
 <!ELEMENT outputproperty EMPTY>
 <!ATTLIST outputproperty
