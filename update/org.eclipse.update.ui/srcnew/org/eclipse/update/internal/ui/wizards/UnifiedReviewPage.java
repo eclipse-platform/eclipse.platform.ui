@@ -197,14 +197,18 @@ public class UnifiedReviewPage
 	}
 
 	private void performPostSearchProcessing() {
-		if (tableViewer != null) {
-			tableViewer.refresh();
-			tableViewer.getTable().layout(true);
-			if (searchRunner.getSearchProvider() instanceof UnifiedModeSelectionPage) {
-				selectTrueUpdates();
+		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			public void run() {
+				if (tableViewer != null) {
+					tableViewer.refresh();
+					tableViewer.getTable().layout(true);
+					if (searchRunner.getSearchProvider() instanceof UnifiedModeSelectionPage) {
+						selectTrueUpdates();
+					}
+				}
+				pageChanged();
 			}
-		}
-		pageChanged();
+		});
 	}
 	
 	private void selectTrueUpdates() {

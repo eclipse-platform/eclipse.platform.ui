@@ -106,7 +106,9 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 	private Button addLocalButton;
 	private Button editButton;
 	private Button removeButton;
+	private Button envFilterCheck;
 	private SearchRunner2 searchRunner;
+	private EnvironmentFilter envFilter;
 	private UpdateSearchRequest searchRequest;
 	private ModelListener modelListener;
 
@@ -120,12 +122,19 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 		discoveryFolder = new DiscoveryFolder();
 		searchRequest = new UpdateSearchRequest(new UnifiedSiteSearchCategory(), new UpdateSearchScope());
-		searchRequest.addFilter(new EnvironmentFilter());
 		searchRequest.addFilter(new BackLevelFilter());
+		envFilter = new EnvironmentFilter();
 		this.searchRunner = searchRunner;
 		modelListener = new ModelListener();
 		UpdateUI.getDefault().getUpdateModel().addUpdateModelChangedListener(
 			modelListener);
+	}
+	
+	private void toggleEnvFilter(boolean add) {
+		if (add) searchRequest.addFilter(envFilter);
+		else
+			searchRequest.removeFilter(envFilter);
+		searchRunner.setNewSearchNeeded(true);
 	}
 
 	public void dispose() {
@@ -201,6 +210,19 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 				handleRemove();
 			}
 		});
+		
+		envFilterCheck = new Button(client, SWT.CHECK);
+		envFilterCheck.setText("Ignore features not applicable to this environment");
+		envFilterCheck.setSelection(true);
+		toggleEnvFilter(true);
+		envFilterCheck.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				toggleEnvFilter(envFilterCheck.getSelection());
+			}
+		});
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		envFilterCheck.setLayoutData(gd);
 
 		Dialog.applyDialogFont(parent);
 		
