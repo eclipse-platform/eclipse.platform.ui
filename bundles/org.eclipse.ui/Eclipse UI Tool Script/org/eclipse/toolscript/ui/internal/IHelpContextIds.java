@@ -22,4 +22,5 @@ public interface IHelpContextIds {
 	
 	// Dialogs
 	public static final String CONFIGURE_DIALOG = PREFIX + "configure_dialog_context"; //$NON-NLS-1$
+	public static final String EDIT_DIALOG = PREFIX + "edit_dialog_context"; //$NON-NLS-1$
 }

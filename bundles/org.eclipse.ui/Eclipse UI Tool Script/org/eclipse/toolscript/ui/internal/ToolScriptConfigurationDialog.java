@@ -9,16 +9,18 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
+import java.util.ArrayList;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -29,9 +31,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.toolscript.core.internal.ToolScript;
+import org.eclipse.toolscript.core.internal.ToolScriptPlugin;
+import org.eclipse.toolscript.core.internal.ToolScriptRegistry;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * Dialog box to add, remove, and edit external tool scripts.
@@ -44,7 +47,8 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 	private Button upButton;
 	private Button downButton;
 	private Text detailText;
-	private Object currentSelection;
+	private ToolScript currentSelection;
+	private ArrayList scripts;
 
 	/**
 	 * Instantiate a new tool script configuration dialog.
@@ -78,6 +82,8 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 	 * Method declared on Dialog.
 	 */
 	protected Control createDialogArea(Composite parent) {
+		scripts = new ArrayList(ToolScriptPlugin.getDefault().getRegistry().getToolScripts());
+		
 		Composite dialogComp = (Composite)super.createDialogArea(parent);
 				
 		// Set title and message now that the controls exist
@@ -118,8 +124,9 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 		
 		listViewer = new ListViewer(listComp, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		listViewer.getList().setLayoutData(new GridData(GridData.FILL_BOTH));
-		listViewer.setContentProvider(new WorkbenchContentProvider());
-		listViewer.setLabelProvider(new WorkbenchLabelProvider());
+		listViewer.setContentProvider(new ScriptContentProvider());
+		listViewer.setLabelProvider(new ScriptLabelProvider());
+		listViewer.setInput(scripts);
 
 		// Build the button list
 		Composite buttonComp = new Composite(midComp, SWT.NONE);
@@ -182,6 +189,12 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 	private void hookButtonActions() {
 		newButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
+				ToolScriptEditDialog dialog;
+				dialog = new ToolScriptEditDialog(getShell(), null);
+				dialog.open();
+				ToolScript script = dialog.getToolScript();
+				scripts.add(script);
+				listViewer.add(script);
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
@@ -189,6 +202,10 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 
 		editButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
+				ToolScriptEditDialog dialog;
+				dialog = new ToolScriptEditDialog(getShell(), currentSelection);
+				dialog.open();
+				listViewer.update(currentSelection, null);
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
@@ -196,6 +213,8 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 
 		removeButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
+				scripts.remove(currentSelection);
+				listViewer.remove(currentSelection);
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
@@ -203,6 +222,14 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 
 		upButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
+				int index = scripts.indexOf(currentSelection);
+				if (index < 1)
+					return;
+				Object script = scripts.get(index - 1);
+				scripts.set(index - 1, currentSelection);
+				scripts.set(index, script);
+				listViewer.update(script, null);
+				listViewer.update(currentSelection, null);
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
@@ -210,6 +237,14 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 
 		downButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
+				int index = scripts.indexOf(currentSelection);
+				if (index < 0 || index >= scripts.size() - 1)
+					return;
+				Object script = scripts.get(index + 1);
+				scripts.set(index + 1, currentSelection);
+				scripts.set(index, script);
+				listViewer.update(script, null);
+				listViewer.update(currentSelection, null);
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
@@ -226,7 +261,7 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 				currentSelection = null;
 				if (event.getSelection() instanceof IStructuredSelection) {
 					IStructuredSelection sel = (IStructuredSelection) event.getSelection() ;
-					currentSelection = sel.getFirstElement();
+					currentSelection = (ToolScript)sel.getFirstElement();
 				}
 
 				int selIndex = listViewer.getList().getSelectionIndex();
@@ -238,5 +273,41 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 				downButton.setEnabled(currentSelection != null && selIndex < itemCount - 1);
 			}
 		});
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on Dialog.
+	 */
+	protected void okPressed() {
+		ToolScriptPlugin.getDefault().getRegistry().setToolScripts(scripts);
+		super.okPressed();
+	}
+
+	
+	/**
+	 * Internal content provider of existing tool scripts
+	 */
+	private class ScriptContentProvider implements IStructuredContentProvider {
+		public Object[] getElements(Object inputElement) {
+			return scripts.toArray();
+		}
+
+		public void dispose() {
+		}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+	}
+	
+	/**
+	 * Internal label provider of existing tool scripts
+	 */
+	private class ScriptLabelProvider extends LabelProvider {
+		public String getText(Object element) {
+			if (element instanceof ToolScript)
+				return ((ToolScript)element).getName();
+			else
+				return "";//$NON-NLS-1$
+		}
 	}
 }

@@ -1,0 +1,275 @@
+package org.eclipse.toolscript.core.internal;
+
+/**********************************************************************
+Copyright (c) 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.tools.ant.BuildListener;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+
+/**
+ * This class represents a tool script that can be run. The tool
+ * script can be inside or outside the workspace.
+ * <p>
+ * A tool script consist of a user defined name, a path to the location
+ * of the script, optional arguments for the script, and the working
+ * directory.
+ * </p><p>
+ * After the script has run, part or all of the workspace can be
+ * refreshed to pickup changes made by the script. This is optional
+ * and does nothing by default
+ * </p>
+ */
+public class ToolScript implements IToolScript {
+	// Internal tags for storing script related information
+	private static final String TAG_SCRIPT_TYPE = "!{script:type}"; //$NON-NLS-1$
+	private static final String TAG_SCRIPT_NAME = "!{script:name}"; //$NON-NLS-1$
+	private static final String TAG_SCRIPT_LOCATION = "!{script:loc}"; //$NON-NLS-1$
+	private static final String TAG_SCRIPT_ARGUMENTS = "!{script:args}"; //$NON-NLS-1$
+	private static final String TAG_SCRIPT_DIRECTORY = "!{script:dir}"; //$NON-NLS-1$
+	private static final String TAG_SCRIPT_REFRESH = "!{script:refresh}"; //$NON-NLS-1$
+	
+	// Known kind of scripts
+	public static final String SCRIPT_TYPE_PROGRAM = "org.eclipse.toolscript.type.program"; //$NON-NLS-1$
+	public static final String SCRIPT_TYPE_ANT = "org.eclipse.toolscript.type.ant"; //$NON-NLS-1$
+	
+	// Variable names the tool script will expand
+	private static final String VAR_DIR_WORKSPACE = "${workspace}"; //$NON-NLS-1$
+	private static final String VAR_DIR_PROJECT = "${project}"; //$NON-NLS-1$
+
+	private static final String EMPTY_VALUE = ""; //$NON-NLS-1$;
+	
+	private String type = SCRIPT_TYPE_PROGRAM;
+	private String name = EMPTY_VALUE;
+	private String location = EMPTY_VALUE;
+	private String arguments = EMPTY_VALUE;
+	private String directory = EMPTY_VALUE;
+	private String refreshScope = EMPTY_VALUE;
+	
+	/**
+	 * Creates an empty initialized tool script.
+	 */
+	public ToolScript() {
+		super();
+	}
+
+	/**
+	 * Creates a fully initialized tool script.
+	 */
+	public ToolScript(String type, String name, String location, String arguments, String directory, String refreshScope) {
+		this();
+		if (type != null)
+			this.type = type;
+		if (name != null)
+			this.name = name;
+		if (location != null)
+			this.location = location;
+		if (arguments != null)
+			this.arguments = arguments;
+		if (directory != null)
+			this.directory = directory;
+		if (refreshScope != null)
+			this.refreshScope = refreshScope;
+	}
+	
+	/**
+	 * Creates a tool script based on specified arguments.
+	 * Returns null if no corresponding tool script could be created.
+	 */
+	public static ToolScript fromArgumentMap(Map args) {
+		// Validate the critical information.
+		String type = (String)args.get(TAG_SCRIPT_TYPE);
+		String name = (String)args.get(TAG_SCRIPT_NAME);
+		String location = (String)args.get(TAG_SCRIPT_LOCATION);
+		if (type == null || name == null || location == null)
+			return null;
+		if (type.length() == 0 || name.length() == 0 || location.length() == 0)
+			return null;
+
+		return new ToolScript(
+			type,
+			name,
+			location,
+			(String)args.get(TAG_SCRIPT_ARGUMENTS),
+			(String)args.get(TAG_SCRIPT_DIRECTORY),
+			(String)args.get(TAG_SCRIPT_REFRESH));
+	}
+
+	/**
+	 * Returns the type of script.
+	 */
+	public String getType() {
+		return type;
+	}
+	
+	/**
+	 * Returns the name of the script.
+	 */
+	public String getName() {
+		return name;
+	}
+	
+	/**
+	 * Returns the path where the script is located.
+	 */
+	public String getLocation() {
+		return location;
+	}
+	
+	/**
+	 * Returns the arguments for the script.
+	 */
+	public String getArguments() {
+		return arguments;
+	}
+	
+	/**
+	 * Returns the working directory to run the script in.
+	 */
+	public String getWorkingDirectory() {
+		return directory;
+	}
+	
+	/**
+	 * Returns the scope of resources to refresh after
+	 * the script is run
+	 */
+	public String getRefreshScope() {
+		return refreshScope;
+	}
+	
+	/**
+	 * Sets the type of script.
+	 */
+	public void setType(String type) {
+		if (type == null)
+			this.type = EMPTY_VALUE;
+		else
+			this.type = type;
+	}
+	
+	/**
+	 * Sets the name of the script.
+	 */
+	public void setName(String name) {
+		if (name == null)
+			this.name = EMPTY_VALUE;
+		else
+			this.name = name;
+	}
+	
+	/**
+	 * Sets the path where the script is located.
+	 */
+	public void setLocation(String location) {
+		if (location == null)
+			this.location = EMPTY_VALUE;
+		else
+			this.location = location;
+	}
+	
+	/**
+	 * Sets the arguments for the script.
+	 */
+	public void setArguments(String arguments) {
+		if (arguments == null)
+			this.arguments = EMPTY_VALUE;
+		else
+			this.arguments = arguments;
+	}
+	
+	/**
+	 * Sets the working directory to run the script in.
+	 */
+	public void setWorkingDirectory(String directory) {
+		if (directory == null)
+			this.directory = EMPTY_VALUE;
+		else
+			this.directory = directory;
+	}
+	
+	/**
+	 * Sets the scope of resources to refresh after
+	 * the script is run
+	 */
+	public void setRefreshScope(String refreshScope) {
+		if (refreshScope == null)
+			this.refreshScope = EMPTY_VALUE;
+		else
+			this.refreshScope = refreshScope;
+	}
+	
+	/**
+	 * Stores the script as an argument map that can be
+	 * used later on to recreate this script.
+	 * 
+	 * @return the argument map
+	 */
+	public Map toArgumentMap() {
+		HashMap args = new HashMap();
+		args.put(TAG_SCRIPT_TYPE, type);
+		args.put(TAG_SCRIPT_NAME, name);
+		args.put(TAG_SCRIPT_LOCATION, location);
+		args.put(TAG_SCRIPT_ARGUMENTS, arguments);
+		args.put(TAG_SCRIPT_DIRECTORY, directory);
+		args.put(TAG_SCRIPT_REFRESH, refreshScope);
+		
+		return args;
+	}
+
+	/**
+	 * Configures the given build command to invoke this
+	 * tool script.
+	 * 
+	 * @param command the build command to configure
+	 * @return the configured command.
+	 */
+	public ICommand toBuildCommand(ICommand command) {
+		Map args = toArgumentMap();
+		command.setBuilderName(ToolScriptBuilder.ID);
+		command.setArguments(args);
+		
+		return command;
+	}
+
+	/**
+	 * Runs the tool script and does a resource refresh if specified. 
+	 * An additional listener may be provided for logging more feedback.
+	 * 
+	 * @param listener the listener to provide feedback to, or null.
+	 * @param the monitor to report progress to, or null.
+	 */
+	public void run(BuildListener listener, IProgressMonitor monitor) throws CoreException {
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
+		try {
+			ToolScriptRunner runner = ToolScriptPlugin.getDefault().getToolScriptRunner(type);
+			if (runner != null) {
+				if (EMPTY_VALUE.equals(refreshScope)) {
+					runner.execute(listener, monitor, this);
+				} else {
+					monitor.beginTask("Running tool script...", 100);
+					runner.execute(listener, new SubProgressMonitor(monitor, 70), this);
+					refreshResources(new SubProgressMonitor(monitor, 30));
+				}
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+	
+	/**
+	 * Causes the specified resources to be refreshed.
+	 */
+	private void refreshResources(IProgressMonitor monitor) {
+	}
+}
