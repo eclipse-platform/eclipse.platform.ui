@@ -11,6 +11,7 @@
 package org.eclipse.help.ui.internal.browser.embedded;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
+import org.eclipse.help.internal.base.*;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.osgi.service.environment.*;
 import org.eclipse.swt.*;
@@ -31,6 +32,10 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 	public boolean isAvailable() {
 		if (!Constants.OS_WIN32.equalsIgnoreCase(Platform.getOS())
 				&& !Constants.OS_LINUX.equalsIgnoreCase(Platform.getOS())) {
+			return false;
+		}
+		if (BaseHelpSystem.MODE_WORKBENCH != BaseHelpSystem.getMode()) {
+			// 56024 event loop usually not running in stand-alone help
 			return false;
 		}
 		if (!tested) {
