@@ -20,7 +20,6 @@
 
 
    <extension-point id="applications" name="%applicationsName" schema="schema/applications.mxsd"/>
-   <extension-point id="urlHandlers" name="%handlersName" schema="schema/urlHandlers.mxsd"/>
    <extension-point id="products" name="%productsName" schema="schema/products.exsd"/>
    <extension-point id="adapters" name="%adaptersName" schema="schema/adapters.exsd"/>
    <extension-point id="preferences" name="preferences" schema="schema/preferences.exsd"/>
