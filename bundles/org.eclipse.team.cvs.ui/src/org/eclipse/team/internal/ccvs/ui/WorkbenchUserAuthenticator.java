@@ -65,11 +65,19 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 			allowCaching[0] = promptForPassword(location, userinfo.getUsername(), message, userinfo.isUsernameMutable(), result);
 		} else {
 			// sync exec in default thread
+			final CVSException[] exception = new CVSException[] { null };
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
-					allowCaching[0] = promptForPassword(location, userinfo.getUsername(), message, userinfo.isUsernameMutable(), result);
+					try {
+						allowCaching[0] = promptForPassword(location, userinfo.getUsername(), message, userinfo.isUsernameMutable(), result);
+					} catch (CVSException e) {
+						exception[0] = e;
+					}
 				}
 			});
+			if (exception[0] != null) {
+				throw exception[0];
+			}
 		}
 			
 		if (result[0] == null) {
@@ -102,11 +110,12 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 	 * @param message  a message to display to the user
 	 * @param userMutable  whether the user can be changed in the dialog
 	 * @param result  a String array of length two in which to put the result
+	 * @throws CVSException 
 	 */
-	private boolean promptForPassword(final ICVSRepositoryLocation location, final String username, final String message, final boolean userMutable, final String[] result) {
+	private boolean promptForPassword(final ICVSRepositoryLocation location, final String username, final String message, final boolean userMutable, final String[] result) throws CVSException {
 		Shell shell = Utils.findShell();
 		if(shell == null) {
-			return false;
+			throw new CVSException(Policy.bind("WorkbenchUserAuthenticator.0")); //$NON-NLS-1$
 		}
 		String domain = location == null ? null : location.getLocation();
 		UserValidationDialog dialog = new UserValidationDialog(shell, domain, (username==null)?"":username, message);//$NON-NLS-1$

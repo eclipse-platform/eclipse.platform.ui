@@ -108,12 +108,26 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	public static final String AUTH_SCHEME = "";//$NON-NLS-1$ 
 	public static final URL FAKE_URL;
 
+	/*
+	 * Fields used to create the EXT command invocation
+	 */
 	public static final String USER_VARIABLE = "{user}"; //$NON-NLS-1$
 	public static final String PASSWORD_VARIABLE = "{password}"; //$NON-NLS-1$
 	public static final String HOST_VARIABLE = "{host}"; //$NON-NLS-1$
 	public static final String PORT_VARIABLE = "{port}"; //$NON-NLS-1$
 
-	private static String extProxy; //$NON-NLS-1$
+	/*
+	 * Field that indicates which connection method is to be used for 
+	 * locations that use the EXT connection method.
+	 */
+	private static String extProxy;
+	
+	/*
+	 * Field that indicates that the last connection attempt made to 
+	 * this repository location failed. When this is set, subsequent 
+	 * attempts should prompt before attempting to connect
+	 */
+	private boolean previousConnectFailed;
 	
 	static {
 		URL temp = null;
@@ -768,11 +782,18 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			}
 		}
 		synchronized(hostLock) {
+			boolean connected = false;
 			try {
 				// Allow two ticks in case of a retry
 				monitor.beginTask(Policy.bind("CVSRepositoryLocation.openingConnection", getHost()), 2);//$NON-NLS-1$
 				ensureLocationCached();
 				boolean cacheNeedsUpdate = false;
+				// If the previous connection failed, prompt before attempting to connect
+				if (previousConnectFailed) {
+					promptForUserInfo(null);
+					// The authentication information has been change so update the cache
+					cacheNeedsUpdate = true;
+				}
 				while (true) {
 					try {
 						// The following will throw an exception if authentication fails
@@ -790,16 +811,13 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 						Connection connection = createConnection(password, monitor);
 						if (cacheNeedsUpdate)
 						    updateCachedLocation();
+						connected = true;
                         return connection;
 					} catch (CVSAuthenticationException ex) {
 						if (ex.getStatus().getCode() == CVSAuthenticationException.RETRY) {
 							String message = ex.getMessage();
-							IUserAuthenticator authenticator = getAuthenticator();
-							if (authenticator == null) {
-								throw new CVSAuthenticationException(Policy.bind("Client.noAuthenticator"), CVSAuthenticationException.NO_RETRY);//$NON-NLS-1$ 
-							}
-							authenticator.promptForUserInfo(this, this, message);
-							// The authentication iformation has been change so update the cache
+							promptForUserInfo(message);
+							// The authentication information has been change so update the cache
 							cacheNeedsUpdate = true;
 						} else {
 							throw ex;
@@ -807,9 +825,21 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 					}
 				}
 			} finally {
+				previousConnectFailed = !connected;
 				monitor.done();
 			}
 		}
+	}
+
+	/*
+	 * Prompt for the user authentication information (i.e. user name and password).
+	 */
+	private void promptForUserInfo(String message) throws CVSException {
+		IUserAuthenticator authenticator = getAuthenticator();
+		if (authenticator == null) {
+			throw new CVSAuthenticationException(Policy.bind("Client.noAuthenticator"), CVSAuthenticationException.NO_RETRY);//$NON-NLS-1$ 
+		}
+		authenticator.promptForUserInfo(this, this, message);
 	}
 
     /*
