@@ -5,23 +5,19 @@ package org.eclipse.help.internal.ui;
  */
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.IAppServer;
-import org.eclipse.help.ui.internal.browser.BrowserManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.help.ui.browser.IBrowser;
 
 /**
  * ShowHelp
  */
-public class HelpContentsActionExperimental //extends Action
+public class HelpContentsAction1 //extends Action
 implements IWorkbenchWindowActionDelegate, IExecutableExtension {
 	private String topicsURL;
-	
-	public HelpContentsActionExperimental() {
+	public HelpContentsAction1() {
 	}
 	public void dispose() {
 	}
@@ -37,23 +33,20 @@ implements IWorkbenchWindowActionDelegate, IExecutableExtension {
 	 *
 	 * [Issue: Will be made abstract. For now, calls <code>actionPerformed()</code> for backwards compatibility.]
 	 */
+	public void run() {
+		WorkbenchHelp.getHelpSupport().displayHelp(topicsURL);
+	}
+	/**
+	 * Implementation of method defined on <code>IAction</code>.
+	 *
+	 * [Issue: Will be made abstract. For now, calls <code>actionPerformed()</code> for backwards compatibility.]
+	 */
 	public void run(IAction a) {
 		//This may take a while, so use the busy indicator
 		BusyIndicator.showWhile(null, new Runnable() {
 			public void run() {
 				try {
-					//Help.displayHelp(topicsURL);
-					IAppServer appServer = WorkbenchHelpPlugin.getDefault().getAppServer();
-					if (appServer == null)
-						return; // may want to display an error message
-						
-					String url = 
-						"http://"
-							+ appServer.getHost()
-							+ ":"
-							+ appServer.getPort()
-							+ "/help";
-					WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
+					WorkbenchHelp.getHelpSupport().displayHelp(topicsURL);
 				} catch (Exception e) {
 				}
 			}
