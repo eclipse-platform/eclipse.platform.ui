@@ -547,7 +547,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * Open the welcome editor for the primary feature and
 	 * for any newly installed features.
 	 */
-	private void openWelcomeEditors(IWorkbenchWindow window) throws WorkbenchException {
+	private void openWelcomeEditors(IWorkbenchWindow window) {
 		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IDEInternalPreferences.WELCOME_DIALOG)) {
 			// Show the welcome page for the primary feature the first time the workbench opens.
 			AboutInfo primaryInfo = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
@@ -952,12 +952,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
         if (windowConfigurer.getWorkbenchConfigurer().getWorkbench().getIntroManager().hasIntro())
             super.openIntro(windowConfigurer);
         else {        
-			try {
-				openWelcomeEditors(windowConfigurer.getWindow());
-			} catch (WorkbenchException e) {
-				IDEWorkbenchPlugin.log("Fail to open remaining welcome editors.", e.getStatus()); //$NON-NLS-1$
-			}        
-	
+			openWelcomeEditors(windowConfigurer.getWindow());			
 			// save any preferences changes caused by the above actions
 			IDEWorkbenchPlugin.getDefault().savePluginPreferences();
         }
