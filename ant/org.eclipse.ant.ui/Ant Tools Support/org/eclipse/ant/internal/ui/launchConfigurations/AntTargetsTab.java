@@ -11,6 +11,7 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -445,64 +447,53 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			fAllTargets= null;
 			setDirty(false);
 			setErrorMessage(null);
+			setMessage(null);
 			
-			final String expandedLocation;
+			final String expandedLocation= validateLocation();
+			final CoreException[] exceptions= new CoreException[1];
 			try {
-				String location= fLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
-				if (location == null) {
-					return fAllTargets;
-				}
-				expandedLocation = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(location);
-			} catch (CoreException e1) {
-				setErrorMessage(e1.getMessage());
-				return fAllTargets;
+				final String[] arguments = AntUtil.parseString(fLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String) null), ","); //$NON-NLS-1$
+				IRunnableWithProgress operation= new IRunnableWithProgress() {
+					/* (non-Javadoc)
+					 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+					 */
+					public void run(IProgressMonitor monitor) {
+						try {
+							fAllTargets = AntUtil.getTargets(expandedLocation, arguments, fLaunchConfiguration);
+						} catch (CoreException ce) {
+							exceptions[0]= ce;
+						}
+					}
+				};
+				
+				getLaunchConfigurationDialog().run(false, false, operation);
+			} catch (CoreException ce) {
+				exceptions[0]= ce;
+			} catch (InvocationTargetException e) {
+			} catch (InterruptedException e) {
 			}
 			
-			if (expandedLocation != null) {
-				final CoreException[] exceptions= new CoreException[1];
-				try {
-					final String[] arguments = AntUtil.parseString(fLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String) null), ","); //$NON-NLS-1$
-					IRunnableWithProgress operation= new IRunnableWithProgress() {
-						/* (non-Javadoc)
-						 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
-						 */
-						public void run(IProgressMonitor monitor) {
-							try {
-								fAllTargets = AntUtil.getTargets(expandedLocation, arguments, fLaunchConfiguration);
-							} catch (CoreException ce) {
-								exceptions[0]= ce;
-							}
-						}
-					};
-					
-					getLaunchConfigurationDialog().run(false, false, operation);
-				} catch (CoreException ce) {
-					exceptions[0]= ce;
-				} catch (InvocationTargetException e) {
-				} catch (InterruptedException e) {
+			if (exceptions[0] != null) {
+				IStatus exceptionStatus= exceptions[0].getStatus();
+				IStatus[] children= exceptionStatus.getChildren();
+				StringBuffer message= new StringBuffer(exceptions[0].getMessage());
+				for (int i = 0; i < children.length; i++) {
+					message.append(' ');
+					IStatus childStatus = children[i];
+					message.append(childStatus.getMessage());
 				}
-				
-				if (exceptions[0] != null) {
-					IStatus exceptionStatus= exceptions[0].getStatus();
-					IStatus[] children= exceptionStatus.getChildren();
-					StringBuffer message= new StringBuffer(exceptions[0].getMessage());
-					for (int i = 0; i < children.length; i++) {
-						message.append(' ');
-						IStatus childStatus = children[i];
-						message.append(childStatus.getMessage());
-					}
-					setErrorMessage(message.toString());
-					fAllTargets= null;
-					return fAllTargets;
-				}
-				for (int i=0; i < fAllTargets.length; i++) {
-					if (fAllTargets[i].isDefault()) {
-						fDefaultTarget = fAllTargets[i];
-						break;
-					}
+				setErrorMessage(message.toString());
+				fAllTargets= null;
+				return fAllTargets;
+			}
+			for (int i=0; i < fAllTargets.length; i++) {
+				if (fAllTargets[i].isDefault()) {
+					fDefaultTarget = fAllTargets[i];
+					break;
 				}
 			}
 		}
+		
 		return fAllTargets;
 	}
 	
@@ -675,12 +666,12 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				}
 			}
 		}
-		setErrorMessage(null);
-		setMessage(null);
 		
 		if (fAllTargets != null && fTableViewer.getCheckedElements().length == 0) {
 			setErrorMessage(AntLaunchConfigurationMessages.getString("AntTargetsTab.No_targets")); //$NON-NLS-1$
 			return false;
+		} else {
+			setErrorMessage(null);
 		}
 		return super.isValid(launchConfig);
 	}
@@ -709,6 +700,49 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		if (fOrderedTargets.size() == 0) {
 			//set the dirty flag so that the state will be reinitialized on activation
 			setDirty(true);
+		}
+	}
+	
+	private String validateLocation() {
+		String expandedLocation= null;
+		String location= null;
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+		try {
+			location= fLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
+			if (location == null) {
+				return null;
+			}
+			
+			expandedLocation= manager.performStringSubstitution(location);
+			if (expandedLocation == null) {
+				return null;
+			}
+			File file = new File(expandedLocation);
+			if (!file.exists()) {
+				setErrorMessage(AntLaunchConfigurationMessages.getString("AntTargetsTab.15")); //$NON-NLS-1$
+				return null;
+			}
+			if (!file.isFile()) {
+				setErrorMessage(AntLaunchConfigurationMessages.getString("AntTargetsTab.16")); //$NON-NLS-1$
+				return null;
+			}
+			
+			return expandedLocation;
+			
+		} catch (CoreException e1) {
+			if (location != null) {
+				try {
+					manager.validateStringVariables(location);
+					setMessage(AntLaunchConfigurationMessages.getString("AntTargetsTab.17")); //$NON-NLS-1$
+					return null;
+				} catch (CoreException e2) {//invalid variable
+					setErrorMessage(e2.getStatus().getMessage());
+					return null;
+				}
+			}
+			
+			setErrorMessage(e1.getStatus().getMessage());
+			return null;
 		}
 	}
 }
