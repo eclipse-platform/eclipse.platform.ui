@@ -91,19 +91,19 @@
    <extension
          point="org.eclipse.help.ui.searchEngine">
       <engine
-            enabled="true"
+            scopeFactory="org.eclipse.help.internal.search.federated.LocalSearchScopeFactory"
             label="Local Help"
-            class="dsdad"
-            id="org.eclipse.help.ui.localSearch"
-            pageClass="org.eclipse.help.ui.internal.views.DummyRootPage">
+            class="org.eclipse.help.ui.internal.search.LocalHelp"
+            pageClass="org.eclipse.help.ui.internal.search.LocalHelpPage"
+            id="org.eclipse.help.ui.localSearch">
          <description>
             Searches the best help system in the world, but only locally.
          </description>
       </engine>
       <engine
             label="Google"
-            class="org.eclipse.hel"
-            pageClass="org.eclipse.help.ui.internal.views.DummyRootPage"
+            class="org.eclipse.help.ui.internal.search.Google"
+            pageClass="org.eclipse.help.ui.internal.search.GooglePage"
             id="org.eclipse.help.ui.google">
          <description>
             Searches another  best system in the world on the Web (but not locally). We should have bought Google when it was $5 :-(.
@@ -112,8 +112,8 @@
       </engine>
       <engine
             label="Eclipse.org"
-            class="org.eclipse.help.ui.engine3"
-            pageClass="org.eclipse.help.ui.internal.views.DummyRootPage"
+            class="org.eclipse.help.ui.internal.search.EclipseOrg"
+            pageClass="org.eclipse.help.ui.internal.search.EclipseOrgPage"
             id="org.eclipse.help.ui.eclipse">
          <description>
             Searches mailing lists, news groups, articles and other documents on Eclipse.org web site.

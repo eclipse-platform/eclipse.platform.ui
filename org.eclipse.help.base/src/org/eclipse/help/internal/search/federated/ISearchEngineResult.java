@@ -1,16 +1,17 @@
-/*
- * Created on Jan 12, 2005
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
-package org.eclipse.help.internal.search;
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.help.internal.search.federated;
 
 /**
- * @author dejan
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * A search result in the federated search.
  */
 public interface ISearchEngineResult {
 	/**
@@ -51,9 +52,10 @@ public interface ISearchEngineResult {
 	 */
 	String getHref();
 	/**
-	 * Returns a number in the range between 1 and 100 that can be used to
-	 * sort the hits by relevance (100 being the perfect result).
+	 * Returns a float number in the range between 0 and 1 that can be used to
+	 * sort the hits by relevance (1 being the perfect result). The number can
+     * be interpreted as the probability of a match in the given topic.
 	 * @return
 	 */
-	int getScore();
+	float getScore();
 }

@@ -10,15 +10,16 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.search.*;
+import org.eclipse.help.internal.search.federated.*;
 import org.eclipse.help.ui.internal.*;
-import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;

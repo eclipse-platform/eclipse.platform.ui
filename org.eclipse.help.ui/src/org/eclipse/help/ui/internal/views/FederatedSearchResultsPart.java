@@ -11,7 +11,7 @@
 package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.help.internal.search.*;
+import org.eclipse.help.internal.search.federated.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
@@ -199,10 +199,18 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.help.internal.search.ISearchEngineResultCollector#accept(org.eclipse.help.internal.search.ISearchEngineResult)
+	 * @see org.eclipse.help.internal.search.ISearchEngineResultCollector#add(org.eclipse.help.internal.search.ISearchEngineResult)
 	 */
-	public void accept(ISearchEngineResult match) {
+	public void add(ISearchEngineResult match) {
 		// TODO Auto-generated method stub
 		
 	}
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.help.internal.search.federated.ISearchEngineResultCollector#add(org.eclipse.help.internal.search.federated.ISearchEngineResult[])
+     */
+    public void add(ISearchEngineResult[] searchResults) {
+        // TODO Auto-generated method stub
+
+    }
 }

@@ -11,11 +11,12 @@
 package org.eclipse.help.internal.search;
 
 import org.eclipse.help.*;
+import org.eclipse.help.internal.search.federated.*;
 
 /**
  * Search hit.
  */
-public class SearchHit {
+public class SearchHit implements ISearchEngineResult {
 	private String href;
 	private String label;
 	private float score;
@@ -82,4 +83,10 @@ public class SearchHit {
 	public void setToc(IToc toc) {
 		this.toc = toc;
 	}
+    /* (non-Javadoc)
+     * @see org.eclipse.help.internal.search.federated.ISearchEngineResult#getDescription()
+     */
+    public String getDescription() {
+        return getLabel();
+    }
 }

@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.search.IndexingOperation.*;
+import org.eclipse.help.internal.search.federated.*;
 
 /**
  * Manages indexing and search for all infosets

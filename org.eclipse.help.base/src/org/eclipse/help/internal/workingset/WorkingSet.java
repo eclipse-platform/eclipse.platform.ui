@@ -12,9 +12,10 @@ package org.eclipse.help.internal.workingset;
 
 import java.util.*;
 
+import org.eclipse.help.internal.search.*;
 import org.w3c.dom.*;
 
-public class WorkingSet {
+public class WorkingSet implements ISearchScope{
 	private String name;
 	private List elements;
 

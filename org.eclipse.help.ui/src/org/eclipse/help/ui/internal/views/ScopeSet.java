@@ -1,9 +1,13 @@
-/*
- * Created on Jan 12, 2005
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
 import java.io.*;
@@ -13,10 +17,7 @@ import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.jface.preference.*;
 
 /**
- * @author dejan
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * Federated search scope.
  */
 public class ScopeSet {
 	public static final String SCOPE_DIR_NAME = "scope_sets";
