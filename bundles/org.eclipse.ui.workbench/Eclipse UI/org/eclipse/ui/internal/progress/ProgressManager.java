@@ -83,6 +83,8 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	private static final String SLEEPING_JOB = "sleeping.gif"; //$NON-NLS-1$
 	private static final String WAITING_JOB = "waiting.gif"; //$NON-NLS-1$
 	private static final String BLOCKED_JOB = "lockedstate.gif"; //$NON-NLS-1$
+	
+	private static final String BUSY_OVERLAY = "progressspin.gif"; //$NON-NLS-1$
 
 	private static final String PROGRESS_20_KEY = "PROGRESS_20"; //$NON-NLS-1$
 	private static final String PROGRESS_40_KEY = "PROGRESS_40"; //$NON-NLS-1$
@@ -93,6 +95,8 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	private static final String SLEEPING_JOB_KEY = "SLEEPING_JOB"; //$NON-NLS-1$
 	private static final String WAITING_JOB_KEY = "WAITING_JOB"; //$NON-NLS-1$
 	private static final String BLOCKED_JOB_KEY = "LOCKED_JOB"; //$NON-NLS-1$
+	
+	public static final String BUSY_OVERLAY_KEY = "BUSY_OVERLAY"; //$NON-NLS-1$
 
 	//A list of keys for looking up the images in the image registry
 	static String[] keys = new String[] { PROGRESS_20_KEY, PROGRESS_40_KEY, PROGRESS_60_KEY, PROGRESS_80_KEY, PROGRESS_100_KEY };
@@ -109,59 +113,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		if (singleton == null)
 			singleton = new ProgressManager();
 		return singleton;
-	}
-
-	/**
-	 * A default progress monitor that is used when an operation is running in the UI
-	 * thread outside of any runnable context.  This allows for feedback and cancelation
-	 * when the UI operation is blocked by ongoing activity in a background job.
-	 */
-	private class DefaultMonitor extends NullProgressMonitor implements IProgressMonitorWithBlocking {
-		private ProgressMonitorJobsDialog dialog;
-		private EventLoopProgressMonitor eventLoopMonitor;
-		private String taskName = ""; //$NON-NLS-1$
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
-		 */
-		public void beginTask(String name, int totalWork) {
-			//remember the task name for use when the operation is blocked
-			this.taskName = name == null ? "" : name; //$NON-NLS-1$
-		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
-		 */
-		public void clearBlocked() {
-			//the UI operation is no longer blocked so get rid of the progress dialog
-			eventLoopMonitor = null;
-			if (dialog == null || dialog.getShell() == null || dialog.getShell().isDisposed())
-				return;
-			dialog.close();
-			dialog = null;
-		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
-		 */
-		public boolean isCanceled() {
-			if (eventLoopMonitor != null)
-				return eventLoopMonitor.isCanceled();
-			return false;
-		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
-		 */
-		public void setBlocked(IStatus reason) {
-			//The UI operation has been blocked.  Open a progress dialog
-			//to report the situation and give the user an opportunity to cancel.
-			dialog = new ProgressMonitorJobsDialog(null);
-			dialog.setBlockOnOpen(false);
-			dialog.setCancelable(true);
-			dialog.open();
-			IProgressMonitor monitor = dialog.getProgressMonitor();
-			eventLoopMonitor = new EventLoopProgressMonitor(monitor);
-			monitor.beginTask(taskName, IProgressMonitor.UNKNOWN);
-			if (monitor instanceof IProgressMonitorWithBlocking) 
-				((IProgressMonitorWithBlocking)monitor).setBlocked(reason);
-		}
 	}
 	/**
 	 * The JobMonitor is the inner class that handles the IProgressMonitor
@@ -338,6 +289,8 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			setUpImage(iconsRoot, WAITING_JOB, WAITING_JOB_KEY);
 			setUpImage(iconsRoot, BLOCKED_JOB, BLOCKED_JOB_KEY);
 			
+			setUpImage(iconsRoot, BUSY_OVERLAY, BUSY_OVERLAY_KEY);
+			
 			//Let the error manager set up its own icons
 			errorManager.setUpImages(iconsRoot);
 
@@ -437,18 +390,15 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 */
 	public IProgressMonitor getDefaultMonitor() {
 		//only need a default monitor for operations the UI thread
-		//and only there is a display
+		//and only if there is a display
 		Display display;
-		if(PlatformUI.isWorkbenchRunning()){
+		if (PlatformUI.isWorkbenchRunning()){
 			display = PlatformUI.getWorkbench().getDisplay();
-			if (display.getThread() == Thread.currentThread())
-				return new DefaultMonitor();
+			if (!display.isDisposed() && (display.getThread() == Thread.currentThread()))
+				return new EventLoopProgressMonitor(new NullProgressMonitor());
 		}
 		return super.getDefaultMonitor();
-			
-			
 	}
-
 	/**
 	 * Return a monitor for the job. Check if we cached a monitor for this job
 	 * previously for a long operation timeout check.

@@ -36,19 +36,31 @@ class ProgressTreeViewer extends TreeViewer {
 	protected void doUpdateItem(Item item, Object element) {
 		super.doUpdateItem(item, element);
 		if (element instanceof JobInfo) {
-			if (item != null && item instanceof TreeItem)
-				updateColors((TreeItem) item, (JobInfo) element);
+			if (item != null && item instanceof TreeItem) {
+				TreeItem treeItem = (TreeItem) item;
+				updateColors(treeItem, (JobInfo) element);
+				if(treeItem.getItemCount() >0 )
+					treeItem.setExpanded(true);
+			}
 		}
 	}
+	
+	/**
+	 * Update the colors for the treeItem.
+	 * @param treeItem
+	 * @param info
+	 */
 
 	private void updateColors(TreeItem treeItem, JobInfo info) {
 
 		if (info.getJob().getState() != Job.RUNNING) {
-			treeItem.setForeground(JFaceColors.getActiveHyperlinkText(treeItem.getDisplay()));
+			treeItem.setForeground(
+				JFaceColors.getActiveHyperlinkText(treeItem.getDisplay()));
 			return;
 		}
 
-		treeItem.setForeground(treeItem.getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+		treeItem.setForeground(
+			treeItem.getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
 
 	}
 
@@ -81,7 +93,8 @@ class ProgressTreeViewer extends TreeViewer {
 				if (e.keyCode == SWT.DEL) {
 					ISelection selection = getSelection();
 					if (selection instanceof IStructuredSelection) {
-						IStructuredSelection structured = (IStructuredSelection) selection;
+						IStructuredSelection structured =
+							(IStructuredSelection) selection;
 						Iterator elements = structured.iterator();
 						while (elements.hasNext()) {
 							Object next = elements.next();

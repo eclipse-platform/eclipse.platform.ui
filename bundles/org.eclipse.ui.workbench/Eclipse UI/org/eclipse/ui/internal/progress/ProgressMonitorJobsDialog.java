@@ -126,7 +126,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 				}
 			});
 
-			IContentProvider provider = new ProgressContentProvider(viewer);
+			IContentProvider provider = new ProgressTreeContentProvider(viewer);
 			viewer.setContentProvider(provider);
 			viewer.setInput(provider);
 			viewer.setLabelProvider(new ProgressLabelProvider());

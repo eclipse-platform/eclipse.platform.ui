@@ -28,7 +28,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 class ProgressViewUpdater implements IJobProgressManagerListener {
 
 	private static ProgressViewUpdater singleton;
-	private ProgressContentProvider[] contentProviders;
+	private IProgressUpdateCollector[] collectors;
 
 	Job updateJob;
 	UpdatesInfo currentInfo = new UpdatesInfo();
@@ -90,7 +90,8 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 			Iterator additionsIterator = additions.iterator();
 			while (additionsIterator.hasNext()) {
 				JobInfo next = (JobInfo) additionsIterator.next();
-				if (deletions.contains(next) || next.getJob().getState() == Job.NONE)
+				if (deletions.contains(next)
+					|| next.getJob().getState() == Job.NONE)
 					staleAdditions.add(next);
 			}
 
@@ -124,13 +125,14 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 			singleton = new ProgressViewUpdater();
 		return singleton;
 	}
-	
+
 	/**
-	 * Return whether or not there is a singleton for updates
-	 * to avoid creating extra listeners.
+	 * Return whether or not there is a singleton for updates to avoid creating
+	 * extra listeners.
+	 * 
 	 * @return
 	 */
-	static boolean hasSingleton(){
+	static boolean hasSingleton() {
 		return singleton != null;
 	}
 
@@ -147,39 +149,41 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	 */
 	private ProgressViewUpdater() {
 		createUpdateJob();
-		contentProviders = new ProgressContentProvider[0];
+		collectors = new IProgressUpdateCollector[0];
 		ProgressManager.getInstance().addListener(this);
-		
+
 	}
 
 	/**
-	 * Add the new provider to the list of content providers.
+	 * Add the new collector to the list of collectors.
 	 * 
-	 * @param newProvider
+	 * @param newCollector
 	 */
-	void addContentProvider(ProgressContentProvider newProvider) {
-		ProgressContentProvider[] newProviders = new ProgressContentProvider[contentProviders.length + 1];
-		System.arraycopy(contentProviders, 0, newProviders, 0, contentProviders.length);
-		newProviders[contentProviders.length] = newProvider;
-		contentProviders = newProviders;
+	void addCollector(IProgressUpdateCollector newCollector) {
+		IProgressUpdateCollector[] newCollectors =
+			new IProgressUpdateCollector[collectors.length + 1];
+		System.arraycopy(collectors, 0, newCollectors, 0, collectors.length);
+		newCollectors[collectors.length] = newCollector;
+		collectors = newCollectors;
 	}
 
 	/**
-	 * Remove the provider from the list of content providers.
+	 * Remove the collector from the list of collectors.
 	 * 
-	 * @param provider
+	 * @param newCollector
 	 */
-	void removeContentProvider(ProgressContentProvider provider) {
-		HashSet newProviders = new HashSet();
-		for (int i = 0; i < contentProviders.length; i++) {
-			if (!contentProviders[i].equals(provider))
-				newProviders.add(contentProviders[i]);
+	void removeCollector(IProgressUpdateCollector provider) {
+		HashSet newCollectors = new HashSet();
+		for (int i = 0; i < collectors.length; i++) {
+			if (!collectors[i].equals(provider))
+				newCollectors.add(collectors[i]);
 		}
-		ProgressContentProvider[] newArray = new ProgressContentProvider[newProviders.size()];
-		newProviders.toArray(newArray);
-		contentProviders = newArray;
+		IProgressUpdateCollector[] newArray =
+			new IProgressUpdateCollector[newCollectors.size()];
+		newCollectors.toArray(newArray);
+		collectors = newArray;
 		//Remove ourselves if there is nothing to update
-		if (contentProviders.length == 0)
+		if (collectors.length == 0)
 			clearSingleton();
 	}
 
@@ -187,7 +191,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	 * Schedule an update.
 	 */
 	void scheduleUpdate() {
-		if(PlatformUI.isWorkbenchRunning()){
+		if (PlatformUI.isWorkbenchRunning()) {
 			//Add in a 100ms delay so as to keep priority low
 			updateJob.schedule(100);
 		}
@@ -199,17 +203,19 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	private void createUpdateJob() {
 			updateJob = new WorkbenchJob(ProgressMessages.getString("ProgressContentProvider.UpdateProgressJob")) {//$NON-NLS-1$
 	/*
-	 * (non-Javadoc) @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 
 					//Abort the job if there isn't anything
-				if (contentProviders.length == 0)
+	if (collectors.length == 0)
 					return Status.CANCEL_STATUS;
 
 				if (currentInfo.updateAll) {
-					for (int i = 0; i < contentProviders.length; i++) {
-						contentProviders[i].viewer.refresh(true);
+					for (int i = 0; i < collectors.length; i++) {
+						collectors[i].refresh();
 					}
 
 				} else {
@@ -226,15 +232,13 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 
 					}
 
-					for (int v = 0; v < contentProviders.length; v++) {
-						ProgressTreeViewer viewer = contentProviders[v].viewer;
+					for (int v = 0; v < collectors.length; v++) {
+						IProgressUpdateCollector collector =
+							collectors[v];
 
-						for (int i = 0; i < updateItems.length; i++) {
-							viewer.refresh(updateItems[i], true);
-						}
-						viewer.add(viewer.getInput(), additionItems);
-
-						viewer.remove(deletionItems);
+						collector.refresh(updateItems);
+						collector.add(additionItems);
+						collector.remove(deletionItems);
 					}
 				}
 
@@ -260,7 +264,9 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 		return currentInfo;
 	}
 	/*
-	 * (non-Javadoc) @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refresh(org.eclipse.ui.internal.progress.JobInfo)
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refresh(org.eclipse.ui.internal.progress.JobInfo)
 	 */
 	public void refresh(JobInfo info) {
 
@@ -276,7 +282,9 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	}
 
 	/*
-	 * (non-Javadoc) @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshAll()
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshAll()
 	 */
 	public void refreshAll() {
 
@@ -290,29 +298,32 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	}
 
 	/*
-	 * (non-Javadoc) @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#add(org.eclipse.ui.internal.progress.JobInfo)
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#add(org.eclipse.ui.internal.progress.JobInfo)
 	 */
 	public void add(JobInfo info) {
 
 		if (isUpdateJob(info.getJob()))
 			return;
-		
+
 		synchronized (updateLock) {
 			currentInfo.add(info);
 		}
 		scheduleUpdate();
-		
 
 	}
 
 	/*
-	 * (non-Javadoc) @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#remove(org.eclipse.ui.internal.progress.JobInfo)
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#remove(org.eclipse.ui.internal.progress.JobInfo)
 	 */
 	public void remove(JobInfo info) {
 
 		if (isUpdateJob(info.getJob()))
 			return;
-		
+
 		synchronized (updateLock) {
 			currentInfo.remove(info);
 		}
@@ -320,19 +331,22 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	}
 
 	/*
-	 * (non-Javadoc) @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#showsDebug()
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#showsDebug()
 	 */
 	public boolean showsDebug() {
 		return debug;
 	}
 
 	/**
-	 * Return whether or not this is the update job. This is used
-	 * to determine if a final refresh is required.
+	 * Return whether or not this is the update job. This is used to determine
+	 * if a final refresh is required.
+	 * 
 	 * @param job
 	 * @return
 	 */
-	boolean isUpdateJob(Job job){
+	boolean isUpdateJob(Job job) {
 		return job.equals(updateJob);
 	}
 }

@@ -10,24 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.IStatusLineWithProgressManager;
 
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.progress.WorkbenchJob;
+
+import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * The WorkbenchProgressListener is a class that listens to progress on the
@@ -35,238 +28,33 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 class WorkbenchMonitorProvider {
 
-	List workingMonitors = Collections.synchronizedList(new ArrayList());
-
-	private class BackgroundProgressMonitor implements IProgressMonitor {
-
-		double allWork;
-		double worked;
-		String taskName;
-		String subTask = ""; //$NON-NLS-1$
-
-		/**
-		 * Create a new instance of the receiver with the supplied jobName
-		 * 
-		 * @param jobName
-		 */
-		BackgroundProgressMonitor(String jobName) {
-			taskName = jobName;
-		}
-
-		/*
-		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String,
-		 * int)
-		 */
-		public void beginTask(String name, int totalWork) {
-
-			if (name != null && name.length() > 0)
-				taskName = name;
-
-			allWork = totalWork;
-			subTask = ""; //$NON-NLS-1$
-			worked = 0;
-			updateMessage();
-		}
-
-		/*
-		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#done()
-		 */
-		public void done() {
-			
-			if(PlatformUI.isWorkbenchRunning())
-				refreshJob.clearStatusLine();
-				refreshJob.schedule(100);
-
-		}
-
-		/*
-		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
-		 */
-		public void internalWorked(double work) {
-			worked += work;
-			//Do not rely on monitor.done() to clear.
-			if (worked >= allWork)
-				done();
-			else
-				updateMessage();
-		}
-
-		/*
-		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
-		 */
-		public boolean isCanceled() {
-			//No cancel functionality in status line currently
-			return false;
-		}
-
-		/*
-		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
-		 */
-		public void setCanceled(boolean value) {
-			//No cancel functionality in status line currently
-
-		}
-
-		/*
-		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
-		 */
-		public void setTaskName(String name) {
-			taskName = name;
-			updateMessage();
-
-		}
-
-		/*
-		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
-		 */
-		public void subTask(String name) {
-			//Don't show this granularity
-		}
-
-		/*
-		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
-		 */
-		public void worked(int work) {
-			internalWorked(work);
-
-		}
-
-		/**
-		 * Update the message for the receiver.
-		 */
-		private void updateMessage() {
-			if (PlatformUI.isWorkbenchRunning() && refreshJob.setMessage(getDisplayString()))
-				refreshJob.schedule(100);
-		}
-
-		/**
-		 * Get the display string for the task.
-		 * 
-		 * @return String
-		 */
-		String getDisplayString() {
-
-			if (worked == IProgressMonitor.UNKNOWN) {
-				if (subTask.length() == 0)
-					return taskName;
-				else
-					return ProgressMessages.format("MonitorProvider.twoValueUnknownMessage", new String[] { taskName, subTask }); //$NON-NLS-1$
-
-			} else {
-				int done = (int) (worked * 100 / allWork);
-				String percentDone = String.valueOf(done);
-
-				if (subTask.length() == 0)
-					return ProgressMessages.format("MonitorProvider.oneValueMessage", new String[] { taskName, percentDone }); //$NON-NLS-1$
-
-				return ProgressMessages.format("MonitorProvider.twoValueMessage", new String[] { taskName, subTask, String.valueOf(done)}); //$NON-NLS-1$
-
-			}
-
-		}
-
-	}
-
-	private class RefreshJob extends WorkbenchJob {
-
-		String message;
-		boolean clear = false;
-
-		/**
-		 * Return a new instance of the receiver.
-		 * 
-		 * @param name
-		 */
-		public RefreshJob() {
-			super(ProgressMessages.getString("StatusLineProgressListener.Refresh")); //$NON-NLS-1$
-			setPriority(Job.DECORATE);
-			setSystem(true);
-
-		}
-
-		public IStatus runInUIThread(IProgressMonitor monitor) {
-			IStatusLineWithProgressManager manager = getStatusLineManager();
-			if (manager == null)
-				return Status.CANCEL_STATUS;
-			if (clear) {
-				clear = false;
-				BackgroundProgressMonitor next = nextMonitor(monitor);
-				if(next == null)
-					manager.clearProgress();
-				else
-					manager.setProgressMessage(next.getDisplayString());
-			} else
-				manager.setProgressMessage(message);
-			return Status.OK_STATUS;
-		}
-
-		/**
-		 * Set the message for the receiver. If it is a new message return a
-		 * boolean.
-		 * 
-		 * @param newMessage
-		 * @return boolean. true if an update is required
-		 */
-		synchronized boolean setMessage(String newMessage) {
-			if (newMessage.equals(message))
-				return false;
-			message = newMessage;
-			return true;
-		}
-
-		synchronized void clearStatusLine() {
-			clear = true;
-		}
-
-	}
-
-	RefreshJob refreshJob = new RefreshJob();
-
 	/**
 	 * Get the progress monitor for a job. If it is a UIJob get the main
-	 * monitor from the status line. Otherwise get a background monitor.
+	 * monitor from the status line. Otherwise return no monitor.
 	 * 
 	 * @return IProgressMonitor
 	 */
 	IProgressMonitor getMonitor(Job job) {
 		
-		//Don't keep track of our own refreshes
-		if(job instanceof RefreshJob)
-			return new NullProgressMonitor();
-		
-		if (job instanceof UIJob) {
+		if (job instanceof UIJob) 
 			return getUIProgressMonitor(job.getName());
-		}
+		else
+			return new NullProgressMonitor();
 
-		return getBackgroundProgressMonitor(job.getName());
 	}
 
 	/**
-	 * Return the status line manager if there is one. Return null if one
-	 * cannot be found or it is not a IStatusLineWithProgressManager.
+	 * Return the status line manager if there is one. 
 	 * 
 	 * @return IStatusLineWithProgressManager
 	 */
-	private IStatusLineWithProgressManager getStatusLineManager() {
+	private IStatusLineManager getStatusLineManager() {
 
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null && window instanceof WorkbenchWindow) {
-			IStatusLineManager manager = ((WorkbenchWindow) window).getStatusLineManager();
-			if (manager instanceof IStatusLineWithProgressManager)
-				return (IStatusLineWithProgressManager) manager;
+			return ((WorkbenchWindow) window).getStatusLineManager();
 		}
 		return null;
-	}
-
-	/**
-	 * Get a IProgressMonitor for the background jobs.
-	 * 
-	 * @param jobName
-	 *           The name of the job.
-	 * @return IProgressMonitor
-	 */
-	private IProgressMonitor getBackgroundProgressMonitor(String jobName) {
-		return new BackgroundProgressMonitor(jobName);
 	}
 
 	/**
@@ -362,7 +150,7 @@ class WorkbenchMonitorProvider {
 			 */
 			private IProgressMonitor getInternalMonitor() {
 				if (internalMonitor == null) {
-					IStatusLineWithProgressManager manager = getStatusLineManager();
+					IStatusLineManager manager = getStatusLineManager();
 					if (manager == null)
 						internalMonitor = new NullProgressMonitor();
 					else
@@ -374,17 +162,4 @@ class WorkbenchMonitorProvider {
 
 	}
 
-	/**
-	 * Return the next monitor to update with if there is one.
-	 * 
-	 * @param finishedMonitor
-	 * @return BackgroundProgressMonitor or <code>null</code>
-	 */
-	BackgroundProgressMonitor nextMonitor(IProgressMonitor finishedMonitor) {
-		workingMonitors.remove(finishedMonitor);
-
-		if (workingMonitors.size() > 0) 
-			return (BackgroundProgressMonitor) workingMonitors.get(0);
-		return null;
-	}
 }

@@ -12,19 +12,38 @@ package org.eclipse.ui.internal.progress;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.jface.resource.JFaceResources;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * The AnimationManager is the class that keeps track of the animation items
@@ -53,7 +72,7 @@ class AnimationManager {
 
 	List items = Collections.synchronizedList(new ArrayList());
 
-	static AnimationManager getInstance() {
+	public static AnimationManager getInstance() {
 		if (singleton == null)
 			singleton = new AnimationManager();
 		return singleton;
@@ -304,6 +323,7 @@ class AnimationManager {
 			image.dispose();
 			offScreenImage.dispose();
 			offScreenImageGC.dispose();
+			animationDone();
 		}
 	}
 
@@ -436,6 +456,7 @@ class AnimationManager {
 	 */
 				public IStatus run(IProgressMonitor monitor) {
 					try {
+						animationStarted();
 						animateLoop(monitor);
 						return Status.OK_STATUS;
 					} catch (SWTException exception) {
@@ -501,6 +522,68 @@ class AnimationManager {
 	 */
 	ImageLoader getLoader() {
 		return runLoader;
+	}
+
+	/**
+	 * The animation is done. Get the items to clean up.
+	 */
+	private void animationDone() {
+
+		UIJob animationDoneJob = new WorkbenchJob("Animation cleanup") {
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				
+				AnimationItem[] animationItems = getAnimationItems();
+				for (int i = 0; i < animationItems.length; i++) {
+					AnimationItem item = animationItems[i];
+					item.animationDone();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		animationDoneJob.setSystem(true);
+		animationDoneJob.schedule();
+		
+	}
+
+	/**
+	 * The animation has started. Get the items to do any s
+	 * other start behaviour.
+	 */
+	private void animationStarted() {
+		
+		UIJob animationDoneJob = new WorkbenchJob("Animation start") {
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				
+				AnimationItem[] animationItems = getAnimationItems();
+				for (int i = 0; i < animationItems.length; i++) {
+					AnimationItem item = animationItems[i];
+					item.animationStart();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		animationDoneJob.setSystem(true);
+		animationDoneJob.schedule();
+
+	}
+	
+	/**
+	 * Get the preferred width for widgets displaying the 
+	 * animation.
+	 * @return int. Return 0 if there is no image data.
+	 */
+	int getPreferredWidth(){
+		if(animatedData == null)
+			return 0;
+		else
+			return animatedData[0].width;
+		
 	}
 
 }

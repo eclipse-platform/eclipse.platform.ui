@@ -46,20 +46,36 @@ public class TaskInfo extends SubTaskInfo {
 	 * @return String
 	 */
 	String getDisplayString() {
-		int done = (int) (preWork * 100 / totalWork);
 		if (taskName == null) {
-			String[] messageValues = new String[2];
-			messageValues[0] = jobInfo.getJob().getName();
-			messageValues[1] = String.valueOf(done);
-			return ProgressMessages.format("JobInfo.NoTaskNameDoneMessage", messageValues); //$NON-NLS-1$
+			return getDisplayStringWithoutTask();
 		} else {
 			String[] messageValues = new String[3];
 			messageValues[0] = jobInfo.getJob().getName();
 			messageValues[1] = taskName;
-			messageValues[2] = String.valueOf(done);
+			messageValues[2] = String.valueOf(getPercentDone());
 			return ProgressMessages.format("JobInfo.DoneMessage", messageValues); //$NON-NLS-1$
 		}
 
+	}
+
+	/**
+	 * Get the display String without the task name.
+	 * @return String
+	 */
+	public String getDisplayStringWithoutTask() {
+		
+		String[] messageValues = new String[2];
+		messageValues[0] = jobInfo.getJob().getName();
+		messageValues[1] = String.valueOf(getPercentDone());
+		return ProgressMessages.format("JobInfo.NoTaskNameDoneMessage", messageValues); //$NON-NLS-1$
+	}
+
+	/**
+	 * Return an integer representing the amount of work completed.
+	 * @return
+	 */
+	int getPercentDone() {
+		return (int) (preWork * 100 / totalWork);
 	}
 
 }

@@ -10,70 +10,50 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
  * The ProgressContentProvider is the content provider used for classes that
  * listen to the progress changes.
  */
-public class ProgressContentProvider implements ITreeContentProvider {
+public abstract class ProgressContentProvider
+	implements IProgressUpdateCollector {
 
-	ProgressTreeViewer viewer;
-
-	public ProgressContentProvider(ProgressTreeViewer mainViewer) {
-		viewer = mainViewer;
-		ProgressViewUpdater.getSingleton().addContentProvider(this);
-	}
-	/*
-	 * (non-Javadoc) @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+	/**
+	 * Create a new instance of the receiver.
+	 *  
 	 */
-	public Object[] getChildren(Object parentElement) {
-		return ((JobTreeElement) parentElement).getChildren();
+	public ProgressContentProvider() {
+		ProgressViewUpdater.getSingleton().addCollector(this);
 	}
 
 	/*
-	 * (non-Javadoc) @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-	 */
-	public Object getParent(Object element) {
-		if (element == this)
-			return null;
-		else
-			return ((JobTreeElement) element).getParent();
-	}
-
-	/*
-	 * (non-Javadoc) @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-	 */
-	public boolean hasChildren(Object element) {
-		if (element == this)
-			return ProgressManager.getInstance().hasJobInfos();
-		else
-			return ((JobTreeElement) element).hasChildren();
-	}
-
-	/*
-	 * (non-Javadoc) @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
 
 		return ProgressManager.getInstance().getJobInfos(
-				ProgressViewUpdater.getSingleton().debug);
-
+			ProgressViewUpdater.getSingleton().debug);
 	}
 
 	/*
-	 * (non-Javadoc) @see org.eclipse.jface.viewers.IContentProvider#dispose()
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
-		ProgressViewUpdater.getSingleton().removeContentProvider(this);
+		ProgressViewUpdater.getSingleton().removeCollector(this);
 	}
 
 	/*
-	 * (non-Javadoc) @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-	 * java.lang.Object, java.lang.Object)
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+	 *      java.lang.Object, java.lang.Object)
 	 */
-	public void inputChanged(Viewer updateViewer, Object oldInput, Object newInput) {
-	}
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
+	}
 }
