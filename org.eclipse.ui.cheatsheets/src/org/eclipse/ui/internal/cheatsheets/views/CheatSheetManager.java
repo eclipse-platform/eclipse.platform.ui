@@ -132,16 +132,10 @@ public class CheatSheetManager implements ICheatSheetManager {
 	}
 
 	/**
-	 * adds string data to manager data hashtable.
-	 * Stores only keyed string data.
+	 * returns the hashtable with all manager data stored.
 	 */
-	public void addData(String key, String data) {
-		if(key == null || data == null)
-			return;
-		if (dataTable == null)
-			dataTable = new Hashtable(30);
-		dataTable.put(key, data);
-		return;
+	public Map getData() {
+		return dataTable;
 	}
 
 	public String getData(String key) {
@@ -150,35 +144,9 @@ public class CheatSheetManager implements ICheatSheetManager {
 		return (String) dataTable.get(key);
 	}
 
-	/**
-	 * returns the hashtable with all manager data stored.
-	 */
-	public Map getData() {
-		return (Map)dataTable;
+	/*package*/ void setData(Hashtable data) {
+		dataTable = data;
 	}
-
-	/*package*/ void setData(Hashtable ht) {
-		dataTable = ht;
-	}
-
-	/**
-	 * Removes data from manager data storage hashtable stored with key passed as argument.
-	 * returns true if data is removed from manager data storage hashtable.
-	 * returns false if no data with the key passed is stored.
-	 */
-	public boolean removeData(String key) {
-		if (dataTable == null)
-			return false;
-		else if (dataTable.remove(key) != null)
-			return true;
-		return false;
-	}
-	
-	/*PACKAGE*/ boolean removeAllData(){
-		dataTable = new Hashtable(30);
-		return true;	
-	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetManager#setData(java.lang.String, java.lang.String)
@@ -187,7 +155,17 @@ public class CheatSheetManager implements ICheatSheetManager {
 		if (key == null) {
 			throw new IllegalArgumentException();
 		}
-		// TODO Auto-generated method stub
+
+		if(data == null && dataTable != null) {
+			dataTable.remove(key);
+			return;
+		}
+
+		if (dataTable == null) {
+			dataTable = new Hashtable(30);
+		}
+
+		dataTable.put(key, data);
 	}
 
 
