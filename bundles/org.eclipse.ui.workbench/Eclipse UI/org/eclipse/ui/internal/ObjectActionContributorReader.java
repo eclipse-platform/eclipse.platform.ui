@@ -24,7 +24,7 @@ public class ObjectActionContributorReader extends RegistryReader {
 
     public final static String TAG_OBJECT_CONTRIBUTION = "objectContribution";//$NON-NLS-1$
 
-    private final static String ATT_OBJECTCLASS = "objectClass";//$NON-NLS-1$
+    public final static String ATT_OBJECTCLASS = "objectClass";//$NON-NLS-1$
 
     private ObjectActionContributorManager manager;
 

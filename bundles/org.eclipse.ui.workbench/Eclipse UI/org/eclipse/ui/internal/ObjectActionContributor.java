@@ -47,6 +47,8 @@ public class ObjectActionContributor extends PluginActionBuilder implements
     private boolean configRead = false;
 
     private boolean adaptable = false;
+    
+    private String objectClass;
 
     /**
      * The constructor.
@@ -55,6 +57,7 @@ public class ObjectActionContributor extends PluginActionBuilder implements
         this.config = config;
         this.adaptable = P_TRUE.equalsIgnoreCase(config
                 .getAttribute(ATT_ADAPTABLE));
+        this.objectClass = config.getAttribute(ObjectActionContributorReader.ATT_OBJECTCLASS);
     }
 
     /* (non-Javadoc)
@@ -63,6 +66,10 @@ public class ObjectActionContributor extends PluginActionBuilder implements
     public boolean canAdapt() {
         return adaptable;
     }
+    
+	public String getObjectClass() {
+		return objectClass;
+	}
 
     /* (non-Javadoc)
      * Method declared on IObjectActionContributor.
@@ -101,7 +108,17 @@ public class ObjectActionContributor extends PluginActionBuilder implements
         if ((sel == null) || !(sel instanceof IStructuredSelection))
             return false;
         IStructuredSelection selection = (IStructuredSelection) sel;
-
+        
+        if(canAdapt()) {        	
+           IStructuredSelection newSelection = LegacyResourceSupport.adaptSelection(selection, getObjectClass());     
+           if(newSelection.size() != selection.size()) {
+            	WorkbenchPlugin.log("Error adapting selection to " + getObjectClass() +  //$NON-NLS-1$
+            			". Contribution " + getID(config) + " is being ignored"); //$NON-NLS-1$ //$NON-NLS-2$            	
+            	return false;
+           }
+           selection = newSelection;
+        }
+        	
         // Generate menu.
         for (int i = 0; i < currentContribution.actions.size(); i++) {
             ActionDescriptor ad = (ActionDescriptor) currentContribution.actions
@@ -121,8 +138,8 @@ public class ObjectActionContributor extends PluginActionBuilder implements
     }
 
     /**
-     * Contributes menus applicable for the current selection.
-     */
+	 * Contributes menus applicable for the current selection.
+	 */
     public boolean contributeObjectMenus(IMenuManager menu,
             ISelectionProvider selProv) {
         if (!configRead)
@@ -169,6 +186,18 @@ public class ObjectActionContributor extends PluginActionBuilder implements
         if (!configRead)
             readConfigElement();
 
+        // Perform all tests with an instance of the objectClass and not
+        // the actual selected object.
+        if (canAdapt()) {
+			Object adapted = LegacyResourceSupport.getAdapter(object, getObjectClass());
+			if (adapted == null) {
+				WorkbenchPlugin.log("Error adapting " + object.getClass().getName() + //$NON-NLS-1$
+						" to " + getObjectClass() + ". Contribution " + getID(config) + " is being ignored"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			} else {
+				object = adapted;
+			}
+		}
+			
         if (!testName(object))
             return false;
 
@@ -295,5 +324,23 @@ public class ObjectActionContributor extends PluginActionBuilder implements
             }
             return result;
         }
+    }
+    
+    /**
+     * Debugging helper that will print out the contribution names for this
+     * contributor.
+     */
+    public String toString() {
+    	StringBuffer buffer = new StringBuffer();
+    	IConfigurationElement[] children = config.getChildren();
+    	for (int i = 0; i < children.length; i++) {
+			IConfigurationElement element = children[i];
+			String label = element.getAttribute(ATT_LABEL);
+			if(label != null) {
+				buffer.append(label);
+				buffer.append('\n'); 
+			}
+		}
+    	return buffer.toString();
     }
 }

@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
@@ -130,5 +131,12 @@ public class PluginActionContributionItem extends ActionContributionItem
             disposeIdentifier();
             getParent().markDirty();
         }
+    }
+    
+    /*
+     * For testing purposes only
+     */
+    public ISelection getSelection() {
+    	return ((PluginAction)getAction()).getSelection();
     }
 }

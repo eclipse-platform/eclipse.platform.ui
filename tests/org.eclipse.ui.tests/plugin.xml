@@ -1832,4 +1832,93 @@
              name="Basic Performance View"
              id="org.eclipse.ui.tests.perf_basic"/>
     </extension>
+    
+    <!-- ObjectContributionTests -->
+    
+    <extension
+          point="org.eclipse.core.runtime.adapters">
+       <factory
+             class="org.eclipse.ui.tests.menus.ObjectContributionClasses"
+             adaptableType="org.eclipse.ui.tests.menus.ObjectContributionClasses$IA">
+          <adapter type="org.eclipse.ui.tests.menus.ObjectContributionClasses$ICommon"/>
+       </factory>
+       <factory
+             class="org.eclipse.ui.tests.menus.ObjectContributionClasses"
+             adaptableType="org.eclipse.ui.tests.menus.ObjectContributionClasses$IB">
+          <adapter type="org.eclipse.ui.tests.menus.ObjectContributionClasses$ICommon"/>
+       </factory>
+    </extension>
+    
+    <extension
+         point="org.eclipse.ui.popupMenus">
+         <objectContribution
+            objectClass="org.eclipse.ui.tests.menus.ObjectContributionClasses$ICommon"
+            adaptable="true"
+            id="adatableObjectContributions">
+         <action
+               label="Label"
+               class="org.eclipse.ui.tests.api.MockActionDelegate"
+               id="ICommon.1">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.ui.tests.menus.ObjectContributionClasses$ICommon"
+            id="adatableObjectContributions">
+         <action
+               label="Label"
+               class="org.eclipse.ui.tests.api.MockActionDelegate"
+               id="ICommon.2">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.ui.tests.menus.ObjectContributionClasses$Common"
+            adaptable="true"
+            id="adatableObjectContributions">
+         <action
+               label="Label"
+               class="org.eclipse.ui.tests.api.MockActionDelegate"
+               id="Common.1">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.ui.tests.menus.ObjectContributionClasses$Common"
+            id="adatableObjectContributions">
+         <action
+               label="Label"
+               class="org.eclipse.ui.tests.api.MockActionDelegate"
+               id="Common.2">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
+            id="adatableObjectContributions">
+         <action
+               label="Label"
+               class="org.eclipse.ui.tests.api.MockActionDelegate"
+               id="IResource.1">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="adatableObjectContributions">
+         <action
+               label="Label"
+               class="org.eclipse.ui.tests.api.MockActionDelegate"
+               id="IProject.1">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            adaptable="true"
+            id="adatableObjectContributions">
+         <action
+               label="Label"
+               class="org.eclipse.ui.tests.api.MockActionDelegate"
+               id="IFile.1">
+         </action>
+      </objectContribution>
+   </extension>
+    
 </plugin>            

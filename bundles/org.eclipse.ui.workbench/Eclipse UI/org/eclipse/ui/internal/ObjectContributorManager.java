@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
@@ -56,7 +55,10 @@ public abstract class ObjectContributorManager {
     protected Map objectLookup;
 
     /** Cache of resource adapter class contributor search paths; <code>null</code> if none. */
-    protected Map adapterLookup;
+    protected Map resourceAdapterLookup;
+    
+    /** Cache of adaptable class contributor search paths; <code>null</code> if none. */
+    protected Map adaptableLookup;
 
     /** 
      * Constructs a new contributor manager.
@@ -64,7 +66,8 @@ public abstract class ObjectContributorManager {
     public ObjectContributorManager() {
         contributors = new Hashtable(5);
         objectLookup = null;
-        adapterLookup = null;
+        resourceAdapterLookup = null;
+        adaptableLookup = null;
     }
 
     /**
@@ -117,16 +120,26 @@ public abstract class ObjectContributorManager {
      */
     public void flushLookup() {
         objectLookup = null;
-        adapterLookup = null;
+        resourceAdapterLookup = null;
+        adaptableLookup = null;
     }
 
     /**
-     * Cache the resource adapter class contributor search path.
+     * Cache the real adapter class contributor search path.
      */
-    private void cacheAdapterLookup(Class adapterClass, List results) {
-        if (adapterLookup == null)
-            adapterLookup = new HashMap();
-        adapterLookup.put(adapterClass, results);
+    private void cacheResourceAdapterLookup(Class adapterClass, List results) {
+        if (resourceAdapterLookup == null)
+            resourceAdapterLookup = new HashMap();
+        resourceAdapterLookup.put(adapterClass, results);
+    }
+    
+    /**
+     * Cache the real adapter class contributor search path.
+     */
+    private void cacheAdaptableLookup(String adapterClass, List results) {
+        if (adaptableLookup == null)
+        	adaptableLookup = new HashMap();
+        adaptableLookup.put(adapterClass, results);
     }
 
     /**
@@ -151,32 +164,6 @@ public abstract class ObjectContributorManager {
     }
 
     /**
-     * Returns all the contributors registered against
-     * the given object class.
-     */
-    protected List getContributors(Class objectClass) {
-
-        List objectList = null;
-
-        // Lookup the results in the cache first
-        if (objectLookup != null) {
-            objectList = (List) objectLookup.get(objectClass);
-        }
-
-        // If not in cache, build it
-        if (objectList == null) {
-            objectList = addContributorsFor(objectClass);
-            if (objectList.size() == 0)
-                objectList = EMPTY_LIST;
-
-            // Store the contribution list into the cache.
-            cacheObjectLookup(objectClass, objectList);
-        }
-
-        return objectList;
-    }
-
-    /**
      * Return the list of contributors for the supplied class.
      */
     protected List addContributorsFor(Class objectClass) {
@@ -190,25 +177,9 @@ public abstract class ObjectContributorManager {
     }
 
     /**
-     * Get the contributors for object including those it adapts
-     * to.
-     * 
-     * @return The list of contributors, empty if none.
-     */
-    protected List getContributors(Object object) {
-
-        Class objectClass = object.getClass();
-        Object adapted = getAdaptedResource(object);
-
-        if (adapted == null)
-            return getContributors(objectClass);
-        else
-            return getContributors(objectClass, adapted.getClass());
-    }
-
-    /**
      * Returns true if contributors exist in the manager for
-     * this object.
+     * this object and any of it's super classes, interfaces, or
+     * adapters.
      */
     public boolean hasContributorsFor(Object object) {
 
@@ -303,110 +274,171 @@ public abstract class ObjectContributorManager {
         contributors.remove(targetType);
         flushLookup();
     }
-
-    /**
-     * Returns all the contributors registered against
-     * the given object class and the resource class that
-     * it has an Adaptable for.
-     */
-    protected List getContributors(Class objectClass, Class resourceClass) {
-
-        List objectList = null;
-        List resourceList = null;
-
-        // Lookup the results in the cache first
-        if (objectLookup != null) {
-            objectList = (List) objectLookup.get(objectClass);
-        }
-        if (adapterLookup != null) {
-            resourceList = (List) adapterLookup.get(resourceClass);
-        }
-
-        if (objectList == null) {
-            objectList = addContributorsFor(objectClass);
-            if (objectList.size() == 0)
-                objectList = EMPTY_LIST;
-            cacheObjectLookup(objectClass, objectList);
-        }
-        if (resourceList == null) {
-            List contributors = addContributorsFor(resourceClass);
-            resourceList = new ArrayList(contributors.size());
-            Iterator itr = contributors.iterator();
-            while (itr.hasNext()) {
-                IObjectContributor contributor = (IObjectContributor) itr
-                        .next();
-                if (contributor.canAdapt())
-                    resourceList.add(contributor);
-            }
-            if (resourceList.size() == 0)
-                resourceList = EMPTY_LIST;
-            cacheAdapterLookup(resourceClass, resourceList);
-        }
-
-        // Collect the contribution lists into one result
-        ArrayList results = new ArrayList(objectList.size()
-                + resourceList.size());
-        results.addAll(objectList);
-        results.addAll(resourceList);
-        return results;
+    
+    protected List getContributors(Object object) {
+    	// Determine is the object is a resource
+    	Object resource  = LegacyResourceSupport.getAdaptedContributorResource(object);	
+    	
+    	// Fetch the unique adapters
+    	List adapters = new ArrayList(Arrays.asList(Platform.getAdapterManager().computeAdapterTypes(object.getClass())));
+    	removeCommonAdapters(adapters, Arrays.asList(new Class[] {object.getClass()}));
+    	
+    	// Calculate the contributors for this object class
+        List contributors = getObjectContributors(object.getClass());
+        // Calculate the contributors for resource classes
+        if(resource != null)
+        	contributors.addAll(getResourceContributors(resource.getClass()));
+        // Calculate the contributors for each adapter type
+    	if(adapters != null) {
+    		for (Iterator it = adapters.iterator(); it.hasNext();) {
+				String adapter = (String) it.next();				
+				contributors.addAll(getAdaptableContributors(adapter));
+			}
+    	}    		
+        return contributors;
     }
-
+    
     /**
-     * Get the adapted resource for the supplied object. If the
-     * object is an instance of IResource or is not an instance
-     * of IAdaptable return null. Otherwise see if it adapts
-     * to IResource via IContributorResourceAdapter.
+     * Returns the contributions for the given class. This considers
+     * contributors on any super classes and interfaces.
      * 
-     * @param object Object 
-     * @return an <code>IResource</code> or null
+     * @param objectClass the class to search for contributions.
+     * @return the contributions for the given class. This considers
+     * contributors on any super classes and interfaces.
+     * 
+     * @since 3.1
      */
-    protected Object getAdaptedResource(Object object) {
-        Class resourceClass = LegacyResourceSupport.getResourceClass();
-        if (resourceClass == null) {
-            return null;
-        }
-        if (resourceClass.isInstance(object)) {
-            return null;
-        }
+    protected List getObjectContributors(Class objectClass) {
+		List objectList = null;
+		// Lookup the results in the cache first.
+		if (objectLookup != null) {
+			objectList = (List) objectLookup.get(objectClass);
+		}
+		if (objectList == null) {
+			objectList = addContributorsFor(objectClass);
+			if (objectList.size() == 0)
+				objectList = EMPTY_LIST;
+			cacheObjectLookup(objectClass, objectList);
+		}
+		// return a shallow copy of the contributors, ensure that the caller
+		// cannot modify the cache directly.
+		return new ArrayList(objectList);
+	}
 
-        if (object instanceof IAdaptable) {
-            IAdaptable adaptable = (IAdaptable) object;
+    /**
+     * Returns the contributions for the given <code>IResource</code>class. 
+     * This considers contributors on any super classes and interfaces. This
+     * will only return contributions that are adaptable.
+     * 
+     * @param resourceClass the class to search for contributions.
+     * @return the contributions for the given class. This considers
+     * adaptable contributors on any super classes and interfaces.
+     * 
+     * @since 3.1
+     */
+	protected List getResourceContributors(Class resourceClass) {
+		List resourceList = null;
+		if (resourceAdapterLookup != null) {
+			resourceList = (List) resourceAdapterLookup.get(resourceClass);
+		}
+		if (resourceList == null) {
+			resourceList = addContributorsFor(resourceClass);
+			if (resourceList.size() == 0)
+				resourceList = EMPTY_LIST;
+			else
+				resourceList = filterOnlyAdaptableContributors(resourceList);
+			cacheResourceAdapterLookup(resourceClass, resourceList);
+		}
+		// return a shallow copy of the contributors, ensure that the caller
+		// cannot modify the cache directly.
+		return new ArrayList(resourceList);
+	}
 
-            Class contributorResourceAdapterClass = LegacyResourceSupport
-                    .getIContributorResourceAdapterClass();
-            if (contributorResourceAdapterClass == null) {
-                return null;
-            }
-            Object resourceAdapter = adaptable
-                    .getAdapter(contributorResourceAdapterClass);
-            if (resourceAdapter == null) {
-                // reflective equivalent of
-                //    resourceAdapter = DefaultContributorResourceAdapter.getDefault();
-                try {
-                    Class c = LegacyResourceSupport
-                            .getDefaultContributorResourceAdapterClass();
-                    Method m = c.getDeclaredMethod("getDefault", new Class[0]); //$NON-NLS-1$
-                    resourceAdapter = m.invoke(null, new Object[0]);
-                } catch (Exception e) {
-                    // shouldn't happen - but play it safe
-                    return null;
-                }
-            }
-
-            Object result;
-            // reflective equivalent of
-            //    result = ((IContributorResourceAdapter) resourceAdapter).getAdaptedResource(adaptable);
-            try {
-                Method m = contributorResourceAdapterClass.getDeclaredMethod(
-                        "getAdaptedResource", new Class[] { IAdaptable.class }); //$NON-NLS-1$
-                result = m.invoke(resourceAdapter, new Object[] { adaptable });
-            } catch (Exception e) {
-                // shouldn't happen - but play it safe
-                return null;
-            }
-            return result;
-        }
-
-        return null;
+    /**
+     * Returns the contributions for the given type name. 
+     * 
+     * @param adapterType the class to search for contributions.
+     * @return the contributions for the given class. This considers
+     * contributors to this specific type.
+     * 
+     * @since 3.1
+     */
+	protected List getAdaptableContributors(String adapterType) {
+		List adaptableList = null;
+		// Lookup the results in the cache first, there are two caches
+		// one that stores non-adapter contributions and the other
+		// contains adapter contributions.
+		if (adaptableLookup != null) {
+			adaptableList = (List) adaptableLookup.get(adapterType);
+		}
+		if (adaptableList == null) {
+			adaptableList = new ArrayList(contributors.size());
+			// ignore resource adapters because these must be adapted via the
+			// IContributorResourceAdapter.
+			if (LegacyResourceSupport.isResourceType(adapterType))
+				return EMPTY_LIST;
+			adaptableList = (List) contributors.get(adapterType);
+			if (adaptableList == null || adaptableList.size() == 0)
+				adaptableList = EMPTY_LIST;
+			else
+				adaptableList = filterOnlyAdaptableContributors(adaptableList);
+			cacheAdaptableLookup(adapterType, adaptableList);
+		}
+		// return a shallow copy of the contributors, ensure that the caller
+		// cannot modify the cache directly.
+		return new ArrayList(adaptableList);
+	}
+	
+	/**
+	 * Prunes from the list of adapters type names that are in the class
+	 * search order of every class in <code>results</code>.  
+	 * @param adapters
+	 * @param results
+	 * @since 3.1
+	 */
+	protected void removeCommonAdapters(List adapters, List results) {
+    	for (Iterator it = results.iterator(); it.hasNext();) {
+			Class clazz = ((Class) it.next());
+			List commonTypes = computeCombinedOrder(clazz);
+			for (Iterator it2 = commonTypes.iterator(); it2.hasNext();) {
+				Class type = (Class) it2.next();
+				adapters.remove(type.getName());	
+			}				
+		}
     }
+	
+	/**
+     * Returns the class search order starting with <code>extensibleClass</code>.
+     * The search order is defined in this class' comment.
+     */
+    protected List computeCombinedOrder(Class inputClass) {
+        List result = new ArrayList(4);
+        Class clazz = inputClass;
+        while (clazz != null) {
+            // add the class
+            result.add(clazz);
+            // add all the interfaces it implements
+            Class[] interfaces = clazz.getInterfaces();
+            for (int i = 0; i < interfaces.length; i++) {
+                result.add(interfaces[i]);
+            }
+            // get the superclass
+            clazz = clazz.getSuperclass();
+        }
+        return result;
+    }
+
+	private List filterOnlyAdaptableContributors(List contributors) {
+		List adaptableContributors = null;
+		for (Iterator it = contributors.iterator(); it.hasNext();) {
+			IObjectContributor c = (IObjectContributor) it.next();
+			if(c.canAdapt()) {
+				if(adaptableContributors == null) {
+					adaptableContributors = new ArrayList();
+				}
+				adaptableContributors.add(c);
+			}
+		}
+		return adaptableContributors == null ? EMPTY_LIST : adaptableContributors;
+	}
 }

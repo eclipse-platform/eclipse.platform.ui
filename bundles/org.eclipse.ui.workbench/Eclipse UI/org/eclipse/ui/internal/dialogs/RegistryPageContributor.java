@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,18 +19,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
-
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
-
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.SelectionEnabler;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-
 import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * This property page contributor is created from page entry
@@ -57,19 +55,13 @@ public class RegistryPageContributor implements IPropertyPageContributor {
      */
     private Collection subPages = new ArrayList();
 
-    private boolean isResourceContributor = false;
+    private boolean adaptable = false;
 
     private IConfigurationElement pageElement;
 
     private HashMap filterProperties;
 
-    private static String[] resourceClassNames = {
-            "org.eclipse.core.resources.IResource", //$NON-NLS-1$
-            "org.eclipse.core.resources.IContainer", //$NON-NLS-1$
-            "org.eclipse.core.resources.IFolder", //$NON-NLS-1$
-            "org.eclipse.core.resources.IProject", //$NON-NLS-1$
-            "org.eclipse.core.resources.IFile", //$NON-NLS-1$
-    };
+	private String objectClassName;
 
     /**
      * PropertyPageContributor constructor.
@@ -86,10 +78,8 @@ public class RegistryPageContributor implements IPropertyPageContributor {
         this.filterProperties = filterProperties;
         this.pageElement = pageElement;
         this.category = categoryName;
-
-        //Only adapt if explicitly allowed to do so
-        if (adaptable)
-            checkIsResourcePage(objectClassName);
+        this.adaptable = adaptable;
+        this.objectClassName = objectClassName;
     }
 
     /**
@@ -119,37 +109,19 @@ public class RegistryPageContributor implements IPropertyPageContributor {
                 pageElement, PropertyPagesRegistryReader.ATT_CLASS);
 
         ppage.setTitle(pageName);
-
-        if (isResourceContributor) {
-            Class resourceClass = LegacyResourceSupport.getResourceClass();
-            IAdaptable resource = resourceClass != null ? (IAdaptable) element
-                    .getAdapter(resourceClass) : null;
-            if (resource == null) {
-                resourceClass = LegacyResourceSupport
-                        .getIContributorResourceAdapterClass();
-                if (resourceClass != null) {
-                    Object resourceAdapter = element.getAdapter(resourceClass);
-                    if (resourceAdapter != null) {
-                        try {
-                            Method m = resourceClass
-                                    .getMethod(
-                                            "getAdaptedResource", new Class[] { IAdaptable.class }); //$NON-NLS-1$
-                            resource = (IAdaptable) m.invoke(resourceAdapter,
-                                    new Object[] { element });
-                        } catch (Exception e) {
-                            // shouldn't happen.				
-                        }
-                    }
-                }
-            }
-
-            if (resource != null)
-                ppage.setElement(resource);
+        
+        Object adapted = element;
+        if(adaptable) {
+        	adapted = LegacyResourceSupport.getAdapter(element, objectClassName);
+        	if(adapted == null) {
+            	String message = "Error adapting selection to " + objectClassName +  //$NON-NLS-1$
+            			". Property page " + pageId + " is being ignored"; //$NON-NLS-1$ //$NON-NLS-2$            	
+            	throw new CoreException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
+                        IStatus.ERROR,message, null));
+           }
         }
-
-        if (ppage.getElement() == null) {
-            ppage.setElement(element);
-        }
+        
+        ppage.setElement((IAdaptable)adapted);
 
         return ppage;
     }
@@ -218,28 +190,21 @@ public class RegistryPageContributor implements IPropertyPageContributor {
             return true;
         IActionFilter filter = null;
 
-        // If this is a resource contributor and the object is not a resource but
-        // is an adaptable then get the object's resource via the adaptable mechanism.
-        Object testObject = object;
-        Class resourceClass = LegacyResourceSupport.getResourceClass();
-        if (isResourceContributor && resourceClass != null
-                && !(resourceClass.isInstance(object))
-                && (object instanceof IAdaptable)) {
-            Object result = ((IAdaptable) object).getAdapter(resourceClass);
-            if (result != null) {
-                testObject = result;
-            }
-        }
+        // Do the free IResource adapting
+		Object adaptedObject = LegacyResourceSupport.getAdaptedResource(object);
+		if(adaptedObject != null) {
+			object = adaptedObject;
+		}
 
-        if (testObject instanceof IActionFilter) {
-            filter = (IActionFilter) testObject;
-        } else if (testObject instanceof IAdaptable) {
-            filter = (IActionFilter) ((IAdaptable) testObject)
+        if (object instanceof IActionFilter) {
+            filter = (IActionFilter) object;
+        } else if (object instanceof IAdaptable) {
+            filter = (IActionFilter) ((IAdaptable) object)
                     .getAdapter(IActionFilter.class);
         }
 
         if (filter != null) {
-            return testCustom(testObject, filter);
+            return testCustom(object, filter);
         } else {
             return true;
         }
@@ -262,30 +227,18 @@ public class RegistryPageContributor implements IPropertyPageContributor {
         return true;
     }
 
-    /**
-     * Check if the object class name is for a class that
-     * inherits from IResource. If so mark the receiver as 
-     * a resource contributor
-     */
-
-    private void checkIsResourcePage(String objectClassName) {
-
-        for (int i = 0; i < resourceClassNames.length; i++) {
-            if (resourceClassNames[i].equals(objectClassName)) {
-                isResourceContributor = true;
-                return;
-            }
-        }
-    }
-
     /*
      * @see IObjectContributor#canAdapt()
      */
     public boolean canAdapt() {
-        return isResourceContributor;
+        return adaptable;
     }
-
-	/**
+    
+	public String getObjectClass() {
+		return objectClassName;
+	}
+	
+		/**
 	 * Get the id of the category.
 	 * @return String
 	 */

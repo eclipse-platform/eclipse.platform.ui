@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.ObjectContributorManager;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;

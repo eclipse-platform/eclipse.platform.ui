@@ -10,18 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
@@ -69,12 +64,6 @@ public abstract class PluginAction extends Action implements
     private String runAttribute = ActionDescriptor.ATT_CLASS;
 
     private static int actionCount = 0;
-
-    //a boolean that returns whether or not this action
-    //is Adaptable - i.e. is defined on a resource type
-    boolean isAdaptableAction = false;
-
-    boolean adaptableNotChecked = true;
 
     /**
      * PluginAction constructor.
@@ -195,50 +184,6 @@ public abstract class PluginAction extends Action implements
     }
 
     /**
-     * Return whether or not this action could have been registered
-     * due to an adaptable - i.e. it is a resource type.
-     */
-    private boolean hasAdaptableType() {
-        if (adaptableNotChecked) {
-            Object parentConfig = configElement.getParent();
-            String typeName = null;
-            if (parentConfig != null
-                    && parentConfig instanceof IConfigurationElement)
-                typeName = ((IConfigurationElement) parentConfig)
-                        .getAttribute("objectClass"); //$NON-NLS-1$
-
-            //See if this is typed at all first
-            if (typeName == null) {
-                adaptableNotChecked = false;
-                return false;
-            }
-            Class resourceClass = LegacyResourceSupport.getResourceClass();
-            if (resourceClass == null) {
-                // resources plug-in not even present
-                isAdaptableAction = false;
-                adaptableNotChecked = false;
-                return false;
-            }
-
-            if (typeName.equals(resourceClass.getName())) {
-                isAdaptableAction = true;
-                adaptableNotChecked = false;
-                return isAdaptableAction;
-            }
-            Class[] children = resourceClass.getDeclaredClasses();
-            for (int i = 0; i < children.length; i++) {
-                if (children[i].getName().equals(typeName)) {
-                    isAdaptableAction = true;
-                    adaptableNotChecked = false;
-                    return isAdaptableAction;
-                }
-            }
-            adaptableNotChecked = false;
-        }
-        return isAdaptableAction;
-    }
-
-    /**
      * Refresh the action enablement.
      */
     protected void refreshEnablement() {
@@ -308,9 +253,11 @@ public abstract class PluginAction extends Action implements
         selection = newSelection;
         if (selection == null)
             selection = StructuredSelection.EMPTY;
-        if (hasAdaptableType())
-            selection = getResourceAdapters(selection);
 
+        // The selection is passed to the delegate as-is without
+        // modification. If the selection needs to be modified
+        // the action contributors should do so.
+        
         // If the delegate can be loaded, do so.
         // Otherwise, just update the enablement.
         if (delegate == null && isOkToCreateDelegate())
@@ -341,31 +288,12 @@ public abstract class PluginAction extends Action implements
     }
 
     /**
-     * Get a new selection with the resource adaptable version 
-     * of this selection
+     * For testing purposes only.
+     * 
+     * @since 3.1
      */
-    private ISelection getResourceAdapters(ISelection sel) {
-        if (sel instanceof IStructuredSelection) {
-            List adaptables = new ArrayList();
-            Object[] elements = ((IStructuredSelection) sel).toArray();
-            for (int i = 0; i < elements.length; i++) {
-                Object originalValue = elements[i];
-                if (originalValue instanceof IAdaptable) {
-                    Class resourceClass = LegacyResourceSupport
-                            .getResourceClass();
-                    if (resourceClass != null) {
-                        Object adaptedValue = ((IAdaptable) originalValue)
-                                .getAdapter(resourceClass);
-                        if (adaptedValue != null) {
-                            adaptables.add(adaptedValue);
-                        }
-                    }
-                }
-            }
-            return new StructuredSelection(adaptables);
-        } else {
-            return sel;
-        }
+    public ISelection getSelection() {
+    	return selection;
     }
 
     /**
