@@ -82,7 +82,8 @@ public class ContextHelpDialog implements Runnable {
 					Display d = shell.getDisplay();
 					if (waitCursor == null)
 						waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
-					((Label) e.widget).setCursor(waitCursor);
+					if(e.widget instanceof Control)
+						((Control)e.widget).setCursor(waitCursor);
 					try {
 						getMoreRelatedTopicsThread.join();
 					} catch (InterruptedException ie) {
@@ -90,7 +91,8 @@ public class ContextHelpDialog implements Runnable {
 					}
 					if (defaultCursor == null)
 						defaultCursor = new Cursor(d, SWT.CURSOR_ARROW);
-					((Label) e.widget).setCursor(defaultCursor);
+					if(e.widget instanceof Control)
+						((Control) e.widget).setCursor(defaultCursor);
 				}
 
 				showMoreLinks();
