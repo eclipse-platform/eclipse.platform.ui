@@ -71,6 +71,10 @@ public final class BindingService implements IBindingService {
 		return bindingManager.getBindings();
 	}
 
+	public final String getDefaultSchemeId() {
+		return BindingPersistence.getDefaultSchemeId();
+	}
+
 	public final Collection getDefinedSchemeIds() {
 		return bindingManager.getDefinedSchemeIds();
 	}

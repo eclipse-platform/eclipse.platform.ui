@@ -64,6 +64,16 @@ public interface IBindingService extends IService {
 	public Set getBindings();
 
 	/**
+	 * Returns the default scheme identifier for the currently running
+	 * application.
+	 * 
+	 * @return The default scheme identifier (<code>String</code>); never
+	 *         <code>null</code>, but may be empty or point to an undefined
+	 *         scheme.
+	 */
+	public String getDefaultSchemeId();
+
+	/**
 	 * Returns the collection of the identifiers for all of the defined schemes
 	 * in the workbench.
 	 * 

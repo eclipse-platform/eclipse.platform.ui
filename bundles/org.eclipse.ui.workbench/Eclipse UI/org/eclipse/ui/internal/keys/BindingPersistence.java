@@ -35,6 +35,9 @@ import org.eclipse.ui.internal.misc.Policy;
  * development for Eclipse 3.1. This class -- its existence, its name and its
  * methods -- are in flux. Do not use this class yet.
  * </p>
+ * <p>
+ * TODO Add methods for reading the extension registry and the preference store.
+ * </p>
  * 
  * @since 3.1
  */
@@ -95,6 +98,20 @@ public final class BindingPersistence {
 	 * called 'commands' for legacy reasons.
 	 */
 	private static final String WORKBENCH_PREFERENCE_KEY = "org.eclipse.ui.commands"; //$NON-NLS-1$
+
+	/**
+	 * Returns the default scheme identifier for the currently running
+	 * application.
+	 * 
+	 * @return The default scheme identifier (<code>String</code>); never
+	 *         <code>null</code>, but may be empty or point to an undefined
+	 *         scheme.
+	 */
+	public static final String getDefaultSchemeId() {
+		final IPreferenceStore store = PlatformUI.getPreferenceStore();
+		return store
+				.getDefaultString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
+	}
 
 	/**
 	 * Writes the given active scheme and bindings to the preference store. Only

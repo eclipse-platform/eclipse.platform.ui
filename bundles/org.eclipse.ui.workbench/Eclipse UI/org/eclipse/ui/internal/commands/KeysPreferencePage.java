@@ -47,6 +47,7 @@ import org.eclipse.jface.bindings.keys.KeySequenceText;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.SafeRunnable;
@@ -520,7 +521,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 			tabFolder.setSelection(selectedTab);
 		}
 
-		// TODO Make this actually do something (i.e., define the help context)
+		// TODO Add a help context
 		// Link a help context to this preference page.
 		// helpSystem.setHelp(parent,
 		// IWorkbenchHelpContextIds.KEYS_PREFERENCE_PAGE);
@@ -1269,45 +1270,54 @@ public final class KeysPreferencePage extends PreferencePage implements
 		return super.performCancel();
 	}
 
-	protected void performDefaults() {
-		/*
-		 * TODO String activeKeyConfigurationId = getSchemeId(); List
-		 * preferenceKeySequenceBindingDefinitions = new ArrayList();
-		 * KeySequenceBindingNode.getKeySequenceBindingDefinitions(tree,
-		 * KeySequence.getInstance(), 0,
-		 * preferenceKeySequenceBindingDefinitions);
-		 * 
-		 * if (activeKeyConfigurationId != null ||
-		 * !preferenceKeySequenceBindingDefinitions.isEmpty()) { final String
-		 * title = Util.translateString(RESOURCE_BUNDLE,
-		 * "restoreDefaultsMessageBoxText"); //$NON-NLS-1$ final String message =
-		 * Util.translateString(RESOURCE_BUNDLE,
-		 * "restoreDefaultsMessageBoxMessage"); //$NON-NLS-1$ final boolean
-		 * confirmed = MessageDialog.openConfirm(getShell(), title, message);
-		 * 
-		 * if (confirmed) {
-		 * setScheme(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID);
-		 * Iterator iterator = preferenceKeySequenceBindingDefinitions
-		 * .iterator();
-		 * 
-		 * while (iterator.hasNext()) { KeySequenceBindingDefinition
-		 * keySequenceBindingDefinition = (KeySequenceBindingDefinition)
-		 * iterator .next(); KeySequenceBindingNode.remove(tree,
-		 * keySequenceBindingDefinition.getKeySequence(),
-		 * keySequenceBindingDefinition.getContextId(),
-		 * keySequenceBindingDefinition .getKeyConfigurationId(), 0,
-		 * keySequenceBindingDefinition.getPlatform(),
-		 * keySequenceBindingDefinition.getLocale(),
-		 * keySequenceBindingDefinition.getCommandId()); } } }
-		 */
+	protected final void performDefaults() {
+		// Ask the user to confirm
+		final String title = Util.translateString(RESOURCE_BUNDLE,
+				"restoreDefaultsMessageBoxText"); //$NON-NLS-1$
+		final String message = Util.translateString(RESOURCE_BUNDLE,
+				"restoreDefaultsMessageBoxMessage"); //$NON-NLS-1$
+		final boolean confirmed = MessageDialog.openConfirm(getShell(), title,
+				message);
 
+		if (confirmed) {
+			// Fix the scheme in the local changes.
+			final String defaultSchemeId = bindingService.getDefaultSchemeId();
+			final Scheme defaultScheme = localChangeManager
+					.getScheme(defaultSchemeId);
+			try {
+				localChangeManager.setActiveScheme(defaultScheme);
+			} catch (final NotDefinedException e) {
+				// At least we tried....
+			}
+
+			// Fix the bindings in the local changes.
+			final Set currentBindings = localChangeManager.getBindings();
+			final Set trimmedBindings = new HashSet();
+			final Iterator bindingItr = currentBindings.iterator();
+			while (bindingItr.hasNext()) {
+				final Binding binding = (Binding) bindingItr.next();
+				if (binding.getType() != Binding.USER) {
+					trimmedBindings.add(binding);
+				}
+			}
+			localChangeManager.setBindings(trimmedBindings);
+
+			// Apply the changes.
+			try {
+				bindingService.savePreferences(defaultScheme, trimmedBindings);
+			} catch (final IOException e) {
+				logPreferenceStoreException(e);
+			}
+		}
+
+		setScheme(localChangeManager.getActiveScheme()); // update the scheme
 		update();
+		super.performDefaults();
 	}
 
-	public boolean performOk() {
+	public final boolean performOk() {
 		// Save the preferences.
 		try {
-			// TODO This is not working for the active scheme.
 			bindingService.savePreferences(
 					localChangeManager.getActiveScheme(), localChangeManager
 							.getBindings());
@@ -2115,7 +2125,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 			 * Set the associated image based on the type of binding. Either it
 			 * is a user binding or a system binding.
 			 * 
-			 * TODO Do we need to do more here?
+			 * TODO Identify more image types.
 			 */
 			if (binding.getType() == Binding.SYSTEM) {
 				tableItem.setImage(0, IMAGE_BLANK);
@@ -2163,7 +2173,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 			 * Set the associated image based on the type of binding. Either it
 			 * is a user binding or a system binding.
 			 * 
-			 * TODO Do we need to do more here?
+			 * TODO Identify more image types.
 			 */
 			if (binding.getType() == Binding.SYSTEM) {
 				tableItem.setImage(0, IMAGE_BLANK);
