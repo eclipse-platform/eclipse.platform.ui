@@ -16,8 +16,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.resource.GradientData;
-import org.eclipse.jface.resource.GradientRegistry;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
@@ -79,47 +77,6 @@ public final class ThemeElementHelper {
 		
 		if (prefFont != null) {		    
 			registry.put(id, prefFont);
-		}
-    }
-
-
-    public static void populateRegistry(ITheme theme, GradientDefinition [] definitions, IPreferenceStore store) {		
-		for (int i = 0; i < definitions.length; i++) {
-			installGradient(definitions[i], theme, store);
-		}        
-    }
-        
-    
-    /**
-     * @param definition
-     * @param registry
-     * @param store
-     */
-    private static void installGradient(GradientDefinition definition, ITheme theme, IPreferenceStore store) {
-        
-        GradientRegistry registry = theme.getGradientRegistry();
-        
-        String id = definition.getId();
-        String key = createPreferenceKey(theme, id);
-		GradientData prefGradient = store != null ? PreferenceConverter.getGradient(store, key) : null;
-		
-        RGB [] rgbs = definition.getValues();
-
-        GradientData defaultGradient = new GradientData(rgbs, definition.getPercentages(), definition.getDirection());		
-		
-		if (prefGradient == null || prefGradient == PreferenceConverter.GRADIENT_DEFAULT_DEFAULT) {
-		    prefGradient = defaultGradient;
-		}
-		
-		if (defaultGradient != null && store != null) {
-			PreferenceConverter.setDefault(
-					store, 
-					key, 
-					defaultGradient);
-		}
-		
-		if (prefGradient != null) {		    
-			registry.put(id, prefGradient);
 		}
     }
 

@@ -53,18 +53,11 @@ public class JFaceResources {
 	 * lazily initialized or explicitly set.
 	 */
 	private static ColorRegistry colorRegistry;
-	
-	/**
-	 * The JFace gradient registry; <code>null</code> until
-	 * lazily initialized or explicitly set.
-	 */
-	private static GradientRegistry gradientRegistry;	
 
 	/**
 	 * The symbolic font name for the standard font 
 	 * (value <code>"org.eclipse.jface.defaultfont"</code>).
 	 */
-
 	public static final String DEFAULT_FONT = "org.eclipse.jface.defaultfont"; //$NON-NLS-1$
 
 	/**
@@ -152,18 +145,6 @@ public class JFaceResources {
 		return bundle;
 	}
 
-	/**
-	 * Returns the color registry for JFace itself.
-	 * <p>
-	 * @return the <code>GradientRegistry</code>.
-	 * @since 3.0
-	 */
-	public static GradientRegistry getGradientRegistry() {
-		if (gradientRegistry == null)
-			gradientRegistry = new GradientRegistry();
-		return gradientRegistry;
-	}
-	
 	/**
 	 * Returns the color registry for JFace itself.
 	 * <p>

@@ -17,8 +17,6 @@ import java.util.Iterator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.resource.Gradient;
-import org.eclipse.jface.resource.GradientRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -38,7 +36,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ColorSchemeService;
 import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.IWorkbenchPresentationConstants;
+import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -250,30 +248,32 @@ public class EditorPresentation extends BasicStackPresentation {
                 .getCurrentTheme();
         FontRegistry fontRegistry = currentTheme.getFontRegistry();
         ColorRegistry colorRegistry = currentTheme.getColorRegistry();
-        GradientRegistry gradientRegistry = currentTheme.getGradientRegistry();
-        Gradient gradient = null;
-
+        Color [] bgColors = new Color[2];
+        int [] percent = new int[1];
+        boolean vertical;
         if (isActive()) {
             fgColor = colorRegistry
-                    .get(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_COLOR);
-            gradient = gradientRegistry
-                    .get(IWorkbenchPresentationConstants.ACTIVE_TAB_BG_GRADIENT);
-            getTabFolder()
-                    .setFont(
-                            fontRegistry
-                                    .get(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_FONT)); //$NON-NLS-1$
+                    .get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR);
+            bgColors[0] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
+            bgColors[1] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
+            percent[0] = currentTheme.getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT);
+            vertical = currentTheme.getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL);            
+            
         } else {
             fgColor = colorRegistry
-                    .get(IWorkbenchPresentationConstants.INACTIVE_TAB_TEXT_COLOR);
-            gradient = gradientRegistry
-                    .get(IWorkbenchPresentationConstants.INACTIVE_TAB_BG_GRADIENT);
-            getTabFolder()
-                    .setFont(
-                            fontRegistry
-                                    .get(IWorkbenchPresentationConstants.INACTIVE_TAB_TEXT_FONT)); //$NON-NLS-1$
+            		.get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR);           
+            bgColors[0] = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START);
+            bgColors[1] = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END);
+            percent[0] = currentTheme.getInt(IWorkbenchThemeConstants.INACTIVE_TAB_PERCENT);
+            vertical = currentTheme.getBoolean(IWorkbenchThemeConstants.INACTIVE_TAB_VERTICAL);            
         }
 
-        drawGradient(fgColor, gradient);
+        getTabFolder()
+        .setFont(
+                fontRegistry
+                        .get(IWorkbenchThemeConstants.TAB_TEXT_FONT));
+
+        drawGradient(fgColor, bgColors, percent, vertical);
     }
     
     void setSelection(CTabItem tabItem) {

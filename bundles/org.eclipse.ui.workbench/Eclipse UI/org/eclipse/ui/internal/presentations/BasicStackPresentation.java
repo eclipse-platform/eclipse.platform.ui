@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.resource.Gradient;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -284,9 +283,9 @@ public class BasicStackPresentation extends StackPresentation {
 		return tabFolder == null || tabFolder.isDisposed();
 	}
 	
-	public void drawGradient(Color fgColor, Gradient gradient) {
+	public void drawGradient(Color fgColor, Color [] bgColors, int [] percentages, boolean vertical) {
 		tabFolder.setSelectionForeground(fgColor);
-		tabFolder.setSelectionBackground(gradient.getColors(), gradient.getPercents(), gradient.getDirection() == SWT.VERTICAL);			    
+		tabFolder.setSelectionBackground(bgColors, percentages, vertical);			    
 	}
 	
 	public boolean isActive() {

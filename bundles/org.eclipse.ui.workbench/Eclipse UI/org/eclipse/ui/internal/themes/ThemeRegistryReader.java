@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.StringConverter;
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -58,9 +57,6 @@ public class ThemeRegistryReader extends RegistryReader {
 	public static final String TAG_COLOROVERRIDE = "colorOverride"; //$NON-NLS-1$    
 	public static final String TAG_FONTDEFINITION = "fontDefinition"; //$NON-NLS-1$
 	public static final String TAG_FONTOVERRIDE = "fontOverride"; //$NON-NLS-1$
-	public static final String TAG_GRADIENTDEFINITION = "gradientDefinition"; //$NON-NLS-1$
-	public static final String TAG_GRADIENTOVERRIDE = "gradientOverride"; //$NON-NLS-1$
-	public static final String TAG_GRADIENTPART = "gradientPart"; //$NON-NLS-1$
 	public static final String TAG_DATA = "data"; //$NON-NLS-1$
 	public static final String TAG_THEME="theme";//$NON-NLS-1$
 
@@ -227,21 +223,6 @@ public class ThemeRegistryReader extends RegistryReader {
             }
 			return true;
 	    }
-        else if (themeDescriptor == null && elementName.equals(TAG_GRADIENTDEFINITION)) {
-            GradientDefinition definition = readGradient(element);
-            if (definition != null) {
-                gradientDefinitions.add(definition);
-                themeRegistry.add(definition);
-            }
-			return true;
-	    }
-        else if (themeDescriptor != null && elementName.equals(TAG_GRADIENTOVERRIDE)) {
-            GradientDefinition definition = readGradient(element);
-            if (definition != null) {
-                themeDescriptor.add(definition);
-            }
-			return true;
-	    }
         else if (themeDescriptor == null && elementName.equals(TAG_FONTDEFINITION)) {
             FontDefinition definition = readFont(element);
             if (definition != null) {
@@ -340,90 +321,6 @@ public class ThemeRegistryReader extends RegistryReader {
 				value,
 				categoryId,
 				description);	    
-	}
-	
-    /**
-     * Read a gradient.
-     * 
-     * @param element the element to read
-     * @return the new gradient
-     */	
-	private GradientDefinition readGradient(IConfigurationElement element) {	
-		String name = element.getAttribute(ATT_LABEL);
-		
-		String id = element.getAttribute(ATT_ID);
-		
-		int direction = SWT.HORIZONTAL;
-		String directionString = element.getAttribute(ATT_DIRECTION);
-
-		if (directionString != null && directionString.equalsIgnoreCase("VERTICAL")) //$NON-NLS-1$ 
-		    direction = SWT.VERTICAL;
-					
-        
-		IConfigurationElement[] children = element.getChildren(TAG_GRADIENTPART);			
-        
-		String values [] = new String[children.length + 1];		
-		
-        values[0] = element.getAttribute(ATT_INITIALVALUE);
-        if (values[0] == null) {
-        	values[0] = checkColorFactory(element);
-        }
-        
-        if (values[0] == null || values[0].equals("")) { //$NON-NLS-1$
-            logError(element, RESOURCE_BUNDLE.getString("Gradient.badGradientValue")); //$NON-NLS-1$
-            return null;                    
-        }                        
-
-        int [] percentages = new int[children.length];
-        
-        for (int i = 0; i < children.length; i++) {      
-            String value = children[i].getAttribute(ATT_VALUE);
-            if (value == null) {
-            	value  = checkColorFactory(children[i]);
-            }
-            
-            if (value == null || value.equals("")) { //$NON-NLS-1$
-                logError(element, RESOURCE_BUNDLE.getString("Gradient.badGradientValue")); //$NON-NLS-1$
-                return null;                    
-            }
-            values[i + 1] = value;
-            
-            try {
-                int percentage = Integer.parseInt(children[i].getAttribute(ATT_PERCENTAGE));
-                if (percentage < 0) {
-                    logError(element, RESOURCE_BUNDLE.getString("Gradient.badPercentage")); //$NON-NLS-1$
-                    return null;
-                }
-                percentages[i] = percentage;
-            }
-            catch (NumberFormatException e) {
-                logError(element, RESOURCE_BUNDLE.getString("Gradient.badPercentage")); //$NON-NLS-1$
-                return null;
-            }               
-        }
-
-		String categoryId = element.getAttribute(ATT_CATEGORYID);
-		
-		String description = null;
-
-		IConfigurationElement[] descriptions =
-			element.getChildren(TAG_DESCRIPTION);
-
-		if (descriptions.length > 0)
-			description = descriptions[0].getValue();
-
-		return new GradientDefinition(
-				name,
-				id,
-				direction,
-				values,
-				percentages,
-				categoryId,
-				description,
-				element
-					.getDeclaringExtension()
-					.getDeclaringPluginDescriptor()
-					.getUniqueIdentifier());
 	}	
 	
     /**

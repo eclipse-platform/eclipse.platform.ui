@@ -16,7 +16,6 @@
             <element ref="theme" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="colorDefinition" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="fontDefinition" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="gradientDefinition" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="themeElementCategory" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="data" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
@@ -53,7 +52,6 @@
       <complexType>
          <sequence>
             <element ref="colorOverride" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="gradientOverride" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="fontOverride" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
             <element ref="data" minOccurs="0" maxOccurs="unbounded"/>
@@ -179,80 +177,6 @@ Only one of defaultsTo or value may be defined.
       </complexType>
    </element>
 
-   <element name="gradientDefinition">
-      <annotation>
-         <documentation>
-            a symbolic gradient definition.
-         </documentation>
-      </annotation>
-      <complexType>
-         <sequence>
-            <element ref="colorFactory" minOccurs="0" maxOccurs="1"/>
-            <element ref="gradientPart" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="description" minOccurs="0" maxOccurs="1"/>
-         </sequence>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  a unique id that can be used to identify this color definition.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="label" type="string">
-            <annotation>
-               <documentation>
-                  a translatable name of the gradient to be presented to the user.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="direction">
-            <annotation>
-               <documentation>
-                  The direction of this gradient.  Must be vertical or horizontal. In the absence of this attribute, horizontal is assumed.
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="vertical">
-                  </enumeration>
-                  <enumeration value="horizontal">
-                  </enumeration>
-               </restriction>
-            </simpleType>
-         </attribute>
-         <attribute name="initialValue" type="string">
-            <annotation>
-               <documentation>
-                  The starting value of this gradient.  The value may be specified in the following ways:
-&lt;ul&gt;
-&lt;li&gt;a String containing comma seperated integers in the form red,green,blue 
-&lt;li&gt;a String that maps to an SWT color constant (ie:  COLOR_RED).
-&lt;li&gt;a String in the form blend(v1-v2).  v1 and v1 may be RGB triples, SWT constants or nested blend(v1-v2) calls.  This function will blend one color with another.
-&lt;ul&gt;
-Only one of defaultsTo or value may be defined.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="categoryId" type="string">
-            <annotation>
-               <documentation>
-                  the optional id of the presentation category this gradient belongs to.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="colorFactory" type="string">
-            <annotation>
-               <documentation>
-                  a class that implements IColorFactory.  This may be used instead of initialValue to specify the default value of the color.  Please be advised that this should be used with caution - usage of this attribute will cause plugin activation.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
    <element name="fontDefinition">
       <complexType>
          <sequence>
@@ -298,49 +222,6 @@ Only one (or neither) of value or defaultsTo may be used.
 Only one or neither of value or defaultsTo may be used.
 &lt;/p&gt;
                </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="gradientPart">
-      <annotation>
-         <documentation>
-            A gradient part describes an additional color segment that exists in the gradient.
-         </documentation>
-      </annotation>
-      <complexType>
-         <sequence>
-            <element ref="colorFactory" minOccurs="0" maxOccurs="1"/>
-         </sequence>
-         <attribute name="percentage" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The percentage point at which this color appears.  This must be &gt;= 0 and &lt;= 100.  Additionally, the sequence of gradientParts must be ordered by this attribute.  Ie:  a gradientPart with percentage 10 cannot be added after a gradientPart with percentage 50.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="value" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The value of this gradient part.  The value may be specified in the following ways:
-&lt;ul&gt;
-&lt;li&gt;a String containing comma seperated integers in the form red,green,blue 
-&lt;li&gt;a String that maps to an SWT color constant (ie:  COLOR_RED).
-&lt;li&gt;a String in the form blend(v1-v2).  v1 and v1 may be RGB triples, SWT constants or nested blend(v1-v2) calls.  This function will blend one color with another.
-&lt;ul&gt;
-Only one of defaultsTo or value may be defined.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="colorFactory" type="string">
-            <annotation>
-               <documentation>
-                  a class that implements IColorFactory.  This may be used instead of value to specify the default value of the color.  Please be advised that this should be used with caution - usage of this attribute will cause plugin activation.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java"/>
-               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -399,55 +280,6 @@ Unlike a colorDefinition, you may not supply a defaultsTo for an override.
                <documentation>
                   the font value.  This is in the form: &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;-&lt;it&gt;style&lt;/it&gt;-&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; where &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;&lt;/code&gt; is the name of a font, &lt;code&gt;&lt;it&gt;style&lt;/it&gt;&lt;/code&gt; is a font style (one of &lt;code&gt;&quot;regular&quot;&lt;/code&gt;, &lt;code&gt;&quot;bold&quot;&lt;/code&gt;, &lt;code&gt;&quot;italic&quot;&lt;/code&gt;, or &lt;code&gt;&quot;bold italic&quot;&lt;/code&gt;) and &lt;code&gt;&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; is an integer representing the font height.&lt;/p&gt;
 &lt;p&gt;Example: &lt;code&gt;Times New Roman-bold-36&lt;/code&gt;.&lt;/p&gt;
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="gradientOverride">
-      <annotation>
-         <documentation>
-            Allows overriding of gradients defined in the org.eclipse.ui.colorDefinitions extension point.
-         </documentation>
-      </annotation>
-      <complexType>
-         <sequence>
-            <element ref="colorFactory" minOccurs="0" maxOccurs="1"/>
-            <element ref="gradientPart" minOccurs="0" maxOccurs="unbounded"/>
-         </sequence>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  a unique id that can be used to identify this gradient definition override.  This should match an existing gradient identifier.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="direction">
-            <annotation>
-               <documentation>
-                  the direction of this gradient.  Must be vertical or horizontal. In the absence of this attribute, horizontal is assumed.
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="vertical">
-                  </enumeration>
-                  <enumeration value="horizontal">
-                  </enumeration>
-               </restriction>
-            </simpleType>
-         </attribute>
-         <attribute name="initialValue" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The starting initial value of this gradient.  The value may be specified in the following ways:
-&lt;ul&gt;
-&lt;li&gt;a String containing comma seperated integers in the form red,green,blue 
-&lt;li&gt;a String that maps to an SWT color constant (ie:  COLOR_RED).
-&lt;li&gt;a String in the form blend(v1-v2).  v1 and v1 may be RGB triples, SWT constants or nested blend(v1-v2) calls.  This function will blend one color with another.
-&lt;ul&gt;
-Only one of defaultsTo or value may be defined.
                </documentation>
             </annotation>
          </attribute>

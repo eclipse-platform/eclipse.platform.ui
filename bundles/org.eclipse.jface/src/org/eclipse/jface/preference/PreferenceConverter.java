@@ -13,11 +13,9 @@ package org.eclipse.jface.preference;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
-import org.eclipse.jface.resource.GradientData;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
@@ -63,14 +61,7 @@ public class PreferenceConverter {
 	 * (black, <code>RGB(0,0,0)</code>).
 	 */
 	public static final RGB COLOR_DEFAULT_DEFAULT = new RGB(0, 0, 0);
-	
-	/**
-	 * The default-default value for gradient preferences.  This is a single step 
-	 * gradient colored black.
-	 * @since 3.0
-	 */	
-	public static final GradientData GRADIENT_DEFAULT_DEFAULT = new GradientData(new RGB[] {COLOR_DEFAULT_DEFAULT}, new int[0], SWT.HORIZONTAL);
-	
+
 	private static final String ENTRY_SEPARATOR = ";"; //$NON-NLS-1$
 
 	/**
@@ -110,20 +101,6 @@ public class PreferenceConverter {
 			return COLOR_DEFAULT_DEFAULT;
 		return color;
 	}
-	/**
-	 * Helper method to construct a gradient from the given string.
-	 */
-    private static GradientData basicGetGradient(String value) {
-        
-        if (IPreferenceStore.STRING_DEFAULT_DEFAULT.equals(value))
-			return GRADIENT_DEFAULT_DEFAULT;
-
-		GradientData gradient = StringConverter.asGradientData(value, null);
-		if (gradient == null)
-			return GRADIENT_DEFAULT_DEFAULT;
-		return gradient;
-    }
-    
 	/**
 	 * Helper method to construct a <code>FontData</code> from the given string.
 	 * String is in the form FontData;FontData; in order that
@@ -201,20 +178,6 @@ public class PreferenceConverter {
 	public static RGB getColor(IPreferenceStore store, String name) {
 		return basicGetColor(store.getString(name));
 	}
-	/**
-	 * Returns the current value of the gradient-valued preference with the
-	 * given name in the given preference store.
-	 * Returns the default-default value (<code>GRADIENT_DEFAULT_DEFAULT</code>) 
-	 * if there is no preference with the given name, or if the current value 
-	 * cannot be treated as a gradient.
-	 *
-	 * @param store the preference store
-	 * @param name the name of the preference
-	 * @return the gradient preference
-	 */
-    public static GradientData getGradient(IPreferenceStore store, String name) {
-        return basicGetGradient(store.getString(name));
-    }
     /**
 	 * Returns the default value for the color-valued preference
 	 * with the given name in the given preference store.
@@ -229,23 +192,6 @@ public class PreferenceConverter {
 	public static RGB getDefaultColor(IPreferenceStore store, String name) {
 		return basicGetColor(store.getDefaultString(name));
 	}
-	
-    /**
-	 * Returns the default value for the gradient-value preference
-	 * with the given name in the given preference store.
-	 * Returns the default-default value (<code>GRADIENT_DEFAULT_DEFAULT</code>) 
-	 * is no default preference with the given name, or if the default 
-	 * value cannot be treated as a gradient.
-	 *
-	 * @param store the preference store
-	 * @param name the name of the preference
-	 * @return the default value of the preference
-	 * @since 3.0
-	 */	
-	public static GradientData getDefaultGradient(IPreferenceStore store, String name) {
-	    return basicGetGradient(store.getDefaultString(name));
-	}
-
 	/**
 	 * Returns the default value array for the font-valued preference
 	 * with the given name in the given preference store.
@@ -453,22 +399,6 @@ public class PreferenceConverter {
 		store.setDefault(name, StringConverter.asString(value));
 	}
 	
-	/**
-	 * Sets the default value of the preference with the given name
-	 * in the given preference store.
-	 *
-	 * @param store the preference store
-	 * @param name the name of the preference
-	 * @param value the new default value of the preference
-	 * @since 3.0
-	 */
-	public static void setDefault(
-		IPreferenceStore store,
-		String name,
-		GradientData value) {
-		store.setDefault(name, StringConverter.asString(value));
-	}	
-
 	/**
 	 * Sets the current value of the preference with the given name
 	 * in the given preference store. 

@@ -28,9 +28,6 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.resource.Gradient;
-import org.eclipse.jface.resource.GradientData;
-import org.eclipse.jface.resource.GradientRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -76,7 +73,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.themes.*;
+import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 
 /**
@@ -116,7 +113,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
         public void hookListeners() {
             colorRegistry.addListener(listener);        
             fontRegistry.addListener(listener);
-            gradientRegistry.addListener(listener);
         }
 
         /* (non-Javadoc)
@@ -126,7 +122,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
             super.dispose();
             colorRegistry.removeListener(listener);
             fontRegistry.removeListener(listener);
-            gradientRegistry.removeListener(listener);
             for (Iterator i = images.values().iterator(); i.hasNext();) {
                 ((Image) i.next()).dispose();
             }
@@ -199,37 +194,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     	        }
 	    		return image;
     	        
-    	    }
-    	    else if (element instanceof GradientDefinition) {
-    	    	// currently only draws a gradient from the first to the last gradient element.
-    	    	// gradients with more than 2 colors are not visualized correctly.	    		
-    	        Gradient g = gradientRegistry.get(((GradientDefinition)element).getId());
-    	        Image image = (Image) images.get(g);
-    	        if (image == null) {
-    	        	Display display = presentationList.getControl().getDisplay();
-    	            ensureImageSize(display);
-	    	        image = new Image(display, imageSize, imageSize);
-	    	        
-		    		GC gc = new GC(image);
-		    		gc.setBackground(presentationList.getControl().getBackground());		    		
-		    		gc.setForeground(presentationList.getControl().getBackground());
-		    		gc.drawRectangle(0, 0, imageSize - 1, imageSize - 1);
-		    		
-		    		gc.setForeground(presentationList.getControl().getForeground());
-					int offset = (imageSize - usableImageSize) / 2;
-		    		gc.drawRectangle(offset, offset, usableImageSize - offset, usableImageSize - offset);
-		    		gc.fillRectangle(offset + 1, offset + 1, usableImageSize - offset - 1, usableImageSize - offset - 1);		    		
-		    		
-		    		Color[] colors = g.getColors();
-                    gc.setForeground(colors[0]);
-		    		gc.setBackground(colors[colors.length -1]);
-		    		gc.fillGradientRectangle(offset + 1, offset + 1, usableImageSize - offset - 1, usableImageSize - offset - 1, g.getDirection() == SWT.VERTICAL);		    			    	
-		    		gc.dispose();
-		    		
-		    		images.put(g, image);
-    	        }
-	    		return image;
-    	    	
     	    }
     	    else {
     	    	if (emptyImage == null) {
@@ -333,7 +297,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     private Composite fontControls;
 	private Map fontPreferencesToSet = new HashMap(7);
 	private CascadingFontRegistry fontRegistry;
-	private CascadingGradientRegistry gradientRegistry;
 	private Button fontResetButton;
     private Button fontSystemButton;
 	
@@ -343,12 +306,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 * registry.
 	 */    
 	private Map fontValuesToSet = new HashMap(7);
-	
-	private Map gradientValuesToSet = new HashMap(7);
-	
-	private Map gradientPreferencesToSet = new HashMap(7);
-    
-    private Composite gradientControls;
 	
 	/**
 	 * The list of fonts and colors.
@@ -549,10 +506,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		fontControls.setLayout(new FillLayout());
 		createFontControl();
 		
-		gradientControls = new Composite(controlArea, SWT.NONE);
-		fontControls.setLayout(new FillLayout());
-		createGradientControls();
-		
 		createCommentControl(controlColumn);
 
 		createDescriptionControl(mainColumn);
@@ -617,15 +570,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 		fontResetButton = createButton(composite, RESOURCE_BUNDLE.getString("reset")); //$NON-NLS-1$        
     }
-
-    /**
-     * 
-     */
-    private void createGradientControls() {
-        // TODO Auto-generated method stub
-        
-    }
-
+    
 	/**
 	 * Create the <code>ListViewer</code> that will contain all color 
 	 * definitions as defined in the extension point.
@@ -682,7 +627,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
         
         colorRegistry.dispose();
         fontRegistry.dispose();
-        gradientRegistry.dispose();
     }
 
 	/**
@@ -917,10 +861,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 					else if (element instanceof FontDefinition) {
 						swapFontControls();
 						updateFontControls((FontDefinition) element);
-					}
-					else if (element instanceof GradientDefinition) {
-						swapGradientControls();
-						updateGradientControls((GradientDefinition) element);
 					}					
 				}
 			}
@@ -1024,8 +964,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
             colorRegistry.dispose();
         if (fontRegistry != null)                    
             fontRegistry.dispose();
-        if (gradientRegistry != null)                    
-            gradientRegistry.dispose();
         
         currentTheme = manager.getCurrentTheme();
         
@@ -1033,9 +971,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	            currentTheme.getColorRegistry());
 	    fontRegistry = new CascadingFontRegistry(
 	            currentTheme.getFontRegistry());
-	    gradientRegistry = new CascadingGradientRegistry(
-	            currentTheme.getGradientRegistry());
-	    
+
 	    fontPreferencesToSet.clear();
 	    fontValuesToSet.clear();
 	    
@@ -1276,7 +1212,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
         
         updateColorControls(null);
         updateFontControls(null);
-        updateGradientControls(null);
     }
 	
 
@@ -1422,14 +1357,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     }
 
     /**
-     * 
-     */
-    protected void swapGradientControls() {
-        controlAreaLayout.topControl = gradientControls;
-        controlArea.layout();        
-    }
-
-    /**
      * Swap in no controls (empty the control area)
      */    
     protected void swapNoControls() {
@@ -1477,16 +1404,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			    if ((catId == null && categoryId == null) || (catId != null && categoryId != null && categoryId.equals(catId))) {
 			        list.add(fontDefinitions[i]);
 			    }
-			}
-
-			GradientDefinition[] gradientDefinitions = themeRegistry.getGradients();
-            for (int i = 0; i < gradientDefinitions.length; i++) {
-			    String catId = gradientDefinitions[i].getCategoryId();
-			    if ((catId == null && categoryId == null) || (catId != null && categoryId != null && categoryId.equals(catId))) {
-			        list.add(gradientDefinitions[i]);
-			    }
-			}
-			
+			}			
 			defintions = new Object[list.size()];
 			list.toArray(defintions);
 			categoryMap.put(key, defintions);
@@ -1531,10 +1449,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
                                 return fontRegistry;
                             }
 
-                            public GradientRegistry getGradientRegistry() {
-                                return gradientRegistry;
-                            }
-
                             public void dispose() {
                                 // TODO: confirm                                
                             }
@@ -1545,6 +1459,14 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
                             public Set keySet() {
                                 return currentTheme.keySet();
+                            }
+
+                            public int getInt(String themeKey) {
+                                return currentTheme.getInt(themeKey);
+                            }
+
+                            public boolean getBoolean(String themeKey) {
+                                return currentTheme.getBoolean(themeKey);
                             }
 	                    };
 	                    preview.createControl(previewControl, theme);
@@ -1654,61 +1576,4 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			((Control) iterator.next()).setFont(newFont);
 		}
 	}    
-
-    /**
-     * @param definition
-     */
-    protected void updateGradientControls(GradientDefinition definition) {
-		if (definition != null) {
-			// set controls enabled
-			String valueString = StringConverter.asString(getGradientValue(definition));
-			if (isDefault(definition)) {
-				commentText.setText(MessageFormat.format(RESOURCE_BUNDLE.getString("Gradients.currentlyDefault"), //$NON-NLS-1$
-					        	new Object[] {valueString})); 
-			} else
-				commentText.setText(MessageFormat.format(RESOURCE_BUNDLE.getString("Gradients.customValue"),  //$NON-NLS-1$
-						new Object [] {valueString}));
-
-			String description = definition.getDescription();
-			descriptionText.setText(description == null ? "" : description); //$NON-NLS-1$
-		} else {
-			// set controls enabled		
-		}
-        
-    }
-
-    /**
-     * @param definition
-     * @return
-     */
-    private GradientData getGradientValue(GradientDefinition definition) {
-		String id = definition.getId();
-		GradientData updatedGD = (GradientData) gradientPreferencesToSet.get(id);
-		if (updatedGD == null) {
-			updatedGD = (GradientData) gradientValuesToSet.get(id);
-			if (updatedGD == null)
-				updatedGD = currentTheme.getGradientRegistry().getGradientData(id);
-		}
-		return updatedGD;
-    }
-
-    /**
-     * @param definition
-     * @return
-     */
-    private boolean isDefault(GradientDefinition definition) {
-		String id = definition.getId();
-		String key = ThemeElementHelper.createPreferenceKey(currentTheme, id);
-
-        if (gradientPreferencesToSet.containsKey(id)) {			
-		    GradientData ourFontValue = (GradientData) gradientPreferencesToSet.get(id);
-		    if (ourFontValue.equals(PreferenceConverter.getDefaultGradient(getPreferenceStore(), key)))
-		    	return true;
-		} else {			
-		    GradientData ourFontValue = getGradientValue(definition);
-		    if (ourFontValue.equals(PreferenceConverter.getDefaultGradient(getPreferenceStore(), key))) 
-		        return true;
-		}
-		return false;
-    }
 }

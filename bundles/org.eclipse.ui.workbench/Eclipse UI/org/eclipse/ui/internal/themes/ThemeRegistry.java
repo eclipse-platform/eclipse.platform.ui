@@ -28,7 +28,6 @@ public class ThemeRegistry implements IThemeRegistry {
     private List themes;
 	private List colors;
 	private List fonts;
-	private List gradients;	
 	private List categories;
 	private Map dataMap;
 
@@ -39,7 +38,6 @@ public class ThemeRegistry implements IThemeRegistry {
 		themes = new ArrayList();
 		colors = new ArrayList();
 		fonts = new ArrayList();
-		gradients = new ArrayList();
 		categories = new ArrayList();
 		dataMap = new HashMap();
 	}
@@ -109,24 +107,6 @@ public class ThemeRegistry implements IThemeRegistry {
 		Arrays.sort(retArray, ID_COMPARATOR);
 		return retArray;
 	}
-
-    /**
-     * @param definition
-     */
-    void add(GradientDefinition definition) {
-        gradients.add(definition);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.themes.IThemeRegistry#getGradients()
-     */
-    public GradientDefinition[] getGradients() {
-		int nSize = gradients.size();
-		GradientDefinition [] retArray = new GradientDefinition[nSize];
-		gradients.toArray(retArray);
-		Arrays.sort(retArray, ID_COMPARATOR);
-		return retArray;
-    }
     
     /**
      * @param definition
@@ -151,13 +131,6 @@ public class ThemeRegistry implements IThemeRegistry {
      */
     public FontDefinition findFont(String id) { 
         return (FontDefinition) findDescriptor(getFonts(), id);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.themes.IThemeRegistry#findGradient(java.lang.String)
-     */
-    public GradientDefinition findGradient(String id) {
-        return (GradientDefinition) findDescriptor(getGradients(), id);
     }
 
     /**

@@ -35,7 +35,6 @@ public class ThemeDescriptor implements IThemeDescriptor {
 	private IConfigurationElement configElement;
     private String description;
 	private Collection fonts = new ArrayList();
-	private Collection gradients = new ArrayList();
 	
 	private String id;
 	private String name;
@@ -66,16 +65,7 @@ public class ThemeDescriptor implements IThemeDescriptor {
      */
     void add(FontDefinition definition) {
         fonts.add(definition);        
-    }    
-    
-    /**
-     * Add a gradient override to this descriptor.
-     * 
-     * @param definition the definition to add
-     */
-    void add(GradientDefinition definition) {
-        gradients.add(definition);
-    }
+    } 
     
     /**
      * Add a data object to this descriptor.
@@ -111,15 +101,6 @@ public class ThemeDescriptor implements IThemeDescriptor {
 	    Arrays.sort(defs, IThemeRegistry.ID_COMPARATOR);
 	    return defs;
     }	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.themes.IThemeDescriptor#getColorOverrides()
-	 */
-	public GradientDefinition[] getGradients() {
-	    GradientDefinition [] defs = (GradientDefinition []) gradients.toArray(new GradientDefinition [gradients.size()]);
-	    Arrays.sort(defs, IThemeRegistry.ID_COMPARATOR);
-	    return defs;
-	}	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.IThemeDescriptor#getID()

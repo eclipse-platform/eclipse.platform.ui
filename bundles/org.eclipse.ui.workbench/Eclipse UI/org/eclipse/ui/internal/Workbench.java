@@ -104,7 +104,6 @@ import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
-import org.eclipse.ui.internal.themes.GradientDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.intro.IIntroPart;
@@ -931,9 +930,6 @@ public final class Workbench implements IWorkbench {
 	private void initializeApplicationColors() {
 		ColorDefinition[] colorDefinitions = WorkbenchPlugin.getDefault().getThemeRegistry().getColors();
 		ThemeElementHelper.populateRegistry(getThemeManager().getTheme(IThemeManager.DEFAULT_THEME), colorDefinitions, getPreferenceStore());
-		
-		GradientDefinition [] gradientDefinitions = WorkbenchPlugin.getDefault().getThemeRegistry().getGradients();
-		ThemeElementHelper.populateRegistry(getThemeManager().getTheme(IThemeManager.DEFAULT_THEME), gradientDefinitions, getPreferenceStore());
 	}
 
 	private void initializeSingleClickOption() {

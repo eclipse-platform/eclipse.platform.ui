@@ -34,12 +34,6 @@ public interface IThemeDescriptor extends IThemeElementDefinition{
 	public FontDefinition [] getFonts();
 	
 	/**
-	 * Returns the gradient overrides for this theme.
-	 * @return GradientDefinition []
-	 */
-	public GradientDefinition [] getGradients();
-	
-	/**
 	 * Returns the data map for this theme.
 	 * 
 	 * @return the data map.  This will be read only.

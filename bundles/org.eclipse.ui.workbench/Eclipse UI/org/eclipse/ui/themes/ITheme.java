@@ -14,7 +14,6 @@ import java.util.Set;
 
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.resource.GradientRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 
 /**
@@ -68,13 +67,6 @@ public interface ITheme {
      * @return this themes font registry
      */
     public FontRegistry getFontRegistry();
-    
-    /**
-     * Return this themes gradient registry.
-     * 
-     * @return this themes gradient registry
-     */
-    public GradientRegistry getGradientRegistry();
 
     /**
      * Dispose of this theme.
@@ -88,6 +80,26 @@ public interface ITheme {
      * @return the data, or <code>null</code> if none exists.
      */
     public String getString(String key);
+    
+    /**
+     * Get arbitrary data associated with this theme.
+     *
+     * @param key the key
+     * @return the data, or the default value <code>0</code> if none exists or 
+     * if the value cannot be treated as an integer.
+     */
+    public int getInt(String key);
+    
+    /**
+     * Get arbitrary data associated with this theme.
+     *
+     * @param key the key
+     * @return the data, or the default value <code>false</code> if none exists 
+     * or if the value cannot be treated as a boolean.
+     */
+    public boolean getBoolean(String key);
+    
+   
     
     /**
      * Get the set of keys associated with this theme.

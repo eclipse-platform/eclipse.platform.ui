@@ -11,14 +11,12 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.jface.resource.Gradient;
-import org.eclipse.jface.resource.GradientRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.themes.ITheme;
@@ -46,7 +44,7 @@ public class ColorSchemeService {
                     
                     String property = event.getProperty();
                     if (property.equals(IThemeManager.CHANGE_CURRENT_THEME) 
-                            || property.equals(IWorkbenchPresentationConstants.VIEW_MENU)) {
+                            || property.equals(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END)) {
                         setViewColors(control);                        
                     }
                 }	            
@@ -71,7 +69,7 @@ public class ColorSchemeService {
 	        
 	        
 	    }
-	    control.setBackground(theme.getColorRegistry().get(IWorkbenchPresentationConstants.VIEW_MENU));	    
+	    control.setBackground(theme.getColorRegistry().get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END));	    
     }
     
 	public static void setTabAttributes(final CTabFolder control) {
@@ -86,12 +84,13 @@ public class ColorSchemeService {
                     
                     String property = event.getProperty();
                     if (property.equals(IThemeManager.CHANGE_CURRENT_THEME) 
-                            || property.equals(IWorkbenchPresentationConstants.INACTIVE_TAB_BG_GRADIENT)
-                            || property.equals(IWorkbenchPresentationConstants.INACTIVE_TAB_TEXT_COLOR)
-                            || property.equals(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_COLOR)
-                            || property.equals(IWorkbenchPresentationConstants.ACTIVE_TAB_BG_GRADIENT)
-                            || property.equals(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_FONT)
-                            || property.equals(IWorkbenchPresentationConstants.INACTIVE_TAB_TEXT_FONT)) {
+                            || property.equals(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START)
+                            || property.equals(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END)
+                            || property.equals(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR)
+                            || property.equals(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR)
+							|| property.equals(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START)
+							|| property.equals(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END)
+                            || property.equals(IWorkbenchThemeConstants.TAB_TEXT_FONT)) {
                         setTabAttributes(control);                        
                     }
                 }	            
@@ -115,19 +114,30 @@ public class ColorSchemeService {
 	        .addPropertyChangeListener(listener);	        
 	    }
 	    
+	    int [] percent = new int[1];
+	    boolean vertical;
 	    ColorRegistry colorRegistry = theme.getColorRegistry();
-        control.setForeground(colorRegistry.get(IWorkbenchPresentationConstants.INACTIVE_TAB_TEXT_COLOR));
+        control.setForeground(colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR));
+
+        Color [] c = new Color[2];
+        c[0] = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START);
+        c[1] = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END);
+
+        percent[0] = theme.getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT);
+        vertical = theme.getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL);
         
-        GradientRegistry gradientRegistry = theme.getGradientRegistry();
-        
-        Gradient bgGradient = gradientRegistry.get(IWorkbenchPresentationConstants.INACTIVE_TAB_BG_GRADIENT);	    
-        control.setBackground(bgGradient.getColors(), bgGradient.getPercents(), bgGradient.getDirection() == SWT.VERTICAL);
+        control.setBackground(c, percent, vertical);
 			
-		control.setSelectionForeground(colorRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_COLOR));
-		
-		bgGradient = gradientRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_BG_GRADIENT);	    
-        control.setSelectionBackground(bgGradient.getColors(), bgGradient.getPercents(), bgGradient.getDirection() == SWT.VERTICAL);
+		control.setSelectionForeground(colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR));
         
-        control.setFont(theme.getFontRegistry().get(IWorkbenchPresentationConstants.INACTIVE_TAB_TEXT_FONT));
+		c[0] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
+        c[1] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
+
+        percent[0] = theme.getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT);
+        vertical = theme.getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL);
+        
+        control.setSelectionBackground(c, percent, vertical);
+        
+        control.setFont(theme.getFontRegistry().get(IWorkbenchThemeConstants.TAB_TEXT_FONT));
 	}	
 }

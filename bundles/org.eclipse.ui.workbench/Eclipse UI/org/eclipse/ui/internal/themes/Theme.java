@@ -14,7 +14,6 @@ import java.util.Set;
 
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.resource.GradientRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
@@ -30,7 +29,6 @@ import org.eclipse.ui.themes.IThemeManager;
 public class Theme implements ITheme {
 
     private CascadingColorRegistry themeColorRegistry;
-    private CascadingGradientRegistry themeGradientRegistry;
     private CascadingFontRegistry themeFontRegistry;
     private IThemeDescriptor descriptor;
     
@@ -57,12 +55,7 @@ public class Theme implements ITheme {
                 themeColorRegistry = new CascadingColorRegistry(theme.getColorRegistry());
 	            ThemeElementHelper.populateRegistry(this, definitions, workbench.getPreferenceStore());	            
 	        }
-	        
-	        GradientDefinition [] gradientDefinitions = this.descriptor.getGradients();
-	        if (gradientDefinitions.length > 0) {
-	            themeGradientRegistry = new CascadingGradientRegistry(theme.getGradientRegistry());	            
-	            ThemeElementHelper.populateRegistry(this, gradientDefinitions, workbench.getPreferenceStore());
-	        }
+            
 	        FontDefinition [] fontDefinitions = this.descriptor.getFonts();
 	        if (fontDefinitions.length > 0) {
 	            themeFontRegistry = new CascadingFontRegistry(theme.getFontRegistry());	            
@@ -74,7 +67,6 @@ public class Theme implements ITheme {
         
         getColorRegistry().addListener(getListener());
         getFontRegistry().addListener(getListener());
-        getGradientRegistry().addListener(getListener());
     }
     
     /**
@@ -110,25 +102,10 @@ public class Theme implements ITheme {
             themeColorRegistry.removeListener(themeListener);
             themeColorRegistry.dispose();
         }
-        if (themeGradientRegistry != null) {
-            themeGradientRegistry.removeListener(themeListener);
-        	themeGradientRegistry.dispose();
-        }
         if (themeFontRegistry != null) {
             themeFontRegistry.removeListener(themeListener);
             themeFontRegistry.dispose();
         }
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.themes.ITheme#getGradientRegistry()
-     */
-    public GradientRegistry getGradientRegistry() {
-        if (themeGradientRegistry != null) 
-            return themeGradientRegistry;
-        else 
-            return JFaceResources.getGradientRegistry();
-
     }
 
     /* (non-Javadoc)
@@ -183,5 +160,31 @@ public class Theme implements ITheme {
             return dataMap.keySet();
         
         return themeRegistry.getData().keySet();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.themes.ITheme#getInt(java.lang.String)
+     */
+    public int getInt(String key) {
+        String string = getString(key);
+        if (string == null)
+            return 0;
+        try {            
+            return Integer.parseInt(string);
+        }
+        catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.themes.ITheme#getBoolean(java.lang.String)
+     */
+    public boolean getBoolean(String key) {
+        String string = getString(key);
+        if (string == null)
+            return false;
+        
+        return Boolean.valueOf(getString(key)).booleanValue();
     }
 }

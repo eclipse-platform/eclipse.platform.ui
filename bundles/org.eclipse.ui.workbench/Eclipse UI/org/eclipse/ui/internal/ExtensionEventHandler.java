@@ -73,7 +73,6 @@ import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.internal.registry.WorkingSetRegistryReader;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
-import org.eclipse.ui.internal.themes.GradientDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.ThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistryReader;
@@ -271,10 +270,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 		
 		ITheme theme = workbench.getThemeManager().getTheme(IThemeManager.DEFAULT_THEME);
         ThemeElementHelper.populateRegistry(theme, colorDefs, workbench.getPreferenceStore());
-
-		Collection gradients = reader.getGradientDefinitions();
-		GradientDefinition [] gradientDefs = (GradientDefinition []) gradients.toArray(new ColorDefinition [gradients.size()]);
-		ThemeElementHelper.populateRegistry(theme, gradientDefs, workbench.getPreferenceStore());
 		
 		Collection fonts = reader.getFontDefinitions();
 		FontDefinition [] fontDefs = (FontDefinition []) fonts.toArray(new ColorDefinition [fonts.size()]);

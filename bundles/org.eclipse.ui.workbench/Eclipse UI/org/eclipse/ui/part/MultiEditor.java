@@ -13,14 +13,21 @@ package org.eclipse.ui.part;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.jface.resource.GradientRegistry;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.EditorSite;
+import org.eclipse.ui.internal.IWorkbenchThemeConstants;
+import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.themes.ITheme;
 
 /**
  * A MultiEditor is a composite of editors.
@@ -190,28 +197,30 @@ public abstract class MultiEditor extends EditorPart {
 		boolean activeEditor = editor == getSite().getPage().getActiveEditor();
 		boolean activePart = editor == getSite().getPage().getActivePart();
 
-		org.eclipse.jface.resource.Gradient jfaceGradient;
+		ITheme theme = editor.getEditorSite().getWorkbenchWindow().getWorkbench().getThemeManager().getCurrentTheme();
 		Gradient g = new Gradient();
-		
-		// TODO : should this come from theme colors? 
-		GradientRegistry gradientRegistry = JFaceResources.getGradientRegistry();        
-		ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
+				       
+		ColorRegistry colorRegistry = theme.getColorRegistry();
         if (activePart) {
-			g.fgColor = colorRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_COLOR);
-			jfaceGradient = gradientRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_BG_GRADIENT);
+			g.fgColor = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR);
+			g.bgColors = new Color [2];
+			g.bgColors[0] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
+			g.bgColors[1] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
 		} else {
-			if (activeEditor) {
-				g.fgColor = colorRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_COLOR);
-				jfaceGradient = gradientRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_BG_GRADIENT);
+			if (activeEditor) {			    
+				g.fgColor = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR);							    
+				g.bgColors = new Color [2];
+				g.bgColors[0] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
+				g.bgColors[1] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
 			}
 			else {
-				g.fgColor = colorRegistry.get(IWorkbenchPresentationConstants.INACTIVE_TAB_TEXT_COLOR);
-				jfaceGradient = gradientRegistry.get(IWorkbenchPresentationConstants.INACTIVE_TAB_BG_GRADIENT);
+				g.fgColor = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR);
+				g.bgColors = new Color [2];
+				g.bgColors[0] = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START);
+				g.bgColors[1] = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END);
 			}
 		}
-		
-	    g.bgColors = jfaceGradient.getColors();
-	    g.bgPercents = jfaceGradient.getPercents();
+	    g.bgPercents = new int [] {theme.getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT)};
 		
 		drawGradient(editor, g);
 	}
@@ -235,28 +244,5 @@ public abstract class MultiEditor extends EditorPart {
 		public Color fgColor;
 		public Color[] bgColors;
 		public int[] bgPercents;
-
-//		private static Gradient BLUE = new Gradient();
-//		private static Gradient BLACK = new Gradient();
-//		private static Gradient GRAY = new Gradient();
-//		private static Gradient WHITE = new Gradient();
-//
-//		static {
-//			BLUE.fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
-//			BLUE.bgColors = WorkbenchColors.getActiveEditorGradient();
-//			BLUE.bgPercents = WorkbenchColors.getActiveEditorGradientPercents();
-//
-//			BLACK.fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
-//			BLACK.bgColors = WorkbenchColors.getDeactivatedEditorGradient();
-//			BLACK.bgPercents = WorkbenchColors.getDeactivatedEditorGradientPercents();
-//
-//			WHITE.fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_BLACK);
-//			WHITE.bgColors = WorkbenchColors.getActiveNoFocusEditorGradient();
-//			WHITE.bgPercents = WorkbenchColors.getActiveNoFocusEditorGradientPercents();
-//
-//			GRAY.fgColor = null;
-//			GRAY.bgColors = null;
-//			GRAY.bgPercents = null;
-//		}
 	}
 }

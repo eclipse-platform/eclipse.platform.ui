@@ -122,16 +122,7 @@ public interface IThemeRegistry {
 	 * not found
 	 */
 	public FontDefinition findFont(String id);
-	
-	/**
-	 *  Returns the gradient matching the provided id.
-	 * 
-	 * @param id the id to search for
-	 * @return the element matching the provided id, or <code>null</code> if 
-	 * not found
-	 */	
-	public GradientDefinition findGradient(String id);
-	
+		
 	/**
 	 *  Returns the theme matching the provided id.
 	 * 
@@ -161,13 +152,6 @@ public interface IThemeRegistry {
 	 * @return the fonts in this registry
 	 */
     public FontDefinition[] getFonts();
-
-	/**
-	 * Returns a list of gradients defined in the registry.
-	 * 
-	 * @return the gradients in this registry
-	 */
-    public GradientDefinition[] getGradients();
 
 	/**
 	 * Returns a list of themes defined in the registry.
