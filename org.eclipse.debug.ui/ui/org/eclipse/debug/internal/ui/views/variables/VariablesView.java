@@ -514,6 +514,12 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		textAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_DLCL_CONTENT_ASSIST));
 		setAction("ContentAssist", textAction); //$NON-NLS-1$
 		
+		// XXX: hook the "java" content assist action - this is a hack to get content
+		// assist to work with the retargetable content assist action in the java UI
+		getViewSite().getActionBars().setGlobalActionHandler("org.eclipse.jdt.ui.actions.ContentAssist", textAction);
+		// Also hook CTRL-Space in case the java UI is not loaded/available
+		addVerifyKeyListener();
+		
 		textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().getTextOperationTarget().SELECT_ALL);
 		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.Select_&All_5"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction(DETAIL_SELECT_ALL_ACTION, textAction);
@@ -539,7 +545,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		fSelectionActions.add(ITextEditorActionConstants.PASTE);
 		updateAction(ITextEditorActionConstants.FIND);
 		
-		addVerifyKeyListener();
 		// set initial content here, as viewer has to be set
 		setInitialContent();
 	} 
