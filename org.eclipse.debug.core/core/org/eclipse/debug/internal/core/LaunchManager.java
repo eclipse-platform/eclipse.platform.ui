@@ -5,12 +5,14 @@ package org.eclipse.debug.internal.core;
  * All Rights Reserved.
  */
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -150,6 +152,27 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	protected static final IPath LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH =
 		DebugPlugin.getDefault().getStateLocation().append(".launches"); //$NON-NLS-1$
 		
+	/**
+	 * Serializes a XML document into a string - encoded in UTF8 format,
+	 * with platform line separators.
+	 * 
+	 * @param doc document to serialize
+	 * @return the document as a string
+	 */
+	public static String serializeDocument(Document doc) throws IOException {
+		ByteArrayOutputStream s= new ByteArrayOutputStream();
+		OutputFormat format = new OutputFormat();
+		format.setIndenting(true);
+		format.setLineSeparator(System.getProperty("line.separator"));  //$NON-NLS-1$
+		
+		Serializer serializer =
+			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
+				new OutputStreamWriter(s, "UTF8"), //$NON-NLS-1$
+				format);
+		serializer.asDOMSerializer().serialize(doc);
+		return s.toString("UTF8"); //$NON-NLS-1$		
+	}	
+			
 	/**
 	 * @see ILaunchManager#addLaunchListener(ILaunchListener)
 	 */
@@ -769,41 +792,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				DebugPlugin.log(e);
 			}
 		}		
-	}
-
-	/**
-	 * Returns XML that can be used to persist the specified
-	 * launch configurations.
-	 * 
-	 * @param configs list of configurations
-	 * @return XML
-	 * @exception IOException if an exception occurs creating the XML
-	 */
-	protected String getConfigsAsXML(List configs) throws IOException, CoreException {
-
-		Document doc = new DocumentImpl();
-		Element configRootElement = doc.createElement("launchConfigurations"); //$NON-NLS-1$
-		doc.appendChild(configRootElement);
-		
-		for (int i = 0; i < configs.size(); i++) {
-			ILaunchConfiguration lc = (ILaunchConfiguration)configs.get(i);
-			String memento = lc.getMemento();
-			Element element = doc.createElement("launchConfiguration"); //$NON-NLS-1$
-			element.setAttribute("memento", memento); //$NON-NLS-1$
-			configRootElement.appendChild(element);
-		}
-
-		// produce a String output
-		StringWriter writer = new StringWriter();
-		OutputFormat format = new OutputFormat();
-		format.setIndenting(true);
-		Serializer serializer =
-			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
-				writer,
-				format);
-		serializer.asDOMSerializer().serialize(doc);
-		return writer.toString();
-			
 	}
 	
 	/**

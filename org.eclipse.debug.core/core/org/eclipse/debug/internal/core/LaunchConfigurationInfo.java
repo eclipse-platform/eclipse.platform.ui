@@ -6,7 +6,6 @@ package org.eclipse.debug.internal.core;
  */
  
 import java.io.IOException;
-import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -16,10 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.Method;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.Serializer;
-import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
@@ -290,17 +285,7 @@ public class LaunchConfigurationInfo {
 			configRootElement.appendChild(element);
 		}
 
-		// produce a String output
-		StringWriter writer = new StringWriter();
-		OutputFormat format = new OutputFormat();
-		format.setIndenting(true);
-		Serializer serializer =
-			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
-				writer,
-				format);
-		serializer.asDOMSerializer().serialize(doc);
-		return writer.toString();
-			
+		return LaunchManager.serializeDocument(doc);
 	}
 	
 	/**

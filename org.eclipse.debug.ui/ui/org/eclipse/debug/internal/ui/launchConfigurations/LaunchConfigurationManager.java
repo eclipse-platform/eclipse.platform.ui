@@ -2,9 +2,9 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,10 +19,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.Method;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.Serializer;
-import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -643,16 +639,7 @@ public class LaunchConfigurationManager implements ILaunchListener,
 			historyRootElement.appendChild(recent);
 		}
 
-		// produce a String output
-		StringWriter writer = new StringWriter();
-		OutputFormat format = new OutputFormat();
-		format.setIndenting(true);
-		Serializer serializer =
-			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
-				writer,
-				format);
-		serializer.asDOMSerializer().serialize(doc);
-		return writer.toString();			
+		return DebugUIPlugin.serializeDocument(doc);
 	}
 	
 	protected Element getHistoryEntryAsXMLElement(org.w3c.dom.Document doc, LaunchConfigurationHistoryElement element) throws CoreException {
@@ -688,11 +675,13 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	protected void persistLaunchHistory() throws IOException, CoreException {
 		IPath historyPath = getHistoryFilePath();
 		String osHistoryPath = historyPath.toOSString();
+		String xml = getHistoryAsXML();
 		File file = new File(osHistoryPath);
 		file.createNewFile();
-		FileWriter writer = new FileWriter(file);
-		writer.write(getHistoryAsXML());
-		writer.close();		
+		
+		FileOutputStream stream = new FileOutputStream(file);
+		stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
+		stream.close();
 	}
 	
 	/**

@@ -7,7 +7,6 @@ package org.eclipse.debug.internal.core;
  
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 
@@ -15,10 +14,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.Method;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.Serializer;
-import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -377,25 +372,16 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		
 		Document doc = new DocumentImpl();
 		Element node = doc.createElement("launchConfiguration"); //$NON-NLS-1$
+		doc.appendChild(node);
 		node.setAttribute("local", (new Boolean(isLocal())).toString()); //$NON-NLS-1$
 		node.setAttribute("path", relativePath.toString()); //$NON-NLS-1$
 		
-		// produce a String output
-		StringWriter writer = new StringWriter();
-		OutputFormat format = new OutputFormat();
-		format.setIndenting(true);
-		Serializer serializer =
-			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
-				writer,
-				format);
-		
 		try {
-			serializer.asDOMSerializer().serialize(node);
+			return LaunchManager.serializeDocument(doc);
 		} catch (IOException e) {
 			IStatus status = newStatus(DebugCoreMessages.getString("LaunchConfiguration.Exception_occurred_creating_launch_configuration_memento_9"), DebugException.INTERNAL_ERROR,  e); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
-		return writer.toString();
 	}
 
 	/**
