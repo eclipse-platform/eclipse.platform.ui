@@ -685,7 +685,8 @@ public class PageLayout implements IPageLayout {
 				stackPlaceholder(viewId, refId);
 				LayoutHelper.addViewActivator(this, viewId);
 			}
-			stackPart(newPart, viewId, refId);
+			else
+				stackPart(newPart, viewId, refId);
 		} catch (PartInitException e) {
 			WorkbenchPlugin.log(e.getMessage());
 		}
