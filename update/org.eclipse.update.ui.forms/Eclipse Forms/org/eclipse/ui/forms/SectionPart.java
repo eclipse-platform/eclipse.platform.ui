@@ -12,21 +12,21 @@ package org.eclipse.ui.forms;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.widgets.*;
 
 /**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * Section part implements IFormPart interface based on the Section widget.
  */
 public class SectionPart implements IFormPart {
-	private ManagedForm managedForm;
+	private IManagedForm managedForm;
 	private Section section;
 	
 	public SectionPart(Section section) {
 		this.section = section;
+		initialize();
+	}
+	
+	protected void initialize() {
 		if ((section.getExpansionStyle()& Section.NONE)==0) {
 			section.addExpansionListener(new ExpansionAdapter() {
 				public void expansionStateChanging(ExpansionEvent e) {
@@ -39,10 +39,15 @@ public class SectionPart implements IFormPart {
 		}
 	}
 	
+	public Section getSection() {
+		return section;
+	}
+	
 	protected void expansionStateChanging(boolean expanding) {
 	}
 	
 	protected void expansionStateChanged(boolean expanded) {
+		managedForm.getForm().reflow(false);
 	}
 	
 	public SectionPart(Composite parent, FormToolkit toolkit, int style) {
@@ -52,8 +57,9 @@ public class SectionPart implements IFormPart {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IFormPart#initialize(org.eclipse.ui.forms.ManagedForm)
 	 */
-	public void initialize(ManagedForm form) {
+	public void initialize(IManagedForm form) {
 		this.managedForm = form;
+		initialize();
 	}
 
 	/* (non-Javadoc)

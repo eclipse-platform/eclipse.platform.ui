@@ -16,7 +16,6 @@ import java.net.URL;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
@@ -31,7 +30,9 @@ public class WidgetTest {
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		FormToolkit toolkit = new FormToolkit(display);
+		FormColors colors = new FormColors(display);
+		colors.markShared();
+		FormToolkit toolkit = new FormToolkit(colors);
 		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
 			HyperlinkSettings.UNDERLINE_ROLLOVER);
 		CTabFolder folder = new CTabFolder(shell, SWT.NULL);
@@ -51,6 +52,7 @@ public class WidgetTest {
 				display.sleep();
 		}
 		display.dispose();
+		colors.dispose();
 	}
 
 	private static Form createForm1(Composite parent, FormToolkit toolkit) {
@@ -60,8 +62,8 @@ public class WidgetTest {
 		ImageDescriptor bd = ImageDescriptor.createFromURL(bdURL);
 		form.setBackgroundImage(bd.createImage());
 		TableWrapLayout layout = new TableWrapLayout();
-		layout.leftMargin = 0;
-		layout.rightMargin = 0;
+		layout.leftMargin = 10;
+		layout.rightMargin = 10;
 		//layout.numColumns = 2;
 		//layout.makeColumnsEqualWidth = true;
 		form.getBody().setLayout(layout);
@@ -140,10 +142,9 @@ public class WidgetTest {
 		exp.setLayoutData(td);
 	}
 	
-	static class FormWizard extends Wizard {
-		private FormToolkit toolkit;
-		public FormWizard(FormColors colors) {
-			toolkit = new FormToolkit(colors); 
+	static class SampleFormWizard extends FormWizard {
+		public SampleFormWizard(FormColors colors) {
+			super(colors);
 			setNeedsProgressMonitor(true);
 			URL banner = WidgetTest.class.getResource("migrate_30_wiz.gif");
 			ImageDescriptor bd = ImageDescriptor.createFromURL(banner);
@@ -152,7 +153,7 @@ public class WidgetTest {
 		}
 		
 		public  void addPages() {
-			addPage(new FormWizardPage(toolkit));
+			addPage(new SampleFormWizardPage(toolkit));
 		}
 		public boolean performFinish() {
 			try {
@@ -178,28 +179,25 @@ public class WidgetTest {
 		
 	}
 	
-	static class FormWizardPage extends WizardPage {
-		private FormToolkit toolkit;
-		public FormWizardPage(FormToolkit toolkit) {
-			super("formPage");
-			this.toolkit = toolkit;
+	static class SampleFormWizardPage extends FormWizardPage {
+		public SampleFormWizardPage(FormToolkit toolkit) {
+			super("formPage", toolkit);
 			setTitle("Sample Form Page");
 			setDescription("This is a sample of a form in the wizard");
 		}
-		public void createControl(Composite parent) {
-			final Form form = toolkit.createForm(parent);
+		protected void createFormContents(Composite parent) {
 			TableWrapLayout layout = new TableWrapLayout();
 			layout.leftMargin = 10;
 			//layout.rightMargin = 10;
 			//layout.bottomMargin = 0;
 			//layout.topMargin = 0;
-			form.getBody().setLayout(layout);
-			Section sec = toolkit.createSection(form.getBody(), Section.TWISTIE);
+			parent.setLayout(layout);
+			Section sec = toolkit.createSection(parent, Section.TWISTIE);
 			sec.setSeparatorControl(toolkit.createCompositeSeparator(sec));
 			sec.setText("A section inside a wizard page");
 			sec.addExpansionListener(new ExpansionAdapter() {
 				public void expansionStateChanged(ExpansionEvent e) {
-					form.reflow(false);
+					managedForm.getForm().reflow(false);
 				}
 			});
 			Composite group = toolkit.createComposite(sec);
@@ -208,9 +206,12 @@ public class WidgetTest {
 			group.setLayout(glayout);
 			glayout.numColumns = 2;
 			toolkit.createLabel(group, "Some text:");
-			toolkit.createText(group, "");
-			Button b;
+			Text text = toolkit.createText(group, "");
 			GridData gd = new GridData();
+			gd.widthHint = 150;
+			text.setLayoutData(gd);
+			Button b;
+			gd = new GridData();
 			b = toolkit.createButton(group, "An option to select", SWT.CHECK);
 			gd = new GridData();
 			gd.horizontalSpan = 2;
@@ -226,60 +227,17 @@ public class WidgetTest {
 			TableWrapData td = new TableWrapData();
 			sec.setLayoutData(td);
 			//createExpandable(form, toolkit);
-			RichText rtext = toolkit.createRichText(form.getBody(), false);
+			RichText rtext = toolkit.createRichText(parent, false);
 			loadRichText(rtext, toolkit);
 			td = new TableWrapData();
 			td.align = TableWrapData.FILL;
 			td.grabHorizontal = true;
 			rtext.setLayoutData(td);
-			setControl(form);
 		}
 	}
-	
-	static class ResizableWizardDialog extends WizardDialog {
-		FormColors colors;
-		public ResizableWizardDialog(Shell shell, Wizard wizard, FormColors colors) {
-			super(shell, wizard);
-			setShellStyle(getShellStyle() | SWT.RESIZE);
-			this.colors = colors;
-		}
-		protected Control createDialogArea(Composite parent) {
-			Composite c = (Composite)super.createDialogArea(parent);
-			setChildColors(c);
-			c.setBackground(colors.getBackground());
-			c.setForeground(colors.getForeground());
-			return c;
-		}
-		protected Control createButtonBar(Composite parent) {
-			Control bar = super.createButtonBar(parent);
-			bar.setBackground(colors.getBackground());
-			bar.setForeground(colors.getForeground());
-			parent.setBackground(colors.getBackground());
-			parent.setForeground(colors.getForeground());
-			return bar;
-		}
-		private void setChildColors(Composite parent) {
-			Control [] children = parent.getChildren();
-			for (int i=0; i<children.length; i++) {
-				Control child = children[i];
-				child.setBackground(colors.getBackground());
-				if (child instanceof ProgressMonitorPart)
-					setChildColors((ProgressMonitorPart)child);
-				if (child instanceof Composite) {
-					Layout l = ((Composite)child).getLayout();
-					if (l instanceof PageContainerFillLayout) {
-						PageContainerFillLayout pl = (PageContainerFillLayout)l;
-						pl.marginWidth = 0;
-						pl.marginHeight = 0;
-					}
-				}
-			}
-		}
-	}
-	
 	private static void openFormWizard(Shell shell, FormColors colors) {
-		FormWizard wizard = new FormWizard(colors);
-		WizardDialog wd = new ResizableWizardDialog(shell, wizard, colors);
+		FormWizard wizard = new SampleFormWizard(colors);
+		FormWizardDialog wd = new FormWizardDialog(shell, wizard, colors);
 		wd.create();
 		wd.getShell().setText("Sample Form Wizard");
 		wd.getShell().setSize(600, 500);

@@ -157,8 +157,17 @@ public class FormToolkit {
 		return composite;
 	}
 	public Composite createCompositeSeparator(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(colors.getColor(FormColors.SEPARATOR));
+		final Composite composite = new Composite(parent, SWT.NONE);
+		composite.addListener(SWT.Paint, new Listener() {
+			public void handleEvent(Event e) {
+				if (composite.isDisposed()) return;
+				Rectangle bounds = composite.getBounds();
+				GC gc = e.gc;
+				gc.setForeground(colors.getColor(FormColors.SEPARATOR));
+				gc.setBackground(colors.getBackground());
+				gc.fillGradientRectangle(0, 0, bounds.width, bounds.height, false);	
+			}
+		});
 		if (parent instanceof Section)
 			((Section)parent).setSeparatorControl(composite);
 		return composite;

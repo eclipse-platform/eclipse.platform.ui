@@ -25,12 +25,9 @@ import org.eclipse.swt.widgets.*;
  * parent by calling 'getBody()' on the form instance. Example:
  * 
  * <pre>
- *  Form form = new Form(parent); 
- *  FormToolkit toolkit = new FormToolkit(parent.getDisplay()); 
- *  form.setText("Sample form"); 
- *  form.getBody().setLayout(new GridLayout()); 
- *  toolkit.createButton(form.getBody(), "Checkbox", SWT.CHECK);
+ *  Form form = new Form(parent); FormToolkit toolkit = new FormToolkit(parent.getDisplay()); form.setText("Sample form"); form.getBody().setLayout(new GridLayout()); toolkit.createButton(form.getBody(), "Checkbox", SWT.CHECK);
  * </pre>
+ * 
  * 
  * 
  * 
@@ -51,12 +48,20 @@ public class Form extends ScrolledComposite {
 	private Composite body;
 
 	private class FormLayout extends Layout implements ILayoutExtension {
-		
-		public int computeMinimumWidth(Composite composite, boolean flushCache) {
+
+		public int computeMinimumWidth(
+			Composite composite,
+			boolean flushCache) {
 			return computeSize(composite, 5, SWT.DEFAULT, flushCache).x;
 		}
-		public int computeMaximumWidth(Composite composite, boolean flushCache) {
-			return computeSize(composite, SWT.DEFAULT, SWT.DEFAULT, flushCache).x;
+		public int computeMaximumWidth(
+			Composite composite,
+			boolean flushCache) {
+			return computeSize(
+				composite,
+				SWT.DEFAULT,
+				SWT.DEFAULT,
+				flushCache).x;
 		}
 		protected Point computeSize(
 			Composite composite,
@@ -170,9 +175,11 @@ public class Form extends ScrolledComposite {
 		super.setFont(font);
 		getContent().setFont(font);
 	}
-	/*
-	 * public final void setContent(Control c) { // should not be used }
-	 */
+/**
+ * The form sets the content widget. This method should not be called by 
+ * classes that instantiate this widget.
+ */
+	public final void setContent(Control c) {}
 
 	/**
 	 * Sets the text to be rendered at the top of the form above the body as a

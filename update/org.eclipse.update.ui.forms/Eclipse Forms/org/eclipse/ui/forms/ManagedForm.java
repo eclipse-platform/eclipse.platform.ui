@@ -2,7 +2,7 @@ package org.eclipse.ui.forms;
 
 import java.util.Vector;
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.*;
 
@@ -10,12 +10,12 @@ import org.eclipse.ui.forms.widgets.*;
  * Managed form wraps a form widget and adds life cycle methods
  * for form parts. A form part is a portion of the form that
  * participates in form life cycle events. 
- * <p>There is no 1/1 mapping between widgets and form parts.
+ * <p>There is requirement for 1/1 mapping between widgets and form parts.
  * A widget like Section can be a part by itself, but a number
  * of widgets can join around one form part.
  * @since 3.0
  */
-public class ManagedForm {
+public class ManagedForm implements IManagedForm {
 	private Form form;
 	private FormToolkit toolkit;
 	private boolean ownsToolkit;
@@ -135,6 +135,13 @@ public class ManagedForm {
 		for (int i=0; i<parts.size(); i++) {
 			IFormPart part = (IFormPart)parts.get(i);
 			part.setFormInput(input);
+		}
+	}
+	
+	public void setFocus() {
+		if (parts.size()>0) {
+			IFormPart part = (IFormPart)parts.get(0);
+			part.setFocus();
 		}
 	}
 }
