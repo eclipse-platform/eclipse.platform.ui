@@ -28,6 +28,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -39,11 +40,17 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * This is a dummy page that is added to the property dialog
@@ -418,9 +425,9 @@ private String getEncodingFromContent(IFile file) {
 	try {
 		InputStream contents = new BufferedInputStream(file.getContents());
 		try {
-			IContentDescription description = contentTypeManager.getDescriptionFor(contents, file.getName(), IContentDescription.CHARSET);
+			IContentDescription description = contentTypeManager.getDescriptionFor(contents, file.getName(), new QualifiedName[] {IContentDescription.CHARSET});
 			if (description != null) {
-				String charset= description.getCharset();
+				String charset= (String) description.getProperty(IContentDescription.CHARSET);
 				if (charset != null)
 					return charset;
 			}
