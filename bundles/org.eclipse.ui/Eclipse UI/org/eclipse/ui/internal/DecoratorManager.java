@@ -39,7 +39,7 @@ public class DecoratorManager
 	private final String VALUE_SEPARATOR = ":";
 	private final String P_TRUE = "true";
 	private final String P_FALSE = "false";
-	private int hitCount = 0;
+
 
 	/**
 	 * Create a new instance of the receiver and load the
