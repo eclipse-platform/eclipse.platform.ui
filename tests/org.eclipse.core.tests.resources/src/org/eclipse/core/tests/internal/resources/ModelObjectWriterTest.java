@@ -5,13 +5,14 @@ package org.eclipse.core.tests.internal.resources;
  * All Rights Reserved.
  */
 
-import java.io.FileInputStream;
+import java.io.*;
 import java.util.HashMap;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.SafeFileOutputStream;
 import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
@@ -30,11 +31,23 @@ protected boolean contains(Object key, Object[] array) {
 			return true;
 	return false;
 }
+protected String getInvalidWorkspaceDescription() {
+	return 
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+			"<workspaceDescription>\n" +
+				"<name>Foo</name>\n" +
+				"<autobuild>Foo</autobuild>\n" +
+				"<snapshotsEnabled>Foo</snapshotsEnabled>\n" +
+				"<operationsPerSnapshot>100Foo</operationsPerSnapshot>\n" +
+				"<snapshotInterval>300Foo000</snapshotInterval>\n" +
+				"<deltaExpirationTimestamp>259Foo00</deltaExpirationTimestamp>\n" +
+				"<fileStateLongevity>Foo480000</fileStateLongevity>\n" +
+				"<maxFileStateSize>104856Foo</maxFileStateSize>\n" +
+				"<maxFileStates>5Foo0</maxFileStates>\n" +
+			"</workspaceDescription>\n";
+}
 public static Test suite() {
-	TestSuite suite = new TestSuite();
-	suite.addTest(new ModelObjectWriterTest("testWorkspaceDescription"));
-	suite.addTest(new ModelObjectWriterTest("testProjectDescription"));
-	return suite;
+	return new TestSuite(ModelObjectWriterTest.class);
 }
 public void testProjectDescription() throws Throwable {
 
@@ -87,7 +100,44 @@ public void testProjectDescription() throws Throwable {
 	/* remove trash */
 	Workspace.clear(location.toFile());
 }
-public void testWorkspaceDescription() throws Throwable {
+public void testInvalidWorkspaceDescription() {
+	/* initialize common objects */
+	ModelObjectReader reader = new ModelObjectReader();
+	IPath root = getWorkspace().getRoot().getLocation();
+	IPath location = root.append("ModelObjectWriterTest2.pbs");
+
+	/* write the bogus description */
+	try {
+		FileWriter writer = new FileWriter(location.toFile());
+		writer.write(getInvalidWorkspaceDescription());
+		writer.close();
+	} catch (IOException e) {
+		fail("1.91", e);
+	}
+
+	/* test read */
+	try {
+		FileInputStream input = null;
+		try {
+			input = new FileInputStream(location.toFile());
+		} catch (FileNotFoundException e) {
+			fail("1.99", e);
+		}
+		//on reading invalid values the reader should revert to default values
+		WorkspaceDescription desc2 = (WorkspaceDescription) reader.read(input);
+		//assertion "1.1" removed because workspace name can't be invalid
+		assertTrue("1.2", Policy.defaultAutoBuild == desc2.isAutoBuilding());
+		assertTrue("1.3", Policy.defaultDeltaExpiration == desc2.getDeltaExpiration());
+		assertTrue("1.4", Policy.defaultFileStateLongevity == desc2.getFileStateLongevity());
+		assertTrue("1.5", Policy.defaultMaxFileStates == desc2.getMaxFileStates());
+		assertTrue("1.6", Policy.defaultMaxFileStateSize == desc2.getMaxFileStateSize());
+		assertTrue("1.7", Policy.defaultOperationsPerSnapshot == desc2.getOperationsPerSnapshot());
+		assertTrue("1.8", Policy.defaultSnapshots == desc2.isSnapshotEnabled());
+	} finally {
+		/* remove trash */
+		Workspace.clear(location.toFile());
+	}
+}public void testWorkspaceDescription() throws Throwable {
 
 	/* initialize common objects */
 	ModelObjectWriter writer = new ModelObjectWriter();
@@ -111,18 +161,20 @@ public void testWorkspaceDescription() throws Throwable {
 	output.close();
 
 	/* test read */
-	FileInputStream input = new FileInputStream(location.toFile());
-	WorkspaceDescription desc2 = (WorkspaceDescription) reader.read(input);
-	assertTrue("1.1", desc.getName().equals(desc2.getName()));
-	assertTrue("1.2", desc.isAutoBuilding() == desc2.isAutoBuilding());
-	assertTrue("1.3", desc.getDeltaExpiration() == desc2.getDeltaExpiration());
-	assertTrue("1.4", desc.getFileStateLongevity() == desc2.getFileStateLongevity());
-	assertTrue("1.5", desc.getMaxFileStates() == desc2.getMaxFileStates());
-	assertTrue("1.6", desc.getMaxFileStateSize() == desc2.getMaxFileStateSize());
-	assertTrue("1.7", desc.getOperationsPerSnapshot() == desc2.getOperationsPerSnapshot());
-	assertTrue("1.8", desc.isSnapshotEnabled() == desc2.isSnapshotEnabled());
-
-	/* remove trash */
-	Workspace.clear(location.toFile());
+	try {
+		FileInputStream input = new FileInputStream(location.toFile());
+		WorkspaceDescription desc2 = (WorkspaceDescription) reader.read(input);
+		assertTrue("1.1", desc.getName().equals(desc2.getName()));
+		assertTrue("1.2", desc.isAutoBuilding() == desc2.isAutoBuilding());
+		assertTrue("1.3", desc.getDeltaExpiration() == desc2.getDeltaExpiration());
+		assertTrue("1.4", desc.getFileStateLongevity() == desc2.getFileStateLongevity());
+		assertTrue("1.5", desc.getMaxFileStates() == desc2.getMaxFileStates());
+		assertTrue("1.6", desc.getMaxFileStateSize() == desc2.getMaxFileStateSize());
+		assertTrue("1.7", desc.getOperationsPerSnapshot() == desc2.getOperationsPerSnapshot());
+		assertTrue("1.8", desc.isSnapshotEnabled() == desc2.isSnapshotEnabled());
+	} finally {
+		/* remove trash */
+		Workspace.clear(location.toFile());
+	}
 }
 }
