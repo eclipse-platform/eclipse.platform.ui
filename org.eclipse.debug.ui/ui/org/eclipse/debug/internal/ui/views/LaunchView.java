@@ -204,13 +204,13 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator(IDebugUIConstants.THREAD_GROUP));
-		tbm.add(getAction("RemoveAll"));
+		tbm.add(getAction("RemoveAll")); //$NON-NLS-1$
 		tbm.add(new Separator(IDebugUIConstants.STEP_GROUP));
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 	}	
 
 	/**
-	 * @see IWorkbenchPart
+	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
 		if (getViewer() != null) {
