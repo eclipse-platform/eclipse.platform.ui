@@ -1,9 +1,16 @@
 package org.eclipse.ui.tests.api;
 
-import junit.framework.TestCase;
-import org.eclipse.ui.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.tests.FileUtil;
 
 public class IWorkbenchPageTest extends AbstractTestCase{
 	
@@ -96,11 +103,35 @@ public class IWorkbenchPageTest extends AbstractTestCase{
 	
 	public void testShowView() throws Throwable
 	{		
+		// Open view.
 		MockViewPart part = (MockViewPart)fActivePage.showView( MockViewPart.ID );												
-
-		CallHistory callTrace = part.getCallHistory();
-		assert( callTrace.verifyOrder( new String[] {
+		assertNotNull(part);
+		assert( part.getCallHistory().verifyOrder( new String[] {
 				"init", "createPartControl", "setFocus"
 			} ));
+		assertEquals(Tool.arrayHas(fActivePage.getViews(), part), true);
+		
+		// Close view.
+		fActivePage.hideView(part);
+		assertNull(fActivePage.findView( MockViewPart.ID ));
+		assertEquals(Tool.arrayHas(fActivePage.getViews(), part), false);
+	}
+	
+	public void testOpenEditor() throws Throwable {
+		// Create test file.
+		IProject proj = FileUtil.createProject("testOpenEditor");
+		IFile file = FileUtil.createFile("test.mock1", proj);
+		
+		// Open editor.
+		IEditorPart editor = fActivePage.openEditor(file);
+		assertNotNull(editor);
+		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
+		
+		// Close editor.
+		fActivePage.closeEditor(editor, false);
+		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), false);
+		
+		// Cleanup.
+		FileUtil.deleteProject(proj);
 	}
 }

@@ -21,8 +21,8 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	private IWorkbenchPartSite site;
 	private String title;
 	
-	public MockWorkbenchPart()
-	{		
+	public MockWorkbenchPart() {		
+		callTrace = new CallHistory();
 	}
 	
 	public CallHistory getCallHistory()

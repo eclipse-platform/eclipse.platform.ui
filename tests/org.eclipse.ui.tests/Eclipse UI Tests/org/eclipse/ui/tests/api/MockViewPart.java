@@ -11,7 +11,6 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
 	public MockViewPart()
 	{
 		super();
-		callTrace = new CallHistory();
 	}
 	
 	/**

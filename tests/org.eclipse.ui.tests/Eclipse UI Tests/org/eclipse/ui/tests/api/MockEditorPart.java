@@ -6,8 +6,8 @@ import org.eclipse.ui.*;
 
 public class MockEditorPart extends MockWorkbenchPart implements IEditorPart {
 
-	public static final String ID_MOCK_EDITOR_1 = "org.eclipse.ui.tests.api.mockEditor1";
-	public static final String ID_MOCK_EDITOR_2 = "org.eclipse.ui.tests.api.mockEditor2";
+	public static final String ID1 = "org.eclipse.ui.tests.api.mockEditor1";
+	public static final String ID2 = "org.eclipse.ui.tests.api.mockEditor2";
 
 	private IEditorInput input;
 	
@@ -54,6 +54,7 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart {
 		throws PartInitException {
 		this.input = input;
 		setSite(site);
+		callTrace.add(this, "init");
 	}
 
 	/**
