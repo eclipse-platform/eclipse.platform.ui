@@ -118,6 +118,8 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 		discoveryFolder = new DiscoveryFolder();
 		searchRequest = new UpdateSearchRequest(new UnifiedSearchCategory2(), new UpdateSearchScope());
+		searchRequest.addFilter(new EnvironmentFilter());
+		searchRequest.addFilter(new BackLevelFilter());
 		this.searchRunner = searchRunner;
 		modelListener = new ModelListener();
 		UpdateUI.getDefault().getUpdateModel().addUpdateModelChangedListener(

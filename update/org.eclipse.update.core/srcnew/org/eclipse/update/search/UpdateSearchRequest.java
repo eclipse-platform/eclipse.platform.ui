@@ -15,7 +15,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
  * This class is central to update search. The search pattern
@@ -25,12 +24,9 @@ import org.eclipse.update.internal.core.UpdateManagerUtils;
  * provided method. Search results are reported to the
  * result collector, while search progress is tracked using
  * the progress monitor.
- * <p>By default, results should be filtered by only
- * accepting matches that are compatible with the current
- * environment (operating system, windowing system etc.).
- * Since search queries are provided by the search category,
- * it should call back into the search request (method 'select')
- * to get the matching feature tested environment match.
+ * <p>Classes that implement <samp>IUpdateSearchResultCollector</samp>
+ * should call 'filter' to test if the match should be
+ * accepted according to the filters added to the request.
  * 
  * @see UpdateSearchScope
  * @see IUpdateSearchCategory
@@ -39,7 +35,7 @@ public class UpdateSearchRequest {
 	private IUpdateSearchCategory category;
 	private UpdateSearchScope scope;
 	private boolean searchInProgress = false;
-	private boolean filterEnvironment = true;
+	private ArrayList filters;
 
 	/**
 	 * The constructor that accepts the search category and 
@@ -53,34 +49,50 @@ public class UpdateSearchRequest {
 		this.category = category;
 		this.scope = scope;
 	}
+/**
+ * Adds a filter to this request. This method does nothing
+ * if search is alrady in progress. 
+ * @param filter the filter 
+ * @see UpdateSearchRequest#filter
+ */	
+	
+	public void addFilter(IUpdateSearchFilter filter) {
+		if (searchInProgress)
+			return;
+		if (filters==null) filters=new ArrayList();
+		if (filters.contains(filter)==false)
+			filters.add(filter);
+	}
+/**
+ * Removes the filter from this request. This method does
+ * nothing if search is alrady in progress.
+ * @param filter the filter to remove
+ * @see UpdateSearchRequest#filter
+ */
+	
+	public void removeFilter(IUpdateSearchFilter filter) {
+		if (searchInProgress)
+			return;
+		if (filters==null) return;
+		filters.remove(filter);
+	}
+	
+/**
+ * Applies filters to the provided feature.
+ * @param match the feature to filter
+ * @return <samp>true</samp> if the feature passes the filters
+ * or <samp>false</samp>otherwise.
+ */
+	public boolean filter(IFeature match) {
+		if (filters==null) return true;
+		for (int i=0; i<filters.size(); i++) {
+			IUpdateSearchFilter filter = (IUpdateSearchFilter)filters.get(i);
+			if (filter.select(match)==false)
+				return false;
+		}
+		return true;
+	}
 
-	/**
-	 * Defines whether features should be tested if they match
-	 * the current environment.
-	 * @param value the new value for the environment filter.
-	 */
-	public void setFilterEnvironment(boolean value) {
-		this.filterEnvironment = value;
-	}
-	/**
-	 * Returns <samp>true</samp> if the features need to be tested
-	 * for the environment match, <samp>false</samp> otherwise.
-	 * @return <samp>true</samp> if features should be filtered for
-	 * the environment.
-	 */
-	public boolean getFilterEnvironment() {
-		return filterEnvironment;
-	}
-	/**
-	 * Update search queries should call this method to further filter their
-	 * matches for settings in the request object (e.g. valid environment).
-	 * @param match the feature to test
-	 * @return <samp>true</samp> if the feature passes the search request test, <samp>false</samp> otherwise.
-	 */
-	public boolean select(IFeature match) {
-		return !getFilterEnvironment()
-			|| UpdateManagerUtils.isValidEnvironment(match);
-	}
 	/**
 	 * Sets the scope object. It is possible to reuse the search request
 	 * object by modifying the scope and re-running the search.

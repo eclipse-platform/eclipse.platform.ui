@@ -56,6 +56,7 @@ public class UnifiedModeSelectionPage extends UnifiedBannerPage implements ISear
 		UpdateSearchScope scope = new UpdateSearchScope();
 		UnifiedUpdatesSearchCategory category = new UnifiedUpdatesSearchCategory();
 		searchRequest = new UpdateSearchRequest(category, scope);
+		searchRequest.addFilter(new EnvironmentFilter());
 	}
 
 

@@ -412,7 +412,7 @@ public class UnifiedReviewPage
 
 	public void accept(final IFeature feature) {
 		UpdateSearchRequest request = searchRunner.getSearchProvider().getSearchRequest();
-		if (!request.select(feature)) return;
+		if (!request.filter(feature)) return;
 		getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				PendingOperation job = new PendingOperation(feature);
