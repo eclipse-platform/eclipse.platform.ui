@@ -8,6 +8,7 @@ package org.eclipse.ui.internal;
 import java.io.*;
 import java.util.*;
 import java.util.List; // otherwise ambiguous with org.eclipse.swt.widgets.List
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
@@ -29,7 +30,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.IPreferenceStore;
+ 
 /**
  * A collection of views and editors in a workbench.
  */
@@ -65,6 +67,196 @@ public class WorkbenchPage implements IWorkbenchPage {
 			}
 		}
 	};
+	private ActionSwitcher actionSwitcher = new ActionSwitcher();
+	/**
+	 * Manages editor contributions and action set part associations.
+	 */
+	private class ActionSwitcher {
+		private IWorkbenchPart activePart;
+		private IEditorPart topEditor;
+		private ArrayList actionSets = new ArrayList();
+
+		/** 
+		 * Updates the contributions given the new part as the active part.
+		 *  
+		 * @param newPart the new active part, may be <code>null</code>
+		 */
+		public void updateActivePart(IWorkbenchPart newPart) {
+			if (activePart == newPart)
+				return;
+				
+			boolean isNewPartAnEditor = newPart instanceof IEditorPart;
+			if (isNewPartAnEditor) {
+				String oldId = null;
+				if (topEditor != null)
+					oldId = topEditor.getSite().getId();
+				String newId = null;
+				if (newPart != null)
+					newId = newPart.getSite().getId();
+				
+				// remove the  contributions of the old editor
+				if (oldId != null && !oldId.equals(newId)) 
+					deactivateContributions(topEditor, true);
+					
+				// show the contributions of the new editor
+				activateContributions(newPart, true);
+				
+				// if a view was the active part, disable its contributions
+				if (activePart != null && activePart != topEditor)
+					deactivateContributions(activePart, true);
+			} else {
+				// new active part is a view or null
+				if (activePart != null)
+					deactivateContributions(activePart, activePart instanceof IViewPart);	
+
+				if (newPart != null)
+					activateContributions(newPart, true);
+			}
+
+			ArrayList newActionSets = null;
+			if (isNewPartAnEditor) 
+				 newActionSets = calculateActionSets(newPart, null);
+			else
+				 newActionSets = calculateActionSets(newPart, topEditor);
+				 
+			if (!updateActionSets(newActionSets));
+				updateActionBars();
+			
+			activePart = newPart;
+			if (isNewPartAnEditor)
+				topEditor = (IEditorPart)newPart;
+		}
+
+		/** 
+		 * Updates the contributions given the new part as the topEditor.
+		 * 
+		 * @param newEditor the new top editor, may be <code>null</code>
+		 */
+		public void updateTopEditor(IEditorPart newEditor) {
+			if (topEditor == newEditor)
+				return;
+				
+			String oldId = null;
+			if (topEditor != null)
+				oldId = topEditor.getSite().getId();
+			String newId = null;
+			if (newEditor != null)
+				newId = newEditor.getSite().getId();
+			if (oldId == null ? newId == null : oldId.equals(newId)) {
+				// we don't have to change anything 
+				topEditor = newEditor;
+				return;
+			}
+			
+			// Remove the contributions of the old editor
+			if (topEditor != null)
+				deactivateContributions(topEditor, true);
+				
+			// Show (disabled) the contributions of the new editor
+			if (newEditor != null)
+				activateContributions(newEditor, false);
+							
+			ArrayList newActionSets = calculateActionSets(activePart, newEditor);
+			if (!updateActionSets(newActionSets));
+				updateActionBars();
+				
+			topEditor = newEditor;	
+		}
+
+		/**
+		 * Activates the contributions of the given part.
+		 * If <code>enable</code> is <code>true</code> the contributions are
+		 * visible and enabled, otherwise they are disabled.
+		 * 
+		 * @param part the part whose contributions are to be activated
+		 * @param enable <code>true</code> the contributions are to be enabled, 
+		 *  not just visible.
+ 		 */
+		private void activateContributions(IWorkbenchPart part, boolean enable) {
+			PartSite site = (PartSite) part.getSite();
+			SubActionBars actionBars = (SubActionBars) site.getActionBars();
+			actionBars.activate(enable);
+		}
+
+		/**
+		 * Deactivates the contributions of the given part.
+		 * If <code>remove</code> is <code>true</code> the contributions are
+		 * removed, otherwise they are disabled.
+		 * 
+		 * @param part the part whose contributions are to be deactivated
+		 * @param remove <code>true</code> the contributions are to be removed, 
+		 *  not just disabled.
+ 		 */
+		private void deactivateContributions(IWorkbenchPart part, boolean remove) {
+			PartSite site = (PartSite) part.getSite();
+			SubActionBars actionBars = (SubActionBars) site.getActionBars();
+			actionBars.deactivate(remove);
+		}
+	
+		/**
+		 * Calculates the action sets to show for the given part and editor
+		 * 
+		 * @param part the active part, may be <code>null</code>
+		 * @param editor the current editor, may be <code>null</code>, 
+		 *  may be the active part
+		 * @return the new action sets
+		 */
+		private ArrayList calculateActionSets(IWorkbenchPart part, IEditorPart editor) {
+			ArrayList newActionSets = new ArrayList();
+			if (part != null) {
+				IActionSetDescriptor[] partActionSets = 
+					WorkbenchPlugin.getDefault().getActionSetRegistry().getActionSetsFor(
+						part.getSite().getId());
+				for (int i = 0; i < partActionSets.length; i++) {
+					newActionSets.add(partActionSets[i]);
+				}
+			}
+			if (editor != null && editor != part) {
+				IActionSetDescriptor[] editorActionSets = 
+					WorkbenchPlugin.getDefault().getActionSetRegistry().getActionSetsFor(
+						editor.getSite().getId());
+				for (int i = 0; i < editorActionSets.length; i++) {
+					newActionSets.add(editorActionSets[i]);
+				}
+			}
+			return newActionSets;
+		}
+			
+		
+		/**
+		 * Updates the actions we are showing for the active part and current editor.
+		 * 
+		 * @param newActionSets the action sets to show
+		 * @return  <code>true</code> if the action sets changed
+		 */
+		private boolean updateActionSets(ArrayList newActionSets) {
+			if(actionSets.equals(newActionSets))
+				return false;
+				
+			Perspective persp = getActivePerspective();
+			if (persp == null) {
+				actionSets = newActionSets;
+				return false;
+			}
+			
+			// hide the old 
+			for (int i = 0; i < actionSets.size(); i++) {
+				persp.hideActionSet(((IActionSetDescriptor)actionSets.get(i)).getId());
+			}
+			
+			// show the new 
+			for (int i = 0; i < newActionSets.size(); i++) {
+				persp.showActionSet(((IActionSetDescriptor)newActionSets.get(i)).getId());
+			}
+			
+			actionSets = newActionSets;
+			
+			window.updateActionSets(); // this calls updateActionBars
+			window.firePerspectiveChanged(WorkbenchPage.this, getPerspective(), CHANGE_ACTION_SET_SHOW);
+			return true;
+		} 
+		
+	}
 
 /**
  * Constructs a new page with a given perspective and input.
@@ -75,7 +267,7 @@ public class WorkbenchPage implements IWorkbenchPage {
  */
 public WorkbenchPage(WorkbenchWindow w, String layoutID, IAdaptable input) 
 	throws WorkbenchException
-{
+{ 
 	super();
 	if (layoutID == null)
 		throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.UndefinedPerspective")); //$NON-NLS-1$
@@ -222,20 +414,14 @@ public void bringToTop(IWorkbenchPart part) {
 	boolean broughtToTop = false;
 	if (part instanceof IEditorPart) {
 		broughtToTop = getEditorManager().setVisibleEditor((IEditorPart)part, false);
-		if (lastActiveEditor != null && broughtToTop) {
-			String newID = part.getSite().getId();
-			String oldID = lastActiveEditor.getSite().getId();
-			if (newID != oldID) {
-				deactivateLastEditor();
+		if (broughtToTop) {
+				actionSwitcher.updateTopEditor((IEditorPart)part);
 				lastActiveEditor = null;
-				updateActionBars();
-			}
 		}
 	} else if (part instanceof IViewPart) {
 		broughtToTop = persp.bringToTop((IViewPart)part);
 	}
 	if (broughtToTop) {
-//		activationList.setActive(part);
 		firePartBroughtToTop(part);
 	}
 }
@@ -393,11 +579,8 @@ public boolean closeAllEditors(boolean save) {
 	boolean deactivate = activePart instanceof IEditorPart;
 	if (deactivate)
 		setActivePart(null);
-	if (lastActiveEditor != null) {
-		deactivateLastEditor();
-		updateActionBars();
-		lastActiveEditor = null;
-	}
+	lastActiveEditor = null;
+	actionSwitcher.updateTopEditor(null);
 			
 	// Close all editors.
 	IEditorPart [] editors = getEditorManager().getEditors();
@@ -450,8 +633,7 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	if (partWasActive)
 		setActivePart(null);
 	if (lastActiveEditor == editor) {
-		deactivateLastEditor();
-		updateActionBars();
+		actionSwitcher.updateTopEditor(null);
 		lastActiveEditor = null;
 	}
 
@@ -569,7 +751,6 @@ private Perspective createPerspective(PerspectiveDescriptor desc) {
 		return null;
 	}
 }
-
 /**
  * Cycles the editors forward or backward.
  * 
@@ -608,6 +789,7 @@ private void deactivateLastEditor() {
 	SubActionBars actionBars = (SubActionBars) site.getActionBars();
 	actionBars.deactivate(true);
 }
+
 /**
  * Deactivates a part.  The pane is unhilighted and the action bars are hidden.
  */
@@ -1349,7 +1531,8 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 			bringToTop(editor);
 		return editor;
 	}
-// Disabled turning redraw off, because it causes setFocus
+
+// Disabled turning redraw off, because it causes setFocus
 // in activate(editor) to fail.
 // getClientComposite().setRedraw(false);
 
@@ -1545,6 +1728,9 @@ private void restoreState(IMemento memento) {
 		if (view != null)
 			activePart = view;
 	}
+	
+	// Restore top editor
+	actionSwitcher.updateTopEditor(getEditorManager().getVisibleEditor());
 }
 /**
  * See IWorkbenchPage
@@ -1659,120 +1845,23 @@ private void setActivePart(IWorkbenchPart newPart) {
 	if (persp != null)
 		persp.partActivated(newPart);
 	
-	// We will switch actions only if the part types are different.
-	boolean switchActions = true;
-	String newID = null;
-	if (newPart != null) 
-		newID = newPart.getSite().getId();
-	String oldID = null;
-	if (activePart != null)
-		oldID = activePart.getSite().getId();
-
-	if (activePart != null && newPart != null) {
-		switchActions = (oldID != newID);
-	}
-
-	// Only change the enablement of the menu and tool items if 
-	// possible - workaround for layout flashing
-	// when editors contribute lots of items.
-	boolean switchActionsForced = false;
-	if (switchActions)
-		switchActionsForced = isActionSwitchForced(newPart);
-
-	// Clear active part.
-	IWorkbenchPart oldPart = activePart;
-	activePart = null;		
-	if (oldPart != null) {
-		deactivatePart(oldPart, switchActions, switchActionsForced);
-	}
-
 	// Set active part.
+	IWorkbenchPart oldPart = activePart;
 	activePart = newPart;
-	IEditorPart tempLastActiveEditor = lastActiveEditor;
 	if (newPart != null) {	
 		activationList.setActive(newPart);
-		// Upon a new editor being activated, make sure the previously
-		// active editor's menubar/toolbar contributions are removed.
 		if (newPart instanceof IEditorPart) {
-			if (lastActiveEditor != null) {
-				String newPartID = newPart.getSite().getId();
-				String oldPartID = lastActiveEditor.getSite().getId();
-				if (newPartID != oldPartID)
-					deactivateLastEditor();
-			}
 			lastActiveEditor = (IEditorPart)newPart;
 			editorMgr.setVisibleEditor(lastActiveEditor,true);
 		}
-		activatePart(newPart, switchActions, switchActionsForced);
 	}
-
-	boolean changedActionSets = false;
-	if (persp != null && switchActions) {
-		// update the action sets
-		List newActionSets = new ArrayList();
-		if (newPart != null) {
-			IActionSetDescriptor[] partActionSets = 
-				WorkbenchPlugin.getDefault().getActionSetRegistry().getActionSetsFor(newID);
-			for (int i = 0; i < partActionSets.length; i++) {
-				newActionSets.add(partActionSets[i]);
-			}
+	activatePart(activePart, false, false);
 	
-			// add the action sets for the active editor (if the new part is a view)
-			if (newPart instanceof IViewPart) {
-				if (tempLastActiveEditor != null) {
-					IActionSetDescriptor[] editorActionSets =
-						WorkbenchPlugin.getDefault().getActionSetRegistry().getActionSetsFor(
-							tempLastActiveEditor.getSite().getId());
-					for (int i = 0; i < editorActionSets.length; i++) {
-						newActionSets.add(editorActionSets[i]);
-					}
-				} 	
-			}
-		}
 
-		// hide the action sets associated only with the old part
-		if (oldPart != null) {
-			IActionSetDescriptor[] oldActionSets = 
-				WorkbenchPlugin.getDefault().getActionSetRegistry().getActionSetsFor(oldID);
-			for (int i = 0; i < oldActionSets.length; i++) {
-				if (!newActionSets.contains(oldActionSets[i])) {
-					persp.hideActionSet(oldActionSets[i].getId());
-					changedActionSets = true;
-				}
-			}
-		}
-		
-		// hide the action sets associated with the last editor if the new part is an editor
-		if (tempLastActiveEditor != null && newPart != null &&
-			newPart instanceof IEditorPart) {
-			IActionSetDescriptor[] oldActionSets = 
-				WorkbenchPlugin.getDefault().getActionSetRegistry().getActionSetsFor(
-					tempLastActiveEditor.getSite().getId());
-			for (int i = 0; i < oldActionSets.length; i++) {
-				if (!newActionSets.contains(oldActionSets[i])) {
-					persp.hideActionSet(oldActionSets[i].getId());
-					changedActionSets = true;
-				}
-			}
-		}
-	
-		// show the action sets associated with the new part
-		for (int i = 0; i < newActionSets.size(); i++) {
-			persp.showActionSet(((IActionSetDescriptor)newActionSets.get(i)).getId());
-			changedActionSets = true;
-		}
-	}
+	// Update actions
+	actionSwitcher.updateActivePart(newPart);	
 
-	// Update actions.
-	if (changedActionSets) {
-		window.updateActionSets(); // this calls updateActionBars
-		window.firePerspectiveChanged(this, getPerspective(), CHANGE_ACTION_SET_SHOW);
-	} else {
-		if (switchActions)
-			updateActionBars();
-	}
-
-	// fire notifications
+	// Fire notifications
 	if (oldPart != null)
 		firePartDeactivated(oldPart);
 	if (newPart != null)
