@@ -15,7 +15,7 @@ import org.eclipse.help.internal.server.TempURL;
 /**
  * Persistent Hashtable with keys and values of type String.
  */
-public class InfosetsMap extends PersistentMap {
+public class InfosetsMap extends HelpProperties {
 	/**
 	 * Creates empty table for storing valid Info Sets.
 	 * @param name name of the table;
@@ -46,22 +46,20 @@ public class InfosetsMap extends PersistentMap {
 						HelpSystem.getRemoteHelpServerPath()
 							+ "/"
 							+ TempURL.getPrefix()
-							+ "/infosets.ini");
+							+ "/infosets.properties");
 
 				if (Logger.DEBUG)
 					Logger.logDebugMessage(
 						"InfosetsMap",
 						"Loading infosets= " + remoteInfosetFile.toExternalForm());
 
-				BufferedReader reader = null;
 				try {
-					reader =
-						new BufferedReader(new InputStreamReader(remoteInfosetFile.openStream()));
+					in = remoteInfosetFile.openStream();
+					super.load(in);
 				} catch (Exception ioe) {
 					Logger.logError("E013", ioe);
 					return false;
 				}
-				super.parseLines(reader);
 				try {
 					in.close();
 				} catch (Exception ioe) {

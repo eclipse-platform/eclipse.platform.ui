@@ -4,7 +4,6 @@ package org.eclipse.help.internal.util;
  * All Rights Reserved.
  */
 
-
 import java.io.*;
 import java.util.*;
 import org.eclipse.help.internal.HelpSystem;
@@ -12,8 +11,7 @@ import org.eclipse.help.internal.HelpSystem;
 /**
  * Persistent Hashtable with keys and values of type String.
  */
-public class PersistentMap extends Hashtable {
-	public static final String columnSeparator = "=";
+public class HelpProperties extends Properties {
 	private File file = null;
 	private File tempfile = null;
 	protected String name = null;
@@ -21,18 +19,18 @@ public class PersistentMap extends Hashtable {
 	 * Creates empty table for use by Help Plugin.
 	 * @param name name of the table;
 	 */
-	public PersistentMap(String name) {
+	public HelpProperties(String name) {
 		this(HelpSystem.getPlugin().getStateLocation().toFile().getPath(), name);
 	}
 	/**
 	 * Creates empty table for use by Help Plugin.
 	 * @param name name of the table;
 	 */
-	public PersistentMap(String dir, String name) {
+	public HelpProperties(String dir, String name) {
 		super();
 		this.name = name;
-		file = new File(dir, name + ".ini");
-		tempfile = new File(dir, name + "_.ini");
+		file = new File(dir, name + ".properties");
+		tempfile = new File(dir, name + "_.properties");
 	}
 	public boolean exists() {
 		return file.exists() || tempfile.exists();
@@ -43,7 +41,7 @@ public class PersistentMap extends Hashtable {
 	 */
 	public boolean restore() {
 		File usedfile = file;
-		BufferedReader bufr = null;
+		InputStream in = null;
 		boolean loaded = false;
 		if (!usedfile.exists()) {
 			usedfile = tempfile;
@@ -53,19 +51,16 @@ public class PersistentMap extends Hashtable {
 		}
 		clear();
 		try {
-			bufr =
-				new BufferedReader(
-					new InputStreamReader(
-						new FileInputStream(usedfile), "UTF-8"));
-			loaded=parseLines(bufr);
+			in = new FileInputStream(usedfile);
+			super.load(in);
 		} catch (IOException ioe00) {
 			Logger.logError(Resources.getString("Table", name), null);
 			Logger.logError(Resources.getString("File4", usedfile.getName()), null);
 			loaded = false;
 		} finally {
-			if (bufr != null)
+			if (in != null)
 				try {
-					bufr.close();
+					in.close();
 				} catch (IOException ioe10) {
 				}
 		}
@@ -76,7 +71,7 @@ public class PersistentMap extends Hashtable {
 	 * @return true if operation was successful
 	 */
 	public boolean save() {
-		PrintWriter buf = null;
+		OutputStream out = null;
 		boolean ret = false;
 		tempfile.delete();
 		if (tempfile.exists()) {
@@ -86,63 +81,26 @@ public class PersistentMap extends Hashtable {
 			return ret;
 		}
 		try {
-			buf =
-				new PrintWriter(new BufferedWriter(
-					new OutputStreamWriter(
-						new BufferedOutputStream(new FileOutputStream(tempfile)),
-						"UTF-8")));
-			for (Enumeration e = this.keys(); e.hasMoreElements();) {
-				String name = (String) e.nextElement();
-				buf.println(name + columnSeparator + this.get(name));
-			}
-			buf.flush();
+			out = new FileOutputStream(tempfile);
+			super.store(out, "This is a generated file; do not edit.");
 			ret = true;
 		} catch (IOException ioe00) {
 			Logger.logError(
 				Resources.getString("Exception_occured", name, tempfile.getAbsolutePath()),
 				null);
 		} finally {
-			if (buf != null) {
-				buf.close();
+			try {
+				if (out != null) {
+					out.close();
+				}
+			} catch (IOException ioe01) {
 			}
 		}
 		if (tempfile.exists()) {
 			file.delete();
-			if (tempfile.renameTo(file)) {
-			} else {
+			if (!tempfile.renameTo(file))
 				ret = false;
-			}
 		}
 		return ret;
-	}
-	protected boolean parseLines(BufferedReader bufr) throws IOException {
-		boolean loaded=false;
-		String line = bufr.readLine();
-		while (line != null) {
-			StringTokenizer tokens = new StringTokenizer(line, columnSeparator, true);
-			try {
-				String key, value;
-				key = tokens.nextToken();
-				if (key.equals(columnSeparator)) {
-					// key was empty, separator read.
-					key = "";
-				} else {
-					// read the separator
-					value = tokens.nextToken();
-				}
-				if (tokens.hasMoreElements()) {
-					value = tokens.nextToken();
-				} else {
-					value = "";
-				}
-				this.put(key, value);
-				loaded = true;
-			} catch (NoSuchElementException nsee) {
-				// Probably got an emtpy line at the end
-				break;
-			}
-			line = bufr.readLine();
-		}
-		return loaded;
 	}
 }

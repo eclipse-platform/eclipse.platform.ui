@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.*;
 /**
  * Table of plugins. Records all plugins and their version.
  */
-public class PluginVersionInfo extends PersistentMap {
+public class PluginVersionInfo extends HelpProperties {
 	boolean doComparison = true;
 	boolean hasChanged = false;
 
@@ -73,7 +73,7 @@ public class PluginVersionInfo extends PersistentMap {
 			return hasChanged;
 
 		// Create table of contributions present before last save()
-		PersistentMap oldContrs = new PersistentMap(this.name);
+		HelpProperties oldContrs = new HelpProperties(this.name);
 		oldContrs.restore();
 		// check if contributions changed
 		hasChanged = false;
