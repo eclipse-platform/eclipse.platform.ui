@@ -108,6 +108,10 @@ public class TopicTreePrinter
 				"printing_topic",
 				(String) labelList.get(currentTopic)));
 		printBrowser.print(false);
+		if (tocFile != null){
+			tocFile.delete();
+			tocFile=null;
+		}
 		pMonitor.worked(1);
 		currentTopic++;
 		if (currentTopic < hrefList.size())
@@ -119,11 +123,11 @@ public class TopicTreePrinter
 	 * Does cleanup
 	 */
 	private void endPrinting() {
+		if (tocFile != null)
+			tocFile.delete();
 		printBrowser.removeDocumentCompleteListener(this);
 		pMonitor = null;
 		(printBrowser).dispose();
-		if (tocFile != null)
-			tocFile.delete();
 		busy = false;
 	}
 	/**

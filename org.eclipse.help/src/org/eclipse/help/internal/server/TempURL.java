@@ -19,9 +19,6 @@ import org.eclipse.help.internal.*;
  *              &infosetId=org.eclipse.help.examples.ex1.someInfosetId  
  */
 public class TempURL extends HelpURL {
-	// the prefix that identifies a Table Of Contents Temp URL.
-	public static String TABLE_OF_CONTENTS_PREFIX = "TableOfContents";
-
 	public TempURL(String url) {
 		super(url);
 	}
