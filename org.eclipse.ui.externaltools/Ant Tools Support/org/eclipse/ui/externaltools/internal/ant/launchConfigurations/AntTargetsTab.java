@@ -481,7 +481,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		TargetInfo[] allWithDuplicates= initializeTargetInfos(allInfos, targetNames, targetInfos);
 		
 		setExecuteInput(allWithDuplicates);
-		
+		executeTargetsTable.setAllChecked(false);
 		TableItem[] items= executeTargetsTable.getTable().getItems();
 		for (int i = 0; i < items.length; i++) {
 			TableItem item= items[i];
