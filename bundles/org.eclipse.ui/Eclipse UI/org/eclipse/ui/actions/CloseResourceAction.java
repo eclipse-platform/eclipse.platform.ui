@@ -29,7 +29,7 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class CloseResourceAction extends WorkspaceAction {
+public class CloseResourceAction extends WorkspaceAction implements IResourceChangeListener {
 	/**
 	 * The id of this action.
 	 */
@@ -204,5 +204,30 @@ public class CloseResourceAction extends WorkspaceAction {
 	 */
 	protected boolean updateSelection(IStructuredSelection s) {
 		return super.updateSelection(s) && selectionIsOfType(IProject.PROJECT);
+	}
+	
+	/**
+	 * Handles a resource changed event by updating the enablement
+	 * if one of the selected projects is opened or closed.
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		// Warning: code duplicated in OpenResourceAction
+		List sel = getSelectedResources();
+		// don't bother looking at delta if selection not applicable
+		if (selectionIsOfType(IResource.PROJECT)) {
+			IResourceDelta delta = event.getDelta();
+			if (delta != null) {
+				IResourceDelta[] projDeltas = delta.getAffectedChildren(IResourceDelta.CHANGED);
+				for (int i = 0; i < projDeltas.length; ++i) {
+					IResourceDelta projDelta = projDeltas[i];
+					if ((projDelta.getFlags() & IResourceDelta.OPEN) != 0) {
+						if (sel.contains(projDelta.getResource())) {
+							selectionChanged(getStructuredSelection());
+							return;
+						}
+					}
+				}
+			}
+		}
 	}
 }

@@ -36,8 +36,11 @@ public class WorkspaceActionGroup extends ActionGroup {
 
 	private void makeActions() {
 		Shell shell = navigator.getSite().getShell();
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		openProjectAction = new OpenResourceAction(shell);
+		workspace.addResourceChangeListener(openProjectAction, IResourceChangeEvent.POST_CHANGE);
 		closeProjectAction = new CloseResourceAction(shell);
+		workspace.addResourceChangeListener(closeProjectAction, IResourceChangeEvent.POST_CHANGE);
 		refreshAction = new RefreshAction(shell);
 		buildAction =
 			new BuildAction(shell, IncrementalProjectBuilder.INCREMENTAL_BUILD);
@@ -110,5 +113,11 @@ public class WorkspaceActionGroup extends ActionGroup {
 		if (event.keyCode == SWT.F5) {
 			refreshAction.refreshAll();
 		}
+	}
+	
+	public void dispose() {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		workspace.removeResourceChangeListener(openProjectAction);
+		workspace.removeResourceChangeListener(closeProjectAction);
 	}
 }
