@@ -645,7 +645,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * is missing, returns null.
 	 */
 	protected IncrementalProjectBuilder instantiateBuilder(String builderName) throws CoreException {
-		IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderName);
+		IExtension extension = Platform.getExtensionRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderName);
 		if (extension == null)
 			return null;
 		IConfigurationElement[] configs = extension.getConfigurationElements();
