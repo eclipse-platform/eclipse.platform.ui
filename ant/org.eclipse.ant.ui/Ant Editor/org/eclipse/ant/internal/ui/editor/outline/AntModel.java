@@ -28,6 +28,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ComponentHelper;
 import org.apache.tools.ant.IntrospectionHelper;
 import org.apache.tools.ant.Location;
+import org.apache.tools.ant.Main;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
@@ -350,6 +351,7 @@ public class AntModel {
     		filePath= file.getAbsolutePath();
     	}
     	project.setUserProperty("ant.file", filePath); //$NON-NLS-1$
+    	project.setUserProperty("ant.version", Main.getAntVersion()); //$NON-NLS-1$
 
 		ProjectHelper projectHelper= new ProjectHelper(this);
 		projectHelper.setBuildFile(file);

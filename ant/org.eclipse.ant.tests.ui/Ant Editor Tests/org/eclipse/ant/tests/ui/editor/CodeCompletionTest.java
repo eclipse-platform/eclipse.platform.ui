@@ -149,6 +149,26 @@ public class CodeCompletionTest extends AbstractAntUITest {
     }
     
     /**
+     * Test the code completion for "built-in" properties
+     */
+    public void testBuiltInPropertyProposals() throws BadLocationException {
+    	TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("buildtest1.xml"));
+    	
+    	int lineNumber= 18;
+    	int columnNumber= 25;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getPropertyProposals(getCurrentDocument(), "", lineOffset + columnNumber);
+    	assertTrue(proposals.length >= 1);
+    	assertContains("ant.file", proposals);
+    	assertContains("ant.version", proposals);
+    	assertContains("ant.project.name", proposals);
+    	assertContains("basedir", proposals);
+    }
+    
+    /**
      * Test the code completion for the depend attribute of a target.
      */
     public void testTargetDependProposals() throws BadLocationException {
@@ -227,7 +247,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
                 break;
             }
         }
-        assertEquals(true, found);
+        assertEquals("Did not find displayString: " + displayString, true, found);
     }        
     
     /**
@@ -244,7 +264,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
                 break;
             }
         }
-        assertEquals(false, found);
+        assertEquals("Found displayString: " + displayString, false, found);
     }        
 
 	/**

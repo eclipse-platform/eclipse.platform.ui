@@ -1,33 +1,18 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Portions Copyright  2000-2004 The Apache Software Foundation
+ * All rights reserved. This program and the accompanying materials are made 
+ * available under the terms of the Apache Software License v2.0 which 
+ * accompanies this distribution and is available at 
+ * http://www.apache.org/licenses/LICENSE-2.0.
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     IBM Corporation - derived implementation
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor.outline;
 
-/*
- * Copyright  2000-2004 The Apache Software Foundation
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
- */
-
+import java.io.File;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -55,7 +40,7 @@ public class AntModelProject extends Project {
 		if (fCurrentProperties.get(name) != null) {
 			return;
 		} 
-		//always property values to be over-written for this parse session
+		//allows property values to be over-written for this parse session
 		//there is currently no way to remove properties from the Apache Ant project
 		//the project resets it properties for each parse...see reset()
 		fCurrentProperties.put(name, value);
@@ -80,13 +65,7 @@ public class AntModelProject extends Project {
 		setDescription(null);
 		setName(""); //$NON-NLS-1$
 		//reset the properties to the initial set
-		fCurrentProperties= new Hashtable();
-        Enumeration e = fBaseProperties.keys();
-        while (e.hasMoreElements()) {
-            Object name = e.nextElement();
-            Object value = fBaseProperties.get(name);
-            fCurrentProperties.put(name, value);
-        }	  
+		fCurrentProperties= new Hashtable(fBaseProperties);
 	}
 	
 	/* (non-Javadoc)
@@ -94,7 +73,11 @@ public class AntModelProject extends Project {
 	 */
 	public String getProperty(String name) {
 		//override as we cannot remove properties from the Apache Ant project
-		return (String)fCurrentProperties.get(name);
+		String result= (String)fCurrentProperties.get(name);
+		if (result == null) {
+			result= getUserProperty(name);
+		}
+		return result;
 	}
 	
 	/* (non-Javadoc)
@@ -102,8 +85,12 @@ public class AntModelProject extends Project {
 	 */
 	public Hashtable getProperties() {
 		//override as we cannot remove properties from the Apache Ant project
-		return fCurrentProperties;
+		Hashtable allProps= new Hashtable(fCurrentProperties);
+		allProps.putAll(getUserProperties());
+		allProps.put("basedir", getBaseDir().getPath()); //$NON-NLS-1$
+		return allProps;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.Project#init()
 	 */
@@ -111,5 +98,13 @@ public class AntModelProject extends Project {
 		super.init();
 		fBaseProperties= super.getProperties();
 		fCurrentProperties= super.getProperties();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.apache.tools.ant.Project#setBaseDir(java.io.File)
+	 */
+	public void setBaseDir(File baseDir) throws BuildException {
+		super.setBaseDir(baseDir);
+		fCurrentProperties.put("basedir", getBaseDir().getPath()); //$NON-NLS-1$
 	}
 }
