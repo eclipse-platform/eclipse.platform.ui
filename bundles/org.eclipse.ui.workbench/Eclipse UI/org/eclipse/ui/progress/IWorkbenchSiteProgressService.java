@@ -32,7 +32,7 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	/**
 	 * The property that is sent with busy notifications.
 	 */
-	public static final String BUSY_PROPERTY = "SITE_BUSY";
+	public static final String BUSY_PROPERTY = "SITE_BUSY"; //$NON-NLS-1$
 	
 	/**
 	 * Jobs scheduled with this method will cause the part's presentation 
