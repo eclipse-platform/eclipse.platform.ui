@@ -89,20 +89,20 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
-		if(element instanceof JobTreeElement)
-			return ((JobTreeElement) element).getParent();
-		else
+		if(element == this)
 			return null;
+		else
+			return ((JobTreeElement) element).getParent();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
-		if(element instanceof JobTreeElement)
-			return ((JobTreeElement) element).hasChildren();
+		if(element == this)
+			return  JobProgressManager.getInstance().getJobs().length > 0;
 		else
-			return false;
+			return ((JobTreeElement) element).hasChildren();
 	}
 
 	/* (non-Javadoc)
