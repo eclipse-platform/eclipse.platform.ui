@@ -70,6 +70,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * <li><code>postWindowRestore</code> - called after a window has been
  * recreated from a previously saved state; use to adjust the restored
  * window</li>
+ * <li><code>preWindowClose</code> - called as each window is being closed; 
+ *  use to pre-screen window closings</li>
  * <li><code>postWindowClose</code> - called as each window is being closed; 
  *  use to unhook listeners, etc.</li>
  * <li><code>eventLoopException</code> - called to handle the case where the
@@ -296,6 +298,36 @@ public abstract class WorkbenchAdviser {
 	}
 
 	/**
+	 * Performs arbitrary actions as the given workbench window is being closed,
+	 * and possibly veto the close.
+	 * <p>
+	 * This method is called from the implementation of
+	 * {@link org.eclipse.ui.IWorkbenchWindow#close IWorkbenchWindow.close}.
+	 * Clients must not call this method directly (although super calls are okay).
+	 * The default implementation does nothing. Subclasses may override.
+	 * Typical clients may use the configurer passed in to access the
+	 * workbench window being closed. If this method
+	 * returns <code>false</code>, then <code>IWorkbenchWindow.close</code>
+	 * returns <code>false</code> immediately. This gives the workbench adviser
+	 * an opportunity to query the user and/or veto the closing of a window
+	 * under some circumstances. Implementations of this method need to be
+	 * written carefully so as to not interfere with emergency workbench
+	 * shutdown.
+	 * </p>
+	 * 
+	 * @param configurer an object for configuring the particular workbench
+	 * window being closed
+	 * @return <code>true</code> to allow the window to close, 
+	 * and <code>false</code> to prevent the window from closing
+	 * @see org.eclipse.ui.IWorkbenchWindow#close
+	 * @see IWorkbenchConfigurer#emergencyClosing
+	 */
+	public boolean preWindowClose(IWorkbenchWindowConfigurer configurer) {
+		// do nothing, but allow the close(0 to proceed
+		return true;
+	}
+	
+	/**
 	 * Performs arbitrary actions after the given workbench window is
 	 * closed.
 	 * <p>
@@ -314,10 +346,10 @@ public abstract class WorkbenchAdviser {
 	}
 
 	/**
-	 * Returns whether the given menu is an application menu of the given
-	 * window. This is used during OLE "in place" editing.  Application menus
-	 * should be preserved during menu merging. All other menus may be removed
-	 * from the window.
+	 * Returns whether the menu with the given id is an application menu of the
+	 * given window. This is used during OLE "in place" editing.  Application
+	 * menus should be preserved during menu merging. All other menus may be
+	 * removed from the window.
 	 * <p>
 	 * The default implementation returns false. Subclasses may override.
 	 * </p>
@@ -328,19 +360,22 @@ public abstract class WorkbenchAdviser {
 	 * for part-specific menus
 	 */
 	public boolean isApplicationMenu(IWorkbenchWindowConfigurer configurer, String menuId) {
+		// default: not an application menu
 		return false;
 	}
 	
 	/**
-	 * Returns the default input for newly created pages, or <code>null</code>
-	 * if none needed.
+	 * Returns the default input for newly created workbench pages.
 	 * <p>
-	 * The default implementation returns <code>null</code>. Subclasses may override.
+	 * The default implementation returns <code>null</code>.
+	 * Subclasses may override.
 	 * </p>
 	 * 
-	 * @return the default input for a new workbench window page
+	 * @return the default input for a new workbench window page, or
+	 * <code>null</code> if none
 	 */
 	public IAdaptable getDefaultWindowInput() {
+		// default: no input
 		return null;
 	}
 }

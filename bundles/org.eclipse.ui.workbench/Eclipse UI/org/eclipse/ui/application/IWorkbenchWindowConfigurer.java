@@ -252,7 +252,7 @@ public interface IWorkbenchWindowConfigurer {
 	public void addToolbarGroup(IToolBarManager toolBarMgr, String id, boolean asSeperator);
 	
 	/**
-	 * Register the action as a global (i.e. retargetable) action with the workbench
+	 * Register the action as a global (retargetable) action with the workbench
 	 * window.
 	 *  
 	 * @param action the global action

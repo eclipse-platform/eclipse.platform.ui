@@ -46,6 +46,9 @@ public interface IWorkbenchConfigurer {
 	 * and parsed correctly.
 	 * 
 	 * @return the configuration information for the primary feature
+	 * @exception WorkbenchException if the information cannot be retrieved
+	 * @issue spec should be less specific about where about info comes from
+	 * @issue there does not need to be a special method for the primary feature
 	 */
 	public AboutInfo getPrimaryFeatureAboutInfo() throws WorkbenchException;
 	
@@ -56,6 +59,8 @@ public interface IWorkbenchConfigurer {
 	 * and parsed correctly.
 	 * 
 	 * @return the configuration information for all features
+	 * @exception WorkbenchException if the information cannot be retrieved
+	 * @issue spec should be less specific about where about info comes from
 	 */
 	public AboutInfo[] getAllFeaturesAboutInfo() throws WorkbenchException;
 	
@@ -67,6 +72,9 @@ public interface IWorkbenchConfigurer {
 	 * correctly.
 	 * 
 	 * @return the configuration information for new installed features
+	 * @exception WorkbenchException if the information cannot be retrieved
+	 * @issue spec should be less specific about where about info comes from
+	 * @issue there does not need to be a special method for the primary feature; there just needs to be a way to find out id of primary feature and obtain about info for that id
 	 */
 	public AboutInfo[] getNewFeaturesAboutInfo() throws WorkbenchException;
 	
