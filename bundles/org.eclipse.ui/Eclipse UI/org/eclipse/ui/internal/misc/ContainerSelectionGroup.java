@@ -166,6 +166,7 @@ protected void createTreeViewer() {
 	cp.showClosedProjects(showClosedProjects);
 	treeViewer.setContentProvider(cp);
 	treeViewer.setLabelProvider(new WorkbenchLabelProvider());
+	treeViewer.setSorter(new ViewerSorter() {});
 	treeViewer.addSelectionChangedListener(
 		new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
