@@ -55,6 +55,9 @@ The life cycle is as follows:
 
    <element name="intro">
       <annotation>
+         <appInfo>
+            <meta.element labelAttribute="id" icon="icon"/>
+         </appInfo>
          <documentation>
             Specifies an introduction. An introduction is a product-specific presentation shown to first-time users on product start up.
          </documentation>
