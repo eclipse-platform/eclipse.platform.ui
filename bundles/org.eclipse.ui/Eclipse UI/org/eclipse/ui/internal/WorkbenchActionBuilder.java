@@ -439,15 +439,14 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		}
 		IContributionManager manager = window.getToolsManager();
 		if (usingMenuReorg) {
-			menu.add(new Separator());
-			menu.add(savePerspectiveAction);
-			menu.add(editActionSetAction);
 			menu.add(hideShowEditorAction);
 			if (manager instanceof CoolBarManager) {
 				menu.add(lockToolBarAction);	
 			}
-			menu.add(resetPerspectiveAction);
 			menu.add(new Separator());
+			menu.add(editActionSetAction);
+			menu.add(savePerspectiveAction);
+			menu.add(resetPerspectiveAction);
 			menu.add(closePerspAction);	
 			menu.add(closeAllPerspsAction);
 		}
@@ -495,16 +494,19 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	/**
 	 * Adds the keyboard navigation submenu to the specified menu.
 	 */
-	private void addNavigationSubMenu(MenuManager menu) {
+	private void addKeyboardShortcuts(MenuManager menu) {
 		MenuManager subMenu = new MenuManager(WorkbenchMessages.getString("Workbench.shortcuts")); //$NON-NLS-1$
 		menu.add(subMenu);
-		subMenu.add(activateEditorAction);
 		subMenu.add(showPartPaneMenuAction);
 		subMenu.add(showViewMenuAction);
+		subMenu.add(new Separator());
+		subMenu.add(activateEditorAction);
 		subMenu.add(nextEditorAction);
 		subMenu.add(prevEditorAction);
+		subMenu.add(new Separator());
 		subMenu.add(nextPartAction);
 		subMenu.add(prevPartAction);
+		subMenu.add(new Separator());
 		subMenu.add(nextPerspectiveAction);
 		subMenu.add(prevPerspectiveAction);
 	}
@@ -532,7 +534,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			menu.add(new Separator());
 			addWorkingSetActions(menu);
 			menu.add(new Separator());
-			addNavigationSubMenu(menu);
+			addKeyboardShortcuts(menu);
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "end")); //$NON-NLS-1$
 			menu.add(openPreferencesAction);
@@ -545,7 +547,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			MenuManager launchWindowMenu = new MenuManager(WorkbenchMessages.getString("Workbench.launch"), IWorkbenchActionConstants.M_LAUNCH); //$NON-NLS-1$
 			launchWindowMenu.add(new GroupMarker(IWorkbenchActionConstants.LAUNCH_EXT));
 			menu.add(launchWindowMenu);
-			addNavigationSubMenu(menu);
+			addKeyboardShortcuts(menu);
 			menu.add(new Separator());
 			menu.add(workbenchEditorsAction);
 			menu.add(new Separator());
@@ -568,6 +570,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		menu.add(new GroupMarker(IWorkbenchActionConstants.HELP_END));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 		// about should always be at the bottom
+		menu.add(new Separator());
 		menu.add(aboutAction);
 		return menu;
 	}
