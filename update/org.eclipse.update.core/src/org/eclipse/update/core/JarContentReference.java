@@ -42,7 +42,7 @@ public class JarContentReference extends ContentReference {
 		 * @since 2.0
 		 */
 		public boolean include(JarEntry entry) {
-			return !entry.isDirectory();
+			return entry == null ? false : !entry.isDirectory();
 		}
 		
 		/**
@@ -53,7 +53,7 @@ public class JarContentReference extends ContentReference {
 		 * @since 2.0
 		 */
 		public String defineIdentifier(JarEntry entry) {
-			return entry.getName();
+			return entry==null ? null : entry.getName();
 		}
 	}	
 

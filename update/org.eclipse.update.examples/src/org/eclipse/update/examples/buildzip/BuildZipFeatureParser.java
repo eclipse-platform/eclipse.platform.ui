@@ -151,6 +151,12 @@ public class BuildZipFeatureParser {
 			if (plugin.startsWith("plugin@")) {
 				pluginId = plugin.substring(7);
 				pluginBuildVersion = manifest.getProperty(plugin);
+				if (pluginBuildVersion.equals("HEAD")) {
+					String featureVersion = feature.getFeatureVersion();
+					int ix = featureVersion.indexOf(".");
+					String featureMajor = ix==-1 ? featureVersion : featureVersion.substring(0,ix);
+					pluginBuildVersion += "-" + featureMajor;
+				}
 				pluginEntry = factory.createPluginEntryModel();
 				pluginVersion = parsePluginVersionInManifest(cp, pluginId, pluginEntry);
 				if (pluginVersion != null) {
