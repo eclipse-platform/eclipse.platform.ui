@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser.embedded;
 import org.eclipse.help.browser.*;
+import org.eclipse.swt.widgets.*;
 /**
  * Web browser.
  */
@@ -23,14 +24,46 @@ public class EmbeddedBrowserAdapter implements IBrowser {
 	/*
 	 * @see IBrowser#displayURL(String)
 	 */
-	public synchronized void displayURL(String url) {
-		close();
+	public synchronized void displayURL(final String url) {
+		Display defaultDisplay = Display.getDefault();
+		if (defaultDisplay == Display.getCurrent()) {
+			uiDisplayURL(url);
+		} else {
+			defaultDisplay.syncExec(new Runnable() {
+				public void run() {
+					uiDisplayURL(url);
+				}
+			});
+		}
+	}
+	/**
+	 * Must be run on UI thread
+	 * 
+	 * @param url
+	 */
+	private void uiDisplayURL(final String url) {
+		uiClose();
 		getBrowser().displayUrl(url);
 	}
 	/*
 	 * @see IBrowser#close()
 	 */
 	public void close() {
+		Display defaultDisplay = Display.getDefault();
+		if (defaultDisplay == Display.getCurrent()) {
+			uiClose();
+		} else {
+			defaultDisplay.syncExec(new Runnable() {
+				public void run() {
+					uiClose();
+				}
+			});
+		}
+	}
+	/*
+	 * Must be run on UI thread
+	 */
+	private void uiClose() {
 		if (browser != null && !browser.isDisposed())
 			browser.close();
 	}
@@ -64,13 +97,43 @@ public class EmbeddedBrowserAdapter implements IBrowser {
 	/*
 	 * @see IBrowser#setLocation(int, int)
 	 */
-	public void setLocation(int x, int y) {
+	public void setLocation(final int x, final int y) {
+		Display defaultDisplay = Display.getDefault();
+		if (defaultDisplay == Display.getCurrent()) {
+			uiSetLocation(x, y);
+		} else {
+			defaultDisplay.syncExec(new Runnable() {
+				public void run() {
+					uiSetLocation(x, y);
+				}
+			});
+		}
+	}
+	/*
+	 * Must be run on UI thread
+	 */
+	private void uiSetLocation(int x, int y) {
 		getBrowser().setLocation(x, y);
 	}
 	/*
 	 * @see IBrowser#setSize(int, int)
 	 */
-	public void setSize(int width, int height) {
+	public void setSize(final int width, final int height) {
+		Display defaultDisplay = Display.getDefault();
+		if (defaultDisplay == Display.getCurrent()) {
+			uiSetSize(width, height);
+		} else {
+			defaultDisplay.syncExec(new Runnable() {
+				public void run() {
+					uiSetSize(width, height);
+				}
+			});
+		}
+	}
+	/*
+	 * Must be run on UI thread
+	 */
+	private void uiSetSize(int width, int height) {
 		getBrowser().setSize(width, height);
 	}
 }

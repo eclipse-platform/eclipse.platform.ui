@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.help.internal.base;
 import java.io.*;
+import java.lang.reflect.*;
 import java.nio.channels.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.appserver.*;
+import org.osgi.framework.*;
 
 /**
  * Help application.
@@ -68,8 +70,10 @@ public class HelpApplication
 		}
 		writeHostAndPort();
 		obtainLock();
-
-		// main program loop
+		
+		//try running UI loop if possible
+		runUI();
+		// otherwise run a headless loop;
 		while (status == STATUS_RUNNING) {
 			try {
 				Thread.sleep(100);
@@ -82,6 +86,19 @@ public class HelpApplication
 			return EXIT_RESTART;
 		} else {
 			return EXIT_OK;
+		}
+	}
+	private void runUI(){
+		try {
+			Bundle bundle = Platform.getBundle("org.eclipse.help.ui");
+			if(bundle == null){
+				return;
+			}
+			Class c = bundle.loadClass("org.eclipse.help.ui.internal.HelpUIEventLoop");
+			Object o = c.newInstance();
+			Method m=c.getMethod("run", new Class[]{} );
+			m.invoke(null, new Object[]{});
+		} catch (Exception e) {
 		}
 	}
 	/**
@@ -135,5 +152,8 @@ public class HelpApplication
 			} catch (IOException ioe) {
 			}
 		}
+	}
+	public static boolean isRunning(){
+		return status==STATUS_RUNNING;
 	}
 }
