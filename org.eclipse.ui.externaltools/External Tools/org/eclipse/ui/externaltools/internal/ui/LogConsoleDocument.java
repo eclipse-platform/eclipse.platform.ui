@@ -91,7 +91,9 @@ public class LogConsoleDocument {
 	}	
 
 	public void refreshTree() {
-		//
+		for(int i=0; i<views.size(); i++) {
+			((LogConsoleView)views.get(i)).refreshTree();
+		}
 	}
 	
 	public Display getDisplay() {
