@@ -4,46 +4,19 @@ package org.eclipse.update.internal.ui.views;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.DrillDownAdapter;
-import org.eclipse.update.configuration.IConfiguredSite;
-import org.eclipse.update.configuration.IConfiguredSiteChangedListener;
-import org.eclipse.update.configuration.IInstallConfiguration;
-import org.eclipse.update.configuration.IInstallConfigurationChangedListener;
-import org.eclipse.update.configuration.ILocalSite;
-import org.eclipse.update.configuration.ILocalSiteChangedListener;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.ISite;
-import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
-import org.eclipse.update.internal.ui.UpdateUIPluginImages;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.manager.RevertSection;
-import org.eclipse.update.internal.ui.model.ConfigurationSiteAdapter;
-import org.eclipse.update.internal.ui.model.ConfiguredFeatureAdapter;
-import org.eclipse.update.internal.ui.model.IConfiguredFeatureAdapter;
-import org.eclipse.update.internal.ui.model.IConfiguredSiteAdapter;
-import org.eclipse.update.internal.ui.model.IFeatureAdapter;
-import org.eclipse.update.internal.ui.model.IUpdateModelChangedListener;
-import org.eclipse.update.internal.ui.model.MissingFeature;
-import org.eclipse.update.internal.ui.model.PreservedConfiguration;
-import org.eclipse.update.internal.ui.model.UpdateModel;
-import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
-import org.eclipse.update.internal.ui.parts.OverlayIcon;
+import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.ui.parts.*;
 
 /**
  * Insert the type's description here.
@@ -85,7 +58,7 @@ public class ConfigurationView
 	private static final String KEY_HISTORY_FOLDER = "ConfigurationView.historyFolder";
 	private static final String KEY_SAVED_FOLDER = "ConfigurationView.savedFolder";
 
-	abstract class ViewFolder implements IAdaptable {
+	abstract class ViewFolder extends ModelObject {
 		private String label;
 		private Image image;
 
@@ -451,6 +424,14 @@ public class ConfigurationView
 			}
 		}
 		return null;
+	}
+	
+	public void selectHistoryFolder() {
+		viewer.setExpandedState(historyFolder, true);
+		viewer.setSelection(new StructuredSelection(historyFolder), true);
+	}
+	public void selectCurrentConfiguration() {
+		viewer.setSelection(new StructuredSelection(getLocalSite()), true);
 	}
 
 	private IInstallConfiguration getSelectedConfiguration(

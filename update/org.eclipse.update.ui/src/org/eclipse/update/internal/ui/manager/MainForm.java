@@ -78,10 +78,9 @@ protected void createContents(Composite parent) {
 
 	action = new HyperlinkAction() {
 		public void linkActivated(IHyperlinkSegment link) {
-			UpdatesView view = (UpdatesView)showView(UpdatePerspective.ID_CONFIGURATION);
-			if (view!=null) {
+			UpdatesView view = (UpdatesView)showView(UpdatePerspective.ID_UPDATES);
+			if (view!=null)
 				view.selectUpdateObject();
-			}
 		}
 	};
 	topicImage = factory.createLabel(parent, null);
@@ -120,7 +119,9 @@ protected void createContents(Composite parent) {
 	
 	action = new HyperlinkAction() {
 		public void linkActivated(IHyperlinkSegment link) {
-			showView(UpdatePerspective.ID_CONFIGURATION);
+			ConfigurationView view = (ConfigurationView)showView(UpdatePerspective.ID_CONFIGURATION);
+			if (view!=null)
+				view.selectCurrentConfiguration();
 		}
 	};
 	topicImage = factory.createLabel(parent, null);
@@ -140,7 +141,8 @@ protected void createContents(Composite parent) {
 
 	action = new HyperlinkAction() {
 		public void linkActivated(IHyperlinkSegment link) {
-			showView(UpdatePerspective.ID_CONFIGURATION);
+			ConfigurationView view = (ConfigurationView)showView(UpdatePerspective.ID_CONFIGURATION);
+			if (view!=null) view.selectHistoryFolder();
 		}
 	};
 	topicImage = factory.createLabel(parent, null);

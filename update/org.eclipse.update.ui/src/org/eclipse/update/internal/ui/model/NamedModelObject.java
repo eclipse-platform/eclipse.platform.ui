@@ -4,14 +4,9 @@ package org.eclipse.update.internal.ui.model;
  * All Rights Reserved.
  */
 
-import java.net.URL;
-import org.eclipse.update.core.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.ui.model.*;
-import java.util.*;
-import org.eclipse.update.internal.ui.*;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class NamedModelObject extends ModelObject 
 							implements IWorkbenchAdapter {
@@ -36,6 +31,14 @@ public class NamedModelObject extends ModelObject
 	
 	public String getName() {
 		return name;
+	}
+	
+	public IPath getPath() {
+		Object parent = getParent(null);
+		if (parent!=null && parent instanceof NamedModelObject)
+			return ((NamedModelObject)parent).getPath().append(getName());
+		else
+			return new Path(getName());
 	}
 	
 	public String toString() {

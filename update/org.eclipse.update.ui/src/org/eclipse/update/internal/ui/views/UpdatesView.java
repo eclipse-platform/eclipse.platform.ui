@@ -7,8 +7,10 @@ import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
@@ -20,9 +22,9 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.manager.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
-import org.eclipse.update.internal.ui.security.AuthorizationDatabase;
 import org.eclipse.update.internal.ui.search.*;
-import org.eclipse.update.internal.ui.search.SearchObject;
+import org.eclipse.update.internal.ui.security.AuthorizationDatabase;
+import org.eclipse.update.internal.ui.wizards.*;
 
 /**
  * Insert the type's description here.
@@ -358,69 +360,80 @@ public class UpdatesView
 			SiteBookmark site = (SiteBookmark) obj;
 			if (site.getType() == SiteBookmark.LOCAL)
 				manager.add(newLocalAction);
-			else
-				manager.add(deleteAction);
-		} else if (obj instanceof BookmarkFolder && !(obj instanceof DiscoveryFolder))
+		}
+		if (canDelete(obj))
 			manager.add(deleteAction);
 		manager.add(new Separator());
 		super.fillContextMenu(manager);
 		if (obj instanceof SiteBookmark)
 			manager.add(propertiesAction);
 	}
+	
+	private boolean canDelete(Object obj) {
+		if (obj instanceof SiteBookmark) {
+			SiteBookmark site = (SiteBookmark)obj;
+			return (site.getType() != SiteBookmark.LOCAL);
+		}
+		if (obj instanceof BookmarkFolder && !(obj instanceof DiscoveryFolder)) {
+			return true;
+		}
+		if (obj instanceof SearchObject && !(obj instanceof DefaultUpdatesSearchObject)) {
+			return true;
+		}
+		return false;
+	}
 
 	private Object getSelectedObject() {
 		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
 		return sel.getFirstElement();
 	}
-
+	
 	private void performNewBookmark() {
+		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
-		NewSiteDialog dialog = new NewSiteDialog(shell);
+		NewSiteBookmarkWizardPage page = new NewSiteBookmarkWizardPage(getSelectedFolder());
+		NewWizard wizard = new NewWizard(page, UpdateUIPluginImages.DESC_NEW_BOOKMARK);
+		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		dialog.getShell().setText(
-			UpdateUIPlugin.getResourceString(NewSiteDialog.KEY_TITLE));
-		dialog.getShell().setSize(400, 150);
-		if (dialog.open() == NewSiteDialog.OK) {
-			updateBookmarks(dialog.getNewSite());
-		}
+			UpdateUIPlugin.getResourceString(NewFolderDialog.KEY_TITLE));
+		dialog.getShell().setSize(400, 400);
+		dialog.open();
 	}
-
-	private void updateBookmarks(NamedModelObject obj) {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+	
+	private BookmarkFolder getSelectedFolder() {
 		Object sel = getSelectedObject();
 		if (sel instanceof BookmarkFolder && !(sel instanceof DiscoveryFolder)) {
 			BookmarkFolder folder = (BookmarkFolder) sel;
-			folder.addChild(obj);
-		} else {
-			model.addBookmark(obj);
+			return folder;
 		}
-		model.saveBookmarks();
+		return null;
 	}
 
 	private void performNewBookmarkFolder() {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
-		NewFolderDialog dialog = new NewFolderDialog(shell);
+		NewFolderWizardPage page = new NewFolderWizardPage(getSelectedFolder());
+		NewWizard wizard = new NewWizard(page, UpdateUIPluginImages.DESC_NEW_FOLDER);
+		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		dialog.getShell().setText(
 			UpdateUIPlugin.getResourceString(NewFolderDialog.KEY_TITLE));
-		dialog.getShell().setSize(400, 150);
-		if (dialog.open() == NewFolderDialog.OK) {
-			updateBookmarks(dialog.getNewFolder());
-		}
+		dialog.getShell().setSize(400, 350);
+		dialog.open();
 	}
 	
 	private void performNewSearch() {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
-		NewSearchDialog dialog = new NewSearchDialog(shell);
+		NewSearchWizardPage page = new NewSearchWizardPage(getSelectedFolder());
+		NewWizard wizard = new NewWizard(page, UpdateUIPluginImages.DESC_NEW_SEARCH);
+		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		dialog.getShell().setText(
-			UpdateUIPlugin.getResourceString(NewSearchDialog.KEY_TITLE));
-		dialog.getShell().setSize(400, 150);
-		if (dialog.open() == NewSearchDialog.OK) {
-			updateBookmarks(dialog.getNewSearch());
-		}
+			UpdateUIPlugin.getResourceString(NewFolderDialog.KEY_TITLE));
+		dialog.getShell().setSize(400, 350);
+		dialog.open();
 	}
 
 	private void performNewLocal() {
@@ -452,6 +465,7 @@ public class UpdatesView
 		ISelection selection = viewer.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
+			if (!confirmDeletion(ssel)) return;
 			for (Iterator iter = ssel.iterator(); iter.hasNext();) {
 				Object obj = iter.next();
 				if (obj instanceof NamedModelObject) {
@@ -487,6 +501,20 @@ public class UpdatesView
 				}
 			});
 		}
+	}
+	
+	private boolean confirmDeletion(IStructuredSelection ssel) {
+		String title="Confirm Delete";
+		String message;
+		
+		if (ssel.size()>1) {
+			message = "Are you sure you want to delete these "+ssel.size()+" items?";
+		}
+		else {
+			Object obj = ssel.getFirstElement().toString();
+			message = "Are you sure you want to delete \""+obj.toString()+"\"?";
+		}
+	 	return MessageDialog.openConfirm(viewer.getControl().getShell(), title, message);
 	}
 
 	private Object[] getBookmarks(UpdateModel model) {
@@ -554,7 +582,8 @@ public class UpdatesView
 			if (parent == null)
 				parent = model;
 			viewer.add(parent, children);
-			viewer.setSelection(new StructuredSelection(children));
+			viewer.expandToLevel(parent, 1);
+			viewer.setSelection(new StructuredSelection(children), true);
 		}
 	}
 

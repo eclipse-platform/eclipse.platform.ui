@@ -1,14 +1,15 @@
 package org.eclipse.update.internal.ui.model;
 
-import java.util.*;
-import org.apache.xerces.parsers.DOMParser;
-import org.xml.sax.SAXException;
 import java.io.*;
-import org.w3c.dom.*;
 import java.net.*;
+import java.util.*;
+
+import org.apache.xerces.parsers.DOMParser;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.search.*;
-import org.eclipse.update.internal.ui.search.SearchObject;
+import org.w3c.dom.*;
+import org.xml.sax.SAXException;
 
 public class BookmarkUtil {
 	public static void parse(String fileName, Vector bookmarks) {
@@ -34,6 +35,36 @@ public class BookmarkUtil {
 			processEntry(bookmarks.get(i), result);
 		}
 		return (SiteBookmark[]) result.toArray(new SiteBookmark[result.size()]);
+	}
+	
+	public static BookmarkFolder getFolder(Vector bookmarks, IPath path) {
+		NamedModelObject object = find(bookmarks, path);
+		if (object!=null && object instanceof BookmarkFolder) 
+			return (BookmarkFolder)object;
+		return null;
+	}
+	
+	public static NamedModelObject find(Vector bookmarks, IPath path) {
+		Object [] array = bookmarks.toArray();
+		return find(array, path);
+	}
+	
+	private static NamedModelObject find(Object[] array, IPath path) {
+		String name = path.segment(0);
+		for (int i=0; i<array.length; i++) {
+			NamedModelObject obj = (NamedModelObject)array[i];
+			if (obj.getName().equals(name)) {
+				if (obj instanceof BookmarkFolder) {
+					if (path.segmentCount()>1) {
+						IPath childPath = path.removeFirstSegments(1);
+						BookmarkFolder folder = (BookmarkFolder)obj;
+						return find(folder.getChildren(null), childPath);
+					}
+				}
+				return obj;
+			}
+		}
+		return null;
 	}
 
 	private static void processRoot(Node root, Vector bookmarks) {

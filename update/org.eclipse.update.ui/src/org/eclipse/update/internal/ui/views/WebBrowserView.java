@@ -32,6 +32,9 @@ public class WebBrowserView extends ViewPart {
 	private Combo addressCombo;
 	private Object input;
 	private ToolBarManager toolBarManager;
+	private Action refreshAction;
+	private Action stopAction;
+	private Action goAction;
 	private Action backwardAction;
 	private Action forwardAction;
 
@@ -81,6 +84,12 @@ public class WebBrowserView extends ViewPart {
 				}
 			}
 		});
+		site.addEventListener(WebBrowser.DownloadBegin, new OleListener() {
+			public void handleEvent(OleEvent event) {
+				stopAction.setEnabled(true);
+				refreshAction.setEnabled(false);
+			}
+		});
 	}
 
 	public void openTo(Object object) {
@@ -98,6 +107,8 @@ public class WebBrowserView extends ViewPart {
 	private void downloadComplete(String url) {
 		backwardAction.setEnabled(browser.isBackwardEnabled());
 		forwardAction.setEnabled(browser.isForwardEnabled());
+		stopAction.setEnabled(false);
+		refreshAction.setEnabled(true);
 	}
 
 	private void createNavBar(Composite parent) {
@@ -105,10 +116,17 @@ public class WebBrowserView extends ViewPart {
 		addressLabel.setText(UpdateUIPlugin.getResourceString(KEY_ADDRESS));
 
 		addressCombo = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER);
+		addressCombo.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				String text = addressCombo.getText();
+				goAction.setEnabled(text.length()>0);
+			}
+		});
 		addressCombo.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				String text = addressCombo.getItem(addressCombo.getSelectionIndex());
-				navigate(text);
+				if (text.length()>0)
+					navigate(text);
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {
 				navigate(addressCombo.getText());
@@ -147,17 +165,18 @@ public class WebBrowserView extends ViewPart {
 	}
 
 	private void makeActions() {
-		Action goAction = new Action() {
+		goAction = new Action() {
 			public void run() {
 				navigate(addressCombo.getText());
 			}
 		};
+		goAction.setEnabled(false);
 		goAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_GO));
 		goAction.setImageDescriptor(UpdateUIPluginImages.DESC_GO_NAV);
 		goAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_GO_NAV_D);
 		goAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_GO_NAV_H);
 
-		Action stopAction = new Action() {
+		stopAction = new Action() {
 			public void run() {
 				browser.stop();
 			}
@@ -166,8 +185,9 @@ public class WebBrowserView extends ViewPart {
 		stopAction.setImageDescriptor(UpdateUIPluginImages.DESC_STOP_NAV);
 		stopAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_STOP_NAV_D);
 		stopAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_STOP_NAV_H);
+		stopAction.setEnabled(false);
 
-		Action refreshAction = new Action() {
+		refreshAction = new Action() {
 			public void run() {
 				browser.refresh();
 			}
@@ -177,6 +197,8 @@ public class WebBrowserView extends ViewPart {
 		refreshAction.setDisabledImageDescriptor(
 			UpdateUIPluginImages.DESC_REFRESH_NAV_D);
 		refreshAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_REFRESH_NAV_H);
+		refreshAction.setEnabled(false);
+		
 		backwardAction = new Action() {
 			public void run() {
 				browser.back();

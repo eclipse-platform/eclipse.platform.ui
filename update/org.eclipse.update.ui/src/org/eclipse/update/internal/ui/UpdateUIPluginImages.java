@@ -116,6 +116,9 @@ public class UpdateUIPluginImages {
 	public static final ImageDescriptor DESC_FORM_UNDERLINE  = create(PATH_WIZBAN, "form_underline.gif");
 	public static final ImageDescriptor DESC_PROVIDER = create(PATH_WIZBAN, "provider.gif");
 	public static final ImageDescriptor DESC_ITEM = create(PATH_WIZBAN, "topic.gif");
+	public static final ImageDescriptor DESC_NEW_BOOKMARK  = create(PATH_WIZBAN, "new_bookmark_wiz.gif");
+	public static final ImageDescriptor DESC_NEW_FOLDER  = create(PATH_WIZBAN, "new_folder_wiz.gif");
+	public static final ImageDescriptor DESC_NEW_SEARCH  = create(PATH_WIZBAN, "new_search_wiz.gif");
 
 	private static ImageDescriptor create(String prefix, String name) {
 		return ImageDescriptor.createFromURL(makeImageURL(prefix, name));

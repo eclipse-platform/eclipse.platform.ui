@@ -49,19 +49,13 @@ protected void createContents(Composite parent) {
 	factory.createComposite(parent);
 	TableData td = new TableData();
 	td.align = TableData.FILL;
-/*
-	urlLabel = factory.createHeadingLabel(parent, null);
-	FormEngine desc = factory.createFormEngine(parent);
-	desc.load(UpdateUIPlugin.getResourceString(KEY_DESC), true, true);
-	TableData td = new TableData();
-	td.align = TableData.FILL;
-	td.grabHorizontal=true;
-	desc.setLayoutData(td);
-*/
 }
 
 public void expandTo(Object obj) {
-	String name = obj != null ? obj.toString() : "";
+	String name = "";
+	
+	if (obj != null && obj instanceof ModelObject)
+		name = obj.toString();
 	setHeadingText(name);
 	((Composite)getControl()).layout();
 	getControl().redraw();

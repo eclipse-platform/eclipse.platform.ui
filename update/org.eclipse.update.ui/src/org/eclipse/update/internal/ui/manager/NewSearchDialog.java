@@ -14,9 +14,9 @@ import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.search.*;
 
 public class NewSearchDialog extends Dialog {
-	public static final String KEY_TITLE = "NewSearchDialog.title";
-	private static final String KEY_NAME = "NewSearchDialog.name";
-	private static final String KEY_CATEGORY = "NewSearchDialog.category";
+	public static final String KEY_TITLE = "BaseNewDialog.title";
+	private static final String KEY_NAME = "BaseNewDialog.name";
+	private static final String KEY_CATEGORY = "BaseNewDialog.category";
 	private Text nameText;
 	private Combo categoryCombo;
 	private String name;

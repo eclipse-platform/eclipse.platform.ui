@@ -111,6 +111,10 @@ public class UpdateModel implements IAdaptable {
 		return BookmarkUtil.getBookmarks(bookmarks);
 	}
 	
+	public BookmarkFolder getFolder(IPath path) {
+		return BookmarkUtil.getFolder(bookmarks, path);
+	}
+	
 	public void addUpdateModelChangedListener(IUpdateModelChangedListener listener) {
 		if (!listeners.contains(listener)) 
 		   listeners.add(listener);

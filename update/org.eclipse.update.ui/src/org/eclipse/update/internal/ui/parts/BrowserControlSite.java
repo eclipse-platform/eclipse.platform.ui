@@ -4,7 +4,6 @@ package org.eclipse.update.internal.ui.parts;
  * All Rights Reserved.
  */
 
-
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.ole.win32.*;
 import org.eclipse.swt.layout.*;
@@ -27,41 +26,19 @@ public class BrowserControlSite extends OleControlSite {
 	protected boolean startedDownload = false;
 	// Web Browser
 	private WebBrowser browser;
-	private ProgressBar webProgress;
-	private Label webStatus;
 	private String presentationURL;
-	private boolean redirection;
 	private IStatusLineManager statusLineManager;
-	private int workSoFar=0;
-	private int prevMax=0;
-	
+	private int workSoFar = 0;
+	private int prevMax = 0;
+
 	public void setStatusLineManager(IStatusLineManager manager) {
 		this.statusLineManager = manager;
 	}
-	
+
 	void setBrowser(WebBrowser browser) {
 		this.browser = browser;
 	}
-	
-	void setStatusContainer(Composite statusContainer) {
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight = 2;
-		statusContainer.setLayout(layout);
-		webProgress = new ProgressBar(statusContainer, SWT.FLAT | SWT.SMOOTH | SWT.HORIZONTAL);
-		webProgress.setMinimum(0);
-		webProgress.setMaximum(100);
-		GridData gd = new GridData();
-		gd.widthHint = 150;
-		webProgress.setLayoutData(gd);
-		//webProgress.setVisible(false);
-		
-		webStatus = new Label(statusContainer, SWT.NONE);
-		webStatus.setText("");
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		webStatus.setLayoutData(gd);
-	}
-	
+
 	public String getPresentationURL() {
 		return presentationURL;
 	}
@@ -71,7 +48,7 @@ public class BrowserControlSite extends OleControlSite {
 	 */
 	public BrowserControlSite(Composite parent, int style, String progId) {
 		super(parent, style, progId);
-		
+
 		addEventListener(WebBrowser.DownloadBegin, new OleListener() {
 			public void handleEvent(OleEvent event) {
 				startedDownload = true;
@@ -84,39 +61,16 @@ public class BrowserControlSite extends OleControlSite {
 			public void handleEvent(OleEvent event) {
 				startedDownload = false;
 				//webProgress.setSelection(0);
-				if (statusLineManager!=null) 
-				   statusLineManager.getProgressMonitor().done();
-				if (redirection)
-				   redirection = false;
-				else
-				   presentationURL = browser.getLocationURL();
+				if (statusLineManager != null)
+					statusLineManager.getProgressMonitor().done();
+				presentationURL = browser.getLocationURL();
 			}
 		});
 
 		addEventListener(WebBrowser.BeforeNavigate2, new OleListener() {
 			public void handleEvent(OleEvent event) {
 				Variant urlVar = event.arguments[1];
-                String strUrl = urlVar.getString();
-                /*
-                if (urlParser.isUpdateURL(strUrl)) {
-                	final String redirURL = urlParser.parseURL(strUrl);
-                    Variant cancel = event.arguments[6];
-                    int ptr = cancel.getByRef();
-                    OS.MoveMemory(ptr, new int [] { 1 }, 4);
-                    //browser.stop();
-                    if (redirURL!=null) {
-                   		redirection = true;
-               			browser.navigate(redirURL);
-                    }
-                    //int ptr = urlVar.getByRef();
-                    //OS.MoveMemory(ptr, redirURL.getBytes(), redirURL.length()); 
-        
-                    //int ptr = urlVar.getByRef();
-                    //OS.MoveMemory(ptr, new 
-                    //browser.navigate(redirURL);
- 
-                }
-                */
+				String strUrl = urlVar.getString();
 			}
 		});
 
@@ -145,8 +99,8 @@ public class BrowserControlSite extends OleControlSite {
 				int newValue = progress.getInt();
 				int worked = newValue - workSoFar;
 				workSoFar = newValue;
-				if (statusLineManager!=null) 
-				   statusLineManager.getProgressMonitor().worked(worked);
+				if (statusLineManager != null)
+					statusLineManager.getProgressMonitor().worked(worked);
 			}
 		});
 
@@ -155,17 +109,13 @@ public class BrowserControlSite extends OleControlSite {
 				Variant newText = event.arguments[0];
 				String msg = newText.getString();
 
-				//if (webStatus!=null) {
-					if (msg != null) {
-						//webStatus.setText(msg);
-						if (statusLineManager!=null) 
-						   statusLineManager.setMessage(msg);
-					}
-					else {
-						//webStatus.setText("");
-						if (statusLineManager!=null) statusLineManager.setMessage("");
-					}
-				//}
+				if (msg != null) {
+					if (statusLineManager != null)
+						statusLineManager.setMessage(msg);
+				} else {
+					if (statusLineManager != null)
+						statusLineManager.setMessage("");
+				}
 			}
 		});
 	}

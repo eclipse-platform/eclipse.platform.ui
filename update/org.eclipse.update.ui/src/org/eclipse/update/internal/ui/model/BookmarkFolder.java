@@ -2,6 +2,8 @@ package org.eclipse.update.internal.ui.model;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.IPath;
+
 public class BookmarkFolder extends NamedModelObject {
 	protected ArrayList children= new ArrayList();
 	public BookmarkFolder() {
@@ -18,11 +20,11 @@ public class BookmarkFolder extends NamedModelObject {
 	public boolean hasChildren() {
 		return children.size()>0;
 	} 
-
+	
 	public void addChild(NamedModelObject object) {
 		internalAdd(object);
 		notifyObjectsAdded(this, new Object[] {object});
-	}	
+	}
 
 	public void addChildren(NamedModelObject [] objects) {
 		for (int i=0; i<objects.length; i++) {
