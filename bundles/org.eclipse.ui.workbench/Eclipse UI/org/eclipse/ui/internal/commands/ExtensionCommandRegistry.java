@@ -92,11 +92,6 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 		else
 			activeKeyConfigurationDefinitions.clear();
 
-		if (contextBindingDefinitions == null)
-			contextBindingDefinitions = new ArrayList();
-		else
-			contextBindingDefinitions.clear();
-
 		if (categoryDefinitions == null)
 			categoryDefinitions = new ArrayList();
 		else
@@ -222,13 +217,6 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 			.equals(super.activeKeyConfigurationDefinitions)) {
 			super.activeKeyConfigurationDefinitions =
 				Collections.unmodifiableList(activeKeyConfigurationDefinitions);
-			commandRegistryChanged = true;
-		}
-
-		if (!contextBindingDefinitions
-			.equals(super.contextBindingDefinitions)) {
-			super.contextBindingDefinitions =
-				Collections.unmodifiableList(contextBindingDefinitions);
 			commandRegistryChanged = true;
 		}
 

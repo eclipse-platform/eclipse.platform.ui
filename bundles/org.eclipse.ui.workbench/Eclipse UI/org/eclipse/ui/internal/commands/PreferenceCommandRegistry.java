@@ -26,156 +26,161 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 
-public final class PreferenceCommandRegistry
-	extends AbstractMutableCommandRegistry {
+/**
+ * The persistent store for the preferences related to the commands
+ * infrastructure. This store handles loading and storing of preferences.
+ * 
+ * @since 3.0
+ */
+public final class PreferenceCommandRegistry extends
+        AbstractMutableCommandRegistry {
 
-	private final static String KEY = Persistence.PACKAGE_FULL;
-	private final static String TAG_ROOT = Persistence.PACKAGE_FULL;
+    /**
+     * The full package name for the store.
+     */
+    private final static String KEY = Persistence.PACKAGE_FULL;
 
-	private IPreferenceStore preferenceStore;
+    /**
+     * The underlying preference store. This value will never be
+     * <code>null</code>.
+     */
+    private IPreferenceStore preferenceStore;
 
-	public PreferenceCommandRegistry(IPreferenceStore preferenceStore) {
-		if (preferenceStore == null)
-			throw new NullPointerException();
+    /**
+     * Constructs a new instance of <code>PreferenceCommandRegistry</code>
+     * with the preference store it is supposed to use.
+     * 
+     * @param preferenceStore
+     *            The preference store to use; must not be <code>null</code>.
+     */
+    public PreferenceCommandRegistry(IPreferenceStore preferenceStore) {
+        if (preferenceStore == null) throw new NullPointerException();
 
-		this.preferenceStore = preferenceStore;
+        this.preferenceStore = preferenceStore;
 
-		this
-			.preferenceStore
-			.addPropertyChangeListener(new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-				if (KEY.equals(propertyChangeEvent.getProperty()))
-					try {
-						load();
-					} catch (final IOException e) {
-						e.printStackTrace();
-					}
-			}
-		});
+        this.preferenceStore
+                .addPropertyChangeListener(new IPropertyChangeListener() {
 
-		try {
-			load();
-		} catch (IOException eIO) {
-		}
-	}
+                    public void propertyChange(
+                            PropertyChangeEvent propertyChangeEvent) {
+                        if (KEY.equals(propertyChangeEvent.getProperty())) try {
+                            load();
+                        } catch (final IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
 
-	public void load() throws IOException {
-		String preferenceString = preferenceStore.getString(KEY);
+        try {
+            load();
+        } catch (IOException eIO) {
+            // At least we tried....
+        }
+    }
 
-		if (preferenceString != null && preferenceString.length() != 0) {
-			Reader reader = new StringReader(preferenceString);
+    /**
+     * Loads all of the preferences from the store, and sets member variables
+     * containing all of the values.
+     * 
+     * @throws IOException
+     *             If something happens while trying to read the store.
+     */
+    public void load() throws IOException {
+        String preferenceString = preferenceStore.getString(KEY);
 
-			try {
-				IMemento memento = XMLMemento.createReadRoot(reader);
-				List activeKeyConfigurationDefinitions =
-					Collections.unmodifiableList(
-						Persistence.readActiveKeyConfigurationDefinitions(
-							memento,
-							Persistence.TAG_ACTIVE_KEY_CONFIGURATION,
-							null));
-				List categoryDefinitions =
-					Collections.unmodifiableList(
-						Persistence.readCategoryDefinitions(
-							memento,
-							Persistence.TAG_CATEGORY,
-							null));
-				List commandDefinitions =
-					Collections.unmodifiableList(
-						Persistence.readCommandDefinitions(
-							memento,
-							Persistence.TAG_COMMAND,
-							null));
-				List keyConfigurationDefinitions =
-					Collections.unmodifiableList(
-						Persistence.readKeyConfigurationDefinitions(
-							memento,
-							Persistence.TAG_KEY_CONFIGURATION,
-							null));
-				List keySequenceBindingDefinitions =
-					Collections.unmodifiableList(
-						Persistence.readKeySequenceBindingDefinitions(
-							memento,
-							Persistence.TAG_KEY_SEQUENCE_BINDING,
-							null));
-				boolean commandRegistryChanged = false;
+        if (preferenceString != null && preferenceString.length() != 0) {
+            Reader reader = new StringReader(preferenceString);
 
-				if (!activeKeyConfigurationDefinitions
-					.equals(this.activeKeyConfigurationDefinitions)) {
-					this.activeKeyConfigurationDefinitions =
-						activeKeyConfigurationDefinitions;
-					commandRegistryChanged = true;
-				}
+            try {
+                IMemento memento = XMLMemento.createReadRoot(reader);
+                List activeKeyConfigurationDefinitions = Collections
+                        .unmodifiableList(Persistence
+                                .readActiveKeyConfigurationDefinitions(
+                                        memento,
+                                        Persistence.TAG_ACTIVE_KEY_CONFIGURATION,
+                                        null));
+                List categoryDefinitions = Collections
+                        .unmodifiableList(Persistence.readCategoryDefinitions(
+                                memento, Persistence.TAG_CATEGORY, null));
+                List commandDefinitions = Collections
+                        .unmodifiableList(Persistence.readCommandDefinitions(
+                                memento, Persistence.TAG_COMMAND, null));
+                List keyConfigurationDefinitions = Collections
+                        .unmodifiableList(Persistence
+                                .readKeyConfigurationDefinitions(memento,
+                                        Persistence.TAG_KEY_CONFIGURATION, null));
+                List keySequenceBindingDefinitions = Collections
+                        .unmodifiableList(Persistence
+                                .readKeySequenceBindingDefinitions(memento,
+                                        Persistence.TAG_KEY_SEQUENCE_BINDING,
+                                        null));
+                boolean commandRegistryChanged = false;
 
-				if (!contextBindingDefinitions
-					.equals(this.contextBindingDefinitions)) {
-					this.contextBindingDefinitions =
-						contextBindingDefinitions;
-					commandRegistryChanged = true;
-				}
+                if (!activeKeyConfigurationDefinitions
+                        .equals(this.activeKeyConfigurationDefinitions)) {
+                    this.activeKeyConfigurationDefinitions = activeKeyConfigurationDefinitions;
+                    commandRegistryChanged = true;
+                }
 
-				if (!categoryDefinitions.equals(this.categoryDefinitions)) {
-					this.categoryDefinitions = categoryDefinitions;
-					commandRegistryChanged = true;
-				}
+                if (!categoryDefinitions.equals(this.categoryDefinitions)) {
+                    this.categoryDefinitions = categoryDefinitions;
+                    commandRegistryChanged = true;
+                }
 
-				if (!commandDefinitions.equals(this.commandDefinitions)) {
-					this.commandDefinitions = commandDefinitions;
-					commandRegistryChanged = true;
-				}
+                if (!commandDefinitions.equals(this.commandDefinitions)) {
+                    this.commandDefinitions = commandDefinitions;
+                    commandRegistryChanged = true;
+                }
 
-				if (!keyConfigurationDefinitions
-					.equals(this.keyConfigurationDefinitions)) {
-					this.keyConfigurationDefinitions =
-						keyConfigurationDefinitions;
-					commandRegistryChanged = true;
-				}
+                if (!keyConfigurationDefinitions
+                        .equals(this.keyConfigurationDefinitions)) {
+                    this.keyConfigurationDefinitions = keyConfigurationDefinitions;
+                    commandRegistryChanged = true;
+                }
 
-				if (!keySequenceBindingDefinitions
-					.equals(this.keySequenceBindingDefinitions)) {
-					this.keySequenceBindingDefinitions =
-						keySequenceBindingDefinitions;
-					commandRegistryChanged = true;
-				}
+                if (!keySequenceBindingDefinitions
+                        .equals(this.keySequenceBindingDefinitions)) {
+                    this.keySequenceBindingDefinitions = keySequenceBindingDefinitions;
+                    commandRegistryChanged = true;
+                }
 
-				if (commandRegistryChanged)
-					fireCommandRegistryChanged();
-			} catch (WorkbenchException eWorkbench) {
-				throw new IOException();
-			} finally {
-				reader.close();
-			}
-		}
-	}
+                if (commandRegistryChanged) fireCommandRegistryChanged();
+            } catch (WorkbenchException eWorkbench) {
+                throw new IOException();
+            } finally {
+                reader.close();
+            }
+        }
+    }
 
-	public void save() throws IOException {
-		XMLMemento xmlMemento = XMLMemento.createWriteRoot(TAG_ROOT);
-		Persistence.writeActiveKeyConfigurationDefinitions(
-			xmlMemento,
-			Persistence.TAG_ACTIVE_KEY_CONFIGURATION,
-			activeKeyConfigurationDefinitions);
-		Persistence.writeCategoryDefinitions(
-			xmlMemento,
-			Persistence.TAG_CATEGORY,
-			categoryDefinitions);
-		Persistence.writeCommandDefinitions(
-			xmlMemento,
-			Persistence.TAG_COMMAND,
-			commandDefinitions);
-		Persistence.writeKeyConfigurationDefinitions(
-			xmlMemento,
-			Persistence.TAG_KEY_CONFIGURATION,
-			keyConfigurationDefinitions);
-		Persistence.writeKeySequenceBindingDefinitions(
-			xmlMemento,
-			Persistence.TAG_KEY_SEQUENCE_BINDING,
-			keySequenceBindingDefinitions);
-		Writer writer = new StringWriter();
+    /**
+     * Saves all of the preferences to the preference store.
+     * 
+     * @throws IOException
+     *             If something happens while trying to write to the preference
+     *             store.
+     */
+    public void save() throws IOException {
+        XMLMemento xmlMemento = XMLMemento.createWriteRoot(KEY);
+        Persistence.writeActiveKeyConfigurationDefinitions(xmlMemento,
+                Persistence.TAG_ACTIVE_KEY_CONFIGURATION,
+                activeKeyConfigurationDefinitions);
+        Persistence.writeCategoryDefinitions(xmlMemento,
+                Persistence.TAG_CATEGORY, categoryDefinitions);
+        Persistence.writeCommandDefinitions(xmlMemento,
+                Persistence.TAG_COMMAND, commandDefinitions);
+        Persistence.writeKeyConfigurationDefinitions(xmlMemento,
+                Persistence.TAG_KEY_CONFIGURATION, keyConfigurationDefinitions);
+        Persistence.writeKeySequenceBindingDefinitions(xmlMemento,
+                Persistence.TAG_KEY_SEQUENCE_BINDING,
+                keySequenceBindingDefinitions);
+        Writer writer = new StringWriter();
 
-		try {
-			xmlMemento.save(writer);
-			preferenceStore.setValue(KEY, writer.toString());
-		} finally {
-			writer.close();
-		}
-	}
+        try {
+            xmlMemento.save(writer);
+            preferenceStore.setValue(KEY, writer.toString());
+        } finally {
+            writer.close();
+        }
+    }
 }

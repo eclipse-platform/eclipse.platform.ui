@@ -19,8 +19,6 @@ public interface ICommandRegistry {
 
 	List getActiveKeyConfigurationDefinitions();
 
-	List getContextBindingDefinitions();
-
 	List getCategoryDefinitions();
 
 	List getCommandDefinitions();
