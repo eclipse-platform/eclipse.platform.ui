@@ -30,5 +30,6 @@ public class UIPerformanceTestSuite extends TestSuite {
      */
     public UIPerformanceTestSuite() {
         addTest(new TestSuite(PerspectiveSwitchTest.class));
+        addTest(new TestSuite(EditorSwitchTest.class));
     }
 }
