@@ -1,12 +1,16 @@
 package org.eclipse.debug.core;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Vector;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -121,6 +125,35 @@ public class DebugPlugin extends Plugin {
 	 * down.
 	 */
 	private boolean fShuttingDown= false;
+	
+	/**
+	 * Whether event dispatch is in progress
+	 * 
+	 * @since 2.1
+	 */
+	private boolean fDispatching = false;
+	
+	/**
+	 * Queue of runnables to execute after event dispatch is
+	 * complete.
+	 * 
+	 * @since 2.1
+	 */
+	private Vector fRunnables = new Vector(10);
+	
+	/**
+	 * Thread that async runnables are run in
+	 * 
+	 * @since 2.1
+	 */
+	private Thread fAsyncThread = null;
+	
+	/**
+	 * Agent that executes runnables
+	 * 
+	 * @since 2.1
+	 */
+	private AsynchRunner fAsynchRunner = null;
 		
 	/**
 	 * Table of status handlers. Keys are {plug-in identifier, status code}
@@ -203,11 +236,34 @@ public class DebugPlugin extends Plugin {
 		if (events == null) {
 			return;
 		} else {
+			fDispatching = true;
 			Object[] listeners= getEventListeners();
 			for (int i= 0; i < listeners.length; i++) {
 				((IDebugEventSetListener)listeners[i]).handleDebugEvents(events);
 			}		
+			synchronized (fAsynchRunner) {
+				fAsynchRunner.notifyAll();
+			}
+			fDispatching = false;
 		}
+	}
+	
+	/**
+	 * Asynchronously executes the given runnable in a seperate
+	 * thread, after debug event dispatch has completed. If debug
+	 * events are not currently being dispatched, the runnable is
+	 * scheduled to run in a seperate thread immediately.
+	 * 
+	 * @param r runnable to execute asynchronously
+	 * @since 2.1
+	 */
+	public void asyncExec(Runnable r) {
+		fRunnables.add(r);
+		if (!fDispatching) {
+			synchronized (fAsynchRunner) {
+				fAsynchRunner.notifyAll();
+			}			
+		} 
 	}
 	
 	/**
@@ -318,6 +374,9 @@ public class DebugPlugin extends Plugin {
 	public void shutdown() throws CoreException {
 		setShuttingDown(true);
 		super.shutdown();
+		synchronized (fAsynchRunner) {
+			fAsynchRunner.notifyAll();
+		}
 		fLaunchManager.shutdown();
 		fBreakpointManager.shutdown();
 		fEventListeners.removeAll();
@@ -339,12 +398,15 @@ public class DebugPlugin extends Plugin {
 	 * @exception CoreException if this plug-in fails to start up
 	 */
 	public void startup() throws CoreException {
+		fAsynchRunner = new AsynchRunner();
+		fAsyncThread = new Thread(fAsynchRunner, DebugCoreMessages.getString("DebugPlugin.Debug_async_queue_1")); //$NON-NLS-1$
 		fLaunchManager= new LaunchManager();
 		fLaunchManager.startup();
 		fBreakpointManager= new BreakpointManager();
 		fBreakpointManager.startup();
 		fExpressionManager = new ExpressionManager();
 		fExpressionManager.startup();
+		fAsyncThread.start();
 	}
 	
 	/**
@@ -533,7 +595,57 @@ public class DebugPlugin extends Plugin {
 		return fEventFilters != null && fEventFilters.size() > 0;
 	}
 
-	
+	/**
+	 * Executes runnables after event dispatch is complete, in
+	 * a seperate thread.
+	 * 
+	 * @ since 2.1
+	 */
+	class AsynchRunner implements Runnable {
+		public void run() {
+			
+			while (!fShuttingDown) {
+				
+				// wait for something to run
+				synchronized (this) {
+					try {
+						wait();
+					} catch (InterruptedException e) {
+					}
+				}
+				
+				// exit on shutdown
+				if (fShuttingDown) {
+					return;
+				}
+				
+				// execute any queued runnables
+				executeRunnables();
+			}
+						
+		}
+		
+		/**
+		 * Executes runnables in the queue, and empties the queue
+		 */
+		private void executeRunnables() {
+			if (fRunnables.isEmpty()) {
+				return;
+			}
+			Vector v = fRunnables;
+			fRunnables = new Vector(5);
+			Iterator iter = v.iterator();
+			while (iter.hasNext()) {
+				Runnable r = (Runnable)iter.next();
+				try {
+					r.run();
+				} catch (Throwable t) {
+					log(t);
+				}
+			}
+			executeRunnables();
+		}		
+	}
 	
 }
 
