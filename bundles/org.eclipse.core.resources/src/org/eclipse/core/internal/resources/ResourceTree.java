@@ -717,6 +717,8 @@ public void standardDeleteProject(IProject project, int updateFlags, IProgressMo
  */
 private void moveProjectContent(IProject source, IProjectDescription destDescription, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	try {
+		String message = Policy.bind("resources.moving", source.getFullPath().toString()); //$NON-NLS-1$
+		monitor.beginTask(message, 10);
 		IProjectDescription srcDescription = source.getDescription();
 		// If the locations are the same (and non-default) then there is nothing to do.
 		if (srcDescription.getLocation() != null && srcDescription.getLocation().equals(destDescription))
@@ -731,7 +733,23 @@ private void moveProjectContent(IProject source, IProjectDescription destDescrip
 			destLocation = Platform.getLocation().append(destDescription.getName());
 
 		// Move the contents on disk.
-		moveInFileSystem(srcLocation.toFile(), destLocation.toFile(), updateFlags);
+		moveInFileSystem(srcLocation.toFile(), destLocation.toFile(), updateFlags, monitor);
+		monitor.worked(9);
+		
+		//if this is a deep move, move the contents of any linked resources
+		if ((updateFlags & IResource.DEEP) != 0) {
+			IResource[] children = source.members();
+			for (int i = 0; i < children.length; i++) {
+				if (children[i].isLinked()) {
+					message = Policy.bind("resources.moving", children[i].getFullPath().toString()); //$NON-NLS-1$
+					monitor.subTask(message);
+					java.io.File sourceFile = children[i].getLocation().toFile();
+					java.io.File destFile = destLocation.append(children[i].getName()).toFile();
+					moveInFileSystem(sourceFile, destFile, updateFlags, Policy.monitorFor(null));
+				}
+			}
+		}
+		monitor.worked(1);
 	} finally {
 		monitor.done();
 	}
@@ -743,7 +761,7 @@ public void standardMoveFile(IFile source, IFile destination, int updateFlags, I
 	Assert.isLegal(isValid);
 	try {
 		String message = Policy.bind("resources.moving", source.getFullPath().toString()); //$NON-NLS-1$
-		monitor.beginTask(message, Policy.totalWork);
+		monitor.subTask(message);
 
 		// These pre-conditions should all be ok but just in case...
 		if (!source.exists() || destination.exists() || !destination.getParent().isAccessible())
@@ -787,9 +805,9 @@ public void standardMoveFile(IFile source, IFile destination, int updateFlags, I
 		// If the file was successfully moved in the file system then the workspace
 		// tree needs to be updated accordingly. Otherwise signal that we have an error.
 		try {
-			moveInFileSystem(sourceFile, destFile, updateFlags);
+			moveInFileSystem(sourceFile, destFile, updateFlags, monitor);
 		} catch (CoreException e) {
-			message = Policy.bind("localstore.couldnotMove", source.getFullPath().toString()); //$NON-NLS-1$
+			message = Policy.bind("localstore.couldNotMove", source.getFullPath().toString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IResourceStatus.ERROR, source.getFullPath(), message, e);
 			failed(status);
 			return;
@@ -809,7 +827,7 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 	Assert.isLegal(isValid);
 	try {
 		String message = Policy.bind("resources.moving", source.getFullPath().toString()); //$NON-NLS-1$
-		monitor.beginTask(message, Policy.totalWork);
+		monitor.subTask(message);
 			
 		// These pre-conditions should all be ok but just in case...
 		if (!source.exists() || destination.exists() || !destination.getParent().isAccessible())
@@ -843,7 +861,7 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 		java.io.File sourceFile = source.getLocation().toFile();
 		java.io.File destinationFile = destination.getLocation().toFile();
 		try {
-			moveInFileSystem(sourceFile, destinationFile, updateFlags);
+			moveInFileSystem(sourceFile, destinationFile, updateFlags, monitor);
 		} catch (CoreException e) {
 			message = Policy.bind("resources.errorMove"); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), message, e);
@@ -856,7 +874,7 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 			success &= !sourceFile.exists();
 		if (success) {
 			movedFolderSubtree(source, destination);
-			updateTimestamps(destination);
+			updateTimestamps(destination, isDeep);
 		} else {
 			message = Policy.bind("localstore.couldNotCreateFolder", destination.getLocation().toOSString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), message);
@@ -870,16 +888,20 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
  * Helper method to update all the timestamps in the tree to match
  * those in the file system. Used after a #move.
  */
-private void updateTimestamps(IResource root) {
+private void updateTimestamps(IResource root, final boolean isDeep) {
 	IResourceVisitor visitor = new IResourceVisitor() {
 		public boolean visit(IResource resource) {
+			boolean isLinked = resource.isLinked();
+			if (isLinked && !isDeep)
+				//don't need to visit children because they didn't move
+				return false;
 			if (resource.getType() == IResource.FILE) {
 				IFile file = (IFile) resource;
 				updateMovedFileTimestamp(file, computeTimestamp(file));
 			} else {
-				//clear the linked resource bit, if any
-				if (resource.isLinked()) {
-					ResourceInfo info = ((Resource)resource).getResourceInfo(false, true);
+				if (isLinked) {
+					//clear the linked resource bit, if any
+					ResourceInfo info = ((Resource) resource).getResourceInfo(false, true);
 					info.clear(ICoreConstants.M_LINK);
 				}
 			}
@@ -888,7 +910,7 @@ private void updateTimestamps(IResource root) {
 	};
 	try {
 		root.accept(visitor, IResource.DEPTH_INFINITE, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
-	} catch(CoreException e) {
+	} catch (CoreException e) {
 		// No exception should be thrown.
 	}
 }
@@ -1022,7 +1044,7 @@ public void standardMoveProject(IProject source, IProjectDescription description
 		try {
 			moveProjectContent(source, description, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork*3/4));
 		} catch (CoreException e) {
-			message = Policy.bind("localstore.couldnotMove", source.getFullPath().toString()); //$NON-NLS-1$
+			message = Policy.bind("localstore.couldNotMove", source.getFullPath().toString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 			failed(status);
 			return;
@@ -1031,10 +1053,20 @@ public void standardMoveProject(IProject source, IProjectDescription description
 		// If we got this far the project content has been moved on disk (if necessary)
 		// and we need to update the workspace tree.
 		movedProjectSubtree(source, description);
-		updateTimestamps(source.getWorkspace().getRoot().getProject(description.getName()));
+		monitor.worked(Policy.totalWork*1/8);
+		boolean isDeep = (updateFlags & IResource.DEEP) != 0;
+		updateTimestamps(source.getWorkspace().getRoot().getProject(description.getName()), isDeep);
+		monitor.worked(Policy.totalWork*1/8);
 	} finally {
 		monitor.done();
 	}
+}
+/**
+ * Moves any children of this project to their new location in the file system.
+ */
+private void moveLinkedChildren(IProject source, IProjectDescription description, int updateFlags, IProgressMonitor monitor) {
+	
+
 }
 /**
  * Move the contents of the specified file from the source location to the destination location.
@@ -1042,11 +1074,11 @@ public void standardMoveProject(IProject source, IProjectDescription description
  * 
  * <code>IResource.FORCE</code> is the only valid flag.
  */
-private void moveInFileSystem(java.io.File source, java.io.File destination, int updateFlags) throws CoreException {
+private void moveInFileSystem(java.io.File source, java.io.File destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	Assert.isLegal(isValid);
 	FileSystemStore store = ((Resource) ResourcesPlugin.getWorkspace().getRoot()).getLocalManager().getStore();
 	boolean force = (updateFlags & IResource.FORCE) != 0;
-	store.move(source, destination, force, Policy.monitorFor(null));
+	store.move(source, destination, force, monitor);
 }
 /**
  * @see IResourceTree#updateMovedFileTimestamp
