@@ -538,7 +538,7 @@ public class JobManager implements IJobManager {
 		}
 		//spin until all jobs are completed
 		try {
-			monitor.beginTask(Policy.bind("jobs.waitFam"), jobCount); //$NON-NLS-1$
+			monitor.beginTask(Policy.bind("jobs.blocked0"), jobCount); //$NON-NLS-1$
 			monitor.subTask(Policy.bind("jobs.waitFamSub", Integer.toString(jobCount))); //$NON-NLS-1$
 			int jobsLeft;
 			int reportedWorkDone = 0;
