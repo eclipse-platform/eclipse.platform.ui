@@ -15,12 +15,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 
 /**
- * @author Administrator
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
+ * Noop command that sends edit notifications to the server.
  */
 public class NOOPCommand extends Command {
 
@@ -52,6 +47,13 @@ public class NOOPCommand extends Command {
 	 */
 	protected void sendArguments(Session session, String[] arguments)throws CVSException {
 		// don't send any arguments
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.client.Command#isWorkspaceModification()
+	 */
+	protected boolean isWorkspaceModification() {
+		return false;
 	}
 
 }

@@ -520,13 +520,6 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		// set the modification state to what it really is and return true if the modification state changed
 		EclipseSynchronizer.getInstance().setModified(this, UNKNOWN);
 	}
-	
-	/**
-	 * @see org.eclipse.team.internal.ccvs.core.resources.EclipseResource#run(org.eclipse.team.internal.ccvs.core.ICVSRunnable, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected void run(ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
-		getParent().run(job, monitor);
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSResource#getRepositoryRelativePath()

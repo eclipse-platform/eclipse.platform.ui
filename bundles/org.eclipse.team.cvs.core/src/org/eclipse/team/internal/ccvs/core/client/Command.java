@@ -345,10 +345,26 @@ public abstract class Command extends Request {
 				}
 			}
 		};
-		session.getLocalRoot().run(job, pm);
+		if (isWorkspaceModification()) {
+			session.getLocalRoot().run(job, pm);
+		} else {
+			job.run(pm);
+		}
 		return status[0];
 	}
 	
+	/**
+	 * Return whether this command modifies the workspace.
+	 * If <code>true</code> is returned, a scheduling rule on
+	 * the session local root is obtained. Otherwise, no
+	 * scheduling rule is obtained. By default, <code>true</code>
+	 * is returned
+	 * @return whether this command modifies the workspace
+	 */
+	protected boolean isWorkspaceModification() {
+		return true;
+	}
+
 	private void notifyConsoleOnCompletion(Session session, IStatus status, Exception exception) {
 		if (session.isOutputToConsole()) {
 			IConsoleListener consoleListener = CVSProviderPlugin.getPlugin().getConsoleListener();

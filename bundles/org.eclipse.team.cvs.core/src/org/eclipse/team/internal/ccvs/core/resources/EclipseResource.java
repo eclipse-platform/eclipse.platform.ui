@@ -11,8 +11,10 @@
 package org.eclipse.team.internal.ccvs.core.resources;
 
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -255,9 +257,25 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 	 */
 	public abstract void handleModification(boolean forAddition) throws CVSException;
 	
-	/*
-	 * Run method which obtains both the CVS synchronizer lock and the workspace
-	 * lock
-	 */
-	protected abstract void run(final ICVSRunnable job, IProgressMonitor monitor) throws CVSException;
+	public void run(final ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
+		final CVSException[] error = new CVSException[1];
+		try {
+			// Do not use a scheduling rule in the workspace run since one
+			// will be obtained by the EclipseSynchronizer
+			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					try {
+						EclipseSynchronizer.getInstance().run(getIResource(), job, monitor);
+					} catch(CVSException e) {
+						error[0] = e; 
+					}
+				}
+			}, null /* no rule */, 0, monitor);
+		} catch(CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+		if(error[0]!=null) {
+			throw error[0];
+		}
+	}
 }

@@ -17,6 +17,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.client.*;
@@ -1157,7 +1158,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 			public void visitFolder(ICVSFolder folder) throws CVSException {
 				// nothing needs to be done here as the recurse will handle the traversal
 			}
-		}, progress);
+		}, null /* no scheduling rule */, progress);
 	}
 	
 	/**
@@ -1191,13 +1192,13 @@ public class CVSTeamProvider extends RepositoryProvider {
 			public void visitFolder(ICVSFolder folder) throws CVSException {
 				// nothing needs to be done here as the recurse will handle the traversal
 			}
-		}, progress);
+		}, getProject() /* project scheduling rule */, progress);
 	}
 	
 	/*
 	 * This method captures the common behavior between the edit and unedit methods.
 	 */
-	private void notifyEditUnedit(final IResource[] resources, final boolean recurse, final boolean notifyServer, final ICVSResourceVisitor editUneditVisitor, IProgressMonitor monitor) throws CVSException {
+	private void notifyEditUnedit(final IResource[] resources, final boolean recurse, final boolean notifyServer, final ICVSResourceVisitor editUneditVisitor, ISchedulingRule rule, IProgressMonitor monitor) throws CVSException {
 		final CVSException[] exception = new CVSException[] { null };
 		IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -1242,7 +1243,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 			}
 		};
 		try {
-			ResourcesPlugin.getWorkspace().run(workspaceRunnable, getProject(), 0, Policy.monitorFor(monitor));
+			ResourcesPlugin.getWorkspace().run(workspaceRunnable, rule, 0, Policy.monitorFor(monitor));
 		} catch (CoreException e) {
 			if (exception[0] == null) {
 				throw CVSException.wrapException(e);

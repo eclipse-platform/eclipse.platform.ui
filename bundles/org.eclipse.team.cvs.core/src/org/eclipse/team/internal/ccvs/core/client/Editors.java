@@ -25,5 +25,12 @@ public class Editors extends AbstractMessageCommand {
 	protected String getRequestId() {
 		return "editors"; //$NON-NLS-1$
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.client.Command#isWorkspaceModification()
+	 */
+	protected boolean isWorkspaceModification() {
+		return false;
+	}
 
 }

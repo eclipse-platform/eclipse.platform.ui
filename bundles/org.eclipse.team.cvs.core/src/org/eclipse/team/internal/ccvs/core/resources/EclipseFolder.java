@@ -13,25 +13,9 @@ package org.eclipse.team.internal.ccvs.core.resources;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
@@ -286,31 +270,6 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		return null;
 	}
 	
-	/*
-	 * @see ICVSFolder#run(ICVSRunnable, IProgressMonitor)
-	 */
-	public void run(final ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
-		final CVSException[] error = new CVSException[1];
-		try {
-			// Do not use a scheduling rule in the workspace run since one
-			// will be obtained by the EclipseSynchronizer
-			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-					try {
-						EclipseSynchronizer.getInstance().run(getIResource(), job, monitor);
-					} catch(CVSException e) {
-						error[0] = e; 
-					}
-				}
-			}, null /* no rule */, 0, monitor);
-		} catch(CoreException e) {
-			throw CVSException.wrapException(e);
-		}
-		if(error[0]!=null) {
-			throw error[0];
-		}
-	}
-		
 	/**
 	 * @see ICVSFolder#fetchChildren(IProgressMonitor)
 	 */
