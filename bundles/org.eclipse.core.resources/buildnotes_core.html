@@ -1,0 +1,4448 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; I) [Netscape]">
+   <title>Eclipse Platform Release Notes Core</title>
+<!-- saved from url=(0079)http://home.ott.oti.com/hubba/drops/sdk/latest-javadoc/doc/buildnotes_core.html -->
+<!-- saved from url=(0079)http://home.ott.oti.com/hubba/drops/sdk/latest-javadoc/doc/buildnotes_core.html -->
+</head>
+<body>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 20011113 (v210)
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=5668">5668</a> -
+Plugin version match on fragments too restrictive - added match attribute
+to fragments</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 20011108 (v209) - November 8, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=5031">5031</a>&nbsp;
+API - Review comments related to resource change notifications</li>
+</ul>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 20011105 - November 5, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=5039">5039</a>&nbsp;
+IFile.create with force true does not handle case variants</li>
+
+<ul>
+<li>
+The compromise is that methods that create files and folders on disk will
+return</li>
+
+<br>a special status constant in the CoreException if a case variant collision
+is
+<br>detected.&nbsp; This constant is IResourceStatus.CASE_VARIANT_EXISTS.&nbsp;
+The idea is
+<br>that at least this allows the programmatic detection of this case,
+so
+<br>appropriate handling can be written.</ul>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 207 - November 1, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=5158">5158</a> Core
+extensions are a mess?</li>
+
+<ul>
+<li>
+Released documentation fixes to our repository.&nbsp; No change in code,
+no change required by clients.</li>
+</ul>
+
+<li>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=3041">3041</a>&nbsp;
+magic 'aux' name not handled by refactoring (1GEUO7L)</li>
+
+<ul>
+<li>
+Added platform specific resource name validation checks to IWorkspace#validateName.&nbsp;
+The given refactoring case still doesn't give pretty results (big error
+dialog), but there's no more walkbacks. The API comment was updated.</li>
+</ul>
+
+<li>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=5002">5002</a>&nbsp;
+API IncrementalProjectBuilder#build should mention how to handle cancel</li>
+
+<ul>
+<li>
+Added a line in the javadoc recommending how cancelation should be handled.</li>
+
+<br>&nbsp;</ul>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=3048">3048</a>&nbsp;
+resource name != file name? (1GF2SPG)</li>
+
+<ul>
+<li>
+This restriction has been removed.&nbsp; It is now legal to create resource
+names involving semi-colons and commas.</li>
+</ul>
+</ul>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 206 - October 25, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+5256&nbsp; XML: plugin prerequisites - match attribute changes</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+3027&nbsp; Integrate changes to core lib (1GDKWLA)
+<br>3122&nbsp; -dev bin not removed from application arguments (1GJUABB)
+<h3>
+Closed Problem Reports</h3>
+3000&nbsp; Hidden files not handled correctly (1FWHT63)
+<br>3029&nbsp; Case sensitive and validity problems (1GDS96P)
+<br>3040&nbsp; Potential deadlock on Java Project creation (1GETAUS)
+<br>3073&nbsp; NPE in indexer printed to the console (1GFKO41)
+<br>3099&nbsp; StreamCorruptedException showing in log file (1GI94QR)
+<br>3561&nbsp; walkback creating class (named "AUX") (1G8VLRY)
+<br>5102&nbsp; Second builder not getting delta from the first</blockquote>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 205 - October 18, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+3133&nbsp; API - clarify IProjectDescription.setLocation (1GKS62X)</li>
+
+<br>Added the following paragraph:
+<br>&nbsp;* This operation maps the root folder of the project to the exact
+location
+<br>&nbsp;* provided.&nbsp; For example, if the location for project named
+"P" is set
+<br>&nbsp;* to the path c:\my_plugins\Project1, the file resource at workspace
+path
+<br>&nbsp;* /P/index.html&nbsp; would be stored in the local file system
+at
+<br>&nbsp;* c:\my_plugins\Project1\index.html.</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+3035&nbsp; duplicate dir structure created while creating .metadata (1GE8WDW)
+<br>3082&nbsp; Problem with UUID and IP address (1GGRLEK)
+<br>3137&nbsp; Performance: slow autobuild with many projects (1GL4NI5)
+<br>5059&nbsp; IPath#append API different then implementation
+<h3>
+Closed Problem Reports</h3>
+2995&nbsp; Missing content types from server (1FU2JQO)
+<br>2999&nbsp; ISVs need to be able to validate rename (1FWHSSI)
+<br>3001&nbsp; Deletion fails if MS Explorer is opened on workbench folders
+(1FWLYJ2)
+<br>3094&nbsp; Extra directory created under ide-beta (1GHJBG2)
+<br>3090&nbsp; Misc performance issues (1GHH6WS)
+<br>3097&nbsp; Inconsistent API and implementation for IContainer and Container
+(1GHSNM1)</blockquote>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 204 - October 11, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+None.
+<h3>
+Closed Problem Reports</h3>
+1GLBU8U: ITPCORE:WINNT - UTFDataFormatException opening a 202a workspace
+with 203
+<br>1GF0ZHZ: ITPJCORE:WIN2000 - NPE in Indexing thread (build 35!)
+<br>1GEL7MV: ITPJUI:ALL - Performance: working with autobuild is not possible</blockquote>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 203 - October 4, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GKS8UD: ITPCORE:ALL - Copying files on Linux using Ant loses files permissions
+<br>1GKS5F8: ITPCORE:ALL - File loses attributes when contents are set/appended
+<br>1GKRUXD: ITPCORE:WINNT - "receiver" is a bad API word
+<br>1GKDEQ5: ITPCORE:WINNT - DCR: possible delta API changes
+<br>1GKD0C8: ITPCORE:WIN2000 - Nit: provider name for xerces is inconsistent
+<br>1GHOPB4: ITPCORE:WINNT - Class loader performance
+<br>1GGM3JX: ITPCORE:ALL - Marker deltas for changed markers reflect new
+state
+<br>1GFL45K: ITPCORE:ALL - File.create does not always close the stream
+<br>1GEGYX7: ITPCORE:ALL - Check modification stamp
+<br>1GET4T6: ITPCORE:WIN2000 - Prevent a workspace being opened twice
+<br>1GE28GZ: ITPCORE:WIN2000 - look for problem code 13
+<br>1GDIL18: ITPCORE:ALL - Don't modify marker dirty bit if transient
+<h3>
+Closed Problem Reports</h3>
+1GIVK8A: ITPCORE:ALL - Opening multiple instances of Eclipse on the same
+target
+<br>1GIGQ9V: ITPCORE:WINNT - IPath - inconsistency between API and implementation
+<br>1GI8ZMM: ITPCORE:ALL - launching Eclipse.exe multiple times
+<br>1GI8X55: ITPCORE:ALL - opening the same workspace / platform data area
+twice
+<br>1GI3CPS: ITPCORE:WINNT - ResourceInfos not cleaned up after deletion
+<br>1GHQ0AP: ITPCORE:WINNT - Not available builders not handled nicely
+<br>1GEWI5C: ITPJUI:ALL - inconsistent IPath API
+<br>1GEWF2M: ITPCORE:ALL - Metadata directory contains dot-whatever files
+<br>1GEHAAS: ITPVCM:WINNT - Performance: catching up hangs
+<br>1GE7206: ITPUI:ALL - Canceling rename may create two projects
+<br>1GDT696: ITPJCORE:WINNT - Performance: Auto-Build does full build after
+a while
+<br>1G5SV9O: ITPCORE:WIN - PlunginStats and ResourceStats</blockquote>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 202 - September 27, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GK9KQN: ITPCORE:WIN2000 - Soft Prereqs - Ignore incompatible versions
+<br>1GK9755: ITPCORE:WIN2000 - Orphaned plugin picks wrong prerequisite
+<h3>
+Closed Problem Reports</h3>
+1GKMN8V: ITPCORE:ALL - Need easier way to access child deltas
+<br>1GKM7OQ: ITPCORE:WINNT - Stack overflow shutting down workspace</blockquote>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 201 - September 20, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GJUFYH: ITPCORE:ALL - ResourceInfo.setSynInfo has a concurrency info
+<br>1GJNHIP: ITPCORE:WIN2000 - Multiple version prerequisite confuses resolver
+<br>1GHWFC5: ITPCORE:ALL - Performance: AdapterManager#getFactory(Class,
+Class)
+<br>1GHH81D: ITPCORE:WIN2000 - Multiple versions of fragments not handled
+properly
+<br>1GFIE1Q: ITPJUI:WIN2000 - Non-obvious error message when creating a
+project
+<br>1GBZ5GB: ITPCORE:WIN - Performance: is refresh local producing unecessary
+garbage?
+<br>1G85WX2: ITPCORE:WINNT - Soft prereqs
+<h3>
+Closed Problem Reports</h3>
+1GJ7ZV5: ITPUI:WINNT - ANT.UI: MissingResourceBundle
+<br>1GFOG2P: ITPCORE:WINNT - Progress bar for refresh from local is not
+very accurate
+<br>1GFBQVP: ITPCORE:ALL - Performance: Project creation time
+<br>1GF9WSC: ITPCORE:ALL - Remove workspace linking on restore?
+<br>1GF9NQD: ITPCORE:ALL - Optimization of findExistingResourceVariant
+method
+<br>1GEVOEW: ITPCORE:WIN2000 - Performance tracking PR
+<br>1GDF4FX: ITPJCORE:WIN2000 - Performance: Strange Build behaviour
+<br>1G3PBWX: ITPCORE:ALL - dtree and watson refactoring</blockquote>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 200 - September 13, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The interface AntRunnerListener (package org.eclipse.ant.core) is renamed
+IAntRunnerListener for consistency with Eclipse namimg conventions.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GJ9RRK: ITPCORE:ALL - Unused temporary variables
+<br>1GJ6OIO: ITPCORE:ALL - Typo in IWorkspace javadoc
+<br>1GIKD70: ITPCORE:WIN2000 - API: AntRunnerListener should be called
+IAntRunnerListener
+<br>1GIIQOK: ITPCORE:ALL - Obsolete import statement on ConfigurationElement
+<br>1GII85Y: ITPCORE:ALL - Obsolete import statement on IResource
+<br>1GHST7H: ITPCORE:ALL - IWorkspace typo
+<br>1GGEPM1: ITPCORE:WIN2000 - More than one runtime element allowed in
+plugin.xml
+<br>1GAIYEE: ITPCORE:ALL - Performance: Marker attributes
+<h3>
+Closed Problem Reports</h3>
+1GJLIRE: ITPCORE:Linux - Symlinks are "dangerous" to use
+<br>1GHGSSM: ITPCORE:WINNT - strange resource string in exception</blockquote>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 135 - September 6, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GIX1TB: ITPCORE:ALL - getOS fails on Solaris and Neutrino
+<br>1GHOM0N: ITPPDE:ALL - Internal error when generating build.xml from
+component install.xml
+<h3>
+Closed Problem Reports</h3>
+1GGEOXX: ITPCORE:WINNT - UTFDataFormatException: Input does not match UTF
+Specification</blockquote>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 134 - August 30, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+Project natures were being shared between the source and destination projects
+after a project copy. This behaviour was incorrect and has been changed
+so they are not being shared anymore. Note that the IProjectNature.configure
+method will NOT be run again on the nature. (even on the destination project)</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GJ837O: ITPCORE:ALL - Typo in Messages.properties references
+<br>1GIKBC8: ITPCORE:ALL - Project Nature gets shared when a project is
+copied
+<h3>
+Closed Problem Reports</h3>
+None.</blockquote>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 133 - August 28, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The Resources plug-in is now saving its files in UTF-8 format. These changes
+might break existing workspaces. Editing files such as .prj and .workspace
+using text editors that do not save contents in UTF-8 encoding might break
+the user workspace or have unexpected behaviour. These changes were made
+to make workspaces portable across machines using different languages (which
+might infer in different platform encoding).</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+The javadoc for org.eclipse.core.launcher.Main has been updated to contain
+more information about the command line arguments accepted.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GJ689I: ITPCORE:ALL - Update version number for plugin.xml
+<br>1GIYVCH: ITPCORE:ALL - Need to change casing for Messages.properties
+<br>1GI8XIT: ITPCORE:WINNT - Random file names
+<br>1GI3PJ3: ITPCORE:ALL - Check for use of getBytes in core marshaling
+<br>1GF67DS: ITPCORE:WIN - Javadoc: Main needs more info about commandline
+args
+<h3>
+Closed Problem Reports</h3>
+1GH2B0N: ITPCORE:WIN2000 - Problem with project location validation</blockquote>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 132 - August 21, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+Fixed bug related to POST_CHANGE notifications. Workspace operations in
+async exec calls were being run in unexpected order. When they accidentaly
+ran in a POST_CHANGE notification, a runtime exception was thrown.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GIRLAP: ITPCORE:ALL - HTML doc cleanup
+<br>1GIKJUX: ITPCORE:ALL - Alt copyright text incorrect in html files
+<br>1GIKCHC: ITPCORE:WIN2000 - Error moving a class to a new project
+<h3>
+Closed Problem Reports</h3>
+1GIIMZ9: ITPCORE:ALL - Review HTML doc for plugin specs
+<br>1GIIF3L: ITPCORE:WINNT - Error restoring tree while opening workspace
+<br>1GH042J: ITPCORE:WIN - Ant: Ant console no keyboard accelerator for
+copy
+<br>1GGYVVP: ITPCORE:WIN - Long pathnames for files cause errors and crashes
+<br>1GGYVTI: ITPCORE:WIN - No details are given after an Import fails
+<br>1GGYUZS: ITPCORE:WIN - Failed Import still imports file, but opening
+it in Navigator causes assert
+<br>1GF60K4: ITPCORE:WIN - Javadoc: Main listed as provisional</blockquote>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 130 - August 14, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+Fixed Javadoc in IProject.configure: Removed references to non-existing
+methods IProject.addNature and IProject.removeNature.</li>
+
+<li>
+Fixed Javadoc in IResourceChangeEvent: Improved comments on constants so
+that they refer to the class comments without replicating it. Also fixed
+spelling on class comment.</li>
+
+<li>
+Runaway stack are no longer possible when having a workspace operation
+in a syncExec call.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GIETLI: ITPCORE:ALL - Javadoc - add comments to WorkspaceLock.getCurrentOperation
+<br>1GI71EV: ITPCORE:ALL - Need to do NL work on Ant UI
+<br>1GGCQFK: ITPCORE:ALL - NL problems in xml files
+<br>1GFQB72: ITPCORE:ALL - Javadoc for IResourceChangeEvent constants appears
+incorrect
+<br>1GFOL8R: ITPCORE:ALL - Javadoc incorrect in IProjectNature.configure
+<br>1GE981Z: ITPCORE:WIN2000 - Post_Build listeners can cause runaway stack
+<h3>
+Closed Problem Reports</h3>
+None.</blockquote>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 128 - July 31, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GHOOPO: ITPCORE:WINNT - translated plugin.properties (R1.0 support)
+<br>1GHFPFY: ITPCORE:ALL - fragment runtime libs added twice
+<br>1GH30IA: ITPCORE:ALL - validateSave() extension point needed
+<br>1GFXLXM: ITPCORE:ALL - Javadoc: IFile.isReadOnly typo
+<br>1GC2SUC: ITPJUI:WINNT - Error when creating class
+<h3>
+Closed Problem Reports</h3>
+1GGYV0V: ITPCORE:WIN - No warnning message when Save As model to a deleted
+folder
+<br>1GGNBHW: ITPJUI:ALL - Lost work: no history for packages</blockquote>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 124 - June 14, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GFBCFL: ITPCORE:ALL - Missing resource info in delta during vcm merge
+<h3>
+Closed Problem Reports</h3>
+1GDUVGW: ITPCORE:ALL - Exception loading the resources plugin
+<br>1GE9800: ITPCORE:WIN2000 - sniff test on linux fails
+<br>1GF9VWV: ITPCORE:WIN2000 - TEST: Stand alone tests in ... Core Resources
+give NPE</blockquote>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 123 - June 13, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The implementation of the platform:/resource has been updated to correctly</li>
+
+<br>&nbsp;handle cases where the workspace location does or does not have
+a trailing / and where the URL
+<br>&nbsp;identifies a project whose location is not the default location.</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GF85FV: ITPCORE:WIN2000 - Problems with doc for application-extension
+<br>1GF7QRW: ITPCORE:ALL - SafeFileOutputStream may be the problem for
+failing sniff tests on Linux
+<br>1GF7PDY: ITPCORE:ALL - Ant: 2 unbound strings in AntRunner
+<br>1GF7N3U: ITPCORE:ALL - SEVERE FOR WSA: platform:/resource/ URLs do
+not work
+<br>1GF7MVG: ITPCORE:ALL - LocalMetaArea is creating .prj as Folder
+<br>1GF615Q: ITPCORE:ALL - Missing message: resourceswriteMeta
+<br>1GF5U73: ITPCORE:WIN2000 - Ant: $(plugin) in fragment zip file name
+<br>1GEUQB2: ITPJUI:WINNT - Rename project when projects location set
+<br>1GEP2XU: ITPCORE:ALL - Can't launch UIMain - Null Pointer Exception
+<h3>
+Closed Problem Reports</h3>
+1GF9OAJ: ITPCORE:ALL - Suggestion: Could have a separated directory for
+settings.
+<br>1GF6AKX: ITPCORE:ALL - Incorrect message in LocalMetaArea.write( IProject
+)
+<br>1GF4PAT: ITPUI:WIN2000 - Navigator, Packages: renaming moves the folder
+<br>1GEZWWK: ITPJUI:WINNT - Exceptions when releasing changes
+<br>1GEV7YY: ITPUI:Linux - Exception on workbench startup
+<br>1GD7RD7: ITPJUI:WINNT - walkback on build</blockquote>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 122 - June 9, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GF0PY3: ITPCORE:ALL - API javadoc - leftover references to activities
+<br>1GF0NC9: ITPCORE:WIN2000 - Error in the Ant Console when it has been
+closed and re-opened
+<br>1GET78P: ITPCORE:WIN2000 - Project manipulation issues.
+<br>1GEJMFU: ITPCORE:ALL - Platform generates invalid xml
+<br>1GCEDCG: ITPCORE:WIN2000 - Registry caching implementation needed
+<h3>
+Closed Problem Reports</h3>
+1GEYUL7: ITPCORE:WIN - indexing problem while replacing from stream
+<br>1GEWME9: ITPCORE:WINNT - error while replacing with stream element
+<br>1GEV1D3: ITPCORE:ALL - exception exiting workbench
+<br>1GE9667: ITPUI:WIN2000 - Cancelling the opening of a project does work
+properly
+<br>1GEVO1D: ITPCORE:WIN2000 - Address Ant suggestions from EG</blockquote>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 121 - June 8, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+IProject#move API clarification. The spec was ambiguous as to when the
+project description was updated during a project move.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GF07GF: ITPCORE:ALL - Logging should write out multistatus objects in
+exceptions
+<br>1GEZDIJ: ITPCORE:WINNT - Message " Synchronizing tree" is bogus
+<br>1GEZDCC: ITPCORE:WINNT - API - Need clarification on IProject.move
+<br>1GEZ1YC: ITPCORE:WIN2000 - Generating build.xml file from PDE has internal
+error if src jar is pointing to the wrong place
+<br>1GEYJYG: ITPCORE:WINNT - IResource.copy typo
+<br>1GEVNZW: ITPCORE:WIN2000 - integrate new Ant graphics
+<br>1GEV05W: ITPCORE:WIN2000 - Performance: Should cache WorkspaceRoot
+<br>1GEUVDX: ITPCORE:ALL - Performance: deleting lots of projects
+<br>1GE71OI: ITPUI:ALL - SEVERE: Canceling move deletes directory!
+<br>1GE6PLC: ITPJUI:WINNT - JDK/J9 - Problems encountered while deleting
+resources.
+<br>1GD0PD5: ITPCORE:ALL - API - org.eclipse.core.launcher
+<br>1GD0OYL: ITPCORE:ALL - API - org.eclipse.ant.core
+<h3>
+Closed Problem Reports</h3>
+1GEYHPV: ITPJUI:WINNT - Smoke 120: import wizard has case-sensitive destination
+field
+<br>1GF00KJ: ITPCORE:WIN2000 - NPE in SaveManager
+<br>1GEYUB0: ITPVCM:WIN2000 - NullPointerException: add to workspace
+<br>1GEYTUA: ITPCORE:Linux - Missing error message for missing required
+plugin
+<br>1GEWXL2: ITPCORE:Linux - Out of synch problems with Linux links to
+Windows
+<br>1GETA3G: ITPUI:Linux - Error saving file when project closed
+<br>1GESY6Z: ITPCORE:ALL - Optimize string binding during resource creation
+<br>1GELQDG: ITPUI:WIN2000 - CoreException + NullPointerException</blockquote>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 120 - June 7, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GEYFZ5: ITPCORE:ALL - Typos in Externalization
+<br>1GEWNI1: ITPCORE:WINNT - When cleaning up the history store, blobs
+should not be read-only
+<br>1GEWHU3: ITPCORE:ALL - javadoc typo: IAdapterFactory.getAdapterList()
+<br>1GEWFI5: ITPCORE:ALL - IndexedStoreException and externalized messages
+<br>1GEVA1O: ITPCORE:WIN2000 - Javadoc improvements for org.eclipse.core.runtime
+<br>1GEUT2I: ITPCORE:Linux - Possible local history policy problem
+<br>1GETMT4: ITPHELP:ALL - [Must Fix] Problem with Help Perspective in
+VA/Java
+<br>1GETMF2: ITPJCORE:ALL - Confusing error message
+<br>1GETEX4: ITPUI:Linux - Walkback replacing project with stream element
+<br>1GET8JV: ITPCORE:WIN2000 - ResourceDelta.getResource can return null
+<br>1GESYPI: ITPUI:WIN2000 - NullPointerException: Navigator
+<br>1GESWSI: ITPCORE:WIN2000 - Class PluginVersionIdentifier does not overwrite
+the hashCode() method.
+<br>1GESVDW: ITPCORE:ALL - NPE during snapshot
+<br>1GEPB3X: ITPCORE:WINNT - "Building:" prefix in build progress dialog
+<br>1GENLZH: ITPCORE:Linux - Component script generator fails on Linux
+<br>1GEL7K4: ITPCORE:WINNT - History is unreliable
+<br>1GEKC21: ITPCORE:WINNT - API - IFile.create
+<br>1GEAH22: ITPCORE:WIN2000 - Error in indexStore in fileSave
+<br>1GE91X4: ITPCORE:ALL - Semaphor error opening project
+<br>1GE8MI1: ITPUI:ALL - What is "read-only" property for? Ignored&nbsp;
+by editors?
+<br>1GE2A2B: ITPCORE:WIN2000 - Fragment problems
+<br>1GDTKRF: ITPCORE:ALL - Exception on exit: SpaceMap
+<br>1GDTAF5: ITPJUI:WIN2000 - No local history
+<br>1GDRVO3: ITPCORE:ALL - Parent of Extension, ExtensionPoint or Prerequisites
+can be plugin or fragment
+<h3>
+Closed Problem Reports</h3>
+1GEX2LR: ITPCORE:WIN2000 - Possible hang in PluginClassLoader.initializeImportedLoaders()
+?
+<br>1GEWYG5: ITPJCORE:WIN2000 - Mysterious NPE to investigate
+<br>1GEWX4I: ITPCORE:WIN2000 - NPE after rebuild of project
+<br>1GEWP35: ITPCORE:WINNT - NPE in SaveManager on release
+<br>1GEWEGY: ITPJUI:WINNT - NPE when opening resource file
+<br>1GEV2XY: ITPCORE:ALL - exception using tooling
+<br>1GEUZNT: ITPCORE:ALL - Cannot run two workbenches simultaneously from
+a single install
+<br>1GEURV3: ITPCORE:WIN2000 - NullPointerException running JavaModel tests
+<br>1GEUQB2: ITPJUI:WINNT - Rename project when projects location set
+<br>1GEUP5Z: ITPJUI:WINNT - NPE when renaming project
+<br>1GEUKUE: ITPJUI:ALL - NPE in debugger
+<br>1GETDCI: ITPDUI:SPARC - NullPointerException in SaveManager.sortTrees
+<br>1GETBOB: ITPCORE:ALL - bug is in org.eclipse.core.runtime plugin
+<br>1GET8MX: ITPVCM:ALL - NPE adding several revisions of the same file
+from history view
+<br>1GET2R0: ITPCORE:WINNT - NPE in File.create
+<br>1GESLO2: ITPJUI:WINNT - Internal error opening multiples files
+<br>1GEPKDY: ITPCORE:ALL - Assertion failure on project copy
+<br>1GEOOBD: ITPJUI:WINNT - Cannot launch UIMain after restarting workbench
+<br>1GENY6G: ITPUI:WIN2000 - ResourceException: extended ASCII code
+<br>1GENL2C: ITPCORE:ALL - Exception: Could not delete property
+<br>1GEND7D: ITPUI:ALL - Assertion failure when renaming projects
+<br>1GEM55L: ITPCORE:WIN2000 - Strange behaviour if your current working
+dir does not exist
+<br>1GELA6Z: ITPJUI:ALL - Inadequate progress message when switching JDK
+<br>1GEKY9Z: ITPJUI:WINNT - project copy in navigator brings up internal
+error: Assertion failed;.
+<br>1GEK7RN: ITPCORE:WIN2000 - modificationStamp changing incorrectly
+<br>1GEK3LH: ITPCORE:ALL - setProjectDescription should have better failure
+mode
+<br>1GEJLL6: ITPCORE:WIN2000 - SEVERE - Assertion failed copying project
+<br>1GEJGAQ: ITPCORE:WIN2000 - Exception when starting Eclipse as a traget
+on J9
+<br>1GEJEDX: ITPCORE:ALL - Build progress dialog should indicate which
+project it is currently building
+<br>1GEHVGM: ITPUI:ALL - Can't copy project onto existing folder
+<br>1GEGRSL: ITPUI:ALL - Rename Project doesn't
+<br>1GEFMC1: ITPJUI:WIN2000 - Strange Walkback
+<br>1GEASAP: ITPUI:WIN98 - Copy Project issues
+<br>1GE9667: ITPUI:WIN2000 - Cancelling the opening of a project does work
+properly
+<br>1GE90JL: ITPVCM:ALL - CoreException on catchup.
+<br>1GE71IW: ITPUI:ALL - Project copy not allowed?
+<br>1GE70X8: ITPUI:ALL - Delete ignores cancel
+<br>1GE59JI: ITPUI:ALL - Renaming a project doesn't work
+<br>1GE556N: ITPCORE:ALL - Project move content should set the whole description
+<br>1GDZP5E: ITPCORE:WIN2000 - AssertionFailed when renaming a project
+<br>1GDXYN6: ITPUI:WIN2000 - Rename project when only name case changes
+deletes original project
+<br>1GDXJGY: ITPJUI:WIN - Exception when adding packages after renaming
+<br>1GDXI6L: ITPJUI:WIN - Renaming a project only copies
+<br>1GDXE6N: ITPCORE:ALL - Usability - refresh from local should happen
+on startup
+<br>1GDW651: ITPCORE:ALL - javadoc errors in org.eclipse.core
+<br>1GDU8KX: ITPCORE:WIN2000 - error creating a project with natures
+<br>1GDMG34: ITPJUI:ALL - Exception while saving
+<br>1GDEWBP: ITPCORE:WINNT - workspace authorization broken between jdk
+and j9
+<br>1GDETDE: ITPJCORE:WINNT - walkback during build
+<br>1GC0X2S: ITPCORE:Legal ICommand might break the ModelObjectReader
+<br>1GBNUP6: ITPCORE:WIN2000 - Need clarification of semantics for IMarker.SEVERITY
+vs. PRIORITY
+<br>1GA4J68: ITPCORE:ALL - Resource.accept and operations
+<br>1G8V163: ITPCORE:WIN2000 - Must not use absolute paths in platform
+<br>1G8J3MW: ITPCORE:ALL - Are we testing session properties?
+<br>1G42BLJ: ITPCORE:WINNT - Searching the pluggin 'requires' list for
+client resources
+<br>1FWA67R: ITPCORE:WINNT - Joining a team fails weirdly if sharing workbench
+<br>1FV7U7G: ITPCORE:ALL - Operations are 30% faster without autobuilding</blockquote>
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 118 - June 2, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+A number of problems related to case-sensitivity on Windows file systems
+have been addressed.&nbsp; Users will notice new support for re-casing
+files (e.g., foo.java => Foo.java), detection of naming conflicts, detection
+of external re-casing, etc.&nbsp; By-in-large the user's experience should
+match that of the standard Windows explorer.&nbsp; There are however a
+number of cases where it is infeasible for the platform to reconcile the
+differences between the case-sensitive resource tree and the case-insensitive
+filesystem. In most of these situations there exists usage patterns which
+allow users to accomplish their tasks.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GELDC5: ITPCORE:ALL - Should not build non-existing projects
+<br>1GEJP1S: ITPCORE:WIN2000 - SEVERE: NPE copying project with existing
+directory
+<br>1GEJOD4: ITPCORE:WIN2000 - Validation message for location mapping
+is not human-friendly
+<br>1GEJMR2: ITPCORE:ALL - javadoc - typo in IPath class comment
+<br>1GDVIMW: ITPCORE:ALL - Can't specify ant command line arguments
+<br>1GDO29J: ITPCORE:WIN2000 - Try to distinguish between real changes
+and simple changes
+<br>1GD5WL4: ITPCORE:WIN - missing runtime plugin extension point doc
+<h3>
+Closed Problem Reports</h3>
+1GENOTX: ITPCORE:ALL - (minor &amp; easy) inconsistent error strings
+<br>1GEJWB3: ITPCORE:ALL - IFile.setContents
+<br>1GEAF8W: ITPCORE:WINNT - Logged stack traces
+<br>1GEA6PO: ITPJUI:WIN2000 - Performance: Time spent at the end of a build
+<br>1GE90F2: ITPCORE:ALL - File URLs in the plugins file do not follow
+URL syntax
+<br>1GE8UTF: ITPCORE:ALL - Can't run eclipse outside the bin directory,
+can't socksify Eclipse
+<br>1GDXQ06: ITPCORE:WIN2000 - must start in installed directory
+<br>1GDVUUQ: ITPCORE:WIN98 - ClassNotFoundException running eclipse.bat
+after installing in w2k
+<br>1GDH5FA: ITPCORE:ALL - leading slash shown for projects
+<br>1GCYL6G: ITPCORE:WIN2000 - Project references don't track renames of
+projects
+<br>1GCPKSQ: ITPUI:WIN2000 - NPE near markers &amp; tasklist
+<br>1G9WWHX: ITPCORE:ALL - Uninformative error message on save
+<br>1G1YAYZ: ITPCORE:ALL - look at hard coded values in tests</blockquote>
+
+<h1>
+Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse SDK Build 117 - June 1, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The previous implementation of IWorkspace.computePrerequisiteOrder() would
+sometimes include additional projects in the result. This issue has been
+corrected such that the prerequisite list returned contains only those
+projects requested.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+A number of resource operations (e.g., copy, move, setContents, delete)
+incorporate a "free" refresh local operation if the supplied force flag
+is set to false. This is an effort on the part of the resources plugin
+to efficiencently and effectively keep up to date with the state of the
+filesystem even when there are no filesystem callbacks/notifications. Unfortunately,
+the behaviour has some undesirable side-effects whereby clients are told
+they are out of sync and then go and look only to find that they are in-sync
+(because a free refresh was being done by the workspace). This is especially
+true in the area of editors and setContents.</li>
+
+<br>&nbsp;
+<p>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<p>To address these issues, the resources plugin no longer does a free
+refresh local in the following operations:
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IResource.move/copy/delete
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IFile.setContents/appendContents
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IFile.create
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IFolder.create</pre>
+Client code which uses force=true should not be affected by these changes.
+Client code which passes force=false may have to be updated if subsequent
+resource manipulations were expecting to succeed based on the free refreshLocal
+of some preceding operation. Clients wishing to synchronize their resources
+should use IResource.refreshLocal explicitly.</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GENL9U: ITPCORE:WIN2000 - "Free" refreshLocals removed
+<br>1GELLM6: ITPCORE:WINNT - SafeChunkyInputStream needs to refine chunks
+<br>1GEKE89: ITPCORE:WIN2000 - IWorkspace.computePrerequisiteOrder including
+too much
+<br>1GEJVO6: ITPCORE:ALL - Problems with Plugin.find($nl$)
+<br>1GEIUE6: ITPCORE:WIN2000 - NPE while reading cached registry
+<h3>
+Closed Problem Reports</h3>
+1GEM3UC: ITPUI:WIN2000 - Exceptions and other Problems: Windows Case Sensitivity
+Issue
+<br>1GDRYW4: ITPJCORE:WIN2000 - Global incremental build sometimes very
+slow
+<br>1GDKSNS: ITPCORE:WIN2000 - platform:/plugin/ not accepting default
+version
+<br>1GDDNXD: ITPCORE:WIN2000 - URLs get resolved into ones with null host
+<br>1GD22K1: ITPCORE:ALL - Rename the "eclipse:" URL protocol support
+<br>1GCQQPC: ITPCORE:ALL - Default project location and eclipse program
+files
+<br>1GAGV6I: ITPCORE:WIN2000 - EclipseURLPluginConnection doesn't consider
+trailing /
+<br>1FVRR26: ITPUI:WINNT - VAJ only: Create New>>Web should include "Web
+Project"
+<br>1FTZV68: ITPISV:ALL - (severe) problem with long vs. short form of
+&lt;class=</blockquote>
+
+<h1>
+Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse SDK Build 116 - May 31, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+None</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+Significant improvements in delta computation have been confirmed.&nbsp;
+Users should see auto-build, save and snapshot times improve dramatically.</li>
+
+<li>
+Some robustness issues related to crash recovery have been address.&nbsp;
+Problems with projects, VCM sync info and/or markers being lost after a
+crash should be much reduced.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GEK2Q5: ITPCORE:WIN2000 - Interesting project list not always persisted
+<br>1GEARZD: ITPCORE:ALL - Projects are lost if the workspace crashes.
+<br>1GE2TKR: ITPCORE:ALL - Incremental build takes a couple of minutes
+<br>1GDX3X6: ITPJCORE:WIN2000 - Slow build
+<br>1GDFW0J: ITPCORE:WIN2000 - runtime plugin should be removed from prereqs
+<h3>
+Closed Problem Reports</h3>
+1GEJWB3: ITPCORE:ALL - IFile.setContents</blockquote>
+
+<h1>
+Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse SDK Build 115 - May 30, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The platform now creates a default "workspace" directory iff -data/-platform
+is not specified and the current user.dir is the same as the current Eclipse
+install dir. This will prevent the user from accidentally creating projects
+etc directly in their install dir.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GEI4XU: ITPCORE:WIN2000 - Typos in IWorkspace.addResourceChangeListener
+<br>1GEHR84: ITPCORE:default value for platform location good and bad
+<h3>
+Closed Problem Reports</h3>
+1GEIOWH: ITPCORE:Linux - Snapshot walkback on startup after OutOfMemory
+<br>1GEI63B: ITPCORE:ALL - Plugin.find(...) when looking for specific locale</blockquote>
+
+<h1>
+Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse SDK Build 114 - May 29, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+Various Javadoc clarifications and fixups were done.</li>
+
+<li>
+The IMarker API has been updated to more clearly specify the behaviour
+of the setAttribute* methods.</li>
+
+<br>In particular, these methods now include the standard comment associated
+with methods which modify the resources
+<br>in the workspace and whose changes are reported in subsequent resource
+change events. The implementation
+<br>of these methods is unchanged.
+<li>
+Due to popular demand, the "-platform" command line argument has been changed
+to be</li>
+
+<br>"-data" to indicate that this is the location of the user's data. The
+"-platform" argument continues to
+<br>work but will be removed at some point in the future.</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+A number of people reported problems reading marker snapshots after crashing.&nbsp;
+This problem has been found and fixed.</li>
+
+<li>
+Various performance improvements including the handling of resource bundles
+and resource delta computations.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GEH4DJ: ITPCORE:WIN2000 - plugin.jars still loaded when running in JDK
+<br>1GEH3X5: ITPCORE:WIN2000 - API - IMarker.setAttributes spec insufficient
+<br>1GEH2TB: ITPCORE:WIN2000 - -platform arg confusing
+<br>1GEGS4F: ITPCORE:ALL - Path.segmentCount
+<br>1GEGJN0: ITPCORE:ALL - Rename target management jar file
+<br>1GEFXO0: ITPCORE:ALL - API javadoc - ISaveParticipant
+<br>1GEAP3P: ITPCORE:WINNT - Cannot delete big files
+<br>1GEAD8A: ITPCORE:WIN98 - Missing @param tag for flag in IResource.setLocal(...)
+<br>1GEAB3C: ITPCORE:ALL - Missing deltas after vcm 'addToWorkspace' action
+<br>1GE8YS3: ITPCORE:WIN2000 - Fragments have 2 'plugin' fields
+<br>1GE8JUK: ITPCORE:ALL - Snaps and saves shouldn't share version numbers
+<br>1GE57VK: ITPCORE:ALL - Plugin.find(IPath) does not find, if $nl$/&lt;path>
+passed
+<br>1GE2VQH: ITPCORE:Eclipse startup failure after ctrl-C
+<br>1GDW939: ITPCORE:ALL - PluginDescriptor#getResourceString() is slow
+<br>1GDU4UP: ITPCORE:ALL - fragments - don't check for existence of prereq's
+<br>1GDU43B: ITPCORE:ALL - plugin.xml - required fields not 'required'
+<br>1GD6HA3: ITPCORE:ALL - Plugins missing doc directories
+<br>1GD4CO2: ITPCORE:ALL - API doc - org.eclipse.ant.core missing plug-in
+and extension point doc
+<br>1GC1BSM: ITPCORE:WIN2000 - NLS messages needed
+<br>1GA4P9X: ITPCORE:WIN2000 - If one builder fails, the build fails
+<h3>
+Closed Problem Reports</h3>
+1GE8VYN: ITPRE:Linux - .metadata is user specific, shouldn't be created
+wherever user is invoking eclipse
+<br>1GE8MFG: ITPCORE:ALL - Unable to load project
+<br>1GE7JBL: ITPJUI:ALL - Crash: Eclipse died comparing 2 very large java
+files
+<br>1GE6EJD: ITPCORE:ALL - Saving of a workspace can take up to 10 minutes
+<br>1GE598Q: ITPCORE:WIN2000 - PDE must be able to start the platform from
+UIMain, not eclipse.exe
+<br>1GDKKQP: ITPCORE:WIN2000 - need ant and xerces source in the build
+<br>1GD9TQ8: ITPCORE:ALL - filesystem dependant tests</blockquote>
+
+<h1>
+Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse SDK Build 112 - May 24, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GDTLXE: ITPVCM:ALL - SEVERE - Lost synch information after a crash
+<br>1GA6AH9: ITPCORE:ALL - MoveTest needs updating
+<h3>
+Closed Problem Reports</h3>
+1GE8D3N: ITPVCM:WIN2000 - NPE on replace with Stream version
+<br>1GE6OJ1: ITPCORE:WIN2000 - Internal Error with default text editor
+<br>1GE68ZK: ITPJUI:WIN2000 - NPE when replacing with stream version
+<br>1GE518H: ITPCORE:WINNT - ClassCastException during replace with team
+stream
+<br>1GE4QPX: ITPCORE:ALL - Change copyright date and update refs to WebSphere
+<br>1GE2SW4: ITPJCORE:WIN2000 - "Full build" after starting the workbench
+<br>1GE2MSB: ITPJUI:ALL - Eclipse won't startup, Corrupted Workspace -
+Markers ?</blockquote>
+
+<h1>
+Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse SDK Build 110 - May 22, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+Under certain conditions the history store may become corrupt.&nbsp; In
+these cases the platform will flush the store and as a result, the history
+for the related project will be lost. Current file content is not affected.&nbsp;
+The cause of the history store corruption is currently unknown but will
+be addressed in future releases.</li>
+
+<li>
+The platform was not handling correctly relative locations passed to -platform.
+It affect the location of all resources in the ResourcesPlugin. Any relative
+locations passed in the -platform command line are now interpreted as relative
+to the user.dir Java property.</li>
+
+<li>
+The semantics for IWorkspace.move has changed. It used to NOT keep history
+for files. It now keeps history.</li>
+
+<li>
+The eclipse shell scripts and the startup.jar have been moved to be in
+a stand-alone bin directory.&nbsp; This better matches the intended shipping
+structure.</li>
+
+<li>
+IProject.move(IProjectDescription, boolean, IProgressMonitor) now allows
+the user to specify a description with the same name and a different location.
+The results will be that the project content will be moved to the new location.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GDZDRX: ITPCORE:ALL - Better failure for restoring from snapshots
+<br>1GDXW32: ITPCORE:WINNT - CopyVisitor is "over reporting" progress when
+resources are out of sync
+<br>1GDXVFV: ITPCORE:WIN2000 - deleteMarkers should not be synchronized
+<br>1GDX2YB: ITPJUI:ALL - NPE when accessing local history
+<br>1GDW1RX: ITPCORE:ALL - IResource.delete() without force not working
+correctly
+<br>1GDVXMA: ITPCORE:WIN98 - Platform does not handle relative paths
+<br>1GDQB1K: ITPCORE:ALL - Path canonicalization turns '\' to '/'
+<br>1GDKIHD: ITPCORE:WINNT - API - IWorkspace.move needs to keep history
+<br>1GDH8SN: ITPCORE:WIN2000 - need to rectify the relative locations of
+Main, boot, runtime and Xerces
+<br>1GDF950: ITPCORE:ALL - NotificationManager should be logging exception?
+<br>1GDD7SP: ITPCORE:ALL - Remove deprecated IResource#setLocal(boolean,
+int)
+<br>1GCP2CW: ITPCORE:WINNT - API - Comments to WorkspaceLock and IWorkspace.setWorkspaceLock
+<br>1GCBZS9: ITPCORE:ALL - Moving project content
+<br>1GBW6D9: ITPCORE:WIN2000 - Need versioned readers for persistent structure
+<br>1GBW5RG: ITPCORE:WIN2000 - Need to persist builder's requested delta
+list
+<br>1GBETSS: ITPCORE:ALL - Path should remove duplicate /'s
+<h3>
+Closed Problem Reports</h3>
+1GDX0MG: ITPJUI:ALL - NPE when saving a resource file
+<br>1GDWOY6: ITPCORE:ALL - SH: NPE in indexing during a project delete
+<br>1GDV1W8: ITPJUI:WINNT - NPE while save/catchup
+<br>1GDRTK8: ITPCORE:WIN2000 - Interesting projects lost after restart
+<br>1GDRL5U: ITPCORE:WINNT - need better error message if 'install' directory
+is missing
+<br>1GDK4BA: ITPCORE:ALL - Save participants should be allowed to notify
+progress
+<br>1GDIK57: ITPCORE:WIN2000 - Would IncrementalProjectBuilder.getDelta(...)
+work between session
+<br>1GDI964: ITPVCM:WINNT - Internal error committing incoming changes
+<br>1GDI52G: ITPCORE:WINNT - CoreException when setting IProject.setLocation
+<br>1GDFVO3: ITPCORE:WIN2000 - need "resource" URL
+<br>1GD9RLP: ITPJCORE:WIN2000 - Code assist is slow
+<br>1GD805I: ITPCORE:WIN2000 - Insufficent error reporting when required
+plugin is missing
+<br>1GD3Q1C: ITPUI:Linux - GPF - On Exit
+<br>1GCWITX: ITPCORE:ALL - Notifications and deltas
+<br>1GCV3GI: ITPCORE:WINNT - Clean up references to IBM and OTI from core
+library makefiles
+<br>1GCOQZ9: ITPJCORE:WIN2000 - NullPointerException creating Java Project
+<br>1GCNJ7R: ITPJCORE:WINNT - Marker error in builder
+<br>1GCE9JD: ITPCORE:WINNT - Exception trying to lookup in the indexed
+store
+<br>1GAZU4S: ITPJUI:WINNT - SH: Java project nature lost
+<br>1G9TG7M: ITPCORE:ALL - Copying non-local resources?</blockquote>
+
+<h1>
+Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse SDK Build 108 - May 17, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+ILibrary and LibraryModel objects recently had type and source fields added
+to them.&nbsp; The type is spec'd as being one of three values including
+"source".&nbsp; The source type and the source field were an ill-fated
+attempt to describe source attachments for jars.&nbsp; Unfortunately, this
+is insufficient and inappropriate in plugin.xml.&nbsp; The support for
+source location is being moved to a build.properties file and removed from
+the library objects.&nbsp; This is a breaking API change.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+Performance of save and snapshot operations has been greatly improved.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GDBKQZ: ITPJCORE:WIN2000 - Saving on exit takes more than 5 minutes
+<br>1GDDPVO: ITPCORE:ALL - Need to incremental save markers and sync info
+<br>1GDK38W: ITPJUI:WINNT - OperationCanceledException in log
+<br>1GDKGYO: ITPCORE:ALL - log entry complaining about missing org.eclipse.core.boot
+plug-in
+<br>1GDVHLF: ITPCORE:ALL - Problem reading persisted markers.
+<br>1GDUPLQ: ITPCORE:ALL - Potentially losing sync info in SyncInfoReader_2
+<br>1GDUKY5: ITPCORE:WIN2000 - remove "source" types from Library
+<h3>
+Closed Problem Reports</h3>
+1FW87XF: ITPUI:WIN2000 - Can create 2 files with same name
+<br>1FW8L5N: ITPUI:WIN2000 - Cannot create Project com2 when com exists
+<br>1GBNKI6: ITPCORE:WINNT - workspace.validatePath: usage is painful
+<br>1GD9IXS: ITPCORE:ALL - make case insensitive depending on platform
+<br>1GD0JXR: ITPUI:WIN98 - Cannot open file with filename > about 220 chars
+<br>1GDM45Q: ITPCORE:WIN2000 - Ant: NPE when executing copy tasks
+<br>1GDU8C9: ITPCORE:WIN - Are build.properties replacing plugin.jars?</blockquote>
+
+<h1>
+Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse SDK Build 107 - May 15, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GDQPK6: ITPCORE:ALL - Safe streams should use buffering
+<h3>
+Closed Problem Reports</h3>
+None.</blockquote>
+
+<h1>
+Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse SDK Build 106 - May 14, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The plugin id of the Ant UI plugin was incorreclty changed to include "internal"
+in the id.&nbsp; The correct id is "org.eclipse.ant.ui".&nbsp; This has
+be corrected.&nbsp; Plug-ins which prereq the Ant UI should be updated
+to reflect the new name.</li>
+
+<li>
+The semantics for IWorkspace.delete has changed. It used to NOT keep history
+for files. It now keeps history.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GDKK8G: ITPCORE:WIN2000 - Ant UI plugin id incorrect
+<br>1GDKJCP: ITPCORE:WINNT - SH: stack trace on startup
+<br>1GDKBZG: ITPCORE:WINNT - IFolder.delete is not keeping history
+<br>1GDK9OG: ITPCORE:ALL - AssertionFailedException with change listener
+<br>1GDGRIZ: ITPCORE:WINNT - API - IWorkspace.delete needs to keep history
+<br>1GDFFT6: ITPCORE:WINNT - Severe: local history always lost on delete
+<h3>
+Closed Problem Reports</h3>
+1GDQB4F: ITPCORE:Linux - Similar exception being raised in many different
+situations
+<br>1GDMICF: ITPJCORE:WINNT - NPE occassionally when loading project with
+autobuild
+<br>1GDKG03: ITPJUI:WINNT - walkback in indexer
+<br>1GDKACH: ITPCORE:WIN2000 - IndexStoreException during save
+<br>1GDGZSC: ITPVCM:WIN2000 - IndexStoreException during replace from TeamStream
+<br>1G7LZJE: ITPCORE:WINNT - VM Crash - Fatal Error in JIT</blockquote>
+
+<h1>
+Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse SDK Build 105 - May 10, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The &lt;library> markup in plugin.xml has been extended to include an optional
+"type" attribute.&nbsp; The valid types include "code" (default), "resource"
+and "source".&nbsp; See the documentation on LibraryModel for more information.&nbsp;
+This is a non-breaking change.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GDH84R: ITPCORE:ALL - MarkerSet not re-hashing correctly
+<br>1GDH4S6: ITPCORE:WINNT - Deadlock stepping to line in debugger
+<br>1GDGAR4: ITPJUI:WINNT - deadlock on build (ctrl-B)
+<br>1GDFIUE: ITPCORE:WIN2000 - platform does not start with -dev bin
+<br>1GDFE7V: ITPCORE:WIN2000 - (Severe) PDE launcher broken with changes
+in BootLauncher loading
+<br>1GDFAOJ: ITPCORE:ALL - InternalBuilder.interestingProjects shouldn't
+be null
+<br>1GDF0SW: ITPJUI:ALL - Too easy to rebuild all
+<br>1GD2VE6: ITPCORE:WIN2000 - API - Need new &lt;library> types
+<h3>
+Closed Problem Reports</h3>
+1GDI8XO: ITPJCORE:WIN2000 - NPE during build
+<br>1GDH7T4: ITPCORE:ALL - NPE saving on close of editor
+<br>1GDGTGZ: ITPJUI:WINNT - NPE while building
+<br>1GDGMMU: ITPJCORE:WIN2000 - NPE when canceling a build
+<br>1GDGM0E: ITPJCORE:WIN2000 - NPE when doing first autobuild after restarting
+<br>1GDFSNA: ITPCORE:WINNT - unpredictable error during build
+<br>1GDFGGQ: ITPDUI:WINNT - NPE in BuildManager
+<br>1GDF38X: ITPCORE:WINNT - NPE building java project
+<br>1GDDXYK: ITPCORE:ALL - EXCEPTION: Creating java project</blockquote>
+
+<h1>
+Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse SDK Build 104 - May 7, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The organization of the boot loader has been made more flexible so that
+in self-hosting scenarios, it is no longer necessary to specify the -boot
+...&nbsp; on the command line when running the target.</li>
+
+<li>
+If the user specifies -refresh on the command line, when the ResourcesPlugin
+is started a local refresh is done on the workspace root. This will discover
+any changes made in the filesystem while the workspace was shut down, and
+propagate the changes to the workspace tree. Classes which take advantage
+of the ISaveParticipant facilities will be notified of these changes when
+their plugin becomes activated. This operation is potentially very costly
+and users should note this when considering its use.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GDD6E4: ITPCORE:WINNT - Insufficent progress reporting
+<br>1GDBUOB: ITPCORE:WIN2000 - Boot code structure too rigid for self hosting
+<br>1GD7CSU: ITPCORE:ALL - IFile.create bug?
+<br>1GD5RNH: ITPCORE:ALL - plugins example xml refers to non-existant jar
+<br>1GD5KIG: ITPCORE:WINNT - API - IFile.setContents does not thow a CoreException
+as spec'ed
+<br>1GD3ZUZ: ITPCORE:WINNT - No CoreException thrown if deletion does not
+occur
+<br>1GCPJVL: ITPCORE:WINNT - move() in IResource does not read only checking
+<br>1GCM8RV: ITPCORE:WIN2000 - Consider refreshLocal on startup
+<br>1GCAMPC: ITPCORE:ALL - Plugins example readme.html needs updating
+<br>1GAJA5Y: ITPJUI:WINNT - walkback on startup
+<br>1GAJ4VJ: ITPCORE:ALL - Project.copy checking requirements twice
+<br>1GABHN7: ITPUI:WIN2000 - Walkback when starting eclipse with a bogus
+workbench
+<br>1G9YUKR: ITPCORE:ALL - Project description name validation?
+<br>1G5LJTE: ITPCORE:WIN - IResource.setLocal and builds
+<br>1FW2X2T: ITPCORE:ALL - Need to improve builder fixup on project move/rename
+<br>1FUDP2L: ITPCORE:ALL - move should not delete destination in some rollback
+cases
+<h3>
+Closed Problem Reports</h3>
+1GDC543: ITPCORE:WIN2000 - need to clear out log
+<br>1GDA2D3: ITPCORE:ALL - Re-visit message.properties
+<br>1GD9SQ9: ITPCORE:WIN2000 - *Model classes should not return null in
+most cases
+<br>1GD5PF8: ITPJUI:WINNT - printlines during debugger startup
+<br>1GD3QCA: ITPCORE:WINNT - Resource exceptions do not give a meaningful
+message
+<br>1GC2HGX: ITPCORE:Incremental build does not use project references
+<br>1GBZLZ5: ITPCORE:ALL - Markers should have creation time
+<br>1GAN66I: ITPCORE:WINNT - Graceful handling of plugins errors needed
+<br>1GALBC4: ITPCORE:WINNT - Marker attributes - unknown types
+<br>1G9V4Q2: ITPCORE:ALL - "File not found", poor exception message
+<br>1G93FX0: ITPCORE:ALL - Builders should not call #build
+<br>1G8W60C: ITPCORE:ALL - Markers and concurrency
+<br>1G8HN3B: ITPCORE:ALL - Add descriptive text in log entry
+<br>1G8BEYR: ITPCORE:ALL - IProjectBuildSpec api addition for no builder
+check
+<br>1G7Z6YV: ITPCORE:WIN98 - Parameter type checking - Workspace root
+<br>1G7YS8T: ITPCORE:WIN98 - API parameter checking - Workspace and null
+<br>1G7MHVU: ITPCORE:WINNT - launching from batch file not suitable
+<br>1G6ABFW: ITPCORE:ALL - API - ISynchronizer: "weak" sync info would
+be useful for VCM
+<br>1G5PQWK: ITPCORE:WINNT - message files need review
+<br>1G56WCW: ITPCORE:WIN98 - DCR - Markers should offer better prioritizing
+<br>1G4GI4B: ITPJUI:WINNT - NewSourceContainerWizard - strange error messages
+<br>1G2W00W: ITPCORE:WINNT - Q: How will CM integration be supported
+<br>1G2EWBO: ITPCORE:ALL - builders and exceptions
+<br>1FU8Y66: ITPCORE:WINNT - API - isValidPath(String) does not make sense
+as an instance method
+<br>1FT28XR: ITPCORE:ALL - test if path is valid in Path#constructor
+<br>1FPEZLZ: ITPCORE:ALL - create new input stream type which has extra
+info</blockquote>
+
+<h1>
+Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse SDK Build 103 - May 3, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+IFile.getContents( true ) does not run anymore a refresh local if the file
+is out of sync. It just returns a stream with the file's contents either
+if it is in sync or not.</li>
+
+<li>
+The spec for ICommand#getArguments and ICommand#setArguments says that
+the arguments can be null. The implementation didn't allow for this (instead
+it used an empty map to indicate lack of arguments). The implementation
+has been updated to match the spec.</li>
+
+<li>
+An assertion failure used to be thrown when an operation was done during
+event notifications. But the spec says that a CoreException should be thrown
+instead. The implementation now matches the API. No API changes.</li>
+
+<li>
+The infrastructure for notifying listeners of IResourceChangeEvents has
+been extended to include two new notification points.&nbsp; Clients can
+now register listeners for notification before and after auto-builds. In
+both cases, the resource tree is open for change during this notification.
+There are a number of caveats associated with these new events and clients
+are advised to take special care when using these new features.</li>
+
+<li>
+Note, that the internal URI scheme used by eclipse for access to installation
+directories, etc is being renamed. Any code that hardcodes "eclipse:" will
+need to change. The correct usage is NOT to create these internal URLs
+directly (via new URL(String)) because the internal URI scheme is not documented
+API. Instead the user should always use the APIs provided by various classes
+in the platform for this purpose (eg. IPluginDescriptor.getInstallURL(),
+BootLoader.getInstallUL(), IInstallInfo.getComponentInstallURLFor(String),
+etc).</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GD4AEI: ITPCORE:WINNT - API - IFile.getContants( boolean )
+<br>1GD43F9: ITPCORE:ALL - Sync info reading should take phantoms into
+account
+<br>1GD3RA2: ITPCORE:WIN2000 - Deadlock creating a new Java Project
+<br>1GD1Y4Q: ITPDUI:ALL - Deadlock creating new project
+<br>1GD0HFA: ITPCORE:ALL - Should be able to change the .log file.
+<br>1GCWMR1: ITPCORE:ALL - Syncinfo, root resource, and persistence
+<br>1GCNQPZ: ITPCORE:ALL - BuildCommand spec doesn't match impl
+<br>1GC4CGP: ITPCORE:WIN2000 - setDescription throws AssertionFailedException
+instead of CoreException
+<br>1GC2WIE: ITPCORE:IResourceChangeListerner should receive a callback
+at the end of the change notification
+<br>1G8DLH0: ITPCORE:ALL - API - IProgressMonitor.checkCanceled
+<h3>
+Closed Problem Reports</h3>
+1GAXP5S: ITPCORE:WIN2000 - Can't save file due to "problems accessing property
+story"</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse SDK Build 0.102 - May 1, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+Core Resources is now able to run without a native library when one is
+not available. It has performance impact and some functionality might be
+missing. For example, IResource.setReadOnly( false ) will not work.</li>
+
+<li>
+The spec for ISynchronizer#setSyncInfo has been updated to say that sync
+information is not stored on the workspace root. Attempts to store information
+on this resource will be ignored.</li>
+
+<li>
+API WorkspaceLock and IWorkspace.setWorkspaceLock were provided to solve
+the problem.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GD0VCA: ITPCORE:ALL - Code cleanup: unsent methods
+<br>1GD0934: ITPCORE:ALL - Need implementation of Core Resources without
+native library
+<br>1GCWDFY: ITPCORE:ALL - Need to implement multiple readers for old data
+<br>1GCV6YS: ITPCORE:WIN2000 - Typos in IncrementalProjectBuilder.getDelta(IProject)
+<br>1GCULA4: ITPCORE:ALL - bad plugin.jars in WebDav
+<br>1GCUJKU: ITPCORE:ALL - Remove unused Path class in WebDAV
+<br>1GCTFGI: ITPCORE:WINNT - 2nd hang, deleting projects
+<br>1GCTEY5: ITPCORE:WINNT - hanging while waiting in UI on tasklist update
+<br>1GCT0O5: ITPCORE:WIN2000 - IWorkspace.validateProjectLocation implementation
+incorrect
+<br>1GCR3DQ: ITPCORE:WINNT - Need functionality to identify the current
+OS
+<br>1GCQO24: ITPCORE:ALL - Why should Workspace#close clear markers and
+sync info?
+<br>1GCQNWT: ITPCORE:ALL - Remove Synchronizer#flushAllSyncInfo?
+<br>1GCP7AW: ITPCORE:ALL - API - Sync info for workspace root?
+<br>1GCN3BQ: ITPCORE:ALL - RegistryWriter: ClassCastException of PluginPrerequisite
+when writing plugin descriptor
+<br>1GBZ2ZW: ITPCORE:ALL - update project description spec
+<br>1GBSBLV: ITPCORE:WIN2000 - API - Concurrent, background thread and
+UI notification
+<h3>
+Closed Problem Reports</h3>
+1GD21LC: ITPCORE:WINNT - DCR: Want to save .matdata in SCM
+<br>1GD0CHF: ITPCORE:WIN2000 - exception in core when doing Catchup
+<br>1GCU4GZ: ITPCORE:WINNT - Exception using 0.048 with old workspace
+<br>1GCN6GX: ITPCORE:WINNT - IWorkspace.validatePath() should also accept
+an IPath
+<br>1GCM8QH: ITPCORE:WIN2000 - matching library entry and plugin.jars entry
+<br>1GCHR86: ITPCORE:WINNT - SH: Lost projects after crash
+<br>1GCFSNR: ITPCORE:WIN2000 - Registry writing API needed
+<br>1GBS293: ITPCORE:ALL - MalformedURLException from EclipsePluginURLConnection
+<br>1GBPG8B: ITPJUI:WIN2000 - Walkback from builder after moving a resource
+<br>1GBK9KC: ITPCORE:ALL - history store performance improvement
+<br>1G9VFSO: ITPCORE:WINNT - Marker performance problem</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse SDK Build 0.048 - April 26, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+Paths containing multiple leading parent references (e.g., ../../../foo)
+were incorrectly canonicalized to remove all but one of the leading references
+(e.g., ../foo).&nbsp; This has been corrected to leave all leading parent
+references.</li>
+
+<li>
+The order of the arguments in the constructor for com.ibm.dav4j.http.client.Response
+have changed.</li>
+
+<li>
+When defining their own marker types, users are encouraged to use the "name"
+attribute for the extension to define a human readable string for their
+marker which potentially may be presented to the user.</li>
+
+<li>
+New API has been added for accessing the command line used to start the
+Platform (see Platform.getCommandLineArgs()).&nbsp; This returns the entire
+command line as provided to the platform launcher.&nbsp; Individual applications
+(IPlatformRunnables) may receive a different set of command line arguments
+depending on how they were run.&nbsp; See BootLoader.run() and BootLoader.startup()
+for more information.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GCSR1P: ITPCORE:Linux - JavaProblem in the URLHandler class
+<br>1GCRVVZ: ITPCORE:WIN2000 - Paths with ../ do not canonicalize correctly
+<br>1GCR3R9: ITPCORE:ALL - API - DAV4J Response constructor changed
+<br>1GCPI1B: ITPCORE:ALL - Add user-readable string to markers
+<br>1GCPHU3: ITPCORE:ALL - Optimization - compact markers file
+<br>1GCNT3H: ITPCORE:ALL - Need internal (non-copy) methods
+<br>1GC1NPR: ITPCORE:ALL - Rogue plugin causes other plugin failures
+<br>1GBYQEZ: ITPCORE:WIN2000 - Performance: resource delta walking
+<br>1GBSC5Y: ITPCORE:WIN2000 - Resource deltas are big, fat and ugly
+<br>1GB434F: ITPCORE:WINNT - Optimization - Persistence of markers and
+sync info
+<br>1GAFWI1: ITPCORE:WIN2000 - Getting command-line arguments
+<h3>
+Closed Problem Reports</h3>
+1GCQD0A: ITPVCM:WIN2000 - ListenerList should be part of a core project
+<br>1GCC2XP: ITPCORE:ALL - Need to change filename case
+<br>1G9V3KL: ITPCORE:ALL - ClassCastException saving file</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse SDK Build 0.047 - April 24, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+API for representing and getting information about the install has been
+added.</li>
+
+<li>
+Updated spec to explicitly say that changes to markers and sync information
+do not appear in build deltas but they do appear in notification deltas.</li>
+
+<li>
+The Ant support plugin now supports the specification of Ant tasks, datatypes
+and 'objects' in extension contributions to extension-points on the Ant
+plugin. There are also several new datatypes and tasks which improve the
+integration of Ant into the Platform and compensate for problems with Ant.</li>
+
+<li>
+IProject#delete and IWorkspaceRoot#delete have been clarified to specify
+that sync information is deleted when you delete the resource.</li>
+
+<li>
+Method 'resolve' moved from Factory to PluginRegistryModel.&nbsp; The new
+resolve returns an IStatus giving all problems found during the resolve
+rather than listing these problems in the factory's status.</li>
+
+<li>
+Main.main() and UIMain.main() have been updated to use the value returned
+from running the application as the value passed to System.exit if the
+value is an Integer.&nbsp; This allows the platform to return status/completion
+codes to the calling entity.</li>
+
+<li>
+Resources and Runtime structures are now clones as the API specs. Most
+of the classes in the Resources and Runtime plug-ins spec that some of
+the structures they return are copies and not the real ones. The implementation
+was not always conforming to the API. So, users of these classes relying
+on behavior instead of API might have unexpected problems in their code.</li>
+
+<li>
+To address the issue of UI/Workspace deadlock, the platform now supports
+a "-avoidDeadlock" command-line argument.&nbsp; Using this enables the
+new deadlock avoidance mechanism.&nbsp; This mode should be considered
+experimental for now but in the very near future will be included as standard
+and this command line option will be removed.&nbsp; Users encountering
+deadlock problems should enable this option.&nbsp; If the problems persist,
+you are encouraged to report your usecase so that the issue can be resolved.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GCP3VP: ITPCORE:ALL - API - Install API added
+<br>1GCOYYX: ITPCORE:ALL - API - markers and deltas
+<br>1GCO4H0: ITPCORE:WIN2000 - New Ant functionality
+<br>1GCO3NV: ITPCORE:WINNT - References outside of JCL Max
+<br>1GCNJOM: ITPCORE:ALL - Project description changes should appear in
+deltas
+<br>1GCNGFO: ITPCORE:ALL - API - sync info does not go away when deleting
+project
+<br>1GCFV4B: ITPCORE:ALL - API - resolve method moved
+<br>1GCFUXU: ITPCORE:ALL - Main needs the ability to set exit code
+<br>1GCE29K: ITPCORE:ALL - Need to include changes in sync info in resource
+deltas
+<br>1GCA4BT: ITPCORE:ALL - Plugin registry loader does not trace failures
+<br>1GBXGW8: ITPCORE:ALL - DCR : IAuthenticator feature request
+<br>1G5TPRY: ITPCORE:WINNT - API - need to deep clone some structures returned
+in API
+<br>1GCP4K8: ITPCORE:WIN2000 - Temporary fix for deadlock issues
+<h3>
+Closed Problem Reports</h3>
+None.</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse SDK Build 0.046 - April 19, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GAJGC4: ITPCORE:ALL - ResourceComparator.compareSync(ResourceInfo, ResourceInfo)
+may be obsolete
+<br>1G31EOY: ITPCORE:ALL - performance and persistent properties
+<h3>
+Closed Problem Reports</h3>
+1GC1FLQ: ITPCORE:WIN2000 - Is refreshLocal needed after copy/move?
+<br>1GAUUDW: ITPCORE:ALL - API - add way to state that we are recovering
+from a crash
+<br>1G3WUNK: ITPCORE:ALL - should setLocal(false) remove the contents of
+a file (is this scrublocal)?
+<br>1G3HHP3: ITPJUI:WINNT - Timestamp check not OK
+<br>1G1V1SP: ITPCORE:ALL - parameter force is not used in Project.move
+<br>1FWT3V5: ITPCORE:WINNT - Task view shows entries for closed projects
+<br>1FWB1VL: ITPCORE:ALL - Empty marker nodes not removed
+<br>1FW6YD1: ITPCORE:ALL - Some PROPFIND requests are sent to the server
+with their request url missing its trailing slash
+<br>1FVIUQC: ITPCORE:ALL - copy implementation should use Status
+<br>1FVFCL1: ITPCORE:ALL - Revisit uses of endOperation(false)</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse SDK Build 0.045 - April 17, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+When running the platform, the -dev command line option can now be qualified
+by a list of directories and jars (previously it was only a list of directories).</li>
+
+<li>
+IPath and Path have been extended with functionality for adding file extensions.&nbsp;
+This completes the set of operations including removeFileExtension and
+getFileExtension.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+Serialization code has changed and therefore old workspaces are no longer
+compatible with this build.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GCARO8: ITPCORE:WIN2000 - Platform.parsePlugins ClassCastException
+<br>1GCA42O: ITPCORE:ALL - plugin .jar not added to loader path in VA Java
+<br>1GC1FTH: ITPCORE:WIN2000 - Hackfinder should be replaced with ISSUE:
+<br>1GC03AF: ITPCORE:WIN2000 - -dev should take jars as well as directories
+<br>1GBXVQ0: ITPCORE:ALL - resource copy and markers
+<br>1GBXE96: ITPVCM:ALL - IProjectDescription.setComment() can't take null
+<br>1GBW8DP: ITPCORE:WIN2000 - SyncInfo should be stored more compactly
+<br>1GBROB6: ITPCORE:ALL - Exception when shutting down (and missing plugin)
+<br>1GBNJD1: ITPCORE:WIN2000 - Cannot setDescription in IProjectNature.configure
+<br>1GB9T8F: ITPCORE:WIN2000 - Markers file should not be created if no
+markers
+<br>1GB9IX5: ITPCORE:WIN2000 - API - need IPath.addFileExtension
+<br>1GAW1NO: ITPCORE:WINNT - wrong progress monitor in BuildManager.build(int,
+IProgressMonitor)
+<br>1GABT9C: ITPCORE:ALL - write test to project copy
+<br>1G5V39V: ITPCORE:WIN98 - Need workspace properties
+<h3>
+Closed Problem Reports</h3>
+1GC1ZUO: ITPCORE:WIN2000 - Resources example using wrong XML
+<br>1GBW8O2: ITPCORE:WIN2000 - API - need API for handling plugins transitively
+<br>1GBW780: ITPCORE:WIN2000 - API - need API for handling references transitively
+<br>1GBPSDB: ITPCORE:WINNT - Move project uses wrong path for non default
+locations
+<br>1GAZBVT: ITPCORE:WIN2000 - Project inconsistent after crash
+<br>1GAJ99R: ITPJUI:WIN2000 - Marker at wrong position after refresh from
+local
+<br>1GAAJKK: ITPCORE:ALL - need to load .options from each plugin
+<br>1G9TGLF: ITPCORE:ALL - Optimize resource copying
+<br>1G8VU0H: ITPCORE:ALL - Project name validation
+<br>1G8D9R7: ITPCORE:WIN98 - Extension elements and objects
+<br>1FYFYYW: ITPCORE:WINNT - Need ability to force auto-build?
+<br>1FW6O09: ITPCORE:WINNT - Cannot reopen workbench created on another
+machine
+<br>1FSOFFL: ITPCORE:ALL - Implement #copy</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse SDK Build 0.044 - April 12, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+Added API for moving/copying projects to folders and vice versa.</li>
+
+<li>
+Class loading has been improved to ensure that plug-in activation is not
+done in a synchronized block.&nbsp; The previous behavior could cause deadlock
+in some conditions.</li>
+
+<li>
+ISafeRunnable.handleException( Exception ) is now SafeRunnable.handleException(
+Throwable ). Implementors of this interface have to change their code.
+LinkageErrors are now logged by the Platform and passed to handleException().</li>
+
+<li>
+IFile.getContents( true ) does not synchronize the file anymore if called
+from inside an IResourceChangeListener during a resource change notification.
+This behaviour was erroneous since resource changes are not allowed during
+change notifications.</li>
+
+<li>
+Added IProjectDescription#hasNature to be consistent.</li>
+
+<li>
+Calling IWorkspace.run() after the ResourcesPlugin has been shutdown causes
+a CoreException to be thrown.</li>
+
+<li>
+Builds were triggering auto builds. These behaviour was not the correct
+one.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>To improve support for development time execution of the platform,
+the the information in the .va.properties file previously associated with
+the plugins should now be incorporated in a plugin.jars file. The file
+has entries corresponding to each of the <tt>&lt;library></tt> elements
+in the plugin.xml. Each defined property is of form:
+<ul><tt>libname=source1,source2,source3,...</tt></ul>
+
+<p><br>For example:
+<p>plugin.xml
+<ul><tt>&lt;runtime></tt>
+<ul><tt>&lt;library name=baseapi.jar></tt>
+<ul><tt>&lt;export name="*"/></tt></ul>
+<tt>&lt;/library></tt>
+<br><tt>&lt;library name=another.jar/></tt>
+<br><tt>&lt;library name=base.jar/></tt></ul>
+<tt>&lt;/runtime></tt></ul>
+
+<p><br>plugin.jars
+<ul><tt>baseapi.jar=Base API Project</tt>
+<br><tt>base.jar=Base Project 1, Base Project 2</tt></ul>
+
+<p><br>If running in JDK with -dev mode configured, the above results in
+a loader search path consisting of:
+<ul><tt>Base API Project, baseapi.jar, another.jar, Base Project 1, Base
+Project 2, base.jar</tt></ul>
+
+<p><br>Any library access filters specified in the plugin.xml are applied
+to the corresponding loader search path entries.</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GC2XHC: ITPCORE:WIN2000 - API - .va.properties file support removed
+<br>1GC2FKV: ITPCORE:BuildManager triggers incremental build when doing
+full builds
+<br>1GC1KI1: ITPCORE:WINNT - WorkspaceRunnable can run during (after) shutdown
+<br>1GC1DWW: ITPCORE:ALL - API - Add IProjectDescription#hasNature
+<br>1GBZD4S: ITPCORE:API - IFile.getContents(true) fails if performed during
+delta notification
+<br>1GBZ0AW: ITPCORE:WINNT - Stack overflow in plugin loader due to cyclical
+dependency
+<br>1GBXSGZ: ITPCORE:ALL - Remove gratuitous methods from Project
+<br>1GBXRP9: ITPCORE:WIN2000 - Client should continue asking for authentication
+info
+<br>1GBXNQL: ITPCORE:ALL - Problems with ISafeRunnable
+<br>1GBXLX4: ITPCORE:WINNT - getBuildOrder is never null
+<br>1GBUK31: ITPCORE:ALL - Parameter Order error in BasicAthenticator
+<br>1GBPU58: ITPCORE:ALL - Copy project properties
+<br>1GBOBKR: ITPCORE:WIN2000 - API - class loading and threads do not mix
+well
+<br>1GA6ALG: ITPCORE:WIN2000 - Xerces classloader is not shared
+<br>1G9TGS3: ITPCORE:ALL - Copying/Moving projects to non-projects?
+<br>1G5PQYH: ITPCORE:WINNT - Runtime plugin not real
+<h3>
+Closed Problem Reports</h3>
+1GBZ98A: ITPCORE:WIN2000 - IResource.exists() returns true when file has
+been manually deleted
+<br>1GBNM66: ITPJUI:WINNT - Deadlock during startup
+<br>1G9V55X: ITPCORE:WIN2000 - Adding/Opening a project triggers a build
+<br>1G82O1B: ITPCORE:WIN98 - Move DLLs to the plugin directories
+<br>1G5RR9M: ITPCORE:WINNT - Plugin runtime objects not being created</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse SDK Build 0.043 - April 10, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+IWorkspace.save( false ) used to throw a CoreException if called from inside
+an IWorkspaceRunnable. It now only acts as a hint that a snapshot was requested.
+Although it is a hint, it should be used carefully since it can slow down
+the system's performance. IWorkspace.save( true ) still throws an exception
+if called from inside an IWorkspaceRunnable.</li>
+
+<li>
+Support for Ant has been added to the platform.&nbsp; Users are now able
+to create and run Ant scripts from within the platform (see context menu
+on .xml files). Users should note that this support is currently considered
+EXPERIMENTAL and is subject to change at any time.&nbsp; User feedback
+in the form of code and usage pattern suggestions are encouraged.</li>
+
+<li>
+The IResource.refreshLocal operation does not trigger an auto-build anymore
+if changes were not detected.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GBXU0W: ITPCORE:ALL - Synchronizer allows duplicate registered partners
+<br>1GBXP1S: ITPCORE:ALL - API - Snapshots should not throw an exception
+if called from inside an operation
+<br>1GBX6IT: ITPCORE:WIN - Dirty flag in metainfo should be centralized
+<br>1GBS55I: ITPCORE:WIN - crash recovery - should remove local history
+blobs that have no reference
+<br>1GBRZ7Z: ITPCORE:WIN - .bak files should be removed
+<br>1GBROXP: ITPCORE:WINNT - Old safetable files should be deleted when
+a new one is created
+<br>1GBPY05: ITPCORE:WIN2000 - Ant support added
+<br>1GBF64N: ITPCORE:ALL - son-of-1GBB2LT/ grandson-of-1GB1W2G: plugin.jars
+does not handle "."
+<br>1GBAY2H: ITPCORE:ALL - Status usage not safe
+<br>1GB79YW: ITPCORE:ALL - RefreshLocal should only cause a build if resources
+changed
+<br>1FVIIP2: ITPCORE:ALL - Unable to delete readonly files
+<h3>
+Closed Problem Reports</h3>
+1GBX62I: ITPCORE:WIN2000 - Walkback exiting after trying to access bogus
+plugin
+<br>1GBX33K: ITPCORE:WINNT - API Inconsistency in IProject and Project
+<br>1GBS1OU: ITPCORE:WINNT - TargetManagement has a dav package
+<br>1GBROJA: ITPCORE:ALL - stack trace in exit (prior errors?)
+<br>1GBR7TI: ITPJUI:WINNT - walkback on startup(?)
+<br>1GBPYHS: ITPCORE:WINNT - IFile needs API for size
+<br>1GBPLAY: ITPJUI:WIN2000 - walkback on restart
+<br>1GBAXWY: ITPCORE:WIN2000 - Inaccurate message in CoreException
+<br>1G5YAVH: ITPCORE:ALL - API - javadoc problems
+<br>1G5WOMG: ITPCORE:WIN - Robustness - handle cases when reading a file
+and the content is not the expected one
+<br>1G3BZ44: ITPCORE:ALL - Policy.debug
+<br>1FWJW7C: ITPCORE:ALL - Progress bug in File.create</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse Platform Build 0.042 - April 5, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The API for IFile.getHistory says&nbsp; "Recently added states first."
+but the implementation was giving back the oposite order. It is now fixed.</li>
+
+<li>
+To reduce brittleness in the core.runtime.model package, the interfaces
+have been removed leaving only the default implementation classes.&nbsp;
+These classes can be extended by clients.&nbsp; This will help cushion
+downstream developers from future changes in the plugin.xml DTD. Related
+methods (e.g., Platform.parsePlugins()) which mention the deleted interfaces
+have also changed.</li>
+
+<li>
+When used with older workspaces under NTFS, it is possible that all resources
+appear to be out of sync. This is a result of the finer granularity we
+are now getting to represent the last modified time of a resource.&nbsp;
+In addition, Daylight Saving Time problems on Windows are also fixed.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GBOBGZ: ITPCORE:WIN2000 - Autobuild happening during crash recovery
+<br>1GBOABF: ITPCORE:ALL - IFile.getHistory gives back array in wrong order
+<br>1GBKMA6: ITPCORE:WIN2000 - API - runtime.model API changes
+<br>1G5WN7I: ITPCORE:WIN - timestamp problem under Win2000
+<h3>
+Closed Problem Reports</h3>
+1GBNHWO: ITPJCORE:WIN2000 - Reorg: move doesn't work anymore
+<br>1GBB1Z0: ITPCORE:WIN2000 - Is it possible for marker type to change?</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse Platform Build 0.041 - April 3, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+Persistence code has changed so old workspaces are not compatible with
+this version.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GBM3WT: ITPCORE:ALL - history store is not compatible with older versions
+<br>1GBLSLD: ITPCORE:WIN2000 - Move file with history fails
+<br>1GBKBOE: ITPUI:ALL - Project location not being used
+<br>1GBBA32: ITPCORE:ALL - review IResource.getModificationStamp implementation
+<br>1GB45M5: ITPCORE:WINNT - Workspace fields between save/snap
+<br>1G5V5ET: ITPCORE:WIN98 - project open/close and modification stamp
+<h3>
+Closed Problem Reports</h3>
+1GBEX1U: ITPCORE:ALL - Project location not quite right
+<br>1GBCDWC: ITPCORE:Cannot rename a file with different case name
+<br>1GBAYLE: ITPCORE:ALL - local history policies should be reviewed and
+implemented
+<br>1GB0FQP: ITPCORE:ALL - API - Incorrect comments in IProject API</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Eclipse Platform Build 0.040 - March 30, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The relationship between IProject and IProjectDescription has been clarified.&nbsp;
+Some of the accessing methods have been removed from IProject and a setProjectDescription
+method has been added. Clients wishing to change a characteristic of a
+project should get its description, update the description and set the
+description back.</li>
+
+<li>
+The workspace has new API to handle workspace-wide builds.&nbsp; Clients
+can set the order in which projects are built and can compute build orders
+based on project reference ordering."</li>
+
+<li>
+The spec for IResource#setLocal has been updated. The workspace root and
+projects are always considered to be local. Calling #setLocal(false) on
+them has no effect on the resource itself."</li>
+
+<li>
+Previously deprecated methods have been removed.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GBEXEL: ITPCORE:WIN2000 - API - IProjectDescription vs. IProject
+<br>1GBEXAN: ITPCORE:WIN2000 - API - project build ordering api required
+<br>1GBELW3: ITPCORE:ALL - IResource.setReadOnly not working
+<br>1GBEEX9: ITPJUI:WINNT - Visibility problem in build manager (VAME)
+<br>1GBD2DT: ITPCORE:ALL - API - look at IResource#setLocal
+<br>1GBCXKL: ITPCORE:ALL - IFile.getHistory gives back array in wrong order
+<br>1GB9IUC: ITPVCM:WINNT - Renaming resources results in screwy state
+<h3>
+Closed Problem Reports</h3>
+1GBD8TS: ITPCORE:WIN2000 - Workspace unable to find IPath returned by ContainerSelectionDialog</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Build 0.039 - March 29, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The ISynchronizer#flushSyncInfo and ISynchronizer#accept methods have both
+been changed to accept a depth parameter as one of the method arguments.</li>
+
+<li>
+ISavedState.getDelta was deprecated and ISavedState.processResourceChangeEvents
+was added instead.</li>
+
+<li>
+IResource.clearHistory was added in order to clients be able to remove
+the local history from a resource and all its children.</li>
+
+<li>
+IWorkspace.setAutoBuilding and IWorkspace.isAutoBuilding were moved to
+IWorkspaceDescription. The original methods were deprecated.</li>
+
+<li>
+The IWorkspaceDescription type was added to represent the workspace preferences.
+It defines things like the local history policies and auto-builds.</li>
+
+<li>
+IResource.setReadOnly was added to change the read-only status of a resource.
+It has no effect against the IWorkspaceRoot.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GBB4YE: ITPCORE:WINNT - API - ISynchronizer methods need depth parameter
+<br>1GBB2LT: ITPCORE:ALL - son-of-1GB1W2G: plugin.jars does not handle
+"."
+<br>1GB9R5D: ITPCORE:ALL - API - ISavedState.getDelta should be deprecated
+<br>1GB9QIL: ITPCORE:ALL - API - IResource.clearHistory should be added
+<br>1GB9NGV: ITPCORE:ALL - API - IWorkspace.setAutoBuilding and IWorkspace.isAutoBuilding
+should move to IWorkspaceDescription
+<br>1GAWD65: ITPCORE:ALL - API - move HistoryStore policy to workspace
+description
+<br>1G8ULM1: ITPCORE:ALL - Sync Info and snapshots
+<br>1G82NK7: ITPCORE:ALL - API - can resources be made read-only?
+<h3>
+Closed Problem Reports</h3>
+1G8QOJ6: ITPCORE:ALL - Move throws Null Pointer Exception when destination
+is a project
+<br>1G0TOYV: ITPCORE:ALL - create a separate class to handle stat</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Build 0.038 - March 27, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+new Path ("./") incorrectly returns Path.ROOT. This is incorrect since
+ROOT isAbsolute()&nbsp; and does not hasTrailingSeparator().&nbsp; Clearly
+"./" is both relative and does have a trailing separator.&nbsp; The implementation
+has been updated to return the path "./" as this best fits the characteristics
+of the original.&nbsp; java.io.File handles this new form in all cases
+tested.&nbsp; Users of Path may wish to confirm their uses to ensure their
+path math is still correct.</li>
+
+<li>
+The core no longer dictates the VCM API to use.&nbsp; As a result, all
+VCM API packages have been removed from the resources plugin and the getVCMProvider()
+api and vcmprovider extension point has been removed.</li>
+
+<li>
+IProject.removeNature used to throw an exception if the nature did not
+exist. Now it just returns.</li>
+
+<li>
+IProject.getNature used to throw an exception if the nature was not added
+to the project. It now returns null.</li>
+
+<li>
+The format for defining the transient/persistent attribute of a marker
+definition has changed. Users are now to specify that they want their marker
+to be persisted by using &lt;persistent=true> in their marker definition,
+rather than &lt;transient=false>.</li>
+
+<li>
+Added IWorkspace#validateProjectLocation so users are able to pre-check
+whether or not a particular location is valid for a project which they
+are going to create.</li>
+
+<li>
+Added IMarker#setAttributes(Map).</li>
+
+<li>
+Adding and removing natures are now operations that show up in project
+deltas. They show up as a content change.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+Previous workspaces are not compatible with this version.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GB871W: ITPCORE:WIN2000 - API - new Path("./") returns incorrect value
+<br>1GB5Z2I: ITPCORE:WIN2000 - API - getVCMProvider removed
+<br>1GB433D: ITPCORE:WINNT - Workspace registered sync partners should
+be persisted
+<br>1GB3SZV: ITPCORE:ALL - Invalid plugin version format
+<br>1GB1W2G: ITPCORE:ALL - plugin.jars causes NullPointerException for
+&lt;library name="."/>
+<br>1GAZZWH: ITPCORE:WINNT - Investigate potential memory leaks
+<br>1GAZXX2: ITPCORE:ALL - Session properties not being removed on Project.close
+<br>1GAZQQX: ITPJUI:WINNT - SH: Build problems dialog not very informative
+<br>1GAYJWI: ITPCORE:ALL - API - IProject.removeNature should not throw
+exception if the nature does not exist
+<br>1GAYJHU: ITPCORE:ALL - API - IProject.getNature should return null
+instead of throwing an exception
+<br>1GAUUZC: ITPCORE:WINNT - API - Return empty arrays instead of null
+<br>1GAUTKK: ITPCORE:WINNT - API - Change marker type definition - persistent
+<br>1GAUTIZ: ITPCORE:WINNT - Need to validate project location
+<br>1GAJ6GA: ITPCORE:ALL - Project nature are session and persistent properties
+<br>1GA6HYV: ITPCORE:WIN2000 - IMarker should have setAttributes(Map)
+<br>1GA4I4N: ITPCORE:ALL - Synchronizer.flushSyncInfo may trigger more
+than one operation
+<br>1G9THMH: ITPCORE:ALL - Project copy/move and rollback
+<br>1G8VXS1: ITPCORE:ALL - Marker deltas for resource copy and move
+<br>1G8ULNT: ITPCORE:ALL - Sync info persistence implementation should
+change
+<br>1G8D9RZ: ITPCORE:WIN98 - Marker tests
+<br>1FW35LW: ITPCORE:ALL - API - add/removeNature() should run as operation
+<h3>
+Closed Problem Reports</h3>
+1GB818Q: ITPJCORE:ALL - Exception in build
+<br>1GAYHB5: ITPCORE:ALL - API - IFileState.getModificationTime should
+correctly specify what the long value means
+<br>1GAVSV0: ITPCORE:WIN2000 - Out of memory exception when building
+<br>1GAUTO8: ITPCORE:ALL - ProjectDescription should be written right away
+<br>1GAL59G: ITPCORE:WIN2000 - Walkback starting Eclipse with old workspace
+<br>1G91KTZ: ITPJUI:WINNT - search: build after search for type references
+<br>1G5WENX: ITPCORE:WIN98 - #beginOperation and ProgressMonitors</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Build 0.037 - March 22, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The Platform now supports the specification of additional plugin classpath
+entries on the command line.&nbsp; Running the platform with "-dev &lt;list,of,classpath,entries>"
+will cause the specified comma separated list of locations to be added
+to the classpath for ALL plugins.&nbsp; All entries are interpreted as
+relative to the plugin's install location</li>
+
+<li>
+IContainer#getFile and IContainer#getFolder have changed. Previously if
+the path argument was absolute then the full path of the receiver had to
+be a prefix. In order to remain consistent with other API calls, the path
+argument is considered to be relative to the receiver, whether it is absolute
+or not.</li>
+
+<li>
+There was a typo in the API for IFile#getContents(boolean), this was changed
+so that it now says an exception</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GAY2CZ: ITPCORE:WIN2000 - API&nbsp; - need additional classpath entries
+in "-dev" mode
+<br>1GAUUP5: ITPCORE:WINNT - API - IContainer path parms are inconsistent
+<br>1GAPBDP: ITPCORE:WINNT - API - IFile.getContents(boolean) javadoc wrong
+<br>1GAUEQU: ITPCORE:WIN2000 - Delta Tree managed by core continually grows
+<h3>
+Closed Problem Reports</h3>
+1GAX43R: ITPCORE:WIN2000 - IMarker.CHAR_END should be exclusive</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Build 0.036 - March 20, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The class BaseBuilder has been renamed "IncrementalProjectBuilder" to better
+emphasize that builders are per-project and intended to be incremental.&nbsp;
+BaseBuilder now subclasses IncrementalProjectBuilder and is deprecated.</li>
+
+<li>
+Persistent properties were spec'd as being XML to facilitate some server
+interactions.&nbsp; Since the core no longer specifies server interactions,
+this restriction can be relaxed.&nbsp; the PT_PROPERTIES constant has been
+deleted from ResourcesPlugin</li>
+
+<li>
+IStorage.getName and getFullPath were underspecified.&nbsp; They are now
+explicitly spec'd to return null if there is no name/path (respectively)</li>
+
+<li>
+This method used to return the location even for non-existent projects.
+Now it returns null for non-existent projects. Users should check it to
+avoid a NullPointerException.</li>
+
+<li>
+The workspace tree is locked for all delta notifications. If listeners
+were modifying the tree during project closing and deleting notifications
+they will be broken because this is no longer allowed.</li>
+
+<li>
+Added a boolean force flag to IFile#getContents and therefore deprecated
+the old method.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+getLocation() for a non existing project used to return the default location
+for the project. It now returns null as the location. This is NOT an API
+change. The implementation was not matching the API.</li>
+
+<li>
+Previous workspaces are not compatible with this version.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GAWCRT: ITPCORE:ALL - Workspace tree file is not compatible with previous
+drops
+<br>1GAWBO4: ITPCORE:WIN2000 - API - BaseBuilder renamed to "IncrementalProjectBuilder"
+<br>1GAWBK0: ITPCORE:WIN2000 - API - persistent properties no longer have
+to be XML
+<br>1GAWBI6: ITPCORE:WIN2000 - API - IStorage.getName and getFullPath underspecified
+<br>1GAUV9O: ITPCORE:WINNT - Deprecate IResource#setMimeType
+<br>1GAUUNF: ITPCORE:ALL - API - IProject.getPluginWorkingLocation should
+return null for non-existent projects
+<br>1GAUTME: ITPCORE:WINNT - Remove WorkspaceRoot#touch
+<br>1GAUKVT: ITPCORE:ALL - getLocation should return null if the resource
+belongs to a non existent project
+<br>1GAUKMB: ITPCORE:ALL - Project.getLocation can be different if the
+project is open or closed
+<br>1GAP3MK: ITPCORE:ALL - API - Tree locked during notification
+<br>1GAOTR9: ITPCORE:WIN2000 - API - -plugins command line arg not worknig
+<br>1GAOT45: ITPCORE:WIN2000 - Boot.jar and runtime.jar must be in different
+plugins.
+<br>1GAOC22: ITPJUI:WINNT - exception during startup
+<br>1GAMR1K: ITPCORE:Platform should be more fault tolerant
+<br>1GALH44: ITPCORE:WINNT - SEVERE: Walkback saving workspace trees
+<br>1GALAP8: ITPCORE:WIN2000 - Marker deltas issued for markers restored
+on startup
+<br>1GAA83M: ITPCORE:ALL - WorkspaceRoot.isLocal does not check depth
+<br>1G97Y4G: ITPCORE:WINNT - IWorkspaceRunnable should only run if required
+<h3>
+Closed Problem Reports</h3>
+1GAOQFZ: ITPCORE:ALL - BuildManager.build(int, IProgressMonitor) is not
+referenced
+<br>1G8W0DX: ITPCORE:ALL - Bring back the spies
+<br>1FX0SG0: ITPCORE:WIN98 - Server property change doesn't signal content
+change</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Build 0.035 - March 15, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+Added IWorkspace#checkpoint(boolean) so users can indicate whether or not
+they would like a build to be run during a checkpoint call. Consequently
+IWorkspace#checkpoint() has been deprecated.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GAKQV7: ITPJUI:WINNT - ArrayIndexOutOfBounds when restarting killed workspace
+<br>1GAL1DN: ITPJUI:WINNT - NPE: when restarting crashed workspace
+<br>1GAJFP7: ITPCORE:ALL - DigestOutputStream uses (non-static) member
+type in constructor
+<br>1G8U380: ITPCORE:ALL - Transient markers should not be persisted
+<br>1GAN1YL: ITPCORE:WINNT - API - IWorkspace#checkpoint
+<h3>
+Closed Problem Reports</h3>
+1GAJGJN: ITPJUI:WINNT - DigestOutputStream.NullOutputStream must be static
+<br>1GAJEKD: ITPJUI:WINNT - URLTool (Core Resources) references dav4j.kernel.util.Assert
+<br>1GAJEHB: ITPCORE:ALL - Invalid import in runtime.URLTool</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Build 0.034 - March 13, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The platform now supports the computing of a plug-in path and parsing of
+plug-in definitions from user code.&nbsp; This support is intended for
+tool developers needing to inspect the plug-ins installed on a particular
+platform.&nbsp; See Platform.parsePlugins() and BootLoader.getPluginPath().</li>
+
+<li>
+Plugins often need to call other plugins.&nbsp; In doing so they run the
+risk of being corrupted by failures in the plugin being called.&nbsp; ISafeRunnable
+and Platform.run() provide a mechanism by which plugins can protect themselves.&nbsp;&nbsp;
+This code should be used by all plugins when calling untrusted code.</li>
+
+<li>
+IWorkspace#checkpoint() was deprecated and has been replaced with IWorkspace#checkpoint(boolean).
+The boolean parameter is used to indicate whether or not a build should
+be run.</li>
+
+<li>
+The notion of a MIME type on a resource has been removed from the core
+since it was unclear that it usefully solved a large number of problems.&nbsp;
+All related implementations have been deprecated.</li>
+
+<li>
+The API for IMarker#getId and IMarkerDelta#getId has changed so that the
+return type of the methods is a long, rather than an int.</li>
+
+<li>
+Updated IMarker#getAttributes spec to say that return value is null if
+there are no attributes.</li>
+
+<li>
+VCM repository adapter API: A new package com.ibm.eclipse.core.vcm.adapter
+has been created for the repository adapter API. Repository adapter implementations
+need to be separate plug-ins that provide an exectuable extension to the
+'adapters' extension point of the VCM plug-in. The executable extension
+must be a class which implements IRepositoryAdapterFactory. A method getType()
+has been added to this interface.</li>
+
+<li>
+Repository adapter API: The signature of IRepositoryAdapter.release() has
+been changed so that implementations don't need to downcast to internal
+classes of the VCM plugin.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GAJCDL: ITPCORE:ALL - API - Need ways of introspecting installed platform
+<br>1GAJC8U: ITPCORE:ALL - API - ISafeRunnable added
+<br>1GAJ90T: ITPCORE:ALL - API - Add build parm to IWorkspace#checkpoint
+<br>1GAC9CO: ITPCORE:ALL - API - MIME type no longer supported
+<br>1GAC927: ITPCORE:ALL - API - server property functionatity removed
+from core
+<br>1GA6OQT: ITPCORE:WIN2000 - (API too) Marker access performance can
+be improved
+<br>1G9YF4J: ITPCORE:WIN2000 - Cannot run platform twice on same VM instance
+<br>1G9V218: ITPCORE:WINNT - API - IMarker.getAttributes() is not clearly
+specified
+<br>1GAIANK: ITPVCM:ALL - Repository adapter API - IRepositoryAdapter.release
+<br>1GAHET6: ITPVCM:WINNT - CVS adapter doesn't handle lack of authenticator
+<br>1GAHDW6: ITPVCM:WINNT - VCMPlugin.startup() doesn't handle empty extension
+case
+<br>1GAACRS: ITPVCM:WINNT - UI for connecting a project to a repository
+<br>1GA4YOJ: ITPVCM:WINNT - Need to split core project to exclude cvs specific
+packages
+<br>1G9X234: ITPCORE:ALL - CVS adapter - project level refresh bug
+<h3>
+Closed Problem Reports</h3>
+1GAFWI1: ITPCORE:WIN2000 - Getting command-line arguments
+<br>1GA3ZMV: ITPCORE:WINNT - Corrupt .snap file keeps workbench from coming
+up
+<br>1G5FYZM: ITPCORE:WIN - Project.deleteWithoutForce does not look for
+out of sync children
+<br>1G2W157: ITPCORE:WINNT - JIntegra parameters not being passed
+<br>1G2QAZ2: ITPCORE:Linux - java.io.File.renameTo overwrites files on
+Linux
+<br>1G2PAVU: ITPCORE:WIN2000 - Order of resource deltas</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Build 0.033 - March 8, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The IStorage interface was added to generically represent data and allow
+users to access content independent of how/where it is stored.&nbsp; IFile
+and IFileState have both been updated to extend IStorage.</li>
+
+<li>
+The resources plugin now defines the notion of "location" on markers.&nbsp;
+Location is a human-readable rendition of the location of a marker.&nbsp;
+The location attribute is intended primarily to help users to distinguish
+one marker from another.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GA8A8B: ITPCORE:WIN2000 - API - IStorage added
+<br>1GA6QYV: ITPCORE:ALL - IContainer.findMember( Path, boolean ) breaking
+API
+<br>1GA6QJP: ITPCORE:ALL - Copying a resource does not copy its lastmodified
+time
+<br>1G8QBT0: ITPCORE:ALL - API - Need to define semantics of marker location
+<h3>
+Closed Problem Reports</h3>
+1GA6I6I: ITPCORE:ALL - Problems with PropertyManager#getProperties
+<br>1GA43IM: ITPCORE:WINNT - Support loading/running eclipse on eclipse
+<br>1G8V01S: ITPCORE:WIN2000 - API - need mime type in markers
+<br>1G8UVZJ: ITPCORE:WINNT - API - Need "target" for markers
+<br>1G8UV2E: ITPCORE:WINNT - MIME type support needed
+<br>1G8SCJT: ITPCORE:ALL - Cannot open breakpoint in external jar</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Build 0.032 - March 6, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The notion of user has been removed from the platform.&nbsp; Support for
+maintaining/managing passwords etc. has been moved to the Platform class.&nbsp;
+See the appropriate *authorization*() methods.</li>
+
+<li>
+VCM API - The deprecated method ISubscriber.confirmMerge has been deleted.</li>
+
+<li>
+The Platform now defines the notion of a "text" marker.&nbsp; Text markers
+further refine the location of the marker using attributes such as charStart,
+charEnd and lineNumber.</li>
+
+<li>
+IResourceMapping has been removed. To set the content location of project
+the user must use #IProjectDescription#setLocation and then use that description
+in the IProject#create call. All methods related to IResourceMapping have
+been removed. (not deprecated, just deleted)</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+Most methods which were deprecated have now been removed.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1GA6J8S: ITPCORE:ALL - Remove Resource Mappings
+<br>1GA6J7M: ITPCORE:ALL - Remove deprecations
+<br>1GA6F5Z: ITPCORE:WIN2000 - API - Users deleted
+<br>1GA6CN6: ITPCORE:ALL - VCM API - Remove deprecated method confirmMerge
+<br>1GA3ZMV: ITPCORE:WINNT - Corrupt .snap file keeps workbench from coming
+up
+<br>1G9X1AL: ITPCORE:ALL - Markers and phantom resources
+<br>1G8W05A: ITPCORE:WIN2000 - API - IMarker should support additional
+attribute types
+<h3>
+Closed Problem Reports</h3>
+1G9VL86: ITPCORE:ALL - DCR: Status.OK singleton
+<br>1G9TH4K: ITPCORE:ALL - Platform current user should be persisted
+<br>1G9RFE5: ITPCORE:ALL - DCR - IResource.isContainer?
+<br>1G9RCLU: ITPCORE:ALL - Resource mappings incorrect
+<br>1G1UW8Y: ITPCORE:ALL - Is addMapping an operation?</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Build 0.031 - March 1, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The constant IResourceStatus.OPERATION_CANCELED has been deprecated. Core
+no longer wraps OperationCanceledExceptions in CoreExceptions so this constant
+is no longer used. OperationCanceledException, when thrown, surface to
+the user.</li>
+
+<li>
+IWorkspace#validateName was changed so that the empty string is no longer
+a valid name.</li>
+
+<li>
+VCM API - added IResourceEdition.getVersionName().</li>
+
+<li>
+Repository adapter API: Added name validation methods for repository locations,
+team stream names, and project version names.</li>
+
+<li>
+Repository Adapter API - renamed interfaces (adding "I" in front of the
+interface names), renamed long-running operations to start with "fetch"
+instead of "get", added of IProgressMonitor arguments for long-running
+operations, moved fetchMembers and fetchMemberNames to IServerWorkspace,
+removed IServerWorkspace.getContextId(), introduced a new interface "IRepositoryAdapterFactory".</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1G9V31J: ITPCORE:ALL - No marker deltas on Project#open
+<br>1G99CBR: ITPCORE:ALL - ResourceMapping parms poorly named
+<br>1G99C3U: ITPCORE:ALL - Workspace#newResourceMapping should check nulls
+<br>1G8VW2B: ITPCORE:ALL - API - Remove unused constant
+<br>1G8U0XH: ITPCORE:ALL - CVS VCM - files with spaces in their names are
+not handled
+<br>1G8ISF7: ITPCORE:WIN98 - Markers should be moved with resources
+<br>1G8HMYU: ITPCORE:WINNT - Log should note which plugin logged
+<br>1G8H7V9: ITPCORE:WINNT - move should do refresh the source
+<br>1G8DXSZ: ITPCORE:ALL - VCM API minor wording..
+<br>1G8DGWZ: ITPCORE:ALL - API: repository-adapter specific naming restrictions
+<br>1G7YP0E: ITPCORE:ALL - API: IWorkspace.validateName error
+<br>1FVTM4S: ITPCORE:ALL - New solution and project in workbench does not
+appear in filesystem
+<h3>
+Closed Problem Reports</h3>
+1G9X188: ITPCORE:ALL - CVS adapter - problem releasing file deletions</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Build 0.030 - February 27, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+Repository adapter API - renamed getProjectVersionWorkspace to getProjectVersion
+and getTeamStreamProjectWorkspace to getTeamStreamProject; simplified the
+signature of getFileHistory and getProjectHistory.</li>
+
+<li>
+The API on IProjectDescription and IProject has been rationalized. The
+net result is that descriptions are stand-alone (e.g., when manipulated
+before project creation) and all modifications to a project are done directly
+on the project after creation.&nbsp; The changes are summarized below:</li>
+
+<ul>
+<li>
+Modifying operations on IProject will now cause a build and as such require
+a progress monitor</li>
+
+<li>
+newMapping and newDescription moved from IProject to IWorkspace</li>
+
+<li>
+various methods from IProjectDescription now appear on IProject as well</li>
+</ul>
+
+<li>
+The IMarker API has been relaxed such that the getAttribute(String, *)
+methods no longer throw CoreException.&nbsp; In cases where either the
+marker does not exist or the attribute is not found, the supplied default
+value is returned.</li>
+
+<br>In an effort to standardize the representation of markers on text resources
+the marker type IMarker.TEXT has been added.&nbsp; In addition, name and
+semantic definitions for IMarker.CHAR_START, CHAR_END and LINE_NUMBER.&nbsp;
+Text related markers should subtype this new marker type in addition to
+any other marker types required.
+<li>
+Added new API for IProject#move and IProject#copy to take the IProjectDescription
+of the destination. This allows the user to set up the resource mappingson
+the destination before the copy/move is done.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1G9RBH5: ITPCORE:ALL - IFile.appendContents might lose data
+<br>1G981PR: ITPCORE:WIN2000 - API - IProjectDescription changes
+<br>1G97GPU: ITPCORE:WIN2000 - API - Marker api and exceptions
+<br>1G97G7L: ITPCORE:WIN2000 - API - Need to define text marker
+<br>1G95KAH: ITPCORE:ALL - workspace save mechanism explained
+<br>1G91QF3: ITPCORE:WINNT - Persistent and session properties lost after
+move
+<br>1G8QQPL: ITPCORE:ALL - API - move and copy with a project destination
+<br>1FWYTKT: ITPCORE:WINNT - Error creating folder with long name
+<br>1FW1C36: ITPCORE:ALL - Project.renameMetaArea() does not use oldName
+<h3>
+Closed Problem Reports</h3>
+1G9R1T0: ITPCORE:WIN2000 - SaveManager doesn't compile in VAME
+<br>1G96YMF: ITPCORE:WINNT - MarkerManager must not always reuse the ID
+<br>1G95FK0: ITPCORE:ALL - API - Add IProjectDescription#addMapping
+<br>1G7YNXE: ITPCORE:ALL - Core leaves dangling file pointers
+<br>1G5WNDJ: ITPCORE:WIN - tree locked should be used more often
+<br>1G3OWKH: ITPCORE:ALL - immutable tree does not use a clear message
+<br>1G3NK4V: ITPCORE:WINNT - Resource rename erroneously gives error
+<br>1G2X1DZ: ITPCORE:WINNT - extendedType not hooked up
+<br>1G21PQ4: ITPCORE:ALL - FSRM and DefaultDefaultMapping
+<br>1G08GAU: ITPUI:WINNT - problems with filenames on windows
+<br>1FX061N: ITPCORE:WIN98 - Walkback closing workspace
+<br>1FVU9QQ: IWT:WINNT - Cannot export a project to an NT machine using
+file export if //computer name is used</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Build 0.028 - February 15, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The methods IResource.getExtendedType() and setExtendedType() have been
+deprecated and replaced with get/setMimeType() to better match the future
+directions of the platform.</li>
+
+<li>
+Repository adapter API: removed ServerResource.getPath; changed return
+type of ServerResource.fetchStateId to be IStateId; renamed RepositoryAdapter.refresh
+to .getRemoteTree; removed RepositoryAdapter.createTeamStreamProject. Note
+that ServerResource.fetchMembers and .fetchMemberNames will likely be moved
+to ServerWorkspace soon.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1G97C3P: ITPCORE:WINNT - API - getExtendedType changed
+<br>1G977X0: ITPCORE:ALL - Deltas wrong?
+<br>1G95LRR: ITPCORE:ALL - API - ISaveContext change
+<br>1G95GO3: ITPCORE:ALL - NullPointer saving workspace
+<br>1G8HKFU: ITPCORE:WINNT - Save participants and saving projects
+<br>1G8FQ7B: ITPCORE:ALL - API - checkpoint is used with two different
+meanings
+<h3>
+Closed Problem Reports</h3>
+1G95C2A: ITPCORE:WINNT - Memory Leaks
+<br>1G957YI: ITPCORE:WINNT - DCR: API to delete markers of a given type
+<br>1G60AFG: ITPCORE:WIN - problem calling RefreshLocal with DEPTH_ZERO
+on folder</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Build 0.027 - February 13, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+Changed IWorkspace#addSaveParticipant so it now throws a CoreException.</li>
+
+<li>
+Added ISaveContext#getFiles, ISaveContext#lookup, and ISaveContext#map.</li>
+
+<li>
+Deprecated ISaveContext#getPlugin.</li>
+
+<li>
+Added ISavedState#lookup and ISavedState#map.</li>
+
+<li>
+Changed ISaveParticipant#doneSaving and ISaveParticipant#rollback so they
+no longer throw a CoreException.</li>
+
+<li>
+Changed comment in ISaveContext#needDelta.</li>
+
+<li>
+The API around IContainer.findMember() and IContainer.exists() was inconsistent
+in its handling of the supplied path.&nbsp; The spec for findMember() has
+been updated to always treat the given path as relative to the container.&nbsp;
+This change may affect user who were calling this method with an absolute
+path.&nbsp; These users should use IWorkspace.getRoot().findMember().</li>
+
+<li>
+VCM API - The notion of transient resources has been replaced by its negative,
+managed resources. See ISharingManager.manage. Note that newly created
+resources are unmanaged by default; they have to be put under version and
+configuration management explicitly.</li>
+
+<li>
+VCM API - The meaning of one of the boolean parameters passed to ISharingManager.load
+has changed, see the spec for details.</li>
+
+<li>
+Added IFile.appendContents.</li>
+
+<li>
+The Platform now declares constants on IMarker to define the various standard
+markers attributes and standard values where applicable.</li>
+
+<li>
+The NullProgressMonitor provided by the Runtime plugin was implemented
+incorrectly with a singleton. NullProgressMonitor#getInstance was used
+to get the singleton. This method has been deprecated and users should
+call the public constructor to create a new NullProgressMonitor.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+The VCM implementation and the internal preliminary repository adapter
+API has been improved.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1G91MN7: ITPCORE:ALL - API changes in save facility
+<br>1G8WEZX: ITPCORE:ALL - API - ISaveParticipant
+<br>1G8W8KX: ITPCORE:WIN2000 - marker deltas in savemanager saved state
+<br>1G8W0RA: ITPCORE:WINNT - getProjectRelativePath() result is different
+in IResource and IResourceDelta for WorkspaceRoot
+<br>1G8VZRB: ITPCORE:WIN2000 - UIMain doesn't run if there aren't any program
+arguments
+<br>1G8UIW4: ITPCORE:ALL - Add marker information to ResourceDelta debug
+strings
+<br>1G8U393: ITPCORE:ALL - Markers and snapshots
+<br>1G8QQQU: ECLIPSE:ALL - API findResource(IPath ) cannot be replaced
+with getRoot().findMember(IPath )
+<br>1G8PV7W: ITPCORE:WINNT - ResourceStatus.setMessage(String message)
+should allow null
+<br>1G8P3VO: ITPCORE:ALL - VCM - make resources transient by default
+<br>1G8OOPI: ITPCORE:ALL - API - IFile.append(InputStream)
+<br>1G8HE7A: ITPCORE:WIN2000 - API - Need declarations of marker attributes
+<br>1G7T3YV: ITPCORE:ALL - Open activities not persisted?
+<br>1G5UUP1: ITPCORE:WIN - Remove location from WorkspaceDescription
+<br>1G5R7QL: ITPCORE:WINNT - Remove uses of/references to Sun code
+<br>1G1JN2C: ITPCORE:ALL - Workbench.setAutoBuilding()
+<br>1G0YCFJ: ITPCORE:ALL - API - Need a public NullProgressMonitor class
+<br>1FWLTTQ: ITPCORE:WINNT - File.list() returning null not handled in
+Core code
+<br>1FWAOBK: ITPCORE:WINNT - Performance issue: Path.segments()
+<br>1FWA8E6: ITPCORE:WINNT - API - IWorkbench.forceNotification
+<br>1FUR2EP: ITPCORE:ALL - TESTS - DavStore test hangs
+<h3>
+Closed Problem Reports</h3>
+1G8W18Z: ITPCORE:ALL - WorkspaceRoot and deltas
+<br>1G8W0ER: ITPCORE:WIN2000 - IMarker API is not very client friendly
+<br>1G8HML7: ITPCORE:WINNT - saved last built state of builders not run...
+<br>1G7N6Z9: ITPCORE:ALL - OutOfMemory error
+<br>1G5WUXV: ITPCORE:WINNT - Null exception causes unexpected error
+<br>1G5RAI3: ITPCORE:WINNT - is move/copy supported for non-local resources
+<br>1G5R9O7: ITPCORE:WINNT - figure out how to package the deploy stuff
+<br>1G5POUT: ITPCORE:WINNT - Need API for BuildManager.get/setDefinedBuildOrder
+<br>1G5POQX: ITPCORE:WINNT - need to save the buildorder with workspace
+<br>1G2Z360: ITPCORE:WIN98 - RebuildAll is building each project more than
+once
+<br>1G20ECW: ITPCORE:ALL - API - build should not be called from an operation
+<br>1G0V36K: ITPCORE:ALL - Workbench getLocation and getDefaultContentLocation
+<br>1FYE6BQ: ITPCORE:ALL - Synchronizer#canExistOnServer change needed
+<br>1FWYH65: ITPCORE:WINNT - Strange Error message
+<br>1FWG0SN: ITPWT:WINNT - Improving the release of files to a server
+<br>1FWEK3K: ITPCORE:WINNT - SCENARIO D4 - unable to delete solution
+<br>1FWAQ6K: ITPCORE:WINNT - Minor - Workbench.isDuplicate
+<br>1FWAOZX: ITPCORE:WIN98 - Merging status objects
+<br>1FWAJ8X: ITPCORE:WINNT - Excessive propfinds during synchronize?
+<br>1FWAC5D: ITPCORE:WINNT - GPFs running desktop
+<br>1FWA8P2: ITPCORE:WINNT - IWorkbench test coverage
+<br>1FW54C5: ITPCORE:ALL - API - IServerSynchronizer.prefer does not mention
+resource changes
+<br>1FW397M: ITPCORE:ALL - Resource.ensureLocal is not using Policy.bind
+for monitor message
+<br>1FW2SLT: ITPUI:ALL - Server is not protected from denial-of-service
+attacks against itp_index
+<br>1FVVIIV: ITPCORE:WINNT - Bug in URI#toString
+<br>1FVUGZS: ITPCORE:WINNT - workbench cannot be relocated
+<br>1FVS67H: ITPUI:ALL - discard local copy confusing to user
+<br>1FVRTP1: ITPCORE:ALL - Monitors should only begin task once
+<br>1FVRQAM: ITPCORE:ALL - MESSAGES - to be fixed
+<br>1FVQ562: ITPUI:WIN98 - Cannot release project with "&amp;" in the name
+<br>1FVPFPX: ITPJUI:WIN98 - URL format check?
+<br>1FVKAGV: ITPCORE:ALL - Wrong ERROR code when moving a resource to non-existant
+directory.
+<br>1FVK7PZ: ITPCORE:ALL - Marker creation should check plugin ID
+<br>1FVIY4M: ITPCORE:ALL - Should API specs list status codes?
+<br>1FVIRBP: ITPCORE:ALL - Add marker priority constants for problems
+<br>1FVIOQW: ITPCORE:WINNT - Require a recursive findMember
+<br>1FVGVM0: ITPCORE:ALL - javadoc - warnings in SubProgressMonitor
+<br>1FVGUCG: ITPCORE:WINNT - empty contents being yielded for out of sync
+file
+<br>1FVF3IX: ITPWT:WINNT - Problems trying to rename a web project that
+has been loaded from WebSphere
+<br>1FVESSH: ITPJUI:ALL - Server for a project cannot be changed
+<br>1FVCXVQ: ITPCORE:ALL - ArrayEnumeration from com.itp.core.utils should
+be promoted to common
+<br>1FV7B0S: ITPCORE:ALL - Consider supporting "weak" prereqs
+<br>1FV66IH: ITPCORE:ALL - "null" error retrieving solution from server
+<br>1FV5OG6: ITPCORE:WINNT - 1st kick: progress and error messages
+<br>1FV40UK: ITPCORE:ALL - should we syncronize File in getContents?
+<br>1FV3MM0: ITPCORE:ALL - Shouldn't be possible to have RootResourceToken
+without a name
+<br>1FV33KV: ITPUI:ALL - Plugins need to be able to log errors
+<br>1FV26C8: ITPJUI:ALL - Exception closing a solution
+<br>1FV12R4: ITPCORE:ALL - ServerManager should not have a local server
+proxy
+<br>1FV0BJL: ITPCORE:ALL - API - IProgressMonitor.setCanceled spec. clarification
+<br>1FUZVYF: ITPCORE:ALL - Reorganize Synchronizer/DiffTree code
+<br>1FUWZXH: ITPCORE:ALL - Re-visit HackFinders
+<br>1FUWVRD: ITPCORE:ALL - DavRM#resourceFor and Solutions
+<br>1FURN1O: ITPCORE:ALL - Project.getMappings() and the default mapping
+<br>1FUPNX5: ITPCORE:ALL - Projects and Solutions should always sync on
+CONTENT
+<br>1FUPHKW: ITPCORE:ALL - updateLocalSync and content added
+<br>1FUHSUX: ITPCORE:ALL - Code coverage for serverstore API classes
+<br>1FU30SV: ITPCORE:ALL - DavStore allows you to delete server root
+<br>1FTX3HY: ITPCORE:ALL - API - overwriteServer
+<br>1FTX3C5: ITPCORE:ALL - API - overwriteWorkbench
+<br>1FSUE9T: ITPCORE:ALL - Mechanism for comparing OS paths
+<br>1FQFGHV: ITPUI:WINNT - Pull and overwrite local kills projects
+<br>1FPPLF5: ITPCORE:ALL -&nbsp; Reopening an incomplete solution causes
+a walkback
+<br>1FPPB17: ITPCORE:ALL - Invalid local content areas allowed
+<br>1FPNLSM: ITPCORE:ALL - Sync status doesn't reflect modifications made
+to a file in the dav server
+<br>1FPNGDU: ITPCORE:ALL - Force pulling a non-existant solution doesn't
+refresh
+<br>1FPLYF5: ITPCORE:WINNT - problems catching up to server</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Build 0.026 - February 8, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The adapter functionality has been extended to automatically include a
+virtual adapter factory which will produce the adapters for all types in
+the given object's type hierarchy. That is, IAdaptable.getAdapter(XX) will
+return the receiver if the receiver is an instance of XX.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1G8QIWZ: ITPCORE:ALL - Activity.setComment always throws NPE
+<br>1G8OUTD: ITPCORE:ALL - Marker deltas should be composed
+<br>1G8D9N9: ITPCORE:WIN98 - Re-implement marker persistence
+<br>1G7PCHP: ITPCORE:WIN2000 - DCR: Adapter to convert an IResource to
+an IResource
+<br>1G65ULW: ITPCORE:WINNT - API - DCR AdapterManager behaviour
+<h3>
+Closed Problem Reports</h3>
+1G843HO: ITPJUI:WINNT - DCR: Crash Recovery
+<br>1G83UCE: ITPUI:WINNT - Refresh from local doesn't detect new or deleted
+projects</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Build 0.025 - February 6, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+Added IMarkerDelta#isSubtypeOf and IMarker#isSubtypeOf to tell if the type
+of the marker is a subtype of the specified type.</li>
+
+<li>
+Added IMarker#getAttributes() which returns a Map of attribute names to
+attribute values.</li>
+
+<br>The "exclusive" boolean parameter in IResource#findMarkers, IResource#deleteMarkers,
+and IResource#removeMarkers was deemed confusing and has been renamed to
+be "includeSubtypes". The meaning behind this parameter name is the opposite
+of its predecessor, and therefore users calling these methods should reverse
+their boolean logic.
+<li>
+Added new attribute convenience methods to IMarker and IMarkerDelta. See
+the appropriate interfaces for more information.</li>
+
+<li>
+Removed unused constant IMarker.UNDEFINED.</li>
+
+<li>
+Added convenience methods on IMarkerDelta to get the type and attributes
+of the marker. See the interface for details.</li>
+
+<li>
+Added IVCMEvent, IVCMListener, and methods in IVCMProvider for registering
+and de-registering VCM event listeners.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<ul>
+<li>
+Note that VCM events are not generated yet.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1G8P0Q0: ITPCORE:ALL - Move Workspace#changedMarkers to MarkerManager
+<br>1G8OU65: ITPCORE:ALL - API - IMarkerDelta.getType() doesn't allow subtype
+comparisons
+<br>1G8ORN0: ITPCORE:WIN2000 - Marker.hashCode() should include resource
+hashcode
+<br>1G8JCKP: ITPCORE:ALL - API - IMarker#getAttributes
+<br>1G8J35N: ITPCORE:ALL - Problems creating markers
+<br>1G8IX8P: ITPCORE:WIN2000 - API - Exclusive flag is confusing on findMarkers()
+<br>1G8ITB8: ITPCORE:ALL - MarkerManager#findMarkers and a null type
+<br>1G8HKIE: ITPCORE:WIN2000 - API - Marker attribute conveniences
+<br>1G8HHVL: ITPCORE:WIN2000 - Exclusive flag ignored on findMarker()
+<br>1G8HEZX: ITPCORE:WIN2000 - API - Need way of testing marker type, including
+subtypes
+<br>1G8HEXP: ITPCORE:WIN2000 - Can marker type change and keep same ID?
+<br>1G8HEVP: ITPCORE:WIN2000 - When is IMarker.UNDEFINED used?
+<br>1G8FTJ2: ITPCORE:WINNT - Can't get type of marker in removed marker
+delta
+<br>1G8D9T6: ITPCORE:WIN98 - MarkerDeltas when host is deleted
+<br>1G8D0QL: ITPCORE:WIN2000 - 'Solution' still used in message from IWorkspace.validatePath
+<h3>
+Closed Problem Reports</h3>
+1G8P1CB: ITPCORE:ALL - Error msgs out of date
+<br>1G8JA4E: ITPCORE:ALL - IMarkerManager references
+<br>1G82LEV: ITPCORE:WINNT - Should not use isDevelopmentMode references
+to load ResourcesPlugIn
+<br>1G71CQI: ITPCORE:META PR for Java UI plugin port
+<br>1G5V1CL: ITPCORE:ALL - API - closing a project without saving
+<br>1FWV3T9: ITPCORE:WINNT - Problems releasing after crash
+<br>1FWJKCA: ITPCORE:WIN2000 - Need way of specifying order of builders
+<br>1FU72OB: ITPCORE:ALL - use of deprecated
+<br>1FU4SVC: ITPCORE:ALL - Behaviour not specified for refreshLocal if
+user adds a project locally
+<br>1FU3BRR: ITPCORE:ALL - Change is problematic
+<br>1FTUHE0: ITPCORE:ALL - API - Status &amp; logging - loss of semantic
+info
+<br>1FTUEBI: ITPCORE:ALL - API - CoreException not spec'd
+<br>1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information
+to be recorded
+<br>1FTQDWJ: ITPCORE:ALL - API - Status/MultiStatus - should able to add
+to a multi status
+<br>1FTKV3A: ITPCORE:ALL - prepackages solutions/projects
+<br>1FTINB4: ITPCORE:WIN - clients required to do optimizations for kernel
+<br>1FTIMT9: ITPCORE:WIN - clients required to front load too many checks
+<br>1FTIMQN: ITPCORE:WIN - clients required to do too much iteration work
+<br>1FTAYT1: ITPUI:WINNT - Need more debug output for extension XML
+<br>1FS603W: ITPINBOX:ALL - Solution-Independent Resources
+<br>1FS4BI5: ITPUI:WINNT - Need solution build order UI
+<br>1FPEZU6: ITPCORE:ALL - pulling content of projects/solutions
+<br>1FPCNTS: ITPCORE:ALL - should we set M_DIRTY flag when modifying props?
+<br>1FPCF7K: ITPCORE:ALL - Fix comment for push/pull/refresh
+<br>1FP94QU: ITPCORE:ALL - BaseBuilder.build() and restarting a builder
+<br>1FP94IV: ITPCORE:ALL - BaseBuilder.build() should be public
+<br>1FP3DZJ: ITPCORE:ALL - operation context needed to run an operation
+<br>1FP13T0: ITPCORE:ALL - unable to extend just folders
+<br>1FOZAXB: ITPCORE:ALL - value for PROJECT_ROOT
+<br>1FOZ3V6: ITPCORE:ALL - semantics of isTransent/A_NONE with move
+<br>1FOXKO9: ITPCORE:ALL - ISolution.getToken should return null when the
+solution doesn't have a root set
+<br>1FO9P5B: ITPCORE:WIN98 - Project deletion and mappings overlaps</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Build 0.024 - February 1, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+IResource#removeMarkers has been deprecated as the method has been renamed
+to IResource#deleteMarkers and will be removed in a future release.</li>
+
+<li>
+Various methods were moved from IWorkspace to IResource (and subtypes)
+to improve consistency within the API.&nbsp; Original methods have been
+deprecated.</li>
+
+<li>
+Users of IFile.create() are advised to ensure they create their files with
+an empty input stream unless they truly intend to create a non-local file.
+The previous API spec was ambiguous as to the behaviour when null was passed.</li>
+</ul>
+
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1G8H34W: ITPCORE:ALL - History Store Policy not persistent
+<br>1G8H1OQ: ITPCORE:WIN98 - API - IResource#removeMarkers renamed
+<br>1G8FSVG: ITPCORE:WINNT - API - changes to IWorkspace
+<br>1G8E95W: ITPCORE:WINNT - IFile.create() spec is incorrect
+<br>1G8DNBJ: ITPCORE:WINNT - ArrayOutOfBoundsException in Sorter utility
+when used by MarkerManager
+<br>1G8DLZD: ITPCORE:WINNT - InternalPlatform throws away exceptions
+<br>1G82WPZ: ITPCORE:WINNT - Log file is empty
+<br>1G7YOPD: ITPCORE:ALL - Date/Time in log
+<br>1G73A8W: ITPCORE:ALL - Walkback in Launcher if -option on command line
+<br>1G67M7O: ITPCORE:ALL - BlobOutputStream#close deletes local file
+<br>1G667LG: ITPCORE:ALL - Platform log should flush
+<br>1G2O9Q0: ITPCORE:WINNT - Silent failure in notification
+<br>1FZH59R: ITPCORE:ALL - API - IResource delete
+<h3>
+Closed Problem Reports</h3>
+1G8FA1R: ITPCORE:WINNT - Plugin Prerequisites do not load in VAJ
+<br>1G8BH60: ITPCORE:WINNT - Unrequired extends in IProject
+<br>1G84CO5: ITPUI:WINNT - Eclipse does not recover from crashes
+<br>1G841ZR: ITPJUI:WIN2000 - Navigator: StringIndexOutOfBoundsException
+in rename dialog
+<br>1G7DXY2: ITPCORE:WIN2000 - Exiting the workspace triggers a build
+<br>1G67MQ8: ITPCORE:ALL - HistoryStore API testing
+<br>1G58I45: ITPCORE:WIN98 - Crash recovery
+<br>1G56WCW: ITPCORE:WIN98 - DCR - Markers should offer better prioritizing
+<br>1G42ELV: ITPCORE:WINNT - JavaDoc: IMarker, what is a warning?
+<br>1G1ZSO8: ITPCORE:ALL - Operations without progress monitors
+<br>1G0YRLE: ITPCORE:WIN98 - ensureLocal should support multi-threading
+<br>1G0YRIC: ITPCORE:WIN98 - API - ensureLocal should mention it can trigger
+build actions
+<br>1FZJA25: ITPUI:WIN - Extenders framework only allows one extender for
+each object/property pair
+<br>1FXKNUH: ITPCORE:ALL - Need consistent trace logging support in platfrom
+<br>1FWYBBT: ITPCORE:WINNT - Can't delete solution
+<br>1FWWISW: ITPJCORE:WINNT - Problem with scenario B4
+<br>1FWWDAF: ITPCORE:WINNT - Workbench log needs readme
+<br>1FWUMQZ: ITPCORE:ALL - resource deletion actually causing resurrection
+<br>1FWULSX: ITPCORE:ALL - renamed files still seem to exist with old name
+<br>1FW77CT: IWT:WINNT - importing a large project into a solution loses
+the project properties (natures?)
+<br>1FW50HK: ITPCORE:ALL - progress monitoring for IWorkbenchRunnable:
+easy to get wrong
+<br>1FVPPAI: ITPJUI:WINNT - SEVERE - Unrecoverable errors
+<br>1FUHK18: ITPCORE:ALL - Last built tree should not be updated if build
+fails
+<br>1FU0N17: ITPCORE:ALL - API - anomaly in setInitializationData</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Build 0.023 - January 30, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+The API related to markers has undergone a major rework.&nbsp; Users of
+the marker infrastructure will be broken by these changes as in general
+deprecations were not possible.&nbsp; See below for details.</li>
+
+<li>
+The notion of <i>root resource</i> was introduced.&nbsp; See below for
+details.</li>
+
+<li>
+ISyncPartner was providing little value and has been deprecated.&nbsp;
+Sync partners are now identified only by their QualifiedName</li>
+
+<li>
+ILocation was providing little value and has been removed. Use URL instead.</li>
+
+<li>
+IProjectBuildSpec has been replaced with ICommand[].</li>
+
+<li>
+IWorkspace.getDefaultContentLocation(IProject) was a confusing duplicate
+of&nbsp; IProject.getLocation() and has been removed.</li>
+
+<li>
+Introduced a depth parameter on IResource.accept() for added flexibility.&nbsp;
+accept(IResourceVisitor, boolean) has been deprecated.</li>
+
+<li>
+IResource.isAncestorOf() was providing little value and has been deprecated.&nbsp;
+Use resource.getFullPath().isPrefixOf(IPath)</li>
+
+<li>
+IActivity.unspecifiedChange is deprecated. It has been replaced by IActivity.checkIn
+with a new boolean flag. The old method checkIn without the boolean flag
+has been deprecated as well.</li>
+
+<li>
+IActivity.getCheckedInResources is deprecated. It has been replaced by
+IActivity.getCommittedResources. Similarly for isCheckedIn -> isCommitted.</li>
+
+<li>
+new methods in IActivity - move() and remove().</li>
+
+<li>
+IActivityListener interface has changed - it uses an event object and only
+one method that should be implemented by listeners. Certain events can
+now be vetoed by activity listeners.</li>
+
+<li>
+IWorkspace.openActivity is deprecated. It has been replaced by IWorkspace.createActivity.</li>
+
+<li>
+IRepository.createCompareManagerPlaceholder() was deleted. A two-way compare
+would use handles (IRepositoryEdition).</li>
+
+<li>
+ISharingManager.setTransient and .isTransient(): added a notion of transient
+resources (i.e. not under version control). Resources are transient by
+default.</li>
+
+<li>
+The spec for ISharingManager.load has been updated - shallow resource editions
+cannot be passed to load().</li>
+
+<li>
+ISubscriber.confirmMerge is deprecated, is has been replaced by ISubscriber.clearIncomingChange().
+There is a new method ISubscriber.clearOutgoingChange().</li>
+
+<li>
+The spec for ISubscriber.loadIfIncoming has been updated - all loads by
+loadIfIncoming are shallow.</li>
+
+<li>
+ISubscriber.getRemoteResource() has been added.</li>
+
+<li>
+ISubscriber.traverse() has been added.</li>
+</ul>
+
+<h4>
+Root resource change details</h4>
+The main issue behind the addition of the root resource (IWorkspaceRoot)
+was the desire to unify function and features of resources with the global
+nature of the workspace.&nbsp; For example, users would like to attach
+properties to the workspace as a whole.&nbsp; Previously this was accomplished
+using null to indicate "no resource" aka "the workspace" in API such as
+makers.&nbsp; Another example was developers wanting to treat the workspace
+as an IContainer.&nbsp;&nbsp; The following changes were made in adding
+the root resource:
+<ul>
+<li>
+IWorkspace.getRoot() was added</li>
+
+<li>
+IContainer.getFile(String) and getFolder(String) were moved to both IProject
+and IFolder.&nbsp; IWorkspaceRoot is an IContainer and cannot accomodate
+these methods.</li>
+
+<li>
+The following methods on IWorkspace have been deprecated and replaced with
+the appropriate method on IWorkspaceRoot: getFile(), getFolder(), getProject(),
+getProjects(), findResource(), findResource().</li>
+
+<li>
+IMarkers, IResourceDelta and ISynchronizer were all updated to use IWorkspaceRoots
+(rather than null) to represent the workspace as a whole.</li>
+</ul>
+
+<h4>
+Marker&nbsp; change details</h4>
+The main issue behind the marker changes is that the original marker story
+was closed. Several teams have requested changes or the ability to extend
+the marker set. We saw this as a growing trend. To resolve this, we have
+opened the model in the following ways:
+<ul>
+<li>
+All markers are exposed through a generic IMarker</li>
+
+<li>
+IMarkerManager has been eliminated.&nbsp; Its functionality has been split
+between IWorkspace and IResource as appropriate.</li>
+
+<li>
+IMarker provides (id, resource and type) as standard fields</li>
+
+<li>
+All other fields are accessed using getAttribute(String key), setAttribute(String
+key, Object value) (and friends)</li>
+
+<li>
+Valid marker attribute values are String, Integer and Boolean</li>
+
+<li>
+The platform persists all markers</li>
+
+<li>
+Core provides a lightweight, extensible "marker type hierarchy" mechanism
+where marker definers declare a&nbsp; marker's "type" relative to other
+markers in the plugin.xml</li>
+
+<li>
+Marker types marked as "transient" (in their defining plugin.xml) are not
+persisted</li>
+
+<li>
+IMarkers now have "handle" characteristics. That is, the need to get a
+mutable copy before doing changes is gone.&nbsp; This is very much like
+IResources.</li>
+
+<li>
+Marker ids are now relative to a particular resource (so a marker is expressed
+as "marker #X on resource "/foo")</li>
+
+<li>
+IMarkers are IAdaptable</li>
+
+<li>
+The platform provides four pre-defined marker types: marker, problem, task
+and bookmark.</li>
+</ul>
+<font color="#000000">Below is the XML markup required to declare some
+of the predefined markers:</font>
+<pre><font color="#000000">&nbsp;&nbsp;&nbsp; &lt;extension id="marker" point="com.ibm.eclipse.core.resources.markers"/>
+&nbsp;&nbsp;&nbsp; &lt;extension id="problemmarker" point="com.ibm.eclipse.core.resources.markers">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;transient value=false/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;super type="com.ibm.eclipse.core.resources.marker"/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;attribute name="message"/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;attribute name="severity"/>
+&nbsp;&nbsp;&nbsp; &lt;/extension></font></pre>
+<font color="#000000">Given the standard marker types, below is the XML
+markup required to some example markers in a plug-in called com.markers.r.us:</font>
+<pre><font color="#000000">&nbsp;&nbsp;&nbsp; &lt;extension id="coolmarker" point="com.ibm.eclipse.core.resources.markers"/>
+&nbsp;&nbsp;&nbsp; &lt;extension id="coolproblem" point="com.ibm.eclipse.core.resources.markers">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;super type="com.ibm.eclipse.core.resources.marker"/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;super type="com.markers.r.us.coolmarker"/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;attribute name="coolFactor"/>
+&nbsp;&nbsp;&nbsp; &lt;/extension></font></pre>
+Marker users should be aware that the implementation is in-progress.&nbsp;
+Marker persistence is known to not work at this time.
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+In build 0.021 the debug options for the platform runtime were detailed
+as options on the "boot" plug-in.&nbsp; This has been changed to be options
+on the runtime plug-in (there is no boot plug-in).&nbsp; That is, the debug
+options should read: com.ibm.eclipse.core.<b><i>runtime</i></b> rather
+than com.ibm.eclipse.core.<b><i>boot</i></b>.
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1G8DGK5: ITPCORE:ALL - VCM API - rename confirmMerge to clearIncomingChange
+<br>1G8D9UO: ITPCORE:WIN98 - IMarkerDelta#getMarker...id ok?
+<br>1G8BMLA: ITPCORE:WIN98 - How to perform a "phantom GC"?
+<br>1G85UV9: ITPCORE:WIN98 - Problem in Resource#accept
+<br>1G84H0I: ITPCORE:ALL - SharingManager.release erroneously releases
+checked-out resources
+<br>1G849Q2: ITPCORE:ALL - VCM API - need ISharingManager.getRemote(IResource)
+<br>1G8435U: ITPCORE:ALL - VCM API - specify root resource cases
+<br>1G82KVI: ITPCORE:WIN - Snapshots are not working
+<br>1G811FM: ITPCORE:WIN98 - Change target management plugin extensions
+<br>1G810Z5: ITPCORE:WIN98 - Need version number on core.dll
+<br>1G810NF: ITPCORE:ALL - checkout/checkin "null" should not be allowed
+<br>1G7Z0LL: ITPCORE:ALL - API- resources can't be removed from or moved
+between activities
+<br>1G7TK4I: ITPCORE:WIN98 - Remove ISyncPartner from API
+<br>1G7TK12: ITPCORE:WIN98 - Remove ILocation from the API
+<br>1G7TIVR: ITPCORE:ALL - ISharingManager.getSyncInfo fails if resource
+has no sharing
+<br>1G7TCYO: ITPCORE:ALL - IActivity API language
+<br>1G7TC9D: ITPCORE:ALL - Can set closed resource as current activity
+<br>1G7TAT1: ITPCORE:ALL - Activities with invalid names allowed
+<br>1G7T30J: ITPCORE:WINNT - Missing API in IWorkspace
+<br>1G7ROTU: ITPCORE:ALL - Workspace doesn't tolerate misbehaving activity
+listeners
+<br>1G7RNZI: ITPCORE:ALL - DCR: extra functionality for activity listener
+<br>1G7RNRS: ITPCORE:ALL - IWorkspace.validateActivityName error
+<br>1G7CDLS: ITPCORE:WINNT - Log mechanism doesn't tolerate misfits
+<br>1G65KR1: ITPCORE:WIN - problem reading long value in SafeChunkyInputStream
+<br>1G5YFE3: ITPCORE:ALL - API - ISyncPartner.resourceFor(ILocation location)
+<br>1G5XH3W: ITPCORE:ALL - API - missing throws clauses in IActivityListener
+<br>1G5WU2L: ITPCORE:ALL - API - use save numbers rather that strings
+<br>1G5G9WB: ITPCORE:WIN - SafeFileOutputStream should be changed
+<h3>
+Closed Problem Reports</h3>
+1G8C0LH: ITPCORE:WINNT - Marker creation API should be public
+<br>1G842C1: ITPCORE:WIN98 - Need access to "real" resource?
+<br>1G7T2J3: ITPCORE:WINNT - Need API to find IProjects currently in a
+Workbench
+<br>1G734TD: ITPCORE:WINNT - Need access to command line arguments
+<br>1G6ZEHT: ITPCORE:WINNT - An interface like IStatusException would be
+helpful
+<br>1G5XV3O: ITPCORE:WIN2000 - plugin.xml syntax error reporting doesn't
+exist anymore
+<br>1G5WN46: ITPCORE:WIN - remove beginOperation without the boolean parameter
+<br>1G1C0DP: ITPCORE:ALL - investigate GPF running All Tests
+<br>1G0GO8B: ITPCORE:ALL - Assertion messages
+<br>1FWUV80: ITPUI:WIN2000 - NullPointerException: Project wizard is not
+doing case insensitive name check
+<br>1FWT5L9: ITPCORE:WINNT - Host not found while loading solution from
+visible host
+<br>1FWT4WI: ITPCORE:WINNT - stack trace during snapshot
+<br>1FWM603: IWT:URI throws exception when the url has two ?
+<br>1FWLZ8J: IWT:WINNT - File System Import does not support UNC path
+<br>1FW8P4V: ITPUI:WIN98 - Resource deletion does not work
+<br>1FW89GK: ITPCORE:WIN98 - Problem deleting solution
+<br>1FW76SX: IWT:WINNT - release of large imported jar takes several tries
+<br>1FW6K60: ITPCORE:WINNT - Problems encountered retrieving solution
+<br>1FW30LD: ITPCORE:ALL - SCENARIO B3 - SEVERE - Unable to delete solution
+<br>1FVXDMK: ITPUI:WIN98 - Usability - migrating a solution from a server
+to another one with being able to change server name
+<br>1FVRW4N: ITPCORE:ALL - Server Index locations are not fully qualified
+<br>1FVRR1R: ITPCORE:ALL - Null messages in CoreExceptions
+<br>1FVROI6: ITPJUI:WIN98 - Bad error message when releasing
+<br>1FVQ4C6: ITPCORE:ALL - WALKBACK - in progress monitors when making
+local
+<br>1FVQ3JT: ITPCORE:ALL - Synchronizer not picking up server changes
+<br>1FVQ2Z8: ITPUI:ALL - Dialog with no text displayed when creating new
+project
+<br>1FVPZ9V: ITPCORE:WINNT - WALKBACK - in Get Local Copy
+<br>1FVPXKZ: ITPJUI:WINNT - WALKBACK - on catchup
+<br>1FVPWQJ: ITPJUI:WINNT - Errors when releasing to web server
+<br>1FVPV9Q: ITPJUI:WINNT - Releasing errors do not have useful details
+<br>1FVPL0N: ITPJCORE:WINNT - Adding a second project recompiles first
+project
+<br>1FVIJSE: ITPCORE:ALL - much shorter: error messages part 2
+<br>1FUSZHG: ITPCORE:ALL - Error dialog when release fails does not help
+<br>1FUSUG3: ITPCORE:ALL - Problem with server leaving files open
+<br>1FUR8VO: ITPCORE:ALL - Classes with suboptimal coverage to look at
+<br>1FUP7TK: ITPUI:ALL - "Not found" error message is meaningless
+<br>1FTNPSX: ITPCORE:ALL - API - Problems in spec for Plugin</blockquote>
+
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Build 0.021 - January 23, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<h4>
+Debugging class loading problems</h4>
+In Eclipse, each plug-in has an associated class loader handling only classes,
+resources and natives from that plug-in. In addition to base loading function,
+the loaders also filter access based on the &lt;export> specification in
+the plugin.xml. They also support a "downstream" delegation model based
+on the &lt;requires> specification in the plugin.xml. On top of this, separate
+plug-ins may be loading different versions of the same class. Needless
+to say, trying to figure out why you are getting ClassNotFoundException
+can sometimes be a bit tricky.
+<p>The loader and the plug-in registry support are instrumented with degug
+trace calls that can be activated using debug flags. The flags are stored
+in a .options file located in the project_resources/ directory in VA/Java,
+or the working directory from which the jdk version of Eclipse was launched.
+When debugging, Eclipse needs to be launched with the -debug option (if
+not specified, the .options file is ignored). The following flags are defined
+for the loader/ plug-in registry support:
+<p>Notation:
+<br>&nbsp;
+<table BORDER COLS=2 WIDTH="24%" >
+<caption><TBODY>
+<br></TBODY>
+<br><TBODY>
+<br></TBODY></caption>
+
+<tr>
+<td WIDTH="10%"><tt>{}</tt></td>
+
+<td>required</td>
+</tr>
+
+<tr>
+<td><tt>[]</tt></td>
+
+<td>optional</td>
+</tr>
+
+<tr>
+<td><tt>a|b</tt></td>
+
+<td>choice of a or b</td>
+</tr>
+
+<tr>
+<td><tt>+</tt></td>
+
+<td>0 or more</td>
+</tr>
+</table>
+
+<p><tt>com.ibm.eclipse.core.boot/loader/debug={true | false}</tt>
+<br><tt>com.ibm.eclipse.core.boot/loader/debug/create={true | false}</tt>
+<br><tt>com.ibm.eclipse.core.boot/loader/debug/activateplugin={true | false}</tt>
+<br><tt>com.ibm.eclipse.core.boot/loader/debug/actions={true | false}</tt>
+<br><tt>com.ibm.eclipse.core.boot/loader/debug/success={true | false}</tt>
+<br><tt>com.ibm.eclipse.core.boot/loader/debug/failure={true | false}</tt>
+<br><tt>com.ibm.eclipse.core.boot/loader/debug/filter/loader=[* | prefix[,prefix]+]</tt>
+<br><tt>com.ibm.eclipse.core.boot/loader/debug/filter/class=[* | prefix[,prefix]+]</tt>
+<br><tt>com.ibm.eclipse.core.boot/loader/debug/filter/resource=[* | prefix[,prefix]+]</tt>
+<br><tt>com.ibm.eclipse.core.boot/loader/debug/filter/native=[* | prefix[,prefix]+]</tt>
+<p><tt>com.ibm.eclipse.core.runtime/debug={true | false}</tt>
+<br><tt>com.ibm.eclipse.core.runtime/debug/registry={true | false}</tt>
+<p><b><tt>...boot/loader/debug</tt></b> - "master" flag for loader debug
+tracing (all-on, all-off)
+<br><b><tt>...boot/loader/debug/create</tt></b> - traces class loader creation.
+Lists actual jars or directories used by the loader, plus downstream loaders
+<br><b><tt>...boot/loader/debug/activateplugin</tt></b> - traces plug-in
+activation
+<br><b><tt>...boot/loader/debug/actions</tt></b> - traces loader activity
+(jars checked, delegation, filtering, etc)
+<br><b><tt>...boot/loader/debug/success</tt></b> - traces loader success
+(found class, resource, native)
+<br><b><tt>...boot/loader/debug/failure</tt></b> - traces loader failure
+(not found class, resource, native)
+<br><b><tt>...boot/loader/debug/filter/loader</tt></b> -specifies loader
+name filters to apply to the above debug points. The filters are optional.
+If not specified, no loader-specific trace is produced. If specified as
+* all loaders are traced. If specified as a comma-separated list of loader
+names, only those loaders are traced. Loader names are their corresponding
+plug-in names, or PLATFORM (in caps only).
+<br><b><tt>...boot/loader/debug/filter/class</tt></b> -specifies class
+name filters to apply to the above debug points. The filters are optional.
+If not specified, no class-specific trace is produced. If specified as
+* all class loads are traced. If specified as a comma-separated list of
+class names, only those classes are traced.
+<br><b><tt>...boot/loader/debug/filter/resource</tt></b> -specifies resource
+name filters to apply to the above debug points. The filters are optional.
+If not specified, no resource-specific trace is produced. If specified
+as * all resource loads are traced. If specified as a comma-separated list
+of resource names, only those resources are traced.
+<br><b><tt>...boot/loader/debug/filter/native</tt></b> -specifies native
+library name filters to apply to the above debug points. The filters are
+optional. If not specified, no native-specific trace is produced. If specified
+as * all native loads are traced. If specified as a comma-separated list
+of native library names (see System.loadLibrary(String)), only those native
+libraries are traced.
+<p>Note, that filters are compared based on a simple prefix match (java.io.File
+would match filter value of j, ja, jav, java, java., etc)
+<p><b><tt>...runtime/debug</tt></b> - "master" flag for runtime debug tracing
+(all-on, all-off)
+<br><b><tt>...runtime/debug/registry</tt></b> - trace plug-in registry
+load (processing of plugin.xml files)
+<br>&nbsp;
+<h1>
+IBM Eclipse Platform Release Notes<br>
+Core</h1>
+Build 0.020 - January 18, 2001
+<h2>
+<a NAME="What's new"></a>What's new in this drop</h2>
+
+<h3>
+<a NAME="API changes"></a>API changes</h3>
+
+<ul>
+<li>
+Minor change of VCM terminology: "proximal" -> "local", "distal" -> "remote",
+and "basis" -> "common". Various methods was renamed accordingly.</li>
+
+<li>
+com.ibm.eclipse.core.resources.IResource#isAncestorOf - unnecessary method
+was deprecated.</li>
+
+<li>
+com.ibm.eclipse.core.resources.IWorkspace#forceNotification - previously
+deprecated method was deleted.</li>
+</ul>
+
+<h3>
+<a NAME="Other highlights"></a>Other highlights</h3>
+
+<h4>
+Running plug-ins inside VA/Java</h4>
+When running inside VA/Java, plug-ins must specify which VA/Java projects
+make up the plug-in runtime. This information is specified in .va.properties
+file placed in the plug-in directory (as a peer to plugin.xml). The .va.properties
+file is used together with the plugin.xml file to determine the class search
+path for each plug-in.
+<p>The properties file has entries corresponding to &lt;library> elements
+from the plugin.xml. Each defined property is of form
+<p>&nbsp;&nbsp;<tt>&nbsp; projects[.libname]=proj1,proj2,proj3</tt>
+<p>The optional ".libname" suffix allows a project mapping to be specified
+for the corresponding &lt;library>. The default "projects=" (w/o suffix)
+applies to the first/ only &lt;library> element in plugin.xml. Example:
+<p><tt>plugin.xml</tt>
+<pre>&nbsp;&nbsp;&nbsp; &lt;runtime>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;library name=baseapi.jar>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;export name="*"/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/library>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;library name=another.jar/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;library name=base.jar/>
+&nbsp;&nbsp;&nbsp; &lt;/runtime></pre>
+
+<p><br><tt>.va.properties</tt>
+<pre>&nbsp;&nbsp;&nbsp; projects=Base API Project
+&nbsp;&nbsp;&nbsp; projects.base.jar=Base Project 1, Base Project 2</pre>
+&nbsp;&nbsp; or
+<pre>&nbsp;&nbsp;&nbsp; projects.baseapi.jar=Base API Project
+&nbsp;&nbsp;&nbsp; projects.base.jar=Base Project 1, Base Project 2</pre>
+
+<p><br>The above results in a plug-in loader search path consisting of
+<ol>
+<li>
+Base API Project</li>
+
+<li>
+another.jar</li>
+
+<li>
+Base Project 1, Base Project 2</li>
+</ol>
+Any library access filters specified in the plugin.xml are applied to the
+corresponding loader search path entries
+<h4>
+Plug-in use of JNI natives</h4>
+JNI native libraries can now be placed inside their corresponding plug-in
+directory. Plug-in class loaders look inside the plug-in directory first,
+and only defer to the default load path if the library is not found in
+the plug-in directory. Note, that if the JNI natives make references to
+other native libraries, these need to be either on the default system search
+path, or need to be explicitly loaded by the JNI natives (e.g., also from
+the plug-in directory, or other location of choice).
+<h2>
+<a NAME="Problem reports fixed"></a>Problem reports fixed</h2>
+
+<blockquote>
+<h3>
+Fixed Problem Reports</h3>
+1G67Q1X: ITPCORE:WINNT - File.setContents failed
+<br>1G60FSZ: ITPCORE:WIN98 - Sync info not being saved when resource info
+is written to disk
+<br>1G60EOE: ITPCORE:WINNT - Closing a project deletes files
+<br>1G60B6G: ITPUI:WINNT - Refresh local deletes files
+<br>1G5X6RE: ITPCORE:WIN98 - Resource#setLocal ignores depth parameter
+<br>1G5X4TN: ITPCORE:ALL - API - the ugly trio: proximal, distal, and basis
+<br>1G5WMTT: ITPCORE:WIN - ProjectDescription should be saved everytime
+we set it
+<br>1G5VC20: ITPCORE:WINNT - API notification delta has limited life
+<br>1G5V5PN: ITPCORE:WIN98 - Project copy
+<br>1G5V072: ITPCORE:ALL - API - IResource.getModificationTime needs a
+constant
+<br>1G5TQJS: ITPCORE:ALL - problem in Synchronizer.accept
+<br>1G5TP0B: ITPCORE:ALL - API - ISynchronizer.PARTNER_NOT_REGISTERED should
+be on IResourceStatus
+<br>1G5TLJ2: ITPCORE:ALL - API - IProject.newBuildSpec is out of place
+<br>1G5TKN5: ITPCORE:ALL - API - should IFileState be adaptable?
+<br>1G5TKEX: ITPCORE:ALL - API - IFileState.getLastModified
+<br>1G5TH4W: ITPCORE:ALL - API - IActivityListener missing javadoc
+<br>1G5TEAF: ITPCORE:ALL - API - content ids
+<br>1G5PP4H: ITPCORE:WINNT - releaseable vs. releasable
+<br>1G5PP2X: ITPCORE:WINNT - Not all interface methods are "public"
+<br>1G5POPE: ITPCORE:WINNT - open projects and API
+<br>1G5PBN6: ITPCORE:WINNT - project references should be projects
+<br>1G5PAXM: ITPCORE:WINNT - IProject.setDescription should be an operation
+<br>1G5NISV: ITPCORE:WINNT - API - method comment specifies missing method
+<br>1G5NDPM: ITPCORE:ALL - Notification for changes in project descriptions
+<br>1G5N9AN: ITPCORE:WINNT - Notification required for changing project
+references
+<br>1G5LRYK: ITPCORE:WIN - API - IWorkspace.getFileForLocation and getContainerForLocation
+<br>1G5I7ZC: ITPCORE:WINNT - IMakerManager.getMarkers() - java doc error
+<br>1G5I6PV: ITPCORE:WINNT - IResource.setLocal() attempts to modify immutable
+tree
+<br>1G5AM8V: ITPCORE:ALL - MultiStatus constructor uses OK
+<br>1G554PK: ITPCORE:WINNT - Current directory for startup of itp.exe
+<br>1G550CZ: ITPJCORE:WINNT - Plugins do not instantiate prerequisites
+when created
+<br>1G54FQM: ITPCORE:WIN2000 - SubProgressMonitor.done should clear the
+subtask label
+<br>1G4J539: ITPCORE:WINNT - Should PlatformObject.getAdapter be final?
+<br>1G4J4OE: ITPCORE:WINNT - VCM API - request
+<br>1G4GW97: ITPCORE:WINNT - VCM API - minor typo
+<br>1G4F1BL: ITPCORE:WINNT - Error starting ResourcesPlugin on existing
+workbench
+<br>1G47NHJ: ITPCORE:WINNT - (Very minor) Spelling error in comment
+<br>1G45L19: ITPJCORE:WINNT - No progress feedback during full build
+<br>1G41B5S: ITPCORE:WINNT - IMarker.T_SEARCH addition not fully implemented
+<br>1G402MK: ITPCORE:WINNT - Assert.isLegal(boolean, String) IllegalArgumentException
+without a message
+<br>1G3NCXU: ITPCORE:WINNT - ULRConnection shutdown problems
+<br>1G3H8UQ: ITPCORE:ALL - DCR - Make IElement Serializable
+<br>1G3AKBM: ITPCORE:ALL - API - spelling
+<br>1G327JL: ITPCORE:ALL - ArrayEnumeration needed
+<br>1G2P6FC: ITPJUI:WINNT - Adding empty folder forces rebuild
+<br>1G2NWY9: ITPCORE:WIN2000 - Need new marker type T_SEARCH
+<br>1G27ACC: ITPCORE:ALL - snapshot bug
+<br>1G1V28S: ITPCORE:ALL - Project.setServerIndex is an operation but Solution.setServerIndex
+is not
+<br>1G1P4OB: ITPCORE:WIN2000 - Missing resources for search
+<br>1G1N9GZ: ITPCORE:WIN2000 - ElementTree corruption when linking trees
+<br>1G1JMZM: ITPCORE:ALL - Workbench.nextNodeId
+<br>1G1HF02: ITPCORE:ALL - API - IWorkbench.run
+<br>1G1C2YX: ITPCORE:ALL - API - path validation
+<br>1G1BVEB: ITPCORE:ALL - API - IWorkbench.build
+<br>1G0YRUC: ITPCORE:ALL - API - setSessionProperty
+<br>1G0XIMA: ITPCORE:ALL - Problem in IResource.accept
+<br>1G0V1F1: ITPCORE:WINNT - NotificationManager.addListener why does it
+need a name?
+<br>1G0JVL6: ITPCORE:ALL - Unable to load plugin in development mode
+<br>1G01OLI: ITPCORE:ALL - API - isAncestorOf
+<br>1G01GYT: ITPCORE:ALL - API - IResourceChangeListener should explain
+about its delta
+<br>1G01GTA: ITPCORE:ALL - API - BaseBuilder.build should explain more
+about its delta
+<br>1FXQ3JV: ITPCORE:WINNT - Project.getVariable() does not conform to
+spec
+<br>1FXMTXB: ITPCORE:WINNT - IFolder.create deletes content if force is
+true
+<br>1FXKO8U: ITPCORE:WINNT - Workbench.setDefaultServerIndexLocation does
+not conform to spec
+<br>1FXKNQ5: ITPCORE:ALL - Allow command line arguments to be passed to
+itp.exe
+<br>1FXKNKR: ITPCORE:ALL - Allow running with a console
+<br>1FWWU4K: ITPUI:WIN98 - Scenario D3 - no warning when index.html is
+simultaneously released
+<br>1FWWG93: ITPCORE:WINNT - Problems releasing large project
+<br>1FWTAYT: ITPCORE:ALL - Errors in jdoc compile
+<br>1FWT5NO: ITPUI:WINNT - Walkback when opening closed project
+<br>1FWNBRK: ITPUI:WIN98 - (minor) Quick Start dialog text is incorrect
+<br>1FWLF6R: IWT:ALL - I can't find a way to change the server index property
+of a solution or project
+<br>1FWGFC0: ITPCORE:WIN98 - cancelation in ServerMetaArea
+<br>1FWGE1L: ITPCORE:WIN98 - DavRM#getProperties(Project)
+<br>1FVPGUT: ITPUI:WINNT - Walkback in Web Project wizard
+<br>1FVIG3K: ITPCORE:ALL - IMarkerManager>>getMarkers(...) not throwing
+CoreException
+<br>1FVF93C: ITPCORE:ALL - Application does not exit after releasing webproject
+<br>1FV2BBP: ITPCORE:ALL - API - "cancelled" with two Ls
+<br>1FV1WE7: ITPCORE:ALL - delete should only delete properties of deleted
+resources
+<br>1FUUNCK: ITPCORE:ALL - overwriteWorkbench should pull content
+<br>1FUSXY5: ITPCORE:ALL - Context.collapse() leaves context in corrupt
+state
+<br>1FUN1E9: ITPCORE:ALL - Error if project contents on server is deleted
+<br>1FUE981: ITPCORE:ALL - API - transient resources
+<br>1FU8DZR: ITPCORE:ALL - exception on saving
+<br>1FTPLVK: ITPCORE:ALL - remove temporary hack to Plugin.workbench
+<br>1FTKIAP: ITPCORE:ALL - API - Status/MultiStatus
+<br>1FTKGKA: ITPCORE:ALL - API - improve status
+<br>1FTD4Y7: ITPCORE:ALL - API - doc for project natures
+<br>1FSUKTI: ITPCORE:ALL - move/copy to invalid paths
+<br>1FSOFKL: ITPCORE:ALL - Validate IStatus error strings
+<br>1FSOFER: ITPCORE:ALL - Multi-Move/Copy
+<br>1FSOF5W: ITPCORE:ALL - Move should only leave phantoms if needed
+<br>1FRI1T1: ITPCORE:ALL - mechanism to delete blobs
+<br>1FR5D2H: ITPCORE:ALL - We need public constants for core plugin identifiers
+<br>1FPT5CA: ITPCORE:ALL - EnsureLocalOperation fails
+<br>1FPPLGA: ITPCORE:ALL - Catching up to a directory deletes the project
+from the workspace
+<br>1FPPLDG: ITPUI:ALL - Terrible grammar in error message
+<br>1FPNRHC: ITPCORE:WINNT - moving Resource twice results in fake phantom
+<br>1FPLSI7: ITPCORE:ALL - Make error messages more user friendly
+<br>1FPLP1J: ITPCORE:ALL - moving a resource leaves a phantom
+<br>1FPEZII: ITPCORE:ALL - need utility to sort hashtables
+<br>1FPEYY6: ITPCORE:ALL - Need common superclass for server operations
+<br>1FPEOFR: ITPCORE:ALL - Releasing large files either locks machine or
+takes very long time
+<br>1FPADA8: ITPCORE:ALL - Push does not pick up a Resource#move
+<br>1FP950S: ITPCORE:ALL - walker/visitor for resource tree
+<br>1FP94CV: ITPCORE:ALL - BaseBuilder.build() should throw BuildException
+<br>1FP14ND: ITPCORE:ALL - resource delta presents resource type change
+incorrectly
+<br>1FP13CZ: ITPCORE:ALL - InternalBuilder should not introduce new members
+<br>1FOZFOV: ITPCORE:ALL - visiting resource deltas should be separate
+facility
+<br>1FOZFF2: ITPCORE:ALL - BaseBuilder.visitingBuild and visit should take
+IProgressMonitor
+<br>1FOQF3Z: ITPCORE:ALL - Confirm structure of core plugin files
+<br>1FMKJUI: ITPINBOX:ALL - Builders keyed by name, but instantiated per
+project</blockquote>
+
+<blockquote>
+<h3>
+Closed Problem Reports</h3>
+</blockquote>
+
+<blockquote>1G4Q5JY: ITPJUI:WIN98 - Headless Java plugin activation causes
+walkback
+<br>1G1WX4X: ITPCORE:ALL - Should a user operation be able to call Workbench.build?
+<br>1G1BUTU: ITPCORE:ALL - non-referenced methods
+<br>1FV7JDG: ITPCORE:ALL - Localstore tests
+<br>1FV1WJV: ITPCORE:ALL - improve performance in refresh local
+<br>1FUUT9W: ITPCORE:ALL - TO DO - implement messages in properties
+<br>1FUUT9P: ITPCORE:ALL - TO DO - implement messages in localstore
+<br>1FU0U3S: ITPCORE:ALL - TO-DO Comment "arrayLoop" in multi copy/move
+<br>1FTEU1I: ITPCORE:ALL - Performance Tests
+<br>1FTD4TD: ITPCORE:ALL - Core test categorization
+<br>1FSULUV: ITPCORE:ALL - write test for FSRM#scrubLocal
+<br>1FSUAOL: ITPCORE:ALL - refactor DirectoryTree
+<br>1FSU7OH: ITPCORE:ALL - change IFolder to IContainer
+<br>1FSNA90: ITPCORE:WINNT - workspace persistence
+<br>1FQHEDQ: ITPCORE:ALL - cannot rename solution
+<br>1FPLP84: ITPCORE:ALL - Walkback during build.
+<br>1FPLKLG: ITPCORE:ALL - collision between mapping names and project
+direct members
+<br>1FPDZSR: ITPCORE:ALL - timestamp for resource's lastmodified has the
+resolution of seconds
+<br>1FOZHO2: ITPCORE:ALL - properties should be deleted on gender change
+<br>1FOQJ7F: ITPCORE:ALL - FileSystemResourceManager#synchronize needs
+to test if resource is a member of the current solution
+<br>1FOOPMC: ITPCORE:ALL - read() of a local but non-existant file
+<br>1FOMST7: ITPCORE:ALL - IResourceDelta should expose resources
+<br>1FOKI0Z: ITPCORE:ALL - Resource#exists and Resource#isLocal
+<br>1FOKCX6: ITPCORE:WINNT - important - MoveOperation sometimes throws
+Exceptions
+<br>1FOKB59: ITPCORE:WIN98 - can get folder through Project#getFile
+<br>1FOBA7I: ITPCORE:WIN98 - FileSystemResourceManager#scrubLocal
+<br>1FOB4GV: ITPCORE:WIN98 - FileSystemResourceManager#ensureLocal
+<br>1FO9WU0: ITPCORE:WIN98 - FileSystemResourceManager#delete
+<br>1FO9ON2: ITPCORE:WIN98 - rewrite FileSystemResourceManager#reportChanges
+<br>1FO9OB8: ITPCORE:WIN98 - DirectoryTree
+<br>1FO9N8A: ITPCORE:WIN98 - FileSystemStore#move
+<br>1FO9KIO: ITPCORE:WIN98 - Need Resource#isAccessible
+<br>1FNWVLE: ITPCORE:WINNT - incorrect terminology in kernel
+<br>1FNWVJ1: ITPCORE:WINNT - clarification/question - isAutoBuilding()
+<br>1FNWVI2: ITPCORE:WINNT - severe - core has knowledge of desktop
+<br>1FNWVEJ: ITPCORE:WINNT - IWorkbench&nbsp; - getOptionsLocation(IPlugin)
+has problems
+<br>1FNWVDH: ITPCORE:WINNT - IWorkbench&nbsp; - getRegistry() should be
+renamed
+<br>1FNWVCL: ITPCORE:WINNT - IWorkbench&nbsp; - inconsistent get* object
+api
+<br>1FMTMP2: ITPCORE:WINNT - Builders not run when project deleted
+<br>1FLUQAZ: ITPCORE:WINNT - DeleteElementOperation doesn't delete blobs
+on disk
+<br>1FKYSPV: ITPCORE:ALL - delta tree problems
+<br>1FKPUXD: ITPCORE:ALL - Resource.delete() problems
+<br>1FKMCQV: ITPCORE:ALL - Resource.delete() and Folder.getMembers() throw
+IllegalArgumentException if missing
+<br>1FK9ATR: ITPCORE:ALL - cannot create multiple resources w/o intervening
+build
+<br>1FJW8YH: ITPCORE:WINNT - Open Solution Fails</blockquote>
+<a href="http://home.ott.oti.com/hubba/drops/sdk/latest-javadoc/doc/hglegal.htm"><img SRC="" BORDER=0 height=12 width=195></a>
+</body>
+</html>
