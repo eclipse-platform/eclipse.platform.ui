@@ -137,6 +137,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
                     for (int j = 0; j < breakpoints.length; j++) {
                         if (container.contains(breakpoints[j])) {
                             fViewer.expandToLevel(container, AbstractTreeViewer.ALL_LEVELS);
+                            fView.updateCheckedState(container);
                             break;
                         }
                     }
