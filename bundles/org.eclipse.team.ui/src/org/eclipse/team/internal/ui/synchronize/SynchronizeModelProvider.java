@@ -422,7 +422,8 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 * @return
 	 */
 	private boolean canUpdateViewer() {
-		return refreshViewer && getViewer() != null;
+		StructuredViewer viewer = getViewer();
+		return refreshViewer && viewer != null && ! viewer.getControl().isDisposed();
 	}
 	
 	/**
