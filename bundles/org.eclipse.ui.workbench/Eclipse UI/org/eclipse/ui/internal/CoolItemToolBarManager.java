@@ -31,7 +31,10 @@ public class CoolItemToolBarManager extends ToolBarManager {
 	public void dispose() {
 		// the toolbar menu is shared by all coolitems, so clear the
 		// reference to the menu so that it does not get disposed of
-		getControl().setMenu(null);
+		ToolBar tBar = getControl();
+		// null check necessary for CoolItemMultiToolBarManager which
+		// does not have a toolbar, but calls super.dispose() 
+		if (tBar != null) tBar.setMenu(null);
 		super.dispose();
 	}
 	protected CoolBarContributionItem getCoolBarItem() {
