@@ -1337,18 +1337,21 @@ public final class Workbench implements IWorkbench {
 
 			public void run() {
 				IExtensionRegistry registry = Platform.getExtensionRegistry();
-				IConfigurationElement[] configElements = registry
-						.getConfigurationElementsFor(PlatformUI.PLUGIN_ID,
-								IWorkbenchConstants.PL_STARTUP);
 
-				for (int i = 0; i < configElements.length; ++i) {
-					IConfigurationElement startElement = configElements[i];
+				// bug 55901: don't use getConfigElements directly, for pre-3.0
+				//            compat, make sure to allow both missing class
+				//            attribute and a missing startup element
+				IExtensionPoint point = registry.getExtensionPoint(
+						PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_STARTUP);
+
+				IExtension[] extensions = point.getExtensions();
+				for (int i = 0; i < extensions.length; ++i) {
+					IExtension extension = extensions[i];
 
 					// if the plugin is not in the set of disabled plugins, then
 					// execute the code to start it
-					String id = startElement.getDeclaringExtension().getNamespace();
-					if (disabledPlugins.indexOf(id) == -1)
-						Platform.run(new EarlyStartupRunnable(startElement));
+					if (disabledPlugins.indexOf(extension.getNamespace()) == -1)
+						Platform.run(new EarlyStartupRunnable(extension));
 				}
 			}
 		};
@@ -1369,12 +1372,10 @@ public final class Workbench implements IWorkbench {
 		private static final String GET_PLUGIN_METHOD = "getPlugin"; //$NON-NLS-1$
 		private static final String GET_DESC_METHOD = "getDeclaringPluginDescriptor"; //$NON-NLS-1$
 
-		private IConfigurationElement startElement;
-		private String pluginId;
+		private IExtension extension;
 
-		public EarlyStartupRunnable(IConfigurationElement startElement) {
-			this.startElement = startElement;
-			this.pluginId = startElement.getDeclaringExtension().getNamespace();
+		public EarlyStartupRunnable(IExtension extension) {
+			this.extension = extension;
 		}
 
 		public void run() throws Exception {
@@ -1385,7 +1386,8 @@ public final class Workbench implements IWorkbench {
 					&& executableExtension instanceof IStartup)
 				((IStartup) executableExtension).earlyStartup();
 			else {
-				IStatus status = new Status(IStatus.ERROR, pluginId, 0,
+				IStatus status = new Status(IStatus.ERROR, extension
+						.getNamespace(), 0,
 						"startup class must implement org.eclipse.ui.IStartup", //$NON-NLS-1$
 						null);
 				WorkbenchPlugin.log("Bad extension specification", status); //$NON-NLS-1$
@@ -1393,7 +1395,8 @@ public final class Workbench implements IWorkbench {
 		}
 
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, pluginId, 0,
+			IStatus status = new Status(IStatus.ERROR,
+					extension.getNamespace(), 0,
 					"Unable to execute early startup code for an extension", //$NON-NLS-1$
 					exception);
 			WorkbenchPlugin.log("Unhandled Exception", status); //$NON-NLS-1$
@@ -1411,11 +1414,30 @@ public final class Workbench implements IWorkbench {
 		 *         an extension (or plugin) could not be found
 		 */
 		private Object getExecutableExtension() throws CoreException {
-			String startupClass = startElement
-					.getAttribute(IWorkbenchConstants.TAG_CLASS);
 
+			// see if this extension has a config element for startup, pre-3.0
+			// plugins are allowed to leave out this element (the plugin will be
+			// used)
+			IConfigurationElement[] configElements = extension
+					.getConfigurationElements();
+
+			// There should only be one configuration element and it
+			// should be named "startup".
+			IConfigurationElement startupElement = null;
+			String startupClass = null;
+			for (int i = 0; i < configElements.length; ++i)
+				if (configElements[i].getName().equals(
+						IWorkbenchConstants.TAG_STARTUP)) {
+					startupElement = configElements[i];
+					startupClass = startupElement
+							.getAttribute(IWorkbenchConstants.TAG_CLASS);
+					break;
+				}
+
+			// if the startup element exists and it had a class attribute, then
+			// use it
 			if (startupClass != null && startupClass.length() > 0)
-				return WorkbenchPlugin.createExtension(startElement,
+				return WorkbenchPlugin.createExtension(startupElement,
 						IWorkbenchConstants.TAG_CLASS);
 
 			// otherwise see if the compat bundle is running
@@ -1425,7 +1447,6 @@ public final class Workbench implements IWorkbench {
 				return null;
 
 			// use reflection to try to access the plugin object
-			IExtension extension = startElement.getDeclaringExtension();
 			try {
 				// IPluginDescriptor pluginDesc =
 				// 		extension.getDeclaringPluginDescriptor();
