@@ -144,7 +144,6 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		if (!keyStrokes.contains(keyStroke)) {
 			keyStrokes.add(keyStroke);
 		}
-		System.out.println("possible key strokes = " + keyStrokes);
 		return keyStrokes;
 	}
 
@@ -480,7 +479,6 @@ public class WorkbenchActivitiesCommandsAndRoles {
 			KeySequence modeBeforeKeyStroke = workbench.commandManager.getMode();
 			List keyStrokes = new ArrayList(modeBeforeKeyStroke.getKeyStrokes());
 			keyStrokes.add(keyStrokeItr.next());
-			System.out.println("key sequence = " + keyStrokes);
 			KeySequence modeAfterKeyStroke = KeySequence.getInstance(keyStrokes);
 			Map matchesByKeySequenceForModeBeforeKeyStroke = workbench.commandManager.getMatchesByKeySequenceForMode();
 			workbench.commandManager.setMode(modeAfterKeyStroke);
@@ -509,7 +507,6 @@ public class WorkbenchActivitiesCommandsAndRoles {
 						// an action was found corresponding to the completion
 
 						if (action.isEnabled()) {
-							System.out.println("command = " + commandId);
 							updateModeLines(modeAfterKeyStroke);
 							try {
 								action.execute(event);
