@@ -12,7 +12,7 @@ package org.eclipse.ui;
 
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
@@ -22,7 +22,6 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
  * decorator returned by <code>getLabelDecorator()</code>.This class is not
  * intended to be implemented by clients.
  */
-
 public interface IDecoratorManager {
 
 	/**
@@ -38,7 +37,7 @@ public interface IDecoratorManager {
 
 	/**
 	 * Return the IBaseLabelProvider that corresponds to the
-	 * decoratorId. This cab handle both lightweight and full
+	 * decoratorId. This can handle both lightweight and full
 	 * decorators.
 	 * 
 	 * @param decoratorId the decorator id
