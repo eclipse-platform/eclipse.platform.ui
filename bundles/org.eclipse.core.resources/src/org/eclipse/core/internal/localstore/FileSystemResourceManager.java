@@ -320,7 +320,7 @@ public IPath locationFor(IResource target) {
 			Project project = (Project) target.getProject();
 			ProjectDescription description = project.internalGetDescription();
 			if (description != null && description.getLocation() != null) {
-				return description.getLocation();
+				return workspace.getPathVariableManager().resolvePath(description.getLocation());
 			}
 			return getProjectDefaultLocation(project);
 		default:
@@ -330,19 +330,20 @@ public IPath locationFor(IResource target) {
 			IResource linked = target;
 			if (numSegments > 2) {
 				//parent could be a linked resource
-				linked = workspace.getRoot().getFolder(
-					targetPath.removeLastSegments(numSegments-2));
+				linked = workspace.getRoot().getFolder(targetPath.removeLastSegments(numSegments-2));
 			}
 			description = ((Project)target.getProject()).internalGetDescription();
 			if (linked.isLinked()) {
 				IPath location = description.getLinkLocation(linked.getName());
 				//location may have been deleted from the project description between sessions
-				if (location != null)
+				if (location != null) {
+					location = workspace.getPathVariableManager().resolvePath(location);
 					return location.append(targetPath.removeFirstSegments(2));
+				}
 			}
 			//not a linked resource -- get location of project
 			if (description != null && description.getLocation() != null) {
-				return description.getLocation().append(target.getProjectRelativePath());
+				return workspace.getPathVariableManager().resolvePath(description.getLocation()).append(target.getProjectRelativePath());
 			} else {
 				return Platform.getLocation().append(target.getFullPath());
 			}
