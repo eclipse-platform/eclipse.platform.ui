@@ -557,7 +557,7 @@ public class OverviewRuler implements IOverviewRuler {
 							gc.setForeground(stroke);
 							r.x= INSET;
 							r.y= yy;
-							r.width= size.x - (2 * INSET) - 1;
+							r.width= size.x - (2 * INSET);
 							r.height= hh;
 							gc.setLineWidth(1);
 							gc.drawRectangle(r);
