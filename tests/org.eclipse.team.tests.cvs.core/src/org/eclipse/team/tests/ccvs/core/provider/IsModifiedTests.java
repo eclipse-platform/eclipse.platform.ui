@@ -86,14 +86,14 @@ public class IsModifiedTests extends EclipseTest {
 			recordParents(cvsResource.getParent());
 		}
 		private void recordModificationState(ICVSResource cvsResource) throws CVSException {
-			IsModifiedTests.this.changedResources.put(cvsResource.getIResource(), cvsResource.isModified() ? Boolean.TRUE : Boolean.FALSE);
+			IsModifiedTests.this.changedResources.put(cvsResource.getIResource(), cvsResource.isModified(null) ? Boolean.TRUE : Boolean.FALSE);
 		}
 		public void resourceModified(IResource[] changedResources) {
 			try {
 				for (int i = 0; i < changedResources.length; i++) {
 					IResource resource = changedResources[i];
 					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-					IsModifiedTests.this.changedResources.put(resource, cvsResource.isModified() ? Boolean.TRUE : Boolean.FALSE);
+					IsModifiedTests.this.changedResources.put(resource, cvsResource.isModified(null) ? Boolean.TRUE : Boolean.FALSE);
 					recordParents(cvsResource);
 					if (cvsResource.isFolder()) {
 						recordChildren((ICVSFolder)cvsResource);
@@ -178,7 +178,7 @@ public class IsModifiedTests extends EclipseTest {
 			}
 			public void assertModificationState(ICVSResource resource) throws CVSException {
 				IPath relativePath = new Path(resource.getRelativePath(rootFolder));
-				boolean resourceModified = resource.isModified();
+				boolean resourceModified = resource.isModified(null);
 				boolean resourceListed = resourceList.contains(relativePath);
 				assertTrue(resource.getIResource().getFullPath().toString() 
 						+ (resourceModified ? " should not be modified but is" : " should be modified but isn't"),

@@ -50,7 +50,7 @@ public class ReplaceWithBaseVisitor implements ICVSResourceVisitor {
 			file.unmanage(null);
 		} else {
 			byte[] tagBytes = ResourceSyncInfo.getTagBytes(syncBytes);
-			boolean isModified = file.isModified();
+			boolean isModified = file.isModified(null);
 			if (ResourceSyncInfo.isDeletion(syncBytes)) {
 				// If deleted, null the sync info so the file will be refetched
 				syncBytes = ResourceSyncInfo.convertFromDeletion(syncBytes);

@@ -119,10 +119,10 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	/*
 	 * @see ICVSFile#isModified()
 	 */
-	public boolean isModified() throws CVSException {
+	public boolean isModified(IProgressMonitor monitor) throws CVSException {
 		
-		// DECORATOR small optimization, we could check for existance only if getDirtyIndicator 
-		// throws an exception.
+		// ignore the monitor, there is no valuable progress to be shown when
+		// calculating the dirty state for files. It is relatively fast.
 		
 		if (!exists()) return true;
 		int state = EclipseSynchronizer.getInstance().getModificationState(getIFile());
@@ -353,7 +353,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 				setNotifyInfo(notifyInfo);
 				
 				// Only record the base if the file is not modified
-				if (!isModified()) {
+				if (!isModified(null)) {
 					EclipseSynchronizer.getInstance().copyFileToBaseDirectory(getIFile(), monitor);
 					setBaserevInfo(new BaserevInfo(getName(), ResourceSyncInfo.getRevision(syncBytes)));
 				}
@@ -381,7 +381,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 				}
 				setNotifyInfo(info);
 					
-				if (isModified()) {
+				if (isModified(null)) {
 					ResourceSyncInfo syncInfo = getSyncInfo();
 					BaserevInfo baserevInfo = getBaserevInfo();
 					EclipseSynchronizer.getInstance().restoreFileFromBaseDirectory(getIFile(), monitor);

@@ -414,7 +414,7 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 		root.accept(new ICVSResourceVisitor() {
 			public void visitFile(ICVSFile file) throws CVSException {
 				// only change managed, unmodified files
-				if (file.isManaged() && !file.isModified())
+				if (file.isManaged() && !file.isModified(null))
 					file.setReadOnly(watchEdit);
 				monitor.worked(1);
 			}

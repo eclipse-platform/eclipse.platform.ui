@@ -50,10 +50,16 @@ public class ReplaceWithTagAction extends WorkspaceAction {
 		// Show a busy cursor while display the tag selection dialog
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
-				PromptingDialog prompt = new PromptingDialog(getShell(), getSelectedResources(), 
-																  getOverwriteLocalChangesPrompt(), 
-																  Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
-				final IResource[] resources = prompt.promptForMultiple();
+				
+				IResource[] resources;
+				try {
+					resources =
+						checkOverwriteOfDirtyResources(
+							getSelectedResources(),
+							null /* no progress just a busy cursor for now */);
+				} catch (CVSException e) {
+					throw new InvocationTargetException(e);
+				} 
 				if(resources.length == 0) {
 					// nothing to do
 					return;

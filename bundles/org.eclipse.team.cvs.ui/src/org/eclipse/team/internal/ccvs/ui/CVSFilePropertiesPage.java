@@ -68,7 +68,7 @@ public class CVSFilePropertiesPage extends PropertyPage {
 				
 				// Modified
 				createLabel(composite, Policy.bind("CVSFilePropertiesPage.modified")); //$NON-NLS-1$
-				createLabel(composite, cvsResource.isModified() ? Policy.bind("yes") : Policy.bind("no")); //$NON-NLS-1$ //$NON-NLS-2$
+				createLabel(composite, cvsResource.isModified(null) ? Policy.bind("yes") : Policy.bind("no")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 			// Keyword Mode

@@ -157,5 +157,5 @@ public interface ICVSResource {
 	 * Method isModified.
 	 * @return boolean
 	 */
-	public boolean isModified() throws CVSException;
+	public boolean isModified(IProgressMonitor monitor) throws CVSException;
 }

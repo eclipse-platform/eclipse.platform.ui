@@ -52,7 +52,7 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 		} else if (ResourceSyncInfo.isDeletion(syncBytes)) {
 			// If deleted, null the sync info so the file will be refetched
 			file.unmanage(null);
-		} else if (file.isModified()) {
+		} else if (file.isModified(null)) {
 			// If the file is modified, delee and unmanage it and allow the 
 			// replace operaton to fetch it again. This isrequired because "update -C" 
 			// will fail for locally modified resources that have been deleted remotely.

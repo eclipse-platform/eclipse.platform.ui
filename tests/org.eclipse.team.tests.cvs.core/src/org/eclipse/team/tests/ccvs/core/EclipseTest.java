@@ -451,7 +451,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	protected void assertIsModified(String prefix, IResource resource) throws TeamException {
 		// Only check for files as CVS doesn't dirty folders
 		if (resource.getType() == IResource.FILE)
-			assertTrue(prefix + " resource " + resource.getFullPath() + " should be dirty.", ((ICVSFile)getCVSResource(resource)).isModified());
+			assertTrue(prefix + " resource " + resource.getFullPath() + " should be dirty.", ((ICVSFile)getCVSResource(resource)).isModified(null));
 	}
 	
 	protected void assertNotModified(String prefix, IResource[] resources) throws TeamException {
@@ -460,7 +460,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	}
 	
 	protected void assertNotModified(String prefix, IResource resource) throws TeamException {
-		assertTrue(prefix + " resource should be dirty", !((ICVSFile)getCVSResource(resource)).isModified());
+		assertTrue(prefix + " resource should be dirty", !((ICVSFile)getCVSResource(resource)).isModified(null));
 	}
 	
 	protected void assertIsIgnored(IResource resource, boolean ignoredState) throws TeamException {
@@ -618,11 +618,11 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		do {
 			file.setContents(new ByteArrayInputStream(contents.getBytes()), false, false, null);
 			assertTrue("Timestamp granularity is too small. Increase test wait factor", count <= CVSTestSetup.WAIT_FACTOR);
-			if (!cvsFile.isModified()) {
+			if (!cvsFile.isModified(null)) {
 				waitMsec(1500);
 				count++;
 			}
-		} while (!cvsFile.isModified());
+		} while (!cvsFile.isModified(null));
 	}
 	
 	public void waitMsec(int msec) {	

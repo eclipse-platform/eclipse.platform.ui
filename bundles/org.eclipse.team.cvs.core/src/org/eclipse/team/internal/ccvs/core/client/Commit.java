@@ -77,7 +77,7 @@ public class Commit extends Command {
 				ICVSResource resource = resources[i];
 				if (!resource.isFolder()) {
 					ICVSFile cvsFile = (ICVSFile)resources[i];
-					if (cvsFile.exists() && cvsFile.isModified()) {
+					if (cvsFile.exists() && cvsFile.isModified(null)) {
 						status = mergeStatus(status, clearModifiedState(cvsFile));
 					}
 				}

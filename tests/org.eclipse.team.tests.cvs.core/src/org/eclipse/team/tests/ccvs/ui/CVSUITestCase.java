@@ -164,7 +164,7 @@ public class CVSUITestCase extends LoggingTestCase {
 	 */
 	protected void actionReplaceWithRemote(IResource[] resources) {
 		ReplaceWithRemoteAction action = new ReplaceWithRemoteAction() {
-			protected IPromptCondition getPromptCondition() {
+			protected IPromptCondition getPromptCondition(IResource[] resources) {
 				return new DummyPromptCondition();
 			}
 		};
@@ -215,7 +215,7 @@ public class CVSUITestCase extends LoggingTestCase {
 			protected String promptForTag(ICVSFolder folder) {
 				return name;
 			}
-			protected IPromptCondition getPromptCondition() {
+			protected IPromptCondition getPromptCondition(IResource[] resources) {
 				return new DummyPromptCondition();
 			}
 		};

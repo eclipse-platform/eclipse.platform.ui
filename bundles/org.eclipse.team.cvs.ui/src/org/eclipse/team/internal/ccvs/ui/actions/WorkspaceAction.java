@@ -46,6 +46,7 @@ import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ui.PromptingDialog;
 
 /**
  * This class represents an action performed on a local CVS workspace
@@ -521,5 +522,29 @@ public abstract class WorkspaceAction extends CVSAction {
 			// silently ignore
 			return Policy.bind("ReplaceWithLatestAction.multipleTags"); //$NON-NLS-1$ 
 		}
+	}
+
+	protected IResource[] checkOverwriteOfDirtyResources(IResource[] resources, IProgressMonitor monitor) throws CVSException, InterruptedException {
+		List dirtyResources = new ArrayList();
+		IResource[] selectedResources = getSelectedResources();
+		
+		try {
+			monitor = Policy.monitorFor(monitor);
+			monitor.beginTask(null, selectedResources.length * 100);
+			monitor.setTaskName(Policy.bind("ReplaceWithAction.calculatingDirtyResources")); //$NON-NLS-1$
+			for (int i = 0; i < selectedResources.length; i++) {
+				IResource resource = selectedResources[i];
+				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+				if(cvsResource.isModified(Policy.subMonitorFor(monitor, 100))) {
+					dirtyResources.add(resource);
+				}			
+			}
+		} finally {
+			monitor.done();		
+		}
+		
+		PromptingDialog dialog = new PromptingDialog(getShell(), selectedResources, 
+				getOverwriteLocalChangesPrompt((IResource[]) dirtyResources.toArray(new IResource[dirtyResources.size()])), Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
+		return dialog.promptForMultiple();
 	}
 }

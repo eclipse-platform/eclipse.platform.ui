@@ -610,7 +610,7 @@ public class HistoryView extends ViewPart {
 		if (file!=null && file.exists()) {
 			ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
 			try {
-				if(cvsFile.isModified()) {
+				if(cvsFile.isModified(null)) {
 					String title = Policy.bind("HistoryView.overwriteTitle"); //$NON-NLS-1$
 					String msg = Policy.bind("HistoryView.overwriteMsg"); //$NON-NLS-1$
 					final MessageDialog dialog = new MessageDialog(getViewSite().getShell(), title, null, msg, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.CANCEL_LABEL }, 0);

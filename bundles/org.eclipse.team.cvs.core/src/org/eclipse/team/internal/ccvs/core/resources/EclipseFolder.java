@@ -334,26 +334,33 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 * Assumption this is only called from decorator and isIgnored() is purposely
 	 * ommited here for performance reasons. 
 	 */
-	public boolean isModified() throws CVSException {
-		IContainer container = (IContainer)getIResource();
-		boolean shared = isCVSFolder();
-
-		if (!shared) return true;
-		
-		int state = EclipseSynchronizer.getInstance().getModificationState(getIResource());
-
-		boolean modified;
-		if (state == ICVSFile.UNKNOWN) {
+	public boolean isModified(IProgressMonitor monitor) throws CVSException {
+		try {
+			monitor = Policy.monitorFor(monitor);
+			monitor.beginTask(Policy.bind("EclipseFolder.isModifiedProgress", resource.getFullPath().toString()), 1000);
 			
-			// We have no cached info for the folder. We'll need to check directly,
-			// caching as go. This will recursively determined the modified state
-			// for all child resources until a modified child is found.
-			modified = calculateAndSaveChildModificationStates();
-			setModified(modified);
-		} else {
-			modified = (state == ICVSFile.DIRTY);
+			IContainer container = (IContainer)getIResource();
+			boolean shared = isCVSFolder();
+	
+			if (!shared) return true;
+			
+			int state = EclipseSynchronizer.getInstance().getModificationState(getIResource());
+	
+			boolean modified;
+			if (state == ICVSFile.UNKNOWN) {
+				
+				// We have no cached info for the folder. We'll need to check directly,
+				// caching as go. This will recursively determined the modified state
+				// for all child resources until a modified child is found.
+				modified = calculateAndSaveChildModificationStates(monitor);
+				setModified(modified);
+			} else {
+				modified = (state == ICVSFile.DIRTY);
+			}
+			return modified;
+		} finally {
+			monitor.done();
 		}
-		return modified;
 	}
 	
 	public void handleModification(boolean forAddition) throws CVSException {
@@ -374,17 +381,18 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 * This method may result in modification state being cached with the children but
 	 * does not cache it for the receiver.
 	 */
-	private boolean calculateAndSaveChildModificationStates() throws CVSException {
+	private boolean calculateAndSaveChildModificationStates(IProgressMonitor monitor) throws CVSException {
 		IContainer container = (IContainer)getIResource();
 		ICVSResource[] children = members(ALL_UNIGNORED_MEMBERS);
 
 		for (int i = 0; i < children.length; i++) {
 			ICVSResource resource = children[i];
-			if (resource.isModified()) {
+			if (resource.isModified(null)) {
 				// if a child resource is dirty consider the parent dirty as well, there
 				// is no need to continue checking other siblings.
 				return true;
 			}
+			monitor.worked(1);
 		}
 			
 		return false;

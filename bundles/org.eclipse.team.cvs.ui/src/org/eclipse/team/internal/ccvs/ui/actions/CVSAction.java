@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -422,10 +423,11 @@ abstract public class CVSAction extends TeamAction {
 	/**
 	 * A helper prompt condition for prompting for CVS dirty state.
 	 */
-	public static IPromptCondition getOverwriteLocalChangesPrompt() {
+	public static IPromptCondition getOverwriteLocalChangesPrompt(final IResource[] dirtyResources) {
 		return new IPromptCondition() {
+			List resources = Arrays.asList(dirtyResources);
 			public boolean needsPrompt(IResource resource) {
-				return CVSLightweightDecorator.isDirty(resource);
+				return resources.contains(resource);
 			}
 			public String promptMessage(IResource resource) {
 				return Policy.bind("ReplaceWithAction.localChanges", resource.getName());//$NON-NLS-1$

@@ -148,7 +148,7 @@ public interface ICVSFile extends ICVSResource {
 	 * from the repository, if the file does not exist, or is not managed. And <code>false</code> 
 	 * if it has not changed.
 	 */
-	boolean isModified() throws CVSException;
+	boolean isModified(IProgressMonitor monitor) throws CVSException;
 	
 	/**
 	 * Answers the revision history for this file. This is similar to the

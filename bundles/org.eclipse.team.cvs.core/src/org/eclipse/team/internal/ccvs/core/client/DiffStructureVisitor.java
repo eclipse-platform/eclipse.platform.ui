@@ -54,7 +54,7 @@ class DiffStructureVisitor extends FileStructureVisitor {
 			return;
 		}
 
-		if (mFile.isModified() || addedFile) {
+		if (mFile.isModified(null) || addedFile) {
 			session.sendModified(mFile, ResourceSyncInfo.isBinary(info), monitor);
 		} else {
 			session.sendUnchanged(mFile);

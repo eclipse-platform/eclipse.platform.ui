@@ -349,7 +349,7 @@ public class KSubstWizard extends Wizard {
 										classification = KSubstChangeElement.ADDED_FILE;
 									} else if (info.isDeleted()) {
 										return true;
-									} else if (cvsFile.isModified()) {
+									} else if (cvsFile.isModified(null)) {
 										classification = KSubstChangeElement.CHANGED_FILE;
 									} else {
 										classification = KSubstChangeElement.UNCHANGED_FILE;

@@ -424,7 +424,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			byte[] syncBytes2 = ((ICVSRemoteFile)e2).getSyncBytes();
 			
 			if(syncBytes1 != null) {
-				if(ResourceSyncInfo.isDeletion(syncBytes1) || ResourceSyncInfo.isMerge(syncBytes1) || cvsFile.isModified()) {
+				if(ResourceSyncInfo.isDeletion(syncBytes1) || ResourceSyncInfo.isMerge(syncBytes1) || cvsFile.isModified(null)) {
 					return false;
 				}
 				return ResourceSyncInfo.getRevision(syncBytes1).equals(ResourceSyncInfo.getRevision(syncBytes2));

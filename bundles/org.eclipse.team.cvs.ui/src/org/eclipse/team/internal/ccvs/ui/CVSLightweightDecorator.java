@@ -90,7 +90,7 @@ public class CVSLightweightDecorator
 
 	public static boolean isDirty(final ICVSResource cvsResource) {
 		try {
-			return !cvsResource.isIgnored() && cvsResource.isModified();
+			return !cvsResource.isIgnored() && cvsResource.isModified(null);
 		} catch (CVSException e) {
 			//if we get an error report it to the log but assume dirty
 			CVSUIPlugin.log(e.getStatus());

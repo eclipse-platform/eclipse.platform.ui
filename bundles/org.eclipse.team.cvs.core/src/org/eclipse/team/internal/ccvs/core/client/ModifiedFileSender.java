@@ -29,7 +29,7 @@ class ModifiedFileSender extends FileStructureVisitor {
 	 */
 	protected void sendFile(ICVSFile mFile) throws CVSException {
 		// Only send the file if its modified
-		if (mFile.isManaged() && mFile.isModified()) {
+		if (mFile.isManaged() && mFile.isModified(null)) {
 			super.sendFile(mFile);
 			modifiedFiles.add(mFile);
 		}
