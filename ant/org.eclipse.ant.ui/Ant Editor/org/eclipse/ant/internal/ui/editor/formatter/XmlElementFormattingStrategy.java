@@ -12,6 +12,7 @@
 
 package org.eclipse.ant.internal.ui.editor.formatter;
 
+import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,6 +39,9 @@ public class XmlElementFormattingStrategy extends ContextBasedFormattingStrategy
     /** The position sets to keep track of during formatting */
     private final LinkedList fPositions = new LinkedList();
 
+    /** access to the preferences store **/
+    private final FormattingPreferences prefs = new FormattingPreferences();
+    
     public XmlElementFormattingStrategy(ISourceViewer viewer) {
         super(viewer);
     }
@@ -57,7 +61,7 @@ public class XmlElementFormattingStrategy extends ContextBasedFormattingStrategy
         IDocument document = getViewer().getDocument();
 
         try {
-            FormattingPreferences prefs = new FormattingPreferences();
+
             String formatted = formatElement(document, partition, lineIndent, prefs);
 
             String partitionText = document.get(partition.getOffset(), partition.getLength());
@@ -77,6 +81,18 @@ public class XmlElementFormattingStrategy extends ContextBasedFormattingStrategy
         StringBuffer formattedElement = null;
 
         // do we even need to think about wrapping?
+        
+		// TODO fix this. If wrapping is all that this strategy does, this is a
+		// very inefficient mechanism for avoiding the element format since this
+        // format method will be called for every tag partition in the document.
+        // What is really needed is for the editor itself to listen for changes 
+        // to the preferences and reconfigure the editor's formatter to ommit 
+        // this strategy.
+        
+        // TODO Always parse and create a model for the element since we may 
+        // want to undo the formatting of a previously formatted element when
+        // the prefences change
+
         if (prefs.useElementWrapping() && !partitionText.startsWith("</")) { //$NON-NLS-1$
 
             IRegion line = document.getLineInformationOfOffset(partition.getOffset());
@@ -84,7 +100,11 @@ public class XmlElementFormattingStrategy extends ContextBasedFormattingStrategy
             int partitionLineOffset = partition.getOffset() - line.getOffset();
 
             // do we have a good candidate for a wrap?
-            if (line.getLength() > prefs.getMaximumLineWidth()) {
+            // chars need to be expanded using the preferences value           
+            int tabCount = count('\t', document.get(line.getOffset(), line.getLength()));
+                        
+            if ((line.getLength() - tabCount) + (tabCount * prefs.getTabWidth())  
+            		> prefs.getMaximumLineWidth()) {
 
                 List attributes = getAttributes(partitionText);
                 if (attributes.size() > 1) {
@@ -93,23 +113,27 @@ public class XmlElementFormattingStrategy extends ContextBasedFormattingStrategy
                     formattedElement.append(startTag);
                     formattedElement.append(' ');
                     formattedElement.append(attributes.get(0));
-                    formattedElement.append("\n"); //$NON-NLS-1$
                     
                     for (int i = 1; i < attributes.size(); i++) {
+                    	formattedElement.append("\n"); //$NON-NLS-1$
                         formattedElement.append(indentation);
                         for (int j = 0; j < (partitionLineOffset - indentation
                                 .length())
                                 + startTag.length() + 1; j++) {
                             formattedElement.append(' ');
                         }
-                        formattedElement.append(attributes.get(i));
-                        formattedElement.append("\n"); //$NON-NLS-1$
+                        formattedElement.append(attributes.get(i));                        
                     }
-                    formattedElement.append(indentation);
-                    for (int j = 0; j < (partitionLineOffset - indentation
-                            .length()) + 1; j++) {
-                        formattedElement.append(' ');
-                    }
+                    
+					if (prefs.alignElementCloseChar()) {
+						formattedElement.append("\n"); //$NON-NLS-1$
+						formattedElement.append(indentation);
+						for (int j = 0; j < (partitionLineOffset - indentation
+								.length()) + 1; j++) {
+							formattedElement.append(' ');
+						}			
+					}
+					
                     if (partitionText.endsWith("/>")) { //$NON-NLS-1$
                         formattedElement.append("/>"); //$NON-NLS-1$
                     } else if (partitionText.endsWith(">")) { //$NON-NLS-1$
@@ -128,12 +152,17 @@ public class XmlElementFormattingStrategy extends ContextBasedFormattingStrategy
         List attributes = new ArrayList();
 
         int start = firstWhitespaceIn(text);
+        if (start == -1) {
+        	return attributes;
+        }
         boolean insideQuotes = false;
 
         boolean haveEquals = false;
         int quotes = 0;
         StringBuffer attributePair = new StringBuffer();
 
+        // TODO logic for inside quotes incorrectly assumes that the quote
+        // character will be " when it could also be '.
         for (int i = start; i < text.length(); i++) {
             char c = text.charAt(i);
             switch (c) {
@@ -209,4 +238,17 @@ public class XmlElementFormattingStrategy extends ContextBasedFormattingStrategy
         fPartitions.clear();
         fPositions.clear();
     }
+
+	private int count(char searchChar, String inTargetString) {
+		StringCharacterIterator iter = new StringCharacterIterator(
+				inTargetString);
+		int i = 0;
+		if(iter.first() == searchChar) i++;
+		while (iter.getIndex() < iter.getEndIndex()) {			
+			if (iter.next() == searchChar) {
+				i++;
+			}
+		}
+		return i;
+	}
 }

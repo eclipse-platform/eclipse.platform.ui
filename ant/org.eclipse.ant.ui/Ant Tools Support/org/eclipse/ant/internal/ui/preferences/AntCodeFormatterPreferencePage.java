@@ -81,6 +81,7 @@ public class AntCodeFormatterPreferencePage extends PreferencePage implements IW
 	
 	private OverlayPreferenceStore createOverlayStore() {
 		List overlayKeys= new ArrayList();
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.FORMATTER_WRAP_LONG));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.FORMATTER_ALIGN));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.FORMATTER_COMMENTS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.FORMATTER_DELETE_BLANK_LINES));
@@ -140,15 +141,14 @@ public class AntCodeFormatterPreferencePage extends PreferencePage implements IW
 		labelText= AntPreferencesMessages.getString("AntCodeFormatterPreferencePage.4"); //$NON-NLS-1$
 		addCheckBox(indentationGroup, labelText, AntEditorPreferenceConstants.FORMATTER_TAB_CHAR, 1);
 		
-		labelText= AntPreferencesMessages.getString("AntCodeFormatterPreferencePage.5"); //$NON-NLS-1$
-		addCheckBox(indentationGroup, labelText, AntEditorPreferenceConstants.FORMATTER_ALIGN, 1);
-		
 		Group wrappingGroup= createGroup(numColumns, result, AntPreferencesMessages.getString("AntCodeFormatterPreferencePage.6")); //$NON-NLS-1$
 		labelText= AntPreferencesMessages.getString("AntCodeFormatterPreferencePage.7"); //$NON-NLS-1$
 		errorMessages= new String[]{AntPreferencesMessages.getString("AntCodeFormatterPreferencePage.8"), AntPreferencesMessages.getString("AntCodeFormatterPreferencePage.9")}; //$NON-NLS-1$ //$NON-NLS-2$
 		addTextField(wrappingGroup, labelText, AntEditorPreferenceConstants.FORMATTER_MAX_LINE_LENGTH, 3, 0, errorMessages);
 		labelText= AntPreferencesMessages.getString("AntCodeFormatterPreferencePage.10"); //$NON-NLS-1$
 		addCheckBox(wrappingGroup, labelText, AntEditorPreferenceConstants.FORMATTER_WRAP_LONG, 1);
+		labelText= AntPreferencesMessages.getString("AntCodeFormatterPreferencePage.5"); //$NON-NLS-1$
+		addCheckBox(wrappingGroup, labelText, AntEditorPreferenceConstants.FORMATTER_ALIGN, 1);
 		
 		Group whiteSpaceGroup= createGroup(numColumns, result, AntPreferencesMessages.getString("AntCodeFormatterPreferencePage.11")); //$NON-NLS-1$
 		labelText= AntPreferencesMessages.getString("AntCodeFormatterPreferencePage.12"); //$NON-NLS-1$
@@ -227,9 +227,6 @@ public class AntCodeFormatterPreferencePage extends PreferencePage implements IW
 		return group;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */

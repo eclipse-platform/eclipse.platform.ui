@@ -41,4 +41,25 @@ public class FormattingPreferences {
     public boolean useElementWrapping() {
         return fPrefs.getBoolean(AntEditorPreferenceConstants.FORMATTER_WRAP_LONG);
     }
+    
+    public boolean alignElementCloseChar() {
+        return fPrefs.getBoolean(AntEditorPreferenceConstants.FORMATTER_ALIGN);        
+    }
+
+    public boolean formatComments() {
+        return fPrefs.getBoolean(AntEditorPreferenceConstants.FORMATTER_COMMENTS);
+    }
+    
+    public boolean stripBlankLines() {
+        return fPrefs.getBoolean(AntEditorPreferenceConstants.FORMATTER_DELETE_BLANK_LINES);
+    }
+
+    public boolean formatElements() {
+        return fPrefs.getBoolean(AntEditorPreferenceConstants.FORMATTER_WRAP_LONG);
+    }
+
+	public int getTabWidth() {
+		return fPrefs.getInt(AntEditorPreferenceConstants.FORMATTER_TAB_SIZE);
+	}
 }
+

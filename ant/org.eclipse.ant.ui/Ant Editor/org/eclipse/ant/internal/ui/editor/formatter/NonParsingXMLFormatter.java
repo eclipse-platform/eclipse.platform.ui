@@ -307,7 +307,8 @@ public class NonParsingXMLFormatter {
                 char c = (char) intChar;
 
                 node.append(c);
-
+                // TODO logic incorrectly assumes that " is quote character
+                // when it could also be '
                 if (c == '"') {
                     insideQuote = !insideQuote;
                 }
