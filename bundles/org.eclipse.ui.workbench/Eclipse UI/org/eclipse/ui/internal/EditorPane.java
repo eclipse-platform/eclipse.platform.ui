@@ -26,7 +26,6 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.presentations.PresentableEditorPart;
 import org.eclipse.ui.part.EditorPart;
-import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.StackPresentation;
 
@@ -46,7 +45,7 @@ public EditorPane(IEditorReference ref, WorkbenchPage page, EditorStack workbook
 	super(ref, page);
 	this.workbook = workbook;
 }
-protected WorkbenchPart createErrorPart(WorkbenchPart oldPart) {
+protected IWorkbenchPart createErrorPart(IWorkbenchPart oldPart) {
 	class ErrorEditorPart extends EditorPart {
 		private Text text;
 		public void doSave(IProgressMonitor monitor) {}

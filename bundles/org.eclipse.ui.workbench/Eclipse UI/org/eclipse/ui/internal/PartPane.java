@@ -40,8 +40,6 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.UIStats;
-import org.eclipse.ui.part.WorkbenchPart;
-
 
 /**
  * Provides the common behavior for both views
@@ -129,7 +127,7 @@ protected void createChildControl() {
 			}
 			
 			// Create new part.
-			IWorkbenchPart newPart = createErrorPart((WorkbenchPart)part[0]);
+			IWorkbenchPart newPart = createErrorPart(part[0]);
 			part[0].getSite().setSelectionProvider(null);
 			newPart.createPartControl(content);
 			((WorkbenchPartReference)partReference).setPart(newPart);
@@ -177,7 +175,7 @@ public void createControl(Composite parent) {
 	control.addTraverseListener(traverseListener);
 }
 
-protected abstract WorkbenchPart createErrorPart(WorkbenchPart oldPart);
+protected abstract IWorkbenchPart createErrorPart(IWorkbenchPart oldPart);
 /**
  * Create a title bar for the pane if required.
  */

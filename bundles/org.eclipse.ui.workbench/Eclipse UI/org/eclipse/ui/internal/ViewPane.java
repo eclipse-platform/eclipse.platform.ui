@@ -38,7 +38,6 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.presentations.PresentableViewPart;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.StackPresentation;
 
@@ -180,7 +179,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		
 	}	
 	
-	protected WorkbenchPart createErrorPart(WorkbenchPart oldPart) {
+	protected IWorkbenchPart createErrorPart(IWorkbenchPart oldPart) {
 		class ErrorViewPart extends ViewPart {
 			private Text text;
 			public void createPartControl(Composite parent) {

@@ -44,11 +44,16 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 		this.tooltip = tooltip;
 		this.imageDescriptor = desc;
 	}
+	
+	/**
+	 * Releases any references maintained by this part reference
+	 * when its actual part becomes known (not called when it is disposed).
+	 */
 	public void releaseReferences() {
 		id = null;
 		tooltip = null;
 		title = null;
-		if(image != null && imageDescriptor != null) {
+		if (image != null && imageDescriptor != null) {
 			//make sure part has inc. the reference count.
 			if(part != null)
 				part.getTitleImage();
@@ -60,6 +65,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 			image = null;
 			imageDescriptor = null;
 		}
+		propChangeListeners.clear();
 	}
 	/**
 	 * @see IWorkbenchPart
