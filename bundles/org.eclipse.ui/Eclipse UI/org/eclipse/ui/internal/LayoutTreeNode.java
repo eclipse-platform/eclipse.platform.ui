@@ -26,6 +26,40 @@ public LayoutTreeNode(LayoutPartSash sash) {
 	super(sash);
 }
 /**
+ * Determine the left, right, top and bottom sashes
+ * that bound the layout part within the tree. It is
+ * possible that some maybe null.
+ */
+protected void boundingSashes(LayoutTree tree, LayoutPartSash sashes[]) {
+	if (children[0] == tree && children[1].isVisible()) {
+		if (getSash().isHorizontal()) {
+			if (sashes[BOTTOM_SASH] == null) {
+				sashes[BOTTOM_SASH] = getSash();
+			}
+		} else {
+			if (sashes[RIGHT_SASH] == null) {
+				sashes[RIGHT_SASH] = getSash();
+			}
+		}
+	}
+	
+	if (children[1] == tree && children[0].isVisible()) {
+		if (getSash().isHorizontal()) {
+			if (sashes[TOP_SASH] == null) {
+				sashes[TOP_SASH] = getSash();
+			}
+		} else {
+			if (sashes[LEFT_SASH] == null) {
+				sashes[LEFT_SASH] = getSash();
+			}
+		}
+	}
+	
+	if (parent != null) {
+		parent.boundingSashes(this, sashes);
+	}
+}
+/**
  * Add the relation ship between the children in the list
  * and returns the left children.
  */

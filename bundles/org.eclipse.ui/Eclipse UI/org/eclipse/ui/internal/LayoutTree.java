@@ -14,6 +14,16 @@ import java.util.ArrayList;
  * placed on its parent.
  */
 public class LayoutTree {
+	/**
+	 * Index into the sashes array returned by
+	 * boundingSashes for the left, right, top,
+	 * and bottom sashes.
+	 */
+	public static final int LEFT_SASH = 0;
+	public static final int RIGHT_SASH = 1;
+	public static final int TOP_SASH = 2;
+	public static final int BOTTOM_SASH = 3;
+	
 	/* The parent of this tree or null if it is the root */
 	LayoutTreeNode parent;
 	/* Any LayoutPart if this is a leaf or a LayoutSashPart if it is a node */
@@ -23,6 +33,26 @@ public class LayoutTree {
  */
 public LayoutTree(LayoutPart part) {
 	this.part = part;
+}
+/**
+ * Determine the left, right, top and bottom sashes
+ * that bound the layout part within the tree. It is
+ * possible that some maybe null.
+ */
+public LayoutPartSash[] boundingSashes() {
+	LayoutPartSash sashes[] = new LayoutPartSash[4];
+	if (parent != null) {
+		parent.boundingSashes(this, sashes);
+	}
+	return sashes;
+}
+/**
+ * Determine the left, right, top and bottom sashes
+ * that bound the layout part within the tree. It is
+ * possible that some maybe null.
+ */
+protected void boundingSashes(LayoutTree tree, LayoutPartSash sashes[]) {
+	return;
 }
 /**
  * Add the relation ship between the children in the list

@@ -713,7 +713,14 @@ public IPerspectiveDescriptor getPerspective() {
 public ArrayList getPerspectiveActions() {
 	return getPersp().getPerspectiveActions();
 }
-/*
+/**
+ * Returns the active perspective's presentation
+ * for this page.
+ */
+public PerspectivePresentation getPresentation() {
+	return getPersp().getPresentation();
+}
+/**
  * Returns the selection within the <code>IWorkbenchPage</code>
  */
 public ISelection getSelection() {

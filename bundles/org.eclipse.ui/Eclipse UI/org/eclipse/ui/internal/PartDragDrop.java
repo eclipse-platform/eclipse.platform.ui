@@ -60,6 +60,29 @@ public PartDragDrop(LayoutPart dragPart, Control dragHandle) {
 	dragControl.addMouseListener(this);
 	dragControl.addMouseMoveListener(this);
 }
+/**
+ * Constructs a new drag drop. This is used to start a manual
+ * move (via a menu item for example).
+ */
+public PartDragDrop(LayoutPart dragPart, Control dragHandle, IPartDropListener listener, int startX, int startY) {
+	sourcePart = dragPart;
+	dragControl = dragHandle;
+	xAnchor = startX;
+	yAnchor = startY;
+	addDropListener(listener);
+	/*
+	* We would want to move the cursor to this location
+	* also but there is not api to do so right now.
+	*
+	* We should also remember the old mouse pointer location
+	* so it can be reset when escape hit
+	*/
+	Cursor sizeAll = new Cursor(dragControl.getDisplay(), SWT.CURSOR_SIZEALL);
+	dragControl.setCursor(sizeAll);
+	startTracking();
+	dragControl.setCursor(null);
+	sizeAll.dispose();
+}
 /**	 
  * Adds the listener to receive events.
  * <p>
@@ -285,7 +308,50 @@ public void mouseMove(MouseEvent e) {
 	// operation to start, ignore the move
 	if (!sourcePart.isDragAllowed())
 		return;
-		
+
+	// Start tracking the source part movement
+	startTracking();		
+}
+/**
+ * @see MouseListener::mouseUp
+ */
+public void mouseUp(MouseEvent e) {
+	mouseDown = false;
+}
+/**	 
+ * Removes the listener.
+ * <p>
+ *
+ * @param listener the listener
+ * @see PartDropListener
+ */
+public void removeDropListener(IPartDropListener listener) {
+	if (listener == null) 
+		return;
+
+	int index = -1;
+	for (int i = 0, length = dropListeners.length; i < length; i++){
+		if (dropListeners[i].equals(listener)){
+			index = i;
+			break;
+		}
+	}
+	if (index == -1) return;
+
+	if (dropListeners.length == 1) {
+		dropListeners = null;
+	} else {
+		IPartDropListener[] newListeners = new IPartDropListener[dropListeners.length - 1];
+		System.arraycopy(dropListeners, 0, newListeners, 0, index);
+		System.arraycopy(dropListeners, index+1, newListeners, index, newListeners.length - index);
+		dropListeners = newListeners;
+	}
+}
+/**
+ * Start tracking the source part movement. Notify interested
+ * listeners as the part is moved around.
+ */
+private void startTracking() {
 	// Create a tracker.  This is just an XOR rect on the screen.
 	// As it moves we notify the drag listeners.
 	final Display display= dragControl.getDisplay();	 						 	
@@ -347,40 +413,5 @@ public void mouseMove(MouseEvent e) {
 
 	// Cleanup.
 	tracker.dispose();
-}
-/**
- * @see MouseListener::mouseUp
- */
-public void mouseUp(MouseEvent e) {
-	mouseDown = false;
-}
-/**	 
- * Removes the listener.
- * <p>
- *
- * @param listener the listener
- * @see PartDropListener
- */
-public void removeDropListener(IPartDropListener listener) {
-	if (listener == null) 
-		return;
-
-	int index = -1;
-	for (int i = 0, length = dropListeners.length; i < length; i++){
-		if (dropListeners[i].equals(listener)){
-			index = i;
-			break;
-		}
-	}
-	if (index == -1) return;
-
-	if (dropListeners.length == 1) {
-		dropListeners = null;
-	} else {
-		IPartDropListener[] newListeners = new IPartDropListener[dropListeners.length - 1];
-		System.arraycopy(dropListeners, 0, newListeners, 0, index);
-		System.arraycopy(dropListeners, index+1, newListeners, index, newListeners.length - index);
-		dropListeners = newListeners;
-	}
 }
 }

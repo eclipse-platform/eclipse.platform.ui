@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
     <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.swt/swt.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.swt/swtsrc.zip"/>
+    <classpathentry kind="src" path="/SWT Hacks"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.help/help.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.help/helpsrc.zip"/>
     <classpathentry kind="var"

@@ -310,6 +310,66 @@ protected void doMakeFast() {
 	page.addFastView(getViewPart());
 }
 /**
+ * Move the view via keyboard input
+ */
+protected void doMove() {
+	Rectangle bounds = getDragHandle().getBounds();
+	int posX = bounds.x + (bounds.width / 2);
+	int posY = bounds.y + (bounds.height / 2);
+	new PartDragDrop(this, getDragHandle(), page.getPresentation().getPartDropListener(), posX, posY);
+}
+/**
+ * Size the view via keyboard input
+ */
+protected void doSize() {
+	// Locate the part within the layout tree. Note that
+	// the part may be within a tab folder too.
+	LayoutTree partTreeNode;
+	LayoutTree treeRoot = page.getPresentation().getLayout().getLayoutTree();
+	ILayoutContainer container = getContainer();
+	if (container instanceof PartTabFolder) {
+		partTreeNode = treeRoot.find((PartTabFolder)container);
+	} else {
+		partTreeNode = treeRoot.find(this);
+	}
+	
+	// Determine which sides of the part can be resized by
+	// locating the left, right, top, and bottom sashes if
+	// available.
+	LayoutPartSash sashes[] = partTreeNode.boundingSashes();
+	
+	// Setup the resize cursor in the middle of the view.
+	Cursor sizeAll = new Cursor(control.getDisplay(), SWT.CURSOR_SIZEALL);
+	control.setCursor(sizeAll);
+	/*
+	* There is no api to set the mouse cursor location
+	* at the moment...
+	*/
+	
+	// Wait for user to select, via the up, down, left, and right
+	// arrow keys, which side to resize. If there is no sash on
+	// the selected side, then ignore the selection.
+	/*
+	* Tracker2 is a total hack...need real support from SWT
+	*/
+	Tracker2 tracker = new Tracker2(control.getDisplay(), SWT.NONE);
+	tracker.resizeLeft = sashes[LayoutTree.LEFT_SASH] != null;
+	tracker.resizeRight = sashes[LayoutTree.RIGHT_SASH] != null;
+	tracker.resizeTop = sashes[LayoutTree.TOP_SASH] != null;
+	tracker.resizeBottom = sashes[LayoutTree.BOTTOM_SASH] != null;
+	tracker.open();
+	control.setCursor(null);
+	sizeAll.dispose();
+	
+	// Get the sash to resize
+	/*
+	* Total hack here using focus...need real support from SWT
+	*/
+	if (tracker.resizeLeft) {
+		sashes[LayoutTree.LEFT_SASH].setFocus();
+	}
+}
+/**
  * Hide the fast view
  */
 protected void doMinimize() {
@@ -409,6 +469,7 @@ private void showTitleLabelMenu(MouseEvent e) {
 	final boolean isZoomed = ((WorkbenchPage)getPart().getSite().getPage()).isZoomed();
 	boolean isFastView = ((WorkbenchPage)getPart().getSite().getPage()).isFastView(getViewPart());
 	boolean canZoom = (getWindow() instanceof IWorkbenchWindow);
+	boolean inDetachedWnd = (getWindow() instanceof DetachedWindow);
 
 	// add restore item
 	item = new MenuItem(aMenu, SWT.NONE);
@@ -433,6 +494,28 @@ private void showTitleLabelMenu(MouseEvent e) {
 	});
 	item.setEnabled(!isFastView);
 
+	// add move item
+	item = new MenuItem(aMenu, SWT.NONE);
+//	item.setText(WorkbenchMessages.getString("ViewPane.maximize")); //$NON-NLS-1$
+	item.setText("Move");
+	item.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			doMove();
+		}
+	});
+	item.setEnabled(!isZoomed && !isFastView);
+
+	// add size item
+	item = new MenuItem(aMenu, SWT.NONE);
+//	item.setText(WorkbenchMessages.getString("ViewPane.maximize")); //$NON-NLS-1$
+	item.setText("Size");
+	item.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			doSize();
+		}
+	});
+	item.setEnabled(!isZoomed && !inDetachedWnd);
+	
 	// add maximize item
 	item = new MenuItem(aMenu, SWT.NONE);
 	item.setText(WorkbenchMessages.getString("ViewPane.maximize")); //$NON-NLS-1$

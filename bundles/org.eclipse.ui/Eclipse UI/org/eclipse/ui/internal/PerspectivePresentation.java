@@ -634,6 +634,12 @@ public RootLayoutContainer getLayout() {
 	return mainLayout;
 }
 /**
+ * Returns the listener for view part drops.
+ */
+public IPartDropListener getPartDropListener() {
+	return partDropListener;
+}
+/**
  * Returns the zoomed part.
  */
 public LayoutPart getZoomPart() {
