@@ -559,7 +559,6 @@ public class WorkbenchActionBuilder {
 		cBarMgr.addToMenu(new ActionContributionItem(editActionSetAction));
 	
 		CoolItemToolBarManager tBarMgr =(CoolItemToolBarManager) toolsManager;
-		String id = IWorkbenchActionConstants.TOOLBAR_FILE;
 		tBarMgr.addBaseGroup(IWorkbenchActionConstants.NEW_GROUP, true);
 		tBarMgr.add(newWizardDropDownAction);
 		tBarMgr.addBaseGroup(IWorkbenchActionConstants.NEW_EXT, false);
