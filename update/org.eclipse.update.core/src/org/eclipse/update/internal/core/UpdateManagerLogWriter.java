@@ -14,7 +14,11 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
+import org.eclipse.update.configurator.*;
+
+
 /**
  * A log writer that writes update manager log entries.  
  */
@@ -52,6 +56,31 @@ public class UpdateManagerLogWriter {
 	public UpdateManagerLogWriter(File file) {
 		this.logFile = file;
 		UpdateCore.warn("UPDATE MANAGER LOG Location: "+file.getAbsolutePath());
+
+		// If the file does not exist, prime it with the sites in the exisiting config
+		if (!file.exists())
+			initLog();
+	}
+	
+	/*
+	 * Initializes the log with the original configuration
+	 */
+	private void initLog() {
+		try {
+			IPlatformConfiguration runtimeConfig = ConfiguratorUtils.getCurrentPlatformConfiguration();
+			IPlatformConfiguration.ISiteEntry[] sites = runtimeConfig.getConfiguredSites();
+			ConfigurationActivity[] activities = new ConfigurationActivity[sites.length];
+			for (int i=0; i<sites.length; i++) {
+				activities[i] = new ConfigurationActivity(IActivity.ACTION_SITE_INSTALL);
+				activities[i].setLabel(Platform.asLocalURL(sites[i].getURL()).toExternalForm());
+				activities[i].setDate(new Date());
+				activities[i].setStatus(IActivity.STATUS_OK);
+			}
+			Date date = new Date(runtimeConfig.getChangeStamp());
+			safeWriteConfiguration(date.toLocaleString(), activities);
+		} catch (Exception e) {
+			// silently ignore errors
+		}
 	}
 
 	/*
@@ -71,37 +100,8 @@ public class UpdateManagerLogWriter {
 	/*
 	 * 
 	 */
-	public synchronized void log(IInstallConfiguration installConfig) {
-		// thread safety: (Concurrency003)
-		if (logFile != null)
-			openLogFile();
-		if (log == null)
-			log = logForStream(System.err);
-		try {
-			try {
-				write(installConfig);
-			} finally {
-				if (logFile != null)
-					closeLogFile();
-				else
-					log.flush();
-			}
-		} catch (Exception e) {
-			System.err.println("An exception occurred while writing to the update manager log:"); //$NON-NLS-1$
-			e.printStackTrace(System.err);
-			System.err.println("Logging to the console instead."); //$NON-NLS-1$
-			//we failed to write, so dump log entry to console instead
-			try {
-				log = logForStream(System.err);
-				write(installConfig);
-				log.flush();
-			} catch (Exception e2) {
-				System.err.println("An exception occurred while logging to the console:"); //$NON-NLS-1$
-				e2.printStackTrace(System.err);
-			}
-		} finally {
-			log = null;
-		}
+	public void log(IInstallConfiguration installConfig) {
+		safeWriteConfiguration(installConfig.getLabel(), installConfig.getActivities());
 	}
 	
 	
@@ -166,17 +166,52 @@ public class UpdateManagerLogWriter {
 		}
 	}
 
+	/*
+	 * 
+	 */
+	private synchronized void safeWriteConfiguration(String label, IActivity[] activities) {
+		// thread safety: (Concurrency003)
+		if (logFile != null)
+			openLogFile();
+		if (log == null)
+			log = logForStream(System.err);
+		try {
+			try {
+				write(label, activities);
+			} finally {
+				if (logFile != null)
+					closeLogFile();
+				else
+					log.flush();
+			}
+		} catch (Exception e) {
+			System.err.println("An exception occurred while writing to the update manager log:"); //$NON-NLS-1$
+			e.printStackTrace(System.err);
+			System.err.println("Logging to the console instead."); //$NON-NLS-1$
+			//we failed to write, so dump log entry to console instead
+			try {
+				log = logForStream(System.err);
+				write(label, activities);
+				log.flush();
+			} catch (Exception e2) {
+				System.err.println("An exception occurred while logging to the console:"); //$NON-NLS-1$
+				e2.printStackTrace(System.err);
+			}
+		} finally {
+			log = null;
+		}
+	}
+	
 
 	/*
 	 * !CONFIGURATION <label>
 	 */
-	private void write(IInstallConfiguration installConfig) throws IOException {
+	private void write(String label, IActivity[] activities) throws IOException {
 		writeln();
 		write(CONFIGURATION);
 		writeSpace();		
-		write(installConfig.getLabel());
+		write(label);
 		writeln();
-		IActivity[] activities = installConfig.getActivities();
 		for (int i = 0; i < activities.length; i++) {
 			write(activities[i]);
 		}				

@@ -170,8 +170,9 @@ public class InstallConfigurationParser {
 	private void processConfig(PlatformConfiguration platformConfig) throws IOException, CoreException {
 
 		// date
-		Date date = platformConfig.getConfiguration().getDate();
+		Date date = new Date(platformConfig.getChangeStamp());
 		config.setCreationDate(date);
+		config.setLabel(date.toLocaleString());
 		
 		//timeline
 //		String timelineString = attributes.getValue("timeline"); //$NON-NLS-1$
