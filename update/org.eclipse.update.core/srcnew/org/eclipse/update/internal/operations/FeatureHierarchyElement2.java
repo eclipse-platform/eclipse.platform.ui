@@ -369,15 +369,14 @@ public class FeatureHierarchyElement2 {
 		}
 		return optionalChildren;
 	}
-	private static boolean hasOlderVersion(IFeatureReference newRef) {
+	public static boolean hasOlderVersion(IFeatureReference newRef) {
 		try {
-			IFeature feature = newRef.getFeature(null);
-			VersionedIdentifier vid = feature.getVersionedIdentifier();
+			VersionedIdentifier vid = newRef.getVersionedIdentifier();
 			PluginVersionIdentifier version = vid.getVersion();
 			String mode = getUpdateVersionsMode();
 
 			IFeature[] allInstalled =
-				UpdateManager.getInstalledFeatures(feature, false);
+				UpdateManager.getInstalledFeatures(vid, false);
 			for (int i = 0; i < allInstalled.length; i++) {
 				IFeature candidate = allInstalled[i];
 				PluginVersionIdentifier cversion =

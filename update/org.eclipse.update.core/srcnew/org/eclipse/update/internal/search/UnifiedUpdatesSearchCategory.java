@@ -230,7 +230,7 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 						// otherwise it is a broken feature that we 
 						// do not care about.
 						if (ref.isOptional()) {
-							return true;
+							return FeatureHierarchyElement2.hasOlderVersion(ref);
 						}
 					}
 				}

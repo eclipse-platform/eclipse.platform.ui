@@ -131,12 +131,14 @@ public class UpdateManager {
 	}
 
 	public static IFeature[] getInstalledFeatures(IFeature feature, boolean onlyConfigured) {
+		return getInstalledFeatures(feature.getVersionedIdentifier(), onlyConfigured);
+	}
+	public static IFeature[] getInstalledFeatures(VersionedIdentifier vid, boolean onlyConfigured) {
 		Vector features = new Vector();
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();
 			IInstallConfiguration config = localSite.getCurrentConfiguration();
 			IConfiguredSite[] isites = config.getConfiguredSites();
-			VersionedIdentifier vid = feature.getVersionedIdentifier();
 			String id = vid.getIdentifier();
 
 			for (int i = 0; i < isites.length; i++) {
