@@ -733,7 +733,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		configureSite(defaultSite);
 		try {
 			// parse the site directory to discover features
-			defaultSite.loadFromDisk();
+			defaultSite.loadFromDisk(0);
 		} catch (CoreException e1) {
 			Utils.log("Cannot load default site " + defaultSite.getResolvedURL());
 			return;
@@ -1336,8 +1336,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		SiteEntry[] sites = config.getSites();
 		for (int s=0; s<sites.length; s++) {
 			long siteTimestamp = sites[s].getChangeStamp();
-			if (siteTimestamp > lastChange) 
-				sites[s].loadFromDisk();
+			if (siteTimestamp > lastChange)
+				sites[s].loadFromDisk(lastChange);
 		}
 	}
 	

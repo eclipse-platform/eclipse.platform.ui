@@ -445,7 +445,9 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		return (PluginEntry[])pluginEntries.toArray(new PluginEntry[pluginEntries.size()]);
 	}
 	
-	public void loadFromDisk() throws CoreException{
+	public void loadFromDisk(long lastChange) throws CoreException{
+		featuresChangeStamp = lastChange;
+		pluginsChangeStamp = lastChange;
 		detectFeatures();
 		detectPlugins();
 	}
