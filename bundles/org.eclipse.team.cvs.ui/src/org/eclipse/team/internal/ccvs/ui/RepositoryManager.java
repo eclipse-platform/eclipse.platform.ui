@@ -131,8 +131,6 @@ public class RepositoryManager {
 		try {
 			ICVSRepositoryLocation location = CVSProvider.getInstance().getRepository(project.getFolderSyncInfo().getRoot());
 			List tags = new ArrayList();
-			filesToRefresh.add(".project"); //$NON-NLS-1$
-			filesToRefresh.add(".vcm_meta"); //$NON-NLS-1$
 			for (Iterator it = filesToRefresh.iterator(); it.hasNext();) {
 				String relativePath = (String)it.next();
 				ICVSFile file = null;
@@ -297,16 +295,9 @@ public class RepositoryManager {
 	
 	public void addAutoRefreshFiles(ICVSFolder project, String[] relativeFilePaths) {
 		ICVSRepositoryLocation location = getRepositoryLocationFor(project);
+		initDefaultAutoRefreshFiles(project);
 		Hashtable table = (Hashtable)autoRefreshFiles.get(location);
-		if (table == null) {
-			table = new Hashtable();
-			autoRefreshFiles.put(location, table);
-		}
 		Set set = (Set)table.get(project.getName());
-		if (set == null) {
-			set = new HashSet();
-			table.put(project.getName(), set);
-		}
 		for (int i = 0; i < relativeFilePaths.length; i++) {
 			set.add(relativeFilePaths[i]);
 		}
@@ -314,6 +305,7 @@ public class RepositoryManager {
 	
 	public void removeAutoRefreshFiles(ICVSFolder project, String[] relativeFilePaths) {
 		ICVSRepositoryLocation location = getRepositoryLocationFor(project);
+		initDefaultAutoRefreshFiles(project);
 		Hashtable table = (Hashtable)autoRefreshFiles.get(location);
 		if (table == null) return;
 		Set set = (Set)table.get(project.getName());
@@ -325,17 +317,27 @@ public class RepositoryManager {
 	
 	public String[] getAutoRefreshFiles(ICVSFolder project) {
 		ICVSRepositoryLocation location = getRepositoryLocationFor(project);
-		Set result = new HashSet();
+		initDefaultAutoRefreshFiles(project);
+		Hashtable table = (Hashtable)autoRefreshFiles.get(location);
+		Set set = (Set)table.get(project.getName());
+		return (String[])set.toArray(new String[0]);
+	}
+	
+	private void initDefaultAutoRefreshFiles(ICVSFolder project) {
+		ICVSRepositoryLocation location = getRepositoryLocationFor(project);
 		Hashtable table = (Hashtable)autoRefreshFiles.get(location);
 		if (table == null) {
-			return (String[])result.toArray(new String[result.size()]);
+			table = new Hashtable();
+			autoRefreshFiles.put(location, table);
 		}
 		Set set = (Set)table.get(project.getName());
 		if (set == null) {
-			return (String[])result.toArray(new String[result.size()]);
+			String projectName = project.getName();
+			set = new HashSet();
+			table.put(projectName, set);
+			set.add(".project");
+			set.add(".vcm_meta");
 		}
-		result.addAll(set);
-		return (String[])result.toArray(new String[0]);
 	}
 	
 	/**
