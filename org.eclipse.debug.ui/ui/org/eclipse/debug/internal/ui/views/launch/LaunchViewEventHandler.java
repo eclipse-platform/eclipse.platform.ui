@@ -292,11 +292,14 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	/**
 	 * @see ILaunchListener#launchAdded(ILaunch)
 	 */
-	public void launchAdded(final ILaunch newLaunch) {
+	public void launchAdded(final ILaunch launch) {
 		Runnable r= new Runnable() {
 			public void run() {
 				if (isAvailable()) {		
-					insert(newLaunch);
+					insert(launch);
+					if (launch.hasChildren()) {
+						getLaunchView().autoExpand(launch, false, true);
+					}					
 				}
 			}
 		};
