@@ -111,6 +111,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		if (!coolBarExist() && parent != null) {
 			// Create the CoolBar and its popup menu.
 			coolBar = new CoolBar(parent, style);
+			coolBar.setLocked(false);
 			coolBar.addListener(SWT.Resize, new Listener() {
 				public void handleEvent(Event event) {
 					coolBar.getParent().layout();
@@ -138,6 +139,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	public void dispose() {
 		if (coolBarExist()) {
 			coolBar.dispose();
+			coolBar = null;
 		}
 		if (chevronMenuManager != null) {
 			chevronMenuManager.dispose();
@@ -147,7 +149,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			coolBarMenuManager.dispose();
 			coolBarMenuManager = null;
 		}
-		coolBar = null;
 	}
 	public CoolBar getControl() {
 		return coolBar;
@@ -189,10 +190,16 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		}
 		chevronMenuManager = new MenuManager();
 		for (int i = visibleItemCount; i < toolCount; i++) {
-			ContributionItem data = (ContributionItem) tools[i].getData();
+			IContributionItem data = (IContributionItem) tools[i].getData();
 			if (data instanceof ActionContributionItem) {
 				ActionContributionItem contribution = new ActionContributionItem(((ActionContributionItem) data).getAction());
 				chevronMenuManager.add(contribution);
+			} else if (data instanceof SubContributionItem) {
+				IContributionItem innerData = ((SubContributionItem)data).getInnerItem();
+				if (innerData instanceof ActionContributionItem) {
+					ActionContributionItem contribution = new ActionContributionItem(((ActionContributionItem) innerData).getAction());
+					chevronMenuManager.add(contribution);
+				}
 			} else if (data.isSeparator()) {
 				chevronMenuManager.add(new Separator());
 			}
@@ -471,8 +478,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 
 		coolBar.setRedraw(false);
 		coolBar.setLocked(layout.locked);
-		coolBar.setItemLayout(itemOrder, new int[] {
-		}, itemSizes);
+		coolBar.setItemLayout(itemOrder, new int[0], itemSizes);
 
 		// restore the wrap indices after the new item order is restored, wrap on the same items that 
 		// were specified in the layout
@@ -518,6 +524,14 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			if (coolBarExist()) {
 				boolean changed = false;
 				coolBar.setRedraw(false);
+				
+				// workaround for 14330
+				boolean relock = false;
+				if (coolBar.getLocked() && (coolBar.getItems().length > 0)) {
+					coolBar.setLocked(false);
+					relock = true;
+				}
+				
 				// remove CoolBarItemContributions that are empty
 				IContributionItem[] items = getItems();
 				ArrayList toRemove = new ArrayList(items.length);
@@ -597,6 +611,12 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 					}
 				}
 				setDirty(false);
+
+				// workaround for 14330
+				if(relock) {
+					coolBar.setLocked(true);
+				}
+
 				coolBar.setRedraw(true);
 				if (changed) {
 					relayout();
