@@ -20,7 +20,10 @@ import org.eclipse.core.internal.runtime.*;
  * a builder running, an editor opening, etc.  This data is collected for the 
  * purpose of performance analysis, and is not intended to be used as
  * a generic event notification system.
- * 
+ * <p>
+ * <p>
+ * This class is not intended to be subclassed or instantiated by clients.
+ * </p>
  * @since 3.1
  */
 public class EventStats {
@@ -188,9 +191,9 @@ public class EventStats {
 	}
 
 	/** 
-	 * Creates a new EventStats object.
+	 * Creates a new EventStats object.  Private to prevent client instantiation.
 	 */
-	public EventStats(String event, String blame, String context) {
+	private EventStats(String event, String blame, String context) {
 		this.event = event;
 		this.blame = blame;
 		this.context = context;

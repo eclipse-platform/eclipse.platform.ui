@@ -10,6 +10,7 @@
  <package name="org.eclipse.core.boot"/>
  
  <package name="org.eclipse.core.runtime">
+   <type name="EventStats" instantiate="false" subclass="false" />
    <type name="IAdapterManager" implement="false" />
    <type name="IConfigurationElement" implement="false" />
    <type name="IExtension" implement="false" />

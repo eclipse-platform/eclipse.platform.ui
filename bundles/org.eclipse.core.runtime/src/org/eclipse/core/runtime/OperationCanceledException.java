@@ -13,6 +13,10 @@ package org.eclipse.core.runtime;
 /**
  * This exception is thrown to blow out of a long-running method 
  * when the user cancels it.
+ * <p>
+ * This class is not intended to be subclassed by clients but
+ * may be instantiated.
+ * </p>
  */
 public final class OperationCanceledException extends RuntimeException {
 	/**
