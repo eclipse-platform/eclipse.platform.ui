@@ -17,6 +17,7 @@ public class SiteBookmark extends NamedModelObject
 	public static final int LOCAL = 1;
 	public static final int LOCAL_BOOKMARK = 2;
 	public static final String P_URL="p_url";
+	public static final String P_TYPE="p_type";
 	
 	private URL url;
 	transient private ISite site;
@@ -47,6 +48,7 @@ public class SiteBookmark extends NamedModelObject
 	public void setWebBookmark(boolean value) {
 		if (type==LOCAL_BOOKMARK) return;
 		this.webBookmark = value;
+		notifyObjectChanged(P_TYPE);
 	}
 	
 	public boolean isWebBookmark() {

@@ -1194,7 +1194,7 @@ public class UpdatesView
 				getTreeViewer().update(object, null);
 			}
 			if (object instanceof SiteBookmark) {
-				if (property.equals(SiteBookmark.P_URL)) {
+				if (property.equals(SiteBookmark.P_URL) || property.equals(SiteBookmark.P_TYPE)) {
 					getTreeViewer().refresh(object);
 				}
 			}
