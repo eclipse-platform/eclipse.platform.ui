@@ -16,8 +16,8 @@ import org.eclipse.swt.widgets.ProgressBar;
  * The JobInfoWithProgress is a JobInfo that also keeps track of progress.
  */
 public class JobInfoWithProgress extends JobInfo {
-	int multiplier;
-	int preWork = 0;
+	double preWork = 0;
+	int totalWork = 0;
 	ProgressBar indicator;
 
 	/**
@@ -28,49 +28,28 @@ public class JobInfoWithProgress extends JobInfo {
 	 */
 	JobInfoWithProgress(String taskName, int total) {
 		super(taskName);
-		multiplier = 10000 / total;
+		totalWork = total;
 	}
-	
+
 	/**
 	 * Add the work increment to the total.
 	 * @param workIncrement
 	 */
 	void addWork(double workIncrement) {
-		int newWork = (int) (multiplier * workIncrement);
-		preWork += newWork;
-		if (indicator == null || indicator.isDisposed())
-			return;
-		indicator.getDisplay().asyncExec(new Runnable() {
-			/* (non-Javadoc)
-			 * @see java.lang.Runnable#run()
-			 */
-			public void run() {
-				if (indicator == null || indicator.isDisposed())
-					return;
-				indicator.setSelection(preWork);
-			}
-		});
+		preWork += workIncrement;
 
 	}
 
-	/**
-	 * Set the progress indicator to use for this job info.
-	 * @param indicator
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.JobInfo#getDisplayString()
 	 */
-	public void setProgressBar(ProgressBar anIndicator) {
-		this.indicator = anIndicator;
-		this.indicator.setMaximum(10000);
-		this.indicator.setSelection(preWork);
+	String getDisplayString() {
+		int done = (int) (preWork * 100 / totalWork);
+		String[] messageValues = new String[2];
+		messageValues[0] = super.getDisplayString();
+		messageValues[1] = String.valueOf(done);
+		return ProgressMessages.format("JobInfo.DoneMessage",messageValues);
+		
 	}
-
-	/**
-	 * Get the progress bar this info is using.
-	 * @return ProgressBar.
-	 */
-	public ProgressBar getProgressBar() {
-		return indicator;
-	}
-
-
 
 }

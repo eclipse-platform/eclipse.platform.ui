@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -41,5 +42,17 @@ public class ProgressMessages {
 		} catch (MissingResourceException e) {
 			return key;
 		}
+	}
+
+	/**
+	 * Returns the formatted message for the given key in
+	 * the resource bundle. 
+	 *
+	 * @param key the resource name
+	 * @param args the message arguments
+	 * @return the string
+	 */
+	public static String format(String key, Object[] args) {
+		return MessageFormat.format(getString(key), args);
 	}
 }
