@@ -30,7 +30,9 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 
 /**
- * A completion processor that computes template proposals.
+ * A completion processor that computes template proposals. Subclasses need to
+ * provide implementations for {@link #getTemplates(String)},
+ * {@link #getContextType(ITextViewer, IRegion)} and {@link #getImage(Template)}.
  * 
  * @since 3.0
  */
@@ -87,15 +89,16 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 	 * Creates a new proposal.
 	 * <p>
 	 * The default implementation returns an instance of
-	 * {@link TemplateProposal}. Subclasses may override to provide their own
-	 * implementations.
+	 * {@link TemplateProposal}. Subclasses may replace this method to provide
+	 * their own implementations.
 	 * </p>
 	 * 
 	 * @param template the template to be applied by the proposal
 	 * @param context the context for the proposal
 	 * @param region the region the proposal applies to
 	 * @param relevance the relevance of the proposal
-	 * @return a new <code>ICompletionProposal</code> for <code>template</code>
+	 * @return a new <code>ICompletionProposal</code> for
+	 *         <code>template</code>
 	 */
 	protected ICompletionProposal createProposal(Template template, TemplateContext context, Region region, int relevance) {
 		return new TemplateProposal(template, context, region, getImage(template), relevance);

@@ -45,8 +45,9 @@ import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.templates.Template;
 
 /**
- * Serializes templates as character stream and reads the same format back.
- * Clients may instantiate this class, it is not intended to be subclassed.
+ * Serializes templates as character or byte stream and reads the same format
+ * back. Clients may instantiate this class, it is not intended to be
+ * subclassed.
  * 
  * @since 3.0
  */
@@ -104,7 +105,7 @@ public class TemplateReaderWriter {
 	}
 	
 	/**
-	 * Reads templates from an InputSource and adds them to the templates.
+	 * Reads templates from an <code>InputSource</code> and adds them to the templates.
 	 * 
 	 * @param source the input source
 	 * @param bundle a resource bundle to use for translating the read templates, or <code>null</code> if no translation should occur

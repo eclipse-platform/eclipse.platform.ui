@@ -26,7 +26,8 @@ public class ContextTypeRegistry {
 	private final Map fContextTypes= new HashMap();
 	
 	/**
-	 * Adds a context type to the registry.
+	 * Adds a context type to the registry. If there already is a context type
+	 * with the same ID registered, it is replaced. 
 	 * 
 	 * @param contextType the context type to add
 	 */	

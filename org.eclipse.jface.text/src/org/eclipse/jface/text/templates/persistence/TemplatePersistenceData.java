@@ -18,6 +18,11 @@ import org.eclipse.jface.text.templates.Template;
  * TemplatePersistenceData stores information about a template. It uniquely
  * references contributed templates via their id. Contributed templates may be
  * deleted or modified. All template may be enabled or not.
+ * <p>
+ * Clients may use this class, although this is not usually needed except when
+ * implementing a custom template preference page or template store. This class
+ * is not intended to be subclassed.
+ * </p>
  * 
  * @since 3.0
  */
@@ -61,7 +66,7 @@ public class TemplatePersistenceData {
 	}
 	
 	/**
-	 * Returs the id of this template store, or <code>null</code> if there is none.
+	 * Returns the id of this template store, or <code>null</code> if there is none.
 	 * 
 	 * @return the id of this template store
 	 */

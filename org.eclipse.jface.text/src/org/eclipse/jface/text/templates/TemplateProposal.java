@@ -40,7 +40,7 @@ import org.eclipse.jface.text.link.ProposalPosition;
 
 
 /**
- * A template proposal. 
+ * A template completion proposal. Clients may subclass.
  * 
  * @since 3.0
  */
@@ -58,6 +58,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 		
 	/**
 	 * Creates a template proposal with a template and its context.
+	 * 
 	 * @param template  the template
 	 * @param context   the context in which the template was requested.
 	 * @param region	the region this proposal is applied to
@@ -69,6 +70,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 
 	/**
 	 * Creates a template proposal with a template and its context.
+	 * 
 	 * @param template  the template
 	 * @param context   the context in which the template was requested.
 	 * @param image     the icon of the proposal.
@@ -97,8 +99,15 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 		// not called anymore
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#apply(org.eclipse.jface.text.ITextViewer, char, int, int)
+	/**
+	 * Inserts the template offered by this proposal into the viewer's document
+	 * and sets up a <code>LinkedModeUI</code> on the viewer to edit any of
+	 * the template's unresolved variables.
+	 * 
+	 * @param viewer {@inheritDoc}
+	 * @param trigger {@inheritDoc}
+	 * @param stateMask {@inheritDoc}
+	 * @param offset {@inheritDoc}
 	 */
 	public void apply(ITextViewer viewer, char trigger, int stateMask, int offset) {
 
