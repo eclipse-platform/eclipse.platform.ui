@@ -41,6 +41,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -861,12 +862,10 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IDebugUIConstants.PREF_MAX_HISTORY_SIZE)) {
-			int newValue = ((Integer)event.getNewValue()).intValue();
-			int oldValue = ((Integer)event.getOldValue()).intValue();
-			if (newValue != oldValue) {
-				if (newValue < oldValue) {
-					shortenHistoryLists(newValue);
-				}
+			IPreferenceStore prefs = DebugUIPlugin.getDefault().getPreferenceStore();
+			int newValue = prefs.getInt(IDebugUIConstants.PREF_MAX_HISTORY_SIZE);
+			if (fMaxHistorySize != newValue) {
+				shortenHistoryLists(newValue);
 				fMaxHistorySize = newValue;
 				fireLaunchHistoryChanged();
 			}
