@@ -468,10 +468,12 @@ public abstract class ResourceState {
 
 	final public void removeState() throws TeamException {
 		try {
-			SynchronizedTargetProvider.getSynchronizer().flushSyncInfo(
-				stateKey,
-				localResource,
-				IResource.DEPTH_INFINITE);
+			if (localResource.exists() || localResource.isPhantom()) {
+				SynchronizedTargetProvider.getSynchronizer().flushSyncInfo(
+					stateKey,
+					localResource,
+					IResource.DEPTH_INFINITE);
+			}
 		} catch (CoreException e) {
 			throw TeamPlugin.wrapException(e);
 		}
