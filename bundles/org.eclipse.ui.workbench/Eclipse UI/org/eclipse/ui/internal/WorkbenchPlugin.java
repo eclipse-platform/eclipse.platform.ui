@@ -18,11 +18,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IMarkerDelta;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -38,7 +33,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -55,10 +49,7 @@ import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -122,11 +113,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	public static String PI_WORKBENCH = PlatformUI.PLUGIN_ID;
 
 	/**
-	 * The id of the Tasks view.
-	 */
-	private static final String TASK_LIST_ID = PI_WORKBENCH + ".views.TaskList";
-	
-	/**
 	 * The character used to separate preference page category ids
 	 */
 	private static char PREFERENCE_PAGE_CATEGORY_SEPARATOR = '/';
@@ -151,61 +137,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	public WorkbenchPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		inst = this;
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(
-			getShowTasksChangeListener(),
-			IResourceChangeEvent.POST_CHANGE);
 	}
-	
-	/**
-	 * Returns the resource change listener for noticing new errors.
-	 * Processes the delta and shows the Tasks view if new errors 
-	 * have appeared.  See PR 2066.
-	 */ 
-	private IResourceChangeListener getShowTasksChangeListener() {
-		return new IResourceChangeListener() {
-			public void resourceChanged(final IResourceChangeEvent event) {	
-				IPreferenceStore store = getWorkbench().getPreferenceStore();
-				if (store.getBoolean(IPreferenceConstants.SHOW_TASKS_ON_BUILD)) {
-					IMarker error = findError(event);
-					if (error != null) {
-						Display.getDefault().asyncExec(new Runnable() {
-							public void run() {
-								try {
-									IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();
-									if (window != null && !window.getShell().isDisposed()) { 
-										IWorkbenchPage page = window.getActivePage();
-										// ensure user has view somewhere on their page
-										if (page != null && page.findView(TASK_LIST_ID) != null)
-											page.showView(TASK_LIST_ID);
-									}
-								} catch (PartInitException e) {
-									getLog().log(e.getStatus()); //$NON-NLS$
-								}
-							}
-						});
-					}
-				}
-			}
-		};
-	}
-			
-	/**
-	 * Finds the first error marker which has been added in the delta.
-	 */
-	private IMarker findError(IResourceChangeEvent event) {
-		IMarkerDelta[] markerDeltas = event.findMarkerDeltas(IMarker.PROBLEM, true);
-		for (int i = 0; i < markerDeltas.length; i++) {
-			IMarkerDelta markerDelta = markerDeltas[i];
-			if (markerDelta.getKind() == IResourceDelta.ADDED) {
-				int severity = markerDelta.getAttribute(IMarker.SEVERITY, -1);
-				if (severity == IMarker.SEVERITY_ERROR) {
-					return markerDelta.getMarker();
-				}
-			}
-		}
-		return null;
-	}
-	
+				
 	/**
 	 * Creates an extension.  If the extension plugin has not
 	 * been loaded a busy cursor will be activated during the duration of

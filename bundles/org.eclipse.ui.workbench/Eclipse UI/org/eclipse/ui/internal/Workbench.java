@@ -76,7 +76,80 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	public Workbench() {
 		super();
 		WorkbenchPlugin.getDefault().setWorkbench(this);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(
+			getShowTasksChangeListener(),
+			IResourceChangeEvent.POST_CHANGE);
 	}
+	
+	
+	// TODO: The code for bringing the Tasks view to front must be moved 
+	// to org.eclipse.ui.views.
+	
+	/**
+	 * The id of the Tasks view.
+	 */
+	private static final String TASK_LIST_ID = WorkbenchPlugin.PI_WORKBENCH + ".views.TaskList";
+	
+	
+	/**
+	 * Returns the resource change listener for noticing new errors.
+	 * Processes the delta and shows the Tasks view if new errors 
+	 * have appeared.  See PR 2066.
+	 */ 
+	private IResourceChangeListener getShowTasksChangeListener() {
+		return new IResourceChangeListener() {
+			public void resourceChanged(final IResourceChangeEvent event) {	
+				IPreferenceStore store = getPreferenceStore();
+				if (store.getBoolean(IPreferenceConstants.SHOW_TASKS_ON_BUILD)) {
+					IMarker error = findProblemToShow(event);
+					if (error != null) {
+						Display.getDefault().asyncExec(new Runnable() {
+							public void run() {
+								try {
+									IWorkbenchWindow window = getActiveWorkbenchWindow();
+									if (window != null && !window.getShell().isDisposed()) { 
+										IWorkbenchPage page = window.getActivePage();
+										if (page != null) {
+											IViewPart tasksView= page.findView(TASK_LIST_ID);
+											if(tasksView == null) {
+												IWorkbenchPart activePart= page.getActivePart();
+												page.showView(TASK_LIST_ID);
+												//restore focus stolen by showing the Tasks view
+												page.activate(activePart);
+											} else {
+												page.bringToTop(tasksView);
+											}
+										}
+									}
+								} catch (PartInitException e) {
+									WorkbenchPlugin.log("Error bringing Tasks view to front", e.getStatus()); //$NON-NLS$
+								}
+							}
+						});
+					}
+				}
+			}
+		};
+	}
+	
+	/**
+	 * Finds the first problem marker to show.
+	 * Returns the first added error or warning.
+	 */
+	private IMarker findProblemToShow(IResourceChangeEvent event) {
+		IMarkerDelta[] markerDeltas = event.findMarkerDeltas(IMarker.PROBLEM, true);
+		for (int i = 0; i < markerDeltas.length; i++) {
+			IMarkerDelta markerDelta = markerDeltas[i];
+			if (markerDelta.getKind() == IResourceDelta.ADDED) {
+				int sev = markerDelta.getAttribute(IMarker.SEVERITY, -1);
+				if (sev == IMarker.SEVERITY_ERROR || sev == IMarker.SEVERITY_WARNING) {
+					return markerDelta.getMarker();
+				}
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * See IWorkbench
 	 */
