@@ -512,8 +512,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         	Class taskClass= getTaskClass(taskName);
         	if (taskClass != null) {
         		if (taskClass == MacroInstance.class) {
-        			addMacroDefProposals(taskName, prefix, proposals);
-                	
+        			addMacroDefAttributeProposals(taskName, prefix, proposals);
         		} else {
 	        		IntrospectionHelper helper= getIntrospectionHelper(taskClass);
 	        		if (helper != null) {
@@ -542,34 +541,73 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     	return helper;
     }
 
-    private void addMacroDefProposals(String taskName, String prefix, List proposals) {
+    private void addMacroDefAttributeProposals(String taskName, String prefix, List proposals) {
+    	currentProposalMode= PROPOSAL_MODE_ATTRIBUTE_PROPOSAL;
 		AntProjectNode projectNode= antModel.getProjectNode();
 		AntDefiningTaskNode node= projectNode.getDefininingTaskNode(taskName);
 		Object task= node.getRealTask();
-		if (task instanceof MacroDef) {
-			List attributes= ((MacroDef)task).getAttributes();
-			Iterator itr= attributes.iterator();
-			while (itr.hasNext()) {
-				MacroDef.Attribute attribute = (MacroDef.Attribute) itr.next();
-				String attributeName= attribute.getName();
-				if (prefix.length() == 0 || attributeName.toLowerCase().startsWith(prefix)) {
-					String replacementString = attributeName + "=\"\""; //$NON-NLS-1$
-					String proposalInfo = null;
-					
-					String description = attribute.getDescription();
-					if(description != null) {
-					    proposalInfo= description;
-					}
-					String deflt = attribute.getDefault();
-					if(deflt != null && deflt.length() > 0) {
-						proposalInfo= (proposalInfo == null ?  "<BR><BR>" : (proposalInfo += "<BR><BR>")); //$NON-NLS-1$ //$NON-NLS-2$
-						proposalInfo+= MessageFormat.format(AntEditorMessages.getString("AntEditorCompletionProcessor.59"), new String[]{deflt}); //$NON-NLS-1$
-					}
-					
-					ICompletionProposal proposal = new AntCompletionProposal(replacementString, cursorPosition - prefix.length(), prefix.length(), attributeName.length() + 2, null, attributeName, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
-					proposals.add(proposal);
-				}
+		if (!(task instanceof MacroDef)) {
+			return;
+		}
+		List attributes= ((MacroDef)task).getAttributes();
+		Iterator itr= attributes.iterator();
+		while (itr.hasNext()) {
+			MacroDef.Attribute attribute = (MacroDef.Attribute) itr.next();
+			String attributeName= attribute.getName();
+			if (!(prefix.length() == 0 || attributeName.toLowerCase().startsWith(prefix))) {
+				continue;
 			}
+			String replacementString = attributeName + "=\"\""; //$NON-NLS-1$
+			String proposalInfo = null;
+			
+			String description = attribute.getDescription();
+			if(description != null) {
+			    proposalInfo= description;
+			}
+			String deflt = attribute.getDefault();
+			if(deflt != null && deflt.length() > 0) {
+				proposalInfo= (proposalInfo == null ?  "<BR><BR>" : (proposalInfo += "<BR><BR>")); //$NON-NLS-1$ //$NON-NLS-2$
+				proposalInfo+= MessageFormat.format(AntEditorMessages.getString("AntEditorCompletionProcessor.59"), new String[]{deflt}); //$NON-NLS-1$
+			}
+			
+			ICompletionProposal proposal = new AntCompletionProposal(replacementString, cursorPosition - prefix.length(), prefix.length(), attributeName.length() + 2, null, attributeName, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
+			proposals.add(proposal);
+		}
+	}
+    
+    private void addMacroDefElementProposals(String taskName, String prefix, List proposals) {
+    	currentProposalMode= PROPOSAL_MODE_ATTRIBUTE_PROPOSAL;
+		AntProjectNode projectNode= antModel.getProjectNode();
+		AntDefiningTaskNode node= projectNode.getDefininingTaskNode(taskName);
+		Object task= node.getRealTask();
+		if (!(task instanceof MacroDef)) {
+			return;
+		}
+		Map elements= ((MacroDef)task).getElements();
+		Iterator itr= elements.keySet().iterator();
+		while (itr.hasNext()) {
+			String elementName = (String) itr.next();
+			if (!(prefix.length() == 0 || elementName.toLowerCase().startsWith(prefix))) {
+				continue;
+			}
+			MacroDef.TemplateElement element = (MacroDef.TemplateElement) elements.get(elementName);
+			String replacementString = MessageFormat.format("<{0}>\n</{1}>", new String[]{elementName, elementName}); //$NON-NLS-1$
+			String proposalInfo = null;
+			
+			String description = element.getDescription();
+			if(description != null) {
+			    proposalInfo= description;
+			}
+			proposalInfo= (proposalInfo == null ?  "<BR><BR>" : (proposalInfo += "<BR><BR>")); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			if(element.isOptional()) {
+				proposalInfo+= AntEditorMessages.getString("AntEditorCompletionProcessor.1"); //$NON-NLS-1$
+			} else {
+				proposalInfo+= AntEditorMessages.getString("AntEditorCompletionProcessor.2"); //$NON-NLS-1$
+			}
+			
+			ICompletionProposal proposal = new AntCompletionProposal(replacementString, cursorPosition - prefix.length(), prefix.length(), elementName.length() + 2, null, elementName, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
+			proposals.add(proposal);
 		}
 	}
 
@@ -787,17 +825,21 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 				//a nested element of a user defined task/type?
 				Class taskClass= getTaskClass(parentName);
 	        	if (taskClass != null) {
-	        		IntrospectionHelper helper= getIntrospectionHelper(taskClass);
-	        		if (helper != null) {
-		        		Enumeration nested= helper.getNestedElements();
-		        		String nestedElement;
-			        	while (nested.hasMoreElements()) {
-							nestedElement = (String) nested.nextElement();
-							if (prefix.length() == 0 || nestedElement.toLowerCase().startsWith(prefix)) {
-								proposal = newCompletionProposal(document, prefix, nestedElement);
-								proposals.add(proposal);
-							}
-				        }
+	        		if (taskClass == MacroInstance.class) {
+	        			addMacroDefElementProposals(parentName, prefix, proposals);
+	        		} else {
+		        		IntrospectionHelper helper= getIntrospectionHelper(taskClass);
+		        		if (helper != null) {
+			        		Enumeration nested= helper.getNestedElements();
+			        		String nestedElement;
+				        	while (nested.hasMoreElements()) {
+								nestedElement = (String) nested.nextElement();
+								if (prefix.length() == 0 || nestedElement.toLowerCase().startsWith(prefix)) {
+									proposal = newCompletionProposal(document, prefix, nestedElement);
+									proposals.add(proposal);
+								}
+					        }
+		        		}
 	        		}
 	        	}
 			}
@@ -1336,6 +1378,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 					try {
 						task.perform();
 					} catch (BuildException be) {
+						
 					}
 				}
             }

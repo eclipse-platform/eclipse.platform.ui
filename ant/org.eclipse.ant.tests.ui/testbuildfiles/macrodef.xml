@@ -11,6 +11,7 @@
 
 	<target name="type">
 		<eclipseMacro v="This is v">
+			
 		</eclipseMacro>
 	</target>
 

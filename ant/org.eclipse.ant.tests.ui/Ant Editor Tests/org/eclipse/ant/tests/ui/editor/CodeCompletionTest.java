@@ -324,6 +324,23 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertContains("eclipse", proposals);
     	assertTrue("Additional proposal information not correct", proposals[1].getAdditionalProposalInfo().startsWith("Testing Eclipse"));
 	}
+	
+	/**
+     * Tests the code completion for elements that have been defined via macrodef in the buildfile
+     */
+	public void testMacrodefElementProposals() throws BadLocationException {
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("macrodef.xml"));
+		int lineNumber= 13;
+    	int columnNumber= 3;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
+    	assertTrue(proposals.length == 1);
+    	assertTrue("Proposal not correct", proposals[0].getDisplayString().equals("some-tasks"));
+    	assertTrue("Additional proposal information not correct", proposals[0].getAdditionalProposalInfo().endsWith("Not required"));
+	}
 
     /**
      * Tests the code completion for tasks having parent tasks.
