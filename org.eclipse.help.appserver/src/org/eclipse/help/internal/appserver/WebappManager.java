@@ -109,7 +109,7 @@ public class WebappManager {
 					AppserverPlugin.PLUGIN_ID,
 					IStatus.OK,
 					AppserverResources.getString(
-						"Appserver.cannotFindPlugin",
+						"Appserver.cannotFindPlugin", //$NON-NLS-1$
 						pluginId),
 					null));
 		}
@@ -124,7 +124,7 @@ public class WebappManager {
 					AppserverPlugin.PLUGIN_ID,
 					IStatus.OK,
 					AppserverResources.getString(
-						"Appserver.cannotFindPath",
+						"Appserver.cannotFindPath", //$NON-NLS-1$
 						pluginId, path.toOSString()),
 					null));
 		}
@@ -139,7 +139,7 @@ public class WebappManager {
 					AppserverPlugin.PLUGIN_ID,
 					IStatus.OK,
 					AppserverResources.getString(
-						"Appserver.cannotResolvePath",
+						"Appserver.cannotResolvePath", //$NON-NLS-1$
 						pluginId, path.toOSString()),
 					ioe));
 		}

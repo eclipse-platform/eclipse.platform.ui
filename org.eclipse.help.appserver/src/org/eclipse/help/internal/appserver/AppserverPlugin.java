@@ -14,12 +14,12 @@ import org.osgi.framework.*;
 /**
  */
 public class AppserverPlugin extends Plugin {
-	public final static String PLUGIN_ID = "org.eclipse.help.appserver";
-	public final static String HOST_KEY = "host";
-	public final static String PORT_KEY = "port";
-	private final static String APP_SERVER_EXTENSION_ID = PLUGIN_ID + ".server";
-	private static final String APP_SERVER_CLASS_ATTRIBUTE = "class";
-	private static final String APP_SERVER_DEFAULT_ATTRIBUTE = "default";
+	public final static String PLUGIN_ID = "org.eclipse.help.appserver"; //$NON-NLS-1$
+	public final static String HOST_KEY = "host"; //$NON-NLS-1$
+	public final static String PORT_KEY = "port"; //$NON-NLS-1$
+	private final static String APP_SERVER_EXTENSION_ID = PLUGIN_ID + ".server"; //$NON-NLS-1$
+	private static final String APP_SERVER_CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
+	private static final String APP_SERVER_DEFAULT_ATTRIBUTE = "default"; //$NON-NLS-1$
 	// singleton object
 	private static AppserverPlugin plugin;
 	private static BundleContext bundleContext;
@@ -93,7 +93,7 @@ public class AppserverPlugin extends Plugin {
 				for (int i = 0; i < elements.length; i++) {
 					String defaultValue = elements[i]
 							.getAttribute(APP_SERVER_DEFAULT_ATTRIBUTE);
-					if (defaultValue == null || defaultValue.equals("false")) {
+					if (defaultValue == null || defaultValue.equals("false")) { //$NON-NLS-1$
 						serverElement = elements[i];
 						break;
 					}
@@ -118,13 +118,13 @@ public class AppserverPlugin extends Plugin {
 	private void startWebappServer() throws CoreException {
 		// Initialize host and port from preferences
 		hostAddress = getPluginPreferences().getString(HOST_KEY);
-		if ("".equals(hostAddress)) {
+		if ("".equals(hostAddress)) { //$NON-NLS-1$
 			hostAddress = null;
 		}
 		port = getPluginPreferences().getInt(PORT_KEY);
 		// apply host and port overrides passed as command line arguments
 		try {
-			String hostCommandLineOverride = System.getProperty("server_host");
+			String hostCommandLineOverride = System.getProperty("server_host"); //$NON-NLS-1$
 			if (hostCommandLineOverride != null
 					&& hostCommandLineOverride.trim().length() > 0) {
 				hostAddress = hostCommandLineOverride;
@@ -132,7 +132,7 @@ public class AppserverPlugin extends Plugin {
 		} catch (Exception e) {
 		}
 		try {
-			String portCommandLineOverride = System.getProperty("server_port");
+			String portCommandLineOverride = System.getProperty("server_port"); //$NON-NLS-1$
 			if (portCommandLineOverride != null
 					&& portCommandLineOverride.trim().length() > 0) {
 				port = Integer.parseInt(portCommandLineOverride);
@@ -142,7 +142,7 @@ public class AppserverPlugin extends Plugin {
 		if (appServer == null)
 			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID,
 					IStatus.OK,
-					AppserverResources.getString("Appserver.start"), null));
+					AppserverResources.getString("Appserver.start"), null)); //$NON-NLS-1$
 		appServer.start(port, hostAddress);
 	}
 }

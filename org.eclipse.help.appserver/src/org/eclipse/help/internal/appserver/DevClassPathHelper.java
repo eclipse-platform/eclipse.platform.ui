@@ -26,14 +26,14 @@ public class DevClassPathHelper {
 
 	static {
 		// Check the osgi.dev property to see if dev classpath entries have been defined.
-		String osgiDev = System.getProperty("osgi.dev");
+		String osgiDev = System.getProperty("osgi.dev"); //$NON-NLS-1$
 		if (osgiDev != null) {
 			try {
 				inDevelopmentMode = true;
 				URL location = new URL(osgiDev);
 				devProperties = load(location);
 				if (devProperties != null)
-					devDefaultClasspath = getArrayFromList(devProperties.getProperty("*"));
+					devDefaultClasspath = getArrayFromList(devProperties.getProperty("*")); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
 				devDefaultClasspath = getArrayFromList(osgiDev);
 			}
