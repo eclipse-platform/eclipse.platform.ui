@@ -50,6 +50,10 @@ public class BenchMiscWorkspace extends ResourceTest {
 			public void run(IProgressMonitor monitor) {
 			}
 		};
+		//run a first operation to make sure no other jobs are running before starting timer
+		ws.run(noop,null);
+		waitForBuild();
+		//now start the test
 		new PerformanceTestRunner() {
 			protected void test() {
 				try {
