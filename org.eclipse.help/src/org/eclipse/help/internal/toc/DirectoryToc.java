@@ -4,12 +4,13 @@
  */
 package org.eclipse.help.internal.toc;
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 import java.util.zip.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.ITopic;
+import org.eclipse.help.*;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 /** 
  * Toc created from files in a extra directory in a plugin.
@@ -82,7 +83,7 @@ public class DirectoryToc {
 				url = pluginDesc.getPlugin().find(new Path("doc.zip"));
 			}
 		} catch (CoreException ce) {
-			Logger.logError(
+			HelpPlugin.logError(
 				Resources.getString("E034", "/" + pluginID + "/doc.zip"),
 				ce);
 		}
@@ -104,7 +105,7 @@ public class DirectoryToc {
 				}
 			}
 		} catch (CoreException ce) {
-			Logger.logError(
+			HelpPlugin.logError(
 				Resources.getString("E035", "/" + pluginID + "/" + directory),
 				ce);
 		}
@@ -129,7 +130,9 @@ public class DirectoryToc {
 		try {
 			realZipURL = Platform.resolve(url);
 		} catch (IOException ioe) {
-			Logger.logError(Resources.getString("E036", url.toString()), ioe);
+			HelpPlugin.logError(
+				Resources.getString("E036", url.toString()),
+				ioe);
 			return new ArrayList(0);
 		}
 		ZipFile zipFile;
@@ -138,7 +141,7 @@ public class DirectoryToc {
 			ret = createExtraTopicsFromZipFile(pluginID, zipFile, directory);
 			zipFile.close();
 		} catch (IOException ioe) {
-			Logger.logError(
+			HelpPlugin.logError(
 				Resources.getString("E037", realZipURL.getFile()),
 				ioe);
 			return new ArrayList(0);
@@ -190,7 +193,9 @@ public class DirectoryToc {
 		try {
 			realURL = Platform.resolve(url);
 		} catch (IOException ioe) {
-			Logger.logError(Resources.getString("E038", url.toString()), ioe);
+			HelpPlugin.logError(
+				Resources.getString("E038", url.toString()),
+				ioe);
 			return col;
 		}
 		File dirFile = new File(realURL.getFile());

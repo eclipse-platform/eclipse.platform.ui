@@ -4,25 +4,24 @@
  */
 package org.eclipse.help.ui.internal.search;
 
-import java.lang.reflect.InvocationTargetException;
-import java.text.NumberFormat;
+import java.lang.reflect.*;
+import java.text.*;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.search.*;
-import org.eclipse.help.internal.util.Logger;
 import org.eclipse.help.ui.internal.*;
-import org.eclipse.help.ui.internal.util.WorkbenchResources;
+import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.search.ui.*;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.actions.*;
+import org.eclipse.ui.help.*;
 
 /**
  * Help Search Operation.
@@ -84,7 +83,9 @@ public class SearchOperation extends WorkspaceModifyOperation {
 			monitor.done();
 			throw oce;
 		} catch (Exception e) {
-			Logger.logError(WorkbenchResources.getString("WE021"), e);
+			WorkbenchHelpPlugin.logError(
+				WorkbenchResources.getString("WE021"),
+				e);
 		}
 		monitor.done();
 	}

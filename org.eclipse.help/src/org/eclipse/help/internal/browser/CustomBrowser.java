@@ -4,9 +4,9 @@
  */
 package org.eclipse.help.internal.browser;
 
+import org.eclipse.help.browser.*;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
-import org.eclipse.help.browser.IBrowser;
-import org.eclipse.help.internal.HelpPlugin;
 
 /**
  * 
@@ -30,7 +30,7 @@ public class CustomBrowser implements IBrowser {
 	/**
 	 * @see org.eclipse.help.ui.browser.IBrowser#displayURL(java.lang.String)
 	 */
-	public void displayURL(String url) throws Exception{
+	public void displayURL(String url) throws Exception {
 		String path =
 			HelpPlugin.getDefault().getPluginPreferences().getString(
 				CustomBrowser.CUSTOM_BROWSER_PATH_KEY);
@@ -43,16 +43,11 @@ public class CustomBrowser implements IBrowser {
 			errConsumer.setName("Custom browser adapter error reader");
 			errConsumer.start();
 		} catch (Exception e) {
-			Logger.logError(
-				Resources.getString(
-					"CustomBrowser.errorLaunching",
-					url,
-					path),
+			HelpPlugin.logError(
+				Resources.getString("CustomBrowser.errorLaunching", url, path),
 				e);
-			throw new Exception(Resources.getString(
-					"CustomBrowser.errorLaunching",
-					url,
-					path));
+			throw new Exception(
+				Resources.getString("CustomBrowser.errorLaunching", url, path));
 		}
 	}
 

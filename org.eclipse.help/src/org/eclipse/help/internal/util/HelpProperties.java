@@ -5,11 +5,10 @@ package org.eclipse.help.internal.util;
  */
 
 import java.io.*;
-import java.util.Properties;
+import java.util.*;
 
-import org.eclipse.core.runtime.Plugin;
-import org.eclipse.help.internal.HelpPlugin;
-
+import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.*;
 
 /**
  * Properties stored in HelpPlugin work area.
@@ -24,7 +23,7 @@ public class HelpProperties extends Properties {
 	public HelpProperties(String name) {
 		this(name, HelpPlugin.getDefault());
 	}
-	
+
 	/**
 	 * Creates empty Properties for the specified plugin
 	 * @param name name of the file;
@@ -33,12 +32,9 @@ public class HelpProperties extends Properties {
 	public HelpProperties(String name, Plugin plugin) {
 		super();
 		this.name = name;
-		file =
-			new File(
-				plugin.getStateLocation().toFile().getPath(),
-				name);
+		file = new File(plugin.getStateLocation().toFile().getPath(), name);
 	}
-	
+
 	/**
 	 * Restores contents of the Properties from a file.
 	 * @return true if persistant data was read in
@@ -57,7 +53,9 @@ public class HelpProperties extends Properties {
 			super.load(in);
 			loaded = true;
 		} catch (IOException ioe00) {
-			Logger.logError(Resources.getString("File4", file.getName()), null);
+			HelpPlugin.logError(
+				Resources.getString("File4", file.getName()),
+				null);
 		} finally {
 			if (in != null)
 				try {
@@ -79,8 +77,11 @@ public class HelpProperties extends Properties {
 			super.store(out, "This is a generated file; do not edit.");
 			ret = true;
 		} catch (IOException ioe00) {
-			Logger.logError(
-				Resources.getString("Exception_occured", name, file.getAbsolutePath()),
+			HelpPlugin.logError(
+				Resources.getString(
+					"Exception_occured",
+					name,
+					file.getAbsolutePath()),
 				null);
 		} finally {
 			try {

@@ -5,6 +5,7 @@ package org.eclipse.help.internal.browser;
  */
 import java.io.*;
 
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 
 /**
@@ -25,7 +26,7 @@ public class StreamConsumer extends Thread {
 			}
 			bReader.close();
 		} catch (IOException ioe) {
-			Logger.logError(Resources.getString("WE001"), ioe);
+			HelpPlugin.logError(Resources.getString("WE001"), ioe);
 		}
 	}
 }

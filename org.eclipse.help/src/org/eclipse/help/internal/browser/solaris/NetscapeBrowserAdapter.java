@@ -3,13 +3,12 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.browser.solaris;
-import java.io.IOException;
+import java.io.*;
 
+import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.browser.*;
 import org.eclipse.help.internal.util.*;
-import org.eclipse.help.internal.util.Logger;
-import org.eclipse.help.browser.IBrowser;
 
 public class NetscapeBrowserAdapter implements IBrowser {
 	// delay that it takes the browser to start responding
@@ -105,7 +104,7 @@ public class NetscapeBrowserAdapter implements IBrowser {
 		} catch (IOException e) {
 			String msg =
 				Resources.getString("NetscapeBrowserAdapter.executeFailed");
-			Logger.logError(msg, e);
+			HelpPlugin.logError(msg, e);
 			HelpSystem.getDefaultErrorUtil().displayError(msg, uiThread);
 		} finally {
 			opened = false;

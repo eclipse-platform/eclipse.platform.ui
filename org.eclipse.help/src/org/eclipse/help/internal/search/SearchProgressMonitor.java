@@ -6,9 +6,9 @@ package org.eclipse.help.internal.search;
 
 import java.util.*;
 
-import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 
 /**
@@ -145,7 +145,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 				} catch (Exception e) {
 					progressMonitors.remove(locale);
 					e.printStackTrace();
-					Logger.logError(
+					HelpPlugin.logError(
 						Resources.getString("search_index_update_error"),
 						null);
 				}

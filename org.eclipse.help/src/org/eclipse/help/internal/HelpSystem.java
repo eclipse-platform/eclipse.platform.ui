@@ -9,7 +9,7 @@ import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.browser.*;
-import org.eclipse.help.internal.appserver.WebappManager;
+import org.eclipse.help.internal.appserver.*;
 import org.eclipse.help.internal.browser.*;
 import org.eclipse.help.internal.context.*;
 import org.eclipse.help.internal.search.*;
@@ -30,7 +30,6 @@ public final class HelpSystem {
 		"org.eclipse.help.support";
 	private static final String HELP_SUPPORT_CLASS_ATTRIBUTE = "class";
 
-	public final static String LOG_LEVEL_KEY = "log_level";
 	public final static String BANNER_KEY = "banner";
 	public final static String BANNER_HEIGHT_KEY = "banner_height";
 	public final static String LINKS_VIEW_KEY = "linksView";
@@ -99,7 +98,7 @@ public final class HelpSystem {
 	public static WorkingSetManager getWorkingSetManager() {
 		return getWorkingSetManager(BootLoader.getNL());
 	}
-	
+
 	public static WorkingSetManager getWorkingSetManager(String locale) {
 		if (getInstance().workingSetManagers == null) {
 			getInstance().workingSetManagers = new HashMap();
@@ -137,7 +136,7 @@ public final class HelpSystem {
 	 *   this plug-in 
 	 */
 	public static void shutdown() throws CoreException {
-		if(HelpPlugin.DEBUG){
+		if (HelpPlugin.DEBUG) {
 			System.out.println("Help System is shutting down.");
 		}
 		if (getInstance().searchManager != null) {
@@ -151,8 +150,7 @@ public final class HelpSystem {
 		// close any browsers created
 		BrowserManager.getInstance().closeAll();
 
-		Logger.shutdown();
-		if(HelpPlugin.DEBUG){
+		if (HelpPlugin.DEBUG) {
 			System.out.println("Help System is shut down.");
 		}
 	}
@@ -172,7 +170,6 @@ public final class HelpSystem {
 
 			});
 			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
-			Logger.setDebugLevel(prefs.getInt(LOG_LEVEL_KEY));
 		} catch (Exception e) {
 			HelpPlugin.getDefault().getLog().log(
 				new Status(
@@ -185,7 +182,7 @@ public final class HelpSystem {
 					Resources.getString("E005"),
 					e));
 		}
-		if(HelpPlugin.DEBUG){
+		if (HelpPlugin.DEBUG) {
 			System.out.println("Help System started.");
 		}
 	}
@@ -203,7 +200,7 @@ public final class HelpSystem {
 						webappPlugin,
 						Path.EMPTY);
 				} catch (CoreException e) {
-					Logger.logError("ensureWebappRunning()", e);
+					HelpPlugin.logError("ensureWebappRunning()", e);
 					return false;
 				}
 			}
@@ -211,7 +208,7 @@ public final class HelpSystem {
 			try {
 				WebappManager.start("help", webappPlugin, Path.EMPTY);
 			} catch (CoreException e) {
-				Logger.logError("ensureWebappRunning()", e);
+				HelpPlugin.logError("ensureWebappRunning()", e);
 				return false;
 			}
 			getInstance().webappRunning = true;
@@ -314,15 +311,15 @@ public final class HelpSystem {
 							// may need to change this
 							HelpPlugin.getDefault().getLog().log(e.getStatus());
 						}
-					} 
+					}
 				}
 			}
 		}
-		
+
 		// if no extension point found or instantiated, use default impl
 		if (helpSupport == null)
 			helpSupport = new DefaultHelpSupport();
-			
+
 		return helpSupport;
 	}
 }

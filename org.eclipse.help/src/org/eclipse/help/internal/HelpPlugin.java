@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2002.
+ * (c) Copyright IBM Corp. 2000, 2003.
  * All Rights Reserved.
  */
 package org.eclipse.help.internal;
@@ -8,11 +8,47 @@ import org.eclipse.core.runtime.*;
  * Simple plugin for a remote help system.
  */
 public class HelpPlugin extends Plugin {
+	public final static String PLUGIN_ID = "org.eclipse.help";
 	// debug options
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_CONSOLELOG = false;
+	public static boolean DEBUG_CONTEXT = false;
+	public static boolean DEBUG_PROTOCOLS = false;
+	public static boolean DEBUG_SEARCH = false;
 
 	protected static HelpPlugin plugin;
+	/** 
+	 * Logs an Error message with an exception. Note that the message should already 
+	 * be localized to proper locale.
+	 * ie: Resources.getString() should already have been called
+	 */
+	public static synchronized void logError(String message, Throwable ex) {
+		if (message == null)
+			message = "";
+		Status errorStatus =
+			new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, ex);
+		HelpPlugin.getDefault().getLog().log(errorStatus);
+	}
+	/** 
+	 * Logs a Warning message with an exception. Note that the message should already 
+	 * be localized to proper local.
+	 * ie: Resources.getString() should already have been called
+	 */
+	public static synchronized void logWarning(String message) {
+		if (HelpPlugin.DEBUG) {
+			if (message == null)
+				message = "";
+			Status warningStatus =
+				new Status(
+					IStatus.WARNING,
+					PLUGIN_ID,
+					IStatus.OK,
+					message,
+					null);
+			HelpPlugin.getDefault().getLog().log(warningStatus);
+		}
+	}
+
 	/**
 	 * HelpViewerPlugin constructor. It is called as part of plugin
 	 * activation.
@@ -93,8 +129,11 @@ public class HelpPlugin extends Plugin {
 		DEBUG = isDebugging();
 		if (DEBUG) {
 			DEBUG_CONSOLELOG = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.help/debug/consolelog")); //$NON-NLS-1$
+			DEBUG_CONTEXT = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.help/debug/context")); //$NON-NLS-1$
+			DEBUG_PROTOCOLS = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.help/debug/protocols")); //$NON-NLS-1$
+			DEBUG_SEARCH = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.help/debug/search")); //$NON-NLS-1$
 		}
-		
+
 		HelpSystem.startup();
 	}
 
@@ -105,6 +144,5 @@ public class HelpPlugin extends Plugin {
 	*/
 	protected void initializeDefaultPluginPreferences() {
 		Preferences prefs = getPluginPreferences();
-		prefs.setDefault(HelpSystem.LOG_LEVEL_KEY,0);
 	}
 }

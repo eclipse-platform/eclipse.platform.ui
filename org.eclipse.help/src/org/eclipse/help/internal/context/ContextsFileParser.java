@@ -7,6 +7,7 @@ import java.io.*;
 import java.text.*;
 
 import org.apache.xerces.parsers.*;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
@@ -30,11 +31,11 @@ public class ContextsFileParser extends DefaultHandler {
 		throws SAXException {
 		if (seenDescription)
 			buffer.append(ch, start, length);
-		if (Logger.DEBUG)
-			Logger.logDebugMessage(
-				"ContextsFileParser",
-				"got char from parser= "
+		if (HelpPlugin.DEBUG_CONTEXT) {
+			System.out.println(
+				"ContextsFileParser.characters(): got char from parser= "
 					+ new StringBuffer().append(ch, start, length).toString());
+		}
 	}
 	/**
 	  * Receive notification of the end of an element.
@@ -61,7 +62,7 @@ public class ContextsFileParser extends DefaultHandler {
 	 */
 	public void error(SAXParseException ex) {
 		String message = getMessage("E001", ex);
-		Logger.logError(message, null);
+		HelpPlugin.logError(message, null);
 		RuntimeHelpStatus.getInstance().addParseError(
 			message,
 			ex.getSystemId());
@@ -71,7 +72,7 @@ public class ContextsFileParser extends DefaultHandler {
 	 */
 	public void fatalError(SAXParseException ex) throws SAXException {
 		String message = getMessage("E002", ex);
-		Logger.logError(message, ex);
+		HelpPlugin.logError(message, ex);
 		RuntimeHelpStatus.getInstance().addParseError(
 			message,
 			ex.getSystemId());
@@ -128,7 +129,7 @@ public class ContextsFileParser extends DefaultHandler {
 	}
 	public void warning(SAXParseException ex) {
 		String message = getMessage("E003", ex);
-		Logger.logWarning(message);
+		HelpPlugin.logWarning(message);
 	}
 	public void parse(ContextsFile contextsFile) {
 		this.contextsFile = contextsFile;
@@ -152,10 +153,10 @@ public class ContextsFileParser extends DefaultHandler {
 			parser.parse(inputSource);
 			is.close();
 		} catch (SAXException se) {
-			Logger.logError("", se);
+			HelpPlugin.logError("", se);
 		} catch (IOException ioe) {
 			String msg = Resources.getString("E009", file);
-			Logger.logError(msg, ioe);
+			HelpPlugin.logError(msg, ioe);
 			// now pass it to the RuntimeHelpStatus object explicitly because we
 			// still need to display errors even if Logging is turned off.
 			RuntimeHelpStatus.getInstance().addParseError(msg, file);

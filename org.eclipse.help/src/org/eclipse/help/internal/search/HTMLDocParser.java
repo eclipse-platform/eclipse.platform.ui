@@ -5,6 +5,7 @@ import java.net.*;
 import java.util.*;
 
 import org.apache.lucene.demo.html.*;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 
 /**
@@ -64,21 +65,25 @@ public class HTMLDocParser {
 						new InputStreamReader(inputStream, encoding));
 
 			} catch (UnsupportedEncodingException uee) {
-				Logger.logDebugMessage(
-					this.getClass().getName(),
-					"JVM does not support encoding "
-						+ encoding
-						+ " specified in document "
-						+ url.getPath()
-						+ ". Default encoding will be used during indexing.");
+				if (HelpPlugin.DEBUG_SEARCH) {
+					System.out.println(
+						this.getClass().getName()
+							+ " JVM does not support encoding "
+							+ encoding
+							+ " specified in document "
+							+ url.getPath()
+							+ ". Default encoding will be used during indexing.");
+				}
 				htmlParser = new HTMLParser(new InputStreamReader(inputStream));
 			}
 		} else {
-			Logger.logDebugMessage(
-				this.getClass().getName(),
-				"Encoding not found in document "
-					+ url.getPath()
-					+ ". Default encoding will be used during indexing.");
+			if (HelpPlugin.DEBUG_SEARCH) {
+				System.out.println(
+					this.getClass().getName()
+						+ " Encoding not found in document "
+						+ url.getPath()
+						+ ". Default encoding will be used during indexing.");
+			}
 			htmlParser = new HTMLParser(new InputStreamReader(inputStream));
 		}
 	}
@@ -166,18 +171,18 @@ public class HTMLDocParser {
 				token != StreamTokenizer.TT_EOF;
 				token = tokenizer.nextToken()) {
 				// debug tokens
-//				if (token == StreamTokenizer.TT_WORD) {
-//					System.out.println("word     =" + tokenizer.sval);
-//				} else if (token == StreamTokenizer.TT_NUMBER) {
-//					System.out.println("number   =" + tokenizer.nval);
-//				} else if (token == StreamTokenizer.TT_EOL) {
-//					System.out.println("endofline=");
-//				} else if ((char) token == '\"') {
-//					System.out.println("\"     =" + tokenizer.sval);
-//
-//				} else {
-//					System.out.println("else     =" + (char) token);
-//				}
+				//				if (token == StreamTokenizer.TT_WORD) {
+				//					System.out.println("word     =" + tokenizer.sval);
+				//				} else if (token == StreamTokenizer.TT_NUMBER) {
+				//					System.out.println("number   =" + tokenizer.nval);
+				//				} else if (token == StreamTokenizer.TT_EOL) {
+				//					System.out.println("endofline=");
+				//				} else if ((char) token == '\"') {
+				//					System.out.println("\"     =" + tokenizer.sval);
+				//
+				//				} else {
+				//					System.out.println("else     =" + (char) token);
+				//				}
 
 				// process input based depending on current state
 				switch (stateElement) {

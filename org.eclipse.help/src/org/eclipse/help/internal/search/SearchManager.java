@@ -7,6 +7,7 @@ package org.eclipse.help.internal.search;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 
 /**
@@ -79,15 +80,17 @@ public class SearchManager {
 		SearchIndex index = getIndex(searchQuery.getLocale());
 		try {
 			updateIndex(pm, index);
-			if(!index.exists()){
+			if (!index.exists()) {
 				//no indexable documents, hence no index
 				//or index is corrupted
 				return;
 			}
 		} catch (IndexingOperation.IndexingException ie) {
-			Logger.logDebugMessage(
-				this.getClass().getName(),
-				"IndexUpdateException occured.");
+			if (HelpPlugin.DEBUG_SEARCH) {
+				System.out.println(
+					this.getClass().getName()
+						+ " IndexUpdateException occured.");
+			}
 		}
 		index.search(searchQuery, collector);
 	}
@@ -120,10 +123,10 @@ public class SearchManager {
 					progressDistrib.removeMonitor(pm);
 					return;
 				}
-				if (Logger.DEBUG)
-					Logger.logDebugMessage(
-						"Search Manager",
-						"indexing " + index.getLocale());
+				if (HelpPlugin.DEBUG_SEARCH) {
+					System.out.println(
+						"SearchManager indexing " + index.getLocale());
+				}
 				// Perform indexing
 				try {
 					PluginVersionInfo versions = index.getDocPlugins();
@@ -138,7 +141,8 @@ public class SearchManager {
 					indexer.execute(progressDistrib);
 				} catch (OperationCanceledException oce) {
 					progressDistrib.operationCanceled();
-					Logger.logWarning(Resources.getString("Search_cancelled"));
+					HelpPlugin.logWarning(
+						Resources.getString("Search_cancelled"));
 					throw oce;
 				}
 			}

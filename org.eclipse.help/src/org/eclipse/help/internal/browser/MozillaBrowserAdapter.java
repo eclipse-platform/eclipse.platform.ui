@@ -5,12 +5,10 @@
 package org.eclipse.help.internal.browser;
 import java.io.*;
 
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
+import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.util.*;
-import org.eclipse.help.internal.util.Logger;
-import org.eclipse.help.browser.IBrowser;
 
 /**
  * Browser adapter for browsers supporting
@@ -149,8 +147,8 @@ public class MozillaBrowserAdapter implements IBrowser {
 					Resources.getString(
 						"MozillaBrowserAdapter.executeFailed",
 						executableName);
-				Logger.logError(msg, e);
-				HelpSystem.getDefaultErrorUtil().displayError(msg, uiThread);	
+				HelpPlugin.logError(msg, e);
+				HelpSystem.getDefaultErrorUtil().displayError(msg, uiThread);
 				// return success so second command does not execute
 				return 0;
 			}

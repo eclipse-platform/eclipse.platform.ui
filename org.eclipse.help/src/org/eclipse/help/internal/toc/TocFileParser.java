@@ -8,6 +8,7 @@ import java.text.*;
 import java.util.*;
 
 import org.apache.xerces.parsers.*;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
@@ -33,7 +34,7 @@ class TocFileParser extends DefaultHandler {
 	public void error(SAXParseException ex) throws SAXException {
 		String message = getMessage("E024", ex);
 		//Error parsing Table of Contents file, URL: %1 at Line:%2 Column:%3 %4
-		Logger.logError(message, null);
+		HelpPlugin.logError(message, null);
 		RuntimeHelpStatus.getInstance().addParseError(
 			message,
 			ex.getSystemId());
@@ -45,7 +46,7 @@ class TocFileParser extends DefaultHandler {
 		// create message string from exception
 		String message = getMessage("E025", ex);
 		//Failed to parse Table of Contents file, URL: %1 at Line:%2 Column:%3 %4
-		Logger.logError(message, ex);
+		HelpPlugin.logError(message, ex);
 		RuntimeHelpStatus.getInstance().addParseError(
 			message,
 			ex.getSystemId());
@@ -86,11 +87,11 @@ class TocFileParser extends DefaultHandler {
 		} catch (SAXException se) {
 			String msg = Resources.getString("E026", file);
 			//Error loading Table of Contents file %1.
-			Logger.logError(msg, se);
+			HelpPlugin.logError(msg, se);
 		} catch (IOException ioe) {
 			String msg = Resources.getString("E026", file);
 			//Error loading Table of Contents file %1.
-			Logger.logError(msg, ioe);
+			HelpPlugin.logError(msg, ioe);
 			// now pass it to the RuntimeHelpStatus object explicitly because we
 			// still need to display errors even if Logging is turned off.
 			RuntimeHelpStatus.getInstance().addParseError(msg, file);

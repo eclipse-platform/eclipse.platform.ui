@@ -7,13 +7,13 @@ package org.eclipse.help.internal.webapp.servlet;
 import java.io.*;
 import java.util.*;
 
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.search.*;
-import org.eclipse.help.internal.util.Logger;
+import org.eclipse.help.internal.webapp.*;
 
 /**
  * Returns search results.
@@ -72,9 +72,8 @@ public class SearchServlet extends HttpServlet {
 				pm);
 			hits = results.getSearchHits();
 		} catch (Exception e) {
-			Logger.logError("", e);
-		}
-		finally {
+			HelpWebappPlugin.logError("", e);
+		} finally {
 			if (hits == null)
 				hits = new SearchHit[0];
 			return hits;

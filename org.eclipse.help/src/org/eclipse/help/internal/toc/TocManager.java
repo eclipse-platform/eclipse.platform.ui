@@ -7,7 +7,7 @@ import java.util.*;
 
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.IToc;
+import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 
@@ -33,7 +33,7 @@ public class TocManager {
 			// Note: this can be removed, and build on first invocation...
 			build(BootLoader.getNL());
 		} catch (Exception e) {
-			Logger.logError("", e);
+			HelpPlugin.logError("", e);
 		}
 	}
 
@@ -98,7 +98,7 @@ public class TocManager {
 			orderedTocs.toArray(tocs);
 		} catch (Exception e) {
 			tocs = new IToc[0];
-			Logger.logError("", e);
+			HelpPlugin.logError("", e);
 		}
 		tocsByLang.put(locale, tocs);
 	}
@@ -146,7 +146,7 @@ public class TocManager {
 				}
 			}
 		} catch (Exception e) {
-			Logger.logError(Resources.getString("E039"), e);
+			HelpPlugin.logError(Resources.getString("E039"), e);
 		}
 		return orderedTocs;
 	}
@@ -171,13 +171,16 @@ public class TocManager {
 		Collection contributedTocFiles = new ArrayList();
 		// find extension point
 		IExtensionPoint xpt =
-			Platform.getPluginRegistry().getExtensionPoint("org.eclipse.help", "toc");
+			Platform.getPluginRegistry().getExtensionPoint(
+				"org.eclipse.help",
+				"toc");
 		if (xpt == null)
 			return contributedTocFiles;
 		// get all extensions
 		IExtension[] extensions = xpt.getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
-			contributingPlugins.add(extensions[i].getDeclaringPluginDescriptor());
+			contributingPlugins.add(
+				extensions[i].getDeclaringPluginDescriptor());
 			// add to TopicFiles declared in this extension
 			IConfigurationElement[] configElements =
 				extensions[i].getConfigurationElements();
@@ -189,11 +192,19 @@ public class TocManager {
 							.getDeclaringPluginDescriptor()
 							.getUniqueIdentifier();
 					String href = configElements[j].getAttribute("file");
-					boolean isPrimary = "true".equals(configElements[j].getAttribute("primary"));
-					String extraDir = configElements[j].getAttribute("extradir");
+					boolean isPrimary =
+						"true".equals(
+							configElements[j].getAttribute("primary"));
+					String extraDir =
+						configElements[j].getAttribute("extradir");
 					if (href != null) {
 						contributedTocFiles.add(
-							new TocFile(pluginId, href, isPrimary, locale, extraDir));
+							new TocFile(
+								pluginId,
+								href,
+								isPrimary,
+								locale,
+								extraDir));
 					}
 				}
 		}

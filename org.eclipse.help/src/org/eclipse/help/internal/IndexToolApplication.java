@@ -9,7 +9,6 @@ import java.util.zip.*;
 
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.util.*;
 
 /**
  * application org.eclipse.help.indexTool
@@ -51,7 +50,7 @@ public class IndexToolApplication
 		} catch (Exception e) {
 			System.out.println(e);
 			e.printStackTrace();
-			Logger.logError("Preindexing failed", e);
+			HelpPlugin.logError("Preindexing failed", e);
 		}
 		return EXIT_OK;
 	}

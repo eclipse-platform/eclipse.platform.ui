@@ -92,7 +92,9 @@ public class SearchIndex {
 				try {
 					parser.openDocument(url);
 				} catch (IOException ioe) {
-					Logger.logError(Resources.getString("ES25", name), null);
+					HelpPlugin.logError(
+						Resources.getString("ES25", name),
+						null);
 					return false;
 				}
 				ParsedDocument parsed =
@@ -114,7 +116,7 @@ public class SearchIndex {
 			indexedDocs.put(name, "0");
 			return true;
 		} catch (IOException e) {
-			Logger.logError(
+			HelpPlugin.logError(
 				Resources.getString("ES16", name, indexDir.getAbsolutePath()),
 				e);
 			return false;
@@ -149,7 +151,7 @@ public class SearchIndex {
 			iw.maxFieldLength = 1000000;
 			return true;
 		} catch (IOException e) {
-			Logger.logError(Resources.getString("ES17"), e);
+			HelpPlugin.logError(Resources.getString("ES17"), e);
 			return false;
 		}
 	}
@@ -169,7 +171,7 @@ public class SearchIndex {
 			ir = IndexReader.open(indexDir);
 			return true;
 		} catch (IOException e) {
-			Logger.logError(Resources.getString("ES18"), e);
+			HelpPlugin.logError(Resources.getString("ES18"), e);
 			return false;
 		}
 	}
@@ -184,7 +186,7 @@ public class SearchIndex {
 			ir.delete(term);
 			indexedDocs.remove(name);
 		} catch (IOException e) {
-			Logger.logError(
+			HelpPlugin.logError(
 				Resources.getString("ES22", name, indexDir.getAbsolutePath()),
 				e);
 			return false;
@@ -211,7 +213,7 @@ public class SearchIndex {
 			setInconsistent(false);
 			return true;
 		} catch (IOException e) {
-			Logger.logError(Resources.getString("ES19"), e);
+			HelpPlugin.logError(Resources.getString("ES19"), e);
 			return false;
 		}
 	}
@@ -234,7 +236,7 @@ public class SearchIndex {
 			setInconsistent(false);
 			return true;
 		} catch (IOException e) {
-			Logger.logError(Resources.getString("ES20"), e);
+			HelpPlugin.logError(Resources.getString("ES20"), e);
 			return false;
 		}
 	}
@@ -278,7 +280,7 @@ public class SearchIndex {
 				collector.addHits(hits, highlightTerms);
 			}
 		} catch (Exception e) {
-			Logger.logError(
+			HelpPlugin.logError(
 				Resources.getString("ES21", searchQuery.getSearchWord()),
 				e);
 		}
@@ -449,10 +451,10 @@ public class SearchIndex {
 				}
 				fos.close();
 			}
-			if (Logger.DEBUG)
-				Logger.logDebugMessage(
-					"SearchIndex",
-					"Prebuilt index restored to " + destDir + ".");
+			if (HelpPlugin.DEBUG_SEARCH) {
+				System.out.println(
+					"SearchIndex: Prebuilt index restored to " + destDir + ".");
+			}
 
 		} catch (IOException ioe) {
 			if (fos != null) {

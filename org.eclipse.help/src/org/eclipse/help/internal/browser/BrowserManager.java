@@ -6,10 +6,9 @@ package org.eclipse.help.internal.browser;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.util.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.util.*;
 
 /**
  * Creates browser by delegating
@@ -75,7 +74,7 @@ public class BrowserManager {
 						public void displayURL(String url) {
 							String msg =
 								Resources.getString("no_browsers", url);
-							Logger.logError(msg, null);
+							HelpPlugin.logError(msg, null);
 							HelpSystem.getDefaultErrorUtil().displayError(msg);
 						}
 						public boolean isCloseSupported() {

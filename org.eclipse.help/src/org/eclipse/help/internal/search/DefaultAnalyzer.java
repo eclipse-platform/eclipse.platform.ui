@@ -9,6 +9,7 @@ import java.util.*;
 
 import org.apache.lucene.analysis.*;
 import org.eclipse.core.boot.*;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 /**
  * Lucene Analyzer.
@@ -57,7 +58,9 @@ public class DefaultAnalyzer extends Analyzer {
 
 		if (locale == null) {
 			// Locale is not supported, will use en_US
-			Logger.logError(Resources.getString("ES24", localeString), null);
+			HelpPlugin.logError(
+				Resources.getString("ES24", localeString),
+				null);
 			locale = new Locale("en", "US");
 		}
 	}

@@ -5,7 +5,8 @@ package org.eclipse.help.ui.internal.util;
  */
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.help.ui.internal.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 /**
@@ -41,7 +42,7 @@ public class ErrorUtil implements IErrorUtil {
 			shell = new Shell();
 		}
 		MessageDialog.openError(shell, title, msg);
-		Logger.logError(msg, null);
+		WorkbenchHelpPlugin.logError(msg, null);
 	}
 	/**
 	 * Immidiately displays error dialog with a given string,
@@ -59,7 +60,7 @@ public class ErrorUtil implements IErrorUtil {
 			shell = new Shell();
 		}
 		MessageDialog.openError(shell, title, msg);
-		Logger.logError(msg, ex);
+		WorkbenchHelpPlugin.logError(msg, ex);
 	}
 	/**
 	 * Immidiately displays an Information dialog with a given string,

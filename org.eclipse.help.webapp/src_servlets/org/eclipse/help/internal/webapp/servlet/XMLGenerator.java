@@ -6,6 +6,7 @@ package org.eclipse.help.internal.webapp.servlet;
 import java.io.*;
 
 import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.webapp.*;
 /**
  * Helper class to generate xml files.
  */
@@ -22,7 +23,7 @@ public class XMLGenerator {
 	 */
 	public XMLGenerator(Writer writer) {
 		if (writer instanceof PrintWriter)
-			this.out = (PrintWriter)writer;
+			this.out = (PrintWriter) writer;
 		else
 			this.out = new PrintWriter(writer);
 	}
@@ -36,12 +37,16 @@ public class XMLGenerator {
 			out =
 				new PrintWriter(
 					new BufferedWriter(
-						new OutputStreamWriter(new FileOutputStream(outFile), "UTF8")),
+						new OutputStreamWriter(
+							new FileOutputStream(outFile),
+							"UTF8")),
 					false /* no aotoFlush */
 			);
 			println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		} catch (IOException ioe) {
-			Logger.logError(Resources.getString("E014", outFile.getAbsolutePath()), ioe);
+			HelpWebappPlugin.logError(
+				Resources.getString("E014", outFile.getAbsolutePath()),
+				ioe);
 		}
 	}
 
@@ -57,7 +62,9 @@ public class XMLGenerator {
 		out.close();
 		if (out.checkError())
 			if (outFile != null)
-				Logger.logError(Resources.getString("E015", outFile.getAbsolutePath()), null);
+				HelpWebappPlugin.logError(
+					Resources.getString("E015", outFile.getAbsolutePath()),
+					null);
 		out = null;
 	}
 	public void print(Object o) {

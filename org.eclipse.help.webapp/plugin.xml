@@ -3,7 +3,8 @@
    id="org.eclipse.help.webapp"
    name="%help_plugin_name"
    version="2.1.0"
-   provider-name="%providerName">
+   provider-name="%providerName"
+   class="org.eclipse.help.internal.webapp.HelpWebappPlugin">
 
    <runtime>
       <library name="webapp.jar">

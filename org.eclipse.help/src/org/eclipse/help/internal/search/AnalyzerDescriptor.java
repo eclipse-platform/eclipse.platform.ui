@@ -6,9 +6,9 @@ package org.eclipse.help.internal.search;
 
 import java.util.*;
 
-import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 
 /**
@@ -125,7 +125,7 @@ public class AnalyzerDescriptor {
 					}
 				}
 			} catch (CoreException ce) {
-				Logger.logError(
+				HelpPlugin.logError(
 					Resources.getString(
 						"ES23",
 						configElements[i].getAttribute("class"),

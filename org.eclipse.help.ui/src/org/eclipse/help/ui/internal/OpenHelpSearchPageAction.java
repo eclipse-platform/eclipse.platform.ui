@@ -4,11 +4,10 @@ package org.eclipse.help.ui.internal;
  * All Rights Reserved.
  */
 
-import org.eclipse.help.internal.util.Logger;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.search.ui.SearchUI;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.search.ui.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
 /**
@@ -31,7 +30,7 @@ public class OpenHelpSearchPageAction
 	public void run(IAction action) {
 		if (fWindow == null || fWindow.getActivePage() == null) {
 			beep();
-			Logger.logError("Could not open the search dialog - for some reason the window handle was null", null); //$NON-NLS-1$
+			WorkbenchHelpPlugin.logError("Could not open the search dialog - for some reason the window handle was null", null); //$NON-NLS-1$
 			return;
 		}
 		SearchUI.openSearchDialog(fWindow, HELP_SEARCH_PAGE_ID);

@@ -16,6 +16,7 @@ import org.eclipse.ui.plugin.*;
   * plugin if the plugin class is moved into the base help.
   */
 public class WorkbenchHelpPlugin extends AbstractUIPlugin {
+	public final static String PLUGIN_ID = "org.eclipse.help.ui";
 	// debug options
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_IE_ADAPTER = false;
@@ -24,6 +25,38 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 
 	private static WorkbenchHelpPlugin plugin;
 	private HelpWorkingSetSynchronizer workingSetListener;
+
+	/** 
+	 * Logs an Error message with an exception. Note that the message should already 
+	 * be localized to proper locale.
+	 * ie: WorkbenchResources.getString() should already have been called
+	 */
+	public static synchronized void logError(String message, Throwable ex) {
+		if (message == null)
+			message = "";
+		Status errorStatus =
+			new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, ex);
+		HelpPlugin.getDefault().getLog().log(errorStatus);
+	}
+	/** 
+	 * Logs a Warning message with an exception. Note that the message should already 
+	 * be localized to proper local.
+	 * ie: WorkbenchResources.getString() should already have been called
+	 */
+	public static synchronized void logWarning(String message) {
+		if (HelpPlugin.DEBUG) {
+			if (message == null)
+				message = "";
+			Status warningStatus =
+				new Status(
+					IStatus.WARNING,
+					PLUGIN_ID,
+					IStatus.OK,
+					message,
+					null);
+			HelpPlugin.getDefault().getLog().log(warningStatus);
+		}
+	}
 
 	/**
 	 * WorkbenchHelpPlugin constructor. It is called as part of plugin

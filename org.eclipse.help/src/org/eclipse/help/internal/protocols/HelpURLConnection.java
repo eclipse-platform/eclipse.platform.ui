@@ -5,9 +5,9 @@
 package org.eclipse.help.internal.protocols;
 import java.io.*;
 import java.net.*;
-import java.util.Date;
+import java.util.*;
 
-import org.eclipse.help.internal.util.Logger;
+import org.eclipse.help.internal.*;
 public class HelpURLConnection extends URLConnection {
 	private HelpURL helpURL = null;
 	/**
@@ -17,8 +17,9 @@ public class HelpURLConnection extends URLConnection {
 		super(url);
 		helpURL = HelpURLFactory.createHelpURL(url.getFile());
 		setDefaultUseCaches(helpURL.isCacheable());
-		if (Logger.DEBUG)
-			Logger.logDebugMessage("HelpURLConnection", "url= " + url);
+		if (HelpPlugin.DEBUG_PROTOCOLS) {
+			System.out.println("HelpURLConnection: url=" + url);
+		}
 	}
 	/**
 	 * @see URLConnection#connect()

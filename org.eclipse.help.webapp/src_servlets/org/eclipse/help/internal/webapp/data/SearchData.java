@@ -3,17 +3,17 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.webapp.data;
-import java.text.NumberFormat;
+import java.text.*;
 import java.util.*;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.webapp.*;
 import org.eclipse.help.internal.webapp.servlet.*;
-import org.eclipse.help.internal.webapp.servlet.UrlUtil;
 
 /**
  * Helper class for searchView.jsp initialization
@@ -180,7 +180,7 @@ public class SearchData extends RequestData {
 	public String getScope() {
 		if (workingSetName != null)
 			return workingSetName;
-			
+
 		if (isSearchRequest()) {
 			workingSetName = request.getParameter("scope");
 			// if we have already set the working set, then use it.
@@ -202,7 +202,7 @@ public class SearchData extends RequestData {
 			workingSetName = ServletResources.getString("All", request);
 		return workingSetName;
 	}
-	
+
 	/**
 	 * This method is used to persist the working set name and is called from
 	 * the search view, after each search
@@ -222,9 +222,9 @@ public class SearchData extends RequestData {
 			HelpPlugin.getDefault().savePluginPreferences();
 		}
 	} /**
-			* Call the search engine, and get results or the percentage of 
-			* indexed documents.
-			*/
+				* Call the search engine, and get results or the percentage of 
+				* indexed documents.
+				*/
 	private void loadSearchResults() {
 		try {
 			SearchProgressMonitor pm =
@@ -238,7 +238,9 @@ public class SearchData extends RequestData {
 					pm);
 				hits = results.getSearchHits();
 				if (hits == null) {
-					Logger.logError(Resources.getString("index_is_busy"), null);
+					HelpWebappPlugin.logError(
+						Resources.getString("index_is_busy"),
+						null);
 				}
 				return;
 			} else {
