@@ -72,7 +72,6 @@ public class Model implements IModel {
 	}
 
 	protected static final String[] fOps = {"?",",","|","&","!!!"};
-	private LinkedList fAny;
 
 	private Nfm qualifyNfm(Nfm nfm) {
 		if (nfm == null)
@@ -112,8 +111,9 @@ public class Model implements IModel {
 		else if (fContentsList != null) {
 			copy.fContentsList = new LinkedList();
 			Iterator it = fContentsList.iterator();
-			while (it.hasNext())
+			while (it.hasNext()) {
 				copy.fContentsList.add(it.next());
+			}
 		}
 		return copy;
 	}
@@ -126,14 +126,14 @@ public class Model implements IModel {
 	}
 
 	/**
-	 * @see org.eclipse.ui.externaltools.internal.ant.dtd.IMoorg.eclipse.ui.externaltools.internal.ant.dtdrs()
+	 * @see org.eclipse.ui.externaltools.internal.ant.dtd.IModel#getMinOccurs()
 	 */
 	public int getMinOccurs() {
 		return fMin;
 	}
 
 	/**
-	 * @see org.eclipse.ui.extorg.eclipse.ui.externaltools.internal.ant.dtdernal.ant.dtd.IModel#getMaxOccurs()
+	 * @see org.eclipse.ui.externaltools.internal.ant.dtd.IModel#getMaxOccurs()
 	 */
 	public int getMaxOccurs() {
 		return fMax;
@@ -227,10 +227,11 @@ public class Model implements IModel {
 					nfm = contents[0].toNfm();
 					for (int i = 1; i < contents.length; i++) {
 						Nfm tmp = contents[i].toNfm();
-						if (fKind == SEQUENCE)
+						if (fKind == SEQUENCE) {
 							nfm = Nfm.getComma(nfm, tmp);
-						else
+						} else {
 							nfm = Nfm.getOr(nfm, tmp);
+						}
 					}
 				}
 				break;
