@@ -256,6 +256,8 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 	
 	/*
 	 * Update the sync info of the local resource in such a way that the remote resource can be loaded ignore any local changes.
+	 * 
+	 * XXX This is a quick fix to allow conflicts to be loaded and has not been tested for non-conflict cases
 	 */
 	public void makeIncoming(IProgressMonitor monitor) throws TeamException {
 		
