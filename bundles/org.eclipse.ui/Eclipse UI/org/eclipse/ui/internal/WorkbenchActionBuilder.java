@@ -52,6 +52,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private static final String activateEditorActionDefId = "org.eclipse.ui.window.activateEditor"; //$NON-NLS-1$
 	private static final String workbenchEditorsActionDefId = "org.eclipse.ui.window.switchToEditor";	 //$NON-NLS-1$
 	
+	private static final String workbenchToolGroupId = "org.eclipse.ui.internal";
+	
 	//pin editor group in the toolbar
 	private static final String pinEditorGroup = "pinEditorGroup"; //$NON-NLS-1$
 	
@@ -161,14 +163,15 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 				}
 			}
 		}
-		IContributionManager toolManager = window.getToolsManager();
-		try {
-			toolManager.prependToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAction);
-			toolManager.prependToGroup(IWorkbenchActionConstants.BUILD_EXT, new Separator());
-			toolManager.update(true);
-		} catch (IllegalArgumentException e) {
-			// group not found
-		}
+		IContributionManager toolsManager = window.getToolsManager();
+		IContributionManager tBarMgr = toolsManager;
+		if (toolsManager instanceof CoolBarManager) {
+			CoolBarContributionItem groupItem = (CoolBarContributionItem)toolsManager.find(workbenchToolGroupId);
+			tBarMgr = groupItem.getToolBarManager();
+		} 
+		tBarMgr.prependToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAction);
+		tBarMgr.prependToGroup(IWorkbenchActionConstants.BUILD_EXT, new Separator());
+		tBarMgr.update(true);
 	}
 	
 	/**
@@ -597,7 +600,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		} else if (manager instanceof CoolBarManager) {
 			// Create a CoolBar item for the workbench
 			CoolBarManager cBarMgr = (CoolBarManager)manager;
-			CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, "org.eclipse.ui.internal"); //$NON-NLS-1$
+			CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, workbenchToolGroupId); //$NON-NLS-1$
 			coolBarItem.setVisible(true);
 			toolsManager = (IContributionManager)coolBarItem.getToolBarManager();
 			cBarMgr.addToMenu(new ActionContributionItem(lockToolBarAction));
@@ -612,18 +615,16 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		toolsManager.add(saveAsAction);
 		toolsManager.add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
 		toolsManager.add(printAction);
-		// Only add the manual incremental build if auto build off
-		if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-			toolsManager.add(new Separator());
-			toolsManager.add(buildAction);
-		}
 		toolsManager.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
 		toolsManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		toolsManager.add(new GroupMarker(pinEditorGroup));
+		// Only add the manual incremental build if auto build off
+		if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
+			toolsManager.prependToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAction);
+			toolsManager.prependToGroup(IWorkbenchActionConstants.BUILD_EXT, new Separator());
+		}
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		if(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
-			pinEditorAction.setVisible(true);
-			toolsManager.add(pinEditorAction);
+			addPinEditorAction();
 		}
 	}
 	/**
@@ -979,27 +980,38 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	 * Adds the pin action to the toolbar.
 	 */
 	private void addPinEditorAction() {
-		IToolBarManager toolbar = window.getToolsManager();
-		try {
+		IToolBarManager toolsMgr = window.getToolsManager();
+		if (toolsMgr instanceof CoolBarManager) {
+			CoolBarManager cBarMgr = (CoolBarManager)toolsMgr;
+			CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, pinEditorGroup); //$NON-NLS-1$
+			coolBarItem.setVisible(true);
 			pinEditorAction.setVisible(true);
-			toolbar.insertAfter(pinEditorGroup,pinEditorAction);
-			toolbar.update(true);
-		} catch (IllegalArgumentException e) {
-			// action was not in toolbar
-		}		
+			IContributionManager toolBarMgr = (IContributionManager)coolBarItem.getToolBarManager();
+			toolBarMgr.add(pinEditorAction);
+		} else {
+			toolsMgr.add(new GroupMarker(pinEditorGroup));
+			pinEditorAction.setVisible(true);
+			toolsMgr.insertAfter(pinEditorGroup,pinEditorAction);
+		} 
+		toolsMgr.update(true);
 	}
 	/*
 	 * Removes the pin action from the toolbar.
 	 */	
 	private void removePinEditorAction() {
-		IToolBarManager toolbar = window.getToolsManager();
-		try {
+		IToolBarManager toolsMgr = window.getToolsManager();
+		if (toolsMgr instanceof CoolBarManager) {
+			CoolBarManager cBarMgr = (CoolBarManager)toolsMgr;
+			CoolBarContributionItem coolBarItem = (CoolBarContributionItem)cBarMgr.find(pinEditorGroup); //$NON-NLS-1$
 			pinEditorAction.setVisible(false);
-			toolbar.remove(pinEditorAction.getId());
-			toolbar.update(true);
-		} catch (IllegalArgumentException e) {
-			// action was not in toolbar
-		}
+			IContributionManager toolBarMgr = (IContributionManager)coolBarItem.getToolBarManager();
+			toolBarMgr.remove(pinEditorAction.getId());
+			cBarMgr.remove(coolBarItem);
+		} else {
+			pinEditorAction.setVisible(false);
+			toolsMgr.remove(pinEditorAction.getId());
+		} 
+		toolsMgr.update(true);
 	}		
 	/**
 	 * Remove the manual incremental build action
@@ -1028,12 +1040,13 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 				}
 			}
 		}
-		IContributionManager toolManager = window.getToolsManager();
-		try {
-			toolManager.remove(IWorkbenchActionConstants.BUILD);
-			toolManager.update(true);
-		} catch (IllegalArgumentException e) {
-			// action was not in toolbar
-		}
+		IContributionManager toolsManager = window.getToolsManager();
+		IContributionManager tBarMgr = toolsManager;
+		if (toolsManager instanceof CoolBarManager) {
+			CoolBarContributionItem groupItem = (CoolBarContributionItem)toolsManager.find(workbenchToolGroupId);
+			tBarMgr = groupItem.getToolBarManager();
+		} 
+		tBarMgr.remove(IWorkbenchActionConstants.BUILD);
+		tBarMgr.update(true);
 	}
 }
