@@ -52,10 +52,6 @@ public class ContainerSelectionDialog extends SelectionDialog {
 	
 	// show closed projects by default
 	private boolean showClosedProjects = true;
-
-	// sizing constants
-	private static final int	SIZING_SELECTION_PANE_HEIGHT = 250;
-	private static final int	SIZING_SELECTION_PANE_WIDTH = 300;
 /**
  * Creates a resource container selection dialog rooted at the given resource.
  * All selections are considered valid. 
