@@ -34,6 +34,13 @@ public class DragUtil {
 	private static final String DROP_TARGET_ID = "org.eclipse.ui.internal.dnd.dropTarget"; //$NON-NLS-1$
 	
 	/**
+	 * The location where all drags will end. If this is non-null, then
+	 * all user input is ignored in drag/drop. If null, we use user input
+	 * to determine where objects should be dropped.
+	 */
+	private static Point forcedDropTarget = null;
+	
+	/**
 	 * Singleton drag listener
 	 */
 	private static DragListener listener = new DragListener();
@@ -126,6 +133,43 @@ public class DragUtil {
 		return true;
 	}
 	
+        
+	/**
+	 * Drags the given item to the given location (in display coordinates). This
+	 * method is intended for use by test suites.
+	 * 
+	 * @param draggedItem object being dragged
+	 * @param finalLocation location being dragged to
+	 * @return true iff the drop was accepted
+	 */
+	public static boolean dragTo(Display display, Object draggedItem, Point finalLocation, Rectangle dragRectangle) {
+		Control currentControl = SwtUtil.findControl(display, finalLocation);
+		
+		IDropTarget target = getDropTarget(currentControl, draggedItem, finalLocation, dragRectangle); 
+		
+		if (target == null) {
+			return false;
+		}
+		
+		target.drop();
+		
+		return true;		
+	}
+    
+	/**
+	 * Forces all drags to end at the given position (display coordinates). Intended
+	 * for use by test suites. If this method is called, then all subsequent calls
+	 * to performDrag will terminate immediately and behave as though the object were
+	 * dragged to the given location. Calling this method with null cancels this 
+	 * behavior and causes performDrag to behave normally. 
+	 * 
+	 * @param forcedLocation location where objects will be dropped (or null to
+	 * cause drag/drop to behave normally).
+	 */
+	public static void forceDropLocation(Point forcedLocation) {
+		forcedDropTarget = forcedLocation; 
+	}
+    
 	/**
 	 * Drags the given item, given an initial bounding rectangle in display coordinates.
 	 * Due to a quirk in the Tracker class, changing the tracking rectangle when using the
@@ -148,6 +192,12 @@ public class DragUtil {
 		// As it moves we notify the drag listeners.
 		final Tracker tracker = new Tracker(display, SWT.NULL);
 				
+		if (forcedDropTarget != null) {
+			Control currentControl = SwtUtil.findControl(display, forcedDropTarget);
+
+			return getDropTarget(currentControl, draggedItem, forcedDropTarget, sourceBounds); 
+		}
+		
 		tracker.setStippled(true);
 		
 		tracker.addListener(SWT.Move, new Listener() {
