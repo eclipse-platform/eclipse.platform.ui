@@ -12,7 +12,7 @@ package org.eclipse.core.internal.runtime;
 
 /**
  * Platform URL support
- * platform:/fragment/<fragmentId>/		maps to fragmentDescriptor.getInstallURLInternal()
+ * platform:/fragment/fragmentId/		maps to fragmentDescriptor.getInstallURLInternal()
  */
 
 import java.io.IOException;
@@ -21,10 +21,8 @@ import org.eclipse.core.internal.boot.PlatformURLConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.osgi.framework.Bundle;
 
-//TODO Remove some deadcode
 public class PlatformURLFragmentConnection extends PlatformURLConnection {
 
-	// fragment/ protocol
 	private Bundle target = null;
 	private static boolean isRegistered = false;
 	public static final String FRAGMENT = "fragment"; //$NON-NLS-1$
@@ -46,7 +44,6 @@ public class PlatformURLFragmentConnection extends PlatformURLConnection {
 		int ix = spec.indexOf("/", FRAGMENT.length() + 1); //$NON-NLS-1$
 		String ref = ix == -1 ? spec.substring(FRAGMENT.length() + 1) : spec.substring(FRAGMENT.length() + 1, ix);
 		String id = getId(ref);
-		String vid = getVersion(ref);
 		target = InternalPlatform.getDefault().getBundle(id);
 		if (target == null)
 			throw new IOException(Policy.bind("url.resolveFragment", url.toString())); //$NON-NLS-1$

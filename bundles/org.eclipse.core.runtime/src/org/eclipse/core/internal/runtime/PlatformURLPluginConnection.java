@@ -12,7 +12,7 @@ package org.eclipse.core.internal.runtime;
 
 /**
  * Platform URL support
- * platform:/plugin/<pluginId>/		maps to pluginDescriptor.getInstallURLInternal()
+ * platform:/plugin/pluginId/		maps to pluginDescriptor.getInstallURLInternal()
  */
 
 import java.io.IOException;
@@ -21,13 +21,10 @@ import org.eclipse.core.internal.boot.PlatformURLConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.osgi.framework.Bundle;
 
-//TODO Remove some deadcode
 public class PlatformURLPluginConnection extends PlatformURLConnection {
 
-	// plugin/ protocol
 	private Bundle target = null;
 	private static boolean isRegistered = false;
-	private URL[] fragmentURLs = null;
 	public static final String PLUGIN = "plugin"; //$NON-NLS-1$
 
 	public PlatformURLPluginConnection(URL url) {
@@ -47,7 +44,6 @@ public class PlatformURLPluginConnection extends PlatformURLConnection {
 		int ix = spec.indexOf("/", PLUGIN.length() + 1); //$NON-NLS-1$
 		String ref = ix == -1 ? spec.substring(PLUGIN.length() + 1) : spec.substring(PLUGIN.length() + 1, ix);
 		String id = getId(ref);
-		String vid = getVersion(ref);
 		target = InternalPlatform.getDefault().getBundle(id);
 		if (target == null)
 			throw new IOException(Policy.bind("url.resolvePlugin", url.toString())); //$NON-NLS-1$
@@ -76,7 +72,6 @@ public class PlatformURLPluginConnection extends PlatformURLConnection {
 			int ix = spec.indexOf("/", PLUGIN.length() + 1); //$NON-NLS-1$
 			String ref = ix == -1 ? spec.substring(PLUGIN.length() + 1) : spec.substring(PLUGIN.length() + 1, ix);
 			String id = getId(ref);
-			String vid = getVersion(ref);
 			target = InternalPlatform.getDefault().getBundle(id);
 			if (target == null)
 				throw new IOException(Policy.bind("url.resolvePlugin", url.toString())); //$NON-NLS-1$
