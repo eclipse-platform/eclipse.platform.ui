@@ -13,8 +13,8 @@ package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.window.Window;
 
 /**
  * An action which renames a breakpoint group.
@@ -32,7 +32,7 @@ public class RenameBreakpointGroupAction extends AbstractBreakpointGroupAction {
 		for (int i = 0; i < groups.length; i++) {
 		    String group= groups[i];
 		    InputDialog dialog= new InputDialog(fView.getViewSite().getShell(), "Rename Group", "Specify the new name for the group:", group, null);
-			if (dialog.open() != Dialog.OK) {
+			if (dialog.open() != Window.OK) {
 				return;
 			}
 			String newGroup = dialog.getValue();

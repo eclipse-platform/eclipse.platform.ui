@@ -17,11 +17,11 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -96,7 +96,7 @@ public class SetDefaultBreakpointGroupAction extends AbstractBreakpointsViewActi
             dialog.setMultipleSelection(false);
             dialog.setMessage("Choose a group");
             dialog.setTitle("Choose Default Group");
-            if (dialog.open() != Dialog.OK) {
+            if (dialog.open() != Window.OK) {
                 return;
             }
             Object[] result = dialog.getResult();
@@ -113,7 +113,7 @@ public class SetDefaultBreakpointGroupAction extends AbstractBreakpointsViewActi
             currentGroup= "";
         }
         InputDialog dialog= new SetDefaultGroupDialog(fView.getViewSite().getShell(), "Set Default Group", "Specify the group in which new breakpoints will be automatically placed:", currentGroup, null);
-        if (dialog.open() != Dialog.OK) {
+        if (dialog.open() != Window.OK) {
             return;
         }
         String group= dialog.getValue();
