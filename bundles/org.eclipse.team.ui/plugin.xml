@@ -21,7 +21,6 @@
 
 
    <extension-point id="configurationWizards" name="%configurationWizards" schema="schema/configurationWizards.exsd"/>
-   <extension-point id="targetConfigWizards" name="%targetWizards"/>
    <extension-point id="subscriberMenus" name="%subscriberMenus"/>
 
 <!-- **************** PREFERENCES ******************* -->
@@ -43,26 +42,6 @@
             category="org.eclipse.team.ui.TeamPreferences"
             class="org.eclipse.team.internal.ui.preferences.IgnorePreferencePage"
             id="org.eclipse.team.ui.IgnorePreferences">
-      </page>
-   </extension>
-<!-- ************** Property Pages *************** -->
-   <extension
-         point="org.eclipse.ui.propertyPages">
-      <page
-            objectClass="org.eclipse.team.internal.ui.target.SiteElement"
-            name="%loginDetails"
-            class="org.eclipse.team.internal.ui.target.AuthenticatedTargetSitePropertiesPage"
-            id="org.eclipse.team.target.ui.propertyPages.AuthenticatedTargetSitePropertiesPage">
-      </page>
-      <page
-            objectClass="org.eclipse.core.resources.IProject"
-            name="%targetSite"
-            class="org.eclipse.team.internal.ui.target.ProjectTargetMappingPropertiesPage"
-            id="org.eclipse.team.internal.ui.target.ProjectTargetMappingPropertiesPage">
-         <filter
-               name="projectPersistentProperty"
-               value="org.eclipse.team.target=basic">
-         </filter>
       </page>
    </extension>
 <!-- ****************** POPUP ACTIONS *************** -->
@@ -125,66 +104,6 @@
                menubarPath="team.main/projectGroup"
                enablesFor="1"
                id="org.eclipse.team.ui.ConfigureProject">
-         </action>
-      </objectContribution>
-<!-- ****************** Target Management Popup Actions *************** -->
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IResource"
-            adaptable="true"
-            id="org.eclipse.team.ui.targetResourceContributionsActions">
-         <filter
-               name="projectPersistentProperty"
-               value="org.eclipse.team.target=basic">
-         </filter>
-         <action
-               label="%Deployment.getAction"
-               helpContextId="org.eclipse.team.ui.target_get_action_context"
-               class="org.eclipse.team.internal.ui.target.GetAction"
-               menubarPath="replaceWithMenu/replaceWithGroup"
-               id="org.eclipse.team.target.getAction">
-         </action>
-         <action
-               label="%Deployment.uploadAction"
-               helpContextId="org.eclipse.team.ui.target_put_action_context"
-               class="org.eclipse.team.internal.ui.target.UploadAction"
-               menubarPath="team.main/targetGroup"
-               id="org.eclipse.team.target.uploadAction">
-         </action>
-         <action
-               label="%Deployment.synchronize"
-               helpContextId="org.eclipse.team.ui.target_synchronize_action_context"
-               class="org.eclipse.team.internal.ui.target.SyncAction"
-               menubarPath="team.main/targetGroup"
-               id="org.eclipse.team.target.SyncAction">
-         </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.team.internal.ui.target.RemoteResourceElement"
-            id="org.eclipse.team.internal.ui.target.RemoteResourceElement">
-         <action
-               label="%SiteExplorerGetAs.label"
-               helpContextId="org.eclipse.team.ui.target_getas_action_context"
-               tooltip="%SiteExplorerGetAs.tooltip"
-               class="org.eclipse.team.internal.ui.target.GetAsAction"
-               id="org.eclipse.team.internal.ui.target.GetAsAction">
-         </action>
-         <action
-               label="%SiteExplorerGetAsProject.label"
-               helpContextId="org.eclipse.team.ui.target_getasproject_action_context"
-               tooltip="%SiteExplorerGetAsProject.tooltip"
-               class="org.eclipse.team.internal.ui.target.GetAsProjectAction"
-               id="org.eclipse.team.internal.ui.target.GetAsProjectAction">
-         </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.team.internal.ui.target.SiteElement"
-            id="org.eclipse.team.internal.ui.target.SiteElement">
-         <action
-               label="%SiteExplorerDiscardSite.label"
-               helpContextId="org.eclipse.team.ui.target_disconnect_action_context"
-               tooltip="%SiteExplorerDiscardSite.tooltip"
-               class="org.eclipse.team.internal.ui.target.DiscardSiteAction"
-               id="org.eclipse.team.internal.ui.target.DiscardSiteAction">
          </action>
       </objectContribution>
    </extension>
@@ -277,12 +196,6 @@
                visible="false"
                relationship="stack"
                id="org.eclipse.team.ui.sync.SyncView">
-         </view>
-         <view
-               relative="org.eclipse.ui.views.ResourceNavigator"
-               visible="false"
-               relationship="stack"
-               id="org.eclipse.team.ui.target.SiteExplorerView">
          </view>
       </perspectiveExtension>
       <perspectiveExtension

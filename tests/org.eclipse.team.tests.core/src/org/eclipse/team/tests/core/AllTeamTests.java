@@ -31,9 +31,6 @@ public class AllTeamTests extends EclipseWorkspaceTest {
 		super(name);
 	}
 
-	/*
-	 * ORDER IS IMPORTANT: Run compatibility and resource tests before any other!!!
-	 */
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 		suite.addTest(RepositoryProviderTests.suite());

@@ -84,15 +84,5 @@
             id="org.eclipse.team.tests.core.linking">
       </repository>
    </extension>
-<!-- *************** Test application **************** -->
-   <extension
-         id="testapplication"
-         point="org.eclipse.core.runtime.applications">
-      <application>
-         <run
-               class="org.eclipse.team.tests.ftp.TestApplication">
-         </run>
-      </application>
-   </extension>
 
 </plugin>

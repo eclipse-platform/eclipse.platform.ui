@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.target.TargetManager;
 
 /**
  * <code>TeamPlugin</code> is the plug-in runtime class for the Team 
@@ -46,8 +45,6 @@ final public class TeamPlugin extends Plugin {
 	public static final String PROJECT_SET_EXTENSION = "projectSets"; //$NON-NLS-1$
 	// The id of the targets extension point
 	public static final String REPOSITORY_EXTENSION = "repository"; //$NON-NLS-1$
-	// The id of the targets extension point
-	public static final String TARGETS_EXTENSION = "targets"; //$NON-NLS-1$
 
 
 	// The one and only plug-in instance
@@ -67,7 +64,6 @@ final public class TeamPlugin extends Plugin {
 	public void startup() throws CoreException {
 		Policy.localize("org.eclipse.team.internal.core.messages"); //$NON-NLS-1$
 		Team.startup();
-		TargetManager.startup();
 	}
 	
 	/**

@@ -58,7 +58,6 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	
 	// extension points
 	public static final String PT_CONFIGURATION ="configurationWizards"; //$NON-NLS-1$
-	public static final String PT_TARGETCONFIG ="targetConfigWizards"; //$NON-NLS-1$
 	public static final String PT_DECORATORS = "decorators"; //$NON-NLS-1$	
 	
 	private static List propertyChangeListeners = new ArrayList(5);

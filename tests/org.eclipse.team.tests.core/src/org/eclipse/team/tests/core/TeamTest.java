@@ -14,12 +14,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -30,21 +27,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
-import org.eclipse.team.internal.core.target.IRemoteTargetResource;
-import org.eclipse.team.internal.core.target.Site;
-import org.eclipse.team.internal.core.target.TargetManager;
-import org.eclipse.team.internal.core.target.TargetProvider;
 
 public class TeamTest extends EclipseWorkspaceTest {
 	protected static IProgressMonitor DEFAULT_MONITOR = new NullProgressMonitor();
 	protected static final IProgressMonitor DEFAULT_PROGRESS_MONITOR = new NullProgressMonitor();
 
-	Properties properties;
 
 	public TeamTest() {
 		super();
@@ -52,13 +43,7 @@ public class TeamTest extends EclipseWorkspaceTest {
 	public TeamTest(String name) {
 		super(name);
 	}
-	/**
-	* @see TestCase#setUp()
-	*/
-	protected void setUp() throws Exception {
-		super.setUp();
-		properties = TargetTestSetup.properties;
-	}
+
 	protected IProject getNamedTestProject(String name) throws CoreException {
 		IProject target = getWorkspace().getRoot().getProject(name);
 		if (!target.exists()) {
@@ -77,18 +62,7 @@ public class TeamTest extends EclipseWorkspaceTest {
 	protected IStatus getTeamTestStatus(int severity) {
 		return new Status(severity, "org.eclipse.team.tests.core", 0, "team status", null);
 	}
-		/**
-	 * Retrieves the Site object that the TargetProvider is contained in.
-	 * @return Site
-	 */
-	Site getSite() {
-		try {
-			URL url = new URL(properties.getProperty("location"));
-			return TargetManager.getSite(properties.getProperty("target"), url);
-		} catch (MalformedURLException e) {
-			return null;
-		}
-	}
+
 	/**
 	 * Creates filesystem 'resources' with the given names and fills them with random text.
 	 * @param container An object that can hold the newly created resources.
@@ -161,21 +135,7 @@ public class TeamTest extends EclipseWorkspaceTest {
 				return "these are my contents";
 		}
 	}
-	public TargetProvider createProvider(IProject project) throws TeamException {
-		// Ensure the remote folder exists
-		IRemoteTargetResource remote = getSite().getRemoteResource().getFolder(
-			new Path(properties.getProperty("test_dir")).append(project.getName()).toString());
-		if (! remote.exists(null)) {
-			remote.mkdirs(null);
-		}
-		TargetManager.map(project, getSite(), new Path(properties.getProperty("test_dir")).append(project.getName()));
-		TargetProvider target = getProvider(project);
-		return target;
-	}
-	
-	public TargetProvider getProvider(IProject project) throws TeamException {
-		return TargetManager.getProvider(project);
-	}
+
 	
 	public void sleep(int ms) {
 		try {
@@ -184,14 +144,7 @@ public class TeamTest extends EclipseWorkspaceTest {
 			System.err.println("Testing was rudely interrupted.");
 		}
 	}
-	void assertLocalEqualsRemote(IProject project) throws CoreException, TeamException {
-		IProject newProject = getNamedTestProject("equals");
-		TargetProvider target = TargetManager.getProvider(project);
-		IResource[] localResources = project.members();
-		for (int i = 0; i < localResources.length; i++) {
-			assertEquals(target.getRemoteResourceFor(localResources[i]), localResources[i]);
-		}
-	}
+
 	// Assert that the two containers have equal contents
 	protected void assertEquals(IRemoteResource container1, IResource container2) throws CoreException, TeamException {
 		if (container2.getType() == IResource.FILE) {
@@ -206,13 +159,6 @@ public class TeamTest extends EclipseWorkspaceTest {
 				assertEquals(remoteResources[i], localResources[i]);
 			}
 		}
-	}
-	protected IProject createAndPut(String projectPrefix, String[] resourceNames) throws CoreException, TeamException {
-		IProject project = getUniqueTestProject(projectPrefix);
-		IResource[] resources = buildResources(project, resourceNames, false);
-		TargetProvider target = createProvider(project);
-		target.put(resources, DEFAULT_MONITOR);
-		return project;
 	}
 
 	public void appendText(IResource resource, String text, boolean prepend) throws CoreException, IOException {
