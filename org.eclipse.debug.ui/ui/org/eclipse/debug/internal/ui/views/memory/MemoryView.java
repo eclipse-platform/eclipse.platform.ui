@@ -246,36 +246,6 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 	/**
 	 * 
 	 */
-	private void createMemoryViewPane() {
-		IAction[] actions;
-		
-		MemoryViewPane memoryViewPane = new MemoryViewPane(this);
-		fViewPanes.put(MemoryViewPane.MEMORY_VIEW_PANE_ID, memoryViewPane);
-		ViewForm memoryViewForm = new ViewForm(fSashForm, SWT.FLAT);
-		fViewPaneControls.put(MemoryViewPane.MEMORY_VIEW_PANE_ID, memoryViewForm);
-		fWeights.add(new Integer(40));
-		
-		Control memoryControl = memoryViewPane.createViewPane(memoryViewForm, MemoryViewPane.MEMORY_VIEW_PANE_ID);
-		memoryViewForm.setContent(memoryControl);
-		memoryViewPane.addSelectionListener(fSelectionProvider);
-		
-		ToolBarManager memoryViewMgr = new ToolBarManager(SWT.FLAT);	
-		actions = memoryViewPane.getActions();
-		for (int i=0; i<actions.length; i++)
-		{
-			memoryViewMgr.add(actions[i]);
-		}
-		ToolBar memoryToolbar = memoryViewMgr.createControl(memoryViewForm);
-		memoryViewForm.setTopRight(memoryToolbar);
-
-		Label memoryLabel = new Label(memoryViewForm, SWT.WRAP);
-		memoryLabel.setText(DebugUIMessages.getString("MemoryView.Memory_renderings")); //$NON-NLS-1$
-		memoryViewForm.setTopLeft(memoryLabel);
-	}
-
-	/**
-	 * 
-	 */
 	private void createMemoryBlocksTreeViewPane(Composite parent) {
 		
 		fMemBlkViewer = new MemoryBlocksTreeViewPane(this);
