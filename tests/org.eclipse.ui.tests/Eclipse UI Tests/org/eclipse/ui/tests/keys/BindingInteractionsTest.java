@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.keys;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -101,11 +101,12 @@ public final class BindingInteractionsTest extends UITestCase {
 		bindings.add(binding2);
 		bindingManager.setBindings(bindings);
 
-		final Map activeBindings = bindingManager.getActiveBindings();
-		final Object activeCommandId = activeBindings
-				.get(TestBinding.TRIGGER_SEQUENCE);
-
-		assertEquals("Neither binding should be active", null, activeCommandId);
+		Collection activeBindings = bindingManager
+				.getActiveBindingsFor(binding1.getCommandId());
+		assertTrue("Neither binding should be active", activeBindings.isEmpty());
+		activeBindings = bindingManager.getActiveBindingsFor(binding2
+				.getCommandId());
+		assertTrue("Neither binding should be active", activeBindings.isEmpty());
 	}
 
 	/**
@@ -142,37 +143,27 @@ public final class BindingInteractionsTest extends UITestCase {
 		final Set activeContextIds = new HashSet();
 		activeContextIds.add("parent");
 		contextManager.setActiveContextIds(activeContextIds);
-
-		Map activeBindings = bindingManager.getActiveBindings();
-		Object activeCommandId = activeBindings
-				.get(TestBinding.TRIGGER_SEQUENCE);
-
 		assertEquals(
 				"When only the parent context is active, only the parent binding is active.",
-				binding1.getCommandId(), activeCommandId);
+				binding1.getCommandId(), bindingManager
+						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
 
 		// Only "child"
 		activeContextIds.clear();
 		activeContextIds.add("child");
 		contextManager.setActiveContextIds(activeContextIds);
-
-		activeBindings = bindingManager.getActiveBindings();
-		activeCommandId = activeBindings.get(TestBinding.TRIGGER_SEQUENCE);
-
 		assertEquals(
 				"When only the child context is active, only the child binding is active.",
-				binding2.getCommandId(), activeCommandId);
+				binding2.getCommandId(), bindingManager
+						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
 
 		// Both "parent" and "child"
 		activeContextIds.add("parent");
 		contextManager.setActiveContextIds(activeContextIds);
-
-		activeBindings = bindingManager.getActiveBindings();
-		activeCommandId = activeBindings.get(TestBinding.TRIGGER_SEQUENCE);
-
 		assertEquals(
 				"When both contexts are active, only the child binding is active.",
-				binding2.getCommandId(), activeCommandId);
+				binding2.getCommandId(), bindingManager
+						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
 	}
 
 	/**
@@ -203,13 +194,8 @@ public final class BindingInteractionsTest extends UITestCase {
 		bindings.add(binding1);
 		bindings.add(binding2);
 		bindingManager.setBindings(bindings);
-
-		final Map activeBindings = bindingManager.getActiveBindings();
-		final Object activeCommandId = activeBindings
-				.get(TestBinding.TRIGGER_SEQUENCE);
-
 		assertEquals("The user should be able to remove bindings", null,
-				activeCommandId);
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
 	}
 
 	/**
@@ -245,14 +231,10 @@ public final class BindingInteractionsTest extends UITestCase {
 		bindings.add(binding2);
 		bindings.add(binding3);
 		bindingManager.setBindings(bindings);
-
-		final Map activeBindings = bindingManager.getActiveBindings();
-		final Object activeCommandId = activeBindings
-				.get(TestBinding.TRIGGER_SEQUENCE);
-
 		assertEquals(
 				"A binding should not cause a deletion if its locale or platform doesn't match",
-				binding2.getCommandId(), activeCommandId);
+				binding2.getCommandId(), bindingManager
+						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
 	}
 
 	/**
@@ -287,13 +269,9 @@ public final class BindingInteractionsTest extends UITestCase {
 		bindings.add(binding2);
 		bindings.add(binding3);
 		bindingManager.setBindings(bindings);
-
-		final Map activeBindings = bindingManager.getActiveBindings();
-		final Object activeCommandId = activeBindings
-				.get(TestBinding.TRIGGER_SEQUENCE);
-
 		assertEquals("The user redefine a particular binding", binding3
-				.getCommandId(), activeCommandId);
+				.getCommandId(), bindingManager
+				.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
 	}
 
 	/**
@@ -328,14 +306,10 @@ public final class BindingInteractionsTest extends UITestCase {
 		bindings.add(binding2);
 		bindings.add(binding3);
 		bindingManager.setBindings(bindings);
-
-		final Map activeBindings = bindingManager.getActiveBindings();
-		final Object activeCommandId = activeBindings
-				.get(TestBinding.TRIGGER_SEQUENCE);
-
 		assertEquals(
 				"A plug-in developer should be able to change a binding for a locale",
-				binding3.getCommandId(), activeCommandId);
+				binding3.getCommandId(), bindingManager
+						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
 	}
 
 	/**
@@ -370,14 +344,10 @@ public final class BindingInteractionsTest extends UITestCase {
 		bindings.add(binding2);
 		bindings.add(binding3);
 		bindingManager.setBindings(bindings);
-
-		final Map activeBindings = bindingManager.getActiveBindings();
-		final Object activeCommandId = activeBindings
-				.get(TestBinding.TRIGGER_SEQUENCE);
-
 		assertEquals(
 				"A plug-in developer should be able to change a binding for a platform",
-				binding3.getCommandId(), activeCommandId);
+				binding3.getCommandId(), bindingManager
+						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
 	}
 
 	/**
@@ -419,13 +389,9 @@ public final class BindingInteractionsTest extends UITestCase {
 		bindings.add(binding1);
 		bindings.add(binding2);
 		bindingManager.setBindings(bindings);
-
-		final Map activeBindings = bindingManager.getActiveBindings();
-		final Object activeCommandId = activeBindings
-				.get(TestBinding.TRIGGER_SEQUENCE);
-
 		assertEquals("The binding from the child scheme should be active",
-				binding1.getCommandId(), activeCommandId);
+				binding1.getCommandId(), bindingManager
+						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
 	}
 
 	/**
@@ -467,13 +433,9 @@ public final class BindingInteractionsTest extends UITestCase {
 		bindings.add(binding1);
 		bindings.add(binding2);
 		bindingManager.setBindings(bindings);
-
-		final Map activeBindings = bindingManager.getActiveBindings();
-		final Object activeCommandId = activeBindings
-				.get(TestBinding.TRIGGER_SEQUENCE);
-
 		assertEquals("The binding from the child scheme should be active",
-				binding1.getCommandId(), activeCommandId);
+				binding1.getCommandId(), bindingManager
+						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
 	}
 
 	/**
@@ -510,36 +472,26 @@ public final class BindingInteractionsTest extends UITestCase {
 		final Set activeContextIds = new HashSet();
 		activeContextIds.add("sibling1");
 		contextManager.setActiveContextIds(activeContextIds);
-
-		Map activeBindings = bindingManager.getActiveBindings();
-		Object activeCommandId = activeBindings
-				.get(TestBinding.TRIGGER_SEQUENCE);
-
 		assertEquals(
 				"When only the first sibling is active, only the first binding is active",
-				binding1.getCommandId(), activeCommandId);
+				binding1.getCommandId(), bindingManager
+						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
 
 		// Other sibling active
 		activeContextIds.clear();
 		activeContextIds.add("sibling2");
 		contextManager.setActiveContextIds(activeContextIds);
-
-		activeBindings = bindingManager.getActiveBindings();
-		activeCommandId = activeBindings.get(TestBinding.TRIGGER_SEQUENCE);
-
 		assertEquals(
 				"When only the second sibling is active, only the second binding is active",
-				binding2.getCommandId(), activeCommandId);
+				binding2.getCommandId(), bindingManager
+						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
 
 		// Both siblings are active
 		activeContextIds.add("sibling1");
 		contextManager.setActiveContextIds(activeContextIds);
-
-		activeBindings = bindingManager.getActiveBindings();
-		activeCommandId = activeBindings.get(TestBinding.TRIGGER_SEQUENCE);
-
 		assertEquals("When both contexts are active, a conflict should occur",
-				null, activeCommandId);
+				null, bindingManager
+						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
 	}
 
 	/**
@@ -578,12 +530,8 @@ public final class BindingInteractionsTest extends UITestCase {
 		bindings.add(binding1);
 		bindings.add(binding2);
 		bindingManager.setBindings(bindings);
-
-		final Map activeBindings = bindingManager.getActiveBindings();
-		final Object activeCommandId = activeBindings
-				.get(TestBinding.TRIGGER_SEQUENCE);
-
 		assertEquals("The user-defined binding should be active", binding1
-				.getCommandId(), activeCommandId);
+				.getCommandId(), bindingManager
+				.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
 	}
 }

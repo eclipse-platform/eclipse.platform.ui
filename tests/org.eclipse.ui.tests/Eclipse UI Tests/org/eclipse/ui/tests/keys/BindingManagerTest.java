@@ -166,23 +166,8 @@ public final class BindingManagerTest extends UITestCase {
 		final Binding binding = new TestBinding("conflict1", "na", "na", null,
 				null, Binding.SYSTEM);
 		bindingManager.addBinding(binding);
-		final Map activeBindings = bindingManager.getActiveBindings();
-		final Object activeCommandId = activeBindings
-				.get(TestBinding.TRIGGER_SEQUENCE);
-		assertEquals("The binding should be active", binding.getCommandId(),
-				activeCommandId);
-	}
-
-	/**
-	 * Tests that <code>getActiveBindings()</code> first returns an empty map.
-	 * The rest of the functionality is tested in
-	 * <code>BindingInteractionsTest</code>.
-	 * 
-	 * @see BindingInteractionsTest
-	 */
-	public final void testGetActiveBindings() {
-		assertTrue("The active bindings should be empty to start",
-				bindingManager.getActiveBindings().isEmpty());
+		assertSame("The binding should be active", binding.getCommandId(),
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
 	}
 
 	/**
