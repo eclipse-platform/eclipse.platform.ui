@@ -669,8 +669,8 @@ public class ViewTabCursorManager
 				{
 					fMenuDisposed = true;	
 					
-					Menu menu = (Menu)e.getSource();
-					menu.removeDisposeListener(this);			
+					Menu disposedMenu = (Menu)e.getSource();
+					disposedMenu.removeDisposeListener(this);			
 				}});
 		}
 		

@@ -159,10 +159,10 @@ public class MonitorMemoryBlockDialog extends Dialog implements ModifyListener{
 
 		if (needLength)
 		{
-			String length = lengthInput.getText();
+			String lengthText = lengthInput.getText();
 			String input = expressionInput.getText();
 			
-			if (input == null || input.equals("") || length == null || length.equals("")) //$NON-NLS-1$ //$NON-NLS-2$
+			if (input == null || input.equals("") || lengthText == null || lengthText.equals("")) //$NON-NLS-1$ //$NON-NLS-2$
 			{
 				getButton(IDialogConstants.OK_ID).setEnabled(false);	
 			}
