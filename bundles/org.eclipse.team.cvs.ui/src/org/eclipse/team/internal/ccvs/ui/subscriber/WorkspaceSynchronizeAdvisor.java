@@ -18,8 +18,8 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.ActionDelegateManager;
 import org.eclipse.team.internal.ui.synchronize.ActionDelegateManager.WrappedActionDelegate;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
-import org.eclipse.team.ui.synchronize.subscriber.DirectionFilterActionGroup;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.subscribers.DirectionFilterActionGroup;
+import org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant;
 import org.eclipse.ui.IActionBars;
 
 public class WorkspaceSynchronizeAdvisor extends CVSSynchronizeViewerAdvisor {

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.synchronize.subscriber;
+package org.eclipse.team.ui.synchronize.subscribers;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -28,8 +28,8 @@ import org.eclipse.team.core.subscribers.FilteredSyncInfoCollector;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
-import org.eclipse.team.ui.synchronize.viewers.SynchronizeCompareInput;
-import org.eclipse.team.ui.synchronize.viewers.TreeViewerAdvisor;
+import org.eclipse.team.ui.synchronize.SynchronizeCompareInput;
+import org.eclipse.team.ui.synchronize.TreeViewerAdvisor;
 
 /**
  * A dialog that is displayed at the end of a synchronize. The dialog shows the result of

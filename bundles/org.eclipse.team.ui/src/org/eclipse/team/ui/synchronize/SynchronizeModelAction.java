@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.synchronize.viewers;
+package org.eclipse.team.ui.synchronize;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ import org.eclipse.ui.*;
  * @see SyncInfoSet
  * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider
  * @see org.eclipse.team.internal.ui.synchronize.SubscriberParticipantPage
- * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelOperation
+ * @see org.eclipse.team.ui.synchronize.SynchronizeModelOperation
  * @since 3.0
  */
 public abstract class SynchronizeModelAction implements IObjectActionDelegate, IViewActionDelegate, IEditorActionDelegate {

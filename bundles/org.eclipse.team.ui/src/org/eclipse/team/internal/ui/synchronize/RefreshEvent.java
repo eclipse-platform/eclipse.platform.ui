@@ -14,7 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.ui.synchronize.subscriber.IRefreshEvent;
+import org.eclipse.team.ui.synchronize.subscribers.IRefreshEvent;
 
 /**
  * A refresh event generated to notify clients of the refresh lifecycle.

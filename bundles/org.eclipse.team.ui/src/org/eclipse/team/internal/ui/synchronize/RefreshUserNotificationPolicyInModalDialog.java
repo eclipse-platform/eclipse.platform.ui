@@ -22,8 +22,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.ui.synchronize.subscriber.*;
-import org.eclipse.team.ui.synchronize.viewers.*;
+import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.subscribers.*;
 
 public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubscriberListener {
 

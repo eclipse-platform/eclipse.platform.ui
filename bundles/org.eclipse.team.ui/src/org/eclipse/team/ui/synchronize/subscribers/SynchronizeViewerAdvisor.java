@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.synchronize.subscriber;
+package org.eclipse.team.ui.synchronize.subscribers;
 
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.core.resources.IResource;
@@ -20,7 +20,7 @@ import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.internal.ui.synchronize.actions.OpenWithActionGroup;
 import org.eclipse.team.internal.ui.synchronize.actions.RefactorActionGroup;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
-import org.eclipse.team.ui.synchronize.viewers.TreeViewerAdvisor;
+import org.eclipse.team.ui.synchronize.TreeViewerAdvisor;
 
 /**
  * Overrides the SyncInfoDiffViewerConfiguration to configure the diff viewer

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.synchronize.viewers;
+package org.eclipse.team.ui.synchronize;
 
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.internal.ResizableDialog;
@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.*;
 
 /**
  * A dialog that displays a synchronize participant. There are some cases when it

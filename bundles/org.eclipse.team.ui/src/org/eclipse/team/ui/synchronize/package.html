@@ -43,5 +43,75 @@ creating its page (<b>IPageBookView</b>), which provides freedom of
 presentation to the synchronize view implementation. A single
 participant may be displayed simultaneously in multiple synchronize
 views, and in different workbench windows.</p>
+
+<p>This package contains classes that support displaying
+synchronization information described by SyncInfo. If you consider the
+synchronization model described by the classes in
+org.eclipse.team.core.synchronize as the physical representation of
+resource variants then the classes in this package allow you to control
+how the model is presented to the user. One key feature of these APIs
+is that they support managing dynamic models.<br>
+</p>
+<p>There is no specific support for the Synchronize View in this
+package. Instead, the classes here can be used to build a page that can
+be shown in the view, but they can also be used to show synchronization
+information in dialogs, wizards, and editors.<br>
+</p>
+<p>The central abstractions for presenting synchronization state are:<br>
+</p>
+<p>- SynchronizeModelProvider, SynchronizeModelElement: are the
+building blocks for
+describing the logical structure of a synchronization model.<br>
+- StructuredViewerAdvisor: are used to
+display the logical structure to the user and define the basics such as
+the SynchronizeModelProvider, label provider, and context menus.<br>
+- SyncInfoCompareInput: is used to show a comparison between a local
+resource and a variant in a compare editor.<br>
+- SyncInfoSetCompareInput: is used to showing a set of variants in a
+compare editor<br>
+</p>
+<p>Default implementations are provided and there are many levels of
+customizations available.<br>
+</p>
+<h2>Basic Example</h2>
+If you have a synchronization model described in a SyncInfoTree and
+would like to show it to the user in a simple resource hierarchical
+tree viewers you would:<br>
+<br>
+SyncInfoTree syncTree = getSyncTree();<br>
+DiffTreeViewerConfiguration viewerConfiguration = new
+DiffTreeViewerConfiguration(syncTree);<br>
+TreeViewer viewer = new TreeViewer(parent);<br>
+viewerConfiguration.initializeViewer(viewer);<br>
+...<br>
+viewerConfiguration.dispose();<br>
+<br>
+Some items of interest in the above example: (1) the viewer
+configuration is used to add behavior to different types of tree
+viewers and by default will build a hierarchical logical model of the
+synchronization info and, (2) the default label provider will show the
+nodes with resource decorations plus the standard diff change markers,
+(3) the default context menu action is expand all plus any object
+contributions.<br>
+<br>
+Another example, you would like to add additional label decorations,
+and actions defined as viewerContribution in your plugin.xml.<br>
+<br>
+SyncInfoTree syncTree = getSyncTree();<br>
+DiffTreeViewerConfiguration viewerConfiguration = new
+DiffTreeViewerConfiguration("org.eclipse.team.example.actions",
+syncTree) {<br>
+&nbsp;&nbsp;&nbsp; protected ILabelProvider getLabelProvider() {<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return new
+SyncInfoLabelProvider.DecoratingColorLabelProvider(new
+SyncInfoLabelProvider(), new MyCustorDecorator());<br>
+&nbsp;&nbsp;&nbsp; }<br>
+}<br>
+TreeViewer viewer = new TreeViewer(parent);<br>
+viewerConfiguration.initializeViewer(viewer);<br>
+...<br>
+viewerConfiguration.dispose();<br>
+
+
 </body>
 </html>

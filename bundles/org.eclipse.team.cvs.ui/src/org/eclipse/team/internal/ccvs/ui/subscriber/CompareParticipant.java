@@ -18,10 +18,10 @@ import org.eclipse.team.core.synchronize.SyncInfoFilter;
 import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
-import org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor;
+import org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant;
 
 public class CompareParticipant extends SubscriberParticipant {
 	

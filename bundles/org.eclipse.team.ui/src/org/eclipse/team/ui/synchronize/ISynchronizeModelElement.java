@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.synchronize.viewers;
+package org.eclipse.team.ui.synchronize;
 
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
@@ -18,6 +18,21 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 
+/**
+ * These are elements created to display synchronization state in the UI. 
+ * Since it implements the <code>ITypedElement</code> and <code>ICompareInput</code>
+ * interfaces it can be used directly to display the
+ * compare result in a <code>DiffTreeViewer</code> and as the input to any other
+ * compare/merge viewer.
+ * <p>
+ * <code>DiffNode</code>s are typically created as the result of performing
+ * a compare with the <code>Differencer</code>.
+ * <p>
+ * Clients typically use this class as is, but may subclass if required.
+ * 
+ * @see DiffTreeViewer
+ * @see Differencer
+ */
 public interface ISynchronizeModelElement extends IDiffContainer, ITypedElement, ICompareInput {
 
 	public static final String BUSY_PROPERTY = TeamUIPlugin.ID + ".busy"; //$NON-NLS-1$

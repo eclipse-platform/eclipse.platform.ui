@@ -12,7 +12,7 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.team.ui.synchronize.viewers.ISynchronizeModelElement;
+import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class DiffNodeWorkbenchAdapter implements IWorkbenchAdapter {

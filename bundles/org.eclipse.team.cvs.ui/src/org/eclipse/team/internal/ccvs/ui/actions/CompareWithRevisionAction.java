@@ -25,7 +25,7 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSCompareRevisionsInput;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.ui.synchronize.viewers.SynchronizeDialog;
+import org.eclipse.team.ui.synchronize.SynchronizeDialog;
 
 /**
  * Compare with revision will allow a user to browse the history of a file, compare with the

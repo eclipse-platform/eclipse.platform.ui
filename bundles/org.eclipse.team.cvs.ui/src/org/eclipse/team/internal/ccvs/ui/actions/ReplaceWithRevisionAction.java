@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.ui.CVSCompareRevisionsInput;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.synchronize.viewers.SynchronizeDialog;
+import org.eclipse.team.ui.synchronize.SynchronizeDialog;
 
 /**
  * Displays a compare dialog and allows the same behavior as the compare. In addition

@@ -23,11 +23,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.actions.*;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberRefreshWizard;
-import org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor;
-import org.eclipse.team.ui.synchronize.viewers.TreeViewerAdvisor;
+import org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.subscribers.SubscriberRefreshWizard;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 

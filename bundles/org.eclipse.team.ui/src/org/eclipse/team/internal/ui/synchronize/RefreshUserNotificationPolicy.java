@@ -8,8 +8,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.ui.synchronize.subscriber.*;
-import org.eclipse.team.ui.synchronize.viewers.SyncInfoCompareInput;
+import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
+import org.eclipse.team.ui.synchronize.subscribers.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 

@@ -14,8 +14,8 @@ import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
-import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelAction;
-import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelOperation;
+import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
+import org.eclipse.team.ui.synchronize.SynchronizeModelOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**

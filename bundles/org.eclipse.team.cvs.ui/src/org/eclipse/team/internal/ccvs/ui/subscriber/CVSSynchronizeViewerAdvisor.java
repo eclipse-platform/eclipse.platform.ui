@@ -21,10 +21,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.internal.ccvs.ui.CVSLightweightDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.ActionDelegateManager;
-import org.eclipse.team.ui.synchronize.ISynchronizeView;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
-import org.eclipse.team.ui.synchronize.subscriber.SynchronizeViewerAdvisor;
-import org.eclipse.team.ui.synchronize.viewers.*;
+import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.subscribers.SynchronizeViewerAdvisor;
 
 public class CVSSynchronizeViewerAdvisor extends SynchronizeViewerAdvisor implements ISynchronizeModelChangeListener {
 

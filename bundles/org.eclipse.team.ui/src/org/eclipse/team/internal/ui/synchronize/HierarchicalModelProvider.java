@@ -16,7 +16,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.ui.synchronize.viewers.ISynchronizeModelElement;
+import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 
 /**
  * An input that can be used with both {@link } and 

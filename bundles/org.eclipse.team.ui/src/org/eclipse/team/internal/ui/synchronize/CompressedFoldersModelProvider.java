@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.team.ui.synchronize.viewers.ISynchronizeModelElement;
+import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 
 public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 

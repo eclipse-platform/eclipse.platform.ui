@@ -11,8 +11,8 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelAction;
-import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelOperation;
+import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
+import org.eclipse.team.ui.synchronize.SynchronizeModelOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**

@@ -1,4 +1,4 @@
-package org.eclipse.team.ui.synchronize.subscriber;
+package org.eclipse.team.ui.synchronize.subscribers;
 
 import java.text.DateFormat;
 import java.util.Date;

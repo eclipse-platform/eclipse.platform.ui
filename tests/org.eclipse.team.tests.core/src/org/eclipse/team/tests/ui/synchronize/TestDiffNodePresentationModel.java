@@ -26,7 +26,7 @@ import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.tests.core.TeamTest;
 import org.eclipse.team.tests.ui.views.ContentProviderTestView;
 import org.eclipse.team.tests.ui.views.TestTreeViewer;
-import org.eclipse.team.ui.synchronize.viewers.*;
+import org.eclipse.team.ui.synchronize.TreeViewerAdvisor;
 
 
 public class TestDiffNodePresentationModel extends TeamTest {

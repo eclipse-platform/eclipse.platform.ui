@@ -31,9 +31,9 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
-import org.eclipse.team.ui.synchronize.viewers.TreeViewerAdvisor;
-import org.eclipse.team.ui.synchronize.viewers.SynchronizeCompareInput;
+import org.eclipse.team.ui.synchronize.SynchronizeCompareInput;
+import org.eclipse.team.ui.synchronize.TreeViewerAdvisor;
+import org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.ContainerCheckedTreeViewer;
 

@@ -85,7 +85,7 @@ import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.actions.MoveRemoteTagAction;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.synchronize.viewers.SyncInfoCompareInput;
+import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorInput;

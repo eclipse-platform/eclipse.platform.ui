@@ -26,8 +26,7 @@ import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.synchronize.viewers.ISynchronizeModelElement;
-import org.eclipse.team.ui.synchronize.viewers.ISynchronizeModelProvider;
+import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**

@@ -8,7 +8,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberRefreshSchedule;
+import org.eclipse.team.ui.synchronize.subscribers.SubscriberRefreshSchedule;
 
 
 public class ConfigureRefreshScheduleDialog extends DetailsDialog {

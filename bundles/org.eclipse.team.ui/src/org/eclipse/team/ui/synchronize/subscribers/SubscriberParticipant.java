@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.synchronize.subscriber;
+package org.eclipse.team.ui.synchronize.subscribers;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -24,7 +24,6 @@ import org.eclipse.team.internal.ui.synchronize.RefreshUserNotificationPolicy;
 import org.eclipse.team.internal.ui.synchronize.RefreshUserNotificationPolicyInModalDialog;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.IPageBookViewPage;
 

@@ -13,8 +13,8 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
-import org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor;
+import org.eclipse.team.ui.synchronize.StructuredViewerAdvisor;
+import org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 
