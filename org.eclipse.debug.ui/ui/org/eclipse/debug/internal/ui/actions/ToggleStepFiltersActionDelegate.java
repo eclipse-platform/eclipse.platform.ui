@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions;
 
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
@@ -30,7 +29,7 @@ public class ToggleStepFiltersActionDelegate extends AbstractDebugActionDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#doAction(java.lang.Object)
 	 */
-	protected void doAction(Object element) throws DebugException {
+	protected void doAction(Object element) {
 		// do nothing - we override #run(IAction)
 	}
 
@@ -43,16 +42,10 @@ public class ToggleStepFiltersActionDelegate extends AbstractDebugActionDelegate
 		getPreferenceStore().addPropertyChangeListener(this);
 	}
 	
-	/**
-	 * @return pref value
-	 */
 	private boolean isUseStepFilters() {
 		return DebugUIPlugin.getDefault().getStepFilterManager().isUseStepFilters();
 	}
 	
-	/**
-	 * @return pref store
-	 */
 	private IPreferenceStore getPreferenceStore() {
 		return DebugUIPlugin.getDefault().getPreferenceStore();
 	}	
