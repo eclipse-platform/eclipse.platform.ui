@@ -492,16 +492,28 @@ private class CloseAction extends Action {
 	public void run() {
 		TableItem[] items = editorsTable.getSelection();
 		Adapter[] editorRef = new Adapter[items.length];
+		List dirtyEditorList = new ArrayList();
 
 		// store the editor references as editorsTable will
 		// be disposed when focus is lost.
 		for (int i = 0; i < items.length; i++) {
 			editorRef[i] = (Adapter)items[i].getData(editorListData);
+			Object element = editorRef[i].editorRef.getPart(false);
+			if (editorRef[i].isDirty()) {
+				dirtyEditorList.add(element);	
+			}			
 		}
-
+	
+		boolean result = true;
+		if (dirtyEditorList != null) {
+			result = EditorManager.saveAll(dirtyEditorList, true, window);
+		}
+		
 		// now close the editors
-		for (int i = 0; i < editorRef.length; i++) {
-			editorRef[i].close();
+		if (result) {
+			for (int i = 0; i < editorRef.length; i++) {
+				editorRef[i].close();
+			}
 		}
 		
 		notifyEditorListViews();
@@ -714,7 +726,7 @@ private class Adapter implements Comparable {
 
 	void close() {
 		WorkbenchPage p = ((WorkbenchPartReference)editorRef).getPane().getPage();
-		p.closeEditor(editorRef,true);
+		p.closeEditor(editorRef,false);
 	}
 
 	// file name without any dirty indication, used for sorting
