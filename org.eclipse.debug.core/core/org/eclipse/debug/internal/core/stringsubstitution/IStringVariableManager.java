@@ -27,6 +27,20 @@ public interface IStringVariableManager {
 	public IStringVariable[] getVariables();
 	
 	/**
+	 * Returns all registered value variables.
+	 * 
+	 * @return a collection of all registered value variables
+	 */
+	public IValueVariable[] getValueVariables();
+	
+	/**
+	 * Returns all registered context variables.
+	 * 
+	 * @return a collection of all registered context variables
+	 */
+	public IContextVariable[] getContextVariables();	
+	
+	/**
 	 * Recursively resolves and replaces all variable references in the given
 	 * expression with their corresponding values.
 	 * 
@@ -37,15 +51,14 @@ public interface IStringVariableManager {
 	public String performStringSubstitution(String expression) throws CoreException;
 	
 	/**
-	 * Returns a new variable with the given name and description. The variable
-	 * will accept a value.
+	 * Returns a new value variable with the given name and description.
 	 * 
 	 * @param name variable name, cannot be <code>null</code>
 	 * @param description variable description, possibly <code>null</code>
 	 * @return a new variable
 	 * @exception CoreException if a variable already exists with the given name
 	 */
-	public IStringVariable newVariable(String name, String description) throws CoreException;
+	public IValueVariable newVariable(String name, String description) throws CoreException;
 	
 	/**
 	 * Adds the given variables to the variable registry.
@@ -54,7 +67,7 @@ public interface IStringVariableManager {
 	 * @throws CoreException if one or more variables to add has a name collision with
 	 *  an existing variable 
 	 */
-	public void addVariables(IStringVariable[] variables) throws CoreException;
+	public void addVariables(IValueVariable[] variables) throws CoreException;
 	
 	/**
 	 * Removes the given variables from the registry. Has no effect for unregistered
@@ -62,7 +75,7 @@ public interface IStringVariableManager {
 	 * 
 	 * @param variables variables to remove
 	 */
-	public void removeVariables(IStringVariable[] variables);
+	public void removeVariables(IValueVariable[] variables);
 	
 	/**
 	 * Returns the context with the given identifier or <code>null</code> if none.
