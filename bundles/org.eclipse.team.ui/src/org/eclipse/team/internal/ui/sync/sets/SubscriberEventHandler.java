@@ -102,7 +102,7 @@ public class SubscriberEventHandler {
 		this.set = set;
 		errors =
 			new ExceptionCollector(
-				Policy.bind("SubscriberEventHandler.errors"),
+				Policy.bind("SubscriberEventHandler.errors"), //$NON-NLS-1$
 				TeamUIPlugin.ID,
 				IStatus.ERROR,
 				null /* don't log */
