@@ -11,10 +11,6 @@
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariable;
-
-
 
 /**
  * Resolver for the <code>${project_*}</code> variables. Accepts an optional argument
@@ -23,20 +19,10 @@ import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariable;
  * @since 3.0
  */
 public class ProjectResolver extends ResourceResolver {
-	
-	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.stringsubstitution.AbstractResolver#getResource(org.eclipse.debug.internal.core.stringsubstitution.IContextVariable, java.lang.String)
-	 */
-	protected IResource getResource(IDynamicVariable variable, String argument) throws CoreException {
-		return getWorkspaceRoot().getProject(argument);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.stringsubstitution.AbstractResolver#translateSelectedResource(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.debug.internal.ui.stringsubstitution.ResourceResolver#translateSelectedResource(org.eclipse.core.resources.IResource)
 	 */
 	protected IResource translateSelectedResource(IResource resource) {
 		return resource.getProject();
 	}
-
 }
