@@ -32,6 +32,8 @@ import org.eclipse.jface.window.WindowManager;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
+import org.eclipse.ui.internal.registry.AcceleratorConfiguration;
+import org.eclipse.ui.internal.registry.AcceleratorRegistry;
 
 /**
  * The workbench class represents the top of the ITP user interface.  Its primary
@@ -55,6 +57,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private PlatformInfo platformInfo;
 	private String[] commandLineArgs;
 	private Window.IExceptionHandler handler;
+	private AcceleratorConfiguration acceleratorConfiguration;
 	/**
 	 * Workbench constructor comment.
 	 */
@@ -325,6 +328,12 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		return windowManager;
 	}
 	/*
+	 * Return the active AcceleratorConfiguration
+	 */
+	public AcceleratorConfiguration getActiveAcceleratorConfiguration() {
+		return acceleratorConfiguration;
+	}
+	/*
 	 * Answer the workbench state file.
 	 */
 	private File getWorkbenchStateFile() {
@@ -368,6 +377,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		windowManager = new WindowManager();
 		WorkbenchColors.startup();
 		initializeFonts();
+		initializeAcceleratorConfiguration();
 
 		// deadlock code
 		boolean avoidDeadlock = true;
@@ -392,7 +402,18 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		isStarting = false;
 		return true;
 	}
-
+	/**
+	 * Initialize the workbench AcceleratorConfiguration with the stored values.
+	 */
+	private void initializeAcceleratorConfiguration() {
+		//IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		//String id = store.getString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
+		String id = IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID;
+	 	id = "org.eclipse.ui.emacsAcceleratorConfiguration";
+		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
+		acceleratorConfiguration = registry.getConfiguration(id);
+		acceleratorConfiguration.initializeScopes();
+	}
 	/**
 	 * Initialize the workbench fonts with the stored values.
 	 */

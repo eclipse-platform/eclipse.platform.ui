@@ -44,7 +44,7 @@ public class WorkbenchWindow extends ApplicationWindow
 	private PageListenerList pageListeners = new PageListenerList();
 	private PerspectiveListenerListOld perspectiveListeners = new PerspectiveListenerListOld();
 	private WWinPerspectiveService perspectiveService = new WWinPerspectiveService(this);
-	private IKeyBindingService keyBindingService;
+	private WWinKeyBindingService keyBindingService;
 	private WWinPartService partService = new WWinPartService(this);
 	private IMemento deferredRestoreState;
 	private ActionPresentation actionPresentation;
@@ -576,9 +576,9 @@ public IPartService getPartService() {
  * @return the key binding service in use.
  * @since 2.0
  */
-public IKeyBindingService getKeyBindingService() {
+public WWinKeyBindingService getKeyBindingService() {
 	if (keyBindingService == null)
-		keyBindingService = new KeyBindingService(this);
+		keyBindingService = new WWinKeyBindingService(this);
 	return keyBindingService;	
 }
 /**

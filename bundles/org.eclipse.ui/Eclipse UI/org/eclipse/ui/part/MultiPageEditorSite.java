@@ -98,8 +98,7 @@ public String getId() {
  * Method declared on IEditorSite.
  */
 public IKeyBindingService getKeyBindingService() {
-	WorkbenchWindow w = (WorkbenchWindow)getPage().getWorkbenchWindow();
-	return w.getKeyBindingService();	
+	return getMultiPageEditor().getEditorSite().getKeyBindingService();	
 }
 
 /**

@@ -13,37 +13,62 @@ import org.eclipse.core.runtime.Platform;
  * of accelerator scopes, and a list of accelerator sets.
  */
 public class AcceleratorRegistry {
-	private List acceleratorConfigurations;
-	private List acceleratorScopes;
-	private List acceleratorSets;
+	private List configurations;
+	private List scopes;
+	private List sets;
+	private HashMap idToScope;
 	
 	public AcceleratorRegistry() {
-		acceleratorConfigurations = new ArrayList();
-		acceleratorScopes = new ArrayList();
-		acceleratorSets = new ArrayList();		
+		configurations = new ArrayList();
+		scopes = new ArrayList();
+		sets = new ArrayList();		
 	}
 
 	/**
 	 * Adds the given accelerator configuration to the registry.
 	 */	
 	public boolean addConfiguration(AcceleratorConfiguration a) {
-		return acceleratorConfigurations.add(a);	
+		return configurations.add(a);	
 	}
-	
+	/**
+	 * Returns all registered configurations.
+	 */
+	public AcceleratorConfiguration[] getConfigurations() {
+		AcceleratorConfiguration[] result = new AcceleratorConfiguration[configurations.size()];
+		configurations.toArray(result);
+		return result;
+	}
+	/**
+	 * Returns all registered configurations.
+	 */
+	public AcceleratorConfiguration getConfiguration(String id) {
+		for (Iterator iterator = configurations.iterator(); iterator.hasNext();) {
+			AcceleratorConfiguration element = (AcceleratorConfiguration)iterator.next();
+			if(element.getId().equals(id))
+				return element;
+		}
+		return null;
+	}	
 	/**
 	 * Adds the given accelerator scope to the registry.
 	 */
 	public boolean addScope(AcceleratorScope a) {
-		return acceleratorScopes.add(a);	
+		return scopes.add(a);	
 	}
-
+	/**
+	 * Returns all registered scopes.
+	 */
+	public AcceleratorScope[] getScopes() {
+		AcceleratorScope[] result = new AcceleratorScope[scopes.size()];
+		scopes.toArray(result);
+		return result;
+	}
 	/**
 	 * Adds the given accelerator set to the registry.
 	 */	
 	public boolean addSet(AcceleratorSet a) {
-		return acceleratorSets.add(a);
-	}
-	
+		return sets.add(a);
+	}	
 	/**
 	 * Loads the accelerator registry from the platform's
 	 * plugin registry.
@@ -53,51 +78,6 @@ public class AcceleratorRegistry {
 			new AcceleratorRegistryReader();
 		reader.read(Platform.getPluginRegistry(), this);
 	}
-	
-	/**
-	 * Returns a list of all the accelerator sets in the registry.
-	 */
-	public List getAcceleratorSets() {
-		return acceleratorSets;	
-	}
-	
-	/**
-	 * Returns a list of accelerator sets which belong to the configuration
-	 * with the given id
-	 * 
-	 * @param configId the id of the accelerator configuration to be queried
-	 */
-	public List getSetsOf(String configId) {
-		List sets = new ArrayList();
-		for(int i=0;i<acceleratorSets.size();i++) {
-			AcceleratorSet set = (AcceleratorSet)(acceleratorSets.get(i));
-			String setConfigId = set.getConfigurationId();
-			if(setConfigId.equals(configId)) {
-				sets.add(set);
-			}
-		}
-		return sets;	
-	}
-	
-	/**
-	 * Returns a list of accelerator sets which belong to both the given
-	 * accelerator configuration and scope.
-	 * 
-	 * @param configId the accelerator configuration to be queried 
-	 * @param scopeId the accelerator scope to be queried
-	 */	
-	public List getSetsOf(String configId, String scopeId) {
-		List sets = new ArrayList();
-		sets = getSetsOf(configId);
-		for(int i=0;i<sets.size();i++) {
-			AcceleratorSet set = (AcceleratorSet)(sets.get(i));
-			if(!set.getScopeId().equals(scopeId)) {
-				sets.remove(i);	
-			}
-		}
-		return sets;	
-	}
-	
 	/**
 	 * Queries the given accelerator configuration and scope to find accelerators
 	 * which belong to both. Returns a mapping between action definition ids and
@@ -106,20 +86,30 @@ public class AcceleratorRegistry {
 	 * @param configId the accelerator configuration to be queried 
 	 * @param scopeId the accelerator scope to be queried
 	 */
-	public HashMap getAcceleratorsOf(String configId, String scopeId) {
-		HashMap map = new HashMap();
-		List sets = getSetsOf(configId, scopeId);
-		for(int i=0; i<sets.size(); i++) {
+	public Accelerator[] getAccelerators(String configId, String scopeId) {
+		List accelarators = new ArrayList();
+		for(int i=0;i<sets.size();i++) {
 			AcceleratorSet set = (AcceleratorSet)(sets.get(i));
-			if (set.getScopeId().equals(scopeId)) {
-				HashSet accelerators = set.getAccelerators();
-				Iterator iterator = accelerators.iterator();
-				while(iterator.hasNext()) {
-					Accelerator a = (Accelerator)(iterator.next());
-					map.put(a.getId(), a.getKey());	
-				}	
+			String setConfigId = set.getConfigurationId();
+			String setScopeId = set.getScopeId();
+			if(configId.equals(setConfigId) && setScopeId.equals(setScopeId)) {
+				accelarators.addAll(Arrays.asList(set.getAccelerators()));
 			}
 		}
-		return map;	
+		Accelerator[] result = new Accelerator[accelarators.size()];
+		accelarators.toArray(result);
+		return result;
+	}
+	
+	public AcceleratorScope getScope(String scopeID) {
+		if(idToScope == null) {
+			idToScope = new HashMap();
+			AcceleratorScope scopes[] = getScopes();
+			for (int i = 0; i < scopes.length; i++) {
+				AcceleratorScope s = scopes[i];
+				idToScope.put(s.getId(),s);
+			}
+		}
+		return (AcceleratorScope)idToScope.get(scopeID);
 	}
 }

@@ -35,26 +35,11 @@ public class AcceleratorSet {
 	public String getPluginId() {
 		return pluginId;	
 	}
-	public HashSet getAccelerators() {
-		return accelerators;	
+	public Accelerator[] getAccelerators() {
+		Accelerator[] result = new Accelerator[accelerators.size()];
+		accelerators.toArray(result);
+		return result;	
 	}
-	
-	/**
-	 * Returns the Accelerator with the given id.
-	 * 
-	 * @return the accelerator with the given id, or <code>null</code>
-	 * if no accelerator with the given id is found
-	 */
-	public Accelerator getAcceleratorById(String id) {
-		Iterator i = accelerators.iterator();
-		while(i.hasNext()) {
-			Accelerator a = (Accelerator)(i.next());
-			if(a.getId()==id)
-				return a;
-		}
-		return null;
-	}
-
 	/**
 	 * Adds the given accelerator to the set.
 	 */	

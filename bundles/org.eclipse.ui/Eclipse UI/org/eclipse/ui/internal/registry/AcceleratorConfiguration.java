@@ -1,5 +1,8 @@
 package org.eclipse.ui.internal.registry;
 
+import java.util.HashMap;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -20,7 +23,6 @@ public class AcceleratorConfiguration {
 		this.name = name;
 		this.description = description;
 	}
-	
 	public String getId() {
 		return id;	
 	}
@@ -29,5 +31,12 @@ public class AcceleratorConfiguration {
 	}
 	public String getDescription() {
 		return description;	
+	}
+	public void initializeScopes() {
+		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
+		AcceleratorScope scopes[] = registry.getScopes();
+		for (int i = 0; i < scopes.length; i++) {
+			scopes[i].initializeAccelerators(this);
+		}
 	}
 }

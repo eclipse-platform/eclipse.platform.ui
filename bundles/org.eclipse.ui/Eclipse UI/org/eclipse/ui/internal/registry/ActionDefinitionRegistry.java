@@ -5,6 +5,7 @@ package org.eclipse.ui.internal.registry;
  * All Rights Reserved.
  */
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
@@ -25,7 +26,17 @@ public class ActionDefinitionRegistry {
 	public boolean add(ActionDefinition a) {
 		return actionDefinitions.add(a);	
 	}
-
+	/**
+	 * Returns the action definition with the same ID;
+	 */
+	public ActionDefinition getDefinition(String id) {
+		for (Iterator iterator = actionDefinitions.iterator(); iterator.hasNext();) {
+			ActionDefinition element = (ActionDefinition)iterator.next();
+			if(element.getId().equals(id))
+				return element;
+		}
+		return null;
+	}
 	/**
 	 * Loads the action definition registry from the platform's plugin registry.
 	 */	
