@@ -4,9 +4,13 @@ import java.io.InputStream;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.accessibility.Accessible;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -23,6 +27,8 @@ public class FormEngine extends Canvas {
 	IHyperlinkSegment entered;
 	boolean mouseDown = false;
 	Point dragOrigin;
+	private Action openAction;
+	private Action copyShortcutAction;
 
 	public boolean getFocus() {
 		return hasFocus;
@@ -132,6 +138,22 @@ public class FormEngine extends Canvas {
 			}
 		});
 		initAccessible();
+		makeActions();
+	}
+	
+	private void makeActions() {
+		openAction = new Action() {
+			public void run() {
+				activateSelectedLink();
+			}
+		};
+		openAction.setText(FormsPlugin.getResourceString("FormEgine.linkPopup.open"));
+		copyShortcutAction = new Action() {
+			public void run() {
+				copyShortcut(getSelectedLink());
+			}
+		};
+		copyShortcutAction.setText(FormsPlugin.getResourceString("FormEgine.linkPopup.copyShortcut"));
 	}
 
 	private String getAcessibleText() {
@@ -196,9 +218,11 @@ public class FormEngine extends Canvas {
 			mouseDown = true;
 			dragOrigin = new Point(e.x, e.y);
 		} else {
-			IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
-			if (segmentUnder != null) {
-				activateLink(segmentUnder);
+			if (e.button==1) {
+				IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
+				if (segmentUnder != null) {
+					activateLink(segmentUnder);
+				}
 			}
 			mouseDown = false;
 		}
@@ -442,5 +466,24 @@ public class FormEngine extends Canvas {
 	public void setMarginHeight(int marginHeight) {
 		this.marginHeight = marginHeight;
 	}
-
+	
+	public void contextMenuAboutToShow(IMenuManager manager) {
+		IHyperlinkSegment link = getSelectedLink();
+		if (link!=null)
+			contributeLinkActions(manager, link);
+	}
+	
+	private void contributeLinkActions(IMenuManager manager, IHyperlinkSegment link) {
+		manager.add(openAction);
+		manager.add(copyShortcutAction);
+		manager.add(new Separator());
+	}
+	
+	private void copyShortcut(IHyperlinkSegment link) {
+		String text = link.getText();
+		Clipboard clipboard = new Clipboard(getDisplay());
+		clipboard.setContents(
+			new Object[] { text },
+			new Transfer[] { TextTransfer.getInstance()});
+	}
 }

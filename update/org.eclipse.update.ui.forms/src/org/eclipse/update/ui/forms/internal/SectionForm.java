@@ -67,6 +67,7 @@ public class SectionForm extends AbstractSectionForm implements PaintListener {
 		canvas.setForeground(factory.getForegroundColor());
 		canvas.addPaintListener(this);
 		canvas.setLayout(new FormLayout());
+		canvas.setMenu(parent.getMenu());
 		Composite formParent = factory.createComposite(canvas);
 		createFormClient(formParent);
 		this.control = canvas;

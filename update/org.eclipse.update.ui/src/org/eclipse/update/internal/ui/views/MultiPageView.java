@@ -68,6 +68,7 @@ public void createPartControl(Composite parent) {
 	manager.setRemoveAllWhenShown(true);
 	manager.addMenuListener(listener);
 	contextMenu = manager.createContextMenu(formWorkbook.getControl());
+	formWorkbook.getControl().setMenu(contextMenu);
 
 	for (Iterator iter = pages.iterator(); iter.hasNext();) {
 		IFormPage page = (IFormPage) iter.next();

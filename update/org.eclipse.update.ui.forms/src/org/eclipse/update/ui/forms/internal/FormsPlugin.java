@@ -1,6 +1,7 @@
 package org.eclipse.update.ui.forms.internal;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -10,6 +11,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class FormsPlugin extends AbstractUIPlugin {
 	private static FormsPlugin instance;
+	private ResourceBundle resourceBundle;
 
 	/**
 	 * Constructor for FormsPlugin.
@@ -18,12 +20,49 @@ public class FormsPlugin extends AbstractUIPlugin {
 	public FormsPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		instance = this;
+		try {
+			resourceBundle =
+				ResourceBundle.getBundle(
+					"org.eclipse.update.ui.forms.internal.FormsPluginResources");
+		} catch (MissingResourceException x) {
+			resourceBundle = null;
+		}
 	}
-	
+
+	/**
+	 * Returns the string from the plugin's resource bundle,
+	 * or 'key' if not found.
+	 */
+	public static String getResourceString(String key) {
+		ResourceBundle bundle = FormsPlugin.getDefault().getResourceBundle();
+		try {
+			return bundle.getString(key);
+		} catch (MissingResourceException e) {
+			return key;
+		}
+	}
+
+	public static String getFormattedMessage(String key, String[] args) {
+		String text = getResourceString(key);
+		return java.text.MessageFormat.format(text, args);
+	}
+
+	public static String getFormattedMessage(String key, String arg) {
+		String text = getResourceString(key);
+		return java.text.MessageFormat.format(text, new Object[] { arg });
+	}
+
+	/**
+	 * Returns the plugin's resource bundle,
+	 */
+	public ResourceBundle getResourceBundle() {
+		return resourceBundle;
+	}
+
 	public static FormsPlugin getDefault() {
 		return instance;
 	}
-	
+
 	public static IWorkbenchPage getActivePage() {
 		return getDefault().internalGetActivePage();
 	}
@@ -43,7 +82,7 @@ public class FormsPlugin extends AbstractUIPlugin {
 	public static String getPluginId() {
 		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
-	
+
 	public static void logException(Throwable e) {
 		logException(e, true);
 	}

@@ -21,87 +21,88 @@ import org.eclipse.swt.*;
 public class ScrollableSectionForm extends SectionForm {
 	private Composite container;
 	private boolean verticalFit;
-	private boolean scrollable=true;
-	
-public ScrollableSectionForm() {
-}
-public Control createControl(Composite parent) {
-	container = createParent(parent);
-	Control formControl = super.createControl(container);
-	if (container instanceof ScrolledComposite) {
-		ScrolledComposite sc = (ScrolledComposite)container;
-		sc.setContent(formControl);
+	private boolean scrollable = true;
+
+	public ScrollableSectionForm() {
 	}
-	GridData gd = new GridData(GridData.FILL_BOTH);
-	formControl.setLayoutData(gd);
-	container.setBackground(formControl.getBackground());
-	return container;
-}
-protected Composite createParent(Composite parent) {
-	Composite result = null;
-	if (isScrollable()) {
-		ScrolledComposite scomp =
-			new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
-		if (isVerticalFit()) {
-			scomp.setExpandHorizontal(true);
-			scomp.setExpandVertical(true);
+	public Control createControl(Composite parent) {
+		container = createParent(parent);
+		Control formControl = super.createControl(container);
+		if (container instanceof ScrolledComposite) {
+			ScrolledComposite sc = (ScrolledComposite) container;
+			sc.setContent(formControl);
 		}
-		initializeScrollBars(scomp);
-		result = scomp;
-	} else {
-		result = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		result.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		formControl.setLayoutData(gd);
+		container.setBackground(formControl.getBackground());
+		return container;
 	}
-	return result;
-}
-public boolean isScrollable() {
-	return scrollable;
-}
-public boolean isVerticalFit() {
-	return verticalFit;
-}
-public void setScrollable(boolean newScrollable) {
-	scrollable = newScrollable;
-}
+	protected Composite createParent(Composite parent) {
+		Composite result = null;
+		if (isScrollable()) {
+			ScrolledComposite scomp =
+				new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
+			if (isVerticalFit()) {
+				scomp.setExpandHorizontal(true);
+				scomp.setExpandVertical(true);
+			}
+			initializeScrollBars(scomp);
+			result = scomp;
+		} else {
+			result = new Composite(parent, SWT.NONE);
+			GridLayout layout = new GridLayout();
+			layout.marginHeight = 0;
+			layout.marginWidth = 0;
+			result.setLayout(layout);
+		}
+		result.setMenu(parent.getMenu());
+		return result;
+	}
+	public boolean isScrollable() {
+		return scrollable;
+	}
+	public boolean isVerticalFit() {
+		return verticalFit;
+	}
+	public void setScrollable(boolean newScrollable) {
+		scrollable = newScrollable;
+	}
 
-public void setVerticalFit(boolean newVerticalFit) {
-	verticalFit = newVerticalFit;
-}
+	public void setVerticalFit(boolean newVerticalFit) {
+		verticalFit = newVerticalFit;
+	}
 
-private void initializeScrollBars(ScrolledComposite scomp) {
-	ScrollBar hbar = scomp.getHorizontalBar();
-	if (hbar!=null) {
-		hbar.setIncrement(H_SCROLL_INCREMENT);
+	private void initializeScrollBars(ScrolledComposite scomp) {
+		ScrollBar hbar = scomp.getHorizontalBar();
+		if (hbar != null) {
+			hbar.setIncrement(H_SCROLL_INCREMENT);
+		}
+		ScrollBar vbar = scomp.getVerticalBar();
+		if (vbar != null) {
+			vbar.setIncrement(V_SCROLL_INCREMENT);
+		}
+		updatePageIncrement(scomp);
 	}
-	ScrollBar vbar = scomp.getVerticalBar();
-	if (vbar!=null) {
-		vbar.setIncrement(V_SCROLL_INCREMENT);
-	}	
-	updatePageIncrement(scomp);
-}
 
-public void update() {
-	super.update();
-	if (container instanceof ScrolledComposite) {
-		updateScrolledComposite();
-	} else {
-		container.layout(true);
+	public void update() {
+		super.update();
+		if (container instanceof ScrolledComposite) {
+			updateScrolledComposite();
+		} else {
+			container.layout(true);
+		}
 	}
-}
-public void updateScrollBars() {
-	if (container instanceof ScrolledComposite) {
-		updateScrolledComposite();
+	public void updateScrollBars() {
+		if (container instanceof ScrolledComposite) {
+			updateScrolledComposite();
+		}
 	}
-}
-public void updateScrolledComposite() {
-	ScrolledComposite sc = (ScrolledComposite) container;
-	Control formControl = getControl();
-	Point newSize = formControl.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-	formControl.setSize(newSize);
-	sc.setMinSize(newSize);
-	updatePageIncrement(sc);
-}
+	public void updateScrolledComposite() {
+		ScrolledComposite sc = (ScrolledComposite) container;
+		Control formControl = getControl();
+		Point newSize = formControl.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		formControl.setSize(newSize);
+		sc.setMinSize(newSize);
+		updatePageIncrement(sc);
+	}
 }

@@ -160,6 +160,7 @@ public class FormWidgetFactory {
 				((Control) e.widget).setFocus();
 			}
 		});
+		composite.setMenu(parent.getMenu());
 		return composite;
 	}
 	public Composite createCompositeSeparator(Composite parent) {
@@ -249,6 +250,7 @@ public class FormWidgetFactory {
 		engine.marginHeight = 0;
 		engine.setHyperlinkSettings(getHyperlinkHandler());
 		engine.addKeyListener(keyboardHandler);
+		engine.setMenu(parent.getMenu());
 		return engine;
 	}
 
@@ -354,7 +356,7 @@ public class FormWidgetFactory {
 	}
 	private void initialize() {
 		clientAreaColor = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-		//registerColor(COLOR_BORDER, 195, 191, 179);
+		registerColor(COLOR_BORDER, 195, 191, 179);
 		registerColor(COLOR_COMPOSITE_SEPARATOR, 152, 170, 203);
 		registerColor(DEFAULT_HEADER_COLOR, 0x48, 0x70, 0x98);
 		backgroundColor = clientAreaColor;

@@ -6,10 +6,13 @@ package org.eclipse.update.internal.ui.views;
 import java.io.*;
 import java.util.Vector;
 
+import org.eclipse.help.ui.browser.IBrowser;
+import org.eclipse.help.ui.internal.browser.BrowserManager;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -22,6 +25,7 @@ import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.pages.*;
 import org.eclipse.update.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.update.internal.ui.search.*;
+import org.eclipse.update.ui.forms.internal.engine.FormEngine;
 
 /**
  * Insert the type's description here.
@@ -93,7 +97,8 @@ public class DetailsView extends MultiPageView {
 
 	public void showURL(String url) {
 		boolean useEmbedded = false;
-		if (SWT.getPlatform().equals("win32")) {
+		boolean win32 = SWT.getPlatform().equals("win32");
+		if (win32) {
 			useEmbedded = MainPreferencePage.getUseEmbeddedBrowser();
 		}
 		if (useEmbedded) {
@@ -105,7 +110,14 @@ public class DetailsView extends MultiPageView {
 				UpdateUIPlugin.logException(e);
 			}
 		} else {
-			Program.launch(url);
+			if (win32) {
+				Program.launch(url);
+			}
+			else {
+				// defect 11483
+				IBrowser browser = BrowserManager.getInstance().createBrowser();
+				browser.displayURL(url);
+			}
 		}
 	}
 
@@ -275,6 +287,11 @@ public class DetailsView extends MultiPageView {
 	}
 
 	public void contextMenuAboutToShow(IMenuManager menu) {
+		Control control = formWorkbook.getControl().getDisplay().getFocusControl();
+		if (control instanceof FormEngine) {
+			((FormEngine)control).contextMenuAboutToShow(menu);
+		}
+		
 		menu.add(backAction);
 		menu.add(forwardAction);
 		menu.add(homeAction);

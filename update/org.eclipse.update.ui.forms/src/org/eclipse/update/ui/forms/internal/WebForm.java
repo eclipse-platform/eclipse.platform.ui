@@ -98,6 +98,7 @@ public class WebForm extends AbstractSectionForm {
 	public Control createControl(Composite parent) {
 		scrollComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 		scrollComposite.setBackground(factory.getBackgroundColor());
+		scrollComposite.setMenu(parent.getMenu());
 		final Composite form = factory.createComposite(scrollComposite);
 
 		scrollComposite.setContent(form);

@@ -18,6 +18,7 @@
       <import plugin="org.eclipse.update.ui.forms"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.help.ui"/>
    </requires>
 
 
