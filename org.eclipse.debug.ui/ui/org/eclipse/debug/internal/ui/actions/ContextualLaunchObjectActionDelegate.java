@@ -172,6 +172,7 @@ public class ContextualLaunchObjectActionDelegate
 			}
 		}
 		iter = filteredShortCuts.iterator();
+		int accelerator = 1;
 		if (iter.hasNext()) {
 			while (iter.hasNext()) {
 				LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
@@ -179,7 +180,7 @@ public class ContextualLaunchObjectActionDelegate
 				Iterator modeIter = modes.iterator();
 				while (modeIter.hasNext()) {
 					String mode = (String) modeIter.next();
-					populateMenu(mode, ext, menu);
+					populateMenuItem(mode, ext, menu, accelerator++);
 				}
 			}
 		} else {
@@ -228,17 +229,24 @@ public class ContextualLaunchObjectActionDelegate
 	/**
 	 * Add the shortcut to the context menu's launch submenu.
 	 */
-	private void populateMenu(String mode, LaunchShortcutExtension ext, Menu menu) {
+	private void populateMenuItem(String mode, LaunchShortcutExtension ext, Menu menu, int accelerator) {
 		LaunchShortcutAction action = new LaunchShortcutAction(mode, ext);
 		action.setActionDefinitionId(ext.getId());
 		String helpContextId = ext.getHelpContextId();
 		if (helpContextId != null) {
 			WorkbenchHelp.setHelp(action, helpContextId);
 		}
+		StringBuffer label= new StringBuffer();
+		if (accelerator >= 0 && accelerator < 10) {
+			//add the numerical accelerator
+			label.append('&');
+			label.append(accelerator);
+			label.append(' ');
+		}
+		String contextLabel= ext.getContextLabel(mode);
 		// replace default action label with context label if specified.
-		String label = ext.getContextLabel(mode);
-		label = (label != null) ? label : action.getText();
-		action.setText(label);
+		label.append((contextLabel != null) ? contextLabel : action.getText());
+		action.setText(label.toString());
 		ActionContributionItem item= new ActionContributionItem(action);
 		item.fill(menu, -1);
 	}
