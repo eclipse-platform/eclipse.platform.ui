@@ -103,9 +103,9 @@ public class PluginEntry {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		String msg = (getPluginIdentifier()!=null)?getPluginIdentifier().toString():"";
-		msg += getPluginVersion()!=null?" "+getPluginVersion().toString():"";
-		msg += isFragment()?" fragment":" plugin";
+		String msg = (getPluginIdentifier()!=null)?getPluginIdentifier().toString():""; //$NON-NLS-1$
+		msg += getPluginVersion()!=null?" "+getPluginVersion().toString():""; //$NON-NLS-1$ //$NON-NLS-2$
+		msg += isFragment()?" fragment":" plugin"; //$NON-NLS-1$ //$NON-NLS-2$
 		return msg;
 	}
 
@@ -124,11 +124,11 @@ public class PluginEntry {
 				versionId = new VersionedIdentifier(id, ver);
 				return versionId;
 			} catch (Exception e) {
-				System.out.println("Unable to create versioned identifier:" + id + ":" + ver);
+				Utils.log(Messages.getString("PluginEntry.versionError", id, ver)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
-		versionId = new VersionedIdentifier("",null);
+		versionId = new VersionedIdentifier("",null); //$NON-NLS-1$
 		return versionId;
 	}
 

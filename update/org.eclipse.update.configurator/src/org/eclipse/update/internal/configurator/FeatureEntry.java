@@ -152,7 +152,7 @@ public class FeatureEntry
 		if (id != null)
 			featureElement.setAttribute(CFG_FEATURE_ENTRY_ID, id); 
 		if (primary)
-			featureElement.setAttribute(CFG_FEATURE_ENTRY_PRIMARY, "true");
+			featureElement.setAttribute(CFG_FEATURE_ENTRY_PRIMARY, "true"); //$NON-NLS-1$
 		if (version != null)
 			featureElement.setAttribute(CFG_FEATURE_ENTRY_VERSION, version); 
 		if (pluginVersion != null && !pluginVersion.equals(version) && pluginVersion.length() > 0)
@@ -323,7 +323,7 @@ public class FeatureEntry
 			return null;
 		
 		String resolvedURL = Utils.getResourceString(getResourceBundle(), licenseURL);
-		if (resolvedURL.startsWith("http://"))
+		if (resolvedURL.startsWith("http://")) //$NON-NLS-1$
 			return resolvedURL;
 		else {
 			try {

@@ -16,8 +16,8 @@ import org.eclipse.update.configurator.IPlatformConfiguration.*;
  * Constants
  */
 public interface IConfigurationConstants {
-	public static final String ECLIPSE_PRODUCT = "eclipse.product";
-	public static final String ECLIPSE_APPLICATION = "eclipse.application";
+	public static final String ECLIPSE_PRODUCT = "eclipse.product"; //$NON-NLS-1$
+	public static final String ECLIPSE_APPLICATION = "eclipse.application"; //$NON-NLS-1$
 	public static final String CFG = "config"; //$NON-NLS-1$
 	public static final String CFG_BOOT_PLUGIN = "bootstrap"; //$NON-NLS-1$
 	public static final String CFG_SITE = "site"; //$NON-NLS-1$
@@ -39,11 +39,11 @@ public interface IConfigurationConstants {
 	public static final String CFG_FEATURE_ENTRY_PLUGIN_IDENTIFIER = "plugin-identifier"; //$NON-NLS-1$
 	public static final String CFG_FEATURE_ENTRY_APPLICATION = "application"; //$NON-NLS-1$
 	public static final String CFG_FEATURE_ENTRY_ROOT = "root"; //$NON-NLS-1$
-	public static final String CFG_DATE = "date";
-	public static final String CFG_PLUGIN = "plugin";
-	public static final String CFG_FRAGMENT = "fragment";
-	public static final String CFG_ENABLED = "enabled";
-	public static final String CFG_SHARED_URL = "shared_ur";
+	public static final String CFG_DATE = "date"; //$NON-NLS-1$
+	public static final String CFG_PLUGIN = "plugin"; //$NON-NLS-1$
+	public static final String CFG_FRAGMENT = "fragment"; //$NON-NLS-1$
+	public static final String CFG_ENABLED = "enabled"; //$NON-NLS-1$
+	public static final String CFG_SHARED_URL = "shared_ur"; //$NON-NLS-1$
 	
 
 	public static final String CFG_VERSION = "version"; //$NON-NLS-1$

@@ -56,7 +56,7 @@ public class PluginParser extends DefaultHandler implements IConfigurationConsta
 		FileInputStream in = null;;
 		try{
 			in = new FileInputStream(pluginFile);
-			return parse(in, PLUGINS + "/" + pluginFile.getParentFile().getName() + "/");
+			return parse(in, PLUGINS + "/" + pluginFile.getParentFile().getName() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 		}finally{
 			if (in != null){
 				try{
@@ -108,7 +108,7 @@ public class PluginParser extends DefaultHandler implements IConfigurationConsta
 		String id = attributes.getValue("id"); //$NON-NLS-1$
 		String version = attributes.getValue("version"); //$NON-NLS-1$
 		if (id == null || id.trim().length() == 0)
-			id = "_no_id_";
+			id = "_no_id_"; //$NON-NLS-1$
 		pluginEntry.setVersionedIdentifier(new VersionedIdentifier(id, version));
 		
 		// stop parsing now

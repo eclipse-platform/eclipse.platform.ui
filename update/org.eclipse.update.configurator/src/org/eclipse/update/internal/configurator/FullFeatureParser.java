@@ -78,14 +78,14 @@ public class FullFeatureParser extends DefaultHandler implements IConfigurationC
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
-		Utils.debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName);
+		Utils.debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-		if ("plugin".equals(localName)) {
+		if ("plugin".equals(localName)) { //$NON-NLS-1$
 			processPlugin(attributes);
-		} else if ("description".equals(localName)){
+		} else if ("description".equals(localName)){ //$NON-NLS-1$
 			isDescription = true;
-		} else if ("license".equals(localName)) {
+		} else if ("license".equals(localName)) { //$NON-NLS-1$
 			processLicense(attributes);
 		}
 	}
@@ -101,7 +101,7 @@ public class FullFeatureParser extends DefaultHandler implements IConfigurationC
 
 		if (id == null || id.trim().equals("") //$NON-NLS-1$
 		|| ver == null || ver.trim().equals("")) { //$NON-NLS-1$
-			System.out.println(Messages.getString("FeatureParser.IdOrVersionInvalid", new String[] { id, ver}));
+			System.out.println(Messages.getString("FeatureParser.IdOrVersionInvalid", new String[] { id, ver})); //$NON-NLS-1$
 			//$NON-NLS-1$
 		} else {
 //			String label = attributes.getValue("label"); //$NON-NLS-1$
@@ -119,12 +119,12 @@ public class FullFeatureParser extends DefaultHandler implements IConfigurationC
 			feature.addPlugin(plugin);
 			
 			Utils.
-				debug("End process DefaultFeature tag: id:" +id + " ver:" +ver + " url:" + feature.getURL()); 	
+				debug("End process DefaultFeature tag: id:" +id + " ver:" +ver + " url:" + feature.getURL()); 	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 	
 	private void processLicense(Attributes attributes ){
-		feature.setLicenseURL(attributes.getValue("url"));
+		feature.setLicenseURL(attributes.getValue("url")); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -141,7 +141,7 @@ public class FullFeatureParser extends DefaultHandler implements IConfigurationC
 	 */
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
-		if ("description".equals(localName)) {
+		if ("description".equals(localName)) { //$NON-NLS-1$
 			isDescription = false;
 			String d = description.toString().trim();
 			ResourceBundle bundle = feature.getResourceBundle();

@@ -47,20 +47,20 @@ public class Utils {
 		IStatus status;
 		if (e instanceof CoreException) {
 			if (s == null)
-				s = "";
-			status = new MultiStatus("org.eclipse.update.configurator", 0, s, e);
+				s = ""; //$NON-NLS-1$
+			status = new MultiStatus("org.eclipse.update.configurator", 0, s, e); //$NON-NLS-1$
 			IStatus childrenStatus = ((CoreException) e).getStatus();
 			((MultiStatus) status).add(childrenStatus);
 			((MultiStatus) status).addAll(childrenStatus);
 		} else {
-			StringBuffer completeString = new StringBuffer("");
+			StringBuffer completeString = new StringBuffer(""); //$NON-NLS-1$
 			if (s != null)
 				completeString.append(s);
 			if (e != null) {
-				completeString.append(" [");
+				completeString.append(" ["); //$NON-NLS-1$
 				String msg = e.getLocalizedMessage();
 				completeString.append(msg!=null?msg:e.toString());
-				completeString.append("]");
+				completeString.append("]"); //$NON-NLS-1$
 			}
 			status = newStatus(completeString.toString(), e);
 		}
@@ -68,7 +68,7 @@ public class Utils {
 	}
 
 	public static IStatus newStatus(String message, Throwable e) {
-		return new Status(IStatus.ERROR, "org.eclipse.update.configurator", IStatus.OK, message, e);
+		return new Status(IStatus.ERROR, "org.eclipse.update.configurator", IStatus.OK, message, e); //$NON-NLS-1$
 	}
 	
 	public static void log(String message) {
@@ -92,10 +92,10 @@ public class Utils {
 	 */
 	public static URL asPlatformURL(URL url) {
 		try {
-			URL platformURL = new URL(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + "base" + "/"); //$NON-NLS-1$ //$NON-NLS-2$ // try using platform-relative URL
+			URL platformURL = new URL(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + "base" + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ // try using platform-relative URL
 			URL resolvedPlatformURL = Platform.asLocalURL(platformURL);
 			// TODO workaround bug in platform url resolution
-			if (resolvedPlatformURL.getProtocol().equals("file"))
+			if (resolvedPlatformURL.getProtocol().equals("file")) //$NON-NLS-1$
 				resolvedPlatformURL = new File(resolvedPlatformURL.getFile()).toURL();
 			String platformURLAsString = resolvedPlatformURL.toExternalForm();
 			String urlAsString = url.toExternalForm();
@@ -125,9 +125,9 @@ public class Utils {
 	 */	
 	private static boolean isMatching(String candidateValues, String siteValues) {
 		if (siteValues==null) return false;
-		if ("*".equalsIgnoreCase(candidateValues)) return true;
+		if ("*".equalsIgnoreCase(candidateValues)) return true; //$NON-NLS-1$
 		siteValues = siteValues.toUpperCase();		
-		StringTokenizer stok = new StringTokenizer(candidateValues, ",");
+		StringTokenizer stok = new StringTokenizer(candidateValues, ","); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken().toUpperCase();
 			if (siteValues.indexOf(token)!=-1) return true;
@@ -140,11 +140,11 @@ public class Utils {
 	 */	
 	private static boolean isMatchingLocale(String candidateValues, String locale) {
 		if (locale==null) return false;
-		if ("*".equalsIgnoreCase(candidateValues)) return true;
+		if ("*".equalsIgnoreCase(candidateValues)) return true; //$NON-NLS-1$
 		
 		locale = locale.toUpperCase();
 		candidateValues = candidateValues.toUpperCase();	
-		StringTokenizer stok = new StringTokenizer(candidateValues, ",");
+		StringTokenizer stok = new StringTokenizer(candidateValues, ","); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String candidate = stok.nextToken();
 			if (locale.indexOf(candidate) == 0)
@@ -162,9 +162,9 @@ public class Utils {
 			return Locale.getDefault();
 		
 		// break the string into tokens to get the Locale object
-		StringTokenizer locales = new StringTokenizer(nl,"_");
+		StringTokenizer locales = new StringTokenizer(nl,"_"); //$NON-NLS-1$
 		if (locales.countTokens() == 1)
-			return new Locale(locales.nextToken(), "");
+			return new Locale(locales.nextToken(), ""); //$NON-NLS-1$
 		else if (locales.countTokens() == 2)
 			return new Locale(locales.nextToken(), locales.nextToken());
 		else if (locales.countTokens() == 3)
@@ -237,17 +237,17 @@ public class Utils {
 	}
 
 	public static boolean isAutomaticallyStartedBundle(String bundleURL) {
-		if (bundleURL.indexOf("org.eclipse.osgi") != -1)
+		if (bundleURL.indexOf("org.eclipse.osgi") != -1) //$NON-NLS-1$
 			return true;
 		
-		String osgiBundles = System.getProperty("osgi.bundles");
-		StringTokenizer st = new StringTokenizer(osgiBundles, ",");
+		String osgiBundles = System.getProperty("osgi.bundles"); //$NON-NLS-1$
+		StringTokenizer st = new StringTokenizer(osgiBundles, ","); //$NON-NLS-1$
 		while (st.hasMoreTokens()) {
 			String token = st.nextToken().trim();
 			int index = token.indexOf('@');
 			if (index != -1)
 				token = token.substring(0,index);
-			if (token.startsWith("reference:file:")) {
+			if (token.startsWith("reference:file:")) { //$NON-NLS-1$
 				File f = new File(token.substring(15));
 				if (bundleURL.indexOf(f.getName()) != -1)
 					return true;

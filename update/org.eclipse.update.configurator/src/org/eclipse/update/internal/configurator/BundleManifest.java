@@ -96,7 +96,7 @@ public class BundleManifest implements IConfigurationConstants {
 					pluginDir = pluginDir.getParentFile();
 				}
 				if (pluginDir != null){
-					pluginEntry.setURL(PLUGINS + "/" + pluginDir.getName() + "/");
+					pluginEntry.setURL(PLUGINS + "/" + pluginDir.getName() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			//

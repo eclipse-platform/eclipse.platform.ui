@@ -103,7 +103,7 @@ public class Configuration implements IConfigurationConstants {
 
 			configElement.setAttribute(CFG_VERSION, VERSION);
 			configElement.setAttribute(CFG_DATE, String.valueOf(date.getTime()));
-			String transitory = isTransient() ? "true" : "false";
+			String transitory = isTransient() ? "true" : "false"; //$NON-NLS-1$ //$NON-NLS-2$
 			configElement.setAttribute(CFG_TRANSIENT, transitory);
 						
 			if (linkedConfig != null) {
@@ -122,7 +122,7 @@ public class Configuration implements IConfigurationConstants {
 			return configElement;
 			
 		} catch (Exception e) {
-			throw Utils.newCoreException("", e);
+			throw Utils.newCoreException("", e); //$NON-NLS-1$
 		} 
 	}
 	
