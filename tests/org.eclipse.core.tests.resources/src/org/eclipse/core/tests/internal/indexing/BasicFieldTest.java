@@ -29,7 +29,7 @@ public class BasicFieldTest extends TestCase {
 		names.add("testPointer");
 		names.add("testField");
 		names.add("testFieldArray");
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(BasicFieldTest.class.getName());
 		for (Iterator z = names.iterator(); z.hasNext();) {
 			suite.addTest(new BasicFieldTest((String) z.next(), env));
 		}

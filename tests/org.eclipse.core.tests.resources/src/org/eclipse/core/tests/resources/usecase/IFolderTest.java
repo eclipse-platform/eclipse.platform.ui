@@ -51,7 +51,7 @@ public class IFolderTest extends IResourceTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(IFolderTest.class.getName());
 		suite.addTest(new IFolderTest("testFolder"));
 		return suite;
 	}

@@ -111,7 +111,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 */
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(DeltaDataTreeTest.class.getName());
 		suite.addTest(new DeltaDataTreeTest("testSetup"));
 
 		suite.addTest(new DeltaDataTreeTest("testAddAndRemoveOnSameLayer"));

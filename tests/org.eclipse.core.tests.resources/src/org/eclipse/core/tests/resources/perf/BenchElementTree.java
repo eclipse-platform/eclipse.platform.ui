@@ -483,7 +483,7 @@ public class BenchElementTree extends CorePerformanceTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(BenchElementTree.class.getName());
 
 		suite.addTest(new BenchElementTree("benchCreateElement"));
 		suite.addTest(new BenchElementTree("benchDeleteElement"));

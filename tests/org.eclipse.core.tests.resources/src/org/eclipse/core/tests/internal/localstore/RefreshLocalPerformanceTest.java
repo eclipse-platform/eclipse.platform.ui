@@ -67,7 +67,7 @@ public class RefreshLocalPerformanceTest extends EclipseWorkspaceTest {
 
 	// this test should not be in AllTests because it is noly a performance test
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(RefreshLocalPerformanceTest.class.getName());
 		suite.addTest(new RefreshLocalPerformanceTest("testLocalRefreshPerformance"));
 		return suite;
 	}

@@ -38,7 +38,7 @@ public class MarkerPerformanceTest extends CorePerformanceTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(MarkerPerformanceTest.class.getName());
 		suite.addTest(new MarkerPerformanceTest("benchSetAttributes1"));
 		suite.addTest(new MarkerPerformanceTest("benchSetAttributes2"));
 		return suite;

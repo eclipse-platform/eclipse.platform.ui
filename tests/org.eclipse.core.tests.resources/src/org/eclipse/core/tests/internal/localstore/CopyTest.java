@@ -28,9 +28,10 @@ public class CopyTest extends LocalStoreTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
-		suite.addTest(new CopyTest("testCopyResource"));
-		return suite;
+		return new TestSuite(CopyTest.class);
+//		TestSuite suite = new TestSuite(CopyTest.class.getName());
+//		suite.addTest(new CopyTest("testCopyResource"));
+//		return suite;
 	}
 
 	public void testCopyResource() throws Throwable {

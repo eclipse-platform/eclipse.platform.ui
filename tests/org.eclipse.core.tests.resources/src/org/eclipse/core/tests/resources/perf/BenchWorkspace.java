@@ -38,7 +38,7 @@ public class BenchWorkspace extends CorePerformanceTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(BenchWorkspace.class.getName());
 		suite.addTest(new BenchWorkspace("benchCountResources"));
 		return suite;
 	}

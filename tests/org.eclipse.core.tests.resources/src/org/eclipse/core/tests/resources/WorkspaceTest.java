@@ -72,7 +72,7 @@ public class WorkspaceTest extends EclipseWorkspaceTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(WorkspaceTest.class.getName());
 		// test the basic create operations
 		suite.addTest(new WorkspaceTest("testProjectCreation"));
 		suite.addTest(new WorkspaceTest("testFolderCreation"));

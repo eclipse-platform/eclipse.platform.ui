@@ -33,7 +33,7 @@ public class MoveTest extends LocalStoreTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(MoveTest.class.getName());
 		suite.addTest(new MoveTest("testRenameProjects"));
 		suite.addTest(new MoveTest("testRenameFolder"));
 		suite.addTest(new MoveTest("testRenameFile"));

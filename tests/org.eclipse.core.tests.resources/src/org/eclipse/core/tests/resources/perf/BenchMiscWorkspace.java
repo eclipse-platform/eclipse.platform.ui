@@ -18,7 +18,7 @@ import org.eclipse.core.tests.harness.CorePerformanceTest;
 
 public class BenchMiscWorkspace extends CorePerformanceTest {
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(BenchMiscWorkspace.class.getName());
 		suite.addTest(new BenchMiscWorkspace("benchNoOp"));
 		return suite;
 	}

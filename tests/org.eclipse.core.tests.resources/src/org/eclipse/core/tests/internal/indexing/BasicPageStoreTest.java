@@ -24,7 +24,7 @@ public class BasicPageStoreTest extends TestCase {
 	}
 
 	public static Test suite(TestEnvironment env) {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(BasicPageStoreTest.class.getName());
 		suite.addTest(new BasicPageStoreTest("testCreate", env));
 		suite.addTest(new BasicPageStoreTest("testDelete", env));
 		suite.addTest(new BasicPageStoreTest("testWrite", env));

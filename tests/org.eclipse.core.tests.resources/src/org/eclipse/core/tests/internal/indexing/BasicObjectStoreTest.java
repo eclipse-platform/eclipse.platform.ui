@@ -27,7 +27,7 @@ public class BasicObjectStoreTest extends TestCase {
 	}
 
 	public static Test suite(TestEnvironment env) {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(BasicObjectStoreTest.class.getName());
 		suite.addTest(new BasicObjectStoreTest("testSanity", env));
 		suite.addTest(new BasicObjectStoreTest("testInsertRemove", env));
 		suite.addTest(new BasicObjectStoreTest("testPopulate", env));

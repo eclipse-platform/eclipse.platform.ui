@@ -63,7 +63,7 @@ public class ResourceURLTest extends EclipseWorkspaceTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(ResourceURLTest.class.getName());
 		suite.addTest(new ResourceURLTest("testNonExistantURLs"));
 		suite.addTest(new ResourceURLTest("testBasicURLs"));
 		suite.addTest(new ResourceURLTest("testExternalURLs"));

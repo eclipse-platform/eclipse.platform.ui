@@ -25,7 +25,7 @@ public class BasicIndexedStoreTest extends TestCase {
 	}
 
 	public static Test suite(TestEnvironment env) {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(BasicIndexedStoreTest.class.getName());
 		suite.addTest(new BasicIndexedStoreTest("testSanity", env));
 		suite.addTest(new BasicIndexedStoreTest("testRecovery", env));
 		suite.addTest(new BasicIndexedStoreTest("testTransactions", env));
