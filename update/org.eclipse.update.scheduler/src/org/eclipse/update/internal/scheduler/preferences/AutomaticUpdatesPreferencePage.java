@@ -92,6 +92,8 @@ public class AutomaticUpdatesPreferencePage
 		gd.widthHint = 60;
 		hourCombo.setLayoutData(gd);
 	
+		createSpacer(container, 1);
+		
 		group = new Group(container, SWT.NONE);
 		group.setText("&Download Options");
 		layout = new GridLayout();
@@ -149,8 +151,8 @@ public class AutomaticUpdatesPreferencePage
 		dayCombo.setText(UpdateScheduler.DAYS[getDay(pref)]);
 		hourCombo.setText(UpdateScheduler.HOURS[getHour(pref)]);
 		
-		searchOnlyRadio.setSelection(pref.getBoolean(UpdateScheduler.P_DOWNLOAD));
-		searchAndDownloadRadio.setSelection(!pref.getBoolean(UpdateScheduler.P_DOWNLOAD));
+		searchOnlyRadio.setSelection(!pref.getBoolean(UpdateScheduler.P_DOWNLOAD));
+		searchAndDownloadRadio.setSelection(pref.getBoolean(UpdateScheduler.P_DOWNLOAD));
 
 		pageChanged();
 	}
@@ -168,6 +170,8 @@ public class AutomaticUpdatesPreferencePage
 		onScheduleRadio.setEnabled(master);
 		dayCombo.setEnabled(master && onScheduleRadio.getSelection());
 		hourCombo.setEnabled(master && onScheduleRadio.getSelection());
+		searchOnlyRadio.setEnabled(master);
+		searchAndDownloadRadio.setEnabled(master);
 	}
 
 	protected void performDefaults() {
