@@ -658,6 +658,8 @@ public void delete(boolean force, IProgressMonitor monitor) throws CoreException
  * However, if <code>FORCE</code> is specified, the method will ruthlessly 
  * attempt to delete corresponding files and directories in the local
  * file system, including ones that have been recently updated or created.
+ * Note that the <code>FORCE</code> flag is ignored if the resource is a project and
+ * <code>ALWAYS_DELETE_PROJECT_CONTENTS</code> is specified.
  * </p>
  * <p>
  * The <code>KEEP_HISTORY</code> update flag controls whether or not 
@@ -676,7 +678,9 @@ public void delete(boolean force, IProgressMonitor monitor) throws CoreException
  * deletions are handled. If <code>ALWAYS_DELETE_PROJECT_CONTENTS</code> is specified,
  * closed projects will be opened if necessary and then deleted. This has the
  * effect of deleting the project's resources from the project's local content
- * area. If <code>NEVER_DELETE_PROJECT_CONTENTS</code> is specified, the project
+ * area. If <code>ALWAYS_DELETE_PROJECT_CONTENTS</code> is specified then the
+ * <code>IResource.FORCE</code> flag is ignored and treated to be <code>true</code>.
+ * If <code>NEVER_DELETE_PROJECT_CONTENTS</code> is specified, the project
  * will be closed if necessary and then deleted. This has the effect of 
  * retaining the project's resources in the project's local content area while
  * dropping the project from the workspace. If neither of these flags is specified,
