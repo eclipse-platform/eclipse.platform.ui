@@ -78,6 +78,6 @@ public interface ISharedImages {
 	 public final String IMG_CHANGE_FILTER = "clcl16/change_filter.gif"; //$NON-NLS-1$
 	 
 	 // TODO: I just picked an image. We should get a custom image
-	 public final String IMG_COMPRESSED_FOLDER = "obj/share_project.gif"; //$NON-NLS-1$
+	 public final String IMG_COMPRESSED_FOLDER = "obj/compressed_folder_obj.gif"; //$NON-NLS-1$
 }
 
