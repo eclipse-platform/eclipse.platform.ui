@@ -10,6 +10,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
@@ -160,6 +161,9 @@ public class SearchResultView
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setSorter(new NameSorter());
 		viewer.setInput(ResourcesPlugin.getWorkspace());
+		WorkbenchHelp.setHelp(
+			getControl(),
+			"org.eclipse.update.ui.SearchResultView");
 	}
 
 	protected void partControlCreated() {

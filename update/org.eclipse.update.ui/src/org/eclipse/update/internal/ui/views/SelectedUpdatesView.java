@@ -10,6 +10,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
@@ -19,7 +20,7 @@ import org.eclipse.update.internal.ui.wizards.*;
 /**
  *
  */
-public class ItemsView extends BaseTableView {
+public class SelectedUpdatesView extends BaseTableView {
 	private UpdateModelChangedListener modelListener;
 	private Action deleteAction;
 	private Action processAction;
@@ -140,7 +141,7 @@ public class ItemsView extends BaseTableView {
 		}
 	}
 
-	public ItemsView() {
+	public SelectedUpdatesView() {
 		modelListener = new UpdateModelChangedListener();
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 	}
@@ -153,6 +154,7 @@ public class ItemsView extends BaseTableView {
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setInput(UpdateUI.getDefault().getUpdateModel());
+		WorkbenchHelp.setHelp(viewer.getControl(), "org.eclipse.update.ui.SelectedUpdatesView");
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {

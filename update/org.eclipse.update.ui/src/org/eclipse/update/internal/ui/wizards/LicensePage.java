@@ -8,6 +8,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.PendingChange;
@@ -61,6 +62,8 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 		client.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
 		client.setLayout(layout);
+		
+		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.LicensePage");
 
 		if (multiLicenseMode) {
 			layout.numColumns = 3;

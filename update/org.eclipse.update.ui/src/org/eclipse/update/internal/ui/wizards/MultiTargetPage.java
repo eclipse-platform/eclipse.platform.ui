@@ -351,7 +351,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		availableSpaceLabel.setLayoutData(
 			new GridData(GridData.FILL_HORIZONTAL));
 
-		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.ReviewPage");
+		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.MultiTargetPage");
 		return client;
 	}
 

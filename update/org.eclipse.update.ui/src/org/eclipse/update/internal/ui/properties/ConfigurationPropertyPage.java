@@ -5,6 +5,7 @@ package org.eclipse.update.internal.ui.properties;
  */
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
@@ -20,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
  * @see PropertyPage
  */
 public class ConfigurationPropertyPage extends PropertyPage implements IWorkbenchPropertyPage {
-	private static final String KEY_NAME = "ConfigurationPropertyPage.name";
+	private static final String KEY_NAME = "ConfigurationPropertyPage.name"; //$NON-NLS-1$
 	private Text nameText;
 	private boolean changed;
 	/**
@@ -45,6 +46,7 @@ public class ConfigurationPropertyPage extends PropertyPage implements IWorkbenc
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		nameText.setLayoutData(gd);
 		initializeFields();
+		WorkbenchHelp.setHelp(container, "org.eclipse.update.ui.ConfigurationPropertyPage");
 		return container;
 	}
 	
@@ -93,7 +95,7 @@ public class ConfigurationPropertyPage extends PropertyPage implements IWorkbenc
 		String text = nameText.getText();
 		if (text.length()==0) valid = false;
 		else if (text.charAt(0)=='@') {
-			error = "Configuration label cannot start with a '@'";
+			error = UpdateUI.getString("ConfigurationPropertyPage.invalidCharacter"); //$NON-NLS-1$
 			valid=false;
 		}
 		setValid(valid);		

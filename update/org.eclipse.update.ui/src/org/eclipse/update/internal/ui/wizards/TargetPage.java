@@ -290,7 +290,7 @@ public class TargetPage extends BannerPage {
 
 		tableViewer.setInput(UpdateUI.getDefault().getUpdateModel());
 		selectFirstTarget();
-		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.ReviewPage");
+		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.TargetPage");
 		return client;
 	}
 	private void createTableViewer(Composite parent) {

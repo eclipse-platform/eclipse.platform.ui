@@ -6,34 +6,78 @@ package org.eclipse.update.internal.ui.forms;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Locale;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.configuration.ILocalSite;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IIncludedFeatureReference;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.internal.ui.UpdatePerspective;
+import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIImages;
+import org.eclipse.update.internal.ui.model.IConfiguredSiteContext;
+import org.eclipse.update.internal.ui.model.IFeatureAdapter;
+import org.eclipse.update.internal.ui.model.IUpdateModelChangedListener;
+import org.eclipse.update.internal.ui.model.MissingFeature;
+import org.eclipse.update.internal.ui.model.PendingChange;
+import org.eclipse.update.internal.ui.model.UpdateModel;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
 import org.eclipse.update.internal.ui.parts.SWTUtil;
 import org.eclipse.update.internal.ui.preferences.UpdateColors;
-import org.eclipse.update.internal.ui.search.*;
 import org.eclipse.update.internal.ui.views.DetailsView;
-import org.eclipse.update.internal.ui.wizards.*;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.update.internal.ui.wizards.InstallWizard;
+import org.eclipse.update.internal.ui.wizards.InstallWizardDialog;
+import org.eclipse.update.ui.forms.internal.ExpandableGroup;
+import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.update.ui.forms.internal.HTMLTableLayout;
+import org.eclipse.update.ui.forms.internal.HyperlinkAdapter;
+import org.eclipse.update.ui.forms.internal.HyperlinkHandler;
+import org.eclipse.update.ui.forms.internal.IHyperlinkListener;
+import org.eclipse.update.ui.forms.internal.SelectableFormLabel;
+import org.eclipse.update.ui.forms.internal.TableData;
 
 public class DetailsForm extends PropertyWebForm {
 	// NL keys
@@ -1014,11 +1058,8 @@ public class DetailsForm extends PropertyWebForm {
 
 	private void executeJob(int mode) {
 		if (currentFeature != null) {
-			if (mode == PendingChange.INSTALL) {
-				if (testDependencies(currentFeature) == false)
-					return;
-			}
 			PendingChange job = createPendingChange(mode);
+			touchChildren(getControl().getShell(), currentFeature);
 			executeJob(getControl().getShell(), job, true);
 		}
 	}
@@ -1141,6 +1182,31 @@ public class DetailsForm extends PropertyWebForm {
 		return null;
 	}
 	
+	private void touchChildren(Shell shell, final IFeature feature) {
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				monitor.beginTask(UpdateUI.getString("DetailsForm.downloadingIncluded"), 1); //$NON-NLS-1$
+				try {
+					touchFeatureChildren(feature, new SubProgressMonitor(monitor, 1));
+				}
+				catch (CoreException e) {
+					// ignore
+				}
+				finally {
+					monitor.done();
+				}
+			}
+		};
+		try {
+			ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell);
+			pmd.run(true, false, op);
+		}
+		catch (InvocationTargetException e) {
+		}
+		catch (InterruptedException e) {
+		}
+	}
+	
 	private static void touchFeatureChildren(IFeature feature, IProgressMonitor monitor) throws CoreException {
 		IFeatureReference[] irefs =
 			feature.getIncludedFeatureReferences();
@@ -1254,111 +1320,6 @@ public class DetailsForm extends PropertyWebForm {
 			mode = PendingChange.INSTALL;
 		}
 		return mode;
-	}
-
-	private boolean testDependencies(IFeature feature) {
-		// NOTE: testing and searching for dependencies is disabled
-		//       at this point. The code needs to correctly handle
-		//       matching rules that can be specified on the dependencies.
-		if (true)
-			return true;
-
-		IImport[] imports = feature.getImports();
-		if (imports.length == 0)
-			return true;
-		ArrayList missing = new ArrayList();
-		try {
-			ILocalSite localSite = SiteManager.getLocalSite();
-			IInstallConfiguration config = localSite.getCurrentConfiguration();
-			IConfiguredSite[] configSites = config.getConfiguredSites();
-
-			for (int i = 0; i < imports.length; i++) {
-				if (!isOnTheList(imports[i], configSites)) {
-					missing.add(imports[i]);
-				}
-			}
-		} catch (CoreException e) {
-			UpdateUI.logException(e);
-			return false;
-		}
-		if (missing.size() > 0) {
-			// show missing plug-in dialog and ask to search
-			MessageDialog dialog =
-				new MessageDialog(
-					getControl().getShell(),
-					UpdateUI.getString(KEY_MISSING_TITLE),
-					(Image) null,
-					UpdateUI.getString(KEY_MISSING_MESSAGE),
-					MessageDialog.WARNING,
-					new String[] {
-						UpdateUI.getString(KEY_MISSING_SEARCH),
-						UpdateUI.getString(KEY_MISSING_ABORT)},
-					0);
-			int result = dialog.open();
-			if (result == 0)
-				initiatePluginSearch(missing);
-			return false;
-		} else
-			return true;
-	}
-	private boolean isOnTheList(
-		IImport iimport,
-		IConfiguredSite[] configSites) {
-		for (int i = 0; i < configSites.length; i++) {
-			IConfiguredSite csite = configSites[i];
-			ISite site = csite.getSite();
-			IPluginEntry[] entries = site.getPluginEntries();
-			if (isOnTheList(iimport, entries))
-				return true;
-		}
-		return false;
-	}
-	private boolean isOnTheList(IImport iimport, IPluginEntry[] entries) {
-		VersionedIdentifier importId = iimport.getVersionedIdentifier();
-		PluginVersionIdentifier version = importId.getVersion();
-		boolean noVersion =
-			version.getMajorComponent() == 0
-				&& version.getMinorComponent() == 0
-				&& version.getServiceComponent() == 0;
-		for (int i = 0; i < entries.length; i++) {
-			IPluginEntry entry = entries[i];
-			VersionedIdentifier entryId = entry.getVersionedIdentifier();
-			if (noVersion) {
-				if (importId.getIdentifier().equals(entryId.getIdentifier()))
-					return true;
-			} else if (entryId.equals(importId))
-				return true;
-		}
-		return false;
-	}
-
-	private void initiatePluginSearch(ArrayList missing) {
-		SearchCategoryDescriptor desc =
-			SearchCategoryRegistryReader.getDefault().getDescriptor(
-				"org.eclipse.update.ui.plugins"); //$NON-NLS-1$
-		if (desc == null)
-			return;
-		String name =
-			UpdateUI.getFormattedMessage(
-				KEY_SEARCH_OBJECT_NAME,
-				currentFeature.getLabel());
-		SearchObject search = new SearchObject(name, desc, true);
-		search.setPersistent(false);
-		search.setInstantSearch(true);
-		search.setSearchBookmarks(true);
-		search.setSearchDiscovery(true);
-		String value = PluginsSearchCategory.encodeImports(missing);
-		search.getSettings().put("imports", value); //$NON-NLS-1$
-		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
-		try {
-			UpdateUI.getActivePage().showView(UpdatePerspective.ID_UPDATES);
-		} catch (PartInitException e) {
-		}
-		model.addBookmark(search);
-		try {
-			UpdateUI.getActivePage().showView(UpdatePerspective.ID_DETAILS);
-		} catch (PartInitException e) {
-		}
 	}
 
 	private PendingChange createPendingChange(int type) {

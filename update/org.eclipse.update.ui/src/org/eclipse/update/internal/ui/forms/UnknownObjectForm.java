@@ -5,6 +5,7 @@ package org.eclipse.update.internal.ui.forms;
  */
 
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.IVolume;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
@@ -45,9 +46,10 @@ public class UnknownObjectForm extends UpdateWebForm {
 		layout.numColumns = 1;
 
 		FormWidgetFactory factory = getFactory();
-		factory.createComposite(parent);
+		Composite client = factory.createComposite(parent);
 		TableData td = new TableData();
 		td.align = TableData.FILL;
+		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.UnknownObjectForm");
 	}
 
 	public void expandTo(Object obj) {

@@ -241,7 +241,7 @@ public class MultiReviewPage extends BannerPage {
 		filterCheck.setLayoutData(gd);
 		pageChanged();
 
-		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.ReviewPage");
+		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.MultiReviewPage");
 		return client;
 	}
 

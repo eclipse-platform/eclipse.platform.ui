@@ -106,7 +106,7 @@
             name="%views.updateItems.label"
             icon="icons/full/cview16/selected_updates.gif"
             category="org.eclipse.update.ui"
-            class="org.eclipse.update.internal.ui.views.ItemsView"
+            class="org.eclipse.update.internal.ui.views.SelectedUpdatesView"
             id="org.eclipse.update.ui.ItemsView">
       </view>
    </extension>

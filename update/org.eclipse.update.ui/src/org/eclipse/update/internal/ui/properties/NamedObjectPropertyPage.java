@@ -9,6 +9,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.*;
 
@@ -45,6 +46,7 @@ public class NamedObjectPropertyPage
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		objectName.setLayoutData(gd);
 		initializeFields();
+		WorkbenchHelp.setHelp(container, "org.eclipse.update.ui.NamedObjectPropertyPage");
 		return container;
 	}
 	

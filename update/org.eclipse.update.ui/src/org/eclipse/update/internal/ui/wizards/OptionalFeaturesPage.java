@@ -11,6 +11,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
@@ -137,6 +138,7 @@ public class OptionalFeaturesPage extends BannerPage {
 					| GridData.VERTICAL_ALIGN_BEGINNING);
 		deselectAllButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(deselectAllButton);
+		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.OptionalFeaturesPage");
 		return client;
 	}
 
