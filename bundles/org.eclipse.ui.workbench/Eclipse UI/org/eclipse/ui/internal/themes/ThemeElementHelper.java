@@ -35,8 +35,14 @@ public final class ThemeElementHelper {
 		// sort the definitions by dependant ordering so that we process 
 		// ancestors before children.		
 		FontDefinition [] copyOfDefinitions = null;
+		
+		// the colors to set a default value for, but not a registry value
+		FontDefinition [] defaults = null;
 		if (!theme.getId().equals(IThemeManager.DEFAULT_THEME)) {
 		    definitions = addDefaulted(definitions);
+		    //compute the defaults only if we're setting preferences at this time
+		    if (store != null)
+		    	defaults = getDefaults(definitions);
 		}    
 				
 		copyOfDefinitions = new FontDefinition[definitions.length];
@@ -45,7 +51,13 @@ public final class ThemeElementHelper {
 
 		for (int i = 0; i < copyOfDefinitions.length; i++) {
 			FontDefinition definition = copyOfDefinitions[i];
-			installFont(definition, theme, store);
+			installFont(definition, theme, store, true);
+		}
+		
+		if (defaults != null) {
+			for (int i = 0; i < defaults.length; i++) {
+				installFont(defaults[i], theme, store, false);
+			}
 		}
     }
     
@@ -64,11 +76,20 @@ public final class ThemeElementHelper {
 
 
     /**
-     * @param definition
-     * @param registry
-     * @param store
-     */
-    private static void installFont(FontDefinition definition, ITheme theme, IPreferenceStore store) {
+	 * Installs the given font in the preference store and optionally the font 
+	 * registry.
+	 * 
+	 * @param definition
+	 *            the font definition
+	 * @param registry
+	 *            the font registry
+	 * @param store
+	 *            the preference store from which to set and obtain font data
+	 * @param setInRegistry
+	 * 			  whether the color should be put into the registry as well as
+	 *            having its default preference set
+	 */    
+    private static void installFont(FontDefinition definition, ITheme theme, IPreferenceStore store, boolean setInRegistry) {
         FontRegistry registry = theme.getFontRegistry();
 		
         String id = definition.getId();
@@ -84,8 +105,14 @@ public final class ThemeElementHelper {
 		    defaultFont = registry.bestDataArray(registry.getFontData(key), Workbench.getInstance().getDisplay());
 		}		    
 		
-		if (prefFont == null || prefFont == PreferenceConverter.FONTDATA_ARRAY_DEFAULT_DEFAULT) {
-		    prefFont = defaultFont;
+		if (setInRegistry) {
+			if (prefFont == null || prefFont == PreferenceConverter.FONTDATA_ARRAY_DEFAULT_DEFAULT) {
+			    prefFont = defaultFont;
+			}
+			
+			if (prefFont != null) {		    
+				registry.put(id, prefFont);
+			}
 		}
 		
 		if (defaultFont != null && store != null) {
@@ -94,11 +121,6 @@ public final class ThemeElementHelper {
 					key, 
 					defaultFont);
 		}
-
-		
-		if (prefFont != null) {		    
-			registry.put(id, prefFont);
-		}
     }
 
     public static void populateRegistry(ITheme theme, ColorDefinition [] definitions, IPreferenceStore store) {
@@ -106,8 +128,14 @@ public final class ThemeElementHelper {
 		// ancestors before children.		
         
 		ColorDefinition [] copyOfDefinitions = null;
+
+		// the colors to set a default value for, but not a registry value
+		ColorDefinition [] defaults = null;
 		if (!theme.getId().equals(IThemeManager.DEFAULT_THEME)) {
 		    definitions = addDefaulted(definitions);
+		    //compute defaults only if we're setting preferences
+		    if (store != null)
+		    	defaults = getDefaults(definitions);		    
 		}    
 		
 	    copyOfDefinitions = new ColorDefinition[definitions.length];
@@ -116,10 +144,50 @@ public final class ThemeElementHelper {
 
 		for (int i = 0; i < copyOfDefinitions.length; i++) {
 			ColorDefinition definition = copyOfDefinitions[i];
-			installColor(definition, theme, store);
-		}        
+			installColor(definition, theme, store, true);
+		}
+		
+		if (defaults != null) {
+			for (int i = 0; i < defaults.length; i++) {
+				installColor(defaults[i], theme, store, false);
+			}
+		}
     }
     
+	/**
+	 * Return the definitions that should have their default preference value
+	 * set but nothing else.
+	 * 
+	 * @param definitions the definitions that will be fully handled
+	 * @return the remaining definitions that should be defaulted
+	 */
+	private static ColorDefinition[] getDefaults(ColorDefinition[] definitions) {
+        IThemeRegistry registry = WorkbenchPlugin.getDefault().getThemeRegistry();
+        ColorDefinition[] allDefs = registry.getColors();
+        
+        SortedSet set = new TreeSet(IThemeRegistry.ID_COMPARATOR);
+        set.addAll(Arrays.asList(allDefs));
+        set.removeAll(Arrays.asList(definitions));
+        return (ColorDefinition []) set.toArray(new ColorDefinition [set.size()]);
+	}
+
+	/**
+	 * Return the definitions that should have their default preference value
+	 * set but nothing else.
+	 * 
+	 * @param definitions the definitions that will be fully handled
+	 * @return the remaining definitions that should be defaulted
+	 */
+	private static FontDefinition[] getDefaults(FontDefinition[] definitions) {
+        IThemeRegistry registry = WorkbenchPlugin.getDefault().getThemeRegistry();
+        FontDefinition[] allDefs = registry.getFonts();
+        
+        SortedSet set = new TreeSet(IThemeRegistry.ID_COMPARATOR);
+        set.addAll(Arrays.asList(allDefs));
+        set.removeAll(Arrays.asList(definitions));
+        return (FontDefinition []) set.toArray(new FontDefinition [set.size()]);
+	}
+
 	/**
      * @param definitions
      * @return
@@ -154,7 +222,8 @@ public final class ThemeElementHelper {
 
 
     /**
-	 * Installs the given color in the color registry.
+	 * Installs the given color in the preference store and optionally the color 
+	 * registry.
 	 * 
 	 * @param definition
 	 *            the color definition
@@ -162,11 +231,15 @@ public final class ThemeElementHelper {
 	 *            the color registry
 	 * @param store
 	 *            the preference store from which to set and obtain color data
+	 * @param setInRegistry
+	 * 			  whether the color should be put into the registry as well as
+	 *            having its default preference set
 	 */
 	private static void installColor(
 		ColorDefinition definition,
 		ITheme theme,
-		IPreferenceStore store) {
+		IPreferenceStore store,
+		boolean setInRegistry) {
 
 	    ColorRegistry registry = theme.getColorRegistry();
 	    		
@@ -179,8 +252,14 @@ public final class ThemeElementHelper {
 		else 
 		    defaultColor = registry.getRGB(definition.getDefaultsTo());
 		
-		if (prefColor == null || prefColor == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
-		    prefColor = defaultColor;
+		if (setInRegistry) {
+			if (prefColor == null || prefColor == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
+			    prefColor = defaultColor;
+			}
+			
+			if (prefColor != null) {		    
+				registry.put(id, prefColor);
+			}
 		}
 		
 		if (defaultColor != null && store != null) {
@@ -188,11 +267,6 @@ public final class ThemeElementHelper {
 					store, 
 					key, 
 					defaultColor);
-		}
-
-		
-		if (prefColor != null) {		    
-			registry.put(id, prefColor);
 		}
 	}
 

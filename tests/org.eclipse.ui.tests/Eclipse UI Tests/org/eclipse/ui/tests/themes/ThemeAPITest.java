@@ -135,7 +135,7 @@ public class ThemeAPITest extends ThemeTest {
         IPreferenceStore store = fWorkbench.getPreferenceStore();
         ITheme defaultTheme = getDefaultTheme();
 
-        testNoOverrideColorPreference(defaultTheme, store, "nooverridecolor");
+        testOverrideColorPreference(defaultTheme, store, "nooverridecolor");
     }
     
     public void testColorPreferenceListener_th1_swtcolor() {
@@ -163,7 +163,7 @@ public class ThemeAPITest extends ThemeTest {
     	IPreferenceStore store = fWorkbench.getPreferenceStore();
     	ITheme theme1 = getTheme1();
     
-        testNoOverrideColorPreference(theme1, store, "nooverridecolor");
+        testOverrideColorPreference(theme1, store, "nooverridecolor");
     }
 
     public void testDataKeySet_data1() {
@@ -341,7 +341,7 @@ public class ThemeAPITest extends ThemeTest {
         IPreferenceStore store = fWorkbench.getPreferenceStore();
         ITheme defaultTheme = getDefaultTheme();
         
-        testNoOverrideFontPreference(defaultTheme, store, "nooverridefont");
+        testOverrideFontPreference(defaultTheme, store, "nooverridefont");
     }
 
     public void testFontPreferenceListener_th1_valfont() {
@@ -369,7 +369,7 @@ public class ThemeAPITest extends ThemeTest {
         IPreferenceStore store = fWorkbench.getPreferenceStore();
         ITheme theme1 = getTheme1();
 
-        testNoOverrideFontPreference(theme1, store, "nooverridefont");
+        testOverrideFontPreference(theme1, store, "nooverridefont");
     }
 
     public void testGetBadTheme() {
@@ -386,34 +386,6 @@ public class ThemeAPITest extends ThemeTest {
         assertEquals(3133, defaultTheme.getInt("int1"));
     }
 
-    private void testNoOverrideColorPreference(ITheme theme,
-            IPreferenceStore store, String color) {
-        RGB oldRGB = theme.getColorRegistry().getRGB(color);
-        RGB newRGB = new RGB(75, 21, 68);
-
-        store.setValue(ThemeElementHelper.createPreferenceKey(theme, color),
-                StringConverter.asString(newRGB));
-        assertEquals(getDefaultTheme().getColorRegistry().getRGB(color), theme
-                .getColorRegistry().getRGB(color));
-        store
-                .setToDefault(ThemeElementHelper.createPreferenceKey(theme,
-                        color));
-        assertEquals(oldRGB, theme.getColorRegistry().getRGB(color));
-    }
-
-    private void testNoOverrideFontPreference(ITheme theme,
-            IPreferenceStore store, String font) {
-        FontData[] oldFont = theme.getFontRegistry().getFontData(font);
-        FontData[] newFont = new FontData[] { new FontData("Courier", 30,
-                SWT.ITALIC)};
-        store.setValue(ThemeElementHelper.createPreferenceKey(theme, font),
-                PreferenceConverter.getStoredRepresentation(newFont));
-        assertArrayEquals(
-                getDefaultTheme().getFontRegistry().getFontData(font), theme
-                        .getFontRegistry().getFontData(font));
-        store.setToDefault(ThemeElementHelper.createPreferenceKey(theme, font));
-        assertArrayEquals(oldFont, theme.getFontRegistry().getFontData(font));
-    }
 
     public void testNoValFont() {
         ITheme defaultTheme = getDefaultTheme();
