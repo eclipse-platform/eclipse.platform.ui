@@ -22,7 +22,7 @@ public class ComponentEntryDescriptorModel  implements IManifestAttributes {
 	private String _dirName = null;			// dir name in install/components/
 	private boolean _upgradeable = false;
 	private boolean _selectable = false;
-	private boolean _optional = true;
+	private boolean _optional = false;
 
 	private boolean _installed = false;
 	private ProductDescriptorModel _containingProduct = null;
