@@ -337,7 +337,6 @@ public class RegistryCacheReader {
 				in.close();
 			}
 		} catch (Throwable t) {
-			// an I/O failure would keep the extension elements unloaded
 			//TODO: log this exception?
 			if (InternalPlatform.DEBUG_REGISTRY)
 				System.err.println("Error opening cache file: " + t.getMessage()); //$NON-NLS-1$
