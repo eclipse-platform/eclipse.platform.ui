@@ -251,34 +251,37 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         &lt;extension
+&lt;pre&gt;
+   &lt;extension
          point=&quot;org.eclipse.ui.examples.templateeditor.template&quot;&gt;
       &lt;template
-            name=&quot;javac&quot;
-            context=&quot;ant&quot;
-            editorId=&quot;org.eclipse.ui.examples.templateeditor.editors.TemplateEditor&quot;
-            description=&quot;%ant.tasks.javac.description&quot;&gt;
-         &lt;pattern&gt;&lt;javac srcdir=&quot;${src}&quot;
- destdir=&quot;${dst}&quot;
- classpath=&quot;${classpath}&quot;
- debug=&quot;${debug}&quot;
-/&gt;&lt;/pattern&gt;
+         name=&quot;javac&quot;
+         context=&quot;ant&quot;
+         editorId=&quot;org.eclipse.ui.examples.templateeditor.editors.TemplateEditor&quot;
+         description=&quot;%ant.tasks.javac.description&quot;&gt;
+          &lt;pattern&gt;
+             &lt;javac srcdir=&quot;${src}&quot;
+               destdir=&quot;${dst}&quot;
+               classpath=&quot;${classpath}&quot;
+               debug=&quot;${debug}&quot;/&gt;
+          &lt;/pattern&gt;
       &lt;/template&gt;
       
       &lt;resolver
-            context=&quot;ant&quot;
-            type=&quot;src&quot;
-            editorId=&quot;org.eclipse.ui.examples.templateeditor.editors.TemplateEditor&quot;
-            class=&quot;org.eclipse.ui.examples.templateeditor.editors.AntVariableResolver&quot;&gt;
+         context=&quot;ant&quot;
+         type=&quot;src&quot;
+         editorId=&quot;org.eclipse.ui.examples.templateeditor.editors.TemplateEditor&quot;
+         class=&quot;org.eclipse.ui.examples.templateeditor.editors.AntVariableResolver&quot;&gt;
       &lt;/resolver&gt;
       
       &lt;resolver
-            context=&quot;ant&quot;
-            type=&quot;dst&quot;
-            editorId=&quot;org.eclipse.ui.examples.templateeditor.editors.TemplateEditor&quot;
-            class=&quot;org.eclipse.ui.examples.templateeditor.editors.AntVariableResolver&quot;&gt;
+         context=&quot;ant&quot;
+         type=&quot;dst&quot;
+         editorId=&quot;org.eclipse.ui.examples.templateeditor.editors.TemplateEditor&quot;
+         class=&quot;org.eclipse.ui.examples.templateeditor.editors.AntVariableResolver&quot;&gt;
       &lt;/resolver&gt;
    &lt;/extension&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 

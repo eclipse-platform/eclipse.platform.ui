@@ -106,7 +106,7 @@ Some annotations serve as the UI counterpart of markers (see &lt;code&gt;org.ecl
       </appInfo>
       <documentation>
          This is an excerpt from the plugin.xml for JDT UI, which adds the java compiler error and warning annotations:
-
+&lt;pre&gt;
    &lt;extension
          point=&quot;org.eclipse.ui.editors.annotationTypes&quot;&gt;
       &lt;type
@@ -128,6 +128,7 @@ Some annotations serve as the UI counterpart of markers (see &lt;code&gt;org.ecl
          markerSeverity=&quot;0&quot;&gt;
       &lt;/type&gt;
    &lt;/extension&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
