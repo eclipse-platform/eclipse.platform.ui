@@ -4,8 +4,6 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.List;
-
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -21,7 +19,6 @@ public class PopupMenuExtender implements IMenuListener
 	private SubMenuManager menuWrapper;
 	private ISelectionProvider selProvider;
 	private IWorkbenchPart part;
-	private List staticItems;
 	private ViewerActionBuilder staticActionBuilder;
 /**
  * Construct a new menu extender.

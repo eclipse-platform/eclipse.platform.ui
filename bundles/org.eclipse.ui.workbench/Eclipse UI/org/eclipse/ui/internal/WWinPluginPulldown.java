@@ -23,7 +23,6 @@ import org.eclipse.ui.*;
 public class WWinPluginPulldown extends WWinPluginAction {
 	private IMenuCreator menuProxy;
 	private class MenuProxy implements IMenuCreator {
-		private Menu menu;
 		public Menu getMenu(Control parent) {
 			IWorkbenchWindowPulldownDelegate delegate = getPulldownDelegate();
 			if (delegate != null) {

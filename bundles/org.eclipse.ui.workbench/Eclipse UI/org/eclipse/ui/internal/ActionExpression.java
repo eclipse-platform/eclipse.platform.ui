@@ -42,9 +42,6 @@ public class ActionExpression {
 	private static final String PLUGIN_INSTALLED = "installed"; //$NON-NLS-1$
 	private static final String PLUGIN_ACTIVATED = "activated"; //$NON-NLS-1$
 	
-	private static final String ID_PERSISTENT_PROPERTY = "persistentProperty"; //$NON-NLS-1$
-	private static final String ID_SESSION_PROPERTY = "sessionProperty"; //$NON-NLS-1$
-
 	private SingleExpression root;
 
 	/**
