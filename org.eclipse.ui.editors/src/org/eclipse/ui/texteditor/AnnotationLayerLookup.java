@@ -39,32 +39,35 @@ public class AnnotationLayerLookup {
 	 * The layer in which task annotations are located.
 	 * @deprecated will be inlined once cache is implemented
 	 */
-	public final static int TASK_LAYER= getAnnotationLayer(IMarker.TASK);
+	public static final int TASK_LAYER= getAnnotationLayer(IMarker.TASK);
 	
 	/** 
 	 * The layer in which bookmarks annotatons are located.
 	 * @deprecated will be inlined once cache is implemented
 	 */
-	public final static int BOOKMARK_LAYER= getAnnotationLayer(IMarker.BOOKMARK);
+	public static final int BOOKMARK_LAYER= getAnnotationLayer(IMarker.BOOKMARK);
 
 	/** 
 	 * The layer in which info annotations are located.
 	 * @deprecated will be inlined once cache is implemented
 	 */
-	public final static int INFO_LAYER= getAnnotationLayer(IMarker.PROBLEM, IMarker.SEVERITY_INFO);
+	public static final int INFO_LAYER= getAnnotationLayer(IMarker.PROBLEM, IMarker.SEVERITY_INFO);
 	
 	/** 
 	 * The layer in which warning annotations representing are located.
 	 * @deprecated will be inlined once cache is implemented
 	 */
-	public final static int WARNING_LAYER= getAnnotationLayer(IMarker.PROBLEM, IMarker.SEVERITY_WARNING);
+	public static final int WARNING_LAYER= getAnnotationLayer(IMarker.PROBLEM, IMarker.SEVERITY_WARNING);
 
 	/** 
 	 * The layer in which error annotations representing are located.
 	 * @deprecated will be inlined once cache is implemented
 	 */
-	public final static int ERROR_LAYER= getAnnotationLayer(IMarker.PROBLEM, IMarker.SEVERITY_ERROR);
+	public static final int ERROR_LAYER= getAnnotationLayer(IMarker.PROBLEM, IMarker.SEVERITY_ERROR);
 
+	/**
+	 * The annotation access.
+	 */
 	private static IAnnotationAccessExtension fgAnnotationAccess;
 
 	
