@@ -86,7 +86,7 @@ public class FormColors {
 	protected void initializeColorTable() {
 		createColor(SEPARATOR, 152, 170, 203);
 		String osname = System.getProperty("os.name").toLowerCase();
-		if (osname.equals("macos") || osname.equals("mac os"))
+		if (osname.startsWith("mac os"))
 			createColor(TITLE, getSystemColor(SWT.COLOR_LIST_FOREGROUND));
 		else
 			createColor(TITLE, getSystemColor(SWT.COLOR_LIST_SELECTION));
