@@ -301,7 +301,7 @@ public void handleEvent(Event event) {
 	updateEnableState();
 }
 protected void promptForExternalEditor() {
-	FileDialog dialog = new FileDialog(getShell());
+	FileDialog dialog = new FileDialog(getShell(), SWT.OPEN | SWT.PRIMARY_MODAL);
 	dialog.setFilterExtensions(Executable_Filters);
 	String result = dialog.open();
 	if (result != null) {
