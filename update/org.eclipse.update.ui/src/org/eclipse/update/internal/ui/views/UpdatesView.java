@@ -3,66 +3,27 @@ package org.eclipse.update.internal.ui.views;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.texteditor.IUpdate;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.VersionedIdentifier;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
-import org.eclipse.update.internal.ui.UpdateUIPluginImages;
-import org.eclipse.update.internal.ui.manager.NewFolderDialog;
-import org.eclipse.update.internal.ui.manager.NewSiteDialog;
-import org.eclipse.update.internal.ui.model.BookmarkFolder;
-import org.eclipse.update.internal.ui.model.DiscoveryFolder;
-import org.eclipse.update.internal.ui.model.FeatureReferenceAdapter;
-import org.eclipse.update.internal.ui.model.IFeatureAdapter;
-import org.eclipse.update.internal.ui.model.IUpdateModelChangedListener;
-import org.eclipse.update.internal.ui.model.MyComputer;
-import org.eclipse.update.internal.ui.model.MyComputerDirectory;
-import org.eclipse.update.internal.ui.model.MyComputerFile;
-import org.eclipse.update.internal.ui.model.NamedModelObject;
-import org.eclipse.update.internal.ui.model.SiteBookmark;
-import org.eclipse.update.internal.ui.model.SiteCategory;
-import org.eclipse.update.internal.ui.model.UpdateModel;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
-import org.eclipse.update.internal.ui.search.DefaultUpdatesSearchObject;
-import org.eclipse.update.internal.ui.search.SearchCategoryDescriptor;
-import org.eclipse.update.internal.ui.search.SearchCategoryRegistryReader;
-import org.eclipse.update.internal.ui.search.SearchObject;
-import org.eclipse.update.internal.ui.search.SearchResultSite;
+import org.eclipse.update.internal.ui.search.*;
 import org.eclipse.update.internal.ui.security.AuthorizationDatabase;
-import org.eclipse.update.internal.ui.wizards.NewFolderWizardPage;
-import org.eclipse.update.internal.ui.wizards.NewSearchWizardPage;
-import org.eclipse.update.internal.ui.wizards.NewSiteBookmarkWizardPage;
-import org.eclipse.update.internal.ui.wizards.NewWizard;
+import org.eclipse.update.internal.ui.wizards.*;
 
 /**
  * Insert the type's description here.
@@ -82,6 +43,9 @@ public class UpdatesView
 	private static final String KEY_FILTER_FILES = "UpdatesView.menu.showFiles";
 	private static final String KEY_SHOW_CATEGORIES =
 		"UpdatesView.menu.showCategories";
+	private static final String KEY_NEW_SEARCH_TITLE = "UpdatesView.newSearch.title";
+	private static final String KEY_NEW_BOOKMARK_TITLE = "UpdatesView.newBookmark.title";
+	private static final String KEY_NEW_FOLDER_TITLE = "UpdatesView.newFolder.title";
 	private Action propertiesAction;
 	private Action newAction;
 	private Action newFolderAction;
@@ -441,7 +405,7 @@ public class UpdatesView
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		dialog.getShell().setText(
-			UpdateUIPlugin.getResourceString(NewFolderDialog.KEY_TITLE));
+			UpdateUIPlugin.getResourceString(KEY_NEW_BOOKMARK_TITLE));
 		//dialog.getShell().setSize(400, 400);
 		dialog.open();
 	}
@@ -463,7 +427,7 @@ public class UpdatesView
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		dialog.getShell().setText(
-			UpdateUIPlugin.getResourceString(NewFolderDialog.KEY_TITLE));
+			UpdateUIPlugin.getResourceString(KEY_NEW_FOLDER_TITLE));
 		//dialog.getShell().setSize(400, 350);
 		dialog.open();
 	}
@@ -476,7 +440,7 @@ public class UpdatesView
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		dialog.getShell().setText(
-			UpdateUIPlugin.getResourceString(NewFolderDialog.KEY_TITLE));
+			UpdateUIPlugin.getResourceString(KEY_NEW_SEARCH_TITLE));
 		//dialog.getShell().setSize(400, 350);
 		dialog.open();
 	}
@@ -491,15 +455,13 @@ public class UpdatesView
 				if (bookmark.getType() == SiteBookmark.LOCAL) {
 					UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 					Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
-					NewSiteDialog dialog = new NewSiteDialog(shell, bookmark);
+					NewSiteBookmarkWizardPage page =
+						new NewSiteBookmarkWizardPage(getSelectedFolder(), bookmark);
+					NewWizard wizard = new NewWizard(page, UpdateUIPluginImages.DESC_NEW_BOOKMARK);
+					WizardDialog dialog = new WizardDialog(shell, wizard);
 					dialog.create();
-					dialog.getShell().setText(
-						UpdateUIPlugin.getResourceString(NewSiteDialog.KEY_TITLE));
-					dialog.getShell().setSize(400, 150);
-					if (dialog.open() == NewSiteDialog.OK) {
-						SiteBookmark site = dialog.getNewSite();
-						model.addBookmark(site);
-					}
+					dialog.getShell().setText("New Site Bookmark");
+					dialog.open();
 				}
 			}
 		}

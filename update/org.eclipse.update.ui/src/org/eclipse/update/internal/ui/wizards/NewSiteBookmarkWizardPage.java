@@ -18,6 +18,7 @@ import org.eclipse.update.internal.ui.model.*;
 public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 	private Text urlText;
 	private URL url;
+	private SiteBookmark localBookmark;
 	/**
 	 * Constructor for NewFolderWizardPage.
 	 * @param folder
@@ -26,6 +27,13 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 		super(folder);
 		setTitle("New Update Site Bookmark");
 		setDescription("Bookmark an update site. Use folders to organize your bookmarks.");
+	}
+
+	public NewSiteBookmarkWizardPage(
+		BookmarkFolder folder,
+		SiteBookmark localBookmark) {
+		this(folder);
+		this.localBookmark = localBookmark;
 	}
 
 	/**
@@ -37,7 +45,12 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 		urlText = new Text(parent, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		urlText.setLayoutData(gd);
-		urlText.setText("http://");
+		if (localBookmark != null) {
+			url = localBookmark.getURL();
+			urlText.setText(url.toString());
+			urlText.setEnabled(false);
+		} else
+			urlText.setText("http://");
 		urlText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				validatePage();
@@ -47,7 +60,7 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 
 	protected void validatePage() {
 		super.validatePage();
-		if (isPageComplete()) {
+		if (isPageComplete() && localBookmark == null) {
 			try {
 				url = new URL(urlText.getText());
 				super.validatePage();

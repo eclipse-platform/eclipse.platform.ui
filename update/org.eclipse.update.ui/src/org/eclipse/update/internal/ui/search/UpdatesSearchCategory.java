@@ -12,6 +12,7 @@ import org.eclipse.update.internal.ui.model.ISiteAdapter;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class UpdatesSearchCategory extends SearchCategory {
+	private static final String KEY_CURRENT_SEARCH = "UpdatesSearchCategory.currentSearch";
 
 	class SiteAdapter implements ISiteAdapter {
 		IURLEntry entry;
@@ -87,7 +88,7 @@ public class UpdatesSearchCategory extends SearchCategory {
 	}
 
 	public String getCurrentSearch() {
-		return "Updates for installed features";
+		return UpdateUIPlugin.getResourceString(KEY_CURRENT_SEARCH);
 	}
 
 	private boolean isNewerVersion(IFeature feature, IFeature candidate) {

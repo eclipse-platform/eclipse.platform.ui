@@ -6,10 +6,18 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.IFeature;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.model.ISiteAdapter;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class ExpressionSearchCategory extends SearchCategory {
+	private static final String KEY_EXPRESSION = "ExpressionSearchCategory.expression";
+	private static final String KEY_CASE = "ExpressionSearchCategory.case";
+	private static final String KEY_LOOK = "ExpressionSearchCategory.look";
+	private static final String KEY_NAME = "ExpressionSearchCategory.name";
+	private static final String KEY_PROVIDER = "ExpressionSearchCategory.provider";
+	private static final String KEY_DESCRIPTION = "ExpressionSearchCategory.description";
+
 	private Text expressionText;
 	private Button caseCheck;
 	private Button nameCheck;
@@ -30,19 +38,19 @@ public class ExpressionSearchCategory extends SearchCategory {
 		layout.marginWidth = 2;
 		layout.numColumns = 2;
 		container.setLayout(layout);
-		factory.createLabel(container, "Expression:");
+		factory.createLabel(container, UpdateUIPlugin.getResourceString(KEY_EXPRESSION));
 		expressionText = factory.createText(container, "");
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		expressionText.setLayoutData(gd);
-		caseCheck = factory.createButton(container, "Case sensitive", SWT.CHECK);
+		caseCheck = factory.createButton(container, UpdateUIPlugin.getResourceString(KEY_CASE), SWT.CHECK);
 		fillHorizontal(caseCheck, 0);
-		Label label = factory.createLabel(container, "Look for expression in:");
+		Label label = factory.createLabel(container, UpdateUIPlugin.getResourceString(KEY_LOOK));
 		fillHorizontal(label, 0);
-		nameCheck = factory.createButton(container, "Feature name", SWT.CHECK);
+		nameCheck = factory.createButton(container, UpdateUIPlugin.getResourceString(KEY_NAME), SWT.CHECK);
 		fillHorizontal(nameCheck, 10);
-		providerCheck = factory.createButton(container, "Feature provider", SWT.CHECK);
+		providerCheck = factory.createButton(container, UpdateUIPlugin.getResourceString(KEY_PROVIDER), SWT.CHECK);
 		fillHorizontal(providerCheck, 10);
-		descriptionCheck = factory.createButton(container, "Feature description", SWT.CHECK);
+		descriptionCheck = factory.createButton(container, UpdateUIPlugin.getResourceString(KEY_DESCRIPTION), SWT.CHECK);
 		fillHorizontal(descriptionCheck, 10);
 		factory.paintBordersFor(container);
 		initializeWidgets();
@@ -87,7 +95,7 @@ public class ExpressionSearchCategory extends SearchCategory {
 	}
 	
 	public String getCurrentSearch() {
-		return "Expression: "+expressionText.getText();
+		return expressionText.getText();
 	}
 	private boolean internalMatches(IFeature feature) {
 		if (searchName) {
