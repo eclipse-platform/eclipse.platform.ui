@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,6 +21,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.ExtensionEventHandlerMessages;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -109,14 +109,10 @@ public class ActionSetRegistry extends RegistryManager implements
             }
         }
         if (retArray != null && retArray.length != 0) {
-            addResetMessage(MessageFormat
-                    .format(
-                            ExtensionEventHandlerMessages
-                                    .getString("ExtensionEventHandler.change_format"), //$NON-NLS-1$ 
-                            new Object[] {
+            addResetMessage(NLS.bind(
+                            ExtensionEventHandlerMessages.ExtensionEventHandler_change_format,
                                     extension.getNamespace(),
-                                    ExtensionEventHandlerMessages
-                                            .getString("ExtensionEventHandler.new_action_set") })); //$NON-NLS-1$ 
+                                    ExtensionEventHandlerMessages.ExtensionEventHandler_new_action_set));
         }
         return retArray;
     }

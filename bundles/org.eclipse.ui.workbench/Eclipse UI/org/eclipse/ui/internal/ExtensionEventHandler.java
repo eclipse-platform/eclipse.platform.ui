@@ -589,15 +589,13 @@ class ExtensionEventHandler implements IRegistryChangeListener {
             return;
 
         final StringBuffer message = new StringBuffer(
-                ExtensionEventHandlerMessages
-                        .getString("ExtensionEventHandler.following_changes")); //$NON-NLS-1$
+                ExtensionEventHandlerMessages.ExtensionEventHandler_following_changes);
 
         for (Iterator i = changeList.iterator(); i.hasNext();) {
             message.append(i.next());
         }
 
-        message.append(ExtensionEventHandlerMessages
-                .getString("ExtensionEventHandler.need_to_reset")); //$NON-NLS-1$
+        message.append(ExtensionEventHandlerMessages.ExtensionEventHandler_need_to_reset);
 
         display.asyncExec(new Runnable() {
             public void run() {
@@ -614,8 +612,7 @@ class ExtensionEventHandler implements IRegistryChangeListener {
                 if (MessageDialog
                         .openQuestion(
                                 parentShell,
-                                ExtensionEventHandlerMessages
-                                        .getString("ExtensionEventHandler.reset_perspective"), message.toString())) { //$NON-NLS-1$
+                                ExtensionEventHandlerMessages.ExtensionEventHandler_reset_perspective, message.toString())) {
                     IWorkbenchPage page = window.getActivePage();
                     if (page == null)
                         return;
