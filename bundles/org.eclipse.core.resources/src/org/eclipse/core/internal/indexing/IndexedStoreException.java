@@ -47,7 +47,6 @@ public class IndexedStoreException extends Exception {
 	public static final int StoreNotCommitted           = 36;
 	public static final int StoreNotRolledBack          = 37;
 	
-
 	public static String[] messages = new String[40];
 
 	static {
@@ -67,6 +66,7 @@ public class IndexedStoreException extends Exception {
 		this.id = id;
 		previousError = null;
 	}
+	
 	/**
 	 * IndexedStoreException constructor comment.
 	 */
@@ -75,6 +75,7 @@ public class IndexedStoreException extends Exception {
 		this.id = id;
 		previousError = e;
 	}
+	
 	/**
 	 * IndexedStoreException constructor comment.
 	 */
@@ -83,45 +84,56 @@ public class IndexedStoreException extends Exception {
 		id = GenericError;
 		previousError = null;
 	}
-/**
- * Initializes the messages at class load time.
- */
-private static void initializeMessages() {
-	messages[GenericError] = Policy.bind("indexedStore.genericError");
-	messages[EntryKeyLengthError] = Policy.bind("indexedStore.");
-	messages[EntryNotRemoved] = Policy.bind("indexedStore.entryKeyLengthError");
-	messages[EntryValueLengthError] = Policy.bind("indexedStore.entryValueLengthError");
-	messages[EntryValueNotUpdated] = Policy.bind("indexedStore.entryValueNotUpdated");
-	messages[IndexNodeNotRetrieved] = Policy.bind("indexedStore.indexNodeNotRetrieved");
-	messages[IndexNodeNotStored] = Policy.bind("indexedStore.indexNodeNotStored");
-	messages[IndexNodeNotSplit] = Policy.bind("indexedStore.indexNodeNotSplit");
-	messages[IndexNodeNotCreated] = Policy.bind("indexedStore.indexNodeNotCreated");
-	messages[IndexExists] = Policy.bind("indexedStore.indexExists");
-	messages[IndexNotCreated] = Policy.bind("indexedStore.indexNotCreated");
-	messages[IndexNotFound] = Policy.bind("indexedStore.indexNotFound");
-	messages[IndexNotRemoved] = Policy.bind("indexedStore.indexNotRemoved");
-	messages[ObjectNotCreated] = Policy.bind("indexedStore.objectNotCreated");
-	messages[ObjectExists] = Policy.bind("indexedStore.objectExists");
-	messages[ObjectNotFound] = Policy.bind("indexedStore.objectNotFound");
-	messages[ObjectNotAcquired] = Policy.bind("indexedStore.objectNotAcquired");
-	messages[ObjectNotReleased] = Policy.bind("indexedStore.objectNotReleased");
-	messages[ObjectNotRemoved] = Policy.bind("indexedStore.objectNotRemoved");
-	messages[ObjectTypeError] = Policy.bind("indexedStore.objectTypeError");
-	messages[ObjectNotUpdated] = Policy.bind("indexedStore.objectNotUpdated");
-	messages[ObjectNotStored] = Policy.bind("indexedStore.objectNotStored");
-	messages[StoreNotCreated] = Policy.bind("indexedStore.storeNotCreated");
-	messages[StoreEmpty] = Policy.bind("indexedStore.storeEmpty");
-	messages[StoreFormatError] = Policy.bind("indexedStore.storeFormatError");
-	messages[StoreNotOpen] = Policy.bind("indexedStore.storeNotOpen");
-	messages[StoreNotReadWrite] = Policy.bind("indexedStore.storeNotReadWrite");
-	messages[StoreNotOpened] = Policy.bind("indexedStore.storeNotOpened");
-	messages[StoreNotClosed] = Policy.bind("indexedStore.storeNotClosed");
-	messages[StoreNotFlushed] = Policy.bind("indexedStore.storeNotFlushed");
-	messages[ContextNotAvailable] = Policy.bind("indexedStore.contextNotAvailable");
-	messages[ObjectIDInvalid] = Policy.bind("indexedStore.objectIDInvalid");
-	messages[EntryRemoved] = Policy.bind("indexedStore.entryRemoved");
-	messages[StoreNotConverted] = Policy.bind("indexedStore.storeNotConverted");
-}
+	
+	/**
+	 * Initializes the messages at class load time.
+	 */
+	private static void initializeMessages() {
+		messages[GenericError] = bind("indexedStore.genericError");
+		messages[EntryKeyLengthError] = bind("indexedStore.");
+		messages[EntryNotRemoved] = bind("indexedStore.entryKeyLengthError");
+		messages[EntryValueLengthError] = bind("indexedStore.entryValueLengthError");
+		messages[EntryValueNotUpdated] = bind("indexedStore.entryValueNotUpdated");
+		messages[IndexNodeNotRetrieved] = bind("indexedStore.indexNodeNotRetrieved");
+		messages[IndexNodeNotStored] = bind("indexedStore.indexNodeNotStored");
+		messages[IndexNodeNotSplit] = bind("indexedStore.indexNodeNotSplit");
+		messages[IndexNodeNotCreated] = bind("indexedStore.indexNodeNotCreated");
+		messages[IndexExists] = bind("indexedStore.indexExists");
+		messages[IndexNotCreated] = bind("indexedStore.indexNotCreated");
+		messages[IndexNotFound] = bind("indexedStore.indexNotFound");
+		messages[IndexNotRemoved] = bind("indexedStore.indexNotRemoved");
+		messages[ObjectNotCreated] = bind("indexedStore.objectNotCreated");
+		messages[ObjectExists] = bind("indexedStore.objectExists");
+		messages[ObjectNotFound] = bind("indexedStore.objectNotFound");
+		messages[ObjectNotAcquired] = bind("indexedStore.objectNotAcquired");
+		messages[ObjectNotReleased] = bind("indexedStore.objectNotReleased");
+		messages[ObjectNotRemoved] = bind("indexedStore.objectNotRemoved");
+		messages[ObjectTypeError] = bind("indexedStore.objectTypeError");
+		messages[ObjectNotUpdated] = bind("indexedStore.objectNotUpdated");
+		messages[ObjectNotStored] = bind("indexedStore.objectNotStored");
+		messages[StoreNotCreated] = bind("indexedStore.storeNotCreated");
+		messages[StoreEmpty] = bind("indexedStore.storeEmpty");
+		messages[StoreFormatError] = bind("indexedStore.storeFormatError");
+		messages[StoreNotOpen] = bind("indexedStore.storeNotOpen");
+		messages[StoreNotReadWrite] = bind("indexedStore.storeNotReadWrite");
+		messages[StoreNotOpened] = bind("indexedStore.storeNotOpened");
+		messages[StoreNotClosed] = bind("indexedStore.storeNotClosed");
+		messages[StoreNotFlushed] = bind("indexedStore.storeNotFlushed");
+		messages[ContextNotAvailable] = bind("indexedStore.contextNotAvailable");
+		messages[ObjectIDInvalid] = bind("indexedStore.objectIDInvalid");
+		messages[EntryRemoved] = bind("indexedStore.entryRemoved");
+		messages[StoreNotConverted] = bind("indexedStore.storeNotConverted");
+	}
+	
+	private static String bind(String name) {
+		String message = name;
+		try {
+			message = Policy.bind(name);
+		} catch (NoClassDefFoundError e) {
+		}
+		return message;
+	}
+	
 	/**
 	 * Creates a printable representation of this exception.
 	 */

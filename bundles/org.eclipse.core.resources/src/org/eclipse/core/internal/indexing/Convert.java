@@ -6,6 +6,7 @@ package org.eclipse.core.internal.indexing;
  */
 
 import java.io.UnsupportedEncodingException;
+
 class Convert {
 		
 	/**

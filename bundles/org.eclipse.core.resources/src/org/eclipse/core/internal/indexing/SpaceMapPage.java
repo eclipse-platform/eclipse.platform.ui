@@ -59,19 +59,31 @@ class SpaceMapPage extends ObjectStorePage {
 	 * object page in this space map page that meets this criteria.  0 is not a valid
 	 * object page number.  All page numbers that are 0 mod 8192 are space map pages.
 	 */
-	public int findObjectPageNumberForSize(int bytesNeeded) throws ObjectStoreException {
-		for (int i = 1; i < SIZE; i++) {		// begin at 1, 0 is the space map page
-			int spaceClass = pageBuffer.getByte(i);
-			int freeSpace = freeSpaceForClass(spaceClass);
-			if (freeSpace >= bytesNeeded) return pageNumber + i;
-		}
-		return 0;
+//	public int findObjectPageNumberForSize(int bytesNeeded) {
+//		for (int i = 1; i < SIZE; i++) {		// begin at 1, 0 is the space map page
+//			int spaceClass = pageBuffer.getByte(i);
+//			int freeSpace = freeSpaceForClass(spaceClass);
+//			if (freeSpace >= bytesNeeded) return pageNumber + i;
+//		}
+//		return 0;
+//	}
+
+	/**
+	 * Returns the guaranteed amount of free space on a page.
+	 * If the page number is a space map page number, 0 is returned.
+	 */
+	public int getFreeSpace(int pageNumber) {
+		int slot = pageNumber - this.pageNumber;
+		if (slot < 1 || slot >= SIZE) return 0;
+		int spaceClass = pageBuffer.getByte(slot);
+		int freeSpace = freeSpaceForClass(spaceClass);
+		return freeSpace;
 	}
 
 	/**
 	 * Sets the spaceClass for a given object page.
 	 */
-	public void updateForObjectPage(int pageNumber, int freeSpace) {
+	public void setFreeSpace(int pageNumber, int freeSpace) {
 		int slot = pageNumber - this.pageNumber;
 		if (slot < 1 || slot >= SIZE) return;
 		byte spaceClass = 0;

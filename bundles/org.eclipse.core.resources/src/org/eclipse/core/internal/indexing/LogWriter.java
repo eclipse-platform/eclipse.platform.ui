@@ -51,7 +51,7 @@ class LogWriter {
 	 */
 	protected void putModifiedPages(Map modifiedPages) throws PageStoreException {
 		Buffer b4 = new Buffer(4);
-		byte[] pageBuffer = new byte[pageStore.getPolicy().pageSize()];
+		byte[] pageBuffer = new byte[Page.SIZE];
 		int numberOfPages = modifiedPages.size();
 		b4.put(0, 4, numberOfPages);
 		if (!write(b4.getByteArray())) throw new PageStoreException(PageStoreException.LogWriteFailure);

@@ -9,6 +9,12 @@ import java.io.*;
 import java.util.*;
 
 public class PageStore implements Observer {
+
+	private static final int NumberOfMetadataAreas = 16;  // NEVER change this
+	private static final int SizeOfMetadataArea = 64; // NEVER change this
+	private static final int CurrentPageStoreVersion = 1; // version 1
+	private static final byte[] ZEROES = new byte[1024];
+
 	private String name;
 	private String mode;
 	private RandomAccessFile file;
@@ -18,17 +24,12 @@ public class PageStore implements Observer {
 	private int numberOfReads;
 	private int numberOfWrites;
 	private int numberOfCacheHits;
-//	private PageCache readCache = null;
 	private Map modifiedPages;
 	private Map acquiredPages;
-//	private static final int NumberOfMetadataAreas = 16;  // NEVER change this
-//	private static final int SizeOfMetadataArea = 64; // NEVER change this
-	private static final int CurrentPageStoreVersion = 1; // version 1
 	private int storeOffset;
-	private PageStorePolicy policy;
+	private AbstractPagePolicy policy;
 	private byte[] pageBuffer;
 	private byte[] metadataBuffer;
-	private static final byte[] ZEROES = new byte[1024];
 	
 	/**
 	 * Creates the page file on the file system.  Creates a file of zero length.
@@ -59,9 +60,9 @@ public class PageStore implements Observer {
 	/**
 	 * Creates a new PageStore with a given policy.
 	 */
-	public PageStore(PageStorePolicy policy) {
+	public PageStore(AbstractPagePolicy policy) {
 		this.policy = policy;
-		this.storeOffset = policy.numberOfMetadataAreas() * policy.sizeOfMetadataArea();
+		this.storeOffset = NumberOfMetadataAreas * SizeOfMetadataArea;
 	}
 	
 	
@@ -121,8 +122,8 @@ public class PageStore implements Observer {
 	 */
 	public void open(String name) throws PageStoreException {
 		this.name = name;
-		pageBuffer = new byte[policy.pageSize()];
-		metadataBuffer = new byte[policy.sizeOfMetadataArea()];
+		pageBuffer = new byte[Page.SIZE];
+		metadataBuffer = new byte[SizeOfMetadataArea];
 		if (!exists(name)) create(name);
 		try {
 			this.file = new RandomAccessFile(name, "rw");
@@ -345,7 +346,7 @@ public class PageStore implements Observer {
 	 * Returns the file seek offset for a given page number.
 	 */
 	protected long offsetOfPage(int pageNumber) {
-		return (long) (pageNumber * policy.pageSize()) + storeOffset;
+		return (long) (pageNumber * Page.SIZE) + storeOffset;
 	}
 
 	protected Page readPage(int pageNumber) throws PageStoreException {
@@ -371,7 +372,7 @@ public class PageStore implements Observer {
 	 * Returns the file seek offset for a given metadata area
 	 */
 	protected long offsetOfMetadataArea(int i) {
-		return (long) i * policy.sizeOfMetadataArea();
+		return (long) i * SizeOfMetadataArea;
 	}
 	
 	public byte[] readMetadataArea(int i) throws PageStoreException {
@@ -382,9 +383,9 @@ public class PageStore implements Observer {
 	}
 
 	public void writeMetadataArea(int i, byte[] buffer) throws PageStoreException {
-		if (i < 0 || i >= policy.numberOfMetadataAreas())
+		if (i < 0 || i >= NumberOfMetadataAreas)
 			throw new PageStoreException(PageStoreException.MetadataRequestFailure);
-		if (buffer.length != policy.sizeOfMetadataArea())
+		if (buffer.length != SizeOfMetadataArea)
 			throw new PageStoreException(PageStoreException.MetadataRequestFailure);
 		if (!writeBuffer(offsetOfMetadataArea(i), buffer, 0, buffer.length)) {
 			throw new PageStoreException(PageStoreException.MetadataRequestFailure);
@@ -440,7 +441,7 @@ public class PageStore implements Observer {
 	 * Returns the number of pages actually in the underlying file.
 	 */
 	protected int numberOfPagesInFile() {
-		return (int) ((getFileLength() - offsetOfPage(0)) / policy.pageSize());
+		return (int) ((getFileLength() - offsetOfPage(0)) / Page.SIZE);
 	}
 
 	/**
@@ -450,7 +451,7 @@ public class PageStore implements Observer {
 		return name;
 	}
 	
-	public PageStorePolicy getPolicy() {
+	public AbstractPagePolicy getPolicy() {
 		return policy;
 	}
 	

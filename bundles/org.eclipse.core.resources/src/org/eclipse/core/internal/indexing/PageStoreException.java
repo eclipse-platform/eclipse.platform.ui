@@ -38,23 +38,34 @@ public class PageStoreException extends Exception {
 		super(s);
 		this.id = GenericFailure;
 	}
-/**
- * Initialize the messages at class load time.
- */
-private static void initializeMessages() {
-	message[GenericFailure] = Policy.bind("pageStore.genericFailure");
-	message[CreateFailure] = Policy.bind("pageStore.createFailure");
-	message[LengthFailure] = Policy.bind("pageStore.lengthFailure");
-	message[OpenFailure] = Policy.bind("pageStore.openFailure");
-	message[ReadFailure] = Policy.bind("pageStore.readFailure");
-	message[WriteFailure] = Policy.bind("pageStore.writeFailure");
-	message[CommitFailure] = Policy.bind("pageStore.commitFailure");
-	message[MetadataRequestFailure] = Policy.bind("pageStore.metadataRequestFailure");
-	message[ConversionFailure] = Policy.bind("pageStore.conversionFailure");
-	message[IntegrityFailure] = Policy.bind("pageStore.integrityFailure");
-	message[LogOpenFailure] = Policy.bind("pageStore.logOpenFailure");
-	message[LogReadFailure] = Policy.bind("pageStore.logReadFailure");
-	message[LogWriteFailure] = Policy.bind("pageStore.logWriteFailure");
-	message[LogCreateFailure] = Policy.bind("pageStore.logCreateFailure");
-}
+	
+	/**
+	 * Initialize the messages at class load time.
+	 */
+	private static void initializeMessages() {
+		message[GenericFailure] = bind("pageStore.genericFailure");
+		message[CreateFailure] = bind("pageStore.createFailure");
+		message[LengthFailure] = bind("pageStore.lengthFailure");
+		message[OpenFailure] = bind("pageStore.openFailure");
+		message[ReadFailure] = bind("pageStore.readFailure");
+		message[WriteFailure] = bind("pageStore.writeFailure");
+		message[CommitFailure] = bind("pageStore.commitFailure");
+		message[MetadataRequestFailure] = bind("pageStore.metadataRequestFailure");
+		message[ConversionFailure] = bind("pageStore.conversionFailure");
+		message[IntegrityFailure] = bind("pageStore.integrityFailure");
+		message[LogOpenFailure] = bind("pageStore.logOpenFailure");
+		message[LogReadFailure] = bind("pageStore.logReadFailure");
+		message[LogWriteFailure] = bind("pageStore.logWriteFailure");
+		message[LogCreateFailure] = bind("pageStore.logCreateFailure");
+	}
+
+	private static String bind(String name) {
+		String message = name;
+		try {
+			message = Policy.bind(name);
+		} catch (NoClassDefFoundError e) {
+		}
+		return message;
+	}
+
 }

@@ -32,9 +32,9 @@ public class ObjectAddress implements Insertable {
 			this.objectNumber = 0;
 			return;
 		}
-		if (pageNumber < 0 || pageNumber >= 16777216) throw new IllegalArgumentException();
+		if (pageNumber < 0 || pageNumber > 0xFFFFFF) throw new IllegalArgumentException();
 		if (pageNumber % ObjectStorePage.SIZE == 0) throw new IllegalArgumentException();
-		if (objectNumber < 1 || objectNumber >= 256) throw new IllegalArgumentException();
+		if (objectNumber < 0 || objectNumber > 0xFF) throw new IllegalArgumentException();
 		this.pageNumber = pageNumber;
 		this.objectNumber = objectNumber;
 	}

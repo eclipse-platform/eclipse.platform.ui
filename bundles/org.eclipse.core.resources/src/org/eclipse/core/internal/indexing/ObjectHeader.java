@@ -7,7 +7,7 @@ package org.eclipse.core.internal.indexing;
 
 class ObjectHeader implements Insertable {
 
-	public static final int Size = 4;
+	public static final int SIZE = 4;
 	private static final int HeaderTagValue = 0xFFFF;
 	private static final int HeaderTagOffset = 0;
 	private static final int ObjectLengthOffset = 2;
@@ -17,7 +17,7 @@ class ObjectHeader implements Insertable {
 	 * ObjectHeader constructor comment.
 	 */
 	public ObjectHeader(byte[] buffer) throws ObjectStoreException {
-		if (buffer.length != Size) throw new IllegalArgumentException();
+		if (buffer.length != SIZE) throw new IllegalArgumentException();
 		Buffer buf = new Buffer(buffer);
 		if (buf.getUInt(HeaderTagOffset, 2) != HeaderTagValue) {
 			throw new ObjectStoreException(ObjectStoreException.ObjectHeaderFailure);
@@ -40,7 +40,7 @@ class ObjectHeader implements Insertable {
 		return objectLength;
 	}
 	public byte[] toByteArray() {
-		Buffer buf = new Buffer(Size);
+		Buffer buf = new Buffer(SIZE);
 		buf.put(HeaderTagOffset, 2, HeaderTagValue);
 		buf.put(ObjectLengthOffset, 2, objectLength);
 		return buf.get();

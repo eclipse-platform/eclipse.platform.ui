@@ -30,9 +30,6 @@ private static final Map registry = new HashMap();
 
 	private ObjectStore objectStore; /* initialized at open */
 	private String name; /* initialized at open */
-	private boolean modified; /* initialized at open */	
-	private int openNumber; /* initialized at open */	
-	private int serialNumber; /* initialized at open */	
 
 	/**
 	 * Acquires an anchor.
@@ -65,10 +62,10 @@ private static final Map registry = new HashMap();
 		return object;
 	}
 	/**
-	 * Acquires a user object.
+	 * Acquires a Binary Object.
 	 */
-	UserDefinedObject acquireUserObject(ObjectAddress address) throws IndexedStoreException {
-		return (UserDefinedObject) acquireObject(address);
+	BinarySmallObject acquireBinarySmallObject(ObjectAddress address) throws IndexedStoreException {
+		return (BinarySmallObject) acquireObject(address);
 	}
 	/**
 	 * Checks to see if the metadata stored in the object store matches that expected by this
@@ -108,9 +105,6 @@ private static final Map registry = new HashMap();
 		indexDirectory = null;
 		indexDirectoryAddress = null;
 		indexDirectoryCursor = null;
-		openNumber = 0;
-		serialNumber = 0;
-		modified = false;
 	}
 	public synchronized void commit() throws IndexedStoreException {
 		try {
@@ -130,7 +124,7 @@ private static final Map registry = new HashMap();
 	 * Creates and initializes an IndexedStore.
 	 */
 	public static synchronized void create(String name) throws IndexedStoreException {
-		ObjectStore store = new ObjectStore();
+		ObjectStore store = new ObjectStore(new IndexedStoreObjectPolicy());
 		try {
 			ObjectStore.create(name);
 			store.open(name);
@@ -172,7 +166,7 @@ private static final Map registry = new HashMap();
 	 * Places a byte array into the store, return a new object identifier.
 	 */
 	public synchronized ObjectID createObject(byte[] b) throws IndexedStoreException {
-		ObjectAddress address = insertObject(new UserDefinedObject(b));
+		ObjectAddress address = insertObject(new BinarySmallObject(b));
 		ObjectID id = getNextObjectID();
 		objectDirectory.insert(id.toByteArray(), address.toByteArray());
 		return id;
@@ -259,15 +253,10 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 	 * Returns the next ObjectID
 	 */
 	private ObjectID getNextObjectID() throws IndexedStoreException {
-		if (!modified) {
-			IndexedStoreContext context = acquireContext(ContextAddress);
-			context.incrementOpenNumber();
-			openNumber = context.getOpenNumber();
-			context.release();
-			modified = true;
-		}
-		serialNumber++;
-		return new ObjectID(openNumber, serialNumber);
+		IndexedStoreContext context = acquireContext(ContextAddress);
+		long objectNumber = context.getNextObjectNumber();
+		context.release();
+		return new ObjectID(objectNumber);
 	}
 	/**
 	 * Returns a byte array given its object identifier.
@@ -275,7 +264,7 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 	public synchronized byte[] getObject(ObjectID id) throws IndexedStoreException {
 		objectDirectoryCursor.find(id.toByteArray());
 		ObjectAddress address = objectDirectoryCursor.getValueAsObjectAddress();
-		UserDefinedObject object = acquireUserObject(address);
+		BinarySmallObject object = acquireBinarySmallObject(address);
 		byte[] b = object.getValue();
 		object.release();
 		return b;
@@ -315,20 +304,15 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 		if (registry.get(name) != null) {
 			throw new IndexedStoreException(IndexedStoreException.StoreIsOpen);
 		}
-		IndexAnchor.registerFactory();
-		UserDefinedObject.registerFactory();
-		IndexedStoreContext.registerFactory();
-		IndexNode.registerFactory();
 		if (!exists(name)) create(name);
 		try {
-			objectStore = new ObjectStore();
+			objectStore = new ObjectStore(new IndexedStoreObjectPolicy());
 			objectStore.open(name);
 			checkMetadata();
 			IndexedStoreContext context = acquireContext(ContextAddress);
 			indexDirectoryAddress = context.getIndexDirectoryAddress();
 			objectDirectoryAddress = context.getObjectDirectoryAddress();
 			context.release();
-			serialNumber = 0;
 			indexDirectory = new Index(this, indexDirectoryAddress);
 			indexDirectoryCursor = indexDirectory.open();
 			objectDirectory = new Index(this, objectDirectoryAddress);
@@ -402,7 +386,7 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 			throw new IndexedStoreException(IndexedStoreException.ObjectNotFound);
 		}
 		ObjectAddress oldAddress = objectDirectoryCursor.getValueAsObjectAddress();
-		ObjectAddress newAddress = insertObject(new UserDefinedObject(b));
+		ObjectAddress newAddress = insertObject(new BinarySmallObject(b));
 		objectDirectoryCursor.updateValue(newAddress.toByteArray());
 		removeObject(oldAddress);
 	}

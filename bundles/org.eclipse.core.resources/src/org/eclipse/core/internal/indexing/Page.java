@@ -7,7 +7,9 @@ package org.eclipse.core.internal.indexing;
 
 import java.util.*;
 
-public abstract class Page extends Observable implements IReferable {
+public abstract class Page extends Observable implements Referable {
+
+	public static final int SIZE = 8192;
 
 	protected int pageNumber;
 	protected int referenceCount;

@@ -5,24 +5,17 @@ package org.eclipse.core.internal.indexing;
  * All Rights Reserved.
  */
 
-public class ObjectStorePSPolicy extends PageStorePolicy {
+public class ObjectStorePagePolicy extends AbstractPagePolicy {
 
 	/**
 	 * @see PagePolicy#createPage(int, byte[], PageStore)
 	 */
 	public final Page createPage(int pageNumber, byte[] buffer, PageStore pageStore) {
-		if (pageNumber % pageSize() == 0) {
+		if (pageNumber % Page.SIZE == 0) {
 			return new SpaceMapPage(pageNumber, buffer, pageStore);
 		} else {
 			return new ObjectPage(pageNumber, buffer, pageStore);
 		}
-	}
-
-	/**
-	 * Returns the size of a page for an object store.
-	 */
-	public final int pageSize() {
-		return ObjectStorePage.SIZE;
 	}
 
 }
