@@ -5,10 +5,12 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
@@ -45,6 +47,9 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	 * Create all field editors for this page
 	 */
 	public void createFieldEditors() {
+		
+		addField(new BooleanFieldEditor(CONSOLE_OPEN_ON_OUT, DebugUIMessages.getString("DebugPreferencePage.Show_&Console_View_when_there_is_program_output_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$		addField(new BooleanFieldEditor(CONSOLE_OPEN_ON_OUT, DebugUIMessages.getString("DebugPreferencePage.Show_&Console_View_when_there_is_program_output_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(CONSOLE_OPEN_ON_ERR, DebugUIMessages.getString("DebugPreferencePage.Show_&Console_View_when_there_is_program_error_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 
 		// Note: first String value is the key for the preference bundle and second the
 		// second String value is the label displayed in front of the editor.
@@ -87,6 +92,8 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	}
 	
 	protected static void initDefaults(IPreferenceStore store) {
+		store.setDefault(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT, true);
+		store.setDefault(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR, true);
 		WorkbenchChainedTextFontFieldEditor.startPropagate(store, CONSOLE_FONT);
 		
 		PreferenceConverter.setDefault(store, CONSOLE_SYS_OUT_RGB, new RGB(0, 0, 255));

@@ -54,7 +54,6 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING, DebugUIMessages.getString("Enable_&single-click_launching_1"), SWT.NONE, getFieldEditorParent()));  //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW, DebugUIMessages.getString("DebugPreferencePage.Show_Debug_Perspective_when_a_program_is_launched_in_de&bug_mode_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_SHOW_PROCESS_VIEW, DebugUIMessages.getString("DebugPreferencePage.Show_Debug_Perspective_when_a_program_is_launched_in_&run_mode_2"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
-		addField(new BooleanFieldEditor(CONSOLE_OPEN, DebugUIMessages.getString("DebugPreferencePage.Show_&Console_View_when_there_is_program_output_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SHOW_VARIABLE_VALUE_CHANGES, DebugUIMessages.getString("DebugPreferencePage.Sho&w_variable_value_changes_in_Variables_and_Expressions_Views_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, DebugUIMessages.getString("DebugPreferencePage.Remove_terminated_launches_when_a_new_launch_is_created_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new RadioGroupFieldEditor(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION,
@@ -79,7 +78,6 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		store.setDefault(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING, false);
 		store.setDefault(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW, true);
 		store.setDefault(IDebugUIConstants.PREF_AUTO_SHOW_PROCESS_VIEW, true);
-		store.setDefault(IDebugPreferenceConstants.CONSOLE_OPEN, true);
 		store.setDefault(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, false);
 		store.setDefault(IDebugUIConstants.PREF_SHOW_VARIABLE_VALUE_CHANGES, true);
 		store.setDefault(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);

@@ -34,9 +34,14 @@ public interface IDebugPreferenceConstants {
 	
 	/**
 	 * (boolean) Whether or not the console view is shown 
-	 * when there is program ouptut.
+	 * when there is program output.
   	 */
-	public static final String CONSOLE_OPEN= "DEBUG.consoleOpen"; //$NON-NLS-1$
+	public static final String CONSOLE_OPEN_ON_OUT= "DEBUG.consoleOpenOnOut"; //$NON-NLS-1$
+	/**
+	 * (boolean) Whether or not the console view is shown 
+	 * when there is program error.
+  	 */
+	public static final String CONSOLE_OPEN_ON_ERR= "DEBUG.consoleOpenOnErr"; //$NON-NLS-1$
 	
 	/**
 	 * The orientation of the detail view in the VariablesView

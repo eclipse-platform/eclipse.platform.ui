@@ -94,8 +94,7 @@ import org.xml.sax.SAXException;
  * The Debug UI Plugin.
  *
  */
-public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener, 
-															   ILaunchListener,
+public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 															   IResourceChangeListener, 
 															   IPropertyChangeListener, 
 															   ILaunchConfigurationListener {															   
@@ -389,7 +388,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		Iterator docs= fConsoleDocuments.values().iterator();
 		while (docs.hasNext()) {
 			ConsoleDocument doc= (ConsoleDocument)docs.next();
-			doc.removeDocumentListener(this);
 			doc.close();
 		}
 		try {
@@ -501,14 +499,31 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	}
 
 	/**
-	 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
-	 */
-	public void documentAboutToBeChanged(final DocumentEvent e) {
-		// if the prefence is set, show the conosle
-		if (!getPreferenceStore().getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN)) {
-			return;
+	 * Notifies the DebugUIPlugin that system out is about to be written
+	 * to the console. The plugin will open the console if the preference is
+	 * set to show the console on system out.
+	 */	
+	public void aboutToWriteSystemOut() {
+		if (getPreferenceStore().getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT)) {
+			showConsole();
 		}
-		
+	}
+	
+	/**
+	 * Notifies the DebugUIPlugin that system err is about to be written
+	 * to the console. The plugin will open the console if the preference is
+	 * set to show the console on system err.
+	 */
+	public void aboutToWriteSystemErr() {
+		if (getPreferenceStore().getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR)) {
+			showConsole();
+		}
+	}
+	
+	/**
+	 * Opens the console view. If the view is already open, it is brought to the front.
+	 */
+	protected void showConsole() {
 		getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
 				IWorkbenchWindow window = getActiveWorkbenchWindow();
@@ -544,13 +559,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		return fCurrentProcess;
 	}
 	private void setCurrentProcess(IProcess process) {
-		if (fCurrentProcess != null) {
-			getConsoleDocument(fCurrentProcess).removeDocumentListener(this);
-		}
 		fCurrentProcess= process;
-		if (fCurrentProcess != null) {
-			getConsoleDocument(fCurrentProcess).addDocumentListener(this);
-		}
 	}
 	
 	/**
@@ -585,7 +594,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 				for (int i= 0; i < processes.length; i++) {
 					ConsoleDocument doc= (ConsoleDocument)getConsoleDocument(processes[i]);
 					if (doc != null) {
-						doc.removeDocumentListener(DebugUIPlugin.this);
 						doc.close();
 						setConsoleDocument(processes[i], null);
 					}
