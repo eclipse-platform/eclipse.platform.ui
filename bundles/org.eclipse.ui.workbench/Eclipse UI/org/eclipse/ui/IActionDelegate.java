@@ -1,9 +1,16 @@
+/************************************************************************
+Copyright (c) 2000, 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 
@@ -31,30 +38,32 @@ import org.eclipse.jface.viewers.ISelection;
  * contained in the extension.  These rules allow enable state control before 
  * the action delegate's plug-in is loaded.
  * </p>
+ * @see org.eclipse.ui.IActionDelegate2
  */
 public interface IActionDelegate {
-/**
- * Performs this action.
- * <p>
- * This method is called when the delegating action has been triggered.
- * Implement this method to do the actual work.
- * </p>
- *
- * @param action the action proxy that handles the presentation portion of the
- *   action
- */
-public void run(IAction action);
-/**
- * Notifies this action delegate that the selection in the workbench has changed.
- * <p>
- * Implementers can use this opportunity to change the availability of the
- * action or to modify other presentation properties.
- * </p>
- *
- * @param action the action proxy that handles presentation portion of 
- * 		the action
- * @param selection the current selection, or <code>null</code> if there
- * 		is no selection.
- */
-public void selectionChanged(IAction action, ISelection selection);
+	/**
+	 * Performs this action.
+	 * <p>
+	 * This method is called when the delegating action has been triggered.
+	 * Implement this method to do the actual work.
+	 * </p>
+	 *
+	 * @param action the action proxy that handles the presentation portion of the
+	 *   action
+	 */
+	public void run(IAction action);
+	
+	/**
+	 * Notifies this action delegate that the selection in the workbench has changed.
+	 * <p>
+	 * Implementers can use this opportunity to change the availability of the
+	 * action or to modify other presentation properties.
+	 * </p>
+	 *
+	 * @param action the action proxy that handles presentation portion of 
+	 * 		the action
+	 * @param selection the current selection, or <code>null</code> if there
+	 * 		is no selection.
+	 */
+	public void selectionChanged(IAction action, ISelection selection);
 }
