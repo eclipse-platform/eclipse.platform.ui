@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Widget;
  * The grayed state is used to visualize the checked state of its children.
  * Containers are checked and non-gray if all contained leafs are checked. The
  * container is grayed if some but not all leafs are checked.
+ * @since 3.1
  */
 public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
 
@@ -79,6 +80,10 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
         });
     }
 
+	/**
+	 * Update element after a checkstate change.
+	 * @param element
+	 */
     protected void doCheckStateChanged(Object element) {
         Widget item = findItem(element);
         if (item instanceof TreeItem) {

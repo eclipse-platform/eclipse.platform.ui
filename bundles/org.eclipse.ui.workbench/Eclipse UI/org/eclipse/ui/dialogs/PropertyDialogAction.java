@@ -82,6 +82,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
      * @param provider
      *            the selection provider whose elements the property dialog will
      *            describe
+     * @since 3.1
      */
     public PropertyDialogAction(IShellProvider shell, ISelectionProvider provider) {
         super(provider, WorkbenchMessages.PropertyDialog_text); 
@@ -145,10 +146,9 @@ public class PropertyDialogAction extends SelectionProviderAction {
 		return selection.size() == 1 && hasPropertyPagesFor(selection.getFirstElement());
 	}
 
-	/**
-	 * The <code>PropertyDialogAction</code> implementation of this
-	 * <code>IAction</code> method performs the action by opening the Property
-	 * Page Dialog for the current selection.
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
 
@@ -163,6 +163,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	 * 
 	 * @return PreferenceDialog or <code>null</code> if no applicable pages
 	 *         are found.
+	 * @since 3.1
 	 */
 	public PreferenceDialog createDialog() {
 
@@ -173,10 +174,9 @@ public class PropertyDialogAction extends SelectionProviderAction {
 				.createDialogOn(shellProvider.getShell(), initialPageId, element);
 	}
 
-	/**
-	 * The <code>PropertyDialogAction</code> implementation of this
-	 * <code>SelectionProviderAction</code> method enables the action only if
-	 * the given selection contains exactly one element.
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void selectionChanged(IStructuredSelection selection) {
 		setEnabled(selection.size() == 1 && selection.getFirstElement() != null);
