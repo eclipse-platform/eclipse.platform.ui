@@ -568,7 +568,7 @@
             class="org.eclipse.team.internal.ccvs.ui.CVSDecorator"
             id="org.eclipse.team.cvs.ui.decorator">
          <description>
-            %DecoratorStandard.description
+            %DecoratorStandard.desc
 	     </description>
      </decorator>
    </extension>
