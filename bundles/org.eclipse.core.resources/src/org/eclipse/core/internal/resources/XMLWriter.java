@@ -27,7 +27,7 @@ public void endTag(String name) {
 public void printSimpleTag(String name, Object value) {
 	if (value != null) {
 		printTag(name, null, true, false);
-		print(value);
+		print(getEscaped(String.valueOf(value)));
 		printTag('/' + name, null, false, true);
 	}
 }
@@ -48,7 +48,7 @@ public void printTag(String name, HashMap parameters, boolean tab, boolean newLi
 			String key = (String) enum.nextElement();
 			sb.append(key);
 			sb.append("=\"");
-			sb.append(parameters.get(key));
+			sb.append(getEscaped(String.valueOf(parameters.get(key))));
 			sb.append("\"");
 		}
 	sb.append(">");
@@ -65,5 +65,44 @@ public void startTag(String name, HashMap parameters) {
 public void startTag(String name, HashMap parameters, boolean newLine) {
 	printTag(name, parameters, true, newLine);
 	tab++;
+}
+private static void appendEscapedChar(StringBuffer buffer, char c) {
+	String replacement = getReplacement(c);
+	if (replacement != null) {
+		buffer.append('&');
+		buffer.append(replacement);
+		buffer.append(';');
+	} else {
+		if ((c >= ' ' && c <= 0x7E) || c == '\n' || c == '\r' || c == '\t') {
+			buffer.append(c);
+		} else {
+			buffer.append("&#");
+			buffer.append(Integer.toString(c));
+			buffer.append(';');
+		}
+	}
+}
+public static String getEscaped(String s) {
+	StringBuffer result = new StringBuffer(s.length() + 10);
+	for (int i = 0; i < s.length(); ++i)
+		appendEscapedChar(result, s.charAt(i));
+	return result.toString();
+}
+private static String getReplacement(char c) {
+	// Encode special XML characters into the equivalent character references.
+	// These five are defined by default for all XML documents.
+	switch (c) {
+		case '<' :
+			return "lt";
+		case '>' :
+			return "gt";
+		case '"' :
+			return "quot";
+		case '\'' :
+			return "apos";
+		case '&' :
+			return "amp";
+	}
+	return null;
 }
 }
