@@ -32,7 +32,7 @@ public class ResourcePathSorter extends ViewerSorter {
 			name1= ""; //$NON-NLS-1$
 		if (name2 == null)
 			name2= ""; //$NON-NLS-1$
-		return name1.toLowerCase().compareTo(name2.toLowerCase());
+		return getCollator().compare(name1, name2);
 	}
 
 	/*

@@ -41,7 +41,7 @@ public class FileLabelProvider extends LabelProvider {
 		if (!(element instanceof ISearchResultViewEntry))
 			return ""; //$NON-NLS-1$
 		IResource resource= ((ISearchResultViewEntry) element).getResource();
-		// PR 1G47GDO
+
 		if (resource == null)
 			return SearchMessages.getString("SearchResultView.removed_resource"); //$NON-NLS-1$
 		
