@@ -4,12 +4,12 @@
  */
 package org.eclipse.help.internal.context;
 import java.io.*;
-import java.util.Locale;
 
-import org.apache.xerces.dom.DocumentImpl;
+import org.apache.xerces.dom.*;
 import org.apache.xml.serialize.*;
+import org.eclipse.core.boot.*;
 import org.eclipse.help.*;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.*;
 import org.w3c.dom.*;
 /**
  * An XML based links result. This is needed in order to decouple
@@ -85,7 +85,7 @@ public class LinksResult {
 	 * or within a scope if specified
 	 */
 	protected IToc findTocForTopic(String href) {
-		IToc[] tocs = HelpSystem.getTocManager().getTocs(Locale.getDefault().toString());
+		IToc[] tocs = HelpSystem.getTocManager().getTocs(BootLoader.getNL());
 		for (int i = 0; i < tocs.length; i++) {
 			ITopic topic = tocs[i].getTopic(href);
 			if (topic != null)

@@ -6,7 +6,7 @@ package org.eclipse.help.internal.protocols;
 
 import java.io.*;
 
-import org.eclipse.help.IToc;
+import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.toc.*;
 
@@ -55,7 +55,7 @@ public class TocURL extends HelpURL {
 	 */
 	private InputStream serializeToc(String tocID) {
 		IToc toc =
-			(Toc) HelpSystem.getTocManager().getToc(tocID, getLocale().toString());
+			(Toc) HelpSystem.getTocManager().getToc(tocID, getLocale());
 		return serializeToc(toc);
 	}
 	/**
@@ -80,7 +80,7 @@ public class TocURL extends HelpURL {
 	 */
 	private InputStream serializeTocs() {
 		TocManager tocManager = HelpSystem.getTocManager();
-		IToc[] tocs = tocManager.getTocs(getLocale().toString());
+		IToc[] tocs = tocManager.getTocs(getLocale());
 		StringWriter stWriter = new StringWriter();
 		TocWriter gen = new TocWriter(stWriter);
 		gen.println("<tocs>");
@@ -140,7 +140,7 @@ public class TocURL extends HelpURL {
 		if (topic == null || topic.equals(""))
 			return null;
 
-		IToc[] tocs = HelpSystem.getTocManager().getTocs(getLocale().toString());
+		IToc[] tocs = HelpSystem.getTocManager().getTocs(getLocale());
 		for (int i=0; i<tocs.length; i++)
 			if (tocs[i].getTopic(topic) != null)
 				return tocs[i];

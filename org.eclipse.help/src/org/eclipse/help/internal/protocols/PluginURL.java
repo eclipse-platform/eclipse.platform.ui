@@ -4,7 +4,6 @@ package org.eclipse.help.internal.protocols;
  * All Rights Reserved.
  */
 import java.io.InputStream;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.util.*;
 /**
@@ -79,9 +78,9 @@ public class PluginURL extends HelpURL {
 		InputStream inputStream = null;
 		// first try finding the file inside nl tree in doc.zip,
 		// and then, in the file system
-		inputStream = ResourceLocator.openFromZip(getPlugin(), "doc.zip", getFile(), getLocale().toString());
+		inputStream = ResourceLocator.openFromZip(getPlugin(), "doc.zip", getFile(), getLocale());
 		if (inputStream == null)
-			inputStream = ResourceLocator.openFromPlugin(getPlugin(), getFile(), getLocale().toString());
+			inputStream = ResourceLocator.openFromPlugin(getPlugin(), getFile(), getLocale());
 		return inputStream;
 	}
 }

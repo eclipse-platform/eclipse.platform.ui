@@ -4,8 +4,8 @@ package org.eclipse.help.ui.internal;
  * All Rights Reserved.
  */
 import java.net.URLEncoder;
-import java.util.Locale;
 
+import org.eclipse.core.boot.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.context.*;
@@ -110,7 +110,7 @@ public class DefaultHelp implements IHelp {
 		IToc toc =
 			HelpSystem.getTocManager().getToc(
 				href,
-				Locale.getDefault().toString());
+				BootLoader.getNL());
 		if (toc != null)
 			displayHelpResource(toc);
 		else if (
@@ -241,8 +241,7 @@ public class DefaultHelp implements IHelp {
 	 * @return an array of TOC's
 	 */
 	public IToc[] getTocs() {
-		return HelpSystem.getTocManager().getTocs(
-			Locale.getDefault().toString());
+		return HelpSystem.getTocManager().getTocs(BootLoader.getNL());
 	}
 
 	/**

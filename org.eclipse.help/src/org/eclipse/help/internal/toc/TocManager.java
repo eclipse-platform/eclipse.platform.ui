@@ -5,6 +5,7 @@
 package org.eclipse.help.internal.toc;
 import java.util.*;
 
+import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.IToc;
 import org.eclipse.help.internal.*;
@@ -30,7 +31,7 @@ public class TocManager {
 			tocsByLang = new HashMap();
 			// build TOCs for machine locale at startup
 			// Note: this can be removed, and build on first invocation...
-			build(Locale.getDefault().toString());
+			build(BootLoader.getNL());
 		} catch (Exception e) {
 			Logger.logError("", e);
 		}

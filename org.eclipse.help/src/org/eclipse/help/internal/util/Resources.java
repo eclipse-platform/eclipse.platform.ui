@@ -4,8 +4,10 @@ package org.eclipse.help.internal.util;
  * All Rights Reserved.
  */
 
-import java.text.MessageFormat;
+import java.text.*;
 import java.util.*;
+
+import org.eclipse.core.boot.*;
 
 /**
  * Uses a resource bundle to load images and strings from
@@ -14,7 +16,7 @@ import java.util.*;
 public class Resources {
 	private static ResourceBundle resBundle;
 	static {
-		resBundle = ResourceBundle.getBundle("help", Locale.getDefault());
+		resBundle = ResourceBundle.getBundle("help", getDefaultLocale());
 	}
 	/**
 	 * Resources constructort.
@@ -148,5 +150,23 @@ public class Resources {
 			return name;
 		}
 
+	}
+	
+	private static Locale getDefaultLocale() {
+		String nl = BootLoader.getNL();
+		// sanity test
+		if (nl == null)
+			return Locale.getDefault();
+		
+		// break the string into tokens to get the Locale object
+		StringTokenizer locales = new StringTokenizer(nl,"_");
+		if (locales.countTokens() == 1)
+			return new Locale(locales.nextToken(), "");
+		else if (locales.countTokens() == 2)
+			return new Locale(locales.nextToken(), locales.nextToken());
+		else if (locales.countTokens() == 3)
+			return new Locale(locales.nextToken(), locales.nextToken(), locales.nextToken());
+		else
+			return Locale.getDefault();
 	}
 }

@@ -3,11 +3,12 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.search;
-import java.io.Reader;
-import java.text.BreakIterator;
-import java.util.Locale;
+import java.io.*;
+import java.text.*;
+import java.util.*;
 
 import org.apache.lucene.analysis.*;
+import org.eclipse.core.boot.*;
 import org.eclipse.help.internal.util.*;
 /**
  * Lucene Analyzer.
@@ -50,22 +51,22 @@ public class DefaultAnalyzer extends Analyzer {
 	/**
 	 * Creates a Locale object out of a string representation
 	 */
-	private Locale getLocale(String localeString)
+	private Locale getLocale(String clientLocale)
 	{
-		Locale locale;	
-
-		if (localeString != null && localeString.length() >= 2) {
-			String language = localeString.substring(0,2);
-			String country;
-			if (localeString.length() >= 5 && localeString.indexOf('_') == 2) 
-				country = localeString.substring(3,5);
-			else
-				country = "";
-			locale = new Locale(language, country);	
-		}
-		else
-			locale = Locale.getDefault();
+		if (clientLocale == null)
+			clientLocale = BootLoader.getNL();
+		if (clientLocale == null)
+			clientLocale = Locale.getDefault().toString();
 		
-		return locale;
+		// break the string into tokens to get the Locale object
+		StringTokenizer locales = new StringTokenizer(clientLocale,"_");
+		if (locales.countTokens() == 1)
+			return new Locale(locales.nextToken(), "");
+		else if (locales.countTokens() == 2)
+			return new Locale(locales.nextToken(), locales.nextToken());
+		else if (locales.countTokens() == 3)
+			return new Locale(locales.nextToken(), locales.nextToken(), locales.nextToken());
+		else
+			return Locale.getDefault();
 	}
 }

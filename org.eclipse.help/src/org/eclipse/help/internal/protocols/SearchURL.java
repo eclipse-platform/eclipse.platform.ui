@@ -103,7 +103,7 @@ public class SearchURL extends HelpURL {
 										"dummy",
 										false,
 										new ArrayList(),
-										getLocale().toString()),
+										getLocale()),
 									new ISearchHitCollector() {
 								public void addHits(Hits h, String s) {
 								}
@@ -220,7 +220,7 @@ public class SearchURL extends HelpURL {
 			searchWord,
 			fieldSearch,
 			new ArrayList(),
-			getLocale().toString());
+			getLocale());
 	}
 	private SearchResults createHitCollector() {
 		if (arguments == null) {
@@ -233,21 +233,21 @@ public class SearchURL extends HelpURL {
 				List scopeList = (List) scopes;
 				if (scopeList.size()
 					!= HelpSystem.getTocManager().getTocs(
-						getLocale().toString()).length) {
+						getLocale()).length) {
 					// scope only if not all books selected
 					scopeCol = scopeList;
 				}
 			} else {
 				if (1
 					!= HelpSystem.getTocManager().getTocs(
-						getLocale().toString()).length) {
+						getLocale()).length) {
 					// scope only if not all books selected
 					List l = new ArrayList(1);
 					l.add(scopes);
 				}
 			}
 		}
-		return new SearchResults(scopeCol, 500, getLocale().toString());
+		return new SearchResults(scopeCol, 500, getLocale());
 	}
 
 }

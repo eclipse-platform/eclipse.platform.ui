@@ -21,7 +21,7 @@ public class HelpURL {
 	protected StringBuffer query;
 	protected HashMap arguments = null;
 	protected long contentSize; // length of input data
-	protected Locale locale;
+	protected String locale;
 	
 	/**
 	 * HelpURL constructor comment.
@@ -118,27 +118,16 @@ public class HelpURL {
 	/**
 	 * Returns the locale specified by client.
 	 */
-	protected Locale getLocale()
+	protected String getLocale()
 	{	
 		if (locale != null)
 			return locale;
 			
-		String clientLocale = getValue(lang);
-		if (clientLocale == null)
-			clientLocale = BootLoader.getNL();
-		if (clientLocale == null)
-			clientLocale = Locale.getDefault().toString();
-		
-		// break the string into tokens to get the Locale object
-		StringTokenizer locales = new StringTokenizer(clientLocale,"_");
-		if (locales.countTokens() == 1)
-			locale = new Locale(locales.nextToken());
-		else if (locales.countTokens() == 2)
-			locale = new Locale(locales.nextToken(), locales.nextToken());
-		else if (locales.countTokens() == 3)
-			locale = new Locale(locales.nextToken(), locales.nextToken(), locales.nextToken());
-		else
-			locale = Locale.getDefault();
+		locale = getValue(lang);
+		if (locale == null)
+			locale = BootLoader.getNL();
+		if (locale == null)
+			locale = Locale.getDefault().toString();
 		
 		return locale;
 	}

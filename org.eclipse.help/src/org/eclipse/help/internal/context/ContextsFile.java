@@ -4,9 +4,10 @@
  */
 package org.eclipse.help.internal.context;
 import java.io.*;
-import java.util.Locale;
 
+import org.eclipse.core.boot.*;
 import org.eclipse.help.internal.util.ResourceLocator;
+
 public class ContextsFile {
 	protected String href;
 	protected String definingPluginID;
@@ -30,7 +31,7 @@ public class ContextsFile {
 		InputStream stream = null;
 		try {
 			if (definingPluginID != null)
-				stream = ResourceLocator.openFromPlugin(definingPluginID, href, Locale.getDefault().toString());
+				stream = ResourceLocator.openFromPlugin(definingPluginID, href, BootLoader.getNL());
 			else
 				stream = new FileInputStream(href);
 		} catch (IOException e) {
