@@ -137,6 +137,7 @@ public void startup() throws CoreException {
 	// Remember workspace before opening, to
 	// make it easier to debug cases where open() is failing.
 	workspace = new Workspace();
+	PlatformURLResourceConnection.startup(Platform.getLocation());
 	workspace.open(null);
 }
 }

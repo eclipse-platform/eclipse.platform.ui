@@ -536,7 +536,7 @@ public URL getLocationURL() {
 	if (project != null && !project.exists())
 		return null;
 	try {
-		return new URL("platform:/resource/" + getFullPath());
+		return new URL("platform:/resource" + getFullPath());
 	} catch (MalformedURLException e) {
 		return null;
 	}
