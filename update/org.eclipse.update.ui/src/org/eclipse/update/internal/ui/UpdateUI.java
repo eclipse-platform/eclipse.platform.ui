@@ -17,13 +17,10 @@ import java.net.URLEncoder;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.browser.*;
-import org.eclipse.help.internal.browser.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.program.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.browser.*;
 import org.eclipse.ui.plugin.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
@@ -41,6 +38,7 @@ public class UpdateUI extends AbstractUIPlugin {
 	// preference key
 	public static final String P_DISCOVERY_SITES_ENABLED = "discoverySitesEnabled"; //$NON-NLS-1$
 	
+	private static final String UPDATE_BROWSER_ID = "org.eclipse.update";	//$NON-NLS-1$
 	//The shared instance.
 	private static UpdateUI plugin;
 	//Resource bundle.
@@ -333,20 +331,21 @@ public class UpdateUI extends AbstractUIPlugin {
 	public static void showURL(String url) {
 		showURL(url, false);
 	}
-	
+
 	public static void showURL(String url, boolean encodeHostAndPort) {
 		if (encodeHostAndPort)
 			url = encodeHostAndPort(url);
 
-		if (SWT.getPlatform().equals("win32")) { //$NON-NLS-1$
-			Program.launch(url);
-		} else {
-			IBrowser browser = BrowserManager.getInstance().createBrowser();
-			try {
-				browser.displayURL(url);
-			} catch (Exception e) {
-				UpdateUI.logException(e);
-			}
+		IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
+		try {
+			IWebBrowser browser = support.createBrowser(IWorkbenchBrowserSupport.AS_EXTERNAL, UPDATE_BROWSER_ID, null, null);
+			browser.openURL(new URL(url));
+		}
+		catch (MalformedURLException e) {
+			UpdateUI.logException(e);
+		}
+		catch (PartInitException e) {
+			UpdateUI.logException(e);
 		}
 	}
 
