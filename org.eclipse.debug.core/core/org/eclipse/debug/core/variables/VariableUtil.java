@@ -383,7 +383,7 @@ public class VariableUtil {
 	 * @param context context used to expand environment variable values
 	 * or <code>null</code> if none
 	 * @return String[] the array of "variable=value" pairs, suitable for
-	 * passing to Process.exec
+	 * passing to Runtime.exec(...)
 	 * @throws CoreException if unable to access associated attribute or if
 	 * unable to resolve a variable in an environment variable's value
 	 */
