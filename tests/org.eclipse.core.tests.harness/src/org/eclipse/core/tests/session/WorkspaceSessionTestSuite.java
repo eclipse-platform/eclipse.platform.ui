@@ -14,6 +14,7 @@ import java.util.*;
 import junit.framework.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.tests.harness.FileSystemHelper;
+import org.eclipse.core.tests.session.SetupManager.SetupException;
 
 public class WorkspaceSessionTestSuite extends SessionTestSuite {
 
@@ -41,8 +42,9 @@ public class WorkspaceSessionTestSuite extends SessionTestSuite {
 
 	/**
 	 * Ensures setup uses this suite's instance location.
+	 * @throws SetupException
 	 */
-	protected Setup getSetup() {
+	protected Setup getSetup() throws SetupException {
 		Setup base = super.getSetup();
 		base.setEclipseArgument(Setup.DATA, instanceLocation.toOSString());
 		return base;

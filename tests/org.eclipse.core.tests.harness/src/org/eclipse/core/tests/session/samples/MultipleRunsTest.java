@@ -16,7 +16,7 @@ import org.eclipse.core.tests.session.*;
 import org.eclipse.test.performance.*;
 
 public class MultipleRunsTest extends TestCase {
-	public void testMultipleRuns() {
+	public void testMultipleRuns() throws SetupManager.SetupException {
 		// the test case to run multiple times
 		TestDescriptor test = new TestDescriptor(SampleSessionTest.class.getName(), "testApplicationStartup");
 		test.setApplicationId(SessionTestSuite.CORE_TEST_APPLICATION);

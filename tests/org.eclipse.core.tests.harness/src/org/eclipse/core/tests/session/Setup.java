@@ -82,12 +82,18 @@ public class Setup implements Cloneable {
 	 */
 	public static Setup getDefaultSetup() {
 		Setup defaultSetup = new Setup();
-		defaultSetup.setEclipseArgument(VM, Setup.getDefaultVMLocation());
-		defaultSetup.setEclipseArgument(CONFIGURATION, Setup.getDefaultConfiguration());
-		defaultSetup.setEclipseArgument(DEBUG, Setup.getDefaultDebugOption());
-		defaultSetup.setEclipseArgument(DEV, Setup.getDefaultDevOption());
-		defaultSetup.setEclipseArgument(INSTALL, Setup.getDefaultInstallLocation());
-		defaultSetup.setEclipseArgument(DATA, Setup.getDefaultInstanceLocation());
+		if (Setup.getDefaultVMLocation() != null)
+			defaultSetup.setEclipseArgument(VM, Setup.getDefaultVMLocation());
+		if (Setup.getDefaultConfiguration() != null)
+			defaultSetup.setEclipseArgument(CONFIGURATION, Setup.getDefaultConfiguration());
+		if (Setup.getDefaultDebugOption() != null)
+			defaultSetup.setEclipseArgument(DEBUG, Setup.getDefaultDebugOption());
+		if (Setup.getDefaultDevOption() != null)
+			defaultSetup.setEclipseArgument(DEV, Setup.getDefaultDevOption());
+		if (Setup.getDefaultInstallLocation() != null)
+			defaultSetup.setEclipseArgument(INSTALL, Setup.getDefaultInstallLocation());
+		if (Setup.getDefaultInstanceLocation() != null)
+			defaultSetup.setEclipseArgument(DATA, Setup.getDefaultInstanceLocation());
 		defaultSetup.setTimeout(DEFAULT_TIMEOUT);
 		return defaultSetup;
 	}
@@ -233,10 +239,13 @@ public class Setup implements Cloneable {
 		List commandLine = new ArrayList();
 		fillCommandLine(commandLine);
 		StringBuffer result = new StringBuffer();
+		result.append("[\n");
 		for (Iterator i = commandLine.iterator(); i.hasNext();) {
+			result.append('\t');
 			result.append(i.next());
-			result.append(System.getProperty("line.separator"));
+			result.append('\n');
 		}
-		return "[" + result.toString() + "]";
+		result.append(']');
+		return result.toString();
 	}
 }

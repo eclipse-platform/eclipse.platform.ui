@@ -12,6 +12,7 @@ package org.eclipse.core.tests.session;
 
 import java.util.*;
 import junit.framework.*;
+import org.eclipse.core.tests.session.SetupManager.SetupException;
 
 public class SessionTestSuite extends TestSuite {
 	public static final String CORE_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$	
@@ -19,7 +20,7 @@ public class SessionTestSuite extends TestSuite {
 	protected String applicationId = CORE_TEST_APPLICATION;
 	protected String pluginId;
 	protected SessionTestRunner testRunner;
-	private Set crashTests = new HashSet(); 
+	private Set crashTests = new HashSet();
 
 	public SessionTestSuite(String pluginId) {
 		super();
@@ -46,7 +47,7 @@ public class SessionTestSuite extends TestSuite {
 		super.addTest(test);
 	}
 
-	protected void fillTestDescriptor(TestDescriptor test) {
+	protected void fillTestDescriptor(TestDescriptor test) throws SetupException {
 		if (test.getApplicationId() == null)
 			test.setApplicationId(applicationId);
 		if (test.getPluginId() == null)
@@ -62,7 +63,7 @@ public class SessionTestSuite extends TestSuite {
 		return applicationId;
 	}
 
-	protected Setup getSetup() {
+	protected Setup getSetup() throws SetupException {
 		return SetupManager.getInstance().getDefaultSetup();
 	}
 
@@ -73,8 +74,12 @@ public class SessionTestSuite extends TestSuite {
 	}
 
 	protected void runSessionTest(TestDescriptor test, TestResult result) {
-		fillTestDescriptor(test);
-		test.run(result);
+		try {
+			fillTestDescriptor(test);
+			test.run(result);
+		} catch (SetupException e) {
+			result.addError(test.getTest(), e.getCause());
+		}
 	}
 
 	public void runTest(Test test, TestResult result) {

@@ -194,7 +194,7 @@ public class SessionTestRunner {
 		Setup setup = (Setup) descriptor.getSetup().clone();
 		setup.setEclipseArgument(Setup.APPLICATION, descriptor.getApplicationId());
 		setup.setEclipseArgument("testpluginname", descriptor.getPluginId());
-		setup.setEclipseArgument("test",descriptor.getTestClass() + ':' + descriptor.getTestMethod());
+		setup.setEclipseArgument("test", descriptor.getTestClass() + ':' + descriptor.getTestMethod());
 		setup.setEclipseArgument("port", Integer.toString(port));
 		return setup;
 	}
@@ -205,11 +205,10 @@ public class SessionTestRunner {
 	 * @return a status object indicating the outcome 
 	 */
 	private IStatus launch(Setup setup) {
-		if (Platform.inDebugMode()) {
-			System.out.println("Command line: ");
-			System.out.print('\t');
+		if (SetupManager.inDebugMode()) {
+			System.out.print("Command line: ");
 			System.out.println(setup);
-		}		
+		}
 		IStatus outcome = Status.OK_STATUS;
 		try {
 			ProcessController process = new ProcessController(setup.getTimeout(), setup.getCommandLine());
@@ -220,18 +219,18 @@ public class SessionTestRunner {
 			//process.forwardInput(System.in);
 			int returnCode = process.execute();
 			if (returnCode != 0)
-				outcome = new Status(IStatus.WARNING, Platform.PI_RUNTIME, returnCode, "Process returned non-zero code: " + returnCode + "\n\tCommand: " +setup, null);
+				outcome = new Status(IStatus.WARNING, Platform.PI_RUNTIME, returnCode, "Process returned non-zero code: " + returnCode + "\n\tCommand: " + setup, null);
 		} catch (Exception e) {
-			outcome = new Status(IStatus.ERROR, Platform.PI_RUNTIME, -1, "Error running process\n\tCommand: " +setup, e);
+			outcome = new Status(IStatus.ERROR, Platform.PI_RUNTIME, -1, "Error running process\n\tCommand: " + setup, e);
 		}
 		return outcome;
 	}
 
 	/**
-	 * Runsthe test described  in a separate session using 
+	 * Runs the test described  in a separate session.
+	 *  
 	 * @param descriptor
 	 * @param result
-	 * @param sessionSetup
 	 */
 	public final void run(TestDescriptor descriptor, TestResult result) {
 		result.startTest(descriptor.getTest());

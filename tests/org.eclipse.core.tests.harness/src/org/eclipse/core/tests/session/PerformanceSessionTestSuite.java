@@ -11,6 +11,7 @@
 package org.eclipse.core.tests.session;
 
 import junit.framework.*;
+import org.eclipse.core.tests.session.SetupManager.SetupException;
 
 /**
  * Runs perfomance test cases multiple times (if they don't fail), 
@@ -118,7 +119,12 @@ public class PerformanceSessionTestSuite extends SessionTestSuite {
 	}
 
 	protected void runSessionTest(TestDescriptor descriptor, TestResult result) {
-		fillTestDescriptor(descriptor);
+		try {
+			fillTestDescriptor(descriptor);
+		} catch (SetupException e) {
+			result.addError(descriptor.getTest(), e.getCause());
+			return;
+		}
 		// first component contains the property except assertAgainst=*
 		// second component contains only assertAgainst=*
 		String[] perfCtrl = parsePerfCtrl();

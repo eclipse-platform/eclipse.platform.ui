@@ -20,11 +20,17 @@ import org.xml.sax.SAXException;
 
 public class SetupManager {
 
+	public class SetupException extends Exception {
+		public SetupException(String message, Throwable cause) {
+			super(message, cause);
+		}
+	}
+
 	private static SetupManager instance;
 	private String defaultVariations = "";
 	private Map setups;
 
-	public synchronized static SetupManager getInstance() {
+	public synchronized static SetupManager getInstance() throws SetupException {
 		if (instance != null)
 			return instance;
 		instance = new SetupManager();
@@ -48,9 +54,13 @@ public class SetupManager {
 		return (String[]) items.toArray(new String[items.size()]);
 	}
 
-	protected SetupManager() {
+	protected SetupManager() throws SetupException {
 		setups = new HashMap();
-		loadSetups();
+		try {
+			loadSetups();
+		} catch (Exception e) {
+			throw new SetupException("Problems initializing SetupManager", e);
+		}
 	}
 
 	private String getAttribute(NamedNodeMap attributes, String name) {
@@ -76,7 +86,12 @@ public class SetupManager {
 	}
 
 	private String[] getDefaultVariationIds() {
-		return parseItems(System.getProperty("setup.variations", defaultVariations));
+		System.getProperty("setup.variations");
+		List allDefaultVariations = new ArrayList();
+		// leave the user provided default variations *after* the ones found in the file
+		allDefaultVariations.addAll(Arrays.asList(parseItems(defaultVariations)));
+		allDefaultVariations.addAll(Arrays.asList(parseItems(System.getProperty("setup.variations"))));
+		return (String[]) allDefaultVariations.toArray(new String[allDefaultVariations.size()]);
 	}
 
 	public Setup getSetup(String setupId) {
@@ -118,18 +133,31 @@ public class SetupManager {
 		setups.put(newSetup.getId(), newSetup);
 	}
 
-	private void loadSetups() {
-		try {
-			File setupFile = new File(System.getProperty("setup.file", "default-setup.xml"));
-			if (!setupFile.isFile())
-				if (Platform.isRunning() && Platform.inDevelopmentMode()) {
-					System.out.println("No setup descriptions found, only the default setup will be available");
-					return;
-				} else
-					throw new IllegalArgumentException("Setup file '" + setupFile.getAbsolutePath() + "' not found. Ensure you are specifying the path for an existing setup file (e.g. -Dsetup.file=<path-to-setup-file>)");
-			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new File(System.getProperty("setup.file")));
+	private void loadSetups() throws ParserConfigurationException, FactoryConfigurationError, SAXException, IOException {
+		String setupFilesProperty = System.getProperty("setup.files", System.getProperty("setup.file", "default-setup.xml"));
+		String[] setupFileNames = parseItems(setupFilesProperty);
+		File[] setupFiles = new File[setupFileNames.length];
+		int found = 0;
+		for (int i = 0; i < setupFiles.length; i++) {
+			setupFiles[found] = new File(setupFileNames[i]);
+			if (!setupFiles[found].isFile())
+				continue;
+			found++;
+		}
+		if (found == 0) {
+			if (Platform.isRunning() && Platform.inDevelopmentMode()) {
+				System.out.println("No setup descriptions found, only the default setup will be available");
+				return;
+			}
+			throw new IllegalArgumentException("No setup files found at '" + setupFilesProperty + "'. Ensure you are specifying the path for an existing setup file (e.g. -Dsetup.files=<setup-file-location1>[...,<setup-file-locationN>])");
+		}
+		DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		for (int fileIndex = 0; fileIndex < found; fileIndex++) {
+			Document doc = docBuilder.parse(setupFiles[fileIndex]);
 			Element root = doc.getDocumentElement();
-			defaultVariations = root.getAttribute("default");
+			String setupDefaultVariations = root.getAttribute("default");
+			if (setupDefaultVariations != null)
+				defaultVariations = defaultVariations == null ? setupDefaultVariations : (defaultVariations + ',' + setupDefaultVariations);
 			NodeList variations = root.getChildNodes();
 			for (int i = 0; i < variations.getLength(); i++) {
 				Node next = variations.item(i);
@@ -140,18 +168,6 @@ public class SetupManager {
 					continue;
 				loadSetup(toParse);
 			}
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FactoryConfigurationError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
@@ -159,4 +175,7 @@ public class SetupManager {
 		newSetup.setVMArgument(toParse.getAttribute("option"), toParse.getAttribute("value"));
 	}
 
+	public static boolean inDebugMode() {
+		return Boolean.getBoolean("setup.debug");
+	}
 }
