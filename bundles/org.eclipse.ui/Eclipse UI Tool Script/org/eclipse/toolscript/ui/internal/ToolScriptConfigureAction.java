@@ -25,7 +25,9 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.toolscript.core.internal.IToolScriptContext;
 import org.eclipse.toolscript.core.internal.ToolScript;
+import org.eclipse.toolscript.core.internal.ToolScriptContext;
 import org.eclipse.toolscript.core.internal.ToolScriptPlugin;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
@@ -169,7 +171,8 @@ public class ToolScriptConfigureAction extends ActionDelegate implements IWorkbe
 		//	return new UIBuildListener(null, null, null, consoles);
 
 		try {
-			script.run(listener, null);
+			IToolScriptContext context = new ToolScriptContext(script, null);
+			script.run(listener, null, context);
 		} catch(CoreException e) {
 			ErrorDialog.openError(
 				window.getShell(),

@@ -39,8 +39,9 @@ public final class ToolScriptBuilder extends IncrementalProjectBuilder {
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		ToolScript script = ToolScript.fromArgumentMap(args);
+		IToolScriptContext context = new ToolScriptContext(script, getProject());
 		if (script != null)
-			script.run(null, monitor);
+			script.run(null, monitor, context);
 		return null;
 	}
 }

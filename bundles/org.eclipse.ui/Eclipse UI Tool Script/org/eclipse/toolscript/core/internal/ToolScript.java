@@ -276,19 +276,20 @@ public class ToolScript {
 	 * An additional listener may be provided for logging more feedback.
 	 * 
 	 * @param listener the listener to provide feedback to, or null.
-	 * @param the monitor to report progress to, or null.
+	 * @param monitor the monitor to report progress to, or null.
+	 * @param scriptContext the context in which to run this script
 	 */
-	public void run(BuildListener listener, IProgressMonitor monitor) throws CoreException {
+	public void run(BuildListener listener, IProgressMonitor monitor, IToolScriptContext scriptContext) throws CoreException {
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
 		try {
 			ToolScriptRunner runner = ToolScriptPlugin.getDefault().getToolScriptRunner(type);
 			if (runner != null) {
 				if (REFRESH_SCOPE_NONE.equals(refreshScope)) {
-					runner.execute(listener, monitor, this);
+					runner.execute(listener, monitor, scriptContext);
 				} else {
 					monitor.beginTask("Running tool script...", 100);
-					runner.execute(listener, new SubProgressMonitor(monitor, 70), this);
+					runner.execute(listener, new SubProgressMonitor(monitor, 70), scriptContext);
 					refreshResources(new SubProgressMonitor(monitor, 30));
 				}
 			}
