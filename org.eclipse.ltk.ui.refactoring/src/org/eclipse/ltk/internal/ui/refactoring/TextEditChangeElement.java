@@ -42,9 +42,6 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 		return fChangeGroup;
 	}
 		
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.refactoring.ChangeElement#getChangePreviewViewer()
-	 */
 	public ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException {
 		DefaultChangeElement element= getDefaultChangeElement();
 		if (element == null)
@@ -52,9 +49,6 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 		return element.getChangePreviewViewerDescriptor();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.refactoring.ChangeElement#feedInput(org.eclipse.jdt.internal.ui.refactoring.IChangePreviewViewer)
-	 */
 	public void feedInput(IChangePreviewViewer viewer) throws CoreException {
 		DefaultChangeElement element= getDefaultChangeElement();
 		if (element != null) {

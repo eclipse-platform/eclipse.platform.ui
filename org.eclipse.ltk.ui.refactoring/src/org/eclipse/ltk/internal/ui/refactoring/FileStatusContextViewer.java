@@ -37,17 +37,11 @@ import org.eclipse.ltk.ui.refactoring.TextStatusContextViewer;
 
 public class FileStatusContextViewer extends TextStatusContextViewer {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.refactoring.IStatusContextViewer#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		getSourceViewer().configure(new SourceViewerConfiguration());
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.refactoring.IStatusContextViewer#setInput(java.lang.Object)
-	 */
 	public void setInput(RefactoringStatusContext context) {
 		FileStatusContext fc= (FileStatusContext)context;
 		IFile file= fc.getFile();

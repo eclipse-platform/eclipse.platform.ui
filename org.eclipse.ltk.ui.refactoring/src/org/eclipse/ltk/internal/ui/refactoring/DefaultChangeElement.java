@@ -49,16 +49,10 @@ class DefaultChangeElement extends ChangeElement {
 		return fChange;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.refactoring.ChangeElement#getChangePreviewViewer()
-	 */
 	public ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException {
 		return ChangePreviewViewerDescriptor.get(fChange);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.refactoring.ChangeElement#feedInput(org.eclipse.jdt.internal.ui.refactoring.IChangePreviewViewer)
-	 */
 	public void feedInput(IChangePreviewViewer viewer) throws CoreException {
 		viewer.setInput(new ChangePreviewViewerInput(fChange));
 	}

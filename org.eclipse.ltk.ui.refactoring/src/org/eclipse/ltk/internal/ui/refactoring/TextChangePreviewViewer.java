@@ -158,23 +158,14 @@ public class TextChangePreviewViewer implements IChangePreviewViewer {
 	}
 	
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.refactoring.IChangePreviewViewer#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	public void createControl(Composite parent) {
 		fViewer= new ComparePreviewer(parent);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.refactoring.IChangePreviewViewer#getControl()
-	 */
 	public Control getControl() {
 		return fViewer;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.refactoring.IChangePreviewViewer#setInput(org.eclipse.jdt.internal.ui.refactoring.ChangeElement)
-	 */
 	public void setInput(ChangePreviewViewerInput input) {
 		try {
 			Change change= input.getChange();
@@ -207,9 +198,6 @@ public class TextChangePreviewViewer implements IChangePreviewViewer {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.refactoring.IChangePreviewViewer#refresh()
-	 */
 	public void refresh() {
 		fViewer.getViewer().refresh();
 	}

@@ -13,8 +13,8 @@ package org.eclipse.ltk.internal.ui.refactoring;
 
 public interface IRefactoringHelpContextIds {
 
-	// copied from JDT_UI so we stil forward to this documentation since we are
-	// places in the same feature.
+	// copied from JDT_UI so we still forward to this documentation since we are
+	// placed in the same feature.
 	public static final String PREFIX= "org.eclipse.jdt.ui" + '.'; //$NON-NLS-1$
 	
 	public static final String NEXT_PROBLEM_ACTION=			PREFIX + "next_problem_action";			//$NON-NLS-1$	

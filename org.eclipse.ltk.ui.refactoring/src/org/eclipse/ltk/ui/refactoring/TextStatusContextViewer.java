@@ -134,8 +134,8 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 	
 	//---- Methods defined in IStatusContextViewer -------------------------------
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.refactoring.IStatusContextViewer#createControl(org.eclipse.swt.widgets.Composite)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void createControl(Composite parent) {
 		fForm= new ViewForm(parent, SWT.BORDER | SWT.FLAT);
@@ -155,8 +155,8 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 		fForm.setContent(fSourceViewer.getControl());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.refactoring.IStatusContextViewer#getControl()
+	/**
+	 * {@inheritDoc}
 	 */
 	public Control getControl() {
 		return fForm;
