@@ -16,9 +16,17 @@ import org.eclipse.core.internal.resources.ResourceInfo;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.watson.ElementTree;
 import java.util.*;
-
+/**
+ * This class is used for calculating and building resource delta trees for notification 
+ * and build purposes.
+ */
 public class ResourceDeltaFactory {
+/**
+ * Returns the resource delta representing the changes made between the given old and new trees,
+ * starting from the given root element.
+ */
 public static ResourceDelta computeDelta(Workspace workspace, ElementTree oldTree, ElementTree newTree, IPath root, boolean notification) {
+	//compute the underlying delta tree.
 	ResourceComparator comparator = ResourceComparator.getComparator(notification);
 	newTree.immutable();
 	DeltaDataTree delta = null;
@@ -28,21 +36,22 @@ public static ResourceDelta computeDelta(Workspace workspace, ElementTree oldTre
 		delta = newTree.getDataTree().compareWith(oldTree.getDataTree(), comparator, root);
 
 	delta = delta.asReverseComparisonTree(comparator);
-	IPath pathInTree = root;
+	IPath pathInTree = root.isRoot() ? Path.ROOT : root;
 	IPath pathInDelta = Path.ROOT;
-
-	Hashtable oldNodeIDMap = new Hashtable(11);
-	Hashtable newNodeIDMap = new Hashtable(11);
-	computeNodeIDMaps(delta, oldNodeIDMap, newNodeIDMap, pathInTree, pathInDelta);
 
 	// get the marker deltas for the delta info object....if needed
 	Map allMarkerDeltas = null;
 	if (notification)
 		allMarkerDeltas = workspace.getMarkerManager().getMarkerDeltas();
+		
+	//recursively walk the delta and create a tree of ResourceDelta objects.
 	ResourceDeltaInfo deltaInfo = new ResourceDeltaInfo(workspace, allMarkerDeltas, comparator);
-	deltaInfo.setNodeMaps(oldNodeIDMap, newNodeIDMap);
-
 	ResourceDelta result = createDelta(workspace, delta, deltaInfo, pathInTree, pathInDelta);
+	
+	//compute node ID map and fix up moves
+	deltaInfo.setNodeIDMap(computeNodeIDMap(result, new NodeIDMap()));
+	result.fixMovesAndMarkers();
+
 	// check all the projects and if they were added and opened then tweek the flags
 	// so the delta reports both.
 	int segmentCount = result.getFullPath().segmentCount();
@@ -68,36 +77,40 @@ protected static void checkForOpen(ResourceDelta delta, int segmentCount) {
 		checkForOpen((ResourceDelta) children[i], 1);
 }
 /**
- * Creates the maps from node id to element id for the old and new states.
- * Used for recognizing moves.
+ * Creates the map from node id to element id for the old and new states.
+ * Used for recognizing moves.  Returns the map.
  */
-protected static void computeNodeIDMaps(DeltaDataTree delta, Hashtable oldNodeIDMap, Hashtable newNodeIDMap, IPath pathInTree, IPath pathInDelta) {
-	long id = 0;
-	NodeComparison nodeComparison = (NodeComparison) delta.getData(pathInDelta);
-	switch (nodeComparison.getUserComparison() & ResourceDelta.KIND_MASK) {
-		case IResourceDelta.ADDED :
-			id = ((ResourceInfo) nodeComparison.getNewData()).getNodeId();
-			newNodeIDMap.put(new Long(id), pathInTree);
-			break;
-		case IResourceDelta.REMOVED :
-			id = ((ResourceInfo) nodeComparison.getOldData()).getNodeId();
-			oldNodeIDMap.put(new Long(id), pathInTree);
-			break;
-		case IResourceDelta.CHANGED :
-			id = ((ResourceInfo) nodeComparison.getOldData()).getNodeId();
-			oldNodeIDMap.put(new Long(id), pathInTree);
-			id = ((ResourceInfo) nodeComparison.getNewData()).getNodeId();
-			newNodeIDMap.put(new Long(id), pathInTree);
-			break;
+protected static NodeIDMap computeNodeIDMap(ResourceDelta delta, NodeIDMap nodeIDMap) {
+	IResourceDelta[] children = delta.children;
+	for (int i = 0; i < children.length; i++) {
+		ResourceDelta child = (ResourceDelta)children[i];
+		IPath path = child.getFullPath();
+		switch (child.getKind()) {
+			case IResourceDelta.ADDED :
+				nodeIDMap.putNewPath(child.newInfo.getNodeId(), path);
+				break;
+			case IResourceDelta.REMOVED :
+				nodeIDMap.putOldPath(child.oldInfo.getNodeId(), path);
+				break;
+			case IResourceDelta.CHANGED :
+				long oldID = child.oldInfo.getNodeId();
+				long newID = child.newInfo.getNodeId();
+				//don't add entries to the map if nothing has changed.
+				if (oldID != newID) {
+					nodeIDMap.putOldPath(oldID, path);
+					nodeIDMap.putNewPath(newID, path);
+				}
+				break;
+		}
+		//recurse
+		computeNodeIDMap(child, nodeIDMap);
 	}
-
-	// XXX: look at using one of the visitors to improve performance
-	// recurse
-	IPath[] children = delta.getChildren(pathInDelta);
-	for (int i = 0; i < children.length; ++i) {
-		computeNodeIDMaps(delta, oldNodeIDMap, newNodeIDMap, pathInTree.append(children[i].lastSegment()), children[i]);
-	}
+	return nodeIDMap;
 }
+/**
+ * Recursively creates the tree of ResourceDelta objects rooted at
+ * the given path.
+ */
 protected static ResourceDelta createDelta(Workspace workspace, DeltaDataTree delta, ResourceDeltaInfo deltaInfo, IPath pathInTree, IPath pathInDelta) {
 	// create the delta and fill it with information
 	ResourceDelta result = new ResourceDelta(pathInTree, deltaInfo);
@@ -114,15 +127,14 @@ protected static ResourceDelta createDelta(Workspace workspace, DeltaDataTree de
 		result.setOldInfo((ResourceInfo) compare.getOldData());
 		result.setNewInfo((ResourceInfo) compare.getNewData());
 	}
-
-	result.checkForMove();
-	result.checkForMarkerDeltas();
-
 	// recurse over the children
 	IPath[] childKeys = delta.getChildren(pathInDelta);
 	IResourceDelta[] children = new IResourceDelta[childKeys.length];
-	for (int i = 0; i < childKeys.length; i++)
-		children[i] = createDelta(workspace, delta, deltaInfo, pathInTree.append(childKeys[i].lastSegment()), childKeys[i]);
+	for (int i = 0; i < childKeys.length; i++) {
+		//reuse the delta path if tree-relative and delta-relative are the same
+		IPath newTreePath = pathInTree == pathInDelta ? childKeys[i] : pathInTree.append(childKeys[i].lastSegment());
+		children[i] = createDelta(workspace, delta, deltaInfo, newTreePath, childKeys[i]);
+	}
 	result.setChildren(children);
 
 	// if this delta has children but no other changes, mark it as changed

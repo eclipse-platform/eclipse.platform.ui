@@ -5,13 +5,21 @@ package org.eclipse.core.internal.resources;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 /**
  * 
  */
 public class ResourceStatus extends Status {
 	IPath path;
+	
+	/** Singleton status indicating success */
+	public static final ResourceStatus OK_STATUS = new ResourceStatus(IResourceStatus.OK, Policy.bind("ok"));
+	
 public ResourceStatus(int type, int code, IPath path, String message, Throwable exception) {
 	super(type, ResourcesPlugin.PI_RESOURCES, code, message, exception);
 	this.path = path;

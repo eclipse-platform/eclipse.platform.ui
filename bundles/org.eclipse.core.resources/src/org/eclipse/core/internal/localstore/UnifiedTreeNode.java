@@ -16,11 +16,14 @@ public class UnifiedTreeNode implements ILocalStoreConstants {
 	protected UnifiedTree tree;
 	protected long stat;
 	protected boolean existsWorkspace;
-public UnifiedTreeNode(UnifiedTree tree, IResource resource, long stat, boolean existsWorkspace) {
+	//the name of the resource in the local file system, if any
+	protected String localName;
+public UnifiedTreeNode(UnifiedTree tree, IResource resource, long stat, String localName, boolean existsWorkspace) {
 	this.tree = tree;
 	setResource(resource);
 	this.stat = stat;
 	this.existsWorkspace = existsWorkspace;
+	this.localName = localName;
 }
 public boolean existsInFileSystem() {
 	return isFile() || isFolder();
@@ -45,6 +48,13 @@ public int getLevel() {
 }
 public IPath getLocalLocation() {
 	return tree.getLocalLocation(resource);
+}
+/**
+ * Gets the name of this node in the local filesystem.
+ * @return Returns a String
+ */
+public String getLocalName() {
+	return localName;
 }
 public IResource getResource() {
 	return resource;

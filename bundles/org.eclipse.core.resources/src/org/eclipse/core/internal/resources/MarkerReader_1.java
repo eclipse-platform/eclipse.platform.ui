@@ -5,15 +5,18 @@ package org.eclipse.core.internal.resources;
  * All Rights Reserved.
  */
 
+import java.io.DataInputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.internal.utils.Assert;
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.util.*;
 
 /**
  * This class is used to read markers from disk. This is for version 1. 
@@ -89,7 +92,7 @@ private Map readAttributes(DataInputStream input) throws IOException {
 	int attributesSize = input.readInt();
 	if (attributesSize == 0)
 		return null;
-	Map result = new HashMap(attributesSize);
+	Map result = new MarkerAttributeMap(attributesSize);
 	for (int j = 0; j < attributesSize; j++) {
 		String key = input.readUTF();
 		int type = input.readInt();

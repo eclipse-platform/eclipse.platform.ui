@@ -5,16 +5,14 @@ package org.eclipse.core.internal.events;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.resources.Workspace;
-import org.eclipse.core.internal.watson.*;
 import java.util.Map;
+
+import org.eclipse.core.internal.resources.Workspace;
 
 public class ResourceDeltaInfo {
 	protected Workspace workspace;
-	protected Map oldNodeIDMap;
-	protected Map newNodeIDMap;
 	protected Map allMarkerDeltas;
+	protected NodeIDMap nodeIDMap;
 	protected ResourceComparator comparator;
 
 public ResourceDeltaInfo(Workspace workspace, Map markerDeltas, ResourceComparator comparator) {
@@ -25,8 +23,6 @@ public ResourceDeltaInfo(Workspace workspace, Map markerDeltas, ResourceComparat
 }
 public void destroy() {
 	workspace = null;
-	oldNodeIDMap = null;
-	newNodeIDMap = null;
 	allMarkerDeltas = null;
 	comparator = null;
 }
@@ -36,11 +32,8 @@ public ResourceComparator getComparator() {
 public Map getMarkerDeltas() {
 	return allMarkerDeltas;
 }
-public Map getNewNodeIDMap() {
-	return newNodeIDMap;
-}
-public Map getOldNodeIDMap() {
-	return oldNodeIDMap;
+public NodeIDMap getNodeIDMap() {
+	return nodeIDMap;
 }
 public Workspace getWorkspace() {
 	return workspace;
@@ -48,8 +41,7 @@ public Workspace getWorkspace() {
 public void setMarkerDeltas(Map value) {
 	allMarkerDeltas = value;
 }
-public void setNodeMaps(Map oldMap, Map newMap) {
-	oldNodeIDMap = oldMap;
-	newNodeIDMap = newMap;
+public void setNodeIDMap(NodeIDMap map) {
+	nodeIDMap = map;
 }
 }

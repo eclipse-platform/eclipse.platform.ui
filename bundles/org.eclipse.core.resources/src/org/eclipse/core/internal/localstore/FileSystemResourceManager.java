@@ -18,6 +18,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	protected Workspace workspace;
 	protected HistoryStore historyStore;
 	protected FileSystemStore localStore;
+	
 public FileSystemResourceManager(Workspace workspace) {
 	this.workspace = workspace;
 	localStore = new FileSystemStore();
@@ -115,13 +116,19 @@ public IPath locationFor(IResource target) {
 		case IResource.PROJECT :
 			Project project = (Project) target.getProject();
 			IProjectDescription description = project.internalGetDescription();
-			if (description != null && description.getLocation() != null)
+			if (description != null && description.getLocation() != null) {
 				return description.getLocation();
+			}
 			return getProjectDefaultLocation(project);
-		default :
-			IPath location = locationFor(target.getProject());
-			location = location.append(target.getFullPath().removeFirstSegments(1));
-			return location;
+		default:
+			//first get the location of the project (without the project name)
+			IPath projectLocation = null;
+			description = ((Project)target.getProject()).internalGetDescription();
+			if (description != null && description.getLocation() != null) {
+				return description.getLocation().append(target.getProjectRelativePath());
+			} else {
+				return Platform.getLocation().append(target.getFullPath());
+			}
 	}
 }
 public void move(IResource target, IPath destination, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
@@ -327,10 +334,9 @@ public void updateLocalSync(ResourceInfo info, long localSyncInfo, boolean isFil
  * has NOT changed since last synchronization, otherwise a CoreException
  * is thrown.
  */
-public void write(IFile target, InputStream content, boolean force, boolean keepHistory, boolean append, IProgressMonitor monitor) throws CoreException {
+public void write(IFile target, IPath location, InputStream content, boolean force, boolean keepHistory, boolean append, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(null);
 	try {
-		IPath location = locationFor(target);
 		java.io.File localFile = location.toFile();
 		long stat = CoreFileSystemLibrary.getStat(localFile.getAbsolutePath());
 		if (CoreFileSystemLibrary.isReadOnly(stat)) {

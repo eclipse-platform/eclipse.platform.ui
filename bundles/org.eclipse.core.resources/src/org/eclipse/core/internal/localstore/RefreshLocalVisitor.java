@@ -129,8 +129,7 @@ protected int synchronizeExistence(UnifiedTreeNode node, Resource target, int le
 						return RL_NOT_IN_SYNC;
 				}
 				IPath location = node.getLocalLocation();
-				String name = target.getLocalManager().getLocalName(location.toFile());
-				if (!target.getName().equals(name))
+				if (!target.getName().equals(node.getLocalName()))
 					return RL_IN_SYNC;
 			}
 			createResource(node, target);

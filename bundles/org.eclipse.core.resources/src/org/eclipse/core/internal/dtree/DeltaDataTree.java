@@ -33,7 +33,6 @@ import java.util.Enumeration;
  */
 
 public class DeltaDataTree extends AbstractDataTree {
-		
 	private AbstractDataTreeNode rootNode;
 	private DeltaDataTree parent;
 
@@ -399,9 +398,9 @@ public boolean isEmptyDelta() {
 public AbstractDataTreeNode findNodeAt (IPath key) {
 	
 	AbstractDataTreeNode node = rootNode;
-	String[] segments = key.segments();
-	for (int i = 0; i < segments.length; i++) {
-		node = node.childAtOrNull(segments[i]);
+	int segmentCount = key.segmentCount();
+	for (int i = 0; i < segmentCount; i++) {
+		node = node.childAtOrNull(key.segment(i));
 		if (node == null)
 			return null;
 	}
@@ -478,12 +477,12 @@ protected AbstractDataTreeNode[] getChildNodes(IPath parentKey) {
 	 */
 	 
 	AbstractDataTreeNode[] childNodes = null;
-	String[] keyNames = parentKey.segments();
+	int keyLength = parentKey.segmentCount();
 	for (DeltaDataTree tree = this; tree != null; tree = tree.parent) {
 		AbstractDataTreeNode node = tree.rootNode;
 		boolean complete = !node.isDelta();
-		for (int i = 0; i < keyNames.length; i++) {
-			node = node.childAtOrNull(keyNames[i]);
+		for (int i = 0; i < keyLength; i++) {
+			node = node.childAtOrNull(parentKey.segment(i));
 			if (node == null) {
 				break;
 			}
@@ -550,12 +549,12 @@ public Object getData (IPath key) {
 	 *   report error if node is missing or has been deleted
 	 */
 	
-	String[] keyNames = key.segments();
+	int keyLength = key.segmentCount();
 	for (DeltaDataTree tree = this; tree != null; tree = tree.parent) {
 		AbstractDataTreeNode node = tree.rootNode;
 		boolean complete = !node.isDelta();
-		for (int i = 0; i < keyNames.length; i++) {
-			node = node.childAtOrNull(keyNames[i]);
+		for (int i = 0; i < keyLength; i++) {
+			node = node.childAtOrNull(key.segment(i));
 			if (node == null) {
 				break;
 			}
@@ -661,12 +660,12 @@ public boolean includes (IPath key) {
  * @param key  key of node for which we want to retrieve data.
  */
 public DataTreeLookup lookup(IPath key) {
-	String[] keyNames = key.segments();
+	int keyLength = key.segmentCount();
 	for (DeltaDataTree tree = this; tree != null; tree = tree.parent) {
 		AbstractDataTreeNode node = tree.rootNode;
 		boolean complete = !node.isDelta();
-		for (int i = 0; i < keyNames.length; i++) {
-			node = node.childAtOrNull(keyNames[i]);
+		for (int i = 0; i < keyLength; i++) {
+			node = node.childAtOrNull(key.segment(i));
 			if (node == null) {
 				break;
 			}
@@ -674,7 +673,7 @@ public DataTreeLookup lookup(IPath key) {
 		}
 		if (node != null) {
 			if (node.hasData()) {
-				return new DataTreeLookup(key, true, node.getData(), tree==this);
+				return DataTreeLookup.newLookup(key, true, node.getData(), tree==this);
 			} else if (node.isDeleted()) {
 				break;
 			}
@@ -684,7 +683,7 @@ public DataTreeLookup lookup(IPath key) {
 			break;
 		}
 	}
-	return new DataTreeLookup(key, false, null);
+	return DataTreeLookup.newLookup(key, false, null);
 }
 /**
  * Converts this tree's representation to be a complete tree, not a delta.
@@ -789,12 +788,12 @@ protected void reroot(DeltaDataTree sourceTree) {
  * if the node is not found or if it has been deleted
  */
 protected AbstractDataTreeNode searchNodeAt (IPath key) {
-	String[] keyNames = key.segments();
+	int keyLength = key.segmentCount();
 	for (DeltaDataTree tree = this; tree != null; tree = tree.parent) {
 		AbstractDataTreeNode node = tree.rootNode;
 		boolean complete = !node.isDelta();
-		for (int i = 0; i < keyNames.length; i++) {
-			node = node.childAtOrNull(keyNames[i]);
+		for (int i = 0; i < keyLength; i++) {
+			node = node.childAtOrNull(key.segment(i));
 			if (node == null) {
 				break;
 			}

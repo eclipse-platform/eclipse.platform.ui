@@ -30,10 +30,10 @@ public class UnifiedTree {
 	protected Sorter sorter;
 
 	/** special node to mark the beginning of a level in the tree */
-	protected static final UnifiedTreeNode levelMarker = new UnifiedTreeNode(null, null, 0, false);
+	protected static final UnifiedTreeNode levelMarker = new UnifiedTreeNode(null, null, 0, null, false);
 
 	/** special node to mark the separation of a node's children */
-	protected static final UnifiedTreeNode childrenMarker = new UnifiedTreeNode(null, null, 0, false);
+	protected static final UnifiedTreeNode childrenMarker = new UnifiedTreeNode(null, null, 0, null, false);
 public UnifiedTree() {
 }
 /**
@@ -94,7 +94,7 @@ protected void addChildren(UnifiedTreeNode node) throws CoreException {
 			if (comp == 0) {
 				// resource exists in workspace and file system
 				long stat = CoreFileSystemLibrary.getStat(getLocalLocation(target).toOSString());
-				child = new UnifiedTreeNode(this, target, stat, true);
+				child = new UnifiedTreeNode(this, target, stat, localName, true);
 				index++;
 				next = true;
 			} else
@@ -105,7 +105,7 @@ protected void addChildren(UnifiedTreeNode node) throws CoreException {
 					next = false;
 				} else {
 					// resource exists only in the workspace
-					child = new UnifiedTreeNode(this, target, 0, true);
+					child = new UnifiedTreeNode(this, target, 0, null, true);
 					next = true;
 				}
 			addChildToTree(node, child);
@@ -152,7 +152,7 @@ protected void addNodeChildrenToQueue(UnifiedTreeNode node) throws CoreException
 }
 protected void addRootToQueue() throws CoreException {
 	long stat = CoreFileSystemLibrary.getStat(rootLocalLocation.toOSString());
-	UnifiedTreeNode node = new UnifiedTreeNode(this, root, stat, root.exists());
+	UnifiedTreeNode node = new UnifiedTreeNode(this, root, stat, rootLocalLocation.lastSegment(), root.exists());
 	if (!node.existsInFileSystem() && !node.existsInWorkspace())
 		return;
 	addElementToQueue(node);
@@ -160,11 +160,11 @@ protected void addRootToQueue() throws CoreException {
 protected UnifiedTreeNode createChildNodeFromFileSystem(UnifiedTreeNode node, IPath parentLocalLocation, String childName) throws CoreException {
 	IPath childPath = node.getResource().getFullPath().append(childName);
 	IPath childLocalLocation = parentLocalLocation.append(childName);
-	return createNode(childPath, childLocalLocation);
+	return createNode(childPath, childLocalLocation, childName);
 }
-protected UnifiedTreeNode createNode(IPath path, IPath location) throws CoreException {
+protected UnifiedTreeNode createNode(IPath path, IPath location, String localName) throws CoreException {
 	long stat = CoreFileSystemLibrary.getStat(location.toOSString());
-	UnifiedTreeNode node = new UnifiedTreeNode(this, null, stat, false);
+	UnifiedTreeNode node = new UnifiedTreeNode(this, null, stat, localName, false);
 	int type = node.isFile() ? IResource.FILE : IResource.FOLDER;
 	IResource target = getWorkspace().newResource(path, type);
 	node.setResource(target);

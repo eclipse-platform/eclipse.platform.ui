@@ -185,10 +185,10 @@ public void empty() {
  public DataTreeNode findNodeAt (IPath key) {
  	
  	AbstractDataTreeNode node = this.getRootNode();
- 	String[] segments = key.segments();
- 	for (int i = 0; i < segments.length; i++) {
+ 	int keyLength = key.segmentCount();
+ 	for (int i = 0; i < keyLength; i++) {
  		try {
- 			node = node.childAt(segments[i]);
+ 			node = node.childAt(key.segment(i));
  		} catch (ObjectNotFoundException notFound) {
  			return null;
  		}
@@ -252,9 +252,9 @@ public DataTreeLookup lookup(IPath key) {
  	DataTreeNode node = this.findNodeAt(key);
  	
  	if (node == null) {
-	 	return new DataTreeLookup(key, false, null);
+	 	return DataTreeLookup.newLookup(key, false, null);
  	} else {
-	 	return new DataTreeLookup(key, true, node.getData());
+	 	return DataTreeLookup.newLookup(key, true, node.getData());
  	}
 }
 /**

@@ -547,6 +547,23 @@ public Object getElementData(IPath key) {
 	return new ElementSubtree(elementNode);
 }
 /**
+ * Returns the names of the children of the specified element.
+ * The specified element must exist in the tree.
+ * If the specified element is null, returns the root element path.
+ */
+public String[] getNamesOfChildren(IPath key) {
+	try {
+		if (key == null) {
+			return new String[] {""};
+		} else {
+			return tree.getNamesOfChildren(key);
+		}
+	} catch (ObjectNotFoundException e) {
+		elementNotFound(key);
+		return null; // can't get here
+	}
+}
+/**
  * Returns the parent tree, or <code>null</code> if there is no parent.
  */
 public ElementTree getParent() {

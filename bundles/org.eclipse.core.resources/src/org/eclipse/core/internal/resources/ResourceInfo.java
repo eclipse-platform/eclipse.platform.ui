@@ -282,22 +282,17 @@ protected void setSyncInfo(HashMap syncInfo) {
 public synchronized void setSyncInfo(QualifiedName id, byte[] value) {
 	// thread safety: (Concurrency001)
 	if (value == null) {
+		//delete sync info
 		if (syncInfo == null)
 			return;
-		HashMap temp = (HashMap) syncInfo.clone();
-		temp.remove(id);
-		if (temp.isEmpty())
+		syncInfo.remove(id);
+		if (syncInfo.isEmpty())
 			syncInfo = null;
-		else
-			syncInfo = temp;
 	} else {
-		HashMap temp = syncInfo;
-		if (temp == null)
-			temp = new HashMap(5);
-		else
-			temp = (HashMap) syncInfo.clone();
-		temp.put(id, value.clone());
-		syncInfo = temp;
+		//add sync info
+		if (syncInfo == null)
+			syncInfo = new HashMap(5);
+		syncInfo.put(id, value.clone());
 	}
 }
 /** 

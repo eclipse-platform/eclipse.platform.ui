@@ -22,7 +22,7 @@ import java.util.Map;
  * <li>A project can be open or closed; a closed project is
  * 		passive and has a minimal in-memory footprint.</li>
  * <li>A project can carry references to other projects.</li>
- * <li>A project can one or more project natures.</li>
+ * <li>A project can have one or more project natures.</li>
  * </ul>
  * </p>
  * <p>

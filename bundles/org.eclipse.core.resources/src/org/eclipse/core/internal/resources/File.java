@@ -32,7 +32,7 @@ public void appendContents(InputStream content, boolean force, boolean keepHisto
 			checkAccessible(getFlags(info));
 
 			workspace.beginOperation(true);
-			internalSetContents(content, force, keepHistory, true, Policy.subMonitorFor(monitor, Policy.opWork));
+			internalSetContents(content, getLocalManager().locationFor(this), force, keepHistory, true, Policy.subMonitorFor(monitor, Policy.opWork));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
@@ -106,7 +106,7 @@ public void create(InputStream content, boolean force, IProgressMonitor monitor)
 			boolean local = content != null;
 			if (local) {
 				try {
-					internalSetContents(content, force, false, false, Policy.subMonitorFor(monitor, Policy.opWork * 40 / 100));
+					internalSetContents(content, location, force, false, false, Policy.subMonitorFor(monitor, Policy.opWork * 40 / 100));
 				} catch (CoreException e) {
 					// a problem happened creating the file on disk, so delete from the workspace
 					workspace.deleteResource(this);
@@ -152,10 +152,10 @@ public IFileState[] getHistory(IProgressMonitor monitor) throws CoreException {
 public int getType() {
 	return FILE;
 }
-protected void internalSetContents(InputStream content, boolean force, boolean keepHistory, boolean append, IProgressMonitor monitor) throws CoreException {
+protected void internalSetContents(InputStream content, IPath location, boolean force, boolean keepHistory, boolean append, IProgressMonitor monitor) throws CoreException {
 	if (content == null)
 		content = new ByteArrayInputStream(new byte[0]);
-	getLocalManager().write(this, content, force, keepHistory, append, monitor);
+	getLocalManager().write(this, location, content, force, keepHistory, append, monitor);
 	ResourceInfo info = getResourceInfo(false, true);
 	info.incrementContentId();
 	workspace.updateModificationStamp(info);
@@ -174,7 +174,7 @@ public void setContents(InputStream content, boolean force, boolean keepHistory,
 			checkAccessible(getFlags(info));
 
 			workspace.beginOperation(true);
-			internalSetContents(content, force, keepHistory, false, Policy.subMonitorFor(monitor, Policy.opWork));
+			internalSetContents(content, getLocalManager().locationFor(this), force, keepHistory, false, Policy.subMonitorFor(monitor, Policy.opWork));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;

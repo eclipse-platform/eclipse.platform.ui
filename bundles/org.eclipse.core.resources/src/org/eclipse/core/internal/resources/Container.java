@@ -98,29 +98,25 @@ protected IResource[] getChildren(IPath parentPath, boolean phantom) {
  * @see IContainer#getFile
  */
 public IFile getFile(String name) {
-	return (IFile) getResource(new Path (name), FILE);
+	return (IFile)workspace.newResource(getFullPath().append(name), FILE);
 }
 /** 
  * @see IContainer#getFile
  */
 public IFile getFile(IPath path) {
-	return (IFile) getResource(path, FILE);
+	return (IFile)workspace.newResource(getFullPath().append(path), FILE);
 }
 /** 
  * @see IContainer#getFolder
  */
 public IFolder getFolder(String name) {
-	return (IFolder) getResource(new Path(name), FOLDER);
+	return (IFolder)workspace.newResource(getFullPath().append(name), FOLDER);
 }
 /** 
  * @see IContainer#getFolder
  */
 public IFolder getFolder(IPath path) {
-	return (IFolder) getResource(path, FOLDER);
-}
-private IResource getResource(IPath path, int type) {
-	IPath target = getFullPath().append(path);
-	return workspace.newResource(target, type);
+	return (IFolder)workspace.newResource(getFullPath().append(path), FOLDER);
 }
 public boolean isLocal(int flags, int depth) {
 	if (!super.isLocal(flags, depth))

@@ -70,7 +70,7 @@ private Map readAttributes(DataInputStream input) throws IOException {
 	short attributesSize = input.readShort();
 	if (attributesSize == 0)
 		return null;
-	Map result = new HashMap(attributesSize);
+	Map result = new MarkerAttributeMap(attributesSize);
 	for (int j = 0; j < attributesSize; j++) {
 		String key = input.readUTF();
 		byte type = input.readByte();

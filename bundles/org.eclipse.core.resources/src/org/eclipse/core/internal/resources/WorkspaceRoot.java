@@ -5,12 +5,21 @@ package org.eclipse.core.internal.resources;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import java.util.HashMap;
+
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 
 public class WorkspaceRoot extends Container implements IWorkspaceRoot {
+	/**
+	 * As an optimization, we store a table of project handles
+	 * that have been requested from this root.  This maps project
+	 * name strings to project handles.
+	 */
+	private HashMap projectTable = new HashMap(10);
+	
 protected WorkspaceRoot(IPath path, Workspace container) {
 	super(path, container);
 	Assert.isTrue(path.equals(Path.ROOT));
@@ -105,10 +114,16 @@ public IProject getProject() {
  * @see IResource#getProject
  */
 public IProject getProject(String name) {
-	Path path = new Path(name);
-	String message = "resources.projectPath";
-	Assert.isLegal(path.segmentCount() == ICoreConstants.PROJECT_SEGMENT_LENGTH, message);
-	return new Project(Path.ROOT.append(name), workspace);
+	//first check our project cache
+	Project result = (Project)projectTable.get(name);
+	if (result == null) {
+		IPath path = Path.ROOT.append(name);
+		String message = "resources.projectPath";
+		Assert.isLegal(path.segmentCount() == ICoreConstants.PROJECT_SEGMENT_LENGTH, message);
+		result = new Project(path, workspace);
+		projectTable.put(name, result);
+	}
+	return result;
 }
 /**
  * @see IResource#getProjectRelativePath

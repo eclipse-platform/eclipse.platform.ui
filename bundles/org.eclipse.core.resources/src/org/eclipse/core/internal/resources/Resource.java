@@ -338,20 +338,7 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  * the phantom boolean is true.
  */
 public int countResources(int depth, boolean phantom) throws CoreException {
-	ResourceInfo info = getResourceInfo(phantom, false);
-	if (!exists(getFlags(info), false))
-		return 0;
-	int total = 1;
-	if (getType() == FILE || depth == DEPTH_ZERO)
-		return total;
-	if (depth == DEPTH_ONE)
-		depth = DEPTH_ZERO;
-	IResource[] children = ((Container) this).members(phantom);
-	for (int i = 0; i < children.length; i++) {
-		Resource child = (Resource) children[i];
-		total += child.countResources(depth, phantom);
-	}
-	return total;
+	return workspace.countResources(path, depth, phantom);
 }
 /**
  * @see IResource
@@ -960,9 +947,7 @@ public void touch(IProgressMonitor monitor) throws CoreException {
 	}
 }
 /**
- * Helper method that considers case insensitive file systems. The parameter
- * renaming is used for the last segment. It was added to handle cases when we are only
- * renaming a resource.
+ * Helper method that considers case insensitive file systems.
  */
 protected void checkDoesNotExist() throws CoreException {
 	// should consider getting the ResourceInfo as a paramenter to reduce tree lookups
@@ -977,25 +962,31 @@ protected void checkDoesNotExist() throws CoreException {
 	throw new ResourceException(IResourceStatus.RESOURCE_EXISTS, variant.getFullPath(), message, null);
 }
 /**
- * Helper method for case insensitive file systems.
+ * Helper method for case insensitive file systems.  Returns
+ * an existing resource whose path differs only in case from
+ * the given path, or null if no such resource exists.
  */
 public IResource findExistingResourceVariant(IPath target) {
 	IPath result = Path.ROOT;
-	String[] segments = target.segments();
-	for (int i = 0; i < segments.length; i++) {
-		IPath[] children = workspace.tree.getChildren(result);
-		String name = findVariant(segments[i], children);
+	int segmentCount = target.segmentCount();
+	for (int i = 0; i < segmentCount; i++) {
+		String[] childNames = workspace.tree.getNamesOfChildren(result);
+		String name = findVariant(target.segment(i), childNames);
 		if (name == null)
 			return null;
 		result = result.append(name);
 	}
 	return workspace.getRoot().findMember(result);
 }
-private String findVariant(String target, IPath[] list) {
+/**
+ * Searches for a variant of the given target in the list,
+ * that differs only in case. Returns the variant from
+ * the list if one is found, otherwise returns null.
+ */
+private String findVariant(String target, String[] list) {
 	for (int i = 0; i < list.length; i++) {
-		String variant = list[i].lastSegment();
-		if (target.equalsIgnoreCase(variant))
-			return variant;
+		if (target.equalsIgnoreCase(list[i]))
+			return list[i];
 	}
 	return null;
 }

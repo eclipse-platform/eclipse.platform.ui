@@ -5,10 +5,9 @@ package org.eclipse.core.internal.resources;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
+import java.util.Map;
+
 import org.eclipse.core.internal.utils.Assert;
-import java.util.*;
 
 public class MarkerInfo implements IMarkerSetElement {
 
@@ -22,7 +21,7 @@ public class MarkerInfo implements IMarkerSetElement {
 	protected String type = null;
 
 	/** The store of attributes for this marker. */
-	protected HashMap attributes = null;
+	protected Map attributes = null;
 public Object getAttribute(String attributeName) {
 	return attributes == null ? null : attributes.get(attributeName);
 }
@@ -38,7 +37,7 @@ public Object[] getAttributes(String[] attributeNames) {
 public Map getAttributes(boolean makeCopy) {
 	if (attributes == null)
 		return null;
-	return makeCopy ? (Map) attributes.clone() : attributes;
+	return makeCopy ? new MarkerAttributeMap(attributes) : attributes;
 }
 public long getId() {
 	return id;
@@ -47,7 +46,9 @@ public String getType() {
 	return type;
 }
 public void internalSetAttributes(Map map) {
-	attributes = (HashMap) map;
+	//the cast effectively acts as an assertion to make sure
+	//the right kind of map is being used
+	attributes = (MarkerAttributeMap)map;
 }
 /**
  * Returns whether the given object is a valid attribute value.
@@ -61,7 +62,7 @@ public void setAttribute(String attributeName, Object value) {
 		if (value == null)
 			return;
 		else {
-			attributes = new HashMap(1);
+			attributes = new MarkerAttributeMap();
 			attributes.put(attributeName, value);
 		}
 	} else {
@@ -83,7 +84,7 @@ public void setAttributes(Map map) {
 	if (map == null)
 		attributes = null;
 	else
-		attributes = new HashMap(map);
+		attributes = new MarkerAttributeMap(map);
 }
 public void setId(long value) {
 	id = value;

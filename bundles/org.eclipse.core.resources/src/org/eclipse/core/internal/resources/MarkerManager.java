@@ -98,13 +98,16 @@ private MarkerInfo[] basicFindMatching(MarkerSet markers, String type, boolean i
  * Removes markers of the specified type from the given resource.
  */
 private void basicRemoveMarkers(IResource resource, String type, boolean includeSubtypes) {
-	ResourceInfo info = workspace.getResourceInfo(resource.getFullPath(), false, true);
+	//don't get a modifiable info until we know we need to modify it.
+	ResourceInfo info = workspace.getResourceInfo(resource.getFullPath(), false, false);
 	MarkerSet markers = info.getMarkers();
 	if (markers == null)
 		return;
 	IMarkerSetElement[] matching;
 	if (type == null) {
 		// if the type is null, all markers are to be removed.
+		//now we need to crack open the tree
+		info = workspace.getResourceInfo(resource.getFullPath(), false, true);
 		info.setMarkers(null);
 		matching = markers.elements();
 	} else {
@@ -112,6 +115,9 @@ private void basicRemoveMarkers(IResource resource, String type, boolean include
 		// if none match, there is nothing to remove
 		if (matching.length == 0)
 			return;
+		//now we need to crack open the tree
+		info = workspace.getResourceInfo(resource.getFullPath(), false, true);
+		
 		// remove all the matching markers and also the whole 
 		// set if there are no remaining markers
 		markers.removeAll(matching);
