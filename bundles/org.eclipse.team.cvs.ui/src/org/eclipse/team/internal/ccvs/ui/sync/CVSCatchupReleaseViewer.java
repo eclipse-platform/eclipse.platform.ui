@@ -31,10 +31,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSDecoration;
 import org.eclipse.team.internal.ccvs.ui.CVSDecorationRunnable;
 import org.eclipse.team.internal.ccvs.ui.CVSDecoratorConfiguration;
@@ -185,9 +187,16 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 					ITeamNode node = (ITeamNode)element;					
 					IResource resource = node.getResource();
 					if (resource.exists()) {
+						
+						// use the default text decoration preferences
 						CVSDecoration decoration = CVSDecorationRunnable.computeTextLabelFor(resource, false /*don't show dirty*/);
 						String format = decoration.getFormat();
 						Map bindings = decoration.getBindings();
+						
+						// don't show the revision number, it will instead be shown in 
+						// the label for the remote/base/local files editors
+						bindings.remove(CVSDecoratorConfiguration.FILE_REVISION);
+						
 						bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, oldProvider.getText(element));
 						return CVSDecoratorConfiguration.bind(format, bindings);
 					}
@@ -314,6 +323,31 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 			}
 		} else {
 			config.setAncestorLabel(Policy.bind("CVSCatchupReleaseViewer.noCommonFile")); //$NON-NLS-1$
+		}
+		
+		IResource local = syncTree.getLocal();
+		if(local != null) {
+			ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)local);
+			ResourceSyncInfo info = null;
+			try {
+				info = cvsFile.getSyncInfo();
+				name = local.getName();
+				String revision = null;
+				if(info != null) {
+					revision = info.getRevision();
+					if(info.isAdded() || info.isDeleted()) {
+						revision = null;
+					}
+				}
+				if(revision != null) {
+					config.setLeftLabel(Policy.bind("CVSCatchupReleaseViewer.commonFileRevision", name, revision)); //$NON-NLS-1$
+				} else {
+					config.setLeftLabel(Policy.bind("CVSCatchupReleaseViewer.commonFile", name)); //$NON-NLS-1$
+				}
+			} catch(CVSException e) {
+				ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
+				config.setLeftLabel(Policy.bind("CVSCatchupReleaseViewer.commonFile", name)); //$NON-NLS-1$				
+			}
 		}
 	}
 }
