@@ -1418,27 +1418,6 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 
 	/**
-	 * Returns the URL for the remote JAR to added to the classpath for a remote
-	 * Ant build
-	 * 
-	 * @return the URL of the remoteAnt.jar
-	 * @since 3.0
-	 */
-	public URL getRemoteAntURL() {
-		Plugin antUIPlugin= Platform.getPlugin("org.eclipse.ant.ui"); //$NON-NLS-1$
-		if (antUIPlugin != null) {
-			IPluginDescriptor descriptor = antUIPlugin.getDescriptor();
-			try {
-				URL root = descriptor.getInstallURL();
-				return Platform.asLocalURL(new URL(root, "lib/remoteAnt.jar")); //$NON-NLS-1$;
-			} catch (MalformedURLException e) {
-			} catch (IOException e1) {
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Returns the list of URLs to added to the classpath for an Ant build that is 
 	 * occuring without the Eclipse runtime.
 	 * 
@@ -1466,11 +1445,6 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 					result.add(entry.getEntryURL());
 				}
 			}
-		}
-		
-		URL remote= getRemoteAntURL();
-		if (remote != null) {
-			result.add(remote);
 		}
 		
 		return (URL[]) result.toArray(new URL[result.size()]);

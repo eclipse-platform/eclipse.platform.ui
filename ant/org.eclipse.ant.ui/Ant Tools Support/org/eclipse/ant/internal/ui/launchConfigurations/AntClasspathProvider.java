@@ -51,10 +51,6 @@ public class AntClasspathProvider extends StandardClasspathProvider {
 				List fullClasspath= new ArrayList(40);
 				fullClasspath.addAll(Arrays.asList(antURLs));
 				fullClasspath.addAll(Arrays.asList(prefs.getRemoteExtraClasspathURLs()));
-				URL remote= prefs.getRemoteAntURL();
-				if (remote != null) {
-					fullClasspath.add(remote);
-				}
 				antURLs= (URL[])fullClasspath.toArray(new URL[fullClasspath.size()]);
 			} else {
 				List fullClasspath= new ArrayList(50);
