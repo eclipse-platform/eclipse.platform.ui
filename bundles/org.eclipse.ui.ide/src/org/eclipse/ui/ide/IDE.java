@@ -11,6 +11,8 @@
 package org.eclipse.ui.ide;
 
 import org.eclipse.ui.IMarkerHelpRegistry;
+import org.eclipse.ui.internal.registry.MarkerHelpRegistry;
+import org.eclipse.ui.internal.registry.MarkerHelpRegistryReader;
 
 /**
  * Placeholder for IDE-specific APIs to be factored out of existing workbench.
@@ -18,15 +20,22 @@ import org.eclipse.ui.IMarkerHelpRegistry;
  * @since 3.0
  */
 public final class IDE {
-	// @issue
-	private static IMarkerHelpRegistry markerHelpRegistry;
 
 	/**
-	 * @issue get doc from IWorkbench
+	 * Marker help registry; lazily initialized on fist access.
+	 */
+	private static MarkerHelpRegistry markerHelpRegistry = null;
+
+	/**
+	 * Returns the marker help registry for the workbench.
 	 * 
-	 * @return
-	 */	
+	 * @return the marker help registry
+	 */
 	public static IMarkerHelpRegistry getMarkerHelpRegistry() {
+		if (markerHelpRegistry == null) {
+			markerHelpRegistry = new MarkerHelpRegistry();
+			new MarkerHelpRegistryReader().addHelp(markerHelpRegistry);
+		}
 		return markerHelpRegistry;
 	}
 	
