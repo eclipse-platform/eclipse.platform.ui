@@ -24,7 +24,7 @@ public interface IArchiveReference {
 
 	/** 
 	 * 
-	 * @return the archive "symbolic" path or <code>null</code>
+	 * @return the archive "symbolic" path, or <code>null</code>
 	 * @since 2.0 
 	 */
 	String getPath();
@@ -32,7 +32,7 @@ public interface IArchiveReference {
 	/**
 	 * Retrieve the site archive URL 
 	 * 
-	 * @return the archive URL or <code>null</code>
+	 * @return the archive URL, or <code>null</code>
 	 * @since 2.0 
 	 */
 	URL getURL();
