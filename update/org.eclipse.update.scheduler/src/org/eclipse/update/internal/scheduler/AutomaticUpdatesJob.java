@@ -28,12 +28,21 @@ import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
 
-public class AutomaticUpdatesJob
-	extends Job
-	implements IUpdateSearchResultCollector {
+public class AutomaticUpdatesJob extends Job {
+	
+	private class AutomaticSearchResultCollector implements IUpdateSearchResultCollector {
+		public void accept(IFeature feature) {
+			IInstallFeatureOperation operation =
+				OperationsManager
+					.getOperationFactory()
+					.createInstallOperation(null, feature, null, null, null);
+			updates.add(operation);
+		}
+	}
 	
 	// job family	
 	public static final Object family = new Object();
+	private IUpdateSearchResultCollector resultCollector;
 	
 	private static final IStatus OK_STATUS =
 		new Status(
@@ -51,13 +60,6 @@ public class AutomaticUpdatesJob
 		setPriority(Job.DECORATE);
 	}
 
-	public void accept(IFeature feature) {
-		IInstallFeatureOperation operation =
-			OperationsManager
-				.getOperationFactory()
-				.createInstallOperation(null, feature, null, null, null);
-		updates.add(operation);
-	}
 
 	/**
 	 * Returns the standard display to be used. The method first checks, if
@@ -82,7 +84,9 @@ public class AutomaticUpdatesJob
 		}
 		searchRequest = UpdateUtils.createNewUpdatesRequest(null);
 		try {
-			searchRequest.performSearch(this, monitor);
+			if (resultCollector == null)
+				resultCollector = new AutomaticSearchResultCollector();
+			searchRequest.performSearch(resultCollector, monitor);
 			if (UpdateCore.DEBUG) {
 				UpdateCore.debug("Automatic update search finished - "
 				+ updates.size()

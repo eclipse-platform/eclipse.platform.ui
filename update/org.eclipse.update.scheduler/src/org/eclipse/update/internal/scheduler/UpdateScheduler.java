@@ -45,15 +45,16 @@ public class UpdateScheduler extends AbstractUIPlugin{
 	 */
 	public UpdateScheduler() {
 		plugin = this;
-		try {
-			resourceBundle = ResourceBundle.getBundle("org.eclipse.update.internal.scheduler.UpdateSchedulerResources"); //$NON-NLS-1$
-		} catch (MissingResourceException x) {
-			resourceBundle = null;
-		}
 	}
 
 
 	public ResourceBundle getResourceBundle() {
+		if (resourceBundle == null)
+			try {
+				resourceBundle = ResourceBundle.getBundle("org.eclipse.update.internal.scheduler.UpdateSchedulerResources"); //$NON-NLS-1$
+			} catch (MissingResourceException x) {
+				resourceBundle = null;
+			}
 		return resourceBundle;
 	}
 
