@@ -174,7 +174,6 @@ public boolean isVisible() {
 	//return visible;
 }
 
-	
 /**
  * Returns whether color icons should be used in toolbars.
  * 

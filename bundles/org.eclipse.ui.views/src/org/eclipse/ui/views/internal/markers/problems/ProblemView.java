@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -129,6 +130,13 @@ public class ProblemView extends MarkerView {
 	protected void fillContextMenuAdditions(IMenuManager manager) {
 		manager.add(new Separator());
 		manager.add(resolveAction);
+	}
+
+	protected void initActionBars(IActionBars actionBars) {
+		super.initActionBars(actionBars);
+		IMenuManager menu = actionBars.getMenuManager();
+		menu.add(new Separator());
+		menu.add(new ShowAction());
 	}
 	
 	/* (non-Javadoc)
