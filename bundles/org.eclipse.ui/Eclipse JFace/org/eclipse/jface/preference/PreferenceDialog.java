@@ -314,10 +314,9 @@ private Composite createTitleArea(Composite parent) {
 	
 	// Get the background color for the title area
 	Display display = parent.getDisplay();
-	Color bg = display.getSystemColor(SWT.COLOR_WHITE);
+	Color bg = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 	
 	GridData layoutData = new GridData(GridData.FILL_BOTH);
-	layoutData.grabExcessVerticalSpace = true;
 	titleArea.setLayout(layout);
 	titleArea.setLayoutData(layoutData);
 	titleArea.setBackground(bg);
@@ -337,6 +336,26 @@ private Composite createTitleArea(Composite parent) {
 	messageLabel = new CLabel(titleArea, SWT.LEFT);
 	messageLabel.setBackground(bg);
 	messageLabel.setText(" ");//$NON-NLS-1$
+	messageLabel.setFont(JFaceResources.getBannerFont());
+	
+	final IPropertyChangeListener fontListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			if(JFaceResources.BANNER_FONT.equals(event.getProperty()) ||
+				JFaceResources.DIALOG_FONT.equals(event.getProperty())) {
+				updateMessage();
+			}
+		}
+	};
+	
+	messageLabel.addDisposeListener(new DisposeListener() {
+		public void widgetDisposed(DisposeEvent event) {
+			JFaceResources.getFontRegistry().removeListener(fontListener);
+		}
+	});
+	
+	JFaceResources.getFontRegistry().addListener(fontListener);
+	
+	
 	GridData gd = new GridData(GridData.FILL_BOTH);
 	messageLabel.setLayoutData(gd);
 
