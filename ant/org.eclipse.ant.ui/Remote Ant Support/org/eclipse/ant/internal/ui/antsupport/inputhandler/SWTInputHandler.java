@@ -79,9 +79,9 @@ public class SWTInputHandler extends DefaultInputHandler {
 		});
 		
 		final Button ok = new Button(dialog, SWT.PUSH);
-		ok.setText("Ok");
+		ok.setText("Ok"); //$NON-NLS-1$
 		Button cancel = new Button(dialog, SWT.PUSH);
-		cancel.setText("Cancel");
+		cancel.setText("Cancel"); //$NON-NLS-1$
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {
 				//result[0] = event.widget == ok;
