@@ -50,6 +50,8 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 	 * @param data
 	 */
 	protected void init(String data) {
+	    //TODO need to move to blocking call(s) to retrieve the information as needed
+	    //otherwise have trouble with things like opening the associated editor
 		String[] strings= data.split(DebugMessageIds.MESSAGE_DELIMITER);
 		//0 STACK message
 		//1 targetName
