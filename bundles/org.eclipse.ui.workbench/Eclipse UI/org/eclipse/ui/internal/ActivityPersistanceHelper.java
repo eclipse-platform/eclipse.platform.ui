@@ -60,9 +60,7 @@ class ActivityPersistanceHelper {
 		// TODO kim: shouldn't you want to check for any activities (not
 		// categories)?
 
-		IWorkbenchActivitySupport support =
-			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
-				IWorkbenchActivitySupport.class);
+		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 
 		if (support == null)
 			return;

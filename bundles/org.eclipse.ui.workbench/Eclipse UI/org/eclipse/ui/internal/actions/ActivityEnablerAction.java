@@ -46,9 +46,7 @@ public class ActivityEnablerAction extends Action implements ActionFactory.IWork
 			throw new IllegalArgumentException();
 		}
 		this.workbenchWindow = window;
-		this.activitySupport =
-			(IWorkbenchActivitySupport) window.getWorkbench().getAdapter(
-				IWorkbenchActivitySupport.class);
+		this.activitySupport = window.getWorkbench().getActivitySupport();
 	}
 
 	/*

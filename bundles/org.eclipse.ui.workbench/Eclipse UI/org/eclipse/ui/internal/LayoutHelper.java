@@ -71,9 +71,7 @@ class LayoutHelper {
 		final IPerspectiveDescriptor partPerspective =
 			pageLayout.getDescriptor();
 
-		IWorkbenchActivitySupport support =
-			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
-				IWorkbenchActivitySupport.class);
+		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 
 		if (support == null)
 			return;

@@ -105,11 +105,7 @@ public class SwapActivityHelper {
 	 * @since 3.0
 	 */
 	private boolean belongsToACategory(String activityId) {
-		IWorkbenchActivitySupport support =
-			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
-				IWorkbenchActivitySupport.class);
-		if (support == null)
-			return false;
+		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 
 		IActivityManager activityManager = support.getActivityManager();
 
