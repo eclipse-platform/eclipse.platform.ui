@@ -12,8 +12,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.views.navigator.*;
 
@@ -36,18 +36,18 @@ public class RefactorActionFactory
 	protected MoveProjectAction moveProjectAction;
 	protected AddBookmarkAction addBookmarkAction;
 
-	protected IWorkbenchPartSite partSite;
+	protected IViewSite viewSite;
 	protected TreeViewer treeViewer;
 
 	/**
 	 * Creates a new instance of the receiver using a 
-	 * tree viewer and a workbench part site.
+	 * tree viewer and a view site.
 	 * 
 	 * @param viewer the tree viewer
-	 * @param site the workbench part site
+	 * @param site the view site
 	 */
-	public RefactorActionFactory(TreeViewer viewer, IWorkbenchPartSite site) {
-		partSite = site;
+	public RefactorActionFactory(TreeViewer viewer, IViewSite site) {
+		viewSite = site;
 		treeViewer = viewer;
 	}
 
