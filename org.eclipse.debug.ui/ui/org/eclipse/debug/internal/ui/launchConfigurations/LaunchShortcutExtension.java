@@ -152,7 +152,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 				return p.secondAsString();
 			}
 		}
-		return LaunchConfigurationsMessages.getString("LaunchShortcutExtension.21"); //$NON-NLS-1$
+		return getLabel();
 	}
 	
 	/**

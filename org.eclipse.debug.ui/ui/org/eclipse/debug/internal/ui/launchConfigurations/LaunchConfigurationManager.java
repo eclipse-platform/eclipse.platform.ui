@@ -19,9 +19,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -41,6 +43,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -97,6 +100,12 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	 * true when restoring launch history
 	 */
 	protected boolean fRestoring = false;
+	
+	/**
+	 * A set containing the launch modes supported by
+	 * current configurations.
+	 */
+	private Set fLoadedModes = null;
 		
 	/**
 	 * The name of the file used to persist the launch history.
@@ -122,6 +131,31 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		for (int i = 0; i < launches.length; i++) {
 			launchAdded(launches[i]);
 		}
+	}
+	
+	/**
+	 * Returns whether any launch config supports the given mode.
+	 * 
+	 * @param mode launch mode
+	 * @return whether any launch config supports the given mode
+	 */
+	public boolean launchModeAvailable(String mode) {
+		if (fLoadedModes == null) {
+			ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+			ILaunchConfigurationType[] types = launchManager.getLaunchConfigurationTypes();
+			ILaunchMode[] modes = launchManager.getLaunchModes();
+			fLoadedModes = new HashSet(3);
+			for (int i = 0; i < types.length; i++) {
+				ILaunchConfigurationType type = types[i];
+				for (int j = 0; j < modes.length; j++) {
+					ILaunchMode launchMode = modes[j];
+					if (type.supportsMode(launchMode.getIdentifier())) {
+						fLoadedModes.add(launchMode.getIdentifier());
+					}
+				}
+			}
+		}
+		return fLoadedModes.contains(mode);
 	}
 	
 	/**

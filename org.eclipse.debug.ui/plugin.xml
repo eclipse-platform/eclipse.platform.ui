@@ -1760,34 +1760,79 @@
          </factory>                            
     </extension>
 <!-- ========================================= -->
-<!-- Contextual Launch Menu (Work in Progress) -->
+<!-- Contextual Launch                         -->
 <!-- ========================================= -->
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
-            objectClass="org.eclipse.core.resources.IResource"
-            adaptable="true"
-            id="org.eclipse.debug.ui.contextualLaunch">
+            objectClass="java.lang.Object"
+            id="org.eclipse.debug.ui.contextualLaunch.profile">
         <action
-               label="%LaunchMenu.label"
+               label="%ProfileContextMenu.label"
                style="pulldown"
-               class="org.eclipse.debug.internal.ui.actions.ContextualLaunchObjectActionDelegate"
+               class="org.eclipse.debug.internal.ui.actions.ProfileContextualLaunchAction"
                menubarPath="additions"
                enablesFor="+"
-               id="org.eclipse.debug.ui.contextualLaunch.submenu">
-         </action>
+               id="org.eclipse.debug.ui.contextualLaunch.profile.submenu">
+        </action>    
+        <enablement>
+         	<test property="org.eclipse.debug.ui.launchable" value="profile"/>
+        </enablement>        
       </objectContribution>
-	</extension>
+      <objectContribution
+            objectClass="java.lang.Object"
+            id="org.eclipse.debug.ui.contextualLaunch.debug">
+        <action
+               label="%DebugContextMenu.label"
+               style="pulldown"
+               class="org.eclipse.debug.internal.ui.actions.DebugContextualLaunchAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="org.eclipse.debug.ui.contextualLaunch.debug.submenu">
+         </action>
+         <enablement>
+         	<test property="org.eclipse.debug.ui.launchable" value="debug"/>
+         </enablement>     
+       </objectContribution>    
+       <objectContribution
+            objectClass="java.lang.Object"
+            id="org.eclipse.debug.ui.contextualLaunch.run">
+         <action
+               label="%RunContextMenu.label"
+               style="pulldown"
+               class="org.eclipse.debug.internal.ui.actions.RunContextualLaunchAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="org.eclipse.debug.ui.contextualLaunch.run.submenu">
+         </action>                  
+         <enablement>
+         	<test property="org.eclipse.debug.ui.launchable" value="run"/>
+         </enablement>
+      </objectContribution>
+    </extension>  
    <extension point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
       		namespace="org.eclipse.debug.ui"
-            properties="matchesPattern, projectNature, canDelete, matchesContentType"
-            type="org.eclipse.core.resources.IResource"
+            properties="matchesPattern, projectNature, matchesContentType"
+            type="org.eclipse.core.runtime.IAdaptable"
             class="org.eclipse.debug.internal.ui.ResourceExtender"
-            id="org.eclipse.debug.IResourceExtender">
+            id="org.eclipse.debug.ui.IResourceExtender">
       </propertyTester>
+      <propertyTester
+      		namespace="org.eclipse.debug.ui"
+            properties="instanceof"
+            type="java.lang.Object"
+            class="org.eclipse.debug.internal.ui.ResourceExtender"
+            id="org.eclipse.debug.ui.ObjectExtender">
+      </propertyTester>      
+	  <propertyTester
+			namespace="org.eclipse.debug.ui"
+			properties="launchable"
+			type="java.lang.Object"
+			class="org.eclipse.debug.internal.ui.actions.LaunchablePropertyTester"
+			id="org.eclipse.debug.ui.propertyTesters.launchable">		
+	  </propertyTester>      
    </extension>
-<!-- End Contextual Run Menu (Work in Progress) -->
 <!-- Context extensions -->
   <extension
         point="org.eclipse.ui.contexts">
