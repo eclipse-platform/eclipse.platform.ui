@@ -250,7 +250,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		createButton(
 			actionButtons,
 			IDialogConstants.OK_ID,
-			WorkbenchMessages.getString("WorkbenchEditorsDialog.activate"),
+			WorkbenchMessages.getString("WorkbenchEditorsDialog.activate"), //$NON-NLS-1$
 			true);
 		
 		//Close selected editors button
