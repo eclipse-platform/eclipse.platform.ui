@@ -64,8 +64,8 @@ public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implemen
 	 * @see ITokenScanner#nextToken()
 	 */
 	public IToken nextToken() {
-
-		boolean resume= (fPartitionOffset < fOffset);
+	
+		boolean resume= (fPartitionOffset > -1 && fPartitionOffset < fOffset);
 		
 		if (fContentType == null || fRules == null) {
 			if (resume)

@@ -21,7 +21,7 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 	
 	private int fStart;
 	private int fEnd;
-	private int	fDocumentLength;
+	private int fDocumentLength;
 	
 	
 	/**
