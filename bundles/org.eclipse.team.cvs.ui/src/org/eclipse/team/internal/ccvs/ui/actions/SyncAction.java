@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
  
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -23,16 +25,22 @@ import org.eclipse.team.internal.ui.sync.SyncView;
  */
 public class SyncAction extends WorkspaceAction {
 	
-	public void execute(IAction action) {
-		IResource[] resources = getResourcesToSync();
-		if (resources == null || resources.length == 0) return;
-		SyncView view = SyncView.findViewInActivePage(getTargetPage());
-		if (view != null) {
-			view.showSync(getCompareInput(resources), getTargetPage());
+	public void execute(IAction action) throws InvocationTargetException {
+		try {
+			IResource[] resources = getResourcesToSync();
+			if (resources == null || resources.length == 0) return;
+			SyncCompareInput input = getCompareInput(resources);
+			if (input == null) return;
+			SyncView view = SyncView.findViewInActivePage(getTargetPage());
+			if (view != null) {
+				view.showSync(input, getTargetPage());
+			}
+		} catch (CVSException e) {
+			throw new InvocationTargetException(e);
 		}
 	}
 	
-	protected SyncCompareInput getCompareInput(IResource[] resources) {
+	protected SyncCompareInput getCompareInput(IResource[] resources) throws CVSException {
 		return new CVSSyncCompareInput(resources);
 	}
 	

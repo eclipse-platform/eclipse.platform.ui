@@ -11,23 +11,29 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.ui.AdaptableResourceList;
-import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.ProjectSelectionDialog;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.SynchronizeProjectsDialog;
+import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
+import org.eclipse.team.internal.ui.sync.SyncCompareInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.IWorkingSet;
 
 /**
  * Synchronize all CVS projects.
@@ -53,7 +59,7 @@ public class SyncAllAction extends SyncAction implements IWorkbenchWindowActionD
 	/**
 	 * @see org.eclipse.team.internal.ui.actions.TeamAction#getSelectedResources()
 	 */
-	protected IResource[] getSharedProjects() {
+	protected IProject[] getSharedProjects() {
 		List selected = new ArrayList();
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
@@ -62,7 +68,7 @@ public class SyncAllAction extends SyncAction implements IWorkbenchWindowActionD
 				selected.add(projects[i]);
 			}
 		}
-		return (IResource[]) selected.toArray(new IResource[selected.size()]);
+		return (IProject[]) selected.toArray(new IProject[selected.size()]);
 	}
 
 	/**
@@ -76,20 +82,50 @@ public class SyncAllAction extends SyncAction implements IWorkbenchWindowActionD
 	 * @see org.eclipse.team.internal.ui.actions.TeamAction#getSelectedResources()
 	 */
 	protected IResource[] getResourcesToSync() {
-		IResource[] resources = getSharedProjects();
-		
-		ProjectSelectionDialog dialog = new ProjectSelectionDialog	(getShell(), 
-			new AdaptableResourceList(resources), 
-			new WorkbenchContentProvider(), new WorkbenchLabelProvider(), 
-			Policy.bind("SyncAllAction.selectProjects")); //$NON-NLS-1$
-		dialog.setInitialSelections(resources);
-		if (dialog.open() == IDialogConstants.CANCEL_ID) return new IResource[0];
-		Object[] result = dialog.getResult();
-		IResource[] selectedResources = new IResource[result.length];
-		for (int i = 0; i < result.length; i++) {
-			selectedResources[i] = (IResource)result[i];
+		return getSharedProjects();
+	}
+
+	protected SyncCompareInput getCompareInput(IResource[] resources) throws CVSException {
+		SynchronizeProjectsDialog dialog = new SynchronizeProjectsDialog(getShell());
+		if (dialog.open() == IDialogConstants.CANCEL_ID) return null;
+		resources = getWorkingSetResources(resources, dialog.getWorkingSet());
+		return new CVSSyncCompareInput(resources, dialog.isSyncOutgoingChanges());
+	}
+	
+	/**
+	 * 
+	 * Return the resources in the working set that are shared with a CVS repository
+	 * @param resources
+	 * @param set
+	 * @return IResource[]
+	 */
+	private IResource[] getWorkingSetResources(IResource[] resources, IWorkingSet set) throws CVSException {
+		// get all the resources out of the working set
+		Set sharedResources = new HashSet();
+		IAdaptable[] adaptables = set.getElements();
+		for (int i = 0; i < adaptables.length; i++) {
+			IAdaptable adaptable = adaptables[i];
+			Object adapted = adaptable.getAdapter(IResource.class);
+			if (adapted != null) {
+				IResource resource = ((IResource)adapted);
+				if (isSharedWithCVS(resource)) 
+					sharedResources.add(resource);
+			}
 		}
-		return selectedResources;
+		return (IResource[]) sharedResources.toArray(new IResource[sharedResources.size()]);
+	}
+
+	/**
+	 * A resource is considered shared 
+	 * @param resource
+	 * @return boolean
+	 */
+	private boolean isSharedWithCVS(IResource resource) throws CVSException {
+		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+		if (cvsResource.isManaged()) return true;
+		if (cvsResource.isFolder() && ((ICVSFolder) cvsResource).isCVSFolder()) return true;
+		if (cvsResource.isIgnored()) return false;
+		return cvsResource.getParent().isCVSFolder();
 	}
 
 	/**

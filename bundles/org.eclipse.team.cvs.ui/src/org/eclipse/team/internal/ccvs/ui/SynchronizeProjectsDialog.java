@@ -10,27 +10,34 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * 
  */
-public class ProjectSelectionDialog extends ListSelectionDialog {
+public class SynchronizeProjectsDialog extends Dialog {
+	
+	private Button outgoingChangesButton;
+
+	private static final String SYNC_OUTGOING_CHANGES = "SyncOutgoingChanges"; //$NON-NLS-1$
 
 	IWorkingSet workingSet;
+	boolean syncOutgoingChanges;
 	
 	// dialogs settings that are persistent between workbench sessions
 	private IDialogSettings settings;
@@ -46,13 +53,12 @@ public class ProjectSelectionDialog extends ListSelectionDialog {
 	 * @param message the message to be displayed at the top of this dialog, or
 	 *    <code>null</code> to display a default message
 	 */
-	public ProjectSelectionDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider, ILabelProvider labelProvider, String message) {
-		super(parentShell, input, contentProvider, labelProvider, message);
-		
+	public SynchronizeProjectsDialog(Shell parentShell) {
+		super(parentShell);
 		IDialogSettings workbenchSettings = CVSUIPlugin.getPlugin().getDialogSettings();
-		this.settings = workbenchSettings.getSection("ProjectSelectionDialog");//$NON-NLS-1$
+		this.settings = workbenchSettings.getSection("SynchronizeProjectsDialog");//$NON-NLS-1$
 		if (settings == null) {
-			this.settings = workbenchSettings.addNewSection("ProjectSelectionDialog");//$NON-NLS-1$
+			this.settings = workbenchSettings.addNewSection("SynchronizeProjectsDialog");//$NON-NLS-1$
 		}
 	}
 
@@ -62,17 +68,35 @@ public class ProjectSelectionDialog extends ListSelectionDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */	
 	protected Control createDialogArea(Composite parent) {
-		Composite composite = (Composite) super.createDialogArea(parent);
+		// page group
+		Composite composite = (Composite)super.createDialogArea(parent);
+	
+		Font font = parent.getFont();
+		composite.setFont(font);
 		
+		createLabel(composite, Policy.bind("SynchronizeProjectsDialog.description"));
+		
+		// Create the checkbox to enable/disable working set use
+		outgoingChangesButton = createCheckbox(composite, Policy.bind("SynchronizeProjectsDialog.syncOutgoingChanges")); //$NON-NLS-1$
+		outgoingChangesButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				syncOutgoingChanges = outgoingChangesButton.getSelection();
+			}
+		});
+		if (settings != null) {
+			syncOutgoingChanges = settings.getBoolean(SYNC_OUTGOING_CHANGES);
+			outgoingChangesButton.setSelection(syncOutgoingChanges);
+		}
+			
 		workingSetArea = new WorkingSetSelectionArea(this, settings);
 		setWorkingSet(workingSet);
 		workingSetArea.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				workingSet = (IWorkingSet)event.getNewValue();
-				handleWorkingSetChange();
 			}
 		});
 		workingSetArea.createArea(composite);
+		
 		return composite;
 	}
 
@@ -82,6 +106,7 @@ public class ProjectSelectionDialog extends ListSelectionDialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		WorkbenchHelp.setHelp(newShell, IHelpContextIds.PROJECT_SELECTION_DIALOG);
+		newShell.setText(Policy.bind("SynchronizeProjectsDialog.title"));
 	}
 	/**
 	 * Returns the selected working set or null if none is selected.
@@ -91,24 +116,7 @@ public class ProjectSelectionDialog extends ListSelectionDialog {
 	public IWorkingSet getWorkingSet() {
 		return workingSet;
 	}
-	
-	private void handleWorkingSetChange() {
-		if (workingSet != null) {
-			// check any projects in the working set
-			getViewer().setAllChecked(false);
-			IAdaptable[] adaptables = workingSet.getElements();
-			for (int i = 0; i < adaptables.length; i++) {
-				IAdaptable adaptable = adaptables[i];
-				Object adapted = adaptable.getAdapter(IResource.class);
-				if (adapted != null) {
-					// Can this code be generalized?
-					IProject project = ((IResource)adapted).getProject();
-					getViewer().setChecked(project, true);
-				}
-			}
-		}
-	}
-	
+
 	/**
 	 * Overrides method in Dialog
 	 * 
@@ -118,6 +126,9 @@ public class ProjectSelectionDialog extends ListSelectionDialog {
 		workingSet = workingSetArea.getWorkingSet();
 		if (workingSet != null) {
 			workingSetArea.useSelectedWorkingSet();
+		}
+		if (settings != null) {
+			settings.put(SYNC_OUTGOING_CHANGES, outgoingChangesButton.getSelection());
 		}
 		super.okPressed();
 	}
@@ -137,4 +148,30 @@ public class ProjectSelectionDialog extends ListSelectionDialog {
 			workingSetArea.setWorkingSet(workingSet);
 		}
 	}
+	
+	protected Button createCheckbox(Composite parent, String label) {
+		Button button = new Button(parent, SWT.CHECK | SWT.LEFT);
+		button.setText(label);
+		button.setFont(parent.getFont());
+		GridData data = new GridData();
+		button.setLayoutData(data);
+		return button;
+	}
+
+	protected Label createLabel(Composite composite, String text) {
+		Label label = new Label(composite,SWT.NONE);
+		if (text != null) {
+			label.setText(text);
+		} 
+		label.setFont(composite.getFont());
+		return label;
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public boolean isSyncOutgoingChanges() {
+		return syncOutgoingChanges;
+	}
+
 }

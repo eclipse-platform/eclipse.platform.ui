@@ -19,14 +19,9 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -40,8 +35,6 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.client.Session;
@@ -59,6 +52,7 @@ import org.eclipse.team.internal.ui.sync.SyncSet;
 import org.eclipse.team.internal.ui.sync.TeamFile;
 
 public class CVSSyncCompareInput extends SyncCompareInput {
+
 	private IResource[] resources;
 	private boolean onlyOutgoing = false;
 	
@@ -195,7 +189,7 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 	
 	protected IRemoteSyncElement[] createSyncElements(IProgressMonitor monitor) throws TeamException {
 		// Ensure that the projects for all resources being synchronized exist
-		// Note: his could happen on a refresh view after a synced project was deleted.
+		// Note: this could happen on a refresh view after a synced project was deleted.
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			if (!resource.getProject().exists()) {
@@ -203,90 +197,30 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 			}
 		}
 		
+		monitor.beginTask(null, 1000 + (onlyOutgoing?10:0));
+		IResource[] resourcesToSync;
 		if (onlyOutgoing) {
-			// Find the outgoing changes in each selected resource
-			final List outgoing = new ArrayList();
-			try {
-				for (int i = 0; i < resources.length; i++) {
-					resources[i].accept(new IResourceVisitor() {
-						public boolean visit(IResource resource) throws CoreException {
-							// if resource is a file and is dirty, add it to the list
-							if (resource.getType() == IResource.FILE) {
-								if (isDirty((IFile)resource)) {
-									outgoing.add(resource);
-								}
-							} else {
-								try {
-									ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resource);
-									if (folder.isCVSFolder()) {
-										// Check for outgoing file deletions (bug 20715)
-										ICVSResource[] files = folder.members(ICVSFolder.FILE_MEMBERS | ICVSFolder.MANAGED_MEMBERS);
-										for (int j = 0; j < files.length; j++) {
-											if (!files[j].exists()) {
-												outgoing.add(((IContainer)resource).getFile(new Path(files[j].getName())));
-											}
-										}
-										return true;
-									} else {
-										if (resource.exists())
-											outgoing.add(resource);
-										return false;
-									}
-								} catch (CVSException e) {
-									CVSUIPlugin.log(e.getStatus());
-									return false;
-								}
-							}	
-							return true;
-						}
-					}, IResource.DEPTH_INFINITE, true);
-				}
-			} catch (CoreException e) {
-				CVSUIPlugin.openError(getShell(), null, null, e, CVSUIPlugin.LOG_CORE_EXCEPTIONS);
-				return new IRemoteSyncElement[0];
-			}
-			
-			final TeamException[] exception = new TeamException[1];
-			final Map providerMapping = getProviderMapping((IResource[])outgoing.toArray(new IResource[outgoing.size()]));
-			final IRemoteSyncElement[] trees = new IRemoteSyncElement[providerMapping.size()];
-			Session.run(null, null, true, new ICVSRunnable() {
-				public void run(IProgressMonitor monitor) throws CVSException {
-					int i = 0;
-					int work = 1000 * trees.length;
-					monitor.beginTask(null, work);
-					try {
-						for (Iterator iter = providerMapping.keySet().iterator(); iter.hasNext();) {
-							RepositoryProvider provider = (RepositoryProvider)iter.next();
-							List resourceList = (List)providerMapping.get(provider);
-							final TeamException[] exception = new TeamException[1];
-							trees[i++] = CVSWorkspaceRoot.getRemoteSyncTree(
-								provider.getProject(), 
-								(IResource[]) resourceList.toArray(new IResource[resourceList.size()]),
-								null /* tag */,
-								Policy.subMonitorFor(monitor, 1000));
-						}
-					} catch (TeamException e) {
-						exception[0] = e;
-					} finally {
-						monitor.done();
-					}
-				}
-			}, monitor);
-			if (exception[0] != null) throw exception[0];
-			return trees;
+			List filteredResources = Arrays.asList(resources);
+			filteredResources = filterOutgoingChangesSet(filteredResources, Policy.subMonitorFor(monitor, 10));
+			resourcesToSync = (IResource[]) filteredResources.toArray(new IResource[filteredResources.size()]);
 		} else {
-			IRemoteSyncElement[] trees = new IRemoteSyncElement[resources.length];
-			int work = 1000 * resources.length;
-			monitor.beginTask(null, work);
-			try {
-				for (int i = 0; i < trees.length; i++) {
-					trees[i] = CVSWorkspaceRoot.getRemoteSyncTree(resources[i], null, Policy.subMonitorFor(monitor, 1000));
-				}
-			} finally {
-				monitor.done();
-			}
-			return trees;
+			resourcesToSync = resources;
 		}
+		return buildSyncTrees(resourcesToSync, Policy.subMonitorFor(monitor, 1000));
+	}
+
+	private IRemoteSyncElement[] buildSyncTrees(IResource[] resourcesToSync, IProgressMonitor monitor)throws TeamException {
+		IRemoteSyncElement[] trees = new IRemoteSyncElement[resourcesToSync.length];
+		int work = 1000 * resourcesToSync.length;
+		monitor.beginTask(null, work);
+		try {
+			for (int i = 0; i < trees.length; i++) {
+				trees[i] = CVSWorkspaceRoot.getRemoteSyncTree(resourcesToSync[i], null, Policy.subMonitorFor(monitor, 1000));
+			}
+		} finally {
+			monitor.done();
+		}
+		return trees;
 	}
 
 	protected void updateView() {
@@ -458,31 +392,6 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 	}
 	
 	/*
-	 * Copied from CVSDecorator
-	 */
-	private static boolean isDirty(ICVSFile cvsFile) {
-		try {
-			// file is dirty or file has been merged by an update
-			if(!cvsFile.isIgnored()) {
-				return cvsFile.isModified();
-			} else {
-				return false;
-			} 
-		} catch (CVSException e) {
-			//if we get an error report it to the log but assume dirty
-			CVSUIPlugin.log(e.getStatus());
-			return true;
-		}
-	}
-
-	/*
-	 * Copied from CVSDecorator
-	 */
-	private static boolean isDirty(IFile file) {
-		return isDirty(CVSWorkspaceRoot.getCVSFileFor(file));
-	}
-	
-	/*
 	 * Method copied from TeamAction. It should be put in a common place
 	 */
 	protected Map getProviderMapping(IResource[] resources) {
@@ -501,5 +410,25 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 
 	protected SyncSet getSyncSet(IStructuredSelection selection) {
 		return new CVSSyncSet(selection);
+	}
+
+	/*
+	 * Return the resources from the original list that are modified. 
+	 */
+	private List filterOutgoingChangesSet(List resources, IProgressMonitor monitor) throws CVSException {
+		try {
+			monitor.beginTask(null, 100 * resources.size());
+			monitor.subTask(Policy.bind("CVSSyncCompareInput.filteringOutgoingChanges"));
+			List result = new ArrayList();
+			for (Iterator iter = resources.iterator(); iter.hasNext();) {
+				IResource resource = (IResource) iter.next();
+				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+				if (!cvsResource.isIgnored() && cvsResource.isModified(Policy.subMonitorFor(monitor, 100)))
+					result.add(resource);
+			}
+			return result;
+		} finally {
+			monitor.done();
+		}
 	}
 }

@@ -384,7 +384,7 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 						if (newLocation != null)
 							provider.setRemoteRoot(newLocation, Policy.subMonitorFor(monitor, 100));
 						if (changeReadOnly[0])
-							setReadOnly(watchEdit, Policy.subMonitorFor(monitor, 100));
+							setReadOnly(watchEdit, Policy.infiniteSubMonitorFor(monitor, 100));
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
 					}
@@ -405,7 +405,7 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 	 * @param watchEdit
 	 */
 	protected void setReadOnly(final boolean watchEdit, final IProgressMonitor monitor) throws CVSException {
-		monitor.beginTask(null, 100);
+		monitor.beginTask(null, 512);
 		String taskName = watchEdit?
 			Policy.bind("CVSProjectPropertiesPage.setReadOnly"):
 			Policy.bind("CVSProjectPropertiesPage.clearReadOnly");

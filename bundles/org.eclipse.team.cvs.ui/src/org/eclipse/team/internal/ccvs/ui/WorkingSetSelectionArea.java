@@ -198,9 +198,17 @@ public class WorkingSetSelectionArea extends DialogArea {
 		selectButton.setEnabled(useWorkingSet);
 		if (useWorkingSet && mruList.getSelectionIndex() >= 0) {
 			handleMruSelection();
+		} else if (!useWorkingSet) {
+			handleDeselection();
 		}
 	}
 	
+	private void handleDeselection() {
+		oldWorkingSet = workingSet;
+		workingSet = null;
+		handleWorkingSetChange();	
+	}
+
 	private void handleWorkingSetChange() {
 		firePropertyChangeChange(SELECTED_WORKING_SET, oldWorkingSet, workingSet);
 	}
