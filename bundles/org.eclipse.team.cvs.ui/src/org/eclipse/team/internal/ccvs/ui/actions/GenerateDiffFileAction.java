@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard;
@@ -31,7 +30,7 @@ public class GenerateDiffFileAction extends WorkspaceAction {
 	public void execute(IAction action) {
 		final String title = Policy.bind("GenerateCVSDiff.title"); //$NON-NLS-1$
 		final IResource[] resources = getSelectedResources();
-		GenerateDiffFileWizard wizard = new GenerateDiffFileWizard(new StructuredSelection(resources), resources[0]);
+		final GenerateDiffFileWizard wizard = new GenerateDiffFileWizard(resources[0]);
 		wizard.setWindowTitle(title);
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		dialog.setMinimumPageSize(350, 250);
