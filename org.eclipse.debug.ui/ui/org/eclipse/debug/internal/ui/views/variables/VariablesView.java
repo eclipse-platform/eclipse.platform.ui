@@ -539,7 +539,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 
 		// listen to selection in debug view
 		getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		setEventHandler(createEventHandler(variablesViewer));
+		setEventHandler(createEventHandler());
 
 		return variablesViewer;
 	}
@@ -599,10 +599,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	/**
 	 * Creates this view's event handler.
 	 * 
-	 * @param viewer the viewer associated with this view
 	 * @return an event handler
 	 */
-	protected AbstractDebugEventHandler createEventHandler(Viewer viewer) {
+	protected AbstractDebugEventHandler createEventHandler() {
 		return new VariablesViewEventHandler(this);
 	}	
 		

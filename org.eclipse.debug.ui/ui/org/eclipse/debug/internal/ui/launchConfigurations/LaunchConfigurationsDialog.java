@@ -670,7 +670,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 			 */
 			public void selectionChanged(SelectionChangedEvent event) {
-				handleTabSelectionChanged(event);
+				handleTabSelectionChanged();
 			}
 		});
 		return (Composite)getTabViewer().getControl();
@@ -962,9 +962,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * Notification that tab selection has changed.
 	 *
-	 * @param event selection changed event
 	 */
-	protected void handleTabSelectionChanged(SelectionChangedEvent event) {
+	protected void handleTabSelectionChanged() {
 		refreshStatus();
 	}
 	 	 	
