@@ -167,7 +167,27 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		((FeatureReference)featureRef[0]).getFeature();
 		
 	}
-	
+
+	public void testParseValid6() throws Exception {
+
+		URL remoteURL = new URL(SOURCE_FILE_SITE + "parsertests/site4.xml");
+		DefaultSiteParser parser = new DefaultSiteParser(new SiteFileFactory());
+		URL resolvedURL = URLEncoder.encode(remoteURL);		
+		SiteModel remoteSite = parser.parse(resolvedURL.openStream());
+		remoteSite.resolve(remoteURL, null);
+
+		FeatureReferenceModel[] featureRef = remoteSite.getFeatureReferenceModels();
+		//CategoryModel[] categories = remoteSite.getCategoryModels();
+		ArchiveReferenceModel[] archives = remoteSite.getArchiveReferenceModels();
+
+		assertTrue("Wrong number of features", featureRef.length == 2);
+		assertTrue("Wrong number of archives", archives.length == 0);
+		
+
+		((FeatureReference)featureRef[0]).getFeature();
+		
+	}
+
 	public void testParseUnknownCategory() throws Exception {
 
 		URL remoteURL = new URL(SOURCE_FILE_SITE + "parsertests/site3.xml");

@@ -129,6 +129,7 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 		}
 
 		//FIXME implement the cleanup
+		getContentConsumer().abort();
 		
 		aborted = true;
 		throw Utilities.newCoreException("",null);

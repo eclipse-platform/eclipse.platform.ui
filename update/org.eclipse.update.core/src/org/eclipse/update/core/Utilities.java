@@ -171,7 +171,13 @@ public class Utilities {
 			status = new MultiStatus( id, IStatus.ERROR, s, e);
 			((MultiStatus)status).addAll(((CoreException)e).getStatus());		
 		} else {
-			status = new Status(IStatus.ERROR, id, 0, s, e);	
+			StringBuffer completeString = new StringBuffer(s);
+			if (e!=null){
+				completeString.append("\r\n[");
+				completeString.append(e.toString());
+				completeString.append("]\r\n");
+			}
+			status = new Status(IStatus.ERROR, id, 0, completeString.toString(), e);	
 		}
 		return new CoreException(status); //$NON-NLS-1$
 	}
@@ -201,14 +207,26 @@ public class Utilities {
 		if (e1 instanceof CoreException){
 			multi.addAll(((CoreException)e1).getStatus());
 		} else {
-			multi.add(new Status(IStatus.ERROR, id, 0, s1, e1));			
+			StringBuffer completeString = new StringBuffer(s);
+			if (e1!=null){
+				completeString.append("\r\n[");
+				completeString.append(e1.toString());
+				completeString.append("]\r\n");
+			}
+			multi.add(new Status(IStatus.ERROR, id, 0, completeString.toString(), e1));			
 		}
 		
 		// check if core exception
 		if (e2 instanceof CoreException){
 			multi.addAll(((CoreException)e2).getStatus());
 		} else {
-			multi.add(new Status(IStatus.ERROR, id, 0, s2, e2));			
+			StringBuffer completeString = new StringBuffer(s);
+			if (e2!=null){
+				completeString.append("\r\n[");
+				completeString.append(e2.toString());
+				completeString.append("]\r\n");
+			}
+			multi.add(new Status(IStatus.ERROR, id, 0, completeString.toString(), e2));			
 		}
 		return new CoreException(multi); //$NON-NLS-1$
 	}
@@ -221,6 +239,7 @@ public class Utilities {
 	 * @since 2.0
 	 */
 	public static void logException(String s, Throwable e) {
+		//FIXME refactor, find duplicate in code
 		String id =
 			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 		IStatus status = new Status(IStatus.ERROR, id, 0, s, e);

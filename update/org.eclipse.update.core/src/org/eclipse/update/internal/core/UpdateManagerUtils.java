@@ -8,6 +8,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 
@@ -20,7 +22,7 @@ public class UpdateManagerUtils {
 	 * return the urlString if it is a absolute URL
 	 * otherwise, return the default URL if the urlString is null
 	 * The defaultURL may point ot a file, create a file URL then
-	 * if teh urlString or the default URL are relatives, prepend the rootURL to it
+	 * if the urlString or the default URL are relatives, prepend the rootURL to it
 	 */
 	public static URL getURL(URL rootURL, String urlString, String defaultURL)
 		throws MalformedURLException {
@@ -58,26 +60,26 @@ public class UpdateManagerUtils {
 	 */
 	public static String getURLAsString(URL rootURL, URL url) {
 		String result = null;
-	
+
 		if (rootURL == null) {
 			return (url == null) ? null : url.toString();
 		}
-	
+
 		// if no URL , return null
 		if (url != null) {
 
 			result = url.toExternalForm();
-	
+
 			if (rootURL.getHost() != null && !rootURL.getHost().equals(url.getHost()))
 				return result;
-	
+
 			if (rootURL.getProtocol() != null
 				&& !rootURL.getProtocol().equals(url.getProtocol()))
 				return result;
-	
+
 			if (rootURL.getPort() != url.getPort())
 				return result;
-	
+
 			String rootURLFileString = rootURL.getFile();
 			rootURLFileString.replace(File.separatorChar, '/');
 			if (!rootURLFileString.endsWith("/")) {
@@ -87,7 +89,7 @@ public class UpdateManagerUtils {
 				}
 			}
 			String urlFileString = url.getFile();
-	
+
 			if (urlFileString.startsWith(rootURLFileString)) {
 				result = urlFileString.substring(rootURLFileString.length());
 				result.replace(File.separatorChar, '/');
@@ -97,13 +99,13 @@ public class UpdateManagerUtils {
 				if ("file".equalsIgnoreCase(url.getProtocol())) {
 					File rootFile = new File(rootURLFileString);
 					File urlFile = new File(urlFileString);
-	
+
 					File relativePath = urlFile.getParentFile();
 					while (relativePath != null
 						&& !relativePath.getParentFile().equals(rootFile)) {
 						relativePath = relativePath.getParentFile();
 					}
-	
+
 					if (relativePath == null) {
 						//DEBUG
 						if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
@@ -119,26 +121,28 @@ public class UpdateManagerUtils {
 								UpdateManagerPlugin.getPlugin().debug(
 									"Full path:" + fullString + " does not start with " + relativeRootString);
 							}
-	
+
 							return url.toString();
 						} else {
 							String returnString = fullString.substring(relativeRootString.length() + 1);
-							if (urlFile.isDirectory()) returnString+=File.separator; // we lost the last slash when tranforming in File
+							if (urlFile.isDirectory())
+								returnString += File.separator;
+							// we lost the last slash when tranforming in File
 							returnString = returnString.replace(File.separatorChar, '/');
 							return returnString;
 						}
-	
+
 					}
-	
+
 				} else {
 					result = url.toString();
 				}
 			}
 		}
-	
+
 		return result;
 	}
-	
+
 	/**
 	 * returns a translated String
 	 */
@@ -152,7 +156,7 @@ public class UpdateManagerUtils {
 		}
 		return result;
 	};
-	
+
 	/**
 	 * 
 	 */
@@ -218,7 +222,7 @@ public class UpdateManagerUtils {
 		String result = name + date.getTime() + ext;
 		return result;
 	}
-	
+
 	/**
 	 * remove a file or directory from the file system.
 	 * used to clean up install
@@ -246,7 +250,7 @@ public class UpdateManagerUtils {
 			UpdateManagerPlugin.getPlugin().getLog().log(status);
 		}
 	}
-	
+
 	/**
 	 * Returns the plugin entries that are in source array and
 	 * not in target array
@@ -273,7 +277,7 @@ public class UpdateManagerUtils {
 			result.toArray(resultEntry);
 		return resultEntry;
 	}
-	
+
 	/**
 	 * Returns the parent URL of the given URL, or <code>null</code> if the
 	 * given URL is the root.
@@ -314,14 +318,14 @@ public class UpdateManagerUtils {
 		}
 		return url;
 	}
-	
+
 	/**
 	 * 
 	 */
 	public static URL asDirectoryURL(URL url) throws MalformedURLException {
 		//url = URLEncoder.encode(url);
 		String path = url.getFile();
-		if (!path.endsWith("/")) {		
+		if (!path.endsWith("/")) {
 			int index = path.lastIndexOf('/');
 			if (index != -1)
 				path = path.substring(0, index + 1);
@@ -330,5 +334,4 @@ public class UpdateManagerUtils {
 		}
 		return url;
 	}
-
 }

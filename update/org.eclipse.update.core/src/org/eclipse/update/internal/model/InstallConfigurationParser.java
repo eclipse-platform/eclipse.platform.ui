@@ -16,7 +16,6 @@ import org.eclipse.update.core.model.SiteModel;
 import org.eclipse.update.internal.core.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
-import org.eclipse.update.internal.core.Policy;
 
 /**
  * parse the default site.xml
@@ -34,12 +33,18 @@ public class InstallConfigurationParser extends DefaultHandler {
 	public static final String FEATURE = "feature"; //$NON-NLS-1$
 	public static final String ACTIVITY = "activity"; //$NON-NLS-1$
 
+	// optimization: cache Site
+	private Map sites = new HashMap();
+
 	private ResourceBundle bundle;
 
 	/**
 	 * Constructor for DefaultSiteParser
 	 */
-	public InstallConfigurationParser(InputStream siteStream, InstallConfigurationModel config) throws IOException, SAXException, CoreException {
+	public InstallConfigurationParser(
+		InputStream siteStream,
+		InstallConfigurationModel config)
+		throws IOException, SAXException, CoreException {
 		super();
 		parser = new SAXParser();
 		parser.setContentHandler(this);
@@ -67,7 +72,11 @@ public class InstallConfigurationParser extends DefaultHandler {
 		try {
 			url = UpdateManagerUtils.asDirectoryURL(config.getURL());
 			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
-			bundle = ResourceBundle.getBundle(SiteLocalModel.SITE_LOCAL_FILE, Locale.getDefault(), l);
+			bundle =
+				ResourceBundle.getBundle(
+					SiteLocalModel.SITE_LOCAL_FILE,
+					Locale.getDefault(),
+					l);
 		} catch (MissingResourceException e) {
 			//DEBUG:
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
@@ -85,7 +94,12 @@ public class InstallConfigurationParser extends DefaultHandler {
 	/**
 	 * @see DefaultHandler#startElement(String, String, String, Attributes)
 	 */
-	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+	public void startElement(
+		String uri,
+		String localName,
+		String qName,
+		Attributes attributes)
+		throws SAXException {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
@@ -116,9 +130,9 @@ public class InstallConfigurationParser extends DefaultHandler {
 			}
 
 		} catch (MalformedURLException e) {
-			throw new SAXException(Policy.bind("Parser.UnableToCreateURL",e.getMessage()), e); //$NON-NLS-1$
+			throw new SAXException(Policy.bind("Parser.UnableToCreateURL", e.getMessage()), e); //$NON-NLS-1$
 		} catch (CoreException e) {
-			throw new SAXException(Policy.bind("Parser.InternalError",e.toString()), e); //$NON-NLS-1$
+			throw new SAXException(Policy.bind("Parser.InternalError", e.toString()), e); //$NON-NLS-1$
 		}
 
 	}
@@ -126,12 +140,15 @@ public class InstallConfigurationParser extends DefaultHandler {
 	/** 
 	 * process the Site info
 	 */
-	private void processSite(Attributes attributes) throws MalformedURLException, CoreException {
+	private void processSite(Attributes attributes)
+		throws MalformedURLException, CoreException {
 
 		//site url
 		String urlString = attributes.getValue("url"); //$NON-NLS-1$
 		siteURL = new URL(urlString);
 		ISite site = SiteManager.getSite(siteURL);
+		sites.put(urlString,site);
+
 
 		// policy
 		String policyString = attributes.getValue("policy"); //$NON-NLS-1$
@@ -139,7 +156,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 
 		// configuration site
 		BaseSiteLocalFactory factory = new BaseSiteLocalFactory();
-		configSite =factory.createConfigurationSiteModel((SiteModel)site,policy);
+		configSite = factory.createConfigurationSiteModel((SiteModel) site, policy);
 
 		//platform url
 		String platformURLString = attributes.getValue("platformURL"); //$NON-NLS-1$
@@ -163,32 +180,34 @@ public class InstallConfigurationParser extends DefaultHandler {
 	/** 
 	 * process the DefaultFeature info
 	 */
-	private void processFeature(Attributes attributes) throws MalformedURLException, CoreException {
+	private void processFeature(Attributes attributes)
+		throws MalformedURLException, CoreException {
 
 		// url
 		String path = attributes.getValue("url"); //$NON-NLS-1$
 		URL url = UpdateManagerUtils.getURL(siteURL, path, null);
-		
+
 		// configured ?
 		String configuredString = attributes.getValue("configured"); //$NON-NLS-1$
-		boolean configured = configuredString.trim().equalsIgnoreCase("true")?true:false; //$NON-NLS-1$
+		boolean configured = configuredString.trim().equalsIgnoreCase("true") ? true : false; //$NON-NLS-1$
 
 		if (url != null) {
 			FeatureReference ref = new FeatureReference();
-			ref.setSite((ISite)configSite.getSiteModel());
+			ref.setSite((ISite) configSite.getSiteModel());
 			ref.setURL(url);
 			if (ref != null)
-				if (configured){
-					(configSite.getConfigurationPolicyModel()).addConfiguredFeatureReference((FeatureReferenceModel)ref);					
-				}
-				else
-					(configSite.getConfigurationPolicyModel()).addUnconfiguredFeatureReference((FeatureReferenceModel)ref);
+				if (configured) {
+					(configSite.getConfigurationPolicyModel()).addConfiguredFeatureReference(
+						(FeatureReferenceModel) ref);
+				} else
+					(configSite.getConfigurationPolicyModel()).addUnconfiguredFeatureReference(
+						(FeatureReferenceModel) ref);
 
 			//updateURL
 			String updateURLString = attributes.getValue("updateURL"); //$NON-NLS-1$
 			URLEntry entry = new URLEntry();
 			entry.setURLString(updateURLString);
-			entry.resolve(siteURL,null);
+			entry.resolve(siteURL, null);
 
 			// DEBUG:		
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
@@ -196,7 +215,8 @@ public class InstallConfigurationParser extends DefaultHandler {
 			}
 
 		} else {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			String id =
+				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, Policy.bind("InstallConfigurationParser.FeatureReferenceNoURL"), null); //$NON-NLS-1$
 			UpdateManagerPlugin.getPlugin().getLog().log(status);
 		}
@@ -206,14 +226,15 @@ public class InstallConfigurationParser extends DefaultHandler {
 	/** 
 	 * process the Activity info
 	 */
-	private void processActivity(Attributes attributes)  {
+	private void processActivity(Attributes attributes) {
 
 		// action
 		String actionString = attributes.getValue("action"); //$NON-NLS-1$
 		int action = Integer.parseInt(actionString);
 
 		// create
-		ConfigurationActivityModel activity = new BaseSiteLocalFactory().createConfigurationAcivityModel();
+		ConfigurationActivityModel activity =
+			new BaseSiteLocalFactory().createConfigurationAcivityModel();
 		activity.setAction(action);
 
 		// label
@@ -230,7 +251,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 		String statusString = attributes.getValue("status"); //$NON-NLS-1$
 		int status = Integer.parseInt(statusString);
 		activity.setStatus(status);
-		
+
 		config.addActivityModel(activity);
 
 		// DEBUG:		

@@ -64,6 +64,7 @@ public class TestRemove extends UpdateManagerTestCase {
 		IFeatureReference ref = localSite.install(remoteFeature, null, null);
 
 		// then remove it
+		assertNotNull("Feature is null",ref.getFeature());
 		String featureRef = ref.getFeature().getVersionedIdentifier().toString();
 		localSite.remove(ref.getFeature(), null);
 

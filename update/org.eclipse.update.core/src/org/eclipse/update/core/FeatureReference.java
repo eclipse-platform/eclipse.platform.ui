@@ -45,12 +45,10 @@ public class FeatureReference
 
 		String type = getType();
 		if (feature == null) {
-
 			if (type == null || type.equals("")) { //$NON-NLS-1$
 				// ask the Site for the default type 
 				type = getSite().getDefaultPackagedFeatureType();
 			}
-
 			feature = createFeature(type, getURL(), getSite());
 		}
 

@@ -108,6 +108,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// teh current one points to a real fature
 		// does not throw error.
 		IConfiguredSite configSite2 = site.getCurrentConfiguration().getConfiguredSites()[0];
+		assertTrue("No Configured features found",configSite2.getConfiguredFeatures().length>0);
 		IFeatureReference ref = configSite2.getConfiguredFeatures()[0];
 		IFeature feature2 = ref.getFeature();
 		//String configuredFeature = feature2.getLabel();
@@ -210,6 +211,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 				found = true;
 			}		
 		}
+		assertNotNull("Feature 2 is Null",feature2);
 		assertTrue("Wrong id  version of feature",feature2.getVersionedIdentifier().toString().equalsIgnoreCase("org.eclipse.update.core.tests.feature3_1.0.0"));
 		
 		// test only 2 install config in local site

@@ -51,6 +51,7 @@ public interface ISiteContentConsumer {
 	
 	/**
 	 * closes the opened FeatureContentConsumer
+	 * @throws CoreException
 	 * @since 2.0 
 	 */
 
@@ -59,10 +60,11 @@ public interface ISiteContentConsumer {
 
 	/**
 	 * aborts the opened FeatureContentConsumer
+	 * @throws CoreException
 	 * @since 2.0 
 	 */
 
-	void abort();		
+	void abort() throws CoreException;		
 	}
 
 

@@ -296,6 +296,7 @@ public class JarContentReference extends ContentReference {
 	 * @param selector selector, used to define "symbolic" path identifier
 	 * for the entry
 	 * @param monitor progress monitor 
+	 * @return the content reference ofr <code>null</null> if the entry doesn't exist
 	 * @exception IOException
 	 * @since 2.0
 	 */
@@ -313,6 +314,8 @@ public class JarContentReference extends ContentReference {
 		JarFile jarArchive = this.asJarFile();
 		entryName = entryName.replace(File.separatorChar, '/');
 		JarEntry entry = jarArchive.getJarEntry(entryName);
+		if (entry==null) return null;
+		
 		String entryId = selector.defineIdentifier(entry);
 		return new JarEntryContentReference(entryId, this, entry);
 	}

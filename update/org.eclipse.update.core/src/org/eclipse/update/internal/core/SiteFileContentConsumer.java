@@ -7,6 +7,7 @@ import java.io.*;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
@@ -75,6 +76,17 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		String featurePath = getFeaturePath();
 		String contentKey = contentReference.getIdentifier();
 		featurePath += contentKey;
+
+		// error recovery
+		if (featurePath.endsWith(Feature.FEATURE_XML)) {
+			featurePath =
+				ErrorRecoveryLog.getLocalRandomIdentifier(featurePath);
+
+			ErrorRecoveryLog.getLog().appendPath(
+				ErrorRecoveryLog.FEATURE_ENTRY,
+				featurePath);
+		}
+
 		try {
 			inStream = contentReference.getInputStream();
 			UpdateManagerUtils.copyToLocal(inStream, featurePath, null);
@@ -101,7 +113,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		InternalFeatureReference ref = new InternalFeatureReference();
 		ref.setSite(getSite());
 		File file = null;
-
+		
 		try {
 			file = new File(getFeaturePath());
 			ref.setURL(file.toURL());
@@ -114,33 +126,41 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			//$NON-NLS-1$
 		}
 
-		if (ref != null){
+		if (ref != null) {
+			// FIXME make sure we rename the XML files before
 			commitPlugins(ref);
 			ref.markReadOnly();
 		}
-		
+
 		return ref;
 	}
 
 	/*
 	 * 
 	 */
-	public void abort() {
+	public void abort() throws CoreException {
 		// FIXME
+		String featurePath = getFeaturePath();
+		UpdateManagerUtils.removeFromFileSystem(new File(featurePath));
 	}
 
 	/*
 	 * commit the plugins installed as archive on the site
 	 */
-	 private void commitPlugins(IFeatureReference localFeatureReference) throws CoreException {
+	private void commitPlugins(IFeatureReference localFeatureReference)
+		throws CoreException {
 
-		((SiteFile)getSite()).addFeatureReferenceModel((FeatureReferenceModel) localFeatureReference);
+		// get the feature
+		((SiteFile) getSite()).addFeatureReferenceModel(
+			(FeatureReferenceModel) localFeatureReference);
+		IFeature feature =localFeatureReference.getFeature();
+		if (feature==null) return;
+
 
 		// add the installed plugins directories as archives entry
 		SiteFileFactory archiveFactory = new SiteFileFactory();
 		ArchiveReferenceModel archive = null;
-		IPluginEntry[] pluginEntries =
-			localFeatureReference.getFeature().getPluginEntries();
+		IPluginEntry[] pluginEntries = feature.getPluginEntries();
 		for (int i = 0; i < pluginEntries.length; i++) {
 			String versionId = pluginEntries[i].getVersionedIdentifier().toString();
 			String pluginID =
@@ -151,14 +171,17 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			archive.setPath(pluginID);
 			try {
 				URL url =
-					new URL(getSite().getURL(), Site.DEFAULT_PLUGIN_PATH + versionId + File.separator);
+					new URL(
+						getSite().getURL(),
+						Site.DEFAULT_PLUGIN_PATH + versionId + File.separator);
 				archive.setURLString(url.toExternalForm());
 				archive.resolve(url, null);
-				((SiteFile)getSite()).addArchiveReferenceModel(archive);
+				((SiteFile) getSite()).addArchiveReferenceModel(archive);
 			} catch (MalformedURLException e) {
 				String id =
 					UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				String urlString = (getSite().getURL() != null) ? getSite().getURL().toExternalForm() : "";
+				String urlString =
+					(getSite().getURL() != null) ? getSite().getURL().toExternalForm() : "";
 				//$NON-NLS-1$
 				urlString += Site.DEFAULT_PLUGIN_PATH + pluginEntries[i].toString();
 				throw Utilities.newCoreException(
@@ -168,6 +191,6 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			}
 		}
 		return;
-	 }
+	}
 
 }

@@ -28,6 +28,8 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 			
 			IFeatureContentProvider contentProvider = new FeaturePackagedContentProvider(url);		
 			ContentReference manifest = contentProvider.getFeatureManifestReference(null/*IProgressMonitor*/);
+			if (manifest==null) throw new IOException();
+			
 			featureStream = manifest.getInputStream();
 			feature = (Feature)parseFeature(featureStream);
 			

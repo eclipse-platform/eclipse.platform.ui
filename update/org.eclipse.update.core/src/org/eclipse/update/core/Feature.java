@@ -206,6 +206,8 @@ public class Feature extends FeatureModel implements IFeature {
 		IProgressMonitor progress)
 		throws CoreException {
 
+		ErrorRecoveryLog recoveryLog = ErrorRecoveryLog.getLog();
+
 		//DEBUG
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL) {
 			UpdateManagerPlugin.getPlugin().debug(
@@ -258,6 +260,9 @@ public class Feature extends FeatureModel implements IFeature {
 				2 + 2 * pluginsToInstall.length + nonPluginsToInstall.length + 1;
 			if (monitor != null)
 				monitor.beginTask("", taskCount);
+
+			// start log
+			recoveryLog.append(recoveryLog.START_INSTALL_LOG);
 
 			// Start the installation tasks			
 			handler.installInitiated();
@@ -332,21 +337,6 @@ public class Feature extends FeatureModel implements IFeature {
 			}
 
 
-			//Install feature files
-			if (monitor != null)
-				monitor.setTaskName(Policy.bind("Feature.TaskInstallFeatureFiles")); //$NON-NLS-1$
-			references = provider.getFeatureEntryContentReferences(monitor);
-			for (int i = 0; i < references.length; i++) {
-				if (monitor != null)
-					monitor.subTask(references[i].getIdentifier());
-				consumer.store(references[i], monitor);
-			}
-			if (monitor != null) {
-				monitor.worked(1);
-				if (monitor.isCanceled())
-					abort();
-			}
-
 			// Install plugin files
 			for (int i = 0; i < pluginsToInstall.length; i++) {
 				if (monitor != null)
@@ -371,6 +361,21 @@ public class Feature extends FeatureModel implements IFeature {
 				}
 			}
 
+			//Install feature files
+			if (monitor != null)
+				monitor.setTaskName(Policy.bind("Feature.TaskInstallFeatureFiles")); //$NON-NLS-1$
+			references = provider.getFeatureEntryContentReferences(monitor);
+			for (int i = 0; i < references.length; i++) {
+				if (monitor != null)
+					monitor.subTask(references[i].getIdentifier());
+				consumer.store(references[i], monitor);
+			}
+			if (monitor != null) {
+				monitor.worked(1);
+				if (monitor.isCanceled())
+					abort();
+			}
+
 			// call handler to complete installation (eg. handle non-plugin entries)
 			handler.completeInstall(consumer);
 			if (monitor != null) {
@@ -380,7 +385,14 @@ public class Feature extends FeatureModel implements IFeature {
 			}
 			// indicate install success
 			success = true;
-
+			
+			// close the log
+			// do not close in finally block
+			// as it is caled when an error occured
+			recoveryLog.append(recoveryLog.END_INSTALL_LOG);
+			recoveryLog.close();			
+			recoveryLog.delete();
+			
 		} catch (Exception e) {
 			originalException = e;
 		} finally {

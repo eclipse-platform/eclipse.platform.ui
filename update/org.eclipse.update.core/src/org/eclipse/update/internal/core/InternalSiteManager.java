@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +36,14 @@ public class InternalSiteManager {
 		"org.eclipse.update.core.deltaHandler.display";
 	//$NON-NLS-1$		
 
+	// cache found sites
+	private static Map sites = new HashMap();
+	public static boolean cache = true;
+	
+	// true if an exception occured creating localSite
+	// so we cache it and don't attempt to create it again
+	private static CoreException exceptionOccured = null;
+
 	/*
 	 * @see SiteManager#getLocalSite()
 	 */
@@ -47,8 +56,16 @@ public class InternalSiteManager {
 	 */
 	private static ILocalSite internalGetLocalSite(boolean isOptimistic)
 		throws CoreException {
+		
+		if (exceptionOccured!=null) throw exceptionOccured;
+			
 		if (localSite == null) {
+			try {
 			localSite = SiteLocal.internalGetLocalSite(isOptimistic);
+			} catch (CoreException e){
+				exceptionOccured=e;
+				throw e;
+			}
 		}
 		return localSite;
 	}
@@ -62,6 +79,11 @@ public class InternalSiteManager {
 		if (siteURL == null)
 			return null;
 
+		if (cache && sites.containsKey(siteURL)) {
+			site = (ISite)sites.get(siteURL);
+			return site;
+		}
+
 		try {
 			site = attemptCreateSite(DEFAULT_SITE_TYPE, siteURL);
 		} catch (CoreException preservedException) {
@@ -73,11 +95,13 @@ public class InternalSiteManager {
 			} catch (CoreException retryException) {
 				IStatus firstStatus = preservedException.getStatus();
 				MultiStatus multi = new MultiStatus(firstStatus.getPlugin(), IStatus.WARNING, Policy.bind("InternalSiteManager.FailedRetryAccessingSite"), retryException); //$NON-NLS-1$
-				multi.add(firstStatus);
-				UpdateManagerPlugin.getPlugin().getLog().log(multi);
+				multi.addAll(firstStatus);
 				throw preservedException;
 			}
 		}
+		
+		if (site!=null) sites.put(siteURL,site);
+		
 		return site;
 	}
 
@@ -165,8 +189,7 @@ public class InternalSiteManager {
 				throw Utilities.newCoreException(
 					Policy.bind(
 						"InternalSiteManager.UnableToAccessURL",
-						url.toExternalForm(),
-						e.getMessage()),
+						url.toExternalForm()),
 					e);
 				//$NON-NLS-1$
 			} else if (url.getFile().endsWith("/")) { //$NON-NLS-1$
@@ -188,8 +211,7 @@ public class InternalSiteManager {
 					throw Utilities.newCoreException(
 						Policy.bind(
 							"InternalSiteManager.UnableToAccessURL",
-							url.toExternalForm(),
-							e.getMessage()),
+							url.toExternalForm()),
 						url.toExternalForm(),
 						urlRetry.toExternalForm(),
 						e,
@@ -201,8 +223,7 @@ public class InternalSiteManager {
 				throw Utilities.newCoreException(
 					Policy.bind(
 						"InternalSiteManager.UnableToAccessURL",
-						url.toExternalForm(),
-						e.getMessage()),
+						url.toExternalForm()),
 					e);
 				//$NON-NLS-1$
 			} else {
@@ -231,8 +252,7 @@ public class InternalSiteManager {
 					throw Utilities.newCoreException(
 						Policy.bind(
 							"InternalSiteManager.UnableToAccessURL",
-							url.toExternalForm(),
-							e.getMessage()),
+							url.toExternalForm()),
 						url.toExternalForm(),
 						urlRetry.toExternalForm(),
 						e,

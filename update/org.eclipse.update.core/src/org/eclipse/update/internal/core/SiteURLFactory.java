@@ -63,7 +63,8 @@ public class SiteURLFactory extends BaseSiteFactory {
 			//$NON-NLS-1$
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-				Policy.bind("SiteURLFactory.UnableToAccessSiteStream"),
+				Policy.bind("SiteURLFactory.UnableToAccessSiteStream",
+				url == null ? "" : url.toExternalForm()),
 				e);
 			//$NON-NLS-1$
 		} finally {

@@ -46,7 +46,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			jarVerifier = new JarVerifier();
 			return jarVerifier;
 		}
-		
+
 		// re-init will be done if the parent changes
 		return jarVerifier;
 	}
@@ -75,14 +75,14 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 				featureJarReference.unpack(getWorkingDirectory(), null, monitor);
 		} catch (IOException e) {
 			String[] values =
-				new String[] {
-					Feature.FEATURE_XML,
-					featureArchiveReference[0].getIdentifier(),
-					getURL().toExternalForm()};
-			throw Utilities.newCoreException(
-				Policy.bind("FeaturePackagedContentProvider.ErrorRetrieving", values),
-				e);
-			//$NON-NLS-1$ //$NON-NLS-2$
+				new String[] { Feature.FEATURE_XML, getURL().toExternalForm()};
+			CoreException exc =
+				Utilities.newCoreException(
+					Policy.bind("FeaturePackagedContentProvider.ErrorRetrieving", values),
+					e);
+			//$NON-NLS-1$ 
+			UpdateManagerPlugin.getPlugin().getLog().log(exc.getStatus());
+			return null;
 		}
 
 		// find the manifest in the unpacked feature files
@@ -95,15 +95,14 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 
 		// the manifest has not been found
 		String[] values =
-			new String[] {
-				Feature.FEATURE_XML,
-				featureArchiveReference[0].getIdentifier(),
-				getURL().toExternalForm()};
-		throw Utilities.newCoreException(
-			Policy.bind("FeaturePackagedContentProvider.NoManifestFile", values),
-			null);
-		//$NON-NLS-1$ //$NON-NLS-2$
-
+			new String[] { Feature.FEATURE_XML, getURL().toExternalForm()};
+		CoreException exc =
+			Utilities.newCoreException(
+				Policy.bind("FeaturePackagedContentProvider.NoManifestFile", values),
+				null);
+		//$NON-NLS-1$ 
+		UpdateManagerPlugin.getPlugin().getLog().log(exc.getStatus());
+		return null;
 	}
 
 	/*
@@ -256,7 +255,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			currentReference = new ContentReference(nonPluginEntry.getIdentifier(), url);
 			currentReference = asLocalReference(currentReference, monitor);
 			references[0] = currentReference;
-			
+
 		} catch (IOException e) {
 			String urlString =
 				(getFeature() == null)
@@ -297,11 +296,11 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 		IPluginEntry pluginEntry,
 		InstallMonitor monitor)
 		throws CoreException {
-			
+
 		ContentReference[] references =
 			getPluginEntryArchiveReferences(pluginEntry, monitor);
 		ContentReference[] pluginReferences = new ContentReference[0];
-		
+
 		try {
 			if (references[0] instanceof JarContentReference) {
 				JarContentReference localRef =

@@ -58,7 +58,7 @@ public interface IFeatureContentProvider {
 	 * format.
 	 * 
 	 * @param monitor progress monitor, can be <code>null</code>
-	 * @return feature manifest reference
+	 * @return feature manifest reference, or <code>null</code> if the manifest cannot be found.
 	 * @since 2.0
 	 */
 	public ContentReference getFeatureManifestReference(InstallMonitor monitor)

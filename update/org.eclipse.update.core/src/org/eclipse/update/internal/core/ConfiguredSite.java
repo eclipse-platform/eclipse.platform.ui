@@ -304,6 +304,12 @@ public class ConfiguredSite
 	private void configure(IFeature feature, boolean callInstallHandler)
 		throws CoreException {
 			
+		if (feature==null) {
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS)
+				UpdateManagerPlugin.getPlugin().debug("Attempting to configure a null feature in site:"+getSite().getURL().toExternalForm());
+			return;
+		}
+			
 		ConfigurationPolicy configPolicy = getConfigurationPolicy();
 		if (configPolicy == null)
 			return;

@@ -116,6 +116,7 @@ public class JarVerifier extends Verifier {
 					UpdateManagerPlugin.getPlugin().debug("Attempting to read JAR file:"+jarFile);
 			
 				// # of entries
+				if (!jarFile.exists()) throw new IOException();
 				JarFile jar = new JarFile(jarFile);
 				entries = jar.size();
 				try {
@@ -124,6 +125,8 @@ public class JarVerifier extends Verifier {
 					// unchecked
 				}
 				jarFileName = jarFile.getName();
+			} catch (ZipException e){
+				throw Utilities.newCoreException(Policy.bind("JarVerifier.InvalidJar", jarReference.toString()), e); //$NON-NLS-1$				
 			} catch (IOException e) {
 				throw Utilities.newCoreException(Policy.bind("JarVerifier.UnableToAccessJar", jarReference.toString()), e); //$NON-NLS-1$
 			}

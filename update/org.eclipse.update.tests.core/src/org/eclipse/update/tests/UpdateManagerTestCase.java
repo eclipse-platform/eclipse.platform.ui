@@ -13,6 +13,7 @@ import java.util.*;
 import junit.framework.TestCase;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 /**
@@ -71,6 +72,9 @@ public abstract class UpdateManagerTestCase extends TestCase {
 		//cleanup target 
 		File target = new File(homePath + "/target/");
 		UpdateManagerUtils.removeFromFileSystem(target);
+		
+		// setup cache site to false
+		InternalSiteManager.cache = false;
 
 	}
 
