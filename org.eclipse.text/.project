@@ -3,7 +3,6 @@
 	<name>org.eclipse.text</name>
 	<comment></comment>
 	<projects>
-		<project>org.junit</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

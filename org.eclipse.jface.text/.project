@@ -8,7 +8,6 @@
 		<project>org.eclipse.jface</project>
 		<project>org.eclipse.swt</project>
 		<project>org.eclipse.text</project>
-		<project>org.junit</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
