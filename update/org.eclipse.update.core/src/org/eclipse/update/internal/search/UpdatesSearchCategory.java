@@ -114,6 +114,8 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 		IFeatureReference ref;
 		IInstallFeatureOperation patchFor;
 		boolean patch;
+		IInstallFeatureOperation job;
+		
 		public Hit(IFeature candidate, IFeatureReference ref) {
 			this.candidate = candidate;
 			this.ref = ref;
@@ -129,12 +131,15 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 		}
 
 		public IInstallFeatureOperation getJob() {
-			try {
-				IFeature feature = ref.getFeature(null);
-				return OperationsManager.getOperationFactory().createInstallOperation(null, feature, null, null, null);
-			} catch (CoreException e) {
-				return null;
+			if (job == null) {
+				try {
+					IFeature feature = ref.getFeature(null);
+					job = OperationsManager.getOperationFactory().createInstallOperation(null, feature, null, null, null);
+				} catch (CoreException e) {
+					UpdateCore.log(e);
+				}
 			}
+			return job;
 		}
 
 		public boolean isPatch() {
@@ -228,7 +233,9 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 					if (isNewerVersion(candidate.getVersionedIdentifier(),ref.getVersionedIdentifier())) {
 						Hit h = new Hit(candidate, ref);
 						hits.add(h);
-						updateJobs.add(h.getJob());
+						IInstallFeatureOperation job = h.getJob();
+						if (job != null)
+							updateJobs.add(job);
 					} else {
 						// accept the same feature if the installed
 						// feature is broken
