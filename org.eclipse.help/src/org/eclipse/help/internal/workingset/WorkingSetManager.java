@@ -76,14 +76,13 @@ public class WorkingSetManager {
 	 * @param locale
 	 */
 	public WorkingSetManager(String locale) {
-		if (locale == null)
-			locale = BootLoader.getNL();
-		this.locale = locale;
-		root = new AdaptableTocsArray(HelpSystem.getTocManager().getTocs(locale));
+		this.locale = locale != null ? locale : BootLoader.getNL();
 		restoreState();
 	}
 
 	public AdaptableTocsArray getRoot() {
+		if (root == null)
+			root = new AdaptableTocsArray(HelpSystem.getTocManager().getTocs(locale));
 		return root;
 	}
 	
@@ -225,8 +224,8 @@ public class WorkingSetManager {
 				if (parser.getDocument() == null)
 					return false;
 
-				Element root = parser.getDocument().getDocumentElement();
-				restoreWorkingSetState(root);
+				Element rootElement = parser.getDocument().getDocumentElement();
+				restoreWorkingSetState(rootElement);
 				input.close();
 
 				return true;
@@ -329,10 +328,10 @@ public class WorkingSetManager {
 	 */
 	public boolean saveState() {
 		Document doc = new DocumentImpl();
-		Element root = doc.createElement("workingSets");
-		doc.appendChild(root);
+		Element rootElement = doc.createElement("workingSets");
+		doc.appendChild(rootElement);
 
-		saveWorkingSetState(root);
+		saveWorkingSetState(rootElement);
 
 		File stateFile = getWorkingSetStateFile();
 		try {
@@ -387,7 +386,7 @@ public class WorkingSetManager {
 		if (toc == null)
 			return null;
 		else {
-			IAdaptable[] tocs = root.getChildren();
+			IAdaptable[] tocs = getRoot().getChildren();
 			for (int i=0; i<tocs.length; i++)
 				if (tocs[i].getAdapter(IToc.class) == toc)
 					return (AdaptableToc)tocs[i];
