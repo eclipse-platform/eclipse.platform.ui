@@ -74,7 +74,7 @@ The content file is parsed at run time by the intro framework. Based on the sett
          <documentation>
             standbyContentPart registration. Once registered, standby parts can be launched through an introURL action of the following format:
 &lt;pre&gt; 
-http://org.eclipse.ui.intro/showStandby?partId=&lt;id of standbyContentPart&gt;
+http://org.eclipse.ui.intro/showStandby?partId=&amp;lt;id of standbyContentPart&amp;gt;
 &lt;/pre&gt;
          </documentation>
       </annotation>
