@@ -1528,7 +1528,7 @@
             name="%SystemSummary"
             class="org.eclipse.ui.internal.SystemSummaryEditor"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
-            icon="icons/diag.gif"
+            icon="icons/full/obj16/system_summary_editor.gif"
             id="org.eclipse.ui.SystemSummaryEditor">
       </editor>
    </extension>
