@@ -62,6 +62,15 @@
    <extension
          point="org.eclipse.ui.importWizards">
       <wizard
+            name="%ImportWizards.Preferences"
+            icon="icons/full/etool16/importdir_wiz.gif"
+            class="org.eclipse.ui.internal.wizards.preferences.PreferencesImportWizard"
+            id="org.eclipse.ui.wizards.import.Preferences">
+         <description>
+            %ImportWizards.PreferencesDescription
+         </description>
+      </wizard>
+      <wizard
             name="%ImportWizards.FileSystem"
             icon="icons/full/etool16/importdir_wiz.gif"
             class="org.eclipse.ui.wizards.datatransfer.FileSystemImportWizard"
@@ -97,6 +106,15 @@
    </extension>
    <extension
          point="org.eclipse.ui.exportWizards">
+      <wizard
+            name="%ExportWizards.Preferences"
+            icon="icons/full/etool16/exportdir_wiz.gif"
+            class="org.eclipse.ui.internal.wizards.preferences.PreferencesExportWizard"
+            id="org.eclipse.ui.wizards.export.Preferences">
+         <description>
+            %ExportWizards.PreferencesDescription
+         </description>
+      </wizard>         
       <wizard
             name="%ExportWizards.FileSystem"
             icon="icons/full/etool16/exportdir_wiz.gif"
@@ -721,5 +739,19 @@
             class="org.eclipse.ui.internal.ide.model.ProjectPersistentPropertyTester"
             properties="projectPersistentProperty"
             id="org.eclipse.ui.ide.projectPersistentPropertyTester"/>
+   </extension>
+  <extension
+         point="org.eclipse.ui.preferenceTransfer">
+       <transfer
+            id="org.eclipse.ui.ide.transfer.keys"
+            icon="\icons\full\etool16\next_nav.gif"
+            name="%KeysPreference.Name">
+            <mapping scope="instance">
+            	<entry node="org.eclipse.ui.workbench" keys="org.eclipse.ui.commands"/>
+            </mapping>
+			<description>
+            	%KeysPreference.Description
+		    </description>
+	   </transfer>
    </extension>
 </plugin>

@@ -403,7 +403,7 @@ public class PreferencesExportDialog extends Dialog {
 			output = new BufferedOutputStream(new FileOutputStream(file));
 			for (int i = 0; i < preferences.length; i++) {
 				IEclipsePreferences node = preferences[i];
-				service.exportPreferences(node, output, null);
+				service.exportPreferences(node, output, (String[])null);
 			}
 
 		} catch (FileNotFoundException exception) {
