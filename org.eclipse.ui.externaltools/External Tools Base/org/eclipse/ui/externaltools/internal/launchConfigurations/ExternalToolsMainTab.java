@@ -60,7 +60,6 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	protected Button workspaceWorkingDirectoryButton;
 
 	protected Button runBackgroundButton;
-	protected Button captureOutputButton;
 	protected Text argumentField;
 	protected Button variableButton;
 
@@ -89,7 +88,6 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		createArgumentComponent(mainComposite);
 		createVerticalSpacer(mainComposite, 2);
 		createRunBackgroundComponent(mainComposite);
-		createCaptureOutputComponent(mainComposite);
 	}
 	
 	/**
@@ -264,22 +262,6 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	/**
-	 * Creates the controls needed to edit the capture output attribute of an
-	 * external tool
-	 *
-	 * @param parent the composite to create the controls in
-	 */
-	protected void createCaptureOutputComponent(Composite parent) {
-		captureOutputButton = new Button(parent, SWT.CHECK);
-		captureOutputButton.setText("Capture &output");
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		data.horizontalSpan = 2;
-		captureOutputButton.setLayoutData(data);
-		captureOutputButton.setFont(parent.getFont());
-		captureOutputButton.addSelectionListener(getSelectionAdapter());
-	}
-	
-	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
@@ -294,7 +276,6 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		updateWorkingDirectory(configuration);
 		updateArgument(configuration);
 		updateRunBackground(configuration);
-		updateCaptureOutput(configuration);
 	}
 	
 	protected void updateWorkingDirectory(ILaunchConfiguration configuration) {
@@ -339,16 +320,6 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		}
 		runBackgroundButton.setSelection(runInBackgroud);
 	}
-	
-	protected void updateCaptureOutput(ILaunchConfiguration configuration) {
-		boolean captureOutput= true;
-		try {
-			captureOutput= configuration.getAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, true);
-		} catch (CoreException ce) {
-			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Error_reading_configuration_7"), ce); //$NON-NLS-1$
-		}
-		captureOutputButton.setSelection(captureOutput);
-	}
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
@@ -369,7 +340,6 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		}
 		
 		setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, configuration, runBackgroundButton.getSelection(), false);
-		setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, configuration, captureOutputButton.getSelection(), true);
 
 		String arguments= argumentField.getText().trim();
 		if (arguments.length() == 0) {

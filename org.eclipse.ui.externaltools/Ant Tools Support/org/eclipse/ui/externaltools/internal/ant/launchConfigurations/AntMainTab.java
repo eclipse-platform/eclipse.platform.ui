@@ -9,12 +9,86 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.ui.externaltools.internal.ui.FileSelectionDialog;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsLaunchConfigurationMessages;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.ToolUtil;
+import org.eclipse.ui.externaltools.internal.ui.FileSelectionDialog;
 
 public class AntMainTab extends ExternalToolsMainTab {
+
+	protected Button captureOutputButton;
+	
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void initializeFrom(ILaunchConfiguration configuration) {
+		super.initializeFrom(configuration);
+		updateCaptureOutput(configuration);
+	}
+	
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		super.performApply(configuration);
+		setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, configuration, captureOutputButton.getSelection(), true);
+	}
+
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		Composite mainComposite = new Composite(parent, SWT.NONE);
+		setControl(mainComposite);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		mainComposite.setLayout(layout);
+		mainComposite.setLayoutData(gridData);
+		mainComposite.setFont(parent.getFont());
+		createLocationComponent(mainComposite);
+		createWorkDirectoryComponent(mainComposite);
+		createArgumentComponent(mainComposite);
+		createVerticalSpacer(mainComposite, 2);
+		createRunBackgroundComponent(mainComposite);
+		createCaptureOutputComponent(mainComposite);
+	}
+	
+	/**
+	 * Creates the controls needed to edit the capture output attribute of an
+	 * external tool
+	 *
+	 * @param parent the composite to create the controls in
+	 */
+	protected void createCaptureOutputComponent(Composite parent) {
+		captureOutputButton = new Button(parent, SWT.CHECK);
+		captureOutputButton.setText("Capture &output");
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		data.horizontalSpan = 2;
+		captureOutputButton.setLayoutData(data);
+		captureOutputButton.setFont(parent.getFont());
+		captureOutputButton.addSelectionListener(getSelectionAdapter());
+	}
+	
+	protected void updateCaptureOutput(ILaunchConfiguration configuration) {
+		boolean captureOutput= true;
+		try {
+			captureOutput= configuration.getAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, true);
+		} catch (CoreException ce) {
+			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Error_reading_configuration_7"), ce); //$NON-NLS-1$
+		}
+		captureOutputButton.setSelection(captureOutput);
+	}
 
 	/**
 	 * Prompts the user for a workspace location within the workspace and sets

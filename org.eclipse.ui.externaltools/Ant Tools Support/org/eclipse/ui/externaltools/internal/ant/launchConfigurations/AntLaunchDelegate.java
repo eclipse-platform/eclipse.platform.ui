@@ -118,7 +118,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		
 		final AntRunner runner = new AntRunner();
 		runner.setBuildFileLocation(location.toOSString());
-		if (AntUtil.getCaptureOutput(configuration)) {
+		if (ExternalToolsUtil.getCaptureOutput(configuration)) {
 			runner.addBuildLogger(ANT_LOGGER_CLASS);
 		} else {
 			runner.addBuildLogger(NULL_LOGGER_CLASS);

@@ -113,6 +113,19 @@ public class ExternalToolsUtil {
 		// execution will not reach here
 		return null;
 	}
+	
+	/**
+	 * Returns a boolean specifying whether or not output should be captured for
+	 * the given configuration
+	 * 
+	 * @param configuration the configuration from which the value will be
+	 * extracted
+	 * @return boolean specifying whether or not output should be captured
+	 * @throws CoreException if unable to access the associated attribute
+	 */
+	public static boolean getCaptureOutput(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, true);
+	}
 
 	/**
 	 * Expands and returns the working directory attribute of the given launch
