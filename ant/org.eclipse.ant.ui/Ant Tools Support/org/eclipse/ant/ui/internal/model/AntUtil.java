@@ -140,7 +140,7 @@ public final class AntUtil {
 			String[] propertyFiles= AntUtil.parseString(attribute, ","); //$NON-NLS-1$
 			for (int i = 0; i < propertyFiles.length; i++) {
 				String propertyFile = propertyFiles[i];
-				propertyFile= expandVariableString(propertyFile, "Could not resolve property file entry", "Invalid property file entry: {0}");
+				propertyFile= expandVariableString(propertyFile, AntUIModelMessages.getString("AntUtil.5"), AntUIModelMessages.getString("AntUtil.6")); //$NON-NLS-1$ //$NON-NLS-2$
 				propertyFiles[i]= propertyFile;
 			}
 			return propertyFiles;
@@ -270,7 +270,7 @@ public final class AntUtil {
 		for (int i = 0; i < URLStrings.length; i++) {
 			String string = URLStrings[i];
 			if (expandVariables) {
-				string= expandVariableString(string, "Could not resolve classpath entry", "Invalid classpath entry: {0}");
+				string= expandVariableString(string, AntUIModelMessages.getString("AntUtil.7"), AntUIModelMessages.getString("AntUtil.8")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			try {
 				URLs.add(new URL("file:" + string)); //$NON-NLS-1$
