@@ -1149,7 +1149,6 @@ public class EditorManager {
 				this.name = title;
 		}
 		Editor() {
-			this.name = name;
 		}
 
 		public String getFactoryId() {

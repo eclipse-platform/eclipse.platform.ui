@@ -8,23 +8,51 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.ole.win32.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.ole.win32.OLE;
+import org.eclipse.swt.ole.win32.OleAutomation;
+import org.eclipse.swt.ole.win32.OleClientSite;
+import org.eclipse.swt.ole.win32.OleFrame;
+import org.eclipse.swt.ole.win32.Variant;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceColors;
+
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -273,7 +301,7 @@ public class OleEditor extends EditorPart {
 							clientSite.exec(OLE.OLECMDID_SAVE, OLE.OLECMDEXECOPT_PROMPTUSER, null, null);
 						if (result == OLE.S_OK) {
 							try {
-								resource.refreshLocal(resource.DEPTH_ZERO, monitor);
+								resource.refreshLocal(IResource.DEPTH_ZERO, monitor);
 							} catch (CoreException ex) {
 							}
 							return;
@@ -287,7 +315,7 @@ public class OleEditor extends EditorPart {
 				}
 				if (saveFile(source)) {
 					try {
-						resource.refreshLocal(resource.DEPTH_ZERO, monitor);
+						resource.refreshLocal(IResource.DEPTH_ZERO, monitor);
 					} catch (CoreException ex) {
 					}
 				} else
@@ -511,7 +539,7 @@ public class OleEditor extends EditorPart {
 				if(newPath == null)
 					return;
 					
-				if (dialog.getReturnCode() == dialog.OK) {
+				if (dialog.getReturnCode() == Dialog.OK) {
 					String projectName = newPath.segment(0);
 					newPath = newPath.removeFirstSegments(1);
 					IProject project = resource.getWorkspace().getRoot().getProject(projectName);
