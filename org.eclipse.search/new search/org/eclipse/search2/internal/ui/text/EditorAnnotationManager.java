@@ -11,8 +11,6 @@
 
 package org.eclipse.search2.internal.ui.text;
 
-import java.util.HashMap;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -27,21 +25,14 @@ import org.eclipse.search.ui.text.RemoveAllEvent;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class AnnotationManager implements ISearchResultListener, IPartListener {
+public class EditorAnnotationManager implements ISearchResultListener {
 	private AbstractTextSearchResult fResult;
 	private IEditorPart fEditor;
 	private Highlighter fHighlighter;
-	private IWorkbenchWindow fWindow;
-	private static HashMap fSearchResultMap;
-	private static AnnotationManager fgManager;
 	
 	public static final int HIGHLLIGHTER_ANY= 0;
 	public static final int HIGHLIGHTER_MARKER= 1;
@@ -49,42 +40,21 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 	public static final int HIGHLIGHTER_EDITOR_ACCESS= 3;
 	private static int fgHighlighterType= HIGHLLIGHTER_ANY;
 	
-	static {
-		fSearchResultMap= new HashMap();
-		fgManager= new AnnotationManager();
-		IWindowListener listener= new IWindowListener() {
-			public void windowActivated(IWorkbenchWindow window) {
-				switchedTo(window);
-			}
-
-			public void windowDeactivated(IWorkbenchWindow window) {
-				// ignore
-			}
-
-			public void windowClosed(IWorkbenchWindow window) {
-				fSearchResultMap.remove(window);
-			}
-
-			public void windowOpened(IWorkbenchWindow window) {
-				// ignore
-			}
-		};
-		PlatformUI.getWorkbench().addWindowListener(listener);
+	
+	public EditorAnnotationManager(IEditorPart editorPart) {
+		fEditor= editorPart;
+		fHighlighter= createHighlighter(editorPart);
 	}
 	
 	public static final void debugSetHighlighterType(int type) {
 		fgHighlighterType= type;
 	}
 
-	public static void searchResultActivated(IWorkbenchWindow window, AbstractTextSearchResult result) {
-		fSearchResultMap.put(window, result);
-		switchedTo(window);
-	}
 
-	public static void switchedTo(IWorkbenchWindow window) {
-		AbstractTextSearchResult result= (AbstractTextSearchResult) fSearchResultMap.get(window);
-		fgManager.setSearchResult(result);
-		fgManager.setWindow(window);
+	void dispose() {
+		removeAnnotations();
+		if (fResult != null)
+			fResult.removeListener(this);
 	}
 
 
@@ -127,16 +97,6 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 		}
 	}
 
-	public synchronized void partActivated(IWorkbenchPart part) {
-		
-		if (part instanceof IEditorPart && part != fEditor) {
-			if (fResult != null)
-				removeAnnotations();
-			fEditor= (IEditorPart) part;
-			fHighlighter= createHighlighter(fEditor);
-			addAnnotations();
-		}
-	}
 
 	private void removeAnnotations() {
 		if (fHighlighter != null)
@@ -184,7 +144,7 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 	}
 
 	private void addAnnotations() {
-		if (fEditor == null || fResult == null)
+		if (fResult == null)
 			return;
 		IEditorMatchAdapter matchAdapter= fResult.getEditorMatchAdapter();
 		if (matchAdapter == null)
@@ -193,37 +153,6 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 		if (matches == null)
 			return;
 		addAnnotations(matches);
-	}
-
-
-	public void partBroughtToTop(IWorkbenchPart part) {
-		partActivated(part);
-	}
-
-	public void partClosed(IWorkbenchPart part) {
-		if (part == fEditor) {
-			removeAnnotations();
-			fEditor= null;
-			fHighlighter= null;
-		}
-	}
-
-	public void setWindow(IWorkbenchWindow window) {
-		if (fWindow != null)
-			fWindow.getPartService().removePartListener(AnnotationManager.this);
-		fWindow= window;
-		fWindow.getPartService().addPartListener(this);
-		IEditorPart editor= window.getActivePage().getActiveEditor();
-		if (editor != null)
-			partActivated(editor);
-	}
-
-	public void partDeactivated(IWorkbenchPart part) {
-		//partClosed(part);
-	}
-
-	public void partOpened(IWorkbenchPart part) {
-		// ignore, will be handled by activate
 	}
 
 	private void addAnnotations(Match[] matches) {

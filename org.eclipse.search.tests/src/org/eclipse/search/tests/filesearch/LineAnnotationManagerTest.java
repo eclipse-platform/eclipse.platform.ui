@@ -31,7 +31,7 @@ import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
-import org.eclipse.search2.internal.ui.text.AnnotationManager;
+import org.eclipse.search2.internal.ui.text.EditorAnnotationManager;
 import org.eclipse.search2.internal.ui.text.PositionTracker;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.ide.IDE;
@@ -50,7 +50,7 @@ public class LineAnnotationManagerTest extends TestCase {
 	public static Test allTests() {
 		TestSuite suite= new TestSuite();
 		
-		suite.addTest(new JUnitSetup(new AnnotationManagerSetup(new TestSuite(LineAnnotationManagerTest.class), AnnotationManager.HIGHLIGHTER_ANNOTATION)));
+		suite.addTest(new JUnitSetup(new AnnotationManagerSetup(new TestSuite(LineAnnotationManagerTest.class), EditorAnnotationManager.HIGHLIGHTER_ANNOTATION)));
 		return suite;
 	}
 	

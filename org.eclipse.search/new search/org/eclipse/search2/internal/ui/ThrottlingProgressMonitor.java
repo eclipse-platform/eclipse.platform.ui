@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
 
 public class ThrottlingProgressMonitor extends ProgressMonitorWrapper {
-	private IProgressMonitor fWrappedMonitor;
 	private float fThrottleRatio;
 	private long fLastCalled;
 	private long fSubMilis;

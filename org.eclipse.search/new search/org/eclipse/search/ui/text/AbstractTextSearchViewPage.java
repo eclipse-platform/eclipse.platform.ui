@@ -72,7 +72,7 @@ import org.eclipse.search2.internal.ui.basic.views.ShowNextResultAction;
 import org.eclipse.search2.internal.ui.basic.views.ShowPreviousResultAction;
 import org.eclipse.search2.internal.ui.basic.views.TableViewerNavigator;
 import org.eclipse.search2.internal.ui.basic.views.TreeViewerNavigator;
-import org.eclipse.search2.internal.ui.text.AnnotationManager;
+import org.eclipse.search2.internal.ui.text.AnnotationManagers;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -700,7 +700,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		ISearchResult oldSearch = disconnectViewer();
 		if (oldSearch != null)
 			oldSearch.removeListener(fListener);
-		AnnotationManager.searchResultActivated(getSite().getWorkbenchWindow(), (AbstractTextSearchResult) search);
+		AnnotationManagers.searchResultActivated(getSite().getWorkbenchWindow(), (AbstractTextSearchResult) search);
 		fInput= search;
 		if (search != null) {
 			search.addListener(fListener);
@@ -999,6 +999,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		}
 		scheduleUIUpdate();
 	}
+	
+
+
 
 	private synchronized void runBatchedUpdates() {
 		if (false /*fBatchedUpdates.size() > 50*/) {

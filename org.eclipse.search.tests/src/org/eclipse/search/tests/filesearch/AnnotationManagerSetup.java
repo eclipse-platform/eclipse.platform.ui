@@ -6,10 +6,10 @@
  */
 package org.eclipse.search.tests.filesearch;
 
-import org.eclipse.search2.internal.ui.text.AnnotationManager;
-
 import junit.extensions.TestSetup;
 import junit.framework.Test;
+
+import org.eclipse.search2.internal.ui.text.EditorAnnotationManager;
 
 public class AnnotationManagerSetup extends TestSetup {
 	private int fHighlighterType;
@@ -21,11 +21,11 @@ public class AnnotationManagerSetup extends TestSetup {
 	
 	protected void setUp() throws Exception {
 		super.setUp();
-		AnnotationManager.debugSetHighlighterType(fHighlighterType);
+		EditorAnnotationManager.debugSetHighlighterType(fHighlighterType);
 	}
 
 	protected void tearDown() throws Exception {
-		AnnotationManager.debugSetHighlighterType(AnnotationManager.HIGHLLIGHTER_ANY);
+		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLLIGHTER_ANY);
 		super.tearDown();
 	}
 }

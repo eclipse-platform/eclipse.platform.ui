@@ -61,6 +61,7 @@ import org.eclipse.search.ui.ISearchResultViewPart;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPluginImages;
+import org.eclipse.search2.internal.ui.text.AnnotationManagers;
 
 public class SearchView extends PageBookView implements ISearchResultViewPart, IQueryListener {
 	private static final String MEMENTO_TYPE= "view"; //$NON-NLS-1$
@@ -318,6 +319,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	public void dispose() {
 		InternalSearchUI.getInstance().getSearchManager().removeQueryListener(this);
+		AnnotationManagers.searchResultActivated(getSite().getWorkbenchWindow(), null);
 		super.dispose();
 	}
 
