@@ -626,11 +626,11 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 		} catch (InvocationTargetException e) {
 			throw new ExecutionException(Policy.bind("CVSAction.errorTitle"), e); //$NON-NLS-1$
 		} catch (InterruptedException e) {
-			throw new ExecutionException(Policy.bind("CVSAction.errorTitle"), e); //$NON-NLS-1$
+			// Operation was cancelled. Ignore
 		} catch (TeamException e) {
 			throw new ExecutionException(Policy.bind("CVSAction.errorTitle"), e); //$NON-NLS-1$
 		}
-		return Boolean.TRUE;
+		return null;
 	}
 
 	/**
