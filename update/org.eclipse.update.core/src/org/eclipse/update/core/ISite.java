@@ -5,8 +5,7 @@ package org.eclipse.update.core;
  */
 import java.net.URL;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 
 /**
  * Site represents a location containing some number of features (packaged
@@ -20,7 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @see org.eclipse.update.core.Site
  * @since 2.0
  */
-public interface ISite {
+public interface ISite extends IAdaptable {
 
 	/**
 	 * Default type for an installed feature. Different concrete feature
@@ -59,7 +58,7 @@ public interface ISite {
 	 * registered together with their corresponding type using the
 	 * <code>org.eclipse.update.core.siteTypes</code> extension point.
 	 * 
-	 * @return site type
+	 * @return site type, or <code>null</code>.
 	 * @since 2.0 
 	 */
 	public String getType();
@@ -156,7 +155,7 @@ public interface ISite {
 	 * @since 2.0
 	 */
 	public int getPluginEntryCount();
-	
+
 	/**
 	 * Adds a new plug-in entry to this site.
 	 * 
