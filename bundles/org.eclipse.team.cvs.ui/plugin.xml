@@ -48,7 +48,7 @@
 	<extension point="org.eclipse.ui.propertyPages">
 		<page name="CVS" id="org.eclipse.team.ccvs.ui.propertyPages.CVSPropertiesPage"
 			objectClass="org.eclipse.core.resources.IProject"
-			class="org.eclipse.team.internal.ccvs.ui.CVSPropertiesPage">
+			class="org.eclipse.team.internal.ccvs.ui.CVSPropertiesPage" adaptable="true">
 			<filter name="nature" value="org.eclipse.team.cvs.core.cvsnature"/> 
 		</page>
 	</extension>
@@ -57,7 +57,7 @@
 	<extension point="org.eclipse.ui.popupMenus"> 
 		<objectContribution 
 			id="org.eclipse.team.ccvs.ui.ResourceContributions" 
-			objectClass="org.eclipse.core.resources.IResource"> 
+			objectClass="org.eclipse.core.resources.IResource" adaptable="true"> 
 			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
 			<action
 				id="org.eclipse.team.ccvs.ui.GenerateDiff"
@@ -146,27 +146,65 @@
 				class="org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction"/>
 		</objectContribution>
 		<objectContribution
+			id="org.eclipse.team.ccvs.ui.VersionCategoryContributions"
+			objectClass="org.eclipse.team.internal.ccvs.ui.model.RemoteModule">
+			<action
+				id="org.eclipse.team.ccvs.ui.defineVersion"
+				label="%DefineVersionAction.label"
+				tooltip="%DefineVersionAction.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.actions.DefineVersionAction"/>
+		</objectContribution>
+		<objectContribution
+			id="org.eclipse.team.ccvs.ui.ProjectVersionContributions"
+			objectClass="org.eclipse.team.internal.ccvs.ui.model.ProjectVersion">
+			<action
+				id="org.eclipse.team.ccvs.ui.defineVersion"
+				label="%DefineVersionAction.label"
+				tooltip="%DefineVersionAction.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.actions.DefineVersionAction"/>
+		</objectContribution>
+		<objectContribution
 			id="org.eclipse.team.ccvs.ui.RemoteRootContributions"
 			objectClass="org.eclipse.team.ccvs.core.ICVSRepositoryLocation">
-			<action
-				id="org.eclipse.team.ccvs.ui.defineTag"
-				label="%DefineTagAction.label"
-				tooltip="%DefineTagAction.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.actions.DefineTagAction"/>
 			<action
 				id="org.eclipse.team.ccvs.ui.removeRoot"
 				label="%RemoveRootAction.label"
 				tooltip="%RemoveRootAction.tooltip"
 				class="org.eclipse.team.internal.ccvs.ui.actions.RemoveRootAction"/>
+			<action
+				id="org.eclipse.team.ccvs.ui.defineBranch"
+				label="%DefineBranchAction.label"
+				icon="icons/full/clcl16/newstream_wiz.gif"
+				tooltip="%DefineBranchAction.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.actions.DefineBranchAction"/>
 		</objectContribution>
 		<objectContribution
-			id="org.eclipse.team.ccvs.ui.TagContributions"
-			objectClass="org.eclipse.team.internal.ccvs.ui.model.Tag">
+			id="org.eclipse.team.ccvs.ui.BranchCategoryContributions"
+			objectClass="org.eclipse.team.internal.ccvs.ui.model.BranchCategory">
+			<action
+				id="org.eclipse.team.ccvs.ui.defineBranch"
+				label="%DefineBranchAction.label"
+				tooltip="%DefineBranchAction.tooltip"
+				icon="icons/full/clcl16/newstream_wiz.gif"
+				class="org.eclipse.team.internal.ccvs.ui.actions.DefineBranchAction"/>
+		</objectContribution>			
+		<objectContribution
+			id="org.eclipse.team.ccvs.ui.ModuleVersionContributions"
+			objectClass="org.eclipse.team.internal.ccvs.ui.model.ModuleVersion">
 			<action
 				id="org.eclipse.team.ccvs.ui.removeTag"
-				label="%RemoveTagAction.label"
-				tooltip="%RemoveTagAction.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.actions.RemoveTagAction"/>
+				label="%RemoveModuleVersionAction.label"
+				tooltip="%RemoveModuleVersionAction.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.actions.RemoveModuleVersionAction"/>
+		</objectContribution>
+		<objectContribution
+			id="org.eclipse.team.ccvs.ui.BranchTagContributions"
+			objectClass="org.eclipse.team.internal.ccvs.ui.model.BranchTag">
+			<action
+				id="org.eclipse.team.ccvs.ui.removeBranchTag"
+				label="%RemoveBranchTagAction.label"
+				tooltip="%RemoveBranchTagAction.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.actions.RemoveBranchTagAction"/>
 		</objectContribution>
 	</extension> 
 
