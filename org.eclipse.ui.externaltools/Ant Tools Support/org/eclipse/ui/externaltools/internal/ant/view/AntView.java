@@ -75,7 +75,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  * A view which displays a hierarchical view of ant build files and allows the
  * user to run selected targets from those files.
  */
-public class AntView extends ViewPart {
+public class AntView extends ViewPart implements IResourceChangeListener {
 	/**
 	 * The root node of the project viewer as restored during initialization
 	 */
@@ -158,44 +158,38 @@ public class AntView extends ViewPart {
 	 * Map of build files (IFile) to project nodes (ProjectNode)
 	 */
 	private Map buildFilesToProjects = new HashMap();
-	private IResourceChangeListener resourceListener = new IResourceChangeListener() {
-		public void resourceChanged(IResourceChangeEvent event) {
-			IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
-				/**
-				 * Returns whether children should be visited
-				 */
-				public boolean visit(IResourceDelta delta) throws CoreException {
-					if (delta == null || (0 == (delta.getKind() & IResourceDelta.CHANGED) && 0 == (delta.getKind() & IResourceDelta.REMOVED))) {
-						return false;
-					}
-					IResource resource = delta.getResource();
-					if (resource.getType() == IResource.FILE) {
-						if ("xml".equalsIgnoreCase(((IFile) resource).getFileExtension())) { //$NON-NLS-1$
-							if ((delta.getKind() & IResourceDelta.CHANGED) != 0 && delta.getFlags() == IResourceDelta.CONTENT) {
-								handleXMLFileChanged((IFile) resource);
-							} else if ((delta.getKind() & IResourceDelta.REMOVED) != 0) {
-								handleXMLFileRemoved((IFile) resource);
-							}
-						}
-						return false;
-					} else if (resource.getType() == IResource.PROJECT) {
-						if ((delta.getFlags() & IResourceDelta.OPEN) != 0) {
-							IProject project= resource.getProject();
-							if (!project.isOpen()) {
-								handleProjectClosed(project);
-								return false;
-							}
-						}
-					}
-					return true;
-				}
-			};
-			try {
-				event.getDelta().accept(visitor);
-			} catch (CoreException e) {
+	private IResourceDeltaVisitor visitor= null;
+	
+	class AntViewVisitor implements IResourceDeltaVisitor {
+		/**
+		 * Returns whether children should be visited
+		 */
+		public boolean visit(IResourceDelta delta) throws CoreException {
+			if (delta == null || (0 == (delta.getKind() & IResourceDelta.CHANGED) && 0 == (delta.getKind() & IResourceDelta.REMOVED))) {
+				return false;
 			}
+			IResource resource = delta.getResource();
+			if (resource.getType() == IResource.FILE) {
+				if ("xml".equalsIgnoreCase(((IFile) resource).getFileExtension())) { //$NON-NLS-1$
+					if ((delta.getKind() & IResourceDelta.CHANGED) != 0 && delta.getFlags() == IResourceDelta.CONTENT) {
+						handleXMLFileChanged((IFile) resource);
+					} else if ((delta.getKind() & IResourceDelta.REMOVED) != 0) {
+						handleXMLFileRemoved((IFile) resource);
+					}
+				}
+				return false;
+			} else if (resource.getType() == IResource.PROJECT) {
+				if ((delta.getFlags() & IResourceDelta.OPEN) != 0) {
+					IProject project= resource.getProject();
+					if (!project.isOpen()) {
+						handleProjectClosed(project);
+						return false;
+					}
+				}
+			}
+			return true;
 		}
-	};
+	}
 
 	/**
 	 * The given XML file has changed. If it is present in the view, refresh the
@@ -293,7 +287,6 @@ public class AntView extends ViewPart {
 		createProjectViewer();
 		createTargetViewer();
 		createToolbarActions();
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener, IResourceChangeEvent.POST_CHANGE);
 	}
 
 	/**
@@ -505,6 +498,7 @@ public class AntView extends ViewPart {
 		projectContentProvider.addProject(project);
 		buildFilesToProjects.put(project.getBuildFileName(), project);
 		projectViewer.refresh();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 
 	/**
@@ -545,6 +539,9 @@ public class AntView extends ViewPart {
 		removeProjectFromContentProviders(project);
 		projectViewer.refresh();
 		targetViewer.refresh();
+		if (!projectContentProvider.getRootNode().hasProjects()) {
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		}
 	}
 
 	/**
@@ -599,6 +596,7 @@ public class AntView extends ViewPart {
 		// Refresh the viewers
 		projectViewer.refresh();
 		targetViewer.refresh();
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 
 	/**
@@ -682,6 +680,7 @@ public class AntView extends ViewPart {
 			buildFilesToProjects.put(project.getBuildFileName(), project);
 		}
 		restoredRoot = new RootNode((ProjectNode[]) projectNodes.toArray(new ProjectNode[projectNodes.size()]));
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 
 	/**
@@ -746,7 +745,19 @@ public class AntView extends ViewPart {
 	 */
 	public void dispose() {
 		super.dispose();
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 
+	public void resourceChanged(IResourceChangeEvent event) {
+		IResourceDelta delta= event.getDelta();
+		if (delta != null) {
+			if (visitor == null) {
+				visitor= new AntViewVisitor();
+			}			
+			try {
+				delta.accept(visitor);
+			} catch (CoreException e) {
+			}
+		}
+	}
 }

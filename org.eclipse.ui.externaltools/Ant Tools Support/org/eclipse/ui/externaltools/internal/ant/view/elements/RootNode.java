@@ -42,6 +42,15 @@ public class RootNode extends AntNode {
 	}
 	
 	/**
+	 * Returns whether this root node contains any projects
+	 * 
+	 * @return boolean Whether there are any projects
+	 */
+	public boolean hasProjects() {
+		return !projects.isEmpty();
+	}
+	
+	/**
 	 * Adds the given project to this root node
 	 * 
 	 * @param project the project to add
