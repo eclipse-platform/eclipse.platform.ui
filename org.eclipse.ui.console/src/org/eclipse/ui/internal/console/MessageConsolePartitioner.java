@@ -335,7 +335,7 @@ public class MessageConsolePartitioner implements IDocumentPartitioner, IDocumen
 						final StreamEntry streamEntry = (StreamEntry)streamEntries.get(0);
 						streamEntries.remove(0);
 						 
-						Runnable r = new Runnable() {
+						Runnable innerRunnable = new Runnable() {
 							public void run() {
 								fLastStream = streamEntry.stream;
 								try {
@@ -347,7 +347,7 @@ public class MessageConsolePartitioner implements IDocumentPartitioner, IDocumen
 						};
 						Display display = ConsolePlugin.getStandardDisplay();
 						if (display != null) {
-							display.asyncExec(r);
+							display.asyncExec(innerRunnable);
 						}
 						
 						try {
