@@ -194,6 +194,7 @@ public class NewUpdatesWizard extends Wizard {
 					1,
 					SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
 			executeOneJob(job, subMonitor);
+			monitor.worked(1);
 			InstallWizard.saveLocalSite();
 			installCount++;
 		}

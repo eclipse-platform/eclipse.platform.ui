@@ -205,7 +205,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 				selectAll(true);
 			}
 		});
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		button.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(button);
 
@@ -216,7 +216,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 				selectAll(false);
 			}
 		});
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		button.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(button);
 

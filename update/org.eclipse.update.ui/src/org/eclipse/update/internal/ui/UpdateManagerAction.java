@@ -25,18 +25,46 @@ public class UpdateManagerAction implements IWorkbenchWindowActionDelegate {
 	 * Insert the method's description here.
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
-	public void run(IAction action)  {
-		IWorkbenchPage page = UpdateUIPlugin.getActiveWorkbenchWindow().getActivePage();
-		if (page == null || 
-		   page.getPerspective().
-		         getId().equals(UpdatePerspective.PERSPECTIVE_ID))
+	public void run(IAction action) {
+		IWorkbenchWindow currentWindow =
+			UpdateUIPlugin.getActiveWorkbenchWindow();
+		IWorkbenchPage currentPage = currentWindow.getActivePage();
+
+		if (currentPage != null
+			&& currentPage.getPerspective().getId().equals(
+				UpdatePerspective.PERSPECTIVE_ID)) {
+			ensureCriticalViewsVisible(currentPage);
 			return;
-		IWorkbenchWindow window = page.getWorkbenchWindow();
+		}
+		IWorkbenchWindow window =
+			currentPage != null
+				? currentPage.getWorkbenchWindow()
+				: currentWindow;
 
 		try {
 			//IAdaptable input = UpdateUIPlugin.getWorkspace();
-			window.getWorkbench().showPerspective(UpdatePerspective.PERSPECTIVE_ID, window);
+			IWorkbenchPage updatePage =
+				window.getWorkbench().showPerspective(
+					UpdatePerspective.PERSPECTIVE_ID,
+					window);
+			ensureCriticalViewsVisible(updatePage);
 		} catch (WorkbenchException e) {
+			UpdateUIPlugin.logException(e, true);
+		}
+	}
+
+	private void ensureCriticalViewsVisible(IWorkbenchPage page) {
+		ensureViewVisible(page, UpdatePerspective.ID_CONFIGURATION);
+		ensureViewVisible(page, UpdatePerspective.ID_UPDATES);
+		ensureViewVisible(page, UpdatePerspective.ID_DETAILS);
+	}
+
+	private void ensureViewVisible(IWorkbenchPage page, String viewId) {
+		try {
+			if (page.findView(viewId) == null) {
+				page.showView(viewId);
+			}
+		} catch (PartInitException e) {
 			UpdateUIPlugin.logException(e, true);
 		}
 	}
@@ -45,20 +73,20 @@ public class UpdateManagerAction implements IWorkbenchWindowActionDelegate {
 	 * Insert the method's description here.
 	 * @see IWorkbenchWindowActionDelegate#selectionChanged
 	 */
-	public void selectionChanged(IAction arg0, ISelection arg1)  {
+	public void selectionChanged(IAction arg0, ISelection arg1) {
 	}
 
 	/**
 	 * Insert the method's description here.
 	 * @see IWorkbenchWindowActionDelegate#dispose
 	 */
-	public void dispose()  {
+	public void dispose() {
 	}
 
 	/**
 	 * Insert the method's description here.
 	 * @see IWorkbenchWindowActionDelegate#init
 	 */
-	public void init(IWorkbenchWindow arg0)  {
+	public void init(IWorkbenchWindow arg0) {
 	}
 }
