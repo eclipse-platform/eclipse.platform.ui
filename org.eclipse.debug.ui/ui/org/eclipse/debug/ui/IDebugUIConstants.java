@@ -269,8 +269,11 @@ public interface IDebugUIConstants {
 	/** Terminated thread image identifier. */
 	public static final String IMG_OBJS_THREAD_TERMINATED= "IMG_OBJS_THREAD_TERMINATED"; //$NON-NLS-1$
 	
-	/** Stack frame image identifier. */
+	/** Stack frame (suspended) image identifier. */
 	public static final String IMG_OBJS_STACKFRAME= "IMG_OBJS_STACKFRAME"; //$NON-NLS-1$
+	
+	/** Stack frame (running) image identifier. */
+	public static final String IMG_OBJS_STACKFRAME_RUNNING= "IMG_OBJS_STACKFRAME_RUNNING"; //$NON-NLS-1$
 	
 	/** Enabled breakpoint image identifier. */
 	public static final String IMG_OBJS_BREAKPOINT= "IMG_OBJS_BREAKPOINT"; //$NON-NLS-1$

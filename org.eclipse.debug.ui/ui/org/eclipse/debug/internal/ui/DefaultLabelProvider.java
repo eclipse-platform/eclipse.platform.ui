@@ -53,7 +53,12 @@ public class DefaultLabelProvider implements ILabelProvider {
 			}
 		} else
 			if (element instanceof IStackFrame) {
-				return IDebugUIConstants.IMG_OBJS_STACKFRAME;
+				IThread thread = ((IStackFrame)element).getThread();
+				if (thread.isSuspended()) {
+					return IDebugUIConstants.IMG_OBJS_STACKFRAME;
+				} else {
+					return IDebugUIConstants.IMG_OBJS_STACKFRAME_RUNNING;					
+				}
 			} else
 				if (element instanceof IProcess) {
 					if (((IProcess) element).isTerminated()) {

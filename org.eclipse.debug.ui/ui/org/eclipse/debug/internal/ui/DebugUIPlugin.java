@@ -404,7 +404,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 						fSwitchContext.setPageCreated(false);
 						LaunchesView view= fSwitchContext.getDebuggerView();
 						if (view != null) {
-							view.autoExpand(event.getSource(), true);
+							view.autoExpand(event.getSource(), true, true);
 						}
 					}
 				}
@@ -464,7 +464,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 		if (fSwitchContext.wasPageCreated()) {
 			LaunchesView view2= fSwitchContext.getDebuggerView();
 			if (view2 != null) {
-				view2.autoExpand(source, true);
+				view2.autoExpand(source, true, true);
 			}
 		}
 	}

@@ -456,7 +456,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 	 * Auto-expand and select the given element - must be called in UI thread.
 	 * This is used to implement auto-expansion-and-select on a SUSPEND event.
 	 */
-	public void autoExpand(Object element, boolean refreshNeeded) {
+	public void autoExpand(Object element, boolean refreshNeeded, boolean selectNeeded) {
 		Object selectee = element;
 		Object[] children= null;
 		if (element instanceof IThread) {
@@ -485,7 +485,9 @@ public class DebugView extends LaunchesView implements IPartListener {
 			//set selection only works if the child exists
 			getViewer().refresh(element);
 		}
-		getViewer().setSelection(new StructuredSelection(selectee), true);
+		if (selectNeeded) {
+			getViewer().setSelection(new StructuredSelection(selectee), true);
+		}
 		if (children != null && children.length > 0) {
 			//reveal the thread children of a debug target
 			getViewer().reveal(children[0]);

@@ -5,6 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
+import java.util.HashMap;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -29,6 +30,11 @@ import org.eclipse.jface.viewers.StructuredSelection;
  * Provides the contents for a debug mode of the Launches viewer.
  */
 public class DebugContentProvider extends BasicContentProvider implements IDebugEventListener, ILaunchListener, ITreeContentProvider {
+	
+	/**
+	 * Stack frame counts keyed by thread.  Used to optimize thread refreshing.
+	 */
+	private HashMap fStackFrameCountByThread = new HashMap(5);
 	
 	public DebugContentProvider() {
 		DebugPlugin plugin= DebugPlugin.getDefault();
@@ -109,6 +115,7 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 			case DebugEvent.TERMINATE :
 				if (element instanceof IThread) {
 					clearSourceSelection((IThread)element);
+					fStackFrameCountByThread.remove(element);
 					remove(element);
 				} else {
 					clearSourceSelection(null);
@@ -129,13 +136,13 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 				break;
 		}
 	}
-
+		
 	protected void doHandleResumeEvent(DebugEvent event, Object element) {
 		if (element instanceof ISuspendResume) {
 			if (((ISuspendResume)element).isSuspended()) {
 				return;
 			}
-		}
+		}		
 		clearSourceSelection(null);
 		if (event.getDetail() != DebugEvent.STEP_START) {
 			refresh(element);
@@ -143,20 +150,90 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 				//select and reveal will update buttons
 				//via selection changed callback
 				selectAndReveal(element);
+				resetStackFrameCount((IThread)element);
 				return;
+			}
+		} else {
+			IThread thread = null;
+			if (element instanceof IThread) {
+				thread = (IThread) element;
+			} else if (element instanceof IStackFrame) {
+				thread = ((IStackFrame)element).getThread();
+			}
+			if (thread != null) {								
+				((LaunchesViewer)fViewer).updateStackFrameIcons(thread);
+				resetStackFrameCount(thread);
 			}
 		}
 		labelChanged(element);
 		updateButtons();
 	}
 	
+	protected void resetStackFrameCount(IThread thread) {
+		fStackFrameCountByThread.put(thread, new Integer(0));
+	}
+
 	protected void doHandleSuspendEvent(Object element) {
 		if (element instanceof IThread) {
-			((LaunchesViewer)fViewer).autoExpand(element, true);
+			doHandleSuspendThreadEvent((IThread)element);
 		}
 		updateButtons();
 	}
 	
+	// This method exists to provide some optimization for refreshing suspended
+	// threads.  If the number of stack frames has changed from the last suspend, 
+	// we do a full refresh on the thread.  Otherwise, we only do a surface-level
+	// refresh on the thread, then refresh each of the children, which eliminates
+	// flicker when do quick stepping (e.g., holding down the F6 key) within a method.
+	protected void doHandleSuspendThreadEvent(IThread thread) {
+		// Get the current stack frames from the thread
+		IStackFrame[] stackFrames = null;
+		try {
+			stackFrames = thread.getStackFrames();
+		} catch (DebugException de) {
+		}
+		
+		// Retrieve the old and current counts of stack frames for this thread
+		int currentStackFrameCount = stackFrames.length;
+		int oldStackFrameCount = 0;
+		Integer oldStackFrameCountObject = (Integer)fStackFrameCountByThread.get(thread);
+		if (oldStackFrameCountObject != null) {
+			oldStackFrameCount = oldStackFrameCountObject.intValue();
+		}
+		
+		// Compare old & current stack frame counts.  We need to refresh the thread
+		// parent if there are fewer stack frame children
+		boolean refreshNeeded = true;
+		if (currentStackFrameCount == oldStackFrameCount) {
+			refreshNeeded = false;
+		}
+		
+		// Auto-expand the thread.  If we are also refreshing the thread,
+		// then we don't need to worry about any children, since refreshing
+		// the parent handles this
+		((LaunchesViewer)fViewer).autoExpand(thread, refreshNeeded, refreshNeeded);
+		if (refreshNeeded) {
+			return;
+		} else {
+			labelChanged(thread);
+		}
+		
+		// Auto-expand each stack frame child.  This has the effect of adding 
+		// any new stack frames, and updating any existing stack frames
+		if ((stackFrames != null) && (currentStackFrameCount > 0)) {
+			for (int i = currentStackFrameCount - 1; i > 0; i--) {
+				((LaunchesViewer)fViewer).autoExpand(stackFrames[i], true, false);				
+			}
+			// Treat the first stack frame differently, since we want to select it
+			((LaunchesViewer)fViewer).autoExpand(stackFrames[0], true, true);				
+		}	
+		
+		// Update the stack frame count for the thread
+		oldStackFrameCountObject = new Integer(currentStackFrameCount);
+		fStackFrameCountByThread.put(thread, oldStackFrameCountObject);
+	}
+	
+		
 	/**
 	 * Helper method for inserting the given element - must be called in UI thread
 	 */
@@ -240,7 +317,7 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 							IThread[] threads= target.getThreads();
 							for (int i=0; i < threads.length; i++) {
 								if (threads[i].isSuspended()) {
-									((LaunchesViewer)fViewer).autoExpand(threads[i], false);
+									((LaunchesViewer)fViewer).autoExpand(threads[i], false, true);
 									return;
 								}
 							}						
@@ -248,7 +325,7 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 							DebugUIPlugin.logError(de);
 						}
 						
-						((LaunchesViewer)fViewer).autoExpand(target.getLaunch(), false);
+						((LaunchesViewer)fViewer).autoExpand(target.getLaunch(), false, true);
 					}
 					updateButtons();
 				}
@@ -266,7 +343,7 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 			public void run() {
 				if (!isDisposed() && launch.getLaunchMode().equals(ILaunchManager.DEBUG_MODE)) {
 					insert(launch);
-					((LaunchesViewer)fViewer).autoExpand(launch, false);
+					((LaunchesViewer)fViewer).autoExpand(launch, false, true);
 				}
 			}
 		};
