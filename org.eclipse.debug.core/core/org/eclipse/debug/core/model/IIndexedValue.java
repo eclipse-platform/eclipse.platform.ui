@@ -1,0 +1,47 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.debug.core.model;
+
+import org.eclipse.debug.core.DebugException;
+
+/**
+ * A value containing an indexed collection of variables - for example,
+ * an array.
+ * <p>
+ * The indexed collection value has been added to the debug model to support
+ * automatic partitioning of large arrays in the debug UI. Clients are not required
+ * to implement this interface for values representing indexed collections,
+ * however, doing so will provide enhanced display options in the debug UI.
+ * </p>
+ * @since 3.0
+ */
+public interface IIndexedValue extends IValue {
+	
+	/**
+	 * Returns the variable at the given offset in this collection.
+	 * The offset is zero based.
+	 * @param offset zero based offset into this collection  
+	 * @return returns the variable in this collection at the given
+	 *  offset
+	 * @throws DebugException if unable to retrieve the variable at the
+	 * given offset
+	 */
+	public IVariable getVariable(int offset) throws DebugException;
+
+	/**
+	 * Returns the number of entries in this indexed collection.
+	 * 
+	 * @return the number of entries in this indexed collection
+	 * @throws DebugException if unable to determine the number
+	 * of entries in this collection
+	 */
+	public int getSize() throws DebugException;
+}

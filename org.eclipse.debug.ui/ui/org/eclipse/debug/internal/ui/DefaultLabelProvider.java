@@ -32,6 +32,7 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.core.model.IWatchExpression;
+import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -150,6 +151,8 @@ public class DefaultLabelProvider implements ILabelProvider {
 			if (element instanceof IDebugElement) {
 				if (element instanceof IStackFrame) {
 					label.append(((IStackFrame)element).getName());
+				} else if (element instanceof IndexedVariablePartition) {
+					label.append(getPartitionText((IndexedVariablePartition)element));
 				} else if (element instanceof IVariable) {
 					label.append(getVariableText((IVariable)element));
 				} else if (element instanceof IThread) {
@@ -285,6 +288,16 @@ public class DefaultLabelProvider implements ILabelProvider {
 		}
 		return buffer.toString();
 	}
+	
+	protected String getPartitionText(IndexedVariablePartition variable) {
+		StringBuffer buffer= new StringBuffer();
+		try {
+			buffer.append(variable.getName());
+		} catch (DebugException de) {
+			DebugUIPlugin.log(de);
+		}
+		return buffer.toString();
+	}	
 	
 	protected String getMarkerText(IMarker marker) {
 		try {

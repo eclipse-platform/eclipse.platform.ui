@@ -18,13 +18,13 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IIndexedValue;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.debug.ui.IDebugView;
-import org.eclipse.debug.ui.IObjectBrowser;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -81,7 +81,9 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 			if (parent instanceof IStackFrame) {
 				children = ((IStackFrame)parent).getVariables();
 			} else if (parent instanceof IVariable) {
-				children = getModelSpecificVariableChildren((IVariable)parent);
+				IVariable variable = (IVariable)parent;
+				IValue value = variable.getValue();
+				children = getModelSpecificChildren(variable, value);
 			}
 			if (children != null) {
 				cache(parent, children);
@@ -97,15 +99,55 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 		return new Object[0];
 	}
 	
-	protected IVariable[] getModelSpecificVariableChildren(IVariable parent) throws DebugException {
-		IObjectBrowser objectBrowser = getObjectBrowser(getDebugModelId(parent));
-		IValue value = parent.getValue();
+	protected IVariable[] getModelSpecificChildren(IDebugElement parent, IValue value) throws DebugException {
 		if (value== null) {
 			return new IVariable[0];
 		}
-		return objectBrowser.getChildren(value);
+		if (value instanceof IndexedValuePartition) {
+			return value.getVariables();
+		} else {
+			return getValueChildren(parent, value);
+		}
 	}
 	
+	/**
+	 * Returns children for the given value, creating array paritions if required
+	 * 
+	 * @param parent expression or variable containing the given value
+	 * @param value the value to retrieve children for
+	 * @return children for the given value, creating array paritions if required
+	 * @throws DebugException
+	 */
+	protected IVariable[] getValueChildren(IDebugElement parent, IValue value) throws DebugException {
+		if (value instanceof IIndexedValue) {
+			IIndexedValue indexedValue = (IIndexedValue)value;
+			int valueLength = indexedValue.getSize();
+			int partitionLength = getArrayPartitionSize();
+			if (valueLength > partitionLength) {
+				int numPartitions = valueLength / partitionLength;
+				if ((valueLength % partitionLength) > 0) {
+					numPartitions++;
+				}
+				IVariable[] partitions = new IVariable[numPartitions];
+				int partition = 0;
+				// partition
+				int offset = 0;
+				while (offset < valueLength) {
+					int partitionSize = partitionLength;
+					if ((valueLength - offset) < partitionLength) {
+						partitionSize = valueLength - offset;
+					}
+					partitions[partition] = new IndexedVariablePartition(parent, indexedValue, offset, partitionSize);
+					partition++;
+					offset+=partitionLength;
+				}
+				return partitions;
+			}
+		}
+		IObjectBrowser objectBrowser = getObjectBrowser(getDebugModelId(parent));
+		return objectBrowser.getChildren(value);
+	}
+
 	/**
 	 * Caches the given elememts as children of the given
 	 * parent.
@@ -166,6 +208,9 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	public boolean hasChildren(Object element) {
 		try {
 			if (element instanceof IVariable) {
+				if (element instanceof IndexedVariablePartition) {
+					return true;
+				}
 				return hasModelSpecificVariableChildren((IVariable)element);
 			}
 			if (element instanceof IValue) {
@@ -282,6 +327,17 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 
 	protected IDebugView getDebugView() {
 		return fDebugView;
+	}
+	
+	/**
+	 * Returns the number of entries that should be displayed in each
+	 * partition of an indexed collection.
+	 * 
+	 * @return the number of entries that should be displayed in each
+	 * partition of an indexed collection
+	 */
+	protected int getArrayPartitionSize() {
+		return ((VariablesView)getDebugView()).getArrayPartitionSize();
 	}
 	
 }

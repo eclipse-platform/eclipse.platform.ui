@@ -19,9 +19,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.DefaultObjectBrowser;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IObjectBrowser;
 
 /**
  * This class returns an instance of <code>IObjectBrowser</code>

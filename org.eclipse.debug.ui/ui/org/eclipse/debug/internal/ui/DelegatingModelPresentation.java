@@ -28,6 +28,7 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -175,12 +176,14 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 * @see IDebugModelPresentation#getText(Object)
 	 */
 	public String getText(Object item) {
-		// Attempt to delegate
-		IDebugModelPresentation lp= getConfiguredPresentation(item);
-		if (lp != null) {
-			String label= lp.getText(item);
-			if (label != null) {
-				return label;
+		if (!(item instanceof IndexedVariablePartition)) {
+			// Attempt to delegate
+			IDebugModelPresentation lp= getConfiguredPresentation(item);
+			if (lp != null) {
+				String label= lp.getText(item);
+				if (label != null) {
+					return label;
+				}
 			}
 		}
 		// If no delegate returned a text label, use the default

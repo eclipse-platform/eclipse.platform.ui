@@ -21,7 +21,6 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewContentProvider;
 import org.eclipse.debug.ui.IDebugView;
-import org.eclipse.debug.ui.IObjectBrowser;
  
 /**
  * Provides contents for the expression view
@@ -49,10 +48,14 @@ public class ExpressionViewContentProvider extends VariablesViewContentProvider 
 					}
 				}
 				if (children == null) {
-					children = getModelSpecificExpressionChildren((IExpression)parent);
+					IExpression expression = (IExpression)parent;
+					IValue value = expression.getValue();
+					children = getModelSpecificChildren(expression, value);
 				}
 			} else if (parent instanceof IVariable) {
-				children = getModelSpecificVariableChildren((IVariable)parent);
+				IVariable variable  = (IVariable)parent;
+				IValue value = variable.getValue();
+				children = getModelSpecificChildren(variable, value);
 			}
 			if (children != null) {
 				cache(parent, children);
@@ -62,15 +65,6 @@ public class ExpressionViewContentProvider extends VariablesViewContentProvider 
 			DebugUIPlugin.log(de);
 		}
 		return new Object[0];
-	}
-	
-	protected IVariable[] getModelSpecificExpressionChildren(IExpression parent) throws DebugException {
-		IObjectBrowser contentProvider = getObjectBrowser(getDebugModelId(parent));
-		IValue value = parent.getValue();
-		if (value == null) {
-			return new IVariable[0];	
-		}
-		return contentProvider.getChildren(value);
 	}
 	
 	/**

@@ -8,21 +8,23 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui;
+package org.eclipse.debug.internal.ui.views.variables;
 
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
 /**
- * This interface is still experimental.
+ * Experimental: Provides logical content for a value, rather than all content.
  * 
  * @since 3.0
  */
-public interface IObjectBrowser {
+public interface IValueContentProvider {
 
-	public IVariable[] getChildren(IValue value) throws DebugException;
-	
-	public boolean hasChildren(IValue value) throws DebugException;
-	
+	/**
+	 * Returns a logical set of variables contained in the given value.
+	 * 
+	 * @param value
+	 * @return
+	 */
+	public IVariable[] getVariables(IValue value);
 }

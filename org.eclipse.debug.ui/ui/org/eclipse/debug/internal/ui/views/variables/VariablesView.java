@@ -924,6 +924,10 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			if (!selection.isEmpty()) {
 				IValue val = null;
 				Object obj = selection.getFirstElement();
+				if (obj instanceof IndexedVariablePartition) {
+					// no details for parititions
+					return;
+				}
 				if (obj instanceof IVariable) {
 					val = ((IVariable)obj).getValue();
 				} else if (obj instanceof IExpression) {
@@ -1292,4 +1296,15 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		((VariablesViewContentProvider)getStructuredViewer().getContentProvider()).setUseContentProviders(flag);
 	}	
 
+	/**
+	 * Returns the number of entries that should be displayed in each
+	 * partition of an indexed collection.
+	 * 
+	 * @return the number of entries that should be displayed in each
+	 * partition of an indexed collection
+	 */
+	protected int getArrayPartitionSize() {
+		// TODO: this should be a view setting
+		return 100;
+	}
 }
