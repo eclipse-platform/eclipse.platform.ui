@@ -32,12 +32,13 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
  * </p>
  * 
  * @since 3.0
+ * @issue consider prohibiting subclassing and make class final
  */
 public class WorkbenchResourceContentProvider extends WorkbenchContentProvider implements IResourceChangeListener {
 	private Viewer viewer;
 
 	/**
-	 * Creates the resource content provider
+	 * Creates the resource content provider.
 	 */
 	public WorkbenchResourceContentProvider() {
 		super();
