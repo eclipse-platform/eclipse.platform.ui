@@ -186,22 +186,26 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 	
 	public boolean performOk() {
 		if (comboConfiguration != null && comboConfiguration.isEnabled()) {
-			String configurationName = comboConfiguration.getItem(comboConfiguration.getSelectionIndex());
+			int i = comboConfiguration.getSelectionIndex();
 			
-			if (configurationName != null) {				
-				Configuration configuration = (Configuration) nameToConfigurationMap.get(configurationName);
+			if (i >= 0 && i < comboConfiguration.getItemCount()) {			
+				String configurationName = comboConfiguration.getItem(i);
 				
-				if (configuration != null) {
-					configurationId = configuration.getLabel().getId();
-					saveConfiguration(configurationId);					
-
-					keyManager.setPreferenceBindingSet(preferenceBindingSet);
-					keyManager.savePreference();					
-					keyManager.update();
-
-					if (workbench instanceof Workbench) {
-						Workbench workbench = (Workbench) this.workbench;
-						workbench.setActiveAcceleratorConfiguration(configuration);
+				if (configurationName != null) {				
+					Configuration configuration = (Configuration) nameToConfigurationMap.get(configurationName);
+					
+					if (configuration != null) {
+						configurationId = configuration.getLabel().getId();
+						saveConfiguration(configurationId);					
+	
+						keyManager.setPreferenceBindingSet(preferenceBindingSet);
+						keyManager.savePreference();					
+						keyManager.update();
+	
+						if (workbench instanceof Workbench) {
+							Workbench workbench = (Workbench) this.workbench;
+							workbench.setActiveAcceleratorConfiguration(configuration);
+						}
 					}
 				}
 			}
