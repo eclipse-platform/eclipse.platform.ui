@@ -32,7 +32,7 @@ public class AntRunner implements IPlatformRunnable, IAntCoreConstants {
 	protected Map userProperties;
 	protected int messageOutputLevel = 2; // Project.MSG_INFO
 	protected String buildLoggerClassName;
-	protected String arguments;
+	protected String[] arguments;
 
 /** 
  * Constructs an instance of this class.
@@ -84,6 +84,52 @@ public void setMessageOutputLevel(int level) {
  * @param arguments the arguments to be passed to the script
  */
 public void setArguments(String arguments) {
+	this.arguments = getArray(arguments);
+}
+
+/**
+ * Helper method to ensure an array is converted into an ArrayList.
+ */
+private String[] getArray(String args) {
+	StringBuffer sb = new StringBuffer();
+	boolean waitingForQuote = false;
+	ArrayList result = new ArrayList();
+	for (StringTokenizer tokens = new StringTokenizer(args, ", \"", true); tokens.hasMoreTokens();) { //$NON-NLS-1$
+		String token = tokens.nextToken();
+		if (waitingForQuote) {
+			if (token.equals("\"")) { //$NON-NLS-1$
+				result.add(sb.toString());
+				sb.setLength(0);
+				waitingForQuote = false;
+			} else
+				sb.append(token);
+		} else {
+			if (token.equals("\"")) { //$NON-NLS-1$
+				// test if we have something like -Dproperty="value"
+				if (result.size() > 0) {
+					int index = result.size() - 1;
+					String last = (String) result.get(index);
+					if (last.charAt(last.length()-1) == '=') {
+						result.remove(index);
+						sb.append(last);
+					}
+				}
+				waitingForQuote = true;
+			} else {
+				if (!(token.equals(",") || token.equals(" "))) //$NON-NLS-1$ //$NON-NLS-2$
+					result.add(token);
+			}
+		}
+	}
+	return (String[]) result.toArray(new String[result.size()]);
+}
+
+/**
+ * Sets the arguments to be passed to the script (e.g. -Dos=win32 -Dws=win32 -verbose).
+ * 
+ * @param arguments the arguments to be passed to the script
+ */
+public void setArguments(String[] arguments) {
 	this.arguments = arguments;
 }
 
@@ -226,7 +272,7 @@ public void run(IProgressMonitor monitor) throws CoreException {
 		}
 		// set extra arguments
 		if (arguments != null) {
-			Method setArguments = classInternalAntRunner.getMethod("setArguments", new Class[] {String.class}); //$NON-NLS-1$
+			Method setArguments = classInternalAntRunner.getMethod("setArguments", new Class[] {String[].class}); //$NON-NLS-1$
 			setArguments.invoke(runner, new Object[] {arguments});
 		}
 		// run
