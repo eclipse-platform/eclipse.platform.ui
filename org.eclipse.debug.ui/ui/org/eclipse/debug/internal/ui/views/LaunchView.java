@@ -708,13 +708,13 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	} 
 
 	/**
-	 * Returns whether this view is in the ative page of
-	 * the active perspective.
+	 * Returns whether this view is in the active page of
+	 * the active perspective and has been fully created.
 	 * 
-	 * @return whether this view is in the ative page of
-	 * the active perspective
+	 * @return whether this view is in the active page of
+	 * the active perspective and has been fully created.
 	 */
 	protected boolean isActive() {
-		return fIsActive;
+		return fIsActive && getViewer() != null;
 	}
 }
