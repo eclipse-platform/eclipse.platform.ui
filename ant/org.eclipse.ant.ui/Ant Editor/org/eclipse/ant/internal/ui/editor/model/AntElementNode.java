@@ -60,6 +60,11 @@ public class AntElementNode {
      * The parent node.
      */
     protected AntElementNode parent;
+    
+    /**
+     * The import node that "imported" this element
+     */
+    private AntElementNode importNode;
 
     /**
      * The child nodes.
@@ -436,7 +441,20 @@ public class AntElementNode {
 
 	protected void appendEntityName(StringBuffer displayName) {
 		String path= getFilePath();
-		String entityName= getAntModel().getEntityName(path);
-		displayName.append(MessageFormat.format(AntModelMessages.getString("AntElementNode.9"), new String[]{entityName})); //$NON-NLS-1$
+		
+		if (getImportNode() != null) {
+			displayName.append(MessageFormat.format(AntModelMessages.getString("AntElementNode.10"), new String[]{getImportNode().getLabel()})); //$NON-NLS-1$
+		} else {
+			String entityName= getAntModel().getEntityName(path);
+			displayName.append(MessageFormat.format(AntModelMessages.getString("AntElementNode.9"), new String[]{entityName})); //$NON-NLS-1$
+		}
+	}
+	
+	public AntElementNode getImportNode() {
+		return importNode;
+	}
+	
+	public void setImportNode(AntElementNode importNode) {
+		this.importNode = importNode;
 	}
 }

@@ -317,6 +317,9 @@ public class AntEditor extends TextEditor {
     
     private void setSelection(AntElementNode reference, boolean moveCursor) {
         if (reference != null) {
+        	while (reference.getImportNode() != null) {
+        		reference= reference.getImportNode();
+        	}
         	if (reference.isExternal()) {
         		return;
         	}
