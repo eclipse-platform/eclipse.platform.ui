@@ -25,7 +25,7 @@ public class SimpleBrowserAdapter implements IBrowser {
 	 */
 	public void displayURL(String url) throws Exception {
 		if (System.getProperty("os.name").startsWith("Win")) {
-			Runtime.getRuntime().exec("start "+url);
+			Runtime.getRuntime().exec("cmd /c start "+url);
 		}
 	}
 	/*
