@@ -137,7 +137,7 @@ protected void fixMovesAndMarkers(ElementTree oldTree) {
 		switch (kind) {
 			case CHANGED :
 			case ADDED :
-				IPath oldPath = (IPath) nodeIDMap.getOldPath(newInfo.getNodeId());
+				IPath oldPath = nodeIDMap.getOldPath(newInfo.getNodeId());
 				if (oldPath != null && !oldPath.equals(path)) {
 					//get the old info from the old tree
 					ResourceInfo actualOldInfo = (ResourceInfo) oldTree.getElementData(oldPath);
@@ -154,7 +154,7 @@ protected void fixMovesAndMarkers(ElementTree oldTree) {
 		switch (kind) {
 			case REMOVED :
 			case CHANGED :
-				IPath newPath = (IPath) nodeIDMap.getNewPath(oldInfo.getNodeId());
+				IPath newPath = nodeIDMap.getNewPath(oldInfo.getNodeId());
 				if (newPath != null && !newPath.equals(path)) {
 					status |= MOVED_TO;
 					//our API states that MOVED_TO must be in conjunction with REMOVED | (CHANGED + REPLACED)

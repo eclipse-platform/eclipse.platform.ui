@@ -178,7 +178,7 @@ public void deleteChild (IPath parentKey, String localName) {
  * @see AbstractDataTree#empty
  */
 public void empty() {
-	this.setRootNode (new DataTreeNode((String)null, null));
+	this.setRootNode (new DataTreeNode(null, null));
 }
 /**
  * Returns the specified node if it is present, otherwise returns null.

@@ -52,7 +52,7 @@ public CopyVisitor(IResource rootSource, IResource destination, int updateFlags,
 	this.force = (updateFlags & IResource.FORCE) != 0;
 	this.monitor = monitor;
 	this.segmentsToDrop = rootSource.getFullPath().segmentCount();
-	this.status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INFO, Policy.bind("localstore.copyProblem"), null); //$NON-NLS-1$
+	this.status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.INFO, Policy.bind("localstore.copyProblem"), null); //$NON-NLS-1$
 }
 protected boolean copy(UnifiedTreeNode node) {
 	Resource source = (Resource) node.getResource();

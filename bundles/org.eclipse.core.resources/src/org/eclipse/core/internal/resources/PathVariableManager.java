@@ -12,6 +12,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.*;
+
 import org.eclipse.core.internal.events.PathVariableChangeEvent;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
@@ -122,10 +123,10 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 			return;
 
 		// use a separate collection to avoid interference of simultaneous additions/removals 
-		Object[] listeners = this.listeners.toArray();
+		Object[] listenerArray = this.listeners.toArray();
 		PathVariableChangeEvent pve = new PathVariableChangeEvent(this, name, value, type);
-		for (int i = 0; i < listeners.length; ++i) {
-			IPathVariableChangeListener l = (IPathVariableChangeListener) listeners[i];
+		for (int i = 0; i < listenerArray.length; ++i) {
+			IPathVariableChangeListener l = (IPathVariableChangeListener) listenerArray[i];
 			l.pathVariableChanged(pve);
 		}
 	}

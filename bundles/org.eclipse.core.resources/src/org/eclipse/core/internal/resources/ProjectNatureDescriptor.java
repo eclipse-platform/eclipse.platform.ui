@@ -123,7 +123,7 @@ protected void readExtension(IExtension natureExtension) throws CoreException {
 		}
 	}
 	requiredNatures = (String[])requiredList.toArray(new String[requiredList.size()]);
-	natureSets = (String[])setList.toArray(new String[setList.size()]);;	
+	natureSets = (String[])setList.toArray(new String[setList.size()]);
 	builderIds = (String[]) builderList.toArray(new String[builderList.size()]);
 }
 /**

@@ -442,7 +442,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			parser.setEntityResolver(this);
 			parser.setErrorHandler(this);
 			try {
-				((SAXParser) parser).setFeature("http://xml.org/sax/features/string-interning", true); //$NON-NLS-1$
+				parser.setFeature("http://xml.org/sax/features/string-interning", true); //$NON-NLS-1$
 			} catch (SAXException e) {
 				// In case support for this feature is removed
 			}

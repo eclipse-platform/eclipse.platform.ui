@@ -30,7 +30,7 @@ public PropertyManager(Workspace workspace) {
 }
 public void closePropertyStore(IResource target) throws CoreException {
 	Resource host = (Resource) getPropertyHost(target);
-	ResourceInfo info = (ResourceInfo) host.getResourceInfo(false, false);
+	ResourceInfo info = host.getResourceInfo(false, false);
 	if (info == null)
 		return;
 	PropertyStore store = info.getPropertyStore();
@@ -131,7 +131,7 @@ protected ResourceName getPropertyKey(IResource target) {
 protected PropertyStore getPropertyStore(IResource target) throws CoreException {
 	try {
 		Resource host = (Resource) getPropertyHost(target);
-		ResourceInfo info = (ResourceInfo) host.getResourceInfo(false, false);
+		ResourceInfo info = host.getResourceInfo(false, false);
 		if (info == null) {
 			String message = Policy.bind("properties.storeNotAvailable", target.getFullPath().toString()); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);

@@ -110,7 +110,7 @@ protected void addState(IPath path, UniversalUniqueIdentifier uuid, long lastMod
 		public byte getCount() {
 			return count;
 		}
-	};
+	}
 
 	// Build partial key for which matches will be found.
 	byte[] keyPrefix = HistoryStoreEntry.keyPrefixToBytes(path, lastModified);

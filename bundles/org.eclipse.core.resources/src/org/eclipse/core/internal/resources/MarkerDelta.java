@@ -178,7 +178,7 @@ protected static MarkerSet merge(MarkerSet oldChanges, IMarkerDelta[] newChanges
 					case IResourceDelta.REMOVED :
 						// change + remove = remove
 						// Change the delta kind.
-						 ((MarkerDelta) oldDelta).setKind(IResourceDelta.REMOVED);
+						 oldDelta.setKind(IResourceDelta.REMOVED);
 						break;
 					case IResourceDelta.CHANGED :
 						// change + change = change

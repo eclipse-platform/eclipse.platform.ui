@@ -216,7 +216,7 @@ public ElementTreeDelta computeDeltaWith(ElementTree olderTree, IElementComparat
 		throw new IllegalArgumentException(Policy.bind("watson.nullArg", "ElementTree.computeDeltaWith")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
-	return new ElementTreeDelta((ElementTree) olderTree, this, comparator);
+	return new ElementTreeDelta(olderTree, this, comparator);
 }
 /**
  * Computes a delta between this element tree and the given one,

@@ -524,7 +524,7 @@ protected IStatus validateAdditions(HashSet newNatures, HashSet additions, IProj
 				return failure(Policy.bind("links.vetoNature", project.getName(), id));//$NON-NLS-1$
 		}
 	}
-	return ResourceStatus.OK_STATUS;
+	return Status.OK_STATUS;
 }
 /**
  * Validates whether a project with the given set of natures should allow
@@ -542,7 +542,7 @@ public IStatus validateLinkCreation(String[] natureIds) {
 			return new ResourceStatus(IResourceStatus.LINKING_NOT_ALLOWED, msg);
 		}
 	}
-	return ResourceStatus.OK_STATUS;
+	return Status.OK_STATUS;
 }
 /**
  * Validates the given nature removals in the nature set for this
@@ -567,7 +567,7 @@ protected IStatus validateRemovals(HashSet newNatures, HashSet deletions) {
 			}
 		}		
 	}
-	return ResourceStatus.OK_STATUS;
+	return Status.OK_STATUS;
 }
 /**
  * @see IWorkspace#validateNatureSet
@@ -575,7 +575,7 @@ protected IStatus validateRemovals(HashSet newNatures, HashSet deletions) {
 public IStatus validateNatureSet(String[] natureIds) {
 	int count = natureIds.length;
 	if (count == 0)
-		return ResourceStatus.OK_STATUS;
+		return Status.OK_STATUS;
 	String msg = Policy.bind("natures.invalidSet"); //$NON-NLS-1$
 	MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_NATURE_SET, msg, null);
 		
@@ -612,6 +612,6 @@ public IStatus validateNatureSet(String[] natureIds) {
 				result.add(failure(Policy.bind("natures.missingPrerequisite", natureIds[i], required[j]))); //$NON-NLS-1$
 	}
 	//if there are no problems we must return a status whose code is OK
-	return result.isOK() ? ResourceStatus.OK_STATUS : (IStatus)result;
+	return result.isOK() ? Status.OK_STATUS : (IStatus)result;
 }
 }

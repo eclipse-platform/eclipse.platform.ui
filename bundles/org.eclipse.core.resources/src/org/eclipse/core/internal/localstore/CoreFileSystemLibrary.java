@@ -15,8 +15,8 @@ import java.io.File;
 import org.eclipse.core.internal.resources.ResourceStatus;
 import org.eclipse.core.internal.utils.Convert;
 import org.eclipse.core.internal.utils.Policy;
-import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IStatus;
 
 public abstract class CoreFileSystemLibrary {
 
@@ -91,7 +91,7 @@ public abstract class CoreFileSystemLibrary {
 	private static void logMissingNativeLibrary(UnsatisfiedLinkError e) {
 		String libName = System.mapLibraryName(LIBRARY_NAME);
 	String message = Policy.bind("localstore.couldNotLoadLibrary", libName); //$NON-NLS-1$
-	ResourceStatus status = new ResourceStatus(IResourceStatus.INFO, null, message, null);
+	ResourceStatus status = new ResourceStatus(IStatus.INFO, null, message, null);
 	ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 	

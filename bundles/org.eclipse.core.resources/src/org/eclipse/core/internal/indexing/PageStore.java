@@ -401,7 +401,7 @@ public class PageStore implements Observer {
 		new Buffer(buffer).clear();
 		long fileLength = getFileLength();
 		if (fileOffset >= fileLength) return true;
-		int bytesToRead = (int)Math.min((long)buffer.length, (fileLength - fileOffset));
+		int bytesToRead = (int)Math.min(buffer.length, (fileLength - fileOffset));
 		try {
 			file.seek(fileOffset); 
 			file.readFully(buffer, 0, bytesToRead);
@@ -435,7 +435,7 @@ public class PageStore implements Observer {
 	protected void clearFileToOffset(long fileOffset) {
 		long fileLength = getFileLength();
 		while (fileLength < fileOffset) {
-			int m = (int)Math.min((long)ZEROES.length, (fileOffset - fileLength));
+			int m = (int)Math.min(ZEROES.length, (fileOffset - fileLength));
 			writeBuffer(fileLength, ZEROES, 0, m);
 			fileLength += m;
 		}

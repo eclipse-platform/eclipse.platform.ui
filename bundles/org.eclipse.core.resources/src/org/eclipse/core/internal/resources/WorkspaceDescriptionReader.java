@@ -45,7 +45,7 @@ protected String[] getStrings(Node target) {
 	for (int i = 0; i < list.getLength(); i++) {
 		Node node = list.item(i);
 		if (node.getNodeType() == Node.ELEMENT_NODE)
-			result.add((String) read(node.getChildNodes().item(0)));
+			result.add(read(node.getChildNodes().item(0)));
 	}
 	return (String[]) result.toArray(new String[result.size()]);
 }

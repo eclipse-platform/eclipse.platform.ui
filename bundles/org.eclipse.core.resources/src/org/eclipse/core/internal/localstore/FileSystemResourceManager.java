@@ -324,7 +324,7 @@ public void link(Resource target, IPath localLocation) {
 	//a relative path means location is relative to an undefined variable
 	if (localLocation.isAbsolute())
 		lastModified = CoreFileSystemLibrary.getLastModified(localLocation.toFile().getAbsolutePath());
-	ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
+	ResourceInfo info = target.getResourceInfo(false, true);
 	updateLocalSync(info, lastModified);
 }
 

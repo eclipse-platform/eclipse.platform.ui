@@ -31,7 +31,7 @@ public class CollectSyncStatusVisitor extends RefreshLocalVisitor {
  */
 public CollectSyncStatusVisitor(String multiStatusTitle, IProgressMonitor monitor) {
 	super(monitor);
-	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INFO, multiStatusTitle, null);
+	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.INFO, multiStatusTitle, null);
 	affectedResources = new ArrayList(20);
 }
 protected void changed(Resource target) {

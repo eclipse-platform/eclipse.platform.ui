@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.resources.team;
 
-import org.eclipse.core.internal.resources.ResourceStatus;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
 
 /**
  * A general hook class for operations that team providers may be 
@@ -66,7 +64,7 @@ protected TeamHook() {
  * @see org.eclipse.core.resources.IResource#ALLOW_MISSING_LOCAL
  */
 public IStatus validateCreateLink(IFile file, int updateFlags, IPath location) {
-	return ResourceStatus.OK_STATUS;
+	return Status.OK_STATUS;
 }
 /**
  * Validates whether a particular attempt at link creation is allowed.  This gives
@@ -96,6 +94,6 @@ public IStatus validateCreateLink(IFile file, int updateFlags, IPath location) {
  * @see org.eclipse.core.resources.IResource#ALLOW_MISSING_LOCAL
  */
 public IStatus validateCreateLink(IFolder folder, int updateFlags, IPath location) {
-	return ResourceStatus.OK_STATUS;
+	return Status.OK_STATUS;
 }
 }

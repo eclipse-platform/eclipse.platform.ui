@@ -204,7 +204,7 @@ public IStatus checkCopyRequirements(IPath destination, int destinationType, int
 	checkAccessible(flags);
 	checkLocal(flags, DEPTH_INFINITE);
 
-	Resource dest = (Resource) workspace.newResource(destination, destinationType);
+	Resource dest = workspace.newResource(destination, destinationType);
 	dest.checkDoesNotExist();
 
 	// ensure we aren't trying to copy a file to a project
@@ -253,7 +253,7 @@ public IStatus checkCopyRequirements(IPath destination, int destinationType, int
 		}
 	}
 
-	return status.isOK() ? ResourceStatus.OK_STATUS : (IStatus) status;
+	return status.isOK() ? Status.OK_STATUS : (IStatus) status;
 }
 /**
  * Helper method that considers case insensitive file systems.
@@ -346,7 +346,7 @@ protected IStatus checkMoveRequirements(IPath destination, int destinationType, 
 	checkAccessible(flags);
 	checkLocal(flags, DEPTH_INFINITE);
 
-	Resource dest = (Resource) workspace.newResource(destination, destinationType);
+	Resource dest = workspace.newResource(destination, destinationType);
 	
 	// check if we are only changing case
 	IResource variant = CoreFileSystemLibrary.isCaseSensitive() ? null : findExistingResourceVariant(destination);
@@ -399,7 +399,7 @@ protected IStatus checkMoveRequirements(IPath destination, int destinationType, 
 		}
 	}
 
-	return status.isOK() ? ResourceStatus.OK_STATUS : (IStatus) status;
+	return status.isOK() ? Status.OK_STATUS : (IStatus) status;
 }
 /**
  * Checks that the supplied path is valid according to Workspace.validatePath().

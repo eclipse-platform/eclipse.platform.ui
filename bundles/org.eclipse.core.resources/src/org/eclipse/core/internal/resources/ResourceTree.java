@@ -276,7 +276,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 		destination.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 	} catch (CoreException e) {
 		String message = Policy.bind("resources.errorRefresh", destination.getFullPath().toString()); //$NON-NLS-1$
-		IStatus status = new ResourceStatus(IResourceStatus.ERROR, destination.getFullPath(), message, e);
+		IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message, e);
 		failed(status);
 		return false;
 	}
@@ -866,7 +866,7 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 		boolean force = (updateFlags & IResource.FORCE) != 0;
 		if (!force && !isSynchronized(source, IResource.DEPTH_INFINITE)) {
 			message = Policy.bind("localstore.resourceIsOutOfSync", source.getFullPath().toString());//$NON-NLS-1$
-			IStatus status = new ResourceStatus(IResourceStatus.ERROR, source.getFullPath(), message);
+			IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message);
 			failed(status);
 			return;
 		}

@@ -108,23 +108,23 @@ public class EventStats {
 
 			int notifyCount = stats.getNotifyCount();
 			if (notifyCount > 0)
-				out.println(Policy.bind("utils.notifications", Integer.toString(notifyCount), Integer.toString((int) ((float) notifyCount * 100.0 / (float) totalNotifications)))); //$NON-NLS-1$
+				out.println(Policy.bind("utils.notifications", Integer.toString(notifyCount), Integer.toString((int) ( notifyCount * 100.0 /  totalNotifications)))); //$NON-NLS-1$
 
 			long notifyTime = stats.getNotifyRunningTime();
 			if (notifyTime > 0)
-				out.println(Policy.bind("utils.notifyTime", Long.toString(notifyTime), Integer.toString((int) ((float) notifyTime * 100.0 / (float) totalNotifyTime)))); //$NON-NLS-1$
+				out.println(Policy.bind("utils.notifyTime", Long.toString(notifyTime), Integer.toString((int) ( notifyTime * 100.0 /  totalNotifyTime)))); //$NON-NLS-1$
 
 			int buildCount = stats.getBuildCount();
 			if (buildCount > 0)
-				out.println(Policy.bind("utils.builds", Integer.toString(buildCount), Integer.toString((int) ((float) buildCount * 100.0 / (float) totalBuilds)))); //$NON-NLS-1$
+				out.println(Policy.bind("utils.builds", Integer.toString(buildCount), Integer.toString((int) ( buildCount * 100.0 /  totalBuilds)))); //$NON-NLS-1$
 
 			long buildTime = stats.getBuildRunningTime();
 			if (buildTime > 0)
-				out.println(Policy.bind("utils.buildTime", Long.toString(buildTime), Integer.toString((int) ((float) buildTime * 100.0 / (float) totalBuildTime)))); //$NON-NLS-1$
+				out.println(Policy.bind("utils.buildTime", Long.toString(buildTime), Integer.toString((int) ( buildTime * 100.0 /  totalBuildTime)))); //$NON-NLS-1$
 
 			int exceptions = stats.getExceptionCount();
 			if (exceptions > 0)
-				out.println(Policy.bind("utils.exceptions", Integer.toString(exceptions), Integer.toString((int) ((float) exceptions * 100.0 / (float) totalExceptions)))); //$NON-NLS-1$
+				out.println(Policy.bind("utils.exceptions", Integer.toString(exceptions), Integer.toString((int) ( exceptions * 100.0 /  totalExceptions)))); //$NON-NLS-1$
 
 			out.println(""); //$NON-NLS-1$
 		}
