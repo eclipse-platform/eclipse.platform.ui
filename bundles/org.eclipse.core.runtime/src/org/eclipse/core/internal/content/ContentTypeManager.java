@@ -99,10 +99,6 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 		return new ContentTypeBuilder(newCatalog);
 	}
 
-	public Object[] findRelatedObjects(IContentType type, String fileName, IRelatedRegistry registry) {
-		return getCatalog().findRelatedObjects(type, fileName, registry);
-	}
-
 	public IContentType[] getAllContentTypes() {
 		return getCatalog().getAllContentTypes();
 	}

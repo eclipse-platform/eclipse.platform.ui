@@ -17,7 +17,6 @@ import org.eclipse.core.internal.content.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
-import org.eclipse.core.runtime.content.IContentTypeManager.IRelatedRegistry;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.harness.TestRegistryChangeListener;
@@ -1100,69 +1099,6 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		assertNotNull("9.2", subFooBar);
 		assertTrue("9.3", contains(fooBarTypes, fooBar));
 		assertTrue("9.4", contains(fooBarTypes, subFooBar));
-	}
-
-	public void testRelatedRegistry() {
-		IContentTypeManager manager = Platform.getContentTypeManager();
-		IContentType text = manager.getContentType(Platform.PI_RUNTIME + ".text");
-		IContentType xml = manager.getContentType(Platform.PI_RUNTIME + ".xml");
-		String textEditor = "Text editor";
-		String xmlEditor = "XML editor";
-		String legacyTextEditor = "Legacy Text editor";
-		String legacyXmlEditor = "Legacy XML editor";
-		final Object[][] contentTypeAssociations = { {text, textEditor}, {xml, xmlEditor}};
-		final Object[][] legacyAssociations = { {"legacy.txt", legacyTextEditor}, {"legacy.xml", legacyXmlEditor}};
-
-		IRelatedRegistry registry = new IRelatedRegistry() {
-			public Object[] getRelatedObjects(IContentType type) {
-				List result = new ArrayList();
-				for (int i = 0; i < contentTypeAssociations.length; i++)
-					if (contentTypeAssociations[i][0].equals(type))
-						result.add(contentTypeAssociations[i][1]);
-				return result.toArray();
-			}
-
-			public Object[] getRelatedObjects(String fileName) {
-				List result = new ArrayList();
-				for (int i = 0; i < contentTypeAssociations.length; i++)
-					if (legacyAssociations[i][0].equals(fileName))
-						result.add(legacyAssociations[i][1]);
-				return result.toArray();
-			}
-		};
-
-		Object[] editors;
-		editors = manager.findRelatedObjects(xml, null, registry);
-		assertEquals("1.0", 2, editors.length);
-		assertEquals("1.1", editors[0], xmlEditor);
-		assertEquals("1.1", editors[1], textEditor);
-
-		editors = manager.findRelatedObjects(text, null, registry);
-		assertEquals("2.0", 1, editors.length);
-		assertEquals("2.1", editors[0], textEditor);
-
-		editors = manager.findRelatedObjects(xml, "legacy.txt", registry);
-		assertEquals("3.0", 3, editors.length);
-		assertEquals("3.1", editors[0], xmlEditor);
-		assertEquals("3.2", editors[1], legacyTextEditor);
-		assertEquals("3.3", editors[2], textEditor);
-
-		editors = manager.findRelatedObjects(text, "legacy.xml", registry);
-		assertEquals("4.0", 2, editors.length);
-		assertEquals("4.1", editors[0], textEditor);
-		assertEquals("4.2", editors[1], legacyXmlEditor);
-
-		editors = manager.findRelatedObjects(xml, "legacy.xml", registry);
-		assertEquals("5.0", 3, editors.length);
-		assertEquals("5.1", editors[0], xmlEditor);
-		assertEquals("5.2", editors[1], legacyXmlEditor);
-		assertEquals("5.3", editors[2], textEditor);
-
-		editors = manager.findRelatedObjects(text, "legacy.txt", registry);
-		assertEquals("6.0", 2, editors.length);
-		assertEquals("6.1", editors[0], textEditor);
-		assertEquals("6.2", editors[1], legacyTextEditor);
-
 	}
 
 	public void testRootElementAndDTDDescriber() throws IOException {
