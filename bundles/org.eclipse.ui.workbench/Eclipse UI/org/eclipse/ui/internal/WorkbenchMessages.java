@@ -842,6 +842,23 @@ public class WorkbenchMessages extends NLS {
 	public static String PartSite_needsWidgetsError;
 	public static String PartFactory_wrongtype;
 
+	//==============================================================
+	// Heap Status
+
+	public static String HeapStatus_status;
+	public static String HeapStatus_Error;
+	public static String HeapStatus_widthStr;
+	public static String HeapStatus_memoryToolTip;
+	public static String HeapStatus_memoryToolTipWithSnapshot;
+	public static String HeapStatus_buttonToolTip;
+	public static String SnapshotAction_text;
+	public static String ClearSnapshotAction_text;
+	public static String ShowKyrsoftViewAction_text;
+	public static String ShowKyrsoftViewAction_KyrsoftNotInstalled;
+	public static String ShowKyrsoftViewAction_OpenPerspectiveFirst;
+	public static String ShowKyrsoftViewAction_ErrorShowingKyrsoftView;
+	
+	
     static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, WorkbenchMessages.class);

@@ -24,6 +24,8 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.PerformanceStats;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.action.CoolBarManager;
@@ -143,6 +145,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
     private TrimLayout defaultLayout;
 
     ProgressRegion progressRegion;
+
+	private HeapStatus heapStatus;
+
 
 	private boolean emptyWindowContentsCreated = false;
 
@@ -876,6 +881,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
         createProgressIndicator(shell);
 
+		if (getShowHeapStatus()) {
+			createHeapStatus(shell);
+		}
         trimDropTarget = new TrimDropTarget(shell, this);
         DragUtil.addDragTarget(shell, trimDropTarget);
 
@@ -885,6 +893,27 @@ public class WorkbenchWindow extends ApplicationWindow implements
         setLayoutDataForContents();
     }
 
+	/**
+	 * Returns whether the heap status indicator should be shown.
+	 * 
+	 * @return <code>true</code> to show the heap status indicator, <code>false</code> otherwise
+	 */
+	private boolean getShowHeapStatus() {
+		return PerformanceStats.ENABLED
+				&& Boolean.valueOf(
+						Platform.getDebugOption(PlatformUI.PLUGIN_ID
+								+ "/perf/showHeapStatus")).booleanValue(); //$NON-NLS-1$
+	}
+
+	/**
+	 * Creates the controls for the heap status indicator.
+	 * 
+	 * @param parent the parent composite
+	 */
+	private void createHeapStatus(Composite parent) {
+		heapStatus = new HeapStatus(parent, PrefUtil.getInternalPreferenceStore());
+	}
+	
     /**
      * Set the perspective bar location
      * 
@@ -2763,6 +2792,28 @@ public class WorkbenchWindow extends ApplicationWindow implements
             getStatusLineManager().getControl().setVisible(false);
         }
 
+		if (getShowHeapStatus()) {
+			if (heapStatus != null) {
+	            if (heapStatus.getLayoutData() == null) {
+	                TrimLayoutData animationData = new TrimLayoutData(false,
+							heapStatus.computeSize(SWT.DEFAULT,
+	                                SWT.DEFAULT).x, getStatusLineManager()
+	                                .getControl().computeSize(SWT.DEFAULT,
+	                                        SWT.DEFAULT).y);
+					heapStatus.setLayoutData(animationData);
+	            }
+
+	            defaultLayout.addTrim(heapStatus, SWT.BOTTOM, null);
+				heapStatus.setVisible(true);
+			}
+		}
+		else {
+			if (heapStatus != null) {
+	            defaultLayout.removeTrim(heapStatus);
+				heapStatus.setVisible(false);
+			}
+		}
+		
         if (getWindowConfigurer().getShowProgressIndicator()) {
             if (progressRegion.getControl().getLayoutData() == null) {
                 TrimLayoutData animationData = new TrimLayoutData(false,

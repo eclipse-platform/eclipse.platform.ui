@@ -92,6 +92,9 @@ public class WorkbenchPreferenceInitializer extends
 		//Temporary option to turn off the dialog font
 		node.putBoolean("DISABLE_DIALOG_FONT", false); //$NON-NLS-1$
 
+		// Heap status preferences
+		node.putInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL, 500);
+		
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()
 				.node(InstanceScope.SCOPE);
