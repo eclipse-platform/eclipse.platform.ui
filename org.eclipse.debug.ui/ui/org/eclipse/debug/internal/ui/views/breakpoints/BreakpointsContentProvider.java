@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -60,7 +62,6 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
      * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
      */
     public Object getParent(Object element) {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -125,11 +126,11 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
             fViewer.getControl().setRedraw(false);
             // maintain expandsion based on visible breakpoints
             IBreakpoint[] breakpoints = null;
-            if (fOrganizers != null) {
+            if (isShowingGroups()) {
                 breakpoints = ((BreakpointsViewer)fViewer).getVisibleBreakpoints();
             }
             reorganize();
-            if (breakpoints != null) {
+            if (isShowingGroups()) {
                 // restore expansion
                 for (int i = 0; i < fElements.length; i++) {
                     BreakpointContainer container = (BreakpointContainer) fElements[i];
@@ -144,6 +145,27 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
             }
             fViewer.getControl().setRedraw(true);
         }
+    }
+    
+    /**
+     * Returns the root containers containing the given breakpoint, or <code>null</code>
+     * if none
+     * 
+     * @param breakpoint
+     * @return root containers containing the given breakpoint or <code>null</code>
+     */
+    public BreakpointContainer[] getRoots(IBreakpoint breakpoint) {
+        if (isShowingGroups()) {
+            List list = new ArrayList();
+            for (int i = 0; i < fElements.length; i++) {
+                BreakpointContainer container = (BreakpointContainer) fElements[i];
+                if (container.contains(breakpoint)) {
+                    list.add(container);
+                }
+            }
+            return (BreakpointContainer[]) list.toArray(new BreakpointContainer[list.size()]);
+        }
+        return null;
     }
     
     /**

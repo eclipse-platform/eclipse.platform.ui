@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
@@ -67,14 +68,25 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 					if (fView.isAvailable()) {
 						CheckboxTreeViewer viewer = fView.getCheckboxViewer();
                         viewer.getControl().setRedraw(false);
-                        ((BreakpointsContentProvider)viewer.getContentProvider()).reorganize();
+                        BreakpointsContentProvider provider = (BreakpointsContentProvider)viewer.getContentProvider();
+                        provider.reorganize();
                         fView.initializeCheckedState();
 						// This code is left in as a test case for platform bug 77075
 						//for (int i = 0; i < breakpoints.length; i++) { 
 							//viewer.expandToLevel(breakpoints[i], AbstractTreeViewer.ALL_LEVELS);
 						//}
-						viewer.setSelection(new StructuredSelection(breakpoints));
+                        // expand as required
+                        for (int i = 0; i < breakpoints.length; i++) {
+                            IBreakpoint breakpoint = breakpoints[i];
+                            BreakpointContainer[] roots = provider.getRoots(breakpoint);
+                            if (roots != null) {
+                                for (int j = 0; j < roots.length; j++) {
+                                    viewer.expandToLevel(roots[i], AbstractTreeViewer.ALL_LEVELS);
+                                }
+                            }
+                        }
                         viewer.getControl().setRedraw(true);
+                        viewer.setSelection(new StructuredSelection(breakpoints));
 						fView.updateObjects();
 					}
 				}
