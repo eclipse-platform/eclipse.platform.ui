@@ -35,6 +35,7 @@ public class ToolScript {
 	private static final String TAG_SCRIPT_ARGUMENTS = "!{script_args}"; //$NON-NLS-1$
 	private static final String TAG_SCRIPT_DIRECTORY = "!{script_dir}"; //$NON-NLS-1$
 	private static final String TAG_SCRIPT_REFRESH = "!{script_refresh}"; //$NON-NLS-1$
+	private static final String TAG_SCRIPT_SHOW_LOG = "!{script_show_log}"; //$NON-NLS-1$
 	
 	// Known kind of scripts
 	public static final String SCRIPT_TYPE_PROGRAM = "org.eclipse.toolscript.type.program"; //$NON-NLS-1$
@@ -57,6 +58,8 @@ public class ToolScript {
 	public static final String REFRESH_SCOPE_WORKING_SET = "working_set"; //$NON-NLS-1$;
 	
 	private static final String EMPTY_VALUE = ""; //$NON-NLS-1$;
+	private static final String TRUE = "true"; //$NON-NLS-1$
+	private static final String FALSE = "false"; //$NON-NLS-1$
 	
 	private String type = SCRIPT_TYPE_PROGRAM;
 	private String name = EMPTY_VALUE;
@@ -64,6 +67,7 @@ public class ToolScript {
 	private String arguments = EMPTY_VALUE;
 	private String directory = EMPTY_VALUE;
 	private String refreshScope = EMPTY_VALUE;
+	private boolean showLog = true;
 	
 	/**
 	 * Creates an empty initialized tool script.
@@ -76,7 +80,7 @@ public class ToolScript {
 	/**
 	 * Creates a fully initialized tool script.
 	 */
-	public ToolScript(String type, String name, String location, String arguments, String directory, String refreshScope) {
+	public ToolScript(String type, String name, String location, String arguments, String directory, String refreshScope, boolean showLog) {
 		this();
 		if (type != null)
 			this.type = type;
@@ -90,6 +94,7 @@ public class ToolScript {
 			this.directory = directory;
 		if (refreshScope != null)
 			this.refreshScope = refreshScope;
+		this.showLog = showLog;
 	}
 	
 	/**
@@ -105,14 +110,21 @@ public class ToolScript {
 			return null;
 		if (type.length() == 0 || name.length() == 0 || location.length() == 0)
 			return null;
-
+		String sShowLog = (String)args.get(TAG_SCRIPT_SHOW_LOG);
+		boolean showLog;
+		if (FALSE.equals(sShowLog))
+			showLog = false;
+		else
+			showLog = true;
+			
 		return new ToolScript(
 			type,
 			name,
 			location,
 			(String)args.get(TAG_SCRIPT_ARGUMENTS),
 			(String)args.get(TAG_SCRIPT_DIRECTORY),
-			(String)args.get(TAG_SCRIPT_REFRESH));
+			(String)args.get(TAG_SCRIPT_REFRESH),
+			showLog);
 	}
 
 	/**
@@ -209,6 +221,14 @@ public class ToolScript {
 	}
 	
 	/**
+	 * Returns whether or not the execution log of the script
+	 * will be shown on the Tool Script console.
+	 */
+	public boolean getShowLog() {
+		return showLog;	
+	}
+	
+	/**
 	 * Sets the type of script.
 	 */
 	public void setType(String type) {
@@ -270,6 +290,14 @@ public class ToolScript {
 	}
 	
 	/**
+	 * Sets whether or not the execution log of the script should
+	 * be shown on the Tool Script console.
+	 */
+	public void setShowLog(boolean showLog) {
+		this.showLog = showLog;	
+	}
+	
+	/**
 	 * Stores the script as an argument map that can be
 	 * used later on to recreate this script.
 	 * 
@@ -283,6 +311,10 @@ public class ToolScript {
 		args.put(TAG_SCRIPT_ARGUMENTS, arguments);
 		args.put(TAG_SCRIPT_DIRECTORY, directory);
 		args.put(TAG_SCRIPT_REFRESH, refreshScope);
+		if (showLog)
+			args.put(TAG_SCRIPT_SHOW_LOG, TRUE);
+		else
+			args.put(TAG_SCRIPT_SHOW_LOG, FALSE);
 		
 		return args;
 	}

@@ -157,11 +157,4 @@ public class AntLaunchWizard extends Wizard {
 */
 		return true;
 	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IWizard.
-	 */
-	public boolean canFinish() {
-		return (page1.getSelectedTargets().size() != 0) || (page1.getArguments().trim() != ""); //$NON-NLS-1$;
-	}
 }

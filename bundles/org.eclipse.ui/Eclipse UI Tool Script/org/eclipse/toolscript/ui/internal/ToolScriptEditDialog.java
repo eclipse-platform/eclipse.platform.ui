@@ -49,6 +49,8 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 	private static final int SIZING_SELECTION_PANE_HEIGHT = 250;
 	private static final int SIZING_SELECTION_PANE_WIDTH = 300;	
 	
+	private static final boolean INITIAL_SHOW_LOG = true;
+	
 	private Text nameField;
 	private Text locationField;
 	private Text argumentsField;
@@ -60,6 +62,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 	private Button directoryBrowseWorkspace;
 	private Button directoryBrowseFileSystem;
 	private Button refreshOptionButton;
+	private Button showLog;
 	
 	private boolean editMode = false;
 	private ToolScript script;
@@ -274,6 +277,15 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 		buttonData[5].top = new FormAttachment(refreshField, 0, SWT.TOP);
 		refreshOptionButton.setLayoutData(buttonData[5]);
 		
+		// Create show log checkbox
+		showLog = new Button(topComp, SWT.CHECK);
+		showLog.setText(ToolScriptMessages.getString("ToolScriptEditDialog.showLogLabel")); //$NON-NLS-1$
+		showLog.setSelection(INITIAL_SHOW_LOG);
+		data = new FormData();
+		data.left = new FormAttachment(0,0);
+		data.top = new FormAttachment(refreshField, GROUP_SPACE, SWT.BOTTOM);
+		showLog.setLayoutData(data);
+		
 		// give all the buttons the same width
 		for (int i=0; i<buttonData.length; i++) {
 			buttonData[i].width = maxButtonWidth;	
@@ -289,6 +301,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 			locationField.setText(script.getLocation());
 			argumentsField.setText(script.getArguments());
 			directoryField.setText(script.getWorkingDirectory());
+			showLog.setSelection(script.getShowLog());
 		}
 		refreshScope = script.getRefreshScope();
 		updateRefreshField();
@@ -499,6 +512,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 		script.setArguments(argumentsField.getText().trim());
 		script.setWorkingDirectory(directoryField.getText().trim());
 		script.setRefreshScope(refreshScope);
+		script.setShowLog(showLog.getSelection());
 		
 		super.okPressed();
 	}

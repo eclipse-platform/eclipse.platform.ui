@@ -12,16 +12,25 @@ Contributors:
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Target;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.toolscript.core.internal.ToolScriptPlugin;
 
@@ -66,20 +75,6 @@ public class AntLaunchWizardPage extends WizardPage {
 		}
 	}
 	
-/*	public void checkStateChanged(CheckStateChangedEvent e) {
-		Target checkedTarget = (Target) e.getElement();
-		if (e.getChecked())
-			selectedTargets.addElement(checkedTarget);
-		else
-			selectedTargets.removeElement(checkedTarget);
-
-		labelProvider.setSelectedTargets(selectedTargets);
-		listViewer.refresh();
-
-		// need to tell the wizard container to refresh his buttons
-		getWizard().getContainer().updateButtons();
-	}
-*/	
 	/* (non-Javadoc)
 	 * Method declared on IWizardPage.
 	 */
@@ -88,46 +83,53 @@ public class AntLaunchWizardPage extends WizardPage {
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
-/*		new Label(composite, SWT.NONE).setText(Policy.bind("wizard.availableTargetsLabel"));
+		// The list of targets
+		Label label = new Label(composite, SWT.NONE);
+		label.setText(ToolScriptMessages.getString("AntLaunchWizardPage.targetLabel")); //$NON-NLS-1$;
 
 		listViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
 		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
+		listViewer.getTable().setLayoutData(data);
 		listViewer.setSorter(new ViewerSorter() {
 			public int compare(Viewer viewer, Object o1, Object o2) {
 				return ((Target) o1).getName().compareTo(((Target) o2).getName());
 			}
 		});
-
-		listViewer.getTable().setLayoutData(data);
 		if (project.getDefaultTarget() != null)
 			labelProvider.setDefaultTargetName(project.getDefaultTarget());
 		listViewer.setLabelProvider(labelProvider);
-		listViewer.setContentProvider(TargetsListContentProvider.getInstance());
+		listViewer.setContentProvider(new AntTargetContentProvider());
 		listViewer.setInput(project);
 
-		new Label(composite, SWT.NONE).setText(Policy.bind("wizard.argumentsLabel"));
+		// The arguments field
+		label = new Label(composite, SWT.NONE);
+		label.setText(ToolScriptMessages.getString("AntLaunchWizardPage.argsLabel")); //$NON-NLS-1$;
+		
 		argumentsField = new Text(composite, SWT.BORDER);
 		argumentsField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		// adds a listener to tell the wizard when it can tell its container to refresh the buttons
 		argumentsField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				AntLaunchWizardPage.this.getWizard().getContainer().updateButtons();
+				validatePageComplete();
 			}
 		});
 
+		// The show log option
 		showLog = new Button(composite, SWT.CHECK);
-		showLog.setText(Policy.bind("wizard.displayLogLabel"));
-		showLog.setSelection(initialDisplayLog);
-		restorePreviousSelectedTargets();
-		listViewer.addCheckStateListener(this);
-		listViewer.refresh();
-
+		showLog.setText(ToolScriptMessages.getString("AntLaunchWizardPage.showLogLabel")); //$NON-NLS-1$;
+		
+		// Setup initial field values
 		if (initialArguments != null)
 			argumentsField.setText(initialArguments);
+		showLog.setSelection(initialDisplayLog);
+		selectInitialTargets();
+		
+		listViewer.addCheckStateListener(new TargetCheckListener());
+		listViewer.refresh();
 		argumentsField.setFocus();
-*/		setControl(composite);
+		
+		setControl(composite);
 	}
 	
 	/**
@@ -137,46 +139,50 @@ public class AntLaunchWizardPage extends WizardPage {
 	 * @return String the arguments
 	 */
 	public String getArguments() {
-		return argumentsField.getText();
+		return argumentsField.getText().trim();
 	}
 	
 	/**
 	 * Returns the targets selected by the user
 	 */
-	public ArrayList getSelectedTargets() {
-		return selectedTargets;
+	public String[] getSelectedTargets() {
+		String[] names = new String[selectedTargets.size()];
+		for (int i = 0; i < selectedTargets.size(); i++) {
+			names[i] = ((Target)selectedTargets.get(i)).getName();
+		}
+		return names;
 	}
 	
-	private void restorePreviousSelectedTargets() {
-/*		if (initialTargetSelections == null)
-			return;
-		Vector result = new Vector();
-		Object availableTargets[] = TargetsListContentProvider.getInstance().getElements(project);
-		if (initialTargetSelections.length == 0) {
-			boolean found = false;
-			for (int j = 0; !found && (j < availableTargets.length); j++) {
-				if (((Target) availableTargets[j]).getName().equals(project.getDefaultTarget())) {
-					result.addElement(availableTargets[j]);
-					listViewer.setChecked(availableTargets[j], true);
-					found = true;
+	/**
+	 * Returns whether the users wants messages from running
+	 * the script displayed in the console
+	 */
+	public boolean getShowLog() {
+		return showLog.getSelection();
+	}
+
+	/**
+	 * Setup the initial selected targets in the viewer
+	 */	
+	private void selectInitialTargets() {
+		if (initialTargets != null && initialTargets.length > 0) {
+			for (int i = 0; i < initialTargets.length; i++) {
+				Target target = (Target)project.getTargets().get(initialTargets[i]);
+				if (target != null && !selectedTargets.contains(target)) {
+					listViewer.setChecked(target, true);
+					selectedTargets.add(target);
 				}
 			}
 		} else {
-			for (int i = 0; i < initialTargetSelections.length; i++) {
-				String currentTargetName = initialTargetSelections[i];
-				for (int j = 0; j < availableTargets.length; j++) {
-					if (((Target) availableTargets[j]).getName().equals(currentTargetName)) {
-						result.addElement(availableTargets[j]);
-						listViewer.setChecked(availableTargets[j], true);
-						continue;
-					}
-				}
+			Target target = (Target)project.getTargets().get(project.getDefaultTarget());
+			if (target != null) {
+				listViewer.setChecked(target, true);
+				selectedTargets.add(target);
 			}
 		}
-
-		selectedTargets = result;
+		
 		labelProvider.setSelectedTargets(selectedTargets);
-*/	}
+	}
 	
 	/**
 	 * Sets the initial contents of the target list field.
@@ -203,10 +209,27 @@ public class AntLaunchWizardPage extends WizardPage {
 	}
 	
 	/**
-	 * Returns whether the users wants messages from running
-	 * the script displayed in the console
+	 * Validates the page is complete
 	 */
-	public boolean shouldLogMessages() {
-		return showLog.getSelection();
+	private void validatePageComplete() {
+		setPageComplete(selectedTargets.size() > 0 || getArguments().length() > 0);
+	}
+	
+	
+	/**
+	 * Inner class for checkbox listener
+	 */
+	private class TargetCheckListener implements ICheckStateListener {
+		public void checkStateChanged(CheckStateChangedEvent e) {
+			Target checkedTarget = (Target) e.getElement();
+			if (e.getChecked())
+				selectedTargets.add(checkedTarget);
+			else
+				selectedTargets.remove(checkedTarget);
+	
+			labelProvider.setSelectedTargets(selectedTargets);
+			listViewer.refresh();
+			validatePageComplete();
+		}
 	}
 }
