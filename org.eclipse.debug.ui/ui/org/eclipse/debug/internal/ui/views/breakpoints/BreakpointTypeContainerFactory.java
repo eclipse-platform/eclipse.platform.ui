@@ -26,7 +26,8 @@ import org.eclipse.swt.graphics.Image;
  */
 public class BreakpointTypeContainerFactory extends AbstractBreakpointContainerFactory {
 	
-	private Image fContainerImage;
+	// The image to use for "breakpoint type" containers.
+	private Image fContainerImage= null;
 	
 	public BreakpointTypeContainerFactory() {
 	}
