@@ -173,7 +173,6 @@ public class TableTreeViewer extends AbstractTreeViewer {
         IBaseLabelProvider prov = getLabelProvider();
         ITableLabelProvider tprov = null;
         
-        colorAndFontCollector.setFontsAndColors(element);
         
         if (prov instanceof ITableLabelProvider)
             tprov = (ITableLabelProvider) prov;

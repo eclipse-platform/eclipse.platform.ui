@@ -288,57 +288,6 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	}
 
 	/**
-	 * TableColorAndFontCollector is an helper class for color and font
-	 * support for tables that support the ITableFontProvider and
-	 * the ITableColorProvider.
-	 * @see ITableColorProvider
-	 * @see ITableFontProvider
-	 */
-	
-	protected class TableColorAndFontCollector{
-		
-		ITableFontProvider fontProvider = null;
-		ITableColorProvider colorProvider = null;
-		
-		/**
-		 * Create an instance of the receiver. Set the color and font
-		 * providers if provider can be cast to the correct type.
-		 * @param provider IBaseLabelProvider
-		 */
-		public TableColorAndFontCollector(IBaseLabelProvider provider){
-			if(provider instanceof ITableFontProvider)
-				fontProvider = (ITableFontProvider) provider;
-			if(provider instanceof ITableColorProvider)
-				colorProvider = (ITableColorProvider) provider;
-		}
-		
-		/**
-		 * Create an instance of the receiver with no color and font
-		 * providers.
-		 */
-		public TableColorAndFontCollector(){
-		}
-		
-		/**
-		 * Set the fonts and colors for the tableItem if there is a color
-		 * and font provider available.
-		 * @param tableItem The item to update.
-		 * @param element The element being represented
-		 * @param column The column index
-		 */
-		public void setFontsAndColors(TableItem tableItem, Object element, int column){
-			if (colorProvider != null) {
-				tableItem.setBackground(column, colorProvider.getBackground(element,
-						column));
-				tableItem.setForeground(column, colorProvider.getForeground(element,
-						column));
-			}
-			if(fontProvider != null)
-				tableItem.setFont(column,fontProvider.getFont(element,column));
-		}	
-		
-	}
-	/**
 	 * The safe runnable used to update an item.
 	 */
 	class UpdateItemSafeRunnable extends SafeRunnable {
