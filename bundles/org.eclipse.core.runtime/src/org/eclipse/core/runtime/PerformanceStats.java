@@ -12,7 +12,8 @@ package org.eclipse.core.runtime;
 
 import java.io.PrintWriter;
 import java.util.*;
-import org.eclipse.core.internal.runtime.*;
+import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.PerformanceStatsProcessor;
 
 /**
  * PerformanceStats collects and aggregates timing data about events such as
