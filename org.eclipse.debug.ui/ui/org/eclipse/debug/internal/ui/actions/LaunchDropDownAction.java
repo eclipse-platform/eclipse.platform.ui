@@ -54,6 +54,10 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 * The tooltip that was specified in XML for this action.
 	 */
 	private String fOriginalTooltip;
+	/**
+	 * Flag which determines if the menu has actually been shown by the user.
+	 * Until this flag is set, don't compute the launch config history and favorites.	 */
+	private boolean fMenuShown= false;
 	
 	protected void setActionProxy(IAction action) {
 		fActionProxy = action;
@@ -175,39 +179,41 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	/**
 	 * Create the drop-down menu based on whether the config style pref is set
 	 */
-	protected Menu createMenu(Menu menu) {	
-		LaunchConfigurationHistoryElement[] historyList= getHistory();
-		LaunchConfigurationHistoryElement[] favoriteList = getFavorites();		
-		
-		// Add any favorites
-		int total = 0;
-		for (int i = 0; i < favoriteList.length; i++) {
-			LaunchConfigurationHistoryElement launch= favoriteList[i];
-			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
-			createMenuForAction(menu, newAction, total + 1);
-			total++;
-		}		
-		
-		// Separator between favorites and history
-		if (favoriteList.length > 0) {
+	protected Menu createMenu(Menu menu) {
+		if (fMenuShown) {
+			LaunchConfigurationHistoryElement[] historyList= getHistory();
+			LaunchConfigurationHistoryElement[] favoriteList = getFavorites();		
+			
+			// Add any favorites
+			int total = 0;
+			for (int i = 0; i < favoriteList.length; i++) {
+				LaunchConfigurationHistoryElement launch= favoriteList[i];
+				RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
+				createMenuForAction(menu, newAction, total + 1);
+				total++;
+			}		
+			
+			// Separator between favorites and history
+			if (favoriteList.length > 0) {
+				if (historyList.length > 0) {
+					new MenuItem(menu, SWT.SEPARATOR);
+				} else {
+					createTopSeparator(menu);
+				}
+			}
+			
+			// Add history launches next
+			for (int i = 0; i < historyList.length; i++) {
+				LaunchConfigurationHistoryElement launch= historyList[i];
+				RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
+				createMenuForAction(menu, newAction, total+1);
+				total++;
+			}
+			
+			// Separator between history and common actions
 			if (historyList.length > 0) {
-				new MenuItem(menu, SWT.SEPARATOR);
-			} else {
 				createTopSeparator(menu);
 			}
-		}
-		
-		// Add history launches next
-		for (int i = 0; i < historyList.length; i++) {
-			LaunchConfigurationHistoryElement launch= historyList[i];
-			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
-			createMenuForAction(menu, newAction, total+1);
-			total++;
-		}
-		
-		// Separator between history and common actions
-		if (historyList.length > 0) {
-			createTopSeparator(menu);
 		}
 
 		// Add the actions to bring up the dialog 
@@ -330,6 +336,7 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 					if (actionSetItem instanceof SubContributionItem) {
 						IContributionItem item= ((SubContributionItem)actionSetItem).getInnerItem();
 						if (item instanceof IMenuManager) {
+							fMenuShown= true;
 							((IMenuManager)item).markDirty();
 						}
 					}
