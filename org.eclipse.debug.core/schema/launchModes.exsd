@@ -9,14 +9,7 @@
          This extension point provides a mechanism for contributing launch modes to the debug platform. The debug platform defines modes for &quot;run&quot;, &quot;debug&quot;, and &quot;profile&quot;.
       </documentation>
    </annotation>
-   <annotation>
-      <appInfo>
-         <meta.section type="since"/>
-      </appInfo>
-      <documentation>
-         3.0
-      </documentation>
-   </annotation>
+
    <element name="extension">
       <complexType>
          <sequence>
@@ -67,10 +60,22 @@
                <documentation>
                   A human-readable label that describes the launch mode
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>

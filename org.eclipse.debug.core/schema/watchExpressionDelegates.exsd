@@ -9,14 +9,7 @@
          This extension provides a mechanism for providing delegates to evaluate watch expressions on a per debug model basis. Watch expression delegates perform evaluations for watch expressions and report the results asynchronously.
       </documentation>
    </annotation>
-   <annotation>
-      <appInfo>
-         <meta.section type="since"/>
-      </appInfo>
-      <documentation>
-         3.0
-      </documentation>
-   </annotation>
+
    <element name="extension">
       <complexType>
          <sequence>
@@ -58,7 +51,7 @@
          <attribute name="delegateClass" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a Java class which implements &lt;samp&gt;org.eclipse.debug.core.model.IWatchExpressionDelegate&lt;/samp&gt;, which is used to evaluate the value of an expression.
+                  specifies a Java class which implements &lt;code&gt;org.eclipse.debug.core.model.IWatchExpressionDelegate&lt;/code&gt;, which is used to evaluate the value of an expression.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.core.model.IWatchExpressionDelegate"/>
@@ -79,21 +72,30 @@
 
    <annotation>
       <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-&lt;pre&gt;
+         &lt;pre&gt;
 The following is the definition of a watch expression delegate for the com.example.foo plug-in:
- &lt;extension point="org.eclipse.debug.core.watchExpressionDelegates"&gt;
+ &lt;extension point=&quot;org.eclipse.debug.core.watchExpressionDelegates&quot;&gt;
    &lt;watchExpressionDelegate
-     debugModel="org.eclipse.jdt.debug"
-     delegateClass="org.eclipse.jdt.internal.debug.ui.JavaWatchExpressionDelegate"/&gt;
+     debugModel=&quot;org.eclipse.jdt.debug&quot;
+     delegateClass=&quot;org.eclipse.jdt.internal.debug.ui.JavaWatchExpressionDelegate&quot;/&gt;
   &lt;/extension&gt;
 &lt;/pre&gt;
       </documentation>
    </annotation>
 
-	<annotation>
+   <annotation>
       <appInfo>
          <meta.section type="apiInfo"/>
       </appInfo>
@@ -101,7 +103,7 @@ The following is the definition of a watch expression delegate for the com.examp
          Value of the attribute &lt;b&gt;delegateClass&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.model.IWatchExpressionDelegate&lt;/b&gt;.
       </documentation>
    </annotation>
-   
+
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>

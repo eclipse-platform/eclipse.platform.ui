@@ -55,15 +55,14 @@ dialog for a type of launch configuration.
          <attribute name="type" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a launch configuration type that this tab group is applicable to (corresponds to the id of a
-launch configuration type extension).
+                  specifies a launch configuration type that this tab group is applicable to (corresponds to the id of a launch configuration type extension).
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a fully qualified name of a Java class that implements &lt;samp&gt;ILaunchConfigurationTabGroup&lt;/samp&gt;.
+                  specifies a fully qualified name of a Java class that implements &lt;code&gt;ILaunchConfigurationTabGroup&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup"/>
@@ -82,6 +81,9 @@ launch configuration type extension).
                <documentation>
                   A description of the Launch Configuration Type
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="bannerImage" type="string">
@@ -120,6 +122,9 @@ launch configuration type extension).
                <documentation>
                   A description of the Launch Configuration Type specific to this launchMode.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

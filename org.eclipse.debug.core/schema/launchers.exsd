@@ -60,8 +60,8 @@ this launcher.
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  fully qualified name of the class that implements 
-&lt;samp&gt;org.eclipse.debug.core.model.ILauncherDelegate&lt;/samp&gt;.
+                  fully qualified name of the Java class that implements 
+&lt;code&gt;org.eclipse.debug.core.model.ILauncherDelegate&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.core.model.ILauncherDelegate"/>
@@ -73,7 +73,7 @@ this launcher.
                <documentation>
                   A comma separated list of modes this launcher supports. 
 The two supported modes are &quot;run&quot; and &quot;debug&quot; - 
-as defined in &lt;samp&gt;org.eclipse.debug.core.ILaunchManager&lt;/samp&gt;. 
+as defined in &lt;code&gt;org.eclipse.debug.core.ILaunchManager&lt;/code&gt;. 
 A launcher may be capable of launching in one or both modes.
                </documentation>
             </annotation>
@@ -83,13 +83,16 @@ A launcher may be capable of launching in one or both modes.
                <documentation>
                   a label to use for the launcher. This attribute is used by the debug UI.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="wizard" type="string">
             <annotation>
                <documentation>
                   fully qualified name of the class that implements 
-&lt;samp&gt;org.eclipse.debug.ui.ILaunchWizard&lt;/samp&gt;. 
+&lt;code&gt;org.eclipse.debug.ui.ILaunchWizard&lt;/code&gt;. 
 This attribute is used by the debug UI. A launcher 
 may contribute a wizard that allows users to configure 
 and launch specific attributes.
@@ -103,7 +106,7 @@ and launch specific attributes.
             <annotation>
                <documentation>
                   whether a launcher is publically visible in the debug UI.
-If &quot;true&quot;,  the launcher will be available from the 
+If &lt;code&gt;true&lt;/code&gt;,  the launcher will be available from the 
 debug UI - the launcher will appear as a choice 
 for a default launcher, launches created by this 
 launcher will appear in the launch history, and the 
@@ -118,6 +121,9 @@ toolbar actions.
                   a description of the launcher.  Currently only used 
 if the wizard attribute is specified.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="perspective" type="string">

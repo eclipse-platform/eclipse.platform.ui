@@ -61,7 +61,7 @@ responsible for the implementation of launching an application.
          <attribute name="delegate" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies the fully qualified name of the Java class that implements &lt;samp&gt;ILaunchConfigurationDelegate&lt;/samp&gt;.
+                  specifies the fully qualified name of the Java class that implements &lt;code&gt;ILaunchConfigurationDelegate&lt;/code&gt;.
 Launch configuration instances of this type will delegate to instances of this class to perform launching.
                </documentation>
                <appInfo>
@@ -81,19 +81,22 @@ Launch configuration instances of this type will delegate to instances of this c
                <documentation>
                   specifies a human-readable name for this type of launch configuration.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="public" type="boolean">
             <annotation>
                <documentation>
-                  specifies whether this launch configuration type is accessible by users.  Defaults to true if not specified.
+                  specifies whether this launch configuration type is accessible by users.  Defaults to &lt;code&gt;true&lt;/code&gt; if not specified.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="category" type="string">
             <annotation>
                <documentation>
-                  an optional attribute that specifies this launch configuration type&apos;s category. The default value is unspecified (null). Categories are client defined. This attribute was added in the 2.1 release.
+                  an optional attribute that specifies this launch configuration type&apos;s category. The default value is unspecified (&lt;code&gt;null&lt;/code&gt;). Categories are client defined. This attribute was added in the 2.1 release.
                </documentation>
             </annotation>
          </attribute>
@@ -126,7 +129,7 @@ Launch configuration instances of this type will delegate to instances of this c
          <attribute name="default" type="boolean">
             <annotation>
                <documentation>
-                  specifies whether this launch configuration type should be the default launch configuration type for the specified file extension.  Defaults to false if not specified.
+                  specifies whether this launch configuration type should be the default launch configuration type for the specified file extension.  Defaults to &lt;code&gt;false&lt;/code&gt; if not specified.
                </documentation>
             </annotation>
          </attribute>

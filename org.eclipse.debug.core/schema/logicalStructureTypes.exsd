@@ -51,8 +51,11 @@
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  a description of this logical structure. Since 3.1, this attribute is optional. When upspecified, a logical structure type delegate must also implement &lt;code&gt;ILogicalStructureTypeDelegate2&lt;/code&gt; to provide descriptions for values that logical structures are provided for.
+                  a description of this logical structure. Since 3.1, this attribute is optional. When unspecified, a logical structure type delegate must also implement &lt;code&gt;ILogicalStructureTypeDelegate2&lt;/code&gt; to provide descriptions for values that logical structures are provided for.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">

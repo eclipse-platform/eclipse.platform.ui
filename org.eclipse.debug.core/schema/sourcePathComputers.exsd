@@ -12,14 +12,7 @@
          specific launch configuration via the launch configuration attribute ATTR_SOURCE_PATH_COMPUTER_ID.
       </documentation>
    </annotation>
-   <annotation>
-      <appInfo>
-         <meta.section type="since"/>
-      </appInfo>
-      <documentation>
-         3.0
-      </documentation>
-   </annotation>
+
    <element name="extension">
       <complexType>
          <sequence>
@@ -67,7 +60,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  A class that implements ISourcePathComputerDelegate.
+                  A class that implements &lt;code&gt;ISourcePathComputerDelegate&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputerDelegate"/>
@@ -88,16 +81,25 @@
 
    <annotation>
       <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
          Following is an example source path computer definition:
 &lt;pre&gt;
    &lt;extension point=&quot;org.eclipse.debug.core.sourcePathComputers&quot;&gt;
-   		&lt;sourcePathComputer
-   			id=&quot;org.eclipse.example.exampleSourcePathComputer&quot;
-   			class=&quot;org.eclipse.example.SourcePathComputer&quot;&gt;
-   		&lt;/sourcePathComputer&gt;
+     &lt;sourcePathComputer
+      id=&quot;org.eclipse.example.exampleSourcePathComputer&quot;
+      class=&quot;org.eclipse.example.SourcePathComputer&quot;&gt;
+     &lt;/sourcePathComputer&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
       </documentation>

@@ -2,23 +2,16 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.debug.core">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.debug.core" id="processFactories" name="Process Factories"/>
-   </appInfo>
-   <documentation>
-      This extension point provides a mechanism for specifying a process factory to be used with a launch configuration to create the appropriate instance of &lt;b&gt;IProcess&lt;/b&gt;.
-      The launch configuration will require the &lt;b&gt;DebugPlugin.ATTR_PROCESS_FACTORY_ID&lt;/b&gt; attribute set to the appropriate process factory ID that will be
-      used to create the &lt;b&gt;IProcess&lt;/b&gt;
-   </documentation>
-</annotation>
-   <annotation>
       <appInfo>
-         <meta.section type="since"/>
+         <meta.schema plugin="org.eclipse.debug.core" id="processFactories" name="Process Factories"/>
       </appInfo>
       <documentation>
-         3.0
+         This extension point provides a mechanism for specifying a process factory to be used with a launch configuration to create the appropriate instance of &lt;b&gt;IProcess&lt;/b&gt;.
+      The launch configuration will require the &lt;b&gt;DebugPlugin.ATTR_PROCESS_FACTORY_ID&lt;/b&gt; attribute set to the appropriate process factory ID that will be
+      used to create the &lt;b&gt;IProcess&lt;/b&gt;
       </documentation>
    </annotation>
+
    <element name="extension">
       <complexType>
          <sequence>
@@ -41,7 +34,7 @@
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                 an optional name of the extension instance
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -65,7 +58,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies the fully qualified name of the Java class that implements IProcessFactory.
+                  specifies the fully qualified name of the Java class that implements &lt;code&gt;IProcessFactory&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.core.IProcessFactory"/>
@@ -77,6 +70,15 @@
 
    <annotation>
       <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
@@ -84,12 +86,12 @@
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.debug.core.processFactories"&gt;
-		&lt;processFactory
-			    id="com.example.ExampleIdentifier"
-			    class="com.example.ExampleProcessFactory"&gt;
-		&lt;/processFactory&gt;
-	&lt;/extension&gt;
+ &lt;extension point=&quot;org.eclipse.debug.core.processFactories&quot;&gt;
+  &lt;processFactory
+       id=&quot;com.example.ExampleIdentifier&quot;
+       class=&quot;com.example.ExampleProcessFactory&quot;&gt;
+  &lt;/processFactory&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>
@@ -116,4 +118,5 @@ accompanies this distribution, and is available at
 &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
+
 </schema>

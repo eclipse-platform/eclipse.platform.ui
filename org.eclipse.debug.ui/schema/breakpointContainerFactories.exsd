@@ -53,7 +53,7 @@ Factories with the specified name will be automatically created by the Debug Pla
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Implementation of org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactoryDelegate
+                  Implementation of &lt;code&gt;org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactoryDelegate&lt;/code&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -65,6 +65,9 @@ Factories with the specified name will be automatically created by the Debug Pla
                <documentation>
                   Optional label for this container factory which is suitable for presentation to the user.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">

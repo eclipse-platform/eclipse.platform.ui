@@ -58,7 +58,7 @@
          <attribute name="category" type="string">
             <annotation>
                <documentation>
-                  specifies the category of launch configurations in this group. When unspecified, the category is null.
+                  specifies the category of launch configurations in this group. When unspecified, the category is &lt;code&gt;null&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -67,6 +67,9 @@
                <documentation>
                   specifies a translatable label used to render this group.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="image" type="string" use="required">
@@ -92,7 +95,7 @@
          <attribute name="public" type="string">
             <annotation>
                <documentation>
-                  specifies whether this launch group is public and should be have a visible launch history tab in the debug preferences. The implied value is true, when not specified.
+                  specifies whether this launch group is public and should be have a visible launch history tab in the debug preferences. The implied value is &lt;code&gt;true&lt;/code&gt;, when not specified.
                </documentation>
             </annotation>
          </attribute>
@@ -101,6 +104,9 @@
                <documentation>
                   title to display in the launch wizard when this launch group is opened - for example &quot;Select or configure an application to debug&quot; (since 3.1)
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

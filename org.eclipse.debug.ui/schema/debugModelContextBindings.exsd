@@ -6,9 +6,9 @@
          <meta.schema plugin="org.eclipse.debug.ui" id="debugModelContextBindings" name="Debug Model Context Bindings"/>
       </appInfo>
       <documentation>
-This extension point provides a mechanism for specifying a context that should be associated with the given debug model.
+         This extension point provides a mechanism for specifying a context that should be associated with the given debug model.
 
-The Debug view uses these bindings to automatically enable contexts. When an element in the Debug view which provides an IDebugModelProvider adapter or a stack frame with the specified debug model identifier is selected, the context with the given identifier will be enabled.
+The Debug view uses these bindings to automatically enable contexts. When an element in the Debug view which provides an &lt;code&gt;IDebugModelProvider&lt;/code&gt; adapter or a stack frame with the specified debug model identifier is selected, the context with the given identifier will be enabled.
       </documentation>
    </annotation>
 
@@ -40,7 +40,7 @@ The Debug view uses these bindings to automatically enable contexts. When an ele
          </attribute>
       </complexType>
    </element>
-   
+
    <element name="modelContextBinding">
       <complexType>
          <attribute name="debugModelId" type="string" use="required">
@@ -77,16 +77,16 @@ The Debug view uses these bindings to automatically enable contexts. When an ele
          The following is an example of a debug model context binding contribution:
 &lt;pre&gt;
 &lt;extension
-      point="org.eclipse.debug.ui.debugModelContextBindings"&gt;
+      point=&quot;org.eclipse.debug.ui.debugModelContextBindings&quot;&gt;
    &lt;modelContextBinding
-         contextId="com.example.myLanguage.debugging"
-         debugModelId="com.example.myLanguageDebugModel"&gt;
+         contextId=&quot;com.example.myLanguage.debugging&quot;
+         debugModelId=&quot;com.example.myLanguageDebugModel&quot;&gt;
    &lt;/modelContextBinding&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
 In the above example, when a stack frame with the debug model identifier of &quot;com.example.myLanguageDebugModel&quot; is selected, the context with the identifier &quot;com.example.myLanguage.debugging&quot; will be enabled.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>

@@ -2,13 +2,13 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.debug.core">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.debug.core" id="sourceLocators" name="Source Locators"/>
-   </appInfo>
-   <documentation>
-      This extension point provides a mechanism specifying a source locator to be used with a launch configuration.
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.debug.core" id="sourceLocators" name="Source Locators"/>
+      </appInfo>
+      <documentation>
+         This extension point provides a mechanism specifying a source locator to be used with a launch configuration.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -32,7 +32,7 @@
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                 an optional name of the extension instance
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -56,7 +56,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies the fully qualified name of the Java class that implements IPersistableSourceLocator.
+                  specifies the fully qualified name of the Java class that implements &lt;code&gt;IPersistableSourceLocator&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.core.model.IPersistableSourceLocator"/>
@@ -68,6 +68,9 @@
                <documentation>
                   a human-readable name, describing the type of this source locator.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -82,13 +85,13 @@
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.debug.core.sourceLocators"&gt;
-		&lt;sourceLocator
-			id="com.example.ExampleIdentifier"
-			class="com.example.ExampleSourceLocator"
-			name="Example Source Locator"&gt;
-		&lt;/sourceLocator&gt;
-	&lt;/extension&gt;
+ &lt;extension point=&quot;org.eclipse.debug.core.sourceLocators&quot;&gt;
+  &lt;sourceLocator
+   id=&quot;com.example.ExampleIdentifier&quot;
+   class=&quot;com.example.ExampleSourceLocator&quot;
+   name=&quot;Example Source Locator&quot;&gt;
+  &lt;/sourceLocator&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>

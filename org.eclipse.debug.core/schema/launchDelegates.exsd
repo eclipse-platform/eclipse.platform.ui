@@ -58,7 +58,7 @@
          <attribute name="delegate" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies the fully qualified name of the Java class that implements &lt;samp&gt;ILaunchConfigurationDelegate&lt;/samp&gt;.
+                  specifies the fully qualified name of the Java class that implements &lt;code&gt;ILaunchConfigurationDelegate&lt;/code&gt;.
 Launch configuration instances of this delegate&apos;s type will delegate to instances of this class to perform launching.
                </documentation>
                <appInfo>

@@ -44,7 +44,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Implementation of org.eclipse.debug.ui.actions.IVariableValueEditor
+                  Implementation of &lt;code&gt;org.eclipse.debug.ui.actions.IVariableValueEditor&lt;/code&gt;
                </documentation>
             </annotation>
          </attribute>

@@ -70,7 +70,7 @@
          <attribute name="browserClass" type="string">
             <annotation>
                <documentation>
-                  A class that can be called to display a browse dialog for the source container type. Must implement ISourceLocationBrowser.
+                  A class that can be called to display a browse dialog for the source container type. Must implement &lt;code&gt;ISourceLocationBrowser&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.internal.ui.sourcelookup.ISourceLocationBrowser"/>

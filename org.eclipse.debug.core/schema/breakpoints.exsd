@@ -58,7 +58,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies the fully qualified name of the java class that implements &lt;samp&gt;IBreakpoint&lt;/samp&gt;.
+                  specifies the fully qualified name of the Java class that implements &lt;code&gt;IBreakpoint&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.core.model.Breakpoint"/>
@@ -70,6 +70,9 @@
                <documentation>
                   specifies a user-presentable name for this breakpoint type. For example, &quot;Java Line Breakpoint&quot;. This attribute was added in 3.1 to support automatic grouping of breakpoints by breakpoint type. When this attribute is unspecified, breakpoints of this type cannot be automatically grouped by type.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

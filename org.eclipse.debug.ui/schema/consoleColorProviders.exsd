@@ -2,13 +2,13 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.debug.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.debug.ui" id="consoleColorProviders" name="Console Color Providers"/>
-   </appInfo>
-   <documentation>
-      This extension point provides a mechanism for contributing a console document coloring scheme for a process. The color provider will be used to color output in the console.
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.debug.ui" id="consoleColorProviders" name="Console Color Providers"/>
+      </appInfo>
+      <documentation>
+         This extension point provides a mechanism for contributing a console document coloring scheme for a process. The color provider will be used to color output in the console.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -32,13 +32,13 @@
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                 an optional name of the extension instance
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
-   
+
    <element name="consoleColorProvider">
       <complexType>
          <attribute name="id" type="string" use="required">
@@ -51,7 +51,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a fully qualified name of a Java class that implements IConsoleColorProvider
+                  specifies a fully qualified name of a Java class that implements &lt;code&gt;IConsoleColorProvider&lt;/code&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.console.IConsoleColorProvider"/>
@@ -61,7 +61,7 @@
          <attribute name="processType" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies the type of process this color provider is for. This attribute corresponds to the process attribute IProcess.ATTR_PROCESS_TYPE.
+                  specifies the type of process this color provider is for. This attribute corresponds to the process attribute &lt;code&gt;IProcess.ATTR_PROCESS_TYPE&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -82,18 +82,17 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-      The following is an example of a console color provider extension point: 
+         The following is an example of a console color provider extension point: 
 &lt;pre&gt;
-&lt;extension point="org.eclipse.debug.ui.consoleColorProviders"&gt;
+&lt;extension point=&quot;org.eclipse.debug.ui.consoleColorProviders&quot;&gt;
   &lt;consoleColorProvider 
-     id="com.example.ExampleConsoleColorProvider"
-     class="com.example.ExampleConsoleColorProvider"
+     id=&quot;com.example.ExampleConsoleColorProvider&quot;
+     class=&quot;com.example.ExampleConsoleColorProvider&quot;
      processType=&quot;ExampleProcessType&quot;&gt;
   &lt;/consoleColorProvider&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
-In the above example, the contributed color provider will be used for processes of type "ExampleProcessType", which corresponds to the process attribute IProcess.ATTR_PROCESS_TYPE. Process types are client defined, and are set by clients that create processes.
-
+In the above example, the contributed color provider will be used for processes of type &quot;ExampleProcessType&quot;, which corresponds to the process attribute IProcess.ATTR_PROCESS_TYPE. Process types are client defined, and are set by clients that create processes.
       </documentation>
    </annotation>
 
@@ -102,8 +101,7 @@ In the above example, the contributed color provider will be used for processes 
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.ui.console.IConsoleColorProvider&lt;/b&gt;. 
-         
+         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.ui.console.IConsoleColorProvider&lt;/b&gt;.
       </documentation>
    </annotation>
 

@@ -56,7 +56,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a fully qualified name of a Java class that implements IPatternMatchListenerDelegate
+                  specifies a fully qualified name of a Java class that implements &lt;code&gt;IPatternMatchListenerDelegate&lt;/code&gt;
                </documentation>
             </annotation>
          </attribute>
@@ -70,7 +70,7 @@
          <attribute name="flags" type="string">
             <annotation>
                <documentation>
-                  specifies flags to be used when matching the pattern. Acceptable flags are defined in java.util.regex.Pattern and should be specified as Strings (eg &quot;Pattern.MULTILINE&quot; or &quot;MULTILINE&quot;)
+                  specifies flags to be used when matching the pattern. Acceptable flags are defined in &lt;code&gt;java.util.regex.Pattern&lt;/code&gt; and should be specified as Strings (eg &quot;Pattern.MULTILINE&quot; or &quot;MULTILINE&quot;)
                </documentation>
             </annotation>
          </attribute>

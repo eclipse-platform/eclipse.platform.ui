@@ -2,16 +2,16 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.debug.core">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.debug.core" id="launchConfigurationComparators" name="Launch Configuration Comparators"/>
-   </appInfo>
-   <documentation>
-      This extension point provides a configurable mechanism for comparing specific attributes of a launch configuration.
+      <appInfo>
+         <meta.schema plugin="org.eclipse.debug.core" id="launchConfigurationComparators" name="Launch Configuration Comparators"/>
+      </appInfo>
+      <documentation>
+         This extension point provides a configurable mechanism for comparing specific attributes of a launch configuration.
 In general, launch configuration attributes can be compared for equality via the default implementation of &lt;samp&gt;java.lang.Object.equals(Object)&lt;/samp&gt;.
 However, attributes that require special handling should implement this extension point.
 For example, when an attribute is stored as XML, it is possible that two strings representing an equivalent attribute have different whitespace formatting.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -35,7 +35,7 @@ For example, when an attribute is stored as XML, it is possible that two strings
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                 an optional name of the extension instance
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -61,7 +61,7 @@ For example, when an attribute is stored as XML, it is possible that two strings
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a fully-qualified name of a class that implements &lt;samp&gt;java.util.Comparator&lt;/samp&gt;.
+                  specifies a fully-qualified name of a class that implements &lt;code&gt;java.util.Comparator&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="java.util.Comparator"/>
@@ -80,13 +80,13 @@ For example, when an attribute is stored as XML, it is possible that two strings
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.debug.core.launchConfigurationComparators"&gt;
-		&lt;launchConfigurationComparator
-			id="com.example.ExampleIdentifier"
-			attribute="com.example.ExampleAttributeName"
-			class="com.example.ComparatorImplementation"&gt;
-		&lt;/launchConfigurationComparator&gt;
-	&lt;/extension&gt;
+ &lt;extension point=&quot;org.eclipse.debug.core.launchConfigurationComparators&quot;&gt;
+  &lt;launchConfigurationComparator
+   id=&quot;com.example.ExampleIdentifier&quot;
+   attribute=&quot;com.example.ExampleAttributeName&quot;
+   class=&quot;com.example.ComparatorImplementation&quot;&gt;
+  &lt;/launchConfigurationComparator&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 

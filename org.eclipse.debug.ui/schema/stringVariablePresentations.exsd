@@ -51,7 +51,7 @@
          <attribute name="argumentSelector" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a fully qualified name of a Java class that implements IArgumentSelector
+                  specifies a fully qualified name of a Java class that implements &lt;code&gt;IArgumentSelector&lt;/code&gt;
                </documentation>
             </annotation>
          </attribute>

@@ -59,7 +59,7 @@ Note that this only occurs in perspectives for which the user has requested &quo
          <attribute name="autoOpen" type="boolean">
             <annotation>
                <documentation>
-                  Specifies whether the view should be automatically opened when the given context is enabled. If unspecified, the value of this attribute is true. If this attribute is specified false, the view will not be automatically opened, but it will still be brought to the front if it is open when the given context is enabled. Clients are intended to specify false to avoid cluttering the perspective with views that are used infrequently.
+                  Specifies whether the view should be automatically opened when the given context is enabled. If unspecified, the value of this attribute is &lt;code&gt;true&lt;/code&gt;. If this attribute is specified &lt;code&gt;false&lt;/code&gt;, the view will not be automatically opened, but it will still be brought to the front if it is open when the given context is enabled. Clients are intended to specify &lt;code&gt;false&lt;/code&gt; to avoid cluttering the perspective with views that are used infrequently.
                </documentation>
             </annotation>
          </attribute>
@@ -67,7 +67,7 @@ Note that this only occurs in perspectives for which the user has requested &quo
             <annotation>
                <documentation>
                   Clients are not intended to specify this attribute except in rare cases.
-Specifies whether the view should be automatically closed when the given context is disabled (this occurs when all debug targets that contained the specified context have terminated). When unspecified, the value of this attribute is true. This attribute should only be specified false in the unlikely case that a debugging view must remain open even when the user is not debugging.
+Specifies whether the view should be automatically closed when the given context is disabled (this occurs when all debug targets that contained the specified context have terminated). When unspecified, the value of this attribute is &lt;code&gt;true&lt;/code&gt;. This attribute should only be specified &lt;code&gt;false&lt;/code&gt; in the unlikely case that a debugging view must remain open even when the user is not debugging.
                </documentation>
             </annotation>
          </attribute>

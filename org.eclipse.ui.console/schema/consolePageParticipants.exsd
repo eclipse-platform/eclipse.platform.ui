@@ -56,7 +56,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a fully qualified name of a Java class that implements IConsolePageParticipant
+                  specifies a fully qualified name of a Java class that implements &lt;code&gt;IConsolePageParticipant&lt;/code&gt;
                </documentation>
             </annotation>
          </attribute>

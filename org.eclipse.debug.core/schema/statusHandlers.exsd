@@ -2,15 +2,15 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.debug.core">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.debug.core" id="statusHandlers" name="Status Handlers"/>
-   </appInfo>
-   <documentation>
-      This extension point provides a mechanism for separating the generation and resolution of an error.
+      <appInfo>
+         <meta.schema plugin="org.eclipse.debug.core" id="statusHandlers" name="Status Handlers"/>
+      </appInfo>
+      <documentation>
+         This extension point provides a mechanism for separating the generation and resolution of an error.
 The interaction between the source of the error and the resolution is client-defined.
 It is a client responsibility to look up and delegate to status handlers when an error condition occurs.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -34,7 +34,7 @@ It is a client responsibility to look up and delegate to status handlers when an
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                 an optional name of the extension instance
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -53,7 +53,7 @@ It is a client responsibility to look up and delegate to status handlers when an
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies the fully qualified name of the Java class that implements IStatusHandler.
+                  specifies the fully qualified name of the Java class that implements &lt;code&gt;IStatusHandler&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.core.IStatusHandler"/>
@@ -63,7 +63,7 @@ It is a client responsibility to look up and delegate to status handlers when an
          <attribute name="plugin" type="string" use="required">
             <annotation>
                <documentation>
-                  Plug-in identifier that corresponds to the plug-in of the status this handler is registered for.  (i.e. IStatus.getPlugin()).
+                  Plug-in identifier that corresponds to the plug-in of the status this handler is registered for.  (i.e. &lt;code&gt;IStatus.getPlugin()&lt;/code&gt;).
                </documentation>
             </annotation>
          </attribute>
@@ -86,14 +86,14 @@ It is a client responsibility to look up and delegate to status handlers when an
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.debug.core.statusHandlers"&gt;
-		&lt;statusHandler
-			id="com.example.ExampleIdentifier"
-			class="com.example.ExampleStatusHandler"
-			plugin="com.example.ExamplePluginId"
-			code="123"&gt;
-		&lt;/statusHandler&gt;
-	&lt;/extension&gt;
+ &lt;extension point=&quot;org.eclipse.debug.core.statusHandlers&quot;&gt;
+  &lt;statusHandler
+   id=&quot;com.example.ExampleIdentifier&quot;
+   class=&quot;com.example.ExampleStatusHandler&quot;
+   plugin=&quot;com.example.ExamplePluginId&quot;
+   code=&quot;123&quot;&gt;
+  &lt;/statusHandler&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 
