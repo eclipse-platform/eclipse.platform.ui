@@ -17,7 +17,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.externaltools.internal.ant.editor.PlantyException;
+import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 
 /**
  * General representation of an xml element.
@@ -25,10 +28,9 @@ import org.eclipse.ui.externaltools.internal.ant.editor.PlantyException;
  * Here an xml element is refered to as what is specified using like
  * '<elementName>' in an xml file.
  * 
- * @version 27.11.2002
  * @author Alf Schiefelbein
  */
-public class XmlElement {
+public class XmlElement implements IAdaptable {
 	
 	/*
 	 * (T)
@@ -535,4 +537,15 @@ public class XmlElement {
 		
 		return e1.getElementPath().hashCode();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == IResource.class) {
+			return AntUtil.getFile(getFilePath());
+		}
+		return null;
+	}
+
 }
