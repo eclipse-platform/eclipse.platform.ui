@@ -124,6 +124,7 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	public SyncViewerPreferencePage() {
 		super(GRID);
 		setTitle("Synchronize view preferences");
+		setDescription("Team Synchronize View settings:");
 		setPreferenceStore(TeamUIPlugin.getPlugin().getPreferenceStore());
 	}
 
