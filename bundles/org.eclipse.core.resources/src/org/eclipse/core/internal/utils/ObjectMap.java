@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,14 +48,14 @@ public ObjectMap(Map map) {
 	putAll(map);
 }
 /**
- * @see Map#clear
+ * @see Map#clear()
  */
 public void clear() {
 	elements = null;
 	count = 0;
 }
 /**
- * @see Map#containsKey
+ * @see Map#containsKey(java.lang.Object)
  */
 public boolean containsKey(Object key) {
 	if (elements == null || count == 0)
@@ -66,7 +66,7 @@ public boolean containsKey(Object key) {
 	return false;
 }
 /**
- * @see Map#containsValue
+ * @see Map#containsValue(java.lang.Object)
  */
 public boolean containsValue(Object value) {
 	if (elements == null || count == 0)
@@ -77,7 +77,7 @@ public boolean containsValue(Object value) {
 	return false;
 }
 /**
- * @see Map#entrySet
+ * @see Map#entrySet()
  * This implementation does not conform properly to the specification
  * in the Map interface.  The returned collection will not be bound to
  * this map and will not remain in sync with this map.
@@ -108,7 +108,7 @@ public boolean equals(Object o) {
 	return true;
 }
 /**
- * @see Map#get
+ * @see Map#get(java.lang.Object)
  */
 public Object get(Object key) {
 	if (elements == null || count == 0)
@@ -140,13 +140,13 @@ public int hashCode() {
 	return hash;
 }
 /**
- * @see Map#isEmpty
+ * @see Map#isEmpty()
  */
 public boolean isEmpty() {
 	return count == 0;
 }
 /**
- * @see Map#keySet
+ * @see Map#keySet()
  * This implementation does not conform properly to the specification
  * in the Map interface.  The returned collection will not be bound to
  * this map and will not remain in sync with this map.
@@ -161,7 +161,7 @@ public Set keySet() {
 	return result;
 }
 /**
- * @see Map#put
+ * @see Map#put(java.lang.Object, java.lang.Object)
  */
 public Object put(Object key, Object value) {
 	if (key == null)
@@ -203,7 +203,7 @@ public Object put(Object key, Object value) {
 	return null;
 }
 /**
- * @see Map#putAll
+ * @see Map#putAll(java.util.Map)
  */
 public void putAll(Map map) {
 	for (Iterator i = map.keySet().iterator(); i.hasNext();) {
@@ -213,7 +213,7 @@ public void putAll(Map map) {
 	}
 }
 /**
- * @see Map#remove
+ * @see Map#remove(java.lang.Object)
  */
 public Object remove(Object key) {
 	if (elements == null || count == 0)
@@ -230,7 +230,7 @@ public Object remove(Object key) {
 	return null;
 }
 /**
- * @see Map#size
+ * @see Map#size()
  */
 public int size() {
 	return count;
@@ -248,7 +248,7 @@ private HashMap toHashMap() {
 	return result;
 }
 /**
- * @see Map#values
+ * @see Map#values()
  * This implementation does not conform properly to the specification
  * in the Map interface.  The returned collection will not be bound to
  * this map and will not remain in sync with this map.
