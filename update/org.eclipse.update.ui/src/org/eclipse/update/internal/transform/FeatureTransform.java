@@ -60,7 +60,7 @@ public class FeatureTransform extends AbstractTransform {
 		if (key.equals(KEY_IMAGE))
 		   return getFeatureImage(feature);
 		if (key.equals(KEY_DESCRIPTION))
-		   return feature.getDescription();
+		   return feature.getDescription().getText();
 		if (key.equals(KEY_SCHEDULE_LABEL)) {
 			switch (getMode(feature)) {
 				case CANCEL:

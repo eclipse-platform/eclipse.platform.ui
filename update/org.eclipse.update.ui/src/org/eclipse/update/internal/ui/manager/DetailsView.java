@@ -164,7 +164,7 @@ private void fillActionBars() {
 }
 
 private void performHome() {
-   	showPage(HOME_PAGE);
+   	showPageWithInput(HOME_PAGE, null);
 }
 
 private boolean canPerformBackward() {

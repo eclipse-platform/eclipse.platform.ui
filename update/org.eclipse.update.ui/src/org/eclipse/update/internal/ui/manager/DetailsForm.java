@@ -32,6 +32,39 @@ private Button doButton;
 private IFeature currentFeature;
 
 
+class ModelListener implements IUpdateModelChangedListener {
+	/**
+	 * @see IUpdateModelChangedListener#objectAdded(Object, Object)
+	 */
+	public void objectAdded(Object parent, Object child) {
+		if (child instanceof ChecklistJob) {
+			ChecklistJob job = (ChecklistJob)child;
+			if (job.getFeature().equals(currentFeature)) {
+				doButton.setEnabled(false);
+			}
+		}
+	}
+
+	/**
+	 * @see IUpdateModelChangedListener#objectRemoved(Object, Object)
+	 */
+	public void objectRemoved(Object parent, Object child) {
+		if (child instanceof ChecklistJob) {
+			ChecklistJob job = (ChecklistJob)child;
+			if (job.getFeature().equals(currentFeature)) {
+				doButton.setEnabled(true);
+			}
+		}
+	}
+
+	/**
+	 * @see IUpdateModelChangedListener#objectChanged(Object, String)
+	 */
+	public void objectChanged(Object object, String property) {
+	}
+}
+
+
 abstract class LinkListener implements IHyperlinkListener {
 public abstract URL getURL();
 public void linkActivated(Control linkLabel) {
@@ -177,7 +210,7 @@ private void inputChanged(IFeature feature) {
 	providerLabel.setText(feature.getProvider());
 	versionLabel.setText(feature.getIdentifier().getVersion().toString());
 	sizeLabel.setText("0 KB");
-	descriptionText.setText(feature.getDescription());
+	descriptionText.setText(feature.getDescription().getText());
 	if (imageLabel.getImage()==null ||
 		!imageLabel.getImage().equals(providerImage))
 	imageLabel.setImage(providerImage);
@@ -216,11 +249,6 @@ private void doButtonSelected() {
 		}
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		model.addJob(new ChecklistJob(currentFeature, mode));
-		doButton.setEnabled(false);
 	}
 }
-
-//private void goToPage(String pageId) {
-	//getPage().getView().showPage(pageId);
-//}
 }

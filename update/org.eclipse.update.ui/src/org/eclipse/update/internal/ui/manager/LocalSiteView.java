@@ -177,29 +177,39 @@ class FakeFeature implements IFeature {
 	public String getLabel() {
 		return label;
 	}
-
+	
 	/**
 	 * @see IFeature#getUpdateURL()
 	 */
-	public URL getUpdateURL() {
+	public IInfo getUpdateInfo() {
 		return null;
 	}
-
-	/**
-	 * @see IFeature#getInfoURL()
-	 */
+	
+	
+	public URL getURL() {
+		return null;
+	}
+		
 	public URL getInfoURL() {
 		return infoURL;
 	}
 	
-	public void setInfoURL(URL url) {
-		infoURL = url;
+	public void setInfoURL(URL infoURL) {
+		this.infoURL = infoURL;
+	}
+
+	public IInfo getLicense() {
+		return null;
+	}
+	
+	public IInfo getCopyright() {
+		return null;
 	}
 
 	/**
 	 * @see IFeature#getDiscoveryURLs()
 	 */
-	public URL[] getDiscoveryURLs() {
+	public IInfo[] getDiscoveryInfos() {
 		return null;
 	}
 
@@ -213,8 +223,15 @@ class FakeFeature implements IFeature {
 	/**
 	 * @see IFeature#getDescription()
 	 */
-	public String getDescription() {
-		return description;
+	public IInfo getDescription() {
+		return new IInfo() {
+			public String getText() {
+				return description;
+			}
+			public URL getURL() {
+				return null;
+			}
+		};
 	}
 
 	/**
@@ -389,11 +406,19 @@ class FakeLocalSite implements ILocalSite {
 	public URL getURL() {
 		return null;
 	}
+	
+	public ICategory [] getCategories() {
+		return null;
+	}
 
 	/**
 	 * @see IPluginContainer#getPluginEntries()
 	 */
 	public IPluginEntry[] getPluginEntries() {
+		return null;
+	}
+	
+	public URL getInfoURL() {
 		return null;
 	}
 

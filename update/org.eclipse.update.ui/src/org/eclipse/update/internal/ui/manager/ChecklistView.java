@@ -18,6 +18,7 @@ import org.eclipse.ui.*;
 import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.jface.wizard.*;
+import java.util.*;
 
 /**
  * Insert the type's description here.
@@ -32,6 +33,7 @@ public class ChecklistView extends BaseTreeView
 	private FolderObject uninstalls = new FolderObject("Uninstall Candidates");
 	private Image featureImage;
 	private Image folderImage;
+	private Action deleteAction;
 	
 class FolderObject {
 	String label;
@@ -219,6 +221,32 @@ private void performStart() {
 			dialog.open();
 		}
 	});
+}
+
+protected void makeActions() {
+	deleteAction = new Action() {
+		public void run() {
+			performDelete();
+		}
+	};
+	deleteAction.setText("Remove");
+}
+
+protected void fillContextMenu(IMenuManager manager) {
+	manager.add(deleteAction);
+}
+
+private void performDelete() {
+	ISelection selection = viewer.getSelection();
+	if (selection.isEmpty()==false && selection instanceof IStructuredSelection) {
+		IStructuredSelection ssel = (IStructuredSelection)selection;
+		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		for (Iterator iter = ssel.iterator(); iter.hasNext();) {
+			Object obj = iter.next();
+			if (obj instanceof ChecklistJob)
+				model.removeJob((ChecklistJob)obj);
+		}
+	}
 }
 
 }
