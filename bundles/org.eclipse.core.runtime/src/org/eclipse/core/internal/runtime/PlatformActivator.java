@@ -270,31 +270,11 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 						throw (RuntimeException) e;
 					else
 						throw new RuntimeException("Error running application", e); //$NON-NLS-1$
-				} finally {
-					stopLegacyBundles(context);
 				}
 			}
 		};
 		Hashtable properties = new Hashtable(1);
 		properties.put(PROP_ECLIPSE_APPLICATION, "default"); //$NON-NLS-1$ 
 		context.registerService(ParameterizedRunnable.class.getName(), work, properties);
-	}
-
-	protected void stopLegacyBundles(BundleContext context) {
-		IExtensionPoint shutdownHooksExtPt = registry.getExtensionPoint(IPlatform.PI_RUNTIME, IPlatform.PT_SHUTDOWN_HOOK);
-		IExtension[] shutdownHooks = shutdownHooksExtPt.getExtensions();
-		for (int i = 0; i < shutdownHooks.length; i++) {
-			if (!IPlatform.PI_RUNTIME_COMPATIBILITY.equals(shutdownHooks[i].getNamespace()))
-				continue;
-			IConfigurationElement[] elements = shutdownHooks[i].getConfigurationElements();
-			try {
-				IShutdownHook shutdownHook = (IShutdownHook)elements[0].createExecutableExtension("run"); //$NON-NLS-1$
-				shutdownHook.run();
-			} catch (CoreException e) {
-				InternalPlatform.getDefault().getLog(context.getBundle()).log(e.getStatus());
-			}
-			// we expect only one shut down hook contributor (if any)
-			break;
-		}
 	}
 }

@@ -88,8 +88,6 @@ public interface IPlatform {
 
 	public static final String PT_URLHANDLERS = "urlHandlers"; //$NON-NLS-1$
 
-	public static final String PT_SHUTDOWN_HOOK = "applicationShutdownHook"; //$NON-NLS-1$	
-
 	/** 
 	 * The simple identifier constant (value "<code>products</code>") of
 	 * the extension point of the Core Runtime plug-in where plug-ins declare

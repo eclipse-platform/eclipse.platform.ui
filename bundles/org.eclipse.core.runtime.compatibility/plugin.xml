@@ -19,15 +19,4 @@
       <import plugin="org.eclipse.osgi" export="true"/>
       <import plugin="org.eclipse.update.configurator" export="true"/>
    </requires>
-
-
-   <extension
-         point="org.eclipse.core.runtime.applicationShutdownHook">
-      <shutdownHook>
-         <run
-               class="org.eclipse.core.internal.plugins.PluginStopper">
-         </run>
-      </shutdownHook>
-   </extension>
-
 </plugin>

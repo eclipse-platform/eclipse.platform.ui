@@ -129,9 +129,6 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 		// load the requested class from this plugin
 		Class classInstance = null;
 		try {
-			if (bundle.getState() != Bundle.STARTING && bundle.getState() != Bundle.ACTIVE) //This is necessary to support recursive call on createExecutableExtension on the same bundle
-				bundle.start();
-			//classInstance = getPluginClassLoader(true).loadClass(className);z
 			classInstance = bundle.loadClass(className);
 		} catch (Exception e1) {
 			throwException(Policy.bind("plugin.loadClassError", bundle.getSymbolicName(), className), e1); //$NON-NLS-1$

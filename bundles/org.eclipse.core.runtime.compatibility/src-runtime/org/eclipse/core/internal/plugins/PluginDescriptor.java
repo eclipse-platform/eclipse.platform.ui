@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.osgi.framework.*;
 public class PluginDescriptor implements IPluginDescriptor {
 
 	private static final String PLUGIN_CLASS = "Plugin-Class"; //$NON-NLS-1$
+	private static final String LEGACY = "Legacy"; //$NON-NLS-1$
 	private boolean active = false; // plugin is active
 	private volatile boolean activePending = false; // being activated
 	private boolean deactivated = false; // plugin deactivated due to startup errors
@@ -467,7 +468,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 			active = true;
 	}
 	public boolean isLegacy() {
-		return new Boolean((String) bundleOsgi.getHeaders().get("Legacy")).booleanValue(); //$NON-NLS-1$
+		return new Boolean((String) bundleOsgi.getHeaders().get(LEGACY)).booleanValue(); //$NON-NLS-1$
 	}
 
 	public Bundle getBundle() {
