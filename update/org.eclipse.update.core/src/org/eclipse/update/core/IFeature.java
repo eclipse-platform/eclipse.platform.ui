@@ -19,7 +19,18 @@ public interface IFeature extends IPluginContainer {
 	URL [] getDiscoveryURLs();
 	String getProvider();
 	String getDescription();
+	
 	boolean isExecutable();
 	boolean isInstallable();
+
+	/**
+	 * returns a list of *bundles*	that compose teh feature
+	 */
+	String[] getContentReferences();
+	
+	/**
+	 * install yourself into another feature.
+	 */
+	void install(IFeature targetFeature);
 }
 

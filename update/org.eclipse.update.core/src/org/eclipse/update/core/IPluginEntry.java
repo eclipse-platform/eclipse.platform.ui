@@ -7,5 +7,7 @@ package org.eclipse.update.core;
 public interface IPluginEntry {
 	boolean isFragment();
 	IPluginContainer getContainer();
+	VersionedIdentifier getIdentifier();
+	String getLabel();
 }
 

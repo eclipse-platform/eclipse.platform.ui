@@ -9,8 +9,10 @@ public class VersionedIdentifier {
 	private String id;
 	private Version version;
 	
+	private static final String	SEPARATOR = "_";
+	
 	public VersionedIdentifier(String idWithVersion) {
-		int loc = idWithVersion.lastIndexOf('_');
+		int loc = idWithVersion.lastIndexOf(SEPARATOR);
 		String id = idWithVersion;
 		if (loc != -1) {
 			id = idWithVersion.substring(0, loc);
@@ -38,6 +40,10 @@ public class VersionedIdentifier {
 	public boolean equals(VersionedIdentifier versionedId) {
 		return versionedId.getIdentifier().equals(id) &&
 		versionedId.getVersion().equals(version);
+	}
+	
+	public String toString(){
+		return id+SEPARATOR+version.toString();
 	}
 }
 
