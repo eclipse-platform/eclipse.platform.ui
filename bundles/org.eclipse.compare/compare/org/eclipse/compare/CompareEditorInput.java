@@ -455,7 +455,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		BusyIndicator.showWhile(fComposite.getDisplay(),
 			new Runnable() {
 				public void run() {
-					if (selection.isEmpty()) {
+					if (selection == null || selection.isEmpty()) {
 						Object input= fStructureInputPane.getInput();
 						fContentInputPane.setInput(input);
 						fStructurePane2.setInput(null); // clear downstream pane

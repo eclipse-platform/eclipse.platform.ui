@@ -122,7 +122,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		IWorkbenchActionConstants.PASTE,
 		IWorkbenchActionConstants.DELETE,
 		IWorkbenchActionConstants.SELECT_ALL,
-		//IWorkbenchActionConstants.SAVE
 	};
 	private static final String[] TEXT_ACTIONS= {
 		MergeSourceViewer.UNDO_ID,
@@ -132,7 +131,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		MergeSourceViewer.PASTE_ID,
 		MergeSourceViewer.DELETE_ID,
 		MergeSourceViewer.SELECT_ALL_ID,
-		//MergeSourceViewer.SAVE_ID
 	};
 		
 	private static final String MY_UPDATER= "my_updater"; //$NON-NLS-1$
@@ -162,6 +160,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 	// determines whether a change between left and right is considered incoming or outgoing
 	private boolean fLeftIsLocal;
+	private boolean fShowCurrentOnly= false;
+	private boolean fShowCurrentOnly2= false;
 	private int fMarginWidth= MARGIN_WIDTH;
 	private int fTopInset;
 	
@@ -181,6 +181,21 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private static final RGB SELECTED_OUTGOING= new RGB(0, 0, 0);
 	private static final RGB SELECTED_OUTGOING_FILL= new RGB(255, 255, 255);
 	
+//	private static final RGB INCOMING= new RGB(230, 230, 240);
+//	private static final RGB INCOMING_FILL= new RGB(250, 250, 255);
+//	private static final RGB SELECTED_INCOMING= new RGB(0, 0, 255);
+//	private static final RGB SELECTED_INCOMING_FILL= new RGB(255, 255, 255);
+//	
+//	private static final RGB CONFLICT= new RGB(240, 230, 230);
+//	private static final RGB CONFLICT_FILL= new RGB(255, 250, 250);
+//	private static final RGB SELECTED_CONFLICT= new RGB(255, 0, 0);
+//	private static final RGB SELECTED_CONFLICT_FILL= new RGB(255, 255, 255);
+//	
+//	private static final RGB OUTGOING= new RGB(230, 230, 230);
+//	private static final RGB OUTGOING_FILL= new RGB(250, 250, 250);
+//	private static final RGB SELECTED_OUTGOING= new RGB(0, 0, 0);
+//	private static final RGB SELECTED_OUTGOING_FILL= new RGB(255, 255, 255);
+
 	private IDocumentListener fDocumentListener;
 	
 	private	IPropertyChangeListener fPreferenceChangeListener;
@@ -787,13 +802,25 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		invalidateLines();
 		updateVScrollBar();
 		
-		if (!emptyInput)
-			selectFirstDiff();
+		if (!emptyInput && !fComposite.isDisposed()) {
+			// delay so that StyledText widget gets a chance to resize itself
+			// (otherwise selectFirstDiff would not know its visible area)
+			fComposite.getDisplay().asyncExec(
+				new Runnable() {
+					public void run() {
+						selectFirstDiff();
+					}
+				}
+			);
+		}
 	}
 	
 	private void updateDiffBackground(Diff diff) {
 		
 		if (diff == null || diff.fIsToken)
+			return;
+			
+		if (fShowCurrentOnly && !isCurrentDiff(diff))
 			return;
 						
 		Color c= getColor(getFillColor(diff));
@@ -816,6 +843,16 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			} catch (BadPositionCategoryException ex) {
 			}
 		}
+	}
+	
+	boolean isCurrentDiff(Diff diff) {
+		if (diff == null)
+			return false;
+		if (diff == fCurrentDiff)
+			return true;
+		if (fCurrentDiff != null && fCurrentDiff.fParent == diff)
+			return true;
+		return false;
 	}
 	
 	/**
@@ -1489,7 +1526,24 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (fCopyDiffRightToLeftItem != null)
 			((Action)fCopyDiffRightToLeftItem.getAction()).setEnabled(rightToLeft);
 			
+		boolean enableNavigation= false;
+		if (fCurrentDiff == null && fChangeDiffs != null && fChangeDiffs.size() > 0)
+			enableNavigation= true;
+		else if (fChangeDiffs != null && fChangeDiffs.size() > 1)
+			enableNavigation= true;
+		else if (fCurrentDiff != null && fCurrentDiff.fDiffs != null)
+			enableNavigation= true;
+		else if (fCurrentDiff != null && fCurrentDiff.fIsToken)
+			enableNavigation= true;
 		
+		if (fNextItem != null) {
+			IAction a= fNextItem.getAction();
+			a.setEnabled(enableNavigation);
+		}
+		if (fPreviousItem != null) {
+			IAction a= fPreviousItem.getAction();
+			a.setEnabled(enableNavigation);
+		}	
 	}
 
 	private void updateStatus(Diff diff) {
@@ -1610,6 +1664,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					
 			doDiff();
 					
+			updateControls();
 			invalidateLines();
 			updateVScrollBar();
 			
@@ -1658,7 +1713,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (CompareNavigator.getDirection(fComposite))
 			firstDiff= findNext(fRight, fChangeDiffs, -1, -1, false);
 		else
-			firstDiff= findPrev(fRight, fChangeDiffs, 9999999, 9999999, false);			
+			firstDiff= findPrev(fRight, fChangeDiffs, 9999999, 9999999, false);
 		setCurrentDiff(firstDiff, true);
 	}
 	
@@ -1784,6 +1839,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				if (diff.isDeleted())
 					continue;
 				
+				if (fShowCurrentOnly2 && !isCurrentDiff(diff))
+					continue;
+
 				fLeft.getLineRange(diff.fLeftPos, region);
 				int ly= (region.x * lineHeight) + lshift;
 				int lh= region.y * lineHeight;
@@ -1842,6 +1900,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				if (diff.isDeleted())
 					continue;
 				
+				if (fShowCurrentOnly2 && !isCurrentDiff(diff))
+					continue;
+
 				tp.getLineRange(diff.getPosition(tp), region);	
 				int y= (region.x * lineHeight) + shift;
 				int h= region.y * lineHeight;
@@ -1895,6 +1956,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			if (diff.isDeleted())
 				continue;
 			
+			if (fShowCurrentOnly && !isCurrentDiff(diff))
+				continue;
+
 			tp.getLineRange(diff.getPosition(tp), range);
 			int y= (range.x * lineHeight) + shift;
 			int h= range.y * lineHeight;
@@ -1903,7 +1967,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				continue;
 			if (y > maxh)
 				break;
-						
+			
 			g.setBackground(getColor(getStrokeColor(diff)));
 			g.fillRectangle(0, y-1, w, LW);
 			g.fillRectangle(0, y+h-1, w, LW);

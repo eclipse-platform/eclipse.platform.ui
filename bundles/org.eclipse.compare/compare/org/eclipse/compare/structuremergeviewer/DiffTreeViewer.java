@@ -144,6 +144,7 @@ public class DiffTreeViewer extends TreeViewer {
 	private Action fCopyRightToLeftAction;
 	private Action fNextAction;
 	private Action fPreviousAction;
+	private Action fEmptyMenuAction;
 		
 	/**
 	 * Creates a new viewer for the given SWT tree control with the specified configuration.
@@ -246,6 +247,14 @@ public class DiffTreeViewer extends TreeViewer {
 			new IMenuListener() {
 				public void menuAboutToShow(IMenuManager mm) {
 					fillContextMenu(mm);
+					if (mm.isEmpty()) {
+						if (fEmptyMenuAction == null) {
+							fEmptyMenuAction=
+								new Action(Utilities.getString(fBundle, "emptyMenuItem")) {};	//$NON-NLS-1$
+							fEmptyMenuAction.setEnabled(false);
+						}
+						mm.add(fEmptyMenuAction);
+					}
 				}
 			}
 		);
@@ -361,7 +370,7 @@ public class DiffTreeViewer extends TreeViewer {
 //		};
 //		Utilities.initAction(fCopyLeftToRightAction, fBundle, "action.TakeLeft.");
 //		toolbarManager.appendToGroup("merge", fCopyLeftToRightAction);
-//
+
 //		fCopyRightToLeftAction= new Action() {
 //			public void run() {
 //				copySelected(false);
