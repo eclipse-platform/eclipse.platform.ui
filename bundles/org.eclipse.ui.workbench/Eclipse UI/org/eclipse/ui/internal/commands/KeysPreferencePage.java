@@ -214,7 +214,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * item is stored.
 	 */
 	private static final String ITEM_DATA_KEY = "org.eclipse.jface.bindings"; //$NON-NLS-1$
-	
+
 	/**
 	 * The number of items to show in the combo boxes.
 	 */
@@ -1329,7 +1329,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		}
 
 		setScheme(localChangeManager.getActiveScheme()); // update the scheme
-		update();
+		update(true);
 		super.performDefaults();
 	}
 
@@ -1373,7 +1373,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 				null, null, null, Binding.USER);
 		localChangeManager.addBinding(new KeyBinding(keySequence, commandId,
 				schemeId, contextId, null, null, null, Binding.USER));
-		update();
+		update(true);
 	}
 
 	/**
@@ -1441,7 +1441,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 				null, null, null, Binding.USER);
 		localChangeManager.addBinding(new KeyBinding(keySequence, null,
 				schemeId, contextId, null, null, null, Binding.USER));
-		update();
+		update(true);
 	}
 
 	/**
@@ -1455,7 +1455,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		KeySequence keySequence = getKeySequence();
 		localChangeManager.removeBindings(keySequence, schemeId, contextId,
 				null, null, null, Binding.USER);
-		update();
+		update(true);
 	}
 
 	/**
@@ -1470,7 +1470,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		} catch (final NotDefinedException e) {
 			// Oh, well.
 		}
-		update();
+		update(true);
 	}
 
 	/**
@@ -1911,10 +1911,22 @@ public final class KeysPreferencePage extends PreferencePage implements
 			setScheme(activeScheme);
 
 			// Update the entire page.
-			update();
+			update(true);
 		}
 
 		super.setVisible(visible);
+	}
+
+	/**
+	 * Updates the entire preference page -- except the view tab -- based on
+	 * current selection sate. This preference page is written so that
+	 * everything can be made consistent simply by inspecting the state of its
+	 * widgets. A change is triggered by the user, and an event is fired. The
+	 * event triggers an update. It is possible for extra work to be done by
+	 * this page before calling update.
+	 */
+	private final void update() {
+		update(false);
 	}
 
 	/**
@@ -1923,9 +1935,14 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * simply by inspecting the state of its widgets. A change is triggered by
 	 * the user, and an event is fired. The event triggers an update. It is
 	 * possible for extra work to be done by this page before calling update.
+	 * 
+	 * @param updateViewTab
+	 *            Whether the view tab should be updated as well.
 	 */
-	private final void update() {
-		updateViewTab();
+	private final void update(final boolean updateViewTab) {
+		if (updateViewTab) {
+			updateViewTab();
+		}
 		updateComboCommand();
 		updateComboContext();
 		final TriggerSequence triggerSequence = getKeySequence();
