@@ -160,14 +160,18 @@ class TrimLayout extends Layout {
 	 * @param controls
 	 * @return
 	 */
-	private static Point maxDimensions(List controls) {
+	private static Point maxDimensions(List controls, int widthHint, int heightHint) {
+		
+		int individualWidthHint = (widthHint == SWT.DEFAULT) ? SWT.DEFAULT : widthHint / controls.size();
+		int individualHeightHint = (heightHint == SWT.DEFAULT) ? SWT.DEFAULT : heightHint / controls.size();
+		
 		Point result = new Point(0,0);
 		Iterator iter = controls.iterator();
 		
 		while (iter.hasNext()) {
 			Control next = (Control)iter.next();
 			
-			Point dimension = next.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			Point dimension = next.computeSize(individualWidthHint, individualHeightHint);
 			
 			result.x = Math.max(result.x, dimension.x);
 			result.y = Math.max(result.y, dimension.y);
@@ -323,7 +327,7 @@ class TrimLayout extends Layout {
 	 * @return an array of trim sizes (pixels). See the index constants,
 	 * above, for the meaning of the indices. 
 	 */
-	private int[] getTrimSizes() {
+	private int[] getTrimSizes(int widthHint, int heightHint) {
 		int[] trimSize = new int[controls.length];
 		
 		for (int idx = 0; idx < trimSizes.length; idx++) {
@@ -334,17 +338,17 @@ class TrimLayout extends Layout {
 			}
 		}
 		
-		if (trimSize[TOP] == SWT.DEFAULT) {	
-			trimSize[TOP] = maxDimensions(controls[TOP]).y;
+		if (trimSize[TOP] == SWT.DEFAULT) {
+			trimSize[TOP] = maxDimensions(controls[TOP], widthHint, SWT.DEFAULT).y;
 		}
 		if (trimSize[BOTTOM] == SWT.DEFAULT) {	
-			trimSize[BOTTOM] = maxDimensions(controls[BOTTOM]).y;
+			trimSize[BOTTOM] = maxDimensions(controls[BOTTOM], widthHint, SWT.DEFAULT).y;
 		}
 		if (trimSize[LEFT] == SWT.DEFAULT) {
-			trimSize[LEFT] = maxDimensions(controls[LEFT]).x;
+			trimSize[LEFT] = maxDimensions(controls[LEFT], SWT.DEFAULT, heightHint).x;
 		}
 		if (trimSize[RIGHT] == SWT.DEFAULT) {
-			trimSize[RIGHT] = maxDimensions(controls[RIGHT]).x;
+			trimSize[RIGHT] = maxDimensions(controls[RIGHT], SWT.DEFAULT, heightHint).x;
 		}		
 		return trimSize;
 	}
@@ -355,7 +359,7 @@ class TrimLayout extends Layout {
 	protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
 		Point result = new Point(wHint, hHint);
 		
-		int[] trimSize = getTrimSizes();
+		int[] trimSize = getTrimSizes(wHint, hHint);
 		int horizontalTrim = trimSize[LEFT] + trimSize[RIGHT] + (2 * marginWidth) + leftSpacing + rightSpacing;
 		int verticalTrim = trimSize[TOP] + trimSize[BOTTOM] + (2 * marginHeight) + topSpacing + bottomSpacing;
 				
@@ -385,14 +389,14 @@ class TrimLayout extends Layout {
 		removeDisposed();
 		
 		Rectangle clientArea = composite.getClientArea();
-		
-		int[] trimSize = getTrimSizes();
 
 		clientArea.x += marginWidth;
 		clientArea.width -= 2 * marginWidth;
 		clientArea.y += marginHeight;
 		clientArea.height -= 2 * marginHeight;
 		
+		int[] trimSize = getTrimSizes(clientArea.width, clientArea.height);
+
 		int leftOfLayout = clientArea.x;
 		int leftOfCenterPane = leftOfLayout + trimSize[LEFT] + leftSpacing;
 		int widthOfCenterPane = clientArea.width - trimSize[LEFT] - trimSize[RIGHT] - leftSpacing - rightSpacing;
