@@ -40,7 +40,7 @@ import org.eclipse.ui.progress.UIJob;
  * 
  * {date/time, comment, user} -> {*files}
  */
-public class ChangeLogViewerInput extends HierarchicalModelProvider {
+public class ChangeLogModelProvider extends HierarchicalModelProvider {
 	
 	private Map commentRoots = new HashMap();
 	private PendingUpdateAdapter pendingItem;
@@ -167,7 +167,7 @@ public class ChangeLogViewerInput extends HierarchicalModelProvider {
 		}
 	};
 	
-	public ChangeLogViewerInput(SyncInfoTree set) {
+	public ChangeLogModelProvider(SyncInfoTree set) {
 		super(set);
 	}
 
