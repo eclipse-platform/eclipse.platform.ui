@@ -8,7 +8,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 public class AntModelContentProvider implements ITreeContentProvider {
 
-	private static final Object[] EMPTY_ARRAY= new Object[0];
+	protected static final Object[] EMPTY_ARRAY= new Object[0];
 	
 	/**
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
@@ -27,11 +27,15 @@ public class AntModelContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(Object)
 	 */
 	public Object[] getChildren(Object parentNode) {
-		AntElementNode parentElement = (AntElementNode)parentNode;
-		if (parentElement.hasChildren()) {
-			List children= parentElement.getChildNodes();
-			return children.toArray();
-		} 
+		if (parentNode instanceof AntElementNode) {
+			AntElementNode parentElement = (AntElementNode)parentNode;
+			if (parentElement.hasChildren()) {
+				List children= parentElement.getChildNodes();
+				return children.toArray();
+			} 
+		} else if (parentNode instanceof AntModel) {
+			return new Object[] {((AntModel)parentNode).getProjectNode()};
+		}
 		return EMPTY_ARRAY;
 	}
 
@@ -53,14 +57,14 @@ public class AntModelContentProvider implements ITreeContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(Object)
 	 */
-	public Object[] getElements(Object anInputElement) {
-		if (anInputElement instanceof AntModel ) {
-			return ((AntModel) anInputElement).getRootElements();
+	public Object[] getElements(Object inputElement) {
+		if (inputElement instanceof AntModel ) {
+			return ((AntModel) inputElement).getRootElements();
 		}
-		if (anInputElement instanceof AntTargetNode[]) {
-			return (Object[])anInputElement;
+		
+		if (inputElement instanceof Object[]) {
+			return (Object[])inputElement;
 		}
 		return EMPTY_ARRAY;
 	}
-
 }

@@ -32,16 +32,10 @@ public class AntTargetNode extends AntElementNode {
 	}	
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#getDisplayName()
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getLabel()
 	 */
 	public String getLabel() {
-		String targetName= fTarget.getName();
-		if (targetName == null) {
-			targetName= "target"; //$NON-NLS-1$
-			setProblemSeverity(AntModelProblem.SEVERITY_ERROR);
-		}
-		
-		StringBuffer displayName= new StringBuffer(targetName);
+		StringBuffer displayName= new StringBuffer(getTargetName());
 		if (isDefaultTarget()) {
 			displayName.append(AntModelMessages.getString("AntTargetNode.2")); //$NON-NLS-1$
 		}
@@ -122,6 +116,9 @@ public class AntTargetNode extends AntElementNode {
 		return null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#collapseProjection()
+	 */
 	public boolean collapseProjection() {
 		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();		
 		if (store.getBoolean(AntEditorPreferenceConstants.EDITOR_FOLDING_TARGETS)) {
@@ -129,4 +126,13 @@ public class AntTargetNode extends AntElementNode {
 		}
 		return false;
 	}
+
+    public String getTargetName() {
+        String targetName= fTarget.getName();
+		if (targetName == null) {
+			targetName= "target"; //$NON-NLS-1$
+			setProblemSeverity(AntModelProblem.SEVERITY_ERROR);
+		}
+		return targetName;
+    }
 }
