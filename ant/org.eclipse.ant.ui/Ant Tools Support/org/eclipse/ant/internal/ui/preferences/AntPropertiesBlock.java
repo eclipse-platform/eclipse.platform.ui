@@ -11,7 +11,7 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +20,10 @@ import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -132,7 +134,19 @@ public class AntPropertiesBlock {
 		String message= AntPreferencesMessages.getString("AntPropertiesFileSelectionDialog.13"); //$NON-NLS-1$
 		String filterExtension= "properties"; //$NON-NLS-1$
 		String filterMessage= AntPreferencesMessages.getString("AntPropertiesFileSelectionDialog.14"); //$NON-NLS-1$
-		FileSelectionDialog dialog= new FileSelectionDialog(propertyTableViewer.getControl().getShell(), Arrays.asList(getPropertyFiles()), title, message, filterExtension, filterMessage);
+		
+		Object[] existingFiles= getPropertyFiles();
+		List propFiles= new ArrayList(existingFiles.length);
+		for (int j = 0; j < existingFiles.length; j++) {
+			String file = (String)existingFiles[j];
+			try {
+                propFiles.add(AntUtil.getFileForLocation(VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(file), null));
+            } catch (CoreException e) {
+                AntUIPlugin.log(e.getStatus());
+            }
+		}
+			
+		FileSelectionDialog dialog= new FileSelectionDialog(propertyTableViewer.getControl().getShell(), propFiles, title, message, filterExtension, filterMessage);
 		if (dialog.open() == Window.OK) {
 			Object[] elements= dialog.getResult();
 			for (int i = 0; i < elements.length; i++) {
