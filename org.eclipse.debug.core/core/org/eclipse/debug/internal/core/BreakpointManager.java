@@ -110,8 +110,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * the debug plugin.
 	 */
 	public void startup() throws CoreException {
-		initBreakpointExtensions();
-		deleteNonPersistedBreakpoints(ResourcesPlugin.getWorkspace().getRoot());
 		getWorkspace().addResourceChangeListener(this);
 	}
 	
@@ -121,6 +119,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * @param resource the resource which contains the breakpoints
 	 */
 	private void loadBreakpoints(IResource resource) throws CoreException {
+		initBreakpointExtensions();
+		deleteNonPersistedBreakpoints(ResourcesPlugin.getWorkspace().getRoot());
 		IMarker[] markers= resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
 		for (int i = 0; i < markers.length; i++) {
 			IMarker marker= markers[i];
@@ -224,9 +224,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			initializeBreakpoints();
 		}
 		return fBreakpoints;
-	}
-	
-	
+	}	
 	
 	/**
 	 * @see IBreakpointManager#getBreakpoints(String)
