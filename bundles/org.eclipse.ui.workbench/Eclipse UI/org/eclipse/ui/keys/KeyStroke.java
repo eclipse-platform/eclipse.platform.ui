@@ -229,22 +229,23 @@ public final class KeyStroke implements Comparable {
 	}
 
 	/**
-	 * TODO 
+	 * Gets an instance of <code>KeyStroke</code> given a natural key. 
 	 * 
-	 * @param naturalKey
-	 * @return
-	 */		
+	 * @param naturalKey the natural key. May be <code>null</code>.
+	 * @return a key stroke. This key stroke will have no modifier keys. 
+	 */	
 	public static KeyStroke getInstance(NaturalKey naturalKey) {
 		return new KeyStroke(Util.EMPTY_SORTED_SET, naturalKey);
 	}
 
 	/**
-	 * TODO
+	 * Gets an instance of <code>KeyStroke</code> given a single modifier key
+	 * and a natural key.
 	 * 
-	 * @param modifierKey
-	 * @param naturalKey
-	 * @return
-	 */
+	 * @param modifierKey a modifier key. Must not be <code>null</code>.
+	 * @param naturalKey  the natural key. May be <code>null</code>.
+	 * @return a key stroke.
+	 */	
 	public static KeyStroke getInstance(ModifierKey modifierKey, NaturalKey naturalKey) {
 		if (modifierKey == null)
 			throw new NullPointerException();
@@ -253,34 +254,44 @@ public final class KeyStroke implements Comparable {
 	}
 
 	/**
-	 * TODO
+	 * Gets an instance of <code>KeyStroke</code> given an array of modifier 
+	 * keys and a natural key.
 	 * 
-	 * @param modifierKeys
-	 * @param naturalKey
-	 * @return
-	 */
+	 * @param modifierKeys the array of modifier keys. This array may be empty, 
+	 *                     but it must not be <code>null</code>. If this array 
+	 *                     is not empty, it must not contain <code>null</code> 
+	 *                     elements. 
+	 * @param naturalKey   the natural key. May be <code>null</code>.
+	 * @return a key stroke.
+	 */	
 	public static KeyStroke getInstance(ModifierKey[] modifierKeys, NaturalKey naturalKey) {
 		Util.assertInstance(modifierKeys, ModifierKey.class);		
 		return new KeyStroke(new TreeSet(Arrays.asList(modifierKeys)), naturalKey);
 	}
 
 	/**
-	 * TODO
+	 * Gets an instance of <code>KeyStroke</code> given a set of modifier 
+	 * keys and a natural key.
 	 * 
-	 * @param modifierKeys
-	 * @param naturalKey
-	 * @return
-	 */
+	 * @param modifierKeys the set of modifier keys. This set may be empty, but
+	 *        			   it must not be <code>null</code>. If this set is not 
+	 * 					   empty, it must only contain instances of 
+	 *                     <code>ModifierKey</code>.
+	 * @param naturalKey   the natural key. May be <code>null</code>.
+	 * @return a key stroke.
+	 */	
 	public static KeyStroke getInstance(SortedSet modifierKeys, NaturalKey naturalKey) {
 		return new KeyStroke(modifierKeys, naturalKey);
 	}
 
 	/**
-	 * TODO
+	 * Gets an instance of <code>KeyStroke</code> by parsing a given a formal
+	 * string representation. 
 	 * 
-	 * @param string
-	 * @return
-	 * @throws ParseException
+	 * @param string the formal string representation to parse.
+	 * @return a key stroke.
+	 * @throws ParseException if the given formal string representation could
+	 * 						  not be parsed to a valid key stroke.
 	 */
 	public static KeyStroke getInstance(String string)
 		throws ParseException {
