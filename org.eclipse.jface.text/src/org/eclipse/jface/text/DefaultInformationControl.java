@@ -327,6 +327,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @see IInformationControl#setFocus()
 	 */
 	public void setFocus() {
+		fShell.forceFocus();
 		fText.setFocus();
 	}
 	
