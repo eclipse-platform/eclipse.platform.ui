@@ -386,6 +386,13 @@ public class AnimationManager {
 				public boolean shouldSchedule() {
 					return PlatformUI.isWorkbenchRunning();
 				}
+				
+				/* (non-Javadoc)
+				 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
+				 */
+				public boolean shouldRun() {
+					return PlatformUI.isWorkbenchRunning();
+				}
 			};
 			animateJob.setSystem(true);
 			animateJob.setPriority(Job.DECORATE);
