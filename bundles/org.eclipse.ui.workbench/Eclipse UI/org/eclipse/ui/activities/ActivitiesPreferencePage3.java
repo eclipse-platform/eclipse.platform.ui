@@ -237,10 +237,25 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         data.horizontalSpan = 2;
         label.setLayoutData(data);
+        createPromptButton(composite);
         createCategoryArea(composite);
         createDetailsArea(composite);
         createButtons(composite);
         return composite;
+    }
+
+    /**
+     * @param composite
+     */
+    private void createPromptButton(Composite composite) {
+        activityPromptButton = new Button(composite, SWT.CHECK);
+        activityPromptButton.setText("&Prompt when enabling capabilities"); //$NON-NLS-1$
+        GridData data = new GridData();
+        data.horizontalSpan = 2;
+        activityPromptButton.setLayoutData(data);
+        activityPromptButton.setSelection(getPreferenceStore()
+                .getBoolean(
+                        IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT));
     }
 
     private void createButtons(Composite parent) {
@@ -266,7 +281,7 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
                 categoryViewer.setCheckedElements(getEnabledCategories());
             }
         });
-        enableAll.setText("&Select All"); //$NON-NLS-1$
+        enableAll.setText("&Enable All"); //$NON-NLS-1$
         setButtonLayoutData(enableAll);
 
         Button disableAll = new Button(composite, SWT.PUSH);
@@ -281,18 +296,8 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
                 categoryViewer.setCheckedElements(getEnabledCategories());
             }
         });
-        disableAll.setText("D&eselect All"); //$NON-NLS-1$
+        disableAll.setText("D&isable All"); //$NON-NLS-1$
         setButtonLayoutData(disableAll);
-
-        activityPromptButton = new Button(composite, SWT.CHECK);
-        activityPromptButton.setText("&Prompt when enabling capabilities"); //$NON-NLS-1$
-        data = new GridData(GridData.GRAB_HORIZONTAL
-                | GridData.HORIZONTAL_ALIGN_END
-                | GridData.VERTICAL_ALIGN_CENTER);
-        activityPromptButton.setLayoutData(data);
-        activityPromptButton.setSelection(getPreferenceStore()
-                .getBoolean(
-                        IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT));
     }
 
     /**
@@ -307,6 +312,14 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
 
         {
             Label label = new Label(composite, SWT.NONE);
+            label.setText("D&escription:"); //$NON-NLS-1$
+            descriptionText = new Text(composite, SWT.READ_ONLY | SWT.BORDER);
+            GridData data = new GridData(GridData.FILL_BOTH);
+            data.heightHint = 100;
+            descriptionText.setLayoutData(data);
+        }
+        {
+            Label label = new Label(composite, SWT.NONE);
             label.setText("Category &Requirements:"); //$NON-NLS-1$
             dependantViewer = new TableViewer(composite, SWT.BORDER);
             dependantViewer.getControl().setLayoutData(
@@ -315,14 +328,6 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
             dependantViewer.addFilter(new EmptyCategoryFilter());
             dependantViewer.setLabelProvider(new CategoryLabelProvider(false));
             dependantViewer.setInput(Collections.EMPTY_SET);
-        }
-        {
-            Label label = new Label(composite, SWT.NONE);
-            label.setText("D&escription:"); //$NON-NLS-1$
-            descriptionText = new Text(composite, SWT.READ_ONLY | SWT.BORDER);
-            GridData data = new GridData(GridData.FILL_BOTH);
-            data.heightHint = 100;
-            descriptionText.setLayoutData(data);
         }
     }
 
