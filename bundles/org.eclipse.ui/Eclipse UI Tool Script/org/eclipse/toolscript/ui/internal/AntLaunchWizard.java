@@ -96,9 +96,11 @@ public class AntLaunchWizard extends Wizard {
 	public void addPages() {
 		page1 = new AntLaunchWizardPage(antProject);
 		addPage(page1);
+		String args = antScript.getArguments();
+
 		page1.setInitialTargets(getInitialTargets());
 		page1.setInitialArguments(getInitialArguments());
-		page1.setInitialDisplayLog(getInitialDisplayLog());
+		page1.setInitialDisplayLog(antScript.getShowLog());
 	}
 	
 	/**
@@ -121,17 +123,6 @@ public class AntLaunchWizard extends Wizard {
 		return ""; //$NON-NLS-1$;
 	}
 	
-	/**
-	 * Returns the initial selection for showing results to the log.
-	 * This information is restored from the tool script created the
-	 * last time it was run.
-	 * 
-	 * @return boolean true if the user wants to show it, false if not
-	 */
-	public boolean getInitialDisplayLog() {
-		return antScript.getShowLog();
-	}
-
 	/* (non-Javadoc)
 	 * Method declared on IWizard.
 	 */

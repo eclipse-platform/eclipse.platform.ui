@@ -116,59 +116,49 @@ public final class ToolScriptContext implements IToolScriptContext {
 	 * Expands the variables found in the text.
 	 */
 	private String expandVariables(String text) {
-		StringBuffer buf = new StringBuffer();
+		StringBuffer buffer = new StringBuffer();
 		
 		int start = 0;
 		while (true) {
-			int end = text.indexOf(script.VAR_TAG_START, start);
-			if (end < 0) {
+			ToolUtil.VariableDefinition varDef = ToolUtil.extractVariableTag(text, start);
+			
+			if (varDef.start == -1) {
 				if (start == 0)
-					return text;
-				buf.append(text.substring(start));
+					buffer.append(text);
+				else
+					buffer.append(text.substring(start));
 				break;
+			} else if (varDef.start > start) {
+				buffer.append(text.substring(start, varDef.start));
 			}
-			if (end > start)
-				buf.append(text.substring(start, end));
-			start = end + script.VAR_TAG_START.length();
-			
-			end = text.indexOf(script.VAR_TAG_END, start);
-			if (end < 0)
+
+			if (varDef.end == -1) {
+				buffer.append(text.substring(varDef.start));
 				break;
-			if (end > start) {
-				String var = text.substring(start, end);
-				expandVariable(var, buf);
+			} else {
+				start = varDef.end;
 			}
-			
-			start = end + script.VAR_TAG_END.length();
+
+			if (varDef.name != null)			
+				expandVariable(varDef, buffer);
 		}
 		
-		return buf.toString();
+		return buffer.toString();
 	}
 
 	/**
 	 * Expands the variable
 	 */
-	private void expandVariable(String text, StringBuffer buf) {
-		String varName = null;
-		String varArg = null;
-		
-		int i = text.indexOf(script.VAR_TAG_SEP);
-		if (i < 0) {
-			varName = text;
-		} else {
-			varName = text.substring(0, i);
-			varArg = text.substring(i+1);
-		}
-		
-		if (script.VAR_DIR_WORKSPACE.equals(varName)) {
+	private void expandVariable(ToolUtil.VariableDefinition varDef, StringBuffer buf) {
+		if (script.VAR_DIR_WORKSPACE.equals(varDef.name)) {
 			buf.append(Platform.getLocation().toString());
 			return;
 		}
 		
-		if (script.VAR_DIR_PROJECT.equals(varName)) {
+		if (script.VAR_DIR_PROJECT.equals(varDef.name)) {
 			IPath location = null;
-			if (varArg != null && varArg.length() > 0) {
-				IProject namedProject = ResourcesPlugin.getWorkspace().getRoot().getProject(varArg);
+			if (varDef.argument != null && varDef.argument.length() > 0) {
+				IProject namedProject = ResourcesPlugin.getWorkspace().getRoot().getProject(varDef.argument);
 				location = namedProject.getLocation();
 			} else {
 				if (currentProject != null)
@@ -179,9 +169,9 @@ public final class ToolScriptContext implements IToolScriptContext {
 			return;
 		}
 		
-		if (script.VAR_ANT_TARGET.equals(varName)) {
-			if (varArg != null && varArg.length() > 0)
-				antTargets.add(varArg);
+		if (script.VAR_ANT_TARGET.equals(varDef.name)) {
+			if (varDef.argument != null && varDef.argument.length() > 0)
+				antTargets.add(varDef.argument);
 			return;
 		}
 	}
@@ -196,15 +186,15 @@ public final class ToolScriptContext implements IToolScriptContext {
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
 		try {
-			String[] scope = ToolUtil.extractVariableTag(script.getRefreshScope());
+			ToolUtil.VariableDefinition scope = ToolUtil.extractVariableTag(script.getRefreshScope(), 0);
 			ToolScriptRunner runner = ToolScriptPlugin.getDefault().getToolScriptRunner(script.getType());
 			if (runner != null) {
-				if (scope[0] == null || script.REFRESH_SCOPE_NONE.equals(scope[0])) {
+				if (scope.name == null || script.REFRESH_SCOPE_NONE.equals(scope.name)) {
 					runner.execute(monitor, this);
 				} else {
 					monitor.beginTask(ToolScriptMessages.getString("ToolScriptContext.runningToolScript"), 100); //$NON-NLS-1$
 					runner.execute(new SubProgressMonitor(monitor, 70), this);
-					refreshResources(new SubProgressMonitor(monitor, 30), scope[0], scope[1]);
+					refreshResources(new SubProgressMonitor(monitor, 30), scope.name, scope.argument);
 				}
 			}
 		} finally {

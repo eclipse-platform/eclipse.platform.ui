@@ -41,11 +41,6 @@ public class ToolScript {
 	public static final String SCRIPT_TYPE_PROGRAM = "org.eclipse.toolscript.type.program"; //$NON-NLS-1$
 	public static final String SCRIPT_TYPE_ANT = "org.eclipse.toolscript.type.ant"; //$NON-NLS-1$
 	
-	// Variable tag identifiers
-	/*package*/ static final String VAR_TAG_START = "${"; //$NON-NLS-1$
-	/*package*/ static final String VAR_TAG_END = "}"; //$NON-NLS-1$
-	/*package*/ static final String VAR_TAG_SEP = ":"; //$NON-NLS-1$
-	
 	// Variable names the tool script will expand
 	public static final String VAR_DIR_WORKSPACE = "workspace_dir"; //$NON-NLS-1$
 	public static final String VAR_DIR_PROJECT = "project_dir"; //$NON-NLS-1$

@@ -523,34 +523,34 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 	 * Update the refresh scope field
 	 */
 	private void updateRefreshField() {
-		String[] result = ToolUtil.extractVariableTag(refreshScope);
-		if (result[0] == null) {
+		ToolUtil.VariableDefinition result = ToolUtil.extractVariableTag(refreshScope, 0);
+		if (result.name == null) {
 			refreshScope = ToolUtil.buildVariableTag(script.REFRESH_SCOPE_NONE, null);
-			result[0] = script.REFRESH_SCOPE_NONE;
+			result.name = script.REFRESH_SCOPE_NONE;
 		}
 		
-		if (script.REFRESH_SCOPE_NONE.equals(result[0])) {
+		if (script.REFRESH_SCOPE_NONE.equals(result.name)) {
 			refreshField.setText(ToolScriptMessages.getString("ToolScriptEditDialog.refreshScopeNone")); //$NON-NLS-1$
 			return;
 		}
-		if (script.REFRESH_SCOPE_WORKSPACE.equals(result[0])) {
+		if (script.REFRESH_SCOPE_WORKSPACE.equals(result.name)) {
 			refreshField.setText(ToolScriptMessages.getString("ToolScriptEditDialog.refreshScopeWorkspace")); //$NON-NLS-1$
 			return;
 		}
-		if (script.REFRESH_SCOPE_PROJECT.equals(result[0])) {
-			if (result[1] == null)
+		if (script.REFRESH_SCOPE_PROJECT.equals(result.name)) {
+			if (result.argument == null)
 				refreshField.setText(ToolScriptMessages.getString("ToolScriptEditDialog.refreshScopeProject")); //$NON-NLS-1$
 			else
-				refreshField.setText(ToolScriptMessages.format("ToolScriptEditDialog.refreshScopeProjectX", new Object[] {result[1]})); //$NON-NLS-1$
+				refreshField.setText(ToolScriptMessages.format("ToolScriptEditDialog.refreshScopeProjectX", new Object[] {result.argument})); //$NON-NLS-1$
 			return;
 		}
-		if (script.REFRESH_SCOPE_WORKING_SET.equals(result[0])) {
-			if (result[1] == null) {
+		if (script.REFRESH_SCOPE_WORKING_SET.equals(result.name)) {
+			if (result.argument == null) {
 				refreshScope = ToolUtil.buildVariableTag(script.REFRESH_SCOPE_NONE, null);
 				refreshField.setText(ToolScriptMessages.getString("ToolScriptEditDialog.refreshScopeNone")); //$NON-NLS-1$
 			}
 			else
-				refreshField.setText(ToolScriptMessages.format("ToolScriptEditDialog.refreshScopeWorkingSet", new Object[] {result[1]})); //$NON-NLS-1$
+				refreshField.setText(ToolScriptMessages.format("ToolScriptEditDialog.refreshScopeWorkingSet", new Object[] {result.argument})); //$NON-NLS-1$
 			return;
 		}
 	}
