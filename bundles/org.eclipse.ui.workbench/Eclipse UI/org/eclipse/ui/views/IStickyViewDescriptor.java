@@ -8,22 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.registry;
+package org.eclipse.ui.views;
 
 /**
- * Describes a view that should be made "sticky".
+ * Supplemental view interface that describes various sticky characteristics
+ * that a view may possess.
  * 
- * @since 3.0
+ * @see org.eclipse.ui.views.IViewRegistry
+ * @see org.eclipse.ui.views.IViewDescriptor
+ * @since 3.1
  */
 public interface IStickyViewDescriptor {
-    public static final String STICKY_FOLDER_RIGHT = "stickyFolderRight"; //$NON-NLS-1$
-
-    public static final String STICKY_FOLDER_LEFT = "stickyFolderLeft"; //$NON-NLS-1$
-
-    public static final String STICKY_FOLDER_TOP = "stickyFolderTop"; //$NON-NLS-1$
-
-    public static final String STICKY_FOLDER_BOTTOM = "stickyFolderBottom"; //$NON-NLS-1$
-
     /**
      * Return the id of the view to be made sticky.
      * 
@@ -32,18 +27,11 @@ public interface IStickyViewDescriptor {
     public String getId();
 
     /**
-     * Return the namespace in which this descriptor was declared.
-     * 
-     * @return the namespace in which this descriptor was declared
-     */
-    public String getNamespace();
-
-    /**
      * Return the location of this sticky view.  Must be one of 
      * <code>IPageLayout.LEFT</code>, <code>IPageLayout.RIGHT</code>, 
      * <code>IPageLayout.TOP</code>, or <code>IPageLayout.BOTTOM</code>.
      * 
-     * @return the location
+     * @return the location constant
      */
     public int getLocation();
 
@@ -57,7 +45,7 @@ public interface IStickyViewDescriptor {
     /**
      * Return whether this view should be moveable.
      * 
-     * @return whether thsi view should be moveable
+     * @return whether this view should be moveable
      */
     public boolean isMoveable();
 }

@@ -13,7 +13,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
+import org.eclipse.ui.views.IViewDescriptor;
 
 /**
  * This layout is used to define the initial set of views and placeholders

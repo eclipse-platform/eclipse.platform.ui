@@ -28,6 +28,9 @@ import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.views.IStickyViewDescriptor;
+import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.views.IViewRegistry;
 
 /**
  * The central manager for view descriptors.
@@ -94,7 +97,7 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
     /**
      * Add a descriptor to the registry.
      */
-    public void add(IViewDescriptor desc) {
+    public void add(ViewDescriptor desc) {
     	if (views.add(desc)) {
     		dirtyViewCategoryMappings = true;
     		PlatformUI.getWorkbench().getExtensionTracker()
@@ -139,7 +142,7 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
         Iterator itr = views.iterator();
         while (itr.hasNext()) {
             IViewDescriptor desc = (IViewDescriptor) itr.next();
-            if (id.equals(desc.getID())) {
+            if (id.equals(desc.getId())) {
                 return desc;
             }
         }
@@ -192,25 +195,11 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
     }
 
     /**
-     * Return the view category count.
-     */
-    public int getCategoryCount() {
-        return categories.size();
-    }
-
-    /**
      * Returns the Misc category.
      * This may be null if there are no miscellaneous views.
      */
     public Category getMiscCategory() {
         return miscCategory;
-    }
-
-    /**
-     * Return the view count.
-     */
-    public int getViewCount() {
-        return views.size();
     }
 
     /**
@@ -263,7 +252,7 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
 	                    String fmt = "Category {0} not found for view {1}.  This view added to ''{2}'' category."; //$NON-NLS-1$
 	                    WorkbenchPlugin.log(MessageFormat
 	                            .format(fmt, new Object[] { catPath[0],
-	                                    desc.getID(), miscCategory.getLabel() })); //$NON-NLS-1$
+	                                    desc.getId(), miscCategory.getLabel() })); //$NON-NLS-1$
 	                }
 	                miscCategory.addElement(desc);
 	            }

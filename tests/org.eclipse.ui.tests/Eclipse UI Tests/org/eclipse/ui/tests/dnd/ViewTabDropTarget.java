@@ -14,7 +14,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
+import org.eclipse.ui.views.IViewDescriptor;
 
 /**
  * Note: this drop location is hardcoded to assume a presentation that has

@@ -16,7 +16,8 @@ import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
+import org.eclipse.ui.internal.registry.ViewDescriptor;
+import org.eclipse.ui.views.IViewDescriptor;
 
 /**
  * Show a View.
@@ -31,7 +32,10 @@ public class ShowViewAction extends Action implements IPluginContribution {
      */
     protected ShowViewAction(IWorkbenchWindow window, IViewDescriptor desc) {
         super(""); //$NON-NLS-1$
-        String accel = desc.getAccelerator();
+        
+        // TODO: is this wart still needed? 
+        String accel = desc instanceof ViewDescriptor ? ((ViewDescriptor) desc)
+				.getAccelerator() : null;
         String label = desc.getLabel();
         setText(accel == null ? label : label + "@" + accel); //$NON-NLS-1$
         setImageDescriptor(desc.getImageDescriptor());
@@ -49,7 +53,7 @@ public class ShowViewAction extends Action implements IPluginContribution {
         IWorkbenchPage page = window.getActivePage();
         if (page != null) {
             try {
-                page.showView(desc.getID());
+                page.showView(desc.getId());
             } catch (PartInitException e) {
                 ErrorDialog.openError(window.getShell(), WorkbenchMessages
                         .getString("ShowView.errorTitle"), //$NON-NLS-1$

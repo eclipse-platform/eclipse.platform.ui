@@ -15,7 +15,7 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.IStickyViewDescriptor;
+import org.eclipse.ui.views.IStickyViewDescriptor;
 
 /**
  * Utility class that will test various view properties.

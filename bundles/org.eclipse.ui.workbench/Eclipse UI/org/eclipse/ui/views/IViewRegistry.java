@@ -8,49 +8,49 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.registry;
+package org.eclipse.ui.views;
+
+import org.eclipse.ui.internal.registry.Category;
 
 /**
  * The view registry maintains a list of views explicitly registered
  * against the view extension point..
  * <p>
- * [Issue: This interface is not exposed in API, but time may
- * demonstrate that it should be.  For the short term leave it be.
- * In the long term its use should be re-evaluated. ]
+ * The description of a given view is kept in a <code>IViewDescriptor</code>.
  * </p>
- * <p>
- * The description of a given view is kept in a IViewDescriptor
- * </p>
+ * 
+ * @see org.eclipse.ui.views.IViewDescriptor
+ * @see org.eclipse.ui.views.IStickyViewDescriptor
+ * @since 3.1
  */
 public interface IViewRegistry {
     /**
-     * Return a view descriptor with the given extension ID.  If no view exists
-     * with the ID return null.
+     * Return a view descriptor with the given extension id.  If no view exists
+     * with the id return <code>null</code>.
+     * 
+     * @param id the id to search for
+     * @return the descriptor or <code>null</code>
      */
     public IViewDescriptor find(String id);
 
     /**
-     * Returns an enumeration of view categories, if defined.
+     * Returns an array of view categories.
+     * 
+     * @return the categories.  Never <code>null</code>.
      */
     public Category[] getCategories();
 
     /**
-     * Return the view category count.
-     */
-    public int getCategoryCount();
-
-    /**
-     * Return the view count.
-     */
-    public int getViewCount();
-
-    /**
      * Return a list of views defined in the registry.
+     * 
+     * @return the views.  Never <code>null</code>.
      */
     public IViewDescriptor[] getViews();
 
     /**
      * Return a list of sticky views defined in the registry.
+     * 
+     * @return the sticky views.  Never <code>null</code>.
      */
     public IStickyViewDescriptor[] getStickyViews();
 }

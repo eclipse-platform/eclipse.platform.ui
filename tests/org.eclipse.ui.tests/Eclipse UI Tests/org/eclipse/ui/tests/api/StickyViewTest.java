@@ -15,8 +15,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.IStickyViewDescriptor;
 import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.views.IStickyViewDescriptor;
 
 /**
  * @since 3.0

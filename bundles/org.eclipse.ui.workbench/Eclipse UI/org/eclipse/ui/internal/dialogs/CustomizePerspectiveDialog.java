@@ -100,11 +100,11 @@ import org.eclipse.ui.internal.registry.ActionSetDescriptor;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
-import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardCategory;
 
 /*******************************************************************************
@@ -1626,7 +1626,7 @@ public class CustomizePerspectiveDialog extends Dialog {
                 if (views != null) {
                     for (int j = 0; j < views.size(); j++) {
                         IViewDescriptor view = (IViewDescriptor) views.get(j);
-                        if (view.getID().equals(IIntroConstants.INTRO_VIEW_ID))
+                        if (view.getId().equals(IIntroConstants.INTRO_VIEW_ID))
                             continue;
                         if (WorkbenchActivityHelper.filterItem(view))
                             continue;

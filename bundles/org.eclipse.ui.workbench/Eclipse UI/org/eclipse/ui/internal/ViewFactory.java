@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -35,10 +36,10 @@ import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.UIStats;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
-import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.views.IViewRegistry;
 
 /**
  * The ViewFactory is used to control the creation and disposal of views.  
@@ -327,10 +328,12 @@ import org.eclipse.ui.internal.util.Util;
                     try {
                         UIStats.start(UIStats.CREATE_PART, label);
                         view = desc.createView();
-                        page.getExtensionTracker().registerObject(
-								desc.getConfigurationElement()
-										.getDeclaringExtension(), view,
-								IExtensionTracker.REF_WEAK);
+                        IConfigurationElement element = (IConfigurationElement) desc
+								.getAdapter(IConfigurationElement.class);
+                        if (element != null)
+							page.getExtensionTracker().registerObject(
+									element.getDeclaringExtension(), view,
+									IExtensionTracker.REF_WEAK);
                     } finally {
                         UIStats.end(UIStats.CREATE_PART, label);
                     }
@@ -347,7 +350,7 @@ import org.eclipse.ui.internal.util.Util;
                             0,
                             WorkbenchMessages
                                     .format(
-                                            "ViewFactory.initException", new Object[] { desc.getID() }), //$NON-NLS-1$
+                                            "ViewFactory.initException", new Object[] { desc.getId() }), //$NON-NLS-1$
                             e);
                     return;
                 }
@@ -389,7 +392,7 @@ import org.eclipse.ui.internal.util.Util;
                             0,
                             WorkbenchMessages
                                     .format(
-                                            "ViewFactory.siteException", new Object[] { desc.getID() }), //$NON-NLS-1$
+                                            "ViewFactory.siteException", new Object[] { desc.getId() }), //$NON-NLS-1$
                             null);
                     return;
                 }

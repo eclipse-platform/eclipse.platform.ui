@@ -27,6 +27,7 @@ import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.views.IViewDescriptor;
 
 /**
  * Capture the attributes of a view extension.
@@ -51,8 +52,6 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
     private static final String ATT_RATIO = "fastViewWidthRatio"; //$NON-NLS-1$
 
     private static final String ATT_MULTIPLE = "allowMultiple"; //$NON-NLS-1$
-
-    private static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
     
     private IConfigurationElement configElement;
 
@@ -61,7 +60,10 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
     private float fastViewWidthRatio;
 
     /**
-     * Create a new ViewDescriptor for an extension.
+     * Create a new <code>ViewDescriptor</code> for an extension.
+     * 
+     * @param e the configuration element
+     * @throws CoreException thrown if there are errors in the configuration
      */
     public ViewDescriptor(IConfigurationElement e)
             throws CoreException {
@@ -70,6 +72,12 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
         registerShowViewHandler();
     }
 
+    /**
+     * Register the show view handler.
+     *
+     * TODO: This is bad.  This doesn't respect dynamic plugin lifecycle.
+     * This code should be moved to the ViewRegistry.
+     */
     private void registerShowViewHandler() {
         IHandler showViewHandler = new ShowViewHandler(getId());
         HandlerSubmission showViewSubmission = new HandlerSubmission(null,
@@ -93,8 +101,10 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
         return categoryPath;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.registry.IViewDescriptor#getConfigurationElement()
+    /**
+     * Return the configuration element for this descriptor.
+     * 
+     * @return the configuration element
      */
     public IConfigurationElement getConfigurationElement() {
         return configElement;
@@ -105,13 +115,6 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
      */
     public String getDescription() {
     	return RegistryReader.getDescription(configElement);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.registry.IViewDescriptor#getID()
-     */
-    public String getID() {
-        return getId();
     }
 
     /* (non-Javadoc)
@@ -205,7 +208,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
      * purposes only.
      */
     public String toString() {
-        return "View(" + getID() + ")"; //$NON-NLS-2$//$NON-NLS-1$
+        return "View(" + getId() + ")"; //$NON-NLS-2$//$NON-NLS-1$
     }
 
     /*
@@ -227,15 +230,6 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
         return getId() == null ? "" : getId(); //$NON-NLS-1$	
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
-     */
-    public boolean fromPlugin() {
-        return true;
-    }
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.registry.IViewDescriptor#getAllowMultiple()
      */
@@ -243,4 +237,14 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
     	String string = configElement.getAttribute(ATT_MULTIPLE);    	
         return string == null ? false : Boolean.valueOf(string).booleanValue();
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter.equals(IConfigurationElement.class)) {
+			return getConfigurationElement();
+		}
+		return null;
+	}
 }

@@ -52,13 +52,14 @@ import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
-import org.eclipse.ui.internal.registry.IStickyViewDescriptor;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
-import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveExtensionReader;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
+import org.eclipse.ui.internal.registry.StickyViewDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.views.IStickyViewDescriptor;
+import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.views.IViewRegistry;
 
 /**
  * The ViewManager is a factory for workbench views.  
@@ -684,7 +685,7 @@ public class Perspective {
                 if (stickyFolderRight == null)
                     stickyFolderRight = layout
                             .createPlaceholderFolder(
-                                    IStickyViewDescriptor.STICKY_FOLDER_RIGHT,
+                                    StickyViewDescriptor.STICKY_FOLDER_RIGHT,
                                     IPageLayout.RIGHT, .75f,
                                     IPageLayout.ID_EDITOR_AREA);
                 stickyFolderRight.addPlaceholder(id);
@@ -692,21 +693,21 @@ public class Perspective {
             case IPageLayout.LEFT:
                 if (stickyFolderLeft == null)
                     stickyFolderLeft = layout.createPlaceholderFolder(
-                            IStickyViewDescriptor.STICKY_FOLDER_LEFT,
+                            StickyViewDescriptor.STICKY_FOLDER_LEFT,
                             IPageLayout.LEFT, .25f, IPageLayout.ID_EDITOR_AREA);
                 stickyFolderLeft.addPlaceholder(id);
                 break;
             case IPageLayout.TOP:
                 if (stickyFolderTop == null)
                     stickyFolderTop = layout.createPlaceholderFolder(
-                            IStickyViewDescriptor.STICKY_FOLDER_TOP,
+                            StickyViewDescriptor.STICKY_FOLDER_TOP,
                             IPageLayout.TOP, .25f, IPageLayout.ID_EDITOR_AREA);
                 stickyFolderTop.addPlaceholder(id);
                 break;
             case IPageLayout.BOTTOM:
                 if (stickyFolderBottom == null)
                     stickyFolderBottom = layout.createPlaceholderFolder(
-                            IStickyViewDescriptor.STICKY_FOLDER_BOTTOM,
+                            StickyViewDescriptor.STICKY_FOLDER_BOTTOM,
                             IPageLayout.BOTTOM, .75f,
                             IPageLayout.ID_EDITOR_AREA);
                 stickyFolderBottom.addPlaceholder(id);

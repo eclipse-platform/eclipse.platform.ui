@@ -20,8 +20,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.registry.Category;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
+import org.eclipse.ui.views.IViewDescriptor;
 
 public class ViewLabelProvider extends LabelProvider {
     private HashMap images;

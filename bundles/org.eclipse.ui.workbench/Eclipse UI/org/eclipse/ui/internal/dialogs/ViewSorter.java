@@ -13,8 +13,8 @@ package org.eclipse.ui.internal.dialogs;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.ui.internal.registry.Category;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.ViewRegistry;
+import org.eclipse.ui.views.IViewDescriptor;
 
 /**
  * This is used to sort views in a ShowViewDialog.

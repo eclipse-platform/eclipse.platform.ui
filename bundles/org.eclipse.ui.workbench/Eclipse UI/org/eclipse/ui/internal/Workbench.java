@@ -113,6 +113,7 @@ import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.themes.IThemeManager;
+import org.eclipse.ui.views.IViewRegistry;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
@@ -2257,7 +2258,6 @@ public final class Workbench implements IWorkbench {
 		return tracker ;
 	}
 	
-
     /**
      * Adds the listener that handles startup plugins
 	 * @since 3.1
@@ -2272,5 +2272,12 @@ public final class Workbench implements IWorkbench {
 	 */
 	public IWorkbenchHelpSystem getHelpSystem() {
 		return WorkbenchHelpSystem.getInstance();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#getViewRegistry()
+	 */
+	public IViewRegistry getViewRegistry() {
+		return WorkbenchPlugin.getDefault().getViewRegistry();
 	}
 }

@@ -22,7 +22,7 @@ import org.eclipse.ui.activities.IIdentifierListener;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.activities.IdentifierEvent;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
+import org.eclipse.ui.views.IViewDescriptor;
 
 /**
  * Helper methods that the internal layout classes (<code>PageLayout</code> and 

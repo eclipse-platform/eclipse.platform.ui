@@ -19,8 +19,8 @@ import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.TestDropLocation;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.presentations.IPresentablePart;
+import org.eclipse.ui.views.IViewDescriptor;
 
 /**
  * @since 3.0

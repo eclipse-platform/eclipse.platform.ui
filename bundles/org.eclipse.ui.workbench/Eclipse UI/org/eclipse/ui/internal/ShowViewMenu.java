@@ -40,8 +40,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
 import org.eclipse.ui.internal.intro.IIntroConstants;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
-import org.eclipse.ui.internal.registry.IViewRegistry;
+import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.views.IViewRegistry;
 
 /**
  * A <code>ShowViewMenu</code> is used to populate a menu manager with
@@ -210,7 +210,7 @@ public class ShowViewMenu extends ContributionItem {
         IViewDescriptor[] descs = dlg.getSelection();
         for (int i = 0; i < descs.length; ++i) {
             try {
-                page.showView(descs[i].getID());
+                page.showView(descs[i].getId());
             } catch (PartInitException e) {
                 ErrorDialog.openError(window.getShell(), WorkbenchMessages
                         .getString("ShowView.errorTitle"), //$NON-NLS-1$

@@ -21,11 +21,11 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.Category;
-import org.eclipse.ui.internal.registry.IStickyViewDescriptor;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
-import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.tests.leaks.LeakTests;
+import org.eclipse.ui.views.IStickyViewDescriptor;
+import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.views.IViewRegistry;
 
 /**
  * Tests to ensure the addition of new views with dynamic plug-ins.
@@ -118,7 +118,6 @@ public class ViewTests extends DynamicTestCase {
 	
 	private void testStickyViewProperties(IStickyViewDescriptor desc) {
 		assertNotNull(desc.getId());
-		assertNotNull(desc.getNamespace());
 		assertFalse(desc.isMoveable());
 		assertFalse(desc.isCloseable());
 		assertEquals(IPageLayout.BOTTOM, desc.getLocation());		
@@ -169,7 +168,6 @@ public class ViewTests extends DynamicTestCase {
 		assertNotNull(desc.getId());
 		assertNotNull(desc.getLabel());
 		assertNotNull(desc.getImageDescriptor());
-		desc.getAccelerator();
 		assertNotNull(desc.getDescription());
 	}	
 	

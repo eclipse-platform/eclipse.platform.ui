@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.views.IStickyViewDescriptor;
 
 /**
  * @since 3.0
@@ -32,16 +33,43 @@ public class StickyViewDescriptor implements IStickyViewDescriptor {
 
 	private String id;
 
-    public StickyViewDescriptor(IConfigurationElement singleton)
+	/**
+	 * Folder constant for right sticky views.
+	 */
+	public static final String STICKY_FOLDER_RIGHT = "stickyFolderRight"; //$NON-NLS-1$
+
+	/**
+	 * Folder constant for left sticky views.
+	 */
+	public static final String STICKY_FOLDER_LEFT = "stickyFolderLeft"; //$NON-NLS-1$
+
+	/**
+	 * Folder constant for top sticky views.
+	 */
+	public static final String STICKY_FOLDER_TOP = "stickyFolderTop"; //$NON-NLS-1$
+
+	/**
+	 * Folder constant for bottom sticky views.
+	 */	
+	public static final String STICKY_FOLDER_BOTTOM = "stickyFolderBottom"; //$NON-NLS-1$
+
+    /**
+     * @param element
+     * @throws CoreException
+     */
+    public StickyViewDescriptor(IConfigurationElement element)
             throws CoreException {
-    	this.configurationElement = singleton;
+    	this.configurationElement = element;
     	id = configurationElement.getAttribute(ATT_ID);;
         if (id == null)
-            throw new CoreException(new Status(IStatus.ERROR, singleton
+            throw new CoreException(new Status(IStatus.ERROR, element
                     .getDeclaringExtension().getNamespace(), 0,
                     "Invalid extension (missing id) ", null));//$NON-NLS-1$
     }
     
+	/**
+	 * @return
+	 */
 	public IConfigurationElement getConfigurationElement() {
 		return configurationElement;
 	}
@@ -67,13 +95,6 @@ public class StickyViewDescriptor implements IStickyViewDescriptor {
      */
     public String getId() {
         return id;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.registry.IStickyViewDescriptor#getNamespace()
-     */
-    public String getNamespace() {
-        return configurationElement.getNamespace();
     }
 
     /* (non-Javadoc)

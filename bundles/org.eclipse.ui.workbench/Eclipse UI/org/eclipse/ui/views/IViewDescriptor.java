@@ -8,10 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.registry;
+package org.eclipse.ui.views;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPartDescriptor;
@@ -20,19 +20,19 @@ import org.eclipse.ui.IWorkbenchPartDescriptor;
  * This is a view descriptor. It provides a "description" of a given
  * given view so that the view can later be constructed.
  * <p>
- * [Issue: This interface is not exposed in API, but time may
- * demonstrate that it should be.  For the short term leave it be.
- * In the long term its use should be re-evaluated. ]
- * </p>
- * <p>
  * The view registry provides facilities to map from an extension
  * to a IViewDescriptor.
  * </p>
  * 
+ * @see org.eclipse.ui.views.IViewRegistry
+ * @since 3.1 
  */
-public interface IViewDescriptor extends IWorkbenchPartDescriptor {
+public interface IViewDescriptor extends IWorkbenchPartDescriptor, IAdaptable {
     /**
      * Creates an instance of the view defined in the descriptor.
+     * 
+     * @return the view part
+     * @throws CoreException thrown if there is a problem creating the part
      */
     public IViewPart createView() throws CoreException;
 
@@ -46,13 +46,7 @@ public interface IViewDescriptor extends IWorkbenchPartDescriptor {
     public String[] getCategoryPath();
 
     /**
-     * Returns the configuration element which contributed this view.
-     */
-    public IConfigurationElement getConfigurationElement();
-
-    /**
      * Returns the description of this view.
-     * This is the value of its <code>"description"</code> attribute.
      *
      * @return the description
      */
@@ -60,8 +54,10 @@ public interface IViewDescriptor extends IWorkbenchPartDescriptor {
 
     /**
      * Returns the id of the view.
+     * 
+     * @return the id
      */
-    public String getID();
+    public String getId();
 
     /**
      * Returns the descriptor for the icon to show for this view.
@@ -70,25 +66,22 @@ public interface IViewDescriptor extends IWorkbenchPartDescriptor {
 
     /**
      * Returns the label to show for this view.
+     * 
+     * @return the label
      */
     public String getLabel();
 
     /**
-     * Returns the text of the accelerator to use for this view.
-     */
-    public String getAccelerator();
-
-    /**
      * Returns the default fast view width ratio for this view.
      * 
-     * @since 2.0
+     * @return the fast view width ratio
      */
     public float getFastViewWidthRatio();
 
     /**
      * Returns whether this view allows multiple instances.
      * 
-     * @since 3.0
+     * @return whether this view allows multiple instances
      */
     public boolean getAllowMultiple();
 

@@ -121,13 +121,6 @@ public class PartSite implements IWorkbenchPartSite {
     }
 
     /**
-     * Returns the configuration element for a part.
-     */
-    public IConfigurationElement getConfigurationElement() {
-        return configElement;
-    }
-
-    /**
      * Returns the part registry extension ID.
      *
      * @return the registry extension ID

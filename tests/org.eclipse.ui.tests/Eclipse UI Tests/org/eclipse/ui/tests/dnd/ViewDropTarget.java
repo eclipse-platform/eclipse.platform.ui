@@ -13,7 +13,7 @@ package org.eclipse.ui.tests.dnd;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
+import org.eclipse.ui.views.IViewDescriptor;
 
 /**
  * @since 3.0

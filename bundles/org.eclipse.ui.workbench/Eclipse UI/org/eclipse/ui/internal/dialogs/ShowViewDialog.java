@@ -34,9 +34,9 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.Category;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
-import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistry;
+import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.views.IViewRegistry;
 
 /**
  * The Show View dialog.
@@ -267,7 +267,7 @@ public class ShowViewDialog extends Dialog implements
         if (viewDescs.length > 0) {
             // in the case of a multi-selection, it's probably less confusing
             // to store just the first rather than the whole multi-selection
-            selectedViewId = viewDescs[0].getID();
+            selectedViewId = viewDescs[0].getId();
         }
         settings.put(STORE_SELECTED_VIEW_ID, selectedViewId);
     }
