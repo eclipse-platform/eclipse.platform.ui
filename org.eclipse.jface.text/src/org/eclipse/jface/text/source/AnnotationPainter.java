@@ -1,0 +1,388 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text.source;
+
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IPaintPositionManager;
+import org.eclipse.jface.text.IPainter;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewerExtension3;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
+
+
+
+/**
+ * Highlights annotations.
+ */
+public class AnnotationPainter implements IPainter, PaintListener, IAnnotationModelListener {	
+	
+	private static class Decoration {
+		Position fPosition;
+		Color fColor;
+		boolean fMultiLine;
+	};
+	
+	private boolean fIsActive= false;
+	private boolean fIsPainting= false;
+	private boolean fIsSettingModel= false;
+	
+	private ISourceViewer fSourceViewer;
+	private StyledText fTextWidget;
+	private IAnnotationModel fModel;
+	private IAnnotationAccess fAnnotationAccess;
+	private List fDecorations= new ArrayList();
+	
+	private Map fColorTable= new HashMap();
+	private Set fAnnotationTypes= new HashSet();
+
+	
+	
+	public AnnotationPainter(ISourceViewer sourceViewer, IAnnotationAccess access) {
+		fSourceViewer= sourceViewer;
+		fAnnotationAccess= access;
+		fTextWidget= sourceViewer.getTextWidget();
+	}
+	
+	private boolean hasDecorations() {
+		return !fDecorations.isEmpty();
+	}	
+	
+	private void enablePainting() {
+		if (!fIsPainting && hasDecorations()) {
+			fIsPainting= true;
+			fTextWidget.addPaintListener(this);
+			handleDrawRequest(null);
+		}
+	}
+	
+	private void disablePainting(boolean redraw) {
+		if (fIsPainting) {
+			fIsPainting= false;
+			fTextWidget.removePaintListener(this);
+			if (redraw && hasDecorations())
+				handleDrawRequest(null);
+		}
+	}
+	
+	private void setModel(IAnnotationModel model) {
+		if (fModel != model) {
+			if (fModel != null)
+				fModel.removeAnnotationModelListener(this);
+			fModel= model;
+			if (fModel != null) {
+				try {
+					fIsSettingModel= true;
+					fModel.addAnnotationModelListener(this);
+				} finally {
+					fIsSettingModel= false;
+				}
+			}
+		}
+	}
+	
+	private void catchupWithModel() {	
+		if (fDecorations != null) {
+			fDecorations.clear();
+			if (fModel != null) {
+				
+				Iterator e= fModel.getAnnotationIterator();
+				while (e.hasNext()) {
+					
+					Annotation annotation= (Annotation) e.next();
+					Object annotationType= fAnnotationAccess.getType(annotation);
+					if (annotationType == null)
+						continue;
+						
+					Color color= null;
+					if (fAnnotationTypes.contains(annotationType)) {
+						color= (Color) fColorTable.get(annotationType);
+						if (color == null)
+							continue;
+					}
+										
+					Decoration pp= new Decoration();
+					pp.fPosition= fModel.getPosition(annotation);
+					pp.fColor= color;
+					pp.fMultiLine= fAnnotationAccess.isMultiLine(annotation);
+					fDecorations.add(pp);
+				}
+			}
+		}
+	}
+	
+	private void updatePainting() {
+		disablePainting(true);
+		catchupWithModel();							
+		enablePainting();
+	}
+	
+	/*
+	 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
+	 */
+	public void modelChanged(final IAnnotationModel model) {
+		if (fTextWidget != null && !fTextWidget.isDisposed()) {
+			if (fIsSettingModel) {
+				// inside the ui thread -> no need for posting
+				updatePainting();
+			} else {
+				Display d= fTextWidget.getDisplay();
+				if (d != null) {
+					d.asyncExec(new Runnable() {
+						public void run() {
+							if (fTextWidget != null && !fTextWidget.isDisposed())
+								updatePainting();
+						}
+					});
+				}
+			}
+		}
+	}
+	
+	public void setAnnotationTypeColor(Object annotationType, Color color) {
+		if (color != null)
+			fColorTable.put(annotationType, color);
+		else
+			fColorTable.remove(annotationType);
+	}
+	
+	public void addAnnotationType(Object annotationType) {
+		fAnnotationTypes.add(annotationType);
+	}
+	
+	public void removeAnnotationType(Object annotationType) {
+		fAnnotationTypes.remove(annotationType);
+	}
+	
+	public boolean isPaintingAnnotations() {
+		return !fAnnotationTypes.isEmpty();
+	}
+	
+	/*
+	 * @see IPainter#dispose()
+	 */
+	public void dispose() {
+		
+		if (fColorTable != null)	
+			fColorTable.clear();
+		fColorTable= null;
+		
+		if (fAnnotationTypes != null)
+			fAnnotationTypes.clear();
+		fAnnotationTypes= null;
+		
+		fTextWidget= null;
+		fSourceViewer= null;
+		fAnnotationAccess= null;
+		fModel= null;
+		fDecorations= null;
+	}
+
+	/*
+	 * Returns the document offset of the upper left corner of the widgets viewport,
+	 * possibly including partially visible lines.
+	 */
+	private int getInclusiveTopIndexStartOffset() {
+		
+		if (fTextWidget != null && !fTextWidget.isDisposed()) {	
+			int top= fSourceViewer.getTopIndex();
+			if ((fTextWidget.getTopPixel() % fTextWidget.getLineHeight()) != 0)
+				top--;
+			try {
+				IDocument document= fSourceViewer.getDocument();
+				return document.getLineOffset(top);
+			} catch (BadLocationException ex) {
+			}
+		}
+		
+		return -1;
+	}
+	
+	/*
+	 * @see PaintListener#paintControl(PaintEvent)
+	 */
+	public void paintControl(PaintEvent event) {
+		if (fTextWidget != null)
+			handleDrawRequest(event.gc);
+	}
+	
+	private void handleDrawRequest(GC gc) {
+
+		int vOffset= getInclusiveTopIndexStartOffset();
+		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=17147
+		int vLength= fSourceViewer.getBottomIndexEndOffset() + 1;		
+		
+		for (Iterator e = fDecorations.iterator(); e.hasNext();) {
+			Decoration pp = (Decoration) e.next();
+			Position p= pp.fPosition;
+			if (p.overlapsWith(vOffset, vLength)) {
+								
+				if (!pp.fMultiLine) {
+					
+					IRegion widgetRange= getWidgetRange(p);
+					if (widgetRange != null)
+						draw(gc, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
+				
+				} else {
+					
+					IDocument document= fSourceViewer.getDocument();
+					try {
+												
+						int startLine= document.getLineOfOffset(p.getOffset()); 
+						int lastInclusive= Math.max(p.getOffset(), p.getOffset() + p.getLength() - 1);
+						int endLine= document.getLineOfOffset(lastInclusive);
+						
+						for (int i= startLine; i <= endLine; i++) {
+							IRegion line= document.getLineInformation(i);
+							int paintStart= Math.max(line.getOffset(), p.getOffset());
+							int paintEnd= Math.min(line.getOffset() + line.getLength(), p.getOffset() + p.getLength());
+							if (paintEnd > paintStart) {
+								// otherwise inside a line delimiter
+								IRegion widgetRange= getWidgetRange(new Position(paintStart, paintEnd - paintStart));
+								if (widgetRange != null)
+									draw(gc, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
+							}
+						}
+					
+					} catch (BadLocationException x) {
+					}
+				}
+			}
+		}
+	}
+	
+	private IRegion getWidgetRange(Position p) {
+		if (fSourceViewer instanceof ITextViewerExtension3) {
+			
+			ITextViewerExtension3 extension= (ITextViewerExtension3) fSourceViewer;
+			return extension.modelRange2WidgetRange(new Region(p.getOffset(), p.getLength()));
+		
+		} else {
+			
+			IRegion region= fSourceViewer.getVisibleRegion();
+			int offset= region.getOffset();
+			int length= region.getLength();
+			
+			if (p.overlapsWith(offset , length)) {
+				int p1= Math.max(offset, p.getOffset());
+				int p2= Math.min(offset + length, p.getOffset() + p.getLength());
+				return new Region(p1 - offset, p2 - p1);
+			}
+		}
+		
+		return null;
+	}
+	
+	private int[] computePolyline(Point left, Point right, int height) {
+		
+		final int WIDTH= 4; // must be even
+		final int HEIGHT= 2; // can be any number
+//		final int MINPEEKS= 2; // minimal number of peeks
+		
+		int peeks= (right.x - left.x) / WIDTH;
+//		if (peeks < MINPEEKS) {
+//			int missing= (MINPEEKS - peeks) * WIDTH;
+//			left.x= Math.max(0, left.x - missing/2);
+//			peeks= MINPEEKS;
+//		}
+		
+		int leftX= left.x;
+				
+		// compute (number of point) * 2
+		int length= ((2 * peeks) + 1) * 2;
+		if (length < 0)
+			return new int[0];
+			
+		int[] coordinates= new int[length];
+		
+		// cache peeks' y-coordinates
+		int bottom= left.y + height - 1;
+		int top= bottom - HEIGHT;
+		
+		// populate array with peek coordinates
+		for (int i= 0; i < peeks; i++) {
+			int index= 4 * i;
+			coordinates[index]= leftX + (WIDTH * i);
+			coordinates[index+1]= bottom;
+			coordinates[index+2]= coordinates[index] + WIDTH/2;
+			coordinates[index+3]= top;
+		}
+		
+		// the last down flank is missing
+		coordinates[length-2]= left.x + (WIDTH * peeks);
+		coordinates[length-1]= bottom;
+		
+		return coordinates;
+	}
+	
+	private void draw(GC gc, int offset, int length, Color color) {
+		if (gc != null) {
+			
+			Point left= fTextWidget.getLocationAtOffset(offset);
+			Point right= fTextWidget.getLocationAtOffset(offset + length);
+			
+			gc.setForeground(color);
+			int[] polyline= computePolyline(left, right, gc.getFontMetrics().getHeight());
+			gc.drawPolyline(polyline);
+								
+		} else {
+			fTextWidget.redrawRange(offset, length, true);
+		}
+	}
+	
+	/*
+	 * @see IPainter#deactivate(boolean)
+	 */
+	public void deactivate(boolean redraw) {
+		if (fIsActive) {
+			fIsActive= false;
+			disablePainting(redraw);
+			setModel(null);
+			catchupWithModel();
+		}
+	}
+	
+	/*
+	 * @see IPainter#paint(int)
+	 */
+	public void paint(int reason) {
+		if (!fIsActive) {
+			fIsActive= true;
+			setModel(fSourceViewer.getAnnotationModel());
+		} else if (CONFIGURATION == reason || INTERNAL == reason)
+			updatePainting();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.IPainter#setPositionManager(org.eclipse.jface.text.IPaintPositionManager)
+	 */
+	public void setPositionManager(IPaintPositionManager manager) {
+	}
+}

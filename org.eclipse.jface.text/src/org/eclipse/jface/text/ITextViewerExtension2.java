@@ -82,6 +82,20 @@ public interface ITextViewerExtension2 {
 	 * @param contentType the content type
 	 * @since 2.1
 	 */
-	void removeAutoEditStrategy(IAutoEditStrategy strategy, String contentType);	
-
+	void removeAutoEditStrategy(IAutoEditStrategy strategy, String contentType);
+	
+	/**
+	 * Adds the given painter to this viewer.
+	 * @param painter the painter to be added
+	 * @since 2.1
+	 */
+	void addPainter(IPainter painter);
+	
+	/**
+	 * Removes the given painter from this viewer. If the painter has not been
+	 * added to this viewer, this call is without effect.
+	 * @param painter the painter to be removed
+	 * @since 2.1
+	 */
+	void removePainter(IPainter painter);
 }

@@ -1063,12 +1063,17 @@ public class TextViewer extends Viewer implements
 	protected IEventConsumer fEventConsumer;
 	/** Indicates whether the viewer's text presentation should be replaced are modified. */
 	protected boolean fReplaceTextPresentation= false;
-	
 	/**
 	 * The mapping between model and visible document.
 	 * @since 2.1
 	 */
 	protected IDocumentInformationMapping fInformationMapping;
+	/**
+	 * The viewer's paint manager;
+	 * @since 2.1
+	 */
+	protected PaintManager fPaintManager;
+	
 	
 	
 	//---- Construction and disposal ------------------
@@ -1206,6 +1211,11 @@ public class TextViewer extends Viewer implements
 	 * control has been disposed.
 	 */
 	protected void handleDispose() {
+		
+		if (fPaintManager != null) {
+			fPaintManager.dispose();
+			fPaintManager= null;
+		}
 		
 		removeViewPortUpdate();
 		fViewportGuard= null;
@@ -3695,7 +3705,26 @@ public class TextViewer extends Viewer implements
 			return null;
 		return fTextHoverManager.getHoverEventLocation();
 	}
-
+	
+	protected PaintManager getPaintManager() {
+		if (fPaintManager == null)
+			fPaintManager= new PaintManager(this);
+		return fPaintManager;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.TextViewer#addPainter(org.eclipse.jface.text.IPainter)
+	 */
+	public void addPainter(IPainter painter) {
+		getPaintManager().addPainter(painter);
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.TextViewer#removePainter(org.eclipse.jface.text.IPainter)
+	 */
+	public void removePainter(IPainter painter) {
+		getPaintManager().removePainter(painter);
+	}
 
 	// ----------------------------------- conversions -------------------------------------------------------			
 		
