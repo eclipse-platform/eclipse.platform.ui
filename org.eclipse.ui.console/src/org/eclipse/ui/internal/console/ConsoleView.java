@@ -125,7 +125,8 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * @see org.eclipse.ui.part.PageBookView#showPageRec(org.eclipse.ui.part.PageBookView.PageRec)
 	 */
 	protected void showPageRec(PageRec pageRec) {
-        if (fPinned) {
+        // don't show the page when pinned, unless this is the first console to be added
+        if (fPinned && fConsoleToPart.size() > 1) {
             return;
         }
 	    super.showPageRec(pageRec);
@@ -334,6 +335,10 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 							if (part != null) {
 								partClosed(part);
 							}
+                            // if removing the last console, clear the active console
+                            if (fStack.isEmpty()) {
+                                fActiveConsole = null;
+                            }
 							if (getConsole() == null) {
 								IConsole[] available = getConsoleManager().getConsoles();
 								if (available.length > 0) {
@@ -485,11 +490,14 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
             IConsole console = getConsole();
             if (console != null) {
                 IConsolePageParticipant[] participants = (IConsolePageParticipant[]) fConsoleToPageParticipants.get(console);
-                for (int i = 0; i < participants.length; i++) {
-                    IConsolePageParticipant participant = participants[i];
-                    adpater = participant.getAdapter(key);
-                    if (adpater != null) {
-                        return adpater;
+                // an adapter can be asked for before the console participants are created
+                if (participants != null) {
+                    for (int i = 0; i < participants.length; i++) {
+                        IConsolePageParticipant participant = participants[i];
+                        adpater = participant.getAdapter(key);
+                        if (adpater != null) {
+                            return adpater;
+                        }
                     }
                 }
             }
