@@ -35,6 +35,7 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.operations.*;
+import org.osgi.framework.*;
 
 
 /**
@@ -369,7 +370,13 @@ public class ConfigurationView
 				try {
 					edesc = ImageDescriptor.createFromURL(new URL(windowImageURL));
 				} catch (MalformedURLException e) {
-					UpdateUI.logException(e, false);
+					// must be a path relative to the product bundle
+					Bundle productBundle = product.getDefiningBundle();
+					if (productBundle != null) { 
+						URL url = Platform.find(productBundle, new Path(windowImageURL));
+						if (url != null)
+							edesc = ImageDescriptor.createFromURL(url);
+					}
 				}
 		}
 		eclipseImage = UpdateUI.getDefault().getLabelProvider().get(edesc);
