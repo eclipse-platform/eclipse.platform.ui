@@ -192,33 +192,29 @@ public class InternalAntRunner {
 
 	protected void setTasks(Project project) {
 		List tasks = AntCorePlugin.getPlugin().getPreferences().getTasks();
-		if (tasks == null) {
-			return;
-		}
-		try {
-			for (Iterator iterator = tasks.iterator(); iterator.hasNext();) {
-				org.eclipse.ant.core.Task task = (org.eclipse.ant.core.Task) iterator.next();
+		
+		for (Iterator iterator = tasks.iterator(); iterator.hasNext();) {
+			org.eclipse.ant.core.Task task = (org.eclipse.ant.core.Task) iterator.next();
+			try {
 				Class taskClass = Class.forName(task.getClassName());
 				project.addTaskDefinition(task.getTaskName(), taskClass);
+			} catch (ClassNotFoundException e) {
+				throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Class_{0}_not_found_for_task_{1}_1"), new String[]{task.getTaskName(), task.getClassName()}), e); //$NON-NLS-1$
 			}
-		} catch (ClassNotFoundException e) {
-			throw new BuildException(e);
 		}
 	}
 
 	protected void setTypes(Project project) {
 		List types = AntCorePlugin.getPlugin().getPreferences().getTypes();
-		if (types == null) {
-			return;
-		}
-		try {
-			for (Iterator iterator = types.iterator(); iterator.hasNext();) {
-				Type type = (Type) iterator.next();
+		
+		for (Iterator iterator = types.iterator(); iterator.hasNext();) {
+			Type type = (Type) iterator.next();
+			try {
 				Class typeClass = Class.forName(type.getClassName());
 				project.addDataTypeDefinition(type.getTypeName(), typeClass);
+			} catch (ClassNotFoundException e) {
+				throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Class_{0}_not_found_for_type_{1}_2"), new String[]{type.getTypeName(), type.getClassName()}), e); //$NON-NLS-1$
 			}
-		} catch (Exception e) {
-			throw new BuildException(e);
 		}
 	}
 
@@ -827,7 +823,7 @@ public class InternalAntRunner {
 		}
 		for (Iterator iter = commands.iterator(); iter.hasNext();) {
 			String arg = (String) iter.next();
-			if (!arg.startsWith("-")) {
+			if (!arg.startsWith("-")) { //$NON-NLS-1$
 				targets.add(arg);
 			} else {
 				//unrecognized args
@@ -847,7 +843,7 @@ public class InternalAntRunner {
 	protected void createLogFile(String fileName) throws FileNotFoundException, IOException {
 		IPath path= new Path(fileName);
 		if (!path.isAbsolute()) {
-			String base= getCurrentProject().getUserProperty("basedir");
+			String base= getCurrentProject().getUserProperty("basedir"); //$NON-NLS-1$
 			if (base != null) {
 				File baseDir= new File(base);
 				if (baseDir != null) {
