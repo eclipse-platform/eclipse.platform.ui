@@ -100,7 +100,6 @@ public class CreateRenderingTab implements IMemoryViewTab, IDebugEventSetListene
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
 		 */
 		public boolean isLabelProperty(Object element, String property) {
-			// TODO Auto-generated method stub
 			return false;
 		}
 
@@ -108,8 +107,6 @@ public class CreateRenderingTab implements IMemoryViewTab, IDebugEventSetListene
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 		 */
 		public void removeListener(ILabelProviderListener listener) {
-			// TODO Auto-generated method stub
-
 		}
 
 	}
@@ -404,8 +401,6 @@ public class CreateRenderingTab implements IMemoryViewTab, IDebugEventSetListene
 	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab#setFont(org.eclipse.swt.graphics.Font)
 	 */
 	public void setFont(Font font) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)

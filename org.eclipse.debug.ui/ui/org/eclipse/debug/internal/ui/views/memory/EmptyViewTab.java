@@ -142,16 +142,12 @@ public class EmptyViewTab extends AbstractMemoryViewTab {
 	 * @see com.ibm.debug.extended.ui.IMemoryViewTab#setFont(org.eclipse.swt.graphics.Font)
 	 */
 	public void setFont(Font font) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
 	 * @see com.ibm.debug.extended.ui.IMemoryViewTab#setTabLabel(java.lang.String)
 	 */
 	public void setTabLabel(String label) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
