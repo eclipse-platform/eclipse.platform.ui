@@ -15,11 +15,17 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
- * A logical console. A console is commonly used to display messages. For example,
- * a console may display the output streams of a system process. A console can be
- * displayed by one or more views.
+ * A console. A console is commonly used to display messages such as the output
+ * streams of a system process. A console can be displayed in one or more console
+ * views.
  * <p>
- * Clients may implement this interface.
+ * The console implementations provided by this plug-in are textual
+ * (<code>MessageConsole</code> and <code>IOConsole</code>). However a client
+ * can provide alternate presentations since a console implementation is responsible
+ * for providing is page for the page book views in which consoles are displayed.
+ * </p>
+ * <p>
+ * Clients implementing this interface should subclass <code>AbstractConsole</code>.
  * </p>
  * @since 3.0
  */
@@ -63,7 +69,7 @@ public interface IConsole {
 	 * </ul>
 	 * </p>
 	 * <p>
-	 * Clients may define additional properties as required.
+	 * Consoles may define additional properties as required.
 	 * </p>
 	 *
 	 * @param listener a property change listener

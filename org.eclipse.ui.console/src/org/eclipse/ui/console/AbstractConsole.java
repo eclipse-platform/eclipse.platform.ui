@@ -223,8 +223,10 @@ public abstract class AbstractConsole implements IConsole {
 	}
 	
 	/**
-	 * Initializes this console. This methods should only be called by clients managing a
-	 * console's lifecycle. The method should be called once to initialize this console.
+	 * Initializes this console. This method should only be called by clients managing a
+	 * console's lifecycle, otherwise this method will be called automatically when this console
+	 * is added to the console manager. The method is called once to initialize this console,
+	 * marking the beginning of its lifecycle.
 	 * 
 	 * @since 3.1
 	 */
@@ -237,16 +239,17 @@ public abstract class AbstractConsole implements IConsole {
 	 * implementation does nothing. Subclasses may override.
 	 * <p>
 	 * Since 3.1, this method is only called automatically if this console was
-	 *  created with an automatic lifecycle.
+	 * created with an automatic lifecycle.
 	 * </p>
 	 */
 	protected void init() {
 	}
 	
 	/**
-	 * Disposes this console. This methods should only be called by clients managing a
-	 * console's lifecycle. The method should be called once to dispose this console,
-	 * afterwhich this console will no longer be used. 
+	 * Disposes this console. This method should only be called by clients managing a
+	 * console's lifecycle, otherwise this method will be called automatically when this
+	 * console is removed from the console manager. The method is called once to dispose
+	 * this console, afterwhich this console will no longer be used. 
 	 * 
 	 * @since 3.1
 	 */
@@ -266,7 +269,9 @@ public abstract class AbstractConsole implements IConsole {
 	}
 	
 	/**
-	 * Activates the consoles
+	 * Shows this console in all console views. This console will be become visible
+	 * if another console is currently pinned. 
+	 * 
 	 * @since 3.1
 	 */
     public void activate() {
