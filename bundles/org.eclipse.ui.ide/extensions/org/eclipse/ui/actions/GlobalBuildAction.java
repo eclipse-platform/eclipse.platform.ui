@@ -208,6 +208,7 @@ public void doBuild() {
 	};
 	
 	buildJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
+	buildJob.setUser(true);
 	buildJob.schedule();
 	
 }
