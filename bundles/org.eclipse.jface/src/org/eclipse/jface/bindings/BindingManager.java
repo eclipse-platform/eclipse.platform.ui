@@ -1318,6 +1318,10 @@ public final class BindingManager implements IContextManagerListener,
 	 * is the number of bindings and <code>m</code> is the number of deletion
 	 * markers.
 	 * </p>
+	 * <p>
+	 * TODO Performance: Remove the nested loop from this method. Lower the
+	 * complexity bound.
+	 * </p>
 	 * 
 	 * @param bindings
 	 *            The bindings from which the deleted items should be removed.
