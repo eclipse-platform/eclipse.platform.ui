@@ -421,6 +421,10 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @see ILaunchManager#addLaunch(ILaunch)
 	 */
 	public void addLaunch(ILaunch launch) {
+		if (fLaunches.contains(launch)) {
+			return;
+		}
+		
 		fLaunches.add(launch);
 		fireUpdate(launch, ADDED);
 	}	
