@@ -9,15 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.contexts.activationservice;
+package org.eclipse.ui.internal.contexts;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.ui.contexts.activationservice.ContextActivationServiceEvent;
-import org.eclipse.ui.contexts.activationservice.IMutableContextActivationService;
+import org.eclipse.ui.contexts.ContextActivationServiceEvent;
+import org.eclipse.ui.contexts.IMutableContextActivationService;
 import org.eclipse.ui.internal.util.Util;
 
 public final class MutableContextActivationService

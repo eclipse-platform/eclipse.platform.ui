@@ -11,12 +11,10 @@
 
 package org.eclipse.ui.contexts;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 /**
- * <p>
- * JAVADOC
- * </p>
+ * An instance of this interface allows clients to manage context activation.
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
@@ -25,45 +23,45 @@ import java.util.SortedSet;
  * </p>
  * 
  * @since 3.0
+ * @see ContextActivationServiceFactory
  */
 public interface IContextActivationService {
 
 	/**
-	 * JAVADOC
-	 * 
-	 * @param contextId
-	 */
-	void activateContext(String contextId);
-
-	/**
-	 * Registers an IContextActivationServiceListener instance with this
-	 * context activation service.
+	 * Registers an instance of <code>IContextActivationServiceListener</code>
+	 * to listen for changes to properties of this instance.
 	 * 
 	 * @param contextActivationServiceListener
-	 *            the IContextActivationServiceListener instance to register.
+	 *            the instance to register. Must not be <code>null</code>.
+	 *            If an attempt is made to register an instance which is
+	 *            already registered with this instance, no operation is
+	 *            performed.
 	 */
 	void addContextActivationServiceListener(IContextActivationServiceListener contextActivationServiceListener);
 
 	/**
-	 * JAVADOC
+	 * Returns the set of identifiers to active contexts.
+	 * <p>
+	 * Notification is sent to all registered listeners if this property
+	 * changes.
+	 * </p>
 	 * 
-	 * @param contextId
+	 * @return the set of identifiers to active contexts. This set may be
+	 *         empty, but is guaranteed not to be <code>null</code>. If this
+	 *         set is not empty, it is guaranteed to only contain instances of
+	 *         <code>String</code>.
 	 */
-	void deactivateContext(String contextId);
+	Set getActiveContextIds();
 
 	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */
-	SortedSet getActiveContextIds();
-
-	/**
-	 * Unregisters an IContextActivationServiceListener instance with this
-	 * context activation services.
+	 * Unregisters an instance of <code>IContextActivationServiceListener</code>
+	 * listening for changes to properties of this instance.
 	 * 
 	 * @param contextActivationServiceListener
-	 *            the IContextActivationServiceListener instance to unregister.
+	 *            the instance to unregister. Must not be <code>null</code>.
+	 *            If an attempt is made to unregister an instance which is not
+	 *            already registered with this instance, no operation is
+	 *            performed.
 	 */
 	void removeContextActivationServiceListener(IContextActivationServiceListener contextActivationServiceListener);
 }

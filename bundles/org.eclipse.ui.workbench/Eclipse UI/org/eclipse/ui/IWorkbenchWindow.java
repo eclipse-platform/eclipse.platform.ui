@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Shell;
  *
  * @see IWorkbenchPage
  */
-public interface IWorkbenchWindow extends IPageService,
+public interface IWorkbenchWindow extends IAdaptable, IPageService,
 	IRunnableContext {
 /**
  * Closes this workbench window.
@@ -149,13 +149,4 @@ public IWorkbenchPage openPage(IAdaptable input)
  * @param page the new active page
  */
 public void setActivePage(IWorkbenchPage page);
-
-/**
- * Returns the activity service for the workbench window.
- * 
- * @return the activity service for the workbench window. Guaranteed not to be 
- * 		   <code>null</code>.
- * @since 3.0
- */
-//public IActivityService getActivityService();
 }

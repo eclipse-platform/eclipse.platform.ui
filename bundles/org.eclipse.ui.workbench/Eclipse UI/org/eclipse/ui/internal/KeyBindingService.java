@@ -11,54 +11,50 @@
 
 package org.eclipse.ui.internal;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IKeyBindingService;
-import org.eclipse.ui.contexts.IContextActivationService;
-import org.eclipse.ui.internal.commands.ActionHandler;
 import org.eclipse.ui.commands.IActionService;
+import org.eclipse.ui.contexts.IMutableContextActivationService;
+import org.eclipse.ui.internal.commands.ActionHandler;
 
 final class KeyBindingService implements IKeyBindingService {
-	
+
 	private IActionService actionService;
-	private IContextActivationService contextActivationService;
-	private List scopes = new ArrayList();
-		
-	KeyBindingService(IActionService actionService, IContextActivationService contextActivationService) {
+	private IMutableContextActivationService mutableContextActivationService;
+
+	KeyBindingService(
+		IActionService actionService,
+		IMutableContextActivationService mutableContextActivationService) {
 		super();
-		this.contextActivationService = contextActivationService;
-		this.actionService = actionService;	
+		this.mutableContextActivationService = mutableContextActivationService;
+		this.actionService = actionService;
 	}
 
 	public String[] getScopes() {
-    	return (String[]) scopes.toArray(new String[scopes.size()]);
-    }
+		Set scopes = mutableContextActivationService.getActiveContextIds();
+		return (String[]) scopes.toArray(new String[scopes.size()]);
+	}
 
 	public void setScopes(String[] scopes) {
-		for (int i = 0; i < this.scopes.size(); i++)
-			contextActivationService.deactivateContext((String) this.scopes.get(i));
-			
-		this.scopes.clear();		
-
-		for (int i = 0; i < scopes.length; i++) {
-			contextActivationService.activateContext(scopes[i]);
-			this.scopes.add(scopes[i]);
-		}
-    }
+		mutableContextActivationService.setActiveContextIds(
+			new HashSet(Arrays.asList(scopes)));
+	}
 
 	public void registerAction(IAction action) {
-    	String command = action.getActionDefinitionId();
+		String command = action.getActionDefinitionId();
 
 		if (command != null)
-			actionService.addAction(command, new ActionHandler(action));		
-    }
-    
-	public void unregisterAction(IAction action) {   		
-    	String command = action.getActionDefinitionId();
+			actionService.addAction(command, new ActionHandler(action));
+	}
+
+	public void unregisterAction(IAction action) {
+		String command = action.getActionDefinitionId();
 
 		if (command != null)
 			actionService.removeAction(command);
-    }	
+	}
 }

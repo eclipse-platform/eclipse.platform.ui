@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.contexts.activationservice;
+package org.eclipse.ui.internal.contexts;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -17,33 +17,21 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.ui.contexts.activationservice.ContextActivationServiceEvent;
-import org.eclipse.ui.contexts.activationservice.ICompoundContextActiviationService;
-import org.eclipse.ui.contexts.activationservice.IContextActivationService;
-import org.eclipse.ui.contexts.activationservice.IContextActivationServiceListener;
-import org.eclipse.ui.contexts.activationservice.IMutableContextActivationService;
+import org.eclipse.ui.contexts.ContextActivationServiceEvent;
+import org.eclipse.ui.contexts.ICompoundContextActivationService;
+import org.eclipse.ui.contexts.IContextActivationService;
+import org.eclipse.ui.contexts.IContextActivationServiceListener;
 import org.eclipse.ui.internal.util.Util;
 
 public final class CompoundContextActivationService
 	extends AbstractContextActivationService
-	implements ICompoundContextActiviationService {
+	implements ICompoundContextActivationService {
 	private Set activeContextIds = new HashSet();
 
 	private final IContextActivationServiceListener contextActivationServiceListener =
 		new IContextActivationServiceListener() {
 		public void contextActivationServiceChanged(ContextActivationServiceEvent contextActivationServiceEvent) {
-			Set activeContextIds = new HashSet();
-
-			for (Iterator iterator = contextActivationServices.iterator();
-				iterator.hasNext();
-				) {
-				IMutableContextActivationService mutableContextActivationService =
-					(IMutableContextActivationService) iterator.next();
-				activeContextIds.addAll(
-					mutableContextActivationService.getActiveContextIds());
-			}
-
-			setActiveContextIds(activeContextIds);
+			refreshActiveContextIds();
 		}
 	};
 	private final HashSet contextActivationServices = new HashSet();
@@ -55,8 +43,10 @@ public final class CompoundContextActivationService
 		if (contextActivationService == null)
 			throw new NullPointerException();
 
-		contextActivationService.addContextActivationServiceListener(contextActivationServiceListener);
+		contextActivationService.addContextActivationServiceListener(
+			contextActivationServiceListener);
 		contextActivationServices.add(contextActivationService);
+		refreshActiveContextIds();
 	}
 
 	public Set getActiveContextIds() {
@@ -68,7 +58,24 @@ public final class CompoundContextActivationService
 			throw new NullPointerException();
 
 		contextActivationServices.remove(contextActivationService);
-		contextActivationService.removeContextActivationServiceListener(contextActivationServiceListener);
+		contextActivationService.removeContextActivationServiceListener(
+			contextActivationServiceListener);
+		refreshActiveContextIds();
+	}
+
+	private void refreshActiveContextIds() {
+		Set activeContextIds = new HashSet();
+
+		for (Iterator iterator = contextActivationServices.iterator();
+			iterator.hasNext();
+			) {
+			IContextActivationService contextActivationService =
+				(IContextActivationService) iterator.next();
+			activeContextIds.addAll(
+				contextActivationService.getActiveContextIds());
+		}
+
+		setActiveContextIds(activeContextIds);
 	}
 
 	private void setActiveContextIds(Set activeContextIds) {

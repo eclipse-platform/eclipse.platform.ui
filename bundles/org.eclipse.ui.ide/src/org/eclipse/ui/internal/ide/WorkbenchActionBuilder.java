@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.ide;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Preferences;
-
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -22,7 +21,6 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
@@ -33,6 +31,8 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
+import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.ide.IDEActionFactory;
@@ -538,9 +538,68 @@ public final class WorkbenchActionBuilder {
 		menu.add(new GroupMarker(IWorkbenchActionConstants.HELP_START));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.HELP_END));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
-		// about should always be at the bottom
+		// about should always be at the bottom				
 		menu.add(new Separator());
 		menu.add(aboutAction);
+			
+		/*
+		menu.add(new Separator());
+		
+		final IMutableContextActivationService workbenchContextActivationService = ContextActivationServiceFactory.getMutableContextActivationService();
+		workbenchContextActivationService.setActiveContextIds(new HashSet(Collections.singletonList("A")));
+
+		final IMutableContextActivationService workbenchPageContextActivationService = ContextActivationServiceFactory.getMutableContextActivationService();
+		workbenchPageContextActivationService.setActiveContextIds(new HashSet(Collections.singletonList("B")));				
+		
+		menu.add(new Action("Add A to the workbench") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchContextSupport workbenchContextSupport = (IWorkbenchContextSupport) workbench.getAdapter(IWorkbenchContextSupport.class);
+				workbenchContextSupport.getCompoundContextActivationService().addContextActivationService(workbenchContextActivationService);
+			}
+		});
+
+		menu.add(new Action("Remove A from the workbench") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchContextSupport workbenchContextSupport = (IWorkbenchContextSupport) workbench.getAdapter(IWorkbenchContextSupport.class);
+				workbenchContextSupport.getCompoundContextActivationService().removeContextActivationService(workbenchContextActivationService);
+			}
+		});
+		
+		menu.add(new Action("Add B to the workbench page") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
+
+				if (workbenchWindow != null) {
+					IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
+					
+					if (workbenchPage != null) {					
+						IWorkbenchPageContextSupport workbenchPageContextSupport = (IWorkbenchPageContextSupport) workbenchPage.getAdapter(IWorkbenchPageContextSupport.class);
+						workbenchPageContextSupport.getCompoundContextActivationService().addContextActivationService(workbenchPageContextActivationService);
+					}
+				}
+			}
+		});
+
+		menu.add(new Action("Remove B from the workbench page") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
+
+				if (workbenchWindow != null) {
+					IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
+					
+					if (workbenchPage != null) {					
+						IWorkbenchPageContextSupport workbenchPageContextSupport = (IWorkbenchPageContextSupport) workbenchPage.getAdapter(IWorkbenchPageContextSupport.class);
+						workbenchPageContextSupport.getCompoundContextActivationService().removeContextActivationService(workbenchPageContextActivationService);
+					}
+				}
+			}
+		});	
+		*/	
+		
 		return menu;
 	}
 
@@ -827,9 +886,16 @@ public final class WorkbenchActionBuilder {
 		registerGlobalAction(projectPropertyDialogAction);
 
 		//Only add the role manager action if we are using role support
-		if(!getWindow().getWorkbench().getActivityManager().getDefinedCategoryIds().isEmpty()){
-            categoryAction = ActionFactory.CONFIGURE_ACTIVITIES.create(getWindow());
-            registerGlobalAction(categoryAction);
+		
+		IWorkbenchActivitySupport workbenchActivitySupport = (IWorkbenchActivitySupport) getWindow().getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
+
+		if (workbenchActivitySupport != null) {
+			IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
+					
+			if (!activityManager.getDefinedCategoryIds().isEmpty()) { 
+				categoryAction = ActionFactory.CONFIGURE_ACTIVITIES.create(getWindow());
+            	registerGlobalAction(categoryAction);
+			}
 		}
 
 		if (EditorWorkbook.usingNewDropDown()) {

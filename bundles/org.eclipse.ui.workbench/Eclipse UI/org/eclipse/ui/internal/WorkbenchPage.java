@@ -72,12 +72,10 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.contexts.activationservice.ContextActivationServiceFactory;
-import org.eclipse.ui.contexts.activationservice.ICompoundContextActiviationService;
 import org.eclipse.ui.commands.IActionService;
-import org.eclipse.ui.contexts.IContextActivationService;
+import org.eclipse.ui.contexts.IWorkbenchPageContextSupport;
 import org.eclipse.ui.internal.commands.ActionService;
-import org.eclipse.ui.internal.contexts.ContextActivationService;
+import org.eclipse.ui.internal.contexts.ws.WorkbenchPageContextSupport;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
@@ -383,17 +381,6 @@ public WorkbenchPage(WorkbenchWindow w, IAdaptable input)
 	init(w, null, input);
 }
 
-private final ICompoundContextActiviationService compoundActivityService = ContextActivationServiceFactory.getCompoundContextActivationService();
-
-public ICompoundContextActiviationService getCompoundContextActivationService() {
-	Perspective perspective = getActivePerspective();
-	
-	if (perspective != null)
-		return perspective.getCompoundActivityService();
-	else 
-		return compoundActivityService;
-}
-
 private IActionService actionService;
 
 public IActionService getActionService() {
@@ -401,15 +388,6 @@ public IActionService getActionService() {
 		actionService = new ActionService();
 		
 	return actionService;
-}
-
-private IContextActivationService contextActivationService;
-
-public IContextActivationService getContextActivationService() {
-	if (contextActivationService == null) 
-		contextActivationService = new ContextActivationService();
-		
-	return contextActivationService;
 }
 
 /**
@@ -1344,7 +1322,7 @@ public IWorkbenchPartReference getActivePartReference() {
  * Returns the active perspective for the page, <code>null</code>
  * if none.
  */
-/* package */ Perspective getActivePerspective() {
+public Perspective getActivePerspective() {
 	return perspList.getActive();
 }
 /**
@@ -1705,6 +1683,8 @@ private void lastPartClosePerspective() {
 private void init(WorkbenchWindow w, String layoutID, IAdaptable input) 
 	throws WorkbenchException
 {
+	workbenchPageContextSupport = new WorkbenchPageContextSupport(this);
+	
 	// Save args.
 	this.window = w;
 	this.input = input;
@@ -3138,5 +3118,14 @@ private class ActivationList {
 				usedList.add(perspective);
 			}
 		}
+	}
+	
+	private IWorkbenchPageContextSupport workbenchPageContextSupport;
+	
+	public Object getAdapter(Class adapter) {
+		if (IWorkbenchPageContextSupport.class.equals(adapter))
+			return workbenchPageContextSupport;
+		else
+			return null;
 	}
 }

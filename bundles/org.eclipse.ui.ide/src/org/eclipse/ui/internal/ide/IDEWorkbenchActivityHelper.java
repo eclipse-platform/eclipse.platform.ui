@@ -20,10 +20,10 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IIdentifier;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
 /**
  * Utility class that manages promotion of activites in response to workspace changes.
@@ -87,20 +87,25 @@ public class IDEWorkbenchActivityHelper {
 
                     try {
                         IResourceDelta[] children = mainDelta.getAffectedChildren();
-                        IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
-                        for (int i = 0; i < children.length; i++) {
-                            IResourceDelta delta = children[i];
-                            if (delta.getResource().getType() == IResource.PROJECT) {
-                                IProject project = (IProject) delta.getResource();
-                                String[] ids = project.getDescription().getNatureIds();
-                                for (int j = 0; j < ids.length; j++) {
-                                    IIdentifier identifier = activityManager.getIdentifier(ids[j]);
-                                    Set activities = new HashSet(activityManager .getEnabledActivityIds());
-                                    if (activities.addAll(identifier.getActivityIds())) {
-                                        PlatformUI.getWorkbench().setEnabledActivityIds(activities);
-                                    }
-                                }
-                            }
+                        IWorkbenchActivitySupport workbenchActivitySupport = (IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
+
+                        if (workbenchActivitySupport != null) {
+	                        IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
+	
+	                        for (int i = 0; i < children.length; i++) {
+	                            IResourceDelta delta = children[i];
+	                            if (delta.getResource().getType() == IResource.PROJECT) {
+	                                IProject project = (IProject) delta.getResource();
+	                                String[] ids = project.getDescription().getNatureIds();
+	                                for (int j = 0; j < ids.length; j++) {
+	                                    IIdentifier identifier = activityManager.getIdentifier(ids[j]);
+	                                    Set activities = new HashSet(activityManager .getEnabledActivityIds());
+	                                    if (activities.addAll(identifier.getActivityIds())) {
+	                                    	workbenchActivitySupport.setEnabledActivityIds(activities);
+	                                    }
+	                                }
+	                            }
+	                        }
                         }
 
                     } catch (CoreException exception) {

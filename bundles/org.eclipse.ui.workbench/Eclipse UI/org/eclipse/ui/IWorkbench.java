@@ -17,9 +17,9 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.activities.IActivityManager;
-import org.eclipse.ui.contexts.activationservice.IContextActivationService;
-import org.eclipse.ui.contexts.activationservice.ICompoundContextActiviationService;
 import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.contexts.ICompoundContextActivationService;
+import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.progress.IProgressService;
 
 /**
@@ -54,7 +54,7 @@ import org.eclipse.ui.progress.IProgressService;
  *
  * @see org.eclipse.ui.PlatformUI#getWorkbench
  */
-public interface IWorkbench {
+public interface IWorkbench extends IAdaptable {
 /**
  * Returns the display for this workbench.
  * <p>
@@ -358,23 +358,14 @@ public boolean saveAllEditors(boolean confirm);
 public IElementFactory getElementFactory(String factoryId);
 
 /**
- * Returns the activity manager for the workbench. 
- * 
- * @return the activity manager for the workbench. Guaranteed not to be 
- * 		   <code>null</code>.
- * @since 3.0
+ * deprecated. use: ((IWorkbenchActivitySupport) getAdapter(IWorkbenchActivitySupport.class)).getActivityManager()
  */
-public IActivityManager getActivityManager();
+IActivityManager getActivityManager();
 
 /**
- * Sets the set of identifiers to enabled activities.
- * 
- * @param enabledActivityIds
- *            the set of identifiers to enabled activities. This set may be
- *            empty, but it must not be <code>null</code>. If this set
- *            is not empty, it must only contain instances of <code>String</code>.
+ * deprecated. use: ((IWorkbenchActivitySupport) getAdapter(IWorkbenchActivitySupport.class)).setEnabledActivityIds(Set enabledActivityIds)
  */
-public void setEnabledActivityIds(Set enabledActivityIds);
+void setEnabledActivityIds(Set enabledActivityIds);
 
 /**
  * Returns the command manager for the workbench. 
@@ -383,23 +374,5 @@ public void setEnabledActivityIds(Set enabledActivityIds);
  * 		   <code>null</code>.
  * @since 3.0
  */
-public ICommandManager getCommandManager();
-
-/**
- * Returns the activity service for the workbench.
- * 
- * @return the activity service for the workbench. Guaranteed not to be 
- * 		   <code>null</code>.
- * @since 3.0
- */
-public IContextActivationService getContextActivationService();
-
-/**
- * Returns the compound activity service for the workbench.
- * 
- * @return the compound activity service for the workbench. Guaranteed not to be 
- * 		   <code>null</code>.
- * @since 3.0
- */
-public ICompoundContextActiviationService getCompoundContextActivationService();
+ICommandManager getCommandManager();
 }

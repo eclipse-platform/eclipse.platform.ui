@@ -7,7 +7,7 @@
       </appInfo>
       <documentation>
          &lt;p&gt;
-The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used to declare activities and activity pattern bindings, using the &lt;code&gt;activity&lt;/code&gt; and &lt;code&gt;patternBinding&lt;/code&gt; elements respectively.
+The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used to declare activities and associated elements.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -214,7 +214,7 @@ The &lt;code&gt;plugin.xml&lt;/code&gt; file in the &lt;code&gt;org.eclipse.ui&l
       </appInfo>
       <documentation>
          &lt;p&gt;
-There is currently no public API for declaring activities or activity pattern bindings other than this extension point.
+There is currently no public API for declaring activities or associated elements other than this extension point.
 &lt;/p&gt;
       </documentation>
    </annotation>

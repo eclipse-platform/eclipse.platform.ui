@@ -33,18 +33,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.DeviceData;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.CommandResolver;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -63,7 +51,16 @@ import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.DeviceData;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
@@ -81,23 +78,17 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.activities.ActivityManagerFactory;
 import org.eclipse.ui.activities.IActivityManager;
-import org.eclipse.ui.activities.IMutableActivityManager;
-import org.eclipse.ui.contexts.activationservice.ContextActivationServiceFactory;
-import org.eclipse.ui.contexts.activationservice.IContextActivationService;
-import org.eclipse.ui.contexts.activationservice.ICompoundContextActiviationService;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.commands.CommandManagerFactory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.KeySupport;
-import org.eclipse.ui.progress.IProgressService;
-
+import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
+import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.fonts.FontDefinition;
 import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
@@ -106,6 +97,10 @@ import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.KeySupport;
+import org.eclipse.ui.progress.IProgressService;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
@@ -289,37 +284,6 @@ public final class Workbench implements IWorkbench {
 		return testableObject;
 	}
 
-	private IMutableActivityManager activityManager;
-	/* TODO private */
-	ICommandManager commandManager;
-	private WorkbenchContextActiviationService workbenchActivityService;
-	private final ICompoundContextActiviationService compoundActivityService =
-		ContextActivationServiceFactory.getCompoundContextActivationService();
-	// TODO reduce visibility
-	public WorkbenchActivitiesCommandsAndRoles workbenchActivitiesCommandsAndRoles =
-		new WorkbenchActivitiesCommandsAndRoles(this);
-	private WorkbenchKeyboard keyboard;
-	private ActivityPersistanceHelper activityHelper;
-
-	public IActivityManager getActivityManager() {
-		return activityManager;
-	}
-
-	public void setEnabledActivityIds(Set enabledActivityIds) {
-		activityManager.setEnabledActivityIds(enabledActivityIds);
-	}
-
-	public ICommandManager getCommandManager() {
-		return commandManager;
-	}
-
-	public IContextActivationService getContextActivationService() {
-		return workbenchActivityService;
-	}
-
-	public ICompoundContextActiviationService getCompoundContextActivationService() {
-		return compoundActivityService;
-	}
 
 	private volatile boolean keyFilterDisabled;
 	private final Object keyFilterMutex = new Object();
@@ -784,15 +748,25 @@ public final class Workbench implements IWorkbench {
 	 * @return true if init succeeded.
 	 */
 	private boolean init(ImageDescriptor windowImage, Display display) {
-		// create an activity manager
-		activityManager = ActivityManagerFactory.getMutableActivityManager();
-		activityManager.addActivityManagerListener(
-			workbenchActivitiesCommandsAndRoles.activityManagerListener);
+		// setup debug mode if required.
+		if (WorkbenchPlugin.getDefault().isDebugging()) {
+			WorkbenchPlugin.DEBUG = true;
+			ModalContext.setDebugMode(true);
+		}
+
+		// create workbench window manager
+		windowManager = new WindowManager();
+		
+		workbenchActivitySupport = new WorkbenchActivitySupport();
+		workbenchContextSupport = new WorkbenchContextSupport(this);
+		
+		workbenchContextSupport.getContextManager().addContextManagerListener(
+				workbenchCommandsAndContexts.contextManagerListener);
 
 		// create a command manager
 		commandManager = CommandManagerFactory.getCommandManager();
 		commandManager.addCommandManagerListener(
-			workbenchActivitiesCommandsAndRoles.commandManagerListener);
+				workbenchCommandsAndContexts.commandManagerListener);
 
 		// establish relationship between jface and the command manager
 		CommandResolver.getInstance().setCommandResolver(new CommandResolver.ICallback() {
@@ -806,14 +780,14 @@ public final class Workbench implements IWorkbench {
 
 					if (!keySequenceBindings.isEmpty()) {
 						IKeySequenceBinding keySequenceBinding =
-							(IKeySequenceBinding) keySequenceBindings.get(0);
+						(IKeySequenceBinding) keySequenceBindings.get(0);
 						KeySequence keySequence = keySequenceBinding.getKeySequence();
 						List keyStrokes = keySequence.getKeyStrokes();
 
 						if (keyStrokes.size() == 1) {
 							KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
 							accelerator =
-								new Integer(KeySupport.convertKeyStrokeToAccelerator(keyStroke));
+							new Integer(KeySupport.convertKeyStrokeToAccelerator(keyStroke));
 						}
 					}
 				}
@@ -830,7 +804,7 @@ public final class Workbench implements IWorkbench {
 
 					if (!keySequenceBindings.isEmpty()) {
 						IKeySequenceBinding keySequenceBinding =
-							(IKeySequenceBinding) keySequenceBindings.get(0);
+						(IKeySequenceBinding) keySequenceBindings.get(0);
 						acceleratorText = keySequenceBinding.getKeySequence().format();
 					}
 				}
@@ -840,9 +814,9 @@ public final class Workbench implements IWorkbench {
 
 			public boolean isAcceleratorInUse(int accelerator) {
 				KeySequence keySequence =
-					KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
+				KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
 				return commandManager.isPerfectMatch(keySequence)
-					|| commandManager.isPartialMatch(keySequence);
+				|| commandManager.isPartialMatch(keySequence);
 			}
 
 			public final boolean isActive(final String commandId) {
@@ -857,28 +831,17 @@ public final class Workbench implements IWorkbench {
 			}
 		});
 
-		workbenchActivitiesCommandsAndRoles.updateActiveActivityIds();
+		workbenchCommandsAndContexts.updateActiveContextIds();
 		keyboard = new WorkbenchKeyboard(this);
 		Listener keyFilter = keyboard.getKeyDownFilter();
 		display.addFilter(SWT.Traverse, keyFilter);
 		display.addFilter(SWT.KeyDown, keyFilter);
 		display.addFilter(SWT.FocusOut, keyFilter);
 		display.addFilter(SWT.KeyUp, keyboard.getKeyUpFilter());
-		addWindowListener(workbenchActivitiesCommandsAndRoles.windowListener);
-		workbenchActivitiesCommandsAndRoles.updateActiveCommandIdsAndActiveActivityIds();
+		addWindowListener(workbenchCommandsAndContexts.windowListener);
+		workbenchCommandsAndContexts.updateActiveIds();		
 
-		// setup debug mode if required.
-		if (WorkbenchPlugin.getDefault().isDebugging()) {
-			WorkbenchPlugin.DEBUG = true;
-			ModalContext.setDebugMode(true);
-		}
-
-		// create workbench window manager
-		windowManager = new WindowManager();
-
-		workbenchActivityService = new WorkbenchContextActiviationService(this);
-		workbenchActivityService.start();
-
+		
 		// allow the workbench configurer to initialize
 		getWorkbenchConfigurer().init();
 
@@ -1894,5 +1857,40 @@ public final class Workbench implements IWorkbench {
 	public IProgressService getProgressService() {
 		return ProgressManager.getInstance();
 	}
+	
+	/* TODO: reduce visibility, or better - get rid of entirely */
+	public WorkbenchCommandsAndContexts workbenchCommandsAndContexts =
+		new WorkbenchCommandsAndContexts(this);	
+	private WorkbenchKeyboard keyboard;
+	private ActivityPersistanceHelper activityHelper;
+	
+	private IWorkbenchActivitySupport workbenchActivitySupport;
+	private IWorkbenchContextSupport workbenchContextSupport;
+	
+	public Object getAdapter(Class adapter) {
+		if (IWorkbenchActivitySupport.class.equals(adapter))
+			return workbenchActivitySupport;
+		else if (IWorkbenchContextSupport.class.equals(adapter))
+			return workbenchContextSupport;
+		else
+			return null;
+	}
 
+	public IActivityManager getActivityManager() {
+		IWorkbenchActivitySupport workbenchActivitySupport = (IWorkbenchActivitySupport) getAdapter(IWorkbenchActivitySupport.class);
+		return workbenchActivitySupport != null ? workbenchActivitySupport.getActivityManager() : null; 
+	}
+
+	public void setEnabledActivityIds(Set enabledActivityIds) {
+		IWorkbenchActivitySupport workbenchActivitySupport = (IWorkbenchActivitySupport) getAdapter(IWorkbenchActivitySupport.class);
+		
+		if (workbenchActivitySupport != null)
+			workbenchActivitySupport.setEnabledActivityIds(enabledActivityIds); 
+	}	
+	
+	ICommandManager commandManager;
+	
+	public ICommandManager getCommandManager() {
+		return commandManager;
+	}
 }

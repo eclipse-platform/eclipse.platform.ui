@@ -9,13 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.contexts.activationservice;
+package org.eclipse.ui.contexts;
 
 /**
- * <p>
- * An instance of <code>ContextActivationServiceEvent</code> describes changes to an
- * instance of <code>IContextActivationService</code>.
- * </p>
+ * An instance of this class describes changes to an instance of <code>IContextActivationService</code>.
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
@@ -24,19 +21,19 @@ package org.eclipse.ui.contexts.activationservice;
  * </p>
  * 
  * @since 3.0
- * @see IContextActivationService
  * @see IContextActivationServiceListener#contextActivationServiceChanged
  */
 public final class ContextActivationServiceEvent {
-
 	private boolean activeContextIdsChanged;
 	private IContextActivationService contextActivationService;
 
 	/**
-	 * TODO javadoc
+	 * Creates a new instance of this class.
 	 * 
 	 * @param contextActivationService
+	 *            the instance of the interface that changed.
 	 * @param activeContextIdsChanged
+	 *            true, iff the activeContextIds property changed.
 	 */
 	public ContextActivationServiceEvent(
 		IContextActivationService contextActivationService,
@@ -49,18 +46,19 @@ public final class ContextActivationServiceEvent {
 	}
 
 	/**
-	 * Returns the instance of <code>IContextActivationService</code> that has
-	 * changed.
+	 * Returns the instance of the interface that changed.
 	 * 
-	 * @return the instance of <code>IContextActivationService</code> that has
-	 *         changed. Guaranteed not to be <code>null</code>.
+	 * @return the instance of the interface that changed. Guaranteed not to be
+	 *         <code>null</code>.
 	 */
 	public IContextActivationService getContextActivationService() {
 		return contextActivationService;
 	}
 
 	/**
-	 * TODO javadoc
+	 * Returns whether or not the activeContextIdsChanged property changed.
+	 * 
+	 * @return true, iff the activeContextIdsChanged property changed.
 	 */
 	public boolean haveActiveContextIdsChanged() {
 		return activeContextIdsChanged;

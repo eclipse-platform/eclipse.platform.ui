@@ -56,14 +56,17 @@ public final class WorkbenchActivityHelper {
 		if (object instanceof IPluginContribution) {
 			IPluginContribution contribution = (IPluginContribution) object;
 			if (contribution.getPluginId() != null) {
-				IIdentifier identifier =
-					PlatformUI
-						.getWorkbench()
-						.getActivityManager()
-						.getIdentifier(
-						createUnifiedId(contribution));
-				if (!identifier.isEnabled())
-					return true;
+				IWorkbenchActivitySupport workbenchActivitySupport = (IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
+
+				if (workbenchActivitySupport != null) {
+					IIdentifier identifier =
+					workbenchActivitySupport
+							.getActivityManager()
+							.getIdentifier(
+							createUnifiedId(contribution));
+					if (!identifier.isEnabled())
+						return true;
+				}
 			}
 		}
 		return false;

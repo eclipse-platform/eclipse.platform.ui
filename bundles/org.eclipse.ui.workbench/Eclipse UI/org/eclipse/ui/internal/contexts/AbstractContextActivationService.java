@@ -12,35 +12,17 @@
 package org.eclipse.ui.internal.contexts;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
+import org.eclipse.ui.contexts.ContextActivationServiceEvent;
 import org.eclipse.ui.contexts.IContextActivationService;
-import org.eclipse.ui.contexts.IContextActivationServiceEvent;
 import org.eclipse.ui.contexts.IContextActivationServiceListener;
-import org.eclipse.ui.internal.util.Util;
 
-public final class ContextActivationService
+public abstract class AbstractContextActivationService
 	implements IContextActivationService {
-
-	private SortedSet activeContextIds;
-	private IContextActivationServiceEvent contextActivationServiceEvent;
 	private List contextActivationServiceListeners;
 
-	public ContextActivationService() {
-	}
-
-	public void activateContext(String contextId) {
-		if (contextId == null)
-			throw new NullPointerException();
-
-		if (activeContextIds == null)
-			activeContextIds = new TreeSet();
-
-		if (activeContextIds.add(contextId))
-			fireContextActivationServiceChanged();
+	protected AbstractContextActivationService() {
 	}
 
 	public void addContextActivationServiceListener(IContextActivationServiceListener contextActivationServiceListener) {
@@ -50,47 +32,22 @@ public final class ContextActivationService
 		if (contextActivationServiceListeners == null)
 			contextActivationServiceListeners = new ArrayList();
 
-		if (!contextActivationServiceListeners
-			.contains(contextActivationServiceListener))
-			contextActivationServiceListeners.add(
-				contextActivationServiceListener);
+		if (!contextActivationServiceListeners.contains(contextActivationServiceListener))
+			contextActivationServiceListeners.add(contextActivationServiceListener);
 	}
 
-	public void deactivateContext(String contextId) {
-		if (contextId == null)
+	protected void fireContextActivationServiceChanged(ContextActivationServiceEvent contextActivationServiceEvent) {
+		if (contextActivationServiceEvent == null)
 			throw new NullPointerException();
 
-		if (activeContextIds != null && activeContextIds.remove(contextId)) {
-			if (activeContextIds.isEmpty())
-				activeContextIds = null;
-
-			fireContextActivationServiceChanged();
-		}
-	}
-
-	private void fireContextActivationServiceChanged() {
-		if (contextActivationServiceListeners != null) {
-			for (int i = 0;
-				i < contextActivationServiceListeners.size();
-				i++) {
-				if (contextActivationServiceEvent == null)
-					contextActivationServiceEvent =
-						new ContextActivationServiceEvent(this);
-
+		if (contextActivationServiceListeners != null)
+			for (int i = 0; i < contextActivationServiceListeners.size(); i++)
 				(
 					(
 						IContextActivationServiceListener) contextActivationServiceListeners
 							.get(
 						i)).contextActivationServiceChanged(
 					contextActivationServiceEvent);
-			}
-		}
-	}
-
-	public SortedSet getActiveContextIds() {
-		return activeContextIds != null
-			? Collections.unmodifiableSortedSet(activeContextIds)
-			: Util.EMPTY_SORTED_SET;
 	}
 
 	public void removeContextActivationServiceListener(IContextActivationServiceListener contextActivationServiceListener) {
@@ -98,7 +55,6 @@ public final class ContextActivationService
 			throw new NullPointerException();
 
 		if (contextActivationServiceListeners != null)
-			contextActivationServiceListeners.remove(
-				contextActivationServiceListener);
+			contextActivationServiceListeners.remove(contextActivationServiceListener);
 	}
 }

@@ -765,7 +765,7 @@ public final class CommandManager implements ICommandManager {
 		}
 	}
 
-	public void setActiveActivityIds(Set activeActivityIds) {
+	public void setActiveActivityIds(Set activeActivityIds) {		
 		activeActivityIds = Util.safeCopy(activeActivityIds, String.class);
 		boolean commandManagerChanged = false;
 		Map commandEventsByCommandId = null;

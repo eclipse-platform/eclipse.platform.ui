@@ -9,15 +9,13 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.contexts.activationservice;
+package org.eclipse.ui.contexts;
 
-import org.eclipse.ui.internal.contexts.activationservice.CompoundContextActivationService;
-import org.eclipse.ui.internal.contexts.activationservice.MutableContextActivationService;
+import org.eclipse.ui.internal.contexts.CompoundContextActivationService;
+import org.eclipse.ui.internal.contexts.MutableContextActivationService;
 
 /**
- * <p>
  * This class allows clients to broker instances of <code>IContextActivationService</code>.
- * </p>
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
@@ -26,28 +24,27 @@ import org.eclipse.ui.internal.contexts.activationservice.MutableContextActivati
  * </p>
  * 
  * @since 3.0
- * @see IContextActivationService
  */
 public final class ContextActivationServiceFactory {
 
 	/**
-	 * Creates a new instance of ICompoundContextActivationService.
+	 * Creates a new instance of <code>ICompoundContextActivationService</code>.
 	 * 
-	 * @return a new instance of ICompoundContextActivationService. Clients should not
-	 *         make assumptions about the concrete implementation outside the
-	 *         contract of <code>ICompoundContextActivationService</code>. Guaranteed
+	 * @return a new instance of <code>ICompoundContextActivationService</code>.
+	 *         Clients should not make assumptions about the concrete
+	 *         implementation outside the contract of the interface. Guaranteed
 	 *         not to be <code>null</code>.
 	 */
-	public static ICompoundContextActiviationService getCompoundContextActivationService() {
+	public static ICompoundContextActivationService getCompoundContextActivationService() {
 		return new CompoundContextActivationService();
 	}
 
 	/**
-	 * Creates a new instance of IMutableContextActivationService.
+	 * Creates a new instance of <code>IMutableContextActivationService</code>.
 	 * 
-	 * @return a new instance of IMutableContextActivationService. Clients should not
-	 *         make assumptions about the concrete implementation outside the
-	 *         contract of <code>IMutableContextActivationService</code>. Guaranteed
+	 * @return a new instance of <code>IMutableContextActivationService</code>.
+	 *         Clients should not make assumptions about the concrete
+	 *         implementation outside the contract of the interface. Guaranteed
 	 *         not to be <code>null</code>.
 	 */
 	public static IMutableContextActivationService getMutableContextActivationService() {

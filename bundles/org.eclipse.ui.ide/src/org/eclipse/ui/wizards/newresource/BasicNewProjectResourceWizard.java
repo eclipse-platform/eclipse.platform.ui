@@ -34,14 +34,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IPluginContribution;
@@ -52,7 +50,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IIdentifier;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
@@ -387,17 +387,22 @@ public static void updatePerspective(IConfigurationElement configElement) {
 	if (finalPersp != null && finalPersp instanceof IPluginContribution) {
         IPluginContribution contribution = (IPluginContribution) finalPersp;
         if (contribution.getPluginId() != null) {            
-            IIdentifier identifier = PlatformUI
-                .getWorkbench()
-                .getActivityManager()
-                .getIdentifier(
-                        WorkbenchActivityHelper.createUnifiedId(contribution));
-            Set idActivities = identifier.getActivityIds();
-            if (!idActivities.isEmpty()) {
-                Set enabledIds = new HashSet(PlatformUI.getWorkbench().getActivityManager().getEnabledActivityIds());
-                if (enabledIds.addAll(idActivities)) 
-                	PlatformUI.getWorkbench().setEnabledActivityIds(enabledIds);
-            }
+        	IWorkbenchActivitySupport workbenchActivitySupport = (IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
+
+        	if (workbenchActivitySupport != null) {
+        		IActivityManager activityManager = workbenchActivitySupport.getActivityManager();        	       
+	        	IIdentifier identifier = activityManager
+	                .getIdentifier(
+	                        WorkbenchActivityHelper.createUnifiedId(contribution));
+	            Set idActivities = identifier.getActivityIds();
+	            
+	            if (!idActivities.isEmpty()) {
+	                Set enabledIds = new HashSet(activityManager.getEnabledActivityIds());
+	                
+	                if (enabledIds.addAll(idActivities)) 
+	                	workbenchActivitySupport.setEnabledActivityIds(enabledIds);
+	            }
+        	}
         }
 	}
 	else {

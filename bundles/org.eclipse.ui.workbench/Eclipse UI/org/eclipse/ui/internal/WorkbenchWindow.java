@@ -72,11 +72,15 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.contexts.activationservice.IContextActivationService;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
+import org.eclipse.ui.contexts.ContextActivationServiceFactory;
+import org.eclipse.ui.contexts.IMutableContextActivationService;
+import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.contexts.IWorkbenchWindowContextSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.ActionHandler;
+import org.eclipse.ui.internal.contexts.ws.WorkbenchWindowContextSupport;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.AnimationItem;
@@ -471,16 +475,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		getAdvisor().preWindowOpen(getWindowConfigurer());
 		// Fill the action bars	
 		getAdvisor().fillActionBars(this, getWindowConfigurer().getActionBarConfigurer(), FILL_ALL_ACTION_BARS);
-
-		workbenchWindowContextActivationService = new WorkbenchWindowContextActivationService(this);
-		workbenchWindowContextActivationService.start();
+				
+		workbenchWindowContextSupport = new WorkbenchWindowContextSupport(this);		
 	}
-
-	private WorkbenchWindowContextActivationService workbenchWindowContextActivationService;
-
-	public IContextActivationService getContextActivationService() {
-		return workbenchWindowContextActivationService;
-	}	
 	
 	private SortedMap actionsForActionSets = new TreeMap();
 	private SortedMap actionsForGlobalActions = new TreeMap();
@@ -512,7 +509,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			}
 		}
 
-		getWorkbenchImpl().workbenchActivitiesCommandsAndRoles.updateActiveCommandIdsAndActiveActivityIds();
+		getWorkbenchImpl().workbenchCommandsAndContexts.updateActiveIds();
 	}
 
 	void registerGlobalAction(IAction globalAction) {
@@ -522,7 +519,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			actionsForGlobalActions.put(
 				command,
 				new ActionHandler(globalAction));
-		getWorkbenchImpl().workbenchActivitiesCommandsAndRoles.updateActiveCommandIdsAndActiveActivityIds();
+		getWorkbenchImpl().workbenchCommandsAndContexts.updateActiveIds();
 	}
 
 	/*
@@ -1036,10 +1033,19 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	public KeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
+			IMutableContextActivationService mutableContextActivationService =
+				ContextActivationServiceFactory
+					.getMutableContextActivationService();
+			IWorkbenchContextSupport workbenchContextSupport =
+				(IWorkbenchContextSupport) getWorkbenchImpl().getAdapter(IWorkbenchContextSupport
+					.class);
+			workbenchContextSupport.getCompoundContextActivationService().addContextActivationService(mutableContextActivationService);			
 			keyBindingService =
 				new KeyBindingService(
-					getWorkbenchImpl().workbenchActivitiesCommandsAndRoles.getActionService(),
-					getWorkbenchImpl().workbenchActivitiesCommandsAndRoles.getContextActivationService());
+					getWorkbenchImpl()
+						.workbenchCommandsAndContexts
+						.getActionService(),
+					mutableContextActivationService);
 			updateActiveActions();
 		}
 
@@ -2007,5 +2013,14 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	public void fillActionBars(IActionBarConfigurer configurer, int flags) {
 		getAdvisor().fillActionBars(this,configurer,flags);
+	}
+	
+	private IWorkbenchWindowContextSupport workbenchWindowContextSupport;
+	
+	public Object getAdapter(Class adapter) {
+		if (IWorkbenchWindowContextSupport.class.equals(adapter))
+			return workbenchWindowContextSupport;
+		else
+			return null;
 	}
 }

@@ -12,24 +12,28 @@
 package org.eclipse.ui.contexts;
 
 /**
+ * An instance of this interface can be used by clients to receive notification
+ * of changes to one or more instances of <code>IContextActivationService</code>.
  * <p>
- * JAVADOC
- * </p>
- * <p>
- * This interface is not intended to be extended by clients.
+ * This interface may be implemented by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
  * </p>
  * 
  * @since 3.0
+ * @see IContextActivationService#addContextActivationServiceListener
+ * @see IContextActivationService#removeContextActivationServiceListener
  */
 public interface IContextActivationServiceListener {
 
 	/**
-	 * JAVADOC
+	 * Notifies that one or more properties of an instance of <code>IContextActivationService</code>
+	 * have changed. Specific details are described in the <code>ContextActivationServiceEvent</code>.
 	 * 
 	 * @param contextActivationServiceEvent
+	 *            the context activation service event. Guaranteed not to be
+	 *            <code>null</code>.
 	 */
-	void contextActivationServiceChanged(IContextActivationServiceEvent contextActivationServiceEvent);
+	void contextActivationServiceChanged(ContextActivationServiceEvent contextActivationServiceEvent);
 }

@@ -9,12 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.contexts.activationservice;
+package org.eclipse.ui.contexts;
+
+import java.util.Set;
 
 /**
- * <p>
- * TODO javadoc
- * </p>
+ * An instance of this interface allows clients to manage context activation.
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
@@ -23,17 +23,18 @@ package org.eclipse.ui.contexts.activationservice;
  * </p>
  * 
  * @since 3.0
- * @see IContextActivationServiceListener
+ * @see ContextActivationServiceFactory
  */
-public interface ICompoundContextActiviationService extends IContextActivationService {
+public interface IMutableContextActivationService
+	extends IContextActivationService {
 
 	/**
-	 * TODO javadoc
+	 * Sets the set of identifiers to active contexts.
+	 * 
+	 * @param activeContextIds
+	 *            the set of identifiers to active contexts. This set may be
+	 *            empty, but it must not be <code>null</code>. If this set
+	 *            is not empty, it must only contain instances of <code>String</code>.
 	 */
-	void addContextActivationService(IContextActivationService contextActivationService);
-
-	/**
-	 * TODO javadoc
-	 */
-	void removeContextActivationService(IContextActivationService contextActivationService);
+	void setActiveContextIds(Set activeContextIds);
 }
