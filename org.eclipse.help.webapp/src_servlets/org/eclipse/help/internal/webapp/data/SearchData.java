@@ -19,7 +19,6 @@ import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.webapp.*;
-import org.eclipse.help.internal.webapp.servlet.*;
 
 /**
  * Helper class for searchView.jsp initialization

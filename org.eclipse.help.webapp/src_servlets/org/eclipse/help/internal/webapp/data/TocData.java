@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.webapp.servlet.*;
+
 
 /**
  * Helper class for tocView.jsp initialization

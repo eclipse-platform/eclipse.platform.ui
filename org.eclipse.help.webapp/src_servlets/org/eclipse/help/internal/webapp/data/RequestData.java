@@ -14,7 +14,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.webapp.servlet.*;
 
 /**
  * Helper class for contents.jsp initialization
