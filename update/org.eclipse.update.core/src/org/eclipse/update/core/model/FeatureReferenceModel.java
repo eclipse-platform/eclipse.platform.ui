@@ -240,4 +240,16 @@ public class FeatureReferenceModel extends ModelObject {
 		url = resolveURL(base, bundle, urlString);
 	}
 
+	/**
+	 * @see Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("FeatureReference :");
+		if (versionID!=null) buffer.append(versionID.toString());
+		buffer.append(" at ");
+		if (url!=null) buffer.append(url.toExternalForm());
+		return buffer.toString();
+	}
+
 }

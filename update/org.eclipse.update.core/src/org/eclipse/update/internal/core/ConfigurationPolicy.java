@@ -161,7 +161,6 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				String urlString = (url!=null)?url.toExternalForm():"<no feature reference url>";
 				UpdateManagerPlugin.getPlugin().debug("The feature to unconfigure is null: feature reference is:"+urlString);
 			}
-			
 			return false;
 		}
 
@@ -281,10 +280,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 								.getPluginEntryArchiveReferences(entry, null /*IProgressMonitor*/
 						);
 					} catch (CoreException e) {
-						// DEBUG
-						if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-							UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
-						}
+						UpdateManagerPlugin.warn(null,e);
 					}
 					
 					// transform into a valid String

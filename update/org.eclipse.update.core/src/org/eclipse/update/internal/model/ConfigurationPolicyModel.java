@@ -147,9 +147,9 @@ public class ConfigurationPolicyModel extends ModelObject {
 		// we have to remove it from unconfigured feature if it exists
 		// because the user doesn't know...
 		if (unconfiguredFeatureReferences != null) {
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION){
-				UpdateManagerPlugin.debug("Removed from unconfigured: "+feature.getURLString());
-			}
+			//if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION){
+			//	UpdateManagerPlugin.debug("Removed from unconfigured: "+feature.getURLString());
+			//}
 			remove(feature, unconfiguredFeatureReferences);
 		}
 
@@ -174,9 +174,9 @@ public class ConfigurationPolicyModel extends ModelObject {
 		// an unconfigured feature is always from a configured one no ?
 		// unless it was parsed right ?
 		if (configuredFeatureReferences != null) {
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION){
-				UpdateManagerPlugin.debug("Removed from configured: "+feature.getURLString());
-			}
+			//if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION){
+			//	UpdateManagerPlugin.debug("Removed from configured: "+feature.getURLString());
+			//}
 			remove(feature, configuredFeatureReferences);
 		}
 	}

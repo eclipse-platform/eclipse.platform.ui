@@ -374,15 +374,26 @@ public class SiteReconciler extends ModelObject implements IWritable {
 
 		// Check configured sites between them
 		if (configuredSites.length > 1) {
+			
+			// TRACE
+			if (UpdateManagerPlugin.DEBUG
+				&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
+				UpdateManagerPlugin.debug(
+					"Compare Feature between different sites:");
+			}			
+			
 			for (int indexConfiguredSites = 0;
 				indexConfiguredSites < configuredSites.length - 1;
 				indexConfiguredSites++) {
+					
 				IFeatureReference[] configuredFeatures =
 					configuredSites[indexConfiguredSites]
 						.getConfiguredFeatures();
+						
 				for (int indexConfiguredFeatures = 0;
 					indexConfiguredFeatures < configuredFeatures.length;
 					indexConfiguredFeatures++) {
+						
 					IFeatureReference featureToCompare =
 						configuredFeatures[indexConfiguredFeatures];
 
@@ -439,6 +450,14 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		IFeatureReference[] configuredFeatures = cSite.getConfiguredFeatures();
 		ConfigurationPolicy cPolicy = cSite.getConfigurationPolicy();
 
+				// TRACE
+		if (UpdateManagerPlugin.DEBUG
+			&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
+			UpdateManagerPlugin.debug(
+				"Compare features within :"
+					+ configuredSite.getSite().getURL());
+		}
+
 		for (int indexConfiguredFeatures = 0;
 			indexConfiguredFeatures < configuredFeatures.length - 1;
 			indexConfiguredFeatures++) {
@@ -479,6 +498,17 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		IFeatureReference featureRef1,
 		IFeatureReference featureRef2)
 		throws CoreException {
+			
+		// TRACE
+		if (UpdateManagerPlugin.DEBUG
+			&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
+			UpdateManagerPlugin.debug(
+				"Compare: "
+					+ featureRef1
+					+ " && "
+					+ featureRef2);
+		}
+					
 		if (featureRef1 == null)
 			return 0;
 
