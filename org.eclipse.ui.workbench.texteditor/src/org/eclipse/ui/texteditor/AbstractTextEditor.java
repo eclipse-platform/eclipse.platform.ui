@@ -2214,7 +2214,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		ITextEditorDropTargetListener listener= (ITextEditorDropTargetListener) getAdapter(ITextEditorDropTargetListener.class);
 		
 		if (listener == null) {
-			Object object= Platform.getAdapterManager().loadAdapter(this, "org.eclipse.ui.texteditor.ITextEditorDropTargetListener");
+			Object object= Platform.getAdapterManager().loadAdapter(this, "org.eclipse.ui.texteditor.ITextEditorDropTargetListener"); //$NON-NLS-1$
 			if (object instanceof ITextEditorDropTargetListener)
 				listener= (ITextEditorDropTargetListener)object;
 		}
