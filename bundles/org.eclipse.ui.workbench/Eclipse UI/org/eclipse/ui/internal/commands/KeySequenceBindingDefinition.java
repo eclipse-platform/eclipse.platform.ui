@@ -81,12 +81,13 @@ public final class KeySequenceBindingDefinition implements Comparable {
     public KeySequenceBindingDefinition(String contextId, String commandId,
             String keyConfigurationId, KeySequence keySequence, String locale,
             String platform, String sourceId) {
-        this.contextId = contextId;
+    	//only strings that are likely to be highly duplicated should be interned
+        this.contextId = Util.intern(contextId);
         this.commandId = commandId;
-        this.keyConfigurationId = keyConfigurationId;
+        this.keyConfigurationId = Util.intern(keyConfigurationId);
         this.keySequence = keySequence;
-        this.locale = locale;
-        this.platform = platform;
+        this.locale = Util.intern(locale);
+        this.platform = Util.intern(platform);
         this.sourceId = sourceId;
     }
 

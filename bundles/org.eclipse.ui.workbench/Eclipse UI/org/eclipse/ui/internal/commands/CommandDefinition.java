@@ -94,7 +94,8 @@ public final class CommandDefinition implements Comparable {
 
     public CommandDefinition(String categoryId, String description, String id,
             String name, String sourceId) {
-        this.categoryId = categoryId;
+    	//only intern strings that are likely to be highly repeated
+        this.categoryId = Util.intern(categoryId);
         this.description = description;
         this.id = id;
         this.name = name;

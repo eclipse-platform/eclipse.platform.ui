@@ -480,4 +480,13 @@ public final class Util {
 
     private Util() {
     }
+
+	/**
+	 * Returns an interned representation of the given string
+	 * @param string The string to intern
+	 * @return The interned string
+	 */
+	public static String intern(String string) {
+		return string == null ? null : string.intern();
+	}
 }
