@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+  name="Eclipse CVS Tests Core"
+  id="org.eclipse.team.tests.cvs.core"
+  version="1.0"
+  provider-name="Object Technology International, Inc.">
+
+  <requires>
+    <import plugin="org.eclipse.core.resources"/>
+    <import plugin="org.eclipse.team.core"/>
+    <import plugin="org.eclipse.team.cvs.core"/>
+    <import plugin="org.eclipse.core.tests.harness"/>
+    <import plugin="org.junit"/>
+  </requires>
+
+  <runtime>
+    <library name="cvstests.jar">
+      <export name="*"/>
+    </library>
+  </runtime>
+
+<!-- **************** TESTS ******************* -->
+
+  <extension point="org.eclipse.core.tests.harness.tests">
+    <test id="org.eclipse.team.tests.cvs.core.AllTests">
+      <run class="org.eclipse.team.tests.ccvs.core.AllTests"/>
+    </test>
+    <test id="org.eclipse.team.tests.cvs.core.ProviderTests">
+      <run class="org.eclipse.team.tests.ccvs.core.provider.AllTests"/>
+    </test>
+    <test id="org.eclipse.team.tests.cvs.core.CompatibilityTest">
+      <run class="org.eclipse.team.tests.ccvs.core.compatible.AllTests"/>
+    </test>
+    <test id="org.eclipse.team.tests.cvs.core.CVSResources">
+      <run class="org.eclipse.team.tests.ccvs.core.cvsresources.AllTests"/>
+    </test>
+    <test id="org.eclipse.team.tests.cvs.core.CurrentTest">
+      <run class="org.eclipse.team.tests.ccvs.core.compatible.CurrentTest"/>
+    </test>
+    
+    <test id="sync">
+      <run class="org.eclipse.team.tests.ccvs.core.provider.SyncElementTest"/>
+    </test>
+    
+     <test id="remote">
+      <run class="org.eclipse.team.tests.ccvs.core.provider.RemoteResourceTest"/>
+    </test>
+  </extension>
+ 
+</plugin>
