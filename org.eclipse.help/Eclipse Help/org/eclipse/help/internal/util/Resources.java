@@ -18,7 +18,7 @@ import org.eclipse.help.internal.HelpSystem;
 public class Resources {
 	private static ResourceBundle resBundle;
 	static {
-		resBundle = ResourceBundle.getBundle("Help", Locale.getDefault());
+		resBundle = ResourceBundle.getBundle("help", Locale.getDefault());
 	}
 	/**
 	 * Resources constructort.
