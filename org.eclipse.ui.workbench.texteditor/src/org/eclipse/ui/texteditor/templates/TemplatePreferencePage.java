@@ -137,10 +137,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	private Button fEditButton;
 	private Button fImportButton;
 	private Button fExportButton;
-	private Button fExportAllButton;
 	private Button fRemoveButton;
-	private Button fEnableAllButton;
-	private Button fDisableAllButton;
 	private Button fRestoreButton;
 	private Button fRevertButton;
 
@@ -322,16 +319,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				remove();
 			}
 		});
+
+		createSeparator(buttons);
 				
-		fImportButton= new Button(buttons, SWT.PUSH);
-		fImportButton.setText(TemplateMessages.getString("TemplatePreferencePage.import")); //$NON-NLS-1$
-		fImportButton.setLayoutData(getButtonGridData(fImportButton));
-		fImportButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event e) {
-				import_();
-			}
-		});
-		
 		fRestoreButton= new Button(buttons, SWT.PUSH);
 		fRestoreButton.setText(TemplateMessages.getString("TemplatePreferencePage.restore")); //$NON-NLS-1$
 		fRestoreButton.setLayoutData(getButtonGridData(fRestoreButton));
@@ -349,40 +339,24 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				revert();
 			}
 		});
+		
+		createSeparator(buttons);
 
+		fImportButton= new Button(buttons, SWT.PUSH);
+		fImportButton.setText(TemplateMessages.getString("TemplatePreferencePage.import")); //$NON-NLS-1$
+		fImportButton.setLayoutData(getButtonGridData(fImportButton));
+		fImportButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event e) {
+				import_();
+			}
+		});
+		
 		fExportButton= new Button(buttons, SWT.PUSH);
 		fExportButton.setText(TemplateMessages.getString("TemplatePreferencePage.export")); //$NON-NLS-1$
 		fExportButton.setLayoutData(getButtonGridData(fExportButton));
 		fExportButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				export();
-			}
-		});
-
-		fExportAllButton= new Button(buttons, SWT.PUSH);
-		fExportAllButton.setText(TemplateMessages.getString("TemplatePreferencePage.export.all")); //$NON-NLS-1$
-		fExportAllButton.setLayoutData(getButtonGridData(fExportAllButton));
-		fExportAllButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event e) {
-				exportAll();
-			}
-		});		
-
-		fEnableAllButton= new Button(buttons, SWT.PUSH);
-		fEnableAllButton.setText(TemplateMessages.getString("TemplatePreferencePage.enable.all")); //$NON-NLS-1$
-		fEnableAllButton.setLayoutData(getButtonGridData(fEnableAllButton));
-		fEnableAllButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event e) {
-				enableAll(true);
-			}
-		});
-
-		fDisableAllButton= new Button(buttons, SWT.PUSH);
-		fDisableAllButton.setText(TemplateMessages.getString("TemplatePreferencePage.disable.all")); //$NON-NLS-1$
-		fDisableAllButton.setLayoutData(getButtonGridData(fDisableAllButton));
-		fDisableAllButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event e) {
-				enableAll(false);
 			}
 		});
 
@@ -407,7 +381,23 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		return parent;
 	}
     
-    /**
+	/**
+	 * Creates a separator between buttons
+	 * @param parent
+	 * @return
+	 */
+	private Label createSeparator(Composite parent) {
+		Label separator= new Label(parent, SWT.NONE);
+		separator.setVisible(false);
+		GridData gd= new GridData();
+		gd.horizontalAlignment= GridData.FILL;
+		gd.verticalAlignment= GridData.BEGINNING;
+		gd.heightHint= 4;
+		separator.setLayoutData(gd);
+		return separator;
+	}
+
+	/**
 	 * Returns whether the formatter preference checkbox should be shown.
 	 * 
 	 * @return <code>true</code> if the formatter preference checkbox should
@@ -532,8 +522,6 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fEditButton.setEnabled(selectionCount == 1);
 		fExportButton.setEnabled(selectionCount > 0);
 		fRemoveButton.setEnabled(selectionCount > 0 && selectionCount <= itemCount);
-		fEnableAllButton.setEnabled(itemCount > 0);
-		fDisableAllButton.setEnabled(itemCount > 0);
 		fRestoreButton.setEnabled(true);
 	}
 	
@@ -637,10 +625,6 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		}
 	}
 	
-	private void exportAll() {
-		export(fTemplateStore.getTemplateData(false));	
-	}
-
 	private void export() {
 		IStructuredSelection selection= (IStructuredSelection) fTableViewer.getSelection();
 		Object[] templates= selection.toArray();
@@ -725,15 +709,6 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fTableViewer.refresh();
 		selectionChanged1();
 		fTableViewer.setChecked(getEnabledTemplates(), true);
-	}
-	
-	private void enableAll(boolean enable) {
-		TemplatePersistenceData[] datas= fTemplateStore.getTemplateData(false);
-		for (int i= 0; i != datas.length; i++)
-			datas[i].setEnabled(enable);		
-			
-		fTableViewer.refresh();
-		fTableViewer.setAllChecked(enable);
 	}
 	
 	/*
