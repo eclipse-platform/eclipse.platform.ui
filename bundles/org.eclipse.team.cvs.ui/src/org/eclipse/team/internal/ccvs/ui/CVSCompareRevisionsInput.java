@@ -257,7 +257,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput implements ISav
 		cc.setRightLabel(rightLabel);
 	}
 	private void initializeActions() {		
-		getRevisionAction = new Action(Policy.bind("HistoryView.getRevisionAction"), null) { //$NON-NLS-1$
+		getRevisionAction = new Action(Policy.bind("HistoryView.getRevisionAction")) { //$NON-NLS-1$
 			public void run() {
 				try {
 					new ProgressMonitorDialog(shell).run(false, true, new WorkspaceModifyOperation(null) {
