@@ -65,10 +65,7 @@ function mouseout(img)
 
 function search()
 {
-newWindow=open("search.jsp", "searchWindow", "height=400,width=300");
-if(newWindow){
-	newWindow.focus();
-	}
+	parent.TabsFrame.showNavFrame("search");
 }
 
 function hidenav()
@@ -108,9 +105,9 @@ function setToc(label)
 	  <div id="title" style="position:absolute; top:0; left:0; z-order:20; color:#ffffff; font-size:smaller; font-style: Regular;"><img src="images/view.gif">&nbsp;Bookshelf</div>
 	  
 	  <div style="right:20; position:absolute; z-order:20;">
-	  <!--
-     	<IMG alt="Search" title="Search" onmouseover="mouseover(this)" onmouseout="mouseout(this)"  onclick="search();"  src="images/search_src.gif" class="normal">
-      -->
+	  
+     	<IMG alt="Search" title="Search" onmouseover="mouseover(this)" onmouseout="mouseout(this)"  onclick="search()"  src="images/search_src.gif" class="normal">
+      
      	<IMG alt="Toggle TOC" title="Toggle TOC"  onmouseover="mouseover(this)" onmouseout="mouseout(this)"  onclick="hidenav();" src="images/hidenav.gif" class="normal">
         <IMG alt="Resynch" title="Resynch TOC"  onmouseover="mouseover(this)" onmouseout="mouseout(this)" onclick="resynch();" src="images/resynch.gif" class="normal">
 	  </div>
