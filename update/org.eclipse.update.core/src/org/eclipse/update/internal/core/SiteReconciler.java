@@ -178,8 +178,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 							.getConfigurationPolicy()
 							.addUnconfiguredFeatureReference(
 							newFeatureRefModel);
+							newFoundFeatures.add(newFeatureRefModel);							
 					}
-					newFoundFeatures.add(newFeatureRefModel);
 				}
 				newDefaultConfiguration.addConfiguredSite(configSite);
 			}
@@ -320,9 +320,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				} else {
 					newSitePolicy.addUnconfiguredFeatureReference(
 						currentFeatureRefModel);
+					newFoundFeatures.add(currentFeatureRefModel);						
 				}
-				// New Feature found. add to list
-				newFoundFeatures.add(currentFeatureRefModel);
 			}
 		}
 
@@ -548,7 +547,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	 */
 	private void saveNewFeatures() throws CoreException {
 
-		if (newFoundFeatures == null || newFoundFeatures.size() == 0) {
+		if (getFeatureReferences().length==0) {
 			return;
 		}
 
