@@ -109,10 +109,24 @@ public abstract class RepositoryProvider implements IProjectNature {
 					unmap(project);
 			}
 			
+			// Create the provider as a session property before adding the persistant
+			// property to ensure that the provider can be instantiated
 			RepositoryProvider provider = mapNewProvider(project, id);
 
 			//mark it with the persistent ID for filtering
-			project.setPersistentProperty(PROVIDER_PROP_KEY, id);		
+			try {
+				project.setPersistentProperty(PROVIDER_PROP_KEY, id);
+			} catch (CoreException outer) {
+				// couldn't set the persistant property so clear the session property
+				try {
+					project.setSessionProperty(PROVIDER_PROP_KEY, null);
+				} catch (CoreException inner) {
+					// something is seriously wrong
+					TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProvider.couldNotClearAfterError", project.getName(), id), inner);//$NON-NLS-1$
+				}
+				throw outer;
+			}	
+			
 			provider.configure();	//xxx not sure if needed since they control with wiz page and can configure all they want
 
 			//adding the nature would've caused project description delta, so trigger one
@@ -124,12 +138,14 @@ public abstract class RepositoryProvider implements IProjectNature {
 
 	/*
 	 * Instantiate the provider denoted by ID and store it in the session property.
-	 * Return the new provider instance.
+	 * Return the new provider instance. If a TeamException is thrown, it is
+	 * guaranteed that the session property will not be set.
+	 * 
 	 * @param project
 	 * @param id
 	 * @return RepositoryProvider
-	 * @throws TeamException Tthe we can't instantiate the provider,
-	 * or if the set session property fails from core
+	 * @throws TeamException we can't instantiate the provider, or if the set
+	 * session property fails from core
 	 */
 	private static RepositoryProvider mapNewProvider(IProject project, String id) throws TeamException {
 		RepositoryProvider provider = newProvider(id); 	// instantiate via extension point
@@ -171,10 +187,11 @@ public abstract class RepositoryProvider implements IProjectNature {
 		try{
 			String id = project.getPersistentProperty(PROVIDER_PROP_KEY);
 			
-			//If you tried to remove a non-existance nature it would fail, so we need to as well with the persistent prop
-			if(id == null)
+			//If you tried to remove a non-existant nature it would fail, so we need to as well with the persistent prop
+			if(id == null) {
 				throw new TeamException(Policy.bind("RepositoryProvider.No_Provider_Registered", project.getName())); //$NON-NLS-1$
-
+			}
+			
 			//This will instantiate one if it didn't already exist,
 			//which is ok since we need to call deconfigure() on it for proper lifecycle
 			RepositoryProvider provider = getProvider(project);
@@ -184,15 +201,16 @@ public abstract class RepositoryProvider implements IProjectNature {
 				// Better log it just in case this is unexpected.
 				TeamPlugin.log(new Status(IStatus.ERROR, TeamPlugin.ID, 0, 
 					Policy.bind("RepositoryProvider.couldNotInstantiateProvider", project.getName(), id), null));  //$NON-NLS-1$
-			} else {
-				provider.deconfigure();
 			}
+
+			if (provider != null) provider.deconfigure();
 							
 			project.setSessionProperty(PROVIDER_PROP_KEY, null);
 			project.setPersistentProperty(PROVIDER_PROP_KEY, null);
 			
+			if (provider != null) provider.deconfigured();
+			
 			//removing the nature would've caused project description delta, so trigger one
-			provider.deconfigured();
 			project.touch(null);	
 		} catch (CoreException e) {
 			throw TeamPlugin.wrapException(e);
@@ -337,30 +355,19 @@ public abstract class RepositoryProvider implements IProjectNature {
 			if(project.isAccessible()) {
 				
 				//-----------------------------
-				//First check if we are using the persistent property to tag the project with provider
-
-				//
-				String id = project.getPersistentProperty(PROVIDER_PROP_KEY);
-				RepositoryProvider provider = lookupProviderProp(project);  //throws core, we will reuse the catching already here
-
-				//If we have the session but not the persistent, we have a problem
-				//because we somehow got only halfway through mapping before
-				if(id == null && provider != null) {
-					TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProvider.propertyMismatch", project.getName()), null); //$NON-NLS-1$
-					project.setSessionProperty(PROVIDER_PROP_KEY, null); //clears it
-					return null;
-				}
-				
+				//First, look for the session property
+				RepositoryProvider provider = lookupProviderProp(project);
 				if(provider != null)
 					return provider;
-					
-				//check if it has the ID as a persistent property, if yes then instantiate provider
+				
+				// -----------------------------
+				//Next, check if it has the ID as a persistent property, if yes then instantiate provider
+				String id = project.getPersistentProperty(PROVIDER_PROP_KEY);
 				if(id != null)
 					return mapNewProvider(project, id);
 				
 				//Couldn't find using new method, fall back to lookup using natures for backwards compatibility
-				//-----------------------------
-								
+				//-----------------------------		
 				IProjectDescription projectDesc = project.getDescription();
 				String[] natureIds = projectDesc.getNatureIds();
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
