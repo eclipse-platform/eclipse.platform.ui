@@ -178,8 +178,8 @@ public class AcceleratorScope {
 		char upper = Character.toUpperCase(event.character);
     	if(event.stateMask == SWT.CONTROL)
 			if (0 <= upper && upper <= 64) 
-				return new Integer(event.stateMask | upper + 64);
-    	return new Integer(event.stateMask | upper);
+				return new Integer(event.stateMask | event.keyCode | upper + 64);
+    	return new Integer(event.stateMask | event.keyCode | upper);
     }
     /**
      * Process a key event. Find a action associated with the event
