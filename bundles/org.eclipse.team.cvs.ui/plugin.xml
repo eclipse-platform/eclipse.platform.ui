@@ -510,7 +510,10 @@
             state="false"
             class="org.eclipse.team.internal.ccvs.ui.CVSDecorator"
             id="org.eclipse.team.cvs.ui.decorator">
-      </decorator>
+         <description>
+            %DecoratorStandard.description
+	     </description>
+     </decorator>
    </extension>
 <!-- *************** View Actions **************** -->
    <extension
