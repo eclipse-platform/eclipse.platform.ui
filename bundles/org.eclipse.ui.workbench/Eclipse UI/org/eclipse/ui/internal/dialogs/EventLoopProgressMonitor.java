@@ -14,13 +14,11 @@ import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.ui.progress.WorkbenchJob;
-
-import org.eclipse.ui.internal.progress.BlockedJobsDialog;
+import org.eclipse.ui.internal.ExceptionHandler;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.progress.BlockedJobsDialog;
+import org.eclipse.ui.progress.WorkbenchJob;
 /**
  * Used to run an event loop whenever progress monitor methods
  * are invoked.  <p>
@@ -110,10 +108,19 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper
 		if (disp == null) {
 			return;
 		}
+		
+		//Initialize an exception handler from the window class.
+		ExceptionHandler handler = new ExceptionHandler();
+		
 		for (;;) {
-			if (!disp.readAndDispatch()) { // Exceptions walk back to parent.
+			try {
+				if(!disp.readAndDispatch())
+					break;
+			} catch (Throwable e) {//Handle the exception the same way as the workbench
+				handler.handleException(e);
 				break;
-			}
+			}			
+			
 			// Only run the event loop for so long.
 			// Otherwise, this would never return if some other thread was 
 			// constantly generating events.
