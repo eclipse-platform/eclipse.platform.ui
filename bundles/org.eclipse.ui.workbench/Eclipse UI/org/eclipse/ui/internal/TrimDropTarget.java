@@ -109,12 +109,8 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
 					layout.getCenterControl().getBounds());
 			
 			// Stores the side as an SWT.* constant
-			final int relativePosition = Geometry.getRelativePosition(bounds, position);
-			// Convert the SWT.* constant into a IPageLayout constant
-			final int layoutPosition = PageLayout.swtConstantToLayoutPosition(relativePosition);
-			
-			// Ignore this drag if we're not on a border
-			if (layoutPosition == -1) {
+			final int relativePosition = Geometry.getClosestSide(bounds, position);
+			if (bounds.contains(position)) {
 				return null;
 			}
 			
