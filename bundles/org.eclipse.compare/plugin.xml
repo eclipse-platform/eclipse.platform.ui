@@ -2,7 +2,6 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-    
 <!-- Compare extension point definitions -->
    <extension-point id="streamMergers" name="%streamMergers" schema="schema/streamMergers.exsd"/>
    <extension-point id="structureCreators" name="%structureCreators" schema="schema/structureCreators.exsd"/>
