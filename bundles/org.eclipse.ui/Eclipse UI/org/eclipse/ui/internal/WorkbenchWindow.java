@@ -1055,13 +1055,20 @@ public void restoreState(IMemento memento) {
  * Method declared on IRunnableContext.
  */
 public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-	Control shortcutBarControl = shortcutBar.getControl();
-	boolean shortcutbarWasEnabled = shortcutBarControl.isEnabled();
+	ToolBarManager shortcutBar = getShortcutBar();
+	Control shortcutBarControl = null;
+	if (shortcutBar != null) 
+		shortcutBarControl = shortcutBar.getControl();
+	boolean shortcutbarWasEnabled = false;
+	if (shortcutBarControl != null) 
+		shortcutbarWasEnabled = shortcutBarControl.isEnabled();
 	try {
-		shortcutBarControl.setEnabled(false);
+		if (shortcutBarControl != null && !shortcutBarControl.isDisposed())
+			shortcutBarControl.setEnabled(false);
 		super.run(fork, cancelable, runnable);
 	} finally {
-		shortcutBarControl.setEnabled(shortcutbarWasEnabled);
+		if (shortcutBarControl != null && !shortcutBarControl.isDisposed())
+			shortcutBarControl.setEnabled(shortcutbarWasEnabled);
 	}
 }
 /**

@@ -348,15 +348,26 @@ public void run(final boolean fork, boolean cancelable, final IRunnableWithProgr
 		runnable.run(new NullProgressMonitor());
 		return;
 	}
+	boolean cancelWasEnabled = mgr.isCancelEnabled();
+
 	final Control contents = getContents();
 	final Display display = contents.getDisplay();
 	Shell shell = getShell();
 	boolean contentsWasEnabled = contents.isEnabled();
-	Menu menuBar = getMenuBarManager().getMenu();
-	boolean menuBarWasEnabled = menuBar.isEnabled();
-	boolean cancelWasEnabled = mgr.isCancelEnabled();
+	MenuManager manager = getMenuBarManager();
+	Menu menuBar = null;
+	if (manager != null) {
+		menuBar = manager.getMenu();
+		manager = null;
+	}
+	boolean menuBarWasEnabled = false;
+	if (menuBar != null)
+		menuBarWasEnabled = menuBar.isEnabled();
+
 	Control toolbarControl = getToolBarControl();
 	boolean toolbarWasEnabled = false;
+	if (toolbarControl != null) 
+		toolbarWasEnabled = toolbarControl.isEnabled();
 
 	// Disable the rest of the shells on the current display
 	Shell[] shells = display.getShells();
@@ -370,11 +381,10 @@ public void run(final boolean fork, boolean cancelable, final IRunnableWithProgr
 		}
 	}
 
-	if (toolbarControl != null) toolbarWasEnabled = toolbarControl.isEnabled();
 	Control currentFocus = display.getFocusControl();
 	try {
 		contents.setEnabled(false);
-		menuBar.setEnabled(false);
+		if (menuBar != null) menuBar.setEnabled(false);
 		if (toolbarControl != null) toolbarControl.setEnabled(false);
 		mgr.setCancelEnabled(cancelable);
 		final Exception[] holder = new Exception[1];
@@ -407,7 +417,7 @@ public void run(final boolean fork, boolean cancelable, final IRunnableWithProgr
 		}
 		if (!contents.isDisposed())
 			contents.setEnabled(contentsWasEnabled);
-		if (!menuBar.isDisposed())
+		if (menuBar != null && !menuBar.isDisposed())
 			menuBar.setEnabled(menuBarWasEnabled);
 		if (toolbarControl != null && !toolbarControl.isDisposed())
 			toolbarControl.setEnabled(toolbarWasEnabled);
