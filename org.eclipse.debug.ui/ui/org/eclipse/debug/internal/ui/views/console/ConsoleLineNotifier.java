@@ -11,9 +11,6 @@
 package org.eclipse.debug.internal.ui.views.console;
 
 
-import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
@@ -27,7 +24,7 @@ import org.eclipse.jface.util.ListenerList;
  * Tracks text appended to the console and notifies listeners in terms of whole
  * lines.
  */
-public class ConsoleLineNotifier implements IDebugEventSetListener {
+public class ConsoleLineNotifier {
 	
 	/**
 	 * Number of lines processed in the console
@@ -51,7 +48,6 @@ public class ConsoleLineNotifier implements IDebugEventSetListener {
 	 */
 	public void connect(IConsole console) {
 		fConsole = console;
-		DebugPlugin.getDefault().addDebugEventListener(this);
 		Object[] listeners = fListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			IConsoleLineTracker listener = (IConsoleLineTracker)listeners[i];
@@ -63,7 +59,6 @@ public class ConsoleLineNotifier implements IDebugEventSetListener {
 	 * Disposes this notifier 
 	 */
 	public void disconnect() {
-		DebugPlugin.getDefault().removeDebugEventListener(this);
 		Object[] listeners = fListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			IConsoleLineTracker listener = (IConsoleLineTracker)listeners[i];
@@ -95,7 +90,7 @@ public class ConsoleLineNotifier implements IDebugEventSetListener {
 				DebugUIPlugin.log(e);
 				return;
 			}
-			if (delimiter == null && !fConsole.getProcess().isTerminated()) {
+			if (delimiter == null) {
 				// line not complete yet
 				return;
 			}
@@ -130,23 +125,6 @@ public class ConsoleLineNotifier implements IDebugEventSetListener {
 
 	protected int getLinesProcessed() {
 		return fLinesProcessed;
-	}
-	
-	/**
-	 * Process the last line of the console when the process terminates, if required.
-	 * 
-	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
-	 */
-	public void handleDebugEvents(DebugEvent[] events) {
-		if (fConsole != null) {
-			for (int i = 0; i < events.length; i++) {
-				DebugEvent event = events[i];
-				if (event.getSource() == fConsole.getProcess() && event.getKind() == DebugEvent.TERMINATE) {
-					DebugPlugin.getDefault().removeDebugEventListener(this);
-					processNewLines();
-				}
-			}
-		}
 	}
 
 }
