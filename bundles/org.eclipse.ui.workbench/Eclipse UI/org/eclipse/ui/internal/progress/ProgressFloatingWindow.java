@@ -82,8 +82,6 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseMove(MouseEvent e) {
-				if(AnimationManager.getInstance().showingDetails())
-					return;
 				window.closeFloatingWindow();	
 			}
 		});

@@ -99,14 +99,6 @@ public class ProgressView extends ViewPart implements IViewPart {
 						updater.refreshAll();
 					}
 				});
-		menuMgr.add(new Action(ProgressMessages.getString("ProgressView.ToggleWindowMessage")) { //$NON-NLS-1$
-					/* (non-Javadoc)
-					 * @see org.eclipse.jface.action.Action#run()
-					 */
-					public void run() {
-						AnimationManager.getInstance().toggleFloatingWindow();
-					}
-				});
 	}
 	/**
 	 * Return the selected objects. If any of the selections are not JobInfos

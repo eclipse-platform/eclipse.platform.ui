@@ -489,8 +489,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.SHOW_TOOL_BAR, true);
 		store.setDefault(IPreferenceConstants.MULTI_KEY_ASSIST, false);
 		store.setDefault(IPreferenceConstants.MULTI_KEY_ASSIST_TIME, 1000);
-		store.setDefault(IPreferenceConstants.SHOW_FLOATING_PROGRESS,false);
-		
+			
 		// @issue get rid of PreferenceConverter - just hard code the RGB string		
 		//Set the default error colour to red
 		PreferenceConverter.setDefault(store,JFacePreferences.ERROR_COLOR, new RGB(255, 0, 0));

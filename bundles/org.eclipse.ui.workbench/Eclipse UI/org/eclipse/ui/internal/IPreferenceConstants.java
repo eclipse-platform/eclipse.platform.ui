@@ -146,8 +146,6 @@ public interface IPreferenceConstants {
 	 */
 	public static final String MULTI_KEY_ASSIST_TIME = "MULTI_KEY_ASSIST_TIME"; //$NON-NLS-1$
 	
-	//Preferences for the floating toolbar
-	public static final String SHOW_FLOATING_PROGRESS = "SHOW_FLOATING_PROGRESS"; //$NON-NLS-1$
 
 	/**
 	 * Workbench preference id for whether the workbench should show text 

@@ -44,9 +44,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
-
-import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 /**
  * The AnimationManager is the class that keeps track of the animation items
  * to update.
