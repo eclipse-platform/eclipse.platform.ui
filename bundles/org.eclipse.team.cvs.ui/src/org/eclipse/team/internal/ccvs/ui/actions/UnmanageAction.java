@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -44,11 +46,8 @@ import org.eclipse.team.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
- * UpdateAction performs a 'cvs update' command on the selected resources.
- * If conflicts are present (file has been changed both remotely and locally),
- * the changes will be merged into the local file such that the user must
- * resolve the conflicts. This action is temporary code; it will be removed
- * when a functional synchronize view has been implemented.
+ * Unmanage action removes the cvs feature from a project and optionally
+ * deletes the CVS meta information that is stored on disk.
  */
 public class UnmanageAction extends TeamAction {
 	
@@ -128,41 +127,53 @@ public class UnmanageAction extends TeamAction {
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		final List unmanagedProjects = new ArrayList();
-		
-		run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
-				try {					
-					if(confirmDeleteProjects()) {		
-						Hashtable table = getProviderMapping();
-						Set keySet = table.keySet();
-						monitor.beginTask("", keySet.size() * 1000);
-						monitor.setTaskName(Policy.bind("Unmanage.unmanaging"));
-						Iterator iterator = keySet.iterator();
-						while (iterator.hasNext()) {
-							IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
-							subMonitor.beginTask(null, 100);
-							CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-							List list = (List)table.get(provider);
-							IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-							for (int i = 0; i < providerResources.length; i++) {
-								IResource resource = providerResources[i];
-								ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor((IContainer) resource);
-								if(deleteContent) {
-									folder.unmanage();
-								}
-								TeamPlugin.getManager().removeProvider((IProject)resource, Policy.subMonitorFor(subMonitor, 10));							
-								CVSDecorator.refresh(resource);
-							}											
-						}										
-					}
+		final Exception[] exceptions = new Exception[] {null};
+		if(confirmDeleteProjects()) {		
+			try {
+				new ProgressMonitorDialog(getShell()).run(true, true, getOperation());
+			} catch (InvocationTargetException e) {
+				exceptions[0] = e;
+			} catch (InterruptedException e) {
+				exceptions[0] = null;
+			}
+		}
+		if (exceptions[0] != null) {
+			handle(exceptions[0], null, Policy.bind("Unmanage.unmanaging"));
+		}
+	}
+
+	private IRunnableWithProgress getOperation() {
+		return new WorkspaceModifyOperation() {
+			public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				try {
+					Hashtable table = getProviderMapping();
+					Set keySet = table.keySet();
+					monitor.beginTask("", keySet.size() * 1000);
+					monitor.setTaskName(Policy.bind("Unmanage.unmanaging"));
+					Iterator iterator = keySet.iterator();
+					while (iterator.hasNext()) {
+						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
+						subMonitor.beginTask(null, 100);
+						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
+						List list = (List)table.get(provider);
+						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
+						for (int i = 0; i < providerResources.length; i++) {
+							IResource resource = providerResources[i];
+							ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor((IContainer) resource);
+							if(deleteContent) {
+								folder.unmanage();
+							}
+							TeamPlugin.getManager().removeProvider((IProject)resource, Policy.subMonitorFor(subMonitor, 10));							
+							CVSDecorator.refresh(resource);
+						}											
+					}										
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				} finally {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("Unmanage.unmanaging"), this.PROGRESS_DIALOG);
+		};
 	}
 
 	boolean confirmDeleteProjects() {
