@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
@@ -33,7 +34,7 @@ public class PluginDescriptorModel extends PluginModel {
 public PluginDescriptorModel() {
 	super();
 }
-/*
+/**
  * Returns true if this plugin has all of it's prerequisites and is,
  * therefore enabled.
  */
