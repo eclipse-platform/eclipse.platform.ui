@@ -15,16 +15,16 @@ import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteModule;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.Option;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ModuleDefinitionsListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.UpdateListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteModule;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 public class Checkout extends Command {
 	/*** Local options: specific to checkout ***/
@@ -34,6 +34,9 @@ public class Checkout extends Command {
 		return new LocalOption("-d", moduleName); //$NON-NLS-1$
 	}
 
+	/*** Default command output listener ***/
+	private static final ICommandOutputListener DEFAULT_OUTPUT_LISTENER = new UpdateListener(null);
+	
 	/** Command options found in the CVSROOT/modules file */
 	public static LocalOption ALIAS = new LocalOption("-a"); //$NON-NLS-1$
 	public static LocalOption makeStatusOption(String status) {
@@ -43,6 +46,10 @@ public class Checkout extends Command {
 	protected Checkout() { }	
 	protected String getRequestId() {
 		return "co"; //$NON-NLS-1$
+	}
+	
+	protected ICommandOutputListener getDefaultCommandOutputListener() {
+		return DEFAULT_OUTPUT_LISTENER;
 	}
 	
 	protected ICVSResource[] computeWorkResources(Session session, LocalOption[] localOptions,
