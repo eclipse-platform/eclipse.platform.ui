@@ -8,8 +8,9 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.*;
+
 public class HyperlinkHandler
-	implements MouseListener, MouseTrackListener, PaintListener {
+	implements MouseListener, MouseTrackListener, PaintListener, Listener {
 	public static final int UNDERLINE_NEVER = 1;
 	public static final int UNDERLINE_ROLLOVER = 2;
 	public static final int UNDERLINE_ALWAYS = 3;
@@ -100,6 +101,7 @@ public class HyperlinkHandler
 	}
 	public void mouseEnter(MouseEvent e) {
 		Control control = (Control) e.widget;
+		
 		if (isHyperlinkCursorUsed())
 			control.setCursor(hyperlinkCursor);
 		if (activeBackground != null)
@@ -108,13 +110,13 @@ public class HyperlinkHandler
 			control.setForeground(activeForeground);
 		if (hyperlinkUnderlineMode == UNDERLINE_ROLLOVER)
 			underline(control, true);
-		IHyperlinkListener action =
-			(IHyperlinkListener) hyperlinkListeners.get(control);
+		IHyperlinkListener action = getLinkListener(control);
 		if (action != null)
 			action.linkEntered(control);
 	}
 	public void mouseExit(MouseEvent e) {
 		Control control = (Control) e.widget;
+						
 		if (isHyperlinkCursorUsed())
 			control.setCursor(null);
 		if (hyperlinkUnderlineMode == UNDERLINE_ROLLOVER)
@@ -123,8 +125,7 @@ public class HyperlinkHandler
 			control.setBackground(background);
 		if (foreground != null)
 			control.setForeground(foreground);
-		IHyperlinkListener action =
-			(IHyperlinkListener) hyperlinkListeners.get(control);
+		IHyperlinkListener action = getLinkListener(control);
 		if (action != null)
 			action.linkExited(control);
 	}
@@ -133,8 +134,8 @@ public class HyperlinkHandler
 	public void mouseUp(MouseEvent e) {
 		if (e.button != 1)
 			return;
-		IHyperlinkListener action =
-			(IHyperlinkListener) hyperlinkListeners.get(e.widget);
+		IHyperlinkListener action = getLinkListener((Control)e.widget);
+			
 		if (action != null) {
 			Control c = (Control) e.widget;
 			c.setCursor(busyCursor);
@@ -144,26 +145,34 @@ public class HyperlinkHandler
 		}
 	}
 	public void paintControl(PaintEvent e) {
-		Control label = (Control) e.widget;
+		Control control = (Control)e.widget;
 		if (hyperlinkUnderlineMode == UNDERLINE_ALWAYS)
-			HyperlinkHandler.underline(label, true);
+			HyperlinkHandler.underline(control, true);
 	}
 	/**
 	 * @param control org.eclipse.swt.widgets.Control
-	 * @param listener com.ibm.pde.internal.forms.IHyperlinkListener
+	 * @param listener org.eclipse.help.internal.ui.IHyperlinkListener
 	 */
-	public void registerHyperlink(Control control, IHyperlinkListener listener) {
+	public void registerHyperlink(Control control, IHyperlinkListener listener) {			
 		if (background != null)
 			control.setBackground(background);
 		if (foreground != null)
 			control.setForeground(foreground);
 		control.addMouseListener(this);
 		control.addMouseTrackListener(this);
+		control.addListener(SWT.DefaultSelection, this);
+
 		if (hyperlinkUnderlineMode == UNDERLINE_ALWAYS)
 			control.addPaintListener(this);
 		hyperlinkListeners.put(control, listener);
 		removeDisposedLinks();
 	}
+	public IHyperlinkListener getLinkListener(Control c) {
+		if (c instanceof Label)
+			c = c.getParent();
+		return (IHyperlinkListener)hyperlinkListeners.get(c);
+	}
+	
 	private void removeDisposedLinks() {
 		for (Enumeration keys = hyperlinkListeners.keys(); keys.hasMoreElements();) {
 			Control control = (Control) keys.nextElement();
@@ -218,8 +227,10 @@ public class HyperlinkHandler
 	 * @param inside boolean
 	 */
 	public static void underline(Control control, boolean inside) {
-		if (!(control instanceof Label))
-			return;
+	
+		if (control instanceof HyperlinkLabel)
+			control = ((HyperlinkLabel)control).getLabel();
+			
 		Composite parent = control.getParent();
 		Rectangle bounds = control.getBounds();
 		GC gc = new GC(parent);
@@ -228,5 +239,15 @@ public class HyperlinkHandler
 		int y = bounds.y + bounds.height;
 		gc.drawLine(bounds.x, y, bounds.x + bounds.width, y);
 		gc.dispose();
+	}
+
+	/**
+	 * Sent when an event that the receiver has registered for occurs.
+	 *
+	 * @param event the event which occurred
+	 */
+	public void handleEvent(Event event) {
+		IHyperlinkListener listener = getLinkListener((Control)event.widget);
+		listener.linkActivated((Control) event.widget);
 	}
 }

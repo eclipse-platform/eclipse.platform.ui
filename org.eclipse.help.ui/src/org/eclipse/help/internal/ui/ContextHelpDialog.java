@@ -27,6 +27,21 @@ public class ContextHelpDialog {
 	private Color linkColour = null;
 	private static HyperlinkHandler linkManager = new HyperlinkHandler();
 	private Shell shell;
+	
+	/**
+	 * Listener for hyperlink selection.
+	 */
+	class LinkListener extends HyperlinkAdapter {
+		IHelpResource topic;
+		public LinkListener(IHelpResource topic) {
+			this.topic = topic;
+		}
+		public void linkActivated(Control c) {
+			launchLinks(topic);
+		}
+
+	}
+	
 	/**
 	 * Constructor:
 	 * @param context an array of String or an array of IContext
@@ -73,7 +88,7 @@ public class ContextHelpDialog {
 				"ContextHelpDialog",
 				"Constructor: Focus owner is: "
 					+ Display.getCurrent().getFocusControl().toString());
-		linkManager.setHyperlinkUnderlineMode(HyperlinkHandler.UNDERLINE_ROLLOVER);
+		linkManager.setHyperlinkUnderlineMode(HyperlinkHandler.UNDERLINE_ALWAYS);
 		createContents(shell);
 		shell.pack();
 		// Correct x and y of the shell if it not contained within the screen
@@ -141,14 +156,10 @@ public class ContextHelpDialog {
 		data.verticalAlignment = data.VERTICAL_ALIGN_BEGINNING;
 		//data.horizontalIndent = 4;
 		image.setLayoutData(data);
-		Label link = new Label(parent, SWT.NONE);
+		HyperlinkLabel link = new HyperlinkLabel(parent, SWT.NONE);
 		link.setText(topic.getLabel());
 		link.setBackground(backgroundColour);
 		link.setForeground(linkColour);
-		data = new GridData();
-		data.horizontalAlignment = data.HORIZONTAL_ALIGN_BEGINNING;
-		data.verticalAlignment = data.VERTICAL_ALIGN_BEGINNING;
-		link.setLayoutData(data);
 		linkManager.registerHyperlink(link, new LinkListener(topic));
 		return link;
 	}
@@ -210,16 +221,6 @@ public class ContextHelpDialog {
 						+ Display.getCurrent().getFocusControl().toString());
 		} catch (Throwable e) {
 		}
-	}
-	class LinkListener extends HyperlinkAdapter {
-		IHelpResource topic;
-		public LinkListener(IHelpResource topic) {
-			this.topic = topic;
-		}
-		public void linkActivated(Control c) {
-			launchLinks(topic);
-		}
-
 	}
 	private Image getImage() {
 		if (imgRegistry == null) {
