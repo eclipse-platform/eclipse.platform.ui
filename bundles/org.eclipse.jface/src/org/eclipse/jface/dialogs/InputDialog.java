@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.*;
 /**
  * A simple input dialog for soliciting an input string from the user.
  * <p>
- * This concrete dialog class can be instantiated as is, or further subclassed as
+ * This concete dialog class can be instantiated as is, or further subclassed as
  * required.
  * </p>
  */
@@ -49,7 +49,7 @@ public class InputDialog extends Dialog {
 	/**
 	 * Error message label widget.
 	 */
-	private Label errorMessageLabel;
+	private Text errorMessageText;
 	/**
 	 * Creates an input dialog with OK and Cancel buttons. Note that the dialog
 	 * will have no visual representation (no widgets) until it is told to open.
@@ -92,7 +92,8 @@ public class InputDialog extends Dialog {
 		super.buttonPressed(buttonId);
 	}
 	/*
-	 *  (non-Javadoc)
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	protected void configureShell(Shell shell) {
@@ -101,7 +102,8 @@ public class InputDialog extends Dialog {
 			shell.setText(title);
 	}
 	/*
-	 *  (non-Javadoc)
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
@@ -144,19 +146,23 @@ public class InputDialog extends Dialog {
 			}
 		});
 		text.setFont(parent.getFont());
-		errorMessageLabel = new Label(composite, SWT.NONE);
-		errorMessageLabel.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
+		errorMessageText = new Text(composite, SWT.NONE);
+		errorMessageText.setEditable(false);
+		errorMessageText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
 				| GridData.HORIZONTAL_ALIGN_FILL));
-		errorMessageLabel.setFont(parent.getFont());
+		errorMessageText.setFont(parent.getFont());
+
+		applyDialogFont(composite);
 		return composite;
 	}
 	/**
 	 * Returns the error message label.
 	 * 
 	 * @return the error message label
+	 * @deprecated use setErrorMessage(String) instead
 	 */
 	protected Label getErrorMessageLabel() {
-		return errorMessageLabel;
+		return null;
 	}
 	/**
 	 * Returns the ok button.
@@ -206,8 +212,18 @@ public class InputDialog extends Dialog {
 		}
 		// Bug 16256: important not to treat "" (blank error) the same as null
 		// (no error)
-		errorMessageLabel.setText(errorMessage == null ? "" : errorMessage); //$NON-NLS-1$
+		setErrorMessage(errorMessage);
+	}
+	/**
+	 * Set the errorMessage to errorMessage.If errorMessage is not null then
+	 * disable the OK button.
+	 * 
+	 * @param errorMessage
+	 *            The String with the error or <code>null</code>
+	 */
+	public void setErrorMessage(String errorMessage) {
+		errorMessageText.setText(errorMessage == null ? "" : errorMessage); //$NON-NLS-1$
 		okButton.setEnabled(errorMessage == null);
-		errorMessageLabel.getParent().update();
+		errorMessageText.getParent().update();
 	}
 }
