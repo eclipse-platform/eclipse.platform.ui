@@ -46,7 +46,7 @@ public WorkbenchWizardSelectionPage(String name, IWorkbench aWorkbench, IStructu
  *	@param searchPath java.lang.String
  */
 protected WorkbenchWizardElement findWizard(String searchId) {
-	Object[] children = wizardElements.toArray();
+	Object[] children = wizardElements.getChildren();
 	for (int i = 0; i < children.length; ++i) {
 		WorkbenchWizardElement currentWizard = (WorkbenchWizardElement)children[i];
 		if (currentWizard.getID().equals(searchId))

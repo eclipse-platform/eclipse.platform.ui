@@ -374,6 +374,6 @@ protected Object[] getWizardCollectionElements() {
 	if (!areWizardsRead()) {
 		readWizards();
 	}
-	return wizardElements.toArray();
+	return wizardElements.getChildren();
 }
 }

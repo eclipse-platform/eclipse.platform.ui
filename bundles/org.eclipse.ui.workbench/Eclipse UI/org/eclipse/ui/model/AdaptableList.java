@@ -12,9 +12,11 @@ package org.eclipse.ui.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.Assert;
 
 /**
  * A modifiable list of <code>IAdaptable</code> objects.
@@ -27,16 +29,17 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @since 3.0
  * @see org.eclipse.ui.model.IWorkbenchAdapter
  */
-public final class AdaptableList
-	extends ArrayList
-	implements IAdaptable, IWorkbenchAdapter {
+public class AdaptableList extends WorkbenchAdapter
+	implements IAdaptable {
+	
+	protected List children = null;
 	
 	/**
 	 * Creates a new adaptable list. All of the elements in the list must 
 	 * implement <code>IAdaptable</code>.
 	 */
 	public AdaptableList() {
-		super();
+		children = new ArrayList();
 	}
 
 	/**
@@ -46,7 +49,19 @@ public final class AdaptableList
 	 * @param initialCapacity the initial capacity of the list
 	 */
 	public AdaptableList(int initialCapacity) {
-		super(initialCapacity);
+		children = new ArrayList(initialCapacity);
+	}
+
+	/**
+	 * Creates a new adaptable list containing the given children.
+	 * 
+	 * @param newChildren the list of children
+	 */
+	public AdaptableList(IAdaptable[] newChildren) {
+		this(newChildren.length);
+		for (int i = 0; i < newChildren.length; i++) {
+			children.add(newChildren[i]);
+		}
 	}
 
 	/**
@@ -58,7 +73,42 @@ public final class AdaptableList
 	 * <code>IAdaptable</code>)
 	 */
 	public AdaptableList(Collection c) {
-		super(c);
+		this(c.size());
+		for (Iterator it = c.iterator(); it.hasNext(); ) {
+			add((IAdaptable) it.next());
+		}
+		children.addAll(c);
+	}
+	
+	/**
+	 * Adds the given adaptable object to this list.  
+	 * 
+	 * @param adaptable the new element
+	 * @return this list
+	 */
+	public AdaptableList add(IAdaptable adaptable) {
+		Assert.isNotNull(adaptable);
+		children.add(adaptable);
+		return this;
+	}
+
+	/**
+	 * Removes the given adaptable object from this list.
+	 * 
+	 * @param adaptable the element to remove
+	 */
+	public void remove(IAdaptable adaptable) {
+		Assert.isNotNull(adaptable);
+		children.remove(adaptable);
+	}
+	
+	/**
+	 * Returns the number of children in this list.
+	 * 
+	 * @return the length of this list
+	 */
+	public int size() {
+		return children.size();
 	}
 
 	/* (non-Javadoc)
@@ -74,32 +124,24 @@ public final class AdaptableList
 	/* (non-Javadoc)
 	 * @see IWorkbenchAdapter
 	 */
-	public ImageDescriptor getImageDescriptor(Object object) {
-		// list has no image
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see IWorkbenchAdapter
-	 */
-	public String getLabel(Object o) {
-		// list has no label
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see IWorkbenchAdapter
-	 */
-	public Object getParent(Object o) {
-		// list has no parent
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see IWorkbenchAdapter
-	 */
 	public Object[] getChildren(Object o) {
-		// list's elements are the children
-		return toArray();
+		// @issue suspicious - does not reference parameter
+		return children.toArray();
+	}
+	
+	/**
+	 * Returns the elements in this list.
+	 * 
+	 * @return the elements in this list
+	 */
+	public Object[] getChildren() {
+		return children.toArray();
+	}
+	
+	/* (non-javadoc)
+	 * For debugging purposes only.
+	 */
+	public String toString() {
+		return children.toString();
 	}
 }

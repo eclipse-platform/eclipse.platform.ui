@@ -16,9 +16,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**
  *	Instances represent registered wizards.

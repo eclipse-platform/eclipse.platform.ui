@@ -53,7 +53,7 @@ public class FileSystemElement implements IAdaptable {
 		 *	Answer the children property of this element
 		 */
 		public Object[] getChildren(Object o) {
-			return getFolders().toArray();
+			return getFolders().getChildren(o);
 		}
 		/**
 		 * Returns the parent of this element
