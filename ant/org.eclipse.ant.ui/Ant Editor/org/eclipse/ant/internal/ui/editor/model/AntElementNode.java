@@ -10,6 +10,7 @@
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
  * 	   IBM Corporation - bug fixes
+ *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49445
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor.model;
@@ -414,6 +415,9 @@ public class AntElementNode {
 		
 		if (isErrorNode()) {
 			flags = flags | AntImageDescriptor.HAS_ERRORS;
+		}
+		if(importNode != null){
+			flags = flags | AntImageDescriptor.IMPORTED;
 		}
 		ImageDescriptor base= getBaseImageDescriptor();
 		return AntUIImages.getImage(new AntImageDescriptor(base, flags));			

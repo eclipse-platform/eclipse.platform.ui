@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49445
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.model;
 
@@ -24,12 +25,15 @@ public class AntImageDescriptor extends CompositeImageDescriptor {
 	/** Flag to render an error adornment */
 	public final static int HAS_ERRORS= 0x0001;
 
+	/** Flag to render an imported adornment */
+	public final static int IMPORTED= 0x0002;
+	
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
 	private Point fSize;
-	
+
 	/**
-	 * Create a new JDIImageDescriptor.
+	 * Create a new AntImageDescriptor.
 	 * 
 	 * @param baseImage an image descriptor used as the base image
 	 * @param flags flags indicating which adornments are to be rendered
@@ -90,11 +94,16 @@ public class AntImageDescriptor extends CompositeImageDescriptor {
 		int x= 0;
 		int y= 0;
 		ImageData data= null;
+		if ((flags & IMPORTED) != 0) {
+			data= AntUIImages.getImageDescriptor(IAntUIConstants.IMG_OVR_IMPORT).getImageData();
+			drawImage(data, 0, 0);
+		}
 		if ((flags & HAS_ERRORS) != 0) {
 			x= getSize().x;
-			y= 0;
+			y= getSize().y;
 			data= AntUIImages.getImageDescriptor(IAntUIConstants.IMG_OVR_ERROR).getImageData();
 			x -= data.width;
+			y -= data.height;
 			drawImage(data, x, y);
 		}
 	}

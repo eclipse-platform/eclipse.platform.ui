@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49380
+ *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49380, 49445
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.model;
 
@@ -76,7 +76,8 @@ public interface IAntUIConstants {
 	public static final String IMG_REFRESH = PLUGIN_ID + ".IMG_REFRESH"; //$NON-NLS-1$
 	 
 	//	Overlays
-	 public static final String IMG_OVR_ERROR = PLUGIN_ID + ".ovrError";  //$NON-NLS-1$
+	public static final String IMG_OVR_ERROR = PLUGIN_ID + ".ovrError";  //$NON-NLS-1$
+	public static final String IMG_OVR_IMPORT = PLUGIN_ID + ".ovrImport"; //$NON-NLS-1$
 	
 	public static final String IMG_ANT_TYPE= PLUGIN_ID + ".type"; //$NON-NLS-1$
 
