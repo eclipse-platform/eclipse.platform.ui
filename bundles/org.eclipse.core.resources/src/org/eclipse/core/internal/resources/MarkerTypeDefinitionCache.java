@@ -69,7 +69,7 @@ public class MarkerTypeDefinitionCache {
 	}
 
 	private void loadDefinitions() {
-		IExtensionPoint point = Platform.getPluginRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MARKERS);
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MARKERS);
 		IExtension[] types = point.getExtensions();
 		definitions = new HashMap(types.length);
 		for (int i = 0; i < types.length; i++)
