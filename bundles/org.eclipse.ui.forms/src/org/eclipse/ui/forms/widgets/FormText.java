@@ -11,8 +11,8 @@
 package org.eclipse.ui.forms.widgets;
 import java.io.InputStream;
 import java.util.*;
+
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -216,6 +216,10 @@ public class FormText extends Canvas {
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				model.dispose();
+				Font boldFont = (Font)resourceTable.get(FormTextModel.BOLD_FONT_ID);
+				if (boldFont!=null) {
+					boldFont.dispose();
+				}
 			}
 		});
 		addPaintListener(new PaintListener() {
@@ -302,8 +306,7 @@ public class FormText extends Canvas {
 		});
 		initAccessible();
 		makeActions();
-		resourceTable.put(FormTextModel.BOLD_FONT_ID, JFaceResources
-				.getBannerFont());
+		ensureBoldFontPresent(getFont());
 	}
 	/**
 	 * Test for focus.
@@ -412,6 +415,22 @@ public class FormText extends Canvas {
 	 */
 	public void setFont(String key, Font font) {
 		resourceTable.put("f." + key, font);
+	}
+	/**
+	 * Sets the font to use to render the default
+	 * text (text that does not have special font property
+	 * assigned). Bold font will be constructed from
+	 * this font.
+	 * @param font the default font to use
+	 */
+	public void setFont(Font font) {
+		super.setFont(font);
+		Font boldFont = (Font)resourceTable.get(FormTextModel.BOLD_FONT_ID);
+		if (boldFont!=null) {
+			boldFont.dispose();
+			resourceTable.remove(FormTextModel.BOLD_FONT_ID);
+		}
+		ensureBoldFontPresent(getFont());
 	}
 	/**
 	 * Sets the provided text. Text can be rendered as-is, or by parsing the
@@ -704,10 +723,21 @@ public class FormText extends Canvas {
 		if (!isDisposed())
 			setCursor(model.getHyperlinkSettings().getHyperlinkCursor());
 	}
+	private void ensureBoldFontPresent(Font regularFont) {
+		Font boldFont = (Font)resourceTable.get(FormTextModel.BOLD_FONT_ID);
+		if (boldFont!=null) return;
+		FontData[] fontDatas = regularFont.getFontData();
+		for (int i = 0; i < fontDatas.length; i++) {
+			fontDatas[i].setStyle(fontDatas[i].getStyle() | SWT.BOLD);
+		}
+		boldFont = new Font(getDisplay(), fontDatas);
+		resourceTable.put(FormTextModel.BOLD_FONT_ID, boldFont);
+	}
 	private void paint(PaintEvent e) {
 		Rectangle carea = getClientArea();
 		GC gc = e.gc;
 		gc.setFont(getFont());
+		ensureBoldFontPresent(getFont());
 		gc.setForeground(getForeground());
 		gc.setBackground(getBackground());
 		
