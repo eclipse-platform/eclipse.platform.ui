@@ -6,7 +6,9 @@
          <meta.schema plugin="org.eclipse.debug.core" id="logicalStructureTypeProviders" name="%logicalStructureTypeProvidersExtensionPointName"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         This extension point allows debuggers to provide logical structure type for a value.
+This is an extension of the logical structure support provided by the extension point org.eclipse.debug.core.logicalStructureTypes.
+This extension point allows the contributor to programmatically to provide logical structure types for a value.
       </documentation>
    </annotation>
 
@@ -18,21 +20,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional name of the extension instance
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -47,7 +49,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  fully qualified name of a Java class that implements &lt;code&gt;ILogicalStructureProvider&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.internal.core.ILogicalStructureProvider"/>
@@ -57,7 +59,7 @@
          <attribute name="modelIdentifier" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  identifier of the debug model this logical structure provider is associated with
                </documentation>
             </annotation>
          </attribute>
@@ -69,7 +71,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         3.1
       </documentation>
    </annotation>
 
@@ -78,7 +80,20 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         The following is an example of a logical structure type extension point:
+
+&lt;p&gt;
+&lt;pre&gt;
+ &lt;extension point=&quot;org.eclipse.debug.core.logicalStructureProviders&quot;&gt;
+  &lt;logicalStructureProvider
+   class=&quot;com.example.ExampleLogicalStructureProvider&quot;
+   modelIdentifier=&quot;com.example.debug.model&quot;&gt;
+  &lt;/logicalStructureProvider&gt;
+ &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+In the example above, the specified logical structure provider will be consulted for alternative logical structures for values from the &lt;code&gt;com.example.debug.model&lt;/code&gt; debug model as they are displayed in the variables view.
       </documentation>
    </annotation>
 
@@ -87,16 +102,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.ILogicalStructureProvider&lt;/b&gt;.
       </documentation>
    </annotation>
 
@@ -105,7 +111,11 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2004 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Common Public License v1.0 which 
+accompanies this distribution, and is available at 
+&lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 
