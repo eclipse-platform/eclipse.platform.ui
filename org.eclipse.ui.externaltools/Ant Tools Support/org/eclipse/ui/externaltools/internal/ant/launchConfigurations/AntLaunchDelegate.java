@@ -9,9 +9,11 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 **********************************************************************/
 
+import java.io.File;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.ant.core.AntRunner;
@@ -151,6 +153,49 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		attributes.put(IProcess.ATTR_PROCESS_TYPE, IExternalToolConstants.ID_ANT_PROCESS_TYPE);
 		attributes.put(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
 		final AntProcess process = new AntProcess(location.toOSString(), launch, attributes);
+		
+		// create "fake" command line for the process
+		StringBuffer commandLine = new StringBuffer();
+		if (antHome != null) {
+			commandLine.append(antHome);
+			commandLine.append(File.separator);
+		}
+		commandLine.append("ant"); //$NON-NLS-1$
+		if (targets != null) {
+			for (int i = 0; i < targets.length; i++) {
+				commandLine.append(" "); //$NON-NLS-1$
+				commandLine.append(targets[i]);
+			}
+		}
+		commandLine.append(" -buildfile "); //$NON-NLS-1$
+		commandLine.append(location.toOSString());
+		if (arguments != null) {
+			for (int i = 0; i < arguments.length; i++) {
+				String arg = arguments[i];
+				commandLine.append(" "); //$NON-NLS-1$
+				commandLine.append(arg);
+			}
+		}
+		if (propertyFiles != null) {
+			for (int i = 0; i < propertyFiles.length; i++) {
+				String path = propertyFiles[i];
+				commandLine.append(" -propertyfile "); //$NON-NLS-1$
+				commandLine.append(path);
+			}
+		}
+		if (userProperties != null) {
+			Iterator keys = userProperties.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String)keys.next();
+				commandLine.append(" -D"); //$NON-NLS-1$
+				commandLine.append(key);
+				commandLine.append("="); //$NON-NLS-1$
+				String value = (String)userProperties.get(key);
+				commandLine.append(value);
+			}
+		}
+		
+		process.setAttribute(IProcess.ATTR_CMDLINE, commandLine.toString());
 		
 		if (ExternalToolsUtil.isBackground(configuration)) {
 			Runnable r = new Runnable() {
