@@ -90,6 +90,11 @@ protected void broadcastLifecycle(final int lifecycle, Map contexts, final Multi
 			Map.Entry entry = (Map.Entry) it.next();
 			Plugin plugin = (Plugin) entry.getKey();
 			final ISaveParticipant participant = (ISaveParticipant) saveParticipants.get(plugin);
+			//save participants can be removed concurrently
+			if (participant == null) {
+				monitor.worked(1);
+				continue;
+			}
 			final SaveContext context = (SaveContext) entry.getValue();
 			/* Be extra careful when calling lifecycle method on arbitary plugin */
 			ISafeRunnable code = new ISafeRunnable() {
@@ -140,9 +145,11 @@ protected void cleanMasterTable() {
  * after a snapshot. It would force plug-ins to rebuild their state.
  */
 protected void clearSavedDelta() {
-	for (Iterator i = saveParticipants.keySet().iterator(); i.hasNext();) {
-		String pluginId = ((Plugin) i.next()).getDescriptor().getUniqueIdentifier();
-		masterTable.setProperty(CLEAR_DELTA_PREFIX + pluginId, "true"); //$NON-NLS-1$
+	synchronized (saveParticipants) {
+		for (Iterator i = saveParticipants.keySet().iterator(); i.hasNext();) {
+			String pluginId = ((Plugin) i.next()).getDescriptor().getUniqueIdentifier();
+			masterTable.setProperty(CLEAR_DELTA_PREFIX + pluginId, "true"); //$NON-NLS-1$
+		}
 	}
 }
 /**
@@ -327,9 +334,11 @@ protected int readVersionNumber(DataInputStream input) throws IOException {
  * deltas when they register themselves as save participants.
  */
 protected void removeClearDeltaMarks() {
-	for (Iterator i = saveParticipants.keySet().iterator(); i.hasNext();) {
-		String pluginId = ((Plugin) i.next()).getDescriptor().getUniqueIdentifier();
-		removeClearDeltaMarks(pluginId);
+	synchronized (saveParticipants) {
+		for (Iterator i = saveParticipants.keySet().iterator(); i.hasNext();) {
+			String pluginId = ((Plugin) i.next()).getDescriptor().getUniqueIdentifier();
+			removeClearDeltaMarks(pluginId);
+		}
 	}
 }
 protected void removeClearDeltaMarks(String pluginId) {
