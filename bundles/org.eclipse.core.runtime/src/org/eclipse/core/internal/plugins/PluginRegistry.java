@@ -262,7 +262,16 @@ private void shutdownPlugins() {
 						return;
 					try {
 						Plugin plugin = descriptor.getPlugin();
+						long time = 0L;
+						if (InternalPlatform.DEBUG_SHUTDOWN) {
+							time = System.currentTimeMillis();
+							System.out.println("Shutting down plugin: " + plugin.getDescriptor().getUniqueIdentifier());
+						}
 						plugin.shutdown();
+						if (InternalPlatform.DEBUG_SHUTDOWN) {
+							time = System.currentTimeMillis() - time;
+							System.out.println("Finished plugin shutdown for " + plugin.getDescriptor().getUniqueIdentifier() + " time: " + time + "ms");
+						}
 					} finally {
 						((PluginDescriptor) descriptor).doPluginDeactivation();
 					}

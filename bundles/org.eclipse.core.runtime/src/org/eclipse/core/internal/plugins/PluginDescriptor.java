@@ -671,6 +671,11 @@ private void internalDoPluginActivation() throws CoreException {
 		throwException(errorMsg, eNoConstructor);
 	}
 
+	long time = 0L;
+	if (InternalPlatform.DEBUG_STARTUP) {
+		time = System.currentTimeMillis();
+		System.out.println("Starting plugin: " + getId());
+	}
 	// create a new instance
 	try {
 		pluginObject = (Plugin) construct.newInstance(new Object[] { this });
@@ -700,6 +705,10 @@ private void internalDoPluginActivation() throws CoreException {
 		}
 	};
 	InternalPlatform.run(code);
+	if (InternalPlatform.DEBUG_STARTUP) {
+		time = System.currentTimeMillis() - time;
+		System.out.println("Finished plugin startup for " + getId() + " time: " + time + "ms");
+	}
 	if (!multiStatus.isOK())
 		throw new CoreException(multiStatus);
 }

@@ -62,6 +62,8 @@ public final class InternalPlatform {
 	// execution options
 	private static final String OPTION_DEBUG = Platform.PI_RUNTIME + "/debug";
 	private static final String OPTION_DEBUG_SYSTEM_CONTEXT = Platform.PI_RUNTIME + "/debug/context";
+	private static final String OPTION_DEBUG_STARTUP = Platform.PI_RUNTIME + "/debug/startup";
+	private static final String OPTION_DEBUG_SHUTDOWN = Platform.PI_RUNTIME + "/debug/shutdown";
 	private static final String OPTION_DEBUG_PLUGINS = Platform.PI_RUNTIME + "/registry/debug";
 	private static final String OPTION_DEBUG_PLUGINS_DUMP = Platform.PI_RUNTIME + "/registry/debug/dump";
 
@@ -77,6 +79,8 @@ public final class InternalPlatform {
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_CONTEXT = false;
 	public static boolean DEBUG_PLUGINS = false;
+	public static boolean DEBUG_STARTUP = false;
+	public static boolean DEBUG_SHUTDOWN = false;
 	public static String DEBUG_PLUGINS_DUMP = "";
 
 	private static boolean inVAJ;
@@ -623,9 +627,13 @@ static void loadOptions(Properties bootOptions) {
 		options.put(key, ((String) options.get(key)).trim());
 	}
 	DEBUG = getBooleanOption(OPTION_DEBUG, false);
-	DEBUG_CONTEXT = getBooleanOption(OPTION_DEBUG_SYSTEM_CONTEXT, false);
-	DEBUG_PLUGINS = getBooleanOption(OPTION_DEBUG_PLUGINS, false);
-	DEBUG_PLUGINS_DUMP = getDebugOption(OPTION_DEBUG_PLUGINS_DUMP);
+	if (DEBUG) {
+		DEBUG_CONTEXT = getBooleanOption(OPTION_DEBUG_SYSTEM_CONTEXT, false);
+		DEBUG_STARTUP = getBooleanOption(OPTION_DEBUG_STARTUP, false);
+		DEBUG_SHUTDOWN = getBooleanOption(OPTION_DEBUG_SHUTDOWN, false);
+		DEBUG_PLUGINS = getBooleanOption(OPTION_DEBUG_PLUGINS, false);
+		DEBUG_PLUGINS_DUMP = getDebugOption(OPTION_DEBUG_PLUGINS_DUMP);
+	}
 	InternalBootLoader.setupOptions();
 }
 /**

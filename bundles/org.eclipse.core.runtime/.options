@@ -1,11 +1,17 @@
 # Debugging options for the org.eclipse.core.runtime plugin
 
 # Turn on general debugging for the org.eclipse.core.runtime plugin.
-# Also displays startup times.
+# Also displays overall startup time.
 org.eclipse.core.runtime/debug=true
 
 # Prints out values of OS, WS, NL, and ARCH
 org.eclipse.core.runtime/debug/context=false
+
+# Prints time taken by Plugin constructors and startup() methods.
+org.eclipse.core.runtime/debug/startup=false
+
+# Prints time taken by Plugin.shutdown() methods.
+org.eclipse.core.runtime/debug/shutdown=false
 
 # Turn on debugging for the registry.
 org.eclipse.core.runtime/registry/debug=false
