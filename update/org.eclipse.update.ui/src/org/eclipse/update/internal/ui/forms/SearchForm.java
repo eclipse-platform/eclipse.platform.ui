@@ -165,7 +165,7 @@ public class SearchForm extends UpdateWebForm {
 		layout.rightMargin = 1;
 		layout.topMargin = 0;
 		layout.bottomMargin = 2;
-		layout.horizontalSpacing = 0;
+		layout.horizontalSpacing = 15;
 		layout.verticalSpacing = 10;
 		layout.numColumns = 2;
 

@@ -191,8 +191,8 @@ public class HTMLTableLayout extends Layout {
 				int span = td.colspan;
 				int cwidth = 0;
 				for (int k=j; k<j+span; k++) {
-					if (k>j) cwidth += horizontalSpacing;
 					cwidth += columnWidths[k];
+					if (k<j+span-1) cwidth += horizontalSpacing;
 				}
 				Point size = computeSize(child, cwidth, changed);
 				td.compWidth = cwidth;
@@ -208,9 +208,9 @@ public class HTMLTableLayout extends Layout {
 					continue;
 				}
 				Control child = children[td.childIndex];
-				if (j>0) x+= horizontalSpacing;
 				placeControl(child, td, x, y, rowHeight);
 				x += td.compWidth;
+				if (j<numColumns-1) x+= horizontalSpacing;		
 			}
 			y += rowHeight + verticalSpacing;
 		}

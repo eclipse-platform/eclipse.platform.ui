@@ -62,8 +62,8 @@ public class SearchResultSection {
 		HTMLTableLayout layout = new HTMLTableLayout();
 		this.factory = factory;
 
-		layout.leftMargin = 10;
-		layout.rightMargin = 10;
+		layout.leftMargin = 0;
+		layout.rightMargin = 0;
 		layout.horizontalSpacing = 5;
 		layout.numColumns = 2;
 

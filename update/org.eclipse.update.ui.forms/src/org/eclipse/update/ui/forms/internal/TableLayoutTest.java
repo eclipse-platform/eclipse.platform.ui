@@ -46,6 +46,9 @@ public static void main (String [] args) {
      c.setBackground(c.getDisplay().getSystemColor(SWT.COLOR_WHITE));
      HTMLTableLayout layout = new HTMLTableLayout();
      layout.numColumns = 2;
+     //layout.horizontalSpacing = 0;
+     layout.leftMargin = 0;
+     layout.rightMargin = 0;
      layout.makeColumnsEqualWidth=false;
      //layout.marginWidth = layout.marginHeight = 0;
      //layout.horizontalSpacing = 0;
