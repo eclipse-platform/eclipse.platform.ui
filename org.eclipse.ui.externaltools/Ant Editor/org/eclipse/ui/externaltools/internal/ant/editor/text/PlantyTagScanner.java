@@ -1,8 +1,11 @@
 package org.eclipse.ui.externaltools.internal.ant.editor.text;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 //
 // Copyright:
@@ -19,9 +22,13 @@ package org.eclipse.ui.externaltools.internal.ant.editor.text;
  * after copying.
  */
 
-import org.eclipse.jface.text.*;
-import java.util.*;
-import org.eclipse.jface.text.rules.*;
+import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.jface.text.rules.IRule;
+import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.jface.text.rules.SingleLineRule;
+import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 /**
@@ -30,25 +37,20 @@ import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 public class PlantyTagScanner extends RuleBasedScanner {
 
     public PlantyTagScanner() {
-        IToken string =
-            new Token(
+        IToken string = 
+        	new Token(
                 new TextAttribute(
-                    ExternalToolsPlugin.getPreferenceColor(PlantyColorConstants.P_STRING)));
-
-        Vector rules = new Vector();
+                    ExternalToolsPlugin.getPreferenceColor(IAntEditorColorConstants.P_STRING)));
+                    
+		IRule[] rules =new IRule[3];
 
         // Add rule for single and double quotes
-        rules.add(new SingleLineRule("\"", "\"", string, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
-        rules.add(new SingleLineRule("'", "'", string, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
+        rules[0]= new SingleLineRule("\"", "\"", string, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
+        rules[1]= new SingleLineRule("'", "'", string, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Add generic whitespace rule.
-        rules.add(new WhitespaceRule(new PlantyWhitespaceDetector()));
+        rules[2]= new WhitespaceRule(new PlantyWhitespaceDetector());
 
-        IRule[] result = new IRule[rules.size()];
-        rules.copyInto(result);
-        setRules(result);
-    }
-    public IToken nextToken() {
-        return super.nextToken();
+        setRules(rules);
     }
 }
