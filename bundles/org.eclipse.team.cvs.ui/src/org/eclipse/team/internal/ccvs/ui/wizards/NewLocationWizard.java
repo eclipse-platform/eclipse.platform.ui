@@ -98,7 +98,7 @@ public class NewLocationWizard extends Wizard {
 			} else {
 				// Exception validating. We can continue if the user wishes.
 				if (error.isMultiStatus() && error.getChildren().length == 1) {
-					error = error.getChildren()[1];
+					error = error.getChildren()[0];
 				}
 					
 				boolean keep = false;
