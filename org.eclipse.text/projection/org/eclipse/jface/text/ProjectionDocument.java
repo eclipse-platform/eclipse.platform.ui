@@ -25,6 +25,7 @@ import java.util.Comparator;
  * This class if for internal use only.
  * 
  * @since 2.1
+ * @deprecated
  */
 public final class ProjectionDocument extends AbstractDocument {
 	

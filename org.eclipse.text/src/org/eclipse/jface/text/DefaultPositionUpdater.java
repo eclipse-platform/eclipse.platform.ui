@@ -23,7 +23,7 @@ package org.eclipse.jface.text;
  * <li> Inserting text at the position offset shifts the position accordingly.
  * <li> Inserting or deleting text completely surrounded by the position shrinks or stretches the position.
  * <li> Inserting or deleting text after a position does not affect the position.
- * <li> Deleting text which completly contains the position deletes the position.
+ * <li> Deleting text which completely contains the position deletes the position.
  * <li> Replacing text overlapping with the position considered as a sequence of first
  * 		deleting the replaced text and afterwards inserting the new text. Thus, a
  * 		position might first be shifted and shrink and then be stretched.
@@ -55,7 +55,7 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 	
 	
 	/**
-	 * Creates a new default positon updater for the given category.
+	 * Creates a new default position updater for the given category.
 	 * 
 	 * @param category the category the updater is responsible for
 	 */
@@ -64,12 +64,23 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 	}
 	
 	/**
-	 * Returns the category this updater is resonsible for.
+	 * Returns the category this updater is responsible for.
 	 *
-	 * @return the category this updater is resonsible for
+	 * @return the category this updater is responsible for
 	 */
 	protected String getCategory() {
 		return fCategory;
+	}
+	
+	/**
+	 * Returns whether the current event describes a well formed replace 
+	 * by which the current position is directly affected.
+	 * 
+	 * @return <code>true</code> the current position is directly affected
+	 * @since 3.0
+	 */
+	protected boolean isAffectingReplace() {
+		return fLength > 0 && fReplaceLength > 0 && fPosition.length < fOriginalPosition.length;
 	}
 	
 	/**
@@ -78,7 +89,7 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 	protected void adaptToInsert() {
 		
 		int myStart= fPosition.offset;
-		int myEnd=   fPosition.offset + fPosition.length -1;
+		int myEnd=   fPosition.offset + fPosition.length - (isAffectingReplace() ? 0 : 1);
 		myEnd= Math.max(myStart, myEnd);
 		
 		int yoursStart= fOffset;

@@ -18,6 +18,7 @@ package org.eclipse.jface.text;
  * This class is for internal use only.
  * 
  * @since 2.1
+ * @deprecated
  */
 public class ProjectionTextStore implements ITextStore {
 	

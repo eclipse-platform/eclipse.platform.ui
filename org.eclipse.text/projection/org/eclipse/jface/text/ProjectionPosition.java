@@ -12,9 +12,10 @@ package org.eclipse.jface.text;
 
 /**
  * Represents the corresponding parent document range of a fragment of a <code>ProjectionDocument</code>.<p>
- * This calss is for internal use only.
+ * This class is for internal use only.
  * 
  * @since 2.1
+ * @deprecated
  */
 public class ProjectionPosition extends Position {
 	

@@ -34,6 +34,7 @@ import java.util.Map;
  * This class if for internal use only.
  * 
  * @since 2.1
+ * @deprecated
  */
 public final class ProjectionDocumentManager implements IDocumentListener, ISlaveDocumentManager {
 	

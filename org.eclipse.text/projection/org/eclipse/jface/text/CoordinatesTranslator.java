@@ -20,6 +20,7 @@ import java.util.Comparator;
  * document is considered the image document.<p>
  * This class is for internal use only. 
  * @since 2.1
+ * @deprecated
  */
 public class CoordinatesTranslator implements IDocumentInformationMapping {
 	
