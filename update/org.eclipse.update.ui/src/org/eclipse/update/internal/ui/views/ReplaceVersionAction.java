@@ -12,7 +12,6 @@ package org.eclipse.update.internal.ui.views;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.wizards.ReplaceFeatureVersionWizard;
@@ -21,8 +20,6 @@ public class ReplaceVersionAction extends Action {
 	
 	private IFeature currentFeature;
 	private IFeature[] features;
-	private IInstallConfiguration config;
-	private IConfiguredSite targetSite;
 	
 	public ReplaceVersionAction(String text) {
 		super(text);
@@ -35,8 +32,7 @@ public class ReplaceVersionAction extends Action {
 	public void setFeatures(IFeature[] features) {
 		this.features = features;
 	}
-
-	
+		
 	public void run() {
 		if (currentFeature == null || features == null || features.length < 2)
 			return;
