@@ -50,10 +50,10 @@
                 <topic label="Importing a zip over a shared project" href="html/00030.html">
                 </topic>
             </topic>
-            <topic label="SSH2" href="html/00028.html">
-                <topic label="Server version compatibiliity" href="html/00029.html">
+            <topic label="SSH2" href="html/00028a.html">
+                <topic label="Server version compatibiliity" href="html/00029a.html">
                 </topic>
-                <topic label="Proxies" href="html/00030.html">
+                <topic label="Proxies" href="html/00030a.html">
                 </topic>
                 <topic label="Generating keys" href="html/00031.html">
                 </topic>
