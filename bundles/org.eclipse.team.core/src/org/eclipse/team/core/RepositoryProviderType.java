@@ -69,7 +69,10 @@ abstract public class RepositoryProviderType {
 	final public static RepositoryProvider getProvider(IProject project) {
 		RepositoryProviderType[] allTypes = getAllProviderTypes();
 		for (int i = 0; i < allTypes.length; i++) {
-			return allTypes[i].getInstance(project);
+			RepositoryProvider provider = allTypes[i].getInstance(project);
+			if(provider!=null) {
+				return provider;
+			}
 		}
 		return null;
 	}
@@ -94,7 +97,7 @@ abstract public class RepositoryProviderType {
 	final public RepositoryProvider getInstance(IProject project) {
 		String id = getID();
 		try {
-			if(project.isOpen()) {
+			if(project.exists() && project.isOpen()) {
 				return (RepositoryProvider)project.getNature(id);
 			}
 		} catch(ClassCastException e) {
