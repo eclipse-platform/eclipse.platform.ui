@@ -232,6 +232,7 @@ public interface IBreakpoint extends IAdaptable {
 	 *  <code>null</code>.
 	 * @exception CoreException if unable to access the associated attribute
 	 *  on this breakpoint's underlying marker
+	 * @since 3.1
 	 */
 	public String getGroup() throws CoreException;
 	
@@ -242,6 +243,7 @@ public interface IBreakpoint extends IAdaptable {
 	 * @param groupName the name of the group to which this breakpoint belongs 
 	 * @exception CoreException if unable to set the associated attribute on
 	 *  this breakpoint's underlying marker.
+	 * @since 3.1
 	 */
 	public void setGroup(String groupName) throws CoreException;
 }
