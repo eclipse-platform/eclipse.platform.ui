@@ -375,18 +375,15 @@ public final class MoveSourceEdit extends TextEdit {
 		if (offset1 < offset2) {
 			int end= Math.max(end1, end2);
 			return new Region(offset2, end - offset2 + 1);
-		} else {
-			int end= Math.max(end1, end2);
-			return new Region(offset1, end - offset1 + 1); 
-		}
+		} 
+		int end= Math.max(end1, end2);
+		return new Region(offset1, end - offset1 + 1); 		
 	}
 		
 	private static ReplaceEdit[] splitEdit(ReplaceEdit edit, IRegion intersect) {
-		if (edit.getOffset() != intersect.getOffset()) {
+		if (edit.getOffset() != intersect.getOffset())
 			return splitIntersectRight(edit, intersect);
-		} else {
-			return splitIntersectLeft(edit, intersect);
-		}
+		return splitIntersectLeft(edit, intersect);
 	}
 		
 	private static ReplaceEdit[] splitIntersectRight(ReplaceEdit edit, IRegion intersect) {

@@ -121,18 +121,18 @@ public class Position {
 	}
 	
 	/**
-	 * Checks whether the given offset is inside
+	 * Checks whether the given index is inside
 	 * of this position's text range.
 	 *
-	 * @param offset the offset to check
-	 * @return <code>true</code> if offset is inside of this position 
+	 * @param index the index to check
+	 * @return <code>true</code> if <code>index</code> is inside of this position 
 	 */
-	public boolean includes(int offset) {
+	public boolean includes(int index) {
 		
 		if (isDeleted)
 			return false;
 		
-		return (this.offset <= offset) && (offset < this.offset + length);
+		return (this.offset <= index) && (index < this.offset + length);
 	}
 	
 	/**
@@ -140,27 +140,27 @@ public class Position {
 	 * and the text range represented by this position is empty
 	 * or not.
 	 *
-	 * @param offset the offset of the range to check
-	 * @param length the length of the range to check
+	 * @param rangeOffset the offset of the range to check
+	 * @param rangeLength the length of the range to check
 	 * @return <code>true</code> if intersection is not empty
 	 */
-	public boolean overlapsWith(int offset, int length) {
+	public boolean overlapsWith(int rangeOffset, int rangeLength) {
 		
 		if (isDeleted)
 			return false;
 			
-		int end= offset + length;
+		int end= rangeOffset + rangeLength;
 		int thisEnd= this.offset + this.length;
 		
-		if (length > 0) {
+		if (rangeLength > 0) {
 			if (this.length > 0)
-				return this.offset < end && offset < thisEnd;
-			return  offset <= this.offset && this.offset < end;
+				return this.offset < end && rangeOffset < thisEnd;
+			return  rangeOffset <= this.offset && this.offset < end;
 		}
 		
 		if (this.length > 0)
-			return this.offset <= offset && offset < thisEnd;
-		return this.offset == offset;
+			return this.offset <= rangeOffset && rangeOffset < thisEnd;
+		return this.offset == rangeOffset;
 	}
 	
 	/**

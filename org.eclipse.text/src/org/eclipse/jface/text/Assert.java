@@ -123,7 +123,7 @@ public final class Assert {
 	 * </p>
 	 * 
 	 * @param object the value to test
-	 * @exception Throwable an unspecified unchecked exception if the object
+	 * @exception RuntimeException an unspecified unchecked exception if the object
 	 *   is <code>null</code>
 	 */
 	public static void isNotNull(Object object) {
@@ -150,7 +150,7 @@ public final class Assert {
 	 * 
 	 * @param object the value to test
 	 * @param message the message to include in the exception
-	 * @exception Throwable an unspecified unchecked exception if the object
+	 * @exception RuntimeException an unspecified unchecked exception if the object
 	 *   is <code>null</code>
 	 */
 	public static void isNotNull(Object object, String message) {

@@ -589,11 +589,11 @@ public class ProjectionDocument extends AbstractDocument {
 			if (imageRegion != null)
 				return new ProjectionDocumentEvent(this, imageRegion.getOffset(), imageRegion.getLength(), masterEvent.getText(), masterEvent);
 			return null;
-		} else {
-			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, fOriginalEvent.getOffset(), fOriginalEvent.getLength(), fOriginalEvent.getText(), masterEvent);
-			fOriginalEvent= null;
-			return event;
 		}
+		
+		ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, fOriginalEvent.getOffset(), fOriginalEvent.getLength(), fOriginalEvent.getText(), masterEvent);
+		fOriginalEvent= null;
+		return event;
 	}
 	
 	private boolean includes(IRegion region, int offset) {

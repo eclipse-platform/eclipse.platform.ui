@@ -39,7 +39,7 @@ import org.eclipse.jface.text.IDocumentExtension.IReplace;
  * group.
  * <p>
  * Setting up a model consists of first adding
- * <code>LinkedPositionGroup</code> s to it, and then installing the
+ * <code>LinkedPositionGroup</code>s to it, and then installing the
  * model by either calling {@link #forceInstall()} or
  * {@link #tryInstall()}. After installing the model, it becomes
  * <em>sealed</em> and no more groups may be added.
@@ -734,7 +734,7 @@ public class LinkedModeModel {
 		for (Iterator it= fGroups.iterator(); it.hasNext(); ) {
 			LinkedPositionGroup group= (LinkedPositionGroup) it.next();
 			if (group.contains(offset))
-				// take the first hit - exlusion is guaranteed by enforcing
+				// take the first hit - exclusion is guaranteed by enforcing
 				// disjointness when adding positions
 				return true;
 		}

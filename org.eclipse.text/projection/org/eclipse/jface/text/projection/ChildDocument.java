@@ -35,22 +35,22 @@ public class ChildDocument extends ProjectionDocument {
 		/**
 		 * Creates a new visible region.
 		 * 
-		 * @param offset the offset of the region
-		 * @param length the length of the region
+		 * @param regionOffset the offset of the region
+		 * @param regionLength the length of the region
 		 */
-		public VisibleRegion(int offset, int length) {
-			super(offset, length);
+		public VisibleRegion(int regionOffset, int regionLength) {
+			super(regionOffset, regionLength);
 		}
 		
 		/**
-		 * If offset is the end of the visible region and the length is 0,
-		 * the offset is considered overlapping with the visible region.
+		 * If <code>regionOffset</code> is the end of the visible region and the <code>regionLength == 0</code>,
+		 * the <code>regionOffset</code> is considered overlapping with the visible region.
 		 * 
 		 * @see org.eclipse.jface.text.Position#overlapsWith(int, int)
 		 */
-		public boolean overlapsWith(int offset, int length) {
-			boolean appending= (offset == this.offset + this.length) && length == 0;
-			return appending || super.overlapsWith(offset, length);
+		public boolean overlapsWith(int regionOffset, int regionLength) {
+			boolean appending= (regionOffset == offset + length) && regionLength == 0;
+			return appending || super.overlapsWith(regionOffset, regionLength);
 		}
 	}
 

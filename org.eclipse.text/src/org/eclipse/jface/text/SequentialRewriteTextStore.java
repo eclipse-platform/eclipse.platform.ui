@@ -76,7 +76,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 	 */
 	public void replace(int offset, int length, String text) {
 		if (text == null)
-			text= "";
+			text= ""; //$NON-NLS-1$
 
 		if (fReplaceList.size() == 0) {
 			fReplaceList.add(new Replace(offset, offset, length, text));
@@ -124,51 +124,51 @@ public class SequentialRewriteTextStore implements ITextStore {
 	 * @see org.eclipse.jface.text.ITextStore#get(int, int)
 	 */
 	public String get(int offset, int length) {
-
-		if (fReplaceList.size() == 0) {
+		
+		if (fReplaceList.size() == 0)
 			return fSource.get(offset, length);
-
-		} else {
-			Replace firstReplace= (Replace) fReplaceList.get(0);
-			Replace lastReplace= (Replace) fReplaceList.get(fReplaceList.size() - 1);
-
-			// before
-			if (offset + length <= firstReplace.newOffset) {
-				return fSource.get(offset, length);
-
+		
+		
+		Replace firstReplace= (Replace) fReplaceList.get(0);
+		Replace lastReplace= (Replace) fReplaceList.get(fReplaceList.size() - 1);
+		
+		// before
+		if (offset + length <= firstReplace.newOffset) {
+			return fSource.get(offset, length);
+			
 			// after				
-			} else if (offset >= lastReplace.newOffset + lastReplace.text.length()) {
-				int delta= getDelta(lastReplace);
-				return fSource.get(offset - delta, length);
-
-			} else if (ASSERT_SEQUENTIALITY) {
-				throw new IllegalArgumentException();
-
-			} else {
-
-				int delta= 0;
-				for (Iterator i= fReplaceList.iterator(); i.hasNext(); ) {
-					Replace replace= (Replace) i.next();				
-		
-					if (offset + length < replace.newOffset) {
-						return fSource.get(offset - delta, length);	
-						
-					} else if (offset >= replace.newOffset && offset + length <= replace.newOffset + replace.text.length()) {
-						return replace.text.substring(offset - replace.newOffset, offset - replace.newOffset + length);
-						
-					} else if (offset >= replace.newOffset + replace.text.length()) {
-						delta= getDelta(replace);
-						continue;		
-		
-					} else {				
-						commit();
-						return fSource.get(offset, length);
-					}
-				}
+		} else if (offset >= lastReplace.newOffset + lastReplace.text.length()) {
+			int delta= getDelta(lastReplace);
+			return fSource.get(offset - delta, length);
+			
+		} else if (ASSERT_SEQUENTIALITY) {
+			throw new IllegalArgumentException();
+			
+		} else {
+			
+			int delta= 0;
+			for (Iterator i= fReplaceList.iterator(); i.hasNext(); ) {
+				Replace replace= (Replace) i.next();				
 				
-				return fSource.get(offset - delta, length);
+				if (offset + length < replace.newOffset) {
+					return fSource.get(offset - delta, length);	
+					
+				} else if (offset >= replace.newOffset && offset + length <= replace.newOffset + replace.text.length()) {
+					return replace.text.substring(offset - replace.newOffset, offset - replace.newOffset + length);
+					
+				} else if (offset >= replace.newOffset + replace.text.length()) {
+					delta= getDelta(replace);
+					continue;		
+					
+				} else {				
+					commit();
+					return fSource.get(offset, length);
+				}
 			}
+			
+			return fSource.get(offset - delta, length);
 		}
+		
 	}
 	
 	/**
@@ -186,56 +186,52 @@ public class SequentialRewriteTextStore implements ITextStore {
 	 * @see org.eclipse.jface.text.ITextStore#get(int)
 	 */
 	public char get(int offset) {
-		if (fReplaceList.size() == 0) {
+		if (fReplaceList.size() == 0)
 			return fSource.get(offset);
-				
-		} else {
-			Replace firstReplace= (Replace) fReplaceList.get(0);
-			Replace lastReplace= (Replace) fReplaceList.get(fReplaceList.size() - 1);
-
-			// before
-			if (offset < firstReplace.newOffset) {
-				return fSource.get(offset);
-
+		
+		Replace firstReplace= (Replace) fReplaceList.get(0);
+		Replace lastReplace= (Replace) fReplaceList.get(fReplaceList.size() - 1);
+		
+		// before
+		if (offset < firstReplace.newOffset) {
+			return fSource.get(offset);
+			
 			// after				
-			} else if (offset >= lastReplace.newOffset + lastReplace.text.length()) {
-				int delta= getDelta(lastReplace);
-				return fSource.get(offset - delta);
-
-			} else if (ASSERT_SEQUENTIALITY) {
-				throw new IllegalArgumentException();
-
-			} else {				
-
-				int delta= 0;
-				for (Iterator i= fReplaceList.iterator(); i.hasNext(); ) {
-					Replace replace= (Replace) i.next();
-					
-					if (offset < replace.newOffset)
-						return fSource.get(offset - delta);	
-						
-					else if (offset < replace.newOffset + replace.text.length())
-						return replace.text.charAt(offset - replace.newOffset);					
-					
-					delta= getDelta(replace);
-				}
-								
-				return fSource.get(offset - delta);
+		} else if (offset >= lastReplace.newOffset + lastReplace.text.length()) {
+			int delta= getDelta(lastReplace);
+			return fSource.get(offset - delta);
+			
+		} else if (ASSERT_SEQUENTIALITY) {
+			throw new IllegalArgumentException();
+			
+		} else {				
+			
+			int delta= 0;
+			for (Iterator i= fReplaceList.iterator(); i.hasNext(); ) {
+				Replace replace= (Replace) i.next();
+				
+				if (offset < replace.newOffset)
+					return fSource.get(offset - delta);	
+				
+				else if (offset < replace.newOffset + replace.text.length())
+					return replace.text.charAt(offset - replace.newOffset);					
+				
+				delta= getDelta(replace);
 			}
-		}		
+			
+			return fSource.get(offset - delta);
+		}
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.ITextStore#getLength()
 	 */
 	public int getLength() {
-		if (fReplaceList.size() == 0) {
+		if (fReplaceList.size() == 0)
 			return fSource.getLength();
-			
-		} else {
-			Replace lastReplace= (Replace) fReplaceList.get(fReplaceList.size() - 1);
-			return fSource.getLength() + getDelta(lastReplace);
-		}
+		
+		Replace lastReplace= (Replace) fReplaceList.get(fReplaceList.size() - 1);
+		return fSource.getLength() + getDelta(lastReplace);
 	}
 	
 	/**

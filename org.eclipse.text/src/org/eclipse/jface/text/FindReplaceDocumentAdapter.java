@@ -199,30 +199,29 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 				if (operationCode == REPLACE_FIND_NEXT)
 					fFindReplaceState= FIND_NEXT;
 				
-				if (found && fFindReplaceMatcher.group().length() > 0) {
+				if (found && fFindReplaceMatcher.group().length() > 0)
 					return new Region(fFindReplaceMatcher.start(), fFindReplaceMatcher.group().length());
-				} else {
-					return null;
-				}
-			} else { // backward search
-				
-				boolean found= fFindReplaceMatcher.find(0);
-				int index= -1;
-				int length= -1;
-				while (found && fFindReplaceMatcher.start() + fFindReplaceMatcher.group().length() <= fFindReplaceMatchOffset + 1) { 
-					index= fFindReplaceMatcher.start();
-					length= fFindReplaceMatcher.group().length();
-					found= fFindReplaceMatcher.find(index + 1);
-				}
-				fFindReplaceMatchOffset= index;
-				if (index > -1) {
-					// must set matcher to correct position
-					fFindReplaceMatcher.find(index);
-					return new Region(index, length);
-				} else
-					return null;
+				return null;
+			} 
+			
+			// backward search
+			boolean found= fFindReplaceMatcher.find(0);
+			int index= -1;
+			int length= -1;
+			while (found && fFindReplaceMatcher.start() + fFindReplaceMatcher.group().length() <= fFindReplaceMatchOffset + 1) { 
+				index= fFindReplaceMatcher.start();
+				length= fFindReplaceMatcher.group().length();
+				found= fFindReplaceMatcher.find(index + 1);
 			}
+			fFindReplaceMatchOffset= index;
+			if (index > -1) {
+				// must set matcher to correct position
+				fFindReplaceMatcher.find(index);
+				return new Region(index, length);
+			}
+			return null;
 		}
+		
 		return null;
 	}
 	

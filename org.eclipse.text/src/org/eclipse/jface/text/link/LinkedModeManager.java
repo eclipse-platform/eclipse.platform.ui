@@ -154,8 +154,7 @@ class LinkedModeManager {
 			LinkedModeModel env= (LinkedModeModel) fEnvironments.pop();
 			if (env == model)
 				break;
-			else
-				env.exit(ILinkedModeListener.NONE);
+			env.exit(ILinkedModeListener.NONE);
 		}
 		
 		if (fEnvironments.isEmpty()) {
@@ -221,12 +220,14 @@ class LinkedModeManager {
     }
 
 	/**
-	 * @return
+	 * Returns the <code>LinkedModeModel</code> that is on top of the stack of 
+	 * environments managed by the receiver.
+	 * 
+	 * @return the topmost <code>LinkedModeModel</code>
 	 */
 	public LinkedModeModel getTopEnvironment() {
 		if (fEnvironments.isEmpty())
 			return null;
-		else
-			return (LinkedModeModel) fEnvironments.peek();
+		return (LinkedModeModel) fEnvironments.peek();
 	}
 }

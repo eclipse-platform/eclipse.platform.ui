@@ -64,8 +64,7 @@ public class GlobalTemplateVariables {
 			String selection= context.getVariable(SELECTION); //$NON-NLS-1$
 			if (selection == null)
 				return ""; //$NON-NLS-1$
-			else
-				return selection;
+			return selection;
 		}		
 	}
 
@@ -88,8 +87,7 @@ public class GlobalTemplateVariables {
 			String selection= context.getVariable(SELECTION); //$NON-NLS-1$
 			if (selection == null)
 				return ""; //$NON-NLS-1$
-			else
-				return selection;
+			return selection;
 		}		
 	}
 
