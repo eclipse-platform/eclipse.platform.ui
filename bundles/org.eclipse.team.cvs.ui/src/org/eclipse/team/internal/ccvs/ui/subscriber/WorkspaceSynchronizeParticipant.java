@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - bug 69926
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
@@ -94,7 +95,7 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CONTEXT_MENU_CONTRIBUTION_GROUP_2,
-					new ConfirmMergedAction(configuration));
+					new ConfirmMergedAction(configuration));		
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CONTEXT_MENU_CONTRIBUTION_GROUP_3,
@@ -116,6 +117,10 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 						CONTEXT_MENU_CONTRIBUTION_GROUP_3,
 						new CVSActionDelegateWrapper(new ShowResourceInHistoryAction(), configuration));
+				appendToGroup(
+						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+						CONTEXT_MENU_CONTRIBUTION_GROUP_3,
+						new CVSActionDelegateWrapper(new SetKeywordSubstitutionAction(), configuration));	
 			}
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
