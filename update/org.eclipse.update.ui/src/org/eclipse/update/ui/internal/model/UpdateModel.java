@@ -157,8 +157,10 @@ public class UpdateModel {
 	}
 	
 	public AvailableUpdates getUpdates() {
-		if (availableUpdates==null)
+		if (availableUpdates==null) {
 		   availableUpdates = new AvailableUpdates();
+		   availableUpdates.setModel(this);
+		}
 		return availableUpdates;
 	}
 }

@@ -13,8 +13,13 @@ import java.util.*;
 import org.eclipse.update.internal.ui.UpdateUIPluginImages;
 
 public class AvailableUpdates extends ModelObject implements IWorkbenchAdapter {
+
 	private Vector updates = new Vector();
+	private boolean searchInProgress;
+	private BackgroundProgressMonitor backgroundProgress;
+	
 	public AvailableUpdates() {
+		backgroundProgress = new BackgroundProgressMonitor();
 	}
 	
 	public Object getAdapter(Class adapter) {
@@ -38,7 +43,7 @@ public class AvailableUpdates extends ModelObject implements IWorkbenchAdapter {
 	public Object[] getChildren(Object parent) {
 		return updates.toArray();
 	}
-
+
 	/**
 	 * @see IWorkbenchAdapter#getImageDescriptor(Object)
 	 */
@@ -57,6 +62,27 @@ public class AvailableUpdates extends ModelObject implements IWorkbenchAdapter {
 	 * @see IWorkbenchAdapter#getParent(Object)
 	 */
 	public Object getParent(Object arg0) {
-		return null;
+		return getModel();
+	}
+	
+	public void attachProgressMonitor(IProgressMonitor monitor) {
+		backgroundProgress.addProgressMonitor(monitor);
+	}
+	public void detachProgressMonitor(IProgressMonitor monitor) {
+		backgroundProgress.removeProgressMonitor(monitor);
+	}
+	
+	public void startSearch() {
+		if (searchInProgress) return;
+		searchInProgress=true;
+	}
+	
+	public boolean isSearchInProgress() {
+		return searchInProgress;
+	}
+	
+	public void stopSearch() {
+		if (!searchInProgress) return;
+		searchInProgress = false;
 	}
 }
