@@ -91,8 +91,8 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 			try {
 				IResource[] members = projects[i].members();
 				for (int j = 0; j < members.length; j++)
-					if (members[i].isLinked())
-						resourcesToMonitor.add(members[i]);
+					if (members[j].isLinked())
+						resourcesToMonitor.add(members[j]);
 			} catch (CoreException e) {
 				ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
 			}
