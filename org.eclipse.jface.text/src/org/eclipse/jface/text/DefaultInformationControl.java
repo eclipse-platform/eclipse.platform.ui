@@ -137,6 +137,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 			layout= new GridLayout(1, false);
 			layout.marginHeight= 0;
 			layout.marginWidth= 0;
+			layout.verticalSpacing= 1;
 			composite.setLayout(layout);
 			gd= new GridData(GridData.FILL_BOTH);
 			composite.setLayoutData(gd);
