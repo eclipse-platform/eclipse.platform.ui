@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IReusableEditor;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
 /**
@@ -56,8 +55,7 @@ public class SourceNotFoundEditor extends EditorPart implements IReusableEditor 
 	/**
 	 * @see org.eclipse.ui.IEditorPart#init(IEditorSite, IEditorInput)
 	 */
-	public void init(IEditorSite site, IEditorInput input)
-		throws PartInitException {
+	public void init(IEditorSite site, IEditorInput input) {
 			setSite(site);
 			setInput(input);
 	}

@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.ui.stringsubstitution;
 
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariable;
 
 /**
@@ -29,7 +28,7 @@ public class WorkspaceResolver extends ResourceResolver {
 	 * 
 	 * @see org.eclipse.debug.internal.ui.stringsubstitution.ResourceResolver#getSelectedResource(org.eclipse.debug.internal.core.stringsubstitution.IContextVariable)
 	 */
-	protected IResource getSelectedResource(IDynamicVariable variable) throws CoreException {
+	protected IResource getSelectedResource(IDynamicVariable variable) {
 		return getWorkspaceRoot();
 	}
 

@@ -72,7 +72,7 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 	/**
 	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
-	protected void doAction(Object element) throws DebugException {
+	protected void doAction(Object element) {
 		//not used
 	}
 }

@@ -84,7 +84,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		final Iterator itr= selection.iterator();
 		final MultiStatus ms= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.getString("EnableBreakpointAction.Enable_breakpoint(s)_failed_2"), null); //$NON-NLS-1$
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
+			public void run(IProgressMonitor monitor) {
 				while (itr.hasNext()) {
 					IBreakpoint breakpoint = (IBreakpoint) itr.next();
 					try {

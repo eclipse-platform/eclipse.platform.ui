@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.stringsubstitution;
 
 import java.text.MessageFormat;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariable;
 import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariableResolver;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -85,7 +84,7 @@ abstract class PromptingResolver implements IDynamicVariableResolver {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IContextVariableResolver#resolveValue(org.eclipse.debug.internal.core.stringsubstitution.IContextVariable, java.lang.String)
 	 */
-	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
+	public String resolveValue(IDynamicVariable variable, String argument) {
 		String value = null;
 		setupDialog(argument);
 
