@@ -727,37 +727,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
         }
     }
 
-    //	/**
-    //	 * Restore the part to the default.
-    //	 * @param partPane PartPane
-    //	 */
-    //	public void clearBusy(PartPane partPane) {
-    //		//updateTab(partPane,partPane.getPartReference().getTitleImage());
-    //	}
-
-    //	/**
-    //	 * Replace the image on the tab with the supplied image.
-    //	 * @param part PartPane
-    //	 * @param image Image
-    //	 */
-    //	private void updateTab(PartPane part, final Image image){
-    //		final CTabItem item = getTab(part);
-    //		if(item != null){
-    //			UIJob updateJob = new UIJob("Tab Update"){ //$NON-NLS-1$
-    //				/* (non-Javadoc)
-    //				 * @see
-    // org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-    //				 */
-    //				public IStatus runInUIThread(IProgressMonitor monitor) {
-    //					item.setImage(image);
-    //					return Status.OK_STATUS;
-    //				}
-    //			};
-    //			updateJob.setSystem(true);
-    //			updateJob.schedule();
-    //		}
-    //			
-    //	}
     /*
      * (non-Javadoc)
      * 
@@ -853,41 +822,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
     // WorkbenchThemeManager.getInstance().getTabThemeDescriptor(theme);
     //		}
     //	}
-
-    //	/**
-    //	 * Replace the image on the tab with the supplied image.
-    //	 * @param part PartPane
-    //	 * @param image Image
-    //	 */
-    //	private void updateImage(final PartPane part, final Image image){
-    //		final CTabItem item = getTab(part);
-    //		if(item != null){
-    //			UIJob updateJob = new UIJob("Tab Update"){ //$NON-NLS-1$
-    //				/* (non-Javadoc)
-    //				 * @see
-    // org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-    //				 */
-    //				public IStatus runInUIThread(IProgressMonitor monitor) {
-    //					part.setImage(item,image);
-    //					return Status.OK_STATUS;
-    //				}
-    //			};
-    //			updateJob.setSystem(true);
-    //			updateJob.schedule();
-    //		}
-    //	}
-
-    /**
-     * Indicate busy state in the supplied partPane.
-     * 
-     * @param partPane
-     *            PartPane.
-     */
-    public void showBusy(PartPane partPane, boolean busy) {
-        //		updateTab(
-        //			partPane,
-        //			JFaceResources.getImage(ProgressManager.BUSY_OVERLAY_KEY));
-    }
 
     /**
      * Makes the given part visible in the presentation

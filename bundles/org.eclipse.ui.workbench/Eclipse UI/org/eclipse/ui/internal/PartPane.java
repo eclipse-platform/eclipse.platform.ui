@@ -534,32 +534,4 @@ protected void doDock() {
 	// do nothing
 }
 
-
-	/**
-	 * Set the busy state of the receiver. Update the 
-	 * tab folder if there is one.
-	 * @param busy
-	 */
-	public void showBusy(boolean busy){
-		
-		PartTabFolder folder = null;
-		
-		ILayoutContainer layoutContainer = getContainer();
-		if(layoutContainer instanceof PartTabFolder)
-			folder = (PartTabFolder) container;
-		
-		if(folder == null)
-			return;
-		
-		folder.showBusy(PartPane.this,busy);		
-	}
-	/**
-	 * Set the image to image. item is used for future work where 
-	 * the tab item may be updated.
-	 * @param item
-	 * @param image
-	 */
-	void setImage(CTabItem item, Image image){
-		//Do nothing by default
-	}
 }
