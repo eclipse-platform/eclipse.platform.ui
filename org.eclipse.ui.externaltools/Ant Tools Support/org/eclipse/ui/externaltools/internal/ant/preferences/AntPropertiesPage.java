@@ -1,5 +1,12 @@
 package org.eclipse.ui.externaltools.internal.ant.preferences;
 
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
 import java.util.Arrays;
 
 import org.eclipse.ant.core.AntCorePlugin;
@@ -82,7 +89,7 @@ public class AntPropertiesPage extends AntPage {
 			removeButton= createButton(parent, "AntPropertiesPage.removeButton", REMOVE_BUTTON); //$NON-NLS-1$;
 		} else {
 			addFileButton= createButton(parent, "AntPropertiesPage.addFileButton", ADD_PROPERTY_FILE_BUTTON); //$NON-NLS-1$;
-			removeFileButton= createButton(parent, "AntPropertiesPage.removeButton", REMOVE_PROPERTY_FILE_BUTTON); //$NON-NLS-1$;
+			removeFileButton= createButton(parent, "AntPropertiesPage.removeFileButton", REMOVE_PROPERTY_FILE_BUTTON); //$NON-NLS-1$;
 		}
 	}
 	
@@ -94,8 +101,7 @@ public class AntPropertiesPage extends AntPage {
 		item.setText(AntPreferencesMessages.getString("AntPropertiesPage.title")); //$NON-NLS-1$
 		item.setImage(labelProvider.getPropertyImage());
 		item.setData(this);
-		Composite top = new Composite(folder, SWT.NONE);
-		item.setControl(createContents(top));
+		item.setControl(createContents(folder));
 		return item;
 	}
 	
@@ -122,16 +128,24 @@ public class AntPropertiesPage extends AntPage {
 		}
 	}
 	
-	
 	protected Composite createContents(Composite parent) {
-		Composite top = super.createContents(parent);
+		Composite top = new Composite(parent, SWT.NONE);
 		
 		Label label = new Label(top, SWT.NONE);
 		GridData gd = new GridData(GridData.GRAB_HORIZONTAL);
 		gd.horizontalSpan =2;
 		label.setLayoutData(gd);
 		label.setFont(parent.getFont());
-		label.setText("Specify global property files:");
+		label.setText(AntPreferencesMessages.getString("AntPropertiesPage.&Global_properties__1")); //$NON-NLS-1$
+		
+		super.createContents(top);
+		
+		label = new Label(top, SWT.NONE);
+		gd = new GridData(GridData.GRAB_HORIZONTAL);
+		gd.horizontalSpan =2;
+		label.setLayoutData(gd);
+		label.setFont(parent.getFont());
+		label.setText(AntPreferencesMessages.getString("AntPropertiesPage.Glo&bal_property_files__2")); //$NON-NLS-1$
 		
 		createTable(top);
 		createButtonGroup(top);
@@ -207,7 +221,7 @@ public class AntPropertiesPage extends AntPage {
 		private static final String IMG_PROPERTY = "icons/full/obj16/prop_ps.gif"; //$NON-NLS-1$;
 
 		private Image classpathImage;
-		private Image folderImage;
+		private Image fileImage;
 		private Image propertyImage;
 	
 		/**
@@ -220,8 +234,8 @@ public class AntPropertiesPage extends AntPage {
 		 * Method declared on IBaseLabelProvider.
 		 */
 		public void dispose() {
-			// Folder image is shared, do not dispose.
-			folderImage = null;
+			// file image is shared, do not dispose.
+			fileImage = null;
 			if (classpathImage != null) {
 				classpathImage.dispose();
 				classpathImage = null;
@@ -236,7 +250,11 @@ public class AntPropertiesPage extends AntPage {
 		 * Method declared on ITableLabelProvider.
 		 */
 		public Image getColumnImage(Object element, int columnIndex) {
-			return getPropertyImage();
+			if (element instanceof Property) {
+				return getPropertyImage();
+			} else {
+				return getFileImage();
+			}
 		}
 		
 		/* (non-Javadoc)
@@ -246,10 +264,11 @@ public class AntPropertiesPage extends AntPage {
 			return element.toString();
 		}
 
-		private Image getFolderImage() {
-			if (folderImage == null)
-				folderImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
-			return folderImage;
+		private Image getFileImage() {
+			if (fileImage == null) {
+				fileImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
+			}
+			return fileImage;
 		}
 		
 		private Image getPropertyImage() {

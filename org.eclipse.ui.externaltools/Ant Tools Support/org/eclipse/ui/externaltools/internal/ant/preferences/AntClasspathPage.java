@@ -170,7 +170,7 @@ public class AntClasspathPage extends AntPage {
 				addJars((AntPageContentProvider)getTableViewer().getContentProvider());
 				break;
 			case ADD_FOLDER_BUTTON :
-				addFolder((AntPageContentProvider)getTableViewer().getContentProvider(), AntPreferencesMessages.getString("AntClasspathPage.&Choose_a_folder_to_add_to_the_classpath__1"));
+				addFolder((AntPageContentProvider)getTableViewer().getContentProvider(), AntPreferencesMessages.getString("AntClasspathPage.&Choose_a_folder_to_add_to_the_classpath__1")); //$NON-NLS-1$
 				break;
 			case UP_BUTTON :
 				handleMove(-1, getTableViewer());
@@ -185,7 +185,7 @@ public class AntClasspathPage extends AntPage {
 				addJars(userContentProvider);
 				break;
 			case ADD_USER_FOLDER_BUTTON :
-				addFolder(userContentProvider,AntPreferencesMessages.getString("AntClasspathPage.&Choose_a_folder_to_add_to_the_classpath__1"));
+				addFolder(userContentProvider,AntPreferencesMessages.getString("AntClasspathPage.&Choose_a_folder_to_add_to_the_classpath__1")); //$NON-NLS-1$
 				break;
 			case UP_USER_BUTTON :
 				handleMove(-1, userTableViewer);
@@ -204,7 +204,7 @@ public class AntClasspathPage extends AntPage {
 	
 	private void browseAntHome() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setMessage("&Choose a folder that will be used as the location of ANT_HOME");
+		dialog.setMessage(AntPreferencesMessages.getString("AntClasspathPage.&Choose_a_folder_that_will_be_used_as_the_location_of_ANT_HOME_3")); //$NON-NLS-1$
 		
 		String path = dialog.open();
 		if (path == null) {
@@ -220,10 +220,10 @@ public class AntClasspathPage extends AntPage {
 		String[] names = rootDir.list();
 		for (int i = 0; i < names.length; i++) {
 			File file = new File(rootDir, names[i]);		
-			if (file.isFile() && file.getPath().endsWith(".jar")) {
+			if (file.isFile() && file.getPath().endsWith(".jar")) { //$NON-NLS-1$
 				try {
 					IPath jarPath= new Path(file.getAbsolutePath());	
-					URL url = new URL("file:" + jarPath.toOSString());
+					URL url = new URL("file:" + jarPath.toOSString()); //$NON-NLS-1$
 					contentProvider.add(url);
 				} catch (MalformedURLException e) {
 				}
@@ -237,9 +237,9 @@ public class AntClasspathPage extends AntPage {
 		if (path.length() == 0) {
 			return null;
 		}
-		File rootDir = new File(path, "lib");
+		File rootDir = new File(path, "lib"); //$NON-NLS-1$
 		if (!rootDir.exists()) {
-			getPreferencePage().setErrorMessage("Specified ANT_HOME does not contain a \"lib\" directory");
+			getPreferencePage().setErrorMessage(AntPreferencesMessages.getString("AntClasspathPage.Specified_ANT_HOME_does_not_contain_a___lib___directory_7")); //$NON-NLS-1$
 			getPreferencePage().setValid(false);
 			return null;
 		} else {
@@ -306,7 +306,7 @@ public class AntClasspathPage extends AntPage {
 		gd.horizontalSpan =2;
 		label.setLayoutData(gd);
 		label.setFont(parent.getFont());
-		label.setText("Ant r&untime classpath:");
+		label.setText(AntPreferencesMessages.getString("AntClasspathPage.Run&time_classpath__8")); //$NON-NLS-1$
 		
 		super.createContents(top);
 		
@@ -321,7 +321,7 @@ public class AntClasspathPage extends AntPage {
 		antHomeComposite.setLayout(layout);
 		
 		antHomeButton = new Button(antHomeComposite, SWT.CHECK);
-		antHomeButton.setText("Set ANT_HO&ME");
+		antHomeButton.setText(AntPreferencesMessages.getString("AntClasspathPage.Set_ANT_HO&ME_9")); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 1;
 		antHomeButton.setLayoutData(gd);
@@ -347,7 +347,7 @@ public class AntClasspathPage extends AntPage {
 		antHome.setEnabled(false);
 		
 		browseAntHomeButton= new Button(top, SWT.PUSH);
-		browseAntHomeButton.setText("&Browse...");
+		browseAntHomeButton.setText(AntPreferencesMessages.getString("AntClasspathPage.&Browse..._10")); //$NON-NLS-1$
 		browseAntHomeButton.setData(new Integer(BROWSE_ANT_HOME));
 		browseAntHomeButton.addSelectionListener(selectionAdapter);
 		gd = new GridData(GridData.GRAB_HORIZONTAL);
@@ -360,7 +360,7 @@ public class AntClasspathPage extends AntPage {
 		gd.horizontalSpan =2;
 		label.setLayoutData(gd);
 		label.setFont(parent.getFont());
-		label.setText("Specif&y additional classpath entries:");
+		label.setText(AntPreferencesMessages.getString("AntClasspathPage.Additional_classpath_entries__11")); //$NON-NLS-1$
 		
 		createTable(top);
 		createButtonGroup(top);
@@ -583,7 +583,7 @@ public class AntClasspathPage extends AntPage {
 		if (antHomeButton.getSelection()) {
 			return antHome.getText();
 		} else {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 }
