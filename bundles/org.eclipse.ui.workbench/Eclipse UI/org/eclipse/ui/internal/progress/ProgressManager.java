@@ -983,7 +983,7 @@ public class ProgressManager extends ProgressProvider
 			public void run() {
 				try {
 					manager.beginRule(rule, null);
-					runnable.run(null);
+					runnable.run(new NullProgressMonitor());
 				} catch (InvocationTargetException e) {
 					exception[0] = e;
 				} catch (InterruptedException e) {
