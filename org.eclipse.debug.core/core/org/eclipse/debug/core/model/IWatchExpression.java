@@ -24,8 +24,10 @@ package org.eclipse.debug.core.model;
 public interface IWatchExpression extends IErrorReportingExpression {
 	
 	/**
-	 * Causes this expression to update its value. When the value update is complete,
-	 * a debug change event is fired.
+	 * Causes this expression to update its value based on the last context
+	 * set for this watch expression. When the value update is complete,
+	 * a debug change event is fired. A watch expression can be asked to
+	 * evaluate even when it is disabled. 
 	 */
 	public void evaluate();
 	/**
