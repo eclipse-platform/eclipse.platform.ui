@@ -118,6 +118,11 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 		});
 	}
 	
+	/**
+	 * Removes the duplicate items from the selection.
+	 * That is, if both a parent and a child are in a selection
+	 * remove the child.
+	 */
 	protected Iterator pruneSelection(LaunchesView view) {
 		IStructuredSelection selection= (IStructuredSelection)view.getSite().getSelectionProvider().getSelection();
 		List elements= new ArrayList(selection.size());
@@ -135,6 +140,10 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 		return elements.iterator();
 	}
 	
+	/**
+	 * Returns whether the parent of the specified
+	 * debug element is already contained in the collection.
+	 */
 	protected boolean walkHierarchy(IDebugElement de, List elements) {
 		IDebugElement parent= de.getParent();
 		if (parent == null) {
