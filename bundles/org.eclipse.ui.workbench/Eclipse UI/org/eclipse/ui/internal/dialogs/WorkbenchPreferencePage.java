@@ -34,7 +34,6 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * Generic workbench main preference page.
@@ -95,7 +94,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements
                 .getString("WorkbenchPreference.RunInBackgroundButton")); //$NON-NLS-1$
         showUserDialogButton.setToolTipText(WorkbenchMessages
                 .getString("WorkbenchPreference.RunInBackgroundToolTip"));//$NON-NLS-1$
-        showUserDialogButton.setSelection(PrefUtil.getAPIPreferenceStore().getBoolean(
+        showUserDialogButton.setSelection(WorkbenchPlugin.getDefault()
+                .getPreferenceStore().getBoolean(
                         IWorkbenchPreferenceConstants.RUN_IN_BACKGROUND));
     }
 
@@ -314,7 +314,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         openAfterDelayButton.setEnabled(openOnSingleClick);
         stickyCycleButton.setSelection(store
                 .getDefaultBoolean(IPreferenceConstants.STICKY_CYCLE));
-        showUserDialogButton.setSelection(PrefUtil.getAPIPreferenceStore().getDefaultBoolean(
+        showUserDialogButton.setSelection(store.getDefaultBoolean(
         		IWorkbenchPreferenceConstants.RUN_IN_BACKGROUND));
 		
         super.performDefaults();
@@ -333,7 +333,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements
                 openOnSingleClick);
         store.setValue(IPreferenceConstants.SELECT_ON_HOVER, selectOnHover);
         store.setValue(IPreferenceConstants.OPEN_AFTER_DELAY, openAfterDelay);
-        PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.RUN_IN_BACKGROUND,
+        store.setValue(IWorkbenchPreferenceConstants.RUN_IN_BACKGROUND,
                 showUserDialogButton.getSelection());
 
         int singleClickMethod = openOnSingleClick ? OpenStrategy.SINGLE_CLICK
