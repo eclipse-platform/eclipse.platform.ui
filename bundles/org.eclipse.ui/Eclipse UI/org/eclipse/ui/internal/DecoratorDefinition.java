@@ -1,6 +1,12 @@
 package org.eclipse.ui.internal;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**
  * The DecoratorDefinition is the class that holds onto
@@ -16,6 +22,7 @@ public class DecoratorDefinition {
 	private boolean enabled;
 	private boolean adaptable;
 	private String id;
+	private IConfigurationElement element;
 
 	/**
 	 * Create a new instance of the receiver with the
@@ -28,13 +35,13 @@ public class DecoratorDefinition {
 		String className,
 		boolean apply,
 		boolean isAdaptable,
-		ILabelDecorator definedDecorator) {
+		IConfigurationElement configElement) {
 		id = identifier;
 		name = label;
 		objectClass = className;
 		enabled = apply;
 		adaptable = isAdaptable;
-		decorator = definedDecorator;
+		element = configElement;
 	}
 
 	/**
@@ -70,11 +77,19 @@ public class DecoratorDefinition {
 	}
 
 	/**
-	 * Gets the decorator.
+	 * Gets the decorator. Throws a CoreException if there is a problem
+	 * creating the decorator.
 	 * @return Returns a ILabelDecorator
 	 */
-	public ILabelDecorator getDecorator() {
+	public ILabelDecorator getDecorator() throws CoreException {
+		if (decorator == null)
+			decorator =
+				(ILabelDecorator) WorkbenchPlugin.createExtension(
+					element,
+					WizardsRegistryReader.ATT_CLASS);
+
 		return decorator;
+
 	}
 
 	/**
@@ -100,21 +115,32 @@ public class DecoratorDefinition {
 	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-		DecoratorManager manager =
-			WorkbenchPlugin.getDefault().getDecoratorManager();
-			
-		if(enabled)
-			getDecorator().addListener(manager);
-		else
-			getDecorator().removeListener(manager);
+		DecoratorManager manager = WorkbenchPlugin.getDefault().getDecoratorManager();
+
+		try {
+			if (enabled)
+				getDecorator().addListener(manager);
+			else {
+				if (decorator != null) {
+					ILabelDecorator cached = decorator;
+					cached.removeListener(manager);
+					//Clear the decorator before disposing
+					decorator = null;
+					cached.dispose();
+				}
+			}
+
+		} catch (CoreException exception) {
+			handleCoreException(exception);
+		}
 	}
 
 	/**
 	 * Return whether or not this decorator should be 
 	 * applied to adapted types.
 	 */
-	
-	public boolean isAdaptable(){
+
+	public boolean isAdaptable() {
 		return adaptable;
 	}
 	/**
@@ -123,6 +149,73 @@ public class DecoratorDefinition {
 	 */
 	public String getId() {
 		return id;
+	}
+
+	/** 
+	 * A CoreException has occured. Inform the user and disable
+	 * the receiver.
+	 */
+
+	private void handleCoreException(CoreException exception) {
+
+		//If there is an error then reset the enabling to false
+		MessageDialog.openError(
+			null,
+			WorkbenchMessages.getString("Internal_error"),
+			exception.getLocalizedMessage());
+		this.enabled = false;
+	}
+
+	/**
+	 * Decorate the image provided for the element type.
+	 * Return null if there is no image or if an error occurs.
+	 */
+	Image decorateImage(Image image, Object element) {
+		try {
+			return getDecorator().decorateImage(image, element);
+		} catch (CoreException exception) {
+			handleCoreException(exception);
+		}
+		return null;
+	}
+
+	/**
+	 * Decorate the text provided for the element type.
+	 * Return null if there is no text or if there is an exception.
+	 */
+	String decorateText(String text, Object element) {
+		try {
+			return getDecorator().decorateText(text, element);
+		} catch (CoreException exception) {
+			handleCoreException(exception);
+		}
+		return null;
+	}
+
+	/**
+	 * Add a listener for the decorator.If there is an exception
+	 * then inform the user and disable the receiver.
+	 */
+	void addListener(ILabelProviderListener listener) {
+		try {
+			getDecorator().addListener(listener);
+		} catch (CoreException exception) {
+			handleCoreException(exception);
+		}
+	}
+
+	/**
+	* Return whether or not the decorator registered for element
+	* has a label property called property name. If there is an 
+	* exception disable the receiver and return false;
+	*/
+	boolean isLabelProperty(Object element, String property) {
+		try {
+			return getDecorator().isLabelProperty(element, property);
+		} catch (CoreException exception) {
+			handleCoreException(exception);
+			return false;
+		}
 	}
 
 }

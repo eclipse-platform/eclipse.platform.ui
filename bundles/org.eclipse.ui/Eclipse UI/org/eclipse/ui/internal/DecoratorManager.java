@@ -58,7 +58,7 @@ public class DecoratorManager
 		for (int i = 0; i < definitions.length; i++) {
 			//Add a listener if it is an enabled option
 			if (definitions[i].isEnabled())
-				definitions[i].getDecorator().addListener(this);
+				definitions[i].addListener(this);
 		}
 	}
 
@@ -96,7 +96,7 @@ public class DecoratorManager
 		DecoratorDefinition[] decorators = getDecoratorsFor(element);
 		String result = text;
 		for (int i = 0; i < decorators.length; i++) {
-			String newResult = decorators[i].getDecorator().decorateText(result, element);
+			String newResult = decorators[i].decorateText(result, element);
 			if(newResult != null)
 				result = newResult;
 		}
@@ -118,7 +118,7 @@ public class DecoratorManager
 		DecoratorDefinition[] decorators = getDecoratorsFor(element);
 		Image result = image;
 		for (int i = 0; i < decorators.length; i++) {
-			Image newResult = decorators[i].getDecorator().decorateImage(result, element);
+			Image newResult = decorators[i].decorateImage(result, element);
 			if(newResult != null)
 				result = newResult;
 		}
@@ -218,19 +218,15 @@ public class DecoratorManager
 	public boolean isLabelProperty(Object element, String property) {
 		DecoratorDefinition[] decorators = getDecoratorsFor(element);
 		for (int i = 0; i < decorators.length; i++) {
-			if (decorators[i].getDecorator().isLabelProperty(element, property))
+			if (decorators[i].isLabelProperty(element, property))
 				return true;
 		}
 
 		//Get any adaptions to IResource
 		Object adapted = getResourceAdapter(element);
 		if (adapted != null) {
-			DecoratorDefinition[] adaptedDecorators = getDecoratorsFor(adapted);
-			for (int i = 0; i < adaptedDecorators.length; i++) {
-				if (adaptedDecorators[i].isAdaptable())
-					if (adaptedDecorators[i].getDecorator().isLabelProperty(element, property))
-						return true;
-			}
+			if(isLabelProperty(adapted,property))
+				return true;
 		}
 
 		return false;
@@ -306,6 +302,7 @@ public class DecoratorManager
 	 * @see IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
+		//Do nothing as this is a shared object
 	}
 
 	/**

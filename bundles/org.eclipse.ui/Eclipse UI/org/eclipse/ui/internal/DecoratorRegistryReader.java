@@ -39,34 +39,17 @@ class DecoratorRegistryReader extends RegistryReader {
 	 */
 	protected boolean readElement(IConfigurationElement element) {
 
-		try {
-			Object contributor =
-				WorkbenchPlugin.createExtension(element, WizardsRegistryReader.ATT_CLASS);
+		String className = element.getAttribute(ATT_OBJECT_CLASS);
 
-			String className = element.getAttribute(ATT_OBJECT_CLASS);
+		String name = element.getAttribute(ATT_LABEL);
 
-			String name = element.getAttribute(ATT_LABEL);
-			
-			String id = element.getAttribute(ATT_ID);
+		String id = element.getAttribute(ATT_ID);
 
-			boolean enabled = P_TRUE.equals(element.getAttribute(ATT_ENABLED));
-			boolean adaptable = P_TRUE.equals(element.getAttribute(ATT_ADAPTABLE));
+		boolean enabled = P_TRUE.equals(element.getAttribute(ATT_ENABLED));
+		boolean adaptable = P_TRUE.equals(element.getAttribute(ATT_ADAPTABLE));
 
-			values.add(
-				new DecoratorDefinition(
-				id,
-					name,
-					className,
-					enabled,
-					adaptable,
-					(ILabelDecorator) contributor));
-		} catch (CoreException exception) {
-			MessageDialog.openError(
-				null,
-				WorkbenchMessages.getString("Internal_error"),
-				exception.getLocalizedMessage());
-			return false;
-		}
+		values.add(
+			new DecoratorDefinition(id, name, className, enabled, adaptable, element));
 
 		return true;
 
