@@ -389,6 +389,18 @@ public class AntEditor extends TextEditor {
 			setResolveFully(((Boolean)event.getNewValue()).booleanValue());
 			return;
 		}
+		
+		if (ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH.equals(property)) {
+			Object value= event.getNewValue();
+			StatusLineSourceViewer viewer= (StatusLineSourceViewer) getSourceViewer();
+			if (value instanceof Integer) {
+				viewer.getTextWidget().setTabs(((Integer) value).intValue());
+			} else if (value instanceof String) {
+				viewer.getTextWidget().setTabs(Integer.parseInt((String) value));
+			}
+			return;
+		}
+		
 		if (AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS.equals(property)) {
 			if (isTabConversionEnabled()) {
 				startTabConversion();
