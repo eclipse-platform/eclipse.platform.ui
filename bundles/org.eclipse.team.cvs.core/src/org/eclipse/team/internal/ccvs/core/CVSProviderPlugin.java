@@ -38,6 +38,8 @@ public class CVSProviderPlugin extends Plugin {
 	public static final String DEFAULT_CVS_SERVER = "cvs"; //$NON-NLS-1$
 	// determines if empty directories received from the server should be pruned.
 	public static final boolean DEFAULT_PRUNE = true;
+	// determines if new directories should be discovered during update.
+	public static final boolean DEFAULT_FETCH = true;
 	// communication timeout with the server
 	public static final int DEFAULT_TIMEOUT = 60;
 
@@ -49,6 +51,7 @@ public class CVSProviderPlugin extends Plugin {
 	private QuietOption quietness;
 	private int communicationsTimeout = DEFAULT_TIMEOUT;
 	private boolean pruneEmptyDirectories = DEFAULT_PRUNE;
+	private boolean fetchAbsentDirectories = DEFAULT_FETCH;
 	private String cvsRshCommand = DEFAULT_CVS_RSH;
 	private String cvsServer = DEFAULT_CVS_SERVER;
 	
@@ -117,18 +120,18 @@ public class CVSProviderPlugin extends Plugin {
 	}
 
 	/**
+	 * Get the communications timeout value in seconds
+	 */
+	public int getTimeout() {
+		return communicationsTimeout;
+	}
+	
+	/**
 	 * Set the timeout value for communications to a value in seconds.
 	 * The value must be greater than or equal 0. If is it 0, there is no timeout.
 	 */
 	public void setTimeout(int timeout) {
 		this.communicationsTimeout = Math.max(0, timeout);
-	}
-
-	/**
-	 * Get the communications timeout value in seconds
-	 */
-	public int getTimeout() {
-		return communicationsTimeout;
 	}
 	
 	/**
@@ -251,5 +254,22 @@ public class CVSProviderPlugin extends Plugin {
 	public void setCvsServer(String cvsServer) {
 		this.cvsServer = cvsServer;
 	}
+
+	/**
+	 * Gets the etchAbsentDirectories.
+	 * @return Returns a boolean
+	 */
+	public boolean getFetchAbsentDirectories() {
+		return fetchAbsentDirectories;
+	}
+
+	/**
+	 * Sets the etchAbsentDirectories.
+	 * @param etchAbsentDirectories The etchAbsentDirectories to set
+	 */
+	public void setFetchAbsentDirectories(boolean fetchAbsentDirectories) {
+		this.fetchAbsentDirectories = fetchAbsentDirectories;
+	}
+
 }
 

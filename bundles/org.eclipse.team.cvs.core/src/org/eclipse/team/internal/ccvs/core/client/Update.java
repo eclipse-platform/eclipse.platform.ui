@@ -98,13 +98,13 @@ public class Update extends Command {
 	protected LocalOption[] getDefaultLocalOptions(GlobalOption[] globalOptions, LocalOption[] localOptions) {
 		List newOptions = new ArrayList(5);
 		
-		// Always look for absent directories for now
-		if(!RETRIEVE_ABSENT_DIRECTORIES.isElementOf(localOptions)) {
+		// Look for absent directories if enabled and the option is not already included
+		if (CVSProviderPlugin.getPlugin().getFetchAbsentDirectories() && ! RETRIEVE_ABSENT_DIRECTORIES.isElementOf(localOptions)) {
 			newOptions.add(Update.RETRIEVE_ABSENT_DIRECTORIES);
 		}
 		
 		// Prune empty directories if pruning is enabled and the command in not being run in non-update mode
-		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories() && !PRUNE_EMPTY_DIRECTORIES.isElementOf(localOptions)) {
+		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories() && ! PRUNE_EMPTY_DIRECTORIES.isElementOf(localOptions)) {
 			if(!Command.DO_NOT_CHANGE.isElementOf(globalOptions)) {
 				newOptions.add(Update.PRUNE_EMPTY_DIRECTORIES);
 			}
