@@ -1603,7 +1603,7 @@ public final class WorkbenchActionBuilder {
 		                    buildAllAction);
 		            toolBarManager.update(false);
 		            toolBarItem.update(ICoolBarManager.SIZE);
-		        } else if (buildAllAction != null && found) {
+		        } else if (buildAllAction != null && found && !enabled) {
 		            toolBarManager.remove(buildAllAction.getId());
 		            toolBarManager.update(false);
 		            toolBarItem.update(ICoolBarManager.SIZE);
@@ -1611,12 +1611,14 @@ public final class WorkbenchActionBuilder {
             }
         };
         //run the update immediately if we are in the UI thread
-        if (Display.getCurrent() != null)
+        if (Display.getCurrent() != null) {
         	update.run();
-        //dispatch the update to the UI thread
-        Shell shell = window.getShell();
-        if (shell != null && !shell.isDisposed())
-        	shell.getDisplay().asyncExec(update);
+        } else {
+	        //dispatch the update to the UI thread
+	        Shell shell = window.getShell();
+	        if (shell != null && !shell.isDisposed())
+	        	shell.getDisplay().asyncExec(update);
+        }
     }
 
 	/**
