@@ -925,7 +925,6 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * @since 2.1
 	 */
 	protected void becomesVisible() {
-		fIsVisible = true;
 	}
 	
 	/**
@@ -934,7 +933,6 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * @since 2.1
 	 */
 	protected void becomesHidden() {
-		fIsVisible = false;
 	}
 	
 	/**
