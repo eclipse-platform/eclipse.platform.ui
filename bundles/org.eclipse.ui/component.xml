@@ -171,6 +171,13 @@
  <package name="org.eclipse.ui.branding">
  </package>
 
+ <package name="org.eclipse.ui.browser">
+  <type name="AbstractWebBrowser"/>
+  <type name="AbstractWorkbenchBrowserSupport"/>
+  <type name="IWebBrowser"/>
+  <type name="IWorkbenchBrowserSupport"/>
+</package>
+ 
  <package name="org.eclipse.ui.commands">
   <type name="AbstractHandler"/>
   <type name="ActionHandler"/>
