@@ -13,6 +13,28 @@
 	// add code to use the input parameters for window size
 	// add code to keep track (cookies?) of the size on closing
 	//window.resizeTo(700, 700);
+	
+	/**
+	 * Parses the parameters passed to the url
+	 */
+	function parseQueryString (str) 
+	{
+	    str = str ? str : unescape(window.location.href);
+	    var longquery = str.split("?");
+	    if (longquery.length <= 1) return "";
+	    var query = longquery[1];
+	    var args = new Object();
+	    if (query) 
+	    {
+	        var fields = query.split('&');
+	        for (var f = 0; f < fields.length; f++) 
+	        {
+	            var field = fields[f].split('=');
+	            args[unescape(field[0].replace(/\+/g, ' '))] = unescape(field[1].replace(/\+/g, ' '));
+	        }
+	    }
+	    return args;
+	}
 
 	</script>
 	
