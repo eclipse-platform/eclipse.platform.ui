@@ -13,7 +13,7 @@ package org.eclipse.core.runtime.preferences;
 /**
  * Represents a node in the preference hierarchy which is used in
  * the import/export mechanism.
- * 
+ * <p>
  * This interface is not intended to be implemented by clients.
  * 
  * @since 3.0
@@ -23,9 +23,11 @@ public interface IExportedPreferences extends IEclipsePreferences {
 	/**
 	 * Return <code>true</code> if this node was an export root
 	 * when the preferences were exported, and <code>false</code>
-	 * otherwise.
+	 * otherwise.  This information is used during the import to clear
+	 * nodes when importing a node's (and its children's) preferences.
 	 * 
 	 * @return <code>true</code> if this node is an export root
+	 * 	and <code>false</code> otherwise
 	 */
 	public boolean isExportRoot();
 

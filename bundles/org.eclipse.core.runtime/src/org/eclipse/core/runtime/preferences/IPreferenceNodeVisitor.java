@@ -26,8 +26,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * IEclipsePreferences root = ...;
  * root.accept(new Visitor());
  * </pre>
- * </p> 
- * <p>
+ * </p><p>
  * Clients may implement this interface.
  * </p>
  *
@@ -45,5 +44,4 @@ public interface IPreferenceNodeVisitor {
 	 * @throws BackingStoreException
 	 */
 	public boolean visit(IEclipsePreferences node) throws BackingStoreException;
-
 }

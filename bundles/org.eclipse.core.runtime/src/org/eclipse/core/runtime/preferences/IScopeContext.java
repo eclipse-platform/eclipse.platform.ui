@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IPath;
  * particular scope. Instances of implementions of this interface are 
  * passed to the <code>IPreferencesService</code> for use in 
  * preference searching.
- * 
  * <p>
  * Clients may implement this interface.
  * </p>
@@ -43,8 +42,7 @@ public interface IScopeContext {
 	 * An example of a qualifier in Eclipse 2.1 would be the plug-in identifier that 
 	 * the preference is associated with (e.g. the "org.eclipse.core.resources" 
 	 * plug-in defines the "description.autobuild" preference).
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * This method can be used to determine the appropriate preferences node
 	 * to aid in setting key/value pairs. For instance: 
 	 * <code>new InstanceScope().getNode("org.eclipse.core.resources");</code>

@@ -20,7 +20,6 @@ import org.osgi.service.prefs.Preferences;
  * story. It provides means for both preference and node change
  * listeners as well as providing node navigation APIs which deal
  * in <code>IPath</code> objects.
- * 
  * <p>
  * Clients may implement this interface.
  * </p>
@@ -80,6 +79,9 @@ public interface IEclipsePreferences extends Preferences {
 
 	/**
 	 * A listener to be used to receive preference node change events.
+	 * <p>
+	 * Clients may implement this interface.
+	 * </p>
 	 * 
 	 * @since 3.0
 	 */
@@ -180,6 +182,9 @@ public interface IEclipsePreferences extends Preferences {
 
 	/**
 	 * A listener used to receive changes to preference values in the preference store.
+	 * <p>
+	 * Clients may implement this interface.
+	 * </p>
 	 * 
 	 * @since 3.0
 	 */
@@ -252,8 +257,7 @@ public interface IEclipsePreferences extends Preferences {
 	 * <p>
 	 * Functionally equivalent to calling "<code>return node(path.toString());</code>". 
 	 * See the spec of <code>Preferences#node(String)<code> for more details. 
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * Note that if the node does not yet exist and is created, then the appropriate
 	 * <code>INodeChangeEvent</code> must be sent to listeners who are
 	 * registered at this node.
