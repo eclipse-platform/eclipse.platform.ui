@@ -49,7 +49,7 @@ public class JavaPartitionScanner extends RuleBasedPartitionScanner {
 		public WordPredicateRule(IToken successToken) {
 			super(new EmptyCommentDetector());
 			fSuccessToken= successToken;
-			addWord("/**/", fSuccessToken);
+			addWord("/**/", fSuccessToken); //$NON-NLS-1$
 		}
 		
 		/*

@@ -24,7 +24,7 @@ public class JavaTextHover implements ITextHover {
 			} catch (BadLocationException x) {
 			}
 		}
-		return "empty selection";
+		return JavaEditorMessages.getString("JavaTextHover.emptySelection"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
