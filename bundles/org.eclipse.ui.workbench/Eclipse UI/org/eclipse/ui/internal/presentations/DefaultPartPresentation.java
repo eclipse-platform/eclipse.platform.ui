@@ -902,7 +902,10 @@ public class DefaultPartPresentation extends StackPresentation {
 		// the part can be added at the given index and not appear (for example, when the list
 		// becomes more constrained due to the addition of a chevron)
 		if (tabFolder.getItemCount() > 1) {
-			CTabItem myItem = tabFolder.getItem(idx);
+			// get the tab for the item.  dont rely on the ideal insertion index as this may be altered
+			CTabItem myItem = getTab(newPart);
+			if (myItem == null) 
+				return;
 			// make sure the part is showing
 			while (!myItem.isShowing()) {
 				IPresentablePart lruPart = null;
@@ -982,6 +985,12 @@ public class DefaultPartPresentation extends StackPresentation {
 		// Select a location for newly inserted parts
 		// Insert after the last showing item on the right
 		int idx = tabFolder.getItemCount();
+		
+		// add to the end if the bounds are 0 - the isShowing/getBounds logic
+		// below does not work when opening an initial perspective because no 
+		// items are showing (the folders bounds are set to 0)
+		if (!tabFolder.getControl().isVisible() || tabFolder.getControl().getBounds().width <= 0)
+			return idx;
 		for (int i = 0; i < idx; i++) {
 			CTabItem item = tabFolder.getItem(i);
 			// make sure the item is not showing and it is on the right

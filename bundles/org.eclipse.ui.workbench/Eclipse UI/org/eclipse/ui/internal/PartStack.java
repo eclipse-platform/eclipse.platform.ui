@@ -734,13 +734,27 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * See IVisualContainer#replace
      */
     public void replace(LayoutPart oldChild, LayoutPart newChild) {
-        IPresentablePart oldPart = oldChild.getPresentablePart();
+		// commented out but left for future reference - we're using this
+		// as the cookie for the part presentation but this will
+		// almost always be null (oldChilds being PartPlaceholders)
+		// even if they aren't null, we don't handle 
+		// IPresentableParts as cookies
+		//
+        // IPresentablePart oldPart = oldChild.getPresentablePart();
         IPresentablePart newPart = newChild.getPresentablePart();
 
         int idx = children.indexOf(oldChild);
+        int numPlaceholders = 0;
+        //subtract the number of placeholders still existing in the list 
+        //before this one - they wont have parts.
+        for (int i = 0; i < idx; i++) {
+        	if (children.get(i) instanceof PartPlaceholder)
+        		numPlaceholders++;
+		}
+        Integer cookie = new Integer(idx - numPlaceholders);
         children.add(idx, newChild);
 
-        showPart(newChild, oldPart);
+        showPart(newChild, cookie);
 
         if (oldChild == current && !(newChild instanceof PartPlaceholder)) {
             setSelection(newChild);
