@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
+import org.eclipse.help.IContext;
 import org.eclipse.help.IContextProvider;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class ContextHelpProviderInput {
+	private IContext context;
 	private IContextProvider provider;
 	private Control control;
 	private IWorkbenchPart part;
@@ -24,8 +26,17 @@ public class ContextHelpProviderInput {
 		this.part = part;
 	}
 	
+	public ContextHelpProviderInput(IContext context, Control control, IWorkbenchPart part) {
+		this.context = context;
+		this.control = control;
+		this.part = part;
+	}
+	
 	public IContextProvider getProvider() {
 		return provider;
+	}
+	public IContext getContext() {
+		return context;
 	}
 	public Control getControl() {
 		return control;

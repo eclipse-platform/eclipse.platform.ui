@@ -148,6 +148,20 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		if (lastProvider!=null || lastControl!=null)
 			updateDynamicHelp(lastProvider!=null?lastProvider.getSearchExpression(lastControl):null, lastControl);		
 	}
+	
+	public void handleActivation(IContext context, Control c, IWorkbenchPart part) {
+		if (text.isDisposed())
+			return;
+		lastControl = c;
+		lastContext = context;
+		lastPart = part;
+		lastProvider = null;
+		String helpText = formatHelpContext(context);
+		updateTitle();
+		if (getSection().isExpanded())
+			updateText(helpText);
+		updateDynamicHelp();
+	}
 
 	public void handleActivation(IContextProvider provider, Control c, IWorkbenchPart part) {
 		if (text.isDisposed())
@@ -334,7 +348,10 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	public boolean setFormInput(Object input) {
 		if (input instanceof ContextHelpProviderInput) {
 			ContextHelpProviderInput chinput = (ContextHelpProviderInput) input;
-			handleActivation(chinput.getProvider(), chinput.getControl(), chinput.getPart());
+			if (chinput.getContext()!=null)
+				handleActivation(chinput.getContext(), chinput.getControl(), chinput.getPart());
+			else
+				handleActivation(chinput.getProvider(), chinput.getControl(), chinput.getPart());
 			return true;
 		}
 		return false;

@@ -12,6 +12,7 @@ package org.eclipse.help.ui.internal;
 
 import org.eclipse.help.*;
 import org.eclipse.help.internal.base.*;
+import org.eclipse.help.ui.internal.views.HelpView;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -83,7 +84,11 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
 				try {
-					page.showView(HELP_VIEW_ID);
+					IViewPart part = page.showView(HELP_VIEW_ID);
+					if (part!=null) {
+						HelpView view = (HelpView)part;
+						view.displayContext(context);
+					}
 					return;
 				} catch (PartInitException e) {
 					// ignore the exception and let
