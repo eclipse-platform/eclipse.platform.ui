@@ -48,7 +48,13 @@ public XmlLiteStore() {
 public File createFile(URL url) throws XmlLiteException {
 
 	String strFilespec = url.getFile();
-	strFilespec = strFilespec.replace('/', File.separatorChar).substring(1);
+	int k = strFilespec.indexOf(UMEclipseTree.DEVICE_SEPARATOR);
+	if (k != -1) {		// we're on windoze
+		strFilespec = strFilespec.replace('/', File.separatorChar).substring(1);
+	} else {
+		strFilespec = strFilespec.replace('/', File.separatorChar).substring(0);
+	}
+
 
 	File file = new File(strFilespec);
 	boolean bExists = file.exists();

@@ -23,23 +23,29 @@ public class LaunchInfo implements IInstallInfo {
 	private URL baseurl;
 	private Properties props;
 	private String id;
+	private String nextId;
 	private String platform;
 	private String app;
 	private String appconfig;
 	private ArrayList configs;
 	private ArrayList configsInact;
+	private ArrayList configsPendingDelete;
 	private ArrayList comps;
 	private ArrayList compsInact;
 	private ArrayList compsDang;
+	private ArrayList compsPendingDelete;
 	private ArrayList plugins;
 	private ArrayList pluginsInact;
 	private ArrayList pluginsUnmgd;
+	private ArrayList pluginsPendingDelete;
 	private ArrayList fragments;
 	private ArrayList fragmentsInact;
 	private ArrayList fragmentsUnmgd;
+	private ArrayList fragmentsPendingDelete;
 	private ArrayList status;
 	private int historyCount;
-	private boolean changed = false;
+	private ArrayList historyPendingDelete;
+	private boolean newHistory = false;
 
 	private static final String CONFIGSDIR = "configurations/";
 	private static final String COMPSDIR = "components/";
@@ -54,6 +60,8 @@ public class LaunchInfo implements IInstallInfo {
 	private static final String LAUNCH_PROFILE_NAME = "update";
 	private static final String LAUNCH_PROFILE_EXT = "cfg";
 	private static final String LAUNCH_PROFILE = LAUNCH_PROFILE_NAME+"."+LAUNCH_PROFILE_EXT;
+	private static final String LAUNCH_PROFILE_CHKPT = "_" + LAUNCH_PROFILE;
+	private static final String LAUNCH_PROFILE_BAK = "__" + LAUNCH_PROFILE;
 	
 	private static final String ID = "id";
 	private static final String PLATFORM = "runtime";
@@ -61,16 +69,21 @@ public class LaunchInfo implements IInstallInfo {
 	private static final String APP_CONFIG = "application.configuration";
 	private static final String CONFIG_ACT = "configurations.active";
 	private static final String CONFIG_INACT = "configurations.inactive";
+	private static final String CONFIG_PENDDEL = "configurations.delete";
 	private static final String COMP_ACT = "components.active";
 	private static final String COMP_INACT = "components.inactive";
 	private static final String COMP_DANG = "components.dangling";
+	private static final String COMP_PENDDEL = "components.delete";
 	private static final String PLUGIN_ACT = "plugins.active";
 	private static final String PLUGIN_INACT = "plugins.inactive";
 	private static final String PLUGIN_UNMGD = "plugins.unmanaged";
+	private static final String PLUGIN_PENDDEL = "plugins.delete";
 	private static final String FRAG_ACT = "fragments.active";
 	private static final String FRAG_INACT = "fragments.inactive";
 	private static final String FRAG_UNMGD = "fragments.unmanaged";
+	private static final String FRAG_PENDDEL = "fragments.delete";
 	private static final String HISTORY_COUNT = "history.count";
+	private static final String HISTORY_PENDDEL = "history.delete";
 	private static final String EOF = "eof";
 	private static final String EOF_MARKER = EOF+"="+EOF;
 	private static final int LIST_SIZE = 10;
@@ -97,10 +110,14 @@ public class LaunchInfo implements IInstallInfo {
 		private URL url;
 		private Date date;
 
-		
 		public History(URL url,Date date) {
 			this.url = url;
 			this.date = date;
+		}
+		
+		public History(URL url,String id) {
+			this.url = url;
+			this.date = id==null ? null : new Date(Long.parseLong(id,Character.MAX_RADIX));
 		}
 
 		public String toString() {
@@ -118,6 +135,16 @@ public class LaunchInfo implements IInstallInfo {
 			*  Return history profile creation date, or null (if curent profile)
 			*/
 			return date;
+		}
+
+		public String getIdentifier() {
+			/**
+			*  Return history profile creation date, or null (if curent profile)
+			*/
+			if (date==null)
+				return null;
+			else
+				return Long.toString(date.getTime(),Character.MAX_RADIX);
 		}
 
 		public boolean isCurrent() {
@@ -197,6 +224,10 @@ public class LaunchInfo implements IInstallInfo {
 		}
 	}
 
+	public static interface ListSelector {
+		public List get(LaunchInfo info);
+	}
+
 private LaunchInfo() {}
 
 private LaunchInfo(URL info) {
@@ -229,21 +260,26 @@ private LaunchInfo(URL info, URL install) {
 		catch (Exception e) {
 			historyCount = DEFAULT_HISTORY_COUNT;
 		}
+		historyPendingDelete = loadListProperty(HISTORY_PENDDEL, String.class);
 		
 		configs = loadListProperty(CONFIG_ACT);
 		configsInact = loadListProperty(CONFIG_INACT);
+		configsPendingDelete = loadListProperty(CONFIG_PENDDEL);
 		
 		comps = loadListProperty(COMP_ACT);
 		compsInact = loadListProperty(COMP_INACT);
 		compsDang = loadListProperty(COMP_DANG);
+		compsPendingDelete = loadListProperty(COMP_PENDDEL);
 	
 		plugins = loadListProperty(PLUGIN_ACT);
 		pluginsInact = loadListProperty(PLUGIN_INACT);
 		pluginsUnmgd = new ArrayList();
+		pluginsPendingDelete = loadListProperty(PLUGIN_PENDDEL);
 	
 		fragments = loadListProperty(FRAG_ACT);
 		fragmentsInact = loadListProperty(FRAG_INACT);
 		fragmentsUnmgd = new ArrayList();
+		fragmentsPendingDelete = loadListProperty(FRAG_PENDDEL);
 	}
 	catch(IOException e) {
 		setDefaults();
@@ -274,7 +310,35 @@ public void addStatus(Status status) {
 	this.status.add(status);
 }
 
-private VersionedIdentifier[] computeDelta(String[] list, List active, List inactive) {
+synchronized private boolean checkpoint() {
+	if (baseurl==null || !isFileProtocol(baseurl)) return false;
+	if (this!=LaunchInfo.getCurrent()) return false;
+
+	File active = new File(baseurl.getFile().replace('/', File.separatorChar));
+	File dir = active.getParentFile();
+	if (dir==null) return false; // cannot save
+	dir.mkdirs();		
+	File chkpt = new File(dir,LAUNCH_PROFILE_CHKPT);
+
+	// write temp state
+	PrintWriter os = null;
+	try {
+		os = new PrintWriter(new FileOutputStream(chkpt));
+		write(getIdentifier(), os);
+	}
+	catch(IOException e) {
+		return false;
+	}
+	finally {
+		if (os!=null) os.close();
+	}
+	return true;	
+}
+
+public void checkUpdateEnabled() {
+}
+
+private VersionedIdentifier[] computeDelta(String[] list, List active, List inactive, List pendingDelete) {
 	if (active == null)
 		active = new ArrayList();
 	if (inactive == null)
@@ -284,7 +348,7 @@ private VersionedIdentifier[] computeDelta(String[] list, List active, List inac
 	for (int i = 0; i < list.length; i++) {
 		try {
 			vid = new VersionedIdentifier(list[i]);
-			if (!active.contains(vid) && !inactive.contains(vid))
+			if (!active.contains(vid) && !inactive.contains(vid) && !pendingDelete.contains(vid))
 				delta.add(vid);
 		}
 		catch(Exception e) { /* skip bad identifiers */ }
@@ -305,7 +369,7 @@ private static void debug(String s) {
 
 synchronized public void flush() {
 	
-	if (!changed) return;
+//	if (!changed) return;
 	if (baseurl==null || !isFileProtocol(baseurl)) return;
 	if (this!=LaunchInfo.getCurrent()) return;
 	
@@ -314,7 +378,7 @@ synchronized public void flush() {
 	// is closed
 
 	// perform cleanup sweep
-//	uninstall();
+	uninstall();
 }
 
 synchronized private VersionedIdentifier[] get(List list) {
@@ -429,8 +493,10 @@ public int getHistoryCount() {
 }
 
 public String getIdentifier() {
-
-	return id;	
+	if (newHistory)
+		return nextId;
+	else
+		return id;	
 }
 /**
  * @see ILaunchInfo#getInstalledComponentIdentifiers
@@ -460,13 +526,13 @@ public String[] getInstalledConfigurationIdentifiers() {
  
 public History[] getLaunchInfoHistory() {
 	
-	if (baseurl==null || !isFileProtocol(baseurl)) return new History[] { new History(baseurl,null) };
+	if (baseurl==null || !isFileProtocol(baseurl)) return new History[] { new History(baseurl,(Date)null) };
 	
 	File dir = (new File(baseurl.getFile().replace('/',File.separatorChar))).getParentFile();
 	String[] list = null;
 	if (dir != null)
 		list = dir.list();
-	if (list==null) return new History[] { new History(baseurl,null) };
+	if (list==null) return new History[] { new History(baseurl,(Date)null) };
 
 	Arrays.sort(list);
 	ArrayList result = new ArrayList();
@@ -475,18 +541,19 @@ public History[] getLaunchInfoHistory() {
 		if (list[i].startsWith(LAUNCH_PROFILE_NAME) && list[i].endsWith(LAUNCH_PROFILE_EXT)) {
 			String time = list[i].substring(LAUNCH_PROFILE_NAME.length(),list[i].length()-LAUNCH_PROFILE_EXT.length()-1);
 			Date date = null;
-			if (time.length()>0) {
-				time = time.substring(1);
-				date = new Date(Long.parseLong(time,Character.MAX_RADIX));
-			}
 			try {
+				if (time.length()>0) {
+					time = time.substring(1);
+					date = new Date(Long.parseLong(time,Character.MAX_RADIX));
+				}
 				URL url = new URL(baseurl,list[i]);
 				if (time.length()>0)
 					result.add(new History(url,date));
 				else
-					current = new History(url,null);
+					current = new History(url,(Date)null);
 			}
 			catch(MalformedURLException e) {}
+			catch(NumberFormatException e) {}
 		}
 	}
 
@@ -572,31 +639,41 @@ private boolean isFileProtocol(URL u) {
 	return URL_FILE.equals(u.getProtocol()) || URL_VA.equals(u.getProtocol());
 
 }
+public boolean isUpdateEnabled() {
+	return true;
+}
 
 private ArrayList loadListProperty(String name) {
+	return loadListProperty(name,VersionedIdentifier.class);
+}
+
+private ArrayList loadListProperty(String name, Class type) {
 
 	ArrayList list = new ArrayList();
 	String value = (String) props.get(name+".0");
 	for (int i=1; value != null; i++) {
-		loadListPropertyEntry(list, value);
+		loadListPropertyEntry(list, value, type);
 		value = (String) props.get(name+"."+i);
 	}
 	return list;
 }
 
-private void loadListPropertyEntry(List list, String value) {
+private void loadListPropertyEntry(List list, String value, Class type) {
 
 	if (value==null) return;
 	
 	StringTokenizer tokens = new StringTokenizer(value, ",");
 	String token;
-	VersionedIdentifier vid;
+	Object o;
 	while (tokens.hasMoreTokens()) {
 		token = tokens.nextToken().trim();
 		if (!token.equals("")) {
 			try {
-				vid = new VersionedIdentifier(token);
-				list.add(vid);
+				if (type.equals(VersionedIdentifier.class))
+					o = new VersionedIdentifier(token);
+				else 
+					o = token;
+				list.add(o);
 			}
 			catch (Exception e) { /* skip bad entry */ }
 		}
@@ -615,7 +692,7 @@ private static String[] processCommandLine(String[] args) throws Exception {
 
 synchronized private void remove(VersionedIdentifier id, List active, List inactive) {
 	if (active.contains(id)) {
-		changed = true;
+		setNewHistory();
 		active.remove(id);
 		if (!inactive.contains(id))
 			inactive.add(id);
@@ -653,21 +730,22 @@ synchronized public void revertTo(History history) {
 	ArrayList newFragmentsInact = revertToInactive(fragments, fragmentsInact, old.fragments, old.fragmentsInact);
 	
 	// update current state
-	changed = true;
+	setNewHistory();
 	platform = old.platform;
 	app = old.app;
 	appconfig = old.appconfig;
-	// keep historyCount from current
+	// historyCount = historyCount; // keep current historyCount
 	configs = old.configs;
 	configsInact = newConfigsInact;
 	comps = old.comps;
 	compsInact = newCompsInact;
+	// compsDang = compsDang; // keep compsDang from current
 	plugins = old.plugins;
 	pluginsInact = newPluginsInact;
-	pluginsUnmgd = new ArrayList();
+	// pluginsUnmgd = pluginsUnmgd; // keep pluginsUnmgd from current
 	fragments = old.fragments;
 	fragmentsInact = newFragmentsInact;
-	fragmentsUnmgd = new ArrayList();
+	// fragmentsUnmgd = fragmentsUnmgd; // keep fragmentsUnmgd from current
 	
 }
 
@@ -729,17 +807,17 @@ synchronized private void set(VersionedIdentifier id, List active, List inactive
 			if (!inactive.contains(vid))
 				inactive.add(vid);
 			inactive.remove(id);
-			changed = true;
+			setNewHistory();
 			return;
 		}
 	}
 	active.add(id); // did not exist ... add it
-	changed = true;
+	setNewHistory();
 }
 
 public void setApplication(String app) {
 	if (this.app!=null && !this.app.equals(app)) {
-		changed = true;
+		setNewHistory();
 		if (app!=null) this.app = app;
 		else this.app = DEFAULT_APP;
 	}
@@ -750,7 +828,7 @@ public void setApplication(String app) {
  */	
 public void setApplicationConfiguration(String appconfig) {
 	if (this.appconfig!=null && !this.appconfig.equals(appconfig)) {
-		changed = true;
+		setNewHistory();
 		if (appconfig!=null) this.appconfig = appconfig;
 		else this.appconfig = DEFAULT_APP_CONFIG;
 	}
@@ -796,27 +874,32 @@ private void setDefaultRuntime() {
 }
 
 private void setDefaults() {
-	changed = true; // force save on shutdown
+	setNewHistory(); // force save on shutdown
 	id = Long.toString((new java.util.Date()).getTime(),Character.MAX_RADIX);
 	platform = DEFAULT_PLATFORM;
 	app = DEFAULT_APP;
 	appconfig = DEFAULT_APP_CONFIG;
-	historyCount = DEFAULT_HISTORY_COUNT;
+	historyCount = DEFAULT_HISTORY_COUNT;	
+	historyPendingDelete = new ArrayList();
 	
 	configs = new ArrayList();
 	configsInact = new ArrayList();
+	configsPendingDelete = new ArrayList();
 	
 	comps = new ArrayList();
 	compsInact = new ArrayList();
 	compsDang = new ArrayList();
+	compsPendingDelete = new ArrayList();
 	
 	plugins = new ArrayList();
 	pluginsInact = new ArrayList();
 	pluginsUnmgd = new ArrayList();
+	pluginsPendingDelete = new ArrayList();
 	
 	fragments = new ArrayList();
 	fragmentsInact = new ArrayList();
 	fragmentsUnmgd = new ArrayList();
+	fragmentsPendingDelete = new ArrayList();
 }
 
 public void setFragment(VersionedIdentifier fragment) {
@@ -825,7 +908,6 @@ public void setFragment(VersionedIdentifier fragment) {
 
 public void setHistoryCount(int count) {
 
-	changed = true;
 	if (count<=0)
 		historyCount = DEFAULT_HISTORY_COUNT;
 	else
@@ -834,11 +916,48 @@ public void setHistoryCount(int count) {
 /**
  * This method is called by the BootUpdateManager with a list of
  * configurations, components, plugins and fragments that could not
- * be installer (after they were discovered). If these items
+ * be installed (after they were discovered). If these items
  * do not exist on an active or inactive list already, they are added
  * to the corresponding inactive list.
  */
-synchronized public void setInactive(VersionedIdentifier[] configId, VersionedIdentifier[] compId, VersionedIdentifier[] pluginId, VersionedIdentifier[] fragId) {
+synchronized public void setInactive(
+	VersionedIdentifier[] configId,
+	VersionedIdentifier[] compId,
+	VersionedIdentifier[] pluginId,
+	VersionedIdentifier[] fragId) {
+
+	VersionedIdentifier vid;
+
+	for (int i = 0; configId != null && i < configId.length; i++) {
+	    vid = (VersionedIdentifier) configId[i];
+	    configs.remove(vid);
+	    if (!configsInact.contains(vid)) configsInact.add(vid);
+	}
+	
+	for (int i = 0; compId != null && i < compId.length; i++) {
+	    vid = (VersionedIdentifier) compId[i];
+	    comps.remove(vid);
+	    if (!compsInact.contains(vid)) compsInact.add(vid);
+	}
+	
+	for (int i = 0; pluginId != null && i < pluginId.length; i++) {
+	    vid = (VersionedIdentifier) pluginId[i];
+	    plugins.remove(vid);
+	    if (!pluginsInact.contains(vid)) pluginsInact.add(vid);
+	}
+	
+	for (int i = 0; fragId != null && i < fragId.length; i++) {
+	    vid = (VersionedIdentifier) fragId[i];
+	    fragments.remove(vid);
+	    if (!fragmentsInact.contains(vid)) fragmentsInact.add(vid);
+	}
+}
+
+private void setNewHistory() {
+	if (newHistory)
+		return;
+	nextId = Long.toString((new java.util.Date()).getTime(),Character.MAX_RADIX);
+	newHistory = true;
 }
 
 public void setPlugin(VersionedIdentifier plugin) {
@@ -854,7 +973,7 @@ public void setPlugin(VersionedIdentifier plugin) {
  */	
 public void setRuntime(String platform) {
 	if (this.platform!=null && !this.platform.equals(platform)) {
-		changed = true;
+		setNewHistory();
 		if (platform!=null) this.platform = platform;
 		else this.platform = DEFAULT_PLATFORM;
 	}
@@ -881,6 +1000,12 @@ static void startup(URL base) {
 			profile.setDefaults();
 		}
 
+		// check if update will be enabled
+		profile.checkUpdateEnabled();
+
+		// check for pending deletes
+		profile.uninstallPendingDelete();
+
 		// detect changes from last startup
 		if (profile.isFileProtocol(base)) {
 			String path;
@@ -905,7 +1030,7 @@ static void startup(URL base) {
 				configDelta = new VersionedIdentifier[0];
 			else {
 				profile.synchConfigurations(list);
-				configDelta = profile.computeDelta(list, profile.configs, profile.configsInact);
+				configDelta = profile.computeDelta(list, profile.configs, profile.configsInact, profile.configsPendingDelete);
 			}
 
 			// look for components	
@@ -919,7 +1044,7 @@ static void startup(URL base) {
 				compDelta = new VersionedIdentifier[0];
 			else {
 				profile.synchComponents(list);
-				compDelta = profile.computeDelta(list, profile.comps, profile.compsInact);
+				compDelta = profile.computeDelta(list, profile.comps, profile.compsInact, profile.compsPendingDelete);
 			}
 
 			// complete "installation" of new configurations and components	
@@ -937,7 +1062,7 @@ static void startup(URL base) {
 				pluginDelta = new VersionedIdentifier[0];
 			else {
 				profile.synchPlugins(list);
-				pluginDelta = profile.computeDelta(list, profile.plugins, profile.pluginsInact);
+				pluginDelta = profile.computeDelta(list, profile.plugins, profile.pluginsInact, profile.pluginsPendingDelete);
 			}
 			for (int i=0; i<pluginDelta.length; i++)
 				profile.pluginsUnmgd.add(pluginDelta[i]);
@@ -953,7 +1078,7 @@ static void startup(URL base) {
 				fragmentDelta = new VersionedIdentifier[0];
 			else {
 				profile.synchFragments(list);
-				fragmentDelta = profile.computeDelta(list, profile.fragments, profile.fragmentsInact);
+				fragmentDelta = profile.computeDelta(list, profile.fragments, profile.fragmentsInact, profile.fragmentsPendingDelete);
 			}
 			for (int i=0; i<fragmentDelta.length; i++)
 				profile.fragmentsUnmgd.add(fragmentDelta[i]);
@@ -963,44 +1088,65 @@ static void startup(URL base) {
 				profile.setDefaultRuntime();
 			}
 
-			// flush the state to disk
-			profile.flush();
+			// try to see if we need to do cleanup pass
+			if (profile.newHistory)
+				profile.checkpoint();
+			profile.uninstall();
 		}
 	}
 }
 
 synchronized private void store() throws IOException {
-	if (!changed) return;
 	if (baseurl==null || !isFileProtocol(baseurl)) return;
+	if (this!=LaunchInfo.getCurrent()) return;
 
 	File active = new File(baseurl.getFile().replace('/', File.separatorChar));
 	File dir = active.getParentFile();
 	if (dir==null) return; // cannot save
 	dir.mkdirs();
+	File chkpt = new File(dir,LAUNCH_PROFILE_CHKPT);
+	File bak = new File(dir,LAUNCH_PROFILE_BAK);
 
-	String newId;
-	if (active.exists()) {
-		newId = Long.toString((new java.util.Date()).getTime(),Character.MAX_RADIX); // id for new file
-		String suffix = getIdentifier(); // id for history
-		File history = new File(dir,LAUNCH_PROFILE_NAME+"_"+suffix+"."+LAUNCH_PROFILE_EXT);
-		active.renameTo(history);
+	// write out temp state
+	if (!checkpoint())
+		return;	
+
+	// check to see if we need to clone history
+	if (newHistory) {
+		if (active.exists()) {
+			String suffix = this.id; // id for history
+			File history = new File(dir,LAUNCH_PROFILE_NAME+"_"+suffix+"."+LAUNCH_PROFILE_EXT);
+			if (history.exists()) {
+				if (!history.delete())
+					return;
+			}
+			if (!active.renameTo(history))
+				return; 
+		}
 	}
-	else newId = getIdentifier(); // use id generated on startup
+	else {
+		if (bak.exists()) {
+			if (!bak.delete())
+				return;
+		}
+		if (!active.renameTo(bak))
+			return;
+	}
 
+	// activate new state
+	if (!chkpt.renameTo(active))
+		return;
+	bak.delete();
+
+	// write out launcher summary
 	File summary = new File(dir,LAUNCH_SUMMARY);
-	PrintWriter os = null;
 	PrintWriter sum = null;
 	try {
-		// write state
-		os = new PrintWriter(new FileOutputStream(active));
-		write(newId, os);
-
 		// write summary
 		sum = new PrintWriter(new FileOutputStream(summary));
-		writeSummary(newId, sum);
+		writeSummary(getIdentifier(), sum);
 	}
 	finally {
-		if (os!=null) os.close();
 		if (sum!=null) sum.close();
 	}
 }
@@ -1059,21 +1205,18 @@ private void synchPlugins(String[] dirlist) {
 
 public static void todo() {
 /*
-	* uninstallMarkForDeletion is getting dups, flush() not activated
+	* delta computation ... ignore pendingDelete, compute additions, deletions
 	*
-	* computeAdditions, computeDeletions instead of computeDelta, cleanup all lists wrt file state
-	*    (active, inactive, unmanaged, dangling, pendingdelete, ...)
+	* launchInfo should not do discovery/etc in a R/O install tree (only read the profile and go, must include unmanaged items)
+	*    also should have a mechanism for detecting update in flight (? ... only rewriting the profile)
 	*
-	* setInactive implementation (failed install after discovery)
-	*
-	* flush() ... trigger cleanup sweep (old histories, unused directories). Called after any change in UI
-	*
-	* detecting bad failure and recovering from it
-	*
+	* detecting bad failure and recovering from it	*
 	* need to hook in error recovery that recomputes all from scratch (when I can't trust state)
 	* ... but how do we know which plugins comps should be inactive vs. be reinstalled?
 	*
 	* batch uninstall
+	*
+	* time stamps on debug(), not on debugDetail()
 	*
 	* "reliability" sweep ... handling hard errors at critical points in processing
 	*    - harden state on flush (but only create new history on shutdown)
@@ -1084,56 +1227,115 @@ public static void todo() {
 	*    - startup - no state (recompute from scratch)
 */
 }
-
 synchronized public void uninstall() {
+
+	// do history-based deletion sweep
 	
-	if (baseurl==null || !isFileProtocol(baseurl)) return;
-	if (this!=LaunchInfo.getCurrent()) return;
-	
-	History [] history = getLaunchInfoHistory();
-	if (history.length <= historyCount) return;
+	if (baseurl == null || !isFileProtocol(baseurl))
+		return;
+	if (this != LaunchInfo.getCurrent())
+		return;
+
+	History[] history = getLaunchInfoHistory();
+	if (history.length <= (historyCount + 1))
+		return;
 
 	// poof up launch info objects
 	LaunchInfo[] historyInfo = new LaunchInfo[history.length];
-	for (int i=0; i<history.length; i++) {
+	for (int i = 0; i < history.length; i++) {
 		if (history[i].isCurrent())
 			historyInfo[i] = LaunchInfo.getCurrent();
-		else 
+		else
 			historyInfo[i] = new LaunchInfo(history[i]);
 	}
 
 	// determine list of deletion candidates
-	Set candidateConfigs = new HashSet();
-	Set candidateComps = new HashSet();
-	Set candidatePlugins = new HashSet();
-	Set candidateFragments = new HashSet();
+	List candidateConfigs = new ArrayList();
+	List candidateComps = new ArrayList();
+	List candidatePlugins = new ArrayList();
+	List candidateFragments = new ArrayList();
 
-	for (int i=0; i<(history.length-historyCount); i++) {
-		uninstallGetCandidates(candidateConfigs, historyInfo[i].configs, historyInfo[i].configsInact);
-		uninstallGetCandidates(candidateComps, historyInfo[i].comps, historyInfo[i].compsInact);
-		uninstallGetCandidates(candidatePlugins, historyInfo[i].plugins, historyInfo[i].pluginsInact);
-		uninstallGetCandidates(candidateFragments, historyInfo[i].fragments, historyInfo[i].fragmentsInact);
+	for (int i = 0; i < (history.length - (historyCount + 1)); i++) {
+		uninstallGetCandidates(
+			candidateConfigs,
+			historyInfo[i].configs,
+			historyInfo[i].configsInact);
+		uninstallGetCandidates(
+			candidateComps,
+			historyInfo[i].comps,
+			historyInfo[i].compsInact);
+		uninstallGetCandidates(
+			candidatePlugins,
+			historyInfo[i].plugins,
+			historyInfo[i].pluginsInact);
+		uninstallGetCandidates(
+			candidateFragments,
+			historyInfo[i].fragments,
+			historyInfo[i].fragmentsInact);
 	}
 
 	// determine which candidates are not active in recent histories
-	List deleteConfigs = uninstallMarkForDeletion(candidateConfigs, historyInfo);
-	List deleteComps = uninstallMarkForDeletion(candidateComps, historyInfo);
-	List deletePlugins = uninstallMarkForDeletion(candidatePlugins, historyInfo);
-	List deleteFragments = uninstallMarkForDeletion(candidateFragments, historyInfo);
+	List deleteConfigs =
+		uninstallMarkForDeletion(candidateConfigs, historyInfo, new ListSelector() {
+		public List get(LaunchInfo i) {
+			return i.configs;
+		}
+	});
+	List deleteComps =
+		uninstallMarkForDeletion(candidateComps, historyInfo, new ListSelector() {
+		public List get(LaunchInfo i) {
+			return i.comps;
+		}
+	});
+	List deletePlugins =
+		uninstallMarkForDeletion(candidatePlugins, historyInfo, new ListSelector() {
+		public List get(LaunchInfo i) {
+			return i.plugins;
+		}
+	});
+	List deleteFragments =
+		uninstallMarkForDeletion(candidateFragments, historyInfo, new ListSelector() {
+		public List get(LaunchInfo i) {
+			return i.fragments;
+		}
+	});
+		
+	if (deleteConfigs.size() <= 0
+		&& deleteComps.size() <= 0
+		&& deletePlugins.size() <= 0
+		&& deleteFragments.size() <= 0)
+		return;
 
-	// uninstall files
+	// update state prior to deletion and harden it
+	uninstallPendingDelete(deleteConfigs, configsInact, configsPendingDelete);
+	uninstallPendingDelete(deleteComps, compsInact, compsPendingDelete);
+	uninstallPendingDelete(deletePlugins, pluginsInact, pluginsPendingDelete);
+	uninstallPendingDelete(deleteFragments, fragmentsInact, fragmentsPendingDelete);
+	uninstallPendingDelete(history);
+	if (!checkpoint())
+		return;
+
+	// delete files
+	uninstall(history, 0, history.length - (historyCount + 1));
 	uninstall(deleteConfigs, deleteComps, deletePlugins, deleteFragments);
-	for (int i=0; i<(history.length-historyCount); i++) {
-		if (history[i].isCurrent()) continue; // just in case
-		if (DEBUG) debug("Removing state "+history[i].getLaunchInfoDate().toString());
-		File info = new File(history[i].getLaunchInfoURL().getFile().replace('/',File.separatorChar));
-		boolean ok = info.delete();
+	checkpoint();
+}
+
+private synchronized void uninstall(History[] history, int from, int to) {
+	for (int i = from; i < to; i++) {
+		if (history[i].isCurrent())
+			continue; // just in case
 		if (DEBUG)
-			debug((ok?"Unistalled ":"Unable to uninstall ")+info.toString());
+			debug("Removing history " + history[i].getIdentifier() + " [" + history[i].getLaunchInfoDate().toString() + "]");
+		File info =
+			new File(
+				history[i].getLaunchInfoURL().getFile().replace('/', File.separatorChar));
+		if (!info.exists() || uninstall(info))
+			historyPendingDelete.remove(history[i].getIdentifier());
 	}
 }
 
-private void uninstall(File f) {
+private boolean uninstall(File f) {
 
 	if (f.isDirectory()) {
 		File[] list = f.listFiles();
@@ -1146,6 +1348,7 @@ private void uninstall(File f) {
 	boolean ok = f.delete();
 	if (DEBUG)
 		debug((ok?"Unistalled ":"Unable to uninstall ")+f.toString());
+	return ok;
 }
 
 synchronized private void uninstall(List configId, List compId, List pluginId, List fragId) {
@@ -1160,51 +1363,108 @@ synchronized private void uninstall(List configId, List compId, List pluginId, L
 	for (int i=0; i<configId.size(); i++) {
 		if (DEBUG) debug("Removing configuration "+configId.get(i).toString());
 		dir = new File(root+INSTALL_INFO_DIR+CONFIGSDIR+configId.get(i).toString()+File.separator);
-		uninstall(dir);
+		if (!dir.exists() || uninstall(dir))
+			configsPendingDelete.remove(configId.get(i));		
 	}
 
 	// unistall components
 	for (int i=0; i<compId.size(); i++) {
 		if (DEBUG) debug("Removing component "+compId.get(i).toString());
 		dir = new File(root+INSTALL_INFO_DIR+COMPSDIR+compId.get(i).toString()+File.separator);
-		uninstall(dir);
+		if (!dir.exists() || uninstall(dir))
+			compsPendingDelete.remove(compId.get(i));
 	}
 
 	// uninstall plugins
 	for (int i=0; i<pluginId.size(); i++) {
 		if (DEBUG) debug("Removing plugin "+pluginId.get(i).toString());
 		dir = new File(root+PLUGINSDIR+pluginId.get(i).toString()+File.separator);
-		uninstall(dir);
+		if (!dir.exists() || uninstall(dir))
+			pluginsPendingDelete.remove(pluginId.get(i));
 	}
 
 	// uninstall fragments
 	for (int i=0; i<fragId.size(); i++) {
 		if (DEBUG) debug("Removing fragment "+fragId.get(i).toString());
 		dir = new File(root+FRAGMENTSDIR+fragId.get(i).toString()+File.separator);
-		uninstall(dir);
+		if (!dir.exists() || uninstall(dir))
+			fragmentsPendingDelete.remove(fragId.get(i));
 	}
 }
 
-private void uninstallGetCandidates(Set candidates, List active, List inactive) {
-	candidates.addAll(active);
-	candidates.addAll(inactive);
+private void uninstallGetCandidates(List candidates, List active, List inactive) {
+	for (int i=0; i<active.size(); i++) {
+		if (!candidates.contains(active.get(i)))
+			candidates.add(active.get(i));
+	}
+	for (int i=0; i<inactive.size(); i++) {
+		if (!candidates.contains(inactive.get(i)))
+			candidates.add(inactive.get(i));
+	}
 }
 
-private List uninstallMarkForDeletion(Set candidates, LaunchInfo[] history) {
+private List uninstallMarkForDeletion(List candidates, LaunchInfo[] history, ListSelector active) {
 	List delete = new ArrayList();
 	Iterator list = candidates.iterator();
 	while(list.hasNext()) {
 		boolean found = false;
 		VersionedIdentifier vid = (VersionedIdentifier) list.next();
-		for (int i=historyCount; i<history.length; i++) {
-			if (history[i].configs.contains(vid)) {
+		for (int i=history.length-(historyCount+1); i<history.length; i++) {
+			if (active.get(history[i]).contains(vid)) {
 				found = true;
 				break;
 			}
 		}
-		if (!found) delete.add(vid); // needs to be a set
+		if (!found) delete.add(vid);
 	}
 	return delete;
+}
+private synchronized void uninstallPendingDelete() {
+
+	if (installurl != null && historyPendingDelete.size() > 0) {
+		ArrayList history = new ArrayList();
+		for (int i=0; i<historyPendingDelete.size(); i++) {
+			String id = (String) historyPendingDelete.get(i);
+			URL prof;
+			try {
+				prof = new URL(installurl,INSTALL_INFO_DIR+LAUNCH_PROFILE_NAME+"_"+id+"."+LAUNCH_PROFILE_EXT);
+				history.add(new History(prof,id));
+			}
+			catch(MalformedURLException e) {
+			}
+		}
+		History[] historyArray = new History[history.size()];
+		history.toArray(historyArray);
+		uninstall(historyArray, 0, historyArray.length);
+	}
+
+	if (configsPendingDelete.size() > 0
+		|| compsPendingDelete.size() > 0
+		|| pluginsPendingDelete.size() > 0
+		|| fragmentsPendingDelete.size() > 0) {
+	        ArrayList configsToDelete = new ArrayList(configsPendingDelete); // need to clone list
+	        ArrayList compsToDelete = new ArrayList(compsPendingDelete);
+	        ArrayList pluginsToDelete = new ArrayList(pluginsPendingDelete);
+	        ArrayList fragsToDelete = new ArrayList(fragmentsPendingDelete);
+	        uninstall(configsToDelete, compsToDelete, pluginsToDelete, fragsToDelete);
+	}
+}
+
+private void uninstallPendingDelete(History[] history) {	
+	for (int i = 0; i < (history.length - (historyCount + 1)); i++) {
+		String id = history[i].getIdentifier();
+		if (!historyPendingDelete.contains(id))
+			historyPendingDelete.add(id);
+	}
+}
+
+private void uninstallPendingDelete(List delete, List inactive, List pending) {
+	for (int i=0; i< delete.size(); i++) {
+		Object o = delete.get(i);
+		inactive.remove(o);
+		if (!pending.contains(o))
+			pending.add(o);
+	}
 }
 
 synchronized private void write(String id, PrintWriter w) throws IOException {
@@ -1214,18 +1474,23 @@ synchronized private void write(String id, PrintWriter w) throws IOException {
 		w.println(APP+"="+app);
 		w.println(APP_CONFIG+"="+appconfig);
 		w.println(HISTORY_COUNT+"="+Integer.toString(historyCount));
+		writeList(w, historyPendingDelete, HISTORY_PENDDEL);
 		
 		writeList(w, configs, CONFIG_ACT);
 		writeList(w, configsInact, CONFIG_INACT);
+		writeList(w, configsPendingDelete, CONFIG_PENDDEL);
 		writeList(w, comps, COMP_ACT);
 		writeList(w, compsInact, COMP_INACT);
 		writeList(w, compsDang, COMP_DANG);
+		writeList(w, compsPendingDelete, COMP_PENDDEL);
 		writeList(w, plugins, PLUGIN_ACT);
 		writeList(w, pluginsInact, PLUGIN_INACT);
 		writeList(w, pluginsUnmgd, PLUGIN_UNMGD);
+		writeList(w, pluginsPendingDelete, PLUGIN_PENDDEL);
 		writeList(w, fragments, FRAG_ACT);
 		writeList(w, fragmentsInact, FRAG_INACT);
 		writeList(w, fragmentsUnmgd, FRAG_UNMGD);
+		writeList(w, fragmentsPendingDelete, FRAG_PENDDEL);
 
 		w.println(EOF_MARKER);
 }

@@ -21,13 +21,11 @@ public interface IManifestAttributes {
 	public static final String DISCOVERY_URL = "discovery";
 	
 	public static final String PLUGIN = "plugin";
-	public static final String PLUGIN_DIR = "plugins";
 	public static final String PLUGIN_NAME = "label";
 	public static final String PLUGIN_ID = "id";
 	public static final String PLUGIN_VERSION = "version";
 
 	public static final String FRAGMENT = "fragment";
-	public static final String FRAGMENT_DIR = "fragments";
 	public static final String FRAGMENT_NAME = "label";
 	public static final String FRAGMENT_ID = "id";
 	public static final String FRAGMENT_VERSION = "version";
@@ -38,7 +36,6 @@ public interface IManifestAttributes {
 	public static final String PRODUCT_ID = "id";
 	public static final String PRODUCT_VERSION = "version";
 	public static final String APPLICATION = "application";
-	public static final String BIN_DIR = "bin";
 
 	public static final String ALLOW_UPGRADE = "allowUpgrade";
 	public static final String OPTIONAL = "optional";

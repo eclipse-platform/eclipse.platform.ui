@@ -71,14 +71,6 @@ public IProductDescriptor[] getContainingProducts();
  */
 public String getDescription();
 /**
- * Returns the name of the directory of this component in install/components
- * The format is compid_version
- *
- *
- * @return the component's directory name in install/components
- */
-public String getDirName();
-/**
  * Returns the URL of this component's jar
  *
  * @return the URL of this component's jar
@@ -184,4 +176,10 @@ public boolean isRemovable(IProductDescriptor containingPrid);
  *   <code>false</code> otherwise
  */
 public boolean isUpdateable();
+/**
+ * Remove the given product from the list of products that
+ * contains this component
+ * @param prod org.eclipse.core.internal.boot.update.IProductDescriptor
+ */
+void removeContainingProduct(IProductDescriptor prod);
 }

@@ -51,8 +51,12 @@ public void addComponentDescriptorToLocal(IComponentDescriptor comp, boolean dan
 	// need to reload the manifest so it'll reflect the state of things as the component
 	// exists relative to the current registry.  Cannot just add the component descriptor
 	// to the current registry
-	ComponentDescriptorModel newComp1 =	fCurrentRegistry._loadComponentManifest(UMEclipseTree.getComponentURL().toString(),comp.getDirName(),fFactory);
-	ComponentDescriptorModel newComp2 = fLocalRegistry._loadComponentManifest(UMEclipseTree.getComponentURL().toString(),comp.getDirName(),fFactory);
+	ComponentDescriptorModel newComp1 = fCurrentRegistry._lookupComponentDescriptor(comp.getUniqueIdentifier(), comp.getVersionStr());
+	if (newComp1 == null) 
+		newComp1 =	fCurrentRegistry._loadComponentManifest(UMEclipseTree.getComponentURL().toString(),comp.getDirName(),fFactory);
+	ComponentDescriptorModel newComp2 = fLocalRegistry._lookupComponentDescriptor(comp.getUniqueIdentifier(), comp.getVersionStr());
+	if (newComp2 == null) 
+		newComp2 =	fLocalRegistry._loadComponentManifest(UMEclipseTree.getComponentURL().toString(),comp.getDirName(),fFactory);
 
 	LaunchInfo.VersionedIdentifier vid = new LaunchInfo.VersionedIdentifier(comp.getUniqueIdentifier(), comp.getVersionStr());
 	if (dangling) {
@@ -95,12 +99,16 @@ public void addComponentDescriptorToLocal(IComponentDescriptor comp, boolean dan
 	
 }
 // add the descriptor to the current and local registries (after successful apply)
-// LINDA - can this be simplified?
+// 
 
 public void addProductDescriptorToLocal(IProductDescriptor prod) {
 
-	fCurrentRegistry._loadProductManifest(UMEclipseTree.getProductURL().toString(),prod.getDirName(),fFactory);
-	fLocalRegistry._loadProductManifest(UMEclipseTree.getProductURL().toString(),prod.getDirName(),fFactory);
+	ProductDescriptorModel existing = fCurrentRegistry._lookupProductDescriptor(prod.getUniqueIdentifier(), prod.getVersionStr());
+	if (existing == null) 
+		fCurrentRegistry._loadProductManifest(UMEclipseTree.getProductURL().toString(),prod.getDirName(),fFactory);
+	existing = fLocalRegistry._lookupProductDescriptor(prod.getUniqueIdentifier(), prod.getVersionStr());		
+	if (existing == null)
+		fLocalRegistry._loadProductManifest(UMEclipseTree.getProductURL().toString(),prod.getDirName(),fFactory);
 	
 }
 private UMRegistry createNewRegistry() {
@@ -242,63 +250,55 @@ private void rehydrateRegistries() {
 	}
 }
 /**
- * Removes the component descriptor with the given identifier
- * and version number from this registry.  If a version number is not specified (null), the latest
- * version of such component will be removed.
- * This will also remove the pluginEntry and FragmentEntry descriptors belonging to
- * this component.
- * Important assumption here is that comp.isRemovable() is called before this is called
+ * Removes the component descriptor from the local and current registry.
  *
- * @param prodId the unique identifier of the component .
- * @param version the version number
+ * Important assumption here is that comp.isRemovable() is called before this is called
  * 
  */
 public void removeComponentDescriptorFromLocal(IComponentDescriptor comp) {
 	removeComponentDescriptorFromLocal(comp, null);
 }
 /**
- * Removes the component descriptor with the given identifier
- * and version number from this registry.  If a version number is not specified (null), the latest
- * version of such component will be removed.
- * This will also remove the pluginEntry and FragmentEntry descriptors belonging to
- * this component.
+ * Removes the component descriptor from the local and current registry.
+ *
  * Important assumption here is that comp.isRemovable() is called before this is called
  *
- * @param prodId the unique identifier of the component .
- * @param version the version number
  * 
  */
 public void removeComponentDescriptorFromLocal(IComponentDescriptor comp, IProductDescriptor prod) {
 
-	// Important: comp.isRemovable() == true   called already
+	// Important: comp.isRemovable(prod) == true   called already
+	if (prod == null) {
+		if (comp.isDanglingComponent()) {
+			LaunchInfo.VersionedIdentifier vid = new LaunchInfo.VersionedIdentifier(comp.getUniqueIdentifier(), comp.getVersionStr());
+			fCurrentRegistry._removeFromDanglingComponentIVPsRel(vid);
+			fLocalRegistry._removeFromDanglingComponentIVPsRel(vid);
+		}
+	} else {		// compEntry, part of a product remove
+		comp.removeContainingProduct(prod);
+	 	if (comp.isDanglingComponent())
+	 		return;
+	 	IProductDescriptor[] prod_list = comp.getContainingProducts();
+	 	if (prod_list.length > 0) 
+	 		return;
+	}
 	fCurrentRegistry._removeFromComponentProxysRel(comp);
-	if (comp.isDanglingComponent())
-		fCurrentRegistry._removeFromDanglingComponentIVPsRel(comp);
-
-	// repeat for local registry
 	fLocalRegistry._removeFromComponentProxysRel(comp);
-	if (comp.isDanglingComponent())
-		fLocalRegistry._removeFromDanglingComponentIVPsRel(comp);
+
+		
 }
 /**
- * Removes the product descriptor with the given product identifier
- * and version number from this registry.  If a version number is not specified (null), the latest
- * version of such product will be removed.
+ * Removes the product descriptor from the ocal and current registries.  
  * This will also remove the componentEntry descriptors that belong to this
  * product.
  * Important assumption here is that prod.isRemovable() is called before this is called
  *
- * @param prodId the unique identifier of the product .
- * @param version the version number
  * 
  */
 public void removeProductDescriptorFromLocal(IProductDescriptor prod) {
 
 	// Important: prod.isRemovable() == true   called already
-	//fCurrentRegistry._removeFromProductProxysRel(prod);
-	// for each compEntry, getComponentDescriptor(), remove prod from containing prod
-	// if comp is danglingComp, continue;
-	// else if comp still has containingprod, continue;
-	// else removeComponentDescriptor() from registry
+	fCurrentRegistry._removeFromProductProxysRel(prod);
+	fLocalRegistry._removeFromProductProxysRel(prod);
 }
 }

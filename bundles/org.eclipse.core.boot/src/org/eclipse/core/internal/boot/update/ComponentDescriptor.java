@@ -427,6 +427,14 @@ public boolean isUpdateable() {
 	}
 	return true;
 }
+/**
+ * Remove the given product from the list of products that
+ * contains this component
+ * @param prod org.eclipse.core.internal.boot.update.IProductDescriptor
+ */
+public void removeContainingProduct(IProductDescriptor prod) {
+	_removeFromContainingProductsRel(prod);
+}
 public String toString() {
 	return getUniqueIdentifier()+VERSION_SEPARATOR_OPEN+getVersionIdentifier().toString()+VERSION_SEPARATOR_CLOSE;
 }

@@ -120,6 +120,15 @@ public static LaunchInfo.Status[] install(LaunchInfo.VersionedIdentifier[] vidCo
 						}
 					}
 				}
+				
+				// Register fragments
+				//-------------------
+				IFragmentEntryDescriptor[] fragmentDescriptors = componentDescriptor.getFragmentEntries();
+
+				for (int j = 0; j < fragmentDescriptors.length; ++j) {
+
+					launchInfo.setFragment(new LaunchInfo.VersionedIdentifier(fragmentDescriptors[j].getUniqueIdentifier(),fragmentDescriptors[j].getVersionStr()));
+				}
 			}
 
 			// Obtain error message string

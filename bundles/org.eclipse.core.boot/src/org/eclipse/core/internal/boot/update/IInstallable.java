@@ -7,6 +7,14 @@ package org.eclipse.core.internal.boot.update;
  */
 public interface IInstallable {
 /**
+ * Returns the name of the directory of this component in install/components
+ * The format is compid_version
+ *
+ *
+ * @return the component's directory name in install/components
+ */
+public String getDirName();
+/**
  * Returns a displayable label (name) for this Product or component.
  * Returns the empty string if no label for this Product or component
  * is specified in its install manifest file.

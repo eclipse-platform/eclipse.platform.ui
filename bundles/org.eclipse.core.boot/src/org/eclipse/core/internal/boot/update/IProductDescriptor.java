@@ -70,14 +70,6 @@ public IComponentEntryDescriptor getComponentEntry(String id);
  */
 public String getDescription();
 /**
- * Returns the name of the directory of this product in .install/.products
- * This is usually made up of prodid_label_version
- *
- *
- * @return the product's directory name in .install/.products
- */
-public String getDirName();
-/**
  * Returns the URL where a download of updates to this Product can be found
  *
  * @return the URL where a download of updates to this Product can be found

@@ -39,7 +39,8 @@ public ComponentDescriptorModel() {
 public void _addToContainingProductsRel(Object o) {
 	
 	if (_containingProducts == null) _containingProducts = new Vector();
-	_containingProducts.addElement(o);
+	if (!_containingProducts.contains(o))
+		_containingProducts.addElement(o);
 	
 }
 public void _addToFragmentEntriesRel(Object o) {

@@ -43,14 +43,6 @@ public IComponentDescriptor getComponentDescriptor() ;
  */
 
 public IProductDescriptor getContainingProduct() ;
-/**
- * Returns the name of the directory of this component entry in install/components
- * The standard format is compid_version
- *
- *
- * @return the component entry's directory name in install/components
- */
-public String getDirName();
 public URL getProdInstallURL() ;
 /**
  * Returns the Registry this component entry belongs to

@@ -20,9 +20,12 @@ public class UMEclipseTree  {
 	public static final String COMPONENTS_DIR = "components";
 	
 	public static final String PLUGINS_DIR = "plugins";
+	public static final String FRAGMENTS_DIR = "fragments";
 	public static final String STAGING_DIR = "staging";
+	public static final String BIN_DIR = "bin";
 
 	public static final String URL_PROTOCOL_FILE = "file";
+	public static final String DEVICE_SEPARATOR = ":";  // assuming windoze only - that we'll not run into dfs
 /**
  * Returns the given URL with a trailing slash appended to it. If the URL
  * already has a trailing slash the URL is returned unchanged.
@@ -201,6 +204,24 @@ public static java.net.URL[] getDirectoriesInChain(URL base, boolean writeable) 
  */
 public static java.net.URL[] getDirectoriesInChain(boolean writeable) {
 	return getDirectoriesInChain(fBaseInstallURL, writeable);
+}
+/**
+ * Returns the path name of the getFile() portion of the url, in platform-specific form
+ *
+ * @return the path name of the getFile() portion of the url, in platform-specific for
+ */
+public static String getFileInPlatformString(URL url) {
+
+	// Convert the URL to a string
+	//----------------------------
+	String strFilespec = url.getFile();
+	int k = strFilespec.indexOf(UMEclipseTree.DEVICE_SEPARATOR);
+	if (k != -1) {		// we're on windoze
+		strFilespec = strFilespec.replace('/', File.separatorChar).substring(1);
+	} else {
+		strFilespec = strFilespec.replace('/', File.separatorChar).substring(0);
+	}
+	return strFilespec;
 }
 /**
  * Returns the install/ directory 
