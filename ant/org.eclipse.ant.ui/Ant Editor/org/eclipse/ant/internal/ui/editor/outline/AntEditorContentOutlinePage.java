@@ -57,7 +57,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInSource;
@@ -454,12 +453,8 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			}
 		});
 		
-		IEditorPart activeEditor= getSite().getPage().getActiveEditor();
-		runTargetImmediately = new AntRunTargetAction(activeEditor, AntRunTargetAction.MODE_IMMEDIATE_EXECUTE);
-		runAnt = new AntRunTargetAction(activeEditor,AntRunTargetAction.MODE_DISPLAY_DIALOG);
-		
-		addPostSelectionChangedListener(runTargetImmediately);
-		addPostSelectionChangedListener(runAnt);
+		runTargetImmediately = new AntRunTargetAction(this, AntRunTargetAction.MODE_IMMEDIATE_EXECUTE);
+		runAnt = new AntRunTargetAction(this, AntRunTargetAction.MODE_DISPLAY_DIALOG);
 	}
 	
 	private void setViewerInput(Object newInput) {
@@ -580,7 +575,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 					XmlElement element= (XmlElement)selected;
 					if ("target".equalsIgnoreCase( element.getName())) { //$NON-NLS-1$
 						return true;                        
-					}	
+					} else if ("project".equalsIgnoreCase( element.getName())) { //$NON-NLS-1$
+						return true;
+					}
 				}
 			}
 		}
