@@ -340,7 +340,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		if (!selectionIter.hasNext()) { 
 			messageString= getStatusLineText(selection);
 		} 
-		AntView.this.getViewSite().getActionBars().getStatusLineManager().setMessage(messageString);
+		getViewSite().getActionBars().getStatusLineManager().setMessage(messageString);
 	}
 	
 	/**
@@ -361,20 +361,22 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			TargetNode target = (TargetNode) node;
 			StringBuffer message= new StringBuffer(AntViewMessages.getString("AntView.Name___1")); //$NON-NLS-1$
 			message.append(target.getName());
+			message.append('\"');
 			String[] depends= target.getDependencies();
 			if (depends.length > 0 ) {
-				message.append(AntViewMessages.getString("AntView._Dependencies___2")); //$NON-NLS-1$
+				message.append(AntViewMessages.getString("AntView._Depends___2")); //$NON-NLS-1$
 				message.append(depends[0]); // Unroll the loop to avoid trailing comma
 				for (int i = 1; i < depends.length; i++) {
-					message.append(", ").append(depends[i]); //$NON-NLS-1$
+					message.append(',').append(depends[i]);
 				}
+				message.append('\"');
 			}
-			message.append(AntViewMessages.getString("AntView._Description___4")); //$NON-NLS-1$
 			String description= target.getDescription();
-			if (description == null || description.length() == 0) {
-				description= AntViewMessages.getString("AntView.(no_description)_9"); //$NON-NLS-1$
+			if (description != null && description.length() != 0) {
+				message.append(AntViewMessages.getString("AntView._Description___4")); //$NON-NLS-1$
+				message.append(description);
+				message.append('\"');
 			}
-			message.append(description);
 			return message.toString();
 		}
 		return null;
