@@ -29,12 +29,12 @@ import org.eclipse.update.ui.forms.internal.engine.*;
 
 public class ConfigurationPreviewForm extends WebForm implements IUpdateModelChangedListener {
 	private Control focusControl;
-	private NewConfigurationView view;
+	private ConfigurationView view;
 	private FormEngine desc;
 	private FormEngine taskList;
 	private IPreviewTask [] tasks;
 
-	public ConfigurationPreviewForm(NewConfigurationView view) {
+	public ConfigurationPreviewForm(ConfigurationView view) {
 		this.view = view;
 		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		model.addUpdateModelChangedListener(this);

@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.update.configuration.ILocalSite;
 import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.internal.ui.views.NewConfigurationView;
+import org.eclipse.update.internal.ui.views.ConfigurationView;
 
 /**
  * @author dejan
@@ -30,7 +30,7 @@ public class ConfigurationManagerWindow
 	implements IWorkbenchWindow {
 	private ManagerActionBars bars;
 	private SubActionBars viewBars;
-	private NewConfigurationView view;
+	private ConfigurationView view;
 	private GlobalAction propertiesAction;
 
 	class ManagerActionBars implements IActionBars {
@@ -200,7 +200,7 @@ public class ConfigurationManagerWindow
 	}
 
 	protected Control createContents(Composite parent) {
-		view = new NewConfigurationView();
+		view = new ConfigurationView();
 		try {
 			view.init(new ManagerSite());
 		} catch (PartInitException e) {

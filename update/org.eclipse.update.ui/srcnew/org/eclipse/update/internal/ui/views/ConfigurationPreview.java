@@ -17,7 +17,7 @@ import org.eclipse.update.internal.ui.forms.ConfigurationPreviewForm;
 public class ConfigurationPreview {
 	private ConfigurationPreviewForm form;
 
-	public ConfigurationPreview(NewConfigurationView configView) {
+	public ConfigurationPreview(ConfigurationView configView) {
 		form = new ConfigurationPreviewForm(configView);
 	}
 	public void createControl(Composite parent) {
