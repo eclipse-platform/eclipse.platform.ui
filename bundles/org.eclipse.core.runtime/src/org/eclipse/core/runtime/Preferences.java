@@ -575,10 +575,7 @@ public class Preferences {
 	 * @param value the new default value for the property
 	 */
 	public void setDefault(String name, boolean value) {
-		if (BOOLEAN_DEFAULT_DEFAULT == value)
-			defaultProperties.remove(name);
-		else
-			defaultProperties.put(name, value ? Preferences.TRUE : Preferences.FALSE);
+		defaultProperties.put(name, value ? Preferences.TRUE : Preferences.FALSE);
 	}
 
 	/**
@@ -672,10 +669,7 @@ public class Preferences {
 		if (Double.isNaN(value)) {
 			throw new IllegalArgumentException();
 		}
-		if (DOUBLE_DEFAULT_DEFAULT == value)
-			defaultProperties.remove(name);
-		else
-			defaultProperties.put(name, Double.toString(value));
+		defaultProperties.put(name, Double.toString(value));
 	}
 
 	/**
@@ -791,10 +785,7 @@ public class Preferences {
 		if (Float.isNaN(value)) {
 			throw new IllegalArgumentException();
 		}
-		if (FLOAT_DEFAULT_DEFAULT == value)
-			defaultProperties.remove(name);
-		else
-			defaultProperties.put(name, Float.toString(value));
+		defaultProperties.put(name, Float.toString(value));
 	}
 
 	/**
@@ -902,10 +893,7 @@ public class Preferences {
 	 * @param value the new default value for the property
 	 */
 	public void setDefault(String name, int value) {
-		if (INT_DEFAULT_DEFAULT == value)
-			defaultProperties.remove(name);
-		else
-			defaultProperties.put(name, Integer.toString(value));
+		defaultProperties.put(name, Integer.toString(value));
 	}
 
 	/**
@@ -1013,10 +1001,7 @@ public class Preferences {
 	 * @param value the new default value for the property
 	 */
 	public void setDefault(String name, long value) {
-		if (LONG_DEFAULT_DEFAULT == value)
-			defaultProperties.remove(name);
-		else
-			defaultProperties.put(name, Long.toString(value));
+		defaultProperties.put(name, Long.toString(value));
 	}
 
 	/**
@@ -1131,10 +1116,7 @@ public class Preferences {
 		if (value == null) {
 			throw new IllegalArgumentException();
 		}
-		if (STRING_DEFAULT_DEFAULT.equals(value))
-			defaultProperties.remove(name);
-		else
-			defaultProperties.put(name, value);
+		defaultProperties.put(name, value);
 	}
 
 	/**
