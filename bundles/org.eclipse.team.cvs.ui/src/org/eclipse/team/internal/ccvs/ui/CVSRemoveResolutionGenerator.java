@@ -31,7 +31,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.ResourceDeltaSyncHandler;
+import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
 import org.eclipse.ui.IMarkerResolution;
 
 /**
@@ -52,7 +52,7 @@ public class CVSRemoveResolutionGenerator extends CVSAbstractResolutionGenerator
 				public void run(IMarker marker) {
 					try {
 						final IContainer parent = (IContainer)marker.getResource();
-						final String childName = (String)marker.getAttribute(ResourceDeltaSyncHandler.NAME_ATTRIBUTE);
+						final String childName = (String)marker.getAttribute(AddDeleteMoveListener.NAME_ATTRIBUTE);
 						ICVSFile mFile = CVSWorkspaceRoot.getCVSFileFor(parent.getFile(new Path(childName)));
 						if (mFile.isManaged()) {
 							ResourceSyncInfo info = mFile.getSyncInfo();
@@ -100,7 +100,7 @@ public class CVSRemoveResolutionGenerator extends CVSAbstractResolutionGenerator
 				public void run(IMarker marker) {
 					try {
 						final IContainer parent = (IContainer)marker.getResource();
-						final String childName = (String)marker.getAttribute(ResourceDeltaSyncHandler.NAME_ATTRIBUTE);
+						final String childName = (String)marker.getAttribute(AddDeleteMoveListener.NAME_ATTRIBUTE);
 						final IFile file = parent.getFile(new Path(childName));
 						final ICVSFile mFile = CVSWorkspaceRoot.getCVSFileFor(parent.getFile(new Path(childName)));
 						
@@ -145,7 +145,7 @@ public class CVSRemoveResolutionGenerator extends CVSAbstractResolutionGenerator
 				public void run(IMarker marker) {
 					try {
 						final IContainer parent = (IContainer)marker.getResource();
-						final String childName = (String)marker.getAttribute(ResourceDeltaSyncHandler.NAME_ATTRIBUTE);
+						final String childName = (String)marker.getAttribute(AddDeleteMoveListener.NAME_ATTRIBUTE);
 						final IFile file = parent.getFile(new Path(childName));
 						final ICVSFile mFile = CVSWorkspaceRoot.getCVSFileFor(parent.getFile(new Path(childName)));
 						

@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
@@ -34,7 +35,8 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
-import org.eclipse.team.internal.ccvs.core.util.ResourceDeltaSyncHandler;
+import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
+import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 public class CVSProviderPlugin extends Plugin {
@@ -66,6 +68,11 @@ public class CVSProviderPlugin extends Plugin {
 	private String cvsServer = DEFAULT_CVS_SERVER;
 	
 	private static CVSProviderPlugin instance;
+	
+	// CVS specific resource delta listeners
+	private IResourceChangeListener projectDescriptionListener;
+	private IResourceChangeListener metaFileSyncListener;
+	private AddDeleteMoveListener addDeleteMoveListener;
 
 	/**
 	 * The identifier for the CVS nature
@@ -175,8 +182,16 @@ public class CVSProviderPlugin extends Plugin {
 		// Start the synchronizer first as the startup of CVSProvider may use it.
 		EclipseSynchronizer.startup();
 		CVSProvider.startup();
-		ProjectDescriptionManager.initializeChangeListener();
-		ResourceDeltaSyncHandler.startup();
+		
+		// Initialize CVS change listeners. Note tha the report type is important.
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		projectDescriptionListener = new ProjectDescriptionManager();
+		metaFileSyncListener = new SyncFileChangeListener();
+		addDeleteMoveListener = new AddDeleteMoveListener();
+		workspace.addResourceChangeListener(projectDescriptionListener, IResourceChangeEvent.PRE_AUTO_BUILD);
+		workspace.addResourceChangeListener(metaFileSyncListener, IResourceChangeEvent.PRE_AUTO_BUILD);
+		workspace.addResourceChangeListener(addDeleteMoveListener, IResourceChangeEvent.POST_AUTO_BUILD);
+		CVSProviderPlugin.getPlugin().addResourceStateChangeListener(addDeleteMoveListener);
 	}
 	
 	/**
@@ -186,9 +201,13 @@ public class CVSProviderPlugin extends Plugin {
 		super.shutdown();
 		CVSProvider.shutdown();
 		EclipseSynchronizer.shutdown();
-		ResourceDeltaSyncHandler.shutdown();
+		
+		// remove listeners
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		workspace.removeResourceChangeListener(projectDescriptionListener);
+		workspace.removeResourceChangeListener(metaFileSyncListener);
+		workspace.removeResourceChangeListener(addDeleteMoveListener);
 	}
-	
 		
 	/*
 	 * Add a resource change listener to the workspace in order to respond to 

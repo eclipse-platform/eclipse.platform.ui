@@ -45,22 +45,22 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
  * provides a bridge between the CVS metafile formats and location to the
  * Eclipse CVS client ResourceSyncInfo and FolderSyncInfo types.
  */
-public class SyncFileWriter implements IResourceChangeListener {
+public class SyncFileWriter {
 
 	// the famous CVS meta directory name
-	private static final String CVS_DIRNAME = "CVS"; //$NON-NLS-1$
+	public static final String CVS_DIRNAME = "CVS"; //$NON-NLS-1$
 
 	// CVS meta files located in the CVS subdirectory
-	private static final String REPOSITORY = "Repository"; //$NON-NLS-1$
-	private static final String ROOT = "Root"; //$NON-NLS-1$
-	private static final String STATIC = "Entries.Static";	 //$NON-NLS-1$
-	private static final String TAG = "Tag";	 //$NON-NLS-1$
-	private static final String ENTRIES = "Entries"; //$NON-NLS-1$
+	public static final String REPOSITORY = "Repository"; //$NON-NLS-1$
+	public static final String ROOT = "Root"; //$NON-NLS-1$
+	public static final String STATIC = "Entries.Static";	 //$NON-NLS-1$
+	public static final String TAG = "Tag";	 //$NON-NLS-1$
+	public static final String ENTRIES = "Entries"; //$NON-NLS-1$
 	//private static final String PERMISSIONS = "Permissions"; //$NON-NLS-1$
-	private static final String ENTRIES_LOG="Entries.Log"; //$NON-NLS-1$
+	public static final String ENTRIES_LOG="Entries.Log"; //$NON-NLS-1$
 	
 	// the local workspace file that contains pattern for ignored resources
-	private static final String IGNORE_FILE = ".cvsignore"; //$NON-NLS-1$
+	public static final String IGNORE_FILE = ".cvsignore"; //$NON-NLS-1$
 
 	// Some older CVS clients may of added a line to the entries file consisting
 	// of only a 'D'. It is safe to ingnore these entries.	
@@ -81,66 +81,12 @@ public class SyncFileWriter implements IResourceChangeListener {
 	public static final String[] BASIC_IGNORE_PATTERNS = {"CVS", ".#*"}; //$NON-NLS-1$ //$NON-NLS-2$
 
 	// key for saving the mod stamp for each writen meta file
-	private static final QualifiedName MODSTAMP_KEY = new QualifiedName("org.eclipse.team.cvs.core", "meta-file-modtime"); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final QualifiedName MODSTAMP_KEY = new QualifiedName("org.eclipse.team.cvs.core", "meta-file-modtime"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	public static void startup() {
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(new SyncFileWriter(), IResourceChangeEvent.POST_CHANGE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(new SyncFileChangeListener(), IResourceChangeEvent.PRE_AUTO_BUILD);
 	}
 			
-	/**
-	 * When a resource changes this method will detect if the changed resources is a meta file that has changed 
-	 * by a 3rd party. For example, if the command line tool was run and then the user refreshed from local. To
-	 * distinguish changes made by this class and thoses made by others a modification stamp is persisted with each
-	 * metafile.
-	 * 
-	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
-	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-		try {
-			final List changedContainers = new ArrayList();
-			event.getDelta().accept(new IResourceDeltaVisitor() {
-				public boolean visit(IResourceDelta delta) throws CoreException {
-					IResource resource = delta.getResource();
-					if(resource.exists()) {
-						IContainer parent = resource.getParent();
-						boolean isCVSMetaFile = parent != null && parent.getName().equals(CVS_DIRNAME);
-						boolean isIgnoreFile = resource.getName().equals(IGNORE_FILE);
-						if(isCVSMetaFile || isIgnoreFile) {
-							long modStamp = resource.getModificationStamp();
-							Long whenWeWrote;
-							try {
-								whenWeWrote = (Long)resource.getSessionProperty(MODSTAMP_KEY);
-							} catch(CoreException e) {
-								CVSProviderPlugin.log(e.getStatus());
-								whenWeWrote = null;
-							}
-							if(whenWeWrote==null || whenWeWrote.longValue() != modStamp) {
-								if(Policy.DEBUG_METAFILE_CHANGES) {
-									System.out.println("CVS metaFile changed by 3rd party: " + resource.getFullPath()); //$NON-NLS-1$
-								}
-								IResource changedContainer = parent;
-								if(isCVSMetaFile) {
-									changedContainer = parent.getParent();
-								}
-								if(!changedContainers.contains(changedContainer)) {
-									changedContainers.add(changedContainer);									
-								}
-							}
-						}
-						return true;
-					}
-					return false;
-				}}, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
-			if(!changedContainers.isEmpty()) {
-				EclipseSynchronizer.getInstance().syncFilesChanged((IContainer[])changedContainers.toArray(new IContainer[changedContainers.size()]));
-			}			
-		} catch(CoreException e) {
-			CVSProviderPlugin.log(e.getStatus());
-		} catch(CVSException e) {
-			CVSProviderPlugin.log(e.getStatus());
-		}
-	}
-	
 	/**
 	 * Reads the CVS/Entries, CVS/Entries.log and CVS/Permissions files from the
 	 * specified folder and returns ResourceSyncInfo instances for the data stored therein.
@@ -323,7 +269,7 @@ public class SyncFileWriter implements IResourceChangeListener {
 			IFolder cvsSubDir = getCVSSubdirectory(folder);
 			if (! cvsSubDir.exists()) {
 				cvsSubDir.create(false /*don't force*/, true /*make local*/, null);
-				//cvsSubDir.setTeamPrivateMember(true);
+				cvsSubDir.setTeamPrivateMember(true);
 			}
 			return cvsSubDir;
 		} catch (CoreException e) {
@@ -398,7 +344,6 @@ public class SyncFileWriter implements IResourceChangeListener {
 						} else {
 							file.setContents(new ByteArrayInputStream(os.toByteArray()), IResource.NONE /*don't keep history and don't force*/, null);
 						}			
-						// this is where we could save the timestamp
 						file.setSessionProperty(MODSTAMP_KEY, new Long(file.getModificationStamp()));
 					} catch(CVSException e) {
 						throw new CoreException(e.getStatus());
@@ -423,5 +368,5 @@ public class SyncFileWriter implements IResourceChangeListener {
 		} catch (IOException e) {
 			throw CVSException.wrapException(e);
 		}
-	}	
+	}
 }

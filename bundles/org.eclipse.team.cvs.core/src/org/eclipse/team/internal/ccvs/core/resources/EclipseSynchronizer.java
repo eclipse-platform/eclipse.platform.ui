@@ -344,15 +344,16 @@ public class EclipseSynchronizer {
 	 * 
 	 * @param root the root of the subtree to flush
 	 * @param purgeCache if true, purges the cache from memory as well
+	 * @param deep purge sync from child folders
 	 * @param monitor the progress monitor, may be null
 	 */
-	public void flush(IContainer root, boolean purgeCache, int depth, IProgressMonitor monitor)
+	public void flush(IContainer root, boolean purgeCache, boolean deep, IProgressMonitor monitor)
 		throws CVSException {
 		// flush unwritten sync info to disk
 		if (nestingCount != 0) commitCache(monitor);
 		
 		// purge from memory too if we were asked to
-		if (purgeCache) purgeCache(root, depth);
+		if (purgeCache) purgeCache(root, deep);
 
 		// prepare for the operation again if we cut the last one short
 		if (nestingCount != 0) prepareCache(monitor);
@@ -361,8 +362,12 @@ public class EclipseSynchronizer {
 	public void syncFilesChanged(IContainer[] roots) throws CVSException {
 		try {
 			for (int i = 0; i < roots.length; i++) {
-				flush(roots[i], true, IResource.DEPTH_ONE, null);
-				CVSProviderPlugin.broadcastResourceStateChanges(roots[i].members());
+				IContainer root = roots[i];
+				flush(root, true, false /*don't flush children*/, null);
+				List changedPeers = new ArrayList();
+				changedPeers.add(root);
+				changedPeers.addAll(Arrays.asList(root.members()));
+				CVSProviderPlugin.broadcastResourceStateChanges((IResource[]) changedPeers.toArray(new IResource[changedPeers.size()]));
 			}
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
@@ -451,7 +456,7 @@ public class EclipseSynchronizer {
 	 * Purges the cache recursively for all resources beneath the container.
 	 * There must not be any pending uncommitted changes.
 	 */
-	private static void purgeCache(IContainer container, int depth) throws CVSException {
+	private static void purgeCache(IContainer container, boolean deep) throws CVSException {
 		if (! container.exists()) return;
 		try {
 			if (container.getType() != IResource.ROOT) {
@@ -459,12 +464,12 @@ public class EclipseSynchronizer {
 				container.setSessionProperty(IGNORE_SYNC_KEY, null);
 				container.setSessionProperty(FOLDER_SYNC_KEY, null);
 			}
-			if(depth!=IResource.DEPTH_ZERO) {
+			if(deep) {
 				IResource[] members = container.members();
 				for (int i = 0; i < members.length; i++) {
 					IResource resource = members[i];
 					if (resource.getType() != IResource.FILE) {
-						purgeCache((IContainer) resource, depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : depth );
+						purgeCache((IContainer) resource, deep);
 					}
 				}
 			}

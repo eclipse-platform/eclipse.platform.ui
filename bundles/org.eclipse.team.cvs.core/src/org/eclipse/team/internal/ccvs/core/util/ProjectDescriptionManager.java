@@ -43,7 +43,7 @@ import org.xml.sax.SAXException;
  * It does so by listening to deltas on the project description and the .vcm_meta file itself.
  * 
  */
-public class ProjectDescriptionManager {
+public class ProjectDescriptionManager implements IResourceChangeListener {
 
 	public final static IPath PROJECT_DESCRIPTION_PATH = new Path(".vcm_meta"); //$NON-NLS-1$
 	public final static IPath CORE_PROJECT_DESCRIPTION_PATH = new Path(".project"); //$NON-NLS-1$
@@ -215,52 +215,47 @@ public class ProjectDescriptionManager {
 		return resource.getProjectRelativePath().equals(PROJECT_DESCRIPTION_PATH);
 	}
 
-	public static void initializeChangeListener() {
-		IResourceChangeListener changeListener = new IResourceChangeListener() {
-			public void resourceChanged(IResourceChangeEvent event) {
-				try {
-					IResourceDelta root = event.getDelta();
-					IResourceDelta[] projectDeltas = root.getAffectedChildren(IResourceDelta.CHANGED | IResourceDelta.ADDED);
-					for (int i = 0; i < projectDeltas.length; i++) {
-						IResourceDelta delta = projectDeltas[i];
-						IResource resource = delta.getResource();
-						if (resource.getType() == IResource.PROJECT) {
-							IProject project = (IProject)resource;
-							RepositoryProvider provider = RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
-							if (provider!=null) continue;
-							// First, check if the .vcm_meta file for the project is in the delta.
-							IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.REMOVED | IResourceDelta.ADDED | IResourceDelta.CHANGED);
-							boolean inSync = false;
-							for (int j = 0; j < children.length; j++) {
-								IResourceDelta childDelta = children[j];
-								IResource childResource = childDelta.getResource();
-								if (isProjectDescription(childResource))
-									switch (childDelta.getKind()) {
-										case IResourceDelta.REMOVED:
-											writeProjectDescriptionIfNecessary((CVSTeamProvider)provider, project, Policy.monitorFor(null));
-											inSync = true;
-											break;
-										case IResourceDelta.CHANGED:
-										case IResourceDelta.ADDED:
-											updateProjectIfNecessary(project, Policy.monitorFor(null));
-											inSync = true;
-											break;
-									}
+	public void resourceChanged(IResourceChangeEvent event) {
+		try {
+			IResourceDelta root = event.getDelta();
+			IResourceDelta[] projectDeltas = root.getAffectedChildren(IResourceDelta.CHANGED | IResourceDelta.ADDED);
+			for (int i = 0; i < projectDeltas.length; i++) {
+				IResourceDelta delta = projectDeltas[i];
+				IResource resource = delta.getResource();
+				if (resource.getType() == IResource.PROJECT) {
+					IProject project = (IProject)resource;
+					RepositoryProvider provider = RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
+					if (provider!=null) continue;
+					// First, check if the .vcm_meta file for the project is in the delta.
+					IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.REMOVED | IResourceDelta.ADDED | IResourceDelta.CHANGED);
+					boolean inSync = false;
+					for (int j = 0; j < children.length; j++) {
+						IResourceDelta childDelta = children[j];
+						IResource childResource = childDelta.getResource();
+						if (isProjectDescription(childResource))
+							switch (childDelta.getKind()) {
+								case IResourceDelta.REMOVED:
+									writeProjectDescriptionIfNecessary((CVSTeamProvider)provider, project, Policy.monitorFor(null));
+									inSync = true;
+									break;
+								case IResourceDelta.CHANGED:
+								case IResourceDelta.ADDED:
+									updateProjectIfNecessary(project, Policy.monitorFor(null));
+									inSync = true;
+									break;
 							}
-							// Check if we didn't do anything above and the project description changed.
-							if (! inSync && (delta.getFlags() & IResourceDelta.DESCRIPTION) != 0) {
-								writeProjectDescriptionIfNecessary((CVSTeamProvider)provider, project, Policy.monitorFor(null));
-							}
-						}
 					}
-				} catch (CVSException ex) {
-					Util.logError("Cannot update project description", ex);
-				} catch (CoreException ex) {
-					Util.logError("Cannot update project description", ex);
-				} 
-			}
-		};
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(changeListener, IResourceChangeEvent.PRE_AUTO_BUILD);
+					// Check if we didn't do anything above and the project description changed.
+					if (! inSync && (delta.getFlags() & IResourceDelta.DESCRIPTION) != 0) {
+						writeProjectDescriptionIfNecessary((CVSTeamProvider)provider, project, Policy.monitorFor(null));
+					}
+				}
+			}	
+		} catch (CVSException ex) {
+			Util.logError("Cannot update project description", ex);
+		} catch (CoreException ex) {
+			Util.logError("Cannot update project description", ex);
+		} 
 	}
 	
 	protected static IMarker createVCMMetaMarker(IResource resource) {

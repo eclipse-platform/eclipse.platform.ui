@@ -26,7 +26,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.ResourceDeltaSyncHandler;
+import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
@@ -72,7 +72,7 @@ public class ResourceDeltaTest extends EclipseTest {
 	
 	public void assertAdditionMarkerFor(IResource resource, boolean exists) throws CoreException {
 		if ( ! CVSProviderPlugin.getPlugin().getShowTasksOnAddAndDelete()) return;
-		IMarker[] markers = resource.findMarkers(ResourceDeltaSyncHandler.ADDITION_MARKER, false, IResource.DEPTH_ZERO);
+		IMarker[] markers = resource.findMarkers(AddDeleteMoveListener.ADDITION_MARKER, false, IResource.DEPTH_ZERO);
 		if (exists) {
    			assertTrue("Addition marker doesn't exist for " + resource.getName(), markers.length == 1);
 		} else {
@@ -85,10 +85,10 @@ public class ResourceDeltaTest extends EclipseTest {
 		IMarker marker = null;
 		if (resource.getParent().exists()) {
 			String name = resource.getName();
-	   		IMarker[] markers = resource.getParent().findMarkers(ResourceDeltaSyncHandler.DELETION_MARKER, false, IResource.DEPTH_ZERO);
+	   		IMarker[] markers = resource.getParent().findMarkers(AddDeleteMoveListener.DELETION_MARKER, false, IResource.DEPTH_ZERO);
 	   		for (int i = 0; i < markers.length; i++) {
 				IMarker iMarker = markers[i];
-				String markerName = (String)iMarker.getAttribute(ResourceDeltaSyncHandler.NAME_ATTRIBUTE);
+				String markerName = (String)iMarker.getAttribute(AddDeleteMoveListener.NAME_ATTRIBUTE);
 				if (markerName.equals(name)) {
 					marker = iMarker;
 					break;

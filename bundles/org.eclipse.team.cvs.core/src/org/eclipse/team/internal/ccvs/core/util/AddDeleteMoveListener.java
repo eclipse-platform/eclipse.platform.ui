@@ -1,14 +1,9 @@
-/*******************************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
- * 
- * Contributors:
- * IBM - Initial API and implementation
- ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.util;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2002.
+ * All Rights Reserved.
+ */
  
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -39,19 +34,13 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
  * Listen for the addition of orphaned subtrees as a result of a copy or move.
- * 
- * Listen in IResourceChangeEvent.PRE_AUTO_BUILD so that other interested parties 
- * (most notably, the file synchronizer) will receive up to date notifications
  */
-public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor, IResourceStateChangeListener {
+public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceChangeListener, IResourceStateChangeListener {
 
 	public static final String DELETION_MARKER = "org.eclipse.team.cvs.core.cvsremove";
 	public static final String ADDITION_MARKER = "org.eclipse.team.cvs.core.cvsadd";
 	
 	public static final String NAME_ATTRIBUTE = "name";
-	
-	private static IResourceChangeListener listener;
-	private static ResourceDeltaSyncHandler visitor;
 	
 	protected IMarker createDeleteMarker(IResource resource) {
 		if (! CVSProviderPlugin.getPlugin().getShowTasksOnAddAndDelete()) {
@@ -141,21 +130,8 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor, IResourc
 				}
 				break;
 			case IResourceDelta.REMOVED :
-				if (resource.getType() == IResource.FOLDER) {
-					// Only record files as there's nothing we can do about folders
-				} else if (resource.getType() == IResource.FILE) {
-					if (movedTo) {
-						IPath target = delta.getMovedToPath();
-						if (target.segment(0).equals(project.getName())) {
-							//handleDeletedFile((IFile)resource);
-							// The line below resulted in 2 calls to handleAddedFile
-							handleMovedFile(project, (IFile)resource, project.getFile(target.removeFirstSegments(1)));
-						} else {
-							handleDeletedFile((IFile)resource);
-						}
-					} else {
-						handleDeletedFile((IFile)resource);
-					}
+				if (resource.getType() == IResource.FILE) {
+					handleDeletedFile((IFile)resource);
 				}
 				break;
 			case IResourceDelta.CHANGED :
@@ -190,6 +166,7 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor, IResourc
 		return false;
 	}
 	
+	
 	/*
 	 * Mark deleted managed files as outgoing deletions
 	 */
@@ -212,7 +189,7 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor, IResourc
 			CVSProviderPlugin.log(e);
 		}
 	}
-
+	
 	/*
 	 * Handle the case where an added file has the same name as a "cvs removed" file
 	 * by restoring the sync info to what it was before the delete
@@ -264,51 +241,29 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor, IResourc
 		}
 	}
 	
-	/*
-	 * Managed new location if old location was managed.
-	 * Also ensure that replaced deletions are handled.
-	 */
-	private void handleMovedFile(IProject project, IFile fromResource, IFile toResource) {
-		handleDeletedFile(fromResource);
-		handleAddedFile(toResource);
-	}
-	
-	public static void startup() {		
-		if (visitor == null)
-			visitor = new ResourceDeltaSyncHandler();
-		if (listener == null)
-			listener = new IResourceChangeListener() {
-				public void resourceChanged(IResourceChangeEvent event) {
-					try {
-						IResourceDelta root = event.getDelta();
-						IResourceDelta[] projectDeltas = root.getAffectedChildren();
-						for (int i = 0; i < projectDeltas.length; i++) {							
-							IResourceDelta delta = projectDeltas[i];
-							IResource resource = delta.getResource();
-							RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());	
+	public void resourceChanged(IResourceChangeEvent event) {
+		try {
+			IResourceDelta root = event.getDelta();
+			IResourceDelta[] projectDeltas = root.getAffectedChildren();
+			for (int i = 0; i < projectDeltas.length; i++) {							
+				IResourceDelta delta = projectDeltas[i];
+				IResource resource = delta.getResource();
+				RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());	
 
-							// if a project is moved the originating project will not be associated with the CVS provider
-							// however listeners will probably still be interested in the move delta.	
-							if ((delta.getFlags() & IResourceDelta.MOVED_TO) > 0) {																
-								IResource destination = getResourceFor(resource.getProject(), resource, delta.getMovedToPath());
-								provider = RepositoryProvider.getProvider(destination.getProject());
-							}
-							
-							if(provider!=null) {
-								delta.accept(visitor);
-							}
-						}
-					} catch (CoreException e) {
-						Util.logError(Policy.bind("ResourceDeltaVisitor.visitError"), e);//$NON-NLS-1$
-					}
+				// if a project is moved the originating project will not be associated with the CVS provider
+				// however listeners will probably still be interested in the move delta.	
+				if ((delta.getFlags() & IResourceDelta.MOVED_TO) > 0) {																
+					IResource destination = getResourceFor(resource.getProject(), resource, delta.getMovedToPath());
+					provider = RepositoryProvider.getProvider(destination.getProject());
 				}
-			};
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_AUTO_BUILD);
-		CVSProviderPlugin.addResourceStateChangeListener(visitor);
-	}
-	
-	public static void shutdown() {
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
+				
+				if(provider!=null) {
+					delta.accept(this);
+				}
+			}
+		} catch (CoreException e) {
+			Util.logError(Policy.bind("ResourceDeltaVisitor.visitError"), e);//$NON-NLS-1$
+		}
 	}
 	
 	/*
