@@ -10,7 +10,7 @@ import org.eclipse.ui.views.properties.*;
 
 /**
  * Example IPropertySource is editable and whose childern properties are itself not editable.
- * The values of "userid" and "mailserver" are parsed from seting "email"
+ * The values of "userid" and "mailserver" are parsed from setting "email"
  */
 public class EmailAddress implements IPropertySource {
 
@@ -117,14 +117,6 @@ public boolean isPropertySet(Object property) {
  * Method declared on IPropertySource
  */
 public void resetPropertyValue(Object property) {
-	if (property.equals(P_ID_USERID)) {
-		setUserid(USERID_DEFAULT);
-		return;
-	}
-	if (property.equals(P_ID_DOMAIN)) {
-		setDomain(DOMAIN_DEFAULT);
-		return;
-	}
 	return;
 }
 /**
@@ -177,7 +169,7 @@ private void setUserid(String newUserid) {
 	userid = newUserid;
 }
 /**
- * The value as displayed in the Property Sheet. Will not print default values
+ * The value as displayed in the Property Sheet.
  * @return java.lang.String
  */
 public String toString() {

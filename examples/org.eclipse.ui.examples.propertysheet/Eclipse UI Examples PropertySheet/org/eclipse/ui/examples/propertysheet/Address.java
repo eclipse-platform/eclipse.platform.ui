@@ -86,8 +86,7 @@ public class Address implements IPropertySource {
 
 				//check for proper length
 				if (testPostalCode.length() != 6) {
-					//fail	
-					return MessageUtil.format("_is_an_invalid_format_for_a_postal_code", new Object[] {testPostalCode}); //$NON-NLS-1$
+					return MessageUtil.getString("postal_code_is_incomplete"); //$NON-NLS-1$
 				}
 
 				//check for proper format
@@ -203,13 +202,21 @@ private Integer getProvince() {
  */
 public StreetAddress getStreet() {
 	if(street == null)
-		street = STREET_DEFAULT;
+		street = new StreetAddress();
 	return street;
 }
 /* (non-Javadoc)
  * Method declared on IPropertySource
  */
 public boolean isPropertySet(Object property) {
+	if (property.equals(P_ID_PROVINCE))
+		return getProvince() != PROVINCE_DEFAULT;
+	if (property.equals(P_ID_STREET))
+		return !STREET_DEFAULT.equals(getStreet());
+	if (property.equals(P_ID_CITY))
+		return getCity() != CITY_DEFAULT;
+	if (property.equals(P_ID_POSTALCODE))
+		return getPostalCode() != POSTALCODE_DEFAULT;
 	return false;
 }
 /* (non-Javadoc)
@@ -229,7 +236,7 @@ public void resetPropertyValue(Object property) {
 		return;
 	};
 	if (P_ID_STREET.equals(property)) {
-		setStreet(STREET_DEFAULT);
+		setStreet(new StreetAddress());
 		return;
 	}
 }
@@ -254,7 +261,17 @@ private void setPostalCode(String newPostalCode) {
  * 	1) P_CITY expects java.lang.String
  * 	2) P_POSTALCODE expects java.lang.String
  *  3) P_PROVINCE expects java.lang.String
- *	4) P_STREET expects StreetAddress
+ * 
+ * <p>P_ID_STREET is not set here since it is referenced 
+ * and set directly in StreetAddress.
+ * According to IPropertySource, StreetAddress.getEditableValue
+ * should return a String which will be passed to this method  
+ * as the value. A new StreetAddress object should then be 
+ * created from the string. 
+ * An alternative would be to return the StreetAddress 
+ * directly in StreetAddress.getEditableValue and define a 
+ * cell editor for the StreetAddress property.
+ * This was ommitted for the sake of simplicity. 
  */
 public void setPropertyValue(Object name, Object value) {
 	if (P_ID_POSTALCODE.equals(name)) {
@@ -269,11 +286,6 @@ public void setPropertyValue(Object name, Object value) {
 		setProvince((Integer) value);
 		return;
 	}
-	if (P_ID_STREET.equals(name)) {
-		//setStreet((StreetAddress) value);
-		return;
-	} 
-
 }
 /**
  * Sets the province
@@ -288,7 +300,7 @@ private void setStreet(StreetAddress newStreet) {
 	street = newStreet;
 }
 /**
- * The value as displayed in the Property Sheet. Will not print default values
+ * The value as displayed in the Property Sheet.
  * @return java.lang.String
  */
 public String toString() {
@@ -299,17 +311,13 @@ public String toString() {
 		outStringBuffer.append(getStreet());
 		outStringBuffer.append(comma_space);
 	}
-	if (!getCity().equals(CITY_DEFAULT)) {
-		outStringBuffer.append(getCity());
-		outStringBuffer.append(space);
-	}
-	if (!getProvince().equals(PROVINCE_DEFAULT)) {
-		outStringBuffer.append(provinceValues[getProvince().intValue()]);
-	}
-	if (!getPostalCode().equals(POSTALCODE_DEFAULT)) {
-		outStringBuffer.append(comma_space);
-		outStringBuffer.append(getPostalCode());
-	}
+	
+	outStringBuffer.append(getCity());
+	outStringBuffer.append(space);
+	outStringBuffer.append(provinceValues[getProvince().intValue()]);
+	outStringBuffer.append(comma_space);
+	outStringBuffer.append(getPostalCode());
+	
 	return outStringBuffer.toString();
 }
 }

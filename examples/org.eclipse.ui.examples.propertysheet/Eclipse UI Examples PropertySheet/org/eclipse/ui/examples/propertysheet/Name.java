@@ -27,6 +27,12 @@ public class Name implements IPropertySource
 	public static String P_LASTNAME = MessageUtil.getString("LastName"); //$NON-NLS-1$
 	public static String P_MIDDLENAME = MessageUtil.getString("Middle"); //$NON-NLS-1$
 	
+	// default values
+	//
+	private static final String FIRSTNAME_DEFAULT = null;
+	private static final String LASTNAME_DEFAULT = null;
+	private static final String MIDDLENAME_DEFAULT = null;
+	
 	public static final String P_DESCRIPTORS = "properties"; //$NON-NLS-1$
 	static private Vector descriptors;	
 	static
@@ -113,6 +119,12 @@ public Object getPropertyValue(Object propKey) {
  * Method declared on IPropertySource
  */
 public boolean isPropertySet(Object key) {
+	if (key.equals(P_ID_FIRSTNAME))
+		return getFirstName() != FIRSTNAME_DEFAULT;
+	if (key.equals(P_ID_LASTNAME))
+		return getLastName() != LASTNAME_DEFAULT;
+	if (key.equals(P_ID_MIDDLENAME))
+		return getInitial() != MIDDLENAME_DEFAULT;
 	return false;
 }
 /**
@@ -124,15 +136,15 @@ public boolean isPropertySet(Object key) {
  */
 public void resetPropertyValue(Object property) {
 	if (P_ID_FIRSTNAME.equals(property)) {
-		setFirstName(null);
+		setFirstName(FIRSTNAME_DEFAULT);
 		return;
 	}
 	if (P_ID_LASTNAME.equals(property)) {
-		setLastName(null);
+		setLastName(LASTNAME_DEFAULT);
 		return;
 	}
 	if (P_ID_MIDDLENAME.equals(property)) {
-		setInitial(null);
+		setInitial(MIDDLENAME_DEFAULT);
 		return;
 	}
 }
@@ -175,7 +187,7 @@ public void setPropertyValue(Object propName, Object val) {
 		setLastName((String) val);
 		return;
 	}
-	if (P_ID_MIDDLENAME.equals(propName)){
+	if (P_ID_MIDDLENAME.equals(propName)) {
 		setInitial((String) val);
 		return;
 	}
@@ -186,16 +198,16 @@ public void setPropertyValue(Object propName, Object val) {
  */
 public String toString(){
 	StringBuffer outStringBuffer = new StringBuffer();
-	if(getFirstName()!=null)
-	{	outStringBuffer.append(getFirstName());
+	if(getFirstName()!=FIRSTNAME_DEFAULT) {
+		outStringBuffer.append(getFirstName());
 		outStringBuffer.append(" "); //$NON-NLS-1$
-		if(getInitial()!=null)
-		{	outStringBuffer.append(getInitial());
-			outStringBuffer.append(" "); //$NON-NLS-1$
-		}
 	}
-	if(getLastName()!=null)
-	{	outStringBuffer.append(getLastName());
+	if(getInitial()!=MIDDLENAME_DEFAULT) {
+		outStringBuffer.append(getInitial());
+		outStringBuffer.append(" "); //$NON-NLS-1$
+	}
+	if(getLastName()!=LASTNAME_DEFAULT) {
+		outStringBuffer.append(getLastName());
 	}
 	
 	return outStringBuffer.toString();

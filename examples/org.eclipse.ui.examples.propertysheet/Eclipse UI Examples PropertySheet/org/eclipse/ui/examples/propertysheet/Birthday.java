@@ -151,6 +151,12 @@ private Integer getYear() {
  * Method declared on IPropertySource
  */
 public boolean isPropertySet(Object property) {
+	if (P_ID_DAY.equals(property))
+		return getDay() != DAY_DEFAULT;
+	if (P_ID_MONTH.equals(property))
+		return getMonth() != MONTH_DEFAULT;
+	if (P_ID_YEAR.equals(property))
+		return getYear() != YEAR_DEFAULT;
 	return false;
 }
 /* (non-Javadoc)
@@ -216,7 +222,7 @@ private void setYear(Integer newYear) {
 	year = newYear;
 }
 /**
- * The value as displayed in the Property Sheet. Will not print default values
+ * The value as displayed in the Property Sheet.
  * @return java.lang.String
  */
 public String toString() {
