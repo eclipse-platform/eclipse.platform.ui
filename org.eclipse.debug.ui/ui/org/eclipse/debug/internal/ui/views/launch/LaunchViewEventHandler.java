@@ -113,8 +113,8 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					}
 					break;
 				case DebugEvent.TERMINATE :
+					clearSourceSelection(source);
 					if (source instanceof IThread) {
-						clearSourceSelection(source);
 						fThreadTimer.getTimedOutThreads().remove(source);
 						remove(source);
 					} else {
