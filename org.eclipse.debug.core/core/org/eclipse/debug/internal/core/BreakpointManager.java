@@ -120,8 +120,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 */
 	private void loadBreakpoints(IResource resource) throws CoreException {
 		initBreakpointExtensions();
-		deleteNonPersistedBreakpoints(ResourcesPlugin.getWorkspace().getRoot());
-		IMarker[] markers= resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
+		IMarker[] markers= getPersistedMarkers(resource);
 		for (int i = 0; i < markers.length; i++) {
 			IMarker marker= markers[i];
 			try {
@@ -133,14 +132,17 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	}
 	
 	/**
+	 * Returns the persisted markers associated with the given resource.
+	 * 
 	 * Delete any non-persisted/invalid breakpoint markers. This is done
 	 * at startup rather than shutdown, since the changes made at
 	 * shutdown are not persisted as the workspace state has already
 	 * been saved. See bug 7683.
 	 */
-	protected void deleteNonPersistedBreakpoints(IResource resource) throws CoreException {
+	protected IMarker[] getPersistedMarkers(IResource resource) throws CoreException {
 		IMarker[] markers= resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
 		final List delete = new ArrayList();
+		List persisted= new ArrayList();
 		for (int i = 0; i < markers.length; i++) {
 			IMarker marker= markers[i];
 			// ensure the marker has a valid model identifier attribute
@@ -153,6 +155,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				// the breakpoint is marked as not to be persisted,
 				// schedule for deletion
 				delete.add(marker);
+			} else {
+				persisted.add(marker);
 			}
 		}
 		// delete any markers that are not to be restored
@@ -163,7 +167,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				}
 			};
 			fork(wr);
-		}		
+		}
+		return (IMarker[])persisted.toArray(new IMarker[persisted.size()]);
 	}
 	
 	/**
@@ -249,9 +254,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 */
 	private void initializeBreakpoints() {
 		setBreakpoints(new Vector(10));
-		IWorkspaceRoot root= getWorkspace().getRoot();
 		try {
-			loadBreakpoints(root);	
+			loadBreakpoints(getWorkspace().getRoot());	
 		} catch (CoreException ce) {
 			DebugPlugin.log(ce);
 			setBreakpoints(new Vector(0));
