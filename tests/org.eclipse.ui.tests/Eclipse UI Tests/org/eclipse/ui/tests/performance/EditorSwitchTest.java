@@ -23,19 +23,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.test.performance.Performance;
-import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.util.UITestCase;
 
 /**
- * Test perspective switching.
+ * Test editor switching.
  */
-public class EditorSwitchTest extends UITestCase {
-
-    private PerformanceMeter performanceMeter;
+public class EditorSwitchTest extends BasicPerformanceTest {
 
     /**
      * Constructor.
@@ -46,23 +42,6 @@ public class EditorSwitchTest extends UITestCase {
     public EditorSwitchTest(String testName) {
         super(testName);
     }
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()
-	 */
-	protected void doSetUp() throws Exception {
-	    super.doSetUp();
-		Performance performance = Performance.getDefault();
-		performanceMeter = performance.createPerformanceMeter(performance.getDefaultScenarioId(this));
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.util.UITestCase#doTearDown()
-	 */
-	protected void doTearDown() throws Exception {
-	    super.doTearDown();
-		performanceMeter.dispose();
-	}	
 	
     /**
      * Test perspective switching performance. This test always fails.
