@@ -66,17 +66,14 @@ public static Test suite() {
 	return suite;
 }
 public void tearDown() throws Exception {
-	super.tearDown();
 	// remove all registered sync partners so we don't create
 	// phantoms when we delete
 	QualifiedName[] names = getWorkspace().getSynchronizer().getPartners();
 	for (int i = 0; i < names.length; i++)
 		getWorkspace().getSynchronizer().remove(names[i]);
-	try {
-		getWorkspace().getRoot().delete(true, null);
-	} catch (CoreException e) {
-		fail("#tearDown", e);
-	}
+
+	// delete the root and everything under it
+	super.tearDown();
 }
 public void testDeleteResources() {
 	final QualifiedName qname = new QualifiedName("org.eclipse.core.tests.resources", "myTarget");
