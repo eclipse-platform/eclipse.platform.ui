@@ -1517,7 +1517,7 @@ public IStatus validateEdit(final IFile[] files, final Object context) {
 		for (int i=0; i<files.length; i++) {
 			if (files[i].isReadOnly()) {
 				message = Policy.bind("resources.readOnly"); //$NON-NLS-1$
-				result.add(new ResourceStatus(IStatus.ERROR, files[i].getFullPath(), message));
+				result.add(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, files[i].getFullPath(), message));
 			}
 		}
 		return result.isOK() ? ResourceStatus.OK_STATUS : (IStatus) result;
