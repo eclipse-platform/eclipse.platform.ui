@@ -651,10 +651,8 @@ public synchronized boolean isPluginDeactivated() {
 	return deactivated;
 }
 private Properties loadJarDefinitions() {
-	// XXX this should be changed to just be !(inVAJ || inVAME).  Eclipse
-	// can now copy the resources etc into the right spot so we don't have to
-	// add the source folders any more.
-	if (!InternalPlatform.inDevelopmentMode())
+	// We only need to load the plugin.jars files if we are in VAJ or VAME.
+	if (!InternalPlatform.inVAJ() && !InternalPlatform.inVAME())
 		return null;
 	Properties result = null;
 	InputStream is;
