@@ -11,9 +11,12 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.DateUtil;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 
 public class LogListener implements ICommandOutputListener {
@@ -98,10 +101,15 @@ public class LogListener implements ICommandOutputListener {
 				boolean isBranch = isBranchTag(tagRevision);
 				if (isBranch) {
 					int lastDot = tagRevision.lastIndexOf('.');
-					if (tagRevision.charAt(lastDot - 1) == '0' && tagRevision.charAt(lastDot - 2) == '.') {
-						lastDot = lastDot - 2;
+					if (lastDot == -1) {
+						CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, 
+							Policy.bind("LogListener.invalidRevisionFormat", tagName, tagRevision)));
+					} else {
+						if (tagRevision.charAt(lastDot - 1) == '0' && tagRevision.charAt(lastDot - 2) == '.') {
+							lastDot = lastDot - 2;
+						}
+						tagRevision = tagRevision.substring(0, lastDot);
 					}
-					tagRevision = tagRevision.substring(0, lastDot);
 				}
 				if (tagRevision.equals(revision)) {
 					int type = isBranch ? CVSTag.BRANCH : CVSTag.VERSION;
