@@ -65,7 +65,7 @@ public class FeatureGeneralPropertyPage
 		addField(composite, "Provider:", feature.getProvider());
 		long size = feature.getInstallSize();
 		if (size != ContentEntryModel.UNKNOWN_SIZE)
-			addField(composite, "Size:", new Long(size).toString());
+			addField(composite, "Size:", new Long(size).toString() + " KB");
 
 	}
 	
