@@ -97,6 +97,8 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
             menuListener = null;
             menuListeners.clear();
         }
+        // Dispose wrapped menus in addition to removing them.
+        // See bugs 64024 and 73715 for details.
         // important to dispose menu wrappers before call to super,
         // otherwise super's call to removeAll will remove them 
         // before they can be disposed
