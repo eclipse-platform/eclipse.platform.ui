@@ -334,7 +334,7 @@ public class AntBuildTab extends AbstractLaunchConfigurationTab {
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
-		if (fSpecificProjectsButton.getSelection() && fProjects.isEmpty()) {
+		if (fBuildButton.getSelection() && fSpecificProjectsButton.getSelection() && fProjects.isEmpty()) {
 			setErrorMessage(AntLaunchConfigurationMessages.getString("AntBuildTab.9")); //$NON-NLS-1$
 			return false;
 		}
