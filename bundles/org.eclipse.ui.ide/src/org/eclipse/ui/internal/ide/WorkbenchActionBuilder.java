@@ -219,7 +219,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
     private IContributionItem pinEditorContributionItem;
 
-    private IContributionItem searchComboItem;
+//    private IContributionItem searchComboItem;
     
     // @issue class is workbench internal
     private StatusLineContributionItem statusLineItem;
@@ -451,7 +451,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             IToolBarManager helpToolBar = new ToolBarManager(coolBar
                     .getStyle());
             helpToolBar.add(new Separator(IWorkbenchActionConstants.GROUP_HELP)); //$NON-NLS-1$
-            helpToolBar.add(searchComboItem);
+//            helpToolBar.add(searchComboItem);
               // Add the group for applications to contribute
             helpToolBar.add(new GroupMarker(IWorkbenchActionConstants.GROUP_APP));              
             // Add to the cool bar manager
@@ -1087,7 +1087,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         pinEditorContributionItem.dispose();
         showInQuickMenu.dispose();
         newQuickMenu.dispose();
-        searchComboItem.dispose();
+//        searchComboItem.dispose();
         
         // null out actions to make leak debugging easier
         closeAction = null;
@@ -1164,7 +1164,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         closeProjectAction = null;
         newWizardMenu = null;
         pinEditorContributionItem = null;
-        searchComboItem = null;
+//        searchComboItem = null;
         statusLineItem = null;
         prefListener = null;
         propPrefListener = null;
@@ -1484,7 +1484,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         pinEditorContributionItem = ContributionItemFactory.PIN_EDITOR
                 .create(window);
         
-        searchComboItem = ContributionItemFactory.HELP_SEARCH.create(window);
+//        searchComboItem = ContributionItemFactory.HELP_SEARCH.create(window);
     }
 
     /**
