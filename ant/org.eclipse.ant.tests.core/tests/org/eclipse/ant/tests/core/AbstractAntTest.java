@@ -81,11 +81,11 @@ public abstract class AbstractAntTest extends TestCase {
 	}
 	
 	public void run(String buildFileName) throws CoreException {
-		run(buildFileName, null, true);
+		run(buildFileName, null, false);
 	}
 	
 	public void run(String buildFileName, String[] args) throws CoreException {
-		run(buildFileName, args, true);
+		run(buildFileName, args, false);
 	}
 	
 	public void run(String buildFileName, String[] args, boolean retrieveTargets) throws CoreException {
