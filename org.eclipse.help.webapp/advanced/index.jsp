@@ -42,7 +42,6 @@ function onloadHandler(e)
 {
 <% if (data.isIE() || data.isMozilla() && "1.2.1".compareTo(data.getMozillaVersion()) <=0){
 %>	var h=window.SearchFrame.document.getElementById("searchLabel").offsetHeight; <%-- default 13 --%>
-	//alert(h);
 	if(h<=19){
 		return; <%-- no need to resize up to 19px --%>
 	}
