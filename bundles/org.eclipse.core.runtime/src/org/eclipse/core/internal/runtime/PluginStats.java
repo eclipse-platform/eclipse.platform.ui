@@ -12,8 +12,7 @@ package org.eclipse.core.internal.runtime;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.internal.boot.ClassloaderStats;
-import org.eclipse.core.internal.boot.DelegatingURLClassLoader;
+import org.eclipse.core.internal.boot.*;
 
 public class PluginStats {
 	public String pluginId;
@@ -65,21 +64,32 @@ public class PluginStats {
 		}
 		pluginActivationOrder.push(pi);
 
-		if (DelegatingURLClassLoader.TRACE_PLUGINS) {
+		if (DelegatingURLClassLoader.TRACE_PLUGINS)
+			traceActivate(id, pi);
+	}
+
+	private static void traceActivate(String id, PluginStats pi) {
+		try {
+			PrintWriter pw = new PrintWriter(new FileOutputStream(ClassloaderStats.traceFile.getAbsolutePath(), true));
 			try {
-				PrintWriter pw = new PrintWriter(new FileOutputStream(ClassloaderStats.traceFile.getAbsolutePath(), true));
-				try {
-					long beginningPosition = ClassloaderStats.traceFile.length();
-					pw.println("Activating plugin: " + id);
-					new Throwable().printStackTrace(pw);
-					pi.setBeginningPosition(beginningPosition);
-				} finally {
-					pw.close();
-					pi.setEndPosition(ClassloaderStats.traceFile.length());
-				}
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				long beginningPosition = ClassloaderStats.traceFile.length();
+				pw.println("Activating plugin: " + id);
+				pw.println("Plugin activation stack:");
+				for (int i = pluginActivationOrder.size() - 1; i >= 0 ; i--)
+					pw.println("\t" + ((PluginStats)pluginActivationOrder.get(i)).getPluginId());
+				pw.println("Class loading stack:");
+				Stack classStack = ClassloaderStats.getClassStack();
+				for (int i = classStack.size() - 1; i >= 0 ; i--)
+					pw.println("\t" + ((ClassStats)classStack.get(i)).getClassName());
+				pw.println("Stack trace:");
+				new Throwable().printStackTrace(pw);
+				pi.setBeginningPosition(beginningPosition);
+			} finally {
+				pw.close();
+				pi.setEndPosition(ClassloaderStats.traceFile.length());
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

@@ -92,6 +92,10 @@ public class ClassloaderStats {
 		return result;
 	}
 
+	public static Stack getClassStack() {
+		return classesBeingLoaded;
+	}
+	
 	public static void endLoadingClass(String id, String className, boolean success) {
 		// should be called from a synchronized location to protect against concurrent updates
 		get(id).endLoadClass(className, success);
@@ -148,7 +152,7 @@ public class ClassloaderStats {
 			numberOfFailure++;
 			return;
 		}
-		if (target.getLoadingNumber() !=-1)
+		if (target.getLoadingNumber() >= 0)
 			return;
 
 		target.setLoadingNumber(++numberOfClassesLoaded);
@@ -185,6 +189,11 @@ public class ClassloaderStats {
 			PrintWriter pw = new PrintWriter(new FileOutputStream(traceFile.getAbsolutePath(),true));
 			try {
 				pw.println("Loading class: " + name);
+				pw.println("Class loading stack:");
+				pw.println("\t" + name);
+				for (int i = classesBeingLoaded.size() - 1; i >= 0 ; i--) 
+					pw.println("\t" + ((ClassStats)classesBeingLoaded.get(i)).getClassName());
+				pw.println("Stack trace:");
 				new Throwable().printStackTrace(pw);
 			} finally {
 				pw.close();

@@ -118,5 +118,6 @@ public class ClassStats {
 
 	public void toBaseClass() {
 		duringStartup = true;
+		loadingNumber = -2;
 	}
 }
