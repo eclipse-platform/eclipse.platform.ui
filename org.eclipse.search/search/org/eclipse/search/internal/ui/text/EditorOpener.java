@@ -33,8 +33,7 @@ public class EditorOpener {
 		IWorkbenchPage wbPage= SearchPlugin.getActivePage();
 		if (NewSearchUI.reuseEditor())
 			return showWithReuse(match, wbPage);
-		else
-			return showWithoutReuse(match, wbPage);
+		return showWithoutReuse(match, wbPage);
 	}
 	
 	private IEditorPart showWithoutReuse(Match match, IWorkbenchPage wbPage) throws PartInitException {
@@ -52,8 +51,7 @@ public class EditorOpener {
 		IEditorDescriptor desc= IDE.getEditorDescriptor(file);
 		if (desc == null)
 			return SearchPlugin.getDefault().getWorkbench().getEditorRegistry().findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID).getId();
-		else
-			return desc.getId();
+		return desc.getId();
 	}
 
 
