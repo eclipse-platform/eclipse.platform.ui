@@ -35,7 +35,6 @@ public class SearchObject extends NamedModelObject {
 	private boolean searchInProgress;
 	private BackgroundProgressMonitor backgroundProgress;
 	private BackgroundThread searchThread;
-	private boolean debug = false;
 	private ISite[] myComputerSites = null;
 	private String categoryId;
 	private boolean categoryFixed;
@@ -181,14 +180,6 @@ public class SearchObject extends NamedModelObject {
 		searchThread.start();
 		Throwable throwable = searchThread.getThrowable();
 		if (throwable != null) {
-			if (debug) {
-				System.err.println("Exception in search background thread:"); //$NON-NLS-1$
-				throwable.printStackTrace();
-				System.err.println("Called from:"); //$NON-NLS-1$
-				// Don't create the InvocationTargetException on the throwable,
-				// otherwise it will print its stack trace (from the other thread).
-				new InvocationTargetException(null).printStackTrace();
-			}
 			if (throwable instanceof InvocationTargetException) {
 				throw (InvocationTargetException) throwable;
 			} else if (throwable instanceof InterruptedException) {
