@@ -14,10 +14,10 @@ package org.eclipse.debug.internal.ui.actions;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -48,8 +48,7 @@ public abstract class ExecutionAction implements IActionDelegate2 {
 		if (dwindow == null) {
 			return;
 		}
-		LaunchConfigurationsDialog dialog = new LaunchConfigurationsDialog(DebugUIPlugin.getShell(), getLaunchConfigurationManager().getLaunchGroup(fLaunchGroupIdentifier));		
-		dialog.open();
+		DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(), fLaunchGroupIdentifier);
 	}
 	
 	protected LaunchConfigurationManager getLaunchConfigurationManager() {

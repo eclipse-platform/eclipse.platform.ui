@@ -177,7 +177,8 @@
             category="org.eclipse.ui.externaltools"
             image="icons/full/obj16/external_tools.gif"
             mode="run"
-            id="org.eclipse.ui.externaltools.launchGroup">
+            id="org.eclipse.ui.externaltools.launchGroup"
+            title="%ExternalToolsLaunchGroup.title">
       </launchGroup>
       <launchGroup
             label="%ExternalToolsLaunchGroup.label"

@@ -87,5 +87,15 @@ public interface ILaunchGroup {
 	 * @return boolean
 	 */
 	public boolean isPublic();
+	
+	/**
+	 * Returns a title message to display when this launch group is opened
+	 * in the launch dilaog, or <code>null</code> if unspecified
+	 * 
+	 * @return a title message to display when this launch group is opened
+	 * in the launch dilaog, or <code>null</code>
+	 * @since 3.1
+	 */
+	public String getTitle();
 }
 

@@ -49,6 +49,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
+import org.eclipse.debug.internal.ui.preferences.DebugWorkInProgressPreferencePage;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
@@ -414,6 +415,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		// set default for column size preference
 		prefs.setDefault(IDebugPreferenceConstants.PREF_COLUMN_SIZE, 
 				IDebugPreferenceConstants.PREF_COLUMN_SIZE_DEFAULT);
+		
+		// work in progress TODO: remove
+		prefs.setDefault(DebugWorkInProgressPreferencePage.WIP_PREF_USE_LAUNCH_WIZARD, false);
 	}
 
 	protected IProcess getProcessFromInput(Object input) {

@@ -84,6 +84,13 @@ launch configuration type extension).
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="bannerImage" type="string">
+            <annotation>
+               <documentation>
+                  specifies the plugin-relative path of an wizard banner image file to display with this launch configuration tab group (since 3.1)
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

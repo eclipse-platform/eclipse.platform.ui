@@ -37,11 +37,15 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationMan
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchWizard;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchWizardDialog;
+import org.eclipse.debug.internal.ui.preferences.DebugWorkInProgressPreferencePage;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
@@ -334,21 +338,27 @@ public class DebugUITools {
 			 * @see java.lang.Runnable#run()
 			 */
 			public void run() {
-				LaunchConfigurationsDialog dialog = (LaunchConfigurationsDialog) LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
-				if (dialog != null) {
-					dialog.setInitialSelection(selection);
-					dialog.doInitialTreeSelection();
-					if (status != null) {
-						dialog.handleStatus(status); 
+			    if (isUseLaunchWizard()) {
+					LaunchWizard wizard = new LaunchWizard(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier), selection);
+					WizardDialog dialog = new LaunchWizardDialog(DebugUIPlugin.getShell(), wizard);
+					result[0] = dialog.open();		        
+			    } else {			    
+					LaunchConfigurationsDialog dialog = (LaunchConfigurationsDialog) LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
+					if (dialog != null) {
+						dialog.setInitialSelection(selection);
+						dialog.doInitialTreeSelection();
+						if (status != null) {
+							dialog.handleStatus(status); 
+						}
+						result[0] = Window.OK;
+					} else {
+						dialog = new LaunchConfigurationsDialog(shell, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier));
+						dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
+						dialog.setInitialSelection(selection);
+						dialog.setInitialStatus(status);
+						result[0] = dialog.open();			
 					}
-					result[0] = Window.OK;
-				} else {
-					dialog = new LaunchConfigurationsDialog(shell, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier));
-					dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
-					dialog.setInitialSelection(selection);
-					dialog.setInitialStatus(status);
-					result[0] = dialog.open();			
-				}
+			    }
 			}
 		};
 		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), r);
@@ -396,35 +406,35 @@ public class DebugUITools {
 	}
 	
 	/**
-	 * Open the launch configuration dialog on the specified launch
-	 * configuration. The dialog displays the tabs for a single configuration
-	 * only (a tree of launch configuration is not displayed), and provides a
-	 * launch (run or debug) button.
-	 * <p>
-	 * If a status is specified, a status handler is consulted to handle the
-	 * status. The status handler is passed the instance of the launch
-	 * configuration dialog that is opened. This gives the status handler an
-	 * opportunity to perform error handling/initialization as required.
-	 * </p>
-	 * @param shell the parent shell for the launch configuration dialog
-	 * @param configuration the configuration to display
-	 * @param groupIdentifier group identifier of the launch group the launch configuration
-	 * belongs to
-	 * @param status the status to display, or <code>null</code> if none 
-	 * @return the return code from opening the launch configuration dialog -
-	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
-	 * @since 2.1
-	 */
-	public static int openLaunchConfigurationDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier, IStatus status) {
-		LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier);
-		if (group != null) {
-			LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(shell, configuration, group);
-			dialog.setInitialStatus(status);
-			return dialog.open();
-		} 
-			
-		return Window.CANCEL;
-	}
+     * Open the launch configuration dialog on the specified launch
+     * configuration. The dialog displays the tabs for a single configuration
+     * only (a tree of launch configuration is not displayed), and provides a
+     * launch (run or debug) button.
+     * <p>
+     * If a status is specified, a status handler is consulted to handle the
+     * status. The status handler is passed the instance of the launch
+     * configuration dialog that is opened. This gives the status handler an
+     * opportunity to perform error handling/initialization as required.
+     * </p>
+     * @param shell the parent shell for the launch configuration dialog
+     * @param configuration the configuration to display
+     * @param groupIdentifier group identifier of the launch group the launch configuration
+     * belongs to
+     * @param status the status to display, or <code>null</code> if none 
+     * @return the return code from opening the launch configuration dialog -
+     *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
+     * @since 2.1
+     */
+    public static int openLaunchConfigurationDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier, IStatus status) {
+    	LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier);
+    	if (group != null) {
+    		LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(shell, configuration, group);
+    		dialog.setInitialStatus(status);
+    		return dialog.open();
+    	} 
+    		
+    	return Window.CANCEL;
+    }
 			
 	/**
 	 * Saves all dirty editors and builds the workspace according to current
@@ -634,5 +644,15 @@ public class DebugUITools {
 	 */
 	public static ILaunchGroup getLaunchGroup(ILaunchConfiguration configuration, String mode) {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
+	}
+	
+	/**
+	 * Return whether to use the launch wizard instead of the launch dialog
+	 * 
+	 * @return whether to use the launch wizard instead of the launch dialog
+	 * TODO: to be removed
+	 */
+	private static boolean isUseLaunchWizard() {
+	    return DebugUIPlugin.getDefault().getPluginPreferences().getBoolean(DebugWorkInProgressPreferencePage.WIP_PREF_USE_LAUNCH_WIZARD);
 	}
 }

@@ -23,6 +23,8 @@ import org.eclipse.jface.viewers.Viewer;
  * Duplicates the selected launch configuration.
  */
 public class DuplicateLaunchConfigurationAction extends AbstractLaunchConfigurationAction {
+    
+    private ILaunchConfiguration fDuplicate;
 	
 	/**
 	 * Action identifier for IDebugView#getAction(String)
@@ -44,7 +46,7 @@ public class DuplicateLaunchConfigurationAction extends AbstractLaunchConfigurat
 		String newName = DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(original.getName());
 		try {
 			ILaunchConfigurationWorkingCopy newWorkingCopy = original.copy(newName);
-			newWorkingCopy.doSave();
+			fDuplicate = newWorkingCopy.doSave();
 		} catch (CoreException e) {
 			errorDialog(e);
 		}
@@ -55,6 +57,15 @@ public class DuplicateLaunchConfigurationAction extends AbstractLaunchConfigurat
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return selection.size() == 1 && selection.getFirstElement() instanceof ILaunchConfiguration;
+	}
+	
+	/**
+	 * Returns the most recently duplicated launch config (i.e. the new one), or <code>null</code>
+	 *  
+	 * @return the most recently duplicated launch config (i.e. the new one), or <code>null</code>
+	 */
+	protected ILaunchConfiguration getDuplicate() {
+	    return fDuplicate;
 	}
 
 }

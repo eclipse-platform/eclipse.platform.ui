@@ -143,6 +143,12 @@
             class="org.eclipse.debug.internal.ui.preferences.StringVariablePreferencePage"
             id="org.eclipse.debug.ui.StringVariablePreferencePage">
       </page>
+      <page
+            name="%WorkInProgressPreferencePage.name"
+            category="org.eclipse.debug.ui.DebugPreferencePage"
+            class="org.eclipse.debug.internal.ui.preferences.DebugWorkInProgressPreferencePage"
+            id="org.eclipse.debug.ui.WorkInProgressPreferencePage">
+      </page>      
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -1218,21 +1224,24 @@
             bannerImage="icons/full/wizban/debug_wiz.gif"
             image="icons/full/etool16/debug_exc.gif"
             mode="debug"
-            id="org.eclipse.debug.ui.launchGroup.debug">
+            id="org.eclipse.debug.ui.launchGroup.debug"
+            title="%DebugLaunchGroup.title">
       </launchGroup>
       <launchGroup
             label="%RunLaunchGroup.label"
             bannerImage="icons/full/wizban/run_wiz.gif"
             image="icons/full/etool16/run_exc.gif"
             mode="run"
-            id="org.eclipse.debug.ui.launchGroup.run">
+            id="org.eclipse.debug.ui.launchGroup.run"
+            title="%RunLaunchGroup.title">
       </launchGroup>
       <launchGroup
             label="%ProfileLaunchGroup.label"
             bannerImage="icons/full/wizban/profile_wiz.gif"
             image="icons/full/etool16/profile_exc.gif"
             mode="profile"
-            id="org.eclipse.debug.ui.launchGroup.profile">
+            id="org.eclipse.debug.ui.launchGroup.profile"
+            title="%ProfileLaunchGroup.title">
       </launchGroup>
    </extension>
    <extension
