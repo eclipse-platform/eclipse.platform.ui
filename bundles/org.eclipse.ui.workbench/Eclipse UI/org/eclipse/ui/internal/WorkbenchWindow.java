@@ -85,7 +85,6 @@ import org.eclipse.ui.commands.IKeyBinding;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.ActionHandler;
 import org.eclipse.ui.internal.commands.CommandManager;
-import org.eclipse.ui.internal.commands.ContextAndHandlerManager;
 import org.eclipse.ui.internal.commands.Match;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.misc.Assert;
@@ -106,16 +105,13 @@ public class WorkbenchWindow
 	extends ApplicationWindow
 	implements IWorkbenchWindow {
 
-	private ContextAndHandlerManager contextAndHandlerManager;
 	private int number;
 	private Workbench workbench;
 	private PageList pageList = new PageList();
 	private PageListenerList pageListeners = new PageListenerList();
-	private PerspectiveListenerListOld perspectiveListeners =
-		new PerspectiveListenerListOld();
+	private PerspectiveListenerListOld perspectiveListeners = new PerspectiveListenerListOld();
 	private IPartDropListener partDropListener;
-	private WWinPerspectiveService perspectiveService =
-		new WWinPerspectiveService(this);
+	private WWinPerspectiveService perspectiveService = new WWinPerspectiveService(this);
 	private KeyBindingService keyBindingService;
 	private WWinPartService partService = new WWinPartService(this);
 	private ActionPresentation actionPresentation;
@@ -198,7 +194,7 @@ public class WorkbenchWindow
 			Rectangle clientArea = composite.getClientArea();
 
 			//Null on carbon
-			if(getSeperator1() != null){
+			if (getSeperator1() != null) {
 				//Layout top seperator
 				Point sep1Size =
 					getSeperator1().computeSize(
@@ -218,10 +214,8 @@ public class WorkbenchWindow
 			//Layout the progress indicator
 			if (showProgressIndicator()) {
 				if (animationItem != null) {
-					Control progressWidget =
-						animationItem.getControl();
-					Rectangle bounds =
-					animationItem.getImageBounds();
+					Control progressWidget = animationItem.getControl();
+					Rectangle bounds = animationItem.getImageBounds();
 					toolBarWidth -= (bounds.width + CLIENT_INSET);
 					progressWidget.setBounds(
 						clientArea.x + toolBarWidth,
@@ -420,24 +414,19 @@ public class WorkbenchWindow
 	}
 
 	private SortedMap actionsForActionSets = new TreeMap();
-	private SortedMap actionsForGlobalActions = new TreeMap(); 
+	private SortedMap actionsForGlobalActions = new TreeMap();
 
 	SortedMap getActionsForActionSets() {
 		return actionsForActionSets;
 	}
-	
+
 	SortedMap getActionsForGlobalActions() {
 		return actionsForGlobalActions;
 	}
 
-	void updateContextAndHandlerManager() {
-		if (contextAndHandlerManager != null)
-			contextAndHandlerManager.update();
-	}
-
 	void registerActionSets(IActionSet[] actionSets) {
 		actionsForActionSets.clear();
-		
+
 		for (int i = 0; i < actionSets.length; i++) {
 			if (actionSets[i] instanceof PluginActionSet) {
 				PluginActionSet pluginActionSet =
@@ -577,7 +566,6 @@ public class WorkbenchWindow
 	 */
 	public int open() {
 		int result = super.open();
-		contextAndHandlerManager = new ContextAndHandlerManager(this);
 		workbench.fireWindowOpened(this);
 		return result;
 	}
@@ -823,7 +811,7 @@ public class WorkbenchWindow
 	protected MenuManager createMenuManager() {
 		final MenuManager result = super.createMenuManager();
 		result.setOverrides(new IContributionManagerOverrides() {
-			
+
 			private CommandManager commandManager = CommandManager.getInstance();
 
 			private String formatCarbon(KeySequence keySequence) {
@@ -879,14 +867,14 @@ public class WorkbenchWindow
 
 						if (matchesByKeySequenceForMode.get(keySequence) == null)
 							return null;
-					}					
+					}
 				} else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$ 		
-					Map keyBindingsByCommandId = commandManager.getKeyBindingsByCommandId();				
+					Map keyBindingsByCommandId = commandManager.getKeyBindingsByCommandId();
 					SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(commandId);
-		
+
 					if (keyBindings != null) {
 						IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
-		
+
 						if (keyBinding != null) {
 							KeySequence keySequence = keyBinding.getKeySequence();
 							List keyStrokes = keySequence.getKeyStrokes();
@@ -894,7 +882,7 @@ public class WorkbenchWindow
 							if (keyStrokes.size() == 1) {
 								KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
 								return new Integer(KeySupport.convertToSWT(keyStroke));
-							}						
+							}
 						}
 					}
 				}
@@ -920,19 +908,17 @@ public class WorkbenchWindow
 						if (matchesByKeySequenceForMode.get(keySequence) == null)
 							return null;
 					}
-				} 
-				else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
-					Map keyBindingsByCommandId = commandManager.getKeyBindingsByCommandId();				
-					SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(commandId);
-		
+				} else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
+					Map keyBindingsByCommandId = commandManager.getKeyBindingsByCommandId();
+					SortedSet keyBindings =	(SortedSet) keyBindingsByCommandId.get(commandId);
+
 					if (keyBindings != null) {
 						IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
-		
+
 						if (keyBinding != null)
 							return formatCarbon(keyBinding.getKeySequence());
 					}
-				}
-				else {
+				} else {
 					String acceleratorText = commandManager.getKeyTextForCommand(commandId);
 
 					if (acceleratorText != null)
@@ -972,8 +958,8 @@ public class WorkbenchWindow
 				KeySequence childMode = KeySequence.getInstance(keyStrokes);
 				Map matchesByKeySequenceForMode = commandManager.getMatchesByKeySequenceForMode();
 				Match match = (Match) matchesByKeySequenceForMode.get(childMode);
-			
-				if (match == null || match.getCommandId() == null)			
+
+				if (match == null || match.getCommandId() == null)
 					return text;
 
 				if (index == 0)
@@ -1606,7 +1592,7 @@ public class WorkbenchWindow
 		setActivePage(newActivePage);
 
 		// TODO: is this necessary?
-		updateContextAndHandlerManager();
+		workbench.updateActiveKeyBindingService();
 
 		// Restore the coolbar manager state. 
 		IMemento coolBarMem =
