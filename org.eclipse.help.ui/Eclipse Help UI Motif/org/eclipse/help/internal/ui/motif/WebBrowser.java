@@ -116,7 +116,9 @@ class WebBrowser implements IBrowser {
 			opened = false;
 		}
 	}
-	public void print() {
+	public int print() {
+		// This feature is temporarily not supported on Linux.
+		return 0;
 	}
 	/**
 	 * Print a Topic and all it's children.

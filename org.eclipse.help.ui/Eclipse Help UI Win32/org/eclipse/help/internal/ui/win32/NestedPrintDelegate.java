@@ -119,7 +119,16 @@ public class NestedPrintDelegate {
 					WorkbenchResources.getString("Printing") + topicList[topicsPrinted].getLabel());
 
 			topicsPrinted++;
-			webBrowser.print(backControlSite, false);
+			
+			// Check to make sure that printing will be OK. 
+			// ie: printer installed..etc
+			int printingResult = webBrowser.print(backControlSite, false);
+			if (printingResult != OLE.S_OK) {
+				// ie: problems printing. Do further printing can be done.
+				// No need for user popup message because IE displayes message.
+				doCleanUp();
+				return; 
+			}
 
 			// add one to compensate for the TableOfContents
 			if (topicsPrinted < topicList.length) {

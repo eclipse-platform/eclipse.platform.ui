@@ -371,18 +371,17 @@ public class WebBrowser implements OleListener, IBrowser {
 	}
 	/**
 	 */
-	public void print() {
-		print(controlSite, true);
+	public int print() {
+		return print(controlSite, true);
 	}
 	/**
 	 */
-	protected synchronized void print(
+	protected int print(
 		HelpControlSite aControlSite,
 		boolean promptuser) {
-		if (Logger.DEBUG)
-			Logger.logDebugMessage("WebBrowser", "print: ");
 
 		int result = aControlSite.queryStatus(OLE.OLECMDID_PRINT);
+		
 		if ((result & OLE.OLECMDF_ENABLED) == OLE.OLECMDF_ENABLED) {
 			if (promptuser)
 				result =
@@ -394,10 +393,11 @@ public class WebBrowser implements OleListener, IBrowser {
 						OLE.OLECMDEXECOPT_DONTPROMPTUSER,
 						null,
 						null);
-
-			if (result == OLE.S_OK)
-				return;
 		}
+		
+		if (Logger.DEBUG)
+			Logger.logDebugMessage("WebBrowser", "exec returns: " + Integer.toString(result));
+		return result;
 	}
 	/*
 	 * Print a List of Topics

@@ -27,7 +27,7 @@ public interface IBrowser {
 	 * Navigate to the specified URL
 	 */
 	public int navigate(String url);
-	public void print();
+	public int print();
 	/**
 	 * Print a Topic and all it's children.
 	 */
