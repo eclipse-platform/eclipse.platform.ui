@@ -364,7 +364,7 @@ public abstract class Command extends Request {
 		ICVSResource[] resources = null;
 		/*** setup progress monitor ***/
 		monitor = Policy.monitorFor(monitor);
-		monitor.beginTask(Policy.bind("Command.server"), 100); //$NON-NLS-1$
+		monitor.beginTask(null, 100);
 		Policy.checkCanceled(monitor);
 		try {
 			/*** prepare for command ***/
