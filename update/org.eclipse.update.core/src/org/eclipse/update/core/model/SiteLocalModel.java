@@ -166,7 +166,7 @@ public class SiteLocalModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public InstallConfigurationModel[] getPreservedConfigurationsModel() {
-		if (preservedConfigurations==null)
+		if (preservedConfigurations==null || preservedConfigurations.isEmpty())
 			return new InstallConfigurationModel[0];
 		return (InstallConfigurationModel[])preservedConfigurations.toArray(arrayTypeFor(preservedConfigurations));
 	}

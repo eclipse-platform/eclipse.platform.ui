@@ -121,7 +121,9 @@ public class InstallConfigurationModel extends ModelObject {
 	 *  @since 2.0
 	 */
 	public void setCurrent(boolean isCurrent) {
-		assertIsWriteable();
+		// FIXME I do not believe we should check
+		// otherwise we can never set as Current
+		//assertIsWriteable();
 		this.isCurrent = isCurrent;
 	}
 	

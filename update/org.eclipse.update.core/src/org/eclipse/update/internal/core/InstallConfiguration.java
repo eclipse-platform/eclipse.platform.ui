@@ -28,6 +28,7 @@ import org.xml.sax.SAXException;
 public class InstallConfiguration extends InstallConfigurationModel implements IInstallConfiguration, IWritable {
 
 	
+
 	private ListenersList listeners = new ListenersList();
 
 	public InstallConfiguration(){
@@ -80,10 +81,6 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			return (IConfigurationSite[]) result;
 	}
 
-	
-	/*
-	 * @see IInstallConfiguration#addConfigurationSite(IConfigurationSite)
-	 */
 	public void addConfigurationSite(IConfigurationSite site) {
 		if (!isCurrent() && isReadOnly() )
 			return;
@@ -98,6 +95,37 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		for (int i = 0; i < configurationListeners.length; i++) {
 			((IInstallConfigurationChangedListener) configurationListeners[i]).installSiteAdded(site);
 		}
+		// everything done ok
+		activity.setStatus(IActivity.STATUS_OK);
+		this.addActivityModel((ConfigurationActivityModel)activity);
+	}
+
+
+	
+	/*
+	 * add multiple sites in one activity
+	 */
+	public void setConfigurationSites(IConfigurationSite[] site) {
+		if (!isCurrent() && isReadOnly() )
+			return;
+		
+		if (site==null)
+			return;
+			
+		//Start UOW ?
+		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_SITE_INSTALL);
+		activity.setLabel("Multiple site install");
+		activity.setDate(new Date());		
+
+		for (int index = 0; index < site.length; index++) {
+			addConfigurationSiteModel((ConfigurationSiteModel)site[index]);
+			// notify listeners
+			Object[] configurationListeners = listeners.getListeners();
+			for (int i = 0; i < configurationListeners.length; i++) {
+				((IInstallConfigurationChangedListener) configurationListeners[i]).installSiteAdded(site[index]);
+			}
+		}
+		
 		// everything done ok
 		activity.setStatus(IActivity.STATUS_OK);
 		this.addActivityModel((ConfigurationActivityModel)activity);
