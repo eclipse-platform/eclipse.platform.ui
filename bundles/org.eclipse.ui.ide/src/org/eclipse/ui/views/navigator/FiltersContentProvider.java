@@ -16,7 +16,7 @@ import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -87,7 +87,7 @@ private static void readFilters() {
 	definedFilters = new ArrayList();
 	defaultFilters = new ArrayList();
 	AbstractUIPlugin plugin =
-		(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
+		(AbstractUIPlugin) Platform.getPlugin(IDEWorkbenchPlugin.IDE_WORKBENCH);
 	if (plugin != null) {
 		IExtensionPoint extension = plugin.getDescriptor().getExtensionPoint(ResourcePatternFilter.FILTERS_TAG);
 		if (extension != null) {

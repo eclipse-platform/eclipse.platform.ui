@@ -848,7 +848,7 @@ public class ResourceNavigator
 			IMemento children[] = filtersMem.getChildren(TAG_FILTER);
 
 			// check if first element has new tag defined, indicates new version
-			if (children[0].getString(TAG_IS_ENABLED) != null) { 
+			if (children.length > 0 && children[0].getString(TAG_IS_ENABLED) != null) { 
 				ArrayList selectedFilters = new ArrayList();
 				ArrayList unSelectedFilters = new ArrayList();
 				for (int i = 0; i < children.length; i++) {
