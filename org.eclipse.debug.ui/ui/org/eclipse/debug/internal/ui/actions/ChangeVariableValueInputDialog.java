@@ -169,7 +169,6 @@ protected Control createDialogArea(Composite parent) {
 		GridData.HORIZONTAL_ALIGN_FILL));
 	errorMessageLabel.setFont(font);
 	
-	applyDialogFont(composite);
 	return composite;
 }
 /**
