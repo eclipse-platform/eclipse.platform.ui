@@ -170,6 +170,8 @@ If no value is supplied, a default ratio will be used.
       <annotation>
          <documentation>
             A sticky view is a view that will appear by default across all perspectives in a window once it is opened.  Its initial placement is governemed by the location attribute, but nothing prevents it from being moved or closed by the user.  Use of this element will only cause a placeholder for the view to be created, it will not show the view.  Please note that usage of this element should be done with great care and should only be applied to views that truely have a need to live across perspectives.
+
+Since 3.0
          </documentation>
       </annotation>
       <complexType>
@@ -227,10 +229,12 @@ If no value is supplied, a default ratio will be used.
 &lt;/p&gt;
 The following is an example of a sticky view declaration:
 &lt;p&gt;
+&lt;pre&gt;
    &lt;extension point=&quot;org.eclipse.ui.views&quot;&gt; 
       &lt;stickyView
          id=&quot;com.xyz.views.XYZView&quot; /&gt;
    &lt;/extension&gt; 
+&lt;/pre&gt;
 &lt;/p&gt;
       </documentation>
    </annotation>
