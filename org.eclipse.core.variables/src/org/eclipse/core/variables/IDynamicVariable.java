@@ -17,7 +17,16 @@ import org.eclipse.core.runtime.CoreException;
  * by a resolver at the time a string substitution is performed. A dynamic
  * variable is contributed by an extension.
  * 
- * TODO: example extension
+ * The following is a definition of a dynamic variable that resolves to the name of the selected resource:
+ * <pre>
+ *  <extension point="org.eclipse.core.variables.dynamicVariables">
+ *    <variable 
+ *       name="resource_name"
+ *       expanderClass="com.example.ResourceNameExpander"
+ *       description="The name of the selected resource">
+ *    </variable>
+ *  </extension>
+ * </pre>
  * 
  * @since 3.0
  */

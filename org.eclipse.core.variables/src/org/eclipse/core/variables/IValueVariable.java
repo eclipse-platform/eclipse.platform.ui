@@ -17,7 +17,34 @@ package org.eclipse.core.variables;
  * A contributor may optionally specify an initial value for a variable, or
  * provide a delegate that will initialie the variable with a value. 
  * 
- * TODO: example plug-in XML
+ * Example of a value variable contribution with an initial value, the specified
+ * variable is created with the initial value "/usr/local/foo".
+ * 
+ * <p>
+ * <pre>
+ *  <extension point="org.eclipse.core.variables.valueVariables">
+ *   <variable
+ *    name="FOO_HOME"
+ *    initialValue="/usr/local/foo">
+ *   </variable>
+ *  </extension>
+ * </pre>
+ * </p>
+ * 
+ * Example of a value variable contribution with an initializer class, the class
+ * "com.example.FooLocator" will be used to initialize the value the first time
+ * it's requested.
+ * <p>
+ * <pre>
+ *  <extension point="org.eclipse.core.variables.valueVariables">
+ *   <variable
+ *    name="FOO_HOME"
+ *    initializerClass="com.example.FooLocator">
+ *   </variable>
+ *  </extension>
+ * </pre>
+ * </p>
+ * 
  * 
  * @since 3.0
  */

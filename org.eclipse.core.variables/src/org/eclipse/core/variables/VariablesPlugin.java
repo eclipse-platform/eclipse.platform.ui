@@ -88,7 +88,6 @@ public class VariablesPlugin extends Plugin {
 	 * Logs the specified status with this plug-in's log.
 	 * 
 	 * @param status status to log
-	 * @since 2.0
 	 */
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
@@ -111,7 +110,6 @@ public class VariablesPlugin extends Plugin {
 	 * Returns the string variable manager.
 	 * 
 	 * @return the string variable manager
-	 * @since 3.0
 	 */
 	public IStringVariableManager getStringVariableManager() {
 		return StringVariableManager.getDefault();
