@@ -422,6 +422,10 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 * @see AbstractInformationControlManager#presentInformation()
 	 */
 	protected void presentInformation() {
+		if (fMouseTracker == null) {
+			super.presentInformation();
+			return;
+		}
 		
 		Rectangle area= getSubjectArea();
 		if (area != null)
@@ -445,14 +449,27 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		super.setEnabled(enabled);
 		boolean is= isEnabled();
 		
-		if (was != is) {
+		if (was != is && fMouseTracker != null) {
 			if (is)
 				fMouseTracker.start(getSubjectControl());
 			else
 				fMouseTracker.stop();
 		}
 	}
-	
+
+
+	/**
+	 * Disposes this manager's information control.
+	 */
+	public void dispose() {
+		if (fMouseTracker != null) {
+			fMouseTracker.stop();
+			fMouseTracker.fSubjectControl= null;
+			fMouseTracker= null;
+		}
+		super.dispose();
+	}
+
 	/**
 	 * Returns the location at which the most recent mouse hover event
 	 * has been issued.
