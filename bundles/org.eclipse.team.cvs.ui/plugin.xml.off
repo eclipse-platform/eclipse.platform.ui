@@ -65,12 +65,6 @@
 				<separator name="enhancedGroup"/>
 			</menu>
 			<action 
-				id="org.eclipse.team.ccvs.ui.refreshFromLocal"
-				label="%RefreshFromLocal.label"
-				tooltip="%RefreshFromLocal.tooltip"
-				menubarPath="cvs.main/enhancedGroup"
-				class="org.eclipse.team.internal.ccvs.ui.actions.RefreshFromLocalAction"/>
-			<action 
 				id="org.eclipse.team.ccvs.ui.branch"
 				label="%BranchAction.label"
 				tooltip="%BranchAction.tooltip"
