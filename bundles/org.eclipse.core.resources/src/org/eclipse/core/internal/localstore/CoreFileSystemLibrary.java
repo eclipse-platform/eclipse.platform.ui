@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.localstore;
-
-/*
+/*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
 import org.eclipse.core.internal.resources.ResourceStatus;
+import org.eclipse.core.internal.utils.Convert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -16,9 +16,6 @@ public abstract class CoreFileSystemLibrary {
 	/** Indicates whether or not this FS is case sensitive */
 	private static final boolean caseSensitive = new File("a").compareTo(new File("A")) != 0;
 	
-	/** Indicates the default string encoding on this platform */
-	private static String defaultEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
-
 	/**
 	 * The following masks are used to represent the bits
 	 * returned by the getStat() and internalGetStat() methods.
@@ -42,7 +39,7 @@ public abstract class CoreFileSystemLibrary {
 	private static final long STAT_LASTMODIFIED = ~(STAT_RESERVED | STAT_VALID | STAT_FOLDER | STAT_READ_ONLY);
 
 	/** instance of this library */
-	private static final String LIBRARY_NAME = "core128";
+	private static final String LIBRARY_NAME = "core203";
 	private static boolean hasNatives = false;
 	
 	static {
@@ -65,23 +62,8 @@ public static long getLastModified(String fileName) {
 	return new File(fileName).lastModified();
 }
 public static long getStat(String fileName) {
-	/* Calling String.getBytes() creates a new encoding object and other garbage.  
-	 * This can be avoided by calling String.getBytes(String encoding) instead.  
-	 */
-	if (hasNatives) {
-		//default encoding is unknown or previously failed, use no-arg getBytes().
-		if (defaultEncoding == null) {
-			return internalGetStat(fileName.getBytes());
-		}
-		//try to use the default encoding
-		try {
-			return internalGetStat(fileName.getBytes(defaultEncoding));
-		} catch (java.io.UnsupportedEncodingException e) {
-			//null the default encoding so we don't try it again
-			defaultEncoding = null;
-			return internalGetStat(fileName.getBytes());
-		}
-	}
+	if (hasNatives)
+		return internalGetStat(Convert.toPlatformBytes(fileName));
 
 	// inlined (no native) implementation
 	File target = new File(fileName);
@@ -117,8 +99,7 @@ public static boolean isFolder(long stat) {
 public static boolean isReadOnly(String fileName) {
 	if (hasNatives) 
 		return isSet(getStat(fileName), STAT_READ_ONLY);
-
-	// inlined (no native) implementation
+	// inlined (no native) implementation
 	return !(new File(fileName).canWrite());
 }
 public static boolean isReadOnly(long stat) {
@@ -129,14 +110,28 @@ private static boolean isSet(long stat, long mask) {
 }
 public static boolean setReadOnly(String fileName, boolean readOnly) {
 	if (hasNatives)
-		return internalSetReadOnly(fileName.getBytes(), readOnly);
+		return internalSetReadOnly(Convert.toPlatformBytes(fileName), readOnly);
 
 	// inlined (no native) implementation
 	if (!readOnly)
-		return false; // unsupported
+		return false; // not supported
 	return new File(fileName).setReadOnly();
 }
 public static boolean isCaseSensitive() {
 	return caseSensitive;
 }
+/**
+ * Copies file attributes from source to destination. The copyLastModified attribute
+ * indicates whether the lastModified attribute should be copied.
+ */
+public static boolean copyAttributes(String source, String destination, boolean copyLastModified) {
+	if (hasNatives)
+		return internalCopyAttributes(Convert.toPlatformBytes(source), Convert.toPlatformBytes(destination), false);
+	return false; // not supported
+}
+/**
+ * Copies file attributes from source to destination. The copyLastModified attribute
+ * indicates whether the lastModified attribute should be copied.
+ */
+private static final native boolean internalCopyAttributes(byte[] source, byte[] destination, boolean copyLastModified);
 }

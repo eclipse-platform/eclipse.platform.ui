@@ -7,6 +7,25 @@
 #include <sys/stat.h>
 #include "core.h"
 
+
+/*
+ * Get a null-terminated byte array from a java byte array.
+ * The returned bytearray needs to be freed whe not used
+ * anymore. Use free(result) to do that.
+ */
+jbyte* getByteArray(JNIEnv *env, jbyteArray target) {
+	jsize n;
+	jbyte *temp, *result;
+	
+	temp = (*env)->GetByteArrayElements(env, target, 0);
+	n = (*env)->GetArrayLength(env, target);
+	result = malloc((n+1) * sizeof(jbyte));
+	memcpy(result, temp, n);
+	result[n] = '\0';
+	(*env)->ReleaseByteArrayElements(env, target, temp, 0);
+	return result;
+}
+
 /*
  * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
  * Method:    internalGetStat
@@ -18,19 +37,11 @@ JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystem
 	struct stat info;
 	jlong result;
 	jint code;
-	jbyte *fileName, *name;
-	jsize n;
+	jbyte *name;
 
 	// get stat
-	fileName = (*env)->GetByteArrayElements(env, target, 0);
-	
-	n = (*env)->GetArrayLength(env, target);
-	name = malloc((n+1) * sizeof(jbyte));
-	memcpy(name, fileName, n);
-	name[n] = '\0';
-
+	name = getByteArray(env, target);
 	code = stat(name, &info);
-	(*env)->ReleaseByteArrayElements(env, target, fileName, 0);
 	free(name);
 
 	// test if an error occurred
@@ -62,17 +73,10 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSys
 
 	int mask;
 	struct stat info;
-	jbyte *fileName, *name;
-	jsize n;
-	jint code;
+	jbyte *name;
+      	jint code;
 
-        fileName = (*env)->GetByteArrayElements(env, target, 0);
-
-	n = (*env)->GetArrayLength(env, target);
-	name = malloc((n+1) * sizeof(jbyte));
-	memcpy(name, fileName, n);
-	name[n] = '\0';
-
+	name = getByteArray(env, target);
 	code = stat(name, &info);
 	mask = S_IRUSR |
 	       S_IWUSR |
@@ -87,15 +91,64 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSys
         mask &= info.st_mode;
 
 	if (readOnly)
-		mask &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
+	  mask &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
 	else
-		mask |= (S_IRUSR | S_IWUSR);
+	  mask |= (S_IRUSR | S_IWUSR);
 
 	code = chmod(name, mask);
-	(*env)->ReleaseByteArrayElements(env, target, fileName, 0);
+
 	free(name);
 	return code != -1;
 }
+
+/*
+ * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
+ * Method:    internalCopyAttributes
+ * Signature: ([B[BZ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalCopyAttributes
+(JNIEnv *env, jclass clazz, jbyteArray source, jbyteArray destination, jboolean copyLastModified) {
+
+  struct stat info;
+  jbyte *sourceFile, *destinationFile;
+  jint code;
+
+  sourceFile = getByteArray(env, source);
+  destinationFile = getByteArray(env, destination);
+
+  code = stat(sourceFile, &info);
+  if (code == 0) {
+    code = chmod(destinationFile, info.st_mode);
+    if (code == 0 && copyLastModified)
+      code = utime(destinationFile, info.st_mtime);
+  }
+
+  free(sourceFile);
+  free(destinationFile);
+  return code != -1;
+}
+
+/*
+ * Class:     org_eclipse_ant_core_EclipseProject
+ * Method:    internalCopyAttributes
+ * Signature: ([B[BZ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_eclipse_ant_core_EclipseProject_internalCopyAttributes
+   (JNIEnv *env, jclass clazz, jbyteArray source, jbyteArray destination, jboolean copyLastModified) {
+
+  // use the same implementation for both methods
+  return Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalCopyAttributes
+    (env, clazz, source, destination, copyLastModified);
+}
+
+
+
+
+
+
+
+
+
 
 
 

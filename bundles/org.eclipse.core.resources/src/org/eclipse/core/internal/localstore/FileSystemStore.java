@@ -71,9 +71,8 @@ protected void copyFile(File target, File destination, IProgressMonitor monitor)
 		long stat = CoreFileSystemLibrary.getStat(target.getAbsolutePath());
 		long lastModified = CoreFileSystemLibrary.getLastModified(stat);
 		destination.setLastModified(lastModified);
-		// update the read-only flag
-		if (CoreFileSystemLibrary.isReadOnly(stat))
-			destination.setReadOnly();
+		// update file attributes
+		CoreFileSystemLibrary.copyAttributes(target.getAbsolutePath(), destination.getAbsolutePath(), false);
 	} finally {
 		monitor.done();
 	}

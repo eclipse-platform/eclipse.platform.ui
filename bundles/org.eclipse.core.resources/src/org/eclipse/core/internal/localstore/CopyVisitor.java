@@ -59,9 +59,8 @@ protected void copyContents(UnifiedTreeNode node, Resource source, Resource dest
 			long lastModified = node.getLastModified();
 			destination.getResourceInfo(false, true).setLocalSyncInfo(lastModified);
 			destination.getLocation().toFile().setLastModified(lastModified);
-			// update the read-only flag
-			if (node.isReadOnly())
-				destination.setReadOnly(true);
+			// update file attributes
+			CoreFileSystemLibrary.copyAttributes(source.getLocation().toOSString(), destination.getLocation().toOSString(), false);
 		}
 	} catch (CoreException e) {
 		status.add(e.getStatus());

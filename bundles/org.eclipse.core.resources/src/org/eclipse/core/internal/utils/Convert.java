@@ -8,6 +8,9 @@ package org.eclipse.core.internal.utils;
 import java.io.UnsupportedEncodingException;
 
 public class Convert {
+
+	/** Indicates the default string encoding on this platform */
+	private static String defaultEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
 		
 /**
  * Converts the string argument to a byte array.
@@ -78,5 +81,20 @@ public static long bytesToLong(byte[] value) {
 
 	return longValue;
 }
-
+/**
+ * Calling String.getBytes() creates a new encoding object and other garbage.
+ * This can be avoided by calling String.getBytes(String encoding) instead.
+ */
+public static byte[] toPlatformBytes(String target) {
+	if (defaultEncoding == null)
+		return target.getBytes();
+	// try to use the default encoding
+	try {
+		return target.getBytes(defaultEncoding);
+	} catch (UnsupportedEncodingException e) {
+		// null the default encoding so we don't try it again
+		defaultEncoding = null;
+		return target.getBytes();
+	}
+}
 }
