@@ -47,13 +47,9 @@ public class OutputStreamMonitor implements IStreamMonitor {
 
 	/**
 	 * The base number of milliseconds to pause
-	 * between reads. The actual delay is calculated
-	 * by incrementing the base delay exponentially, up to a
-	 * maximum delay. The current implementation results in delays
-	 * of 4, 16, 64, 256, 1024 milliseconds as needed. The delay
-	 * increases in response to program output.
+	 * between reads.
 	 */
-	private static final long BASE_DELAY= 4L;
+	private static final long BASE_DELAY= 50L;
 	/**
 	 * Whether or not this monitor has been killed.
 	 * When the monitor is killed, it stops reading
@@ -123,22 +119,15 @@ public class OutputStreamMonitor implements IStreamMonitor {
 	 */
 	private void read() {
 		byte[] bytes= new byte[BUFFER_SIZE];
-		int readCount= 1;
 		while (true) {
 			try {
 				if (fKilled) {
 					break;
 				}
 				if (fStream.available() == 0) {
-					if (readCount > 1) { // Don't decrement below 1
-						readCount--;
-					}
 					if (fThread == null)
 						break;
 				} else {
-					if (readCount < 5) { // Don't increment above 5
-						readCount++;
-					}
 					int read= fStream.read(bytes);
 					if (read > 0) {
 						String text= new String(bytes, 0, read);
@@ -151,7 +140,7 @@ public class OutputStreamMonitor implements IStreamMonitor {
 				return;
 			}
 			try {
-				Thread.sleep((long)Math.pow(BASE_DELAY,readCount));
+				Thread.sleep(BASE_DELAY);
 			} catch (InterruptedException ie) {
 			}
 		}
