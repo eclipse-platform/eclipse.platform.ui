@@ -129,9 +129,7 @@ public class AntEditorMarkerUpdater {
 		}
 		if (description != null) {
 			IContentType type= description.getContentType();
-			if (AntCorePlugin.ANT_BUILDFILE_CONTENT_TYPE.equals(type.getId())) {
-				return true;
-			}
+			return type != null && AntCorePlugin.ANT_BUILDFILE_CONTENT_TYPE.equals(type.getId());
 		}
 		return false;
 	}
