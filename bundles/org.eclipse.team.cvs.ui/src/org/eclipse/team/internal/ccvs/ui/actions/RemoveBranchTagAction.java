@@ -72,7 +72,7 @@ public class RemoveBranchTagAction extends TeamAction {
 		BranchTag[] tags = getSelectedBranchTags();
 		if (tags.length == 0) return false;
 		for (int i = 0; i < tags.length; i++) {
-			if (tags[i].getTag().equals("HEAD")) return false;
+			if (tags[i].getTag().getName().equals("HEAD")) return false;
 		}
 		return true;
 	}
