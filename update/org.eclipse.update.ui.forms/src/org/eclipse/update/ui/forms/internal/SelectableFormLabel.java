@@ -1,6 +1,7 @@
 package org.eclipse.update.ui.forms.internal;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -57,6 +58,51 @@ public class SelectableFormLabel extends FormLabel {
 		});
 		textMarginWidth = 1;
 		textMarginHeight = 1;
+	}
+	
+	protected void initAccessible() {
+		Accessible accessible = getAccessible();
+		accessible.addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = getText();
+			}
+
+			public void getHelp(AccessibleEvent e) {
+				e.result = getToolTipText();
+			}
+		});
+
+		accessible
+			.addAccessibleControlListener(new AccessibleControlAdapter() {
+			public void getChildAtPoint(AccessibleControlEvent e) {
+				Point pt = toControl(new Point(e.x, e.y));
+				e.childID =
+					(getBounds().contains(pt))
+						? ACC.CHILDID_SELF
+						: ACC.CHILDID_NONE;
+			}
+
+			public void getLocation(AccessibleControlEvent e) {
+				Rectangle location = getBounds();
+				Point pt = toDisplay(new Point(location.x, location.y));
+				e.x = pt.x;
+				e.y = pt.y;
+				e.width = location.width;
+				e.height = location.height;
+			}
+
+			public void getChildCount(AccessibleControlEvent e) {
+				e.detail = 0;
+			}
+
+			public void getRole(AccessibleControlEvent e) {
+				e.detail = ACC.ROLE_LABEL;
+			}
+
+			public void getState(AccessibleControlEvent e) {
+				e.detail = ACC.STATE_READONLY;
+			}
+		});
 	}
 	
 	private void notifyListeners(int eventType) {

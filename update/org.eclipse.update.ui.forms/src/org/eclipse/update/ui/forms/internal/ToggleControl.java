@@ -3,10 +3,11 @@ package org.eclipse.update.ui.forms.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.SWT;
 
 public class ToggleControl extends SelectableControl {
 	private boolean selection;
@@ -42,6 +43,48 @@ public class ToggleControl extends SelectableControl {
 				if (activeCursor!=null)
 				   setCursor(null);
 				redraw();
+			}
+		});
+		initAccessible();
+	}
+	void initAccessible() {
+		getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getHelp(AccessibleEvent e) {
+				e.result = getToolTipText();
+			}
+		});
+		
+		getAccessible().addAccessibleControlListener(new AccessibleControlAdapter() {
+			public void getChildAtPoint(AccessibleControlEvent e) {
+				Point testPoint = toControl(new Point(e.x, e.y));
+				if (getBounds().contains(testPoint)) {
+					e.childID = ACC.CHILDID_SELF;
+				}
+			}
+		
+			public void getLocation(AccessibleControlEvent e) {
+				Rectangle location = getBounds();
+				Point pt = toDisplay(new Point(location.x, location.y));
+				e.x = pt.x;
+				e.y = pt.y;
+				e.width = location.width;
+				e.height = location.height;
+			}
+		
+			public void getChildCount(AccessibleControlEvent e) {
+				e.detail = 0;
+			}
+		
+			public void getRole(AccessibleControlEvent e) {
+				e.detail = ACC.ROLE_TREE;
+			}
+		
+			public void getState(AccessibleControlEvent e) {
+				e.detail = ToggleControl.this.getSelection()?ACC.STATE_EXPANDED:ACC.STATE_COLLAPSED;
+			}
+
+			public void getValue(AccessibleControlEvent e) {
+				e.result = ToggleControl.this.getSelection()?"1":"0";
 			}
 		});
 	}

@@ -29,6 +29,7 @@ public class FormLabel extends Canvas {
 				paint(e);
 			}
 		});
+		initAccessible();
 	}
 	public String getText() {
 		return text;
@@ -40,7 +41,7 @@ public class FormLabel extends Canvas {
 			text = "";
 	}
 
-	private void initAccessible() {
+	protected void initAccessible() {
 		Accessible accessible = getAccessible();
 		accessible.addAccessibleListener(new AccessibleAdapter() {
 			public void getName(AccessibleEvent e) {
