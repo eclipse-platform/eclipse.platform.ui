@@ -93,6 +93,11 @@ public class PerformanceStats {
 	public static final boolean ENABLED;
 
 	/**
+	 * A constant indicating that the timer has not been started.
+	 */
+	private static final long NOT_STARTED = -1;
+
+	/**
 	 * All known event statistics.
 	 */
 	private final static Map statMap = Collections.synchronizedMap(new HashMap());
@@ -104,10 +109,10 @@ public class PerformanceStats {
 	private final static Map thresholdMap = Collections.synchronizedMap(new HashMap());
 
 	/**
-	 * More specific tracing constants for tracking success and failure
+	 * Whether non-failure statistics should be retained.
 	 */
-	private static final boolean TRACE_FAILURE;
 	private static final boolean TRACE_SUCCESS;
+	
 	/**
 	 * An identifier that can be used to figure out who caused the event. This is 
 	 * typically the object whose code was running when the event occurred or
@@ -121,6 +126,11 @@ public class PerformanceStats {
 	 * name of a project being built, or the input of an editor being opened.
 	 */
 	private String context;
+
+	/**
+	 * The starting time of the current occurence of this event.
+	 */
+	private long currentStart = NOT_STARTED;
 
 	/**
 	 * The symbolic name of the event that occurred. This is usually the name of 
@@ -146,7 +156,6 @@ public class PerformanceStats {
 	static {
 		ENABLED = InternalPlatform.getDefault().getBooleanOption(Platform.PI_RUNTIME + "/perf", false);//$NON-NLS-1$
 		//turn these on by default if the global trace flag is turned on
-		TRACE_FAILURE = InternalPlatform.getDefault().getBooleanOption(Platform.PI_RUNTIME + "/perf/failure", ENABLED); //$NON-NLS-1$
 		TRACE_SUCCESS = InternalPlatform.getDefault().getBooleanOption(Platform.PI_RUNTIME + "/perf/success", ENABLED); //$NON-NLS-1$
 	}
 
@@ -207,7 +216,7 @@ public class PerformanceStats {
 		statMap.put(newStats, newStats);
 		return newStats;
 	}
-	
+
 	/**
 	 * Returns whether monitoring of a given performance event is enabled.
 	 * <p>
@@ -295,7 +304,10 @@ public class PerformanceStats {
 	}
 
 	/**
-	 * Adds an occurence of this event to the cumulative counters.
+	 * Adds an occurence of this event to the cumulative counters. This method
+	 * can be used as an alternative to <code>startRun</code> and <code>endRun</code>
+	 * for clients that want to track the context and execution time separately.
+	 * 
 	 * @param elapsed The elapsed time of the new occurrence in milliseconds
 	 * @param contextName The context for the event to return, or <code>null</code>.
 	 * The context optionally provides extra information about an event, such as the
@@ -306,7 +318,7 @@ public class PerformanceStats {
 			return;
 		runCount++;
 		runningTime += elapsed;
-		if (TRACE_FAILURE && elapsed > getThreshold(event))
+		if (elapsed > getThreshold(event))
 			PerformanceStatsProcessor.failed(createFailureStats(contextName, elapsed), elapsed);
 		if (TRACE_SUCCESS)
 			PerformanceStatsProcessor.changed(this);
@@ -324,12 +336,30 @@ public class PerformanceStats {
 		PerformanceStats old = (PerformanceStats) statMap.get(failedStat);
 		if (old == null)
 			statMap.put(failedStat, failedStat);
-		else 
+		else
 			failedStat = old;
 		failedStat.isFailure = true;
 		failedStat.runCount++;
 		failedStat.runningTime += elapsed;
 		return failedStat;
+	}
+
+	/**
+	 * Stops timing the occurence of this event that was started by the previous
+	 * call to <code>startRun</code>.  The event is automatically added to
+	 * the cumulative counters for this event and listeners are notified.
+	 * <p>
+	 * Note that this facility guards itself against runs that start but fail to stop,
+	 * so it is not necessary to call this method from a finally block.  Tracking
+	 * performance of failure cases is generally not of interest.
+	 * 
+	 * @see #startRun()
+	 */
+	public void endRun() {
+		if (!ENABLED || currentStart == NOT_STARTED)
+			return;
+		addRun(System.currentTimeMillis() - currentStart, context);
+		currentStart = NOT_STARTED;
 	}
 
 	/* (non-Javadoc)
@@ -371,8 +401,8 @@ public class PerformanceStats {
 
 	/**
 	 * Returns the optional event context, such as the input of an editor, or the target project
-	 * 
 	 * of a build event.
+	 * 
 	 * @return The context, or <code>null</code> if there is none
 	 */
 	public String getContext() {
@@ -435,7 +465,7 @@ public class PerformanceStats {
 			hash = hash * 37 + context.hashCode();
 		return hash;
 	}
-	
+
 	/**
 	 * Returns whether this performance event represents a performance failure.
 	 * @return <code>true</code> if this is a performance failure, and 
@@ -452,7 +482,32 @@ public class PerformanceStats {
 		runningTime = 0;
 		runCount = 0;
 	}
-	
+
+	/**
+	 * Starts timing an occurence of this event. This is a convenience method,
+	 * fully equivalent to <code>startRun(null)</code>.
+	 */
+	public void startRun() {
+		if (ENABLED)
+			startRun(null);
+	}
+
+	/**
+	 * Starts timing an occurence of this event.  The event should be stopped
+	 * by a subsequent call to <code>endRun</code>.
+	 * 
+	 * @param contextName The context for the event to return, or <code>null</code>.
+	 * The context optionally provides extra information about an event, such as the
+	 * name of a project being built, or the input of an editor being opened.
+	 * @see #endRun
+	 */
+	public void startRun(String contextName) {
+		if (!ENABLED)
+			return;
+		this.context = contextName;
+		this.currentStart = System.currentTimeMillis();
+	}
+
 	/**
 	 * For debugging purposes only.
 	 */

@@ -12,10 +12,9 @@ org.eclipse.core.runtime/timing/startup=false
 
 # Captures performance event information (See org.eclipse.core.runtime.PerformanceStats)
 org.eclipse.core.runtime/perf=false
-# Logs performance events that take longer than specified threshold value
-org.eclipse.core.runtime/perf/failure=true
-# Tracks performance events that take less than specified threshold value
-org.eclipse.core.runtime/perf/success=true
+
+# Tracks performance events that run within an acceptable duration
+org.eclipse.core.runtime/perf/success=false
 
 # Turn on debugging for the compatibility layer
 org.eclipse.core.runtime/compatibility/debug=false
