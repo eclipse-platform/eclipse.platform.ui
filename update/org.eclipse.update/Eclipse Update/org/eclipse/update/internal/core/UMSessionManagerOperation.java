@@ -367,7 +367,7 @@ public boolean doCopy(IProgressMonitor progressMonitor) {
 public boolean doUnzip(IProgressMonitor progressMonitor) {
 
 	String strErrorMessage = null;
-	boolean allInstalled = false;
+	int rc = UpdateManagerConstants.UNDEFINED_CONTENTS;
 
 	// Input URL
 	//----------
@@ -393,6 +393,7 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 	// set up the list of directories to look for
 	//-----------------------------------------------------
 	Vector dirNames = new Vector();
+	Vector dirNamesInstalled = new Vector();	// keep track of plugins/fragments unzipped
 	if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_PLUGINS ) {
 		IComponentDescriptor comp = null;
 		if (getData() instanceof IComponentEntryDescriptor) {
@@ -411,6 +412,7 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 			strErrorMessage = UpdateManagerStrings.getString("S_Error_in_registry");
 		}
 	} else if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_INSTALL) {
+		rc = UpdateManagerConstants.INSTALL_XML_MISSING;
 		IInstallable desc = (IInstallable) getData();
 		if (getData() instanceof IProductDescriptor) 
 			dirNames.addElement(UMEclipseTree.INSTALL_DIR + "/" + UMEclipseTree.PRODUCTS_DIR + "/" + desc.getDirName());
@@ -482,10 +484,9 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 				if (match < 0) 
 					continue;
 				// got an entry with matching directory 
-				// we're happy if we get plugin.xml for all plugins
-				if (entryName.equals((String)dirNames.elementAt(match)+"/"+IManifestAttributes.PLUGIN_MANIFEST) ||
-					entryName.equals((String)dirNames.elementAt(match)+"/"+IManifestAttributes.PLUGIN_MANIFEST_OFF))
-					allInstalled = true;
+				// keep track of which ones they are
+				if (!dirNamesInstalled.contains(prefix))
+					dirNamesInstalled.addElement(prefix);
 			} else if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_INSTALL) {
 				// Skip over entries that don't start with the right dir naming convention (id_version)
 				//-------------------------------------------------------------------------------------
@@ -495,7 +496,7 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 				}
 				// got an entry - as long as we have install.xml we're happy
 				if (entryName.equals((String)dirNames.firstElement()+"/"+IManifestAttributes.INSTALL_MANIFEST))
-					allInstalled = true;
+					rc = UpdateManagerConstants.OK;
 			} else if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_BINDIR) {
 				// Unzip the bin directory, if it exists
 				//--------------------------------------
@@ -504,7 +505,7 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 					continue;
 				}
 				// got bin dir
-				allInstalled = true;
+				rc = UpdateManagerConstants.OK;
 			}
 			try {
 				streamInputEntry = jarFile.getInputStream(entry);
@@ -536,7 +537,9 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 					strbTarget.append(entryName);
 					urlOutputFile = new URL(strbTarget.toString());
 					File fTarget = new File(UMEclipseTree.getFileInPlatformString(urlOutputFile));
-					if (fTarget.exists()) {		// we will not override existing files
+					if (fTarget.exists() &&
+						(getAction() != UpdateManagerConstants.OPERATION_UNZIP_BINDIR)) {		
+						// we will not override existing files, except in bin/
 						if (progressMonitor != null) progressMonitor.worked(1);
 						continue;
 					}
@@ -592,9 +595,22 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 		lock.remove();
 	}	// if jarFile is not null
 
-	if (!allInstalled) 
-		strErrorMessage = UpdateManagerStrings.getString("S_File_is_not_a_valid_JAR_file");
+	if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_PLUGINS ) {
+		// tally up what's unzipped and what's not
+		if (!dirNames.containsAll(dirNamesInstalled)) {
+			rc = UpdateManagerConstants.UNDEFINED_CONTENTS;
+			strErrorMessage = UpdateManagerStrings.getString("S_Undefined_contents_found_in_Jar");
+		}
+		else if (!dirNamesInstalled.containsAll(dirNames)) {
+			rc = UpdateManagerConstants.MISSING_CONTENTS;
+			strErrorMessage = UpdateManagerStrings.getString("S_Unable_to_find_defined_contents_in_Jar");
+		}
+	} else if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_INSTALL) {
+		if (rc != UpdateManagerConstants.OK)
+			strErrorMessage = UpdateManagerStrings.getString("S_Unable_to_find_install_manifest_file_in_Jar");
+	}		
 
+	
 	if (progressMonitor != null) progressMonitor.done();
 
 	// Increment the number of attempts
