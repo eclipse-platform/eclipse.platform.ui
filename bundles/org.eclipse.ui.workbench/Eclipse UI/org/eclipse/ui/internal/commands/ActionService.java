@@ -15,26 +15,15 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.IActionService;
-import org.eclipse.ui.IActiveContextService;
+import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.internal.ActionDescriptor;
-import org.eclipse.ui.internal.EditorActionBuilder;
-import org.eclipse.ui.internal.EditorSite;
-import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.PartSite;
 
-final class CommandServiceForParts implements IActionService, IActiveContextService {
+public final class ActionService implements IActionService {
 	
 	private SortedMap commandIdToActionMap = new TreeMap();
-	private String[] activeContexts = new String[] { IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID };
 	
-	CommandServiceForParts(PartSite partSite) {
-		if (partSite instanceof EditorSite) {
-			EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor) ((EditorSite) partSite).getExtensionActionBarContributor();
-			
-			if (contributor != null)
-				registerExtendedActions(contributor.getExtendedActions());
-		}
+	public ActionService() {
+		super();
 	}
 
 	IAction getAction(String command) {
@@ -75,28 +64,4 @@ final class CommandServiceForParts implements IActionService, IActiveContextServ
 		if (command != null)
 			commandIdToActionMap.remove(command);
     }
-    
-	/*
-	 * @see IActiveContextService#getActiveContexts()
-	 */
-	public String[] getActiveContexts() {
-		return (String[]) activeContexts.clone();	
-	}	
-	
-	/*
-	 * @see IActiveContextService#setActiveContexts(String[] activeContexts)
-	 */
-	public void setActiveContexts(String[] activeContexts)
-		throws IllegalArgumentException {
-		if (activeContexts == null || activeContexts.length < 1)
-			throw new IllegalArgumentException();
-			
-		activeContexts = (String[]) activeContexts.clone();
-    	
-		for (int i = 0; i < activeContexts.length; i++)
-			if (activeContexts[i] == null)
-				throw new IllegalArgumentException(); 
-				
-		this.activeContexts = activeContexts;   	
-	}    
 }

@@ -25,6 +25,10 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.commands.IActionService;
+import org.eclipse.ui.commands.IActiveContextService;
+import org.eclipse.ui.internal.commands.ActionService;
+import org.eclipse.ui.internal.commands.ActiveContextService;
 
 /**
  * <code>PartSite</code> is the general implementation for an
@@ -58,6 +62,9 @@ public class PartSite implements IWorkbenchPartSite {
 	private SubActionBars actionBars;
 	private KeyBindingService keyBindingService;
 	private ArrayList menuExtenders;
+	
+	private IActionService actionService;
+	private IActiveContextService activeContextService;
 	
 	/**
 	 * EditorContainer constructor comment.
@@ -223,7 +230,15 @@ public class PartSite implements IWorkbenchPartSite {
 	 */
 	public IKeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService(this);
+			keyBindingService = new KeyBindingService();
+			
+			if (this instanceof EditorSite) {
+				EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor) ((EditorSite) this).getExtensionActionBarContributor();
+			
+				if (contributor != null)
+					keyBindingService.registerExtendedActions(contributor.getExtendedActions());
+			}			
+			
 			keyBindingService.setScopes(new String[] { getInitialScopeId()}); //$NON-NLS-1$
 		}
 
@@ -234,4 +249,17 @@ public class PartSite implements IWorkbenchPartSite {
 		return IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID;
 	}
 
+	public IActionService getActionService() {
+		if (actionService == null)
+			actionService = new ActionService();
+		
+		return actionService;		
+	}
+
+	public IActiveContextService getActiveContextService() {
+		if (activeContextService == null)
+			activeContextService = new ActiveContextService();
+		
+		return activeContextService;		
+	}
 }

@@ -9,7 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui;
+package org.eclipse.ui.commands;
+
+import org.eclipse.jface.action.IAction;
 
 /**
  * <p>
@@ -17,20 +19,21 @@ package org.eclipse.ui;
  * </p>
  * @since 3.0
  */
-public interface IActiveContextService {
-
-	/**
-	 * Returns the active contexts.
-	 * 
-	 * @return the active contexts.
-	 */
-	String[] getActiveContexts();
+public interface IActionService {
 	
 	/**
-	 * Sets the active contexts.
-	 *
-	 * @param ids the active contexts.
+	 * Registers an action with a command.
+	 * 
+	 * @param action the action to be registered with a command.
+	 */
+	void registerAction(IAction action)
+		throws IllegalArgumentException;
+			
+	/**
+	 * Unregisters an action with a command.
+	 * 
+	 * @param action the action to be unregistered with a command.
 	 */	
-	void setActiveContexts(String[] activeContexts)
+	void unregisterAction(IAction action)
 		throws IllegalArgumentException;
 }

@@ -23,13 +23,8 @@ final class KeyBindingService implements IKeyBindingService {
 	private SortedMap commandIdToActionMap = new TreeMap();
 	private String[] scopes = new String[] { IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID };
 	
-	KeyBindingService(PartSite partSite) {
-		if (partSite instanceof EditorSite) {
-			EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor) ((EditorSite) partSite).getExtensionActionBarContributor();
-			
-			if (contributor != null)
-				registerExtendedActions(contributor.getExtendedActions());
-		}
+	KeyBindingService() {
+		super();
 	}
 
 	IAction getAction(String command) {
