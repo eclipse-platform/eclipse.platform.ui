@@ -41,7 +41,7 @@ public class ModuleVersion extends CVSModelElement implements IAdaptable {
 	public CVSTag getTag() {
 		return tag;
 	}
-	public ICVSRemoteResource getCVSResource() {
+	public ICVSRemoteResource getCVSRemoteFolder() {
 		return resource;
 	}
 	

@@ -29,8 +29,8 @@ import org.eclipse.team.ui.actions.TeamAction;
 /**
  * TagAction tags the selected resources with a version tag specified by the user.
  */
-public class TagAction extends TeamAction {
-	// The previously remembered tag
+public class BranchAction extends TeamAction {
+	// The previously remembered branch
 	private static String previousTag = "";
 	
 	/*
@@ -45,7 +45,7 @@ public class TagAction extends TeamAction {
 					s.getDisplay().syncExec(new Runnable() {
 						public void run() {
 							// Prompt for the tag
-							InputDialog dialog = new InputDialog(s, Policy.bind("TagAction.tagResources"), Policy.bind("TagAction.enterTag"), previousTag, null);
+							InputDialog dialog = new InputDialog(s, Policy.bind("BranchAction.tagResources"), Policy.bind("BranchAction.enterTag"), previousTag, null);
 							if (dialog.open() != InputDialog.OK) return;
 							result[0] = dialog.getValue();
 						}
@@ -60,14 +60,14 @@ public class TagAction extends TeamAction {
 						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
 						List list = (List)table.get(provider);
 						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-						provider.tag(providerResources, IResource.DEPTH_INFINITE, result[0], false, subMonitor);
+						provider.tag(providerResources, IResource.DEPTH_INFINITE, result[0], true, subMonitor);
 					}	
 					previousTag = result[0];							
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("TagAction.tag"), this.PROGRESS_DIALOG);
+		}, Policy.bind("BranchAction.tag"), this.PROGRESS_DIALOG);
 
 	}
 	/*

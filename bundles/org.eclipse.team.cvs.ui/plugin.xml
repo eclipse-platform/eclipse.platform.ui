@@ -85,6 +85,12 @@
 				menubarPath="team.main/checkinGroup"
 				class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"/>
 			<action 
+				id="org.eclipse.team.ccvs.ui.branch"
+				label="%BranchAction.label"
+				tooltip="%BranchAction.tooltip"
+				menubarPath="team.main/checkinGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.BranchAction"/>
+			<action 
 				id="org.eclipse.team.ccvs.ui.tag"
 				label="%TagAction.label"
 				tooltip="%TagAction.tooltip"
@@ -124,6 +130,15 @@
 		<objectContribution 
 			id="org.eclipse.team.ccvs.ui.RemoteFolderContributions" 
 			objectClass="org.eclipse.team.ccvs.core.ICVSRemoteFolder">
+			<action 
+				id="org.eclipse.team.ccvs.ui.addToWorkspace"
+				label="%AddToWorkspaceAction.label"
+				tooltip="%AddToWorkspaceAction.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.actions.AddToWorkspaceAction"/>
+		</objectContribution>
+		<objectContribution 
+			id="org.eclipse.team.ccvs.ui.ModuleVersionContributions" 
+			objectClass="org.eclipse.team.internal.ccvs.ui.model.ModuleVersion">
 			<action 
 				id="org.eclipse.team.ccvs.ui.addToWorkspace"
 				label="%AddToWorkspaceAction.label"

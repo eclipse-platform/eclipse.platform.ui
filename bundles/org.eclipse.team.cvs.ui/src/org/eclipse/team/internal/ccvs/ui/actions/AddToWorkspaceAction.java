@@ -20,6 +20,7 @@ import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.model.ModuleVersion;
 import org.eclipse.team.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -43,6 +44,10 @@ public class AddToWorkspaceAction extends TeamAction {
 					resources.add(next);
 					continue;
 				}
+				if (next instanceof ModuleVersion) {
+					resources.add(((ModuleVersion)next).getCVSRemoteFolder());
+					continue;
+				}
 				if (next instanceof IAdaptable) {
 					IAdaptable a = (IAdaptable) next;
 					Object adapter = a.getAdapter(ICVSRemoteFolder.class);
@@ -54,9 +59,7 @@ public class AddToWorkspaceAction extends TeamAction {
 			}
 		}
 		if (resources != null && !resources.isEmpty()) {
-			ICVSRemoteFolder[] result = new ICVSRemoteFolder[resources.size()];
-			resources.toArray(result);
-			return result;
+			return (ICVSRemoteFolder[])resources.toArray(new ICVSRemoteFolder[resources.size()]);
 		}
 		return new ICVSRemoteFolder[0];
 	}

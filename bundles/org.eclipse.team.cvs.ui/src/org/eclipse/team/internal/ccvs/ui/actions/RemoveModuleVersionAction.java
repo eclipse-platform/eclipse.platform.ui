@@ -60,7 +60,7 @@ public class RemoveModuleVersionAction extends TeamAction {
 				RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 				for (int i = 0; i < tags.length; i++) {
 					ModuleVersion tag = tags[i];
-					manager.removeVersionTags(tag.getCVSResource(), new CVSTag[] {tag.getTag()});
+					manager.removeVersionTags(tag.getCVSRemoteFolder(), new CVSTag[] {tag.getTag()});
 				}
 			}
 		}, Policy.bind("RemoveModuleVersionAction.removeTag"), this.PROGRESS_BUSYCURSOR);
