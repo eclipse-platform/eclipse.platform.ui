@@ -77,7 +77,7 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 			}
 			errors.join(1000);
 			if (errors.getLastLine() != null
-				&& outputs.getLastLine().indexOf("no " + executable + " in")
+				&& errors.getLastLine().indexOf("no " + executable + " in")
 					>= 0) {
 				return true;
 			}
