@@ -11,23 +11,21 @@
 package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.bindings.BindingManager;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandListener;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.ParseException;
 
 /**
  * A wrapper around a core command so that it satisfies the deprecated
@@ -119,9 +117,12 @@ final class CommandWrapper implements ICommand {
 	 * 
 	 * @see org.eclipse.ui.commands.ICommand#getCategoryId()
 	 */
-	public final String getCategoryId() {
-		// TODO Does this break anybody?
-		return null;
+	public final String getCategoryId() throws NotDefinedException {
+		try {
+			return command.getCategory().getId();
+		} catch (final org.eclipse.core.commands.common.NotDefinedException e) {
+			throw new NotDefinedException(e);
+		}
 	}
 
 	/*
@@ -152,19 +153,18 @@ final class CommandWrapper implements ICommand {
 	 * @see org.eclipse.ui.commands.ICommand#getKeySequenceBindings()
 	 */
 	public final List getKeySequenceBindings() {
-		// TODO Make this go faster.
 		final List legacyBindings = new ArrayList();
-		final Collection activeBindings = bindingManager
+		final TriggerSequence[] activeBindings = bindingManager
 				.getActiveBindingsFor(command.getId());
-		final Iterator activeBindingItr = activeBindings.iterator();
-		while (activeBindingItr.hasNext()) {
-			final String formalRepresentation = activeBindingItr.next()
-					.toString();
-			try {
-				legacyBindings.add(new KeySequenceBinding(KeySequence
-						.getInstance(formalRepresentation), 0));
-			} catch (final ParseException e) {
-				// Oh, well...
+		final int activeBindingsCount = activeBindings.length;
+		for (int i = 0; i < activeBindingsCount; i++) {
+			final TriggerSequence triggerSequence = activeBindings[i];
+			if (triggerSequence instanceof org.eclipse.jface.bindings.keys.KeySequence) {
+				legacyBindings
+						.add(new KeySequenceBinding(
+								KeySequence
+										.getInstance((org.eclipse.jface.bindings.keys.KeySequence) triggerSequence),
+								0));
 			}
 		}
 

@@ -151,6 +151,33 @@ public final class KeySequence implements Comparable {
     public static KeySequence getInstance(List keyStrokes) {
         return new KeySequence(keyStrokes);
     }
+	
+	/**
+	 * Gets an instance of <code>KeySequence</code> given a new-style key
+	 * sequence.
+	 * 
+	 * @param newKeySequence
+	 *            The new-style key sequence to convert into a legacy key
+	 *            sequence; must not be <code>null</code>.
+	 * @return a key sequence; never <code>null</code>.
+	 */
+	public static final KeySequence getInstance(
+			final org.eclipse.jface.bindings.keys.KeySequence newKeySequence) {
+		final org.eclipse.jface.bindings.keys.KeyStroke[] newKeyStrokes = newKeySequence
+				.getKeyStrokes();
+		final int newKeyStrokesCount = newKeyStrokes.length;
+		final List legacyKeyStrokes = new ArrayList(newKeyStrokesCount);
+
+		for (int i = 0; i < newKeyStrokesCount; i++) {
+			final org.eclipse.jface.bindings.keys.KeyStroke newKeyStroke = newKeyStrokes[i];
+			legacyKeyStrokes.add(SWTKeySupport
+					.convertAcceleratorToKeyStroke(newKeyStroke
+							.getModifierKeys()
+							| newKeyStroke.getNaturalKey()));
+		}
+		
+		return new KeySequence(legacyKeyStrokes);
+	}
 
     /**
      * Gets an instance of <code>KeySequence</code> by parsing a given a

@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.bindings.Trigger;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -57,7 +54,7 @@ public class CyclePartAction extends PageEventAction {
 	 * The list of key bindings for the backward command when it is open. This
 	 * value is <code>null</code> if the dialog is not open.
 	 */
-	private Collection backwardTriggerSequences = null;
+	private TriggerSequence[] backwardTriggerSequences = null;
 
 	private String commandBackward = null;
 
@@ -69,7 +66,7 @@ public class CyclePartAction extends PageEventAction {
 	 * The list of key bindings for the forward command when it is open. This
 	 * value is <code>null</code> if the dialog is not open.
 	 */
-	private Collection forwardTriggerSequences = null;
+	private TriggerSequence[] forwardTriggerSequences = null;
 
 	private Object selection;
 
@@ -162,11 +159,9 @@ public class CyclePartAction extends PageEventAction {
 
 				if (commandForward != null) {
 					if (forwardTriggerSequences != null) {
-						Iterator iterator = forwardTriggerSequences.iterator();
-
-						while (iterator.hasNext()) {
-							TriggerSequence triggerSequence = (TriggerSequence) iterator
-									.next();
+						final int forwardCount = forwardTriggerSequences.length;
+						for (int i = 0; i < forwardCount; i++) {
+							final TriggerSequence triggerSequence = forwardTriggerSequences[i];
 
 							// Compare the last key stroke of the binding.
 							final Trigger[] triggers = triggerSequence
@@ -184,11 +179,9 @@ public class CyclePartAction extends PageEventAction {
 
 				if (commandBackward != null) {
 					if (backwardTriggerSequences != null) {
-						Iterator iterator = backwardTriggerSequences.iterator();
-
-						while (iterator.hasNext()) {
-							TriggerSequence triggerSequence = (TriggerSequence) iterator
-									.next();
+						final int backwardCount = backwardTriggerSequences.length;
+						for (int i = 0; i < backwardCount; i++) {
+							final TriggerSequence triggerSequence = backwardTriggerSequences[i];
 
 							// Compare the last key stroke of the binding.
 							final Trigger[] triggers = triggerSequence

@@ -11,10 +11,9 @@
 package org.eclipse.ui.keys;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
+import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.ui.IService;
@@ -42,10 +41,10 @@ public interface IBindingService extends IService {
 	 * @param commandId
 	 *            The identifier of the command for which the active bindings
 	 *            should be found; must not be <code>null</code>.
-	 * @return The collection of all active bindings for the given command. This
+	 * @return The array of all active bindings for the given command. This
 	 *         collection may be empty, but it is never <code>null</code>.
 	 */
-	public Collection getActiveBindingsFor(String commandId);
+	public TriggerSequence[] getActiveBindingsFor(String commandId);
 
 	/**
 	 * Returns the currently active scheme.
@@ -58,10 +57,9 @@ public interface IBindingService extends IService {
 	/**
 	 * Returns the current set of bindings.
 	 * 
-	 * @return The current set of bindings (<code>Binding</code>). This is
-	 *         an unmodifiable collection.
+	 * @return The current array of bindings (<code>Binding</code>).
 	 */
-	public Set getBindings();
+	public Binding[] getBindings();
 
 	/**
 	 * Returns the default scheme identifier for the currently running
@@ -74,13 +72,12 @@ public interface IBindingService extends IService {
 	public String getDefaultSchemeId();
 
 	/**
-	 * Returns the collection of the identifiers for all of the defined schemes
-	 * in the workbench.
+	 * Returns the array of defined schemes in the workbench.
 	 * 
-	 * @return The collection of scheme identifiers (<code>String</code>)
-	 *         that are defined; never <code>null</code>, but may be empty.
+	 * @return The array of schemes (<code>Scheme</code>) that are defined;
+	 *         never <code>null</code>, but may be empty.
 	 */
-	public Collection getDefinedSchemeIds();
+	public Scheme[] getDefinedSchemes();
 
 	/**
 	 * Returns the currently active locale.
@@ -180,6 +177,6 @@ public interface IBindingService extends IService {
 	 * @see org.eclipse.ui.IWorkbenchPreferenceConstants
 	 * @see org.eclipse.ui.contexts.IContextService
 	 */
-	public void savePreferences(Scheme activeScheme, Set bindings)
+	public void savePreferences(Scheme activeScheme, Binding[] bindings)
 			throws IOException;
 }

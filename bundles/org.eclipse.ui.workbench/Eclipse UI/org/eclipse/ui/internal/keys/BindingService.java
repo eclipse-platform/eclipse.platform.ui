@@ -11,11 +11,10 @@
 package org.eclipse.ui.internal.keys;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -59,7 +58,7 @@ public final class BindingService implements IBindingService {
 		this.bindingManager = bindingManager;
 	}
 
-	public final Collection getActiveBindingsFor(final String commandId) {
+	public final TriggerSequence[] getActiveBindingsFor(final String commandId) {
 		return bindingManager.getActiveBindingsFor(commandId);
 	}
 
@@ -67,7 +66,7 @@ public final class BindingService implements IBindingService {
 		return bindingManager.getActiveScheme();
 	}
 
-	public final Set getBindings() {
+	public final Binding[] getBindings() {
 		return bindingManager.getBindings();
 	}
 
@@ -75,8 +74,8 @@ public final class BindingService implements IBindingService {
 		return BindingPersistence.getDefaultSchemeId();
 	}
 
-	public final Collection getDefinedSchemeIds() {
-		return bindingManager.getDefinedSchemeIds();
+	public final Scheme[] getDefinedSchemes() {
+		return bindingManager.getDefinedSchemes();
 	}
 
 	public final String getLocale() {
@@ -112,7 +111,7 @@ public final class BindingService implements IBindingService {
 	}
 
 	public final void savePreferences(final Scheme activeScheme,
-			final Set bindings) throws IOException {
+			final Binding[] bindings) throws IOException {
 		BindingPersistence.persist(activeScheme, bindings);
 		try {
 			bindingManager.setActiveScheme(activeScheme);

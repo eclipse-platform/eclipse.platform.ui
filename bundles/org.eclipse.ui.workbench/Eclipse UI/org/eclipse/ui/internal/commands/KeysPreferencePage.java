@@ -1306,20 +1306,23 @@ public final class KeysPreferencePage extends PreferencePage implements
 			}
 
 			// Fix the bindings in the local changes.
-			final Set currentBindings = localChangeManager.getBindings();
+			final Binding[] currentBindings = localChangeManager.getBindings();
+			final int currentBindingsLength = currentBindings.length;
 			final Set trimmedBindings = new HashSet();
-			final Iterator bindingItr = currentBindings.iterator();
-			while (bindingItr.hasNext()) {
-				final Binding binding = (Binding) bindingItr.next();
+			for (int i = 0; i < currentBindingsLength; i++) {
+				final Binding binding = currentBindings[i];
 				if (binding.getType() != Binding.USER) {
 					trimmedBindings.add(binding);
 				}
 			}
-			localChangeManager.setBindings(trimmedBindings);
+			final Binding[] trimmedBindingArray = (Binding[]) trimmedBindings
+					.toArray(new Binding[trimmedBindings.size()]);
+			localChangeManager.setBindings(trimmedBindingArray);
 
 			// Apply the changes.
 			try {
-				bindingService.savePreferences(defaultScheme, trimmedBindings);
+				bindingService.savePreferences(defaultScheme,
+						trimmedBindingArray);
 			} catch (final IOException e) {
 				logPreferenceStoreException(e);
 			}
@@ -1714,10 +1717,9 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 			Map schemesByName = new HashMap();
 
-			for (Iterator iterator = bindingService.getDefinedSchemeIds()
-					.iterator(); iterator.hasNext();) {
-				Scheme scheme = bindingService.getScheme((String) iterator
-						.next());
+			final Scheme[] definedSchemes = bindingService.getDefinedSchemes();
+			for (int i = 0; i < definedSchemes.length; i++) {
+				final Scheme scheme = definedSchemes[i];
 				try {
 					String name = scheme.getName();
 					Collection schemes = (Collection) schemesByName.get(name);
@@ -1868,16 +1870,10 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 			// Make an internal copy of the binding manager, for local changes.
 			try {
-				final Collection definedSchemeIds = bindingService
-						.getDefinedSchemeIds();
-				final Iterator definedSchemeIdItr = definedSchemeIds.iterator();
-				while (definedSchemeIdItr.hasNext()) {
-					final String definedSchemeId = (String) definedSchemeIdItr
-							.next();
-					final Scheme scheme = bindingService
-							.getScheme(definedSchemeId);
-					final Scheme copy = localChangeManager
-							.getScheme(definedSchemeId);
+				for (int i = 0; i < definedSchemes.length; i++) {
+					final Scheme scheme = definedSchemes[i];
+					final Scheme copy = localChangeManager.getScheme(scheme
+							.getId());
 					copy.define(scheme.getName(), scheme.getDescription(),
 							scheme.getParentId());
 				}

@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.keys;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +24,7 @@ import java.util.TreeMap;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.Dialog;
@@ -348,16 +348,16 @@ final class KeyAssistDialog extends Dialog {
 		 * Figure out which key is used to open the key assist. If no key, then
 		 * just return.
 		 */
-		final Collection keyBindings = bindingService
+		final TriggerSequence[] keyBindings = bindingService
 				.getActiveBindingsFor("org.eclipse.ui.window.showKeyAssist"); //$NON-NLS-1$
-		final Iterator keyBindingItr = keyBindings.iterator();
+		final int keyBindingsCount = keyBindings.length;
 		final KeySequence currentState = keyBindingState.getCurrentSequence();
 		final int prefixSize = currentState.getKeyStrokes().length;
 
 		// Try to find the first possible matching key binding.
 		KeySequence keySequence = null;
-		while (keyBindingItr.hasNext()) {
-			keySequence = (KeySequence) keyBindingItr.next();
+		for (int i = 0; i < keyBindingsCount; i++) {
+			keySequence = (KeySequence) keyBindings[i];
 
 			// Now just double-check to make sure the key is still possible.
 			if (prefixSize > 0) {

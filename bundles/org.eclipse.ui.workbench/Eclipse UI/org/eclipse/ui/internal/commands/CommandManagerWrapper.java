@@ -263,26 +263,33 @@ public final class CommandManagerWrapper implements ICommandManager,
 	 * @see org.eclipse.jface.bindings.IBindingManagerListener#bindingManagerChanged(org.eclipse.jface.bindings.BindingManagerEvent)
 	 */
 	public final void bindingManagerChanged(final BindingManagerEvent event) {
-		final boolean schemeDefinitionsChanged = event.isSchemeIdDefined()
-				|| event.isSchemeIdUndefined();
-		final Set previousSchemeIds;
+		final boolean schemeDefinitionsChanged = event.isSchemeDefined()
+				|| event.isSchemeUndefined();
+		final Set previousSchemes;
 		if (schemeDefinitionsChanged) {
-			previousSchemeIds = new HashSet(event.getManager()
-					.getDefinedSchemeIds());
-			final String schemeId = event.getSchemeId();
-			if (event.isSchemeIdDefined()) {
-				previousSchemeIds.remove(schemeId);
-			} else {
-				previousSchemeIds.add(schemeId);
+			previousSchemes = new HashSet();
+			final Scheme scheme = event.getScheme();
+			final Scheme[] definedSchemes = event.getManager()
+					.getDefinedSchemes();
+			final int definedSchemesCount = definedSchemes.length;
+			for (int i = 0; i < definedSchemesCount; i++) {
+				final Scheme definedScheme = definedSchemes[0];
+				if ((definedScheme == scheme) && (event.isSchemeDefined())) {
+					continue; // skip this one, it was just defined.
+				}
+				previousSchemes.add(definedSchemes[0].getId());
+			}
+			if (!event.isSchemeDefined()) {
+				previousSchemes.add(scheme.getId());
 			}
 		} else {
-			previousSchemeIds = null;
+			previousSchemes = null;
 		}
 
 		fireCommandManagerChanged(new CommandManagerEvent(this, false, event
 				.hasActiveSchemeChanged(), event.hasLocaleChanged(), event
-				.hasPlatformChanged(), false, false, event.isSchemeIdDefined()
-				|| event.isSchemeIdUndefined(), null, null, previousSchemeIds));
+				.hasPlatformChanged(), false, false, event.isSchemeDefined()
+				|| event.isSchemeUndefined(), null, null, previousSchemes));
 	}
 
 	/*
@@ -414,7 +421,12 @@ public final class CommandManagerWrapper implements ICommandManager,
 	}
 
 	public Set getDefinedKeyConfigurationIds() {
-		return bindingManager.getDefinedSchemeIds();
+		final Set definedIds = new HashSet();
+		final Scheme[] schemes = bindingManager.getDefinedSchemes();
+		for (int i = 0; i < schemes.length; i++) {
+			definedIds.add(schemes[i].getId());
+		}
+		return definedIds;
 	}
 
 	public IKeyConfiguration getKeyConfiguration(String keyConfigurationId) {
@@ -634,7 +646,8 @@ public final class CommandManagerWrapper implements ICommandManager,
 				// Ignore this binding.
 			}
 		}
-		bindingManager.setBindings(bindings);
+		bindingManager.setBindings((Binding[]) bindings
+				.toArray(new Binding[bindings.size()]));
 	}
 
 	public void removeCommandManagerListener(

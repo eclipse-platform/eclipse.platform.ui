@@ -13,8 +13,6 @@ package org.eclipse.ui.internal.keys;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Iterator;
-import java.util.Set;
 
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.Scheme;
@@ -128,7 +126,7 @@ public final class BindingPersistence {
 	 *             preference store.
 	 */
 	public static final void persist(final Scheme activeScheme,
-			final Set bindings) throws IOException {
+			final Binding[] bindings) throws IOException {
 		// Print out debugging information, if requested.
 		if (DEBUG) {
 			System.out.println("BINDINGS >> Persisting active scheme '" //$NON-NLS-1$
@@ -146,9 +144,9 @@ public final class BindingPersistence {
 			writeActiveScheme(xmlMemento, activeScheme);
 		}
 		if (bindings != null) {
-			final Iterator bindingItr = bindings.iterator();
-			while (bindingItr.hasNext()) {
-				final Binding binding = (Binding) bindingItr.next();
+			final int bindingsLength = bindings.length;
+			for (int i = 0; i < bindingsLength; i++) {
+				final Binding binding = bindings[i];
 				if (binding.getType() == Binding.USER) {
 					writeBinding(xmlMemento, binding);
 				}
