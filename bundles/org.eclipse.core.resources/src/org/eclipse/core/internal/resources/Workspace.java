@@ -288,8 +288,9 @@ public static String[][] computeNodeOrder(String[][] specs) {
 /**
  * @see IProject
  */
-public IProject[][] computePrerequisiteOrder(IProject[] projects) {
+public IProject[][] computePrerequisiteOrder(IProject[] targets) {
 	List prereqs = new ArrayList(6);
+	IProject[] projects = getRoot().getProjects();
 	for (int i = 0; i < projects.length; i++) {
 		prereqs.add(new String[] { projects[i].getName(), null });
 		try {
@@ -302,15 +303,30 @@ public IProject[][] computePrerequisiteOrder(IProject[] projects) {
 	}
 	String[][] prereqArray = (String[][]) prereqs.toArray(new String[prereqs.size()][]);
 	String[][] ordered = computeNodeOrder(prereqArray);
+	HashSet filter = new HashSet(Arrays.asList(targets));
 	IProject[][] result = new IProject[2][];
-	result[0] = new IProject[ordered[0].length];
-	for (int i = 0; i < ordered[0].length; i++)
-		result[0][i] = getRoot().getProject(ordered[0][i]);
-	result[1] = new IProject[ordered[1].length];
-	for (int i = 0; i < ordered[1].length; i++)
-		result[1][i] = getRoot().getProject(ordered[1][i]);
+	// build the result list for the ordered projects.  Trim off any projects which
+	// were not requested.
+	ArrayList list = new ArrayList(ordered[0].length);
+	for (int i = 0; i < ordered[0].length; i++) {
+		IProject project = getRoot().getProject(ordered[0][i]);
+		if (filter.contains(project))
+			list.add(project);
+	}
+	result[0] = (IProject[])list.toArray(new IProject[list.size()]);
+
+	// build the result list for the ordered projects.  Trim off any projects which
+	// were not requested.
+	list = new ArrayList(ordered[0].length);
+	for (int i = 0; i < ordered[1].length; i++) {
+		IProject project = getRoot().getProject(ordered[1][i]);
+		if (filter.contains(project))
+			list.add(project);
+	}
+	result[1] = (IProject[])list.toArray(new IProject[list.size()]);
 	return result;
 }
+
 /**
  * @see IWorkspace#copy
  */
