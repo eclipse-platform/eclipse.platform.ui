@@ -34,7 +34,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.externaltools.internal.ant.editor.PlantyEditor;
 import org.eclipse.ui.externaltools.internal.ant.editor.PlantyException;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
@@ -69,10 +68,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		 * do nothing
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(Viewer, Object, Object)
 		 */
-		public void inputChanged(
-			Viewer viewer,
-			Object oldInput,
-			Object newInput) {
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
         
 
@@ -119,19 +115,17 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 	 * The label provider for the objects shown in the outline view.
 	 */
 	private class PlantyLabelProvider implements ILabelProvider {
-			/* (non-Javadoc)
+		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(ILabelProviderListener)
 		 */
 		public void addListener(ILabelProviderListener listener) {
 		}
-
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 		 */
 		public void dispose() {
 		}
-
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(Object, String)
@@ -146,7 +140,6 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		 */
 		public void removeListener(ILabelProviderListener listener) {
 		}
-
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(Object)
@@ -165,15 +158,13 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 			return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TASK);
 		}
         
-
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(Object)
 		 */
 		public String getText(Object aNode) {
 			return ((XmlElement)aNode).getDisplayName();
 		}
-
-}
+	}
    
 	/**
 	 * Creates a new PlantyContentOutlinePage.
@@ -182,7 +173,6 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		super();
 		this.file = aFile;
 	}
-
 
 	/**  
 	 * Creates the control (outline view) for this page
@@ -206,7 +196,6 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		viewer.setInput(getContentOutline(file));
 		viewer.expandToLevel(2);
 	}
-
     
 	/**
 	 * Gets the content outline for a given input element.
@@ -285,7 +274,6 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
                 
 		return tempElement;
 	}
-
     
 	/**
 	 * Fixes the starting positions and offset of all tags after parsing.
@@ -387,7 +375,6 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		}    
 	}
 
-
 	/**
 	 * Returns whether we are on a Microsoft OS.
 	 */
@@ -398,9 +385,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		}
 		return false;
 	}
-	
 
-    
 	/**
 	 * Returns the next element that is to be fixed.
 	 * @param anElement the element that has just been fixed
@@ -427,7 +412,6 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		}
 		return null;
 	}
-
 
 	/**
 	 * Returns the content of the specified file as <code>String</code>.
@@ -459,37 +443,12 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 				tempLine = tempBufferedReader.readLine();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			ExternalToolsPlugin.getDefault().log(e);
 			return null;
 		}
 
-//		tempResult = convertTabsToSpacesIn(tempResult);
-
 		return tempResult.toString();
 	}
-
-	/**
-	 * Replaces all tabs with the appropriate amount of spaces in the specified
-	 * <code>StringBuffer</code>.
-	 * 
-	 * @return the modified <code>aStringBuffer</code>
-	 */
-	private StringBuffer convertTabsToSpacesIn(StringBuffer aStringBuffer) {
-	
-		String tempReplacementString = ""; //$NON-NLS-1$
-		for(int i=0; i< PlantyEditor.TAB_WIDTH; i++) {
-			tempReplacementString += " "; //$NON-NLS-1$
-		}
-		
-		int tempIndex = aStringBuffer.toString().indexOf("\t"); //$NON-NLS-1$
-		while(tempIndex != -1) {
-			aStringBuffer = aStringBuffer.replace(tempIndex, tempIndex+1, tempReplacementString);
-			tempIndex = aStringBuffer.toString().indexOf("\t"); //$NON-NLS-1$
-		}
-		
-		return aStringBuffer;
-	}	
-
 
 	/**
 	 * Returns the index of the first occurence of <code>aSubString</code> in 
@@ -506,11 +465,8 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		return tempIndex;
 	}		
 
-
 	/**
 	 * Forces the page to update its contents.
-	 *
-	 * @see ReadmeEditor#doSave(IProgressMonitor)
 	 */
 	public void update() {
 		getControl().setRedraw(false);
