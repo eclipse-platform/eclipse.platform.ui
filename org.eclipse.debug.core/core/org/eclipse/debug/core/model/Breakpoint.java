@@ -14,7 +14,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -29,7 +29,7 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  * @since 2.0
  */
 
-public abstract class Breakpoint implements IBreakpoint {
+public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 				
 	/**
 	 * Underlying marker.
@@ -104,13 +104,6 @@ public abstract class Breakpoint implements IBreakpoint {
 	 */
 	public IMarker getMarker() {
 		return fMarker;
-	}
-	
-	/**
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
-	 */
-	public Object getAdapter(Class adapter) {		
-		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
 	/**
