@@ -55,7 +55,7 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
 				menu.add(goIntoAction);
 			} else {
 				IStructuredSelection resourceSelection = ResourceSelectionUtil.allResources(selection, IResource.PROJECT);
-				if (!resourceSelection.isEmpty()) {
+				if (resourceSelection != null && !resourceSelection.isEmpty()) {
 					IProject project = (IProject)resourceSelection.getFirstElement();
 					if (project.isOpen())
 						menu.add(goIntoAction);
