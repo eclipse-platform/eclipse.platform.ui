@@ -388,11 +388,48 @@ public class RepositoryManager {
 	}
 	
 	/**
+	 * Add the given resources to their associated providers.
+	 * This schedules the resources for additin; they still need to be committed.
+	 */
+	public void add(IResource[] resources, IProgressMonitor monitor) throws TeamException {
+		Hashtable table = getProviderMapping(resources);
+		Set keySet = table.keySet();
+		monitor.beginTask("", keySet.size() * 1000);
+		monitor.setTaskName(Policy.bind("RepositoryManager.adding"));
+		Iterator iterator = keySet.iterator();
+		while (iterator.hasNext()) {
+			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
+			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
+			provider.setComment(previousComment);
+			List list = (List)table.get(provider);
+			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
+			provider.add(providerResources, IResource.DEPTH_INFINITE, subMonitor);
+		}		
+	}
+	
+	/**
+	 * Delete the given resources from their associated providers.
+	 * This schedules the resources for deletion; they still need to be committed.
+	 */
+	public void delete(IResource[] resources, IProgressMonitor monitor) throws TeamException {
+		Hashtable table = getProviderMapping(resources);
+		Set keySet = table.keySet();
+		monitor.beginTask("", keySet.size() * 1000);
+		monitor.setTaskName(Policy.bind("RepositoryManager.deleting"));
+		Iterator iterator = keySet.iterator();
+		while (iterator.hasNext()) {
+			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
+			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
+			provider.setComment(previousComment);
+			List list = (List)table.get(provider);
+			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
+			provider.delete(providerResources, subMonitor);
+		}		
+	}
+	/**
 	 * Commit the given resources to their associated providers.
 	 * Prompt for a release comment, which will be applied to all committed
 	 * resources. Persist the release comment for the next caller.
-	 * 
-	 * To do: should automatically handle outgoing additions, outgoing deletions.
 	 * 
 	 * What should happen with errors?
 	 * Should this do a workspace operation?
