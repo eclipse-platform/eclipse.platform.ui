@@ -154,6 +154,7 @@ public class ViewsPreferencePage
 		
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(WorkbenchMessages.getString("ViewsPreference.currentTheme")); //$NON-NLS-1$
+		label.setFont(parent.getFont());
 		label.setLayoutData(data);
 		
 		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
