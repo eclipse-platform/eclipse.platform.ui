@@ -85,16 +85,9 @@ public class MessageDialogWithToggle extends MessageDialog {
 	 */
 	protected void buttonPressed(int id) {
 		if (id == IDialogConstants.OK_ID) {  // was the OK button pressed?
-			storePreference();
+			fStore.setValue(fPreferenceKey, !getToggleButton().getSelection());
 		}
 		super.buttonPressed(id);
-	}
-
-	/**
-	 * Store the preference based on the user's selection
-	 */
-	protected void storePreference() {
-		fStore.setValue(fPreferenceKey, !getToggleButton().getSelection());
 	}
 
 	/**
