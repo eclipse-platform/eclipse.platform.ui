@@ -285,14 +285,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		DebugUIAdapterFactory uiFactory = new DebugUIAdapterFactory();
 		manager.registerAdapters(uiFactory, ILaunchConfiguration.class);
 		manager.registerAdapters(uiFactory, ILaunchConfigurationType.class);
-
-		getStandardDisplay().asyncExec(
-			new Runnable() {
-				public void run() {
-					createImageRegistry();
-				}
-			}
-		);
 	}
 
 	/**
