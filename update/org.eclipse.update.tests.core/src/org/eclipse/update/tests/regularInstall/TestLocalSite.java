@@ -215,7 +215,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		assertTrue("Wrong id  version of feature",feature2.getVersionedIdentifier().toString().equalsIgnoreCase("org.eclipse.update.core.tests.feature3_1.0.0"));
 		
 		// test only 2 install config in local site
-		assertTrue("wrong number of history in Local site",site.getConfigurationHistory().length==2);
+		assertTrue("wrong number of history in Local site: found "+site.getConfigurationHistory().length,site.getConfigurationHistory().length==2);
 		
 		// test # of sites in current config
 		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfiguredSites().length==oldNumber);
