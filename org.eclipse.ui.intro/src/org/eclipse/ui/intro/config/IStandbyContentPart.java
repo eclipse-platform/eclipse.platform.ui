@@ -79,7 +79,7 @@ public interface IStandbyContentPart {
      * not call this method.
      * </p>
      * 
-     * @param part
+     * @param introPart
      *            the intro part hosting this stanndby content part.
      * @param memento
      *            this part state or <code>null</code> if there is no previous

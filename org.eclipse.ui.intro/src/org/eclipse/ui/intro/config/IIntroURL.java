@@ -57,8 +57,9 @@ public interface IIntroURL {
      * Return a parameter defined in the Intro URL. Returns null if the
      * parameter is not defined.
      * 
-     * @param parameterId
-     * @return
+     * @param parameterId the id of the parameter being requested
+     * @return the value of the parameter, or <code>null</code> if
+     * the parameter is not defined
      */
     public String getParameter(String parameterId);
 }

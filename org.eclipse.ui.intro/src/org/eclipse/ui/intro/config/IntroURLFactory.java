@@ -55,8 +55,8 @@ public final class IntroURLFactory {
      * }
      * </pre>
      * 
-     * @param url
-     * @return
+     * @param url the url to construct an IntroURL from
+     * @return an IntroURL, or <code>null</code> if the url is invalid
      */
     public static IIntroURL createIntroURL(String url) {
         IntroURLParser parser = new IntroURLParser(url);
