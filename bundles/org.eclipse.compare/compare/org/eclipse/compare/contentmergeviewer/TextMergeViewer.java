@@ -3678,10 +3678,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			
 			c.getDisplay().beep();
 			
-			String key= down ? "atEnd" : "atBeginning"; //$NON-NLS-1$ //$NON-NLS-2$
+			if (down)
+				return MessageDialog.openQuestion(c.getShell(),
+					CompareMessages.getString("TextMergeViewer.atEnd.title"),	//$NON-NLS-1$
+					CompareMessages.getString("TextMergeViewer.atEnd.message"));	//$NON-NLS-1$
 			return MessageDialog.openQuestion(c.getShell(),
-				CompareMessages.getString("TextMergeViewer."+key+".title"),	//$NON-NLS-1$ //$NON-NLS-2$
-				CompareMessages.getString("TextMergeViewer."+key+".message"));	//$NON-NLS-1$ //$NON-NLS-2$
+					CompareMessages.getString("TextMergeViewer.atBeginning.title"),	//$NON-NLS-1$
+					CompareMessages.getString("TextMergeViewer.atBeginning.message"));	//$NON-NLS-1$
 		}
 		return false;
 	}
