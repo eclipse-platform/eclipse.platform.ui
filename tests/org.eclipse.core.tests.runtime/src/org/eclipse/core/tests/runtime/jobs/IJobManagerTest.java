@@ -189,6 +189,11 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		waitForCompletion(jobB, 30000);
 	}
 
+	/**
+	 * This is a regression test for bug 71448. IJobManager.currentJob was not 
+	 * returning the correct value when executed in a thread that is performing
+	 * asynchronous completion of a job (i.e., a UI Job)
+	 */
 	public void testCurrentJob() {
 		final Thread[] thread = new Thread[1];
 		final boolean[] done = new boolean[] {false};
