@@ -219,6 +219,28 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		ComparePreferencePage.initDefaults(getPreferenceStore());
 	}
 			
+	public void stop(BundleContext context) throws Exception {
+		
+		IPreferenceStore ps= getPreferenceStore();
+		rememberAliases(ps);	
+		if (fPropertyChangeListener != null) {
+			ps.removePropertyChangeListener(fPropertyChangeListener);
+			fPropertyChangeListener= null;
+		}
+		
+		super.stop(context);
+		
+		if (fgDisposeOnShutdownImages != null) {
+			Iterator i= fgDisposeOnShutdownImages.iterator();
+			while (i.hasNext()) {
+				Image img= (Image) i.next();
+				if (!img.isDisposed())
+					img.dispose();
+			}
+			fgImages= null;
+		}
+	}
+		
 	/**
 	 * Returns the singleton instance of this plug-in runtime class.
 	 *
@@ -396,28 +418,6 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			fgDisposeOnShutdownImages.add(image);
 	}
 	
-	public void stop(BundleContext context) throws Exception {
-		
-		IPreferenceStore ps= getPreferenceStore();
-		rememberAliases(ps);	
-		if (fPropertyChangeListener != null) {
-			ps.removePropertyChangeListener(fPropertyChangeListener);
-			fPropertyChangeListener= null;
-		}
-		
-		super.stop(context);
-		
-		if (fgDisposeOnShutdownImages != null) {
-			Iterator i= fgDisposeOnShutdownImages.iterator();
-			while (i.hasNext()) {
-				Image img= (Image) i.next();
-				if (!img.isDisposed())
-					img.dispose();
-			}
-			fgImages= null;
-		}
-	}
-		
 	/**
 	 * Performs the comparison described by the given input and opens a
 	 * compare editor on the result.
@@ -522,10 +522,8 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	public static ImageDescriptor getImageDescriptor(String relativePath) {
 		
 		URL installURL= null;
-		if (fgComparePlugin != null) {
-			//installURL= fgComparePlugin.getDescriptor().getInstallURL();
+		if (fgComparePlugin != null)
 			installURL= fgComparePlugin.getBundle().getEntry("/"); //$NON-NLS-1$
-		}
 					
 		if (installURL != null) {
 			try {
