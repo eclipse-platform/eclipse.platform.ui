@@ -89,7 +89,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 	}
 	
 	/**
-	 * @see IViewPart
+	 * @see IViewPart#init(IViewSite)
 	 */
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
@@ -103,7 +103,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 	}
 	
 	/**
-	 * @see IWorkbenchPart
+	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
 		super.dispose();
@@ -191,6 +191,8 @@ public class DebugView extends LaunchesView implements IPartListener {
 	/**
 	 * The selection has changed in the viewer. Show the
 	 * associated source code if it is a stack frame.
+	 * 
+	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 		super.selectionChanged(event);
@@ -274,14 +276,13 @@ public class DebugView extends LaunchesView implements IPartListener {
 			return;
 		}
 		
-		
 		IWorkbenchPage page= dwindow.getActivePage();
 		if (page == null) {
 			return;
 		}
+		
 		IEditorPart editor= null;
 		IEditorPart[] editorParts= page.getEditors();
-		
 		
 		// restore editor on startup
 		if (fEditorMemento != null) {
@@ -289,7 +290,6 @@ public class DebugView extends LaunchesView implements IPartListener {
 				fEditor = editorParts[fEditorMemento.intValue()];
 			fEditorMemento = null;
 		}
-
 
 		for (int i= 0; i < editorParts.length; i++) {
 			IEditorPart part= editorParts[i];
@@ -497,7 +497,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 	}
 	
 	/**
-	 * @see IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
+	 * @see IPartListener#partClosed(IWorkbenchPart)
 	 */
 	public void partClosed(IWorkbenchPart part) {
 		if (part.equals(fEditor)) {
@@ -506,25 +506,25 @@ public class DebugView extends LaunchesView implements IPartListener {
 	}
 	
 	/**
-	 * @see IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
+	 * @see IPartListener#partOpened(IWorkbenchPart)
 	 */
 	public void partOpened(IWorkbenchPart part) {
 	}
 
 	/**
-	 * @see IPartListener#partDeactivated(org.eclipse.ui.IWorkbenchPart)
+	 * @see IPartListener#partDeactivated(IWorkbenchPart)
 	 */
 	public void partDeactivated(IWorkbenchPart part) {
 	}
 
 	/**
-	 * @see IPartListener#partBroughtToTop(org.eclipse.ui.IWorkbenchPart)
+	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
 	 */
 	public void partBroughtToTop(IWorkbenchPart part) {
 	}
 
 	/**
-	 * @see IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
+	 * @see IPartListener#partActivated(IWorkbenchPart)
 	 */
 	public void partActivated(IWorkbenchPart part) {
 		if (part == this) {
@@ -533,17 +533,17 @@ public class DebugView extends LaunchesView implements IPartListener {
 	}	
 
 	/**
-	 * @see IViewPart
+	 * @see IViewPart#init(IViewSite, IMemento)
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
-		super.init(site,memento);
+		super.init(site, memento);
 		if (memento != null) {
 			fEditorMemento = memento.getInteger(DEBUG_EDITOR);
 		}
 	}
 	
 	/**
-	 * @see IViewPart
+	 * @see IViewPart#saveState(IMemento)
 	 */
 	public void saveState(IMemento memento) {
 		if (fEditor != null) {
