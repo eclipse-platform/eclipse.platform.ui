@@ -528,7 +528,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		}
 		// notify listeners if a child was added
 		if (added && notify)
-			nodeAdded(child);
+			fireNodeEvent(new NodeChangeEvent(this, child), true);
 		return (IEclipsePreferences) child.node(index == -1 ? EMPTY_STRING : path.substring(index + 1));
 	}
 
@@ -562,7 +562,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				makeDirty();
 		}
 		if (wasRemoved)
-			preferenceChanged(key, oldValue, null);
+			firePreferenceEvent(key, oldValue, null);
 	}
 
 	/*
@@ -655,12 +655,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		return internalNode(pathName, true, null);
 	}
 
-	protected void nodeAdded(IEclipsePreferences child) {
+	protected void fireNodeEvent(final NodeChangeEvent event, final boolean added) {
 		if (nodeListeners == null)
 			return;
 		Object[] listeners = nodeListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
-			final NodeChangeEvent event = new NodeChangeEvent(this, child);
 			final INodeChangeListener listener = (INodeChangeListener) listeners[i];
 			ISafeRunnable job = new ISafeRunnable() {
 				public void handleException(Throwable exception) {
@@ -668,7 +667,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				}
 
 				public void run() throws Exception {
-					listener.added(event);
+					if (added)
+						listener.added(event);
+					else
+						listener.removed(event);
 				}
 			};
 			Platform.run(job);
@@ -700,26 +702,6 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		return child.nodeExists(index == -1 ? EMPTY_STRING : path.substring(index + 1));
 	}
 
-	protected void nodeRemoved(IEclipsePreferences child) {
-		if (nodeListeners == null)
-			return;
-		final Object[] listeners = nodeListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			final NodeChangeEvent event = new NodeChangeEvent(this, child);
-			final INodeChangeListener listener = (INodeChangeListener) listeners[i];
-			ISafeRunnable job = new ISafeRunnable() {
-				public void handleException(Throwable exception) {
-					// already being logged in Platform#run()
-				}
-
-				public void run() throws Exception {
-					listener.removed(event);
-				}
-			};
-			Platform.run(job);
-		}
-	}
-
 	/*
 	 * @see org.osgi.service.prefs.Preferences#parent()
 	 */
@@ -732,7 +714,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	/*
 	 * Convenience method for notifying preference change listeners.
 	 */
-	protected void preferenceChanged(String key, Object oldValue, Object newValue) {
+	protected void firePreferenceEvent(String key, Object oldValue, Object newValue) {
 		if (preferenceListeners == null)
 			return;
 		Object[] listeners = preferenceListeners.getListeners();
@@ -761,7 +743,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		String oldValue = internalPut(key, newValue);
 		if (!newValue.equals(oldValue)) {
 			makeDirty();
-			preferenceChanged(key, oldValue, newValue);
+			firePreferenceEvent(key, oldValue, newValue);
 		}
 	}
 
@@ -775,7 +757,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		String oldValue = internalPut(key, newValue);
 		if (!newValue.equals(oldValue)) {
 			makeDirty();
-			preferenceChanged(key, oldValue, newValue);
+			firePreferenceEvent(key, oldValue, newValue);
 		}
 	}
 
@@ -789,7 +771,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		String oldValue = internalPut(key, newValue);
 		if (!newValue.equals(oldValue)) {
 			makeDirty();
-			preferenceChanged(key, oldValue, newValue);
+			firePreferenceEvent(key, oldValue, newValue);
 		}
 	}
 
@@ -803,7 +785,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		String oldValue = internalPut(key, newValue);
 		if (!newValue.equals(oldValue)) {
 			makeDirty();
-			preferenceChanged(key, oldValue, newValue);
+			firePreferenceEvent(key, oldValue, newValue);
 		}
 	}
 
@@ -817,7 +799,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		String oldValue = internalPut(key, newValue);
 		if (!newValue.equals(oldValue)) {
 			makeDirty();
-			preferenceChanged(key, oldValue, newValue);
+			firePreferenceEvent(key, oldValue, newValue);
 		}
 	}
 
@@ -831,7 +813,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		String oldValue = internalPut(key, newValue);
 		if (!newValue.equals(oldValue)) {
 			makeDirty();
-			preferenceChanged(key, oldValue, newValue);
+			firePreferenceEvent(key, oldValue, newValue);
 		}
 	}
 
@@ -845,7 +827,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		String oldValue = internalPut(key, newValue);
 		if (!newValue.equals(oldValue)) {
 			makeDirty();
-			preferenceChanged(key, oldValue, newValue);
+			firePreferenceEvent(key, oldValue, newValue);
 		}
 	}
 
@@ -907,7 +889,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			}
 		}
 		if (wasRemoved)
-			nodeRemoved(child);
+			fireNodeEvent(new NodeChangeEvent(this, child), false);
 	}
 
 	/*
