@@ -54,7 +54,6 @@ public class ResourceNavigatorActionFactory extends ActionFactory {
 		gotoFactory.makeActions();
 		openActionFactory.makeActions();
 		refactorFactory.makeActions();
-		refactorFactory.addGlobalActions(part.getViewSite().getActionBars());
 		workbenchFactory.makeActions();
 		sortAndFilterMenuFactory.makeActions();
 	}

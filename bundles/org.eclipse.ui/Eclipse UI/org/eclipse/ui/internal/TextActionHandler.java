@@ -9,6 +9,10 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.*;
 
 /**
@@ -48,7 +52,17 @@ public class TextActionHandler {
 	
 	private Listener textControlListener = new TextControlListener();
 	private Text activeTextControl;
-
+	
+	private MouseAdapter mouseAdapter = new MouseAdapter() {
+		public void mouseUp(MouseEvent e) {
+			updateActionsEnableState();
+		}
+	};
+	private KeyAdapter keyAdapter = new KeyAdapter() {
+		public void keyReleased(KeyEvent e) {
+			updateActionsEnableState();
+		}
+	};
 	
 	private class TextControlListener implements Listener {
 		public void handleEvent(Event event) {
@@ -59,10 +73,6 @@ public class TextActionHandler {
 					break;
 				case SWT.Deactivate:
 					activeTextControl = null;
-					updateActionsEnableState();
-					break;
-				case SWT.Selection:
-				case SWT.DefaultSelection:
 					updateActionsEnableState();
 					break;
 				default:
@@ -112,6 +122,7 @@ public class TextActionHandler {
 				setEnabled(deleteAction.isEnabled());
 				return;
 			}
+			setEnabled(false);
 		}
 	}
 	
@@ -140,6 +151,7 @@ public class TextActionHandler {
 				setEnabled(cutAction.isEnabled());
 				return;
 			}
+			setEnabled(false);
 		}
 	}
 	
@@ -168,6 +180,7 @@ public class TextActionHandler {
 				setEnabled(copyAction.isEnabled());
 				return;
 			}
+			setEnabled(false);
 		}
 	}
 	
@@ -196,6 +209,7 @@ public class TextActionHandler {
 				setEnabled(pasteAction.isEnabled());
 				return;
 			}
+			setEnabled(false);
 		}
 	}
 	
@@ -224,6 +238,7 @@ public class TextActionHandler {
 				setEnabled(selectAllAction.isEnabled());
 				return;
 			}
+			setEnabled(false);
 		}
 	}
 /**
@@ -254,10 +269,16 @@ public void addText(Text textControl) {
 	if (textControl == null)
 		return;
 
+	activeTextControl = textControl;
 	textControl.addListener(SWT.Activate, textControlListener);
 	textControl.addListener(SWT.Deactivate, textControlListener);
-	textControl.addListener(SWT.Selection, textControlListener);
-	textControl.addListener(SWT.DefaultSelection, textControlListener);
+
+	// We really want a selection listener but it is not supported so we
+	// use a key listener and a mouse listener to know when selection changes
+	// may have occured
+	textControl.addKeyListener(keyAdapter);
+	textControl.addMouseListener(mouseAdapter);	
+	
 }
 /**
  * Dispose of this action handler
@@ -282,8 +303,12 @@ public void removeText(Text textControl) {
 
 	textControl.removeListener(SWT.Activate, textControlListener);
 	textControl.removeListener(SWT.Deactivate, textControlListener);
-	textControl.removeListener(SWT.Selection, textControlListener);
-	textControl.removeListener(SWT.DefaultSelection, textControlListener);
+
+	textControl.removeMouseListener(mouseAdapter);
+	textControl.removeKeyListener(keyAdapter);
+	
+	activeTextControl = null;
+	updateActionsEnableState();
 }
 /**
  * Set the default <code>IAction</code> handler for the Copy

@@ -68,6 +68,10 @@ public class RefactorActionFactory
 		deleteResourceAction = new DeleteResourceAction(shell);
 		addBookmarkAction = new AddBookmarkAction(shell);
 
+		viewSite.getActionBars().setGlobalActionHandler(
+			IWorkbenchActionConstants.BOOKMARK,
+			addBookmarkAction);
+		
 		textActionHandler = new TextActionHandler(viewSite.getActionBars());
 		textActionHandler.setCopyAction(copyResourceAction);
 		textActionHandler.setDeleteAction(deleteResourceAction);
@@ -128,20 +132,6 @@ public class RefactorActionFactory
 		if (onlyFilesSelected)
 			menu.add(addBookmarkAction);
 
-	}
-
-	/**
-	 * Add actions that need to be part of a global
-	 * action handler
-	 */
-
-	public void addGlobalActions(IActionBars actionBars) {
-		actionBars.setGlobalActionHandler(
-			IWorkbenchActionConstants.DELETE,
-			deleteResourceAction);
-		actionBars.setGlobalActionHandler(
-			IWorkbenchActionConstants.BOOKMARK,
-			addBookmarkAction);
 	}
 	
 	/**
