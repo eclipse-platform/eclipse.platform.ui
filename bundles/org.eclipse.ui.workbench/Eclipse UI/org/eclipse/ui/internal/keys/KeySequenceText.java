@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.keys;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -61,6 +60,14 @@ public final class KeySequenceText {
 		private int insertionIndex = -1;
 
 		/**
+		 * Resets the insertion index to point nowhere. In other words, it is
+		 * set to <code>-1</code>.
+		 */
+		void clearInsertionIndex() {
+			insertionIndex = -1;
+		}
+
+		/**
 		 * Deletes the current selection. If there is no selection, then it
 		 * deletes the last key stroke.
 		 * 
@@ -70,7 +77,7 @@ public final class KeySequenceText {
 		 *            sequence.
 		 */
 		private void deleteKeyStroke(List keyStrokes) {
-			insertionIndex = -1;
+			clearInsertionIndex();
 
 			if (hasSelection()) {
 				/*
@@ -223,7 +230,7 @@ public final class KeySequenceText {
 				// There is a previous replacement still going on.
 				if (stroke.isComplete()) {
 					insertStrokeAt(keyStrokes, stroke, insertionIndex);
-					insertionIndex = -1;
+					clearInsertionIndex();
 				}
 
 			} else if (hasSelection()) {
@@ -231,7 +238,7 @@ public final class KeySequenceText {
 				insertionIndex = deleteSelection(keyStrokes, stroke.isComplete());
 				if ((stroke.isComplete()) || (insertionIndex >= keyStrokes.size())) {
 					insertStrokeAt(keyStrokes, stroke, insertionIndex);
-					insertionIndex = -1;
+					clearInsertionIndex();
 				}
 
 			} else {
@@ -243,7 +250,7 @@ public final class KeySequenceText {
 				// And then add the new stroke.
 				if ((keyStrokes.isEmpty()) || (insertionIndex >= keyStrokes.size()) || (isCursorInLastPosition())) {
 					insertStrokeAt(keyStrokes, stroke, keyStrokes.size());
-					insertionIndex = -1;
+					clearInsertionIndex();
 				} else {
 					/*
 					 * I'm just getting the insertionIndex here. No actual
@@ -252,7 +259,7 @@ public final class KeySequenceText {
 					insertionIndex = deleteSelection(keyStrokes, stroke.isComplete());
 					if (stroke.isComplete()) {
 						insertStrokeAt(keyStrokes, stroke, insertionIndex);
-						insertionIndex = -1;
+						clearInsertionIndex();
 					}
 				}
 
@@ -379,11 +386,12 @@ public final class KeySequenceText {
 	}
 
 	static {
-		Collection trappedKeys = new TreeSet();
+		TreeSet trappedKeys = new TreeSet();
 		trappedKeys.add(KeySupport.convertAcceleratorToKeyStroke(SWT.TAB));
 		trappedKeys.add(KeySupport.convertAcceleratorToKeyStroke(SWT.TAB | SWT.SHIFT));
 		trappedKeys.add(KeySupport.convertAcceleratorToKeyStroke(SWT.BS));
-		TRAPPED_KEYS = Collections.unmodifiableCollection(trappedKeys);
+		List trappedKeyList = new ArrayList(trappedKeys);
+		TRAPPED_KEYS = Collections.unmodifiableList(trappedKeyList);
 	}
 
 	/** An empty string instance for use in clearing text values. */
@@ -398,8 +406,12 @@ public final class KeySequenceText {
 	 * accurate. Perfection is not possible, as SWT does not export traversal
 	 * keys as constants.
 	 */
-	public static final Collection TRAPPED_KEYS;
+	public static final List TRAPPED_KEYS;
 
+	/** 
+	 * The key filter attached to the underlying widget that traps key events.
+	 */
+	private final KeyTrapListener keyFilter = new KeyTrapListener();
 	/**
 	 * The text of the key sequence -- containing only the complete key
 	 * strokes.
@@ -443,7 +455,6 @@ public final class KeySequenceText {
 		}
 
 		// Add the key listener.
-		final Listener keyFilter = new KeyTrapListener();
 		text.addListener(SWT.KeyUp, keyFilter);
 		text.addListener(SWT.KeyDown, keyFilter);
 
@@ -497,49 +508,66 @@ public final class KeySequenceText {
 		int end = selection.y;
 
 		/*
-		 * Using the key sequence format method, discover the range of key
-		 * strokes affected by the deletion.
+		 * Using the key sequence format method, discover the point at which
+		 * adding key strokes passes or equals the start of the selection.  In 
+		 * other words, find the first stroke that is part of the selection.
+		 * Keep track of the text range under which the stroke appears
+		 * (i.e., startTextIndex->string.length() is the first selected stroke).
 		 */
 		String string = new String();
 		List currentStrokes = new ArrayList();
 		Iterator keyStrokeItr = keyStrokes.iterator();
-		int startTextIndex = 0;
-		while ((string.length() <= start) && (keyStrokeItr.hasNext())) {
+		int startTextIndex = 0; // keeps track of the start of the stroke
+		while ((string.length() < start) && (keyStrokeItr.hasNext())) {
 			startTextIndex = string.length();
 			currentStrokes.add(keyStrokeItr.next());
 			string = KeySequence.getInstance(currentStrokes).format();
 		}
+		
+		/*
+		 * If string.length() == start, then the cursor is positioned between 
+		 * strokes (i.e., selection is outside of a stroke).
+		 */
 		int startStrokeIndex;
 		if (string.length() == start) {
 			startStrokeIndex = currentStrokes.size();
 		} else {
 			startStrokeIndex = currentStrokes.size() - 1;
 		}
-		while ((string.length() < end) && (keyStrokeItr.hasNext())) {
-			currentStrokes.add(keyStrokeItr.next());
-			string = KeySequence.getInstance(currentStrokes).format();
-		}
-		int endStrokeIndex = currentStrokes.size() - 1;
-		if (endStrokeIndex < 0) {
-			endStrokeIndex = 0;
-		}
 
 		/*
 		 * Check to see if the cursor is only positioned, rather than actually
-		 * selecting something
+		 * selecting something.  We only need to compute the end if there is a
+		 * selection.
 		 */
+		int endStrokeIndex;
 		if (start == end) {
 			return startStrokeIndex;
+			
+		} else {
+			while ((string.length() < end) && (keyStrokeItr.hasNext())) {
+				currentStrokes.add(keyStrokeItr.next());
+				string = KeySequence.getInstance(currentStrokes).format();
+			}
+			endStrokeIndex = currentStrokes.size() - 1;
+			if (endStrokeIndex < 0) {
+				endStrokeIndex = 0;
+			}
+			
 		}
 
-		// Remove the strokes that are touched by the selection.
+		/* Remove the strokes that are touched by the selection.  Keep track of
+		 * the first stroke removed.
+		 */
 		KeyStroke startStroke = (KeyStroke) keyStrokes.get(startStrokeIndex);
 		while (startStrokeIndex <= endStrokeIndex) {
 			keyStrokes.remove(startStrokeIndex);
 			endStrokeIndex--;
 		}
 
-		// Allow the start stroke to be replaced by an incomplete stroke.
+		/* Allow the first stroke removed to be replaced by an incomplete 
+		 * stroke.
+		 */
 		if (allowIncomplete) {
 			SortedSet modifierKeys = new TreeSet(startStroke.getModifierKeys());
 			KeyStroke incompleteStroke = KeyStroke.getInstance(modifierKeys, null);
@@ -590,20 +618,30 @@ public final class KeySequenceText {
 	boolean hasSelection() {
 		return (text.getSelectionCount() > 0);
 	}
-	
+
 	/**
-	 * Inserts the key stroke represented by this string at the current 
-	 * insertion point.  This does a regular delete and insert, as if the key 
-	 * had been pressed.  If the key stroke can't be parsed, nothing happens.
-	 * @param keyStroke The key stroke to insert; must not be <code>null</code>.
+	 * Inserts the key stroke at the current insertion point. This does a
+	 * regular delete and insert, as if the key had been pressed.
+	 * 
+	 * @param stroke
+	 *            The key stroke to insert; must not be <code>null</code>.
 	 */
-	public void insert(String keyStroke) {
-		try {
-			KeyStroke stroke = KeyStroke.getInstance(keyStroke);
-			
-		} catch (ParseException e) {
-			// Do nothing
+	public void insert(KeyStroke stroke) {
+		if (!stroke.isComplete()) {
+			return;
 		}
+
+		// Copy the key strokes in the current key sequence.
+		List keyStrokes = new ArrayList(getKeySequence().getKeyStrokes());
+
+		if ((hasIncompleteStroke()) && (!keyStrokes.isEmpty())) {
+			keyStrokes.remove(keyStrokes.size() - 1);
+		}
+
+		int index = deleteSelection(keyStrokes, false);
+		insertStrokeAt(keyStrokes, stroke, index);
+		keyFilter.clearInsertionIndex();
+		setKeySequence(KeySequence.getInstance(keyStrokes));
 	}
 
 	/**
