@@ -31,6 +31,14 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  */
 public class UndoActionHandler extends OperationHistoryActionHandler {
 
+	/**
+	 * Construct an action handler that handles the labelling and enabling of
+	 * the undo action for the specified operation context.
+	 * 
+	 * @param context -
+	 *            the OperationContext to be used to filter the operations
+	 *            history.
+	 */
 	public UndoActionHandler(OperationContext context) {
 		super(context);
 		setId("OperationHistoryUndoHandler");//$NON-NLS-1$

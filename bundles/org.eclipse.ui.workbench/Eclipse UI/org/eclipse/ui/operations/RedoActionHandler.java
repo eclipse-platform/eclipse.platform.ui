@@ -31,6 +31,14 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  */
 public class RedoActionHandler extends OperationHistoryActionHandler {
 
+	/**
+	 * Construct an action handler that handles the labelling and enabling of
+	 * the redo action for the specified operation context.
+	 * 
+	 * @param context -
+	 *            the OperationContext to be used to filter the operations
+	 *            history.
+	 */
 	public RedoActionHandler(OperationContext context) {
 		super(context);
 		setId("OperationHistoryRedoHandler");//$NON-NLS-1$
