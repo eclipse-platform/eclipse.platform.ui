@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.debug.core" id="simpleLaunchVariables" name="Simple Launch Variables"/>
       </appInfo>
       <documentation>
-         This extension point defines a mechanism for defining simple launch configuration variables. Simple launch variables are sets of key/value pairs (both strings) that can be used as attribute values in launch configuration types which support variable expansion.
+         This extension point provides a mechanism for defining simple launch configuration variables. A simple launch variable is a key/value pair (of strings) that can be used as an attribute value in a launch configuration which supports variable expansion.
       </documentation>
    </annotation>
 
@@ -51,16 +51,16 @@
          <attribute name="initialValue" type="string">
             <annotation>
                <documentation>
-                  specifies the initial value for this variable.
+                  specifies the initial value for this variable. When specified, an &lt;samp&gt;initializerClass&lt;/samp&gt; attribute must not be specified.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="initializerClass" type="string">
             <annotation>
                <documentation>
-                  specifies the fully qualified name of the Java class that implements &lt;samp&gt;org.eclipse.debug.core.variables.ILaunchVariableInitializer&lt;/samp&gt;.
+                  specifies the fully qualified name of the Java class that implements &lt;samp&gt;org.eclipse.debug.core.variables.ILaunchVariableInitializer&lt;/samp&gt;. When specified, an &lt;samp&gt;initialValue&lt;/samp&gt; attribute must not be specified.
                </documentation>
-                <appInfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.core.variables.ILaunchVariableInitializer"/>
                </appInfo>
             </annotation>
@@ -68,13 +68,13 @@
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  specifies the human-readable description of this variable
+                  specifies a human-readable description of this variable
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
-   
+
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -83,7 +83,7 @@
          3.0
       </documentation>
    </annotation>
-   
+
    <annotation>
       <appInfo>
          <meta.section type="examples"/>

@@ -13,7 +13,7 @@ div.dtd-fragment {
 <H1><CENTER>Context Launch Variables</CENTER></H1>
 <b><i>Identifier: </i></b>org.eclipse.debug.core.contextLaunchVariables<p>
 <b><i>Since: </i></b>3.0<p>
-<b><i>Description: </i></b>This extension point defines a mechanism for defining context launch configuration variables. Context launch variables derive their value dynamically based on a context, usually the resource selected in the UI. Context launch variables can be used as attribute values in launch configuration types which support variable expansion.<p><b><i>Configuration Markup:</i></b><p>
+<b><i>Description: </i></b>This extension point provides a mechanism for defining context sensitive launch configuration variables. Context launch variables derive their value dynamically based on a client defined context (for example, the selected resource). Context launch variables can be used as attribute values in launch configurations that support variable expansion.<p><b><i>Configuration Markup:</i></b><p>
 <p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.variable">variable</a>*)&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
@@ -34,7 +34,7 @@ div.dtd-fragment {
 <ul>
 <li><b>name</b> - specifies a unique name for this variable.</li>
 <li><b>expanderClass</b> - specifies a Java class which implements <samp>org.eclipse.debug.core.variables.IVariableExpander</samp>, which is used to determine the value of the variable</li>
-<li><b>description</b> - specifies the human-readable description of this variable</li>
+<li><b>description</b> - specifies a human-readable description of this variable</li>
 </ul>
 <b><i>Examples: </i></b>The following is a definition of a context launch variable that expands to the name of the selected resource:
 <pre>

@@ -13,7 +13,7 @@ div.dtd-fragment {
 <H1><CENTER>Simple Launch Variables</CENTER></H1>
 <b><i>Identifier: </i></b>org.eclipse.debug.core.simpleLaunchVariables<p>
 <b><i>Since: </i></b>3.0<p>
-<b><i>Description: </i></b>This extension point defines a mechanism for defining simple launch configuration variables. Simple launch variables are sets of key/value pairs (both strings) that can be used as attribute values in launch configuration types which support variable expansion.<p><b><i>Configuration Markup:</i></b><p>
+<b><i>Description: </i></b>This extension point provides a mechanism for defining simple launch configuration variables. A simple launch variable is a key/value pair (of strings) that can be used as an attribute value in a launch configuration which supports variable expansion.<p><b><i>Configuration Markup:</i></b><p>
 <p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.variable">variable</a>*)&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
@@ -34,9 +34,9 @@ div.dtd-fragment {
 <br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
 <li><b>name</b> - specifies a unique name for this variable.</li>
-<li><b>initialValue</b> - specifies the initial value for this variable.</li>
-<li><b>initializerClass</b> - specifies the fully qualified name of the Java class that implements <samp>org.eclipse.debug.core.variables.ILaunchVariableInitializer</samp>.</li>
-<li><b>description</b> - specifies the human-readable description of this variable</li>
+<li><b>initialValue</b> - specifies the initial value for this variable. When specified, an <samp>initializerClass</samp> attribute must not be specified.</li>
+<li><b>initializerClass</b> - specifies the fully qualified name of the Java class that implements <samp>org.eclipse.debug.core.variables.ILaunchVariableInitializer</samp>. When specified, an <samp>initialValue</samp> attribute must not be specified.</li>
+<li><b>description</b> - specifies a human-readable description of this variable</li>
 </ul>
 <b><i>Examples: </i></b>The following is an example of a launch configuration variable extension point with an initial value:
 
