@@ -276,7 +276,8 @@ public class CVSSyncInfo extends SyncInfo {
 		// Since the parent is managed, this will also set the resource sync info. It is
 		// impossible for an incoming folder addition to map to another location in the
 		// repo, so we assume that using the parent's folder sync as a basis is safe.
-		// It is also impossible for an incomming folder to be static.		
+		// It is also impossible for an incomming folder to be static.
+		Assert.isNotNull(remote);
 		FolderSyncInfo remoteInfo = remote.getFolderSyncInfo();
 		FolderSyncInfo localInfo = local.getParent().getFolderSyncInfo();
 		local.setFolderSyncInfo(new FolderSyncInfo(remoteInfo.getRepository(), remoteInfo.getRoot(), localInfo.getTag(), false));
