@@ -189,5 +189,11 @@ public interface IExternalToolConstants {
 	/**
 	 * Status code indicating an unexpected internal error.
 	 */
-	public static final int ERR_INTERNAL_ERROR = 150;		
+	public static final int ERR_INTERNAL_ERROR = 150;
+
+	/**
+	 * String attribute identifying a non-external tool builder launch configuration that is disabled
+	 * The value is the name of the disabled builder.
+	 */
+	public static final String ATTR_DISABLED_BUILDER = PLUGIN_ID + ".ATTR_DISABLED_BUILDER";		 //$NON-NLS-1$
 }

@@ -88,6 +88,9 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private static final String IMG_INVALID_BUILD_TOOL = "icons/full/obj16/invalid_build_tool.gif"; //$NON-NLS-1$
 
 	private static final String LAUNCH_CONFIG_HANDLE = "LaunchConfigHandle"; //$NON-NLS-1$
+
+	//locally mark a command's enabled state so it can be processed correctly on performOK
+	private static final String COMMAND_ENABLED= "CommandEnabled"; //$NON-NLS-1$
 	
 	// Extension point constants.
 	private static final String TAG_CONFIGURATION_MAP= "configurationMap"; //$NON-NLS-1$
@@ -114,6 +117,17 @@ public final class BuilderPropertyPage extends PropertyPage {
 		}
 
 		public Image getImage(Object element) {
+			if (element instanceof ILaunchConfiguration) {
+				try {
+					ILaunchConfiguration config= (ILaunchConfiguration) element;
+					String disabledBuilderName= config.getAttribute(IExternalToolConstants.ATTR_DISABLED_BUILDER, (String)null);
+					if (disabledBuilderName != null) {
+						//really a disabled builder wrapped as a launch configuration
+						return builderImage;
+					}
+				} catch (CoreException e) {
+				}
+			}
 			return debugModelPresentation.getImage(element);
 		}
 
@@ -124,7 +138,12 @@ public final class BuilderPropertyPage extends PropertyPage {
 			StringBuffer buffer= new StringBuffer(debugModelPresentation.getText(element));
 			if (element instanceof ILaunchConfiguration) {
 				try {
-					if (!ExternalToolsUtil.isBuilderEnabled((ILaunchConfiguration) element)) {
+					ILaunchConfiguration config= (ILaunchConfiguration) element;
+					String disabledBuilderName= config.getAttribute(IExternalToolConstants.ATTR_DISABLED_BUILDER, (String)null);
+					if (disabledBuilderName != null) {
+						buffer= new StringBuffer(getBuilderName(disabledBuilderName));
+					} 
+					if (!ExternalToolsUtil.isBuilderEnabled(config)) {
 						buffer.append(ExternalToolsUIMessages.getString("BuilderPropertyPage.38")); //$NON-NLS-1$
 					}
 				} catch (CoreException e) {
@@ -272,7 +291,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	
 	/**
 	 * Adds the given erroneous configuration entry to the table
-	 * and selection it if <code>select</code> is <code>true</code>.
+	 * and selects it if <code>select</code> is <code>true</code>.
 	 */
 	private void addErrorConfig(ErrorConfig config, int position, boolean select) {
 		TableItem newItem;
@@ -503,31 +522,17 @@ public final class BuilderPropertyPage extends PropertyPage {
 		} else if (button == downButton) {
 			moveSelectionDown();
 		} else if (button == enableButton) {
-			handleEnableButtonPressed();
+			handleToggleEnabledButtonPressed(true);
 		} else if (button == disableButton) {
-			handleDisableButtonPressed();
+			handleToggleEnabledButtonPressed(false);
 		}
 		handleTableSelectionChanged();
 		builderTable.setFocus();
 	}
 
 	/**
-	 * 
-	 */
-	private void handleDisableButtonPressed() {
-		handleToggleEnabledButtonPressed(false);
-	}
-
-	/**
-	 * 
-	 */
-	private void handleEnableButtonPressed() {
-		handleToggleEnabledButtonPressed(true);
-	}
-
-	/**
-	 * A button which toggles launch config enabled state has been 
-	 * pressed. The selected configs should be enabled or disabled.
+	 * A button which toggles the builder enabled state has been 
+	 * pressed. The selected builder should be enabled or disabled.
 	 */
 	private void handleToggleEnabledButtonPressed(boolean enable) {
 		TableItem[] selection = builderTable.getSelection();
@@ -536,24 +541,41 @@ public final class BuilderPropertyPage extends PropertyPage {
 			item= selection[i];
 			Object data= item.getData();
 			if (data instanceof ILaunchConfiguration) {
-				ILaunchConfiguration configuration= (ILaunchConfiguration) data;
-				ILaunchConfigurationWorkingCopy workingCopy;
-				try {
-					if (configuration instanceof ILaunchConfigurationWorkingCopy) {
-						workingCopy = (ILaunchConfigurationWorkingCopy) configuration;
-					} else {
-						// Replace the config with a working copy
-						workingCopy = configuration.getWorkingCopy();
-						item.setData(workingCopy);
-					}
-					workingCopy.setAttribute(IExternalToolConstants.ATTR_BUILDER_ENABLED, enable);
-				} catch (CoreException e) {
-					continue;
-				}
-				userHasMadeChanges= true;
-				updateConfigItem(item, workingCopy);
+				enableLaunchConfiguration(item, (ILaunchConfiguration) data, enable);
+			} else if (data instanceof ICommand) {
+				enableCommand(item, (ICommand)data, enable);
 			}
 		}
+	}
+	
+	private void enableLaunchConfiguration(TableItem item, ILaunchConfiguration configuration, boolean enable) {
+		ILaunchConfigurationWorkingCopy workingCopy;
+		try {
+			if (configuration instanceof ILaunchConfigurationWorkingCopy) {
+				workingCopy = (ILaunchConfigurationWorkingCopy) configuration;
+			} else {
+				// Replace the config with a working copy
+				workingCopy = configuration.getWorkingCopy();
+				item.setData(workingCopy);
+			}
+			workingCopy.setAttribute(IExternalToolConstants.ATTR_BUILDER_ENABLED, enable);
+		} catch (CoreException e) {
+			return;
+		}
+		userHasMadeChanges= true;
+		updateConfigItem(item, workingCopy);
+	}
+	
+	private void enableCommand(TableItem item, ICommand command, boolean enable) {
+		Map args= command.getArguments();
+		if (args == null) {
+			args= new HashMap(1);
+		}
+		args.put(COMMAND_ENABLED, Boolean.valueOf(enable));
+		command.setArguments(args);
+	
+		updateCommandItem(item, command);
+		userHasMadeChanges= true;
 	}
 
 	/**
@@ -913,10 +935,10 @@ public final class BuilderPropertyPage extends PropertyPage {
 			if (items.length > 1) {
 				enableEdit= false;
 			}
-			int indeces[]= builderTable.getSelectionIndices();
+			int indices[]= builderTable.getSelectionIndices();
 			int max = builderTable.getItemCount();
-			enableUp= indeces[0] != 0;
-			enableDown= indeces[indeces.length - 1] < max - 1;
+			enableUp= indices[0] != 0;
+			enableDown= indices[indices.length - 1] < max - 1;
 			boolean disabledSelected= false; // Any disabled configs selected?
 			boolean enabledSelected= false; // Any enabled configs selected?
 			for (int i = 0; i < items.length; i++) {
@@ -940,11 +962,27 @@ public final class BuilderPropertyPage extends PropertyPage {
 						enableDisable= false;
 					}
 				} else {
+					if (data instanceof ICommand) {
+						ICommand command= (ICommand)data;
+						Boolean enabled= (Boolean)command.getArguments().get(COMMAND_ENABLED);
+						if (enabled != null) {
+							enableEnable= !enabled.booleanValue();
+							enableDisable= enabled.booleanValue();
+							enabledSelected=  enabled.booleanValue();
+							disabledSelected= !enabled.booleanValue();
+						} else {
+							enableDisable= true;
+							enabledSelected= true;
+							enableEnable= false;
+						}
+					} else {
+						enableEnable= false;
+						enableDisable= false;
+					}
 					enableEdit= false;
 					enableUp= false;
 					enableDown= false;
-					enableEnable= false;
-					enableDisable= false;
+					
 					if (data instanceof ErrorConfig) {
 						continue;
 					}
@@ -1026,9 +1064,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 			return super.performOk();
 		}
 		userHasMadeChanges= false;
-		if (configsToBeDeleted != null) {
-			deleteConfigurations();
-		}
+		
 		IProject project = getInputProject();
 		//get all the build commands
 		int numCommands = builderTable.getItemCount();
@@ -1036,8 +1072,30 @@ public final class BuilderPropertyPage extends PropertyPage {
 		for (int i = 0; i < numCommands; i++) {
 			Object data = builderTable.getItem(i).getData();
 			if (data instanceof ICommand) {
+				ICommand command= (ICommand)data;
+				Map args= command.getArguments();
+				Boolean enabled= (Boolean)args.get(COMMAND_ENABLED);
+				if (enabled != null && enabled.equals(Boolean.FALSE)) {
+					ILaunchConfiguration config= disableCommand(command);
+					if (config != null) {
+						data= translateLaunchConfigurationToCommand(config, project);
+					}
+				} else {
+					args.remove(COMMAND_ENABLED);
+					command.setArguments(args);
+				}
 			} else if (data instanceof ILaunchConfiguration) {
 				ILaunchConfiguration config= (ILaunchConfiguration) data;
+				String disabledBuilderName;
+				try {
+					disabledBuilderName = config.getAttribute(IExternalToolConstants.ATTR_DISABLED_BUILDER, (String)null);
+					if (disabledBuilderName != null && ExternalToolsUtil.isBuilderEnabled(config)) {
+						commands[i]= translateBackToCommand(config, project);
+						continue;
+					}
+				} catch (CoreException e1) {
+				}
+				
 				if (!isUnmigratedConfig(config) && (config instanceof ILaunchConfigurationWorkingCopy)) {
 					ILaunchConfigurationWorkingCopy workingCopy= ((ILaunchConfigurationWorkingCopy) config);
 					// Save any changes to the config (such as enable/disable)
@@ -1049,15 +1107,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 						}
 					}
 				}
-				// Translate launch configs to ICommands for storage
-				ICommand newCommand = null;
-				try {
-					newCommand = project.getDescription().newCommand();
-					data = toBuildCommand(config, newCommand);
-				} catch (CoreException exception) {
-					MessageDialog.openError(getShell(), ExternalToolsUIMessages.getString("BuilderPropertyPage.Command_error_13"), ExternalToolsUIMessages.getString("BuilderPropertyPage.error")); //$NON-NLS-1$ //$NON-NLS-2$
-					return true;
-				}
+				data= translateLaunchConfigurationToCommand(config, project);
 			}
 			commands[i] = (ICommand) data;
 		}
@@ -1072,7 +1122,97 @@ public final class BuilderPropertyPage extends PropertyPage {
 				handleException(e);
 			}
 		}
+		
+		if (configsToBeDeleted != null) {
+			deleteConfigurations();
+		}
+		
 		return super.performOk();
+	}
+	
+	/**
+	 * A non-external tool builder builder was disabled.
+	 * It has been re-enabled. Translate the disabled external tool builder launch configuration
+	 * wrapper back into the full fledged builder command.
+	 */
+	private ICommand translateBackToCommand(ILaunchConfiguration config, IProject project) {
+		try {
+			ICommand newCommand = project.getDescription().newCommand();
+			String builderName= config.getAttribute(IExternalToolConstants.ATTR_DISABLED_BUILDER, (String)null);
+			Map args= config.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, new HashMap(0));
+			
+			newCommand.setBuilderName(builderName);
+			newCommand.setArguments(args);
+			if (configsToBeDeleted == null) {
+				configsToBeDeleted= new ArrayList();
+			}
+			configsToBeDeleted.add(config);
+			return newCommand;
+		} catch (CoreException exception) {
+			MessageDialog.openError(getShell(), ExternalToolsUIMessages.getString("BuilderPropertyPage.Command_error_13"), ExternalToolsUIMessages.getString("BuilderPropertyPage.error")); //$NON-NLS-1$ //$NON-NLS-2$
+			return null;
+		}
+	}
+	
+	/**
+	 * 
+	 * Translates a launch configuration to an ICommand for storage
+	 */
+	private ICommand translateLaunchConfigurationToCommand(ILaunchConfiguration config, IProject  project) {
+		ICommand newCommand = null;
+		try {
+			newCommand = project.getDescription().newCommand();
+			newCommand = toBuildCommand(config, newCommand);
+		} catch (CoreException exception) {
+			MessageDialog.openError(getShell(), ExternalToolsUIMessages.getString("BuilderPropertyPage.Command_error_13"), ExternalToolsUIMessages.getString("BuilderPropertyPage.error")); //$NON-NLS-1$ //$NON-NLS-2$
+			return null;
+		}
+		return newCommand;
+	}
+	
+	/**
+	 * Disables a builder by wrappering the builder command as a disabled external tool builder.
+	 * The details of the command is persisted in the launch configuration.
+	 */
+	private ILaunchConfiguration disableCommand(ICommand command) {
+		Map arguments= command.getArguments();
+		if (arguments != null) {
+			arguments.remove(COMMAND_ENABLED);
+		}
+		List externalToolTypes= getConfigurationTypes(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY);
+		if (externalToolTypes.size() == 0) {
+			return null;
+		}
+		ILaunchConfigurationType type= (ILaunchConfigurationType)externalToolTypes.get(0);
+		if (type == null) {
+			return null;
+		}
+		boolean wasAutobuilding= ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
+		try {
+			ILaunchConfigurationWorkingCopy workingCopy = null;
+			String builderName = command.getBuilderName();
+			String name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(builderName);
+			workingCopy = type.newInstance(getBuilderFolder(true), name);		
+					
+			workingCopy.setAttribute(IExternalToolConstants.ATTR_DISABLED_BUILDER, builderName);
+			if (arguments != null) {
+				workingCopy.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments);
+			}
+			workingCopy.setAttribute(IExternalToolConstants.ATTR_BUILDER_ENABLED, false);
+			ILaunchConfiguration config = null;
+			setAutobuild(false);
+			config = workingCopy.doSave();
+			return config;
+		} catch (CoreException e) {
+			handleException(e);
+		} finally {
+			try {
+				setAutobuild(wasAutobuilding);
+			} catch (CoreException e) {
+				handleException(e);
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -1184,18 +1324,28 @@ public final class BuilderPropertyPage extends PropertyPage {
 				item.setImage(builderImage);
 			}
 		} else {
-			// Get the human-readable name of the builder
-			IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderID);
-			String builderName;
-			if (extension != null) {
-				builderName = extension.getLabel();
-			} else {
-				builderName = MessageFormat.format(ExternalToolsUIMessages.getString("BuilderPropertyPage.missingBuilder"), new Object[] { builderID }); //$NON-NLS-1$
+			StringBuffer builderName = new StringBuffer(getBuilderName(builderID));
+			Boolean enabled= (Boolean)command.getArguments().get(COMMAND_ENABLED);
+			if (enabled != null && !enabled.booleanValue()) {
+				builderName.append(ExternalToolsUIMessages.getString("BuilderPropertyPage.38")); //$NON-NLS-1$
 			}
-			item.setText(builderName);
+			item.setText(builderName.toString());
 			item.setImage(builderImage);
 		}
 	}
+	
+	private String getBuilderName(String builderID) {
+		// Get the human-readable name of the builder
+		IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderID);
+		String builderName;
+		if (extension != null) {
+			builderName = extension.getLabel();
+		} else {
+			builderName = MessageFormat.format(ExternalToolsUIMessages.getString("BuilderPropertyPage.missingBuilder"), new Object[] { builderID }); //$NON-NLS-1$
+		}
+		return builderName;
+	}
+
 	/**
 	 * @see org.eclipse.jface.preference.IPreferencePage#performCancel()
 	 */
