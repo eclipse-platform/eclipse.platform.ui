@@ -300,9 +300,11 @@ public static Plugin getRuntimePlugin() {
 	}
 }
 private static void handleException(ISafeRunnable code, Throwable e) {
-	String message = Policy.bind("pluginProblems", new String[0]);
-	IStatus status = new Status(Status.WARNING, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, e);
-	getRuntimePlugin().getLog().log(status);
+	if (!(e instanceof OperationCanceledException)) {
+		String message = Policy.bind("pluginProblems", new String[0]);
+		IStatus status = new Status(Status.WARNING, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, e);
+		getRuntimePlugin().getLog().log(status);
+	}
 	code.handleException(e);
 }
 /**
