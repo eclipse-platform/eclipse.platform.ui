@@ -47,6 +47,8 @@ import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
 import org.eclipse.ui.externaltools.internal.ant.preferences.AntEditorPreferenceConstants;
 import org.eclipse.ui.externaltools.internal.model.ColorManager;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -343,7 +345,7 @@ public class PlantyEditor extends TextEditor {
 		ISourceViewer sourceViewer= new SourceViewer(parent, ruler, fOverviewRuler, isOverviewRulerVisible(), styles);
 		fSourceViewerDecorationSupport= new SourceViewerDecorationSupport(sourceViewer, fOverviewRuler, fAnnotationAccess, sharedColors);
 		configureSourceViewerDecorationSupport();
-		
+		WorkbenchHelp.setHelp(sourceViewer.getTextWidget(), IExternalToolsHelpContextIds.ANT_EDITOR);
 		return sourceViewer;
 	}
 

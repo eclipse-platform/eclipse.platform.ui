@@ -58,6 +58,9 @@ public interface IExternalToolsHelpContextIds {
 	
 	// Views
 	public static final String ANT_VIEW = PREFIX + "ant_view_context"; //$NON-NLS-1$
+	
+	// Editor
+	public static final String ANT_EDITOR = PREFIX + "ant_editor_context"; //$NON-NLS-1$
 
 	//Launch configuration dialog tabs
 	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_ANT_MAIN_TAB = PREFIX + "ant_main_tab_context"; //$NON-NLS-1$
