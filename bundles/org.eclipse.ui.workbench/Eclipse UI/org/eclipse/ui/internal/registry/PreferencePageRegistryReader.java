@@ -53,7 +53,7 @@ public class PreferencePageRegistryReader extends RegistryReader {
 
 	public static final String TAG_CATEGORY = "category"; //$NON-NLS-1$
 
-	public static final String ATT_PARENT_CATEGORY = "parent"; //$NON-NLS-N$
+	public static final String ATT_PARENT_CATEGORY = "parent"; //$NON-NLS-1$
 
 	private static final Comparator comparer = new Comparator() {
 		private Collator collator = Collator.getInstance();
