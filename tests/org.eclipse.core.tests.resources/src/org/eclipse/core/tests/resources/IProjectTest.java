@@ -10,15 +10,15 @@
  ******************************************************************************/
 package org.eclipse.core.tests.resources;
 
+import java.util.*;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
-import junit.framework.*;
-import junit.textui.TestRunner;
-import java.util.*;
 
 public class IProjectTest extends EclipseWorkspaceTest {
 public IProjectTest() {

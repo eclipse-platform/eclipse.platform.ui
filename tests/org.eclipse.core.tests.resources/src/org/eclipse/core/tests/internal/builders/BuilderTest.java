@@ -429,12 +429,20 @@ public void testForgetLastBuiltState() {
 	} catch (CoreException e) {
 		fail("5.99", e);
 	}
+	
+	//try a snapshot when a builder has a null tree
+	try {
+		getWorkspace().save(false, getMonitor());
+	} catch (CoreException e) {
+		fail("6.99");
+	}
+	
 	// Do another incremental build.  Delta should be null
 	try {
 		project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, SortBuilder.BUILDER_NAME, null, getMonitor());
-		assertTrue("6.0", verifier.wasDeltaNull());
+		assertTrue("7.0", verifier.wasDeltaNull());
 	} catch (CoreException e) {
-		fail("6.99", e);
+		fail("7.99", e);
 	}
 
 	// Delete the project

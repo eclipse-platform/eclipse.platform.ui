@@ -10,12 +10,11 @@
  ******************************************************************************/
 package org.eclipse.core.tests.resources;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.events.ResourceDelta;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
-import junit.framework.*;
-import junit.textui.TestRunner;
 
 public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 	ResourceDeltaVerifier verifier;

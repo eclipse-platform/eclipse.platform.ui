@@ -10,17 +10,17 @@
  ******************************************************************************/
 package org.eclipse.core.tests.resources;
 
+import java.io.*;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.*;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Vector;
-import junit.framework.*;
-import junit.textui.TestRunner;
+import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.harness.FussyProgressMonitor;
 
 public class IFileTest extends EclipseWorkspaceTest {
 	IProject[] projects = null;

@@ -1,13 +1,18 @@
+/**********************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.tests.internal.indexing;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
-import org.eclipse.core.internal.indexing.*;
+import org.eclipse.core.internal.indexing.*;
 
 class TestObject extends StoredObject {
-
+
 	private static final int TYPE = 99;
 	protected byte[] value;
 	
@@ -18,14 +23,14 @@ class TestObject extends StoredObject {
 		super();
 		this.value = new Field(value).get();
 	}
-
+
 	/**
 	 * Standard constructor -- constructs an object from bytes that came from the store.
 	 */
 	TestObject(Field buffer, ObjectStore store, ObjectAddress address) throws ObjectStoreException {
 		super(buffer, store, address);
 	}
-
+
 	/**
 	 * Places the contents of the fields into the buffer.
 	 * Subclasses should implement and call super.
@@ -34,7 +39,7 @@ class TestObject extends StoredObject {
 		super.insertValues(buffer);
 		buffer.subfield(2).put(value);
 	}
-
+
 	/**
 	 * Places the contents of the buffer into the fields.
 	 * Subclasses should implement and call super.
@@ -43,7 +48,7 @@ class TestObject extends StoredObject {
 		super.extractValues(buffer);
 		value = buffer.subfield(2).get();
 	}
-
+
 	/**
 	 * Returns the maximum size of this object's instance -- including its type field.
 	 * Subclasses should override.
@@ -51,7 +56,7 @@ class TestObject extends StoredObject {
 	protected int getMaximumSize() {
 		return ObjectStore.MAXIMUM_OBJECT_SIZE;
 	}
-
+
 	/**
 	 * Returns the minimum size of this object's instance -- including its type field.
 	 * Subclasses should override.
@@ -59,7 +64,7 @@ class TestObject extends StoredObject {
 	protected int getMinimumSize() {
 		return 2;
 	}
-
+
 	/**
 	 * Returns the length of the stored object for this instance.  Including the
 	 * type field.
@@ -67,7 +72,7 @@ class TestObject extends StoredObject {
 	protected int length() {
 		return 2 + value.length;
 	}
-
+
 	/**
 	 * Returns the required type of this class of object.
 	 * Subclasses must override.
@@ -75,7 +80,7 @@ class TestObject extends StoredObject {
 	protected int getRequiredType() {
 		return TYPE;
 	}
-
+
 	/**
 	 * Returns the value of the object.
 	 */
@@ -90,7 +95,7 @@ class TestObject extends StoredObject {
 		new Field(value).put(bytes);
 		setChanged();
 	}
-
+
 	/**
 	 * Returns a id tag to be used in toString
 	 */

@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.tests.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.io.*;
 import java.io.File;
@@ -642,7 +647,7 @@ public void test_10989() {
 		project.open(null);
 		IFile file = project.getFile("foo.txt");
 		file.create(getRandomContents(), true, null);
-		IMarker marker = file.createMarker(IMarker.PROBLEM);
+		file.createMarker(IMarker.PROBLEM);
 		IMarker[] found = file.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
 		assertEquals("1.0", 1, found.length);
 		found = file.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
