@@ -265,10 +265,10 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 
 		// set invalid value (with invalid segment)
 		if (WINDOWS) {
-			String invalidPathString = "/a/\\:/b";
-			IPath invalidPath = new Path(invalidPathString);
+			String invalidPathString = "C:/a/\\::/b";
+			IPath invalidPath = Path.fromPortableString(invalidPathString);
 			assertTrue("6.0", invalidPath.isAbsolute());
-			assertTrue("6.1", !Path.EMPTY.isValidPath(invalidPath.toString()));
+			assertTrue("6.1", !Path.EMPTY.isValidPath(invalidPathString));
 			assertTrue("6.2", !manager.validateValue(invalidPath).isOK());
 			try {
 				manager.setValue("one", invalidPath);
