@@ -30,8 +30,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
@@ -94,8 +93,8 @@ public class SaveAsDialog extends TitleAreaDialog {
         validatePage();
         resourceGroup.setFocus();
         setTitle(IDEWorkbenchMessages.SaveAsDialog_title);
-        dlgTitleImage = WorkbenchImages.getImageDescriptor(
-                IWorkbenchGraphicConstants.IMG_DLGBAN_SAVEAS_DLG).createImage();
+        dlgTitleImage = IDEInternalWorkbenchImages.getImageDescriptor(
+                IDEInternalWorkbenchImages.IMG_DLGBAN_SAVEAS_DLG).createImage();
         setTitleImage(dlgTitleImage);
         setMessage(IDEWorkbenchMessages.SaveAsDialog_message);
 

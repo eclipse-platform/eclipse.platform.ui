@@ -495,6 +495,10 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
         declareWorkbenchImage(ideBundle,
                 IDEInternalWorkbenchImages.IMG_WIZBAN_RESOURCEWORKINGSET_WIZ,
                 PATH_WIZBAN + "workset_wiz.gif", false); //$NON-NLS-1$
+        
+        declareWorkbenchImage(ideBundle,
+                IDEInternalWorkbenchImages.IMG_DLGBAN_SAVEAS_DLG,
+                PATH_WIZBAN + "saveas_wiz.gif", false); //$NON-NLS-1$
 
         declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OBJ_PROJECT,
                 PATH_OBJECT + "prj_obj.gif", true); //$NON-NLS-1$

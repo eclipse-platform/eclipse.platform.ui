@@ -257,9 +257,6 @@ public/*final*/class WorkbenchImages {
         declareImage(IWorkbenchGraphicConstants.IMG_VIEW_DEFAULTVIEW_MISC,
                 PATH_EVIEW + "defaultview_misc.gif", false); //$NON-NLS-1$
 
-        declareImage(IWorkbenchGraphicConstants.IMG_DLGBAN_SAVEAS_DLG,
-                PATH_WIZBAN + "saveas_wiz.gif", false); //$NON-NLS-1$
-
         declareImage(IWorkbenchGraphicConstants.IMG_OBJ_FONT, PATH_OBJECT
                 + "font.gif", true); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_OBJ_THEME_CATEGORY,

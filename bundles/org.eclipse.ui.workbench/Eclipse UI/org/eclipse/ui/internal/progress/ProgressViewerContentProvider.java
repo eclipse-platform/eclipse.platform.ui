@@ -48,7 +48,7 @@ public class ProgressViewerContentProvider extends ProgressContentProvider
      * @see org.eclipse.ui.internal.progress.IProgressUpdateCollector#add(org.eclipse.ui.internal.progress.JobTreeElement[])
      */
     public void add(Object[] elements) {
-        progressViewer.setInput(this);
+		 progressViewer.refresh(true);
     }
 
     /**
@@ -101,7 +101,7 @@ public class ProgressViewerContentProvider extends ProgressContentProvider
      * @see org.eclipse.ui.internal.progress.IProgressUpdateCollector#remove(org.eclipse.ui.internal.progress.JobTreeElement[])
      */
     public void remove(Object[] elements) {
-        progressViewer.setInput(this);
+        progressViewer.refresh(true);
     }
 
     /*
