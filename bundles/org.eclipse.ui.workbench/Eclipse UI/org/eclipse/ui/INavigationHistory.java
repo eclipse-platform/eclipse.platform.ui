@@ -11,8 +11,8 @@
 package org.eclipse.ui;
 
 /**
- * Manages a list of entries to keep history of locations on editors
- * to enable the user to go back and forward without losing context.
+ * Manages a list of entries to keep a history of locations on editors,
+ * enabling the user to go back and forward without losing context.
  * 
  * The history is a list of <code>INavigationLocation</code> and a pointer
  * to the current location. Whenever the back or forward action runs the
@@ -22,11 +22,10 @@ package org.eclipse.ui;
  * in any way.
  * 
  * If the user steps N times in one direction (back or forward) and then N times to
- * the oposit direction, the editor and location should be exactly the same as if
- * nothing as done.
+ * the oposite direction, the editor and location should be exactly the same as before.
  * 
  * Clients must guarantee that the current location is
- * always in the history. Independent if that is done by marking
+ * always in the history, which can be done either by marking
  * a new location or by updating the current location.
  * 
  * Not intended to be implemented by clients.
@@ -39,21 +38,21 @@ public interface INavigationHistory {
      * should be sent by clients whenever significant changes
      * in location are detected.
      * 
-     * The location is obtened by calling <code>INavigationLocationProvider.createNavigationLocation</code>
+     * The location is obtained by calling <code>INavigationLocationProvider.createNavigationLocation</code>
      */
     public void markLocation(IEditorPart part);
 
     /**
-     * Return the current location;
+     * Returns the current location.
      * 
-     * @return INavigationLocation the current location
+     * @return the current location
      */
     public INavigationLocation getCurrentLocation();
 
     /**
-     * Return all entries in the history.
+     * Returns all entries in the history.
      * 
-     * @return INavigationLocation[]
+     * @return all entries in the history
      */
     public INavigationLocation[] getLocations();
 }
