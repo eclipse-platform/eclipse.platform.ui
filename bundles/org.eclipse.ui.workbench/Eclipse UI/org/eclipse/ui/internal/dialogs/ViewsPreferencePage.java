@@ -17,13 +17,21 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -51,6 +59,11 @@ public class ViewsPreferencePage
 	 */
 	private Button showTraditionalStyleTabs;
 
+	private Button editorTopButton;
+	private Button editorBottomButton;
+	private Button viewTopButton;
+	private Button viewBottomButton;
+
 	/*
 	 * No longer supported - removed when confirmed!
 	 * private Button openFloatButton;
@@ -58,6 +71,13 @@ public class ViewsPreferencePage
 	int editorAlignment;
 	int viewAlignment;
 
+	private static final String COLOUR_ICONS_TITLE = WorkbenchMessages.getString("ViewsPreference.colorIcons"); //$NON-NLS-1$
+	static final String EDITORS_TITLE = WorkbenchMessages.getString("ViewsPreference.editors"); //$NON-NLS-1$
+	private static final String EDITORS_TOP_TITLE = WorkbenchMessages.getString("ViewsPreference.editors.top"); //$NON-NLS-1$
+	private static final String EDITORS_BOTTOM_TITLE = WorkbenchMessages.getString("ViewsPreference.editors.bottom"); //$NON-NLS-1$
+	private static final String VIEWS_TITLE = WorkbenchMessages.getString("ViewsPreference.views"); //$NON-NLS-1$
+	private static final String VIEWS_TOP_TITLE = WorkbenchMessages.getString("ViewsPreference.views.top"); //$NON-NLS-1$
+	private static final String VIEWS_BOTTOM_TITLE = WorkbenchMessages.getString("ViewsPreference.views.bottom"); //$NON-NLS-1$
 	/*
 	 * No longer supported - remove when confirmed!
 	 * private static final String OVM_FLOAT = WorkbenchMessages.getString("OpenViewMode.float"); //$NON-NLS-1$
@@ -66,6 +86,28 @@ public class ViewsPreferencePage
     private Combo themeCombo;
 
     private Button colorIcons;
+
+	/**
+	 * Create a composite that for creating the tab toggle buttons.
+	 * @param composite Composite
+	 * @param title String
+	 */
+	private Group createButtonGroup(Composite composite, String title) {
+		Group buttonComposite = new Group(composite, SWT.NONE);
+		buttonComposite.setText(title);
+		buttonComposite.setFont(composite.getFont());
+		FormLayout layout = new FormLayout();
+		layout.marginWidth = 2;
+		layout.marginHeight = 2;
+		buttonComposite.setLayout(layout);
+		GridData data =
+			new GridData(
+				GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+		buttonComposite.setLayoutData(data);
+
+		return buttonComposite;
+
+	}
 
 	/**
 	 * Creates and returns the SWT control for the customized body 
@@ -84,6 +126,12 @@ public class ViewsPreferencePage
 
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.VIEWS_PREFERENCE_PAGE);
 
+		IPreferenceStore store =
+			WorkbenchPlugin.getDefault().getPreferenceStore();
+		editorAlignment =
+			store.getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
+		viewAlignment = store.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
+
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setFont(font);
@@ -93,6 +141,9 @@ public class ViewsPreferencePage
 		layout.marginHeight = 0;
 		//layout.verticalSpacing = 10;
 		composite.setLayout(layout);
+		
+		createEditorTabButtonGroup(composite);
+		createViewTabButtonGroup(composite);
 		
 		GridData data =
 			new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
@@ -120,7 +171,108 @@ public class ViewsPreferencePage
 		
 		return composite;
 	}
+
+	/**
+	 * Set the two supplied controls to be beside each other.
+	 */
+
+	private void attachControls(Control leftControl, Control rightControl) {
+
+		FormData leftData = new FormData();
+		leftData.left = new FormAttachment(0, 0);
+
+		FormData rightData = new FormData();
+		rightData.left = new FormAttachment(leftControl, 5);
+
+		leftControl.setLayoutData(leftData);
+		rightControl.setLayoutData(rightData);
+	}
+
+	/**
+	 * Create a composite that contains buttons for selecting tab position for the edit selection. 
+	 * @param composite Composite
+	 * @param store IPreferenceStore
+	 */
+	private void createEditorTabButtonGroup(Composite composite) {
+
+		Font font = composite.getFont();
+
+		Group buttonComposite = createButtonGroup(composite, EDITORS_TITLE);
+
+		this.editorTopButton = new Button(buttonComposite, SWT.RADIO);
+		this.editorTopButton.setText(EDITORS_TOP_TITLE);
+		this.editorTopButton.setSelection(this.editorAlignment == SWT.TOP);
+		this.editorTopButton.setFont(font);
+
+		this.editorTopButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				editorAlignment = SWT.TOP;
+			}
+		});
+
+		this
+			.editorTopButton
+			.getAccessible()
+			.addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = EDITORS_TITLE;
+			}
+		});
+
+		this.editorBottomButton = new Button(buttonComposite, SWT.RADIO);
+		this.editorBottomButton.setText(EDITORS_BOTTOM_TITLE);
+		this.editorBottomButton.setSelection(
+			this.editorAlignment == SWT.BOTTOM);
+		this.editorBottomButton.setFont(font);
+
+		this.editorBottomButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				editorAlignment = SWT.BOTTOM;
+			}
+		});
+
+		attachControls(this.editorTopButton, this.editorBottomButton);
+
+	}
+	/**
+	 * Create a composite that contains buttons for selecting tab position for the view selection. 
+	 * @param composite Composite
+	 * @param store IPreferenceStore
+	 */
+	private void createViewTabButtonGroup(Composite composite) {
+
+		Font font = composite.getFont();
+
+		Group buttonComposite = createButtonGroup(composite, VIEWS_TITLE);
+		buttonComposite.setFont(font);
+
+		this.viewTopButton = new Button(buttonComposite, SWT.RADIO);
+		this.viewTopButton.setText(VIEWS_TOP_TITLE);
+		this.viewTopButton.setSelection(this.viewAlignment == SWT.TOP);
+		this.viewTopButton.setFont(font);
+
+		this.viewTopButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				viewAlignment = SWT.TOP;
+			}
+		});
+
+		this.viewBottomButton = new Button(buttonComposite, SWT.RADIO);
+		this.viewBottomButton.setText(VIEWS_BOTTOM_TITLE);
+		this.viewBottomButton.setSelection(this.viewAlignment == SWT.BOTTOM);
+		this.viewBottomButton.setFont(font);
+
+		this.viewBottomButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				viewAlignment = SWT.BOTTOM;
+			}
+		});
+
+		attachControls(this.viewTopButton, this.viewBottomButton);
+
+	}
 	
+		
     /**
      * 
      */
@@ -147,6 +299,7 @@ public class ViewsPreferencePage
 		
 		themeCombo.select(selection);
     }
+
     /**
 	 * Create the button and text that support setting the preference for showing
 	 * text labels on the perspective switching bar
@@ -158,7 +311,7 @@ public class ViewsPreferencePage
 		showTextOnPerspectiveBar.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
 		setButtonLayoutData(showTextOnPerspectiveBar);
 	}
-	
+
 	/**
 	 * Create the button and text that support setting the preference for showing
 	 * text labels on the perspective switching bar
@@ -213,6 +366,17 @@ public class ViewsPreferencePage
 		showTraditionalStyleTabs.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
 		colorIcons.setSelection(store.getDefaultBoolean(IPreferenceConstants.COLOR_ICONS));
 
+		int editorTopValue =
+			store.getDefaultInt(IPreferenceConstants.EDITOR_TAB_POSITION);
+		editorTopButton.setSelection(editorTopValue == SWT.TOP);
+		editorBottomButton.setSelection(editorTopValue == SWT.BOTTOM);
+		editorAlignment = editorTopValue;
+
+		int viewTopValue =
+			store.getDefaultInt(IPreferenceConstants.VIEW_TAB_POSITION);
+		viewTopButton.setSelection(viewTopValue == SWT.TOP);
+		viewBottomButton.setSelection(viewTopValue == SWT.BOTTOM);
+		viewAlignment = viewTopValue;
 		/*
 		 * No longer supported - remove when confirmed!
 		 * if (openFloatButton != null) 
@@ -231,6 +395,15 @@ public class ViewsPreferencePage
 		store.setValue(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR, showTextOnPerspectiveBar.getSelection());
 		store.setValue(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, showTraditionalStyleTabs.getSelection());
 		store.setValue(IPreferenceConstants.COLOR_ICONS, colorIcons.getSelection());		
+		
+		// store the editor tab value to setting
+		store.setValue(
+			IPreferenceConstants.EDITOR_TAB_POSITION,
+			editorAlignment);
+
+		// store the view tab value to setting
+		store.setValue(IPreferenceConstants.VIEW_TAB_POSITION, viewAlignment);
+		
 				
 		int idx = themeCombo.getSelectionIndex();
 		if (idx == 0) {		    

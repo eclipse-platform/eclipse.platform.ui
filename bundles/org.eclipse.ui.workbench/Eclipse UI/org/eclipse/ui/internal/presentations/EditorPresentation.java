@@ -44,11 +44,11 @@ public class EditorPresentation extends BasicStackPresentation {
     private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 
         public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-            if (IPreferenceConstants.VIEW_TAB_POSITION
+            if (IPreferenceConstants.EDITOR_TAB_POSITION
                     .equals(propertyChangeEvent.getProperty())
                     && !isDisposed()) {
                 int tabLocation = preferenceStore
-                        .getInt(IPreferenceConstants.VIEW_TAB_POSITION);
+                        .getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
                 setTabPosition(tabLocation);
             } else if (IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS
                     .equals(propertyChangeEvent.getProperty())
@@ -87,7 +87,7 @@ public class EditorPresentation extends BasicStackPresentation {
         CTabFolder tabFolder = getTabFolder();
         preferenceStore.addPropertyChangeListener(propertyChangeListener);
         int tabLocation = preferenceStore
-                .getInt(IPreferenceConstants.VIEW_TAB_POSITION);
+                .getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
         setTabPosition(tabLocation);
 		tabFolder.setSingleTab(!preferenceStore.getBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
         setTabStyle(preferenceStore

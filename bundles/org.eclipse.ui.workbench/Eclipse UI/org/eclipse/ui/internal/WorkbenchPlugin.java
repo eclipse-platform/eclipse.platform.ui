@@ -461,10 +461,11 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.OPEN_AFTER_DELAY, false);
 		store.setDefault(IPreferenceConstants.RECENT_FILES, 4);
 
-		// TODO remove these preferences once parttabfolder changes are done
 		store.setDefault(IPreferenceConstants.VIEW_TAB_POSITION, SWT.TOP);
 		store.setDefault(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
 		
+		store.setDefault(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, false);
+	
 		store.setDefault(IPreferenceConstants.EDITOR_TAB_WIDTH, 3); // high
 		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_EMBED);
 		store.setDefault(IPreferenceConstants.OPEN_PERSP_MODE, IPreferenceConstants.OPM_ACTIVE_PAGE);
