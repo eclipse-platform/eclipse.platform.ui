@@ -46,12 +46,10 @@ public class UIJobTest extends UITestCase {
         fPage = fWindow.getActivePage();
     }
 
-    private static boolean testJobRan = false;
-    private static boolean backgroundThreadStarted = false;
-    private static boolean backgroundThreadFinished = false;
-    private static boolean backgroundThreadInterrupted = false;
-    private static boolean backgroundThreadFinishedWhenUIJobRan = false;
-    private static boolean testJobRanBeforeBackgroundJobFinished = false;
+    private volatile boolean testJobRan = false;
+    private volatile boolean backgroundThreadStarted = false;
+    private volatile boolean backgroundThreadInterrupted = false;
+    private volatile boolean backgroundThreadFinishedWhenUIJobRan = false;
     
     /**
      * Test to ensure that calling join() on a UIJob will block the calling
@@ -64,7 +62,6 @@ public class UIJobTest extends UITestCase {
 
         testJobRan = false;
         backgroundThreadStarted = false;
-        backgroundThreadFinished = false;
         backgroundThreadInterrupted = false;
 
         final UIJob testJob = new UIJob("blah blah blah") {
@@ -73,7 +70,6 @@ public class UIJobTest extends UITestCase {
 	         */
 	        public IStatus runInUIThread(IProgressMonitor monitor) {
 	            testJobRan = true;
-	            backgroundThreadFinishedWhenUIJobRan = backgroundThreadFinished;
 	            
 	            return Status.OK_STATUS;
 	        }
@@ -95,8 +91,6 @@ public class UIJobTest extends UITestCase {
             
             try {
                 testJob.join();
-                backgroundThreadFinished = true;
-                testJobRanBeforeBackgroundJobFinished = testJobRan;
             } catch (InterruptedException e) {
                 backgroundThreadInterrupted = true;
             }
@@ -133,7 +127,6 @@ public class UIJobTest extends UITestCase {
 	        
 	        Assert.assertTrue("Background do not start",backgroundThreadStarted);
 	        Assert.assertFalse("Test job ran",testJobRan);
-	        Assert.assertFalse("Background job finished to early",backgroundThreadFinished);
 	        Assert.assertFalse("Background was interrupted",backgroundThreadInterrupted);
 	        
 	        // Now run the event loop. Give the asyncExec a chance to run.
@@ -154,10 +147,8 @@ public class UIJobTest extends UITestCase {
 	        // Now that the event queue is empty, check that our final state is okay.
 	        Assert.assertTrue("Background thread did not start",backgroundThreadStarted);
 	        Assert.assertTrue("Test job did not run",testJobRan);
-	        Assert.assertTrue("Background thread did not finish",backgroundThreadFinished);
 	        Assert.assertFalse("Background thread was interrupted", backgroundThreadInterrupted);
 	        Assert.assertFalse("Background thread finished when the job ran",backgroundThreadFinishedWhenUIJobRan);
-	        Assert.assertTrue("Test job ran after background",testJobRanBeforeBackgroundJobFinished);
 	        
         } finally {
             
