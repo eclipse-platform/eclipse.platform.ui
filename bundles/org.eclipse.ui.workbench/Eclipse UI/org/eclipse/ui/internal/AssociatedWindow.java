@@ -235,7 +235,7 @@ public class AssociatedWindow extends Window {
 				GC gc = event.gc;
 				gc.setClipping(getBorderRegion(outerShellSize,paintShell));
 				gc.setBackground(paintShell.getDisplay().getSystemColor(
-						SWT.COLOR_BLACK));
+						SWT.COLOR_WIDGET_NORMAL_SHADOW));
 				gc.fillRoundRectangle(0, 0, outerShellSize.width,
 						outerShellSize.height, 5, 5);
 			}
