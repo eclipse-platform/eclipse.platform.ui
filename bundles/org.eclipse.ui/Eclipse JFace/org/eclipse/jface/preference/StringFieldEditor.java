@@ -97,14 +97,32 @@ protected StringFieldEditor() {
  * @param labelText the label text of the field editor
  * @param width the width of the text input field in characters,
  *  or <code>UNLIMITED</code> for no limit
+ * @param strategy either <code>VALIDATE_ON_KEY_STROKE</code> to perform
+ *  on the fly checking (the default), or <code>VALIDATE_ON_FOCUS_LOST</code> to
+ *  perform validation only after the text has been typed in
  * @param parent the parent of the field editor's control
+ * @since 2.0
  */
-public StringFieldEditor(String name, String labelText, int width, Composite parent) {
+public StringFieldEditor(String name, String labelText, int width, int strategy, Composite parent) {
 	init(name, labelText);
 	widthInChars = width;
+	setValidateStrategy(strategy);
 	isValid = false;
 	errorMessage = JFaceResources.getString("StringFieldEditor.errorMessage");//$NON-NLS-1$
 	createControl(parent);
+}
+/**
+ * Creates a string field editor.
+ * Use the method <code>setTextLimit</code> to limit the text.
+ * 
+ * @param name the name of the preference this field editor works on
+ * @param labelText the label text of the field editor
+ * @param width the width of the text input field in characters,
+ *  or <code>UNLIMITED</code> for no limit
+ * @param parent the parent of the field editor's control
+ */
+public StringFieldEditor(String name, String labelText, int width, Composite parent) {
+	this(name, labelText, UNLIMITED, VALIDATE_ON_KEY_STROKE, parent);
 }
 /**
  * Creates a string field editor of unlimited width.
@@ -401,6 +419,12 @@ public void setTextLimit(int limit) {
 }
 /**
  * Sets the strategy for validating the text.
+ * <p>
+ * Calling this method has no effect after <code>createPartControl</code>
+ * is called. Thus this method is really only useful for subclasses to call
+ * in their constructor. However, it has public visibility for backward 
+ * compatibility.
+ * </p>
  *
  * @param value either <code>VALIDATE_ON_KEY_STROKE</code> to perform
  *  on the fly checking (the default), or <code>VALIDATE_ON_FOCUS_LOST</code> to
