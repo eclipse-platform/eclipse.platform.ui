@@ -34,7 +34,7 @@ public class TargetInfo {
 }
 
 /**
- * Returns the name of a target within an Ant build file.
+ * Returns the target name.
  * 
  * @return the target name
  */
@@ -53,8 +53,7 @@ public String getDescription() {
 }
 
 /**
- * Returns whether this target will be executed if none
- * is specified.
+ * Returns whether this is the build file default target.
  * 
  * @return whether this is the build file default target
  */

@@ -136,7 +136,7 @@ public void addUserProperties(Map properties) {
 }
 
 /**
- * Gets all the target information available from the build script.
+ * Returns the build file target information.
  * 
  * @return an array containing the target information
  * 
