@@ -333,12 +333,6 @@ public interface IExternalToolConstants {
 	public static final String ATTR_TOOL_ARGUMENTS = PLUGIN_ID + ".ATTR_TOOL_ARGUMENTS"; //$NON-NLS-1$
 
 	/**
-	 * String attribute containing a (optional) description of an external tool.
-	 * Default value is <code>null</code>.
-	 */
-	public static final String ATTR_TOOL_DESCRIPTION = PLUGIN_ID + ".ATTR_TOOL_DESCRIPTION"; //$NON-NLS-1$
-
-	/**
 	 * String attribute identifying the working directory of an external tool.
 	 * Default value is <code>null</code>, which indicates a default working
 	 * directory, which is tool specific.

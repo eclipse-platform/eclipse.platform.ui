@@ -46,7 +46,6 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 
 	protected Text locationField;
 	protected Text workDirectoryField;
-	protected Text descriptionField;
 	private Button fileLocationButton;
 	private Button workspaceLocationButton;
 	private Button fileWorkingDirectoryButton;
@@ -72,31 +71,6 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		mainComposite.setFont(parent.getFont());
 		createLocationComponent(mainComposite);
 		createWorkDirectoryComponent(mainComposite);
-		createDescriptionComponent(mainComposite);
-	}
-	
-	/**
-	 * Creates the controls needed to edit the description
-	 * attribute of an external tool
-	 * 
-	 * @param parent the composite to create the controls in
-	 */
-	protected void createDescriptionComponent(Composite parent) {
-		Font font = parent.getFont();
-		
-		Label label = new Label(parent, SWT.NONE);
-		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Descri&ption__1")); //$NON-NLS-1$
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		data.horizontalSpan = 2;
-		label.setLayoutData(data);
-		label.setFont(font);
-		
-		descriptionField = new Text(parent, SWT.BORDER);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-		descriptionField.setLayoutData(data);
-		descriptionField.setFont(font);
 	}
 	
 	/**
@@ -222,21 +196,6 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		updateLocation(configuration);
 		updateWorkingDirectory(configuration);
-		updateDescription(configuration);
-	}
-	/**
-	 * Method updateDescription.
-	 * @param configuration
-	 */
-	private void updateDescription(ILaunchConfiguration configuration) {
-		String desc= ""; //$NON-NLS-1$
-		try {
-			desc= configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_DESCRIPTION, ""); //$NON-NLS-1$
-		} catch (CoreException ce) {
-			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Error_reading_configuration_10"), ce); //$NON-NLS-1$
-		}
-		descriptionField.setText(desc);
-		descriptionField.addModifyListener(modifyListener);
 	}
 	
 	private void updateWorkingDirectory(ILaunchConfiguration configuration) {
@@ -278,13 +237,6 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 			configuration.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String)null);
 		} else {
 			configuration.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, workingDirectory);
-		}
-		
-		String desc= descriptionField.getText().trim();
-		if (desc.length() == 0) {
-			configuration.setAttribute(IExternalToolConstants.ATTR_TOOL_DESCRIPTION, (String)null);
-		} else {
-			configuration.setAttribute(IExternalToolConstants.ATTR_TOOL_DESCRIPTION, desc);
 		}
 	}
 

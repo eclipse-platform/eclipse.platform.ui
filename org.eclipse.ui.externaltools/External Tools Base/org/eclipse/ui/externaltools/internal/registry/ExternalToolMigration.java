@@ -83,7 +83,6 @@ public final class ExternalToolMigration {
 	private static final String TAG_PROMPT_ARGS = "promptForArguments"; //$NON-NLS-1$
 	private static final String TAG_SHOW_MENU = "showInMenu"; //$NON-NLS-1$
 	private static final String TAG_SAVE_DIRTY = "saveDirtyEditors"; //$NON-NLS-1$
-	private static final String TAG_DESC = "description"; //$NON-NLS-1$
 	private static final String TAG_ARGS = "arguments"; //$NON-NLS-1$
 	private static final String TAG_REFRESH_SCOPE = "refreshScope"; //$NON-NLS-1$
 	private static final String TAG_REFRESH_RECURSIVE = "refreshRecursive"; //$NON-NLS-1$
@@ -216,12 +215,7 @@ public final class ExternalToolMigration {
 		config.setAttribute(IExternalToolConstants.ATTR_REFRESH_RECURSIVE, TRUE.equals((String) commandArgs.get(TAG_REFRESH_RECURSIVE)));
 
 		config.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, (String) commandArgs.get(TAG_RUN_BUILD_KINDS));
-
-		String desc = (String) commandArgs.get(TAG_DESC);
-		if (desc != null) {
-			config.setAttribute(IExternalToolConstants.ATTR_TOOL_DESCRIPTION, desc);
-		}
-
+		
 		String args = (String) commandArgs.get(TAG_ARGS);
 		if (args != null) {
 			config.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, args);
