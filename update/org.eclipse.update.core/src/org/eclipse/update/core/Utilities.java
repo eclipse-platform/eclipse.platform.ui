@@ -173,12 +173,13 @@ public class Utilities {
 		// check the case of a multistatus
 		IStatus status;
 		if (e instanceof CoreException){
+			if (s==null) s="";
 			status = new MultiStatus( id, IStatus.OK, s, e);
 			IStatus childrenStatus = ((CoreException)e).getStatus();
 			((MultiStatus)status).add(childrenStatus);		
 			((MultiStatus)status).addAll(childrenStatus);		
 		} else {
-			StringBuffer completeString = new StringBuffer();
+			StringBuffer completeString = new StringBuffer("");
 			if (s!=null)
 				completeString.append(s);
 			if (e!=null){
@@ -210,6 +211,7 @@ public class Utilities {
 		Throwable e2) {
 		String id =
 			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+		if (s==null) s="";
 		MultiStatus multi = new MultiStatus(id, IStatus.OK, s, null);
 		
 		// check if core exception

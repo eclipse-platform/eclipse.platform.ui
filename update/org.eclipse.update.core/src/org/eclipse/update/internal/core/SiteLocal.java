@@ -835,7 +835,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			String msg = Policy.bind("SiteLocal.UnableToDetermineFeatureStatusSiteNull",new Object[]{feature.getURL()});
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
 				UpdateManagerPlugin.debug("Cannot determine status of feature:" + feature.getLabel() + ". Site is NULL.");
-			return createStatus(IStatus.WARNING,IFeature.STATUS_AMBIGUOUS,msg,null);
+			return createStatus(IStatus.ERROR,IFeature.STATUS_AMBIGUOUS,msg,null);
 		}
 
 		for (int i = 0; i < configuredSites.length; i++) {
@@ -870,8 +870,12 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		IFeature childFeature = null;		
 		IStatus childStatus;
 		
-		MultiStatus multi = new MultiStatus(featureStatus.getPlugin(),IStatus.OK,null,null);
-		multi.add(featureStatus);
+		String msg = Policy.bind("SiteLocal.FeatureUnHappy");
+		int code = IFeature.STATUS_HAPPY;
+		MultiStatus multiTemp = new MultiStatus(featureStatus.getPlugin(),code,msg,null);
+		if (featureStatus.getSeverity()==IStatus.ERROR)
+			multiTemp.add(featureStatus);
+		if (featureStatus.getCode()>code) code = featureStatus.getCode();
 		
 		for (int i = 0; i < children.length; i++) {
 			try {
@@ -885,9 +889,18 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				childStatus = getFeatureStatus(childFeature);	
 				// do not add the status, add the children status as getFeatureStatus
 				// returns a multiStatus 
-				multi.addAll(childStatus);
+				if (childStatus.getSeverity()!=IStatus.OK){
+					VersionedIdentifier versionID = childFeature.getVersionedIdentifier();
+					String featureID = (versionID==null)?"":versionID.toString();
+					String msg1 = Policy.bind("SiteLocal.NestedFeatureUnHappy",featureID);
+					multiTemp.add(createStatus(IStatus.ERROR,childStatus.getCode(),msg1,null));
+					if (childStatus.getCode()>code) code = childStatus.getCode();					
+				}
 			}
 		}
+		
+		MultiStatus multi = new MultiStatus(featureStatus.getPlugin(),code,msg,null);
+		multi.addAll(multiTemp);
 		return multi; 
 	}
 
@@ -944,7 +957,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 						// there is a plugin with a different version on the path
 						String msg = Policy.bind("SiteLocal.TwoVersionSamePlugin",featureID.toString(),compareID.toString());
 						UpdateManagerPlugin.warn("Found 2 versions of the same plugin on the path:" + featureID.toString() + " & " + compareID.toString());
-						return createStatus(IStatus.WARNING,IFeature.STATUS_AMBIGUOUS,msg,null);
+						return createStatus(IStatus.ERROR,IFeature.STATUS_AMBIGUOUS,msg,null);
 					}
 				}
 			}

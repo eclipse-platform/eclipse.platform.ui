@@ -266,8 +266,8 @@ public class ErrorRecoveryLog {
 	 */
 	 private IStatus processRecoverInstall(Properties prop){
 	 	
-		IStatus mainStatus = createStatus(IStatus.OK,null,null);
-		MultiStatus multi = new MultiStatus(mainStatus.getPlugin(),mainStatus.getCode(),null,null);
+		IStatus mainStatus = createStatus(IStatus.OK,"",null);
+		MultiStatus multi = new MultiStatus(mainStatus.getPlugin(),mainStatus.getCode(),"",null);
 	 	
 	 	Collection values = prop.values();
 	 	
@@ -383,8 +383,8 @@ public class ErrorRecoveryLog {
 	  */
 	  private IStatus processRemove(String val){
 	  	
-		IStatus mainStatus = createStatus(IStatus.OK,null,null);
-		MultiStatus multi = new MultiStatus(mainStatus.getPlugin(),mainStatus.getCode(),null,null);	  	
+		IStatus mainStatus = createStatus(IStatus.OK,"",null);
+		MultiStatus multi = new MultiStatus(mainStatus.getPlugin(),mainStatus.getCode(),"",null);	  	
 	  	
 		// get the path
 		int index = -1;
@@ -421,8 +421,8 @@ public class ErrorRecoveryLog {
 	 */
 	public IStatus removeFromFileSystem(File file) {
 		
-		IStatus mainStatus = createStatus(IStatus.OK,null,null);
-		MultiStatus multi = new MultiStatus(mainStatus.getPlugin(),mainStatus.getCode(),null,null);		
+		IStatus mainStatus = createStatus(IStatus.OK,"",null);
+		MultiStatus multi = new MultiStatus(mainStatus.getPlugin(),mainStatus.getCode(),"",null);		
 		
 		if (!file.exists()){
 			multi.add(createStatus(IStatus.ERROR,"Unable to find file to remove:"+file,null));
@@ -450,8 +450,8 @@ public class ErrorRecoveryLog {
 	 */
 	 private IStatus processRecoverRemove(Properties prop){
 	 	
-		IStatus mainStatus = createStatus(IStatus.OK,null,null);
-		MultiStatus multi = new MultiStatus(mainStatus.getPlugin(),mainStatus.getCode(),null,null);
+		IStatus mainStatus = createStatus(IStatus.OK,"",null);
+		MultiStatus multi = new MultiStatus(mainStatus.getPlugin(),mainStatus.getCode(),"",null);
 	 	
 	 	Collection values = prop.values();
 	 	
