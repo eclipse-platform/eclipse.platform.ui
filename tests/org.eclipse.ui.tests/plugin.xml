@@ -183,6 +183,13 @@
             class="org.eclipse.ui.tests.internal.ExtendedTextEditor"
             id="org.eclipse.ui.tests.ExtendedTextEditor">
       </editor>
+      <editor
+            name="Test Multi-Page Editor"
+            icon="icons\mockeditorpart1.gif"
+            extensions="multi"
+            class="org.eclipse.ui.tests.multipageeditor.TestMultiPageEditor"
+            id="org.eclipse.ui.tests.multipageeditor.TestMultiPageEditor">
+      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">

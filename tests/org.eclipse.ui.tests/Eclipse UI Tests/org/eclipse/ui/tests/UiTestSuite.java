@@ -14,6 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.ui.tests.keys.KeysTestSuite;
+import org.eclipse.ui.tests.multipageeditor.MultiPageEditorTestSuite;
 import org.eclipse.ui.tests.util.PlatformUtil;
 
 /**
@@ -45,5 +46,6 @@ public class UiTestSuite extends TestSuite {
 		addTest(new org.eclipse.ui.tests.datatransfer.DataTransferTestSuite());
 		addTest(new org.eclipse.ui.tests.preferences.PreferencesTestSuite());
 		addTest(new KeysTestSuite());
+		addTest(new MultiPageEditorTestSuite());
 	}
 }
