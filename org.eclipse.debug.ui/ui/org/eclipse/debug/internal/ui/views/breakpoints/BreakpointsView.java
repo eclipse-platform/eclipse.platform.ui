@@ -105,7 +105,7 @@ public class BreakpointsView extends AbstractDebugView {
 	private void initializeCheckedState() {
 		IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
 		final CheckboxTableViewer viewer= getCheckboxViewer();
-		List breakpoints= Arrays.asList((IBreakpoint[]) ((IStructuredContentProvider) viewer.getContentProvider()).getElements(manager));
+		List breakpoints= Arrays.asList(((IStructuredContentProvider) viewer.getContentProvider()).getElements(manager));
 		ListIterator iterator= breakpoints.listIterator();
 		while (iterator.hasNext()) {
 			try {
