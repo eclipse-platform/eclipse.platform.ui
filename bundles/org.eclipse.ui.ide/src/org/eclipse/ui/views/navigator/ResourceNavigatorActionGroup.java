@@ -7,7 +7,7 @@
  * 
  * Contributors: 
  *        IBM Corporation - initial API and implementation 
- *        Sebastian Davids <sdavids@gmx.de> - Images for menu items
+ *        Sebastian Davids <sdavids@gmx.de> - Images for menu items (27481)
 ************************************************************************/
 package org.eclipse.ui.views.navigator;
 

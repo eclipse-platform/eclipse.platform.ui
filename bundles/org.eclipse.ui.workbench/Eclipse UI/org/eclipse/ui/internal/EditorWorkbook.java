@@ -8,8 +8,9 @@
  * 
  * Contributors: 
  *  IBM Corporation - initial API and implementation 
- * 	Cagatay Kavukcuoglu <cagatayk@acm.org> - Fix for bug 10025 - Resizing views should not use height ratios		
-************************************************************************/
+ * 	Cagatay Kavukcuoglu <cagatayk@acm.org> - Fix for bug 10025 - Resizing views 
+ *    should not use height ratios		
+ ************************************************************************/
 
 package org.eclipse.ui.internal;
 

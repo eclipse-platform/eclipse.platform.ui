@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/cpl-v10.html 
  * 
  * Contributors: 
- *      IBM Corporation - initial API and implementation 
- *  	Sebastian Davids <sdavids@gmx.de> - Collapse all action
- *      Sebastian Davids <sdavids@gmx.de> - Images for menu items
-************************************************************************/
+ *   IBM Corporation - initial API and implementation 
+ *   Sebastian Davids <sdavids@gmx.de> - Collapse all action (25826)
+ *   Sebastian Davids <sdavids@gmx.de> - Images for menu items (27481)
+ ************************************************************************/
 package org.eclipse.ui.views.navigator;
 
 import java.util.List;

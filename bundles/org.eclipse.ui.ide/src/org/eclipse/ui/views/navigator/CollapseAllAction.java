@@ -7,8 +7,8 @@
  * 
  * Contributors: 
  *   IBM Corporation - initial API and implementation 
- *   Sebastian Davids <sdavids@gmx.de> - Initial Implementation
-******************************************************************************/ 
+ *   Sebastian Davids <sdavids@gmx.de> - Collapse all action (25826)
+ ******************************************************************************/ 
 package org.eclipse.ui.views.navigator;
 
 import org.eclipse.ui.help.WorkbenchHelp;
