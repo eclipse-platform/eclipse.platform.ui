@@ -60,7 +60,7 @@ class ImplicitJobs {
 			}
 			buf.append(".  See log for trace information if rule tracing is enabled."); //$NON-NLS-1$
 			String msg = buf.toString();
-			if (JobManager.DEBUG) {
+			if (JobManager.DEBUG || JobManager.DEBUG_BEGIN_END) {
 				System.out.println(msg);
 				Throwable t = lastPush == null ? new IllegalArgumentException() : lastPush;
 				IStatus error = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 1, msg, t);
