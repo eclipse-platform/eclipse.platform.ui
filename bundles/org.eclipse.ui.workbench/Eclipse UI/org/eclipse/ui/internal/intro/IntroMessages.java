@@ -14,6 +14,8 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
+ * Introduction NLS bundle.
+ * 
  * @since 3.0
  */
 public class IntroMessages {
@@ -23,11 +25,11 @@ public class IntroMessages {
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	/**
-	 * 
-	 * @since 3.0
 	 */
 	private IntroMessages() {
+	    //no-op
 	}
+	
 	/**
 	 * @param key
 	 * @return

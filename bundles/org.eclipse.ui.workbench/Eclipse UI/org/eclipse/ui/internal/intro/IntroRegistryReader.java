@@ -19,15 +19,14 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.RegistryReader;
 
 /**
- * <em>EXPERIMENTAL</em>
+ * Introduction registry reader.
  *  
  * @since 3.0
  */
 public class IntroRegistryReader extends RegistryReader {
-	private static final String TAG_INTRO="intro";//$NON-NLS-1$	
-	private static final String TAG_INTROPRODUCTBINDING="introProductBinding";//$NON-NLS-1$
+	private static final String TAG_INTRO = "intro";//$NON-NLS-1$	
+	private static final String TAG_INTROPRODUCTBINDING = "introProductBinding";//$NON-NLS-1$
 	private IntroRegistry introRegistry;
-
 
 	/**
 	 */

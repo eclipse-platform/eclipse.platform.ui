@@ -6,19 +6,21 @@
          <meta.schema plugin="org.eclipse.ui" id="intro" name="Intro Part"/>
       </appInfo>
       <documentation>
-         This extension point is used to register a part that is responsible for rendering the initial product experience. The part is created on application startup and is allowed to consume most of the application window client area. The extension provider is responsible for providing the content.
+         This extension point is used to register a part that is responsible for rendering the initial product experience. The part should be created on application startup and is allowed to consume most of the application window client area. The extension provider is responsible for providing the content.
 &lt;p&gt;
 Life cycle of the initial product experience is as follows:
 &lt;ul&gt;
 &lt;li&gt;
-Initial experience area is created on startup. The class that will be used to control its state will implement &lt;samp&gt;IIntroArea&lt;/samp&gt; interface.&lt;/li&gt;
-&lt;li&gt;Clients will use this extension point to plug in a class that implements &lt;samp&gt;IIntroPart&lt;/samp&gt; interface. After creation, this interface will be initialized by passing the IIntroArea object.&lt;/li&gt;
-&lt;li&gt;During the initial experience, IIntroPart can cause the IIntroArea object to go into the stand-by state, where most of the window area is consumed by the current perspective, while only a small part on the edge is still occupied by the initial experience client.&lt;/li&gt;
-&lt;li&gt;Users can toggle IIntroArea between active and stand-by mode several times.&lt;/li&gt;
-&lt;li&gt;Eventually, IIntroArea will be closed (either programmatically or explicitly by the user. The current perspective will take over the entire application window area.&lt;/li&gt;
+Initial experience area is created on startup. The class that will be used to control its state will implement the &lt;samp&gt;org.eclipse.ui.intro.IIntroSite&lt;/samp&gt; interface.  This is similar to other workbench part site objects.&lt;/li&gt;
+&lt;li&gt;Clients will use this extension point to plug in a class that implements the&lt;samp&gt;org.eclipse.ui.intro.IIntroPart&lt;/samp&gt; interface. After creation, this interface will be initialized by passing the IIntroSite object.&lt;/li&gt;
+&lt;li&gt;During the initial experience, IIntroPart can cause the IIntroSite object to go into the stand-by state, where most of the window area is consumed by the current perspective, while only a small part on the edge is still occupied by the initial experience client.  The user is free to move this area as if it were a view.&lt;/li&gt;
+&lt;li&gt;Users can toggle IIntroPart between active and stand-by mode several times.&lt;/li&gt;
+&lt;li&gt;Eventually, IIntroPart will be closed (either programmatically or explicitly by the user). The current perspective will take over the entire application window area.&lt;/li&gt;
 &lt;/ul&gt;
+&lt;/p&gt;
 &lt;p&gt;
-Users are free to create any kind of SWT control as a client of the intro area. Typically, HTML browser widget will be used in order to provide for a rich user experience.
+Users are free to create any kind of SWT control as a client of the IIntroPart. Typically, HTML browser widget will be used in order to provide for a rich user experience.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -31,21 +33,21 @@ Users are free to create any kind of SWT control as a client of the intro area. 
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -62,7 +64,7 @@ Users are free to create any kind of SWT control as a client of the intro area. 
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique identifier that can be used to reference the intro element.
+                  a unique identifier that can be used to reference the intro element
                </documentation>
             </annotation>
          </attribute>
@@ -76,7 +78,7 @@ Users are free to create any kind of SWT control as a client of the intro area. 
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  a relative name of the icon that will be used for all resources that match the specified extensions.
+                  a relative name of the icon that will be associated with the intro
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -86,7 +88,9 @@ Users are free to create any kind of SWT control as a client of the intro area. 
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified name of the class that implements &lt;samp&gt;org.eclipse.ui.intro.IIntroPart&lt;/samp&gt; interface.
+                  a fully qualified name of the class that implements &lt;samp&gt;org.eclipse.ui.intro.IIntroPart&lt;/samp&gt; interface.  A common practice 
+is to subclass &lt;samp&gt;org.eclipse.ui.part.intro.IntroPart&lt;/samp&gt; 
+in order to inherit the default functionality.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.intro.IIntroPart"/>
@@ -106,7 +110,7 @@ Users are free to create any kind of SWT control as a client of the intro area. 
          <attribute name="productId" type="string" use="required">
             <annotation>
                <documentation>
-                  product identifier used to resolve the case when more than one intro parts have been registered. This can typically happen when there are two or more primary features present in the platform (RCP applications that support features will most likely provide extension definition in the primary feature plug-in). In this case, one of these primary features is used to provide application identity and &lt;samp&gt;productId&lt;/samp&gt; is used to identify it.
+                  a unique identifier that can be used to indicate the bound product
                </documentation>
             </annotation>
          </attribute>
@@ -140,8 +144,10 @@ Users are free to create any kind of SWT control as a client of the intro area. 
   &lt;extension point=&quot;org.eclipse.ui.intro&quot;&gt;
      &lt;intro
         id=&quot;com.example.xyz.intro.custom&quot;
-        productId=&quot;com.example.xyz.XYZProduct&quot;
         class=&quot;com.example.xyz.intro.IntroPart&quot;/&gt;
+     &lt;introProductBinding
+     	productId=&quot;com.example.xyz.Product&quot;
+     	introId=&quot;com.example.xyz.intro.custom&quot;/&gt;
   &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -153,7 +159,7 @@ Users are free to create any kind of SWT control as a client of the intro area. 
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must be a name of the class that implements &lt;samp&gt;org.eclipse.ui.intro.IIntroPart&lt;/samp&gt; interface. It controls the life cycle of the initial user experience using the provided &lt;samp&gt;org.eclipse.ui.intro.IIntroArea&lt;/samp&gt; object.
+         The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must be a name of the class that implements the &lt;samp&gt;org.eclipse.ui.intro.IIntroPart&lt;/samp&gt; interface. It controls the life cycle of the initial user experience using the provided &lt;samp&gt;org.eclipse.ui.intro.IIntroSite&lt;/samp&gt; object.  It is common practice to subclass &lt;samp&gt;org.eclipse.ui.part.intro.IntroPart&lt;/samp&gt; when developing a new intro in order to inherit default behaviour.
       </documentation>
    </annotation>
 

@@ -17,8 +17,6 @@ import org.eclipse.ui.intro.IIntroPart;
 
 /**
  * Describes an introduction extension.
- * 
- * <em>EXPERIMENTAL</em>
  *  
  * @since 3.0
  */
@@ -28,9 +26,4 @@ public interface IIntroDescriptor extends IWorkbenchPartDescriptor {
 	 * Creates an instance of the intro part defined in the descriptor.
 	 */
 	IIntroPart createIntro() throws CoreException;		
-
-	/** 
-	 * @return the product id
-	 */
-	String getProductId();	
 }

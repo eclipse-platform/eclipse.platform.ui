@@ -23,21 +23,19 @@ import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
- * <em>EXPERIMENTAL</em>
- *  
+ * Describes an introduction extension.
+ * 
  * @since 3.0
  */
 public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 	private static final String ATT_CLASS = "class"; //$NON-NLS-1$
-	private static final String ATT_NAME = "name"; //$NON-NLS-1$
-	private static final String ATT_PRODUCTID = "productId"; //$NON-NLS-1$	
+	private static final String ATT_NAME = "name"; //$NON-NLS-1$	
 	
 	private IConfigurationElement configElement;
 	private String id;
 	private String pluginId;
-	private String productId;
 	private String name;
 	
 	/**
@@ -47,13 +45,6 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 	throws CoreException {
 		this.configElement = configElement;
 		loadFromExtension();
-	}	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.intro.IIntroDescriptor#getProductId()
-	 */
-	public String getProductId() {
-		return productId;
 	}
 	
 	/**
@@ -62,7 +53,6 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 	private void loadFromExtension() throws CoreException {
 		id = configElement.getAttribute(ATT_ID);
 		name = configElement.getAttribute(ATT_NAME);
-		productId = configElement.getAttribute(ATT_PRODUCTID);
 		pluginId = configElement.getDeclaringExtension().getNamespace();
 		String className = configElement.getAttribute(ATT_CLASS);
 		// Sanity check.

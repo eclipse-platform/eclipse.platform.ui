@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * <em>EXPERIMENTAL</em>
+ * Registry for introduction elements.
  * 
  * @since 3.0
  */

@@ -13,12 +13,11 @@ package org.eclipse.ui.intro;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchPartSite;
 
-/**
+/** 
+ * The primary interface between an intro part and the workbench.
  * <p>
- * This interface is not intended to be extended or implemented by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
+ * The workbench exposes its implemention of intro part sites via this 
+ * interface, which is not intended to be implemented or extended by clients.
  * </p>
  *  
  * @since 3.0
@@ -26,10 +25,9 @@ import org.eclipse.ui.IWorkbenchPartSite;
 public interface IIntroSite extends IWorkbenchPartSite {
 
 	/**
-	 * Returns intro area action bars in case the intro part needs to contribute
-	 * actions to menu, tool bar or status bar of the enclosing window.
-	 * 
-	 * @return the <code>IActionBars</code>.
+	 * Returns the action bars for this part site.
+	 *
+	 * @return the <code>IActionBars</code>
 	 */
 	IActionBars getActionBars();
 }

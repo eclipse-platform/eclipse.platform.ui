@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.intro;
 
 
 /**
- * <em>EXPERIMENTAL</em>
+ * Registry for introduction elements.
  * 
  * @since 3.0
  */
