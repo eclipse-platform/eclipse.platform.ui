@@ -46,21 +46,25 @@ public class UpdateModel {
 	
 	public void addJob(ChecklistJob job) {
 		jobs.add(job);
+		job.setModel(this);
 		fireObjectAdded(null, job);
 	}
 	
 	public void removeJob(ChecklistJob job) {
 		jobs.remove(job);
+		job.setModel(null);
 		fireObjectRemoved(null, job);
 	}
 
 	public void addBookmark(SiteBookmark bookmark) {
 		bookmarks.add(bookmark);
+		bookmark.setModel(this);
 		fireObjectAdded(null, bookmark);
 	}
 	
 	public void removeBookmark(SiteBookmark bookmark) {
 		bookmarks.remove(bookmark);
+		bookmark.setModel(null);
 		fireObjectRemoved(null, bookmark);
 	}
 	
@@ -91,6 +95,14 @@ public class UpdateModel {
 				iter.hasNext();) {
 			IUpdateModelChangedListener listener = (IUpdateModelChangedListener)iter.next();
 			listener.objectRemoved(parent, child);
+		}
+	}
+	
+	void fireObjectChanged(Object object, String property) {
+		for (Iterator iter=listeners.iterator();
+			iter.hasNext();) {
+			IUpdateModelChangedListener listener = (IUpdateModelChangedListener)iter.next();
+			listener.objectChanged(object, property);
 		}
 	}
 }

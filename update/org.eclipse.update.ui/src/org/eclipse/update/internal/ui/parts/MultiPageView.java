@@ -14,9 +14,7 @@ import org.eclipse.update.ui.forms.*;
 import java.util.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.ISelection;
-
-
-public abstract class MultiPageView extends ViewPart implements ISelectionListener {
+public abstract class MultiPageView extends ViewPart implements ISelectionListener {
 	protected IFormWorkbook formWorkbook;
 	private Vector pages;
 	protected String firstPageId;
@@ -84,12 +82,12 @@ public void contextMenuAboutToShow(IMenuManager menu) {
 	if (contributor!=null) contributor.contextMenuAboutToShow(menu);
 */
 }
-public UpdateFormPage getPage(String pageId) {
-	return (UpdateFormPage)table.get(pageId);
+public IUpdateFormPage getPage(String pageId) {
+	return (IUpdateFormPage)table.get(pageId);
 }
 
-public UpdateFormPage getCurrentPage() {
-	return (UpdateFormPage)formWorkbook.getCurrentPage();
+public IUpdateFormPage getCurrentPage() {
+	return (IUpdateFormPage)formWorkbook.getCurrentPage();
 }
 
 public Menu getContextMenu() {
@@ -106,13 +104,13 @@ public IFormPage showPage(String id) {
 }
 
 public void showPage(String id, Object openToObject) {
-	UpdateFormPage page = showPage(getPage(id));
+	IUpdateFormPage page = showPage(getPage(id));
 	if (page != null)
 		page.openTo(openToObject);
 }
 
-public UpdateFormPage showPage(final UpdateFormPage page) {
-	UpdateFormPage oldPage = getCurrentPage();
+public IUpdateFormPage showPage(final IUpdateFormPage page) {
+	IUpdateFormPage oldPage = getCurrentPage();
 	formWorkbook.selectPage(page);
 	return page;
 }
@@ -127,11 +125,14 @@ public UpdateFormPage showPage(final UpdateFormPage page) {
 }
 
 public void dispose() {
-	// run super.
-	super.dispose();
-
 	// remove ourselves as a selection listener
 	getSite().getPage().removeSelectionListener(this);
+	for (int i = 0; i < pages.size(); i++) {
+		IUpdateFormPage page = (IUpdateFormPage) pages.elementAt(i);
+		page.dispose();
+	}
+	// run super.
+	super.dispose();
 }
 
 public void selectionChanged(IWorkbenchPart part, ISelection sel) {

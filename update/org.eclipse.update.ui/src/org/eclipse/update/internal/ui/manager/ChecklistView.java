@@ -187,7 +187,7 @@ public void objectRemoved(Object parent, Object child) {
 		viewer.remove(child);
 	}
 }
-public void objectChanged(Object object) {
+public void objectChanged(Object object, String property) {
 	if (object instanceof ChecklistJob) {
 		viewer.update(object, new String [] {});
 	}

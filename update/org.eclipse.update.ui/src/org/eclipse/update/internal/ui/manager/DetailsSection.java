@@ -172,7 +172,8 @@ private void openInfoURL() {
 		final String fileName = infoLinkURL.toString();
 		BusyIndicator.showWhile(nameLabel.getDisplay(), new Runnable() {
 			public void run() {
-				Program.launch(infoLinkURL.toString());
+				DetailsView dv = (DetailsView)getPage().getView();
+				dv.showURL(fileName);
 			}
 		});
 	}

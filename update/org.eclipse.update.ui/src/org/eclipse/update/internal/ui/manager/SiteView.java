@@ -12,6 +12,9 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.core.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.graphics.Image;
+import java.util.*;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.core.runtime.*;
 
 /**
  * Insert the type's description here.
@@ -19,6 +22,7 @@ import org.eclipse.swt.graphics.Image;
  */
 public class SiteView extends BaseTreeView implements IUpdateModelChangedListener {
 	private Action newAction;
+	private Action deleteAction;
 	private Image siteImage;
 	
 class SiteProvider extends DefaultContentProvider
@@ -86,6 +90,12 @@ public void makeActions() {
 		}
 	};
 	newAction.setText("New Site...");
+	deleteAction = new Action() {
+		public void run() {
+			performDelete();
+		}
+	};
+	deleteAction.setText("Delete");
 }
 
 public void fillActionBars() {
@@ -94,6 +104,9 @@ public void fillActionBars() {
 
 public void fillContextMenu(IMenuManager manager) {
 	manager.add(newAction);
+	manager.add(deleteAction);
+	ISelection selection = viewer.getSelection();
+	deleteAction.setEnabled(!selection.isEmpty());
 }
 
 private void performNew() {
@@ -108,7 +121,35 @@ private void performNew() {
 	}
 }
 
-private IFeature [] getSiteFeatures(SiteBookmark bookmark) {
+private void performDelete() {
+	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+	ISelection selection = viewer.getSelection();
+	if (selection instanceof IStructuredSelection) {
+		IStructuredSelection ssel = (IStructuredSelection)selection;
+		for (Iterator iter=ssel.iterator(); iter.hasNext();) {
+			Object obj = iter.next();
+			if (obj instanceof SiteBookmark) {
+				model.removeBookmark((SiteBookmark)obj);
+			}
+		}
+	}
+}
+
+private IFeature [] getSiteFeatures(final SiteBookmark bookmark) {
+	if (!bookmark.isSiteConnected()) {
+		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			public void run() {
+				try {
+					bookmark.connect(null);
+				}
+				catch (CoreException e) {
+				}
+			}
+		});
+	}
+	if (bookmark.getSite()!=null) {
+		return bookmark.getSite().getFeatures();
+	}
 	return new IFeature[0];
 }
 
@@ -116,13 +157,19 @@ public void objectAdded(Object parent, Object child) {
 	if (child instanceof SiteBookmark) {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		viewer.add(model, child);
+		viewer.setSelection(new StructuredSelection(child));
 	}
 }
 
 public void objectRemoved(Object parent, Object child) {
+	if (child instanceof SiteBookmark) {
+		viewer.remove(child);
+	}
 }
-
-public void objectChanged(Object object) {
+public void objectChanged(Object object, String property) {
+	if (object instanceof SiteBookmark &&
+		property.equals(SiteBookmark.P_NAME))
+		viewer.update(object, null);
 }
 
 }

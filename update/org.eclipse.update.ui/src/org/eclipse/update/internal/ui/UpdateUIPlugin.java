@@ -7,6 +7,7 @@ import java.util.*;
 import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.model.*;
+import org.eclipse.update.internal.ui.manager.*;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -18,6 +19,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	private static UpdateUIPlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
+	private UpdateAdapterFactory adapterFactory;
 	
 	private UpdateModel model;
 	
@@ -92,9 +94,14 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		super.startup();
 		model = new UpdateModel();
 		model.startup();
+		IAdapterManager manager = Platform.getAdapterManager();
+		adapterFactory = new UpdateAdapterFactory();
+		manager.registerAdapters(adapterFactory, ModelObject.class);
 	}
 	
 	public void shutdown() throws CoreException {
+		IAdapterManager manager = Platform.getAdapterManager();
+		manager.unregisterAdapters(adapterFactory);
 		model.shutdown();
 		super.shutdown();
 	}

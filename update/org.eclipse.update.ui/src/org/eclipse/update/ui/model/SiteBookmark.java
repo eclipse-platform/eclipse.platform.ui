@@ -3,11 +3,17 @@ package org.eclipse.update.ui.model;
 import java.net.URL;
 import org.eclipse.update.core.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.ui.views.properties.*;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
-public class SiteBookmark {
+public class SiteBookmark extends ModelObject {
 	private String name;
 	private URL url;
 	private ISite site;
+	
+	public static final String P_NAME="p_name";
+	public static final String P_URL="p_url";
 	
 	public SiteBookmark() {
 	}
@@ -27,6 +33,7 @@ public class SiteBookmark {
 	
 	public void setName(String name) {
 		this.name = name;
+		notifyObjectChanged(P_NAME);
 	}
 	
 	public URL getURL() {
@@ -35,6 +42,7 @@ public class SiteBookmark {
 
 	public void setURL(URL url) {
 		this.url = url;
+		notifyObjectChanged(P_URL);
 	}
 	
 	public ISite getSite() {

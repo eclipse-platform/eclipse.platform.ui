@@ -10,5 +10,6 @@ public interface IUpdateFormPage extends IFormPage {
 	void performGlobalAction(String id);
 	void init(Object model);
 	void update();
+	void dispose();
 }
 
