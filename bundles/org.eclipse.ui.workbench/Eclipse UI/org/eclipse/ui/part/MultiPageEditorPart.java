@@ -527,38 +527,51 @@ public void setFocus() {
  *            the index of the page
  */
 private void setFocus(int pageIndex) {
-	IKeyBindingService service = getSite().getKeyBindingService();
-	if (pageIndex < 0 || pageIndex >= getPageCount()) {
-		// There is no selected page, so deactivate the active service.
-		if (service instanceof INestableKeyBindingService) {
-			INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
-			nestableService.activateKeyBindingService(null);
-		} else {
-			WorkbenchPlugin.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		return;
-	}
-	
-	IEditorPart editor = getEditor(pageIndex);
-	if (editor != null) {
-		editor.setFocus();
-		// There is no selected page, so deactivate the active service.
-		if (service instanceof INestableKeyBindingService) {
-			INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
-			if (editor != null) {
-				nestableService.activateKeyBindingService(editor.getEditorSite());
-			} else {
-				nestableService.activateKeyBindingService(null);
-			}
-		} else {
-			WorkbenchPlugin.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	} else {
-		Control control = getControl(pageIndex);
-		if (control != null) {
-			control.setFocus();
-		}
-	}
+	final IKeyBindingService service = getSite().getKeyBindingService();
+        if (pageIndex < 0 || pageIndex >= getPageCount()) {
+            // There is no selected page, so deactivate the active service.
+            if (service instanceof INestableKeyBindingService) {
+                final INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
+                nestableService.activateKeyBindingService(null);
+            } else {
+                WorkbenchPlugin
+                        .log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+            return;
+        }
+
+        final IEditorPart editor = getEditor(pageIndex);
+        if (editor != null) {
+            editor.setFocus();
+            // There is no selected page, so deactivate the active service.
+            if (service instanceof INestableKeyBindingService) {
+                final INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
+                if (editor != null) {
+                    nestableService.activateKeyBindingService(editor
+                            .getEditorSite());
+                } else {
+                    nestableService.activateKeyBindingService(null);
+                }
+            } else {
+                WorkbenchPlugin
+                        .log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+        } else {
+            // There is no selected editor, so deactivate the active service.
+            if (service instanceof INestableKeyBindingService) {
+                final INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
+                nestableService.activateKeyBindingService(null);
+            } else {
+                WorkbenchPlugin
+                        .log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+
+            // Give the page's control focus.
+            final Control control = getControl(pageIndex);
+            if (control != null) {
+                control.setFocus();
+            }
+        }
 }
 /**
  * Sets the image for the page with the given index, or <code>null</code>
