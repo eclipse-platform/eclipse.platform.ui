@@ -18,6 +18,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.variants.IResourceVariantTree;
 import org.eclipse.team.core.variants.SessionResourceVariantByteStore;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.CVSResourceVariantTree;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MultiTagResourceVariantTree;
 
@@ -217,5 +218,36 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 		CVSTag tag2 = tree2.getTag(root);
 		if (tag1 == null || tag2 == null) return false;
 		return tag1.equals(tag2) && rootsEqual(s);		
+	}
+	
+	/**
+	 * Prime the remote tree with the sync info from the local workspace.
+	 * This is done to ensure that we don't get a huge nimber of outgoing
+	 * changes before the first refresh.
+	 *
+	 */
+	public void primeRemoteTree() throws CVSException {
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+			cvsResource.accept(new ICVSResourceVisitor() {
+				public void visitFile(ICVSFile file) throws CVSException {
+					byte[] bytes = file.getSyncBytes();
+					if (bytes != null) {
+						try {
+							tree.getByteStore().setBytes(file.getIResource(), bytes);
+						} catch (TeamException e) {
+							throw CVSException.wrapException(e);
+						}
+					}
+				}
+				public void visitFolder(ICVSFolder folder) throws CVSException {
+					// No need to copy sync info for folders since
+					// CVS resource variant tree will get missing
+					// folder info from the local resources
+					folder.acceptChildren(this);
+				}
+			});
+		}
 	}
 }
