@@ -1,17 +1,16 @@
 package org.eclipse.help.internal.ui.win32;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.util.*;
-import org.eclipse.help.internal.util.Logger;
 import org.eclipse.help.internal.ui.*;
 import org.eclipse.help.internal.ui.util.*;
+import org.eclipse.help.internal.util.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.ole.win32.*;
 import org.eclipse.swt.widgets.*;
-
 /**
  * ActiveX based web browser control.
  */
@@ -74,6 +73,8 @@ public class WebBrowser implements OleListener, IBrowser {
 	private OleFrame controlFrame;
 	// DocumentComplete listeners
 	private Collection documentCompleteListeners;
+	// CommandStateChanged listeners
+	private Collection commandStateChangedListeners;
 	/**
 	 */
 	public WebBrowser(Composite parent) throws HelpWorkbenchException {
@@ -91,6 +92,8 @@ public class WebBrowser implements OleListener, IBrowser {
 			forwardEnabled = false;
 			// initialize DocumentComplete listeners;
 			documentCompleteListeners = new ArrayList();
+			// initialize CommandStateChanged listeners;
+			commandStateChangedListeners = new ArrayList();
 			// Listen for changes to the Command States
 			controlSite.addEventListener(CommandStateChange, this);
 			// Listen for DocumentComplete events
@@ -113,10 +116,22 @@ public class WebBrowser implements OleListener, IBrowser {
 		documentCompleteListeners.add(listener);
 	}
 	/**
-	 * Adds listener for DocumentComplete events
+	 * Adds listener for CommandStateChange events
+	 */
+	public void addCommandStateChangedListener(ICommandStateChangedListener listener) {
+		commandStateChangedListeners.add(listener);
+	}
+	/**
+	 * Removes listener for DocumentComplete events
 	 */
 	public void removeDocumentCompleteListener(IDocumentCompleteListener listener) {
 		documentCompleteListeners.remove(listener);
+	}
+	/**
+	 * Removes listener for CommandStateChange events
+	 */
+	public void removeCommandStateChangedListener(IDocumentCompleteListener listener) {
+		commandStateChangedListeners.remove(listener);
 	}
 	/**
 	 */
@@ -261,6 +276,13 @@ public class WebBrowser implements OleListener, IBrowser {
 					backwardEnabled = enabled;
 				if (command == CSC_NAVIGATEFORWARD)
 					forwardEnabled = enabled;
+				Collection currentStateChangedListeners =
+					new ArrayList(commandStateChangedListeners.size());
+				currentStateChangedListeners.addAll(commandStateChangedListeners);
+				for (Iterator it = currentStateChangedListeners.iterator(); it.hasNext();) {
+					ICommandStateChangedListener listener = (ICommandStateChangedListener) it.next();
+					listener.commandStateChanged(backwardEnabled, forwardEnabled);
+				}
 				return;
 			case (DocumentComplete) :
 				varResult = event.arguments[1];
