@@ -166,8 +166,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 
 		// ConfigSite is read only
 		if (!isUpdatable()) {
-			String errorMessage = Policy.bind("ConfiguredSite.NonUninstallableSite", getSite().getURL().toExternalForm());
-			//$NON-NLS-1$
+			String errorMessage = Policy.bind("ConfiguredSite.NonUninstallableSite", getSite().getURL().toExternalForm()); //$NON-NLS-1$
 			throw Utilities.newCoreException(errorMessage, null);
 		}
 
@@ -195,13 +194,11 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 				if (getConfigurationPolicy().isConfigured(referenceToRemove)) {
 					IFeature featureToRemove = ((IFeatureReference) referenceToRemove).getFeature(null);
 					String featureLabel = (featureToRemove == null) ? null : featureToRemove.getLabel();
-					throw Utilities.newCoreException(Policy.bind("ConfiguredSite.UnableToRemoveConfiguredFeature"
-					//$NON-NLS-1$
+					throw Utilities.newCoreException(Policy.bind("ConfiguredSite.UnableToRemoveConfiguredFeature" //$NON-NLS-1$
 					, featureLabel), null);
 				}
 			} else {
-				throw Utilities.newCoreException(Policy.bind("ConfiguredSite.UnableToFindFeature", feature.getURL().toString()),
-				//$NON-NLS-1$
+				throw Utilities.newCoreException(Policy.bind("ConfiguredSite.UnableToFindFeature", feature.getURL().toString()), //$NON-NLS-1$
 				null);
 			}
 
@@ -547,19 +544,15 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 							if (!contains(currentFeaturePluginEntry.getVersionedIdentifier(), sitePluginIdentifiers)) {
 								// the plugin defined by the feature
 								// doesn't seem to exist on the site
-								String msg = "Error verifying existence of plugin:" + currentFeaturePluginEntry.getVersionedIdentifier().toString();
-								//$NON-NLS-1$
+								String msg = "Error verifying existence of plugin:" + currentFeaturePluginEntry.getVersionedIdentifier().toString(); //$NON-NLS-1$
 								UpdateCore.log(msg, new Exception());
 
-								String siteString = (site != null) ? site.getURL().toExternalForm() : Policy.bind("ConfiguredSite.NoSite");
-								//$NON-NLS-1$
-								String errorLabel = Policy.bind("ConfiguredSite.CannotFindPluginEntry", currentFeaturePluginEntry.getVersionedIdentifier().toString(), siteString);
-								//$NON-NLS-1$ //$NON-NLS-2$
+								String siteString = (site != null) ? site.getURL().toExternalForm() : Policy.bind("ConfiguredSite.NoSite");	//$NON-NLS-1$
+								String errorLabel = Policy.bind("ConfiguredSite.CannotFindPluginEntry", currentFeaturePluginEntry.getVersionedIdentifier().toString(), siteString);	//$NON-NLS-1$ //$NON-NLS-2$
 								if (handler == null) {
 									throw new InterruptedException(errorLabel);
 								}
 								if (!handler.reportProblem(Policy.bind(errorLabel))) {
-									//$NON-NLS-1$ //$NON-NLS-2$
 									throw new InterruptedException();
 								}
 							} // end if not found in site
@@ -700,8 +693,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 				if (id != null) {
 					values = new Object[] { id.getIdentifier(), id.getVersion()};
 				}
-				String msg1 = Policy.bind("ConfiguredSite.MissingPluginsBrokenFeature", values);
-				//$NON-NLS-1$
+				String msg1 = Policy.bind("ConfiguredSite.MissingPluginsBrokenFeature", values); //$NON-NLS-1$
 				UpdateCore.warn(msg1);
 				IStatus status = createStatus(IStatus.ERROR, IFeature.STATUS_UNHAPPY, msg1, null);
 				multi.add(status);

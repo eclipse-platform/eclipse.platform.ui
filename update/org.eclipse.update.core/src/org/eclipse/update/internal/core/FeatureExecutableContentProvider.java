@@ -47,8 +47,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		File pluginPath = new File(result);
 		if (!pluginPath.exists())
 			throw new IOException(
-				Policy.bind("FeatureExecutableContentProvider.FileDoesNotExist", result));
-		//$NON-NLS-1$ //$NON-NLS-2$
+				Policy.bind("FeatureExecutableContentProvider.FileDoesNotExist", result));	//$NON-NLS-1$
 
 		return result;
 	}
@@ -65,8 +64,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		File pluginDir = new File(result);
 		if (!pluginDir.exists())
 			throw new IOException(
-				Policy.bind("FeatureExecutableContentProvider.FileDoesNotExist", result));
-		//$NON-NLS-1$ //$NON-NLS-2$
+				Policy.bind("FeatureExecutableContentProvider.FileDoesNotExist", result)); //$NON-NLS-1$
 
 		return result;
 	}
@@ -81,9 +79,9 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		if (!dir.isDirectory()) {
 			String msg =
 				Policy.bind(
-					"FeatureExecutableContentProvider.InvalidDirectory",
+					"FeatureExecutableContentProvider.InvalidDirectory", //$NON-NLS-1$
 					dir.getAbsolutePath());
-			//$NON-NLS-1$
+
 			throw new IOException(msg);
 
 		}
@@ -120,10 +118,9 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		} catch (MalformedURLException e) {
 			throw Utilities.newCoreException(
 				Policy.bind(
-					"FeatureExecutableContentProvider.UnableToCreateURLFor",
+					"FeatureExecutableContentProvider.UnableToCreateURLFor", //$NON-NLS-1$
 					getURL().toExternalForm() + " " + Feature.FEATURE_XML),
 				e);
-			//$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return result;
 	}
@@ -157,10 +154,9 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
 					Policy.bind(
-						"FeatureExecutableContentProvider.UnableToRetrievePluginEntry",
+						"FeatureExecutableContentProvider.UnableToRetrievePluginEntry", //$NON-NLS-1$
 						pluginEntry.getVersionedIdentifier().toString()),
 					e);
-			//$NON-NLS-1$
 		}
 		return result;
 	}
@@ -185,9 +181,8 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		File nonPluginData = new File(fileString);
 		if (!nonPluginData.exists())
 			throw Utilities.newCoreException(
-				Policy.bind("FeatureExecutableContentProvider.FileDoesNotExist", fileString),
-				null);
-		//$NON-NLS-1$ //$NON-NLS-2$
+				Policy.bind("FeatureExecutableContentProvider.FileDoesNotExist", fileString), //$NON-NLS-1$
+				null); 
 
 		try {
 			result[0] =
@@ -195,10 +190,9 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		} catch (MalformedURLException e) {
 			throw Utilities.newCoreException(
 				Policy.bind(
-					"FeatureExecutableContentProvider.UnableToRetrieveNonPluginEntry",
+					"FeatureExecutableContentProvider.UnableToRetrieveNonPluginEntry", //$NON-NLS-1$
 					nonPluginEntry.getIdentifier().toString()),
 				e);
-			//$NON-NLS-1$
 		}
 		return result;
 	}
@@ -230,10 +224,9 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
 				Policy.bind(
-					"FeatureExecutableContentProvider.UnableToRetrieveFeatureEntryContentRef",
+					"FeatureExecutableContentProvider.UnableToRetrieveFeatureEntryContentRef", //$NON-NLS-1$
 					getFeature().getVersionedIdentifier().toString()),
 				e);
-			//$NON-NLS-1$
 		}
 		return result;
 	}
@@ -267,10 +260,9 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
 				Policy.bind(
-					"FeatureExecutableContentProvider.UnableToRetriveArchiveContentRef")
+					"FeatureExecutableContentProvider.UnableToRetriveArchiveContentRef") //$NON-NLS-1$
 					+ pluginEntry.getVersionedIdentifier().toString(),
 				e);
-			//$NON-NLS-1$
 		}
 		
 		//[20866] we did not preserve executable bit

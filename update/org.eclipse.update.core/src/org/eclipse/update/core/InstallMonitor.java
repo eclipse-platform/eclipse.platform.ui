@@ -250,12 +250,11 @@ public class InstallMonitor implements IProgressMonitor {
 			long totalK = totalCopyCount / 1024;
 			String msg =
 				(totalK <= 0)
-					? Policy.bind("InstallMonitor.DownloadSize", Long.toString(countK))
+					? Policy.bind("InstallMonitor.DownloadSize", Long.toString(countK)) //$NON-NLS-1$
 					: Policy.bind(
-						"InstallMonitor.DownloadSizeLong",
+						"InstallMonitor.DownloadSizeLong", //$NON-NLS-1$
 						Long.toString(countK),
 						Long.toString(totalK));
-			//$NON-NLS-1$ //$NON-NLS-2$
 			monitor.subTask(subTaskString + msg);
 		}
 	}

@@ -132,8 +132,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 
 				// DEBUG:
 				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION) {
-					UpdateCore.debug("Removed configuration :" + removedConfig.getLabel());
-					//$NON-NLS-1$
+					UpdateCore.debug("Removed configuration :" + removedConfig.getLabel()); //$NON-NLS-1$
 				}
 
 				// notify listeners

@@ -85,8 +85,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 			UpdateManagerUtils.checkPermissions(contentReference, pluginPath); // 20305
 			installedFiles.add(pluginPath);
 		} catch (IOException e) {
-			throw Utilities.newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile", pluginPath), e);
-			//$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile", pluginPath), e);//$NON-NLS-1$
 		} finally {
 			if (inStream != null) {
 				try {

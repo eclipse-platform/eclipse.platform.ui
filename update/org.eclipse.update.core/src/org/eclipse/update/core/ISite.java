@@ -43,8 +43,7 @@ public interface ISite extends IAdaptable {
 	 * 
 	 * @since 2.0
 	 */
-	public static final String DEFAULT_INSTALLED_FEATURE_TYPE = "org.eclipse.update.core.installed"; //$NON-NLS-1$
-	//$NON-NLS-1$		
+	public static final String DEFAULT_INSTALLED_FEATURE_TYPE = "org.eclipse.update.core.installed"; //$NON-NLS-1$		
 
 	/**
 	 * Default type for a packaged feature. Different concrete feature
@@ -54,8 +53,7 @@ public interface ISite extends IAdaptable {
 	 * 
 	 * @since 2.0
 	 */
-	public static final String DEFAULT_PACKAGED_FEATURE_TYPE = "org.eclipse.update.core.packaged"; //$NON-NLS-1$
-	//$NON-NLS-1$		
+	public static final String DEFAULT_PACKAGED_FEATURE_TYPE = "org.eclipse.update.core.packaged"; //$NON-NLS-1$		
 
 	/**
 	 * If we are unable to access a site, the returned CoreException will contain

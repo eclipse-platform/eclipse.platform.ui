@@ -22,8 +22,7 @@ public final class FeatureTypeFactory {
 	private static FeatureTypeFactory inst;
 	private Map factories;
 
-	private static final String SIMPLE_EXTENSION_ID = "featureTypes";
-	//$NON-NLS-1$	
+	private static final String SIMPLE_EXTENSION_ID = "featureTypes";	//$NON-NLS-1$	
 
 	/*
 	 * hide constructor
@@ -67,14 +66,12 @@ public final class FeatureTypeFactory {
 
 		if (elements == null || elements.length == 0) {
 			throw Utilities.newCoreException(
-					Policy.bind("FeatureTypeFactory.UnableToFindFeatureFactory", type),
+					Policy.bind("FeatureTypeFactory.UnableToFindFeatureFactory", type), //$NON-NLS-1$
 					null);
-			//$NON-NLS-1$
 		} 
 
 		IConfigurationElement element = elements[0];
-		result = (IFeatureFactory) element.createExecutableExtension("class");
-			//$NON-NLS-1$
+		result = (IFeatureFactory) element.createExecutableExtension("class");	//$NON-NLS-1$
 		return result;
 	}
 

@@ -29,7 +29,6 @@ public class InternalSiteManager {
 
 	public static final String DEFAULT_SITE_TYPE = SiteURLContentProvider.SITE_TYPE;
 	private static final String DEFAULT_EXECUTABLE_SITE_TYPE = SiteFileContentProvider.SITE_TYPE;
-	//$NON-NLS-1$
 
 	private static Map estimates;
 
@@ -203,8 +202,7 @@ public class InternalSiteManager {
 			// attempt to use this type instead	
 			//DEBUG:
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_TYPE) {
-				UpdateCore.debug("The Site :" + siteURL.toExternalForm() + " is a different type than the guessed type based on the protocol. new Type:" + e.getNewType());
-				//$NON-NLS-1$ //$NON-NLS-2$
+				UpdateCore.debug("The Site :" + siteURL.toExternalForm() + " is a different type than the guessed type based on the protocol. new Type:" + e.getNewType());	//$NON-NLS-1$ 
 			}
 
 			try {
@@ -212,8 +210,7 @@ public class InternalSiteManager {
 					throw e;
 				site = createSite(e.getNewType(), siteURL, monitor);
 			} catch (InvalidSiteTypeException e1) {
-				throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToCreateSiteWithType", e.getNewType(), siteURL.toExternalForm()), e1);
-				//$NON-NLS-1$ //$NON-NLS-2$
+				throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToCreateSiteWithType", e.getNewType(), siteURL.toExternalForm()), e1);	//$NON-NLS-1$ 
 			}
 		}
 
@@ -258,38 +255,32 @@ public class InternalSiteManager {
 			// or a directory, without reference			
 			if (url.getRef() != null) {
 				// 4 nothing we can do
-				throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL", url.toExternalForm()), e);
-				//$NON-NLS-1$
+				throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL", url.toExternalForm()), e); //$NON-NLS-1$
 			} else if (url.getFile().endsWith("/")) { //$NON-NLS-1$
 				// 1 try to add site.xml
 				URL urlRetry;
 				try {
 					urlRetry = new URL(url, Site.SITE_XML);
 				} catch (MalformedURLException e1) {
-					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToCreateURL", url.toExternalForm() + "+" + Site.SITE_XML), e1);
-					//$NON-NLS-1$ //$NON-NLS-2$
+					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToCreateURL", url.toExternalForm() + "+" + Site.SITE_XML), e1);	//$NON-NLS-1$ //$NON-NLS-2$
 				}
 				try {
 					if (monitor != null)
 						monitor.worked(1);
 					site = createSite(factory, urlRetry, monitor);
 				} catch (CoreException e1) {
-					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL", url.toExternalForm()), url.toExternalForm(), urlRetry.toExternalForm(), e, e1);
-					//$NON-NLS-1$
+					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL", url.toExternalForm()), url.toExternalForm(), urlRetry.toExternalForm(), e, e1);//$NON-NLS-1$
 				}
 			} else if (url.getFile().endsWith(Site.SITE_XML)) {
 				// 3 nothing we can do
-				throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL", url.toExternalForm()), e);
-				//$NON-NLS-1$
+				throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL", url.toExternalForm()), e);//$NON-NLS-1$
 			} else {
 				// 2 try to add /site.xml 
 				URL urlRetry;
 				try {
-					urlRetry = new URL(url.getProtocol(), url.getHost(), url.getPort(), url.getFile() + "/" + Site.SITE_XML);
-					//$NON-NLS-1$
+					urlRetry = new URL(url.getProtocol(), url.getHost(), url.getPort(), url.getFile() + "/" + Site.SITE_XML);	//$NON-NLS-1$
 				} catch (MalformedURLException e1) {
-					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToCreateURL", url.toExternalForm() + "+" + Site.SITE_XML), e1);
-					//$NON-NLS-1$ //$NON-NLS-2$
+					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToCreateURL", url.toExternalForm() + "+" + Site.SITE_XML), e1);	//$NON-NLS-1$ //$NON-NLS-2$
 				}
 
 				try {
@@ -297,8 +288,7 @@ public class InternalSiteManager {
 						monitor.worked(1);
 					site = createSite(factory, urlRetry, monitor);
 				} catch (CoreException e1) {
-					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL", url.toExternalForm()), url.toExternalForm(), urlRetry.toExternalForm(), e, e1);
-					//$NON-NLS-1$
+					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL", url.toExternalForm()), url.toExternalForm(), urlRetry.toExternalForm(), e, e1);//$NON-NLS-1$
 				}
 			}
 		}
@@ -326,8 +316,7 @@ public class InternalSiteManager {
 				URL siteURL = siteLocation.toURL();
 				site = getSite(siteURL, false, null);
 			} catch (MalformedURLException e) {
-				throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToCreateURL", siteLocation.getAbsolutePath()), e);
-				//$NON-NLS-1$
+				throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToCreateURL", siteLocation.getAbsolutePath()), e);	//$NON-NLS-1$
 			}
 		}
 		return site;

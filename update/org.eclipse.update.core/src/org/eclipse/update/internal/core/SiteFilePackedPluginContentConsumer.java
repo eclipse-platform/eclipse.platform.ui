@@ -60,8 +60,7 @@ public class SiteFilePackedPluginContentConsumer extends ContentConsumer {
 			//
 			UpdateManagerUtils.copyToLocal(inStream, tempPath, null);
 		} catch (IOException e) {
-			throw Utilities.newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile", tempPath), e);
-			//$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile", tempPath), e); //$NON-NLS-1$
 		} finally {
 			if (inStream != null) {
 				try {

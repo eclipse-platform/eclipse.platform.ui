@@ -107,8 +107,7 @@ public class DefaultInstallHandler extends BaseInstallHandler {
 						}
 					} catch (IOException e) {
 						throw Utilities
-							.newCoreException(Policy.bind("JarVerificationService.CancelInstall", id),
-						//$NON-NLS-1$
+							.newCoreException(Policy.bind("JarVerificationService.CancelInstall", id),	//$NON-NLS-1$
 						e);
 					}
 
@@ -135,12 +134,11 @@ public class DefaultInstallHandler extends BaseInstallHandler {
 
 		if (result == IVerificationListener.CHOICE_ABORT) {
 			Exception e = verificationResult.getVerificationException();
-			throw new InstallAbortedException(Policy.bind("JarVerificationService.CancelInstall"),e);
+			throw new InstallAbortedException(Policy.bind("JarVerificationService.CancelInstall"),e); //$NON-NLS-1$
 		}
 		if (result == IVerificationListener.CHOICE_ERROR) {
 			throw Utilities
-				.newCoreException(Policy.bind("JarVerificationService.UnsucessfulVerification"),
-			//$NON-NLS-1$
+				.newCoreException(Policy.bind("JarVerificationService.UnsucessfulVerification"), //$NON-NLS-1$
 			verificationResult.getVerificationException());
 		}
 

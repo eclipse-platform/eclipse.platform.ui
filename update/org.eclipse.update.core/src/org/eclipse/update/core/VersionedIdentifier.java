@@ -46,7 +46,6 @@ public class VersionedIdentifier {
 		if (id == null	|| (id = id.trim()).equals("")) //$NON-NLS-1$
 			throw new IllegalArgumentException(
 				Policy.bind("VersionedIdentifier.IdOrVersionNull", id, versionName)); //$NON-NLS-1$
-		//$NON-NLS-1$
 		this.id = id;
 		// 15707
 		if (versionName != null){
@@ -91,7 +90,6 @@ public class VersionedIdentifier {
 	 */
 	public String toString() {
 		return id.equals("") ? "" : id + SEPARATOR + version.toString(); //$NON-NLS-1$ //$NON-NLS-2$
-		//$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

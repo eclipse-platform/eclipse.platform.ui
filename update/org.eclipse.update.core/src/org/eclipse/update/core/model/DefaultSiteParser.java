@@ -121,8 +121,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		currentState = ((Integer) stateStack.peek()).intValue();
 		parser.parse(new InputSource(in), this);
 		if (objectStack.isEmpty())
-			throw new SAXException(Policy.bind("DefaultSiteParser.NoSiteTag"));
-		//$NON-NLS-1$
+			throw new SAXException(Policy.bind("DefaultSiteParser.NoSiteTag"));	//$NON-NLS-1$
 		else {
 			if (objectStack.peek() instanceof SiteModel) {
 				return (SiteModel) objectStack.pop();
@@ -132,8 +131,7 @@ public class DefaultSiteParser extends DefaultHandler {
 				while (iter.hasNext()) {
 					stack = stack + iter.next().toString() + "\r\n"; //$NON-NLS-1$
 				}
-				throw new SAXException(Policy.bind("DefaultSiteParser.WrongParsingStack", stack));
-				//$NON-NLS-1$
+				throw new SAXException(Policy.bind("DefaultSiteParser.WrongParsingStack", stack));	//$NON-NLS-1$
 			}
 		}
 	}
@@ -157,14 +155,12 @@ public class DefaultSiteParser extends DefaultHandler {
 
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
 			debug("State: " + currentState); //$NON-NLS-1$
-			debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName);
-			//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName);//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 		switch (currentState) {
 			case STATE_IGNORED_ELEMENT :
-				internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownElement", localName, getState(currentState)));
-				//$NON-NLS-1$
+				internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownElement", localName, getState(currentState)));//$NON-NLS-1$
 				break;
 			case STATE_INITIAL :
 				handleInitialState(localName, attributes);
@@ -199,8 +195,7 @@ public class DefaultSiteParser extends DefaultHandler {
 				break;
 
 			default :
-				internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownStartState", getState(currentState)));
-				//$NON-NLS-1$
+				internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownStartState", getState(currentState)));//$NON-NLS-1$
 				break;
 		}
 		int newState = ((Integer) stateStack.peek()).intValue();
@@ -228,8 +223,7 @@ public class DefaultSiteParser extends DefaultHandler {
 				break;
 
 			case STATE_INITIAL :
-				internalError(Policy.bind("DefaultSiteParser.ParsingStackBackToInitialState"));
-				//$NON-NLS-1$
+				internalError(Policy.bind("DefaultSiteParser.ParsingStackBackToInitialState"));	//$NON-NLS-1$
 				break;
 
 			case STATE_SITE :
@@ -282,8 +276,7 @@ public class DefaultSiteParser extends DefaultHandler {
 				// do not raise error as previous description may be default one
 				// when parsing site tag
 				if (DESCRIPTION_SITE_ALREADY_SEEN)
-					debug(Policy.bind("DefaultSiteParser.ElementAlreadySet", getState(state)));
-				//$NON-NLS-1$
+					debug(Policy.bind("DefaultSiteParser.ElementAlreadySet", getState(state)));	//$NON-NLS-1$
 				siteModel.setDescriptionModel(info);
 				DESCRIPTION_SITE_ALREADY_SEEN = true;
 				break;
@@ -310,21 +303,18 @@ public class DefaultSiteParser extends DefaultHandler {
 
 				CategoryModel category = (CategoryModel) objectStack.peek();
 				if (category.getDescriptionModel() != null)
-					internalError(Policy.bind("DefaultSiteParser.ElementAlreadySet2", getState(state), category.getLabel()));
-				//$NON-NLS-1$
+					internalError(Policy.bind("DefaultSiteParser.ElementAlreadySet2", getState(state), category.getLabel()));//$NON-NLS-1$
 				else
 					category.setDescriptionModel(info);
 				break;
 
 			default :
-				internalError(Policy.bind("DefaultSiteParser.UnknownEndState", getState(state)));
-				//$NON-NLS-1$
+				internalError(Policy.bind("DefaultSiteParser.UnknownEndState", getState(state)));//$NON-NLS-1$
 				break;
 		}
 
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING)
-			debug("End Element:" + uri + ":" + localName + ":" + qName);
-		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			debug("End Element:" + uri + ":" + localName + ":" + qName);//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	/**
@@ -366,8 +356,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_SITE));
 			processSite(attributes);
 		} else {
-			internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownElement", elementName, getState(currentState)));
-			//$NON-NLS-1$
+			internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownElement", elementName, getState(currentState)));	//$NON-NLS-1$
 			// what we received was not a site.xml, no need to continue
 			throw new SAXException(Policy.bind("DefaultSiteParser.InvalidXMLStream")); //$NON-NLS-1$
 		}
@@ -388,8 +377,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_CATEGORY_DEF));
 			processCategoryDef(attributes);
 		} else
-			internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownElement", elementName, getState(currentState)));
-		//$NON-NLS-1$ 			
+			internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownElement", elementName, getState(currentState))); //$NON-NLS-1$ 			
 	}
 
 	private void handleFeatureState(String elementName, Attributes attributes) {
@@ -409,8 +397,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_CATEGORY));
 			processCategory(attributes);
 		} else
-			internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownElement", elementName, getState(currentState)));
-		//$NON-NLS-1$ 			
+			internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownElement", elementName, getState(currentState))); //$NON-NLS-1$ 			
 	}
 
 	private void handleCategoryDefState(String elementName, Attributes attributes) {
@@ -427,8 +414,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_DESCRIPTION_CATEGORY_DEF));
 			processInfo(attributes);
 		} else
-			internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownElement", elementName, getState(currentState)));
-		//$NON-NLS-1$ 			
+			internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownElement", elementName, getState(currentState)));	//$NON-NLS-1$ 			
 	}
 
 	private void handleCategoryState(String elementName, Attributes attributes) {
@@ -448,8 +434,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_CATEGORY));
 			processCategory(attributes);
 		} else
-			internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownElement", elementName, getState(currentState)));
-		//$NON-NLS-1$ 			
+			internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownElement", elementName, getState(currentState)));//$NON-NLS-1$ 			
 	}
 
 	/* 
@@ -486,8 +471,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		objectStack.push(site);
 
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING)
-			debug("End process Site tag: siteURL:" + siteURL + " type:" + type);
-		//$NON-NLS-1$ //$NON-NLS-2$
+			debug("End process Site tag: siteURL:" + siteURL + " type:" + type);//$NON-NLS-1$ //$NON-NLS-2$
 
 	}
 
@@ -498,8 +482,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		SiteFeatureReferenceModel feature = factory.createFeatureReferenceModel();
 		String urlInfo = attributes.getValue("url"); //$NON-NLS-1$
 		if (urlInfo == null || urlInfo.trim().equals("")) //$NON-NLS-1$
-			internalError(Policy.bind("DefaultSiteParser.Missing", "url", getState(currentState)));
-		//$NON-NLS-1$  //$NON-NLS-2$
+			internalError(Policy.bind("DefaultSiteParser.Missing", "url", getState(currentState)));	//$NON-NLS-1$  //$NON-NLS-2$
 
 		feature.setURLString(urlInfo);
 
@@ -514,8 +497,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		if ((id == null || id.trim().equals("")) //$NON-NLS-1$
 		^ (ver == null || ver.trim().equals(""))) { //$NON-NLS-1$
 			String[] values = new String[] { id, ver, getState(currentState)};
-			UpdateCore.warn(Policy.bind("DefaultFeatureParser.IdOrVersionInvalid", values));
-			//$NON-NLS-1$
+			UpdateCore.warn(Policy.bind("DefaultFeatureParser.IdOrVersionInvalid", values));//$NON-NLS-1$
 		} else {
 			feature.setFeatureIdentifier(id);
 			feature.setFeatureVersion(ver);
@@ -556,8 +538,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		objectStack.push(feature);
 
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING)
-			debug("End Processing DefaultFeature Tag: url:" + urlInfo + " type:" + type);
-		//$NON-NLS-1$ //$NON-NLS-2$
+			debug("End Processing DefaultFeature Tag: url:" + urlInfo + " type:" + type); //$NON-NLS-1$ //$NON-NLS-2$
 
 	}
 
@@ -568,16 +549,14 @@ public class DefaultSiteParser extends DefaultHandler {
 		ArchiveReferenceModel archive = factory.createArchiveReferenceModel();
 		String id = attributes.getValue("path"); //$NON-NLS-1$
 		if (id == null || id.trim().equals("")) { //$NON-NLS-1$
-			internalError(Policy.bind("DefaultSiteParser.Missing", "path", getState(currentState)));
-			//$NON-NLS-1$  //$NON-NLS-2$
+			internalError(Policy.bind("DefaultSiteParser.Missing", "path", getState(currentState))); //$NON-NLS-1$  //$NON-NLS-2$
 		}
 
 		archive.setPath(id);
 
 		String url = attributes.getValue("url"); //$NON-NLS-1$
 		if (url == null || url.trim().equals("")) { //$NON-NLS-1$
-			internalError(Policy.bind("DefaultSiteParser.Missing", "archive", getState(currentState)));
-			//$NON-NLS-1$  //$NON-NLS-2$
+			internalError(Policy.bind("DefaultSiteParser.Missing", "archive", getState(currentState)));	//$NON-NLS-1$  //$NON-NLS-2$
 		} else {
 			archive.setURLString(url);
 
@@ -585,8 +564,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			site.addArchiveReferenceModel(archive);
 		}
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING)
-			debug("End processing Archive: path:" + id + " url:" + url);
-		//$NON-NLS-1$ //$NON-NLS-2$
+			debug("End processing Archive: path:" + id + " url:" + url);//$NON-NLS-1$ //$NON-NLS-2$
 
 	}
 
@@ -617,8 +595,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		objectStack.push(category);
 
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING)
-			debug("End processing CategoryDef: name:" + name + " label:" + label);
-		//$NON-NLS-1$ //$NON-NLS-2$
+			debug("End processing CategoryDef: name:" + name + " label:" + label); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* 
@@ -654,12 +631,10 @@ public class DefaultSiteParser extends DefaultHandler {
 
 		String msg;
 		if (name.equals("")) //$NON-NLS-1$
-			msg = Policy.bind("DefaultSiteParser.ErrorParsing", ex.getMessage());
-		//$NON-NLS-1$
+			msg = Policy.bind("DefaultSiteParser.ErrorParsing", ex.getMessage());	//$NON-NLS-1$
 		else {
 			String[] values = new String[] { name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()};
-			msg = Policy.bind("DefaultSiteParser.ErrorLineColumnMessage", values);
-			//$NON-NLS-1$
+			msg = Policy.bind("DefaultSiteParser.ErrorLineColumnMessage", values);//$NON-NLS-1$
 		}
 		error(new Status(IStatus.ERROR, PLUGIN_ID, Platform.PARSE_PROBLEM, msg, ex));
 	}
@@ -673,8 +648,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	private void error(IStatus error) {
 
 		if (status == null) {
-			status = new MultiStatus(PLUGIN_ID, Platform.PARSE_PROBLEM, Policy.bind("DefaultSiteParser.ErrorParsingSite"), null);
-			//$NON-NLS-1$
+			status = new MultiStatus(PLUGIN_ID, Platform.PARSE_PROBLEM, Policy.bind("DefaultSiteParser.ErrorParsingSite"), null);//$NON-NLS-1$
 		}
 
 		status.add(error);

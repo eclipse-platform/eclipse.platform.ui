@@ -492,8 +492,7 @@ public class ErrorRecoveryLog {
 		}
 		
 		if (!file.delete()) {
-			String msg = "Unable to remove file" +file.getAbsolutePath();
-			//$NON-NLS-1$ 
+			String msg = "Unable to remove file" +file.getAbsolutePath(); //$NON-NLS-1$ 
 			multi.add(createStatus(IStatus.ERROR,msg,null));
 		}
 		return multi;

@@ -176,8 +176,7 @@ public class JarContentReference extends ContentReference {
 		try {
 			if (monitor != null) {
 				monitor.saveState();
-				monitor.setTaskName(Policy.bind("JarContentReference.Unpacking"));
-				//$NON-NLS-1$
+				monitor.setTaskName(Policy.bind("JarContentReference.Unpacking"));	//$NON-NLS-1$
 				monitor.subTask(this.getIdentifier());
 				monitor.showCopyDetails(false);
 			}
@@ -266,8 +265,7 @@ public class JarContentReference extends ContentReference {
 			} else
 				return null; // entry was a directory
 		} else
-			throw new FileNotFoundException(this.asFile().getAbsolutePath() + " " + entryName);
-		//$NON-NLS-1$
+			throw new FileNotFoundException(this.asFile().getAbsolutePath() + " " + entryName);	//$NON-NLS-1$
 	}
 
 	/**

@@ -106,22 +106,18 @@ public class JarVerificationPage extends BannerPage {
 					UpdateUI.getString(
 						"JarVerificationDialog.NotDigitallySigned"+ //$NON-NLS-1$
 						componentVerified));
-				//$NON-NLS-1$
 				strb.append("\r\n"); //$NON-NLS-1$
 				strb.append(
 					UpdateUI.getString(
 						"JarVerificationDialog.CannotVerifyProvider"+ //$NON-NLS-1$
 						componentVerified));
-				//$NON-NLS-1$
 /*				strb.append("\r\n"); //$NON-NLS-1$
 				if (_VerificationResult.isFeatureVerification()) {
 					strb.append(
-						UpdateUI.getResourceString("JarVerificationDialog.InstallMayCorrupt"));
-					//$NON-NLS-1$
+						UpdateUI.getResourceString("JarVerificationDialog.InstallMayCorrupt"));//$NON-NLS-1$
 				} else {
 					strb.append(
-						UpdateUI.getResourceString("JarVerificationDialog.ContinueMayCorrupt"));
-					//$NON-NLS-1$ 					
+						UpdateUI.getResourceString("JarVerificationDialog.ContinueMayCorrupt"));//$NON-NLS-1$ 					
 				}
 				*/
 				labelInformation.setText(strb.toString());
@@ -133,11 +129,9 @@ public class JarVerificationPage extends BannerPage {
 						"JarVerificationDialog.CorruptedContent"+ //$NON-NLS-1$
 						componentVerified);
 				setMessage(msg, ERROR);
-				//$NON-NLS-1$
 				strb.append(
 					UpdateUI.getString(
 						"JarVerificationDialog.ComponentNotInstalled")); //$NON-NLS-1$
-				//$NON-NLS-1$
 				labelInformation.setText(strb.toString());
 				break;
 
@@ -146,28 +140,23 @@ public class JarVerificationPage extends BannerPage {
 					UpdateUI.getString(
 						"JarVerificationDialog.SignedComponent"+ //$NON-NLS-1$
 						componentVerified);
-				//$NON-NLS-1$
 				setMessage(msg, WARNING);
 				strb.append(
 					UpdateUI.getString(
 						"JarVerificationDialog.UnknownCertificate"+ //$NON-NLS-1$
 						componentVerified));
-				//$NON-NLS-1$
 				strb.append("\r\n"); //$NON-NLS-1$
 				strb.append(
 					UpdateUI.getString(
 						"JarVerificationDialog.UnableToVerifyProvider"+ //$NON-NLS-1$
 						componentVerified));
-				//$NON-NLS-1$
 /*				strb.append("\r\n"); //$NON-NLS-1$
 				if (_VerificationResult.isFeatureVerification()) {
 					strb.append(
-						UpdateUI.getResourceString("JarVerificationDialog.InstallMayCorrupt"));
-					//$NON-NLS-1$
+						UpdateUI.getResourceString("JarVerificationDialog.InstallMayCorrupt")); //$NON-NLS-1$
 				} else {
 					strb.append(
-						UpdateUI.getResourceString("JarVerificationDialog.ContinueMayCorrupt"));
-					//$NON-NLS-1$ 					
+						UpdateUI.getResourceString("JarVerificationDialog.ContinueMayCorrupt"));//$NON-NLS-1$ 					
 				}
 				*/
 				labelInformation.setText(strb.toString());
@@ -178,19 +167,16 @@ public class JarVerificationPage extends BannerPage {
 					UpdateUI.getString(
 						"JarVerificationDialog.SignedComponent"+ //$NON-NLS-1$
 						componentVerified);
-				//$NON-NLS-1$
 				setMessage(msg, WARNING);
 				strb.append(
 					UpdateUI.getString(
 						"JarVerificationDialog.KnownCertificate"+ //$NON-NLS-1$
 						componentVerified));
-				//$NON-NLS-1$
 				strb.append("\r\n"); //$NON-NLS-1$
 				strb.append(
 					UpdateUI.getString(
 						"JarVerificationDialog.ProviderKnown"+ //$NON-NLS-1$
 						componentVerified));
-				//$NON-NLS-1$
 				strb.append("\r\n"); //$NON-NLS-1$
 
 				labelInformation.setText(strb.toString());
@@ -223,7 +209,7 @@ public class JarVerificationPage extends BannerPage {
 			keyLabel = new Label(compositeInformation, SWT.NULL);
 			keyLabel.setText(
 				UpdateUI.getString("JarVerificationDialog.FeatureName")); //$NON-NLS-1$
-			//$NON-NLS-1$
+
 			valueLabel = new CLabel(compositeInformation, SWT.NULL);
 			valueLabel.setFont(JFaceResources.getBannerFont());
 			valueLabel.setText(_strFeatureName);
@@ -235,7 +221,7 @@ public class JarVerificationPage extends BannerPage {
 			keyLabel = new Label(compositeInformation, SWT.NULL);
 			keyLabel.setText(
 				UpdateUI.getString("JarVerificationDialog.FeatureIdentifier")); //$NON-NLS-1$
-			//$NON-NLS-1$
+
 			valueLabel = new CLabel(compositeInformation, SWT.NULL);
 			valueLabel.setFont(JFaceResources.getBannerFont());
 			valueLabel.setText(_strId);
@@ -247,7 +233,7 @@ public class JarVerificationPage extends BannerPage {
 			keyLabel = new Label(compositeInformation, SWT.NULL);
 			keyLabel.setText(
 				UpdateUI.getString("JarVerificationDialog.Provider")); //$NON-NLS-1$
-			//$NON-NLS-1$
+
 			valueLabel = new CLabel(compositeInformation, SWT.NULL);
 			valueLabel.setFont(JFaceResources.getBannerFont());
 			valueLabel.setText(_strProviderName);
@@ -258,7 +244,7 @@ public class JarVerificationPage extends BannerPage {
 		keyLabel = new Label(compositeInformation, SWT.NULL);
 		keyLabel.setText(
 			UpdateUI.getString("JarVerificationDialog.FileName")); //$NON-NLS-1$
-		//$NON-NLS-1$
+
 		valueLabel = new CLabel(compositeInformation, SWT.NULL);
 		valueLabel.setFont(JFaceResources.getBannerFont());
 		valueLabel.setText(_fileName);
@@ -295,7 +281,7 @@ public class JarVerificationPage extends BannerPage {
 				keyLabel = new Label(group, SWT.NULL);
 				keyLabel.setText(UpdateUI.getString("JarVerificationDialog.SubjectCA")); //$NON-NLS-1$
 				keyLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-				//$NON-NLS-1$
+
 				valueText = new Text(group, SWT.MULTI|SWT.BORDER|SWT.WRAP|SWT.V_SCROLL);
 				valueText.setText(_VerificationResult.getSignerInfo());
 				valueText.setEditable(false);
@@ -308,7 +294,7 @@ public class JarVerificationPage extends BannerPage {
 				keyLabel = new Label(group, SWT.NULL);
 				keyLabel.setText(UpdateUI.getString("JarVerificationDialog.RootCA")); //$NON-NLS-1$
 				keyLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));				
-				//$NON-NLS-1$
+
 				valueText = new Text(group, SWT.MULTI|SWT.BORDER|SWT.WRAP|SWT.V_SCROLL);
 				valueText.setText(_VerificationResult.getVerifierInfo());
 				valueText.setEditable(false);

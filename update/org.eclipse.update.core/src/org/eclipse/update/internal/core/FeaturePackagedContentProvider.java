@@ -75,8 +75,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			// we need to unpack archive locally for UI browser references to be resolved correctly
 			localFeatureFiles = featureJarReference.unpack(getWorkingDirectory(), null, monitor);
 		} catch (IOException e) {
-			throw errorRetrieving(Feature.FEATURE_XML, featureJarReference, getURL(), e);
-			//$NON-NLS-1$ 
+			throw errorRetrieving(Feature.FEATURE_XML, featureJarReference, getURL(), e); //$NON-NLS-1$ 
 		}
 
 		// find the manifest in the unpacked feature files
@@ -90,8 +89,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 
 		// the manifest has not been found
 		String[] values = new String[] { Feature.FEATURE_XML, getURL().toExternalForm()};
-		throw Utilities.newCoreException(Policy.bind("FeaturePackagedContentProvider.NoManifestFile", values), new Exception());
-		//$NON-NLS-1$ 
+		throw Utilities.newCoreException(Policy.bind("FeaturePackagedContentProvider.NoManifestFile", values), new Exception()); //$NON-NLS-1$ 
 
 	}
 
@@ -139,14 +137,12 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 		String archiveID = null;
 
 		try {
-			archiveID = (getFeature() != null) ? getFeature().getVersionedIdentifier().toString() : "";
-			//$NON-NLS-1$
+			archiveID = (getFeature() != null) ? getFeature().getVersionedIdentifier().toString() : "";	//$NON-NLS-1$
 			currentReference = new JarContentReference(archiveID, getURL());
 			currentReference = asLocalReference(currentReference, monitor);
 			references[0] = currentReference;
 		} catch (IOException e) {
-			throw errorRetrieving(archiveID, currentReference, getFeature().getURL(), e);
-			//$NON-NLS-1$
+			throw errorRetrieving(archiveID, currentReference, getFeature().getURL(), e); //$NON-NLS-1$
 		}
 		return references;
 	}
@@ -168,7 +164,6 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			references[0] = asLocalReference(new JarContentReference(archiveID, url), monitor);
 		} catch (IOException e) {
 			throw errorRetrieving(archiveID, references[0], getFeature().getURL(), e);
-			//$NON-NLS-1$
 		}
 		return references;
 	}
@@ -179,8 +174,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	public ContentReference[] getNonPluginEntryArchiveReferences(INonPluginEntry nonPluginEntry, InstallMonitor monitor) throws CoreException {
 
 		// archive = feature/<id>_<ver>/<file>
-		String archiveID = Site.DEFAULT_FEATURE_PATH + ((getFeature() != null) ? getFeature().getVersionedIdentifier().toString() : "");
-		//$NON-NLS-1$
+		String archiveID = Site.DEFAULT_FEATURE_PATH + ((getFeature() != null) ? getFeature().getVersionedIdentifier().toString() : ""); //$NON-NLS-1$
 		archiveID += "/" + nonPluginEntry.getIdentifier(); //$NON-NLS-1$
 
 		ContentReference[] references = new ContentReference[1];
@@ -197,7 +191,6 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 
 		} catch (IOException e) {
 			throw errorRetrieving(archiveID, currentReference, getFeature().getURL(), e);
-			//$NON-NLS-1$
 		}
 
 		return references;
@@ -241,7 +234,6 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 
 		} catch (IOException e) {
 			throw errorRetrieving(pluginEntry.getVersionedIdentifier().toString(), references[0], getFeature().getURL(), e);
-			//$NON-NLS-1$
 		}
 		return pluginReferences;
 	}
@@ -274,8 +266,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 
 		String[] values = new String[] { obj };
 
-		return Utilities.newCoreException(Policy.bind("FeaturePackagedContentProvider.ErrorRetrieving", values), e);
-		//$NON-NLS-1$	 	
+		return Utilities.newCoreException(Policy.bind("FeaturePackagedContentProvider.ErrorRetrieving", values), e); //$NON-NLS-1$	 	
 
 	}
 

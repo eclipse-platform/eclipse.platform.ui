@@ -87,21 +87,19 @@ public class InstallHandlerProxy implements IInstallHandler {
 			handler.initialize(type, feature, entry, monitor);
 		} catch (ClassNotFoundException e) {
 			handleExceptionInInit(
-				Policy.bind("InstallHandler.notFound", feature.getLabel()),
+				Policy.bind("InstallHandler.notFound", feature.getLabel()), //$NON-NLS-1$
 				e);
-			//$NON-NLS-1$
+
 		} catch (ClassCastException e) {
 			handleExceptionInInit(
-				Policy.bind("InstallHandler.invalidHandler", feature.getLabel()),
+				Policy.bind("InstallHandler.invalidHandler", feature.getLabel()), //$NON-NLS-1$
 				e);
-			//$NON-NLS-1$
 		} catch (CoreException e) {
 			handleExceptionInInit(null, e);
 		} catch (Exception e) {
 			handleExceptionInInit(
-				Policy.bind("InstallHandler.unableToCreateHandler", feature.getLabel()),
+				Policy.bind("InstallHandler.unableToCreateHandler", feature.getLabel()), //$NON-NLS-1$
 				e);
-			//$NON-NLS-1$
 		}
 
 	}
@@ -375,8 +373,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 			String id =
 				UpdateCore.getPlugin().getBundle().getSymbolicName();
 			IStatus status =
-				new Status(IStatus.ERROR, id, 0, "InstallHandler.deactivated", ce);
-			//$NON-NLS-1$
+				new Status(IStatus.ERROR, id, 0, "InstallHandler.deactivated", ce);	//$NON-NLS-1$
 			UpdateCore.getPlugin().getLog().log(status);
 			handler = null; // disable subsequent handler calls
 			savedStatus = status;
@@ -397,17 +394,15 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else
 			ce =
 				Utilities.newCoreException(
-					Policy.bind("InstallHandler.callException", feature.getLabel()),
+					Policy.bind("InstallHandler.callException", feature.getLabel()), //$NON-NLS-1$
 					e);
-		//$NON-NLS-1$
 		
 		if (isUndoAction()) {
 			// for "undo" operations, deactivate handler and log error
 			String id =
 				UpdateCore.getPlugin().getBundle().getSymbolicName();
 			IStatus status =
-				new Status(IStatus.ERROR, id, 0, "InstallHandler.deactivated", ce);
-			//$NON-NLS-1$
+				new Status(IStatus.ERROR, id, 0, "InstallHandler.deactivated", ce);	//$NON-NLS-1$
 			UpdateCore.getPlugin().getLog().log(status);
 			handler = null; // disable subsequent handler calls
 			savedStatus = status;
@@ -445,9 +440,9 @@ public class InstallHandlerProxy implements IInstallHandler {
 			base = baseRef.asURL();
 		if (base == null)
 			throw Utilities.newCoreException(
-				Policy.bind("InstallHandler.unableToCreateHandler", this.feature.getLabel()),
+				Policy.bind("InstallHandler.unableToCreateHandler", this.feature.getLabel()), //$NON-NLS-1$
 				null);
-		//$NON-NLS-1$
+
 
 		// determine loader class path
 		URL cp = new URL(base, lib);
@@ -495,15 +490,14 @@ public class InstallHandlerProxy implements IInstallHandler {
 			reg.getConfigurationElementsFor(EXT_PLUGIN, EXT_POINT, name);
 		if (handlerExtension == null || handlerExtension.length <= 0)
 			throw Utilities.newCoreException(
-				Policy.bind("InstallHandler.unableToCreateHandler", this.feature.getLabel()),
+				Policy.bind("InstallHandler.unableToCreateHandler", this.feature.getLabel()), //$NON-NLS-1$
 				null);
-		//$NON-NLS-1$	
 
 		return (IInstallHandler) handlerExtension[0].createExecutableExtension("class");
 	}
 	
 	private void debug(String s) {
 		String pfx = (feature==null) ? "" : feature.getVersionedIdentifier().toString();
-		System.out.println("InstallHandler["+pfx+"]: " + s);
+		System.out.println("InstallHandler["+pfx+"]: " + s); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

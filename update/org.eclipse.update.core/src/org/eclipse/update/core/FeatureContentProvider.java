@@ -209,7 +209,6 @@ public abstract class FeatureContentProvider
 				monitor.saveState();
 				monitor.setTaskName(
 					Policy.bind("FeatureContentProvider.Downloading")); //$NON-NLS-1$
-				//$NON-NLS-1$
 				monitor.subTask(ref.getIdentifier() + " "); //$NON-NLS-1$
 				monitor.setTotalCount(ref.getInputSize());
 				monitor.showCopyDetails(true);
@@ -492,7 +491,6 @@ public abstract class FeatureContentProvider
 			Site.DEFAULT_FEATURE_PATH
 				+ feature.getVersionedIdentifier().toString()
 				+ "/"; //$NON-NLS-1$
-		//$NON-NLS-1$
 		return nonPluginBaseID + entry.getIdentifier();
 	}
 

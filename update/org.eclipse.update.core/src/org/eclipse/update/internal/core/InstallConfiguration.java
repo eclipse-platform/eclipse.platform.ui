@@ -390,8 +390,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			resetActivities();
 			return isRestartNeeded(runtimeConfiguration);
 		} catch (IOException e) {
-			CoreException exc = Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToSavePlatformConfiguration", runtimeConfiguration.getConfigurationLocation().toExternalForm()), e);
-			//$NON-NLS-1$
+			CoreException exc = Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToSavePlatformConfiguration", runtimeConfiguration.getConfigurationLocation().toExternalForm()), e);	//$NON-NLS-1$
 			UpdateCore.warn("",exc);
 		}
 		return true;
@@ -417,11 +416,9 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		try {
 			urlToCheck = new URL(cSite.getPlatformURLString());
 		} catch (MalformedURLException e) {
-			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToCreateURL", cSite.getPlatformURLString()), e);
-			//$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToCreateURL", cSite.getPlatformURLString()), e); //$NON-NLS-1$
 		} catch (ClassCastException e) {
-			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToCast"), e);
-			//$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToCast"), e);	//$NON-NLS-1$
 		}
 
 		// update runtime configuration [18520]
@@ -520,18 +517,15 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			try {
 				urlToCheck = new URL(configurationSites[i].getPlatformURLString());
 			} catch (MalformedURLException e) {
-				UpdateCore.warn(Policy.bind("InstallConfiguration.UnableToCreateURL", configurationSites[i].getPlatformURLString()), e);
-				//$NON-NLS-1$
+				UpdateCore.warn(Policy.bind("InstallConfiguration.UnableToCreateURL", configurationSites[i].getPlatformURLString()), e); //$NON-NLS-1$
 			} catch (ClassCastException e) {
-				UpdateCore.warn(Policy.bind("InstallConfiguration.UnableToCast"), e);
-				//$NON-NLS-1$
+				UpdateCore.warn(Policy.bind("InstallConfiguration.UnableToCast"), e);//$NON-NLS-1$
 			}
 
 			// if the URL doesn't exits log it
 			IPlatformConfiguration.ISiteEntry siteEntry = runtimeConfiguration.findConfiguredSite(urlToCheck);
 			if (siteEntry == null) {
-				UpdateCore.warn(Policy.bind("Unable to find site {0} in platform configuration {1}.", urlToCheck.toExternalForm(), runtimeConfiguration.getConfigurationLocation().toExternalForm()));
-				//$NON-NLS-1$
+				UpdateCore.warn(Policy.bind("Unable to find site {0} in platform configuration {1}.", urlToCheck.toExternalForm(), runtimeConfiguration.getConfigurationLocation().toExternalForm())); //$NON-NLS-1$
 			}
 		}
 	}
@@ -695,8 +689,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 			return result;
 		} catch (IOException e) {
-			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToCreateURL", rootString), e);
-			//$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToCreateURL", rootString), e);	//$NON-NLS-1$
 		}
 	}
 

@@ -57,14 +57,12 @@ public class JarVerificationDialog extends TitleAreaDialog {
 					IDialogConstants.OK_ID,
 					UpdateUI.getString("JarVerificationDialog.Install"), //$NON-NLS-1$
 					false);
-				//$NON-NLS-1$
 			} else {
 				createButton(
 					parent,
 					IDialogConstants.OK_ID,
 					UpdateUI.getString("JarVerificationDialog.Continue"), //$NON-NLS-1$
-					false);
-				//$NON-NLS-1$				
+					false);				
 			}
 
 			// Radio button: Cancel installation
@@ -73,8 +71,7 @@ public class JarVerificationDialog extends TitleAreaDialog {
 				parent,
 				IDialogConstants.CANCEL_ID,
 				UpdateUI.getString("JarVerificationDialog.Cancel"), //$NON-NLS-1$
-				true);
-			//$NON-NLS-1$							
+				true);							
 		} else {
 			createButton(
 				parent,

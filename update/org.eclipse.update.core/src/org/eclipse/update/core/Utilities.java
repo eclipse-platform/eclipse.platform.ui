@@ -60,7 +60,6 @@ public class Utilities {
 				dirRoot += home + File.separator;
 			}
 			dirRoot += "eclipse" + File.separator + ".update" + File.separator + Long.toString(tmpseed) + File.separator; //$NON-NLS-1$ //$NON-NLS-2$
-			//$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		String tmpName = dirRoot + Long.toString(++tmpseed) + File.separator;

@@ -490,11 +490,10 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 						// make it relative to the site
 						String path = UpdateManagerUtils.getURLAsString(site.getURL(), url);
 						// add end "/"
-						path += (path.endsWith(File.separator) || path.endsWith("/")) ? "" : "/";
-						//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						path += (path.endsWith(File.separator) || path.endsWith("/")) ? "" : "/"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						pluginStrings.add(path);
 						if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
-							UpdateCore.warn("Add plugin: " + path + " to the list");
+							UpdateCore.warn("Add plugin: " + path + " to the list"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 			}

@@ -63,7 +63,6 @@ public abstract class SiteContentProvider implements ISiteContentProvider {
 						archiveID,
 						getURL().toExternalForm()),
 					e);
-			//$NON-NLS-1$
 		}
 	}
 

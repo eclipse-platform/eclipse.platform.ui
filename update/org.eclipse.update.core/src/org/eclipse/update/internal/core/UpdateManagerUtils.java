@@ -246,13 +246,11 @@ public class UpdateManagerUtils {
 	 * c	-> c953867549
 	 */
 	public static String getLocalRandomIdentifier(String remotePath, Date date) {
-		int dotIndex = remotePath.lastIndexOf(".");
-		//$NON-NLS-1$
+		int dotIndex = remotePath.lastIndexOf(".");	//$NON-NLS-1$
 		int fileIndex = remotePath.lastIndexOf(File.separator);
 		// if there is a separator after the dot
 		// do not consider it as an extension
-		String ext = (dotIndex != -1 && fileIndex < dotIndex) ? remotePath.substring(dotIndex) : "";
-		//$NON-NLS-1$
+		String ext = (dotIndex != -1 && fileIndex < dotIndex) ? remotePath.substring(dotIndex) : ""; //$NON-NLS-1$
 		// the name is the string between the separator and the dot
 		// if there is no separator, it is the string up to the dot		
 		// if there is no dot, go to the end of the string 
@@ -262,8 +260,7 @@ public class UpdateManagerUtils {
 			dotIndex = remotePath.length();
 		// if I have a separator and no dot: /a/b/c -> c
 		// if my separator is the last /a/b/c/, fileIndex and dotIndex are the same, so it will return the default temp name
-		String name = (fileIndex < dotIndex) ? remotePath.substring(fileIndex, dotIndex) : "Eclipse_Update_TMP_";
-		//$NON-NLS-1$
+		String name = (fileIndex < dotIndex) ? remotePath.substring(fileIndex, dotIndex) : "Eclipse_Update_TMP_"; //$NON-NLS-1$
 		String result = name + date.getTime() + ext;
 		return result;
 	}
@@ -284,8 +281,7 @@ public class UpdateManagerUtils {
 		}
 
 		if (!file.delete()) {
-			String msg = Policy.bind("UpdateManagerUtils.UnableToRemoveFile", file.getAbsolutePath());
-			//$NON-NLS-1$ //$NON-NLS-2$
+			String msg = Policy.bind("UpdateManagerUtils.UnableToRemoveFile", file.getAbsolutePath());	//$NON-NLS-1$ //$NON-NLS-2$
 			UpdateCore.log(msg, new Exception());
 		}
 	}
@@ -305,8 +301,7 @@ public class UpdateManagerUtils {
 			}
 		}
 		if (!file.delete()) {
-			String msg = Policy.bind("UpdateManagerUtils.UnableToRemoveFile", file.getAbsolutePath());
-			//$NON-NLS-1$ //$NON-NLS-2$
+			String msg = Policy.bind("UpdateManagerUtils.UnableToRemoveFile", file.getAbsolutePath());	//$NON-NLS-1$ //$NON-NLS-2$
 			UpdateCore.log(msg, new Exception());
 		}
 	}

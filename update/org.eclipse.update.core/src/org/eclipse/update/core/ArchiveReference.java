@@ -44,7 +44,6 @@ public class ArchiveReference
 				+ ((getPath() == null)
 					? getURL().toExternalForm()
 					: getPath() + " : " + getURL().toExternalForm()); //$NON-NLS-1$
-		//$NON-NLS-1$
 		return result;
 	}
 }

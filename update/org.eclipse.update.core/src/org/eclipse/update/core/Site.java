@@ -40,8 +40,7 @@ public class Site extends SiteModel implements ISite {
 	 * 
 	 * @since 2.0
 	 */
-	public static final String DEFAULT_INSTALLED_FEATURE_PATH = "features/";
-	//$NON-NLS-1$
+	public static final String DEFAULT_INSTALLED_FEATURE_PATH = "features/"; //$NON-NLS-1$
 
 	/**
 	 * Default installation path for plug-ins and plug-in fragments
@@ -162,11 +161,9 @@ public class Site extends SiteModel implements ISite {
 		//DEBUG:
 		if (!found) {
 			String URLString = (this.getURL() != null) ? this.getURL().toExternalForm() : "<no site url>";
-			UpdateCore.warn(Policy.bind("Site.CannotFindCategory", key, URLString));
-			//$NON-NLS-1$ //$NON-NLS-2$
+			UpdateCore.warn(Policy.bind("Site.CannotFindCategory", key, URLString)); //$NON-NLS-1$ //$NON-NLS-2$
 			if (getCategoryModels().length <= 0)
-				UpdateCore.warn(Policy.bind("Site.NoCategories"));
-			//$NON-NLS-1$
+				UpdateCore.warn(Policy.bind("Site.NoCategories"));	//$NON-NLS-1$
 		}
 
 		return result;
@@ -276,8 +273,7 @@ public class Site extends SiteModel implements ISite {
 	 */
 	public ISiteContentProvider getSiteContentProvider() throws CoreException {
 		if (siteContentProvider == null) {
-			throw Utilities.newCoreException(Policy.bind("Site.NoContentProvider"), null);
-			//$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("Site.NoContentProvider"), null);	//$NON-NLS-1$
 		}
 		return siteContentProvider;
 	}

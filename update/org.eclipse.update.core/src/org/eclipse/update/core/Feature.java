@@ -716,10 +716,9 @@ public class Feature extends FeatureModel implements IFeature {
 		if (featureContentProvider == null) {
 			throw Utilities.newCoreException(
 				Policy.bind(
-					"Feature.NoContentProvider",
+					"Feature.NoContentProvider", //$NON-NLS-1$
 					getVersionedIdentifier().toString()),
-				null);
-			//$NON-NLS-1$
+				null);	
 		}
 		return this.featureContentProvider;
 	}
@@ -746,9 +745,8 @@ public class Feature extends FeatureModel implements IFeature {
 			String featureURLString =
 				(getURL() != null) ? getURL().toExternalForm() : "";
 			throw Utilities.newCoreException(
-				Policy.bind("Feature.SiteAlreadySet", featureURLString),
+				Policy.bind("Feature.SiteAlreadySet", featureURLString), //$NON-NLS-1$
 				null);
-			//$NON-NLS-1$
 		}
 		this.site = site;
 	}
@@ -773,15 +771,14 @@ public class Feature extends FeatureModel implements IFeature {
 	public String toString() {
 		String URLString =
 			(getURL() == null)
-				? Policy.bind("Feature.NoURL")
+				? Policy.bind("Feature.NoURL") //$NON-NLS-1$
 				: getURL().toExternalForm();
-		//$NON-NLS-1$
+
 		String verString =
 			Policy.bind(
-				"Feature.FeatureVersionToString",
+				"Feature.FeatureVersionToString", //$NON-NLS-1$
 				URLString,
 				getVersionedIdentifier().toString());
-		//$NON-NLS-1$
 		String label = getLabel() == null ? "" : getLabel();
 		return verString + " [" + label + "]";
 	}
@@ -949,8 +946,7 @@ public class Feature extends FeatureModel implements IFeature {
 						throw Utilities
 							.newCoreException(
 								Policy.bind(
-									"JarVerificationService.UnsucessfulVerification"),
-						//$NON-NLS-1$
+									"JarVerificationService.UnsucessfulVerification"),	//$NON-NLS-1$
 						vr.getVerificationException());
 					}
 				}
