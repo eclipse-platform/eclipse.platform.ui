@@ -17,7 +17,7 @@ import java.util.List;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 
 
 /**
@@ -44,7 +44,7 @@ public class AbstractUISourceLookupDirector
 					dialog.open();											
 				}						
 			});	
-		if(dialog.getReturnCode() == Dialog.OK)
+		if(dialog.getReturnCode() == Window.OK)
 			file = dialog.getSelection();		
 		return file;
 	}
