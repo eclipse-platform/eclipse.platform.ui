@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.core.filebuffers.manipulation;
 
 import java.text.MessageFormat;
