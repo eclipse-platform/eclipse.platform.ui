@@ -49,11 +49,11 @@ public class PluginMap {
 		if (preserveOrder)
 			for (;i < verList.size(); i++) {
 				PluginModel element = (PluginModel) verList.get(i);
-				if (getVersionIdentifier(pluginModel).equals(getVersionIdentifier(element)))
+				if (getVersionIdentifier(pluginModel).equals(getVersionIdentifier(element))) {
 					if (replaceDuplicates)
 						verList.set(i,pluginModel);
-					else 
-						return; // ignore duplicates
+					return; // ignore duplicates
+				}
 				if (getVersionIdentifier(pluginModel).isGreaterThan(getVersionIdentifier(element)))
 					break;
 			}

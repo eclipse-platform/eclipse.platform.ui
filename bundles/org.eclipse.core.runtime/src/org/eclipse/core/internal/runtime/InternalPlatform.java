@@ -19,6 +19,7 @@ import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.internal.plugins.*;
 import org.eclipse.core.internal.registry.ExtensionRegistry;
+import org.eclipse.core.internal.registry.PluginRegistryWrapper;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.model.*;
@@ -838,6 +839,7 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 		} else {
 			resolveStatus = registry.resolve(true, true);
 			registry.markReadOnly();
+			extensionsRegistry = new PluginRegistryWrapper(registry);
 		}
 		problems.merge(resolveStatus);
 		if (DEBUG)
