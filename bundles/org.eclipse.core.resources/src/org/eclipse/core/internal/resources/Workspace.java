@@ -181,9 +181,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			try {
 				prepareOperation(rule, monitor);
 				beginOperation(true);
-				broadcastChanges(IResourceChangeEvent.PRE_WORKSPACE_BUILD, false);
+				broadcastChanges(IResourceChangeEvent.PRE_BUILD, false);
 				getBuildManager().build(trigger, Policy.subMonitorFor(monitor, Policy.opWork));
-				broadcastChanges(IResourceChangeEvent.POST_WORKSPACE_BUILD, false);
+				broadcastChanges(IResourceChangeEvent.POST_BUILD, false);
 			} finally {
 				//building may close the tree, but we are still inside an operation so open it
 				if (tree.isImmutable())

@@ -152,7 +152,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 			// Be sure to clear out the old delta
 			isNotifying = false;
 			boolean postChange = type == IResourceChangeEvent.POST_CHANGE;
-			if (postChange || type == IResourceChangeEvent.POST_WORKSPACE_BUILD) {
+			if (postChange || type == IResourceChangeEvent.POST_BUILD) {
 				long id = workspace.getMarkerManager().getChangeId();
 				lastState.immutable();
 				if (postChange) {

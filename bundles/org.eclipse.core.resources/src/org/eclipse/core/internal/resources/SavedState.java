@@ -72,7 +72,7 @@ public class SavedState implements ISavedState {
 				workspace.beginOperation(true);
 				ResourceDelta delta = ResourceDeltaFactory.computeDelta(workspace, oldTree, newTree, Path.ROOT, -1);
 				forgetTrees(); // free trees to prevent memory leak
-				workspace.getNotificationManager().broadcastChanges(listener, IResourceChangeEvent.POST_WORKSPACE_BUILD, delta);
+				workspace.getNotificationManager().broadcastChanges(listener, IResourceChangeEvent.POST_BUILD, delta);
 			} finally {
 				workspace.endOperation(rule, false, null);
 			}

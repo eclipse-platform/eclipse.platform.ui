@@ -19,7 +19,7 @@ package org.eclipse.core.resources;
  *    After-the-fact batch reports of arbitrary creations, 
  *    deletions and modifications to one or more resources expressed
  *    as a hierarchical resource delta. Event type is
- *    <code>PRE_WORKSPACE_BUILD</code>, and <code>getDelta</code> returns
+ *    <code>PRE_BUILD</code>, and <code>getDelta</code> returns
  *    the hierarchical delta. The resource delta is rooted at the 
  *    workspace root.  These events are broadcast to interested parties immediately before
  *    any auto-building and happen whether or not auto-building is enabled.  These
@@ -116,7 +116,7 @@ public interface IResourceChangeEvent {
 
 	/**
 	 * @deprecated This event type has been renamed to
-	 * <code>PRE_WORKSPACE_BUILD</code>
+	 * <code>PRE_BUILD</code>
 	 */
 	public static final int PRE_AUTO_BUILD = 8;
 
@@ -131,11 +131,11 @@ public interface IResourceChangeEvent {
 	 * @see #getResource()
 	 * @since 3.0
 	 */
-	public static final int PRE_WORKSPACE_BUILD = 8;
+	public static final int PRE_BUILD = 8;
 
 	/**
 	 * @deprecated This event type has been renamed to
-	 * <code>POST_WORKSPACE_BUILD</code>
+	 * <code>POST_BUILD</code>
 	 */
 	public static final int POST_AUTO_BUILD = 16;
 
@@ -150,7 +150,7 @@ public interface IResourceChangeEvent {
 	 * @see #getResource()
 	 * @since 3.0
 	 */
-	public static final int POST_WORKSPACE_BUILD = 16;
+	public static final int POST_BUILD = 16;
 
 	/**
 	 * Returns all marker deltas of the specified type that are associated
@@ -202,8 +202,8 @@ public interface IResourceChangeEvent {
 	 *
 	 * @return one of the event type constants
 	 * @see #POST_CHANGE
-	 * @see #POST_WORKSPACE_BUILD
-	 * @see #PRE_WORKSPACE_BUILD
+	 * @see #POST_BUILD
+	 * @see #PRE_BUILD
 	 * @see #PRE_CLOSE
 	 * @see #PRE_DELETE
 	 */

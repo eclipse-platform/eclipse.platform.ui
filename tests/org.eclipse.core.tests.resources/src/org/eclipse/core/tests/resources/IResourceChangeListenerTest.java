@@ -267,7 +267,7 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 			}
 		};
 		// register the listener with the workspace.
-		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_WORKSPACE_BUILD);
+		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
 		try {
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
 				// cause a delta by touching all resources
@@ -578,7 +578,7 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 			}
 		};
 		// register the listener with the workspace.
-		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_WORKSPACE_BUILD);
+		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
 		try {
 			getWorkspace().run(new IWorkspaceRunnable() {
 				// cause a delta by touching all resources
@@ -1022,14 +1022,14 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 		}
 		class Listener2 extends Listener1 implements IResourceChangeListener {
 			public void resourceChanged(IResourceChangeEvent event) {
-				assertEquals("2.0", IResourceChangeEvent.POST_WORKSPACE_BUILD, event.getType());
+				assertEquals("2.0", IResourceChangeEvent.POST_BUILD, event.getType());
 				done = true;
 			}
 		}
 		Listener1 listener1 = new Listener1();
 		Listener2 listener2 = new Listener2();
 		getWorkspace().addResourceChangeListener(listener1, IResourceChangeEvent.POST_CHANGE);
-		getWorkspace().addResourceChangeListener(listener2, IResourceChangeEvent.POST_WORKSPACE_BUILD);
+		getWorkspace().addResourceChangeListener(listener2, IResourceChangeEvent.POST_BUILD);
 		try {
 			try {
 				project1.touch(getMonitor());

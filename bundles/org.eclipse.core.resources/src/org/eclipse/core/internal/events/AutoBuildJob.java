@@ -145,10 +145,10 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 			try {
 				workspace.prepareOperation(rule, monitor);
 				workspace.beginOperation(true);
-				broadcastChanges(IResourceChangeEvent.PRE_WORKSPACE_BUILD);
+				broadcastChanges(IResourceChangeEvent.PRE_BUILD);
 				if (shouldBuild())
 					workspace.getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, Policy.subMonitorFor(monitor, Policy.opWork));
-				broadcastChanges(IResourceChangeEvent.POST_WORKSPACE_BUILD);
+				broadcastChanges(IResourceChangeEvent.POST_BUILD);
 			} finally {
 				//building may close the tree, but we are still inside an
 				// operation so open it

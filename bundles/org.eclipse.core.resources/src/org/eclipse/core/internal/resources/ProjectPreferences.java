@@ -112,7 +112,7 @@ public class ProjectPreferences extends EclipsePreferences {
 
 		IResourceChangeListener result = new IResourceChangeListener() {
 			public void resourceChanged(IResourceChangeEvent event) {
-				if (event.getType() != IResourceChangeEvent.PRE_WORKSPACE_BUILD)
+				if (event.getType() != IResourceChangeEvent.PRE_BUILD)
 					return;
 				IResourceDelta delta = event.getDelta();
 				if (delta == null)
@@ -130,7 +130,7 @@ public class ProjectPreferences extends EclipsePreferences {
 	}
 
 	private static void addListener() {
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_WORKSPACE_BUILD);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_BUILD);
 	}
 
 	/*
