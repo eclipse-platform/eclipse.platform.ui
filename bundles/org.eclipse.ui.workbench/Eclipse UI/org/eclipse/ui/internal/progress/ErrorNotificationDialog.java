@@ -14,6 +14,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -21,12 +22,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -34,23 +30,22 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-
-import org.eclipse.ui.IWorkbenchActionConstants;
 /**
  * The ErrorNotificationDialog is is the dialog that comes up when an
  * error has occured.
  */
 public class ErrorNotificationDialog extends Dialog {
-	Action clearSelectionAction;
-	Action clearAllErrorsAction;
-	Action showErrorAction;
 	TableViewer errorViewer;
+	Button showButton;
+	Button clearButton;
 	/**
 	 * Create a new instance of the receiver.
 	 * @param parentShell
@@ -82,7 +77,7 @@ public class ErrorNotificationDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		initializeDialogUnits(parent);
 		Composite topArea = (Composite) super.createDialogArea(parent);
-		errorViewer = new TableViewer(topArea, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		errorViewer = new TableViewer(topArea, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		errorViewer.setSorter(getViewerSorter());
 		errorViewer.getControl().addMouseListener(new MouseAdapter() {
 			/* (non-Javadoc)
@@ -92,15 +87,21 @@ public class ErrorNotificationDialog extends Dialog {
 				openErrorDialog();
 			}
 		});
+		errorViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+
+				clearButton.setEnabled(!errorViewer.getSelection().isEmpty());
+				showButton.setEnabled(getSingleSelection() != null);
+			}
+		});
 		Control control = errorViewer.getControl();
 		GridData data = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
 				| GridData.GRAB_VERTICAL);
-		data.widthHint = convertWidthInCharsToPixels(50);
+		data.widthHint = convertWidthInCharsToPixels(60);
 		data.heightHint = convertHeightInCharsToPixels(10);
 		control.setLayoutData(data);
 		initContentProvider();
 		initLabelProvider();
-		initContextMenu();
 		applyDialogFont(parent);
 		return topArea;
 	}
@@ -108,6 +109,25 @@ public class ErrorNotificationDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
+		showButton = createButton(parent, IDialogConstants.CLIENT_ID + 1, ProgressMessages.getString("ErrorNotificationDialog.ShowButtonTitle"), false); //$NON-NLS-1$
+		showButton.setEnabled(false);
+		showButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				openErrorDialog();
+			}
+		});
+		clearButton = createButton(parent, IDialogConstants.CLIENT_ID + 2, ProgressMessages.getString("ErrorNotificationDialog.ClearButtonTitle"), false); //$NON-NLS-1$
+		clearButton.setEnabled(false);
+		clearButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				ISelection rawSelection = errorViewer.getSelection();
+				if (rawSelection != null && rawSelection instanceof IStructuredSelection) {
+					IStructuredSelection selection = (IStructuredSelection) rawSelection;
+					getManager().removeErrors(selection.toList());
+				}
+				refresh();
+			}
+		});
 		Button button = createButton(parent, IDialogConstants.CLOSE_ID,
 				IDialogConstants.CLOSE_LABEL, true);
 		button.addSelectionListener(new SelectionListener() {
@@ -124,56 +144,6 @@ public class ErrorNotificationDialog extends Dialog {
 				close();
 			}
 		});
-	}
-	/**
-	 * Create the clear all errors action for the receiver.
-	 * @return Action
-	 */
-	private void createClearAllErrorsAction() {
-		clearAllErrorsAction = new Action(ProgressMessages.getString("ProgressView.ClearAllAction")) {//$NON-NLS-1$
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.action.Action#run()
-			 */
-			public void run() {
-				getManager().clearAllErrors();
-				errorViewer.refresh();
-			}
-		};
-	}
-	/**
-	 * Create the show error action for the receiver.
-	 * @return Action
-	 */
-	private void createShowErrorAction() {
-		showErrorAction = new Action(ProgressMessages.getString("ProgressView.ShowErrorAction")) {//$NON-NLS-1$
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.action.Action#run()
-			 */
-			public void run() {
-				openErrorDialog();
-			}
-		};
-	}
-	
-	/**
-	 * Create the clear selection action for the receiver.
-	 * @return Action
-	 */
-	private void createClearSelectionAction() {
-		clearSelectionAction = new Action(ProgressMessages
-				.getString("ErrorNotificationDialog.ClearSelectionAction")) {//$NON-NLS-1$
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.action.Action#run()
-			 */
-			public void run() {
-				ISelection rawSelection = errorViewer.getSelection();
-				if (rawSelection != null && rawSelection instanceof IStructuredSelection) {
-					IStructuredSelection selection = (IStructuredSelection) rawSelection;
-					getManager().removeErrors(selection.toList());
-				}
-				refresh();
-			}
-		};
 	}
 	/**
 	 * Return a viewer sorter for looking at the jobs.
@@ -223,21 +193,6 @@ public class ErrorNotificationDialog extends Dialog {
 	 */
 	private ErrorNotificationManager getManager() {
 		return ProgressManager.getInstance().errorManager;
-	}
-	/**
-	 * Initialize the context menu for the receiver.
-	 */
-	private void initContextMenu() {
-		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
-		Menu menu = menuMgr.createContextMenu(errorViewer.getControl());
-		createShowErrorAction();
-		createClearSelectionAction();
-		createClearAllErrorsAction();
-		menuMgr.add(clearSelectionAction);
-		menuMgr.add(clearAllErrorsAction);
-		menuMgr.add(showErrorAction);
-		menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		errorViewer.getControl().setMenu(menu);
 	}
 	/**
 	 * Refresh the contents of the viewer.
@@ -291,17 +246,26 @@ public class ErrorNotificationDialog extends Dialog {
 	 * Open the error dialog on the current selection.
 	 */
 	private void openErrorDialog() {
+		ErrorInfo element = getSingleSelection();
+		if (element == null)
+			return;
+		ErrorDialog.openError(getShell(), element.getDisplayString(), null, element
+				.getErrorStatus());
+	}
+	/**
+	 * Get the single selection. Return null if the selection
+	 * is not just one element.
+	 * @return ErrorInfo or <code>null</code>.
+	 */
+	private ErrorInfo getSingleSelection() {
 		ISelection rawSelection = errorViewer.getSelection();
 		if (rawSelection != null && rawSelection instanceof IStructuredSelection) {
 			IStructuredSelection selection = (IStructuredSelection) rawSelection;
-			if (selection.size() == 1) {
-				ErrorInfo element = (ErrorInfo) selection.getFirstElement();
-				ErrorDialog.openError(getShell(), element.getDisplayString(), null, element
-						.getErrorStatus());
-			}
+			if (selection.size() == 1)
+				return (ErrorInfo) selection.getFirstElement();
 		}
+		return null;
 	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#close()
 	 */
