@@ -608,18 +608,20 @@ public class EclipseSynchronizer implements IFlushOperation {
 		ISchedulingRule rule = null;
 		try {
 			rule = beginBatching(project, Policy.subMonitorFor(monitor, 10));
-			// Flush 
+			// Flush the sync info
 			flush(project, true /* deep */, Policy.subMonitorFor(monitor, 80));
+			
+			purgeDirtyCache(project, Policy.subMonitorFor(monitor, 5));
 				
 			// forget about pruned folders however the top level pruned folder will have resource sync (e.g. 
 			// a line in the Entry file). As a result the folder is managed but is not a CVS folder.
 			synchronizerCache.purgeCache(project, true);
 		} finally {
-			if (rule != null) endBatching(rule, Policy.subMonitorFor(monitor, 10));
+			if (rule != null) endBatching(rule, Policy.subMonitorFor(monitor, 5));
 			monitor.done();
 		}
 	}
-	
+
 	/**
 	 * Called to notify the synchronizer that meta files have changed on disk, outside 
 	 * of the workbench. The cache will be flushed for this folder and it's immediate
@@ -1876,5 +1878,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 				synchronizerCache.setCachedSyncBytes(resource, null, true);
 			}
 		}
+	}
+	
+	private void purgeDirtyCache(IProject project, IProgressMonitor monitor) throws CVSException {
+		sessionPropertyCache.purgeDirtyCache(project);
 	}
 }

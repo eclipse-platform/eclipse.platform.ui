@@ -175,22 +175,27 @@ public class CVSTeamProvider extends RepositoryProvider {
 	public CVSTeamProvider() {
 	}
 
-	/**
-	 * @see IProjectNature#deconfigure()
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IProjectNature#deconfigure()
 	 */
 	public void deconfigure() {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.RepositoryProvider#deconfigured()
+	 */
+	public void deconfigured() {
 		// when a nature is removed from the project, notify the synchronizer that
 		// we no longer need the sync info cached. This does not affect the actual CVS
 		// meta directories on disk, and will remain unless a client calls unmanage().
 		try {
 			EclipseSynchronizer.getInstance().deconfigure(getProject(), null);
+			internalSetWatchEditEnabled(null);
+			internalSetFetchAbsentDirectories(null);
 		} catch(CVSException e) {
 			// Log the exception and let the disconnect continue
 			CVSProviderPlugin.log(e);
 		}
-	}
-	
-	public void deconfigured() {
 		ResourceStateChangeListeners.getListener().projectDeconfigured(getProject());
 	}
 	/**
@@ -888,13 +893,17 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 * @param etchAbsentDirectories The etchAbsentDirectories to set
 	 */
 	public void setFetchAbsentDirectories(boolean fetchAbsentDirectories) throws CVSException {
+		internalSetFetchAbsentDirectories(fetchAbsentDirectories ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
+	}
+
+	public void internalSetFetchAbsentDirectories(String fetchAbsentDirectories) throws CVSException {
 		try {
-			getProject().setPersistentProperty(FETCH_ABSENT_DIRECTORIES_PROP_KEY, fetchAbsentDirectories ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
+			getProject().setPersistentProperty(FETCH_ABSENT_DIRECTORIES_PROP_KEY, fetchAbsentDirectories);
 		} catch (CoreException e) {
 			throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.errorSettingFetchProperty", project.getName()), e)); //$NON-NLS-1$
 		}
 	}
-
+	
 	/**
 	 * @see org.eclipse.team.core.RepositoryProvider#canHandleLinkedResources()
 	 */
@@ -1036,7 +1045,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 				property = project.getPersistentProperty(WATCH_EDIT_PROP_KEY);
 				if (property == null) {
 					// The persistant property for the project was never set (i.e. old project)
-					// Use the global preference to determinw if the project is using watch/edit
+					// Use the global preference to determine if the project is using watch/edit
 					return CVSProviderPlugin.getPlugin().isWatchEditEnabled();
 				} else {
 					project.setSessionProperty(WATCH_EDIT_PROP_KEY, property);
@@ -1053,10 +1062,14 @@ public class CVSTeamProvider extends RepositoryProvider {
 	}
 	
 	public void setWatchEditEnabled(boolean enabled) throws CVSException {
+		internalSetWatchEditEnabled(enabled ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
+	}
+	
+	private void internalSetWatchEditEnabled(String enabled) throws CVSException {
 		try {
 			IProject project = getProject();
-			project.setPersistentProperty(WATCH_EDIT_PROP_KEY, enabled ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
-			project.setSessionProperty(WATCH_EDIT_PROP_KEY, enabled ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
+			project.setPersistentProperty(WATCH_EDIT_PROP_KEY, enabled);
+			project.setSessionProperty(WATCH_EDIT_PROP_KEY, enabled);
 		} catch (CoreException e) {
 			throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.errorSettingWatchEdit", project.getName()), e)); //$NON-NLS-1$
 		}

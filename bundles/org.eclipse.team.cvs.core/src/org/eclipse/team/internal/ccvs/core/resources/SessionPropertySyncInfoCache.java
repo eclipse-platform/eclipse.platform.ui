@@ -37,7 +37,6 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	private static final FolderSyncInfo NULL_FOLDER_SYNC_INFO = new FolderSyncInfo("", "", null, false); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	private QualifiedName FOLDER_DIRTY_STATE_KEY = new QualifiedName(CVSProviderPlugin.ID, "folder-dirty-state-cached"); //$NON-NLS-1$
-	private boolean hasBeenSaved = false;
 	
 	// defer to the sychronizer if there is no sync info
 	// (i.e. for those cases where a deleted resource is recreated)
@@ -442,7 +441,6 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 					});
 				}
 			}
-			hasBeenSaved = true;
 		}
 	}
 		
@@ -456,6 +454,27 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 			synchronizer.flushSyncInfo(FOLDER_DIRTY_STATE_KEY, container, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
 			CVSProviderPlugin.log(e);
+		}
+	}
+
+	/*
+	 * Flush all the cahced dirty state for the resource and its members.
+	 */
+	/* package*/ void purgeDirtyCache(IResource resource) throws CVSException {
+		if (! resource.exists()) return;
+		try {
+			if (resource.getType() != IResource.ROOT) {
+				safeSetSessionProperty(resource, IS_DIRTY, null);
+			}
+			if (resource.getType() != IResource.FILE) {
+				ResourcesPlugin.getWorkspace().getSynchronizer().flushSyncInfo(FOLDER_DIRTY_STATE_KEY, resource, IResource.DEPTH_INFINITE);
+				IResource[] members = ((IContainer)resource).members();
+				for (int i = 0; i < members.length; i++) {
+					purgeDirtyCache(members[i]);
+				}
+			}
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
 		}
 	}
 }
