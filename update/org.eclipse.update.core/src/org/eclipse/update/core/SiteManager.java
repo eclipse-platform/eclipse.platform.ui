@@ -66,6 +66,6 @@ public class SiteManager {
 	 * @since 2.0
 	 */
 	public static void handleNewChanges() throws CoreException{
-		//InternalSiteManager.handleNewChanges();
+		InternalSiteManager.handleNewChanges();
 	}
 }
