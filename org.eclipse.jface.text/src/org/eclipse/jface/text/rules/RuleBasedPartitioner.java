@@ -307,8 +307,13 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 			
 			
 			// remove all positions behind lastScannedPosition since there aren't any further types
-			TypedPosition p;
+			if (lastScannedPosition != reparseStart) {
+				// if this condition is not met, nothing has been scanned because of a delete
+				++ lastScannedPosition;
+			}
 			first= d.computeIndexInCategory(CONTENT_TYPES_CATEGORY, lastScannedPosition);
+			
+			TypedPosition p;
 			while (first < category.length) {
 				p= (TypedPosition) category[first++];
 				d.removePosition(CONTENT_TYPES_CATEGORY, p);
