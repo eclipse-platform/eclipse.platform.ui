@@ -28,6 +28,24 @@
                id="newAction1">
          </action>
       </actionSet>
+      <actionSet
+            id="org.eclipse.newActionSet1.newActionSet2"
+            label="Another New Action Set From ActionSet 1"
+            visible="true">
+         <action
+               class="some.bogus.class"
+               icon="anything.gif"
+               id="org.eclipse.ui.tests.action1"
+               label="Another New Action From ActionSet1"
+               menubarPath="menu1/sep1"
+               style="push"
+               toolbarPath="newActionSet1"/>
+         <menu
+               id="menu1"
+               label="org.eclipse.ui.tests.menu1">
+            <separator name="sep1"/>
+         </menu>
+      </actionSet>
    </extension>
    <extension
          point="org.eclipse.ui.actionSetPartAssociations">

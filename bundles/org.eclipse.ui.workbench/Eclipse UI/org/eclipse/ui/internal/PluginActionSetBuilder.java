@@ -11,8 +11,10 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.action.AbstractGroupMarker;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
@@ -40,6 +42,18 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
     private IWorkbenchWindow window;
 
     private ArrayList adjunctContributions = new ArrayList(0);
+    
+    /**
+     * Used by the workbench window extension handler to unhook action sets from
+     * their associated window.
+     * 
+     * @since 3.1
+     */
+    public static class Binding {
+        PluginActionSetBuilder builder;
+        PluginActionSet set;
+        IWorkbenchWindow window;
+    }
 
     /**
      * Constructs a new builder.
@@ -85,6 +99,14 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
                         .contributeAdjunctCoolbarAction(adjunctAction, bars);
             }
         }
+        
+        Binding binding = new Binding();
+        binding.builder = this;
+        binding.set = set;
+        binding.window = window;
+        window.getExtensionTracker().registerObject(
+                set.getConfigElement().getDeclaringExtension(), binding,
+                IExtensionTracker.REF_STRONG);
     }
 
     /* (non-Javadoc)
@@ -246,6 +268,14 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
                     adjunctContributions.add(contribution);
                 }
             }
+            
+            Binding binding = new Binding();
+            binding.builder = this;
+            binding.set = set;
+            binding.window = window;
+            window.getExtensionTracker().registerObject(
+                    set.getConfigElement().getDeclaringExtension(), binding,
+                    IExtensionTracker.REF_STRONG);
         } else {
             WorkbenchPlugin
                     .log("Action Set is empty: " + set.getDesc().getId()); //$NON-NLS-1$
@@ -585,18 +615,18 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
                 } else if (items[i] instanceof ActionSetContributionItem) {
                     id = ((ActionSetContributionItem) items[i])
                             .getActionSetId();
-                    if (id.equals(actionsetId))
+                    if (actionsetId.equals(id))
                         itemsToRemove.add(items[i]);
                 } else if (items[i] instanceof Separator) {
                     id = ((Separator) items[i]).getId();
-                    if (id.equals(actionsetId))
+                    if (actionsetId.equals(id))
                         itemsToRemove.add(items[i]);
                 } else if (items[i] instanceof GroupMarker) {
                     id = ((GroupMarker) items[i]).getId();
-                    if (id.equals(actionsetId))
+                    if (actionsetId.equals(id))
                         itemsToRemove.add(items[i]);
                 }
-            java.util.Iterator iter = itemsToRemove.iterator();
+            Iterator iter = itemsToRemove.iterator();
             while (iter.hasNext()) {
                 IContributionItem item = (IContributionItem) iter.next();
                 menuMgr.remove(item);
@@ -612,7 +642,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
             String id;
             for (int i = 0; i < items.length; i++) {
                 id = items[i].getId();
-                if (id.equals(actionsetId)) {
+                if (actionsetId.equals(id)) {
                     itemsToRemove.add(items[i]);
                     continue;
                 }
@@ -621,15 +651,15 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
                             actionsetId);
                 } else if (items[i] instanceof ToolBarContributionItem) {
                     id = ((ToolBarContributionItem) items[i]).getId();
-                    if (id.equals(actionsetId))
+                    if (actionsetId.equals(id))
                         itemsToRemove.add(items[i]);
                 } else if (items[i] instanceof GroupMarker) {
                     id = ((GroupMarker) items[i]).getId();
-                    if (id.equals(actionsetId))
+                    if (actionsetId.equals(id))
                         itemsToRemove.add(items[i]);
                 }
             }
-            java.util.Iterator iter = itemsToRemove.iterator();
+            Iterator iter = itemsToRemove.iterator();
             while (iter.hasNext())
                 coolbarMgr.remove((IContributionItem) iter.next());
             coolbarMgr.update(true);
@@ -650,41 +680,41 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
                 if (items[i] instanceof PluginActionCoolBarContributionItem) {
                     id = ((PluginActionCoolBarContributionItem) items[i])
                             .getActionSetId();
-                    if (id.equals(actionsetId))
+                    if (actionsetId.equals(id))
                         itemsToRemove.add(items[i]);
                 } else if (items[i] instanceof ActionContributionItem) {
                     id = ((ActionContributionItem) items[i]).getId();
-                    if (id.equals(actionsetId))
+                    if (actionsetId.equals(id))
                         itemsToRemove.add(items[i]);
                 } else if (items[i] instanceof GroupMarker) {
                     id = ((GroupMarker) items[i]).getId();
-                    if (id.equals(actionsetId))
+                    if (actionsetId.equals(id))
                         itemsToRemove.add(items[i]);
                 }
             }
-            java.util.Iterator iter = itemsToRemove.iterator();
+            Iterator iter = itemsToRemove.iterator();
             while (iter.hasNext())
                 toolbarMgr.remove((IContributionItem) iter.next());
             toolbarMgr.update(true);
         }
     }
 
-    // for dynamic UI
-    public void removeActionExtensions(PluginActionSet set,
+
+    /**
+     * Remove the given action set from the window.
+     * 
+     * @param set the set to remove
+     * @param window the window to remove from
+     */
+    protected void removeActionExtensions(PluginActionSet set,
             IWorkbenchWindow window) {
         this.actionSet = set;
         this.window = window;
-        cache = null;
         currentContribution = null;
         targetID = null;
         targetContributionTag = IWorkbenchRegistryConstants.TAG_ACTION_SET;
         String id = set.getDesc().getId();
-
-//        cache = (ArrayList) WorkbenchPlugin.getDefault().getActionSetRegistry()
-//                .removeCache(id);
         
-        //readElements(new IConfigurationElement[] {set.getConfigElement()});
-
         if (cache != null) {
             for (int i = 0; i < cache.size(); i++) {
                 ActionSetContribution contribution = (ActionSetContribution) cache

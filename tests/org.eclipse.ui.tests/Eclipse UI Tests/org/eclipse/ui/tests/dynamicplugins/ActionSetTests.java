@@ -11,9 +11,14 @@
 package org.eclipse.ui.tests.dynamicplugins;
 
 import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.PluginActionSet;
+import org.eclipse.ui.internal.WWinPluginAction;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
+import org.eclipse.ui.internal.registry.IActionSet;
 
 /**
  * Tests to ensure the addition of new action sets with dynamic plug-ins.
@@ -32,11 +37,35 @@ public class ActionSetTests extends DynamicTestCase implements
         super(testName);
     }
 
-    public void testActionSets() {
+    public void testActionSets() throws Exception {
         assertNull(getActionSetRegistry().findActionSet(ACTION_SET_ID));
         getBundle();
+        WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
         assertNotNull(getActionSetRegistry().findActionSet(ACTION_SET_ID));
+        IActionSet [] sets = window.getActionPresentation().getActionSets();
+        boolean found = false;
+        WWinPluginAction action = null;
+        for (int i = 0; i < sets.length; i++) {
+            if (((PluginActionSet)sets[i]).getDesc().getId().equals("org.eclipse.newActionSet1.newActionSet2")) {
+                found = true;
+                IAction [] pluginActions = ((PluginActionSet)sets[i]).getPluginActions();
+                for (int j = 0; j < pluginActions.length; j++) {
+                    if (pluginActions[j].getId().equals("org.eclipse.ui.tests.action1"))
+                        action = (WWinPluginAction) pluginActions[j];
+                }
+                break;
+            }
+        }
+        assertTrue("Action set not found", found);
+        assertNotNull("Action not found", action);
+//        ReferenceQueue queue = new ReferenceQueue();
+//        WeakReference ref = new WeakReference(action, queue);
+//        action = null;
         removeBundle();
+        
+        assertNull(window.getActionBars().getMenuManager().findMenuUsingPath("menu1"));
+//        LeakTests.checkRef(queue, ref);
+        
         assertNull(getActionSetRegistry().findActionSet(ACTION_SET_ID));
     }
 

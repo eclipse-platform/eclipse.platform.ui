@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,11 +23,15 @@ import java.util.Map;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.GroupMarker;
@@ -288,6 +293,13 @@ public class WorkbenchWindow extends ApplicationWindow implements
         addStatusLine();
 
         actionPresentation = new ActionPresentation(this);
+        
+        // register with the tracker
+        getExtensionTracker()
+                .registerHandler(
+                        actionSetHandler,
+                        ExtensionTracker
+                                .createExtensionPointFilter(getActionSetExtensionPoint()));
 
         fireWindowOpening();
 
@@ -296,6 +308,17 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
         // Fill the action bars
         fillActionBars(FILL_ALL_ACTION_BARS);
+    }
+    
+    /**
+     * Return the action set extension point.
+     * 
+     * @return the action set extension point
+     * @since 3.1
+     */
+    private IExtensionPoint getActionSetExtensionPoint() {
+        return Platform.getExtensionRegistry().getExtensionPoint(
+                PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTION_SETS);
     }
 
     /**
@@ -348,6 +371,97 @@ public class WorkbenchWindow extends ApplicationWindow implements
     private int largeUpdates = 0;
 
 	private IExtensionTracker tracker;
+    
+    private IExtensionChangeHandler actionSetHandler = new IExtensionChangeHandler() {
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamichelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
+         */
+        public void addExtension(IExtensionTracker tracker, IExtension extension) {
+            // this assumes that the workbench-level tracker will have already
+            // updated the registry
+
+            ArrayList setsToActivate = new ArrayList();
+            // look for all new sets that are on by default. Examine the tracker
+            // at the workbench level to see what descriptors are registered
+            // against this extension
+            Object[] registeredObjects = getWorkbench().getExtensionTracker()
+                    .getObjects(extension);
+            for (int i = 0; i < registeredObjects.length; i++) {
+                if (registeredObjects[i] instanceof IActionSetDescriptor) {
+                    IActionSetDescriptor desc = (IActionSetDescriptor) registeredObjects[i];
+                    if (desc.isInitiallyVisible()) {
+                        setsToActivate.add(desc);
+                    }
+                }
+            }
+            
+            // if none of the new sets are marked as initially visible, abort.
+            if (setsToActivate.isEmpty())
+                return;
+
+            Perspective[] perspectives = getActiveWorkbenchPage()
+                    .getOpenInternalPerspectives();
+
+            for (int i = 0; i < perspectives.length; i++) {
+                IActionSetDescriptor[] originalSets = perspectives[i]
+                        .getActionSets();
+                ArrayList newSets = new ArrayList(Arrays.asList(originalSets));
+                newSets.addAll(setsToActivate);
+                perspectives[i].setActionSets((IActionSetDescriptor[]) newSets
+                        .toArray(new IActionSetDescriptor[newSets.size()]));
+            }
+
+            updateActionSets();
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
+         */
+        public void removeExtension(IExtension extension, Object[] objects) {
+            // remove the contributions from the window bars and dispose of the
+            // actions
+            for (int i = 0; i < objects.length; i++) {
+                if (objects[i] instanceof PluginActionSetBuilder.Binding) {
+                    PluginActionSetBuilder.Binding binding = (PluginActionSetBuilder.Binding) objects[i];
+                    binding.builder.removeActionExtensions(binding.set, binding.window);
+                    binding.set.dispose();
+                }
+            }
+
+            // update all opened perspectives
+            Perspective[] perspectives = getActiveWorkbenchPage()
+                    .getOpenInternalPerspectives();
+            boolean updateNeeded = false;
+            for (int i = 0; i < perspectives.length; i++) {
+                IActionSetDescriptor[] originalSets = perspectives[i]
+                        .getActionSets();
+                ArrayList newSets = new ArrayList(Arrays.asList(originalSets));
+                for (int j = 0; j < objects.length; j++) {
+                    if (objects[j] instanceof IActionSetDescriptor) {
+                        IActionSetDescriptor setToRemove = (IActionSetDescriptor) objects[j];
+                        newSets.remove(setToRemove);
+                    }
+                }
+
+                // if set sizes differ, flag for window updating
+                // and update the perspective
+                if (originalSets.length != newSets.size()) {
+                    updateNeeded |= true;
+                    perspectives[i]
+                            .setActionSets((IActionSetDescriptor[]) newSets
+                                    .toArray(new IActionSetDescriptor[newSets
+                                            .size()]));
+                }
+            }
+
+            if (updateNeeded) {
+                // refresh the window
+                updateActionSets();
+            }
+        }
+    };
+    
 
     void registerActionSets(IActionSet[] actionSets) {
         
@@ -2905,7 +3019,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
     }
 
     //for dynamic UI
-    protected ActionPresentation getActionPresentation() {
+    public ActionPresentation getActionPresentation() {
         return actionPresentation;
     }
 

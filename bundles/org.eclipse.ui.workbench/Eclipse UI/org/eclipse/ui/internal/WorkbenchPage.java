@@ -205,8 +205,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private ActionSwitcher actionSwitcher = new ActionSwitcher();
 
 	private IExtensionTracker tracker;
-
-	private IExtensionChangeHandler changeHandler = new IExtensionChangeHandler() {
+    
+	private IExtensionChangeHandler perspectiveChangeHandler = new IExtensionChangeHandler() {
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
@@ -266,7 +266,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
         }
 	};
-	private IExtensionPoint getExtensionPointFilter() {
+    
+	private IExtensionPoint getPerspectiveExtensionPoint() {
 		return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PERSPECTIVE_EXTENSIONS);
 	}
 
@@ -2016,7 +2017,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             window.firePerspectiveActivated(this, desc);
         }
         
-        getExtensionTracker().registerHandler(changeHandler, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
+        getExtensionTracker()
+                .registerHandler(
+                        perspectiveChangeHandler,
+                        ExtensionTracker
+                                .createExtensionPointFilter(getPerspectiveExtensionPoint()));
     }
 
     /**
@@ -3352,6 +3357,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             result[i] = opened[i].getDesc();
         }
         return result;
+    }
+    
+    /**
+     * Return all open Perspective objects.
+     * 
+     * @return all open Perspective objects
+     * @since 3.1
+     */
+    /*package*/Perspective [] getOpenInternalPerspectives() {
+        return perspList.getOpenedPerspectives();
     }
 
     /**

@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
@@ -149,6 +150,22 @@ public class ActionPresentation {
                         rec = new SetRec(desc, set, bars);
                         set.init(window, bars);
                         sets.add(set);
+
+                        // only register against the tracker once - check for
+                        // other registrations against the provided extension
+                        Object[] existingRegistrations = window
+                                .getExtensionTracker().getObjects(
+                                        desc.getConfigurationElement()
+                                                .getDeclaringExtension());
+                        if (existingRegistrations.length == 0
+                                || !containsRegistration(existingRegistrations,
+                                        desc)) {
+                            //register the set with the page tracker
+                            //this will be cleaned up by WorkbenchWindow listener
+                            window.getExtensionTracker().registerObject(
+                                    desc.getConfigurationElement().getDeclaringExtension(),
+                                    desc, IExtensionTracker.REF_WEAK);
+                        }
                     }
                     mapDescToRec.put(desc, rec);
                 } catch (CoreException e) {
@@ -171,6 +188,22 @@ public class ActionPresentation {
             PluginActionSet set = (PluginActionSet) iter.next();
             set.getBars().activate();
         }
+    }
+
+    /**
+     * Return whether the array contains the given action set.
+     * 
+     * @param existingRegistrations the array to check
+     * @param set the set to look for
+     * @return whether the set is in the array
+     * @since 3.1
+     */
+    private boolean containsRegistration(Object[] existingRegistrations, IActionSetDescriptor set) {
+        for (int i = 0; i < existingRegistrations.length; i++) {
+            if (existingRegistrations[i] == set)
+                return true;
+        }
+        return false;
     }
 
     /**
