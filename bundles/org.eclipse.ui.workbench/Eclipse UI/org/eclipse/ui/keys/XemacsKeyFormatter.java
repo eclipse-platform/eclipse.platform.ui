@@ -46,7 +46,7 @@ public class XemacsKeyFormatter extends AbstractKeyFormatter {
 	 *            The key to format; must not be <code>null</code>.
 	 * @return The key formatted as a string; should not be <code>null</code>.
 	 */
-	protected String formatKey(Key key) {
+	public String format(Key key) {
 		if (key instanceof ModifierKey) {
 			String formattedName =
 				Util.translateString(RESOURCE_BUNDLE, key.name, null, false, false);
@@ -55,7 +55,7 @@ public class XemacsKeyFormatter extends AbstractKeyFormatter {
 			}
 		}
 
-		return super.formatKey(key).toLowerCase();
+		return super.format(key).toLowerCase();
 	}
 
 	/*

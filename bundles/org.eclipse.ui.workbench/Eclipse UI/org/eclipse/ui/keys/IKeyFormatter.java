@@ -19,32 +19,32 @@ package org.eclipse.ui.keys;
  * 
  * @since 3.0
  */
-public interface KeyFormatter {
+public interface IKeyFormatter {
 
 	/**
 	 * The delimiter between multiple keys in a single key strokes -- expressed
 	 * in the formal key stroke grammar. This is not to be displayed to the
 	 * user. It is only intended as an internal representation.
 	 */
-	public final static String KEY_DELIMITER = Character.toString('\u002B');
-	/**
-	 * The key for the delimiter between keys. This is used in the
-	 * internationalization bundles.
-	 */
-	final static String KEY_DELIMITER_KEY = "KEY_DELIMITER"; //$NON-NLS-1$
+	String KEY_DELIMITER = Character.toString('\u002B');
 
 	/**
 	 * The delimiter between multiple key strokes in a single key sequence --
 	 * expressed in the formal key stroke grammar. This is not to be displayed
 	 * to the user. It is only intended as an internal representation.
 	 */
-	public final static String KEY_STROKE_DELIMITER = Character.toString('\u0020'); //$NON-NLS-1$
-
+	String KEY_STROKE_DELIMITER = Character.toString('\u0020'); //$NON-NLS-1$
+	
 	/**
-	 * The key for the delimiter between key strokes. This is used in the
-	 * internationalization bundles.
+	 * Formats an individual key into a human readable format. This uses an
+	 * internationalization resource bundle to look up the key. This does not
+	 * do any platform-specific formatting (e.g., Carbon's command character).
+	 * 
+	 * @param key
+	 *            The key to format; must not be <code>null</code>.
+	 * @return The key formatted as a string; should not be <code>null</code>.
 	 */
-	final static String KEY_STROKE_DELIMITER_KEY = "KEY_STROKE_DELIMITER"; //$NON-NLS-1$
+	String format(Key key);
 
 	/**
 	 * Format the given key sequence into a string. The manner of the
@@ -55,7 +55,7 @@ public interface KeyFormatter {
 	 *            The key sequence to convert; must not be <code>null</code>.
 	 * @return A string representation of the key sequence; must not be <code>null</code>.
 	 */
-	public String format(KeySequence keySequence);
+	String format(KeySequence keySequence);
 
 	/**
 	 * Format the given key strokes into a string. The manner of the conversion
@@ -67,5 +67,5 @@ public interface KeyFormatter {
 	 * @return A string representation of the key stroke; must not be <code>
 	 *         null</code>
 	 */
-	public String formatKeyStroke(KeyStroke keyStroke);
+	String format(KeyStroke keyStroke);
 }

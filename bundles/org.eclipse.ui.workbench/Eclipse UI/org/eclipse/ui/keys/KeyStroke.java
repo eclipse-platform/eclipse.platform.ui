@@ -61,7 +61,7 @@ public final class KeyStroke implements Comparable {
 	 * The set of delimiters for <code>Key</code> objects allowed during
 	 * parsing of the formal string representation.
 	 */
-	public final static String KEY_DELIMITERS = KeyFormatter.KEY_DELIMITER;
+	public final static String KEY_DELIMITERS = IKeyFormatter.KEY_DELIMITER;
 
 	/**
 	 * Gets an instance of <code>KeyStroke</code> given a single modifier key
@@ -261,28 +261,13 @@ public final class KeyStroke implements Comparable {
 	}
 
 	/**
-	 * Formats this key stroke into the native look.
+	 * Formats this key stroke into the current default look.
 	 * 
-	 * @return A string representation for this key stroke using the native
+	 * @return A string representation for this key stroke using the default
 	 *         look; never <code>null</code>.
 	 */
 	public String format() {
-		return format(FormatManager.NATIVE);
-	}
-
-	/**
-	 * Formats this key stroke into the given <code>format</code>.
-	 * 
-	 * @param format
-	 *            The integer constant representing the format you want. This
-	 *            value must be one of the constants defined in the <code>FormatManager</code>.
-	 *            If it is not, then it the <code>FormalKeyFormatter</code>
-	 *            is used.
-	 * @return A string representation for this key stroke in the given format;
-	 *         never <code>null</code>.
-	 */
-	public String format(int format) {
-		return FormatManager.getFormatter(format).formatKeyStroke(this);
+		return KeyFormatterFactory.getDefault().format(this);
 	}
 
 	/**
@@ -339,6 +324,6 @@ public final class KeyStroke implements Comparable {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return format(FormatManager.FORMAL);
+		return KeyFormatterFactory.getFormalKeyFormatter().format(this);
 	}
 }

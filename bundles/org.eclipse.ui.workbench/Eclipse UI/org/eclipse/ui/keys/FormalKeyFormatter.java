@@ -33,7 +33,7 @@ public class FormalKeyFormatter extends AbstractKeyFormatter {
 	 * @see org.eclipse.ui.keys.AbstractKeyFormatter#getKeyDelimiter()
 	 */
 	protected String getKeyDelimiter() {
-		return KeyFormatter.KEY_DELIMITER;
+		return IKeyFormatter.KEY_DELIMITER;
 	}
 
 	/*
@@ -42,7 +42,7 @@ public class FormalKeyFormatter extends AbstractKeyFormatter {
 	 * @see org.eclipse.ui.keys.AbstractKeyFormatter#getKeyStrokeDelimiter()
 	 */
 	protected String getKeyStrokeDelimiter() {
-		return KeyFormatter.KEY_STROKE_DELIMITER;
+		return IKeyFormatter.KEY_STROKE_DELIMITER;
 	}
 
 	/*

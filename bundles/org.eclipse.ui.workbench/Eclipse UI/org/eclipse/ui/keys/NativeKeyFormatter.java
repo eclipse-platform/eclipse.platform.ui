@@ -86,7 +86,7 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
 	 *            The key to format; must not be <code>null</code>.
 	 * @return The key formatted as a string; should not be <code>null</code>.
 	 */
-	protected String formatKey(Key key) {
+	public String format(Key key) {
 		String name = key.name;
 
 		// TODO consider platform-specific resource bundles
@@ -97,7 +97,7 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
 			}
 		}
 
-		return super.formatKey(key);
+		return super.format(key);
 	}
 
 	/*
@@ -111,7 +111,7 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
 			return Util.translateString(
 				RESOURCE_BUNDLE,
 				CARBON_KEY_DELIMITER_KEY,
-				KEY_DELIMITER,
+				Util.ZERO_LENGTH_STRING,
 				false,
 				false);
 		} else {

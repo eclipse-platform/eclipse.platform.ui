@@ -26,6 +26,7 @@ import java.util.TreeSet;
  * @since 3.0
  */
 public class CompactKeyFormatter extends NativeKeyFormatter {
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -78,7 +79,7 @@ public class CompactKeyFormatter extends NativeKeyFormatter {
 		sortedModifierKeys.addAll(modifierKeys);
 		Iterator sortedModifierKeyItr = sortedModifierKeys.iterator();
 		while (sortedModifierKeyItr.hasNext()) {
-			stringBuffer.append(formatKey((ModifierKey) sortedModifierKeyItr.next()));
+			stringBuffer.append(format((ModifierKey) sortedModifierKeyItr.next()));
 			stringBuffer.append(keyDelimiter);
 		}
 
@@ -87,7 +88,7 @@ public class CompactKeyFormatter extends NativeKeyFormatter {
 		while (naturalKeyItr.hasNext()) {
 			Object naturalKey = naturalKeyItr.next();
 			if (naturalKey instanceof NaturalKey) {
-				stringBuffer.append(formatKey((NaturalKey) naturalKey));
+				stringBuffer.append(format((NaturalKey) naturalKey));
 				if (naturalKeyItr.hasNext()) {
 					stringBuffer.append(keyDelimiter);
 				}
