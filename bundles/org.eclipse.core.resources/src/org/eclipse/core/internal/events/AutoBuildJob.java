@@ -9,7 +9,6 @@
  **********************************************************************/
 package org.eclipse.core.internal.events;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.internal.resources.ICoreConstants;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.utils.Policy;
@@ -61,7 +60,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		return family == ResourcesPlugin.FAMILY_AUTO_BUILD;
 	}
 
-	private void broadcastChanges(int type) throws CoreException {
+	private void broadcastChanges(int type) {
 		workspace.getNotificationManager().broadcastChanges(workspace.getElementTree(), type, false);
 	}
 
@@ -77,7 +76,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		long delay = Math.max(Policy.MIN_BUILD_DELAY, Policy.MAX_BUILD_DELAY + lastBuild - System.currentTimeMillis());
 		int state = getState();
 		if (Policy.DEBUG_NEEDS_BUILD)
-			Policy.debug("Build requested, needsBuild: " + needsBuild + " state: " + JobManager.printState(state) + " delay: " + delay); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Policy.debug("Build requested, needsBuild: " + needsBuild + " state: " + state + " delay: " + delay); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		switch (state) {
 			case Job.SLEEPING :
 				wakeUp(delay);
