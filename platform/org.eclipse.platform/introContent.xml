@@ -30,7 +30,7 @@
   <!-- 
 
 -->
-  <page alt-style="css/standby_swt.properties" style="css/root.css" id="standby" style-id="page">
+  <page alt-style="css/standby_swt.properties" style="css/standby_root.css" id="standby" style-id="page">
     <title style-id="intro-header">Welcome to Eclipse Platform 3.0</title>
     <group id="links-background">
       <group id="page-links">

@@ -103,6 +103,7 @@ body {
 
 #background-image {
 	width : 100%;
+	min-width : 770px;
 	height : 164px;
 	background-image : url(graphics/contentpage/background.jpg);
 	background-repeat : no-repeat;
