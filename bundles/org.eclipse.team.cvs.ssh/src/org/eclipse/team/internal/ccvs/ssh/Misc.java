@@ -300,7 +300,7 @@ static public long crc32(byte[] b, int off, int len, long crc32val) {
 
 	return crc32val;
 }
-static public byte[] lengthEncode(byte[] b, int off, int len) throws IOException {
+static public byte[] lengthEncode(byte[] b, int off, int len) {
 	byte[] result = new byte[len + 4];
 	writeInt(len, result, 0);
 	System.arraycopy(b, off, result, 4, len);
@@ -354,7 +354,7 @@ public static void readFully(InputStream is, byte[] b, int off, int len) throws 
 		totalBytesRead += bytesRead;
 	}
 }
-public static int readInt(byte[] arr, int off) throws IOException {
+public static int readInt(byte[] arr, int off) {
 	int a = arr[off] & 0xff;
 	int b = arr[off + 1] & 0xff;
 	int c = arr[off + 2] & 0xff;

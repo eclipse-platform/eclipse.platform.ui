@@ -19,8 +19,8 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Vector;
 
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.internal.ccvs.ssh.Policy;
 
 /**
@@ -42,7 +42,7 @@ public class KnownHosts {
 	}
 	
 	static String defaultFilename() {
-		if (!BootLoader.getOS().equals(BootLoader.OS_LINUX)) return internalFilename();
+		if (!Platform.getOS().equals(Platform.OS_LINUX)) return internalFilename();
 		String HOME = System.getProperty("user.home"); //$NON-NLS-1$
 		if (HOME==null) return internalFilename();
 		return HOME+"/.ssh/known_hosts"; //$NON-NLS-1$
@@ -75,7 +75,6 @@ public class KnownHosts {
 		}
 		BufferedReader r = new BufferedReader(f);
 		try {
-			boolean found = false;
 			String line;
 			while ((line = r.readLine()) != null) {
 				if (line.trim().length()==0) continue;

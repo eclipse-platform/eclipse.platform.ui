@@ -9,10 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ssh;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.osgi.framework.BundleContext;
 public class SSHPlugin extends Plugin {
 	
 	public static String ID = "org.eclipse.team.cvs.ssh"; //$NON-NLS-1$
@@ -29,16 +28,16 @@ public class SSHPlugin extends Plugin {
 	/**
 	 * Constructor for SSHPlugin
 	 */
-	public SSHPlugin(IPluginDescriptor d) {
-		super(d);	
+	public SSHPlugin() {
+		super();	
 		instance = this;
 	}
 	
 	/**
-	 * @see Plugin#startup()
+	 * @see Plugin#start(BundleContext)
 	 */
-	public void startup() throws CoreException {
-		super.startup();
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 		Policy.localize("org.eclipse.team.internal.ccvs.ssh.messages"); //$NON-NLS-1$
 	}
 	

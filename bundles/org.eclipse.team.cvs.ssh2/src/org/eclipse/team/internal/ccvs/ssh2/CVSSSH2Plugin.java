@@ -12,18 +12,17 @@ package org.eclipse.team.internal.ccvs.ssh2;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 public class CVSSSH2Plugin extends AbstractUIPlugin {
 
 	public static String ID = "org.eclipse.team.cvs.ssh2"; //$NON-NLS-1$
 	private static CVSSSH2Plugin plugin;
 
-	public CVSSSH2Plugin(IPluginDescriptor d) {
-		super(d);
+	public CVSSSH2Plugin() {
+		super();
 		plugin = this;
 	}
 
@@ -31,9 +30,12 @@ public class CVSSSH2Plugin extends AbstractUIPlugin {
 		return plugin;
 	}
 
-	public void shutdown() throws org.eclipse.core.runtime.CoreException {
-		JSchSession.shutdown();
-		super.shutdown();
+	public void stop(BundleContext context) throws Exception {
+		try {
+			JSchSession.shutdown();
+		} finally {
+			super.stop(context);
+		}
 	}
 
 	public static CVSSSH2Plugin getDefault() {
@@ -48,8 +50,8 @@ public class CVSSSH2Plugin extends AbstractUIPlugin {
 		CVSSSH2PreferencePage.initDefaults(store);
 	}
 	
-	public void startup() throws CoreException {
+	public void start(BundleContext context) throws Exception {
+		super.start(context);	
 		Policy.localize("org.eclipse.team.internal.ccvs.ssh2.messages"); //$NON-NLS-1$
-		super.startup();		
 	}
 }

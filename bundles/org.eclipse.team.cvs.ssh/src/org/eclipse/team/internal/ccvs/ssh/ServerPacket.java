@@ -138,7 +138,7 @@ class ServerPacket extends Packet {
 				fill();
 			}
 
-			len = (int) Math.min(len, (buflen == remaining + bufpos ? buflen - 4 : buflen) - bufpos);
+			len = Math.min(len, (buflen == remaining + bufpos ? buflen - 4 : buflen) - bufpos);
 
 			System.arraycopy(buffer, bufpos, b, off, len);
 

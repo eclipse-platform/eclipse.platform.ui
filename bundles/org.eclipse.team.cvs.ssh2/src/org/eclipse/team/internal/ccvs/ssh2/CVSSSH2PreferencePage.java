@@ -746,7 +746,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  kpair.setPassphrase(pass);
 
-	  IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
 	  String home=ssh2HomeText.getText();
 
 	  File _home=new File(home);
@@ -839,7 +838,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
       channel.connect();
       ChannelSftp c=(ChannelSftp)channel;
 
-      String pwd=c.pwd();
+      c.pwd();
       SftpATTRS attr=null;
 
       try{ attr=c.stat(".ssh"); } //$NON-NLS-1$

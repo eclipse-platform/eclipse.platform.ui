@@ -61,22 +61,10 @@ public class Client {
 	private static String[] cipherNames = { "None", "IDEA", "DES", "3DES", "TSS", "RC4", "Blowfish" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 
 	// cipher types
-	private static int SSH_CIPHER_NONE = 0;
-	private static int SSH_CIPHER_IDEA = 1;
-	private static int SSH_CIPHER_DES = 2;
-	private static int SSH_CIPHER_3DES = 3;
-	private static int SSH_CIPHER_TSS = 4;
-	private static int SSH_CIPHER_RC4 = 5;
 	private static int SSH_CIPHER_BLOWFISH = 6;
 
 	// preferred cipher types
 	private int[] preferredCipherTypes = { SSH_CIPHER_BLOWFISH };
-
-	// authentication methods 
-	private final int SSH_AUTH_RHOSTS = 1;
-	private final int SSH_AUTH_RSA = 2;
-	private final int SSH_AUTH_PASSWORD = 3;
-	private final int SSH_AUTH_RHOSTS_RSA = 4;
 
 	private String host;
 	private int port;
@@ -97,10 +85,8 @@ public class Client {
 	private class StandardInputStream extends InputStream {
 		private ServerPacket packet = null;
 		private InputStream buffer = null;
-		private int buflen = 0;
 		private boolean atEnd = false;
 		private boolean closed = false;
-		private int exitStatus = 0;
 
 		public int available() throws IOException {
 			if (closed) {
@@ -127,7 +113,6 @@ public class Client {
 					packet.close(false);
 					buffer = null;
 					packet = null;
-					buflen = 0;
 				}
 			}
 		}
@@ -183,20 +168,18 @@ public class Client {
 				case SSH_SMSG_STDERR_DATA :
 				case SSH_MSG_DEBUG :
 					buffer = packet.getInputStream();
-					buflen = Misc.readInt(buffer);
+					Misc.readInt(buffer);
 					break;
 				case SSH_SMSG_EXITSTATUS :
 					buffer = null;
-					buflen = 0;
 					atEnd = true;
 					InputStream pis = packet.getInputStream();
-					exitStatus = Misc.readInt(pis);
+					Misc.readInt(pis);
 					pis.close();
 					send(SSH_CMSG_EXIT_CONFIRMATION, null);
 					break;
 				case SSH_MSG_DISCONNECT :
 					buffer = null;
-					buflen = 0;
 					atEnd = true;
 					handleDisconnect(packet.getInputStream());
 					break;
@@ -692,7 +675,7 @@ private void send_SSH_CMSG_SESSION_KEY(byte[] anti_spoofing_cookie, byte[] host_
 	byte[] data = new byte[1 + anti_spoofing_cookie.length + session_key_encrypted.length + protocol_flags.length];
 
 	offset = 0;
-	data[offset++] = (byte) cipher_type;
+	data[offset++] = cipher_type;
 
 	System.arraycopy(anti_spoofing_cookie, 0, data, offset, anti_spoofing_cookie.length);
 
