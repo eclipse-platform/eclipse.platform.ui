@@ -43,7 +43,12 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 		if (info == null) {
 			info = subscriber.getSyncInfo(resource);
 			if ((info != null && info.getKind() != SyncInfo.IN_SYNC)) {
-				throw new AssertionFailedError();
+				throw new AssertionFailedError(
+						"Sync info for " 
+						+ resource.getFullPath() 
+						+ " was "
+						+ SyncInfo.kindToString(info.getKind())
+						+ " but resource was not collected");
 			}
 		}
 		return info;
