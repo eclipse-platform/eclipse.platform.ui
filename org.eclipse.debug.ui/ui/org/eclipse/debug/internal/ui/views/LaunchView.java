@@ -299,6 +299,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		setActive(page.findView(getSite().getId()) != null);
 		updateActions();
+		showMarkerForCurrentSelection();
 	}
 
 	/**
