@@ -14,6 +14,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 import java.util.Vector;
 
@@ -26,6 +27,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -130,6 +132,33 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 			DebugEvent event= events[i];
 			if (event.getKind() == DebugEvent.SUSPEND) {
 				handleSuspendEvent(event);
+			} else if (event.getKind() == DebugEvent.TERMINATE) {
+				handleTerminateEvent(event);
+			}
+		}
+	}
+
+	/**
+	 * When a terminate event is received for a debug target, remove
+	 * any of its threads from the resumed threads collection. This not only
+	 * prevents unnecessary stack frame label computations, it is a
+	 * backstop for cleaning up threads in the collection.
+	 * 
+	 * @param event the terminate event
+	 */
+	private void handleTerminateEvent(DebugEvent event) {
+		Object source= event.getSource();
+		if (source instanceof IDebugTarget) {
+			List copiedThreads= new ArrayList(resumedThreads);
+			ListIterator iterator = copiedThreads.listIterator();
+			while (iterator.hasNext()) {
+				IThread thread = (IThread) iterator.next();
+				if (thread.getDebugTarget() == source) {
+					iterator.remove();
+				}
+			}
+			synchronized(resumedThreads) {
+				resumedThreads.retainAll(copiedThreads);
 			}
 		}
 	}
@@ -143,8 +172,10 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 	 */
 	private void handleSuspendEvent(DebugEvent event) {
 		Object source= event.getSource();
-		if (!resumedThreads.remove(source)) {
-			return;
+		synchronized (resumedThreads) {
+			if (!resumedThreads.remove(source)) {
+				return;
+			}
 		}
 		if (!event.isEvaluation() && (event.getDetail() & DebugEvent.STEP_END) == 0) {
 			return;
@@ -237,8 +268,10 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 							// the thread manages to resume after we check its suspended status and then
 							// suspend before we check the status for the next frame.
 							IThread thread= ((IStackFrame) element).getThread();
-							if (!thread.isSuspended()) {
-								resumedThreads.add(thread);
+							synchronized(resumedThreads) {
+								if (!thread.isTerminated() && !thread.isSuspended()) {
+									resumedThreads.add(thread);
+								}
 							}
 						}
 						fLabelProvider.textComputed(element, fJobPresentation.getText(element));
