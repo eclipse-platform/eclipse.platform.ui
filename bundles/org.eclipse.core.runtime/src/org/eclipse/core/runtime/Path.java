@@ -41,6 +41,14 @@ public class Path implements IPath, Cloneable {
 
 	/** Constant value containing the empty path with no device. */
 	public static final Path EMPTY = new Path(EMPTY_STRING);
+/* (Intentionally not included in javadoc)
+ * Private constructor.
+ */
+private Path() {
+	
+	super();
+}
+
 /** 
  * Constructs a new path from the given string path.
  * The given string path must be valid.
@@ -94,12 +102,63 @@ public IPath addTrailingSeparator() {
  * @see IPath#append(java.lang.String)
  */
 public IPath append(String tail) {
-	if (tail.length() == 0) {
+
+	// Appending a zero length string has no effect.
+	int tailLength = tail.length();
+	if (tailLength == 0)
 		return this;
+
+	// Must retain compatibility with zero path length appending
+	// so do a slow append.
+	int pathLength = path.length();
+	if (pathLength == 0)
+		return append(new Path(tail));
+
+	// Figure out the leading separator case for the tail
+	// and trailing separator for the receiver.
+	boolean trailing = path.charAt(path.length() - 1) == SEPARATOR;
+	boolean leading = tail.charAt(0) == SEPARATOR;
+
+	// If the receiver has a trailing separator *and* the tail
+	// has a leading separator, we have at least one separator too many.
+	if (leading && trailing)
+		return append(tail.substring(1, tailLength));
+
+	// If the receiver does not have a trailing separator and the
+	// the tail does not have a leading separator then we will
+	// actually be appending "/" + tail.
+	String append;
+	int appendLength;
+	if (!trailing && !leading) {
+		append = ROOT_STRING.concat(tail);
+		appendLength = tailLength + 1;
+	} else {
+		append = tail;
+		appendLength = tailLength;
 	}
-	Path tailPath = new Path(tail);
-	return append(tailPath);
+
+	// Fast track the case of appending a segment
+	// known not to have any effect on canonicalization.
+
+	// Scan the tail looking for instances of "//" or
+	// "/../" or "/./" which are canon-breakers.
+	for (int i = 0; i < appendLength - 1; i++) {
+		char c = append.charAt(i);
+		if ((c == SEPARATOR) || (c == '.')) {
+			char lookAhead = append.charAt(i + 1);
+			if ((lookAhead == SEPARATOR) || (lookAhead == '.'))
+				// Have to do the slow append with re-canonicalization.
+				return append(new Path(tail));
+		}
+	}
+
+	// This is a fast-track append.
+	Path newPath = new Path();
+	newPath.device = device;
+	newPath.path = path.concat(append);
+	return newPath;
 }
+
 /* (Intentionally not included in javadoc)
  * @see IPath#append(IPath)
  */
