@@ -204,13 +204,10 @@ public class Util {
                 public void run() {
                     try {
                         Process p = doOpenBrowser(localHref, true);
-                        if (p == null) {
+                        if (p == null) 
                             // no browser already opened. Launch new one.
-                            p = doOpenBrowser(localHref, false);
-                            if (p == null)
-                                // failed to launch new browser.
-                                throw new Exception();
-                        }
+                            doOpenBrowser(localHref, false);
+                        
                     } catch (Exception e) {
                         openBrowserError(display, e);
                     }
