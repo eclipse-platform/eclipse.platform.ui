@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,14 +14,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ant.internal.ui.editor.outline.IProblem;
-import org.eclipse.ui.texteditor.MarkerAnnotation;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Annotation representating an <code>IProblem</code>.
@@ -30,28 +26,18 @@ public class XMLProblemAnnotation extends Annotation implements IXMLAnnotation {
 	
 	private List fOverlaids;
 	private IProblem fProblem;
-	private String fType;
-	
 	
 	public XMLProblemAnnotation(IProblem problem) {
 		
 		fProblem= problem;
-		setLayer(MarkerAnnotation.PROBLEM_LAYER + 1);
 		
 		if (fProblem.isError()) {
-			fType= ERROR_ANNOTATION_TYPE;
+			setType(ERROR_ANNOTATION_TYPE);
 		} else if (fProblem.isWarning()) {
-			fType= WARNING_ANNOTATION_TYPE;
+			setType(WARNING_ANNOTATION_TYPE);
 		} else {
-			fType= INFO_ANNOTATION_TYPE;
+			setType(INFO_ANNOTATION_TYPE);
 		}	
-	}
-	
-	/**
-	 * @see org.eclipse.jface.text.source.Annotation#paint(org.eclipse.swt.graphics.GC, org.eclipse.swt.widgets.Canvas, org.eclipse.swt.graphics.Rectangle)
-	 * @deprecated
-	 */
-	public void paint(GC gc, Canvas canvas, Rectangle r) {
 	}
 	
 	/* (non-Javadoc)
@@ -79,7 +65,7 @@ public class XMLProblemAnnotation extends Annotation implements IXMLAnnotation {
 	 * @see org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation#isProblem()
 	 */
 	public boolean isProblem() {
-		return WARNING_ANNOTATION_TYPE.equals(fType) || ERROR_ANNOTATION_TYPE.equals(fType);
+		return WARNING_ANNOTATION_TYPE.equals(getType()) || ERROR_ANNOTATION_TYPE.equals(getType());
 	}
 	
 	/* (non-Javadoc)
@@ -128,12 +114,5 @@ public class XMLProblemAnnotation extends Annotation implements IXMLAnnotation {
 			return fOverlaids.iterator();
 		}
 		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation#getAnnotationType()
-	 */
-	public String getAnnotationType() {
-		return fType;
 	}
 }

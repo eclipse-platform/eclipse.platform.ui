@@ -32,7 +32,7 @@ public interface IXMLAnnotation {
 	 *
 	 * @return the type of the annotation or <code>null</code> if it has none.
 	 */
-	public String getAnnotationType();
+	public String getType();
 	
 	/**
 	 * Returns whether this annotation is temporary rather than persistent.

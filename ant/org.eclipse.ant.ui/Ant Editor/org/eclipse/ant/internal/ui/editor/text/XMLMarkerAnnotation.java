@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,17 +13,13 @@ package org.eclipse.ant.internal.ui.editor.text;
 
 import java.util.Iterator;
 
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
-import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotation {
 	private static final int NO_IMAGE= 0;
@@ -35,17 +31,10 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 	
 	private IXMLAnnotation fOverlay;
 	private boolean fNotRelevant= false;
-	private String fType;
 	private int fImageType;
 	
-	/**
-	 * The marker annotation preferences.
-	 * @since 3.0
-	 */
-	private MarkerAnnotationPreferences fMarkerAnnotationPreferences;
-	
-	public XMLMarkerAnnotation(IMarker marker) {
-		super(marker);
+	public XMLMarkerAnnotation(String annotationType, IMarker marker) {
+		super(annotationType, marker);
 	}
 	
 	/* (non-Javadoc)
@@ -53,38 +42,8 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 	 */
 	protected void initialize() {
 		fImageType= NO_IMAGE;
-		IMarker marker= getMarker();
 		
-		fMarkerAnnotationPreferences= new MarkerAnnotationPreferences();
-		fType= findAnnotationTypeForMarker(marker);
 		super.initialize();
-	}
-	
-	/**
-	 * Finds the annotation type for the given marker.
-	 * 
-	 * @param marker the marker
-	 * @return the annotation type or <code>null</code> if none was found
-	 * @since 3.0
-	 */
-	private String findAnnotationTypeForMarker(IMarker marker) {
-		Iterator e= fMarkerAnnotationPreferences.getAnnotationPreferences().iterator();
-		while (e.hasNext()) {
-			AnnotationPreference annotationPreference= (AnnotationPreference) e.next();
-			boolean isSubtype;
-			Integer severity;
-			try {
-				isSubtype= marker.isSubtypeOf(annotationPreference.getMarkerType());
-				severity= (Integer)marker.getAttribute(IMarker.SEVERITY);
-			} catch (CoreException ex) {
-				AntUIPlugin.log(ex);
-				return null;
-			}
-			if (isSubtype && (severity == null || severity.intValue() == annotationPreference.getSeverity())) {
-				return (String)annotationPreference.getAnnotationType();
-			}
-		}
-		return null;
 	}
 		
 	/* (non-Javadoc)
@@ -109,7 +68,7 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 	 * @see org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation#isProblem()
 	 */
 	public boolean isProblem() {
-		return WARNING_ANNOTATION_TYPE.equals(fType) || ERROR_ANNOTATION_TYPE.equals(fType);
+		return WARNING_ANNOTATION_TYPE.equals(getType()) || ERROR_ANNOTATION_TYPE.equals(getType());
 	}
 	
 	/* (non-Javadoc)
@@ -125,14 +84,16 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 	 * @param xmlAnnotation annotation that is overlaid by this annotation
 	 */
 	public void setOverlay(IXMLAnnotation xmlAnnotation) {
-		if (fOverlay != null)
+		if (fOverlay != null) {
 			fOverlay.removeOverlaid(this);
+		}
 			
 		fOverlay= xmlAnnotation;
 		fNotRelevant= (fNotRelevant || fOverlay != null);
 		
-		if (xmlAnnotation != null)
+		if (xmlAnnotation != null) {
 			xmlAnnotation.addOverlaid(this);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -223,12 +184,5 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 	public Iterator getOverlaidIterator() {
 		// not supported
 		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation#getAnnotationType()
-	 */
-	public String getAnnotationType() {
-		return fType;
 	}
 }

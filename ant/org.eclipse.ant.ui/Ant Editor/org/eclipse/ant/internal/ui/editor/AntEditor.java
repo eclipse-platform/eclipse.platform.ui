@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2003 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2004 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -297,7 +297,7 @@ public class AntEditor extends TextEditor {
 	 * @see org.eclipse.ui.texteditor.ExtendedTextEditor#createAnnotationAccess()
 	 */
 	protected IAnnotationAccess createAnnotationAccess() {
-		return new AnnotationAccess(getAnnotationPreferences());
+		return new AnnotationAccess();
 	}
 	
 	/**
