@@ -616,23 +616,33 @@ public final class WorkbenchActionBuilder {
 	 * Creates and returns the Help menu.
 	 */
 	private MenuManager createHelpMenu() {
+
 		MenuManager menu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.help"), IWorkbenchActionConstants.M_HELP); //$NON-NLS-1$
+	    addSeparatorOrGroupMarker(menu, "group.intro"); //$NON-NLS-1$
 		// See if a welcome or intro page is specified
 		if (introAction != null)
 			menu.add(introAction);
 		else if (quickStartAction != null)
 			menu.add(quickStartAction);
+		menu.add(new GroupMarker("group.intro.ext")); //$NON-NLS-1$
+	    addSeparatorOrGroupMarker(menu, "group.main"); //$NON-NLS-1$
 		menu.add(helpContentsAction);
 		
         // See if a tips and tricks page is specified
 		if (tipsAndTricksAction != null)
 			menu.add(tipsAndTricksAction);
+		// HELP_START should really be the first item, but it was after quickStartAction and tipsAndTricksAction in 2.1.
 		menu.add(new GroupMarker(IWorkbenchActionConstants.HELP_START));
+		menu.add(new GroupMarker("group.main.ext")); //$NON-NLS-1$
+	    addSeparatorOrGroupMarker(menu, "group.tutorials"); //$NON-NLS-1$
+	    addSeparatorOrGroupMarker(menu, "group.tools"); //$NON-NLS-1$
+	    addSeparatorOrGroupMarker(menu, "group.updates"); //$NON-NLS-1$
 		menu.add(new GroupMarker(IWorkbenchActionConstants.HELP_END));
-		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+		addSeparatorOrGroupMarker(menu, IWorkbenchActionConstants.MB_ADDITIONS);
 		// about should always be at the bottom				
-		menu.add(new Separator());
+		menu.add(new Separator("group.about")); //$NON-NLS-1$
 		menu.add(aboutAction);
+		menu.add(new GroupMarker("group.about.ext")); //$NON-NLS-1$
 		
 		/*		
 		final IMutableContextActivationService contextActivationServiceA = ContextActivationServiceFactory.getMutableContextActivationService();
@@ -876,6 +886,26 @@ public final class WorkbenchActionBuilder {
 	}
 
 	/**
+	 * Adds a <code>GroupMarker</code> or <code>Separator</code> to a menu.  The 
+	 * test for whether a separator should be added is done by checking for the existence
+	 * of a preference matching the string useSeparator.MENUID.GROUPID that is set
+	 * to <code>true</code>.
+	 * 
+     * @param menu  the menu to add to
+     * @param string  the group id for the added separator or group marker
+     */
+    private void addSeparatorOrGroupMarker(MenuManager menu, String groupId) {
+        String prefId = "useSeparator." + menu.getId() + "." + groupId; //$NON-NLS-1$ //$NON-NLS-2$
+	    boolean addExtraSeparators = IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(prefId);
+        if (addExtraSeparators) {
+            menu.add(new Separator(groupId));
+        }
+        else {
+            menu.add(new GroupMarker(groupId));
+        }
+    }
+
+    /**
 	 * Disposes any resources and unhooks any listeners that are no longer needed.
 	 * Called when the window is closed.
 	 */
