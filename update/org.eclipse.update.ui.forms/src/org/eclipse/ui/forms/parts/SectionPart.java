@@ -241,6 +241,7 @@ public abstract class SectionPart implements IPropertyChangeListener {
 	 *            SEPARATOR, DESCRIPTION, COLLAPSABLE and COMPACT.
 	 */
 	public SectionPart(int style) {
+		this.style = style;
 		JFaceResources.getFontRegistry().addListener(this);
 	}
 
@@ -267,15 +268,11 @@ public abstract class SectionPart implements IPropertyChangeListener {
 		section.setLayout(slayout);
 		section.setData(this);
 
-		FormColors colors = toolkit.getColors();
-
 		if (hasStyle(TITLE)) {
-			Color headerColor = colors.getColor(FormColors.TITLE);
 			titleLabel =
 				toolkit.createHeadingLabel(
 					section,
 					getTitle(),
-					headerColor,
 					SWT.WRAP);
 			if (hasStyle(COLLAPSABLE)) {
 				twistie = toolkit.createTwistie(section);

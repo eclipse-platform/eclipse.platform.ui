@@ -27,8 +27,10 @@ public class FormToolkit {
 	private KeyListener deleteListener;
 	private BorderPainter borderPainter;
 	private HyperlinkGroup hyperlinkGroup;
-	/* default */ VisibilityHandler visibilityHandler;
-	/* default */ KeyboardHandler keyboardHandler;
+	/* default */
+	VisibilityHandler visibilityHandler;
+	/* default */
+	KeyboardHandler keyboardHandler;
 
 	private class BorderPainter implements PaintListener {
 		public void paintControl(PaintEvent event) {
@@ -36,33 +38,59 @@ public class FormToolkit {
 			Control[] children = composite.getChildren();
 			for (int i = 0; i < children.length; i++) {
 				Control c = children[i];
-				boolean inactiveBorder=false;
+				boolean inactiveBorder = false;
 				if (c.getEnabled() == false && !(c instanceof CCombo))
 					continue;
 				if (c instanceof Hyperlink)
 					continue;
 				Object flag = c.getData(KEY_DRAW_BORDER);
-				if (flag!=null) {
-					if (flag.equals(Boolean.FALSE)) continue;
-					if (flag.equals(TREE_BORDER)) inactiveBorder=true;
+				if (flag != null) {
+					if (flag.equals(Boolean.FALSE))
+						continue;
+					if (flag.equals(TREE_BORDER))
+						inactiveBorder = true;
 				}
-				 
-				if (!inactiveBorder && (c instanceof Text || c instanceof Canvas || c instanceof CCombo)) {
+
+				if (!inactiveBorder
+					&& (c instanceof Text
+						|| c instanceof Canvas
+						|| c instanceof CCombo)) {
 					Rectangle b = c.getBounds();
 					GC gc = event.gc;
 					gc.setForeground(c.getBackground());
-					gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1, b.height + 1);
+					gc.drawRectangle(
+						b.x - 1,
+						b.y - 1,
+						b.width + 1,
+						b.height + 1);
 					gc.setForeground(colors.getForeground());
 					if (c instanceof CCombo)
-						gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1, b.height + 1);
-					else 
-						gc.drawRectangle(b.x - 1, b.y - 2, b.width + 1, b.height + 3);
-				} else if (inactiveBorder ||c instanceof Table || c instanceof Tree || c instanceof TableTree) {
+						gc.drawRectangle(
+							b.x - 1,
+							b.y - 1,
+							b.width + 1,
+							b.height + 1);
+					else
+						gc.drawRectangle(
+							b.x - 1,
+							b.y - 2,
+							b.width + 1,
+							b.height + 3);
+				} else if (
+					inactiveBorder
+						|| c instanceof Table
+						|| c instanceof Tree
+						|| c instanceof TableTree) {
 					Rectangle b = c.getBounds();
 					GC gc = event.gc;
 					gc.setForeground(colors.getBorderColor());
-					//gc.drawRectangle(b.x - 2, b.y - 2, b.width + 3, b.height + 3);
-					gc.drawRectangle(b.x - 1, b.y - 1, b.width + 2, b.height + 2);
+					//gc.drawRectangle(b.x - 2, b.y - 2, b.width + 3, b.height
+					// + 3);
+					gc.drawRectangle(
+						b.x - 1,
+						b.y - 1,
+						b.width + 2,
+						b.height + 2);
 				}
 			}
 		}
@@ -85,20 +113,21 @@ public class FormToolkit {
 			}
 		}
 	}
-/**
- * Creates a toolkit that is self-sufficient (will manage its own
- * colors).
- *
- */
-	
+	/**
+	 * Creates a toolkit that is self-sufficient (will manage its own colors).
+	 *  
+	 */
+
 	public FormToolkit() {
 		this(new FormColors());
 	}
 
-/**
- * Creates a toolkit that will use the provided (shared) colors.
- * @param colors the shared colors
- */
+	/**
+	 * Creates a toolkit that will use the provided (shared) colors.
+	 * 
+	 * @param colors
+	 *            the shared colors
+	 */
 	public FormToolkit(FormColors colors) {
 		this.colors = colors;
 		initialize();
@@ -134,28 +163,17 @@ public class FormToolkit {
 	}
 
 	public Label createHeadingLabel(Composite parent, String text) {
-		return createHeadingLabel(parent, text, null, SWT.NONE);
+		return createHeadingLabel(parent, text, SWT.NONE);
 	}
 
 	public Label createHeadingLabel(Composite parent, String text, int style) {
-		return createHeadingLabel(parent, text, null, style);
-	}
-
-	public Label createHeadingLabel(Composite parent, String text, Color bg) {
-		return createHeadingLabel(parent, text, bg, SWT.NONE);
-	}
-
-	public Label createHeadingLabel(
-		Composite parent,
-		String text,
-		Color bg,
-		int style) {
 		Label label = new Label(parent, style);
 		if (text != null)
 			label.setText(text);
 		label.setBackground(colors.getBackground());
 		label.setForeground(colors.getForeground());
-		label.setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
+		label.setFont(
+			JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
 		return label;
 	}
 
@@ -198,21 +216,36 @@ public class FormToolkit {
 		engine.marginWidth = 1;
 		engine.marginHeight = 0;
 		engine.setHyperlinkSettings(getHyperlinkGroup());
-		if (trackFocus) engine.addFocusListener(visibilityHandler);
+		if (trackFocus)
+			engine.addFocusListener(visibilityHandler);
 		engine.addKeyListener(keyboardHandler);
 		engine.setMenu(parent.getMenu());
 		return engine;
 	}
-	
+
 	public Twistie createTwistie(Composite parent) {
 		Twistie twistie = new Twistie(parent, SWT.NULL);
 		twistie.setBackground(colors.getBackground());
-		twistie.setActiveDecorationColor(getHyperlinkGroup().getActiveForeground());
+		twistie.setActiveDecorationColor(
+			getHyperlinkGroup().getActiveForeground());
 		twistie.setDecorationColor(colors.getColor(FormColors.SEPARATOR));
 		twistie.setActiveCursor(FormsResources.getHandCursor());
 		twistie.addFocusListener(visibilityHandler);
 		twistie.addKeyListener(keyboardHandler);
 		return twistie;
+	}
+
+	public ExpandableComposite createExpandableComposite(Composite parent) {
+		ExpandableComposite ec = new ExpandableComposite(parent, SWT.NULL);
+		ec.setBackground(colors.getBackground());
+		ec.setForeground(colors.getForeground());
+		ec.textLabel.setBackground(colors.getBackground());
+		hyperlinkGroup.add(ec.textLabel);
+		ec.textLabel.addFocusListener(visibilityHandler);
+		ec.textLabel.addKeyListener(keyboardHandler);
+		ec.textLabel.setFont(
+			JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
+		return ec;
 	}
 
 	public Label createSeparator(Composite parent, int style) {
@@ -262,7 +295,7 @@ public class FormToolkit {
 		}
 	}
 	public void dispose() {
-		if (colors.isShared()==false) {
+		if (colors.isShared() == false) {
 			colors.dispose();
 			colors = null;
 		}
@@ -288,7 +321,7 @@ public class FormToolkit {
 		visibilityHandler = new VisibilityHandler();
 		keyboardHandler = new KeyboardHandler();
 	}
-	
+
 	public void updateHyperlinkColors() {
 		hyperlinkGroup.initializeDefaultForegrounds();
 	}
@@ -298,7 +331,7 @@ public class FormToolkit {
 			borderPainter = new BorderPainter();
 		parent.addPaintListener(borderPainter);
 	}
-	
+
 	public FormColors getColors() {
 		return colors;
 	}

@@ -160,12 +160,4 @@ public class FormColors {
 	public boolean isShared() {
 		return shared;
 	}
-
-	private static Display getStandardDisplay() {
-		Display display;
-		display = Display.getCurrent();
-		if (display == null)
-			display = Display.getDefault();
-		return display;
-	}
 }

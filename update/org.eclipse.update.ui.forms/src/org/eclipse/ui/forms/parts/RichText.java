@@ -51,7 +51,7 @@ public class RichText extends Canvas {
 
 	private HyperlinkSegment entered;
 	private boolean mouseDown = false;
-	private Point dragOrigin;
+	//private Point dragOrigin;
 	private Action openAction;
 	private Action copyShortcutAction;
 	private boolean loading = true;
@@ -526,7 +526,7 @@ public class RichText extends Canvas {
 				paintFocusTransfer(oldLink, segmentUnder);
 			}
 			mouseDown = true;
-			dragOrigin = new Point(e.x, e.y);
+			//dragOrigin = new Point(e.x, e.y);
 		} else {
 			if (e.button == 1) {
 				HyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
