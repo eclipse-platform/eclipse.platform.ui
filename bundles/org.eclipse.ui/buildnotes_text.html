@@ -14,7 +14,86 @@ Eclipse Platform Build Notes</h1>
 <h1>
 Text Editor Support (including JFace Text)</h1>
 
-<p><br>Eclipse SDK Build 135
+<p><br>Eclipse SDK Build 200
+<h2>
+Breaking API changes</h2>
+&nbsp; package:&nbsp;&nbsp; org.eclipse.jface.text
+<br>&nbsp; interface:&nbsp;&nbsp; ITextViewer
+<br>&nbsp; change:&nbsp;&nbsp; added method public void invalidateTextPresentation(
+)
+<br>&nbsp; change type: breaking API change for implementers of ITextViewer
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.jface.text
+<br>&nbsp; interface:&nbsp;&nbsp; ITextViewer
+<br>&nbsp; change:&nbsp;&nbsp; added method public void setDefaultPrefixes(String[]
+defaultPrefixes, String contentType)
+<br>&nbsp; change type: breaking API change for implementers of ITextViewer
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.jface.text
+<br>&nbsp; interface:&nbsp;&nbsp; ITextViewer
+<br>&nbsp; change:&nbsp;&nbsp; removed method&nbsp; void setDefaultPrefix(String
+defaultPrefix, String contentType)
+<br>&nbsp; change type: breaking API change for implementers of ITextViewer
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.jface.text.rules
+<br>&nbsp; class:&nbsp;&nbsp; RuleBasedDamagerRepairer
+<br>&nbsp; change:&nbsp;&nbsp; deprecated constructor&nbsp; public RuleBasedDamagerRepairer(RuleBasedScanner
+scanner, TextAttribute defaultTextAttribute)
+<br>&nbsp; change type: breaking API change for clients of RuleBasedDamagerRepairer
+<h2>
+Other highlights</h2>
+For more information about the following issue please see JavaDoc of the
+classes
+<ul>
+<li>
+IContextInformationValidator implementers may also implement IContextInformationPresenter
+to style context information</li>
+
+<li>
+ITextHover implementers may also implement IHoverInfoPresenter to style
+hover information</li>
+
+<li>
+PropagatingFontFieldEditor has been introduced</li>
+
+<li>
+MonoReconciler has been introduced to support partition independent reconciling</li>
+
+<li>
+Token has been reimplemented, supports setData method now</li>
+
+<li>
+RuleBasedScanner now supports&nbsp; public void setDefaultReturnToken(IToken
+defaultReturnToken). This token is returned if no rule can fire.</li>
+
+<li>
+TextPresentation now supports&nbsp; public static void applyTextPresentation(TextPresentation
+presentation, StyledText text)</li>
+
+<li>
+BasicMarkerUpdater has been marked as final</li>
+
+<li>
+SelectMarkerRulerAction has been introduced</li>
+
+<li>
+WorkbenchChainedTextFontFieldEditor has been introduced</li>
+</ul>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+1GJ65EW: ITPSRCEDIT:WINNT - ResourceMarkerAnnotaionModel: unnecessary fireModelChange
+<br>1GIYR3X: ITPSRCEDIT:ALL - NL: word select (double click) in Java comments
+<br>1GGYYWK: ITPJUI:ALL - Dismissing editor with code assist up causes
+lots of Internal Errors
+<br>1GEUOZ9: ITPJUI:ALL - Confusing UI for multiline Bookmarks and Tasks
+<br>1GII2RZ: ITPJUI:WINNT - AssertionFailed Ex. in Java editor
+<br>1GIYQ9K: ITPUI:WINNT - StyledText swallows Shift+TAB
+<br>1GIJZOO: ITPSRCEDIT:ALL - Gotodialog's edit field has no initial focus
+<br>&nbsp;
+<p>
+<hr WIDTH="100%">
+<p>Eclipse SDK Build 135
 <h2>
 Breaking API changes</h2>
 

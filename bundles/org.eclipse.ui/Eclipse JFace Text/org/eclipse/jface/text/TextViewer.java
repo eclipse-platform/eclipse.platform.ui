@@ -12,11 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.Viewer;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -31,6 +26,8 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
@@ -44,8 +41,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
-import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.Viewer;
 
 
 
@@ -527,6 +527,17 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		fTextWidget.setFont(parent.getFont());
 		fTextWidget.setDoubleClickEnabled(false);
 		
+		/*
+		 * Disable SWT Shift+TAB traversal in this viewer
+		 * 1GIYQ9K: ITPUI:WINNT - StyledText swallows Shift+TAB
+		 */
+		fTextWidget.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				if ((SWT.SHIFT == e.stateMask) && ('\t' == e.character))
+					e.doit = false;
+			}	
+		});
+		
 		// where does the first line start
 		fTopInset= -fTextWidget.computeTrim(0, 0, 0, 0).y;
 		
@@ -541,31 +552,9 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			}
 		});
 		
-		/*
-		 * 1GERDLB: ITPUI:ALL - Important: Viewers should add a help listener only when required
-		 * Removed:
-		 
-			fTextWidget.addHelpListener(new HelpListener() {
-				public void helpRequested(HelpEvent event) {
-					TextViewer.this.helpRequested(event);
-				}
-			});
-		 */
-		
 		initializeViewportUpdate();
 	}
-	
-	/*
-	 * 1GERDLB: ITPUI:ALL - Important: Viewers should add a help listener only when required
-	 * Removed:
-	 *
-	 * Circumvents visiblity issues by calling the actualli intended method.
-	 *
-		private void helpRequested(HelpEvent event) { 
-			super.handleHelpRequest(event);
-		}
-	 */
-	
+		
 	/*
 	 * @see Viewer#getControl
 	 */
@@ -745,14 +734,14 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	}
 			
 	/*
-	 * @see ITextViewer#setDefaultPrefix
+	 * @see ITextViewer#setDefaultPrefixes
 	 */
-	public void setDefaultPrefix(String defaultPrefix, String contentType) {
+	public void setDefaultPrefixes(String[] defaultPrefixes, String contentType) {
 				
-		if (defaultPrefix != null && defaultPrefix.length() > 0) {
+		if (defaultPrefixes != null && defaultPrefixes.length > 0) {
 			if (fDefaultPrefixChars == null)
 				fDefaultPrefixChars= new HashMap();
-			fDefaultPrefixChars.put(contentType, new String[] { defaultPrefix });
+			fDefaultPrefixChars.put(contentType, defaultPrefixes);
 		} else if (fDefaultPrefixChars != null)
 			fDefaultPrefixChars.remove(contentType);
 	}
@@ -1418,8 +1407,22 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	}
 	
 	/**
-	 * Initializes the text widget with the visual document. Informs
-	 * all text listeners about this initialization.
+	 * Invalidates the current presentation by sending an initialization
+	 * event to all text listener.
+	 */
+	public final void invalidateTextPresentation() {
+		if (fVisibleDocument != null) {
+			fWidgetCommand.start= 0;
+			fWidgetCommand.length= 0;
+			fWidgetCommand.text= fVisibleDocument.get();
+			fWidgetCommand.event= null;
+			updateTextListeners(fWidgetCommand);
+		}
+	}
+	
+	/**
+	 * Initializes the text widget with the visual document and
+	 * invalidates the overall presentation.
 	 */
 	private void initializeWidgetContents() {
 		
@@ -1432,12 +1435,8 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			fDocumentAdapter.setDocument(fVisibleDocument);
 			fTextWidget.setContent(fDocumentAdapter);
 								
-			// sent out appropriate widget change event				
-			fWidgetCommand.start= 0;
-			fWidgetCommand.length= 0;
-			fWidgetCommand.text= fVisibleDocument.get();
-			fWidgetCommand.event= null;
-			updateTextListeners(fWidgetCommand);
+			// invalidate presentation				
+			invalidateTextPresentation();
 		}
 	}
 	
@@ -1618,7 +1617,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	 * manipulated by interested parties. By default, the hook forwards the command
 	 * to the installed <code>IAutoIndentStrategy</code>.
 	 *
-	 * @param command the document command representing the varify event
+	 * @param command the document command representing the verify event
 	 */
 	protected void customizeDocumentCommand(DocumentCommand command) {
 		if (!fIgnoreAutoIndent) {
@@ -1681,7 +1680,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				return isEditable() && fIndentChars != null && isBlockSelected();
 			case PREFIX:
 			case STRIP_PREFIX:
-				return isEditable() && fDefaultPrefixChars != null && isBlockSelected();
+				return isEditable() && fDefaultPrefixChars != null;
 			case UNDO:
 				return fUndoManager != null && fUndoManager.undoable();
 			case REDO:
@@ -1736,16 +1735,16 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				setSelectedRange(getVisibleRegionOffset(), getVisibleDocument().getLength());
 				break;
 			case SHIFT_RIGHT:
-				shift(false, true);
+				shift(false, true, false);
 				break;
 			case SHIFT_LEFT:
-				shift(false, false);
+				shift(false, false, false);
 				break;
 			case PREFIX:
-				shift(true, true);
+				shift(true, true, true);
 				break;
 			case STRIP_PREFIX:
-				shift(true, false);
+				shift(true, false, true);
 				break;
 			case PRINT:
 				print();
@@ -1842,30 +1841,67 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		
 		return -1;
 	}
+	
+	
+	/**
+	 * Creates a region describing the text block (something that starts at
+	 * the beginning of a line) completely containing the current selection.
+	 * 
+	 * @param selection the selection to use
+	 */
+	private IRegion getTextBlockFromSelection(Point selection) {
+				
+		try {
+			IDocument document= getDocument();
+			IRegion line= document.getLineInformationOfOffset(selection.x);
+			int length= selection.y == 0 ? line.getLength() : selection.y + (selection.x - line.getOffset());
+			return new Region(line.getOffset(), length);
+			
+		} catch (BadLocationException x) {
+		}
 		
+		return null;		
+	}
 
 	/**
-	 * Shifts a block selection to the right or left using the specified set of prefix characters.
+	 * Shifts a text block to the right or left using the specified set of prefix characters.
+	 * The prefixes must start at the beginnig of the line.
 	 *
 	 * @param useDefaultPrefixes says whether the configured default or indent prefixes should be used
 	 * @param right says whether to shift to the right or the left
+	 * 
+	 * @deprecated use shift(boolean, boolean, boolean) instead
 	 */
 	protected void shift(boolean useDefaultPrefixes, boolean right) {
+		shift(useDefaultPrefixes, right, false);
+	}
 		
-		if ( !isBlockSelected())
-			return;
-			
+	/**
+	 * Shifts a text block to the right or left using the specified set of prefix characters.
+	 * If white space should be ignored the prefix characters must not be at the beginning of
+	 * the line when shifting to the left. There may be whitespace in front of the prefixes.
+	 *
+	 * @param useDefaultPrefixes says whether the configured default or indent prefixes should be used
+	 * @param right says whether to shift to the right or the left
+	 * @param ignoreWhitespace says whether whitepsace in front of prefixes is allowed
+	 */
+	protected void shift(boolean useDefaultPrefixes, boolean right, boolean ignoreWhitespace) {
+		
 		if (fUndoManager != null)
 			fUndoManager.beginCompoundChange();
 						
 		try {
+			
 			Point selection= getSelectedRange();
-			ITypedRegion[] regions= getDocument().computePartitioning(selection.x, selection.y);
+			IRegion block= getTextBlockFromSelection(selection);
+			ITypedRegion[] regions= getDocument().computePartitioning(block.getOffset(), block.getLength());
 			
 			IDocument d= getDocument();
-			int[] lines= new int[regions.length * 2];
+			int[] lines= new int[regions.length * 2]; // [startline, endline, startline, endline, ...]
 			for (int i= 0, j= 0; i < regions.length; i++, j+= 2) {
+				// start line of region
 				lines[j]= getFirstCompleteLineOfRegion(regions[i]);
+				// end line of region
 				int offset= regions[i].getOffset() + regions[i].getLength() - 1;
 				lines[j + 1]= (lines[j] == -1 ? -1 : d.getLineOfOffset(offset));
 			}
@@ -1887,8 +1923,12 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			Map map= (useDefaultPrefixes ? fDefaultPrefixChars : fIndentChars);
 			for (int i= 0, j= 0; i < regions.length; i++, j += 2) {
 				String[] prefixes= (String[]) selectContentTypePlugin(regions[i].getType(), map);
-				if (prefixes != null && lines[j] >= 0 && lines[j + 1] >= 0)
-					shift(prefixes, right, lines[j], lines[j + 1]);
+				if (prefixes != null && prefixes.length > 0 && lines[j] >= 0 && lines[j + 1] >= 0) {
+					if (right)
+						shiftRight(lines[j], lines[j + 1], prefixes[0]);
+					else
+						shiftLeft(lines[j], lines[j + 1], prefixes, ignoreWhitespace);
+				}
 			}
 			
 			// Restore the selection.
@@ -1913,6 +1953,29 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	}
 	
 	/**
+	 * Shifts the specified lines to the right inserting the given prefix
+	 * at the beginning of each line
+	 *
+	 * @param prefix the prefix to be inserted
+	 * @param startLine the first line to shift
+	 * @param endLine the last line to shift
+	 */
+	private void shiftRight(int startLine, int endLine, String prefix) {
+		
+		try {
+						
+			IDocument d= getDocument();
+			while (startLine <= endLine) {
+				d.replace(d.getLineOffset(startLine++), 0, prefix);
+			}
+
+		} catch (BadLocationException x) {
+			if (TRACE_ERRORS)
+				System.out.println("TextViewer.shiftRight: BadLocationException");
+		}
+	}
+	
+	/**
 	 * Shifts the specified lines to the right or to the left. On shifting to the right
 	 * it insert <code>prefixes[0]</code> at the beginning of each line. On shifting to the
 	 * left it tests whether each of the specified lines starts with one of the specified 
@@ -1923,57 +1986,55 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	 * @param startLine the first line to shift
 	 * @param endLine the last line to shift
 	 */
-	private void shift(String[] prefixes, boolean right, int startLine, int endLine) {
-				
+	private void shiftLeft(int startLine, int endLine, String[] prefixes, boolean ignoreWhitespace) {
+		
 		IDocument d= getDocument();
 		
 		try {
 						
-			int lineNumber= startLine;
-			int lineCount= 0;
-			int lines= endLine - startLine;
-			String[] linePrefixes= null;
-
-			if (!right) {
+			IRegion[] occurrences= new IRegion[endLine - startLine + 1];
+			
+			// find all the first occurrences of prefix in the given lines
+			for (int i= 0; i < occurrences.length; i++) {
 				
-				linePrefixes= new String[lines + 1];
+				IRegion line= d.getLineInformation(startLine + i);
+				String text= d.get(line.getOffset(), line.getLength());
 				
-				// check whether stripping is possible
-				while (lineNumber <= endLine) {
-					for (int i= 0; i < prefixes.length; i++) {
-						IRegion line= d.getLineInformation(lineNumber);
-						int delimiterLength= Math.min(prefixes[i].length(), line.getLength());
-						String s= d.get(line.getOffset(), delimiterLength);
-						if (prefixes[i].equals(s)) {
-							linePrefixes[lineCount]= s;
-							break;
-						}
-					}
-					
-					if (linePrefixes[lineCount] == null) {
-						// found a line which does not start with one of the prefixes
+				int index= -1;
+				int[] found= TextUtilities.indexOf(prefixes, text, 0);
+				if (found[0] != -1) {
+					if (ignoreWhitespace) {
+						String s= d.get(line.getOffset(), found[0]);
+						s= s.trim();
+						if (s.length() == 0)
+							index= line.getOffset() + found[0];
+					} else if (found[0] == 0)
+						index= line.getOffset();
+				}
+				
+				if (index > -1) {
+					// remember where prefix is in line, so that it can be removed
+					int length= prefixes[found[1]].length();
+					if (length == 0 && !ignoreWhitespace && line.getLength() > 0) {
+						// found a non-empty line which cannot be shifted
 						return;
-					}
-					
-					++ lineNumber;						
-					++ lineCount;
+					} else 
+						occurrences[i]= new Region(index, length);
+				} else {
+					// found a line which cannot be shifted
+					return;
 				}
 			}
 
 			// ok - change the document
-			lineNumber= startLine;
-			
-			lineCount= 0;
-			while (lineNumber <= endLine) {
-				if (right)
-					d.replace(d.getLineOffset(lineNumber++), 0, prefixes[0]);
-				else
-					d.replace(d.getLineOffset(lineNumber++), linePrefixes[lineCount++].length(), null);
+			for (int i= occurrences.length - 1; i >= 0; i--) {
+				IRegion r= occurrences[i];
+				d.replace(r.getOffset(), r.getLength(), null);
 			}
 
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
-				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.shift_2")); //$NON-NLS-1$
+				System.out.println("TextViewer.shiftLeft: BadLocationException");
 		}
 	}
 	
@@ -2101,24 +2162,6 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	}
 	
 	/**
-	 * Replaces the viewer's style information with the given presentation.
-	 *
-	 * @param presentation the viewer's new style information
-	 */
-	private void replacePresentation(TextPresentation presentation) {
-		
-		StyleRange[] ranges= new StyleRange[presentation.getDenumerableRanges()];				
-		
-		int i= 0;
-		Iterator e= presentation.getAllStyleRangeIterator();
-		while (e.hasNext()) {
-			ranges[i++]= (StyleRange) e.next();
-		}
-		
-		fTextWidget.setStyleRanges(ranges);
-	}
-	
-	/**
 	 * Returns the visible region if it is not equal to the whole document.
 	 * Otherwise returns <code>null</code>.
 	 *
@@ -2151,7 +2194,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			fTextWidget.setRedraw(false);
 		
 		if (fReplaceTextPresentation)
-			replacePresentation(presentation);
+			TextPresentation.applyTextPresentation(presentation, fTextWidget);
 		else
 			addPresentation(presentation);
 		

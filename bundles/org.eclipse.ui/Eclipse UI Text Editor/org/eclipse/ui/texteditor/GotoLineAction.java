@@ -8,6 +8,10 @@ package org.eclipse.ui.texteditor;
 
 import java.util.ResourceBundle;
 
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.text.BadLocationException;
@@ -55,6 +59,30 @@ public class GotoLineAction extends TextEditorAction {
 			}
 			
 			return ""; //$NON-NLS-1$
+		}
+	};
+	
+	/**
+	 * Standard input dialog which additionally sets the focus to the
+	 * text input field. Workaround for <code>InputDialog</code> issue.
+	 * 1GIJZOO: ITPSRCEDIT:ALL - Gotodialog's edit field has no initial focus
+	 */
+	class GotoLineDialog extends InputDialog {
+		
+		/*
+		 * @see InputDialog#InputDialog
+		 */
+		public GotoLineDialog(Shell parent, String title, String message, String initialValue, IInputValidator validator) {
+			super(parent, title, message, initialValue, validator);
+		}
+		
+		/*
+		 * @see InputDialog#createDialogArea(Composite)
+		 */
+		protected Control createDialogArea(Composite parent) {
+			Control result= super.createDialogArea(parent);
+			getText().setFocus();
+			return result;
 		}
 	};
 	
@@ -125,7 +153,11 @@ public class GotoLineAction extends TextEditorAction {
 			String title= fBundle.getString(fPrefix + "dialog.title"); //$NON-NLS-1$
 			String message= fBundle.getString(fPrefix + "dialog.message"); //$NON-NLS-1$
 			String value= Integer.toString(selection.getStartLine() + 1);
-			InputDialog d= new InputDialog(editor.getSite().getShell(), title, message, value, new NumberValidator());
+			
+			/*
+			 * 1GIJZOO: ITPSRCEDIT:ALL - Gotodialog's edit field has no initial focus
+			 */
+			GotoLineDialog d= new GotoLineDialog(editor.getSite().getShell(), title, message, value, new NumberValidator());
 			d.open();
 			
 			try {

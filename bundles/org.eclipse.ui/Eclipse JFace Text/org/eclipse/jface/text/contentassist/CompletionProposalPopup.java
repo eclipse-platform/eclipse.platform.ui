@@ -114,6 +114,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	}
 	
 	private void insertSelectedProposal() {
+		
 		int i= fProposalTable.getSelectionIndex();
 
 		if (i < 0 || i >= fProposalInput.length)
@@ -281,15 +282,16 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (fIgnoreConsumedEvents)
 			return;
 
-		if (e.start == e.end && e.text != null && e.text.equals(fLineDelimiter)) {
+		if (e.text != null && e.text.equals(fLineDelimiter)) {
+			
 			e.doit= false;
 			insertSelectedProposal();
 			hide();
-			return;
-		}
-
-		if (e.start != e.end && (e.text == null || e.text.length() == 0))
+			
+		} else if (e.text == null || e.text.length() == 0) {
+			
 			filterProposal();
+		}
 	}
 
 	private void filterProposal() {

@@ -5,17 +5,141 @@ package org.eclipse.jface.text;
  * All Rights Reserved.
  */
 
+
+import java.text.BreakIterator;
+import java.text.CharacterIterator;
+
+
 /**
- * Standard implementation of <code>ITextDoubleClickStrategy</code>. Selects words
- * considering any character other than defined by <code>Character.isLetterOrDigit</code>
- * as a word delimiter. This class is not intended to be subclassed.
+ * Standard implementation of <code>ITextDoubleClickStrategy</code>.
+ * Selects words using <code>java.text.BreakIterator</code> for the
+ * default locale.
+ * This class is not intended to be subclassed.
  */
 public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy {
 	
-	/** Character position representing the offset of the word */
-	private int fOffset;
-	/** The length of the word */
-	private int fLength;
+	
+	
+	/**
+	 * Implements a character iterator for documents.
+	 */
+	static class DocumentCharacterIterator implements CharacterIterator {
+		
+		private IDocument fDocument;
+		private int fOffset= -1;
+		private int fEndOffset= -1;
+		private int fIndex= -1;
+		
+		public DocumentCharacterIterator() {
+		}
+		
+		public void setDocument(IDocument document, IRegion iteratorRange) {
+			fDocument= document;
+			fOffset= iteratorRange.getOffset();
+			fEndOffset= fOffset + iteratorRange.getLength();
+		}
+		
+		/**
+		 * @see CharacterIterator#first()
+		 */
+		public char first() {
+			fIndex= fOffset;
+			return current();
+		}
+		
+		/**
+		 * @see CharacterIterator#last()
+		 */
+		public char last() {
+	        fIndex= fOffset < fEndOffset ? fEndOffset -1 : fEndOffset;
+        	return current();
+		}
+		
+		/**
+		 * @see CharacterIterator#current()
+		 */
+		public char current() {
+			if (fOffset <= fIndex && fIndex < fEndOffset) {
+				try {
+					return fDocument.getChar(fIndex);
+				} catch (BadLocationException x) {
+				}
+			}
+			return DONE;
+		}
+		
+		/**
+		 * @see CharacterIterator#next()
+		 */
+		public char next() {
+			if (fIndex == fEndOffset -1)
+				return DONE;
+			
+			if (fIndex < fEndOffset)
+				++ fIndex;
+				
+			return current();
+		}
+		
+		/**
+		 * @see CharacterIterator#previous()
+		 */
+		public char previous() {
+			if (fIndex == fOffset)
+				return DONE;
+				
+			if (fIndex > fOffset)
+				-- fIndex;
+			
+			return current();
+		}
+		
+		/**
+		 * @see CharacterIterator#setIndex(int)
+		 */
+		public char setIndex(int index) {
+			fIndex= index;
+			return current();
+		}
+		
+		/**
+		 * @see CharacterIterator#getBeginIndex()
+		 */
+		public int getBeginIndex() {
+			return fOffset;
+		}
+		
+		/**
+		 * @see CharacterIterator#getEndIndex()
+		 */
+		public int getEndIndex() {
+			return fEndOffset;
+		}
+		
+		/**
+		 * @see CharacterIterator#getIndex()
+		 */
+		public int getIndex() {
+			return fIndex;
+		}
+		
+		/**
+		 * @see CharacterIterator#clone()
+		 */
+		public Object clone() {
+			DocumentCharacterIterator i= new DocumentCharacterIterator();
+			i.fDocument= fDocument;
+			i.fIndex= fIndex;
+			i.fOffset= fOffset;
+			i.fEndOffset= fEndOffset;
+			return i;
+		}
+	};
+	
+	
+	/** The document character iterator used by this strategy */
+	private DocumentCharacterIterator fDocIter= new DocumentCharacterIterator();
+	
 	
 	/**
 	 * Creates a new default text double click strategy.
@@ -23,10 +147,6 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	public DefaultTextDoubleClickStrategy() {
 		super();
 	}
-	
-	/**
-	 * Returns
-	 */
 	
 	/*
 	 * @see ITextDoubleClickStrategy#doubleClicked
@@ -38,62 +158,30 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 		if (position < 0)
 			return;
 					
-		if (matchWord(text.getDocument(), position))
-			text.setSelectedRange(fOffset, fLength);
-	}
-	
-	/**
-	 * Determines the word underlying or touching the given offset in the
-	 * given document.
-	 *
-	 * @param document the document to search in
-	 * @param offset the offset at which search starts
-	 * @return <code>true</code> if a word could be found
-	 */
-	private boolean matchWord(IDocument document, int offset) {
-		
 		try {
 			
-			int pos= offset;
-			char c;
+			IDocument document= text.getDocument();
+			IRegion line= document.getLineInformationOfOffset(position);
+			if (position == line.getOffset() + line.getLength())
+				return;
+				
+			fDocIter.setDocument(document, line);
 			
-			while (pos >= 0) {
-				c= document.getChar(pos);
-				if (!isWordCharacter(c))
-					break;
-				--pos;
-			}
+			BreakIterator breakIter= BreakIterator.getWordInstance();
+			breakIter.setText(fDocIter);
 			
-			fOffset= pos + 1;
+			int start= breakIter.preceding(position);
+			if (start == BreakIterator.DONE)
+				start= line.getOffset();
+				
+			int end= breakIter.following(position);
+			if (end == BreakIterator.DONE)
+				end= line.getOffset() + line.getLength();
 			
-			pos= offset;
-			int length= document.getLength();
-			
-			while (pos < length) {
-				c= document.getChar(pos);
-				if (!isWordCharacter(c))
-					break;
-				++pos;
-			}
-			
-			fLength= pos - fOffset;
-			
-			return fLength >= 0;
+			if (start != end)
+				text.setSelectedRange(start, end - start);
 			
 		} catch (BadLocationException x) {
 		}
-		
-		return false;
-	}
-	
-	/**
-	 * Answers whether the given character is consider a
-	 * regular part of a word.
-	 *
-	 * @param c the character to be checked
-	 * @return <code>true</code> if character is a valid word character
-	 */
-	private boolean isWordCharacter(char c) {
-		return Character.isLetterOrDigit(c);
 	}
 }

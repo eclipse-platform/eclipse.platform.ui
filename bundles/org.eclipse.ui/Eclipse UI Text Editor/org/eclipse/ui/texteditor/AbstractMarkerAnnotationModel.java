@@ -105,7 +105,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	 */
 	protected AbstractMarkerAnnotationModel() {
 	}
-		
+	
 	/**
 	 * Adds the given marker updater to this annotation model.
 	 * It is client's responsibility to ensure the consitency of the
@@ -224,27 +224,13 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 
 		fireModelChanged();
 	}
-	
-	/**
-	 * Creates a marker updater as specified in the given configuration
-	 * element.
-	 */
-	private IMarkerUpdater createMarkerUpdater(IConfigurationElement element) {
-		try {
-			return (IMarkerUpdater) element.createExecutableExtension("class"); //$NON-NLS-1$
-		} catch (CoreException x) {
-			handleCoreException(x, EditorMessages.getString("AbstractMarkerAnnotationModel.installMarkerUpdaters")); //$NON-NLS-1$
-		}
 		
-		return null;
-	}
-	
 	/**
 	 * Installs all marker updaters for this marker annotation model. 
 	 */
 	private void installMarkerUpdaters() {
 		
-		// initialize lists
+		// initialize lists - indicates that the initialization happened
 		fMarkerUpdaterSpecifications= new ArrayList(2);
 		fInstantiatedMarkerUpdaters= new ArrayList(2);
 		
@@ -392,7 +378,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	 * @param marker the marker
 	 * @return the annotation, or <code>null</code> if none
 	 */
-	protected final MarkerAnnotation getMarkerAnnotation(IMarker marker) {
+	public final MarkerAnnotation getMarkerAnnotation(IMarker marker) {
 		Iterator e= getAnnotationIterator(false);
 		while (e.hasNext()) {
 			Object o= e.next();
@@ -407,8 +393,82 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	}
 	
 	/**
-	 * Updates the actual markers with the current positional information
-	 * for all marker annotations.
+	 * Creates a marker updater as specified in the given configuration
+	 * element.
+	 */
+	private IMarkerUpdater createMarkerUpdater(IConfigurationElement element) {
+		try {
+			return (IMarkerUpdater) element.createExecutableExtension("class"); //$NON-NLS-1$
+		} catch (CoreException x) {
+			handleCoreException(x, EditorMessages.getString("AbstractMarkerAnnotationModel.createMarkerUpdater")); //$NON-NLS-1$
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Checks whether a merker updater is registered for the type of the
+	 * given marker but not yet instantiated. If so, the method instantiates
+	 * the marker updater and registers it with this model.
+	 */
+	private void checkMarkerUpdaters(IMarker marker) {
+		List toBeDeleted= new ArrayList();
+		for (int i= 0; i < fMarkerUpdaterSpecifications.size(); i++) {
+			IConfigurationElement spec= (IConfigurationElement) fMarkerUpdaterSpecifications.get(i);
+			String markerType= spec.getAttribute("markerType"); //$NON-NLS-1$
+			if (markerType == null || MarkerUtilities.isMarkerType(marker, markerType)) {
+				toBeDeleted.add(spec);
+				IMarkerUpdater updater= createMarkerUpdater(spec);
+				if (updater != null)
+					addMarkerUpdater(updater);
+			}
+		}
+		
+		for (int i= 0; i < toBeDeleted.size(); i++)
+			fMarkerUpdaterSpecifications.remove(toBeDeleted.get(i));
+	}
+	
+	/**
+	 * Updates the given marker according to the given position in the given
+	 * document. If the given position is <code>null</code>, the marker is 
+	 * assumed to carry the correct positional information. If it is detected 
+	 * that the marker is invalid and should thus be deleted, this method 
+	 * returns <code>false</code>.
+	 *
+	 * @param marker the marker to be updated
+	 * @param document the document into which the given position points
+	 * @param position the current position of the marker inside the given document
+	 * @exception CoreException if there is a problem updating the marker  
+	 */
+	public boolean updateMarker(IMarker marker, IDocument document, Position position) throws CoreException {
+		
+
+		if (!fMarkerUpdaterSpecifications.isEmpty())
+			checkMarkerUpdaters(marker);
+			
+			
+		boolean isOK= true;
+		
+		for (int i= 0; i < fInstantiatedMarkerUpdaters.size();  i++) {
+			IMarkerUpdater updater= (IMarkerUpdater) fInstantiatedMarkerUpdaters.get(i);
+			String markerType= updater.getMarkerType();
+			if (markerType == null || MarkerUtilities.isMarkerType(marker, markerType)) {
+				
+				if (position == null) {
+					/* compatibility code */
+					position= createPositionFromMarker(marker);
+				}
+				
+				isOK= (isOK && updater.updateMarker(marker, document, position));
+			}
+		}
+		
+		return isOK;
+	}
+	
+	/**
+	 * Updates the markers managed by this annotation model by calling 
+	 * all registered marker updaters (<code>IMarkerUpdater</code>).
 	 *
 	 * @param document the document to which this model is currently connected
 	 * @exception CoreException if there is a problem updating the markers
@@ -426,7 +486,6 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 		if (fMarkerUpdaterSpecifications == null)
 			installMarkerUpdaters();
 			
-			
 		listenToMarkerChanges(false);
 				
 		// update all markers with the positions known by the annotation model
@@ -436,37 +495,9 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 				MarkerAnnotation a= (MarkerAnnotation) o;
 				IMarker marker= a.getMarker();
 				Position position= (Position) fAnnotations.get(a);
-				
-				// not yet instantiated marker updaters
-				if (!fMarkerUpdaterSpecifications.isEmpty()) {
-					
-					List toBeDeleted= new ArrayList();
-					for (int i= 0; i < fMarkerUpdaterSpecifications.size(); i++) {
-						IConfigurationElement spec= (IConfigurationElement) fMarkerUpdaterSpecifications.get(i);
-						String markerType= spec.getAttribute("markerType"); //$NON-NLS-1$
-						if (markerType == null || MarkerUtilities.isMarkerType(marker, markerType)) {
-							toBeDeleted.add(spec);
-							IMarkerUpdater updater= createMarkerUpdater(spec);
-							if (updater != null)
-								addMarkerUpdater(updater);
-						}
-					}
-					
-					for (int i= 0; i < toBeDeleted.size(); i++)
-						fMarkerUpdaterSpecifications.remove(toBeDeleted.get(i));
-					toBeDeleted= null;
-				}
-				
-				// instantiated marker updaters
-				for (int i= 0; i < fInstantiatedMarkerUpdaters.size();  i++) {
-					IMarkerUpdater updater= (IMarkerUpdater) fInstantiatedMarkerUpdaters.get(i);
-					String markerType= updater.getMarkerType();
-					if (markerType == null || MarkerUtilities.isMarkerType(marker, markerType)) {
-						if ( !updater.updateMarker(marker, document, position)) {
-							if ( !fDeletedAnnotations.contains(a))
-								fDeletedAnnotations.add(a);
-						}
-					}
+				if ( !updateMarker(marker, document, position)) {
+					if ( !fDeletedAnnotations.contains(a))
+						fDeletedAnnotations.add(a);
 				}
 			}
 		}
