@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.projection;
 
+
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
@@ -18,12 +19,11 @@ import org.eclipse.jface.text.Position;
 
 
 /**
- * Internal class. Do not use. Only public for testing purposes.
- * <p>
  * The position updater used to adapt the segments of a projection document to
- * changes of the master document. If an insertion happens at a segment's
- * offset, the segment is extended rather than shifted. Also, the last segment
- * is extended if an insert operation happens at the end of the segment.
+ * changes of the master document. Depending on the flags set on a segment, a
+ * segment is either extended to shifted if an insertion happens at a segment's
+ * offset. The last segment is extended if an insert operation happens at the
+ * end of the segment.
  * 
  * @since 3.0
  */

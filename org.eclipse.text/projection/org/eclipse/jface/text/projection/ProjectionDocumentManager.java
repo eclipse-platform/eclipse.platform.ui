@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,20 +25,22 @@ import org.eclipse.jface.text.ISlaveDocumentManager;
 import org.eclipse.jface.text.ISlaveDocumentManagerExtension;
 
 
-
 /**
- * <code>ProjectionDocumentManager</code> is one particular implementation of
- * <code>ISlaveDocumentManager</code>. This manager creates so called
- * projection documents as slave documents for given master documents.
+ * A <code>ProjectionDocumentManager</code> is one particular implementation
+ * of {@link org.eclipse.jface.text.ISlaveDocumentManager}. This manager
+ * creates so called projection documents (see
+ * {@link org.eclipse.jface.text.projection.ProjectionDocument}as slave
+ * documents for given master documents.
  * <p>
  * A projection document represents a particular projection of the master
  * document and is accordingly adapted to changes of the master document. Vice
  * versa, the master document is accordingly adapted to changes of its slave
  * documents. The manager does not maintain any particular management structure
- * but utilizes mechanisms given by <code>IDocument</code> such as position
- * categories and position updaters.
+ * but utilizes mechanisms given by {@link org.eclipse.jface.text.IDocument}
+ * such as position categories and position updaters.
  * <p>
- * API in progress. Do not yet use.
+ * Clients can instantiate this class. This class is not intended to be
+ * subclassed.
  * 
  * @since 3.0
  */

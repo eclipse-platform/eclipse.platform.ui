@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.projection;
+
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -17,9 +17,8 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextStore;
 import org.eclipse.jface.text.Region;
 
+
 /**
- * * Internal class. Do not use. Only public for testing purposes.
- * <p>
  * A text store representing the projection defined by the given document
  * information mapping.
  * 
@@ -28,7 +27,7 @@ import org.eclipse.jface.text.Region;
 class ProjectionTextStore implements ITextStore {
 	
 	/**
-	 * Implementation of <code>IRegion</code> that can be reused
+	 * Implementation of {@link IRegion} that can be reused
 	 * by setting the offset and the length. 
 	 */
 	private static class ReusableRegion implements IRegion {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,40 +10,43 @@
  *******************************************************************************/
 package org.eclipse.jface.text.projection;
 
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
 
+
 /**
- * Internal interface. Do not use.
+ * Internal interface for defining the exact subset of
+ * {@link org.eclipse.jface.text.projection.ProjectionMapping}that the
+ * {@link org.eclipse.jface.text.projection.ProjectionTextStore}is allowed to
+ * access.
  * 
  * @since 3.0
  */
 interface IMinimalMapping {
 
 	/**
-	 * @return
+	 * @see org.eclipse.jface.text.IDocumentInformationMapping#getCoverage()
 	 */
 	IRegion getCoverage();
 
 	/**
-	 * @param region
-	 * @return
+	 * @see org.eclipse.jface.text.IDocumentInformationMapping#toOriginRegion(IRegion)
 	 */
 	IRegion toOriginRegion(IRegion region) throws BadLocationException;
 
 	/**
-	 * @param offset
-	 * @return
+	 * @see org.eclipse.jface.text.IDocumentInformationMapping#toOriginOffset(int)
 	 */
 	int toOriginOffset(int offset) throws BadLocationException;
 	
 	/**
-	 * @return
+	 * @see org.eclipse.jface.text.IDocumentInformationMappingExtension#toExactOriginRegions(IRegion)
 	 */
 	IRegion[] toExactOriginRegions(IRegion region)throws BadLocationException;
 	
 	/**
-	 * @return
+	 * @see org.eclipse.jface.text.IDocumentInformationMappingExtension#getImageLength()
 	 */
 	int getImageLength();
 }

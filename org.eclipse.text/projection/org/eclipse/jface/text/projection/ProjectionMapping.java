@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.text.projection;
+
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
@@ -20,11 +21,12 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 
+
 /**
  * Internal class. Do not use. Only public for testing purposes.
  * <p>
- * Implementation of <code>IDocumentInformationMapping</code> for the
- * projection mapping between a master and a slave document.
+ * Implementation of {@link org.eclipse.jface.text.IDocumentInformationMapping}
+ * for the projection mapping between a master and a slave document.
  * 
  * @since 3.0
  */

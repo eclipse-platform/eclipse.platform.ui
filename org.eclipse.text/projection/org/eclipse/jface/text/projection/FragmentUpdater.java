@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.projection;
+
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -20,12 +20,10 @@ import org.eclipse.jface.text.Position;
 
 
 /**
- * The position updater used to adapt the fragments of a document. If an
+ * The position updater used to adapt the fragments of a master document. If an
  * insertion happens at a fragment's offset, the fragment is extended rather
  * than shifted. Also, the last fragment is extended if an insert operation
  * happens at the end of the fragment.
- * <p>
- * Internal class. Do not use. Only public for testing purposes.
  * 
  * @since 3.0
  */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.text.projection;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,6 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 
 
-
 /**
  * A <code>ProjectionDocument</code> represents a projection of its master
  * document. The contents of a projection document is a sequence of fragments of
@@ -36,10 +36,23 @@ import org.eclipse.jface.text.Region;
  * constructed from the master document by not copying the whole master document
  * but omitting several ranges of the master document.
  * <p>
- * The projection document utilizes its master document as
- * <code>ITextStore</code>.
+ * The projection document indirectly utilizes its master document as
+ * <code>ITextStore</code> by means of a <code>ProjectionTextStore</code>.
  * <p>
- * API in progress. Do not yet use.
+ * The content of a projection document can be changed in two ways. Either by a
+ * text replace applied to the master document or the projection document. Or by
+ * changing the projection between the master document and the projection
+ * document. For the latter the two methods <code>addMasterDocumentRange</code>
+ * and <code>removeMasterDocumentRange</code> are provided. For any
+ * manipulation, the projection document sends out a
+ * {@link org.eclipse.jface.text.projection.ProjectionDocumentEvent} describing
+ * the change.
+ * <p>
+ * Clients are not supposed to directly instantiate this class. In order to
+ * obtain a projection document, a
+ * {@link org.eclipse.jface.text.projection.ProjectionDocumentManager}should be
+ * used. This class is not intended to be subclassed outside of its origin
+ * package.
  * 
  * @since 3.0
  */
@@ -134,6 +147,11 @@ public class ProjectionDocument extends AbstractDocument {
 		throw new IllegalStateException();
 	}
 	
+	/**
+	 * Returns the fragments of the master documents.
+	 * 
+	 * @return the fragment of the master document
+	 */
 	protected final Position[] getFragments() {
 		try {
 			return fMasterDocument.getPositions(fFragmentsCategory);
@@ -144,6 +162,11 @@ public class ProjectionDocument extends AbstractDocument {
 		return null;
 	}
 	
+	/**
+	 * Returns the segments of this projection document.
+	 * 
+	 * @return the segments of this projection document
+	 */
 	protected final Position[] getSegments() {
 		try {
 			return getPositions(fSegmentsCategory);
@@ -201,6 +224,15 @@ public class ProjectionDocument extends AbstractDocument {
 		}
 	}
 	
+	/**
+	 * Creates a segment for the given fragment at the given position inside the list of segments.
+	 * 
+	 * @param fragment the corresponding fragment
+	 * @param index the index in the list of segments
+	 * @return the created segment
+	 * @throws BadLocationException in case the fragment is invalid
+	 * @throws BadPositionCategoryException in case the segment category is invalid
+	 */
 	private Segment createSegmentFor(Fragment fragment, int index) throws BadLocationException, BadPositionCategoryException {
 		
 		int offset= 0;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,10 +16,11 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 
 /**
- * Implementation of a child document based on <code>ProjectionDocument</code>.
- * This class exists for compatibility reasons.
+ * Implementation of a child document based on
+ * {@link org.eclipse.jface.text.projection.ProjectionDocument}. This class
+ * exists for compatibility reasons.
  * <p>
- * Internal class. Do not use. Public only for testing purposes.
+ * Internal class. This class is not intended to be used by clients.
  * 
  * @since 3.0
  */
@@ -31,6 +32,12 @@ public class ChildDocument extends ProjectionDocument {
 	 */
 	static private class VisibleRegion extends Position {
 		
+		/**
+		 * Creates a new visible region.
+		 * 
+		 * @param offset the offset of the region
+		 * @param length the length of the region
+		 */
 		public VisibleRegion(int offset, int length) {
 			super(offset, length);
 		}
