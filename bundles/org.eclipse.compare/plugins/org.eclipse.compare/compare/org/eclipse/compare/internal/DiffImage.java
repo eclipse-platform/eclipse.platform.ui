@@ -65,7 +65,7 @@ public class DiffImage extends CompositeImageDescriptor {
 				ImageData overlay= fOverlayImage.getImageData();
 				if (overlay == null)
 					overlay= DEFAULT_IMAGE_DATA;
-				drawImage(overlay, fWidth - overlay.width+1, (HEIGHT - overlay.height) / 2);
+				drawImage(overlay, fWidth - overlay.width, (HEIGHT - overlay.height) / 2);
 			}
 		}
 	}

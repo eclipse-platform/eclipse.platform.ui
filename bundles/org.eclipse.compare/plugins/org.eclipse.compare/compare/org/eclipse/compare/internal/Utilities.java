@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.text.Document;
@@ -177,6 +178,15 @@ public class Utilities {
 			}
 		}
 		return null;
+	}
+	
+	public static String getIconPath(Display display) {
+		if (display == null)
+			display= Display.getCurrent();
+		String path= "icons/basic/";
+		if (display != null && display.getIconDepth() > 4)
+			path= "icons/full/";
+		return path;
 	}
 	
 	/**

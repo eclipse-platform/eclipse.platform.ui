@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -345,14 +346,14 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	}
 	
 	public static ImageDescriptor getImageDescriptor(String relativePath) {
-		
+				
 		URL installURL= null;
 		if (fgComparePlugin != null)
 			installURL= fgComparePlugin.getDescriptor().getInstallURL();
 					
 		if (installURL != null) {
 			try {
-				URL url= new URL(installURL, "icons/full/" + relativePath);
+				URL url= new URL(installURL, Utilities.getIconPath(null) + relativePath);
 				return ImageDescriptor.createFromURL(url);
 			} catch (MalformedURLException e) {
 				Assert.isTrue(false);
