@@ -2113,10 +2113,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected void handleClosePressed() {
 		if (canDiscardCurrentConfig()) {
+			disposeExistingTabs();
 			cancelPressed();
 		}
 	}
-
+	
 	/**
 	 * Notification that the 'Apply' button has been pressed
 	 */
@@ -2216,6 +2217,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 					DebugUIPlugin.log(e);
 				}
 			}
+			disposeExistingTabs();
 			close();
 		} else {
 			getShell().setFocus();
