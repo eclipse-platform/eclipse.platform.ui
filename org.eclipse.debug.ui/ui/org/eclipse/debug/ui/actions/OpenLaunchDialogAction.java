@@ -37,7 +37,7 @@ public class OpenLaunchDialogAction extends Action implements IWorkbenchWindowAc
 	
 	/**
 	 * Constucts an action that opens the launch configuration dialog in
-	 * the context of the specified launch groupd.
+	 * the context of the specified launch group.
 	 * 
 	 * @param identifier unique identifier of a launch group extension
 	 */
@@ -52,7 +52,7 @@ public class OpenLaunchDialogAction extends Action implements IWorkbenchWindowAc
 	}
 
 	/**
-	 * @see IAction
+	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
 		LaunchHistory history = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchHistory(fIdentifier);
