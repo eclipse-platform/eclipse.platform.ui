@@ -13,9 +13,9 @@ package org.eclipse.help.ui.internal.views;
 import java.util.LinkedList;
 
 public class ReusableHelpPartHistory {
+	private static final int CAPACITY = 50;
 	private LinkedList queue;
 	private int cursor = -1;
-	private int capacity = 50;
 	private boolean blocked;
 
 	public ReusableHelpPartHistory() {
@@ -35,7 +35,7 @@ public class ReusableHelpPartHistory {
 			}
 		}
 		queue.add(entry);
-		if (queue.size()>capacity)
+		if (queue.size()>CAPACITY)
 			queue.removeFirst();
 		cursor = queue.size()-1;
 	}

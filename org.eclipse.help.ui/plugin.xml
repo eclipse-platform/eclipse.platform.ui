@@ -124,14 +124,16 @@
          </description>
       </engineType>
       <engine
-            id="org.eclipse.help.ui.localSearch"
+            enabled="true"
             engineTypeId="org.eclipse.help.ui.localSearch"
-            enabled="true">
+            id="org.eclipse.help.ui.localSearch"
+            label="%LocalHelp.label">
       </engine>
       <engine
+            enabled="true"
+            engineTypeId="org.eclipse.help.ui.web"
             id="org.eclipse.help.ui.web.Google"
-      		engineTypeId="org.eclipse.help.ui.web"
-      		label="%Google.label">
+            label="%Google.label">
       		<description>
 	      		%Google.desc
       		</description>
@@ -141,9 +143,10 @@
       		</param>
       </engine>
       <engine
+            enabled="true"
+            engineTypeId="org.eclipse.help.ui.web"
             id="org.eclipse.help.ui.web.Eclipse"
-      		engineTypeId="org.eclipse.help.ui.web"
-      		label="%Eclipse.label">
+            label="%Eclipse.label">
       		<description>
 	      		%Eclipse.desc
       		</description>
