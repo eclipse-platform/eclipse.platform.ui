@@ -96,12 +96,6 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 	// enable selecting auto-refresh files
 	private boolean allowSettingAutoRefreshFiles = true;
 	
-	// sizing default hints
-	private final int ALLOWREFRESH_WIDTH = 500;
-	private final int ALLOWREFRESH_HEIGHT = 625;
-	private final int NOREFRESH_WIDTH = 500;
-	private final int NOREFRESH_HEIGHT = 550;
-	
 	// preference keys
 	private final String ALLOWREFRESH_WIDTH_KEY = "AllowRefreshWidth"; //$NON-NLS-1$
 	private final String ALLOWREFRESH_HEIGHT_KEY = "AllowRefreshHeight"; //$NON-NLS-1$
@@ -746,16 +740,18 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 				height = settings.getInt(ALLOWREFRESH_HEIGHT_KEY);
 				width = settings.getInt(ALLOWREFRESH_WIDTH_KEY);
 			} catch(NumberFormatException e) {
-				height = ALLOWREFRESH_HEIGHT;
-				width = ALLOWREFRESH_WIDTH;
+				Point is = super.getInitialSize();
+				height = is.x;
+				width = is.y;
 			}
 		} else {
 			try {
 				height = settings.getInt(NOREFRESH_HEIGHT_KEY);
 				width = settings.getInt(NOREFRESH_WIDTH_KEY);
 			} catch(NumberFormatException e) {
-				height = NOREFRESH_HEIGHT;
-				width = NOREFRESH_WIDTH;
+				Point is = super.getInitialSize();
+				height = is.x;
+				width = is.y;
 			}
 		}
 		return new Point(width, height);
