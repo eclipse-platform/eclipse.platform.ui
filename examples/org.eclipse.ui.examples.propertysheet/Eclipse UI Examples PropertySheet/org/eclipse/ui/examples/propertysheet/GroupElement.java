@@ -12,6 +12,8 @@ package org.eclipse.ui.examples.propertysheet;
 
 import java.util.Vector;
 
+import org.eclipse.swt.graphics.RGB;
+
 /**
  * A Group Element
  */
@@ -141,5 +143,17 @@ private Vector getUsers() {
  */
 public boolean isGroup() {
 	return true;
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.model.IWorkbenchAdapter#getForeground(java.lang.Object)
+ */
+public RGB getForeground(Object element) {
+    return null;
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.model.IWorkbenchAdapter#getBackground(java.lang.Object)
+ */
+public RGB getBackground(Object element) {
+    return null;
 }
 }

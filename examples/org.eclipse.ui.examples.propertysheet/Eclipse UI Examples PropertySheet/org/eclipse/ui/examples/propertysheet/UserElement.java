@@ -508,4 +508,16 @@ public void setPropertyValue(Object propKey, Object val) {
 void setSalary(Float newSalary) {
 	salary = newSalary;
 }
+/* (non-Javadoc)
+ * @see org.eclipse.ui.model.IWorkbenchAdapter#getForeground(java.lang.Object)
+ */
+public RGB getForeground(Object element) {
+    return null;
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.model.IWorkbenchAdapter#getBackground(java.lang.Object)
+ */
+public RGB getBackground(Object element) {
+    return null;
+}
 }
