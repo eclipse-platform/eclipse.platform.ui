@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -365,7 +365,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			for (int i = 0; i < methods.length; i++) {
 				connectionMethodCombo.add(methods[i]);
 			}
-			String method = (String)properties.getProperty("method");
+			String method = (String)properties.getProperty("connection");
 			if (method == null) {
 				connectionMethodCombo.select(0);
 			} else {
@@ -437,7 +437,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 				tagCombo.setText(tag);
 			}
 		}
-}
+	}
 	/**
 	 * Saves the widget values
 	 */
