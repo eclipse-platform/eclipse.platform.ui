@@ -78,6 +78,9 @@
     <test id="resources.NatureTest">
       <run class="org.eclipse.core.tests.resources.NatureTest"/>
     </test>
+    <test id="resources.ProjectOrderTest">
+      <run class="org.eclipse.core.tests.resources.ProjectOrderTest"/>
+    </test>
     <test id="resources.WorkspaceTest">
       <run class="org.eclipse.core.tests.resources.WorkspaceTest"/>
     </test>
