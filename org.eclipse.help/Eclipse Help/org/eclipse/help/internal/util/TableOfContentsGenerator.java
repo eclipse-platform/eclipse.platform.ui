@@ -50,7 +50,7 @@ public class TableOfContentsGenerator {
 	private void generateHeader(StringBuffer buffer) {
 		buffer.append("<HEAD>");
 		// officially, a HEAD element needs a TITLE. fake it.
-		buffer.append("<TITLE/>");
+		buffer.append("<TITLE></TITLE>");
 
 		// make sure that we have everything in UTF-8 because this is
 		// what this string buffer will converted to.
