@@ -470,7 +470,7 @@ public class StringVariableManager implements IStringVariableManager {
 	protected void notifyChanged(ValueVariable variable) {
 		if (!fInitializing) {
 			IValueVariable existing = getValueVariable(variable.getName());
-			if (existing.equals(variable)) {
+			if (variable.equals(existing)) {
 				// do not do change notification for unregistered variables
 				getNotifier().notify(new IValueVariable[]{variable}, CHANGED);
 			}
