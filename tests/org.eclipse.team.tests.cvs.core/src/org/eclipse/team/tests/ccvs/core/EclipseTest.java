@@ -871,6 +871,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 					Job job = allJobs[i];
 					System.out.println(job.getName());
 				}
+				throw e;
 			}
 		} else {
 			super.ensureDoesNotExistInWorkspace(resource);
