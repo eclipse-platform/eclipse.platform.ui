@@ -81,7 +81,7 @@ public class Property {
 	/**
 	 * Returns the value.
 	 * 
-	 * @param whether the value has any variables resolved.
+	 * @param substituteVariables whether the value has any variables resolved.
 	 * @return String
 	 * @since 3.0
 	 */
