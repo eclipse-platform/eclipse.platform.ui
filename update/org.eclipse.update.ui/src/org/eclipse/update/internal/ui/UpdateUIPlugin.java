@@ -13,6 +13,7 @@ import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -22,6 +23,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.forms.UpdateAdapterFactory;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.AboutInfo;
+import org.eclipse.update.internal.ui.parts.SWTUtil;
 import org.eclipse.update.internal.ui.preferences.UpdateColors;
 import org.eclipse.update.internal.ui.security.AuthorizationDatabase;
 
@@ -70,7 +72,8 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	}
 
 	public static Shell getActiveWorkbenchShell() {
-		return getActiveWorkbenchWindow().getShell();
+		IWorkbenchWindow window = getActiveWorkbenchWindow();
+		return window!=null ? window.getShell() : null;
 	}
 
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
@@ -172,7 +175,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		}
 		log(status, showErrorDialog);
 	}
-
+	
 	public static void log(IStatus status, boolean showErrorDialog) {
 		if (status.getSeverity()!=IStatus.INFO){
 			if (showErrorDialog)

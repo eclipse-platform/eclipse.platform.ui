@@ -488,7 +488,7 @@ public class SearchForm extends UpdateWebForm {
 			//attachStatusLineMonitor();
 			enableOptions(false);
 			searchObject.startSearch(getControl().getDisplay(), getQueries());
-			//searchResultSection.setSearchObject(searchObject);
+			searchResultSection.setSearchObject(searchObject);
 			searchResultSection.searchStarted();
 		} catch (InvocationTargetException e) {
 			UpdateUIPlugin.logException(e);

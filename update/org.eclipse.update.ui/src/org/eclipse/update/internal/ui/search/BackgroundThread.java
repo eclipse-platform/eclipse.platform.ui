@@ -7,6 +7,8 @@ package org.eclipse.update.internal.ui.search;
 import org.eclipse.jface.operation.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
+
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.jface.util.Assert;
 
@@ -77,6 +79,13 @@ public class BackgroundThread extends Thread {
 			// Force the event loop to return from sleep () so that
 			// it stops event dispatching.
 			display.asyncExec(null);
+			if (throwable!=null) {
+				display.asyncExec(new Runnable() {
+					public void run() {
+						UpdateUIPlugin.logException(throwable);
+					}
+				});
+			}
 		}	
 	}
 	public Throwable getThrowable() {

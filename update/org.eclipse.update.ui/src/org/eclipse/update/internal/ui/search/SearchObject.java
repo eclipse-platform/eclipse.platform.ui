@@ -180,6 +180,7 @@ public class SearchObject extends NamedModelObject {
 		searchThread.start();
 		Throwable throwable = searchThread.getThrowable();
 		if (throwable != null) {
+			UpdateUIPlugin.logException(throwable);
 			if (throwable instanceof InvocationTargetException) {
 				throw (InvocationTargetException) throwable;
 			} else if (throwable instanceof InterruptedException) {
@@ -210,6 +211,9 @@ public class SearchObject extends NamedModelObject {
 					doSearch(display, queries, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
+				}
+				finally {
+					monitor.done();
 				}
 			}
 		};
