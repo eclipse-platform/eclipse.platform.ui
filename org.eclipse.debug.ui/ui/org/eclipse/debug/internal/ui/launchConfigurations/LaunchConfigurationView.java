@@ -38,6 +38,7 @@ import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
@@ -198,7 +199,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
+	public void launchConfigurationAdded(final ILaunchConfiguration configuration) {
 		try {
 			if (configuration.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false)) {
 				return;
@@ -207,7 +208,26 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 			DebugUIPlugin.log(e);
 			return;
 		}
-		TreeViewer viewer = getTreeViewer();
+		Display display = DebugUIPlugin.getStandardDisplay();
+		if (display.getThread() == Thread.currentThread()) {
+		    // If we're already in the UI thread (user pressing New in the
+		    // dialog), update the tree immediately.
+		    handleConfigurationAdded(configuration);
+		} else {
+	        display.asyncExec(new Runnable() {
+	            public void run() {
+	                handleConfigurationAdded(configuration);
+	            }
+	        });
+		}
+	}
+
+    /**
+     * The given launch configuration has been added. Add it to the tree.
+     * @param configuration the added configuration
+     */
+    private void handleConfigurationAdded(final ILaunchConfiguration configuration) {
+        TreeViewer viewer = getTreeViewer();
 		viewer.getControl().setRedraw(false);
 		try {
 			viewer.add(configuration.getType(), configuration);
@@ -217,13 +237,13 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 				viewer.remove(from);
 			}
 		} catch (CoreException e) {
+		} finally {
+		    viewer.getControl().setRedraw(true);
 		}
-		viewer.getControl().setRedraw(true);
 		if (isAutoSelect()) {
 			getTreeViewer().setSelection(new StructuredSelection(configuration), true);
 		}
-		
-	}
+    }
 
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
@@ -234,14 +254,32 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
+	public void launchConfigurationRemoved(final ILaunchConfiguration configuration) {
 		// if moved, ignore
 		ILaunchConfiguration to = getLaunchManager().getMovedTo(configuration);
 		if (to != null) {
 			return;
 		}
-		
-		ILaunchConfigurationType type = null;
+		Display display = DebugUIPlugin.getStandardDisplay();
+		if (display.getThread() == Thread.currentThread()) {
+		    // If we're already in the UI thread (user pressing Delete in the
+		    // dialog), update the tree immediately.
+            handleConfigurationRemoved(configuration);
+		} else {
+			display.asyncExec(new Runnable() {
+		        public void run() {
+		            handleConfigurationRemoved(configuration);
+		        }
+			});
+		}
+	}
+
+	/**
+	 * The given launch configuration has been removed. Remove it from the tree.
+     * @param configuration the deleted configuration
+     */
+    private void handleConfigurationRemoved(ILaunchConfiguration configuration) {
+        ILaunchConfigurationType type = null;
 		int typeIndex= -1; // The index of the deleted configuration's type
 		int configIndex= -1; // The index of the deleted configuration		
 		// Initialize data used to set the selection after deletion
@@ -283,9 +321,9 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 			}
 			getTreeViewer().setSelection(newSelection);
 		}
-	}
+    }
 
-	/**
+    /**
 	 * This is similar to IWorkbenchPart#createPartControl(Composite), but it is
 	 * called by the launch dialog when creating the launch config tree view.
 	 * Since this view is not contained in the workbench, we cannot do all the
