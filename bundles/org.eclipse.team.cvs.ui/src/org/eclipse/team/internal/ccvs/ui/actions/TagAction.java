@@ -16,9 +16,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.window.Window;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
@@ -69,8 +69,6 @@ public abstract class TagAction extends WorkspaceAction {
 		} catch (CVSException e1) {
 			throw new InvocationTargetException(e1);
 		}
-		
-		broadcastTagChange(result[0]);
 	}
 	
 	protected boolean performPrompting()  {
@@ -88,7 +86,7 @@ public abstract class TagAction extends WorkspaceAction {
 		TagAsVersionDialog dialog = new TagAsVersionDialog(getShell(),
 											Policy.bind("TagAction.tagResources"), //$NON-NLS-1$
 											operation);
-		if (dialog.open() != InputDialog.OK) return null;
+		if (dialog.open() != Window.OK) return null;
 
 		// The user has indicated they want to force a move.  Make sure they really do.		
 		if (dialog.shouldMoveTag() && store.getBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG))  {
@@ -134,31 +132,29 @@ public abstract class TagAction extends WorkspaceAction {
 		wasCancelled = b;
 	}
 
-	protected void broadcastTagChange(final ITagOperation operation) throws InvocationTargetException, InterruptedException {
+	public static void broadcastTagChange(final ICVSResource[] resources, final CVSTag tag) throws InvocationTargetException, InterruptedException {
 		final RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 		manager.run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				ICVSResource[] resources = operation.getCVSResources();
-				for (int i = 0; i < resources.length; i++) {
-					ICVSResource resource = resources[i];
-					// Cache the new tag creation even if the tag may have had warnings.
-					try {
-						manager.addTags(getRootParent(resource), new CVSTag[] {operation.getTag()});
-					} catch (CVSException e) {
-						CVSUIPlugin.log(e);
+			public void run(IProgressMonitor monitor) {
+				try {
+					for (int i = 0; i < resources.length; i++) {
+						ICVSResource resource = resources[i];
+						// Cache the new tag creation even if the tag may have had warnings.
+						manager.addTags(getRootParent(resource), new CVSTag[] {tag});
 					}
+				} catch (CVSException e) {
+					CVSUIPlugin.log(e);
 				}
 			}
+			private ICVSResource getRootParent(ICVSResource resource) throws CVSException {
+				if (!resource.isManaged()) return resource;
+				ICVSFolder parent = resource.getParent();
+				if (parent == null) return resource;
+				// Special check for a parent which is the repository itself
+				if (parent.getName().length() == 0) return resource;
+				return getRootParent(parent);
+			}
 		}, new NullProgressMonitor());
-	}
-
-	private ICVSResource getRootParent(ICVSResource resource) throws CVSException {
-		if (!resource.isManaged()) return resource;
-		ICVSFolder parent = resource.getParent();
-		if (parent == null) return resource;
-		// Special check for a parent which is the repository itself
-		if (parent.getName().length() == 0) return resource;
-		return getRootParent(parent);
 	}
 }
 

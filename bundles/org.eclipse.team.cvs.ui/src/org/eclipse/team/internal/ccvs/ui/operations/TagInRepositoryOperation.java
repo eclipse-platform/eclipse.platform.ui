@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,6 +25,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.RTag;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.actions.TagAction;
 
 
 public class TagInRepositoryOperation extends RemoteOperation implements ITagOperation {
@@ -44,7 +46,14 @@ public class TagInRepositoryOperation extends RemoteOperation implements ITagOpe
 		for (int i = 0; i < resources.length; i++) {
 			IStatus status = resources[i].tag(getTag(), getLocalOptions(), new SubProgressMonitor(monitor, 1000));
 			collectStatus(status);
-		}		
+		}
+		if (!errorsOccurred()) {
+			try {
+				TagAction.broadcastTagChange(getCVSResources(), getTag());
+			} catch (InvocationTargetException e) {
+				throw CVSException.wrapException(e);
+			}
+		}
 	}
 
 	/**

@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -320,5 +321,17 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	 * @return
 	 */
 	protected abstract String getTaskName();
+	
+	/**
+	 * Return true if any of the accumulated status have a severity of ERROR
+	 * @return
+	 */
+	protected boolean errorsOccurred() {
+		for (Iterator iter = errors.iterator(); iter.hasNext();) {
+			IStatus status = (IStatus) iter.next();
+			if (status.getSeverity() == IStatus.ERROR) return true;
+		}
+		return false;
+	}
 
 }

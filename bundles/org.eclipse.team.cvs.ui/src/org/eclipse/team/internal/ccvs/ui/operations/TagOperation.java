@@ -10,23 +10,25 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Tag;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.actions.TagAction;
 
 public class TagOperation extends RepositoryProviderOperation implements ITagOperation {
 
@@ -49,7 +51,16 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#execute(org.eclipse.team.internal.ccvs.core.CVSTeamProvider, org.eclipse.core.resources.IResource[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void execute(CVSTeamProvider provider, IResource[] resources, IProgressMonitor monitor) throws CVSException, InterruptedException {
-		collectStatus(tag(provider, resources, monitor));
+		IStatus status = tag(provider, resources, monitor);
+		collectStatus(status);
+	}
+
+	private ICVSResource[] getCVSResources(IResource[] resources) {
+		ICVSResource[] cvsResources = new ICVSResource[resources.length];
+		for (int i = 0; i < cvsResources.length; i++) {
+			cvsResources[i] = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
+		}
+		return cvsResources;
 	}
 
 	/**
@@ -57,7 +68,6 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
 	 */
 	protected String getErrorMessage(IStatus[] problems, int operationCount) {
 		// We accumulated 1 status per resource above.
-		MultiStatus combinedStatus;
 		if(operationCount == 1) {
 			return Policy.bind("TagAction.tagProblemsMessage"); //$NON-NLS-1$
 		} else {
@@ -124,4 +134,19 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
 	protected  String getTaskName() {
 		return Policy.bind("TagFromWorkspace.taskName"); //$NON-NLS-1$
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
+		super.execute(monitor);
+		if (!errorsOccurred()) {
+			try {
+				TagAction.broadcastTagChange(getCVSResources(), getTag());
+			} catch (InvocationTargetException e) {
+				throw CVSException.wrapException(e);
+			}
+		}
+	}
+
 }
