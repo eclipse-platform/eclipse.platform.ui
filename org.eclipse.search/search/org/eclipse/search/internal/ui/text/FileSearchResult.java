@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IFile;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -21,12 +19,13 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
 
-import org.eclipse.search.internal.ui.SearchPluginImages;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.IEditorMatchAdapter;
 import org.eclipse.search.ui.text.IFileMatchAdapter;
 import org.eclipse.search.ui.text.Match;
+
+import org.eclipse.search.internal.ui.SearchPluginImages;
 
 public class FileSearchResult extends AbstractTextSearchResult implements IEditorMatchAdapter, IFileMatchAdapter {
 	private final Match[] EMPTY_ARR= new Match[0];
@@ -40,9 +39,7 @@ public class FileSearchResult extends AbstractTextSearchResult implements IEdito
 		return SearchPluginImages.DESC_OBJ_TSEARCH_DPDN;
 	}
 	public String getLabel() {
-		if (getMatchCount() == 1)
-			return fQuery.getSingularLabel();
-		return MessageFormat.format(fQuery.getPluralPattern(), new Object[] { new Integer(getMatchCount()) });
+		return fQuery.getResultLabel(getMatchCount());
 	}
 	public String getTooltip() {
 		return getLabel();

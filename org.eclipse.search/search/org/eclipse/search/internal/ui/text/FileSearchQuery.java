@@ -70,10 +70,6 @@ public class FileSearchQuery implements ISearchQuery {
 		fSearchOptions= options;
 		fSearchString= searchString;
 	}
-
-	public FileSearchQuery(TextSearchScope scope, String options, String searchString) {
-		this(scope, options, searchString, false);
-	}
 	
 	public boolean canRunInBackground() {
 		return true;
@@ -98,20 +94,21 @@ public class FileSearchQuery implements ISearchQuery {
 		return fSearchOptions;
 	}
 
-	String getSingularLabel() {
-		String[] args= new String[] { fSearchString, fScope.getDescription() };
-		return SearchMessages.getFormattedString("FileSearchQuery.singularLabel", args); //$NON-NLS-1$;
-	}
-	
-	String getPluralPattern() {
-		String[] args= new String[] { quote(fSearchString), "{0}", fScope.getDescription() }; //$NON-NLS-1$
-		return SearchMessages.getFormattedString("FileSearchQuery.pluralPattern", args); //$NON-NLS-1$;
-	}
-
-	public static String quote(String searchString) {
-		searchString= searchString.replaceAll("\\'", "''"); //$NON-NLS-1$ //$NON-NLS-2$
-		return searchString.replaceAll("\\{", "'{'"); //$NON-NLS-1$ //$NON-NLS-2$
-		
+	public String getResultLabel(int nMatches) {
+		if (nMatches == 1) {
+			if (fSearchString.length() > 0) {
+				String[] args= new String[] { fSearchString, fScope.getDescription() };
+				return SearchMessages.getFormattedString("FileSearchQuery.singularLabel", args); //$NON-NLS-1$;
+			}
+			String[] args= new String[] { fScope.getExtensionsLabel(), fScope.getDescription() };
+			return SearchMessages.getFormattedString("FileSearchQuery.singularLabel.fileNameSearch", args); //$NON-NLS-1$;
+		}
+		if (fSearchString.length() > 0) {
+			String[] args= new String[] { fSearchString, String.valueOf(nMatches), fScope.getDescription() }; //$NON-NLS-1$
+			return SearchMessages.getFormattedString("FileSearchQuery.pluralPattern", args); //$NON-NLS-1$;
+		}
+		String[] args= new String[] { fScope.getExtensionsLabel(), String.valueOf(nMatches), fScope.getDescription() }; //$NON-NLS-1$
+		return SearchMessages.getFormattedString("FileSearchQuery.pluralPattern.fileNameSearch", args); //$NON-NLS-1$;
 	}
 
 	/**

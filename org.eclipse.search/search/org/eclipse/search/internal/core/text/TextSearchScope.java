@@ -64,6 +64,7 @@ public class TextSearchScope extends SearchScope {
 	}
 	
 	private Set fExtensions= new HashSet(3);
+	private Matcher[] fFileNameMatchers= null;
 
 	/**
 	 * @return Returns a workbench scope.
@@ -114,10 +115,23 @@ public class TextSearchScope extends SearchScope {
 	 * @param extension
 	 */
 	public void addExtension(String extension) {
-		Pattern pattern= PatternConstructor.createPattern(extension, true, false); // case insensitive pattern
-		fExtensions.add(pattern.matcher("")); //$NON-NLS-1$
+		if (fExtensions.add(extension)) {
+			fFileNameMatchers= null; // clear cache
+		}
 	}
 
+	private Matcher[] getFileNameMatchers() {
+		if (fFileNameMatchers == null) {
+			fFileNameMatchers= new Matcher[fExtensions.size()];
+			int i= 0;
+			for (Iterator iter= fExtensions.iterator(); iter.hasNext();) {
+				String ext= (String) iter.next();
+				Pattern pattern= PatternConstructor.createPattern(ext, true, false); // case insensitive pattern
+				fFileNameMatchers[i++]= pattern.matcher(""); //$NON-NLS-1$
+			}
+		}
+		return fFileNameMatchers;
+	}
 
 	/**
 	 * Adds all string patterns contained in <code>extensions</code> to this
@@ -146,15 +160,27 @@ public class TextSearchScope extends SearchScope {
 		return super.encloses(elementPath, elementType);	
 	}
 
-	boolean skipFile(String fileName) {
-		if (fExtensions.isEmpty()) {
-			return false;
-		}
-		Iterator iter= fExtensions.iterator();
-		while (iter.hasNext()) {
-			if (((Matcher) iter.next()).reset(fileName).matches())
+	/*package */ final boolean skipFile(String fileName) {
+		Matcher[] matchers= getFileNameMatchers();
+		for (int i= 0; i < matchers.length; i++) {
+			if (matchers[i].reset(fileName).matches()) {
 				return false;
+			}
 		}
 		return true;
 	}
+	
+	public String getExtensionsLabel() {
+		String[] ext= (String[]) fExtensions.toArray(new String[fExtensions.size()]);
+		Arrays.sort(ext);
+		StringBuffer buf= new StringBuffer();
+		for (int i= 0; i < ext.length; i++) {
+			if (i > 0) {
+				buf.append(", "); //$NON-NLS-1$
+			}
+			buf.append(ext[i]);
+		}
+		return buf.toString();
+	}
+	
 }

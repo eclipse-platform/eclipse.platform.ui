@@ -254,7 +254,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		}		
 		NewSearchUI.activateSearchResultView();
 		scope.addExtensions(patternData.fileNamePatterns);
-	
 		return new FileSearchQuery(scope,  getSearchOptions(), patternData.textPattern, fSearchDerived);
 	}
 
