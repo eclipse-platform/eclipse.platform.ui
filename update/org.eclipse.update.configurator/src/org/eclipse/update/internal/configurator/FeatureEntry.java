@@ -158,9 +158,9 @@ public class FeatureEntry
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IBundleGroup#getBundles()
 	 */
-	public Bundle getBundles() {
+	public Bundle[] getBundles() {
 		// TODO Auto-generated method stub
-		return null;
+		return new Bundle[0];
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IBundleGroup#getDescription()
