@@ -7,8 +7,11 @@ package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewPart;
 
 public abstract class AbstractRemoveActionDelegate extends AbstractListenerActionDelegate {
@@ -23,12 +26,26 @@ public abstract class AbstractRemoveActionDelegate extends AbstractListenerActio
 	}
 	
 	/**
-	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
+	 * @see IViewActionDelegate#init(IViewPart)
 	 */
 	public void init(IViewPart view) {
 		setView(view);
 		setWindow(view.getViewSite().getWorkbenchWindow());
 		getPage().addPartListener(this);
 		getPage().getWorkbenchWindow().addPageListener(this);
+	}
+	
+	/**
+	 * @see AbstractDebugActionDelegate#initialize(IAction, ISelection)
+	 */
+	protected boolean initialize(IAction action, ISelection selection) {
+		if (!isInitialized()) {
+			IDebugViewAdapter debugView= (IDebugViewAdapter)getView().getAdapter(IDebugViewAdapter.class);
+			if (debugView != null) {
+				debugView.setAction(AbstractDebugView.REMOVE_ACTION, action);
+			}
+			return super.initialize(action, selection);
+		}
+		return false;
 	}
 }
