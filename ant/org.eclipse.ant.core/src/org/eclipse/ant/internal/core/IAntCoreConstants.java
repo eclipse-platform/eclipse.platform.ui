@@ -24,12 +24,6 @@ public interface IAntCoreConstants {
 	public static final String PREFIX_TYPE = "type."; //$NON-NLS-1$
 	
 	/**
-	 * Debug constant
-	 * @since 2.1
-	 */
-	public static boolean DEBUG_BUILDFILE_TIMING = false;
-	
-	/**
 	 * Preferences
 	 * @since 2.1
 	 */
