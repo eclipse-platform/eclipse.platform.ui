@@ -17,6 +17,7 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.ui.ICapabilityWizard;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -78,7 +79,7 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 		}
 		
 		if (missingAttribute)
-			throw new WorkbenchException("Missing required category attribute"); //$NON-NLS-1$
+			throw new WorkbenchException("Capability missing required attributes."); //$NON-NLS-1$
 
 		id = attr_id;
 		natureId = attr_nature;
@@ -103,11 +104,15 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	 * Method declared on IWorkbenchAdapter.
 	 */
 	public String getLabel(Object o) {
-		return getNatureDescriptor().getLabel();
+		return getName();
 	}
 	
 	public String getName() {
-		return getNatureDescriptor().getLabel();
+		IProjectNatureDescriptor desc = getNatureDescriptor();
+		if (desc == null)
+			return WorkbenchMessages.format("Capability.nameMissing", new Object[] {getNatureId()}); //$NON-NLS-1$
+		else
+			return desc.getLabel();
 	}
 	
 	public ImageDescriptor getIconDescriptor() {
@@ -119,6 +124,10 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 		return icon;
 	}
 	
+	/**
+	 * Returns the nature descriptor or <code>null</code> if
+	 * none exist.
+	 */
 	public IProjectNatureDescriptor getNatureDescriptor() {
 		if (natureDescriptor == null)
 			natureDescriptor = ResourcesPlugin.getWorkspace().getNatureDescriptor(natureId);
