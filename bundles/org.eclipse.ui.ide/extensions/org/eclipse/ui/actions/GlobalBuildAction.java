@@ -322,15 +322,4 @@ public class GlobalBuildAction extends Action
 		//If they cancelled get them to do it again.
 		return false;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#setImageDescriptor(org.eclipse.jface.resource.ImageDescriptor)
-	 */
-	public void setImageDescriptor(ImageDescriptor newImage) {
-		super.setImageDescriptor(newImage);
-		IProgressService service = PlatformUI.getWorkbench().getProgressService();
-		service.registerIconForFamily(newImage,ResourcesPlugin.FAMILY_MANUAL_BUILD);
-		service.registerIconForFamily(newImage,ResourcesPlugin.FAMILY_AUTO_BUILD);
-		
-	}
 }

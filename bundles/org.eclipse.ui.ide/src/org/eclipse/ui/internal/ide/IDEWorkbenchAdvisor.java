@@ -71,6 +71,7 @@ import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.part.EditorInputTransfer;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
+import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.update.core.SiteManager;
 
 /**
@@ -192,6 +193,16 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 				welcomePerspectiveInfos.add(info);
 			}
 		}
+		
+		//Register the build actions
+		IProgressService service = PlatformUI.getWorkbench()
+				.getProgressService();
+		ImageDescriptor newImage = IDEInternalWorkbenchImages
+				.getImageDescriptor(IDEInternalWorkbenchImages.IMG_ETOOL_BUILD_EXEC);
+		service.registerIconForFamily(newImage,
+				ResourcesPlugin.FAMILY_MANUAL_BUILD);
+		service.registerIconForFamily(newImage,
+				ResourcesPlugin.FAMILY_AUTO_BUILD);
 	}
 
 	/* (non-Javadoc)
