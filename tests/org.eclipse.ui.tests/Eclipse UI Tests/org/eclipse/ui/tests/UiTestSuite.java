@@ -13,7 +13,6 @@ package org.eclipse.ui.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.tests.util.PlatformUtil;
 
 /**
