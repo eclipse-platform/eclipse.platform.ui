@@ -18,9 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-
 import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.progress.ProgressMessages;
@@ -31,6 +29,8 @@ public abstract class UIJob extends Job {
 
 	/**
 	 * Create a new instance of the receiver with the supplied name.
+	 * The display used will be the one from the workbench if this
+	 * is available.
 	 * <b>NOTE:<b> It is recommended that <code>UIJob(String,Display></code>
 	 * is used if possible so as to prevent unneccessary creation
 	 * of the workbench or a display by the jobs mechanism.
@@ -39,7 +39,12 @@ public abstract class UIJob extends Job {
 	 * 
 	 */
 	public UIJob(String name) {
-		this(Display.getDefault(), name);
+		
+		super(name);
+		Display currentDisplay;
+		if(PlatformUI.isWorkbenchRunning())
+			setDisplay(PlatformUI.getWorkbench().getDisplay());
+		
 	}
 
 	/**
