@@ -32,6 +32,7 @@ package org.eclipse.debug.core.model;
  * Clients are intended to implement this interface.
  * </p>
  * @see org.eclipse.debug.core.model.IWatchExpression
+ * @see org.eclipse.debug.core.model.IWatchExpressionListener
  * 
  * @since 3.0
  */

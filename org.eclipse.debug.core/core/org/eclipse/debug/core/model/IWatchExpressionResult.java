@@ -13,7 +13,13 @@ package org.eclipse.debug.core.model;
 import org.eclipse.debug.core.DebugException;
 
 /**
+ * The result of an evaluation performed by an
+ * <code>org.eclipse.debug.core.model.IWatchExpressionDelegate</code>.
+ * A watch expression reports the value of the evaluation
+ * and any errors or exceptions that occurred.
  * 
+ * @see org.eclipse.debug.core.model.IWatchExpressionDelegate
+ * @since 3.0
  */
 public interface IWatchExpressionResult {
 	/**
