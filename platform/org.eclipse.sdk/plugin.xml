@@ -2,6 +2,6 @@
 <plugin
    id="org.eclipse.sdk"
    name="%pluginName"
-   version="1.0"
+   version="2.0"
    provider-name="Object Technology International, Inc.">
 </plugin>
