@@ -12,6 +12,8 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -47,6 +49,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 	private ICVSRepositoryLocation location;
 	private boolean badLocation = false;
 	private String helpContextId;
+	private boolean supportsMultiSelection;
 	
 	public ModuleSelectionPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
@@ -153,26 +156,42 @@ public class ModuleSelectionPage extends CVSWizardPage {
 				}
 				setModuleListInput();
 			}
-			ICVSRemoteFolder folder = internalGetSelectedModule();
-			setPageComplete(folder != null);
+			setPageComplete(internalGetSelectedModules().length > 0);
 		}
 	}
 
-	private ICVSRemoteFolder internalGetSelectedModule() {
+	private ICVSRemoteFolder[] internalGetSelectedModules() {
 		if (moduleList != null && moduleList.getControl().isEnabled()) {
 			ISelection selection = moduleList.getSelection();
-			if (selection instanceof IStructuredSelection) {
+			if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
 				IStructuredSelection ss = (IStructuredSelection)selection;
-				Object firstElement = ss.getFirstElement();
-				if (firstElement instanceof ICVSRemoteFolder) {
-					return (ICVSRemoteFolder)firstElement;
+				ArrayList result = new ArrayList();
+				for (Iterator iter = ss.iterator(); iter.hasNext();) {
+					Object element = iter.next();
+					if (element instanceof ICVSRemoteFolder) {
+						result.add(element);
+					}
+					
+				}
+				return (ICVSRemoteFolder[]) result.toArray(new ICVSRemoteFolder[result.size()]);
+			}
+		} else {
+			ICVSRemoteFolder folder = null;
+			if (moduleName != null) {
+				folder = internalCreateModuleHandle(moduleName);
+			} else {
+				if (project != null) {
+					folder = internalCreateModuleHandle(project.getName());
 				}
 			}
-		}
-		return null;
+			if (folder != null) {
+				return new ICVSRemoteFolder[] { folder };
+			}
+		} 
+		return new ICVSRemoteFolder[0];
 	}
 	
-	private ICVSRemoteFolder internalCreateModule(String name) {
+	private ICVSRemoteFolder internalCreateModuleHandle(String name) {
 		ICVSRepositoryLocation location = getLocation();
 		if (location == null) return null;
 		return location.getRemoteFolder(name, CVSTag.DEFAULT);
@@ -185,30 +204,26 @@ public class ModuleSelectionPage extends CVSWizardPage {
 	 * @return the selected exisiting remote module
 	 */
 	public ICVSRemoteFolder getSelectedModule() {
-		final ICVSRemoteFolder[] folder = new ICVSRemoteFolder[] { null };
+		ICVSRemoteFolder[] selectedModules = getSelectedModules();
+		if (selectedModules.length > 0) {
+			return selectedModules[0];
+		} else {
+			return null;
+		}
+	}
+	
+	public ICVSRemoteFolder[] getSelectedModules() {
+		final ICVSRemoteFolder[][] folder = new ICVSRemoteFolder[][] { null };
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
-				folder[0] = internalGetSelectedModule();
-				if (folder[0] == null) {
-					if (moduleName != null) {
-						folder[0] = internalCreateModule(moduleName);
-					} else {
-						if (project != null) {
-							folder[0] = internalCreateModule(project.getName());
-						}
-					}
-				}
+				folder[0] = internalGetSelectedModules();
 			}
 		});
 		return folder[0];
 	}
 	
-	public boolean isSelectedModuleExists() {
-		return internalGetSelectedModule() != null;
-	}
-	
 	private TreeViewer createModuleTree(Composite composite, int horizontalSpan) {
-		Tree tree = new Tree(composite, SWT.SINGLE | SWT.BORDER);
+		Tree tree = new Tree(composite, (supportsMultiSelection ? SWT.MULTI : SWT.SINGLE) | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.horizontalSpan = horizontalSpan;
 		tree.setLayoutData(data);	
@@ -235,11 +250,17 @@ public class ModuleSelectionPage extends CVSWizardPage {
 		result.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateEnablements(false);
-				ICVSRemoteFolder selectedModule = getSelectedModule();
-				if (selectedModule == null) return;
-				String repositoryRelativePath = selectedModule.getRepositoryRelativePath();
-				if (repositoryRelativePath.equals(FolderSyncInfo.VIRTUAL_DIRECTORY)) return;
-				text.setText(repositoryRelativePath);
+				ICVSRemoteFolder[] modules = internalGetSelectedModules();
+				if (modules.length == 1) {
+					// There is at 1 module selected
+					ICVSRemoteFolder selectedModule = modules[0];
+					String repositoryRelativePath = selectedModule.getRepositoryRelativePath();
+					if (!repositoryRelativePath.equals(FolderSyncInfo.VIRTUAL_DIRECTORY)) {
+						text.setText(repositoryRelativePath);
+					}
+				} else {
+					text.setText(""); //$NON-NLS-1$
+				}
 			}
 		});
 		result.getTree().addMouseListener(new MouseAdapter() {
@@ -274,5 +295,8 @@ public class ModuleSelectionPage extends CVSWizardPage {
 
 	public void setProject(IProject project) {
 		this.project = project;
+	}
+	public void setSupportsMultiSelection(boolean supportsMultiSelection) {
+		this.supportsMultiSelection = supportsMultiSelection;
 	}
 }

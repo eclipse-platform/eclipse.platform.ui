@@ -69,6 +69,7 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 		modulePage = new ModuleSelectionPage("moduleSelection", Policy.bind("CheckoutWizard.10"), substImage); //$NON-NLS-1$ //$NON-NLS-2$
 		modulePage.setDescription(Policy.bind("CheckoutWizard.11")); //$NON-NLS-1$
 		modulePage.setHelpContxtId(IHelpContextIds.CHECKOUT_MODULE_SELECTION_PAGE);
+		modulePage.setSupportsMultiSelection(true);
 		addPage(modulePage);
 		
 		// Dummy page to allow lazy creation of CheckoutAsWizard
@@ -85,7 +86,7 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
 	 */
 	public boolean canFinish() {
-		return (wizard == null && getSelectedModule() != null) || 
+		return (wizard == null && getSelectedModules().length > 0) || 
 			(wizard != null && wizard.canFinish());
 	}
 	
@@ -102,7 +103,7 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 			return true;
 		} else {
 			try {
-				new CheckoutMultipleProjectsOperation(getPart(), new ICVSRemoteFolder[] { getSelectedModule() }, null)
+				new CheckoutMultipleProjectsOperation(getPart(), getSelectedModules(), null)
 					.run();
 				if (isNewLocation) {
 					KnownRepositories.getInstance().addRepository(location, true /* broadcast */);
@@ -174,15 +175,23 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 			return modulePage;
 		}
 		if (page == modulePage) {
-			ICVSRemoteFolder selectedModule = getSelectedModule();
-			if (selectedModule != null && selectedModule.isDefinedModule()) {
-				// No further configuration is possible for defined modules
-				return null;
+			ICVSRemoteFolder[] selectedModules = getSelectedModules();
+			if (selectedModules.length == 0) return null;
+			for (int i = 0; i < selectedModules.length; i++) {
+				ICVSRemoteFolder folder = selectedModules[i];
+				if (folder.isDefinedModule()) {
+					// No further configuration is possible for defined modules
+					return null;
+				}
 			}
 			if (aboutToShow) {
 				try {
-					boolean hasMetafile = hasProjectMetafile(selectedModule);
-					wizard = new CheckoutAsWizard(getPart(), new ICVSRemoteFolder[] { selectedModule }, ! hasMetafile /* allow configuration */);
+					boolean hasMetafile = true;
+					if (selectedModules.length == 1) {
+						// Only allow configuration if one module is selected
+						hasMetafile = hasProjectMetafile(selectedModules[0]);
+					}
+					wizard = new CheckoutAsWizard(getPart(), selectedModules, ! hasMetafile /* allow configuration */);
 					wizard.addPages();
 					return wizard.getStartingPage();
 				} catch (InvocationTargetException e) {
@@ -218,9 +227,9 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 		return result[0];
 	}
 
-	private ICVSRemoteFolder getSelectedModule() {
+	private ICVSRemoteFolder[] getSelectedModules() {
 		if (modulePage == null) return null;
-		return modulePage.getSelectedModule();
+		return modulePage.getSelectedModules();
 	}
 
 	/**
