@@ -290,15 +290,13 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 					
 				ITeamNode node = (ITeamNode)element;					
 				IResource resource = node.getResource();
-				
-				if (! resource.exists())
-					return label;
-						
-				// use the default text decoration preferences
-				Decoration decoration = new Decoration();
 
-				CVSLightweightDecorator.decorateTextLabel(resource, decoration, false /*don't show dirty*/, false /*don't show revisions*/);
-				label = decoration.prefix + label + decoration.suffix;
+				if (resource.exists()) {
+					// use the default text decoration preferences
+					Decoration decoration = new Decoration();
+					CVSLightweightDecorator.decorateTextLabel(resource, decoration, false /*don't show dirty*/, false /*don't show revisions*/);
+					label = decoration.prefix + label + decoration.suffix;
+				}
 				
 				if (CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_SHOW_SYNCINFO_AS_TEXT)) {
 					int syncKind = node.getKind();
