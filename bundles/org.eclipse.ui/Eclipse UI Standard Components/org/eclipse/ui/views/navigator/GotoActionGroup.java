@@ -10,12 +10,9 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-
+import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.views.framelist.*;
@@ -94,10 +91,19 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
 	public void updateActionBars() {
 		IStructuredSelection selection =
 			(IStructuredSelection) getContext().getSelection();
-		goIntoAction.setEnabled(selection.size() == 1
-			&& ResourceSelectionUtil.allResourcesAreOfType(
-				selection,
-				IResource.PROJECT | IResource.FOLDER));
+		boolean enable = false;
+				
+		if (selection.size() == 1) {
+			Object object = selection.getFirstElement();
+			if (object instanceof IProject) {
+				enable = ((IProject) object).isOpen();
+			}
+			else
+			if (object instanceof IFolder) {
+				enable = true;
+			}
+		}
+		goIntoAction.setEnabled(enable);
 		// the rest of the actions update by listening to frame list changes
 	}
 }
