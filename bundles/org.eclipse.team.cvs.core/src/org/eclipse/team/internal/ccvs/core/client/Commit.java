@@ -5,9 +5,8 @@ package org.eclipse.team.internal.ccvs.core.client;
  * All Rights Reserved.
  */
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -19,6 +18,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 public class Commit extends Command {
@@ -87,7 +87,16 @@ public class Commit extends Command {
 							status = mergeStatus(status, new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0, Policy.bind("Commit.syncInfoMissing", cvsFile.getIResource().getFullPath().toString()), null)); //$NON-NLS-1$
 						} else {
 							status = mergeStatus(status, new Status(IStatus.INFO, CVSProviderPlugin.ID, 0, Policy.bind("Commit.timestampReset", cvsFile.getIResource().getFullPath().toString()), null)); //$NON-NLS-1$
-							cvsFile.setTimeStamp(info.getTimeStamp());
+							Date timeStamp = info.getTimeStamp();
+							if (timeStamp == null) {
+								// If the entry line has no timestamp, put the file timestamp in the entry line
+								MutableResourceSyncInfo mutable = info.cloneMutable();
+								mutable.setTimeStamp(cvsFile.getTimeStamp());
+								cvsFile.setSyncInfo(mutable);
+							} else {
+								// reset the file timestamp to the one from the entry line
+								cvsFile.setTimeStamp(timeStamp);
+							}
 						}
 					}
 				}
