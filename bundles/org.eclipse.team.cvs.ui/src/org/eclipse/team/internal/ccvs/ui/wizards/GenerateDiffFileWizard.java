@@ -251,6 +251,7 @@ public class GenerateDiffFileWizard extends Wizard {
 			cp.showClosedProjects(false);
 			GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 			data.verticalSpan = 5;
+			data.heightHint = 200;
 			treeViewer.getTree().setLayoutData(data);
 			treeViewer.setContentProvider(cp);
 			treeViewer.setLabelProvider(new WorkbenchLabelProvider());
@@ -311,7 +312,7 @@ public class GenerateDiffFileWizard extends Wizard {
 
 			browseButton.setEnabled(type==FILESYSTEM);
 			filenameCombo.setEnabled(type==FILESYSTEM);
-
+			treeViewer.getTree().setEnabled(type==WORKSPACE);
 			workspaceFilename.setEnabled(type==WORKSPACE);
 		}
 		
