@@ -11,22 +11,11 @@
 
 package org.eclipse.update.internal.core;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.text.*;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
@@ -68,11 +57,20 @@ public class InstallLogParser {
 		installConfigMap = new HashMap();
 		try {
 			IInstallConfiguration[] configs = SiteManager.getLocalSite().getConfigurationHistory();
-			for (int i=0;i <configs.length; i++)
+			for (int i=0;i <configs.length; i++){
+				((InstallConfiguration)configs[i]).resetActivities();
 				installConfigMap.put(configs[i].getCreationDate().toString(), configs[i]);
+			}
 		} catch (CoreException e) {
 			UpdateCore.log(e);
 		}
+		comparator = new Comparator(){
+			public int compare(Object e1, Object e2) {
+				Date date1 = ((InstallConfiguration)e1).getCreationDate();
+				Date date2 = ((InstallConfiguration)e2).getCreationDate();
+				return date1.before(date2) ? 1 : -1;
+			}
+		};
 	}
 	
 	public void parseInstallationLog(){
@@ -202,5 +200,12 @@ public class InstallLogParser {
 	
 	public IActivity[] getActivities() {
 		return (IActivity[])activities.toArray(new ConfigurationActivity[activities.size()]);
+	}
+	
+	public InstallConfiguration[] getConfigurations(){
+		Collection configSet = installConfigMap.values();
+		InstallConfiguration[] configs = (InstallConfiguration[]) configSet.toArray(new InstallConfiguration[configSet.size()]);
+		Arrays.sort(configs, comparator);
+		return configs;
 	}
 }

@@ -25,9 +25,9 @@ import org.eclipse.update.internal.ui.parts.*;
 
 
 /**
- * Viewer for configuration activities
+ * @author cgwong
  */
-public class ActivitiesTableViewer{
+public class CurrentActivitiesTableViewer{
 
 	private static InstallLogParser parser; 
 	
@@ -36,23 +36,7 @@ public class ActivitiesTableViewer{
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object element) {
 			InstallConfiguration currentConfig = (InstallConfiguration)element;
-			InstallConfiguration[] configs = parser.getConfigurations();
-			boolean hitCurrentConfig = false;
-			ArrayList activitiesList = new ArrayList();
-			for (int i = 0; i<configs.length; i++){
-				if (configs[i].equals(currentConfig) && !hitCurrentConfig)
-					hitCurrentConfig = true;
-				if (hitCurrentConfig){
-					IActivity[] activities = configs[i].getActivities();
-//					System.out.println(configs[i].getCreationDate() + ": " + configs[i].getActivities().length);
-					for (int j = 0; j<activities.length; j++)
-						activitiesList.add(activities[j]);
-				}
-				
-			}
-//			System.out.println("num activities " + activitiesList.size());
-			return (IActivity[])activitiesList.toArray(new IActivity[activitiesList.size()]);
-//			return currentConfig.getActivities();
+			return currentConfig.getActivities();
 		}
 	}
 

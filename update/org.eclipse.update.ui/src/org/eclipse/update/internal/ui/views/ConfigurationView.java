@@ -27,13 +27,12 @@ import org.eclipse.ui.help.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.api.operations.*;
+import org.eclipse.update.internal.api.operations.IUpdateModelChangedListener;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.api.operations.*;
-import org.eclipse.update.internal.api.operations.IUpdateModelChangedListener;
-import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * Insert the type's description here.
@@ -60,6 +59,7 @@ public class ConfigurationView
 	private InstallOptionalFeatureAction installOptFeatureAction;
 	private Action showUnconfFeaturesAction;
 	private RevertConfigurationAction revertAction;
+	private ShowActivitiesAction showActivitiesAction;
 	private Action propertiesAction;
 	private SiteStateAction siteStateAction;
 	private Action installationHistoryAction;
@@ -499,6 +499,11 @@ public class ConfigurationView
 
 		findUpdatesAction =
 			new FindUpdatesAction(getControl().getShell(), UpdateUI.getString("ConfigurationView.findUpdates")); //$NON-NLS-1$
+
+		showActivitiesAction = new ShowActivitiesAction(getControl().getShell(), UpdateUI.getString("ConfigurationView.showActivitiesLabel")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(
+			showActivitiesAction,
+			"org.eclipse.update.ui.CofigurationView_showActivitiesAction"); //$NON-NLS-1$
 
 		makeShowUnconfiguredFeaturesAction();
 		makeShowSitesAction();
@@ -1021,7 +1026,7 @@ public class ConfigurationView
 			new PreviewTask(
 				UpdateUI.getString("ConfigurationView.activitiesLabel"), //$NON-NLS-1$
 				UpdateUI.getString("ConfigurationView.activitiesDesc"), //$NON-NLS-1$
-				propertiesAction));
+				showActivitiesAction));
 
 		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
 

@@ -1,13 +1,17 @@
-/*
- * Created on May 21, 2003
- *
- * To change this generated comment go to 
- * Window>Preferences>Java>Code Generation>Code Template
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import java.util.*;
 import java.lang.reflect.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
@@ -27,19 +31,19 @@ import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.api.operations.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.views.*;
 
 
 public class RevertConfigurationWizardPage extends WizardPage {
 
 	private TableViewer activitiesViewer;
 	private TableViewer configViewer;
-	private InstallLogParser parser;
+	public static Color blueBGColor;
 
 	public RevertConfigurationWizardPage() {
 		super("RevertConfiguration"); //$NON-NLS-1$
 		setTitle(UpdateUI.getString("RevertConfigurationWizardPage.title")); //$NON-NLS-1$
 		setDescription(UpdateUI.getString("RevertConfigurationWizardPage.desc")); //$NON-NLS-1$
+		blueBGColor = new Color(null, 238,238,255);
 	}
 
 	public void createControl(Composite parent) {
@@ -113,13 +117,14 @@ public class RevertConfigurationWizardPage extends WizardPage {
 			public void selectionChanged(SelectionChangedEvent e) {
 				IStructuredSelection ssel =	(IStructuredSelection) e.getSelection();
 				InstallConfiguration currentConfig = (InstallConfiguration)ssel.getFirstElement();
+				activitiesViewer.setInput(currentConfig);
+				activitiesViewer.refresh();
 				TableItem[] items = activitiesViewer.getTable().getItems();
-				Color color = new Color(null, 238,238,255);
 				for (int i =0; i<items.length; i++){
 					IActivity activity = (IActivity)items[i].getData();
 					// for now, we test exact config match. If needed, we can also compare dates, etc.
 					if (activity.getInstallConfiguration() == currentConfig)
-						items[i].setBackground(color);//activitiesViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
+						items[i].setBackground(blueBGColor);//activitiesViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
 					else
 						items[i].setBackground(activitiesViewer.getControl().getBackground());
 				}
@@ -139,7 +144,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 		gridLayout.marginHeight = gridLayout.marginWidth = 0;
 		composite.setLayout(gridLayout);
 
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.grabExcessHorizontalSpace = true;
 		gd.grabExcessVerticalSpace = true;
 		composite.setLayoutData(gd);
@@ -161,11 +166,13 @@ public class RevertConfigurationWizardPage extends WizardPage {
 		layout.addColumnData(new ColumnWeightData(50, 100, true));
 
 		activitiesViewer.getTable().setLayout(layout);
-		parser = new InstallLogParser();
-		parser.parseInstallationLog();
+//		parser = new InstallLogParser();
+//		parser.parseInstallationLog();
 //		InstallConfigElement[] ele = parser.getInstallConfigurations();
 //		return ele;
-		activitiesViewer.setInput(parser);
+		TableItem[] configs = configViewer.getTable().getItems();
+		if (configs.length >0)
+			activitiesViewer.setInput((InstallConfiguration)configs[0].getData());
 	}
 
 	public boolean performFinish() {
