@@ -240,7 +240,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		ILaunchConfiguration[] favoriteList = getLaunchHistory().getFavorites();		
 		
 		// Add favorites
-		int accelerator = 0;
+		int accelerator = 1;
 		for (int i = 0; i < favoriteList.length; i++) {
 			ILaunchConfiguration launch= favoriteList[i];
 			LaunchAction action= new LaunchAction(launch, getMode());
