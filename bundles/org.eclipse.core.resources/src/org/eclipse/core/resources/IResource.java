@@ -1017,27 +1017,28 @@ public long getLocalTimeStamp();
  * <p>
  * If this resource is the workspace root, this method returns
  * the absolute local file system path of the platform working area.
- * </p>
- * <p>
+ * </p><p>
  * If this resource is a project that exists in the workspace, this method
  * returns the path to the project's local content area. This is true regardless
  * of whether the project is open or closed. This value will be null in the case
  * where the location is relative to an undefined workspace path variable.
- * </p>
- * <p>
+ * </p><p>
  * If this resource is a linked resource under a project that is open, this
  * method returns the resolved path to the linked resource's local contents.
  * This value will be null in the case where the location is relative to an
  * undefined workspace path variable.
- * <p>
+ * </p><p>
  * If this resource is a file or folder under a project that exists, or a
  * linked resource under a closed project, this method returns a (non-
  * <code>null</code>) path computed from the location of the project's local
  * content area and the project- relative path of the file or folder. This is
  * true regardless of whether the file or folders exists, or whether the project
- * is open or closed. FIXME: for linked resources, it is true only for closed projects
- * </p>
- * <p>
+ * is open or closed. In the case of linked resources, the location of a linked resource
+ * within a closed project is too computed from the location of the
+ * project's local content area and the project-relative path of the resource. If the
+ * linked resource resides in an open project then its location is computed
+ * according to the link.
+ * </p><p>
  * If this resource is a project that does not exist in the workspace,
  * or a file or folder below such a project, this method returns
  * <code>null</code>.
@@ -1311,9 +1312,10 @@ public boolean isDerived();
  */
 public boolean isLocal(int depth);
 /**
- * FIXME: a linked resource *can* point to a location inside of the project's location area.
  * Returns <code>true</code> if this resource has been linked to 
- * a location outside of the project's content area.  Returns <code>false</code>
+ * a location other than the default location calculated by the platform. This
+ * location can be outside the project's content area or another location
+ * within the project. Returns <code>false</code>
  * in all other cases, including the case where this resource does not exist.
  * The workspace root and projects are never linked.
  * <p>
@@ -1324,7 +1326,6 @@ public boolean isLocal(int depth);
  * 
  * @return <code>true</code> if this resource is linked, and 
  *   <code>false</code> otherwise
- *
  * @see IFile#createLink(IPath, int, IProgressMonitor)
  * @see IFolder#createLink(IPath, int, IProgressMonitor)
  * @since 2.1
