@@ -383,7 +383,6 @@ public static void updatePerspective(IConfigurationElement configElement) {
 	// Map perspective id to descriptor.
 	IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 	IPerspectiveDescriptor finalPersp = reg.findPerspectiveWithId(finalPerspId);
-    // @issue IPluginContribution and WorkbenchActivityHelper are internal
 	if (finalPersp != null && finalPersp instanceof IPluginContribution) {
         IPluginContribution contribution = (IPluginContribution) finalPersp;
         if (contribution.getPluginId() != null) {            
