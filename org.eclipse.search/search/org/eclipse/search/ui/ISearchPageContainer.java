@@ -135,14 +135,18 @@ public interface ISearchPageContainer {
 
 	/**
 	 * Returns the action a search page should perform in it's performAction() method.
+	 * 
 	 * @return ACTION_SEARCH or ACTION_REPLACE
 	 * @since 3.0
 	 */
+	
 	public int getActionId();
+	
 	/**
 	 * Tells the container what to do after the action has been performed.
 	 * The runnable will be executed by the search page container
 	 * if <code>performAction()</code> returns true.
+	 * 
 	 * @since 3.0
 	 */
 	public void setPostPerformRunnable(Runnable runnable);
