@@ -23,6 +23,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Sorter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -135,12 +136,7 @@ public class FontPreferencePage
 	 * Create the preference page.
 	 */
 	public FontPreferencePage() {
-
-		Plugin plugin = Platform.getPlugin(PlatformUI.PLUGIN_ID);
-		if (plugin instanceof AbstractUIPlugin) {
-			AbstractUIPlugin uiPlugin = (AbstractUIPlugin) plugin;
-			setPreferenceStore(uiPlugin.getPreferenceStore());
-		}
+		setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
 	}
 
 	/**
@@ -404,6 +400,7 @@ public class FontPreferencePage
 				preferenceName,
 				(FontData[]) idsToFontData.get(preferenceName));
 		}
+		WorkbenchPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
 	}
 	
