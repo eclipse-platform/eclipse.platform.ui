@@ -1,5 +1,8 @@
 package org.eclipse.update.tests;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import junit.framework.*;
 import org.eclipse.update.tests.api.AllAPITests;
 import org.eclipse.update.tests.parser.AllParserTests;

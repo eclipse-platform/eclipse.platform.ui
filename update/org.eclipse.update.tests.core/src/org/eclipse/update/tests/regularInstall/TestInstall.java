@@ -1,5 +1,8 @@
 package org.eclipse.update.tests.regularInstall;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import java.io.File;
 import java.net.URL;
 
@@ -55,12 +58,24 @@ public class TestInstall extends UpdateManagerTestCase {
 
 	public void testHTTPSite() throws Exception{
 		
-		ISite remoteSite = new URLSite(SOURCE_HTTP_SITE);
-		IFeature remoteFeature = getFeature2(remoteSite);
-		ISite localSite = new FileSite(TARGET_FILE_SITE);
+		ISite remoteSite = SiteManager.getSite(SOURCE_HTTP_SITE);
+		IFeature[] features = remoteSite.getFeatures();
+		IFeature remoteFeature=null;
+		
+		if (features==null || features.length==0) fail("No features on the site");
+		
+		for (int i=0; i < features.length; i++){
+			if (features[i].getURL().toExternalForm().endsWith("features2.jar")){
+				remoteFeature=features[i];
+				break;
+			}
+		}
+
+		assertNotNull("Cannot find feature2.jar on site",remoteFeature);		
+		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
 		localSite.install(remoteFeature,null);
 
-		String site = localSite.getURL().getFile();
+		String site = localSite.getURL().getPath();
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry",(entries!=null && entries.length!=0));
 		

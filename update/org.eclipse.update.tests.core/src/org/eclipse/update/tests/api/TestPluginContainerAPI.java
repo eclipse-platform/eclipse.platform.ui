@@ -1,5 +1,8 @@
 package org.eclipse.update.tests.api;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import java.net.URL;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.VersionedIdentifier;

@@ -1,7 +1,13 @@
 package org.eclipse.update.internal.core;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.update.core.ICategory;
 
+/**
+ * Default Implementation of ICategory
+ */
 public class DefaultCategory implements ICategory {
 	
 	private String name;

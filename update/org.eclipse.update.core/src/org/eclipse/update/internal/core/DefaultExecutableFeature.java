@@ -1,10 +1,17 @@
 package org.eclipse.update.internal.core;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.update.core.*; 
+
+/**
+ * feature that is executable
+ */
 
 public class DefaultExecutableFeature extends AbstractFeature {
 	

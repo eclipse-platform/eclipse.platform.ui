@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature id="org.test1.ident2" image="feature1.bmp" label="Feature One" nl="en_us,fr,de" os="OS_WIN32,OS_LINUX" provider-name="Object Technology International" version="1.0.0" ws="WS_WIN32,WS_MOTIF,WS_GTK">
+<feature id="org.test1.ident2" label="Feature One" nl="en_us,fr,de" os="OS_WIN32,OS_LINUX" provider-name="Object Technology International" version="1.0.0" ws="WS_WIN32,WS_MOTIF,WS_GTK">
   <description>Test feature for testIdentifier test</description>
-  <copyright>Ok, now, this is a very very complex Copyright #1 Do you accept it #2 if you do not accept it would you pay anyway ? #3 not prepared by a lawyer Copyright (c) the company</copyright>
-  <license>Hum... what is a difference between a license and a copyright... ahhhhYou have to accept teh license...Do you accpt it ?</license>
+  <copyright>Copyright (c) the company</copyright>
+  <license>Do you accept the license ?</license>
   <url>
-    <update label="URL to update teh feature" url="www.eclipse.org"/>
+    <update label="URL to update teh feature" url="http://www.eclipse.org"/>
     <discovery label="Discovery 1" url="http://www.eclipse.org"/>
     <discovery label="Discovery 2" url="http://www.eclipse.org"/>
   </url>

@@ -1,10 +1,16 @@
 package org.eclipse.update.internal.core;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import java.io.*;
 import java.net.URL;
 
 import org.eclipse.update.core.*;
 
+/**
+ * Site on the File System
+ */
 public class FileSite extends URLSite {
 
 	private String path;

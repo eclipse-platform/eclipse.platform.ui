@@ -1,7 +1,11 @@
 package org.eclipse.update.tests.regularInstall;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.internal.core.URLSite;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
@@ -14,23 +18,23 @@ public class TestGetFeature extends UpdateManagerTestCase {
 	}
 	
 	
-	public void testFileSite() throws Exception{
+	public void testFeatureFileSite() throws Exception{
 		
-		ISite remoteSite = new URLSite(SOURCE_FILE_SITE);
+		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
 		IFeature[] remoteFeatures = remoteSite.getFeatures();
 		if (remoteFeatures==null || remoteFeatures.length==0) fail("No feature available for testing");
 		for (int i=0;i<remoteFeatures.length;i++){
-			System.out.println("feature:"+remoteFeatures[i].getIdentifier());
+			System.out.println("feature:"+remoteFeatures[i].getURL().toExternalForm());
 		}
 	}
 
-	public void testHTTPSite() throws Exception{ 
+	public void testFeatureHTTPSite() throws Exception{ 
 		
 		ISite remoteSite = new URLSite(SOURCE_HTTP_SITE);
 		IFeature[] remoteFeatures = remoteSite.getFeatures();
 		if (remoteFeatures==null || remoteFeatures.length==0) fail("No feature available for testing");		
 		for (int i=0;i<remoteFeatures.length;i++){
-			System.out.println("feature:"+remoteFeatures[i].getIdentifier());
+			System.out.println("feature:"+remoteFeatures[i].getURL().toExternalForm());
 		}
 	}
 }

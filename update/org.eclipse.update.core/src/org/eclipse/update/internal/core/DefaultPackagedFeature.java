@@ -1,5 +1,8 @@
 package org.eclipse.update.internal.core;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -10,7 +13,10 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
 import org.eclipse.update.core.*;
-
+
+/**
+ * Parse the default feature.xml
+ */
 public class DefaultPackagedFeature extends AbstractFeature {
 
 	private JarFile currentOpenJarFile = null;

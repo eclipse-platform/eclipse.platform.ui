@@ -10,5 +10,24 @@
 
 new java.net.URL("file://C:/temp/org.eclipse.update.core.feature1_1.0.0/org.eclipse.update.core.feature1.plugin1_1.1.1.jar").openStream()
 
-(new java.io.File("C:\\xtf xtf\\hello\\")).mkdirs();
+(new java.io.File("C:\\chris chris\hello\\")).mkdirs();
+
+java.net.URL a =  new java.net.URL("http","www.oti.com","/feature/blah.jar");
+java.net.URL b =  new java.net.URL("jar",null,a.toExternalForm()+"!/hello.txt");
+b
+
+new java.net.URL("file",null,System.getProperty("java.io.tmpdir"));
+
+String tempDir = "c:\\TEMP\\features2.jar";
+java.net.URL TEMP_SITE = new java.net.URL("file",null,tempDir);
+java.net.URL file = new java.net.URL("jar",null,TEMP_SITE.toExternalForm()+"!/feature.xml");
+file.openStream();
+file
+
+java.io.File f =  new java.io.File("c:\\temp\\xtf\\file.jar");
+f.mkdirs()
+
+
+
+
 

@@ -1,26 +1,27 @@
 package org.eclipse.update.tests.uivalues;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import java.net.URL;
 
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.URLSite;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
-public class TestDejan extends UpdateManagerTestCase {
+public class TestUILabel extends UpdateManagerTestCase {
 
-
-	public String SOURCE = "http://9.26.150.182/Dejan/";
-		/**
+	/**
 	 * Test the getFeatures()
 	 */
-	public TestDejan(String arg0) {
+	public TestUILabel(String arg0) {
 		super(arg0);
 	}
 	
 	
 	public void testHTTPSite() throws Exception{ 
 		
-		ISite remoteSite = new URLSite(new URL(SOURCE));
+		ISite remoteSite = new URLSite(new URL("http",bundle.getString("HTTP_HOST_1"),bundle.getString("HTTP_PATH_2")));
 		ICategory[] categories = remoteSite.getCategories();
 		for (int i =0; i<categories.length; i++){
 			System.out.println("Category ->"+categories[i].getLabel()+":"+categories[i].getName());

@@ -1,12 +1,12 @@
 package org.eclipse.update.core;
 
-import java.io.InputStream;
-
-
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+
+import java.io.InputStream;
+
 public interface IPluginContainer {
 	IPluginEntry [] getPluginEntries();
 	int getPluginEntryCount();

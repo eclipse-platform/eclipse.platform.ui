@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-
 <site url="/info/siteInfo.html">
-  <feature id="org.isv.feature3" url="www.eclipse.org/feature3" version="3.4.5">
+  <feature id="org.isv.feature3" url="http://www.eclipse.org/feature3" version="3.4.5">
     <category name="eclipse/UML"/>
   </feature>
-  <feature id="org.eclipse.update.core.tests.feature2" url="www.eclipse.org/feature2" version="3.4.6">
+  <feature id="org.eclipse.update.core.tests.feature2" url="http://www.eclipse.org/feature2" version="3.4.6">
     <category name="eclipse/J2EE"/>
   </feature>
-  <feature id="org.eclipse.update.core.tests.fature1" url="www.eclipse.org/feature1" version="2.3.5">
+  <feature id="org.eclipse.update.core.tests.fature1" url="http://www.eclipse.org/feature1" version="2.3.5">
     <category name="eclipse/J2EE"/>
   </feature>
   <archive id="org.eclipse.update.plugin1" url="www.eclipse.org/pluign1"/>

@@ -1,5 +1,8 @@
 package org.eclipse.update.tests.api;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
@@ -7,12 +10,12 @@ import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
-public class TestSiteManagerAPI extends UpdateManagerTestCase {
+public class CopyOfTestSiteManagerAPI extends UpdateManagerTestCase {
 	
 	/**
 	 * Test the getFeatures()
 	 */
-	public TestSiteManagerAPI(String arg0) {
+	public CopyOfTestSiteManagerAPI(String arg0) {
 		super(arg0);
 	}
 	

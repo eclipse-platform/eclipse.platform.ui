@@ -1,5 +1,8 @@
 package org.eclipse.update.tests.regularInstall;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.update.tests.UpdateManagerTestCase;
 import junit.framework.*;
 

@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-
-<feature id="org.eclipse.update.core.tests.feature1" image="feature1.bmp" label="Feature One" nl="us,fr,de" os="OS_WIN32,OS_LINUX" provider-name="Object Technology International" version="1.0.4" ws="WS_WIN32,WS_MOTIF,WS_GTK">
-  <description>I believe this is teh description of feature 1, well, feature 1 is an exceptional feature that you should install right NOW on your machine... try it.</description>
-  <copyright>Ok, now, this is a very very complex Copyright #1 Do you accept it #2 if you do not accept it would you pay anyway ? #3 not prepared by a lawyer Copyright (c) the company</copyright>
-  <license>Hum... what is a difference between a license and a copyright... ahhhhYou have to accept teh license...Do you accpt it ?</license>
+<feature id="org.eclipse.update.core.tests.feature1" image="feature1.gif" label="Feature One" nl="en,fr,de" os="OS_WIN32,OS_LINUX" provider-name="Object Technology International" version="1.0.4" ws="WS_WIN32,WS_MOTIF,WS_GTK">
+  <description>I believe this is the description of feature 1, well, feature 1 is an exceptional feature that you should install right NOW on your machine... try it.</description>
+  <copyright>Ok, now, this is a very very complex Copyright  not prepared by a lawyer Copyright (c) the company</copyright>
+  <license>#1 Do you accept it #2 you do nto accept it ...Do you accpt it ?</license>
   <url>
-    <update label="URL to update teh feature" url="path/feature1/"/>
+    <update label="URL to update the feature" url="path/feature1/"/>
     <discovery label="Discovery 1" url="http://www.eclipse.org"/>
     <discovery label="Discovery 2" url="http://www.eclipse.org"/>
   </url>

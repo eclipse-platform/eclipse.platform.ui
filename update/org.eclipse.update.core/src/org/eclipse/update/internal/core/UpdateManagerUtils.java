@@ -1,5 +1,8 @@
 package org.eclipse.update.internal.core;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -40,7 +43,7 @@ public class UpdateManagerUtils {
 					new URL(
 						rootURL.getProtocol(),
 						rootURL.getHost(),
-						rootURL.getPath() + urlString);
+						rootURL.getPath() + (rootURL.getPath().endsWith("/")?"":"/")+urlString);
 			}
 		} catch (MalformedURLException e) {
 			//FIXME:

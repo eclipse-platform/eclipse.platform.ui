@@ -1,5 +1,8 @@
 package org.eclipse.update.internal.core;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -15,7 +18,9 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
 
-
+/**
+ * Parse the feature.xml
+ */
 
 public class DefaultFeatureParser extends DefaultHandler {
 
