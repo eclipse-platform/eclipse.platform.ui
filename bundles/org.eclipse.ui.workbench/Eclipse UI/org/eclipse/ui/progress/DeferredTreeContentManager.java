@@ -29,6 +29,16 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * The DeferredContentManager is a class that helps an ITreeContentProvider get
  * its deferred input.
  * 
+ * <b>NOTE</b> AbstractTreeViewer#isExpandable may need to 
+ * be implemented in AbstractTreeViewer subclasses with 
+ * deferred content that use filtering as a call to 
+ * #getChildren may be required to determine the correct 
+ * state of the expanding control.
+ * 
+ * AbstractTreeViewers which use this class may wish to 
+ * sacrifice accuracy of the expandable state indicator for the 
+ * performance benefits of defering content.
+ * 
  * @see IDeferredWorkbenchAdapter
  * @since 3.0
  */
@@ -114,8 +124,7 @@ public class DeferredTreeContentManager {
 		Object adapter = ((IAdaptable) element).getAdapter(IDeferredWorkbenchAdapter.class);
 		if (adapter == null)
 			return null;
-		else
-			return (IDeferredWorkbenchAdapter) adapter;
+		return (IDeferredWorkbenchAdapter) adapter;
 	}
 	/**
 	 * Starts a job and creates a collector for fetching the children of this
@@ -191,8 +200,7 @@ public class DeferredTreeContentManager {
 						.getAdapter(IWorkbenchAdapter.class);
 				if (workbenchAdapter == null)
 					return null;
-				else
-					return (IWorkbenchAdapter) workbenchAdapter;
+				return (IWorkbenchAdapter) workbenchAdapter;
 			}
 		};
 		job.addJobChangeListener(new JobChangeAdapter() {

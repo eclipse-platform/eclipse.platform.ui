@@ -20,6 +20,8 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * The IProgressManager is an interface to the progress manager provided by the
  * workbench. 
+ * <b>NOTE</b> This interface is not intended to be implemented
+ * by other plug-ins.
  * 
  * @see org.eclipse.ui.IWorkbench#getProgressService. 
  * @since 3.0

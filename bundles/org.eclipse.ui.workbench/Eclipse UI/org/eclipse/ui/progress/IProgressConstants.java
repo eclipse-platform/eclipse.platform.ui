@@ -38,7 +38,7 @@ public interface IProgressConstants {
 	 * if its value is <code>true</code>.
 	 * </p>
 	 */
-	public static final QualifiedName KEEP_PROPERTY = new QualifiedName(PROPERTY_PREFIX, "keep");
+	public static final QualifiedName KEEP_PROPERTY = new QualifiedName(PROPERTY_PREFIX, "keep"); //$NON-NLS-1$
 	
 	/** 
 	 * The KEEPONE_PROPERTY is an extension to the KEEP_PROPERTY, that provides a hint
@@ -54,7 +54,7 @@ public interface IProgressConstants {
 	 * Non finshed jobs of the same family are left alone.
 	 * </p>
 	 **/
-	public static final QualifiedName KEEPONE_PROPERTY = new QualifiedName(PROPERTY_PREFIX, "keepone");
+	public static final QualifiedName KEEPONE_PROPERTY = new QualifiedName(PROPERTY_PREFIX, "keepone"); //$NON-NLS-1$
 	
 	/**
 	 * This property is used to associate an <code>IAction</code> with a Job.
@@ -72,7 +72,7 @@ public interface IProgressConstants {
 	 * @see org.eclipse.jface.action.IAction
 	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction
 	 **/
-	public static final QualifiedName ACTION_PROPERTY = new QualifiedName(PROPERTY_PREFIX, "action");
+	public static final QualifiedName ACTION_PROPERTY = new QualifiedName(PROPERTY_PREFIX, "action"); //$NON-NLS-1$
 	
 	/**
 	 * This property is used to associate an <code>ImageDescriptor</code> with a Job.
@@ -85,5 +85,5 @@ public interface IProgressConstants {
 	 * @see org.eclipse.jface.resource.ImageDescriptor
 	 * @see org.eclipse.ui.progress.IProgressService
 	 **/
-	public static final QualifiedName ICON_PROPERTY = new QualifiedName(PROPERTY_PREFIX, "icon");
+	public static final QualifiedName ICON_PROPERTY = new QualifiedName(PROPERTY_PREFIX, "icon"); //$NON-NLS-1$
 }
