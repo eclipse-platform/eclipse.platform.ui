@@ -24,6 +24,7 @@ import java.util.TreeSet;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.ParseException;
 
 final class KeySequenceBindingNode {
 
@@ -467,6 +468,13 @@ final class KeySequenceBindingNode {
 			) {
 			KeySequenceBindingNode keySequenceBindingNode =
 				(KeySequenceBindingNode) iterator.next();
+			try {
+			if ((keySequenceBindingNode == keyStrokeNodeByKeyStrokeMap.get(KeyStroke.getInstance("CTRL+SHIFT+/"))) && (contextIds.length == 5)) {
+			    System.out.println("moo");
+			}
+			} catch (ParseException e) {
+			    
+			}
 			keySequenceBindingNode.solveMatch(
 				contextIds,
 				keyConfigurationIds,
@@ -745,72 +753,179 @@ final class KeySequenceBindingNode {
 		}
 	}
 
-	private void solveMatch(
-		String[] contextIds,
-		String[] keyConfigurationIds,
-		String[] platforms,
-		String[] locales) {
-		match = null;
+	/**
+     * <p>
+     * Finds a single match for this key binding node, given the state passed in
+     * as parameters. The match will contain a single command identifier, and a
+     * match value (a rough approximation of how accurate the match may be --
+     * lower is better).
+     * </p>
+     * <p>
+     * The matching algorithm checks for a match in each context given -- in the
+     * order provided. Similar, it checks the key configuration, the rank (see
+     * below), the platform, and the locale -- in the order provided. If a
+     * single command identifier (note: this could be <code>null</code>--
+     * indicating a removed key binding) matches the given characteristics, then
+     * it is added to the list. For each context identifier, there can be at
+     * most one match. If there is no match,
+     * <em>or the match has a <code>null</code> command identifier</em>,
+     * then we will move on to consider the next context.
+     * </p>
+     * <p>
+     * The rank is a special value. It is either <code>0</code> or
+     * <code>1</code>. It is used for marking removed key bindings. The
+     * removed command identifier is moved to the first rank, and a
+     * <code>null</code> command identifier is placed in the zeroth rank. The
+     * ranking mechanism is controlled externally, but only the zeroth and first
+     * ranks are considered internally.
+     * </p>
+     * <p>
+     * When this method completes, <code>match</code> will contain the best
+     * possible match, if any. If no match can be found, then <code>match</code>
+     * will be <code>null</code>.
+     * </p>
+     * <p>
+     * TODO Doug's Note (May 29, 2004): This mechanism is insanely complex for
+     * what it is doing, and doesn't seem to cover all of the use cases. This
+     * would be a good candidate for refactoring in the future. Most of this
+     * code was written by Chris McLaren, but I've had to hack in some
+     * behavioural changes to accomodate bugs for 3.0. If you're looking for
+     * insight as to how it currently works, you might try talking to one of us.
+     * Most notably, the fall through mechanism for <code>null</code> command
+     * identifiers. My main concerns are: interactions between key
+     * configurations, and unbinding a key in a child context so as to bind it
+     * in a parent context.
+     * </p>
+     * 
+     * @param contextIds
+     *            The context identifiers in the order they should be
+     *            considered. This value must never be <code>null</code>,
+     *            though it may contain <code>null</code> values.
+     *            <code>null</code> values typically indicate "any".
+     *            Currently, this array is expected to be in the depth-sorted
+     *            order (i.e., contexts with more ancestors first).
+     * @param keyConfigurationIds
+     *            The key configuration identifiers in the order they should be
+     *            considered. This value must never be <code>null</code>,
+     *            though it may contain <code>null</code> values.
+     *            <code>null</code> values typically indicate "any".
+     * @param platforms
+     *            The platform identifiers in the order they should be
+     *            considered. This value must never be <code>null</code>,
+     *            though it may contain <code>null</code> values.
+     *            <code>null</code> values typically indicate "any".
+     * @param locales
+     *            The locale identifiers in the order they should be considered.
+     *            This value must never be <code>null</code>, though it may
+     *            contain <code>null</code> values. <code>null</code> values
+     *            typically indicate "any".
+     */
+    private void solveMatch(String[] contextIds, String[] keyConfigurationIds,
+            String[] platforms, String[] locales) {
+        // Clear out the current match.
+        match = null;
 
-		for (int context = 0;
-			context < contextIds.length && context < 0xFF && match == null;
-			context++) {
-			Map keyConfigurationMap =
-				(Map) contextMap.get(contextIds[context]);
+        // Get the maximum indices to consider.
+        final int maxContext = (contextIds.length > 0xFF) ? 0xFF
+                : contextIds.length;
+        int maxKeyConfiguration = (keyConfigurationIds.length > 0xFF) ? 0xFF
+                : keyConfigurationIds.length;
+        final int maxPlatform = (platforms.length > 0xFF) ? 0xFF
+                : platforms.length;
+        final int maxLocale = (locales.length > 0xFF) ? 0xFF : locales.length;
 
-			if (keyConfigurationMap != null)
-				for (int keyConfiguration = 0;
-					keyConfiguration < keyConfigurationIds.length
-						&& keyConfiguration < 0xFF
-						&& match == null;
-					keyConfiguration++) {
-					Map rankMap =
-						(Map) keyConfigurationMap.get(
-							keyConfigurationIds[keyConfiguration]);
+        // Peel apart the nested map looking for matches.
+        for (int context = 0; context < maxContext; context++) {
+            boolean matchFoundForThisContext = false;
+            final Map keyConfigurationMap = (Map) contextMap
+                    .get(contextIds[context]);
 
-					if (rankMap != null) {
-						for (int rank = 0; rank <= 1; rank++) {
-							Map platformMap =
-								(Map) rankMap.get(new Integer(rank));
+            if (keyConfigurationMap != null)
+                    for (int keyConfiguration = 0; keyConfiguration < maxKeyConfiguration
+                            && !matchFoundForThisContext; keyConfiguration++) {
+                        Map rankMap = (Map) keyConfigurationMap
+                                .get(keyConfigurationIds[keyConfiguration]);
 
-							if (platformMap != null)
-								for (int platform = 0;
-									platform < platforms.length
-										&& platform < 0xFF
-										&& match == null;
-									platform++) {
-									Map localeMap =
-										(Map) platformMap.get(
-											platforms[platform]);
+                        if (rankMap != null) {
+                            for (int rank = 0; rank <= 1; rank++) {
+                                final Map platformMap = (Map) rankMap
+                                        .get(new Integer(rank));
 
-									if (localeMap != null)
-										for (int locale = 0;
-											locale < locales.length
-												&& locale < 0xFF
-												&& match == null;
-											locale++) {
-											Set commandIds =
-												(Set) localeMap.get(
-													locales[locale]);
+                                if (platformMap != null)
+                                        for (int platform = 0; platform < maxPlatform
+                                                && !matchFoundForThisContext; platform++) {
+                                            final Map localeMap = (Map) platformMap
+                                                    .get(platforms[platform]);
 
-											if (commandIds != null)
-												match =
-													new Match(
-														commandIds.size() == 1
-															? (String) commandIds
-																.iterator()
-																.next()
-															: null,
-														(context << 24)
-															+ (keyConfiguration
-																<< 16)
-															+ (platform << 8)
-															+ locale);
-										}
-								}
-						}
-					}
-				}
-		}
-	}
+                                            if (localeMap != null)
+                                                    for (int locale = 0; locale < maxLocale
+                                                            && !matchFoundForThisContext; locale++) {
+                                                        final Set commandIds = (Set) localeMap
+                                                                .get(locales[locale]);
+
+                                                        if (commandIds != null) {
+                                                            /*
+                                                             * Jump to the next
+                                                             * context.
+                                                             */
+                                                            matchFoundForThisContext = true;
+
+                                                            /*
+                                                             * Get the command
+                                                             * identifier.
+                                                             */
+                                                            final String commandId = commandIds
+                                                                    .size() == 1 ? (String) commandIds
+                                                                    .iterator()
+                                                                    .next()
+                                                                    : null;
+
+                                                            /*
+                                                             * Make sure we
+                                                             * don't consider
+                                                             * this key
+                                                             * configuration
+                                                             * again (or its
+                                                             * parents).
+                                                             */
+                                                            if (commandId == null) {
+                                                                /*
+                                                                 * We have a
+                                                                 * removed
+                                                                 * binding, so
+                                                                 * consider this
+                                                                 * configuration
+                                                                 * again (but
+                                                                 * nothing
+                                                                 * higher).
+                                                                 */
+                                                                maxKeyConfiguration = keyConfiguration + 1;
+                                                            } else {
+                                                                /*
+                                                                 * We have a
+                                                                 * real match,
+                                                                 * so only
+                                                                 * consider
+                                                                 * lower
+                                                                 * specific key
+                                                                 * configuration.
+                                                                 */
+                                                                maxKeyConfiguration = keyConfiguration;
+                                                            }
+
+                                                            // Record the match
+                                                            match = new Match(
+                                                                    commandId,
+                                                                    (context << 24)
+                                                                            + (keyConfiguration << 16)
+                                                                            + (platform << 8)
+                                                                            + locale);
+                                                        }
+                                                    }
+                                        }
+                            }
+                        }
+                    }
+        }
+    }
 }
