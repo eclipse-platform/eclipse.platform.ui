@@ -106,7 +106,7 @@ if (data.isMozilla() && "content".equals(request.getParameter("toolbar"))) {
 HTML { 
 	margin:0px;
 	padding:0px;
-	border-right:2px solid ThreeDShadow;
+	border-right:1px solid ThreeDShadow;
 }
 <%
 }
