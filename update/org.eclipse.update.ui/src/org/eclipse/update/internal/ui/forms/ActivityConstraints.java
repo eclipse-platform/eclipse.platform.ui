@@ -35,6 +35,7 @@ public class ActivityConstraints {
 	private static final String KEY_PREREQ_GREATER =
 		"ActivityConstraints.prereqGreaterOrEqual";
 	private static final String KEY_CYCLE = "ActivityConstraints.cycle";
+	private static final String KEY_CONFLICT = "ActivityConstraints.conflict";
 
 	/*
 	 * Called by UI before performing operation
@@ -95,6 +96,50 @@ public class ActivityConstraints {
 	}
 
 	/*
+	 * Called by the UI before doing a revert/ restore operation
+	 */
+	public static IStatus validatePendingRevert(IInstallConfiguration config) {
+		// check initial state
+		ArrayList beforeStatus = new ArrayList();
+		validateInitialState(beforeStatus);
+
+		// check proposed change
+		ArrayList status = new ArrayList();
+		validateRevert(config, status);
+
+		// report status
+		if (status.size() > 0) {
+			if (beforeStatus.size() > 0)
+				return createMultiStatus(KEY_ROOT_MESSAGE_INIT, beforeStatus);
+			else
+				return createMultiStatus(KEY_ROOT_MESSAGE, status);
+		}
+		return null;
+	}
+
+	/*
+	 * Called by the UI before doing a one-click update operation
+	 */
+	public static IStatus validatePendingOneClickUpdate(PendingChange[] jobs) {
+		// check initial state
+		ArrayList beforeStatus = new ArrayList();
+		validateInitialState(beforeStatus);
+
+		// check proposed change
+		ArrayList status = new ArrayList();
+		validateOneClickUpdate(jobs, status);
+
+		// report status
+		if (status.size() > 0) {
+			if (beforeStatus.size() > 0)
+				return createMultiStatus(KEY_ROOT_MESSAGE_INIT, beforeStatus);
+			else
+				return createMultiStatus(KEY_ROOT_MESSAGE, status);
+		}
+		return null;
+	}
+
+	/*
 	 * Check to see if we are not broken even before we start
 	 */
 	private static void validateInitialState(ArrayList status) {
@@ -113,7 +158,8 @@ public class ActivityConstraints {
 		IFeature feature,
 		ArrayList status) {
 		try {
-			ArrayList features = computeFeaturesAfterOperation(null, feature);
+			ArrayList features = computeFeatures();
+			features = computeFeaturesAfterOperation(features, null, feature);
 			checkConstraints(features, status);
 
 		} catch (CoreException e) {
@@ -126,7 +172,8 @@ public class ActivityConstraints {
 	 */
 	private static void validateConfigure(IFeature feature, ArrayList status) {
 		try {
-			ArrayList features = computeFeaturesAfterOperation(feature, null);
+			ArrayList features = computeFeatures();
+			features = computeFeaturesAfterOperation(features, feature, null);
 			checkConstraints(features, status);
 
 		} catch (CoreException e) {
@@ -142,9 +189,26 @@ public class ActivityConstraints {
 		IFeature newFeature,
 		ArrayList status) {
 		try {
-			ArrayList features =
-				computeFeaturesAfterOperation(newFeature, oldFeature);
+			ArrayList features = computeFeatures();
+			features =
+				computeFeaturesAfterOperation(features, newFeature, oldFeature);
 			checkConstraints(features, status);
+
+		} catch (CoreException e) {
+			status.add(e.getStatus());
+		}
+	}
+
+	/*
+	 * handle revert and restore
+	 */
+	private static void validateRevert(
+		IInstallConfiguration config,
+		ArrayList status) {
+		try {
+			ArrayList features = computeFeaturesAfterRevert(config);
+			checkConstraints(features, status);
+			checkRevertConstraints(features, status);
 
 		} catch (CoreException e) {
 			status.add(e.getStatus());
@@ -160,6 +224,38 @@ public class ActivityConstraints {
 		try {
 			ArrayList features = computeFeaturesAfterDelta(delta);
 			checkConstraints(features, status);
+
+		} catch (CoreException e) {
+			status.add(e.getStatus());
+		}
+	}
+
+	/*
+	 * Handle one-click changes as a batch
+	 */
+	private static void validateOneClickUpdate(
+		PendingChange[] jobs,
+		ArrayList status) {
+		try {
+			ArrayList features = computeFeatures();
+			for (int i = 0; i < jobs.length; i++) {
+				IFeature newFeature = jobs[i].getFeature();
+				IFeature oldFeature = jobs[i].getOldFeature();
+				features =
+					computeFeaturesAfterOperation(
+						features,
+						newFeature,
+						oldFeature);
+				checkConstraints(features, status);
+				if (status.size() > 0) {
+					IStatus conflict =
+						createStatus(
+							newFeature,
+							UpdateUIPlugin.getResourceString(KEY_CONFLICT));
+					status.add(conflict);
+					return;
+				}
+			}
 
 		} catch (CoreException e) {
 			status.add(e.getStatus());
@@ -195,7 +291,8 @@ public class ActivityConstraints {
 	private static ArrayList computeFeatureSubtree(
 		IFeature top,
 		IFeature feature,
-		ArrayList features)
+		ArrayList features,
+		boolean tolerateMissingChildren)
 		throws CoreException {
 
 		// check arguments
@@ -217,8 +314,18 @@ public class ActivityConstraints {
 		features.add(feature);
 		IFeatureReference[] children = feature.getIncludedFeatureReferences();
 		for (int i = 0; i < children.length; i++) {
-			IFeature child = children[i].getFeature();
-			features = computeFeatureSubtree(top, child, features);
+			try {
+				IFeature child = children[i].getFeature();
+				features =
+					computeFeatureSubtree(
+						top,
+						child,
+						features,
+						tolerateMissingChildren);
+			} catch (CoreException e) {
+				if (!tolerateMissingChildren)
+					throw e;
+			}
 		}
 		return features;
 	}
@@ -227,19 +334,51 @@ public class ActivityConstraints {
 	 * Compute a list of features that will be configured after the operation
 	 */
 	private static ArrayList computeFeaturesAfterOperation(
+		ArrayList features,
 		IFeature add,
 		IFeature remove)
 		throws CoreException {
 
-		ArrayList features = computeFeatures();
-		ArrayList addTree = computeFeatureSubtree(add, null, null);
-		ArrayList removeTree = computeFeatureSubtree(remove, null, null);
+		ArrayList addTree =
+			computeFeatureSubtree(
+				add,
+				null,
+				null,
+				false /* do not tolerate missing children */
+		);
+		ArrayList removeTree =
+			computeFeatureSubtree(
+				remove,
+				null,
+				null,
+				true /* tolerate missing children */
+		);
+
 		if (add != null)
 			features.addAll(addTree);
+
 		if (remove != null)
 			features.removeAll(removeTree);
 
 		return features;
+	}
+
+	/*
+	 * Compute a list of features that will be configured after performing the revert
+	 */
+	private static ArrayList computeFeaturesAfterRevert(IInstallConfiguration config)
+		throws CoreException {
+
+		ArrayList list = new ArrayList();
+		IConfiguredSite[] csites = config.getConfiguredSites();
+		for (int i = 0; i < csites.length; i++) {
+			IConfiguredSite csite = csites[i];
+			IFeatureReference[] features = csite.getConfiguredFeatures();
+			for (int j = 0; j < features.length; j++) {
+				list.add(features[j].getFeature());
+			}
+		}
+		return list;
 	}
 
 	/*
@@ -542,6 +681,29 @@ public class ActivityConstraints {
 				}
 			}
 		}
+	}
+
+	/*
+	 * Verify we end up with valid nested features after revert
+	 */
+	private static void checkRevertConstraints(
+		ArrayList features,
+		ArrayList status) {
+
+		for (int i = 0; i < features.size(); i++) {
+			IFeature feature = (IFeature) features.get(i);
+			try {
+				computeFeatureSubtree(
+					feature,
+					null,
+					null,
+					false /* do not tolerate missing children */
+				);
+			} catch (CoreException e) {
+				status.add(e.getStatus());
+			}
+		}
+
 	}
 
 	private static IStatus createMultiStatus(

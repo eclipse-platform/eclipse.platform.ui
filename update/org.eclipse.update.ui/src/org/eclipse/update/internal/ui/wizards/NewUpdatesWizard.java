@@ -7,14 +7,20 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.update.configuration.*;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.InstallAbortedException;
-import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUIPluginImages;
+import org.eclipse.update.internal.ui.forms.ActivityConstraints;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.search.*;
+import org.eclipse.update.internal.ui.search.SearchObject;
+import org.eclipse.update.internal.ui.search.SearchResultSite;
 import org.eclipse.update.internal.ui.security.JarVerificationService;
 
 public class NewUpdatesWizard extends Wizard {
@@ -86,6 +92,19 @@ public class NewUpdatesWizard extends Wizard {
 	 */
 	public boolean performFinish() {
 		final PendingChange[] selectedJobs = mainPage.getSelectedJobs();
+		
+		// make sure we can actually apply the entire batch of updates
+		IStatus status = ActivityConstraints.validatePendingOneClickUpdate(selectedJobs);
+		if (status != null) {
+			ErrorDialog.openError(
+				UpdateUIPlugin.getActiveWorkbenchShell(),
+				null,
+				null,
+				status);
+			return false;
+		}
+		
+		// ok to continue		
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {
