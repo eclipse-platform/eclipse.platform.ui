@@ -141,7 +141,15 @@ public void testExpandElement() {
 		((AbstractTreeViewer) fViewer).setExpandedState(parent, true);
 		parent.deleteChild(child);
 		child = parent.addChild(TestModelChange.STRUCTURE_CHANGE);
-		assertNotNull("new child is visible", fViewer.testFindItem(child));
+		// On some platforms (namely GTK), removing all children causes the
+		// parent to collapse (actually it's worse than that: GTK doesn't
+		// allow there to be an empty expanded tree item, even if you do a
+		// setExpanded(true)).  
+		// This behaviour makes it impossible to do this regression test.
+		// See bug 40797 for more details.
+		if (((AbstractTreeViewer) fViewer).getExpandedState(parent)) { 
+			assertNotNull("new child is visible", fViewer.testFindItem(child));
+		}
 	}
 	/**
 	 * Regression test for 1GBDB5A: ITPUI:WINNT - Exception in AbstractTreeViewer update.
