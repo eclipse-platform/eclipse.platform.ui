@@ -35,7 +35,7 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 
 
 	public CompareEditorContributor() {
-		ResourceBundle bundle= CompareUIPlugin.getResourceBundle();
+		ResourceBundle bundle= CompareUI.getResourceBundle();
 		
 		fIgnoreWhitespace= new IgnoreWhiteSpaceAction(bundle, null);
 		WorkbenchHelp.setHelp(fIgnoreWhitespace, ICompareContextIds.IGNORE_WHITESPACE_ACTION);

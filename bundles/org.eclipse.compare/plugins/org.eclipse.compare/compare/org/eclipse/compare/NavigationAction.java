@@ -41,7 +41,7 @@ public class NavigationAction extends Action {
 	 * @param next if <code>true</code> action goes to the next difference; otherwise to the previous difference.
 	 */
 	public NavigationAction(boolean next) {
-		this(CompareUIPlugin.getResourceBundle(), next);
+		this(CompareUI.getResourceBundle(), next);
 	}
 
 	/**

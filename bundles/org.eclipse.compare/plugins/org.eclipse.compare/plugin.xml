@@ -366,12 +366,4 @@
 	  </contentTypeBinding>
    </extension>
 
-
-	<extension point="org.eclipse.core.runtime.contentTypes">
-		<content-type id="foo" name="Foo Type" 	
-			base-type="org.eclipse.core.runtime.javaProperties"
-			file-extensions="foo"
-		/>
-	</extension>		 
-
 </plugin>

@@ -100,7 +100,7 @@ public final class CompareUI {
 	 * @return the plugin's resource bundle
 	 */
 	public static ResourceBundle getResourceBundle() {
-		return CompareUIPlugin.getResourceBundle();
+		return CompareUIPlugin.getDefault().getResourceBundle();
 	}
 	
 	/**
@@ -216,7 +216,7 @@ public final class CompareUI {
 	 *   stream merger has been registered
 	 */
 	public static IStreamMerger createStreamMerger(IContentType type) {
-	    return CompareUIPlugin.createStreamMerger(type);
+	    return CompareUIPlugin.getDefault().createStreamMerger(type);
 	}
 
 	/**
@@ -228,7 +228,7 @@ public final class CompareUI {
 	 *   stream merger has been registered
 	 */
 	public static IStreamMerger createStreamMerger(String type) {
-	    return CompareUIPlugin.createStreamMerger(type);
+	    return CompareUIPlugin.getDefault().createStreamMerger(type);
 	}
 
 	/**
@@ -247,7 +247,7 @@ public final class CompareUI {
 	public static Viewer findStructureViewer(Viewer oldViewer, ICompareInput input, Composite parent,
 				CompareConfiguration configuration) {
 
-		return CompareUIPlugin.findStructureViewer(oldViewer, input, parent, configuration);
+		return CompareUIPlugin.getDefault().findStructureViewer(oldViewer, input, parent, configuration);
 	}
 	
 	/**
@@ -265,7 +265,7 @@ public final class CompareUI {
 	 */
 	public static Viewer findContentViewer(Viewer oldViewer, ICompareInput input, Composite parent,
 			CompareConfiguration configuration) {
-		return CompareUIPlugin.findContentViewer(oldViewer, input, parent, configuration);
+		return CompareUIPlugin.getDefault().findContentViewer(oldViewer, input, parent, configuration);
 	}
 	
 	/**
@@ -289,7 +289,7 @@ public final class CompareUI {
 	public static Viewer findContentViewer(Viewer oldViewer, Object input, Composite parent,
 			CompareConfiguration configuration) {
 		
-		return CompareUIPlugin.findContentViewer(oldViewer, input, parent, configuration);
+		return CompareUIPlugin.getDefault().findContentViewer(oldViewer, input, parent, configuration);
 	}
 
 	/**
@@ -303,7 +303,7 @@ public final class CompareUI {
 	 * @since 2.0
 	 */
 	public static void addStructureViewerAlias(String type, String alias) {
-		CompareUIPlugin.addStructureViewerAlias(type, alias);
+		CompareUIPlugin.getDefault().addStructureViewerAlias(type, alias);
 	}
 	
 	/**
@@ -316,7 +316,7 @@ public final class CompareUI {
 	 * @since 2.0
 	 */
 	public static void removeAllStructureViewerAliases(String type) {
-		CompareUIPlugin.removeAllStructureViewerAliases(type);
+		CompareUIPlugin.getDefault().removeAllStructureViewerAliases(type);
 	}
 }
 

@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.*;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.IEncodedStreamContentAccessor;
 import org.eclipse.compare.IStreamContentAccessor;
 
@@ -287,7 +288,7 @@ public class Utilities {
 	
 	public static String getString(String key) {
 		try {
-			return CompareUIPlugin.getResourceBundle().getString(key);
+			return CompareUI.getResourceBundle().getString(key);
 		} catch (MissingResourceException e) {
 			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
 		}
@@ -295,7 +296,7 @@ public class Utilities {
 	
 	public static String getFormattedString(String key, String arg) {
 		try{
-			return MessageFormat.format(CompareUIPlugin.getResourceBundle().getString(key), new String[] { arg });
+			return MessageFormat.format(CompareUI.getResourceBundle().getString(key), new String[] { arg });
 		} catch (MissingResourceException e) {
 			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
 		}	

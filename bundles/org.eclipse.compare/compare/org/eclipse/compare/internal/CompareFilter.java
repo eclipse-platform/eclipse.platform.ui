@@ -28,6 +28,9 @@ public class CompareFilter {
 	public CompareFilter() {
 	}
 
+	/**
+	 * Returns true if path matches filter, that is if path should be filtered.
+	 */
 	public boolean filter(String path0, boolean folder, boolean isArchive) {
 		if (!folder && fExtraResourceFileFilters != null) {
 			char[] name= path0.toCharArray();

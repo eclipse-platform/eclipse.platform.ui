@@ -50,6 +50,7 @@ public interface IStreamMerger {
      * On success a status <code>IStatus.OK</code> is returned, on error a status <code>IStatus.ERROR</code>. 
      * If the merge operation cannot deal with conflicts, the code of the error status has the value <code>IStreamMerger.CONFLICT</code>.
      * For text oriented mergers the encoding for the input and output streams is honored.
+     * It is the responsibility of callers to close input and output streams. 
      * 
      * @param output the byte stream to which the merge result is written; the merger will not close the stream
      * @param outputEncoding the encoding to use when writing to the output stream
@@ -60,7 +61,7 @@ public interface IStreamMerger {
      * @param other the byte stream containing the target of the merge
      * @param otherEncoding the encoding of the other input byte stream
      * @param monitor reports progress of the merge operation
-     * @return returns an ISta
+     * @return returns the completion status of the operation
      */
 	IStatus merge(OutputStream output, String outputEncoding,
 			InputStream ancestor, String ancestorEncoding,

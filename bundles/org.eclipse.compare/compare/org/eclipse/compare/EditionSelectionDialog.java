@@ -274,7 +274,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 		IStructureCreator structureCreator= null;
 		if (ppath != null) {
 			String type= target.getType();
-			StructureCreatorDescriptor scd= CompareUIPlugin.getStructureCreator(type);
+			StructureCreatorDescriptor scd= CompareUIPlugin.getDefault().getStructureCreator(type);
 			if (scd != null)
 				structureCreator= scd.createStructureCreator();
 		}
@@ -345,7 +345,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 		IStructureCreator structureCreator= null;
 		if (ppath != null) {
 			String type= target.getType();
-			StructureCreatorDescriptor scd= CompareUIPlugin.getStructureCreator(type);
+			StructureCreatorDescriptor scd= CompareUIPlugin.getDefault().getStructureCreator(type);
 			if (scd != null)
 				structureCreator= scd.createStructureCreator();
 		}
@@ -750,7 +750,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 				fStructuredComparePane= new CompareViewerSwitchingPane(hsplitter, SWT.BORDER | SWT.FLAT, true) {
 					protected Viewer getViewer(Viewer oldViewer, Object input) {
 						if (input instanceof ICompareInput)
-							return CompareUIPlugin.findStructureViewer(oldViewer, (ICompareInput)input, this, getCompareConfiguration());
+							return CompareUI.findStructureViewer(oldViewer, (ICompareInput)input, this, getCompareConfiguration());
 						return null;
 					}
 				};
@@ -795,7 +795,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 		
 		fContentPane= new CompareViewerSwitchingPane(vsplitter, SWT.BORDER | SWT.FLAT) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
-				return CompareUIPlugin.findContentViewer(oldViewer, input, this, getCompareConfiguration());	
+				return CompareUI.findContentViewer(oldViewer, input, this, getCompareConfiguration());	
 			}
 		};
 		vsplitter.setWeights(new int[] { 30, 70 });

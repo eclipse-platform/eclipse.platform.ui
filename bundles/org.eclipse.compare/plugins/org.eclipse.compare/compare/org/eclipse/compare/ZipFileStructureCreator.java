@@ -98,7 +98,7 @@ public class ZipFileStructureCreator implements IStructureCreator {
 				entry= path.substring(0, pos);
 				path= path.substring(pos + 1);
 			} else if (entry.length() > 0) {
-				if (CompareUIPlugin.filter(path, false, true))
+				if (CompareUIPlugin.getDefault().filter(path, false, true))
 					return null;
 				ZipFile ze= new ZipFile(entry);
 				fChildren.put(entry, ze);
@@ -114,7 +114,7 @@ public class ZipFileStructureCreator implements IStructureCreator {
 			}
 
 			if (folder == null) {
-				if (path.length() > 0 && CompareUIPlugin.filter(path, true, true))
+				if (path.length() > 0 && CompareUIPlugin.getDefault().filter(path, true, true))
 					return null;
 				folder= new ZipFolder(entry);
 				fChildren.put(entry, folder);

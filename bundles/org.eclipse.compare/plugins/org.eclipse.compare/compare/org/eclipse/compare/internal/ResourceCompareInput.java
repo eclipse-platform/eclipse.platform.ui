@@ -86,7 +86,7 @@ class ResourceCompareInput extends CompareEditorInput {
 		}
 		protected IStructureComparator createChild(IResource child) {
 			String name= child.getName();
-			if (CompareUIPlugin.filter(name, child instanceof IContainer, false))
+			if (CompareUIPlugin.getDefault().filter(name, child instanceof IContainer, false))
 				return null;
 			return new FilteredBufferedResourceNode(child);
 		}

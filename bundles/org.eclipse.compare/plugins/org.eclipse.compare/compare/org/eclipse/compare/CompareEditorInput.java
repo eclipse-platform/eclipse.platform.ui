@@ -138,7 +138,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		if (object instanceof Boolean)
 			fUseOutlineView= ((Boolean) object).booleanValue();
 
-		ResourceBundle bundle= CompareUIPlugin.getResourceBundle();
+		ResourceBundle bundle= CompareUI.getResourceBundle();
 		fIgnoreWhitespace= new IgnoreWhiteSpaceAction(bundle, configuration);
 		fShowPseudoConflicts= new ShowPseudoConflicts(bundle, configuration);
 
@@ -644,7 +644,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @return a compare viewer which is suitable for the given input object or <code>null</code>
 	 */
 	public Viewer findStructureViewer(Viewer oldViewer, ICompareInput input, Composite parent) {
-		return CompareUIPlugin.findStructureViewer(oldViewer, input, parent, fCompareConfiguration);
+		return CompareUI.findStructureViewer(oldViewer, input, parent, fCompareConfiguration);
 	}
 
 	/**
@@ -663,7 +663,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	public Viewer findContentViewer(Viewer oldViewer, ICompareInput input, Composite parent) {
 
-		Viewer newViewer= CompareUIPlugin.findContentViewer(oldViewer, input, parent, fCompareConfiguration);
+		Viewer newViewer= CompareUI.findContentViewer(oldViewer, input, parent, fCompareConfiguration);
 		
 		boolean isNewViewer= newViewer != oldViewer;
 		if (DEBUG) System.out.println("CompareEditorInput.findContentViewer: " + isNewViewer); //$NON-NLS-1$
