@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,11 +21,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
+import org.eclipse.search.ui.ISearchPage;
+import org.eclipse.search.ui.ISearchPageScoreComputer;
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -33,11 +40,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.StringConverter;
 
-import org.eclipse.search.ui.ISearchPage;
-import org.eclipse.search.ui.ISearchPageScoreComputer;
-import org.eclipse.search.ui.ISearchResultViewEntry;
-
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.ui.IPluginContribution;
 
 /**
@@ -82,6 +84,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 	
 	/**
 	 * Creates a new search page node with the given configuration element.
+	 * @param element The configuration element
 	 */
 	public SearchPageDescriptor(IConfigurationElement element) {
 		fElement= element;
@@ -89,6 +92,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 
 	/**
 	 * Creates a new search page from this node.
+	 * @return the created page or null if the creation failed
 	 */
 	public ISearchPage createObject() {
 		ISearchPage result= null;
@@ -110,6 +114,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 	
 	/**
 	 * Returns the page's id.
+	 * @return The id of the page
 	 */
 	public String getId() {
 		return fElement.getAttribute(ID_ATTRIBUTE);
@@ -117,30 +122,32 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 	 
 	/**
 	 * Returns the page's image
+	 * @return ImageDescriptor of the image or null if creating failed
 	 */
 	public ImageDescriptor getImage() {
 		String imageName= fElement.getAttribute(ICON_ATTRIBUTE);
 		if (imageName == null)
 			return null;
-		URL url;
+		Bundle bundle = Platform.getBundle(fElement.getDeclaringExtension().getNamespace());
+		URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
 		try {
-			url= new URL(fElement.getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL(), imageName);
-		} catch (java.net.MalformedURLException ex) {
-			ExceptionHandler.log(ex, SearchMessages.getString("Search.Error.createSearchPage.message")); //$NON-NLS-1$
-			return null;
+			iconURL = new URL(iconURL, imageName);
+			return ImageDescriptor.createFromURL(iconURL);
+		} catch (MalformedURLException e) {
+			ExceptionHandler.log(e, SearchMessages.getString("Search.Error.createSearchPage.message")); //$NON-NLS-1$
 		}
-		return ImageDescriptor.createFromURL(url);
+		return null;
 	}
 
 	/**
-	 * Returns the page's label.
+	 * @return Returns the page's label.
 	 */
 	public String getLabel() {
 		return fElement.getAttribute(LABEL_ATTRIBUTE);
 	}
 
 	/**
-	 * Returns <code>true</code> if the scope section needs
+	 * @return  Returns <code>true</code> if the scope section needs
 	 * to be shown in the dialog.
 	 */
 	public boolean showScopeSection() {
@@ -152,6 +159,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 	 * shown in the Search dialog.
 	 * 
 	 * This attribute is optional and defaults to <code>true</code>.
+	 * @return Returns if the page should be initially shown
 	 */
 	public boolean isInitiallyEnabled() {
 		String strVal= fElement.getAttribute(ENABLED_ATTRIBUTE);
@@ -164,13 +172,14 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 	 * returns <code>false</code>.
 	 * 
 	 * This attribute is optional and defaults to <code>false</code>.
+	 * @return Returns if the page can handle searches in enclosing projects
 	 */
 	public boolean canSearchInProjects() {
 		return Boolean.valueOf(fElement.getAttribute(CAN_SEARCH_ENCLOSING_PROJECTS)).booleanValue();
 	}
 
 	/**
-	 * Returns the page's preferred size
+	 * @return Returns the page's preferred size
 	 */
 	public Point getPreferredSize() {
 		return StringConverter.asPoint(
@@ -275,14 +284,16 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 		int objsPos= ((SearchPageDescriptor)o).getTabPosition();
 		if (myPos == Integer.MAX_VALUE && objsPos == Integer.MAX_VALUE || myPos == objsPos)
 			return getLabel().compareTo(((SearchPageDescriptor)o).getLabel());
-		else
-			return myPos - objsPos;
+		
+		return myPos - objsPos;
 	}
 	
 	//---- Suitability tests ---------------------------------------------------
 	
 	/**
 	 * Returns the score for this page with the given input element.
+	 * @param element The input element
+	 * @return The scope for the page
 	 */
 	public int computeScore(Object element) {
 		if (element instanceof IAdaptable) {
@@ -297,10 +308,11 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 				if (tester != null)
 					return tester.computeScore(getId(), element);	
 			}
-		} else if (element instanceof ISearchResultViewEntry) {
+		} /* can be removed as ISearchResultViewEntry adaptes to IResource
+			else if (element instanceof ISearchResultViewEntry) {
 			ISearchResultViewEntry entry= (ISearchResultViewEntry)element;
 			return computeScore(entry.getSelectedMarker());
-		}
+		}*/
 		if (fWildcardScore != ISearchPageScoreComputer.UNKNOWN)
 			return fWildcardScore;
 			
@@ -355,6 +367,6 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
      * @see org.eclipse.ui.IPluginContribution#getPluginId()
      */
     public String getPluginId() {
-        return fElement.getDeclaringExtension().getNamespace();
+        return fElement.getNamespace();
     }
 }
