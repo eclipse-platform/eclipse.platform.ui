@@ -19,10 +19,7 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-//@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
-import org.eclipse.ui.internal.AboutInfo;
-import org.eclipse.ui.internal.EditorWorkbook;
-import org.eclipse.ui.internal.EditorsDropDownAction;
+
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
@@ -37,7 +34,9 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IDEContributionItemFactory;
-import org.eclipse.ui.internal.actions.ActivityEnablementAction;
+import org.eclipse.ui.internal.AboutInfo;
+import org.eclipse.ui.internal.EditorWorkbook;
+import org.eclipse.ui.internal.EditorsDropDownAction;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 
 /**
@@ -106,9 +105,7 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchAction upAction;
 	private IWorkbenchAction nextAction;
 	private IWorkbenchAction previousAction;
-	
-	// @issue roleManagerAction should be provided by ActionFactory
-	private ActivityEnablementAction roleManagerAction;
+    private IWorkbenchAction categoryAction;
 
 	// @issue editorsDropDownAction should be provided by ActionFactory
 	private EditorsDropDownAction editorsDropDownAction;
@@ -508,9 +505,9 @@ public final class WorkbenchActionBuilder {
 			menu.add(quickStartAction);
 
 		//Only add it if role filtering is on
-		if(roleManagerAction != null)
-			menu.add(roleManagerAction);
-		
+		if (categoryAction != null) 
+            menu.add(categoryAction);
+        
 		// See if a tips and tricks page is specified
 		if (tipsAndTricksAction != null)
 			menu.add(tipsAndTricksAction);
@@ -793,12 +790,11 @@ public final class WorkbenchActionBuilder {
 		projectPropertyDialogAction = IDEActionFactory.OPEN_PROJECT_PROPERTIES.create(getWindow());
 		registerGlobalAction(projectPropertyDialogAction);
 
-		// @issue illegal internal ref to ActivityEnablementAction
 		//Only add the role manager action if we are using role support
-		//if(RoleManager.getInstance().isFiltering()){
-			roleManagerAction = new ActivityEnablementAction();
-			registerGlobalAction(roleManagerAction);
-		//}
+		if(!getWindow().getWorkbench().getRoleManager().getDefinedRoleIds().isEmpty()){
+            categoryAction = ActionFactory.CONFIGURE_ACTIVITIES.create(getWindow());
+            registerGlobalAction(categoryAction);
+		}
 
 		if (EditorWorkbook.usingNewDropDown()) {
 			editorsDropDownAction = new EditorsDropDownAction(window);
