@@ -162,11 +162,12 @@ public class ProgressContentProvider implements ITreeContentProvider {
 			return;
 
 		JobInfo info = getJobInfo(job);
-		if (info.taskInfo == null) {
+		if (info.hasTaskInfo()) 
+			info.setTaskName(taskName);
+		else{
 			beginTask(job, taskName, totalWork);
 			return;
-		} else
-			info.taskInfo.setTaskName(taskName);
+		}
 
 		info.clearChildren();
 		refreshViewer(info);
@@ -198,7 +199,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 			return;
 
 		JobInfo info = getJobInfo(job);
-		if (info.taskInfo != null) {
+		if (info.hasTaskInfo()) {
 			info.addWork(work);
 			refreshViewer(info);
 		}
@@ -231,7 +232,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 */
 	void clearJob(Job job) {
 		JobInfo info = (JobInfo) jobs.get(job);
-		if (info != null && info.status.getCode() == IStatus.ERROR) {
+		if (info != null && info.getStatus().getCode() == IStatus.ERROR) {
 			jobs.remove(job);
 			viewer.refresh(null);
 		}

@@ -22,10 +22,23 @@ import org.eclipse.ui.PlatformUI;
  * for objects that display job status in a tree.
  */
 class JobInfo extends JobTreeElement {
-	ArrayList children = new ArrayList();
-	Job job;
-	TaskInfo taskInfo;
+	private ArrayList children = new ArrayList();
+	private Job job;
+	private TaskInfo taskInfo;
+	private IStatus status;
 
+	static int RUNNING_STATUS = 0;
+	static int PENDING_STATUS = 1;
+	static int DONE_STATUS = 2;
+	//	IStatus.ERROR = 4 so we keep our constants lower for sorting
+	
+	/**
+	 * Create a new status for the supplied job with the
+	 * code.
+	 * @param code. One of RUNNING_STATUS, PENDING_STATUS,
+	 *  DONE_STATUS or IStatus.ERROR.
+ 	 * @param Job
+	 */
 	private static IStatus createStatus(int code, Job job) {
 		return new Status(
 			IStatus.INFO,
@@ -35,10 +48,38 @@ class JobInfo extends JobTreeElement {
 			null);
 	}
 
-	static int PENDING_STATUS = 0;
-	static int RUNNING_STATUS = 1;
-	static int DONE_STATUS = 2;
-	IStatus status;
+	/**
+	 * Return the job that the receiver is collecting data
+	 * on.
+	 * @return Job
+	 */
+	Job getJob() {
+		return job;
+	}
+
+	/**
+	 * Return the current status of the receiver.
+	 * @return IStatus
+	 */
+	IStatus getStatus() {
+		return status;
+	}
+
+	/**
+	 * Return whether or not there is a task.
+	 * @return boolean
+	 */
+	boolean hasTaskInfo() {
+		return taskInfo != null;
+	}
+
+	/**
+	 * Set the name of the taskInfo.
+	 * @param name
+	 */
+	void setTaskName(String name) {
+		taskInfo.setTaskName(name);
+	}
 
 	/**
 	 * Create a top level JobInfo.

@@ -25,6 +25,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 				parent,
 				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setUseHashlookup(true);
+		viewer.setSorter(getViewerSorter());
 		initContentProvider();
 		initLabelProvider();
 		initContextMenu();
@@ -75,10 +76,10 @@ public class ProgressView extends ViewPart implements IViewPart {
 					JobTreeElement element = (JobTreeElement) items.next();
 					if (element.isJobInfo()) {
 						JobInfo info = (JobInfo) element;
-						int code = info.status.getCode();
+						int code = info.getStatus().getCode();
 						if (code == JobInfo.PENDING_STATUS
 							|| code == JobInfo.RUNNING_STATUS)
-							info.job.cancel();
+							info.getJob().cancel();
 					}
 				}
 			}
@@ -102,11 +103,12 @@ public class ProgressView extends ViewPart implements IViewPart {
 					JobTreeElement element = (JobTreeElement) items.next();
 					if (element.isJobInfo()) {
 						JobInfo info = (JobInfo) element;
-						if (info.status.getCode() == IStatus.ERROR)
+						if (info.getStatus().getCode() == IStatus.ERROR)
 							(
 								(ProgressContentProvider) viewer
 									.getContentProvider())
-									.clearJob(info.job);
+									.clearJob(
+								info.getJob());
 					}
 				}
 			}
@@ -154,5 +156,32 @@ public class ProgressView extends ViewPart implements IViewPart {
 		ISelectionProvider provider = getSite().getSelectionProvider();
 		ISelection currentSelection = provider.getSelection();
 		return currentSelection != null;
+	}
+
+	/**
+	 * Return a viewer sorter for looking at the jobs.
+	 * @return
+	 */
+	private ViewerSorter getViewerSorter() {
+		return new ViewerSorter() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+			 */
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				JobTreeElement element1 = (JobTreeElement) e1;
+				JobTreeElement element2 = (JobTreeElement) e2;
+
+				if (element1.isJobInfo() && element2.isJobInfo()) {
+					IStatus status1 = ((JobInfo) element1).getStatus();
+					IStatus status2 = ((JobInfo) element1).getStatus();
+					int difference = status1.getCode() - status2.getCode();
+					if (difference != 0)
+						return difference;
+				}
+				return element1.getDisplayString().compareTo(
+					element2.getDisplayString());
+
+			}
+		};
 	}
 }
