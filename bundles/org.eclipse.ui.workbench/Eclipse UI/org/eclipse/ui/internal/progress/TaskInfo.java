@@ -68,9 +68,10 @@ public class TaskInfo extends SubTaskInfo {
 			return getDisplayStringWithoutTask();
 		} else {
 			String[] messageValues = new String[3];
-			messageValues[0] = jobInfo.getJob().getName();
-			messageValues[1] = taskName;
-			messageValues[2] = String.valueOf(getPercentDone());
+			messageValues[0] = String.valueOf(getPercentDone());
+			messageValues[1] = jobInfo.getJob().getName();
+			messageValues[2] = taskName;
+			
 			return ProgressMessages.format("JobInfo.DoneMessage", messageValues); //$NON-NLS-1$
 		}
 
