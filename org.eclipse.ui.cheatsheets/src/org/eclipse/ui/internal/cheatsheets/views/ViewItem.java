@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.*;
+import org.eclipse.jface.util.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
@@ -387,11 +389,48 @@ public abstract class ViewItem {
 			return VIEWITEM_DONOT_ADVANCE;
 		}
 
+		final boolean[] listenerFired = { false };
+		final boolean[] listenerResult = { false };
+		IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if(event.getNewValue() instanceof Boolean) {
+					listenerFired[0] = true;
+					listenerResult[0] = ((Boolean)event.getNewValue()).booleanValue();
+				}
+			}
+		};
+
+		// Add PropertyChangeListener to the action, so we can detemine if a action was succesfull
+		action.addPropertyChangeListener(propertyChangeListener);
+
 		// Run the action for this ViewItem
 		if (action instanceof ICheatSheetAction) {
-			((ICheatSheetAction) action).run(params, csm);
+			// Prepare parameters
+			String[] clonedParams = new String[params.length];
+			System.arraycopy(params, 0, clonedParams, 0, params.length);
+			for (int i = 0; i < clonedParams.length; i++) {
+				String param = clonedParams[i];
+				if(param != null && param.startsWith("${") && param.endsWith("}")) { //$NON-NLS-1$ //$NON-NLS-2$
+					param = param.substring(2,param.length()-1);
+					String value = csm.getData(param);
+					clonedParams[i] = value == null ? "" : value; //$NON-NLS-1$
+				}
+			}
+			
+			((ICheatSheetAction) action).run(clonedParams, csm);
 		} else
 			action.run();
+
+		// Remove the PropertyChangeListener
+		action.removePropertyChangeListener(propertyChangeListener);
+
+		if (listenerFired[0]) {
+			if (listenerResult[0]) {
+				return VIEWITEM_ADVANCE;
+			} else {
+				return VIEWITEM_DONOT_ADVANCE;
+			}
+		}
 
 		return VIEWITEM_ADVANCE;
 	}
