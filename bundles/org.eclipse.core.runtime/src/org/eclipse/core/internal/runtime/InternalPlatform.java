@@ -1245,7 +1245,7 @@ public final class InternalPlatform implements IPlatform {
 		String productId = System.getProperty("eclipse.product");
 		if (productId == null)
 			return null;
-		IConfigurationElement[] entries = getRegistry().getConfigurationElementsFor(PI_RUNTIME, "product", productId);
+		IConfigurationElement[] entries = getRegistry().getConfigurationElementsFor(PI_RUNTIME, "products", productId);
 		if (entries == null || entries.length == 0)
 			return null;
 		// There should only be one product with the given id so just take the first element
