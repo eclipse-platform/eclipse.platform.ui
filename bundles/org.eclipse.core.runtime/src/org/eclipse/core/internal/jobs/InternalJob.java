@@ -45,6 +45,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	//flag mask bits
 	private static final int M_STATE = 0xFF;
 	private static final int M_SYSTEM = 0x0100;
+	private static final int M_USER = 0x0200;
 	
 	private static final JobManager manager = JobManager.getInstance();
 	private static int nextJobNumber = 0;
@@ -193,8 +194,17 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		else
 			return otherRule.isConflicting(schedulingRule);
 	}
+	/* (non-javadoc)
+	 * @see Job.isSystem
+	 */
 	protected boolean isSystem() {
 		return (flags & M_SYSTEM) != 0;
+	}
+	/* (non-javadoc)
+	 * @see Job.isUser
+	 */
+	protected boolean isUser() {
+		return (flags & M_USER) != 0;
 	}
 	protected void join() throws InterruptedException {
 		manager.join(this);
@@ -276,8 +286,17 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	final void setStartTime(long time) {
 		startTime = time;
 	}
+	/* (non-javadoc)
+	 * @see Job.setSystem
+	 */
 	protected void setSystem(boolean value) {
 		flags = value ? flags | M_SYSTEM : flags & ~M_SYSTEM;
+	}
+	/* (non-javadoc)
+	 * @see Job.setUser
+	 */
+	protected void setUser(boolean value) {
+		flags = value ? flags | M_USER : flags & ~M_USER;
 	}
 	/* (non-javadoc)
 	 * @see Job.setThread

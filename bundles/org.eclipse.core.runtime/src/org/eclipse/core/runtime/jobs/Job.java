@@ -276,6 +276,17 @@ public abstract class Job extends InternalJob implements IAdaptable {
 		return super.isSystem();
 	}
 	/**
+	 * Returns whether this job has been directly initiated by a UI end user. 
+	 * These jobs may be presented differently in the UI.
+	 * 
+	 * @return <code>true</code> if this job is a user-initiated job, and
+	 * <code>false</code> otherwise.
+	 * @see setUser
+	 */
+	public final boolean isUser()  {
+		return super.isUser();
+	}
+	/**
 	 * Waits until this job is finished.  This method will block the calling thread until the 
 	 * job has finished executing, or until this thread has been interrupted.  If the job 
 	 * has not been scheduled, this method returns immediately.
@@ -421,6 +432,17 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 */
 	public final void setSystem(boolean value)  {
 		super.setSystem(value);
+	}
+	/**
+	 * Sets whether or not this job has been directly initiated by a UI end user. 
+	 * These jobs may be presented differently in the UI.
+	 * 
+	 * @param value <code>true</code> if this job is a user-initiated job, and
+	 * <code>false</code> otherwise.
+	 * @see isUser
+	 */
+	public final void setUser(boolean value)  {
+		super.setUser(value);
 	}
 	/**
 	 * Sets the thread that this job is currently running in, or <code>null</code>

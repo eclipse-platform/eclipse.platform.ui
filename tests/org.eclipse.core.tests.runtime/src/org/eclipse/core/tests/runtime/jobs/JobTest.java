@@ -163,11 +163,29 @@ public class JobTest extends TestCase {
 
 	public void testIsSystem() {
 		//reset the system parameter several times
-		assertTrue("1.0", !shortJob.isSystem());
-		shortJob.setSystem(true);
-		assertTrue("1.1", shortJob.isSystem());
+		shortJob.setUser(false);
 		shortJob.setSystem(false);
-		assertTrue("1.2", !shortJob.isSystem());
+		assertTrue("1.0", !shortJob.isUser());
+		assertTrue("1.1", !shortJob.isSystem());
+		shortJob.setSystem(true);
+		assertTrue("1.2", !shortJob.isUser());
+		assertTrue("1.3", shortJob.isSystem());
+		shortJob.setSystem(false);
+		assertTrue("1.4", !shortJob.isUser());
+		assertTrue("1.5", !shortJob.isSystem());
+	}
+	public void testIsUser() {
+		//reset the user parameter several times
+		shortJob.setUser(false);
+		shortJob.setSystem(false);
+		assertTrue("1.0", !shortJob.isUser());
+		assertTrue("1.1", !shortJob.isSystem());
+		shortJob.setUser(true);
+		assertTrue("1.2", shortJob.isUser());
+		assertTrue("1.3", !shortJob.isSystem());
+		shortJob.setUser(false);
+		assertTrue("1.4", !shortJob.isUser());
+		assertTrue("1.5", !shortJob.isSystem());
 	}
 
 	/*
