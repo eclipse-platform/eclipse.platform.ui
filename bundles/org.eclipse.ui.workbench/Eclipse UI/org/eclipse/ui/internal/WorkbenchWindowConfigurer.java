@@ -62,8 +62,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	private int shellStyle = SWT.SHELL_TRIM;
 	
 	/**
-	 * The window title to set when the window's shell has been created,
-	 * or <code>null</code> if there is none to set.
+	 * The window title to set when the window's shell has been created.
 	 */
 	private String windowTitle;
 	
@@ -201,6 +200,10 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 			throw new IllegalArgumentException();
 		}
 		this.window = window;
+	    windowTitle = WorkbenchPlugin.getDefault().getProductName();
+	    if (windowTitle == null) {
+	        windowTitle = ""; //$NON-NLS-1$
+	    }
 	}
 
 	/* (non-javadoc)
