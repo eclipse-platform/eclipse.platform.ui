@@ -25,11 +25,14 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
@@ -450,6 +453,45 @@ public class Utils {
 		return null;
 	}
 	
+	/**
+	 * Return whether any sync nodes in the given selection or their
+	 * descendants match the given filter.
+	 * @param selection a selection
+	 * @param filter a sync info filter
+	 * @return whether any sync nodes in the given selection or their
+	 * descendants match the given filter
+	 */
+	public static boolean hasMatchingDescendant(IStructuredSelection selection, FastSyncInfoFilter filter) {
+		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+			Object o = iter.next();
+			if (o instanceof ISynchronizeModelElement) {
+				if (hasMatchingDescendant((ISynchronizeModelElement)o, filter)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	private static boolean hasMatchingDescendant(ISynchronizeModelElement element, FastSyncInfoFilter filter) {
+		if (element.getKind() != SyncInfo.IN_SYNC && element instanceof SyncInfoModelElement) {
+			SyncInfo info = ((SyncInfoModelElement) element).getSyncInfo();
+			if (info != null && filter.select(info)) {
+				return true;
+			}
+		}
+		IDiffElement[] children = element.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			IDiffElement child = children[i];
+			if (child instanceof ISynchronizeModelElement) {
+				if (hasMatchingDescendant((ISynchronizeModelElement)child, filter)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * This method returns all out-of-sync SyncInfos that are in the current
 	 * selection.

@@ -99,7 +99,7 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncInf
 
 	private void updateCounts() {
 		if (getParticipant().getSubscriber() != null) {
-			SyncInfoSet workspaceSetStats = getWorkingSetSyncInfoSet();
+			SyncInfoSet workspaceSetStats = getSyncInfoSet();
 
 			final int total = workspaceSetStats.size();
 			final int workspaceConflicting = (int) workspaceSetStats.countFor(SyncInfo.CONFLICTING, SyncInfo.DIRECTION_MASK);
@@ -159,10 +159,6 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncInf
 	}
 	
 	private SyncInfoSet getSyncInfoSet() {
-		return (SyncInfoSet)configuration.getProperty(ISynchronizePageConfiguration.P_SYNC_INFO_SET);
-	}
-	
-	private SyncInfoSet getWorkingSetSyncInfoSet() {
 		return (SyncInfoSet)configuration.getProperty(SynchronizePageConfiguration.P_WORKING_SET_SYNC_INFO_SET);
 	}
 }
