@@ -58,7 +58,7 @@ public class CVSDecoratorConfiguration {
 						int curLength = output.length();
 						if(curLength>0) {
 							char c = output.charAt(curLength - 1);
-							if(c == KEYWORD_SEPCOLON || c == KEYWORD_SEPSPACE || c == KEYWORD_SEPCOLON) {
+							if(c == KEYWORD_SEPCOLON || c == KEYWORD_SEPCOLON) {
 								output.deleteCharAt(curLength - 1);							
 							}
 						}
