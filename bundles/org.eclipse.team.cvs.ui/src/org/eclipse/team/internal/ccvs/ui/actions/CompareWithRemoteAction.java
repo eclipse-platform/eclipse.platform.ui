@@ -39,50 +39,64 @@ public class CompareWithRemoteAction extends TeamAction {
 	 * Method declared on IActionDelegate.
 	 */
 	public void run(IAction action) {
+		
+		// Setup the holders
+		final IResource[] resource = new IResource[] {null};
+		final CVSTag[] tag = new CVSTag[] {null};
+		final ICVSRemoteResource[] remoteResource = new ICVSRemoteResource[] { null };
+		
+		// Fetch the remote tree
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				String title = Policy.bind("CompareWithRemoteAction.compare");
 				try {
 					IResource[] resources = getSelectedResources();
 					if (resources.length != 1) return;
-					IResource resource = resources[0];
+					resource[0] = resources[0];
 					
 					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resources[0].getProject());
 		
-					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-					CVSTag tag = null;
+					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource[0]);
 					if (cvsResource.isFolder()) {
 						FolderSyncInfo folderInfo = ((ICVSFolder)cvsResource).getFolderSyncInfo();
 						if (folderInfo!=null) {
-							tag = folderInfo.getTag();
+							tag[0] = folderInfo.getTag();
 						}
 					} else {
 						ResourceSyncInfo info = cvsResource.getSyncInfo();
 						if (info!=null) {					
-							tag = info.getTag();
+							tag[0] = info.getTag();
 						}
 					}
-					if (tag==null) {
+					if (tag[0]==null) {
 						if (cvsResource.getParent().isCVSFolder()) {
-							tag = cvsResource.getParent().getFolderSyncInfo().getTag();
+							tag[0] = cvsResource.getParent().getFolderSyncInfo().getTag();
 						} else {
 							// XXX: this is wrong :> should return an error
-							tag = CVSTag.DEFAULT;
+							tag[0] = CVSTag.DEFAULT;
 						}
 					}
 					
-					ICVSRemoteResource remoteResource = CVSWorkspaceRoot.getRemoteTree(resource, tag, new NullProgressMonitor());
-					// Just to be safe...
-					if (remoteResource == null) {
-						MessageDialog.openInformation(getShell(), Policy.bind("CompareWithRemoteAction.noRemote"), Policy.bind("CompareWithRemoteAction.noRemoteLong"));
-						return;
-					}
-					CompareUI.openCompareEditor(new CVSCompareEditorInput(new CVSResourceNode(resource), new ResourceEditionNode(remoteResource)));
+					// This is the only use of the monitor so no submonitor is created
+					remoteResource[0] = CVSWorkspaceRoot.getRemoteTree(resource[0], tag[0], monitor);
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
 			}
+		}, Policy.bind("CompareWithRemoteAction.compare"), PROGRESS_DIALOG);
+		
+		// Just to be safe...
+		if (remoteResource[0] == null) {
+			MessageDialog.openInformation(getShell(), Policy.bind("CompareWithRemoteAction.noRemote"), Policy.bind("CompareWithRemoteAction.noRemoteLong"));
+			return;
+		}
+					
+		// Open the compare view
+		run(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+				CompareUI.openCompareEditor(new CVSCompareEditorInput(new CVSResourceNode(resource[0]), new ResourceEditionNode(remoteResource[0])));
+			}
 		}, Policy.bind("CompareWithRemoteAction.compare"), PROGRESS_BUSYCURSOR);
+		
 	}
 	
 	protected boolean isEnabled() {

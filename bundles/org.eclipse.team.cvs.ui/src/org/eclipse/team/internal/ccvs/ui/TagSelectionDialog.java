@@ -5,10 +5,16 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
  
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -190,10 +196,31 @@ public class TagSelectionDialog extends Dialog {
 
 		// initialize the table contents
 		try {
-			CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource);
-			tagTree.setInput(new ProjectElement((ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(resource.getProject()), getShell()));
-		} catch (TeamException e) {
-			// To do: error dialog
+			new ProgressMonitorDialog(getShell()).run(false, false, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						monitor.beginTask(Policy.bind("TagSelectionDialog.fetching"), 100);
+						monitor.subTask(Policy.bind("TagSelectionDialog.preparing"));
+						CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource);
+						monitor.worked(50);
+						monitor.subTask(Policy.bind("TagSelectionDialog.fetching"));
+						tagTree.setInput(new ProjectElement((ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(resource.getProject()), getShell()));
+					} catch (TeamException e) {
+						new InvocationTargetException(e);
+					} finally {
+						monitor.done();
+					}
+				}
+			});
+		} catch (InvocationTargetException e) {
+			// To do: Error dialog
+			if (e.getTargetException() instanceof TeamException) {
+				CVSUIPlugin.log(((TeamException)e.getTargetException()).getStatus());
+			} else {
+				CVSUIPlugin.log(new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("internal"), e.getTargetException()));
+			}
+		} catch (InterruptedException e) {
+			// Ignore
 		}
 
 		return top;

@@ -10,9 +10,10 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
@@ -25,7 +26,6 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.ResourceEditionNode;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.ui.actions.TeamAction;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * Action for compare with tag.
@@ -35,30 +35,56 @@ public class CompareWithTagAction extends TeamAction {
 	 * Method declared on IActionDelegate.
 	 */
 	public void run(IAction action) {
-		run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
-				String title = Policy.bind("CompareWithTagAction.compare");
-				try {
-					IResource[] resources = getSelectedResources();
-					if (resources.length != 1) return;
-					IResource resource = resources[0];
 		
-					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource.getProject());
-					TagSelectionDialog dialog = new TagSelectionDialog(getShell(), resource);
-					dialog.setBlockOnOpen(true);
-					int result = dialog.open();
-					if (result == Dialog.CANCEL || dialog.getResult() == null) {
-						return;
-					}
-					CVSTag tag = dialog.getResult();
-					ICVSRemoteResource remoteResource = CVSWorkspaceRoot.getRemoteTree(resource, tag, new NullProgressMonitor());
-					CompareUI.openCompareEditor(new CVSCompareEditorInput(new CVSResourceNode(resource), new ResourceEditionNode(remoteResource)));
+		// Setup the holders
+		final IResource[] resource = new IResource[] {null};
+		final CVSTag[] tag = new CVSTag[] {null};
+		final ICVSRemoteResource[] remoteResource = new ICVSRemoteResource[] { null };
+		
+		// Show a busy curesor while popping up the Tag selection dialog
+		run(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+				IResource[] resources = getSelectedResources();
+				if (resources.length != 1) return;
+				resource[0] = resources[0];
+	
+				CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource[0].getProject());
+				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), resource[0]);
+				dialog.setBlockOnOpen(true);
+				int result = dialog.open();
+				if (result == Dialog.CANCEL || dialog.getResult() == null) {
+					return;
+				}
+				tag[0] = dialog.getResult();
+			}
+		}, Policy.bind("CompareWithTagAction.compare"), PROGRESS_BUSYCURSOR);
+		
+		if (tag[0] == null) return;
+		
+		// Show a progress dialog while fethcing the remote tree
+		run(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+				try {
+					// This is the only use of the monitor so no submonitor is created
+					remoteResource[0] = CVSWorkspaceRoot.getRemoteTree(resource[0], tag[0], monitor);
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
 			}
+		}, Policy.bind("CompareWithTagAction.compare"), PROGRESS_DIALOG);
+		
+		// Just to be safe...
+		if (remoteResource[0] == null) {
+			MessageDialog.openInformation(getShell(), Policy.bind("CompareWithTagAction.noRemote"), Policy.bind("CompareWithTagAction.noRemoteLong"));
+			return;
+		}
+		
+		// Show a busy cursor while opening the compare view
+		run(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+				CompareUI.openCompareEditor(new CVSCompareEditorInput(new CVSResourceNode(resource[0]), new ResourceEditionNode(remoteResource[0])));
+			}
 		}, Policy.bind("CompareWithTagAction.compare"), PROGRESS_BUSYCURSOR);
-			
 	}
 	
 	protected boolean isEnabled() {

@@ -226,7 +226,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 			} else if (t instanceof InterruptedException) {
 				return;
 			} else {
-				status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, message, t);
+				status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("TeamAction.internal"), t);
 				log = true;
 				dialog = true;
 			}
