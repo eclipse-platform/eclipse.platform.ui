@@ -52,22 +52,6 @@
 
 
    <!-- ========================================================================== -->
-   <!-- Extension point: org.eclipse.help.contributions                        -->
-   <!-- Purpose: Extension point for registering documentation contributions       -->
-   <!--          by individual plugins                                             -->
-   <!-- Extension Implementation: must provide one or more manifest files for      -->
-   <!--                           the documentation navigation and interleaving    -->
-   <!-- Sample usage:                                                              -->
-   <!--   <extension point="org.eclipse.help.contributions">                   -->
-   <!--	  	<infoset name="infoSet.xml"/>                                      -->
-   <!--	  	<topics  name="infoTopics.xml"/>                                   -->
-   <!--	  	<actions name="infoTopicsWiring.xml"/>                             -->
-   <!--   </extension>                                                             -->
-   <!-- ========================================================================== -->
-   <extension-point id="contributions" name="%contributions_extention_point_name"/>
-   
-
-   <!-- ========================================================================== -->
    <!-- Extension point: org.eclipse.help.contexts                             -->
    <!-- Purpose: Extension point for registering context help contributions        -->
    <!--          by individual plugins                                             -->

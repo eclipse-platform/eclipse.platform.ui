@@ -121,20 +121,7 @@ public class DefaultHelp implements IHelp {
 			//Documentation is not installed.
 			return;
 		}
-		// 1.0 nav support
-		// change topicshref to a href of one of a views
-		if (tocFileHref != null) {
-			Collection idCol = HelpSystem.getTocManager().getTocIDs();
-			for (Iterator it = idCol.iterator(); it.hasNext();) {
-				String newFileHref = (String) it.next();
-				if (newFileHref.indexOf(tocFileHref) == 0
-					&& newFileHref.indexOf("..") == tocFileHref.length()) {
-					tocFileHref = newFileHref;
-					break;
-				}
-			}
-		}
-		// eo 1.0 nav support
+
 		ITopic toc = HelpSystem.getTocManager().getToc(tocFileHref);
 		if (toc == null) {
 			// if toc href specified, but not found, log it

@@ -6,19 +6,21 @@ package org.eclipse.help.internal.context;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
-import org.eclipse.help.internal.contributions1_0.Contribution;
-import org.eclipse.help.internal.contributors.xml1_0.ContributorFactory;
-import org.eclipse.help.internal.contributors1_0.Contributor;
 import org.eclipse.help.internal.util.*;
 /**
  * Maintains the list of contexts
  * and performs look-ups.
  */
-public class ContextManager implements IContextManager {
-	/** contexts are indexed by each plugin */
+public class ContextManager {
+	public static final String CONTEXT_EXTENSION = "org.eclipse.help.contexts";
+	/**
+	 * Contexts, indexed by each plugin 
+	 */
 	Map pluginsContexts = new HashMap(/*of Map of Context indexed by plugin*/
 	);
-	/** Context contributors */
+	/**
+	 * Context contributors
+	 */
 	Map contextContributors =
 		new HashMap(/* of List of Contributors index by plugin */
 	);
@@ -69,7 +71,7 @@ public class ContextManager implements IContextManager {
 	}
 	/**
 	 * Finds the context description to display, given
-	 * a an ordered list of (nested) context objects.
+	 * an ordered list of (nested) context objects.
 	 */
 	private String getDescription(Object context) {
 		if (context instanceof IContext)
@@ -79,7 +81,7 @@ public class ContextManager implements IContextManager {
 		IContext contextNode = getContext((String) context);
 		if (contextNode != null)
 			return contextNode.getText();
-		else			// no context defined for this object. return null to enable 
+		else // no context defined for this object. return null to enable 
 			// lookup of description from other Contexts. 
 			return null;
 	}
@@ -145,14 +147,10 @@ public class ContextManager implements IContextManager {
 		IContext contextNode = getContext((String) context);
 		if (contextNode != null)
 			return contextNode.getRelatedTopics();
-		else			// no context defined for this object. return null to enable 
+		else // no context defined for this object. return null to enable 
 			// lookup of description from other Contexts. 
 			return null;
 	}
-	/**
-	 * Finds the context to display (text and related topics), given
-	 * a an ordered list of (nested) context objects
-	 */
 	private synchronized Map loadContext(String plugin) {
 		Map contexts = (Map) pluginsContexts.get(plugin);
 		if (contexts == null) {
@@ -173,8 +171,9 @@ public class ContextManager implements IContextManager {
 			for (Iterator contextContributors = contributors.iterator();
 				contextContributors.hasNext();
 				) {
-				Contributor contextContributor = (Contributor) contextContributors.next();
-				Contribution contrib = contextContributor.getContribution();
+				ContextContributor contextContributor =
+					(ContextContributor) contextContributors.next();
+				IContextContributionNode contrib = contextContributor.getContribution();
 				// contrib could be null if there was an error parsing the manifest file!
 				if (contrib == null);
 				// do nothing here because we need to load other Context files.
@@ -192,7 +191,7 @@ public class ContextManager implements IContextManager {
 								contextNode.getContributor().getPlugin().getUniqueIdentifier(),
 								description);
 						contextNode.setDescription(description);
-						contexts.put(contextNode.getID(), contextNode);
+						contexts.put(contextNode.getPlugin(), contextNode);
 					}
 				}
 			}
@@ -214,16 +213,16 @@ public class ContextManager implements IContextManager {
 			IConfigurationElement[] contextContributions =
 				extensions[i].getConfigurationElements();
 			for (int j = 0; j < contextContributions.length; j++) {
-				Contributor contributor =
-					ContributorFactory.getFactory().createContributor(
-						plugin,
-						contextContributions[j]);
-				if (contributor != null) {
+				if (ContextContributor
+					.CONTEXTS_ELEM
+					.equals(contextContributions[j].getName())) {
+					ContextContributor contributor =
+						new ContextContributor(plugin, contextContributions[j]);
 					// add this contributors to the map of contributors
 					// and index it by the plugin id specified.
 					// Use the current plugin if none is specified
 					String contextPlugin =
-						contextContributions[j].getAttribute(Contributor.PLUGIN_ATTR);
+						contextContributions[j].getAttribute(ContextContributor.PLUGIN_ATTR);
 					if (contextPlugin == null || contextPlugin.length() == 0)
 						contextPlugin = plugin.getUniqueIdentifier();
 					List contributors = (List) contextContributors.get(contextPlugin);

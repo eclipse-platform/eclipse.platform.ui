@@ -13,7 +13,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	protected static WorkbenchHelpPlugin plugin;
 	/**
-	 * HelpViewerPlugin constructor. It is called as part of plugin
+	 * WorkbenchHelpPlugin constructor. It is called as part of plugin
 	 * activation.
 	 */
 	public WorkbenchHelpPlugin(IPluginDescriptor descriptor) {
@@ -21,7 +21,7 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 		plugin = this;
 	}
 	/**
-	 * @return com.ibm.ua.HelpViewerPlugin
+	 * @return HelpViewerPlugin
 	 */
 	public static WorkbenchHelpPlugin getDefault() {
 		return plugin;

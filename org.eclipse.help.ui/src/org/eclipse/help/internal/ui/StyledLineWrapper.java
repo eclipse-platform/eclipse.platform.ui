@@ -7,7 +7,7 @@ import java.text.*;
 import java.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
-import org.eclipse.help.internal.context.IContextContributor;
+import org.eclipse.help.internal.context.ContextContributor;
 import org.eclipse.help.internal.ui.util.TString;
 public class StyledLineWrapper implements StyledTextContent {
 	/** Lines after splitting */
@@ -182,8 +182,8 @@ public class StyledLineWrapper implements StyledTextContent {
 	 * Returns the text without the style
 	 */
 	private static String getUnstyledText(String styledText) {
-		String s = TString.change(styledText, IContextContributor.BOLD_TAG, "");
-		s = TString.change(s, IContextContributor.BOLD_CLOSE_TAG, "");
+		String s = TString.change(styledText, ContextContributor.BOLD_TAG, "");
+		s = TString.change(s, ContextContributor.BOLD_CLOSE_TAG, "");
 		return s;
 	}
 	/**
@@ -216,14 +216,14 @@ public class StyledLineWrapper implements StyledTextContent {
 			StyleRange style = new StyleRange();
 			style.fontStyle = SWT.BOLD;
 			// the index of the starting style in styled text
-			int start = text.indexOf(IContextContributor.BOLD_TAG, offset);
+			int start = text.indexOf(ContextContributor.BOLD_TAG, offset);
 			if (start == -1)
 				break;
 			String prefix = getUnstyledText(text.substring(0, start));
 			style.start = prefix.length();
 			// the index of the ending style in styled text
 			offset = start + 1;
-			int end = text.indexOf(IContextContributor.BOLD_CLOSE_TAG, offset);
+			int end = text.indexOf(ContextContributor.BOLD_CLOSE_TAG, offset);
 			if (end == -1)
 				break;
 			prefix = getUnstyledText(text.substring(0, end));

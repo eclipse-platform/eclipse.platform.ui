@@ -6,7 +6,6 @@ package org.eclipse.help.internal.ui;
 import java.util.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.toc.*;
-import org.eclipse.help.internal.contributions.xml1_0.HelpInfoView;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -176,15 +175,11 @@ public class NavigationViewer implements ISelectionProvider, IMenuListener {
 	 *   of InfoView element and each of Infoset's children (InfoViews)
 	 */
 	public void setInput(Object input) {
-		if (input instanceof Toc || input instanceof HelpInfoView) {
+		if (input instanceof Toc) {
 			// do nothing if asked to display the same infoset
 			if (input == getInput())
 				return;
-			int index;
-			if(input instanceof Toc)
-				index = tocIDs.indexOf(((Toc)input).getTocID());
-			else
-				index = tocIDs.indexOf(((HelpInfoView)input).getTocID());
+			int index = tocIDs.indexOf(((Toc)input).getTocID());
 			if (index != -1)
 				toc_Combo.select(index);
 			// remove selection, so it is gray not blue;

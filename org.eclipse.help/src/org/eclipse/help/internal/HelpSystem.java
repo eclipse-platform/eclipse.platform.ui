@@ -6,9 +6,6 @@ package org.eclipse.help.internal;
 import java.net.URL;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.context.*;
-import org.eclipse.help.internal.contributors.xml1_0.HelpContributionManager;
-import org.eclipse.help.internal.contributors1_0.ContributionManager;
-import org.eclipse.help.internal.navigation1_0.HelpNavigationManager;
 import org.eclipse.help.internal.server.HelpServer;
 import org.eclipse.help.internal.toc.TocManager;
 import org.eclipse.help.internal.util.*;
@@ -17,20 +14,11 @@ import org.eclipse.help.internal.util.*;
  */
 public final class HelpSystem {
 	protected static final HelpSystem instance = new HelpSystem();
-	// 1.0 nav support
-	// ContributionManager for help v1.0 contributions
-	protected ContributionManager contributionManager;
-	// Help Naviagation Manager for v1.0 navigation
-	protected HelpNavigationManager navigationManager;
-	// eo 1.0 nav support
+
 	// TocManager
 	protected TocManager tocManager;
-	protected IContextManager contextManager;
+	protected ContextManager contextManager;
 	private String browserPath;
-	// constants
-	private static final String SEARCH_ENGINE_EXTENSION_POINT =
-		"org.eclipse.help.searchEngine";
-	private static final String SEARCH_ENGINE_CONFIG = "config";
 	private String localServerAddress;
 	private String localServerPort;
 	protected HelpPreferences preferences = null;
@@ -51,33 +39,12 @@ public final class HelpSystem {
 	 * Used to obtain Print Manager
 	 * returns an instance of HelpPrintManager
 	 */
-	public static IContextManager getContextManager() {
+	public static ContextManager getContextManager() {
 		if (getInstance().contextManager == null)
 			getInstance().contextManager = new ContextManager();
 		return getInstance().contextManager;
 	}
-	// 1.0 nav support
-	/**
-	 * Used to obtain Contribution Manager
-	 * @return instance of ContributionManager
-	 */
-	public static ContributionManager getContributionManager() {
-		if (getInstance().contributionManager == null) {
-			getInstance().contributionManager = new HelpContributionManager();
-		}
-		return getInstance().contributionManager;
-	}
-	/**
-	 * Used to obtain Help Navigation Manager
-	 * @return instance of HelpNavigationManager
-	 */
-	public static HelpNavigationManager getNavigationManager() {
-		if (getInstance().navigationManager == null) {
-			getInstance().navigationManager = new HelpNavigationManager();
-		}
-		return getInstance().navigationManager;
-	}
-	// eof 1.0 nav support
+
 	public static HelpPreferences getPreferences() {
 		return getInstance().preferences;
 	}

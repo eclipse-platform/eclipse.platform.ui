@@ -9,7 +9,6 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.contributions.xml1_0.HelpInfoView;
 import org.eclipse.help.internal.util.*;
 /**
  * Manages the navigation model. It generates it and it reads it back
@@ -43,13 +42,7 @@ public class TocManager {
 				Toc toc = (Toc) it.next();
 				idToToc.put(toc.getTocID(), toc);
 			}
-			// 1.0 navigation support
-			Collection builtTopics10 = HelpSystem.getNavigationManager().getTopicsIDs();
-			for (Iterator it = builtTopics10.iterator(); it.hasNext();) {
-				String id= (String) it.next();
-				idToToc.put(id, HelpSystem.getNavigationManager().getTopics(id));
-			}
-			// eo 1.0 nav support
+
 		} catch (Exception e) {
 			Logger.logError("", e);
 		}
@@ -83,18 +76,6 @@ public class TocManager {
 				if (unorderedIDs.contains(infosetID))
 					tocIDs.add(infosetID);
 				unorderedIDs.remove(infosetID);
-				// 1.0 nav support
-				for (Iterator it2 = unorderedIDs.iterator(); it2.hasNext();) {
-					String infosetDDView = (String) it2.next();
-					if (infosetDDView.startsWith(infosetID + "..")) {
-						tocIDs.add(infosetDDView);
-						unorderedIDs.remove(infosetDDView);
-						// iterator is dirty, start again
-						it2 = unorderedIDs.iterator();
-						continue;
-					}
-				}
-				// oe 1.0 nav support
 			}
 		}
 		// add the rest of infosets

@@ -25,7 +25,7 @@ import org.eclipse.help.internal.context.*;
 public class ContextHelpDialog{
 	private final static String IMAGE_MORE = "moreImage";
 	private Color backgroundColour = null;
-	private IContextManager cmgr = HelpSystem.getContextManager();
+	private ContextManager cmgr = HelpSystem.getContextManager();
 	private Object contexts[];
 	private Cursor defaultCursor = null;
 	private IHelpTopic farRelatedTopics[] = new IHelpTopic[0];
