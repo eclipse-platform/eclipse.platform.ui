@@ -164,7 +164,8 @@ public class SubContributionItem implements IContributionItem {
      * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.CoolBar, int)
      */
     public void fill(CoolBar parent, int index) {
-
+        if (visible)
+            innerItem.fill(parent, index);
     }
 
     /* (non-Javadoc)
