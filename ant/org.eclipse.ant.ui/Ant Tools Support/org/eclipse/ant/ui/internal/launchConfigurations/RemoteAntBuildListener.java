@@ -20,9 +20,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
-import org.eclipse.ant.ui.internal.antsupport.logger.AntProcessBuildLogger;
 import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.AntUtil;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.debug.core.DebugPlugin;
@@ -156,9 +156,9 @@ public class RemoteAntBuildListener {
 			String name= message.substring(0, message.indexOf(','));
 			String location= message.substring(message.indexOf(',') + 1, message.length());
 	
-			int size = AntProcessBuildLogger.LEFT_COLUMN_SIZE - (name.length() + 3);
+			int size = IAntUIConstants.LEFT_COLUMN_SIZE - (name.length() + 3);
 			int offset = Math.max(size, 0) - 2;
-			int length = AntProcessBuildLogger.LEFT_COLUMN_SIZE - size - 3;
+			int length = IAntUIConstants.LEFT_COLUMN_SIZE - size - 3;
 			IConsoleHyperlink taskLink = AntUtil.getTaskLink(location, fBuildFileParent);
 			if (taskLink != null) {
 				TaskLinkManager.addTaskHyperlink(getProcess(), taskLink, new Region(offset, length), name );
