@@ -228,13 +228,13 @@ public class CompositeChange extends Change {
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		fUndoUntilException= null;
 		List undos= new ArrayList(fChanges.size());
-		pm.beginTask("", fChanges.size() * 2); //$NON-NLS-1$
+		pm.beginTask("", fChanges.size()); //$NON-NLS-1$
 		pm.setTaskName(RefactoringCoreMessages.getString("CompositeChange.performingChangesTask.name")); //$NON-NLS-1$
 		Change change= null;
 		try {
 			for (Iterator iter= fChanges.iterator(); iter.hasNext();) {
 				change= (Change)iter.next();
-				if (change.isEnabled() && canPerformChange(change, new SubProgressMonitor(pm, 1))) {
+				if (change.isEnabled()) {
 					Change undoChange= change.perform(new SubProgressMonitor(pm, 1));
 					if (undos != null) {
 						if (undoChange == null) {
