@@ -11,23 +11,18 @@
 package org.eclipse.ui.forms;
 /**
  * AbstractFormPart implements IFormPart interface and can be used as a
- * convenient base class for concrete form parts.
+ * convenient base class for concrete form parts. If a method contains
+ * code that must be called, look for instructions to call 'super'
+ * when overriding.
  * 
- * TODO (dejan) - spell out subclass contract
- * TODO (dejan) - mark non-overrideable methods as final
  * @see Section
  * @since 3.0
  */
 public abstract class AbstractFormPart implements IFormPart {
-	/**
-	 * TODO (dejan) - avoid protected API fields
-	 */
-	protected IManagedForm managedForm;
+	private IManagedForm managedForm;
 	private boolean dirty = false;
 	private boolean stale = true;
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.ui.forms.IFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
 	 */
 	public void initialize(IManagedForm form) {
@@ -38,7 +33,7 @@ public abstract class AbstractFormPart implements IFormPart {
 	 * 
 	 * @return the managed form
 	 */
-	public IManagedForm getForm() {
+	public IManagedForm getManagedForm() {
 		return managedForm;
 	}
 	/**

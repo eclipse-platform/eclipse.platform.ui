@@ -85,7 +85,7 @@ public class SectionPart extends AbstractFormPart {
 	 *            collapse.
 	 */
 	protected void expansionStateChanged(boolean expanded) {
-		managedForm.getForm().reflow(false);
+		getManagedForm().getForm().reflow(false);
 	}
 	/**
 	 * Instructs the section to grab keyboard focus. The default implementation
