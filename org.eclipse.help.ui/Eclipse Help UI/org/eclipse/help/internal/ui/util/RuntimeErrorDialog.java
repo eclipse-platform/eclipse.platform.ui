@@ -74,6 +74,10 @@ public class RuntimeErrorDialog extends MessageDialog {
 						| GridData.HORIZONTAL_ALIGN_FILL
 						| GridData.VERTICAL_ALIGN_CENTER);
 			data.widthHint = getMinimumMessageWidth();
+			// set the default height on linux. 
+			// Note: on Windows, the default height is fine.
+			if (System.getProperty("os.name").startsWith("Linux"))
+				data.heightHint = convertHorizontalDLUsToPixels(100);
 			text.setLayoutData(data);
 			text.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 
