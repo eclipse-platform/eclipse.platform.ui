@@ -172,7 +172,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	/**
 	 * @see ITerminate#isTerminated()
 	 */
-	public synchronized boolean isTerminated() {
+	public boolean isTerminated() {
 		return fTerminated;
 	}
 
@@ -214,7 +214,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * Notification that the system process associated with this process
 	 * has terminated.
 	 */
-	protected synchronized void terminated() {
+	protected void terminated() {
 		if (fStreamsProxy instanceof StreamsProxy) {
 			((StreamsProxy)fStreamsProxy).close();
 		}
