@@ -156,10 +156,10 @@
             </groupMarker>
          </menu>
          <action
-               id="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate"
+               id="org.eclipse.debug.ui.actions.ToggleStepFilters"
                hoverIcon="icons/full/clcl16/stepbystep_co.gif"
                class="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate"
-               definitionId="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate"
+               definitionId="org.eclipse.debug.ui.commands.ToggleStepFilters"
                disabledIcon="icons/full/dlcl16/stepbystep_co.gif"
                icon="icons/full/elcl16/stepbystep_co.gif"
                helpContextId="step_with_filters_action_context"
@@ -169,10 +169,10 @@
                state="false">
          </action>         
          <action
-               id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
+               id="org.eclipse.debug.ui.actions.StepReturn"
                hoverIcon="icons/full/clcl16/stepreturn_co.gif"
                class="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
-               definitionId="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
+               definitionId="org.eclipse.debug.ui.commands.StepReturn"
                disabledIcon="icons/full/dlcl16/stepreturn_co.gif"
                icon="icons/full/elcl16/stepreturn_co.gif"
                helpContextId="step_return_action_context"
@@ -180,10 +180,10 @@
                menubarPath="org.eclipse.ui.run/stepReturnGroup">
          </action>
          <action
-               id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
+               id="org.eclipse.debug.ui.actions.StepOver"
                hoverIcon="icons/full/clcl16/stepover_co.gif"
                class="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
-               definitionId="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
+               definitionId="org.eclipse.debug.ui.commands.StepOver"
                disabledIcon="icons/full/dlcl16/stepover_co.gif"
                icon="icons/full/elcl16/stepover_co.gif"
                helpContextId="step_over_action_context"
@@ -191,10 +191,10 @@
                menubarPath="org.eclipse.ui.run/stepOverGroup">
          </action>
          <action
-               id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
+               id="org.eclipse.debug.ui.actions.StepInto"
                hoverIcon="icons/full/clcl16/stepinto_co.gif"
                class="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
-               definitionId="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
+               definitionId="org.eclipse.debug.ui.commands.StepInto"
                disabledIcon="icons/full/dlcl16/stepinto_co.gif"
                icon="icons/full/elcl16/stepinto_co.gif"
                helpContextId="step_into_action_context"
@@ -202,10 +202,10 @@
                menubarPath="org.eclipse.ui.run/stepIntoGroup">
          </action>
          <action
-               id="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
+               id="org.eclipse.debug.ui.actions.Terminate"
                hoverIcon="icons/full/clcl16/terminate_co.gif"
                class="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
-               definitionId="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
+               definitionId="org.eclipse.debug.ui.commands.Terminate"
                disabledIcon="icons/full/dlcl16/terminate_co.gif"
                icon="icons/full/elcl16/terminate_co.gif"
                helpContextId="terminate_action_context"
@@ -213,10 +213,10 @@
                menubarPath="org.eclipse.ui.run/stepGroup">
          </action>
          <action
-               id="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
+               id="org.eclipse.debug.ui.actions.Suspend"
                hoverIcon="icons/full/clcl16/suspend_co.gif"
                class="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
-               definitionId="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
+               definitionId="org.eclipse.debug.ui.commands.Suspend"
                disabledIcon="icons/full/dlcl16/suspend_co.gif"
                icon="icons/full/elcl16/suspend_co.gif"
                helpContextId="suspend_action_context"
@@ -224,10 +224,10 @@
                menubarPath="org.eclipse.ui.run/stepGroup">
          </action>
          <action
-               id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
+               id="org.eclipse.debug.ui.actions.Resume"
                hoverIcon="icons/full/clcl16/resume_co.gif"
                class="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
-               definitionId="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
+               definitionId="org.eclipse.debug.ui.commands.Resume"
                disabledIcon="icons/full/dlcl16/resume_co.gif"
                icon="icons/full/elcl16/resume_co.gif"
                helpContextId="resume_action_context"
@@ -260,12 +260,12 @@
             </separator>
          </menu>
          <action
-               definitionId="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations"
+               definitionId="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
                label="%OpenRunConfigurations.label"
                helpContextId="open_run_configurations_action_context"
                class="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations"
                menubarPath="org.eclipse.ui.run/runGroup"
-               id="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations">
+               id="org.eclipse.debug.ui.actions.OpenRunConfigurations">
          </action>
          <action
                label="%RunWithConfigurationAction.label"
@@ -284,10 +284,10 @@
                id="org.eclipse.debug.internal.ui.actions.RunHistoryMenuAction">
          </action>
          <action
-               id="org.eclipse.debug.internal.ui.actions.DebugLastAction"
+               id="org.eclipse.debug.ui.actions.DebugLast"
                hoverIcon="icons/full/clcl16/debuglast_co.gif"
                class="org.eclipse.debug.internal.ui.actions.DebugLastAction"
-               definitionId="org.eclipse.debug.internal.ui.actions.DebugLastAction"
+               definitionId="org.eclipse.debug.ui.commands.DebugLast"
                disabledIcon="icons/full/dlcl16/debuglast_co.gif"
                icon="icons/full/elcl16/debuglast_co.gif"
                helpContextId="debug_last_action_context"
@@ -295,10 +295,10 @@
                menubarPath="org.eclipse.ui.run/relaunchGroup">
          </action>
          <action
-               id="org.eclipse.debug.internal.ui.actions.RunLastAction"
+               id="org.eclipse.debug.ui.actions.RunLast"
                hoverIcon="icons/full/clcl16/runlast_co.gif"
                class="org.eclipse.debug.internal.ui.actions.RunLastAction"
-               definitionId="org.eclipse.debug.internal.ui.actions.RunLastAction"
+               definitionId="org.eclipse.debug.ui.commands.RunLast"
                disabledIcon="icons/full/dlcl16/runlast_co.gif"
                icon="icons/full/elcl16/runlast_co.gif"
                helpContextId="run_last_action_context"
@@ -317,12 +317,12 @@
                pulldown="true">
          </action>
          <action
-               definitionId="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations"
+               definitionId="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
                label="%OpenDebugConfigurations.label"
                helpContextId="open_debug_configurations_action_context"
                class="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations"
                menubarPath="org.eclipse.ui.run/debugGroup"
-               id="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations">
+               id="org.eclipse.debug.ui.actions.OpenDebugConfigurations">
          </action>
          <action
                label="%DebugWithConfigurationAction.label"
@@ -382,12 +382,12 @@
                pulldown="true">
          </action>
          <action
-               definitionId="org.eclipse.debug.internal.ui.actions.OpenProfileConfigurations"
+               definitionId="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
                label="%OpenProfileConfigurations.label"
                helpContextId="open_profile_configurations_action_context"
                class="org.eclipse.debug.internal.ui.actions.OpenProfileConfigurations"
                menubarPath="org.eclipse.ui.run/profileGroup"
-               id="org.eclipse.debug.internal.ui.actions.OpenProfileConfigurations">
+               id="org.eclipse.debug.ui.actions.OpenProfileConfigurations">
          </action>
          <action
                label="%ProfileWithConfigurationAction.label"
@@ -406,10 +406,10 @@
                id="org.eclipse.debug.internal.ui.actions.ProfileHistoryMenuAction">
          </action>
          <action
-               id="org.eclipse.debug.internal.ui.actions.ProfileLastAction"
+               id="org.eclipse.debug.ui.actions.ProfileLast"
                hoverIcon="icons/full/ctool16/profile_exc.gif"
                class="org.eclipse.debug.internal.ui.actions.ProfileLastAction"
-               definitionId="org.eclipse.debug.internal.ui.actions.ProfileLastAction"
+               definitionId="org.eclipse.debug.ui.commands.ProfileLast"
                disabledIcon="icons/full/dtool16/profile_exc.gif"
                icon="icons/full/etool16/profile_exc.gif"
                helpContextId="profile_last_action_context"
@@ -1161,159 +1161,159 @@
             id="org.eclipse.debug.ui.category.run">
       </category>
       <command
-            name="%ActionDefinition.stepWithFilters.name"
+            name="%ActionDefinition.toggleStepFilters.name"
             category="org.eclipse.debug.ui.category.run"
-            description="%ActionDefinition.stepWithFilters.description"
-            id="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate">
+            description="%ActionDefinition.toggleStepFilters.description"
+            id="org.eclipse.debug.ui.commands.ToggleStepFilters">
       </command>
       <keyBinding
             string="Shift+F5"
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate"
+            command="org.eclipse.debug.ui.commands.ToggleStepFilters"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.stepInto.name"
             category="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.stepInto.description"
-            id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate">
+            id="org.eclipse.debug.ui.commands.StepInto">
       </command>
       <keyBinding
             string="F5"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
+            scope="org.eclipse.debug.ui.debugging"
+            command="org.eclipse.debug.ui.commands.StepInto"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.stepOver.name"
             category="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.stepOver.description"
-            id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate">
+            id="org.eclipse.debug.ui.commands.StepOver">
       </command>
       <keyBinding
             string="F6"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
+            scope="org.eclipse.debug.ui.debugging"
+            command="org.eclipse.debug.ui.commands.StepOver"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.stepReturn.name"
             category="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.stepReturn.description"
-            id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate">
+            id="org.eclipse.debug.ui.commands.StepReturn">
       </command>
       <keyBinding
             string="F7"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
+            scope="org.eclipse.debug.ui.debugging"
+            command="org.eclipse.debug.ui.commands.StepReturn"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.resume.name"
             category="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.resume.description"
-            id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate">
+            id="org.eclipse.debug.ui.commands.Resume">
       </command>
       <keyBinding
             string="F8"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
+            scope="org.eclipse.debug.ui.debugging"
+            command="org.eclipse.debug.ui.commands.Resume"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.terminate.name"
             category="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.terminate.description"
-            id="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate">
+            id="org.eclipse.debug.ui.commands.Terminate">
       </command>
       <keyBinding
             string=""
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
+            command="org.eclipse.debug.ui.commands.Terminate"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.suspend.name"
             category="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.suspend.description"
-            id="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate">
+            id="org.eclipse.debug.ui.commands.Suspend">
       </command>
       <keyBinding
             string=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
+            scope="org.eclipse.debug.ui.debugging"
+            command="org.eclipse.debug.ui.commands.Suspend"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.openProfile.name"
             category="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.openProfile.description"
-            id="org.eclipse.debug.internal.ui.actions.OpenProfileConfigurations">
+            id="org.eclipse.debug.ui.commands.OpenProfileConfigurations">
       </command>
       <keyBinding
             string=""
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.internal.ui.actions.OpenProfileConfigurations"
+            command="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.openRun.name"
             category="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.openRun.description"
-            id="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations">
+            id="org.eclipse.debug.ui.commands.OpenProfileConfigurations">
       </command>
       <keyBinding
             string=""
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations"
+            command="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.openDebug.name"
             category="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.openDebug.description"
-            id="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations">
+            id="org.eclipse.debug.ui.commands.OpenProfileConfigurations">
       </command>
       <keyBinding
             string=""
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations"
+            command="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.debugLast.name"
             category="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.debugLast.description"
-            id="org.eclipse.debug.internal.ui.actions.DebugLastAction">
+            id="org.eclipse.debug.ui.commands.DebugLast">
       </command>
       <keyBinding
             string="F11"
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.internal.ui.actions.DebugLastAction"
+            command="org.eclipse.debug.ui.commands.DebugLast"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.runLast.name"
             category="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.runLast.description"
-            id="org.eclipse.debug.internal.ui.actions.RunLastAction">
+            id="org.eclipse.debug.ui.commands.RunLast">
       </command>
       <keyBinding
             string="Ctrl+F11"
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.internal.ui.actions.RunLastAction"
+            command="org.eclipse.debug.ui.commands.RunLast"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.profileLast.name"
             category="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.profileLast.description"
-            id="org.eclipse.debug.internal.ui.actions.ProfileLastAction">
+            id="org.eclipse.debug.ui.commands.ProfileLast">
       </command>
       <keyBinding
             string="Ctrl+F11"
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.internal.ui.actions.RunLastAction"
+            command="org.eclipse.debug.ui.commands.ProfileLast"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
