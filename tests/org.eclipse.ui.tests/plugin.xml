@@ -537,12 +537,17 @@
    </workingSet>
 </extension>
 
-<!-- Preference Enablement tests -->
+<!-- Preference tests -->
 <extension point="org.eclipse.ui.preferencePages">
 	<page
 		name="Editors Test"
 		class="org.eclipse.ui.tests.dialogs.EnableTestPreferencePage"
 		id="org.eclipse.ui.tests.dialogs.EnableTestPreferencePage">
+     </page>
+	<page
+		name="Bad Listeners Test"
+		class="org.eclipse.ui.tests.manual.BrokenUpdatePreferencePage"
+		id="org.eclipse.ui.tests.manual.BrokenUpdatePreferencePage">
      </page>
   </extension>
 
