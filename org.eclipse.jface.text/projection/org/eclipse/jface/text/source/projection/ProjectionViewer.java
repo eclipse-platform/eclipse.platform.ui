@@ -286,6 +286,12 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private boolean fWasProjectionEnabled;
 	/** The queue of projection commands used to assess the costs of projection changes. */
 	private ProjectionCommandQueue fCommandQueue;
+	/**
+	 * The amount of lines deleted by the last document event issued by the
+	 * visible document event.
+	 * @since 3.1
+	 */
+	private int fDeletedLines;
 	
 	
 	/**
@@ -1373,10 +1379,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				if (ProjectionDocumentEvent.PROJECTION_CHANGE == e.getChangeType()) {
 					if (e.getLength() == 0 && replaceLength != 0)
 						fProjectionAnnotationModel.expandAll(e.getMasterOffset(), e.getMasterLength());
-				} else if (master != null && replaceLength > 0 ) {
+				} else if (master != null && (replaceLength > 0 || fDeletedLines > 1)) {
 					try {
 						int numberOfLines= e.getDocument().getNumberOfLines(e.getOffset(), replaceLength);
-						if (numberOfLines > 1)
+						if (numberOfLines > 1 || fDeletedLines > 1)
 							fProjectionAnnotationModel.expandAll(master.getOffset(), master.getLength());
 					} catch (BadLocationException x) {
 					}
@@ -1386,6 +1392,22 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				fReplaceVisibleDocumentExecutionTrigger= null;
 			}
 			
+		}
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.TextViewer#handleVisibleDocumentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
+	 * @since 3.1
+	 */
+	protected void handleVisibleDocumentAboutToBeChanged(DocumentEvent event) {
+		if (fHandleProjectionChanges && event instanceof ProjectionDocumentEvent && isProjectionMode()) {
+			int deletedLines;
+			try {
+				deletedLines= event.getDocument().getNumberOfLines(event.getOffset(), event.getLength());
+			} catch (BadLocationException e1) {
+				deletedLines= 0;
+			}
+			fDeletedLines= deletedLines;
 		}
 	}
 	
