@@ -38,7 +38,7 @@ public class SearchObject extends NamedModelObject {
 	protected static final String S_FILTER = "searchFilter"; //$NON-NLS-1$
 	protected static final String S_DRIVES = "searchDrives"; //$NON-NLS-1$
 
-	private Vector result;
+	transient private Vector result;
 	transient private boolean searchInProgress;
 	private BackgroundProgressMonitor backgroundProgress;
 	transient private BackgroundThread searchThread;
@@ -177,6 +177,7 @@ public class SearchObject extends NamedModelObject {
 				((ISearchObjectAdapter)monitor).setSearchObject(this);
 			}
 		}
+		result = new Vector();
 	}
 
 	public void attachProgressMonitor(IProgressMonitor monitor) {
