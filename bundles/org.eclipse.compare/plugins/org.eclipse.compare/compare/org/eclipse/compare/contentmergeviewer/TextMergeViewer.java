@@ -51,8 +51,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.progress.IProgressService;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.ICompareContextIds;
@@ -64,7 +66,6 @@ import org.eclipse.compare.internal.DocLineComparator;
 import org.eclipse.compare.internal.ComparePreferencePage;
 import org.eclipse.compare.internal.INavigatable;
 import org.eclipse.compare.internal.CompareNavigator;
-import org.eclipse.compare.internal.TimeoutContext;
 import org.eclipse.compare.internal.DocumentManager;
 import org.eclipse.compare.internal.CompareMessages;
 import org.eclipse.compare.rangedifferencer.*;
@@ -167,8 +168,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private static final int LW= 1;
 	/** Selects between smartTokenDiff and mergingTokenDiff */
 	private static final boolean USE_MERGING_TOKEN_DIFF= false;
-	/** When calculating differences show Progress after this timeout (in milliseconds) */
-	private static final int TIMEOUT= 2000;
 		
 	// determines whether a change between left and right is considered incoming or outgoing
 	private boolean fLeftIsLocal;
@@ -2252,15 +2251,16 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				monitor.done();
 			}
 		};
+		IProgressService progressService= PlatformUI.getWorkbench().getProgressService();
 		
 		RangeDifference[] e= null;
 		try {
-			TimeoutContext.run(true, TIMEOUT, getControl().getShell(), runnable);
+			progressService.run(true, true, runnable);
 			e= (RangeDifference[]) result[0];
 		} catch (InvocationTargetException ex) {
 			String title= Utilities.getString(bundle, "tooComplexError.title"); //$NON-NLS-1$
 			String format= Utilities.getString(bundle, "tooComplexError.format"); //$NON-NLS-1$
-			String msg= MessageFormat.format(format, new Object[] { Integer.toString(TIMEOUT/1000) } );
+			String msg= MessageFormat.format(format, new Object[] { Integer.toString(progressService.getLongOperationTime()/1000) } );
 			MessageDialog.openError(fComposite.getShell(), title, msg);
 			e= null;
 		} catch (InterruptedException ex) {
@@ -2397,15 +2397,16 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				monitor.done();
 			}
 		};
+		IProgressService progressService= PlatformUI.getWorkbench().getProgressService();
 		
 		RangeDifference[] e= null;
 		try {
-			TimeoutContext.run(true, TIMEOUT, getControl().getShell(), runnable);
+			progressService.run(true, true, runnable);
 			e= (RangeDifference[]) result[0];
 		} catch (InvocationTargetException ex) {
 			String title= Utilities.getString(bundle, "tooComplexError.title"); //$NON-NLS-1$
 			String format= Utilities.getString(bundle, "tooComplexError.format"); //$NON-NLS-1$
-			String msg= MessageFormat.format(format, new Object[] { Integer.toString(TIMEOUT/1000) } );
+			String msg= MessageFormat.format(format, new Object[] { Integer.toString(progressService.getLongOperationTime()/1000) } );
 			MessageDialog.openError(fComposite.getShell(), title, msg);
 			e= null;
 		} catch (InterruptedException ex) {

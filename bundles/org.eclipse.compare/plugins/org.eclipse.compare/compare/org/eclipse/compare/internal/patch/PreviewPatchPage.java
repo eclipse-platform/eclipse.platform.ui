@@ -22,6 +22,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 import org.eclipse.jface.viewers.Viewer;
@@ -37,7 +38,6 @@ import org.eclipse.compare.*;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.DiffImage;
 import org.eclipse.compare.internal.ICompareContextIds;
-import org.eclipse.compare.internal.TimeoutContext;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.structuremergeviewer.*;
 
@@ -48,9 +48,7 @@ import org.eclipse.compare.structuremergeviewer.*;
  * resources.
  */
 /* package */ class PreviewPatchPage extends WizardPage {
-	
-	static final int GUESS_TIMEOUT= 1500; 	// show progress after 1.5sec of fuzz factor guessing
-	
+		
 	/**
 	 * Used with CompareInput
 	 */
@@ -369,7 +367,8 @@ import org.eclipse.compare.structuremergeviewer.*;
 		final int strip= getStripPrefixSegments();
 		final int[] result= new int[1];
 		try {
-			TimeoutContext.run(true, GUESS_TIMEOUT, getControl().getShell(),
+			PlatformUI.getWorkbench().getProgressService().run(true, true,
+			//TimeoutContext.run(true, GUESS_TIMEOUT, getControl().getShell(),
 				new IRunnableWithProgress() {
 					public void run(IProgressMonitor monitor) {
 						result[0]= guess(patcher, monitor, strip);
