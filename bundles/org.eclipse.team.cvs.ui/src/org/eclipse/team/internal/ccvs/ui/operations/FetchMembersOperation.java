@@ -60,7 +60,7 @@ public class FetchMembersOperation extends RemoteOperation {
 		}
 		private boolean isTimeToSend() {
 			long currentTime = System.currentTimeMillis();
-			return (currentTime - intervalStart) >  sendIncrement;
+			return ((currentTime - intervalStart) >  sendIncrement) || unsent.size() > sendIncrement;
 		}
 		protected IStatus performUpdate(IProgressMonitor progress, CVSTag tag) throws CVSException {
 			intervalStart = System.currentTimeMillis();

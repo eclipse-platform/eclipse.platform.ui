@@ -50,7 +50,7 @@ public abstract class CVSModelElement implements IWorkbenchAdapter, IAdaptable {
 	 */
 	public IRunnableContext getRunnableContext() {
 		if (runnableContext == null) {
-			return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			return PlatformUI.getWorkbench().getProgressService();
 		}
 		return runnableContext;
 	}
