@@ -66,7 +66,22 @@ public class DetailsForm extends PropertyWebForm {
 	private static final String KEY_DO_INSTALL = "FeaturePage.doButton.install";
 	private static final String KEY_DO_UNINSTALL =
 		"FeaturePage.doButton.uninstall";
-	private static final String KEY_DO_ADD = "FeaturePage.doButton.add";
+
+	private static final String KEY_BATCH_UNCONFIGURE =
+		"FeaturePage.batchButton.unconfigure";
+	private static final String KEY_BATCH_CONFIGURE =
+		"FeaturePage.batchButton.configure";
+	private static final String KEY_BATCH_REPAIR =
+		"FeaturePage.batchButton.repair";
+	private static final String KEY_BATCH_CHANGE =
+		"FeaturePage.batchButton.change";
+	private static final String KEY_BATCH_UPDATE =
+		"FeaturePage.batchButton.update";
+	private static final String KEY_BATCH_INSTALL =
+		"FeaturePage.batchButton.install";
+	private static final String KEY_BATCH_UNINSTALL =
+		"FeaturePage.batchButton.uninstall";
+
 	private static final String KEY_DIALOG_UTITLE = "FeaturePage.dialog.utitle";
 	private static final String KEY_DIALOG_TITLE = "FeaturePage.dialog.title";
 	private static final String KEY_DIALOG_CTITLE = "FeaturePage.dialog.ctitle";
@@ -113,7 +128,7 @@ public class DetailsForm extends PropertyWebForm {
 	private InfoLink copyrightLink;
 	private ReflowGroup supportedPlatformsGroup;
 	private Image providerImage;
-	private Button uninstallButton;
+	//private Button uninstallButton;
 	private Button addButton;
 	private Button removeButton;
 	private Button doButton;
@@ -125,6 +140,7 @@ public class DetailsForm extends PropertyWebForm {
 	private boolean alreadyInstalled;
 	private IFeature[] installedFeatures;
 	private boolean newerVersion;
+	private boolean addBlock;
 
 	class ModelListener implements IUpdateModelChangedListener {
 		/**
@@ -343,23 +359,17 @@ public class DetailsForm extends PropertyWebForm {
 		descriptionText.setLayoutData(td);
 
 		glayout = new GridLayout();
-		glayout.numColumns = 5;
+		glayout.numColumns = 4;
 		glayout.horizontalSpacing = 20;
 		glayout.marginWidth = 10;
 
-		Composite l = factory.createCompositeSeparator(container);
-		l.setBackground(factory.getBorderColor());
-		td = new TableData();
-		td.colspan = 2;
-		td.heightHint = 1;
-		td.align = TableData.FILL;
-		l.setLayoutData(td);
+		addSeparator(container);
 
 		Composite footer = factory.createComposite(container);
 		td = new TableData();
 		td.colspan = 2;
 		td.align = TableData.FILL;
-		td.valign = TableData.FILL;
+		//td.valign = TableData.FILL;
 		footer.setLayoutData(td);
 		footer.setLayout(glayout);
 
@@ -385,40 +395,6 @@ public class DetailsForm extends PropertyWebForm {
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		copyrightLink.getControl().setLayoutData(gd);
 
-		addButton = factory.createButton(footer, "Add", SWT.PUSH);
-		addButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				doAdd();
-			}
-		});
-		addButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_ADD));
-		gd =
-			new GridData(
-				GridData.HORIZONTAL_ALIGN_END
-					| GridData.VERTICAL_ALIGN_BEGINNING);
-		gd.grabExcessHorizontalSpace = true;
-		addButton.setLayoutData(gd);
-		//SWTUtil.setButtonDimensionHint(addButton);
-
-		/*
-				uninstallButton = factory.createButton(footer, "", SWT.PUSH);
-				uninstallButton.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						doUninstall();
-					}
-				});
-				gd =
-					new GridData(
-						GridData.HORIZONTAL_ALIGN_END
-							| GridData.VERTICAL_ALIGN_BEGINNING);
-				//gd.grabExcessHorizontalSpace = true;
-				uninstallButton.setVisible(false);
-				uninstallButton.setText(
-					UpdateUIPlugin.getResourceString(KEY_DO_UNINSTALL));
-				uninstallButton.setLayoutData(gd);
-				//SWTUtil.setButtonDimensionHint(uninstallButton);
-		*/
-
 		doButton = factory.createButton(footer, "", SWT.PUSH);
 		doButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -429,11 +405,72 @@ public class DetailsForm extends PropertyWebForm {
 			new GridData(
 				GridData.HORIZONTAL_ALIGN_END
 					| GridData.VERTICAL_ALIGN_BEGINNING);
-		//gd.grabExcessHorizontalSpace = true;
+		gd.grabExcessHorizontalSpace = true;
 		doButton.setLayoutData(gd);
+
+		Composite batch = factory.createComposite(container);
+		glayout = new GridLayout();
+		glayout.numColumns = 3;
+		glayout.marginWidth = 0;
+		glayout.marginHeight = 0;
+		batch.setLayout(glayout);
+		td = new TableData();
+		td.colspan = 2;
+		td.align = TableData.FILL;
+		td.grabHorizontal = true;
+		batch.setLayoutData(td);
+		addButton =
+			factory.createButton(
+				batch,
+				UpdateUIPlugin.getResourceString(KEY_BATCH_INSTALL),
+				SWT.CHECK);
+		addButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (!addBlock)
+					doAdd(addButton.getSelection());
+			}
+		});
+		addButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
+		label = new Label(batch, SWT.NULL);
+		label.setImage(
+			UpdateUIPlugin.getDefault().getLabelProvider().get(
+				UpdateUIPluginImages.DESC_SELECTED_UPDATES_VIEW));
+		label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
+		SelectableFormLabel itemsLink =
+			factory.createSelectableLabel(batch, "Open Selected Updates");
+		factory.turnIntoHyperlink(itemsLink, new HyperlinkAdapter() {
+			public void linkActivated(Control link) {
+				openUpdateItems();
+			}
+		});
+		itemsLink.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
+
 		//SWTUtil.setButtonDimensionHint(doButton);
 		WorkbenchHelp.setHelp(container, "org.eclipse.update.ui.DetailsForm");
 
+	}
+
+	private void addSeparator(Composite container) {
+		Composite l = factory.createCompositeSeparator(container);
+		l.setBackground(factory.getBorderColor());
+		TableData td = new TableData();
+		td.colspan = 2;
+		td.heightHint = 1;
+		td.align = TableData.FILL;
+		l.setLayoutData(td);
+	}
+
+	private void openUpdateItems() {
+		BusyIndicator.showWhile(SWTUtil.getStandardDisplay(), new Runnable() {
+			public void run() {
+				try {
+					IWorkbenchPage page = UpdateUIPlugin.getActivePage();
+					page.showView(UpdatePerspective.ID_ITEMS);
+				} catch (PartInitException e) {
+					UpdateUIPlugin.logException(e);
+				}
+			}
+		});
 	}
 
 	public void expandTo(final Object obj) {
@@ -550,17 +587,36 @@ public class DetailsForm extends PropertyWebForm {
 		licenseLink.setInfo(feature.getLicense());
 		copyrightLink.setInfo(feature.getCopyright());
 		this.reinstallCode = 0;
-		doButton.setVisible(getDoButtonVisibility(false));
-		addButton.setEnabled(getDoButtonVisibility(true));
+
+		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		PendingChange relatedJob =
+			model.findRelatedPendingChange(currentFeature);
+		doButton.setVisible(getDoButtonVisibility(false, relatedJob));
+		addButton.setVisible(getDoButtonVisibility(true, relatedJob));
+		if (addButton.isVisible()) {
+			if (relatedJob != null) {
+				IFeature relatedFeature = relatedJob.getFeature();
+				addButton.setEnabled(
+					currentFeature.getVersionedIdentifier().equals(
+						relatedFeature.getVersionedIdentifier()));
+			} else
+				addButton.setEnabled(true);
+		}
+		addBlock = true;
+		addButton.setSelection(
+			relatedJob != null && relatedJob.isProcessed() == false);
+		addBlock = false;
 		//uninstallButton.setVisible(getUninstallButtonVisibility());
-		if (doButton.isVisible())
-			updateButtonText(newerVersion);
+		//if (doButton.isVisible())
+		updateButtonText(newerVersion);
 		reflow();
 		updateSize();
 		((Composite) getControl()).redraw();
 	}
 
-	private boolean getDoButtonVisibility(boolean add) {
+	private boolean getDoButtonVisibility(
+		boolean add,
+		PendingChange relatedJob) {
 		if (currentFeature instanceof MissingFeature) {
 			MissingFeature mf = (MissingFeature) currentFeature;
 			if (mf.isOptional() && mf.getOriginatingSiteURL() != null)
@@ -588,12 +644,11 @@ public class DetailsForm extends PropertyWebForm {
 				return false;
 		}
 
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-		PendingChange job = model.findRelatedPendingChange(currentFeature);
-		if (job != null) {
-			if (add)
+		if (relatedJob != null) {
+			/*if (add)
 				return false;
-			if (job.isProcessed())
+			*/
+			if (relatedJob.isProcessed())
 				return false;
 		}
 
@@ -719,10 +774,14 @@ public class DetailsForm extends PropertyWebForm {
 	private void updateButtonText(boolean update) {
 		if (reinstallCode == REPAIR) {
 			doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_REPAIR));
+			addButton.setText(
+				UpdateUIPlugin.getResourceString(KEY_BATCH_REPAIR));
 			return;
 		}
 		if (reinstallCode == CHANGE) {
 			doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_CHANGE));
+			addButton.setText(
+				UpdateUIPlugin.getResourceString(KEY_BATCH_CHANGE));
 			return;
 		}
 		if (currentFeature instanceof MissingFeature) {
@@ -735,16 +794,26 @@ public class DetailsForm extends PropertyWebForm {
 		}
 		if (currentAdapter instanceof IConfiguredSiteContext) {
 			boolean configured = isConfigured();
-			if (configured)
+			if (configured) {
 				doButton.setText(
 					UpdateUIPlugin.getResourceString(KEY_DO_UNCONFIGURE));
-			else
+				addButton.setText(
+					UpdateUIPlugin.getResourceString(KEY_BATCH_UNCONFIGURE));
+			} else {
 				doButton.setText(
 					UpdateUIPlugin.getResourceString(KEY_DO_CONFIGURE));
+				addButton.setText(
+					UpdateUIPlugin.getResourceString(KEY_BATCH_CONFIGURE));
+			}
 		} else if (update && !alreadyInstalled) {
 			doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_UPDATE));
-		} else
+			addButton.setText(
+				UpdateUIPlugin.getResourceString(KEY_BATCH_UPDATE));
+		} else {
 			doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_INSTALL));
+			addButton.setText(
+				UpdateUIPlugin.getResourceString(KEY_BATCH_INSTALL));
+		}
 	}
 
 	private Image loadProviderImage(IFeature feature) {
@@ -879,23 +948,21 @@ public class DetailsForm extends PropertyWebForm {
 		});
 	}
 
-	private void doAdd() {
-		PendingChange job = createPendingChange(PendingChange.INSTALL);
-		IStatus validationStatus =
-			ActivityConstraints.validatePendingChange(job);
-		if (validationStatus != null) {
-			ErrorDialog.openError(
-				UpdateUIPlugin.getActiveWorkbenchShell(),
-				null,
-				null,
-				validationStatus);
-			return;
-		}
-		UpdateUIPlugin.getDefault().getUpdateModel().addPendingChange(job);
-		IWorkbenchPage page = UpdateUIPlugin.getActivePage();
-		IViewPart view = page.findView(UpdatePerspective.ID_ITEMS);
-		if (view != null) {
-			page.bringToTop(view);
+	private void doAdd(boolean selection) {
+		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		if (selection) {
+			int mode = getCurrentJobType();
+			PendingChange job = createPendingChange(mode);
+			model.addPendingChange(job);
+			IWorkbenchPage page = UpdateUIPlugin.getActivePage();
+			IViewPart view = page.findView(UpdatePerspective.ID_ITEMS);
+			if (view != null) {
+				page.bringToTop(view);
+			}
+		} else {
+			PendingChange job = model.findRelatedPendingChange(currentFeature);
+			if (job != null)
+				model.removePendingChange(job);
 		}
 	}
 
@@ -1019,7 +1086,7 @@ public class DetailsForm extends PropertyWebForm {
 			return;
 		}
 		if (job.getJobType() == PendingChange.UNCONFIGURE
-			&& job.getFeature().isPatch()){
+			&& job.getFeature().isPatch()) {
 			unconfigurePatch(shell, job.getFeature());
 			return;
 		}
@@ -1082,6 +1149,20 @@ public class DetailsForm extends PropertyWebForm {
 			}
 			executeJob(mode);
 		}
+	}
+
+	private int getCurrentJobType() {
+		int mode;
+		if (currentAdapter instanceof IConfiguredSiteContext) {
+			boolean configured = isConfigured();
+			if (configured)
+				mode = PendingChange.UNCONFIGURE;
+			else
+				mode = PendingChange.CONFIGURE;
+		} else {
+			mode = PendingChange.INSTALL;
+		}
+		return mode;
 	}
 
 	private boolean testDependencies(IFeature feature) {

@@ -9,6 +9,7 @@
    <runtime>
       <library name="updateui.jar">
          <export name="*"/>
+         <packages prefixes="org.eclipse.update.internal.ui"/>
       </library>
    </runtime>
    <requires>
@@ -104,7 +105,7 @@
       </view>
       <view
             name="%views.updateItems.label"
-            icon="icons/full/cview16/updates.gif"
+            icon="icons/full/cview16/selected_updates.gif"
             category="org.eclipse.update.ui"
             class="org.eclipse.update.internal.ui.views.ItemsView"
             id="org.eclipse.update.ui.ItemsView">

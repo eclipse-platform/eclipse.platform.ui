@@ -37,19 +37,21 @@ public class ActivityConstraints {
 		"ActivityConstraints.prereqCompatible";
 	private static final String KEY_PREREQ_GREATER =
 		"ActivityConstraints.prereqGreaterOrEqual";
-	private static final String KEY_PATCH_REGRESSION = 
+	private static final String KEY_PATCH_REGRESSION =
 		"ActivityConstraints.patchRegression";
-	private static final String KEY_PATCH_UNCONFIGURE = 
+	private static final String KEY_PATCH_UNCONFIGURE =
 		"ActivityConstraints.patchUnconfigure";
-	private static final String KEY_PATCH_UNCONFIGURE_BACKUP = 
+	private static final String KEY_PATCH_UNCONFIGURE_BACKUP =
 		"ActivityConstraints.patchUnconfigureBackup";
-	private static final String KEY_PATCH_MISSING_TARGET = 
+	private static final String KEY_PATCH_MISSING_TARGET =
 		"ActivityConstraints.patchMissingTarget";
 	private static final String KEY_OPTIONAL_CHILD =
 		"ActivityConstraints.optionalChild";
 	private static final String KEY_CYCLE = "ActivityConstraints.cycle";
 	private static final String KEY_CONFLICT = "ActivityConstraints.conflict";
-	private static final String KEY_WRONG_TIMELINE = "ActivityConstraints.timeline";
+	private static final String KEY_EXCLUSIVE = "ActivityConstraints.exclusive";
+	private static final String KEY_WRONG_TIMELINE =
+		"ActivityConstraints.timeline";
 
 	/*
 	 * Called by UI before performing operation
@@ -141,7 +143,29 @@ public class ActivityConstraints {
 
 		// check proposed change
 		ArrayList status = new ArrayList();
-		validateOneClickUpdate(jobs, status);
+
+		// report status
+		if (status.size() > 0) {
+			if (beforeStatus.size() > 0)
+				return createMultiStatus(KEY_ROOT_MESSAGE_INIT, beforeStatus);
+			else
+				return createMultiStatus(KEY_ROOT_MESSAGE, status);
+		}
+		return null;
+	}
+
+	/*
+	 * Called by the UI before doing a batched processing of
+	 * several pending changes.
+	 */
+	public static IStatus validatePendingChanges(PendingChange[] jobs) {
+		// check initial state
+		ArrayList beforeStatus = new ArrayList();
+		validateInitialState(beforeStatus);
+
+		// check proposed change
+		ArrayList status = new ArrayList();
+		validatePendingChanges(jobs, status);
 
 		// report status
 		if (status.size() > 0) {
@@ -172,22 +196,35 @@ public class ActivityConstraints {
 		IFeature feature,
 		ArrayList status) {
 		try {
-			if (feature.isPatch()) {
-				IInstallConfiguration backup = UpdateUIPlugin.getBackupConfigurationFor(feature);
-				String msg;
-				if (backup!=null)
-					msg = UpdateUIPlugin.getFormattedMessage(KEY_PATCH_UNCONFIGURE_BACKUP, backup.getLabel());
-				else
-					msg = UpdateUIPlugin.getResourceString(KEY_PATCH_UNCONFIGURE);
-				status.add(createStatus(feature, msg));
+			if (validateUnconfigurePatch(feature, status))
 				return;
-			}
 			ArrayList features = computeFeatures();
 			features = computeFeaturesAfterOperation(features, null, feature);
 			checkConstraints(features, status);
 		} catch (CoreException e) {
 			status.add(e.getStatus());
 		}
+	}
+
+	private static boolean validateUnconfigurePatch(
+		IFeature feature,
+		ArrayList status)
+		throws CoreException {
+		if (feature.isPatch()) {
+			IInstallConfiguration backup =
+				UpdateUIPlugin.getBackupConfigurationFor(feature);
+			String msg;
+			if (backup != null)
+				msg =
+					UpdateUIPlugin.getFormattedMessage(
+						KEY_PATCH_UNCONFIGURE_BACKUP,
+						backup.getLabel());
+			else
+				msg = UpdateUIPlugin.getResourceString(KEY_PATCH_UNCONFIGURE);
+			status.add(createStatus(feature, msg));
+			return true;
+		}
+		return false;
 	}
 
 	/*
@@ -233,7 +270,8 @@ public class ActivityConstraints {
 		try {
 			// check the timeline and don't bother
 			// to check anything else if negative
-			if (!checkTimeline(config, status)) return;
+			if (!checkTimeline(config, status))
+				return;
 			ArrayList features = computeFeaturesAfterRevert(config);
 			checkConstraints(features, status);
 			checkRevertConstraints(features, status);
@@ -253,6 +291,111 @@ public class ActivityConstraints {
 			ArrayList features = computeFeaturesAfterDelta(delta);
 			checkConstraints(features, status);
 
+		} catch (CoreException e) {
+			status.add(e.getStatus());
+		}
+	}
+
+	/*
+	 * Handle one-click changes as a batch
+	 */
+	private static void validatePendingChanges(
+		PendingChange[] jobs,
+		ArrayList status) {
+		try {
+			ArrayList features = computeFeatures();
+			ArrayList savedFeatures = features;
+			int nexclusives = 0;
+
+			// pass 1: see if we can process the entire "batch"
+			ArrayList tmpStatus = new ArrayList();
+			for (int i = 0; i < jobs.length; i++) {
+				PendingChange job = jobs[i];
+				int mode = job.getJobType();
+
+				IFeature newFeature = job.getFeature();
+				IFeature oldFeature = job.getOldFeature();
+				if (jobs.length > 1 && newFeature.isExclusive()) {
+					nexclusives++;
+					status.add(
+						createStatus(
+							newFeature,
+							UpdateUIPlugin.getResourceString(KEY_EXCLUSIVE)));
+					continue;
+				}
+				if (mode == PendingChange.UNCONFIGURE
+					&& validateUnconfigurePatch(newFeature, status))
+					continue;
+				switch (mode) {
+					case PendingChange.INSTALL :
+						features =
+							computeFeaturesAfterOperation(
+								features,
+								newFeature,
+								oldFeature);
+						break;
+					case PendingChange.CONFIGURE :
+						features =
+							computeFeaturesAfterOperation(
+								features,
+								newFeature,
+								null);
+						break;
+					case PendingChange.UNCONFIGURE :
+						features =
+							computeFeaturesAfterOperation(
+								features,
+								null,
+								newFeature);
+						break;
+				}
+			}
+			if (nexclusives > 0)
+				return;
+			checkConstraints(features, tmpStatus);
+			if (tmpStatus.size() == 0) // the whole "batch" is OK
+				return;
+
+			// pass 2: we have conflicts
+			features = savedFeatures;
+			for (int i = 0; i < jobs.length; i++) {
+				PendingChange job = jobs[i];
+				int mode = job.getJobType();
+				IFeature newFeature = job.getFeature();
+				IFeature oldFeature = job.getOldFeature();
+				switch (mode) {
+					case PendingChange.INSTALL :
+						features =
+							computeFeaturesAfterOperation(
+								features,
+								newFeature,
+								oldFeature);
+						break;
+					case PendingChange.CONFIGURE :
+						features =
+							computeFeaturesAfterOperation(
+								features,
+								newFeature,
+								null);
+						break;
+					case PendingChange.UNCONFIGURE :
+						features =
+							computeFeaturesAfterOperation(
+								features,
+								null,
+								newFeature);
+						break;
+				}
+				checkConstraints(features, status);
+				if (status.size() > 0) {
+					IStatus conflict =
+						createStatus(
+							newFeature,
+							UpdateUIPlugin.getResourceString(KEY_CONFLICT));
+					status.add(0, conflict);
+					return;
+				}
+			}
 		} catch (CoreException e) {
 			status.add(e.getStatus());
 		}
@@ -370,7 +513,8 @@ public class ActivityConstraints {
 
 		// return specified base feature and all its children
 		features.add(feature);
-		IIncludedFeatureReference[] children = feature.getIncludedFeatureReferences();
+		IIncludedFeatureReference[] children =
+			feature.getIncludedFeatureReferences();
 		for (int i = 0; i < children.length; i++) {
 			try {
 				IFeature child = children[i].getFeature();
@@ -425,15 +569,15 @@ public class ActivityConstraints {
 
 		return features;
 	}
-	
+
 	private static void contributePatchesFor(
 		ArrayList removeTree,
 		ArrayList features,
 		ArrayList result)
 		throws CoreException {
-		
-		for (int i=0; i<removeTree.size(); i++) {
-			IFeature feature = (IFeature)removeTree.get(i);
+
+		for (int i = 0; i < removeTree.size(); i++) {
+			IFeature feature = (IFeature) removeTree.get(i);
 			contributePatchesFor(feature, features, result);
 		}
 	}
@@ -600,13 +744,18 @@ public class ActivityConstraints {
 					// otherwise flag.
 					found = true;
 					// Ignore equal - will be filtered in the download
-					if (version.equals(cversion)) continue;
+					if (version.equals(cversion))
+						continue;
 					// Flag only the case when the installed one is
 					// newer than the one that will be installed.
 					if (!version.isGreaterThan(cversion)) {
 						// Don't allow this.
-						String msg = UpdateUIPlugin.getFormattedMessage(KEY_PATCH_REGRESSION,
-									new String[] { ifeature.getLabel(), version.toString() });
+						String msg =
+							UpdateUIPlugin.getFormattedMessage(
+								KEY_PATCH_REGRESSION,
+								new String[] {
+									ifeature.getLabel(),
+									version.toString()});
 						status.add(createStatus(feature, msg));
 
 					}
@@ -617,8 +766,12 @@ public class ActivityConstraints {
 				// already be present, unless this feature
 				// is a patch itself
 				if (!isPatch(ifeature)) {
-					String msg = UpdateUIPlugin.getFormattedMessage(KEY_PATCH_MISSING_TARGET,
-							new String[] { ifeature.getLabel(), version.toString() });
+					String msg =
+						UpdateUIPlugin.getFormattedMessage(
+							KEY_PATCH_MISSING_TARGET,
+							new String[] {
+								ifeature.getLabel(),
+								version.toString()});
 					status.add(createStatus(feature, msg));
 				}
 			}
@@ -913,7 +1066,8 @@ public class ActivityConstraints {
 		boolean included = false;
 		for (int i = 0; i < csites.length; i++) {
 			IConfiguredSite csite = csites[i];
-			ISiteFeatureReference[] crefs = csite.getSite().getFeatureReferences();
+			ISiteFeatureReference[] crefs =
+				csite.getSite().getFeatureReferences();
 			for (int j = 0; j < crefs.length; j++) {
 				IFeatureReference cref = crefs[j];
 				IFeature cfeature = null;
@@ -925,7 +1079,7 @@ public class ActivityConstraints {
 					/* if (cref.isOptional())
 						continue;
 					else */
-						throw e;
+					throw e;
 				}
 				if (isParent(cfeature, feature, true)) {
 					// Included in at least one feature as optional
@@ -954,7 +1108,8 @@ public class ActivityConstraints {
 		IFeature feature,
 		boolean optionalOnly)
 		throws CoreException {
-		IIncludedFeatureReference[] refs = candidate.getIncludedFeatureReferences();
+		IIncludedFeatureReference[] refs =
+			candidate.getIncludedFeatureReferences();
 		for (int i = 0; i < refs.length; i++) {
 			IIncludedFeatureReference child = refs[i];
 			VersionedIdentifier cvid = child.getVersionedIdentifier();
@@ -966,19 +1121,23 @@ public class ActivityConstraints {
 		}
 		return false;
 	}
-	
-	private static boolean checkTimeline(IInstallConfiguration config, ArrayList status) {
+
+	private static boolean checkTimeline(
+		IInstallConfiguration config,
+		ArrayList status) {
 		try {
 			ILocalSite lsite = SiteManager.getLocalSite();
 			IInstallConfiguration cconfig = lsite.getCurrentConfiguration();
-			if (cconfig.getTimeline()!=config.getTimeline()) {
+			if (cconfig.getTimeline() != config.getTimeline()) {
 				// Not the same timeline - cannot revert
-				String msg = UpdateUIPlugin.getFormattedMessage(KEY_WRONG_TIMELINE, config.getLabel());
+				String msg =
+					UpdateUIPlugin.getFormattedMessage(
+						KEY_WRONG_TIMELINE,
+						config.getLabel());
 				status.add(createStatus(null, msg));
 				return false;
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			status.add(e.getStatus());
 		}
 		return true;

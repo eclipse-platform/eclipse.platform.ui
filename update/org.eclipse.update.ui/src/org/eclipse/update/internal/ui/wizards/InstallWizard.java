@@ -121,7 +121,7 @@ public class InstallWizard extends Wizard {
 			if (needLicensePage && UpdateModel.hasLicense(job)) {
 				addPage(new LicensePage(job));
 			}
-			if (hasOptionalFeatures(job.getFeature())) {
+			if (UpdateModel.hasOptionalFeatures(job.getFeature())) {
 				optionalFeaturesPage = new OptionalFeaturesPage(job, config);
 				addPage(optionalFeaturesPage);
 			}
@@ -337,30 +337,6 @@ public class InstallWizard extends Wizard {
 			}
 		} catch (CoreException e) {
 			// will return false
-		}
-		return false;
-	}
-
-	static boolean hasOptionalFeatures(IFeatureReference fref) {
-		try {
-			return hasOptionalFeatures(fref.getFeature());
-		} catch (CoreException e) {
-			return false;
-		}
-	}
-	static boolean hasOptionalFeatures(IFeature feature) {
-		try {
-			IIncludedFeatureReference[] irefs = feature.getIncludedFeatureReferences();
-			for (int i = 0; i < irefs.length; i++) {
-				IIncludedFeatureReference iref = irefs[i];
-				if (iref.isOptional())
-					return true;
-				// see if it has optional children
-				IFeature child = iref.getFeature();
-				if (hasOptionalFeatures(child))
-					return true;
-			}
-		} catch (CoreException e) {
 		}
 		return false;
 	}

@@ -3,16 +3,13 @@ package org.eclipse.update.internal.ui.wizards;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.InstallAbortedException;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.security.JarVerificationService;
@@ -21,25 +18,25 @@ public class MultiInstallWizard extends Wizard {
 	private static final String KEY_UNABLE = "InstallWizard.error.unable";
 	private static final String KEY_OLD = "InstallWizard.error.old";
 	private static final String KEY_SAVED_CONFIG = "InstallWizard.savedConfig";
-	private ReviewPage reviewPage;
-	private OptionalFeaturesPage optionalFeaturesPage;
-	private TargetPage targetPage;
-	private PendingChange job;
+	private MultiReviewPage reviewPage;
+	private LicensePage licensePage;
+	private PendingChange[] jobs;
 	private boolean successfulInstall = false;
 	private IInstallConfiguration config;
 	private boolean needLicensePage;
-	
-	public MultiInstallWizard(PendingChange job) {
-		this(job, true);
+
+	public MultiInstallWizard(PendingChange[] jobs) {
+		this(jobs, true);
 	}
 
-	public MultiInstallWizard(PendingChange job, boolean needLicensePage) {
+	public MultiInstallWizard(PendingChange[] jobs, boolean needLicensePage) {
 		setDialogSettings(UpdateUIPlugin.getDefault().getDialogSettings());
 		setDefaultPageImageDescriptor(UpdateUIPluginImages.DESC_INSTALL_WIZ);
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(true);
-		setWindowTitle(UpdateUIPlugin.getResourceString("InstallWizard.wtitle"));
-		this.job = job;
+		setWindowTitle(
+			UpdateUIPlugin.getResourceString("MultiInstallWizard.wtitle"));
+		this.jobs = jobs;
 		this.needLicensePage = needLicensePage;
 	}
 
@@ -51,6 +48,7 @@ public class MultiInstallWizard extends Wizard {
 	 * @see Wizard#performFinish()
 	 */
 	public boolean performFinish() {
+		/*
 		final IConfiguredSite targetSite =
 			(targetPage == null) ? null : targetPage.getTargetSite();
 		final IFeatureReference[] optionalFeatures =
@@ -108,26 +106,60 @@ public class MultiInstallWizard extends Wizard {
 		} catch (InterruptedException e) {
 			return false;
 		}
+		*/
 		return true;
 	}
 
 	public void addPages() {
-		reviewPage = new ReviewPage(job);
+		reviewPage = new MultiReviewPage(jobs);
 		addPage(reviewPage);
 
 		config = createInstallConfiguration();
+		boolean addLicensePage = false;
+		boolean addOptionalFeaturesPage = false;
 
-		if (job.getJobType() == PendingChange.INSTALL) {
-			if (needLicensePage && UpdateModel.hasLicense(job)) {
-				addPage(new LicensePage(job));
+		for (int i = 0; i < jobs.length; i++) {
+			PendingChange job = jobs[i];
+
+			if (job.getJobType() == PendingChange.INSTALL) {
+				if (needLicensePage && UpdateModel.hasLicense(job)) {
+					addLicensePage = true;
+				}
+				if (UpdateModel.hasOptionalFeatures(job.getFeature())) {
+					addOptionalFeaturesPage = true;
+				}
 			}
-			if (hasOptionalFeatures(job.getFeature())) {
-				optionalFeaturesPage = new OptionalFeaturesPage(job, config);
-				addPage(optionalFeaturesPage);
+			if (addLicensePage) {
+				licensePage = new LicensePage(true);
+				addPage(licensePage);
 			}
-			targetPage = new TargetPage(job, config);
-			addPage(targetPage);
 		}
+	}
+
+	public IWizardPage getNextPage(IWizardPage page) {
+		if (page.equals(reviewPage)) {
+			PendingChange[] licenseJobs =
+				reviewPage.getSelectedJobsWithLicenses();
+			if (licenseJobs.length == 0)
+				return licensePage.getNextPage();
+			licensePage.setJobs(licenseJobs);
+			return licensePage;
+		}
+		return super.getNextPage(page);
+	}
+
+	public IWizardPage getPreviousPage(IWizardPage page) {
+		if (page instanceof LicensePage)
+			return reviewPage;
+		IWizardPage prevPage = super.getPreviousPage(page);
+		if (prevPage==null) return null;
+		if (prevPage.equals(licensePage)) {
+			PendingChange[] licenseJobs =
+				reviewPage.getSelectedJobsWithLicenses();
+			if (licenseJobs.length == 0)
+				return reviewPage;
+		}
+		return prevPage;
 	}
 
 	public static IInstallConfiguration createInstallConfiguration() {
@@ -143,19 +175,26 @@ public class MultiInstallWizard extends Wizard {
 		}
 	}
 
-	public static void makeConfigurationCurrent(IInstallConfiguration config, PendingChange job)
+	public static void makeConfigurationCurrent(
+		IInstallConfiguration config,
+		PendingChange job)
 		throws CoreException {
 		ILocalSite localSite = SiteManager.getLocalSite();
-		if (job!=null && job.getJobType()==PendingChange.INSTALL) {
+		if (job != null && job.getJobType() == PendingChange.INSTALL) {
 			if (job.getFeature().isPatch()) {
 				// Installing a patch - preserve the current configuration
-				IInstallConfiguration cconfig = localSite.getCurrentConfiguration();
-				IInstallConfiguration savedConfig = localSite.addToPreservedConfigurations(cconfig);
-				VersionedIdentifier vid = job.getFeature().getVersionedIdentifier();
-				String key = "@"+vid.getIdentifier()+"_"+vid.getVersion();
-				String newLabel = UpdateUIPlugin.getFormattedMessage(KEY_SAVED_CONFIG, key);
+				IInstallConfiguration cconfig =
+					localSite.getCurrentConfiguration();
+				IInstallConfiguration savedConfig =
+					localSite.addToPreservedConfigurations(cconfig);
+				VersionedIdentifier vid =
+					job.getFeature().getVersionedIdentifier();
+				String key = "@" + vid.getIdentifier() + "_" + vid.getVersion();
+				String newLabel =
+					UpdateUIPlugin.getFormattedMessage(KEY_SAVED_CONFIG, key);
 				savedConfig.setLabel(newLabel);
-				UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+				UpdateModel model =
+					UpdateUIPlugin.getDefault().getUpdateModel();
 				model.fireObjectChanged(savedConfig, null);
 			}
 		}
@@ -172,12 +211,6 @@ public class MultiInstallWizard extends Wizard {
 		return page.getNextPage() == null && super.canFinish();
 	}
 
-	public IWizardPage getPreviousPage(IWizardPage page) {
-		return super.getPreviousPage(page);
-	}
-	public IWizardPage getNextPage(IWizardPage page) {
-		return super.getNextPage(page);
-	}
 	/*
 	 * When we are uninstalling, there is no targetSite
 	 */
@@ -187,53 +220,55 @@ public class MultiInstallWizard extends Wizard {
 		IFeatureReference[] optionalFeatures,
 		IProgressMonitor monitor)
 		throws CoreException {
+		/*
 		IFeature feature = job.getFeature();
 		if (job.getJobType() == PendingChange.UNINSTALL) {
-			//find the  config site of this feature
-			IConfiguredSite site = findConfigSite(feature, config);
-			if (site != null) {
-				site.remove(feature, monitor);
-			} else {
-				// we should do something here
-				throwError(UpdateUIPlugin.getResourceString(KEY_UNABLE));
-			}
-		} else if (job.getJobType() == PendingChange.INSTALL) {
-			if (optionalFeatures == null)
-				targetSite.install(feature, getVerificationListener(), monitor);
-			else
-				targetSite.install(
-					feature,
-					optionalFeatures,
-					getVerificationListener(),
-					monitor);
-			IFeature oldFeature = job.getOldFeature();
-			if (oldFeature != null && !job.isOptionalDelta()) {
-				if (optionalElements != null)
-					preserveOptionalState(config, targetSite, optionalElements);
-				boolean oldSuccess = unconfigure(config, oldFeature);
-				if (!oldSuccess) {
-					if (!isNestedChild(oldFeature))
-						// "eat" the error if nested child
-						throwError(UpdateUIPlugin.getResourceString(KEY_OLD));
-				}
-			}
-			if (oldFeature == null) {
-				ensureUnique(config, feature, targetSite);
-				if (optionalFeatures != null) {
-					preserveOriginatingURLs(feature, optionalFeatures);
-				}
-			}
-		} else if (job.getJobType() == PendingChange.CONFIGURE) {
-			configure(feature);
-			ensureUnique(config, feature, targetSite);
-		} else if (job.getJobType() == PendingChange.UNCONFIGURE) {
-			unconfigure(config, job.getFeature());
+		//find the  config site of this feature
+		IConfiguredSite site = findConfigSite(feature, config);
+		if (site != null) {
+			site.remove(feature, monitor);
 		} else {
-			// should not be here
-			return;
+			// we should do something here
+			throwError(UpdateUIPlugin.getResourceString(KEY_UNABLE));
+		}
+		} else if (job.getJobType() == PendingChange.INSTALL) {
+		if (optionalFeatures == null)
+			targetSite.install(feature, getVerificationListener(), monitor);
+		else
+			targetSite.install(
+				feature,
+				optionalFeatures,
+				getVerificationListener(),
+				monitor);
+		IFeature oldFeature = job.getOldFeature();
+		if (oldFeature != null && !job.isOptionalDelta()) {
+			if (optionalElements != null)
+				preserveOptionalState(config, targetSite, optionalElements);
+			boolean oldSuccess = unconfigure(config, oldFeature);
+			if (!oldSuccess) {
+				if (!isNestedChild(oldFeature))
+					// "eat" the error if nested child
+					throwError(UpdateUIPlugin.getResourceString(KEY_OLD));
+			}
+		}
+		if (oldFeature == null) {
+			ensureUnique(config, feature, targetSite);
+			if (optionalFeatures != null) {
+				preserveOriginatingURLs(feature, optionalFeatures);
+			}
+		}
+		} else if (job.getJobType() == PendingChange.CONFIGURE) {
+		configure(feature);
+		ensureUnique(config, feature, targetSite);
+		} else if (job.getJobType() == PendingChange.UNCONFIGURE) {
+		unconfigure(config, job.getFeature());
+		} else {
+		// should not be here
+		return;
 		}
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		model.addPendingChange(job);
+		*/
 	}
 
 	static void ensureUnique(
@@ -242,7 +277,7 @@ public class MultiInstallWizard extends Wizard {
 		IConfiguredSite targetSite)
 		throws CoreException {
 		boolean patch = false;
-		if (targetSite==null)
+		if (targetSite == null)
 			targetSite = feature.getSite().getCurrentConfiguredSite();
 		IImport[] imports = feature.getImports();
 		for (int i = 0; i < imports.length; i++) {
@@ -341,30 +376,6 @@ public class MultiInstallWizard extends Wizard {
 		return false;
 	}
 
-	static boolean hasOptionalFeatures(IFeatureReference fref) {
-		try {
-			return hasOptionalFeatures(fref.getFeature());
-		} catch (CoreException e) {
-			return false;
-		}
-	}
-	static boolean hasOptionalFeatures(IFeature feature) {
-		try {
-			IIncludedFeatureReference[] irefs = feature.getIncludedFeatureReferences();
-			for (int i = 0; i < irefs.length; i++) {
-				IIncludedFeatureReference iref = irefs[i];
-				if (iref.isOptional())
-					return true;
-				// see if it has optional children
-				IFeature child = iref.getFeature();
-				if (hasOptionalFeatures(child))
-					return true;
-			}
-		} catch (CoreException e) {
-		}
-		return false;
-	}
-
 	static void preserveOptionalState(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
@@ -434,7 +445,8 @@ public class MultiInstallWizard extends Wizard {
 		// be installed.
 		URL url = feature.getSite().getURL();
 		try {
-			IIncludedFeatureReference[] irefs = feature.getIncludedFeatureReferences();
+			IIncludedFeatureReference[] irefs =
+				feature.getIncludedFeatureReferences();
 			for (int i = 0; i < irefs.length; i++) {
 				IIncludedFeatureReference iref = irefs[i];
 				boolean preserve = false;

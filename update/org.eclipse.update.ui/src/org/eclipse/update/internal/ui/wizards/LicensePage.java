@@ -135,7 +135,14 @@ public class LicensePage extends WizardPage {
 				for (int i = 0; i < jobs.length; i++) {
 					IFeature feature = jobs[i].getFeature();
 					item = new TableItem(table, SWT.NONE);
-					item.setText(feature.getLabel());
+					String label =
+						feature.getLabel()
+							+ " "
+							+ feature
+								.getVersionedIdentifier()
+								.getVersion()
+								.toString();
+					item.setText(label);
 					boolean efix = feature.isPatch();
 					item.setImage(
 						UpdateUIPlugin.getDefault().getLabelProvider().get(
@@ -160,6 +167,7 @@ public class LicensePage extends WizardPage {
 		}
 		super.setVisible(visible);
 	}
+
 	private void showLicenseText() {
 		if (!multiLicenseMode) {
 			String license = jobs[0].getFeature().getLicense().getAnnotation();
@@ -177,6 +185,5 @@ public class LicensePage extends WizardPage {
 				text.setText((String) data);
 			}
 		}
-
 	}
 }

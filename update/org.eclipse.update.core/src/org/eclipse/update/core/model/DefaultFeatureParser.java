@@ -861,7 +861,11 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			// primary
 			String primary = attributes.getValue("primary"); //$NON-NLS-1$
-			feature.isPrimary(primary != null && primary.trim().equalsIgnoreCase("true"));
+			feature.setPrimary(primary != null && primary.trim().equalsIgnoreCase("true"));
+
+			// exclusive
+			String exclusive = attributes.getValue("exclusive"); //$NON-NLS-1$
+			feature.setExclusive(exclusive != null && exclusive.trim().equalsIgnoreCase("true"));
 			//$NON-NLS-1$
 
 			// application

@@ -1,16 +1,21 @@
 package org.eclipse.update.internal.ui.views;
 
+import java.util.*;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.SharedLabelProvider;
+import org.eclipse.update.internal.ui.wizards.*;
+import org.eclipse.update.internal.ui.wizards.MultiInstallWizard;
 
 /**
  *
@@ -19,6 +24,7 @@ public class ItemsView extends BaseTableView {
 	private UpdateModelChangedListener modelListener;
 	private Action deleteAction;
 	private Action processAction;
+	private Action processAllAction;
 
 	class ViewContentProvider implements IStructuredContentProvider {
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
@@ -149,9 +155,12 @@ public class ItemsView extends BaseTableView {
 
 	protected void fillContextMenu(IMenuManager manager) {
 		manager.add(processAction);
-		if (canDelete())
-			manager.add(deleteAction);
+		manager.add(processAllAction);
 		manager.add(new Separator());
+		if (canDelete()) {
+			manager.add(deleteAction);
+			manager.add(new Separator());
+		}
 		super.fillContextMenu(manager);
 	}
 
@@ -163,6 +172,7 @@ public class ItemsView extends BaseTableView {
 		};
 		deleteAction.setText(
 			UpdateUIPlugin.getResourceString("ItemsView.popup.delete"));
+			
 		processAction = new Action() {
 			public void run() {
 				doProcess();
@@ -170,6 +180,15 @@ public class ItemsView extends BaseTableView {
 		};
 		processAction.setText(
 			UpdateUIPlugin.getResourceString("ItemsView.popup.process"));
+
+		processAllAction = new Action() {
+			public void run() {
+				doProcessAll();
+			}
+		};
+		processAllAction.setText(
+			UpdateUIPlugin.getResourceString("ItemsView.popup.processAll"));
+
 		super.makeActions();
 	}
 
@@ -202,6 +221,40 @@ public class ItemsView extends BaseTableView {
 	}
 
 	private void doProcess() {
+		IStructuredSelection ssel =
+			(IStructuredSelection) getViewer().getSelection();
+		ArrayList jobs = new ArrayList();
+		for (Iterator iter = ssel.iterator(); iter.hasNext();) {
+			PendingChange job = (PendingChange) iter.next();
+			if (job.isProcessed() == false)
+				jobs.add(job);
+		}
+		PendingChange[] result =
+			(PendingChange[]) jobs.toArray(new PendingChange[jobs.size()]);
+		doProcess(result);
+	}
+
+	private void doProcessAll() {
+		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		PendingChange[] jobs = model.getPendingChanges();
+		doProcess(jobs);
+	}
+
+	private void doProcess(final PendingChange[] jobs) {
+		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
+			public void run() {
+				MultiInstallWizard wizard = new MultiInstallWizard(jobs);
+				WizardDialog dialog =
+					new InstallWizardDialog(
+						getControl().getShell(),
+						wizard);
+				dialog.create();
+				dialog.getShell().setSize(600, 500);
+				dialog.open();
+				if (wizard.isSuccessfulInstall())
+					UpdateUIPlugin.informRestartNeeded();
+			}
+		});
 	}
 
 	private void doDelete() {

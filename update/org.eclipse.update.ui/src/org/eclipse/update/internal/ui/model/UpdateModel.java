@@ -4,14 +4,11 @@ package org.eclipse.update.internal.ui.model;
  * All Rights Reserved.
  */
 
-import java.util.Iterator;
-import java.util.Vector;
+import java.util.*;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IURLEntry;
+import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
 public class UpdateModel implements IAdaptable {
@@ -179,5 +176,28 @@ public class UpdateModel implements IAdaptable {
 		if (licenseTxt == null)
 			return false;
 		return licenseTxt.trim().length() > 0;
+	}
+	public static boolean hasOptionalFeatures(IFeatureReference fref) {
+		try {
+			return hasOptionalFeatures(fref.getFeature());
+		} catch (CoreException e) {
+			return false;
+		}
+	}
+	public static boolean hasOptionalFeatures(IFeature feature) {
+		try {
+			IIncludedFeatureReference[] irefs = feature.getIncludedFeatureReferences();
+			for (int i = 0; i < irefs.length; i++) {
+				IIncludedFeatureReference iref = irefs[i];
+				if (iref.isOptional())
+					return true;
+				// see if it has optional children
+				IFeature child = iref.getFeature();
+				if (hasOptionalFeatures(child))
+					return true;
+			}
+		} catch (CoreException e) {
+		}
+		return false;
 	}
 }

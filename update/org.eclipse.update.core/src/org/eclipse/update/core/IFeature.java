@@ -374,6 +374,17 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	 * @since 2.0 
 	 */
 	public boolean isPrimary();
+	
+	/**
+	 * Indicates whether the feature must be processed alone during installation
+	 * and configuration. Features that are not exclusive can be installed in a
+	 * batch.
+	 * 
+	 * @return <code>true</code> if feature requires exclusive processing,
+	 * <code>false</code> otherwise.
+	 * @since 2.1
+	 */
+	public boolean isExclusive();
 
 	/**
 	 * Returns an optional identifier of an application to be used when

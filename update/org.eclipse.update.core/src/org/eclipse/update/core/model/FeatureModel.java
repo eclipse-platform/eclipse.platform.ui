@@ -36,7 +36,8 @@ public class FeatureModel extends ModelObject {
 	private String ws;
 	private String nl;
 	private String arch;
-	private boolean isPrimary = false;
+	private boolean primary = false;
+	private boolean exclusive=false;
 	private String primaryPluginID;
 	private String application;
 	private String affinity;
@@ -235,7 +236,20 @@ public class FeatureModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public boolean isPrimary() {
-		return isPrimary;
+		return primary;
+	}
+	
+	/**
+	 * Indicates whether the feature must be processed alone
+	 * during installation and configuration. Features that
+	 * are not exclusive can be installed in a batch.
+	 * 
+	 * @return <code>true</code> if feature requires
+	 * exclusive processing, <code>false</code> otherwise.
+	 * @since 2.1
+	 */
+	public boolean isExclusive() {
+		return exclusive;
 	}
 
 	/**
@@ -526,14 +540,29 @@ public class FeatureModel extends ModelObject {
 	 * Indicates whether this feature can act as a primary feature.
 	 * Throws a runtime exception if this object is marked read-only.
 	 * 
-	 * @param isPrimary <code>true</code> if this feature can act as primary,
+	 * @param primary <code>true</code> if this feature can act as primary,
 	 * <code>false</code> otherwise
 	 * 
 	 * @since 2.0
 	 */
-	public void isPrimary(boolean isPrimary) {
+	public void setPrimary(boolean primary) {
 		assertIsWriteable();
-		this.isPrimary = isPrimary;
+		this.primary = primary;
+	}
+	
+	/**
+	 * Indicates whether this feature can act as a primary feature.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param exclusive <code>true</code> if this feature must be
+	 * processed independently from other features, <code>false</code> 
+	 * if feature can be processed in a batch with other features.
+	 * 
+	 * @since 2.1
+	 */
+	public void setExclusive(boolean exclusive) {
+		assertIsWriteable();
+		this.exclusive = exclusive;
 	}
 
 	/**
@@ -882,7 +911,7 @@ public class FeatureModel extends ModelObject {
 	 * @param plugin
 	 */
 	public void setPrimaryPluginID(String plugin) {
-		if (isPrimary && primaryPluginID == null) {
+		if (primary && primaryPluginID == null) {
 			primaryPluginID = featureId;
 		}
 		primaryPluginID = plugin;

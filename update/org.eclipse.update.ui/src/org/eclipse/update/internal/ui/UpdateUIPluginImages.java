@@ -97,6 +97,7 @@ public class UpdateUIPluginImages {
 
 	public static final ImageDescriptor DESC_CONFIGS_VIEW = create(PATH_VIEW, "configs.gif");
 	public static final ImageDescriptor DESC_SITES_VIEW = create(PATH_VIEW, "updates.gif");
+	public static final ImageDescriptor DESC_SELECTED_UPDATES_VIEW = create(PATH_VIEW, "selected_updates.gif");
 
 	/**
 	 * LCL
