@@ -32,16 +32,27 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 			Object source= event.getSource();
 			if (source instanceof IDebugTarget) {
 				ILaunch launch= ((IDebugTarget)source).getLaunch();
-				if (launch.isTerminated()) {
+				if (launch.isTerminated() && launchIsRegistered(launch)) {
 					getAction().setEnabled(true);
 				}
 			} else if (source instanceof IProcess) {
 				ILaunch launch= ((IProcess)source).getLaunch();
-				if (launch.isTerminated()) {
+				if (launch.isTerminated() && launchIsRegistered(launch)) {
 					getAction().setEnabled(true);
 				}
 			}
 		}
+	}
+
+	private boolean launchIsRegistered(ILaunch iLaunch) {
+		ILaunch[] launches= DebugPlugin.getDefault().getLaunchManager().getLaunches();
+		for (int i = 0; i < launches.length; i++) {
+			ILaunch launch = launches[i];
+			if (launch.equals(iLaunch)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/** 
