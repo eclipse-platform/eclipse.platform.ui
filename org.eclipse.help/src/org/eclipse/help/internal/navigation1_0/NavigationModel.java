@@ -3,31 +3,23 @@ package org.eclipse.help.internal.navigation1_0;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-import org.xml.sax.*;
-import java.util.*;
 import java.io.*;
+import java.net.URL;
+import java.util.*;
 import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.contributions1_0.*;
-import java.net.*;
-import org.eclipse.help.internal.contributors.xml1_0.*;
-import org.eclipse.core.runtime.IPath;
-
-import org.eclipse.help.internal.server.TempURL;
-
+import org.eclipse.help.internal.contributors.xml1_0.ContributionParser;
+import org.eclipse.help.internal.util.*;
+import org.xml.sax.*;
 /**
  * Domain notifier for the help model.
  * It holds the model (views and topic elements).
  */
 public class NavigationModel {
-
 	// the map of topic url to all possible topics
 	private Map urlToTopicMap = new HashMap();
-
 	private Contribution infoset;
 	private String infosetID;
-
 	/**
 	 * NavigationModel constructor.
 	 */
@@ -35,7 +27,6 @@ public class NavigationModel {
 		super();
 		this.infosetID = infoset;
 		load();
-
 		registerURLs();
 	}
 	/**
@@ -62,14 +53,12 @@ public class NavigationModel {
 			if (pos > 0)
 				url = url.substring(0, pos);
 		}
-
 		// strip off the http://host:port/path
 		URL helpServerURL = HelpSystem.getLocalHelpServerURL();
 		if (helpServerURL != null && url.startsWith(helpServerURL.getProtocol())) {
 			url = url.substring(helpServerURL.toExternalForm().length());
 		} else if (url.indexOf('/') != 0)
 			url = "/" + url;
-
 		// get topics for corrected URL from the map
 		return (Topic[]) urlToTopicMap.get(url);
 	}
@@ -88,31 +77,24 @@ public class NavigationModel {
 				.append(infosetID)
 				.append(HelpNavigationManager.NAV_XML_FILENAME)
 				.toOSString();
-
 		ContributionParser parser = null;
-
 		try {
 			parser = new ContributionParser();
 			if (Logger.DEBUG)
 				Logger.logDebugMessage("NavigationModel", "Loading _nav= " + xmlFile);
 			InputStream input = new FileInputStream(xmlFile);
-
 			InputSource source = new InputSource(input);
 			// set id info for parser exceptions.
 			// use toString method to capture protocol...etc
 			source.setSystemId(xmlFile);
-
 			parser.parse(source);
 			infoset = parser.getContribution();
-
 		} catch (SAXException se) {
 			// create message string from exception
 			//String message = parser.getMessage("E002", se);
-
 			// Log the error. No need to populate RuntimeHelpStatus
 			// because the parsing already did this.
 			Logger.logError("", se);
-
 			// now pass it to the RuntimeHelpStatus object explicitly because we
 			// still need to display errors even if Logging is turned off.
 			//RuntimeHelpStatus.getInstance().addParseError(message, se.getSystemId());
@@ -121,12 +103,10 @@ public class NavigationModel {
 			// a parse exception.
 			String msg = Resources.getString("E009", xmlFile);
 			Logger.logError(msg, e);
-
 			// now pass it to the RuntimeHelpStatus object explicitly because we
 			// still need to display errors even if Logging is turned off.
 			RuntimeHelpStatus.getInstance().addParseError(msg, xmlFile);
 		}
-
 	}
 	/**
 	 * Registers an element with the model
@@ -136,7 +116,6 @@ public class NavigationModel {
 		String url = topic.getHref();
 		if (url == null || "".equals(url))
 			return;
-
 		// see if mapped already
 		Object t = urlToTopicMap.get(url);
 		Topic[] topics;
@@ -151,7 +130,6 @@ public class NavigationModel {
 			topics[((Topic[]) t).length] = topic;
 		}
 		urlToTopicMap.put(url, topics);
-
 	}
 	/**
 	 * Register all the topics by url

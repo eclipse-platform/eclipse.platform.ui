@@ -3,17 +3,12 @@ package org.eclipse.help.internal.navigation1_0;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
 import java.io.*;
-import java.net.URL;
 import java.util.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
-import org.eclipse.help.internal.server.TempURL;
-import org.eclipse.help.internal.contributions1_0.*;
-import org.eclipse.help.internal.contributions.xml1_0.*;
+import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.contributions1_0.InfoSet;
 import org.eclipse.help.internal.contributors.xml1_0.*;
-import org.apache.xerces.parsers.SAXParser;
+import org.eclipse.help.internal.util.*;
 import org.xml.sax.*;
 /*
  * Persistent Hashtable with keys and values of type String.
@@ -38,7 +33,6 @@ public class InfosetsMap extends Hashtable {
 				.addTrailingSeparator()
 				.append(INFOSETS_FILENAME)
 				.toFile();
-
 	}
 	public void save() {
 		XMLGenerator gen = new XMLGenerator(infosetsFile);
@@ -65,7 +59,6 @@ public class InfosetsMap extends Hashtable {
 	public boolean restore() {
 		if (!this.isEmpty())
 			clear();
-
 		InputStream input = null;
 		try {
 			if (!infosetsFile.exists())
@@ -77,10 +70,9 @@ public class InfosetsMap extends Hashtable {
 			source.setSystemId(infosetsFile.toString());
 			ContributionParser parser =
 				new ContributionParser(new InfosetsContributionFactory().instance());
-			if(source==null)
+			if (source == null)
 				return false;
 			parser.parse(source);
-
 			Iterator infosetsIt = parser.getContribution().getChildren();
 			while (infosetsIt.hasNext()) {
 				Object o = infosetsIt.next();
@@ -90,13 +82,12 @@ public class InfosetsMap extends Hashtable {
 						put(iset.getID(), iset.getLabel());
 				}
 			}
-
 		} catch (SAXException se) {
-			Logger.logError("E016", se);//Could not parse infosets data
-				return false;
+			Logger.logError("E016", se); //Could not parse infosets data
+			return false;
 		} catch (Exception e) {
-			Logger.logError("E013", e);//Could not read the infosets data
-				return false;
+			Logger.logError("E013", e); //Could not read the infosets data
+			return false;
 		} finally {
 			try {
 				if (input != null)
