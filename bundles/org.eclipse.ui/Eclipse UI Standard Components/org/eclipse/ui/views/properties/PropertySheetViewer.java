@@ -42,7 +42,7 @@ class PropertySheetViewer extends Viewer {
 	private TableTree tableTree;
 	private TableTreeEditor tableTreeEditor;
 	private static String[] columnLabels = { PropertiesMessages.getString("PropertyViewer.property"), PropertiesMessages.getString("PropertyViewer.value")}; //$NON-NLS-2$ //$NON-NLS-1$
-	private static String MISCELLANEOUS_CATEGORY_NAME = "Misc"; //$NON-NLS-1$
+	private static String MISCELLANEOUS_CATEGORY_NAME = PropertiesMessages.getString("PropertyViewer.miscellaneousCategoryName"); //$NON-NLS-1$
 
 	// Cell editor support.
 	private int columnToEdit = 1;
