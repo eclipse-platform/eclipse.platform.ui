@@ -30,18 +30,29 @@ import org.eclipse.jface.text.IDocument;
 public class TextEditProcessor {
 	
 	private IDocument fDocument;
-	private MultiTextEdit fRoot;
+	private TextEdit fRoot;
+	
+	private boolean fChecked;
+	private MalformedTreeException fException;
 	
 	/**
 	 * Constructs a new edit processor for the given
 	 * document.
 	 * 
 	 * @param document the document to manipulate
+	 * @param root the root of the text edit tree describing
+	 *  the modifications. By passing a text edit a a text edit
+	 *  processor the ownership of the edit is transfered to the
+	 *  text edit processors. Clients must not modify the edit
+	 *  (e.g adding new children) any longer. 
 	 */
-	public TextEditProcessor(IDocument document) {
+	public TextEditProcessor(IDocument document, TextEdit root) {
 		Assert.isNotNull(document);
+		Assert.isNotNull(root);
 		fDocument= document;
-		fRoot= new MultiTextEdit(0, fDocument.getLength()); 
+		fRoot= root;
+		if (fRoot instanceof MultiTextEdit)
+			((MultiTextEdit)fRoot).defineRegion(0);
 	}
 	
 	/**
@@ -63,23 +74,6 @@ public class TextEditProcessor {
 	}
 	
 	/**
-	 * Adds an <code>Edit</code> to this edit processor. Adding an edit
-	 * to an edit processor transfers ownership of the edit to the 
-	 * processor. So after an edit has been added to a processor the 
-	 * creator of the edit <b>must</b> not continue modifying the edit.
-	 * 
-	 * @param edit the edit to add
-	 * @exception MalformedTreeException if the text edit can not be 
-	 *  added to this edit processor.
-	 * 
-	 * @see TextEdit#addChild(TextEdit)
-	 */
-	public void add(TextEdit edit) throws MalformedTreeException {
-		checkIntegrity(edit, fDocument);
-		fRoot.addChild(edit);
-	}
-		
-	/**
 	 * Checks if the processor can execute all its edits.
 	 * 
 	 * @return <code>true</code> if the edits can be executed. Return  <code>false
@@ -88,7 +82,14 @@ public class TextEditProcessor {
 	 *  likely end in a <code>BadLocationException</code>.
 	 */
 	public boolean canPerformEdits() {
-		return checkBufferLength(fRoot, fDocument.getLength()) == null;
+		try {
+			fRoot.dispatchCheckIntegrity(this);
+			fChecked= true;
+		} catch (MalformedTreeException e) {
+			fException= e;
+			return false;
+		}
+		return true;
 	}
 	
 	/**
@@ -102,8 +103,14 @@ public class TextEditProcessor {
 	 *  tree can't be executed. The state of the document is undefined if this 
 	 *  exception is thrown.
 	 */
-	public UndoMemento performEdits() throws MalformedTreeException, BadLocationException {
-		return execute();
+	public UndoEdit performEdits() throws MalformedTreeException, BadLocationException {
+		if (!fChecked) {
+			fRoot.dispatchCheckIntegrity(this);
+		} else {
+			if (fException != null)
+				throw fException;
+		}
+		return fRoot.dispatchPerformEdits(this);
 	}
 
 	/* non Java-doc
@@ -113,49 +120,41 @@ public class TextEditProcessor {
 		return true;
 	}
 		
-	/* protected */ void checkIntegrity() throws MalformedTreeException {
-		TextEdit failure= checkBufferLength(fRoot, fDocument.getLength());
-		if (failure != null) {
-			throw new MalformedTreeException(failure.getParent(), failure, TextEditMessages.getString("TextEditProcessor.invalid_length")); //$NON-NLS-1$
-		}
+	//---- checking --------------------------------------------------------------------
+	
+	/* package */ void checkIntegrityDo() throws MalformedTreeException {
+		checkIntegrity(fRoot);
+		if (fRoot.getExclusiveEnd() > fDocument.getLength())
+			throw new MalformedTreeException(null, fRoot, TextEditMessages.getString("TextEditProcessor.invalid_length")); //$NON-NLS-1$
 	}
 	
-	//---- Helper methods ------------------------------------------------------------------------
-		
-	private static TextEdit checkBufferLength(TextEdit root, int bufferLength) {
-		if (root.getExclusiveEnd() > bufferLength)
-			return root;
-		List children= root.internalGetChildren();
-		if (children != null) {
-			for (Iterator iter= children.iterator(); iter.hasNext();) {
-				TextEdit edit= (TextEdit)iter.next();
-				TextEdit failure= null;
-				if ((failure= checkBufferLength(edit, bufferLength)) != null)
-					return failure;
-			}
-		}
-		return null;
-	}
-	
-	private static void checkIntegrity(TextEdit root, IDocument document) {
+	private static void checkIntegrity(TextEdit root) throws MalformedTreeException {
 		root.checkIntegrity();
 		List children= root.internalGetChildren();
 		if (children != null) {
 			for (Iterator iter= children.iterator(); iter.hasNext();) {
 				TextEdit edit= (TextEdit)iter.next();
-				checkIntegrity(edit, document);
+				checkIntegrity(edit);
 			}
 		}
 	}
 	
-	private UndoMemento execute() throws BadLocationException {
+	/* package */ void checkIntegrityUndo() {
+		if (fRoot.getExclusiveEnd() > fDocument.getLength())
+			throw new MalformedTreeException(null, fRoot, TextEditMessages.getString("TextEditProcessor.invalid_length")); //$NON-NLS-1$
+	}
+	
+	//---- execution --------------------------------------------------------------------
+	
+	/* package */ UndoEdit executeDo() throws BadLocationException {
 		Updater.DoUpdater updater= null;
 		try {
-			updater= Updater.createDoUpdater();
+			updater= Updater.createDoUpdater(fRoot);
 			fDocument.addDocumentListener(updater);
 			updater.push(new TextEdit[] { fRoot });
 			updater.setIndex(0);
 			execute(fRoot, updater);
+			updater.storeRegion();
 			return updater.undo;
 		} finally {
 			if (updater != null)
@@ -178,4 +177,21 @@ public class TextEditProcessor {
 			edit.perform(fDocument);
 		}
 	}
+	
+	/* package */ UndoEdit executeUndo() throws BadLocationException {
+		Updater updater= null;
+		try {
+			updater= Updater.createUndoUpdater(fRoot);
+			fDocument.addDocumentListener(updater);
+			TextEdit[] edits= fRoot.getChildren();
+			for (int i= edits.length - 1; i >= 0; i--) {
+				edits[i].perform(fDocument);
+			}
+			updater.storeRegion();
+			return updater.undo;
+		} finally {
+			if (updater != null)
+				fDocument.removeDocumentListener(updater);
+		}
+	}		
 }

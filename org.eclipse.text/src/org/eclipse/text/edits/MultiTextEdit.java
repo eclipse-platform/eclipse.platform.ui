@@ -58,18 +58,11 @@ public class MultiTextEdit extends TextEdit {
 		fDefined= true;
 	}
 	
-	/**
+	/*
 	 * Copy constructor.
 	 */
-	private MultiTextEdit(MultiTextEdit other) {
+	protected MultiTextEdit(MultiTextEdit other) {
 		super(other);
-	}
-
-	/* non Java-doc
-	 * @see TextEdit#perform
-	 */	
-	/* package */ final void perform(IDocument document) {
-		// do nothing.
 	}
 
 	/* non Java-doc
@@ -80,16 +73,28 @@ public class MultiTextEdit extends TextEdit {
 		return new MultiTextEdit(this);
 	}
 	
+	/* non Java-doc
+	 * @see TextEdit#perform
+	 */	
+	/* package */ final void perform(IDocument document) {
+		// do nothing.
+	}
+
 	/* package */ void aboutToBeAdded(TextEdit parent) {
-		if (!fDefined) {
-			if (hasChildren()) {
-				IRegion region= getCoverage(getChildren());
-				internalSetOffset(region.getOffset());
-				internalSetLength(region.getLength());
-			} else {
-				internalSetOffset(parent.getOffset());
-				internalSetLength(0);
-			}
+		defineRegion(parent.getOffset());
+	}
+
+	/* package */ void defineRegion(int parentOffset) {
+		if (fDefined)
+			return;
+		if (hasChildren()) {
+			IRegion region= getCoverage(getChildren());
+			internalSetOffset(region.getOffset());
+			internalSetLength(region.getLength());
+		} else {
+			internalSetOffset(parentOffset);
+			internalSetLength(0);
 		}
-	}	
+		fDefined= true;
+	}
 }

@@ -16,22 +16,26 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocumentListener;
 
 
-/* package */ class Updater implements IDocumentListener {
+/* package */ abstract class Updater implements IDocumentListener {
 
-	protected UndoMemento undo= new UndoMemento();
+	protected UndoEdit undo= new UndoEdit();
 	
-	public static Updater createUndoUpdater() {
-		return new Updater();
+	public static Updater createUndoUpdater(TextEdit root) {
+		return new UndoUpdater(root);
 	}
 
-	public static DoUpdater createDoUpdater() {
-		return new DoUpdater();
+	public static DoUpdater createDoUpdater(TextEdit root) {
+		return new DoUpdater(root);
 	}
 		
 	public static class DoUpdater extends Updater {
+		private TextEdit fRoot;
 		private TextEdit fActiveEdit;
 		private TreeIterationInfo fIterationInfo= new TreeIterationInfo();
 		
+		public DoUpdater(TextEdit root) {
+			fRoot= root;
+		}
 		public void push(TextEdit[] edits) {
 			fIterationInfo.push(edits);
 		}
@@ -46,6 +50,24 @@ import org.eclipse.jface.text.IDocumentListener;
 		}
 		public void documentChanged(DocumentEvent event) {
 			fActiveEdit.update(event, fIterationInfo);
+		}
+		public void storeRegion() {
+			undo.defineRegion(fRoot.getOffset(), fRoot.getLength());
+		}
+	}
+	
+	public static class UndoUpdater extends Updater {
+		private int fOffset;
+		private int fLength;
+		private UndoUpdater(TextEdit root) {
+			fOffset= root.getOffset();
+			fLength= root.getLength();
+		}
+		public void documentChanged(DocumentEvent event) {
+			fLength+= TextEdit.getDelta(event);
+		}
+		public void storeRegion() {
+			undo.defineRegion(fOffset, fLength);
 		}
 	}
 
@@ -66,5 +88,7 @@ import org.eclipse.jface.text.IDocumentListener;
 	}
 	
 	public void documentChanged(DocumentEvent event) {
-	}	
+	}
+	
+	public abstract void storeRegion();	
 }

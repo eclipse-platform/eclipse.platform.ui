@@ -102,6 +102,9 @@ public abstract class TextEdit {
 	 * the point in time when this call is made. Any subsequent changes
 	 * to the edit's offset and length aren't reflected in the returned
 	 * region object.
+	 * <p>
+	 * Creating a region for a deleted edit will result in an assertion
+	 * failure.
 	 * 
 	 * @return the manipulated region
 	 */
@@ -111,7 +114,8 @@ public abstract class TextEdit {
 	
 	/**
 	 * Returns the offset of the edit. An offset is a 0-based 
-	 * character index.
+	 * character index. Returns <code>-1</code> if the edit
+	 * is marked as deleted
 	 * 
 	 * @return the offset of the edit
 	 */
@@ -120,7 +124,8 @@ public abstract class TextEdit {
 	}
 	
 	/**
-	 * Returns the length of the edit.
+	 * Returns the length of the edit. Returns <code>-1</code>
+	 * if the edit is marked as deleted.
 	 * 
 	 * @return the length of the edit
 	 */
@@ -313,6 +318,17 @@ public abstract class TextEdit {
 	}
 	
 	/**
+	 * Returns the size of the managed children.
+	 * 
+	 * @return the size of the children
+	 */
+	public final int getChildrenSize() {
+		if (fChildren == null)
+			return 0;
+		return fChildren.size();
+	}
+	
+	/**
 	 * Returns the text range spawned by the given array of text edits.
 	 * The method requires that the given array contains at least one
 	 * edit. If all edits passed are deleted the method returns <code>
@@ -457,26 +473,10 @@ public abstract class TextEdit {
 	//---- Execution -------------------------------------------------------
 	
 	/**
-	 * Returns whether the edit tree can be applied to the
-	 * given document or not.
-	 * 
-	 * @return <code>true</code> if the edit tree can be
-	 *  applied to the given document. Otherwise <code>false
-	 *  </code> is returned.
-	 */
-	public boolean canBeApplied(IDocument document) {
-		try {
-			TextEditProcessor processor= new TextEditProcessor(document);
-			processor.add(this);
-			return processor.canPerformEdits();
-		} finally {
-			// unconnect from text edit processor
-			fParent= null;
-		}
-	}
-	 
-	/**
-	 * Applies the edit tree rooted by this edit to the given document.
+	 * Applies the edit tree rooted by this edit to the given document. To check
+	 * if the edit tree can be applied to the document either catch <code>
+	 * MalformedTreeException</code> or use <code>TextEditProcessor</code> to
+	 * execute an edit tree.
 	 * 
 	 * @param document the document to be manipulated
 	 * @exception MalformedTreeException is thrown if the tree isn't
@@ -485,14 +485,14 @@ public abstract class TextEdit {
 	 * @exception BadLocationException is thrown if one of the edits
 	 *  in the tree can't be executed. The state of the document is
 	 *  undefined if this exception is thrown.
+	 * 
 	 * @see #checkIntegrity()
 	 * @see #perform(IDocument)
+	 * @see TextEditProcessor#performEdits()
 	 */
-	public final UndoMemento apply(IDocument document) throws MalformedTreeException, BadLocationException {
+	public final UndoEdit apply(IDocument document) throws MalformedTreeException, BadLocationException {
 		try {
-			TextEditProcessor processor= new TextEditProcessor(document);
-			processor.add(this);
-			processor.checkIntegrity();
+			TextEditProcessor processor= new TextEditProcessor(document, this);
 			return processor.performEdits();
 		} finally {
 			// unconnect from text edit processor
@@ -528,6 +528,14 @@ public abstract class TextEdit {
 	 */
 	/* package */ abstract void perform(IDocument document) throws BadLocationException;
 	
+	
+	/* package */ UndoEdit dispatchPerformEdits(TextEditProcessor processor) throws BadLocationException {
+		return processor.executeDo();
+	}
+	
+	/* package */ void dispatchCheckIntegrity(TextEditProcessor processor) throws MalformedTreeException {
+		processor.checkIntegrityDo();
+	}
 	
 	//---- internal state accessors ----------------------------------------------------------
 	
@@ -697,7 +705,7 @@ public abstract class TextEdit {
 		}	
 	}
 	
-	private static int getDelta(DocumentEvent event) {
+	/* package */ static int getDelta(DocumentEvent event) {
 		String text= event.getText();
 		return (text == null ? -event.getLength() : text.length()) - event.getLength();
 	}
