@@ -13,11 +13,12 @@ Contributors:
 package org.eclipse.ui.dialogs;
 
 import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -30,8 +31,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * Shows a list of resources to the user with a text entry field
  * for a string pattern used to filter the list of resources.
  * <p>
- * This class may be instantiated; it is not intended to be subclassed.
- * </p>
  * 
  * @since 2.1
  */
@@ -40,24 +39,29 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 	Table resourceNames;
 	Table folderNames;
 	String patternString;
-	private static Collator collator = Collator.getInstance();
-	
+	IContainer container;
+	int typeMask;
+	static Collator collator = Collator.getInstance();
+
+	boolean gatherResourcesDynamically = true;	
 	StringMatcher stringMatcher;
 	
-	UpdateThread updateThread;
+	UpdateFilterThread updateFilterThread;
+	UpdateGatherThread updateGatherThread;
 	ResourceDescriptor[] descriptors;
 	int descriptorsSize;
 	
 	WorkbenchLabelProvider labelProvider = new WorkbenchLabelProvider();
 	static class ResourceDescriptor implements Comparable {
 		String label;
-		ArrayList resources = new ArrayList(1);
+		ArrayList resources = new ArrayList();
+		boolean resourcesSorted = true;
 		public int compareTo(Object o) {
 			return collator.compare(label,((ResourceDescriptor)o).label);
 		}
 	}
 	
-	class UpdateThread extends Thread {
+	class UpdateFilterThread extends Thread {
 		boolean stop = false;
 		int firstMatch = 0;
 		int lastMatch = descriptorsSize - 1;
@@ -166,6 +170,98 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 			});
 		}
 	};
+	class UpdateGatherThread extends Thread {
+		boolean stop = false;
+		int lastMatch = -1;
+		int firstMatch = 0;
+		boolean refilter = false;
+		
+		public void run() {
+			Display display = resourceNames.getDisplay();
+			final int itemIndex[] = {0};
+			final int itemCount[] = {0};
+			//Keep track of if the widget got disposed 
+			//so that we can abort if required
+			final boolean[] disposed = {false};
+			display.syncExec(new Runnable(){
+				public void run() {
+					//Be sure the widget still exists
+					if(resourceNames.isDisposed()){
+						disposed[0] = true;
+						return;
+					}
+			 		itemCount[0] = resourceNames.getItemCount();
+				}
+			});
+			
+			if(disposed[0]) {
+				return;
+			}
+				 
+			if (!refilter) {
+				for (int i = 0; i <= lastMatch;i++) {
+					if(i % 50 == 0) {
+						try { Thread.sleep(10); } catch(InterruptedException e){}
+					}
+					if(stop || resourceNames.isDisposed()){
+						disposed[0] = true;
+						return;
+					}
+					final int index = i;
+					display.syncExec(new Runnable() {
+						public void run() {
+							if(stop || resourceNames.isDisposed()) return;
+							updateItem(index, itemIndex[0], itemCount[0]);
+							itemIndex[0]++;
+						}
+					});
+				}		
+			} else {
+				// we're filtering the previous list
+				for (int i = firstMatch; i <= lastMatch;i++) {
+					if(i % 50 == 0) {
+						try { Thread.sleep(10); } catch(InterruptedException e){}
+					}
+					if(stop || resourceNames.isDisposed()){
+						disposed[0] = true;
+						return;
+					}
+					final int index = i;
+					if(match(descriptors[index].label)) {
+						display.syncExec(new Runnable() {
+							public void run() {
+								if(stop || resourceNames.isDisposed()) return;
+								updateItem(index,itemIndex[0],itemCount[0]);
+								itemIndex[0]++;
+							}
+						});
+					}
+				}
+			}
+				
+			if(disposed[0]) {
+				return;
+			}
+				
+			display.syncExec(new Runnable() {
+				public void run() {
+					if(resourceNames.isDisposed()) {
+						return;
+					}
+			 		itemCount[0] = resourceNames.getItemCount();
+			 		if(itemIndex[0] < itemCount[0]) {
+			 			resourceNames.setRedraw(false);
+				 		resourceNames.remove(itemIndex[0],itemCount[0] -1);
+			 			resourceNames.setRedraw(true);
+			 		}
+			 		// If no resources, remove remaining folder entries
+			 		if(resourceNames.getItemCount() == 0) {
+			 			folderNames.removeAll();
+			 		}
+				}
+			});
+		}
+	};
 /**
  * Creates a new instance of the class.
  * 
@@ -175,7 +271,25 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 public ResourceListSelectionDialog(Shell parentShell, IResource[] resources) {
 	super(parentShell);
 	setShellStyle(getShellStyle() | SWT.RESIZE);
+	gatherResourcesDynamically = false;
 	initDescriptors(resources);
+}
+/**
+ * Creates a new instance of the class.  When this constructor is used to
+ * create the dialog, resources will be gathered dynamically as the pattern
+ * string is specified.  Only resources of the given types that match the 
+ * pattern string will be listed.  To further filter the matching resources,
+ * @see #select(IResource).
+ * 
+ * @param parentShell shell to parent the dialog on
+ * @param container container to get resources from
+ * @param typeMask mask containing IResource types to be considered
+ */
+public ResourceListSelectionDialog(Shell parentShell, IContainer container, int typeMask) {
+	super(parentShell);
+	this.container = container;
+	this.typeMask = typeMask;
+	setShellStyle(getShellStyle() | SWT.RESIZE);
 }
 /**
  * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
@@ -238,7 +352,11 @@ protected Control createDialogArea(Composite parent) {
 	data.heightHint = 4 * folderNames.getItemHeight();
 	folderNames.setLayoutData(data);
 	
-	updateThread = new UpdateThread();
+	if (gatherResourcesDynamically) {
+		updateGatherThread = new UpdateGatherThread();
+	} else {
+		updateFilterThread = new UpdateFilterThread();
+	}
 	
 	pattern.addKeyListener(new KeyAdapter(){
 		public void keyPressed(KeyEvent e) {
@@ -263,6 +381,38 @@ protected Control createDialogArea(Composite parent) {
 	});
 	
 	return dialogArea;
+}
+/**
+ */
+private void filterResources() {
+	String oldPattern = patternString;
+	patternString = pattern.getText().trim();
+	if (!patternString.equals("")) {
+		if(patternString.indexOf('*') == -1 && patternString.indexOf('?') == -1)	//$NON-NLS-1$ //$NON-NLS-2$
+			patternString = patternString + "*";	//$NON-NLS-1$
+	}
+	if(patternString.equals(oldPattern))
+		return;
+
+	updateFilterThread.stop = true;
+	stringMatcher = new StringMatcher(patternString,true,false);
+	UpdateFilterThread oldThread = updateFilterThread;
+	updateFilterThread = new UpdateFilterThread();
+	if (patternString.equals("")) {
+		updateFilterThread.firstMatch = 0;
+		updateFilterThread.lastMatch = -1;
+	} else if(oldPattern == null || 
+	  (oldPattern.length() == 0) || 
+	  (!patternString.regionMatches(0,oldPattern,0,oldPattern.length())) ||
+	  (patternString.endsWith("?")) ||
+	  (patternString.endsWith("*"))) {
+		updateFilterThread.firstMatch = 0;
+		updateFilterThread.lastMatch = descriptorsSize - 1;
+	} else {
+		updateFilterThread.firstMatch = oldThread.firstMatch;
+		updateFilterThread.lastMatch = oldThread.lastMatch;
+	}
+	updateFilterThread.start();
 }
 /**
  * Use a binary search to get the first match for the patternString.
@@ -293,6 +443,54 @@ private int getFirstMatch() {
 	}
 	if (match) return high;
 	else return -1;
+}
+/**
+ */
+private void gatherResources() {
+	String oldPattern = patternString;
+	patternString = pattern.getText().trim();
+	if (!patternString.equals("")) {
+		if(patternString.indexOf('*') == -1 && patternString.indexOf('?') == -1)	//$NON-NLS-1$ //$NON-NLS-2$
+			patternString = patternString + "*";	//$NON-NLS-1$
+	}
+	if(patternString.equals(oldPattern))
+		return;
+	
+	updateGatherThread.stop = true;
+	updateGatherThread = new UpdateGatherThread();
+
+	if (patternString.equals("")) {
+		updateGatherThread.start();
+		return;
+	} 
+	stringMatcher = new StringMatcher(patternString,true,false);
+	
+	if (oldPattern != null && (oldPattern.length() != 0) && 
+	   oldPattern.endsWith("*") && patternString.endsWith("*")) {
+		// see if the new pattern is a derivative of the old pattern
+		int matchLength = oldPattern.length() - 1;
+	  	if (patternString.regionMatches(0, oldPattern, 0, matchLength)) {
+			updateGatherThread.refilter = true;
+			updateGatherThread.firstMatch = 0;
+			updateGatherThread.lastMatch = descriptorsSize - 1;
+			updateGatherThread.start();
+			return;
+	  	}
+	} 
+	
+	final ArrayList resources = new ArrayList();
+	BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+		public void run() {
+			getMatchingResources(resources);
+			IResource resourcesArray[] = new IResource[resources.size()];
+			resources.toArray(resourcesArray);
+			initDescriptors(resourcesArray);
+		}
+	});
+	
+	updateGatherThread.firstMatch = 0;
+	updateGatherThread.lastMatch = descriptorsSize - 1;
+	updateGatherThread.start();
 }
 /**
  * Return an image for a resource descriptor.
@@ -335,43 +533,92 @@ private int getLastMatch() {
 	else return -1;
 }
 /**
+ * Gather the resources of the specified type that match the current
+ * pattern string.  Gather the resources using the proxy visitor since
+ * this is quicker than getting the entire resource.
+ * 
+ * @param resources resources that match
+ */
+private void getMatchingResources(final ArrayList resources) {
+	try {
+		container.accept(new IResourceProxyVisitor() {
+			public boolean visit(IResourceProxy proxy) {
+				int type = proxy.getType();
+				if ((typeMask & type) != 0) {
+					if(match(proxy.getName())) {
+						IResource res = proxy.requestResource();
+						if (select(res)) resources.add(res);
+						return true;
+					} 
+				}
+				if (type == IResource.FILE) return false;
+				return true;
+			}
+		}, IResource.DEPTH_INFINITE);
+	} catch (CoreException e) {
+	}
+}
+private Image getParentImage(IResource resource) {
+	IResource parent = resource.getParent();
+	return labelProvider.getImage(parent);
+}
+private String getParentLabel(IResource resource) {
+	IResource parent = resource.getParent();
+	String text;
+	if (parent.getType() == IResource.ROOT) {
+		// Get readable name for workspace root ("Workspace"), without duplicating language-specific string here.
+		text = labelProvider.getText(parent);
+	}
+	else {
+		text = parent.getFullPath().makeRelative().toString();
+	}
+	return text;
+}
+/**
  * Creates a ResourceDescriptor for each IResource,
  * sorts them and removes the duplicated ones.
  * 
  * @param resources resources to create resource descriptors for
  */
-private void initDescriptors(IResource resources[]) {
-	descriptors = new ResourceDescriptor[resources.length];
-	for (int i = 0; i < resources.length; i++){
-		IResource r = resources[i];
-		ResourceDescriptor d = new ResourceDescriptor();
-		//TDB: Should use the label provider and compare performance.
-		d.label = r.getName();
-		d.resources.add(r);
-		descriptors[i] = d;
-	}
-	Arrays.sort(descriptors);
-	descriptorsSize = descriptors.length;
-
-	//Merge the resource descriptor with the same label and type.
-	int index = 0;
-	if(descriptorsSize < 2)
-		return;
-	ResourceDescriptor current = descriptors[index];
-	IResource currentResource = (IResource)current.resources.get(0);
-	for (int i = 1; i < descriptorsSize; i++){
-		ResourceDescriptor next = descriptors[i];
-		IResource nextResource = (IResource)next.resources.get(0);
-		if((next.label.equals(current.label)) && (nextResource.getType() == currentResource.getType())) {
-			current.resources.add(next.resources.get(0));
-		} else {
-			descriptors[index + 1] = descriptors[i];
-			index++;
-			current = descriptors[index];
-			currentResource = (IResource)current.resources.get(0);
+private void initDescriptors(final IResource resources[]) {
+	BusyIndicator.showWhile(null, new Runnable() {
+		public void run() {
+			descriptors = new ResourceDescriptor[resources.length];
+			for (int i = 0; i < resources.length; i++){
+				IResource r = resources[i];
+				ResourceDescriptor d = new ResourceDescriptor();
+				//TDB: Should use the label provider and compare performance.
+				d.label = r.getName();
+				d.resources.add(r);
+				descriptors[i] = d;
+			}
+			Arrays.sort(descriptors);
+			descriptorsSize = descriptors.length;
+		
+			//Merge the resource descriptor with the same label and type.
+			int index = 0;
+			if(descriptorsSize < 2)
+				return;
+			ResourceDescriptor current = descriptors[index];
+			IResource currentResource = (IResource)current.resources.get(0);
+			for (int i = 1; i < descriptorsSize; i++) {
+				ResourceDescriptor next = descriptors[i];
+				IResource nextResource = (IResource)next.resources.get(0);
+				if(nextResource.getType() == currentResource.getType() && next.label.equals(current.label)) {
+					current.resources.add(nextResource);
+				} else {
+					if (current.resources.size() > 1) {
+						current.resourcesSorted = false;
+					} 
+					descriptors[index + 1] = descriptors[i];
+					index++;
+					current = descriptors[index];
+					currentResource = (IResource)current.resources.get(0);
+				}
+			}
+			descriptorsSize = index + 1;
 		}
-	}
-	descriptorsSize = index + 1;
+	});
 }
 /**
  * Returns true if the label matches the chosen pattern.
@@ -399,38 +646,24 @@ protected void okPressed() {
 	super.okPressed();
 }
 /**
+ * Use this method to further filter resources.  As resources are gathered,
+ * if a resource matches the current pattern string, this method will be called.
+ * If this method answers false, the resource will not be included in the list
+ * of matches.
+ */
+protected boolean select(IResource resource) {
+	return true;
+}
+/**
  * The text in the pattern text entry has changed.
  * Create a new string matcher and start a new update tread.
  */
 private void textChanged() {
-	String oldPattern = patternString;
-	patternString = pattern.getText().trim();
-	if (!patternString.equals("")) {
-		if(patternString.indexOf('*') == -1 && patternString.indexOf('?') == -1)	//$NON-NLS-1$ //$NON-NLS-2$
-			patternString = patternString + "*";	//$NON-NLS-1$
-	}
-	if(patternString.equals(oldPattern))
-		return;
-	
-	updateThread.stop = true;
-	stringMatcher = new StringMatcher(patternString,true,false);
-	UpdateThread oldThread = updateThread;
-	updateThread = new UpdateThread();
-	if (patternString.equals("")) {
-		updateThread.firstMatch = 0;
-		updateThread.lastMatch = -1;
-	} else if(oldPattern == null || 
-	  (oldPattern.length() == 0) || 
-	  (!patternString.regionMatches(0,oldPattern,0,oldPattern.length())) ||
-	  (patternString.endsWith("?")) ||
-	  (patternString.endsWith("*"))) {
-		updateThread.firstMatch = 0;
-		updateThread.lastMatch = descriptorsSize - 1;
+	if (gatherResourcesDynamically) {
+		gatherResources();
 	} else {
-		updateThread.firstMatch = oldThread.firstMatch;
-		updateThread.lastMatch = oldThread.lastMatch;
-	}
-	updateThread.start();
+		filterResources();
+	}	
 }
 /**
  * A new resource has been selected. Change the contents
@@ -438,25 +671,31 @@ private void textChanged() {
  * 
  * @desc resource descriptor of the selected resource
  */
-private void updateFolders(ResourceDescriptor desc) {
-	folderNames.removeAll();
-	for (int i = 0; i < desc.resources.size(); i++){
-		TableItem newItem = new TableItem(folderNames,SWT.NONE);
-		IResource r = (IResource) desc.resources.get(i);
-		IResource parent = r.getParent();
-		String text;
-		if (parent.getType() == IResource.ROOT) {
-			// XXX: Get readable name for workspace root ("Workspace"), without duplicating language-specific string here.
-			text = labelProvider.getText(parent);
+private void updateFolders(final ResourceDescriptor desc) {
+	BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+		public void run() {
+			if (!desc.resourcesSorted) {
+				// sort the folder names
+				Collections.sort(desc.resources , new Comparator() {
+					public int compare(Object o1, Object o2) {
+						String s1 = getParentLabel((IResource)o1);
+						String s2 = getParentLabel((IResource)o2);
+						return collator.compare(s1, s2);
+					}
+				});
+				desc.resourcesSorted = true;
+			}
+			folderNames.removeAll();
+			for (int i = 0; i < desc.resources.size(); i++){
+				TableItem newItem = new TableItem(folderNames,SWT.NONE);
+				IResource r = (IResource) desc.resources.get(i);
+				newItem.setText(getParentLabel(r));
+				newItem.setImage(getParentImage(r));
+				newItem.setData(r);
+			}
+			folderNames.setSelection(0);
 		}
-		else {
-			text = parent.getFullPath().makeRelative().toString();
-		}
-		newItem.setText(text);
-		newItem.setImage(labelProvider.getImage(r.getParent()));
-		newItem.setData(r);
-	}
-	folderNames.setSelection(0);
+	});
 }
 /**
  * Update the specified item with the new info from the resource 
