@@ -780,7 +780,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		if (fViewer instanceof TableViewer) {
 			navigator = new TableViewerNavigator((TableViewer) fViewer);
 		} else {
-			navigator = new TreeViewerNavigator((TreeViewer) fViewer);
+			navigator = new TreeViewerNavigator(this, (TreeViewer) fViewer);
 		}
 		navigator.navigateNext(forward);
 	}
