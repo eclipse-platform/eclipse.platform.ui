@@ -188,7 +188,6 @@ public class FavoritesDialog extends Dialog {
 		ListSelectionDialog dialog = new ListSelectionDialog(fFavoritesTable.getControl().getShell(),
 			getMode(), new LaunchConfigurationContentProvider(), DebugUITools.newDebugModelPresentation(),
 			LaunchConfigurationsMessages.getString("FavoritesDialog.7")); //$NON-NLS-1$
-		DebugPlugin.getDefault().getLaunchManager().getLaunchMode(getMode());
 		dialog.setTitle(MessageFormat.format(LaunchConfigurationsMessages.getString("FavoritesDialog.0"), new String[]{getModeLabel()})); //$NON-NLS-1$
 		dialog.open();
 		Object[] selection = dialog.getResult();
