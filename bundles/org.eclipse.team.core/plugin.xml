@@ -135,6 +135,10 @@
             type="text"
             extension="MF">
       </fileTypes>
+      <fileTypes
+            type="text"
+            extension="prefs">
+      </fileTypes>
    </extension>
    <extension
          id="FileValidator"
