@@ -14,7 +14,6 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
@@ -811,9 +810,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				newPluginsSet.add(pluginLocation.toLowerCase());
 		}
 		
-		PlatformAdmin platformAdmin = Platform.getPlatformAdmin();
-		State state = platformAdmin.getState();
-		BundleDescription[] oldBundles = state.getBundles();
+		Bundle[] oldBundles = UpdateCore.getPlugin().getBundleContext().getBundles();
 
 		int offset = ConfigurationActivator.UPDATE_PREFIX.length();
 		for (int i=0; i<oldBundles.length; i++) {
