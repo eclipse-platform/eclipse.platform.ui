@@ -44,9 +44,12 @@ public final class KeyBindingManager {
 	private Platform platform = Platform.system();
 	private Scope[] scopes = new Scope[] { Scope.create() };
 
-	private KeySequence mode = KeySequence.create();	
-	private SortedMap keySequenceActionMap = null;
-	private SortedMap keySequenceActionMapForMode = null;	
+	private KeySequence mode = KeySequence.create();
+	private SortedMap actionKeySequenceSetMap;
+	private SortedMap keySequenceActionMap;
+	private SortedMap actionKeySequenceSetMapForMode;
+	private SortedMap keySequenceActionMapForMode;
+	private SortedSet keyStrokeSetForMode;
 
 	private KeyBindingManager() {
 		super();				
@@ -229,114 +232,96 @@ public final class KeyBindingManager {
 			throw new IllegalArgumentException();
 			
 		this.mode = mode;
-		keySequenceActionMap = null;
-		keySequenceActionMapForMode = null;
+		invalidateForMode();
 	}
 
-	public SortedMap getActionKeySequenceSetMap() {		
-		SortedMap actionKeySequenceSetMap = new TreeMap();
-		SortedMap keySequenceActionMap = getKeySequenceActionMap();
-		Iterator iterator = keySequenceActionMap.entrySet().iterator();
-
-		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			KeySequence keySequence = (KeySequence) entry.getKey();
-			Action action = (Action) entry.getValue();		
-			SortedSet keySequenceSet = 
-				(SortedSet) actionKeySequenceSetMap.get(action);
-			
-			if (keySequenceSet == null) {
-				keySequenceSet = new TreeSet();
-				actionKeySequenceSetMap.put(action, keySequenceSet);
+	public SortedMap getActionKeySequenceSetMap() {
+		if (actionKeySequenceSetMap == null) {				
+			actionKeySequenceSetMap = new TreeMap();
+			SortedMap keySequenceActionMap = getKeySequenceActionMap();
+			Iterator iterator = keySequenceActionMap.entrySet().iterator();
+	
+			while (iterator.hasNext()) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				KeySequence keySequence = (KeySequence) entry.getKey();
+				Action action = (Action) entry.getValue();		
+				SortedSet keySequenceSet = 
+					(SortedSet) actionKeySequenceSetMap.get(action);
+				
+				if (keySequenceSet == null) {
+					keySequenceSet = new TreeSet();
+					actionKeySequenceSetMap.put(action, keySequenceSet);
+				}
+				
+				keySequenceSet.add(keySequence);
 			}
-			
-			keySequenceSet.add(keySequence);
 		}
 				
 		return actionKeySequenceSetMap;		
 	}
-	
-	public SortedMap getActionKeySequenceSetMapForMode() {
-		SortedMap actionKeySequenceSetMap = new TreeMap();
-		SortedMap keySequenceActionMap = getKeySequenceActionMapForMode();
-		Iterator iterator = keySequenceActionMap.entrySet().iterator();
 
-		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			KeySequence keySequence = (KeySequence) entry.getKey();
-			Action action = (Action) entry.getValue();		
-			SortedSet keySequenceSet = 
-				(SortedSet) actionKeySequenceSetMap.get(action);
-			
-			if (keySequenceSet == null) {
-				keySequenceSet = new TreeSet();
-				actionKeySequenceSetMap.put(action, keySequenceSet);
-			}
-			
-			keySequenceSet.add(keySequence);
-		}
-					
-		return actionKeySequenceSetMap;			
-	}		
-	
 	public SortedMap getKeySequenceActionMap() {
-		/*
-		if (keySequenceActionMap == null) {
-			if (tree != null)
-				keySequenceActionMap = Collections.unmodifiableSortedMap(
-					Node.toKeySequenceActionMap(tree));
-		}
+		if (keySequenceActionMap == null && tree != null)
+			keySequenceActionMap = Collections.unmodifiableSortedMap(
+				Node.toKeySequenceActionMap(tree));
 		
 		return keySequenceActionMap;
-		*/
-		
-		if (tree != null)
-			return Collections.unmodifiableSortedMap(
-				Node.toKeySequenceActionMap(tree));
-		else
-			return null;
 	}
-
+	
+	public SortedMap getActionKeySequenceSetMapForMode() {
+		if (actionKeySequenceSetMapForMode == null) {
+			actionKeySequenceSetMapForMode = new TreeMap();
+			SortedMap keySequenceActionMap = getKeySequenceActionMapForMode();
+			Iterator iterator = keySequenceActionMap.entrySet().iterator();
+	
+			while (iterator.hasNext()) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				KeySequence keySequence = (KeySequence) entry.getKey();
+				Action action = (Action) entry.getValue();		
+				SortedSet keySequenceSet = 
+					(SortedSet) actionKeySequenceSetMapForMode.get(action);
+				
+				if (keySequenceSet == null) {
+					keySequenceSet = new TreeSet();
+					actionKeySequenceSetMapForMode.put(action, keySequenceSet);
+				}
+				
+				keySequenceSet.add(keySequence);
+			}
+		}
+					
+		return actionKeySequenceSetMapForMode;			
+	}		
+	
 	public SortedMap getKeySequenceActionMapForMode() {
-		/*
-		if (keySequenceActionMapForMode == null) {
+		if (keySequenceActionMapForMode == null && tree != null) {
 			SortedMap tree = Node.find(this.tree, mode);
 			
-			if (tree != null)
+			if (tree != null)	
 				keySequenceActionMapForMode = Collections.unmodifiableSortedMap(
 					Node.toKeySequenceActionMap(tree));
 		}
 		
 		return keySequenceActionMapForMode;
-		*/
-
-		if (tree == null)
-			return null;
-		
-		SortedMap tree = Node.find(this.tree, mode);		
-		
-		if (tree != null)
-			return Collections.unmodifiableSortedMap(
-				Node.toKeySequenceActionMap(tree));
-		else
-			return null;
 	}
 
 	public SortedSet getStrokeSetForMode() {
-		SortedSet strokeSetForMode = new TreeSet();
-		SortedMap keySequenceActionMapForMode = 
-			getKeySequenceActionMapForMode();
-		Iterator iterator = keySequenceActionMapForMode.keySet().iterator();
-		
-		while (iterator.hasNext()) {
-			KeySequence keySequence = (KeySequence) iterator.next();			
-			List keyStrokes = keySequence.getKeyStrokes();			
+		if (keyStrokeSetForMode == null) {
+			keyStrokeSetForMode = new TreeSet();
+			SortedMap keySequenceActionMapForMode = 
+				getKeySequenceActionMapForMode();
+			Iterator iterator = keySequenceActionMapForMode.keySet().iterator();
 			
-			if (keyStrokes.size() >= 1)
-				strokeSetForMode.add(keyStrokes.get(0));
+			while (iterator.hasNext()) {
+				KeySequence keySequence = (KeySequence) iterator.next();			
+				List keyStrokes = keySequence.getKeyStrokes();			
+				
+				if (keyStrokes.size() >= 1)
+					keyStrokeSetForMode.add(keyStrokes.get(0));
+			}
 		}
 		
-		return strokeSetForMode;			
+		return keyStrokeSetForMode;			
 	}
 
 	public String getAcceleratorTextForAction(String action)
@@ -382,6 +367,18 @@ public final class KeyBindingManager {
 		}
 	}
 	
+	private void invalidate() {
+		actionKeySequenceSetMap = null;
+		keySequenceActionMap = null;
+		invalidateForMode();
+	}
+	
+	private void invalidateForMode() {
+		actionKeySequenceSetMapForMode = null;
+		keySequenceActionMapForMode = null;
+		keyStrokeSetForMode = null;		
+	}
+	
 	private void solve() {
 		State[] states = new State[scopes.length];
 			
@@ -391,7 +388,6 @@ public final class KeyBindingManager {
 		}
 		
 		Node.solveTree(tree, states);
-		keySequenceActionMap = null;
-		keySequenceActionMapForMode = null;		
+		invalidate();
 	}
 }
