@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
@@ -28,8 +27,7 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
  * 
  * @since 3.1
  */
-public final class KeywordRegistry implements IExtensionAdditionHandler,
-		IExtensionRemovalHandler {
+public final class KeywordRegistry implements IExtensionChangeHandler {
 
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 
@@ -61,24 +59,19 @@ public final class KeywordRegistry implements IExtensionAdditionHandler,
 	 * Private constructor.
 	 */
 	private KeywordRegistry() {
-		PlatformUI.getWorkbench().getExtensionTracker()
-				.registerAdditionHandler(this);
-		PlatformUI.getWorkbench().getExtensionTracker().registerRemovalHandler(
-				this);
+		IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
+        tracker.registerHandler(this, tracker.createExtensionPointFilter(getExtensionPointFilter()));
 		IExtension[] extensions = getExtensionPointFilter().getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
-			addInstance(PlatformUI.getWorkbench().getExtensionTracker(),
+			addExtension(PlatformUI.getWorkbench().getExtensionTracker(),
 					extensions[i]);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#addInstance(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker,
-	 *      org.eclipse.core.runtime.IExtension)
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
 	 */
-	public void addInstance(IExtensionTracker tracker, IExtension extension) {
+	public void addExtension(IExtensionTracker tracker, IExtension extension) {
 		IConfigurationElement[] elements = extension.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {
 			if (elements[i].getName().equals(TAG_KEYWORD)) {
@@ -91,12 +84,7 @@ public final class KeywordRegistry implements IExtensionAdditionHandler,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#getExtensionPointFilter()
-	 */
-	public IExtensionPoint getExtensionPointFilter() {
+	private IExtensionPoint getExtensionPointFilter() {
 		return Platform.getExtensionRegistry().getExtensionPoint(
 				PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_KEYWORDS);
 	}
@@ -111,13 +99,10 @@ public final class KeywordRegistry implements IExtensionAdditionHandler,
 		return (String) internalKeywordMap.get(id);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler#removeInstance(org.eclipse.core.runtime.IExtension,
-	 *      java.lang.Object[])
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
 	 */
-	public void removeInstance(IExtension extension, Object[] objects) {
+	public void removeExtension(IExtension extension, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof String) {
 				internalKeywordMap.remove(objects[i]);

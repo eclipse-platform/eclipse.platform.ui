@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -118,7 +118,7 @@ import org.eclipse.ui.presentations.IPresentablePart;
  * <li>The editor should persist its own state plus editor input.</li>
  * </ol>
  */
-public class EditorManager implements IExtensionRemovalHandler {
+public class EditorManager implements IExtensionChangeHandler {
     private EditorAreaHelper editorPresentation;
 
     private WorkbenchWindow window;
@@ -159,7 +159,7 @@ public class EditorManager implements IExtensionRemovalHandler {
         this.page = workbenchPage;
         this.editorPresentation = pres;
         
-        page.getExtensionTracker().registerRemovalHandler(this);
+        page.getExtensionTracker().registerHandler(this, null);
     }
 
     /**
@@ -1962,9 +1962,9 @@ public class EditorManager implements IExtensionRemovalHandler {
     }
 	
     /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler#removeInstance(org.eclipse.core.runtime.IExtension, java.lang.Object[])
+     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
      */
-    public void removeInstance(IExtension source, Object[] objects) {
+    public void removeExtension(IExtension source, Object[] objects) {
         for (int i = 0; i < objects.length; i++) {
             if (objects[i] instanceof IEditorPart) {
                 // close the editor and clean up the editor history
@@ -1975,5 +1975,12 @@ public class EditorManager implements IExtensionRemovalHandler {
                 ((Workbench) window.getWorkbench()).getEditorHistory().remove(input);
             }
         }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
+     */
+    public void addExtension(IExtensionTracker tracker,IExtension extension) {
+        //Nothing to do
     }
 }

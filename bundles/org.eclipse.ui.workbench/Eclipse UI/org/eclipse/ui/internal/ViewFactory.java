@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -50,7 +50,7 @@ import org.eclipse.ui.views.IViewRegistry;
  * It implements a reference counting strategy so that one view can be shared
  * by more than one client.
  */
-/*package*/class ViewFactory implements IExtensionRemovalHandler {
+/*package*/class ViewFactory implements IExtensionChangeHandler {
 
     private class ViewReference extends WorkbenchPartReference implements
             IViewReference {
@@ -262,7 +262,7 @@ import org.eclipse.ui.views.IViewRegistry;
         this.page = page;
         this.viewReg = reg;
         counter = new ReferenceCounter();
-        page.getExtensionTracker().registerRemovalHandler(this);
+        page.getExtensionTracker().registerHandler(this, null);
     }
     
     /**
@@ -777,9 +777,9 @@ import org.eclipse.ui.views.IViewRegistry;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler#removeInstance(org.eclipse.core.runtime.IExtension, java.lang.Object[])
+     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
      */
-    public void removeInstance(IExtension source, Object[] objects) {
+    public void removeExtension(IExtension source, Object[] objects) {
         for (int i = 0; i < objects.length; i++) {
             if (objects[i] instanceof IViewPart) {
                 IViewPart part = (IViewPart) objects[i];
@@ -802,6 +802,13 @@ import org.eclipse.ui.views.IViewRegistry;
             }
 
         }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
+     */
+    public void addExtension(IExtensionTracker tracker,IExtension extension) {
+        //Do nothing
     }
 
 }

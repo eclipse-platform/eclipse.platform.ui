@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -55,17 +55,24 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
 
     private final Map actions = new HashMap(21);
 
-    private final IExtensionRemovalHandler configListener = new IExtensionRemovalHandler() {
+    private final IExtensionChangeHandler configListener = new IExtensionChangeHandler() {
 
         /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler#removeInstance(org.eclipse.core.runtime.IExtension, java.lang.Object[])
+         * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
          */
-        public void removeInstance(IExtension source, Object[] objects) {
+        public void removeExtension(IExtension source, Object[] objects) {
             for (int i = 0; i < objects.length; i++) {
                 if (objects[i] instanceof NewWizardShortcutAction) {
                     actions.values().remove(objects[i]);
                 }
             }
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
+         */
+        public void addExtension(IExtensionTracker tracker, IExtension extension) {
+            // Do nothing
         }
     };
 
@@ -229,8 +236,8 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
     private void registerListeners() {
         Platform.getExtensionRegistry().addRegistryChangeListener(
                 registryListener);
-        workbenchWindow.getExtensionTracker().registerRemovalHandler(
-				configListener);
+        workbenchWindow.getExtensionTracker().registerHandler(
+				configListener,  null);
     }
 
     /**
@@ -255,7 +262,6 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
     private void unregisterListeners() {
         Platform.getExtensionRegistry().removeRegistryChangeListener(
                 registryListener);
-        workbenchWindow.getExtensionTracker().unregisterRemovalHandler(
-				configListener);
+        workbenchWindow.getExtensionTracker().unregisterHandler(configListener);
     }
 }

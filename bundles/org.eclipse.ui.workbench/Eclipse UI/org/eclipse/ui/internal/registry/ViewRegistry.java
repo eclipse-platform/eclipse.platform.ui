@@ -24,8 +24,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
@@ -39,7 +38,7 @@ import org.eclipse.ui.views.IViewRegistry;
 /**
  * The central manager for view descriptors.
  */
-public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IExtensionAdditionHandler {
+public class ViewRegistry implements IViewRegistry, IExtensionChangeHandler {
 	
     /**
      * Proxies a Category implementation.
@@ -159,8 +158,7 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
         super();    
         categories = new ArrayList();       
         sticky = new ArrayList();        
-        PlatformUI.getWorkbench().getExtensionTracker().registerRemovalHandler(this);
-        PlatformUI.getWorkbench().getExtensionTracker().registerAdditionHandler(this);
+        PlatformUI.getWorkbench().getExtensionTracker().registerHandler(this, PlatformUI.getWorkbench().getExtensionTracker().createExtensionPointFilter(getExtensionPointFilter()));
         reader.readViews(Platform.getExtensionRegistry(), this);
     }
 
@@ -372,14 +370,13 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
      * Dispose of this registry.
      */
     public void dispose() {
-    	PlatformUI.getWorkbench().getExtensionTracker().unregisterRemovalHandler(this);
-    	PlatformUI.getWorkbench().getExtensionTracker().unregisterAdditionHandler(this);
+    	PlatformUI.getWorkbench().getExtensionTracker().unregisterHandler(this);
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement, java.lang.Object)
-	 */
-	public void removeInstance(IExtension source, Object[] objects) {
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
+     */
+    public void removeExtension(IExtension extension,Object[] objects) {
         for (int i = 0; i < objects.length; i++) {
             if (objects[i] instanceof StickyViewDescriptor) {           
                 sticky.remove(objects[i]);
@@ -397,17 +394,15 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
 
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#getExtensionPointFilter()
-     */
-    public IExtensionPoint getExtensionPointFilter() {
+    private IExtensionPoint getExtensionPointFilter() {
       return Platform.getExtensionRegistry().getExtensionPoint(EXTENSIONPOINT_UNIQUE_ID);
     }
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementAdditionHandler#addInstance(org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker, org.eclipse.core.runtime.IConfigurationElement)
-	 */
-	public void addInstance(IExtensionTracker tracker, IExtension addedeExtension) {
-        IConfigurationElement[] addedElements = addedeExtension.getConfigurationElements();
+
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
+     */
+    public void addExtension(IExtensionTracker tracker,IExtension addedExtension){
+        IConfigurationElement[] addedElements = addedExtension.getConfigurationElements();
         for (int i = 0; i < addedElements.length; i++) {
             IConfigurationElement element = addedElements[i];
     		if (element.getName().equals(IWorkbenchRegistryConstants.TAG_VIEW)) {

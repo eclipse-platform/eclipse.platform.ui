@@ -14,8 +14,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -26,7 +25,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 /**
  * @since 3.1
  */
-public class ImageBindingRegistry implements IExtensionAdditionHandler, IExtensionRemovalHandler{
+public class ImageBindingRegistry implements IExtensionChangeHandler {
 
 	static final String ICON = "icon"; //$NON-NLS-1$
 	static final String ID = "id"; //$NON-NLS-1$
@@ -43,14 +42,14 @@ public class ImageBindingRegistry implements IExtensionAdditionHandler, IExtensi
 		this.tag = tag;
 		IExtension [] extensions = getExtensionPointFilter().getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
-			addInstance(PlatformUI.getWorkbench().getExtensionTracker(), extensions[i]);
+			addExtension(PlatformUI.getWorkbench().getExtensionTracker(), extensions[i]);
 		}
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#addInstance(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
+	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
 	 */
-	public void addInstance(IExtensionTracker tracker, IExtension extension) {
+	public void addExtension(IExtensionTracker tracker, IExtension extension) {
 		IConfigurationElement [] elements = extension.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
@@ -70,18 +69,21 @@ public class ImageBindingRegistry implements IExtensionAdditionHandler, IExtensi
 		}
 		
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#getExtensionPointFilter()
-	 */
+    
+    /**
+     * Return the activity support extension point that this registry is interested in.
+     * 
+     * @return the extension point
+     */
 	public IExtensionPoint getExtensionPointFilter() {
-		return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTIVITYSUPPORT);
+		return Platform.getExtensionRegistry().getExtensionPoint(
+                PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTIVITYSUPPORT);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler#removeInstance(org.eclipse.core.runtime.IExtension, java.lang.Object[])
+	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
 	 */
-	public void removeInstance(IExtension extension, Object[] objects) {
+	public void removeExtension(IExtension extension, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof String) {
 				registry.remove((String) objects[i]);

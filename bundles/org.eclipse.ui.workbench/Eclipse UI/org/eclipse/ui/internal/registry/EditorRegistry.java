@@ -36,8 +36,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -53,7 +52,6 @@ import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
@@ -70,7 +68,7 @@ import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 /**
  * Provides access to the collection of defined editors for resource types.
  */
-public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler, IExtensionAdditionHandler {
+public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler {
 	
 	private final static Object [] EMPTY = new Object[0];
 	
@@ -151,10 +149,8 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
     public EditorRegistry() {
         super();
         initializeFromStorage();
-        PlatformUI.getWorkbench().getExtensionTracker().registerRemovalHandler(
-				this);
-        PlatformUI.getWorkbench().getExtensionTracker().registerAdditionHandler(
-				this);
+        IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
+        tracker.registerHandler(this, tracker.createExtensionPointFilter(getExtensionPointFilter()));
 		relatedRegistry = new RelatedRegistry();
     }
 
@@ -525,8 +521,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
         sortInternalEditors();
         rebuildInternalEditorMap();
 
-        IWorkbench workbench = PlatformUI.getWorkbench();
-        IPreferenceStore store = workbench.getPreferenceStore();
+        IPreferenceStore store = PlatformUI.getPreferenceStore();
         String defaultEditors = store
                 .getString(IPreferenceConstants.DEFAULT_EDITORS);
         String chachedDefaultEditors = store
@@ -1184,13 +1179,10 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
     }
 
 	
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement,
-     *           java.lang.Object)
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
      */
-    public void removeInstance(IExtension source, Object[] objects) {
+    public void removeExtension(IExtension source, Object[] objects) {
         for (int i = 0; i < objects.length; i++) {
             if (objects[i] instanceof EditorDescriptor) {
                 EditorDescriptor desc = (EditorDescriptor) objects[i];
@@ -1206,9 +1198,9 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
     }
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#addInstance(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
+	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
 	 */
-	public void addInstance(IExtensionTracker tracker, IExtension extension) {
+	public void addExtension(IExtensionTracker tracker, IExtension extension) {
         EditorRegistryReader eReader = new EditorRegistryReader();
         IConfigurationElement[] elements = extension.getConfigurationElements();
         for (int i = 0; i < elements.length; i++) {
@@ -1219,10 +1211,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
         }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#getExtensionPointFilter()
-	 */
-	public IExtensionPoint getExtensionPointFilter() {
+	private IExtensionPoint getExtensionPointFilter() {
 		return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_EDITOR);
 	}
 

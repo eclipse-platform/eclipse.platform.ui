@@ -14,8 +14,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
@@ -30,8 +29,7 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * @since 3.1
  */
 public abstract class AbstractExtensionWizardRegistry extends
-		AbstractWizardRegistry implements IExtensionAdditionHandler,
-		IExtensionRemovalHandler {
+		AbstractWizardRegistry implements IExtensionChangeHandler{
 
 	/**
 	 * Create a new instance of this class.
@@ -40,13 +38,10 @@ public abstract class AbstractExtensionWizardRegistry extends
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#addInstance(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker,
-	 *      org.eclipse.core.runtime.IExtension)
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
 	 */
-	public void addInstance(IExtensionTracker tracker, IExtension extension) {
+	public void addExtension(IExtensionTracker tracker, IExtension extension) {
 		WizardsRegistryReader reader = new WizardsRegistryReader(getPlugin(),
 				getExtensionPoint());
 		reader.setInitialCollection(getWizardElements());
@@ -83,9 +78,7 @@ public abstract class AbstractExtensionWizardRegistry extends
 	public void dispose() {
 		super.dispose();
 		PlatformUI.getWorkbench().getExtensionTracker()
-				.unregisterAdditionHandler(this);
-		PlatformUI.getWorkbench().getExtensionTracker()
-				.unregisterRemovalHandler(this);		
+				.unregisterHandler(this);
 	}
 
 	/*
@@ -94,10 +87,9 @@ public abstract class AbstractExtensionWizardRegistry extends
 	 * @see org.eclipse.ui.internal.wizards.AbstractWizardRegistry#doInitialize()
 	 */
 	protected void doInitialize() {
-		PlatformUI.getWorkbench().getExtensionTracker()
-				.registerAdditionHandler(this);
-		PlatformUI.getWorkbench().getExtensionTracker().registerRemovalHandler(
-				this);
+        
+		IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
+        tracker.registerHandler(this, tracker.createExtensionPointFilter(getExtensionPointFilter()));
 
 		WizardsRegistryReader reader = new WizardsRegistryReader(getPlugin(),
 				getExtensionPoint());
@@ -114,12 +106,7 @@ public abstract class AbstractExtensionWizardRegistry extends
 	 */
 	protected abstract String getExtensionPoint();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#getExtensionPointFilter()
-	 */
-	public IExtensionPoint getExtensionPointFilter() {
+	private IExtensionPoint getExtensionPointFilter() {
 		return Platform.getExtensionRegistry().getExtensionPoint(getPlugin(),
 				getExtensionPoint());
 	}
@@ -178,13 +165,10 @@ public abstract class AbstractExtensionWizardRegistry extends
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler#removeInstance(org.eclipse.core.runtime.IExtension,
-	 *      java.lang.Object[])
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
 	 */
-	public void removeInstance(IExtension extension, Object[] objects) {
+	public void removeExtension(IExtension extension, Object[] objects) {
 		if (!extension.getExtensionPointUniqueIdentifier().equals(
 				getExtensionPointFilter().getUniqueIdentifier()))
 			return;

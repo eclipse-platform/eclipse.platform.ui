@@ -26,8 +26,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
@@ -60,7 +59,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * @since 2.0
  */
 public class DecoratorManager implements IDelayedLabelDecorator,
-        ILabelProviderListener, IDecoratorManager, IFontDecorator, IColorDecorator, IExtensionAdditionHandler, IExtensionRemovalHandler {
+        ILabelProviderListener, IDecoratorManager, IFontDecorator, IColorDecorator, IExtensionChangeHandler {
 
 	private static String EXTENSIONPOINT_UNIQUE_ID = WorkbenchPlugin.PI_WORKBENCH + "." + IWorkbenchConstants.PL_DECORATORS; //$NON-NLS-1$
 	
@@ -102,8 +101,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         scheduler = new DecorationScheduler(this);
         IExtensionTracker tracker = PlatformUI.getWorkbench()
 				.getExtensionTracker();
-        tracker.registerAdditionHandler(this);
-        tracker.registerRemovalHandler(this);
+        tracker.registerHandler(this, tracker.createExtensionPointFilter(getExtensionPointFilter()));
     }
 
     /**
@@ -870,12 +868,14 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 		return fullDefinitions;
 	}
 
-    //PASCAL Need to see with Kim. 
-    public IExtensionPoint getExtensionPointFilter() {
+    private IExtensionPoint getExtensionPointFilter() {
         return Platform.getExtensionRegistry().getExtensionPoint(EXTENSIONPOINT_UNIQUE_ID);
     }
 
-    public void addInstance(IExtensionTracker tracker, IExtension addedExtension) {
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
+     */
+    public void addExtension(IExtensionTracker tracker, IExtension addedExtension) {
         IConfigurationElement addedElements[] = addedExtension.getConfigurationElements();
         for (int i = 0; i < addedElements.length; i++) {
             DecoratorRegistryReader reader = new DecoratorRegistryReader();
@@ -887,9 +887,9 @@ public class DecoratorManager implements IDelayedLabelDecorator,
     }
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement, java.lang.Object)
+	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
 	 */
-	public void removeInstance(IExtension source, Object[] objects) {
+	public void removeExtension(IExtension source, Object[] objects) {
         for (int i = 0; i < objects.length; i++) {
             if (objects[i] instanceof DecoratorDefinition) {
                 DecoratorDefinition definition = (DecoratorDefinition) objects[i];

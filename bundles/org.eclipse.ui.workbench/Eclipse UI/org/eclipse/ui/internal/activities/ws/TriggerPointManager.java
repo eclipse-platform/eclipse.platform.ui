@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ITriggerPoint;
@@ -31,8 +30,7 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  * 
  * @since 3.1
  */
-public class TriggerPointManager implements ITriggerPointManager,
-        IExtensionRemovalHandler, IExtensionAdditionHandler {
+public class TriggerPointManager implements ITriggerPointManager, IExtensionChangeHandler {
 
     private HashMap triggerMap = new HashMap();
 
@@ -99,15 +97,13 @@ public class TriggerPointManager implements ITriggerPointManager,
                         return false;
                     }
                 });
-        PlatformUI.getWorkbench().getExtensionTracker()
-                .registerAdditionHandler(this);
-        PlatformUI.getWorkbench().getExtensionTracker().registerRemovalHandler(
-                this);
+        IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
+        tracker.registerHandler(this, tracker.createExtensionPointFilter(getExtensionPointFilter()));
 
         IExtensionPoint point = getExtensionPointFilter();
         IExtension[] extensions = point.getExtensions();
         for (int i = 0; i < extensions.length; i++) {
-            addInstance(PlatformUI.getWorkbench().getExtensionTracker(),
+            addExtension(tracker,
                     extensions[i]);
         }
     }
@@ -136,7 +132,7 @@ public class TriggerPointManager implements ITriggerPointManager,
      * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler#removeInstance(org.eclipse.core.runtime.IExtension,
      *      java.lang.Object[])
      */
-    public void removeInstance(IExtension extension, Object[] objects) {
+    public void removeExtension(IExtension extension, Object[] objects) {
         for (int i = 0; i < objects.length; i++) {
             Object object = objects[i];
             if (object instanceof RegistryTriggerPoint) {
@@ -151,7 +147,7 @@ public class TriggerPointManager implements ITriggerPointManager,
      * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#addInstance(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker,
      *      org.eclipse.core.runtime.IExtension)
      */
-    public void addInstance(IExtensionTracker tracker, IExtension extension) {
+    public void addExtension(IExtensionTracker tracker, IExtension extension) {
         IConfigurationElement[] elements = extension.getConfigurationElements();
         for (int i = 0; i < elements.length; i++) {
             IConfigurationElement element = elements[i];
@@ -170,12 +166,7 @@ public class TriggerPointManager implements ITriggerPointManager,
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#getExtensionPointFilter()
-     */
-    public IExtensionPoint getExtensionPointFilter() {
+    private IExtensionPoint getExtensionPointFilter() {
         return Platform.getExtensionRegistry().getExtensionPoint(
                 PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTIVITYSUPPORT);
     }

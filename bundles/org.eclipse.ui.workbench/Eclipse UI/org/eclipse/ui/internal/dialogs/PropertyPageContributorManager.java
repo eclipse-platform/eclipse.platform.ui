@@ -21,7 +21,6 @@ import java.util.List;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.ui.internal.IWorkbenchConstants;
@@ -200,15 +199,10 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 		reader.registerPropertyPages(Platform.getExtensionRegistry());
 	}
 	
-    //PASCAL: Which Extension Point is this?
-    public IExtensionPoint getExtensionPointFilter() {
-        return null;
-    }
-    
     /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#addInstance(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
+     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
      */
-    public void addInstance(IExtensionTracker tracker, IExtension extension) {
+    public void addExtension(IExtensionTracker tracker, IExtension extension) {
         IConfigurationElement[] addedElements = extension.getConfigurationElements();
         for (int i = 0; i < addedElements.length; i++) {
             PropertyPagesRegistryReader reader = new PropertyPagesRegistryReader(this);

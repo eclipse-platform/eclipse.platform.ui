@@ -12,8 +12,7 @@ package org.eclipse.ui.internal.registry;
 
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.dynamicHelpers.ExtensionTracker;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -39,12 +38,12 @@ public class UIExtensionTracker extends ExtensionTracker {
 		this.display = display;
 	}
 
-	protected void applyRemove(final IExtensionRemovalHandler handler, final IExtension removedExtension, final Object[] objects) {
+	protected void applyRemove(final IExtensionChangeHandler handler, final IExtension removedExtension, final Object[] objects) {
         display.syncExec(new Runnable() {
 
             public void run() {
                 try {
-                    handler.removeInstance(removedExtension, objects);
+                    handler.removeExtension(removedExtension, objects);
                 } catch (Exception e) {
                     WorkbenchPlugin.log(getClass(), "doRemove", e); //$NON-NLS-1$
                 }
@@ -52,11 +51,11 @@ public class UIExtensionTracker extends ExtensionTracker {
         });
     }
 
-    protected void applyAdd(final IExtensionAdditionHandler handler, final IExtension addedExtension) {
+    protected void applyAdd(final IExtensionChangeHandler handler, final IExtension addedExtension) {
         display.syncExec(new Runnable() {
             public void run() {
                 try {
-                    handler.addInstance(UIExtensionTracker.this, addedExtension);
+                    handler.addExtension(UIExtensionTracker.this, addedExtension);
                 } catch (Exception e) {
                     WorkbenchPlugin.log(getClass(), "doAdd", e); //$NON-NLS-1$
                 }

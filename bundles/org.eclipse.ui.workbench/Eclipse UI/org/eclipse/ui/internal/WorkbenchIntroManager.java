@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
@@ -44,16 +44,27 @@ public class WorkbenchIntroManager implements IIntroManager {
      */
     WorkbenchIntroManager(Workbench workbench) {
         this.workbench = workbench;
-        workbench.getExtensionTracker().registerRemovalHandler(new IExtensionRemovalHandler(){
-
-			public void removeInstance(IExtension source, Object[] objects) {
+        workbench.getExtensionTracker().registerHandler(new IExtensionChangeHandler(){
+            
+            /* (non-Javadoc)
+             * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
+             */
+            public void addExtension(IExtensionTracker tracker,IExtension extension) {
+                //Do nothing
+            }
+            
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
+			 */
+			public void removeExtension(IExtension source, Object[] objects) {
                 for (int i = 0; i < objects.length; i++) {
                     if (objects[i] instanceof IIntroPart) {
                         closeIntro((IIntroPart) objects[i]);
                     }
                 }
 				
-			}});
+			}}, null);
+        
     }
 
     /**

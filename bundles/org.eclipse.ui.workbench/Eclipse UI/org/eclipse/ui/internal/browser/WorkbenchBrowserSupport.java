@@ -10,12 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.dynamicHelpers.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.*;
-import org.eclipse.ui.browser.*;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.AbstractWorkbenchBrowserSupport;
+import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -40,15 +48,19 @@ public class WorkbenchBrowserSupport implements IWorkbenchBrowserSupport {
 
 	private boolean initialized;
 
-	private IExtensionRemovalHandler handler = new IExtensionRemovalHandler() {
+	private IExtensionChangeHandler handler = new IExtensionChangeHandler() {
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
+         */
+        public void addExtension(IExtensionTracker tracker,IExtension extension) {
+            //Do nothing
+        }
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement,
-		 *      java.lang.Object)
-		 */
-		public void removeInstance(IExtension source, Object[] objects) {
+        /* (non-Javadoc)
+         * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
+         */
+        public void removeExtension(IExtension source, Object[] objects) {
 			for (int i = 0; i < objects.length; i++) {
 				if (objects[i] == activeSupport) {
 					activeSupport = null;
@@ -56,7 +68,7 @@ public class WorkbenchBrowserSupport implements IWorkbenchBrowserSupport {
 					// remove ourselves - we'll be added again in initalize if
 					// needed
 					PlatformUI.getWorkbench().getExtensionTracker()
-							.unregisterRemovalHandler(handler);
+							.unregisterHandler(handler);
 				}
 			}
 		}
@@ -170,7 +182,7 @@ public class WorkbenchBrowserSupport implements IWorkbenchBrowserSupport {
 							.createExtension(element, ATT_CLASS);
 					// start listening for removals
 					PlatformUI.getWorkbench().getExtensionTracker()
-							.registerRemovalHandler(handler);
+							.registerHandler(handler, null);
 					// register the new browser support for removal
 					// notification
 					PlatformUI.getWorkbench().getExtensionTracker()

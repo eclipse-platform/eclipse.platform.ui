@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IContext;
@@ -156,15 +156,19 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
      * 
      * @since 3.1
      */
-    private IExtensionRemovalHandler handler = new IExtensionRemovalHandler() {
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement,
-         *           java.lang.Object)
+    private IExtensionChangeHandler handler = new IExtensionChangeHandler() {
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
          */
-        public void removeInstance(IExtension source, Object[] objects) {
+        public void addExtension(IExtensionTracker tracker,IExtension extension) {
+            //Do nothing
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
+         */
+        public void removeExtension(IExtension source, Object[] objects) {
             for (int i = 0; i < objects.length; i++) {
                 if (objects[i] == pluggableHelpUI) {
                     isInitialized = false;
@@ -173,11 +177,12 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
                     // remove ourselves - we'll be added again in initalize if
                     // needed
                     PlatformUI.getWorkbench().getExtensionTracker()
-							.unregisterRemovalHandler(handler);
+							.unregisterHandler(handler);
                 }
             }
         }
     };
+    
 	/**
 	 * Compatibility implementation of old IHelp interface.
 	 * WorkbenchHelp.getHelpSupport and IHelp were deprecated in 3.0.
@@ -336,7 +341,7 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 		helpCompatibilityWrapper = null;
 		isInitialized = false;
 		PlatformUI.getWorkbench().getExtensionTracker()
-				.unregisterRemovalHandler(handler);
+				.unregisterHandler(handler);
 	}
 
 	/**
@@ -435,7 +440,7 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 									HELP_SYSTEM_CLASS_ATTRIBUTE);
 					// start listening for removals
 					PlatformUI.getWorkbench().getExtensionTracker()
-							.registerRemovalHandler(handler);
+							.registerHandler(handler, null);
 					// register the new help UI for removal notification
 					PlatformUI
 							.getWorkbench()

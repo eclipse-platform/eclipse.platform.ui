@@ -21,8 +21,7 @@ import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -61,8 +60,7 @@ import org.eclipse.ui.internal.misc.StatusUtil;
  * Implementation of {@link org.eclipse.ui.activities.IWorkbenchActivitySupport}.
  * @since 3.0
  */
-public class WorkbenchActivitySupport implements IWorkbenchActivitySupport,
-		IExtensionAdditionHandler, IExtensionRemovalHandler {
+public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExtensionChangeHandler {
     private MutableActivityManager mutableActivityManager;
 
     private ProxyActivityManager proxyActivityManager;
@@ -296,8 +294,8 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport,
                     }
                 });
 		triggerPointManager = new TriggerPointManager();
-		PlatformUI.getWorkbench().getExtensionTracker().registerAdditionHandler(this);
-		PlatformUI.getWorkbench().getExtensionTracker().registerRemovalHandler(this);
+		IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
+        tracker.registerHandler(this, tracker.createExtensionPointFilter(getExtensionPointFilter()));
     }
 
     /* (non-Javadoc)
@@ -379,8 +377,7 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport,
 		if (categoryImageBindingRegistry != null)
 			categoryImageBindingRegistry.dispose();
 		
-		PlatformUI.getWorkbench().getExtensionTracker().unregisterAdditionHandler(this);
-		PlatformUI.getWorkbench().getExtensionTracker().unregisterRemovalHandler(this);
+		PlatformUI.getWorkbench().getExtensionTracker().unregisterHandler(this);
 	}
 	
 	/**
@@ -422,13 +419,10 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport,
 		return triggerPointManager;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#addInstance(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker,
-	 *      org.eclipse.core.runtime.IExtension)
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
 	 */
-	public void addInstance(IExtensionTracker tracker, IExtension extension) {
+	public void addExtension(IExtensionTracker tracker, IExtension extension) {
 		// reset the advisor if it's the "default" advisor.
 		// this will give getAdvisor the chance to find a proper trigger/binding if
 		// it exists.
@@ -437,23 +431,21 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#getExtensionPointFilter()
-	 */
-	public IExtensionPoint getExtensionPointFilter() {
+    /**
+     * Return the activity support extension point.
+     * 
+     * @return the activity support extension point.
+     * @since 3.1
+     */
+	private IExtensionPoint getExtensionPointFilter() {
 		return Platform.getExtensionRegistry().getExtensionPoint(
 				PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTIVITYSUPPORT);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler#removeInstance(org.eclipse.core.runtime.IExtension,
-	 *      java.lang.Object[])
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
 	 */
-	public void removeInstance(IExtension extension, Object[] objects) {
+	public void removeExtension(IExtension extension, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] == advisor) {
 				advisor = null;

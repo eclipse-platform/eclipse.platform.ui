@@ -26,8 +26,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.PlatformUI;
@@ -51,7 +50,7 @@ import org.eclipse.ui.PlatformUI;
  *
  * @see IObjectContributor
  */
-public abstract class ObjectContributorManager implements IExtensionRemovalHandler, IExtensionAdditionHandler {
+public abstract class ObjectContributorManager implements IExtensionChangeHandler {
 	
 	/** 
 	 * @since 3.1
@@ -93,8 +92,8 @@ public abstract class ObjectContributorManager implements IExtensionRemovalHandl
         objectLookup = null;
         resourceAdapterLookup = null;
         adaptableLookup = null;
-        PlatformUI.getWorkbench().getExtensionTracker().registerAdditionHandler(this);
-        PlatformUI.getWorkbench().getExtensionTracker().registerRemovalHandler(this);
+        IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
+        tracker.registerHandler(this, null);
     }
 
     /**
@@ -513,9 +512,9 @@ public abstract class ObjectContributorManager implements IExtensionRemovalHandl
 	}
 	
     /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler#removeInstance(org.eclipse.core.runtime.IExtension, java.lang.Object[])
+     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
      */
-    public void removeInstance(IExtension source, Object[] objects) {
+    public void removeExtension(IExtension source, Object[] objects) {
         for (int i = 0; i < objects.length; i++) {
             if (objects[i] instanceof ContributorRecord) {
                 ContributorRecord contributorRecord = (ContributorRecord) objects[i];
@@ -531,7 +530,6 @@ public abstract class ObjectContributorManager implements IExtensionRemovalHandl
      * @since 3.1
      */
     public void dispose() {
-    	PlatformUI.getWorkbench().getExtensionTracker().unregisterAdditionHandler(this);
-    	PlatformUI.getWorkbench().getExtensionTracker().unregisterRemovalHandler(this);
+    	PlatformUI.getWorkbench().getExtensionTracker().unregisterHandler(this);
     }	
 }

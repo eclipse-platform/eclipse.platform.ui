@@ -19,8 +19,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -34,7 +33,7 @@ import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
  * preference nodes.
  */
 public class WorkbenchPreferenceManager extends PreferenceManager implements
-		IExtensionAdditionHandler, IExtensionRemovalHandler {
+		IExtensionChangeHandler {
 
 	/**
 	 * Create a new instance of the receiver with the specified seperatorChar
@@ -43,10 +42,9 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 	 */
 	public WorkbenchPreferenceManager(char separatorChar) {
 		super(separatorChar);
-		PlatformUI.getWorkbench().getExtensionTracker()
-				.registerAdditionHandler(this);
-		PlatformUI.getWorkbench().getExtensionTracker().registerRemovalHandler(
-				this);
+        
+		IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
+		tracker.registerHandler(this, tracker.createExtensionPointFilter(getExtensionPointFilter()));
 
 		// add a listener for keyword deltas. If any occur clear all page caches
 		Platform.getExtensionRegistry().addRegistryChangeListener(
@@ -109,13 +107,10 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#addInstance(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker,
-	 *      org.eclipse.core.runtime.IExtension)
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
 	 */
-	public void addInstance(IExtensionTracker tracker, IExtension extension) {
+	public void addExtension(IExtensionTracker tracker, IExtension extension) {
 		IConfigurationElement[] elements = extension.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {
 			WorkbenchPreferenceNode node = PreferencePageRegistryReader
@@ -154,18 +149,15 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 	 * 
 	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#getExtensionPointFilter()
 	 */
-	public IExtensionPoint getExtensionPointFilter() {
+	private IExtensionPoint getExtensionPointFilter() {
 		return Platform.getExtensionRegistry().getExtensionPoint(
 				PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PREFERENCES);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler#removeInstance(org.eclipse.core.runtime.IExtension,
-	 *      java.lang.Object[])
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
 	 */
-	public void removeInstance(IExtension extension, Object[] objects) {
+	public void removeExtension(IExtension extension, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof WorkbenchPreferenceNode) {
 				WorkbenchPreferenceNode wNode = (WorkbenchPreferenceNode) objects[i];

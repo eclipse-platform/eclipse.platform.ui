@@ -30,8 +30,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -202,12 +201,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	private IExtensionTracker tracker;
 
-	private IExtensionRemovalHandler removalHandler = new IExtensionRemovalHandler() {
+	private IExtensionChangeHandler changeHandler = new IExtensionChangeHandler() {
 
 		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler#removeInstance(org.eclipse.core.runtime.IExtension, java.lang.Object[])
+		 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
 		 */
-		public void removeInstance(IExtension extension, Object[] objects) {
+		public void removeExtension(IExtension extension, Object[] objects) {
 			boolean suggestReset = false;
 			for (int i = 0; i < objects.length; i++) {
 				if (objects[i] instanceof DirtyPerspectiveMarker) {
@@ -224,52 +223,47 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			if (suggestReset)
 				suggestReset();
 		}
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
+         */
+        public void addExtension(IExtensionTracker tracker, IExtension extension) {
+            if (WorkbenchPage.this != getWorkbenchWindow().getActivePage()) 
+                return;
+            
+            // Get the current perspective.
+            PerspectiveDescriptor persp = (PerspectiveDescriptor) getPerspective();
+            if (persp == null)
+                return;
+            String currentId = persp.getId();
+            IConfigurationElement[] elements = extension.getConfigurationElements();
+            boolean suggestReset = false;
+            for (int i = 0; i < elements.length; i++) {
+                // If any of these refer to the current perspective, output
+                // a message saying this perspective will need to be reset
+                // in order to see the changes.  For any other case, the
+                // perspective extension registry will be rebuilt anyway so
+                // just ignore it.
+                String id = elements[i].getAttribute(PerspectiveExtensionReader.ATT_TARGET_ID);
+                if (id == null)
+                    continue;
+                if (id.equals(currentId) && !persp.hasCustomDefinition()) {
+                    suggestReset = true;
+                }
+                else {
+                    dirtyPerspectives.add(id);
+                }
+                DirtyPerspectiveMarker marker = new DirtyPerspectiveMarker(id);
+                tracker.registerObject(extension, marker, IExtensionTracker.REF_STRONG);
+            }
+            if (suggestReset) 
+                suggestReset();
+
+        }
 	};
-	private IExtensionAdditionHandler additionHandler = new IExtensionAdditionHandler() {
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#addInstance(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
-		 */
-		public void addInstance(IExtensionTracker tracker, IExtension extension) {
-			if (WorkbenchPage.this != getWorkbenchWindow().getActivePage()) 
-				return;
-			
-	        // Get the current perspective.
-	        PerspectiveDescriptor persp = (PerspectiveDescriptor) getPerspective();
-	        if (persp == null)
-	            return;
-	        String currentId = persp.getId();
-	        IConfigurationElement[] elements = extension.getConfigurationElements();
-	        boolean suggestReset = false;
-	        for (int i = 0; i < elements.length; i++) {
-	            // If any of these refer to the current perspective, output
-	            // a message saying this perspective will need to be reset
-	            // in order to see the changes.  For any other case, the
-	            // perspective extension registry will be rebuilt anyway so
-	            // just ignore it.
-	            String id = elements[i].getAttribute(PerspectiveExtensionReader.ATT_TARGET_ID);
-	            if (id == null)
-	                continue;
-	            if (id.equals(currentId) && !persp.hasCustomDefinition()) {
-	            	suggestReset = true;
-	            }
-	            else {
-	            	dirtyPerspectives.add(id);
-	            }
-	            DirtyPerspectiveMarker marker = new DirtyPerspectiveMarker(id);
-	            tracker.registerObject(extension, marker, IExtensionTracker.REF_STRONG);
-	        }
-	        if (suggestReset) 
-	        	suggestReset();
-
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#getExtensionPointFilter()
-		 */
-		public IExtensionPoint getExtensionPointFilter() {
-			return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PERSPECTIVE_EXTENSIONS);
-		}};
+	private IExtensionPoint getExtensionPointFilter() {
+		return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PERSPECTIVE_EXTENSIONS);
+	}
 
     /**
      * Manages editor contributions and action set part associations.
@@ -931,8 +925,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         BusyIndicator.showWhile(null, new Runnable() {
             public void run() {
                 ret[0] = window.closePage(WorkbenchPage.this, true);
-                if (ret[0] && tracker != null)
-                	tracker.close();
             }
         });
         return ret[0];
@@ -1375,6 +1367,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         navigationHistory.dispose();
 
         stickyPerspectives.clear();
+        
+        if (tracker != null) 
+            tracker.close();
     }
 
     /**
@@ -1972,8 +1967,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             window.firePerspectiveActivated(this, desc);
         }
         
-        getExtensionTracker().registerAdditionHandler(additionHandler);
-        getExtensionTracker().registerRemovalHandler(removalHandler);
+        getExtensionTracker().registerHandler(changeHandler, getExtensionTracker().createExtensionPointFilter(getExtensionPointFilter()));
     }
 
     /**
