@@ -87,7 +87,7 @@ public void addNavigationActions(IToolBarManager toolBar) {
  * @return <code>true</code> if expansion is possible; otherwise 
  *		return <code>false</code
  */
-public boolean canExpand(IAdaptable element) {
+public boolean canExpand(Object element) {
 	return fChildTree.isExpandable(element);
 }
 /**
@@ -118,7 +118,7 @@ public boolean canGoInto() {
 	IStructuredSelection oSelection = (IStructuredSelection) fChildTree.getSelection();
 	if (oSelection == null || oSelection.size() != 1)
 		return false;
-	IAdaptable anElement = (IAdaptable) oSelection.getFirstElement();
+	Object anElement = oSelection.getFirstElement();
 	return canExpand(anElement);
 }
 /**
@@ -195,9 +195,9 @@ private List getExpanded() {
  * </p>
  */
 public void goBack() {
-	IAdaptable currentInput = (IAdaptable) fChildTree.getInput();
+	Object currentInput = fChildTree.getInput();
 	DrillFrame oFrame = fDrillStack.goBack();
-	IAdaptable input = oFrame.getElement();
+	Object input = oFrame.getElement();
 	fChildTree.setInput(input);
 	expand(oFrame.getExpansion());
 	// if there was a selection, it should have been preserved,
@@ -215,9 +215,9 @@ public void goBack() {
  * </p>
  */
 public void goHome() {
-	IAdaptable currentInput = (IAdaptable) fChildTree.getInput();
+	Object currentInput = fChildTree.getInput();
 	DrillFrame oFrame = fDrillStack.goHome();
-	IAdaptable input = oFrame.getElement();
+	Object input = oFrame.getElement();
 	fChildTree.setInput(input);
 	expand(oFrame.getExpansion());
 	// if there was a selection, it should have been preserved,
@@ -239,7 +239,7 @@ public void goHome() {
  */
 public void goInto() {
 	IStructuredSelection sel = (IStructuredSelection) fChildTree.getSelection();
-	IAdaptable element = (IAdaptable) sel.getFirstElement();
+	Object element = sel.getFirstElement();
 	goInto(element);
 }
 /**
@@ -255,12 +255,12 @@ public void goInto() {
  *
  * @param newInput the new input element
  */
-public void goInto(IAdaptable newInput) {
+public void goInto(Object newInput) {
 	// If we can drill ..
 	if (canExpand(newInput)) 
 	{
 		// Save the old state.
-		IAdaptable oldInput = (IAdaptable)fChildTree.getInput();
+		Object oldInput = fChildTree.getInput();
 		List expandedList = getExpanded();
 		fDrillStack.add(new DrillFrame(oldInput, "null", expandedList));//$NON-NLS-1$
 		

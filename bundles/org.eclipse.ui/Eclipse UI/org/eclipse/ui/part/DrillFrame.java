@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * This class is not intended for use beyond the package.
  */
 /* package */ class DrillFrame {
-	IAdaptable fElement;
+	Object fElement;
 	Object fPropertyName;
 	List fExpansion = null;
 /**
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * @param strPropertyName the visible tree property
  * @param vExpansion the current expansion state of the tree
  */ 
-public DrillFrame(IAdaptable oElement, Object strPropertyName, List vExpansion) {
+public DrillFrame(Object oElement, Object strPropertyName, List vExpansion) {
 	fElement = oElement;
 	fPropertyName = strPropertyName;
 	fExpansion = vExpansion;
@@ -55,7 +55,7 @@ public DrillFrame(IAdaptable oElement, Object strPropertyName, List vExpansion) 
  *
  * @return the input element
  */ 
-public IAdaptable getElement() {
+public Object getElement() {
 	return fElement;
 }
 /**
