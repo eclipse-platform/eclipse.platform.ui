@@ -9,7 +9,7 @@ import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.context.*;
 import org.eclipse.help.internal.ui.util.*;
-import sun.security.krb5.internal.*;
+
 /**
  * This class is an implementation of the pluggable help support.
  * In is registered into the support extension point, and all 
