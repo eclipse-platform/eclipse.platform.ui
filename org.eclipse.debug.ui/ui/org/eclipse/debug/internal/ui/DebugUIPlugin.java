@@ -302,7 +302,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		Iterator docs= fConsoleDocuments.values().iterator();
 		while (docs.hasNext()) {
 			ConsoleDocument doc= (ConsoleDocument)docs.next();
-			doc.close();
+			doc.kill();
 		}
 		try {
 			persistLaunchHistory();

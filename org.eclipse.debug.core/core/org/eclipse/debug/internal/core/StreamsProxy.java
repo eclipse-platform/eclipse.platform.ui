@@ -50,10 +50,12 @@ public class StreamsProxy implements IStreamsProxy {
 	 * in the streams is read.
 	 */
 	protected void close() {
-		fClosed= true;
-		fOutputMonitor.close();
-		fErrorMonitor.close();
-		fInputMonitor.close();
+		if (!fClosed) {
+			fClosed= true;
+			fOutputMonitor.close();
+			fErrorMonitor.close();
+			fInputMonitor.close();
+		}
 	}
 
 	/**
@@ -66,6 +68,7 @@ public class StreamsProxy implements IStreamsProxy {
 		fClosed= true;
 		fOutputMonitor.kill();
 		fErrorMonitor.kill();
+		fInputMonitor.close();
 	}
 
 	/**

@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Display;
 public class ConsoleDocument extends AbstractDocument implements IDebugEventSetListener {
 
 	private boolean fClosed= false;
+	private boolean fKilled= false;
 
 	protected IProcess fProcess;
 	private IStreamsProxy fProxy;
@@ -144,11 +145,24 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 	}
 
 	public void close() {
-		fClosed= true;
-		stopReading();
-		DebugPlugin.getDefault().removeDebugEventListener(this);
-		fStyleRanges= Collections.EMPTY_LIST;
-		set(""); //$NON-NLS-1$
+		if (!fClosed) {
+			fClosed= true;
+			stopReading();
+			DebugPlugin.getDefault().removeDebugEventListener(this);
+			fStyleRanges= Collections.EMPTY_LIST;
+			set(""); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * Stops reading/polling immediately
+	 */
+	public void kill() {
+		fKilled = true;
+		if (fPollingThread != null && fPollingThread.isAlive()) {
+			fPollingThread.interrupt();
+		}
+		close();
 	}
 
 	public boolean isClosed() {
@@ -262,7 +276,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 	 * process terminates
 	 */
 	protected void pollAndSleep() {
-		while (fPoll && (!fTerminated || !fQueue.isEmpty())) {
+		while (!fKilled && fPoll && (!fTerminated || !fQueue.isEmpty())) {
 			poll();
 			try {
 				Thread.sleep(BASE_DELAY);
@@ -283,7 +297,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 			StreamEntry prev = null;
 			int processed = 0;
 			int amount = 0;
-			while (processed < fQueue.size() && amount < 8096) {
+			while (!fKilled && processed < fQueue.size() && amount < 8096) {
 				StreamEntry entry = (StreamEntry)fQueue.get(processed);
 				if (prev == null) {
 					buffer = new StringBuffer(entry.getText());
