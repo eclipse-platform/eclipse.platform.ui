@@ -70,7 +70,7 @@ Only one of defaultsTo or value may be defined.
          <attribute name="value" type="string">
             <annotation>
                <documentation>
-                  The default value of this color.  This may be a comma seperated integer in the form red,green,blue or a String that maps to an SWT color constant.
+                  The default value of this color.  This may be a comma seperated integer in the form red,green,blue or a String that maps to an SWT color constant (ie:  COLOR_RED).
 
 Only one of defaultsTo or value may be defined.
                </documentation>
