@@ -118,9 +118,10 @@ public class AdaptableDecoratorTestCase
 	 * Test enabling the contributor
 	 */
 	public void testEnableDecorator() throws CoreException {
+		getDecoratorManager().updateForEnablementChange();
 		fullDefinition.setEnabled(true);
 		lightDefinition.setEnabled(true);
-		getDecoratorManager().reset();
+		getDecoratorManager().updateForEnablementChange();
 
 	}
 
@@ -128,9 +129,10 @@ public class AdaptableDecoratorTestCase
 	 * Test disabling the contributor
 	 */
 	public void testDisableDecorator() throws CoreException {
+		getDecoratorManager().updateForEnablementChange();
 		fullDefinition.setEnabled(false);
 		lightDefinition.setEnabled(false);
-		getDecoratorManager().reset();
+		getDecoratorManager().updateForEnablementChange();
 	}
 
 	/**
@@ -139,9 +141,10 @@ public class AdaptableDecoratorTestCase
 	public void testRefreshFullContributor() throws CoreException {
 
 		updated = false;
+		getDecoratorManager().updateForEnablementChange();
 		fullDefinition.setEnabled(true);
 		lightDefinition.setEnabled(false);
-		getDecoratorManager().reset();
+		getDecoratorManager().updateForEnablementChange();
 		assertTrue("Got an update", updated);
 		updated = false;
 
@@ -153,9 +156,10 @@ public class AdaptableDecoratorTestCase
 	public void testRefreshLightContributor() throws CoreException {
 
 		updated = false;
+		getDecoratorManager().updateForEnablementChange();
 		lightDefinition.setEnabled(true);
 		fullDefinition.setEnabled(false);
-		getDecoratorManager().reset();
+		getDecoratorManager().updateForEnablementChange();
 		assertTrue("Got an update", updated);
 		updated = false;
 
