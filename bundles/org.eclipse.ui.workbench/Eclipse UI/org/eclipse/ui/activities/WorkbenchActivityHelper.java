@@ -44,16 +44,14 @@ public final class WorkbenchActivityHelper {
 			return true;
 		if (object instanceof IPluginContribution) {
 			IPluginContribution contribution = (IPluginContribution) object;
-			if (contribution.getPluginId() != null) {
-				IWorkbenchActivitySupport workbenchActivitySupport =
-				PlatformUI.getWorkbench().getActivitySupport();
-				IIdentifier identifier =
-					workbenchActivitySupport
-						.getActivityManager()
-						.getIdentifier(
-						createUnifiedId(contribution));
-				return allow(identifier);
-			}
+			IWorkbenchActivitySupport workbenchActivitySupport =
+			PlatformUI.getWorkbench().getActivitySupport();
+			IIdentifier identifier =
+				workbenchActivitySupport
+					.getActivityManager()
+					.getIdentifier(
+					createUnifiedId(contribution));
+			return allow(identifier);
 		}
 		return true;
 	}
