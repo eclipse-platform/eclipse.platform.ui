@@ -10,7 +10,7 @@ import java.util.ResourceBundle;
 
 public class SearchMessages {
 
-	private static final String RESOURCE_BUNDLE= "org.eclipse.search.internal.ui.SearchMessages";//$NON-NLS-1$
+	private static final String RESOURCE_BUNDLE= SearchMessages.class.getName();
 
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 
