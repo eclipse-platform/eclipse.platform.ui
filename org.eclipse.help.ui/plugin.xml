@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+
+<!-- ========================================================== -->
+<!-- This is a Default implementation of the Eclipse Workbench  -->
+<!-- Help System. It uses the extension points defined by       -->
+<!-- the base help system (id="org.eclipse.help").          -->
+<!-- ========================================================== -->
+
+<plugin
+   name = "%help_system_plugin_name"
+   id = "org.eclipse.help.ui"
+   version = "0.5"
+   vendor-name = "IBM"
+   class="org.eclipse.help.internal.ui.WorkbenchHelpPlugin">
+
+   <requires>
+	<import plugin="org.eclipse.core.runtime"/>
+	<import plugin="org.eclipse.ui"/>
+	<import plugin="org.eclipse.help"/>
+	<import plugin="org.apache.xerces"/>
+   </requires>
+
+
+   <runtime>
+      <library name="helpworkbench.jar">
+         <export name="org.eclipse.help.workbench.*"/>
+      </library>
+   </runtime>
+
+
+   <!-- ========================================================================== -->
+   <!-- Internal configuration for this plugin                                     -->
+   <!-- ========================================================================== -->
+   <!-- The Help System  --> 
+   <!-- ================ -->
+   <extension point="org.eclipse.help.support">
+      <config class="org.eclipse.help.internal.ui.DefaultHelp"/>
+   </extension>
+
+   <!-- The Help System View  --> 
+   <!-- ===================== -->
+   <extension point="org.eclipse.ui.views">
+      <category
+           id="org.eclipse.help"
+           name="%help">
+      </category>
+
+      <view
+      	id="org.eclipse.help.internal.ui.EmbeddedHelpView"
+      	name="%help_view"
+      	icon="icons/view.gif"
+      	category="org.eclipse.help"
+      	class="org.eclipse.help.internal.ui.EmbeddedHelpView">
+    	</view>
+   </extension>
+
+   <!-- The Help System Perspective  --> 
+   <!-- ============================ -->
+
+   <extension 
+	point="org.eclipse.ui.perspectives">
+	<perspective
+		id="org.eclipse.help.internal.ui.HelpPerspective"
+		name="%help_perspective"
+		class="org.eclipse.help.internal.ui.HelpPerspective">
+	</perspective>
+   </extension>
+
+   <!-- Help system preference page -->
+   <!-- =========================== -->
+   <extension
+      point = "org.eclipse.ui.preferencePages">
+       <page id="org.eclipse.help.workbench.preferencePages.Page1"
+	      class="org.eclipse.help.internal.ui.util.HelpPreferencePage"
+            name="%help_preferences_page_name">
+       </page>
+   </extension>
+
+
+   <!-- Context Help contribution for this plugin  --> 
+   <!-- ========================================== -->
+   <extension point="org.eclipse.help.contexts"> 
+      <contexts name="HelpContexts.xml"/> 
+   </extension>
+  
+   <!-- Define the help menu action set -->
+   <!-- =============================== -->
+   <extension point="org.eclipse.ui.actionSets">
+     <actionSet
+          id="org.eclipse.help.internal.ui.HelpActionSet"
+          label="%help"
+          visible="true">
+
+          <action id="org.eclipse.help.internal.ui.HelpAction"
+                  menubarPath="help/helpEnd"
+                  label="%helpcontents"
+                  class="org.eclipse.help.internal.ui.ShowHelp"/>
+             
+     </actionSet>
+ </extension>
+
+</plugin>
