@@ -55,6 +55,7 @@ public interface ITextEditorExtension3 {
 	 * Sets the insert mode of this editor.
 	 * 
 	 * @param mode the new insert mode
+	 * @exception IllegalArgumentException if <code>mode</code> is not a legal insert mode for this editor
 	 */
 	void setInsertMode(InsertMode mode);
 }

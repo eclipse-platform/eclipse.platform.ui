@@ -40,8 +40,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -826,98 +824,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 *  @since 2.1
 	 */
 	class ToggleInsertModeAction extends TextNavigationAction {
-		
-		private Caret fOverwriteCaret;
-		private Caret fOriginalCaret;
 	
 		public ToggleInsertModeAction(StyledText textWidget) {
 			super(textWidget, ST.TOGGLE_OVERWRITE);
-			
-			fOriginalCaret= textWidget.getCaret();
-			fOverwriteCaret= createOverwriteCaret();
-			textWidget.setCaret(fOriginalCaret);
-			
-			textWidget.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent e) {
-					if (fOriginalCaret != null) {
-						if (!fOriginalCaret.isDisposed())
-							fOriginalCaret.dispose();
-						fOriginalCaret= null;
-					}
-					if (fOverwriteCaret != null) {
-						if (!fOverwriteCaret.isDisposed())
-							fOverwriteCaret.dispose();
-						fOverwriteCaret= null;
-					}
-				}
-			});
 		}
 		
 		/*
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
 		public void run() {	
-			updateInsertMode();
-			updateCursor();
-			handleInsertModeChanged();
-		}
-		
-		public void updateCursor() {
-			StyledText styledText= getTextWidget();
-			if (OVERWRITE == getInsertMode()) {
-				Image image= fOverwriteCaret.getImage();
-				fOverwriteCaret.setImage(createOverwriteCaretImage(styledText));
-				image.dispose();
-				styledText.setCaret(fOverwriteCaret);
-			} else {
-				styledText.setCaret(fOriginalCaret);
-			}
-		}
-		
-		private void updateInsertMode() {
-			InsertMode mode= getInsertMode();
-			List legalModes= getLegalInsertModes();
-			
-			int i= 0;
-			while (i < legalModes.size()) {
-				if (legalModes.get(i) == mode) break;
-				++ i;
-			}
-			
-			i= (i + 1) % legalModes.size();
-			InsertMode newMode= (InsertMode) legalModes.get(i);
-			
-			if (mode == OVERWRITE || newMode == OVERWRITE)
-				super.run();
-				
-			setInsertMode(newMode);
-		}
-
-		private Caret createOverwriteCaret() {
-			StyledText styledText= getTextWidget();
-			Caret caret= new Caret(styledText, SWT.NULL);
-			caret.setImage(createOverwriteCaretImage(styledText));
-			return caret;
-		}
-
-		private Image createOverwriteCaretImage(StyledText styledText) {
-			PaletteData caretPalette= new PaletteData(new RGB[] {new RGB (0,0,0), new RGB (255,255,255)});
-			ImageData imageData = new ImageData(100, styledText.getLineHeight(), 1, caretPalette);
-			Display display = styledText.getDisplay();
-			Image blockImage= new Image(display, imageData);
-			GC gc = new GC (blockImage);
-			gc.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
-
-//			gc.drawLine(0, 0, imageData.width -1, 0);
-//			gc.drawLine(0, 0, 0, imageData.height -1);
-//			gc.drawLine(0, imageData.height -1, imageData.width -1, imageData.height -1);
-			
-			gc.setFont(styledText.getFont());
-			Point extent= gc.stringExtent("l");  //$NON-NLS-1$
-			gc.fillRectangle(0, 0,extent.x, imageData.height -1);
-			gc.dispose();
-			
-			return blockImage;
+			switchToNextInsertMode();
 		}
 	};
 
@@ -1515,6 +1431,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.0
 	 */
 	private List fLegalInsertModes= null;
+	/**
+	 * The caret used in overwrite mode.
+	 * @since 3.0
+	 */
+	private Caret fOverwriteModeCaret;
+	/**
+	 * The caret used in insert mode.
+	 * @since 3.0
+	 */
+	private Caret fInsertModeCaret;
+	/**
+	 * The caret used in smart insert mode.
+	 * @since 3.0
+	 */
+	private Caret fSmartInsertModeCaret;
 	
 	
 	/**
@@ -2391,15 +2322,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			extension.elementStateValidationChanged(input, false);
 		}
 		
-		if (getInsertMode() == OVERWRITE) {
-			IAction action= getAction(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE);
-			if (action instanceof ToggleInsertModeAction) {
-				fSourceViewer.getTextWidget().invokeAction(ST.TOGGLE_OVERWRITE);
-				ToggleInsertModeAction action2= (ToggleInsertModeAction) action;
-				action2.updateCursor();
-				handleInsertModeChanged();
-			}				
-		}
+		createInsertModeCarets();
+		if (getInsertMode() == OVERWRITE)
+			fSourceViewer.getTextWidget().invokeAction(ST.TOGGLE_OVERWRITE);
+		handleInsertModeChanged();
 	}
 	
 	/**
@@ -2561,6 +2487,24 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fFont != null) {
 			fFont.dispose();
 			fFont= null;
+		}
+		
+		if (fInsertModeCaret != null) {
+			if (!fInsertModeCaret.isDisposed())
+				fInsertModeCaret.dispose();
+			fInsertModeCaret= null;
+		}
+		
+		if (fOverwriteModeCaret != null) {
+			if (!fOverwriteModeCaret.isDisposed())
+				fOverwriteModeCaret.dispose();
+			fOverwriteModeCaret= null;
+		}
+		
+		if (fSmartInsertModeCaret != null) {
+			if (!fSmartInsertModeCaret.isDisposed())
+				fSmartInsertModeCaret.dispose();
+			fSmartInsertModeCaret= null;
 		}
 		
 		if (fForegroundColor != null) {
@@ -4297,8 +4241,20 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/*
 	 * @see org.eclipse.ui.texteditor.ITextEditorExtension3#setInsertMode(org.eclipse.ui.texteditor.ITextEditorExtension3.InsertMode)
 	 */
-	public void setInsertMode(InsertMode mode) {
-		fInsertMode= mode;
+	public void setInsertMode(InsertMode newMode) {
+		List legalModes= getLegalInsertModes();
+		if (!legalModes.contains(newMode))
+			throw new IllegalArgumentException();
+		
+		InsertMode oldMode= fInsertMode;
+		fInsertMode= newMode;
+		
+		if (getSourceViewer() != null && (oldMode == OVERWRITE || newMode == OVERWRITE)) {
+			StyledText styledText= getSourceViewer().getTextWidget();
+			styledText.invokeAction(ST.TOGGLE_OVERWRITE);
+		}
+		
+		handleInsertModeChanged();
 	}
 	
 	/**
@@ -4316,6 +4272,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		return fLegalInsertModes;
 	}
+	
+	private void switchToNextInsertMode() {
+		
+		InsertMode mode= getInsertMode();
+		List legalModes= getLegalInsertModes();
+			
+		int i= 0;
+		while (i < legalModes.size()) {
+			if (legalModes.get(i) == mode) break;
+			++ i;
+		}
+			
+		i= (i + 1) % legalModes.size();
+		InsertMode newMode= (InsertMode) legalModes.get(i);				
+		setInsertMode(newMode);
+	}
 
 	
 	/**
@@ -4326,13 +4298,108 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @param legal <code>true</code> if the given mode is legal, <code>false</code> otherwise
 	 */
 	protected void configureInsertMode(InsertMode mode, boolean legal) {
-		List modes= getLegalInsertModes();		
+		List legalModes= getLegalInsertModes();		
 		if (legal) {
-			if (!modes.contains(mode))
-			modes.add(mode);
-		} else if (modes.size() > 1){
-			modes.remove(mode);
+			if (!legalModes.contains(mode))
+				legalModes.add(mode);
+		} else if (legalModes.size() > 1) {
+			if (getInsertMode() == mode) {
+				
+			}
+			legalModes.remove(mode);
 		}
+	}
+
+	private Image createOverwriteModeCaretImage(StyledText styledText) {
+		PaletteData caretPalette= new PaletteData(new RGB[] {new RGB (0,0,0), new RGB (255,255,255)});
+		ImageData imageData = new ImageData(100, styledText.getLineHeight(), 1, caretPalette);
+		Display display = styledText.getDisplay();
+		Image blockImage= new Image(display, imageData);
+		GC gc = new GC (blockImage);
+		gc.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
+		gc.setFont(styledText.getFont());
+		Point extent= gc.stringExtent("l");  //$NON-NLS-1$
+		gc.fillRectangle(0, 0,extent.x, imageData.height -1);
+		gc.dispose();
+			
+		return blockImage;
+	}
+	
+	private Caret createOverwriteCaret(StyledText styledText) {
+		Caret caret= new Caret(styledText, SWT.NULL);
+		caret.setImage(createOverwriteModeCaretImage(styledText));
+		return caret;
+	}
+	
+	private Image createSmartInsertModeCaretImage(StyledText styledText) {
+		PaletteData caretPalette= new PaletteData(new RGB[] {new RGB (0,0,0), new RGB (255,255,255)});
+		ImageData imageData = new ImageData(4, styledText.getLineHeight(), 1, caretPalette);
+		Display display = styledText.getDisplay();
+		Image bracketImage= new Image(display, imageData);
+		GC gc = new GC (bracketImage);
+		gc.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
+		gc.drawLine(0, 0, imageData.width -1, 0);
+		gc.drawLine(0, 0, 0, imageData.height -1);
+		gc.drawLine(0, imageData.height -1, imageData.width -1, imageData.height -1);
+		gc.dispose();
+			
+		return bracketImage;
+	}
+	
+	private Caret createSmartInsertModeCaret(StyledText styledText) {
+		Caret caret= new Caret(styledText, SWT.NULL);
+		caret.setImage(createSmartInsertModeCaretImage(styledText));
+		return caret;
+	}
+
+	private void createInsertModeCarets() {
+		StyledText styledText= getSourceViewer().getTextWidget();
+		fInsertModeCaret= styledText.getCaret();
+		fOverwriteModeCaret= createOverwriteCaret(styledText);
+		fSmartInsertModeCaret= createSmartInsertModeCaret(styledText);
+		styledText.setCaret(fInsertModeCaret);
+	}
+	
+	private void updateCaret() {
+		
+		if (getSourceViewer() == null)
+			return;
+			
+		StyledText styledText= getSourceViewer().getTextWidget();
+		
+		Caret caret= null;
+		Image image= null;
+		
+		InsertMode mode= getInsertMode();
+		if (OVERWRITE == mode) {
+			caret= fOverwriteModeCaret;
+			image= createOverwriteModeCaretImage(styledText);
+		} else if (INSERT == mode) {
+			caret= fInsertModeCaret;
+		} else if (SMART_INSERT == mode) {
+			caret= fSmartInsertModeCaret;
+			image= createSmartInsertModeCaretImage(styledText);
+		}
+		
+		if (caret != null) {
+			if (image != null) {
+				Image oldImage= caret.getImage();
+				caret.setImage(image);
+				oldImage.dispose();
+			}
+			styledText.setCaret(caret);
+		}
+	}
+		
+	/**
+	 * Handles a change of the editor's insert mode.
+	 * Subclasses may extend.
+	 * 
+	 * @since 2.0
+	 */
+	protected void handleInsertModeChanged() {
+		updateCaret();
+		updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE);
 	}
 	
 	/**
@@ -4344,17 +4411,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected void handleCursorPositionChanged() {
 		updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION);
 	}
-	
-	/**
-	 * Handles a change of the editor's insert mode.
-	 * Subclasses may extend.
-	 * 
-	 * @since 2.0
-	 */
-	protected void handleInsertModeChanged() {
-		updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE);
-	}
-	
+
 	/**
 	 * Updates the status fields for the given category.
 	 * 
