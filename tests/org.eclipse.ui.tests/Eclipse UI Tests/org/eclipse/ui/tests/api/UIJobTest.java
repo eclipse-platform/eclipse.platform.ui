@@ -46,10 +46,12 @@ public class UIJobTest extends UITestCase {
         fPage = fWindow.getActivePage();
     }
 
-    private volatile boolean testJobRan = false;
+    private volatile boolean uiJobFinished = false;
     private volatile boolean backgroundThreadStarted = false;
     private volatile boolean backgroundThreadInterrupted = false;
-    private volatile boolean backgroundThreadFinishedWhenUIJobRan = false;
+    private volatile boolean backgroundThreadFinishedBeforeUIJob = false;
+    private volatile boolean backgroundThreadFinished = false;
+    private volatile boolean uiJobFinishedBeforeBackgroundThread = false;
     
     /**
      * Test to ensure that calling join() on a UIJob will block the calling
@@ -60,16 +62,19 @@ public class UIJobTest extends UITestCase {
      */
     public void testJoin() throws Exception {
 
-        testJobRan = false;
+        uiJobFinished = false;
         backgroundThreadStarted = false;
+        backgroundThreadFinished = false;
         backgroundThreadInterrupted = false;
+        uiJobFinishedBeforeBackgroundThread = false;
 
         final UIJob testJob = new UIJob("blah blah blah") {
 	        /* (non-Javadoc)
 	         * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 	         */
 	        public IStatus runInUIThread(IProgressMonitor monitor) {
-	            testJobRan = true;
+	            backgroundThreadFinishedBeforeUIJob = backgroundThreadFinished;
+	            uiJobFinished = true;
 	            
 	            return Status.OK_STATUS;
 	        }
@@ -78,7 +83,7 @@ public class UIJobTest extends UITestCase {
         testJob.setPriority(Job.INTERACTIVE);
         
         // Background thread that will try to schedule and join a UIJob. If all goes well
-        // it should deadlock since we're intentionally blocking the UI thread, preventing
+        // it should lock up since we're intentionally blocking the UI thread, preventing
         // it from running.
         Thread testThread = new Thread() {
         /* (non-Javadoc)
@@ -91,6 +96,8 @@ public class UIJobTest extends UITestCase {
             
             try {
                 testJob.join();
+                uiJobFinishedBeforeBackgroundThread = uiJobFinished;
+                backgroundThreadFinished = true;
             } catch (InterruptedException e) {
                 backgroundThreadInterrupted = true;
             }
@@ -116,25 +123,47 @@ public class UIJobTest extends UITestCase {
 	        // Measure current time
 	        long currentTime = System.currentTimeMillis();
 	                
-	        // Sleep for at least 200ms
+	        // We need to create a situation in which the run() method of the UIJob will have
+	        // been called and exited, but the runInUIThread() method will not have been called.
+	        // We then put everything else to sleep, making a high probability that the background
+	        // thread would wake up if there was nothing blocking it. Note: it is possible that the 
+	        // test would still pass if there was a problem and the background thread failed to
+	        // wake up for reasons other than its join()... but it creates a high probability of 
+	        // things failing if something goes wrong.
+	        //
+	        // The point of this join() is to block the UI thread, making it impossible to 
+	        // run *syncExecs. Joining a low priority job means that the UIJob should get
+	        // scheduled first (meaning its run(...) method will be called). The fact that we're 
+	        // in the UI thread right now means that the UIJob's runInUIThread method shouldn't 
+	        // be called.
+	        
+	        // Block the UI thread until the UIJob's run() method is called.
 	        delayJob.schedule(200);
 	        delayJob.join();
 	        
 	        long finalTime = System.currentTimeMillis();
 	        
-	        // Ensure that we slept for at least 1s
-	        Assert.assertTrue("Did not sleep",finalTime - currentTime >= 200);
+	        // Ensure that we slept for at least 200ms
+	        Assert.assertTrue("We tried to sleep the UI thread, but it woke up too early. ",
+	                finalTime - currentTime >= 200);
 	        
-	        Assert.assertTrue("Background do not start",backgroundThreadStarted);
-	        Assert.assertFalse("Test job ran",testJobRan);
-	        Assert.assertFalse("Background was interrupted",backgroundThreadInterrupted);
+	        Assert.assertTrue("Background thread did not start, so there was no possibility "
+	                + "of testing whether its behavior was correct. This is not a test failure. "
+	                + "It means we were unable to run the test. ",
+	                backgroundThreadStarted);
+	        
+	        Assert.assertFalse("A UI job somehow ran to completion while the UI thread was blocked", uiJobFinished);
+	        Assert.assertFalse("Background job managed to run to completion, even though it joined a UI thread that still hasn't finished",
+	                backgroundThreadFinished);
+	        Assert.assertFalse("Background thread was interrupted", backgroundThreadInterrupted);
 	        
 	        // Now run the event loop. Give the asyncExec a chance to run.
 			//Use the display provided by the shell if possible
 	        Display display = fWindow.getShell().getDisplay();
 	        
-	        while (!testJobRan) {
-	            
+	        // Wait until both threads have run to completion. If we wait for more than 3s, something
+	        // probably deadlocked.
+	        while (!(uiJobFinished && backgroundThreadFinished) ) {    
 	            // If we've waited more than 3s for the test job to run, then something is wrong.
 	            if (finalTime - System.currentTimeMillis() > 3000) {
 	                break;
@@ -145,11 +174,21 @@ public class UIJobTest extends UITestCase {
 	        }
 	        
 	        // Now that the event queue is empty, check that our final state is okay.
-	        Assert.assertTrue("Background thread did not start",backgroundThreadStarted);
-	        Assert.assertTrue("Test job did not run",testJobRan);
-	        Assert.assertFalse("Background thread was interrupted", backgroundThreadInterrupted);
-	        Assert.assertFalse("Background thread finished when the job ran",backgroundThreadFinishedWhenUIJobRan);
+	        Assert.assertTrue("Background thread did not finish (possible deadlock)", backgroundThreadFinished);
+	        Assert.assertTrue("Test job did not finish (possible deadlock)", uiJobFinished);
+	        Assert.assertFalse("Background thread was interrupted ", backgroundThreadInterrupted);
+	        Assert.assertFalse("Background thread finished before the UIJob, even though the background thread was supposed to be waiting for the UIJob", 
+	                backgroundThreadFinishedBeforeUIJob);
 	        
+	        // This is the whole point of the test: ensure that the background job actually waited for the UI job
+	        // to run to completion.
+	        Assert.assertFalse("Background thread finished before the UIJob, even though the background thread was supposed to be waiting for the UIJob", 
+	                backgroundThreadFinishedBeforeUIJob);
+	        
+	        // Paranoia check: this is really the same test as above, but it confirms that both
+	        // threads agreed on the answer.
+	        Assert.assertTrue("Background thread finished before the UIJob, even though the background thread was supposed to be waiting for the UIJob", 
+	                uiJobFinishedBeforeBackgroundThread);
         } finally {
             
         }
