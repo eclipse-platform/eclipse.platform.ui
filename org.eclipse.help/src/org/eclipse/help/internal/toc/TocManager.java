@@ -84,6 +84,9 @@ public class TocManager {
 	 * Returns the list of contributing Bundle IDs
 	 */
 	public Collection getContributingPlugins() {
+		if(contributingPlugins == null){
+			getContributedTocFiles(Locale.getDefault().toString());
+		}
 		return contributingPlugins;
 	}
 
