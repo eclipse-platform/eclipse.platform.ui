@@ -78,7 +78,7 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 	 * The user has pressed "remove" on a container. Remove all breakpoints in the group.
 	 */
 	private void removeContainer(IBreakpointContainer container, IBreakpointManager manager) throws CoreException {
-		boolean proceed = MessageDialog.openQuestion(getView().getSite().getShell(), "Delete Breakpoints", MessageFormat.format("Delete all breakpoints in {0}?", new String[] { container.getName() }));
+		boolean proceed = MessageDialog.openQuestion(getView().getSite().getShell(), ActionMessages.getString("RemoveBreakpointAction.0"), MessageFormat.format(ActionMessages.getString("RemoveBreakpointAction.1"), new String[] { container.getName() })); //$NON-NLS-1$ //$NON-NLS-2$
 		if (proceed) {
 			IBreakpoint[] breakpoints = container.getBreakpoints();
 			manager.removeBreakpoints(breakpoints, true);
