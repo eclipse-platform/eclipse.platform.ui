@@ -94,7 +94,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventListener {
 	 * Helper method to remove the given element - must be called in UI thread.
 	 */
 	protected void remove(Object element) {
-		 getView().showViewer();
+		getView().showViewer();
 		getTreeViewer().remove(element);
 	}
 
