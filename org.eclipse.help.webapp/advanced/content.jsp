@@ -26,7 +26,6 @@
 if (data.isMozilla()) {
 %>
 HTML {
-	border-left:1px solid ThreeDShadow;
 	background:<%=prefs.getToolbarBackground()%>;
 }
 <% 
