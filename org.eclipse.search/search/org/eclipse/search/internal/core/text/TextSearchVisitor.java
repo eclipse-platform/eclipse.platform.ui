@@ -28,6 +28,8 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.team.core.Team;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -124,10 +126,18 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 		if (! fScope.encloses(file))
 			return false;
 
+		// Exclude to be ignored files
+		if (Team.isIgnoredHint(file))
+			return false;
+
 		if (fPattern.length() == 0) {
 			fCollector.accept(file, "", -1, 0, -1); //$NON-NLS-1$
 			return true;
 		}
+
+		// Exclude binary files from text search
+		if (Team.getType(file) == Team.BINARY)
+			return false;
 			
 		try {
 			BufferedReader reader= null;
