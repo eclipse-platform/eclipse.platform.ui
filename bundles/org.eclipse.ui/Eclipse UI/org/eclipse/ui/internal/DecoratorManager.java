@@ -13,6 +13,7 @@ import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IContributorResourceAdapter;
+import org.eclipse.ui.IDecoratorManager;
 
 /**
  * The DecoratorManager is the class that handles all of the
@@ -21,7 +22,11 @@ import org.eclipse.ui.IContributorResourceAdapter;
  * @since 2.0
  */
 public class DecoratorManager
-	implements ICombinedLabelDecorator, ILabelDecorator, ILabelProviderListener {
+	implements
+		ICombinedLabelDecorator,
+		ILabelDecorator,
+		ILabelProviderListener,
+		IDecoratorManager {
 
 	//Hold onto the list of listeners to be told if a change has occured
 	private HashSet listeners = new HashSet();
@@ -470,7 +475,7 @@ public class DecoratorManager
 		}
 
 	}
-	
+
 	/**
 	 * Shutdown the decorator manager by disabling all
 	 * of the decorators so that dispose() will be called
@@ -484,4 +489,44 @@ public class DecoratorManager
 				definitions[i].setEnabled(false);
 		}
 	}
+	/**
+	 * @see IDecoratorManager#getEnabled(String)
+	 */
+	public boolean getEnabled(String decoratorId) {
+		DecoratorDefinition definition = getDecoratorDefinition(decoratorId);
+		if (definition == null)
+			return false;
+		else
+			return definition.isEnabled();
+	}
+
+	/**
+	 * @see IDecoratorManager#getLabelDecorator()
+	 */
+	public ILabelDecorator getLabelDecorator() {
+		return this;
+	}
+
+	/**
+	 * @see IDecoratorManager#setEnabled(String, boolean)
+	 */
+	public void setEnabled(String decoratorId, boolean enabled) {
+		DecoratorDefinition definition = getDecoratorDefinition(decoratorId);
+		if (definition != null)
+			definition.setEnabled(enabled);
+	}
+
+	/**
+	 * Get the DecoratorDefinition with the supplied id
+	 * @return DecoratorDefinition or <code>null</code> if it is not found
+	 * @param decoratorId String
+	 */
+	private DecoratorDefinition getDecoratorDefinition(String decoratorId) {
+		for (int i = 0; i < definitions.length; i++) {
+			if (definitions[i].getId().equals(decoratorId))
+				return definitions[i];
+		}
+		return null;
+	}
+
 }
