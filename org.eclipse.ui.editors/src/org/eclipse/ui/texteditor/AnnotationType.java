@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-
+/**
+ * Represents an annotation type.
+ *
+ * @since 3.0
+ */
 public class AnnotationType {
 	private String fType;
 	private String[] fSuperTypes;

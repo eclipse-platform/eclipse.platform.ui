@@ -56,6 +56,8 @@ import org.eclipse.ui.PlatformUI;
  * <p>
  * This class may be instantiated but is not intended for subclassing.
  * </p>
+ *
+ * @since 3.0
  */
 public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	

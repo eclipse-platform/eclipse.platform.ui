@@ -75,7 +75,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	private WorkspaceOperationRunner fOperationRunner;
 	/** 
 	 * The scheduling rule factory.
-	 * @since 3.0 
+	 * @since 3.0
 	 */
 	private IResourceRuleFactory fResourceRuleFactory;
 
@@ -410,6 +410,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#doSynchronize(java.lang.Object)
+	 * @since 3.0
 	 */
 	protected void doSynchronize(Object element, IProgressMonitor monitor)  throws CoreException {
 		if (element instanceof IFileEditorInput) {
@@ -702,6 +703,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#doResetDocument(java.lang.Object, org.eclipse.core.runtime.IProgressMonitor)
+	 * @since 3.0
 	 */
 	protected void doResetDocument(Object element, IProgressMonitor monitor) throws CoreException {
 		if (element instanceof IFileEditorInput) {
@@ -825,6 +827,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getOperationRunner(org.eclipse.core.runtime.IProgressMonitor)
+	 * @since 3.0
 	 */
 	protected IRunnableContext getOperationRunner(IProgressMonitor monitor) {
 		if (fOperationRunner == null)
@@ -835,6 +838,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getResetRule(java.lang.Object)
+	 * @since 3.0
 	 */
 	protected ISchedulingRule getResetRule(Object element) {
 		if (element instanceof IFileEditorInput) {
@@ -847,6 +851,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getSaveRule(java.lang.Object)
+	 * @since 3.0
 	 */
 	protected ISchedulingRule getSaveRule(Object element) {
 		if (element instanceof IFileEditorInput) {			
@@ -863,6 +868,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getSynchronizeRule(java.lang.Object)
+	 * @since 3.0
 	 */
 	protected ISchedulingRule getSynchronizeRule(Object element) {
 		if (element instanceof IFileEditorInput) {
@@ -875,6 +881,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getValidateStateRule(java.lang.Object)
+	 * @since 3.0
 	 */
 	protected ISchedulingRule getValidateStateRule(Object element) {
 		if (element instanceof IFileEditorInput) {

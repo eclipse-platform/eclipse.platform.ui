@@ -58,6 +58,8 @@ import org.eclipse.ui.PlatformUI;
  *   <li><code>listenToMarkerChanges</code></li>
  * </ul> 
  * </p>
+ *
+ * @since 3.0
  */
 public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 

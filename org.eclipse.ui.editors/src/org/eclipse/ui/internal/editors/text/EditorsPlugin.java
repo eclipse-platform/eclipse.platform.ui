@@ -93,6 +93,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	
 	/*
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#startup()
+	 * @since 3.0
 	 */
 	public void startup() throws CoreException {
 		super.startup();

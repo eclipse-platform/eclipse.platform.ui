@@ -46,6 +46,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
  * used to find object adapters.
  *
  * @see org.eclipse.core.runtime.IAdapterManager
+ * @since 3.0
  */
 public class DocumentProviderRegistry {
 	

@@ -416,6 +416,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getOperationRunner(org.eclipse.core.runtime.IProgressMonitor)
+	 * @since 3.0
 	 */
 	protected IRunnableContext getOperationRunner(IProgressMonitor monitor) {
 		return null;

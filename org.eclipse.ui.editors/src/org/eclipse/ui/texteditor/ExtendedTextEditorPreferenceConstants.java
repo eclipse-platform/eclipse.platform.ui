@@ -20,8 +20,9 @@ import org.eclipse.jface.preference.PreferenceConverter;
 
 /**
  * Preference constants used in the extended text editor preference store.
+ * 
  * @since 3.0
-  */
+ */
 public class ExtendedTextEditorPreferenceConstants {
 	
 	/**

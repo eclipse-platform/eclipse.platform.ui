@@ -22,6 +22,8 @@ import org.eclipse.core.resources.IMarker;
 /**
  * Updates a marker's positional attributes which are 
  * start position, end position, and line number.
+ *
+ * @since 3.0
  */
 public final class BasicMarkerUpdater implements IMarkerUpdater {
 	

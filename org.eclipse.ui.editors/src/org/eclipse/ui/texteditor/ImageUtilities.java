@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Canvas;
 
 /**
  * Provides methods for drawing images onto a canvas.
+ *
  * @since 3.0
  */
 public class ImageUtilities {
