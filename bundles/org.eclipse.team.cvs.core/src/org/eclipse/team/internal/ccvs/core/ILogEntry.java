@@ -1,5 +1,7 @@
 package org.eclipse.team.ccvs.core;
 
+import org.eclipse.core.runtime.IAdaptable;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -11,7 +13,7 @@ package org.eclipse.team.ccvs.core;
  * 
  * Clients are not expected to implement this interface
  */
-public interface ILogEntry {
+public interface ILogEntry extends IAdaptable {
 
 	/**
 	 * Get the revision for the entry

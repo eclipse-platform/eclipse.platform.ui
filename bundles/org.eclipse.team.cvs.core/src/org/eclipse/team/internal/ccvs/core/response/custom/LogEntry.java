@@ -7,10 +7,11 @@ package org.eclipse.team.internal.ccvs.core.response.custom;
  
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFileRevision;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.ccvs.core.IRemoteFile;
 
-public class LogEntry implements ILogEntry {
+public class LogEntry extends PlatformObject implements ILogEntry {
 
 	private RemoteFileRevision file;
 	private String author;
