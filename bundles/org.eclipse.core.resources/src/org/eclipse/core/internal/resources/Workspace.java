@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  * IBM - Initial API and implementation
@@ -428,6 +428,9 @@ public IStatus copy(IResource[] resources, IPath destination, boolean force, IPr
 }
 
 protected void copyTree(IResource source, IPath destination, int depth, boolean phantom, boolean overwrite) throws CoreException {
+	copyTree(source, destination, depth, phantom, overwrite, false);
+}
+protected void copyTree(IResource source, IPath destination, int depth, boolean phantom, boolean overwrite, boolean keepSyncInfo) throws CoreException {
 	// FIXME: change this method signature to use the int updateFlags rather than the booleans.
 
 	// retrieve the resource at the destination if there is one (phantoms included).
@@ -452,7 +455,7 @@ protected void copyTree(IResource source, IPath destination, int depth, boolean 
 		sourceInfo = (ResourceInfo) sourceInfo.clone();
 		sourceInfo.setType(destinationResource.getType());
 	}
-	ResourceInfo newInfo = createResource(destinationResource, sourceInfo, phantom, overwrite);
+	ResourceInfo newInfo = createResource(destinationResource, sourceInfo, phantom, overwrite, keepSyncInfo);
 	// get/set the node id from the source's resource info so we can later put it in the
 	// info for the destination resource. This will help us generate the proper deltas,
 	// indicating a move rather than a add/delete
@@ -475,7 +478,7 @@ protected void copyTree(IResource source, IPath destination, int depth, boolean 
 	for (int i = 0; i < children.length; i++) {
 		IResource child = children[i];
 		IPath childPath = destination.append(child.getName());
-		copyTree(child, childPath, depth, phantom, overwrite);
+		copyTree(child, childPath, depth, phantom, overwrite, keepSyncInfo);
 	}
 }
 /**
@@ -505,6 +508,9 @@ public int countResources(IPath root, int depth, final boolean phantom) {
 	}
 	return 0;
 }
+public ResourceInfo createResource(IResource resource, ResourceInfo info, boolean phantom, boolean overwrite) throws CoreException {
+	return createResource(resource, info, phantom, overwrite, false);
+}
 /*
  * Creates the given resource in the tree and returns the new resource info object.  
  * If phantom is true, the created element is marked as a phantom.
@@ -514,8 +520,12 @@ public int countResources(IPath root, int depth, final boolean phantom) {
  * the element is overwritten with the new element. (but the synchronization
  * information is preserved) If the specified resource info is null, then create
  * a new one.
+ * 
+ * If keepSyncInfo is set to be true, the sync info in the given ResourceInfo is NOT
+ * cleared before being created and thus any sync info already existing at that namespace
+ * (as indicated by an already existing phantom resource) will be lost.
  */
-public ResourceInfo createResource(IResource resource, ResourceInfo info, boolean phantom, boolean overwrite) throws CoreException {
+public ResourceInfo createResource(IResource resource, ResourceInfo info, boolean phantom, boolean overwrite, boolean keepSyncInfo) throws CoreException {
 	info = info == null ? newElement(resource.getType()) : (ResourceInfo) info.clone();
 	ResourceInfo original = getResourceInfo(resource.getFullPath(), true, false);
 	if (phantom) {
@@ -526,7 +536,8 @@ public ResourceInfo createResource(IResource resource, ResourceInfo info, boolea
 	if (original == null) {
 		// we got here from a copy/move. we don't want to copy over any sync info
 		// from the source so clear it.
-		info.setSyncInfo(null);
+		if (!keepSyncInfo)
+			info.setSyncInfo(null);
 		tree.createElement(resource.getFullPath(), info);
 	} else {
 		// if overwrite==true then slam the new info into the tree even if one existed before
@@ -537,7 +548,8 @@ public ResourceInfo createResource(IResource resource, ResourceInfo info, boolea
 			// preserve the old sync info so its not dirty
 			// XXX: must copy over the generic sync info from the old info to the new
 			// XXX: do we really need to clone the sync info here?
-			info.setSyncInfo(original.getSyncInfo(true));
+			if (!keepSyncInfo)
+				info.setSyncInfo(original.getSyncInfo(true));
 			// mark the markers bit as dirty so we snapshot an empty marker set for
 			// the new resource
 			info.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
@@ -1146,15 +1158,20 @@ public IStatus move(IResource[] resources, IPath destination, boolean force, IPr
 	return move(resources, destination, updateFlags, monitor);
 }
 
+/* package */ void move(Resource source, IPath destination, int depth, boolean overwrite) throws CoreException {
+	move(source, destination, depth, overwrite, false);
+}
 /**
  * Moves this resource's subtree to the destination. This operation should only be
  * used by move methods. Destination must be a valid destination for this resource.
+ * The keepSyncInfo boolean is used to indicated whether or not the sync info should
+ * be moved from the source to the destination.
  */
 
-/* package */ void move(Resource source, IPath destination, int depth, boolean overwrite) throws CoreException {
+/* package */ void move(Resource source, IPath destination, int depth, boolean overwrite, boolean keepSyncInfo) throws CoreException {
 	// overlay the tree at the destination path, preserving any important info
 	// in any already existing resource infos
-	copyTree(source, destination, depth, false, overwrite);
+	copyTree(source, destination, depth, false, overwrite, keepSyncInfo);
 	source.fixupAfterMoveSource();
 }
 /**

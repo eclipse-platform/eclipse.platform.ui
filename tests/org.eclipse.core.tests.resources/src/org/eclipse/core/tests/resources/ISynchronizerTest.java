@@ -1,9 +1,9 @@
 /**********************************************************************
  * Copyright (c) 2000,2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -369,6 +369,90 @@ public void testMoveResource() {
 	} catch (CoreException e) {
 		fail("4.3", e);
 	}
+}
+public void testMoveResource2() {
+	final QualifiedName qname = new QualifiedName("org.eclipse.core.tests.resources", "myTarget");
+	final ISynchronizer synchronizer = ResourcesPlugin.getWorkspace().getSynchronizer();
+
+	// cleanup auto-created resources
+	try {
+		getWorkspace().getRoot().delete(true, getMonitor());
+	} catch (CoreException e) {
+		fail("0.0", e);
+	}
+
+	// setup
+	IResource[] resources = buildResources(getWorkspace().getRoot(), new String[] { "/Foo", "/Foo/file.txt" });
+	IProject sourceProject = (IProject) resources[0];
+	IFile sourceFile = (IFile) resources[1];
+	// create in workspace
+	ensureExistsInWorkspace(resources, true);
+
+	// register partner and add sync info
+	synchronizer.add(qname);
+	byte[] b = new byte[] { 1, 2, 3, 4 };
+	try {
+		synchronizer.setSyncInfo(qname, sourceProject, b);
+		synchronizer.setSyncInfo(qname, sourceFile, b);
+	} catch (CoreException e) {
+		fail("2.0", e);
+	}
+
+	// move the file
+	IFile destFile = sourceProject.getFile("newFile.txt");
+	try {
+		sourceFile.move(destFile.getFullPath(), true, getMonitor());
+	} catch (CoreException e) {
+		fail("3.0", e);
+	}
+
+	// check sync info
+	try {
+		byte[] old = synchronizer.getSyncInfo(qname, sourceFile);
+		assertNotNull("4.0", old);
+		assertEquals("4.1", b, old);
+		assertNull("4.2", synchronizer.getSyncInfo(qname, destFile));
+	} catch (CoreException e) {
+		fail("4.3", e);
+	}
+	
+	// move the file back
+	try {
+		destFile.move(sourceFile.getFullPath(), true, getMonitor());
+	} catch (CoreException e) {
+		fail("5.0", e);
+	}
+	
+	// check the sync info
+	try {
+		byte[] old = synchronizer.getSyncInfo(qname, sourceFile);
+		assertNotNull("6.0", old);
+		assertEquals("6.1", b, old);
+		assertNull("6.2", synchronizer.getSyncInfo(qname, destFile));
+	} catch (CoreException e) {
+		fail("6.3", e);
+	}
+	
+	// rename the file and ensure that the sync info is moved with it
+	IProject destProject = getWorkspace().getRoot().getProject("newProject");
+	try {
+		sourceProject.move(destProject.getFullPath(), true, getMonitor());
+	} catch (CoreException e) {
+		fail("7.0", e);
+	}
+	try {
+		assertNull("7.1", synchronizer.getSyncInfo(qname, sourceProject));
+		assertNull("7.2", synchronizer.getSyncInfo(qname, sourceFile));
+		byte[] old = synchronizer.getSyncInfo(qname, destProject.getFile(sourceFile.getName()));
+		assertNotNull("7.3", old);
+		assertEquals("7.4", b, old);
+		old = synchronizer.getSyncInfo(qname, destProject);
+		assertNotNull("7.5", old);
+		assertEquals("7.6", b, old);
+	} catch (CoreException e) {
+		fail("7.3", e);
+	}
+	
 }
 public void testRegistration() {
 	// setup
