@@ -103,15 +103,11 @@ public final class CustomizableIntroPart extends IntroPart {
             standbyPart.init(this);
         }
 
-        // REVISIT: make sure this is handled better.
-        //TODO need to NL this
         if (model == null || !model.hasValidConfig())
             DialogUtil.displayErrorMessage(site.getShell(),
-                    "Could not find a valid configuration for Intro Part: " //$NON-NLS-1$
-                            + ModelLoaderUtil.getLogString(
-                                    getConfigurationElement(), "id") //$NON-NLS-1$
-                            + "\nCheck Log View for details.", null); //$NON-NLS-1$
-
+                    "CustomizableIntroPart.configNotFound",
+                    new Object[] { ModelLoaderUtil.getLogString(
+                            getConfigurationElement(), null) }, null);
     }
 
     /*
