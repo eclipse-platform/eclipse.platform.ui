@@ -162,14 +162,14 @@ a file association extends an existing content type by associating new file name
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  the name of this parameter made available to instances of the specified application class
+                  the name of this parameter made available to instances of the specified content describer class
                </documentation>
             </annotation>
          </attribute>
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  the value of this parameter made available to instances of the specified application class
+                  an arbitrary value associated with the given name and made available to instances of the specified content describer class
                </documentation>
             </annotation>
          </attribute>
@@ -198,7 +198,7 @@ a file association extends an existing content type by associating new file name
        base-type=&quot;org.eclipse.core.runtime.xml&quot;      
        file-extensions=&quot;a,b,c&quot;&gt;
        &lt;describer class=&quot;org.eclipse.core.runtime.content.XMLRootElementContentDescriber&quot;&gt;
-        &lt;param name=&quot;element&quot; value=&quot;abc&quot;/&gt;
+        &lt;parameter name=&quot;element&quot; value=&quot;abc&quot;/&gt;
        &lt;/describer&gt;
       &lt;/content-type&gt; 
    &lt;/extension&gt; 
@@ -272,4 +272,5 @@ this distribution, and is available at
 href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
+
 </schema>
