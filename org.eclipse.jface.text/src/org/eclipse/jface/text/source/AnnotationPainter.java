@@ -177,8 +177,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 						color= (Color) fColorTable.get(annotationType);
 					
 					if (color != null) {
+						Position position= fModel.getPosition(annotation);
+						if (position == null || position.isDeleted())
+							continue;
+						
 						Decoration pp= new Decoration();
-						pp.fPosition= fModel.getPosition(annotation);
+						pp.fPosition= position;
 						pp.fColor= color;
 						pp.fMultiLine= fAnnotationAccess.isMultiLine(annotation);
 						fDecorations.add(pp);
