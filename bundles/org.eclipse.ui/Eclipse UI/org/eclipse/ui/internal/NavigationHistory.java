@@ -105,6 +105,17 @@ public class NavigationHistory {
 				public boolean samePart(IEditorPart part) {
 					return fPart == part && part != null;
 				}
+				
+				public boolean differsFromCurrentState(IEditorPart part) {
+					if (part == null || fPart != part)
+						return true;
+						
+					if (fSelection == null)
+						return false;
+						
+					ISelectionProvider provider= part.getSite().getSelectionProvider();
+					return !fSelection.equals(provider.getSelection());
+				}
 			};
 			
 			
@@ -178,14 +189,14 @@ public class NavigationHistory {
 		fCounter= fHistory.size() - 1;
 	}
 	
-	private NavigationHistoryEntry getCurrent() {
-		if (0 <= fCounter && fCounter < fHistory.size())
-			return (NavigationHistoryEntry) fHistory.get(fHistory.size() -1);
+	private NavigationHistoryEntry getEntry(int index) {
+		if (0 <= index && index < fHistory.size())
+			return (NavigationHistoryEntry) fHistory.get(index);
 		return null;
 	}
 	
 	private boolean merge(IEditorPart part) {
-		NavigationHistoryEntry entry= getCurrent();
+		NavigationHistoryEntry entry= getEntry(fCounter);
 		if (entry != null)
 			return entry.samePart(part);
 		return false;
@@ -204,7 +215,7 @@ public class NavigationHistory {
 	}
 	
 	private boolean merge(IEditorPart part, ISelection selection) {
-		NavigationHistoryEntry entry= getCurrent();
+		NavigationHistoryEntry entry= getEntry(fCounter);
 		if (entry != null && entry.samePart(part)) {
 			if (entry.fSelection == null) {
 				entry.fSelection= selection;
@@ -247,10 +258,17 @@ public class NavigationHistory {
 		return (0 <= fCounter + 1) && (fCounter + 1 < fHistory.size());
 	}
 	
+	private boolean stateDiffers(IEditorPart part) {
+		NavigationHistoryEntry entry= getEntry(fCounter);
+		if (entry != null)
+			return entry.differsFromCurrentState(part);
+		return false;
+	}
+	
 	private boolean canBackward() {
 		IEditorPart editor= fPage.getActiveEditor();
-		boolean activateEditor= (editor != null && editor != fPage.getActivePart());
-		return activateEditor || (0 <= fCounter - 1) && (fCounter - 1 < fHistory.size());
+		boolean activateEditor= (editor != null && editor != fPage.getActivePart());			
+		return activateEditor || stateDiffers(editor) || (0 <= fCounter - 1) && (fCounter - 1 < fHistory.size());
 	}
 	
 	private void updateActions() {
@@ -271,14 +289,20 @@ public class NavigationHistory {
 	
 	public void backward() {
 		if (canBackward()) {
+			
+			NavigationHistoryEntry entry= null;
+			
 			IEditorPart editor= fPage.getActiveEditor();
 			boolean activateEditor= (editor != null && editor != fPage.getActivePart());
-			if(activateEditor) {
-				NavigationHistoryEntry e= new NavigationHistoryEntry(editor);
-				e.gotoEntry();	
-			} 	else {		
-				NavigationHistoryEntry e= (NavigationHistoryEntry) fHistory.get(--fCounter);
-				e.gotoEntry();
+			if(activateEditor)
+				entry= new NavigationHistoryEntry(editor);
+			else if (stateDiffers(editor))
+				entry= (NavigationHistoryEntry) fHistory.get(fCounter);
+			else
+				entry= (NavigationHistoryEntry) fHistory.get(--fCounter);
+			
+			if (entry != null) {
+				entry.gotoEntry();
 				updateActions();
 				printEntries();
 			}
