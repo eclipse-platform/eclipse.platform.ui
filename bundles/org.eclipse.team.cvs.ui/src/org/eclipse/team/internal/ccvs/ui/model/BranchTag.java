@@ -44,6 +44,9 @@ public class BranchTag extends CVSModelElement implements IAdaptable {
 		if (!tag.equals(t.tag)) return false;
 		return root.equals(t.root);
 	}
+	public int hashCode() {
+		return root.hashCode() ^ tag.hashCode();
+	}
 	/**
 	 * Return children of the root with this tag.
 	 */
