@@ -42,9 +42,6 @@ public interface ICoreConstants {
 	public static final int FIRST_INTERNAL_ERROR = 10075;
 	public static final int LAST_INTERNAL_ERROR = 10099;
 
-	// invalid chars for resource names
-	public static final char[] invalidResourceNameChars = {':', ';', '*', '?', '"', '\'', '<', '>', '|', '/', '\\'};
-
 	public static final int PROJECT_SEGMENT_LENGTH = 1;
 	public static final int MINIMUM_FOLDER_SEGMENT_LENGTH = 2;
 	public static final int MINIMUM_FILE_SEGMENT_LENGTH = 2;

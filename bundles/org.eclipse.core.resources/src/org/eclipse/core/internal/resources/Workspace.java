@@ -1353,12 +1353,18 @@ public IStatus validateName(String segment, int type) {
 	}
 
 	/* test invalid characters */
-	for (int i = 0; i < invalidResourceNameChars.length; i++)
-		if (segment.indexOf(invalidResourceNameChars[i]) != -1) {
-			message = Policy.bind("resources.invalidChar", String.valueOf(invalidResourceNameChars[i]));
+	char[] chars = OS.INVALID_RESOURCE_CHARACTERS;
+	for (int i = 0; i < chars.length; i++)
+		if (segment.indexOf(chars[i]) != -1) {
+			message = Policy.bind("resources.invalidChar", String.valueOf(chars[i]));
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
+	/* test invalid OS names */
+	if (!OS.isNameValid(segment)) {
+		message = Policy.bind("resources.invalidName", segment);
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+	}
 	return ResourceStatus.OK_STATUS;
 }
 /**
@@ -1396,9 +1402,7 @@ public IStatus validatePath(String path, int type) {
 	int numberOfSegments = testPath.segmentCount();
 	if ((type & IResource.PROJECT) != 0) {
 		if (numberOfSegments == ICoreConstants.PROJECT_SEGMENT_LENGTH) {
-			IStatus status = validateName(testPath.segment(0), IResource.PROJECT);
-			if (status.isOK())
-				return status;
+			return validateName(testPath.segment(0), IResource.PROJECT);
 		} else
 			if (type == IResource.PROJECT) {
 				message = Policy.bind("resources.projectPath");
