@@ -19,6 +19,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * @since 3.0
@@ -35,7 +36,9 @@ public class CascadingColorRegistry extends ColorRegistry {
     };
 
     /**
-     * @param parent
+     * Create a new instance of this class.
+     * 
+     * @param parent the parent registry
      */
     public CascadingColorRegistry(ColorRegistry parent) {
     	super(Display.getCurrent(), false);
@@ -49,8 +52,8 @@ public class CascadingColorRegistry extends ColorRegistry {
     public Color get(String symbolicName) {
         if (super.hasValueFor(symbolicName))
             return super.get(symbolicName);
-        else
-            return parent.get(symbolicName);
+        
+        return parent.get(symbolicName);
     }
 
     /* (non-Javadoc)
@@ -68,8 +71,8 @@ public class CascadingColorRegistry extends ColorRegistry {
     public RGB getRGB(String symbolicName) {
         if (super.hasValueFor(symbolicName))
             return super.getRGB(symbolicName);
-        else
-            return parent.getRGB(symbolicName);
+        
+        return parent.getRGB(symbolicName);
     }
 
     /* (non-Javadoc)
@@ -95,6 +98,6 @@ public class CascadingColorRegistry extends ColorRegistry {
      */
     public void dispose() {
         parent.removeListener(listener);
-        Display.getCurrent().asyncExec(displayRunnable);
+        PlatformUI.getWorkbench().getDisplay().asyncExec(displayRunnable);
     }
 }

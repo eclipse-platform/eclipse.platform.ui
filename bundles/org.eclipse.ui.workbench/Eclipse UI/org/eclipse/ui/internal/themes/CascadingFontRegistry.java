@@ -19,6 +19,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * @since 3.0
@@ -35,7 +36,9 @@ public class CascadingFontRegistry extends FontRegistry {
     };
 
     /**
+     * Create a new instance of this class.
      * 
+     * @param parent the parent registry
      */
     public CascadingFontRegistry(FontRegistry parent) {
     	super(Display.getCurrent(), false);
@@ -49,8 +52,7 @@ public class CascadingFontRegistry extends FontRegistry {
     public Font get(String symbolicName) {
         if (super.hasValueFor(symbolicName))
             return super.get(symbolicName);
-        else
-            return parent.get(symbolicName);
+        return parent.get(symbolicName);
     }
 
     /* (non-Javadoc)
@@ -65,8 +67,7 @@ public class CascadingFontRegistry extends FontRegistry {
     public FontData[] getFontData(String symbolicName) {
         if (super.hasValueFor(symbolicName))
             return super.getFontData(symbolicName);
-        else
-            return parent.getFontData(symbolicName);
+        return parent.getFontData(symbolicName);
     }
 
     /* (non-Javadoc)
@@ -92,6 +93,6 @@ public class CascadingFontRegistry extends FontRegistry {
      */
     public void dispose() {
         parent.removeListener(listener);
-        Display.getCurrent().asyncExec(displayRunnable);
+        PlatformUI.getWorkbench().getDisplay().asyncExec(displayRunnable);
     }
 }
