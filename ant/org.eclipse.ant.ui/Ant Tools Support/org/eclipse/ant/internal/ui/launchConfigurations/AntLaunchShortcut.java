@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
@@ -52,6 +51,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
@@ -116,12 +116,26 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		IFile file= node.getIFile();
 		if (file != null) {
 			launch(file, ILaunchManager.RUN_MODE, selectedTarget);
-		} else { //external buildfile
-			String filePath= node.getFilePath();
-			if (filePath != null) {
-				launch(new Path(filePath), ILaunchManager.RUN_MODE, selectedTarget);
-			}
+			return;
+		} 
+		//external buildfile
+		IPath filePath= getExternalBuildFilePath();
+		if (filePath != null) {
+			launch(filePath, ILaunchManager.RUN_MODE, selectedTarget);
+			return;
 		}
+		
+		antFileNotFound();
+	}
+	
+	private IPath getExternalBuildFilePath() {
+		IWorkbenchPage page= AntUIPlugin.getActiveWorkbenchWindow().getActivePage();
+		IEditorInput editorInput= page.getActiveEditor().getEditorInput();
+		IPath filePath= null;
+		if (editorInput instanceof ILocationProvider) {
+	    	filePath= ((ILocationProvider)editorInput).getPath(editorInput);
+	    }
+		return filePath;
 	}
 	
 	/**
