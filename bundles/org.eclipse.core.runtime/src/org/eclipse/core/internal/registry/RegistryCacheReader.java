@@ -418,12 +418,18 @@ public class RegistryCacheReader {
 	}
 
 	public class InvalidRegistryCacheException extends Exception {
+		Throwable cause=null;
 		public InvalidRegistryCacheException(String msg, Throwable cause) {
-			super(msg, cause);
+			super(msg);
+			this.cause = cause;
 		}
 
 		public InvalidRegistryCacheException(String string) {
 			super(string);
+		}
+		
+		public Throwable getCause() {
+			return cause;
 		}
 	}
 }
