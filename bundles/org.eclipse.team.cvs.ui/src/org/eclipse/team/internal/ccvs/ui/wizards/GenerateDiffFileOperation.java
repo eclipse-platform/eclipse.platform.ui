@@ -84,6 +84,7 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
 					clipboard.setContents(
 						new String[]{baos.toString()}, 
 						new Transfer[]{plainTextTransfer});	
+					clipboard.dispose();
 				}
 			} else {
 				if(outputFile.length() == 0) {

@@ -54,5 +54,6 @@ public class CopyRepositoryNameAction extends TeamAction {
 	private void copyToClipbard(Display display, String str) {
 		Clipboard clipboard = new Clipboard(display);
 		clipboard.setContents(new String[] { str },	new Transfer[] { TextTransfer.getInstance()});			
+		clipboard.dispose();
 	}
 }
