@@ -20,6 +20,19 @@ plus = new Image();
 plus.src = "images/plus_tree.gif";
 
 /**
+ * Returns the target node of an event
+ */
+function getTarget(e) {
+	var target;
+  	if (isMozilla)
+  		target = e.target;
+  	else if (isIE)
+   		target = window.event.srcElement;
+
+	return target;
+}
+
+/**
  * Returns the node with specified tag
  */
 function getChildNode(parent, childTag)
@@ -244,13 +257,8 @@ function focusHandler(e)
  * display topic label in the status line on mouse over topic
  */
 function mouseMoveHandler(e) {
-  var overNode;
-  if (isMozilla)
-  	overNode = e.target;
-  else if (isIE)
-   	overNode = window.event.srcElement;
-  else 
-  	return;
+  var overNode = getTarget(e);
+  if (!overNode) return;
   	
   overNode = getAnchorNode(overNode);
   if (overNode == null)
@@ -266,13 +274,36 @@ function mouseMoveHandler(e) {
  * handler for expanding / collapsing topic tree
  */
 function mouseClickHandler(e) {
-  	var clickedNode;
+  	var clickedNode = getTarget(e);
+  	if (!clickedNode) return;
+
+  	if (isPlusMinus(clickedNode) )
+  	{	
+    	if (isCollapsed(clickedNode)) 
+   			expand(clickedNode);
+  		else if (isExpanded(clickedNode)) 
+  	  		collapse(clickedNode);
+  	}
+  	else
+  	{
+  		var plus_minus = getPlusMinus(clickedNode);
+  		if (plus_minus != null)
+  			highlightTopic(plus_minus);
+  	}
+  	
   	if (isMozilla)
-  		clickedNode = e.target;
+  		e.cancelBubble = true;
   	else if (isIE)
-   		clickedNode = window.event.srcElement;
-  	else 
-  		return;
+  		window.event.cancelBubble = true;
+}
+
+/**
+ * handler for expanding / collapsing topic tree
+ */
+function mouseDblClickHandler(e) {
+
+  	var clickedNode = getTarget(e);
+  	if (!clickedNode) return;
 
   	var plus_minus = getPlusMinus(clickedNode);
   	if (plus_minus != null)
@@ -291,9 +322,91 @@ function mouseClickHandler(e) {
   		window.event.cancelBubble = true;
 }
 
+/**
+ * Handler for key down (arrows)
+ */
+function keyDownHandler(e)
+{
+	var key;
+	if (isIE)
+		key = window.event.keyCode;
+	else if (isMozilla)
+		key = e.keyCode;
+	
+	if (key == 9 | key == 13) // tab or enter
+		return true;
+	
+	if (isMozilla)
+  		e.cancelBubble = true;
+  	else if (isIE)
+  		window.event.cancelBubble = true;
+  		
+  	if (key == 39) { // Right arrow, expand
+		var clickedNode = getTarget(e);
+  		if (!clickedNode) return;
 
-document.onclick = mouseClickHandler;
-document.onmousemove = mouseMoveHandler;
-if (isIE) {
+  		var plus_minus = getPlusMinus(clickedNode);
+  		if (plus_minus != null)
+  		{	
+    		if (isCollapsed(plus_minus)) 
+   				expand(plus_minus);
+  			
+  			highlightTopic(plus_minus);
+  			scrollIntoView(clickedNode);
+  		}
+  	} else if (key == 37) { // Left arrow,collapse
+		var clickedNode = getTarget(e);
+  		if (!clickedNode) return;
+
+  		var plus_minus = getPlusMinus(clickedNode);
+  		if (plus_minus != null)
+  		{	
+    		if (isExpanded(plus_minus)) 
+   				collapse(plus_minus);
+  			
+  			highlightTopic(plus_minus);
+  			scrollIntoView(clickedNode);
+  		}
+  	}
+  	/*
+  	  else if (key == 40 ) { // down arrow
+  		var clickedNode = getTarget(e);
+  		if (!clickedNode) return;
+		
+  		var evtObj = document.createEventObject();
+  		evtObj.keyCode = 9;
+  
+		var x=clickedNode.fireEvent("onkeydown",evtObj);
+
+		//if (isIE)
+		//	window.event.cancelBubble = true;
+  	} else if (key == 40 ) { // up arrow
+  		if (!e) e = window.event;
+  		var evtObj = document.createEventObject(e);
+  		evtObj.keyCode = 9;
+ 		evtObj.shiftKey = true;
+  
+		document.fireEvent("onkeydown",evtObj);
+		document.fireEvent("onkeyup",evtObj);
+		if (isIE)
+			window.event.cancelBubble = true;
+  	}
+  	*/
+  	 			
+  	return false;
+}
+
+if (isMozilla) {
+  document.addEventListener('click', mouseClickHandler, true);
+  document.addEventListener('dblclick', mouseDblClickHandler, true);
+  document.addEventListener('mousemove', mouseMoveHandler, true);
+  document.addEventListener('keydown', keyDownHandler, true);
+}
+else if (isIE){
+  document.onclick = mouseClickHandler;
+  document.ondblclick = mouseDblClickHandler;
+  document.onmousemove = mouseMoveHandler;
+  document.onkeydown = keyDownHandler;
   window.onfocus = focusHandler;
 }
+
