@@ -15,9 +15,8 @@ import org.eclipse.core.runtime.preferences.*;
 
 /**
  */
-public class HelpBasePreferenceInitializer
-		extends
-			AbstractPreferenceInitializer {
+public class HelpBasePreferenceInitializer extends
+		AbstractPreferenceInitializer {
 
 	/*
 	 * (non-Javadoc)
@@ -28,14 +27,17 @@ public class HelpBasePreferenceInitializer
 		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
 
 		String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
-		boolean isWindows = os.indexOf("windows") != -1; //$NON-NLS-1$
 
-		if (isWindows)
+		if (os.indexOf("windows") != -1) { //$NON-NLS-1$
 			prefs
 					.setDefault("custom_browser_path", //$NON-NLS-1$
 							"\"C:\\Program Files\\Internet Explorer\\IEXPLORE.EXE\" %1"); //$NON-NLS-1$
-		else
+		} else if (os.indexOf("linux") != -1) { //$NON-NLS-1$
+			prefs.setDefault("custom_browser_path", //$NON-NLS-1$
+					"konqueror %1"); //$NON-NLS-1$
+		} else {
 			prefs.setDefault("custom_browser_path", "mozilla %1"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 
 }
