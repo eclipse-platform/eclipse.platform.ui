@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="test">
+<schema targetNamespace="org.eclipse.ui.intro">
 <annotation>
       <appInfo>
-         <meta.schema plugin="test" id="test" name="test"/>
+         <meta.schema plugin="org.eclipse.ui.intro" id="null" name=""/>
       </appInfo>
       <documentation>
          [Enter description of this extension point.]
@@ -21,6 +21,17 @@
    </element>
 
    <element name="page">
+      <annotation>
+         <documentation>
+            This element is used to describe a page to be displayed. A page can be either either dynamic or static.&lt;br/&gt;
+&lt;br/&gt;
+Static pages allow for reuse of existing HTML documents within ones introduction. When a static page is used, none of the subelements are utilized. Also note when the SWT presentation is used and a static page is to be displayed an external brower is launched and the current page remains visible.&lt;br/&gt;
+&lt;br/&gt;
+Dynamic pages do not have a url defined and their contents are generated from the subelements of the page. The style or alt-style will be applied depending on the presentation. The styles can be further enhanced by referencing the id or class-id.&lt;br/&gt;
+
+A &lt;b&gt;group&lt;/b&gt; subelement is used to group of content and apply style across the grouped content. A &lt;b&gt;link&lt;/b&gt; subelement defines a link which can be used to link to a page and run an intro action/command.  A link is normally defined at the page level to navigate between main pages verses links within a page. A &lt;b&gt;text&lt;/b&gt; subelement defines textual content for the page level. A &lt;b&gt;head&lt;/b&gt; subelement is only applicable for the Web based presentation and allows for additional html to be added to the HTML &lt;b&gt;head&lt;/b&gt; section. This is useful for adding java srcipts or extra styles sheets. An &lt;b&gt;img&lt;/b&gt; subelement defines image content for the page level. An &lt;b&gt;include&lt;/b&gt; subelement allows for reuse any element other than a page. An &lt;b&gt;html&lt;/b&gt; subelement is only applicable for the Web based presentation and allows for the embedding or inclusion of html into the page&apos;s content. Embedding allows for a fully defined html file to be embeded within an HTML &lt;b&gt;object&lt;/b&gt; by referencing the html file. Inclusion allows for embedding an html snippets directly from html file. A &lt;b&gt;title&lt;/b&gt; subelement defines the title of the page.
+         </documentation>
+      </annotation>
       <complexType>
          <choice>
             <element ref="group" minOccurs="0" maxOccurs="unbounded"/>
@@ -36,28 +47,28 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  A unique name that can be used to identify this page.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="style" type="string">
             <annotation>
                <documentation>
-                  
+                  A relative path to a CSS file which is applied to the page only when using the Web based presentation.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="alt-style" type="string">
             <annotation>
                <documentation>
-                  
+                  A relative path to a SWT presentation properies file which is applied to the page only when using the SWT based presentation.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="url" type="string">
             <annotation>
                <documentation>
-                  
+                  The optional relative path to an HTML file. When using the Web based presentation, this HTML file will displayed instead of any content defined for this page.
                </documentation>
             </annotation>
          </attribute>
@@ -85,7 +96,7 @@
          <attribute name="style-id" type="string">
             <annotation>
                <documentation>
-                  
+                  A means to classifiy the page into a given category so that a common style may be applied.
                </documentation>
             </annotation>
          </attribute>
@@ -135,7 +146,7 @@
          <attribute name="style-id" type="string">
             <annotation>
                <documentation>
-                  
+                  A means to classifiy this group into a given category so that a common style may be applied.
                </documentation>
             </annotation>
          </attribute>
@@ -165,7 +176,7 @@
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  A unique id that can be used to identify this link
                </documentation>
             </annotation>
          </attribute>
@@ -179,14 +190,14 @@
          <attribute name="url" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  A valid URL to external web site or an Intro URL that represents an Intro actions. All intro URLs have the following form:  http://org.eclipse.ui.intro/&amp;lt;command&amp;gt&gt;&amp;amp;p1=v1&amp;amp;p2=v2... and will be processed as Eclipse requests.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="style-id" type="string">
             <annotation>
                <documentation>
-                  
+                  A means to classifiy this link into a given category so that a common style may be applied.
                </documentation>
             </annotation>
          </attribute>
@@ -211,7 +222,8 @@
    <element name="html">
       <annotation>
          <documentation>
-            direct HTML to include in the page either by embedding the entire document, or inlining a snippet of HTML in-place. A fallback image or text must be defined for alternative rendering.
+            direct HTML to include in the page either by embedding the entire document, or inlining a snippet of HTML in-place. A fallback image or text must be defined for alternative swt presentation rendering.
+Embedding allows for a fully defined html file to be embeded within an HTML object by referencing the html file. Inclusion allows for embedding an html snippets directly from html file.
          </documentation>
       </annotation>
       <complexType>
@@ -236,7 +248,7 @@
          <attribute name="type" use="required">
             <annotation>
                <documentation>
-                  if &apos;inline&apos;, value of &apos;src&apos; will be treated as a snippet of HTML to emit &apos;in-place&apos;. If &apos;embed&apos;, a valid (full) HTML document will be embedded using HTML &apos;OBJECT&apos; tag. (if type is not specified, this html object is ignored by the intro configuration).
+                  if &apos;embed&apos;, a valid (full) HTML document will be embedded using HTML &apos;OBJECT&apos; tag. If &apos;inline&apos;, value of &apos;src&apos; will be treated as a snippet of HTML to emit &apos;in-place&apos;. (if type is not specified, this html object is ignored by the intro configuration).
                </documentation>
             </annotation>
             <simpleType>
@@ -251,7 +263,7 @@
          <attribute name="style-id" type="string">
             <annotation>
                <documentation>
-                  
+                  A means to classifiy this HTML element into a given category so that a common style may be applied.
                </documentation>
             </annotation>
          </attribute>
@@ -276,7 +288,7 @@
    <element name="title">
       <annotation>
          <documentation>
-            a snippet of text that can optionally contain escaped HTML tags. It is used as the page Title.
+            a snippet of text that can optionally contain escaped HTML tags. It is only used as a Page Title, and so a given page can have a maximun of one Title element.
          </documentation>
       </annotation>
       <complexType>
@@ -315,7 +327,8 @@
    <element name="text">
       <annotation>
          <documentation>
-            a snippet of text that can optionally contain escaped HTML tags.
+            a snippet of text that can optionally contain escaped HTML tags. It can include b and li tags. It can also contain anchors for urls. 
+If multiple paragraphs are needed, then the text can be divided into multiple sections each begining and ending with the p tag.
          </documentation>
       </annotation>
       <complexType>
@@ -354,7 +367,7 @@
    <element name="include">
       <annotation>
          <documentation>
-            expands an element targeted by the given path, and optional configId attributes. Path should uniquely address an element within the specified configuration. It could point to a div defined at the configuration level, or any element in a page.
+            expands an element targeted by the given path, and optional configId attributes. Path should uniquely address an element within the specified configuration. It could point to a shared group defined at the configuration level, or any element in a page.
          </documentation>
       </annotation>
       <complexType>
@@ -368,7 +381,7 @@
          <attribute name="path" type="string" use="required">
             <annotation>
                <documentation>
-                  the path that uniquely represents the target element within the configuration (e.g. page/div1/div2). It may be a div element, or any element that may be contained in a div. You can not include a page.
+                  the path that uniquely represents the target element within the configuration (e.g. page/group1/group2). It may be a group element, or any element that may be contained in a group. You can not include a page.
                </documentation>
             </annotation>
          </attribute>
@@ -385,14 +398,15 @@
    <element name="head">
       <annotation>
          <documentation>
-            direct HTML to include in a page&apos;s HEAD content area. This markup is only to be used with an SWT Based intro part implementation. It is simply ignored in the case of a UI Forms implementation. A page can have more than one head element. An implementation can have one and only one head element (since it is a shared head content, it makes sense to just define it in one file).
+            Direct HTML to include in a page&apos;s HEAD content area. It allows for additional html to be added to the HTML HEAD section. This is useful for adding java srcipts or extra styles sheets.
+This markup is only to be used with an SWT Based intro part implementation. It is simply ignored in the case of a UI Forms implementation. A page can have more than one head element. An implementation can have one and only one head element (since it is a shared head content, it makes sense to just define it in one file).
          </documentation>
       </annotation>
       <complexType>
          <attribute name="src" type="string" use="required">
             <annotation>
                <documentation>
-                  relative or absolute URL to a file containing HTML
+                  relative or absolute URL to a file containing HTML to include directly into the HTML head section.
                </documentation>
             </annotation>
          </attribute>
@@ -402,7 +416,7 @@
    <element name="img">
       <annotation>
          <documentation>
-            an image that represents presentation content (as opposed to decoration images defined in styles).
+            An image that represents intro content and not presentation. (as opposed to decoration images defined in styles).
          </documentation>
       </annotation>
       <complexType>
@@ -423,14 +437,14 @@
          <attribute name="alt" type="string">
             <annotation>
                <documentation>
-                  
+                  the alternative text to use when the image can not be loaded and as tooltip text for the image.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="style-id" type="string">
             <annotation>
                <documentation>
-                  
+                  A means to classifiy this image into a given category so that a common style may be applied.
                </documentation>
             </annotation>
          </attribute>
@@ -455,7 +469,7 @@
    <element name="extensionContent">
       <annotation>
          <documentation>
-            The content to be added to the target page or div. Only one extensionContent is allowed in a given configExtension because if this extension could not be resolved (if the config could not be found, or the target element could not be found, for example) then the pages and/or divs in the extension need to be ingnored.
+            The content to be added to the target anchor. Only one extensionContent is allowed in a given configExtension because if this extension could not be resolved (if the config could not be found, or the target anchor element could not be found) then the pages and/or groups in the extension need to be ingnored.
          </documentation>
       </annotation>
       <complexType>
