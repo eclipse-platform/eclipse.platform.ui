@@ -16,7 +16,8 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.parts.*;
 
 /**
- *  */
+ * 
+ */
 
 public class UpdateLabelProvider extends SharedLabelProvider {
 	/**
