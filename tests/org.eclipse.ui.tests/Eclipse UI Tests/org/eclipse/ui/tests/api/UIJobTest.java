@@ -129,12 +129,12 @@ public class UIJobTest extends UITestCase {
 	        long finalTime = System.currentTimeMillis();
 	        
 	        // Ensure that we slept for at least 1s
-	        Assert.assertTrue(finalTime - currentTime >= 200);
+	        Assert.assertTrue("Did not sleep",finalTime - currentTime >= 200);
 	        
-	        Assert.assertTrue(backgroundThreadStarted);
-	        Assert.assertFalse(testJobRan);
-	        Assert.assertFalse(backgroundThreadFinished);
-	        Assert.assertFalse(backgroundThreadInterrupted);
+	        Assert.assertTrue("Background do not start",backgroundThreadStarted);
+	        Assert.assertFalse("Test job ran",testJobRan);
+	        Assert.assertFalse("Background job finished to early",backgroundThreadFinished);
+	        Assert.assertFalse("Background was interrupted",backgroundThreadInterrupted);
 	        
 	        // Now run the event loop. Give the asyncExec a chance to run.
 			//Use the display provided by the shell if possible
@@ -152,12 +152,12 @@ public class UIJobTest extends UITestCase {
 	        }
 	        
 	        // Now that the event queue is empty, check that our final state is okay.
-	        Assert.assertTrue(backgroundThreadStarted);
-	        Assert.assertTrue(testJobRan);
-	        Assert.assertTrue(backgroundThreadFinished);
-	        Assert.assertFalse(backgroundThreadInterrupted);
-	        Assert.assertFalse(backgroundThreadFinishedWhenUIJobRan);
-	        Assert.assertTrue(testJobRanBeforeBackgroundJobFinished);
+	        Assert.assertTrue("Background thread did not start",backgroundThreadStarted);
+	        Assert.assertTrue("Test job did not run",testJobRan);
+	        Assert.assertTrue("Background thread did not finish",backgroundThreadFinished);
+	        Assert.assertFalse("Background thread was interrupted", backgroundThreadInterrupted);
+	        Assert.assertFalse("Background thread finished when the job ran",backgroundThreadFinishedWhenUIJobRan);
+	        Assert.assertTrue("Test job ran after background",testJobRanBeforeBackgroundJobFinished);
 	        
         } finally {
             
