@@ -26,7 +26,9 @@ public class DirectoryToc {
 		this.tocFile = tocFile;
 		// Obtain extra search directory if provided
 		this.dir =
-			HrefUtil.normalizeDirectoryHref(tocFile.getPluginID(), tocFile.getExtraDir());
+			HrefUtil.normalizeDirectoryHref(
+				tocFile.getPluginID(),
+				tocFile.getExtraDir());
 
 	}
 	/**
@@ -42,8 +44,8 @@ public class DirectoryToc {
 			Collection col = createExtraTopics();
 			extraTopics = (ITopic[]) col.toArray(new ITopic[col.size()]);
 			// for memory foot print, release TocFile and dir
-			tocFile=null;
-			dir=null;
+			tocFile = null;
+			dir = null;
 		}
 
 		return extraTopics;
@@ -82,7 +84,9 @@ public class DirectoryToc {
 				url = pluginDesc.getPlugin().find(new Path("doc.zip"));
 			}
 		} catch (CoreException ce) {
-			Logger.logError(Resources.getString("E034", "/" + pluginID + "/doc.zip"), ce);
+			Logger.logError(
+				Resources.getString("E034", "/" + pluginID + "/doc.zip"),
+				ce);
 		}
 		if (url != null) {
 			// collect topics from doc.zip file
@@ -108,7 +112,8 @@ public class DirectoryToc {
 		}
 		if (url != null) {
 			// collect topics from doc.zip file
-			ret.addAll(createExtraTopicsFromDirectory(pluginID, directory, url));
+			ret.addAll(
+				createExtraTopicsFromDirectory(pluginID, directory, url));
 		}
 		return ret;
 
@@ -135,7 +140,9 @@ public class DirectoryToc {
 			ret = createExtraTopicsFromZipFile(pluginID, zipFile, directory);
 			zipFile.close();
 		} catch (IOException ioe) {
-			Logger.logError(Resources.getString("E037", realZipURL.getFile()), ioe);
+			Logger.logError(
+				Resources.getString("E037", realZipURL.getFile()),
+				ioe);
 			return new ArrayList(0);
 		}
 
@@ -190,10 +197,13 @@ public class DirectoryToc {
 		}
 		File dirFile = new File(realURL.getFile());
 		if (dirFile.exists() && dirFile.isDirectory()) {
-			createExtraTopicsFromDirectoryFile(
-				"/" + pluginID + "/" + directory,
-				dirFile,
-				col);
+			String prefix;
+			if (directory.length() > 0) {
+				prefix = "/" + pluginID + "/" + directory;
+			} else {
+				prefix = "/" + pluginID;
+			}
+			createExtraTopicsFromDirectoryFile(prefix, dirFile, col);
 		}
 		return col;
 
