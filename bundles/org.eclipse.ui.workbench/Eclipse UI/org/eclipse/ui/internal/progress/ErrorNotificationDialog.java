@@ -71,6 +71,13 @@ public class ErrorNotificationDialog extends Dialog {
 			}
 		});
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#getShellStyle()
+	 */
+	protected int getShellStyle() {
+		return super.getShellStyle() | SWT.MIN;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
