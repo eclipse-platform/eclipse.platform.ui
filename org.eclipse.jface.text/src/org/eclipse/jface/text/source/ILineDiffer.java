@@ -17,6 +17,9 @@ import org.eclipse.jface.text.BadLocationException;
  * Protocol that allows direct access to line information. Usually, implementations will also 
  * implement <code>IAnnotationModel</code>, which only allows <code>Iterator</code> based access
  * to annotations.
+ * <p>
+ * This interface may be implemented by clients.
+ * </p>
  * 
  * @since 3.0
  */
@@ -25,7 +28,7 @@ public interface ILineDiffer {
 	/**
 	 * Determines the line state for line <code>line</code> in the targeted document.
 	 * 
-	 * @param line
+	 * @param line the line to get diff information for
 	 * @return the line information object for <code>line</code>.
 	 */
 	ILineDiffInfo getLineInfo(int line);

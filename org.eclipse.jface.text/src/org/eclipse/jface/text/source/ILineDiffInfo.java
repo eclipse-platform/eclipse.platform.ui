@@ -14,7 +14,10 @@ package org.eclipse.jface.text.source;
 /**
  * Describes the change state of one line, which consists of the state of the line itself, which
  * can be <code>UNCHANGED</code>, <code>CHANGED</code> or <code>ADDED</code>, and the number of 
- * deleted lines before and after this line. 
+ * deleted lines before and after this line.
+ * <p>
+ * This interface may be implemented by clients.
+ * </p>
  * 
  * @since 3.0
  */
