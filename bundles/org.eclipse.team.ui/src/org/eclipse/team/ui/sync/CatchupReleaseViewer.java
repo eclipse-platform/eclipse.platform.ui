@@ -276,7 +276,8 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		};
 		
 		// Toggle granularity
-		toggleGranularity = new Action(Policy.bind("CatchupReleaseViewer.Compare_File_Contents_1")) { //$NON-NLS-1$
+		image = TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_CONTENTS);
+		toggleGranularity = new Action(Policy.bind("CatchupReleaseViewer.Compare_File_Contents_1"), image) { //$NON-NLS-1$
 			public void run() {
 				diffModel.setSyncGranularity(isChecked() ? ILocalSyncElement.GRANULARITY_CONTENTS : ILocalSyncElement.GRANULARITY_TIMESTAMP);
 			}

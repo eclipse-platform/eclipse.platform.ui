@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ui;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
@@ -20,19 +20,20 @@ public interface UIConstants {
 	public final String ICON_PATH_FULL = "icons/full/"; //$NON-NLS-1$
 	public final String ICON_PATH_BASIC = "icons/basic/"; //$NON-NLS-1$
 
-	//Local toolbars (colour)
+	// local toolbars (colour)
 	public final String IMG_DLG_SYNC_INCOMING = "clcl16/incom_synch.gif"; //$NON-NLS-1$
 	public final String IMG_DLG_SYNC_OUTGOING = "clcl16/outgo_synch.gif"; //$NON-NLS-1$
 	public final String IMG_DLG_SYNC_CONFLICTING = "clcl16/conflict_synch.gif"; //$NON-NLS-1$
 	public final String IMG_REFRESH = "clcl16/refresh.gif"; //$NON-NLS-1$
 	public final String IMG_IGNORE_WHITESPACE = "clcl16/ignorews_edit.gif";	 //$NON-NLS-1$
-
-	//sync view modes
+	public final String IMG_CONTENTS = "clcl16/contents.gif"; //$NON-NLS-1$
+	
+	// sync view modes
 	public final String IMG_SYNC_MODE_CATCHUP = "clcl16/catchup_rls.gif"; //$NON-NLS-1$
 	public final String IMG_SYNC_MODE_RELEASE = "clcl16/release_rls.gif"; //$NON-NLS-1$
 	public final String IMG_SYNC_MODE_FREE = "clcl16/catchuprelease_rls.gif"; //$NON-NLS-1$
 	
-	// Wizard banners
+	// wizard banners
 	public final String IMG_WIZBAN_SHARE = "wizban/newconnect_wizban.gif"; //$NON-NLS-1$
 	
 }
