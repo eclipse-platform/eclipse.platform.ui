@@ -297,7 +297,7 @@ final class KeySequenceBindingNode {
 			KeySequenceBindingNode keySequenceBindingNode = (KeySequenceBindingNode) iterator.next();
 			keySequenceBindingNode.solveMatch(activityIds, keyConfigurationIds, platforms, locales);		
 			solve(keySequenceBindingNode.childKeyStrokeNodeByKeyStrokeMap, activityIds, keyConfigurationIds, platforms, locales);								
-		}		
+		}
 	}
 
 	private Map assignmentsByActivityId = new HashMap();

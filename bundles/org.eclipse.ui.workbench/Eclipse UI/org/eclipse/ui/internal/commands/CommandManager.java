@@ -90,7 +90,7 @@ public final class CommandManager implements ICommandManager {
 			IKeySequenceBindingDefinition keySequenceBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();
 			KeySequence keySequence = keySequenceBindingDefinition.getKeySequence();
 			
-			if (keySequenceBindingDefinition.getCommandId() == null || keySequence == null || !validateKeySequence(keySequence))
+			if (keySequence == null || !validateKeySequence(keySequence))
 				iterator.remove();
 		}
 	}	
@@ -666,8 +666,8 @@ public final class CommandManager implements ICommandManager {
 		validateKeySequenceBindingDefinitions(commandRegistryKeySequenceBindingDefinitions);		
 		List mutableCommandRegistryKeySequenceBindingDefinitions = new ArrayList(mutableCommandRegistry.getKeySequenceBindingDefinitions());
 		validateKeySequenceBindingDefinitions(mutableCommandRegistryKeySequenceBindingDefinitions);		
-		keySequenceBindingMachine.setKeySequenceBindings0(commandRegistryKeySequenceBindingDefinitions);
-		keySequenceBindingMachine.setKeySequenceBindings1(mutableCommandRegistryKeySequenceBindingDefinitions);		
+		keySequenceBindingMachine.setKeySequenceBindings0(mutableCommandRegistryKeySequenceBindingDefinitions);		
+		keySequenceBindingMachine.setKeySequenceBindings1(commandRegistryKeySequenceBindingDefinitions);
 		calculateKeySequenceBindings();
 		Map categoryEventsByCategoryId = updateCategories(categoriesById.keySet());	
 		Map commandEventsByCommandId = updateCommands(commandsById.keySet());	

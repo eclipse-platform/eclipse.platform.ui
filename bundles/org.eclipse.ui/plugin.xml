@@ -1191,7 +1191,13 @@
             commandId="org.eclipse.ui.edit.text.showRulerContextMenu"
             contextId="org.eclipse.ui.textEditorScope"
             keySequence="Ctrl+W">
-      </keyBinding>
+      </keyBinding>      
+      <keyBinding
+            commandId="org.eclipse.ui.edit.cut"
+            contextId="org.eclipse.ui.textEditorScope"
+            keySequence="Ctrl+W"
+            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
+      </keyBinding>      
       <keyBinding
             commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
             keySequence="Ctrl+Space">
