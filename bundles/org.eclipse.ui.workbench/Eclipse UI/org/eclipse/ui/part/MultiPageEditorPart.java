@@ -150,7 +150,7 @@ public abstract class MultiPageEditorPart extends EditorPart {
         IEditorSite site = createSite(editor);
         // call init first so that if an exception is thrown, we have created no new widgets
         editor.init(site, input);
-        Composite parent2 = new Composite(getContainer(), SWT.NONE);
+        Composite parent2 = new Composite(getContainer(), getOrientation(editor));
         parent2.setLayout(new FillLayout());
         editor.createPartControl(parent2);
         editor.addPropertyListener(new IPropertyListener() {
@@ -165,7 +165,21 @@ public abstract class MultiPageEditorPart extends EditorPart {
         nestedEditors.add(editor);
     }
 
-    /**
+	/**
+	 * Get the orientation of the editor.
+	 * @param editor
+	 * @return int the orientation flag
+	 * @see SWT#RIGHT_TO_LEFT
+	 * @see SWT#LEFT_TO_RIGHT
+	 * @see SWT#NONE
+	 */
+    private int getOrientation(IEditorPart editor) {
+		if(editor instanceof IWorkbenchPartOrientation)
+			return ((IWorkbenchPartOrientation) editor).getOrientation();
+		return getOrientation();
+	}
+
+	/**
      * Creates an empty container. Creates a CTabFolder with no style bits set, and
      * hooks a selection listener which calls <code>pageChange()</code> whenever
      * the selected tab changes.
