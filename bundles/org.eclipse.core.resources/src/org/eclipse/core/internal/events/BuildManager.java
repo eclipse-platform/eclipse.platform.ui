@@ -763,7 +763,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				String message = "Checking if need to build. Starting delta computation between: " + oldTree.toString() + " and " + newTree.toString(); //$NON-NLS-1$ //$NON-NLS-2$
 				Policy.debug(message);
 			}
-			currentDelta = newTree.getDataTree().forwardDeltaWith(oldTree.getDataTree(), ResourceComparator.getComparator(false));
+			currentDelta = newTree.getDataTree().forwardDeltaWith(oldTree.getDataTree(), ResourceComparator.getBuildComparator());
 			if (Policy.DEBUG_NEEDS_BUILD)
 				Policy.debug("End delta computation. (" + (System.currentTimeMillis() - start) + "ms)."); //$NON-NLS-1$ //$NON-NLS-2$
 			deltaTreeCache.cache(null, oldTree, newTree, currentDelta);

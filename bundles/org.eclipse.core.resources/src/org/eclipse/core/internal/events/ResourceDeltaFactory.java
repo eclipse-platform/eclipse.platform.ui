@@ -38,7 +38,7 @@ public class ResourceDeltaFactory {
 	 */
 	public static ResourceDelta computeDelta(Workspace workspace, ElementTree oldTree, ElementTree newTree, IPath root, long markerGeneration) {
 		//compute the underlying delta tree.
-		ResourceComparator comparator = ResourceComparator.getComparator(markerGeneration >= 0);
+		ResourceComparator comparator = markerGeneration >= 0 ? ResourceComparator.getNotificationComparator() : ResourceComparator.getBuildComparator();
 		newTree.immutable();
 		DeltaDataTree delta = null;
 		if (Path.ROOT.equals(root))
@@ -172,7 +172,7 @@ public class ResourceDeltaFactory {
 	 * it is rooted at a project, and does not contain marker deltas.
 	 */
 	public static IResourceDelta newEmptyDelta(IProject project) {
-		ResourceDelta result = new ResourceDelta(project.getFullPath(), new ResourceDeltaInfo(((Workspace) project.getWorkspace()), null, ResourceComparator.getComparator(false)));
+		ResourceDelta result = new ResourceDelta(project.getFullPath(), new ResourceDeltaInfo(((Workspace) project.getWorkspace()), null, ResourceComparator.getBuildComparator()));
 		result.setStatus(0);
 		result.setChildren(NO_CHILDREN);
 		ResourceInfo info = ((Project) project).getResourceInfo(true, false);

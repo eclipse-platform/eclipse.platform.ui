@@ -994,7 +994,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 				try {
 					out.writeInt(ICoreConstants.WORKSPACE_TREE_VERSION_2);
 					writeWorkspaceFields(out, monitor);
-					writer.writeDelta(tree, lastSnap, Path.ROOT, ElementTreeWriter.D_INFINITE, out, ResourceComparator.getComparator());
+					writer.writeDelta(tree, lastSnap, Path.ROOT, ElementTreeWriter.D_INFINITE, out, ResourceComparator.getSaveComparator());
 					safeStream.succeed();
 				} finally {
 					out.close();
@@ -1122,7 +1122,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 				/* save the forest! */
 				ElementTreeWriter writer = new ElementTreeWriter(this);
 				ElementTree[] treesToSave = (ElementTree[]) trees.toArray(new ElementTree[trees.size()]);
-				writer.writeDeltaChain(treesToSave, Path.ROOT, ElementTreeWriter.D_INFINITE, output, ResourceComparator.getComparator());
+				writer.writeDeltaChain(treesToSave, Path.ROOT, ElementTreeWriter.D_INFINITE, output, ResourceComparator.getSaveComparator());
 				monitor.worked(Policy.totalWork * 50 / 100);
 			} finally {
 				if (!wasImmutable)
@@ -1189,7 +1189,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 				/* save the forest! */
 				ElementTreeWriter writer = new ElementTreeWriter(this);
 				ElementTree[] treesToSave = (ElementTree[]) trees.toArray(new ElementTree[trees.size()]);
-				writer.writeDeltaChain(treesToSave, project.getFullPath(), ElementTreeWriter.D_INFINITE, output, ResourceComparator.getComparator());
+				writer.writeDeltaChain(treesToSave, project.getFullPath(), ElementTreeWriter.D_INFINITE, output, ResourceComparator.getSaveComparator());
 				monitor.worked(8);
 			} finally {
 				if (output != null)

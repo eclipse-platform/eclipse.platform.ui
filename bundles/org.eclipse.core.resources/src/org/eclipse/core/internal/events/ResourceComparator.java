@@ -25,21 +25,55 @@ import org.eclipse.core.resources.IResourceDelta;
  * whether the comparison is zero (equal) or non-zero (not equal).
  */
 public class ResourceComparator implements IElementComparator, ICoreConstants {
-	// boolean indicating whether or not this comparator is to be used for
-	// a notification. (as opposed to a build) Notifications include extra information
-	// like marker and sync info changes.
-	boolean notification;
-
 	/* Singeton instances */
-	protected static ResourceComparator markerSingleton;
-	protected static ResourceComparator noMarkerSingleton;
+	protected static final ResourceComparator notificationSingleton = new ResourceComparator(true, false);
+	protected static final ResourceComparator buildSingleton = new ResourceComparator(false, false);
+
+	/** 
+	 * Boolean indicating whether or not this comparator is to be used for
+	 * a notification. (as opposed to a build) Notifications include extra information
+	 * like marker and sync info changes.
+	 */
+	private boolean notification;
+
+	/** 
+	 * Boolean indicating whether or not this comparator is to be used for
+	 * snapshot. Snapshots care about extra information such as the used bit.
+	 */
+	private boolean save;
+
+	/**
+	 * Returns a comparator which compares resource infos, suitable for computing
+	 * save and snapshot deltas.
+	 */
+	public static ResourceComparator getSaveComparator() {
+		return new ResourceComparator(false, true);
+	}
+
+	/**
+	 * Returns a comparator which compares resource infos, suitable for computing
+	 * build deltas.
+	 */
+	public static ResourceComparator getBuildComparator() {
+		return buildSingleton;
+	}
+
+	/**
+	 * Returns a comparator which compares resource infos, suitable for computing
+	 * build deltas.
+	 */
+	public static ResourceComparator getNotificationComparator() {
+		return notificationSingleton;
+	}
 
 	/**
 	 * Create a comparator which compares resource infos.
-	 * If includeMarkerDeltas is true, check for marker deltas.
+	 * @param notification if true, check for marker deltas.
+	 * @param save if true, check for all resource changes that snapshot needs
 	 */
-	private ResourceComparator(boolean notification) {
+	private ResourceComparator(boolean notification, boolean save) {
 		this.notification = notification;
+		this.save = save;
 	}
 
 	/**
@@ -78,13 +112,19 @@ public class ResourceComparator implements IElementComparator, ICoreConstants {
 			if (oldElement.getType() == IResource.FILE && newElement.getType() == IResource.FILE)
 				result |= IResourceDelta.CONTENT;
 		}
+		if (!compareCharsets(oldElement, newElement))
+			result |= IResourceDelta.ENCODING;
 		if (notification && !compareSync(oldElement, newElement))
 			result |= IResourceDelta.SYNC;
 		if (notification && !compareMarkers(oldElement, newElement))
 			result |= IResourceDelta.MARKERS;
-		if (!compareCharsets(oldElement, newElement))
-			result |= IResourceDelta.ENCODING;
+		if (save && !compareUsed(oldElement, newElement))
+			result |= IResourceDelta.CHANGED;
 		return result == 0 ? 0 : result | IResourceDelta.CHANGED;
+	}
+
+	private boolean compareCharsets(ResourceInfo oldElement, ResourceInfo newElement) {
+		return oldElement.getCharsetGenerationCount() == newElement.getCharsetGenerationCount();
 	}
 
 	/**
@@ -92,10 +132,6 @@ public class ResourceComparator implements IElementComparator, ICoreConstants {
 	 */
 	private boolean compareContents(ResourceInfo oldElement, ResourceInfo newElement) {
 		return oldElement.getContentId() == newElement.getContentId();
-	}
-
-	private boolean compareCharsets(ResourceInfo oldElement, ResourceInfo newElement) {
-		return oldElement.getCharsetGenerationCount() == newElement.getCharsetGenerationCount();
 	}
 
 	private boolean compareMarkers(ResourceInfo oldElement, ResourceInfo newElement) {
@@ -132,27 +168,9 @@ public class ResourceComparator implements IElementComparator, ICoreConstants {
 	}
 
 	/**
-	 * Returns a comparator which compares resource infos.
-	 * Does not check for marker deltas.
+	 * Compares the open state of the ElementInfos for two resources.
 	 */
-	public static ResourceComparator getComparator() {
-		return getComparator(false);
-	}
-
-	/**
-	 * Returns a comparator which compares resource infos.
-	 * If includeMarkerDeltas is true, check for marker deltas.
-	 */
-	public static ResourceComparator getComparator(boolean includeMarkerDeltas) {
-		if (includeMarkerDeltas) {
-			if (markerSingleton == null) {
-				markerSingleton = new ResourceComparator(includeMarkerDeltas);
-			}
-			return markerSingleton;
-		}
-		if (noMarkerSingleton == null) {
-			noMarkerSingleton = new ResourceComparator(includeMarkerDeltas);
-		}
-		return noMarkerSingleton;
+	private boolean compareUsed(ResourceInfo oldElement, ResourceInfo newElement) {
+		return oldElement.isSet(M_USED) == newElement.isSet(M_USED);
 	}
 }

@@ -900,7 +900,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				hasTreeChanges = workManager.shouldBuild();
 				//double check if the tree has actually changed
 				if (hasTreeChanges)
-					hasTreeChanges = operationTree != null && ElementTree.hasChanges(tree, operationTree, ResourceComparator.getComparator(false), true);
+					hasTreeChanges = operationTree != null && ElementTree.hasChanges(tree, operationTree, ResourceComparator.getBuildComparator(), true);
 				broadcastChanges(IResourceChangeEvent.POST_CHANGE, true);
 				// Request a snapshot if we are sufficiently out of date.
 				saveManager.snapshotIfNeeded(hasTreeChanges);
