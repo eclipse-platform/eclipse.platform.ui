@@ -41,6 +41,9 @@ public class BatchInstallOperation
 	public boolean execute(IProgressMonitor monitor, IOperationListener listener) throws CoreException, InvocationTargetException {
 		int installCount = 0;
 
+		if (monitor == null) 
+			monitor = new NullProgressMonitor();
+			
 		try {
 			if (operations == null || operations.length == 0)
 				return false;
@@ -76,8 +79,7 @@ public class BatchInstallOperation
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} finally {
-			if (monitor != null)
-				monitor.done();
+			monitor.done();
 		}
 	}
 }
