@@ -27,12 +27,14 @@ This infopop opened because you pressed F1 while an infopop was already open.</d
 
    <context  id="prefPageBrowsers" >
       <description>Allows selecting a web browser.  The selected web browser will be the default browser used to display help contents.</description>
+	  <topic label="Preferences Dialog" href="/org.eclipse.platform.doc.user/reference/ref-72.htm"/>
    </context>
 
    <context  id="prefPageCustomBrowserPath" >
       <description>When custom web browser is selected from the list, specify path to the browser program that launches the browser.  If the program is available on your system path, you may specify only the program name.
 
 If the program does not accept URL as its last parameter, you may use %1 string to denote the position of the URL parameter in the command.</description>
+      <topic label="Preferences Dialog" href="/org.eclipse.platform.doc.user/reference/ref-72.htm"/>
    </context>
 
    <context  id="prefPageAppServer" >
@@ -43,6 +45,7 @@ To automatically determine the interface address, leave the host field <b>blank<
 To use port dynamically assigned by the system, specify <b>0</b> in the port field.
 
 Under normal circumstances, use the <b>Default</b> settings.</description>
+      <topic label="Preferences Dialog" href="/org.eclipse.platform.doc.user/reference/ref-72.htm"/>
    </context>
 
 <!-- Search dialog Search Help -->
