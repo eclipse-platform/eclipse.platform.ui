@@ -34,10 +34,8 @@ public class UnifiedSearchCategory extends SearchCategory {
 			if (adapter instanceof SiteBookmark) {
 				SiteBookmark bookmark = (SiteBookmark) adapter;
 				String[] ignoredCategories = bookmark.getIgnoredCategories();
-				if (ignoredCategories != null) {
-					for (int i = 0; i < ignoredCategories.length; i++) {
-						ignores.add(ignoredCategories[i]);
-					}
+				for (int i = 0; i < ignoredCategories.length; i++) {
+					ignores.add(ignoredCategories[i]);
 				}
 			}
 

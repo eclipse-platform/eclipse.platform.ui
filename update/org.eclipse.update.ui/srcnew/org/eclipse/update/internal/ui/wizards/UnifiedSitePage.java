@@ -54,12 +54,15 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 		}
 
 		public Object getParent(Object element) {
+			if (element instanceof SiteCategory) 
+				return ((SiteCategory)element).getBookmark();
 			return null;
 		}
 
 		public boolean hasChildren(Object element) {
 			return (element instanceof SiteBookmark);
 		}
+		
 
 	}
 
@@ -100,7 +103,7 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 		}
 	}
 
-	private DiscoveryFolder discoveryFolder;
+	private static DiscoveryFolder discoveryFolder = new DiscoveryFolder();
 	private CheckboxTreeViewer treeViewer;
 	private Button addSiteButton;
 	private Button addLocalButton;
@@ -120,7 +123,6 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 		setTitle("Update sites to visit");
 		setDescription("Select update sites to visit while looking for new features.");
 		UpdateUI.getDefault().getLabelProvider().connect(this);
-		discoveryFolder = new DiscoveryFolder();
 		searchRequest = new UpdateSearchRequest(new UnifiedSiteSearchCategory(), new UpdateSearchScope());
 		searchRequest.addFilter(new BackLevelFilter());
 		envFilter = new EnvironmentFilter();
@@ -353,19 +355,16 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 	private void handleSiteChecked(SiteBookmark bookmark, boolean checked) {
 		bookmark.setSelected(checked);
 		if (checked) {
-			bookmark.setIgnoredCategories(null);
+			bookmark.setIgnoredCategories(new String[0]);
 		} else {
-			Object[] cats = getSiteCatalogWithIndicator(bookmark, false);
+			Object[] cats = ((TreeContentProvider)treeViewer.getContentProvider()).getChildren(bookmark);
 			ArrayList result = new ArrayList();
 			for (int i = 0; i < cats.length; i++) {
 				if (cats[i] instanceof SiteCategory) {
 					result.add(((SiteCategory)cats[i]).getFullName());
 				}
 			}
-			bookmark.setIgnoredCategories(
-				result.size() == 0
-					? null
-					: (String[]) result.toArray(new String[result.size()]));
+			bookmark.setIgnoredCategories((String[]) result.toArray(new String[result.size()]));
 		}
 		treeViewer.setSubtreeChecked(bookmark, checked);
 		treeViewer.setGrayed(bookmark, false);
@@ -373,28 +372,31 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 	}
 
 	private void handleSiteExpanded(SiteBookmark bookmark, Object[] cats) {
-		String[] ignored = bookmark.getIgnoredCategories();
-		HashSet imap = null;
-
-		if (ignored != null) {
-			imap = new HashSet();
+		if (!bookmark.isSelected()) {
+			treeViewer.setSubtreeChecked(bookmark, false);
+			ArrayList result = new ArrayList();
+			for (int i = 0; i < cats.length; i++) {
+				if (cats[i] instanceof SiteCategory) {
+					result.add(((SiteCategory) cats[i]).getFullName());
+				}
+			}
+			bookmark.setIgnoredCategories(
+				(String[]) result.toArray(new String[result.size()]));
+		} else {
+			String[] ignored = bookmark.getIgnoredCategories();
+			HashSet imap = new HashSet();
 			for (int i = 0; i < ignored.length; i++) {
 				imap.add(ignored[i]);
 			}
-		}
 
-		for (int i = 0; i < cats.length; i++) {
-			if (cats[i] instanceof SiteCategory) {
-				SiteCategory category = (SiteCategory) cats[i];
-				boolean checked = true;
-				if (imap != null) {
-					String cname = category.getFullName();
-					checked = !imap.contains(cname);
+			for (int i = 0; i < cats.length; i++) {
+				if (cats[i] instanceof SiteCategory) {
+					SiteCategory category = (SiteCategory) cats[i];
+					treeViewer.setChecked(category, !imap.contains(category.getFullName()));
 				}
-				treeViewer.setChecked(category, checked);
 			}
+			treeViewer.setGrayed(bookmark, ignored.length > 0 && ignored.length < cats.length);
 		}
-		treeViewer.setGrayed(bookmark, ignored != null && ignored.length < cats.length);
 		searchRunner.setNewSearchNeeded(true);
 	}
 
@@ -403,10 +405,8 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 		String[] ignored = bookmark.getIgnoredCategories();
 		ArrayList array = new ArrayList();
 
-		if (ignored != null) {
-			for (int i = 0; i < ignored.length; i++) {
-				array.add(ignored[i]);
-			}
+		for (int i = 0; i < ignored.length; i++) {
+			array.add(ignored[i]);
 		}
 		if (checked) {
 			array.remove(category.getFullName());
@@ -414,14 +414,12 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 			array.add(category.getFullName());
 		}
 
-		bookmark.setIgnoredCategories(
-			array.size() == 0
-				? null
-				: (String[]) array.toArray(new String[array.size()]));
+		bookmark.setIgnoredCategories((String[]) array.toArray(new String[array.size()]));
 		searchRunner.setNewSearchNeeded(true);
-		
+
 		Object[] children =
-			bookmark.getCatalog(true, null);
+			((TreeContentProvider) treeViewer.getContentProvider()).getChildren(
+				category.getBookmark());
 		treeViewer.setChecked(bookmark, array.size() < children.length);
 		bookmark.setSelected(array.size() < children.length);
 		treeViewer.setGrayed(

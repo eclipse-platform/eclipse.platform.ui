@@ -145,7 +145,6 @@ public class MyComputerDirectory
 				new URL("file:" + file.getAbsolutePath() + File.separator);
 			String siteName = root?file.getAbsolutePath():file.getName();
 			SiteBookmark site = new SiteBookmark(siteName, url, false);
-			site.setType(SiteBookmark.LOCAL);
 			site.setLocal(true);
 			return site;
 		} catch (Exception e) {

@@ -52,7 +52,6 @@ public class UpdateUI extends AbstractUIPlugin {
 	private static UpdateUI plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
-	private UpdateAdapterFactory adapterFactory;
 	private UpdateModel model;
 	private UpdateManagerAuthenticator authenticator;
 	private AboutInfo aboutInfo;
@@ -157,9 +156,6 @@ public class UpdateUI extends AbstractUIPlugin {
 		super.startup();
 		readInfo();
 		model = new UpdateModel();
-		IAdapterManager manager = Platform.getAdapterManager();
-		adapterFactory = new UpdateAdapterFactory();
-		manager.registerAdapters(adapterFactory, UIModelObject.class);
 		authenticator = new UpdateManagerAuthenticator();
 		Authenticator.setDefault(authenticator);
 		int historyPref =
@@ -213,8 +209,6 @@ public class UpdateUI extends AbstractUIPlugin {
 	}
 
 	public void shutdown() throws CoreException {
-		IAdapterManager manager = Platform.getAdapterManager();
-		manager.unregisterAdapters(adapterFactory);
 		model.shutdown();
 
 		if (labelProvider != null)

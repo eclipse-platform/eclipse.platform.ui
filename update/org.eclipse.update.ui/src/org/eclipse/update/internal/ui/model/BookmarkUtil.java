@@ -137,8 +137,7 @@ public class BookmarkUtil {
 				String tok = stok.nextToken();
 				array.add(tok);
 			}
-			String[] ignArray = (String[]) array.toArray(new String[array.size()]);
-			bookmark.setIgnoredCategories(ignArray);
+			bookmark.setIgnoredCategories((String[]) array.toArray(new String[array.size()]));
 		}
 		return bookmark;
 	}
@@ -185,16 +184,14 @@ public class BookmarkUtil {
 			String sel = bookmark.isSelected()?"true":"false";
 			String local = bookmark.isLocal() ? "true" : "false";
 			String [] ign = bookmark.getIgnoredCategories();
-			StringBuffer wign=null;
-			if (ign!=null) {
-				wign = new StringBuffer();
-				for (int i=0; i<ign.length; i++) {
-					if (i>0) wign.append(',');
-					wign.append(ign[i]);
-				}
+			StringBuffer wign = new StringBuffer();
+			for (int i = 0; i < ign.length; i++) {
+				if (i > 0)
+					wign.append(',');
+				wign.append(ign[i]);
 			}
 			writer.print(indent + "<site name=\"" + name + "\" url=\"" + url + "\" web=\"" + web + "\" selected=\"" + sel + "\" local=\"" + local + "\"");
-			if (wign!=null)
+			if (wign.length() > 0)
 				writer.print(" ignored-categories=\""+wign.toString()+"\"");
 			writer.println("/>");
 		} else if (obj instanceof BookmarkFolder) {

@@ -19,9 +19,6 @@ import org.eclipse.update.internal.ui.UpdateUI;
 
 public class SiteBookmark extends NamedModelObject 
 							implements ISiteAdapter {
-	public static final int USER = 0;
-	public static final int LOCAL = 1;
-	public static final int LOCAL_BOOKMARK = 2;
 	public static final String P_URL="p_url";
 	public static final String P_TYPE="p_type";
 	
@@ -29,10 +26,9 @@ public class SiteBookmark extends NamedModelObject
 	transient private ISite site;
 	transient private Vector catalog;
 	transient private SiteCategory otherCategory;
-	private int type;
 	private boolean webBookmark;
 	private boolean selected;
-	private String [] ignoredCategories;
+	private String [] ignoredCategories = new String[0];
 	private boolean readOnly = false;
 	private boolean local = false;
 
@@ -66,16 +62,8 @@ public class SiteBookmark extends NamedModelObject
 		this.ignoredCategories = categories;
 	}
 	
-	public void setType(int type) {
-		this.type = type;
-	}
-	
-	public int getType() {
-		return type;
-	}
-	
 	public void setWebBookmark(boolean value) {
-		if (type==LOCAL_BOOKMARK) return;
+		if (isLocal()) return;
 		this.webBookmark = value;
 		notifyObjectChanged(P_TYPE);
 	}

@@ -114,8 +114,8 @@ public class NewUpdateSiteDialog extends Dialog {
 		}
 	
 		try {
-			new URL(URLDecoder.decode(url.getText().trim()));
-			okButton.setEnabled(true);
+			URL newURL = new URL(URLDecoder.decode(url.getText().trim()));
+			okButton.setEnabled(!newURL.getProtocol().equals("file"));
 		} catch (Exception e) {
 			okButton.setEnabled(false);
 		}
