@@ -5,63 +5,44 @@ package org.eclipse.debug.internal.ui.actions;
  * All Rights Reserved.
  */
 
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugViewAdapter;
-import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.texteditor.IUpdate;
  
 /**
  * Removes all terminated/detached launches from the
  * active debug view.
  */
-public class RemoveTerminatedAction extends Action implements IUpdate {
+public class RemoveTerminatedAction extends ListenerActionDelegate implements ILaunchListener {
 
 	/**
-	 * The part this action is installed in
-	 */
-	private IViewPart fPart;
-	
-	public RemoveTerminatedAction(IViewPart part) {
-		super(ActionMessages.getString("RemoveTerminatedAction.Remove_&All_Terminated_1")); //$NON-NLS-1$
-		setToolTipText(ActionMessages.getString("RemoveTerminatedAction.Remove_All_Terminated_Launches_2")); //$NON-NLS-1$
-		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_TERMINATED));
-		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_TERMINATED));
-		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_TERMINATED));
-		setEnabled(false);
-		WorkbenchHelp.setHelp(
-			this,
-			new Object[] { IDebugHelpContextIds.REMOVE_ACTION });
-		setPart(part);
+	 * @see ListenerActionDelegate#doHandleDebugEvent(DebugEvent)
+	 */	
+	protected void doHandleDebugEvent(DebugEvent event) {	
+		if (event.getKind() == DebugEvent.TERMINATE) {
+			getAction().setEnabled(true);
+		}
 	}
 
 	/**
 	 * Removes all of the terminated launches relevant to the
-	 * active debug view.
-	 * 
-	 * @see IAction
+	 * active launch view.
 	 */
 	public void run() {
-		Object[] elements = getElements();
-		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i] instanceof ILaunch) {
-				ILaunch launch = (ILaunch)elements[i];
-				if (launch.isTerminated()) {
-					manager.removeLaunch(launch);
-				}
-			}
-		}
+		doAction(null);
 	}
 
 	/** 
@@ -75,13 +56,13 @@ public class RemoveTerminatedAction extends Action implements IUpdate {
 				if (elements[i] instanceof ILaunch) {
 					ILaunch launch= (ILaunch)elements[i];
 					if (launch.isTerminated()) {
-						setEnabled(true);
+						getAction().setEnabled(true);
 						return;
 					}
 				}
 			}
 		}
-		setEnabled(false);
+		getAction().setEnabled(false);
 	}
 
 	/**
@@ -91,7 +72,7 @@ public class RemoveTerminatedAction extends Action implements IUpdate {
 	 * @return array of object
 	 */
 	protected Object[] getElements() {
-		IDebugViewAdapter view = (IDebugViewAdapter)getPart().getAdapter(IDebugViewAdapter.class);
+		IDebugViewAdapter view = (IDebugViewAdapter)getView().getAdapter(IDebugViewAdapter.class);
 		if (view != null) {
 			Viewer viewer = view.getViewer();
 			if (viewer instanceof StructuredViewer) {
@@ -102,23 +83,127 @@ public class RemoveTerminatedAction extends Action implements IUpdate {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Sets the part this action is installed in
-	 * 
-	 * @param part view part
+	 * @see ControlActionDelegate#doAction(Object)
 	 */
-	private void setPart(IViewPart part) {
-		fPart = part;
+	protected void doAction(Object notUsed) {
+		Object[] elements = getElements();
+		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+		for (int i = 0; i < elements.length; i++) {
+			if (elements[i] instanceof ILaunch) {
+				ILaunch launch = (ILaunch)elements[i];
+				if (launch.isTerminated()) {
+					manager.removeLaunch(launch);
+				}
+			}
+		}
+		getAction().setEnabled(false);
+	}
+
+	/**
+	 * @see ControlActionDelegate#getErrorDialogMessage()
+	 */
+	protected String getErrorDialogMessage() {
+		return null;
+	}
+
+	/**
+	 * @see ControlActionDelegate#getErrorDialogTitle()
+	 */
+	protected String getErrorDialogTitle() {
+		return null;
+	}
+
+	/**
+	 * @see ControlActionDelegate#getHelpContextId()
+	 */
+	protected String getHelpContextId() {
+		return IDebugHelpContextIds.REMOVE_ACTION;
+	}
+
+	/**
+	 * @see ControlActionDelegate#getStatusMessage()
+	 */
+	protected String getStatusMessage() {
+		return null;
+	}
+
+	/**
+	 * @see ControlActionDelegate#getText()
+	 */
+	protected String getText() {
+		return null;
+	}
+
+	/**
+	 * @see ControlActionDelegate#getToolTipText()
+	 */
+	protected String getToolTipText() {
+		return ActionMessages.getString("RemoveTerminatedAction.Remove_All_Terminated_Launches_2");
+	}
+
+	/**
+	 * @see ControlActionDelegate#isEnabledFor(Object)
+	 */
+	public boolean isEnabledFor(Object element) {
+		return false;
+	}
+
+	/**
+	 * @see ControlActionDelegate#setActionImages(IAction)
+	 */
+	protected void setActionImages(IAction action) {
+		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_TERMINATED));
+		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_TERMINATED));
+		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_TERMINATED));
 	}
 	
 	/**
-	 * Returns the part this action is installed in
-	 * 
-	 * @return view part
+	 * RemoveTerminatedAction cares nothing about the current selection
 	 */
-	protected IViewPart getPart() {
-		return fPart;
+	public void selectionChanged(IAction action, ISelection s) {
+		if (!fInitialized) {
+			action.setEnabled(false);
+			setAction(action);
+			setActionImages(action);
+			fInitialized = true;
+		}
 	}
+
+	/**
+	 * @see IViewActionDelegate#init(IViewPart)
+	 */
+	public void init(IViewPart view) {
+		super.init(view);
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+	}
+		
+	public void dispose() {
+		super.dispose();
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+	}
+	
+	/**
+	 * @see ILaunchListener#launchAdded(ILaunch)
+	 */
+	public void launchAdded(ILaunch launch) {
+	}
+
+	/**
+	 * @see ILaunchListener#launchChanged(ILaunch)
+	 */
+	public void launchChanged(ILaunch launch) {
+	}
+
+	/**
+	 * @see ILaunchListener#launchRemoved(ILaunch)
+	 */
+	public void launchRemoved(ILaunch launch) {
+		if (getAction().isEnabled()) {
+			update();
+		}
+	}
+
 }
 

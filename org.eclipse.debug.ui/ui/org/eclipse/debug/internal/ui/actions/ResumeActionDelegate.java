@@ -5,6 +5,7 @@ package org.eclipse.debug.internal.ui.actions;
  * All Rights Reserved.
  */
 
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.ISuspendResume;
@@ -15,7 +16,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-public class ResumeActionDelegate extends ControlActionDelegate {
+public class ResumeActionDelegate extends ListenerActionDelegate {
 
 	/**
 	 * @see ControlActionDelegate#doAction(Object)
@@ -94,4 +95,22 @@ public class ResumeActionDelegate extends ControlActionDelegate {
 	protected String getText() {
 		return ActionMessages.getString("ResumeActionDelegate.&Resume_4"); //$NON-NLS-1$
 	}
+	
+	/**
+	 * @see ListenerActionDelegate#doHandleDebugEvent(DebugEvent)
+	 */
+	protected void doHandleDebugEvent(DebugEvent event) {
+		IAction action= getAction();
+		switch (event.getKind()) {
+			case DebugEvent.TERMINATE :
+				action.setEnabled(false);
+				break;
+			case DebugEvent.RESUME :
+				action.setEnabled(false);
+				break;
+			case DebugEvent.SUSPEND :
+				update(getAction(), getSelection());
+				break;
+		}
+	}		
 }
