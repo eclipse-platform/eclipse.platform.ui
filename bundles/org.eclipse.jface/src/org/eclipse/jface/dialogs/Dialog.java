@@ -38,7 +38,7 @@ public abstract class Dialog extends Window {
 	/**
 	 * Image registry key for error image (value <code>"dialog_error_image"</code>).
 	 */
-		public static final String DLG_IMG_LOCKED = "dialog_error_locked"; //$NON-NLS-1$
+	public static final String DLG_IMG_LOCKED = "dialog_error_locked"; //$NON-NLS-1$
 	/**
 	 * Image registry key for error image (value <code>"dialog_error_image"</code>).
 	 */
@@ -275,34 +275,6 @@ public abstract class Dialog extends Window {
 	protected void cancelPressed() {
 		setReturnCode(CANCEL);
 		close();
-	}
-	/**
-	 * Constrain the shell size to be no larger than the display bounds.
-	 * Reduce the shell size and move its origin as required.
-	 * 
-	 * @since 2.0
-	 */
-	protected void constrainShellSize() {
-		// limit the shell size to the display size
-		super.constrainShellSize();
-		Shell shell = getShell();
-		Point size = shell.getSize();
-		Rectangle bounds = shell.getDisplay().getClientArea();
-
-		// move the shell origin as required
-		Point loc = shell.getLocation();
-
-		//Choose the position between the origin of the client area and 
-		//the bottom right hand corner
-		int x =
-			Math.max(
-				bounds.x,
-				Math.min(loc.x, bounds.x + bounds.width - size.x));
-		int y =
-			Math.max(
-				bounds.y,
-				Math.min(loc.y, bounds.y + bounds.height - size.y));
-		shell.setLocation(x, y);
 	}
 	/**
 	 * Returns the number of pixels corresponding to the

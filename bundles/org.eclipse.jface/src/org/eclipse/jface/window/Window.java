@@ -10,14 +10,27 @@
  *******************************************************************************/
 package org.eclipse.jface.window;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Monitor;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
 
 /**
  * A JFace window is an object that has no visual representation (no widgets)
@@ -270,11 +283,19 @@ protected void configureShell(Shell newShell) {
 		else
 			newShell.setImage(defaultImage);
 	}
+	newShell.setLayout(getLayout());
+}
 
+
+/**
+ * Get the layout for the shell.
+ * @return Layout
+ */
+protected Layout getLayout() {
 	GridLayout layout = new GridLayout();
 	layout.marginHeight = 0;
 	layout.marginWidth = 0;
-	newShell.setLayout(layout);
+	return layout;
 }
 /**
  * Constrain the shell size to be no larger than the display bounds.
@@ -283,12 +304,11 @@ protected void configureShell(Shell newShell) {
  */
 protected void constrainShellSize() {
 	// limit the shell size to the display size
-	Point size = shell.getSize();
-	Rectangle bounds = shell.getDisplay().getClientArea();
-	int newX = Math.min(size.x, bounds.width);
-	int newY = Math.min(size.y, bounds.height);
-	if (size.x != newX || size.y != newY)
-		shell.setSize(newX, newY);
+	Rectangle bounds = shell.getBounds();
+	Rectangle constrained = getConstrainedShellSize(bounds);
+	if (!bounds.equals(constrained)) {
+		shell.setBounds(constrained);
+	}
 }
 /**
  * Creates this window's widgetry in a new top-level shell.
@@ -393,11 +413,24 @@ public static Image getDefaultImage() {
  * @return the initial location of the shell
  */
 protected Point getInitialLocation(Point initialSize) {
-	Composite parentShell = shell.getParent();
-	Rectangle containerBounds = (parentShell != null) ? parentShell.getBounds() : shell.getDisplay().getClientArea();
-	int x = Math.max(0, containerBounds.x + (containerBounds.width - initialSize.x) / 2);
-	int y = Math.max(0, containerBounds.y + (containerBounds.height - initialSize.y) / 3);
-	return new Point(x, y);
+	Composite parent = shell.getParent();
+	
+	Monitor monitor = Display.getCurrent().getPrimaryMonitor();
+	if (parent != null) {
+		monitor = parent.getMonitor();
+	}
+	
+	Rectangle monitorBounds = monitor.getClientArea();
+	Point centerPoint;
+	if (parent != null) {
+		centerPoint = Geometry.centerPoint(parent.getBounds());
+	} else {
+		centerPoint = Geometry.centerPoint(monitorBounds);
+	}
+	
+	return new Point(centerPoint.x - (initialSize.x / 2), 
+			Math.max(monitorBounds.y, Math.min(centerPoint.y - (initialSize.y * 2 / 3),
+							monitorBounds.y + monitorBounds.height - initialSize.y)));
 }
 /**
  * Returns the initial size to use for the shell.
@@ -531,7 +564,7 @@ protected void initializeBounds() {
 	Point size = getInitialSize();
 	Point location = getInitialLocation(size);
 
-	shell.setBounds(location.x, location.y, size.x, size.y);
+	shell.setBounds(getConstrainedShellSize(new Rectangle(location.x, location.y, size.x, size.y)));
 }
 /**
  * Opens this window, creating it first if it has not yet been created.
@@ -626,6 +659,45 @@ protected void setReturnCode(int code) {
 	returnCode = code;
 	globalReturnCode = code;
 }
+
+/**
+ * Given the desired position of the window, this method returns an 
+ * adjusted position such that the window is no larger than its monitor,
+ * and does not extend beyond the edge of the monitor. This is used for
+ * computing the initial window position, and subclasses can use this
+ * as a utility method if they want to limit the region in which the
+ * window may be moved. 
+ * 
+ * @param preferredSize the preferred position of the window
+ * @return a rectangle as close as possible to preferredSize that does
+ * not extend outside the monitor 
+ * 
+ * @since 3.0
+ */
+protected Rectangle getConstrainedShellSize(Rectangle preferredSize) {
+	Rectangle result = new Rectangle(preferredSize.x, preferredSize.y, 
+			preferredSize.width, preferredSize.height);
+	
+	Monitor mon = shell.getMonitor();
+	
+	Rectangle bounds = mon.getClientArea();
+	
+	if (result.height > bounds.height) {
+		result.height = bounds.height;
+	}
+	
+	if (result.width > bounds.width) {
+		result.width = bounds.width;
+	}
+	
+	result.x = Math.max(bounds.x, Math.min(result.x, 
+					bounds.x + bounds.width - result.width));
+	result.y = Math.max(bounds.y, Math.min(result.y,
+					bounds.y + bounds.height - result.height));
+			
+	return result;		
+}
+
 /**
  * Sets the shell style bits.
  * This method has no effect after the shell is created.
