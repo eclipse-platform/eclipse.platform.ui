@@ -9,6 +9,7 @@ package org.eclipse.help.internal.search.federated;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.search.*;
+import org.eclipse.help.internal.workingset.*;
 
 /**
  * @author dorian
@@ -28,7 +29,10 @@ public class LocalHelp implements ISearchEngine {
       
         SearchQuery searchQuery = new SearchQuery();
         searchQuery.setSearchWord(query);
-        SearchResults localResults = new SearchResults(null, MAX_HITS, Platform.getNL());
+        WorkingSet[] workingSets = null;
+        if (scope instanceof WorkingSet)
+            workingSets = new WorkingSet[] {(WorkingSet)scope};
+        SearchResults localResults = new SearchResults(workingSets, MAX_HITS, Platform.getNL());
         BaseHelpSystem.getSearchManager().search(searchQuery, localResults, monitor);
         collector.add(localResults.getSearchHits());
 
