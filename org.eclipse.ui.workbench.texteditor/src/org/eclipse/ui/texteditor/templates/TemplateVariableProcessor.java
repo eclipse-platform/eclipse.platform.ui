@@ -35,7 +35,7 @@ import org.eclipse.jface.text.templates.TemplateVariableResolver;
  * 
  * @since 3.0
  */
-public class TemplateVariableProcessor implements IContentAssistProcessor {	
+final class TemplateVariableProcessor implements IContentAssistProcessor {	
 
 	private static Comparator fgTemplateVariableProposalComparator= new Comparator() {
 		public int compare(Object arg0, Object arg1) {

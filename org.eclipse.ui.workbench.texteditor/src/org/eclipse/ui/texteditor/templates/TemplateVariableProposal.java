@@ -32,7 +32,7 @@ import org.eclipse.jface.text.templates.TemplateVariableResolver;
  * 
  * @since 3.0
  */
-public class TemplateVariableProposal implements ICompletionProposal {
+final class TemplateVariableProposal implements ICompletionProposal {
 
 	private TemplateVariableResolver fVariable;
 	private int fOffset;
