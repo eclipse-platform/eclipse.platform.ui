@@ -75,7 +75,8 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
         	mng.addToRoot(node);
         	return true;
         }
-        mng.addToDeep(getCategory(),node);
+        if(!mng.addToDeep(getCategory(),node))
+        	mng.addToRoot(node);
     
         return true;
     }
