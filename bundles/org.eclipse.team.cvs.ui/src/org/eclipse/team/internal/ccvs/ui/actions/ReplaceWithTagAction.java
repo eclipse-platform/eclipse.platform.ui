@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
@@ -29,40 +30,51 @@ public class ReplaceWithTagAction extends ReplaceWithAction {
 	 * Method declared on IActionDelegate.
 	 */
 	public void run(IAction action) {
+		
+		// Setup the holders
+		final IResource[] resource = new IResource[] {null};
+		final CVSTag[] tag = new CVSTag[] {null};
+		
+		// Show a busy cursor while display the tag selection dialog
+		run(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+				IResource[] resources = getSelectedResources();
+				if (resources.length != 1) return;
+				resource[0] = resources[0];
+	
+				if (isDirty(resource[0])) {
+					final Shell shell = getShell();
+					final boolean[] result = new boolean[] { false };
+					shell.getDisplay().syncExec(new Runnable() {
+						public void run() {
+							result[0] = MessageDialog.openQuestion(getShell(), Policy.bind("question"), Policy.bind("localChanges"));
+						}
+					});
+					if (!result[0]) return;
+				}
+				
+				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), resource[0]);
+				dialog.setBlockOnOpen(true);
+				if (dialog.open() == Dialog.CANCEL) {
+					return;
+				}
+				tag[0] = dialog.getResult();
+			}
+		}, Policy.bind("ReplaceWithTagAction.replace"), this.PROGRESS_BUSYCURSOR);			
+		
+		if (tag[0] == null) return;
+		
+		// Display a progress dialog while replacing
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
-					IResource[] resources = getSelectedResources();
-					if (resources.length != 1) return;
-					IResource resource = resources[0];
-		
-					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource.getProject());
-					if (isDirty(resource)) {
-						final Shell shell = getShell();
-						final boolean[] result = new boolean[] { false };
-						shell.getDisplay().syncExec(new Runnable() {
-							public void run() {
-								result[0] = MessageDialog.openQuestion(getShell(), Policy.bind("question"), Policy.bind("localChanges"));
-							}
-						});
-						if (!result[0]) return;
-					}
-					
-					TagSelectionDialog dialog = new TagSelectionDialog(getShell(), resource);
-					dialog.setBlockOnOpen(true);
-					if (dialog.open() == Dialog.CANCEL) {
-						return;
-					}
-					CVSTag tag = dialog.getResult();
-					if (tag == null) {
-						return;
-					}
-					provider.get(new IResource[] { resource }, IResource.DEPTH_INFINITE, tag, monitor);
+					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource[0].getProject());
+					provider.get(resource, IResource.DEPTH_INFINITE, tag[0], monitor);
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("ReplaceWithTagAction.replace"), this.PROGRESS_BUSYCURSOR);			
+		}, Policy.bind("ReplaceWithTagAction.replace"), this.PROGRESS_DIALOG);
 	}
 	
 	protected boolean isEnabled() {
