@@ -5,15 +5,16 @@ package org.eclipse.core.internal.resources;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.events.*;
+import java.util.*;
+
+import org.eclipse.core.internal.events.BuildManager;
+import org.eclipse.core.internal.events.NotificationManager;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.PropertyManager;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
-import java.util.*;
-import java.io.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 
 public class Workspace extends PlatformObject implements IWorkspace, ICoreConstants {
 	protected WorkspaceDescription description;
@@ -105,11 +106,11 @@ public void beginOperation(boolean createNewTree) throws CoreException {
 		newWorkingTree();
 	}
 }
-private IResourceDelta broadcastChanges(IResourceDelta delta, ElementTree currentTree, int type, boolean lockTree, boolean updateState, IProgressMonitor monitor) {
+private void broadcastChanges(ElementTree currentTree, int type, boolean lockTree, boolean updateState, IProgressMonitor monitor) {
 	if (operationTree == null)
-		return null;
+		return;
 	monitor.subTask(Policy.bind("resources.updating"));
-	return notificationManager.broadcastChanges(delta, currentTree, type, lockTree, updateState);
+	notificationManager.broadcastChanges(currentTree, type, lockTree, updateState);
 }
 public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
@@ -127,51 +128,6 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 		monitor.done();
 	}
 }
-
-/**
- * Returns true if there have been changes in the tree between the two
- * given layers.  The two must be related and new must be newer than old.
- * That is, new must an ancestor of old.
- */
-public boolean haveResourcesChanged(ElementTree newLayer, ElementTree oldLayer, boolean inclusive) {
-	// if any of the layers are null, assume that things have changed
-	if (newLayer == null || oldLayer == null)
-		return true;
-
-	// The tree structure has the top layer(s) (i.e., tree) parentage pointing down to a complete
-	// layer whose parent is null.  The bottom layers (i.e., operationTree) point up to the 
-	// common complete layer whose parent is null.  The complete layer moves up as
-	// changes happen.  To see if any changes have happened, we should consider only
-	// layers whose parent is not null.  That is, skip the complete layer as it will clearly not be
-	// empty.
-	
-	// look down from the current layer (always inclusive) if the top layer is mutable
-	ElementTree stopLayer = null;
-	if (newLayer.isImmutable()) 
-		// if the newLayer is immutable, the tree structure all points up so ensure that
-		// when searching up, we stop at newLayer (inclusive)
-		stopLayer = newLayer.getParent();
-	else {
-		ElementTree layer = newLayer;
-		while (layer != null && layer.getParent() != null) {
-			if (!layer.getDataTree().isEmptyDelta())
-				return true;
-			layer = layer.getParent();
-		}
-	}
-
-	// look up from the layer at which we started to null or newLayer's parent (variably inclusive)
-	// depending on whether newLayer is mutable.
-	ElementTree layer = inclusive ? oldLayer : oldLayer.getParent();
-	while (layer != null && layer.getParent() != stopLayer) {
-		if (!layer.getDataTree().isEmptyDelta())
-			return true;
-		layer = layer.getParent();
-	}
-	// didn't find anything that changed
-	return false;
-}
-
 /**
  * Notify the relevant infrastructure pieces that the given project is being
  * changed (e.g., setDescription, move, copy...) and various parts of 
@@ -194,12 +150,11 @@ public void checkpoint(boolean build) {
 		if (!getWorkManager().isCurrentOperation())
 			return;
 		immutable = tree.isImmutable();
-		broadcastChanges(null, tree, IResourceChangeEvent.PRE_AUTO_BUILD, false, false, Policy.monitorFor(null));
+		broadcastChanges(tree, IResourceChangeEvent.PRE_AUTO_BUILD, false, false, Policy.monitorFor(null));
 		if (build && isAutoBuilding())
 			getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, Policy.monitorFor(null));
-		// XXX consider detecting that the deltas are the same and reusing them
-		broadcastChanges(null, tree, IResourceChangeEvent.POST_AUTO_BUILD, false, false, Policy.monitorFor(null));
-		broadcastChanges(null, tree, IResourceChangeEvent.POST_CHANGE, true, true, Policy.monitorFor(null));
+		broadcastChanges(tree, IResourceChangeEvent.POST_AUTO_BUILD, false, false, Policy.monitorFor(null));
+		broadcastChanges(tree, IResourceChangeEvent.POST_CHANGE, true, true, Policy.monitorFor(null));
 		getMarkerManager().resetMarkerDeltas();
 	} catch (CoreException e) {
 		// ignore any CoreException.  There shouldn't be any as the buildmanager and notification manager
@@ -732,7 +687,7 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 			CoreException signal = null;
 			monitor = Policy.monitorFor(monitor);
 			monitor.subTask(Policy.bind("resources.updating"));
-			broadcastChanges(null, tree, IResourceChangeEvent.PRE_AUTO_BUILD, false, false, Policy.monitorFor(null));
+			broadcastChanges(tree, IResourceChangeEvent.PRE_AUTO_BUILD, false, false, Policy.monitorFor(null));
 			if (isAutoBuilding() && shouldBuild()) {
 				try {
 					getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, monitor);
@@ -742,11 +697,10 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 					signal = sig;
 				}
 			}
-			// XXX consider detecting that the deltas are the same and reusing them
-			broadcastChanges(null, tree, IResourceChangeEvent.POST_AUTO_BUILD, false, false, Policy.monitorFor(null));
-			broadcastChanges(null, tree, IResourceChangeEvent.POST_CHANGE, true, true, Policy.monitorFor(null));
+			broadcastChanges(tree, IResourceChangeEvent.POST_AUTO_BUILD, false, false, Policy.monitorFor(null));
+			broadcastChanges(tree, IResourceChangeEvent.POST_CHANGE, true, true, Policy.monitorFor(null));
 			getMarkerManager().resetMarkerDeltas();
-			// Perform a snapshot if we are sufficiently out of date.  Besure to make the tree immutable first
+			// Perform a snapshot if we are sufficiently out of date.  Be sure to make the tree immutable first
 			tree.immutable();
 			saveManager.snapshotIfNeeded();
 			if (cancel != null)
@@ -1086,9 +1040,11 @@ public Resource newResource(IPath path, int type) {
 	// will never get here because of assertion.
 	return null;
 }
+/**
+ * Opens a new mutable element tree layer, thus allowing 
+ * modifications to the tree.
+ */
 public ElementTree newWorkingTree() {
-	// In practice (i.e., currently) this is the same as aborting 
-	// but we want to ensure the proper call chains are here for future expansion.
 	tree = tree.newEmptyDelta();
 	return tree;
 }
@@ -1291,7 +1247,7 @@ public void setWorkspaceLock(WorkspaceLock lock) {
 }
 
 private boolean shouldBuild() throws CoreException {
-	return getWorkManager().shouldBuild() && haveResourcesChanged(tree, operationTree, true);
+	return getWorkManager().shouldBuild() && ElementTree.hasChanges(tree, operationTree, true);
 }
 protected void shutdown(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
