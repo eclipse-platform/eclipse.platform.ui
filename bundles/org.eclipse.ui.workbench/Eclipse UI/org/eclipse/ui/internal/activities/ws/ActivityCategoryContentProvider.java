@@ -66,6 +66,48 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
 		}
 		return (IActivity[]) categoryActivities.toArray(new IActivity[categoryActivities.size()]);
 	}
+	
+	/**
+	 * Get the duplicate activities found in the other defined categories.
+	 * 
+	 * @param categorizedActivity
+	 *            The categorized activity.
+	 * @return the list of duplicate categorized activities.
+	 */
+	public Object[] getDuplicateCategoryActivities(
+			CategorizedActivity categorizedActivity) {
+		ArrayList duplicateCategorizedactivities = new ArrayList();
+		Set categoryIds = manager.getDefinedCategoryIds();
+		ICategory currentCategory = null;
+		String currentActivityId = null;
+		IActivity[] categoryActivities = null;
+		String currentCategoryId = null;
+		// find the duplicate activities in the defined categories
+		for (Iterator i = categoryIds.iterator(); i.hasNext();) {
+			currentCategoryId = (String) i.next();
+			if (!currentCategoryId.equals(categorizedActivity.getCategory()
+					.getId())) {
+				currentCategory = manager.getCategory(currentCategoryId);
+				categoryActivities = getCategoryActivities(currentCategory);
+				// traverse the category's activities to find a duplicate
+				for (int index = 0; index < categoryActivities.length; index++) {
+					currentActivityId = categoryActivities[index].getId();
+					if (currentActivityId.equals(categorizedActivity
+							.getActivity().getId())) {
+						duplicateCategorizedactivities
+								.add(new CategorizedActivity(currentCategory,
+										manager.getActivity(currentActivityId)));
+						// Assuming only one unique activity per category -
+						// break
+						break;
+					}
+				}
+
+			}
+
+		}
+		return duplicateCategorizedactivities.toArray();
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
