@@ -175,7 +175,15 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput, String encoding) throws CoreException {
 		if (editorInput instanceof IStorageEditorInput) {
 			IStorage storage= ((IStorageEditorInput) editorInput).getStorage();
-			setDocumentContent(document, storage.getContents(), encoding);
+			InputStream stream= storage.getContents();
+			try {
+				setDocumentContent(document, stream, encoding);
+			} finally {
+				try {
+					stream.close();
+				} catch (IOException x) {
+				}
+			}
 			return true;
 		}
 		return false;

@@ -348,7 +348,15 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput) throws CoreException {
 		if (editorInput instanceof IFileEditorInput) {
 			IFile file= ((IFileEditorInput) editorInput).getFile();
-			setDocumentContent(document, file.getContents(false));
+			InputStream stream= file.getContents(false);
+			try {
+				setDocumentContent(document, stream);
+			} finally {
+				try {
+					stream.close();
+				} catch (IOException x) {
+				}
+			}
 			return true;
 		}
 		return super.setDocumentContent(document, editorInput);
@@ -362,17 +370,17 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		if (editorInput instanceof IFileEditorInput) {
 			IFile file= ((IFileEditorInput) editorInput).getFile();
 			InputStream contentStream= file.getContents(false);
-			
-			FileInfo info= (FileInfo)getElementInfo(editorInput);
-			
-			/*
-			 * XXX:
-			 * This is a workaround for a corresponding bug in Java readers and writer,
-			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
-			 * </p>
-			 */
-			if (info != null && info.fHasBOM && CHARSET_UTF_8.equals(encoding)) {
-				try {
+			try {
+				
+				FileInfo info= (FileInfo)getElementInfo(editorInput);
+				
+				/*
+				 * XXX:
+				 * This is a workaround for a corresponding bug in Java readers and writer,
+				 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+				 * </p>
+				 */
+				if (info != null && info.fHasBOM && CHARSET_UTF_8.equals(encoding)) {
 					int n= 0;
 					do {
 						int bytes= contentStream.read(new byte[IContentDescription.BOM_UTF_8.length]);
@@ -380,21 +388,20 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 							throw new IOException();
 						n += bytes;
 					} while (n < IContentDescription.BOM_UTF_8.length);
-				} catch (IOException ex) {
-					String message= (ex.getMessage() != null ? ex.getMessage() : ""); //$NON-NLS-1$
-					IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, ex);
-					throw new CoreException(s);
-				} finally {
-					try {
-						if (contentStream != null)
-							contentStream.close();
-					} catch (IOException e1) {
-					}
+				}
+				
+				setDocumentContent(document, contentStream, encoding);
+				
+			} catch (IOException ex) {
+				String message= (ex.getMessage() != null ? ex.getMessage() : ""); //$NON-NLS-1$
+				IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, ex);
+				throw new CoreException(s);
+			} finally {
+				try {
+					contentStream.close();
+				} catch (IOException e1) {
 				}
 			}
-				
-			setDocumentContent(document, contentStream, encoding);
-
 			return true;
 		}
 		return super.setDocumentContent(document, editorInput, encoding);
