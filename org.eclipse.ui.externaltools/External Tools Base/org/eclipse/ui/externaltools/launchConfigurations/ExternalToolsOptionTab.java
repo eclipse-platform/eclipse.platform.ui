@@ -201,7 +201,7 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 	private void updateRunBackground(ILaunchConfiguration configuration) {
 		boolean  runInBackgroud= true;
 		try {
-			runInBackgroud= configuration.getAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, true);
+			runInBackgroud= configuration.getAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, false);
 		} catch (CoreException ce) {
 			ExternalToolsPlugin.getDefault().log("Error reading configuration", ce);
 		}
