@@ -15,10 +15,16 @@ public class PendingChange extends SimpleFeatureAdapter {
 	public static final int CONFIGURE = 0x3;
 	public static final int UNCONFIGURE = 0x4;
 	private int jobType;
+	private IFeature oldFeature;
 	
 	public PendingChange(IFeature feature, int jobType) {
 		super(feature);
 		this.jobType = jobType;
+	}
+	
+	public PendingChange(IFeature oldFeature, IFeature newFeature) {
+		this(newFeature, INSTALL);
+		this.oldFeature = oldFeature;
 	}
 
 	public int getJobType() {
@@ -27,5 +33,9 @@ public class PendingChange extends SimpleFeatureAdapter {
 	
 	public IFeature getFeature() {
 		return feature;
+	}
+	
+	public IFeature getOldFeature() {
+		return oldFeature;
 	}
 }

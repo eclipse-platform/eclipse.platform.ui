@@ -147,8 +147,13 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		Platform.getPlugin("org.eclipse.core.runtime").getLog().log(status);
 	}
 	
-	public static IFeature [] searchSite(String featureId, ISite site) throws CoreException {
-		IFeatureReference [] references = site.getFeatureReferences();
+	public static IFeature [] searchSite(String featureId, IConfigurationSite site, boolean onlyConfigured) throws CoreException {
+		IFeatureReference [] references = null;
+		
+		if (onlyConfigured)
+		   references = site.getConfiguredFeatures();
+		else
+			references = site.getSite().getFeatureReferences();
 		Vector result=new Vector();
 
 		for (int i=0; i<references.length; i++) {

@@ -38,6 +38,7 @@ public class HistoryView
 	private Image configImage;
 	private Image featureImage;
 	private Image unconfFeatureImage;
+	private Image errorFeatureImage;
 	private Image siteImage;
 	private Image currentConfigImage;
 	private Action revertAction;
@@ -103,7 +104,7 @@ public class HistoryView
 				parent = ((PreservedConfiguration) parent).getConfiguration();
 			}
 			if (parent instanceof IInstallConfiguration) {
-				return getConfigurationSites((IInstallConfiguration)parent);
+				return getConfigurationSites((IInstallConfiguration) parent);
 			}
 			if (parent instanceof IConfigurationSiteAdapter) {
 				IConfigurationSiteAdapter csite = (IConfigurationSiteAdapter) parent;
@@ -111,35 +112,35 @@ public class HistoryView
 			}
 			return new Object[0];
 		}
-		
+
 		private Object[] getConfigurationSites(IInstallConfiguration config) {
-			IConfigurationSite [] sites = config.getConfigurationSites();
-			Object [] adapters = new Object [sites.length];
-			for (int i=0; i<sites.length; i++) {
+			IConfigurationSite[] sites = config.getConfigurationSites();
+			Object[] adapters = new Object[sites.length];
+			for (int i = 0; i < sites.length; i++) {
 				adapters[i] = new ConfigurationSiteAdapter(config, sites[i]);
 			}
 			return adapters;
 		}
-		
+
 		private Object[] getConfiguredFeatures(IConfigurationSiteAdapter adapter) {
 			IConfigurationSite csite = adapter.getConfigurationSite();
 			IFeatureReference[] crefs = csite.getConfiguredFeatures();
 			ISite site = csite.getSite();
 			Object[] result = new Object[crefs.length];
-			
+
 			for (int i = 0; i < crefs.length; i++) {
-				IFeature feature;
+				IFeature feature = null;
 				try {
 					feature = crefs[i].getFeature();
 				} catch (CoreException e) {
-					feature = new MissingFeature(site, crefs[i].getURL());
+				} finally {
+					if (feature == null)
+						feature = new MissingFeature(site, crefs[i].getURL());
 				}
-				result [i] = new ConfiguredFeatureAdapter(adapter, feature, true);
+				result[i] = new ConfiguredFeatureAdapter(adapter, feature, true);
 			}
 			return result;
 		}
-		
-
 
 		/**
 		 * @see ITreeContentProvider#getParent(Object)
@@ -179,20 +180,17 @@ public class HistoryView
 				return config.getLabel();
 			}
 			if (obj instanceof IConfigurationSiteAdapter) {
-				IConfigurationSiteAdapter ad = (IConfigurationSiteAdapter)obj;
+				IConfigurationSiteAdapter ad = (IConfigurationSiteAdapter) obj;
 				IConfigurationSite csite = ad.getConfigurationSite();
 				ISite site = csite.getSite();
 				return site.getURL().toString();
 			}
 			if (obj instanceof IFeatureAdapter) {
 				try {
-				IFeature feature = ((IFeatureAdapter) obj).getFeature();
-				// FIXME the feature may be null or the FeatureReference
-				// maybe broken.
-				String version = feature.getVersionIdentifier().getVersion().toString();
-				return feature.getLabel() + " " + version;
-				}
-				catch (CoreException e) {
+					IFeature feature = ((IFeatureAdapter) obj).getFeature();
+					String version = feature.getVersionIdentifier().getVersion().toString();
+					return feature.getLabel() + " " + version;
+				} catch (CoreException e) {
 					return "error";
 				}
 			}
@@ -202,7 +200,7 @@ public class HistoryView
 			if (obj instanceof SavedFolder)
 				return ((SavedFolder) obj).getImage();
 			if (obj instanceof IFeatureAdapter)
-				return getFeatureImage((IFeatureAdapter)obj);
+				return getFeatureImage((IFeatureAdapter) obj);
 			if (obj instanceof IConfigurationSiteAdapter)
 				return siteImage;
 			if (obj instanceof PreservedConfiguration) {
@@ -217,9 +215,14 @@ public class HistoryView
 			return null;
 		}
 		private Image getFeatureImage(IFeatureAdapter adapter) {
+			try {
+				if (adapter.getFeature() instanceof MissingFeature)
+					return errorFeatureImage;
+			} catch (CoreException e) {
+			}
 			boolean configured = true;
 			if (adapter instanceof IConfiguredFeatureAdapter) {
-				configured = ((IConfiguredFeatureAdapter)adapter).isConfigured();
+				configured = ((IConfiguredFeatureAdapter) adapter).isConfigured();
 			}
 			return (configured ? featureImage : unconfFeatureImage);
 		}
@@ -238,6 +241,15 @@ public class HistoryView
 				UpdateUIPluginImages.DESC_CURRENT_CO }
 		});
 		currentConfigImage = cdesc.createImage();
+		cdesc =
+			new OverlayIcon(
+				UpdateUIPluginImages.DESC_FEATURE_OBJ,
+				new ImageDescriptor[][] { {
+			}, {
+			}, {
+				UpdateUIPluginImages.DESC_ERROR_CO }
+		});
+		errorFeatureImage = cdesc.createImage();
 		savedFolder = new SavedFolder();
 	}
 
@@ -270,6 +282,7 @@ public class HistoryView
 	public void dispose() {
 		featureImage.dispose();
 		unconfFeatureImage.dispose();
+		errorFeatureImage.dispose();
 		siteImage.dispose();
 		configImage.dispose();
 		currentConfigImage.dispose();
@@ -296,12 +309,14 @@ public class HistoryView
 		}
 		return null;
 	}
-	
-	private IInstallConfiguration getSelectedConfiguration(Object obj, boolean onlyPreserved) {
+
+	private IInstallConfiguration getSelectedConfiguration(
+		Object obj,
+		boolean onlyPreserved) {
 		if (!onlyPreserved && obj instanceof IInstallConfiguration)
-				return (IInstallConfiguration) obj;
+			return (IInstallConfiguration) obj;
 		if (obj instanceof PreservedConfiguration)
-				return ((PreservedConfiguration) obj).getConfiguration();
+			return ((PreservedConfiguration) obj).getConfiguration();
 		return null;
 	}
 
@@ -387,7 +402,8 @@ public class HistoryView
 			manager.add(removePreservedAction);
 		}
 		super.fillContextMenu(manager);
-		if (obj instanceof PreservedConfiguration || obj instanceof IInstallConfiguration)
+		if (obj instanceof PreservedConfiguration
+			|| obj instanceof IInstallConfiguration)
 			manager.add(propertiesAction);
 	}
 

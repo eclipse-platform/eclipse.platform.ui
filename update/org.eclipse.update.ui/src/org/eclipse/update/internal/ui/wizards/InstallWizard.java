@@ -12,12 +12,13 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.jface.operation.*;
 import java.lang.reflect.*;
+import org.eclipse.update.internal.ui.manager.UIProblemHandler;
 
 public class InstallWizard extends Wizard {
 	private ReviewPage reviewPage;
 	private TargetPage targetPage;
 	private PendingChange job;
-	private boolean successfulInstall=false;
+	private boolean successfulInstall = false;
 	private IInstallConfiguration config;
 
 	public InstallWizard(PendingChange job) {
@@ -27,29 +28,29 @@ public class InstallWizard extends Wizard {
 		setNeedsProgressMonitor(true);
 		this.job = job;
 	}
-	
+
 	public boolean isSuccessfulInstall() {
 		return successfulInstall;
 	}
-	
+
 	private boolean hasLicense() {
 		IFeature feature = job.getFeature();
 		IURLEntry info = feature.getLicense();
-		return info!=null;
+		return info != null;
 	}
 
-	
 	/**
 	 * @see Wizard#performFinish()
 	 */
 	public boolean performFinish() {
-		final IConfigurationSite targetSite = (targetPage==null)?null: targetPage.getTargetSite();
+		final IConfigurationSite targetSite =
+			(targetPage == null) ? null : targetPage.getTargetSite();
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				try {
-					successfulInstall=false;
+					successfulInstall = false;
 					makeConfigurationCurrent();
-					performInstall(targetSite, monitor);
+					execute(targetSite, monitor);
 					saveLocalSite();
 					successfulInstall = true;
 				} catch (CoreException e) {
@@ -70,49 +71,49 @@ public class InstallWizard extends Wizard {
 		}
 		return true;
 	}
-	
+
 	public void addPages() {
 		reviewPage = new ReviewPage(job);
 		addPage(reviewPage);
-		
-		if (job.getJobType()==PendingChange.INSTALL){			
+
+		config = createInstallConfiguration();
+
+		if (job.getJobType() == PendingChange.INSTALL) {
 			if (hasLicense()) {
 				addPage(new LicensePage(job));
 			}
-			config = createInstallConfiguration();
 			targetPage = new TargetPage(config);
 			addPage(targetPage);
 		}
 	}
-	
+
 	private IInstallConfiguration createInstallConfiguration() {
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();
 			IInstallConfiguration config = localSite.cloneCurrentConfiguration(null, null);
 			config.setLabel(config.getCreationDate().toString());
 			return config;
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			UpdateUIPlugin.logException(e);
 			return null;
 		}
 	}
-	
+
 	private void makeConfigurationCurrent() throws CoreException {
 		ILocalSite localSite = SiteManager.getLocalSite();
 		localSite.addConfiguration(config);
 	}
-	
+
 	private void saveLocalSite() throws CoreException {
 		ILocalSite localSite = SiteManager.getLocalSite();
 		localSite.save();
 	}
-	
+
 	public boolean canFinish() {
 		IWizardPage page = getContainer().getCurrentPage();
-		return page.getNextPage()==null && super.canFinish();
+		return page.getNextPage() == null && super.canFinish();
 	}
-	
+
 	public IWizardPage getPreviousPage(IWizardPage page) {
 		return super.getPreviousPage(page);
 	}
@@ -122,26 +123,103 @@ public class InstallWizard extends Wizard {
 	/*
 	 * When we are uninstalling, there is not targetSite
 	 */
-	private void performInstall(IConfigurationSite targetSite, IProgressMonitor monitor) throws CoreException {
-		IFeature feature = job.getFeature();		
-		if (job.getJobType()==PendingChange.UNINSTALL) {
-			
+	private void execute(
+		IConfigurationSite targetSite,
+		IProgressMonitor monitor)
+		throws CoreException {
+		IFeature feature = job.getFeature();
+		if (job.getJobType() == PendingChange.UNINSTALL) {
 			//find the  config site of this feature
-			ILocalSite localSite = SiteManager.getLocalSite();
-			IConfigurationSite[] configSite = localSite.getCurrentConfiguration().getConfigurationSites();
-			for (int i = 0; i < configSite.length; i++) {
-				IConfigurationSite site = configSite[i];
-				if (site.getSite().getURL().equals(feature.getSite().getURL())){
-					site.remove(feature,monitor);
-					break;
-				}
+			IConfigurationSite site = findConfigSite(feature);
+			if (site != null) {
+				site.remove(feature, monitor);
+			} else {
+				// we should do something here
+				String message = "Unable to locate configuration site for the feature";
+				IStatus status =
+					new Status(
+						IStatus.ERROR,
+						UpdateUIPlugin.getPluginId(),
+						IStatus.OK,
+						message,
+						null);
+				throw new CoreException(status);
 			}
+		} else if (job.getJobType() == PendingChange.INSTALL) {
+			IFeature oldFeature = job.getOldFeature();
+			boolean success = true;
+			if (oldFeature != null) {
+				success = unconfigure(oldFeature);
+			}
+			if (success) targetSite.install(feature, monitor);
+			else return;
 		}
-		if (job.getJobType()==PendingChange.INSTALL) {
-			targetSite.install(feature,monitor);
+		else if (job.getJobType() == PendingChange.CONFIGURE) {
+			configure(job.getFeature());
+		}
+		else if (job.getJobType() == PendingChange.UNCONFIGURE) {
+			unconfigure(job.getFeature());
+		}
+		else {
+			return;
 		}
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		model.addPendingChange(job);
 	}
-}
 
+	private IConfigurationSite findConfigSite(IFeature feature)
+		throws CoreException {
+		ILocalSite localSite = SiteManager.getLocalSite();
+		IConfigurationSite[] configSite =
+			localSite.getCurrentConfiguration().getConfigurationSites();
+		for (int i = 0; i < configSite.length; i++) {
+			IConfigurationSite site = configSite[i];
+			if (site.getSite().getURL().equals(feature.getSite().getURL())) {
+				return site;
+			}
+		}
+		return null;
+	}
+
+	private boolean unconfigure(IFeature feature) throws CoreException {
+		IConfigurationSite site = findConfigSite(feature);
+		if (site != null) {
+			// get the feature reference
+			IFeatureReference fref = site.getSite().getFeatureReference(feature);
+			if (fref != null)
+				return site.unconfigure(fref, new UIProblemHandler());
+			else {
+				String message = "Unable to locate feature reference";
+				IStatus status =
+					new Status(
+						IStatus.ERROR,
+						UpdateUIPlugin.getPluginId(),
+						IStatus.OK,
+						message,
+						null);
+				throw new CoreException(status);
+			}
+		}
+		return false;
+	}
+	private void configure(IFeature feature) throws CoreException {
+		IConfigurationSite site = findConfigSite(feature);
+		if (site != null) {
+			// get the feature reference
+			IFeatureReference fref = site.getSite().getFeatureReference(feature);
+			if (fref != null)
+				site.configure(fref);
+			else {
+				String message = "Unable to locate feature reference";
+				IStatus status =
+					new Status(
+						IStatus.ERROR,
+						UpdateUIPlugin.getPluginId(),
+						IStatus.OK,
+						message,
+						null);
+				throw new CoreException(status);
+			}
+		}
+	}
+}

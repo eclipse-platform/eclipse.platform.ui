@@ -46,9 +46,12 @@ public class InfoLink extends HyperlinkAdapter {
 	
 	public void setInfo(IURLEntry info) {
 		this.info = info;
-		boolean hasText = info.getAnnotation()!=null && info.getAnnotation().length()>0;
-		boolean hasURL = info.getURL()!=null;
-		setVisible(hasText || hasURL);
+		if (info!=null) {
+			boolean hasText = info.getAnnotation()!=null && info.getAnnotation().length()>0;
+			boolean hasURL = info.getURL()!=null;
+			setVisible(hasText || hasURL);
+		}
+		else setVisible(false);
 	}
 	
 	private void setVisible(boolean visible) {

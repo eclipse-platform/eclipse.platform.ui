@@ -189,7 +189,7 @@ public class MissingFeature implements IFeature {
 	 * @see IPluginContainer#getPluginEntries()
 	 */
 	public IPluginEntry[] getPluginEntries() {
-		return null;
+		return new IPluginEntry[0];
 	}
 
 	/*
@@ -262,6 +262,7 @@ public class MissingFeature implements IFeature {
 	 * @see IFeature#setSite(ISite)
 	 */
 	public void setSite(ISite site) throws CoreException {
+		this.site = site;
 	}
 
 	/*
