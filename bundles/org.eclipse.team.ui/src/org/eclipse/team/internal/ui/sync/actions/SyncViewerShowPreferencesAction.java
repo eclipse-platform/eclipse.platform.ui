@@ -13,23 +13,22 @@ package org.eclipse.team.internal.ui.sync.actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.dialogs.PreferencePageContainerDialog;
 import org.eclipse.team.internal.ui.preferences.SyncViewerPreferencePage;
 
 public class SyncViewerShowPreferencesAction extends Action {
-	private final SyncViewerActions actions;
+	private final Shell shell;
 	
-	public SyncViewerShowPreferencesAction(SyncViewerActions actions) {
-		this.actions = actions;
+	public SyncViewerShowPreferencesAction(Shell shell) {
+		this.shell = shell;
 		setText("Preferences...");
 		setToolTipText("Configure the view's preferences");
 	}
 
 	public void run() {
 		PreferencePage page = new SyncViewerPreferencePage();
-		Dialog dialog = new PreferencePageContainerDialog(
-			actions.getSyncView().getSite().getShell(), 
-			page);
+		Dialog dialog = new PreferencePageContainerDialog(shell, page);
 		dialog.setBlockOnOpen(true);
 		dialog.open();
 	}

@@ -21,19 +21,16 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
-import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
 
 /**
  * Job to refresh a subscriber with its remote state.
  * 
  * There can be several refresh jobs created but they will be serialized.
  */
-public class RefreshSubscriberJob extends Job implements ITeamResourceChangeListener {
+public class RefreshSubscriberJob extends Job {
 	
 	protected final static boolean DEBUG = Policy.DEBUG_REFRESH_JOB;		
 	
@@ -50,7 +47,7 @@ public class RefreshSubscriberJob extends Job implements ITeamResourceChangeList
 	/**
 	 * If true a rescheduled refresh job should be retarted when cancelled
 	 */
-	private boolean restartOnCancel = false; 
+	private boolean restartOnCancel = true; 
 
 	/**
 	 * The schedule delay used when rescheduling a completed job 
@@ -61,7 +58,8 @@ public class RefreshSubscriberJob extends Job implements ITeamResourceChangeList
 	 * The subscribers and roots to refresh. If these are changed when the job
 	 * is running the job is cancelled.
 	 */
-	private SubscriberInput input;
+	private IResource[] resources;
+	private TeamSubscriber subscriber;
 	
 	private class BatchSimilarSchedulingRule implements ISchedulingRule {
 		public String id;
@@ -76,25 +74,29 @@ public class RefreshSubscriberJob extends Job implements ITeamResourceChangeList
 		}
 	}
 	
-	public RefreshSubscriberJob(String name) {
+	public RefreshSubscriberJob(String name, IResource[] resources, TeamSubscriber subscriber) {
 		super(name);
+		
+		this.resources = resources;
+		this.subscriber = subscriber;
+		
 		setPriority(Job.DECORATE);
 		setRule(new BatchSimilarSchedulingRule("org.eclipse.team.core.refreshsubscribers"));
 		
 		addJobChangeListener(new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
 				if(shouldReschedule()) {
-					if(event.getResult().getSeverity() != IStatus.CANCEL || restartOnCancel) {					
+					if(restartOnCancel && shouldReschedule()) {					
 						RefreshSubscriberJob.this.schedule(scheduleDelay);
-						restartOnCancel = false;
 					}
+					restartOnCancel = true;
 				}
 			}
 		});
 	}
 
 	public boolean shouldRun() {
-		return input != null;
+		return getSubscriber() != null && getResources() != null;
 	}
 		
 	public boolean belongsTo(Object family) {		
@@ -111,8 +113,8 @@ public class RefreshSubscriberJob extends Job implements ITeamResourceChangeList
 	 */
 	public IStatus run(IProgressMonitor monitor) {		
 		MultiStatus status = new MultiStatus(TeamPlugin.ID, TeamException.UNABLE, Policy.bind("Team.errorRefreshingSubscribers"), null);
-		TeamSubscriber subscriber = input.getSubscriber();
-		IResource[] roots = input.roots();		
+		TeamSubscriber subscriber = getSubscriber();
+		IResource[] roots = getResources();		
 		monitor.beginTask(Policy.bind("RefreshSubscriber.runTitle", subscriber.getName()), 100);
 		try {
 			TeamSubscriber[] subscribers = new TeamSubscriber[] {subscriber};
@@ -136,35 +138,18 @@ public class RefreshSubscriberJob extends Job implements ITeamResourceChangeList
 		return status.isOK() ? Status.OK_STATUS : (IStatus) status;
 	}
 
-	public void teamResourceChanged(TeamDelta[] deltas) {
-		for (int i = 0; i < deltas.length; i++) {
-			TeamDelta delta = deltas[i];
-			if(delta.getFlags() == TeamDelta.SUBSCRIBER_DELETED) {
-				// cancel current refresh just to make sure that the subscriber being deleted can
-				// be properly shutdown
-				cancel();
-				setSubscriberInput(null);
-			}
-		}
+	protected IResource[] getResources() {
+		return resources;
+	}
+
+	protected TeamSubscriber getSubscriber() {
+		return subscriber;
 	}
 	
-	public void setSubscriberInput(SubscriberInput input) {
-		int state = getState();
-		if(state == Job.RUNNING) {
-			if(shouldReschedule()) {
-				setRestartOnCancel(true);
-			}
-			cancel();
-		}
-		this.input = input;
-	
-		if(state == Job.NONE && input != null) {
-			if(reschedule) {
-				schedule(scheduleDelay);
-			}
-		}
+	protected long getScheduleDelay() {
+		return scheduleDelay;
 	}
-		
+
 	/**
 	 * Specify the interval in seconds at which this job is scheduled.
 	 * @param seconds delay specified in seconds
@@ -191,5 +176,5 @@ public class RefreshSubscriberJob extends Job implements ITeamResourceChangeList
 	
 	public boolean shouldReschedule() {
 		return reschedule;
-	}
+	}	
 }

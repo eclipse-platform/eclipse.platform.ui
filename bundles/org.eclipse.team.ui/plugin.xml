@@ -190,13 +190,13 @@
         category="org.eclipse.team.ui"
         class="org.eclipse.team.internal.ui.sync.views.SyncViewer">
       </view>
-<!--      <view
+      <view
         id="org.eclipse.team.sync.views.JobsView"
       	name="Jobs"
         fastViewWidthRatio="0.25"
         category="org.eclipse.team.ui"
         class="org.eclipse.team.internal.ui.jobs.JobsView">
-      </view>    -->
+      </view>  
 </extension>	
 
 <!-- ****************** Import Wizards ********************* -->
@@ -261,4 +261,45 @@
                 relationship="stack"/>
         </perspectiveExtension>
     </extension> 
+    
+<!-- ***************** Actions ********************** -->
+    <extension point="org.eclipse.ui.commands">
+      <category
+            name="%TeamActionSet.categoryName"
+            description="%TeamActionSet.description"
+            id="org.eclipse.team.ui.actionSet">
+      </category>
+      <command
+			category="org.eclipse.team.ui.actionSet"
+            name="%TeamActionSet.syncLabel"
+            description="%TeamActionSet.syncTooltip"
+            id="org.eclipse.team.ui.sync.all">
+      </command>
+      <command
+			category="org.eclipse.team.ui.actionSet"
+            name="%TeamActionSet.syncLabel"
+            description="%TeamActionSet.syncTooltip"
+            id="org.eclipse.team.ui.sync.all">
+      </command>
+   </extension>
+   
+   	<extension point="org.eclipse.ui.actionSets">
+		<actionSet 
+			label="%Team" 
+			visible="true" 
+			id="org.eclipse.team.ui.actionSet"
+			description="%ActionSet.description">
+	  	   <action
+	  	  	 toolbarPath="Normal/CVS"
+	  	  	 style="pulldown"
+	  		 label="%TeamActionSet.syncLabel"
+	  		 tooltip="%TeamActionSet.syncTooltip"
+	  		 icon="icons/full/cview16/synch_synch.gif"
+	  		 class="org.eclipse.team.internal.ui.sync.actions.SyncAllAction"
+	  		 id="org.eclipse.team.internal.ui.sync.actions.SyncAllAction"
+	  		 definitionId="org.eclipse.team.ui.sync.all"> 
+	  	    </action>
+	  </actionSet>
+	</extension>
+        
 </plugin>

@@ -30,6 +30,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.team.internal.ui.jobs.RefreshSubscriberInputJob;
 import org.eclipse.team.internal.ui.jobs.RefreshSubscriberJob;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
@@ -60,12 +61,12 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	private static Hashtable imageDescriptors = new Hashtable(20);
 	private static List disposeOnShutdownImages= new ArrayList();
 	
-	private RefreshSubscriberJob refreshJob;
+	private RefreshSubscriberInputJob refreshJob;
 
 	/**
 	 * Returns the job that refreshes the active subscribers in the background.
 	 */
-	public RefreshSubscriberJob getRefreshJob() {
+	public RefreshSubscriberInputJob getRefreshJob() {
 		return refreshJob;
 	}
 
@@ -182,7 +183,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 		getPreferenceStore().addPropertyChangeListener(this);
 		
 		// startup auto-refresh job if necessary
-		refreshJob = new RefreshSubscriberJob(Policy.bind("ScheduledSyncViewRefresh.taskName"));
+		refreshJob = new RefreshSubscriberInputJob(Policy.bind("ScheduledSyncViewRefresh.taskName"));
 		refreshJob.setReschedule(true);
 		refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY) * 60);
 		if(getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC)) {
@@ -364,7 +365,8 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 			refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY) * 60);
 			if(((Boolean)event.getNewValue()).booleanValue()) {
 				refreshJob.schedule();				
-			} else {
+			} else {				
+				refreshJob.setRestartOnCancel(false /* don't restart the job */);
 				refreshJob.cancel();
 			}
 		}

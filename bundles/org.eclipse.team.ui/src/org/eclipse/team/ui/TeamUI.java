@@ -12,6 +12,9 @@ package org.eclipse.team.ui;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.sync.views.SyncViewer;
+import org.eclipse.team.ui.sync.ISyncViewer;
+import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * TeamUI contains public API for generic UI-based Team functionality
@@ -19,6 +22,14 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 public class TeamUI {
 	// property change types
 	public static String GLOBAL_IGNORES_CHANGED = "global_ignores_changed"; //$NON-NLS-1$
+	
+	/**
+	 * Makes the synchronize view visible in the active page and returns a handle
+	 * to the view.
+	 */
+	public static ISyncViewer showSyncViewInActivePage(IWorkbenchPage activePage) {
+		return SyncViewer.showInActivePage(activePage);		
+	}
 		
 	/**
 	 * Register for changes made to Team properties.

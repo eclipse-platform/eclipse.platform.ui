@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,10 +24,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -70,12 +72,14 @@ import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.TeamAction;
+import org.eclipse.team.internal.ui.jobs.RefreshSubscriberInputJob;
 import org.eclipse.team.internal.ui.jobs.RefreshSubscriberJob;
+import org.eclipse.team.internal.ui.sync.actions.RefreshAction;
 import org.eclipse.team.internal.ui.sync.actions.SyncViewerActions;
 import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.ui.sync.ISyncViewer;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -87,12 +91,14 @@ import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
 
-public class SyncViewer extends ViewPart implements ITeamResourceChangeListener, ISyncSetChangedListener, IJobChangeListener {
+public class SyncViewer extends ViewPart implements ITeamResourceChangeListener, ISyncSetChangedListener, ISyncViewer {
 	
+	public static int PROP_VIEWTYPE = 0x10;
+
 	/*
 	 * This view's id. The same value as in the plugin.xml.
 	 */
-	public static final String VIEW_ID = "org.eclipse.team.sync.views.SyncViewer"; 
+	 public static final String VIEW_ID = "org.eclipse.team.sync.views.SyncViewer"; 
 	
 	/*
 	 * The viewer thst is shown in the view. Currently this can be
@@ -110,8 +116,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	/*
 	 * viewer type constants
 	 */ 
-	public static final int TREE_VIEW = 0;
-	public static final int TABLE_VIEW = 1;
+	private int currentViewType = TABLE_VIEW;
 	
 	/*
 	 * Array of SubscriberInput objects. There is one of these for each subscriber
@@ -133,16 +138,12 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	private Image refreshingImg;
 	private Image initialImg; 
 	private Image viewImage;
-
-	// the currently choosen viewer type (TREE_VIEW or TABLE_VIEW)
-	private int viewerType = TABLE_VIEW;
 	
 	private static final String VIEWER_TYPE_MEMENTO_KEY = "viewerType"; // $NON-NLS-1$
-	
+
 	/**
-	 * Subclass of TreeViewer which handles decorator events properly.
-	 * 
-	 * TODO: We should not need to create a subclass just for this!
+	 * Subclass of TreeViewer which handles decorator events properly. We should not need to create 
+	 * a subclass just for this!
 	 */
 	public class SyncTreeViewer extends TreeViewer {
 		public SyncTreeViewer(Composite parent, int style) {
@@ -167,7 +168,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 			super.handleLabelProviderChanged(event);
 		}
 	}
-
+			
 	public SyncViewer() {
 	}
 
@@ -181,9 +182,23 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	 */
 	public void createPartControl(Composite parent) {
 		TeamProvider.addListener(this);
-		Platform.getJobManager().addJobChangeListener(this);
+		
+		Platform.getJobManager().addJobChangeListener(new JobChangeAdapter() {
+			public void done(IJobChangeEvent event) {
+				if(event.getJob().belongsTo(RefreshSubscriberJob.getFamily())) {
+					setViewImage(initialImg);
+				}
+			}
+
+			public void running(IJobChangeEvent event) {
+				if(event.getJob().belongsTo(RefreshSubscriberJob.getFamily())) {
+					setViewImage(refreshingImg);
+				}
+			}
+		});
+		
 		initializeActions();
-		createViewer(parent, getViewerType());
+		createViewer(parent);
 		contributeToActionBars();
 		this.composite = parent;
 		
@@ -198,25 +213,29 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		refreshingImg = TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP).createImage();
 		TeamUIPlugin.disposeOnShutdown(initialImg);
 		TeamUIPlugin.disposeOnShutdown(refreshingImg);
-		viewImage= initialImg;
+		setViewImage(initialImg);
 		
 		updateTitle();
 	}
 
-	public int getViewerType() {
-		return viewerType;
+	private void setViewImage(Image image) {
+		viewImage = image;
+		fireSafePropertyChange(IWorkbenchPart.PROP_TITLE);
 	}
-	
+
 	public void switchViewerType(int viewerType) {
-		if (composite == null || composite.isDisposed()) return;
-		disposeChildren(composite);
-		createViewer(composite, viewerType);
-		composite.layout();
+		if(viewerType != currentViewType) {
+			if (composite == null || composite.isDisposed()) return;
+			currentViewType = viewerType;
+			disposeChildren(composite);
+			createViewer(composite);
+			composite.layout();
+			fireSafePropertyChange(PROP_VIEWTYPE);
+		}
 	}
 	
-	private void createViewer(Composite parent, int viewerType) {
-		this.viewerType = viewerType;
-		switch(viewerType) {
+	private void createViewer(Composite parent) {
+		switch(currentViewType) {
 			case TREE_VIEW:
 				createTreeViewerPartControl(parent); 
 				break;
@@ -397,6 +416,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		actions = new SyncViewerActions(this);
 		actions.restore(memento);
 	}
+	
 
 	public void activateSubscriber(TeamSubscriber subscriber) {
 		SubscriberInput input = (SubscriberInput)subscriberInputs.get(subscriber.getId());
@@ -457,7 +477,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {			
 				viewer.setInput(input.getFilteredSyncSet());
-				RefreshSubscriberJob refreshJob = TeamUIPlugin.getPlugin().getRefreshJob();
+				RefreshSubscriberInputJob refreshJob = TeamUIPlugin.getPlugin().getRefreshJob();
 				refreshJob.setSubscriberInput(input);
 			}
 		});
@@ -521,6 +541,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 			SubscriberInput input = (SubscriberInput) it.next();
 			input.dispose();
 		}
+		TeamUIPlugin.getPlugin().getRefreshJob().setSubscriberInput(null);
 	}
 
 	public void run(IRunnableWithProgress runnable) {
@@ -554,7 +575,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		if (memento != null) {
 			Integer i = memento.getInteger(VIEWER_TYPE_MEMENTO_KEY);
 			if (i != null) {
-				viewerType = i.intValue();
+				currentViewType = i.intValue();
 			}
 		}
 	}
@@ -568,6 +589,10 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		actions.save(memento);
 	}
 	
+	public int getViewerType() {
+		return currentViewType;
+	}
+
 	/*
 	 * Return the current input for the view.
 	 */
@@ -602,6 +627,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		ActionContext context = new ActionContext(null);
 		context.setInput(si);
 		actions.addContext(context);
+		initializeSubscriberInput(si);
 	}
 	
 	private void removeSubscriber(TeamSubscriber s) {
@@ -615,8 +641,8 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		subscriberInputs.remove(s.getId());
 		
 		if (si == input && lastInput != null) {
-			// show last input
-			initializeSubscriberInput(lastInput);
+		// show last input
+		initializeSubscriberInput(lastInput);
 		}
 	}
 	
@@ -673,8 +699,10 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	protected void updateActionBars(IStructuredSelection selection) {
 		if (actions != null) {
 			ActionContext actionContext = actions.getContext();
-			actionContext.setSelection(selection);
-			actions.updateActionBars();
+			if(actionContext != null) {
+				actionContext.setSelection(selection);
+				actions.updateActionBars();
+			}
 		}
 	}
 	
@@ -721,27 +749,19 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	/**
 	 * Makes this view visible in the active page.
 	 */
-	public static void showInActivePage(IWorkbenchPage activePage) {
-		showInActivePage(activePage, null);
-	}
-
-	/**
-	 * Makes this view visible in the active page.
-	 */
-	public static void showInActivePage(IWorkbenchPage activePage, TeamSubscriber subscriber) {
+	public static SyncViewer showInActivePage(IWorkbenchPage activePage) {
 		try {
 			if (activePage == null) {
 				activePage = TeamUIPlugin.getActivePage();
-				if (activePage == null) return;
+				if (activePage == null) return null;
 			}
-			IViewPart view = activePage.showView(VIEW_ID);
-			if (subscriber != null && view instanceof SyncViewer) {
-				((SyncViewer)view).activateSubscriber(subscriber);
-			}
+			return (SyncViewer)activePage.showView(VIEW_ID);
 		} catch (PartInitException pe) {
 			TeamUIPlugin.log(new TeamException("error showing view", pe));
+			return null;
 		}
 	}
+
 	/**
 	 * Update the title when either the subscriber or filter sync set changes.
 	 */
@@ -749,44 +769,69 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		updateTitle();
 	}
 
-	/**
-	 * IJobChangeListener overrides. The only one of interest is done so that we can
-	 * change the icon of the view when the refresh jobis running.
-	 */
-	public void done(IJobChangeEvent event) {
-		if(event.getJob().belongsTo(RefreshSubscriberJob.getFamily())) {
-			viewImage = initialImg;
-			fireSavePropertyChange(IWorkbenchPart.PROP_TITLE);
-		}
-	}
-
-	public void running(IJobChangeEvent event) {
-		if(event.getJob().belongsTo(RefreshSubscriberJob.getFamily())) {
-			viewImage = refreshingImg;
-			fireSavePropertyChange(IWorkbenchPart.PROP_TITLE);
-		}
-	}
-
-	public void scheduled(IJobChangeEvent event) {	
-	}
-
-	public void sleeping(IJobChangeEvent event) {
-	}
-
-	public void aboutToRun(IJobChangeEvent event) {
-	}
-
-	public void awake(IJobChangeEvent event) {
-	}
-	
-	private void fireSavePropertyChange(final int property) {
+	private void fireSafePropertyChange(final int property) {
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {		
 				firePropertyChange(property);
 			}
 		});
 	}
+	
+	public void setSelection(TeamSubscriber subscriber, IResource[] resources, int viewType) {
+		switchViewerType(viewType);
+		List syncResource = new ArrayList(resources.length);
+		for (int i = 0; i < resources.length; i++) {
+			syncResource.add(new SyncResource((SyncSet)viewer.getInput(), resources[i]));			
+		}
+		if(! syncResource.isEmpty()) {
+			viewer.setSelection(new StructuredSelection(syncResource), true /* reveal */);
+			if(viewer instanceof AbstractTreeViewer) {
+				((AbstractTreeViewer)viewer).expandToLevel(2);
+			}
+		}
+		if(subscriber != null) {
+			activateSubscriber(subscriber);
+		}
+	}
+	
+	/**
+	 * Refreshes the resources from the specified subscriber. The working set or filters applied
+	 * to the sync view do not affect the sync.
+	 */
+	public void refreshWithRemote(TeamSubscriber subscriber, IResource[] resources) {
+		QualifiedName id = subscriber.getId();
+		if(subscriberInputs.containsKey(id)) {
+			if(! input.getSubscriber().getId().equals(id)) {
+				initializeSubscriberInput((SubscriberInput)subscriberInputs.get(id));
+			}
+			RefreshAction.run(this, resources, subscriber);
+		}		
+	}
 
+	/**
+	 * Refreshes the resources in the current input for the given subscriber.
+	 */	
+	public void refreshWithRemote(TeamSubscriber subscriber) {
+		QualifiedName id = subscriber.getId();
+		if(subscriberInputs.containsKey(id)) {
+			if(! input.getSubscriber().getId().equals(id)) {
+				initializeSubscriberInput((SubscriberInput)subscriberInputs.get(id));
+			}
+			RefreshAction.run(this, input.roots(), subscriber);
+		}		
+	}
+	
+	/**
+	 * Refreshes the resources in the current input for the given subscriber.
+	 */	
+	public void refreshWithRemote() {
+		RefreshAction.run(this, input.roots(), input.getSubscriber());
+	}
+	
+	public int getCurrentViewType() {
+		return currentViewType;
+	}
+}
 	public void selectAll() {
 		if (getViewerType() == TABLE_VIEW) {
 			TableViewer table = (TableViewer)getViewer();

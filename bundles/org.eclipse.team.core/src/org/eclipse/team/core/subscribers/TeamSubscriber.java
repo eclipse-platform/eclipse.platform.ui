@@ -231,7 +231,9 @@ abstract public class TeamSubscriber {
 	 * @param listener a team resource change listener
 	 */
 	public void addListener(ITeamResourceChangeListener listener) {
-		listeners.add(listener);
+		if(! listeners.contains(listener)) {
+			listeners.add(listener);
+		}
 	}
 
 	/**

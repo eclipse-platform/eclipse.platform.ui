@@ -146,6 +146,10 @@ public class CVSProviderPlugin extends Plugin {
 	 */
 	private static final String NATURE_ID = ID + ".cvsnature"; //$NON-NLS-1$
 
+	public CVSWorkspaceSubscriber getCVSWorkspaceSubscriber() {
+		return cvsWorkspaceSubscriber;
+	}
+
 	/**
 	 * @return
 	 */

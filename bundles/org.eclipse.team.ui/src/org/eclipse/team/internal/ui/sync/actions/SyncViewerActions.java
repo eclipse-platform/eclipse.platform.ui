@@ -33,6 +33,7 @@ import org.eclipse.team.ui.sync.SyncInfoDirectionFilter;
 import org.eclipse.team.ui.sync.SyncInfoFilter;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
@@ -78,14 +79,17 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		}
 	}
 	
-	class ToggleViewAction extends Action {
-		public ToggleViewAction(int initialState) {
+	class ToggleViewAction extends Action implements IPropertyListener {
+		private SyncViewer viewer;
+		public ToggleViewAction(SyncViewer viewer, int initialState) {
+			this.viewer = viewer;
 			setText("Toggle Tree/Table");
 			setToolTipText("Toggle Tree/Table");
 			setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 						getImageDescriptor(org.eclipse.ui.ISharedImages.IMG_TOOL_COPY));
 			setChecked(initialState == SyncViewer.TREE_VIEW);
 			collapseAll.setEnabled(false);
+			viewer.addPropertyListener(this);
 		}
 		public void run() {
 			int viewerType;
@@ -97,6 +101,11 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 				collapseAll.setEnabled(false);
 			}
 			getSyncView().switchViewerType(viewerType);
+		}
+		public void propertyChanged(Object source, int propId) {
+			if(propId == SyncViewer.PROP_VIEWTYPE) {
+				setChecked(viewer.getCurrentViewType() == SyncViewer.TREE_VIEW);
+			}			
 		}
 	}
 	
@@ -188,7 +197,7 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		expandAll = new ExpandAllAction(this);
 		cancelSubscription = new CancelSubscription(this);
 		
-		toggleViewerType = new ToggleViewAction(getSyncView().getViewerType());
+		toggleViewerType = new ToggleViewAction(getSyncView(), getSyncView().getCurrentViewType());
 		open = new OpenInCompareAction(syncView);
 		
 		IPropertyChangeListener workingSetUpdater = new IPropertyChangeListener() {
@@ -232,7 +241,7 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		
 		IMenuManager dropDownMenu = actionBars.getMenuManager();
 		workingSetGroup.fillActionBars(actionBars);
-		dropDownMenu.add(new SyncViewerShowPreferencesAction(this));
+		dropDownMenu.add(new SyncViewerShowPreferencesAction(getSyncView().getSite().getShell()));
 		dropDownMenu.add(cancelSubscription);
 		
 	}

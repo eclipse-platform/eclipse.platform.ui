@@ -55,6 +55,7 @@ public class OpenInCompareAction extends Action {
 			} else {
 				CompareUI.openCompareEditor(input);
 			}
+			SyncViewer.showInActivePage(viewer.getSite().getPage());
 		}		
 	}
 	

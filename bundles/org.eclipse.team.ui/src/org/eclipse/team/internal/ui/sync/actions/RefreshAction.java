@@ -30,7 +30,7 @@ import org.eclipse.team.internal.ui.sync.views.SyncViewer;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.actions.ActionContext;
 
-class RefreshAction extends Action {
+public class RefreshAction extends Action {
 	private final SyncViewerActions actions;
 	private boolean refreshAll;
 	
@@ -55,17 +55,7 @@ class RefreshAction extends Action {
 				// If no resources are selected, refresh all the subscriber roots
 				resources = input.roots();
 			}
-			if(TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_BACKGROUND_SYNC)) {
-				// Cancel the scheduled background refresh but ensure it gets rescheduled
-				// to run later.
-				TeamUIPlugin.getPlugin().getRefreshJob().setRestartOnCancel(true);
-				Platform.getJobManager().cancel(RefreshSubscriberJob.getFamily());
-				RefreshSubscriberJob job = new RefreshSubscriberJob(Policy.bind("SyncViewRefresh.taskName", new Integer(resources.length).toString()));
-				job.setSubscriberInput(input);
-				job.schedule();
-			} else {
-				runBlocking(input.getSubscriber(), resources);
-			}
+			run(view, resources, input.getSubscriber());
 		}					
 	}
 	
@@ -76,8 +66,22 @@ class RefreshAction extends Action {
 		return (IResource[])TeamAction.getSelectedAdaptables(selection, IResource.class);					
 	}
 	
-	private void runBlocking(final TeamSubscriber s, final IResource[] resources) {
-		actions.getSyncView().run(new IRunnableWithProgress() {
+	public static void run(SyncViewer viewer, IResource[] resources, TeamSubscriber subscriber) {
+		if(TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_BACKGROUND_SYNC)) {
+			// Cancel the scheduled background refresh but ensure it gets rescheduled
+			// to run later.
+			Platform.getJobManager().cancel(RefreshSubscriberJob.getFamily());
+			RefreshSubscriberJob job = new RefreshSubscriberJob(Policy.bind("SyncViewRefresh.taskName", new Integer(resources.length).toString()), resources, subscriber);
+			if(TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC)) {
+				job.schedule();
+			}
+		} else {
+			runBlocking(viewer, subscriber, resources);
+		}		
+	}
+		
+	private static void runBlocking(SyncViewer viewer, final TeamSubscriber s, final IResource[] resources) {
+		viewer.run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
 					monitor.beginTask(null, 100);
