@@ -65,7 +65,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		
 		createSpacer(getFieldEditorParent(), 2);
 		
-		addField(new ColorFieldEditor(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB, DebugPreferencesMessages.getString("VariableViewsPreferencePage.&Changed_variable_value_color__3"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new ColorFieldEditor(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB, DebugPreferencesMessages.getString("DebugPreferencePage.1"), getFieldEditorParent())); //$NON-NLS-1$
 		
 	}
 
