@@ -61,7 +61,7 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 			ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
 			if (cvsFile.isIgnored()) return false;
 			// Otherwise, we need to prepare properly for the delete
-			EclipseSynchronizer.getInstance().run(new ICVSRunnable() {
+			EclipseSynchronizer.getInstance().run(file, new ICVSRunnable() {
 				public void run(IProgressMonitor monitor) throws CVSException {
 					try {
 						monitor.beginTask(null, 100);
@@ -95,7 +95,7 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 		try {
 			final ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
 			if (cvsFolder.isManaged() && ensureCheckedOut(new IFolder[] {folder}, tree, Policy.subMonitorFor(monitor, 30))) {
-				EclipseSynchronizer.getInstance().run(new ICVSRunnable() {
+				EclipseSynchronizer.getInstance().run(folder, new ICVSRunnable() {
 					public void run(IProgressMonitor monitor) throws CVSException {
 						try {
 							monitor.beginTask(null, 100);

@@ -501,7 +501,7 @@ public class EclipseSynchronizer {
 	}
 
 	public void deconfigure(final IProject project, IProgressMonitor monitor) throws CVSException {
-		run(new ICVSRunnable() {
+		run(project, new ICVSRunnable() {
 			public void run(IProgressMonitor monitor) throws CVSException {
 				flush(project, true, true, monitor);
 				
@@ -1194,7 +1194,7 @@ public class EclipseSynchronizer {
 	}
 
 	public void copyFileToBaseDirectory(final IFile file, IProgressMonitor monitor) throws CVSException {
-		run(new ICVSRunnable() {
+		run(file, new ICVSRunnable() {
 			public void run(IProgressMonitor monitor) throws CVSException {
 				ResourceSyncInfo info = getResourceSync(file);
 				// The file must exist remotely and locally
@@ -1207,7 +1207,7 @@ public class EclipseSynchronizer {
 	}
 	
 	public void restoreFileFromBaseDirectory(final IFile file, IProgressMonitor monitor) throws CVSException {
-		run(new ICVSRunnable() {
+		run(file, new ICVSRunnable() {
 			public void run(IProgressMonitor monitor) throws CVSException {
 				ResourceSyncInfo info = getResourceSync(file);
 				// The file must exist remotely
@@ -1308,17 +1308,21 @@ public class EclipseSynchronizer {
 	 * @param monitor
 	 * @throws CVSException
 	 */
-	public void run(ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
+	public void run(IResource rootResource, ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
 		monitor = Policy.monitorFor(monitor);
 		monitor.beginTask(null, 100);
 		try {
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			beginOperation(root, Policy.subMonitorFor(monitor, 5));
+			beginOperation(rootResource, Policy.subMonitorFor(monitor, 5));
 			job.run(Policy.subMonitorFor(monitor, 60));
 		} finally {
 			endOperation(Policy.subMonitorFor(monitor, 35));
 			monitor.done();
 		}
+	}
+	
+	public void run(ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		run(root, job, monitor);
 	}
 	
 	/**

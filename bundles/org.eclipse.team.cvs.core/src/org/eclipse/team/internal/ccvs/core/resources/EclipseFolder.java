@@ -299,7 +299,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					try {
-						EclipseSynchronizer.getInstance().run(job, monitor);
+						EclipseSynchronizer.getInstance().run(getIResource(), job, monitor);
 					} catch(CVSException e) {
 						error[0] = e; 
 					}
