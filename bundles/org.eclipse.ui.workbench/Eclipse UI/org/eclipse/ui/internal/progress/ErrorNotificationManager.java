@@ -29,6 +29,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 
+import org.eclipse.ui.internal.ExceptionHandler;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -54,6 +55,7 @@ public class ErrorNotificationManager {
 	/**
 	 * Set up any images the error management needs.
 	 * @param iconsRoot
+	 * @throws MalformedURLException
 	 */
 	void setUpImages(URL iconsRoot) throws MalformedURLException {
 		JFaceResources.getImageRegistry().put(
@@ -66,6 +68,21 @@ public class ErrorNotificationManager {
 	 * @param jobName
 	 */
 	void addError(IStatus status, String jobName) {
+		
+		//Handle out of memory errors via the workbench
+		final Throwable exception = status.getException();
+		if(exception != null && exception instanceof OutOfMemoryError){
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable(){
+				/* (non-Javadoc)
+				 * @see java.lang.Runnable#run()
+				 */
+				public void run() {
+					ExceptionHandler.getInstance().handleException(exception);
+				}
+			});
+			
+			return;		
+		}
 		errors.add(new ErrorInfo(status, jobName));
 		if (dialogActive) {
 			if (dialog != null)

@@ -425,6 +425,15 @@ public class ErrorNotificationDialog extends Dialog {
 		if (info != null) {
 			selectedError = info;
 			statusList.add(selectedError.getErrorStatus().getMessage());
+			if (selectedError.getErrorStatus().getException() != null) {
+				Throwable exception = selectedError.getErrorStatus()
+						.getException();
+				statusList.add(exception.toString());
+				StackTraceElement[] elements = exception.getStackTrace();
+				for (int i = 0; i < elements.length; i++) {
+					statusList.add(elements[i].toString());
+				}
+			}
 			IStatus[] statuses = (selectedError.getErrorStatus().getChildren());
 			for (int i = 0; i < statuses.length; i++) {
 				statusList.add(NESTING_INDENT + statuses[i].getMessage());
@@ -470,6 +479,19 @@ public class ErrorNotificationDialog extends Dialog {
 			buffer.append(NESTING_INDENT); //$NON-NLS-1$
 		}
 		buffer.append(buildingStatus.getMessage());
+
+		if (buildingStatus.getException() != null) {
+			Throwable exception = buildingStatus.getException();
+			buffer.append("\n"); //$NON-NLS-1$
+			buffer.append(exception.toString());
+			StackTraceElement[] elements = exception.getStackTrace();
+			for (int i = 0; i < elements.length; i++) {
+				buffer.append("\n"); //$NON-NLS-1$
+				buffer.append(elements[i].toString());
+
+			}
+		}
+
 		buffer.append("\n"); //$NON-NLS-1$
 		IStatus[] children = buildingStatus.getChildren();
 		for (int i = 0; i < children.length; i++) {
