@@ -72,6 +72,13 @@ public final class WorkbenchActivityHelper {
 	public static final boolean isFiltering() {
 		return !PlatformUI.getWorkbench().getActivitySupport().getActivityManager().getDefinedCategoryIds().isEmpty();
 	}
+	
+	/** 
+	 * @return whether the UI will provide a "show all" option when applicable.
+	 */
+	public static final boolean showAll() {
+		return true;
+	}
 
 	/**
 	 * Not intended to be instantiated.

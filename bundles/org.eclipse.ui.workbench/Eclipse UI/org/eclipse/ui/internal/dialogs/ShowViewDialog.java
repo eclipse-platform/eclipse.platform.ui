@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -29,8 +30,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
@@ -52,12 +51,13 @@ public class ShowViewDialog
 	private static final String DIALOG_SETTING_SECTION_NAME = "ShowViewDialog"; //$NON-NLS-1$
 	private static final int LIST_HEIGHT = 300;
 	private static final int LIST_WIDTH = 250;
-	private static final String STORE_EXPANDED_FILTERED_CATEGORIES_ID = DIALOG_SETTING_SECTION_NAME + ".STORE_EXPANDED_FILTERED_CATEGORIES_ID"; //$NON-NLS-1$
-	private static final String STORE_EXPANDED_UNFILTERED_CATEGORIES_ID = DIALOG_SETTING_SECTION_NAME + ".STORE_EXPANDED_UNFILTERED_CATEGORIES_ID"; //$NON-NLS-1$
-	private static final String UNFILTERED_TAB_SELECTED = DIALOG_SETTING_SECTION_NAME + ".UNFILTERED_TAB_SELECTED"; //$NON-NLS-1$    
+	private static final String STORE_EXPANDED_CATEGORIES_ID = DIALOG_SETTING_SECTION_NAME + ".STORE_EXPANDED_CATEGORIES_ID"; //$NON-NLS-1$
+	private static final String SHOW_ALL_ENABLED = DIALOG_SETTING_SECTION_NAME + ".SHOW_ALL_SELECTED"; //$NON-NLS-1$    
 	private TreeViewer filteredTree, unfilteredTree;
 	private Button okButton;
-	private TabFolder tabFolder;
+	private StackLayout stackLayout;
+	private Composite stackComposite;
+	private Button showAllCheck;
 	private IViewDescriptor[] viewDescs = new IViewDescriptor[0];
 	private IViewRegistry viewReg;
 
@@ -133,25 +133,39 @@ public class ShowViewDialog
 		Composite composite = (Composite) super.createDialogArea(parent);
 		composite.setFont(parent.getFont());
 
-		if (WorkbenchActivityHelper.isFiltering()) {
-			tabFolder = new TabFolder(composite, SWT.NONE);
-			tabFolder.setFont(parent.getFont());
+		stackComposite = new Composite(composite, SWT.NONE);
+		stackLayout = new StackLayout();
+		stackComposite.setLayout(stackLayout);
+		
+		stackComposite.setFont(parent.getFont());
 
-			layoutTopControl(tabFolder);
+		layoutTopControl(stackComposite);
 
-			// Add filtered view list.
-			filteredTree = createViewer(tabFolder, true);
-			unfilteredTree = createViewer(tabFolder, false);
-
+		// Add filtered view list.
+		filteredTree = createViewer(stackComposite, true);
+		
+		if (WorkbenchActivityHelper.showAll()) {
+			unfilteredTree = createViewer(stackComposite, false);
+			showAllCheck = new Button(composite, SWT.CHECK);
+			showAllCheck.setText(ActivityMessages.getString("ActivityFiltering.showAll")); //$NON-NLS-1$
+			
 			// flipping tabs updates the selected node
-			tabFolder.addSelectionListener(new SelectionAdapter() {
+			showAllCheck.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					if (tabFolder.getSelectionIndex() == 0) {
+					if (!showAllCheck.getSelection()) {
+					    filteredTree.setExpandedElements(unfilteredTree.getExpandedElements());
+					    filteredTree.setSelection(unfilteredTree.getSelection());
+						stackLayout.topControl = filteredTree.getControl();	
+						stackComposite.layout();
 						selectionChanged(
 							new SelectionChangedEvent(
 								filteredTree,
 								filteredTree.getSelection()));
 					} else {
+					    unfilteredTree.setExpandedElements(filteredTree.getExpandedElements());
+					    unfilteredTree.setSelection(filteredTree.getSelection());
+						stackLayout.topControl = unfilteredTree.getControl();
+						stackComposite.layout();
 						selectionChanged(
 							new SelectionChangedEvent(
 								unfilteredTree,
@@ -159,11 +173,9 @@ public class ShowViewDialog
 					}
 				}
 			});
-
-		} else {
-			unfilteredTree = createViewer(composite, false);
-			layoutTopControl(unfilteredTree.getControl());
+			
 		}
+		stackLayout.topControl = filteredTree.getControl();
 
 		// Restore the last state
 		restoreWidgetValues();
@@ -192,13 +204,6 @@ public class ShowViewDialog
 		tree.addSelectionChangedListener(this);
 		tree.addDoubleClickListener(this);
 		tree.getTree().setFont(parent.getFont());
-
-		if (parent instanceof TabFolder) {
-			TabItem tabItem = new TabItem((TabFolder) parent, SWT.NONE);
-			tabItem.setControl(tree.getControl());
-			tabItem.setText(filtering ? ActivityMessages.getString("ActivityFiltering.filtered") //$NON-NLS-1$
-			: ActivityMessages.getString("ActivityFiltering.unfiltered")); //$NON-NLS-1$
-		}
 
 		return tree;
 	}
@@ -291,19 +296,19 @@ public class ShowViewDialog
 		IDialogSettings settings = getDialogSettings();
 
 		expandTree(
-			settings.getArray(STORE_EXPANDED_UNFILTERED_CATEGORIES_ID),
-			unfilteredTree);
+			settings.getArray(STORE_EXPANDED_CATEGORIES_ID),
+			filteredTree);
 
-		if (WorkbenchActivityHelper.isFiltering()) {
-			expandTree(
-				settings.getArray(STORE_EXPANDED_FILTERED_CATEGORIES_ID),
-				filteredTree);
-
+		if (unfilteredTree != null) {
 			boolean unfilteredSelected =
-				getDialogSettings().getBoolean(UNFILTERED_TAB_SELECTED);
+				getDialogSettings().getBoolean(SHOW_ALL_ENABLED);
 
-			if (unfilteredSelected)
-				tabFolder.setSelection(1);
+			showAllCheck.setSelection(unfilteredSelected);
+			
+			if (unfilteredSelected) {
+				stackLayout.topControl = unfilteredTree.getControl();
+				stackComposite.layout();
+			}
 		}
 	}
 
@@ -336,20 +341,15 @@ public class ShowViewDialog
 	protected void saveWidgetValues() {
 		IDialogSettings settings = getDialogSettings();
 
-		if (WorkbenchActivityHelper.isFiltering()) {
-			saveExpanded(
-				settings,
-				filteredTree,
-				STORE_EXPANDED_FILTERED_CATEGORIES_ID);
-		}
 		saveExpanded(
 			settings,
 			unfilteredTree,
-			STORE_EXPANDED_UNFILTERED_CATEGORIES_ID);
-		if (WorkbenchActivityHelper.isFiltering()) {
+			STORE_EXPANDED_CATEGORIES_ID);
+		
+		if (unfilteredTree != null) {
 			settings.put(
-				UNFILTERED_TAB_SELECTED,
-				tabFolder.getSelectionIndex() == 1 ? true : false);
+				SHOW_ALL_ENABLED,
+				showAllCheck.getSelection());
 		}
 	}
 

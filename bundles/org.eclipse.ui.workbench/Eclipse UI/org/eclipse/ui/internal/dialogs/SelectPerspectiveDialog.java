@@ -13,6 +13,7 @@
 
 package org.eclipse.ui.internal.dialogs;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -22,6 +23,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -29,8 +31,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -44,13 +44,16 @@ import org.eclipse.ui.model.PerspectiveLabelProvider;
  * A dialog for perspective creation
  */
 public class SelectPerspectiveDialog
-	extends org.eclipse.jface.dialogs.Dialog
+	extends Dialog
 	implements ISelectionChangedListener {
 
 	final private static int LIST_HEIGHT = 300;
 	final private static int LIST_WIDTH = 200;
 	private TableViewer filteredList, unfilteredList;
 	private Button okButton;
+	private StackLayout stackLayout;
+	private Composite stackComposite;
+	private Button showAllCheck;	
 	private IPerspectiveDescriptor perspDesc;
 	private IPerspectiveRegistry perspReg;
 
@@ -121,23 +124,35 @@ public class SelectPerspectiveDialog
 		Composite composite = (Composite) super.createDialogArea(parent);
 		composite.setFont(parent.getFont());
 
-		if (WorkbenchActivityHelper.isFiltering()) {
-			final TabFolder tabFolder = new TabFolder(composite, SWT.NONE);
-			tabFolder.setFont(parent.getFont());
-			layoutTopControl(tabFolder);
+		stackComposite = new Composite(composite, SWT.NONE);
+		stackLayout = new StackLayout();
+		stackComposite.setLayout(stackLayout);
+		layoutTopControl(stackComposite);
+		filteredList = createViewer(stackComposite, true);
+		
+		if (WorkbenchActivityHelper.showAll()) {
 
-			filteredList = createViewer(tabFolder, true);
-			unfilteredList = createViewer(tabFolder, false);
+			unfilteredList = createViewer(stackComposite, false);
 
+			showAllCheck = new Button(composite, SWT.CHECK);
+			showAllCheck.setSelection(false);
+			showAllCheck.setText(ActivityMessages.getString("ActivityFiltering.showAll")); //$NON-NLS-1$
+						
 			// flipping tabs updates the selected node
-			tabFolder.addSelectionListener(new SelectionAdapter() {
+			showAllCheck.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					if (tabFolder.getSelectionIndex() == 0) {
+					if (!showAllCheck.getSelection()) {
+					    filteredList.setSelection(unfilteredList.getSelection());
+						stackLayout.topControl = filteredList.getControl();	
+						stackComposite.layout();						
 						selectionChanged(
 							new SelectionChangedEvent(
 								filteredList,
 								filteredList.getSelection()));
 					} else {
+					    unfilteredList.setSelection(filteredList.getSelection());
+						stackLayout.topControl = unfilteredList.getControl();	
+						stackComposite.layout();						
 						selectionChanged(
 							new SelectionChangedEvent(
 								unfilteredList,
@@ -145,10 +160,9 @@ public class SelectPerspectiveDialog
 					}
 				}
 			});
-		} else {
-			unfilteredList = createViewer(composite, false);
-			layoutTopControl(unfilteredList.getControl());
-		}
+		} 
+		
+		stackLayout.topControl = filteredList.getControl();
 
 		// Return results.
 		return composite;
@@ -177,13 +191,6 @@ public class SelectPerspectiveDialog
 				handleDoubleClickEvent();
 			}
 		});
-
-		if (parent instanceof TabFolder) {
-			TabItem tabItem = new TabItem((TabFolder) parent, SWT.NONE);
-			tabItem.setControl(list.getControl());
-			tabItem.setText(filtering ? ActivityMessages.getString("ActivityFiltering.filtered") //$NON-NLS-1$
-			: ActivityMessages.getString("ActivityFiltering.unfiltered")); //$NON-NLS-1$
-		}
 		return list;
 	}
 
