@@ -77,10 +77,12 @@ public class ConsoleDocument {
 	public ConsoleLine[] getLines() {
 		if(isEmpty()) return new ConsoleLine[0];
 		ConsoleLine[] docLines = new ConsoleLine[readIndex > writeIndex ? BUFFER_SIZE : writeIndex];
-		for (int i = readIndex; i < writeIndex; ) {
-			docLines[i] = new ConsoleLine(lines[i], lineTypes[i]);
-			if(++i >= BUFFER_SIZE)
-				i = 0;
+		int index = readIndex;
+		for (int i = 0; i < docLines.length; i++) {
+			docLines[i] = new ConsoleLine(lines[index], lineTypes[index]);
+			if (++index >= BUFFER_SIZE) {
+				index = 0;
+			}
 		}
 		return docLines;
 	}

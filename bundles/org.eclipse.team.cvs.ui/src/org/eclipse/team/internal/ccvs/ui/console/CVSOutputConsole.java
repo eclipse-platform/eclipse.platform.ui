@@ -49,6 +49,9 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	// format for timings printed to console
 	private static final DateFormat TIME_FORMAT = new SimpleDateFormat(Policy.bind("Console.resultTimeFormat")); //$NON-NLS-1$
 
+	// Indicates whether the console is visible in the Console view
+	private boolean visible = false;
+	// Indicates whether the console's streams have been initialized
 	private boolean initialized = false;
 	
 	/**
@@ -91,25 +94,6 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		showConsole();
 	}
 	
-	/*
-	 * Initialize thre streams of the console. Must be 
-	 * called from the UI thread.
-	 */
-	private void initializeStreams() {
-		commandStream = newMessageStream();
-		errorStream = newMessageStream();
-		messageStream = newMessageStream();
-		// install colors
-		commandColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR);
-		commandStream.setColor(commandColor);
-		messageColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_MESSAGE_COLOR);
-		messageStream.setColor(messageColor);
-		errorColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_ERROR_COLOR);
-		errorStream.setColor(errorColor);
-		// install font
-		setFont(JFaceResources.getFontRegistry().get(ICVSUIConstants.PREF_CONSOLE_FONT));
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.AbstractConsole#init()
 	 */
@@ -126,9 +110,33 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		});
 	}
 	
+	/*
+	 * Initialize thre streams of the console. Must be 
+	 * called from the UI thread.
+	 */
+	private void initializeStreams() {
+		synchronized(document) {
+			if (!initialized) {
+				commandStream = newMessageStream();
+				errorStream = newMessageStream();
+				messageStream = newMessageStream();
+				// install colors
+				commandColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR);
+				commandStream.setColor(commandColor);
+				messageColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_MESSAGE_COLOR);
+				messageStream.setColor(messageColor);
+				errorColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_ERROR_COLOR);
+				errorStream.setColor(errorColor);
+				// install font
+				setFont(JFaceResources.getFontRegistry().get(ICVSUIConstants.PREF_CONSOLE_FONT));
+				initialized = true;
+			}
+		}
+	}
+
 	private void dump() {
 		synchronized(document) {
-			initialized = true;
+			visible = true;
 			ConsoleDocument.ConsoleLine[] lines = document.getLines();
 			for (int i = 0; i < lines.length; i++) {
 				ConsoleDocument.ConsoleLine line = lines[i];
@@ -140,7 +148,7 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	
 	private void appendLine(int type, String line) {
 		synchronized(document) {
-			if(initialized) {
+			if(visible) {
 				switch(type) {
 					case ConsoleDocument.COMMAND:
 						commandStream.println(line);
@@ -161,7 +169,7 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	private void showConsole() {
 		if(showOnMessage) {
 			IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
-			if(! initialized) {
+			if(! visible) {
 				manager.addConsoles(new IConsole[] {this});
 			}
 			manager.showConsoleView(this);
@@ -178,7 +186,7 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		
 		// Called when console is removed from the console view
 		synchronized (document) {
-			initialized = false;
+			visible = false;
 			JFaceResources.getFontRegistry().removeListener(this);
 		}
 	}
@@ -272,7 +280,7 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();		
 		// colors
-		if (initialized) {
+		if (visible) {
 			if (property.equals(ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR)) {
 				Color newColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR);
 				commandStream.setColor(newColor);
