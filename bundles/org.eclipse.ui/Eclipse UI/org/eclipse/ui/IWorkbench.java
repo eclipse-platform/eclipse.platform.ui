@@ -44,6 +44,20 @@ import org.eclipse.jface.viewers.ILabelDecorator;
  */
 public interface IWorkbench {
 /**
+ * Adds a window listener.
+ * 
+ * @param listener the window listener to add
+ * @since 2.0
+ */
+public void addWindowListener(IWindowListener listener);	
+/**
+ * Removes a window listener.
+ * 
+ * @param listener the window listener to remove
+ * @since 2.0
+ */
+public void removeWindowListener(IWindowListener l);
+/**
  * Creates a copy of an existing workbench page, and opens it in the workbench.
  * If the user preference for "Open Perspective" is "in current window", the 
  * page will be created in the current window.  Otherwise, it will be created 

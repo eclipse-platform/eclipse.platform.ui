@@ -27,6 +27,7 @@ import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.*;
+import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.ICombinedLabelDecorator;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -63,6 +64,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private Window.IExceptionHandler handler;
 	private AcceleratorConfiguration acceleratorConfiguration;
 	private Object returnCode;
+	private ListenerList windowListeners = new ListenerList();
 	/**
 	 * Workbench constructor comment.
 	 */
@@ -70,6 +72,54 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		super();
 		WorkbenchPlugin.getDefault().setWorkbench(this);
 	}
+	/**
+	 * See IWorkbench
+	 */
+	public void addWindowListener(IWindowListener l) {
+		windowListeners.add(l);
+	}	
+	/**
+	 * See IWorkbench
+	 */
+	public void removeWindowListener(IWindowListener l) {
+		windowListeners.remove(l);
+	}
+	/**
+	 * Fire window opened event.
+	 */	
+	protected void fireWindowOpened(IWorkbenchWindow window) {
+		Object list[] = windowListeners.getListeners();
+		for (int i = 0; i < list.length; i++) {
+			((IWindowListener)list[i]).windowOpened(window);
+		}
+	}		
+	/**
+	 * Fire window closed event.
+	 */
+	protected void fireWindowClosed(IWorkbenchWindow window) {
+		Object list[] = windowListeners.getListeners();
+		for (int i = 0; i < list.length; i++) {
+			((IWindowListener)list[i]).windowClosed(window);
+		}
+	}
+	/**
+	 * Fire window activated event.
+	 */	
+	protected void fireWindowActivated(IWorkbenchWindow window) {
+		Object list[] = windowListeners.getListeners();
+		for (int i = 0; i < list.length; i++) {
+			((IWindowListener)list[i]).windowActivated(window);
+		}
+	}
+	/**
+	 * Fire window deactivated event.
+	 */	
+	protected void fireWindowDeactivated(IWorkbenchWindow window) {
+		Object list[] = windowListeners.getListeners();
+		for (int i = 0; i < list.length; i++) {
+			((IWindowListener)list[i]).windowDeactivated(window);
+		}
+	}		
 	/**
 	 * Get the extenders from the registry and adds them to the 
 	 * extender manager.

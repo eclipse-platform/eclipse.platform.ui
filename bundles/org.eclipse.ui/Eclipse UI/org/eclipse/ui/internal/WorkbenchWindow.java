@@ -320,6 +320,14 @@ protected IWorkbenchPage busyOpenPage(String perspID, IAdaptable input)
 	return newPage;
 }
 /**
+ * @see Window
+ */
+public int open() {
+	int r = super.open();
+	workbench.fireWindowOpened(this);
+	return r;
+}
+/**
  * @see IWorkbenchWindow
  */
 public boolean close() {
@@ -768,13 +776,14 @@ public IWorkbench getWorkbench() {
 /**
  * Unconditionally close this window.
  */
-public boolean hardClose() {
+private boolean hardClose() {
 	closing = true;
 	updateDisabled = true;
 	closeAllPages();
 	builder.dispose();
 	if(keyBindingService != null)
 		keyBindingService.dispose();
+	workbench.fireWindowClosed(this);
 	return super.close();
 }
 /**
@@ -1170,6 +1179,7 @@ private void trackShellActivation(Shell shell) {
 					PartSite site = (PartSite) editor.getSite();
 					site.getPane().shellActivated();
 				}
+				workbench.fireWindowActivated(WorkbenchWindow.this);
 			}
 		}
 		public void shellDeactivated(ShellEvent event) {
@@ -1186,6 +1196,7 @@ private void trackShellActivation(Shell shell) {
 					PartSite site = (PartSite) editor.getSite();
 					site.getPane().shellDeactivated();
 				}
+				workbench.fireWindowDeactivated(WorkbenchWindow.this);
 			}
 		}
 	});
