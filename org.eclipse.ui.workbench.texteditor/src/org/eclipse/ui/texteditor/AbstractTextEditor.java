@@ -1998,10 +1998,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		try {
 			IRunnableContext context= (window instanceof IRunnableContext) ? (IRunnableContext) window : new ProgressMonitorDialog(window.getShell());
 			context.run(false, true, runnable);
-		} catch (InvocationTargetException x) {
 		} catch (InterruptedException x) {
+		} catch (InvocationTargetException x) {
+			Throwable t= x.getTargetException();
+			if (t instanceof CoreException)
+				exceptions[0]= new PartInitException(((CoreException)t).getStatus());
+			else
+				exceptions[0]= new PartInitException(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, EditorMessages.getString("Editor.error.init"), t)); //$NON-NLS-1$
 		}
-
 		if (exceptions[0] != null)
 			throw exceptions[0];
 	}
