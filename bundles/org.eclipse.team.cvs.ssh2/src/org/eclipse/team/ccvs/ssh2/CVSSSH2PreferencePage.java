@@ -447,6 +447,12 @@ public class CVSSSH2PreferencePage extends PreferencePage
     	public void modifyText(ModifyEvent e){
     		String pass1=keyPassphrase1Text.getText();
     		String pass2=keyPassphrase2Text.getText();
+    		if(kpair!=null && pass1.equals(pass2)){
+    			saveKeyPair.setEnabled(true);
+    		}
+    		else{
+    			saveKeyPair.setEnabled(false);
+    		}
     		if(pass2.length()==0){
     			setErrorMessage(null);
     			return;
@@ -464,6 +470,12 @@ public class CVSSSH2PreferencePage extends PreferencePage
     	public void modifyText(ModifyEvent e){
     		String pass1=keyPassphrase1Text.getText();
     		String pass2=keyPassphrase2Text.getText();
+    		if(kpair!=null && pass1.equals(pass2)){
+    			saveKeyPair.setEnabled(true);
+    		}
+    		else{
+    			saveKeyPair.setEnabled(false);
+    		}
     		if(pass2.length()<pass1.length()){
     			if(pass1.startsWith(pass2)){
     				setErrorMessage(null);
@@ -587,10 +599,12 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  MessageBox mb;
 	  String pass=keyPassphrase1Text.getText();
+	  /*
 	  if(!pass.equals(keyPassphrase2Text.getText())){
 	    setErrorMessage(Policy.bind("CVSSSH2PreferencePage.48")); //$NON-NLS-1$
 	    return;
 	  }
+	  */
 	  if(pass.length()==0){
 	    mb=new MessageBox(getShell(),SWT.YES|SWT.NO|SWT.ICON_WARNING);
 	    mb.setText(Policy.bind("CVSSSH2PreferencePage.warning")); //$NON-NLS-1$
