@@ -181,7 +181,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 				bounds.height, false);
 	}
 
-	private void contributeToToolBar(IToolBarManager tbm) {
+	protected void contributeToToolBar(IToolBarManager tbm) {
 		Action collapseAllAction = new Action() {
 			public void run() {
 				BusyIndicator.showWhile(container.getDisplay(), new Runnable() {

@@ -11,17 +11,30 @@
 package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.help.*;
+import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.util.OverlayIcon;
-import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
+public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart,
+		IActivityManagerListener {
+	private static final String PROMPT_KEY = "askShowAll";
 	private Image containerWithTopicImage;
+
+	private Action showAllAction;
+
+	private RoleFilter roleFilter;
 
 	class TopicsProvider implements ITreeContentProvider {
 		public Object[] getChildren(Object parentElement) {
@@ -96,8 +109,8 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
 			if (obj instanceof ITopic) {
 				boolean expandable = treeViewer.isExpandable(obj);
 				if (expandable) {
-					ITopic topic = (ITopic)obj;
-					if (topic.getHref()!=null)
+					ITopic topic = (ITopic) obj;
+					if (topic.getHref() != null)
 						return containerWithTopicImage;
 				}
 				String key = expandable ? IHelpUIConstants.IMAGE_CONTAINER
@@ -105,6 +118,17 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
 				return HelpUIResources.getImage(key);
 			}
 			return super.getImage(obj);
+		}
+	}
+
+	class RoleFilter extends ViewerFilter {
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
+			IHelpResource res = (IHelpResource) element;
+			String href = res.getHref();
+			if (href == null)
+				return true;
+			return HelpBasePlugin.getActivitySupport().isEnabled(href);
 		}
 	}
 
@@ -117,7 +141,7 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
 			IToolBarManager tbm) {
 		super(parent, toolkit, tbm);
 	}
-	
+
 	protected void configureTreeViewer() {
 		initializeImages();
 		treeViewer.setContentProvider(new TopicsProvider());
@@ -137,17 +161,51 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
 					postUpdate(event.getElement());
 				}
 			}
-		});		
+		});
+		PlatformUI.getWorkbench().getActivitySupport().getActivityManager()
+				.addActivityManagerListener(this);
 	}
-	
+
+	protected void contributeToToolBar(IToolBarManager tbm) {
+		roleFilter = new RoleFilter();
+		if (HelpBasePlugin.getActivitySupport().isFilteringEnabled()) {
+			treeViewer.addFilter(roleFilter);
+		}
+		if (HelpBasePlugin.getActivitySupport().isUserCanToggleFiltering()) {
+			showAllAction = new Action() {
+				public void run() {
+					BusyIndicator.showWhile(getControl().getDisplay(),
+							new Runnable() {
+								public void run() {
+									toggleShowAll(showAllAction.isChecked());
+								}
+							});
+				}
+			};
+			showAllAction.setImageDescriptor(HelpUIResources
+					.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_ALL));
+			showAllAction.setToolTipText(HelpUIResources
+					.getString("AllTopicsPart.showAll.tooltip")); //$NON-NLS-1$
+			tbm.insertBefore("back", showAllAction); //$NON-NLS-1$
+			showAllAction.setChecked(!HelpBasePlugin.getActivitySupport()
+					.isFilteringEnabled());
+		}
+		super.contributeToToolBar(tbm);
+	}
+
 	private void initializeImages() {
-		ImageDescriptor base = HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_CONTAINER);
-		ImageDescriptor ovr = HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_DOC_OVR);
-		ImageDescriptor desc = new OverlayIcon(base, new ImageDescriptor[][] { {ovr}});
+		ImageDescriptor base = HelpUIResources
+				.getImageDescriptor(IHelpUIConstants.IMAGE_CONTAINER);
+		ImageDescriptor ovr = HelpUIResources
+				.getImageDescriptor(IHelpUIConstants.IMAGE_DOC_OVR);
+		ImageDescriptor desc = new OverlayIcon(base,
+				new ImageDescriptor[][] { { ovr } });
 		containerWithTopicImage = desc.createImage();
 	}
-	
+
 	public void dispose() {
+		PlatformUI.getWorkbench().getActivitySupport().getActivityManager()
+				.removeActivityManagerListener(this);
 		containerWithTopicImage.dispose();
 		super.dispose();
 	}
@@ -155,22 +213,49 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
 	protected void doOpen(Object obj) {
 		if (!(obj instanceof IHelpResource))
 			return;
-		IHelpResource res = (IHelpResource)obj;
+		IHelpResource res = (IHelpResource) obj;
 		if (res instanceof IToc
 				|| (res instanceof ITopic
-						&& ((ITopic) obj).getSubtopics().length > 0 && res.getHref() == null))
+						&& ((ITopic) obj).getSubtopics().length > 0 && res
+						.getHref() == null))
 			treeViewer.setExpandedState(obj, !treeViewer.getExpandedState(res));
 		if (res instanceof IToc)
 			postUpdate(res);
 		else if (res.getHref() != null)
 			parent.showURL(res.getHref());
 	}
-	
+
 	protected String getHref(IHelpResource res) {
 		return (res instanceof ITopic) ? res.getHref() : null;
 	}
 
 	protected boolean canAddBookmarks() {
 		return true;
+	}
+
+	public void activityManagerChanged(ActivityManagerEvent activityManagerEvent) {
+		treeViewer.refresh();
+	}
+
+	private void toggleShowAll(boolean checked) {
+		if (checked) {
+			IPreferenceStore store = HelpUIPlugin.getDefault().getPreferenceStore();
+			String value = store.getString(PROMPT_KEY);
+			if (value.length()==0) {
+				MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(
+						null,
+						HelpUIResources.getString("AskShowAll.dialogTitle"), //$NON-NLS-1$
+						HelpUIResources.getString("AskShowAll.message"), //$NON-NLS-1$
+						HelpUIResources.getString("AskShowAll.toggleMessage"), //$NON-NLS-1$
+						false, store, PROMPT_KEY);
+				if (dialog.getReturnCode()!=MessageDialogWithToggle.OK) {
+					showAllAction.setChecked(false);
+					return;
+				}
+			}
+			treeViewer.removeFilter(roleFilter);
+		}
+		else
+			treeViewer.addFilter(roleFilter);
 	}
 }
