@@ -87,19 +87,6 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 **/
 	private final static String PRINT_MARGIN_COLUMN= ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN;
 	/**
-	 * Preference key for unknown annotation indication in overview ruler.
-	 * @since 2.1
-	 **/
-	private final static String UNKNOWN_INDICATION_IN_OVERVIEW_RULER= ExtendedTextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER;
-	/**
-	 * Preference key for unknown annotation indication.
-	 **/
-	private final static String UNKNOWN_INDICATION= ExtendedTextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION;
-	/**
-	 * Preference key for unknown annotation color.
-	 **/
-	private final static String UNKNOWN_INDICATION_COLOR= ExtendedTextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR;
-	/**
 	 * The annotation preferences.
 	 */
 	private MarkerAnnotationPreferences fAnnotationPreferences;
@@ -248,7 +235,6 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 		Iterator e= fAnnotationPreferences.getAnnotationPreferences().iterator();
 		while (e.hasNext())
 			support.setAnnotationPreference((AnnotationPreference) e.next());
-		support.setAnnotationPainterPreferenceKeys(DefaultMarkerAnnotationAccess.UNKNOWN, UNKNOWN_INDICATION_COLOR, UNKNOWN_INDICATION, UNKNOWN_INDICATION_IN_OVERVIEW_RULER, 0);
 		
 		support.setCursorLinePainterPreferenceKeys(CURRENT_LINE, CURRENT_LINE_COLOR);
 		support.setMarginPainterPreferenceKeys(PRINT_MARGIN, PRINT_MARGIN_COLOR, PRINT_MARGIN_COLUMN);
