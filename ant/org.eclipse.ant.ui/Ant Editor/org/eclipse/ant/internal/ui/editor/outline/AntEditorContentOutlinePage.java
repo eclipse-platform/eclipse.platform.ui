@@ -89,7 +89,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	private TopLevelFilter fTopLevelFilter= null;
 	private boolean fSort;
 
-	private static ViewerSorter fSorter;
+	private ViewerSorter fSorter;
 	
 	private static final Object[] EMPTY_ARRAY= new Object[0];
 	
