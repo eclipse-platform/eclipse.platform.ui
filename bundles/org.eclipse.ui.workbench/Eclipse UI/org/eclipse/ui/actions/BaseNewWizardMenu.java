@@ -74,7 +74,9 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
         public void registryChanged(IRegistryChangeEvent event) {
             // reset the reader.
             // TODO This is expensive.  Can we be more selective?
-            getParent().markDirty();
+            if (getParent() != null) {
+                getParent().markDirty();
+            }
             reader = new NewWizardsRegistryReader();
         }
 
