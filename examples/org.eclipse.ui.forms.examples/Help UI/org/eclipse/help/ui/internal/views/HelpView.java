@@ -83,7 +83,8 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 		this.memento = memento;
 		init(site);
 		reusableHelpPart = new ReusableHelpPart(site.getWorkbenchWindow());
-		reusableHelpPart.init(site.getActionBars().getToolBarManager());
+		IActionBars actionBars = site.getActionBars();
+		reusableHelpPart.init(actionBars.getToolBarManager(), actionBars.getStatusLineManager());
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		IPartService service = window.getPartService();

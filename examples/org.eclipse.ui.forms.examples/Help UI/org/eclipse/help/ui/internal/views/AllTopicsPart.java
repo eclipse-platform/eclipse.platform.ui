@@ -249,4 +249,8 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 	public boolean hasFocusControl(Control focusControl) {
 		return treeViewer.getControl().equals(focusControl);		
 	}
+	public void setFocus() {
+		if (treeViewer!=null)
+			treeViewer.getTree().setFocus();
+	}
 }

@@ -6,13 +6,12 @@
  */
 package org.eclipse.help.ui.internal.views;
 
-import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.*;
-import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.AbstractFormPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
@@ -25,7 +24,8 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private ReusableHelpPart parent;
 	private Browser browser;
 	private String id;
-	
+	private int lastProgress = -1;
+
 	public BrowserPart(final Composite parent, FormToolkit toolkit) {
 		browser = new Browser(parent, SWT.NULL);
 		browser.addLocationListener(new LocationListener() {
@@ -36,6 +36,30 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 			public void changed(LocationEvent event) {
 				String url = event.location;
 				BrowserPart.this.parent.browserChanged(url);
+			}
+		});
+		browser.addProgressListener(new ProgressListener() {
+			public void changed(ProgressEvent e) {
+				if (e.current == e.total)
+					return;
+				IProgressMonitor monitor = BrowserPart.this.parent.getStatusLineManager().getProgressMonitor();
+				if (lastProgress == -1) {
+					lastProgress = 0;
+					monitor.beginTask("", e.total);
+				}
+				monitor.worked(e.current - lastProgress);
+				lastProgress = e.current;
+			}
+			public void completed(ProgressEvent e) {
+				IProgressMonitor monitor = BrowserPart.this.parent.getStatusLineManager().getProgressMonitor();
+				monitor.done();
+				lastProgress = -1;
+			}
+		});
+		browser.addStatusTextListener(new StatusTextListener() {
+			public void changed(StatusTextEvent event) {
+				IStatusLineManager statusLine = BrowserPart.this.parent.getStatusLineManager();
+				statusLine.setMessage(event.text);
 			}
 		});
 	}
