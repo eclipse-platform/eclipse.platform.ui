@@ -21,6 +21,8 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 //@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
 import org.eclipse.ui.internal.AboutInfo;
+import org.eclipse.ui.internal.EditorWorkbook;
+import org.eclipse.ui.internal.EditorsDropDownAction;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
@@ -36,7 +38,6 @@ import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IDEContributionItemFactory;
 import org.eclipse.ui.internal.actions.ActivityEnablementAction;
-import org.eclipse.ui.internal.roles.RoleManager;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 
 /**
@@ -108,6 +109,9 @@ public final class WorkbenchActionBuilder {
 	
 	// @issue roleManagerAction should be provided by ActionFactory
 	private ActivityEnablementAction roleManagerAction;
+
+	// @issue editorsDropDownAction should be provided by ActionFactory
+	private EditorsDropDownAction editorsDropDownAction;
 	
 	// IDE-specific actions
 	private IWorkbenchAction projectPropertyDialogAction;
@@ -481,6 +485,9 @@ public final class WorkbenchActionBuilder {
 		subMenu.add(maximizePartAction);
 		subMenu.add(new Separator());
 		subMenu.add(activateEditorAction);
+		if (editorsDropDownAction != null) {
+			subMenu.add(editorsDropDownAction);
+		}
 		subMenu.add(nextEditorAction);
 		subMenu.add(prevEditorAction);
 		subMenu.add(new Separator());
@@ -792,6 +799,11 @@ public final class WorkbenchActionBuilder {
 			roleManagerAction = new ActivityEnablementAction();
 			registerGlobalAction(roleManagerAction);
 		//}
+
+		if (EditorWorkbook.usingNewDropDown()) {
+			editorsDropDownAction = new EditorsDropDownAction(window);
+			registerGlobalAction(editorsDropDownAction);
+		}
 	}
 
 	private void setCurrentActionBarConfigurer(IActionBarConfigurer actionBarConfigurer)

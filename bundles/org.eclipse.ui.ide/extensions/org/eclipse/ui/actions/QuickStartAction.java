@@ -15,9 +15,10 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.swt.widgets.Shell;
 //@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
 import org.eclipse.ui.internal.AboutInfo;
@@ -50,6 +51,17 @@ public class QuickStartAction
 	 */
 	private IWorkbenchWindow workbenchWindow;
 	
+	/**
+	 * Create an instance of this class.
+	 * <p>
+	 * This consructor added to support calling the action from the welcome
+	 * page.
+	 * </p>
+	 */
+	public QuickStartAction() {
+		this(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+	}
+
 	/**
 	 * Creates an instance of this action, for use in the given window.
 	 */
@@ -122,7 +134,7 @@ public class QuickStartAction
 			"WelcomePageSelectionDialog.title",  //$NON-NLS-1$
 			"WelcomePageSelectionDialog.message", //$NON-NLS-1$
 			IHelpContextIds.WELCOME_PAGE_SELECTION_DIALOG);
-		if (d.open() != Dialog.OK || d.getResult().length != 1)
+		if (d.open() != Window.OK || d.getResult().length != 1)
 			return null;
 		return (AboutInfo) d.getResult()[0];
 	}
