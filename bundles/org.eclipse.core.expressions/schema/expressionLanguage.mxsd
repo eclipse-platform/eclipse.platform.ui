@@ -419,7 +419,7 @@ rules:
             <annotation>
                <documentation>
                   either &quot;and&quot; or &quot;or&quot;. The operator defines how the child
-                  elements will be combined. If not specified, and will be used.
+                  elements will be combined. If not specified, &quot;and&quot; will be used.
                </documentation>
             </annotation>
             <simpleType>
