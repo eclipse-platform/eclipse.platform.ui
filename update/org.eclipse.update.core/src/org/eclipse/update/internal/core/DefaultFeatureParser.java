@@ -2,7 +2,8 @@ package org.eclipse.update.internal.core;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
- */
+ */
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
@@ -13,16 +14,21 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
-
-
+
+
+
+
 /**
  * Parse the feature.xml
- */
-
+ */
+
+
+
 public class DefaultFeatureParser extends DefaultHandler {
-
+
+
 	private SAXParser parser;
-	private InputStream featureStream;
+	//private InputStream featureStream;
 	private AbstractFeature feature;
 	private static final String FEATURE			= "feature";	
 	private static final String DESCRIPTION		= "description";
@@ -36,16 +42,16 @@ public class DefaultFeatureParser extends DefaultHandler {
 	private String text;
 	private ResourceBundle	bundle;
 		
-
+
+
 	/**
 	 * Constructor for DefaultFeatureParser
 	 */
-	public DefaultFeatureParser(InputStream featureStream,IFeature feature) throws IOException,SAXException {
+	public DefaultFeatureParser(InputStream featureStream,IFeature feature) throws IOException,SAXException, CoreException {
 		super();
 		parser = new SAXParser();
 		parser.setContentHandler(this);
 		
-		this.featureStream = featureStream;
 		Assert.isTrue(feature instanceof AbstractFeature);
 		this.feature = (AbstractFeature)feature;
 
@@ -54,19 +60,9 @@ public class DefaultFeatureParser extends DefaultHandler {
 			UpdateManagerPlugin.getPlugin().debug("Start parsing:"+feature.getURL().toExternalForm());
 		}
 
-
-		try {
-			ClassLoader l = new URLClassLoader(new URL[]{((AbstractFeature)feature).getRootURL()},null);
-			bundle = ResourceBundle.getBundle("feature",Locale.getDefault(),l);
-		} catch (MissingResourceException e){
-			//ok, there is no bundle, keep it as null
-			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
-				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage()+":"+((AbstractFeature)feature).getRootURL().toExternalForm());
-			}
-		}
+		bundle = ((AbstractFeature)feature).getResourceBundle();
 		
-		parser.parse(new InputSource(this.featureStream));
+		parser.parse(new InputSource(featureStream));
 	}
 	
 	/**
@@ -74,7 +70,8 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 */
 	public void startElement(String uri, String localName,String qName, Attributes attributes)
 		throws SAXException {
-		// DEBUG:		
+
+		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
 			UpdateManagerPlugin.getPlugin().debug("Start Element: uri:"+uri+" local Name:"+localName+" qName:"+qName);
 		}
@@ -123,7 +120,8 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 		} catch (MalformedURLException e){
 			throw new SAXException("error processing URL. Check the validity of the URLs",e);
-		}
+		}
+
 	}
 	
 	
@@ -302,22 +300,26 @@ public class DefaultFeatureParser extends DefaultHandler {
 	
 		feature.addPluginEntry(pluginEntry);
 	}
-
+
+
 	/**
 	 * @see DefaultHandler#error(SAXParseException)
 	 */
 	public void error(SAXParseException arg0) throws SAXException {
 		super.error(arg0);
 	}
-
+
+
 	/**
 	 * @see DefaultHandler#endElement(String, String, String)
 	 */
 	public void endElement(String uri, String localName, String qName)
 		throws SAXException {
-		if (text!= null) {
 
-			String tag = localName.trim();
+		if (text!= null) {
+
+			String tag = localName.trim();
+
 			if (tag.equalsIgnoreCase(DESCRIPTION)) {
 				((Info)feature.getDescription()).setText(text);
 				
@@ -326,7 +328,8 @@ public class DefaultFeatureParser extends DefaultHandler {
 					UpdateManagerPlugin.getPlugin().debug("Found Description Text");
 				}
 			}
-
+
+
 			if (tag.equalsIgnoreCase(COPYRIGHT)) {
 				((Info)feature.getCopyright()).setText(text);
 
@@ -336,7 +339,8 @@ public class DefaultFeatureParser extends DefaultHandler {
 				}
 				
 			}
-
+
+
 			if (tag.equalsIgnoreCase(LICENSE)) {
 				((Info)feature.getLicense()).setText(text);
 
@@ -349,25 +353,22 @@ public class DefaultFeatureParser extends DefaultHandler {
 			// clean the text
 			text = null;
 		}
-		// DEBUG:		
+
+		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
 			UpdateManagerPlugin.getPlugin().debug("End Element:"+uri+":"+localName+":"+qName);
 		}
 	}
-
-	/**
-	 * Gets the feature
-	 * @return Returns a IFeature
-	 */
-	public IFeature getFeature() {
-		return feature;
-	}
+
+
 	/**
 	 * @see DefaultHandler#characters(char[], int, int)
 	 */
 	public void characters(char[] ch, int start, int length) throws SAXException {
 		text = new String(ch,start,length).trim();
 	}
-
+
+
 }
-
+
+

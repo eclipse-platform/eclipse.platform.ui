@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.URLConnection;
 import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
@@ -23,10 +25,16 @@ import org.xml.sax.SAXException;
  */
 public abstract class AbstractFeature implements IFeature {
 
+
 	/**
 	 * 
 	 */
-	public static final String FEATURE_XML = "feature.xml";
+	public static final String FEATURE_FILE = "feature";
+	
+	/**
+	 * 
+	 */
+	public static final String FEATURE_XML = FEATURE_FILE+".xml";
 
 	/**
 	 * Identifier of the Feature
@@ -535,16 +543,16 @@ public abstract class AbstractFeature implements IFeature {
 					String newFile;
 					URL newURL;
 					for (int i = 0; i < archiveIDToInstall.length; i++) {
-							
+
 						// transform the id by asking the site to map them to real URL inside the SITE	
-						sourceURL  = ((AbstractSite) getSite()).getURL(archiveIDToInstall[i]);						
+						sourceURL = ((AbstractSite) getSite()).getURL(archiveIDToInstall[i]);
 						// the name of the file in the temp directory
 						// should be the regular plugins/pluginID_ver as the Temp site is OUR site
 						newFile = AbstractSite.DEFAULT_PLUGIN_PATH + archiveIDToInstall[i];
 						newURL = UpdateManagerUtils.resolveAsLocal(sourceURL, newFile);
-		
+
 						// transfer the possible mapping to the temp site						
-						tempSite.addArchive(new Info(archiveIDToInstall[i],newURL));
+						tempSite.addArchive(new Info(archiveIDToInstall[i], newURL));
 					}
 				}
 
@@ -556,13 +564,13 @@ public abstract class AbstractFeature implements IFeature {
 
 				this.setSite(tempSite);
 			}
-			
-			
+
 			// obtain the list of *Streamable Storage Unit*
 			// from the archive
 			if (pluginsToInstall != null) {
 				InputStream inStream = null;
 				for (int i = 0; i < pluginsToInstall.length; i++) {
+					open(pluginsToInstall[i]);
 					String[] names = getStorageUnitNames(pluginsToInstall[i]);
 					if (names != null) {
 						for (int j = 0; j < names.length; j++) {
@@ -570,6 +578,7 @@ public abstract class AbstractFeature implements IFeature {
 								targetFeature.store(pluginsToInstall[i], names[j], inStream);
 						}
 					}
+					close(pluginsToInstall[i]);
 				}
 			}
 
@@ -577,14 +586,16 @@ public abstract class AbstractFeature implements IFeature {
 			InputStream inStream = null;
 			String[] names = getStorageUnitNames();
 			if (names != null) {
+				openFeature();
 				for (int j = 0; j < names.length; j++) {
 					if ((inStream = getInputStreamFor(names[j])) != null)
 						 ((AbstractSite) targetFeature.getSite()).storeFeatureInfo(getIdentifier(), names[j], inStream);
 				}
+				closeFeature();
 			}
 
-		//Everything went fine, clean up TEMP drive
-		UpdateManagerUtils.removeFromFileSystem(new File(tempSite.getURL().getPath()));
+			//Everything went fine, clean up TEMP drive
+			UpdateManagerUtils.removeFromFileSystem(new File(tempSite.getURL().getPath()));
 
 		} catch (IOException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
@@ -597,20 +608,29 @@ public abstract class AbstractFeature implements IFeature {
 	 * initialize teh feature by reading the feature.xml if it exists
 	 */
 	public void initializeFeature() throws CoreException {
+		InputStream featureStream = null;
 		try {
-			new DefaultFeatureParser(getFeatureInputStream(), this);
+			featureStream = getInputStreamFor(FEATURE_XML);
+			new DefaultFeatureParser(featureStream, this);
 		} catch (IOException e) {
 			//FIXME: if we cannot find the feature and or the feature.xml
 			// is it an error or a warning ???
 			// I do not believe we should stop the execution for that...
 			// but we must Log it all the time, not only when debugging...
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error opening feature.xml in the feature archive:"+url.toExternalForm(), e);
+			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error opening feature.xml in the feature archive:" + url.toExternalForm(), e);
 			UpdateManagerPlugin.getPlugin().getLog().log(status);
-		} catch (SAXException e){
+		} catch (SAXException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error parsing feature.xml in the feature archive:"+url.toExternalForm(), e);
-			throw new CoreException(status);			
+			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error parsing feature.xml in the feature archive:" + url.toExternalForm(), e);
+			throw new CoreException(status);
+		} finally {
+			try {
+				featureStream.close();
+			} catch (Exception e) {}
+			try {
+				closeFeature();
+			} catch (Exception e) {}
 		}
 	}
 
@@ -790,27 +810,44 @@ public abstract class AbstractFeature implements IFeature {
 	}
 
 	/**
-	 * returns the Stream corresponding to the feature.xml file
+	 * perform pre processing before opening a plugin archive
+	 * @param entry the plugin about to be opened
 	 */
-	protected InputStream getFeatureInputStream() throws CoreException, IOException {
+	protected void open(IPluginEntry entry) {};
 
-		InputStream resultStream = null;
+	/**
+	 * perform post processing to close a plugin archive
+	 * @param entry the plugin about to be closed
+	 */
+	protected void close(IPluginEntry entry) throws IOException {};
 
-		// get the stream inside the Feature
-		URL insideURL = null;
-		URL rootURL = null;
+	/**
+	 * perform pre processing before opening the feature archive
+	 */
+	protected void openFeature() {};
+
+	/**
+	 * perform post processing to close a feature archive
+	 */
+	public void closeFeature() throws IOException {};
+
+	/**
+	 * return the appropriate resource bundle for this feature
+	 */
+	public ResourceBundle getResourceBundle()  throws IOException, CoreException {
+		ResourceBundle bundle = null;
 		try {
-			rootURL = getRootURL();
-			insideURL = new URL(rootURL, FEATURE_XML);
-		} catch (MalformedURLException e) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error creating the URL for" + rootURL.toExternalForm(), e);
-			throw new CoreException(status);
+			ClassLoader l = new URLClassLoader(new URL[] {this.getURL()}, null);
+			bundle = ResourceBundle.getBundle(FEATURE_FILE, Locale.getDefault(), l);
+		} catch (MissingResourceException e) {
+			//ok, there is no bundle, keep it as null
+			//DEBUG:
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + this.getURL().toExternalForm());
+			}
 		}
-
-		resultStream = insideURL.openStream();
-		return resultStream;
-	};
+		return bundle;
+	}
 
 	/**
 	 * @see IFeature#getContentReferences()
@@ -837,7 +874,7 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * return the Stream of FILE to be transfered from within the Feature
 	 */
-	protected abstract InputStream getInputStreamFor(String name) throws CoreException;
+	protected abstract InputStream getInputStreamFor(String name) throws IOException, CoreException;
 
 	/**
 	 * returns the list of archive to transfer/install

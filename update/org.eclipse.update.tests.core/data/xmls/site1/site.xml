@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-
 <site url="/info/siteInfo.html">
   <feature id="org.isv.feature3" url="www.eclipse.org/feature3" version="3.4.5">
     <category name="eclipse/UML"/>
@@ -19,5 +17,6 @@
   <category-def label="J2EE tools" name="eclipse/J2EE"/>
   <category-def label="EJB Tools" name="eclipse/J2EE/EJB"/>
   <category-def label="UML tools" name="eclipse/UML"/>
-  <category-def label="Messaging Tools" name="eclipse/B2B"/>
+  <category-def label="Messaging Tools" name="B2B"/>
+  <category-def label="Eclipse tools" name="eclipse"/>
 </site>

@@ -119,16 +119,19 @@ public class DefaultExecutableFeature extends AbstractFeature {
 	/**
 	 * return the path for the Feature
 	 */
-	private String getFeaturePath() throws Exception {
+	private String getFeaturePath() throws IOException {
 		URL fileURL = getURL();
 		String result = null;
-		
+
+		result = fileURL.getPath();		
 		// if the feature doesn't have a URL, use the default
-		if (fileURL != null) {
+/*		if (fileURL != null) {
 			result = fileURL.getPath();
 		} else {
 			result = getSite().getURL().getPath()+ FileSite.INSTALL_FEATURE_PATH	+ getIdentifier().toString()	;
 		}
+*/
+//FIXME: delete obsolete code
 
 		// return the list of all subdirectories
 		if (!result.endsWith(File.separator)) result += File.separator;		
@@ -174,16 +177,14 @@ public class DefaultExecutableFeature extends AbstractFeature {
 	/**
 	 * @see AbstractFeature#getInputStreamFor(String)
 	 */
-	protected InputStream getInputStreamFor(String name) throws CoreException {
+	protected InputStream getInputStreamFor(String name) throws IOException {
 	
 		InputStream result = null;
 		try {
 			File entry = new File(getFeaturePath(), name);
 			result = new FileInputStream(entry);
-		} catch (Exception e) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during retrieving the Stream of :" + name + " in feature:" + getIdentifier().toString(), e);
-			throw new CoreException(status);
+		} catch (IOException e) {
+			throw new IOException( "Error during retrieving the Stream of :" + name + " in feature:" + getURL().toExternalForm()+"\r\n"+e.toString());
 		}
 		return result;
 	}

@@ -3,9 +3,9 @@ package org.eclipse.update.internal.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -23,7 +23,8 @@ public abstract class AbstractSite implements ISite {
 	 */
 	public static final String DEFAULT_FEATURE_PATH = "features/";
 
-	private static final String SITE_XML= "site.xml";
+	public static final String SITE_FILE = "site";
+	public static final String SITE_XML= SITE_FILE+".xml";
 	private boolean isManageable = true;
 	private boolean isInitialized = false;
 	private DefaultSiteParser parser;
@@ -166,6 +167,24 @@ public abstract class AbstractSite implements ISite {
 	 */
 	public URL getURL() {
 		return siteURL;
+	}
+
+	/**
+	 * return the appropriate resource bundle for this site
+	 */
+	public ResourceBundle getResourceBundle()  throws IOException, CoreException {
+		ResourceBundle bundle = null;
+		try {
+			ClassLoader l = new URLClassLoader(new URL[] {this.getURL()}, null);
+			bundle = ResourceBundle.getBundle(SITE_FILE, Locale.getDefault(), l);
+		} catch (MissingResourceException e) {
+			//ok, there is no bundle, keep it as null
+			//DEBUG:
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + this.getURL().toExternalForm());
+			}
+		}
+		return bundle;
 	}
 
 	/**

@@ -82,18 +82,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 			// check if the site.xml had a coded URL for this plugin or if we
 			// should look in teh default place to find it: <site>+/plugins/+archiveId
 			String filePath = ((AbstractSite) getSite()).getURL(getArchiveID(pluginEntry)).getPath();
-
-			// are we looking into teh same Jar file
-			// or shoudl we close the previously opened one and open another one ?
-			if (currentOpenJarFile != null) {
-				if (!currentOpenJarFile.getName().equals(filePath)) {
-					currentOpenJarFile.close();
-					currentOpenJarFile = new JarFile(filePath);
-				}
-			} else {
-				currentOpenJarFile = new JarFile(filePath);
-			}
-
+			open(filePath);
 			if (!(new File(filePath)).exists())
 				throw new IOException("The File:" + filePath + "does not exist.");
 			ZipEntry entry = currentOpenJarFile.getEntry(name);
@@ -122,34 +111,19 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	}
 
 	/**
-	 * @see AbstractFeature#getFeatureInputStream()
-	 * The feature url is pointing at the JAR
-	 * download the JAR in the TEMP dir 
-	 * Change the URL to be JAR url jar:file://<filename>!/
-	 * and get the feature.xml
-	 */
-	public InputStream getFeatureInputStream() throws CoreException, IOException {
-		transferLocally();
-		return super.getFeatureInputStream();
-	}
-
-	/**
 	 * Transfer feature.jar file locally
 	 */
 	private void transferLocally() throws CoreException {
 		// install in DEFAULT PATH for feature
 		// as we OWN the temp site
-		// attempt to preserve name
 
 		try {
 			URL resolvedURL = UpdateManagerUtils.resolveAsLocal(getURL(), getURL().getPath());
-			if (!resolvedURL.equals(getURL())){
-				this.setURL(resolvedURL);
+			this.setURL(resolvedURL);
 
-				// DEBUG:
-				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL) {
-					UpdateManagerPlugin.getPlugin().debug("the feature on TEMP file is :" + resolvedURL.toExternalForm());
-				}
+			// DEBUG:
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL) {
+				System.out.println("the feature on TEMP file is :" + resolvedURL.toExternalForm());
 			}
 		} catch (IOException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
@@ -162,7 +136,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	 * return the archive ID for a plugin
 	 */
 	private String getArchiveID(IPluginEntry entry) {
-		return entry.getIdentifier().toString()+JAR_EXTENSION;
+		return entry.getIdentifier().toString() + JAR_EXTENSION;
 	}
 
 	/**
@@ -187,7 +161,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	/**
 	 * @see AbstractFeature#getInputStreamFor(String)
 	 */
-	protected InputStream getInputStreamFor(String name) throws CoreException {
+	protected InputStream getInputStreamFor(String name) throws CoreException, IOException {
 		URL siteURL = getSite().getURL();
 		InputStream result = null;
 		try {
@@ -197,26 +171,14 @@ public class DefaultPackagedFeature extends AbstractFeature {
 			// teh feature must have a URL as 
 			//it has been transfered locally
 			String filePath = getURL().getPath();
-			
-			// ensure we close the previous JAR file 
-			if (currentOpenJarFile != null) {
-				if (!currentOpenJarFile.getName().equals(filePath)) {
-					currentOpenJarFile.close();
-					currentOpenJarFile = new JarFile(filePath);
-				}
-			} else {
-				currentOpenJarFile = new JarFile(filePath);
-			}
-
 			if (!(new File(filePath)).exists())
 				throw new IOException("The File:" + filePath + "does not exist.");
+			open(filePath);
 			ZipEntry entry = currentOpenJarFile.getEntry(name);
 			result = currentOpenJarFile.getInputStream(entry);
 
-		} catch (Exception e) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error opening :" + name + " in feature archive:" + getIdentifier().toString(), e);
-			throw new CoreException(status);
+		} catch (IOException e) {
+			throw new IOException("Error opening :" + name + " in feature archive:" + getIdentifier().toString() + "\r\n" + e.toString());
 		}
 		return result;
 	}
@@ -231,19 +193,19 @@ public class DefaultPackagedFeature extends AbstractFeature {
 
 		//FIXME: delete obsolete try/catch block
 		//try {
-			// make sure the feature archive has been transfered locally
-			transferLocally();
+		// make sure the feature archive has been transfered locally
+		transferLocally();
 
-			// get the URL of the feature JAR file 
-			// must exist as we tranfered it locally
-			URL jarURL = getURL();
-			result = getJAREntries(jarURL.getPath());
+		// get the URL of the feature JAR file 
+		// must exist as we tranfered it locally
+		URL jarURL = getURL();
+		result = getJAREntries(jarURL.getPath());
 
-/*		} catch (MalformedURLException e) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during Install", e);
-			throw new CoreException(status);
-		}*/
+		/*		} catch (MalformedURLException e) {
+					String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+					IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during Install", e);
+					throw new CoreException(status);
+				}*/
 		return result;
 	}
 
@@ -285,4 +247,120 @@ public class DefaultPackagedFeature extends AbstractFeature {
 		return result;
 	}
 
+	/**
+	 * @see AbstractFeature#close(IPluginEntry)
+	 */
+	protected void close(IPluginEntry entry) throws IOException {
+		if (currentOpenJarFile != null)
+			currentOpenJarFile.close();
+	}
+
+	/**
+	 * @see AbstractFeature#closeFeature()
+	 */
+	public void closeFeature() throws IOException {
+		if (currentOpenJarFile != null)
+			currentOpenJarFile.close();
+	}
+
+	/**
+	 * opens a JAR file or returns the one already opened 
+	 * if teh path is the same.
+	 */
+	protected void open(String filePath) throws IOException {
+		JarFile newJarFile = new JarFile(filePath);
+		open(newJarFile);
+	}
+
+	/**
+	 * opens a JAR file or returns the one already opened
+	 * if teh path is the same.
+	 */
+	protected void open(JarFile newJarFile) throws IOException {
+
+		// are we looking into teh same Jar file
+		// or shoudl we close the previously opened one and open another one ?
+		if (currentOpenJarFile != null) {
+			if (!currentOpenJarFile.getName().equals(newJarFile.getName())) {
+				currentOpenJarFile.close();
+				currentOpenJarFile = newJarFile;
+			} else {
+				newJarFile.close();
+			}
+		} else {
+			currentOpenJarFile = newJarFile;
+		}
+	}
+
+	/**
+	 * return the appropriate resource bundle for this feature
+	 * Need to override as opening the JAR keeps it locked
+	 * 
+	 * baseclass + "_" + language1 + "_" + country1 + "_" + variant1 
+	 * baseclass + "_" + language1 + "_" + country1 + "_" + variant1 + ".properties" 
+	 * baseclass + "_" + language1 + "_" + country1 
+	 * baseclass + "_" + language1 + "_" + country1 + ".properties" 
+	 * baseclass + "_" + language1 
+	 * baseclass + "_" + language1 + ".properties" 
+	 * baseclass + "_" + language2 + "_" + country2 + "_" + variant2 
+	 * baseclass + "_" + language2 + "_" + country2 + "_" + variant2 + ".properties" 
+	 * baseclass + "_" + language2 + "_" + country2 
+	 * baseclass + "_" + language2 + "_" + country2 + ".properties" 
+	 * baseclass + "_" + language2 
+	 * baseclass + "_" + language2 + ".properties" 
+	 * baseclass 
+	 * baseclass + ".properties" 
+	 */
+	public ResourceBundle getResourceBundle() throws IOException, CoreException {
+
+		ResourceBundle result = null;
+		String[] names = getStorageUnitNames();
+		String base = FEATURE_FILE;
+
+		// retrive names in teh JAR that starts with the basename
+		// remove FEATURE_XML file
+		List baseNames = new ArrayList();
+		for (int i = 0; i < names.length; i++) {
+			if (names[i].startsWith(base))
+				baseNames.add(names[i]);
+		}
+		baseNames.remove(FEATURE_XML);
+
+		// is there any file		
+		if (!baseNames.isEmpty()) {
+
+			Locale locale = Locale.getDefault();
+			String lang1 = locale.getLanguage();
+			String country1 = locale.getCountry();
+			String variant1 = locale.getVariant();
+			String[] attempt =
+				new String[] {
+					base + "_" + lang1 + "_" + country1 + "_" + variant1,
+					base + "_" + lang1 + "_" + country1 + "_" + variant1 + ".properties",
+					base + "_" + lang1 + "_" + country1,
+					base + "_" + lang1 + "_" + country1 + ".properties",
+					base + "_" + lang1,
+					base + "_" + lang1 + ".properties",
+					base,
+					base + ".properties" };
+
+			boolean found = false;
+			int index = 0;
+			while (!found && index < attempt.length) {
+				if (baseNames.contains(attempt[index])) {
+					result = new PropertyResourceBundle(getInputStreamFor(attempt[index]));
+					found = true;
+				}
+				index++;
+			}
+
+		} // baseNames is empty
+
+		if (result == null) {
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+				UpdateManagerPlugin.getPlugin().debug("Cannot find resourceBundle for:" + base + " - " + Locale.getDefault().toString() + ":" + this.getURL().toExternalForm());
+			}
+		}
+		return result;
+	}
 }

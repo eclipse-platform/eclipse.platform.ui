@@ -132,4 +132,13 @@ public class TestInstall extends UpdateManagerTestCase {
 		//cleanup
 		UpdateManagerUtils.removeFromFileSystem(pluginFile);
 	}
+	
+	
+	public void testFileSiteWithoutSiteXML() throws Exception {
+		ISite remoteSite = SiteManager.getTempSite();
+		IFeature[] features = remoteSite.getFeatures();
+		if (features.length!=0) fail("The site contains feature");
+	}
+	
+	
 }

@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.xerces.parsers.SAXParser;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.update.core.*;
@@ -43,7 +44,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	/**
 	 * Constructor for DefaultSiteParser
 	 */
-	public DefaultSiteParser(InputStream siteStream, ISite site) throws IOException, SAXException {
+	public DefaultSiteParser(InputStream siteStream, ISite site) throws IOException, SAXException, CoreException {
 		super();
 		parser = new SAXParser();
 		parser.setContentHandler(this);
@@ -57,16 +58,8 @@ public class DefaultSiteParser extends DefaultHandler {
 			UpdateManagerPlugin.getPlugin().debug("Start parsing site:" + site.getURL().toExternalForm());
 		}
 
-		try {
-			ClassLoader l = new URLClassLoader(new URL[] { site.getURL()}, null);
-			bundle = ResourceBundle.getBundle("site", Locale.getDefault(), l);
-		} catch (MissingResourceException e) {
-			//ok, there is no bundle, keep it as null
-			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + site.getURL().toExternalForm());
-			}
-		}
+		bundle = ((AbstractSite)site).getResourceBundle();
+		
 		parser.parse(new InputSource(this.siteStream));
 	}
 
