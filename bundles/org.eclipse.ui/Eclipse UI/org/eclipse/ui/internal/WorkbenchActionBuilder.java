@@ -51,6 +51,9 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private ClosePageAction closePageAction;
 	private CloseAllPagesAction closeAllPagesAction;
 	private PinEditorAction pinEditorAction;
+	private CycleEditorAction nextEditorAction;
+	private CycleEditorAction prevEditorAction;
+	
 
 	// menus
 	private OpenPerspectiveMenu openPerspMenu;
@@ -255,6 +258,8 @@ private void createMenuBar() {
 		new MenuManager(WorkbenchMessages.getString("Workbench.launch"), IWorkbenchActionConstants.M_LAUNCH); //$NON-NLS-1$
 	launchWindowMenu.add(new GroupMarker(IWorkbenchActionConstants.LAUNCH_EXT));
 	popup.add(launchWindowMenu);
+	popup.add(nextEditorAction);
+	popup.add(prevEditorAction);
 	popup.add(new Separator(IWorkbenchActionConstants.WINDOW_EXT));
 	popup.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 	popup.add(new Separator());
@@ -473,6 +478,10 @@ private void makeActions() {
 	// See if a welcome page is specified
 	if (((Workbench)PlatformUI.getWorkbench()).getProductInfo().getWelcomePageURL() != null)
 		quickStartAction = new QuickStartAction(workbench);
+	
+	// Actions for invisible accelerators
+	nextEditorAction = new CycleEditorAction(window, true);
+	prevEditorAction = new CycleEditorAction(window, false);
 }
 /**
  * Update the menubar and toolbar when

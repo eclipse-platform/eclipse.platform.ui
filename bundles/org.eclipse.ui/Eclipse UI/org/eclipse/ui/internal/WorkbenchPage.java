@@ -422,8 +422,15 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
 	
 	// Activate new part.
-	if (partWasActive)
-		setActivePart(activationList.getActive());
+	if (partWasActive) {
+		IEditorPart top = activationList.getTopEditor();
+		if (top != null) {
+			setActivePart(top);
+		}
+		else {
+			setActivePart(activationList.getActive());
+		}
+	}
 	
 	// Return true on success.
 	return true;
@@ -455,6 +462,19 @@ private Perspective createPerspective(PerspectiveDescriptor desc) {
 		return null;
 	}
 }
+
+/**
+ * Cycles the editors forward or backward.
+ * 
+ * @param forward true to cycle forward, false to cycle backward
+ */
+public void cycleEditors(boolean forward) {
+	IEditorPart editor = activationList.cycleEditors(forward);
+	if (editor != null) {
+		activate(editor);
+	}
+}
+
 /**
  * Deactivate the last known active editor to force its
  * action items to be removed, not just disabled.
@@ -1485,6 +1505,59 @@ class ActivationList {
 	}
 	boolean remove(Object part) {
 		return parts.remove(part);
+	}
+
+	/**
+	 * Returns the editors in activation order (oldest first).
+	 */
+	private ArrayList getEditors() {
+		ArrayList editors = new ArrayList(parts.size());
+		for (Iterator i = parts.iterator(); i.hasNext();) {
+			IWorkbenchPart part = (IWorkbenchPart) i.next();
+			if (part instanceof IEditorPart) {
+				editors.add(part);
+			}
+		}
+		return editors;
+	}
+	
+	/** 
+	 * Cycles the editors forward or backward, returning the editor to activate,
+	 * or null if none.
+	 * 
+	 * @param forward true to cycle forward, false to cycle backward
+	 */
+	IEditorPart cycleEditors(boolean forward) {
+		ArrayList editors = getEditors();
+		if (editors.size() >= 2) {
+			if (forward) {
+				// move the topmost editor to the bottom
+				IEditorPart top = (IEditorPart) editors.get(editors.size()-1);
+				parts.remove(top);
+				parts.add(0, top);
+				// get the next editor and move it on top of any views
+				IEditorPart next = (IEditorPart) editors.get(editors.size()-2);
+				setActive(next);
+				return next;
+			} else {
+				// move the bottom-most editor to the top
+				IEditorPart prev = (IEditorPart) editors.get(0);
+				setActive(prev);
+				return prev;
+			}
+		}
+		return null;
+	}
+	
+	/** 
+	 * Returns the topmost editor on the stack, or null if none.
+	 */
+	IEditorPart getTopEditor() {
+		ArrayList editors = getEditors();
+		if (editors.size() > 0) {
+			return (IEditorPart) editors.get(editors.size()-1);
+		}
+		return null;
 	}
 }
 }
