@@ -220,14 +220,17 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		label.setLayoutData(data);
 		label.setFont(font);
 
-		argumentField = new Text(parent, SWT.BORDER);
-		data = new GridData(GridData.FILL_HORIZONTAL);
+		argumentField = new Text(parent, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+		data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		data.heightHint= 40;
 		argumentField.setLayoutData(data);
 		argumentField.setFont(font);
 		argumentField.addModifyListener(modifyListener);
 
 		variableButton= createPushButton(parent, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Varia&bles..._2"), null); //$NON-NLS-1$
+		GridData gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
+		variableButton.setLayoutData(gridData);
 		variableButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				VariableSelectionDialog dialog= new VariableSelectionDialog(getShell());
