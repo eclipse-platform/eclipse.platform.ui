@@ -34,7 +34,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	/** 
 	 * Job state code (value 32) indicating that a job has passed scheduling
 	 * precondition checks and is about to be added to the wait queue. From an API point of view, 
-	 * this is the same as NONE.
+	 * this is the same as WAITING.
 	 */
 	static final int ABOUT_TO_SCHEDULE = 0x20;
 
@@ -146,8 +146,8 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	/* (non-Javadoc)
 	 * @see Job#done(IStatus)
 	 */
-	protected void done(IStatus result) {
-		manager.endJob(this, result, true);
+	protected void done(IStatus endResult) {
+		manager.endJob(this, endResult, true);
 	}
 	/**
 	 * Returns the job listeners that are only listening to this job.  Returns null
@@ -216,7 +216,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 			case ABOUT_TO_RUN :
 				return Job.RUNNING;
 			case ABOUT_TO_SCHEDULE:
-				return Job.NONE;
+				return Job.WAITING;
 			default :
 				return state;
 		}
@@ -333,7 +333,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	/* (non-Javadoc)
 	 * @see Job#run(IProgressMonitor)
 	 */
-	protected abstract IStatus run(IProgressMonitor monitor);
+	protected abstract IStatus run(IProgressMonitor progressMonitor);
 	/* (non-Javadoc)
 	 * @see Job#schedule(long)
 	 */
@@ -382,9 +382,9 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 */
 	protected void setProgressGroup(IProgressMonitor group, int ticks) {
 		Assert.isNotNull(group);
-		IProgressMonitor result = manager.createMonitor(this, group, ticks);
-		if (result != null)
-			setProgressMonitor(result);
+		IProgressMonitor pm = manager.createMonitor(this, group, ticks);
+		if (pm != null)
+			setProgressMonitor(pm);
 	}
 	/**
 	 * Sets the progress monitor to use for the next execution of this job,
