@@ -248,8 +248,6 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			
 			IRegion r= getWidgetRange(p);
 			if (r != null) {
-//				fBgRepairOffset= Math.min(fBgRepairOffset, r.getOffset());
-//				fBgRepairLength= Math.max(fBgRepairLength, r.getOffset() + r.getLength() - fBgRepairOffset);
 				StyleRange[] styleRanges= fTextWidget.getStyleRanges(r.getOffset(), r.getLength());
 				ArrayList newStyleRanges= new ArrayList(styleRanges.length + 10); 
 				int offset= r.getOffset();
