@@ -1,4 +1,5 @@
 package org.eclipse.help.internal.navigation;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -7,12 +8,14 @@ package org.eclipse.help.internal.navigation;
 
 import java.io.*;
 import java.util.*;
-import org.eclipse.help.internal.HelpSystem;
+import java.net.*;
+import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.contributors.*;
 import org.eclipse.help.internal.contributions.*;
 import org.eclipse.help.internal.contributors.xml.*;
-import org.eclipse.help.internal.util.Logger;
+import org.eclipse.help.internal.util.*;
 
 /**
  * Manages the navigation model. It generates it and it reas it back
@@ -30,13 +33,18 @@ public class HelpNavigationManager {
 
 	private String currentInfosetId = null;
 
+	// suggested ordered list of infosets
+	private String baseInfosets = null;
 	/**
 	 * HelpNavigationManager constructor.
 	 */
 	public HelpNavigationManager() {
 		super();
 
-		try {			
+		try {	
+			// read the product.ini file with base infoset ordering
+			readProductInfo();
+				
 			ContributionManager cmgr = HelpSystem.getContributionManager();
 			if (cmgr.hasNewContributions()) {
 				// build all the info sets: build the structure and generate the xml's
@@ -125,11 +133,6 @@ public class HelpNavigationManager {
 	public NavigationModel getCurrentNavigationModel() {
 		if (currentModel == null) {
 			// no previous InfoSet loaded, find an InfoSet
-			/*ContributionManager cmgr = HelpSystem.getContributionManager();
-			Iterator infoSetContributors =
-						cmgr.getContributionsOfType(ViewContributor.INFOSET_ELEM);
-			if (infoSetContributors.hasNext()) 
-				setCurrentInfoSet(((InfoSet) infoSetContributors.next()).getID());*/
 			if (infosetsMap.size() > 0)
 				setCurrentInfoSet((String) infosetsMap.keys().nextElement());
 		}
@@ -151,12 +154,32 @@ public class HelpNavigationManager {
 	 * (i.e. standalone included elsewhere)
 	 */
 	public Collection getInfoSetIds() {
-		if(infosetsMap!=null)
-			return infosetsMap.keySet();
-	
-		infosetsMap = new InfosetsMap(INFOSETS_FILE);
-		infosetsMap.restore();
-		return infosetsMap.keySet();
+		if(infosetsMap == null)
+		{
+			infosetsMap = new InfosetsMap(INFOSETS_FILE);
+			infosetsMap.restore();
+		}
+
+		ArrayList orderedInfosets = new ArrayList(infosetsMap.size());
+		// first add the infosets from the product ini
+		if (baseInfosets != null)
+		{
+			StringTokenizer suggestdOrderedInfosets = new StringTokenizer(baseInfosets, " ;,");
+			while(suggestdOrderedInfosets.hasMoreElements())
+			{
+				String infoset = (String)suggestdOrderedInfosets.nextElement();
+				if (infosetsMap.containsKey(infoset))
+					orderedInfosets.add(infoset);
+			}
+		}
+		// add the remaining infosets
+		for (Enumeration infosets=infosetsMap.keys(); infosets.hasMoreElements(); )
+		{
+			String infoset = (String)infosets.nextElement();
+			if (!orderedInfosets.contains(infoset))
+				orderedInfosets.add(infoset);
+		}
+		return orderedInfosets;
 	}
 	/**
 	 * Returns the navigation model for an infoset
@@ -172,6 +195,39 @@ public class HelpNavigationManager {
 			navigationModels.put(id, m);
 		}
 		return m;
+	}
+	/**
+	 * Reads the product info and extracts the ordering of the infosets
+	 */
+	private void readProductInfo() {
+		try
+		{
+			Properties productInfo = new Properties();
+			URL configURL= null;
+			IInstallInfo ii= BootLoader.getInstallationInfo();
+			String configName= ii.getApplicationConfigurationIdentifier();
+			if (configName != null) {
+				configURL = ii.getConfigurationInstallURLFor(configName);
+			} else {
+				Logger.logWarning(Resources.getString("product_ini"));
+				return;
+			}
+			URL iniURL= null;
+			try {
+				iniURL = new URL(configURL, "product.ini");//$NON-NLS-1$
+			} catch (MalformedURLException e) {
+				Logger.logWarning(Resources.getString("product_ini"));
+			}
+	
+			InputStream is = iniURL.openStream();
+			if (is == null) return;
+			productInfo.load(is);
+			is.close();
+
+			baseInfosets = productInfo.getProperty("baseInfosets");
+		}
+		catch(Throwable e)
+		{}
 	}
 	/**
 	 * Sets the current model
