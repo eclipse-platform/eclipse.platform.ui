@@ -1112,7 +1112,7 @@ public class DefaultPartPresentation extends StackPresentation {
     
     String getLabelText(IPresentablePart presentablePart,
             boolean includePath) {
-        String title = presentablePart.getTitle();
+        String title = presentablePart.getName();
         return title;
     }
     
