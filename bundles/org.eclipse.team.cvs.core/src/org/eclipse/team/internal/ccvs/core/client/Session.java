@@ -456,7 +456,6 @@ public class Session {
 			Iterator iter = unhandledMappings.iterator();
 			while (iter.hasNext()) {
 				IPath desiredPath = (IPath) iter.next();
-				IPath actualPath = (IPath)mappings.get(desiredPath);
 				status.add(new CVSStatus(IStatus.ERROR, CVSStatus.CASE_VARIANT_EXISTS, 
 					Policy.bind("PruneFolderVisitor.caseVariantExists", desiredPath.toString())));//$NON-NLS-1$		
 			}
@@ -948,7 +947,15 @@ public class Session {
 		// if not binary, translate line delimiters on the fly
 		if (! isBinary) {
 			// switch from LF to CRLF if appropriate
-			if (IS_CRLF_PLATFORM) in = new LFtoCRLFInputStream(in);
+			if (IS_CRLF_PLATFORM) {
+				// auto-correct for CRLF line-ends that come from the server
+				in = new CRLFtoLFInputStream(in);
+				// convert LF to CRLF
+				in = new LFtoCRLFInputStream(in);
+			} else {
+				// be nice and warn about text files that contain CRLF
+				in = new CRLFDetectInputStream(in, file.getName());
+			}
 		}
 		// write the file locally
 		file.setContents(in, responseType, true, new NullProgressMonitor());
