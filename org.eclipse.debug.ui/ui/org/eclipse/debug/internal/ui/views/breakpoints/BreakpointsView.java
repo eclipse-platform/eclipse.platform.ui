@@ -49,6 +49,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -84,10 +85,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	 */
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-		if (getViewer() != null) {
-			updateViewerBackground();
-			DebugPlugin.getDefault().getBreakpointManager().addBreakpointManagerListener(this);
-		}
+		DebugPlugin.getDefault().getBreakpointManager().addBreakpointManagerListener(this);
 	}
 
 	/**
@@ -114,6 +112,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	                    expandToLevel(iter.next(), ALL_LEVELS);
 	                }
 	                initializeCheckedState(this, fContentProvider);
+	                updateViewerBackground(this);
 		    	} finally {
 		    		getControl().setRedraw(true);
 		    	}
@@ -510,7 +509,6 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	protected void becomesVisible() {
 		super.becomesVisible();
 		getViewer().refresh();
-		updateViewerBackground();
 	}
 
 	/* (non-Javadoc)
@@ -594,7 +592,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 				if (action != null) {
 					((SkipAllBreakpointsAction) action).updateActionCheckedState();
 				}
-				updateViewerBackground();
+				updateViewerBackground(getCheckboxViewer());
 			}
 		});
 	}
@@ -603,14 +601,14 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	 * Updates the background color of the viewer based
 	 * on the breakpoint manager enablement.
 	 */
-	protected void updateViewerBackground() {
+	protected void updateViewerBackground(TreeViewer viewer) {
 		Color color= null;
 		boolean enabled = true;
 		if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
 			color= DebugUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 			enabled = false;
 		}
-		Tree tree = getCheckboxViewer().getTree();
+		Tree tree = viewer.getTree();
 		updateTreeItems(tree.getItems(), color, !enabled);
 		tree.setBackground(color);
 		if (enabled) {

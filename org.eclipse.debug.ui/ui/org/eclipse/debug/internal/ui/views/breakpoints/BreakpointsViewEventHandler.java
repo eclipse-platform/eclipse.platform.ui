@@ -71,9 +71,6 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 					if (fView.isAvailable()) {
 						CheckboxTreeViewer viewer = fView.getCheckboxViewer();
 						viewer.refresh();
-						if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
-                        	fView.updateViewerBackground();
-                        }
 						// This code is left in as a test case for platform bug 77075
 						//for (int i = 0; i < breakpoints.length; i++) { 
 							//viewer.expandToLevel(breakpoints[i], AbstractTreeViewer.ALL_LEVELS);
@@ -117,9 +114,6 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 							// If the groups has changed, completely refresh the view to
 							// pick up structural changes.
 							fView.getViewer().refresh();
-							if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
-							    fView.updateViewerBackground();
-							}
 							fView.updateObjects();
 							// Fire a selection change to update contributed actions
 							viewer.setSelection(viewer.getSelection());
