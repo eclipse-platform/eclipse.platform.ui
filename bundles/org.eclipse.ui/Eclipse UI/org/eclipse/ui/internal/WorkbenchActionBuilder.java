@@ -57,10 +57,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private CycleEditorAction prevEditorAction;
 	private ActivateEditorAction activateEditorAction;
 	private WorkbenchEditorsAction workbenchEditorsAction;
-	private ClonePerspectiveAction cloneAction;
-
-	// menus
-	private OpenPerspectiveMenu openPerspMenu;
 
 	// retarget actions.
 	private RetargetAction undoAction;
@@ -137,9 +133,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			public void pageOpened(IWorkbenchPage page) {
 			}
 			private void enableActions(boolean value) {
-				openPerspMenu.setReplaceEnabled(value);
 				hideShowEditorAction.setEnabled(value);
-				cloneAction.setEnabled(value);
 				savePerspectiveAction.setEnabled(value);
 				resetPerspectiveAction.setEnabled(value);
 				editActionSetAction.setEnabled(value);
@@ -241,10 +235,10 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private MenuManager createPerspectiveMenu() {
 		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.perspective"), IWorkbenchActionConstants.M_VIEW); //$NON-NLS-1$
 		{
-			MenuManager openInSameWindow = new MenuManager(WorkbenchMessages.getString("Workbench.open")); //$NON-NLS-1$
-			openPerspMenu = new WindowPerspectiveMenu(window, ResourcesPlugin.getWorkspace().getRoot());
-			openInSameWindow.add(openPerspMenu);
-			menu.add(openInSameWindow);
+			MenuManager changePerspMenuMgr = new MenuManager(WorkbenchMessages.getString("Workbench.change")); //$NON-NLS-1$
+			ChangeToPerspectiveMenu changePerspMenuItem = new ChangeToPerspectiveMenu(window);
+			changePerspMenuMgr.add(changePerspMenuItem);
+			menu.add(changePerspMenuMgr);
 		}
 		{
 			MenuManager subMenu = new MenuManager(WorkbenchMessages.getString("Workbench.showView")); //$NON-NLS-1$
@@ -252,7 +246,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			new ShowViewMenu(subMenu, window, true);
 		}
 		menu.add(hideShowEditorAction = new ToggleEditorsVisibilityAction(window));
-		menu.add(cloneAction = new ClonePerspectiveAction(window));
 		menu.add(new Separator());
 		menu.add(savePerspectiveAction = new SavePerspectiveAction(window));
 		menu.add(editActionSetAction = new EditActionSetsAction(window));
@@ -263,7 +256,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		menu.add(new Separator(IWorkbenchActionConstants.VIEW_EXT));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator());
-		menu.add(new OpenPagesMenu(window, false));
+		menu.add(new OpenedPerspectivesMenu(window, false));
 		return menu;
 	}
 	
@@ -290,7 +283,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	 */
 	private MenuManager createWindowMenu() {
 		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.window"), IWorkbenchActionConstants.M_WINDOW); //$NON-NLS-1$
-		menu.add(new OpenWorkbenchAction(window));
+		menu.add(new OpenNewWindowAction(window));
 		MenuManager launchWindowMenu = new MenuManager(WorkbenchMessages.getString("Workbench.launch"), IWorkbenchActionConstants.M_LAUNCH); //$NON-NLS-1$
 		launchWindowMenu.add(new GroupMarker(IWorkbenchActionConstants.LAUNCH_EXT));
 		menu.add(launchWindowMenu);
@@ -338,8 +331,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	 */
 	private void createShortcutBar() {
 		ToolBarManager shortcutBar = window.getShortcutBar();
-		shortcutBar.add(new PerspectiveContributionItem(window, new OpenNewAction(window)));
 		shortcutBar.add(new Separator(window.GRP_PAGES));
+		shortcutBar.add(new Separator(window.GRP_PERSPECTIVES));
 		shortcutBar.add(new Separator(window.GRP_FAST_VIEWS));
 		shortcutBar.add(new ShowFastViewContribution(window));
 	}
@@ -361,7 +354,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			toolbar.add(new Separator());
 			toolbar.add(buildAction);
 		}
-		toolbar.add(new PerspectiveComboBox(window));
 		toolbar.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
 		toolbar.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		toolbar.add(pinEditorAction);
