@@ -88,6 +88,10 @@ public final class BindingManager implements IContextManagerListener,
 	 */
 	private static final void addReverseLookup(final Map map, final Object key,
 			final Object value) {
+		if (map == null) {
+			return;
+		}
+		
 		final Object currentValue = map.get(key);
 		if (currentValue != null) {
 			final Collection values = (Collection) currentValue;
