@@ -45,7 +45,8 @@ public class BrowserAdvisor extends WorkbenchAdvisor {
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor
 	 */
 	public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
-		configurer.setShowShortcutBar(false);
+		configurer.setShowFastViewBars(false);
+		configurer.setShowPerspectiveBar(false);
 		configurer.setTitle("Browser Example");
 	}
 	
