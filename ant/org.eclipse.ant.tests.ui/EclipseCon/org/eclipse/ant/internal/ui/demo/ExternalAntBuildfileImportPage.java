@@ -461,7 +461,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 				return new Path(buildFile.getAbsolutePath());
 			}
 		});
-		model.reconcile();
+		model.reconcile(null);
 		return model;
 	}
 	
@@ -509,6 +509,9 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	}
 	
 	private void getJavacNodes(List javacNodes, AntElementNode parent) {
+		if (!parent.hasChildren()) {
+			return;
+		}
 		List children= parent.getChildNodes();
 		for (Iterator iter = children.iterator(); iter.hasNext();) {
 			AntElementNode node = (AntElementNode) iter.next();

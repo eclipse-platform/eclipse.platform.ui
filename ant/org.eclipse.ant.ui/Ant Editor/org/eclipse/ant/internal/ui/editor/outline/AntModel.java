@@ -220,7 +220,7 @@ public class AntModel {
 			}
 			beginReporting();
 			Map references= project.getReferences();
-			references.remove("ant.parsing.context");
+			references.remove("ant.parsing.context"); //$NON-NLS-1$
 			projectHelper.parse(project, textToParse);
 			
     	} catch(BuildException e) {
@@ -342,7 +342,7 @@ public class AntModel {
 		}
 		temp.append(">"); //$NON-NLS-1$
 		while (line > 0) {
-			temp.append("\n");
+			temp.append("\n"); //$NON-NLS-1$
 			line--;
 		}
 		return temp;
