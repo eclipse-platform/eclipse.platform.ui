@@ -744,10 +744,11 @@
          point="org.eclipse.ui.preferenceTransfer">
        <transfer
             id="org.eclipse.ui.ide.transfer.keys"
-            icon="\icons\full\etool16\next_nav.gif"
+            icon="\icons\full\etool16\exportdir_wiz.gif"
             name="%KeysPreference.Name">
             <mapping scope="instance">
             	<entry node="org.eclipse.ui.workbench" keys="org.eclipse.ui.commands"/>
+            	<entry node="org.eclipse.ui" keys="KEY_CONFIGURATION_ID"/>
             </mapping>
 			<description>
             	%KeysPreference.Description

@@ -72,13 +72,17 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
     private Composite buttonComposite;
 
     private Button allButton;
+	
+	private Button chooseImportsButton;
+
+	private Group group;
 
     // dialog store id constants
     private static final String STORE_DESTINATION_NAMES_ID = "WizardPreferencesExportPage1.STORE_DESTINATION_NAMES_ID";//$NON-NLS-1$
 
     private static final String STORE_OVERWRITE_EXISTING_FILES_ID = "WizardPreferencesExportPage1.STORE_OVERWRITE_EXISTING_FILES_ID";//$NON-NLS-1$
 
-    private static final String EXPORT_ALL_PREFERENCES_ID = "WizardPreferencesExportPage1.EXPORT_ALL_PREFERENCES_ID"; //$NON-NLS-1$
+    private static final String TRANSFER_ALL_PREFERENCES_ID = "WizardPreferencesExportPage1.EXPORT_ALL_PREFERENCES_ID"; //$NON-NLS-1$
 
     private Hashtable imageTable;
 
@@ -247,10 +251,10 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
         allButton = new Button(composite, SWT.RADIO);
         allButton.setText(getAllButtonText());
 
-        final Button choose = new Button(composite, SWT.RADIO);
-        choose.setText(getChooseButtonText());
+        chooseImportsButton = new Button(composite, SWT.RADIO);
+		chooseImportsButton.setText(getChooseButtonText());
 
-        final Group group = new Group(composite, SWT.NONE);
+        group = new Group(composite, SWT.NONE);
         group.setText(PreferencesMessages
                 .getString("WizardPreferencesExportPage1.preferences")); //$NON-NLS-1$
         GridData data = new GridData(GridData.FILL_BOTH);
@@ -288,20 +292,12 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
         allButton.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent e) {
-                updateTransferAll();
+                updateTransferAll(allButton.getSelection());
             }
 
             public void widgetDefaultSelected(SelectionEvent e) {
-                updateTransferAll();
+                updateTransferAll(allButton.getSelection());
             }
-
-            private void updateTransferAll() {
-                boolean transferAll = !allButton.getSelection();
-                transfersTable.setEnabled(transferAll);
-                buttonComposite.setEnabled(transferAll);
-                group.setEnabled(transferAll);
-            }
-
         });
 
         addSelectionButtons(group);
@@ -667,7 +663,7 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
                 settings.put(STORE_OVERWRITE_EXISTING_FILES_ID,
                     overwriteExistingFilesCheckbox.getSelection());
             }
-            settings.put(EXPORT_ALL_PREFERENCES_ID, allButton
+            settings.put(TRANSFER_ALL_PREFERENCES_ID, allButton
                     .getSelection());
 
         }
@@ -696,8 +692,13 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
                     .getBoolean(STORE_OVERWRITE_EXISTING_FILES_ID));
             }
             
-            allButton.setSelection(settings
-                    .getBoolean(EXPORT_ALL_PREFERENCES_ID));
+			boolean all = settings.getBoolean(TRANSFER_ALL_PREFERENCES_ID);
+			if (all)
+				allButton.setSelection(true);
+			else
+				chooseImportsButton.setSelection(true);
+            
+			updateTransferAll(all);
         }
     }
 
@@ -709,6 +710,12 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
         return allButton.getSelection();
     }
 
+    private void updateTransferAll(boolean transferAll) {
+        transfersTable.setEnabled(!transferAll);
+        buttonComposite.setEnabled(!transferAll);
+        group.setEnabled(!transferAll);
+    }
+	
     /**
      * Set the contents of self's destination specification widget to the passed
      * value

@@ -1970,5 +1970,50 @@
          </action>
       </objectContribution>
    </extension>
-    
+    <!-- Preference Transfer examples -->
+   <extension
+       point="org.eclipse.ui.preferenceTransfer">
+       <transfer
+            icon="XYZ.gif"
+            name="Export All Transfer Test"
+            id="org.eclipse.ui.tests.all">
+            <mapping scope="instance">
+            </mapping>
+            <mapping scope="configuration">
+            </mapping>
+            <mapping scope="project">
+            </mapping>
+      <description>
+             Export all tranfer, exports all nodes for specified scopes
+      </description>
+    </transfer>
+   </extension>
+      <extension
+         point="org.eclipse.ui.preferenceTransfer">
+       <transfer
+            name="Bare Bones Transfer Test"
+            id="org.eclipse.ui.tests.bones">
+            <mapping scope="instance">
+            </mapping>
+    </transfer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferenceTransfer">
+       <transfer
+            icon="XYZ.gif"
+            name="Export many preferences"
+            id="org.eclipse.ui.tests.many">
+            <mapping scope="instance">
+                <entry node="org.eclipse.ui" keys="showIntro,DOCK_PERSPECTIVE_BAR"/>
+                <entry node="org.eclipse.ui.workbench" keys="bogus,RUN_IN_BACKGROUND"/>
+                <entry node="org.eclipse.ui.ide"/>
+                <entry node="org.eclipse.core.resources"/>
+            </mapping>
+            <mapping scope="configuration">
+            </mapping>
+      <description>
+             Export many combinations of keys and nodes
+      </description>
+    </transfer>
+   </extension>
 </plugin>            
