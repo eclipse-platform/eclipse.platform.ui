@@ -124,8 +124,7 @@ public abstract class TargetProvider {
 	
 	/**
 	 * Answers true if the base identifier of the given resource is different to the
-	 * current released state of the resource. Answer false if the remote resource no 
-	 * longer exists.
+	 * current released state of the resource.
 	 * 
 	 * @param resource the resource to test
 	 * @param monitor a progress monitor
@@ -136,8 +135,9 @@ public abstract class TargetProvider {
 	
 	/**
 	 * Answer true if the local resource currently has a different timestamp to the
-	 * base timestamp for this resource. Answer false if the local resource does not 
-	 * exist.
+	 * base timestamp for this resource. Answer true for local resources that no longer exist
+	 * (i.e. the local resource did exist and was mapped to a remote resource) and false if the 
+	 * local resource does not exist and was never mapped to a remote resource.
 	 * 
 	 * @param resource the resource to test
 	 */
