@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.jobs;
 
 import org.eclipse.core.internal.plugins.PluginClassLoader;
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -32,7 +33,6 @@ public class Worker extends Thread {
 		return currentJob;
 	}
 	private IStatus handleException(Job job, Throwable t) {
-		t.printStackTrace();
 		String id;
 		try {
 			id = ((PluginClassLoader) job.getClass().getClassLoader()).getPluginDescriptor().getUniqueIdentifier();
@@ -65,6 +65,8 @@ public class Worker extends Thread {
 				} finally {
 					//clear interrupted state for this thread
 					Thread.interrupted();
+					if (!result.isOK())
+						InternalPlatform.log(result);
 					pool.endJob(currentJob, result);
 					currentJob = null;
 				}
