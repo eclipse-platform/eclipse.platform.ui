@@ -43,6 +43,7 @@ public class AutomaticUpdatesJob
 	private ArrayList updates;
 
 	public AutomaticUpdatesJob() {
+		super("Automatic Update Search");
 		updates = new ArrayList();
 		setPriority(Job.DECORATE);
 	}
