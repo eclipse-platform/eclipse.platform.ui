@@ -74,7 +74,7 @@ public class TagAction extends TeamAction {
 						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
 						List list = (List)table.get(provider);
 						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-						provider.tag(providerResources, IResource.DEPTH_INFINITE, result[0], false, subMonitor);
+						provider.tag(providerResources, IResource.DEPTH_INFINITE, new CVSTag(result[0], CVSTag.VERSION), subMonitor);
 					}	
 					previousTag = result[0];							
 				} catch (TeamException e) {

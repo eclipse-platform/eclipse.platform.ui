@@ -50,7 +50,7 @@ public class UpdateAction extends TeamAction {
 						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
 						List list = (List)table.get(provider);
 						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-						provider.update(providerResources, IResource.DEPTH_INFINITE, subMonitor);
+						provider.update(providerResources, IResource.DEPTH_INFINITE, null, false, subMonitor);
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);

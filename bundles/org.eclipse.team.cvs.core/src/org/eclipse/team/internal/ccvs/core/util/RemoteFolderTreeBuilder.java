@@ -26,6 +26,7 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
+import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
@@ -83,10 +84,14 @@ public class RemoteFolderTreeBuilder {
 		
 		// Build the local options
 		List localOptions = new ArrayList();
-		localOptions.add("-d");
-		if ((tag != null) && (tag.getType() != tag.HEAD)) {
-			localOptions.add(Client.TAG_OPTION);
-			localOptions.add(tag.getName());
+		localOptions.add(Client.RETRIEVE_ABSENT_DIRECTORIES);
+		if (tag != null) {
+			if (tag.getType() == CVSTag.HEAD) {
+				localOptions.add(Client.CLEAR_STICKY);
+			} else {
+				localOptions.add(tag.getUpdateOption());
+				localOptions.add(tag.getName());
+			}
 		}
 		updateLocalOptions = (String[])localOptions.toArray(new String[localOptions.size()]);
 	}
@@ -265,9 +270,15 @@ public class RemoteFolderTreeBuilder {
 				buildRemoteTree(connection, localFolder, remoteFolder, localPath.append(name), monitor);
 				// Record any children that are empty
 				if (pruneEmptyDirectories() && remoteFolder.getChildren().length == 0) {
-					// Only attempt to prune if the local folder is also empty.
-					if ((localFolder == null) || (localFolder.getFiles().length == 0 && localFolder.getFolders().length == 0))
+					// Prune if the local folder is also empty.
+					if (localFolder == null || (localFolder.getFiles().length == 0 && localFolder.getFolders().length == 0))
 						emptyChildren.add(remoteFolder);
+					else {
+						// Also prune if the tag we are fetching is not HEAD and differs from the tag of the local folder
+						FolderSyncInfo info = localFolder.getFolderSyncInfo();
+						if (tag != null && info != null && ! tag.equals(CVSTag.DEFAULT) && ! tag.equals(info.getTag()))
+							emptyChildren.add(remoteFolder);
+					}
 				}
 			}
 		}
