@@ -117,6 +117,11 @@ public class ContextManager {
 					// in v1 file attribute was called name
 					if (fileName == null)
 						fileName = contextContributions[j].getAttribute("name");
+					if (fileName == null){
+						String msg = HelpResources.getString("ContextManager.FileAttribute", CONTEXTS_EXTENSION, definingPlugin);
+						HelpPlugin.logError(msg, null);
+						continue;
+					}
 					List pluginContextsFiles = (List) contextsFiles.get(plugin);
 					if (pluginContextsFiles == null) {
 						pluginContextsFiles = new ArrayList();

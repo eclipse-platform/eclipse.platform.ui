@@ -48,15 +48,31 @@ public class HelpResources {
 		try {
 			String stringFromPropertiesFile = resBundle.getString(name);
 			stringFromPropertiesFile =
-				MessageFormat.format(
+			MessageFormat.format(
 					stringFromPropertiesFile,
 					new Object[] { replace0 });
 			return stringFromPropertiesFile;
 		} catch (Exception e) {
 			return name;
 		}
-
 	}
+
+	/**
+	 * Returns a string from a property file
+	 */
+	public static String getString(String name, String replace0, String replace1) {
+		try {
+			String stringFromPropertiesFile = resBundle.getString(name);
+			stringFromPropertiesFile =
+			MessageFormat.format(
+					stringFromPropertiesFile,
+					new Object[] { replace0, replace1 });
+			return stringFromPropertiesFile;
+		} catch (Exception e) {
+			return name;
+		}
+	}
+
 	private static Locale getDefaultLocale() {
 		String nl = BootLoader.getNL();
 		// sanity test
