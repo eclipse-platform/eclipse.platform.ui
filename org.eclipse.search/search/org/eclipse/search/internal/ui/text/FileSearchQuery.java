@@ -11,6 +11,7 @@
 package org.eclipse.search.internal.ui.text;
 
 import java.text.MessageFormat;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
@@ -75,8 +76,7 @@ public class FileSearchQuery implements ISearchQuery {
 	}
 
 	public String getLabel() {
-		String format= SearchMessages.getString("FileSearchQuery.label"); //$NON-NLS-1$
-		return MessageFormat.format(format, new String[] { fSearchString });
+		return SearchMessages.getString("FileSearchQuery.label"); //$NON-NLS-1$
 	}
 	
 	public String getSearchString() {
