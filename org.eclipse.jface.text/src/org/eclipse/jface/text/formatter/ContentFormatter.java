@@ -15,6 +15,7 @@ package org.eclipse.jface.text.formatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +64,7 @@ import org.eclipse.jface.text.TypedPosition;
  * @see ITypedRegion
  * @see Position
  */
-public class ContentFormatter implements IContentFormatter, IContentFormatterExtension {
+public class ContentFormatter implements IContentFormatter, IContentFormatterExtension, IContentFormatterExtension2 {
 		
 	/**
 	 * Defines a reference to either the offset or the end offset of
@@ -289,7 +290,16 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * @since 3.0
 	 */
 	private boolean fNeedsComputation= true;
-	
+	/**
+	 * Formatting context to use while formatting
+	 * @since 3.0
+	 */
+	private IFormattingContext fFormattingContext= null;
+	/**
+	 * Queue of position arrays used during formatting.
+	 * @since 3.0
+	 */
+	private final LinkedList fPositions= new LinkedList();
 	
 	/**
 	 * Creates a new content formatter. The content formatter operates by default
@@ -379,44 +389,109 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * @see IContentFormatter#format(IDocument, IRegion)
 	 */
 	public void format(IDocument document, IRegion region) {
-		fNeedsComputation= true;
-		fDocument= document;
-		try {
-			
-			if (fIsPartitionAware)
-				formatPartitions(region);
-			else
-				formatRegion(region);
 		
+		fDocument= document;
+		fNeedsComputation= true;
+		fFormattingContext= null;
+		
+		try {
+
+			final int offset= region.getOffset();
+			final int length= region.getLength();
+
+			if (fIsPartitionAware)
+				formatPartitions(offset, length);
+			else
+				formatRegion(offset, length, IDocument.DEFAULT_CONTENT_TYPE);
+
 		} finally {
+			fFormattingContext= null;
 			fNeedsComputation= true;
 			fDocument= null;
 		}
 	}
-		
+
+	/*
+	 * @see org.eclipse.jface.text.formatter.IContentFormatterExtension2#format(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.formatter.IFormattingContext)
+	 */
+	public void format(IDocument document, IFormattingContext context) {
+
+		fNeedsComputation= true;
+		fDocument= document;
+		fFormattingContext= context;
+		fPositions.clear();
+
+		try {
+
+			final Boolean all= (Boolean) context.getProperty(FormattingContextProperties.CONTEXT_DOCUMENT);
+			if (all == null || !all.booleanValue()) {
+
+				final TypedPosition partition= (TypedPosition) context.getProperty(FormattingContextProperties.CONTEXT_PARTITION);
+				final IRegion region= (IRegion) context.getProperty(FormattingContextProperties.CONTEXT_REGION);
+
+				if (partition != null) {
+					formatRegion(partition.getOffset(), partition.getLength(), partition.getType());
+				} else if (region != null) {
+
+					final int offset= region.getOffset();
+					final int length= region.getLength();
+
+					final ITypedRegion[] regions= TextUtilities.computePartitioning(fDocument, fPartitioning, offset, length);
+					if (regions.length > 1) {
+
+						try {
+							formatRegion(offset, length, IDocument.DEFAULT_CONTENT_TYPE);
+						} finally {
+							formatPartitions(offset, length);
+						}
+					} else
+						formatRegion(offset, length, regions[0].getType());
+				}
+			} else {
+
+				try {
+					formatRegion(0, fDocument.getLength(), IDocument.DEFAULT_CONTENT_TYPE);
+				} finally {
+					formatPartitions(0, fDocument.getLength());
+				}
+			}
+		} catch (BadLocationException x) {
+			// Should not happen
+		} finally {
+
+			fNeedsComputation= true;
+			fFormattingContext= null;
+			fDocument= null;
+			fPositions.clear();
+		}
+	}
+
 	/**
 	 * Determines the partitioning of the given region of the document.
 	 * Informs the formatting strategies of each partition about the start,
 	 * the process, and the termination of the formatting session.
 	 * 
-	 * @param region the document region to be formatted
+	 * @param offset The offset of the region to be formatted
+	 * @param length The length of the region to be formatted
 	 */
-	private void formatPartitions(IRegion region) {
-		
+	private void formatPartitions(int offset, int length) {
+
 		addPartitioningUpdater();
 		
 		try {
-			
-			TypedPosition[] ranges= getPartitioning(region);
+
+			final TypedPosition[] ranges= getPartitioning(offset, length);
+
 			if (ranges != null) {
-				start(ranges, getIndentation(region.getOffset()));
+
+				start(ranges, getIndentation(offset));
 				format(ranges);
 				stop(ranges);
 			}
-			
-		} catch (BadLocationException x) {
+
+		} catch (BadLocationException exception) {
+			// Can not happen
 		}
-			
 		removePartitioningUpdater();
 	}
 	
@@ -425,16 +500,46 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * content type. The strategy is informed about the start, the process, and
 	 * the termination of the formatting session.
 	 * 
-	 * @param region the region to be formatted
+	 * @param offset The offset of the region
+	 * @param length The length of the region
+	 * @param type The type of the region
 	 */
-	private void formatRegion(IRegion region) {
-		
-		IFormattingStrategy strategy= getFormattingStrategy(IDocument.DEFAULT_CONTENT_TYPE);
+	private void formatRegion(final int offset, final int length, final String type) {
+
+		final IFormattingStrategy strategy= getFormattingStrategy(type);
 		if (strategy != null) {
-			strategy.formatterStarts(getIndentation(region.getOffset()));
-			format(strategy, new TypedPosition(region.getOffset(), region.getLength(), IDocument.DEFAULT_CONTENT_TYPE));
+
+			final TypedPosition partition= new TypedPosition(offset, length, type);
+
+			formatterStarts(strategy, partition, getIndentation(offset));
+			format(strategy, partition);
 			strategy.formatterStops();
 		}
+	}
+	
+	/**
+	 * Fires the formatter starts event for the indicated formatting strategy.
+	 * 
+	 * @param strategy Strategy to fire the event for
+	 * @param region Region where the strategy is supposed to format
+	 * @param indentation Indentation of the formatting region
+	 */
+	private void formatterStarts(final IFormattingStrategy strategy, final TypedPosition region, final String indentation) {
+
+		if (fFormattingContext != null && strategy instanceof IFormattingStrategyExtension) {
+
+			final IFormattingStrategyExtension extension= (IFormattingStrategyExtension)strategy;
+			final int[] positions= getAffectedPositions(region.getOffset(), region.getLength());
+
+			fPositions.addLast(positions);
+
+			fFormattingContext.setProperty(FormattingContextProperties.CONTEXT_INDENTATION, indentation);
+			fFormattingContext.setProperty(FormattingContextProperties.CONTEXT_PARTITION, region);
+			fFormattingContext.setProperty(FormattingContextProperties.CONTEXT_POSITIONS, positions);
+
+			extension.formatterStarts(fFormattingContext);
+		} else
+			strategy.formatterStarts(indentation);
 	}
 	
 	/**
@@ -443,16 +548,16 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * probably change the length of the formatted partition, it must be kept 
 	 * track of the modifications in order to submit the correct partition to all 
 	 * formatting strategies. For this, all partitions are remembered as positions
-	 * in a dedicated position category. (As formatting stratgies might rely on each
-	 * other, calling them in reversed order is not an option.)
+	 * in a dedicated position category.
 	 *
-	 * @param region the region for which the partitioning must be determined
+	 * @param offset Offset of the region for which the partitioning must be determined
+	 * @param length Length of the region for which the partitioning must be determined
 	 * @return the partitioning of the specified region
 	 * @exception BadLocationException of region is invalid in the document
 	 */
-	private TypedPosition[] getPartitioning(IRegion region) throws BadLocationException {
+	private TypedPosition[] getPartitioning(int offset, int length) throws BadLocationException {
 		
-		ITypedRegion[] regions= TextUtilities.computePartitioning(fDocument, fPartitioning, region.getOffset(), region.getLength());
+		ITypedRegion[] regions= TextUtilities.computePartitioning(fDocument, fPartitioning, offset, length);
 		TypedPosition[] positions= new TypedPosition[regions.length];
 		
 		for (int i= 0; i < regions.length; i++) {
@@ -475,10 +580,21 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * @param indentation the initial indentation
 	 */
 	private void start(TypedPosition[] regions, String indentation) {
-		for (int i= 0; i < regions.length; i++) {
-			IFormattingStrategy s= getFormattingStrategy(regions[i].getType());
-			if (s != null)
-				s.formatterStarts(indentation);
+
+		String type= null;
+		TypedPosition region= null;
+
+		for (int i= regions.length - 1; i >= 0; i--) {
+
+			region= regions[i];
+			type= region.getType();
+
+			if (!type.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
+
+				final IFormattingStrategy strategy= getFormattingStrategy(type);
+				if (strategy != null)
+					formatterStarts(strategy, region, indentation);
+			}
 		}
 	}
 	
@@ -486,13 +602,31 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * Formats one partition after the other using the formatter strategy registered for
 	 * the partition's content type.
 	 *
-	 * @param ranges the partitioning of the document region to be formatted
+	 * @param regions the partitioning of the document region to be formatted
 	 */
-	private void format(TypedPosition[] ranges) {
-		for (int i= 0; i < ranges.length; i++) {
-			IFormattingStrategy s= getFormattingStrategy(ranges[i].getType());
-			if (s != null) {
-				format(s, ranges[i]);
+	private void format(TypedPosition[] regions) {
+
+		String type= null;
+		TypedPosition region= null;
+
+		for (int i= regions.length - 1; i >= 0; i--) {
+
+			region= regions[i];
+			type= region.getType();
+
+			if (!type.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
+
+				final IFormattingStrategy strategy= getFormattingStrategy(type);
+				if (strategy != null) {
+
+					if (fFormattingContext != null && strategy instanceof IFormattingStrategyExtension) {
+
+						final IFormattingStrategyExtension extension= (IFormattingStrategyExtension)strategy;
+						extension.format();
+
+					} else
+						format(strategy, region);
+				}
 			}
 		}
 	}
@@ -511,30 +645,49 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * @param region the region to be formatted
 	 */
 	private void format(IFormattingStrategy strategy, TypedPosition region) {
-		try {
-		
-			final int offset= region.getOffset();
-			int length= region.getLength();
-		
-			String content= fDocument.get(offset, length);
-			final int[] positions= getAffectedPositions(offset, length);
-			String formatted= strategy.format(content, isLineStart(offset), getIndentation(offset), positions);
-			
-			if (formatted != null && !formatted.equals(content)) {
-				
-				IPositionUpdater first= new RemoveAffectedPositions();
-				fDocument.insertPositionUpdater(first, 0);
-				IPositionUpdater last= new UpdateAffectedPositions(positions, offset);
-				fDocument.addPositionUpdater(last);
-				
-				fDocument.replace(offset, length, formatted);
-				
-				fDocument.removePositionUpdater(first);
-				fDocument.removePositionUpdater(last);
+
+		if (fFormattingContext != null && strategy instanceof IFormattingStrategyExtension) {
+
+			final int[] positions= (int[])fFormattingContext.getProperty(FormattingContextProperties.CONTEXT_POSITIONS);
+
+			IPositionUpdater first= new RemoveAffectedPositions();
+			fDocument.insertPositionUpdater(first, 0);
+			IPositionUpdater last= new UpdateAffectedPositions(positions, region.getOffset());
+			fDocument.addPositionUpdater(last);
+
+			final IFormattingStrategyExtension extension= (IFormattingStrategyExtension)strategy;
+			extension.format();
+
+			fDocument.removePositionUpdater(first);
+			fDocument.removePositionUpdater(last);
+
+		} else {
+
+			try {
+
+				final int offset= region.getOffset();
+				int length= region.getLength();
+
+				String content= fDocument.get(offset, length);
+				final int[] positions= getAffectedPositions(offset, length);
+				String formatted= strategy.format(content, isLineStart(offset), getIndentation(offset), positions);
+
+				if (formatted != null && !formatted.equals(content)) {
+
+					IPositionUpdater first= new RemoveAffectedPositions();
+					fDocument.insertPositionUpdater(first, 0);
+					IPositionUpdater last= new UpdateAffectedPositions(positions, offset);
+					fDocument.addPositionUpdater(last);
+
+					fDocument.replace(offset, length, formatted);
+
+					fDocument.removePositionUpdater(first);
+					fDocument.removePositionUpdater(last);
+				}
+
+			} catch (BadLocationException x) {
+				// should not happen
 			}
-					
-		} catch (BadLocationException x) {
-			// should not happen
 		}
 	}
 	
@@ -545,10 +698,17 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * @param regions the partitioning of the document which has been formatted
 	 */
 	private void stop(TypedPosition[] regions) {
-		for (int i= 0; i < regions.length; i++) {
-			IFormattingStrategy s= getFormattingStrategy(regions[i].getType());
-			if (s != null)
-				s.formatterStops();
+
+		String type= null;
+		for (int i= regions.length - 1; i >= 0; i--) {
+
+			type= regions[i].getType();
+			if (!type.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
+
+				final IFormattingStrategy strategy= getFormattingStrategy(type);
+				if (strategy != null)
+					strategy.formatterStops();
+			}
 		}
 	}
 		
@@ -688,13 +848,15 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * @param document the document 
 	 */
 	private void removeAffectedPositions(IDocument document) {
-		int size= fOverlappingPositionReferences.size();
-		for (int i= 0; i < size; i++) {
-			PositionReference r= (PositionReference) fOverlappingPositionReferences.get(i);
-			try {
-				document.removePosition(r.getCategory(), r.getPosition());
-			} catch (BadPositionCategoryException x) {
-				// can not happen
+		if (fOverlappingPositionReferences != null) {
+			int size= fOverlappingPositionReferences.size();
+			for (int i= 0; i < size; i++) {
+				PositionReference r= (PositionReference)fOverlappingPositionReferences.get(i);
+				try {
+					document.removePosition(r.getCategory(), r.getPosition());
+				} catch (BadPositionCategoryException x) {
+					// can not happen
+				}
 			}
 		}	
 	}
@@ -712,7 +874,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 		if (document != fDocument)
 			return;
 		
-		if (positions.length == 0)
+		if (fOverlappingPositionReferences == null || positions.length == 0)
 			return;
 		
 		for (int i= 0; i < positions.length; i++) {

@@ -28,7 +28,11 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
+import org.eclipse.jface.text.formatter.FormattingContext;
+import org.eclipse.jface.text.formatter.FormattingContextProperties;
 import org.eclipse.jface.text.formatter.IContentFormatter;
+import org.eclipse.jface.text.formatter.IContentFormatterExtension2;
+import org.eclipse.jface.text.formatter.IFormattingContext;
 import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
@@ -493,6 +497,16 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		return super.canDoOperation(operation);
 	}
 	
+	/**
+	 * Creates and prepares a new formatting context for a format operation.
+	 * 
+	 * @return The new formatting context
+	 * @since 3.0
+	 */
+	public IFormattingContext createFormattingContext() {
+		return new FormattingContext();	
+	}
+	
 	/*
 	 * @see ITextOperationTarget#doOperation(int)
 	 */
@@ -511,18 +525,36 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			case INFORMATION:
 				fInformationPresenter.showInformation();
 				return;
-			case FORMAT: {
-				Point s= getSelectedRange();
-				IRegion r= (s.y == 0) ? getModelCoverage() : new Region(s.x, s.y);
+			case FORMAT : {
+				IFormattingContext context= createFormattingContext();
 				try {
-					setRedraw(false); 
-					fContentFormatter.format(getDocument(), r);						
+					Point selection= getSelectedRange();
+					IRegion region= new Region(selection.x, selection.y);
+
+					if (selection.y == 0) {
+						context.setProperty(FormattingContextProperties.CONTEXT_DOCUMENT, Boolean.TRUE);
+					} else {
+						context.setProperty(FormattingContextProperties.CONTEXT_DOCUMENT, Boolean.FALSE);
+						context.setProperty(FormattingContextProperties.CONTEXT_REGION, region);
+					}
+
+					try {
+						setRedraw(false);
+						if (fContentFormatter instanceof IContentFormatterExtension2) {
+							IContentFormatterExtension2 extension= (IContentFormatterExtension2) fContentFormatter;
+							extension.format(getDocument(), context);
+						} else {
+							fContentFormatter.format(getDocument(), region);
+						}
+					} finally {
+						setRedraw(true);
+					}
 				} finally {
-					setRedraw(true);
+					context.dispose();
 				}
 				return;
 			}
-			default:
+			default :
 				super.doOperation(operation);
 		}
 	}
