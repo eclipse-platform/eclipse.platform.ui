@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * An Ant task which allows to switch from a file system path to a resource path, 
- * and vice versa, and store the result in a user property which name is set by the user. If the 
- * resource does not exist, the property is set to "false".
+ * and vice versa, and store the result in a user property whose name is set by the user. If the 
+ * resource does not exist, the property is set to <code>false</code>.
  * <p>
  * The attribute "property" must be specified, as well as only one of "fileSystemPath" or "resourcePath".
  * <p><p>
