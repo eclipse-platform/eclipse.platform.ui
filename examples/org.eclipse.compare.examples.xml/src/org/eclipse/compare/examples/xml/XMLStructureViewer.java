@@ -20,7 +20,6 @@ import java.util.HashMap;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareViewerSwitchingPane;
 import org.eclipse.compare.ITypedElement;
-import org.eclipse.compare.internal.TimeoutContext;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
@@ -41,6 +40,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * An XML diff tree viewer that can be configured with a <code>IStructureCreator</code>
@@ -320,10 +320,8 @@ public class XMLStructureViewer extends StructureDiffViewer {
 		//TimeoutContext.run(true, TIMEOUT, getControl().getShell(), runnable);
 		if (left != null && right != null) {
 			try {
-				TimeoutContext.run(
-					true,
-					500,
-					XMLPlugin.getActiveWorkbenchShell(),
+				PlatformUI.getWorkbench().getProgressService().run(true, true,
+				//TimeoutContext.run(true, 500, XMLPlugin.getActiveWorkbenchShell(),
 					getMatchingRunnable(
 						(XMLNode) left,
 						(XMLNode) right,
