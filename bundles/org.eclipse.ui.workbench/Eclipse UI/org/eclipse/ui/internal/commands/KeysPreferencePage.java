@@ -191,6 +191,15 @@ public class KeysPreferencePage extends
          * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
          */
         public void widgetSelected(SelectionEvent e) {
+            // Change the column titles.
+            final int oldSortIndex = sortOrder[0];
+            final TableColumn oldSortColumn = tableKeyBindings
+                    .getColumn(oldSortIndex);
+            oldSortColumn.setText(UNSORTED_COLUMN_NAMES[oldSortIndex]);
+            final TableColumn newSortColumn = tableKeyBindings
+                    .getColumn(columnSelected);
+            newSortColumn.setText(SORTED_COLUMN_NAMES[columnSelected]);
+
             // Change the sort order.
             boolean columnPlaced = false;
             boolean enoughRoom = false;
@@ -264,26 +273,6 @@ public class KeysPreferencePage extends
             .getBundle(KeysPreferencePage.class.getName());
 
     /**
-     * The constant representing the category column within the sort order.
-     */
-    private final static int SORT_COLUMN_CATEGORY = 0;
-
-    /**
-     * The constant representing the command column within the sort order.
-     */
-    private final static int SORT_COLUMN_COMMAND = 1;
-
-    /**
-     * The constant representing the context column within the sort order.
-     */
-    private final static int SORT_COLUMN_CONTEXT = 3;
-
-    /**
-     * The constant representing the key sequence column within the sort order.
-     */
-    private final static int SORT_COLUMN_KEY_SEQUENCE = 2;
-
-    /**
      * The index of the column on the view tab containing the category name.
      */
     private final static int VIEW_CATEGORY_COLUMN_INDEX = 0;
@@ -302,6 +291,44 @@ public class KeysPreferencePage extends
      * The index of the column on the view tab containing the key sequence.
      */
     private final static int VIEW_KEY_SEQUENCE_COLUMN_INDEX = 2;
+
+    /**
+     * The total number of columns on the view tab.
+     */
+    private final static int VIEW_TOTAL_COLUMNS = 4;
+
+    /**
+     * The translated names for the columns when they are not the primary sort
+     * key (e.g., "Category").
+     */
+    private final static String[] UNSORTED_COLUMN_NAMES = new String[VIEW_TOTAL_COLUMNS];
+
+    /**
+     * The translated names for the columns when they are the primary sort key
+     * (e.g., ">Category <").
+     */
+    private final static String[] SORTED_COLUMN_NAMES = new String[VIEW_TOTAL_COLUMNS];
+
+    static {
+        UNSORTED_COLUMN_NAMES[VIEW_CATEGORY_COLUMN_INDEX] = Util
+                .translateString(RESOURCE_BUNDLE, "tableColumnCategory"); //$NON-NLS-1$
+        UNSORTED_COLUMN_NAMES[VIEW_COMMAND_COLUMN_INDEX] = Util
+                .translateString(RESOURCE_BUNDLE, "tableColumnCommand"); //$NON-NLS-1$
+        UNSORTED_COLUMN_NAMES[VIEW_KEY_SEQUENCE_COLUMN_INDEX] = Util
+                .translateString(RESOURCE_BUNDLE, "tableColumnKeySequence"); //$NON-NLS-1$
+        UNSORTED_COLUMN_NAMES[VIEW_CONTEXT_COLUMN_INDEX] = Util
+                .translateString(RESOURCE_BUNDLE, "tableColumnContext"); //$NON-NLS-1$
+
+        SORTED_COLUMN_NAMES[VIEW_CATEGORY_COLUMN_INDEX] = Util.translateString(
+                RESOURCE_BUNDLE, "tableColumnCategorySorted"); //$NON-NLS-1$
+        SORTED_COLUMN_NAMES[VIEW_COMMAND_COLUMN_INDEX] = Util.translateString(
+                RESOURCE_BUNDLE, "tableColumnCommandSorted"); //$NON-NLS-1$
+        SORTED_COLUMN_NAMES[VIEW_KEY_SEQUENCE_COLUMN_INDEX] = Util
+                .translateString(RESOURCE_BUNDLE,
+                        "tableColumnKeySequenceSorted"); //$NON-NLS-1$
+        SORTED_COLUMN_NAMES[VIEW_CONTEXT_COLUMN_INDEX] = Util.translateString(
+                RESOURCE_BUNDLE, "tableColumnContextSorted"); //$NON-NLS-1$
+    }
 
     private Map assignmentsByContextIdByKeySequence;
 
@@ -380,8 +407,9 @@ public class KeysPreferencePage extends
      * bindings. This sort order can be changed by the user. This array is never
      * <code>null</code>, but may be empty.
      */
-    private int[] sortOrder = { SORT_COLUMN_CATEGORY, SORT_COLUMN_COMMAND,
-            SORT_COLUMN_KEY_SEQUENCE, SORT_COLUMN_CONTEXT };
+    private int[] sortOrder = { VIEW_CATEGORY_COLUMN_INDEX,
+            VIEW_COMMAND_COLUMN_INDEX, VIEW_KEY_SEQUENCE_COLUMN_INDEX,
+            VIEW_CONTEXT_COLUMN_INDEX };
 
     private TabFolder tabFolder;
 
@@ -1148,30 +1176,30 @@ public class KeysPreferencePage extends
         tableKeyBindings.setLayoutData(gridData);
         final TableColumn tableColumnCategory = new TableColumn(
                 tableKeyBindings, SWT.NONE, VIEW_CATEGORY_COLUMN_INDEX);
-        tableColumnCategory.setText(Util.translateString(RESOURCE_BUNDLE,
-                "tableColumnCategory")); //$NON-NLS-1$
+        tableColumnCategory
+                .setText(SORTED_COLUMN_NAMES[VIEW_CATEGORY_COLUMN_INDEX]);
         tableColumnCategory
                 .addSelectionListener(new SortOrderSelectionListener(
-                        SORT_COLUMN_CATEGORY));
+                        VIEW_CATEGORY_COLUMN_INDEX));
         final TableColumn tableColumnCommand = new TableColumn(
                 tableKeyBindings, SWT.NONE, VIEW_COMMAND_COLUMN_INDEX);
-        tableColumnCommand.setText(Util.translateString(RESOURCE_BUNDLE,
-                "tableColumnCommand")); //$NON-NLS-1$
+        tableColumnCommand
+                .setText(UNSORTED_COLUMN_NAMES[VIEW_COMMAND_COLUMN_INDEX]);
         tableColumnCommand.addSelectionListener(new SortOrderSelectionListener(
-                SORT_COLUMN_COMMAND));
+                VIEW_COMMAND_COLUMN_INDEX));
         final TableColumn tableColumnKeySequence = new TableColumn(
                 tableKeyBindings, SWT.NONE, VIEW_KEY_SEQUENCE_COLUMN_INDEX);
-        tableColumnKeySequence.setText(Util.translateString(RESOURCE_BUNDLE,
-                "tableColumnKeySequence")); //$NON-NLS-1$
+        tableColumnKeySequence
+                .setText(UNSORTED_COLUMN_NAMES[VIEW_KEY_SEQUENCE_COLUMN_INDEX]);
         tableColumnKeySequence
                 .addSelectionListener(new SortOrderSelectionListener(
-                        SORT_COLUMN_KEY_SEQUENCE));
+                        VIEW_KEY_SEQUENCE_COLUMN_INDEX));
         final TableColumn tableColumnContext = new TableColumn(
                 tableKeyBindings, SWT.NONE, VIEW_CONTEXT_COLUMN_INDEX);
-        tableColumnContext.setText(Util.translateString(RESOURCE_BUNDLE,
-                "tableColumnContext")); //$NON-NLS-1$
+        tableColumnContext
+                .setText(UNSORTED_COLUMN_NAMES[VIEW_CONTEXT_COLUMN_INDEX]);
         tableColumnContext.addSelectionListener(new SortOrderSelectionListener(
-                SORT_COLUMN_CONTEXT));
+                VIEW_CONTEXT_COLUMN_INDEX));
 
         // A button for exporting the contents to a file.
         final Button button = new Button(composite, SWT.PUSH);
@@ -2296,25 +2324,25 @@ public class KeysPreferencePage extends
                 int compare = 0;
                 for (int i = 0; i < sortOrder.length; i++) {
                     switch (sortOrder[i]) {
-                    case SORT_COLUMN_CATEGORY:
+                    case VIEW_CATEGORY_COLUMN_INDEX:
                         compare = Util.compare(categoryName1, categoryName2);
                         if (compare != 0) {
                             return compare;
                         }
                         break;
-                    case SORT_COLUMN_COMMAND:
+                    case VIEW_COMMAND_COLUMN_INDEX:
                         compare = Util.compare(commandName1, commandName2);
                         if (compare != 0) {
                             return compare;
                         }
                         break;
-                    case SORT_COLUMN_KEY_SEQUENCE:
+                    case VIEW_KEY_SEQUENCE_COLUMN_INDEX:
                         compare = Util.compare(keySequence1, keySequence2);
                         if (compare != 0) {
                             return compare;
                         }
                         break;
-                    case SORT_COLUMN_CONTEXT:
+                    case VIEW_CONTEXT_COLUMN_INDEX:
                         compare = Util.compare(contextName1, contextName2);
                         if (compare != 0) {
                             return compare;
