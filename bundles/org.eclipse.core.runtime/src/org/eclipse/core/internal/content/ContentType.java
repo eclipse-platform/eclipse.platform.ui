@@ -26,9 +26,11 @@ public final class ContentType implements IContentType {
 		public int describe(InputStream contents, IContentDescription description) throws IOException {
 			return INVALID;
 		}
+
 		public int describe(Reader contents, IContentDescription description) throws IOException {
 			return INVALID;
 		}
+
 		public QualifiedName[] getSupportedOptions() {
 			return new QualifiedName[0];
 		}
@@ -220,7 +222,8 @@ public final class ContentType implements IContentType {
 			return getTarget().getBaseType();
 		if (baseTypeId == null)
 			return null;
-		return manager.getContentType(baseTypeId);
+		ContentType originalBaseType = manager.internalGetContentType(baseTypeId);
+		return originalBaseType != null ? originalBaseType.getTarget() : null;
 	}
 
 	String getBaseTypeId() {
@@ -474,7 +477,7 @@ public final class ContentType implements IContentType {
 		if (another == null)
 			return false;
 		if (aliasTarget != null)
-			return getTarget().isKindOf(another);		
+			return getTarget().isKindOf(another);
 		if (this == another)
 			return true;
 		if (getDepth() <= ((ContentType) another).getDepth())
@@ -525,6 +528,8 @@ public final class ContentType implements IContentType {
 		// don't allow a sub-type to be made into an alias to the base type
 		if (aliasTarget == null && isKindOf(newTarget))
 			return;
+		if (ContentTypeManager.DEBUGGING)
+			Policy.debug("Setting alias target for " + this + " -> " + newTarget); //$NON-NLS-1$ //$NON-NLS-2$		
 		aliasTarget = newTarget;
 	}
 
@@ -549,9 +554,19 @@ public final class ContentType implements IContentType {
 
 	void setValidation(byte validation) {
 		this.validation = validation;
+		if (ContentTypeManager.DEBUGGING)
+			Policy.debug("Validating " + this + ": " + getValidationString(validation)); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	private static String getValidationString(byte validation) {
+		return validation == STATUS_VALID ? "VALID" : (validation == STATUS_INVALID ? "INVALID" : "UNKNOWN"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	public String toString() {
 		return getId();
+	}
+
+	public boolean isAlias() {
+		return aliasTarget != null;
 	}
 }

@@ -51,7 +51,10 @@
             priority="high"    
             name="Specialized Conflict 1"
             id="aaa_conflict1"/>
-      <!-- A base type and a sub-type (that restates file-spec) are in conflict. Base type should be picked. -->             
+      <!-- 
+      	A base type and a sub-type (that restates file-spec) are in conflict. 
+      	Base type should be picked (no aliasing will be done since they are related). 
+      -->
       <content-type      
             file-extensions="conflict2"
             name="Conflict 2"
@@ -62,20 +65,29 @@
             file-extensions="conflict2"
             name="Specialized Conflict 2"
             id="aaa_conflict2"/>
-      <!-- Two unrelated types are in conflict. The "heaviest" one should be picked -->
+      <!-- 
+      	Two unrelated types are in conflict. The one with lowest depth should be picked,
+      	an the other marked as an alias. 
+      	-->
       <content-type      
+            file-extensions="base_conflict3"
+            name="Conflict 3"
+            id="base_conflict3"/>
+      <content-type
+            base-type="base_conflict3"         
+            file-extensions="conflict3"
+            name="Deeper Conflict 3"
+            id="aaa_conflict3"/>                                             
+      <content-type
+            base-type="aaa_conflict3"         
+            file-extensions="specialized.conflict3"
+            name="Specialized Conflict 3"
+            id="bbb_conflict3"/>                                                         
+      <content-type
             file-extensions="conflict3"
             name="Unrelated Conflict 3"
-            id="xxx_conflict3"/>      
-      <content-type      
-            file-extensions="conflict3"
-            name="Conflict 3"
-            id="conflict3"/>
-      <content-type      
-            base-type="conflict3"         
-            file-extensions="conflict3"
-            name="Specialized Conflict 3"
-            id="aaa_conflict3"/>                                             
+            id="conflict3"/>            	            
+      <!-- end of conflict-related content types -->
 	  <content-type
             file-extensions="tzt"
             default-charset="BAR"

@@ -28,14 +28,21 @@ public class ContentTypeManager implements IContentTypeManager {
 			// don't do anything on close
 		}
 	}
+
 	final static String CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$
+
 	private static final String OPTION_DEBUG_CONTENT_TYPES = Platform.PI_RUNTIME + "/contenttypes/debug"; //$NON-NLS-1$;	
+
 	static final boolean DEBUGGING = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_CONTENT_TYPES));
+
 	private static ContentTypeManager instance;
+
 	private static final int MARK_LIMIT = 0x400;
 
 	private ContentTypeBuilder builder;
+
 	private Map catalog = new HashMap();
+
 	// a comparator used when resolving conflicts (two types associated to the same spec) 
 	private Comparator conflictComparator = new Comparator() {
 		public int compare(Object o1, Object o2) {
@@ -48,7 +55,7 @@ public class ContentTypeManager implements IContentTypeManager {
 			// second criteria: priority - the higher, the better
 			int priorityCriteria = type1.getPriority() - type2.getPriority();
 			if (priorityCriteria != 0)
-				return -priorityCriteria;			
+				return -priorityCriteria;
 			// to ensure stability
 			return type1.getId().compareTo(type2.getId());
 		}
@@ -59,7 +66,9 @@ public class ContentTypeManager implements IContentTypeManager {
 			return ((ContentType) o2).getDepth() - ((ContentType) o1).getDepth();
 		}
 	};
+
 	private Map fileExtensions = new HashMap();
+
 	private Map fileNames = new HashMap();
 
 	/*
@@ -241,7 +250,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		List result = new ArrayList(catalog.size());
 		for (Iterator i = catalog.values().iterator(); i.hasNext();) {
 			ContentType type = (ContentType) i.next();
-			if (type.isValid())
+			if (type.isValid() && !type.isAlias())
 				result.add(type);
 		}
 		return (IContentType[]) result.toArray(new IContentType[result.size()]);
@@ -263,7 +272,7 @@ public class ContentTypeManager implements IContentTypeManager {
 	 */
 	public IContentType getContentType(String contentTypeIdentifier) {
 		ContentType type = internalGetContentType(contentTypeIdentifier);
-		return (type != null && type.isValid()) ? type : null;
+		return (type != null && type.isValid() && !type.isAlias()) ? type : null;
 	}
 
 	/**
@@ -395,7 +404,7 @@ public class ContentTypeManager implements IContentTypeManager {
 	}
 
 	protected void startup() {
-		builder = createBuilder();		
+		builder = createBuilder();
 		catalog = new HashMap();
 		builder.startup();
 		builder.buildContentTypes();

@@ -465,20 +465,29 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		IContentType conflict2a = manager.getContentType(PI_RUNTIME_TESTS + ".conflict2");
 		IContentType conflict2b = manager.getContentType(PI_RUNTIME_TESTS + ".aaa_conflict2");
 		assertNotNull("2.0", conflict2a);
+		// although there is conflict, aliasing is not done for related content types
 		assertNotNull("2.1", conflict2b);
 		IContentType preferredConflict2 = manager.findContentTypeFor("test.conflict2");
 		assertNotNull("2.2", preferredConflict2);
 		assertEquals("2.3", conflict2a, preferredConflict2);
 
 		IContentType conflict3a = manager.getContentType(PI_RUNTIME_TESTS + ".conflict3");
-		IContentType conflict3b = manager.getContentType(PI_RUNTIME_TESTS + ".aaa_conflict3");
-		IContentType conflict3c = manager.getContentType(PI_RUNTIME_TESTS + ".xxx_conflict3");
+		IContentType conflict3b = manager.getContentType(PI_RUNTIME_TESTS + ".base_conflict3");
+		IContentType conflict3c = manager.getContentType(PI_RUNTIME_TESTS + ".aaa_conflict3");
+		IContentType conflict3d = manager.getContentType(PI_RUNTIME_TESTS + ".bbb_conflict3");		
 		assertNotNull("3.0", conflict3a);
-		assertNotNull("3.1", conflict3b);
-		assertNotNull("3.2", conflict3c);
+		assertNotNull("3.1", conflict3b);		
+		// this content type is an alias for conflict3a, should not be visible
+		assertNull("3.2", conflict3c);
+		assertFalse(contains(manager.getAllContentTypes(), conflict3c));
+		// this descends from conflict3c. Its base type should be conflict3a instead (due to aliasing) 
+		assertNotNull("3.3", conflict3d);
+		assertEquals("3.4", conflict3a, conflict3d.getBaseType());
+		
+		// the chosen one should be conflict3a
 		IContentType preferredConflict3 = manager.findContentTypeFor("test.conflict3");
-		assertNotNull("3.3", preferredConflict3);
-		assertEquals("3.3", conflict3a, preferredConflict3);
+		assertNotNull("4.0", preferredConflict3);
+		assertEquals("4.1", conflict3a, preferredConflict3);
 	}
 
 	public void testMyContentDescriber() throws UnsupportedEncodingException, IOException {
@@ -512,6 +521,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	}
 
 	public static Test suite() {
+//		return new IContentTypeManagerTest("testFileSpecConflicts");
 		return new TestSuite(IContentTypeManagerTest.class);
 	}
 
