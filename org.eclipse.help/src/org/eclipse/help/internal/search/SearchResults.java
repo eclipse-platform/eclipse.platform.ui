@@ -59,7 +59,7 @@ public class SearchResults implements ISearchHitCollector {
 			IToc toc = null; // the TOC containing the topic
 			AdaptableHelpResource scope = null; // the scope for the topic, if any
 			if (scopeNames == null) {
-				toc = HelpSystem.getTocManager().getToc(href, locale);
+				toc = getTocForTopic(href, locale);
 			} else {
 				scope = getScopeForTopic(href);
 				if (scope == null)
@@ -121,6 +121,21 @@ public class SearchResults implements ISearchHitCollector {
 		}
 		return null;
 	}
+	
+	/**
+	 * Finds a topic in a toc
+	 * or within a scope if specified
+	 */
+	private IToc getTocForTopic(String href, String locale) {
+		IToc[] tocs = HelpSystem.getTocManager().getTocs(locale);
+		for (int i = 0; i < tocs.length; i++) {
+			ITopic topic = tocs[i].getTopic(href);
+			if (topic != null)
+				return tocs[i];
+		}
+		return null;
+	}
+	
 	/**
 	 * Gets the searchHits.
 	 * @return Returns a SearchHit[]
