@@ -162,6 +162,9 @@ public class OleEditor extends EditorPart {
 
 	private void activateClient(IWorkbenchPart part) {
 		if (part == this) {
+			//Do a deactivation as some OLE controls will not update menus
+			if(clientSite != null)
+				clientSite.deactivateInPlaceClient();
 			setFocus();
 			this.clientActive = true;
 		}
