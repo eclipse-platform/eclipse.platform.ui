@@ -12,11 +12,6 @@ package org.eclipse.ui.texteditor;
 
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
@@ -26,6 +21,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResourceStatus;
 
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -59,18 +60,17 @@ import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.editors.text.DefaultEncodingSupport;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
 import org.eclipse.ui.editors.text.IEncodingSupport;
 import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
+
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IGotoMarker;
-import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
-
-import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 import org.eclipse.ui.internal.editors.quickdiff.CompositeRevertAction;
 import org.eclipse.ui.internal.editors.quickdiff.RestoreAction;
 import org.eclipse.ui.internal.editors.quickdiff.RevertBlockAction;
@@ -78,6 +78,7 @@ import org.eclipse.ui.internal.editors.quickdiff.RevertLineAction;
 import org.eclipse.ui.internal.editors.quickdiff.RevertSelectionAction;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.texteditor.TextChangeHover;
+import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
 
 /**
  * An intermediate editor comprising functionality not present in the leaner <code>AbstractTextEditor</code>,
@@ -1143,7 +1144,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			public void run() {
 				String[] preferencePages= collectRulerMenuPreferencePages();
 				if (preferencePages.length > 0)
-					WorkbenchPreferenceDialog.createDialogOn(preferencePages[0], preferencePages).open();
+					PreferencesUtil.createPreferenceDialogOn(preferencePages[0], preferencePages, null).open();
 			}
 
 		};
@@ -1153,7 +1154,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			public void run() {
 				String[] preferencePages= collectContextMenuPreferencePages();
 				if (preferencePages.length > 0)
-					WorkbenchPreferenceDialog.createDialogOn(preferencePages[0], preferencePages).open();
+					PreferencesUtil.createPreferenceDialogOn(preferencePages[0], preferencePages, null).open();
 			}
 		};
 		setAction(ITextEditorActionConstants.CONTEXT_PREFERENCES, action);
