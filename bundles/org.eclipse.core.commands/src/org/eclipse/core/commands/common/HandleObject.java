@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.commands.misc;
+package org.eclipse.core.commands.common;
 
 import org.eclipse.core.internal.commands.util.Util;
 

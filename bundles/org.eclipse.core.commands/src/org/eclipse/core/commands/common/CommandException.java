@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.commands.misc;
+package org.eclipse.core.commands.common;
 
 /**
  * Signals that an exception occured within the command architecture.

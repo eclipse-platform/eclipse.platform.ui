@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.commands.misc.NamedHandleObject;
+import org.eclipse.core.commands.common.NamedHandleObject;
 import org.eclipse.core.internal.commands.util.Util;
 
 /**
