@@ -82,18 +82,4 @@
              eclipseRuntime="false">
       </antProperty>
    </extension>
-
-<!--  EclipseCon demo action set-->
-	<extension 
-       point="org.eclipse.ui.importWizards"> 
-      <wizard 
-         id="org.eclipse.ant.internal.ui.import" 
-         name="Exisiting Ant Buildfile" 
-         class="org.eclipse.ant.internal.ui.demo.AntBuildfileImportWizard" 
-         icon="icons/ant.gif"> 
-         <description> 
-            Creates an Eclipse project from an exisiting Ant buildfile in the filesystem.
-         </description> 
-      </wizard> 
-   </extension>
 </plugin>

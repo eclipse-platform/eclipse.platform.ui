@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ant.internal.ui.demo;
+package org.eclipse.ant.internal.ui.datatransfer;
 
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
@@ -38,7 +38,7 @@ public class AntBuildfileImportWizard extends Wizard implements IImportWizard {
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-		setWindowTitle("Import project from exiting Ant buildfile");
+		setWindowTitle(DataTransferMessages.getString("AntBuildfileImportWizard.0")); //$NON-NLS-1$
 		setDefaultPageImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT));
 		
 	}

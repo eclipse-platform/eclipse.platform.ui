@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ant.internal.ui.demo;
+package org.eclipse.ant.internal.ui.datatransfer;
 
 import java.io.File;
 

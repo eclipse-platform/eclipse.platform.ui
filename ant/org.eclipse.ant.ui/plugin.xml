@@ -471,5 +471,18 @@
   		<super type="org.eclipse.core.resources.problemmarker" /> 
   			<persistent value="true" /> 
 	</extension>
+	
+	<extension 
+       point="org.eclipse.ui.importWizards"> 
+      <wizard 
+         id="org.eclipse.ant.internal.ui.import" 
+         name="%antImportWizard.name" 
+         class="org.eclipse.ant.internal.ui.datatransfer.AntBuildfileImportWizard" 
+         icon="icons/full/obj16/ant.gif"> 
+         <description> 
+            %antImportWizard.description
+         </description> 
+      </wizard> 
+   </extension>
     
 </plugin>

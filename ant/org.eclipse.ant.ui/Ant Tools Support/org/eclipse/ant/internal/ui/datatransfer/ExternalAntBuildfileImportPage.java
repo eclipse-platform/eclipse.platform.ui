@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ant.internal.ui.demo;
+package org.eclipse.ant.internal.ui.datatransfer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -101,8 +101,8 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	public ExternalAntBuildfileImportPage() {
 		super("externalAntBuildfilePage"); //$NON-NLS-1$
 		setPageComplete(false);
-		setTitle("Import a Project from an Ant Buildfile");
-		setDescription("Creates a new project based on the specification in the javac task of the Ant buildfile. This does not copy the source contents to the workspace.");
+		setTitle(DataTransferMessages.getString("ExternalAntBuildfileImportPage.9")); //$NON-NLS-1$
+		setDescription(DataTransferMessages.getString("ExternalAntBuildfileImportPage.10")); //$NON-NLS-1$
 
 	}
 	/* (non-Javadoc)
@@ -146,7 +146,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 
 		// new project label
 		Label projectContentsLabel = new Label(projectGroup, SWT.NONE);
-		projectContentsLabel.setText("&Ant Buildfile:");
+		projectContentsLabel.setText(DataTransferMessages.getString("ExternalAntBuildfileImportPage.11")); //$NON-NLS-1$
 		projectContentsLabel.setFont(parent.getFont());
 
 		createUserSpecifiedProjectLocationGroup(projectGroup);
@@ -170,7 +170,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 
 		// new project label
 		Label projectLabel = new Label(projectGroup, SWT.NONE);
-		projectLabel.setText("&Project Name:");
+		projectLabel.setText(DataTransferMessages.getString("ExternalAntBuildfileImportPage.12")); //$NON-NLS-1$
 		projectLabel.setFont(dialogFont);
 
 		// new project name entry field
@@ -201,7 +201,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 
 		// browse button
 		this.browseButton = new Button(projectGroup, SWT.PUSH);
-		this.browseButton.setText("B&rowse...");
+		this.browseButton.setText(DataTransferMessages.getString("ExternalAntBuildfileImportPage.13")); //$NON-NLS-1$
 		this.browseButton.setFont(dialogFont);
 		setButtonLayoutData(this.browseButton);
 		
@@ -228,7 +228,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		}
 		String projectName= projectNode.getLabel();
 		if (projectName == null) {
-			projectName= "Ant Project";
+			projectName= DataTransferMessages.getString("ExternalAntBuildfileImportPage.14"); //$NON-NLS-1$
 		}
 		return projectName;
 	}
@@ -294,28 +294,28 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 
 		if (locationFieldContents.equals("")) { //$NON-NLS-1$
 			setErrorMessage(null);
-			setMessage("No buildfile selected");
+			setMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.15")); //$NON-NLS-1$
 			return false;
 		}
 
 		IPath path = new Path(""); //$NON-NLS-1$
 		if (!path.isValidPath(locationFieldContents)) {
-			setErrorMessage("Location error");
+			setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.16")); //$NON-NLS-1$
 			return false;
 		}
 
 		if (fAntModel == null) {
-			setErrorMessage("Specified buildfile could not be parsed successfully");
+			setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.17")); //$NON-NLS-1$
 			return false;
 		}
 		
 		if (getProjectNameFieldValue().length() == 0) {
-			setErrorMessage("Project name must be specified");
+			setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.18")); //$NON-NLS-1$
 			return false;
 		} else {
 			IProject existingProject= ResourcesPlugin.getWorkspace().getRoot().getProject(getProjectNameFieldValue());
 			if (existingProject.exists()) {
-				setErrorMessage("A project with the specified name already exists");
+				setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.19")); //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -371,7 +371,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		final String projectName= getProjectNameFieldValue();
 		final File buildFile= getBuildFile(getProjectLocationFieldValue());
 		if (javacNodes.size() > 1) {
-			setErrorMessage("Currently only supports creating a project from a single javac declaration");
+			setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.20")); //$NON-NLS-1$
 			return null;
 		}
 		
@@ -399,7 +399,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 			// ie.- one of the steps resulted in a core exception	
 			Throwable t = e.getTargetException();
 			if (t instanceof CoreException) {	
-				ErrorDialog.openError(getShell(), "Error occurred creating project",
+				ErrorDialog.openError(getShell(), DataTransferMessages.getString("ExternalAntBuildfileImportPage.21"), //$NON-NLS-1$
 				null, ((CoreException) t).getStatus());
 			}
 		}
@@ -422,7 +422,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		} catch (InvocationTargetException e) {
 			Throwable t = e.getTargetException();
 			if (t instanceof CoreException) {	
-				ErrorDialog.openError(getShell(), "Error occurred importing buildfile",
+				ErrorDialog.openError(getShell(), DataTransferMessages.getString("ExternalAntBuildfileImportPage.22"), //$NON-NLS-1$
 				null, ((CoreException) t).getStatus());
 			}
 		}
