@@ -139,7 +139,7 @@ public class ViewerState {
 		IVariable variable = (IVariable)item.getData();
 		IPath path = new Path(variable.getName());
 		TreeItem parent = item.getParentItem();
-		while (parent instanceof TreeItem) {
+		while (parent != null) {
 			variable = (IVariable)parent.getData();
 			path = new Path(variable.getName()).append(path);
 			parent = parent.getParentItem();
