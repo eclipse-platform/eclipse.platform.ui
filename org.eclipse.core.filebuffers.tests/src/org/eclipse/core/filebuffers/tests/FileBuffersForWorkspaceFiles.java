@@ -103,6 +103,7 @@ public class FileBuffersForWorkspaceFiles extends FileBufferFunctions {
 	protected boolean modifyUnderlyingFile() throws Exception {
 		File file= FileBuffers.getSystemFileAtLocation(getPath());
 		FileTool.write(file.getAbsolutePath(), new StringBuffer("Changed content of workspace file"));
+		file.setLastModified(1000);
 		IFile iFile= FileBuffers.getWorkspaceFileAtLocation(getPath());
 		
 		ResourceListener listener= new ResourceListener(iFile.getFullPath());
