@@ -55,13 +55,23 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 					}
 					break;
 				case DebugEvent.RESUME:
-					if (!event.isStepStart() && !event.isEvaluation()) {
-						// Clear existing variables from the view
-						getViewer().setInput(null);
-					}
+					doHandleResumeEvent(event);
 			}
 		}
 	}
+
+	/**
+	 * Clear the variables immediately upon resume.
+	 */
+	protected void doHandleResumeEvent(DebugEvent event) {
+		if (!event.isStepStart() && !event.isEvaluation()) {
+			// Clear existing variables from the view
+			getViewer().setInput(null);
+		}
+	}
+
+
+
 
 	protected VariablesView getVariablesView() {
 		return (VariablesView)getView();

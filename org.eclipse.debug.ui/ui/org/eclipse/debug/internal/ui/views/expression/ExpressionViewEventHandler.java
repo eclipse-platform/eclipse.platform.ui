@@ -7,6 +7,7 @@ package org.eclipse.debug.internal.ui.views.expression;
 
 import java.util.List;
 
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionListener;
 import org.eclipse.debug.core.model.IExpression;
@@ -93,5 +94,11 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 			}
 		};
 		getView().asyncExec(r);			
+	}
+	
+	/**
+	 * Override the superclass method. Do nothing.
+	 */
+	protected void doHandleResumeEvent(DebugEvent event) {
 	}
 }
