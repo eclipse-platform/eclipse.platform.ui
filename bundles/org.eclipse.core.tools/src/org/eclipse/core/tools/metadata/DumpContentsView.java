@@ -105,8 +105,9 @@ public class DumpContentsView extends SpyView {
 		// dumps file        
 		IDump dump = dumper.dump(file);
 		if (dump.isFailed()) {
+			CoreToolsPlugin.getDefault().log("Error during file dump", dump.getFailureReason()); //$NON-NLS-1$
 			String message = "File dumping did not complete successfully. Reason: " + dump.getFailureReason(); //$NON-NLS-1$
-			ErrorUtil.showErrorMessage(message, "Error during file dump"); //$NON-NLS-1$
+			ErrorUtil.showErrorMessage(message, "Error during file dump"); //$NON-NLS-1$		
 		}
 
 		// loads the new dump object

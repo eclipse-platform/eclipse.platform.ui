@@ -11,6 +11,8 @@
 package org.eclipse.core.tools;
 
 import java.net.URL;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.tools.runtime.VMClassInfo;
 import org.eclipse.core.tools.runtime.VMClassloaderInfo;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -69,5 +71,9 @@ public class CoreToolsPlugin extends AbstractUIPlugin {
 
 	public BundleContext getContext() {
 		return context;
+	}
+	
+	public void log(String message, Throwable exception) {
+		getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, 0, message, exception));
 	}
 }
