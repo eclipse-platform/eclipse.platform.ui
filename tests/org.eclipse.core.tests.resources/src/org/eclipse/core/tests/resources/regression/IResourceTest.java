@@ -162,9 +162,11 @@ public class IResourceTest extends ResourceTest {
 		final boolean[] phantomSeen = new boolean[] {false};
 		class DeltaVisitor implements IResourceDeltaVisitor {
 			private boolean[] mySeen;
+
 			DeltaVisitor(boolean[] mySeen) {
 				this.mySeen = mySeen;
 			}
+
 			public boolean visit(IResourceDelta aDelta) {
 				if (aDelta.getResource().equals(file))
 					mySeen[0] = true;
@@ -186,7 +188,7 @@ public class IResourceTest extends ResourceTest {
 		};
 		try {
 			getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
-			
+
 			try {
 				//removing and adding sync info causes phantom to be deleted and recreated
 				getWorkspace().run(new IWorkspaceRunnable() {
@@ -206,6 +208,25 @@ public class IResourceTest extends ResourceTest {
 			getWorkspace().removeResourceChangeListener(listener);
 		}
 
+	}
+
+	/**
+	 * Calling isSynchronized on a non-local resource caused an internal error.
+	 */
+	public void testBug83777() {
+		IProject project = getWorkspace().getRoot().getProject("testBug83777");
+		IFolder folder = project.getFolder("f");
+		ensureExistsInWorkspace(project, true);
+		ensureExistsInWorkspace(folder, true);
+		try {
+			folder.setLocal(false, IResource.DEPTH_ZERO, getMonitor());
+			//non-local resource is never synchronized because it doesn't exist on disk
+			assertTrue("1.0", !project.isSynchronized(IResource.DEPTH_INFINITE));
+		} catch (RuntimeException e) {
+			fail("1.99", e);
+		} catch (CoreException e) {
+			fail("2.99", e);
+		}
 	}
 
 	/**

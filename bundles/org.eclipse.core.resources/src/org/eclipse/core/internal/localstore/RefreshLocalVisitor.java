@@ -24,10 +24,11 @@ import org.eclipse.core.runtime.*;
  * resource existence, gender, and timestamp.
  */
 public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreConstants {
-	protected IProgressMonitor monitor;
-	protected Workspace workspace;
-	protected boolean resourceChanged;
-	protected MultiStatus errors;
+	/** control constants */
+	protected static final int RL_UNKNOWN = 0;
+	protected static final int RL_IN_SYNC = 1;
+	protected static final int RL_NOT_IN_SYNC = 2;
+
 
 	/*
 	 * Fields for progress monitoring algorithm.
@@ -38,15 +39,16 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 	 * number of resources).
 	 */
 	public static final int TOTAL_WORK = 250;
-	private int halfWay = TOTAL_WORK / 2;
 	private int currentIncrement = 4;
+	private int halfWay = TOTAL_WORK / 2;
 	private int nextProgress = currentIncrement;
 	private int worked = 0;
 
-	/** control constants */
-	protected static final int RL_UNKNOWN = 0;
-	protected static final int RL_IN_SYNC = 1;
-	protected static final int RL_NOT_IN_SYNC = 2;
+
+	protected MultiStatus errors;
+	protected IProgressMonitor monitor;
+	protected boolean resourceChanged;
+	protected Workspace workspace;
 
 	public RefreshLocalVisitor(IProgressMonitor monitor) {
 		this.monitor = monitor;
@@ -141,6 +143,12 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 	 */
 	public IStatus getErrorStatus() {
 		return errors;
+	}
+
+	protected void makeLocal(UnifiedTreeNode node, Resource target) {
+		ResourceInfo info = target.getResourceInfo(false, true);
+		if (info != null)
+			target.getLocalManager().updateLocalSync(info, node.getLastModified());
 	}
 
 	/**
@@ -264,12 +272,8 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 				/* for folders we only care about updating local status */
 				if (targetType == IResource.FOLDER && node.isFolder()) {
 					// if not local, mark as local
-					if (!target.isLocal(IResource.DEPTH_ZERO)) {
-						ResourceInfo info = target.getResourceInfo(false, true);
-						if (info == null)
-							return true;
-						target.getLocalManager().updateLocalSync(info, node.getLastModified());
-					}
+					if (!target.isLocal(IResource.DEPTH_ZERO))
+						makeLocal(node, target);
 					return true;
 				}
 				/* compare file last modified */

@@ -26,8 +26,8 @@ import org.eclipse.core.runtime.*;
  * the two will be recorded in the returned status.
  */
 public class CollectSyncStatusVisitor extends RefreshLocalVisitor {
-	protected MultiStatus status;
 	protected List affectedResources;
+	protected MultiStatus status;
 
 	/**
 	 * Creates a new visitor, whose sync status will have the given title.
@@ -45,6 +45,22 @@ public class CollectSyncStatusVisitor extends RefreshLocalVisitor {
 		resourceChanged = true;
 	}
 
+	protected void createResource(UnifiedTreeNode node, Resource target) {
+		changed(target);
+	}
+
+	protected void deleteResource(UnifiedTreeNode node, Resource target) {
+		changed(target);
+	}
+
+	protected void fileToFolder(UnifiedTreeNode node, Resource target) {
+		changed(target);
+	}
+
+	protected void folderToFile(UnifiedTreeNode node, Resource target) {
+		changed(target);
+	}
+
 	/**
 	 * Returns the list of resources that were not synchronized with
 	 * the local filesystem.
@@ -60,24 +76,12 @@ public class CollectSyncStatusVisitor extends RefreshLocalVisitor {
 		return status;
 	}
 
+	protected void makeLocal(UnifiedTreeNode node, Resource target) {
+		changed(target);
+	}
+
 	protected void refresh(Container parent) {
 		changed(parent);
-	}
-
-	protected void createResource(UnifiedTreeNode node, Resource target) {
-		changed(target);
-	}
-
-	protected void deleteResource(UnifiedTreeNode node, Resource target) {
-		changed(target);
-	}
-
-	protected void fileToFolder(UnifiedTreeNode node, Resource target) {
-		changed(target);
-	}
-
-	protected void folderToFile(UnifiedTreeNode node, Resource target) {
-		changed(target);
 	}
 
 	protected void resourceChanged(UnifiedTreeNode node, Resource target) {
