@@ -292,6 +292,7 @@ public class OperationValidator implements IOperationValidator {
 		IFeature feature,
 		ArrayList status) {
 		try {
+			checkSiteReadOnly(feature,status);
 			if (validateUnconfigurePatch(feature, status))
 				return;
 			ArrayList features = computeFeatures();
@@ -328,6 +329,7 @@ public class OperationValidator implements IOperationValidator {
 	 */
 	private static void validateConfigure(IFeature feature, ArrayList status) {
 		try {
+			checkSiteReadOnly(feature,status);
 			ArrayList features = computeFeatures();
 			checkOptionalChildConfiguring(feature, status);
 			checkForCycles(feature, null, features);
@@ -347,6 +349,7 @@ public class OperationValidator implements IOperationValidator {
 		IFeature anotherFeature,
 		ArrayList status) {
 		try {
+			checkSiteReadOnly(feature,status);
 			ArrayList features = computeFeatures();
 			checkForCycles(feature, null, features);
 			features =
@@ -368,6 +371,7 @@ public class OperationValidator implements IOperationValidator {
 		IFeature newFeature,
 		ArrayList status) {
 		try {
+			checkSiteReadOnly(oldFeature,status);
 			ArrayList features = computeFeatures();
 			if (oldFeature == null && isPatch(newFeature))
 				checkUnique(newFeature, features, status);
@@ -485,6 +489,14 @@ public class OperationValidator implements IOperationValidator {
 		} catch (CoreException e) {
 			status.add(e.getStatus());
 		}
+	}
+	
+	private static void checkSiteReadOnly(IFeature feature, ArrayList status) {
+		IConfiguredSite csite = feature.getSite().getCurrentConfiguredSite();
+		if (csite != null && !csite.isUpdatable())
+			status.add(createStatus(feature, UpdateUtils
+					.getFormattedMessage("ActivityConstraints.readOnly",
+							csite.getSite().getURL().toExternalForm())));
 	}
 
 	/*

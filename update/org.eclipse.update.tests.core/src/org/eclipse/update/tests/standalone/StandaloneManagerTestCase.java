@@ -297,7 +297,7 @@ public class StandaloneManagerTestCase extends UpdateManagerTestCase {
 				int latest = 0; 
 				for (int i = parList.length-1; i>=0; i--){
 					System.out.println("parList[" + i + "]: " + parList[i]);
-					if (parList[i].startsWith(SiteLocalModel.DEFAULT_CONFIG_PREFIX)){
+					if (parList[i].startsWith("platform")){
 						latest = i;
 						break;
 					}
@@ -305,22 +305,6 @@ public class StandaloneManagerTestCase extends UpdateManagerTestCase {
 				File configFile = new File(parent.getAbsolutePath() + File.separator + parList[latest]);
 				return configFile;
 				// end of config file read
-				
-				// attempt to get parent file info
-//				File grandparent =new File(parent.getParent());
-//				System.out.println("grandparent: " + grandparent.getCanonicalPath());
-//				parList = grandparent.list();
-//				for (int i = 0; i<parList.length; i++){
-//					System.out.println("parList[" + i + "]: " + parList[i]);
-//				}
-//				configFile = new File(grandparent.getAbsolutePath() + File.separator + parList[0]);
-//				freader = new FileReader(configFile);
-//				breader = new BufferedReader(freader);
-//					
-//				while (breader.ready()) {
-//					line = breader.readLine();
-//					System.out.println(line);
-//				}
 		} catch (Exception e) {
 			System.err.println(e);
 			e.printStackTrace();

@@ -16,10 +16,8 @@ import java.net.URL;
 import java.util.Date;
 
 import junit.framework.Assert;
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.core.boot.IPlatformConfiguration.ISiteEntry;
-import org.eclipse.core.boot.IPlatformConfiguration.ISitePolicy;
+import org.eclipse.update.configurator.*;
+import org.eclipse.update.configurator.IPlatformConfiguration.*;
 
 public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 			
@@ -32,7 +30,7 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		// get new config object
 		IPlatformConfiguration cfig = null;
 		try {
-			cfig = BootLoader.getPlatformConfiguration(null);
+			cfig = ConfiguratorUtils.getPlatformConfiguration(null);
 		} catch (IOException e) {
 			Assert.fail("0.0.0 "+e.toString());
 		}
@@ -109,7 +107,7 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		// get new config object
 		IPlatformConfiguration cfig = null;
 		try {
-			cfig = BootLoader.getPlatformConfiguration(null);
+			cfig = ConfiguratorUtils.getPlatformConfiguration(null);
 		} catch (IOException e) {
 			Assert.fail("0.0.0 "+e.toString());
 		}
@@ -159,7 +157,7 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		
 		URL cfigURL = null;
 		try {
-			cfigURL = new URL("file:"+tempDir+(new Date()).getTime()+"_platform.cfg");
+			cfigURL = new URL("file:"+tempDir+ "platform.xml");
 		} catch(MalformedURLException e) {
 			Assert.fail("2.1 unable to create URL "+e);
 		}
@@ -172,7 +170,7 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		
 		// reload configuration	
 		try {
-			BootLoader.getPlatformConfiguration(cfigURL);
+			ConfiguratorUtils.getPlatformConfiguration(cfigURL);
 		} catch (IOException e) {
 			Assert.fail("2.3 "+e.toString());
 		}
@@ -204,7 +202,7 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		
 		// get new config object
 		IPlatformConfiguration cfig = null;
-		cfig = BootLoader.getCurrentPlatformConfiguration();
+		cfig = ConfiguratorUtils.getCurrentPlatformConfiguration();
 		cfig.getPluginPath();
 		cfig.save();
 	}

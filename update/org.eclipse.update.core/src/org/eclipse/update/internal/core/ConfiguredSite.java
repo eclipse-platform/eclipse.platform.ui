@@ -26,7 +26,7 @@ import org.eclipse.update.configurator.*;
 /**
  * A Configured site manages the Configured and unconfigured features of a Site
  */
-public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSite, IWritable {
+public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSite {
 
 	private static final String PRODUCT_SITE_MARKER = ".eclipseproduct";
 	private static final String EXTENSION_SITE_MARKER = ".eclipseextension";
@@ -79,76 +79,76 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		}
 	}
 
-	/*
-	 * @see IWritable#write(int, PrintWriter)
-	 */
-	public void write(int indent, PrintWriter w) {
-		String gap = ""; //$NON-NLS-1$
-		for (int i = 0; i < indent; i++)
-			gap += " "; //$NON-NLS-1$
-		String increment = ""; //$NON-NLS-1$
-		for (int i = 0; i < IWritable.INDENT; i++)
-			increment += " "; //$NON-NLS-1$
-
-		// CONFIGURATION SITE	
-		w.print(gap + "<" + InstallConfigurationParser.CONFIGURATION_SITE + " ");
-		//$NON-NLS-1$ //$NON-NLS-2$
-		w.println("url=\"" + getSite().getURL().toExternalForm() + "\"");
-		//$NON-NLS-1$ //$NON-NLS-2$
-		w.println(gap + increment + "platformURL=\"" + getPlatformURLString() + "\"");
-		//$NON-NLS-1$ //$NON-NLS-2$
-		w.println(gap + increment + "enable=\"" + (isEnabled() ? "true" : "false") + "\"");
-		//$NON-NLS-1$ //$NON-NLS-2$
-		w.println(gap + increment + "policy=\"" + getConfigurationPolicy().getPolicy() + "\" >");
-		//$NON-NLS-1$ //$NON-NLS-2$
-
-		// configured features ref
-		IFeatureReference[] featuresReferences = getRawConfiguredFeatures();
-		if (featuresReferences != null) {
-			for (int index = 0; index < featuresReferences.length; index++) {
-				IFeatureReference element = featuresReferences[index];
-				w.print(gap + increment + "<" + InstallConfigurationParser.FEATURE + " ");
-				//$NON-NLS-1$ //$NON-NLS-2$
-				// configured = true
-				w.print("configured = \"true\" "); //$NON-NLS-1$
-				// feature URL
-				String URLInfoString = null;
-				if (element.getURL() != null) {
-					ISite featureSite = element.getSite();
-					URLInfoString = UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
-					w.print("url=\"" + UpdateManagerUtils.Writer.xmlSafe(URLInfoString) + "\" ");
-					//$NON-NLS-1$ //$NON-NLS-2$
-				}
-				w.println("/>"); //$NON-NLS-1$
-			}
-		}
-
-		// unconfigured features ref
-		featuresReferences = getConfigurationPolicy().getUnconfiguredFeatures();
-		if (featuresReferences != null) {
-			for (int index = 0; index < featuresReferences.length; index++) {
-				IFeatureReference element = featuresReferences[index];
-				w.print(gap + increment + "<" + InstallConfigurationParser.FEATURE + " ");
-				//$NON-NLS-1$ //$NON-NLS-2$
-				// configured = true
-				w.print("configured = \"false\" "); //$NON-NLS-1$
-				// feature URL
-				String URLInfoString = null;
-				if (element.getURL() != null) {
-					ISite featureSite = element.getSite();
-					URLInfoString = UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
-					w.print("url=\"" + UpdateManagerUtils.Writer.xmlSafe(URLInfoString) + "\" ");
-					//$NON-NLS-1$ //$NON-NLS-2$
-				}
-				w.println("/>"); //$NON-NLS-1$
-			}
-		}
-
-		// end
-		w.println(gap + "</" + InstallConfigurationParser.CONFIGURATION_SITE + ">");
-		//$NON-NLS-1$ //$NON-NLS-2$
-		w.println(""); //$NON-NLS-1$		
-	}
+//	/*
+//	 * @see IWritable#write(int, PrintWriter)
+//	 */
+//	public void write(int indent, PrintWriter w) {
+//		String gap = ""; //$NON-NLS-1$
+//		for (int i = 0; i < indent; i++)
+//			gap += " "; //$NON-NLS-1$
+//		String increment = ""; //$NON-NLS-1$
+//		for (int i = 0; i < IWritable.INDENT; i++)
+//			increment += " "; //$NON-NLS-1$
+//
+//		// CONFIGURATION SITE	
+//		w.print(gap + "<" + InstallConfigurationParser.CONFIGURATION_SITE + " ");
+//		//$NON-NLS-1$ //$NON-NLS-2$
+//		w.println("url=\"" + getSite().getURL().toExternalForm() + "\"");
+//		//$NON-NLS-1$ //$NON-NLS-2$
+//		w.println(gap + increment + "platformURL=\"" + getPlatformURLString() + "\"");
+//		//$NON-NLS-1$ //$NON-NLS-2$
+//		w.println(gap + increment + "enable=\"" + (isEnabled() ? "true" : "false") + "\"");
+//		//$NON-NLS-1$ //$NON-NLS-2$
+//		w.println(gap + increment + "policy=\"" + getConfigurationPolicy().getPolicy() + "\" >");
+//		//$NON-NLS-1$ //$NON-NLS-2$
+//
+//		// configured features ref
+//		IFeatureReference[] featuresReferences = getRawConfiguredFeatures();
+//		if (featuresReferences != null) {
+//			for (int index = 0; index < featuresReferences.length; index++) {
+//				IFeatureReference element = featuresReferences[index];
+//				w.print(gap + increment + "<" + InstallConfigurationParser.FEATURE + " ");
+//				//$NON-NLS-1$ //$NON-NLS-2$
+//				// configured = true
+//				w.print("configured = \"true\" "); //$NON-NLS-1$
+//				// feature URL
+//				String URLInfoString = null;
+//				if (element.getURL() != null) {
+//					ISite featureSite = element.getSite();
+//					URLInfoString = UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
+//					w.print("url=\"" + UpdateManagerUtils.Writer.xmlSafe(URLInfoString) + "\" ");
+//					//$NON-NLS-1$ //$NON-NLS-2$
+//				}
+//				w.println("/>"); //$NON-NLS-1$
+//			}
+//		}
+//
+//		// unconfigured features ref
+//		featuresReferences = getConfigurationPolicy().getUnconfiguredFeatures();
+//		if (featuresReferences != null) {
+//			for (int index = 0; index < featuresReferences.length; index++) {
+//				IFeatureReference element = featuresReferences[index];
+//				w.print(gap + increment + "<" + InstallConfigurationParser.FEATURE + " ");
+//				//$NON-NLS-1$ //$NON-NLS-2$
+//				// configured = true
+//				w.print("configured = \"false\" "); //$NON-NLS-1$
+//				// feature URL
+//				String URLInfoString = null;
+//				if (element.getURL() != null) {
+//					ISite featureSite = element.getSite();
+//					URLInfoString = UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
+//					w.print("url=\"" + UpdateManagerUtils.Writer.xmlSafe(URLInfoString) + "\" ");
+//					//$NON-NLS-1$ //$NON-NLS-2$
+//				}
+//				w.println("/>"); //$NON-NLS-1$
+//			}
+//		}
+//
+//		// end
+//		w.println(gap + "</" + InstallConfigurationParser.CONFIGURATION_SITE + ">");
+//		//$NON-NLS-1$ //$NON-NLS-2$
+//		w.println(""); //$NON-NLS-1$		
+//	}
 
 	/*
 	 * @see IConfiguredSite#install(IFeature,IVerificationListener, IProgressMonitor)

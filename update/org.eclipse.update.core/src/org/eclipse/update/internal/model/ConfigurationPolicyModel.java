@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.operations.UpdateUtils;
 
 /**
  * 
@@ -41,7 +42,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 		super();
 		enable = true;
 		configuredFeatureReferences = new HashMap();
-		unconfiguredFeatureReferences = new HashMap();		
+//		unconfiguredFeatureReferences = new HashMap();		
 	}
 
 	/**
@@ -73,9 +74,33 @@ public class ConfigurationPolicyModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public FeatureReferenceModel[] getUnconfiguredFeaturesModel() {
-	if (unconfiguredFeatureReferences==null || unconfiguredFeatureReferences.isEmpty())
-			return new FeatureReferenceModel[0];			
-		return (FeatureReferenceModel[]) unconfiguredFeatureReferences.keySet().toArray(arrayTypeFor(unconfiguredFeatureReferences.keySet()));		
+		// obtain unconfigured features by comparing configured ones with those installed
+		if (unconfiguredFeatureReferences == null
+				&& configuredSiteModel != null
+				&& configuredSiteModel.getSiteModel() != null) {
+			ISite site = (ISite) configuredSiteModel.getSiteModel();
+			ISiteFeatureReference[] siteFeatures = site.getFeatureReferences();
+			if (siteFeatures.length > getConfiguredFeaturesModel().length) {
+				for (int i=0; i<siteFeatures.length; i++) {
+					if (!(siteFeatures[i] instanceof SiteFeatureReference))
+						continue;
+					Iterator iterator = configuredFeatureReferences.keySet().iterator();
+					boolean found = false;
+					while(!found && iterator.hasNext()) {
+						FeatureReferenceModel f = (FeatureReferenceModel)iterator.next();
+						if (UpdateManagerUtils.sameURL(f.getURL(), siteFeatures[i].getURL()))
+							found = true;
+					}
+					if (!found)
+						addUnconfiguredFeatureReference((SiteFeatureReference)siteFeatures[i]);
+				}
+			}
+		}
+		if (unconfiguredFeatureReferences == null
+				|| unconfiguredFeatureReferences.isEmpty())
+			return new FeatureReferenceModel[0];
+		return (FeatureReferenceModel[]) unconfiguredFeatureReferences.keySet()
+				.toArray(arrayTypeFor(unconfiguredFeatureReferences.keySet()));
 	}
 
 	/**

@@ -80,7 +80,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		
 		// check
 		String time = ""+site.getCurrentConfiguration().getCreationDate().getTime();
-		File file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),SiteLocal.DEFAULT_CONFIG_PREFIX+time+".xml").getFile());
+		File file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),"platform.xml").getFile());
 		assertTrue("new configuration does not exist", file.exists());
 		
 		

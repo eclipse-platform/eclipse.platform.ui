@@ -182,7 +182,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		SiteLocal siteLocal = ((SiteLocal) SiteManager.getLocalSite());
 		File localFile = new File(siteLocal.getLocationURL().getFile());
 		//if (!localFile.exists()) fail("LocalSite file doesn't exist ->"+localFile.getAbsolutePath()+"<-");
-		UpdateManagerUtils.removeFromFileSystem(localFile.getParentFile());		
+		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		/*
 		localFile = new File(localFile,SiteLocal.SITE_LOCAL_FILE);
 		if (!localFile.exists()) fail("LocalSite.xml doesn't exist:"+localFile);

@@ -18,15 +18,17 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.configurator.*;
 import org.eclipse.update.internal.model.*;
 import org.eclipse.update.internal.operations.*;
+import org.eclipse.update.core.VersionedIdentifier;
 
 /**
  * Manages ConfiguredSites
  *
  */
 
-public class InstallConfiguration extends InstallConfigurationModel implements IInstallConfiguration, IWritable {
+public class InstallConfiguration extends InstallConfigurationModel implements IInstallConfiguration {
 
 	private ListenersList listeners = new ListenersList();
 
@@ -270,21 +272,21 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		}
 	}
 
-	/*
-	 * write the Configuration.xml file
-	 */
-	private void export(File exportFile) throws CoreException {
-		try {
-			UpdateManagerUtils.Writer writer = UpdateManagerUtils.getWriter(exportFile, "UTF-8"); //$NON-NLS-1$
-			writer.write(this);
-		} catch (FileNotFoundException e) {
-			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToSaveConfiguration", exportFile.getAbsolutePath()), e);
-			//$NON-NLS-1$
-		} catch (UnsupportedEncodingException e) {
-			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToEncodeConfiguration", exportFile.getAbsolutePath()), e);
-			//$NON-NLS-1$
-		}
-	}
+//	/*
+//	 * write the Configuration.xml file
+//	 */
+//	private void export(File exportFile) throws CoreException {
+//		try {
+//			UpdateManagerUtils.Writer writer = UpdateManagerUtils.getWriter(exportFile, "UTF-8"); //$NON-NLS-1$
+//			writer.write(this);
+//		} catch (FileNotFoundException e) {
+//			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToSaveConfiguration", exportFile.getAbsolutePath()), e);
+//			//$NON-NLS-1$
+//		} catch (UnsupportedEncodingException e) {
+//			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToEncodeConfiguration", exportFile.getAbsolutePath()), e);
+//			//$NON-NLS-1$
+//		}
+//	}
 
 	/*
 	 * Deletes the configuration from its URL/location
@@ -305,9 +307,6 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 * (cannot recreate these because must preserve other runtime state) [18520]
 	 */
 	public void save(boolean isTransient) throws CoreException {
-
-		// save the configuration.xml file
-		saveConfigurationFile(isTransient);
 
 		// Write info  into platform for the next runtime
 		IPlatformConfiguration runtimeConfiguration = ConfiguratorUtils.getCurrentPlatformConfiguration();
@@ -367,6 +366,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			}
 		}
 
+// TODO unconfigure disabled sites
 		try {
 			runtimeConfiguration.save();
 		} catch (IOException e) {
@@ -458,13 +458,19 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			// save information in runtime platform state
 			String version = feature.getVersionedIdentifier().getVersion().toString();
 			String application = feature.getApplication();
-			IPlatformConfiguration.IFeatureEntry featureEntry = runtimeConfiguration.createFeatureEntry(id, version, pluginIdentifier, pluginVersion, true, application, roots);
+			FeatureEntry featureEntry = (FeatureEntry)runtimeConfiguration.createFeatureEntry(id, version, pluginIdentifier, pluginVersion, true, application, roots);
+			featureEntry.setURL(getFeatureRelativeURL(feature));
+			SiteEntry siteEntry = (SiteEntry)runtimeConfiguration.findConfiguredSite(cSite.getSite().getURL());
+			siteEntry.addFeatureEntry(featureEntry);
 			runtimeConfiguration.configureFeatureEntry(featureEntry);
 		} else {
 			// write non-primary feature entries
 			String version = feature.getVersionedIdentifier().getVersion().toString();
 			String pluginIdentifier = feature.getPrimaryPluginID();
-			IPlatformConfiguration.IFeatureEntry featureEntry = runtimeConfiguration.createFeatureEntry(id, version, pluginIdentifier, pluginVersion, false, null, null);
+			FeatureEntry featureEntry = (FeatureEntry)runtimeConfiguration.createFeatureEntry(id, version, pluginIdentifier, pluginVersion, false, null, null);
+			featureEntry.setURL(getFeatureRelativeURL(feature));
+			SiteEntry siteEntry = (SiteEntry)runtimeConfiguration.findConfiguredSite(cSite.getSite().getURL());
+			siteEntry.addFeatureEntry(featureEntry);
 			runtimeConfiguration.configureFeatureEntry(featureEntry);
 		}
 
@@ -514,61 +520,20 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 *
 	 */
 	public void saveConfigurationFile(boolean isTransient) throws CoreException {
-		// save the configuration
-		if ("file".equalsIgnoreCase(getURL().getProtocol())) { //$NON-NLS-1$
-			// the location points to a file
-			File file = new File(getURL().getFile());
-			if (!file.exists()) {
-				//log + 24642 [works for all activities]
-				UpdateCore.log(this);
-			}
-			if (isTransient)
-				file.deleteOnExit();
-			export(file);
-		}
-	}
-
-	/*
-	 * @see IWritable#write(int, PrintWriter)
-	 */
-	public void write(int indent, PrintWriter w) {
-		String gap = ""; //$NON-NLS-1$
-		for (int i = 0; i < indent; i++)
-			gap += " "; //$NON-NLS-1$
-		String increment = ""; //$NON-NLS-1$
-		for (int i = 0; i < IWritable.INDENT; i++)
-			increment += " "; //$NON-NLS-1$
-
-		//CONFIGURATION
-		w.print(gap + "<" + InstallConfigurationParser.CONFIGURATION + " ");
-		//$NON-NLS-1$ //$NON-NLS-2$
-		long time = (getCreationDate() != null) ? getCreationDate().getTime() : 0L;
-		w.print("date=\"" + time + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		w.print("timeline=\"" + getTimeline() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		w.println(">"); //$NON-NLS-1$
-
-		// site configurations
-		if (getConfigurationSitesModel() != null) {
-			ConfiguredSiteModel[] sites = getConfigurationSitesModel();
-			for (int i = 0; i < sites.length; i++) {
-				ConfiguredSite element = (ConfiguredSite) sites[i];
-				((IWritable) element).write(indent + IWritable.INDENT, w);
-			}
-		}
-
-		// activities
-		if (getActivityModel() != null) {
-			ConfigurationActivityModel[] activities = getActivityModel();
-			for (int i = 0; i < activities.length; i++) {
-				ConfigurationActivity element = (ConfigurationActivity) activities[i];
-				((IWritable) element).write(indent + IWritable.INDENT, w);
-			}
-		}
-
-		// end
-		w.println(gap + "</" + InstallConfigurationParser.CONFIGURATION + ">");
-		//$NON-NLS-1$ //$NON-NLS-2$
-		w.println(""); //$NON-NLS-1$
+//		// save the configuration
+//		if ("file".equalsIgnoreCase(getURL().getProtocol())) { //$NON-NLS-1$
+//			// the location points to a file
+//			File file = new File(getURL().getFile());
+//			if (!file.exists()) {
+//				//log + 24642 [works for all activities]
+//				UpdateCore.log(this);
+//			}
+//			if (isTransient)
+//				file.deleteOnExit();
+//			//export(file);
+//			// make a backup copy of the current platform.xml
+//			// TODO copy to history
+//		}
 	}
 
 	/*
@@ -816,5 +781,22 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				return true;
 		}
 		return false;
+	}
+	
+	/*
+	 * Returns the feature url relative to the site.
+	 */
+	private String getFeatureRelativeURL(IFeature feature) {
+		String url = feature.getURL().toExternalForm();
+		String siteURL = feature.getSite().getURL().toExternalForm();
+		// TODO fix this. toURL() returns file:/d:/eclipse/etc... wheareas the 
+		// platform.asLocalURL() returns file:d:/eclipse/etc... (no leading / )
+		if (url.startsWith("file:/") && Platform.getOS().equals("win32"))
+			url = "file:" + url.substring(6);
+		
+		if (url.startsWith(siteURL))
+			return url.substring(siteURL.length());
+		else
+			return url;
 	}
 }

@@ -14,6 +14,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
@@ -55,7 +56,8 @@ public class InstallConfigurationModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public ConfiguredSiteModel[] getConfigurationSitesModel() {
-		if (!initialized) initialize();
+		if (!initialized) 
+			initialize();
 		if (configurationSites == null)
 			return new ConfiguredSiteModel[0];
 	
@@ -238,14 +240,16 @@ public class InstallConfigurationModel extends ModelObject {
 		
 		try {
 			try {
-				URL resolvedURL = URLEncoder.encode(getURL());
-				InputStream in = UpdateCore.getPlugin().get(resolvedURL).getInputStream();
-				new InstallConfigurationParser(in, this);
+				IPlatformConfiguration platformConfig;
+				if (UpdateManagerUtils.sameURL(getURL(), ConfiguratorUtils.getCurrentPlatformConfiguration().getConfigurationLocation()))
+					platformConfig = ConfiguratorUtils.getCurrentPlatformConfiguration();
+				else 
+					platformConfig = ConfiguratorUtils.getPlatformConfiguration(getURL());
+				
+				new InstallConfigurationParser(platformConfig, this);
 			} catch (FileNotFoundException exception) {
 				UpdateCore.warn(locationURLString + " does not exist, The local site is not in synch with the file system and is pointing to a file that doesn't exist.", exception); //$NON-NLS-1$
 				throw Utilities.newCoreException(Policy.bind("InstallConfiguration.ErrorDuringFileAccess", locationURLString), exception); //$NON-NLS-1$
-			} catch (SAXException exception) {
-				throw Utilities.newCoreException(Policy.bind("InstallConfiguration.ParsingErrorDuringCreation", locationURLString, "\r\n" + exception.toString()), exception); //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (IOException exception) {
 				throw Utilities.newCoreException(Policy.bind("InstallConfiguration.ErrorDuringFileAccess", locationURLString), exception); //$NON-NLS-1$
 			}

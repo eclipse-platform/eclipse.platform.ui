@@ -12,190 +12,108 @@ package org.eclipse.update.internal.model;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import javax.xml.parsers.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.configurator.*;
+import org.eclipse.update.internal.configurator.*;
 import org.eclipse.update.internal.core.*;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
+
 
 /**
  * parse the default site.xml
  */
 
-public class InstallConfigurationParser extends DefaultHandler {
-	private final static SAXParserFactory parserFactory =
-		SAXParserFactory.newInstance();
-	private SAXParser parser;
-	private InputStream siteStream;
+public class InstallConfigurationParser {
+	private PlatformConfiguration platformConfig;
 	private URL siteURL;
 	private InstallConfigurationModel config;
 	private ConfiguredSiteModel configSite;
-	public static final String CONFIGURATION = "configuration"; //$NON-NLS-1$
-	public static final String CONFIGURATION_SITE = "site"; //$NON-NLS-1$
-	public static final String FEATURE = "feature"; //$NON-NLS-1$
-	public static final String ACTIVITY = "activity"; //$NON-NLS-1$
-
-	// optimization: cache Site
-	private Map sites = new HashMap();
 
 	/**
 	 * Constructor for DefaultSiteParser
 	 */
 	public InstallConfigurationParser(
-		InputStream siteStream,
+		IPlatformConfiguration platformConfig,
 		InstallConfigurationModel config)
-		throws IOException, SAXException, CoreException {
-		super();
-		try {
-			parserFactory.setNamespaceAware(true);
-			this.parser = parserFactory.newSAXParser();
-		} catch (ParserConfigurationException e) {
-			UpdateCore.log(e);
-		} catch (SAXException e) {
-			UpdateCore.log(e);
-		}
+		throws IOException, CoreException {
 
-		this.siteStream = siteStream;
+		Assert.isTrue(platformConfig instanceof PlatformConfiguration);
+		this.platformConfig = (PlatformConfiguration)platformConfig;
+		
 		this.config = config;
 
 		// DEBUG:		
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
 			UpdateCore.debug("Start parsing Configuration:" + (config).getURL().toExternalForm()); //$NON-NLS-1$
 		}
-
-		parser.parse(new InputSource(this.siteStream), this);
+		
+		processConfig(this.platformConfig);
 	}
 
-	/**
-	 * @see DefaultHandler#startElement(String, String, String, Attributes)
-	 */
-	public void startElement(
-		String uri,
-		String localName,
-		String qName,
-		Attributes attributes)
-		throws SAXException {
 
-		// DEBUG:		
-		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
-			UpdateCore.debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-		try {
-
-			String tag = localName.trim();
-
-			if (tag.equalsIgnoreCase(CONFIGURATION)) {
-				processConfig(attributes);
-				return;
-			}
-
-			if (tag.equalsIgnoreCase(CONFIGURATION_SITE)) {
-				processSite(attributes);
-				return;
-			}
-
-			if (tag.equalsIgnoreCase(FEATURE)) {
-				processFeature(attributes);
-				return;
-			}
-
-			if (tag.equalsIgnoreCase(ACTIVITY)) {
-				processActivity(attributes);
-				return;
-			}
-
-		} catch (MalformedURLException e) {
-			throw new SAXException(Policy.bind("Parser.UnableToCreateURL", e.getMessage()), e); //$NON-NLS-1$
-		} catch (CoreException e) {
-			throw new SAXException(Policy.bind("Parser.InternalError", e.toString()), e); //$NON-NLS-1$
-		}
-
-	}
 
 	/** 
 	 * process the Site info
 	 */
-	private void processSite(Attributes attributes)
-		throws MalformedURLException, CoreException {
+	private void processSite(SiteEntry siteEntry) throws CoreException, IOException {
 
 		//site url
-		String urlString = attributes.getValue("url"); //$NON-NLS-1$
-		siteURL = new URL(urlString);
-		ISite site = SiteManager.getSite(siteURL,null);
-		sites.put(urlString,site);
+		siteURL = siteEntry.getURL();
+		try {
+			siteURL = Platform.asLocalURL(siteURL);
+		} catch (IOException e) {
+			// keep original url
+		}
 
 		// policy
-		String policyString = attributes.getValue("policy"); //$NON-NLS-1$
-		int policy = Integer.parseInt(policyString);
+		ISite site = SiteManager.getSite(siteURL,null);
 
 		// configuration site
 		BaseSiteLocalFactory factory = new BaseSiteLocalFactory();
-		configSite = factory.createConfigurationSiteModel((SiteModel) site, policy);
+		configSite = factory.createConfigurationSiteModel((SiteModel) site, siteEntry.getSitePolicy().getType());
 
 		//platform url
-		String platformURLString = attributes.getValue("platformURL"); //$NON-NLS-1$
-		configSite.setPlatformURLString(platformURLString);
-
-		//platform url
-		String enableString = attributes.getValue("enable"); //$NON-NLS-1$
-		boolean enable = (enableString==null || enableString.equalsIgnoreCase("true"));
-		configSite.setEnabled(enable);
+		configSite.setPlatformURLString(siteEntry.getURL().toExternalForm());
+		
+		// configured
+		configSite.setEnabled(siteEntry.isEnabled());
 
 		// check if the site exists and is updatable
-		// update configSite
-		URL	urlToCheck = new URL(configSite.getPlatformURLString());
-	 	IPlatformConfiguration runtimeConfig = ConfiguratorUtils.getCurrentPlatformConfiguration();			
-	 	IPlatformConfiguration.ISiteEntry entry = runtimeConfig.findConfiguredSite(urlToCheck);	 
-	 	if (entry!=null){	
-		 	configSite.setUpdatable(entry.isUpdateable());
-	 	} else {
-	 		UpdateCore.warn("Unable to retrieve site:" +platformURLString+" from platform.");
-	 	}
-	 	String updatable = configSite.isUpdatable()?"true":"false";
-
+	 	configSite.setUpdatable(siteEntry.isUpdateable());
+	 	
 		// add to install configuration
-		config.addConfigurationSiteModel(configSite);
-
-		// DEBUG:		
-		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
-			UpdateCore.debug("End process config site url:" + urlString + " policy:" + policyString + " updatable:"+updatable ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	 	config.addConfigurationSiteModel(configSite);
+	 	configSite.setInstallConfigurationModel(config);
+		
+		FeatureEntry[] features = siteEntry.getFeatureEntries();
+		for (int i=0; i<features.length; i++) {
+			processFeature(features[i]);
 		}
-
 	}
 
 	/** 
 	 * process the DefaultFeature info
 	 */
-	private void processFeature(Attributes attributes)
-		throws MalformedURLException, CoreException {
+	private void processFeature(FeatureEntry feature) throws CoreException, IOException {
 
 		// url
-		String path = attributes.getValue("url"); //$NON-NLS-1$
+		String path = feature.getURL(); //$NON-NLS-1$
 		URL url = UpdateManagerUtils.getURL(siteURL, path, null);
-
-		// configured ?
-		String configuredString = attributes.getValue("configured"); //$NON-NLS-1$
-		boolean configured = configuredString.trim().equalsIgnoreCase("true") ? true : false; //$NON-NLS-1$
 
 		if (url != null) {
 			SiteFeatureReference ref = new SiteFeatureReference();
 			ref.setSite((ISite) configSite.getSiteModel());
 			ref.setURL(url);
-			if (ref != null)
-				if (configured) {
-					(configSite.getConfigurationPolicyModel()).addConfiguredFeatureReference(ref);
-				} else
-					(configSite.getConfigurationPolicyModel()).addUnconfiguredFeatureReference(ref);
+			(configSite.getConfigurationPolicyModel()).addConfiguredFeatureReference(ref);
 
 			//updateURL
-			String updateURLString = attributes.getValue("updateURL"); //$NON-NLS-1$
-			URLEntry entry = new URLEntry();
-			entry.setURLString(updateURLString);
-			entry.resolve(siteURL,null);
+//TODO do we need the update url and to resolve it?
+//			String updateURLString = attributes.getValue("updateURL"); //$NON-NLS-1$
+//			URLEntry entry = new URLEntry();
+//			entry.setURLString(updateURLString);
+//			entry.resolve(siteURL,null);
 
 			// DEBUG:		
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
@@ -211,62 +129,61 @@ public class InstallConfigurationParser extends DefaultHandler {
 	/** 
 	 * process the Activity info
 	 */
-	private void processActivity(Attributes attributes) {
-
-		// action
-		String actionString = attributes.getValue("action"); //$NON-NLS-1$
-		int action = Integer.parseInt(actionString);
-
-		// create
-		ConfigurationActivityModel activity =
-			new BaseSiteLocalFactory().createConfigurationActivityModel();
-		activity.setAction(action);
-
-		// label
-		String label = attributes.getValue("label"); //$NON-NLS-1$
-		if (label != null)
-			activity.setLabel(label);
-
-		// date
-		String dateString = attributes.getValue("date"); //$NON-NLS-1$
-		Date date = new Date(Long.parseLong(dateString));
-		activity.setDate(date);
-
-		// status
-		String statusString = attributes.getValue("status"); //$NON-NLS-1$
-		int status = Integer.parseInt(statusString);
-		activity.setStatus(status);
-
-		config.addActivityModel(activity);
-
-		// DEBUG:		
-		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
-			UpdateCore.debug("End Processing Activity: action:" + actionString + " label: " + label + " date:" + dateString + " status" + statusString); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		}
-
-	}
+//	private void processActivity(Attributes attributes) {
+//
+//		// action
+//		String actionString = attributes.getValue("action"); //$NON-NLS-1$
+//		int action = Integer.parseInt(actionString);
+//
+//		// create
+//		ConfigurationActivityModel activity =
+//			new BaseSiteLocalFactory().createConfigurationActivityModel();
+//		activity.setAction(action);
+//
+//		// label
+//		String label = attributes.getValue("label"); //$NON-NLS-1$
+//		if (label != null)
+//			activity.setLabel(label);
+//
+//		// date
+//		String dateString = attributes.getValue("date"); //$NON-NLS-1$
+//		Date date = new Date(Long.parseLong(dateString));
+//		activity.setDate(date);
+//
+//		// status
+//		String statusString = attributes.getValue("status"); //$NON-NLS-1$
+//		int status = Integer.parseInt(statusString);
+//		activity.setStatus(status);
+//
+//		config.addActivityModel(activity);
+//
+//		// DEBUG:		
+//		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
+//			UpdateCore.debug("End Processing Activity: action:" + actionString + " label: " + label + " date:" + dateString + " status" + statusString); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+//		}
+//
+//	}
 
 	/** 
 	 * process the Config info
 	 */
-	private void processConfig(Attributes attributes) {
+	private void processConfig(PlatformConfiguration platformConfig) throws IOException, CoreException {
 
 		// date
-		long date = Long.parseLong(attributes.getValue("date")); //$NON-NLS-1$
-		config.setCreationDate(new Date(date));
+		Date date = platformConfig.getConfiguration().getDate();
+		config.setCreationDate(date);
 		
 		//timeline
-		String timelineString = attributes.getValue("timeline"); //$NON-NLS-1$
-		long timeline = date;
-		if (timelineString!=null) {
-			timeline = Long.parseLong(timelineString);
-		}
-		config.setTimeline(timeline);
+//		String timelineString = attributes.getValue("timeline"); //$NON-NLS-1$
+//		long timeline = config.getCreationDate().getTime();
+//		if (timelineString!=null) {
+//			timeline = Long.parseLong(timelineString);
+//		}
+//		config.setTimeline(timeline);
 
-		// DEBUG:		
-		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
-			UpdateCore.debug("End Processing Config Tag: date:" + date+" timeline:"+ timeline); //$NON-NLS-1$
-		}
+		SiteEntry[] sites = platformConfig.getConfiguration().getSites();
+		for (int i=0; i<sites.length; i++)
+			processSite(sites[i]);
 
 	}
 }

@@ -12,19 +12,23 @@ package org.eclipse.update.internal.model;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import javax.xml.parsers.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
+import org.eclipse.update.configurator.*;
+import org.eclipse.update.internal.configurator.*;
 import org.eclipse.update.internal.core.*;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
 
 /**
  * parse the default site.xml
  */
 
-public class SiteLocalParser extends DefaultHandler {
+public class SiteLocalParser {
+
+	private PlatformConfiguration platformConfig;
+	private SiteLocalModel site;
+	public static final String CONFIG = "config"; //$NON-NLS-1$
+	private ResourceBundle bundle;
 
 	/**
 	 * return the appropriate resource bundle for this sitelocal
@@ -43,35 +47,14 @@ public class SiteLocalParser extends DefaultHandler {
 		}
 		return bundle;
 	}
-	private final static SAXParserFactory parserFactory =
-		SAXParserFactory.newInstance();
-	
-	private SAXParser parser;
-	private InputStream siteStream;
-	private SiteLocalModel site;
-	public static final String SITE = "localsite"; //$NON-NLS-1$
-	public static final String CONFIG = "config"; //$NON-NLS-1$
-	public static final String PRESERVED_CONFIGURATIONS = "preservedConfigurations"; //$NON-NLS-1$
-	private ResourceBundle bundle;
-
-	// trus if we are now parsing preserved config
-	private boolean preserved = false;
 
 	/**
 	 * Constructor for DefaultSiteParser
 	 */
-	public SiteLocalParser(InputStream siteStream, ILocalSite site) throws IOException, SAXException, CoreException {
-		super();
-		try {
-			parserFactory.setNamespaceAware(true);
-			this.parser = parserFactory.newSAXParser();
-		} catch (ParserConfigurationException e) {
-			UpdateCore.log(e);
-		} catch (SAXException e) {
-			UpdateCore.log(e);
-		}
-
-		this.siteStream = siteStream;
+	public SiteLocalParser(IPlatformConfiguration platformConfig, ILocalSite site) throws IOException, CoreException {
+		Assert.isTrue(platformConfig instanceof PlatformConfiguration);
+		this.platformConfig = (PlatformConfiguration)platformConfig;
+		
 		Assert.isTrue(site instanceof SiteLocalModel);
 		this.site = (SiteLocalModel) site;
 
@@ -81,8 +64,8 @@ public class SiteLocalParser extends DefaultHandler {
 		}
 		
 		bundle = getResourceBundle();
-
-		parser.parse(new InputSource(this.siteStream),this);
+		
+		processConfig();
 	}
 
 	/**
@@ -100,115 +83,60 @@ public class SiteLocalParser extends DefaultHandler {
 		return url;
 	}
 
-	/**
-	 * @see DefaultHandler#startElement(String, String, String, Attributes)
-	 */
-	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-
-		// DEBUG:		
-		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
-			UpdateCore.debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-		try {
-
-			String tag = localName.trim();
-
-			if (tag.equalsIgnoreCase(SITE)) {
-				processSite(attributes);
-				return;
-			}
-
-			if (tag.equalsIgnoreCase(CONFIG)) {
-				processConfig(attributes);
-				return;
-			}
-
-			if (tag.equalsIgnoreCase(PRESERVED_CONFIGURATIONS)) {
-				preserved = true;
-				return;
-			}
-
-		} catch (MalformedURLException e) {
-			throw new SAXException(Policy.bind("Parser.UnableToCreateURL", e.getMessage()), e); //$NON-NLS-1$
-		} catch (CoreException e) {
-			throw new SAXException(Policy.bind("Parser.InternalError", e.toString()), e); //$NON-NLS-1$
-		}
-
-	}
-
-	/** 
-	 * process the Site info
-	 */
-	private void processSite(Attributes attributes) throws MalformedURLException {
-		//
-		String info = attributes.getValue("label"); //$NON-NLS-1$
-		info = UpdateManagerUtils.getResourceString(info, bundle);
-		site.setLabel(info);
 	
-		// history
-		String historyString = attributes.getValue("history"); //$NON-NLS-1$
-		int history;
-		if (historyString == null || historyString.equals("")) { //$NON-NLS-1$
-			history = SiteLocalModel.DEFAULT_HISTORY;
-		} else {
-			history = Integer.parseInt(historyString);
-		}
-		site.setMaximumHistoryCount(history);
-	
-		//stamp
-		String stampString = attributes.getValue("stamp"); //$NON-NLS-1$
-		long stamp = Long.parseLong(stampString);
-		site.setStamp(stamp);
-	
-		// DEBUG:		
-		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
-			UpdateCore.debug("End process Site label:" + info); //$NON-NLS-1$
-		}
-	
-	}
+//	/** 
+//	 * process the Site info
+//	 */
+//	private void processSite(Attributes attributes) throws MalformedURLException {
+//		//
+//		String info = attributes.getValue("label"); //$NON-NLS-1$
+//		info = UpdateManagerUtils.getResourceString(info, bundle);
+//		site.setLabel(info);
+//	
+//		// history
+//		String historyString = attributes.getValue("history"); //$NON-NLS-1$
+//		int history;
+//		if (historyString == null || historyString.equals("")) { //$NON-NLS-1$
+//			history = SiteLocalModel.DEFAULT_HISTORY;
+//		} else {
+//			history = Integer.parseInt(historyString);
+//		}
+//		site.setMaximumHistoryCount(history);
+//	
+//		//stamp
+//		String stampString = attributes.getValue("stamp"); //$NON-NLS-1$
+//		long stamp = Long.parseLong(stampString);
+//		site.setStamp(stamp);
+//	
+//		// DEBUG:		
+//		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
+//			UpdateCore.debug("End process Site label:" + info); //$NON-NLS-1$
+//		}
+//	
+//	}
 
 	/** 
 	 * process the Config info
 	 */
-	private void processConfig(Attributes attributes) throws MalformedURLException, CoreException {
-		// url
-		URL url = UpdateManagerUtils.getURL(site.getLocationURL(), attributes.getValue("url"), null); //$NON-NLS-1$
-		String label = attributes.getValue("label"); //$NON-NLS-1$
-		label = UpdateManagerUtils.getResourceString(label, bundle);
+	private void processConfig() throws MalformedURLException, CoreException {
 
+		String label = platformConfig.getConfiguration().getDate().toString();
+		label = UpdateManagerUtils.getResourceString(label, bundle);
+		site.setLabel(label);
+
+		URL url = site.getLocationURL();
 		InstallConfigurationModel config = new BaseSiteLocalFactory().createInstallConfigurationModel();
 		config.setLocationURLString(url.toExternalForm());
 		config.setLabel(label);
 		config.resolve(url, getResourceBundleURL());
 
 		// add the config
-		if (preserved) {
-			site.addPreservedInstallConfigurationModel(config);
-		} else {
-			site.addConfigurationModel(config);
-		}
+		site.addConfigurationModel(config);
+
 		// DEBUG:		
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
 			UpdateCore.debug("End Processing Config Tag: url:" + url.toExternalForm()); //$NON-NLS-1$
 		}
-	}
-
-	/*
-	 * @see ContentHandler#endElement(String, String, String)
-	 */
-	public void endElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-		// DEBUG:		
-		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
-			UpdateCore.debug("End Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-
-		String tag = localName.trim();
-
-		if (tag.equalsIgnoreCase(PRESERVED_CONFIGURATIONS)) {
-			preserved = false;
-			return;
-		}
-
 	}
 
 }

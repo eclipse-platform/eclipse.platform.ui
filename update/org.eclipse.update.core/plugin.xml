@@ -25,15 +25,6 @@
    <extension-point id="deltaHandler" name="Install/Update Delta Handler"/>
 
    <extension
-         id="reconciler"
-         point="org.eclipse.core.runtime.applications">
-      <application>
-         <run
-               class="org.eclipse.update.internal.core.UpdateManagerReconciler">
-         </run>
-      </application>
-   </extension>
-   <extension
          id="packaged"
          point="org.eclipse.update.core.featureTypes">
       <feature-factory

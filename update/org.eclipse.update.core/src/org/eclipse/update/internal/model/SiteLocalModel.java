@@ -20,14 +20,9 @@ import org.eclipse.update.core.model.*;
 
 public class SiteLocalModel extends ModelObject {
 
-
-	public static final String SITE_LOCAL_PREFIX = "v2LocalSite"; //$NON-NLS-1$
-	public static final String DEFAULT_CONFIG_PREFIX = "v2Config"; //$NON-NLS-1$
-	public static final String DEFAULT_PRESERVED_CONFIG_PREFIX = "v2PreservedConfig"; //$NON-NLS-1$
-
-	public static final String SITE_LOCAL_FILE = SITE_LOCAL_PREFIX +".xml"; //$NON-NLS-1$
-	public static final String DEFAULT_CONFIG_FILE = DEFAULT_CONFIG_PREFIX+".xml"; //$NON-NLS-1$
-	public static final String DEFAULT_PRESERVED_CONFIG_FILE = DEFAULT_PRESERVED_CONFIG_PREFIX+".xml"; //$NON-NLS-1$
+	public static final String SITE_LOCAL_FILE = "platform.xml"; //$NON-NLS-1$
+	public static final String DEFAULT_CONFIG_FILE = "platform.xml"; //$NON-NLS-1$
+	public static final String DEFAULT_PRESERVED_CONFIG_FILE = "platform.xml"; //$NON-NLS-1$
 	public static int DEFAULT_HISTORY = Integer.MAX_VALUE;	
 
 
