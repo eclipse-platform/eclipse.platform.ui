@@ -513,6 +513,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		int result = super.open();
 		getWorkbenchImpl().fireWindowOpened(this);
 		getAdvisor().postWindowOpen(getWindowConfigurer());
+		 if (perspectiveSwitcher != null)
+	        perspectiveSwitcher.updatePerspectiveBar();
 		return result;
 	}
 

@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Assert;
@@ -60,7 +57,6 @@ public class PerspectiveSwitcher {
     private WorkbenchWindow window;
     private CBanner topBar;
     private int style;
-    private List MRUList = new ArrayList();
     
     private Composite parent;
     private Composite trimControl;
@@ -141,117 +137,13 @@ public class PerspectiveSwitcher {
 	        return;
 
 	    PerspectiveBarContributionItem item = new PerspectiveBarContributionItem(perspective, workbenchPage);
-
-	    int index = Math.max(1, getItemInsertionIndex());
-		perspectiveBar.insert(index, item);
-		perspectiveBar.update(false);
-		ensureVisible(index, workbenchPage);
-		MRUList.add(0, perspective);
+	  	perspectiveBar.addItem(item);
 		setCoolItemSize(coolItem);
+		// SUPPORTING LARGE FONTS
+		/*if (perspectiveBar != null)
+			perspectiveBar.update(true);*/
 	}
 	
-	/**
-	 * Method to insure that an item at a given position is visible
-	 * @param index the index of the item to ensure visible
-	 * @param page the workbench page containing the perspective
-	 */
-	private void ensureVisible(int index, WorkbenchPage page) {
-		if (index == 1 || !perspectiveBar.getControl().isVisible())
-			return;
-		
-		ToolItem[] items = perspectiveBar.getControl().getItems();
-		ToolItem current = items[index];
-		Rectangle barBounds = perspectiveBar.getControl().getBounds();
-		while (!barBounds.intersects(current.getBounds()) && index > 1)
-			index = relocateLRU(index, page);
-		
-		setCoolItemSize(coolItem);
-	}
-
-	/**
-	 * Method to get the insertion position of a new item
-	 * @return the index at which a new item should be inserted
-	 */
-	private int getItemInsertionIndex() {
-		if (!perspectiveBar.getControl().isVisible())
-			return perspectiveBar.getControl().getItemCount();
-		
-		ToolItem[] items = perspectiveBar.getControl().getItems();
-		if (items.length > 1) { 
-			Rectangle barBounds = perspectiveBar.getControl().getBounds();
-			// find the first non-visible item
-			for (int i = 1; i < items.length; i++) {
-				ToolItem toolItem = items[i];
-				if (!barBounds.intersects(toolItem.getBounds()))
-					return i;
-			}
-			// they are all visible
-			return items.length;
-		}
-		// insert at the beginning
-		return 1;
-	}
-
-	/**
-	 * Method that removes the most recently used and visible 
-	 * perspective button and places it at a given index
-	 * @param index the position at which the removed button should
-	 * be relocated
-	 * @param page the workbench page containing the perspective button
-	 */
-	private int relocateLRU(int index, WorkbenchPage page) {
-		// if the MRU list does not contain entries, do nothing
-		if (MRUList.size() < 1)
-			return -1;
-		
-		// get the perspective bar bounds
-		Rectangle barBounds = perspectiveBar.getControl().getBounds();
-		boolean isVis = false;
-		IPerspectiveDescriptor descriptor = null;
-		IContributionItem item = null;
-		// loop through the MRU list and find the visible LRU item  
-		for (int MRUindex = MRUList.size() - 1; !isVis && MRUindex >= 0; MRUindex--) {
-			descriptor = (IPerspectiveDescriptor)MRUList.get(MRUindex);
-			item = findPerspectiveShortcut(descriptor, page);
-			ToolItem tItem = ((PerspectiveBarContributionItem)item).getToolItem();
-			isVis = barBounds.intersects(tItem.getBounds());
-		}
-		// remove and add the found item at the given index in parameter
-		if (item != null) {
-			PerspectiveBarContributionItem contribItem = (PerspectiveBarContributionItem)item;
-			PerspectiveBarContributionItem newItem = new PerspectiveBarContributionItem(contribItem.getPerspective(), contribItem.getPage());
-			perspectiveBar.remove(contribItem);
-			contribItem.dispose();
-			perspectiveBar.insert(index, newItem);
-			perspectiveBar.update(false);
-		}
-		else
-			return -1;
-		
-		// the item to be removed next should be placed at
-		// the given index -1 since we already removed an item 
-		// prior to the given index
-		return --index;
-	}
-
-	/**
-	 * @return a list with the visible perspective tool items
-	 */
-	private List getVisibleItems() {
-		ArrayList list = new ArrayList();
-		
-		ToolItem[] items = perspectiveBar.getControl().getItems();
-		Rectangle barBounds = perspectiveBar.getControl().getBounds();
-		for (int i = 0; i < items.length; i++) {
-			ToolItem toolItem = items[i];
-			if (!barBounds.intersects(toolItem.getBounds()))
-				return list;
-			else
-				list.add(toolItem);
-		}
-		return list;
-	}
-
 	public IContributionItem findPerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage page) {
 	    if (perspectiveBar == null)
 	        return null;
@@ -273,11 +165,11 @@ public class PerspectiveSwitcher {
 
 	    IContributionItem item = findPerspectiveShortcut(perspective, page);
 		if (item != null) {
-			perspectiveBar.remove(item);
+			if (item instanceof PerspectiveBarContributionItem)
+				perspectiveBar.removeItem((PerspectiveBarContributionItem)item);
 			item.dispose();
 			perspectiveBar.update(false);
 			setCoolItemSize(coolItem);
-			MRUList.remove(perspective);
 		}
 	}
 
@@ -351,21 +243,7 @@ public class PerspectiveSwitcher {
 			if (selected) {
 				// check if not visible and ensure visible
 				PerspectiveBarContributionItem contribItem = (PerspectiveBarContributionItem)item;
-				Rectangle barBounds = perspectiveBar.getControl().getBounds();
-				
-				if (perspectiveBar.getControl().isVisible() && !barBounds.intersects(contribItem.getToolItem().getBounds())) {
-					// remove and add as the first non-visible
-					int index = Math.max(1, getItemInsertionIndex());
-					PerspectiveBarContributionItem newItem = new PerspectiveBarContributionItem(contribItem.getPerspective(), contribItem.getPage());
-					perspectiveBar.remove(contribItem);
-					contribItem.dispose();
-					perspectiveBar.insert(index, newItem);
-					perspectiveBar.update(false);
-					// ensure visible
-					ensureVisible(index, (WorkbenchPage)window.getActivePage());
-				}
-			    MRUList.remove(perspective);
-			    MRUList.add(0, perspective);
+				perspectiveBar.select(contribItem);
 			}
 		    // select or de-select
 		    ((PerspectiveBarContributionItem) item).setSelection(selected);
@@ -447,6 +325,11 @@ public class PerspectiveSwitcher {
 	        createControlForTop();
 	    
 	    perspectiveBar.getControl().addDisposeListener(toolBarListener);
+	    
+	    // the items have been recreated, update the references to them
+	    // in the MRU and sequential lists of items
+	    perspectiveBar.updateLists();
+	    updatePerspectiveBar();
 	}
 
 	private void setPropertyChangeListener() {
@@ -508,8 +391,23 @@ public class PerspectiveSwitcher {
 
 		// adjust the toolbar size to display as many items as possible
 		perspectiveCoolBar.addControlListener(new ControlAdapter() {
+			int visibleItemCount = (perspectiveBar != null) ? perspectiveBar.getVisibleItemCount()
+														    : 0;
 			public void controlResized(ControlEvent e) {
 				setCoolItemSize(coolItem);
+				int visibleItems = perspectiveBar.getVisibleItemCount();
+				
+				if (visibleItems != visibleItemCount) {
+					visibleItemCount = visibleItems;
+					perspectiveBar.rebuildToolBar();
+					// the -1 is added on the next line because the visibleItemCount
+					// does not take in consideration the 'open a perspective' button,
+					// i.e. perspectiveBar.getVisibleItemCount() does not include the 'open
+					// a perspective' button
+					if (visibleItemCount < perspectiveBar.getControl().getItemCount()-1) {
+						perspectiveBar.arrangeToolBar();
+					}
+				}	
 			}
 		});
 		
@@ -553,7 +451,16 @@ public class PerspectiveSwitcher {
 		}
 */		
 		Rectangle area = perspectiveCoolBar.getClientArea();
+
 		int rowHeight = toolbar.getItem(0).getBounds().height;
+		// SUPPORTING LARGE FONTS
+		/*for (int i = 1; i < perspectiveBar.getControl().getItemCount(); i++) {
+			int height = perspectiveBar.getControl().getItem(i).getBounds().height;
+			if(height > rowHeight)
+				rowHeight = height;
+		}
+		
+		area.height = topBar.getLeft().getBounds().height;*/
 		int rows = rowHeight <= 0 ? 1 : (int)Math.max(1, Math.floor(area.height / rowHeight));
 		if (rows == 1 || (toolbar.getStyle() & SWT.WRAP) == 0 || currentLocation == TOP_LEFT) {
 			Point p = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -747,6 +654,7 @@ public class PerspectiveSwitcher {
                 PrefUtil.getAPIPreferenceStore()
                         .setValue(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR, preference);
                 setCoolItemSize(coolItem);
+                updatePerspectiveBar();
 			}
 		});
 	}
@@ -785,6 +693,15 @@ public class PerspectiveSwitcher {
 			else
 				topBar.setRightWidth(DEFAULT_RIGHT_X);
 		}
+	}
+
+	/**
+	 * Method to rebuild and update the toolbar when necessary
+	 */
+	void updatePerspectiveBar() {
+		perspectiveBar.rebuildToolBar();
+		perspectiveBar.arrangeToolBar();
+		perspectiveBar.getControl().redraw();
 	}
 
 }
