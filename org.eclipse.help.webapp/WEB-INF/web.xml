@@ -31,6 +31,11 @@
         <servlet-name>search</servlet-name>
         <servlet-class>org.eclipse.help.internal.webapp.servlet.SearchServlet</servlet-class>
     </servlet>
+    
+    <servlet>
+        <servlet-name>context</servlet-name>
+        <servlet-class>org.eclipse.help.internal.webapp.servlet.ContextServlet</servlet-class>
+    </servlet>
           
 <!-- placeholder for JSPs web.xml -->
 
@@ -57,6 +62,11 @@
     <servlet-mapping>
         <servlet-name>search</servlet-name>
         <url-pattern>/search/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>context</servlet-name>
+        <url-pattern>/context/*</url-pattern>
     </servlet-mapping>
     
 	<welcome-file-list>

@@ -32,10 +32,6 @@
             class="org.eclipse.help.internal.protocols.URLHandler"
             protocol="help">
       </handler>
-      <handler
-            class="org.eclipse.help.internal.protocols.URLHandler"
-            protocol="links">
-      </handler>
    </extension>
 <!-- Stand-alone infocenter application -->
    <extension
