@@ -2274,6 +2274,16 @@
             keySequence="F10"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
       </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.redo"
+            keySequence="M1+X R"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.redo"
+            keySequence="M1+M2++"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
 <!-- Cut -->
       <keyBinding
             commandId="org.eclipse.ui.edit.cut"
@@ -2367,6 +2377,379 @@
             keySequence="M1+K"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
       </keyBinding>
+<!-- PREFIX: Source editing -->
+<!-- Block comment -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.add.block.comment"
+            keySequence="M1+X K B"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+K M1+B"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Comment -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.comment"
+            keySequence="M1+X K C"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+K M1+C"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Format -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.format"
+            keySequence="M1+X K F"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+K M1+F"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Correct indentation -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.indent"
+            keySequence="M1+X K I"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+K M1+I"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Add import -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.add.import"
+            keySequence="M1+X K M"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+K M1+M"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Organize imports -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.organize.imports"
+            keySequence="M1+X K O"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+K M1+O"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Remove block comment -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.remove.block.comment"
+            keySequence="M1+X K R"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+K M1+R"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Sort members -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.sort.members"
+            keySequence="M1+X K S"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+K M1+S"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Uncomment -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.uncomment"
+            keySequence="M1+X K U"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+K M1+U"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- PREFIX: Debug, run, projects -->
+<!-- Build all -->
+      <keyBinding
+            commandId="org.eclipse.ui.project.buildAll"
+            keySequence="M1+X D B"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+D M1+B"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Debug last launched -->
+      <keyBinding
+            commandId="org.eclipse.debug.internal.ui.actions.DebugLastAction"
+            keySequence="M1+X D D"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+D M1+D"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Execute -->
+      <keyBinding
+            commandId="org.eclipse.jdt.debug.ui.Execute"
+            keySequence="M1+X D E"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+D M1+E"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Step with filters -->
+      <keyBinding
+            commandId="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
+            keySequence="M1+X D F"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+D M1+F"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Step into -->
+      <keyBinding
+            commandId="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
+            keySequence="M1+X D I"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+D M1+I"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Toggle breakpoint -->
+      <keyBinding
+            commandId="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
+            keySequence="M1+X D K"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+D M1+K"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Run to line -->
+      <keyBinding
+            commandId="org.eclipse.jdt.debug.ui.RunToLineAction"
+            keySequence="M1+X D L"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+D M1+L"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Resume -->
+      <keyBinding
+            commandId="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
+            keySequence="M1+X D M"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+D M1+M"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Step over -->
+      <keyBinding
+            commandId="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
+            keySequence="M1+X D O"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+D M1+O"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Display -->
+      <keyBinding
+            commandId="org.eclipse.jdt.debug.ui.Display"
+            keySequence="M1+X D P"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+D M1+P"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Run last launched -->
+      <keyBinding
+            commandId="org.eclipse.debug.internal.ui.actions.RunLastAction"
+            keySequence="M1+X D R"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+D M1+R"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Step into selection -->
+      <keyBinding
+            commandId="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"
+            keySequence="M1+X D S"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+D M1+S"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- PREFIX: editing text, text editor control -->
+<!-- Remove annotations -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.remove.occurrence.annotations"
+            keySequence="M1+X E A"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+E M1+A"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Delete line -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.delete.line"
+            keySequence="M1+X E D"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+E M1+D"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Delete line to end -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.delete.line.to.end"
+            keySequence="M1+X E E"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+E M1+E"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Select previous word -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.select.wordPrevious"
+            keySequence="M1+X E J"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+E M1+J"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Select next word -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.select.wordNext"
+            keySequence="M1+X E K"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+E M1+K"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Lower case -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.lowerCase"
+            keySequence="M1+X E L"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+E M1+L"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Go to next member -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.goto.next.member"
+            keySequence="M1+X E N"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+E M1+N"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Go to previous member -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.goto.previous.member"
+            keySequence="M1+X E P"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+E M1+P"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Quick fix -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"
+            keySequence="M1+X E Q"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+E M1+Q"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Show ruler context menu -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.showRulerContextMenu"
+            keySequence="M1+X E R"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+E M1+R"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Quick diff toggle -->
+      <keyBinding
+            commandId="org.eclipse.quickdiff.toggle"
+            keySequence="M1+X E T"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+E M1+T"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Upper case -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.upperCase"
+            keySequence="M1+X E U"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+E M1+U"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Restore last selection -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.select.last"
+            keySequence="M1+X E Arrow_Down"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+E M1+Arrow_Down"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Select previous element -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.select.previous"
+            keySequence="M1+X E Arrow_Left"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+E M1+Arrow_Left"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Select next element -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.select.next"
+            keySequence="M1+X E Arrow_Right"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+E M1+Arrow_Right"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Select enclosing element -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.select.enclosing"
+            keySequence="M1+X E Arrow_Up"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+E M1+Arrow_Up"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
 <!-- Set mark -->
       <keyBinding
             commandId="org.eclipse.ui.edit.text.set.mark"
@@ -2400,6 +2783,87 @@
       <keyBinding
             commandId="org.eclipse.ui.edit.findIncrementalReverse"
             keySequence="M1+R"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- PREFIX: Refactoring -->
+<!-- Extract constant -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.extract.constant"
+            keySequence="M1+X R C"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+R M1+C"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Inline -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.inline"
+            keySequence="M1+X R I"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+R M1+I"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Extract local variable -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.extract.local.variable"
+            keySequence="M1+X R L"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+R M1+L"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Extract method -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.extract.method"
+            keySequence="M1+X R M"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+R M1+M"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Rename -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.rename.element"
+            keySequence="M1+X R N"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+R M1+N"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Redo -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.refactor.redo"
+            keySequence="M1+X R R"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+R M1+R"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Undo -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.refactor.undo"
+            keySequence="M1+X R U"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+R M1+U"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Move -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.move.element"
+            keySequence="M1+X R V"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+R M1+V"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
       </keyBinding>
 <!-- Line up -->
