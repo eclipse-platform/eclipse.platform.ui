@@ -17,6 +17,139 @@
         <servlet-class>org.eclipse.help.servlet.InitServlet</servlet-class>
     </servlet>
     
+    <!-- **** begin precompiled JSP config ***** -->
+	<servlet>
+		<servlet-name>jsp.advanced</servlet-name>
+		<servlet-class>jsp.advanced</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.banner</servlet-name>
+		<servlet-class>jsp.banner</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.err</servlet-name>
+		<servlet-class>jsp.err</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.help</servlet-name>
+		<servlet-class>jsp.help</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.home</servlet-name>
+		<servlet-class>jsp.home</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.index</servlet-name>
+		<servlet-class>jsp.index</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.links</servlet-name>
+		<servlet-class>jsp.links</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.navToolbar</servlet-name>
+		<servlet-class>jsp.navToolbar</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.search_0005fresults</servlet-name>
+		<servlet-class>jsp.search_0005fresults</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.tabs</servlet-name>
+		<servlet-class>jsp.tabs</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.toc</servlet-name>
+		<servlet-class>jsp.toc</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.tocs</servlet-name>
+		<servlet-class>jsp.tocs</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.toolbar</servlet-name>
+		<servlet-class>jsp.toolbar</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>jsp.ns4.advanced</servlet-name>
+		<servlet-class>jsp.ns4.advanced</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.ns4.banner</servlet-name>
+		<servlet-class>jsp.ns4.banner</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.ns4.err</servlet-name>
+		<servlet-class>jsp.ns4.err</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.ns4.help</servlet-name>
+		<servlet-class>jsp.ns4.help</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.ns4.home</servlet-name>
+		<servlet-class>jsp.ns4.home</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.ns4.index</servlet-name>
+		<servlet-class>jsp.ns4.index</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.ns4.links</servlet-name>
+		<servlet-class>jsp.ns4.links</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.ns4.navToolbar</servlet-name>
+		<servlet-class>jsp.ns4.navToolbar</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.ns4.search_0005fresults</servlet-name>
+		<servlet-class>jsp.ns4.search_0005fresults</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.ns4.tabs</servlet-name>
+		<servlet-class>jsp.ns4.tabs</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.ns4.toc</servlet-name>
+		<servlet-class>jsp.ns4.toc</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.ns4.tocs</servlet-name>
+		<servlet-class>jsp.ns4.tocs</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.ns4.toolbar</servlet-name>
+		<servlet-class>jsp.ns4.toolbar</servlet-class>
+	</servlet>
+
+    <!-- ***** end precompiled JSP config ***** -->
+    
     <servlet-mapping>
         <servlet-name>content</servlet-name>
         <url-pattern>/content/*</url-pattern>
@@ -27,4 +160,139 @@
         <url-pattern>/ns4/content/*</url-pattern>
     </servlet-mapping>
     
+    <!-- **** begin precompiled JSP config ***** -->
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced</servlet-name>
+		<url-pattern>/advanced.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.banner</servlet-name>
+		<url-pattern>/banner.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.err</servlet-name>
+		<url-pattern>/err.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.help</servlet-name>
+		<url-pattern>/help.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.home</servlet-name>
+		<url-pattern>/home.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.index</servlet-name>
+		<url-pattern>/index.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.links</servlet-name>
+		<url-pattern>/links.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.navToolbar</servlet-name>
+		<url-pattern>/navToolbar.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.search_0005fresults</servlet-name>
+		<url-pattern>/search_results.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.tabs</servlet-name>
+		<url-pattern>/tabs.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.toc</servlet-name>
+		<url-pattern>/toc.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.tocs</servlet-name>
+		<url-pattern>/tocs.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.toolbar</servlet-name>
+		<url-pattern>/toolbar.jsp</url-pattern>
+	</servlet-mapping>
+   
+	<servlet-mapping>
+		<servlet-name>jsp.ns4.advanced</servlet-name>
+		<url-pattern>/ns4/advanced.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.ns4.banner</servlet-name>
+		<url-pattern>/ns4/banner.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.ns4.err</servlet-name>
+		<url-pattern>/ns4/err.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.ns4.help</servlet-name>
+		<url-pattern>/ns4/help.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.ns4.home</servlet-name>
+		<url-pattern>/ns4/home.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.ns4.index</servlet-name>
+		<url-pattern>/ns4/index.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.ns4.links</servlet-name>
+		<url-pattern>/ns4/links.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.ns4.navToolbar</servlet-name>
+		<url-pattern>/ns4/navToolbar.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.ns4.search_0005fresults</servlet-name>
+		<url-pattern>/ns4/search_results.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.ns4.tabs</servlet-name>
+		<url-pattern>/ns4/tabs.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.ns4.toc</servlet-name>
+		<url-pattern>/ns4/toc.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.ns4.tocs</servlet-name>
+		<url-pattern>/ns4/tocs.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.ns4.toolbar</servlet-name>
+		<url-pattern>/ns4/toolbar.jsp</url-pattern>
+	</servlet-mapping>
+
+    <!-- ***** end precompiled JSP config ***** -->
+    
 </web-app>
+

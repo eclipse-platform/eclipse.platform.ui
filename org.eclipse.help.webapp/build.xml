@@ -118,32 +118,105 @@
     <delete file="${plugin}_${version}.log.zip"/>
   </target>
   
-  
-  <!-- JSPC:  pre-compile JSPs -->
-  <target name="jspc"  >
-     <java classname="org.apache.jasper.JspC">
-     	<sysproperty key="tomcat_home" value="../org.eclipse.tomcat"/>
-     	<sysproperty key="jasper_home" value="../org.eclipse.tomcat"/>
-     	<classpath>
-     		<pathelement location="d:\\java\\lib\\tools.jar"/>
-			<pathelement location="../org.apache.xerces/xerces.jar"/>
-        	<pathelement location="../org.eclipse.tomcat/catalina.jar" />
-			<pathelement location="../org.eclipse.tomcat/servlet.jar" />
-        	<pathelement location="../org.eclipse.tomcat/jasper-compiler.jar" />
-        	<pathelement location="../org.eclipse.tomcat/jasper-runtime.jar" />
-			<pathelement location="../org.eclipse.tomcat/tomcat_util.jar" />    
-			<!--
-			<pathelement location="${basedir}/WEB-INF/classes"/>
-			-->
-        </classpath>     
+  <!-- pass this in when running the script 
+   <property name="tomcat.home" value="d:\programs\jakarta-tomcat-4.0.1"/>
+  -->
+	<path id="jasper.classpath" >  
+		<pathelement location="${basedir}/WEB-INF/classes"/>
+		<pathelement location="${basedir}/WEB-INF/lib/webapp.jar" />
+		<pathelement location="${tomcat.home}/common/lib/xerces.jar"/>
+		<pathelement location="${tomcat.home}/server/lib/catalina.jar" />
+		<pathelement location="${tomcat.home}/common/lib/servlet.jar" />
+		<pathelement location="${tomcat.home}/lib/jasper-compiler.jar" />
+		<pathelement location="${tomcat.home}/lib/jasper-runtime.jar" />
+		<pathelement location="${tomcat.home}/server/lib/tomcat_util.jar" />  
+	</path>
 
-      	<arg value="${basedir}/help.jsp"/>
-      	<!--
-      	<arg value="-webapp" />
-      	<arg file="${basedir}"/>
-     	<arg value="-v4"/>
-     	-->
-     </java>
-  </target>
+	<target name="precompileJSP" depends="precompile.clean, precompile.default, precompile.ns4, precompile.jar">
+	</target>
+	
+	<target name="precompile.clean">
+	    <delete dir="${basedir}/temp" />
+    </target>
+    
+	<target name="precompile.default">
+		<property name="workdir" value="${basedir}/temp/default"/>
+		<mkdir dir="${workdir}"/>
+		<mkdir dir="${workdir}/classes"/>
+		<copy todir="${workdir}/WEB-INF">
+			<fileset dir="WEB-INF"/>
+		</copy>
+		<copy todir="${workdir}" >
+			<fileset dir="${basedir}" includes="*.jsp" />
+		</copy>
+		<java
+			taskname="jasper"
+			classname="org.apache.jasper.JspC"
+			fork="true"
+			failonerror="true"
+			classpathref="jasper.classpath">
+			<arg value="-v3" />
+			<arg value="-dd" /><arg value="${workdir}" />
+			<arg value="-die" />
+			<arg value="-p" /><arg value="jsp"/>
+			<arg value="-webinc" /><arg value="${workdir}/temp_web.xml" />
+			<arg value="-webapp" /><arg value="${workdir}" />
+		</java>
+		<javac
+			srcdir="${workdir}"
+			destdir="${workdir}/classes"
+			debug="false"
+			deprecation="false"
+			optimize = "false"
+			includes="**/*.java">
+			<classpath refid="jasper.classpath" />
+		</javac>
+	</target>
+	
+	<target name="precompile.ns4">
+		<property name="ns4workdir" value="${basedir}/temp/ns4"/>
+		<mkdir dir="${ns4workdir}"/>
+		<mkdir dir="${ns4workdir}/classes"/>
+		<copy todir="${ns4workdir}/WEB-INF">
+			<fileset dir="WEB-INF"/>
+		</copy>
+		<copy todir="${ns4workdir}" >
+			<fileset dir="${basedir}/ns4" includes="*.jsp" />
+		</copy>
+		<java
+			taskname="jasper"
+			classname="org.apache.jasper.JspC"
+			fork="true"
+			failonerror="true"
+			classpathref="jasper.classpath">
+			<arg value="-v3" />
+			<arg value="-dd" /><arg value="${ns4workdir}" />
+			<arg value="-die" />
+			<arg value="-p" /><arg value="jsp.ns4"/>
+			<arg value="-uriroot" /><arg value="${basedir}/temp"/>
+			<arg value="-webinc" /><arg value="${ns4workdir}/temp_web.xml" />
+			<arg value="-webapp" /><arg value="${ns4workdir}" />
+		</java>
+		<javac
+			srcdir="${ns4workdir}"
+			destdir="${ns4workdir}/classes"
+			debug="false"
+			deprecation="false"
+			optimize = "false"
+			includes="**/*.java">
+			<classpath refid="jasper.classpath" />
+		</javac>
+	</target>
+	
+	<target name="precompile.jar">
+		<mkdir dir="${basedir}/WEB-INF/lib"/>
+		<jar jarfile="${basedir}/WEB-INF/lib/jsp.jar"
+			basedir="${basedir}/temp/default/classes"
+			includes="**" />
+		<jar jarfile="${basedir}/WEB-INF/lib/jsp.jar"
+			basedir="${basedir}/temp/ns4/classes"
+			includes="**" 
+			update="yes"/>
+	</target>
   
 </project>
