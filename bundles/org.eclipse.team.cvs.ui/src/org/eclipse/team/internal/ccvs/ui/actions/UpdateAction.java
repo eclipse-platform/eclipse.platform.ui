@@ -53,7 +53,7 @@ public class UpdateAction extends TeamAction {
 						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
 						List list = (List)table.get(provider);
 						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-						provider.update(providerResources, Command.NO_LOCAL_OPTIONS, null, null, subMonitor);
+						provider.update(providerResources, Command.NO_LOCAL_OPTIONS, null, true /*createBackups*/, subMonitor);
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);

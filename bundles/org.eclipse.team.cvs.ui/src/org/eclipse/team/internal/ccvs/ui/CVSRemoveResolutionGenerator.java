@@ -154,7 +154,9 @@ public class CVSRemoveResolutionGenerator extends CVSAbstractResolutionGenerator
 				CVSRemoveResolutionGenerator.this.run(new IRunnableWithProgress() {
 					public void run(IProgressMonitor monitor)throws InvocationTargetException, InterruptedException {
 						try {
-							((CVSTeamProvider)RepositoryProvider.getProvider(parent.getProject())).update(new IResource[] {parent.getFile(new Path(childName))}, Command.NO_LOCAL_OPTIONS, null, null, monitor);
+							CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(parent.getProject());
+							provider.update(new IResource[] { parent.getFile(new Path(childName)) },
+								Command.NO_LOCAL_OPTIONS, null, true /*createBackups*/, monitor);
 						} catch (TeamException e) {
 							exception[0] = e;
 						}

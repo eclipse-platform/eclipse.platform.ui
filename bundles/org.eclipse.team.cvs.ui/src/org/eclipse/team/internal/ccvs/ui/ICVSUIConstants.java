@@ -51,6 +51,13 @@ public interface ICVSUIConstants {
 	public final String PREF_PROMPT_ON_FILE_DELETE = "pref_prompt_on_file_delete";
 	public final String PREF_PROMPT_ON_FOLDER_DELETE = "pref_prompt_on_folder_delete";
 	public final String PREF_SHOW_MARKERS = "pref_show_markers";
+
+	// console preferences
+	public final String PREF_CONSOLE_COMMAND_COLOR = "pref_console_command_color";
+	public final String PREF_CONSOLE_MESSAGE_COLOR = "pref_console_message_color";
+	public final String PREF_CONSOLE_ERROR_COLOR = "pref_console_error_color";
+	public final String PREF_CONSOLE_FONT = "pref_console_font";
+	public final String PREF_CONSOLE_AUTO_OPEN = "pref_console_auto_open";
 		
 	// decorator preferences
 	public final String PREF_FILETEXT_DECORATION = "pref_filetext_decoration";

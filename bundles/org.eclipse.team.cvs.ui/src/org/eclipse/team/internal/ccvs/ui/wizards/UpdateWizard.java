@@ -63,7 +63,8 @@ public class UpdateWizard extends Wizard {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
 						CVSTeamProvider provider = ((CVSTeamProvider)RepositoryProvider.getProvider(project));	
-						provider.update(new IResource[] {project}, updatePage.getLocalOptions(), updatePage.getTag(), null, monitor);
+						provider.update(new IResource[] { project }, updatePage.getLocalOptions(),
+							updatePage.getTag(), true /*createBackups*/, monitor);
 						result[0] = true;
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);

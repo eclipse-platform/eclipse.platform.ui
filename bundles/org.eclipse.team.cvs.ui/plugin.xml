@@ -359,6 +359,15 @@
 			</page>
 	</extension>
 
+   	<extension
+      point = "org.eclipse.ui.preferencePages">
+       <page id="org.eclipse.team.cvs.ui.ConsolePreferences"
+       	  class="org.eclipse.team.internal.ccvs.ui.ConsolePreferencesPage"
+       	    name="%ConsolePreferencePage.name"
+       	    category="org.eclipse.team.cvs.ui.CVSPreferences">
+       </page>
+   </extension>
+
 	<extension
       point = "org.eclipse.ui.preferencePages">
        <page id="org.eclipse.team.cvs.ui.CVSDecoratorPreferences"
