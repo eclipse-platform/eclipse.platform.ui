@@ -35,6 +35,9 @@
 	<uiTest
 		id="ui.dialogs.Automated"
 		class="org.eclipse.ui.tests.dialogs.UIAutomatedSuite"/>
+	<uiTest 
+		id="ui.propertysheet.PropertySheetTestSuite"
+		class="org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite"/>
 	
 	<!-- Interactive Test Suites -->
 	<uiTest
@@ -83,6 +86,13 @@
 	   name="Action Extension Test View"
        icon="icons\view.gif"
 	   class="org.eclipse.ui.tests.api.MockViewPart"/>
+	<view
+       id="org.eclipse.ui.tests.propertysheet.SelectionProviderView"
+	   name="Selection Provider Test View"
+       icon="icons\view.gif"
+	   class="org.eclipse.ui.tests.propertysheet.SelectionProviderView"/>
+
+
 </extension>
 
 <extension

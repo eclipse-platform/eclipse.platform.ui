@@ -27,6 +27,6 @@ public class UiTestSuite extends TestSuite {
 		if (!platform.equals("motif")) {
 			addTest(new org.eclipse.ui.tests.dialogs.UIAutomatedSuite());
 		}
+		addTest(new org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite());		
 	}
-
 }
