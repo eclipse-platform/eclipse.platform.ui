@@ -242,6 +242,9 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 			if (title == null) {
 				title = status.getMessage();
 			}
+			if (message == null) {
+				message = status.getMessage();
+			}
 			if (dialog) {
 				ErrorDialog.openError(getShell(), title, message, toShow);
 			}
