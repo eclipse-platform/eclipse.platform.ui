@@ -105,6 +105,36 @@ public class RegistryCacheReader {
 	// So it's easier to add a new label ...
 	public static final byte LARGEST_LABEL = 55;
 	
+	// String constants for those byte values in the cache that
+	// do not translate directly to strings found in manifest xml
+	// files.  For example, the 'location' of a plugin or fragment
+	// is not listed in a plugin.xml file.  The parser fills in 
+	// this field after the plugin.xml file has been successfully
+	// parsed and added to the plugin registry.  Therefore, 'location'
+	// will not appear in plugin.xml (and not in IModel either) but
+	// will appear in the registry cache.
+	public static final String RESOLVED = "resolved"; //$NON-NLS-1$
+	public static final String READONLY = "readonly"; //$NON-NLS-1$
+	public static final String LOCATION = "location"; //$NON-NLS-1$
+	public static final String ENABLED = "enabled"; //$NON-NLS-1$
+	public static final String RESOLVED_VERSION = "resolved_version"; //$NON-NLS-1$
+	public static final String END = "end"; //$NON-NLS-1$
+	public static final String EXPORTS_lENGTH = "<length of export list>"; //$NON-NLS-1$
+	public static final String SUBELEMENTS_LENGTH = "<length of subelement list>"; //$NON-NLS-1$
+	public static final String PROPERTIES_LENGTH = "<length of properties list>"; //$NON-NLS-1$
+	public static final String PARENT_REGISTRY = "<index of parent registry>"; //$NON-NLS-1$
+	public static final String CONFIGURATION_ELEMENT_PARENT = "<index of element parent>"; //$NON-NLS-1$
+	public static final String PLUGIN_INDEX = "<index of plugin>"; //$NON-NLS-1$
+	public static final String EXTENSION_INDEX = "<index of extension>"; //$NON-NLS-1$
+	public static final String EXT_PT_PARENT_INDEX = "<index of extension point parent>"; //$NON-NLS-1$
+	public static final String EXT_PT_EXTENSION_LENGTH = "<length of extension list>"; //$NON-NLS-1$
+	public static final String EXT_LIST = "<list of extensions>"; //$NON-NLS-1$
+	public static final String EXTENSION_PARENT = "<index of extension parent>"; //$NON-NLS-1$
+	public static final String ELEMENT_INDEX = "<index of element>"; //$NON-NLS-1$
+	public static final String REGISTRY_INDEX = "<index of registry>"; //$NON-NLS-1$
+	public static final String FRAGMENT_INDEX = "<index of fragment>"; //$NON-NLS-1$
+	public static final String UNKNOWN = "<unknown label>"; //$NON-NLS-1$
+
 public RegistryCacheReader(Factory factory) {
 	super();
 	cacheFactory = factory;
@@ -123,122 +153,182 @@ private void debug(String msg) {
 	System.out.println("RegistryCacheReader: " + msg); //$NON-NLS-1$
 }
 public static String decipherLabel(byte labelValue) {
-	// This method should use the constants in IModel
-	// e.g. return "<" + IModel.REGISTRY + ">"
+	// Change a byte value from the registry cache into a
+	// human readable string.
+	String retValue = "\""; //$NON-NLS-1$
 	switch (labelValue) {
 		case REGISTRY_LABEL:
-			return "<registry>"; //$NON-NLS-1$
+			retValue += IModel.REGISTRY;
+			break;
 		case REGISTRY_RESOLVED_LABEL:
-			return "<resolved>"; //$NON-NLS-1$
+			retValue += RESOLVED;
+			break;
 		case PLUGIN_LABEL:
-			return "<plugin>"; //$NON-NLS-1$
+			retValue += IModel.PLUGIN;
+			break;
 		case REGISTRY_END_LABEL:
-			return "<endregistry>"; //$NON-NLS-1$
+			retValue += END + IModel.REGISTRY;
+			break;
 		case READONLY_LABEL:
-			return "<readonly>"; //$NON-NLS-1$
+			retValue += READONLY;
+			break;
 		case NAME_LABEL:
-			return "<name>"; //$NON-NLS-1$
+			retValue += IModel.PLUGIN_NAME;
+			break;
 		case ID_LABEL:
-			return "<id>"; //$NON-NLS-1$
+			retValue += IModel.PLUGIN_ID;
+			break;
 		case PLUGIN_PROVIDER_NAME_LABEL:
-			return "<provider>"; //$NON-NLS-1$
+			retValue += IModel.PLUGIN_PROVIDER;
+			break;
 		case VERSION_LABEL:
-			return "<version>"; //$NON-NLS-1$
+			retValue += IModel.PLUGIN_VERSION;
+			break;
 		case PLUGIN_CLASS_LABEL:
-			return "<class>"; //$NON-NLS-1$
+			retValue += IModel.PLUGIN_CLASS;
+			break;
 		case PLUGIN_LOCATION_LABEL:
-			return "<location>"; //$NON-NLS-1$
+			retValue += LOCATION;
+			break;
 		case PLUGIN_ENABLED_LABEL:
-			return "<enabled>"; //$NON-NLS-1$
+			retValue += ENABLED;
+			break;
 		case PLUGIN_REQUIRES_LABEL:
-			return "<requires>"; //$NON-NLS-1$
+			retValue += IModel.PLUGIN_REQUIRES;
+			break;
 		case PLUGIN_LIBRARY_LABEL:
-			return "<library>"; //$NON-NLS-1$
+			retValue += IModel.LIBRARY;
+			break;
 		case PLUGIN_EXTENSION_LABEL:
-			return "<extension>"; //$NON-NLS-1$
+			retValue += IModel.EXTENSION;
+			break;
 		case PLUGIN_EXTENSION_POINT_LABEL:
-			return "<extensionPoint>"; //$NON-NLS-1$
+			retValue += IModel.EXTENSION_POINT;
+			break;
 		case PLUGIN_END_LABEL:
-			return "<endplugin>"; //$NON-NLS-1$
+			retValue += END + IModel.PLUGIN;
+			break;
 		case REQUIRES_MATCH_LABEL:
-			return "<match>"; //$NON-NLS-1$
+			retValue += IModel.PLUGIN_REQUIRES_MATCH;
+			break;
 		case REQUIRES_EXPORT_LABEL:
-			return "<export>"; //$NON-NLS-1$
+			retValue += IModel.PLUGIN_REQUIRES_EXPORT;
+			break;
 		case REQUIRES_RESOLVED_VERSION_LABEL:
-			return "<resolved_version>"; //$NON-NLS-1$
+			retValue += RESOLVED_VERSION;
+			break;
 		case REQUIRES_PLUGIN_NAME_LABEL:
-			return "<requires_plugin_name>"; //$NON-NLS-1$
+			retValue += IModel.PLUGIN_REQUIRES_PLUGIN;
+			break;
 		case REQUIRES_END_LABEL:
-			return "<endrequires>"; //$NON-NLS-1$
+			retValue += END + IModel.PLUGIN_REQUIRES;
+			break;
 		case LIBRARY_EXPORTS_LENGTH_LABEL:
-			return "<exports-length>"; //$NON-NLS-1$
+			retValue += EXPORTS_lENGTH;
+			break;
 		case LIBRARY_EXPORTS_LABEL:
-			return "<exports>"; //$NON-NLS-1$
+			retValue += IModel.LIBRARY_EXPORT;
+			break;
 		case LIBRARY_END_LABEL:
-			return "<endlibrary>"; //$NON-NLS-1$
+			retValue += END + IModel.LIBRARY;
+			break;
 		case EXTENSION_POINT_SCHEMA_LABEL:
-			return "<schema>"; //$NON-NLS-1$
+			retValue += IModel.EXTENSION_POINT_SCHEMA;
+			break;
 		case EXTENSION_POINT_END_LABEL:
-			return "<endextensionPoint>"; //$NON-NLS-1$
+			retValue += END + IModel.EXTENSION_POINT;
+			break;
 		case EXTENSION_EXT_POINT_NAME_LABEL:
-			return "<extension-extPt-name>"; //$NON-NLS-1$
+			retValue += IModel.EXTENSION_TARGET;
+			break;
 		case SUBELEMENTS_LENGTH_LABEL:
-			return "<subElements-length>"; //$NON-NLS-1$
+			retValue += SUBELEMENTS_LENGTH;
+			break;
 		case EXTENSION_END_LABEL:
-			return "<endextension>"; //$NON-NLS-1$
+			retValue += END + IModel.EXTENSION;
+			break;
 		case CONFIGURATION_ELEMENT_LABEL:
-			return "<configuration-element>"; //$NON-NLS-1$
+			retValue += IModel.ELEMENT;
+			break;
 		case VALUE_LABEL:
-			return "<value>"; //$NON-NLS-1$
+			retValue += IModel.ELEMENT_VALUE;
+			break;
 		case PROPERTIES_LENGTH_LABEL:
-			return "<properties-length>"; //$NON-NLS-1$
+			retValue += PROPERTIES_LENGTH;
+			break;
 		case CONFIGURATION_ELEMENT_END_LABEL:
-			return "<endconfiguration-element>"; //$NON-NLS-1$
+			retValue += END + IModel.ELEMENT;
+			break;
 		case CONFIGURATION_PROPERTY_LABEL:
-			return "<configuration-property>"; //$NON-NLS-1$
+			retValue += IModel.PROPERTY;
+			break;
 		case CONFIGURATION_PROPERTY_END_LABEL:
-			return "<endconfiguration-property>"; //$NON-NLS-1$
+			retValue += END + IModel.PROPERTY;
+			break;
 		case PLUGIN_PARENT_LABEL:
-			return "<parentRegistry>"; //$NON-NLS-1$
+			retValue += PARENT_REGISTRY;
+			break;
 		case CONFIGURATION_ELEMENT_PARENT_LABEL:
-			return "<ConfigurationElementParent>"; //$NON-NLS-1$
+			retValue += CONFIGURATION_ELEMENT_PARENT;
+			break;
 		case PLUGIN_INDEX_LABEL:
-			return "<pluginIndex>"; //$NON-NLS-1$
+			retValue += PLUGIN_INDEX;
+			break;
 		case EXTENSION_INDEX_LABEL:
-			return "<extensionIndex>"; //$NON-NLS-1$
+			retValue += EXTENSION_INDEX;
+			break;
 		case EXTENSION_POINT_PARENT_LABEL:
-			return "<ExtensionPointParent>"; //$NON-NLS-1$
+			retValue += EXT_PT_PARENT_INDEX;
+			break;
 		case EXTENSION_POINT_EXTENSIONS_LENGTH_LABEL:
-			return "<extensionPointExtensionsLength>"; //$NON-NLS-1$
+			retValue += EXT_PT_EXTENSION_LENGTH;
+			break;
 		case EXTENSION_POINT_EXTENSIONS_LABEL:
-			return "<extensionPointExtensions>"; //$NON-NLS-1$
+			retValue += EXT_LIST;
+			break;
 		case EXTENSION_PARENT_LABEL:
-			return "<extensionParent>"; //$NON-NLS-1$
+			retValue += EXTENSION_PARENT;
+			break;
 		case CONFIGURATION_ELEMENT_INDEX_LABEL:
-			return "<configElementIndex>"; //$NON-NLS-1$
+			retValue += ELEMENT_INDEX;
+			break;
 		case REGISTRY_INDEX_LABEL:
-			return "<registryIndex>"; //$NON-NLS-1$
+			retValue += REGISTRY_INDEX;
+			break;
 		case FRAGMENT_END_LABEL:
-			return "<fragmentEnd>"; //$NON-NLS-1$
+			retValue += END + IModel.FRAGMENT;
+			break;
 		case FRAGMENT_INDEX_LABEL:
-			return "<fragmentIndex>"; //$NON-NLS-1$
+			retValue += FRAGMENT_INDEX;
+			break;
 		case FRAGMENT_LABEL:
-			return "<fragment>"; //$NON-NLS-1$
+			retValue += IModel.FRAGMENT;
+			break;
 		case FRAGMENT_PLUGIN_LABEL:
-			return "<fragmentPlugin>"; //$NON-NLS-1$
+			retValue += IModel.FRAGMENT_PLUGIN_ID;
+			break;
 		case FRAGMENT_PLUGIN_MATCH_LABEL:
-			return "<fragmentPluginMatch>"; //$NON-NLS-1$
+			retValue += IModel.FRAGMENT_PLUGIN_MATCH;
+			break;
 		case FRAGMENT_PLUGIN_VERSION_LABEL:
-			return "<fragmentPluginVersion>"; //$NON-NLS-1$
+			retValue += IModel.FRAGMENT_PLUGIN_VERSION;
+			break;
 		case REQUIRES_OPTIONAL_LABEL:
-			return "<requiresOptional>"; //$NON-NLS-1$
+			retValue += IModel.PLUGIN_REQUIRES_OPTIONAL;
+			break;
 		case SOURCE_LABEL:
-			return "<source>"; //$NON-NLS-1$
+			retValue += IModel.LIBRARY_SOURCE;
+			break;
 		case TYPE_LABEL:
-			return "<type>"; //$NON-NLS-1$
+			retValue += IModel.LIBRARY_TYPE;
+			break;
+		default:
+			retValue += UNKNOWN;
+			break;
 	}
-
-	return "<unknown label>"; //$NON-NLS-1$
+	
+	retValue += "\""; //$NON-NLS-1$
+	return retValue;
 }
 public boolean interpretHeaderInformation(DataInputStream in) {
 	try {
