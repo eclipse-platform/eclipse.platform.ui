@@ -265,19 +265,6 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		}
 	}
 
-	public void _testOtherRules() {
-		try {
-			for(int i = 0; i < 100; i++) {
-				//testSimpleRuleStarting();
-				System.out.println("Done Simple " + (i+1));
-				//testComplexRuleStarting();
-				System.out.println("Done Complex " + (i+1));
-			}
-		} catch(Throwable t) {
-			t.printStackTrace();
-		}
-	}
-	
 	public void testSimpleRuleStarting() {
 		//start two jobs, each of which will begin and end a rule several times
 		//while one job starts a rule, the second job's call to begin rule should block that thread
