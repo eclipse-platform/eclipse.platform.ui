@@ -189,8 +189,10 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	private int currentProposalMode= -1;
 	
 	/**
-	 * Constructor for AntEditorCompletionProcessor.
-	 */
+	 * The prefix for the current content assist
+     */
+	private String currentPrefix= null;
+	
 	public AntEditorCompletionProcessor(AntModel model) {
 		super();
 		if(dtd == null) {
@@ -223,7 +225,9 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer refViewer, int documentOffset) {
         this.viewer = refViewer;   
         ICompletionProposal[] matchingTemplateProposals = determineTemplateProposals(refViewer, documentOffset);
-        return mergeProposals(determineProposals(), matchingTemplateProposals);
+        ICompletionProposal[] merged= mergeProposals(determineProposals(), matchingTemplateProposals);
+        currentPrefix= null;
+        return merged;
     }
 	
 	private ICompletionProposal[] determineTemplateProposals(ITextViewer refViewer, int documentOffset) {
@@ -998,7 +1002,9 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
      * Determines the current prefix, that should be used for completion.
      */
 	private String getCurrentPrefix() {
-
+		if (currentPrefix != null) {
+        	return currentPrefix;
+        }
 		ITextSelection selection = (ITextSelection)viewer.getSelectionProvider().getSelection();
 		
 		if (selection.getLength() > 0) {
@@ -1019,7 +1025,9 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
      * @param anOffset the cursor position
      */
     protected String getPrefixFromDocument(String aDocumentText, int anOffset) {
-        
+        if (currentPrefix != null) {
+        	return currentPrefix;
+        }
         int startOfWordToken = anOffset;
         
         char token= 'a';
@@ -1041,10 +1049,11 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         }
         
         if (startOfWordToken != anOffset) {
-            return aDocumentText.substring(startOfWordToken, anOffset);
+            currentPrefix= aDocumentText.substring(startOfWordToken, anOffset);
         } else {
-            return ""; //$NON-NLS-1$
+            currentPrefix= ""; //$NON-NLS-1$
         }
+        return currentPrefix;
     }
  
  
