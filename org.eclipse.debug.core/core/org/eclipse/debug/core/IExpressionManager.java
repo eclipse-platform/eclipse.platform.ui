@@ -35,7 +35,7 @@ public interface IExpressionManager {
 	public void addExpression(IExpression expression);
 		
 	/**
-	 * Returns a collection of all registered expressions,
+	 * Returns a collection of all registered expressions, 
 	 * possibly empty.
 	 *
 	 * @return an array of expressions
