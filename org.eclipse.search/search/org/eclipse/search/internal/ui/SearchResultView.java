@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.ui;
@@ -25,12 +25,14 @@ import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.ViewPart;
 
 import org.eclipse.search.ui.IActionGroupFactory;
@@ -48,6 +50,8 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	private Map fResponse;
 	private IMemento fMemento;
 	private IPropertyChangeListener fPropertyChangeListener;
+	private CellEditorActionHandler fCellEditorActionHandler;
+	private SelectAllAction fSelectAllAction;
 
 	/*
 	 * Implements method from IViewPart.
@@ -85,6 +89,12 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 			fViewer.setPageId(search.getPageId());
 		fViewer.setInput(SearchManager.getDefault().getCurrentResults());
 		fillToolBar(getViewSite().getActionBars().getToolBarManager());	
+
+		// Add selectAll action handlers.
+		fCellEditorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
+		fSelectAllAction= new SelectAllAction(fViewer);
+		fCellEditorActionHandler.setSelectAllAction(fSelectAllAction);
+		getViewSite().getSelectionProvider().addSelectionChangedListener(fSelectAllAction);
 		
 		fPropertyChangeListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -120,6 +130,14 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		}
 		if (fPropertyChangeListener != null)
 			SearchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPropertyChangeListener);
+		if (fCellEditorActionHandler != null) {
+			fCellEditorActionHandler.dispose();
+			fCellEditorActionHandler= null;
+		}
+		ISelectionProvider selectionProvider= getViewSite().getSelectionProvider();
+		if (selectionProvider != null && fSelectAllAction != null)
+			selectionProvider.removeSelectionChangedListener(fSelectAllAction);
+
 		super.dispose();
 	}
 	
