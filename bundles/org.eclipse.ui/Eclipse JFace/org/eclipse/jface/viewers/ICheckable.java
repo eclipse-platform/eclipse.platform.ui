@@ -42,8 +42,8 @@ public void removeCheckStateListener(ICheckStateListener listener);
  * @param element the element
  * @param state <code>true</code> if the item should be checked,
  *  and <code>false</code> if it should be unchecked
- * @return <code>true</code> if the element is visible and the checked
- *  state could be set, and <code>false</code> otherwise
+ * @return <code>true</code> if the checked state could be set, 
+ *  and <code>false</code> otherwise
  */
 public boolean setChecked(Object element, boolean state);
 }
