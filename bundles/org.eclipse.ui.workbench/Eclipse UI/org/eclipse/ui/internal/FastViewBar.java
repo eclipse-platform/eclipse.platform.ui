@@ -123,7 +123,7 @@ class FastViewBar implements IWindowTrim {
 				ViewPane pane = (ViewPane)draggedItem;
 				
 				Perspective persp = getPerspective(pane);
-				return Rectangles.toDisplay(pane.getPage().getClientComposite().getParent(), 
+				return Geometry.toDisplay(pane.getPage().getClientComposite().getParent(), 
 						persp.getFastViewBounds(pane.getViewReference()));
 			}
 

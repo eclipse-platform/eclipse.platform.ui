@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tracker;
 
 import org.eclipse.ui.internal.DragCursors;
-import org.eclipse.ui.internal.Rectangles;
+import org.eclipse.ui.internal.Geometry;
 
 /**
  * Provides the methods for attaching drag-and-drop listeners to SWT controls. 
@@ -88,7 +88,7 @@ public class DragUtil {
 			return boundsControl.getBounds();
 		}
 		
-		return Rectangles.toDisplay(parent, boundsControl.getBounds());
+		return Geometry.toDisplay(parent, boundsControl.getBounds());
 	}
 	
     public static boolean performDrag(final Object draggedItem, Rectangle sourceBounds) {

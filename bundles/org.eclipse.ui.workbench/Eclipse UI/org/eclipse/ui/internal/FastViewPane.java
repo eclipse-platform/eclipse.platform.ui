@@ -82,7 +82,7 @@ class FastViewPane {
 			int deltay = 0;
 			int deltax = 0;
 
-			if (Rectangles.isHorizontal(side)) {
+			if (Geometry.isHorizontal(side)) {
  				deltax = d.width;
 			} else {
 				deltay = d.height;
@@ -105,11 +105,11 @@ class FastViewPane {
 				ViewPane pane = currentPane;
 				Rectangle bounds = pane.getBounds();
 				Point location = new Point(e.x, e.y);
-				int distanceFromEdge = Rectangles.getDistanceFromEdge(bounds, location, side);
+				int distanceFromEdge = Geometry.getDistanceFromEdge(bounds, location, side);
 				if (distanceFromEdge < MIN_FASTVIEW_SIZE) {
 					distanceFromEdge = MIN_FASTVIEW_SIZE;
 				}
-				Rectangle newBounds = Rectangles.getExtrudedEdge(bounds, distanceFromEdge, side);
+				Rectangle newBounds = Geometry.getExtrudedEdge(bounds, distanceFromEdge, side);
 				
 				pane.setBounds(newBounds);
 				pane.moveAbove(null); 
@@ -129,11 +129,11 @@ class FastViewPane {
 			return 0.0f;
 		}
 		
-		boolean isVertical = !Rectangles.isHorizontal(side);
+		boolean isVertical = !Geometry.isHorizontal(side);
 		Rectangle clientArea = clientComposite.getClientArea();
 
-		int clientSize = Rectangles.getDimension(clientArea, isVertical);
-		int currentSize = Rectangles.getDimension(currentPane.getBounds(), isVertical);
+		int clientSize = Geometry.getDimension(clientArea, isVertical);
+		int currentSize = Geometry.getDimension(currentPane.getBounds(), isVertical);
 		
 		return (float)currentSize / (float)clientSize;
 	}
@@ -172,11 +172,11 @@ class FastViewPane {
 		}
 		
 		// Set initial bounds
-		boolean isVertical = !Rectangles.isHorizontal(side);
+		boolean isVertical = !Geometry.isHorizontal(side);
 		Rectangle clientArea = clientComposite.getClientArea();
 
-		int defaultSize = (int) (Rectangles.getDimension(clientArea, isVertical) * sizeRatio);
-		Rectangle newBounds = Rectangles.getExtrudedEdge(clientArea, defaultSize, side);
+		int defaultSize = (int) (Geometry.getDimension(clientArea, isVertical) * sizeRatio);
+		Rectangle newBounds = Geometry.getExtrudedEdge(clientArea, defaultSize, side);
 		ctrl.setBounds(newBounds);
 		
 		// Show pane fast.
@@ -189,7 +189,7 @@ class FastViewPane {
 		pane.moveAbove(null);
 		pane.setFocus();
 		
-		fastViewSash = new Sash(parent, Rectangles.getSwtHorizontalOrVerticalConstant(Rectangles.isHorizontal(side)));
+		fastViewSash = new Sash(parent, Geometry.getSwtHorizontalOrVerticalConstant(Geometry.isHorizontal(side)));
 		fastViewSash.addPaintListener(paintListener);
 		fastViewSash.addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
@@ -211,8 +211,8 @@ class FastViewPane {
 	 * @param bounds
 	 */
 	private void updateFastViewSashBounds(Rectangle bounds) {
-		int oppositeSide = Rectangles.getOppositeSide(side);
-		Rectangle newBounds = Rectangles.getExtrudedEdge(bounds, -SASH_SIZE, oppositeSide);
+		int oppositeSide = Geometry.getOppositeSide(side);
+		Rectangle newBounds = Geometry.getExtrudedEdge(bounds, -SASH_SIZE, oppositeSide);
 		
 		fastViewSash.setBounds(newBounds);
 		fastViewSash.moveAbove(null);
@@ -242,12 +242,12 @@ class FastViewPane {
 	private Rectangle getFastViewBounds() {
 		Rectangle clientArea = clientComposite.getClientArea();
 
-		boolean isVertical = !Rectangles.isHorizontal(side);
-		int clientSize = Rectangles.getDimension(clientArea, isVertical);
-		int viewSize = Math.min(Rectangles.getDimension(currentPane.getControl().getBounds(), isVertical),
+		boolean isVertical = !Geometry.isHorizontal(side);
+		int clientSize = Geometry.getDimension(clientArea, isVertical);
+		int viewSize = Math.min(Geometry.getDimension(currentPane.getControl().getBounds(), isVertical),
 				clientSize - MIN_FASTVIEW_SIZE);
 		
-		return Rectangles.getExtrudedEdge(clientArea, viewSize, side);
+		return Geometry.getExtrudedEdge(clientArea, viewSize, side);
 	}
 	
 	/**

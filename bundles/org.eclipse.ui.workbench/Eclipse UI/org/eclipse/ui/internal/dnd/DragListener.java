@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.dnd;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -36,14 +37,6 @@ import org.eclipse.swt.widgets.Widget;
 	
 	private Listener dragListener = new Listener() {
 		public void handleEvent(Event event) {
-			anchor = event.display.getCursorLocation();
-			dragControl = event.widget;
-			dragSource = (IDragSource)dragControl.getData(SOURCE_ID);
-						
-			draggedItem = null;
-			if (dragSource != null) {
-				draggedItem = dragSource.getDraggedItem(anchor);
-			}
 			isDragAllowed = (draggedItem != null);
 		}
 	};
@@ -60,6 +53,19 @@ import org.eclipse.swt.widgets.Widget;
 		}
 	};
 
+	private Listener mouseDownListener = new Listener() {
+		public void handleEvent(Event event) {
+			anchor = event.display.getCursorLocation();
+			dragControl = event.widget;
+			dragSource = (IDragSource)dragControl.getData(SOURCE_ID);
+			
+			draggedItem = null;
+			if (dragSource != null) {
+				draggedItem = dragSource.getDraggedItem(anchor);
+			}			
+		}
+	};
+	
 	// Public interface /////////////////////////////////////
 	
 	public DragListener() {
@@ -71,6 +77,7 @@ import org.eclipse.swt.widgets.Widget;
 		control.addListener(SWT.MouseMove, moveListener);
 		control.addListener(SWT.MouseUp, clickListener);
 		control.addListener(SWT.MouseDoubleClick, clickListener);
+		control.addListener(SWT.MouseDown, mouseDownListener);
 		control.setData(SOURCE_ID, source);
 	}
 	
@@ -79,6 +86,7 @@ import org.eclipse.swt.widgets.Widget;
 		control.removeListener(SWT.MouseMove, moveListener);
 		control.removeListener(SWT.MouseUp, clickListener);
 		control.removeListener(SWT.MouseDoubleClick, clickListener);
+		control.removeListener(SWT.MouseDown, mouseDownListener);
 		control.setData(SOURCE_ID, null);
 	}
 	
@@ -123,7 +131,15 @@ import org.eclipse.swt.widgets.Widget;
 		sourceBounds.x += location.x - anchor.x;
 		sourceBounds.y += location.y - anchor.y;
 		
+		if (dragControl instanceof Control) {
+			((Control)dragControl).setCapture(true);
+		}
+		
 		IDropTarget target = DragUtil.dragToTarget(draggedItem, sourceBounds);
+
+		if (dragControl instanceof Control) {
+			((Control)dragControl).setCapture(false);
+		}
 		
 		dragSource.dragFinished(draggedItem, target != null);
 		
