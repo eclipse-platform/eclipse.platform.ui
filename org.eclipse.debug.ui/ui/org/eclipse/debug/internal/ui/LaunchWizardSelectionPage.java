@@ -5,6 +5,8 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -28,6 +30,7 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 	
 	private static final String PREFIX= "launch_wizard_page.";
 	private static final String LAUNCHER= PREFIX + "launcher";
+	private static final String UNKNOWN= PREFIX + "unknown";
 	private static final String DEFAULT_LAUNCHER= PREFIX + "default_launcher";
 	private static final String SELECT_ERROR_LAUNCHER= PREFIX + "select_error_launcher";
 	/**
@@ -140,9 +143,15 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 			}
 		});
 		fLaunchersList.setInput(fLaunchersList);
-
 		fSetAsDefaultLauncher= new Button(root, SWT.CHECK);
-		fSetAsDefaultLauncher.setText(DebugUIUtils.getResourceString(DEFAULT_LAUNCHER));
+		IProject project= ((LaunchWizard)getWizard()).getProject();
+		String projectName= "";
+		if (project != null) {
+			projectName= project.getName();
+		} else {
+			projectName= DebugUIUtils.getResourceString(UNKNOWN);
+		}
+		fSetAsDefaultLauncher.setText(MessageFormat.format(DebugUIUtils.getResourceString(DEFAULT_LAUNCHER), new String[] {projectName}));
 	}
 
 	/**
