@@ -701,8 +701,10 @@ public class Feature extends FeatureModel implements IFeature {
 		VersionedIdentifier[] identifiers =
 			getFeatureIncludeVersionedIdentifier();
 		ISite site = getSite();
-		IFeatureReference[] refs =
-			(site == null) ? null : site.getFeatureReferences();
+		if (site == null)
+			return; // [20367] no site, cannot initialize nested references
+			
+		IFeatureReference[] refs = site.getFeatureReferences();
 
 		for (int i = 0; i < identifiers.length; i++) {
 			VersionedIdentifier identifier = identifiers[i];
