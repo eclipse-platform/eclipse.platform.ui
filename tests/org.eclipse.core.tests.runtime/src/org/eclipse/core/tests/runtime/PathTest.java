@@ -199,6 +199,7 @@ public class PathTest extends RuntimeTest {
 		assertEquals("3.0", "/a/b", new Path("/a/b/c/..").toString());
 		assertEquals("3.1", "/", new Path("/a/./b/../..").toString());
 		assertEquals("3.2", "../", new Path("../").toString());
+		// test bug 46043 - IPath collapseParentReferences
 		//	assertEquals("3.3", "../", new Path("./../").toString());
 		//	assertEquals("3.4", "../", new Path(".././").toString());
 		//	assertEquals("3.5", "..", new Path("./..").toString());
