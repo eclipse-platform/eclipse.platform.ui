@@ -31,13 +31,10 @@ public MessagePage() {
 public void createControl(Composite parent) {
 	// Message in default page of Outline should have margins
 	pgComp = new Composite(parent, SWT.NULL);
-	pgComp.setLayout(new GridLayout());
+	pgComp.setLayout(new FillLayout());
 	
-	msgLabel = new Label(pgComp, SWT.LEFT | SWT.WRAP);
+	msgLabel = new Label(pgComp, SWT.LEFT | SWT.TOP | SWT.WRAP);
 	msgLabel.setText(message);
-	
-	GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-	msgLabel.setLayoutData(gridData);
 }
 /* (non-Javadoc)
  * Method declared on IPage.
