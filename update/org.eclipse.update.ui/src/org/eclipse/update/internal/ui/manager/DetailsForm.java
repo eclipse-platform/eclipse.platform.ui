@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.graphics.*;
+
 import java.net.URL;
 import org.eclipse.update.core.*;
 import org.eclipse.update.ui.internal.model.*;
@@ -19,11 +20,42 @@ import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
 import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.jface.wizard.*;
+
+import java.text.MessageFormat;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 public class DetailsForm extends PropertyWebForm {
+// NL keys
+private static final String KEY_PROVIDER = "FeaturePage.provider";
+private static final String KEY_VERSION = "FeaturePage.version";
+private static final String KEY_IVERSION = "FeaturePage.installedVersion";
+private static final String KEY_SIZE = "FeaturePage.size";
+private static final String KEY_OS = "FeaturePage.os";
+private static final String KEY_WS = "FeaturePage.ws";
+private static final String KEY_NL = "FeaturePage.nl";
+private static final String KEY_PLATFORMS = "FeaturePage.platforms";
+private static final String KEY_DESC = "FeaturePage.description";
+private static final String KEY_INFO_LINK = "FeaturePage.infoLink";
+private static final String KEY_LICENSE_LINK = "FeaturePage.licenseLink";
+private static final String KEY_COPYRIGHT_LINK = "FeaturePage.copyrightLink";
+private static final String KEY_NOT_INSTALLED = "FeaturePage.notInstalled";
+private static final String KEY_SIZE_VALUE = "FeaturePage.sizeValue";
+private static final String KEY_DO_UNINSTALL="FeaturePage.doButton.uninstall";
+private static final String KEY_DO_UPDATE="FeaturePage.doButton.update";
+private static final String KEY_DO_INSTALL="FeaturePage.doButton.install";
+private static final String KEY_OS_WIN32="FeaturePage.os.win32";
+private static final String KEY_OS_LINUX="FeaturePage.os.linux";
+private static final String KEY_WS_WIN32="FeaturePage.ws.win32";
+private static final String KEY_WS_MOTIF="FeaturePage.ws.motif";
+private static final String KEY_WS_GTK="FeaturePage.ws.gtk";
+private static final String KEY_DIALOG_UTITLE="FeaturePage.dialog.utitle";
+private static final String KEY_DIALOG_TITLE="FeaturePage.dialog.title";
+private static final String KEY_DIALOG_UMESSAGE="FeaturePage.dialog.umessage";
+private static final String KEY_DIALOG_MESSAGE="FeaturePage.dialog.message";
+//	
+	
 private Label imageLabel;
 private Label providerLabel;
 private Label versionLabel;
@@ -163,7 +195,7 @@ public void dispose() {
 }
 	
 public void initialize(Object modelObject) {
-	setHeadingText("Feature Details");
+	setHeadingText("");
 	setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
 	setHeadingUnderlineImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
 	super.initialize(modelObject);
@@ -190,31 +222,23 @@ public void createContents(Composite container) {
 	glayout.marginWidth = glayout.marginHeight = 0;
 	glayout.verticalSpacing = 0;
 
-	providerLabel = createProperty(properties, "Provider");
-	versionLabel = createProperty(properties,"\nVersion" );
-	installedVersionLabel = createProperty(properties, "\nInstalled Version");
-	sizeLabel = createProperty(properties, "\nDownload Size");
+	providerLabel = createProperty(properties, UpdateUIPlugin.getResourceString(KEY_PROVIDER));
+	versionLabel = createProperty(properties,UpdateUIPlugin.getResourceString(KEY_VERSION));
+	installedVersionLabel = createProperty(properties, UpdateUIPlugin.getResourceString(KEY_IVERSION));
+	sizeLabel = createProperty(properties, UpdateUIPlugin.getResourceString(KEY_SIZE));
 	supportedPlatformsGroup = new ReflowGroup () {
 		public void fillExpansion(Composite expansion, FormWidgetFactory factory) {
 			GridLayout layout = new GridLayout();
   			expansion.setLayout(layout);
    			layout.marginWidth = 0;
-		   	osLabel = createProperty(expansion, "Operating System");
-			wsLabel = createProperty(expansion, "\nWindowing System");
-			nlLabel = createProperty(expansion, "\nSupported Languages");
-			
+		   	osLabel = createProperty(expansion, UpdateUIPlugin.getResourceString(KEY_OS));
+			wsLabel = createProperty(expansion, UpdateUIPlugin.getResourceString(KEY_WS));
+			nlLabel = createProperty(expansion, UpdateUIPlugin.getResourceString(KEY_NL));
 		}
 	};
-	supportedPlatformsGroup.setText("Supported Platforms");
+	supportedPlatformsGroup.setText(UpdateUIPlugin.getResourceString(KEY_PLATFORMS));
 	new Label(properties, SWT.NULL);
 	supportedPlatformsGroup.createControl(properties, factory);
-	/*
-	Composite sep = factory.createCompositeSeparator(properties);
-	sep.setBackground(factory.getBorderColor());
-	gd = new GridData(GridData.FILL_HORIZONTAL);
-	gd.heightHint = 1;
-	sep.setLayoutData(gd);
-	*/
 	
 	imageLabel = factory.createLabel(container, null);
 	TableData td = new TableData();
@@ -222,7 +246,7 @@ public void createContents(Composite container) {
 	//td.valign = TableData.MIDDLE;
 	imageLabel.setLayoutData(td);
 	
-	Label label = createHeading(container, "\nDescription");
+	Label label = createHeading(container, UpdateUIPlugin.getResourceString(KEY_DESC));
 	td = new TableData();
 	td.colspan = 2;
 	label.setLayoutData(td);
@@ -257,17 +281,17 @@ public void createContents(Composite container) {
 		public URL getURL() { return infoLinkURL; }
 	};
    	infoLinkLabel = new SelectableFormLabel(footer, SWT.NULL);
-   	infoLinkLabel.setText("More Info");
+   	infoLinkLabel.setText(UpdateUIPlugin.getResourceString(KEY_INFO_LINK));
    	factory.turnIntoHyperlink(infoLinkLabel, listener);
    	gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
    	infoLinkLabel.setLayoutData(gd);
    	licenseGroup = new ReflowInfoGroup((DetailsView)getPage().getView());
-   	licenseGroup.setText("License");
+   	licenseGroup.setText(UpdateUIPlugin.getResourceString(KEY_LICENSE_LINK));
    	licenseGroup.createControl(footer, factory);
     gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
    	licenseGroup.getControl().setLayoutData(gd);
    	copyrightGroup = new ReflowInfoGroup((DetailsView)getPage().getView());
-   	copyrightGroup.setText("Copyright");
+   	copyrightGroup.setText(UpdateUIPlugin.getResourceString(KEY_COPYRIGHT_LINK));
    	copyrightGroup.createControl(footer, factory);
    	gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
    	copyrightGroup.getControl().setLayoutData(gd);
@@ -350,11 +374,15 @@ private void inputChanged(IFeature feature) {
 	versionLabel.setText(feature.getIdentifier().getVersion().toString());
 	String installedVersion = getInstalledVersion(feature);
 	if (installedVersion==null)
-	   installedVersion = "Not installed";
+	   installedVersion = UpdateUIPlugin.getResourceString(KEY_NOT_INSTALLED);
 	else
 	   newerVersion = true;
 	installedVersionLabel.setText(installedVersion);
-	sizeLabel.setText("0KB");
+	int size = 0;
+	String stext = Integer.toString(size);
+	String pattern = UpdateUIPlugin.getResourceString(KEY_SIZE_VALUE);
+	String format = UpdateUIPlugin.getFormattedMessage(pattern, stext);
+	sizeLabel.setText(format);
 	descriptionText.setText(feature.getDescription().getText());
 	Image logoImage = loadProviderImage(feature);
 	if (logoImage==null)
@@ -382,13 +410,13 @@ private void inputChanged(IFeature feature) {
 
 private void updateButtonText(IFeature feature, boolean update) {
 	if (alreadyInstalled) {
-		doButton.setText("&Uninstall");
+		doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_UNINSTALL));
 	}
 	else if (update) {
-		doButton.setText("&Update");
+		doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_UPDATE));
 	}
 	else
-	  	doButton.setText("&Install");
+	  	doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_INSTALL));
 }
 
 private void restoreSettings(IFeature feature) {
@@ -448,19 +476,19 @@ private void setOS(String os) {
 
 private String mapOS(String key) {
 	if (key.equals("OS_WIN32"))
-	   return "Windows";
+	   return UpdateUIPlugin.getResourceString(KEY_OS_WIN32);
 	if (key.equals("OS_LINUX"))
-	   return "Linux";
+	   return UpdateUIPlugin.getResourceString(KEY_OS_LINUX);
 	return key;
 }
 
 private String mapWS(String key) {
 	if (key.equals("WS_WIN32"))
-	   return "Windows";
+	   return UpdateUIPlugin.getResourceString(KEY_WS_WIN32);
 	if (key.equals("WS_MOTIF"))
-	   return "Motif";
+	   return UpdateUIPlugin.getResourceString(KEY_WS_MOTIF);
 	if (key.equals("WS_GTK"))
-	   return "GTK";
+	   return UpdateUIPlugin.getResourceString(KEY_WS_GTK);
 	return key;
 }
 
@@ -542,10 +570,12 @@ private void doButtonSelected() {
 				dialog.getShell().setSize(500, 500);
 				dialog.open();
 				if (wizard.isSuccessfulInstall()) {
-					String title = alreadyInstalled?"Uninstall":"Install";
+					String title = alreadyInstalled?
+					UpdateUIPlugin.getResourceString(KEY_DIALOG_UTITLE):
+					UpdateUIPlugin.getResourceString(KEY_DIALOG_TITLE);
 					String message=alreadyInstalled?
-					"The feature has been successfully uninstalled. You will need to restart the workbench to see the effects of the action.":
-					"The feature has been successfully installed. You will need to restart the workbench to be able to use it.";
+					UpdateUIPlugin.getResourceString(KEY_DIALOG_UMESSAGE):
+					UpdateUIPlugin.getResourceString(KEY_DIALOG_MESSAGE);
 					MessageDialog.openInformation(UpdateUIPlugin.getActiveWorkbenchShell(),
 							title,
 							message);

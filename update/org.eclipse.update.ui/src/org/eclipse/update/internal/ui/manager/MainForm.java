@@ -13,6 +13,16 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.jface.resource.JFaceResources;
 
 public class MainForm extends UpdateWebForm {
+private static final String KEY_TITLE = "HomePage.title";
+private static final String KEY_UPDATES_TITLE = "HomePage.updates.title";
+private static final String KEY_UPDATES_DESC = "HomePage.updates.desc";
+private static final String KEY_INSTALLS_TITLE = "HomePage.installs.title";
+private static final String KEY_INSTALLS_DESC = "HomePage.installs.desc";
+private static final String KEY_UNINSTALLS_TITLE = "HomePage.uninstalls.title";
+private static final String KEY_UNINSTALLS_DESC = "HomePage.uninstals.desc";
+private static final String KEY_HISTORY_TITLE = "HomePage.history.title";
+private static final String KEY_HISTORY_DESC = "HomePage.history.desc";
+
 	Image itemImage;
 	
 public MainForm(UpdateFormPage page) {
@@ -26,7 +36,7 @@ public void dispose() {
 }
 
 public void initialize(Object modelObject) {
-	setHeadingText("Welcome to Eclipse Update");
+	setHeadingText(UpdateUIPlugin.getResourceString(KEY_TITLE));
 	setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
 	setHeadingUnderlineImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
 	super.initialize(modelObject);
@@ -62,15 +72,12 @@ protected void createContents(Composite parent) {
 	topic.setImage(itemImage);
 	link = new SelectableFormLabel(parent, SWT.NULL);
 	link.setFont(JFaceResources.getBannerFont());
-	link.setText("Feature Updates");
+	link.setText(UpdateUIPlugin.getResourceString(KEY_UPDATES_TITLE));
 	factory.turnIntoHyperlink(link, listener);
 
 	factory.createLabel(parent, null);	
 	text = factory.createLabel(parent, null, SWT.WRAP);	
-	text.setText(
-	"To check for updates for features you have installed, "+
-	"go to the \"My Eclipse\" view and expand \"Available Updates\" folder. "+
-	"You can drag new updates into the Checklist folder.\n");
+	text.setText(UpdateUIPlugin.getResourceString(KEY_UPDATES_DESC));
 	TableData td = new TableData();
 	//td.colspan = 2;
 	text.setLayoutData(td);
@@ -84,16 +91,12 @@ protected void createContents(Composite parent) {
 	topic.setImage(itemImage);
 	link = new SelectableFormLabel(parent, SWT.NULL);
 	link.setFont(JFaceResources.getBannerFont());
-	link.setText("New Feature Installs");
+	link.setText(UpdateUIPlugin.getResourceString(KEY_INSTALLS_TITLE));
 	factory.turnIntoHyperlink(link, listener);
 
 	factory.createLabel(parent, null);	
 	text = factory.createLabel(parent, null, SWT.WRAP);
-	text.setText(
-	"To install new features, open \"Update Sites\" view and expand"+
-	"the desired site (this operation may take time). Select features and "+
-	"read about them in the \"Details\" view. If you want to install a feature, "+
-	"just drag it into the \"Checklist\" view.\n");
+	text.setText(UpdateUIPlugin.getResourceString(KEY_INSTALLS_DESC));
 	td = new TableData();
 	//td.colspan = 2;
 	text.setLayoutData(td);
@@ -107,14 +110,12 @@ protected void createContents(Composite parent) {
 	topic.setImage(itemImage);
 	link = new SelectableFormLabel(parent, SWT.NULL);
 	link.setFont(JFaceResources.getBannerFont());
-	link.setText("Uninstalling Features");
+	link.setText(UpdateUIPlugin.getResourceString(KEY_UNINSTALLS_TITLE));
 	factory.turnIntoHyperlink(link, listener);
 
 	factory.createLabel(parent, null);		
 	text = factory.createLabel(parent, null, SWT.WRAP);
-	text.setText("To uninstall a feature, open \"My Eclipse\" view, "+
-	"expand \"Installed Features\" folder, select the desired feature and drag it "+
-	"into the \"Checklist\" folder.\n");
+	text.setText(UpdateUIPlugin.getResourceString(KEY_UNINSTALLS_DESC));
 	td = new TableData();
 	//td.colspan = 2;
 	text.setLayoutData(td);
@@ -128,12 +129,11 @@ protected void createContents(Composite parent) {
 	topic.setImage(itemImage);
 	link = new SelectableFormLabel(parent, SWT.NULL);
 	link.setFont(JFaceResources.getBannerFont());
-	link.setText("Installation History");
+	link.setText(UpdateUIPlugin.getResourceString(KEY_HISTORY_TITLE));
 	factory.turnIntoHyperlink(link, listener);
 	factory.createLabel(parent, null);	
 	text = factory.createLabel(parent, null, SWT.WRAP);
-	text.setText("You can review your installation history or revert to one of the previous stable states."+
-	" To do so, open \"Update History\" view.\n");
+	text.setText(UpdateUIPlugin.getResourceString(KEY_HISTORY_DESC));
 	td = new TableData();
 	//td.colspan = 2;
 	text.setLayoutData(td);

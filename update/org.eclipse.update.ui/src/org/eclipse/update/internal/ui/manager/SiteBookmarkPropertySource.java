@@ -8,8 +8,14 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import java.util.*;
 import org.eclipse.update.ui.internal.model.*;
 import java.net.*;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
 public class SiteBookmarkPropertySource implements IPropertySource {
+private static final String KEY_URL_LABEL = "SiteBookmarkPropertySource.url.label";
+private static final String KEY_URL_DESC = "SiteBookmarkPropertySource.url.desc";
+private static final String KEY_NAME_LABEL = "SiteBookmarkPropertySource.name.label";
+private static final String KEY_NAME_DESC = "SiteBookmarkPropertySource.name.desc";
+ 
 	private SiteBookmark bookmark;
 	private Vector descriptors;
 	/**
@@ -30,11 +36,11 @@ public class SiteBookmarkPropertySource implements IPropertySource {
 		if (descriptors==null) {
 			descriptors = new Vector();
 			PropertyDescriptor desc;
-			desc = new TextPropertyDescriptor(SiteBookmark.P_URL, "Site URL");
-			desc.setDescription("a URL of the update site");
+			desc = new TextPropertyDescriptor(SiteBookmark.P_URL, UpdateUIPlugin.getResourceString(KEY_URL_LABEL));
+			desc.setDescription(UpdateUIPlugin.getResourceString(KEY_URL_DESC));
 			descriptors.add(desc);
-			desc = new TextPropertyDescriptor(SiteBookmark.P_NAME, "Site name");
-			desc.setDescription("a display name of the update site");
+			desc = new TextPropertyDescriptor(SiteBookmark.P_NAME, UpdateUIPlugin.getResourceString(KEY_NAME_LABEL));
+			desc.setDescription(UpdateUIPlugin.getResourceString(KEY_NAME_DESC));
 			descriptors.add(desc);
 		}
 		return (IPropertyDescriptor[])

@@ -19,6 +19,11 @@ import org.eclipse.core.runtime.CoreException;
 import java.util.Date;
 
 public class SnapshotForm extends PropertyWebForm {
+	private static final String KEY_CREATED_ON = "SnapshotPage.createdOn";
+	private static final String KEY_CURRENT_CONFIG = "SnapshotPage.currentConfig";
+	private static final String KEY_YES = "SnapshotPage.yes";
+	private static final String KEY_NO = "SnapshotPage.no";
+	
 	private IInstallConfiguration currentConfiguration;
 	private Label dateLabel;
 	private Label currentLabel;
@@ -34,7 +39,7 @@ public void dispose() {
 }
 
 public void initialize(Object modelObject) {
-	setHeadingText("Snapshot Page");
+	setHeadingText("");
 	setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
 	setHeadingUnderlineImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
 	super.initialize(modelObject);
@@ -51,8 +56,8 @@ protected void createContents(Composite parent) {
 	
 	FormWidgetFactory factory = getFactory();
 	
-	dateLabel = createProperty(parent, "Created On");
-	currentLabel = createProperty(parent, "\nCurrent Configuration");
+	dateLabel = createProperty(parent, UpdateUIPlugin.getResourceString(KEY_CREATED_ON));
+	currentLabel = createProperty(parent, UpdateUIPlugin.getResourceString(KEY_CURRENT_CONFIG));
 	factory.createLabel(parent,null);
 	
 	activitySection = new ActivitySection((UpdateFormPage)getPage());
@@ -92,7 +97,9 @@ private void inputChanged(IInstallConfiguration configuration) {
 	setHeadingText(configuration.getLabel());
 	Date date = configuration.getCreationDate();
 	dateLabel.setText(date.toString());
-	String isCurrent = configuration.isCurrent()?"Yes": "No";
+	String isCurrent = configuration.isCurrent()?
+		UpdateUIPlugin.getResourceString(KEY_YES): 
+		UpdateUIPlugin.getResourceString(KEY_NO);
 	currentLabel.setText(isCurrent);
 
 	activitySection.configurationChanged(configuration);

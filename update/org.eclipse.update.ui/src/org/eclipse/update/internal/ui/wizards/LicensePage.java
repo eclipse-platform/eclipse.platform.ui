@@ -13,16 +13,22 @@ import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.events.*;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
 public class LicensePage extends WizardPage {
+private static final String KEY_TITLE = "InstallWizard.LicensePage.title";
+private static final String KEY_DESC = "InstallWizard.LicensePage.desc";
+private static final String KEY_ACCEPT = "InstallWizard.LicensePage.accept";
+private static final String KEY_DECLINE = "InstallWizard.LicensePage.decline";
+
 	private ChecklistJob job;
 	/**
 	 * Constructor for ReviewPage
 	 */
 	public LicensePage(ChecklistJob job) {
 		super("License");
-		setTitle("Feature License");
-		setDescription("This feature has a license agreement that you need to accept before proceeding with the installation.");
+		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
+		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
 		this.job = job;
 		setPageComplete(false);
 	}
@@ -48,7 +54,7 @@ public class LicensePage extends WizardPage {
 		buttonContainer.setLayoutData(gd);
 		
 		final Button button1 = new Button(buttonContainer, SWT.PUSH);
-		button1.setText("&Accept");
+		button1.setText(UpdateUIPlugin.getResourceString(KEY_ACCEPT));
 		button1.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				button1.setEnabled(false);
@@ -56,7 +62,7 @@ public class LicensePage extends WizardPage {
 			}
 		});
 		final Button button2 = new Button(buttonContainer, SWT.PUSH);
-		button2.setText("&Decline");
+		button2.setText(UpdateUIPlugin.getResourceString(KEY_DECLINE));
 		button2.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				InstallWizardDialog dialog = (InstallWizardDialog)getWizard().getContainer();

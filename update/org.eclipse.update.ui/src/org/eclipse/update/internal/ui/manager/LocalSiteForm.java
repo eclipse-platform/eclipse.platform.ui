@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.internal.*;
 
 public class LocalSiteForm extends UpdateWebForm {
+private static final String KEY_TITLE = "LocalSitePage.title";
+
 	private Label url;
 	private SiteBookmark currentBookmark;
 	private	PlatformInfo 	platformInfo;	//the platform info
@@ -40,7 +42,7 @@ public void dispose() {
 }
 
 public void initialize(Object modelObject) {
-	setHeadingText("Current Configuration");
+	setHeadingText(UpdateUIPlugin.getResourceString(KEY_TITLE));
 	setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
 	setHeadingUnderlineImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
 	super.initialize(modelObject);

@@ -16,9 +16,13 @@ import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
+import java.text.MessageFormat;
 
 public class CDROMForm extends UpdateWebForm {
 	private SiteBookmark currentBookmark;
+	private static final String KEY_TITLE = "CDROMPage.title";
+	private static final String KEY_NTITLE = "CDROMPage.ntitle";
+	private static final String KEY_DESC = "CDROMPage.desc";
 	
 public CDROMForm(UpdateFormPage page) {
 	super(page);
@@ -29,7 +33,7 @@ public void dispose() {
 }
 
 public void initialize(Object modelObject) {
-	setHeadingText("Compact Disc");
+	setHeadingText(UpdateUIPlugin.getResourceString(KEY_NTITLE));
 	setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
 	setHeadingUnderlineImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
 	super.initialize(modelObject);
@@ -48,7 +52,7 @@ protected void createContents(Composite parent) {
 	FormWidgetFactory factory = getFactory();
 	
 	Label text = factory.createLabel(parent, null, SWT.WRAP);
-	text.setText("Insert the Compact Disc with an Eclipse-based product, expand the Compact Disc object and browse the available features.");
+	text.setText(UpdateUIPlugin.getResourceString(KEY_DESC));
 }
 
 public void expandTo(Object obj) {
@@ -59,10 +63,12 @@ public void expandTo(Object obj) {
 
 private void inputChanged(CDROM cdrom) {
 	if (cdrom.isAvailable()) {
-		setHeadingText("Compact Disc - "+cdrom.getName());
+		String pattern = UpdateUIPlugin.getResourceString(KEY_TITLE);
+		String message = MessageFormat.format(pattern, new Object[] {cdrom.getName()});
+		setHeadingText(message);
 	}
 	else {
-		setHeadingText("Compact Disc (not available)");
+		setHeadingText(UpdateUIPlugin.getResourceString(KEY_NTITLE));
 	}
 }
 

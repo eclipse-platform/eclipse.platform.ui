@@ -25,6 +25,15 @@ import org.eclipse.jface.action.IStatusLineManager;
 import java.util.Date;
 
 public class UpdatesForm extends UpdateWebForm {
+private static final String KEY_TITLE = "UpdatesPage.title";
+private static final String KEY_LAST_SEARCH = "UpdatesPage.lastSearch";
+private static final String KEY_NO_LAST_SEARCH = "UpdatesPage.noLastSearch";
+private static final String KEY_SEARCH_NOW = "UpdatesPage.searchNow";
+private static final String KEY_CANCEL = "UpdatesPage.cancel";
+private static final String KEY_DESC = "UpdatesPage.desc";
+private static final String KEY_OPTIONS = "UpdatesPage.options.label";
+private static final String KEY_CDROM_CHECK = "UpdatesPage.options.cdromCheck";
+
 	private Label descLabel;
 	private Label infoLabel;
 	private ExpandableGroup optionsGroup;
@@ -46,7 +55,9 @@ class SearchMonitor extends ProgressMonitorPart {
 		super.done();
 		updateButtonText();
 		Date date = new Date();
-		infoLabel.setText("Last search: "+date.toString());
+		String pattern = UpdateUIPlugin.getResourceString(KEY_LAST_SEARCH);
+		String text = UpdateUIPlugin.getFormattedMessage(pattern, date.toString());
+		infoLabel.setText(text);
 		infoLabel.getParent().layout(true);
 		enableOptions(true);
 	}
@@ -66,7 +77,7 @@ public void dispose() {
 }
 
 public void initialize(Object modelObject) {
-	setHeadingText("Available Updates");
+	setHeadingText(UpdateUIPlugin.getResourceString(KEY_TITLE));
 	setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
 	setHeadingUnderlineImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
 	super.initialize(modelObject);
@@ -85,8 +96,7 @@ protected void createContents(Composite parent) {
 	FormWidgetFactory factory = getFactory();
 	
 	descLabel = factory.createLabel(parent, null, SWT.WRAP);
-	descLabel.setText("Search for updates to the features you have previously installed. If needed, modify the search options."+
-	"If a search has already been performed during this session, you can browse the result by expanding the object.");
+	descLabel.setText(UpdateUIPlugin.getResourceString(KEY_DESC));
 	TableData td = new TableData();
 	td.colspan = 2;
 	descLabel.setLayoutData(td);
@@ -97,7 +107,7 @@ protected void createContents(Composite parent) {
 			expansion.setLayout(layout);
 			
 			cdromCheck = factory.createButton(expansion, null, SWT.CHECK);
-			cdromCheck.setText("Include CD-ROM in the search");
+			cdromCheck.setText(UpdateUIPlugin.getResourceString(KEY_CDROM_CHECK));
 		}
 		protected SelectableFormLabel createTextLabel(Composite parent, FormWidgetFactory factory) {
 			SelectableFormLabel label = super.createTextLabel(parent, factory);
@@ -113,7 +123,7 @@ protected void createContents(Composite parent) {
 			updateSize();
 		}
 	};
-	optionsGroup.setText("Search Options");
+	optionsGroup.setText(UpdateUIPlugin.getResourceString(KEY_OPTIONS));
 	optionsGroup.createControl(parent, factory);
 	td = new TableData();
 	td.colspan = 2;
@@ -128,11 +138,12 @@ protected void createContents(Composite parent) {
 	sep.setLayoutData(td);
 	
 	infoLabel = factory.createLabel(parent, null);
-	infoLabel.setText("Last search: n/a");
+	infoLabel.setText(UpdateUIPlugin.getResourceString(KEY_NO_LAST_SEARCH));
 	td = new TableData(TableData.LEFT, TableData.MIDDLE);
 	infoLabel.setLayoutData(td);
 	
-	searchButton = factory.createButton(parent, "&Search Now", SWT.PUSH);
+	searchButton = factory.createButton(parent, 
+		UpdateUIPlugin.getResourceString(KEY_SEARCH_NOW), SWT.PUSH);
 	searchButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			performSearch();
@@ -216,9 +227,9 @@ private void enableOptions(boolean enable) {
 private void updateButtonText() {
 	boolean inSearch = updates.isSearchInProgress();
 	if (inSearch)
-		searchButton.setText("&Cancel");
+		searchButton.setText(UpdateUIPlugin.getResourceString(KEY_CANCEL));
 	else
-		searchButton.setText("&Search Now");
+		searchButton.setText(UpdateUIPlugin.getResourceString(KEY_SEARCH_NOW));
 	searchButton.getParent().layout(true);
 }
 

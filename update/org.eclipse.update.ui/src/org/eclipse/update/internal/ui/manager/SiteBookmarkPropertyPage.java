@@ -11,12 +11,15 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.swt.events.*;
 import java.net.*;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
 /**
  * Insert the type's description here.
  * @see PropertyPage
  */
 public class SiteBookmarkPropertyPage extends PropertyPage implements IWorkbenchPropertyPage {
+	private static final String KEY_NAME = "SiteBookmarkPropertyPage.name";
+	private static final String KEY_ADDRESS = "SiteBookmarkPropertyPage.address";
 	private Text siteName;
 	private Text siteURL;
 	private boolean changed;
@@ -37,12 +40,12 @@ public class SiteBookmarkPropertyPage extends PropertyPage implements IWorkbench
 		container.setLayout(layout);
 		
 		Label label = new Label(container, SWT.NULL);
-		label.setText("Name:");
+		label.setText(UpdateUIPlugin.getResourceString(KEY_NAME));
 		siteName = new Text(container, SWT.SINGLE|SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		siteName.setLayoutData(gd);
 		label = new Label(container, SWT.NULL);
-		label.setText("Address:");
+		label.setText(UpdateUIPlugin.getResourceString(KEY_ADDRESS));
 		siteURL = new Text(container, SWT.SINGLE|SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		siteURL.setLayoutData(gd);

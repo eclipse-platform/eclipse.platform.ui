@@ -20,6 +20,7 @@ import org.eclipse.ui.*;
 public abstract class BaseTreeView extends ViewPart {
 protected TreeViewer viewer;
 private Action showDetailsAction;
+private static final String KEY_SHOW_DETAILS = "BaseTreeView.Popup.ShowDetails";
 /**
  * The constructor.
  */
@@ -103,7 +104,7 @@ protected void makeActions() {
 			}
 		}
 	};
-	showDetailsAction.setText("Show Details");
+	showDetailsAction.setText(UpdateUIPlugin.getResourceString(KEY_SHOW_DETAILS));
 }
 
 protected void handleSelectionChanged(SelectionChangedEvent e) {

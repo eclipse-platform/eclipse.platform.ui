@@ -17,6 +17,15 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import java.lang.reflect.InvocationTargetException;
 
 public class RevertSection extends UpdateSection {
+// NL keys
+private static final String KEY_TITLE = "SnapshotPage.RevertSection.title";
+private static final String KEY_DESC = "SnapshotPage.RevertSection.desc";
+private static final String KEY_CURRENT_TEXT = "SnapshotPage.RevertSection.currentText";
+private static final String KEY_REVERT_TEXT = "SnapshotPage.RevertSection.revertText";
+private static final String KEY_REVERT_BUTTON = "SnapshotPage.RevertSection.revertButton";
+private static final String KEY_RESTORE_TEXT = "SnapshotPage.RevertSection.restoreText";
+private static final String KEY_RESTORE_BUTTON = "SnapshotPage.RevertSection.restoreButton";
+	
 	private Composite container;
 	private FormWidgetFactory factory;
 	private IInstallConfiguration config;
@@ -27,10 +36,8 @@ public class RevertSection extends UpdateSection {
 	public RevertSection(UpdateFormPage page) {
 		super(page);
 		setAddSeparator(false);
-		setHeaderText("Configuration Reversal");
-		setDescription("You can revert from the current to any of the previous configurations."+
-		" Note that the reversal will be only partial if some of the features that are part of the "+
-		"desired configuration have since been deleted.");
+		setHeaderText(UpdateUIPlugin.getResourceString(KEY_TITLE));
+		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
 	}
 
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
@@ -79,14 +86,14 @@ public class RevertSection extends UpdateSection {
 		container.getParent().setVisible(canRevert);
 		if (!canRevert) return;
 		if (config.isCurrent()) {
-			currentTextLabel.setText("This is the current configuration.");
-			textLabel.setText(" To revert to the previous one, press:");
-			revertButton.setText("Revert");
+			currentTextLabel.setText(UpdateUIPlugin.getResourceString(KEY_CURRENT_TEXT));
+			textLabel.setText(UpdateUIPlugin.getResourceString(KEY_REVERT_TEXT));
+			revertButton.setText(UpdateUIPlugin.getResourceString(KEY_REVERT_BUTTON));
 		}
 		else {
 			currentTextLabel.setText("");
-			textLabel.setText("To restore this configuration, press:");
-			revertButton.setText("Restore");
+			textLabel.setText(UpdateUIPlugin.getResourceString(KEY_RESTORE_TEXT));
+			revertButton.setText(UpdateUIPlugin.getResourceString(KEY_RESTORE_BUTTON));
 		}
 	}
 	

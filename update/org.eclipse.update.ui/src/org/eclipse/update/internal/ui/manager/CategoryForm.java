@@ -18,6 +18,8 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 
 public class CategoryForm extends UpdateWebForm {
+	private final static String KEY_TITLE = "CategoryPage.title";
+	private final static String KEY_MORE_INFO = "CategoryPage.moreInfo";
 	SiteCategory currentCategory;
 	Label textLabel;
 	SelectableFormLabel link;
@@ -31,7 +33,7 @@ public void dispose() {
 }
 
 public void initialize(Object modelObject) {
-	setHeadingText("Category");
+	setHeadingText(UpdateUIPlugin.getResourceString(KEY_TITLE));
 	setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
 	setHeadingUnderlineImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
 	super.initialize(modelObject);
@@ -72,7 +74,7 @@ protected void createContents(Composite parent) {
 		}
 	};
 	link = new SelectableFormLabel(parent, SWT.NULL);
-	link.setText("More Info");
+	link.setText(UpdateUIPlugin.getResourceString(KEY_MORE_INFO));
 	factory.turnIntoHyperlink(link, listener);
 	link.setVisible(false);
 }

@@ -12,16 +12,26 @@ import org.eclipse.swt.SWT;
 import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
 public class ReviewPage extends WizardPage {
+// NL keys
+private static final String KEY_TITLE = "InstallWizard.ReviewPage.title";
+private static final String KEY_DESC = "InstallWizard.ReviewPage.desc";
+private static final String KEY_ABOUT = "InstallWizard.ReviewPage.about";
+private static final String KEY_NAME = "InstallWizard.ReviewPage.name";
+private static final String KEY_PROVIDER = "InstallWizard.ReviewPage.provider";
+private static final String KEY_VERSION = "InstallWizard.ReviewPage.version";
+private static final String KEY_CORRECT = "InstallWizard.ReviewPage.correct"; 
+
 	private ChecklistJob job;
 	/**
 	 * Constructor for ReviewPage
 	 */
 	public ReviewPage(ChecklistJob job) {
 		super("Review");
-		setTitle("Feature Install");
-		setDescription("This wizard helps you install new or update existing features of your product.");
+		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
+		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
 		this.job = job;
 	}
 	
@@ -36,7 +46,7 @@ public class ReviewPage extends WizardPage {
 		layout.numColumns = 2;
 		client.setLayout(layout);
 		Label label = new Label(client, SWT.NULL);
-		label.setText("You are about to install the following feature:");
+		label.setText(UpdateUIPlugin.getResourceString(KEY_ABOUT));
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -47,7 +57,7 @@ public class ReviewPage extends WizardPage {
 		label.setLayoutData(gd);
 		
 		label = new Label(client, SWT.NULL);
-		label.setText("Name:");
+		label.setText(UpdateUIPlugin.getResourceString(KEY_NAME));
 		
 		label = new Label(client, SWT.NULL);
 		label.setFont(JFaceResources.getBannerFont());
@@ -55,14 +65,14 @@ public class ReviewPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(gd);
 		label = new Label(client, SWT.NULL);
-		label.setText("Provider:");
+		label.setText(UpdateUIPlugin.getResourceString(KEY_PROVIDER));
 		label = new Label(client, SWT.NULL);
 		label.setFont(JFaceResources.getBannerFont());
 		label.setText(job.getFeature().getProvider());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(gd);
 		label = new Label(client, SWT.NULL);
-		label.setText("Version:");
+		label.setText(UpdateUIPlugin.getResourceString(KEY_VERSION));
 		label = new Label(client, SWT.NULL);
 		label.setFont(JFaceResources.getBannerFont());
 		label.setText(job.getFeature().getIdentifier().getVersion().toString());
@@ -70,7 +80,7 @@ public class ReviewPage extends WizardPage {
 		label.setLayoutData(gd);
 
 		label = new Label(client, SWT.NULL);
-		label.setText("\nIf that is correct, select Next to continue.");
+		label.setText(UpdateUIPlugin.getResourceString(KEY_CORRECT));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);

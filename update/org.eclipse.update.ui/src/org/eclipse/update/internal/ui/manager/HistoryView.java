@@ -36,6 +36,7 @@ private Image featureImage;
 private Image siteImage;
 private Image currentConfigImage;
 private Action revertAction;
+private static final String KEY_RESTORE = "HistoryView.Popup.restore";
 
 class HistoryProvider extends DefaultContentProvider 
 						implements ITreeContentProvider {
@@ -192,7 +193,7 @@ protected void makeActions() {
 			   RevertSection.performRevert(target);
 		}
 	};
-	revertAction.setText("Restore");
+	revertAction.setText(UpdateUIPlugin.getResourceString(KEY_RESTORE));
 }
 
 protected void fillContextMenu(IMenuManager manager) {

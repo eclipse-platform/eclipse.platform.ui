@@ -21,10 +21,15 @@ import org.eclipse.update.internal.ui.*;
 import java.net.URL;
 
 public class TargetPage extends WizardPage {
-	private TableViewer tableViewer;
-	private IInstallConfiguration config;
-	private Image siteImage;
-	
+// NL keys
+private static final String KEY_TITLE = "InstallWizard.TargetPage.title";
+private static final String KEY_DESC = "InstallWizard.TargetPage.desc";
+private static final String KEY_NEW = "InstallWizard.TargetPage.new";
+private static final String KEY_LOCATION = "InstallWizard.TargetPage.location";
+
+private TableViewer tableViewer;
+private IInstallConfiguration config;
+private Image siteImage;
 	
 class TableContentProvider extends DefaultContentProvider 
 							implements IStructuredContentProvider {
@@ -34,7 +39,7 @@ class TableContentProvider extends DefaultContentProvider
 	 */
 	public Object[] getElements(Object parent) {
 	   return config.getConfigurationSites();
-	}
+	}	
 }	
 
 class TableLabelProvider extends LabelProvider implements
@@ -67,8 +72,8 @@ class TableLabelProvider extends LabelProvider implements
 	 */
 	public TargetPage(IInstallConfiguration config) {
 		super("Target");
-		setTitle("Install Location");
-		setDescription("Choose the location where the feature will be installed.");
+		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
+		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
 		this.config = config;
 		siteImage = UpdateUIPluginImages.DESC_SITE_OBJ.createImage();
 	}
@@ -97,7 +102,7 @@ class TableLabelProvider extends LabelProvider implements
 		GridData gd = new GridData(GridData.FILL_VERTICAL);
 		buttonContainer.setLayoutData(gd);
 		final Button button = new Button(buttonContainer, SWT.PUSH);
-		button.setText("&New...");
+		button.setText(UpdateUIPlugin.getResourceString(KEY_NEW));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				addTargetLocation();
@@ -115,7 +120,7 @@ class TableLabelProvider extends LabelProvider implements
 		table.setHeaderVisible(true);
 		
 		TableColumn tc = new TableColumn(table, SWT.NULL);
-		tc.setText("Target Location");
+		tc.setText(UpdateUIPlugin.getResourceString(KEY_LOCATION));
 		
 		TableLayout layout= new TableLayout();
 		ColumnLayoutData ld = new ColumnWeightData(100);

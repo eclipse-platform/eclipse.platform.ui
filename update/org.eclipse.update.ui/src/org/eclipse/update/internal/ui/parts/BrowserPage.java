@@ -20,6 +20,12 @@ import org.eclipse.jface.action.*;
 
 
 public class BrowserPage implements IUpdateFormPage {
+// NL
+private static final String KEY_ADDRESS = "BrowserPage.address";
+private static final String KEY_STOP = "BrowserPage.stop";
+private static final String KEY_GO = "BrowserPage.go";
+private static final String KEY_REFRESH = "BrowserPage.refresh";
+
 	private int ADDRESS_SIZE = 10;
 	private WebBrowser browser;
 	private Control control;
@@ -154,7 +160,7 @@ public class BrowserPage implements IUpdateFormPage {
 	
 	private void createNavBar(Composite parent) {
 		Label addressLabel = new Label(parent, SWT.NONE);
-		addressLabel.setText("Address");
+		addressLabel.setText(UpdateUIPlugin.getResourceString(KEY_ADDRESS));
 
 		addressCombo = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER);
 		addressCombo.addSelectionListener(new SelectionListener () {
@@ -201,7 +207,7 @@ public class BrowserPage implements IUpdateFormPage {
 				navigate(addressCombo.getText());
 			}
 		};
-		goAction.setToolTipText("Go");
+		goAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_GO));
 		goAction.setImageDescriptor(UpdateUIPluginImages.DESC_GO_NAV);
 		goAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_GO_NAV_D);
 		goAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_GO_NAV_H);
@@ -211,7 +217,7 @@ public class BrowserPage implements IUpdateFormPage {
 				browser.stop();
 			}
 		};
-		stopAction.setToolTipText("Stop");
+		stopAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_STOP));
 		stopAction.setImageDescriptor(UpdateUIPluginImages.DESC_STOP_NAV);
 		stopAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_STOP_NAV_D);
 		stopAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_STOP_NAV_H);
@@ -221,7 +227,7 @@ public class BrowserPage implements IUpdateFormPage {
 				browser.refresh();
 			}
 		};
-		refreshAction.setToolTipText("Refresh");
+		refreshAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_REFRESH));
 		refreshAction.setImageDescriptor(UpdateUIPluginImages.DESC_REFRESH_NAV);
 		refreshAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_REFRESH_NAV_D);
 		refreshAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_REFRESH_NAV_H);

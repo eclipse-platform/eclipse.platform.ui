@@ -16,6 +16,11 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.update.internal.ui.*;
 
 public class AvailableUpdates extends ModelObject implements IWorkbenchAdapter {
+private static final String KEY_NAME = "AvailableUpdates.name";
+private static final String KEY_BEGIN = "AvailableUpdates.search.begin";
+private static final String KEY_CONTACTING = "AvailableUpdates.search.contacting";
+private static final String KEY_CHECKING = "AvailableUpdates.search.checking";
+
 	public static final String P_REFRESH = "p_refresh";
 
 	private Vector updates = new Vector();
@@ -43,7 +48,7 @@ class SearchAdapter extends MonitorAdapter {
 	}
 	
 	public String getName() {
-		return "Available Updates";
+		return UpdateUIPlugin.getResourceString(KEY_NAME);
 	}
 	
 	public String toString() {
@@ -142,7 +147,7 @@ class SearchAdapter extends MonitorAdapter {
 		
 		IFeature [] candidates = getInstalledFeatures();
 		if (candidates.length==0) return;
-		backgroundProgress.beginTask("Searching for updates:", candidates.length);
+		backgroundProgress.beginTask(UpdateUIPlugin.getResourceString(KEY_BEGIN), candidates.length);
 		for (int i=0; i<candidates.length; i++) {
 			if (monitor.isCanceled()) {
 				break;
@@ -190,10 +195,12 @@ class SearchAdapter extends MonitorAdapter {
 		if (updateInfo == null) return;
 		URL updateURL = updateInfo.getURL();
 		if (updateURL==null) return;
-		backgroundProgress.subTask("Contacting site "+updateURL.toString()+"...");
+		String pattern = UpdateUIPlugin.getResourceString(KEY_CONTACTING);
+		String text = UpdateUIPlugin.getFormattedMessage(pattern, updateURL.toString());
+		backgroundProgress.subTask(text);
 		try {
 			ISite site = SiteManager.getSite(updateURL);
-			backgroundProgress.subTask("Checking for updates...");
+			backgroundProgress.subTask(UpdateUIPlugin.getResourceString(KEY_CHECKING));
 			IFeatureReference [] refs = site.getFeatureReferences();
 			UpdateSearchSite searchSite = null;
 			for (int i=0; i<refs.length; i++) {

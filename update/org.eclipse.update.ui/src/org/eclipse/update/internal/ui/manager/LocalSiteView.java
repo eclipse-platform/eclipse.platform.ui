@@ -38,6 +38,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 public class LocalSiteView extends BaseTreeView 
 				implements IInstallConfigurationChangedListener,
 							ISiteChangedListener {
+private static final String KEY_CURRENT = "LocalSiteView.current";
 private Image eclipseImage;
 private Image updatesImage;
 private Image featureImage;
@@ -161,7 +162,7 @@ class LocalSiteProvider extends DefaultContentProvider
 class LocalSiteLabelProvider extends LabelProvider {
 	public String getText(Object obj) {
 		if (obj instanceof ILocalSite) {
-			return "Current Configuration";
+			return UpdateUIPlugin.getResourceString(KEY_CURRENT);
 		}
 		if (obj instanceof IConfigurationSite) {
 			IConfigurationSite csite = (IConfigurationSite)obj;

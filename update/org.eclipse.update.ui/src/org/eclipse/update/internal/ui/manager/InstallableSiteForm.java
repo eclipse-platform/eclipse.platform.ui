@@ -18,8 +18,12 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.events.*;
 public class InstallableSiteForm extends UpdateWebForm {
-	private IConfigurationSite currentSite;
-	private Label urlLabel;
+private static final String KEY_TITLE = "InstallableSitePage.title";
+private static final String KEY_DESC = "InstallableSitePage.desc";
+private static final String KEY_NEW_LOC = "InstallableSitePage.newLocation";
+
+private IConfigurationSite currentSite;
+private Label urlLabel;
 	
 public InstallableSiteForm(UpdateFormPage page) {
 	super(page);
@@ -30,7 +34,7 @@ public void dispose() {
 }
 
 public void initialize(Object modelObject) {
-	setHeadingText("Install Location");
+	setHeadingText(UpdateUIPlugin.getResourceString(KEY_TITLE));
 	setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
 	setHeadingUnderlineImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
 	super.initialize(modelObject);
@@ -49,13 +53,12 @@ protected void createContents(Composite parent) {
 	FormWidgetFactory factory = getFactory();	
 	urlLabel = factory.createHeadingLabel(parent, null);
 	Label desc = factory.createLabel(parent, null, SWT.WRAP);
-	desc.setText("Install location is the place on your disk where features are installed. "+
-	"You can use an existing location to install a feature or create a new one for the purpose "+
-	"of grouping.");
+	desc.setText(UpdateUIPlugin.getResourceString(KEY_DESC));
 	TableData td = new TableData();
 	td.align = TableData.FILL;
 	desc.setLayoutData(td);
-	Button b = factory.createButton(parent, "&New Location...", SWT.PUSH);
+	Button b = factory.createButton(parent, 
+		UpdateUIPlugin.getResourceString(KEY_NEW_LOC), SWT.PUSH);
 	b.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			performNewLocation();

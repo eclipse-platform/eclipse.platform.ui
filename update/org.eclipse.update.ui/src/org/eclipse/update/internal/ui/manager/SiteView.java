@@ -26,6 +26,9 @@ import org.eclipse.ui.dialogs.*;
  * @see ViewPart
  */
 public class SiteView extends BaseTreeView implements IUpdateModelChangedListener {
+	private static final String KEY_NEW_SITE = "SiteView.Popup.newSite";
+	private static final String KEY_DELETE = "SiteView.Popup.delete";
+	private static final String KEY_REFRESH = "SiteView.Popup.refresh";
 	private Action propertiesAction;
 	private Action newAction;
 	private Action deleteAction;
@@ -56,9 +59,6 @@ class SiteProvider extends DefaultContentProvider
 		}
 		if (parent instanceof SiteCategory) {
 			final SiteCategory category = (SiteCategory)parent;
-			IStatusLineManager mng = getViewSite().getActionBars().getStatusLineManager();
-			mng.setMessage("Connecting the server...");
-			mng.getProgressMonitor().beginTask("", IProgressMonitor.UNKNOWN);
 			BusyIndicator.showWhile(viewer.getTree().getDisplay(),
 									new Runnable() {
 				public void run() {
@@ -69,9 +69,7 @@ class SiteProvider extends DefaultContentProvider
 						UpdateUIPlugin.logException(e);
 					}
 				}
-									});
-			mng.getProgressMonitor().done();
-			mng.setMessage("");
+			});
 			return category.getChildren();
 		}
 		return new Object[0];
@@ -159,26 +157,27 @@ public void initProviders() {
 }
 
 public void makeActions() {
+	super.makeActions();
 	propertiesAction = new PropertyDialogAction(UpdateUIPlugin.getActiveWorkbenchShell(), viewer);
 	newAction = new Action() {
 		public void run() {
 			performNew();
 		}
 	};
-	newAction.setText("New Site...");
+	newAction.setText(UpdateUIPlugin.getResourceString(KEY_NEW_SITE));
 	deleteAction = new Action() {
 		public void run() {
 			performDelete();
 		}
 	};
-	deleteAction.setText("Delete");
+	deleteAction.setText(UpdateUIPlugin.getResourceString(KEY_DELETE));
 	
 	refreshAction = new Action() {
 		public void run() {
 			performRefresh();
 		}
 	};
-	refreshAction.setText("Refresh");
+	refreshAction.setText(UpdateUIPlugin.getResourceString(KEY_REFRESH));
 	viewer.addSelectionChangedListener(selectionListener);
 }
 
@@ -199,8 +198,9 @@ public void fillContextMenu(IMenuManager manager) {
 		manager.add(deleteAction);
 	}
 	manager.add(new Separator());
-	manager.add(propertiesAction);
 	super.fillContextMenu(manager);
+	manager.add(propertiesAction);
+
 }
 
 private void performNew() {
@@ -265,9 +265,6 @@ class CatalogBag {
 private Object [] getSiteCatalog(final SiteBookmark bookmark) {
 	if (!bookmark.isSiteConnected()) {
 		final CatalogBag bag = new CatalogBag();
-		IStatusLineManager mng = getViewSite().getActionBars().getStatusLineManager();
-		mng.setMessage("Connecting the server...");
-		mng.getProgressMonitor().beginTask("", IProgressMonitor.UNKNOWN);
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
 				try {
@@ -278,8 +275,6 @@ private Object [] getSiteCatalog(final SiteBookmark bookmark) {
 				}
 			}
 		});
-		mng.getProgressMonitor().done();
-		mng.setMessage("");
 		if (bag.catalog!=null) return bag.catalog;
 	}
 	if (bookmark.getSite()!=null) {

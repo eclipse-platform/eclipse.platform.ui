@@ -18,6 +18,8 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 
 public class SiteForm extends UpdateWebForm {
+	private static final String KEY_DESC = "SitePage.desc";
+	private static final String KEY_LINK = "SitePage.link";
 	private Label url;
 	private ISiteWrapper currentSite;
 	
@@ -30,7 +32,7 @@ public void dispose() {
 }
 
 public void initialize(Object modelObject) {
-	setHeadingText("Site Page");
+	setHeadingText("");
 	setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
 	setHeadingUnderlineImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
 	super.initialize(modelObject);
@@ -50,7 +52,7 @@ protected void createContents(Composite parent) {
 	url = factory.createHeadingLabel(parent, null);
 	
 	Label text = factory.createLabel(parent, null, SWT.WRAP);
-	text.setText("Expand the site folder to browse the features available for download.");
+	text.setText(UpdateUIPlugin.getResourceString(KEY_DESC));
 
 	IHyperlinkListener listener;
 
@@ -73,7 +75,7 @@ protected void createContents(Composite parent) {
 		}
 	};
 	SelectableFormLabel link = new SelectableFormLabel(parent, SWT.NULL);
-	link.setText("Site home page");
+	link.setText(UpdateUIPlugin.getResourceString(KEY_LINK));
 	factory.turnIntoHyperlink(link, listener);
 }
 

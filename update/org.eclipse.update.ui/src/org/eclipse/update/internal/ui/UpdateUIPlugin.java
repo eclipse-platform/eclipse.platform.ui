@@ -90,7 +90,16 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 			return key;
 		}
 	}
-
+	
+	public static String getFormattedMessage(String key, String [] args) {
+		String text = getResourceString(key);
+		return java.text.MessageFormat.format(text, args);
+	}
+	
+	public static String getFormattedMessage(String key, String arg) {
+		String text = getResourceString(key);
+		return java.text.MessageFormat.format(text, new Object [] { arg });
+	}
 
 	/**
 	 * Returns the plugin's resource bundle,

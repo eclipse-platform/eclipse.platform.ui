@@ -10,8 +10,11 @@ import org.eclipse.update.core.*;
 import org.eclipse.swt.layout.*;
 import java.net.URL;
 import org.eclipse.swt.SWT;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
 public class InfoGroup extends ExpandableGroup {
+	private static final String KEY_TEXT = "InfoGroup.plainTextVersion";
+	private static final String KEY_HTML = "InfoGroup.htmlVersion";
 	private IInfo info;
 	private SelectableFormLabel textLink;
 	private SelectableFormLabel urlLink;
@@ -21,8 +24,8 @@ public class InfoGroup extends ExpandableGroup {
 
 	public InfoGroup(DetailsView view) {
 		this.view = view;
-		textLabelText = "Plain Text Version";
-		urlLabelText = "HTML Version";
+		textLabelText = UpdateUIPlugin.getResourceString(KEY_TEXT);
+		urlLabelText = UpdateUIPlugin.getResourceString(KEY_HTML);
 	}
 
 	public void fillExpansion(Composite expansion, FormWidgetFactory factory) {

@@ -10,9 +10,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.ui.model.*;
 import java.util.*;
-import org.eclipse.update.internal.ui.UpdateUIPluginImages;
+import org.eclipse.update.internal.ui.*;
 
 public class CDROM extends ModelObject implements IWorkbenchAdapter {
+private static final String KEY_LABEL = "CDROM.label";
 	public CDROM() {
 	}
 	
@@ -24,7 +25,7 @@ public class CDROM extends ModelObject implements IWorkbenchAdapter {
 	}
 	
 	public String getName() {
-		return "Compact Disc";
+		return UpdateUIPlugin.getResourceString(KEY_LABEL);
 	}
 	
 	public String toString() {

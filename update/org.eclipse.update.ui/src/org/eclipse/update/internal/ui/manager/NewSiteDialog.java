@@ -17,8 +17,11 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.update.ui.internal.model.*;
 import java.net.*;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
 public class NewSiteDialog extends Dialog {
+	private static final String KEY_URL = "NewSiteDialog.url";
+	private static final String KEY_NAME = "NewSiteDialog.name";
 	private Text urlText;
 	private Text nameText;
 	private String url;
@@ -51,7 +54,7 @@ public Control createDialogArea(Composite parent) {
 	container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 	Label label = new Label(container, SWT.NULL);
-	label.setText("Site URL:");
+	label.setText(UpdateUIPlugin.getResourceString(KEY_URL));
 	urlText = new Text(container, SWT.SINGLE | SWT.BORDER);
 	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 	urlText.setLayoutData(gd);
@@ -62,7 +65,7 @@ public Control createDialogArea(Composite parent) {
 	});
 	
 	label = new Label(container, SWT.NULL);
-	label.setText("Site Name:");
+	label.setText(UpdateUIPlugin.getResourceString(KEY_NAME));
 	nameText = new Text(container, SWT.SINGLE | SWT.BORDER);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	nameText.setLayoutData(gd);

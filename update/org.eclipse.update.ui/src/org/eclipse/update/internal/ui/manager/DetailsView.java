@@ -23,6 +23,13 @@ import java.io.*;
  * @see ViewPart
  */
 public class DetailsView extends MultiPageView {
+	
+// NL keys
+private static final String KEY_T_HOME= "DetailsView.home.tooltip";
+private static final String KEY_T_BACKWARD = "DetailsView.backward.tooltip";
+private static final String KEY_T_FORWARD= "DetailsView.forward.tooltip";
+	
+	
 public static final String HOME_PAGE = "Home";
 public static final String SITE_PAGE = "Site";
 public static final String CATEGORY_PAGE = "Category";
@@ -197,7 +204,7 @@ private void makeActions() {
 			performHome();
 		}
 	};
-	homeAction.setToolTipText("Go to the Update Manager home page");
+	homeAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_T_HOME));
 	homeAction.setImageDescriptor(UpdateUIPluginImages.DESC_HOME_NAV);
 	homeAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_HOME_NAV_H);
 	homeAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_HOME_NAV_D);
@@ -210,7 +217,7 @@ private void makeActions() {
 			setEnabled(canPerformBackward());
 		}
 	};
-	backAction.setToolTipText("Go Back");
+	backAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_T_BACKWARD));
 	backAction.setImageDescriptor(UpdateUIPluginImages.DESC_BACKWARD_NAV);
 	backAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_BACKWARD_NAV_H);
 	backAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_BACKWARD_NAV_D);
@@ -224,7 +231,7 @@ private void makeActions() {
 			setEnabled(canPerformForward());
 		}
 	};
-	forwardAction.setToolTipText("Go Forward");
+	forwardAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_T_FORWARD));
 	forwardAction.setImageDescriptor(UpdateUIPluginImages.DESC_FORWARD_NAV);
 	forwardAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_FORWARD_NAV_H);
 	forwardAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_FORWARD_NAV_D);

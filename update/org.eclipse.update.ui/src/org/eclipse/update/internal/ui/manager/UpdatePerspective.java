@@ -36,24 +36,6 @@ public void createInitialLayout(IPageLayout factory) {
 	left.addView(ID_SITES);
 	left.addPlaceholder(ID_HISTORY);
 	
-
-/*
-	IFolderLayout right =
-		factory.createFolder(
-			"right",
-			IPageLayout.RIGHT,
-			0.25f,
-			factory.getEditorArea());
-
-	right.addView(ID_CHECKLIST);
-	right.addView(ID_HISTORY);
-*/
-	
 	factory.addView(ID_DETAILS, IPageLayout.RIGHT, 0.33f, "left");
-//	factory.addView(IPageLayout.ID_PROP_SHEET, IPageLayout.BOTTOM, (float)0.75, ID_DETAILS);
-
-	// Add action sets
-	//factory.addActionSet(IDebugUIConstants.DEBUG_ACTION_SET);
-	//factory.addActionSet(JavaUI.ID_ACTION_SET);
 }
 }
