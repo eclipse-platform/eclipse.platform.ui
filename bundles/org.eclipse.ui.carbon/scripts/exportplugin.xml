@@ -4,8 +4,8 @@
 		<tstamp/>
 		<property name="destdir" value="../../plugin-export" />
 		<property name="plugin"  value="org.eclipse.ui.carbon" />
-		<property name="version"  value="_3.0.0" />
-		<property name="dest"  value="${destdir}/${plugin}${version}" />
+		<property name="fragment_version"  value="_3.0.0" />
+		<property name="dest"  value="${destdir}/${plugin}${fragment_version}" />
 	</target>
 
 	<target name="build" depends="init">
@@ -20,11 +20,8 @@
 			jarfile="${dest}/carbon.jar"
 			basedir="bin"
 		/>
-		<copy file="plugin.xml" todir="${dest}"/>
-		<copy file="plugin.properties" todir="${dest}"/>
-		<copy todir="${dest}/icons">
-			<fileset dir="icons" />
-		</copy>
+		<copy file="fragment.xml" todir="${dest}"/>
+		<copy file="fragment.properties" todir="${dest}"/>
 		<zip zipfile="${dest}/carbonsrc.zip">
 		    <fileset dir="src" />
   		</zip>				

@@ -23,8 +23,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-//import org.eclipse.ui.internal.ide.actions.AboutAction;
-import org.eclipse.ui.internal.OpenPreferencesAction;
 
 
 public class CarbonPlugin implements IStartup {
@@ -34,6 +32,7 @@ public class CarbonPlugin implements IStartup {
 	static final int kHICommandServices= ('s'<<24) + ('e'<<16) + ('r'<<8) + 'v';
 
 	public CarbonPlugin() {
+		System.out.println("CarbonPlugin");
 	}
 
 	/* (non-Javadoc)
@@ -50,10 +49,10 @@ public class CarbonPlugin implements IStartup {
 		);
 	}
 	
-	private void showAboutDialog(IWorkbenchWindow window, String name) {
-//		new AboutAction(window).run();
-		
-		// workaround:
+	private void runAction(String name) {
+		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window == null)
+			return;
 		Shell shell= window.getShell();
 		Menu menubar= shell.getMenuBar();
 		for (int i= 0; i < menubar.getItemCount(); i++) {
@@ -65,6 +64,7 @@ public class CarbonPlugin implements IStartup {
 				if (o instanceof ActionContributionItem) {
 					ActionContributionItem aci= (ActionContributionItem) o;
 					String id= aci.getId();
+					System.out.println(id);
 					if (id != null && id.equals(name)) {
 						IAction a= aci.getAction();
 						if (a != null) {
@@ -90,12 +90,11 @@ public class CarbonPlugin implements IStartup {
 					OS.GetEventParameter(theEvent, OS.kEventParamDirectObject, OS.typeHICommand, null, HICommand.sizeof, null, command);
 					switch (command.commandID) {
 					case kHICommandPreferences:
-						new OpenPreferencesAction().run();
+						runAction("preferences"); //$NON-NLS-1$
+						//new OpenPreferencesAction().run();
 						return OS.noErr;
 					case kHICommandAbout:
-						IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-						if (window != null)
-							showAboutDialog(window, "about"); //$NON-NLS-1$
+						runAction("about"); //$NON-NLS-1$
 						return OS.noErr;
 					default:
 						break;
