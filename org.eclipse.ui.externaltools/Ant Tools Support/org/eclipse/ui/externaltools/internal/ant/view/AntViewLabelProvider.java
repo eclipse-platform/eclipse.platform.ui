@@ -72,7 +72,7 @@ public class AntViewLabelProvider implements ILabelProvider {
 			StringBuffer buffer= new StringBuffer(project.getName());
 			String defaultTarget= project.getDefaultTargetName();
 			if (defaultTarget != null) {
-				buffer.append(" [").append(defaultTarget).append(']');
+				buffer.append(" [").append(defaultTarget).append(']'); //$NON-NLS-1$
 			}
 			return buffer.toString();
 		} else {

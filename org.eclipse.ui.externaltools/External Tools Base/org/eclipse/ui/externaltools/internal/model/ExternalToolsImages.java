@@ -104,7 +104,7 @@ public class ExternalToolsImages {
 		declareRegistryImage(IExternalToolConstants.IMG_TAB_OPTIONS, OBJECT + "options_tab.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolConstants.IMG_PROPERTY, OBJECT + "prop_ps.gif"); //$NON-NLS-1$
 		//ANT object
-		declareRegistryImage(IExternalToolConstants.IMG_TAB_ANT_TARGETS, LOCALTOOL + "ant_tsk_check.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolConstants.IMG_TAB_ANT_TARGETS, LOCALTOOL + "ant_targets.gif"); //$NON-NLS-1$
 		
 		// Overlays
 		declareRegistryImage(IExternalToolsUIConstants.IMG_OVR_DEFAULT, OVR + "run_co.gif"); //$NON-NLS-1$
