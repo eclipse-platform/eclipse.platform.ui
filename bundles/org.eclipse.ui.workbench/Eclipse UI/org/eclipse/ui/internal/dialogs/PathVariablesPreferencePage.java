@@ -34,14 +34,14 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  */
 public class PathVariablesPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	private PathVariablesGroup pathVariablesBlock;
+	private PathVariablesGroup pathVariablesGroup;
 
 	/**
 	 * Constructs a preference page of path variables.
 	 * Omits "Restore Defaults"/"Apply Changes" buttons.
 	 */
 	public PathVariablesPreferencePage() {
-		pathVariablesBlock = new PathVariablesGroup(true, IResource.FILE | IResource.FOLDER);
+		pathVariablesGroup = new PathVariablesGroup(true, IResource.FILE | IResource.FOLDER);
 
 		this.noDefaultAndApplyButton();
 	}
@@ -74,8 +74,16 @@ public class PathVariablesPreferencePage extends PreferencePage implements IWork
 		topLabel.setLayoutData(data);
 		topLabel.setFont(font);
 
-		pathVariablesBlock.createContents(pageComponent);
+		pathVariablesGroup.createContents(pageComponent);
 		return pageComponent;
+	}
+	/**
+	 * Disposes the path variables group.
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+	 */
+	public void dispose() {
+		pathVariablesGroup.dispose();
+		super.dispose();
 	}
 	/**
 	 * Empty implementation. This page does not use the workbench.
@@ -92,6 +100,6 @@ public class PathVariablesPreferencePage extends PreferencePage implements IWork
 	 * @see PathVariablesGroup#performOk()
 	 */
 	public boolean performOk() {
-		return pathVariablesBlock.performOk();
+		return pathVariablesGroup.performOk();
 	}
 }

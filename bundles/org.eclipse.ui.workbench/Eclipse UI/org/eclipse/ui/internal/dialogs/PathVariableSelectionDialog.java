@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * </p>
  */
 public class PathVariableSelectionDialog extends SelectionDialog {
-	private PathVariablesGroup pathVariablesBlock;
+	private PathVariablesGroup pathVariablesGroup;
 
 /**
  * Creates a path variable selection dialog.
@@ -45,7 +45,7 @@ public class PathVariableSelectionDialog extends SelectionDialog {
 public PathVariableSelectionDialog(Shell parentShell, int variableType) {
 	super(parentShell);
 	setTitle(WorkbenchMessages.getString("PathVariableSelectionDialog.title")); //$NON-NLS-1$
-	pathVariablesBlock = new PathVariablesGroup(false, variableType);
+	pathVariablesGroup = new PathVariablesGroup(false, variableType);
 	setShellStyle(getShellStyle() | SWT.RESIZE);
 }
 /* (non-Javadoc)
@@ -62,15 +62,23 @@ protected Control createDialogArea(Composite parent) {
 	// create composite 
 	Composite dialogArea = (Composite)super.createDialogArea(parent);
 
-	pathVariablesBlock.createContents(dialogArea);
+	pathVariablesGroup.createContents(dialogArea);
 	return dialogArea;
+}
+/**
+ * Disposes the path variables group.
+ * @see org.eclipse.jface.window.Window#close()
+ */
+public boolean close() {
+	pathVariablesGroup.dispose();
+	return super.close();
 }
 /**
  * Sets the dialog result to the selected path variable name(s). 
  */
 protected void okPressed() {
-	if (pathVariablesBlock.performOk()) {
-		String[] variableNames = pathVariablesBlock.getSelection(); 
+	if (pathVariablesGroup.performOk()) {
+		String[] variableNames = pathVariablesGroup.getSelection(); 
 		setSelectionResult(variableNames);
 	}
 	else {

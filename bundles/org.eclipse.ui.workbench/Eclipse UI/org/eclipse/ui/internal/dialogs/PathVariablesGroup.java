@@ -10,29 +10,32 @@ Contributors:
 ************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.io.File;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IPathVariableManager;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * A widget group that displays path variables. 
  * Includes buttons to edit, remove existing variables and create new ones.
+ * 
+ * @since 2.1
  */
 public class PathVariablesGroup {
 	// sizing constants
@@ -64,6 +67,8 @@ public class PathVariablesGroup {
 	private final Image FILE_IMG = WorkbenchImages.getImage(ISharedImages.IMG_OBJ_FILE);
 	// folder image
 	private final Image FOLDER_IMG = WorkbenchImages.getImage(ISharedImages.IMG_OBJ_FOLDER);
+	// unknown (non-existent) image. created locally, dispose locally
+	private Image imageUnkown;
 
 	/**
 	 * Creates a new PathVariablesGroup.
@@ -110,6 +115,8 @@ public class PathVariablesGroup {
 	}
 	/**
 	 * Creates the widget group.
+	 * Callers must call <code>dispose</code> when the group is no 
+	 * longer needed.
 	 * 
 	 * @param parent the widget parent
 	 * @return container of the widgets 
@@ -117,6 +124,12 @@ public class PathVariablesGroup {
 	public Control createContents(Composite parent) {
 		Font font = parent.getFont();
 
+		if (imageUnkown == null ) {
+			ImageDescriptor descriptor = WorkbenchImages.getImageDescriptorFromPluginID(
+				PlatformUI.PLUGIN_ID, 
+				"icons/full/obj16/question.gif");	//$NON-NLS-1$
+			imageUnkown = descriptor.createImage();
+		}
 		initializeDialogUnits(parent);
 		shell = parent.getShell();		
 
@@ -161,6 +174,15 @@ public class PathVariablesGroup {
 		updateWidgetState(null);
 
 		return pageComponent;
+	}
+	/**
+	 * Disposes the group's resources. 
+	 */
+	public void dispose() {
+		if (imageUnkown != null) {
+			imageUnkown.dispose();
+			imageUnkown = null;
+		}
 	}
 	/**
 	 * Opens a dialog for editing an existing variable.
@@ -335,10 +357,12 @@ public class PathVariablesGroup {
 			TableItem item = new TableItem(variableTable, SWT.NONE);
 			String varName = (String) varNames.next();
 			IPath value = (IPath) tempPathVariables.get(varName);
+			File file = value.toFile();
+			
 			item.setText(varName + " - " + value.toString()); //$NON-NLS-1$ 
 			// the corresponding variable name is stored in each table widget item
 			item.setData(varName);
-			item.setImage(value.toFile().isFile() ? FILE_IMG : FOLDER_IMG);
+			item.setImage(file.exists() ? (file.isFile() ? FILE_IMG : FOLDER_IMG) : imageUnkown);
 			if (varName.equals(selectedVarName))
 				selectedVarIndex = variableTable.getItemCount() - 1;
 		}
