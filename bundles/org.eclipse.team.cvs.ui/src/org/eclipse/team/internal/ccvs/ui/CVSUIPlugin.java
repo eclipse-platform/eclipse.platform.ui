@@ -635,6 +635,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_FOLDERTEXT_DECORATION, CVSDecoratorConfiguration.DEFAULT_FOLDERTEXTFORMAT);
 		store.setDefault(ICVSUIConstants.PREF_PROJECTTEXT_DECORATION, CVSDecoratorConfiguration.DEFAULT_PROJECTTEXTFORMAT);
 		
+		store.setDefault(ICVSUIConstants.PREF_FIRST_STARTUP, true);
 		store.setDefault(ICVSUIConstants.PREF_ADDED_FLAG, CVSDecoratorConfiguration.DEFAULT_ADDED_FLAG);
 		store.setDefault(ICVSUIConstants.PREF_DIRTY_FLAG, CVSDecoratorConfiguration.DEFAULT_DIRTY_FLAG);	
 		store.setDefault(ICVSUIConstants.PREF_SHOW_ADDED_DECORATION, true);
@@ -684,6 +685,19 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		
 		console = new CVSOutputConsole();
 		ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] {console});
+		
+		IPreferenceStore store = getPreferenceStore();
+		if (store.getBoolean(ICVSUIConstants.PREF_FIRST_STARTUP)) {
+			// If we enable the decorator in the XML, the CVS plugin will be loaded
+			// on startup even if the user never uses CVS. Therefore, we enable the 
+			// decorator on the first start of the CVS plugin since this indicates that 
+			// the user has done something with CVS. Subsequent startups will load
+			// the CVS plugin unless the user disables the decorator. In this case,
+			// we will not reenable since we only enable auatomatically on the first startup.
+			PlatformUI.getWorkbench().getDecoratorManager().setEnabled(CVSLightweightDecorator.ID, true);
+			store.setValue(ICVSUIConstants.PREF_FIRST_STARTUP, false);
+		}
+
 	}
 	
 	public static IWorkingSet getWorkingSet(IResource[] resources, String name) {

@@ -89,6 +89,7 @@ public interface ICVSUIConstants {
 	
 		
 	// decorator preferences
+	public final String PREF_FIRST_STARTUP = "pref_first_startup"; //$NON-NLS-1$
 	public final String PREF_FILETEXT_DECORATION = "pref_filetext_decoration"; //$NON-NLS-1$
 	public final String PREF_FOLDERTEXT_DECORATION = "pref_foldertext_decoration"; //$NON-NLS-1$
 	public final String PREF_PROJECTTEXT_DECORATION = "pref_projecttext_decoration"; //$NON-NLS-1$
