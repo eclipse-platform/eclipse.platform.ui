@@ -59,6 +59,9 @@ A scheme is a group of these bindings into a set that the end user can select.  
 
    <element name="scheme">
       <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
          <documentation>
             &lt;p&gt;
 A scheme is a grouping of bindings that an end user can chose to use.
@@ -108,6 +111,9 @@ It is possible for schemes to inherit bindings from a parent scheme.  This is in
 
    <element name="key">
       <annotation>
+         <appInfo>
+            <meta.element labelAttribute="commandId"/>
+         </appInfo>
          <documentation>
             &lt;p&gt;A binding between some keyboard input and the triggering of a command.&lt;/p&gt;
          </documentation>
@@ -182,6 +188,9 @@ If no command identifier is specified, this is a deletion marker.  This means th
 
    <element name="parameter">
       <annotation>
+         <appInfo>
+            <meta.element labelAttribute="id"/>
+         </appInfo>
          <documentation>
             A parameter name and value that should be passed to the command when it is executed.  This allows for the command to be qualified in some way.  For example, a &quot;Show View&quot; command might accept the view id as a parameter.
          </documentation>
