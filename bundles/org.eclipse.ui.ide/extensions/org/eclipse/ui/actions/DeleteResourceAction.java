@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,9 +26,9 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -46,7 +46,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
-import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 
 /**
  * Standard action for deleting the currently selected resources.
@@ -150,7 +149,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
             }
         };
 
-        public boolean getDeleteContent() {
+        boolean getDeleteContent() {
             return deleteContent;
         }
     }
@@ -264,6 +263,40 @@ public class DeleteResourceAction extends SelectionListenerAction {
         // note that the selection may contain multiple types of resource
         return types == IResource.PROJECT;
     }
+    
+    /**
+     * Creates and returns a result status appropriate for the given list of exceptions.
+     * @param exceptions The list of exceptions that occurred (may be empty)
+     * @return The result status for the deletion
+     */
+    private IStatus createResult(List exceptions) {
+    	if (exceptions.isEmpty())
+    		return Status.OK_STATUS;
+        final int exceptionCount = exceptions.size();
+        if (exceptionCount == 1) {
+            return ((CoreException) exceptions.get(0)).getStatus();
+        }
+        CoreException[] children = (CoreException[]) exceptions.toArray(new CoreException[exceptionCount]);
+        boolean outOfSync = false;
+        for (int i = 0; i < children.length; i++) {
+            if (children[i].getStatus().getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
+                outOfSync = true;
+                break;
+            }
+        }
+        String title = IDEWorkbenchMessages.getString(outOfSync ? "DeleteResourceAction.outOfSyncError" : "DeleteResourceAction.deletionExceptionMessage"); //$NON-NLS-1$ //$NON-NLS-2$
+        final MultiStatus multi = new MultiStatus(
+                IDEWorkbenchPlugin.IDE_WORKBENCH,
+                0,
+                title, null);
+        for (int i = 0; i < exceptionCount; i++) {
+            CoreException exception = children[i];
+            IStatus status = exception.getStatus();
+            multi.add(new Status(status.getSeverity(), status.getPlugin(),
+                    status.getCode(), status.getMessage(), exception));
+        }
+        return multi;
+    }
 
     /**
      * Asks the user to confirm a delete operation.
@@ -275,9 +308,8 @@ public class DeleteResourceAction extends SelectionListenerAction {
     private boolean confirmDelete(IResource[] resources) {
         if (containsOnlyProjects(resources)) {
             return confirmDeleteProjects(resources);
-        } else {
-            return confirmDeleteNonProjects(resources);
         }
+        return confirmDeleteNonProjects(resources);
     }
 
     /**
@@ -337,44 +369,26 @@ public class DeleteResourceAction extends SelectionListenerAction {
     /**
      * Deletes the given resources.
      */
-    private void delete(IResource[] resourcesToDelete, IProgressMonitor monitor)
-            throws CoreException {
+    private IStatus delete(IResource[] resourcesToDelete, IProgressMonitor monitor) {
         final List exceptions = new ArrayList();
         forceOutOfSyncDelete = false;
         monitor.beginTask("", resourcesToDelete.length); //$NON-NLS-1$
-        for (int i = 0; i < resourcesToDelete.length; ++i) {
-            if (monitor.isCanceled()) {
-                throw new OperationCanceledException();
-            }
-            try {
-                delete(resourcesToDelete[i], new SubProgressMonitor(monitor, 1,
-                        SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-            } catch (CoreException e) {
-                exceptions.add(e);
-            }
+        try {
+	        for (int i = 0; i < resourcesToDelete.length; ++i) {
+	            if (monitor.isCanceled()) {
+	                return Status.CANCEL_STATUS;
+	            }
+	            try {
+	                delete(resourcesToDelete[i], new SubProgressMonitor(monitor, 1,
+	                        SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+	            } catch (CoreException e) {
+	                exceptions.add(e);
+	            }
+	        }
+	        return createResult(exceptions);
+        } finally {
+        	monitor.done();
         }
-
-        // Check to see if any problems occurred during processing.
-        final int exceptionCount = exceptions.size();
-        if (exceptionCount == 1) {
-            throw (CoreException) exceptions.get(0);
-        } else if (exceptionCount > 1) {
-            final MultiStatus multi = new MultiStatus(
-                    IDEWorkbenchPlugin.IDE_WORKBENCH,
-                    0,
-                    IDEWorkbenchMessages
-                            .getString("DeleteResourceAction.deletionExceptionMessage"), new Exception()); //$NON-NLS-1$
-            for (int i = 0; i < exceptionCount; i++) {
-                CoreException exception = (CoreException) exceptions.get(0);
-                IStatus status = exception.getStatus();
-                multi.add(new Status(status.getSeverity(), status.getPlugin(),
-                        status.getCode(), status.getMessage(), exception));
-            }
-            throw new CoreException(multi);
-        }
-
-        // Signal that the job has completed successfully.
-        monitor.done();
     }
 
     /**
@@ -464,58 +478,14 @@ public class DeleteResourceAction extends SelectionListenerAction {
 
         if (resourcesToDelete.length == 0)
             return;
-        try {
-            WorkspaceModifyOperation op = new WorkspaceModifyOperation(getDeleteRule(resourcesToDelete)) {
-                protected void execute(IProgressMonitor monitor)
-                        throws CoreException {
-                    delete(resourcesToDelete, monitor);
-                }
-            };
-            new ProgressMonitorJobsDialog(shell).run(true, true, op);
-        } catch (InvocationTargetException e) {
-            Throwable t = e.getTargetException();
-            if (t instanceof CoreException) {
-                CoreException exception = (CoreException) t;
-                IStatus status = exception.getStatus();
-                IStatus[] children = status.getChildren();
-                boolean outOfSyncError = false;
-
-                for (int i = 0; i < children.length; i++) {
-                    if (children[i].getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
-                        outOfSyncError = true;
-                        break;
-                    }
-                }
-                IDEWorkbenchPlugin.log(getClass(), "run", t); //$NON-NLS-1$
-                if (outOfSyncError) {
-                    ErrorDialog
-                            .openError(
-                                    shell,
-                                    IDEWorkbenchMessages
-                                            .getString("DeleteResourceAction.errorTitle"), //$NON-NLS-1$
-                                    IDEWorkbenchMessages
-                                            .getString("DeleteResourceAction.outOfSyncError"), //$NON-NLS-1$
-                                    status);
-                } else {
-                    ErrorDialog.openError(shell, IDEWorkbenchMessages
-                            .getString("DeleteResourceAction.errorTitle"), // no special message //$NON-NLS-1$
-                            null, status);
-                }
-            } else {
-                // CoreExceptions are collected above, but unexpected runtime exceptions and errors may still occur.
-                IDEWorkbenchPlugin.log(getClass(), "run()", t);//$NON-NLS-1$
-                MessageDialog
-                        .openError(
-                                shell,
-                                IDEWorkbenchMessages
-                                        .getString("DeleteResourceAction.messageTitle"), //$NON-NLS-1$
-                                IDEWorkbenchMessages
-                                        .format(
-                                                "DeleteResourceAction.internalError", new Object[] { t.getMessage() })); //$NON-NLS-1$
-            }
-        } catch (InterruptedException e) {
-            // just return
-        }
+    	Job deleteJob = new WorkspaceJob(IDEWorkbenchMessages.getString("DeleteResourceAction.jobName")) { //$NON-NLS-1$
+    		public IStatus runInWorkspace(IProgressMonitor monitor) {
+                return delete(resourcesToDelete, monitor);
+    		}
+    	};
+    	deleteJob.setRule(getDeleteRule(resourcesToDelete));
+    	deleteJob.setUser(true);
+    	deleteJob.schedule();
     }
 
     /*
