@@ -212,11 +212,7 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
 		}
 
 		// -data @noDefault or -data not specified, prompt and set
-		URL defaultUrl = instanceLoc.getDefault();
-		String initialDefault = defaultUrl == null ? null : defaultUrl
-				.getFile();
-		ChooseWorkspaceData launchData = new ChooseWorkspaceData(
-				initialDefault);
+        ChooseWorkspaceData launchData = new ChooseWorkspaceData(instanceLoc.getDefault());
 
 		boolean force = false;
 		while (true) {

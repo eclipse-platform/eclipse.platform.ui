@@ -74,7 +74,16 @@ public class ChooseWorkspaceData {
 	 */
 	public ChooseWorkspaceData(String initialDefault) {
 		readPersistedData();
-		this.initialDefault = initialDefault;
+		setInitialDefault(initialDefault);
+	}
+
+	/**
+	 * Creates a new instance, loading persistent data if its found.
+	 */
+	public ChooseWorkspaceData(URL instanceUrl) {
+		readPersistedData();
+		if (instanceUrl != null)
+		    setInitialDefault(new File(instanceUrl.getFile()).toString());
 	}
 
 	/**
@@ -83,11 +92,29 @@ public class ChooseWorkspaceData {
 	 */
 	public String getInitialDefault() {
 		if (initialDefault == null)
-			initialDefault = new Path(System.getProperty("user.dir") //$NON-NLS-1$
-					+ File.separator + "workspace").toOSString(); //$NON-NLS-1$
+                setInitialDefault(System.getProperty("user.dir") //$NON-NLS-1$
+                        + File.separator + "workspace"); //$NON-NLS-1$
 		return initialDefault;
 	}
 
+	/**
+     * Set this data's initialDefault parameter to a properly formatted version
+     * of the argument directory string. The proper format is to the platform
+     * appropriate separator character without meaningless leading or trailing
+     * separator characters.
+     */
+	private void setInitialDefault(String dir) {
+	    if (dir == null) {
+	        initialDefault = null;
+	        return;
+	    }
+
+	    dir = new Path(dir).toOSString();
+	    while (dir.charAt(dir.length() - 1) == File.separatorChar)
+            dir = dir.substring(0, dir.length() - 1);
+        initialDefault = dir;
+	}
+	
 	/**
 	 * Return the currently selected workspace or null if nothing is selected.
 	 */

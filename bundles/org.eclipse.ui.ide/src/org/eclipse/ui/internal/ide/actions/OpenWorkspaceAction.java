@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.actions;
 
-import java.io.File;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -88,13 +86,10 @@ public class OpenWorkspaceAction extends Action implements
      */
     private String promptForWorkspace() {
         // get the current workspace as the default
-        String instanceLoc = Platform.getLocation().toOSString();
-        while (instanceLoc.charAt(instanceLoc.length() - 1) == File.separatorChar)
-            instanceLoc = instanceLoc.substring(0, instanceLoc.length() - 1);
-
-        ChooseWorkspaceData data = new ChooseWorkspaceData(instanceLoc);
-        ChooseWorkspaceDialog dialog
-        		= new ChooseWorkspaceDialog(window.getShell(), data, true);
+        ChooseWorkspaceData data = new ChooseWorkspaceData(Platform
+                .getInstanceLocation().getURL());
+        ChooseWorkspaceDialog dialog = new ChooseWorkspaceDialog(window
+                .getShell(), data, true);
         dialog.prompt(true);
 
         // return null if the user changed their mind
