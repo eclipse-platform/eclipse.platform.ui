@@ -72,10 +72,6 @@ protected void copyFile(File target, File destination, IProgressMonitor monitor)
 	try {
 		int totalWork = 1 + ((int) target.length() / 8192);
 		monitor.beginTask(Policy.bind("localstore.copying", target.getAbsolutePath()), totalWork); //$NON-NLS-1$
-		if (CoreFileSystemLibrary.isReadOnly(target.getAbsolutePath())) {
-			String message = Policy.bind("localstore.couldNotWriteReadOnly", target.getAbsolutePath()); //$NON-NLS-1$
-			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(target.getAbsolutePath()), message, null);
-		}
 		try {
 			write(destination, read(target), false, monitor);
 		} catch (CoreException e) {
