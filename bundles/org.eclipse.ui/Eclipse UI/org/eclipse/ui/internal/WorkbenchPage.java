@@ -141,7 +141,7 @@ public void addFastView(IViewPart view) {
 	// The view is now invisible.
 	// If it is active then deactivate it.
 	if (view == activePart) {
-		setActivePart(activationList.getPreviouslyActive());
+		activate(activationList.getActive());
 	}
 		
 	// Notify listeners.
@@ -388,8 +388,9 @@ public boolean closeAllEditors(boolean save) {
 		firePartClosed(editor);
 		editor.dispose();
 	}
-	if(deactivate)
-		setActivePart(activationList.getActive());
+	if (deactivate)
+		activate(activationList.getActive());
+		
 	// Notify interested listeners
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
 
@@ -434,13 +435,13 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	
 	// Activate new part.
 	if (partWasActive) {
-		IEditorPart top = activationList.getTopEditor();
-		if (top != null) {
-			setActivePart(top);
-		}
-		else {
-			setActivePart(activationList.getActive());
-		}
+		IWorkbenchPart top = activationList.getTopEditor();
+		if (top == null)
+			top = activationList.getActive();
+		if (top != null)
+			activate(top);
+		else
+			setActivePart(null);
 	}
 	
 	// Return true on success.
@@ -843,8 +844,13 @@ public void hideView(IViewPart view) {
 		return;
 		
 	// Activate new part.
-	if (view == activePart)
-		setActivePart(activationList.getPreviouslyActive());
+	if (view == activePart) {
+		IWorkbenchPart prevActive = activationList.getPreviouslyActive();
+		if (prevActive != null)
+			activate(prevActive);
+		else
+			setActivePart(null);
+	}
 		
 	// Hide the part.  
 	getPersp().hideView(view);
