@@ -821,16 +821,20 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	}
 	
 	/**
-	 * Returns the active workbench page or <code>null</code>
-	 * if none.
+	 * Returns the workbench page in which views should be managed.
+	 * The page containing the debug view, the active workbench page, or
+	 * <code>null</code> if neither of these is available.
 	 * 
-	 * @return the active workbench page or <code>null</code>
+	 * @return the workbench page in which views should be managed or
+	 *  <code>null</code>
 	 */
 	public IWorkbenchPage getActiveWorkbenchPage() {
-		IWorkbenchWindow window = launchView.getViewSite().getWorkbenchWindow();
-		IWorkbenchPage page= null;
-		if (window != null) {
-			page= window.getActivePage();
+		IWorkbenchPage page= launchView.getViewSite().getWorkbenchWindow().getActivePage();
+		if (page == null) {
+			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
+			if (window != null) {
+				page= window.getActivePage();
+			}
 		}
 		return page;
 	}
