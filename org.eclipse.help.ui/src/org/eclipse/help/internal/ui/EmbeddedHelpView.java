@@ -7,7 +7,7 @@ import java.util.Iterator;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.ui.Actions.ShowHideAction;
 import org.eclipse.help.internal.ui.util.*;
-import org.eclipse.help.internal.topics.Topics;
+import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -34,7 +34,7 @@ public class EmbeddedHelpView extends ViewPart {
 	protected float viewsWidthPercentage = 0.25f;
 	protected HTMLHelpViewer htmlViewer = null;
 	protected NavigationViewer navigationViewer = null;
-	private ITopic topicsToDisplay;
+	private ITopic tocToDisplay;
 	private String topicHrefToDisplay;
 	private Action showHideAction;
 	private Action backAction;
@@ -68,18 +68,18 @@ public class EmbeddedHelpView extends ViewPart {
 			new String[] { IHelpUIConstants.EMBEDDED_HELP_VIEW });
 		String errorMessage = "";
 		try {
-			if (topicsToDisplay == null) {
-				// get first Topics available
-				Iterator topicsHrefsIt =
-					HelpSystem.getTopicsNavigationManager().getTopicsIDs().iterator();
-				if (topicsHrefsIt.hasNext()) {
-					String topicsHref = (String) topicsHrefsIt.next();
-					topicsToDisplay = HelpSystem.getTopicsNavigationManager().getTopics(topicsHref);
+			if (tocToDisplay == null) {
+				// get first Toc available
+				Iterator tocHrefsIt =
+					HelpSystem.getTocManager().getTocIDs().iterator();
+				if (tocHrefsIt.hasNext()) {
+					String tocHref = (String) tocHrefsIt.next();
+					tocToDisplay = HelpSystem.getTocManager().getToc(tocHref);
 				}
 			}
-			// No InfoSets installed at all. Display error dialog, but also handle
+			// No TOCs installed at all. Display error dialog, but also handle
 			// empty view. Since view is already created, do *not* close for safety. 
-			if (topicsToDisplay == null) {
+			if (tocToDisplay == null) {
 				errorMessage = WorkbenchResources.getString("WW001");
 				//Documentation is not installed.
 				creationSuccessful = false;
@@ -88,7 +88,7 @@ public class EmbeddedHelpView extends ViewPart {
 			}
 			htmlViewer = new HTMLHelpViewer(viewContainer);
 			navigationViewer = new NavigationViewer(viewContainer, this);
-			// htmlViewer should be updated when selected topics or topic change
+			// htmlViewer should be updated when selected toc or topic change
 			navigationViewer.addSelectionChangedListener(htmlViewer);
 			// only add actions for windows.
 			// when we have an embedded browser on linux, remove the if()
@@ -110,7 +110,7 @@ public class EmbeddedHelpView extends ViewPart {
 				}
 			});
 			// show help
-			displayHelp(topicsToDisplay, topicHrefToDisplay);
+			displayHelp(tocToDisplay, topicHrefToDisplay);
 			// if any errors or parsing errors have occurred, display them in a pop-up
 			ErrorUtil.displayStatus();
 			creationSuccessful = true;
@@ -209,11 +209,11 @@ public class EmbeddedHelpView extends ViewPart {
 		init(site);
 		if (memento == null)
 			return;
-		if (topicsToDisplay == null && topicHrefToDisplay == null) {
+		if (tocToDisplay == null && topicHrefToDisplay == null) {
 			// Use memento values only if no other values available
-			topicsToDisplay =
-				HelpSystem.getTopicsNavigationManager().getTopics(
-					memento.getString("topicsToDisplay"));
+			tocToDisplay =
+				HelpSystem.getTocManager().getToc(
+					memento.getString("tocToDisplay"));
 			topicHrefToDisplay = memento.getString("topicHrefToDisplay");
 		}
 	}
@@ -267,9 +267,9 @@ public class EmbeddedHelpView extends ViewPart {
 	public void saveState(IMemento memento) {
 		try {
 			if (navigationViewer != null) {
-				Topics topics = (Topics)navigationViewer.getInput();
+				Toc topics = (Toc)navigationViewer.getInput();
 				if (topics != null)
-					memento.putString("topicsToDisplay", topics.getTopicsID());
+					memento.putString("tocToDisplay", topics.getTocID());
 				ISelection sel = navigationViewer.getSelection();
 				if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
 					Object selectedTopic = ((IStructuredSelection) sel).getFirstElement();
@@ -343,11 +343,11 @@ public class EmbeddedHelpView extends ViewPart {
 	public void setFocus() {
 	}
 	/**
-	 * Gets the topicsToDisplay.
+	 * Gets the tocToDisplay.
 	 * @return Returns a ITopic
 	 */
-	public ITopic getTopicsToDisplay() {
-		return topicsToDisplay;
+	public ITopic getTocToDisplay() {
+		return tocToDisplay;
 	}
 
 }

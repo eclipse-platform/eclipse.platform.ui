@@ -209,7 +209,7 @@ public class ContextHelpDialog implements Runnable {
 		// get links from first context with links
 		relatedTopics = cmgr.getRelatedTopics(contexts);
 		relatedTopics = removeDuplicates(relatedTopics);
-		if (relatedTopics == null)			// none of the contexts have Topics
+		if (relatedTopics == null)			// none of the contexts have Toc
 			return null;
 		// Create control
 		Composite composite = new Composite(parent, SWT.NONE);

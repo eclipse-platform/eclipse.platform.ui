@@ -76,7 +76,7 @@ public class DefaultHelp implements IHelp {
 		if (topic == null || topic.getHref() == null)
 			return;
 		// Do not start help view if documentaton is not available, display error
-		if (HelpSystem.getTopicsNavigationManager().getTopicsIDs().size() <= 0) {
+		if (HelpSystem.getTocManager().getTocIDs().size() <= 0) {
 			ErrorUtil.displayErrorDialog(WorkbenchResources.getString("WW001"));
 			//Documentation is not installed.
 			return;
@@ -113,9 +113,9 @@ public class DefaultHelp implements IHelp {
 	/**
 	 * Display help and selected specified topic.
 	 */
-	public void displayHelp(String topicsFileHref, String topicHref) {
+	public void displayHelp(String tocFileHref, String topicHref) {
 		// Do not start help view if documentaton is not available, display error
-		if (HelpSystem.getTopicsNavigationManager().getTopicsIDs().size() <= 0) {
+		if (HelpSystem.getTocManager().getTocIDs().size() <= 0) {
 			// There is no documentation
 			ErrorUtil.displayErrorDialog(WorkbenchResources.getString("WW001"));
 			//Documentation is not installed.
@@ -123,30 +123,30 @@ public class DefaultHelp implements IHelp {
 		}
 		// 1.0 nav support
 		// change topicshref to a href of one of a views
-		if (topicsFileHref != null) {
-			Collection idCol = HelpSystem.getTopicsNavigationManager().getTopicsIDs();
+		if (tocFileHref != null) {
+			Collection idCol = HelpSystem.getTocManager().getTocIDs();
 			for (Iterator it = idCol.iterator(); it.hasNext();) {
 				String newFileHref = (String) it.next();
-				if (newFileHref.indexOf(topicsFileHref) == 0
-					&& newFileHref.indexOf("..") == topicsFileHref.length()) {
-					topicsFileHref = newFileHref;
+				if (newFileHref.indexOf(tocFileHref) == 0
+					&& newFileHref.indexOf("..") == tocFileHref.length()) {
+					tocFileHref = newFileHref;
 					break;
 				}
 			}
 		}
 		// eo 1.0 nav support
-		ITopic topics = HelpSystem.getTopicsNavigationManager().getTopics(topicsFileHref);
+		ITopic topics = HelpSystem.getTocManager().getToc(tocFileHref);
 		if (topics == null) {
-			// if topics href specified, but not found, log it
-			if (topicsFileHref != null && topicsFileHref.trim().length() != 0)
-				Logger.logWarning(WorkbenchResources.getString("WE008", topicsFileHref));
-			//Help Topics %1 are not installed.
+			// if toc href specified, but not found, log it
+			if (tocFileHref != null && tocFileHref.trim().length() != 0)
+				Logger.logWarning(WorkbenchResources.getString("WE008", tocFileHref));
+			//Help Toc %1 are not installed.
 		}
 		EmbeddedHelpView helpView = getHelpView();
 		if (helpView == null)
 			return; // could not open any help view
 		activateHelpPerspective();
-		// switch to specified topics and topic
+		// switch to specified toc and topic
 		helpView.displayHelp(topics, topicHref);
 	}
 	/**

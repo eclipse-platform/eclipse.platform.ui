@@ -25,18 +25,17 @@
    </runtime>
 
    <!-- ========================================================================== -->
-   <!-- Extension point: org.eclipse.help.topics                                   -->
-   <!-- Purpose: Extension point for registering documentation components          -->
-   <!--          by individual plugins                                             -->
-   <!-- Extension Implementation: must provide one or more topics files for        -->
-   <!--                           documentation navigation, and linking            -->
+   <!-- Extension point: org.eclipse.help.toc                                      -->
+   <!-- Purpose: Extension point for registering documentation tables of           -->
+   <!--          contents by individual plugins                                    -->
+   <!-- Extension Implementation: must provide one or more table of contents       -->
+   <!--           files describing table of contents for documentation             -->
    <!-- Sample usage:                                                              -->
-   <!--   <extension point="org.eclipse.help.topics">                              -->
-   <!--	  	<topics href="infoTopics.xml"/>                                    -->
-   <!--	  	<require href="../mainDocPluing/categories.xml"/>                  -->
+   <!--   <extension point="org.eclipse.help.toc">                                 -->
+   <!--	  	<toc file="infoToc.xml"/>                                              -->
    <!--   </extension>                                                             -->
    <!-- ========================================================================== -->
-   <extension-point id="topics" name="%topics_extention_point_name"/>
+   <extension-point id="toc" name="%toc_extention_point_name"/>
 
 
    <!-- ========================================================================== -->

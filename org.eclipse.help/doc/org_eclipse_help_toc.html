@@ -19,8 +19,8 @@ ways.</b></td>
 
 <center>
 <h1>
-Topics</h1></center>
-<b><i>Identifier: </i></b>org.eclipse.help.topics
+Table of Contents (TOC)</h1></center>
+<b><i>Identifier: </i></b>org.eclipse.help.toc
 <p><b><i>Description:</i></b> For registering an online help contribution
 for an individual plug-in.
 <p>Each plug-in that contributes help files should in general do the following:
@@ -31,39 +31,37 @@ author the html files, zip html files into doc.zip, and store the zip file
 in the plug-in directory.</li>
 
 <li>
-create navigation topics files that describe navigation (table of contents)
+create TOC files that describe Table of Contents
 for the help and the necessary topic interleaving. See the syntax below.</li>
 
 <li>
-the plugin.xml file should extend the <tt>org.eclipse.help.topics</tt>
-extension point and specify topics navigation file(s).</li>
+the plugin.xml file should extend the <tt>org.eclipse.help.toc</tt>
+extension point and specify TOC file(s).</li>
 </ul>
 </ul>
-<b><i>Configuration Markup for the <tt>topics</tt> extension point </i></b><i>(this
+<b><i>Configuration Markup for the <tt>toc</tt> extension point </i></b><i>(this
 is what goes into the plugin.xml file)<b>:</b></i>
-<p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT topics EMPTY></tt>
-<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topics file CDATA #REQUIRED></tt>
-<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topics type (toc | tocsection)
-#DEFAULT tocsection></tt>
+<p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT toc EMPTY></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST toc file CDATA #REQUIRED></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST toc primary (true | false) "false"></tt>
 <ul>
 <li>
-<b>file<i> </i></b>- the name of the topics file which contains the table
+<b>file<i> </i></b>- the name of the TOC file which contains the table
 of contents or section&nbsp; for this plug-in's online help</li>
 </ul>
 
 <ul>
 <li>
-<b>type</b> - specifies whether the topics file is a complete table of
-contents (toc) or only a section; the help system will make available to
-the user all table of contents that are not part of other table of contents
-(are not integrated);&nbsp; unintegrated sections will be ignored.</li>
+<b>primary</b> - specifies whether the TOC file is a primary table of
+contents and is meant to be the master table of contents
+or not primary and intended to be integrated into another table of contents</li>
 </ul>
-<i><b>Configuration Markup for Topics </b>(this is what goes into the topics
+<i><b>Configuration Markup for toc </b>(this is what goes into the TOC
 file)<b>:</b></i>
-<p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT topics (topic | anchor | link)*
+<p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT toc (topic | anchor | link)*
 ></tt>
-<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topics link_to CDATA #IMPLIED ></tt>
-<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topics label CDATA #REQUIRED ></tt><tt></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST toc link_to CDATA #IMPLIED ></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST toc label CDATA #REQUIRED ></tt><tt></tt>
 <p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT topic (topic | anchor | link )*
 ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topic label CDATA #REQUIRED ></tt>
@@ -72,21 +70,20 @@ file)<b>:</b></i>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST anchor id ID&nbsp; #REQUIRED
 ></tt><tt></tt>
 <p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT link EMPTY ></tt>
-<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST link topics CDATA #REQUIRED ></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST link toc CDATA #REQUIRED ></tt>
 <p>In general, a plug-in that needs to provide online help will define
-its own topics manifest files. In the end, the help system is configured
-to be launched as some actions, and the path of the topics file can be
+its own TOC files. In the end, the help system is configured
+to be launched as some actions, and the path of the TOC file can be
 used to do so.
 <p><b>The topic element</b>
-<p>All help topic element are contributed as part of the topics container
+<p>All help topic element are contributed as part of the toc container
 element. They can have a hierarchical structure, or can be listed as a
-flat list. A topics manifest is viewed as a data source and a table of
-contents skeleton.
-<p>The topic element is the workhorse of the navigation structure. There
+flat list.
+<p>The topic element is the workhorse of structure of Table of Contents. There
 are two typical uses for the topic element:
 <p>1.&nbsp; To provide a link to a documentation file - usually an HTML
 file.
-<br>2.&nbsp; To act as a container for other topics, either in the same
+<br>2.&nbsp; To act as a container for other toc, either in the same
 manifest or another.
 <p><b><i>1.&nbsp; Topics as links</i></b>
 <br>The simplest use of a topic is as a link to a documentation file.
@@ -99,7 +96,7 @@ can use the syntax
 /></tt>
 <p><b><i>2.&nbsp; Topics as containers</i></b>
 <br>The next most common use of a topic is to use it as a container for
-other topics.&nbsp; The container topic itself can always refer to a particular
+other toc.&nbsp; The container topic itself can always refer to a particular
 file as well.
 <p><tt>&lt;topic label="Integrated Development Environment" href="concepts/ciover.htm"
 ></tt>
@@ -108,62 +105,62 @@ file as well.
 <br><tt>&nbsp; ...</tt>
 <br><tt>&lt;/topic></tt>
 <p><b>The link element</b>
-<p>The link element allows to link navigation structure defined in another
-topics file.&nbsp; All the topics from the topics file specified in the
-topics attribute will appear in the table of contents as if they were defined
-directly in place of the link element.&nbsp; To include topics from api.xml
+<p>The link element allows to link Table of Contents defined in another
+toc file.&nbsp; All the topics from the toc file specified in the
+toc attribute will appear in the table of contents as if they were defined
+directly in place of the link element.&nbsp; To include toc from api.xml
 file you could write<tt></tt>
 <p><tt>&lt;topic label="References" ></tt>
 <br><tt>&nbsp; ...</tt>
-<br><tt>&nbsp; &lt;link topics="api.xml" /></tt>
+<br><tt>&nbsp; &lt;link toc="api.xml" /></tt>
 <br><tt>&nbsp; ...</tt>
 <br><tt>&lt;/topic></tt>
 <p><b>The anchor element</b>
-<p>The anchor element defines a point that will allow linking other topics
+<p>The anchor element defines a point that will allow linking other toc
 files to this navigation, and extending it, without using the link element
-and referencing other topics files from here.&nbsp; To allow inserting
-more topics after the "ZZZ" document you would define an anchor as follows:<tt></tt>
+and referencing other toc files from here.&nbsp; To allow inserting
+Table of Contents with more topics after the "ZZZ" document you would define an anchor as follows:<tt></tt>
 <p><tt>...</tt>
 <br><tt>&lt;topic label="zzz" href="zzz.html" /></tt>
 <br><tt>&lt;anchor id="moreapi" /></tt>
 <br><tt>...</tt>
-<p><b>The topics element</b>
-<p>The topics element is simply a grouping for topic and other element
+<p><b>The toc element</b>
+<p>The toc element is a Table of Contents that groups topics and other elements
 defined in this file.&nbsp; The label identifies the table of contents
 to the user, when it is displayed to the user.&nbsp; The optional link_to
-attribute allows for linking topics from this file into another topics
+attribute allows for linking toc from this file into another toc
 file being higher in the navigation hierarchy.&nbsp; The value of the link_to
-attribute must specify an anchor in another topics file. To link topics
+attribute must specify an anchor in another toc file. To link toc
 from myapi.xml to a api.xml file, specified in another plugin you would
 use the syntax<tt></tt>
-<p><tt>&lt;topic link_to="../anotherPlugin/api.xml#moreapi" label="My Tool
+<p><tt>&lt;toc link_to="../anotherPlugin/api.xml#moreapi" label="My Tool
 API"/></tt>
 <br><tt>...</tt>
-<br><tt>&lt;topics /></tt><tt></tt>
-<p>where # character separates topics file name from the anchor identifier.
+<br><tt>&lt;toc /></tt><tt></tt>
+<p>where # character separates toc file name from the anchor identifier.
 <p><b><i>Examples:</i></b>
-<p>The following is an example of using the <tt>topics</tt> extension point.
+<p>The following is an example of using the <tt>toc</tt> extension point.
 Assume the following is for a plug-in with id&nbsp; named <tt>"org.eclipse.help.examples.ex1"</tt>.
 (The example is intended as a general sample, and it should be noted that
-the same documentation hierarchy, resulting from all the following topics
-files, could also be created with different combination of another topics
+the same documentation hierarchy, resulting from all the following toc
+files, could also be created with different combination of another toc
 files.)
 <p>(in file <tt>plugin.xml</tt>)
-<p><tt>&nbsp;&lt;extension point="org.eclipse.help.topics"></tt>
-<br><tt>&nbsp; &lt;topics file="maindocs.xml" type="toc" /></tt>
-<br><tt>&nbsp; &lt;topics file="task.xml"/></tt>
-<br><tt>&nbsp; &lt;topics file="sample.xml"/></tt>
+<p><tt>&nbsp;&lt;extension point="org.eclipse.help.toc"></tt>
+<br><tt>&nbsp; &lt;toc file="maindocs.xml" type="toc" /></tt>
+<br><tt>&nbsp; &lt;toc file="task.xml"/></tt>
+<br><tt>&nbsp; &lt;toc file="sample.xml"/></tt>
 <br><tt>&nbsp;&lt;/extension></tt>
 <br>&nbsp;
 <p>(in file <tt>maindocs.xml</tt>)
-<blockquote><tt>&lt;topics label="Help System Example"></tt>
+<blockquote><tt>&lt;toc label="Help System Example"></tt>
 <br><tt>&nbsp;&lt;topic label="Introduction" href="intro.html"/></tt>
 <br><tt>&nbsp;&lt;topic label="Tasks"></tt>
 <br><tt>&nbsp; &lt;topic label="Creating a Project" href="tasks/task1.html"></tt>
 <br><tt>&nbsp;&nbsp; &lt;topic label="Creating a Web Project" href="tasks/task11.html"/></tt>
 <br><tt>&nbsp;&nbsp; &lt;topic label="Creating a Java Project" href="tasks/task12.html"/></tt>
 <br><tt>&nbsp; &lt;/topic></tt>
-<br><tt>&nbsp; &lt;link topics="task.xml" /></tt>
+<br><tt>&nbsp; &lt;link toc="task.xml" /></tt>
 <br><tt>&nbsp; &lt;topic label="Testing a Project" href="tasks/taskn.html"/></tt>
 <br><tt>&nbsp;&lt;/topic></tt>
 <br><tt>&nbsp;&lt;topic label="Samples"></tt>
@@ -174,18 +171,18 @@ files.)
 <br><tt>&nbsp; &lt;/topic></tt>
 <br><tt>&nbsp; &lt;anchor id="samples" /></tt>
 <br><tt>&nbsp;&lt;/topic></tt>
-<br><tt>&lt;/topics></tt></blockquote>
+<br><tt>&lt;/toc></tt></blockquote>
 
 <p><br>(in file <tt>tasks.xml</tt>)
-<blockquote><tt>&lt;topics label="Building a Project"></tt>
+<blockquote><tt>&lt;toc label="Building a Project"></tt>
 <br><tt>&nbsp;&lt;topic label="Building a Project" href="build/building.html"></tt>
 <br><tt>&nbsp; &lt;topic label="Building a Web Project" href="build/web.html"/></tt>
 <br><tt>&nbsp; &lt;topic label="Building a Java Project" href="build/java.html"/></tt>
 <br><tt>&nbsp;&lt;/topic></tt>
-<br><tt>&lt;/topics></tt></blockquote>
+<br><tt>&lt;/toc></tt></blockquote>
 
 <p><br>(in file <tt>samples.xml</tt>)
-<blockquote><tt>&lt;topics link_to="maindocs.xml#samples" label="Using
+<blockquote><tt>&lt;toc link_to="maindocs.xml#samples" label="Using
 The Compile Tool"></tt>
 <br><tt>&nbsp;&lt;topic label="The Compile Tool Sample" href="compilesample/example.html"></tt>
 <br><tt>&nbsp; &lt;topic label="Step 1" href="compilesample/step1.html"/></tt>
@@ -193,7 +190,7 @@ The Compile Tool"></tt>
 <br><tt>&nbsp; &lt;topic label="Step 3" href="compilesample/step3.html"/></tt>
 <br><tt>&nbsp; &lt;topic label="Step 4" href="compilesample/step4.html"/></tt>
 <br><tt>&nbsp;&lt;/topic></tt>
-<br><tt>&lt;/topics></tt></blockquote>
+<br><tt>&lt;/toc></tt></blockquote>
 
 <p><br>Here is the resulting documentation hierarchy in the Eclipse Workbench
 :
@@ -208,8 +205,8 @@ a key (e.g. %pluginName) and creating an entry in the plugin.properties
 file of the form:
 <br>&nbsp;&nbsp;&nbsp; pluginName = "Online Help Sample Plugin"
 <br>The translated property files should be placed in nl/&lt;locale> directory.
-<br>The labels in the topics XML files can be translated and the resulting
-topics files placed in nl/&lt;locale> directory. The help system will look
+<br>The labels in the toc XML files can be translated and the resulting
+toc files placed in nl/&lt;locale> directory. The help system will look
 for the files under this directory before defaulting to plugin directory.
 <br>The documentation contained in doc.zip can be localized by placing
 the zip file in nl/&lt;locale> directory. The help system will look for
@@ -221,7 +218,7 @@ the appropriate manifest files mentioned in the <tt>plugin.xml</tt> file.
 <br>&nbsp;
 <p><i><b>Supplied Implementation:</b> </i>The optional default implementation
 of the help system UI supplied with the Eclipse platform fully supports
-the <tt>topics</tt> extension point.
+the <tt>toc</tt> extension point.
 <p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
 </body>
 </html>

@@ -62,29 +62,29 @@ public interface IHelp {
 	 */
 	public void displayHelp(IContext[] contexts, int x, int y);
 	/**
-	 * Displays help content for the topics with the given URL.
+	 * Displays help content for the toc with the given URL.
 	 * <p>
 	 * This method is called by the platform to launch the help system UI, displaying
-	 * the documentation identified by the <code>topics</code> parameter.
+	 * the documentation identified by the <code>toc</code> parameter.
 	 * </p> 
 	 * <p>
-	 * Valid topics are
-	 * contributed through the <code>topics</code> element of the 
-	 * <code>"org.eclipse.help.topics"</code> extension point.   
+	 * Valid toc are
+	 * contributed through the <code>toc</code> element of the 
+	 * <code>"org.eclipse.help.toc"</code> extension point.   
 	 * </p> 
 	 *
-	 * @param topics the URL of the topics as specified in
-	 * the <code>"org.eclipse.help.topics"</code> extenstion
+	 * @param toc the URL of the toc as specified in
+	 * the <code>"org.eclipse.help.toc"</code> extenstion
 	 * point
 	 */
-	public void displayHelp(String topics);
+	public void displayHelp(String toc);
 	/**
 	 * This method is an extension to the 
-	 * <a href="#displayHelp(java.lang.String)">displayHelp(String topics)</a>
+	 * <a href="#displayHelp(java.lang.String)">displayHelp(String toc)</a>
 	 * method, providing the ability to open the specified help topic.
 	 * <p>
 	 * <code>selectedTopic</code> should be a valid help topic url contained in
-	 * the specified <code>topics</code> and have the following format: 
+	 * the specified <code>toc</code> and have the following format: 
 	 * <em>/pluginID/path_to_document</em>
 	 * <br>where
 	 * <dl>
@@ -94,11 +94,11 @@ public interface IHelp {
 	 * </dt>
 	 * </dl>
 	 * </p>
-	 * @param topics the URL of the topics
+	 * @param toc the URL of the toc
 	 * @param selectedTopic the help topic url.
 	 * @see #displayHelp(java.lang.String)
 	 */
-	public void displayHelp(String topics, String selectedTopic);
+	public void displayHelp(String toc, String selectedTopic);
 	/**
 	 * Computes and returns context information for the given context id.
 	 * 
