@@ -31,6 +31,7 @@ import org.eclipse.ui.actions.CloseResourceAction;
 import org.eclipse.ui.actions.OpenResourceAction;
 import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.ide.IDEActionFactory;
+import org.eclipse.ui.ide.IDEContributionItemFactory;
 
 /**
  * This is the action group for workspace actions such as Build, Refresh Local,
@@ -53,10 +54,10 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
 			ActionFactory.REFRESH.getId(),
 			refreshAction);
 		actionBars.setGlobalActionHandler(
-			IDEActionFactory.BUILD.getId(),
+			IDEContributionItemFactory.BUILD.getId(),
 			buildAction);
 		actionBars.setGlobalActionHandler(
-			IDEActionFactory.BUILD_PROJECT.getId(),
+			IDEContributionItemFactory.BUILD_PROJECT.getId(),
 			rebuildAction);
 		actionBars.setGlobalActionHandler(
 			IDEActionFactory.OPEN_PROJECT.getId(),

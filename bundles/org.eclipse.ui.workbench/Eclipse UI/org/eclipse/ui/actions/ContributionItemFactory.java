@@ -94,7 +94,7 @@ public abstract class ContributionItemFactory {
 			}
 			PinEditorAction action = new PinEditorAction(window);
 			action.setId(getId());
-			IContributionItem item = new PinEditorContributionItem(action);
+			IContributionItem item = new PinEditorContributionItem(action, window);
 			return item;
 		}
 	};

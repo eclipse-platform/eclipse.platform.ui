@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.actions;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.PinEditorAction;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -24,15 +25,25 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * @since 3.0
  */
 public class PinEditorContributionItem extends ActionContributionItem {
+	private IWorkbenchWindow window = null;
 	private boolean reuseEditors = false;
 	
 	private IPropertyChangeListener prefListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
 			if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
-				reuseEditors = WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
-				setVisible(reuseEditors);
-				getParent().markDirty();
-				getParent().update(false);
+				if (getParent() != null) {
+					reuseEditors = WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
+					setVisible(reuseEditors);
+					getParent().markDirty();
+					if (window.getShell() != null && !window.getShell().isDisposed()) {
+						// this property change notification could be from a non-ui thread
+						window.getShell().getDisplay().syncExec(new Runnable() {
+							public void run() {
+								getParent().update(false);
+							}
+						});
+					}
+				}
 			}
 		}
 	};
@@ -40,8 +51,13 @@ public class PinEditorContributionItem extends ActionContributionItem {
 	/**
 	 * @param action
 	 */
-	public PinEditorContributionItem(PinEditorAction action) {
+	public PinEditorContributionItem(PinEditorAction action, IWorkbenchWindow window) {
 		super(action);
+		
+		if (window == null) {
+			throw new IllegalArgumentException();
+		}
+		this.window = window;
 		
 		reuseEditors = WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
 		setVisible(reuseEditors);
