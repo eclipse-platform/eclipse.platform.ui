@@ -160,6 +160,7 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		setTitle(Policy.bind("TagConfigurationDialog.4")); //$NON-NLS-1$
+		setTitleImage(null);
 		Composite shell = new Composite(parent, SWT.NONE);
 		GridData data = new GridData (GridData.FILL_BOTH);		
 		shell.setLayoutData(data);
