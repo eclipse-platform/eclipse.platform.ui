@@ -13,5 +13,7 @@ package org.eclipse.compare.internal;
 
 public class ViewerSwitchingCancelled extends RuntimeException {
 
+	private static final long serialVersionUID = 1L;
+
 }
 

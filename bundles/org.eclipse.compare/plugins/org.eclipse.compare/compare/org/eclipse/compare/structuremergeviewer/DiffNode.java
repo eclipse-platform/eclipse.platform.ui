@@ -356,7 +356,7 @@ public class DiffNode extends DiffContainer implements ITypedElement, ICompareIn
 		String[] path= null;
 		if (el instanceof IDiffContainer) {
 			IDiffContainer parent= ((IDiffContainer)el).getParent();
-			if (parent instanceof ITypedElement)
+			if (parent != null)
 				path= getPath(parent, level+1);
 		}
 		if (path == null)

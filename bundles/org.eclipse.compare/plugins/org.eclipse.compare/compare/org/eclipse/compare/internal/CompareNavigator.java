@@ -58,8 +58,9 @@ public class CompareNavigator implements ICompareNavigator {
 			if (navigators[n].gotoDifference(next)) {
 				// at end of this navigator
 				continue;
-			} else // not at end
-				return false;
+			}
+			// not at end
+			return false;
 		}
 		
 		return true;

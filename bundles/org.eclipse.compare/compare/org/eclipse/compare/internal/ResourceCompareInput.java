@@ -313,10 +313,9 @@ class ResourceCompareInput extends CompareEditorInput {
 				String format= Utilities.getString("ResourceCompare.threeWay.tooltip"); //$NON-NLS-1$
 				String ancestorLabel= fAncestorResource.getFullPath().makeRelative().toString();
 				return MessageFormat.format(format, new String[] {ancestorLabel, leftLabel, rightLabel});
-			} else {
-				String format= Utilities.getString("ResourceCompare.twoWay.tooltip"); //$NON-NLS-1$
-				return MessageFormat.format(format, new String[] {leftLabel, rightLabel});
 			}
+			String format= Utilities.getString("ResourceCompare.twoWay.tooltip"); //$NON-NLS-1$
+			return MessageFormat.format(format, new String[] {leftLabel, rightLabel});
 		}
 		// fall back
 		return super.getToolTipText();

@@ -99,8 +99,8 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 		addDisposeListener(
 			new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
-					if (fViewer instanceof ISelectionProvider)
-						((ISelectionProvider) fViewer).removeSelectionChangedListener(CompareViewerSwitchingPane.this);
+					if (fViewer != null)
+						fViewer.removeSelectionChangedListener(CompareViewerSwitchingPane.this);
 					if (fViewer instanceof StructuredViewer) {
 						StructuredViewer sv= (StructuredViewer) fViewer;
 						sv.removeDoubleClickListener(CompareViewerSwitchingPane.this);
@@ -132,8 +132,7 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 
 		if (fViewer != null) {
 			
-			if (fViewer instanceof ISelectionProvider)
-				 ((ISelectionProvider) fViewer).removeSelectionChangedListener(this);
+			fViewer.removeSelectionChangedListener(this);
 				 
 			if (fViewer instanceof StructuredViewer) {
 				StructuredViewer sv= (StructuredViewer) fViewer;
@@ -164,8 +163,7 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 
 			boolean newEmpty= isEmpty();
 
-			if (fViewer instanceof ISelectionProvider)
-				 ((ISelectionProvider) fViewer).addSelectionChangedListener(this);
+			fViewer.addSelectionChangedListener(this);
 
 			if (fViewer instanceof StructuredViewer) {
 				StructuredViewer sv= (StructuredViewer) fViewer;
@@ -236,14 +234,14 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 	}
 
 	public ISelection getSelection() {
-		if (fViewer instanceof ISelectionProvider)
-			return ((ISelectionProvider) fViewer).getSelection();
+		if (fViewer != null)
+			return fViewer.getSelection();
 		return null;
 	}
 
 	public void setSelection(ISelection s) {
-		if (fViewer instanceof ISelectionProvider)
-			 ((ISelectionProvider) fViewer).setSelection(s);
+		if (fViewer != null)
+			 fViewer.setSelection(s);
 	}
 
 	public void selectionChanged(SelectionChangedEvent ev) {

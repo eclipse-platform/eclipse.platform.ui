@@ -771,14 +771,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		updateColors(null);
 	}
 	
-	private RGB getForeground(Display display) {
-		if (fForeground != null)
-			return fForeground;
-		if (display == null)
-			display= fComposite.getDisplay();
-		return display.getSystemColor(SWT.COLOR_LIST_FOREGROUND).getRGB();
-	}
-	
 	private void updateColors(Display display) {
 		
 		if (display == null)
@@ -1621,11 +1613,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 
 		Object input= getInput();
 
-		Position ancestorRange= null;
 		Position leftRange= null;
 		Position rightRange= null;
-		
-		int dir= 0;
 		
 		// if one side is empty use container
 		if (FIX_47640 && !emptyInput && (left == null || right == null)) {
@@ -1638,8 +1627,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				            || ci.getLeft() instanceof IDocumentRange
 				            		|| ci.getRight() instanceof IDocumentRange) {
 				    
-				        	if (ancestor instanceof IDocumentRange)
-				        	    ancestorRange= ((IDocumentRange)ancestor).getRange();
 				        	if (left instanceof IDocumentRange)
 				        	    leftRange= ((IDocumentRange)left).getRange();
 				        	if (right instanceof IDocumentRange)
@@ -1648,8 +1635,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					    ancestor= ci.getAncestor();
 					    left= ci.getLeft();
 					    right= ci.getRight();
-					    
-					    dir= ((IDiffElement)input).getKind();
 				    }
 				}
 			}
@@ -1732,7 +1717,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			return null;
 		
 		if (fChangeDiffs != null) {
-			boolean threeWay= isThreeWay();
 			Iterator iter= fChangeDiffs.iterator();
 			while (iter.hasNext()) {
 				Diff diff= (Diff) iter.next();
@@ -2821,9 +2805,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 							if (d.fDirection == RangeDifference.CONFLICT) {
 								unresolvedConflicting++;
 								break; // we can stop here because a conflict has the maximum priority
-							} else {
-								unresolvedIncoming++;
 							}
+							unresolvedIncoming++;
 						}
 					}
 				}

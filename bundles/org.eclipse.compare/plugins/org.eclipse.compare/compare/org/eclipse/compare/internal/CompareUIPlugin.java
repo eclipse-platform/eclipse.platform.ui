@@ -173,7 +173,6 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 
 	// content type
 	private static final IContentTypeManager fgContentTypeManager= Platform.getContentTypeManager();
-	private static final IContentType CT_TEXT= fgContentTypeManager.getContentType(IContentTypeManager.CT_TEXT);
 
 	/**
 	 * The plugin singleton.

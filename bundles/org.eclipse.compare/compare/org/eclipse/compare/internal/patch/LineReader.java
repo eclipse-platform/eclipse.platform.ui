@@ -66,10 +66,9 @@ import org.eclipse.jface.util.Assert;
 					if (fIgnoreSingleCR) {
 						sb.append((char)c);	
 						continue;
-					} else {
-						fHaveChar= true;
-						fLastChar= c;
 					}
+					fHaveChar= true;
+					fLastChar= c;
 				} else
 					sb.append((char)c);	
 				break;
