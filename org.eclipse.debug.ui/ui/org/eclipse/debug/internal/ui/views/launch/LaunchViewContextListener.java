@@ -30,10 +30,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.DebugContextManager;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener2;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
@@ -70,7 +67,7 @@ import org.eclipse.ui.contexts.NotDefinedException;
  * an element with the specified debug model identifier is selected,
  * the specified activity will be enabled.
  */
-public class LaunchViewContextListener implements IPartListener2, IPageListener, IPerspectiveListener, IContextManagerListener {
+public class LaunchViewContextListener implements IPartListener2, IContextManagerListener {
 
 	public static final String DEBUG_MODEL_ACTIVITY_SUFFIX = "debugModel"; //$NON-NLS-1$
 	public static final String ID_CONTEXT_VIEW_BINDINGS= "contextViewBindings"; //$NON-NLS-1$
@@ -126,24 +123,16 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	
 	/**
 	 * Creates a fully initialized context listener.
-	 * @param view
+	 * 
+	 * @param view a fully initialized launch view
 	 */
 	public LaunchViewContextListener(LaunchView view) {
 		launchView= view;
 		loadDebugModelContextExtensions();
 		loadDebugModelActivityExtensions();
 		loadContextToViewExtensions(true);
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		workbench.getContextSupport().getContextManager().addContextManagerListener(this);
-		IWorkbenchWindow window= workbench.getActiveWorkbenchWindow();
-		if (window != null) {
-			window.addPageListener(this);
-			window.addPerspectiveListener(this);
-			IWorkbenchPage page = window.getActivePage();
-			if (page != null) {
-				showDebugActionSet(page);
-			}
-		}
+		PlatformUI.getWorkbench().getContextSupport().getContextManager().addContextManagerListener(this);
+		showDebugActionSet();
 	}
 	
 	/**
@@ -824,18 +813,22 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	}
 	
 	/**
-	 * Turns on the debug action set in the given page.
+	 * Turns on the debug action set.
 	 */
-	private void showDebugActionSet(IWorkbenchPage page) {
+	private void showDebugActionSet() {
+		IWorkbenchPage page = getActiveWorkbenchPage();
 		if (page != null) {
 			page.showActionSet(IDebugUIConstants.DEBUG_ACTION_SET);
 		}
 	}
 	
 	/**
-	 * Reset context state when the perspective is reset
+	 * Notifies this listener that the given perspective change
+	 * has occurred.
+	 * 
+	 * Reset context state when the perspective is reset.
 	 */
-	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
+	public void perspectiveChanged(IWorkbenchPage page, String changeId) {
 		if (changeId.equals(IWorkbenchPage.CHANGE_RESET)) {
 			page.removePartListener(this);
 			managedViewIds.clear();
@@ -846,22 +839,6 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 		} else if (changeId.equals(IWorkbenchPage.CHANGE_RESET_COMPLETE)) {
 			page.addPartListener(this);
 		}
-	}
-	
-	/**
-	 * When a workbench page is opened, start listening to
-	 * part notifications.
-	 */
-	public void pageActivated(IWorkbenchPage page) {
-		page.addPartListener(this);
-	}
-	
-	/**
-	 * When a workbench page is closed, stop listening to
-	 * part notifications.
-	 */
-	public void pageClosed(IWorkbenchPage page) {
-		page.removePartListener(this);
 	}
 	
 	/**
@@ -905,15 +882,11 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 		if (ref instanceof IViewReference) {
 			IViewPart part = ((IViewReference) ref).getView(false);
 			if (part == launchView) {
-				showDebugActionSet(getActiveWorkbenchPage());
+				showDebugActionSet();
 			}
 		}
 	}
 	
-	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-	}
-	public void pageOpened(IWorkbenchPage page) {
-	}
 	public void partActivated(IWorkbenchPartReference ref) {
 	}
 	public void partBroughtToTop(IWorkbenchPartReference ref) {

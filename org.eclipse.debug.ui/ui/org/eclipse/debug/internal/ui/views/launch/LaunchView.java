@@ -611,6 +611,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 		setActive(page.findView(getSite().getId()) != null);
+		fContextListener.perspectiveChanged(page, changeId);
 	}
 
 	/* (non-Javadoc)
@@ -621,8 +622,22 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			setActive(true);
 			updateObjects();
 			showEditorForCurrentSelection();
+			page.addPartListener(fContextListener);
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPageListener#pageClosed(org.eclipse.ui.IWorkbenchPage)
+	 */
+	public void pageClosed(IWorkbenchPage page) {
+		page.removePartListener(fContextListener);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPageListener#pageOpened(org.eclipse.ui.IWorkbenchPage)
+	 */
+	public void pageOpened(IWorkbenchPage page) {
+	}		
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
@@ -643,18 +658,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			updateContextListener();
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageListener#pageClosed(org.eclipse.ui.IWorkbenchPage)
-	 */
-	public void pageClosed(IWorkbenchPage page) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageListener#pageOpened(org.eclipse.ui.IWorkbenchPage)
-	 */
-	public void pageOpened(IWorkbenchPage page) {
-	}		
 	
 	/**
 	 * Opens an editor for the current selection if it is a stack frame.
