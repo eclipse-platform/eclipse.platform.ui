@@ -37,6 +37,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -50,7 +51,7 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 	}
 	
 	public void addPages() {
-		mainPage = new ExportProjectSetMainPage("projectSetMainPage", Policy.bind("ProjectSetExportWizard.Export_a_Project_Set_3"), null); //$NON-NLS-1$ //$NON-NLS-2$
+		mainPage = new ExportProjectSetMainPage("projectSetMainPage", Policy.bind("ProjectSetExportWizard.Export_a_Project_Set_3"), TeamImages.getImageDescriptor(UIConstants.IMG_PROJECTSET_EXPORT_BANNER)); //$NON-NLS-1$ //$NON-NLS-2$
 		IProject[] projects = (IProject[])selection.toList().toArray(new IProject[0]);
 		mainPage.setSelectedProjects(projects);
 		mainPage.setFileName(ProjectSetImportWizard.lastFile);

@@ -206,7 +206,7 @@
          id="org.eclipse.team.ui.ProjectSetImportWizard"
          name="%ProjectSetImportWizard.name"
          class="org.eclipse.team.internal.ui.ProjectSetImportWizard"
-         icon="icons/full/clcl16/projectset.gif">
+         icon="icons/full/obj/import_projectset.gif">
          <description>
             %ProjectSetImportWizard.description
          </description>
@@ -221,7 +221,7 @@
          id="org.eclipse.team.ui.ProjectSetExportWizard"
          name="%ProjectSetExportWizard.name"
          class="org.eclipse.team.internal.ui.ProjectSetExportWizard"
-         icon="icons/full/clcl16/projectset.gif">
+         icon="icons/full/obj/export_projectset.gif">
          <description>
             %ProjectSetExportWizard.description
          </description>

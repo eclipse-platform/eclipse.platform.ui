@@ -101,5 +101,10 @@ public class TeamImages {
 		createImageDescriptor(UIConstants.IMG_WIZBAN_SHARE, baseURL);
 		createImageDescriptor(UIConstants.IMG_WIZBAN_NEW_CONNECTION, baseURL);
 		createImageDescriptor(UIConstants.IMG_CONTENTS, baseURL);
+		
+		// Wizard banners
+		createImageDescriptor(UIConstants.IMG_PROJECTSET_IMPORT_BANNER, baseURL);
+		createImageDescriptor(UIConstants.IMG_PROJECTSET_EXPORT_BANNER, baseURL);
+		
 	}
 }

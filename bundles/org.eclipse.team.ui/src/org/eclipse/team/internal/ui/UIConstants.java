@@ -35,7 +35,9 @@ public interface UIConstants {
 	
 	// wizard banners
 	public final String IMG_WIZBAN_SHARE = "wizban/share_wizban.gif"; //$NON-NLS-1$
-	public final String IMG_WIZBAN_NEW_CONNECTION = "wizban/newconnect_wizban.gif"; //$NON-NLS-1$
+	public final String IMG_WIZBAN_NEW_CONNECTION = "wizban/newconnect_wizban.gif"; //$NON-NLS-1$	
+	public final String IMG_PROJECTSET_IMPORT_BANNER = "wizban/import_projectset_wizban.gif"; //$NON-NLS-1$
+	public final String IMG_PROJECTSET_EXPORT_BANNER = "wizban/export_projectset_wizban.gif"; //$NON-NLS-1$
 	
 	// preferences
 	public final String PREF_ALWAYS_IN_INCOMING_OUTGOING = "pref_always_in_incoming_outgoing"; //$NON-NLS-1$

@@ -27,6 +27,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.core.IProjectSetSerializer;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.xml.sax.InputSource;
@@ -42,7 +43,7 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 	}
 	
 	public void addPages() {
-		mainPage = new ImportProjectSetMainPage("projectSetMainPage", Policy.bind("ProjectSetImportWizard.Import_a_Project_Set_3"), null); //$NON-NLS-1$ //$NON-NLS-2$
+		mainPage = new ImportProjectSetMainPage("projectSetMainPage", Policy.bind("ProjectSetImportWizard.Import_a_Project_Set_3"), TeamImages.getImageDescriptor(UIConstants.IMG_PROJECTSET_IMPORT_BANNER)); //$NON-NLS-1$ //$NON-NLS-2$
 		mainPage.setFileName(lastFile);
 		addPage(mainPage);
 	}
