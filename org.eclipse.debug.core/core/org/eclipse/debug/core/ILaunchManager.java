@@ -246,7 +246,7 @@ public interface ILaunchManager {
 	 * the launch configuration that the added launch configuration was moved
 	 * from. This method returns <code>null</code> if the added launch
 	 * configuration was not the result of a rename or move. This information is
-	 * only available during the add notifcation call back
+	 * only available during the add notification call back
 	 * <code>launchConfigurationAdded</code>.
 	 * <p>
 	 * Renaming a configuration is considered the same as moving a
@@ -270,7 +270,7 @@ public interface ILaunchManager {
 	 * will return a handle to the launch configuration that the removed launch
 	 * configuration was moved to. This method returns <code>null</code> if the
 	 * removed launch configuration was not the result of a rename or move. This
-	 * information is only available during the add notifcation call back
+	 * information is only available during the add notification call back
 	 * <code>launchConfigurationRemoved</code>.
 	 * <p>
 	 * Renaming a configuration is considered the same as moving a
