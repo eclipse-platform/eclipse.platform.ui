@@ -305,7 +305,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				UpdateCore.warn("CONFIGURED PLUGINS");
 			
 			// virtually configured
-			configuredFeatures = (IFeatureReference[]) subtract(patched, configuredFeatures);
+			configuredFeatures = (IFeatureReference[]) subtract(configuredFeatures, patched);
 			String[] configuredPlugins = getPluginString(site, configuredFeatures);
 			if (isEnabled())
 				pluginsToWrite = (String[]) subtract(configuredPlugins, unconfiguredPlugins);
@@ -484,7 +484,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	*	 remove them from include
 	*	 we can compare the String of the URL
 	*/
-	private Object[] subtract(Object[] pluginsToRemove, Object[] allPlugins) {
+	private Object[] subtract(Object[] allPlugins, Object[] pluginsToRemove) {
 		// No plugins to remove, return allPlugins 
 		if (pluginsToRemove == null || pluginsToRemove.length == 0) {
 			return allPlugins;
