@@ -26,35 +26,6 @@ public final class URLEncoder {
 	private URLEncoder() {
 	}
 	/**
-	 * Encodes the given <code>URL</code> into an <code>ASCII</code>
-	 * readable <code>URL</code> that is safe for transport. Returns the
-	 * result.
-	 *
-	 * @return the result of encoding the given <code>URL</code> into an
-	 *         <code>ASCII</code> readable <code>URL</code> that is safe for
-	 *         transport
-	 */
-	public static String encode(String url) {
-		try {
-			return encode(new URL(url)).toString();
-		} catch (MalformedURLException e) {
-		}
-
-		String file;
-		String ref = null;
-
-		int lastSlashIndex = url.lastIndexOf('/');
-		int lastHashIndex = url.lastIndexOf('#');
-		if ((lastHashIndex - lastSlashIndex > 1) && lastHashIndex < url.length() - 1) {
-			file = url.substring(0, lastHashIndex);
-			ref = url.substring(lastHashIndex + 1, url.length());
-		} else {
-			file = url;
-		}
-
-		return encode(file, ref);
-	}
-	/**
 	 * Encodes the given file and reference parts of a <code>URL</code> into
 	 * an <code>ASCII</code> readable <code>String</code> that is safe for
 	 * transport. Returns the result.
@@ -63,7 +34,7 @@ public final class URLEncoder {
 	 *         a <code>URL</code> into an <code>ASCII</code> readable
 	 *         <code>String</code> that is safe for transport
 	 */
-	public static String encode(String file, String ref) {
+	public static String encode(String file, String query, String ref) {
 		StringBuffer buf = new StringBuffer();
 		StringTokenizer tokenizer = new StringTokenizer(file, "/", true); //$NON-NLS-1$
 
@@ -74,6 +45,11 @@ public final class URLEncoder {
 			} else {
 				buf.append(encodeSegment(token));
 			}
+		}
+
+		if (query != null){
+			buf.append('?');
+			buf.append(query);
 		}
 
 		if (ref != null) {
@@ -93,10 +69,12 @@ public final class URLEncoder {
 	 *         transport
 	 */
 	public static URL encode(URL url) throws MalformedURLException {
-		String file = url.getFile();
+		// encode the path not the file as the URL may contain a query
+		String file = url.getPath();
+		String query = url.getQuery();
 		String ref = url.getRef();
 
-		URL result =  new URL(url.getProtocol(), url.getHost(), url.getPort(), encode(file, ref));
+		URL result =  new URL(url.getProtocol(), url.getHost(), url.getPort(), encode(file, query, ref));
 		return result;
 	}
 	private static String encodeSegment(String segment) {

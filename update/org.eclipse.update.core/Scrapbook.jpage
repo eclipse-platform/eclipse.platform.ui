@@ -425,3 +425,7 @@ OLD Feature Code
 org.eclipse.core.runtime.IPath p1= (new org.eclipse.core.runtime.Path("/path1/path2/*.txt"));
 org.eclipse.core.runtime.IPath p2= (new org.eclipse.core.runtime.Path("/path1/path2/a.txt"));
 p1.equals(p2);
+
+
+org.eclipse.update.internal.core.URLEncoder.encode(new java.net.URL("http://www.ourwebsite.com/servlet/update?jar=somefeaturejarfile"));(java.net.URL) http://www.ourwebsite.com/servlet/update?jar=somefeaturejarfile
+
