@@ -11,6 +11,7 @@
 package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
@@ -33,8 +34,11 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private String url;
 
 	private Action showExternalAction;
+	private Action bookmarkAction;
 	private Action printAction;
 	private String statusURL;
+	private String title;
+	private boolean block=false;
 
 	public BrowserPart(final Composite parent, FormToolkit toolkit,
 			IToolBarManager tbm) {
@@ -76,10 +80,18 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				BrowserPart.this.parent.getStatusLineManager().setCancelEnabled(false);				
 				monitor.done();
 				lastProgress = -1;
+				block=true;
+				boolean status = browser.execute("window.status=document.title;");
+				block=false;
 			}
 		});
 		browser.addStatusTextListener(new StatusTextListener() {
 			public void changed(StatusTextEvent event) {
+				if (block) {
+					title = event.text;
+					block=false;
+					return;
+				}
 				IStatusLineManager statusLine = BrowserPart.this.parent
 						.getStatusLineManager();
 				statusLine.setMessage(event.text);
@@ -112,7 +124,15 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		showExternalAction.setToolTipText(HelpUIResources.getString("BrowserPart.showExternalTooltip")); //$NON-NLS-1$
 		showExternalAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_NW));
+		bookmarkAction = new Action() {
+			public void run() {
+				BaseHelpSystem.getBookmarkManager().addBookmark(url, title);
+			}
+		};
+		bookmarkAction.setToolTipText(HelpUIResources.getString("BrowserPart.bookmarkTooltip")); //$NON-NLS-1$
+		bookmarkAction.setImageDescriptor(HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_ADD_BOOKMARK));
 		tbm.insertBefore("back", showExternalAction); //$NON-NLS-1$
+		tbm.insertBefore("back", bookmarkAction); //$NON-NLS-1$
 		tbm.insertBefore("back", new Separator()); //$NON-NLS-1$
 		printAction = new Action(ActionFactory.PRINT.getId()) {
 			public void run() {

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.IHelpResource;
+import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.swt.SWT;
@@ -32,7 +33,7 @@ public class EngineResultSection {
 	private SearchResultsPart part;
 
 	private EngineDescriptor desc;
-	
+
 	private IStatus errorStatus;
 
 	private ArrayList hits;
@@ -76,7 +77,8 @@ public class EngineResultSection {
 
 	public Control createControl(Composite parent, final FormToolkit toolkit) {
 		section = toolkit.createSection(parent, Section.COMPACT
-				| Section.TWISTIE | Section.EXPANDED | Section.LEFT_TEXT_CLIENT_ALIGNMENT);
+				| Section.TWISTIE | Section.EXPANDED
+				| Section.LEFT_TEXT_CLIENT_ALIGNMENT);
 		// section.marginHeight = 10;
 		container = toolkit.createComposite(section);
 		TableWrapLayout layout = new TableWrapLayout();
@@ -88,7 +90,9 @@ public class EngineResultSection {
 		container.setLayout(layout);
 		createFormText(container, toolkit);
 		searchResults.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		searchResults.setColor("summary", parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW)); //$NON-NLS-1$
+		searchResults
+				.setColor(
+						"summary", parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW)); //$NON-NLS-1$
 		section.setClient(container);
 		updateSectionTitle();
 		section.addExpansionListener(new IExpansionListener() {
@@ -122,9 +126,11 @@ public class EngineResultSection {
 		searchResults.setImage(ISharedImages.IMG_TOOL_BACK, PlatformUI
 				.getWorkbench().getSharedImages().getImage(
 						ISharedImages.IMG_TOOL_BACK));
-		searchResults.setImage(ISharedImages.IMG_OBJS_ERROR_TSK, PlatformUI.
-				getWorkbench().getSharedImages().getImage(
+		searchResults.setImage(ISharedImages.IMG_OBJS_ERROR_TSK, PlatformUI
+				.getWorkbench().getSharedImages().getImage(
 						ISharedImages.IMG_OBJS_ERROR_TSK));
+		searchResults.setImage(IHelpUIConstants.IMAGE_ADD_BOOKMARK,
+				HelpUIResources.getImage(IHelpUIConstants.IMAGE_ADD_BOOKMARK));
 		searchResults.setImage(desc.getId(), desc.getIconImage());
 		searchResults.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkActivated(HyperlinkEvent e) {
@@ -133,6 +139,8 @@ public class EngineResultSection {
 					part.doOpenLink(e.getHref());
 				} else if (HREF_PROGRESS.equals(href)) {
 					showProgressView();
+				} else if (((String)href).startsWith("bmk:")) { //$NON-NLS-1$
+					doBookmark(e.getLabel(), (String)href);
 				} else
 					part.doOpenLink(e.getHref());
 			}
@@ -157,13 +165,16 @@ public class EngineResultSection {
 			buff.append("<p><a href=\""); //$NON-NLS-1$
 			buff.append(HREF_PROGRESS);
 			buff.append("\" alt=\""); //$NON-NLS-1$
-			buff.append(HelpUIResources.getString("EngineResultSection.progressTooltip")); //$NON-NLS-1$
+			buff.append(HelpUIResources
+					.getString("EngineResultSection.progressTooltip")); //$NON-NLS-1$
 			buff.append("\">"); //$NON-NLS-1$
-			buff.append(HelpUIResources.getString("EngineResultSection.searchInProgress")); //$NON-NLS-1$
+			buff.append(HelpUIResources
+					.getString("EngineResultSection.searchInProgress")); //$NON-NLS-1$
 			buff.append("</a></p></form>"); //$NON-NLS-1$
 			searchResults.setText(buff.toString(), true, false);
 		} else {
-			searchResults.setText(HelpUIResources.getString("EngineResultSection.progress2"), false, false); //$NON-NLS-1$
+			searchResults.setText(HelpUIResources
+					.getString("EngineResultSection.progress2"), false, false); //$NON-NLS-1$
 		}
 	}
 
@@ -176,7 +187,8 @@ public class EngineResultSection {
 				try {
 					page.showView(PROGRESS_VIEW);
 				} catch (PartInitException e) {
-					HelpUIPlugin.logError(HelpUIResources.getString("EngineResultSection.progressError"), e); //$NON-NLS-1$
+					HelpUIPlugin.logError(HelpUIResources
+							.getString("EngineResultSection.progressError"), e); //$NON-NLS-1$
 				}
 			}
 		}
@@ -200,20 +212,21 @@ public class EngineResultSection {
 
 	public synchronized void error(IStatus status) {
 		errorStatus = status;
-		asyncUpdateResults(false, false);		
+		asyncUpdateResults(false, false);
 	}
-	
+
 	public synchronized void completed() {
-		if (hits.size()==0 && !searchResults.isDisposed())
+		if (hits.size() == 0 && !searchResults.isDisposed())
 			asyncUpdateResults(false, false);
 	}
-	
+
 	public synchronized void canceling() {
-		if (hits.size()==0 && !searchResults.isDisposed()) {
+		if (hits.size() == 0 && !searchResults.isDisposed()) {
 			StringBuffer buff = new StringBuffer();
 			buff.append("<form>"); //$NON-NLS-1$
 			buff.append("<p><span color=\"summary\">");//$NON-NLS-1$
-			buff.append(HelpUIResources.getString("EngineResultSection.canceling")); //$NON-NLS-1$
+			buff.append(HelpUIResources
+					.getString("EngineResultSection.canceling")); //$NON-NLS-1$
 			buff.append("</span></p>"); //$NON-NLS-1$
 			buff.append("</form>"); //$NON-NLS-1$
 			searchResults.setText(buff.toString(), true, false);
@@ -266,7 +279,8 @@ public class EngineResultSection {
 				buff.append("<p>"); //$NON-NLS-1$
 				if (cat.getHref() != null) {
 					buff.append("<a bold=\"true\" href=\""); //$NON-NLS-1$
-					String absoluteHref = hit.toAbsoluteHref(cat.getHref(), true); 
+					String absoluteHref = hit.toAbsoluteHref(cat.getHref(),
+							true);
 					buff.append(part.parent.escapeSpecialChars(absoluteHref));
 					buff.append("\">"); //$NON-NLS-1$
 					buff.append(cat.getLabel());
@@ -288,7 +302,8 @@ public class EngineResultSection {
 			buff.append("<a href=\""); //$NON-NLS-1$
 			if (hit.getForceExternalWindow())
 				buff.append("nw:"); //$NON-NLS-1$
-			buff.append(part.parent.escapeSpecialChars(hit.toAbsoluteHref(hit.getHref(), false)));
+			buff.append(part.parent.escapeSpecialChars(hit.toAbsoluteHref(hit
+					.getHref(), false)));
 			buff.append("\""); //$NON-NLS-1$
 			if (hit.getCategory() != null) {
 				buff.append(" alt=\""); //$NON-NLS-1$
@@ -302,7 +317,8 @@ public class EngineResultSection {
 			if (!hit.getForceExternalWindow()) {
 				buff.append(" <a href=\""); //$NON-NLS-1$ 
 				buff.append("nw:");//$NON-NLS-1$ 
-				String ahref = part.parent.escapeSpecialChars(hit.toAbsoluteHref(hit.getHref(), true));
+				String ahref = part.parent.escapeSpecialChars(hit
+						.toAbsoluteHref(hit.getHref(), true));
 				buff.append(ahref);
 				buff.append("\"><img href=\""); //$NON-NLS-1$ 
 				buff.append(IHelpUIConstants.IMAGE_NW);
@@ -313,22 +329,23 @@ public class EngineResultSection {
 				buff.append("/>"); //$NON-NLS-1$ 
 				buff.append("</a>"); //$NON-NLS-1$
 			}
+			addBookmarkLink(buff, hit);
 			if (part.getShowDescription()) {
 				String edesc = hit.getDescription();
-				if (edesc!=null)
+				if (edesc != null)
 					edesc = part.parent.escapeSpecialChars(edesc);
 				String summary = getSummary(elabel, edesc);
 				if (summary != null) {
 					buff.append("<br/>"); //$NON-NLS-1$
-					//buff.append("<span color=\"summary\">"); //$NON-NLS-1$
-					//System.out.println(summary);
+					// buff.append("<span color=\"summary\">"); //$NON-NLS-1$
+					// System.out.println(summary);
 					buff.append(summary);
-					//buff.append("</span>"); //$NON-NLS-1$
+					// buff.append("</span>"); //$NON-NLS-1$
 				}
 			}
 			buff.append("</li>"); //$NON-NLS-1$
 		}
-		if (errorStatus!=null)
+		if (errorStatus != null)
 			updateErrorStatus(buff);
 		updateNavigation();
 		buff.append("</form>"); //$NON-NLS-1$
@@ -336,6 +353,23 @@ public class EngineResultSection {
 		section.layout();
 		if (reflow)
 			part.reflow();
+	}
+
+	private void addBookmarkLink(StringBuffer buff, ISearchEngineResult hit) {
+		buff.append(" <a href=\""); //$NON-NLS-1$ 
+		buff.append("bmk:");//$NON-NLS-1$ 
+		String ahref = part.parent.escapeSpecialChars(hit.toAbsoluteHref(hit
+				.getHref(), true));
+		buff.append(ahref);
+		buff.append("\"><img href=\""); //$NON-NLS-1$ 
+		buff.append(IHelpUIConstants.IMAGE_ADD_BOOKMARK);
+		buff.append("\" alt=\""); //$NON-NLS-1$
+		buff.append(HelpUIResources.getString("SearchResultsPart.bmktooltip"));//$NON-NLS-1$
+		buff.append("\" text=\"");  //$NON-NLS-1$
+		buff.append(hit.getLabel());
+		buff.append("\""); //$NON-NLS-1$ 
+		buff.append("/>"); //$NON-NLS-1$ 
+		buff.append("</a>"); //$NON-NLS-1$
 	}
 
 	private void updateErrorStatus(StringBuffer buff) {
@@ -348,7 +382,7 @@ public class EngineResultSection {
 		buff.append("</b>"); //$NON-NLS-1$
 		buff.append("<br/>"); //$NON-NLS-1$
 		Throwable t = errorStatus.getException();
-		if (t!=null)
+		if (t != null)
 			buff.append(part.parent.escapeSpecialChars(t.getMessage()));
 		buff.append("</li>"); //$NON-NLS-1$
 	}
@@ -371,7 +405,8 @@ public class EngineResultSection {
 				sep.setLayoutData(gd);
 				prevLink = toolkit.createImageHyperlink(navContainer, SWT.NULL);
 
-				prevLink.setText(HelpUIResources.getString("EngineResultSection.previous", ""+HITS_PER_PAGE)); //$NON-NLS-1$ //$NON-NLS-2$
+				prevLink.setText(HelpUIResources.getString(
+						"EngineResultSection.previous", "" + HITS_PER_PAGE)); //$NON-NLS-1$ //$NON-NLS-2$
 				prevLink.setImage(PlatformUI.getWorkbench().getSharedImages()
 						.getImage(ISharedImages.IMG_TOOL_BACK));
 				prevLink.addHyperlinkListener(new HyperlinkAdapter() {
@@ -396,12 +431,13 @@ public class EngineResultSection {
 				});
 			}
 			prevLink.setVisible(resultOffset > 0);
-			
+
 			int nextOffset = resultOffset + HITS_PER_PAGE;
 			int remainder = hits.size() - nextOffset;
 			remainder = Math.min(remainder, HITS_PER_PAGE);
-				
-			nextLink.setText(HelpUIResources.getString("EngineResultSection.next", ""+remainder)); //$NON-NLS-1$ //$NON-NLS-2$
+
+			nextLink.setText(HelpUIResources.getString(
+					"EngineResultSection.next", "" + remainder)); //$NON-NLS-1$ //$NON-NLS-2$
 			nextLink.setVisible(hits.size() >= resultOffset + HITS_PER_PAGE);
 		} else {
 			if (prevLink != null) {
@@ -428,14 +464,14 @@ public class EngineResultSection {
 	}
 
 	private void updateSectionTitle() {
-		if (errorStatus!=null) {
+		if (errorStatus != null) {
 			Label label = part.getToolkit().createLabel(section, null);
-			label.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
+			label.setImage(PlatformUI.getWorkbench().getSharedImages()
+					.getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
 			section.setTextClient(label);
-			section.setText(HelpUIResources.getString(
-					"EngineResultSection.sectionTitle.error"));//$NON-NLS-1$
-		}
-		else {
+			section.setText(HelpUIResources
+					.getString("EngineResultSection.sectionTitle.error"));//$NON-NLS-1$
+		} else {
 			section.setTextClient(null);
 		}
 		if (hits.size() == 1)
@@ -455,6 +491,15 @@ public class EngineResultSection {
 							.getLabel(), "" + from, "" + to, "" + hits.size())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
+	
+	private void doBookmark(final String label, String href) {
+		final String fhref = href.substring(4);
+		BusyIndicator.showWhile(container.getDisplay(), new Runnable() {
+			public void run() {
+				BaseHelpSystem.getBookmarkManager().addBookmark(fhref, label);
+			}
+		});
+	}
 
 	public void dispose() {
 		if (!section.isDisposed()) {
@@ -462,6 +507,7 @@ public class EngineResultSection {
 			section.dispose();
 		}
 	}
+
 	private void recursiveSetMenu(Control control, Menu menu) {
 		control.setMenu(menu);
 		if (control instanceof Composite) {

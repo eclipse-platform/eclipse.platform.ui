@@ -38,7 +38,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	public static final int CONTEXT_HELP = 1 << 2;
 
 	public static final int SEARCH = 1 << 3;
-	
+
 	public static final int BOOKMARKS = 1 << 4;
 
 	private ManagedForm mform;
@@ -62,6 +62,8 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	private OpenHrefAction openAction;
 
 	private OpenHrefAction openInHelpAction;
+
+	private OpenHrefAction bookmarkAction;
 
 	private ReusableHelpPartHistory history;
 
@@ -151,7 +153,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		private String id;
 
 		private String iconId;
-		
+
 		Action pageAction;
 
 		private int vspacing = verticalSpacing;
@@ -306,7 +308,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 						}
 					}
 				}
-				if (pageAction!=null)
+				if (pageAction != null)
 					pageAction.setChecked(visible);
 			}
 			if (bars != null) {
@@ -472,7 +474,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		// don't schedule the indexer job if one is
 		// already running
 		Job[] jobs = Platform.getJobManager().find(IndexerJob.FAMILY);
-		if (jobs.length==0) {
+		if (jobs.length == 0) {
 			IndexerJob indexerJob = new IndexerJob();
 			indexerJob.schedule();
 		}
@@ -500,13 +502,11 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		page.addPart(HV_TOPIC_TREE, true);
 		page.addPart(HV_SEE_ALSO, false);
 		pages.add(page);
-		
+
 		// bookmarks page
-		page = new HelpPartPage(
-				HV_BOOKMARKS_PAGE,
-				HelpUIResources
-						.getString("ReusableHelpPart.bookmarksPage.name"),  //$NON-NLS-1$
-						IHelpUIConstants.IMAGE_BOOKMARKS); //$NON-NLS-1$
+		page = new HelpPartPage(HV_BOOKMARKS_PAGE, HelpUIResources
+				.getString("ReusableHelpPart.bookmarksPage.name"), //$NON-NLS-1$
+				IHelpUIConstants.IMAGE_BOOKMARKS); //$NON-NLS-1$
 		page.setVerticalSpacing(0);
 		page.setHorizontalMargin(0);
 		page.addPart(HV_BOOKMARKS_TREE, true);
@@ -535,7 +535,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		this.toolBarManager = toolBarManager;
 		this.statusLineManager = statusLineManager;
 		definePages();
-		makeActions();		
+		makeActions();
 	}
 
 	private void makeActions() {
@@ -602,8 +602,16 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		copyAction = new CopyAction();
 		copyAction.setText(HelpUIResources
 				.getString("ReusableHelpPart.copyAction.label")); //$NON-NLS-1$
-		if (actionBars!=null && actionBars.getMenuManager()!=null)
-			contributeToDropDownMenu(actionBars.getMenuManager());		
+		bookmarkAction = new OpenHrefAction("bookmark") {
+			protected void busyRun() {
+				doBookmark(getTarget());
+			}
+		};
+		bookmarkAction.setText(HelpUIResources
+				.getString("ReusableHelpPart.bookmarkAction.label")); //$NON-NLS-1$
+		bookmarkAction.setImageDescriptor(HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_ADD_BOOKMARK));
+		if (actionBars != null && actionBars.getMenuManager() != null)
+			contributeToDropDownMenu(actionBars.getMenuManager());
 	}
 
 	private void doBack() {
@@ -712,7 +720,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	}
 
 	public String getCurrentPageId() {
-		return currentPage!=null?currentPage.getId():null;
+		return currentPage != null ? currentPage.getId() : null;
 	}
 
 	void browserChanged(String url) {
@@ -999,7 +1007,12 @@ public class ReusableHelpPart implements IHelpUIConstants {
 
 	boolean fillSelectionProviderMenu(ISelectionProvider provider,
 			IMenuManager manager) {
-		fillOpenActions(provider, manager);
+		boolean value = fillOpenActions(provider, manager);
+		if (value) {
+			manager.add(new Separator());
+			bookmarkAction.setTarget(provider);
+			manager.add(bookmarkAction);
+		}
 		return true;
 	}
 
@@ -1021,6 +1034,11 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			manager.add(new Separator());
 		manager.add(copyAction);
 		copyAction.setTarget(text);
+		if (text.getSelectedLinkHref() != null) {
+			manager.add(new Separator());
+			manager.add(bookmarkAction);
+			bookmarkAction.setTarget(text);
+		}
 		return true;
 	}
 
@@ -1045,6 +1063,42 @@ public class ReusableHelpPart implements IHelpUIConstants {
 				return href.toString();
 		}
 		return null;
+	}
+
+	private IHelpResource getResource(Object target) {
+		if (target instanceof ISelectionProvider) {
+			ISelectionProvider provider = (ISelectionProvider) target;
+			IStructuredSelection ssel = (IStructuredSelection) provider
+					.getSelection();
+			Object obj = ssel.getFirstElement();
+			if (obj instanceof ITopic) {
+				return (ITopic) obj;
+			}
+		} else if (target instanceof FormText) {
+			FormText text = (FormText) target;
+			final Object href = text.getSelectedLinkHref();
+			final String label = text.getSelectedLinkText();
+			if (href != null) {
+				return new IHelpResource() {
+					public String getHref() {
+						return href.toString();
+					}
+
+					public String getLabel() {
+						return label;
+					}
+				};
+			}
+		}
+		return null;
+	}
+
+	private void doBookmark(Object target) {
+		IHelpResource res = getResource(target);
+		if (res != null) {
+			BaseHelpSystem.getBookmarkManager().addBookmark(res.getHref(),
+					res.getLabel());
+		}
 	}
 
 	private void doOpen(Object target) {
