@@ -187,7 +187,7 @@ public static Font getFont(String symbolicName) {
  */
 public static FontRegistry getFontRegistry() {
 	if (fontRegistry == null) {
-		fontRegistry = new FontRegistry("org.eclipse.jface.resource.jfacefonts");//$NON-NLS-1$
+		fontRegistry = new FontRegistry();
 	}
 	return fontRegistry;
 }
