@@ -75,12 +75,18 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipantDel
      * @see org.eclipse.ui.console.IConsolePageParticipantDelegate#dispose()
      */
     public void dispose() {
-        fSite.getPage().removeSelectionListener(this);
+        fSite.getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 
 		if (fRemoveTerminated != null) {
 			fRemoveTerminated.dispose();
+			fRemoveTerminated = null;
 		}
+		if (fTerminate != null) {
+		    fTerminate.dispose();
+		    fTerminate = null;
+		}
+		fConsole = null;
     }
 
     /* (non-Javadoc)
@@ -145,7 +151,9 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipantDel
             if (event.getSource().equals(getProcess())) {
                 Runnable r = new Runnable() {
                     public void run() {
-                        fTerminate.update();
+                        if (fTerminate != null) {
+                            fTerminate.update();
+                        }
                     }
                 };
                 

@@ -55,5 +55,9 @@ public class ConsoleTerminateAction extends Action implements IUpdate {
 			// TODO: report exception
 		}
 	}
+	
+	public void dispose() {
+	    fConsole = null;
+	}
 
 }

@@ -270,6 +270,7 @@ public class IOConsoleInputStream extends InputStream {
         synchronized(input) {
             input.notifyAll();
         }
+        console = null;
     }
 
     /**
@@ -280,5 +281,6 @@ public class IOConsoleInputStream extends InputStream {
         synchronized(input) {
             input.notifyAll();
         }
+        console = null;
     }
 }

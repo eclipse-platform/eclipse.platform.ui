@@ -396,17 +396,19 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
             //FIXME: should close output streams? Need to store references.
         } catch (IOException ioe) {
         }
+        inputStream = null;
         synchronized (patterns) {
             Iterator iterator = patterns.iterator();
             while (iterator.hasNext()) {
                 CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) iterator.next();
-                notifier.listener.disconnect();
+                notifier.dispose();
             }
             patterns.clear();
         }
         synchronized(attributes) {
             attributes.clear();
         }
+        matchJob = null;
     }
     
     /**
@@ -482,6 +484,13 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
             this.pattern = pattern;
             this.listener = matchListener;
             this.qualifier = qualifier;
+        }
+        
+        public void dispose() {
+            listener.disconnect();
+            pattern = null;
+            qualifier = null;
+            listener = null;
         }
     }
     

@@ -163,6 +163,7 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
         for (int i = 0; i < delegates.length; i++) {
             delegates[i].dispose();
         }
+        delegates = null;
         console.removePropertyChangeListener(this);
         JFaceResources.getFontRegistry().removeListener(this);
         

@@ -242,6 +242,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 		        StreamListener listener = (StreamListener) i.next();
 		        listener.dispose();
 		    }
+		    streamListeners.clear();
 		}
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
@@ -395,6 +396,9 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
                 stream.close();
             } catch (IOException e) {
             }
+            stream = null;
+            streamMonitor = null;
+            streamId = null;
         }
     }
     
