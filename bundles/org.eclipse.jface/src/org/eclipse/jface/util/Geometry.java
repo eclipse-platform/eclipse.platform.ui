@@ -355,4 +355,34 @@ public class Geometry {
 		return result;
 	}
 	
+	/**
+	 * Returns the edge of the given rectangle is closest to the given
+	 * point.
+	 * 
+	 * @param boundary rectangle to test
+	 * @param toTest point to compare
+	 * @return one of SWT.LEFT, SWT.RIGHT, SWT.TOP, or SWT.BOTTOM
+	 * 
+	 * @since 3.0
+	 */
+	public static int getClosestSide(Rectangle boundary, Point toTest) {
+		int[] sides = new int[] {SWT.LEFT, SWT.RIGHT, SWT.TOP, SWT.BOTTOM};
+		
+		int closestSide = SWT.LEFT;
+		int closestDistance = Integer.MAX_VALUE;
+		
+		for (int idx = 0; idx < sides.length; idx++) {
+			int side = sides[idx];
+			
+			int distance = getDistanceFromEdge(boundary, toTest, side);
+			
+			if (distance < closestDistance) {
+				closestDistance = distance;
+				closestSide = side;
+			}
+		}
+		
+		return closestSide;
+	}
+	
 }
