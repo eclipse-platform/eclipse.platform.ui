@@ -59,7 +59,7 @@ public void create(boolean force, boolean local, IProgressMonitor monitor) throw
 			} else {
 				checkDoesNotExist(flags, false);
 			}
-			internalCreate(force, local, Policy.subMonitorFor(monitor, Policy.totalWork));
+			internalCreate(force, local, Policy.subMonitorFor(monitor, Policy.opWork));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
