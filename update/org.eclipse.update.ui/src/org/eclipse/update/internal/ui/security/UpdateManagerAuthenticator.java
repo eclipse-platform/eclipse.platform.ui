@@ -29,9 +29,10 @@ public class UpdateManagerAuthenticator extends Authenticator {
 	// fields needed for caching the password
 	public static final String INFO_PASSWORD = "password"; //$NON-NLS-1$ 
 	public static final String INFO_USERNAME = "username"; //$NON-NLS-1$ 
+	public static final String UNKNOWN_HOST = "unknown"; //$NON-NLS-1$ 
 	public static final String AUTH_SCHEME = ""; //$NON-NLS-1$ 
 
-	private InetAddress requestingSite;
+	private String requestingHostName;
 	private int requestingPort;
 	private String requestingProtocol;
 	private String requestingPrompt;
@@ -69,18 +70,11 @@ public class UpdateManagerAuthenticator extends Authenticator {
 		// already called by retrieve
 		//if (!equalsPreviousRequest(resourceUrl, realm, scheme)) {
 			// save state
-			InetAddress ip = null;
-			try {
-				ip = InetAddress.getByName(resourceUrl.getHost());
-			} catch (UnknownHostException e) {
-				UpdateUI.logException(e, false);
-			}
-
 			this.requestingPort = resourceUrl.getPort();
 			this.requestingPrompt = realm;
 			this.requestingProtocol = resourceUrl.getProtocol();
 			this.requestingScheme = scheme;
-			this.requestingSite = ip;
+			this.requestingHostName = resourceUrl.getHost();
 
 			// try to get the password info from the in-memory database first
 			Map map = Platform.getAuthorizationInfo(resourceUrl, requestingPrompt, requestingScheme);
@@ -120,7 +114,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 		requestingPrompt = null;
 		requestingProtocol = null;
 		requestingScheme = null;
-		requestingSite = null;
+		requestingHostName = null;
 	}
 
 	/*
@@ -129,7 +123,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 	 */
 	private Map retrievePasswordAuthentication(final URL resourceUrl, final String realm, final String scheme) {
 		result = new HashMap();
-		if ("Basic".equalsIgnoreCase(scheme)) { //$NON-NLS-1$
+		if ("Basic".equalsIgnoreCase(scheme) || "NTLM".equalsIgnoreCase(scheme)) { //$NON-NLS-1$
 			Display disp = Display.getCurrent();
 			if (disp != null) {
 				result = promptForPassword(resourceUrl, realm);
@@ -168,16 +162,9 @@ public class UpdateManagerAuthenticator extends Authenticator {
 		if (requestingScheme == null && scheme != null)
 			return false;
 
-		InetAddress ip = null;
-		try {
-			ip = InetAddress.getByName(url.getHost());
-		} catch (UnknownHostException e) {
-			UpdateUI.logException(e, false);
-		}
-
-		if (requestingSite != null && !requestingSite.equals(ip))
+		if (requestingHostName != null && !requestingHostName.equals(url.getHost()))
 			return false;
-		if (requestingSite == null && ip != null)
+		if (requestingHostName == null && url.getHost() != null)
 			return false;
 
 		return true;
@@ -213,7 +200,8 @@ public class UpdateManagerAuthenticator extends Authenticator {
 	protected PasswordAuthentication getPasswordAuthentication() {
 
 		try {
-			URL url = new URL(getRequestingProtocol(), getRequestingSite().getHostName(), getRequestingPort(), ""); //$NON-NLS-1$
+			String hostName = getRequestingHost() != null ? getRequestingHost() : UNKNOWN_HOST;
+			URL url = new URL(getRequestingProtocol(), hostName, getRequestingPort(), ""); //$NON-NLS-1$
 			Map map = retrievePasswordAuthentication(url);
 
 			String username = null;
@@ -254,7 +242,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 			requestingPrompt = getRequestingPrompt();
 			requestingProtocol = getRequestingProtocol();
 			requestingScheme = getRequestingScheme();
-			requestingSite = getRequestingSite();
+			requestingHostName = getRequestingHost() != null ? getRequestingHost() : UNKNOWN_HOST;
 			savedPasswordAuthentication = Platform.getAuthorizationInfo(url, requestingPrompt, requestingScheme);
 			if (savedPasswordAuthentication == null) {
 				savedPasswordAuthentication = requestAuthenticationInfo(url, requestingPrompt, requestingScheme);
