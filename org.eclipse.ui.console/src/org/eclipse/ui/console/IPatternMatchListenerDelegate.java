@@ -12,7 +12,7 @@ package org.eclipse.ui.console;
 
 /**
  * A pattern match listener delegate is notified of regular expression matches
- * in a <code>TextConsole</code>. A delegate is contributed via the
+ * in a text console. A delegate is contributed via the
  * <code>consolePatternMatcherListeners</code> extension point.
  * <p>
  * Clients contributing a console pattern match listener extension are intended
@@ -29,7 +29,7 @@ public interface IPatternMatchListenerDelegate {
      * 
      * @param console the console in which pattern matching will be performed
      */
-    public void connect(IConsole console);
+    public void connect(TextConsole console);
     
     /**
      * Notification that pattern matching has been completed in the console

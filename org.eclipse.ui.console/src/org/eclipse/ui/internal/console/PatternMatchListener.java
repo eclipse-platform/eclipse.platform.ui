@@ -11,10 +11,10 @@
 package org.eclipse.ui.internal.console;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IPatternMatchListener;
 import org.eclipse.ui.console.IPatternMatchListenerDelegate;
 import org.eclipse.ui.console.PatternMatchEvent;
+import org.eclipse.ui.console.TextConsole;
 
 public class PatternMatchListener implements IPatternMatchListener {
 
@@ -46,11 +46,11 @@ public class PatternMatchListener implements IPatternMatchListener {
     public void matchFound(PatternMatchEvent event) {
         fDelegate.matchFound(event);
     }
-
+    
     /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListener#connect(org.eclipse.ui.console.IConsole)
+     * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#connect(org.eclipse.ui.console.TextConsole)
      */
-    public void connect(IConsole console) {
+    public void connect(TextConsole console) {
         fDelegate.connect(console);
     }
 

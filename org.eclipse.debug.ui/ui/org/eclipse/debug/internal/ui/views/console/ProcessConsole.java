@@ -75,6 +75,7 @@ import org.eclipse.ui.console.IOConsoleInputStream;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.IPatternMatchListener;
 import org.eclipse.ui.console.PatternMatchEvent;
+import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -724,7 +725,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             return null;
         }
 
-        public void connect(org.eclipse.ui.console.IConsole console) {
+        public void connect(TextConsole console) {
         }
 
         public void disconnect() {

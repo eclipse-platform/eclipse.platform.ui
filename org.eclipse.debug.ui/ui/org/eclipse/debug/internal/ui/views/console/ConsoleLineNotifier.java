@@ -21,10 +21,10 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IPatternMatchListener;
 import org.eclipse.ui.console.PatternMatchEvent;
+import org.eclipse.ui.console.TextConsole;
 
 /**
  * Tracks text appended to the console and notifies listeners in terms of whole
@@ -42,9 +42,9 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 	private ProcessConsole fConsole = null;
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IPatternMatchListener#connect(org.eclipse.ui.console.IConsole)
+	 * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#connect(org.eclipse.ui.console.TextConsole)
 	 */
-	public void connect(IConsole console) {
+	public void connect(TextConsole console) {
 	    if (console instanceof ProcessConsole) {
 	        fConsole = (ProcessConsole)console;
 
