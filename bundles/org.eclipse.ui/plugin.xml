@@ -2203,7 +2203,7 @@
             id="org.eclipse.ui.views.ResourceNavigator">
       </view>
       <view
-            name="%Views.BookmarkNavigator"
+            name="%Views.Bookmark"
             icon="icons/full/cview16/bkmrk_nav.gif"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.internal.markers.bookmarks.BookmarkView"
@@ -2231,7 +2231,7 @@
             id="org.eclipse.ui.views.ContentOutline">
       </view>
       <view
-            name="%Views.TaskList"
+            name="%Views.Task"
             icon="icons/full/cview16/tasks_tsk.gif"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.internal.markers.tasks.TaskView"
@@ -2245,7 +2245,7 @@
             id="org.eclipse.ui.views.TaskList">
       </view>
       <view
-            name="%Views.ProblemView"
+            name="%Views.Problem"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.internal.markers.problems.ProblemView"
             id="org.eclipse.ui.views.ProblemView">
