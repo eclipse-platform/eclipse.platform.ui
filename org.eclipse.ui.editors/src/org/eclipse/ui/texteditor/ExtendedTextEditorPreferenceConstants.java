@@ -184,7 +184,30 @@ public class ExtendedTextEditorPreferenceConstants {
 	 * @since 3.0
 	 */
 	public static final String QUICK_DIFF_CHARACTER_MODE= "quickdiff.characterMode"; //$NON-NLS-1$
-
+	
+	/**
+	 * A named preference that controls whether custom carets are allowed in the
+	 * editor or not.
+	 * <p>
+	 * Value is of type <code>Boolean</code>. If <code>true</code>, only
+	 * the default caret is used in the editor.
+	 * </p>
+	 * 
+	 * @since 3.0
+	 */
+	public static final String EDITOR_DISABLE_CUSTOM_CARETS= AbstractTextEditor.PREFERENCE_DISABLE_CUSTOM_CARETS;
+	
+	/**
+	 * A named preference that controls whether carets are drawn wide or not.
+	 * <p>
+	 * Value is of type <code>Boolean</code>. If <code>true</code>, the caret is
+	 * twice as wide as the default caret.
+	 * </p>
+	 * 
+	 * @since 3.0
+	 */
+	public static final String EDITOR_WIDE_CARET= AbstractTextEditor.PREFERENCE_WIDE_CARET;
+	
 	/**
   	* Initializes the given preference store with the default values.
 	 * 
@@ -212,6 +235,9 @@ public class ExtendedTextEditorPreferenceConstants {
 		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION, false);
 		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER, false);
 		PreferenceConverter.setDefault(store, ExtendedTextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR, new RGB(0, 0, 0));
+		
+		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_DISABLE_CUSTOM_CARETS, false);
+		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_WIDE_CARET, true);
 		
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 	}

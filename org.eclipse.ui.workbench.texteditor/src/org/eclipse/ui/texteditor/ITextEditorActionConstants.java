@@ -422,4 +422,12 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Value: <code>"ITextEditorActionConstants.REVERT"</code>
 	 */
 	static final String REVERT_TO_SAVED= REVERT;
+
+	/** 
+	 * Name of the action for toggling the smart insert mode. 
+	 * Value: <code>"ToggleInsertMode"</code>
+	 * 
+	 * @since 3.0
+	 */
+	static final String TOGGLE_INSERT_MODE= "TOGGLE_INSERT_MODE"; //$NON-NLS-1$
 }

@@ -295,4 +295,11 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * @since 3.0
 	 */
 	public static final String SMART_ENTER_ACTION= PREFIX + "smart_enter" + ACTION_POSTFIX; //$NON-NLS-1$;
+
+	/**
+	 * Help context id for the smart insert mode toggle action.
+	 * Value: <code>"org.eclipse.ui.toggle_insert_mode_action_context"</code>
+	 * @since 3.0
+	 */
+	public static final String TOGGLE_INSERT_MODE_ACTION= PREFIX + "toggle_insert_mode" + ACTION_POSTFIX; //$NON-NLS-1$;;
 }

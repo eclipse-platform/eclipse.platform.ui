@@ -420,6 +420,12 @@
             categoryId="org.eclipse.ui.category.edit"
             id="org.eclipse.ui.edit.text.contentAssist.contextInformation">
       </command>
+      <command
+            name="%command.toggleInsertMode.name"
+            description="%command.toggleInsertMode.description"
+            categoryId="org.eclipse.ui.category.edit"
+            id="org.eclipse.ui.edit.text.toggleInsertMode">
+      </command>
 	
 	  <keyBinding
 	        commandId="org.eclipse.ui.edit.text.delete.line"
@@ -775,6 +781,12 @@
             commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
             keySequence="Command+Shift+Space">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.toggleInsertMode"
+            contextId="org.eclipse.ui.textEditorScope"
+            keySequence="Ctrl+Shift+Insert"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.edit.text.cut.line.to.beginning"

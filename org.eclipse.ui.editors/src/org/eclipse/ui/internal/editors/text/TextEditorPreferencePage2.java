@@ -166,6 +166,8 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ExtendedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_DISABLE_CUSTOM_CARETS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_WIDE_CARET));
 		
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -305,6 +307,11 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		label= TextEditorMessages.getString("TextEditorPreferencePage.showPrintMargin"); //$NON-NLS-1$
 		addCheckBox(appearanceComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, 0);
 
+		label= TextEditorMessages.getString("TextEditorPreferencePage.accessibility.disableCustomCarets"); //$NON-NLS-1$
+		addCheckBox(appearanceComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_DISABLE_CUSTOM_CARETS, 0);
+
+		label= TextEditorMessages.getString("TextEditorPreferencePage.accessibility.wideCaret"); //$NON-NLS-1$
+		addCheckBox(appearanceComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_WIDE_CARET, 0);
 
 		Label l= new Label(appearanceComposite, SWT.LEFT );
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);

@@ -440,4 +440,11 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * @since 2.1
 	 */
 	public static final String CONTENT_ASSIST_CONTEXT_INFORMATION= "org.eclipse.ui.edit.text.contentAssist.contextInformation"; //$NON-NLS-1$
+
+	/**
+	 * Action definition ID of the edit -> smart insert mode action
+	 * Value: <code>"org.eclipse.ui.edit.text.toggleInsertMode"</code>).
+	 * @since 3.0
+	 */
+	public static final String TOGGLE_INSERT_MODE= "org.eclipse.ui.edit.text.toggleInsertMode"; //$NON-NLS-1$
 }

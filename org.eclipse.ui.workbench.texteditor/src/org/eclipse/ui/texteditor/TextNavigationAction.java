@@ -20,17 +20,16 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Event;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 
 
 /**
- * An <code>IAction</code> wrapper for text widget navigational and selection actions.
+ * An <code>Action</code> wrapper for text widget navigational and selection actions.
  * @since 2.0
  */
-public class TextNavigationAction extends Action implements IAction {
+public class TextNavigationAction extends Action {
 	
 	/** The text widget */
 	private StyledText fTextWidget;

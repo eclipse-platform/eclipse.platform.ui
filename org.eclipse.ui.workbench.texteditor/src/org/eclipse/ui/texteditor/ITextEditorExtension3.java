@@ -35,10 +35,6 @@ public interface ITextEditorExtension3 {
 	 */
 	final static InsertMode INSERT= new InsertMode();
 	/**
-	* Represents the non-smart overwrite mode.
-	*/
-	final static InsertMode OVERWRITE= new InsertMode();
-	/**
 	 * Represents the smart insert mode.
 	 */	
 	final static InsertMode SMART_INSERT= new InsertMode();
