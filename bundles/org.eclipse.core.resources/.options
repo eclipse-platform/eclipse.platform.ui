@@ -10,7 +10,7 @@ org.eclipse.core.resources/perf/builders=10000
 org.eclipse.core.resources/perf/listeners=500
 
 # Monitor workspace snapshot and gather time statistics etc.
-org.eclipse.core.resources/perf/snapshot=500
+org.eclipse.core.resources/perf/snapshot=1000
 
 # Debug build failure cases such as failure to retrieve deltas.
 org.eclipse.core.resources/build/failure=false
