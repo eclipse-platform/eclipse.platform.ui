@@ -13,12 +13,12 @@ package org.eclipse.ui.internal.decorators;
 
 import java.util.*;
 
-import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The DecorationScheduler is the class that handles the
@@ -228,7 +228,7 @@ public class DecorationScheduler implements IResourceChangeListener {
 
 				changedObjects.clear();
 			} catch (CoreException exception) {
-				InternalPlatform.getRuntimePlugin().getLog().log(
+				WorkbenchPlugin.getDefault().getLog().log(
 					exception.getStatus());
 			}
 		}
