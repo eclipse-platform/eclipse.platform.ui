@@ -85,6 +85,15 @@ public String getValue() {
 	return value;
 }
 /**
+ * Returns the value of this element.
+ * 
+ * @return the value of this element or <code>null</code>
+ * @since 2.0
+ */
+public String getValueAsIs() {
+	return value;
+}
+/**
  * Sets this model object and all of its descendents to be read-only.
  * Subclasses may extend this implementation.
  *

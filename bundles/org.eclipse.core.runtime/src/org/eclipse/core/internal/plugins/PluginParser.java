@@ -92,9 +92,13 @@ public void characters(char[] ch, int start, int length) {
 		// part of a configuration element (i.e. an element within an EXTENSION element
 		ConfigurationElementModel currentConfigElement = (ConfigurationElementModel) objectStack.peek();
 		String value = new String(ch, start, length);
-		String newValue = value.trim();
-		if (!newValue.equals("") || newValue.length() != 0) //$NON-NLS-1$
-			currentConfigElement.setValue(newValue);
+		String oldValue = currentConfigElement.getValueAsIs();
+		if (oldValue == null) {
+			if (value.trim().length() != 0)
+				currentConfigElement.setValue(value);
+		} else {
+			currentConfigElement.setValue(oldValue + value);
+		}
 	} 
 }
 public void endDocument() {
@@ -198,6 +202,12 @@ public void endElement(String uri, String elementName, String qName) {
 			stateStack.pop();
 			// Now finish up the configuration element object
 			ConfigurationElementModel currentConfigElement = (ConfigurationElementModel) objectStack.pop();
+			
+			String value= currentConfigElement.getValueAsIs();
+			if (value != null) {
+				currentConfigElement.setValue(value.trim());
+			}
+				
 			Object parent = objectStack.peek();
 			currentConfigElement.setParent(parent);
 			if (((Integer) stateStack.peek()).intValue() == PLUGIN_EXTENSION_STATE) {

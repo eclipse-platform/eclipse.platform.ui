@@ -151,9 +151,6 @@ public String getValue() {
 	String s = getValueAsIs();
 	return s == null ? null : getDeclaringExtension().getDeclaringPluginDescriptor().getResourceString(s);
 }
-public String getValueAsIs() {
-	return super.getValue();
-}
 private void logError(IStatus status) {
 	InternalPlatform.getRuntimePlugin().getLog().log(status);
 	if (InternalPlatform.DEBUG)
