@@ -1083,7 +1083,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		new IdMapEntry(ITextEditorActionDefinitionIds.COPY, ST.COPY),
 		new IdMapEntry(ITextEditorActionDefinitionIds.PASTE, ST.PASTE),
 		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_PREVIOUS, ST.DELETE_PREVIOUS),
-		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_NEXT, ST.DELETE_NEXT)
+		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_NEXT, ST.DELETE_NEXT),
+		// miscellaneous
+		new IdMapEntry(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE, ST.TOGGLE_OVERWRITE)
 	};
 	
 	
@@ -2942,7 +2944,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Creates this editor's standard navigation actions.
+	 * Creates action entries for all SWT StyledText actions as defined in
+	 * <code>org.eclipse.swt.custom.ST</code>. Overwrites and 
+	 * extends the list of these actions afterwards.
 	 * <p>
 	 * Subclasses may extend.
 	 * </p>
