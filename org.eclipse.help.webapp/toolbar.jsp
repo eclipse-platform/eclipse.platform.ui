@@ -88,7 +88,11 @@ function bookmarkPage(button)
 		if (i >= 0)
 			url = url.substring(0, i);
 			
-		parent.NavFrame.bookmarks.location = "bookmarks.jsp?add="+url;
+		var title = parent.parent.MainFrame.document.title;
+		if (title == null || title == "")
+			title = url;
+			
+		parent.NavFrame.bookmarks.location = "bookmarks.jsp?add="+url+"&title="+escape(title);
 	}catch (e) {}
 	if (isIE) button.blur();
 

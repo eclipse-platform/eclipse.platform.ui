@@ -142,12 +142,12 @@ if (linksView) {
    <td  title="<%=LinksStr%>" align="center" class="tab" id="linksTab"  onclick="parent.switchTab('links')" onmouseover="window.status='<%=LinksStr%>';return true;" onmouseout="window.status='';"><a href='javascript:parent.switchTab("links")' onclick="this.blur()" onmouseover="window.status='<%=LinksStr%>';return true;" onmouseout="window.status='';"><img class="tabImage" alt="<%=LinksStr%>" title="<%=LinksStr%>" src="images/links_view.gif"></a></td>
 <%
 }
-//if (bookmarksView) {
+if (bookmarksView) {
 %>
    <td width="1px" class="separator"></td>
    <td  title="<%=BookmarksStr%>" align="center" class="tab" id="bookmarksTab"  onclick="parent.switchTab('bookmarks')" onmouseover="window.status='<%=BookmarksStr%>';return true;" onmouseout="window.status='';"><a href='javascript:parent.switchTab("bookmarks")' onclick="this.blur()" onmouseover="window.status='<%=BookmarksStr%>';return true;" onmouseout="window.status='';"><img class="tabImage" alt="<%=BookmarksStr%>" title="<%=BookmarksStr%>" src="images/bookmarks_view.gif"></a></td>
 <%
-//}
+}
 %>
    </tr>
    </table>

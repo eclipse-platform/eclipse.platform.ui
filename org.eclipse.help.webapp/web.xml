@@ -27,6 +27,12 @@
 		<servlet-name>jsp.advanced</servlet-name>
 		<servlet-class>jsp.advanced</servlet-class>
 	</servlet>
+	
+	<servlet>
+		<servlet-name>jsp.bookmarks</servlet-name>
+		<servlet-class>jsp.bookmarks</servlet-class>
+	</servlet>
+
 
 	<servlet>
 		<servlet-name>jsp.search</servlet-name>
@@ -91,6 +97,11 @@
 	<servlet>
 		<servlet-name>jsp.ns4.advanced</servlet-name>
 		<servlet-class>jsp.ns4.advanced</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>jsp.ns4.bookmarks</servlet-name>
+		<servlet-class>jsp.ns4.bookmarks</servlet-class>
 	</servlet>
 
 	<servlet>
@@ -196,6 +207,11 @@
 		<servlet-name>jsp.advanced</servlet-name>
 		<url-pattern>/advanced.jsp</url-pattern>
 	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>jsp.bookmarks</servlet-name>
+		<url-pattern>/bookmarks.jsp</url-pattern>
+	</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>jsp.search</servlet-name>
@@ -262,6 +278,11 @@
 		<url-pattern>/ns4/advanced.jsp</url-pattern>
 	</servlet-mapping>
 
+	<servlet-mapping>
+		<servlet-name>jsp.ns4.bookmarks</servlet-name>
+		<url-pattern>/ns4/bookmarks.jsp</url-pattern>
+	</servlet-mapping>
+	
 	<servlet-mapping>
 		<servlet-name>jsp.ns4.search</servlet-name>
 		<url-pattern>/ns4/search.jsp</url-pattern>

@@ -12,6 +12,7 @@ var args = parseQueryString();
 var tocURL = "tocs.jsp";
 var searchURL = "search_results.jsp" + getQuery();
 var linksURL = "links.jsp" + getQuery();
+var bookmarksURL = "bookmarks.jsp"+ getQuery();
 
 var tocTitle;
 var currToc;
@@ -108,6 +109,8 @@ function switchTab(nav, newTitle)
     	NavFrame.location = searchURL;
 	}else if (nav == "links"){
     	NavFrame.location = linksURL;
+    }else if (nav == "bookmarks") {
+    	NavFrame.location = bookmarksURL;
     }
     
     TabsFrame.location = "tabs.jsp?tab="+nav;

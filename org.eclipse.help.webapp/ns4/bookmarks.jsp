@@ -10,7 +10,7 @@
 	String removeUrl = request.getParameter("remove");
 	if (bookmarkURL != null && bookmarkURL.length() > 0)
 	{
-		String title=UrlUtil.getRequestParameter(request,"title");
+		String title=request.getParameter("title");
 		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
 		String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);
 		// separate the url and title by vertical bar
@@ -38,8 +38,7 @@
 
 <style type="text/css">
 BODY {
-	background-color: Window;
-	font: icon;
+	font: 8pt Tahoma;
 	margin-top:5px;
 	margin-left:5px;
 	padding:0;
@@ -53,16 +52,21 @@ BODY {
 	scrollbar-face-color:ButtonFace;
 }
 
+
 A {
 	text-decoration:none; 
-	color:WindowText; 
+	color:black; 
 	padding:0px;
 	white-space: nowrap;
+	cursor:default;
 }
 
-A:hover {
-	text-decoration:underline; 
+
+TABLE {
+	font: 8pt Tahoma;
+	width:100%;
 }
+
 
 IMG {
 	border:0px;
@@ -71,46 +75,28 @@ IMG {
 	margin-right:4px;
 }
 
-TABLE {
-	background-color: Window;
-	font: icon;
-	width:100%;
-}
+
 
 .list {
-	background-color: Window;
 	padding:2px;
 }
      
 .active { 
 	background:ButtonFace;
-	width:100%;
-	height:100%;
+	padding:2px;
 }
 
 .label {
 	margin-left:4px;
 }
 
+
 </style>
-
-<base target="MainFrame">
-
-<script language="JavaScript" src="list.js"></script>
-
-<script language="JavaScript">		
-var extraStyle = "";
-if (isMozilla)
-	extraStyle = "<style type='text/css'>.active, A.active:hover {background:WindowText;color:Window;} </style>";
- 
-document.write(extraStyle);
-
-</script>
 
 </head>
 
 
-<body>
+<body BGCOLOR="#FFFFFF">
  
 <%
 // Load the bookmarks in the non-infocenter scenario.
@@ -136,9 +122,10 @@ if (application.getAttribute("org.eclipse.help.servlet.eclipse") == null)
 	}
 }
 
+
 %>
 
-<table id='list'  cellspacing='0' >
+<table id='list' >
 
 <%
 if (bookmarks != null && bookmarks.hasMoreTokens())
@@ -169,9 +156,13 @@ if (bookmarks != null && bookmarks.hasMoreTokens())
 			href = "about:blank";
 %>
 
-<tr class='list' id='r<%=i%>'>
+<tr class='list' id='r<%=i%>' align=left nowrap>
+	<td align='left' nowrap width="16">
+		<img src="../images/bookmark_obj.gif" border=0>
+	</td>
+
 	<td align='left' class='label' nowrap>
-		<a id='a<%=i%>' href='<%=href%>' onclick='parent.parent.setToolbarTitle(" ")' title="<%=UrlUtil.htmlEncode(label)%>"><img src="images/bookmark_obj.gif"><%=UrlUtil.htmlEncode(label)%></a>
+		<a id='a<%=i%>' href='<%=href%>' title="<%=UrlUtil.htmlEncode(label)%>"><%=UrlUtil.htmlEncode(label)%></a>
 	</td>
 </tr>
 
