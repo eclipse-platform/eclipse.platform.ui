@@ -83,6 +83,7 @@ public abstract class BenchmarkTest extends EclipseTest {
         groups = new HashMap();
 		Performance perf = Performance.getDefault();
 		PerformanceMeter meter = null;
+        global = false; // Removed until proper baseline can be used
 		if (global) {
 			// Use one meter for all groups - provides a single timing result
 			meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(this));
