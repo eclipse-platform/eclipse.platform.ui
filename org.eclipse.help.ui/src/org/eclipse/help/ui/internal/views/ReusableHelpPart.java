@@ -1046,7 +1046,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 	public IHelpPart findPart(String id) {
 		if (mform == null)
 			return null;
-		IFormPart[] parts = (IFormPart[]) mform.getParts();
+		IFormPart[] parts = mform.getParts();
 		for (int i = 0; i < parts.length; i++) {
 			IHelpPart part = (IHelpPart) parts[i];
 			if (part.getId().equals(id))
@@ -1344,7 +1344,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 			case '\"':
 				buf.append("&quot;"); //$NON-NLS-1$
 				break;
-			case (int) 160:
+			case 160:
 				buf.append(" "); //$NON-NLS-1$
 				break;
 			default:

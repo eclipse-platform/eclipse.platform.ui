@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-     <extension-point id="searchEngine" name="Search Engine" schema="schema/searchEngine.exsd"/>
+     <extension-point id="searchEngine" name="%searchEngine" schema="schema/searchEngine.exsd"/>
 
 <!-- Default Help UI  -->
    <extension
