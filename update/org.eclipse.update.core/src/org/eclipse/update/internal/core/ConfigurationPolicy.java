@@ -3,6 +3,7 @@ package org.eclipse.update.internal.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.boot.IPlatformConfiguration;
@@ -160,14 +161,20 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 		if (configuredFeatureReferences != null && !configuredFeatureReferences.isEmpty()) {
 			List pluginsString = new ArrayList(0);
 
-			Iterator iter = configuredFeatureReferences.iterator();
+			Iterator iter = null;
+			if (policy==IPlatformConfiguration.ISitePolicy.USER_EXCLUDE){
+				iter = unconfiguredFeatureReferences.iterator();
+			} else {
+				iter = configuredFeatureReferences.iterator();				
+			}
 			while (iter.hasNext()) {
 				IFeatureReference element = (IFeatureReference) iter.next();
 				IFeature feature = element.getFeature();
 				IPluginEntry[] entries = feature.getPluginEntries();
 				for (int index = 0; index < entries.length; index++) {
 					IPluginEntry entry = entries[index];
-					pluginsString.add(entry.getIdentifier().toString());
+					String id = entry.getIdentifier().toString();
+					pluginsString.add(id);
 				}
 			}
 
