@@ -10,8 +10,8 @@
  ******************************************************************************/
 package org.eclipse.ui.commands;
 
-import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.util.Util;
 
 public final class HandlerSubmission implements Comparable {
@@ -21,9 +21,9 @@ public final class HandlerSubmission implements Comparable {
     private final static int HASH_INITIAL = HandlerSubmission.class.getName()
             .hashCode();
 
-    private IPerspectiveDescriptor activePerspectiveDescriptor;
-
     private IWorkbenchSite activeWorkbenchSite;
+
+    private IWorkbenchWindow activeWorkbenchWindow;
 
     private String commandId;
 
@@ -37,14 +37,13 @@ public final class HandlerSubmission implements Comparable {
 
     private transient String string;
 
-    public HandlerSubmission(
-            IPerspectiveDescriptor activePerspectiveDescriptor,
-            IWorkbenchSite activeWorkbenchSite, String commandId,
+    public HandlerSubmission(IWorkbenchSite activeWorkbenchSite,
+            IWorkbenchWindow activeWorkbenchWindow, String commandId,
             IHandler handler, int priority) {
         if (commandId == null || handler == null)
                 throw new NullPointerException();
-        this.activePerspectiveDescriptor = activePerspectiveDescriptor;
         this.activeWorkbenchSite = activeWorkbenchSite;
+        this.activeWorkbenchWindow = activeWorkbenchWindow;
         this.commandId = commandId;
         this.handler = handler;
         this.priority = priority;
@@ -52,12 +51,12 @@ public final class HandlerSubmission implements Comparable {
 
     public int compareTo(Object object) {
         HandlerSubmission castedObject = (HandlerSubmission) object;
-        int compareTo = Util.compare(activePerspectiveDescriptor,
-                castedObject.activePerspectiveDescriptor);
+        int compareTo = Util.compare(activeWorkbenchSite,
+                castedObject.activeWorkbenchSite);
 
         if (compareTo == 0) {
-            compareTo = Util.compare(activeWorkbenchSite,
-                    castedObject.activeWorkbenchSite);
+            compareTo = Util.compare(activeWorkbenchWindow,
+                    castedObject.activeWorkbenchWindow);
 
             if (compareTo == 0) {
                 compareTo = Util.compare(-priority, -castedObject.priority);
@@ -75,27 +74,12 @@ public final class HandlerSubmission implements Comparable {
         return compareTo;
     }
 
-    //    public boolean equals(Object object) {
-    //        if (!(object instanceof HandlerSubmission)) return false;
-    //
-    //        HandlerSubmission castedObject = (HandlerSubmission) object;
-    //        boolean equals = true;
-    //        equals &= Util.equals(activePerspectiveDescriptor,
-    //                castedObject.activePerspectiveDescriptor);
-    //        equals &= Util.equals(activeWorkbenchSite,
-    //                castedObject.activeWorkbenchSite);
-    //        equals &= Util.equals(commandId, castedObject.commandId);
-    //        equals &= Util.equals(handler, castedObject.handler);
-    //        equals &= Util.equals(priority, castedObject.priority);
-    //        return equals;
-    //    }
-
-    public IPerspectiveDescriptor getActivePerspectiveDescriptor() {
-        return activePerspectiveDescriptor;
-    }
-
     public IWorkbenchSite getActiveWorkbenchSite() {
         return activeWorkbenchSite;
+    }
+
+    public IWorkbenchWindow getActiveWorkbenchWindow() {
+        return activeWorkbenchWindow;
     }
 
     public String getCommandId() {
@@ -114,9 +98,9 @@ public final class HandlerSubmission implements Comparable {
         if (!hashCodeComputed) {
             hashCode = HASH_INITIAL;
             hashCode = hashCode * HASH_FACTOR
-                    + Util.hashCode(activePerspectiveDescriptor);
-            hashCode = hashCode * HASH_FACTOR
                     + Util.hashCode(activeWorkbenchSite);
+            hashCode = hashCode * HASH_FACTOR
+                    + Util.hashCode(activeWorkbenchWindow);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(handler);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(priority);
@@ -129,10 +113,10 @@ public final class HandlerSubmission implements Comparable {
     public String toString() {
         if (string == null) {
             final StringBuffer stringBuffer = new StringBuffer();
-            stringBuffer.append("[activePerspectiveDescriptor="); //$NON-NLS-1$
-            stringBuffer.append(activePerspectiveDescriptor);
-            stringBuffer.append(",activeWorkbenchSite="); //$NON-NLS-1$
+            stringBuffer.append("[activeWorkbenchSite="); //$NON-NLS-1$
             stringBuffer.append(activeWorkbenchSite);
+            stringBuffer.append(",activeWorkbenchWindow="); //$NON-NLS-1$
+            stringBuffer.append(activeWorkbenchWindow);
             stringBuffer.append(",commandId="); //$NON-NLS-1$
             stringBuffer.append(commandId);
             stringBuffer.append(",handler="); //$NON-NLS-1$

@@ -38,8 +38,6 @@ import org.eclipse.ui.internal.util.Util;
 
 public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 
-    private IPerspectiveDescriptor activePerspectiveDescriptor;
-
     private IWorkbenchSite activeWorkbenchSite;
 
     private IWorkbenchWindow activeWorkbenchWindow;
@@ -207,11 +205,11 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
         }
 
         if (force
-                || !Util.equals(this.activePerspectiveDescriptor,
-                        activePerspectiveDescriptor)
-                || !Util.equals(this.activeWorkbenchSite, activeWorkbenchSite)) {
-            this.activePerspectiveDescriptor = activePerspectiveDescriptor;
+                || !Util.equals(this.activeWorkbenchSite, activeWorkbenchSite)
+                || !Util.equals(this.activeWorkbenchWindow,
+                        activeWorkbenchWindow)) {
             this.activeWorkbenchSite = activeWorkbenchSite;
+            this.activeWorkbenchWindow = activeWorkbenchWindow;
             Set enabledContextIds = new HashSet();
 
             for (Iterator iterator = enabledSubmissionsByContextId.entrySet()
@@ -223,17 +221,18 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                 for (int i = 0; i < enabledSubmissions.size(); i++) {
                     EnabledSubmission enabledSubmission = (EnabledSubmission) enabledSubmissions
                             .get(i);
-                    IPerspectiveDescriptor activePerspectiveDescriptor2 = enabledSubmission
-                            .getActivePerspectiveDescriptor();
                     IWorkbenchSite activeWorkbenchSite2 = enabledSubmission
                             .getActiveWorkbenchSite();
 
-                    if (activePerspectiveDescriptor2 != null
-                            && activePerspectiveDescriptor2 != activePerspectiveDescriptor)
-                            continue;
-
                     if (activeWorkbenchSite2 != null
                             && activeWorkbenchSite2 != activeWorkbenchSite)
+                            continue;
+
+                    IWorkbenchWindow activeWorkbenchWindow2 = enabledSubmission
+                            .getActiveWorkbenchWindow();
+
+                    if (activeWorkbenchWindow2 != null
+                            && activeWorkbenchWindow2 != activeWorkbenchWindow)
                             continue;
 
                     enabledContextIds.add(contextId);

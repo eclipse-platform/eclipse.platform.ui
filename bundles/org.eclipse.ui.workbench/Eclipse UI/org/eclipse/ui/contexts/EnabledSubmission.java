@@ -10,8 +10,8 @@
  ******************************************************************************/
 package org.eclipse.ui.contexts;
 
-import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.util.Util;
 
 public final class EnabledSubmission implements Comparable {
@@ -21,9 +21,9 @@ public final class EnabledSubmission implements Comparable {
     private final static int HASH_INITIAL = EnabledSubmission.class.getName()
             .hashCode();
 
-    private IPerspectiveDescriptor activePerspectiveDescriptor;
-
     private IWorkbenchSite activeWorkbenchSite;
+
+    private IWorkbenchWindow activeWorkbenchWindow;
 
     private String contextId;
 
@@ -33,23 +33,22 @@ public final class EnabledSubmission implements Comparable {
 
     private transient String string;
 
-    public EnabledSubmission(
-            IPerspectiveDescriptor activePerspectiveDescriptor,
-            IWorkbenchSite activeWorkbenchSite, String contextId) {
+    public EnabledSubmission(IWorkbenchSite activeWorkbenchSite,
+            IWorkbenchWindow activeWorkbenchWindow, String contextId) {
         if (contextId == null) throw new NullPointerException();
-        this.activePerspectiveDescriptor = activePerspectiveDescriptor;
         this.activeWorkbenchSite = activeWorkbenchSite;
+        this.activeWorkbenchWindow = activeWorkbenchWindow;
         this.contextId = contextId;
     }
 
     public int compareTo(Object object) {
         EnabledSubmission castedObject = (EnabledSubmission) object;
-        int compareTo = Util.compare(activePerspectiveDescriptor,
-                castedObject.activePerspectiveDescriptor);
+        int compareTo = Util.compare(activeWorkbenchSite,
+                castedObject.activeWorkbenchSite);
 
         if (compareTo == 0) {
-            compareTo = Util.compare(activeWorkbenchSite,
-                    castedObject.activeWorkbenchSite);
+            compareTo = Util.compare(activeWorkbenchWindow,
+                    castedObject.activeWorkbenchWindow);
 
             if (compareTo == 0)
                     compareTo = Util.compare(contextId, castedObject.contextId);
@@ -58,25 +57,12 @@ public final class EnabledSubmission implements Comparable {
         return compareTo;
     }
 
-    //    public boolean equals(Object object) {
-    //        if (!(object instanceof EnabledSubmission)) return false;
-    //
-    //        EnabledSubmission castedObject = (EnabledSubmission) object;
-    //        boolean equals = true;
-    //        equals &= Util.equals(activePerspectiveDescriptor,
-    //                castedObject.activePerspectiveDescriptor);
-    //        equals &= Util.equals(activeWorkbenchSite,
-    //                castedObject.activeWorkbenchSite);
-    //        equals &= Util.equals(contextId, castedObject.contextId);
-    //        return equals;
-    //    }
-
-    public IPerspectiveDescriptor getActivePerspectiveDescriptor() {
-        return activePerspectiveDescriptor;
-    }
-
     public IWorkbenchSite getActiveWorkbenchSite() {
         return activeWorkbenchSite;
+    }
+
+    public IWorkbenchWindow getActiveWorkbenchWindow() {
+        return activeWorkbenchWindow;
     }
 
     public String getContextId() {
@@ -87,9 +73,9 @@ public final class EnabledSubmission implements Comparable {
         if (!hashCodeComputed) {
             hashCode = HASH_INITIAL;
             hashCode = hashCode * HASH_FACTOR
-                    + Util.hashCode(activePerspectiveDescriptor);
-            hashCode = hashCode * HASH_FACTOR
                     + Util.hashCode(activeWorkbenchSite);
+            hashCode = hashCode * HASH_FACTOR
+                    + Util.hashCode(activeWorkbenchWindow);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(contextId);
             hashCodeComputed = true;
         }
@@ -100,10 +86,10 @@ public final class EnabledSubmission implements Comparable {
     public String toString() {
         if (string == null) {
             final StringBuffer stringBuffer = new StringBuffer();
-            stringBuffer.append("[activePerspectiveDescriptor="); //$NON-NLS-1$
-            stringBuffer.append(activePerspectiveDescriptor);
-            stringBuffer.append(",activeWorkbenchSite="); //$NON-NLS-1$
+            stringBuffer.append("[activeWorkbenchSite="); //$NON-NLS-1$
             stringBuffer.append(activeWorkbenchSite);
+            stringBuffer.append(",activeWorkbenchWindow="); //$NON-NLS-1$
+            stringBuffer.append(activeWorkbenchWindow);
             stringBuffer.append(",contextId="); //$NON-NLS-1$
             stringBuffer.append(contextId);
             stringBuffer.append(']');

@@ -45,8 +45,6 @@ import org.eclipse.ui.keys.SWTKeySupport;
 
 public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
-    private IPerspectiveDescriptor activePerspectiveDescriptor;
-
     private IWorkbenchSite activeWorkbenchSite;
 
     private IWorkbenchWindow activeWorkbenchWindow;
@@ -240,11 +238,11 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         }
 
         if (force
-                || !Util.equals(this.activePerspectiveDescriptor,
-                        activePerspectiveDescriptor)
-                || !Util.equals(this.activeWorkbenchSite, activeWorkbenchSite)) {
-            this.activePerspectiveDescriptor = activePerspectiveDescriptor;
+                || !Util.equals(this.activeWorkbenchSite, activeWorkbenchSite)
+                || !Util.equals(this.activeWorkbenchWindow,
+                        activeWorkbenchWindow)) {
             this.activeWorkbenchSite = activeWorkbenchSite;
+            this.activeWorkbenchWindow = activeWorkbenchWindow;
             Map handlersByCommandId = new HashMap();
 
             for (Iterator iterator = handlerSubmissionsByCommandId.entrySet()
@@ -258,31 +256,30 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                 for (int i = 0; i < handlerSubmissions.size(); i++) {
                     HandlerSubmission handlerSubmission = (HandlerSubmission) handlerSubmissions
                             .get(i);
-                    IPerspectiveDescriptor activePerspectiveDescriptor2 = handlerSubmission
-                            .getActivePerspectiveDescriptor();
                     IWorkbenchSite activeWorkbenchSite2 = handlerSubmission
                             .getActiveWorkbenchSite();
-
-                    if (activePerspectiveDescriptor2 != null
-                            && activePerspectiveDescriptor2 != activePerspectiveDescriptor)
-                            continue;
 
                     if (activeWorkbenchSite2 != null
                             && activeWorkbenchSite2 != activeWorkbenchSite)
                             continue;
 
+                    IWorkbenchWindow activeWorkbenchWindow2 = handlerSubmission
+                            .getActiveWorkbenchWindow();
+
+                    if (activeWorkbenchWindow2 != null
+                            && activeWorkbenchWindow2 != activeWorkbenchWindow)
+                            continue;
+
                     if (bestHandlerSubmission == null)
                         bestHandlerSubmission = handlerSubmission;
                     else {
-                        int compareTo = Util.compare(
-                                activePerspectiveDescriptor2,
-                                bestHandlerSubmission
-                                        .getActivePerspectiveDescriptor());
+                        int compareTo = Util.compare(activeWorkbenchSite2,
+                                bestHandlerSubmission.getActiveWorkbenchSite());
 
                         if (compareTo == 0) {
-                            compareTo = Util.compare(activeWorkbenchSite2,
+                            compareTo = Util.compare(activeWorkbenchWindow2,
                                     bestHandlerSubmission
-                                            .getActiveWorkbenchSite());
+                                            .getActiveWorkbenchWindow());
 
                             if (compareTo == 0)
                                     compareTo = Util.compare(-handlerSubmission

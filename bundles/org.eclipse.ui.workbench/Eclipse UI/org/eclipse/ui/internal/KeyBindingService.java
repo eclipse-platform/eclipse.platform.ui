@@ -325,8 +325,9 @@ final class KeyBindingService implements INestableKeyBindingService {
                 if (!workbenchSite.equals(enabledSubmission
                         .getActiveWorkbenchSite())) {
                     replacementSubmission = new EnabledSubmission(
-                            enabledSubmission.getActivePerspectiveDescriptor(),
-                            workbenchSite, enabledSubmission.getContextId());
+                            workbenchSite, enabledSubmission
+                                    .getActiveWorkbenchWindow(),
+                            enabledSubmission.getContextId());
                 } else {
                     replacementSubmission = enabledSubmission;
                 }
@@ -336,9 +337,10 @@ final class KeyBindingService implements INestableKeyBindingService {
                 if (!workbenchSite.equals(handlerSubmission
                         .getActiveWorkbenchSite())) {
                     replacementSubmission = new HandlerSubmission(
-                            handlerSubmission.getActivePerspectiveDescriptor(),
-                            workbenchSite, handlerSubmission.getCommandId(),
-                            handlerSubmission.getHandler(), handlerSubmission
+                            workbenchSite, handlerSubmission
+                                    .getActiveWorkbenchWindow(),
+                            handlerSubmission.getCommandId(), handlerSubmission
+                                    .getHandler(), handlerSubmission
                                     .getPriority());
                 } else {
                     replacementSubmission = handlerSubmission;
@@ -369,8 +371,8 @@ final class KeyBindingService implements INestableKeyBindingService {
 
             // Create the new submission
             IHandler handler = new ActionHandler(action);
-            HandlerSubmission handlerSubmission = new HandlerSubmission(null,
-                    workbenchSite, commandId, handler, 4);
+            HandlerSubmission handlerSubmission = new HandlerSubmission(
+                    workbenchSite, null, commandId, handler, 4);
             handlerSubmissionsByCommandId.put(commandId, handlerSubmission);
 
             // Either submit the new handler myself, or simply re-activate.
@@ -420,7 +422,7 @@ final class KeyBindingService implements INestableKeyBindingService {
         for (Iterator iterator = enabledContextIds.iterator(); iterator
                 .hasNext();) {
             String contextId = (String) iterator.next();
-            enabledSubmissions.add(new EnabledSubmission(null, workbenchSite,
+            enabledSubmissions.add(new EnabledSubmission(workbenchSite, null,
                     contextId));
         }
 
