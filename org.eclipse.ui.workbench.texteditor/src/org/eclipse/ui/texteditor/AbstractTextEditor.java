@@ -4066,6 +4066,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsSelectionDependentAction(ITextEditorActionConstants.UPPER_CASE, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.LOWER_CASE, true);
 		
+		markAsPropertyDependentAction(ITextEditorActionConstants.UNDO, true);
+		markAsPropertyDependentAction(ITextEditorActionConstants.REDO, true);
 		markAsPropertyDependentAction(ITextEditorActionConstants.REVERT_TO_SAVED, true);
 		
 		markAsStateDependentAction(ITextEditorActionConstants.UNDO, true);

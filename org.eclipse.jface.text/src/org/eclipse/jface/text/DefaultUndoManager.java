@@ -23,14 +23,16 @@ import org.eclipse.swt.events.MouseListener;
 
 
 /**
- * Standard implementation of <code>IUndoManager</code>. 
- * It registers with the connected text viewer as text listeners and logs all changes. 
- * It also monitors mouse and keyboard activities in order to partition the stream of
- * text changes into undoable edit commands. <p>
+ * Standard implementation of <code>IUndoManager</code>. It registers with
+ * the connected text viewer as text input listener and document listener and
+ * logs all changes. It also monitors mouse and keyboard activities in order to
+ * partition the stream of text changes into undoable edit commands.
+ * <p>
  * This class is not intended to be subclassed.
  * 
- * @see ITextViewer
- * @see ITextListener
+ * @see org.eclipse.jface.text.ITextViewer
+ * @see org.eclipse.jface.text.ITextInputListener
+ * @see org.eclipse.jface.text.IDocumentListener
  * @see MouseListener
  * @see KeyListener
  */
@@ -349,30 +351,72 @@ public class DefaultUndoManager implements IUndoManager {
 	}
 	
 	/**
-	 * Internal listener to text changes.
+	 * Internal listener to document changes.
 	 */
-	class TextListener implements ITextListener {
+	class DocumentListener implements IDocumentListener {
 		
+		private String fReplacedText;
+
 		/*
-		 * @see ITextListener#textChanged
+		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
-		public void textChanged(TextEvent e) {
-			if (e.getDocumentEvent() != null)
-				processTextEvent(e);
+		public void documentAboutToBeChanged(DocumentEvent event) {
+			try {
+				fReplacedText= event.getDocument().get(event.getOffset(), event.getLength());
+			} catch (BadLocationException x) {
+				fReplacedText= null;
+			}
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
+		 */
+		public void documentChanged(DocumentEvent event) {
+			processChange(event.getOffset(), event.getOffset() + event.getLength(), event.getText(), fReplacedText);
 		}
 	}
-	 
+	
+	/**
+	 * Internal text input listener.
+	 */
+	class TextInputListener implements ITextInputListener {
+
+		/*
+		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
+		 */
+		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
+			if (oldInput != null && fDocumentListener != null) {
+				oldInput.removeDocumentListener(fDocumentListener);
+				commit();
+			}
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
+		 */
+		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
+			if (newInput != null) {
+				if (fDocumentListener == null)
+					fDocumentListener= new DocumentListener();
+				newInput.addDocumentListener(fDocumentListener);
+			}
+		}
+		
+	}
+	
+	
 	/** Text buffer to collect text which is inserted into the viewer */
 	private StringBuffer fTextBuffer= new StringBuffer();
 	/** Text buffer to collect viewer content which has been replaced */
 	private StringBuffer fPreservedTextBuffer= new StringBuffer(); 
 	/** Pretended undo manager state */
 	private PretendedUndoManagerState fPretendedState= new PretendedUndoManagerState();
-	
-	/** The internal text listener */
-	private ITextListener fTextListener;
 	/** The internal key and mouse event listener */
 	private KeyAndMouseListener fKeyAndMouseListener;
+	/** The internal document listener */
+	private DocumentListener fDocumentListener;
+	/** The internal text input listener */
+	private TextInputListener fTextInputListener;
 	
 	
 	/** Indicates inserting state */
@@ -431,6 +475,8 @@ public class DefaultUndoManager implements IUndoManager {
 			fKeyAndMouseListener= new KeyAndMouseListener();
 			text.addMouseListener(fKeyAndMouseListener);
 			text.addKeyListener(fKeyAndMouseListener);
+			fTextInputListener= new TextInputListener();
+			fTextViewer.addTextInputListener(fTextInputListener);
 			listenToTextChanges(true);
 		}
 	}
@@ -440,9 +486,16 @@ public class DefaultUndoManager implements IUndoManager {
 	 */
 	private void removeListeners() {
 		StyledText text= fTextViewer.getTextWidget();
-		if (text != null && fKeyAndMouseListener != null) {
-			text.removeMouseListener(fKeyAndMouseListener);
-			text.removeKeyListener(fKeyAndMouseListener);
+		if (text != null) {
+			if (fKeyAndMouseListener != null) {
+				text.removeMouseListener(fKeyAndMouseListener);
+				text.removeKeyListener(fKeyAndMouseListener);
+				fKeyAndMouseListener= null;
+			}
+			if (fTextInputListener != null) {
+				fTextViewer.removeTextInputListener(fTextInputListener);
+				fTextInputListener= null;
+			}
 			listenToTextChanges(false);
 		}
 	}
@@ -453,12 +506,16 @@ public class DefaultUndoManager implements IUndoManager {
 	 * @param listen the state which should be established
 	 */
 	private void listenToTextChanges(boolean listen) {
-		if (listen && fTextListener == null) {
-			fTextListener= new TextListener();
-			fTextViewer.addTextListener(fTextListener);
-		} else if (!listen && fTextListener != null) {
-			fTextViewer.removeTextListener(fTextListener);
-			fTextListener= null;
+		if (listen) {
+			if (fDocumentListener == null && fTextViewer.getDocument() != null) {
+				fDocumentListener= new DocumentListener();
+				fTextViewer.getDocument().addDocumentListener(fDocumentListener);
+			}
+		} else if (!listen) {
+			if (fDocumentListener != null && fTextViewer.getDocument() != null) {
+				fTextViewer.getDocument().removeDocumentListener(fDocumentListener);
+				fDocumentListener= null;
+			}
 		}
 	}
 	
@@ -547,49 +604,28 @@ public class DefaultUndoManager implements IUndoManager {
 		}
 		return fPretendedState;	
 	}
-				
-	/**
-	 * Processes the given text event in order to determine editor command.
-	 *
-	 * @param e the text event
-	 */
-	private void processTextEvent(TextEvent e) {
-		
-		DocumentEvent event= e.getDocumentEvent();
-		if (event == null) {
-			commit();
-			return;
-		}
 	
-		int start= e.getOffset();
-		int modelStart= event.getOffset();
-		int end= e.getOffset() + e.getLength();
-		int modelEnd= event.getOffset() + event.getLength();
+	private void processChange(int modelStart, int modelEnd, String insertedText, String replacedText) {
 		
-		String newText= e.getText();
-		String oldText= e.getReplacedText();
-		
-		
-		if (newText == null)
-			newText= ""; //$NON-NLS-1$
+		if (insertedText == null)
+			insertedText= ""; //$NON-NLS-1$
 			
-		if (oldText == null)
-			oldText= ""; //$NON-NLS-1$
+		if (replacedText == null)
+			replacedText= ""; //$NON-NLS-1$
 		
-		int length= newText.length();
-		int diff= end - start;
+		int length= insertedText.length();
+		int diff= modelEnd - modelStart;
 		
-		// normalize verify command
+		// normalize
 		if (diff < 0) {
-			int tmp= end;
-			end= start;
-			start= tmp;
-			diff= -diff;
+			int tmp= modelEnd;
+			modelEnd= modelStart;
+			modelStart= tmp;
 		}
 				
-		if (start == end) {
+		if (modelStart == modelEnd) {
 			// text will be inserted
-			if ((length == 1) || isWhitespaceText(newText)) {
+			if ((length == 1) || isWhitespaceText(insertedText)) {
 				// by typing or model manipulation
 				if (!fInserting || (modelStart != fCurrent.fStart + fTextBuffer.length())) {
 					commit();
@@ -598,25 +634,25 @@ public class DefaultUndoManager implements IUndoManager {
 				if (fCurrent.fStart < 0)
 					fCurrent.fStart= fCurrent.fEnd= modelStart;
 				if (length > 0)
-					fTextBuffer.append(newText);
+					fTextBuffer.append(insertedText);
 			} else if (length > 0) {
 				// by pasting
 				commit();
 				fCurrent.fStart= fCurrent.fEnd= modelStart;
-				fTextBuffer.append(newText);
+				fTextBuffer.append(insertedText);
 				commit();
 			}
 		} else {
 			if (length == 0) {
 				// text will be deleted by backspace or DEL key or empty clipboard
-				length= oldText.length();
+				length= replacedText.length();
 				String[] delimiters= fTextViewer.getDocument().getLegalLineDelimiters();
 				
-				if ((length == 1) || TextUtilities.equals(delimiters, oldText) > -1) {
+				if ((length == 1) || TextUtilities.equals(delimiters, replacedText) > -1) {
 					
 					// whereby selection is empty
 					
-					if (fPreviousDelete.fStart == start && fPreviousDelete.fEnd == end) {
+					if (fPreviousDelete.fStart == modelStart && fPreviousDelete.fEnd == modelEnd) {
 						// repeated DEL
 							
 							// correct wrong settings of fCurrent
@@ -625,14 +661,14 @@ public class DefaultUndoManager implements IUndoManager {
 							fCurrent.fEnd= modelEnd;
 						}
 							// append to buffer && extend command range
-						fPreservedTextBuffer.append(oldText);
+						fPreservedTextBuffer.append(replacedText);
 						++fCurrent.fEnd;
 						
-					} else if (fPreviousDelete.fStart == end) {
+					} else if (fPreviousDelete.fStart == modelEnd) {
 						// repeated backspace
 						
 							// insert in buffer and extend command range
-						fPreservedTextBuffer.insert(0, oldText);
+						fPreservedTextBuffer.insert(0, replacedText);
 						fCurrent.fStart= modelStart;
 					
 					} else {
@@ -641,28 +677,28 @@ public class DefaultUndoManager implements IUndoManager {
 						commit();
 						
 						// as we can not decide whether it was DEL or backspace we initialize for backspace
-						fPreservedTextBuffer.append(oldText);
+						fPreservedTextBuffer.append(replacedText);
 						fCurrent.fStart= modelStart;
 						fCurrent.fEnd= modelEnd;
 					}
 					
-					fPreviousDelete.set(start, end);
+					fPreviousDelete.set(modelStart, modelEnd);
 					
 				} else if (length > 0) {
 					// whereby selection is not empty
 					commit();
 					fCurrent.fStart= modelStart;
 					fCurrent.fEnd= modelEnd;
-					fPreservedTextBuffer.append(oldText);
+					fPreservedTextBuffer.append(replacedText);
 				}
 			} else {
 				// text will be replaced
 								
 				if (length == 1) {
-					length= oldText.length();
+					length= replacedText.length();
 					String[] delimiters= fTextViewer.getDocument().getLegalLineDelimiters();
 
-					if ((length == 1) || TextUtilities.equals(delimiters, oldText) > -1) {
+					if ((length == 1) || TextUtilities.equals(delimiters, replacedText) > -1) {
 						// because of overwrite mode or model manipulation
 						if (!fOverwriting || (modelStart != fCurrent.fStart +  fTextBuffer.length())) {
 							commit();
@@ -673,8 +709,8 @@ public class DefaultUndoManager implements IUndoManager {
 							fCurrent.fStart= modelStart;
 
 						fCurrent.fEnd= modelEnd;
-						fTextBuffer.append(newText);
-						fPreservedTextBuffer.append(oldText);
+						fTextBuffer.append(insertedText);
+						fPreservedTextBuffer.append(replacedText);
 						return;
 					}
 				} 
@@ -682,12 +718,12 @@ public class DefaultUndoManager implements IUndoManager {
 				commit();
 				fCurrent.fStart= modelStart;
 				fCurrent.fEnd= modelEnd;
-				fTextBuffer.append(newText);
-				fPreservedTextBuffer.append(oldText);
+				fTextBuffer.append(insertedText);
+				fPreservedTextBuffer.append(replacedText);
 			}
-		}
+		}		
 	}
-	
+		
 	/*
 	 * @see IUndoManager#setMaximalUndoLevel
 	 */
