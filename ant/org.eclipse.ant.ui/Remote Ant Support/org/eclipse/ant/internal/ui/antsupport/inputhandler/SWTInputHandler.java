@@ -5,9 +5,12 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.input.DefaultInputHandler;
 import org.apache.tools.ant.input.InputRequest;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -27,6 +30,7 @@ public class SWTInputHandler extends DefaultInputHandler {
 		if (problem[0] != null) {
 			throw problem[0];
 		}
+		Display.getDefault().dispose ();
 	}
 	
 	protected Runnable getHandleInputRunnable(final InputRequest request, final BuildException[] problem) {
@@ -45,30 +49,54 @@ public class SWTInputHandler extends DefaultInputHandler {
 	}
 	
 	private void open(String title, String prompt, final InputRequest request) {
-		Display display = new Display ();
-		Shell shell = new Shell (display);
-		shell.setLayout (new FillLayout ());
-		shell.setText(title);
-		Text text = new Text (shell, SWT.SINGLE | SWT.BORDER);
+		Display display = new Display();
+		final String[] result = new String[1];
+		final Shell dialog = new Shell(display, SWT.DIALOG_TRIM
+				| SWT.APPLICATION_MODAL | SWT.RESIZE);
+		dialog.setLayout(new GridLayout());
+		GridData gd= new GridData(SWT.FILL);
+		gd.horizontalSpan= 2;
+		dialog.setLayoutData(gd);
+		dialog.setText(title);
+		Label l= new Label(dialog, SWT.WRAP);
+		l.setText(prompt);
+		Text text = new Text (dialog, SWT.BORDER | SWT.V_SCROLL);
+		//text.setBounds (10, 10, 200, 200);
 		
 		text.addListener (SWT.Verify, new Listener () {
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+			 */
 			public void handleEvent (Event e) {
 				String currentText = e.text;
-				request.setInput(currentText);
-				if (request.isInputValid()) {
-					e.doit = false;
+				result[0]= currentText;
+				//request.setInput(currentText);
+				//if (request.isInputValid()) {
+					e.doit= true;
 					return;
 				}
-			}
+			//}
 		});
-	
-		shell.pack ();
-		shell.open ();
-		while (!shell.isDisposed ()) {
-			if (!display.readAndDispatch ()) {
-                display.sleep ();
-            }
+		
+		final Button ok = new Button(dialog, SWT.PUSH);
+		ok.setText("Ok");
+		Button cancel = new Button(dialog, SWT.PUSH);
+		cancel.setText("Cancel");
+		Listener listener = new Listener() {
+			public void handleEvent(Event event) {
+				//result[0] = event.widget == ok;
+				dialog.close();
+			}
+		};
+		ok.addListener(SWT.Selection, listener);
+		cancel.addListener(SWT.Selection, listener);
+		dialog.pack();
+		dialog.open();
+
+		while (!dialog.isDisposed()) {
+			if (!display.readAndDispatch()) display.sleep();
 		}
-		display.dispose ();
+
+		display.dispose();
 	}
 }
