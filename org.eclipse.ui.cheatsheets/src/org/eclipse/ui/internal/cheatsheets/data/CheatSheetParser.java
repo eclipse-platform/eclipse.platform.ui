@@ -40,6 +40,7 @@ public class CheatSheetParser {
 
 	
 	class CheatSheetParserException extends Exception {
+		private static final long serialVersionUID = 6009335074727417445L;
 		public CheatSheetParserException(String message) {
 			super(message);
 		}

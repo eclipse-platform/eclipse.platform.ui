@@ -298,9 +298,9 @@ public class CheatSheetSaveHelper {
 				root.appendChild(eRel);
 			}
 			if (subcompletedTable != null) {
-				Enumeration enum = subcompletedTable.keys();
-				while (enum.hasMoreElements()) {
-					String itemNum = (String) enum.nextElement();
+				Enumeration enumeration = subcompletedTable.keys();
+				while (enumeration.hasMoreElements()) {
+					String itemNum = (String) enumeration.nextElement();
 					String subItemNum = (String) subcompletedTable.get(itemNum);
 					if (itemNum == null || subItemNum == null)
 						continue;
@@ -311,9 +311,9 @@ public class CheatSheetSaveHelper {
 				}
 			}
 			if (subskippedTable != null) {
-				Enumeration enum = subskippedTable.keys();
-				while (enum.hasMoreElements()) {
-					String itemNum = (String) enum.nextElement();
+				Enumeration enumeration = subskippedTable.keys();
+				while (enumeration.hasMoreElements()) {
+					String itemNum = (String) enumeration.nextElement();
 					String subItemNum = (String) subskippedTable.get(itemNum);
 					if (itemNum == null || subItemNum == null)
 						continue;
