@@ -361,7 +361,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 						IPluginEntry[] entries = feature.getPluginEntries();
 						for (int index = 0; index < entries.length; index++) {
 							IPluginEntry entry = entries[index];
-							if (!siteIdentifiers.contains(entry.getVersionIdentifier())) {
+							if (!contains(entry.getVersionIdentifier(),siteIdentifiers)) {
 								// FIXME: the plugin defined by the feature
 								// doesn't seem to exist on the site
 								String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
@@ -396,6 +396,24 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 				found = true;
 			}
 		}
+	}
+
+	/**
+	 * I have issues when running list.contain(versionedIdentifier)
+	 * The code runs teh Object.equals instead of teh VersionedIdentifier.equals
+	 */
+	private boolean contains (VersionedIdentifier id, List list){
+		boolean found = false;
+		if (list!=null && !list.isEmpty()){
+			Iterator iter = list.iterator();
+			while (iter.hasNext() && !found) {
+				VersionedIdentifier element = (VersionedIdentifier) iter.next();
+				if (element.equals(id)){
+					found = true;
+				}		
+			}
+		}
+		return found;
 	}
 
 }

@@ -59,15 +59,6 @@ public class InternalSiteManager {
 	 * If the Site has a different Type/Site Handler not known up to now,
 	 * it will be discovered when parsing the site.xml file.
 	 */
-	public static ISite getSite(URL siteURL) throws CoreException {
-		return getSite(siteURL,true);
-	}
-
-	/** 
-	 * Returns an ISite based on teh protocol of the URL
-	 * If the Site has a different Type/Site Handler not known up to now,
-	 * it will be discovered when parsing the site.xml file.
-	 */
 	public static ISite getSite(URL siteURL, boolean forceCreation) throws CoreException {
 		ISite site = null;
 		if (singleton == null)
@@ -127,7 +118,7 @@ public class InternalSiteManager {
 				String tempDir = System.getProperty("java.io.tmpdir");
 				if (!tempDir.endsWith(File.separator))
 					tempDir += File.separator;
-				TEMP_SITE = InternalSiteManager.getSite(new URL("file", null, tempDir + TEMP_NAME + '/')); // URL must end with '/' if they refer to a path/directory
+				TEMP_SITE = InternalSiteManager.getSite(new URL("file", null, tempDir + TEMP_NAME + '/'),true); // URL must end with '/' if they refer to a path/directory
 			} catch (MalformedURLException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create Temporary Site", e);
@@ -222,7 +213,7 @@ public class InternalSiteManager {
 		if (siteLocation != null) {
 			try {
 				URL siteURL = new URL("file", null, siteLocation.getAbsolutePath());
-				site = (Site) getSite(siteURL);
+				site = (Site) getSite(siteURL,true);
 				site.save();
 			} catch (MalformedURLException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();

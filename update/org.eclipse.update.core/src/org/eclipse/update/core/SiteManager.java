@@ -45,19 +45,24 @@ public class SiteManager {
 	 * If there is no XML file, and the site is on the file system, we will attempt to 
 	 * discover any feature or archives.
 	 * 
-	 * If a site doesn't exists, it will be created in memory. use <code>ISite.save()</code>
+	 * If a site doesn't exists, and <code>forceCreation</code> is <code> true </code>
+	 * the site will be created in memory. Use <code>ISite.save()</code>
 	 * to persist the site.
 	 * 
-	 * The site is not created in the LocalSite.
+	 * The site is not created in the LocalSite. //FIXME what does it mean ??
 	 * 
 	 * @return the site which maps to this URL
 	 * @since 2.0 
 	 */
 	
-	public static ISite getSite(URL siteURL) throws CoreException {
-		return InternalSiteManager.getSite(siteURL);
+	public static ISite getSite(URL siteURL,boolean forceCreation) throws CoreException {
+		return InternalSiteManager.getSite(siteURL,forceCreation);
 	}
 	
+	
+	public static ISite getSite(URL siteURL) throws CoreException {
+		return InternalSiteManager.getSite(siteURL,true);
+	}
 	
 	/**
 	 * Returns a local temporary site where 
