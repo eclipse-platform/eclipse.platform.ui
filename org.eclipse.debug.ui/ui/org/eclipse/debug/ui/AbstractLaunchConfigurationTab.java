@@ -80,7 +80,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	}
 
 	/**
-	 * @see ILaunchConfigurationTab#canChangePage()
+	 * @see ILaunchConfigurationTab#okToLeave()
 	 */
 	public boolean okToLeave() {
 		return isValid();
@@ -162,6 +162,5 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 		}
 		return null;
 	}	
-
 }
 
