@@ -9,7 +9,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.core.ExpressionManager;
@@ -63,6 +65,11 @@ public class DebugPlugin extends Plugin {
 	 * (value <code>"breakpoints"</code>).
 	 */
 	public static final String EXTENSION_POINT_BREAKPOINTS= "breakpoints";	 //$NON-NLS-1$
+	
+	/**
+	 * Status code indicating an unexpected internal error.
+	 */
+	public static final int INTERNAL_ERROR = 120;		
 
 	/**
 	 * The singleton debug plug-in instance.
@@ -375,6 +382,26 @@ public class DebugPlugin extends Plugin {
 		}
 		return false;
 	}	
+	
+	/**
+	 * Convenience method to log internal errors
+	 */
+	public static void logError(Exception e) {
+		if (getDefault().isDebugging()) {
+			// this message is intentionally not internationalized, as an exception may
+			// be due to the resource bundle itself
+			log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Internal error logged from Debug Core: ", e));  //$NON-NLS-1$		
+		}
+	}
+	
+	/**
+	 * Logs the specified status with this plug-in's log.
+	 * 
+	 * @param status status to log
+	 */
+	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
+	}
 }
 
 
