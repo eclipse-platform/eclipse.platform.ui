@@ -169,11 +169,15 @@ public class ExpandableComposite extends Composite {
 			if (textLabel!=null)
 				textLabelCache.setBounds(x, y, size.x, size.y);
 			if (textClient!=null) {
-				int tcx = clientArea.width - tcsize.x-thmargin;
+				int tcx = clientArea.width - tcsize.x-marginWidth-thmargin;
 				textClientCache.setBounds(tcx, y, tcsize.x, tcsize.y);
 			}
+			int tbarHeight = 0;
 			if (size!=null)
-				y += size.y;
+				tbarHeight = size.y;
+			if (tcsize!=null)
+				tbarHeight = Math.max(tbarHeight, tcsize.y);
+			y += tbarHeight;
 			if ((expansionStyle & TITLE_BAR) != 0) 
 				y += tvmargin;
 			if (getSeparatorControl() != null) {
