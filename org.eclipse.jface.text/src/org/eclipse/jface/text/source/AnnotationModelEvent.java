@@ -25,7 +25,7 @@ import java.util.Set;
 public class AnnotationModelEvent {
 	
 	/** The model this event refers to. For internal use only. */
-	IAnnotationModel fAnnotationModel;
+	private IAnnotationModel fAnnotationModel;
 	/**
 	 * The added annotations.
 	 * @since 3.0
@@ -41,6 +41,11 @@ public class AnnotationModelEvent {
 	 * @since 3.0 
 	 */
 	private Set fChangedAnnotations= new HashSet();
+	/**
+	 * Indicates that this event does not contain detailed information.
+	 * @since 3.0
+	 */
+	private boolean fIsWorldChange;
 	
 	/**
 	 * Creates a new annotation model event for the given model.
@@ -48,7 +53,19 @@ public class AnnotationModelEvent {
 	 * @param model the model 
 	 */
 	public AnnotationModelEvent(IAnnotationModel model) {
+		this(model, true);
+	}
+
+	/**
+	 * Creates a new annotation model event for the given model.
+	 * 
+	 * @param model the model
+	 * @param isWorldChange <code>true</code> if world change
+	 * @since 3.0
+	 */
+	public AnnotationModelEvent(IAnnotationModel model, boolean isWorldChange) {
 		fAnnotationModel= model;
+		fIsWorldChange= isWorldChange;
 	}
 	
 	/**
@@ -62,13 +79,15 @@ public class AnnotationModelEvent {
 	
 	/**
 	 * Adds the given annotation to the set of annotations that are reported as
-	 * being added from the model.
+	 * being added from the model. If this event is considered a world change,
+	 * it is no longer so after this method has successfully finished.
 	 * 
 	 * @param annotation the added annotation
 	 * @since 3.0
 	 */
 	public void annotationAdded(Annotation annotation) {
 		fAddedAnnotations.add(annotation);
+		fIsWorldChange= false;
 	}
 	
 	/**
@@ -86,13 +105,15 @@ public class AnnotationModelEvent {
 	
 	/**
 	 * Adds the given annotation to the set of annotations that are reported as
-	 * being removed from the model.
+	 * being removed from the model. If this event is considered a world
+	 * change, it is no longer so after this method has successfully finished.
 	 * 
 	 * @param annotation the removed annotation
 	 * @since 3.0
 	 */
 	public void annotationRemoved(Annotation annotation) {
 		fRemovedAnnotations.add(annotation);
+		fIsWorldChange= false;
 	}
 	
 	/**
@@ -110,13 +131,15 @@ public class AnnotationModelEvent {
 	
 	/**
 	 * Adds the given annotation to the set of annotations that are reported as
-	 * being changed from the model.
+	 * being changed from the model. If this event is considered a world
+	 * change, it is no longer so after this method has successfully finished.
 	 * 
 	 * @param annotation the changed annotation
 	 * @since 3.0
 	 */
 	public void annotationChanged(Annotation annotation) {
 		fChangedAnnotations.add(annotation);
+		fIsWorldChange= false;
 	}
 	
 	/**
@@ -133,12 +156,37 @@ public class AnnotationModelEvent {
 	}
 	
 	/**
-	 * Returns whether this annotation model event is empty or not.
+	 * Returns whether this annotation model event is empty or not. If this
+	 * event represents a world change, this method returns <code>false</code>
+	 * although the event does not carry any added, removed, or changed
+	 * annotations.
 	 * 
 	 * @return <code>true</code> if this event is empty
 	 * @since 3.0
 	 */
 	public boolean isEmpty() {
-		return fAddedAnnotations.isEmpty() && fRemovedAnnotations.isEmpty() && fChangedAnnotations.isEmpty();
+		return !fIsWorldChange && fAddedAnnotations.isEmpty() && fRemovedAnnotations.isEmpty() && fChangedAnnotations.isEmpty();
+	}
+	
+	/**
+	 * Returns whether this annotation model events contains detailed
+	 * information about the modifications applied to the event annotation
+	 * model or whether it represents a world change, i.e. everything in the
+	 * model might have changed.
+	 * 
+	 * @return <code>true</code> if world change, <code>false</code> otherwise
+	 */
+	public boolean isWorldChange() {
+		return fIsWorldChange;
+	}
+	
+	/**
+	 * Marks this event as world change according to the given flag.
+	 * 
+	 * @param worldChange <code>true</code> if this event is a world change, <code>false</code> otherwise
+	 * @since 3.0
+	 */
+	void markWorldChange(boolean isWorldChange) {
+		fIsWorldChange= isWorldChange;
 	}
 }

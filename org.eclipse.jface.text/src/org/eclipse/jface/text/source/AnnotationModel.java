@@ -32,6 +32,29 @@ import org.eclipse.jface.text.Position;
  * annotation mechanisms.
  */
 public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtension {
+	
+	/**
+	 * Internal annotation model listener for forwarding annotation model changes from the attached models to the
+	 * registered listeners of the outer most annotation model.
+	 * 
+	 * @since 3.0
+	 */
+	private class InternalModelListener implements IAnnotationModelListener, IAnnotationModelListenerExtension {
+
+		/*
+		 * @see org.eclipse.jface.text.source.IAnnotationModelListener#modelChanged(org.eclipse.jface.text.source.IAnnotationModel)
+		 */
+		public void modelChanged(IAnnotationModel model) {
+			AnnotationModel.this.fireModelChanged(new AnnotationModelEvent(model, true));
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.source.IAnnotationModelListenerExtension#modelChanged(org.eclipse.jface.text.source.AnnotationModelEvent)
+		 */
+		public void modelChanged(AnnotationModelEvent event) {
+			AnnotationModel.this.fireModelChanged(event);
+		}
+	}
 
 	/** The list of managed annotations */
 	protected Map fAnnotations;
@@ -54,11 +77,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * The annotation model listener on attached sub-models.
 	 * @since 3.0
 	 */
-	private IAnnotationModelListener fModelListener= new IAnnotationModelListener() {
-		public void modelChanged(IAnnotationModel model) {
-			AnnotationModel.this.fireModelChanged();
-		}
-	};
+	private IAnnotationModelListener fModelListener= new InternalModelListener();
 	/**
 	 * The current annotation model event.
 	 * @since 3.0
@@ -266,6 +285,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	protected void fireModelChanged() {
 		AnnotationModelEvent event= fModelEvent;
 		fModelEvent= createAnnotationModelEvent();
+		fModelEvent.markWorldChange(false);
 		fireModelChanged(event);
 	}
 	
