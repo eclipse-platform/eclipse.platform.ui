@@ -46,7 +46,7 @@ public interface IExtensionRegistry {
 	* @param namespace the namespace in which to listen for changes
 	* @see IRegistryChangeListener
 	* @see IRegistryChangeEvent
-	* @see #removeRegistryChangeListener 
+	* @see #removeRegistryChangeListener(IRegistryChangeListener) 
 	*/
 	public void addRegistryChangeListener(IRegistryChangeListener listener, String namespace);
 	/**
@@ -64,7 +64,7 @@ public interface IExtensionRegistry {
 	* @see IRegistryChangeListener
 	* @see IRegistryChangeEvent
 	* @see #addRegistryChangeListener(IRegistryChangeListener, String)
-	* @see #removeRegistryChangeListener
+	* @see #removeRegistryChangeListener(IRegistryChangeListener)
 	*/
 	public void addRegistryChangeListener(IRegistryChangeListener listener);
 	/**
@@ -205,7 +205,8 @@ public interface IExtensionRegistry {
 	 *
 	 * @param listener the listener
 	 * @see IRegistryChangeListener
-	 * @see #addRegistryChangeListener
+	 * @see #addRegistryChangeListener(IRegistryChangeListener)
+	 * @see #addRegistryChangeListener(IRegistryChangeListener, String)
 	 */
 	public void removeRegistryChangeListener(IRegistryChangeListener listener);
 }
