@@ -103,7 +103,7 @@ public final class WorkbenchKeyboard {
 						+ Integer.toHexString(event.stateMask)
 						+ ", keyCode = 0x" //$NON-NLS-1$
 						+ Integer.toHexString(event.keyCode) + ", time = " //$NON-NLS-1$
-						+ Integer.toHexString(event.time) + ", character = 0x" //$NON-NLS-1$
+						+ event.time + ", character = 0x" //$NON-NLS-1$
 						+ Integer.toHexString(event.character) + ")"); //$NON-NLS-1$
 			}
 
