@@ -395,8 +395,13 @@ public class EditorManager {
 				IFile file = ((IFileEditorInput)input).getFile();
 				if(file != null) {
 					// Update the default editor for this file.
+					IEditorDescriptor defaultDesc = (EditorDescriptor)getEditorRegistry().getDefaultEditor(file);
 					String editorID = desc.getId();
-					WorkbenchPlugin.getDefault().getEditorRegistry().setDefaultEditor(file, editorID);
+					if(defaultDesc.getId().equals(editorId)) {
+						getEditorRegistry().setDefaultEditor(file, null);
+					} else {
+						getEditorRegistry().setDefaultEditor(file, editorID);
+					}
 				}
 			}
 			return result;			
