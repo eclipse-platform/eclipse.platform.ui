@@ -1286,7 +1286,7 @@ public class AntModel implements IAntModel {
      * Removes any type definitions that no longer exist in the buildfile
      */
 	private void reconcileTaskAndTypes() {
-		if (fCurrentNodeIdentifiers == null) {
+		if (fCurrentNodeIdentifiers == null || fDefinerNodeIdentifierToDefinedTasks == null) {
 			return;
 		}
         Iterator iter= fDefinerNodeIdentifierToDefinedTasks.keySet().iterator();
