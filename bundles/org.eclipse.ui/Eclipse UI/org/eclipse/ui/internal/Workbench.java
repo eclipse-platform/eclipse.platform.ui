@@ -552,7 +552,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * @deprecated This experimental API will be removed.
 	 */
 	public IWorkbenchPage openPage(String perspId, IAdaptable input, int keyStateMask) throws WorkbenchException {
-		return showPerspective(getPerspectiveRegistry().getDefaultPerspective(), getActiveWorkbenchWindow(), input);
+		return showPerspective(perspId, getActiveWorkbenchWindow(), input);
 	}
 	/**
 	 * Return the alternate mask for this platform. It is control on win32 and
