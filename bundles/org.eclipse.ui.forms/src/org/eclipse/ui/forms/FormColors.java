@@ -85,7 +85,11 @@ public class FormColors {
 	 */
 	protected void initializeColorTable() {
 		createColor(SEPARATOR, 152, 170, 203);
-		createColor(TITLE, getSystemColor(SWT.COLOR_LIST_SELECTION));
+		String osname = System.getProperty("os.name").toLowerCase();
+		if (osname.equals("macos") || osname.equals("mac os"))
+			createColor(TITLE, getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+		else
+			createColor(TITLE, getSystemColor(SWT.COLOR_LIST_SELECTION));
 		RGB border = getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT);
 		RGB black = new RGB(0,0,0);
 		createColor(BORDER, blend(border, black, 80));
