@@ -25,12 +25,12 @@ public class AntDocumentSetupParticipant  implements IDocumentSetupParticipant {
 	 * The name of the Ant partitioning.
 	 * @since 3.0
 	 */
-	public final static String ANT_PARTITIONING= "___ant_partitioning";  //$NON-NLS-1$
+	public final static String ANT_PARTITIONING= "org.eclipse.ant.ui.antPartitioning";  //$NON-NLS-1$
 	
 	public AntDocumentSetupParticipant() {
 	}
 	
-	/*
+	/* (non-Javadoc)
 	 * @see org.eclipse.core.filebuffers.IDocumentSetupParticipant#setup(org.eclipse.jface.text.IDocument)
 	 */
 	public void setup(IDocument document) {
