@@ -125,6 +125,25 @@ public class Accessor extends Assert {
 	}
 	
 	/**
+	 * Creates an accessor for the given class.
+	 * <p>
+	 * This constructor is used to access static stuff.
+	 * </p>
+	 * 
+	 * @param className the name of the class
+	 * @param classLoader the class loader to use i.e. <code>getClass().getClassLoader()</code>
+	 */
+	public Accessor(String className, ClassLoader classLoader) {
+		try {
+			fClass= Class.forName(className, true, classLoader);
+		} catch (ClassNotFoundException e) {
+			fail();
+		} catch (ExceptionInInitializerError e) {
+			fail();
+		}
+	}
+
+	/**
 	 * Invokes the method with the given method name and arguments.
 	 * <p>
 	 * In order to get the type information from the given
