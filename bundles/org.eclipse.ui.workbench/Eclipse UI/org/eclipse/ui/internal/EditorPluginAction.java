@@ -12,11 +12,7 @@ package org.eclipse.ui.internal;
 
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.IActionDelegate;
-import org.eclipse.ui.IEditorActionDelegate;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.*;
 
 /**
  * Extends PartPluginAction for usage in editor parts. Objects
