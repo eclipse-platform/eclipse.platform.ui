@@ -62,33 +62,43 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 	 */
 	public void process(IProgressMonitor pm) throws CoreException {
 
-		// manage ProgressMonitor
-		// FIXME
-		
-		// process all feature reference to configure
+
+		// process all feature references to configure
+		// find the configured site each feature belongs to
 		if (process==ENABLE) {
-			// loop through all the configured site
-			// find the configuredSite that maintains this featureReference
-			// configure the feature
 			if (featureReferences != null && featureReferences.size() > 0) {
 				IInstallConfiguration currentConfig =
 					SiteManager.getLocalSite().getCurrentConfiguration();
 				if (currentConfig != null) {
 					IConfiguredSite[] configSites = currentConfig.getConfiguredSites();
+					
+							// manage ProgressMonitor
+					if (pm!=null){
+						int nbFeatures = featureReferences.size();
+						pm.beginTask(Policy.bind("SessionDelta.EnableFeatures"),nbFeatures);
+					}
+					// loop through all the configured site
+					// find the configuredSite that maintains this featureReference
+					// configure the feature
 					for (int i = 0; i < configSites.length; i++) {
 						Iterator iterator = featureReferences.iterator();
 						while (iterator.hasNext()) {
 							IFeatureReference ref = (IFeatureReference) iterator.next();
 							ISite site = ref.getSite();
-							if(site!=null && site.equals(configSites[i])){
+							
+							if(site!=null && site.equals(configSites[i].getSite())){
 								IFeature featureToConfigure = null;
+								
 								try {
 									featureToConfigure = ref.getFeature();
 								} catch (CoreException e){
 									UpdateManagerPlugin.warn(null,e);								
 								}
-								if (featureToConfigure!=null)
+								
+								if (featureToConfigure!=null){
+									if (pm!=null) pm.worked(1);
 									configSites[i].configure(featureToConfigure);									
+								}
 							}
 						}
 					}

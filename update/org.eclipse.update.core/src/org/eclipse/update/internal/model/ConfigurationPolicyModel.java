@@ -124,6 +124,8 @@ public class ConfigurationPolicyModel extends ModelObject {
 
 		if (!found) {
 			list.add(feature);
+		} else {
+			UpdateManagerPlugin.warn("Feature Reference :"+feature+" already part of the list.",new Exception());
 		}
 	}
 
@@ -150,7 +152,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 		if (unconfiguredFeatureReferences != null) {
 			boolean success = remove(feature, unconfiguredFeatureReferences);
 			if (!success)
-				UpdateManagerPlugin.warn("Unable to removed from unconfigured: "+feature.getURLString(), new Exception());			
+				UpdateManagerPlugin.warn("Unable to remove from unconfigured: "+feature.getURLString());			
 		}
 
 	}
@@ -175,7 +177,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 		if (configuredFeatureReferences != null) {
 			boolean success = remove(feature, configuredFeatureReferences);
 			if (!success)
-				UpdateManagerPlugin.warn("Unable to removed from configured: "+feature.getURLString(), new Exception());				
+				UpdateManagerPlugin.warn("Unable to remove from configured: "+feature.getURLString());				
 		}
 	}
 
@@ -187,13 +189,13 @@ public class ConfigurationPolicyModel extends ModelObject {
 		if (unconfiguredFeatureReferences!=null){
 			boolean success = remove(feature, unconfiguredFeatureReferences);
 			if (!success)
-				UpdateManagerPlugin.warn("Unable to removed from unconfigured: "+feature.getURLString(), new Exception());							
+				UpdateManagerPlugin.warn("Unable to remove from unconfigured: "+feature.getURLString());							
 		}
 
 		if (configuredFeatureReferences != null) {
 			boolean success = remove(feature, configuredFeatureReferences);
 			if (!success)
-				UpdateManagerPlugin.warn("Unable to removed from unconfigured: "+feature.getURLString(), new Exception());							
+				UpdateManagerPlugin.warn("Unable to remove from unconfigured: "+feature.getURLString());							
 		}
 	}
 	
@@ -223,6 +225,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 	 * Return false if one of them is null
 	 */
 	private boolean sameURL(URL url1, URL url2) {
+		
 		if (url1 == null)
 			return false;
 		if (url1.equals(url2))

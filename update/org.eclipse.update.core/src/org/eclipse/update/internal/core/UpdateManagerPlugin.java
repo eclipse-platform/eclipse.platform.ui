@@ -83,9 +83,6 @@ public class UpdateManagerPlugin extends Plugin {
 			DEBUG_SHOW_IHANDLER = getBooleanDebugOption("org.eclipse.update.core/debug/installhandler", false); //$NON-NLS-1$
 			DEBUG_SHOW_RECONCILER = getBooleanDebugOption("org.eclipse.update.core/debug/reconciler", false); //$NON-NLS-1$
 		}
-
-		warn("Install/Update debug: Version 2.0.0 : May 13th 2002: 1.50pm");
-		warn("-----------------------------------------------------------");		
 	}
 
 	private void startupWebInstallHandler() throws CoreException {
