@@ -14,21 +14,34 @@ package org.eclipse.ui.part;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Item;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorActionBarContributor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.INestableKeyBindingService;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
+
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * A multi-page editor is an editor with multiple pages, each of which may
@@ -81,7 +94,7 @@ protected MultiPageEditorPart() {
  * @param control the control, or <code>null</code>
  * @return the index of the new page
  *
- * @see #setControl
+ * @see MultiPageEditorPart#setControl(int, Control)
  */
 public int addPage(Control control) {
 	createItem(control);
@@ -96,7 +109,7 @@ public int addPage(Control control) {
  * @return the index of the new page
  * @exception PartInitException if a new page could not be created
  *
- * @see #handlePropertyChange the handler for property change events from the nested editor
+ * @see MultiPageEditorPart#handlePropertyChange(int) the handler for property change events from the nested editor
  */
 public int addPage(IEditorPart editor, IEditorInput input) throws PartInitException {
 	IEditorSite site = createSite(editor);
@@ -119,21 +132,24 @@ public int addPage(IEditorPart editor, IEditorInput input) throws PartInitExcept
 	return getPageCount() - 1;
 }
 /**
- * Creates an empty container.
- * Creates a CTabFolder with no style bits set, and hooks a selection 
- * listener which calls <code>pageChange()</code> whenever the selected tab changes.
+ * Creates an empty container. Creates a CTabFolder with no style bits set, and
+ * hooks a selection listener which calls <code>pageChange()</code> whenever
+ * the selected tab changes.
  * 
+ * @param parent
+ *            The composite in which the container tab folder should be
+ *            created; must not be <code>null</code>.
  * @return a new container
  */
 private CTabFolder createContainer(Composite parent) {
-	final CTabFolder container = new CTabFolder(parent, SWT.BOTTOM);
-	container.addSelectionListener(new SelectionAdapter() {
+	final CTabFolder newContainer = new CTabFolder(parent, SWT.BOTTOM);
+	newContainer.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
-			int newPageIndex = container.indexOf((CTabItem) e.item);
+			int newPageIndex = newContainer.indexOf((CTabItem) e.item);
 			pageChange(newPageIndex);
 		}
 	});
-	return container;
+	return newContainer;
 }
 /**
  * Creates a tab item and places control in the new item.
@@ -155,11 +171,14 @@ private CTabItem createItem(Control control) {
  */
 protected abstract void createPages();
 /**
- * The <code>MultiPageEditor</code> implementation of this 
- * <code>IWorkbenchPart</code> method creates the control for the multi-page
- * editor by calling <code>createContainer</code>, then <code>createPages</code>.
- * Subclasses should implement <code>createPages</code> rather than overriding 
- * this method.
+ * The <code>MultiPageEditor</code> implementation of this <code>IWorkbenchPart</code>
+ * method creates the control for the multi-page editor by calling <code>createContainer</code>,
+ * then <code>createPages</code>. Subclasses should implement <code>createPages</code>
+ * rather than overriding this method.
+ * 
+ * @param parent
+ *            The parent in which the editor should be created; must not be
+ *            <code>null</code>.
  */
 public final void createPartControl(Composite parent) {
 	this.container = createContainer(parent);
@@ -345,11 +364,18 @@ protected void handlePropertyChange (int propertyId) {
 	firePropertyChange(propertyId);
 }
 /**
- * The <code>MultiPageEditorPart</code> implementation of this 
- * <code>IEditorPart</code> method sets its site to the given site, its 
- * input to the given input, and the site's selection provider to a
- * <code>MultiPageSelectionProvider</code>.
+ * The <code>MultiPageEditorPart</code> implementation of this <code>IEditorPart</code>
+ * method sets its site to the given site, its input to the given input, and
+ * the site's selection provider to a <code>MultiPageSelectionProvider</code>.
  * Subclasses may extend this method.
+ * 
+ * @param site
+ *            The site for which this part is being created; must not be <code>null</code>.
+ * @param input
+ *            The input on which this editor should be created; must not be
+ *            <code>null</code>.
+ * @throws PartInitException
+ *             If the initialization of the part fails -- currently never.
  */
 public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 	setSite(site);
@@ -357,13 +383,16 @@ public void init(IEditorSite site, IEditorInput input) throws PartInitException 
 	site.setSelectionProvider(new MultiPageSelectionProvider(this));
 }
 /**
- * The <code>MultiPageEditorPart</code> implementation of this 
- * <code>IEditorPart</code> method returns whether the contents of any of this
- * multi-page editor's nested editors have changed since the last save.
- * Pages created with <code>addPage(Control)</code> are ignored.
+ * The <code>MultiPageEditorPart</code> implementation of this <code>IEditorPart</code>
+ * method returns whether the contents of any of this multi-page editor's
+ * nested editors have changed since the last save. Pages created with <code>addPage(Control)</code>
+ * are ignored.
  * <p>
  * Subclasses may extend or reimplement this method.
  * </p>
+ * 
+ * @return <code>true</code> if any of the nested editors are dirty; <code>false</code>
+ *         otherwise.
  */
 public boolean isDirty() {
 	// use nestedEditors to avoid SWT requests; see bug 12996
@@ -415,6 +444,12 @@ protected void pageChange(int newPageIndex) {
 		}
 	}
 }
+/**
+ * Disposes the given part and its site.
+ * 
+ * @param part
+ *            The part to dispose; must not be <code>null</code>.
+ */
 private void disposePart(final IWorkbenchPart part) {
 	Platform.run(new SafeRunnable() {
 		public void run() {
@@ -430,12 +465,14 @@ private void disposePart(final IWorkbenchPart part) {
 	});
 }
 /**
- * Removes the page with the given index from this multi-page editor.
- * The controls for the page are disposed of; if the page has an editor, 
- * it is disposed of too. The page index must be valid.
- *
- * @param pageIndex the index of the page
- * @see #addPage
+ * Removes the page with the given index from this multi-page editor. The
+ * controls for the page are disposed of; if the page has an editor, it is
+ * disposed of too. The page index must be valid.
+ * 
+ * @param pageIndex
+ *            the index of the page
+ * @see MultiPageEditorPart#addPage(Control)
+ * @see MultiPageEditorPart#addPage(IEditorPart, IEditorInput)
  */
 public void removePage(int pageIndex) {
 	Assert.isTrue(pageIndex >= 0 && pageIndex < getPageCount());
@@ -477,23 +514,43 @@ protected void setControl(int pageIndex, Control control) {
  * </p>
  */
 public void setFocus() {
-	int index = getActivePage();
-	if (index != -1)
-		setFocus(index);
+	setFocus(getActivePage());
 }
 /**
- * Sets focus to the control for the given page.
- * If the page has an editor, this calls its <code>setFocus()</code> method.
- * Otherwise, this calls <code>setFocus</code> on the control for the page.
- *
- * @pageIndex the index of the page
+ * Sets focus to the control for the given page. If the page has an editor,
+ * this calls its <code>setFocus()</code> method. Otherwise, this calls
+ * <code>setFocus</code> on the control for the page.
+ * 
+ * @param pageIndex
+ *            the index of the page
  */
 private void setFocus(int pageIndex) {
-	if (pageIndex < 0 || pageIndex >= getPageCount())
+	IKeyBindingService service = getSite().getKeyBindingService();
+	if (pageIndex < 0 || pageIndex >= getPageCount()) {
+		// There is no selected page, so deactivate the active service.
+		if (service instanceof INestableKeyBindingService) {
+			INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
+			nestableService.activateKeyBindingService(null);
+		} else {
+			WorkbenchPlugin.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		return;
+	}
+	
 	IEditorPart editor = getEditor(pageIndex);
 	if (editor != null) {
 		editor.setFocus();
+		// There is no selected page, so deactivate the active service.
+		if (service instanceof INestableKeyBindingService) {
+			INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
+			if (editor != null) {
+				nestableService.activateKeyBindingService(editor.getEditorSite());
+			} else {
+				nestableService.activateKeyBindingService(null);
+			}
+		} else {
+			WorkbenchPlugin.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	} else {
 		Control control = getControl(pageIndex);
 		if (control != null) {

@@ -851,5 +851,34 @@
             id="org.eclipse.ui.tests.dialogs.FontFieldEditorTestPreferencePage">
       </page>
    </extension>
+   <!-- Multi-page editor tests -->
+   <extension
+         point="org.eclipse.ui.commands">
+      <keyBinding
+            string="Ctrl+Shift+4"
+            scope="org.eclipse.ui.tests.scope1"
+            command="org.eclipse.ui.tests.TestCommandId"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            string="Ctrl+Shift+5"
+            scope="org.eclipse.ui.tests.scope2"
+            command="org.eclipse.ui.tests.TestCommandId"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            name="Scope 1"
+            description="Test Scope #1"
+            id="org.eclipse.ui.tests.scope1">
+      </context>
+      <context
+            name="Scope 2"
+            description="Test Scope #2"
+            id="org.eclipse.ui.tests.scope2">
+      </context>
+   </extension>
 
 </plugin>

@@ -14,21 +14,27 @@ package org.eclipse.ui.part;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+
 import org.eclipse.ui.internal.PopupMenuExtender;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Site for a nested editor within a multi-page editor.
@@ -54,7 +60,7 @@ public class MultiPageEditorSite implements IEditorSite {
 
 	/**
 	 * The selection provider; <code>null</code> if none.
-	 * @see #setSelectionProvider
+	 * @see MultiPageEditorSite#setSelectionProvider(ISelectionProvider)
 	 */
 	private ISelectionProvider selectionProvider = null;
 
@@ -63,6 +69,13 @@ public class MultiPageEditorSite implements IEditorSite {
 	 * if not yet created.
 	 */
 	private ISelectionChangedListener selectionChangedListener = null;
+
+	/**
+	 * The cached copy of the key binding service specific to this multi-page
+	 * editor site.  This value is <code>null</code> if it is not yet
+	 * initialized.
+	 */
+	private IKeyBindingService service = null;
 
 	/**
 	 * The list of popup menu extenders; <code>null</code> if none registered.
@@ -92,12 +105,26 @@ public class MultiPageEditorSite implements IEditorSite {
 			}
 			menuExtenders = null;
 		}
+
+		// Remove myself from the list of nested key binding services.
+		if (service != null) {
+			IKeyBindingService parentService =
+				getEditor().getSite().getKeyBindingService();
+			if (parentService instanceof INestableKeyBindingService) {
+				INestableKeyBindingService nestableParent =
+					(INestableKeyBindingService) parentService;
+				nestableParent.removeKeyBindingService(this);
+			}
+			service = null;
+		}
 	}
 
 	/**
 	 * The <code>MultiPageEditorSite</code> implementation of this 
 	 * <code>IEditorSite</code> method returns <code>null</code>,
 	 * since nested editors do not have their own action bar contributor.
+	 * 
+	 * @return <code>null</code>
 	 */
 	public IEditorActionBarContributor getActionBarContributor() {
 		return null;
@@ -107,6 +134,8 @@ public class MultiPageEditorSite implements IEditorSite {
 	 * The <code>MultiPageEditorSite</code> implementation of this 
 	 * <code>IEditorSite</code> method forwards to the multi-page editor
 	 * to return the action bars.
+	 * 
+	 * @return The action bars from the parent multi-page editor.
 	 */
 	public IActionBars getActionBars() {
 		return multiPageEditor.getEditorSite().getActionBars();
@@ -117,6 +146,7 @@ public class MultiPageEditorSite implements IEditorSite {
 	 * <code>IWorkbenchPartSite</code> method forwards to the multi-page editor to
 	 * return the decorator manager.
 	 * 
+	 * @return The decorator from the workbench window.
 	 * @deprecated use IWorkbench.getDecoratorManager()
 	 */
 	public ILabelDecorator getDecoratorManager() {
@@ -135,6 +165,8 @@ public class MultiPageEditorSite implements IEditorSite {
 	 * The <code>MultiPageEditorSite</code> implementation of this 
 	 * <code>IWorkbenchPartSite</code> method returns an empty string since the
 	 * nested editor is not created from the registry.
+	 * 
+	 * @return An empty string.
 	 */
 	public String getId() {
 		return ""; //$NON-NLS-1$
@@ -144,7 +176,24 @@ public class MultiPageEditorSite implements IEditorSite {
 	 * Method declared on IEditorSite.
 	 */
 	public IKeyBindingService getKeyBindingService() {
-		return getMultiPageEditor().getEditorSite().getKeyBindingService();
+		if (service == null) {
+			service =
+				getMultiPageEditor().getEditorSite().getKeyBindingService();
+			if (service instanceof INestableKeyBindingService) {
+				INestableKeyBindingService nestableService =
+					(INestableKeyBindingService) service;
+				service = nestableService.getKeyBindingService(this);
+
+			} else {
+				/* This is an internal reference, and should not be copied by
+				 * client code.  If you are thinking of copying this, DON'T DO 
+				 * IT.
+				 */
+				WorkbenchPlugin.log("MultiPageEditorSite.getKeyBindingService()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+
+		return service;
 	}
 
 	/**
@@ -159,6 +208,8 @@ public class MultiPageEditorSite implements IEditorSite {
 	 * The <code>MultiPageEditorSite</code> implementation of this 
 	 * <code>IWorkbenchPartSite</code> method forwards to the multi-page editor to
 	 * return the workbench page.
+	 * 
+	 * @return The workbench page in which this editor site resides.
 	 */
 	public IWorkbenchPage getPage() {
 		return getMultiPageEditor().getSite().getPage();
@@ -166,7 +217,9 @@ public class MultiPageEditorSite implements IEditorSite {
 	/**
 	 * The <code>MultiPageEditorSite</code> implementation of this 
 	 * <code>IWorkbenchPartSite</code> method returns an empty string since the
-	 * nested editor is not created from the registry. 
+	 * nested editor is not created from the registry.
+	 * 
+	 * @return An empty string. 
 	 */
 	public String getPluginId() {
 		return ""; //$NON-NLS-1$
@@ -174,7 +227,9 @@ public class MultiPageEditorSite implements IEditorSite {
 	/**
 	 * The <code>MultiPageEditorSite</code> implementation of this 
 	 * <code>IWorkbenchPartSite</code> method returns an empty string since the
-	 * nested editor is not created from the registry. 
+	 * nested editor is not created from the registry.
+	 * 
+	 * @return An empty string.
 	 */
 	public String getRegisteredName() {
 		return ""; //$NON-NLS-1$
@@ -199,6 +254,8 @@ public class MultiPageEditorSite implements IEditorSite {
 	 * The <code>MultiPageEditorSite</code> implementation of this 
 	 * <code>IWorkbenchPartSite</code> method returns the selection provider 
 	 * set by <code>setSelectionProvider</code>.
+	 * 
+	 * @return The current selection provider.
 	 */
 	public ISelectionProvider getSelectionProvider() {
 		return selectionProvider;
@@ -207,6 +264,8 @@ public class MultiPageEditorSite implements IEditorSite {
 	 * The <code>MultiPageEditorSite</code> implementation of this 
 	 * <code>IWorkbenchPartSite</code> method forwards to the multi-page editor to
 	 * return the shell.
+	 * 
+	 * @return The shell in which this editor site resides.
 	 */
 	public Shell getShell() {
 		return getMultiPageEditor().getSite().getShell();
@@ -215,6 +274,8 @@ public class MultiPageEditorSite implements IEditorSite {
 	 * The <code>MultiPageEditorSite</code> implementation of this 
 	 * <code>IWorkbenchPartSite</code> method forwards to the multi-page editor to
 	 * return the workbench window.
+	 * 
+	 * @return The workbench window in which this editor site resides.
 	 */
 	public IWorkbenchWindow getWorkbenchWindow() {
 		return getMultiPageEditor().getSite().getWorkbenchWindow();
@@ -242,6 +303,10 @@ public class MultiPageEditorSite implements IEditorSite {
 	 * The <code>MultiPageEditorSite</code> implementation of this 
 	 * <code>IWorkbenchPartSite</code> method forwards to the multi-page editor for
 	 * registration.
+	 * 
+	 * @param menuID The identifier for the menu.
+	 * @param menuMgr The menu manager
+	 * @param selProvider The selection provider.
 	 */
 	public void registerContextMenu(String menuID, MenuManager menuMgr, ISelectionProvider selProvider) {
 		if (menuExtenders == null) {
@@ -253,17 +318,21 @@ public class MultiPageEditorSite implements IEditorSite {
 	 * The <code>MultiPageEditorSite</code> implementation of this 
 	 * <code>IWorkbenchPartSite</code> method forwards to the multi-page editor for
 	 * registration.
+	 * 
+	 * @param menuManager The menu manager
+	 * @param selProvider The selection provider.
 	 */
-	public void registerContextMenu(MenuManager menuManager, ISelectionProvider selectionProvider) {
-		getMultiPageEditor().getSite().registerContextMenu(menuManager, selectionProvider);
+	public void registerContextMenu(MenuManager menuManager, ISelectionProvider selProvider) {
+		getMultiPageEditor().getSite().registerContextMenu(menuManager, selProvider);
 	}
 	/**
 	 * The <code>MultiPageEditorSite</code> implementation of this
 	 * <code>IWorkbenchPartSite</code> method remembers the selection provider, 
 	 * and also hooks a listener on it, which calls <code>handleSelectionChanged</code> 
 	 * when a selection changed event occurs.
-	 *
-	 * @see #handleSelectionChanged
+	 * 
+	 * @param provider The selection provider.
+	 * @see MultiPageEditorSite#handleSelectionChanged(SelectionChangedEvent)
 	 */
 	public void setSelectionProvider(ISelectionProvider provider) {
 		ISelectionProvider oldSelectionProvider = selectionProvider;
@@ -279,13 +348,14 @@ public class MultiPageEditorSite implements IEditorSite {
 	 * @see org.eclipse.ui.IWorkbenchPartSite#progressEnd()
 	 */
 	public void progressEnd(Job job) {
+	    // Do nothing
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPartSite#progressStart()
 	 */
 	public void progressStart(Job job) {
-
+	    // Do nothing
 	}
 
 	/* (non-Javadoc)

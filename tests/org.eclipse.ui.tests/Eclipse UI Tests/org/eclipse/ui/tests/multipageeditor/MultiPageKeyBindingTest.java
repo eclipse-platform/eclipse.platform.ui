@@ -11,7 +11,6 @@
 package org.eclipse.ui.tests.multipageeditor;
 
 import java.io.ByteArrayInputStream;
-import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -23,10 +22,12 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -48,7 +49,16 @@ public class MultiPageKeyBindingTest extends UITestCase {
         super(name);
     }
 
-    public void testSwitch() throws CoreException {
+    /**
+     * Tests that the key bindings are updated when the page is switched in a
+     * multi-page editor part.
+     * 
+     * @throws CoreException
+     *             If the project or file cannot be created.
+     * @throws ParseException
+     *             The expected key sequence cannot be parsed.
+     */
+    public void testSwitch() throws CoreException, ParseException {
         final String extension = "multi"; //$NON-NLS-1$
         final String fileName = "A." + extension; //$NON-NLS-1$
 
@@ -71,17 +81,16 @@ public class MultiPageKeyBindingTest extends UITestCase {
                 "org.eclipse.ui.tests.multipageeditor.TestMultiPageEditor"); //$NON-NLS-1$
         TestMultiPageEditor multiPageEditorPart = (TestMultiPageEditor) editorPart;
 
-        // Switch to the second tab.
+        // Switch to the second tab
         multiPageEditorPart.setPage(1);
 
         // Check that "Ctrl+Shift+5" is the bound key.
         IWorkbenchCommandSupport commandSupport = window.getWorkbench()
                 .getCommandSupport();
         ICommandManager commandManager = commandSupport.getCommandManager();
-        ICommand command = commandManager
-                .getCommand("org.eclipse.ui.tests.TestCommandId"); //$NON-NLS-1$
-        List keySequenceBindings = command.getKeySequenceBindings();
-        System.out.println("Key sequence bindings = " + keySequenceBindings);
-        //		final int expectedValue = (SWT.CTRL | SWT.SHIFT | '5');
+        KeySequence expectedKeyBinding = KeySequence
+                .getInstance("Ctrl+Shift+5"); //$NON-NLS-1$
+        String commandId = commandManager.getPerfectMatch(expectedKeyBinding);
+        assertEquals("org.eclipse.ui.tests.TestCommandId", commandId); //$NON-NLS-1$
     }
 }
