@@ -39,7 +39,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public class WorkbenchPreferencePage extends PreferencePage implements
         IWorkbenchPreferencePage {
-
     private Button stickyCycleButton;
 
     private Button doubleClickButton;

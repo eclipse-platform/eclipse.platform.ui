@@ -48,6 +48,7 @@ import org.eclipse.ui.internal.ide.misc.WorkInProgressMessages;
  */
 public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         implements IWorkbenchPreferencePage {
+	
 
     private Button autoBuildButton;
 
