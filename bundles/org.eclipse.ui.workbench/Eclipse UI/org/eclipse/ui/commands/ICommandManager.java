@@ -66,13 +66,6 @@ public interface ICommandManager {
 	 * JAVADOC
 	 *
 	 * @return
-	 */	
-	// TODO SortedSet getContextBindings();
-
-	/**
-	 * JAVADOC
-	 *
-	 * @return
 	 */
 	SortedSet getDefinedCategoryIds();
 
@@ -93,47 +86,12 @@ public interface ICommandManager {
 	/**
 	 * JAVADOC
 	 *
-	 * @return
-	 */	
-	// TODO SortedSet getImageBindings();
-
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */	
-	// TODO SortedSet getKeyBindings();
-
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */	
-	// TODO SortedSet getUserContextBindings();
-
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */	
-	// TODO SortedSet getUserImageBindings();
-
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */	
-	// TODO SortedSet getUserKeyBindings();
-
-	/**
-	 * JAVADOC
-	 *
 	 * @param keyConfigurationId
 	 * @return
 	 * @throws NullPointerException
 	 */	
 	IKeyConfigurationHandle getKeyConfigurationHandle(String keyConfigurationId);
-	
+		
 	/**
 	 * Unregisters an ICommandManagerListener instance with this command manager.
 	 *
@@ -141,4 +99,38 @@ public interface ICommandManager {
 	 * @throws NullPointerException
 	 */
 	void removeCommandManagerListener(ICommandManagerListener commandManagerListener);
+
+	/*
+	List getPluginActiveKeyConfigurations();
+
+	List getPluginCategories();
+	
+	List getPluginCommands();
+
+	List getPluginContextBindings();
+
+	List getPluginImageBindings();
+
+	List getPluginKeyBindings();
+	
+	List getPluginKeyConfigurations();
+
+	List getPreferenceActiveKeyConfigurations();
+
+	List getPreferenceKeyBindings();
+	
+	List getPreferenceKeyConfigurations();
+	
+	void setPreferenceActiveKeyConfigurations(List preferenceActiveKeyConfigurations);
+
+	void setPreferenceKeyBindings(List preferenceKeyBindings);
+
+	void setPreferenceKeyConfigurations(List preferenceKeyConfigurations);
+	
+	SortedMap getDefinedCategoriesById();
+
+	SortedMap getDefinedCommandsById();
+
+	SortedMap getDefinedKeyConfigurationsById();
+	*/
 }

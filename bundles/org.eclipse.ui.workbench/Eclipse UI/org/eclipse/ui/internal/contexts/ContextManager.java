@@ -27,9 +27,19 @@ import org.eclipse.ui.contexts.IContextHandle;
 import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IContextManagerEvent;
 import org.eclipse.ui.contexts.IContextManagerListener;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 
 public final class ContextManager implements IContextManager {
+
+	private static ContextManager instance;
+
+	public static ContextManager getInstance() {
+		if (instance == null)
+			instance = new ContextManager();
+			
+		return instance;
+	}
 
 	private SortedSet activeContextIds = new TreeSet();
 	private IContextManagerEvent contextManagerEvent;
@@ -37,11 +47,14 @@ public final class ContextManager implements IContextManager {
 	private SortedMap contextHandlesById = new TreeMap();
 	private SortedMap contextsById = new TreeMap();
 	private SortedSet definedContextIds = new TreeSet();
-	private PluginRegistry pluginRegistry;
+	private IRegistry pluginRegistry;
+	private IMutableRegistry preferenceRegistry;
 
-	public ContextManager() {
+	private ContextManager() {
 		super();
-		updateFromRegistry();
+		loadPluginRegistry();
+		loadPreferenceRegistry();
+		updateFromRegistries();
 	}
 
 	public void addContextManagerListener(IContextManagerListener contextManagerListener) {
@@ -97,8 +110,45 @@ public final class ContextManager implements IContextManager {
 			fireContextManagerChanged();
 		}
 	}
+	
+	private void fireContextManagerChanged() {
+		if (contextManagerListeners != null) {
+			// TODO copying to avoid ConcurrentModificationException
+			Iterator iterator = new ArrayList(contextManagerListeners).iterator();	
+			
+			if (iterator.hasNext()) {
+				if (contextManagerEvent == null)
+					contextManagerEvent = new ContextManagerEvent(this);
+				
+				while (iterator.hasNext())	
+					((IContextManagerListener) iterator.next()).contextManagerChanged(contextManagerEvent);
+			}							
+		}			
+	}
+	
+	private void loadPluginRegistry() {
+		if (pluginRegistry == null)
+			pluginRegistry = new PluginRegistry(Platform.getPluginRegistry());
+		
+		try {
+			pluginRegistry.load();
+		} catch (IOException eIO) {
+			// TODO proper catch
+		}
+	}
+	
+	private void loadPreferenceRegistry() {
+		if (preferenceRegistry == null)
+			preferenceRegistry = new PreferenceRegistry(WorkbenchPlugin.getDefault().getPreferenceStore());
+		
+		try {
+			preferenceRegistry.load();
+		} catch (IOException eIO) {
+			// TODO proper catch
+		}
+	}
 
-	public void updateFromRegistry() {
+	private void updateFromRegistries() {
 		if (pluginRegistry == null)
 			pluginRegistry = new PluginRegistry(Platform.getPluginRegistry());
 		
@@ -108,7 +158,9 @@ public final class ContextManager implements IContextManager {
 			// TODO proper catch
 		}
 
-		List contexts = pluginRegistry.getContexts();
+		List contexts = new ArrayList();
+		contexts.addAll(pluginRegistry.getContexts());
+		contexts.addAll(preferenceRegistry.getContexts());
 		SortedMap contextsById = Context.sortedMapById(contexts);			
 		SortedSet contextChanges = new TreeSet();
 		Util.diff(contextsById, this.contextsById, contextChanges, contextChanges, contextChanges);
@@ -142,20 +194,5 @@ public final class ContextManager implements IContextManager {
 				}
 			}			
 		}
-	}
-	
-	private void fireContextManagerChanged() {
-		if (contextManagerListeners != null) {
-			// TODO copying to avoid ConcurrentModificationException
-			Iterator iterator = new ArrayList(contextManagerListeners).iterator();	
-			
-			if (iterator.hasNext()) {
-				if (contextManagerEvent == null)
-					contextManagerEvent = new ContextManagerEvent(this);
-				
-				while (iterator.hasNext())	
-					((IContextManagerListener) iterator.next()).contextManagerChanged(contextManagerEvent);
-			}							
-		}			
-	}
+	}			
 }

@@ -37,6 +37,15 @@ import org.eclipse.ui.internal.util.Util;
 
 public final class CommandManager implements ICommandManager {
 
+	private static CommandManager instance;
+
+	public static CommandManager getInstance() {
+		if (instance == null)
+			instance = new CommandManager();
+			
+		return instance;
+	}
+
 	private SortedMap categoriesById = new TreeMap();
 	private SortedMap categoryHandlesById = new TreeMap();
 	private SortedMap commandDelegatesById = new TreeMap();	
@@ -52,7 +61,7 @@ public final class CommandManager implements ICommandManager {
 	private IRegistry pluginRegistry;
 	private IMutableRegistry preferenceRegistry;
 
-	public CommandManager() {
+	private CommandManager() {
 		super();
 		loadPluginRegistry();
 		loadPreferenceRegistry();

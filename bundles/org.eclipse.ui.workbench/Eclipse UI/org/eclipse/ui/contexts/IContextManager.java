@@ -66,4 +66,10 @@ public interface IContextManager {
 	 * @throws NullPointerException
 	 */
 	void removeContextManagerListener(IContextManagerListener contextManagerListener);
+
+	/*
+	List getPluginContexts();
+	
+	SortedMap getDefinedContextsByIds();
+	*/
 }

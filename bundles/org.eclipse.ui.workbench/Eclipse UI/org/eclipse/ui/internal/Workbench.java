@@ -301,8 +301,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	}
 
 	private void initializeCommandsAndContexts() {
-		commandManager = new CommandManager();
-		contextManager = new ContextManager();
+		commandManager = CommandManager.getInstance();
+		contextManager = ContextManager.getInstance();
 		addWindowListener(windowListener);
 		updateCommandsAndContexts();
 	}
