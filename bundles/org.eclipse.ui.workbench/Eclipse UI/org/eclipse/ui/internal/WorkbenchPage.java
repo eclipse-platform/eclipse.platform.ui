@@ -769,6 +769,8 @@ public boolean closeAllEditors(boolean save) {
 	if (!window.isClosing() && deactivate)
 		activate(activationList.getActive());
 		
+	window.updateTitle();
+		
 	// Notify interested listeners
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
 
@@ -860,6 +862,7 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	
 	//if it was the last part, close the perspective
 	lastPartClosePerspective();
+	window.updateTitle();
 	
 	// Return true on success.
 	return true;
