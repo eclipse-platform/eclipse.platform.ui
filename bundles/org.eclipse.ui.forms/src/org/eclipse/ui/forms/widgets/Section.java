@@ -9,25 +9,33 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
+import java.util.Hashtable;
+
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 /**
  * A variation of the expandable composite that adds optional description below
  * the title.
  * 
  * TODO (dejan) - spell out subclass contract
+ * 
  * @since 3.0
  */
 public class Section extends ExpandableComposite {
 	/**
-	 * Description style. If used, description will be rendered below the
-	 * title.
+	 * Description style. If used, description will be rendered below the title.
 	 */
 	public static final int DESCRIPTION = 1 << 7;
 	private Label descriptionLabel;
 	private Control separator;
+	private Hashtable titleColors;
+	private static final String COLOR_BG = "bg";
+	private static final String COLOR_GBG = "gbg";
+	private static final String COLOR_FG = "fg";
+	private static final String COLOR_BORDER = "border";
 	/**
 	 * Creates a new section instance in the provided parent.
 	 * 
@@ -48,25 +56,24 @@ public class Section extends ExpandableComposite {
 	}
 	protected void reflow() {
 		Composite c = this;
-		
-		while (c!=null) {
+		while (c != null) {
 			c.setRedraw(false);
 			c = c.getParent();
 			if (c instanceof ScrolledForm) {
 				break;
 			}
 		}
-		c=this;
-		while (c!=null) {
+		c = this;
+		while (c != null) {
 			c.layout(true);
 			c = c.getParent();
 			if (c instanceof ScrolledForm) {
-				((ScrolledForm)c).reflow(true);
+				((ScrolledForm) c).reflow(true);
 				break;
 			}
 		}
-		c=this;
-		while (c!=null) {
+		c = this;
+		while (c != null) {
 			c.setRedraw(true);
 			c = c.getParent();
 			if (c instanceof ScrolledForm) {
@@ -147,5 +154,105 @@ public class Section extends ExpandableComposite {
 	 */
 	protected Control getDescriptionControl() {
 		return descriptionLabel;
+	}
+	public void setTitleBarBorderColor(Color color) {
+		putTitleBarColor(COLOR_BORDER, color);
+	}
+	public void setTitleBarForeground(Color color) {
+		putTitleBarColor(COLOR_FG, color);
+	}
+	public void setTitleBarBackground(Color color) {
+		putTitleBarColor(COLOR_BG, color);
+		textLabel.setBackground(color);
+		if (toggle!=null)
+			toggle.setBackground(color);
+	}
+	public void setTitleGradientBackground(Color color) {
+		putTitleBarColor(COLOR_GBG, color);
+		//textLabel.setBackground(color);
+		//if (toggle!=null)
+		//	toggle.setBackground(color);
+	}
+	public Color getTitleBarBorderColor() {
+		if (titleColors==null) return null;
+		return (Color)titleColors.get(COLOR_BORDER);
+	}
+	public Color getTitleGradientBackground() {
+		if (titleColors==null) return null;
+		return (Color)titleColors.get(COLOR_GBG);
+	}
+	public Color getTitleBarForeground() {
+		if (titleColors==null) return null;
+		return (Color)titleColors.get(COLOR_FG);
+	}
+	public Color getTitleBarBackground() {
+		if (titleColors==null) return null;
+		return (Color)titleColors.get(COLOR_BG);
+	}
+	private void putTitleBarColor(String key, Color color) {
+		if (titleColors==null)
+			titleColors = new Hashtable();
+		titleColors.put(key, color);
+	}
+	protected void onPaint(PaintEvent e) {
+		Color bg = null;
+		Color gbg = null;
+		Color fg = null;
+		Color border = null;
+		if (titleColors!=null) {
+			bg = (Color)titleColors.get(COLOR_BG);
+			gbg = (Color)titleColors.get(COLOR_GBG);
+			fg = (Color)titleColors.get(COLOR_FG);
+			border = (Color)titleColors.get(COLOR_BORDER);
+		}
+		if (bg==null) bg = getBackground();
+		if (fg ==null) fg = getForeground();
+		if (border==null) border = fg;
+		if (gbg==null) gbg = bg;
+
+		Rectangle bounds = getClientArea();
+		Point tsize = null;
+		Point tcsize = null;
+		if (toggle != null)
+			tsize = toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		int twidth = bounds.width - marginWidth - marginWidth;
+		if (tsize != null)
+			twidth -= tsize.x + GAP;
+		if (getTextClient() != null)
+			tcsize = getTextClient().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		if (tcsize != null)
+			twidth -= tcsize.x + GAP;
+		Point size = textLabel.computeSize(twidth, SWT.DEFAULT, true);
+		int tvmargin = GAP;
+		int theight = 0;
+		if (tsize != null)
+			theight += Math.max(theight, tsize.y);
+		if (tcsize != null)
+			theight = Math.max(theight, tcsize.y);
+		theight = Math.max(theight, size.y);
+		theight += tvmargin + tvmargin;
+		int midpoint = (theight *66)/100;
+		int rem = theight - midpoint;
+		GC gc = e.gc;
+		//gc.fillRectangle(marginWidth, marginHeight, bounds.width - 1
+		//		- marginWidth - marginWidth, solidHeight - 1);
+		gc.setForeground(bg);
+		gc.setBackground(gbg);
+		gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width - 1
+				- marginWidth - marginWidth, midpoint - 1, true);
+		gc.setForeground(gbg);
+		gc.setBackground(getBackground());
+		gc.fillGradientRectangle(marginWidth, marginHeight+midpoint-1, bounds.width - 1
+				- marginWidth - marginWidth, rem - 1, true);
+		gc.setForeground(border);
+		gc.drawLine(marginWidth, marginHeight+2, marginWidth, marginHeight+theight-1);
+		gc.drawLine(marginWidth, marginHeight+2, marginWidth+2, marginHeight);
+		gc.drawLine(marginWidth+2, marginHeight, bounds.width-marginWidth-3, marginHeight);
+		gc.drawLine(bounds.width-marginWidth-3, marginHeight, bounds.width-marginWidth-1, marginHeight+2);
+		gc.drawLine(bounds.width-marginWidth-1, marginHeight+2, bounds.width-marginWidth-1, marginHeight+theight-1);
+		if (toggle != null && !isExpanded()) {
+			gc.drawLine(marginWidth, marginHeight+theight-1, bounds.width-marginWidth-1, marginHeight+theight-1);
+		}
+
 	}
 }
