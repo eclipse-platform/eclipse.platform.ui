@@ -10,6 +10,7 @@ Contributors:
 **********************************************************************/
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -161,6 +162,9 @@ public class AntPreferencePage extends PreferencePage implements IWorkbenchPrefe
 	}
 	
 	protected List getLibraryURLs() {
-		return classpathPage.getContents();
+		List urls= new ArrayList();
+		urls.addAll(classpathPage.getContents());
+		urls.addAll(classpathPage.getUserURLs());
+		return urls;
 	}
 }
