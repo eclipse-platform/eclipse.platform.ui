@@ -115,6 +115,10 @@ abstract public class AbstractReconciler implements IReconciler {
 					fDirtyRegionQueue.notifyAll();
 				}
 			}
+            
+            // http://bugs.eclipse.org/bugs/show_bug.cgi?id=19525
+            reconcilerReset();
+            
 		}
 		
 		/**
@@ -389,8 +393,10 @@ abstract public class AbstractReconciler implements IReconciler {
 			if (fDocument != null) fDocument.removeDocumentListener(fListener);
 			fListener= null;
 			
-			fThread.cancel();
+			// http://dev.eclipse.org/bugs/show_bug.cgi?id=19135
+			BackgroundThread bt= fThread;
 			fThread= null;
+			bt.cancel();
 		}
 	}
 		
@@ -425,7 +431,7 @@ abstract public class AbstractReconciler implements IReconciler {
 	
 	/**
 	 * Forces the reconciler to reconcile the structure of the whole document.
-	 * Clients my extend this method.
+	 * Clients may extend this method.
 	 */
 	protected void forceReconciling() {
 		
@@ -434,9 +440,19 @@ abstract public class AbstractReconciler implements IReconciler {
 			createDirtyRegion(e);
 		}
 		
+		// http://dev.eclipse.org/bugs/show_bug.cgi?id=19135
+		if (fThread == null)
+			return;
+			
 		if (!fThread.isAlive())
 			fThread.start();
 		else
 			fThread.reset();
 	}
+    
+    /**
+     * Hook that is called after the reconciler thread has been reset.
+     */
+    protected void reconcilerReset() {
+    }
 }
