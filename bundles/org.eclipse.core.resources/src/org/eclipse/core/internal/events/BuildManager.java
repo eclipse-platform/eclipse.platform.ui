@@ -616,6 +616,10 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				case IncrementalProjectBuilder.FULL_BUILD :
 					type = "FULL_BUILD"; //$NON-NLS-1$
 					break;
+				case IncrementalProjectBuilder.CLEAN_BUILD :
+					type = "CLEAN_BUILD"; //$NON-NLS-1$
+					break;
+				case IncrementalProjectBuilder.AUTO_BUILD :
 				case IncrementalProjectBuilder.INCREMENTAL_BUILD :
 				default :
 					type = "INCREMENTAL_BUILD"; //$NON-NLS-1$
