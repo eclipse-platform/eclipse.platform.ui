@@ -46,7 +46,7 @@
    <extension-point id="fontDefinitions" name="%ExtPoint.fontDefinitions" schema="schema/fontDefinitions.exsd"/>
    <extension-point id="importWizards" name="%ExtPoint.importWizards" schema="schema/importWizards.exsd"/>
    <extension-point id="markerHelp" name="%ExtPoint.markerHelp" schema="schema/markerHelp.exsd"/>
-   <extension-point id="markerImageProviders" name="%ExtPoint.markerImageProviders"/>
+   <extension-point id="markerImageProviders" name="%ExtPoint.markerImageProviders" schema="schema/markerImageProviders.exsd"/>
    <extension-point id="markerResolution" name="%ExtPoint.markerResolution" schema="schema/markerResolution.exsd"/>
    <extension-point id="newWizards" name="%ExtPoint.newWizards" schema="schema/newWizards.exsd"/>
    <extension-point id="perspectiveExtensions" name="%ExtPoint.perspectiveExtensions" schema="schema/perspectiveExtensions.exsd"/>
