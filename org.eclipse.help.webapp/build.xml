@@ -56,30 +56,24 @@
 		<javac destdir="${temp.folder}/webapp.jar.bin" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bootclasspath}" source="${javacSource}" target="${javacTarget}"		>
 			<compilerarg line="${compilerArg}"/>
 			<classpath>
-				<pathelement path="../org.eclipse.help.base/helpbase.jar"/>
+				<pathelement path="../org.eclipse.help.base/bin"/>
+				<pathelement path="../org.eclipse.help.base/@dot"/>
 				<pathelement path="../org.apache.lucene/bin"/>
-				<pathelement path="../org.apache.lucene/parser.jar"/>
 				<pathelement path="../org.apache.lucene/lucene-1.4.3.jar"/>
-				<pathelement path="../org.eclipse.help/help.jar"/>
+				<pathelement path="../org.apache.lucene/parser.jar"/>
+				<pathelement path="../org.eclipse.help/bin"/>
+				<pathelement path="../org.eclipse.help/@dot"/>
 				<pathelement path="../org.eclipse.core.runtime"/>
 				<pathelement path="../org.eclipse.core.runtime/@dot"/>
 				<pathelement path="../org.eclipse.osgi"/>
 				<pathelement path="../org.eclipse.osgi/@dot"/>
-				<pathelement path="../org.eclipse.help.appserver/appserver.jar"/>
-				<pathelement path="../org.eclipse.osgi_3.1.0.jar"/>
-				<pathelement path="../org.eclipse.core.runtime_3.1.0.jar"/>
-				<pathelement path="../org.eclipse.help/help.jar"/>
-				<pathelement path="../org.eclipse.help"/>
-				<pathelement path="../org.eclipse.help/@dot"/>
-				<pathelement path="../org.eclipse.help_3.1.0.jar"/>
-				<pathelement path="../org.eclipse.help.base/helpbase.jar"/>
-				<pathelement path="../org.eclipse.help.base"/>
-				<pathelement path="../org.eclipse.help.base/@dot"/>
-				<pathelement path="../org.eclipse.help.base_3.1.0.jar"/>
-				<pathelement path="../org.eclipse.help.appserver/appserver.jar"/>
-				<pathelement path="../org.eclipse.help.appserver"/>
+				<pathelement path="../org.eclipse.help.appserver/bin"/>
 				<pathelement path="../org.eclipse.help.appserver/@dot"/>
-				<pathelement path="../org.eclipse.help.appserver_3.1.0.jar"/>
+				<pathelement path="../org.eclipse.osgi/bin"/>
+				<pathelement path="../org.eclipse.core.runtime/bin"/>
+				<pathelement path="../org.eclipse.help"/>
+				<pathelement path="../org.eclipse.help.base"/>
+				<pathelement path="../org.eclipse.help.appserver"/>
 				<pathelement path="../org.eclipse.tomcat/servlet.jar"/>
 				<pathelement path="../org.eclipse.tomcat/jasper-runtime.jar"/>
 			</classpath>
@@ -111,33 +105,27 @@
 		<javac destdir="${temp.folder}/WEB-INF/lib/servlets.jar.bin" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bootclasspath}" source="${javacSource}" target="${javacTarget}"		>
 			<compilerarg line="${compilerArg}"/>
 			<classpath>
-				<pathelement path="../org.eclipse.help.base/helpbase.jar"/>
+				<pathelement path="../org.eclipse.help.base/bin"/>
+				<pathelement path="../org.eclipse.help.base/@dot"/>
 				<pathelement path="../org.apache.lucene/bin"/>
-				<pathelement path="../org.apache.lucene/parser.jar"/>
 				<pathelement path="../org.apache.lucene/lucene-1.4.3.jar"/>
-				<pathelement path="../org.eclipse.help/help.jar"/>
+				<pathelement path="../org.apache.lucene/parser.jar"/>
+				<pathelement path="../org.eclipse.help/bin"/>
+				<pathelement path="../org.eclipse.help/@dot"/>
 				<pathelement path="../org.eclipse.core.runtime"/>
 				<pathelement path="../org.eclipse.core.runtime/@dot"/>
 				<pathelement path="../org.eclipse.osgi"/>
 				<pathelement path="../org.eclipse.osgi/@dot"/>
-				<pathelement path="../org.eclipse.help.appserver/appserver.jar"/>
+				<pathelement path="../org.eclipse.help.appserver/bin"/>
+				<pathelement path="../org.eclipse.help.appserver/@dot"/>
 				<pathelement path="${build.result.folder}/bin"/>
 				<pathelement path="${build.result.folder}/WEB-INF/classes"/>
 				<pathelement path="${build.result.folder}/webapp.jar"/>
-				<pathelement path="../org.eclipse.osgi_3.1.0.jar"/>
-				<pathelement path="../org.eclipse.core.runtime_3.1.0.jar"/>
-				<pathelement path="../org.eclipse.help/help.jar"/>
+				<pathelement path="../org.eclipse.osgi/bin"/>
+				<pathelement path="../org.eclipse.core.runtime/bin"/>
 				<pathelement path="../org.eclipse.help"/>
-				<pathelement path="../org.eclipse.help/@dot"/>
-				<pathelement path="../org.eclipse.help_3.1.0.jar"/>
-				<pathelement path="../org.eclipse.help.base/helpbase.jar"/>
 				<pathelement path="../org.eclipse.help.base"/>
-				<pathelement path="../org.eclipse.help.base/@dot"/>
-				<pathelement path="../org.eclipse.help.base_3.1.0.jar"/>
-				<pathelement path="../org.eclipse.help.appserver/appserver.jar"/>
 				<pathelement path="../org.eclipse.help.appserver"/>
-				<pathelement path="../org.eclipse.help.appserver/@dot"/>
-				<pathelement path="../org.eclipse.help.appserver_3.1.0.jar"/>
 				<pathelement path="../org.eclipse.tomcat/servlet.jar"/>
 				<pathelement path="../org.eclipse.tomcat/jasper-runtime.jar"/>
 			</classpath>
@@ -192,34 +180,28 @@
 		<javac destdir="${temp.folder}/WEB-INF/lib/jsp.jar.bin" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bootclasspath}" source="${javacSource}" target="${javacTarget}"		>
 			<compilerarg line="${compilerArg}"/>
 			<classpath>
-				<pathelement path="../org.eclipse.help.base/helpbase.jar"/>
+				<pathelement path="../org.eclipse.help.base/bin"/>
+				<pathelement path="../org.eclipse.help.base/@dot"/>
 				<pathelement path="../org.apache.lucene/bin"/>
-				<pathelement path="../org.apache.lucene/parser.jar"/>
 				<pathelement path="../org.apache.lucene/lucene-1.4.3.jar"/>
-				<pathelement path="../org.eclipse.help/help.jar"/>
+				<pathelement path="../org.apache.lucene/parser.jar"/>
+				<pathelement path="../org.eclipse.help/bin"/>
+				<pathelement path="../org.eclipse.help/@dot"/>
 				<pathelement path="../org.eclipse.core.runtime"/>
 				<pathelement path="../org.eclipse.core.runtime/@dot"/>
 				<pathelement path="../org.eclipse.osgi"/>
 				<pathelement path="../org.eclipse.osgi/@dot"/>
-				<pathelement path="../org.eclipse.help.appserver/appserver.jar"/>
+				<pathelement path="../org.eclipse.help.appserver/bin"/>
+				<pathelement path="../org.eclipse.help.appserver/@dot"/>
 				<pathelement path="${build.result.folder}/bin"/>
 				<pathelement path="${build.result.folder}/WEB-INF/classes"/>
 				<pathelement path="${build.result.folder}/webapp.jar"/>
 				<pathelement path="${build.result.folder}/WEB-INF/lib/servlets.jar"/>
-				<pathelement path="../org.eclipse.osgi_3.1.0.jar"/>
-				<pathelement path="../org.eclipse.core.runtime_3.1.0.jar"/>
-				<pathelement path="../org.eclipse.help/help.jar"/>
+				<pathelement path="../org.eclipse.osgi/bin"/>
+				<pathelement path="../org.eclipse.core.runtime/bin"/>
 				<pathelement path="../org.eclipse.help"/>
-				<pathelement path="../org.eclipse.help/@dot"/>
-				<pathelement path="../org.eclipse.help_3.1.0.jar"/>
-				<pathelement path="../org.eclipse.help.base/helpbase.jar"/>
 				<pathelement path="../org.eclipse.help.base"/>
-				<pathelement path="../org.eclipse.help.base/@dot"/>
-				<pathelement path="../org.eclipse.help.base_3.1.0.jar"/>
-				<pathelement path="../org.eclipse.help.appserver/appserver.jar"/>
 				<pathelement path="../org.eclipse.help.appserver"/>
-				<pathelement path="../org.eclipse.help.appserver/@dot"/>
-				<pathelement path="../org.eclipse.help.appserver_3.1.0.jar"/>
 				<pathelement path="../org.eclipse.tomcat/servlet.jar"/>
 				<pathelement path="../org.eclipse.tomcat/jasper-runtime.jar"/>
 			</classpath>
@@ -269,7 +251,7 @@
 			<fileset dir="${build.result.folder}" includes="webapp.jar,WEB-INF/lib/servlets.jar,WEB-INF/lib/jsp.jar" excludes="WEB-INF/classes/"			/>
 		</copy>
 		<copy todir="${destination.temp.folder}/org.eclipse.help.webapp_3.1.0" failonerror="true">
-			<fileset dir="${basedir}" includes="advanced/,basic/,WEB-INF/,*.html,*.jar,*.jsp,plugin.properties,plugin.xml,.options" excludes="WEB-INF/classes/"			/>
+			<fileset dir="${basedir}" includes="META-INF/,advanced/,basic/,WEB-INF/,*.html,*.jar,*.jsp,plugin.properties,plugin.xml,.options" excludes="WEB-INF/classes/"			/>
 		</copy>
 <!-- custom begin -->
 		<loadfile
@@ -322,7 +304,7 @@
 	</target>
 
 	<target name="refresh" depends="init" if="eclipse.running" description="Refresh this folder.">
-		<eclipse.convertPath fileSystemPath="d:/workspaceHelp/org.eclipse.help.webapp" property="resourcePath"/>
+		<eclipse.convertPath fileSystemPath="d:/runtime-workspacePDE/org.eclipse.help.webapp" property="resourcePath"/>
 		<eclipse.refreshLocal resource="${resourcePath}" depth="infinite"/>
 	</target>
 
