@@ -72,6 +72,7 @@ public Object createExecutableExtension(String attributeName) throws CoreExcepti
 		else {
 			String message = Policy.bind("plugin.extDefNotFound", attributeName); //$NON-NLS-1$
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, null);
+			logError(status);
 			throw new CoreException(status);
 		}
 	} else {
