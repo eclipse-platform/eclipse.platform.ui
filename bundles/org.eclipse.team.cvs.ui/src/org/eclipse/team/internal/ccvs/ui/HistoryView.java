@@ -131,7 +131,6 @@ public class HistoryView extends ViewPart {
 			switch (columnIndex) {
 				case COL_REVISION:
 					String revision = entry.getRevision();
-					if (file == null) return revision;
 					if (currentRevision != null && currentRevision.equals(revision)) {
 						revision = Policy.bind("currentRevision", revision); //$NON-NLS-1$
 					}
