@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
@@ -611,6 +612,15 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 		} catch(NumberFormatException e) {
 			// ignore and use the defaults.
 		}
+		switch (sortCriteria) {
+        case ChangeLogModelSorter.COMMENT:
+        case ChangeLogModelSorter.DATE:
+        case ChangeLogModelSorter.USER:
+            break;
+        default:
+            sortCriteria = ChangeLogModelSorter.DATE;
+            break;
+        }
     }
 
     /* (non-Javadoc)
@@ -1125,17 +1135,16 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
     private ICVSRemoteResource getRemoteResource(CVSSyncInfo info) {
 		try {
 			ICVSRemoteResource remote = (ICVSRemoteResource) info.getRemote();
-			ICVSRemoteResource local = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(info.getLocal());
+			ICVSRemoteResource local = CVSWorkspaceRoot.getRemoteResourceFor(info.getLocal());
 			if(local == null) {
 				local = (ICVSRemoteResource)info.getBase();
 			}
-
-			String remoteRevision = getRevisionString(remote);
-			String localRevision = getRevisionString(local);
 			
 			boolean useRemote = true;
 			if (local != null && remote != null) {
-				useRemote = ResourceSyncInfo.isLaterRevision(remoteRevision, localRevision);
+				String remoteRevision = getRevisionString(remote);
+				String localRevision = getRevisionString(local);
+				useRemote = useRemote(localRevision, remoteRevision);
 			} else if (remote == null) {
 				useRemote = false;
 			}
@@ -1151,7 +1160,21 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 		}
 	}
 	
-	private String getRevisionString(ICVSRemoteResource remoteFile) {
+    private boolean useRemote(String localRevision, String remoteRevision) {
+        boolean useRemote;
+        if (remoteRevision == null && localRevision == null) {
+            useRemote = true;
+        } else if (localRevision == null) {
+            useRemote = true;
+        } else if (remoteRevision == null) {
+            useRemote = false;
+        } else {
+            useRemote = ResourceSyncInfo.isLaterRevision(remoteRevision, localRevision);
+        }
+        return useRemote;
+    }
+
+    private String getRevisionString(ICVSRemoteResource remoteFile) {
 		if(remoteFile instanceof RemoteFile) {
 			return ((RemoteFile)remoteFile).getRevision();
 		}

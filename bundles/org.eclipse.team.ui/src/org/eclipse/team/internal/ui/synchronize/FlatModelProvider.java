@@ -20,7 +20,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.TeamImages;
@@ -206,7 +207,16 @@ public class FlatModelProvider extends SynchronizeModelProvider {
 			}
 		} catch(NumberFormatException e) {
 			// ignore and use the defaults.
-		} 
+		}
+		switch (sortCriteria) {
+        case FlatSorter.PATH:
+        case FlatSorter.NAME:
+        case FlatSorter.PARENT_NAME:
+            break;
+        default:
+            sortCriteria = FlatSorter.PATH;
+            break;
+        }
     }
     
     /* (non-Javadoc)
