@@ -521,7 +521,6 @@ public final class Workbench implements IWorkbench {
 		WorkbenchWindow newWindow = newWorkbenchWindow();
 		newWindow.create(); // must be created before adding to window manager
 		windowManager.add(newWindow);
-		getContextSupport().registerShell(newWindow.getShell(), IWorkbenchContextSupport.TYPE_WINDOW);
 
 		// Create the initial page.
 		try {
@@ -1066,7 +1065,6 @@ public final class Workbench implements IWorkbench {
 		WorkbenchWindow newWindow = newWorkbenchWindow();
 		newWindow.create();
 		windowManager.add(newWindow);
-		getContextSupport().registerShell(newWindow.getShell(), IWorkbenchContextSupport.TYPE_WINDOW);
 
 		// Create the initial page.
 		try {
@@ -1284,7 +1282,6 @@ public final class Workbench implements IWorkbench {
 			childMem = children[x];
 			WorkbenchWindow newWindow = newWorkbenchWindow();
 			newWindow.create();
-			getContextSupport().registerShell(newWindow.getShell(), IWorkbenchContextSupport.TYPE_WINDOW);
 
 			// allow the application to specify an initial perspective to open
 			// @issue temporary workaround for ignoring initial perspective

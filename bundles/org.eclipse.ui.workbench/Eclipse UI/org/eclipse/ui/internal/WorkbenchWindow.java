@@ -562,6 +562,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		}
 		
 		WorkbenchHelp.setHelp(shell, IHelpContextIds.WORKBENCH_WINDOW);
+        getWorkbench().getContextSupport().registerShell(shell,
+                IWorkbenchContextSupport.TYPE_WINDOW);
 
 		trackShellActivation(shell);
 		trackShellResize(shell);
