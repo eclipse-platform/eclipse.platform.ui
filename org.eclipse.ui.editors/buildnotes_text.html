@@ -19,6 +19,22 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <br>
 <br>
 <br>
+========== Eclipse Build Input May 11th 2004 ==========<br>
+<pre>
+- Added folding to the java editor
+  - Infrastructure is called "projection" and can be used by any text editor.
+    It is based on annotations managed by a ProjectionAnnotationModel. ProjectionViewer
+    listens to changes of these annotations to update its UI accordingly.
+  - JDT UI defines the org.eclipse.jdt.ui.foldingStructureProvider extension
+    point which allows arbitrary foldings to be contributed. The standard folding
+    allows to fold methods, javadoc, inner types, and imports.
+  - Contributed structure providers must implement IJavaFoldingStructureProvider,
+    which is responsible for keeping the folding model up to date when the document
+    changes. Folding structure changes are reflected by updating the ProjectionAnnotationModel.
+  - Additionally, contributors may specify an IJavaFoldingPreferenceBlock that 
+    will be displayed on the Java Editor preference page. User preferences for folding
+    can be shown there.
+</pre>
 ========== Eclipse Build Input May 4th 2004 ==========<br>
 <pre>
 - ICompletionProposalExtension3: renamed methods:
