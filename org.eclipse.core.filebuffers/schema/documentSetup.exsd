@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.core.filebuffers" id="documentSetup" name="Document Setup"/>
       </appInfo>
       <documentation>
-         This extension point is interesting if you want to install specific partitioners etc. on documents created by the file buffer manager for certain file content types, file extensions, or file names.
+         This extension point is used to customize the initialization process of a document for a text file buffer manager by this plug-in&apos;s default text file buffer manager. It allows to specify which document setup participant should be involved in the initialization process for a text file buffer created for a certain file content type, file extension, or file name.
       </documentation>
    </annotation>
 
@@ -40,11 +40,16 @@
    </element>
 
    <element name="participant">
+      <annotation>
+         <documentation>
+            The specification of a document setup participant. In order find all participants for a given file the attributes of each participant specification are consulted in the following sequence: contentTypeId, fileNames, extensions. If multiple participants are found, the sequence in which they are called is not specified.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The fully qualified name of the participant implementation class. This class must implement the org.eclipse.core.filebuffers.IDocumentSetupParticipant interface.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.filebuffers.IDocumentSetupParticipant"/>
@@ -54,21 +59,21 @@
          <attribute name="extensions" type="string">
             <annotation>
                <documentation>
-                  
+                  A comma separated list of file extensions for which this participant should be used.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="fileNames" type="string">
             <annotation>
                <documentation>
-                  
+                  A comma separated list of file names for which this participant should be used.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="contentTypeId" type="string">
             <annotation>
                <documentation>
-                  
+                  The id of a content type as defined by the org.eclipse.core.runtime.contentTypes extension point for which this participant should be used.
                </documentation>
             </annotation>
          </attribute>
@@ -89,7 +94,17 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         &lt;pre&gt;
+   &lt;extension
+         id=&quot;JavaDocumentSetupParticipant&quot;
+         name=&quot;%javaDocumentSetupParticipant&quot;
+         point=&quot;org.eclipse.core.filebuffers.documentSetup&quot;&gt;
+      &lt;participant
+            extensions=&quot;java&quot;
+            class=&quot;org.eclipse.jdt.internal.ui.javaeditor.JavaDocumentSetupParticipant&quot;&gt;
+      &lt;/participant&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
@@ -98,7 +113,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         Document setup participants have to implement org.eclipse.core.filebuffers.IDocumentSetupParticipant.
       </documentation>
    </annotation>
 
@@ -107,7 +122,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         
       </documentation>
    </annotation>
 

@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.core.filebuffers" id="annotationModelCreation" name="Annotation Model Creation"/>
       </appInfo>
       <documentation>
-         This extension point is interesting for your if you want the file buffer manager to instantiate a specific annotation models for certain file content types, file extensions, or file names.
+         This extension point is used to customize the annotation model creation behavior of this plug-in&apos;s default text file buffer manager. It allows to specify which annotation model factory should be used in order to create the annotation model instance of a text file buffer created for a certain file content type, file extension, or file name.
       </documentation>
    </annotation>
 
@@ -40,11 +40,16 @@
    </element>
 
    <element name="factory">
+      <annotation>
+         <documentation>
+            The specification of a annotation model factory. In order to find a factory for a given file the attributes of each factory specification are consulted in the following sequence: contentTypeId, fileNames, extensions. If multiple, equally specific factory specifications are found for a given file it is not specified which factory is used.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The fully qualified name of the factory implementation class. This class must implement the org.eclipse.core.filebuffers.IAnnotationModelFactory interface.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.filebuffers.IAnnotationModelFactory"/>
@@ -54,21 +59,21 @@
          <attribute name="extensions" type="string">
             <annotation>
                <documentation>
-                  
+                  A comma separated list of file extensions for which this factory should be used.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="fileNames" type="string">
             <annotation>
                <documentation>
-                  
+                  A comma separated list of file names for which this factory should be used.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="contentTypeId" type="string">
             <annotation>
                <documentation>
-                  
+                  The id of a content type as defined by the org.eclipse.core.runtime.contentTypes extension point for which this factory should be used.
                </documentation>
             </annotation>
          </attribute>
@@ -89,7 +94,15 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         &lt;pre&gt;
+   &lt;extension
+      point=&quot;org.eclipse.core.filebuffers.annotationModelCreation&quot;&gt;
+      &lt;factory
+            extensions=&quot;xzy&quot;
+            class=&quot;org.eclipse.ui.texteditor.ResourceMarkerAnnotationModelFactory&quot;&gt;
+      &lt;/factory&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
@@ -98,7 +111,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         Annotation model factories have to implement org.eclipse.core.filebuffers.IAnnotationModelFactory.
       </documentation>
    </annotation>
 
@@ -107,7 +120,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         
       </documentation>
    </annotation>
 
