@@ -91,7 +91,7 @@ private void focusOn(StyledText newText, int caretOffset){
 }
 
 /**
- * Find the next text 
+ * Finds the next text 
  */		
 private StyledText nextText(StyledText text){
 	int index = 0;
@@ -108,7 +108,7 @@ private StyledText nextText(StyledText text){
 }
 
 /**
- * Find the previous text 
+ * Finds the previous text 
  */		
 private StyledText previousText(StyledText text){
 	int index = 0;
@@ -176,7 +176,7 @@ private StyleRange findPreviousLink(StyledText text) {
 }
 
 /**
- * Find the current link of the current selection.
+ * Finds the current link of the current selection.
  */
 protected StyleRange getCurrentLink(StyledText text){
 	StyleRange[] ranges = text.getStyleRanges();
@@ -842,6 +842,8 @@ private void setBoldRanges(StyledText styledText, int[][] boldRanges) {
  * </p>
  */
 public void setFocus() {
+	if ((editorComposite != null) && (lastNavigatedText == null) && (currentText == null))
+		editorComposite.setFocus();
 }
 /**
  * Sets the styled text's link (blue) ranges
