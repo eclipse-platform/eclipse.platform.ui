@@ -72,7 +72,9 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 				Updater updater= (Updater) fMap.get(fEditor);
 				if (updater != null) {
 					Control control= rulerInfo.getControl();
-					control.removeMouseListener(updater);	
+					if (!control.isDisposed()) {
+						control.removeMouseListener(updater);	
+					}
 				}
 			}
 		}
@@ -93,7 +95,9 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 				}
 
 				Control control= rulerInfo.getControl();
-				control.addMouseListener(updater);
+				if (!control.isDisposed()) {
+					control.addMouseListener(updater);
+				}
 			}			
 		}
 	}
