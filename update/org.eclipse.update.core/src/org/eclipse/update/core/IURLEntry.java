@@ -23,7 +23,7 @@ public interface IURLEntry extends IAdaptable {
 	 * @since 2.0 
 	 */
 
-	String getAnnotation();
+	public String getAnnotation();
 	
 	/**
 	 * Returns a URL containing more information
@@ -32,6 +32,6 @@ public interface IURLEntry extends IAdaptable {
 	 * @since 2.0 
 	 */
 
-	URL getURL();
+	public URL getURL();
 }
 

@@ -23,7 +23,7 @@ public interface IVerificationResult {
 	/**
 	 * Sets the exception that may have occured while verifying
 	 */
-	void setResultException(Exception ex);
+	public void setResultException(Exception ex);
 
 
 	/**
@@ -32,7 +32,7 @@ public interface IVerificationResult {
 	 * @see IVerificationNotifier#ERROR_INSTALL
 	 * @see IVerificationNotifier#static final int OK_TO_INSTALL
 	 */ 
-	void setResultCode(int code);
+	public void setResultCode(int code);
 
 
 	/**
@@ -46,17 +46,17 @@ public interface IVerificationResult {
 	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_RECOGNIZED
 	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_UNRECOGNIZED
 	 */
-	void setVerificationCode(int type);
+	public void setVerificationCode(int type);
 
 	/**
 	 * 		
 	 */
-	void isFeatureVerification(boolean verification);
+	public void isFeatureVerification(boolean verification);
 	
 	/**
 	 * 		
 	 */
-	boolean isFeatureVerification();
+	public boolean isFeatureVerification();
 
 	
 	
@@ -71,7 +71,7 @@ public interface IVerificationResult {
 	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_RECOGNIZED
 	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_UNRECOGNIZED
 	 */
-	int getVerificationCode();
+	public int getVerificationCode();
 
 	
 		
@@ -81,13 +81,13 @@ public interface IVerificationResult {
 	 * @see IVerificationNotifier#ERROR_INSTALL
 	 * @see IVerificationNotifier#static final int OK_TO_INSTALL
 	 */ 
-	int getResultCode();	
+	public int getResultCode();	
 	
 		
 	/**
 	 * Returns the exception that may have occured while verifying
 	 */
-	Exception getResultException();
+	public Exception getResultException();
 	
 	
 		
@@ -95,31 +95,31 @@ public interface IVerificationResult {
 	 * Returns the notifier text. If no text is supplied, default
 	 * text may be generated based on the notification type
 	 */
-	String getText();
+	public String getText();
 		
 		
 	/**
 	 * Returns the signer info text
 	 */
-	String getSignerInfo();
+	public String getSignerInfo();
 		
 	
 	/**
 	 * Returns the verifier (eg. CA) info text
 	 */
-	String getVerifierInfo();
+	public String getVerifierInfo();
 
 	
 	
 	/**
 	 * Returns the content reference that is verified 
 	 */
-	ContentReference getContentReference();
+	public ContentReference getContentReference();
 
 	
 	/**
 	 * Returns the feature
 	 */
-	IFeature getFeature();
+	public IFeature getFeature();
 
 }

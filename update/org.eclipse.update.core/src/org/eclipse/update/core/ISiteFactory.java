@@ -42,7 +42,7 @@ public interface ISiteFactory {
 	 * @since 2.0 
 	 */
 
-	ISite createSite(URL url)
+	public ISite createSite(URL url)
 		throws CoreException, InvalidSiteTypeException;
 
 }
