@@ -20,7 +20,7 @@ public abstract class Site implements ISite, IWritable {
 	/**
 	 * default path under the site where plugins will be installed
 	 */
-	//FIXME: framgment
+	//FIXME: fragment
 	public static final String DEFAULT_FRAGMENT_PATH = "fragments/";
 
 	/**
@@ -53,7 +53,6 @@ public abstract class Site implements ISite, IWritable {
 	public Site(URL siteReference) throws CoreException {
 		super();
 		this.siteURL = siteReference;
-		// FIXME: not lazy... upfront loading
 		initializeSite();
 	}
 

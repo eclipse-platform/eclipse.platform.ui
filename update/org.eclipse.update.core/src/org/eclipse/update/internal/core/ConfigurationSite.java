@@ -6,9 +6,10 @@ package org.eclipse.update.internal.core;
 import java.io.PrintWriter;
 import java.util.Date;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.IFeatureReference;
 
 /**
  * 
@@ -54,7 +55,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 	public boolean isInstallSite() {
 		return installable;
 	}
-	
+
 	/*
 	 * @see IConfigurationSite#setInstallSite(booelan)
 	 */
@@ -75,10 +76,10 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 			increment += " ";
 
 		w.println(gap + "<" + InstallConfigurationParser.CONFIGURATION_SITE + " ");
-		w.println(gap+increment+"url=\""+getSite().getURL().toExternalForm()+"\"");
-		w.println(gap+increment+"policy=\"" + getConfigurationPolicy().getPolicy() + "\" ");
+		w.println(gap + increment + "url=\"" + getSite().getURL().toExternalForm() + "\"");
+		w.println(gap + increment + "policy=\"" + getConfigurationPolicy().getPolicy() + "\" ");
 		String install = installable ? "true" : "false";
-		w.print(gap+increment+"install=\"" + install + "\" ");
+		w.print(gap + increment + "install=\"" + install + "\" ");
 		w.println(">");
 		w.println("");
 
@@ -87,13 +88,13 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 		if (featuresReferences != null) {
 			for (int index = 0; index < featuresReferences.length; index++) {
 				IFeatureReference element = featuresReferences[index];
-				w.print(gap+increment+"<"+InstallConfigurationParser.FEATURE+" ");
+				w.print(gap + increment + "<" + InstallConfigurationParser.FEATURE + " ");
 				// feature URL
 				String URLInfoString = null;
-				if(element.getURL()!=null) {
-					ISite featureSite = ((FeatureReference)element).getSite();
-					URLInfoString = UpdateManagerUtils.getURLAsString(featureSite.getURL(),element.getURL());
-					w.print("url=\""+Writer.xmlSafe(URLInfoString)+"\"");
+				if (element.getURL() != null) {
+					ISite featureSite = ((FeatureReference) element).getSite();
+					URLInfoString = UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
+					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\"");
 				}
 				w.println("/>");
 			}
@@ -108,22 +109,45 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 	 * @see IConfigurationSite#install(IFeature, IProgressMonitor)
 	 */
 	public void install(IFeature feature, IProgressMonitor monitor) throws CoreException {
-		if (!installable){
-			//FIXME: throw error
+		if (!installable) {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "The site is not considered to be installable:" + site.getURL().toExternalForm(), null);
+			throw new CoreException(status);
 		}
-		
+
 		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_FEATURE_INSTALL);
 		activity.setLabel(feature.getIdentifier().toString());
 		activity.setDate(new Date());
-			
-		IFeatureReference installedFeature = getSite().install(feature,monitor);
-		getConfigurationPolicy().configure(installedFeature);
 
-		// everything done ok
-		activity.setStatus(IActivity.STATUS_OK);
-		((InstallConfiguration)SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
-		
+		try {
+			IFeatureReference installedFeature = getSite().install(feature, monitor);
+			configure(installedFeature);
+
+			// everything done ok
+			activity.setStatus(IActivity.STATUS_OK);
+
+		} catch (CoreException e) {
+			activity.setStatus(IActivity.STATUS_NOK);
+			throw e;
+		} finally {
+			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
+		}
+
+	}
+
+	/*
+	 * @see IConfigurationSite#configure(IFeatureReference)
+	 */
+	public void configure(IFeatureReference feature) throws CoreException {
+		((ConfigurationPolicy)getConfigurationPolicy()).configure(feature);
+	}
+
+	/*
+	 * @see IConfigurationSite#unconfigure(IFeatureReference)
+	 */
+	public void unconfigure(IFeatureReference feature) throws CoreException {
+		((ConfigurationPolicy)getConfigurationPolicy()).unconfigure(feature);		
 	}
 
 }

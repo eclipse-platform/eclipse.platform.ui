@@ -153,8 +153,6 @@ public class SiteFile extends SiteURL {
 		// FIXME: fragments
 		model = parsePlugins(fragmentPath);
 		addParsedPlugins(model.getFragments());
-		
-		System.out.print("");
 
 	}
 	
@@ -229,20 +227,19 @@ public class SiteFile extends SiteURL {
 	
 	/**
 	 * Method parsePlugins.
+	 * 
+	 * look into each plugin/fragment directory, crack the plugin.xml open (or fragment.xml ???)
+	 * get id and version, calculate URL...	
+	 * 
 	 * @return PluginRegistryModel
 	 * @throws CoreException
 	 */
 	private PluginRegistryModel parsePlugins(String path) throws CoreException {
-		
-		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		
 		PluginRegistryModel model;
-		//FIXME: handle the archives
-		// look into each plugin/fragment directory, crack the plugin.xml open (or fragment.xml ???)
-		// get id and version, calculate URL...
-		
+		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();		
 		MultiStatus parsingStatus = new MultiStatus(id, IStatus.WARNING, "Error parsing plugin.xml in " + path, new Exception());
 		Factory factory = new Factory(parsingStatus);
+		
 		try {
 			URL pluginURL = new URL("file", null, path);
 			model = Platform.parsePlugins(new URL[] { pluginURL }, factory);
@@ -254,6 +251,7 @@ public class SiteFile extends SiteURL {
 		if (factory.getStatus().getChildren().length != 0) {
 			throw new CoreException(parsingStatus);
 		}
+		
 		return model;
 	}
 

@@ -109,7 +109,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfigurationSites().length==1);
 		
 		//test only one feature for the site
-		assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfiguredFeatures().length==1);
+		assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfigurationSites()[0].getConfigurationPolicy().getConfiguredFeatures().length==1);
 		
 		// test only 2 activities
 		assertTrue("Wrong number of activities for install config",site.getCurrentConfiguration().getActivities().length==2);
@@ -168,7 +168,6 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// teh current one points to a real fature
 		// does not throw error.
 		IConfigurationSite configSite2 = site.getCurrentConfiguration().getConfigurationSites()[0];
-		//FIXME: broken (Dec 4th 2001)
 		IFeatureReference ref = configSite2.getConfigurationPolicy().getConfiguredFeatures()[0];
 		IFeature feature2 = ref.getFeature();
 		String configuredFeature = feature2.getLabel();
@@ -182,7 +181,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfigurationSites().length==1);
 		
 		//test only one feature for the site
-		assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfiguredFeatures().length==1);
+		assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfigurationSites()[0].getConfigurationPolicy().getConfiguredFeatures().length==1);
 		
 		// test only 2 activities
 		assertTrue("Wrong number of activities for install config",site.getCurrentConfiguration().getActivities().length==2);
@@ -244,7 +243,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfigurationSites().length==1);
 		
 		//test only one feature for the site
-		assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfiguredFeatures().length==1);
+		assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfigurationSites()[0].getConfigurationPolicy().getConfiguredFeatures().length==1);
 		
 		// test only 2 activities
 		assertTrue("Wrong number of activities for install config",site.getCurrentConfiguration().getActivities().length==2);

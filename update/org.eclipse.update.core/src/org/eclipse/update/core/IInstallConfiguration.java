@@ -31,25 +31,6 @@ public interface IInstallConfiguration {
 	
 	
 	/**
-	 * Returns an array of features configured through this configuration.
-	 * 
-	 * @return IFeatureReference[] configured features. Returns an empty array
-	 * if there are no configured features
-	 */
-	public IFeatureReference[] getConfiguredFeatures();
-	
-	/**
-	 * Returns an array of unconfigured features  through this configuration.
-	 * 
-	 * unconfigured Features are accessible by the user but will not be executed.
-	 * 
-	 * @return IFeatureReference[] unconfigured features. Returns an empty array
-	 * if there are no unconfigured features
-	 */
-	public IFeatureReference[] getUnconfiguredFeatures();
-	
-	
-	/**
 	 * Returns an array of local configuration sites that the sites
 	 * configured.
 	 * 

@@ -83,6 +83,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 			((ISiteLocalChangedListener) siteLocalListeners[i]).currentInstallConfigurationChanged(config);
 		}
 		}
+		
 	}
 	/**
 	 * initialize the configurations from the persistent model.
@@ -136,9 +137,6 @@ public class SiteLocal implements ILocalSite, IWritable {
 		try {
 			URL execURL = BootLoader.getInstallURL();
 			ISite site = SiteManager.getSite(execURL);
-			//FIXME: location points to a file, not a directory, 
-			// check UpdateManagerUtils.getURL()
-			// use / and File.Separator, ATTN Linux/Unix issues ?
 			IInstallConfiguration newDefaultConfiguration = cloneCurrentConfiguration(new URL(location, DEFAULT_CONFIG_FILE), DEFAULT_CONFIG_LABEL);
 			addConfiguration(newDefaultConfiguration);			
 

@@ -22,9 +22,6 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	private String label;
 	private List activities;
 	private List configurationSites;
-	private List featuresConfigured;
-	private List featuresUnconfigured;
-
 	/*
 	 * default constructor. Create
 	 */
@@ -41,18 +38,16 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	public InstallConfiguration(IInstallConfiguration config,URL newLocation, String label) {
 		this.location = newLocation;
 		this.label = label;
-		// do not copy list of listeners
-		// FIXME: incomplete ?
-		// FIXME: istaht true that Arrays.asList returns a fixed size list, so I cannot modify it ? 
-		// so I have to do all this stuff to get a modifiable list ?
+		// do not copy list of listeners nor activities
 		if (config!=null){
 			configurationSites = new ArrayList();
 			configurationSites.addAll(Arrays.asList(config.getConfigurationSites()));
-			featuresConfigured = new ArrayList();
+			/*featuresConfigured = new ArrayList();
 			featuresConfigured.addAll(Arrays.asList(config.getConfiguredFeatures()));
 			featuresUnconfigured = new ArrayList();
-			featuresUnconfigured.addAll(Arrays.asList(config.getUnconfiguredFeatures()));
+			featuresUnconfigured.addAll(Arrays.asList(config.getUnconfiguredFeatures()));*/
 		}
+		date = new Date();
 		this.isCurrent = false;
 	}
 	
@@ -84,38 +79,6 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	}
 	
 	
-	/**
-	 * Returns all the featuresConfigured of all teh sites
-	 */
-	private IFeatureReference[] getFeatures() {
-
-		IFeatureReference[] result = new IFeatureReference[0];
-
-		// initialize if needed
-		//if (featuresConfigured == null) {
-		//FIXME: always initialize ? because we don;t know if feature have been
-		// added to a config site ????
-			featuresConfigured = new ArrayList();
-
-			if (configurationSites != null) {
-				Iterator iter = configurationSites.iterator();
-				while (iter.hasNext()) {
-					IConfigurationSite currentSite = (IConfigurationSite) iter.next();
-					featuresConfigured.addAll(Arrays.asList(currentSite.getConfigurationPolicy().getConfiguredFeatures()));
-					// unconfigured features are getSIte.getFeatures - configuredFeatures ?
-				}
-			}
-		//}
-
-		if (featuresConfigured != null && !featuresConfigured.isEmpty()) {
-			// move List in Array
-			result = new IFeatureReference[featuresConfigured.size()];
-			featuresConfigured.toArray(result);
-		}
-
-		return result;
-	}
-
 	/*
 	 * @see IInstallConfiguration#getConfigurationSites()
 	 */
@@ -140,12 +103,7 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_SITE_INSTALL);
 		activity.setLabel(site.getSite().getURL().toExternalForm());
 		activity.setDate(new Date());
-			
-		if (configurationSites == null) {
-			configurationSites = new ArrayList(0);
-		}
-		configurationSites.add(site);
-		
+		addConfigSite(site);
 
 		// notify listeners
 		Object[] configurationListeners = listeners.getListeners();
@@ -160,9 +118,11 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 
 	/**
 	 * Adds the configuration to teh list
+	 * is called when adding a Site or parsing the XML file
+	 * in this case we do not want to create a new activity, so we do not want t call
+	 * addConfigurationSite()
 	 */
 	public void addConfigSite(IConfigurationSite site) {
-		// FIXME: better name, better separation
 		if (configurationSites == null) {
 			configurationSites = new ArrayList(0);
 		}
@@ -218,24 +178,6 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		synchronized (listeners) {
 			listeners.remove(listener);
 		}
-	}
-
-	/*
-	 * @see IInstallConfiguration#getConfiguredFeatures()
-	 */
-	public IFeatureReference[] getConfiguredFeatures() {
-		// FIXME: 
-		//if (featuresConfigured==null) featuresConfigured = getFeatures();
-		return getFeatures();
-	}
-
-	/*
-	 * @see IInstallConfiguration#getUnconfiguredFeatures()
-	 */
-	public IFeatureReference[] getUnconfiguredFeatures() {
-		IFeatureReference[] result = new IFeatureReference[0];
-		// FIXME:
-		return result;
 	}
 
 	/*
@@ -341,7 +283,6 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 			ConfigurationPolicy configurationPolicy = (ConfigurationPolicy)element.getConfigurationPolicy();
 			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(),configurationPolicy.getPlugins());
 			runtimeConfiguration.createSiteEntry(element.getSite().getURL(),sitePolicy);	
-			System.out.println("---------------------------------->"+runtimeConfiguration.getConfigurationLocation().toExternalForm());
 			try {
 				runtimeConfiguration.save();
 			} catch (IOException e){

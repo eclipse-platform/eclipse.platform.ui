@@ -8,6 +8,7 @@ import java.util.*;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.IFeatureReference;
 
 /**
  * 
@@ -38,9 +39,9 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 	public IFeatureReference[] getFilteredFeatures(IFeatureReference[] featuresToFilter) {
 
 		IFeatureReference[] result = new IFeatureReference[0];
-		if (featureReferences!=null && !featureReferences.isEmpty()) {
-				result = new IFeatureReference[featureReferences.size()];
-				featureReferences.toArray(result);
+		if (featureReferences != null && !featureReferences.isEmpty()) {
+			result = new IFeatureReference[featureReferences.size()];
+			featureReferences.toArray(result);
 		}
 		return result;
 	}
@@ -64,12 +65,22 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 		IFeatureReference[] result = new IFeatureReference[0];
 		// FIXME:
 		if (policy == IPlatformConfiguration.ISitePolicy.USER_INCLUDE) {
-			if (featureReferences!=null && !featureReferences.isEmpty()) {
-				result = new IFeatureReference[featureReferences.size()];
-				featureReferences.toArray(result);
-			}
+			result = getFilteredFeatures(null);
 		}
 		return result;
+	}
+
+	/*
+	 * @see IConfigurationPolicy#getUnconfiguredFeatures()
+	 */
+	public IFeatureReference[] getUnconfiguredFeatures() {
+		IFeatureReference[] result = new IFeatureReference[0];
+		// FIXME:
+		if (policy == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
+			result = getFilteredFeatures(null);
+		}
+		return result;
+
 	}
 
 	/*
@@ -90,7 +101,7 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 					}
 				}
 				break;
-		case IPlatformConfiguration.ISitePolicy.USER_EXCLUDE :
+			case IPlatformConfiguration.ISitePolicy.USER_EXCLUDE :
 				// return true if the feature is NOT part of the list
 				iter = featureReferences.iterator();
 				result = true;
@@ -107,46 +118,50 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 		return false;
 	}
 
-	/*
-	 * @see IConfigurationSite#configure(IFeatureReference)
+	/**
+	 * adds teh feature to teh list of features if the policy is USER_INCLUDE
 	 */
-	public void configure(IFeatureReference feature) throws CoreException{
-		if (policy==IPlatformConfiguration.ISitePolicy.USER_INCLUDE){
-		//Start UOW ?
-		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_CONFIGURE);
-		activity.setLabel(feature.getURL().toExternalForm());
-		activity.setDate(new Date());
-		addFeatureReference(feature);
-		
-		// everything done ok
-		activity.setStatus(IActivity.STATUS_OK);
-		((InstallConfiguration)SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
-		}		
+	/*packahge*/ void configure(IFeatureReference feature) throws CoreException {
+		if (policy == IPlatformConfiguration.ISitePolicy.USER_INCLUDE) {
+			//Start UOW ?
+
+			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_CONFIGURE);
+			activity.setLabel(feature.getURL().toExternalForm());
+			activity.setDate(new Date());
+			addFeatureReference(feature);
+
+			// everything done ok
+			activity.setStatus(IActivity.STATUS_OK);
+
+			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
+
+		}
 	}
 
-	/*
-	 * @see IConfigurationSite#unconfigure(IFeatureReference)
+	/**
+	 * adds teh feature to teh list of features if the policy is USER_EXCLUDE
 	 */
-	public void unconfigure(IFeatureReference feature) throws CoreException {
-		if (policy==IPlatformConfiguration.ISitePolicy.USER_EXCLUDE){		
-		//Start UOW ?
-		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
-		activity.setLabel(feature.getURL().toExternalForm());
-		activity.setDate(new Date());
-		addFeatureReference(feature);
-		
-		// everything done ok
-		activity.setStatus(IActivity.STATUS_OK);
-		((InstallConfiguration)SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
-		}	
+	/*package*/ void unconfigure(IFeatureReference feature) throws CoreException {
+		if (policy == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
+			//Start UOW ?
+			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
+			activity.setLabel(feature.getURL().toExternalForm());
+			activity.setDate(new Date());
+			addFeatureReference(feature);
+
+			// everything done ok
+			activity.setStatus(IActivity.STATUS_OK);
+			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
+		}
 	}
-	
+
 	/**
 	 * returns an array of string corresponding to plugin
 	 */
-	/*package*/ String[] getPlugins() throws CoreException {
+	/*package*/
+	String[] getPlugins() throws CoreException {
 		String[] result = new String[0];
-		if (featureReferences!=null && !featureReferences.isEmpty()){
+		if (featureReferences != null && !featureReferences.isEmpty()) {
 			List pluginsString = new ArrayList(0);
 
 			Iterator iter = featureReferences.iterator();
@@ -160,13 +175,13 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 				}
 			}
 
-			if (!pluginsString.isEmpty()){
+			if (!pluginsString.isEmpty()) {
 				result = new String[pluginsString.size()];
 				pluginsString.toArray(result);
-			}			
-			
+			}
+
 		}
-	return result;
+		return result;
 	}
 
 }

@@ -663,9 +663,8 @@ public abstract class Feature implements IFeature {
 				featureStream = getInputStreamFor(FEATURE_XML);
 				new FeatureParser(featureStream, this);
 			} catch (IOException e) {
-				//FIXME: if we cannot find the feature and or the feature.xml
-				// is it an error or a warning ???
-				// I do not believe we should stop the execution for that...
+				// if we cannot find the feature and or the feature.xml...
+				// We should not stop the execution 
 				// but we must Log it all the time, not only when debugging...
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 				IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error opening feature.xml in the feature archive:" + url.toExternalForm(), e);

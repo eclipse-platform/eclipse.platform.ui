@@ -47,6 +47,16 @@ public interface IConfigurationSite {
 	void install(IFeature feature, IProgressMonitor monitor) throws CoreException;
 	
 	/**
+	 * Configure the Feature to be available at next startup
+	 */
+	void configure(IFeatureReference feature) throws CoreException;
+	
+	/**
+	 * Unconfigure the feature from the execution path
+	 */
+	void unconfigure(IFeatureReference feature) throws CoreException;
+	
+	/**
 	 * sets if the site is an installable site
 	 */
 	void setInstallSite(boolean installable);

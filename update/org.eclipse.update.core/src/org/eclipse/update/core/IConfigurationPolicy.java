@@ -21,25 +21,20 @@ public interface IConfigurationPolicy {
 	 */
 	IFeatureReference[] getFilteredFeatures(IFeatureReference[] featuresToFilter);
 	
-		/**
+	/**
 	 * Returns teh configured features for this Site based on the current policy
 	 */
 	IFeatureReference[] getConfiguredFeatures();
+
+	/**
+	 * Returns teh features that should not be configured for this Site based on the current policy
+	 */
+	IFeatureReference[] getUnconfiguredFeatures();
 	
 	/**
 	 * returns <code>true</code> if the feature is configured for this Site
 	 */
 	boolean isConfigured(IFeatureReference feature);
-	
-	/**
-	 * Configure the Feature to be available at next startup
-	 */
-	void configure(IFeatureReference feature) throws CoreException;
-	
-	/**
-	 * Unconfigure the feature from the execution path
-	 */
-	void unconfigure(IFeatureReference feature) throws CoreException;
 
 }
 
