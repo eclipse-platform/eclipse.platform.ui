@@ -243,11 +243,9 @@ import org.eclipse.swt.widgets.*;
 	 * work units. 
 	 */
 	public void beginTask(String name, int totalWork) {
-
 		fStartTime= System.currentTimeMillis();
+		final long timestamp= fStartTime;
 		if (totalWork == UNKNOWN || totalWork == 0) {
-			
-			final long timestamp= fStartTime;
 			Thread t= new Thread() {
 				public void run() {
 					try {
@@ -260,6 +258,27 @@ import org.eclipse.swt.widgets.*;
 			t.start();
 			
 		} else {
+			// make sure the progress bar is made visible while
+			// the task is running. Fixes bug 32198.
+			Thread t= new Thread() {
+				public void run() {
+					try {
+						sleep(DELAY_PROGRESS);
+						if (! fProgressIsVisible) {
+							fProgressBar.getDisplay().asyncExec(
+								new Runnable() {
+									public void run() {
+										if (fStartTime == timestamp)										
+											showProgress();
+									}
+								}
+							);
+						}
+					} catch (InterruptedException e) {
+					}
+				}
+			};
+			t.start();
 			fProgressBar.beginTask(totalWork);
 		}
 		
