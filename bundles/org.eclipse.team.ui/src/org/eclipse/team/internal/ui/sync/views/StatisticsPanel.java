@@ -68,7 +68,22 @@ public class StatisticsPanel extends Composite {
 		});
 		
 		addControlListener(new ControlAdapter() {
-			public void controlResized(ControlEvent e) {				
+			public void controlResized(ControlEvent e) {
+//				Point preferredSize = nOutgoing.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+//				Rectangle currentSize = nOutgoing.getBounds();
+//				if(currentSize.width < preferredSize.y) {
+//					for (Iterator it = descriptions.iterator(); it.hasNext();) {
+//						Label element = (Label) it.next();
+//						element.setText("");					
+//					}
+//				} else {
+//					for (Iterator it = descriptions.iterator(); it.hasNext();) {
+//						Label element = (Label) it.next();
+//						element.setText("lksjfdg lksjdglksdj glks jg");
+//					}
+//				}
+//				layout(true);
+//				redraw();				
 			}
 		});	
 		addPaintListener(new PaintListener() {
