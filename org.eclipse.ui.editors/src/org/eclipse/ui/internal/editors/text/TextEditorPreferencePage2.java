@@ -12,9 +12,6 @@ Contributors:
 package org.eclipse.ui.internal.editors.text;
 
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,14 +22,12 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.TabFolder;
@@ -42,7 +37,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.jface.dialogs.DialogPage;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
 
@@ -122,16 +116,6 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 
 	private OverlayPreferenceStore fOverlayStore;
 	
-	private Map fColorButtons= new HashMap();
-	private SelectionListener fColorButtonListener= new SelectionListener() {
-		public void widgetDefaultSelected(SelectionEvent e) {
-		}
-		public void widgetSelected(SelectionEvent e) {
-			ColorEditor editor= (ColorEditor) e.widget.getData();
-			PreferenceConverter.setValue(fOverlayStore, (String) fColorButtons.get(editor), editor.getColorValue());
-		}
-	};
-	
 	private Map fCheckBoxes= new HashMap();
 	private SelectionListener fCheckBoxListener= new SelectionListener() {
 		public void widgetDefaultSelected(SelectionEvent e) {
@@ -204,28 +188,6 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		key= fAnnotationColorListModel[i][3];
 		fShowInOverviewRulerCheckBox.setSelection(fOverlayStore.getBoolean(key));				
 	}
-	
-	/**
-	 * Creates a color from the information stored in the given preference store.
-	 * Returns <code>null</code> if there is no such information available.
-	 */
-	private Color createColor(IPreferenceStore store, String key, Display display) {
-	
-		RGB rgb= null;		
-		
-		if (store.contains(key)) {
-			
-			if (store.isDefault(key))
-				rgb= PreferenceConverter.getDefaultColor(store, key);
-			else
-				rgb= PreferenceConverter.getColor(store, key);
-		
-			if (rgb != null)
-				return new Color(display, rgb);
-		}
-		
-		return null;
-	}	
 	
 	// sets enabled flag for a control and all its sub-tree
 	private static void setEnabled(Control control, boolean enable) {
@@ -444,31 +406,14 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		return composite;
 	}
 
-	private void addFiller(Composite composite) {
-		Label filler= new Label(composite, SWT.LEFT );
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 2;
-		gd.heightHint= convertHeightInCharsToPixels(1) / 2;
-		filler.setLayoutData(gd);
-	}
+//	private void addFiller(Composite composite) {
+//		Label filler= new Label(composite, SWT.LEFT );
+//		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+//		gd.horizontalSpan= 2;
+//		gd.heightHint= convertHeightInCharsToPixels(1) / 2;
+//		filler.setLayoutData(gd);
+//	}
 	
-	private static void indent(Control control) {
-		GridData gridData= new GridData();
-		gridData.horizontalIndent= 20;
-		control.setLayoutData(gridData);		
-	}
-	
-	private static void createDependency(final Button master, final Control slave) {
-		indent(slave);
-		master.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				slave.setEnabled(master.getSelection());
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {}
-		});		
-	}
-
 	/*
 	 * @see PreferencePage#createContents(Composite)
 	 */
@@ -524,15 +469,7 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 	
 	private void initializeFields() {
 		
-		Iterator e= fColorButtons.keySet().iterator();
-		while (e.hasNext()) {
-			ColorEditor c= (ColorEditor) e.next();
-			String key= (String) fColorButtons.get(c);
-			RGB rgb= PreferenceConverter.getColor(fOverlayStore, key);
-			c.setColorValue(rgb);
-		}
-		
-		e= fCheckBoxes.keySet().iterator();
+		Iterator e= fCheckBoxes.keySet().iterator();
 		while (e.hasNext()) {
 			Button b= (Button) e.next();
 			String key= (String) fCheckBoxes.get(b);
@@ -585,28 +522,6 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		super.dispose();
 	}
 	
-	private Control addColorButton(Composite composite, String label, String key, int indentation) {
-
-		Label labelControl= new Label(composite, SWT.NONE);
-		labelControl.setText(label);
-		
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= indentation;
-		labelControl.setLayoutData(gd);
-		
-		ColorEditor editor= new ColorEditor(composite);
-		Button button= editor.getButton();
-		button.setData(editor);
-		
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		button.setLayoutData(gd);
-		button.addSelectionListener(fColorButtonListener);
-		
-		fColorButtons.put(editor, key);
-		
-		return composite;
-	}
-	
 	private Button addCheckBox(Composite parent, String label, String key, int indentation) {		
 		Button checkBox= new Button(parent, SWT.CHECK);
 		checkBox.setText(label);
@@ -644,39 +559,6 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		}
 			
 		return textControl;
-	}
-	
-	private void addTextFontEditor(Composite parent, String label, String key) {
-		
-		Composite editorComposite= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 3;
-		editorComposite.setLayout(layout);		
-				
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 2;
-		editorComposite.setLayoutData(gd);
-	}
-	
-	private String loadPreviewContentFromFile(String filename) {
-		String line;
-		String separator= System.getProperty("line.separator"); //$NON-NLS-1$
-		StringBuffer buffer= new StringBuffer(512);
-		BufferedReader reader= null;
-		try {
-			reader= new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(filename)));
-			while ((line= reader.readLine()) != null) {
-				buffer.append(line);
-				buffer.append(separator);
-			}
-		} catch (IOException io) {
-			EditorsPlugin.log(io);
-		} finally {
-			if (reader != null) {
-				try { reader.close(); } catch (IOException e) {}
-			}
-		}
-		return buffer.toString();
 	}
 	
 	private void numberFieldChanged(Text textControl) {
