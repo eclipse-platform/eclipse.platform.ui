@@ -41,9 +41,11 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.MessagePage;
@@ -566,6 +568,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 							}
 						}
 					}
+					setMemento(null);
 				}
 			}
 		};
@@ -587,6 +590,15 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 			action.setChecked(checked);
 		}
 	}
+
+	/**
+	 * @see IViewPart#init(IViewSite, IMemento)
+	 */
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
+		//store the memento to be used when this view is created.
+		setMemento(memento);
+	}	 
 
 	/**
 	 * Sets the viewer for this view.
