@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSStatus;
@@ -34,7 +35,6 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Update;
-import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogListener;
@@ -50,6 +50,8 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 
 	// cache for file contents received from the server
 	private byte[] contents;
+	// cach the log entry for the remote file
+	private ILogEntry entry;
 			
 	/**
 	 * Static method which creates a file as a single child of its parent.
@@ -153,18 +155,33 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	public InputStream getContents(final IProgressMonitor monitor) {
 		try {
 			if (contents == null) {
+				final List entries = new ArrayList();
 				monitor.beginTask(null, 100);
 				IStatus status;
 				Session s = new Session(getRepository(), parent, false);
 				s.open(Policy.subMonitorFor(monitor, 10));
 				try {
 					status = Command.UPDATE.execute(s,
-					Command.NO_GLOBAL_OPTIONS,
-					new LocalOption[] { Update.makeTagOption(new CVSTag(info.getRevision(), CVSTag.VERSION)),
-						Update.IGNORE_LOCAL_CHANGES },
-					new String[] { getName() },
-					null,
-					Policy.subMonitorFor(monitor, 90));
+						Command.NO_GLOBAL_OPTIONS,
+						new LocalOption[] { 
+							Update.makeTagOption(new CVSTag(info.getRevision(), CVSTag.VERSION)),
+							Update.IGNORE_LOCAL_CHANGES },
+						new String[] { getName() },
+						null,
+						Policy.subMonitorFor(monitor, 80));
+					if (status.getCode() != CVSStatus.SERVER_ERROR) {
+						IStatus logStatus = Command.LOG.execute(s,
+							Command.NO_GLOBAL_OPTIONS,
+							new LocalOption[] { 
+								Command.LOG.makeRevisionOption(info.getRevision())},
+							new String[] { getName() },
+							new LogListener(this, entries),
+							Policy.subMonitorFor(monitor, 10));
+						if (logStatus.isMultiStatus()) {
+							((MultiStatus)logStatus).merge(status);
+							status = logStatus;
+						}
+					}
 				} finally {
 					s.close();
 					monitor.done();
@@ -176,6 +193,12 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 				// than we can assume that the remote file has no contents.
 				if (contents == null)
 					contents = new byte[0];
+					
+				if (entries.size() == 1) {
+					entry = (ILogEntry)entries.get(0);
+				} else {
+					// No log entry was fetch for the remote file.
+				}
 			}
 			return new ByteArrayInputStream(contents);
 		} catch(CVSException e) {
@@ -306,6 +329,13 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	 */
 	public InputStream getContents() throws CVSException {
 		return new ByteArrayInputStream(contents == null ? new byte[0] : contents);
+	}
+
+	/*
+	 * @see ICVSRemoteFile#getLogEntry()
+	 */
+	public ILogEntry getLogEntry() {
+		return entry;
 	}
 
 	/*

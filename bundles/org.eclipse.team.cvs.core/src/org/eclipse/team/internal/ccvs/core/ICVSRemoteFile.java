@@ -22,7 +22,14 @@ import org.eclipse.team.core.TeamException;
 public interface ICVSRemoteFile extends ICVSRemoteResource {
 
 	/**
-	 * Get the log entries of the remote file
+	 * Get the log entry for the revision the remote file represents.
+	 * This method will return null until after the getContents(IProgressMonitor)
+	 * method is called (i.e. the call to getContents also fetches the entry.
+	 */
+	public ILogEntry getLogEntry();
+	
+	/**
+	 * Get all the log entries of the remote file
 	 */
 	public ILogEntry[] getLogEntries(IProgressMonitor monitor) throws TeamException;
 	
