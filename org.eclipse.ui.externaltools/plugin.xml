@@ -65,7 +65,7 @@
 				id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
 				definitionId= "org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
 				label="%Action.externalTools"
-				toolbarPath="org.eclipse.ui.workbench.file/additions"
+				toolbarPath="Normal/additions"
 				disabledIcon="icons/full/dtool16/external_tools.gif"
 				icon="icons/full/etool16/external_tools.gif"
 				hoverIcon="icons/full/ctool16/external_tools.gif"
