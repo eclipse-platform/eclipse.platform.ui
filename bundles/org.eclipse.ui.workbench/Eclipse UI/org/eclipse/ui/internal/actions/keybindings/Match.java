@@ -39,9 +39,6 @@ public final class Match implements Comparable {
 	}	
 
 	public int compareTo(Object object) {
-		if (!(object instanceof Match))
-			throw new ClassCastException();
-			
 		Match match = (Match) object;
 		int compareTo = binding.compareTo(match.binding);
 		

@@ -66,12 +66,11 @@ public final class Path implements Comparable {
 		return pathItems;
 	}
 
-	public boolean equalsOrIsChildOf(Path path) {
-		return pathItems.size() >= path.pathItems.size() && pathItems.subList(0, path.pathItems.size()).equals(path.pathItems);
-	}
-			
-	public boolean isChildOf(Path path) {
-		return pathItems.size() > path.pathItems.size() && pathItems.subList(0, path.pathItems.size()).equals(path.pathItems);
+	public boolean isChildOf(Path path, boolean equals) {
+		if (path == null)
+			return false;
+
+		return Util.isChildOf(pathItems, path.pathItems, equals);
 	}
 
 	public int match(Path path)
@@ -79,17 +78,14 @@ public final class Path implements Comparable {
 		if (path == null)
 			throw new IllegalArgumentException();
 			
-		if (path.equalsOrIsChildOf(this)) 
+		if (path.isChildOf(this, true)) 
 			return path.pathItems.size() - pathItems.size();
 		else 
 			return -1;
 	}
 
 	public int compareTo(Object object) {
-		if (!(object instanceof Path))
-			throw new ClassCastException();
-
-		return Util.compare(pathItems.iterator(), ((Path) object).pathItems.iterator());
+		return Util.compare(pathItems, ((Path) object).pathItems);
 	}
 	
 	public boolean equals(Object object) {

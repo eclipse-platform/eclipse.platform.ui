@@ -65,9 +65,6 @@ public final class KeyStroke implements Comparable {
 	}
 	
 	public int compareTo(Object object) {
-		if (!(object instanceof KeyStroke))
-			throw new ClassCastException();
-			
 		return accelerator - ((KeyStroke) object).accelerator;
 	}
 	

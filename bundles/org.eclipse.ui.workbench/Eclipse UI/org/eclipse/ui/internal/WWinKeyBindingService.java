@@ -332,7 +332,7 @@ public class WWinKeyBindingService {
 		while (iterator.hasNext()) {
 			KeySequence keySequence = (KeySequence) iterator.next();
 			
-			if (keySequence.isChildOf(mode))
+			if (keySequence.isChildOf(mode, false))
 				keyStrokeSetForMode.add(keySequence.getKeyStrokes().get(size));	
 		}
 

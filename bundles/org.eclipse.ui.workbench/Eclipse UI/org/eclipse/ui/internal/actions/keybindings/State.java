@@ -70,10 +70,7 @@ public final class State implements Comparable {
 	}
 
 	public int compareTo(Object object) {
-		if (!(object instanceof State))
-			throw new ClassCastException();	
-		
-		return Util.compare(paths.iterator(), ((State) object).paths.iterator());
+		return Util.compare(paths, ((State) object).paths);
 	}
 	
 	public boolean equals(Object object) {

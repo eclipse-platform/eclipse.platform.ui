@@ -269,9 +269,6 @@ public class KeyManager {
 			String scope;
 
 			public int compareTo(Object object) {
-				if (!(object instanceof Key))
-					throw new ClassCastException();		
-				
 				Key key = (Key) object;
 				int compareTo = keySequence.compareTo(key.keySequence);
 		
@@ -521,21 +518,11 @@ public class KeyManager {
 		Map actionMap = getKeyMachine().getActionMap();		
 		SortedSet matchSet = (SortedSet) actionMap.get(action);
 		
-		if (matchSet != null) {
-			int i = 0;
-	    	StringBuffer stringBuffer = new StringBuffer();
-			Iterator iterator = matchSet.iterator();
-						
-			while (iterator.hasNext() && i < 2) {
-				if (i != 0)
-					stringBuffer.append(KEY_SEQUENCE_SEPARATOR);
-
-				Match match = (Match) iterator.next();	
-				stringBuffer.append(getTextForKeySequence(match.getBinding().getKeySequence()));
-				i++;
-			}
-	
-			text = stringBuffer.toString();
+		if (matchSet != null && !matchSet.isEmpty()) {
+			Match match = (Match) matchSet.first();
+		
+			if (match != null)
+				text = getTextForKeySequence(match.getBinding().getKeySequence());
 		}
 		
 		return text;

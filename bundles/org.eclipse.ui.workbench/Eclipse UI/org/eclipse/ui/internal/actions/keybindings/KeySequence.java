@@ -81,14 +81,11 @@ public final class KeySequence implements Comparable {
 		return keyStrokes;
 	}
 
-	public boolean equalsOrIsChildOf(KeySequence keySequence) {
-		return keyStrokes.size() >= keySequence.keyStrokes.size() && 
-			keyStrokes.subList(0, keySequence.keyStrokes.size()).equals(keySequence.keyStrokes);
-	}
-			
-	public boolean isChildOf(KeySequence keySequence) {
-		return keyStrokes.size() > keySequence.keyStrokes.size() &&
-			keyStrokes.subList(0, keySequence.keyStrokes.size()).equals(keySequence.keyStrokes);
+	public boolean isChildOf(KeySequence keySequence, boolean equals) {
+		if (keySequence == null)
+			return false;
+		
+		return Util.isChildOf(keyStrokes, keySequence.keyStrokes, equals);
 	}
 
 	public void write(IMemento memento)
@@ -103,10 +100,7 @@ public final class KeySequence implements Comparable {
 	}
 
 	public int compareTo(Object object) {
-		if (!(object instanceof KeySequence))
-			throw new ClassCastException();
-
-		return Util.compare(keyStrokes.iterator(), ((KeySequence) object).keyStrokes.iterator());
+		return Util.compare(keyStrokes, ((KeySequence) object).keyStrokes);
 	}
 	
 	public boolean equals(Object object) {

@@ -115,9 +115,6 @@ public final class Binding implements Comparable {
 	}
 	
 	public int compareTo(Object object) {
-		if (!(object instanceof Binding))
-			throw new ClassCastException();		
-		
 		Binding binding = (Binding) object;
 		int compareTo = Util.compare(action, binding.action); 
 		

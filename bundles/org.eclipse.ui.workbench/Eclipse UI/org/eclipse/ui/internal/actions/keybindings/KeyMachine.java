@@ -109,7 +109,7 @@ public final class KeyMachine {
 			while (iterator.hasNext()) {
 				Match match = (Match) iterator.next();
 
-				if (match.getBinding().getKeySequence().isChildOf(mode))
+				if (match.getBinding().getKeySequence().isChildOf(mode, false))
 					matchSetForMode.add(match);				
 			}
 

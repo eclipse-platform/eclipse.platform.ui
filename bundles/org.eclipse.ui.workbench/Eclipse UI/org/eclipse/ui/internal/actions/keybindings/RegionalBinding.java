@@ -47,9 +47,6 @@ public final class RegionalBinding implements Comparable {
 	}
 
 	public int compareTo(Object object) {
-		if (!(object instanceof RegionalBinding))
-			throw new ClassCastException();		
-		
 		RegionalBinding regionalBinding = (RegionalBinding) object;
 		int compareTo = binding.compareTo(regionalBinding.binding);
 
