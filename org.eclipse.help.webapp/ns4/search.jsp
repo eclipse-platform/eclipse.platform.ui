@@ -135,7 +135,7 @@ function doSearch()
 					<input type="hidden" name="maxHits" value="500" >
 				</td>
 				<td>
-					&nbsp;<a id="advanced" href="javascript:openAdvanced();" alt='<%=WebappResources.getString("Advanced", request)%>' onmouseover="window.status='<%=WebappResources.getString("Advanced", request)%>';return true;" onmouseout="window.status=''"><%=WebappResources.getString("Advanced", request)%></a>&nbsp;
+					&nbsp;<a id="advanced" href="javascript:openAdvanced();" alt='<%=WebappResources.getString("Advanced", request)%>' onmouseover="window.status='<%=WebappResources.getString("Advanced", request)%>';return true;" onmouseout="window.status=''"><%=WebappResources.getString("Advanced", request)%></a>
 				</td>
 			</tr>
 
