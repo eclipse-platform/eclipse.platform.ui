@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ssh2;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -44,10 +42,6 @@ public class CVSSSH2Plugin extends AbstractUIPlugin {
 		plugin = this;
 	}
 
-	public static CVSSSH2Plugin getPlugin() {
-		return plugin;
-	}
-
 	public void stop(BundleContext context) throws Exception {
 		try {
 			JSchSession.shutdown();
@@ -58,10 +52,6 @@ public class CVSSSH2Plugin extends AbstractUIPlugin {
 
 	public static CVSSSH2Plugin getDefault() {
 		return plugin;
-	}
-
-	public static IWorkspace getWorkspace() {
-		return ResourcesPlugin.getWorkspace();
 	}
 
 	private void initializeDefaultPreferences() {

@@ -33,10 +33,6 @@ public class KnownHosts {
 
 	private String filename;
 	
-	public KnownHosts(String filename) {
-		this.filename = filename;
-	}
-	
 	public KnownHosts() {
 		this.filename = KnownHosts.defaultFilename();
 	}
