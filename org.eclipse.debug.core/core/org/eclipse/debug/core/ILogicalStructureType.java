@@ -46,7 +46,9 @@ import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2;
  * <p>
  * Clients are not intended to implement this interface. Instead clients
  * providing logical strucutre types provide and implement an
- * <code>ILogicalStructureTypeDelegate</code>.
+ * <code>ILogicalStructureTypeDelegate</code>. Clients may optionally implement
+ * <code>ILogicalStructureTypeDelegate2</code> to provide dynamic descriptions
+ * of logical structures.
  * </p>
  * @since 3.0
  * @see org.eclipse.debug.core.model.ILogicalStructureTypeDelegate
@@ -56,9 +58,13 @@ public interface ILogicalStructureType extends ILogicalStructureTypeDelegate, IL
 	/**
 	 * Returns a simple description of the logical structure provided by this
 	 * structure type.
+	 * <p>
+	 * Since 3.1, this method can return <code>null</code> if this logical structure
+	 * type's delegate implements <code>ILogicalStructureTypeDelegate2</code>.
+	 * </p>
 	 * 
 	 * @return a simple description of the logical structure provided by this
-	 * structure type
+	 * structure type, possibly <code>null</code>
 	 */
 	public String getDescription();
 	

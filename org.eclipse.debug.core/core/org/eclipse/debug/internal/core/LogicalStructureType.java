@@ -29,6 +29,9 @@ public class LogicalStructureType implements ILogicalStructureType {
 	private IConfigurationElement fConfigurationElement;
 	private ILogicalStructureTypeDelegate fDelegate;
 	private String fModelId;
+	// whether the 'description' attribute has been verified to exist: it is only
+	// required when the delegate does *not* implement ILogicalStructureTypeDelegate2.
+	private boolean fVerifiedDescription = false; 
 	
 	/**
 	 * Constructs a new logical structure type, and verifies required attributes.
@@ -47,7 +50,6 @@ public class LogicalStructureType implements ILogicalStructureType {
 	 */
 	private void verifyAttributes() throws CoreException {
 		verifyAttributeExists("id"); //$NON-NLS-1$
-		verifyAttributeExists("description"); //$NON-NLS-1$
 		verifyAttributeExists("class"); //$NON-NLS-1$
 		fModelId = fConfigurationElement.getAttribute("modelIdentifier"); //$NON-NLS-1$
 		if (fModelId == null) {
@@ -121,6 +123,18 @@ public class LogicalStructureType implements ILogicalStructureType {
 			ILogicalStructureTypeDelegate2 d2 = (ILogicalStructureTypeDelegate2) delegate;
 			return d2.getDescription(value);
 		}
-		return getDescription();
+		if (!fVerifiedDescription) {
+		    fVerifiedDescription = true;
+		    try {
+                verifyAttributeExists("description"); //$NON-NLS-1$
+            } catch (CoreException e) {
+                DebugPlugin.log(e);
+            }
+		}
+		String description = getDescription();
+		if (description == null) {
+		    return DebugCoreMessages.getString("LogicalStructureType.0"); //$NON-NLS-1$
+		}
+		return description;
 	}
 }
