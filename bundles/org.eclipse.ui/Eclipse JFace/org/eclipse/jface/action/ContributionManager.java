@@ -44,6 +44,12 @@ public abstract class ContributionManager implements IContributionManager {
 	 * Number of dynamic contribution items.
 	 */
 	private int dynamicItems = 0;
+	
+	/**
+	 * The overrides for items of this manager
+	 */
+	private IContributionManagerOverrides overrides;
+	
 /**
  * Creates a new contribution manager.
  */
@@ -59,6 +65,7 @@ public void add(IAction action) {
  * Method declared on IContributionManager.
  */
 public void add(IContributionItem item) {
+	item.setParent(this);
 	contributions.add(item);
 	itemAdded(item);
 }
@@ -76,6 +83,7 @@ public void add(IContributionItem item) {
 private void addToGroup(String groupName, IContributionItem item, boolean append) 
 {
 	int i;
+	item.setParent(this);
 	Iterator items = contributions.iterator();
 	for (i = 0; items.hasNext(); i++) {
 		IContributionItem o = (IContributionItem) items.next();
@@ -150,6 +158,24 @@ public IContributionItem[] getItems() {
 	return items;
 }
 /**
+ * The <code>ContributionManager</code> implemenatation of this
+ * method declared on <code>IContributionManager</code> returns
+ * the current overrides. If there is no overrides it lazily creates
+ * one which overrides no item state.
+ * 
+ * @since 2.0
+ */
+public IContributionManagerOverrides getOverrides() {
+	if (overrides == null) {
+		overrides = new IContributionManagerOverrides() {
+			public boolean getEnabledAllowed(IContributionItem item) {
+				return true;
+			}
+		};
+	}
+	return overrides;
+}
+/**
  * Returns whether this contribution manager contains dynamic items. 
  * A dynamic contribution item contributes items conditionally, 
  * dependent on some internal state.
@@ -176,6 +202,7 @@ public void insertAfter(String ID, IContributionItem item) {
 	int ix= contributions.indexOf(ci);
 	if (ix >= 0) {
 		// System.out.println("insert after: " + ix);
+		item.setParent(this);
 		contributions.add(ix+1,item);
 		itemAdded(item);
 	}
@@ -196,6 +223,7 @@ public void insertBefore(String ID, IContributionItem item) {
 	int ix = contributions.indexOf(ci);
 	if (ix >= 0) {
 		// System.out.println("insert before: " + ix);
+		item.setParent(this);
 		contributions.add(ix,item);
 		itemAdded(item);
 	}
@@ -284,5 +312,14 @@ public void removeAll() {
  */
 protected void setDirty(boolean d) {
 	isDirty = d;
+}
+/**
+ * Sets the overrides for this contribution manager
+ * 
+ * @param newOverrides the overrides for the items of this manager
+ * @since 2.0
+ */
+public void setOverrides(IContributionManagerOverrides newOverrides) {
+	overrides = newOverrides;
 }
 }

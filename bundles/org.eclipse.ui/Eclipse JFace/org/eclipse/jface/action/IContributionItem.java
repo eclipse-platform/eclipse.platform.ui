@@ -90,30 +90,19 @@ public boolean isGroupMarker();
  */
 public boolean isSeparator();
 /**
- * Returns whether this contribution item is allowed to be enabled 
- * within its manager.
- * 
- * @return <code>true</code> if this item is enabled, and
- *  <code>false</code> otherwise
- * @since 2.0
- */
-public boolean isEnabledAllowed();
-/**
- * Sets whether this contribution item is allowed to be enabled within
- * its manager.
- *
- * @param enabledAllowed <code>true</code> if this item can be enabled, and
- *  <code>false</code> otherwise
- * @since 2.0
- */
-public void setEnabledAllowed(boolean enabledAllowed);
-/**
  * Returns whether this contribution item is visibile within its manager.
  *
  * @return <code>true</code> if this item is visible, and
  *  <code>false</code> otherwise
  */
 public boolean isVisible();
+/**
+ * Sets the parent manager of this item
+ * 
+ * @param parent the parent contribution manager
+ * @since 2.0
+ */
+public void setParent(IContributionManager parent);
 /**
  * Sets whether this contribution item is visibile within its manager.
  *
@@ -127,4 +116,12 @@ public void setVisible(boolean visible);
  * Called by contribution manager update methods.
  */
 public void update();
+/**
+ * Updates any SWT controls cached by this contribution item with changes
+ * for the the given property. 
+ * 
+ * @param String id the di of the changed property
+ * @since 2.0
+ */
+public void update(String id);
 }

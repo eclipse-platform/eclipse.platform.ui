@@ -17,8 +17,36 @@ import java.util.*;
  */
 public class EditorMenuManager extends SubMenuManager {
 	private IMenuManager parentMgr;
-	private ArrayList wrappers;
-	private boolean enabledAllowed;
+  	private ArrayList wrappers;
+  	private boolean enabledAllowed = true;
+  	
+	private class Overrides implements IContributionManagerOverrides {
+		/**
+		 * Indicates that the items of this manager are allowed to enable;
+		 * <code>true</code> by default.
+		 */
+		public void updateEnabledAllowed() {
+			// update the items in the map
+			IContributionItem[] items = EditorMenuManager.super.getItems();
+			for (int i = 0; i < items.length; i++) {
+				IContributionItem item = items[i];
+				item.update(IContributionManagerOverrides.P_ENABLE_ALLOWED);
+			}
+			// update the wrapped menus
+			if (wrappers != null) {
+				for (int i = 0; i < wrappers.size(); i++) {
+					EditorMenuManager manager = (EditorMenuManager)wrappers.get(i);
+					manager.setEnabledAllowed(enabledAllowed);
+				}
+			}
+		}
+		public boolean getEnabledAllowed(IContributionItem item) {
+			return ((item instanceof ActionContributionItem) &&
+				(((ActionContributionItem)item).getAction() instanceof RetargetAction)) ||
+				enabledAllowed;
+		}
+	}
+	private Overrides overrides = new Overrides();
 /**
  * Constructs a new editor manager.
  */
@@ -31,6 +59,12 @@ public EditorMenuManager(IMenuManager mgr) {
  */
 public IContributionItem[] getItems() {
 	return parentMgr.getItems();
+}
+/* (non-Javadoc)
+ * Method declared on IContributionManager.
+ */
+public IContributionManagerOverrides getOverrides() {
+	return overrides;
 }
 /* (non-Javadoc)
  * Method declared on IContributionManager.
@@ -71,7 +105,7 @@ public void prependToGroup(String groupName, IContributionItem item) {
 public void setVisible(boolean visible, boolean forceVisibility) {
 	if (visible) {
 		// Make the items visible 
-		if (!isEnabledAllowed()) 
+		if (!enabledAllowed) 
 			setEnabledAllowed(true);
 		if (!isVisible())
 			setVisible(true);
@@ -85,54 +119,18 @@ public void setVisible(boolean visible, boolean forceVisibility) {
 			setEnabledAllowed(false);
 	}
 }
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
-public boolean isEnabledAllowed() {
-	return enabledAllowed;
-}
-
 /**
  * Sets the enablement ability of all the items contributed by the editor.
+ *
+ * @param enabledAllowed <code>true</code> if the items may enable
+ * @since 2.0
  */
 public void setEnabledAllowed(boolean enabledAllowed) {
+	if (this.enabledAllowed == enabledAllowed)
+		return;
 	this.enabledAllowed = enabledAllowed;
-	IContributionItem[] items = super.getItems();
-	for (int i = 0; i < items.length; i++) {
-		IContributionItem item = items[i];
-		item.setEnabledAllowed(enabledAllowed);
-	}
-	// pass it on to the created wrappers
-	if (wrappers != null) {
-		for (int i = 0; i < wrappers.size(); i++) {
-			((EditorMenuManager)wrappers.get(i)).setEnabledAllowed(enabledAllowed);
-		}
-	}
-	if (!enabledAllowed) {
-		// search for retarget actions and allow them to enable
-		setRetargetEnabledAllowed(this);
-	}
+	overrides.updateEnabledAllowed();
 }
-
-/**
- * Sets enablement allowed ability for the given item if it is a retarget
- * action.
- */
-public void setRetargetEnabledAllowed(IContributionItem item) {
-	if (item instanceof IMenuManager) {
-		IContributionItem[] items = ((IMenuManager)item).getItems();
-		for (int i = 0; i < items.length; i++) {
-			setRetargetEnabledAllowed(items[i]);
-		}
-	} else if (item instanceof SubContributionItem) {
-		setRetargetEnabledAllowed(((SubContributionItem)item).getInnerItem());
-	} else if (item instanceof ActionContributionItem &&
-		((ActionContributionItem)item).getAction() instanceof RetargetAction) {
-			// retarget actions stay enabled if they have a handler	
-			item.setEnabledAllowed(true);
-	}
-}
-
 /* (non-Javadoc)
  * Method declared on SubMenuManager.
  */

@@ -30,12 +30,6 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
 	 * the visibility of the submenus is also modified.
 	 */
 	private Map mapMenuToWrapper;
-	
-	/**
-	 * Indicates that the items of this manager are allowed to enable;
-	 * <code>true</code> by default.
-	 */
-	private boolean enabledAllowed = true;
 
 /**
  * Constructs a new manager.
@@ -175,23 +169,6 @@ public boolean isGroupMarker() {
 public boolean isSeparator() {
 	return parentMgr.isSeparator();
 }
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
-public boolean isEnabledAllowed() {
-	return enabledAllowed;
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
-public void setEnabledAllowed(boolean enableAllowed) {
-	this.enabledAllowed = enableAllowed;
-	IContributionItem[] items = getItems();
-	for (int i = 0; i < items.length; i++) {
-		items[i].setEnabledAllowed(enabledAllowed);
-	}
-	
-}
 /**
  * Remove all contribution items.
  */
@@ -212,6 +189,13 @@ public void removeAll() {
  */
 public void removeMenuListener(IMenuListener listener) {
 	parentMgr.removeMenuListener(listener);
+}
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ */
+public void setParent(IContributionManager parent) {
+	// do nothing, our "parent manager's" parent 
+	// is set when it is added to a manager
 }
 /* (non-Javadoc)
  * Method declared on IMenuManager.
@@ -259,6 +243,12 @@ public void updateAll(boolean force) {
 	// point we need to update the parent.
 	parentMgr.updateAll(force);
 }
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ */
+public void update(String id) {
+	parentMgr.update(id);
+}
 /**
  * Wraps a menu manager in a sub menu manager, and returns the new wrapper.
  */
@@ -286,5 +276,4 @@ protected IContributionItem unwrap(IContributionItem item) {
 	}
 	return item;
 }
-
 }

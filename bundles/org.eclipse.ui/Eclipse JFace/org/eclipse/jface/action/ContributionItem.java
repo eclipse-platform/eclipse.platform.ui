@@ -16,18 +16,17 @@ public abstract class ContributionItem implements IContributionItem {
 	 * The identifier for this contribution item, of <code>null</code> if none.
 	 */
 	private String id = null;
-	
-	/**
-	 * Indicates this item is allowed to be enabled in its manager;
-	 * <code>true</code> by default.
-	 */
-	private boolean enabledAllowed = true;
 
 	/**
 	 * Indicates this item is visible in its manager; <code>true</code> 
 	 * by default.
 	 */
 	private boolean visible = true;
+
+    /**
+     * The parent contribution manager for this item
+     */
+	private IContributionManager parent;
 /**
  * Creates a contribution item with a <code>null</code> id.
  * Calls <code>this(String)</code> with <code>null</code>.
@@ -70,6 +69,15 @@ public String getId() {
 	return id;
 }
 /**
+ * Returns the parent contribution manager.
+ * 
+ * @return the parent contribution manager
+ * @since 2.0
+ */
+public IContributionManager getParent() {
+	return parent;
+}
+/**
  * The default implementation of this <code>IContributionItem</code>
  * method returns <code>false</code>. Subclasses may override.
  */
@@ -89,23 +97,6 @@ public boolean isGroupMarker() {
  */
 public boolean isSeparator() {
 	return false;
-}
-/**
- * The default implementation of this <code>IContributionItem</code>
- * method returns the value recorded in an internal state variable,
- * which is <code>true</code> by default. <code>setEnableAllowed</code>
- * should be used to change this setting.
- */
-public boolean isEnabledAllowed() {
-	return enabledAllowed;
-}
-/**
- * The default implementation of this <code>IContributionItem</code>
- * method stores the value in an internal state variable,
- * which is <code>true</code> by default.
- */
-public void setEnabledAllowed(boolean enabledAllowed) {
-	this.enabledAllowed = enabledAllowed;
 }
 /**
  * The default implementation of this <code>IContributionItem</code>
@@ -136,5 +127,18 @@ public String toString() {
  * method does nothing. Subclasses may override.
  */
 public void update() {
+}
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ */
+public void setParent(IContributionManager parent) {
+	this.parent = parent;
+}
+/**
+ * The <code>ContributionItem</code> implementation of this 
+ * method declared on <code>IContributionItem</code> does nothing.
+ * Subclasses should override to update their state.
+ */
+public void update(String id) {
 }
 }

@@ -56,18 +56,21 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 	private boolean removeAllWhenShown = false;
 	
 	/**
-	 * Indicates that the managed items are allowed to enable;
-	 * <code>true</code> by default.
+	 * The parent contribution manager.
 	 */
-	private boolean enabledAllowed = true;
-	
+	private IContributionManager parent;
 
 	/**
 	 * Indicates this item is visible in its manager; <code>true</code> 
 	 * by default.
 	 */
 	private boolean visible = true;
-	
+
+	/**
+	 * The overrides for items of this manager
+	 */
+	private IContributionManagerOverrides overrides;
+
 	private static String OLD_ACCELERATOR = "org.eclipse.jface.action.MenuManager.oldAccelerator";
 	private static String OLD_LABEL = "org.eclipse.jface.action.MenuManager.oldLabel";
 	private static String ACCELERATORS_ALLOWED = "org.eclipse.jface.action.MenuManager.accelerators_allowed";
@@ -251,6 +254,35 @@ public Menu getMenu() {
 	return menu;
 }
 /* (non-Javadoc)
+ * Method declared on IContributionManager.
+ */
+public IContributionManagerOverrides getOverrides() {
+	if (overrides == null) {
+		if (parent == null) {
+			overrides = new IContributionManagerOverrides() {
+				public boolean getEnabledAllowed(IContributionItem item) {
+					return true;
+				}
+			};
+		} else {
+			overrides = parent.getOverrides();
+		}
+		super.setOverrides(overrides);
+	}
+	return overrides;
+}
+
+/**
+ * Returns the parent contribution manager of this manger.
+ * 
+ * @return the parent contribution manager
+ * @since 2.0
+ */
+public IContributionManager getParent() {
+	return parent;
+}
+
+/* (non-Javadoc)
  * Method declared on IMenuManager.
  */
 public boolean getRemoveAllWhenShown() {
@@ -340,12 +372,6 @@ public boolean isSubstituteFor(IContributionItem item) {
 /* (non-Javadoc)
  * Method declared on IContributionItem.
  */
-public boolean isEnabledAllowed() {
-	return enabledAllowed;
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
 public boolean isVisible() {
 	return visible;
 }
@@ -374,18 +400,24 @@ public void setRemoveAllWhenShown(boolean removeAll) {
 /* (non-Javadoc)
  * Method declared on IContributionItem.
  */
-public void setEnabledAllowed(boolean enabledAllowed) {
-	this.enabledAllowed = enabledAllowed;
-	IContributionItem[] items = getItems();
-	for (int i = 0; i < items.length; i++) {
-		items[i].setEnabledAllowed(enabledAllowed);
-	}
+public void setVisible(boolean visible) {
+	this.visible = visible;
+}
+/**
+ * Sets the overrides for this contribution manager
+ * 
+ * @param newOverrides the overrides for the items of this manager
+ * @since 2.0
+ */
+public void setOverrides(IContributionManagerOverrides newOverrides) {
+	overrides = newOverrides;
+	super.setOverrides(overrides);
 }
 /* (non-Javadoc)
  * Method declared on IContributionItem.
  */
-public void setVisible(boolean visible) {
-	this.visible = visible;
+public void setParent(IContributionManager manager) {
+	parent = manager;
 }
 /* (non-Javadoc)
  * Method declared on IContributionItem.
@@ -401,6 +433,17 @@ public void update() {
  */
 public void update(boolean force) {
 	update(force, false);
+}
+/**
+ * The <code>MenuManager</code> implementation of this 
+ * method declared on <code>IContributionItem</code> updates
+ * all of the items.
+ */
+public void update(String id) {
+	IContributionItem[] items = getItems();
+	for (int i = 0; i < items.length; i++) {
+		items[i].update(id);
+	}
 }
 /**
  * Incrementally builds the menu from the contribution items.
@@ -636,4 +679,6 @@ private void restoreAccelerators(MenuItem item) {
 	if (label != null)
 		item.setText(label);
 }
+
+
 }

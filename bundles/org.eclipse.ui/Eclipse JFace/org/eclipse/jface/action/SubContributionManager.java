@@ -27,6 +27,7 @@ public abstract class SubContributionManager implements IContributionManager {
 	 * The visibility of the manager,
 	 */
 	private boolean visible = false;
+	
 /**
  * Constructs a new <code>SubContributionManager</code>
  *
@@ -48,6 +49,7 @@ public void add(IAction action) {
  * Method declared on IContributionManager.
  */
 public void add(IContributionItem item) {
+	item.setParent(this);
 	SubContributionItem wrap = wrap(item);
 	wrap.setVisible(visible);
 	parentMgr.add(wrap);
@@ -63,6 +65,7 @@ public void appendToGroup(String groupName, IAction action) {
  * Method declared on IContributionManager.
  */
 public void appendToGroup(String groupName, IContributionItem item) {
+	item.setParent(this);
 	SubContributionItem wrap = wrap(item);
 	wrap.setVisible(visible);
 	parentMgr.appendToGroup(groupName, wrap);
@@ -100,6 +103,12 @@ public IContributionManager getParent() {
 /* (non-Javadoc)
  * Method declared on IContributionManager.
  */
+public IContributionManagerOverrides getOverrides() {
+	return parentMgr.getOverrides();
+}
+/* (non-Javadoc)
+ * Method declared on IContributionManager.
+ */
 public void insertAfter(String id, IAction action) {
 	insertAfter(id, new ActionContributionItem(action));
 }
@@ -107,6 +116,7 @@ public void insertAfter(String id, IAction action) {
  * Method declared on IContributionManager.
  */
 public void insertAfter(String id, IContributionItem item) {
+	item.setParent(this);
 	SubContributionItem wrap = wrap(item);
 	wrap.setVisible(visible);
 	parentMgr.insertAfter(id, wrap);
@@ -122,6 +132,7 @@ public void insertBefore(String id, IAction action) {
  * Method declared on IContributionManager.
  */
 public void insertBefore(String id, IContributionItem item) {
+	item.setParent(this);
 	SubContributionItem wrap = wrap(item);
 	wrap.setVisible(visible);
 	parentMgr.insertBefore(id, wrap);
@@ -203,6 +214,7 @@ public void prependToGroup(String groupName, IAction action) {
  * Method declared on IContributionManager.
  */
 public void prependToGroup(String groupName, IContributionItem item) {
+	item.setParent(this);
 	SubContributionItem wrap = wrap(item);
 	wrap.setVisible(visible);
 	parentMgr.prependToGroup(groupName, wrap);

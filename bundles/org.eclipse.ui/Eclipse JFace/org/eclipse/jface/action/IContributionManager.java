@@ -81,6 +81,13 @@ public IContributionItem find(String id);
  */
 public IContributionItem[] getItems();
 /**
+ * Returns the overrides for the items of this manager.
+ * 
+ * @return the overrides for the items of this manager
+ * @since 2.0 
+ */
+public IContributionManagerOverrides getOverrides();
+/**
  * Inserts a contribution item for the given action after the item 
  * with the given id.
  * Equivalent to

@@ -86,20 +86,15 @@ public boolean isSeparator() {
 /* (non-Javadoc)
  * Method declared on IContributionItem.
  */
-public boolean isEnabledAllowed() {
-	return innerItem.isEnabledAllowed();
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
-public void setEnabledAllowed(boolean enableAllowed) {
-	innerItem.setEnabledAllowed(enableAllowed);
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
 public boolean isVisible() {
 	return visible && innerItem.isVisible();
+}
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ */
+public void setParent(IContributionManager parent) {
+	// do nothing, the parent of our inner item
+	// is its SubContributionManager
 }
 /* (non-Javadoc)
  * Method declared on IContributionItem.
@@ -112,5 +107,11 @@ public void setVisible(boolean visible) {
  */
 public void update() {
 	innerItem.update();
+}
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ */
+public void update(String id) {
+	innerItem.update(id);
 }
 }

@@ -423,37 +423,17 @@ public boolean isDynamic() {
 	//actions in menus are always dynamic
 	return widget instanceof MenuItem;
 }
-
 /**
- * The <code>ActionContributionItem</code> implementation of this method declared
- * by <code>IContributionItem</code> ensures that the current widget enablement state
- * is correct.
+ * Returns <code>true</code> if this item is allowed to enable,
+ * <code>false</code> otherwise.
+ * 
+ * @return if this item is allowed to be enabled
+ * @since 2.0
  */
-public void setEnabledAllowed(boolean enabledAllowed) {
-	if (isEnabledAllowed() == enabledAllowed)
-		return; // no change
-
-	super.setEnabledAllowed(enabledAllowed);
-
-	if (!enabledAllowed && !action.isEnabled())
-		return; // already disabled
-
-	if (widget != null) {
-		boolean b = action.isEnabled() && enabledAllowed; 
-		// if the widget state is different than the (allowed) action state, update it
-
-		if (widget instanceof ToolItem) {
-			ToolItem ti = (ToolItem) widget;
-			if (ti.isEnabled() != b)
-				ti.setEnabled(b);		
-		}
-		
-		if (widget instanceof MenuItem) {
-			MenuItem mi = (MenuItem) widget;
-			if (mi.isEnabled() != b)
-				mi.setEnabled(b);	
-		}
-	}		
+protected boolean isEnabledAllowed() {
+	if (getParent() == null)
+		return true;
+	return getParent().getOverrides().getEnabledAllowed(this);
 }
 
 /**
@@ -476,12 +456,11 @@ public void update(String propertyName) {
 		boolean textChanged = propertyName == null || propertyName.equals(Action.TEXT);
 		boolean imageChanged = propertyName == null || propertyName.equals(Action.IMAGE);
 		boolean tooltipTextChanged = propertyName == null || propertyName.equals(Action.TOOL_TIP_TEXT);
-		boolean enableStateChanged = propertyName == null || propertyName.equals(Action.ENABLED);
+		boolean enableStateChanged = propertyName == null || propertyName.equals(Action.ENABLED) || 
+			propertyName.equals(IContributionManagerOverrides.P_ENABLE_ALLOWED);
 		boolean checkChanged = (action.getStyle() == IAction.AS_CHECK_BOX) &&
 			(propertyName == null || propertyName.equals(Action.CHECKED));
 					
-		boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
-		
 		if (widget instanceof ToolItem) {
 			ToolItem ti = (ToolItem) widget;
 			if (imageChanged) {
@@ -490,8 +469,10 @@ public void update(String propertyName) {
 			if (tooltipTextChanged)
 				ti.setToolTipText(action.getToolTipText());
 				
-			if (enableStateChanged && ti.getEnabled() != shouldBeEnabled) {
-				ti.setEnabled(shouldBeEnabled);
+			if (enableStateChanged) {
+				boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
+				if (ti.getEnabled() != shouldBeEnabled)
+					ti.setEnabled(shouldBeEnabled);
 			}
 				
 			if (checkChanged) {
@@ -526,8 +507,10 @@ public void update(String propertyName) {
 			if (imageChanged) {
 				updateImages(false);
 			}
-			if (enableStateChanged && mi.getEnabled() != shouldBeEnabled) {
-				mi.setEnabled(shouldBeEnabled);
+			if (enableStateChanged) {
+				boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
+				if (mi.getEnabled() != shouldBeEnabled) 
+					mi.setEnabled(shouldBeEnabled);
 			}
 	
 			if (checkChanged) {	
@@ -554,8 +537,11 @@ public void update(String propertyName) {
 			if (tooltipTextChanged)
 				button.setToolTipText(action.getToolTipText());
 				
-			if (enableStateChanged && button.getEnabled() != shouldBeEnabled)
-				button.setEnabled(shouldBeEnabled);
+			if (enableStateChanged) {
+				boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
+				if (button.getEnabled() != shouldBeEnabled)
+					button.setEnabled(shouldBeEnabled);
+			}
 				
 			if (checkChanged) {
 				boolean bv = action.isChecked();
@@ -634,5 +620,4 @@ private boolean updateImages(boolean forceImage) {
 	}
 	return false;
 }
-
 }

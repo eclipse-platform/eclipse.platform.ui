@@ -20,6 +20,27 @@ public class EditorToolBarManager extends SubToolBarManager
 {
 	private IToolBarManager parentMgr;
 	private boolean enabledAllowed = true;
+
+	private class Overrides implements IContributionManagerOverrides {
+		/**
+		 * Indicates that the items of this manager are allowed to enable;
+		 * <code>true</code> by default.
+		 */
+		public void updateEnabledAllowed() {
+			IContributionItem[] items = EditorToolBarManager.super.getItems();
+			for (int i = 0; i < items.length; i++) {
+				IContributionItem item = items[i];
+				item.update(IContributionManagerOverrides.P_ENABLE_ALLOWED);
+			}
+		}
+		public boolean getEnabledAllowed(IContributionItem item) {
+			return ((item instanceof ActionContributionItem) &&
+				(((ActionContributionItem)item).getAction() instanceof RetargetAction)) ||
+				enabledAllowed;
+		}
+	}
+	private Overrides overrides = new Overrides();
+	
 /**
  * Constructs a new manager.
  *
@@ -37,7 +58,12 @@ public EditorToolBarManager(IToolBarManager mgr) {
 public IContributionItem[] getItems() {
 	return parentMgr.getItems();
 }
-
+/* (non-Javadoc)
+ * Method declared on IContributionManager.
+ */
+public IContributionManagerOverrides getOverrides() {
+	return overrides;
+}
 /**
  * Return the toolbar into which this manager will
  * contribute to.
@@ -112,20 +138,16 @@ public void setVisible(boolean visible, boolean forceVisibility) {
 			setEnabledAllowed(false);
 	}
 }
-
 /**
  * Sets the enablement ability of all the items contributed by the editor.
+ * 
+ * @param enabledAllowed <code>true</code> if the items may enable
+ * @since 2.0
  */
-private void setEnabledAllowed(boolean enabledAllowed) {
+public void setEnabledAllowed(boolean enabledAllowed) {
+	if (this.enabledAllowed = enabledAllowed)
+		return;
 	this.enabledAllowed = enabledAllowed;
-	IContributionItem[] items = super.getItems();
-	for (int i = 0; i < items.length; i++) {
-		IContributionItem item = items[i];
-		if (!(item instanceof ActionContributionItem &&
-			((ActionContributionItem)item).getAction() instanceof RetargetAction)) {
-			// skip retarget actions, they stay enabled if they have a handler	
-			item.setEnabledAllowed(enabledAllowed);
-		}
-	}
+	overrides.updateEnabledAllowed();
 }
 }
