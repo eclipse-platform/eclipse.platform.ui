@@ -461,7 +461,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 		String propertyName;
 		Image image = AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY);
 		// Determine replacement length and offset
-	   // String from beginning to the beginning of the prefix
+	    // String from beginning to the beginning of the prefix
 	   int replacementLength = aPrefix.length();
 	   int replacementOffset = 0;
 	   String text= document.get();
