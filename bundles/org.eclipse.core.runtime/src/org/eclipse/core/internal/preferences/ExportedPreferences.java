@@ -63,4 +63,16 @@ public class ExportedPreferences extends EclipsePreferences implements IExported
 				log(status);
 			}
 	}
+
+	/*
+	 * Return a string representation of this object. To be used for 
+	 * debugging purposes only.
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		if (isExportRoot)
+			buffer.append("* "); //$NON-NLS-1$
+		buffer.append(absolutePath());
+		return buffer.toString();
+	}
 }

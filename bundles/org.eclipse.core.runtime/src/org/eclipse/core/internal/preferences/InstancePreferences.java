@@ -12,8 +12,7 @@ package org.eclipse.core.internal.preferences;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Properties;
+import java.util.*;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -33,6 +32,8 @@ public class InstancePreferences extends EclipsePreferences {
 	private int segmentCount;
 	private EclipsePreferences loadLevel;
 	private IPath location;
+	// cache which nodes have been loaded from disk
+	private static Set loadedNodes = new HashSet();
 
 	/**
 	 * Default constructor. Should only be called by #createExecutableExtension.
@@ -46,10 +47,23 @@ public class InstancePreferences extends EclipsePreferences {
 		initialize();
 	}
 
+	private boolean alreadyLoaded(String nodeName) {
+		return loadedNodes.contains(nodeName);
+	}
+
 	/*
 	 * @see org.osgi.service.prefs.Preferences#flush()
 	 */
-	public void flush() throws BackingStoreException {
+	protected void internalFlush() throws BackingStoreException {
+		// TODO move this to superclass?
+		if (!isLoadLevel()) {
+			// flush children
+			for (Iterator i = children.values().iterator(); i.hasNext();) {
+				EclipsePreferences child = (EclipsePreferences) i.next();
+				child.internalFlush();
+			}
+			return;
+		}
 		if (location == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
 				System.out.println("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
@@ -217,10 +231,11 @@ public class InstancePreferences extends EclipsePreferences {
 	public IEclipsePreferences create(IEclipsePreferences nodeParent, String nodeName) {
 		InstancePreferences result = new InstancePreferences(nodeParent, nodeName);
 		// lazy loaded for the nodes in this scope.
-		if (result.isLoadLevel() && !isLoading())
+		if (result.isLoadLevel() && !isLoading() && !alreadyLoaded(nodeName))
 			try {
 				isLoading = true;
 				result.sync();
+				loadedNodes.add(nodeName);
 			} catch (BackingStoreException e) {
 				String message = Policy.bind("preferences.syncException", result.absolutePath()); //$NON-NLS-1$
 				IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);

@@ -615,6 +615,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public void removeNode() throws BackingStoreException {
 		// illegal state if this node has been removed
 		checkRemoved();
+		// clear all the property values. do it "the long way" so 
+		// everyone gets notification
+		String[] keys = keys();
+		for (int i = 0; i < keys.length; i++)
+			remove(keys[i]);
 		// don't remove the scope root from the parent but
 		// remove all its children
 		if (!(parent instanceof RootPreferences)) {
@@ -641,6 +646,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		if (children != null)
 			if (children.remove(child.name()) != null)
 				nodeRemoved(child);
+		if (children != null && children.isEmpty())
+			children = null;
 	}
 
 	/*
@@ -665,6 +672,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		if (nodeListeners == null)
 			nodeListeners = new ListenerList();
 		nodeListeners.add(listener);
+		if (InternalPlatform.DEBUG_PREFERENCES)
+			System.out.println("Added preference node change listener: " + listener + " to: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*
@@ -675,6 +684,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		if (preferenceListeners == null)
 			preferenceListeners = new ListenerList();
 		preferenceListeners.add(listener);
+		if (InternalPlatform.DEBUG_PREFERENCES)
+			System.out.println("Added preference property change listener: " + listener + " to: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*
@@ -687,6 +698,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		nodeListeners.remove(listener);
 		if (nodeListeners.size() == 0)
 			nodeListeners = null;
+		if (InternalPlatform.DEBUG_PREFERENCES)
+			System.out.println("Removed preference node change listener: " + listener + " from: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*
@@ -699,6 +712,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		preferenceListeners.remove(listener);
 		if (preferenceListeners.size() == 0)
 			preferenceListeners = null;
+		if (InternalPlatform.DEBUG_PREFERENCES)
+			System.out.println("Removed preference property change listener: " + listener + " from: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*
@@ -713,46 +728,46 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	}
 
 	public String toDeepDebugString() {
-		return recursivePrint(this);
+		final StringBuffer buffer = new StringBuffer();
+		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
+			public boolean visit(IEclipsePreferences node) throws BackingStoreException {
+				buffer.append(node);
+				buffer.append('\n');
+				String[] keys = node.keys();
+				for (int i = 0; i < keys.length; i++) {
+					buffer.append(node.absolutePath());
+					buffer.append(IPath.SEPARATOR);
+					buffer.append(keys[i]);
+					buffer.append('=');
+					buffer.append(node.get(keys[i], "*default*")); //$NON-NLS-1$
+					buffer.append('\n');
+				}
+				return true;
+			}
+		};
+		try {
+			accept(visitor);
+		} catch (BackingStoreException e) {
+			System.out.println("Exception while calling #toDeepDebugString()"); //$NON-NLS-1$
+			e.printStackTrace();
+		}
+		return buffer.toString();
 	}
 
 	public String toString() {
 		return absolutePath();
 	}
 
-	private String recursivePrint(Preferences preferences) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(preferences.absolutePath());
-		buffer.append('\n');
-		try {
-			String[] keys = preferences.keys();
-			for (int i = 0; i < keys.length; i++) {
-				buffer.append(preferences.absolutePath());
-				buffer.append(IPath.SEPARATOR);
-				buffer.append(keys[i]);
-				buffer.append('=');
-				buffer.append(preferences.get(keys[i], "*default*")); //$NON-NLS-1$
-				buffer.append('\n');
-			}
-		} catch (BackingStoreException e) {
-			System.out.println("Exception accessing keys."); //$NON-NLS-1$
-			e.printStackTrace();
-		}
-		try {
-			String[] childNames = preferences.childrenNames();
-			for (int i = 0; i < childNames.length; i++)
-				buffer.append(recursivePrint(preferences.node(childNames[i])));
-		} catch (BackingStoreException e) {
-			System.out.println("Exception accessing children names."); //$NON-NLS-1$
-			e.printStackTrace();
-		}
-		return buffer.toString();
-	}
-
 	/*
 	 * @see org.osgi.service.prefs.Preferences#flush()
 	 */
 	public void flush() throws BackingStoreException {
+		// illegal state if this node has been removed
+		checkRemoved();
+		internalFlush();
+	}
+
+	protected void internalFlush() throws BackingStoreException {
 		// do nothing...subclasses to provide implementation
 	}
 
@@ -760,6 +775,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#sync()
 	 */
 	public void sync() throws BackingStoreException {
+		// illegal state if this node has been removed
+		checkRemoved();
 		// do nothing...subclasses to provide implementation
 	}
 

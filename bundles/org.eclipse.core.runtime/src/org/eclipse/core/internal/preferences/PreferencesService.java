@@ -280,6 +280,9 @@ public class PreferencesService implements IPreferencesService {
 		if (input == null)
 			throw new IllegalArgumentException();
 
+		if (InternalPlatform.DEBUG_PREFERENCES)
+			System.out.println("Reading preferences from stream..."); //$NON-NLS-1$
+
 		// read the file into a properties object
 		Properties properties = new Properties();
 		try {
@@ -296,10 +299,15 @@ public class PreferencesService implements IPreferencesService {
 		}
 
 		// manipulate the file if it from a legacy preference export
-		if (isLegacy(properties))
+		if (isLegacy(properties)) {
+			if (InternalPlatform.DEBUG_PREFERENCES)
+				System.out.println("Read legacy preferences file, converting to 3.0 format..."); //$NON-NLS-1$
 			properties = convertFromLegacy(properties);
-		else
+		} else {
+			if (InternalPlatform.DEBUG_PREFERENCES)
+				System.out.println("Read preferences file."); //$NON-NLS-1$
 			properties.remove(VERSION_KEY);
+		}
 
 		// convert the Properties object into an object to return
 		return convertFromProperties(properties);
@@ -325,6 +333,10 @@ public class PreferencesService implements IPreferencesService {
 				current.put(key, value);
 			}
 		}
+		if (InternalPlatform.DEBUG_PREFERENCES) {
+			System.out.println("Converted preferences file to IExportedPreferences tree:"); //$NON-NLS-1$
+			System.out.println(((ExportedPreferences) result).toDeepDebugString());
+		}
 		return result;
 	}
 
@@ -332,6 +344,8 @@ public class PreferencesService implements IPreferencesService {
 	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#importPreferences(java.io.InputStream)
 	 */
 	public IStatus importPreferences(InputStream input) throws CoreException {
+		if (InternalPlatform.DEBUG_PREFERENCES)
+			System.out.println("Importing preferences..."); //$NON-NLS-1$
 		return applyPreferences(readPreferences(input));
 	}
 
@@ -341,18 +355,31 @@ public class PreferencesService implements IPreferencesService {
 	public IStatus applyPreferences(IExportedPreferences preferences) throws CoreException {
 		if (preferences == null)
 			throw new IllegalArgumentException();
+
+		if (InternalPlatform.DEBUG_PREFERENCES) {
+			System.out.println("Applying exported preferences:"); //$NON-NLS-1$
+			System.out.println(((ExportedPreferences) preferences).toDeepDebugString());
+		}
+
 		final MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, "Problems applying preference changes.", null);
 
 		// create a visitor to apply the given set of preferences
 		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
 			public boolean visit(IEclipsePreferences node) throws BackingStoreException {
-				IEclipsePreferences globalNode = (IEclipsePreferences) root.node(node.absolutePath());
+				IEclipsePreferences globalNode;
+				if (node.parent() == null)
+					globalNode = root;
+				else
+					globalNode = (IEclipsePreferences) root.node(node.absolutePath());
 				ExportedPreferences epNode = (ExportedPreferences) node;
 
 				// if this node is an export root then we need to remove 
-				// it from the gloabl preferences before continuing.
+				// it from the global preferences before continuing.
 				boolean removed = false;
-				if (epNode.isExportRoot() && epNode.properties != null && !epNode.properties.isEmpty()) {
+				if (epNode.isExportRoot()) {
+					if (InternalPlatform.DEBUG_PREFERENCES)
+						System.out.println("Found export root: " + epNode.absolutePath()); //$NON-NLS-1$
+					// TODO should only have to do this if any of my children have properties to set
 					globalNode.removeNode();
 					removed = true;
 				}
@@ -370,8 +397,11 @@ public class PreferencesService implements IPreferencesService {
 						// instead of equals. See bug 20193 and 20534.
 						key = key.intern();
 						String value = node.get(key, null);
-						if (value != null)
+						if (value != null) {
+							if (InternalPlatform.DEBUG_PREFERENCES)
+								System.out.println("Setting: " + globalNode.absolutePath() + '/' + key + '=' + value); //$NON-NLS-1$
 							globalNode.put(key, value);
+						}
 					}
 				}
 
@@ -387,6 +417,12 @@ public class PreferencesService implements IPreferencesService {
 			String message = "Problems applying preferences.";
 			throw new CoreException(createStatusError(message, e));
 		}
+
+		if (InternalPlatform.DEBUG_PREFERENCES) {
+			System.out.println("Current list of all settings:"); //$NON-NLS-1$
+			System.out.println(((EclipsePreferences) Platform.getPreferencesService().getRootNode()).toDeepDebugString());
+		}
+
 		return result;
 	}
 
