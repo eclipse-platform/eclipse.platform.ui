@@ -20,14 +20,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
@@ -41,9 +37,11 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.operations.CVSBlockingRunnableContext;
+import org.eclipse.team.internal.ccvs.ui.operations.CVSNonblockingRunnableContext;
+import org.eclipse.team.internal.ccvs.ui.operations.ICVSRunnableContext;
 import org.eclipse.team.ui.sync.SubscriberAction;
 import org.eclipse.team.ui.sync.SyncInfoSet;
-import org.eclipse.ui.PlatformUI;
 
 public abstract class CVSSubscriberAction extends SubscriberAction {
 	
@@ -126,7 +124,7 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 		SyncInfoSet syncSet = getFilteredSyncInfoSet(getFilteredSyncInfos());
 		if (syncSet == null || syncSet.isEmpty()) return;
 		try {
-			getRunnableContext(syncSet).run(true /* fork */, true /* cancelable */, getRunnable(syncSet));
+			getCVSRunnableContext().run(getJobName(syncSet), getSchedulingRule(syncSet), getRunnable(syncSet));
 		} catch (InvocationTargetException e) {
 			handle(e);
 		} catch (InterruptedException e) {
@@ -165,29 +163,14 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 
 	protected abstract void run(SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException;
 
-	protected IRunnableContext getRunnableContext(final SyncInfoSet syncSet) {
+	/*
+	 * Return the ICVSRunnableContext which will be used to run the operation.
+	 */
+	private ICVSRunnableContext getCVSRunnableContext() {
 		if (canRunAsJob() && areJobsEnabled()) {
-			return new IRunnableContext() {
-				public void run(boolean fork, boolean cancelable, final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-					Job job = new Job(getJobName(syncSet)) {
-						public IStatus run(IProgressMonitor monitor) {
-							try {
-								runnable.run(monitor);
-							} catch (InvocationTargetException e) {
-								return CVSException.wrapException(e).getStatus();
-							} catch (InterruptedException e) {
-								return Status.OK_STATUS;
-							}
-							return Status.OK_STATUS;
-						}
-					};
-					job.setRule(getSchedulingRule(syncSet));
-					job.schedule();
-
-				}
-			};
+			return new CVSNonblockingRunnableContext();
 		} else {
-			return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			return new CVSBlockingRunnableContext(shell);
 		}
 	}
 	
@@ -202,7 +185,7 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 	 * @return
 	 */
 	protected String getJobName(SyncInfoSet syncSet) {
-		return Policy.bind("CVSSubscriberAction.jobName", new Integer(syncSet.size()).toString());
+		return Policy.bind("CVSSubscriberAction.jobName", new Integer(syncSet.size()).toString()); //$NON-NLS-1$
 	}
 
 	/**

@@ -28,7 +28,7 @@ public class UpdateDialog extends SyncInfoSetDetailsDialog {
 	public static final int YES = IDialogConstants.YES_ID;
 	
 	public UpdateDialog(Shell parentShell, SyncInfoSet syncSet) {
-		super(parentShell, Policy.bind("UpdateDialog.overwriteTitle"), Policy.bind("UpdateDialog.overwriteDetailsTitle"), syncSet); //$NON-NLS-1$
+		super(parentShell, Policy.bind("UpdateDialog.overwriteTitle"), Policy.bind("UpdateDialog.overwriteDetailsTitle"), syncSet); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)
