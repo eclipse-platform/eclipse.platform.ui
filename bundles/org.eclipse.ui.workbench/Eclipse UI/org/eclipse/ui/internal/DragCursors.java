@@ -44,6 +44,25 @@ public class DragCursors {
 	}
 	
 	/**
+	 * Converts a drag cursor (LEFT, RIGHT, TOP, BOTTOM, CENTER) into an SWT constant
+	 * (SWT.LEFT, SWT.RIGHT, SWT.TOP, SWT.BOTTOM, SWT.CENTER)
+	 * 
+	 * @param dragCursorId
+	 * @return an SWT.* constant
+	 */
+	public static int dragCursorToSwtConstant(int dragCursorId) {
+		switch(dragCursorId) {
+			case LEFT: return SWT.LEFT;
+			case RIGHT: return SWT.RIGHT;
+			case TOP: return SWT.TOP;
+			case BOTTOM: return SWT.BOTTOM;
+			case CENTER: return SWT.CENTER;
+		}
+		
+		return SWT.DEFAULT;		
+	}
+	
+	/**
 	 * Return the cursor for a drop scenario, as identified by code.
 	 * Code must be one of INVALID, LEFT, RIGHT, TOP, etc.
 	 * If the code is not found default to INVALID.

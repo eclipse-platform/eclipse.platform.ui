@@ -16,6 +16,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 
+import org.eclipse.jface.util.Geometry;
+
 import org.eclipse.ui.internal.DragCursors;
 import org.eclipse.ui.internal.IPartDropListener;
 import org.eclipse.ui.internal.IWorkbenchDragSource;
@@ -31,12 +33,12 @@ import org.eclipse.ui.internal.PartDropEvent;
 public class CompatibilityDragTarget implements IDragOverListener {
 
 	// Define width of part's "hot" border	
-	private final static int MARGIN = 10;
+	private final static int MARGIN = 20;
 	
 	private IPartDropListener listener;
 	private int type;
 
-	class DropTarget implements IDropTarget {
+	class DropTarget extends AbstractDropTarget {
 		private PartDropEvent dropEvent;
 
 		DropTarget(PartDropEvent dropEvent) {
@@ -55,6 +57,28 @@ public class CompatibilityDragTarget implements IDragOverListener {
 		 */
 		public Cursor getCursor() {
 			return DragCursors.getCursor(dropEvent.relativePosition);
+		}
+		
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.internal.dnd.IDropTarget#getSnapRectangle()
+		 */
+		public Rectangle getSnapRectangle() {
+			int direction = DragCursors.dragCursorToSwtConstant(dropEvent.relativePosition);
+			
+			if (direction == SWT.DEFAULT || dropEvent.dropTarget == null) {
+				return null;
+			}
+			
+			Rectangle targetBounds = DragUtil.getDisplayBounds(dropEvent.dropTarget.getControl()); 
+			
+			if (direction == SWT.CENTER) {
+				return targetBounds;
+			}
+			
+			int distance = Geometry.getDimension(targetBounds, !Geometry.isHorizontal(direction));
+			
+			return Geometry.getExtrudedEdge(targetBounds, distance / 2, direction);
 		}
 	}
 	

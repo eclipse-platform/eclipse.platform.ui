@@ -112,40 +112,58 @@ public class DragUtil {
 	 * @param sourceBounds
 	 * @return
 	 */
-    /* package */ static IDropTarget dragToTarget(final Object draggedItem, Rectangle sourceBounds) {
+    /* package */ static IDropTarget dragToTarget(final Object draggedItem, final Rectangle sourceBounds) {
 		final Display display = Display.getDefault();
 		// Create a tracker.  This is just an XOR rect on the screen.
 		// As it moves we notify the drag listeners.
 		final Tracker tracker = new Tracker(display, SWT.NULL);
+		final Point initialLocation = display.getCursorLocation();
+		
+		tracker.setStippled(true);
+		
 		tracker.addListener(SWT.Move, new Listener() {
 			public void handleEvent(Event event) {
 				Point location = display.getCursorLocation();
 				Control targetControl = display.getCursorControl();
 				
 				IDropTarget target = getDropTarget(targetControl, draggedItem, location, tracker.getRectangles()[0]); 
-
+				
+				Rectangle snapTarget = null;
+				
 				if (target != null) {
+					
+					snapTarget = target.getSnapRectangle();  
+										
 					tracker.setCursor(target.getCursor());
 				} else {
 					tracker.setCursor(DragCursors.getCursor(DragCursors.INVALID));
-				}				
+				}	
+				
+				if (snapTarget == null) {
+					snapTarget = new Rectangle(location.x + sourceBounds.x - initialLocation.x,
+						location.y + sourceBounds.y - initialLocation.y,
+						sourceBounds.width, 
+						sourceBounds.height);
+				}
+									
+				tracker.setRectangles(new Rectangle[] {snapTarget});
 			}
 		});
 		
 		if (sourceBounds != null) {
-			tracker.setRectangles(new Rectangle[] { sourceBounds });
+			tracker.setRectangles(new Rectangle[] { new Rectangle(sourceBounds.x, sourceBounds.y, sourceBounds.width, sourceBounds.height) });
 		}
 
 		// Run tracker until mouse up occurs or escape key pressed.
 		boolean trackingOk = tracker.open();
-
-		Point location = display.getCursorLocation();
+		
+		Point finalLocation = display.getCursorLocation();
 		
 		IDropTarget dropTarget = null;
 		if (trackingOk) {
 			Control targetControl = display.getCursorControl();
 			
-			dropTarget = getDropTarget(targetControl, draggedItem, location, tracker.getRectangles()[0]);			
+			dropTarget = getDropTarget(targetControl, draggedItem, finalLocation, tracker.getRectangles()[0]);			
 		}
 				
 		// Cleanup.

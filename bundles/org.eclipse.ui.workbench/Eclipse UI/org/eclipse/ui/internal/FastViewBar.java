@@ -33,6 +33,7 @@ import org.eclipse.jface.util.Geometry;
 import org.eclipse.ui.IViewReference;
 
 import org.eclipse.ui.internal.dnd.AbstractDragSource;
+import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDragSource;
@@ -151,7 +152,7 @@ class FastViewBar implements IWindowTrim {
 		
 		IDragOverListener fastViewDragTarget = new IDragOverListener() {
 
-			class ViewDropTarget implements IDropTarget {
+			class ViewDropTarget extends AbstractDropTarget {
 				ViewPane pane;
 				IViewReference position;
 				
@@ -171,6 +172,10 @@ class FastViewBar implements IWindowTrim {
 				 */
 				public Cursor getCursor() {
 					return DragCursors.getCursor(DragCursors.FASTVIEW);
+				}
+				
+				public Rectangle getSnapRectangle() {
+					return DragUtil.getDisplayBounds(getControl());
 				}
 			}
 			

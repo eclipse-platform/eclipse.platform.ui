@@ -17,6 +17,9 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import org.eclipse.jface.util.Geometry;
+
+import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.CompatibilityDragTarget;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
@@ -36,7 +39,7 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.dnd.IDragOverListener#drag(org.eclipse.swt.widgets.Control, java.lang.Object, org.eclipse.swt.graphics.Point, org.eclipse.swt.graphics.Rectangle)
 	 */
-	public IDropTarget drag(Control currentControl, Object draggedObject, Point position, Rectangle dragRectangle) {
+	public IDropTarget drag(Control currentControl, Object draggedObject, Point position, final Rectangle dragRectangle) {
 
 		if (draggedObject instanceof IWindowTrim) {
 			final IWindowTrim draggedTrim = (IWindowTrim)draggedObject;
@@ -66,13 +69,21 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
 						final int dropSide = side; 
 						final Control insertionPoint = targetTrim;
 						
-						return new IDropTarget() {
+						return new AbstractDropTarget() {
 							public void drop() {
 								draggedTrim.dock(dropSide);
 							}
 
 							public Cursor getCursor() {
 								return DragCursors.getCursor(DragCursors.positionToDragCursor(dropSide));
+							}
+							
+							public Rectangle getSnapRectangle() {
+								
+								int smaller = Math.min(dragRectangle.width, dragRectangle.height);
+								
+								return Geometry.toDisplay(windowComposite, Geometry.getExtrudedEdge(windowComposite.getClientArea(), 
+									smaller, dropSide));							
 							}
 						};
 					}

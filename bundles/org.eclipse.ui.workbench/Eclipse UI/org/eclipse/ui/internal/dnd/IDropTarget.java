@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.dnd;
 
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * This interface is used to drop objects. It knows how to drop a particular object
@@ -33,4 +34,13 @@ public interface IDropTarget {
 	 * @return a cursor describing this drop operation
 	 */
 	Cursor getCursor();
+	
+	/**
+	 * Returns a rectangle (screen coordinates) describing the target location
+	 * for this drop operation.
+	 * 
+	 * @return a snap rectangle or null if this drop target does not have a specific snap
+	 * location.
+	 */
+	Rectangle getSnapRectangle();
 }
