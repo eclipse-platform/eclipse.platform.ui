@@ -74,16 +74,19 @@ public final class AboutInfo {
 		Assert.isNotNull(versionId);
 		Assert.isNotNull(pluginId);
 
+		IProduct product = Platform.getProduct();
+		IBundleGroup bundleGroup = getBundleGroup(featureId);
+		if (product == null || bundleGroup == null)
+		    return null;
+
 		AboutInfo info = new AboutInfo(featureId);
 		info.versionId = versionId;
 
-		IProduct product = Platform.getProduct();
 		info.appName = ProductProperties.getAppName(product);
 		info.aboutText = ProductProperties.getAboutText(product);
 		info.aboutImage = ProductProperties.getAboutImage(product);
 		info.windowImages = ProductProperties.getWindowImages(product);
 
-		IBundleGroup bundleGroup = getBundleGroup(featureId);
 		info.featurePluginLabel = bundleGroup.getName();
 		info.providerName = bundleGroup.getProviderName();
 		info.featureImage = BundleGroupProperties.getFeatureImage(bundleGroup);
