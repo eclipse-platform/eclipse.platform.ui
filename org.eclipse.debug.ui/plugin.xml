@@ -1698,7 +1698,7 @@ M4 = Platform-specific fourth key
             id="org.eclipse.debug.ui.BreakpointView">
       </command>
       <keyBinding
-            keySequence=""
+            keySequence="M3+M2+Q B"
             contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.debug.ui.BreakpointView"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1710,7 +1710,7 @@ M4 = Platform-specific fourth key
             id="org.eclipse.debug.ui.VariableView">
       </command>
       <keyBinding
-            keySequence=""
+            keySequence="M3+M2+Q V"
             contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.debug.ui.VariableView"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
