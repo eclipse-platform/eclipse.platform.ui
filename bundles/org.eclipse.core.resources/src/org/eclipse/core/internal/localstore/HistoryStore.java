@@ -194,8 +194,18 @@ public void clean() {
 public void copyHistory(final IPath source, final IPath destination) {
 	// return early if either of the paths are null or if the source and
 	// destination are the same.
-	if (source == null || destination == null || source.equals(destination))
+	if (source == null || destination == null) {
+		String message = Policy.bind("history.copyToNull"); //$NON-NLS-1$
+		ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, source, message, null);
+		ResourcesPlugin.getPlugin().getLog().log(status);
 		return;
+	}
+	if (source.equals(destination)) {
+		String message = Policy.bind("history.copyToSelf"); //$NON-NLS-1$
+		ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, source, message, null);
+		ResourcesPlugin.getPlugin().getLog().log(status);
+		return;
+	}
 	IHistoryStoreVisitor visitor = new IHistoryStoreVisitor () {
 		public boolean visit(HistoryStoreEntry entry) throws IndexedStoreException {
 			IPath path = entry.getPath();
