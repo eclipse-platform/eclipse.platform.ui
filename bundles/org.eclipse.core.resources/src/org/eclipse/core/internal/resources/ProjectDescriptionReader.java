@@ -382,7 +382,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// on this LinkDescription.
 			int oldType = ((LinkDescription) objectStack.peek()).getType();
 			if (oldType != -1) {
-				parseProblem(Policy.bind("projectDescriptionReader.badLinkType", Integer.toString(oldType), Integer.toString(newType))); //$NON-NLS-1$
+				parseProblem(Policy.bind("projectDescriptionReader.badLinkType2", Integer.toString(oldType), Integer.toString(newType))); //$NON-NLS-1$
 			} else {
 				((LinkDescription) objectStack.peek()).setType(newType);
 			}
