@@ -717,9 +717,9 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	protected void firePreferenceEvent(String key, Object oldValue, Object newValue) {
 		if (preferenceListeners == null)
 			return;
+		final PreferenceChangeEvent event = new PreferenceChangeEvent(this, key, oldValue, newValue);
 		Object[] listeners = preferenceListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
-			final PreferenceChangeEvent event = new PreferenceChangeEvent(this, key, oldValue, newValue);
 			final IPreferenceChangeListener listener = (IPreferenceChangeListener) listeners[i];
 			ISafeRunnable job = new ISafeRunnable() {
 				public void handleException(Throwable exception) {
