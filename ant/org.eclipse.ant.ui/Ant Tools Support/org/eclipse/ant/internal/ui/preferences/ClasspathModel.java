@@ -11,6 +11,7 @@
 
 package org.eclipse.ant.internal.ui.preferences;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -274,11 +275,23 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		for (int i = 0; i < antHomeEntries.length; i++) {
 			IAntClasspathEntry entry = antHomeEntries[i];
 			IAntClasspathEntry defaultEntry= defaultAntHomeEntries[i];
-			if (!entry.getLabel().equals(defaultEntry.getLabel())) {
+			if (!sameURL(entry, defaultEntry)) {
 				return false;
 			}
 		}
 		return true;
+	}
+	
+	private boolean sameURL(IAntClasspathEntry first, IAntClasspathEntry second) {
+		if (first == null || second == null) {
+			return false;
+		}
+		File newFile= new File(first.getEntryURL().getFile());
+		File existingFile= new File(second.getEntryURL().getFile());
+		if (existingFile.equals(newFile)) {
+			return true;
+		}
+		return false;
 	}
 	
 	public ClasspathModel(String serializedClasspath, boolean customAntHome) {
