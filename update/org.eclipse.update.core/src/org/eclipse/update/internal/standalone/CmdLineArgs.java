@@ -71,7 +71,8 @@ public class CmdLineArgs {
 			|| cmd.equals("update")
 			|| cmd.equals("mirror")
 			|| cmd.equals("uninstall")
-			|| cmd.equals("configuredFeatures");
+			|| cmd.equals("configuredFeatures")
+			|| cmd.equals("addSite");
 	}
 
 	public ScriptedCommand getCommand() {
@@ -117,7 +118,10 @@ public class CmdLineArgs {
 					(String) options.get("-verifyOnly"));
 			else if (cmd.equals("configuredFeatures"))
 				return new ListConfigFeaturesCommand((String) options.get("-from"));
-			return null;
+			else if (cmd.equals("addSite"))
+				return new AddSiteCommand((String) options.get("-from"));
+			else
+				return null;
 		} catch (Exception e) {
 			StandaloneUpdateApplication.exceptionLogged();
 			UpdateCore.log(e);
