@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 public class AnimationItem {
 
@@ -213,7 +214,7 @@ public class AnimationItem {
 		floatingWindow =
 			new ProgressFloatingWindow(window.getShell(), imageCanvas);
 
-		UIJob floatingJob = new UIJob(ProgressMessages.getString("AnimationItem.openFloatingWindowJob")) { //$NON-NLS-1$
+		UIJob floatingJob = new WorkbenchJob(ProgressMessages.getString("AnimationItem.openFloatingWindowJob")) { //$NON-NLS-1$
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -224,8 +225,15 @@ public class AnimationItem {
 					if (floatingWindow == null)
 						return Status.CANCEL_STATUS;
 					else {
-						floatingWindow.open();
-						return Status.OK_STATUS;
+						//Do not bother if the control is disposed
+						if(getControl().isDisposed()){
+							floatingWindow = null;
+							return Status.CANCEL_STATUS;
+						}
+						else{
+							floatingWindow.open();
+							return Status.OK_STATUS;
+						}
 					}
 				}
 
