@@ -12,7 +12,6 @@ package org.eclipse.core.tests.harness;
 
 import java.io.PrintWriter;
 import java.util.*;
-
 import junit.framework.*;
 
 /**

@@ -12,7 +12,6 @@ package org.eclipse.core.tests.harness;
 
 import java.util.Arrays;
 import java.util.Comparator;
-
 import junit.framework.*;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
