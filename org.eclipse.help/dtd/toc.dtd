@@ -1,6 +1,7 @@
 <!ELEMENT toc (topic | anchor | link)* >
 <!ATTLIST toc link_to CDATA #IMPLIED >
 <!ATTLIST toc label CDATA #REQUIRED >
+<!ATTLIST toc href CDATA #IMPLIED >
 
 <!ELEMENT topic (topic | anchor | link )* >
 <!ATTLIST topic label CDATA #REQUIRED >
