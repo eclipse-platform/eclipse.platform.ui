@@ -23,7 +23,9 @@ import org.eclipse.team.ui.sync.SyncCompareInput;
 import org.eclipse.team.ui.sync.TeamFile;
 
 public class CVSSyncCompareInput extends SyncCompareInput {
+	boolean dirty = false;
 	IResource[] resources;
+	
 	/**
 	 * Creates a new catchup or release operation.
 	 */
@@ -108,4 +110,12 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 		}
 		return element;
 	}
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
+		super.setDirty(dirty);
+	}
+	public boolean isDirty() {
+		return dirty;
+	}
+
 }
