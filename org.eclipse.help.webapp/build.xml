@@ -68,7 +68,7 @@
       <property name="includes" value="src/"/>
       <property name="excludes" value=""/>
       <property name="dest" value="${basedir}/WEB-INF/lib/webapp.jar"/>
-      <property name="compilePath" value="../org.eclipse.core.runtime/bin;../org.eclipse.core.runtime/runtime.jar;../org.eclipse.core.boot/bin;../org.eclipse.core.boot/boot.jar;../org.apache.xerces/bin;../org.apache.xerces/xerces.jar;../org.eclipse.help/bin;../org.eclipse.help/help.jar;../org.apache.lucene/bin;../org.apache.lucene/lucene-1.2-rc2.jar;../org.apache.lucene/lucenedemo.zip;../org.eclipse.tomcat/servlet.jar"/>
+      <property name="compilePath" value="../org.eclipse.core.runtime/bin;../org.eclipse.core.runtime/runtime.jar;../org.eclipse.core.boot/bin;../org.eclipse.core.boot/boot.jar;../org.apache.xerces/bin;../org.apache.xerces/xerces.jar;../org.eclipse.help/bin;../org.eclipse.help/help.jar;../org.eclipse.tomcat/servlet.jar"/>
     </ant>
   </target>
 
