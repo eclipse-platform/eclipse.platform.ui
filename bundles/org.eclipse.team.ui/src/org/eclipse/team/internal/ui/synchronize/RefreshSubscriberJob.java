@@ -134,8 +134,12 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 		return getSubscriber() != null;
 	}
 
-	public boolean belongsTo(Object family) {		
-		return family == getFamily() || family == ISynchronizeManager.FAMILY_SYNCHRONIZE_OPERATION;
+	public boolean belongsTo(Object family) {	
+		if(family instanceof RefreshSubscriberJob) {
+			return ((RefreshSubscriberJob)family).getSubscriber() == getSubscriber();
+		} else {
+			return (family == getFamily() || family == ISynchronizeManager.FAMILY_SYNCHRONIZE_OPERATION);
+		}
 	}
 	
 	public static Object getFamily() {
@@ -162,7 +166,6 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 				return Status.OK_STATUS;
 			}
 			
-			monitor.beginTask(null, 100);
 			RefreshEvent event = new RefreshEvent(reschedule ? IRefreshEvent.SCHEDULED_REFRESH : IRefreshEvent.USER_REFRESH, roots, collector.getSubscriber());
 			RefreshChangeListener changeListener = new RefreshChangeListener(collector);
 			try {
@@ -177,7 +180,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 					// Pre-Notify
 					notifyListeners(STARTED, event);
 					// Perform the refresh										
-					subscriber.refresh(roots, IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 100));					
+					subscriber.refresh(roots, IResource.DEPTH_INFINITE, monitor);					
 				} catch(TeamException e) {
 					status.merge(e.getStatus());
 				}
@@ -194,6 +197,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 			Boolean modelProperty = (Boolean)getProperty(ProgressManager.PROPERTY_IN_DIALOG);
 			boolean isModal = modelProperty == null ? true : false;
 			setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keep"), Boolean.valueOf(! isModal));
+			setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keepone"), Boolean.valueOf(! isModal));
 			
 			// Post-Notify
 			event.setChanges(changeListener.getChanges());
@@ -212,7 +216,8 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 		IResource[] resources = event.getResources();
 		if (collector != null) {
 			SyncInfoSet set = collector.getSyncInfoSet();
-			if (refreshedResourcesContainChanges(event)) {
+			int numChanges = refreshedResourcesContainChanges(event);
+			if (numChanges > 0) {
 				code = IRefreshEvent.STATUS_CHANGES;
 				String outgoing = Long.toString(set.countFor(SyncInfo.OUTGOING, SyncInfo.DIRECTION_MASK));
 				String incoming = Long.toString(set.countFor(SyncInfo.INCOMING, SyncInfo.DIRECTION_MASK));
@@ -223,7 +228,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 					text.append(Policy.bind("RefreshCompleteDialog.5a", new Object[]{numNewChanges, subscriber.getName(), outgoing, incoming, conflicting})); //$NON-NLS-1$
 				} else {
 				// Refreshed resources contain changes
-					text.append(Policy.bind("RefreshCompleteDialog.5", new Object[]{subscriber.getName(), outgoing, incoming, conflicting})); //$NON-NLS-1$
+					text.append(Policy.bind("RefreshCompleteDialog.5", new Object[]{new Integer(numChanges), outgoing, incoming, conflicting})); //$NON-NLS-1$
 				}
 			} else {
 				// No changes found
@@ -235,7 +240,8 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 		return Status.OK_STATUS;
 	}
 	
-	private boolean refreshedResourcesContainChanges(IRefreshEvent event) {
+	private int refreshedResourcesContainChanges(IRefreshEvent event) {
+		int numChanges = 0;
 		if (collector != null) {
 			SyncInfoTree set = collector.getSyncInfoSet();
 			IResource[] resources = event.getResources();
@@ -243,11 +249,11 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 				IResource resource = resources[i];
 				SyncInfo[] infos = set.getSyncInfos(resource, IResource.DEPTH_INFINITE);
 				if(infos != null && infos.length > 0) {
-					return true;
+					numChanges += infos.length;
 				}
 			}
 		}
-		return false;
+		return numChanges;
 	}
 	
 	protected IResource[] getResources() {

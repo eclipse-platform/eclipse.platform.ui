@@ -55,7 +55,6 @@ public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubsc
 						return;
 					}
 					compareAndOpenDialog(event, participant);
-					setEnabled(false);
 			}
 			public void dispose() {
 				if (TeamUI.getSynchronizeManager().get(participant.getId(), participant.getSecondaryId()) == null) {

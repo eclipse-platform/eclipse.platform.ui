@@ -117,10 +117,10 @@ public abstract class ResourceVariantTreeSubscriber extends Subscriber {
 		monitor = Policy.monitorFor(monitor);
 		List errors = new ArrayList();
 		try {
-			monitor.beginTask(null, 100 * resources.length);
+			monitor.beginTask(null, 1000 * resources.length);
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
-				IStatus status = refresh(resource, depth, Policy.subMonitorFor(monitor, 100));
+				IStatus status = refresh(resource, depth, Policy.subMonitorFor(monitor, 1000));
 				if (!status.isOK()) {
 					errors.add(status);
 				}
@@ -148,13 +148,13 @@ public abstract class ResourceVariantTreeSubscriber extends Subscriber {
 	private IStatus refresh(IResource resource, int depth, IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(null, IProgressMonitor.UNKNOWN);
+			monitor.beginTask(null, 100);
 			Set allChanges = new HashSet();
 			if (getResourceComparator().isThreeWay()) {
-				IResource[] baseChanges = getBaseTree().refresh(new IResource[] {resource}, depth, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
+				IResource[] baseChanges = getBaseTree().refresh(new IResource[] {resource}, depth, Policy.subMonitorFor(monitor, 25));
 				allChanges.addAll(Arrays.asList(baseChanges));
 			}
-			IResource[] remoteChanges = getRemoteTree().refresh(new IResource[] {resource}, depth, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
+			IResource[] remoteChanges = getRemoteTree().refresh(new IResource[] {resource}, depth, Policy.subMonitorFor(monitor, 75));
 			allChanges.addAll(Arrays.asList(remoteChanges));
 			IResource[] changedResources = (IResource[]) allChanges.toArray(new IResource[allChanges.size()]);
 			fireTeamResourceChange(SubscriberChangeEvent.asSyncChangedDeltas(this, changedResources));

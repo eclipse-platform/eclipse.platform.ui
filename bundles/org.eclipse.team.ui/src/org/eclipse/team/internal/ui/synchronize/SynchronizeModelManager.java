@@ -186,7 +186,8 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 	 */
 	protected void setInput() {
 		configuration.setProperty(SynchronizePageConfiguration.P_MODEL, modelProvider.getModelRoot());
-		advisor.setInput(modelProvider);
+		if(advisor != null)
+			advisor.setInput(modelProvider);
 	}
 
 	/* (non-Javadoc)
