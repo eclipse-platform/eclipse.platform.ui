@@ -355,21 +355,24 @@ public final class AntUtil {
 	}
 
 	/**
-	 * Returns the workspace file associated with the given absolute path in the
+	 * Returns the workspace file associated with the given path in the
 	 * local file system, or <code>null</code> if none.
+	 * If the path happens to be a relative path, then the path is interpreted as
+	 * relative to the specified parent file.
 	 *   
-	 * @param absolutePath
+	 * @param path
+	 * @param buildFileParent
 	 * @return file or <code>null</code>
 	 */
-	public static IFile getFileForLocation(String absolutePath, File buildFileParent) {
-		IPath filePath= new Path(absolutePath);
+	public static IFile getFileForLocation(String path, File buildFileParent) {
+		IPath filePath= new Path(path);
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(filePath);
 		if (file == null) {
 			//relative path
 			File relativeFile= null;
 			try {
 				//this call is ok if fBuildFileParent is null
-				relativeFile= FileUtils.newFileUtils().resolveFile(buildFileParent, absolutePath);
+				relativeFile= FileUtils.newFileUtils().resolveFile(buildFileParent, path);
 				filePath= new Path(relativeFile.getAbsolutePath());
 				file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(filePath);
 				if (file == null) {
