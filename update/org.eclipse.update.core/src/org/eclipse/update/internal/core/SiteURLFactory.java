@@ -5,6 +5,7 @@ package org.eclipse.update.internal.core;
  */
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.*;
@@ -26,7 +27,7 @@ public class SiteURLFactory extends BaseSiteFactory {
 		InputStream siteStream = null;
 		
 		try {		
-			SiteURLContentProvider contentProvider = new SiteURLContentProvider(url);
+			SiteURLContentProvider contentProvider = new SiteURLContentProvider(removeSiteXML(url));
 		
 			siteXML = new URL(url,Site.SITE_XML);
 			siteStream = siteXML.openStream();
@@ -70,4 +71,16 @@ public class SiteURLFactory extends BaseSiteFactory {
 		return (super.canParseSiteType(type) || SiteURLContentProvider.SITE_TYPE.equalsIgnoreCase(type));
 	}
 
+	/**
+	 * removes site.xml from the URL
+	 */
+	private URL removeSiteXML(URL url) throws MalformedURLException{
+		URL result = url;
+		if (url!=null && url.toExternalForm().endsWith(Site.SITE_XML)){
+			int index = url.toExternalForm().lastIndexOf(Site.SITE_XML);
+			result = new URL(url.getProtocol(), url.getHost(), url.toExternalForm().substring(0,index));
+		}
+		return result;
+	}
+	
 }

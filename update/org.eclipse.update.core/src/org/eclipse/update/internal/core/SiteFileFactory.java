@@ -32,7 +32,8 @@ public class SiteFileFactory extends BaseSiteFactory {
 		InputStream siteStream = null;
 		
 		try {		
-			SiteFileContentProvider contentProvider = new SiteFileContentProvider(url);
+			// remove site.xml from teh URL
+			SiteFileContentProvider contentProvider = new SiteFileContentProvider(removeSiteXML(url));
 					
 			try {
 				siteXML = new URL(contentProvider.getURL(),Site.SITE_XML);
@@ -348,6 +349,18 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 */
 	public boolean canParseSiteType(String type) {
 		return (super.canParseSiteType(type) || SiteFileContentProvider.SITE_TYPE.equalsIgnoreCase(type));
+	}
+
+	/**
+	 * removes site.xml from the URL
+	 */
+	private URL removeSiteXML(URL url) throws MalformedURLException{
+		URL result = url;
+		if (url!=null && url.toExternalForm().endsWith(Site.SITE_XML)){
+			int index = url.toExternalForm().lastIndexOf(Site.SITE_XML);
+			result = new URL(url.getProtocol(), url.getHost(), url.toExternalForm().substring(0,index));
+		}
+		return result;
 	}
 
 }
