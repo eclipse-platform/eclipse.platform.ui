@@ -4,9 +4,6 @@
  */
 package org.eclipse.search.internal.ui;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.swt.SWT;
@@ -35,7 +32,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.IContextMenuContributor;
@@ -61,7 +57,6 @@ class SearchResultViewer extends TableViewer {
 	private SortDropDownAction fSortDropDownAction;
 	private SearchDropDownAction fSearchDropDownAction;
 	private int fMarkerToShow;
-	private Map fSorters;
 	
 	/*
 	 * These static fields will go away when support for 
@@ -97,9 +92,7 @@ class SearchResultViewer extends TableViewer {
 		fSortDropDownAction.setEnabled(getItemCount() > 0);
 		fSearchDropDownAction= new SearchDropDownAction(this);
 		fSearchDropDownAction.setEnabled(hasSearch);
-		fSorters= new HashMap(5);
-
-		addSelectionChangedListener(
+		addSelectionChangedListener(
 			new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
 					int selectionCount= getSelectedEntriesCount();
@@ -234,16 +227,8 @@ class SearchResultViewer extends TableViewer {
 		ILabelProvider labelProvider= fOuterPart.getLabelProvider(pageId);
 		if (labelProvider != null)
 			internalSetLabelProvider(labelProvider);
-		Object value= fSorters.get(pageId);
-		if (value instanceof ViewerSorter)
-			setSorter((ViewerSorter)value);
 	}
-
-	public void setSorter(ViewerSorter sorter) {
-		super.setSorter(sorter);
-		fSorters.put(SearchManager.getDefault().getCurrentSearch().getPageId(), sorter);
-	}
-
+	
 	void fillToolBar(IToolBarManager tbm) {
 		tbm.add(fShowNextResultAction);
 		tbm.add(fShowPreviousResultAction);

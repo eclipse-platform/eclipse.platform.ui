@@ -22,6 +22,8 @@ import org.eclipse.jface.viewers.ViewerSorter;
  */
 class SortDropDownAction extends Action implements IMenuCreator {
 
+	private static Map fgLastCheckedForType= new HashMap(5);
+
 	private SearchResultViewer fViewer;
 	private String fPageId;
 	private Menu fMenu;
@@ -49,6 +51,16 @@ class SortDropDownAction extends Action implements IMenuCreator {
 
 	void setPageId(String pageId) {
 		fPageId= pageId;
+		SorterDescriptor sorterDesc= (SorterDescriptor)fLastCheckedForType.get(pageId);
+		if (sorterDesc == null)
+			sorterDesc= (SorterDescriptor)fgLastCheckedForType.get(pageId);
+		if (sorterDesc == null)
+			sorterDesc= findSorter(fPageId);
+		if (sorterDesc != null) {
+			fLastCheckedForType.put(fPageId, sorterDesc);
+			fgLastCheckedForType.put(fPageId, sorterDesc);
+			fViewer.setSorter(sorterDesc.createObject());
+		}
 	}
 
 	public Menu getMenu(final Menu parent) {
@@ -58,8 +70,8 @@ class SortDropDownAction extends Action implements IMenuCreator {
 		while (iter.hasNext()) {
 			Object value= fLastCheckedForType.get(fPageId);
 			final String checkedId;
-			if (value instanceof String)
-				checkedId= (String)value;
+			if (value instanceof SorterDescriptor)
+				checkedId= ((SorterDescriptor)value).getId();
 			else
 				checkedId= ""; //$NON-NLS-1$
 			
@@ -71,7 +83,8 @@ class SortDropDownAction extends Action implements IMenuCreator {
 				final Action action= new Action() {
 					public void run() {
 						if (!checkedId.equals(sorterDesc.getId())) {
-							fLastCheckedForType.put(fPageId, sorterDesc.getId());
+							fLastCheckedForType.put(fPageId, sorterDesc);
+							fgLastCheckedForType.put(fPageId, sorterDesc);
 							BusyIndicator.showWhile(parent.getDisplay(), new Runnable() {
 								public void run() {
 									fViewer.setSorter(sorter);
@@ -100,5 +113,14 @@ class SortDropDownAction extends Action implements IMenuCreator {
     public void run() {
 		// nothing to do
 	    }
-}
 
+	private SorterDescriptor findSorter(String pageId) {
+		Iterator iter= SearchPlugin.getDefault().getSorterDescriptors().iterator();
+		while (iter.hasNext()) {
+			SorterDescriptor sorterDesc= (SorterDescriptor)iter.next();
+			if (sorterDesc.getPageId().equals(pageId) || sorterDesc.getPageId().equals("*")) //$NON-NLS-1$
+				return sorterDesc;
+		}
+		return null;
+	}
+}

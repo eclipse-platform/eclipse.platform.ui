@@ -23,7 +23,7 @@ class SearchResultViewEntry implements ISearchResultViewEntry {
 	private Object fGroupByKey= null;
 	private IResource fResource= null;
 	private IMarker fMarker= null;
-	private List fMarkers= null;
+	private ArrayList fMarkers= null;
 	private ArrayList fAttributes;
 	private int fSelectedMarkerIndex;
 	private long fModificationStamp= IResource.NULL_STAMP;
@@ -79,9 +79,9 @@ class SearchResultViewEntry implements ISearchResultViewEntry {
 		}
 		if (fMarkers == null) {
 			fMarkers= new ArrayList(10);
-			fMarkers.add(fMarker);
+			addByStartpos(fMarkers, fMarker);
 		}
-		fMarkers.add(marker);
+		addByStartpos(fMarkers, marker);
 	}
 	
 	void setSelectedMarkerIndex(int index) {
@@ -152,5 +152,15 @@ class SearchResultViewEntry implements ISearchResultViewEntry {
 			fAttributes.add(attributes);
 		}
 	}
+	
+	private void addByStartpos(ArrayList markers, IMarker marker) {
+		int startPos= marker.getAttribute(IMarker.CHAR_START, -1);
+		int i= 0;
+		int markerCount= markers.size();
+		while (i < markerCount && startPos >= ((IMarker)markers.get(i)).getAttribute(IMarker.CHAR_START, -1))
+			i++;
+		markers.add(i, marker);
+		if (i == 0)
+			fMarker= marker;
+	}
 }
-
