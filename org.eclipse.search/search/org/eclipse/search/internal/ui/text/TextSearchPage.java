@@ -39,8 +39,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 import org.eclipse.search.internal.core.text.TextSearchScope;
 import org.eclipse.search.internal.ui.SearchPlugin;
@@ -276,6 +278,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 					ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.markerAttributeAccess.");
 					text= "";
 				}
+			} else if (item instanceof IAdaptable) {
+				IWorkbenchAdapter element= (IWorkbenchAdapter)((IAdaptable)item).getAdapter(IWorkbenchAdapter.class);
+				if (element != null)
+					text= element.getLabel(item);
 			}
 		}		
 		fPattern.setText(insertEscapeChars(text));

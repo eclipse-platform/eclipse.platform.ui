@@ -260,7 +260,6 @@ class SearchManager implements IResourceChangeListener {
 				viewer.setContextMenuTarget(search.getContextMenuContributor());
 				display.syncExec(new Runnable() {
 					public void run() {
-						viewer.setInput(null);						
 						viewer.internalSetLabelProvider(search.getLabelProvider());
 						viewer.setInput(getCurrentResults());
 					}
@@ -404,7 +403,6 @@ class SearchManager implements IResourceChangeListener {
 		final Search search= getCurrentSearch();
 		while (iter.hasNext()) {
 			SearchResultViewer viewer= (SearchResultViewer)iter.next();
-			viewer.setInput(null);
 			viewer.setPageId(search.getPageId());
 			viewer.setContextMenuTarget(search.getContextMenuContributor());
 			viewer.internalSetLabelProvider(search.getLabelProvider());

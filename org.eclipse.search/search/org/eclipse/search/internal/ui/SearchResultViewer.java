@@ -24,6 +24,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -62,14 +63,14 @@ class SearchResultViewer extends TableViewer {
 	private static IAction fgGotoMarkerAction;
 	
 	public SearchResultViewer(SearchResultView outerPart, Composite parent) {
-		super(new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION));
+		super(new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION));
 		
 		fOuterPart= outerPart;
 		Assert.isNotNull(fOuterPart);
 		
 		setUseHashlookup(true);
 		setContentProvider(new SearchResultContentProvider());
-		internalSetLabelProvider(internalGetLabelProvider().getLabelProvider());
+		setLabelProvider(new SearchResultLabelProvider());
 
 		fShowNextResultAction= new ShowNextResultAction(this);
 		fShowNextResultAction.setEnabled(false);
@@ -140,6 +141,11 @@ class SearchResultViewer extends TableViewer {
 		updateTitle();
 		enableActions();
 	}
+
+	protected void unmapAllElements() {
+		super.unmapAllElements();
+		getTable().removeAll();
+	}
 	
 	//--- Contribution management -----------------------------------------------
 	
@@ -201,15 +207,15 @@ class SearchResultViewer extends TableViewer {
 		return SearchManager.getDefault().getCurrentItemCount();
 	}
 
-	SearchResultLabelProvider internalGetLabelProvider() {
-		if (fLabelProvider == null)
-			fLabelProvider= new SearchResultLabelProvider();
-		return fLabelProvider;
-	}
-
 	void internalSetLabelProvider(ILabelProvider provider) {
-		internalGetLabelProvider().setLabelProvider(provider);
-		setLabelProvider(fLabelProvider);
+		IBaseLabelProvider tableLabelProvider= getLabelProvider();
+		if (tableLabelProvider instanceof SearchResultLabelProvider)
+			((SearchResultLabelProvider)getLabelProvider()).setLabelProvider(provider);
+		else {
+			// should never happen - just to be safe
+			setLabelProvider(new SearchResultLabelProvider());
+			internalSetLabelProvider(provider);
+		}
 	}
 	
 	/**
@@ -318,7 +324,7 @@ class SearchResultViewer extends TableViewer {
 	 */
 	protected void updateTitle() {
 		int count= SearchManager.getDefault().getCurrentItemCount();
-		boolean showZero= SearchManager.getDefault().getCurrentResults() == SearchManager.getDefault().getCurrentResults();
+		boolean showZero= SearchManager.getDefault().getCurrentSearch() != null;
 		String title= SearchPlugin.getResourceString("SearchResultView.title");
 		if (count > 0 || showZero)
 			title= title + " (" + count + " " + SearchPlugin.getResourceString("SearchResultView.matches") + ")";
