@@ -198,7 +198,6 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 								String moduleName = getModuleName();
 								ICVSRemoteFolder folder = location.getRemoteFolder(moduleName, null);
 								if (folder.exists(new SubProgressMonitor(monitor, 50))) {
-									// We didn't get an exception, so the folder must already exist.
 									MessageDialog.openInformation(getShell(), Policy.bind("SharingWizard.couldNotImport"), Policy.bind("SharingWizard.couldNotImportLong"));
 									result[0] = false;
 									doSync[0] = false;
