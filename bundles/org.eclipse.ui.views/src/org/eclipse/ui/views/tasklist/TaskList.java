@@ -141,7 +141,7 @@ public class TaskList extends ViewPart {
 	private TaskAction selectAllAction;
 	private TaskAction resolveMarkerAction;
 	private TaskAction filtersAction;
-	private TaskAction markCompletedAction;
+	private MarkCompletedAction markCompletedAction;
 	private TaskAction propertiesAction;
 	
 	//sort by action
@@ -252,12 +252,11 @@ public class TaskList extends ViewPart {
 
 	private ICellModifier cellModifier = new ICellModifier() {
 		public Object getValue(Object element, String property) {
-			return MarkerUtil.getProperty(element,property);
+			return MarkerUtil.getProperty(element, property);
 		}
 
 		public boolean canModify(Object element, String property) {
-			IMarker marker = (IMarker) element;
-			return MarkerUtil.isMarkerType(marker, IMarker.TASK);
+			return MarkerUtil.isEditable((IMarker) element);
 		}
 
 		/**
@@ -1136,7 +1135,7 @@ void selectionChanged(SelectionChangedEvent event) {
 	boolean canRemove = true;
 	for (Iterator markers = selection.iterator(); markers.hasNext();) {
 		IMarker m = (IMarker) markers.next();
-		if (!MarkerUtil.isMarkerType(m, IMarker.TASK)) {
+		if (!MarkerUtil.isEditable(m)) {
 			canRemove = false;
 			break;
 		}
@@ -1156,6 +1155,9 @@ void selectionChanged(SelectionChangedEvent event) {
 			}
 		}
 	}
+	
+	
+	markCompletedAction.setEnabled(markCompletedAction.shouldEnable(selection));
 }
 
 /* (non-Javadoc)

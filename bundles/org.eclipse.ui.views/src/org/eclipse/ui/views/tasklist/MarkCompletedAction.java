@@ -43,21 +43,17 @@ class MarkCompletedAction extends TaskAction {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IAction.
+	/**
+	 * Returns whether this action should be enabled for the given selection.
 	 */
-	public boolean isEnabled() {
-		ISelection markers = getTaskList().getSelection();
-		if (markers instanceof IStructuredSelection) {
-			Iterator selections = ((IStructuredSelection) markers).iterator();
-			
-			//Do not enable if there is no selection
-			if(!selections.hasNext())
-				return false;
-			while (selections.hasNext()) {
-				IMarker marker = (IMarker) selections.next();
-				if (!MarkerUtil.isMarkerType(marker, IMarker.TASK)
-					|| MarkerUtil.isComplete(marker))
+	public boolean shouldEnable(IStructuredSelection selection) {
+		if (selection.isEmpty())
+			return false;
+		for (Iterator i = selection.iterator(); i.hasNext();) {
+			IMarker marker = (IMarker) i.next();
+			if (!(MarkerUtil.isMarkerType(marker, IMarker.TASK)
+				&& !MarkerUtil.isComplete(marker)
+				&& MarkerUtil.isEditable(marker))) {
 					return false;
 			}
 		}

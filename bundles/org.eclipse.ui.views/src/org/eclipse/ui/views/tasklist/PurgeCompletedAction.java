@@ -30,29 +30,37 @@ public PurgeCompletedAction(TaskList tasklist, String id) {
  * Fetches all the completed tasks in the workspace and deletes them.
  */
 public void run() {
-	// Verify.
-	if (!MessageDialog
-		.openConfirm(
-			getShell(), 
-			TaskListMessages.getString("PurgeCompleted.question"),  //$NON-NLS-1$
-			TaskListMessages.getString("PurgeCompleted.permanent") //$NON-NLS-1$
-			))
-		return;
-
 	try {
 		IResource resource = getTaskList().getResource();
 		int depth = getTaskList().getResourceDepth();
 		IMarker[] tasks = resource.findMarkers(IMarker.TASK, true, depth);
-		final List completed = new ArrayList(tasks.length);
+		final List completed = new ArrayList();
 		for (int i = 0; i < tasks.length; i++) {
 			IMarker task = tasks[i];
-			if (MarkerUtil.isComplete(task)) {
+			if (MarkerUtil.isComplete(task) && !MarkerUtil.isReadOnly(task)) {
 				completed.add(task);
 			}
 		}
 		// Check if there is anything to do
-		if (completed.size() == 0)
+		if (completed.size() == 0) {
+			MessageDialog.openInformation(
+				getShell(), 
+				TaskListMessages.getString("PurgeCompleted.title"),  //$NON-NLS-1$
+				TaskListMessages.getString("PurgeCompleted.noneCompleted"));  //$NON-NLS-1$
 			return;
+		}
+
+		// Verify.
+		if (!MessageDialog
+			.openConfirm(
+				getShell(), 
+				TaskListMessages.getString("PurgeCompleted.title"),  //$NON-NLS-1$
+				TaskListMessages.format("PurgeCompleted.permanent", //$NON-NLS-1$
+					new Object[] { new Integer(completed.size()) } )
+				)) {
+			return;
+		}
+
 		IMarker[] toDelete = new IMarker[completed.size()];
 		completed.toArray(toDelete);
 		getTaskList().getWorkspace().deleteMarkers(toDelete);

@@ -217,7 +217,7 @@ private void createCreationTimeArea(Composite parent) {
  */
 protected void createButtonsForButtonBar(Composite parent) {
 	createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-	if (isTask()) {
+	if (isEditable()) {
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 }
@@ -235,7 +235,7 @@ private void createDescriptionArea(Composite parent) {
 	label.setText(TaskListMessages.getString("TaskProp.description")); //$NON-NLS-1$
 	label.setFont(font);
 	int style = SWT.SINGLE | SWT.BORDER;
-	if (!isTask()) {
+	if (!isEditable()) {
 		style |= SWT.READ_ONLY;
 	}
 	descriptionText = new Text(composite, style);
@@ -280,6 +280,11 @@ private void createPriorityAndStatusArea(Composite parent) {
 	gridData.horizontalIndent = convertHorizontalDLUsToPixels(20);
 	completedCheckbox.setLayoutData(gridData);
 	completedCheckbox.setFont(font);
+	
+	if (!isEditable()) {
+		priorityCombo.setEnabled(false);
+		completedCheckbox.setEnabled(false);
+	}
 }
 
 /**
@@ -466,6 +471,13 @@ private boolean isDirty() {
 }
 
 /**
+ * Returns whether the marker is editable.
+ */
+private boolean isEditable() {
+	return marker == null || MarkerUtil.isEditable(marker);
+}
+
+/**
  * Returns <code>true</code> if a task is being created or modified.
  * Returns <code>false</code> if a problem is being shown.
  */
@@ -480,7 +492,7 @@ private boolean isTask() {
  * Does nothing for problems, since they cannot be modified.
  */
 private void saveChanges() {
-	if (!isTask() || !isDirty()) {
+	if (!isEditable() || !isDirty()) {
 		return;
 	}
 	try {

@@ -138,7 +138,7 @@ public static Image getCompleteImage(IMarker marker) {
 	if (isMarkerType(marker, IMarker.TASK)) {
 		if (isComplete(marker))
 			return getImage("complete_tsk");//$NON-NLS-1$
-		else
+		else if (!isReadOnly(marker)) // don't show a check box for read-only tasks
 			return getImage("incomplete_tsk");//$NON-NLS-1$
 	}
 	return null;
@@ -433,6 +433,15 @@ public static int getSeverity(IMarker marker) {
 public static boolean isComplete(IMarker marker) {
 	return marker.getAttribute(IMarker.DONE, false);
 }
+
+/**
+ * Returns whether the given marker is editable.
+ * Only tasks which have not been marked as read-only are editable.
+ */
+public static boolean isEditable(IMarker marker) {
+	return isMarkerType(marker, IMarker.TASK) && !isReadOnly(marker);
+}
+
 /**
  * Returns whether the given marker is of the given type (either directly or indirectly).
  */
@@ -444,42 +453,21 @@ public static boolean isMarkerType(IMarker marker, String type) {
 		return false;
 	}
 }
+
 /**
- * Returns whether the given string represents a numeric value.
- *
- * @return <code>true</code> if numeric, <code>false</code> if not
+ * Returns whether the given marker is read-only.
  */
-static public boolean isNumeric(String value) {
-	int i = 0;
-	int len = value.length();
-	
-	// skip any leading '#'
-	// workaround for 1GCE69U: ITPJCORE:ALL - Java problems should not have '#' in location.
-	if (i < len && value.charAt(i) == '#') 
-		++i;
-
-	// skip any '-'
-	if (i < len && value.charAt(i) == '-') 
-		++i;
-		
-	// if no digits, consider it not to be numeric
-	if (i == len) 
-		return false;
-
-	while (i < len) {
-		if (Character.digit(value.charAt(i++), 10) == -1)
-			return false;
-	}
-	return true;
+public static boolean isReadOnly(IMarker marker) {
+	return marker.getAttribute("readOnly", false)
+	 || getMessage(marker).startsWith("[RO]");  // TODO: for debugging only 
 }
+
 /**
- * Method getCreationTime.
- * @param marker
- * @return String
+ * Returns the creation time of the marker as a string.
  */
 public static String getCreationTime(IMarker marker) {
 	try {
-		return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date(marker.getCreationTime()));
+		return DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM).format(new Date(marker.getCreationTime()));
 	} catch (CoreException e) {
 		return null;
 	}
