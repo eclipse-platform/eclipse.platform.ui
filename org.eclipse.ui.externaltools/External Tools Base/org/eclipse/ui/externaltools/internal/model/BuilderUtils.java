@@ -90,23 +90,22 @@ public class BuilderUtils {
 				configuration= manager.getLaunchConfiguration(file);
 			}
 		} else {
-			try {
-				// Treat the configHandle as a memento. This is the format
-				// used in Eclipse 2.1.
-				configuration = manager.getLaunchConfiguration(configHandle);
-			} catch (CoreException e) {
-			}
-			if (configuration != null) {
-				version[0]= VERSION_2_1;
-			} else {
-				// If the memento failed, try treating the handle as a file name.
-				// This is the format used in 3.0 RC1.
+		    // Try treating the handle as a file name.
+			// This is the format used in 3.0 RC1.
+			IPath path= new Path(BUILDER_FOLDER_NAME).append(configHandle);
+			IFile file= project.getFile(path);
+			if (file.exists()) {
 				version[0]= VERSION_3_0_interim;
-				IPath path= new Path(BUILDER_FOLDER_NAME).append(configHandle);
-				IFile file= project.getFile(path);
-				if (file.exists()) {
-					version[0]= VERSION_3_0_interim;
-					configuration= manager.getLaunchConfiguration(file);
+				configuration= manager.getLaunchConfiguration(file);
+			} else {
+				try {
+					// Treat the configHandle as a memento. This is the format
+					// used in Eclipse 2.1.
+					configuration = manager.getLaunchConfiguration(configHandle);
+				} catch (CoreException e) {
+				}
+				if (configuration != null) {
+					version[0]= VERSION_2_1;
 				}
 			}
 		}
