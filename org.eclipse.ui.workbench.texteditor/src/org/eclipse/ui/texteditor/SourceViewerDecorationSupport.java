@@ -584,7 +584,7 @@ public class SourceViewerDecorationSupport {
 	}
 	
 	/**
-	 * Enables annotations for the given annotation type.
+	 * Enables annotations in the source viewer for the given annotation type.
 	 * 
 	 * @param annotationType the annotation type
 	 */
@@ -619,7 +619,7 @@ public class SourceViewerDecorationSupport {
 	}
 
 	/**
-	 * Hides annotations for the given annotation type.
+	 * Hides annotations in the source viewer for the given annotation type.
 	 * 
 	 * @param annotationType the annotation type
 	 */
@@ -631,7 +631,7 @@ public class SourceViewerDecorationSupport {
 	}
 	
 	/**
-	 * Tells whether annotations are shown for the given type.
+	 * Tells whether annotations are shown in the source viewer for the given type.
 	 * 
 	 * @param annotationType the annotation type
 	 * @return <code>true</code> if the annotations are shown
