@@ -134,4 +134,20 @@ public class VersionedIdentifier {
 		}
 		return whitespace ? new String(chars) : s;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof VersionedIdentifier))
+			return false;
+		
+		VersionedIdentifier other = (VersionedIdentifier)obj;
+		return equalIdentifiers(other) &&
+			this.major == other.major &&
+			this.minor == other.minor &&
+			this.service == other.service &&
+			compareQualifiers(this.qualifier, other.qualifier) == EQUAL;
+	}
 }

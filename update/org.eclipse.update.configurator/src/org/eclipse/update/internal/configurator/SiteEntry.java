@@ -551,6 +551,11 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			if (existingVersion.compareVersion(newVersion) == VersionedIdentifier.LESS_THAN) {
 				featureEntries.put(feature.getFeatureIdentifier(), feature);
 				pluginsChangeStamp = 0;
+			} else if (existingVersion.equals(newVersion)) {
+				// log error if same feature version/id but a different url
+				if (feature instanceof FeatureEntry && existing instanceof FeatureEntry &&
+						!((FeatureEntry)feature).getURL().equals(((FeatureEntry)existing).getURL()))
+				Utils.log("Duplicate feature found on site "+getURL() + " : " + existing.getFeatureIdentifier());
 			}
 		} else {
 			featureEntries.put(feature.getFeatureIdentifier(), feature);
