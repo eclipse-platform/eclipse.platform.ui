@@ -152,7 +152,7 @@ public class ChangesSection extends Composite {
 		this.changesViewer = viewer;
 		calculateDescription();
 		configuration.addActionContribution(changedListener);
-		getParticpantSyncInfoSet().addSyncSetChangedListener(subscriberListener);
+		getWorkingSetSyncInfoSet().addSyncSetChangedListener(subscriberListener);
 		getSyncInfoTree().addSyncSetChangedListener(outputSetListener);
 	}
 	
@@ -276,7 +276,7 @@ public class ChangesSection extends Composite {
 		super.dispose();
 		forms.dispose();
 		configuration.removeActionContribution(changedListener);
-		getParticpantSyncInfoSet().removeSyncSetChangedListener(subscriberListener);
+		getWorkingSetSyncInfoSet().removeSyncSetChangedListener(subscriberListener);
 	}
 	
 	private Composite getErrorComposite(Composite parent) {
