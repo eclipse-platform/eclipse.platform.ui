@@ -115,7 +115,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 		public boolean isJobRunning() {
 			return fIsJobRunning;
 		}
-	};
+	}
 	
 	/**
 	 * The background delegate manager which disables and reenables background action delegates.
