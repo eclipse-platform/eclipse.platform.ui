@@ -12,11 +12,13 @@ package org.eclipse.core.tests.resources.perf;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.localstore.*;
+import org.eclipse.core.internal.localstore.IHistoryStore;
+import org.eclipse.core.internal.localstore.TestingSupport;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.tests.harness.PerformanceTestRunner;
 import org.eclipse.core.tests.internal.localstore.HistoryStoreTest;
 import org.eclipse.core.tests.resources.ResourceTest;
 
@@ -94,9 +96,9 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 	public void testAddState() {
 		setMaxFileStates("0.01", 100);
 		final IFile file = getWorkspace().getRoot().getProject("proj1").getFile("file.txt");
-		new CorePerformanceTest() {
+		new PerformanceTestRunner() {
 
-			protected void operation() {
+			protected void test() {
 				try {
 					file.setContents(getRandomContents(), IResource.KEEP_HISTORY, getMonitor());
 				} catch (CoreException e) {
@@ -104,11 +106,11 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 				}
 			}
 
-			protected void setup() {
+			protected void setUp() {
 				ensureExistsInWorkspace(file, getRandomContents());
 			}
 
-			protected void teardown() {
+			protected void tearDown() {
 				try {
 					file.clearHistory(getMonitor());
 					file.delete(IResource.FORCE, getMonitor());
@@ -125,9 +127,9 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		final IFile file1 = folder1.getFile("myfile.txt");
 		final IFile file2 = folder2.getFile(file1.getName());
 
-		new CorePerformanceTest() {
+		new PerformanceTestRunner() {
 
-			protected void operation() {
+			protected void test() {
 				try {
 					file1.move(file2.getFullPath(), true, true, getMonitor());
 					file2.move(file1.getFullPath(), true, true, getMonitor());
@@ -135,7 +137,7 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 					fail("1.0", e);
 				}
 			}
-			protected void setup() {
+			protected void setUp() {
 				ensureExistsInWorkspace(new IResource[] {project, folder1, folder2}, true);
 				try {
 					file1.create(getRandomContents(), IResource.FORCE, getMonitor());
@@ -147,7 +149,7 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 				}
 			}
 
-			protected void teardown() {
+			protected void tearDown() {
 				try {
 					ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
 					IHistoryStore store = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
@@ -167,9 +169,9 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		IProject project = getWorkspace().getRoot().getProject("proj1");
 		final IFolder base = project.getFolder("base");
 		ensureDoesNotExistInWorkspace(base);
-		new CorePerformanceTest() {
+		new PerformanceTestRunner() {
 
-			protected void operation() {
+			protected void test() {
 				try {
 					base.clearHistory(getMonitor());
 				} catch (CoreException e) {
@@ -177,7 +179,7 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 				}
 			}
 
-			protected void setup() {
+			protected void setUp() {
 				createTree(base, filesPerFolder, statesPerFile);
 				ensureDoesNotExistInWorkspace(base);
 			}
@@ -202,8 +204,8 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		createTree(base, filesPerFolder, statesPerFile);
 		// need a final reference so the inner class can see it
 		final IProject[] tmpProject = new IProject[] {project};
-		new CorePerformanceTest() {
-			protected void operation() {
+		new PerformanceTestRunner() {
+			protected void test() {
 				try {
 					String newProjectName = getUniqueString();
 					IProject newProject = getWorkspace().getRoot().getProject(newProjectName);
@@ -235,8 +237,8 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		ensureDoesNotExistInWorkspace(base);
 		// need a final reference so the inner class can see it
 		final IProject tmpProject = project;
-		new CorePerformanceTest() {
-			protected void operation() {
+		new PerformanceTestRunner() {
+			protected void test() {
 				try {
 					tmpProject.findDeletedMembersWithHistory(IResource.DEPTH_INFINITE, getMonitor());
 				} catch (CoreException e) {
@@ -268,8 +270,8 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		} catch (CoreException ce) {
 			fail("0.5", ce);
 		}
-		new CorePerformanceTest() {
-			protected void operation() {
+		new PerformanceTestRunner() {
+			protected void test() {
 				try {
 					file.getHistory(getMonitor());
 				} catch (CoreException e) {

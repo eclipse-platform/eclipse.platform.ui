@@ -15,9 +15,10 @@ import org.eclipse.core.tests.harness.LoggingPerformanceTestResult;
 import org.eclipse.core.tests.harness.PerformanceTestResult;
 
 /**
- * This class is the common superclass for all performance tests for
+ * This class used to be the common superclass for all performance tests for
  * the Core project.  It provides extensions to the JUnit infrastructure
- * to incorporate timers into test cases.
+ * to incorporate timers into test cases. This class has been superceded by
+ * a newer eclipse-wide performance test suite.
  *
  * There are two distinct sets of timing mechanisms available, depending
  * on the type of operation being testing.  For long running operations
@@ -44,16 +45,16 @@ import org.eclipse.core.tests.harness.PerformanceTestResult;
  * in addition to any messages added using the log() method.  In the absence
  * of a logging test result, all log events are written to the standard output.
  */
-public abstract class CorePerformanceTest extends ResourceTest {
+public abstract class OldCorePerformanceTest extends ResourceTest {
 	protected long benchStart;
 	protected LoggingPerformanceTestResult logger = null;
 	protected PerformanceTestResult result = null;
 
-	public CorePerformanceTest() {
+	public OldCorePerformanceTest() {
 		super();
 	}
 
-	public CorePerformanceTest(String name) {
+	public OldCorePerformanceTest(String name) {
 		super(name);
 	}
 

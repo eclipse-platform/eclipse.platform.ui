@@ -17,12 +17,13 @@ import org.eclipse.core.internal.watson.DefaultElementComparator;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.tests.resources.CorePerformanceTest;
+import org.eclipse.core.tests.harness.PerformanceTestRunner;
+import org.eclipse.core.tests.resources.OldCorePerformanceTest;
 
 /**
  * Benchmarks for <code>ElementTree</code>.
  */
-public class BenchElementTree extends CorePerformanceTest {
+public class BenchElementTree extends OldCorePerformanceTest {
 	static String[] javaLangUnits = {"AbstractMethodError.java", "ArithmeticException.java", "ArrayIndexOutOfBoundsException.java", "ArrayStoreException.java", "Boolean.java", //
 			"Byte.java", "Character.java", "Class.java", "ClassCastException.java", "ClassCircularityError.java", "ClassFormatError.java", "ClassLoader.java", "ClassNotFoundException.java", //
 			"Cloneable.java", "CloneNotSupportedException.java", "Compiler.java", "Double.java", "Error.java", "Exception.java", "ExceptionInInitializerError.java", "Float.java", "FloatingDecimal.java", //
@@ -51,8 +52,8 @@ public class BenchElementTree extends CorePerformanceTest {
 	 * Tests the performance of the createElement operation.
 	 */
 	public void testCreateElement() {
-		new CorePerformanceTest() {
-			protected void operation() {
+		new PerformanceTestRunner() {
+			protected void test() {
 				createTestTree(false);
 			}
 		}.run(this, 10, 400);

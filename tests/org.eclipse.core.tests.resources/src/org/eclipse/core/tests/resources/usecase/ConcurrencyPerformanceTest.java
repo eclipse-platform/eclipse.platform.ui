@@ -15,6 +15,7 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.tests.harness.PerformanceTestRunner;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class ConcurrencyPerformanceTest extends ResourceTest {
@@ -36,8 +37,8 @@ public class ConcurrencyPerformanceTest extends ResourceTest {
 				// do nothing
 			}
 		};
-		new CorePerformanceTest() {
-			protected void operation() {
+		new PerformanceTestRunner() {
+			protected void test() {
 				try {
 					getWorkspace().run(job, null);
 				} catch (CoreException e) {

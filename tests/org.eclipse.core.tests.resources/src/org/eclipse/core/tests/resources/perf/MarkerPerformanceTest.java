@@ -14,6 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.harness.PerformanceTestRunner;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class MarkerPerformanceTest extends ResourceTest {
@@ -57,8 +58,8 @@ public class MarkerPerformanceTest extends ResourceTest {
 				}
 			}
 		};
-		new CorePerformanceTest() {
-			protected void operation() {
+		new PerformanceTestRunner() {
+			protected void test() {
 				try {
 					getWorkspace().run(runnable, null);
 				} catch (CoreException e) {
@@ -80,8 +81,8 @@ public class MarkerPerformanceTest extends ResourceTest {
 				}
 			}
 		};
-		new CorePerformanceTest() {
-			protected void operation() {
+		new PerformanceTestRunner() {
+			protected void test() {
 				try {
 					getWorkspace().run(runnable, null);
 				} catch (CoreException e) {

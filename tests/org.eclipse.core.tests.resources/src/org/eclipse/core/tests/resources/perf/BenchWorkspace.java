@@ -16,6 +16,7 @@ import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.tests.harness.PerformanceTestRunner;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class BenchWorkspace extends ResourceTest {
@@ -47,8 +48,8 @@ public class BenchWorkspace extends ResourceTest {
 	public void testCountResources() {
 		final Workspace workspace = (Workspace) getWorkspace();
 		final IWorkspaceRoot root = workspace.getRoot();
-		new CorePerformanceTest() {
-			protected void operation() {
+		new PerformanceTestRunner() {
+			protected void test() {
 				workspace.countResources(root.getFullPath(), IResource.DEPTH_INFINITE, true);
 			}
 		}.run(this, 10, 100);
@@ -65,8 +66,8 @@ public class BenchWorkspace extends ResourceTest {
 						return true;
 					}
 				});
-				new CorePerformanceTest() {
-					protected void operation() {
+				new PerformanceTestRunner() {
+					protected void test() {
 						workspace.countResources(project.getFullPath(), IResource.DEPTH_INFINITE, true);
 					}
 				}.run(BenchWorkspace.this, 10, 10);
