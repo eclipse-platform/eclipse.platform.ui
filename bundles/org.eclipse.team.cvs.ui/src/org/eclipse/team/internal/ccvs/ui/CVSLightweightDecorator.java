@@ -430,7 +430,7 @@ public class CVSLightweightDecorator
 	/* package */ static CVSLightweightDecorator getActiveCVSDecorator() {
 		IDecoratorManager manager = CVSUIPlugin.getPlugin().getWorkbench().getDecoratorManager();
 		if (manager.getEnabled(CVSUIPlugin.DECORATOR_ID))
-			return (CVSLightweightDecorator) manager.getLightweightLabelDecorator(CVSUIPlugin.DECORATOR_ID);
+			return (CVSLightweightDecorator) manager.getBaseLabelProvider(CVSUIPlugin.DECORATOR_ID);
 		return null;
 	}
 	/*
