@@ -96,7 +96,7 @@ public PerspectiveDescriptor(IConfigurationElement configElement)
  * @throws a CoreException if the object could not be instantiated.
  */
 public IPerspectiveFactory createFactory() throws CoreException {
-	if (className == null)
+	if (className == null || configElement == null)
 		return null;
 	Object obj = WorkbenchPlugin.createExtension(configElement, ATT_CLASS);
 	return (IPerspectiveFactory) obj;
