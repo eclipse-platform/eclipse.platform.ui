@@ -18,12 +18,12 @@
    </requires>
 
 
-   <extension-point id="builders" name="%buildersName" schema="schema/builders.mxsd"/>
-   <extension-point id="markers" name="%markersName" schema="schema/markers.mxsd"/>
-   <extension-point id="natures" name="%naturesName" schema="schema/natures.mxsd"/>
-   <extension-point id="fileModificationValidator" name="%validatorName" schema="schema/fileModificationValidator.mxsd"/>
-   <extension-point id="moveDeleteHook" name="%hookName" schema="schema/moveDeleteHook.mxsd"/>
-   <extension-point id="teamHook" name="%teamHookName" schema="schema/teamHook.mxsd"/>
+   <extension-point id="builders" name="%buildersName" schema="schema/builders.exsd"/>
+   <extension-point id="markers" name="%markersName" schema="schema/markers.exsd"/>
+   <extension-point id="natures" name="%naturesName" schema="schema/natures.exsd"/>
+   <extension-point id="fileModificationValidator" name="%validatorName" schema="schema/fileModificationValidator.exsd"/>
+   <extension-point id="moveDeleteHook" name="%hookName" schema="schema/moveDeleteHook.exsd"/>
+   <extension-point id="teamHook" name="%teamHookName" schema="schema/teamHook.exsd"/>
    <extension-point id="refreshProviders" name="%refreshProvidersName" schema="schema/refreshProviders.exsd"/>
 
 	<extension id="preferences" point="org.eclipse.core.runtime.preferences" name="preferences">
