@@ -70,6 +70,7 @@ public class ResourceComponent extends AbstractVariableComponent {
 		data.heightHint = tree.getItemHeight() * 8;
 		tree.setLayoutData(data);
 		tree.setFont(mainGroup.getFont());
+		tree.setEnabled(false);
 		
 		resourceList = new TreeViewer(tree);
 		resourceList.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -88,7 +89,7 @@ public class ResourceComponent extends AbstractVariableComponent {
 	 */
 	public void setEnabled(boolean enabled) {
 		mainGroup.setEnabled(enabled);
-		resourceList.getTree().setEnabled(enabled);
+		resourceList.getTree().setEnabled(specificResourceButton.getSelection());
 	}
 	
 	/**
