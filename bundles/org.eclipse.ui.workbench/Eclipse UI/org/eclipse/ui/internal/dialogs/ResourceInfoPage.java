@@ -131,6 +131,11 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 		
 		Text sizeValue = new Text(basicInfoComposite, SWT.LEFT | SWT.READ_ONLY);
 		sizeValue.setText(MessageFormat.format(BYTES_LABEL, new Object[] {getSizeString((IFile) resource)}));
+		gd = new GridData();
+		gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
+		gd.grabExcessHorizontalSpace = true;
+		gd.horizontalAlignment = GridData.FILL;
+		sizeValue.setLayoutData(gd);
 		sizeValue.setFont(font);
 	}
 
@@ -250,6 +255,8 @@ private void createStateGroup(Composite parent, IResource resource) {
 	Text timeStampValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 	timeStampValue.setText(getDateStringValue(resource));
 	timeStampValue.setFont(font);
+	timeStampValue.setLayoutData(
+		new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
 
 	createEditableButton(composite);
 	
