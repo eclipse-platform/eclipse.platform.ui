@@ -492,12 +492,16 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		initializeAcceleratorConfiguration();
 		initializeSingleClickOption();
 
-		// deadlock code
 		boolean avoidDeadlock = true;
+		boolean newUpdates = false;
 		for (int i = 0; i < commandLineArgs.length; i++) {
 			if (commandLineArgs[i].equalsIgnoreCase("-allowDeadlock")) //$NON-NLS-1$
 				avoidDeadlock = false;
+			else if (commandLineArgs[i].equalsIgnoreCase("-newUpdates")) //$NON-NLS-1$
+				newUpdates = true;
 		}
+
+		// deadlock code
 		if (avoidDeadlock) {
 			try {
 				Display display = Display.getCurrent();
@@ -516,6 +520,15 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			openFirstTimeWindow();
 			
 		openWelcomeDialog();
+		
+		if (newUpdates) {
+			Shell shell = null;
+			IWorkbenchWindow window = getActiveWorkbenchWindow();
+			if (window != null) // should never be null
+				shell = window.getShell();
+			// Temp dialog code, will need a custom dialog to directly open the update manager
+			MessageDialog.openInformation(shell, "Updates", "You have updates.\nRun the Update Manager by going to Help>Update Manager.");
+		}
 
 		isStarting = false;
 		return true;
