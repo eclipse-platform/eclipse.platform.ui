@@ -103,7 +103,8 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ICon
 		fgProposalKeys.add("U|V");  //$NON-NLS-1$
 		fgProposalKeys.add("(U)");  //$NON-NLS-1$
 		
-		fgProposalKeys.add("\\n");  //$NON-NLS-1$
+		fgProposalKeys.add("\\i");  //$NON-NLS-1$
+		fgProposalKeys.add("$i");  //$NON-NLS-1$
 
 		fgProposalKeys.add("\\");  //$NON-NLS-1$
 		fgProposalKeys.add("\\Q");  //$NON-NLS-1$
@@ -199,8 +200,9 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ICon
 		fgProposalStrings.put("U|V", "|");  //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("(U)", "()");  //$NON-NLS-1$ //$NON-NLS-2$
 		
-		fgProposalStrings.put("\\n", "\\");  //$NON-NLS-1$ //$NON-NLS-2$
-
+		fgProposalStrings.put("\\i", "\\");  //$NON-NLS-1$ //$NON-NLS-2$
+		fgProposalStrings.put("$i", "$");  //$NON-NLS-1$ //$NON-NLS-2$
+		
 		fgProposalStrings.put("\\", "\\");  //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\Q", "\\Q");  //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\E", "\\E");  //$NON-NLS-1$ //$NON-NLS-2$
