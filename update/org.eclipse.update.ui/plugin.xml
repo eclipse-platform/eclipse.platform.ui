@@ -184,6 +184,12 @@
             class="org.eclipse.update.internal.ui.properties.FeatureLicensePropertyPage"
             id="org.eclipse.update.ui.featureLicensePropertyPage">
       </page>
+      <page
+            objectClass="org.eclipse.update.internal.ui.model.IFeatureAdapter"
+            name="Copyright Statement"
+            class="org.eclipse.update.internal.ui.properties.FeatureCopyrightPropertyPage"
+            id="org.eclipse.update.ui.featureCopyrightPropertyPage">
+      </page>
    </extension>
    <extension
          point="org.eclipse.update.ui.searchCategory">

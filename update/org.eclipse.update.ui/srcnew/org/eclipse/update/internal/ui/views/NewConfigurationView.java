@@ -930,7 +930,7 @@ public class NewConfigurationView
 			if (adapter.getInstallConfiguration().isCurrent())
 				manager.add(showStatusAction);
 		}
-		super.fillContextMenu(manager);
+		//super.fillContextMenu(manager);
 		if (obj instanceof PreservedConfiguration
 			|| obj instanceof IInstallConfiguration || obj instanceof IFeatureAdapter)
 			manager.add(propertiesAction);
