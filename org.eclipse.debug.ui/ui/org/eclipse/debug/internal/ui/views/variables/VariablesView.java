@@ -32,6 +32,7 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
+import org.eclipse.debug.internal.ui.actions.AssignValueAction;
 import org.eclipse.debug.internal.ui.actions.ChangeVariableValueAction;
 import org.eclipse.debug.internal.ui.actions.CollapseAllAction;
 import org.eclipse.debug.internal.ui.actions.ShowTypesAction;
@@ -802,6 +803,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		fSelectionActions.add(ActionFactory.CUT.getId());
 		fSelectionActions.add(ActionFactory.PASTE.getId());
 		updateAction(ActionFactory.FIND.getId());
+		
+		action = new AssignValueAction(this, fDetailViewer);
+		setAction("AssignValue", action); //$NON-NLS-1$
 	} 
 	
 	private void createOrientationActions() {
@@ -865,6 +869,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	protected void fillDetailContextMenu(IMenuManager menu) {
 		
 		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));		
+		menu.add(getAction("AssignValue")); //$NON-NLS-1$
 		menu.add(getAction("ContentAssist")); //$NON-NLS-1$
 		menu.add(new Separator());
 		menu.add(getAction(ActionFactory.CUT.getId()));
