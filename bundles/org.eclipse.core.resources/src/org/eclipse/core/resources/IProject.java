@@ -192,7 +192,7 @@ public void close(IProgressMonitor monitor) throws CoreException;
 public void create(IProjectDescription description, IProgressMonitor monitor) throws CoreException;
 
 /**
- * Creates a new project resource in the workspace with files are the default
+ * Creates a new project resource in the workspace with files in the default
  * location in the local file system. Upon successful completion, the project
  * will exist but be closed.
  * <p>
