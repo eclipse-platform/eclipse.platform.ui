@@ -55,10 +55,6 @@ public class Policy {
 	public static boolean DEBUG_SAVE_MASTERTABLE = false;
 
 	public static boolean DEBUG_AUTO_REFRESH = false;
-	public static final String OPTION_TRACE_BUILDERS = ResourcesPlugin.PI_RESOURCES + "/trace/builders"; //$NON-NLS-1$
-	public static final String OPTION_TRACE_LISTENERS = ResourcesPlugin.PI_RESOURCES + "/trace/listeners"; //$NON-NLS-1$
-	public static final String OPTION_TRACE_SNAPSHOT = ResourcesPlugin.PI_RESOURCES + "/trace/snapshot"; //$NON-NLS-1$
-
 	static {
 		//init debug options
 		if (ResourcesPlugin.getPlugin().isDebugging()) {
@@ -73,9 +69,9 @@ public class Policy {
 			DEBUG_PREFERENCES = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/preferences")); //$NON-NLS-1$
 			DEBUG_STRINGS = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/strings")); //$NON-NLS-1$
 
-			TRACE_BUILDERS = !sFalse.equalsIgnoreCase(Platform.getDebugOption(OPTION_TRACE_BUILDERS));
-			TRACE_LISTENERS = !sFalse.equalsIgnoreCase(Platform.getDebugOption(OPTION_TRACE_LISTENERS));
-			TRACE_SNAPSHOT = !sFalse.equalsIgnoreCase(Platform.getDebugOption(OPTION_TRACE_SNAPSHOT));
+			TRACE_BUILDERS = !sFalse.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/perf/builders")); //$NON-NLS-1$
+			TRACE_LISTENERS = !sFalse.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/perf/listeners")); //$NON-NLS-1$
+			TRACE_SNAPSHOT = !sFalse.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/perf/snapshot")); //$NON-NLS-1$
 
 			DEBUG_RESTORE_MARKERS = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/markers")); //$NON-NLS-1$ 
 			DEBUG_RESTORE_SYNCINFO = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/syncinfo")); //$NON-NLS-1$ 
