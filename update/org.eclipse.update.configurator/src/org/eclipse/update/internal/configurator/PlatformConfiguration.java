@@ -219,15 +219,15 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			return null;
 		String key = url.toExternalForm();
 
-		SiteEntry result = config.getSiteEntry(key);
-		try {
-			key = URLDecoder.decode(key, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			// ignore
-		}
-		
-		if (result == null) // retry with decoded URL string
+		SiteEntry result = config.getSiteEntry(key);	
+		if (result == null) { // retry with decoded URL string
+			try {
+				key = URLDecoder.decode(key, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				// ignore
+			}
 			result = config.getSiteEntry(key);
+		}
 			
 		if (result == null && checkPlatformURL) {
 			try {
@@ -883,18 +883,14 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		} else if (path.startsWith(LINK_READ_WRITE + " ")) { //$NON-NLS-1$
 			link = path.substring(3).trim();
 		} else {
-			link = path;
+			link = path.trim();
 		}
 
 		// 	make sure we have a valid link specification
 		try {
-			if (!link.endsWith(File.separator))
-				link += File.separator;
-			File target = new File(link + ECLIPSE);
-			link = "file:" + target.getAbsolutePath().replace(File.separatorChar, '/'); //$NON-NLS-1$
-			if (!link.endsWith("/")) //$NON-NLS-1$
-				link += "/"; // sites must be directories //$NON-NLS-1$
-			siteURL = new URL(link);
+			File siteFile = new File(link);
+			siteFile = new File(siteFile, ECLIPSE);
+			siteURL = siteFile.toURL();
 			if (findConfiguredSite(siteURL, true) != null)
 				// linked site is already known
 				return;
