@@ -1,0 +1,536 @@
+package org.eclipse.core.internal.properties;
+
+/*
+ * Licensed Materials - Property of IBM,
+ * WebSphere Studio Workbench
+ * (c) Copyright IBM Corp 2000
+ */
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.internal.resources.ResourceException;
+import org.eclipse.core.internal.resources.ResourceStatus;
+import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.indexing.*;
+import java.util.*;
+/**
+ *
+ */
+public class PropertyStore {
+
+	// The indexed store will maintain the properties
+	protected IndexedStore store = null;
+	protected IPath location = null;
+
+	/* constants */
+	protected static final String INDEX_NAME = "index";
+
+	// Add directives
+	public static final int CREATE = 0; // must not exist
+	public static final int UPDATE = 1; // must exist
+	public static final int SET_UPDATE = 2; // create if doesn't exist, update if exists
+	public static final int SET_SKIP = 3; // create if doesn't exist, don't update if exists
+
+	// Remove directives
+	public static final int IGNORE_MISSING = 0;
+	public static final int FAIL_MISSING = 1;
+public PropertyStore(IPath location) {
+	this.location = location;
+}
+protected boolean basicExists(StoreKey searchKey) throws CoreException {
+	try {
+		byte[] searchBytes = searchKey.toBytes();
+		IndexCursor cursor = getIndex().open();
+		cursor.find(searchBytes);
+		boolean exists = cursor.keyEquals(searchBytes);
+		cursor.close();
+		return exists;
+	} catch (IndexedStoreException e) {
+		String message = "Problems accessing property store";
+		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_LOCAL, null, message, e);
+		throw new ResourceException(status);
+	}
+}
+/**
+ * The caller is responsible for ensuring that this will not produce
+ * duplicate keys in the index.
+ */
+protected void basicInsert(StoreKey key, String value) throws CoreException {
+	try {
+		ObjectID valueID = store.createObject(value);
+		getIndex().insert(key.toBytes(), valueID);
+	} catch (IndexedStoreException e) {
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, null, Policy.bind("couldNotWriteProp", null), e);
+	}
+}
+protected boolean basicRemove(ResourceName resourceName, QualifiedName propertyName) throws CoreException {
+	StoreKey key = new StoreKey(resourceName, propertyName);
+	byte[] keyBytes = key.toBytes();
+	boolean wasFound = false;
+	try {
+		IndexCursor cursor = getIndex().open();
+		cursor.find(keyBytes);
+		if (cursor.keyEquals(keyBytes)) {
+			wasFound = true;
+			ObjectID valueID = cursor.getValueAsObjectID();
+			store.removeObject(valueID);
+			cursor.remove();
+		}
+		cursor.close();
+	} catch (IndexedStoreException e) {
+		throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, null, Policy.bind("couldNotDeleteProp", null), e);
+	}
+	return wasFound;
+}
+protected void basicUpdate(StoreKey key, String value) throws CoreException {
+	try {
+		byte[] keyBytes = key.toBytes();
+		IndexCursor cursor = getIndex().open();
+		cursor.find(keyBytes);
+		if (cursor.keyEquals(keyBytes)) {
+			ObjectID newValueId = store.createObject(value);
+			ObjectID oldValueId = cursor.getValueAsObjectID();
+			cursor.updateValue(newValueId);
+		}
+		cursor.close();
+	} catch (IndexedStoreException e) {
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, null, Policy.bind("couldNotWriteProp", null), e);
+	}
+}
+protected synchronized void close(IndexedStore store) {
+	try {
+		store.close();
+	} catch (IndexedStoreException e) {
+		String message = "Could not close property store";
+		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
+		ResourcesPlugin.getPlugin().getLog().log(status);
+	}
+}
+protected void commit() throws CoreException {
+	try {
+		getIndexedStore().commit();
+	} catch (IndexedStoreException e) {
+		String message = "Property store transactions did not commit properly";
+		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
+		throw new ResourceException(status);
+	}
+}
+synchronized protected void commonSet(ResourceName resourceName, StoredProperty[] properties, int depth, int setMode, QueryResults failures) throws CoreException {
+	if (depth == IResource.DEPTH_ZERO) {
+		for (int i = 0; i < properties.length; i++) {
+			StoredProperty property = properties[i];
+			StoreKey key = new StoreKey(resourceName, property.getName());
+			boolean exists = basicExists(key);
+			if ((exists && (setMode == CREATE)) || (!exists && (setMode == UPDATE)))
+				failures.add(resourceName, property);
+			else
+				if (exists && (setMode != SET_SKIP))
+					basicUpdate(key, property.getStringValue());
+				else
+					basicInsert(key, property.getStringValue());
+		}
+	} else {
+		Enumeration resourceNamesEnum = deepResourceNames(resourceName);
+		while (resourceNamesEnum.hasMoreElements())
+			commonSet((ResourceName) resourceNamesEnum.nextElement(), properties, IResource.DEPTH_ZERO, setMode, failures);
+	}
+}
+protected synchronized IndexedStore create(IndexedStore store) throws CoreException {
+	store = open(store);
+	createIndex(store);
+	return store;
+}
+protected synchronized Index createIndex(IndexedStore store) throws CoreException {
+	try {
+		return store.createIndex(INDEX_NAME);
+	} catch (IndexedStoreException e) {
+		if (e.id == IndexedStoreException.IndexExists)
+			return getIndex(store);
+		String message = "Could not create index for property store";
+		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
+		throw new ResourceException(status);
+	}
+}
+/**
+ * Returns the names of all resources that are rooted at the given resource.
+ * <p>
+ * Answers an <code>Enumeration</code> of <code>IResourceName</code>.
+ * The enumerator will include (at least) <code>resourceName</code> if it
+ * exists.  If <code>resourceName</code> does not exist returns an empty
+ * enumerator.
+ *
+ * @see IResourceName
+ * @param resourceName the name of the top most resource to match.
+ * @return an enumeration of matching resource names.
+ */
+public Enumeration deepResourceNames(ResourceName resourceName) throws CoreException {
+	final Set resultHolder = new HashSet(10);
+	IVisitor visitor = new IVisitor() {
+		public void visit(ResourceName resourceName, StoredProperty property, IndexCursor cursor) {
+			resultHolder.add(resourceName);
+		}
+		public boolean requiresValue(ResourceName resourceName, QualifiedName propertyName) {
+			return false;
+		}
+	};
+	recordsDeepMatching(resourceName, visitor);
+	return Collections.enumeration(resultHolder);
+}
+/**
+ * Returns the named property for the given resource.
+ * <p>
+ * The retieval is performed to depth zero.  Returns <code>null</code>
+ * if there is no such property defined on the resource.
+ *
+ * @param resourceName the resource name to match.
+ * @param propertyName the property name to match.
+ * @return the matching property, or <code>null</code> if no such property.
+ */
+public StoredProperty get(ResourceName resourceName, final QualifiedName propertyName) throws CoreException {
+	final Object[] resultHolder = new Object[1];
+	IVisitor simpleVisitor = new IVisitor() {
+		public void visit(ResourceName resourceName, StoredProperty property, IndexCursor cursor) {
+			resultHolder[0] = property;
+		}
+		public boolean requiresValue(ResourceName resourceName, QualifiedName propertyName) {
+			return true;
+		}
+	};
+	recordsMatching(resourceName, propertyName, simpleVisitor);
+	return (StoredProperty) resultHolder[0];
+}
+/**
+ * Returns all the properties for a given resource.
+ * <p>
+ * Answer a <code>QueryResults</code> containing <code>StoredProperty</code>.
+ * If there are no matches returns an empty <code>QueryResults</code></p>
+ * <p>
+ * The depth parameter allows searching based on resource name path prefix.</p>
+ *
+ * @see QueryResults
+ * @param resourceName the resource name to match.
+ * @param depth the scope of the query
+ * @return a <code>QueryResults</code> with the matching properties.
+ */
+public QueryResults getAll(ResourceName resourceName, int depth) throws CoreException {
+	final QueryResults result = new QueryResults();
+	IVisitor visitor = new IVisitor() {
+		public void visit(ResourceName resourceName, StoredProperty property, IndexCursor cursor) {
+			result.add(resourceName, property);
+		}
+		public boolean requiresValue(ResourceName resourceName, QualifiedName propertyName) {
+			return true;
+		}
+	};
+	if (depth == IResource.DEPTH_ZERO)
+		recordsMatching(resourceName, visitor);
+	else
+		recordsDeepMatching(resourceName, visitor);
+	return result;
+}
+protected Index getIndex() throws CoreException {
+	return getIndex(getIndexedStore());
+}
+protected Index getIndex(IndexedStore store) throws CoreException {
+	try {
+		return store.getIndex(INDEX_NAME);
+	} catch (IndexedStoreException e) {
+		if (e.id == IndexedStoreException.IndexNotFound)
+			return createIndex(store);
+		String message = "Problems accessing property store index";
+		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
+		throw new ResourceException(status);
+	}
+}
+protected IndexedStore getIndexedStore() throws CoreException {
+	if (store != null)
+		return store;
+	String name = location.toOSString();
+	store = IndexedStore.find(name);
+	if (store != null) {
+		rollback(store);
+		return store;
+	}
+	if (IndexedStore.exists(name))
+		store = open(new IndexedStore());
+	else
+		store = create(new IndexedStore());
+	if (store != null)
+		return store;
+	String message = "Problems accessing property store";
+	ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_LOCAL, null, message, null);
+	throw new ResourceException(status);
+}
+/**
+ * Returns all the property names for a given resource.
+ * <p>
+ * The result is a <code>QueryResults</code> containing <code>QualifiedName</code>.  
+ * If the resource has no defined properties, the method returns
+ * an empty <code>QueryResults</code>.</p>
+ * <p>
+ * The depth parameter allows searching based on resource name path prefix.</p>
+ *
+ * @param resourceName the resource name to match.
+ * @param depth the depth to which the query runs.
+ * @return a <code>QueryResults</code> containing the property names.
+ */
+public QueryResults getNames(ResourceName resourceName, int depth) throws CoreException {
+	QueryResults results = new QueryResults();
+	if (depth == IResource.DEPTH_ZERO)
+		recordsMatching(resourceName, propertyNameVisitor(results));
+	else
+		recordsDeepMatching(resourceName, propertyNameVisitor(results));
+	return results;
+}
+protected synchronized IndexedStore open(IndexedStore store) throws CoreException {
+	try {
+		store.open(location.toOSString());
+	} catch (IndexedStoreException e) {
+		String message = "Could not open property store";
+		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
+		ResourcesPlugin.getPlugin().getLog().log(status);
+		store = recreate(store);
+	}
+	return store;
+}
+protected IVisitor propertyNameVisitor(final QueryResults results) {
+	return new IVisitor() {
+		public void visit(ResourceName resourceName, StoredProperty property, IndexCursor cursor) {
+			results.add(resourceName, property.getName());
+		}
+		public boolean requiresValue(ResourceName resourceName, QualifiedName propertyName) {
+			return false;
+		}
+	};
+}
+/**
+ * Matches all properties for a given resource.
+ */
+protected void recordsDeepMatching(ResourceName resourceName, IVisitor visitor) throws CoreException {
+
+	// Build the partial 'search' key
+	StoreKey searchKey = new StoreKey(resourceName, true);
+	byte[] searchBytes = searchKey.toBytes();
+	int probe = searchBytes.length;
+	try {
+		// Position a cursor over the first matching key
+		IndexCursor cursor = getIndex().open();
+		cursor.find(searchBytes);
+
+		// While we have a prefix match
+		while (cursor.keyMatches(searchBytes)) {
+			// Must check that the prefix is up to a valid path segment
+			// note that the matching bytes length is > search key length since
+			//      properties MUST have a local name.
+			byte[] matchingBytes = cursor.getKey();
+			if ((matchingBytes[probe] == 0) || // a full path match
+			 	(matchingBytes[probe] == 47 /*IPath.SEPARATOR*/)) {
+				// a segment boundary match
+				visitPropertyAt(cursor, visitor);
+			}
+			// else the match is intra-segment and therefore invalid
+			cursor.next();
+		}
+		cursor.close();
+	} catch (IndexedStoreException e) {
+		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Policy.bind("storeProblem", null), e);
+	}
+}
+/**
+ * Matches all properties for a given resource.
+ */
+protected void recordsMatching(ResourceName resourceName, IVisitor visitor) throws CoreException {
+
+	// Build the partial 'search' key
+	StoreKey searchKey = new StoreKey(resourceName, false);
+	byte[] searchBytes = searchKey.toBytes();
+	try {
+		// Position a cursor over the first matching key
+		IndexCursor cursor = getIndex().open();
+		cursor.find(searchBytes);
+
+		// While we have a prefix match, evaluate the visitor
+		while (cursor.keyMatches(searchBytes)) {
+			visitPropertyAt(cursor, visitor);
+			cursor.next();
+		}
+		cursor.close();
+	} catch (IndexedStoreException e) {
+		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Policy.bind("storeProblem", null), e);
+	}
+}
+/**
+ * Matches the given property for a given resource.
+ * Note that there should be only one.
+ */
+protected void recordsMatching(ResourceName resourceName, QualifiedName propertyName, IVisitor visitor) throws CoreException {
+
+	// Build the full 'search' key
+	StoreKey searchKey = new StoreKey(resourceName, propertyName);
+	byte[] searchBytes = searchKey.toBytes();
+	try {
+		// Position a cursor over the first matching key
+		IndexCursor cursor = getIndex().open();
+		cursor.find(searchBytes);
+
+		// If we have an exact match, evaluate the visitor
+		if (cursor.keyEquals(searchBytes))
+			visitPropertyAt(cursor, visitor);
+		cursor.close();
+	} catch (IndexedStoreException e) {
+		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Policy.bind("storeProblem", null), e);
+	}
+}
+protected synchronized IndexedStore recreate(IndexedStore store) throws CoreException {
+	close(store);
+	String name = location.toOSString();
+	// Rename the problematic store for future analysis.
+	location.toFile().renameTo(location.append(".001").toFile());
+	location.toFile().delete();
+	if (location.toFile().exists())
+		return null; // we would not be able to recreate the store
+	store = create(new IndexedStore());
+	return store;
+}
+/**
+ * Remove the given collection of named properties from the given resource.
+ * <p>
+ * All of the properties being removed must exist already on the
+ * resource based on the removeRule parameter.  If the rule is
+ * MISSING_IGNORE then attempts to remove properties that do not exist
+ * are ignored, if the rule is MISSING_FAIL the method will throw
+ * a <code>PropertyNotFoundException</code> if the property does not exist.
+ * <p>
+ * If an exception is thrown, all properties that did previously
+ * exist will have been removed from the resource.  To determine which
+ * properties caused the exception see the offenders result in the exception.</p>
+ * <p>
+ * The depth parameter allows matching based on resource name path prefix.</p>
+ *
+ * @param resourceName the resource containing the properties.
+ * @param propertyNames the property names to remove.
+ * @param depth the scope for matching the resource name.
+ * @param removeRule the behavior when removing non-existant properties.
+ * @exception PropertyNotFoundException
+ */
+public QueryResults remove(ResourceName resourceName, QualifiedName[] propertyNames, int depth, int removeRule) throws CoreException {
+	QueryResults failures = new QueryResults();
+	if (depth == IResource.DEPTH_ZERO) {
+		for (int i = 0; i < propertyNames.length; i++) {
+			boolean found = basicRemove(resourceName, propertyNames[i]);
+			if (!found && (removeRule == FAIL_MISSING))
+				failures.add(resourceName, propertyNames[i]);
+		}
+	} else {
+		Enumeration resourceNamesEnum = deepResourceNames(resourceName);
+		while (resourceNamesEnum.hasMoreElements()) {
+			ResourceName resName = (ResourceName) resourceNamesEnum.nextElement();
+			for (int i = 0; i < propertyNames.length; i++) {
+				boolean found = basicRemove(resName, propertyNames[i]);
+				if (!found && (removeRule == FAIL_MISSING))
+					failures.add(resName, propertyNames[i]);
+			}
+		}
+	}
+	return failures;
+}
+/**
+ * Remove the named property from the given resource.
+ * <p>
+ * If a matching property does not exist on this resource
+ * the method has no affect on the store.  Removal is performed
+ * to depth zero.</p>
+ * <p>
+ * @param resourceName the resource containing the property.
+ * @param property the property to remove.
+ */
+public void remove(ResourceName resourceName, QualifiedName propertyName) throws CoreException {
+	remove(resourceName, new QualifiedName[] {propertyName}, IResource.DEPTH_ZERO, IGNORE_MISSING);
+}
+/**
+ * Remove all the properties from a given resource.
+ * <p>
+ * The depth parameter allows matching based on resource name path prefix.</p>
+ *
+ * @param resourceName the resource containing the properties.
+ * @param depth the scope for matching the resource name.
+ */
+public void removeAll(ResourceName resourceName, int depth) throws CoreException {
+	QueryResults namesSearch = getNames(resourceName, depth);
+	Enumeration resourceNamesEnum = namesSearch.getResourceNames();
+	while (resourceNamesEnum.hasMoreElements()) {
+		ResourceName resName = (ResourceName) resourceNamesEnum.nextElement();
+		Enumeration propertyNamesEnum = Collections.enumeration(namesSearch.getResults(resName));
+		while (propertyNamesEnum.hasMoreElements()) {
+			QualifiedName propertyName = (QualifiedName) propertyNamesEnum.nextElement();
+			basicRemove(resName, propertyName);
+		}
+	}
+}
+protected void rollback(IndexedStore store) {
+	try {
+		store.rollback();
+	} catch (IndexedStoreException e) {
+		String message = "Property store transactions did not rollback properly";
+		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
+		ResourcesPlugin.getPlugin().getLog().log(status);
+	}
+}
+/**
+ * Sets the given collection of properties on the given resource.
+ * <p>
+ * The addRule determines whether the properties must already exist
+ * or not, and if they do whether they are updated by subsequent addition.  
+ * Valid addRule values are defined in <code>IPropertyCollectionConstants</code>.
+ * <p>
+ * The depth parameter allows matching based on resource name path prefix.</p>
+ * <p>
+ * The <code>PropertyExistsException</code> is thrown if the matching resource
+ * already has a property of the same name, and the rule requires that
+ * it must not.  If the exception is thrown, all successfull properties
+ * will have been set, and the failures are listed in the exception.</p>
+ *
+ * @param resourceName the resource to receive the properties.
+ * @param properties the properties to add.
+ * @param depth the depth at which to apply the add opertion.
+ * @param addRule the behavior of the add operation.
+ * @exception PropertyExistsException
+ */
+public QueryResults set(ResourceName resourceName, StoredProperty[] properties, int depth, int mode) throws CoreException {
+	QueryResults failures = new QueryResults();
+	commonSet(resourceName, properties, depth, mode, failures);
+	return failures;
+}
+/**
+ * Sets the given property to the given resource.
+ * <p>
+ * The property is added to depth zero.  If the resource already has
+ * a proprety with the same name, it's value is updated to the given
+ * value (i.e. SET_UPDATE add rule equivalent.)</p>
+ *
+ * @param resourceName the resource to receive the property.
+ * @param property the property to add.
+ */
+public void set(ResourceName resourceName, StoredProperty property) throws CoreException {
+	commonSet(resourceName, new StoredProperty[] {property}, IResource.DEPTH_ZERO, SET_UPDATE, null);
+}
+public void shutdown(IProgressMonitor monitor) {
+	if (store == null)
+		return;
+	close(store);
+}
+public void startup(IProgressMonitor monitor) {
+}
+protected void visitPropertyAt(IndexCursor cursor, IVisitor visitor) throws CoreException {
+	try {
+		StoreKey key = new StoreKey(cursor.getKey());
+		ResourceName resourceName = key.getResourceName();
+		QualifiedName propertyName = key.getPropertyName();
+		String propertyValue = null;
+		if (visitor.requiresValue(resourceName, propertyName))
+			propertyValue = store.getObjectAsString(cursor.getValueAsObjectID());
+		visitor.visit(resourceName, new StoredProperty(propertyName, propertyValue), cursor);
+	} catch (IndexedStoreException e) {
+		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Policy.bind("storeProblem", null), e);
+	}
+}
+}

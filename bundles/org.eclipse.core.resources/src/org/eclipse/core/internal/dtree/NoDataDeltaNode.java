@@ -1,0 +1,113 @@
+package org.eclipse.core.internal.dtree;
+
+/*
+ * Licensed Materials - Property of IBM,
+ * WebSphere Studio Workbench
+ * (c) Copyright IBM Corp 2000
+ */
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+
+/**
+ * A <code>NoDataDeltaNode</code>is a node in a delta tree whose subtree contains
+ * differences since the delta's parent.  Refer to the <code>DeltaDataTree</code>
+ * API and class comment for details.
+ *
+ * @see DeltaDataTree
+ */
+public class NoDataDeltaNode extends AbstractDataTreeNode {
+	/**
+	 * Creates a new empty delta.
+	 */
+	public NoDataDeltaNode(String name) {
+		this(name, emptyChildArray);
+	}
+	/**
+	 * Creates a new data tree node
+	 *
+	 * @param name
+	 *	name of new node
+	 * @param children
+	 *	children of the new node
+	 */
+	public NoDataDeltaNode(String name, AbstractDataTreeNode[] children) {
+		super (name, children);
+	}
+	/**
+	 * Creates a new data tree node
+	 *
+	 * @param name
+	 *	name of new node
+	 * @param childNode
+	 *	single child for new node
+	 */
+	NoDataDeltaNode(String localName, AbstractDataTreeNode childNode) {
+		
+		super (localName, new AbstractDataTreeNode[] { childNode });
+	}
+	/**
+	 * @see AbstractDataTreeNode#asBackwardDelta
+	 */
+	AbstractDataTreeNode asBackwardDelta (DeltaDataTree myTree, DeltaDataTree parentTree, IPath key) {
+		
+		AbstractDataTreeNode[] newChildren = new AbstractDataTreeNode[children.length];
+		for (int i = children.length; --i >= 0;) {
+			newChildren[i] = children[i].asBackwardDelta(myTree, parentTree, key.append(children[i].getName()));
+		}
+		return new NoDataDeltaNode(name, newChildren);
+	}
+	AbstractDataTreeNode compareWithParent (IPath key, DeltaDataTree parent, IComparator comparator) {
+		
+		AbstractDataTreeNode[] comparedChildren = compareWithParent(children, key, parent, comparator);
+		Object oldData = parent.getData(key);
+		return new DataTreeNode(
+			key.lastSegment(),
+			new NodeComparison(oldData, oldData, NodeComparison.K_CHANGED, 0),
+			comparedChildren);
+	}
+	/**
+	 * Creates and returns a new copy of the receiver.  Makes a deep copy of 
+	 * children, but a shallow copy of name and data.
+	 */
+	AbstractDataTreeNode copy () {
+		AbstractDataTreeNode[] childrenCopy = new AbstractDataTreeNode[children.length];
+		System.arraycopy(children, 0, childrenCopy, 0, children.length);
+		return new NoDataDeltaNode(name, childrenCopy);
+	}
+	/**
+	 * Returns true if the receiver represents delta information,
+	 * false if it represents the complete information.
+	 */
+	boolean isDelta() {
+		return true;
+	}
+	/**
+	 * Returns true if the receiver is an empty delta node, false otherwise.
+	 */
+	boolean isEmptyDelta() {
+		return this.size() == 0;
+	}
+	/** 
+	 * Simplifies the given node, and returns its replacement.
+	 */
+	AbstractDataTreeNode simplifyWithParent(IPath key, DeltaDataTree parent, IComparator comparer) {
+
+		AbstractDataTreeNode[] simplifiedChildren = simplifyWithParent(children, key, parent, comparer);
+		return new NoDataDeltaNode (name, simplifiedChildren);
+	}
+	/**
+	 * Returns a unicode representation of the node.  This method is used
+	 * for debugging purposes only (no NLS support needed)
+	 */
+	public String toString () {
+		
+		return "a NoDataDeltaNode(" + this.getName() + ") with " + 
+			getChildren().length + " children.";
+	}
+	/**
+	 * Return a constant describing the type of node.
+	 */
+	int type() {
+		return NoDataDeltaNodeType;
+	}
+}

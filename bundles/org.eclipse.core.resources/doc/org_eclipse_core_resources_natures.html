@@ -1,0 +1,83 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]">
+   <title>Workbench Extension Points</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+
+<center>
+<h1>
+Project Natures</h1></center>
+<b><i>Identifier: </i></b>org.eclipse.core.resources.natures
+<p><b><i>Description:</i></b> The workspace supports the notion of project
+natures (or "natures" for short").&nbsp; A nature associates lifecycle
+behaviour with a project.&nbsp; Natures are installed on a per-project
+basis and are configured automatically when a project is opened and deconfigured
+when a project is closed.&nbsp; For example, the Java nature might install
+a Java builder and do other project configuration when a project is opened.
+<p>The natures extension-point allows nature writers to register their
+nature implementation under a symbolic name that is then used from within
+the workspace to find and configure natures. The symbolic name it the id
+of the nature extension.
+<p><b><i>Configuration Markup:</i></b>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT nature runtime?></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST nature</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+<ul>
+<li>
+<b>id -</b> a unique name that can be used to identify this nature</li>
+
+<li>
+<b>name</b> - a translatable name that may be presented to the user to
+identify this nature</li>
+</ul>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT runtime parameter*></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST runtime</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+<ul>
+<li>
+<b>class -</b> the fully-qualified name of a class which implements <tt>org.eclipse.core.resources.IProjectNature</tt></li>
+</ul>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT parameter EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST parameter</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; value&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+<ul>
+<li>
+<b>name</b> - the name of this parameter made available to instances of
+the specified nature class</li>
+
+<li>
+<b>value</b> - an arbitrary value associated with the given name and made
+available to instances of the specificed nature class</li>
+</ul>
+<b><i>Examples:</i></b>
+<p>Following is an example of a builder configuration:
+<p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.core.resources.natures"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;nature id="com.xyz.coolNature"
+name="Cool Nature"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;runtime class="com.xyz.natures.Cool"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;parameter name="installBuilder" value="true"/></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/runtime></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/nature></tt>
+<br><tt>&nbsp;&nbsp; &lt;/extension></tt>
+<p><b><i>API Information</i>: </b>The value of the <tt>class</tt> attribute
+must represent an implementor of <tt>org.eclipse.core.resources.IProjectNature</tt>.
+<p><b><i>Supplied Implementation:</i></b> The platform itself does not
+have any predefined natures. Particular product installs may include natures
+as required.
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000" BORDER=0 height=12 width=195></a>
+</body>
+</html>
