@@ -28,7 +28,7 @@ public class ExampleApplication implements IPlatformRunnable, IExecutableExtensi
 	 * Creates a new application.
 	 */
 	public ExampleApplication() {
-		// TODO Auto-generated method stub
+		// do nothing
 	}
 	
 	/* (non-Javadoc)
@@ -58,6 +58,6 @@ public class ExampleApplication implements IPlatformRunnable, IExecutableExtensi
 		String propertyName,
 		Object data)
 		throws CoreException {
-		// TODO Auto-generated method stub
+			// do nothing
 	}
 }
