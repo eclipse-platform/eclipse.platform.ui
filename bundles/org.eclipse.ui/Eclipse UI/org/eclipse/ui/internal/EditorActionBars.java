@@ -63,7 +63,7 @@ public void deactivate(boolean forceVisibility) {
 public void dispose() {
 	super.dispose();
 	if (coolBarItem != null)
-		coolBarItem.getToolBarManager().removeAll();
+		coolBarItem.dispose();
 }
 /**
  * Gets the editor contributor
@@ -92,10 +92,12 @@ public IToolBarManager getToolBarManager() {
 		if (coolBarItem == null) {
 			// Create a CoolBar item for this action bar.
 			CoolBarManager cBarMgr = ((CoolBarManager)parentMgr);
-			coolBarItem = new CoolBarContributionItem(cBarMgr, type);
+			ToolBarManager tBarMgr = new ToolBarManager(cBarMgr.getStyle());
+			toolBarMgr = createSubToolBarManager(tBarMgr);
+			coolBarItem = new CoolBarContributionItem(cBarMgr, tBarMgr, type);
 			coolBarItem.setVisible(active);
 		}
-		return coolBarItem.getToolBarManager();
+		return toolBarMgr;
 	}
 	return null;
 }

@@ -38,7 +38,7 @@ protected SubToolBarManager createSubToolBarManager(IToolBarManager parent) {
 public void dispose() {
 	super.dispose();
 	if (coolBarItem != null) 
-		coolBarItem.getToolBarManager().removeAll();
+		coolBarItem.dispose();
 }
 /**
  * Returns the tool bar manager.  If items are added or
@@ -54,7 +54,9 @@ public IToolBarManager getToolBarManager() {
 		if (coolBarItem == null) {
 			// Create a CoolBar item for this action bar.
 			CoolBarManager cBarMgr = ((CoolBarManager)parentMgr);
-			coolBarItem = new CoolBarContributionItem(cBarMgr, actionSetId);
+			ToolBarManager tBarMgr = new ToolBarManager(cBarMgr.getStyle());
+			toolBarMgr = createSubToolBarManager(tBarMgr);
+			coolBarItem = new CoolBarContributionItem(cBarMgr, tBarMgr, actionSetId);
 			coolBarItem.setVisible(active);
 		}
 		return coolBarItem.getToolBarManager();
