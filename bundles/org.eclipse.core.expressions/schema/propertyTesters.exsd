@@ -3,16 +3,16 @@
 <schema targetNamespace="org.eclipse.jdt.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.jdt.ui" id="typeExtenders" name="Type Extenders"/>
+         <meta.schema plugin="org.eclipse.jdt.ui" id="propertyTesters" name="Property Testers"/>
       </appInfo>
       <documentation>
          This extension point allows to add properties to an already existing type. Those
-         properties can then be used inside the common expression language&apos;s test expression
+         properties can then be used inside the expression language&apos;s test expression
          element.
       </documentation>
    </annotation>
 
-   <element name="propteryTesters">
+   <element name="extension">
       <complexType>
          <sequence>
             <element ref="propertyTester" minOccurs="0" maxOccurs="unbounded"/>
@@ -91,7 +91,7 @@
 
 &lt;p&gt;
 &lt;pre&gt;
-  &lt;extension point=&quot;org.eclipse.core.expressions.propertyTester&quot;&gt;
+  &lt;extension point=&quot;org.eclipse.core.expressions.propertyTesters&quot;&gt;
     &lt;propertyTester
       id=&quot;org.eclipse.jdt.ui.IResourceTester&quot;
       type=&quot;org.eclipse.core.resources.IResource&quot;
