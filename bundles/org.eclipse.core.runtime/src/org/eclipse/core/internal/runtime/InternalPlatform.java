@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.osgi.framework.log.FrameworkLog;
+import org.eclipse.osgi.framework.log.FrameworkLogEntry;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
@@ -1153,6 +1154,7 @@ public final class InternalPlatform implements IPlatform {
 			return product;
 		}
 		IConfigurationElement[] elements = getRegistry().getConfigurationElementsFor(PI_RUNTIME, IPlatform.PT_PRODUCT);
+		List logEntries = null;
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (element.getName().equalsIgnoreCase("provider")) { //$NON-NLS-1$
@@ -1167,12 +1169,15 @@ public final class InternalPlatform implements IPlatform {
 						}
 					}
 				} catch (CoreException e) {
-					// Skip any bogus providers
-					// TODO check if we should log If we do log, ensure we only do it once.  Otherwise 
-					// the log will fill up with redundant entries.
+					if (logEntries == null)
+						logEntries = new ArrayList(3);
+					logEntries.add(new FrameworkLogEntry(PI_RUNTIME, Policy.bind("provider.invalid", element.getParent().toString()), 0, e, null));  //$NON-NLS-1$
 				}
 			}
 		}
+		if (logEntries != null)
+			getFrameworkLog().log(new FrameworkLogEntry(PI_RUNTIME, Policy.bind("provider.invalid.general"), 0, null, (FrameworkLogEntry[]) logEntries.toArray())); //$NON-NLS-1$
+
 		return null;
 	}
 
