@@ -220,9 +220,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fProposalShell.setVisible(false);
 			fProposalShell.dispose();
 			fProposalShell= null;
-			
 		}
-
+		
 		fFilteredProposals= null;
 	}
 	

@@ -237,7 +237,6 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		IDocument doc= fTextViewer.getDocument();
 
 		int topLeft= getInclusiveTopIndexStartOffset(styledText, doc, fTextViewer.getVisibleRegion().getOffset());
-//		int topLeft= fTextViewer.getTopIndexStartOffset();
 		int bottomRight= fTextViewer.getBottomIndexEndOffset();
 		int viewPort= bottomRight - topLeft;
 		
@@ -246,8 +245,6 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		int lineheight= styledText.getLineHeight();
 			
 		int shift= fTextViewer.getTopInset();
-		
-		System.err.println("top inset = " + shift);
 		
 		int topLine= -1, bottomLine= -1;
 		try {

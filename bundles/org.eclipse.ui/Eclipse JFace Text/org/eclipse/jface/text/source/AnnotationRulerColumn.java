@@ -242,7 +242,6 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 			return;
 
 		int topLeft= getInclusiveTopIndexStartOffset(fCachedTextWidget, fCachedTextViewer.getDocument(), fCachedTextViewer.getVisibleRegion().getOffset());
-//		int topLeft= fCachedTextViewer.getTopIndexStartOffset();
 		int bottomRight= fCachedTextViewer.getBottomIndexEndOffset();
 		int viewPort= bottomRight - topLeft;
 		
