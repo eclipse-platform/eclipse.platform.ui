@@ -42,8 +42,8 @@ public class IOConsolePage extends TextConsolePage {
             public void propertyChange(PropertyChangeEvent event) {
                 String property = event.getProperty();
                 if (property.equals(IConsoleConstants.P_AUTO_SCROLL)) {
-                    IOConsole console = (IOConsole) getConsole();
-                    setAutoScroll(console.getAutoScroll());
+                    IOConsole ioconsole = (IOConsole) getConsole();
+                    setAutoScroll(ioconsole.getAutoScroll());
                 } else if (property.equals(IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE)) {
                     setReadOnly();
                 }
