@@ -227,7 +227,7 @@
                style="pulldown"
                definitionId="org.eclipse.team.ui.synchronizeAll"
                allowLabelUpdate="true"
-               icon="icons/full/cview16/synch_synch.gif"
+               icon="icons/full/eview16/synch_synch.gif"
                class="org.eclipse.team.internal.ui.synchronize.actions.GlobalRefreshAction"
                toolbarPath="Normal/Team"
                tooltip="%Command.syncAll.name"
