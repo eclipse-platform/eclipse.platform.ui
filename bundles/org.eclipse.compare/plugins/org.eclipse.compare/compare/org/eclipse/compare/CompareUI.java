@@ -210,10 +210,33 @@ public final class CompareUI {
 	 */
 	public static Viewer findContentViewer(Viewer oldViewer, ICompareInput input, Composite parent,
 			CompareConfiguration configuration) {
+		return CompareUIPlugin.findContentViewer(oldViewer, input, parent, configuration);
+	}
+	
+	/**
+	 * Returns a content compare viewer based on an old viewer and an input
+	 * object. If the old viewer is suitable for showing the input the old
+	 * viewer is returned. Otherwise the input's type is used to find a viewer
+	 * descriptor in the registry which in turn is used to create a content
+	 * compare viewer under the given parent composite. In order to determine
+	 * the input's type, the input must either implement IStreamContentAccessor
+	 * and ITypedElement or ICompareInput. If no viewer descriptor can be found
+	 * <code>null</code> is returned.
+	 *
+	 * @param oldViewer a new viewer is only created if this old viewer cannot show the given input
+	 * @param input the input object for which to find a content viewer. Must
+	 * implement either <code>IStreamContentAccessor</code> and<code>
+	 * ITypedElement</code> or <code>ICompareInput</code>.
+	 * @param parent the SWT parent composite under which the new viewer is created
+	 * @param configuration a configuration which is passed to a newly created viewer
+	 * @return the compare viewer which is suitable for the given input object or <code>null</code>
+	 */
+	public static Viewer findContentViewer(Viewer oldViewer, Object input, Composite parent,
+			CompareConfiguration configuration) {
 		
 		return CompareUIPlugin.findContentViewer(oldViewer, input, parent, configuration);
 	}
-		
+
 	/**
 	 * Adds an alias for the given type.
 	 * Subsequent calls to <code>findStructureViewer</code>
