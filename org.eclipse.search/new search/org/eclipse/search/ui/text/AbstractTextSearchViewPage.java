@@ -81,9 +81,11 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
@@ -161,6 +163,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private int fCurrentMatchIndex = 0;
 	private String fId;
 	private int fSupportedLayouts;
+	
 	/**
 	 * Flag (<code>value 1</code>) denoting tree layout.
 	 */
@@ -839,6 +842,20 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	public void init(IPageSite pageSite) {
 		super.init(pageSite);
 		addLayoutActions(pageSite.getActionBars().getMenuManager());
+		initActionDefinitionIDs(pageSite.getWorkbenchWindow());
+	}
+
+	private void initActionDefinitionIDs(IWorkbenchWindow window) {
+		fRemoveSelectedMatches.setActionDefinitionId(getActionDefinitionId(window, ActionFactory.DELETE));
+		fShowNextAction.setActionDefinitionId(getActionDefinitionId(window, ActionFactory.NEXT));
+		fShowPreviousAction.setActionDefinitionId(getActionDefinitionId(window, ActionFactory.PREVIOUS));
+	}
+
+	private String getActionDefinitionId(IWorkbenchWindow window, ActionFactory factory) {
+		IWorkbenchAction action= factory.create(window);
+		String id= action.getActionDefinitionId();
+		action.dispose();
+		return id;
 	}
 
 	/**
@@ -853,6 +870,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		tbm.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveSelectedMatches); //$NON-NLS-1$
 		tbm.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveAllResultsAction); //$NON-NLS-1$
 		IActionBars actionBars = getSite().getActionBars();
+		getSite().getWorkbenchWindow();
 		if (actionBars != null) {
 			actionBars.setGlobalActionHandler(ActionFactory.NEXT.getId(), fShowNextAction);
 			actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), fShowPreviousAction);
