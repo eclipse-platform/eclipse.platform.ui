@@ -260,13 +260,18 @@ public class InternalAntRunner {
 		antProject.setProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
 		parseScript(antProject);
 		defaultTarget = antProject.getDefaultTarget();
+		
 		Enumeration targets = antProject.getTargets().elements();
 		List infos= new ArrayList();
 		List info;
+		boolean defaultFound= false;
 		while (targets.hasMoreElements()) {
 			Target target = (Target) targets.nextElement();
 			info= new ArrayList(4);
 			info.add(target.getName());
+			if (target.getName().equals(defaultTarget)) {
+				defaultFound= true;
+			}
 			info.add(target.getDescription());
 			info.add(target.getProject().getName());
 			List dependencies= new ArrayList();
@@ -278,6 +283,11 @@ public class InternalAntRunner {
 			dependencies.toArray(dependencyArray);
 			info.add(dependencyArray);
 			infos.add(info);
+		}
+		
+		if (!defaultFound) {
+			//default target must exist
+			throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Default_target_{0}{1}{2}_does_not_exist_in_this_project_1"), new String[]{"'", defaultTarget, "'"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return infos;
 	}
@@ -472,6 +482,7 @@ public class InternalAntRunner {
 			setTypes(getCurrentProject());
 			
 			parseScript(getCurrentProject());
+			validateDefaultTarget();
 			createMonitorBuildListener(getCurrentProject());
 			
 			if (projectHelp) {
@@ -515,6 +526,27 @@ public class InternalAntRunner {
 			}
 			
 			fireBuildFinished(getCurrentProject(), error);
+		}
+	}
+	/**
+	 * Method validateDefaultTarget.
+	 */
+	private void validateDefaultTarget() {
+		defaultTarget = getCurrentProject().getDefaultTarget();
+		
+		Enumeration targets = getCurrentProject().getTargets().elements();
+		boolean defaultFound= false;
+		while (targets.hasMoreElements()) {
+			Target target = (Target) targets.nextElement();
+			if (target.getName().equals(defaultTarget)) {
+				defaultFound= true;
+				break;
+			}
+		}
+		
+		if (!defaultFound) {
+			//default target must exist
+			throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Default_target_{0}{1}{2}_does_not_exist_in_this_project_1"), new String[]{InternalAntMessages.getString("InternalAntRunner.___5"), defaultTarget, InternalAntMessages.getString("InternalAntRunner.___6")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 	
@@ -754,7 +786,7 @@ public class InternalAntRunner {
 		
 		args = getArgument(commands, "-inputhandler"); //$NON-NLS-1$
 		if (args != null) {
-			if (antVersion.indexOf("1.5") == -1) { //$NON-NLS-1$
+			if (getAntVersion().indexOf("1.5") == -1) { //$NON-NLS-1$
 				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Specifying_an_InputHandler_is_an_Ant_1.5.*_feature._Please_update_your_Ant_classpath_to_include_an_Ant_version_greater_than_this._2")); //$NON-NLS-1$
 			}
 			if (args.length == 0) {
@@ -807,7 +839,7 @@ public class InternalAntRunner {
 		}
 		
 		if (commands.remove("-diagnostics")) { //$NON-NLS-1$
-			if (antVersion.indexOf("1.5") == -1) { //$NON-NLS-1$
+			if (getAntVersion().indexOf("1.5") == -1) { //$NON-NLS-1$
 				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.The_diagnositics_options_is_an_Ant_1.5.*_feature._Please_update_your_Ant_classpath_to_include_an_Ant_version_greater_than_this._4")); //$NON-NLS-1$
 			}
 			//Diagnostics.doReport(System.out);
@@ -938,7 +970,7 @@ public class InternalAntRunner {
 		//MULTIPLE property files are allowed
 		String[] args= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
 		while(args != null) {
-			if (antVersion.indexOf("1.5") == -1) { //$NON-NLS-1$
+			if (getAntVersion().indexOf("1.5") == -1) { //$NON-NLS-1$
 				logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.Specifying_property_files_is_a_Ant_1.5.*_feature._Please_update_your_Ant_classpath._6"), Project.MSG_ERR); //$NON-NLS-1$
 				break;
 			}
@@ -1200,7 +1232,7 @@ public class InternalAntRunner {
      *                           implementation could not be loaded.
      */
     private void addInputHandler(Project project) {
-    	if (antVersion.indexOf("1.5") == -1) { //$NON-NLS-1$
+    	if (getAntVersion().indexOf("1.5") == -1) { //$NON-NLS-1$
 			return;
 		}
         InputHandler handler = null;
