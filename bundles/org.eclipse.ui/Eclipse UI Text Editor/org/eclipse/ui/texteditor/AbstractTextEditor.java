@@ -2598,17 +2598,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		setAction(ITextEditorActionConstants.FIND, action);
 
 		action= new FindNextAction(EditorMessages.getResourceBundle(), "Editor.FindNext.", this, true); //$NON-NLS-1$
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_NEXT_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_NEXT);
 		setAction(ITextEditorActionConstants.FIND_NEXT, action);
 
 		action= new FindNextAction(EditorMessages.getResourceBundle(), "Editor.FindPrevious.", this, false); //$NON-NLS-1$
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_PREVIOUS_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_PREVIOUS);
 		setAction(ITextEditorActionConstants.FIND_PREVIOUS, action);
 
 		action= new IncrementalFindAction(EditorMessages.getResourceBundle(), "Editor.FindIncremental.", this); //$NON-NLS-1$
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_INCREMENTAL_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_INCREMENTAL);
 		setAction(ITextEditorActionConstants.FIND_INCREMENTAL, action);
 		

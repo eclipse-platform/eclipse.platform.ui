@@ -39,6 +39,9 @@ public interface IAbstractTextEditorHelpContextIds {
 	public static final String SHIFT_RIGHT_ACTION= PREFIX + ITextEditorActionConstants.SHIFT_RIGHT + ACTION_POSTFIX;
 	public static final String SHIFT_LEFT_ACTION= PREFIX + ITextEditorActionConstants.SHIFT_LEFT + ACTION_POSTFIX;
 	public static final String FIND_ACTION= PREFIX + ITextEditorActionConstants.FIND + ACTION_POSTFIX;
+	public static final String FIND_NEXT_ACTION = PREFIX + ITextEditorActionConstants.FIND_NEXT + ACTION_POSTFIX;
+	public static final String FIND_PREVIOUS_ACTION = PREFIX + ITextEditorActionConstants.FIND_PREVIOUS + ACTION_POSTFIX;
+	public static final String FIND_INCREMENTAL_ACTION = PREFIX + ITextEditorActionConstants.FIND_INCREMENTAL + ACTION_POSTFIX;
 	public static final String BOOKMARK_ACTION= PREFIX + ITextEditorActionConstants.BOOKMARK + ACTION_POSTFIX;
 	public static final String ADD_TASK_ACTION= PREFIX + ITextEditorActionConstants.ADD_TASK + ACTION_POSTFIX;
 	public static final String SAVE_ACTION= PREFIX + ITextEditorActionConstants.SAVE + ACTION_POSTFIX;
