@@ -263,6 +263,11 @@ public class CompositeChange extends Change {
 						}
 					}
 				}
+				// remove the change from the list of children to give
+				// the garbage collector the change to collect the change. This
+				// ensures that the memory consumption doesn't go up when
+				// producing the undo change tree.
+				iter.remove();
 			}
 			if (undos != null) {
 				Collections.reverse(undos);

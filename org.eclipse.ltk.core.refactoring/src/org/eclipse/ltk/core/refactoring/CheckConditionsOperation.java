@@ -12,6 +12,7 @@ package org.eclipse.ltk.core.refactoring;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 
@@ -71,6 +72,8 @@ public class CheckConditionsOperation implements IWorkspaceRunnable {
 	 * {@inheritDoc}
 	 */
 	public void run(IProgressMonitor pm) throws CoreException {
+		if (pm == null)
+			pm= new NullProgressMonitor();
 		try {
 			fStatus= null;
 			if ((fStyle & ALL_CONDITIONS) == ALL_CONDITIONS)

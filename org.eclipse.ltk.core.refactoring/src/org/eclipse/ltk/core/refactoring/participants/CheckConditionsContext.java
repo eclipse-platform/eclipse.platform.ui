@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -84,13 +85,16 @@ public class CheckConditionsContext {
 	 * Checks the condition of all registered condition checkers and returns a
 	 * merge status result.
 	 * 
-	 * @param pm a progress monitor
+	 * @param pm a progress monitor or <code>null</code> if no progress 
+	 *  reporting is desired
 	 * 
 	 * @return the combined status result
 	 * 
 	 * @throws CoreException if an error occurs during condition checking
 	 */
 	public RefactoringStatus check(IProgressMonitor pm) throws CoreException {
+		if (pm == null)
+			pm= new NullProgressMonitor();
 		RefactoringStatus result= new RefactoringStatus();
 		Collection values = fCheckers.values();
 		pm.beginTask("", values.size()); //$NON-NLS-1$

@@ -15,6 +15,7 @@ import org.eclipse.text.edits.UndoEdit;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -60,6 +61,8 @@ public class UndoDocumentChange extends Change {
 	 * {@inheritDoc}
 	 */
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
+		if (pm == null)
+			pm= new NullProgressMonitor();
 		pm.beginTask("", 1); //$NON-NLS-1$
 		RefactoringStatus result= TextChanges.isValid(fDocument, fLength);
 		pm.worked(1);

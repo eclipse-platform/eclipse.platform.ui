@@ -90,7 +90,7 @@ public interface IUndoManager {
 	 *  status isn't a fatal error. If <code>null</code> is passed in the the 
 	 *  undo proceeds if the status is not a fatal error.
 	 * @param pm a progress monitor to report progress during performing
-	 *  the undo change. The progress monitor must not be <code>null</code>
+	 *  the undo change
 	 * 
 	 * @throws CoreException if performing the undo caused an exception
 	 */	
@@ -121,7 +121,7 @@ public interface IUndoManager {
 	 *  <code>null</code> is passed in the the undo proceeds if the status
 	 *  is not a fatal error.
 	 * @param pm a progress monitor to report progress during performing
-	 *  the redo change. The progress monitor must not be <code>null</code>
+	 *  the redo change
 	 * 
 	 * @throws CoreException if performing the redo caused an exception
 	 */	

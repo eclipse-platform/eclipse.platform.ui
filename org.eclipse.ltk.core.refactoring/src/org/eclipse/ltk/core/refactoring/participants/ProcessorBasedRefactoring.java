@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
@@ -103,6 +104,8 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 	 * {@inheritDoc}
 	 */
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException {
+		if (pm == null)
+			pm= new NullProgressMonitor();
 		RefactoringStatus result= new RefactoringStatus();
 		pm.beginTask("", 10); //$NON-NLS-1$
 		pm.setTaskName(RefactoringCoreMessages.getString("ProcessorBasedRefactoring.initial_conditions")); //$NON-NLS-1$
@@ -120,6 +123,8 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 	 * {@inheritDoc}
 	 */
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm) throws CoreException {
+		if (pm == null)
+			pm= new NullProgressMonitor();
 		RefactoringStatus result= new RefactoringStatus();
 		CheckConditionsContext context= createCheckConditionsContext();
 		
@@ -162,6 +167,8 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 	 * {@inheritDoc}
 	 */
 	public Change createChange(IProgressMonitor pm) throws CoreException {
+		if (pm == null)
+			pm= new NullProgressMonitor();
 		pm.beginTask("", fParticipants.length + 2); //$NON-NLS-1$
 		pm.setTaskName(RefactoringCoreMessages.getString("ProcessorBasedRefactoring.create_change")); //$NON-NLS-1$
 		Change processorChange= getProcessor().createChange(new SubProgressMonitor(pm, 1));

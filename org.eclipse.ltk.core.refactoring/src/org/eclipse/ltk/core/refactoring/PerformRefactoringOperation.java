@@ -12,6 +12,7 @@ package org.eclipse.ltk.core.refactoring;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -91,6 +92,8 @@ public class PerformRefactoringOperation implements IWorkspaceRunnable {
 	 * {@inheritDoc}
 	 */
 	public void run(IProgressMonitor monitor) throws CoreException {
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
 		monitor.beginTask("", 10); //$NON-NLS-1$
 		CreateChangeOperation create= new CreateChangeOperation(
 			new CheckConditionsOperation(fRefactoring, fStyle),

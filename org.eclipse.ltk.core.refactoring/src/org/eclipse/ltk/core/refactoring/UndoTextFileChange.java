@@ -15,6 +15,7 @@ import org.eclipse.text.edits.UndoEdit;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.core.resources.IFile;
@@ -127,6 +128,8 @@ public class UndoTextFileChange extends Change {
 	 * {@inheritDoc}
 	 */
 	public void initializeValidationData(IProgressMonitor pm) {
+		if (pm == null)
+			pm= new NullProgressMonitor();
 		pm.beginTask("", 1); //$NON-NLS-1$
 		fValidationState= BufferValidationState.create(fFile);
 		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath());
@@ -138,6 +141,8 @@ public class UndoTextFileChange extends Change {
 	 * {@inheritDoc}
 	 */
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
+		if (pm == null)
+			pm= new NullProgressMonitor();
 		pm.beginTask("", 1); //$NON-NLS-1$
 		RefactoringStatus result= fValidationState.isValid();
 		pm.worked(1);
@@ -148,6 +153,8 @@ public class UndoTextFileChange extends Change {
 	 * {@inheritDoc}
 	 */
 	public Change perform(IProgressMonitor pm) throws CoreException {
+		if (pm == null)
+			pm= new NullProgressMonitor();
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		pm.beginTask("", 2); //$NON-NLS-1$
 		ITextFileBuffer buffer= null;

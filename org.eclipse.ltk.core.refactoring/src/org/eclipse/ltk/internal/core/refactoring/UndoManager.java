@@ -16,6 +16,7 @@ import java.util.Stack;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -167,6 +168,8 @@ public class UndoManager implements IUndoManager {
 	 * (Non-Javadoc) Method declared in IUndoManager.
 	 */
 	public void performUndo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException {
+		if (pm == null)
+			pm= new NullProgressMonitor();
 		RefactoringStatus result= new RefactoringStatus();
 
 		if (fUndoChanges.empty())
@@ -200,6 +203,8 @@ public class UndoManager implements IUndoManager {
 	 * (Non-Javadoc) Method declared in IUndoManager.
 	 */
 	public void performRedo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException {
+		if (pm == null)
+			pm= new NullProgressMonitor();
 		RefactoringStatus result= new RefactoringStatus();
 
 		if (fRedoChanges.empty())

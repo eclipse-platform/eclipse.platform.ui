@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
- * An abstract base implementation for object represents a generic change 
+ * An abstract base implementation for object representing a generic change 
  * to the workbench. A <code>Change</code> object is typically created by 
  * calling <code>Refactoring.createChange()</code>. This class should be
  * subclassed by clients wishing to provide new changes.
@@ -35,7 +35,7 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  *       results in an unspecified result. This method can be called multiple
  *       times.
  *   <li>then the method perform can be called. An disabled change should not
- *       be executed.</li>
+ *       be executed. The perform method can only be called once.</li>
  *   <li>the method dispose has to be called either after the perform method
  *       has been called or if a change is no longer needed. The second case
  *       for example occurs when the undo stack gets flushed and all change

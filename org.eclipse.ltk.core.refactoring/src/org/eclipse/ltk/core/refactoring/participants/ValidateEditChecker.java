@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -76,6 +77,8 @@ public class ValidateEditChecker implements IConditionChecker {
 	 * {@inheritDoc}
 	 */
 	public RefactoringStatus check(IProgressMonitor monitor) throws CoreException {
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
 		IResource[] resources= (IResource[])fFiles.toArray(new IResource[fFiles.size()]);
 		RefactoringStatus result= new RefactoringStatus();
 		IStatus status= Resources.checkInSync(resources);
