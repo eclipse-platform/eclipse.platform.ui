@@ -1027,6 +1027,6 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation#setUserAuthenticator()
 	 */
 	public void setUserAuthenticator(IUserAuthenticator authenticator) {
-		this.authenticator = authenticator;
+		CVSRepositoryLocation.authenticator = authenticator;
 	}	
 }
