@@ -147,10 +147,14 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		if (input instanceof ICompareInput) {
 			compareInputChanged((ICompareInput) input);
 			if (input != oldInput)
-				navigate(true);
+				initialSelection();
 		}
 	}
 	
+	protected void initialSelection() {
+		expandToLevel(2);
+	}
+
 	/* (non Javadoc)
 	 * Overridden to unregister all listeners.
 	 */
