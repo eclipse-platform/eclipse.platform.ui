@@ -17,9 +17,11 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
+
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
@@ -33,6 +35,7 @@ import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.registry.Category;
+import org.eclipse.ui.internal.registry.IPluginContribution;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
@@ -294,6 +297,21 @@ public class WorkbenchActivityHelper {
         objectManager.applyPatternBindings();
     }
 
+
+    /**
+     * Utility method to create a String containing the plugin and local ids of 
+     * a contribution.
+     * 
+     * @param contribution the contribution to use.
+     * @return the unified id.
+     * @since 3.0
+     */
+    public static final String createUnifiedId(IPluginContribution contribution) {
+        if (contribution.fromPlugin()) 
+            return contribution.getPluginId() + '/' + contribution.getLocalId();
+        return contribution.getLocalId();
+    }    
+    
     /**
 	 * Utility method to create a key/object value from a given view category
 	 * ID.

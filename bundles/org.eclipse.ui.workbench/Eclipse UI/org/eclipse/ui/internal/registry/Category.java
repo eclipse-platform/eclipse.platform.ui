@@ -30,7 +30,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * achieve hierarchy.
  * </p>
  */
-public class Category implements IWorkbenchAdapter {
+public class Category implements IWorkbenchAdapter, IPluginContribution {
 	/**
 	 * Name of the miscellaneous category
 	 */
@@ -46,6 +46,7 @@ public class Category implements IWorkbenchAdapter {
 	private static final String ATT_NAME = "name"; //$NON-NLS-1$
 	
 	private String id;
+    private String pluginId;    
 	private String name;
 	private String[] parentPath;
 	private String unparsedPath;
@@ -83,6 +84,7 @@ public class Category implements IWorkbenchAdapter {
 	 */
 	public Category(IConfigurationElement configElement) throws WorkbenchException {
 		id = configElement.getAttribute(ATT_ID);
+        pluginId = configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
 		name = configElement.getAttribute(ATT_NAME);
 		unparsedPath = configElement.getAttribute(ATT_PARENT);
 		configurationElement = configElement;
@@ -195,5 +197,26 @@ public class Category implements IWorkbenchAdapter {
 	 */
 	public Object getParent(Object o) {
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.IPluginContribution#fromPlugin()
+	 */
+	public boolean fromPlugin() {
+		return pluginId != null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getLocalId()
+	 */
+	public String getLocalId() {
+		return id;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getPluginId()
+	 */
+	public String getPluginId() {		
+		return pluginId;
 	}
 }
